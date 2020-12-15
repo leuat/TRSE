@@ -146,6 +146,7 @@ void MultiColorImage::setBackground(unsigned int col)
     for (int i=0;i<m_charWidth*m_charHeight;i++) {
         m_data[i].c[0] = col;
     }
+
  //   qDebug() << "SETBACK";
     if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
 //        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
@@ -1379,7 +1380,8 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
 
 }
 
-void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, double compression, int maxChars, int type) {
+void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1,
+                                      int& noChars, double compression, int maxChars, int type) {
     CharsetImage* ni = new CharsetImage(m_colorList.m_type);
 
     QVector<PixelChar> chars;
@@ -1387,6 +1389,8 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
     QVector<int> data;
     int sx = x1-x0;
     int sy = y1-y0;
+
+//    qDebug() << "*******" <<sx << sy;
     data.resize(sx*sy);
     data.fill(0x0);
     noChars = 0;

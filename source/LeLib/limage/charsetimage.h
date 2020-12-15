@@ -114,6 +114,8 @@ public:
 
     void setPixelHybrid(int x, int y, unsigned int color);
 
+    void setBackground(unsigned int col) override;
+
 
 /*    void FlipHorizontal() override;
     void FlipVertical() override;

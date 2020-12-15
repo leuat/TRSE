@@ -941,6 +941,19 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="export_parallax_data") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+
         if (m_currentToken.m_value=="perlinnoise") {
             Eat();
             Eat();
@@ -2146,6 +2159,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="export_parallax_data") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportParallaxData();
               }
               else if (m_currentToken.m_value.toLower()=="perlinnoise") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3690,6 +3707,37 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleExportParallaxData()
+{
+//    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    int x0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int y0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int x1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int y1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    Compression::GenerateParallaxData(inFile, outFile, x0,y0,x1,y1,param1,param2);
+
 
 }
 

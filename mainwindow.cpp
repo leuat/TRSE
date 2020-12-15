@@ -659,6 +659,7 @@ void MainWindow::ConnectDocument()
         connect(m_currentDoc, SIGNAL(emitSearchSymbols()), this, SLOT(acceptSearchSymbols()));
         connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
         connect(m_currentDoc, SIGNAL(emitGotoSymbol(QString)), this, SLOT(GotoSymbol(QString)));
+        connect(m_currentDoc, SIGNAL(emitGotoAssemblerLine(QString, int)), this, SLOT(GotoAssemblerLine(QString, int)));
     }
 
 }
@@ -2262,6 +2263,21 @@ void MainWindow::GotoSymbol(QString s)
     ui->treeSymbols->setCurrentItem(m_treeItems[s]);
 }
 
+void MainWindow::GotoAssemblerLine(QString s, int lineNumber)
+{
+    QString asmSrc = s.split(".")[0] + ".asm";
+//    qDebug() << "Exists : " + m_currentPath+ asmSrc;
+ //   qDebug() << QFile::exists(m_currentPath+ asmSrc);
+    if (!QFile::exists(m_currentPath+ QDir::separator() + asmSrc))
+        return;
+
+    ForceOpenFile(asmSrc,0);
+    m_currentDoc->Focus();
+    m_currentDoc->SearchInSource("linenumber: "+QString::number(lineNumber+1));
+//    qDebug() << "Searching for line : " << lineNumber+2;
+//    m_currentDoc->SearchInSource("lineumber:");
+}
+
 
 
 void MainWindow::on_leFilterSymbols_textChanged(const QString &arg1)
@@ -2429,4 +2445,11 @@ void MainWindow::on_action_Comment_Uncomment_triggered()
 {
     if (m_currentDoc!=nullptr)
         m_currentDoc->ToggleComment();
+}
+
+void MainWindow::on_actionLook_up_assembly_line_under_cursor_F3_triggered()
+{
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->LookupAssemblerUnderCursor();
+
 }

@@ -54,6 +54,7 @@
 #include "source/LeLib/limage/c64fullscreenchar.h"
 #include "source/trsedocuments/formpaw.h"
 #include "source/LeLib/util/tool.h"
+#include "source/LeLib/limage/compression.h"
 #include "source/LeLib/util/SimplexNoise.h"
 //#include "source/Compiler/sourcebuilder.h"
 
@@ -231,6 +232,7 @@ public:
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleExportParallaxData();
     void HandleExportBW();
     void HandleBuildPaw();
     void HandleExportPrg2Bin();

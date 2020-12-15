@@ -46,7 +46,12 @@ public:
     QElapsedTimer m_timer;
     int m_elapsedTime;
     QVector<int> alreadySet;
+    QByteArray m_background, m_backgroundUsed, m_backgroundTarget;
+;
+    bool m_backgroundSet = false;
 
+    char FadeColor(char c, int speed);
+    char FadeColorTo(char c, char tar, int speed, int start = 0);
 
     virtual void ToggleAnim() {m_toggleAnim=!m_toggleAnim;}
 
@@ -58,6 +63,12 @@ public:
     virtual void Save(QString file);
 
 
+    void UpdateScreenDataFrame(QVector<int>& screen, int xp, int yp, int w, int h, int frame);
+
+
+    void ExportDiffAsUnrolledBitmap6502ColorOut(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int startCol);
+    void ExportDiffAsUnrolledBitmap6502ColorIn(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int startCol);
+    void ExportDiffAsUnrolledBitmap6502ColorInAddress(QString file, int background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed);
     void ExportDiffAsUnrolledBitmap6502(QString file, QString background, QString name, QString wf, int pos, int x, int y, int w, int h);
     void ExportDiffAsUnrolledBitmap6502In(QString file, QString background, QString name, QString wf, int pos, int x, int y, int w, int h);
     virtual void Init() {}

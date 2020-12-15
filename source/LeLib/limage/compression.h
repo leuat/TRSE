@@ -12,14 +12,15 @@
 #include <math.h>
 #include <QtMath>
 #include "source/LeLib/limage/charsetimage.h"
+#include "source/LeLib/limage/limageio.h"
 
 class Compression
 {
 public:
     Compression();
 
-    const int TYPE_REGULAR = 0;
-    const int TYPE_SSIM = 1;
+    static const int TYPE_REGULAR = 0;
+    static const int TYPE_SSIM = 1;
 
     void SaveCharset(QString filename, QImage& img, int w, int h, int div);
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div);
@@ -34,16 +35,21 @@ public:
 
     void CompressScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, int noTargetChar,int bmask);
 
-    void OptimizeScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
-    void OptimizeScreenAndCharsetGB(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
+    static void OptimizeScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
+    static void OptimizeScreenAndCharsetGB(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, double compression,int type, LColorList& lst, int bmask);
+
+//    static void FrameConverter(QString dir, QString outFile, QVector<int> cols);
+
 
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);
 
-    double Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length, int type, int bmask);
+    static double Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length, int type, int bmask);
 
     void OptimizeAndPackCharsetData(QByteArray& dataIn, QByteArray& out, QByteArray& table, int width, double compression, bool invertTable,int type,LColorList& lst, int bmask);
 
     void ConvertToC64(bool dither);
+
+    static void GenerateParallaxData(QString inFile, QString outFile, int x0, int y0, int x1, int y1,int p1, int type);
 
     void AddCharsetScreen(QByteArray& data, QImage& img, CharsetImage* charset,int w, int h);
 
@@ -57,5 +63,6 @@ public:
 
     void SaveCompressedTRM(QByteArray& data, QString file, int compression);
 };
+
 
 #endif // COMPRESSION_H

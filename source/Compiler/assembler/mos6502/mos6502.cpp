@@ -154,8 +154,10 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         }
         line = line.remove(line.count()-1,1);
         Asm(line);
-
-        Asm(".byte    $29, $00, $00, $00");   // 6, 4, )*/
+        QString extra = "";
+        if (s.count()<5)
+            extra=", $00";
+        Asm(".byte    $29, $00, $00"+ extra);   // 6, 4, )*/
         Nl();
 //        Asm("ORG " + Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
         EndMemoryBlock();

@@ -256,6 +256,23 @@ void C64FullScreenChar::Initialize(int width, int height) {
     ReInitialize();
 }
 
+void C64FullScreenChar::setBackground(unsigned int col)
+{
+    //qDebug() << "SetBackrouund VIC "<<col;
+    m_colorList.setPen(0,col);
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
+        m_data[i].c[0] = col;
+    }
+
+//    C64Screen* cur = ((C64Screen*)m_items[m_current]);
+
+//qDebug() << "Setting bg col "<< Util::numToHex(col);
+
+
+    if (m_charset!=nullptr)
+        m_charset->setBackground(col);
+}
+
 bool C64FullScreenChar::KeyPress(QKeyEvent *e)
 {
     if (e->key()==Qt::Key_A)
@@ -307,9 +324,12 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
 //    x=x*m_charWidth/40.0;
  //   y=y*m_charHeight/25.0;
 
-    if (m_writeType==Character)
+
+
+
+    if (m_writeType==Character || !m_forcePaintColorAndChar)
         ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currentChar;
-    if (m_writeType==Color)
+    if (m_writeType==Color || !m_forcePaintColorAndChar)
         ((C64Screen*)m_items[m_current])->m_rawColors[x/8+ (y/8)*m_charWidth] = color;
 
 
@@ -331,8 +351,14 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
   // x=x*m_charWidth/40.0;
   //  y=y*m_charHeight/25.0;
 
-    uchar v = ((C64Screen*)m_items[m_current])->m_rawData[(x/8) + (y/8)*m_charWidth];
-    uchar col = ((C64Screen*)m_items[m_current])->m_rawColors[(x/8) + (y/8)*m_charWidth];
+    int pp = (x/8) + (y/8)*m_charWidth;
+    C64Screen* cur = ((C64Screen*)m_items[m_current]);
+    uchar v = 0, col = 0;
+    if (pp<cur->m_rawData.count())
+        v = cur->m_rawData[pp];
+
+    if (pp<cur->m_rawColors.count())
+        col = cur->m_rawColors[pp];
 
 
     int ix = (x % 8);//- (dx*40);
@@ -356,6 +382,11 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
     int pos = v;
     uchar val = m_charset->m_data[pos].get(ix, iy,m_bitMask);
 
+//    if (val==0)
+//        val = m_colorList.getPen(0);
+
+//    if (rand()%1000>990)
+  //      qDebug() << Util::numToHex(val);
     if (m_bitMask==0b11) {
         if (val==m_charset->m_data[pos].c[3])
             val = col;
@@ -382,7 +413,7 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
 
         m_charWidth = c->m_charWidth;
         m_charHeight = c->m_charHeight;
-
+        m_forcePaintColorAndChar  = mc->m_forcePaintColorAndChar;
         DeleteAll();
         for (LImageContainerItem* li: c->m_items) {
             C64Screen* s= (C64Screen*)li;

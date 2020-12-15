@@ -1,6 +1,7 @@
 unit Animations;
 var  
 	trm_zp: pointer;   
+	screen_ptr : pointer;
 	trm_maxFrames, trm_compressionType, trm_hasTimeStamps, trm_endChar, trm_skipChar, trm_curFrame: byte=0;	
 
 	trm_orgPos : integer;
@@ -21,7 +22,7 @@ begin
 end;
 
 
-procedure RenderNextPackedFrameCompressionType2(trm_data_width, trm_xpos, trm_ypos:byte);
+procedure RenderNextPackedFrameCompressionType2(screen_ptr:global pointer;trm_data_width, trm_xpos, trm_ypos:byte);
 var
    trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
    trm_s : pointer;
@@ -35,11 +36,14 @@ begin
 	trm_sw:=screen_width-trm_dw;
 	
 	for trm_pass:=0 to 2 do begin
+		
 		case trm_pass of
-			1:	trm_s:=screen_col_loc+trm_xpos;
-			0:	trm_s:=screen_char_loc+trm_xpos;
+			0:	trm_s:=screen_ptr;
+			1:	trm_s:=#screen_col_loc;
 		end;
-	trm_s:=trm_s+screen_width*trm_ypos;
+		trm_s := trm_s +trm_xpos;
+	if (trm_ypos<>0) then
+		trm_s:=trm_s+screen_width*trm_ypos;
 	while (trm_zp[0]<>trm_endChar) do begin
 		if (trm_zp[0] = trm_skipChar) then begin
 			trm_s := trm_s + trm_zp[1]; 

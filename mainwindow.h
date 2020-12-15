@@ -301,6 +301,7 @@ private slots:
 
     void FindFileDialog();
     void GotoSymbol(QString s);
+    void GotoAssemblerLine(QString s, int lineNumber);
     void onImageMouseMove();
 
     void on_treeFiles_doubleClicked(const QModelIndex &index);
@@ -427,6 +428,8 @@ private slots:
     void on_actionView_changelog_triggered();
 
     void on_action_Comment_Uncomment_triggered();
+
+    void on_actionLook_up_assembly_line_under_cursor_F3_triggered();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

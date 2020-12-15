@@ -98,7 +98,7 @@ public:
 
     void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
 
-    QString getReturn() override { return "ret";}
+    QString getReturn() override { return "rts";}
     QString getReturnInterrupt() override { return "rti";}
 
 

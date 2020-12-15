@@ -340,7 +340,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
 //    screen = sOut;
 }
 
-void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type,LColorList& lst, int bmask)
+void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type, LColorList& lst, int bmask)
 {
     cOut.clear();
     sOut.clear();
@@ -617,6 +617,103 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
 
 }
 
+void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, int y0, int x1, int y1, int p1, int type)
+{
+    LImage* imgIn = (LImage*)LImageIO::Load(inFile);
+    if (imgIn==nullptr) {
+        qDebug() << "File not found / not c64 fullscreen : " << inFile;
+        return;
+    }
+    C64FullScreenChar* fs = (C64FullScreenChar*)imgIn;
+    if (fs!=nullptr)
+        imgIn->LoadCharset(fs->m_charsetFilename,0);
+
+    outFile = outFile.split(".")[0];
+    QVector<int> screenData;
+    QByteArray charData;
+    int compType = 0;
+    for (int scroll=0;scroll<8;scroll+=2) {
+        QSharedPointer<CharsetImage> c1 = QSharedPointer<CharsetImage>(new CharsetImage(imgIn->m_colorList.m_type));
+ //       c1->setMultiColor(false)
+        c1->m_width = 320;
+        c1->m_bitMask = 0b1;
+        c1->m_noColors = 4;
+        c1->m_scale = 1;
+        c1->m_minCol = 0;
+
+        c1->m_width = 320;
+        c1->m_bitMask = 0b11;
+        c1->m_noColors = 4;
+        c1->m_scale = 1;
+        c1->m_minCol = 0;
+
+
+//        c1->setMultiColor(false);
+//        c1->m_charWidth = imgIn->m_charWidth;
+  //      c1->m_width = imgIn->m_width;
+        // Paint data!
+        for (int y=0;y<imgIn->m_height;y++)
+            for (int x=0;x<imgIn->m_width;x++) {
+                int i = imgIn->getPixel(x/2,y);
+                if (i!=0)
+                    c1->setPixel((x+scroll)%(c1->m_width),y, 1);
+            }
+        int noChars;
+        QVector<int> tmpI;
+        QByteArray ba;
+        c1->CompressAndSave(ba, tmpI, x0,x1,y0,y1,
+                            noChars,p1,  256, compType);
+        charData.append(ba);
+        screenData.append(tmpI);
+//        qDebug() << "NO chars frame " << scroll << " : " << noChars <<imgIn->m_charHeight << screenData.count();
+        //qDebug() << charData;
+
+        if (scroll==2)
+            LImageIO::Save(outFile+"_test.flf",c1.get());
+
+    }
+    // Type set
+    if (type!=0) {
+        QByteArray n;
+        for (char c: charData) {
+            char r = 0;
+            for (int i=0;i<4;i++) {
+                char k = (c>>(i*2))&0b11;
+                if (k==0b11)
+                    k = type;
+                r = r | k<<(2*i);
+
+            }
+            n.append(r);
+        }
+        charData = n;
+    }
+
+    QString fsOut = outFile+"_screens.bin";
+    QString fcOut = outFile+"_charset.bin";
+    QVector<int> sOut;
+    QByteArray cOut;
+/*    OptimizeScreenAndCharset(screenData, charData, sOut, cOut,  x1-x0,y1-y0,
+                             256,p1, compType,imgIn->m_colorList,imgIn->m_bitMask);
+                             */
+//    int sw, int sh, int charSize, double compression, int type, LColorList& lst, int bmask//
+/*    Util::SaveByteArray(cOut, fcOut);
+    QByteArray d = Util::toQByteArray(sOut);
+    Util::SaveByteArray(d, fsOut);
+*/
+    qDebug() << "No chars : " << cOut.count()/8 << " vs ORG " << charData.count()/8 << "  ";
+
+     Util::SaveByteArray(charData, fcOut);
+     QByteArray d = Util::toQByteArray(screenData);
+     Util::SaveByteArray(d, fsOut);
+
+
+//    void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type,LColorList& lst, int bmask)
+
+
+//    qDebug() << "WHOO";
+}
+
 void Compression::AddCharsetScreen(QByteArray &data, QImage &img, CharsetImage *charset, int w, int h)
 {
 
@@ -763,4 +860,8 @@ void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
 
 }
 
+/*
+void Compression::FrameConverter(QString dir, QString outFile, QVector<int> cols) {
 
+}
+*/

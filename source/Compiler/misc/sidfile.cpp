@@ -52,7 +52,7 @@ void SidFile::Load(QString filename, QString path)
 
 
 //    qDebug() << Util::numToHex(m_playAddress);
-  //  qDebug() << Util::numToHex(m_playAddress);
+  //  qDebug() << Util::numToHex(m_initAddress);
 
     file.close();
 }

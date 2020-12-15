@@ -124,7 +124,7 @@ public:
     void SetLights();
     void SetText(QString s);
     void SetupHighlighter();
-    void SearchInSource();
+    void SearchInSource(QString text) override;
     void UpdateColors() override;
     void UpdateFromIni() override;
     void AutoFormat() override;
@@ -153,6 +153,7 @@ public:
 
     void BuildNes(QString prg);
     void LookupSymbolUnderCursor() override;
+    void LookupAssemblerUnderCursor() override;
     void ToggleComment() override;
 
 public slots:

@@ -135,12 +135,40 @@ begin
 	start:=tableDiv20[start];	
 	stop:=tableDiv20[stop];	
 
-	for i:=start to stop do
+ 	for i:=start to stop do
 	begin
 		// Basically a memcpy of the data, but ora with the colour cell value defined in p_col
 		asm("
 			ldy #39
 lpp:
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
+			lda (p1),y
+			ora localVariable_Paint_p_col
+			sta (screenmemory),y
+			dey
 			lda (p1),y
 			ora localVariable_Paint_p_col
 			sta (screenmemory),y
@@ -167,8 +195,8 @@ begin
 	hidebordery(1);
 	i:=peek(^$D011,0);
 	poke(^$D011,0,i | %01000000);
-
 	scrolly(yscroll);
+
 
 	if (time&1=0) then
 		Advance();
@@ -225,7 +253,7 @@ begin
 	// Must be called at the end: Update colours (if advancement has been triggered)
 	if (adv=1) then 
 	begin
-		waitforraster(1);
+		waitforraster(0);
 		SetExtraCols();
 		adv:=0;
 	end;
@@ -249,7 +277,7 @@ begin
 	// Initialze blank screen
 	clearscreen(1,screen_char_loc);
 	// Start raster!
-	StartRasterchain(Raster(),10,0);
+	StartRasterchain(Raster(),16,0);
 	Loop();	
 
 end.

@@ -554,7 +554,8 @@ void LColorList::InitC64()
     m_list.append(LColor(QColor(0x58, 0x8d, 0x43),""));
     m_list.append(LColor(QColor(0x35, 0x28, 0x79),""));
     m_list.append(LColor(QColor(0xb8, 0xc7, 0x6F),""));
-    m_list.append(LColor(QColor(0x6f, 0x4f, 0x25),""));
+ //   m_list.append(LColor(QColor(0x6f, 0x4f, 0x25),"")); // INTERNAL ORANGE
+    m_list.append(LColor(QColor(0x90, 0x5f, 0x25),"")); /// ALT ORANGE
     m_list.append(LColor(QColor(0x43, 0x39, 0x00),""));
     m_list.append(LColor(QColor(0x9a, 0x67, 0x59),""));
     m_list.append(LColor(QColor(0x44, 0x44, 0x44),""));

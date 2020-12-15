@@ -8,10 +8,60 @@ AbstractDemoEffect::AbstractDemoEffect(QGridLayout* gl)
     m_gl = gl;
 }
 
+char AbstractDemoEffect::FadeColor(char c, int speed)
+{
+//    int fromBlack[] = {0x00,0x06,0x09,0x0b,0x02,0x04,0x08,0x0c,0x0e,0x0a,0x05,0x0f,0x03,0x07,0x0d,0x01,0x0d,0x07,0x03,0x0f,0x05,0x0a,0x0e,0x0c,0x08,0x04,0x02,0x0b,0x09,0x06,0x00,0x00};
+    int fromBlack[] = {0x00,0x06,0x09,0x0b,0x02,0x04,0x08,0x0c,0x0e,0x0a,0x05,0x0f,0x03,0x07,0x0d,0x01,0x0d,0x07,0x03,0x0f,0x05,0x0a,0x0e,0x0c,0x08,0x04,0x02,0x0b,0x09,0x06,0x00,0x00};
+    uchar c1 = c&0b00001111;
+    uchar c2 = (c&0b11110000)>>4;
+    int i1, i2;
+    if (speed==0) speed=1;
+    for (int i=0;i<16;i++) {
+        if (fromBlack[i]==c1) i1 = i;
+        if (fromBlack[i]==c2) i2 = i;
+    }
+    i1-=speed;
+    i2-=speed;
+    if (i1<0) i1=0;
+    if (i2<0) i2=0;
+    return fromBlack[i1] | fromBlack[i2]<<4;
+
+}
+
+char AbstractDemoEffect::FadeColorTo(char c, char tar, int speed, int start)
+{
+    if (speed==0) speed=1;
+        tar = tar &0xff;
+        int fromBlack[] = {0x00,0x06,0x09,0x0b,0x02,0x04,0x08,0x0c,0x0e,0x0a,0x05,0x0f,0x03,0x07,0x0d,0x01,0x0d,0x07,0x03,0x0f,0x05,0x0a,0x0e,0x0c,0x08,0x04,0x02,0x0b,0x09,0x06,0x00,0x00};
+        uchar c1 = c&0b00001111;
+        uchar c2 = (c&0b11110000)>>4;
+        uchar tc1 = tar&0b00001111;
+        uchar tc2 = (tar&0b11110000)>>4;
+        int i1, i2,t1=0,t2=0;
+        for (int i=start;i<32;i++) {
+            if (fromBlack[i]==c1) i1 = i;
+            if (fromBlack[i]==c2) i2 = i;
+            if (fromBlack[i]==tc1) t1 = i;
+            if (fromBlack[i]==tc2) t2 = i;
+        }
+        i1+=speed;
+        i2+=speed;
+        if (i1>t1) i1=t1;
+        if (i2>t2) i2=t2;
+//        if (i1>16) i1=16;
+ //       if (i2>16) i2=16;
+//        qDebug() << i1 << t1 << " AND " << i2 << t2 <<Util::numToHex((uchar)tar);
+//        if (rand()%100>98)
+  //          qDebug() << speed;
+        return fromBlack[i1] | fromBlack[i2]<<4;
+
+}
+
 void AbstractDemoEffect::Save(QString file)
 {
 
 }
+
 
 void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h) {
 //    m_prev.save("test.png");
@@ -84,6 +134,334 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString ba
     for (uchar c: lst.keys()) {
         uchar inv = c;
         out += " lda #"+ Util::numToHex(inv) + "\n";
+        for (int pos : lst[c]) {
+//            if (!alreadySet.contains(pos))
+            out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";
+        }
+
+    }
+
+/*
+    out+=" lda #$0\n";
+    for (int pos: lst2) {
+        out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";
+
+    }*/
+    out+=" jsr "+waitFunc + " ; wait \n ";
+
+
+    out+=" \"); end;\n";
+    Util::SaveTextFile(file,out);
+
+
+}
+
+void AbstractDemoEffect::UpdateScreenDataFrame(QVector<int> &screen, int xp, int yp, int w, int h, int frame)
+{
+    if (!m_backgroundSet) {
+        m_backgroundUsed.resize((w-xp)*(h-yp));
+        m_backgroundUsed.fill(0);
+        m_backgroundSet = true;
+    }
+    if (screen.count()==0) {
+        screen.resize((w-xp)*(h-yp));
+        screen.fill(0);
+    }
+    for (int y=yp;y<h;y++) {
+        for (int x=xp;x<w;x++) {
+            QColor c0 = m_img.pixelColor(x,y);
+            QRgb c1 = m_prev.pixel(x,y);
+            int pos = y * w +x;
+            if (c0 != Qt::black) {
+                if (m_backgroundUsed[pos]==(char)0) {
+                    screen[pos] = frame;
+                    //                    if (m_backgroundUsed[pos]!=(char)0)  {
+                    m_backgroundUsed[pos] = 1;
+                }
+
+
+            }
+
+        }
+
+    }
+
+}
+
+
+
+void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorOut(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int endCol) {
+//    m_prev.save("test.png");
+    if (m_prev.width() != m_img.width())
+        return;
+
+    if (!m_backgroundSet) {
+        m_background = Util::loadBinaryFile(background);
+        m_backgroundUsed.resize(m_background.size());
+        m_backgroundUsed.fill(0);
+        m_backgroundSet = true;
+
+    }
+    QString out ="";
+    bool isFirst = false;
+    if (QFile::exists(file)) {
+        out = Util::loadTextFile(file);
+        out.remove(" \"); end;\n");
+    }
+    else {
+        out = "procedure "+name+"();\n";
+        out+="begin\n  asm(\"\n";
+        isFirst = true;
+        alreadySet.clear();
+    }
+
+
+
+    QMap<uchar,QVector<int>> lst;
+    QVector<int> lst2;
+    for (int y=yp;y<h;y++) {
+        for (int x=xp;x<w;x++) {
+            QColor c0 = m_img.pixelColor(x,y);
+            QRgb c1 = m_prev.pixel(x,y);
+            int pos = y * w +x + 2;
+            if (c0 != Qt::black) {
+                if (m_backgroundUsed[pos]==(char)0) {
+                    //                    if (m_backgroundUsed[pos]!=(char)0)  {
+                    uchar c = FadeColorTo(m_background[pos],endCol,speed);
+  //                  c= 0;
+                    m_background[pos]=c;
+                    if (c==endCol) // Done!
+                        m_backgroundUsed[pos] = 1;
+                    //                        else
+                    lst[c].append(pos + base-2);
+                }
+
+                pos+=1000;
+
+                if (m_backgroundUsed[pos]==(char)0) {
+//                    if (m_backgroundUsed[pos]!=(char)0)  {
+                        uchar c = FadeColorTo(m_background[pos],endCol,speed);
+//                        c= 0;
+                        m_background[pos]=c;
+                        if (c==endCol) // Done!
+                            m_backgroundUsed[pos] = 1;
+//                        else
+                        lst[c].append(pos + 0xD800-1000-2);
+                    }
+
+            }
+
+        }
+        //          if ()
+
+    }
+    // Sort
+    for (uchar c: lst.keys()) {
+        uchar inv = c;
+        out += " lda #"+ Util::numToHex(inv) + "\n";
+        for (int pos : lst[c]) {
+//            if (!alreadySet.contains(pos))
+            out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";
+        }
+
+    }
+
+/*
+    out+=" lda #$0\n";
+    for (int pos: lst2) {
+        out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";
+
+    }*/
+    out+=" jsr "+waitFunc + " ; wait \n ";
+
+
+    out+=" \"); end;\n";
+    Util::SaveTextFile(file,out);
+
+
+}
+
+void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorIn(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int startCol) {
+//    m_prev.save("test.png");
+    if (m_prev.width() != m_img.width())
+        return;
+
+    if (!m_backgroundSet) {
+        m_backgroundTarget = Util::loadBinaryFile(background);
+        m_background.resize(m_backgroundTarget.size());;
+        m_background.fill(startCol);
+//        m_background.fill(st);
+        m_backgroundUsed.resize(m_background.size());
+        m_backgroundUsed.fill(0);
+        m_backgroundSet = true;
+
+    }
+    QString out ="";
+    bool isFirst = false;
+    if (QFile::exists(file)) {
+        out = Util::loadTextFile(file);
+        out.remove(" \"); end;\n");
+    }
+    else {
+        out = "procedure "+name+"();\n";
+        out+="begin\n  asm(\"\n";
+        isFirst = true;
+        alreadySet.clear();
+    }
+
+
+
+    QMap<uchar,QVector<int>> lst;
+    QVector<int> lst2;
+    for (int y=yp;y<h;y++) {
+        for (int x=xp;x<w;x++) {
+            QColor c0 = m_img.pixelColor(x,y);
+            QRgb c1 = m_prev.pixel(x,y);
+            int pos = y * w +x +2;
+            if (c0 != Qt::black) {
+
+                if (m_backgroundUsed[pos]==(char)0) {
+                    //                    if (m_backgroundUsed[pos]!=(char)0)  {
+                    char c = FadeColorTo(m_background[pos],m_backgroundTarget[pos],speed,startCol);
+//                    c = m_backgroundTarget[pos];
+  //                  c= 0;
+                    m_background[pos] = c;
+                    if (c==m_backgroundTarget[pos]) {// Done!
+                        m_backgroundUsed[pos] = 1;
+//                        qDebug() << "DONE "<< Util::numToHex((char)c) << Util::numToHex(pos);
+                    }
+                    //                        else
+                    if (pos-2>=0 && pos-2<=1000)
+                    lst[c].append(pos + base-2);
+                }
+
+                pos+=1000;
+
+                if (m_backgroundUsed[pos]==(char)0) {
+//                    if (m_backgroundUsed[pos]!=(char)0)  {
+                        uchar c = FadeColorTo(m_background[pos],m_backgroundTarget[pos], speed);
+//                        c= 0;
+                        c =c&0xF;
+  //                      c = m_backgroundTarget[pos];
+                        m_background[pos]=c;
+                        if (c==m_backgroundTarget[pos]) // Done!
+                            m_backgroundUsed[pos] = 1;
+//                        else
+                        int p = pos + 0xD800-1000-2;
+                        if (p>=0xD800 && p<0xD800+1000)
+                            lst[c].append(p);
+                    }
+
+
+            }
+
+        }
+        //          if ()
+
+    }
+    // Sort
+    for (uchar c: lst.keys()) {
+        uchar inv = c;
+        out += " lda #"+ Util::numToHex(inv) + "\n";
+        for (int pos : lst[c]) {
+//            if (!alreadySet.contains(pos))
+            out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";
+        }
+
+    }
+
+/*
+    out+=" lda #$0\n";
+    for (int pos: lst2) {
+        out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";
+
+    }*/
+    out+=" jsr "+waitFunc + " ; wait \n ";
+
+
+    out+=" \"); end;\n";
+    Util::SaveTextFile(file,out);
+
+
+}
+
+
+void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorInAddress(QString file, int background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed) {
+//    m_prev.save("test.png");
+    if (m_prev.width() != m_img.width())
+        return;
+
+    if (!m_backgroundSet) {
+//        m_backgroundTarget = Util::loadBinaryFile(background);
+
+        m_background.resize(2000);;
+        m_background.fill(0);
+        m_backgroundUsed.resize(m_background.size());
+        m_backgroundUsed.fill(0);
+        m_backgroundSet = true;
+
+    }
+    QString out ="";
+    bool isFirst = false;
+    if (QFile::exists(file)) {
+        out = Util::loadTextFile(file);
+        out.remove(" \"); end;\n");
+    }
+    else {
+        out = "procedure "+name+"();\n";
+        out+="begin\n  asm(\"\n";
+        isFirst = true;
+        alreadySet.clear();
+    }
+
+
+
+    QMap<uchar,QVector<int>> lst;
+    QVector<int> lst2;
+    for (int y=yp;y<h;y++) {
+        for (int x=xp;x<w;x++) {
+            QColor c0 = m_img.pixelColor(x,y);
+            QRgb c1 = m_prev.pixel(x,y);
+            int pos = y * w +x;
+            if (c0 != Qt::black) {
+
+                if (m_backgroundUsed[pos]==(char)0) {
+
+                    int c = background + pos;
+                    //                    if (m_backgroundUsed[pos]!=(char)0)  {
+                    //char c = FadeColorTo(m_background[pos],m_backgroundTarget[pos],speed);
+
+//                    c = m_backgroundTarget[pos];
+  //                  c= 0;
+                    m_background[pos] = c;
+                    m_backgroundUsed[pos] = 1;
+//                        qDebug() << "DONE "<< Util::numToHex((char)c) << Util::numToHex(pos);
+
+                    //                        else
+                    lst[c].append(pos + base);
+                }
+
+                pos+=1000;
+
+                if (m_backgroundUsed[pos]==(char)0) {
+//                    if (m_backgroundUsed[pos]!=(char)0)  {
+                    int c = background + pos + 1000;
+                        m_background[pos]=c;
+                            m_backgroundUsed[pos] = 1;
+                        lst[c].append(c);
+                    }
+
+
+            }
+
+        }
+        //          if ()
+
+    }
+    // Sort
+    for (uchar c: lst.keys()) {
+        uchar inv = c;
+        out += " lda "+ Util::numToHex(inv) + "\n";
         for (int pos : lst[c]) {
 //            if (!alreadySet.contains(pos))
             out += " sta "+Util::numToHex((unsigned short)(pos&0xFFFF)) + "\n";

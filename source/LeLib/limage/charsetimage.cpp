@@ -804,3 +804,29 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
     CharsetImage::setLimitedPixel(p.x(),p.y(),color);
 }
 
+void CharsetImage::setBackground(unsigned int col)
+{
+    m_colorList.setPen(0,col);
+    //qDebug() << "SetBackrouund VIC "<<col;
+  //  if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==1 && m_bitMask!=1)
+        for (int i=0;i<m_charWidth*m_charHeight;i++) {
+            m_data[i].c[0] = col;
+        }
+
+    //   qDebug() << "SETBACK";
+    if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+        //        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
+        if (m_type != MultiColorBitmap)
+            for (int i=0;i<m_charWidth*m_charHeight;i++) {
+                //m_data[i].c[0] = col;
+
+                m_data[i].c[1] = m_colorList.getPen(1);
+                m_data[i].c[2] = m_colorList.getPen(2);
+            }
+
+    }
+
+    if (m_charset!=nullptr)
+        m_charset->setBackground(col);
+}
+

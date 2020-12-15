@@ -115,7 +115,10 @@ public:
         return false;
     }
 
-    void SetBank(int bank)
+
+    void setBackground(unsigned int col) override;
+
+    void SetBank(int bank) override
     {
         if (m_charset!=nullptr)
             m_charset->SetBank(bank);

@@ -810,6 +810,59 @@ static int ExportDiffAsUnrolledBitmapIn(lua_State* L) {
     return 0;
 }
 
+static int ExportDiffAsUnrolledBitmapColorOut(lua_State* L) {
+    QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    QString name = lua_tostring(L,3);
+    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
+    QString waitFunc = lua_tostring(L,4);
+    m_effect->ExportDiffAsUnrolledBitmap6502ColorOut(file,bg, name,waitFunc,lua_tonumber(L,5),
+                                             lua_tonumber(L,6),
+                                             lua_tonumber(L,7),
+                                             lua_tonumber(L,8),
+                                             lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
+   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+    return 0;
+}
+
+static int ExportDiffAsUnrolledBitmapColorIn(lua_State* L) {
+    QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    QString name = lua_tostring(L,3);
+    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
+    QString waitFunc = lua_tostring(L,4);
+    m_effect->ExportDiffAsUnrolledBitmap6502ColorIn(file,bg, name,waitFunc,lua_tonumber(L,5),
+                                             lua_tonumber(L,6),
+                                             lua_tonumber(L,7),
+                                             lua_tonumber(L,8),
+                                             lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
+   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+    return 0;
+}
+
+static int UpdateScreenDataFrame(lua_State* L) {
+    m_effect->UpdateScreenDataFrame(m_screenData,lua_tonumber(L,1),
+                                             lua_tonumber(L,2),
+                                             lua_tonumber(L,3),
+                                             lua_tonumber(L,4),
+                                             lua_tonumber(L,5));
+   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+    return 0;
+}
+
+
+static int ExportDiffAsUnrolledBitmapColorInAddress(lua_State* L) {
+    QString file = m_currentDir+"/"+ lua_tostring(L,1);
+    QString name = lua_tostring(L,3);
+//    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
+    QString waitFunc = lua_tostring(L,4);
+    m_effect->ExportDiffAsUnrolledBitmap6502ColorInAddress(file,lua_tonumber(L,2), name,waitFunc,lua_tonumber(L,5),
+                                             lua_tonumber(L,6),
+                                             lua_tonumber(L,7),
+                                             lua_tonumber(L,8),
+                                             lua_tonumber(L,9),lua_tonumber(L,10));
+   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+    return 0;
+}
+
 static int Save2DInfo(lua_State* L) {
     QString file = m_currentDir+"/"+ lua_tostring(L,1);
     QString fileUnroll = m_currentDir+"/"+ lua_tostring(L,4);
@@ -1251,6 +1304,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveCompressedSpriteData", SaveCompressedSpriteData);
     lua_register(m_script->L, "AddRawCharsetData", AddRawCharsetData);
 
+    lua_register(m_script->L, "UpdateScreenDataFrame", UpdateScreenDataFrame);
+
     lua_register(m_script->L, "CopyFile", CopyFile);
     lua_register(m_script->L, "AddToPng", AddToPng);
 
@@ -1262,6 +1317,10 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "Save2DInfo", Save2DInfo);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmap", ExportDiffAsUnrolledBitmap);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapIn", ExportDiffAsUnrolledBitmapIn);
+    lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorOut", ExportDiffAsUnrolledBitmapColorOut);
+    lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorIn", ExportDiffAsUnrolledBitmapColorIn);
+    lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorInAddress", ExportDiffAsUnrolledBitmapColorInAddress);
+
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
     lua_register(m_script->L, "SaveKoalaImage", SaveKoalaImage);
     lua_register(m_script->L, "SaveImage", SaveImage);

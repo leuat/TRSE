@@ -15,7 +15,7 @@ begin
 
 
 ;unpacker variables, no need to change these
-delta	=	$B4
+delta_d	=	$B4
 
 
 	ldy	#0
@@ -47,9 +47,9 @@ parsetoken:
 
 copymatches
 	jsr	getsrc
-	sta	delta
+	sta	delta_d
 	jsr	getsrc
-	sta	delta+1
+	sta	delta_d+1
 	pla
 	and	#$0f
 	jsr	buildcount
@@ -65,10 +65,10 @@ c_b1:
 	pha
 	sec
 	lda	Compression_dst
-	sbc	delta
+	sbc	delta_d
 	sta	Compression_src
 	lda	Compression_dst+1
-	sbc	delta+1
+	sbc	delta_d+1
 	sta	Compression_src+1
 	jsr	docopy
 	pla

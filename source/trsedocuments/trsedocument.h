@@ -88,6 +88,7 @@ public:
 
     virtual void MemoryAnalyze(bool isHidden) {}
     virtual void LookupSymbolUnderCursor() {}
+    virtual void LookupAssemblerUnderCursor() {}
 
     virtual void UpdateFromIni() {}
     virtual void Init() {}
@@ -108,6 +109,7 @@ public:
     virtual void Reload() {}
 
     virtual void setOutputText(QString text) {}
+    virtual void SearchInSource(QString text) {}
 
 
     virtual void Destroy() = 0;
@@ -124,6 +126,7 @@ signals:
     void requestSaveAs();
     void emitSuccess();
     void emitGotoSymbol(QString sym);
+    void emitGotoAssemblerLine(QString rasSrc, int lineNuber);
 
 };
 

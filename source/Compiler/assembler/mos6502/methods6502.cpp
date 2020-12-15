@@ -43,11 +43,17 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     if (Command("EnableAllRam")) {
             as->Comment("Enable all ram visible");
-            as->Asm("lda $01");
+/*            as->Asm("lda $01");
             as->Asm("and #%11111100");
   //          as->Asm("and #%00");
 //            as->Asm("ora #%100");
+            as->Asm("sta $01");*/
+
+            as->Asm("lda $01");
+            as->Asm("and #%00");
+            as->Asm("ora #%100");
             as->Asm("sta $01");
+
 
     }
 
@@ -4754,6 +4760,7 @@ void Methods6502::KeyPressed(Assembler *as)
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
     if (num==nullptr)
         ErrorHandler::e.Error("KeyPressed requires key to be numeric! KEY_A etc");
+
 
     if (!Syntax::s.m_c64keys.contains(num->m_val))
         ErrorHandler::e.Error("KeyPressed: does not recognize character " + QString::number(num->m_val));

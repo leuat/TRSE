@@ -446,6 +446,13 @@ void FormRasEditor::LookupSymbolUnderCursor()
     emit emitGotoSymbol(word);
 }
 
+void FormRasEditor::LookupAssemblerUnderCursor()
+{
+    emit emitGotoAssemblerLine(m_currentFileShort, ui->txtEditor->textCursor().blockNumber());
+//    void emitGotoAssemblerLine(QString rasSrc, int lineNuber);
+
+}
+
 void FormRasEditor::ToggleComment()
 {
     ui->txtEditor->ToggleComments();
@@ -646,6 +653,9 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         LookupSymbolUnderCursor();
     }
 
+    if (e->key()==Qt::Key_F3) {
+        LookupAssemblerUnderCursor();
+    }
 
     if (e->key() == Qt::Key_U &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         MemoryAnalyze(false);
@@ -692,7 +702,7 @@ void FormRasEditor::GotoLine(int ln)
 void FormRasEditor::on_leSearch_textChanged()
 {
     QString i;
-    SearchInSource();
+    SearchInSource(ui->leSearch->text().toLower());
 }
 
 void FormRasEditor::AcceptBuildString()
@@ -704,11 +714,13 @@ void FormRasEditor::AcceptBuildString()
 
 }
 
-void FormRasEditor::SearchInSource()
+void FormRasEditor::SearchInSource(QString text)
 {
-    m_currentFromPos = ui->txtEditor->document()->toPlainText().toLower().indexOf(ui->leSearch->text().toLower(), m_searchFromPos);
+    m_currentFromPos = ui->txtEditor->document()->toPlainText().toLower().indexOf(text, m_searchFromPos);
     QTextCursor cursor(ui->txtEditor->document()->findBlock(m_currentFromPos));
+    ui->txtEditor->moveCursor(QTextCursor::End);
     ui->txtEditor->setTextCursor(cursor);
+//    ui->txtEditor->scroll(0,200);
 }
 
 void FormRasEditor::UpdateColors()
@@ -979,13 +991,13 @@ bool FormRasEditor::Load(QString filename)
 void FormRasEditor::on_leSearch_returnPressed()
 {
     m_searchFromPos=m_currentFromPos+1;
-    SearchInSource();
+    SearchInSource(ui->leSearch->text().toLower());
 
 }
 
 void FormRasEditor::on_leSearch_textChanged(const QString &arg1)
 {
-    SearchInSource();
+    SearchInSource(ui->leSearch->text().toLower());
 }
 
 void FormRasEditor::on_btnReplace_clicked()
