@@ -9,14 +9,40 @@
 
 
 <h3>Description</h3>
-<p></p>
+<p>unroll is mega fast compared to the other memcpy commands but it consumes memory</p>
+
+<p>In assembler does something like this</p>
+
+<code>
+B[0] := A[0];
+B[1] := A[1];
+B[2] := A[2];
+</code>
+
 
 
 <h3>Example</h3>
 
 <code>
-
+    // copies 16 bytes = from color memory to some user-defined pointer
+    MemCpy(^$D800, 0, my_ptr, 16);
 </code>
 
 
+<h3>Notes:</h3>
 
+<p>Make sure that the Source and the Destinatin pointers are initialised as Integers</p>
+<p>You can't use expressions in the command</p>
+
+
+<code>
+	s: pointer of integer;
+	d: pointer of integer;
+	
+	s:=1154;
+	d:=1153;
+
+	MemCpyUnroll(s, 0, d, 20);
+</code>
+
+	

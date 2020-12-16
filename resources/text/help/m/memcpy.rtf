@@ -26,4 +26,11 @@
     MemCpy(^$D800, 0, my_ptr, 160);
 </code>
 
+<h3>Notes:</h3>
 
+<p>MemCpy is the slowest. It copies 0-256 bytes from A to B by basically (in assembler) saying </p>
+<p>This is slow because for every copied byte, it needs to decrement i and test if it is zero and go to the top again</p>
+
+<code>
+    for i:=0 to 256 do B[i] := A[i];
+</code>
