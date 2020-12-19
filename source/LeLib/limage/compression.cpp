@@ -662,7 +662,7 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
         QVector<int> tmpI;
         QByteArray ba;
         c1->CompressAndSave(ba, tmpI, x0,x1,y0,y1,
-                            noChars,p1,  256, compType);
+                            noChars,p1,  256, compType,true);
         charData.append(ba);
         screenData.append(tmpI);
 //        qDebug() << "NO chars frame " << scroll << " : " << noChars <<imgIn->m_charHeight << screenData.count();

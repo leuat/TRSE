@@ -231,6 +231,11 @@ public:
         return m_height;
     }
 
+    virtual QPoint getActualPixelWidth() {
+        return QPoint(m_width *m_scale,m_height);
+
+    }
+
 
     virtual void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h, int comp) {
         qDebug() << "LImage::SpritePacker not implemented for this image type : " <<m_type;

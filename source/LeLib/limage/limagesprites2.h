@@ -25,6 +25,9 @@ public:
 
     QByteArray ToQByteArray(int mask) override;
 
+
+
+
     void Clear() override {
         for (PixelChar &pc : m_data)
             pc.Clear(pc.c[0]);
@@ -80,6 +83,7 @@ public:
     LSprite m_copy;
 
 
+    QPoint getActualPixelWidth() override;
 
     void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;

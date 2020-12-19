@@ -925,7 +925,7 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
     CompressAndSave(charData, i_screenData,
                     m_exportParams["StartX"],m_exportParams["EndX"],
                     m_exportParams["StartY"],m_exportParams["EndY"],
-                    noChars,    (double)m_exportParams["Compression"]/100.0,255,1);
+                    noChars,    (double)m_exportParams["Compression"]/100.0,255,1,true);
 //    qDebug() << "No chars :" << noChars;
     screenData = Util::toQByteArray(i_screenData);
     FixUp(charData);
@@ -1381,7 +1381,7 @@ void MultiColorImage::RenderEffect(QMap<QString, float> params)
 }
 
 void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen, int x0,int x1, int y0, int y1,
-                                      int& noChars, double compression, int maxChars, int type) {
+                                      int& noChars, double compression, int maxChars, int type, bool addChars=true) {
     CharsetImage* ni = new CharsetImage(m_colorList.m_type);
 
     QVector<PixelChar> chars;
@@ -1404,10 +1404,12 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
         p2.p[i]=0b10101010;
         p3.p[i]=0b01010101;
     }
+    if (addChars) {
     chars.append(p0);
     chars.append(p1);
     chars.append(p2);
     chars.append(p3);
+    }
     for (int j=0;j<sy;j++) {
 
         for (int i=0;i<sx;i++)
