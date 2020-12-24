@@ -26,6 +26,11 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
 
 }
 
+QPoint LImageSprites2::getActualPixelWidth(){
+    return QPoint(24*m_items[m_current]->m_width,m_items[m_current]->m_height*21);
+
+}
+
 void LImageSprites2::AddNew(int w, int h)
 {
     LSprite* s = new LSprite();

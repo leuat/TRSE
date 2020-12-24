@@ -1069,11 +1069,13 @@ void FormImageEditor::on_btnExportImage_clicked()
 
 
     QImage img = *m_updateThread.m_tmpImage;
+    QPoint size = m_work.m_currentImage->m_image->getActualPixelWidth();
+/*    int wy = m_updateThread.m_tmpImage->width()*2
     if (img.width()==160) {
-        img = m_updateThread.m_tmpImage->scaled(m_updateThread.m_tmpImage->width()*2,
-                                                m_updateThread.m_tmpImage->height(),
-                                                Qt::IgnoreAspectRatio,Qt::FastTransformation);
-    }
+
+    }*/
+    img = m_updateThread.m_tmpImage->scaled(size.x(), size.y(),
+                                            Qt::IgnoreAspectRatio,Qt::FastTransformation);
     img.save(fileName);
 
 

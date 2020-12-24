@@ -349,7 +349,7 @@ static int AddObject(lua_State *L)
         QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
         obj = new RayObjectEmpty(orgPos);
         obj->m_flatten = false;
-//        obj = new RayObjectUnion(orgPos);
+        //        obj = new RayObjectUnion(orgPos);
         PixelChar& pc = charset->m_data[chr];
         for (int y=0;y<8;y++)
             for (int x=0;x<8;x++) {
@@ -357,6 +357,62 @@ static int AddObject(lua_State *L)
                     float xx = (x-4+0.5)*scale.x();
                     float yy = (y-4+0.5)*scale.y();
                     float s = 0.5;
+                    QVector3D pos = QVector3D(0,yy,xx);
+
+                    AbstractRayObject* aro = new RayObjectBox(pos,QVector3D(0,1,0),
+                                                              size, mat);
+                    aro->m_name = name + "_"+QString::number(x) +"_"+QString::number(y);
+                    //                  qDebug() << aro->m_name;
+                    //((RayObjectUnion*)obj)->m_objects.append(aro);
+                    obj->m_children.append(aro);
+                }
+            }
+
+
+
+
+        /*       obj =
+                    new RayObjectBox(
+                        QVector3D(lua_tonumber(L,4),lua_tonumber(L,5),lua_tonumber(L,6)) ,
+                        QVector3D(0,1,0),
+                        QVector3D(lua_tonumber(L,7),lua_tonumber(L,8),lua_tonumber(L,9)),
+                        mat);
+*/
+        delete charset;
+
+    }
+
+    if (object=="image") {
+        QImage img;
+        QString fname = m_currentDir+"/"+QString(lua_tostring(L,N));
+        if (!QFile::exists(fname)) {
+            m_error += "<br>Could not open image file: " + fname;
+            return 0;
+        }
+        img.load(fname);
+        N++;
+
+        int boxwidth = lua_tonumber(L, N);
+        N++;
+        int boxheight = lua_tonumber(L, N);
+        N++;
+
+        QVector3D orgPos = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
+        QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
+        QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
+        obj = new RayObjectEmpty(orgPos);
+        obj->m_flatten = false;
+//        obj = new RayObjectUnion(orgPos);
+
+        for (int y=0;y<boxwidth;y++)
+            for (int x=0;x<boxheight;x++) {
+                int xp = x/(float)boxwidth*img.width();
+                int yp = y/(float)boxwidth*img.height();
+                QVector3D c = Util::fromColor(img.pixelColor(xp,yp));
+
+                if (c.length()!=0) {
+                    float xx = (x-boxwidth/2+0.5)*scale.x();
+                    float yy = (y-boxheight/2+0.5)*scale.y();
                     QVector3D pos = QVector3D(0,yy,xx);
 
                     AbstractRayObject* aro = new RayObjectBox(pos,QVector3D(0,1,0),
@@ -371,16 +427,8 @@ static int AddObject(lua_State *L)
 
 
 
-/*       obj =
-                    new RayObjectBox(
-                        QVector3D(lua_tonumber(L,4),lua_tonumber(L,5),lua_tonumber(L,6)) ,
-                        QVector3D(0,1,0),
-                        QVector3D(lua_tonumber(L,7),lua_tonumber(L,8),lua_tonumber(L,9)),
-                        mat);
-*/
-        delete charset;
-
     }
+
 
     if (obj!=nullptr) {
         obj->m_name= name;
@@ -753,7 +801,7 @@ static int CompressCharset(lua_State* L) {
     if (args>=7)
         type = lua_tonumber(L,7);
 
-    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type);
+    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type,false);
     m_infoText+="Compressed chars: " + QString::number(noChars) + "\n";
     return 0;
 }

@@ -1,0 +1,117 @@
+Unit DemoUnit;
+var
+
+procedure StartDemoIRQ() inline;
+begin
+	asm("
+		pha
+		txa
+		pha
+		tya
+		pha
+;		lda 01
+;		sta @keepPos+1
+;		lda @keepPos
+;		sta 01
+		dec 00
+		asl $d019
+	");
+end;
+
+procedure CloseDemoIRQ() inline;
+begin
+	asm("
+;		lda @keepPos+1
+;		sta $01
+		inc 00
+	");
+	closeirq();
+end;
+
+procedure Endd();
+begin
+	while (true) do
+	begin
+		@ifdef IS_DEMO
+		//call(^@outerCall);
+		asm(" 
+			jsr @outerCall
+			beq pp_cnt
+			jmp $810
+pp_cnt:
+		
+		");
+	//	inc(^$D020);
+		@endif
+	//	waitforverticalblank();
+	end;
+end;
+
+interrupt RasterClear();
+begin
+	StartDemoIRQ();
+	@ifdef IS_DEMO
+	call(^@callPos);
+	@endif
+	CloseDemoIRQ();	
+end;
+
+procedure EnddClear();
+begin
+	while (true) do
+	begin
+		@ifdef IS_DEMO
+		//call(^@outerCall);
+		asm(" 
+			jsr @outerCall
+			beq pp_cnt2
+			");
+	//		inc(^$d020);
+//			RasterIRQ(Empty(),0,0);
+//			waitforraster(0);
+//			waitforraster(0);
+			//settextmode();
+			//setregularcolormode();
+			RasterIRQ(RasterClear(),0,0);
+			waitforraster(0);
+			setcharsetlocation($1000);
+			setbank(vic_bank0);
+			clearscreen(key_space,^$0400);
+//			setregularcolormode();
+	
+			asm("
+			jmp $810
+pp_cnt2:
+		
+		");
+	//	inc(^$D020);
+		@endif
+	//	waitforverticalblank();
+	end;
+
+end;
+
+procedure TimingTest();
+var
+	test_transition, test_curData, test_time, test_time2, test_timeStop : byte = 0;
+	test_volume:byte=15;
+begin
+/*	transition:=0;
+	if (time2<1) then transition:=1;
+	if (time2+1=timeStop) then transition:=2;*/
+	inc(test_time);
+	if (test_time&15=0) then inc(test_time2);
+	if (test_timeStop<>0) then begin
+		if (test_time2>=test_timeStop) then asm(" eor $ea");
+		//if (time2+1=timeStop) then transition:=1;
+		test_transition:=abs(test_time2-test_timeStop);
+		//if (transition>=31) then transition:=0;
+	end;
+//	inc(^$D020);			
+//	if (currentScene>=3) then begin
+end;
+
+
+
+
+end.
