@@ -1347,7 +1347,6 @@ void Methods6502::InitRandom256(Assembler *as)
     as->Asm("eor #$4d");
 
     as->Label(lblRandomSkip);
-    as->Asm("sta Random+1");
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C64)
         as->Asm("eor $dc04");
@@ -1357,6 +1356,8 @@ void Methods6502::InitRandom256(Assembler *as)
         as->Asm("eor $ff00");
     else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16)
         as->Asm("eor $ff00");
+
+    as->Asm("sta Random+1");
 
     //as->Asm("rts");
 
