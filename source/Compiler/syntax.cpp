@@ -1,7 +1,7 @@
 /*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
- * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
+ * Copyright (C) 2018  Nicolaas Erk Groeneboom (nicolaas.groeneboom@gmail.com)
  *
  *
  *   This program is free software: you can redistribute it and/or modify

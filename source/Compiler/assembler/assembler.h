@@ -281,6 +281,8 @@ public:
     virtual void Write(QString str, int level=0);
 
 
+
+
     virtual QString GetOrg(int pos ) = 0;
 
     virtual void Program(QString name, QString vicParam) {};

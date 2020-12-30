@@ -553,6 +553,7 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
 
         while (m_pCounter<val) {
             m_pCounter++;
+//            m_data.append((uchar)0xff);
             m_data.append((uchar)0xff);
         }
     }

@@ -72,6 +72,8 @@ public:
     //int m_lblIdx = 0;
     QMap<QString, int> m_lblIdx;
 
+    QString intToHexString(int val);
+
 
     void InitCStrings();
 

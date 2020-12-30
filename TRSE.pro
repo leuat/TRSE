@@ -77,9 +77,9 @@ macx:arm {
 
 }
 
-QMAKE_APPLE_DEVICE_ARCHS=arm64
-LIBS += -L$$PWD/libs/lua/ -lluamac_arm
-CONFIG += arm64
+#QMAKE_APPLE_DEVICE_ARCHS=arm64
+#LIBS += -L$$PWD/libs/lua/ -lluamac_arm
+#CONFIG += arm64
 
 
 win32-g++ {

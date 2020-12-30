@@ -38,6 +38,19 @@ AsmMOS6502::AsmMOS6502() :Assembler()
 AsmMOS6502::~AsmMOS6502() {
 }
 
+QString AsmMOS6502::intToHexString(int val)
+{
+    QString s = QString::number(val);
+    QString line = ".byte   ";
+    for (int i=0;i<s.count();i++) {
+        int val = QString(s[i]).toInt() + 0x30;
+        line = line + Util::numToHex(val) + ",";
+    }
+    line = line.remove(line.count()-1,1);
+    return line;
+
+}
+
 void AsmMOS6502::InitCStrings()
 {
     m_cstr.clear();
@@ -144,21 +157,40 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
         // 2064
 //        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
-        Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20, $28");
-//        qDebug() << "START ADDRESS " << Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
-        QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
-        QString line = ".byte   ";
-        for (int i=0;i<s.count();i++) {
-            int val = QString(s[i]).toInt() + 0x30;
-            line = line + Util::numToHex(val) + ",";
+
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
+
+            Asm(" .byte $09,$20 //End of command marker (first byte after the 00 terminator)");
+            Asm(" .byte $0a,$00 //10");
+            Asm(" .byte $fe,$02,$30,$00 //BANK 0");
+            Asm(" .byte #<endd_s, #>endd_s ");
+            Asm(" .byte $14,$00 //20");
+            Asm(" .byte $9e //SYS");
+            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+            QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
+
+            //QString extra = "";
+            //if (s.count()<5)
+//                extra=", $00";
+            Asm("  .byte $00");
+            Label("endd_s:");
+            Asm("  .byte $00,$00    //End of basic terminators");
+
         }
-        line = line.remove(line.count()-1,1);
-        Asm(line);
-        QString extra = "";
-        if (s.count()<5)
-            extra=", $00";
-        Asm(".byte    $29, $00, $00"+ extra);   // 6, 4, )*/
-        Nl();
+        else {
+            Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20, $28");
+    //        qDebug() << "START ADDRESS " << Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
+
+
+            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+            QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
+
+            QString extra = "";
+            if (s.count()<5)
+                extra=", $00";
+            Asm(".byte    $29, $00, $00"+ extra);   // 6, 4, )*/
+            Nl();
+            }
 //        Asm("ORG " + Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
         EndMemoryBlock();
   //      Comment("End of SYS memory block, starting new");
