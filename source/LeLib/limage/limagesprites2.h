@@ -137,6 +137,8 @@ public:
 
 
 
+   virtual void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma = 1.0) override;
+
 
 };
 

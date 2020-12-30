@@ -1,5 +1,6 @@
 Unit DemoUnit;
 var
+	curBorderY : byte = 0;
 
 procedure StartDemoIRQ() inline;
 begin
@@ -50,6 +51,10 @@ end;
 interrupt RasterClear();
 begin
 	StartDemoIRQ();
+	if (curBorderY=0) then
+		hidebordery(0)
+		else
+		hidebordery(1);
 	@ifdef IS_DEMO
 	call(^@callPos);
 	@endif

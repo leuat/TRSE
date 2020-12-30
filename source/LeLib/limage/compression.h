@@ -49,7 +49,7 @@ public:
 
     void ConvertToC64(bool dither);
 
-    static void GenerateParallaxData(QString inFile, QString outFile, int x0, int y0, int x1, int y1,int p1, int type);
+    static void GenerateParallaxData(QString inFile, QString outFile, int x0, int y0, int x1, int y1,int p1, int type, int eor);
 
     void AddCharsetScreen(QByteArray& data, QImage& img, CharsetImage* charset,int w, int h);
 

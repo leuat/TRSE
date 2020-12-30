@@ -134,6 +134,7 @@ void LImageVIC20::setPixel(int x, int y, unsigned int color)
     if (i>m_charHeight*m_charWidth || i>=256*2 || i<0)
         return;
 
+
     CharsetImage::setPixel(x,y,color);
 }
 
@@ -213,4 +214,5 @@ void LImageVIC20::FixUp(QByteArray &ba) {
 
     }
 }
+
 

@@ -524,4 +524,55 @@ void LImageSprites2::Transform(int x, int y)
 
 }
 
+void LImageSprites2::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
+{
+    int height  =min(img.height(), m_height);
+    int width  =min(img.width(), m_width);
+    QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
+    bayer4x4 = bayer4x4*1/16.0*strength.x();
+
+    /*    QMatrix4x4 bayer4x4 = QMatrix4x4(0,2,0,0,  3,1,0,0, 0,0,0,0, 0,0,0,0);
+       bayer4x4 = bayer4x4*1/4.0*strength.x();
+   */
+
+    QVector<QPoint> hist;
+    hist.resize(16);
+
+    //  QElapsedTimer timer;
+    //    timer.start();
+//    LSprite* s = ((LSprite*)m_items[m_current]);
+
+    float w = m_width;//s->m_width*12*m_scale;
+    float h = m_height;//s->m_height*21;
+
+
+    for (int y=0;y<h;y++) {
+        for (int x=0;x<w;x++) {
+
+            //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
+
+            double dx = x/(double)w*img.width();
+            double dy = y/(double)h*img.height();
+            int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
+            int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
+
+
+            QColor color = QColor(img.pixel(xx,yy));
+            int yp = y + x%(int)strength.y();
+            int xp = x + y%(int)strength.z();
+            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+
+            int winner = 0;
+            QColor newPixel = colors.getClosestColor(color, winner);
+            //            PixelChar& pc = getPixelChar(x,y);
+            setPixel(x,y,winner);
+
+        }
+    }
+    //qDebug() << "The slow operation took" << timer.elapsed() << "milliseconds";
+
+}
+
 

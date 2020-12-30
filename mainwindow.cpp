@@ -2026,10 +2026,10 @@ void TRSEProject::VerifyDefaults() {
         m_ini->setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
 
     if (!m_ini->contains("zeropage_screenmemory"))
-        m_ini->setString("zeropage_screenmemory","$fe");
+        m_ini->setString("zeropage_screenmemory","$fd");
 
     if (!m_ini->contains("zeropage_colormemory"))
-        m_ini->setString("zeropage_colormemory","$fc");
+        m_ini->setString("zeropage_colormemory","$fb");
 
     if (!m_ini->contains("zeropage_decrunch1"))
         m_ini->setString("zeropage_decrunch1","$47");

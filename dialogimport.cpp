@@ -155,10 +155,12 @@ void DialogImport::Convert()
 
 
 //    qDebug() << m_output.m_qImage->width();
+
     m_output.m_qImage = img->Resize(m_work.m_qImage->width(),
                                     m_work.m_qImage->height(),
                                     m_image->m_colorList,
                                     m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
+    m_output.m_qImage->save("/Users/leuat/test.png");
 //    qDebug() << m_image->m_width << m_output.m_qImage->width() << m_work.m_qImage->width();
     //exit(1);
 //    m_image->Clear();
@@ -215,6 +217,9 @@ void DialogImport::Convert()
 
     if (!useDither)
         strength.setX(0);
+
+
+//    qDebug() << "IMG WIDTH " <<m_output.m_qImage->width();
 
     m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
 
@@ -384,7 +389,7 @@ void DialogImport::SetColors()
 void DialogImport::on_btnImport_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), "", tr("Image Files (*.png *.jpg *.bmp *.jpeg)"));
+        tr("Open Image"), "", tr("Image Files (*.png *.jpg *.bmp *.jpeg *.gif)"));
 
     m_input.LoadQImage(fileName);
     if (ui->chkGenPal->isChecked()) {

@@ -3,6 +3,68 @@
 SimplexNoise AbstractRayObject::m_sn;
 
 
+QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, float l)
+{
+    QVector3D res;
+    for (int a = 0;a<3;a++) {
+
+
+        float uu =0;
+        float vv =0;
+        // Project 3 directions.. but pr
+        if (a==0) {
+            uu = pos.x();
+            vv = pos.y();
+//                    if (pos.z()>0) uu=-uu;
+        }
+        if (a==1) {
+            uu = pos.z();
+            vv = pos.y();
+//                      if (pos.y()>0) uu=-uu;
+        }
+        if (a==2) {
+            uu = pos.x();
+            vv = pos.z();
+//                        if (pos.y()<0) uu=-uu;
+        }
+        float lvl = pow(0.1*l,0.9);
+        //                lvl = 0;
+        //            lvl = 4;
+        QImage* img = m_material.m_texture.get(lvl);
+        if (img->width()!=0) {
+        uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
+        vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+        }
+        QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
+        //                qDebug() << c <<uv << img->width();
+        //                col = QVector3D(1,1,1);
+        //              c = QVector3D(1,1,1);
+        if (a==0) res+=abs(n.z())*c;
+        if (a==1) res+=abs(n.x())*c;
+        if (a==2) res+=abs(n.y())*c;
+//                    res += abs(n[0])c;
+    }
+    return res;
+}
+
+QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, float l)
+{
+    float uu=0,vv=0;
+  //  uu = n.y();
+   // vv = (((atan2(n.z(),n.x()))/3.14159)+1)/2.0;
+    QVector3D uv = CalculateUV(pos,n,t);
+    uu = uv.y();
+    vv = uv.x();
+    QImage* img = m_material.m_texture.get(0);
+    if (img->width()!=0) {
+        uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
+        vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+    }
+    QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
+//    qDebug() << c;
+    return c;
+}
+
 void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
     m_localRotmat = m_rotmat*mat;
 //    m_centerPos = campos;
@@ -96,56 +158,19 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
 
             if (m_material.m_hasTexture) {
 
-                //QVector3D uv = CalculateUV(isp, normal, tangent);
 
-/*                QVector<QVector3D> axes;
-                axes.append(QVector3D(1,1,0));
-                axes.append(QVector3D(1,0,1));
-                axes.append(QVector3D(0,1,1));*/
+
                 Ray r = *ray;// = new Ray();
                 r = r.Rotate(m_localRotmat,m_position);
                 QVector3D n = normal;
                 n = m_localRotmat*n;
                 QVector3D pos = r.m_currentPos;
                 QVector3D res = QVector3D(0,0,0);
-                for (int a = 0;a<3;a++) {
+                if (m_material.m_type == Material::Type::UV_CUBE)
+                    res = CalculateBoxUV(pos,n,l);
+                else res = CalculateSphereUV(pos,n,tangent, l);
 
 
-                    float uu =0;
-                    float vv =0;
-                    // Project 3 directions.. but pr
-                    if (a==0) {
-                        uu = pos.x();
-                        vv = pos.y();
-    //                    if (pos.z()>0) uu=-uu;
-                    }
-                    if (a==1) {
-                        uu = pos.z();
-                        vv = pos.y();
-  //                      if (pos.y()>0) uu=-uu;
-                    }
-                    if (a==2) {
-                        uu = pos.x();
-                        vv = pos.z();
-//                        if (pos.y()<0) uu=-uu;
-                    }
-                    float lvl = pow(0.1*l,0.9);
-                    //                lvl = 0;
-                    //            lvl = 4;
-                    QImage* img = m_material.m_texture.get(lvl);
-                    if (img->width()!=0) {
-                    uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
-                    vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
-                    }
-                    QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
-                    //                qDebug() << c <<uv << img->width();
-                    //                col = QVector3D(1,1,1);
-                    //              c = QVector3D(1,1,1);
-                    if (a==0) res+=abs(n.z())*c;
-                    if (a==1) res+=abs(n.x())*c;
-                    if (a==2) res+=abs(n.y())*c;
-//                    res += abs(n[0])c;
-                }
 //                res = QVector3D(res.x()*abs(n.x()), res.y()*abs(n.y()), res.z()*abs(n.z()));
                 col.setX(col.x()*res.x());
                 col.setY(col.y()*res.y());

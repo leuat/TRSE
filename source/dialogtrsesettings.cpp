@@ -56,6 +56,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->lePETEmulator->setText(m_ini->getString("pet_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
+    ui->leMega65Emu->setText(m_ini->getString("mega65_emulator"));
     ui->leAtari2600Emulator->setText(m_ini->getString("atari2600_emulator"));
     ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
@@ -172,6 +173,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
 
+    m_ini->setString("mega65_emulator", ui->leMega65Emu->text());
 
     m_ini->setString("nes_emulator", ui->leNesEmulator->text());
     m_ini->setString("gameboy_emulator", ui->leGameboyEmulator->text());
@@ -249,7 +251,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16";
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65";
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
@@ -607,5 +609,14 @@ void DialogTRSESettings::on_btnSidPlayer_clicked()
     if (filename!="")
         ui->leSidplayer->setText(filename);
 
+
+}
+
+void DialogTRSESettings::on_btnMega65Emulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Mega 65 emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leMega65Emu->setText(filename);
 
 }

@@ -372,7 +372,10 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
   //  QElapsedTimer timer;
     //    timer.start();
 
-
+/*    width = m_width;
+    height = m_height;
+    qDebug() << width << height << img.width() << img.height();
+*/
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
@@ -382,6 +385,9 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             double dy = y/(double)height*img.height();
             int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
             int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
+
+//            xx = x;
+ //           yy = y;
 
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
@@ -1472,7 +1478,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
     f.close();
 */
 
-//    qDebug() << "CHARDATA : " << chardata.count()/8;
+    qDebug() << "CHARDATA : " << chars.count();
     delete ni;
 
    // return out;

@@ -125,6 +125,7 @@ public:
 
     QMap<QString, float> m_exportParams;
     QMap<QString, QString> m_exportParamsComments;
+    QVector<int> m_ignoreValues;
 
     QMap<GUIType, QString> m_GUIParams;
 

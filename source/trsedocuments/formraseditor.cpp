@@ -78,8 +78,8 @@ void FormRasEditor::setOutputText(QString text) {
 
 void FormRasEditor::ExecutePrg(QString fileName, QString system)
 {
-
     QString emu = m_iniFile->getString("emulator");
+
     QStringList params;
 
     QString name = "emulator_additional_parameters_"+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system);
@@ -166,8 +166,15 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 #ifdef _WIN32
 //        params << "-noconsole";
 #endif
+
     }
 
+
+
+    if (m_projectIniFile->getString("system")=="MEGA65") {
+        params  <<"-besure" <<"-prgmode" <<"65"<< "-prg";
+        emu = m_iniFile->getString("mega65_emulator");
+    }
 
     if (m_projectIniFile->getString("system")=="X16") {
         emu = m_iniFile->getString("x16_emulator");
@@ -227,13 +234,6 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (!(m_projectIniFile->getString("system")=="TIKI100"))
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
-/*
-
-
-
-  */
-
-
 
 
     process.waitForFinished();
@@ -244,9 +244,11 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 #endif
 //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
 #ifdef __APPLE__
+//    qDebug() << emu << params;
     if (emu.endsWith(".app")) {
         process.setArguments(params);
         process.setProgram(emu);
+//        qDebug() << emu << params;
         process.startDetached();
     }
     else process.startDetached(emu, params);

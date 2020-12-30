@@ -617,7 +617,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
 
 }
 
-void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, int y0, int x1, int y1, int p1, int type)
+void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, int y0, int x1, int y1, int p1, int type, int eor)
 {
     LImage* imgIn = (LImage*)LImageIO::Load(inFile);
     if (imgIn==nullptr) {
@@ -684,10 +684,11 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
                 r = r | k<<(2*i);
 
             }
-            n.append(r);
+            n.append(r ^eor);
         }
         charData = n;
     }
+//    qDebug() << type << QString::number(eor,2) <;
 
     QString fsOut = outFile+"_screens.bin";
     QString fcOut = outFile+"_charset.bin";
@@ -701,7 +702,7 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
     QByteArray d = Util::toQByteArray(sOut);
     Util::SaveByteArray(d, fsOut);
 */
-    qDebug() << "No chars : " << cOut.count()/8 << " vs ORG " << charData.count()/8 << "  ";
+//    qDebug() << "Parallax no chars : " << charData.count()/8 << " vs ORG " << charData.count()/8 << "  ";
 
      Util::SaveByteArray(charData, fcOut);
      QByteArray d = Util::toQByteArray(screenData);

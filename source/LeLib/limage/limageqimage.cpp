@@ -344,16 +344,18 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
         aspectX = 1*(1.4);
         aspectY = 1;
     }
-    aspectY = 1/aspect;
+    aspectY = 1.0/aspect;
     QColor black(0,0,0);
+//    qDebug() << sx << sy << aspectX << aspectY;
 #pragma omp parallel for
     for (int i=0;i<x;i++)
         for (int j=0;j<y;j++) {
             QColor color = black;
 
 
-            int xx = ((i-x/2)*aspectX + x/2)/sx + addx;
-            int yy = ((j-y/2)*aspectY + y/2)/sy + addy;
+            int xx = ((i-x/2.0)*aspectX + x/2.0)/sx + addx;
+            int yy = ((j-y/2.0)*aspectY + y/2.0)/sy + addy;
+
 //            int xx = ((i-x/4)*1.4 + x/4)/sx + addx;
 //            int yy = j/sy + addy;
 

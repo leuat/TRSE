@@ -164,6 +164,8 @@ private slots:
 
     void on_btnSidPlayer_clicked();
 
+    void on_btnMega65Emulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

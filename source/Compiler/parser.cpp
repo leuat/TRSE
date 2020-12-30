@@ -951,6 +951,7 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            Eat();
             return;
         }
 
@@ -3736,7 +3737,10 @@ void Parser::HandleExportParallaxData()
     int param2 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
 
-    Compression::GenerateParallaxData(inFile, outFile, x0,y0,x1,y1,param1,param2);
+    int param3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    Compression::GenerateParallaxData(inFile, outFile, x0,y0,x1,y1,param1,param2, param3);
 
 
 }

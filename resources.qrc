@@ -543,5 +543,6 @@
         <file>resources/text/help/r/break.rtf</file>
         <file>resources/text/help/r/continue.rtf</file>
         <file>resources/text/help/r/return.rtf</file>
+        <file>resources/images/MEGA65.png</file>
     </qresource>
 </RCC>

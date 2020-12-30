@@ -8,8 +8,16 @@ QT += core gui opengl qml
 QT += widgets
 CONFIG += c++14
 
+
+CONFIG+=warn_off
+
 TARGET = trse
 TEMPLATE = app
+#CONFIG += arm64
+#CONFIG -= x86_64
+
+
+#QMAKE_APPLE_DEVICE_ARCHS=arm64
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -36,6 +44,8 @@ DEPENDPATH += $$PWD/../Libs
 win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
+#QMAKE_CFLAGS_WARN_OFF
+
 macx {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
@@ -45,7 +55,32 @@ macx {
     LIBS += -ldl
     LIBS += -L$$PWD/libs/lua/ -lluamac
 
+
+#    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/opt/homebrew/include/
+#   QMAKE_LFLAGS += -lomp
+#     LIBS += -L /opt/homebrew/lib
 }
+
+# Doesn't work yet, it seems. Must copy arm stuff out manually
+macx:arm {
+    QMAKE_CXXFLAGS += -fopenmp
+    #LIBS += -openmp
+#    ICON = trse.icns
+    QMAKE_CXXFLAGS += -Ofast
+    LIBS += -L$$PWD/libs -Ofast
+    LIBS += -ldlc
+    CONFIG -= x86_64
+    QMAKE_APPLE_DEVICE_ARCHS=arm64
+    LIBS += -L$$PWD/libs/lua/ -lluamac_arm
+    CONFIG += arm64
+
+
+}
+
+QMAKE_APPLE_DEVICE_ARCHS=arm64
+LIBS += -L$$PWD/libs/lua/ -lluamac_arm
+CONFIG += arm64
+
 
 win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
@@ -65,7 +100,7 @@ win32-msvc*{
 
 linux*{
     QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
+#    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
     LIBS += -fopenmp
     QMAKE_CXXFLAGS +=  -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl

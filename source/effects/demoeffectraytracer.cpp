@@ -44,12 +44,14 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new C64FullScreenChar(LColorList::C64);
 //       qDebug() << "HERE" <<m_rt->m_globals.m_width;
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+
        QString charName = m_rt->m_globals.m_charset;
        if (charName.toLower()=="rom") {
            m_mc->LoadCharset(":resources/character.rom",0);
        }
        else {
            m_mc->LoadCharset(charName,0);
+           m_mc->m_ignoreValues = m_rt->m_globals.m_ignoreChars;
        }
 
 //       ((C64FullScreenChar*)m_mc)->m_charset = m_charset;

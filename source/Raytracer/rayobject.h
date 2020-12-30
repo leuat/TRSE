@@ -47,6 +47,10 @@ public:
     }
 
 
+    QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, float l);
+
+    QVector3D CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, float l);
+
     void AddToFlattened(QVector<AbstractRayObject*>& list) {
        list.append(this);
         if (m_flatten)

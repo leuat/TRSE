@@ -23,6 +23,8 @@ public:
 
     virtual void FixUp(QByteArray& ba);
 
+
+
 };
 
 #endif // LIMAGEVIC20_H

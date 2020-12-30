@@ -61,6 +61,8 @@ public:
             return new SystemAmstradCPC464(settings, proj);
         if (type==AbstractSystem::COLECO)
             return new SystemColeco(settings, proj);
+        if (type==AbstractSystem::MEGA65)
+            return new SystemMEGA65(settings, proj);
 
 
         return s;

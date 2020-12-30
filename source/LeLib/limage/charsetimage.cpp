@@ -43,8 +43,8 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 
     // Needed for NES stuff
 
-    m_supports.koalaExport = false;
-    m_supports.koalaImport = false;
+    m_supports.koalaExport = true;
+    m_supports.koalaImport = true;
     m_supports.asmExport = false;
     m_supports.binaryLoad = true;
     m_supports.binarySave = true;
@@ -96,6 +96,8 @@ int CharsetImage::FindClosestChar(PixelChar p)
     double topScore=1E9;
     double winner = 0;
     for (int i=0;i<256;i++) {
+        if (m_ignoreValues.contains(i))
+            continue;
         double score = p.CompareLength2(m_data[i]);
         if (score<topScore) {
             topScore = score;

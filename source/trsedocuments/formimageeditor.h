@@ -160,7 +160,7 @@ public:
 
 
     void GenericExportImage(QString type, QString ext);
-    void GenericImportImage(QString type, QString ext);
+    void GenericImportImage(QString type, QStringList ext);
 
     void UpdateSpriteImages();
 

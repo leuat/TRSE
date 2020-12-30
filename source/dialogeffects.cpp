@@ -462,6 +462,13 @@ static int AddObject(lua_State *L)
         if (m_script->lua_exists(material+".uv_scale")) {
             mat.m_uvScale = m_script->getVec(material+".uv_scale");
         }
+        if (m_script->lua_exists(material+".uvtype")) {
+
+            if (m_script->get<QString>(material+".uvtype")=="sphere_map") {
+                mat.m_type = Material::Type::UV_SPHERE_MAP;
+            //    qDebug() << "HERE";
+            }
+        }
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
         if (m_script->lua_exists(material+".checkerboard")) {
@@ -650,7 +657,7 @@ static int AddC64FullScreen(lua_State* L) {
         if (screen==nullptr)
             return 0;
 
-//        qDebug() << screen->m_width;
+
         for (char c : screen->m_rawData)
             m_screenData.append(c);
 
@@ -1075,7 +1082,7 @@ static int AddBinaryScreen(lua_State* L) {
 static int AddScreenPetscii(lua_State* L) {
     m_compression.AddPetsciiScreen(m_charData, m_effect->m_img);
 //    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
-    m_infoText="Added petscii screen";
+    m_infoText+="Added petscii screen";
     return 0;
 }
 
@@ -1200,11 +1207,12 @@ static int DrawImage(lua_State* L) {
     QVector3D pos(lua_tonumber(L,2),lua_tonumber(L,3),0);
     QVector3D scale(lua_tonumber(L,4),lua_tonumber(L,5),0);
     double rot = lua_tonumber(L,6);
+ //   qDebug() << QFile::exists(lua_tostring(L,1)) <<lua_tostring(L,1);
 
     for (int y=0;y<m_effect->m_img.height();y++)
         for (int x=0;x<m_effect->m_img.width();x++) {
-            double xs = ((x-pos.x())/(double)m_effect->m_img.width())*img.width();
-            double ys = ((y-pos.y())/(double)m_effect->m_img.height())*img.height();
+            double xs = ((x-pos.x())/(double)(m_effect->m_img.width()))*img.width();
+            double ys = ((y-pos.y())/(double)(m_effect->m_img.height()))*img.height();
             xs = (xs - img.width()/2);//*scale.x();
             ys = (ys - img.height()/2);//*scale.y();
             double xr = xs * cos(rot) -ys*sin(rot);
@@ -1214,7 +1222,7 @@ static int DrawImage(lua_State* L) {
             xr+=img.width()/2;
             yr+=img.height()/2;
             QColor col(0,0,0,0);
-            if (xr>0 && xr<img.width() && yr>0 && yr<img.height()) {
+            if (xr>=0 && xr<img.width() && yr>=0 && yr<img.height()) {
                 col = img.pixelColor(xr,yr);
             }
             if (col.alpha()>0) {
@@ -1453,6 +1461,10 @@ void DialogEffects::UpdateGlobals()
 
     m_rt.m_globals.m_width = m_script->get<float>("output.resolution.width");
     m_rt.m_globals.m_height = m_script->get<float>("output.resolution.height");
+
+    if (m_script->lua_exists("output.ignorechars")) {
+        m_rt.m_globals.m_ignoreChars = m_script->getIntVector("output.ignorechars");
+    }
 
     if (m_script->lua_exists("output.charset")) {
         QString charName = m_script->get<QString>("output.charset");

@@ -25,4 +25,10 @@ public:
     }
 };
 
+class SystemMEGA65 : public SystemMOS6502
+{
+public:
+    SystemMEGA65(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
+};
+
 #endif // SYSTEMC64_H

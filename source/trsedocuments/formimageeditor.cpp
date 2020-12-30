@@ -1580,10 +1580,13 @@ void FormImageEditor::GenericExportImage(QString type, QString ext)
 
 }
 
-void FormImageEditor::GenericImportImage(QString type, QString ext)
+void FormImageEditor::GenericImportImage(QString type, QStringList ext)
 {
-
-    QString f = type+" ( *."+ext+" )";
+    QString f = type+" (";
+    for (auto e: ext)
+       f+="*."+e+" ";
+    f+=")";
+//    qDebug() << f;
     QString ttr  = "Import " + type.toLower() + " file";
     QString filename = QFileDialog::getOpenFileName(this,
         ttr.toStdString().c_str(), m_projectPath, f);
@@ -1591,13 +1594,14 @@ void FormImageEditor::GenericImportImage(QString type, QString ext)
         return;
 
 
+
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
-    if (ext=="bin")
+    if (ext.contains("bin"))
         m_work.m_currentImage->m_image->ImportBin(file);
-    if (ext=="koa")
+    if (ext.contains("koa") || ext.contains("kla"))
         m_work.m_currentImage->m_image->ImportKoa(file);
-    if (ext=="c")
+    if (ext.contains("c"))
         m_work.m_currentImage->m_image->ImportC(file);
 
     file.close();
@@ -1851,13 +1855,13 @@ void FormImageEditor::onSwapDisplayMode()
 
 void FormImageEditor::on_btnExportKoala_clicked()
 {
-    GenericExportImage("Koala", "koa");
+    GenericExportImage("Koala", "kla");
 
 }
 
 void FormImageEditor::on_btnImportKoala_clicked()
 {
-    GenericImportImage("Koala", "koa");
+    GenericImportImage("Koala", QStringList() <<"koa" << "kla");
 
 }
 
@@ -1865,7 +1869,7 @@ void FormImageEditor::on_btnImportKoala_clicked()
 
 void FormImageEditor::on_btnImportBin_clicked()
 {
-    GenericImportImage("Binary", "bin");
+    GenericImportImage("Binary", QStringList() <<"bin");
 }
 
 void FormImageEditor::on_btnExportBin_clicked()
@@ -2224,7 +2228,7 @@ void FormImageEditor::on_leTimeStamp_textChanged(const QString &arg1)
 
 void FormImageEditor::on_btnImportC_clicked()
 {
-    GenericImportImage("c", "c");
+    GenericImportImage("c", QStringList() <<"c");
 
 }
 

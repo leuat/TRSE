@@ -183,8 +183,8 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
     QImage out(chr.m_width, chr.m_height,QImage::Format_RGB32);
     chr.ToQImage(chr.m_colorList,out,1,QPointF(160,100));
    // out.save("test.png");
-
-
+    m_charset->m_ignoreValues = m_ignoreValues;
+//#pragma omp parallel for
     for (float i=0;i<m_charWidth;i++)
         for (float j=0;j<m_charHeight;j++) {
             PixelChar pc;
@@ -327,9 +327,9 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
 
 
 
-    if (m_writeType==Character || !m_forcePaintColorAndChar)
+    if (m_writeType==Character || m_forcePaintColorAndChar)
         ((C64Screen*)m_items[m_current])->m_rawData[x/8+ (y/8)*m_charWidth] = m_currentChar;
-    if (m_writeType==Color || !m_forcePaintColorAndChar)
+    if (m_writeType==Color || m_forcePaintColorAndChar)
         ((C64Screen*)m_items[m_current])->m_rawColors[x/8+ (y/8)*m_charWidth] = color;
 
 

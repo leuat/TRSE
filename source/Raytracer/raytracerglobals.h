@@ -108,7 +108,7 @@ public:
     float m_shadowScale = 0.5;
     int m_width, m_height;
     int m_orgWidth, m_orgHeight;
-    QVector<int> m_c64Colors;
+    QVector<int> m_c64Colors, m_ignoreChars;
     QVector3D getPerlinNormal(QVector3D p, QVector3D n, QVector3D t, QVector3D bn, float s, float s2) {
         QVector3D p0 = n.normalized()+p;
         QVector3D p1 = (n+t*s).normalized()+p;

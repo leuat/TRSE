@@ -168,6 +168,11 @@ void Compiler6502::Init6502Assembler()
 
     }
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+        Syntax::s.m_ignoreSys = true;
+        Syntax::s.m_stripPrg = false;
+
+    }
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));

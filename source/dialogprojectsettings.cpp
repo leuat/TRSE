@@ -327,7 +327,8 @@ void DialogProjectSettings::on_btnDefaultZP_clicked()
           ui->leInternalZp2->setText("$82");
           ui->leInternalZp3->setText("$84");
           ui->leInternalZp4->setText("$86");
-          ui->leZeropageScreenMemory->setText("$FE");
+          ui->leZeropageScreenMemory->setText("$FD");
+          ui->leZeropageColorMemory->setText("$FB");
           ui->leDecrunchZp1->setText("$7B");
           ui->leDecrunchZp2->setText("$7C");
           ui->leDecrunchZp3->setText("$7E");
