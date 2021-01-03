@@ -148,6 +148,7 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/lglshowcases.cpp \
     source/LeLib/lglslideshow.cpp \
     source/LeLib/limage/lcolor.cpp \
     source/LeLib/limage/limageamstradcpc.cpp \
@@ -349,6 +350,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/lglshowcases.h \
     source/LeLib/lglslideshow.h \
     source/LeLib/limage/lcolor.h \
     source/LeLib/limage/limageamstradcpc.h \

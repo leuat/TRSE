@@ -547,5 +547,22 @@
         <file>resources/text/opcodes_GS4510.txt</file>
         <file>resources/images/morketid.png</file>
         <file>resources/bin/rasm_osx</file>
+        <file>resources/images/billboard/b15.png</file>
+        <file>resources/images/billboard/b16.png</file>
+        <file>resources/images/billboard/b17.png</file>
+        <file>resources/images/billboard/b18.png</file>
+        <file>resources/images/billboard/b19.png</file>
+        <file>resources/images/billboard/b20.png</file>
+        <file>resources/images/billboard/b21.png</file>
+        <file>resources/images/billboard/b22.png</file>
+        <file>resources/images/billboard/b23.png</file>
+        <file>resources/images/billboard/b24.png</file>
+        <file>resources/images/billboard/b25.png</file>
+        <file>resources/images/billboard/b26.png</file>
+        <file>resources/images/billboard/b27.png</file>
+        <file>resources/images/billboard/b28.png</file>
+        <file>resources/images/billboard/b29.png</file>
+        <file>resources/shaders/screen_showcases.frag</file>
+        <file>resources/shaders/screen_showcases.vert</file>
     </qresource>
 </RCC>

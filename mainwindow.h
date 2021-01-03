@@ -191,7 +191,7 @@ public:
     TRSEDocument* m_currentDoc = nullptr;
 
     void LoadIniFile();
-
+    void InitOpenGLBanners();
     void AfterStart(QString oldCurDir);
 
     void SearchInSource();

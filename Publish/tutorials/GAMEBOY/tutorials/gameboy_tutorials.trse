@@ -53,4 +53,5 @@ data_header_images/charset.flf = 6.91604e-310
 zeropage_colormemory = $fc
 open_files = ,tutorial1.ras
 project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/tutorials/
-open_files =, tutorial1.ras
+open_files = ,tutorial1.ras
+current_file = tutorial1.ras

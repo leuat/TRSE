@@ -43,6 +43,9 @@
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"
 
+
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -56,43 +59,6 @@ MainWindow::MainWindow(QWidget *parent) :
     TRSEDocument::m_defaultPalette = m_defaultPalette;
     qRegisterMetaTypeStreamOperators<CItem>("CItem");
 
-    //QObject::connect(m_updateThread, SIGNAL(valueChanged()), this, SLOT (Update()));
-//    m_updateThread = new WorkerThread();
-//    connect(m_updateThread, SIGNAL(updateImageSignal()), this, SLOT(updateImage()));
-
-
-//   Data::data.version += "   Build  " + QDate::currentDate().toString();
-
-
-    ui->glslider->m_slides.append(GLSlide(":resources/images/C64.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/rb1.png","RB1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.gif","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/pumpkid.png","Pumpkid",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/yogrl.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floskel.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/X86.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/torus.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tape.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floppy.jpeg","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/image_icon.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/GAMEBOY.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/nopgrl.png","Nibbler",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b1.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b2.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b3.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b4.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b5.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b6.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b7.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b8.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b9.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b10.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b11.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b12.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b13.png","b1",""));
-    ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b14.png","b1",""));
-    ui->glslider->Init();
-    ui->glslider->setCurrentTexture();
 
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
@@ -124,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->splitter->setStretchFactor(0,10);
     ui->splitter->setStretchFactor(1,100);
-
+    InitOpenGLBanners();
 
     //Messages::messages.DisplayMessage(Messages::messages.ALPHA_WARNING);
     ui->lblSave->setHidden(true);
@@ -160,6 +126,57 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 
+void MainWindow::InitOpenGLBanners()
+{
+
+    ui->glslider->m_slides.append(GLSlide(":resources/images/C64.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/rb1.png","RB1",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.gif","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/pumpkid.png","Pumpkid",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/yogrl.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floskel.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/X86.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/torus.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tape.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/floppy.jpeg","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/image_icon.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/GAMEBOY.png","Nibbler",""));
+    ui->glslider->m_slides.append(GLSlide(":resources/images/nopgrl.png","Nibbler",""));
+    for (int i=0;i<29;i++) {
+        ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b"+QString::number(i)+".png","b1",""));
+    }
+    ui->glslider->Init();
+    ui->glslider->setCurrentTexture();
+
+
+
+
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/tutorials/yogrl.png","https://www.pouet.net/prod.php?which=86248",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/nopgrl.png","https://www.pouet.net/prod.php?which=86248",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/tutorials/pumpkid.png","https://hewco64.itch.io/pumpkid",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b15.png","https://hewco64.itch.io/escape-2020-vic-20",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b16.png","https://www.pouet.net/prod.php?which=87663",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b17.png","https://www.pouet.net/prod.php?which=87663",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b18.png","https://www.pouet.net/prod.php?which=87663",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b19.png","https://www.pouet.net/prod.php?which=87595",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b20.png","https://www.pouet.net/prod.php?which=87595",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b21.png","https://www.pouet.net/prod.php?which=87595",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b22.png","https://www.pouet.net/prod.php?which=87509",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b23.png","https://www.pouet.net/prod.php?which=87509",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b24.png","https://www.pouet.net/prod.php?which=87476",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b25.png","https://phaze101.itch.io/flangry-bird-101",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b26.png","https://csdb.dk/release/?id=195845",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b27.png","https://csdb.dk/release/?id=193571",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b28.png","https://csdb.dk/release/?id=193571",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b2.png","https://www.pouet.net/prod.php?which=85300",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b4.png","https://csdb.dk/release/?id=188056",""));
+
+
+    ui->glShowcase->Init();
+    ui->glShowcase->setCurrentTexture();
+
+
+}
 
 
 MainWindow::~MainWindow()
@@ -2354,6 +2371,7 @@ void MainWindow::LoadIniFile()
     Messages::messages.LoadFromCIni(m_iniFile);
 
 }
+
 
 
 void MainWindow::on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
