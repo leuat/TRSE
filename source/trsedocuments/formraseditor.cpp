@@ -235,6 +235,23 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
+/*        QString cs = m_currentFileShort;
+        cs = cs.toUpper().remove(".RAS");
+        params << "-a" << "run\""+cs+".BIN";*/
+        params.insert(0,"-i");
+        int num = Syntax::s.m_currentSystem->m_programStartAddress;
+        if (m_projectIniFile->getdouble("exomizer_toggle")==1)
+            num = 0x4000; /// Always start at 0x4000
+        params << "-o" << "0x"+QString::number(num,16);
+//        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
+        process.setWorkingDirectory(QFileInfo(emu).path());
+//        qDebug() << "Setting working dir to "<<QFileInfo(emu).path();
+        QDir::setCurrent(QFileInfo(emu).path());
+
+    }
+
+
 
     process.waitForFinished();
     QString orgDir = QDir::currentPath();
@@ -253,27 +270,13 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     }
     else process.startDetached(emu, params);
 
-#else
 //    qDebug() << emu << params;
 //    qDebug() << "FormRasEditor params" << emu << params;
 
     // Finally, add custom paramters
 
 
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
-/*        QString cs = m_currentFileShort;
-        cs = cs.toUpper().remove(".RAS");
-        params << "-a" << "run\""+cs+".BIN";*/
-        params.insert(0,"-i");
-        int num = Syntax::s.m_currentSystem->m_programStartAddress;
-        if (m_projectIniFile->getdouble("exomizer_toggle")==1)
-            num = 0x4000; /// Always start at 0x4000
-        params << "-o" << "0x"+QString::number(num,16);
-//        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        QDir::setCurrent(QFileInfo(emu).path());
-
-    }
+#else
 //    qDebug()<<"TEST"+QDir::toNativeSeparators(fileName)+"TEST";
 
 

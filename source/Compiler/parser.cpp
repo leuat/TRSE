@@ -201,6 +201,7 @@ void Parser::InitBuiltinFunctions()
             Syntax::s.m_currentSystem->m_system == AbstractSystem::PET ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::X16 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM  ) {
 /*        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
@@ -3248,7 +3249,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
         nvt->m_arrayVarType.m_type = m_currentToken.m_type;
 
         if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG)) {
-            ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs (m68k).",m_currentToken.m_lineNumber);
+            ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs (m68k/mega65).",m_currentToken.m_lineNumber);
         }
         Eat();
         if (m_currentToken.m_type == TokenType::EQUALS) {
@@ -3256,7 +3257,12 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
 
         }
         nvt->VerifyFlags(isInProcedure);
+        if (m_currentToken.m_type == TokenType::AT) {
+            Eat();
+            nvt->initVal = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+            Eat();
 
+        }
         return nvt;
 
     }
@@ -3277,6 +3283,12 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
 
             Eat();
             nvt->m_arrayVarType.m_type = typ;
+
+        }
+        if (m_currentToken.m_type == TokenType::AT) {
+            Eat();
+            nvt->initVal = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+            Eat();
 
         }
 
@@ -3763,10 +3775,12 @@ void Parser::HandleExportBW()
     Eat(TokenType::INTEGER_CONST);
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
+    if (!QFile::exists(inFile))
+        ErrorHandler::e.Error("Could not find file :" +inFile,m_currentToken.m_lineNumber);
+
     LImage* img = LImageIO::Load(inFile);
     if (QFile::exists(outFile))
         QFile::remove(outFile);
-
 
 
     QFile file(outFile);

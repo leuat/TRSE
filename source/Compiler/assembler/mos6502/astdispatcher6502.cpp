@@ -1127,6 +1127,7 @@ void ASTDispatcher6502::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString initVal = t->initVal;
 
+//    qDebug() << "POINTER INIT VAL " <<initVal;
     if (initVal=="") {
         initVal = as->PushZeroPointer();
         node->m_pushedPointers++;

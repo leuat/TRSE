@@ -77,10 +77,6 @@ macx:arm {
 
 }
 
-#QMAKE_APPLE_DEVICE_ARCHS=arm64
-#LIBS += -L$$PWD/libs/lua/ -lluamac_arm
-#CONFIG += arm64
-
 
 win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
@@ -553,6 +549,7 @@ RESOURCES += \
 
 DISTFILES += \
     resources/bin/rasm.exe \
+    resources/bin/rasm_osx \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
     resources/code/atari520st/end.s \

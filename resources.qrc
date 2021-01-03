@@ -544,5 +544,8 @@
         <file>resources/text/help/r/continue.rtf</file>
         <file>resources/text/help/r/return.rtf</file>
         <file>resources/images/MEGA65.png</file>
+        <file>resources/text/opcodes_GS4510.txt</file>
+        <file>resources/images/morketid.png</file>
+        <file>resources/bin/rasm_osx</file>
     </qresource>
 </RCC>

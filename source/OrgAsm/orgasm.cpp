@@ -4,7 +4,7 @@
 bool OrgasmLine::m_inIFDEF = false;
 
 void Orgasm::LoadFile(QString filename) {
-    LoadCodes();
+    LoadCodes(m_cpuFlavor);
     QFile f(filename);
     f.open(QFile::ReadOnly);
     m_source=f.readAll();
@@ -18,11 +18,17 @@ void Orgasm::LoadFile(QString filename) {
     m_constantPassLines = -1;
 }
 
-void Orgasm::LoadCodes()
+void Orgasm::LoadCodes(int CPUFlavor)
 {
-    QFile f(":/resources/text/opcodes.txt");
+    QString filename = ":/resources/text/opcodes.txt";
+    if (CPUFlavor==2) filename = ":/resources/text/opcodes_GS4510.txt";
+    QFile f(filename);
+
+//    int num_states[3] {11,11,13};
+
     f.open(QFile::ReadOnly);
     QString all = f.readAll();
+   // qDebug() << filename << all;
     f.close();
     for (QString s: all.split("\n")) {
         s = s.trimmed().simplified().toLower();
@@ -30,18 +36,16 @@ void Orgasm::LoadCodes()
         if (s.startsWith("#")) continue;
         QStringList lst = s.split(",");
         QVector<uchar> opCodes;
-
-        for (int i=0;i<11;i++) {
+        for (int i=0;i<lst.count()-1;i++) {
             bool ok;
             int code = lst[i+1].toInt(&ok, 16);
-            //            qDebug() << "Adding : " << lst[0] << " " << Util::numToHex(code);
             opCodes.append( code );
         }
         MOSOperandCycle c = m_opCodes[lst[0]];
+
         c.m_opcodes = opCodes;
         m_opCodes.m_opCycles[lst[0]] = c;
     }
-
 
 }
 
@@ -400,7 +404,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
         if (ol.m_type==OrgasmLine::ORG)
             ProcessOrgData(ol);
 
-        if (ol.m_type==OrgasmLine::INSTRUCTION)
+      if (ol.m_type==OrgasmLine::INSTRUCTION)
             ProcessInstructionData(ol, pt);
 
         if (ol.m_type==OrgasmLine::INCBIN)
@@ -711,9 +715,12 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 /*        if (m_opCode == "jmp" || m_opCode=="jsr")
             type = OrgasmInstruction::abs;
 */
-
+    if ((int)type>cyc.m_opcodes.length())
+        throw OrgasmError("Unknown or non-implemented opcode: " + m_opCode,ol);
 
     int code = cyc.m_opcodes[(int)type];
+
+
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
         throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +type + "        on line " + ol.m_expr,ol );
@@ -740,7 +747,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     else
 
-    if (type==OrgasmInstruction::zp || type==OrgasmInstruction::zpx || type==OrgasmInstruction::zpy || type == OrgasmInstruction::izx || type == OrgasmInstruction::izy || type==OrgasmInstruction::imm) {
+    if (type==OrgasmInstruction::zp || type==OrgasmInstruction::zpx || type==OrgasmInstruction::zpy || type == OrgasmInstruction::izx || type == OrgasmInstruction::izy || type == OrgasmInstruction::izz|| type==OrgasmInstruction::imm) {
         data.append(val);
     }
     else

@@ -34,6 +34,10 @@ ATARI2600; Atari 2600 tutorials; ATARI2600/tutorials/;  <h2>Main Atari 2600 tuto
 AMIGA; Main Amiga 500 tutorials; AMIGA/tutorials/;<h2>Main Amiga 500 tutorials</h2><p>The main Amiga 500 tutorials in TRSE<p><img src=":resources/images/AMIGA.png" width="300"><p>TRSE currently containts 8 stand-alone Amiga 500 example files, ranging from sprite handling to bitplane manipulation, 3D and text rendering. <p>More tutorials to come soon!
 ATARI520ST; Main Atari 520 ST tutorials; ATARI520ST/tutorials/;<h2>Main Atari 520 ST tutorials</h2><p>The main Atari ST 520 tutorials in TRSE<p><img src=":resources/images/ATARI520ST.png" width="300"><p>TRSE currently containts 5 stand-alone Atari ST example files, all being demo-oriented.  <p>More tutorials to come soon!
 
+AMSTRADCPC464; Main Amstrad CPC tutorials; AMSTRADCPC464/tutorials/;<h2>Main Amstrad CPC</h2><p><img src=":resources/images/AMSTRADCPC464.png" width="300"><p>Amstrad CPC main example files!
+AMSTRADCPC464; Mørketid (demo); AMSTRADCPC464/Morketid/;<h2>Mørketid</h2><p><img src=":resources/images/morketid.png" width="300"><p>Mørketid is a full Amstrad CPC demo that was made with TRSE. The demo competed at Syntax 2020, and can be found on pouet here : https://www.pouet.net/prod.php?which=87509.<br><br>This project contains the full source code with all resources for the demo.
+
+
 
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!
 OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2>The first demo made for the OK64! Presented at Revision 2020.
@@ -44,4 +48,3 @@ CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.
 C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
 
-AMSTRADCPC464; Main Amstrad CPC tutorials; AMSTRADCPC464/tutorials/;<h2>Main Amstrad CPC</h2><p><img src=":resources/images/AMSTRADCPC464.png" width="300"><p>Amstrad CPC main example files!

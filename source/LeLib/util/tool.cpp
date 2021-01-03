@@ -36,8 +36,9 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     Util::CopyFile(":resources/bin/rasm.exe",rasm);
 #endif
 #ifdef __APPLE__
-    QString rasm = path+"rasm.exe";
-    Util::CopyFile(":resources/bin/rasm.exe",rasm);
+    QString rasm = path+"rasm";
+    Util::CopyFile(":resources/bin/rasm_osx",rasm);
+    QFile::setPermissions(rasm,QFile::ExeUser);
 #endif
 
 
@@ -60,8 +61,11 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     QProcess process;
     process.start(rasm,QStringList() << asmFile << "-o" <<filename << "-s"<<"-sl"<<"-sq");
     process.waitForFinished();
+//    qDebug() << process.readAllStandardError() << process.readAllStandardOutput();
 
     // Ok. We have the binary file - now we need to read the symbol file.
+
+
 
     QStringList symFile = Util::loadTextFile(filename+".sym").split("\n");
     for (QString s: symFile) {
@@ -75,7 +79,7 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
         }
         if (d[0]=="PLY_AKG_PLAY") {
             symTab->m_constants["PLAY_MUSIC"]->m_value->m_fVal = d[1].toInt(&ok,16);
-        }
+       }
         if (d[0]=="PLY_AKG_STOP") {
             symTab->m_constants["STOP_MUSIC"]->m_value->m_fVal = d[1].toInt(&ok,16);
         }
@@ -86,11 +90,19 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
   //  qDebug() << process.readAllStandardError() << process.readAllStandardOutput();
     // Compile time
 
+
     QFile::remove(rasm);
     QFile::remove(filename+".sym");
     QFile::remove(player);
     QFile::remove(snd);
     QFile::remove(asmFile);
+//    qDebug() << rasm << QFile::exists(rasm);
+
+
+    if (symTab->m_constants["INIT_MUSIC"]->m_value->m_fVal == 0 ||symTab->m_constants["PLAY_MUSIC"]->m_value->m_fVal==0) {
+        ErrorHandler::e.Error("Could not extract music locations. Did RASM actually run?");
+    }
+
     return true;
 }
 

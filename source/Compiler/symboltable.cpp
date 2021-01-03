@@ -160,7 +160,7 @@ void SymbolTable::Initialize()
 
      }
 //    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
     if (!m_constants.contains("SIDFILE_1_INIT")) {
         for (int i=1;i<10;i++) {
            if (!m_constants.contains("SIDFILE_"+QString::number(i)+"_INIT")) {
@@ -185,6 +185,7 @@ void SymbolTable::Initialize()
         m_constants["INIT_MUSIC"] = keeps[0];
         m_constants["PLAY_MUSIC"] = keeps[1];
         m_constants["STOP_MUSIC"] = keeps[2];
+//        qDebug() << Util::numToHex(keeps[0]->m_value->m_fVal);
     }
 
 }

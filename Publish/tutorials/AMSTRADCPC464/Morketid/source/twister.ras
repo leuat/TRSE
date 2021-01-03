@@ -1,0 +1,109 @@
+var
+   	data : incbin("data/twister_data.bin") compressed;
+   	table : incbin("data/twister_table.bin") compressed;
+   	t2,tt: byte;
+	tab : pointer of integer;   
+	text : string = ("ABCDEFGABCDEFG");
+	charLookup : array[32] of integer = BuildTable("(2*16*16*i)");
+	frameLookup : array[16] of integer = BuildTable("(2*16*i)");
+	
+
+procedure RenderTwister(tx:byte);
+begin
+	t2:=t2+1;
+	tt:=0-tx; // Text goes up
+	t2:=tx; // Twist goes down
+	tp:=#text;
+//	dst:=dst+xp;
+	j:=0;
+//		zp:=#data;
+	y:=32;
+	if (scroll<>0) then
+	for k:=0 to scroll do
+	begin
+		j:=sine32[(k+t2)&255]; // Twist turning
+		frame:=(((j-tx))&15); // Current rotation frame
+		ll:=(k-tt); // Current shift & text position in y
+		j:=ll>>4; // Twister yeah!
+//	 	j:=(tp[j]-1)&31; // Look up current character, store in j
+	 	j:=(j)&7; // Look up current character, store in j
+//	 	j:=(ll)&7; // Look up current character, store in j
+			 	
+		tab :=$7000 + frameLookup[frame];
+		tab :=tab + charLookup[j];
+		
+	
+		zp :=tab[ll&15];
+		zp:=$8000+zp;
+		
+//		zp:=zp+#data;
+//		zp:=zp + ll<<1;
+		//zp := #data + tab[ll];	
+		//zp := #data;
+		
+//		k:=table2[frame<<5+ line +char];
+
+
+		// Copy 2x2 rows of data
+		crtc::PointToY(y);
+		crtc::sp:=crtc::sp+8;
+		memcpy(zp,crtc::sp,8);
+		y:=y+1;
+		crtc::PointToY(y);
+		crtc::sp:=crtc::sp+8;
+		memcpy(zp,crtc::sp,8);
+		y:=y+1;
+
+		
+
+	end;
+	if (transition=1) then
+	begin
+	for j:=0 to 4 do
+	begin
+	crtc::PointToY(y);
+	crtc::sp:=crtc::sp+8;
+	fill(crtc::sp,0,8);
+	y:=y+1;
+	end;
+	end;
+		
+end;
+
+
+procedure Twister();
+begin
+	
+//	Compression::Decompress(tw_pp, screen);
+	Compression::Decompress(#data, $8000);
+	Compression::Decompress(#table, $7000);
+	ftime := 0;
+	scroll := 1;
+	while (done=false) do
+	begin
+		while (ready=false) do
+		begin
+		
+		end;
+		//		crtc::WaitForSync();
+		RenderTwister(ftime);
+
+		if (transition=0) then
+		begin
+			if (scroll<70) then
+				scroll := scroll +1;
+		end
+		else
+		begin
+			if (scroll<>0) then
+				scroll := scroll -1;
+				if (scroll>200) then scroll:=0;
+		end;
+		ftime := ftime +1;
+		ready:=false;
+	end;
+		
+
+
+
+end;

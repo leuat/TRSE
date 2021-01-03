@@ -29,6 +29,10 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             delete m_orgAsm;
 
         m_orgAsm = new Orgasm();
+
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
+           m_orgAsm->m_cpuFlavor = Orgasm::CPUFLAVOR_GS4510;
+
         emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
         connect(m_orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
         if (symTab!=nullptr)

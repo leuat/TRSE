@@ -23,7 +23,7 @@ public:
 class OrgasmInstruction {
     public:
         QString m_opCode;
-        enum Type {none, imm, zp, zpx, zpy, izx, izy, abs, abx,aby, ind, rel, label, imp};
+        enum Type {none, imm, zp, zpx, zpy, izx, izy,abs, abx,aby, ind, rel, izz, label, imp};
         Type m_type;
         int m_size = 0;
 //        enum Pass { passSymbol, passCompile };
@@ -69,6 +69,8 @@ class OrgasmInstruction {
             }
             if (s.contains("(") && s.contains("),y"))
                 return izy;
+            if (s.contains("(") && s.contains("),z"))
+                return izz;
             if (!s.contains("(") && i>=256 && !s.contains(")") && !s.contains(",x") && !s.contains(",y")) {
 
                 return abs;
@@ -184,7 +186,13 @@ public:
     bool m_done = false;
     void LoadFile(QString filename);
 
-    void LoadCodes();
+    static const int CPUFLAVOR_6502_STOCK = 0;
+    static const int CPUFLAVOR_6502_ILLEGAL = 1;
+    static const int CPUFLAVOR_GS4510 = 2;
+
+    int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
+
+    void LoadCodes(int CPUflavor);
     void ProcessSource();
 
 
