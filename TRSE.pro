@@ -46,7 +46,7 @@ ICON = trse.icns
 
 #QMAKE_CFLAGS_WARN_OFF
 
-macx {
+macx:x86 {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
@@ -62,13 +62,12 @@ macx {
 }
 
 # Doesn't work yet, it seems. Must copy arm stuff out manually
-macx:arm {
-    QMAKE_CXXFLAGS += -fopenmp
+macx {
+    QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
     LIBS += -L$$PWD/libs -Ofast
-    LIBS += -ldlc
     CONFIG -= x86_64
     QMAKE_APPLE_DEVICE_ARCHS=arm64
     LIBS += -L$$PWD/libs/lua/ -lluamac_arm
