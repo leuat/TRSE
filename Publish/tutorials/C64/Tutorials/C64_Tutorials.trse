@@ -59,3 +59,4 @@ data_header_resources/images/paint.flf = 0
 open_files = ,easy/12_sqrt_and_atan.ras, easy/03_boxes.asm, easy/03_boxes.ras
 project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
 current_file = easy/04_randomness.ras
+open_files =, Hello.ras

@@ -34,3 +34,4 @@ output_type = prg
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 open_files =, floskel.ras
+open_files =, floskel.ras

@@ -48,3 +48,4 @@ data_header_bin/chars.flf = 6.95265e-310
 data_header_bin\chars.flf = 6.95265e-310
 zeropage_colormemory = $fc
 open_files =, nibbler.ras
+open_files =, nibbler.ras

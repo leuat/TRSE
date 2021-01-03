@@ -1081,10 +1081,16 @@ void MainWindow::UpdateRecentProjects()
        // item->data(Qt::UserRole).QVariant
         item->setData(Qt::UserRole,s);
         QString name = s.split("/").last();
-        item->setText(name);
+        CIniFile inf;
+        if (QFile::exists(s)) {
+            inf.Load(s);
+            QString system = inf.getString("system");
 
-        if (name.trimmed()!="")
-        ui->lstRecentProjects->addItem(item);
+            item->setText("("+system+") " + name);
+
+            if (name.trimmed()!="")
+                ui->lstRecentProjects->addItem(item);
+        }
     }
 
 }

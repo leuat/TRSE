@@ -56,3 +56,4 @@ ignore_initial_jump = 0
 remove_unused_symbols = 1
 zeropage_colormemory = $fc
 open_files =, demo.ras
+open_files =, demo.ras

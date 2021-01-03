@@ -47,3 +47,4 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 open_files =, intro.ras
+open_files =, intro.ras

@@ -85,3 +85,4 @@ data_header_images/test2.flf = 6.89897e-310
 zeropage_colormemory = $fc
 open_files = ,demo.ras
 project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/yo-grl/
+open_files =, demo.ras

@@ -51,3 +51,5 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 exomizer_toggle = 0
+project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/NES/intro_tutorial/
+open_files = ,tutorial_1_hello_nes.ras
