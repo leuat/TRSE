@@ -315,14 +315,14 @@
               <widget class="QLabel" name="label_4">
                <property name="minimumSize">
                 <size>
-                 <width>200</width>
-                 <height>200</height>
+                 <width>180</width>
+                 <height>180</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>200</width>
-                 <height>200</height>
+                 <width>180</width>
+                 <height>180</height>
                 </size>
                </property>
                <property name="text">
