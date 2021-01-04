@@ -325,8 +325,12 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
 //    if (!(e->modifiers() & Qt::ControlModifier))
     // Tab selection
+
     if (e->key()==Qt::Key_Tab || e->key()==Qt::Key_Backtab) {
         QTextCursor cursor = textCursor();
+        int lineCopy = cursor.anchor();
+        if (cursor.position()<lineCopy)
+            lineCopy =cursor.position();
         QString txt = cursor.selectedText();
         txt = txt.replace("\u2029","\n");
         // Damn hack.. above won't work on windows
@@ -348,17 +352,12 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
             }
             else { // Backtab!
 
-//                if (s.trimmed()!="")
- //               {
                 int i = s.indexOf("\t");
                 if (s>0 && i<s.count()) {
                     if (s[i]=='\t')
                         str+=s.remove(i,1)+"\n";
                     else str+=s+"\n";
                 }
-
-   //             }
-  //              else str+="\n";
 
             }
         }
@@ -367,10 +366,128 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
         if(cursor.hasSelection())
         {
+
+            cursor.beginEditBlock();
             cursor.insertText(str);
+            cursor.setPosition(lineCopy, QTextCursor::KeepAnchor);
+            cursor.endEditBlock();
+            setTextCursor(cursor);
+
             return;
         }
 
+  /*      static QChar par(0x2029); // Qt uses paragraph separators
+        QTextCursor cursor = textCursor();
+        QString selected = cursor.selectedText();
+        qint32 amountOfLines = selected.count(par) + 1;
+        static QString tab = QString(" ").repeated(4);
+        QKeyEvent* event = e;
+
+        // Adds tabs in front of the selected block(s)
+        if (event->key() == Qt::Key_Tab && !textCursor().selectedText().isEmpty()) {
+            // Retrieves the amount of lines within the selected text
+            QTextCursor cursor = textCursor();
+            QString selected = cursor.selectedText();
+            qint32 amountOfLines = selected.count(par) + 1;
+
+            // Does not do anything if only one line is selected
+            if (amountOfLines == 1) {
+                return;
+            }
+
+            // Selects the start of the current line and retrieves the position
+            int linePos, lineCopy;
+            cursor.setPosition(cursor.selectionStart());
+            cursor.movePosition(QTextCursor::StartOfLine);
+            linePos = lineCopy = cursor.position();
+            cursor.beginEditBlock();
+
+            // Inserts tabs for each selected line
+            for (int i = 0; i < amountOfLines; ++i) {
+                cursor.setPosition(linePos);
+                cursor.insertText(tab);
+                cursor.movePosition(QTextCursor::Down);
+                cursor.movePosition(QTextCursor::StartOfLine);
+                linePos = cursor.position();
+            }
+
+            // Selects all the text
+            cursor.movePosition(QTextCursor::Down);
+            cursor.movePosition(QTextCursor::EndOfLine);
+            cursor.setPosition(lineCopy, QTextCursor::KeepAnchor);
+            cursor.endEditBlock();
+            setTextCursor(cursor);
+            return;
+        }
+
+        // Removes tabs in front of selected block(s)
+        if (event->key() == Qt::Key_Backtab && !textCursor().selectedText().isEmpty()) {
+            // Retrieves the amount of lines within the selected text
+            QTextCursor cursor = textCursor();
+            QString selected = cursor.selectedText();
+            qint32 amountOfLines = selected.count(par) + 1;
+
+            // Does not do anything if only one line is selected
+            if (amountOfLines == 1) {
+                return;
+            }
+
+            // Retrieves the start of the selection
+            int start = 0, line, diff, copy;
+            cursor.setPosition(cursor.selectionStart());
+            cursor.movePosition(QTextCursor::StartOfLine);
+            copy = cursor.position();
+
+            if (selected.at(0).isSpace()) {
+                cursor.movePosition(QTextCursor::NextWord);
+                start = cursor.position();
+            }
+
+            cursor.clearSelection();
+            cursor.beginEditBlock();
+
+            // Removes a tab from each line
+            for (int i = 0; i < amountOfLines; ++i) {
+                cursor.setPosition(start);
+                cursor.movePosition(QTextCursor::StartOfLine);
+                line = cursor.position();
+                cursor.setPosition(start);
+
+                if (start == line) {
+                    continue;   // nothing to remove
+                }
+
+                diff = qMin(4, start - line);
+                for (int i = 0; i < diff; ++i) {
+                    cursor.deletePreviousChar();
+                }
+
+                // Finds position of the first word in the next line
+                cursor.movePosition(QTextCursor::Down);
+                cursor.movePosition(QTextCursor::StartOfLine);
+                cursor.movePosition(QTextCursor::NextWord);
+                cursor.movePosition(QTextCursor::StartOfWord);
+                start = cursor.position();
+            }
+
+            // Selects all the text
+            cursor.movePosition(QTextCursor::Down);
+            cursor.movePosition(QTextCursor::EndOfLine);
+            cursor.setPosition(copy, QTextCursor::KeepAnchor);
+            cursor.endEditBlock();
+            setTextCursor(cursor);
+            return;
+        }
+
+        // Replaces a tab with four whitespaces
+        if (event->key() == Qt::Key_Tab) {
+            QTextCursor cursor = textCursor();
+            cursor.insertText(QString(" ").repeated(4));
+            setTextCursor(cursor);
+            return;
+        }
+
+*/
     }
 
 
