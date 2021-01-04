@@ -192,6 +192,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>comboBox</tabstop>
+  <tabstop>txtInfo</tabstop>
+  <tabstop>btnSelectDir</tabstop>
+  <tabstop>leProjectName</tabstop>
+  <tabstop>leProjectDir</tabstop>
+  <tabstop>btnOk</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>lstData</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

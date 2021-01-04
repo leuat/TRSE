@@ -27,7 +27,8 @@ DialogNewProject::DialogNewProject(QSharedPointer<CIniFile> ini, QWidget *parent
     }
     int s = 64;
     ui->comboBox->setIconSize(QSize(s,s/1.5));
-    ui->btnOk->setFocus();
+//    ui->btnOk->setFocus();
+    ui->leProjectName->setFocus();
     ui->btnOk->setAutoDefault(true);
     ui->pushButton_2->setAutoDefault(false);
 
@@ -107,7 +108,9 @@ void DialogNewProject::on_leProjectName_editingFinished()
 {
 /*    if (ui->btnOk->isEnabled())
         ui->btnOk->setFocus();
+
 */
+
 }
 
 void DialogNewProject::on_btnSelectDir_clicked()
@@ -119,4 +122,9 @@ void DialogNewProject::on_btnSelectDir_clicked()
 
     if (dir!="")
         ui->leProjectDir->setText(dir);
+}
+
+void DialogNewProject::on_leProjectName_cursorPositionChanged(int arg1, int arg2)
+{
+
 }

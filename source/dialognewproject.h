@@ -40,6 +40,8 @@ private slots:
 
     void on_btnSelectDir_clicked();
 
+    void on_leProjectName_cursorPositionChanged(int arg1, int arg2);
+
 private:
     Ui::DialogNewProject *ui;
     void UpdateProjectInfo();
