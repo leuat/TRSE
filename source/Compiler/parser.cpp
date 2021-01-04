@@ -2446,6 +2446,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
     if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
         StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
+
     Data::data.compilerState = Data::PREPROCESSOR;
     InitSystemPreprocessors();
     bool done = false;
@@ -2483,6 +2484,9 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_currentToken = m_lexer->GetNextToken();
     m_symTab->Initialize();
     Node::m_staticBlockInfo.m_blockID=-1;
+    ErrorHandler::e.m_lexer = m_lexer.get(); // for Warnings
+
+
     // Main parser
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
 
@@ -2756,7 +2760,7 @@ void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockN
 
 }
 
-void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName)
+void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName)
 {
     int type=0;
     if (m_currentToken.m_type == TokenType::INTERRUPT) type=1;
@@ -2787,7 +2791,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokN
     QSharedPointer<Node> funcType;
     if (isFunction) {
         Eat(TokenType::COLON);
-        funcType = TypeSpec(false);
+        funcType = TypeSpec(false,QStringList());
         auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
         if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte")) {
             ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte' and 'integer'",t->m_op.m_lineNumber);
@@ -2955,7 +2959,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     // Make sure that prefix is added
     m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
     vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
+
     QString varName = m_currentToken.m_value;
+    QStringList variableNames;
+    variableNames << varName;
 //    qDebug() << "CURRENT VARNAME "<< varName;
     QVector<QSharedPointer<Symbol>> syms;
     syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
@@ -2977,6 +2984,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
         Eat(TokenType::COMMA);
         // Prefix
         m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
+        variableNames << m_currentToken.m_value;
         vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
         AppendComment(vars[vars.count()-1]);
         syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
@@ -3000,7 +3008,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     }
 
 //    qDebug() << "CURVAL " <<m_currentToken.m_value;
-    QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec(isProcedureParams));
+    QSharedPointer<NodeVarType> typeNode = qSharedPointerDynamicCast<NodeVarType>(TypeSpec(isProcedureParams, variableNames));
     typeNode->m_flags.append(getFlags());
     typeNode->m_flags.append(preflags);
     typeNode->VerifyFlags(isProcedureParams);
@@ -3101,7 +3109,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 
 
 
-QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
+QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 {
     Token t = m_currentToken;
 
@@ -3180,15 +3188,18 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure)
                     }
                 }
             }
+
+            QString vars = Util::toString(varNames);
             Eat(TokenType::RPAREN);
+
             if (count!=data.count() && count!=0) {
                 if (count>data.count()) {
-                    ErrorHandler::e.Warning("Declared array count ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Padding with zeros. ", m_currentToken.m_lineNumber);
+                    ErrorHandler::e.Warning("Declared array count for variable '"+vars+"' ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Padding with zeros. ", m_currentToken.m_lineNumber);
                     for (int i=data.count();i<count;i++)
                         data.append(QString("0"));
                 }
                 else
-                    ErrorHandler::e.Warning("Declared array count ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Adjusting array size to fit data. ", m_currentToken.m_lineNumber);
+                    ErrorHandler::e.Warning("Declared array count for variable '"+vars+"' ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Adjusting array size to fit data. ", m_currentToken.m_lineNumber);
 
             }
 

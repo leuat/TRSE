@@ -20,6 +20,7 @@
 */
 
 #include "errorhandler.h"
+#include "source/Compiler/lexer.h"
 
 ErrorHandler ErrorHandler::e;
 
@@ -29,8 +30,21 @@ ErrorHandler::ErrorHandler()
 
 void ErrorHandler::Warning(QString str, int lineNumber) {
     QString ln ="";
-    if (lineNumber!=0) ln = " at line " + QString::number(lineNumber);
+
+    if (m_lexer!=nullptr) {
+        int linenr = Pmm::Data::d.lineNumber;
+        QString file = "";
+        m_lexer->FindLineNumberAndFile(linenr, file, linenr);
+        if (linenr!=0 && !m_lexer->m_finished) ln = " at line " + QString::number(linenr);
+        if (file!="") ln +=" in file '"+file+"'";
+
+    }
+    else
+        if (lineNumber!=0) ln = " at line " + QString::number(lineNumber);
+
     QString v = "<font color=\"#F0E030\">Warning"+ln+": " +str + "</font>";
     if (m_displayWarnings)
         m_teOut = m_teOut + v + "<br>";
+
+
 }

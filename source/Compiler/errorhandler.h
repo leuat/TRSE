@@ -31,7 +31,10 @@
 #include <iostream>
 //#include <QTextEdit>
 #include <exception>
+
 using namespace std;
+
+class Lexer;
 
 
 class FatalErrorException: public exception
@@ -67,6 +70,7 @@ public:
     QString m_teOut;
     QStringList m_warnings;
     bool m_displayWarnings = true;
+    Lexer* m_lexer = nullptr;
 
     void OutputText(QString str) {
         std::cout << str.toStdString() << std::endl;
