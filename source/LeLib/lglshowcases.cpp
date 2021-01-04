@@ -1,4 +1,4 @@
-#include "source/LeLib/LGLShowcases.h"
+#include "source/LeLib/lglshowcases.h"
 #include <QDesktopServices>
 #include "source/LeLib/util/util.h"
 #include <QOpenGLFunctions>
