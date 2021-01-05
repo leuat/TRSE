@@ -3,13 +3,21 @@
 programs. The structure of a unit is similar to that of a program.  THe Unit is declared
 and a name specified.  A var section is used to declare any data and variables. Procedures
 then follow.  The Unit concludes with an 'end.' statement.</p>
-
+<h2>Paths</h2>
+TRSE will search for units at 3 distinct locations:
+<li>
+<ul>1. "TRSE/units/[ current system ]". For instance, "TRSE/units/C64". This is the main platform unit path.</ul>
+<ul>2. "TRSE/units/cpu_specific/[ current CPU type ]". For instance, "TRSE/cpu_specific/MOS6502". This is the main CPU unit path that contains units that are common for systems using the same CPU.</ul>
+<ul>3. "[ current project path ]". TRSE also searches for units that are located in your current project folder.</ul>
+</li>
 <p>
 A unit can be included in a programe with the 'use' statement.
 For example: <strong>@use "cart"</strong>
 </p>
 
 <h3>Example 1</h3>
+See the C64 tutorial intermediate/12_units.ras and intermediate/customunit.tru for a thorough example on how to create and use units.
+<h3>Example 2</h3>
 
 <code>
 Unit cart;

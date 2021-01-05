@@ -12,7 +12,6 @@ program Morketid;
 	
 	This demo is written entirely in TRSE, and should compile
 	out-of the box.
-
 */
 
 var
