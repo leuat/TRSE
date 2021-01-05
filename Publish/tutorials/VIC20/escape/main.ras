@@ -1,0 +1,160 @@
+program Escape2020;
+/*
+
+	Escape 2020
+	For the unexpanded Vic 20
+
+*/
+var  
+
+
+
+// to run without TAPE LOADER as-is (note there will be no sound)
+
+// alt + M in VICE to start monitor
+// g 1000 to run
+//
+// or from the BASIC prompt:
+//
+// SYS 4096
+//
+// or tick Exomize below nd run from TRSE
+//
+
+// See also:
+// loader.ras - this is the tape loader
+// loaddisk.ras - this is the disk loader
+//
+// The loaders set up some things on the Vic and then 
+// load in the main game. They are included here in case
+// you wish to rebuild the full game, or want to make your
+// own loaders. 
+
+
+
+	@VicMemoryConfig "none"
+
+	@projectsettings "ignorebasicsysstart" 1
+
+
+
+	// Remove if using multiplcation or division
+	@ignoremethod "init16x8mul"
+	@ignoremethod "init16x8div"
+	@ignoremethod "init8x8div"
+	@ignoremethod "initeightbitmul"
+	// deprecated commands - ensure not included
+	@ignoremethod "initjoystick"
+	@ignoremethod "initmoveto"
+
+
+// -------------------------------------------------------------------------------
+
+@include "_memory.ras"
+@include "_sound.ras"
+@include "_macros.ras"
+
+@include "screen.ras"
+@include "enemy_helper.ras"
+@include "enemy.ras"
+@include "player_helper.ras"
+@include "player.ras"
+@include "bullet.ras"
+@include "title.ras"
+
+
+@donotremove "Title_Screen"
+@donotremove "Title_Start"
+@donotremove "GameLoop"
+@donotremove "Title_LostLife"
+@donotremove "Title_GameOver"
+
+
+// simple state machine
+procedure ProcessState();
+begin
+
+	asm( "
+
+	ldy mode ; what state to select
+
+	lda gameSectionL,y
+	sta p1
+	lda gameSectionH,y
+	sta p1+1
+	
+	jmp (p1) 
+
+gameSectionL:
+	dc.b <Title_Screen
+	dc.b <Title_Start
+	dc.b <GameLoop
+	dc.b <Title_LostLife
+	dc.b <Title_GameOver
+	
+gameSectionH:
+	dc.b >Title_Screen
+	dc.b >Title_Start
+	dc.b >GameLoop	
+	dc.b >Title_LostLife
+	dc.b >Title_GameOver
+	
+	" );
+
+end;
+
+// main game loop
+procedure GameLoop();
+begin
+
+//	Player_Debug();
+
+	// play the game
+	Screen_DrawKeys();
+	Enemy_Update();
+	Player_Update();
+	Bullet_Update();
+
+end;
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+begin
+	
+	DefineScreen();
+
+	SetVIC();
+	Player_Init();
+	
+	SCREEN_BG_COLOR := RED + SCREEN_BG_BLACK;// (=10)
+	//AUX_COLOR_AND_VOLUME := 10;
+	
+	// set vertical position of screen for PAL/NTSC
+	m_SetVerticalPosition();
+
+	mode := MODE_TITLE;
+
+	// main game loop
+	while (true) do 
+	begin
+	
+		readjoy1();
+
+		ProcessState();
+
+		// inefficient to keep printing, but saves byte just doing it once and we have loads of time
+		Player_PrintScores();
+
+		// wait for vertical blank		
+		waitforraster(0);
+
+		// tick timing variables
+		ticks := ticks + 1;
+		m_SetTicks();	
+		
+		Sound_Update();
+		
+	end;
+
+end.

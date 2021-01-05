@@ -1,0 +1,153 @@
+program MainProgram;
+var  
+
+/*
+
+					Echo the Mouse
+	
+					     in
+	
+					CHEESY TRIALS
+	
+				for the expanded Vic 20
+
+					(C)2020 HEWCO
+					 www.hewco.uk
+					andyh@hewco.uk
+	
+
+	For TheC64 Winter Games Development Competition 2020
+	
+	Game design and coding: Andy Hewitt
+	Devilish level designs: Ross Hewitt
+	
+	Hope you enjoy the game.
+	
+	Created with Turbo Rascal
+
+cheesy.cjm file:
+X:vic,pal,fullheight,35k
+J:1*:JU,JD,JL,JR,JF,JF,1,2,SP,F1,F3,F5,EN,A,B
+
+*/
+
+//@define DEBUG		1		// uncomment to show debugging timings
+
+//@define BUILDCRT	1		// uncomment to build for cartridge
+
+
+// CART
+@ifdef BUILDCRT
+
+	// Need all RAM memory model for cart so can inject into a000
+	@VicMemoryConfig "all"
+	
+	@exportprg2bin   "main.prg" "a000.prg" $a000 $c000
+	@exportprg2bin   "main.prg" "2000.prg" $2000 $4000
+	@exportprg2bin   "main.prg" "4000.prg" $4000 $6000
+	
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000 // other blocks, eg: $2000
+	//
+	
+@endif
+
+// RAM
+@ifndef BUILDCRT
+
+	// Regular Tape or Disk - default output is PRG
+	@VicMemoryConfig "24k"
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1200
+	@projectsettings "startaddress" $2000
+	//
+	
+@endif
+
+
+@use "key"
+@use "cart"
+@use "crtcompression"
+
+
+// -------------------------------------------------------------------------------
+
+@include "_constants.ras"		// GAME PARAMETERS and CONSTANTS
+@include "_memory.ras"			// variables in Zero Page and binary data
+@include "_lookup.ras"			// read only lookup tables
+
+
+// -------------------------------------------------------------------------------
+// The magic bytes needed at address $A000
+
+@startblock $A000 "CARTAUTOSTART"
+@donotremove cartAutostart
+@ifdef BUILDCRT
+procedure cartAutostart();
+begin
+
+	Cart::Autostart();
+	
+end;
+@endif
+@endblock
+
+
+// -------------------------------------------------------------------------------
+// source files						// add your include files here
+
+@include "drawtext.ras"				// text typewriter routine
+@include "cat.ras"					// handle the cat
+@include "gamesectionhelper.ras"	// helper routines for game sections
+@include "bcd.ras"					// eor BCD small draw routine
+@include "sound.ras"				// sound effect routines
+@include "vbl.ras"					// vertical blank interrupt
+@include "roomhelper.ras"			// helper routines for drawing rooms
+@include "room.ras"					// Room (level) data
+@include "level.ras"				// game level routines
+@include "game.ras"					// game control routines
+@include "player.ras"				// player routines
+@include "gamesection.ras"			// game screens and sections
+
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+begin
+
+	@ifdef BUILDCRT
+
+		Cart::Init();
+	
+	@endif
+
+	Sound_Init();
+	
+	// initialise our interrupt timer to be called each frame
+	Vbl_Init(); // call before set display mode
+	
+	// set up VBM
+	vbmSetDisplayMode( 0 );
+	vbmclear( 0 );
+
+	// set up the global colours we want to use
+	AUX_COLOR_AND_VOLUME := %01100111;//%00000010;
+
+	// splash
+	GameSection_TRSE();
+
+	section := SECTION_TITLE;
+
+	// set up a new game
+	Game_NewGame();
+
+	// once you enter, you will never leave!
+	while (true) do
+	begin
+	
+		GameSection_ProcessState();	
+		
+	end;
+
+end.

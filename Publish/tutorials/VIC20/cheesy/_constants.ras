@@ -1,0 +1,208 @@
+	// Remove if using multiplcation or division
+	@ignoremethod "init16x8mul"
+	@ignoremethod "init16x8div"
+	@ignoremethod "init8x8div"
+	@ignoremethod "initeightbitmul"
+	// deprecated commands - ensure not included
+	@ignoremethod "initjoystick"
+	@ignoremethod "initmoveto"
+	
+
+
+// -------------------------------------------------------------------------------
+		
+
+	// Game sections
+	const SECTION_TITLE: byte		= 0;	// titlescreen
+
+	const SECTION_INTRO: byte		= 1;	// titlescreen
+	const SECTION_INSTRUCTION: byte	= 2;	// Instructions
+	const SECTION_THEVIC20: byte 	= 3;	// The Vic 20
+	const SECTION_THECREDITS: byte 	= 4;	// The credits
+	
+	const SECTION_EXPERIMENT: byte  = 5;	// Experiment introduction
+	
+	const SECTION_ROOM: byte		= 6;	// Room selection
+	const SECTION_GAME: byte		= 7;	// game loop
+	const SECTION_SELECTEDROOM: byte = 8;	// selected a room to play
+	const SECTION_ROOMWON: byte 	= 9;	// just won a room being playing
+	const SECTION_ROOMLOST: byte 	= 10;	// just won a room being playing
+
+	const SECTION_EXPERIMENTCOMPLETE: byte = 11; // An experiment has been completed
+
+	// 12 rooms per level, 3 levels
+	const LEVEL1BCD: byte			= $00;
+	const LEVEL2BCD: byte			= $12;
+	const LEVEL3BCD: byte			= $24;
+
+	const MAX_ROOMLEVEL: byte		= 12;	  // 12 - rooms per level (Experiment)
+	const ALL_ROOMS_COMPLETE: byte 	= 13 * 3; // 13 - as start at 1 and count how many completed	
+
+	// Player
+	const PLAYER_MAXFALL: byte 		= 7;	// maximum fall speed 
+	const PLAYER_MIDFALL: byte 		= 128;	// for unsigned byte check
+	const PLAYER_JUMPCOUNT: byte 	= 3;	// reset counter for rate of jump change
+	const PLAYER_JUMP: byte 		= 6;	// maximum jump speed  
+	const PLAYER_SUPERJUMP: byte 	= 8;	// maximum SUPER jump speed
+	const PLAYER_JUMPHALF: byte 	= PLAYER_JUMP/2; // half maximum jump speed  
+	const PLAYER_FALLSAVE: byte 	= 4;	// how far fall (-1) and can still jump
+	const PLAYER_MAXFALLDISTANCE: byte = 26; // if reach this fall distance, become stunned on landing
+	const PLAYER_STUNTIME: byte		= 70; // how long remain stunned
+	const PLAYER_LADDERCOUNT_MAX: byte = 12; // time to be on ladder before can leave it
+	const PLAYER_JUMPCOUNT_MAX: byte = 6; // time allowed to set a jump direction
+
+	// player states to help control how player behaves in each state
+	const PLAYERSTATE_NONE: byte 	= 0;
+	const PLAYERSTATE_LADDER: byte 	= 1;
+	const PLAYERSTATE_JUMP: byte 	= 2;
+	const PLAYERSTATE_FALL: byte 	= 3;
+
+	// player animation states - set variable panim with one of these constants
+	// to instruct the player drawing routine which animations to use
+	const PANIM_WALKRIGHT: byte		= 0;
+	const PANIM_WALKLEFT: byte		= 1;
+	const PANIM_JUMPRIGHT: byte		= 2;
+	const PANIM_JUMPLEFT: byte		= 3;
+	const PANIM_ONLADDER: byte		= 4;
+	const PANIM_STANDRIGHT: byte	= 5;
+	const PANIM_STANDLEFT: byte		= 6;
+	const PANIM_STUNRIGHT: byte		= 7;
+	const PANIM_STUNLEFT: byte		= 8;
+ 
+	// used for cat delta / direction
+	const CATFLAG_EARS: byte 			= %00000001;
+	const CATFLAG_TAIL: byte			= %00000010;
+
+	const SPRINGTIME_RESET: byte	= 12; // how long to show spring
+    
+	// Tile numbers in image
+	const TILEID_BLANK: byte  		= 0;
+	const TILEID_SPIKE: byte		= 1;
+	const TILEID_CHEESE: byte		= 2;
+	const TILEID_EXIT: byte			= 3;
+	const TILEID_SPRING: byte		= 4;
+	const TILEID_BLANKLIKE: byte	= 5;		// can fall into these (less than)
+	// cannot fall through / special
+	const TILEID_SOLID: byte 		= 5;		// cannot go through tile
+	const TILEID_PLATFORM: byte		= 6;		// cannot fall through but can walk/jump through
+	const TILEID_LADDER: byte 		= 7;		// can climb
+
+
+	const CHEESEMASK: byte 		= %00001111;
+	const CHEESEIDSTART: byte 	= %00010000;
+	const CHEESEIDNEXT: byte 	= %00010000;	// how much to add
+
+	// collapsable platforms uses the upper nibbles like cheese id's
+	const COLLAPSEMASK: byte	= %11110000;
+	const COLLAPSE1: byte		= %00010000;
+	const COLLAPSE2: byte		= %00100000;
+	const COLLAPSE3: byte		= %00110000;
+	const COLLAPSE4: byte		= %01000000;
+
+	const ROOMCOUNTRESET: byte = 3;		// Speed to draw room
+	const LEVELCOUNTRESET: byte = 1;	// Speed to draw level selct
+	const ROOMCOUNT1SEC: byte = 25;		// 1 second delay value
+
+	const TIMERCOUNTRESET: byte = 50;
+
+
+	const TEXT_LARGE: byte = 1;			// used to instruct want large text, next two bytes = x/y pos
+	const TEXT_SMALL: byte = 2;			// used to instruct want small text, next two bytes = x/y pos
+	const TEXT_END: byte = 0;
+
+// -------------------------------------------------------------------------------
+// Room building
+
+	// OPERTATION
+	const OPMASK:		byte = %10000000;
+	  const OPPOS:		byte = %00000000; // position operation
+	  const OPDRAW:		byte = %10000000; // draw operation
+
+	// DRAW -----------------------------
+	const DRAWMASK:		byte = %01100000;
+	  // these use DRAWDIR and DRAWQUANTITY
+	  const DSOLID:		byte = %00000000;
+	  const DPLATFORM:	byte = %00100000;
+	  const DLADDER:	byte = %01000000;
+	  // Specials do not used DRAWDIR and just do 1 special thing
+	  const DSPECIAL:	byte = %01100000;
+
+	// DRAW DIRECTION
+	const DRAWDIRMASK:	byte = %00011000;
+	
+	  const DUP:		byte = %00000000;
+	  const DDOWN:		byte = %00001000;
+	  const DLEFT:		byte = %00010000;
+	  const DRIGHT:		byte = %00011000;
+		
+	// DRAW QUANTITY
+	const DRAWQUANTITY:	byte = %00000111; // 0-7
+
+	// SPECIALS
+	const SPECIALMASK:	byte = %00011111;
+	
+	  const DS_SPIKE:	byte = %00010000;
+	  const DS_DOOR:	byte = %00001000;
+	  const DS_CHEESE:	byte = %00011000; // add a cheese with next ID
+	  const DS_PLAYER:	byte = %00000100; // Player start position - use at start only
+	  const DS_PAUSE1:	byte = %00010100; // wait 1 second
+	  const DS_LEVEL:	byte = %00001100; // level door
+	  const DS_SPRING:	byte = %00011100; // spring trap
+	  const DS_ERASE:	byte = %00000010; // force erase of a block
+	  const DS_COLLAPSE1:byte= %00010010; // Collapse platform stage 1
+	  const DS_COLLAPSE2:byte= %00001010; // Collapse platform stage 2
+	  const DS_COLLAPSE3:byte= %00011010; // Collapse platform stage 3
+	  const DS_COLLAPSE4:byte= %00000110; // Collapse platform stage 4
+
+	// POSITION -------------------------
+	const POSMASK:		byte = %01100000;
+	
+	  const POSX:		byte = %00000000; // set xpos
+	  const POSY:		byte = %01000000; // set ypos
+	  const POSXR:		byte = %00101111; // set relative xpos-15
+	  const POSYR:		byte = %01101111; // set relative ypos-15
+	  
+	// POSITION VALUE
+	const POSVALUE:		byte = %00011111; // 0 - 31 x or y position
+	const POSMID:		byte = %00001111; // middle value=15	
+
+	const ROOMEND:		byte = %11111111; // mark end of room, or two for end of level
+
+
+
+// -------------------------------------------------------------------------------
+// Sound effect constants
+
+	const S_IDLE: 			byte = 0; // Sound is idle/ended
+	const S_UP:				byte = %10000000; // note should go up in pitch, modifier = amount
+	const S_DOWN:			byte = %01000000; // note should go down in pitch, modifier = amount
+	const S_BACK:			byte = %00000000; // same as idle BUT MUST specify modifier for how many to step back
+	const S_TOGGLESILENCE:	byte = %11000000; // no note played
+
+	const S_ACTION:			byte = %11000000; // mask
+	const S_MODIFIER:		byte = %00111111; // mask - the modifier value to use for above 	
+ 
+// what channel to play sounds on
+// 0/1 2/3 4/5 - 6/7
+
+	// time count down and time up
+	const CH_TIMER:			byte = 4;
+	const CH_TIMER2:		byte = 0;
+	const CH_TIMEUP:		byte = 0;
+	const CH_TIMEUP2:		byte = 1;
+	
+	// room
+	const CH_ROOMCOMPLETE:	byte = 4;
+
+	// building noises
+	const CH_BUILD:			byte = 3;
+	
+	// player
+	const CH_COLLECTCHEESE:	byte = 2;
+	const CH_PLAYER:		byte = 1;
+	const CH_PLAYERLANDING1:	byte = 7;
+	const CH_PLAYERLANDING2:	byte = 5;
+	const CH_PLAYERWALKING:	byte = 5;
+	const CH_PLAYEREEK:		byte = 5;
+	const CH_PLAYEREEK2:	byte = 2;
+

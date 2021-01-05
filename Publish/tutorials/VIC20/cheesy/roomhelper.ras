@@ -1,0 +1,379 @@
+
+// determine what room element to draw
+// draw to screen and to LEVELMAP
+procedure rh_DrawTile();
+begin
+
+	l := roomToken & DRAWMASK;
+
+	// set screen position ready for drawing
+	vbmSetColumn( rx );
+	screenmemory := screenmemory + ( ry << 3 );
+	
+	// draw a solid
+	if ( l = DSOLID ) then
+	begin
+	
+		Sound_Solid();
+		
+		// clear if solid in this space, otherwise set it
+		if ( lmp[ 0 ] = TILEID_SOLID ) then
+		begin
+			lmp[ 0 ] := TILEID_BLANK;
+			vbmClearBlock();
+		end
+		else
+		begin
+			lmp[ 0 ] := TILEID_SOLID;
+			p1 := gfx + imgSolidO;
+			vbmDrawTile( p1 );
+		end;
+	end;
+
+	// draw next part of platform
+	if ( l = DPLATFORM ) then
+	begin
+	
+		Sound_Platform();
+		
+		// clear if solid in this space, otherwise set it
+		if ( lmp[ 0 ] = TILEID_PLATFORM ) then
+		begin
+			lmp[ 0 ] := TILEID_BLANK;
+			vbmClearBlock();
+		end
+		else
+		begin
+			lmp[ 0 ] := TILEID_PLATFORM;
+			// toggle between two platform tiles
+			if ((rx + ry)&1) then
+				p1 := gfx + imgPlatform1O //vbmDrawTile( #imgPlatform1 )
+			else
+				p1 := gfx + imgPlatform2O; //vbmDrawTile( #imgPlatform2 );
+			vbmDrawTile( p1 );
+		end;
+		
+	end;
+
+	// draw next part of ladder
+	if ( l = DLADDER ) then
+	begin
+	
+		Sound_Ladder();
+	
+		// clear if solid in this space, otherwise set it
+		if ( lmp[ 0 ] = TILEID_LADDER ) then
+		begin
+			lmp[ 0 ] := TILEID_BLANK;
+			vbmClearBlock();
+		end
+		else
+		begin
+			lmp[ 0 ] := TILEID_LADDER;
+			p1 := gfx + imgLadderO;
+			vbmDrawTile( p1 );
+		end;
+		
+	end;
+
+	if ( l = DSPECIAL ) then
+	begin
+
+		l := roomToken & SPECIALMASK;
+		
+		// place a spike
+		if ( l = DS_SPIKE ) then
+		begin
+		
+			// clear if solid in this space, otherwise set it
+			if ( lmp[ 0 ] = TILEID_SPIKE ) then
+			begin
+				lmp[ 0 ] := TILEID_BLANK;
+				vbmClearBlock();
+			end
+			else
+			begin
+				lmp[ 0 ] := TILEID_SPIKE;
+				p1 := gfx + imgSpikeO;
+				vbmDrawTile( p1 );
+			end;
+		
+		end;
+
+		// place a spring
+		if ( l = DS_SPRING ) then
+		begin
+		
+			// clear if solid in this space, otherwise set it
+			if ( lmp[ 0 ] = TILEID_SPRING ) then
+			begin
+				lmp[ 0 ] := TILEID_BLANK;
+				vbmClearBlock();
+			end
+			else
+			begin
+				lmp[ 0 ] := TILEID_SPRING;
+				p1 := gfx + imgSpringO;
+				vbmDrawTile( p1 );
+			end;
+		
+		end;
+
+		// Erase a block
+		if ( l = DS_ERASE ) then
+		begin
+		
+			lmp[ 0 ] := TILEID_BLANK;
+			vbmClearBlock();
+		
+		end;
+
+		// place a door
+		if ( l = DS_DOOR ) then
+		begin
+		
+			Sound_Door();
+			
+			// clear if solid in this space, otherwise set it
+			if ( lmp[ 0 ] & CHEESEMASK = TILEID_EXIT ) then
+			begin
+				lmp[ 0 ] := TILEID_BLANK;
+				vbmClearBlock();
+			end
+			else
+			begin
+				lmp[ 0 ] := TILEID_EXIT;
+				p1 := gfx + imgExitClosedO;
+				vbmDrawTile( p1 );
+			end;
+		
+		end;
+		// place a level door
+		if ( l = DS_LEVEL ) then
+		begin
+		
+			Sound_Door();
+			
+			// using cheese Id (upper nibble) for room/level select
+
+			lmp[ 0 ] := TILEID_EXIT + (cheeseId - CHEESEIDSTART); // Id the room door
+			i := cheeseId >> 4 - 1;
+			// on room select, stop drawinf when > completed room.
+			if ( i <> 0 and i < levelComplete[ gameLevel ] ) then
+				p1 := gfx + imgExitOpenO
+			else
+				p1 := gfx + imgExitClosedO;
+				
+			vbmDrawTile( p1 );
+			
+			//colormemory := screenmemory; //save it
+			// room 1 = exit
+			if ( cheeseId = CHEESEIDSTART ) then
+			begin
+			
+				screenmemory := screenmemory - 9;
+				p1 := gfx + imgSpikeO;
+				vbmDrawTile( p1 );
+				
+			end
+			else
+			begin
+
+				BCD_DrawDoorNumber();
+				
+			end;
+			//screenmemory := colormemory; // restore it
+
+			bcdadd( #gameRoomBCD, #bcd1, 1 );
+			cheeseId := cheeseId + CHEESEIDNEXT;
+		
+		end;
+
+		// place a cheese with next Id
+		if ( l = DS_CHEESE ) then
+		begin
+		
+			Sound_Cheese();
+			
+			// clear if solid in this space, otherwise set it
+			if ( lmp[ 0 ] & CHEESEMASK = TILEID_CHEESE ) then
+			begin
+				lmp[ 0 ] := TILEID_BLANK;
+				vbmClearBlock();
+			end
+			else
+			begin
+
+				lmp[ 0 ] := TILEID_CHEESE + cheeseId;
+				// only increment cheese Id in game, cheese Id is used on level/room select for the doors
+				if ( section = SECTION_GAME ) then cheeseId := cheeseId + CHEESEIDNEXT;
+				p1 := gfx + imgCheeseO;
+				vbmDrawTile( p1 );
+			end;
+		
+		end;
+
+		// place a collapsable platform at stage 1
+		if ( l = DS_COLLAPSE1 ) then
+		begin
+		
+			Sound_Platform();
+			
+			lmp[ 0 ] := TILEID_PLATFORM + COLLAPSE1;
+			p1 := #ACOLLAPSE1;
+			vbmDrawTile( p1 );
+		
+		end;
+		// place a collapsable platform at stage 2
+		if ( l = DS_COLLAPSE2 ) then
+		begin
+		
+			Sound_Platform();
+			
+			lmp[ 0 ] := TILEID_PLATFORM + COLLAPSE2;
+			p1 := #ACOLLAPSE2;
+			vbmDrawTile( p1 );
+		
+		end;
+		// place a collapsable platform at stage 3
+		if ( l = DS_COLLAPSE3 ) then
+		begin
+		
+			Sound_Platform();
+			
+			lmp[ 0 ] := TILEID_PLATFORM + COLLAPSE3;
+			p1 := #ACOLLAPSE3;
+			vbmDrawTile( p1 );
+		
+		end;
+		// place a collapsable platform at stage 4
+		if ( l = DS_COLLAPSE4 ) then
+		begin
+		
+			Sound_Platform();
+			
+			lmp[ 0 ] := TILEID_PLATFORM + COLLAPSE4;
+			p1 := #ACOLLAPSE4;
+			vbmDrawTile( p1 );
+		
+		end;
+
+		// special - set position of player to where room x/y is currently
+		if ( l = DS_PLAYER ) then
+		begin
+		
+			Sound_PlayerAppear();
+
+			px := rx << 3;
+			py := ry << 3;
+		
+		end;
+
+		// special - wait 1 second before moving to next room piece
+		if ( l = DS_PAUSE1 ) then
+		begin
+		
+			roomCount := ROOMCOUNT1SEC;
+		
+		end;
+
+		
+	end;
+
+
+end;
+
+// work out where to position the rx/rp/lmp for next draw
+procedure rh_MoveNextPos();
+begin
+
+	l := roomToken & DRAWDIRMASK;
+	
+	// special items will always advance one space to right
+	if ( roomToken & DRAWMASK = DSPECIAL) then 
+	begin
+	
+		j := roomToken & SPECIALMASK;
+		if ( j = DS_PAUSE1 ) then return; // pauses do not advance
+		
+		l := DRIGHT;
+		
+	end;
+
+	if ( l = DUP ) then ry := ry - 1;
+	if ( l = DDOWN ) then ry := ry + 1;
+	if ( l = DLEFT ) then rx := rx - 1;
+	if ( l = DRIGHT ) then rx := rx + 1;
+	
+	// wrap around -- note: don't allow anything in top row
+	if ( rx = 20 ) then rx := 0;
+	if ( rx = -1 ) then rx := 19;
+	if ( ry = 24 ) then ry := 1;
+	if ( ry = 0 ) then ry := 23;
+	
+	lmp := addresstable( #levelAddr, rx, ry );
+
+end;
+
+// perform reposition of level map pointer lmp
+procedure rh_Reposition();
+begin
+
+	l := roomToken & POSMASK;
+	
+	if ( l = POSX ) then
+	begin
+		rx := roomToken & POSVALUE;
+		lmp := addresstable( #levelAddr, rx, ry );
+	end;
+	if ( l = POSY ) then
+	begin
+		ry := roomToken & POSVALUE;
+		lmp := addresstable( #levelAddr, rx, ry );
+	end;
+	if ( l = POSXR & POSMASK ) then
+	begin
+		rx := rx + ( roomToken & POSVALUE ) - POSMID;
+		lmp := addresstable( #levelAddr, rx, ry );
+	end;
+	if ( l = POSYR & POSMASK ) then
+	begin
+		ry := ry + ( roomToken & POSVALUE ) - POSMID;
+		lmp := addresstable( #levelAddr, rx, ry );
+	end;
+	
+	// move to next room element
+	room := room + 1;
+	// do not change ii variable, so can process next room element next
+
+end;
+
+// draw something on the level map lmp
+procedure rh_DrawAction();
+begin
+
+	if ( roomQuantity = 0 ) then
+	begin
+	
+		if ( roomToken & DRAWMASK <> DSPECIAL) then
+		begin
+		
+			// load draw operation
+			roomQuantity := roomToken & DRAWQUANTITY + 1;
+			roomDir := roomToken & DRAWDIRMASK;
+			
+		end
+		else
+		
+			roomQuantity := 1;
+
+	end;
+
+	// draw it
+	rh_DrawTile();
+	rh_MoveNextPos();
+	
+	roomQuantity := roomQuantity - 1;
+	if ( roomQuantity = 0 ) then room := room + 1; // move to next room element
+
+end;

@@ -1,0 +1,294 @@
+
+// -------------------------------------------------------------------------------
+// Variables:	(for assignable/changing data, use these addresses)
+
+
+	// Address of bitmap (screen and characters)
+	@userdata 		$1000 $1FFF "Bitmap"
+
+
+// Declare variables
+
+// ------------------------------
+// Zero Page: 			$35 - $5d
+
+	// game tick counter + 1 per FPS
+	ticks : 		byte at $35;		// incremented 1 per frame
+	ticks1:			byte at $36;
+	ticks3:			byte at $37;
+	ticks15:		byte at $38;
+	oldticks : 		byte at $39;
+
+	i, j, k, l :	byte at $3a;		// working temporary variables
+	ii, jj :		byte at $3e;		// loop temporary variables
+
+	px, py :		byte at $40;		// player position
+	dy : 			byte at $42;		// jump / fall
+	dx : 			byte at $43;		// delta x for jumping/falling
+	playerState:	byte at $44;		// defines the state the player is in
+	jumpCount:		byte at $45;		// jump counter
+	fallCount:		byte at $46;		// count down for falling in direction
+	panim:			byte at $47;		// player animation to display
+
+	room:			byte at $48;		// room index inside rp pointer
+	roomCount:		byte at $49;		// counter for how fast to draw each room block
+
+	roomToken:		byte at $4a;		// current room token
+	roomQuantity:	byte at $4b;		// how many to draw
+	roomDir:		byte at $4c;		// current direction to draw
+	rx, ry: 		byte at $4d;		// -4e room x and y pos
+
+	pStunCount:		byte at $4f;		// if > 0 then stunned
+	fallDistance:	byte at $50;		// keep cound of how far fall, if over limit become stunned on landing
+
+	timerCount:		byte at $51;		// count the seconds
+
+	section:		byte at $52;		// Game section to play Title, Room, Game etc
+
+	cat_ears:		byte at $53;		// cat ears x pos
+	cat_tail:		byte at $54;		// cat tail x pos
+	cat_delta:		byte at $55;		// ears and tail direction
+
+	pauseLadderCount:	byte at $56;	// counter while on ladder - prevent accidental jump off when first get on
+	pauseJumpCount:		byte at $57;	// counter for how long can set a direction on starting a jump
+
+	spiked:			byte at $58;		// true if collided with spike or hazard
+	jumpNumber:		byte at $59;		// reset jump counter (allow to jump again)
+
+	sindex:			byte at $5a;		// sound fx index used only in VBL
+	sound:			byte at $5b;		// sound fx being played used in VBL only
+	stemp:			byte at $5c;		// temp sound var only used in VBL 
+	// $5d = last
+
+	// ------------------------------
+	// $7a is free
+	timer:			byte at $7a;		// timer index 0 - 5 (which number graphic)
+
+
+// ------------------------------
+// BASIC input buffer:	$0200-$0258 - 88 bytes
+	
+	cheeseList: array[10] of byte at $0200; //list of collected cheese
+
+	cheeseId:		byte at $020A;		// next cheese Id for level drawing	
+	currentCheeseId: 	byte at $020B; 	// current id in the array to action
+	nextCheeseId: 	byte at $020C; 		// next id in the array to add
+
+	gameRoomBCD: 	byte at $020D;
+	
+	gameLevel:		byte at $020E;		// level screen we are on
+	gameRoom:		byte at $020F;		// which room number we are in
+	gameLoop:		byte at $0210;		// true while in game loop, set to false to leave
+
+	oldPx:			byte at $0211;		// old X pos for player (saved when entering room)
+	oldPy:			byte at $0212;		// old Y pos
+
+	springX:		byte at $0213;		// spring X pos
+	springY:		byte at $0214;		// spring Y pos
+	springTime:		byte at $0215;		// how long to show spring
+
+	levelComplete:	array[ 3 ] of byte at $0216;	// number of rooms completed per level
+	// ends at $218, 219 is next free byte
+	levelCompleteBCD: array[ 3 ] of byte at $0219;// number of rooms completed per level
+	// ends at $21b, $21c is next free byte
+	const LEVELCOMPLETEBCD2: address = $021A;	
+	const LEVELCOMPLETEBCD3: address = $021B;	
+
+	numMouseBCD:	array[ 3 ] of byte at $021c; // number of mice used
+	// ends at $21e, $21f is next free byte
+
+	textX: 			byte at $021f;		// Text drawing X pos
+	textY:			byte at $0220;		// Text drawing Y pos
+	textSize:		byte at $0221;		// current text size Large or Small
+	textChar:		byte at $0222;		// character to draw
+	textCharNull:	byte at $0223;		// must be zero
+
+// ------------------------------
+// Indirect vectors:	$02A1-$02FF - 94 bytes 
+	// 
+	// ** RESERVED FOR UNITS TO USE **
+	//
+	// Following units can have overlapping temp memory
+	// ------------------------------------------------
+	// $02A1 - $02A4 = crtcompression unit
+	// $02A1 - $02A3 = key unit 
+
+
+// ------------------------------
+// Cassette buffer:		$033C-$03FB (828-1019)
+
+	// Sound FX data - allows for two notes per channel (duplex on 3 channels)
+	sfxType = record
+		note, timer, index: byte;
+	end;
+	// sfx data - what note value is 
+	// currently playing on each channel
+	// - 0,1 is even odd for s channel 1, 
+	// - 2,3 for ch 2 and 
+	// - 4,5 for ch 3
+	// - 6,7 for ch 4 sound effects
+	sfx:			array[ 8 ] of sfxType at $033c;
+	// ends at $354
+	
+
+
+	// ------------------------------	
+	// Working Zero Page pointers
+	p1: 			pointer;			// general pointer
+	lp:				pointer;			// levelmap testing pointer
+
+	levelp:			pointer of integer;	// level list pointer 
+	rp:				pointer;			// Room data array pointer
+	lmp:			pointer;			// level map pointer
+
+	gfx:			pointer;			// pointer to graphics set to use
+
+// -------------------------------------------------------------------------------
+// CString
+
+	strRoomCompleteTitle: cstring =	( "ROOM COMPLETE" );
+	strRoomFailedTitle: cstring = 	( "ROOM FAILED" );
+
+	strPressFire: cstring = 		( "PRESS FIRE" );
+
+
+// -------------------------------------------------------------------------------
+// Data
+
+
+// export data
+const fontSize: address = 8 * 64;	// 64 characters using 8 bytes each
+@vbmexport "chr/font8x8.flf" "chr/font8x8.bin" 0 64  1 0	// S E  H M 
+@vbmexport "chr/font4x8.flf" "chr/font4x8.bin" 0 64  1 0	// S E  H M 
+
+const NUMBERSIZE: address = 16 * 6; // six double height chars
+@vbmexport "chr/font8x8.flf" "chr/numbers.bin" 40 46  2 0	// S E  H M 
+
+// Export the tileset character data to a bin file
+const tileSize: address = 9 * 8;  // 9 tiles for use on the level
+@vbmexportchunk "chr/echo-tiles.flf" "chr/echo-tiles1.bin" 0  9 1  0	// S  W H  M
+@vbmexportchunk "chr/echo-tiles.flf" "chr/echo-tiles2.bin" 40  9 1  0	// S  W H  M
+@vbmexportchunk "chr/echo-tiles.flf" "chr/echo-tiles3.bin" 80  9 1  0	// S  W H  M
+@vbmexportchunk "chr/echo-tiles.flf" "chr/echo-tiles5.bin" 160  9 1  0	// S  W H  M
+
+const SPRINGSIZE: address = 8;
+@vbmexportchunk "chr/echo-tiles.flf" "chr/spring.bin" 200  1 1  0	// S  W H  M
+
+const COLLAPSESIZE: address = 8 * 4;
+@vbmexportchunk "chr/echo-tiles.flf" "chr/collapse.bin" 201  4 1  0	// S  W H  M
+
+// Export the animation frames for the player to a series of bin files
+const sprPlayerSize: address = 2 * 8 * 4; // 2 characters and 4 preshifted positions
+@vbmexport "spr/sprites.flf" "spr/sprPlayerRight.bin" 0 8   1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerLeft.bin" 40 48  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerJumpRight.bin" 80 88  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerJumpLeft.bin" 120 128  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerStandRight.bin" 160 168  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerStandLeft.bin" 200 208  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerClimb.bin" 240 248  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerTailRight.bin" 280 288  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerTailLeft.bin" 320 328  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerTailRun.bin" 360 368  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerStunRight.bin" 440 448  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprPlayerStunLeft.bin" 480 488  1 0 // S E  H M
+
+// cat
+const sprCatSize: address = 2 * 8 * 4; // 2 characters and 4 preshifted positions
+@vbmexport "spr/sprites.flf" "spr/sprCatEars.bin" 520 528  1 0 // S E  H M
+@vbmexport "spr/sprites.flf" "spr/sprCatTail.bin" 560 568  1 0 // S E  H M
+
+// titles
+@vbmexport "chr/title.flf" "chr/title.bin" 0 20  24 0 // S E  H M
+@vbmexportColor "chr/title.flf" "chr/title_col.bin" 	0  20 24  2	// S  W H  LH
+
+
+// memory - load addresses - calculated to follow sequentially in memory
+	const aBaseData:	address = $8000;		// address where binary data ends
+
+	const aFont8:		address = aBaseData - fontSize;
+	const aFont4:		address = aFont8 - fontSize;
+	const aTiles1:		address = aFont4 - tileSize;
+	const aTiles2:		address = aTiles1 - tileSize;
+	const aTiles3:		address = aTiles2 - tileSize;
+	const aTiles5:		address = aTiles3 - tileSize;
+	const aSprPlayerRight:	address = aTiles5 - sprPlayerSize;
+	const aSprPlayerLeft:	address = aSprPlayerRight - sprPlayerSize;
+	const aSprPlayerJumpRight:	address = aSprPlayerLeft - sprPlayerSize;
+	const aSprPlayerJumpLeft:	address = aSprPlayerJumpRight - sprPlayerSize;
+	const aSprPlayerStandRight:	address = aSprPlayerJumpLeft - sprPlayerSize;
+	const aSprPlayerStandLeft:	address = aSprPlayerStandRight - sprPlayerSize;
+	const aSprPlayerClimb:		address =  aSprPlayerStandLeft - sprPlayerSize;
+	const aSprPlayerTailRight:	address =  aSprPlayerClimb - sprPlayerSize;
+	const aSprPlayerTailLeft:	address =  aSprPlayerTailRight - sprPlayerSize;
+	const aSprPlayerTailRun:	address =  aSprPlayerTailLeft - sprPlayerSize;
+	const aSprPlayerStunRight:	address =  aSprPlayerTailRun - sprPlayerSize;
+	const aSprPlayerStunLeft:	address =  aSprPlayerStunRight - sprPlayerSize;
+	const ANUMBERS:		address = aSprPlayerStunLeft - NUMBERSIZE;
+	const ASPRING:		address = ANUMBERS - SPRINGSIZE;
+	const ACOLLAPSE:		address = ASPRING - COLLAPSESIZE;
+	const ASPRCATEARS:		address = ACOLLAPSE - SPRCATSIZE;
+	const ASPRCATTAIL:		address = ASPRCATEARS - SPRCATSIZE;
+	// **** WARNING - if add more gfx, note LEVELMAP must be adjusted
+
+
+	const LEVELSIZE: address = 20 * 24; // 480
+	const LEVELMAP: address = ASPRCATTAIL - LEVELSIZE;
+	const LEVELEND: address = LEVELMAP + LEVELSIZE;
+	@userdata 		LEVELMAP LEVELEND "LevelMap"
+
+	const ADIGITSMALL: address = aFont4 + (48*8); // where small digit graphics can be found
+	const ADIGIT: address = aFont8 + (48*8); // where large digit graphics can be found
+
+	const imgSpikeO: byte = 0;
+	const imgCheeseO: byte = 1 * 8;
+	const imgExitClosedO: byte = 2 * 8;
+	const imgExitOpenO: byte = 3 * 8;
+	const imgSpringO: byte = 4 * 8;
+	const imgSolidO: byte = 5 * 8;
+	const imgPlatform1O: byte = 6 * 8;
+	const imgPlatform2O: byte = 7 * 8;
+	const imgLadderO: byte = 8 * 8;
+	
+	const AEXITOPEN: address = aTiles1 + (3 * 8);
+	
+	const ACOLLAPSE1: address = ACOLLAPSE;
+	const ACOLLAPSE2: address = ACOLLAPSE + 8;
+	const ACOLLAPSE3: address = ACOLLAPSE + 16;
+	const ACOLLAPSE4: address = ACOLLAPSE + 24;
+	
+
+
+// incbin - include the bin data exported earlier
+font8: 				incbin( "chr/font8x8.bin", aFont8 );
+font4: 				incbin( "chr/font4x8.bin", aFont4 );
+tiles1: 			incbin( "chr/echo-tiles1.bin", aTiles1 );
+tiles2: 			incbin( "chr/echo-tiles2.bin", aTiles2 );
+tiles3: 			incbin( "chr/echo-tiles3.bin", aTiles3 );
+tiles5: 			incbin( "chr/echo-tiles5.bin", aTiles5 );
+sprPlayerRight: 	incbin( "spr/sprPlayerRight.bin", aSprPlayerRight );
+sprPlayerLeft: 		incbin( "spr/sprPlayerLeft.bin", aSprPlayerLeft );
+sprPlayerJumpRight:	incbin( "spr/sprPlayerJumpRight.bin", aSprPlayerJumpRight );
+sprPlayerJumpLeft:	incbin( "spr/sprPlayerJumpLeft.bin", aSprPlayerJumpLeft );
+sprPlayerStandRight:incbin( "spr/sprPlayerStandRight.bin", aSprPlayerStandRight );
+sprPlayerStandLeft:	incbin( "spr/sprPlayerStandLeft.bin", aSprPlayerStandLeft );
+sprPlayerClimb: 	incbin( "spr/sprPlayerClimb.bin", aSprPlayerClimb );
+sprPlayerTailRight:	incbin( "spr/sprPlayerTailRight.bin", aSprPlayerTailRight );
+sprPlayerTailLeft:	incbin( "spr/sprPlayerTailLeft.bin", aSprPlayerTailLeft );
+sprPlayerTailRun:	incbin( "spr/sprPlayerTailRun.bin", aSprPlayerTailRun );
+sprPlayerStunRight:	incbin( "spr/sprPlayerStunRight.bin", aSprPlayerStunRight );
+sprPlayerStunLeft:	incbin( "spr/sprPlayerStunLeft.bin", aSprPlayerStunLeft );
+imgNumbers:			incbin( "chr/numbers.bin", ANUMBERS );
+imgSpring:			incbin( "chr/spring.bin", ASPRING );
+imgCollapse:		incbin( "chr/collapse.bin", ACOLLAPSE );
+sprCatEars:			incbin( "spr/sprCatEars.bin", ASPRCATEARS );
+sprCatTail:			incbin( "spr/sprCatTail.bin", ASPRCATTAIL );
+
+// where ever it falls...
+binTitle:			incbin( "chr/title.bin" ) compressed;
+binTitleColour: 	incbin( "chr/title_col.bin" ) compressed;
+
+// Made with Turbo Rascal graphic
+@vbmexportchunk "chr/turbo-rascal.flf" "chr/trse.bin" 	 	0  20 24  0	// S  W H  M
+@vbmexportColor "chr/turbo-rascal.flf" "chr/trse_col.bin" 	0  20 24  2	// S  W H  LH
+binTRSE: incbin( "chr/trse.bin" ) compressed;
+binTRSEColour: incbin( "chr/trse_col.bin" ) compressed;

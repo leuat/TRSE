@@ -1,0 +1,57 @@
+
+procedure _Enemy_Inactive();
+begin
+
+	en[ i ].a := ENEMY_INACTIVE; // disable enemy
+	en[ i ].x := 23; // set off-screen
+
+end;
+
+procedure _Enemy_DrawChar();
+begin
+
+	screenmemory[ ii ] := ENEMY_CHAR + ( random() & $03 );
+
+end;
+
+// i = enemy number
+procedure _Enemy_FindFreeSpot();
+begin
+
+	jj := true;
+	while (jj) do
+	begin
+	
+		ii := ( random() & 15 ) + 4;
+		ty := ( random() & 15 ) + 1;
+		if (ii > 17) then ii := ii - 5;
+		if (ty > 12) then ty := ty - 5;
+
+		screenmemory := screenAddr[ ty ];
+		//ii := tx;
+		if ( screenmemory[ ii ] = 0 ) then 
+		begin
+		
+			_Enemy_DrawChar();
+			
+			en[ i ].x := ii;
+			en[ i ].y := ty;
+			
+			jj := false; // found a spot, can now leave loop
+			
+		end;
+
+	end;
+	
+end;
+
+
+// move next direction
+procedure _Enemy_ChangeDir();
+begin
+
+	// Enemy will turn left or right (smaller code too!)	
+	en[ i ].a := ( en[ i ].a + ( random() & 2 ) - 1 ) & $03;
+
+end;
+

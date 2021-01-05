@@ -1,0 +1,277 @@
+
+procedure Sound_Init();
+var
+
+begin
+
+	for i := 0 to 8 do
+	begin
+	
+		sfx[ i ].note := S_IDLE; // note to start at
+		sfx[ i ].index := 0; // sfx to use
+		sfx[ i ].timer := 0; // start playing immediately
+
+	end;	
+
+end;
+
+// process all active duplex sound effects
+procedure Sound_ProcessFX();
+begin
+
+	for sindex := 0 to 8 step 2 do
+	begin
+
+		// which sound data to use (vic channel / duplex)
+		sound := ticks1 + sindex; // ticks=odd or even
+
+		// is there a sound to play?
+		if ( sfx[ sound ].note <> S_IDLE ) then
+		begin
+
+			// decrement timer
+			if ( sfx[ sound ].timer > 0 ) then 
+			begin
+			
+				sfx[ sound ].timer := sfx[ sound ].timer - 1;
+
+				// get action to take
+				stemp := SoundBank[ sfx[ sound ].index ] & S_ACTION;
+
+				// sound must go up
+				if (stemp = S_UP) then sfx[ sound ].note := sfx[ sound ].note + SoundBank[ sfx[ sound ].index ] & S_MODIFIER;
+				// sound must go down
+				if (stemp = S_DOWN) then sfx[ sound ].note := sfx[ sound ].note - SoundBank[ sfx[ sound ].index ] & S_MODIFIER;		
+				
+			end;
+			
+			// has time run out? if so load next
+			if ( sfx[ sound ].timer = 0 ) then
+			begin
+
+				// move to next token in sound bank
+				stemp := sfx[ sound ].index + 2;
+				sfx[ sound ].index := stemp;
+				
+				sfx[ sound ].timer := SoundBank[ stemp + 1 ];
+				stemp := SoundBank[ stemp ] & S_ACTION;
+				
+				if ( stemp = S_TOGGLESILENCE ) then
+				begin
+				
+					sfx[ sound ].note := sfx[ sound ].note XOR 128;
+
+				end;
+
+				// sound fx has ended, ensure note is 0
+				if (stemp = S_IDLE) then 
+				begin
+				
+					// this could be a repeat
+					
+					// get action to take
+					stemp := SoundBank[ sfx[ sound ].index ] & S_MODIFIER;
+					if ( stemp = 0 ) then
+						// it is idle if modifier 
+						sfx[ sound ].note := S_IDLE
+					else
+						// step back
+						sfx[ sound ].index := sfx[ sound ].index - stemp;
+					
+				end;
+
+
+			end;
+			
+		end;
+
+
+		asm("
+
+	; get sound channel to play on
+	lda sindex
+	lsr
+	tax ; put into x reg
+	
+	; get note
+	ldy sound
+	lda sfx_sfxType_sfxType_note,y
+
+	; play sound
+	sta SOUND1_REGISTER,x
+
+		");
+			
+	end;
+
+end;
+
+// Timer beep
+procedure Sound_Timer();
+begin
+
+	sfx[ CH_TIMER ].note := 230 - ( timer << 4 ); // note to start at
+	sfx[ CH_TIMER ].index := SB_TIMER; // sfx to use
+	sfx[ CH_TIMER ].timer := 0; // start playing immediately
+
+end;
+
+
+// Time up beep beep
+procedure Sound_Timer2();
+begin
+
+	sfx[ CH_TIMER2 ].note := 235; // note to start at
+	sfx[ CH_TIMER2 ].index := SB_TIMER2; // sfx to use
+	sfx[ CH_TIMER2 ].timer := 0; // start playing immediately
+
+end;
+
+
+// completed room
+procedure Sound_RoomComplete();
+begin
+
+	sfx[ CH_ROOMCOMPLETE ].note := 170; // note to start at
+	sfx[ CH_ROOMCOMPLETE ].index := SB_ROOMCOMPLETE; // sfx to use
+	sfx[ CH_ROOMCOMPLETE ].timer := 0; // start playing immediately
+
+end;
+
+
+// lost room
+procedure Sound_TimeUp();
+begin
+
+	sfx[ CH_TIMEUP ].note := 150; // note to start at
+	sfx[ CH_TIMEUP ].index := SB_TIMEUP; // sfx to use
+	sfx[ CH_TIMEUP ].timer := 0; // start playing immediately
+	sfx[ CH_TIMEUP2 ].note := 220; // note to start at
+	sfx[ CH_TIMEUP2 ].index := SB_TIMEUP; // sfx to use
+	sfx[ CH_TIMEUP2 ].timer := 0; // start playing immediately
+
+end;
+
+// Build platform
+procedure Sound_Platform();
+begin
+
+	sfx[ CH_BUILD ].note := 220 - ry + rx; // note to start at
+	sfx[ CH_BUILD ].index := SB_PLATFORM; // sfx to use
+	sfx[ CH_BUILD ].timer := 0; // start playing immediately
+
+end;
+// Build solid
+procedure Sound_Solid();
+begin
+
+	sfx[ CH_BUILD ].note := 180 - ry + rx; // note to start at
+	sfx[ CH_BUILD ].index := SB_SOLID; // sfx to use
+	sfx[ CH_BUILD ].timer := 0; // start playing immediately
+
+end;
+
+// Build ladder
+procedure Sound_Ladder();
+begin
+
+	sfx[ CH_BUILD ].note := 240 - (ry << 2); // note to start at
+	sfx[ CH_BUILD ].index := SB_LADDER; // sfx to use
+	sfx[ CH_BUILD ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_Cheese();
+begin
+
+	sfx[ CH_BUILD ].note := 245; // note to start at
+	sfx[ CH_BUILD ].index := SB_CHEESE; // sfx to use
+	sfx[ CH_BUILD ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_Door();
+begin
+
+	sfx[ CH_BUILD ].note := 253; // note to start at
+	sfx[ CH_BUILD ].index := SB_DOOR; // sfx to use
+	sfx[ CH_BUILD ].timer := 0; // start playing immediately
+
+end;
+
+// Player actions
+
+procedure Sound_CollectCheese();
+begin
+
+	sfx[ CH_COLLECTCHEESE ].note := 255; // note to start at
+	sfx[ CH_COLLECTCHEESE ].index := SB_COLLECTCHEESE; // sfx to use
+	sfx[ CH_COLLECTCHEESE ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_PlayerAppear();
+begin
+
+	sfx[ CH_PLAYER ].note := 250; // note to start at
+	sfx[ CH_PLAYER ].index := SB_PLAYERAPPEAR; // sfx to use
+	sfx[ CH_PLAYER ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_PlayerJump();
+begin
+
+	sfx[ CH_PLAYER ].note := 242; // note to start at
+	sfx[ CH_PLAYER ].index := SB_PLAYERJUMP; // sfx to use
+	sfx[ CH_PLAYER ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_PlayerLanding1();
+begin
+
+	sfx[ CH_PLAYERLANDING1 ].note := 160; // note to start at
+	sfx[ CH_PLAYERLANDING1 ].index := SB_PLAYERLANDING1; // sfx to use
+	sfx[ CH_PLAYERLANDING1 ].timer := 0; // start playing immediately
+
+end;
+procedure Sound_PlayerLanding2();
+begin
+
+	Sound_PlayerLanding1();
+	sfx[ CH_PLAYERLANDING2 ].note := 220; // note to start at
+	sfx[ CH_PLAYERLANDING2 ].index := SB_PLAYERLANDING2; // sfx to use
+	sfx[ CH_PLAYERLANDING2 ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_PlayerWalking();
+begin
+
+	sfx[ CH_PLAYERWALKING ].note := 230 + (ticks3 << 2); // note to start at
+	sfx[ CH_PLAYERWALKING ].index := SB_PLAYERWALKING; // sfx to use
+	sfx[ CH_PLAYERWALKING ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_PlayerClimbing();
+begin
+
+	sfx[ CH_PLAYERWALKING ].note := 255 - (py >> 2); // note to start at
+	sfx[ CH_PLAYERWALKING ].index := SB_PLAYERWALKING; // sfx to use
+	sfx[ CH_PLAYERWALKING ].timer := 0; // start playing immediately
+
+end;
+
+procedure Sound_PlayerEek();
+begin
+
+	sfx[ CH_PLAYEREEK ].note := 220; // note to start at
+	sfx[ CH_PLAYEREEK ].index := SB_PLAYEREEK; // sfx to use
+	sfx[ CH_PLAYEREEK ].timer := 0; // start playing immediately
+	sfx[ CH_PLAYEREEK2 ].note := 240; // note to start at
+	sfx[ CH_PLAYEREEK2 ].index := SB_PLAYEREEK; // sfx to use
+	sfx[ CH_PLAYEREEK2 ].timer := 0; // start playing immediately
+
+end;

@@ -1,0 +1,110 @@
+
+// initialis
+procedure Enemy_Init();
+begin
+
+	for i := 0 to NUM_ENEMIES do
+		_Enemy_Inactive();
+
+end;
+
+
+// create all the enemies for the level
+procedure Enemy_Create();
+begin
+
+	if ( numEnemies = 0 ) then return;
+
+	for i := 0 to numEnemies do
+	begin
+	
+		_Enemy_FindFreeSpot();
+		_Enemy_ChangeDir();
+
+	end;
+
+end;
+
+// move the enemies (one per frame)
+procedure Enemy_Update();
+begin
+
+	i := ticks & $f; // up to 15 enemies, pick one to move
+
+	if ( enemyWait > 0 ) then enemyWait := enemyWait - 1;	
+
+	if ( en[ i ].a = ENEMY_INACTIVE or enemyWait > 0 ) then return;
+	
+	ii := en[ i ].x;
+	jj := en[ i ].y;
+
+	// erase
+	screenmemory := screenAddr[ jj ];
+	screenmemory[ ii ] := 0;
+
+	if ( random() & $07 = 0 ) then _Enemy_ChangeDir();
+
+	if ( en[ i ].a = ENEMY_UP ) then
+	begin
+	
+		p1 := screenmemory - SCREEN_WIDTH;
+		if ( p1[ ii ] < ENEMYROOMTILE and jj > 0 ) then
+		begin
+			// move up;
+			en[ i ].y := en[ i ].y - 1;
+			_Screen_UpdateScreenPos();
+		end
+		else
+			_Enemy_ChangeDir();
+		
+	end;
+	//else
+	if ( en[ i ].a = ENEMY_DOWN ) then
+	begin
+	
+		p1 := screenmemory + SCREEN_WIDTH;
+		if ( p1[ ii ] < ENEMYROOMTILE and jj < 13 ) then
+		begin
+			// move down
+			en[ i ].y := en[ i ].y + 1;
+			_Screen_UpdateScreenPos();
+		end
+		else
+			_Enemy_ChangeDir();
+		
+	end;
+	//else
+	if ( en[ i ].a = ENEMY_LEFT ) then
+	begin
+	
+		p1 := screenmemory - 1;
+		if ( p1[ ii ] < ENEMYROOMTILE ) then
+		begin
+			// move left
+			en[ i ].x := en[ i ].x - 1;
+			_Screen_UpdateScreenPos();
+		end
+		else
+			_Enemy_ChangeDir();
+		
+	end;
+	//else
+	if ( en[ i ].a = ENEMY_RIGHT ) then
+	begin
+	
+		p1 := screenmemory + 1;
+		if ( p1[ ii ] < ENEMYROOMTILE ) then
+		begin
+			// move right
+			en[ i ].x := en[ i ].x + 1;
+			_Screen_UpdateScreenPos();
+		end
+		else
+			_Enemy_ChangeDir();
+		
+	end;
+
+	// p1 now contains new direction
+	_Enemy_DrawChar();
+
+end;

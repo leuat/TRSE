@@ -1,0 +1,157 @@
+
+// reset to a new game
+procedure Game_NewGame();
+begin
+
+	gameRoom := 0;		// Room player is in or selected
+
+	// for text drawing routine
+	textCharNull := TEXT_END;
+		
+	cat_delta := 0;
+	cat_ears := 12;
+	cat_tail := 0;
+
+	// clear completed room list
+	levelComplete[ 0 ] := 1;
+	levelComplete[ 1 ] := 1;
+	levelComplete[ 2 ] := 1;
+
+	// BCD number of completed rooms per level
+	levelCompleteBCD[ 0 ] := $00;
+	levelCompleteBCD[ 1 ] := $00;
+	levelCompleteBCD[ 2 ] := $00;
+
+	// how many mice (BCD number) have we used / cloned
+	numMouseBCD[ 0 ] := $01;
+	numMouseBCD[ 1 ] := $00;
+	numMouseBCD[ 2 ] := $00;
+
+end;
+
+// init vars to start a new room
+procedure Game_Init();
+begin
+	
+	// if on level select
+	if ( section = SECTION_ROOM ) then
+	begin
+	 
+		// set graphics tile set
+		gfx := #ATILES5;
+
+		gameRoomBCD := levelBCD[ gameLevel ]; // set the starting BCD number ($00, $16, $32, $48) used on room doors
+		levelp := levels_list[ gameLevel ]; // which level list
+		
+	end;
+
+	// select the room	
+	if ( section = SECTION_GAME ) then
+	begin
+	
+		// set the graphics tile set
+		gfx := tile_list[ gameLevel ]; // gfx tileset to use
+
+		i := gameRoom; // level 0 starts at 0, so set game room
+		// now add an offset for gameLevel we are on
+		if ( gameLevel = 1 ) then i := i + MAX_ROOMLEVEL; // level 1 starts at 13 so add that on
+		if ( gameLevel = 2 ) then i := i + ( MAX_ROOMLEVEL * 2 ); // level 2 starts at 25 so add that on
+
+		// choose level
+		levelp := rooms_list[ i ]; // set pointer
+
+	end;
+
+	// set room pointer to first one of room
+	rp := levelp[ 0 ];
+	// level
+	roomCount := 1; // set to 1 for first time read
+	room := 0;		// point to first room block in rp pointer array
+
+	lmp := #LEVELMAP;
+
+	roomToken := 0;
+	roomQuantity := 0;
+	roomDir := 0;
+	rx := 0;
+	ry := 0;
+	
+	timer := 0;
+	timerCount := TIMERCOUNTRESET;
+	
+	springX := 0; // columns
+	springY := 0; // pixels
+	springTime := 0;
+
+end;
+
+procedure Game_ResetCheeseArray();
+begin
+
+	cheeseId := CHEESEIDSTART; // cheese id's start at 16
+
+	currentCheeseId := 0; // point to first cheese in list - ready to action when player collects a cheese
+	nextCheeseId := 0; // no cheese collected yet, point to first slot in array	
+
+	for i := 0 to 10 do
+		cheeseList[ i ] := 0;
+
+end;
+
+procedure Game_DrawTimer();
+begin
+
+	i := timer << 4;
+
+	vbmSetColumn( 10 );
+	p1 := #ANUMBERS + i;
+	vbmDrawTileE( p1 );
+	vbmSetColumn( 10 );
+	screenmemory := screenmemory + 8;
+	p1 := p1 + 8;
+	vbmDrawTileE( p1 );
+
+end;
+
+procedure Game_UpdateTimer();
+begin
+
+	if ( py > 184 ) then return; // we're not on the screen
+
+	if ( timerCount > 0 ) then timerCount := timerCount - 1;
+	
+	if ( timerCount = 0 ) then
+	begin
+	
+		timerCount := TIMERCOUNTRESET;
+
+		// erase old
+		Game_DrawTimer();
+
+		if ( timer < 5 ) then timer := timer + 1;		
+		
+		// draw new
+		Game_DrawTimer();
+		
+		if ( timer < 5 ) then Sound_Timer() else Sound_Timer2();
+
+	end;
+
+end;
+
+procedure Game_ResetTimer();
+begin
+
+
+	// erase old
+	Game_DrawTimer();
+
+	timer := 0;
+	timerCount := TIMERCOUNTRESET;
+			
+	// draw new
+	Game_DrawTimer();
+	
+	Sound_Timer();
+
+end;

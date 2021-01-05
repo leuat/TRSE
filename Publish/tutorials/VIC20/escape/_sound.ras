@@ -1,0 +1,66 @@
+
+// update sounds
+procedure Sound_Update();
+begin
+/*
+	for i := 0 to 2 do
+	begin
+
+		if ( sc[ i ] > 0 ) then
+		begin
+		
+			sc[ i ] := sc[ i ] - 1;			
+			s[ i ] := s[ i ] - 3;
+			
+		end
+		else
+		begin
+		
+			s[ i ] := 0;
+	
+		end;	
+
+	end;
+
+// converted to asm (and run backwards) to save some bytes
+*/
+
+	asm("
+
+	lda #$1
+	sta i
+	
+Sound_Update_Soundforloop
+	ldx i
+	lda sc,x
+	cmp #$1;keep
+	bcc Sound_Update_elseblock21
+
+	dec sc,x
+	lda s,x
+	sec
+	sbc #$3
+	sta s,x
+	jmp Sound_Update_elsedoneblock22
+
+Sound_Update_elseblock21
+
+	lda #$0 ; clear/stop sound
+	sta s,x
+Sound_Update_elsedoneblock22
+
+	dec i
+	bpl Sound_Update_Soundforloop
+
+	");
+
+end;
+
+/*
+
+to play a sound
+
+	s[ 0 ] := note
+	sc[ 0 ] := duration
+
+*/

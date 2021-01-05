@@ -1,0 +1,216 @@
+
+// Declare variables
+
+// ------------------------------
+// Zero Page: 			$00 - $5d
+
+	oldticks: 		byte at $00;	// ticks for measuring VBL time
+	ticks: 			byte at $01;
+	ticks1:			byte at $02;
+	ticks3: 		byte at $03;
+	
+	i, j: 			byte at $04;	// temp counters
+	ii, jj: 		byte at $06;	// temp counters
+	
+	room: 			byte at $08;	// current room number to display 0 - 24
+	roomdata: 		byte at $09;	// temporary var containing room data to decode
+	roomchar: 		byte at $0a;	// the character used for current room
+	roomcolour: 	byte at $0b;	// the colour used for current room 
+
+	px:				byte at $0c;	// player position
+	py:				byte at $0d;
+	pstep:			byte at $0e;	// step counter for player (how fast to move)
+	pdir:			byte at $0f;	// player animation direction
+	panim:			byte at $10;	// animation frame
+
+	k1x, k1y:		byte at $11;	// key 1 position, or 0=none
+	k2x, k2y:		byte at $13;	// key 2 position, or 0=none
+	
+	enemyWait: 		byte at $15;	// timer to wait for enemy to start moving
+	numEnemies:		byte at $16;	// current number of enemies in room
+	
+	roomflags:		byte at $17;	// flags for each room
+
+	keys:			byte at $18;	// number of keys picked up (44 in total)
+	
+	mode: 			byte at $19;	// game mode
+
+	rx, ry:			byte at $1a;	// Player x/y pos on entering a room
+
+	const NUM_ENEMIES: byte = 16;
+	
+	enemyType = record	
+		a, x, y: byte;	
+	end;
+	
+	en: array[ NUM_ENEMIES ] of enemyType at $1c;
+	// end $4c
+
+
+	bx, by: 		byte at $4c;	// bullet position
+	bdx, bdy:		byte at $4e; 	// direction
+	
+	tx, ty: 		byte at $50;	// temp x/y
+	// 52
+	s:				array[ 2 ] of byte at $900c;
+	sc:				array[ 2 ] of byte at $52;	// time to play sound
+
+//last available = $5d
+
+	const ENEMY_WAITRESET: byte = 40;	// number of frames to wait before enemies start to move
+
+
+	const LIVES_START: byte = 59;	// 5 FIVE
+	const LIVES_END: byte = 54;		// 0 ZERO
+
+	const TOTAL_KEYS: byte = 44;	// 44 keys to collect
+
+
+	const ENEMY_CHAR: byte = 14;	// characters to display enemy
+	const TOMBSTONE_CHAR: byte = 13;// char for death	
+	const SPLAT_CHAR: byte = 12;	// char for enemy death	
+	const DOOR_CHAR: byte = 2;		// char for a door
+	const BULLET_CHAR: byte = 3;
+
+	const ENEMY_INACTIVE: byte = 5;	// enemy inactive
+	const ENEMY_UP: byte = 0;
+	const ENEMY_LEFT: byte = 1;
+	const ENEMY_DOWN: byte = 2;
+	const ENEMY_RIGHT: byte = 3;
+		
+
+	const MODE_TITLE: byte = 0;		// title screen
+	const MODE_START: byte = 1;		// count through rooms and reset them
+	const MODE_GAME: byte = 2;		// game
+	const MODE_LIFE: byte = 3;		// lost a life
+	const MODE_GAMEOVER: byte = 4;	// game over or game won
+	
+	const DATA_KEY1: byte = 14;		// position in level data for key 1 data
+	const DATA_KEY2: byte = 15;
+	const DATA_ENEMY: byte = 94;
+	const DATA_FLAG: byte = 95;
+
+	const ROOM_KEY1: byte = %10000000; // key 1 collected?
+	const ROOM_KEY2: byte = %01000000; // key 2 collected?
+	const ROOM_FLAGKEYMASK: byte = %11000000; // mask for KEY flags
+	const ROOM_ENEMYMASK: byte = %00001111; // lower nibble = mask for number of start enemies in a room
+	const ROOM_MAXENEMYMASK: byte = %11110000; // upper nibble = mask for max number of enemies in a room
+
+	const ROOM_TITLE: byte = 25;
+	const ROOM_GAMEOVER: byte = 26;
+	const ROOM_WELLDONE: byte = 27;
+	
+
+	const ROOMHEIGHT: byte = 5;		// rooms are in rows of 5
+	// used to repos player when leaving edge
+	const ROOMTILEHEIGHT: byte = 13; // rooms are 14 char tiles high .. -1 
+	const ROOMTILEWIDTH: byte = 15;	// rooms are 16 char tiles wide .. - 1
+	const ROOMTILE: byte = 	18;		// room tile char for solid blocks
+	const ENEMYROOMTILE: byte = 14;	// room tile char for enemy solid blocks
+
+	const PSTEPMASK: byte =	$07;	// mask to use for player step counter
+	const PANIMMASK: byte =	$01;	// for animation	
+
+	const ANIMSTEP: byte = PSTEPMASK / 2;
+
+	const JOY_MOVE: byte = 	$0f;	// joy movement dir in lower nibble 
+
+	const PUP: byte =		10;		// character to use for this direction
+	const PDOWN: byte =		4;
+	const PLEFT: byte =		8;
+	const PRIGHT: byte =	6;
+
+// pointers
+
+	p1, p2: pointer;
+	roomp: pointer;					// current room pointer
+
+// ------------------------------
+// BASIC input buffer:	$0200-$0258 - 88 bytes
+
+	bcdScore: array[4] of byte at $0200;	// 0200 - 0203
+	bcdKey: array[4] of byte at $0204;		// 0204 - 0207
+
+// ------------------------------
+// Indirect vectors:	$02A1-$02FF - 94 bytes 
+
+
+
+
+// ------------------------------
+// Cassette buffer:		$033C-$03FB (828-1019)
+
+
+
+// ------------------------------
+// Other memory
+
+	lives: byte at $1e2a;		// location on screen where lives counter displayed
+
+	doors1: byte at $1ed0;		// game won doors
+	doors2: byte at $1ed1;
+
+
+	// stored in characterset in the title screen/gameover etc rows 14 and 15 where not used
+	bcdHighScore: array[ 4 ] of byte at $1dae; // in charset between title screen
+	bcdEnemy: array[ 4 ] of byte at $1dce; //$15, $00, $00, $00 
+	bcdBonus: array[ 4 ] of byte at $1dee; //$00, $50, $00, $00
+
+
+
+
+// ------------------------------
+// lookups - regular RAM
+
+
+
+	// map start addresses 25 words (50 bytes)
+	const AMAPS: address = $18e0;
+
+	@donotremove "mapAddr1"
+	@donotremove "mapAddr2"
+	@donotremove "mapAddr3"
+	@donotremove "mapAddr4"
+	@donotremove "mapTitles"
+
+	// points to each room going top left down to bottom, then next column
+	// columns 0, 1, 2, 3 and 4
+	mapAddr0: array[ 5 ] of integer = buildtable( "AMAPS + (i * 16)" );
+	mapAddr1: array[ 5 ] of integer = buildtable( "AMAPS + (160*1) + (i * 16)" );
+	mapAddr2: array[ 5 ] of integer = buildtable( "AMAPS + (160*2) + (i * 16)" );
+	mapAddr3: array[ 5 ] of integer = buildtable( "AMAPS + (160*3) + (i * 16)" );
+	mapAddr4: array[ 5 ] of integer = buildtable( "AMAPS + (160*4) + (i * 16)" );
+	// title screens
+	mapTitles: array[ 3 ] of integer = ( $1da0, $1dc0, $1de0 );
+
+	// screen address row starting locations
+	screenAddr: array[ 14 ] of integer = buildtable( "0x01e00 + ( i * 22 )" );
+
+// 16 bytes per char (8x16) x 32
+@vbmexport "chr/chars.flf" "chr/chars.bin" 0 32  2 0	// S E  H M 
+binChars: incbin( "chr/chars.bin", $1c00 );
+
+// additional chars + screens
+@vbmexport "chr/chars.flf" "chr/chars2.bin" 240 252  2 0	// S E  H M 
+binChars2: incbin( "chr/chars2.bin", $1f40 );
+
+// maps
+@vbmexportchunk "chr/chars.flf" "chr/maps.bin" 80  10 10  0	// S  W H  M
+binMaps: incbin( "chr/maps.bin", AMAPS );
+
+// screen
+@exportframe "chr/screen.flf" "chr/screen.bin" 0 1  0  0 0 22 14 0 
+binScreen: incbin( "chr/screen.bin", $1e00 );
+
+
+@startblock $1f34 "SetupVic"
+
+procedure SetVIC();
+begin
+
+	VICCR3 := (14*2) + 1; // 16 rows, 1 = double height
+	VICCR5 := %11111111; // set Screen + char addresses
+
+end;
+
+@endblock

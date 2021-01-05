@@ -1,0 +1,83 @@
+
+procedure _Bullet_SetYPosScreenMemory();
+begin
+
+	screenmemory := screenAddr[ by ];
+	
+end;
+
+//
+procedure Bullet_Update();
+begin
+
+	// check we can fire our bullet
+	if ( joy1pressed & JOY_FIRE and bx = 0 ) then
+	begin
+	
+		m_PlayShootSound();
+		
+		bdx := 0;
+		bdy := 0;
+
+		if ( pdir = PUP ) then bdy := -1;
+		if ( pdir = PDOWN ) then bdy := 1;
+		if ( pdir = PLEFT ) then bdx := -1;
+		if ( pdir = PRIGHT ) then bdx := 1;
+		
+		bx := px;
+		by := py;
+		
+	end;
+
+	if ( bx > 0 ) then
+	begin
+
+		// erase bullet if not already done so	
+		_Bullet_SetYPosScreenMemory();
+		screenmemory[ bx ] := 0;
+
+		if ( ticks1 = 0 ) then
+		begin
+
+			bx := bx + bdx;
+			by := by + bdy;
+
+		end;
+
+		_Bullet_SetYPosScreenMemory();
+		if ( screenmemory[ bx ] >= ROOMTILE or ( by = 0 or by = 13) ) then
+		begin
+
+			bx := 0; // disable
+
+		end 	
+		else
+		begin
+		
+			// hit an enemy
+
+			for i := 0 to NUM_ENEMIES do
+			begin
+
+				if ( bx = en[ i ].x and by = en[ i ].y ) then
+				begin
+
+					screenmemory[ bx ] := SPLAT_CHAR;
+					bcdAdd( #bcdScore, #bcdEnemy, 4 );
+					bx := 0; // disable bullet
+					_Enemy_Inactive();
+					m_PlaySplatSound();
+
+				end;
+
+			end;
+	
+		end;
+
+		// display bullet if not disabled
+		if ( bx > 0 ) then 
+			screenmemory[ bx ] := BULLET_CHAR;
+
+	end;
+	
+end;

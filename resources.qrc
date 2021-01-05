@@ -564,5 +564,7 @@
         <file>resources/images/billboard/b29.png</file>
         <file>resources/shaders/screen_showcases.frag</file>
         <file>resources/shaders/screen_showcases.vert</file>
+        <file>resources/images/tutorials/cheesy.gif</file>
+        <file>resources/images/tutorials/escape.png</file>
     </qresource>
 </RCC>

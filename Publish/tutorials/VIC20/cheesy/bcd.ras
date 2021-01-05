@@ -1,0 +1,245 @@
+
+@donotremove "BCD_initDrawSmallBCD"
+procedure BCD_initDrawSmallBCD();
+begin
+
+	asm("
+
+	; Draw small text characters to the bitmap using a zero terminated CSTRING with OR operation
+	; Font chars = $82
+	; Temp addr  = $84 - used to calculate char address
+vbmDrawSmallBCDEDigit
+	; calculate next screen memory position
+	lda vbmX
+	lsr ; divde x by 2 (2 chars per character cell)
+	tax
+	; Work out from LSR if odd or even pattern
+	bcs vbmDSBCDE_Odd
+	lda #$f0 ; even, use left side of font
+	bcc vbmDSBCDE_Even ; we know carry will be clear
+vbmDSBCDE_Odd
+	lda #$0f ; odd, use right side of font
+vbmDSBCDE_Even
+	sta vbmJ ; store mask to use for later
+	lda vbmScrL,x   ; Address of table lo
+	ldy vbmScrH,x   ; Address of table hi
+	clc
+	adc vbmY		; Add Y offset
+	bcc vbmDSBCDE_NSP_NoOverflow
+	iny
+vbmDSBCDE_NSP_NoOverflow
+	sta screenmemory
+	sty screenmemory+1
+vbmDSBCDE_GetCharNum
+	; convert text number (0-255) * 8 = memory offset
+	ldy #0
+	lda vbmI ; get digit to display
+	sta $84
+	sty $84+1
+	asl $84
+	rol $84+1 ;x2
+	asl $84
+	rol $84+1 ;x4
+	asl $84
+	rol $84+1 ;x8
+	lda $84
+	clc
+	adc $82  ; add char low address
+	sta $84
+	lda $84+1
+	adc $82+1 ; add char high address
+	sta $84+1
+vbmDSBCDE_DrawDigit
+	; y reg is ZERO from ldy #0 in GetTileNum
+	lda ($84),y
+	and vbmJ
+	eor (screenmemory),y
+	sta (screenmemory),y
+	iny
+	lda ($84),y
+	and vbmJ
+	eor (screenmemory),y
+	sta (screenmemory),y
+	iny
+	lda ($84),y
+	and vbmJ
+	eor (screenmemory),y
+	sta (screenmemory),y
+	iny
+	lda ($84),y
+	and vbmJ
+	eor (screenmemory),y
+	sta (screenmemory),y
+	iny
+	lda ($84),y
+	and vbmJ
+	eor (screenmemory),y
+	sta (screenmemory),y
+
+vbmDSBCDE_Done
+	inc vbmX
+
+	");
+
+end;
+
+// draw the room number above the door
+procedure BCD_DrawDoorNumber();
+begin
+
+	asm("
+	
+	; VBM DrawSBCDE BCD array, Font, X, Y, number of BCD bytes
+	; Font characters to use:
+	lda #<ADIGITSMALL ;$5d80
+	sta $82
+	lda #>ADIGITSMALL ;$5d80
+	sta $82+1
+	
+	; x is complex
+	lda rx
+	asl
+	sta vbmX ; x position
+
+	lda ry
+	sec
+	sbc #$1
+
+	asl
+	asl
+	asl
+	sta vbmY ; y position in pixels
+	
+	lda #$00 ; BCD array - highest byte (in reverse order)
+	sta vbmT
+	
+BCD_DrawDoorNumber_vbmDrawSBCDEloop
+	ldx vbmT
+	lda gameRoomBCD,x
+	pha
+	lsr ; get high nibble
+	lsr
+	lsr
+	lsr
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+	pla
+	and #$0f ; get low nibble
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+	dec vbmT
+	bpl BCD_DrawDoorNumber_vbmDrawSBCDEloop ; loop until all bytes displayed
+
+
+	");
+
+end;
+
+// draw small bcd of level completed number
+procedure BCD_DrawLevel1Number();
+begin
+
+	asm("
+	
+	; VBM DrawSBCDE BCD array, Font, X, Y, number of BCD bytes
+	; Font characters to use:
+	lda #<ADIGITSMALL ;$5d80
+	sta $82
+	lda #>ADIGITSMALL ;$5d80
+	sta $82+1
+	
+	lda #26
+	sta vbmX ; x position
+	lda #104
+	sta vbmY ; y position in pixels
+	
+	ldx #0
+	lda levelCompleteBCD,x
+	pha
+	lsr ; get high nibble
+	lsr
+	lsr
+	lsr
+	
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+	pla
+	and #$0f ; get low nibble
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+
+	");
+
+end;
+procedure BCD_DrawLevel2Number();
+begin
+
+	asm("
+	
+	; VBM DrawSBCDE BCD array, Font, X, Y, number of BCD bytes
+	; Font characters to use:
+	lda #<ADIGITSMALL ;$5d80
+	sta $82
+	lda #>ADIGITSMALL ;$5d80
+	sta $82+1
+	
+	lda #26
+	sta vbmX ; x position
+	lda #124
+	sta vbmY ; y position in pixels
+	
+	ldx #1
+	lda levelCompleteBCD,x
+	pha
+	lsr ; get high nibble
+	lsr
+	lsr
+	lsr
+
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+	pla
+	and #$0f ; get low nibble
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+
+
+	");
+
+end;
+procedure BCD_DrawLevel3Number();
+begin
+
+	asm("
+	
+	; VBM DrawSBCDE BCD array, Font, X, Y, number of BCD bytes
+	; Font characters to use:
+	lda #<ADIGITSMALL ;$5d80
+	sta $82
+	lda #>ADIGITSMALL ;$5d80
+	sta $82+1
+	
+	lda #27
+	sta vbmX ; x position
+	lda #144
+	sta vbmY ; y position in pixels
+	
+	ldx #2
+	lda levelCompleteBCD,x
+	pha
+	lsr ; get high nibble
+	lsr
+	lsr
+	lsr
+
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+	pla
+	and #$0f ; get low nibble
+	sta vbmI ; digit to display
+	jsr vbmDrawSmallBCDEDigit
+
+
+	");
+
+end;
