@@ -178,12 +178,12 @@ signals:
 private slots:
     void ShadowBuild();
 
-    void on_leSearch_textChanged();
+    void on_leSearch2_textChanged();
 
     void AcceptBuildString();
-    void on_leSearch_returnPressed();
+    void on_leSearch2_returnPressed();
 
-    void on_leSearch_textChanged(const QString &arg1);
+    void on_leSearch2_textChanged(const QString &arg1);
     void on_btnReplace_clicked();
     void on_chkExomize_stateChanged(int arg1);
     void on_chkRemoveUnusedSymbols_stateChanged(int arg1);

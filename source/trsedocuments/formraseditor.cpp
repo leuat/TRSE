@@ -621,7 +621,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 {
     TRSEDocument::keyPressEvent(e);
     m_documentIsChanged  = ui->txtEditor->m_textChanged;
-    if (e->key() == Qt::Key_Escape && ui->leSearch->hasFocus()) {
+    if (e->key() == Qt::Key_Escape && ui->leSearch2->hasFocus()) {
         ui->txtEditor->setFocus();
     }
 
@@ -643,9 +643,9 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
     if (e->key()==Qt::Key_F && QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        ui->leSearch->setText("");
+        ui->leSearch2->setText("");
         m_searchFromPos = ui->txtEditor->textCursor().position();
-        ui->leSearch->setFocus();
+        ui->leSearch2->setFocus();
     }
     if (e->key()==Qt::Key_G && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         emit emitSearchSymbols();
@@ -722,10 +722,9 @@ void FormRasEditor::GotoLine(int ln)
 
 
 
-void FormRasEditor::on_leSearch_textChanged()
+void FormRasEditor::on_leSearch2_textChanged()
 {
-    QString i;
-    SearchInSource(ui->leSearch->text().toLower());
+    SearchInSource(ui->leSearch2->text().toLower());
 }
 
 void FormRasEditor::AcceptBuildString()
@@ -1011,21 +1010,21 @@ bool FormRasEditor::Load(QString filename)
 
 
 
-void FormRasEditor::on_leSearch_returnPressed()
+void FormRasEditor::on_leSearch2_returnPressed()
 {
     m_searchFromPos=m_currentFromPos+1;
-    SearchInSource(ui->leSearch->text().toLower());
+    SearchInSource(ui->leSearch2->text().toLower());
 
 }
 
-void FormRasEditor::on_leSearch_textChanged(const QString &arg1)
+void FormRasEditor::on_leSearch2_textChanged(const QString &arg1)
 {
-    SearchInSource(ui->leSearch->text().toLower());
+    SearchInSource(ui->leSearch2->text().toLower());
 }
 
 void FormRasEditor::on_btnReplace_clicked()
 {
-    QString orgstr = ui->leSearch->text();
+    QString orgstr = ui->leSearch2->text();
     QString replacestr = ui->leReplace->text();
 
     QString source = ui->txtEditor->toPlainText();
