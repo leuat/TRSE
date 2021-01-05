@@ -244,15 +244,15 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
 
         QString str = Util::numToHex(mb->m_start);
         str = str.toLower().remove("$");
-  //      qDebug() << "SEARCHING FOR " << str;;
         int end = mb->m_start;
         QString curEnd = ("endblock"+str);
         for (QString s : orgAsm->m_symbols.keys())  {
-            //qDebug() << s.toLower() << curEnd << Util::numToHex(orgAsm.m_symbols[s]);
+//            qDebug() << s.toLower() << curEnd << Util::numToHex(orgAsm->m_symbols[s]);
             QString chk = s;
 //            chk = chk.remove("_extra"); // Ignore the extra label
             if (chk.toLower()==curEnd) {
                 end = orgAsm->m_symbols[s];
+                mb->m_end = end;
                 break;
             }
         }
