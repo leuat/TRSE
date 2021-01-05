@@ -17,10 +17,13 @@ public:
     ~FormHexEdit();
     QByteArray m_data;
     CIniFile m_colors;
+    QString m_rawFilename;
     void Destroy() override {}
 
     bool Load(QString filename) override;
     void Save(QString filename) override;
+
+    void Reload() override;
 
     void InitDocument(WorkerThread* t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
 

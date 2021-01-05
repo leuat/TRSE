@@ -16,6 +16,7 @@ FormHexEdit::~FormHexEdit()
 
 bool FormHexEdit::Load(QString filename) {
     m_data = Util::loadBinaryFile(filename);
+    m_rawFilename = filename;
     ui->scrollArea->setData(new HexView::DataStorageArray(m_data));
     return true;
 }
@@ -25,6 +26,12 @@ void FormHexEdit::Save(QString filename)
     m_data = ui->scrollArea->m_pdata->m_data;
     Util::SaveByteArray(m_data,filename);
 
+}
+
+void FormHexEdit::Reload()
+{
+    if (!ui->scrollArea->m_isChanged)
+        Load(m_rawFilename);
 }
 
 void FormHexEdit::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) {

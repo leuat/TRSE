@@ -429,27 +429,27 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
 
 
 
-    QStringList lst = ol.m_expr.split(",");
-//    qDebug() << lst;
+    QStringList lst = Util::fixStringListSplitWithCommaThatContainsStrings(ol.m_expr.split(","));
+
     for (QString s: lst) {
 
         if (s.trimmed()=="") continue;
-  //      qDebug() << Util::NumberFromStringHex(s);
+        //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
 
             if (pt==OrgasmData::PASS_SYMBOLS) {
-    //            qDebug() << "Before "<< s;
-            for (QString& c: m_symbolsList)
-                if (s.contains(c)) {
-  //                  qDebug() << c;
-                    //exit(1);
-                    s = OrgasmData::ReplaceWord(s,c,Util::numToHex(m_symbols[c]));
+                //            qDebug() << "Before "<< s;
+                for (QString& c: m_symbolsList)
+                    if (s.contains(c)) {
+                        //                  qDebug() << c;
+                        //exit(1);
+                        s = OrgasmData::ReplaceWord(s,c,Util::numToHex(m_symbols[c]));
 
-                }
-  //              qDebug() << "After: "<<s;
+                    }
+                //              qDebug() << "After: "<<s;
 
                 s = Util::numToHex(Util::NumberFromStringHex(s));
-//                qDebug() << "After2: "<<s;
+                //                qDebug() << "After2: "<<s;
 
             }
 
@@ -467,8 +467,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             str = str.remove("\"");
             for (int i=0;i<str.length();i++) {
                 int c = str.at(i).toLatin1();
-//                if (c>)
-//                qDebug() << c << QChar(c);
                 m_data.append((uchar)c);
                 m_pCounter++;
 

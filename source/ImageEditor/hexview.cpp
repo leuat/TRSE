@@ -425,12 +425,13 @@ void HexView::keyPressEvent(QKeyEvent *event)
         //m_pdata->Delete(m_cursorPos/2);
 //        m_pdata->getData()
         m_pdata->m_data.remove(m_selectBegin / 2, (m_selectEnd - m_selectBegin) / 2 + 1);
-
+        m_isChanged = true;
     }
 
     if(event->key() == Qt::Key_I)
     {
         m_pdata->Insert(m_cursorPos/2,0);
+        m_isChanged = true;
     }
 
 
@@ -452,6 +453,7 @@ void HexView::keyPressEvent(QKeyEvent *event)
         setCursorPos(m_cursorPos + 1);
         resetSelection(m_cursorPos);
         setVisible = true;
+        m_isChanged = true;
     }
 
 

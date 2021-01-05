@@ -396,6 +396,33 @@ int Util::isEqual(QColor a, QColor b) {
     return 1;
 }
 
+QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst)
+{
+    QStringList fixList;
+    bool isInString = false;
+    QString cur = "";
+    for (auto s: lst) {
+        bool add = true;
+        cur += s;
+        if (s.startsWith("\"")) {
+            isInString = true;
+            add = false;
+        }
+
+        if (s.endsWith("\"")) {
+            isInString = false;
+            add = true;
+        }
+        if (isInString) cur+=",";
+        if (add) {
+            fixList << cur;
+            cur = "";
+            isInString = false;
+        }
+    }
+    return fixList;
+}
+
 int Util::getShiftCount(int i) {
     if (i==1) return 0;
     if (i==2) return 1;

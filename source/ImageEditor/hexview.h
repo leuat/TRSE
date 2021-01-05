@@ -78,6 +78,8 @@ class HexView: public QAbstractScrollArea
         int BYTES_PER_LINE = 16;
         void Calculate();
 
+        bool m_isChanged = false;
+
     public slots:
         void setData(DataStorage *pData);
         void clear();

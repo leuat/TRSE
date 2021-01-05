@@ -102,6 +102,9 @@ public:
     static int isEqual(QColor a, QColor b);
 
 
+    static QStringList fixStringListSplitWithCommaThatContainsStrings(QStringList lst);
+
+
     static int getShiftCount(int i);
 
     static uchar flipBit(uchar val, int bit);
