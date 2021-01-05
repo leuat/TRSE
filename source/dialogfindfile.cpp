@@ -1,5 +1,6 @@
 #include "dialogfindfile.h"
 #include "ui_dialogfindfile.h"
+#include <QDebug>
 
 DialogFindFile::DialogFindFile(QWidget *parent) :
     QDialog(parent),
@@ -34,6 +35,7 @@ void DialogFindFile::keyPressEvent(QKeyEvent *e)
         if (cur>0)
             cur--;
         ui->lstItems->setCurrentRow(cur);
+        qDebug() << "WOOT";
 
     }
     if (e->key() == Qt::Key_Escape) {

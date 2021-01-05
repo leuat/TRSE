@@ -41,7 +41,7 @@ begin
 	while (p1^<>0) do
 	begin	
 		j := p1^;
-		if (j>64) then j:=j-64;
+		if (j>64 and j<64+32) then j:=j-64;
 		PrintSingleChar(j);
 	end;
 end;

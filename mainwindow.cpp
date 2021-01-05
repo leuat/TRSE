@@ -42,7 +42,7 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"
-
+#include "source/LeLib/data.h"
 
 
 
@@ -1216,13 +1216,13 @@ QStringList MainWindow::getTRUPaths()
 {
     QStringList paths;
     QString system = m_currentProject.m_ini->getString("system").toUpper();
-    QString s =  Util::path + QDir::separator() + "tutorials"+QDir::separator() + system+ QDir::separator() + "tru"+QDir::separator();
+    QString s =  Util::path + QDir::separator() + Data::data.unitPath + QDir::separator() + system+ QDir::separator();
     s = s.replace("\\\\","\\");
     if (s.startsWith("\\")) s = s.remove(0,1);
 //    qDebug() << "TRU path "<<s;
 
 
-    QString s2 =  Util::path + QDir::separator() + "tutorials"+QDir::separator() + "tru" + QDir::separator() + Syntax::s.m_currentSystem->StringFromProcessor(system) +  QDir::separator();
+    QString s2 =  Util::path + QDir::separator() + Data::data.unitPath+QDir::separator() + Data::data.cpuUnitPath + QDir::separator() + Syntax::s.m_currentSystem->StringFromProcessor(system) +  QDir::separator();
     s2 = s2.replace("\\\\","\\");
     if (s2.startsWith("\\")) s2 = s2.remove(0,1);
 

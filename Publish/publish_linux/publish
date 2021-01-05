@@ -5,6 +5,7 @@ find ../tutorials/ -name "*.sym" -type f -delete
 mkdir trse/
 mkdir trse/bin
 mkdir trse/tutorials/
+mkdir trse/units/
 cp -r ../../Release/trse trse/bin
 cp -r ../../Release/lib trse/bin
 #cp -r ../../Release/plugins trse/bin
@@ -13,6 +14,7 @@ cp -r ../source/* trse/
 cp -r ../tutorials/RasLib trse/tutorials/
 
 cp -r ../tutorials/* trse/tutorials
+cp -r ../units/* trse/units
 cp -r ../project_templates trse/project_templates
 cp -r lib trse/bin/
 cp trse.sh trse

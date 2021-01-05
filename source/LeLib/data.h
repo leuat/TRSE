@@ -38,6 +38,8 @@ public:
     QString version;
     enum CompilerState {PREPROCESSOR, PARSER, DISPATCHER, ASSEMBLER };
     CompilerState compilerState = PREPROCESSOR;
+    QString unitPath = "units";
+    QString cpuUnitPath = "cpu_specific";
     bool redrawOutput=false;
     bool redrawInput=false;
     bool forceRedraw = false;
