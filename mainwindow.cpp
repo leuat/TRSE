@@ -101,7 +101,10 @@ MainWindow::MainWindow(QWidget *parent) :
 //    m_tutorials.PopulateTreeList(ui->treeTutorials);
 //    m_tutorials.PopulateSystemList(ui->lstSystems);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystem);
+    m_tutorials.PopulateSystemCmb(ui->cmbSelectSystemRecent);
+    ui->cmbSelectSystemRecent->insertItem(0,"Show all systems");
     ui->cmbSelectSystem->setCurrentIndex(0);
+    ui->cmbSelectSystemRecent->setCurrentIndex(0);
     on_cmbSelectSystem_activated(0);
     //ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
@@ -1108,8 +1111,12 @@ void MainWindow::UpdateRecentProjects()
             QString system = inf.getString("system");
 
             item->setText("("+system+") " + name);
-
-            if (name.trimmed()!="")
+            bool ok=true;
+            if (m_restrictRecentProjectsSystem!="") {
+                ok = false;
+                if (system == m_restrictRecentProjectsSystem) ok = true;
+            }
+            if (name.trimmed()!="" && ok)
                 ui->lstRecentProjects->addItem(item);
         }
     }
@@ -2490,4 +2497,13 @@ void MainWindow::on_action_Rename_current_file_triggered()
         QFile::remove(orgFile);
     }
     RefreshFileList();
+}
+
+void MainWindow::on_cmbSelectSystemRecent_activated(const QString &arg1)
+{
+    if (arg1.toLower().contains("all"))
+        m_restrictRecentProjectsSystem = "";
+    else
+        m_restrictRecentProjectsSystem = arg1;
+    UpdateRecentProjects();
 }

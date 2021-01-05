@@ -364,6 +364,9 @@
               </widget>
              </item>
              <item>
+              <widget class="QComboBox" name="cmbSelectSystemRecent"/>
+             </item>
+             <item>
               <widget class="QListWidget" name="lstRecentProjects">
                <property name="font">
                 <font>

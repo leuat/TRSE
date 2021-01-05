@@ -170,6 +170,7 @@ public:
     QString m_fontFamily;
     QPalette m_defaultPalette;
     QString m_currentPath;
+    QString m_restrictRecentProjectsSystem = "";
     QStringList m_expandedList;
 
     void findExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
@@ -240,6 +241,7 @@ public slots:
 
     void acceptRunMain();
     void setupIcons();
+
 
     void acceptBuild() {
         //ui->lblBuild->setHidden(false);
@@ -432,6 +434,8 @@ private slots:
     void on_actionLook_up_assembly_line_under_cursor_F3_triggered();
 
     void on_action_Rename_current_file_triggered();
+
+    void on_cmbSelectSystemRecent_activated(const QString &arg1);
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
