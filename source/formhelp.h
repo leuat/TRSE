@@ -45,6 +45,7 @@ public:
     void FillTopics();
 
     void Search(QString txt);
+    void SetFontSize(int size);
 
 
     void AppendItem(QListWidget* w, QString s);

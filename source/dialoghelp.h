@@ -46,7 +46,7 @@ class DialogHelp : public QDialog
 public:
     explicit DialogHelp(QWidget *parent, QString search, QPalette pal);
     ~DialogHelp();
-
+    void SetFontSize(int size);
 
 private:
     Ui::DialogHelp *ui;

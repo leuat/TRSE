@@ -657,6 +657,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QString word = tc.selectedText();
 */
         ui->tabOutputs->setCurrentIndex(1);
+        ui->widgetHelp->SetFontSize(m_iniFile->getdouble("font_size"));
 //        ui->tabHelp->setFocus();
         ui->widgetHelp->Search(word);
     }
@@ -1148,6 +1149,7 @@ void FormRasEditor::HandleBuildComplete()
 
 void FormRasEditor::Help(QString word) {
     m_help = QSharedPointer<DialogHelp>(new DialogHelp(nullptr, word, m_defaultPalette));
+    m_help->SetFontSize(m_iniFile->getdouble("font_size"));
     m_help->show();
 //    delete dh;
 

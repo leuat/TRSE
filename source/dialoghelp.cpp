@@ -41,6 +41,11 @@ DialogHelp::~DialogHelp()
     delete ui;
 }
 
+void DialogHelp::SetFontSize(int size)
+{
+    ui->widgetHelp->SetFontSize(size);
+}
+
 
 
 

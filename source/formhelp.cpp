@@ -352,6 +352,17 @@ void formHelp::on_lstTopic_itemClicked(QListWidgetItem *item)
     LoadItems(m_curTopic);
 }
 
+void formHelp::SetFontSize(int size)
+{
+    QFont f = ui->lstItems->font();
+    f.setPointSize(size);
+    ui->lstItems->setFont(f);
+    QFont f2 = ui->lstTopic->font();
+    f2.setPointSize(size);
+    ui->lstTopic->setFont(f2);
+    ui->txtHelp->setFontPointSize(size);
+}
+
 void formHelp::on_lstItems_itemClicked(QListWidgetItem *item)
 {
     int idx = item->data(Qt::UserRole).toInt();
