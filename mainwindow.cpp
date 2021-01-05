@@ -600,9 +600,13 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     }
     editor->m_currentDir = m_currentPath+"/";
     if (!isExternal)
-    editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
+        editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
     else
         editor->m_currentSourceFile = fileName;
+
+    QString s = QDir::separator();
+    // replace "//" with "/"
+    editor->m_currentSourceFile = editor->m_currentSourceFile.replace(s+s,s);
 
     if (isExternal) {
         fileName = "[external]"+fileName.split(QDir::separator()).last();
@@ -626,7 +630,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     editor->setFocus();
     editor->showMaximized();
     ui->tabMain->setCurrentWidget(editor);
-
+    ui->tabMain->setTabToolTip(ui->tabMain->currentIndex(),editor->m_currentSourceFile);
     m_currentProject.m_ini->setString("current_file", fileName);
     //m_buildSuccess = false;
     ui->tabMain->setTabsClosable(true);
