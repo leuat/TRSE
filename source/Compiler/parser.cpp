@@ -2714,6 +2714,7 @@ QSharedPointer<Node> Parser::String()
 
 
     Eat();
+
     Token token(TokenType::STRING, m_currentToken.m_value);
     //m_currentToken.m_type = TokenType::STRING;
     QStringList lst;
@@ -2721,12 +2722,23 @@ QSharedPointer<Node> Parser::String()
 //    lst<<m_currentToken.m_value;
     int max=0;
     while (m_currentToken.m_type!=TokenType::RPAREN) {
-        if (m_currentToken.m_value=="")
-            m_currentToken.m_value = QString::number(m_currentToken.m_intVal);
+        //GetParsedInt(TokenType::INTEGER);
+
+        if (m_currentToken.m_value=="" || m_currentToken.m_type==TokenType::ID || m_currentToken.m_type==TokenType::LPAREN)
+            m_currentToken.m_value = QString::number(GetParsedInt(TokenType::INTEGER));
+
+/*        if (m_currentToken.m_value=="")
+            m_currentToken.m_value = QString::number();
+*/
+//        qDebug() << m_currentToken.m_value <<m_currentToken.getType();
 
         if (m_currentToken.m_value!="")
             lst<<m_currentToken.m_value;
+
+        if (m_currentToken.m_type == TokenType::RPAREN)
+            break;
         Eat();
+
         if (m_currentToken.m_type==TokenType::COMMA)
             Eat();
         if (max++>10000)
