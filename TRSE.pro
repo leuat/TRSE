@@ -523,7 +523,6 @@ FORMS    += mainwindow.ui \
     source/dialognewproject.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \
-    source/formHelp.ui \
     source/formhelp.ui \
     source/trsedocuments/formhexedit.ui \
     source/trsedocuments/formraseditor.ui \
