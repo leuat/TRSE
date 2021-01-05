@@ -206,3 +206,13 @@ void LGLSlideshow::mousePressEvent(QMouseEvent *e)
 
 
 
+
+GLSlide::GLSlide(QString img, QString text, QString project) {
+    if (!QFile::exists(img)) {
+        qDebug() << "ERROR GLSlide::GLSlide could not find image file : "<<img;
+        exit(1);
+    }
+    m_image.load(img);
+    m_text = text;
+    m_project = project;
+}

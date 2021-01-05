@@ -227,12 +227,22 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
         as->BinOP(node->m_op.m_type);
         as->Term(node->m_right->getValue(as),true);
-        as->Asm("pha ");
-        as->Asm("tya ");
-        as->BinOP(node->m_op.m_type,false);
-        as->Term(node->m_right->getValue8bit(as,true),true);
-        as->Asm("tay ");
-        as->Asm("pla ");
+        if (node->m_right->getValue8bit(as,true)=="#0") {
+            as->Comment("RHS is byte, optimization");
+            QString lbl = as->NewLabel("skip");
+            as->Asm("bcc "+lbl);
+            as->Asm("iny");
+            as->Label(lbl);
+
+        }
+        else {
+            as->Asm("pha ");
+            as->Asm("tya ");
+            as->BinOP(node->m_op.m_type,false);
+            as->Term(node->m_right->getValue8bit(as,true),true);
+            as->Asm("tay ");
+            as->Asm("pla ");
+        }
         return;
         //        as->Asm("sta " + varName);
 

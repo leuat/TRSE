@@ -142,7 +142,7 @@ void MainWindow::InitOpenGLBanners()
     ui->glslider->m_slides.append(GLSlide(":resources/images/image_icon.png","Nibbler",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/GAMEBOY.png","Nibbler",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/nopgrl.png","Nibbler",""));
-    for (int i=0;i<29;i++) {
+    for (int i=1;i<29;i++) {
         ui->glslider->m_slides.append(GLSlide(":resources/images/billboard/b"+QString::number(i)+".png","b1",""));
     }
     ui->glslider->Init();

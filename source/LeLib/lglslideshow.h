@@ -13,11 +13,7 @@ public:
     GLSlide() {
 
     }
-    GLSlide(QString img, QString text, QString project) {
-        m_image.load(img);
-        m_text = text;
-        m_project = project;
-    }
+    GLSlide(QString img, QString text, QString project);
 
     QImage m_image;
     QString m_text;
