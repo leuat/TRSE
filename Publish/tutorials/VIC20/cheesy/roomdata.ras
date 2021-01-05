@@ -1,0 +1,4924 @@
+
+// -------------------------------------------------------
+// Levels - these are the map rooms
+
+// level 0 = easy
+// level 1 = normal
+// level 2 = hard
+
+level0: array[] of byte = (
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 0,
+		OPDRAW + DSPECIAL + DS_CHEESE, // key
+
+		OPPOS + POSX + 0,
+		OPPOS + POSY + 23,
+		OPDRAW + DSOLID + DRIGHT + 7, // draw 8
+		OPDRAW + DSOLID + DRIGHT + 7, // +8 = 16
+		OPDRAW + DSOLID + DRIGHT + 3, // +4 = 20
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 0 - exit game
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 20,
+		OPDRAW + DPLATFORM + DLEFT + 5,
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 1
+		
+		OPPOS + POSX + 11, 
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 4, // 5
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 19,
+		OPDRAW + DLADDER + DUP + 3,
+		OPPOS + POSXR + 4, // right 4
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 2
+
+		OPPOS + POSX + 13, 
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DRIGHT + 6,	
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 3
+		
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 22,
+		OPDRAW + DSOLID + DUP + 2,
+		OPPOS + POSX + 19, 
+		OPPOS + POSY + 20, 
+		OPDRAW + DPLATFORM + DLEFT + 2,
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 4
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 5
+		
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 14,
+		OPDRAW + DPLATFORM + DRIGHT + 2,	
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 6		
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DRIGHT + 2,	
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 7		
+
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 11,
+		OPDRAW + DLADDER + DDOWN + 4,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 10,
+		OPDRAW + DLADDER + DUP + 5,
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 5,
+		OPDRAW + DPLATFORM + DUP + 0,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 8		
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 5,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		OPDRAW + DPLATFORM + DUP + 0,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 9		
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 16,
+		OPDRAW + DLADDER + DUP + 7,
+		OPDRAW + DLADDER + DUP + 1,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DLEFT + 2,
+		OPDRAW + DPLATFORM + DUP + 0,
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 10		
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+		OPDRAW + DPLATFORM + DUP + 0,
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 11		
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 12,
+		OPDRAW + DLADDER + DUP + 2,
+		OPDRAW + DLADDER + DLEFT,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+
+		OPPOS + POSX + 0,
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 12		
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 8,
+		OPDRAW + DLADDER + DUP + 7, // ladder up to key
+
+		ROOMEND
+
+);
+	// room select screens for level 0 - easy
+	level0_list: array[] of integer = (
+		level0,
+		
+		ROOMEND
+	);
+
+level1: array[] of byte = (
+
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 0,
+		OPDRAW + DSPECIAL + DS_CHEESE, // key
+
+		OPPOS + POSX + 0,
+		OPPOS + POSY + 23,
+		OPDRAW + DSOLID + DRIGHT + 7, // draw 8
+		OPDRAW + DSOLID + DRIGHT + 7, // +8 = 16
+		OPDRAW + DSOLID + DRIGHT + 3, // +4 = 20
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 0 - exit game
+		
+		OPPOS + POSX + 17,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 13
+
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 14
+
+		OPPOS + POSX + 11,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 15
+
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 16
+
+		OPPOS + POSX + 5,
+		OPDRAW + DLADDER + DUP + 6,
+		OPDRAW + DLADDER + DLEFT,
+		OPDRAW + DSOLID + DLEFT,
+		OPDRAW + DSOLID + DUP,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 17
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 15,
+		OPDRAW + DSOLID + DRIGHT + 7,	// first floor
+		OPDRAW + DSOLID + DRIGHT + 3,
+	
+		OPPOS + POSY + 14,
+
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 18
+
+		OPPOS + POSX + 11,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 19
+
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 20
+
+		OPPOS + POSX + 5,				// second floor
+		OPDRAW + DLADDER + DUP + 6,
+		OPDRAW + DLADDER + DRIGHT,
+		OPDRAW + DSOLID + DRIGHT + 1,
+		OPDRAW + DSOLID + DUP,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 21
+	
+		OPPOS + POSX + 9,				// third floor
+		OPPOS + POSY + 7,
+		OPDRAW + DSOLID + DRIGHT + 7,
+		OPDRAW + DSOLID + DUP,
+
+		OPPOS + POSX + 11,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 22
+
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 23
+
+		OPPOS + POSX + 4,				// third floor
+		OPPOS + POSY + 7,
+		OPDRAW + DSOLID + DLEFT,
+		OPDRAW + DSOLID + DUP,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 24
+
+		OPPOS + POSX + 18,				// Access key
+		OPPOS + POSY + 9,
+		OPDRAW + DLADDER + DUP + 7,
+	
+		ROOMEND
+
+);
+	// room select screens for level 1 - normal
+	level1_list: array[] of integer = (
+		
+		level1,
+		ROOMEND
+	);
+	
+level2: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_CHEESE, // key
+
+		OPPOS + POSX + 8,
+		OPDRAW + DSOLID + DUP,
+		OPDRAW + DSOLID + DRIGHT + 3,
+		OPDRAW + DSOLID + DDOWN + 1,
+
+		OPPOS + POSX + 0,
+		OPPOS + POSY + 23,
+		OPDRAW + DSOLID + DRIGHT + 7, // draw 8
+		OPDRAW + DSOLID + DRIGHT + 7, // +8 = 16
+		OPDRAW + DSOLID + DRIGHT + 3, // +4 = 20
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 0 - exit game
+		
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 25 
+
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 26
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 27
+
+		OPPOS + POSX + 6,				// first solid center
+		OPPOS + POSY + 22,
+		OPDRAW + DLADDER + DUP + 4,
+		OPDRAW + DLADDER + DRIGHT,
+		OPDRAW + DSOLID + DRIGHT + 6,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 16,		
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 28
+
+		OPPOS + POSX + 13,				// second solid center
+		OPDRAW + DLADDER + DUP + 4,
+		OPDRAW + DLADDER + DLEFT,
+		OPDRAW + DSOLID + DLEFT + 6,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 29
+
+		OPPOS + POSX + 6,				// third solid center
+		OPDRAW + DLADDER + DUP + 4,
+		OPDRAW + DLADDER + DRIGHT,
+		OPDRAW + DSOLID + DRIGHT + 6,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 30
+
+		OPPOS + POSX + 1,				// top left
+		OPPOS + POSY + 5,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+		
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 31
+
+		OPPOS + POSX + 18,				// bottom right
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DLEFT + 3,
+		
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 32
+
+		OPPOS + POSX + 18,				// top right
+		OPPOS + POSY + 5,
+		OPDRAW + DPLATFORM + DLEFT + 3,
+		
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 33
+
+		OPPOS + POSX + 1,				// bottom left
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+		
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 34
+
+		OPPOS + POSX + 18,				// middle right
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DLEFT + 3,
+		
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 35
+
+		OPPOS + POSX + 1,				// middle left
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+		
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_LEVEL, // Room 36
+
+		OPPOS + POSX + 10,	// access key
+		OPPOS + POSY + 21,
+		OPDRAW + DSPECIAL + DS_ERASE,
+
+		ROOMEND
+
+);
+	// room select screens for level 2 - hard
+	level2_list: array[] of integer = (
+		
+		level2,
+		ROOMEND
+	);
+
+
+// -------------------------------------------------------
+// rooms
+
+// 1
+
+room1_0: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+		
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room1_1: array[] of byte = (
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DUP + 1,	// move platform down
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DUP + 1,	// move next platform down
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room1_2: array[] of byte = (
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		OPPOS + POSYR - 3, // up 3
+		OPPOS + POSX + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 3;
+		OPPOS + POSYR - 3, // up 3
+		OPPOS + POSX + 16,
+		OPDRAW + DPLATFORM + DLEFT + 2;
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 15,
+		OPPOS + POSYR - 1, // back 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+		
+		ROOMEND
+	);
+	room1_3: array[] of byte = (
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 20,
+		OPDRAW + DPLATFORM + DUP + 1,	// move platform down
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 20,
+		OPDRAW + DPLATFORM + DUP + 1,	// move next platform down
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+	);
+	
+	room1_list: array[] of integer = ( 
+		room1_0, 
+		room1_1,
+		room1_2,
+		room1_3,
+		
+		ROOMEND
+	);
+	
+// 2
+
+room2_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+		OPPOS + POSXR + 1, // right 1
+		OPDRAW + DPLATFORM + DRIGHT + 6,
+		
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room2_1: array[] of byte = (
+
+		OPPOS + POSX + 15,
+		OPDRAW + DLADDER + DUP + 4,	// ladder up
+		OPPOS + POSXR + 1, // right 1
+		OPDRAW + DPLATFORM + DLEFT + 0, // one platform bit
+		OPDRAW + DLADDER + DLEFT + 0, // one ladder bit
+		OPDRAW + DPLATFORM + DLEFT + 4,	// rest of platform
+		OPPOS + POSXR - 1, // left 1
+		OPDRAW + DPLATFORM + DLEFT + 4,	
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room2_2: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPDRAW + DLADDER + DUP + 5,	// ladder up
+		OPPOS + POSXR - 1, // back 1
+		OPDRAW + DPLATFORM + DRIGHT + 0, // one platform bit
+		OPDRAW + DLADDER + DRIGHT + 0, // one ladder bit
+		OPDRAW + DPLATFORM + DRIGHT + 5,	// rest of platform
+		OPDRAW + DPLATFORM + DRIGHT + 3,	
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 14,
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		ROOMEND
+	);
+	room2_3: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+	
+		ROOMEND
+	);
+	room2_4: array[] of byte = (
+
+		OPPOS + POSXR - 1, // back 1
+		OPPOS + POSY + 17,
+		OPDRAW + DLADDER + DUP + 5,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 5,
+		OPDRAW + DPLATFORM + DRIGHT + 2, // wipe out 3 pieces	
+	
+		ROOMEND
+	);
+	
+	room2_list: array[] of integer = ( 
+		room2_0, 
+		room2_1,
+		room2_2,
+		room2_3,
+		room2_4,
+		
+		ROOMEND
+	);
+	
+// 3
+
+room3_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 6,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSXR + 3, // make hole
+		OPDRAW + DPLATFORM + DRIGHT + 0,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSXR - 2, // back 1 
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room3_1: array[] of byte = (
+
+		OPPOS + POSXR - 1, // back 1 
+		OPPOS + POSYR + 1, // down 1
+		OPDRAW + DLADDER + DDOWN + 5,
+
+		OPPOS + POSXR + 1, // right 1
+		OPDRAW + DPLATFORM + DLEFT + 2,
+
+		OPPOS + POSXR - 3, // make hole
+		OPDRAW + DPLATFORM + DLEFT + 0,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+	
+		ROOMEND
+	);
+	room3_2: array[] of byte = (
+
+		OPPOS + POSXR - 1, // back 1 
+		OPPOS + POSYR + 1, // down 1
+		OPDRAW + DLADDER + DDOWN + 5,
+
+		OPPOS + POSXR + 5, // make hole
+		OPDRAW + DPLATFORM + DRIGHT + 0,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSXR - 2, // back 1 
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_DOOR,
+	
+		ROOMEND
+	);
+	
+	room3_list: array[] of integer = ( 
+		room3_0, 
+		room3_1,
+		room3_2,
+		
+		ROOMEND
+	);
+
+// 4
+
+room4_0: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+
+		OPPOS + POSX + 6,				// set player start pos
+		OPPOS + POSY + 3,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+		
+		ROOMEND
+	);
+
+	room4_1: array[] of byte = (
+
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+		
+		ROOMEND
+	);
+
+	// cheese 2
+	room4_2: array[] of byte = (
+		
+		OPPOS + POSX + 10, // no Y pos so that ...
+		OPDRAW + DSOLID + DUP + 7, // this can be drawn on different platforms!
+		
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSX + 6,
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4		
+		
+		ROOMEND
+		
+	);
+
+	// cheese 3
+	room4_3: array[] of byte = (
+				
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		OPPOS + POSYR - 1, // 1 up (for the wall in cheese 2)
+		
+		ROOMEND
+		
+	);
+
+	// cheese 4
+	room4_4: array[] of byte = (
+				
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 20,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6		
+		
+		ROOMEND
+		
+	);	
+
+	// cheese 5
+	room4_5: array[] of byte = (
+		
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 19,
+		OPDRAW + DSOLID + DUP + 3,
+
+		//OPPOS + POSX + 10,
+		OPPOS + POSY + 7,
+		OPDRAW + DSOLID + DUP + 3, 
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 7, //19,		
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+		
+	);	
+
+	// cheese 6
+	room4_6: array[] of byte = (
+		
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 19,
+		OPDRAW + DSOLID + DUP + 3,
+		
+		ROOMEND
+		
+	);	
+
+	room4_list: array[] of integer = ( 
+		room4_0, 
+		room4_1,
+		room4_2,
+		room4_3,
+		room4_4,
+		room4_5,
+		room4_6,
+		
+		ROOMEND
+	);
+	
+
+// 5
+
+room5_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DLEFT + 7,
+
+		OPPOS + POSX + 6,				// set player start pos
+		OPPOS + POSY + 2,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+
+		ROOMEND
+	);
+	
+	room5_1: array[] of byte = (
+	
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DLEFT + 7,		
+		OPDRAW + DPLATFORM + DLEFT + 6,		
+
+		OPPOS + POSXR + 2, // forward 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		ROOMEND
+	);
+	
+	room5_2: array[] of byte = (
+	
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 7,		
+		OPDRAW + DPLATFORM + DRIGHT + 6,		
+
+		OPPOS + POSXR - 2, // back 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+
+		ROOMEND
+	);
+
+	room5_3: array[] of byte = (
+	
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 10,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DLEFT + 7,		
+		OPDRAW + DPLATFORM + DLEFT + 6,		
+
+		OPPOS + POSXR + 2, // forward 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4		
+
+		ROOMEND
+	);
+
+	room5_4: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DUP, // moves up one
+
+		OPPOS + POSX + 16,
+		//OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+
+		ROOMEND
+	);
+	
+	room5_5: array[] of byte = (
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+
+		ROOMEND
+	);
+
+	room5_6: array[] of byte = (
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_DOOR,	// Yay		
+
+		ROOMEND
+	);
+
+	room5_list: array[] of integer = ( 
+		room5_0,
+		room5_1,
+		room5_2,
+		room5_3,
+		room5_4,
+		room5_5,
+		room5_6,
+		
+		ROOMEND 
+	);
+
+// 6
+
+room6_0: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DLEFT + 2,
+
+		OPPOS + POSX + 6,				// set player start pos
+		OPPOS + POSY + 3,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+
+		ROOMEND
+	);
+	
+	room6_1: array[] of byte = (
+	
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 10,
+		OPDRAW + DLADDER + DDOWN + 5,
+		
+		OPDRAW + DPLATFORM + DRIGHT + 0,		
+		OPPOS + POSXR + 1,
+		OPDRAW + DPLATFORM + DUP + 0,		
+
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		ROOMEND
+	);
+	
+	room6_2: array[] of byte = (
+	
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DLEFT + 6,
+		
+		OPDRAW + DSOLID + DDOWN + 1,
+		OPDRAW + DSOLID + DLEFT + 3,
+		OPDRAW + DSOLID + DUP + 2,
+		OPPOS + POSXR - 1, // back 2
+		OPPOS + POSYR + 1, // down 1
+		OPDRAW + DPLATFORM + DLEFT + 2,
+
+		OPPOS + POSXR + 2, // forward 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+
+		ROOMEND
+	);
+	
+// cheese 3
+	room6_3: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,			
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 17,
+		OPDRAW + DLADDER + DUP + 7,
+		OPDRAW + DLADDER + DUP + 0,
+
+		ROOMEND
+	);
+// cheese 4
+	room6_4: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		ROOMEND
+	);
+// cheese 5
+	room6_5: array[] of byte = (
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6
+		
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DRIGHT + 2,		
+		OPPOS + POSX + 2,
+		OPDRAW + DLADDER + DUP + 0,
+
+		ROOMEND
+	);
+// cheese 6
+	room6_6: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		// make an escape route for below
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 19,
+		OPDRAW + DLADDER + DUP + 1,
+
+		ROOMEND
+	);
+	
+
+	room6_list: array[] of integer = ( 
+		room6_0,
+		room6_1,
+		room6_2,
+		room6_3,
+		room6_4,
+		room6_5,
+		room6_6,
+		
+		ROOMEND 
+	);
+
+// 7
+
+room7_0: array[] of byte = (
+	
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPPOS + POSX + 2,				// set player start pos
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+		
+		ROOMEND
+	);
+
+	room7_1: array[] of byte = (
+	
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+				
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+
+	room7_2: array[] of byte = (
+	
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 6,
+		OPDRAW + DLADDER + DDOWN + 3,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+				
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+		
+		ROOMEND
+	);
+
+	room7_3: array[] of byte = (
+	
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 6,
+		OPDRAW + DLADDER + DDOWN + 3,
+
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 15,
+		OPDRAW + DLADDER + DDOWN + 3,
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 15,
+		OPDRAW + DLADDER + DDOWN + 3,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+				
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4		
+		
+		ROOMEND
+	);
+
+	room7_4:array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+		
+		ROOMEND
+	);
+	
+	room7_5:array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6		
+		OPPOS + POSX + 18,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 7		
+		
+		ROOMEND
+	);
+	// cheese 6 -  left side - opens door
+	room7_6:array[] of byte = (
+
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_DOOR,	// EXIT!	
+		
+		OPPOS + POSX + 16,
+		OPDRAW + DSPECIAL + DS_SPIKE,	// block door
+		
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_ERASE,	// erase any blocker on left
+		ROOMEND
+	);
+	// cheese 7 -  right side - creates last cheese
+	room7_7:array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 8		
+		
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_SPIKE,	// block cheese
+				
+		ROOMEND
+	);
+	// cheese 8 -  right side - creates last cheese
+	room7_8:array[] of byte = (
+
+		OPPOS + POSX + 16,
+		OPDRAW + DSPECIAL + DS_ERASE,	// erase any blocker on right
+		
+		ROOMEND
+	);
+	
+	room7_list: array[] of integer = ( 
+		room7_0,
+		room7_1,
+		room7_2,
+		room7_3,
+		room7_4,
+		room7_5,
+		room7_6,
+		room7_7,
+		room7_8,
+		
+		ROOMEND 
+	);
+
+// 8
+
+room8_0: array[] of byte = (
+	
+		OPPOS + POSX + 0,
+		OPPOS + POSY + 22,
+		OPDRAW + DSOLID + DRIGHT + 3,
+
+		OPPOS + POSX + 1,				// set player start pos
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 21,
+		OPDRAW + DSOLID + DUP + 1,
+		OPDRAW + DSOLID + DRIGHT + 1,
+		OPDRAW + DSOLID + DDOWN + 1,
+		OPDRAW + DSOLID + DRIGHT + 0,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR + 1, 	// make gap
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+		
+		ROOMEND
+	);
+	
+	room8_1: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+	
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 21,
+		OPDRAW + DSOLID + DRIGHT + 4,
+		
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DLADDER + DUP + 3,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR + 1,
+		OPDRAW + DSOLID + DDOWN + 1,
+		OPDRAW + DSOLID + DRIGHT + 4,
+		
+		OPPOS + POSXR - 4,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR + 2,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		ROOMEND
+	);
+
+	room8_2: array[] of byte = (
+
+		OPPOS + POSX + 19,
+		OPPOS + POSY + 19,
+		OPDRAW + DSOLID + DDOWN + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSYR - 1,
+		OPPOS + POSXR - 1,
+		OPDRAW + DSOLID + DLEFT + 6,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+
+	room8_3: array[] of byte = (
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 22,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 20,
+		OPDRAW + DLADDER + DUP + 3,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPDRAW + DPLATFORM + DUP + 0,
+
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+
+		ROOMEND
+	);
+
+	room8_4: array[] of byte = (
+
+		OPPOS + POSXR + 4,
+
+		OPDRAW + DPLATFORM + DUP + 0,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5
+
+		ROOMEND
+	);
+	
+	room8_5: array[] of byte = (
+
+		OPPOS + POSXR + 4,
+
+		OPDRAW + DPLATFORM + DUP + 0,
+		
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6
+
+		ROOMEND
+	);
+
+	room8_6: array[] of byte = (
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 7 (just time)
+
+		ROOMEND
+	);
+
+	room8_list: array[] of integer = ( 
+		room8_0,
+		room8_1,
+		room8_2,
+		room8_3,
+		room8_4,
+		room8_5,
+		room8_6,
+		
+		ROOMEND 
+	);
+
+// 9
+
+room9_0: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+
+		OPPOS + POSX + 10,				// set player start pos
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DLEFT + 7,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+		
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+
+	room9_1: array[] of byte = (
+	
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 8,
+		OPDRAW + DLADDER + DDOWN + 4,
+
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		ROOMEND 
+	);	
+
+	room9_2: array[] of byte = (
+	
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 16,
+		OPDRAW + DLADDER + DUP + 4,
+		
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		ROOMEND 
+	);	
+	
+	room9_3: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 12,
+		OPDRAW + DSOLID + DRIGHT + 1,
+		OPPOS + POSXR + 1,
+		OPDRAW + DSOLID + DRIGHT + 6,
+
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+
+		ROOMEND 
+	);	
+
+	room9_4: array[] of byte = (
+	
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5
+
+		ROOMEND 
+	);	
+	
+	room9_5: array[] of byte = (
+	
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6
+
+		ROOMEND 
+	);	
+	
+	room9_6: array[] of byte = (
+	
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 7
+
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		ROOMEND 
+	);	
+	
+	room9_7: array[] of byte = (
+	
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_DOOR,	// EXIT
+
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		ROOMEND 
+	);	
+	
+	room9_list: array[] of integer = ( 
+		room9_0,
+		room9_1,
+		room9_2,
+		room9_3,
+		room9_4,
+		room9_5,
+		room9_6,
+		room9_7,
+		
+		ROOMEND 
+	);
+
+
+// 10
+
+room10_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room10_1: array[] of byte = (
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DLEFT +3;	// ERASE PLATFORM
+		OPPOS + POSYR + 5,
+		OPPOS + POSX + 16,
+		OPDRAW + DPLATFORM + DLEFT +4,	// DRAW NEW PLATFORM
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room10_2: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 3;	// ERASE PLATFORM
+		OPPOS + POSYR + 5,
+		OPPOS + POSX + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 4;
+		OPPOS + POSXR - 2,
+		OPDRAW + DPLATFORM + DLEFT + 3;		// DRAW THEN ERASE PLATFORM
+		OPPOS + POSYR + 4,
+		OPPOS + POSX + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 4,	//DRAW ACTUAL PLATFORM
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DLEFT +3;
+		OPPOS + POSYR + 5,
+		OPDRAW + DPLATFORM + DRIGHT +4,		//CLEAN UP OLD PLATFORMS
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 15,
+		OPPOS + POSYR - 6, // back 6
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+	room10_3: array[] of byte = (
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DLEFT + 4;
+		OPPOS + POSXR - 4,
+		OPDRAW + DSPECIAL + DS_ERASE,		// ERASE PLATFORMS
+		OPPOS + POSY + 20,
+		OPPOS + POSX + 16,
+		OPDRAW + DPLATFORM + DLEFT + 4, 	// BUILD PLATFORM BELOW ME
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 3;	// BUILD FINAL PLATFORM
+		OPPOS + POSYR + 4,
+		OPPOS + POSX + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 3,	// ERASE EXTRA PLATFORM
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_ERASE,		// LONG PAUSE, THEN ERASE. CAN DELETE IF TOO MUCH MEMORY USED
+		
+		ROOMEND
+	);
+	
+	room10_list: array[] of integer = ( 
+		room10_0, 
+		room10_1,
+		room10_2,
+		room10_3,
+		
+		ROOMEND
+	);
+
+// 11
+
+room11_0: array[] of byte = (
+	
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DRIGHT + 3;
+		OPPOS + POSYR - 1,
+		OPPOS + POSXR - 1,
+		OPDRAW + DLADDER + DUP + 4;
+		OPPOS + POSXR + 2,
+		OPPOS + POSYR + 1,
+		OPDRAW + DLADDER + DUP + 6;
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		
+		OPPOS + POSX + 5,				// set player start pos
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 11, 
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room11_1: array[] of byte = (
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 4,
+		OPDRAW + DSOLID + DDOWN + 2,	// CREATE WALL
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		OPDRAW + DLADDER + DDOWN + 5,	// MAKE LADDER AND PLATFORM
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room11_2: array[] of byte = (
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 7,
+		OPDRAW + DSOLID + DDOWN + 3;
+		OPPOS + POSYR + 3,
+		OPDRAW + DSOLID + DDOWN + 3;		// MAKE MORE WALLS
+		OPPOS + POSXR + 3,
+		OPDRAW + DLADDER + DUP + 5;
+		OPPOS + POSYR + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 3,	// MAKE MORE PLATFORM AND LADDER
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR - 2,
+		OPPOS + POSYR - 1, // back 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+	room11_3: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 17,
+		OPDRAW + DSOLID + DUP + 1,
+		OPDRAW + DSPECIAL + DS_SPIKE;
+		OPPOS + POSYR - 3,
+		OPPOS + POSXR -1,
+		OPDRAW + DSOLID + DUP + 4,		// CREATE EVEN MORE WALLS
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		
+		ROOMEND
+	);
+	room11_4: array[] of byte = (
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPIKE;
+		OPPOS + POSXR + 2,
+		OPPOS + POSYR + 1,
+		OPDRAW + DLADDER + DUP + 4;
+		OPPOS + POSXR + 2,
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSXR - 5,
+		OPDRAW + DSPECIAL + DS_SPIKE,	// FINAL SPIKE, MIGHT BE TOO MEAN
+		
+		ROOMEND
+	);
+	
+	room11_list: array[] of integer = ( 
+		room11_0, 
+		room11_1,
+		room11_2,
+		room11_3,
+		room11_4,
+		
+		ROOMEND
+	);
+	
+// 12 C
+
+room12_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 5;
+		OPPOS + POSXR - 1,
+		OPDRAW + DLADDER + DDOWN + 7,
+		OPDRAW + DLADDER + DDOWN + 3,
+		OPDRAW + DPLATFORM + DLEFT + 7,
+		OPDRAW + DPLATFORM + DLEFT + 5;
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DLADDER + DUP + 7,
+		OPDRAW + DLADDER + DUP + 3,
+
+		OPPOS + POSX + 5,				// set player start pos
+		OPPOS + POSY + 3,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+	room12_1: array[] of byte = (
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1-4
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE;	// cheese 1-5
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1-6
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DUP + 3,
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DUP + 3,	// TRAPS HERE
+
+		ROOMEND
+	);
+	room12_2: array[] of byte = (
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2-4
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE;	// cheese 2-5
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2-6
+		
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 11,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_SPIKE,	// TRAPS HERE
+
+		ROOMEND
+	);
+	room12_3: array[] of byte = (
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3-4
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE;	// cheese 3-5
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3-6
+		
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 7,
+		OPDRAW + DLADDER + DDOWN + 5,
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 18,
+		OPDRAW + DLADDER + DUP + 5,	// TRAPS HERE
+
+		ROOMEND
+	);
+	room12_4: array[] of byte = (
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DUP + 3,
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DUP + 3,	// TRAPS HERE
+
+		OPPOS + POSY + 10,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4-7
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE;	// cheese 4-8
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4-9
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4-10
+
+		ROOMEND
+	);
+	room12_5: array[] of byte = (
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		
+		OPPOS + POSY + 14,
+		OPPOS + POSX + 7,
+		OPDRAW + DSOLID + DRIGHT + 5,
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 16,
+		OPDRAW + DSOLID + DUP + 6,
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR + 1,
+		OPDRAW + DSOLID + DDOWN + 6,	// TRAPS HERE
+
+		OPPOS + POSY + 10,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5-7
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE;	// cheese 5-8
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5-9
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5-10
+
+		ROOMEND
+	);
+	room12_6: array[] of byte = (
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 3,
+		OPDRAW + DSOLID + DDOWN + 7,
+		OPDRAW + DSOLID + DRIGHT + 5,
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 14,
+		OPDRAW + DSOLID + DRIGHT + 4,
+		OPDRAW + DSOLID + DDOWN + 4,	// TRAPS HERE
+
+		OPPOS + POSY + 10,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6-7
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE;	// cheese 6-8
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6-9
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6-10
+
+		ROOMEND
+	);
+	room12_7: array[] of byte = (
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSY + 10,
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSY + 6,
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		ROOMEND
+	);
+	room12_8: array[] of byte = (
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSY + 6,
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		ROOMEND
+	);
+	room12_9: array[] of byte = (
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 5,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSY + 6,
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		ROOMEND
+	);
+	room12_10: array[] of byte = (
+		OPPOS + POSX - 1,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSY + 10,
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSXR - 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSY + 6,
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		ROOMEND
+	);
+
+	room12_list: array[] of integer = ( 
+		room12_0,
+		room12_1,
+		room12_2,
+		room12_3,
+		room12_4,
+		room12_5,
+		room12_6,
+		room12_7,
+		room12_8,
+		room12_9,
+		room12_10,
+		
+		ROOMEND 
+	);
+
+// ===========================================================
+// Level 2
+
+// 13
+
+room13_0: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+
+		OPPOS + POSX + 6,				// set player start pos
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		ROOMEND
+	);
+	room13_1: array[] of byte = (
+	
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DLEFT + 5,
+		
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE, // cheese 2
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		ROOMEND
+	);
+	room13_2: array[] of byte = (
+	
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+		
+		OPPOS + POSXR - 5,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPPOS + POSXR + 2,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		
+		ROOMEND
+	);
+
+	room13_list: array[] of integer = ( 
+		room13_0,
+		room13_1,
+		room13_2,
+				
+		ROOMEND 
+	);
+
+// 14
+
+room14_0: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 7, // floor
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+
+		OPPOS + POSX + 6,				// set player start pos
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_SPRING, // it's a trap
+		
+		OPPOS + POSX + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 12,
+		OPDRAW + DSOLID + DRIGHT + 6, // first solid platform
+		
+		OPPOS + POSYR + 2,
+		OPDRAW + DSPECIAL + DS_SPRING, // it's a trap
+
+		ROOMEND
+	);
+	room14_1: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_SPRING, // Up to left
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_SPIKE, // stop jumping over
+
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DLEFT + 1, // left platform
+
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPRING, // to jump back right
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_SPRING, // Trap for later
+
+		ROOMEND
+	);
+	room14_2: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DLEFT + 1, // middle
+
+		OPPOS + POSXR + 2,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPRING, // spring it
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPRING, 
+
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DRIGHT + 1, // right pf
+		
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 8,
+		OPDRAW + DPLATFORM + DLEFT + 1, // left pf
+
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+
+		ROOMEND
+	);
+	room14_3: array[] of byte = (
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPRING, // on platform below
+		OPDRAW + DSPECIAL + DS_SPIKE, 
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_SPRING, // on platform above where just got cheese
+		OPDRAW + DSPECIAL + DS_SPRING, // on platform above where just got cheese
+		OPPOS + POSX + 6, // make sure platform
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DRIGHT,
+		
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 3, // extend middle
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPDRAW + DSPECIAL + DS_SPRING, // put a spring on it
+		OPDRAW + DSPECIAL + DS_SPRING, // put a spring on it
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPRING, // trap at end of solid
+
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DUP,
+		
+		ROOMEND
+	);
+
+
+	room14_list: array[] of integer = ( 
+		room14_0,
+		room14_1,
+		room14_2,
+		room14_3,
+		
+		ROOMEND 
+	);
+
+// 15
+
+room15_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+		
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1	
+		
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_SPRING, // it's a trap
+
+		ROOMEND
+	);
+	room15_1: array[] of byte = (
+	
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		
+		OPPOS + POSXR - 2,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPPOS + POSYR - 2,
+		OPPOS + POSX + 6,
+		OPDRAW + DPLATFORM + DLEFT + 3;
+		
+		OPPOS + POSYR - 3,
+		OPPOS + POSX + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+
+		ROOMEND
+	);
+	room15_2: array[] of byte = (
+
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DRIGHT,
+
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3	
+
+		OPPOS + POSXR - 4,
+		OPPOS + POSYR + 1,
+		OPDRAW + DSPECIAL + DS_ERASE, 
+
+
+		ROOMEND
+	);
+	room15_3: array[] of byte = (
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_DOOR,	// EXIT
+
+		ROOMEND
+	);
+
+	room15_list: array[] of integer = ( 
+		room15_0,
+		room15_1,
+		room15_2,
+		room15_3,
+		
+		ROOMEND 
+	);
+
+// 16
+
+	room16_0: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 4;
+		OPPOS + POSYR -1,
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 1,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 13, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room16_1: array[] of byte = (
+	
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 9,
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+		OPPOS + POSYR - 1,
+		OPPOS + POSXR - 3,
+		OPDRAW + DSPECIAL + DS_SPRING,
+	
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+
+		ROOMEND
+	);
+	room16_2: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 4;
+		OPPOS + POSYR -1,
+		OPPOS + POSX + 7,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 3,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+				
+		ROOMEND
+	);
+	room16_3: array[] of byte = (
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR - 5,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 7,
+		OPDRAW + DSPECIAL + DS_SPRING;
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+				
+		ROOMEND
+	);
+	room16_4: array[] of byte = (
+	
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_SPRING,	// HIDDEN TRAP
+		
+		ROOMEND
+	);
+
+	room16_list: array[] of integer = ( 
+		room16_0,
+		room16_1,
+		room16_2,
+		room16_3,
+		room16_4,
+
+		
+		ROOMEND 
+	);	
+
+// 17
+
+room17_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+		OPPOS + POSXR + 1, // right 1
+		OPDRAW + DPLATFORM + DRIGHT + 6,
+		
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 13, 
+		OPDRAW + DSPECIAL + DS_SPRING, // trap
+						
+		ROOMEND
+	);
+	room17_1: array[] of byte = (
+
+		OPPOS + POSX + 15,
+		OPDRAW + DLADDER + DUP + 4,	// ladder up
+		OPPOS + POSXR + 1, // right 1
+		OPDRAW + DPLATFORM + DLEFT + 0, // one platform bit
+		OPDRAW + DLADDER + DLEFT + 0, // one ladder bit
+		OPDRAW + DPLATFORM + DLEFT + 4,	// rest of platform
+		OPPOS + POSXR - 1, // left 1
+		OPDRAW + DPLATFORM + DLEFT + 4,	
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 12, 
+		OPDRAW + DSPECIAL + DS_SPRING, // trap 2
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 8, 
+		OPDRAW + DSPECIAL + DS_SPIKE, // haha
+		
+		ROOMEND
+	);
+	room17_2: array[] of byte = (
+	
+		OPPOS + POSX + 5,
+		OPDRAW + DLADDER + DUP + 5,	// ladder up
+		OPPOS + POSXR - 1, // back 1
+		OPDRAW + DPLATFORM + DRIGHT + 0, // one platform bit
+		OPDRAW + DLADDER + DRIGHT + 0, // one ladder bit
+		OPDRAW + DPLATFORM + DRIGHT + 5,	// rest of platform
+		OPDRAW + DPLATFORM + DRIGHT + 3,	
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 14,
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		OPPOS + POSX + 6, 
+		OPDRAW + DSPECIAL + DS_SPRING, // trap 3
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 9, 
+		OPDRAW + DSPECIAL + DS_SPIKE, // haha
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 13, 
+		OPDRAW + DSPECIAL + DS_SPRING, // trap 4
+
+		ROOMEND
+	);
+	room17_3: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5, 
+		OPDRAW + DSPECIAL + DS_SPRING, // trap 5a
+		OPPOS + POSX + 3, 
+		OPDRAW + DSPECIAL + DS_SPRING, // trap 5b
+		OPPOS + POSX + 13, 
+		OPDRAW + DSPECIAL + DS_ERASE, // clear spring
+	
+		ROOMEND
+	);
+	room17_4: array[] of byte = (
+
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 17,
+		OPDRAW + DLADDER + DUP + 5,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPPOS + POSX + 13, 
+		OPDRAW + DSPECIAL + DS_ERASE, // remove trap 4
+
+		OPPOS + POSX + 6, 
+		OPDRAW + DSPECIAL + DS_ERASE, // remove trap 3
+		
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 5,
+		OPDRAW + DPLATFORM + DRIGHT + 2, // wipe out 3 pieces	
+	
+		ROOMEND
+	);
+	
+	room17_list: array[] of integer = ( 
+		room17_0, 
+		room17_1,
+		room17_2,
+		room17_3,
+		room17_4,
+		
+		ROOMEND
+	);
+
+// 18
+
+room18_0: array[] of byte = (
+	
+		OPPOS + POSX + 7,				// set player start pos
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 21,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 20,
+		OPDRAW + DLADDER + DUP + 3,
+		OPDRAW + DLADDER + DRIGHT,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+		
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+
+		ROOMEND
+	);
+	room18_1: array[] of byte = (
+	
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 15,
+		OPDRAW + DLADDER + DUP + 2,
+		
+		OPPOS + POSYR - 1,
+		OPDRAW + DLADDER + DUP + 2,
+		OPDRAW + DLADDER + DRIGHT,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+		
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+		
+		ROOMEND
+	);
+	room18_2: array[] of byte = (
+	
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		ROOMEND
+	);
+	room18_3: array[] of byte = (
+	
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		ROOMEND
+	);
+	
+	room18_list: array[] of integer = ( 
+		room18_0,
+		room18_1,
+		room18_2,
+		room18_3,
+		
+		ROOMEND 
+	);
+	
+// 19
+
+room19_0: array[] of byte = (
+	
+		OPPOS + POSX + 18, 
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		
+		OPPOS + POSX + 2, 
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 1
+		
+		ROOMEND
+	);
+	room19_1: array[] of byte = (
+	
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 2
+		
+		ROOMEND
+	);
+	room19_2: array[] of byte = (
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_SPRING,
+	
+		OPPOS + POSX + 18, 
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		
+		OPPOS + POSX + 2, 
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 3
+		
+		ROOMEND
+	);
+	room19_3: array[] of byte = (
+	
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 4
+		
+		ROOMEND
+	);
+	room19_4: array[] of byte = (
+	
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_DOOR,  // Jump over and drop down
+		
+		ROOMEND
+	);
+	
+	room19_list: array[] of integer = ( 
+		room19_0,
+		room19_1,
+		room19_2,
+		room19_3,
+		room19_4,
+		
+		ROOMEND 
+	);
+
+// 20
+
+room20_0: array[] of byte = (
+	
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DLEFT + 7,
+
+		OPPOS + POSX + 6,				// set player start pos
+		OPPOS + POSY + 2,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		ROOMEND
+	);
+	
+	room20_1: array[] of byte = (
+	
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 16,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPPOS + POSX + 6,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DLEFT + 7,		
+		OPDRAW + DPLATFORM + DLEFT + 6,		
+
+		OPPOS + POSXR + 2, // forward 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		ROOMEND
+	);
+	
+	room20_2: array[] of byte = (
+	
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DRIGHT + 7,		
+		OPDRAW + DPLATFORM + DRIGHT + 6,		
+
+		OPPOS + POSXR - 2, // back 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+
+		ROOMEND
+	);
+
+	room20_3: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPDRAW + DSPECIAL + DS_SPRING,
+	
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 10,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DLEFT + 7,		
+		OPDRAW + DPLATFORM + DLEFT + 6,		
+
+		OPPOS + POSXR + 2, // forward 2
+		OPPOS + POSYR - 1, // up 1
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4		
+
+		ROOMEND
+	);
+
+	room20_4: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DPLATFORM + DUP, // moves up one
+
+		OPPOS + POSX + 16,
+		//OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+
+		ROOMEND
+	);
+	
+	room20_5: array[] of byte = (
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+
+		ROOMEND
+	);
+
+	room20_6: array[] of byte = (
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_DOOR,	// Yay		
+
+		ROOMEND
+	);
+
+	room20_list: array[] of integer = ( 
+		room20_0,
+		room20_1,
+		room20_2,
+		room20_3,
+		room20_4,
+		room20_5,
+		room20_6,
+		
+		ROOMEND 
+	);
+
+// 21
+
+room21_0: array[] of byte = (
+	
+		OPPOS + POSX + 0,				// first part
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPRING,	// spring on first part right
+
+		OPPOS + POSX + 1,				// set player start pos
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT,	// saving block		
+
+		OPPOS + POSX + 3,				// put cursor back 
+		OPPOS + POSY + 18,
+		
+		OPDRAW + DSOLID + DDOWN + 2,	// first pit
+		OPDRAW + DSOLID + DRIGHT + 4,
+		OPDRAW + DSOLID + DUP + 2,
+		
+		OPDRAW + DSOLID + DRIGHT + 3,	// second part 
+
+		OPPOS + POSX + 9,				// put cursor back 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_SPRING,	// spring on second part left
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+		OPDRAW + DSPECIAL + DS_SPRING,	
+		
+		OPPOS + POSYR + 1,
+		
+		OPDRAW + DSOLID + DDOWN + 2,	// second pit
+		OPDRAW + DSOLID + DRIGHT + 4,
+		OPDRAW + DSOLID + DUP + 2,
+		
+		OPDRAW + DSOLID + DRIGHT + 2,	// third part 
+		
+		ROOMEND
+	);
+	room21_1: array[] of byte = (
+	
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT,	// saving block		
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 18,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room21_2: array[] of byte = (
+	
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 1,	// saving block
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT,	// saving block
+				
+
+		ROOMEND
+	);
+	room21_3: array[] of byte = (
+	
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4		
+		
+		ROOMEND
+	);
+	room21_4: array[] of byte = (
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5		
+		
+		ROOMEND
+	);
+	room21_5: array[] of byte = (
+
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6		
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_ERASE,   /// remove troublesome spring
+		
+		ROOMEND
+	);
+	room21_6: array[] of byte = (
+
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_DOOR,
+				
+		ROOMEND
+	);
+	
+	room21_list: array[] of integer = ( 
+		room21_0,
+		room21_1,
+		room21_2,
+		room21_3,
+		room21_4,
+		room21_5,
+		room21_6,
+				
+		ROOMEND
+	);
+
+// 22
+
+	room22_0: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+		OPPOS + POSXR + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPPOS + POSX + 3,				// set player start pos
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSY + 15,
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room22_1: array[] of byte = (
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 2
+		
+		ROOMEND
+	);
+	room22_2: array[] of byte = (
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 3
+		
+		ROOMEND
+	);
+	room22_3: array[] of byte = (
+	
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+		OPPOS + POSXR + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 2,	// ERASE RAISED PLATFORMS
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 4
+		
+		ROOMEND
+	);
+	room22_4: array[] of byte = (
+
+		OPPOS + POSY + 15,
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPDRAW + DSPECIAL + DS_PAUSE1,	// ERASE SPRINGS THEN PAUSE
+		OPPOS + POSYR + 1,
+		OPPOS + POSX + 15,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+		OPPOS + POSX + 3,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPPOS + POSX + 9,
+		OPPOS + POSYR -1,
+		OPDRAW + DSPECIAL + DS_ERASE;
+		OPPOS + POSYR + 1,
+		OPPOS + POSXR - 1,
+		OPDRAW + DSPECIAL + DS_ERASE,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,	// ERASE MORE PLATFORM AND PAUSE
+
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+	);
+	
+	room22_list: array[] of integer = ( 
+		room22_0,
+		room22_1,
+		room22_2,
+		room22_3,
+		room22_4,
+		
+		ROOMEND
+	);
+
+// 23
+
+room23_0: array[] of byte = (
+			
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 21,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+
+		OPPOS + POSX + 9, OPPOS + POSYR - 1, OPDRAW + DSPECIAL + DS_SPRING,		
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+
+		OPPOS + POSX + 10, OPPOS + POSYR - 1, OPDRAW + DSPECIAL + DS_SPRING,		
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+
+		OPPOS + POSX + 9, OPPOS + POSYR - 1, OPDRAW + DSPECIAL + DS_SPRING,		
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 6,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,		// cheese 1
+
+		ROOMEND
+	);
+	room23_1: array[] of byte = (
+			
+		OPPOS + POSX + 5, 
+		OPPOS + POSY + 19,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+
+		OPPOS + POSX + 14, 
+		OPPOS + POSY + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 1,
+		
+		OPPOS + POSX + 5, 
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_DOOR,
+
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,		// cheese 2
+
+		ROOMEND
+	);
+	room23_2: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+			
+		OPPOS + POSX + 4, 
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_CHEESE,		// cheese 3
+
+		ROOMEND
+	);
+	room23_3: array[] of byte = (
+			
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_ERASE,
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		ROOMEND
+	);
+
+	room23_list: array[] of integer = ( 
+		room23_0,
+		room23_1,
+		room23_2,
+		room23_3,
+		
+		ROOMEND 
+	);
+
+// 24
+
+room24_0: array[] of byte = (
+	
+		OPPOS + POSX + 4,		// bottom platform
+		OPPOS + POSY + 20,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+
+		OPPOS + POSX + 13,		// top platform
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DLEFT + 3,
+		OPDRAW + DSOLID + DLEFT + 3,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		// set player start pos
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 6,		// LADERS OFF TOP,
+		OPPOS + POSY + 6,
+		OPDRAW + DLADDER + DDOWN + 2,
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 6,
+		OPDRAW + DLADDER + DDOWN + 1,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 1 good
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 2 bad
+
+		ROOMEND
+	);
+	room24_1: array[] of byte = (
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_SPRING, // REMOVE CHEESE 2 but give spring up
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 16,
+		OPDRAW + DSOLID + DRIGHT + 4,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 3
+
+		ROOMEND
+	);
+	room24_2: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_SPIKE, // REMOVE CHEESE 1 and no spring up
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 16,
+		OPDRAW + DSOLID + DRIGHT + 4,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 3 - can't get to
+
+		ROOMEND
+	);
+	room24_3: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 4 good
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 5 bad
+		ROOMEND
+	);
+	room24_4: array[] of byte = (
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_SPRING, // REMOVE CHEESE 2 but give spring up
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 6
+
+		ROOMEND
+	);
+	room24_5: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_SPIKE, // REMOVE CHEESE 1 and no spring up
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// CHEESE 6 - can't get to
+
+		ROOMEND
+	);
+	room24_6: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 7 bad this time
+		OPPOS + POSX + 14,
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 8 good
+		ROOMEND
+	);
+	room24_7: array[] of byte = (
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_SPIKE, // REMOVE CHEESE 2 but no spring up
+
+
+		ROOMEND
+	);
+	room24_8: array[] of byte = (
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 19,
+		OPDRAW + DSPECIAL + DS_SPRING, // REMOVE CHEESE 1 and give spring up
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DLADDER + DUP + 4,	
+		OPDRAW + DSPECIAL + DS_CHEESE, // CHEESE 9
+
+		ROOMEND
+	);
+	room24_9: array[] of byte = (
+
+		OPPOS + POSX + 8,		
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		OPPOS + POSX + 12,		
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		ROOMEND
+	);
+	room24_list: array[] of integer = ( 
+		room24_0,
+		room24_1,
+		room24_2,	
+		room24_3,	
+		room24_4,	
+		room24_5,	
+		room24_6,	
+		room24_7,	
+		room24_8,	
+		room24_9,	
+
+		ROOMEND 
+	);
+	
+
+
+// ===========================================================
+// Level 3
+
+// 25
+
+room25_0: array[] of byte = (
+	
+		OPPOS + POSX + 0,
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DRIGHT + 5,
+
+		OPPOS + POSX + 1,				// set player start pos
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 19,
+		OPPOS + POSY + 11,
+		OPDRAW + DPLATFORM + DLEFT + 5,
+		
+		OPPOS + POSX + 7,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1		
+
+		ROOMEND
+	);
+	room25_1: array[] of byte = (
+	
+		OPPOS + POSX + 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+
+		ROOMEND
+	);
+	room25_2: array[] of byte = (
+	
+		OPPOS + POSX + 18,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3		
+
+		ROOMEND
+	);
+	room25_3: array[] of byte = (
+	
+		OPPOS + POSX + 18,
+		OPDRAW + DSPECIAL + DS_DOOR,		
+
+		ROOMEND
+	);
+
+	room25_list: array[] of integer = ( 
+		room25_0,
+		room25_1,
+		room25_2,
+		room25_1, // repeat this room again
+		room25_3,		
+
+		ROOMEND 
+	);
+
+// 26
+
+room26_0: array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 12,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DPLATFORM + DRIGHT + 2,	
+		
+		OPPOS + POSX + 3,				// set player start pos
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 16, 
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room26_1: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 16,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room26_2: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		
+		ROOMEND
+	);
+	room26_3: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		
+		ROOMEND
+	);
+	room26_4: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 8,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR - 2,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+	);
+	
+	room26_list: array[] of integer = ( 
+		room26_0, 
+		room26_1,
+		room26_2,
+		room26_3,
+		room26_4,
+		
+		ROOMEND
+	);
+
+// 27
+
+room27_0: array[] of byte = (
+	
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 9,
+		OPDRAW + DSOLID + DLEFT + 2,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 12,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 15,
+		OPDRAW + DSOLID + DLEFT + 2,
+
+		OPPOS + POSX + 10,				// set player start pos
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 12, 
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE1,	
+		
+		ROOMEND
+	);
+	room27_1: array[] of byte = (
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 8, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE2,	
+		
+
+		ROOMEND
+	);
+	room27_2: array[] of byte = (
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 8, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE3,	
+		
+		OPPOS + POSX + 12, 
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE2,	
+
+		ROOMEND
+	);
+	room27_3: array[] of byte = (
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE2,
+		
+		OPPOS + POSX + 15, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE3,	
+		OPDRAW + DSPECIAL +	DS_COLLAPSE4,	
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 6, 
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE2,	
+		OPDRAW + DSPECIAL +	DS_COLLAPSE4,	
+
+		OPPOS + POSX + 14, 
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL +	DS_COLLAPSE2,
+		
+		ROOMEND
+	);
+	room27_4: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5
+		
+		ROOMEND
+	);
+	room27_5: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+	);
+
+	room27_list: array[] of integer = ( 
+		room27_0,
+		room27_1,
+		room27_2,
+		room27_3,
+		room27_4,
+		room27_5,
+		
+		ROOMEND 
+	);
+
+
+// 28
+
+room28_0: array[] of byte = (
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 20,
+		OPDRAW + DPLATFORM + DLEFT + 3,
+
+		OPPOS + POSX + 5,				// set player start pos
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 18,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+
+		OPPOS + POSX + 17,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		
+		OPPOS + POSX + 18,
+		OPPOS + POSY + 14,
+		OPDRAW + DPLATFORM + DLEFT + 2,
+		
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,		// cheese 1
+		
+		ROOMEND
+	);
+	room28_1: array[] of byte = (
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2;
+		OPPOS + POSYR - 1,
+		OPPOS + POSX + 6,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DLEFT + 1,
+		
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,		// cheese 2
+
+		ROOMEND
+	);
+	room28_2: array[] of byte = (
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3;
+		OPPOS + POSYR + 1,
+		OPPOS + POSXR + 3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4;
+		
+		OPPOS + POSYR - 4,
+		OPPOS + POSXR + 2,
+		OPDRAW + DSPECIAL + DS_DOOR,		// DOOR
+		
+		ROOMEND
+	);
+
+	room28_list: array[] of integer = ( 
+		room28_0,
+		room28_1,
+		room28_2,
+		
+		ROOMEND 
+	);
+
+// 29
+
+room29_0: array[] of byte = (
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 21,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+	
+		OPPOS + POSX + 17,				// set player start pos
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 21,
+		OPDRAW + DPLATFORM + DLEFT + 7,
+		
+		OPPOS + POSX + 15,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+	
+		OPPOS + POSX + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+
+		OPPOS + POSX + 11,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+
+		OPPOS + POSX + 8,
+		OPDRAW + DPLATFORM + DLEFT + 5,
+		
+		OPPOS + POSX + 7,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+	
+		OPPOS + POSX + 4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 20,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+
+		ROOMEND
+	);
+	room29_1: array[] of byte = (
+
+		OPPOS + POSX + 10,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		
+		OPPOS + POSX + 14,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+		
+		ROOMEND
+	);
+	room29_2: array[] of byte = (
+		
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 16,
+		OPDRAW + DSOLID + DLEFT + 4,
+		OPDRAW + DSOLID + DUP,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+	room29_3: array[] of byte = (
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+				
+		ROOMEND
+	);
+	room29_4: array[] of byte = (
+		
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 15,
+		OPDRAW + DLADDER + DUP + 2,
+		OPDRAW + DLADDER + DRIGHT,
+		OPDRAW + DPLATFORM + DUP,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5
+		
+		ROOMEND
+	);
+	room29_5: array[] of byte = (
+		
+		OPPOS + POSYR + 1,
+		OPPOS + POSXR + 1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		OPDRAW + DPLATFORM + DUP,
+		
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6
+				
+		ROOMEND
+	);
+	room29_6: array[] of byte = (
+		
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		ROOMEND
+	);
+
+	room29_list: array[] of integer = ( 
+		room29_0,
+		room29_1,
+		room29_2,
+		room29_3,
+		room29_4,
+		room29_5,
+		room29_6,
+		
+		ROOMEND 
+	);
+
+// 30
+
+room30_0: array[] of byte = (
+	
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+
+		OPPOS + POSX + 3,				// set player start pos
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 3,
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 6,
+		OPDRAW + DLADDER + DUP + 1,
+		OPDRAW + DLADDER + DLEFT,
+		OPDRAW + DPLATFORM + DLEFT + 2,
+		
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 3,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+		
+		ROOMEND
+	);
+	room30_1: array[] of byte = ( 
+		
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 9,
+		OPDRAW + DLADDER + DDOWN + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		
+		OPPOS + POSXR - 2,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+		
+		ROOMEND 
+	);
+	room30_2: array[] of byte = ( 
+
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		
+		OPDRAW + DPLATFORM + DRIGHT,
+		OPDRAW + DPLATFORM + DUP,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		OPPOS + POSXR + 1,
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND 
+	);
+	room30_3: array[] of byte = ( 
+
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+		
+		ROOMEND 
+	);
+	room30_4: array[] of byte = ( 
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 6,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND 
+	);
+
+	room30_list: array[] of integer = ( 
+		room30_0,
+		room30_1,
+		room30_2,
+		room30_3,
+		room30_4,
+		
+		ROOMEND 
+	);
+
+// 31
+
+	room31_0: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DPLATFORM + DRIGHT + 4;
+		OPPOS + POSYR -1,
+		OPPOS + POSX + 8,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 1,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 4,				// set player start pos
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 13, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room31_1: array[] of byte = (
+	
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 13,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+		OPPOS + POSXR - 1,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 9,
+		OPPOS + POSYR + 1,
+		OPDRAW + DPLATFORM + DRIGHT + 2;
+		OPPOS + POSYR - 1,
+		OPPOS + POSXR - 3,
+		OPDRAW + DSPECIAL + DS_SPRING,
+	
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+
+		ROOMEND
+	);
+	room31_2: array[] of byte = (
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 7,
+		OPDRAW + DPLATFORM + DRIGHT + 4;
+		OPPOS + POSYR -1,
+		OPPOS + POSX + 7,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 3,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+				
+		ROOMEND
+	);
+	room31_3: array[] of byte = (
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR - 5,
+		OPDRAW + DSPECIAL + DS_SPRING;
+		OPPOS + POSXR + 7,
+		OPDRAW + DSPECIAL + DS_SPRING;
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+				
+		ROOMEND
+	);
+	room31_4: array[] of byte = (
+	
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_SPRING,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_SPRING,	// HIDDEN TRAP
+		
+		ROOMEND
+	);
+
+	room31_list: array[] of integer = ( 
+		room31_0,
+		room31_1,
+		room31_2,
+		room31_3,
+		room31_4,
+
+		
+		ROOMEND 
+	);	
+
+// 32
+
+room32_0: array[] of byte = (
+	
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 16,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSX + 1,				// set player start pos
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPPOS + POSX + 7,
+		OPPOS + POSY + 14,
+
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 12,
+		OPDRAW + DSOLID + DRIGHT + 3,
+
+		OPPOS + POSX + 17,
+		OPPOS + POSY + 10,
+
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 8,
+		OPDRAW + DSOLID + DLEFT + 5,
+		
+		OPPOS + POSX + 11,
+		OPPOS + POSY + 7,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+		
+		ROOMEND
+	);
+	room32_1: array[] of byte = (
+	
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 18,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+		
+		ROOMEND
+	);
+	room32_2: array[] of byte = (
+	
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+	room32_3: array[] of byte = (
+	
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 12,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+		
+		ROOMEND
+	);
+	room32_4: array[] of byte = (
+	
+		OPPOS + POSX + 1,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		ROOMEND
+	);
+	
+	room32_list: array[] of integer = ( 
+		room32_0,
+		room32_1,
+		room32_2,
+		room32_3,
+		room32_4,
+		
+		ROOMEND 
+	);
+
+// 33
+
+room33_0: array[] of byte = (
+	
+		OPPOS + POSX + 18, 
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		
+		OPPOS + POSX + 2, 
+		OPPOS + POSY + 17,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 1
+		
+		ROOMEND
+	);
+	room33_1: array[] of byte = (
+	
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPRING,
+
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 2
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		
+		ROOMEND
+	);
+	room33_2: array[] of byte = (
+
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_SPRING,
+	
+		OPPOS + POSX + 18, 
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DLEFT + 4,
+		
+		OPPOS + POSX + 2, 
+		OPPOS + POSY + 9,
+		OPDRAW + DPLATFORM + DRIGHT + 4,
+
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 3
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		
+		ROOMEND
+	);
+	room33_3: array[] of byte = (
+	
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 4
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		
+		ROOMEND
+	);
+	room33_4: array[] of byte = (
+	
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,  // cheese 5
+
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		
+		ROOMEND
+	);
+	room33_5: array[] of byte = (
+	
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_DOOR,  // Jump over and drop down
+		
+		ROOMEND
+	);
+	
+	room33_list: array[] of integer = ( 
+		room33_0,
+		room33_1,
+		room33_2,
+		room33_3,
+		room33_4,
+		room33_5,
+		
+		ROOMEND 
+	);
+
+// 34
+
+room34_0: array[] of byte = (
+	
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 5,
+		
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 9,
+		
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 13,
+		
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 17,
+		
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+
+		OPPOS + POSX + 17,				// set player start pos
+		OPPOS + POSY + 2,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 5, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 16, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 2, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+
+		ROOMEND
+	);
+	room34_1: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 13, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 2, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_ERASE,	// ERASE cheese 3
+
+		ROOMEND
+	);
+
+	room34_2: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 7, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 5
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 5, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_ERASE,	// ERASE cheese 1
+
+		ROOMEND
+	);
+	room34_3: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+	);
+	room34_4: array[] of byte = (
+		
+		OPPOS + POSX + 10, 
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 6 - erase door?
+
+		OPPOS + POSX + 8, 
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 16, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 11, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 6, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		ROOMEND
+	);
+	room34_5: array[] of byte = (
+		
+		OPPOS + POSX + 14, 
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 17, 
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 3, 
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		OPPOS + POSX + 9, 
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_SPIKE,
+		
+		ROOMEND
+	);
+	room34_list: array[] of integer = ( 
+		room34_0,
+		room34_1,
+		room34_2,
+		room34_3,
+		room34_4,
+		room34_5,
+		room34_3,
+		
+		ROOMEND 
+	);
+
+// 35
+
+room35_0: array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 6,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DPLATFORM + DRIGHT + 2,	
+		
+		OPPOS + POSX + 3,				// set player start pos
+		OPPOS + POSY + 4,
+		OPDRAW + DSPECIAL + DS_PLAYER,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 16, 
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 1
+				
+		ROOMEND
+	);
+	room35_1: array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 10,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 2		
+		
+		ROOMEND
+	);
+	room35_2: array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 14,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DPLATFORM + DRIGHT + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR - 2,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 3
+		
+		ROOMEND
+	);
+	room35_3: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 5,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		
+		ROOMEND
+	);
+	room35_4: array[] of byte = (
+
+		OPPOS + POSX + 2,
+		OPPOS + POSY + 18,
+		OPDRAW + DSOLID + DRIGHT + 2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE4,
+		OPDRAW + DSPECIAL + DS_COLLAPSE3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE2,
+		OPDRAW + DSOLID + DRIGHT + 2,
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSXR - 2,
+		OPPOS + POSYR - 1,
+		OPDRAW + DSPECIAL + DS_CHEESE,	// cheese 4
+		
+		ROOMEND
+	);
+	room35_5: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 16,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		
+		ROOMEND
+	);
+	room35_6: array[] of byte = (
+
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+
+		OPPOS + POSX + 3,
+		OPPOS + POSY + 17,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		
+		ROOMEND
+	);
+	
+	room35_list: array[] of integer = ( 
+		room35_0, 
+		room35_1,
+		room35_2,
+		room35_3,
+		room35_4,
+		room35_5,
+		room35_6,
+		
+		ROOMEND
+	);
+	
+// 36
+
+room36_0: array[] of byte = (
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSXR + 1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 1 END
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSX + 10,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 2 END
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 11,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSX + 11,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 3 END
+		OPPOS + POSX + 5,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSX + 10,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 4 END
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 13,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSX + 9,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSXR + 1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 5 END
+		OPPOS + POSX + 8,
+		OPPOS + POSY + 14,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 6 END
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSXR + 1,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 7 END
+		OPPOS + POSX + 9,
+		OPPOS + POSY + 16,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,
+		OPPOS + POSXR + 3,
+		OPDRAW + DSPECIAL + DS_COLLAPSE1,	//LINE 8 END
+		
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_PLAYER,		//SPAWN PLAYER
+		
+		OPDRAW + DSPECIAL + DS_PAUSE1,
+		
+		OPPOS + POSX + 15,
+		OPPOS + POSY + 10,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		
+		ROOMEND
+	);
+	room36_1: array[] of byte = (
+		OPPOS + POSX + 10,
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		ROOMEND
+	);
+	room36_2: array[] of byte = (
+		OPPOS + POSX + 13,
+		OPPOS + POSY + 15,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		ROOMEND
+	);
+	room36_3: array[] of byte = (
+		OPPOS + POSX + 6,
+		OPPOS + POSY + 12,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		ROOMEND
+	);
+	room36_4: array[] of byte = (
+		OPPOS + POSX + 14,
+		OPPOS + POSY + 8,
+		OPDRAW + DSPECIAL + DS_CHEESE,
+		ROOMEND
+	);
+	room36_5: array[] of byte = (
+		OPPOS + POSX + 4,
+		OPPOS + POSY + 9,
+		OPDRAW + DSPECIAL + DS_DOOR,
+		ROOMEND
+	);
+
+	room36_list: array[] of integer = ( 
+		room36_0,
+		room36_1,
+		room36_2,
+		room36_3,
+		room36_4,
+		room36_5,
+		ROOMEND 
+	);
+
+
+
+
+// -------------------------------------------------------
+
+
+
+
+
+
+
+
+// list of Rooms 
+// 12 rooms per level, 3 levels, 36 rooms in total
+
+	rooms_list: array[] of integer = (
+	
+		0, // generic placeholder for level select (will be one of four)
+		room1_list,
+		room2_list,
+		room3_list,
+		room4_list,
+		room5_list,
+		room6_list,
+		room7_list,
+		room8_list,
+		room9_list,
+		room10_list,
+		room11_list,
+		room12_list,
+
+		room13_list,		
+		room14_list,
+		room15_list,
+		room16_list,
+		room17_list,
+		room18_list,
+		room19_list,
+		room20_list,
+		room21_list,
+		room22_list,
+		room23_list,
+		room24_list,
+		
+		room25_list,
+		room26_list,
+		room27_list,
+		room28_list,
+		room29_list,
+		room30_list,
+		room31_list,
+		room32_list,
+		room33_list,
+		room34_list,
+		room35_list,
+		room36_list
+		
+	);
+
+	// the three levels
+	levels_list: array[3] of integer = (
+	
+		level0_list,
+		level1_list,
+		level2_list
+
+	);
+	
+	levelBCD: array[3] of byte = (
+	
+		LEVEL1BCD,
+		LEVEL2BCD,
+		LEVEL3BCD
+	);
+	
+	tile_list: array[3] of integer = (
+	
+		#ATILES1,
+		#ATILES2,
+		#ATILES3
+
+	);

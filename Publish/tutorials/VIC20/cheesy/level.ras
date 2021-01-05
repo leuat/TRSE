@@ -1,0 +1,429 @@
+/*
+
+	Level routines
+	
+	Used to draw the level and test where tile blocks are for the player.
+	(test blocks hardcoded to player for speed) 
+
+*/
+
+
+// draw level map
+procedure Level_Draw();
+begin
+
+	SCREEN_BG_COLOR := BLACK + BLACK;
+	
+	// clear screen
+	vbmClear( 0 );
+	
+	// clear room map data
+	Room_Clear();
+	
+	// set up colours
+	if ( gameRoom = 0 ) then
+	begin 
+
+
+		i :=  gameLevel << 1;
+		vbmClearColor( levelColour_list[ i  ] );	
+		SCREEN_BG_COLOR := levelColour_list[ i + 1 ];
+
+	end 
+	else
+	begin
+
+		i := ( random() & 15 ) << 1;
+		vbmClearColor( roomColour_list[ i  ] );	
+		SCREEN_BG_COLOR := roomColour_list[ i + 1 ];
+
+	end;
+end;
+
+
+// special text
+procedure Level_DrawSpecial();
+var
+	// level messages
+	l0_r1_jump: cstring = 			( "MOUSES JUMP" );
+	l0_r2_climb: cstring = 			( "MOUSES CLIMB" );
+	l0_r3_highjump: cstring = 		( "MOUSES HIGH JUMP UP" );
+	l0_r3_pressfire: cstring =		( "HOLD UP AND FIRE");
+	l0_r4_jumpdown: cstring =		( "MOUSES JUMP DOWN" );
+	l0_r4_pressfire: cstring =		( "HOLD DOWN AND FIRE");
+
+	l1_r1_spring: cstring =			( "SPRING IN AIR?" );
+	l1_r2_back: cstring =			( "BOUNCE BACK" );
+
+	l2_r1_crumble: cstring =		( "DON'T CRUMBLE ON ME!" );
+
+begin
+
+	if ( section = SECTION_ROOM ) then
+	begin
+	
+
+		if ( gameLevel = 0) then
+		begin
+		
+			if ( levelComplete[ 0 ] = 1 ) then
+				vbmDrawSmallTextE( #l0_r1_jump, #font4, 19, 120, 5 );
+
+			if ( levelComplete[ 0 ] = 2 ) then
+				vbmDrawSmallTextE( #l0_r2_climb, #font4, 20, 90, 5 );
+
+			if ( levelComplete[ 0 ] = 3 ) then
+			begin
+				vbmDrawSmallTextE( #l0_r3_highjump, #font4, 4, 75, 5 );
+				vbmDrawSmallTextE( #l0_r3_pressfire, #font4, 5, 82, 5 );
+			end;
+		
+			if ( levelComplete[ 0 ] = 4 ) then
+			begin
+				vbmDrawSmallTextE( #l0_r4_jumpdown, #font4, 24, 45, 5 );
+				vbmDrawSmallTextE( #l0_r4_pressfire, #font4, 22, 52, 5 );
+			end;
+
+		end;
+		
+		if ( gameLevel = 1 ) then
+		begin
+		
+			if ( levelComplete[ 1 ] = 1 ) then
+				vbmDrawSmallTextE( #l1_r1_spring, #font4, 23, 140, 5 );
+				
+			if ( levelComplete[ 1 ] = 2 ) then
+				vbmDrawSmallTextE( #l1_r2_back, #font4, 20, 140, 5 );
+
+		end;
+		
+		if ( gameLevel = 2 ) then
+		begin
+		
+			if ( levelComplete[ 2 ] = 1 ) then
+				vbmDrawSmallTextE( #l2_r1_crumble, #font4, 19, 120, 5 );
+
+		end;
+		
+	end;
+
+end;
+
+
+// draw spring at springX and springY
+procedure Level_DrawSpring();
+begin
+
+	vbmSetColumn( springX );
+	screenmemory := screenmemory + springY;
+	vbmDrawTileE( #ASPRING );
+	
+end;
+
+// draw door open at player position (char aligned)
+procedure Level_OpenDoor();
+begin
+
+//	i := ( px + 3 ) >> 3;
+	k := ( py + 3 ) & $f8;
+	vbmSetColumn( i );
+	screenmemory := screenmemory + k;
+	vbmDrawTile( #AEXITOPEN );
+
+end;
+
+
+//
+// ----- Collapsable platforms start -----
+//
+
+// provide the i variable so can test left and right feet
+
+// draw collapsable below player position (char aligned)
+// p1 = point to graphic
+procedure Level_DrawCollapsable();
+begin
+
+//	i := ( px + 3 ) >> 3;
+	k := ( py + 8 ) & $f8;
+	vbmSetColumn( i );
+	screenmemory := screenmemory + k;
+	vbmDrawTileE( p1 );
+
+end;
+// Set p1 to point to collapsable platform tile you are standing on
+procedure Level_SetP1ForCollapsable();
+begin
+
+//	i := ( px + 3 ) >> 3;
+	k := ( py + 8 ) >> 3;
+	p1 := addresstable( #levelAddr, i, k );
+	
+end;
+// Test block at feet
+// k = result  
+procedure Level_PlayerOnCollapsableTest();
+begin
+	
+//	i := ( px + 3 ) >> 3;
+	j := ( py + 8 ) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[ 0 ] & CHEESEMASK;				// check tile on level
+	l := p1[ 0 ] & COLLAPSEMASK;
+
+end;
+//
+// ----- Collapsable platforms end -----
+//
+
+
+// Test block at feet
+// k = result  
+procedure Level_PlayerFeetTest();
+begin
+	
+	i := (px + 3) >> 3;
+	j := (py + 7) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;				// check tile on level
+
+end;
+
+// Test Ladder to left at feet
+// k = result  
+procedure Level_PlayerLadderRightTest();
+begin
+	
+	i := (px+7) >> 3;
+	j := (py + 7) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;				// check tile on level
+
+end;
+
+// wider, 2 feet test block at feet
+// k = result
+procedure Level_PlayerFeetTestPlatform();
+begin
+
+	i := (px + 2) >> 3;	
+	j := (py + 7) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+
+	if (k = TILEID_BLANK) then
+	begin
+		i := (px + 4) >> 3;
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;								// check tile on level
+		
+	end;	
+
+end;
+
+// Test block at back foot
+// k = result  
+procedure Level_PlayerRunFeetTest();
+begin
+	
+	// jumping / falling should not test 
+	if ( playerState = PLAYERSTATE_JUMP or playerState = PLAYERSTATE_FALL ) then 
+	begin
+		
+		k := 0;
+		return;
+		
+	end;
+
+	i := (px + 3) >> 3;
+	j := (py + 7) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;				// check tile on level
+
+end;
+
+// Test block below feet 
+// k = result  
+procedure Level_PlayerBelowFeetTest();
+begin
+	
+	i := (px + 4) >> 3;
+	j := (py + 8) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+
+end;
+
+// test if feet are on a platform to allow a drop down test
+// k = result
+procedure Level_PlayerFeetOnPlatfornTest();
+begin
+	
+	i := px >> 3;
+	j := (py + 8) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+	
+	// if left side is not a platform, check right side
+	if (k <> TILEID_PLATFORM) then
+	begin
+		i := (px + 6) >> 3;
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;					// check tile on level
+		
+	end;	
+
+end;
+// Test block below platform to see if can drop down (two test)
+// k = result  
+procedure Level_PlayerDropDownTest();
+begin
+	
+	i := px >> 3;
+	j := (py + 16) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;						// check tile on level
+
+	if (k = TILEID_BLANK) then
+	begin
+		i := (px + 6) >> 3;
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;					// check tile on level
+		
+	end;	
+
+end;
+
+// Tests the block beneath each foot (two tests)
+// k = result  
+procedure Level_PlayerFallTest();
+begin
+	
+	i := px >> 3; // + 2	
+	j := (py + 8) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;						// check tile on level
+
+	if (k = TILEID_BLANK) then
+	begin
+		i := (px + 6) >> 3;
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;					// check tile on level
+		
+	end;	
+
+end;
+
+// test block to right of player
+// k = result  
+procedure Level_PlayerRightTest();
+begin
+	
+	i := (px + 6) >> 3;	
+	j := (py + 3) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+	
+end;
+
+// test block to left of player
+// k = result  
+procedure Level_PlayerLeftTest();
+begin
+	
+	i := (px - 1) >> 3;
+	j := (py + 3) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+	
+end;
+
+// test block above player
+// k = result  
+procedure Level_PlayerJumpTest();
+begin
+	
+//	i := (px + 3) >> 3;	
+	i := (px + 2) >> 3;	
+	j := (py - 1) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+
+	if (k = TILEID_BLANK) then
+	begin
+		i := (px + 4) >> 3;
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;								// check tile on level
+		
+	end;	
+	
+end;
+
+// Test block at centre of sprite
+// k = result  
+procedure Level_PlayerCentreTest();
+begin
+	
+	i := (px + 3) >> 3;
+	j := (py + 3) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;								// check tile on level
+
+end;
+
+// Test diamond shape from centre of sprite
+// And look for a spike collision
+// k = result  
+procedure Level_PlayerSpikeTest();
+begin
+	
+	// check left
+	i := (px + 2) >> 3;	
+	j := (py + 3) >> 3;
+	
+	p1 := addresstable( #levelAddr, i, j );
+	k := p1[0] & CHEESEMASK;				// check tile on level
+
+	// check right
+	if (k <> TILEID_SPIKE) then
+	begin
+		i := (px + 4) >> 3;
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;			// check tile on level
+		
+	end;
+	// check top	
+	if (k <> TILEID_SPIKE) then
+	begin
+		i := (px + 4) >> 3;
+		j := (py + 1) >> 3;
+
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;			// check tile on level
+		
+	end;
+	// check bottom	- ish
+	if (k <> TILEID_SPIKE) then
+	begin
+		//i := (px + 4) >> 3;
+		j := (py + 5) >> 3;
+
+		p1 := addresstable( #levelAddr, i, j );
+		k := p1[0] & CHEESEMASK;			// check tile on level
+		
+	end;	
+
+end;

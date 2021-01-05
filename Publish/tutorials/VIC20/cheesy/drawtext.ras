@@ -1,0 +1,60 @@
+
+// Draw Text routine
+// p1 = pointer to next text token
+// textX and textY next pos on screen
+procedure DrawText_Update();
+begin
+
+	// get next token
+	textChar := p1[ 0 ];
+
+	if ( textChar = TEXT_END ) then return; // no more text to display
+
+	if ( textChar = TEXT_LARGE or textChar = TEXT_SMALL ) then
+	begin
+	
+		textSize := textChar;
+		textX := p1[ 1 ]; // get x pos
+		textY := p1[ 2 ]; // get y pos
+		p1 := p1 + 3; // move to next token
+		return;
+
+	end;
+
+	// convert ASCII A-Z [?] up left arrow to screen codes
+	if ( textChar >= 64 and textChar <= 95 ) then textChar := textChar - 64; // convert text down
+
+	if ( textSize = TEXT_LARGE ) then
+	begin
+	
+		vbmDrawTextE( #textChar, #font8, textX, textY, 8 );
+		
+		textX := textX + 1;
+		if ( textX > 19 ) then
+		begin
+		
+			textX := 0;
+			textY := textY + 9;
+			
+		end;
+
+	end
+	else
+	begin
+	
+		vbmDrawSmallTextE( #textChar, #font4, textX, textY, 8 );
+		
+		textX := textX + 1;
+		if ( textX > 39 ) then
+		begin
+		
+			textX := 0;
+			textY := textY + 7;
+			
+		end;
+
+	end;
+	
+	p1 := p1 + 1; // next token
+
+end;

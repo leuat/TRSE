@@ -1,0 +1,157 @@
+
+// set the screenmemory pointer to the address of the Y pos of player
+procedure _Player_SetYPosScreenMemory();
+begin
+
+	screenmemory := screenAddr[ py ];
+	
+end;
+
+
+@donotremove "_Player_PrintADigit"
+procedure _Player_PrintADigit();
+begin
+
+	asm("
+	; 
+	; a = digit to display
+	; y = 0
+bcdplotvdigit
+	clc
+	adc #54 ; 0 screen code
+	sta (screenmemory),y
+	; next row up
+	lda screenmemory
+	sec
+	sbc #$16
+	sta screenmemory+0
+	bcs _bcdAddoverflow
+	dec screenmemory+1
+_bcdAddoverflow
+
+	");
+	
+end;
+
+procedure _Player_CheckLoseLife();
+begin
+
+	// splats are now acid, tombstone and enemies follow
+	if ( screenmemory[ px ] >= SPLAT_CHAR ) then
+	begin
+	
+		lives := lives - 1;
+		mode := MODE_LIFE;
+		
+		m_PlaySplatSound();
+
+	end;
+
+	// end game - go through doors!
+	if ( screenmemory[ px ] = DOOR_CHAR ) then
+	begin
+	
+		mode := MODE_GAMEOVER;
+
+	end;
+	
+end;
+
+// move the player
+procedure _Player_Move();
+begin
+
+	if ( joy1 & JOY_UP ) then
+	begin
+		// leave room?
+		if ( py = 0 ) then
+		begin
+			room := room - 1;
+			py := py + ROOMTILEHEIGHT;
+			Screen_DrawRoom();
+			return
+		end;		
+
+		p1 := screenmemory - SCREEN_WIDTH;
+		if ( p1[ px ] < ROOMTILE ) then
+		begin
+			// move up
+			py := py - 1;
+			pdir := PUP;
+			_Screen_UpdateScreenPos(); // need for diagonals - as now in a new location
+		end;
+	end;
+	if ( joy1 & JOY_DOWN ) then
+	begin
+		// leave room?
+		if ( py = ROOMTILEHEIGHT ) then
+		begin
+			room := room + 1;
+			py := py - ROOMTILEHEIGHT;
+			Screen_DrawRoom();
+			return
+		end;		
+
+		p1 := screenmemory + SCREEN_WIDTH;
+		if ( p1[ px ] < ROOMTILE ) then
+		begin
+			// move down
+			py := py + 1;
+			pdir := PDOWN;
+			_Screen_UpdateScreenPos(); // need for diagonals - as now in a new location
+		end;
+	end;
+	if ( joy1 & JOY_LEFT ) then
+	begin
+		// leave room?
+		if ( px = 3 ) then
+		begin
+			room := room - ROOMHEIGHT;
+			px := px + ROOMTILEWIDTH;
+			Screen_DrawRoom();
+			return
+		end;		
+
+		p1 := screenmemory - 1;
+		if ( p1[ px ] < ROOMTILE ) then
+		begin
+			// move left
+			px := px - 1;
+			pdir := PLEFT;
+		end;
+	end;
+	if ( joy1 & JOY_RIGHT ) then
+	begin
+		// leave room?
+		if ( px = ROOMTILEWIDTH+3 ) then
+		begin
+			room := room + ROOMHEIGHT;
+			px := px - ROOMTILEWIDTH;
+			Screen_DrawRoom();
+			return
+		end;		
+
+		p1 := screenmemory + 1;
+		if ( p1[ px ] < ROOMTILE ) then
+		begin
+			// move right
+			px := px + 1;
+			pdir := PRIGHT;
+		end;
+	end;
+
+
+end;
+
+// collect a key
+procedure _Player_WipeKey();
+begin
+
+	keys := keys + 1;
+
+	bcdAdd( #bcdKey, #bcdBonus, 4 ); // keys worth 5000 more with each key collected
+	bcdAdd( #bcdScore, #bcdKey, 4 );
+
+	m_PlayGetKeySound();
+	
+end;

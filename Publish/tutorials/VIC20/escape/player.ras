@@ -1,0 +1,162 @@
+
+// initialise the player data
+procedure Player_Init();
+begin
+
+	px := 10;
+	py := 10;
+	pdir := PDOWN;
+	lives := LIVES_START;
+	keys := 0; //0;
+	bx := 0; // set player bullet xpos to 0 to disable it 
+		
+	// clear score and key value (bytes 0-3, 4-7)
+	for i:=0  to 8 do
+		bcdScore[ i ] := $00;
+
+end;
+
+// display a vertical score (BCD number)
+procedure Player_PrintScores();
+begin
+
+	// scores
+	screenmemory := $1e00 + (22 * 12) + 1; // where to print score
+	asm("
+	
+	ldy #$0
+	ldx #$0 ; score byte index
+_Player_PrintScore
+	lda bcdScore,x
+	inx
+	pha
+	and #$0f
+	jsr bcdplotvdigit
+	pla
+	lsr
+	lsr
+	lsr
+	lsr
+	jsr bcdplotvdigit
+	cpx #4
+	bne _Player_PrintScore
+
+	");
+	
+	// high scores
+	screenmemory := $1e00 + (22 * 12) + 20; // where to print score
+	asm("
+	
+	ldy #$0
+	ldx #$0 ; score byte index
+_Player_PrintHighScore
+	lda bcdHighScore,x
+	inx
+	pha
+	and #$0f
+	jsr bcdplotvdigit
+	pla
+	lsr
+	lsr
+	lsr
+	lsr
+	jsr bcdplotvdigit
+	cpx #4
+	bne _Player_PrintHighScore
+
+	");
+	
+end;
+
+// collect key - assume screenmemory still points to player pos
+procedure Player_CollectKey();
+begin
+
+//	_Screen_SetColorAddress();
+
+	if ( px = k1x and py = k1y ) then
+	begin
+		_Player_WipeKey();
+		roomp[ 95 ] := roomp[ 95 ] | ROOM_KEY1;
+		k1x := 0;
+	//	k1y := 0;
+	end;
+	if (px = k2x and py = k2y) then
+	begin
+		_Player_WipeKey();
+		roomp[ 95 ] := roomp[ 95 ] | ROOM_KEY2;
+		k2x := 0;
+	//	k2y := 0;
+	end;
+	
+end;
+
+// process input and update the player
+procedure Player_Update();
+begin
+
+	if ( joy1 & JOY_MOVE <> 0 ) then
+	begin
+	
+		// holding a direction
+		if ( pstep = 0 ) then
+		begin
+		
+			// time to move (if possible)
+			
+			// clear current spot
+			_Player_SetYPosScreenMemory();
+			_Player_CheckLoseLife();
+			screenmemory[ px ] := 0;
+
+			// move player(expects screenmemory to contain pos of player)
+			_Player_Move();
+
+		end;		
+		
+		if (pstep = ANIMSTEP) then panim := panim xor PANIMMASK; // toggle animation frame
+		pstep := ( pstep + 1 ) & PSTEPMASK; // controls move speed
+
+	end
+	else
+	begin
+	
+		pstep := 0; // reset move counter
+
+	end;
+
+	// Draw player with animation frame (possibly in new location)
+	_Player_SetYPosScreenMemory();
+	_Player_CheckLoseLife();
+	screenmemory[ px ] := pdir + panim;
+	
+	Player_CollectKey();
+
+end;
+
+procedure Player_Debug();
+begin
+
+	if (joy1pressed & JOY_UP) then
+	begin
+		room := room - 1;
+		Screen_DrawRoom();
+	end;
+	if (joy1pressed & JOY_DOWN) then
+	begin
+		room := room + 1;
+		Screen_DrawRoom();
+	end;
+	if (joy1pressed & JOY_LEFT) then
+	begin
+		room := room - ROOMHEIGHT;
+		Screen_DrawRoom();
+	end;
+	if (joy1pressed & JOY_RIGHT) then
+	begin
+		room := room + ROOMHEIGHT;
+		Screen_DrawRoom();
+	end;
+
+end;
+

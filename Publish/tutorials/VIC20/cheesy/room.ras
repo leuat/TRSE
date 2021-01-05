@@ -1,0 +1,112 @@
+
+// game room draw
+procedure Room_Draw();
+var
+@include "roomdata.ras"			// room definitions and data
+
+begin
+
+	roomCount := roomCount - 1;
+	if ( roomCount >= 1 ) then return; // not reached 0 yet
+	
+	// draw level select screen faster
+	if ( section = SECTION_GAME ) then
+		roomCount := ROOMCOUNTRESET
+	else
+		roomCount := LEVELCOUNTRESET;
+
+
+	// get room token
+		
+	ii := true;
+	while ( ii ) do
+	begin
+
+		roomToken := rp[ room ];
+		
+		i := cheeseId >> 4 - 1;
+		// on room select, stop drawinf when > completed room.
+		if ( section = SECTION_ROOM and i > levelComplete[ gameLevel ] ) then
+		begin
+			
+			roomToken := ROOMEND;
+			ii := false;
+
+		end;
+
+		if ( roomToken = ROOMEND ) then 
+		begin
+
+			i := cheeseList[ currentCheeseId ];
+			// any cheeses collected in list
+			if ( i <> 0 ) then
+			begin
+
+				// if there is another segment of room to draw
+				if ( levelp[ i ] <> ROOMEND ) then
+				begin
+
+					rp :=  levelp[ i ] ;				
+
+					currentCheeseId := currentCheeseId + 1;
+					room := 0;
+										
+				end;
+
+			end
+			else
+			// this is a level / room select screen - position player
+			// if off screen
+			if ( section = SECTION_ROOM and py >= 184 ) then
+			begin
+			
+				px := oldPx;
+				py := oldPy;					
+
+			end;
+			
+			return; // all done 
+			
+		end;
+			
+		if ( roomToken & OPMASK = OPPOS ) then 
+			rh_Reposition();
+			
+		if ( roomToken & OPMASK = OPDRAW ) then 
+		begin
+		
+			rh_DrawAction();
+			// normally leave loop
+			ii := false;
+			// but if room select screen, keep going until on last door
+			i := cheeseId >> 4;
+			if ( section = SECTION_ROOM and i < levelComplete[ gameLevel ] ) then ii := true;
+			
+		end;
+
+	end;
+
+end;
+
+
+procedure Room_Clear();
+begin
+
+	p1 := #LEVELMAP;
+	
+	// make first row solid so cannot jump into it (row 0)
+	for j := 0 to 20 do
+		p1[ j ] := TILEID_SOLID;
+		
+	// clear rest of room (rows 1 to 24)
+	for i := 0 to 23 do // 0 - 22 as already done a row
+	begin
+
+		p1 := p1 + 20; // width of level - go to next row
+	
+		for j := 0 to 20 do
+			p1[ j ] := TILEID_BLANK;
+			
+	end;
+
+end;

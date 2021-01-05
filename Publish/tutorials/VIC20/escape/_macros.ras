@@ -1,0 +1,103 @@
+
+// Set the vertical position of the screen
+procedure m_SetVerticalPosition() inline;
+begin
+
+	asm("
+
+	lda $9000
+	cmp #$c;keep
+	bne _ntscPosition
+
+	; pal
+	lda #$1d
+	jmp _palPosition
+
+_ntscPosition
+	; ntsc
+	lda #$11
+
+_palPosition
+	sta $9001
+
+	");
+			
+end;
+
+// set tick counters - useful for timing
+procedure m_SetTicks() inline;
+begin
+
+	asm("
+	
+	lda ticks
+	and #$3
+	sta ticks3		
+	and #$1
+	sta ticks1
+	
+	");	
+	
+end;
+
+procedure m_GetNumEnemiesLimited() inline;
+begin
+
+	asm("
+
+	lda keys
+	lsr
+	lsr
+Screen_DrawRoom_rightvarAddSub_TempVar = $88
+	sta Screen_DrawRoom_rightvarAddSub_TempVar 
+
+	ldy #$5e ; DATA_ENEMY
+	lda (p1),y
+	adc Screen_DrawRoom_rightvarAddSub_TempVar 
+
+	; if more that 16 limit it
+	cmp #$11;keep
+	bcc Screen_DrawRoom_NumEnemiesNotMax
+	lda #$10
+
+Screen_DrawRoom_NumEnemiesNotMax
+	sta numEnemies
+	
+	");
+	
+end;
+
+// shooting sound
+procedure m_PlayShootSound() inline;
+begin
+
+	s[ 1 ] := 240;
+	sc[ 1 ] := 5;
+
+end;
+// splat sound
+procedure m_PlaySplatSound() inline;
+begin
+
+	s[ 1 ] := 180;
+	sc[ 1 ] := 10;
+
+end;
+
+// title screen room sound
+procedure m_PlayStartSound() inline;
+begin
+
+	s[ 0 ] := 200 - room;
+	sc[ 0 ] := 5;
+
+end;
+
+// collect key sound
+procedure m_PlayGetKeySound() inline;
+begin
+
+	s[ 0 ] := 240;
+	sc[ 0 ] := 3;
+
+end;

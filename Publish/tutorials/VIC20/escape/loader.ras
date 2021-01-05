@@ -1,0 +1,126 @@
+program Load0;
+/*
+
+	Vic 20 loader - Install the loader routine
+	** DO NOT EXOMIZE THIS LOADER PRG **
+	
+	Installs a simple custom loader at $0100
+	
+*/
+var  
+	@VicMemoryConfig "none"
+	@projectsettings "ignorebasicsysstart" 0
+	@projectsettings "basicsysaddress" $1000
+	@projectsettings "startaddress" $1010
+
+	i: byte at $35;
+	
+	s1, d1: pointer;
+
+	cursorRow: byte at $d6;
+
+@exportframe "chr/loadingText.flf" "chr/loadingText.bin" 0 1 0  0 0  0 0  0
+@exportframe "chr/loadingText.flf" "chr/loadingText_col.bin" 0 1 1  0 0  0 0  0
+binLoader: incbin( "chr/loadingText.bin", $1234 ) compressed;
+binLoaderColour: incbin( "chr/loadingText_col.bin", $11A0 ) compressed;
+
+@use "compression"
+
+// code copied to address $100 (stack)
+procedure Loader();
+begin
+
+	asm("
+
+;$100
+progstart	dc.b $00, $10	; this is the address to jmp to after loading (set by my program)
+
+;$102
+oldVect 	dc.b 0, 0 		; old break vector
+
+; the flashing bar routine
+'$104
+loadVect
+
+	lda $a9  ; b1    a4=this works  a9 works best
+	and #%00000110
+	adc #8
+	sta $900F
+
+	jmp ($102)
+	
+; the loader code
+;$110
+callLoader
+	
+	; save the old vector
+	lda $0328
+	sta $102
+	lda $0329
+	sta $103
+	
+	; install my break routine to flash border colours @ $0104
+	lda #$04
+	sta $0328
+	lda #$01
+	sta $0329
+	
+	; load in, expect first two byte = address to load to
+	lda #0	; file num
+	ldx #1	; tape device
+	ldy #255 ; no command
+	jsr $ffba ; setlfs
+	
+	lda #0  ; no filename - so wont set x and y
+	jsr $ffbd ; setnam
+	
+	lda #0  ; 0 = load
+	ldx #$ff ; not specifying address - use address of file
+	ldy #$ff
+	jsr $ffd5 ; load
+
+	lda #0  ; file num
+	jsr $ffc3 ; close
+
+	jmp ($100) ; the vector pointing to where the code loaded is stored
+
+	");
+
+end;
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+begin
+
+	// set up
+	
+	definescreen();
+	cursorRow := 20;
+	AUX_COLOR_AND_VOLUME := 10; // needed for game
+
+	// show screenmemory
+	
+	screenmemory := $1E00;
+	colormemory := $9600;
+	Compression::Decompress( #binLoader, screenmemory );
+	Compression::Decompress( #binLoaderColour, colormemory );
+
+	// copy loader to stack
+
+	s1 := ProcedureToPointer( Loader() );
+	d1 := $0100;
+
+	// copy to $0100 - current loader is 70 bytes in length
+	for i:= 0 to 70 do
+	begin
+		d1[ i ] := s1[ i ];
+	end;
+
+	asm(" 
+	
+	jmp $0110 ; start the loader
+	
+	");
+
+end.

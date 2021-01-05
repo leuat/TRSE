@@ -1,0 +1,172 @@
+
+// forward references
+procedure Enemy_Init();
+procedure Enemy_Create();
+
+// converts a screenmemory address to the same place in colormemory
+procedure _Screen_SetColorAddress();
+begin
+	
+	// convert screen address
+	asm("
+	
+	ldx screenmemory
+	stx colormemory
+
+	lda screenmemory+1
+	eor #%10001000
+	sta colormemory+1
+
+	");
+	
+end;
+
+// Less memory to call routine to update than repeat in code
+procedure _Screen_UpdateScreenPos();
+begin
+
+	screenmemory := p1;
+
+end;
+
+// draw keys with colour
+procedure Screen_DrawKeys();
+begin
+
+	if ( k1x > 3 ) then
+	begin
+	
+		screenmemory := screenAddr[ k1y ];
+		screenmemory[ k1x ] := 1; // add border width of 3
+
+	end;
+	if ( k2x > 3 ) then
+	begin
+	
+		screenmemory := screenAddr[ k2y ];
+		screenmemory[ k2x ] := 1; // add border width of 3
+
+	end;
+	// special, if in start room and got all keys, then show doors
+	if ( room = 12 and keys >= TOTAL_KEYS ) then
+	begin
+	
+		doors1 := DOOR_CHAR;
+		doors2 := DOOR_CHAR;
+
+	end;
+
+end;
+
+// draws current 'room'
+procedure Screen_DrawRoom();
+begin
+
+	m_PlayStartSound();
+
+	p1 := mapAddr0[ room ]; // start of room
+	roomp := p1; // store pointer to current room for use in game
+	p2 := $8268; // address of graphic \ char (77) - has bits 128 - 1 set
+
+	// record position of player when enters room
+	rx := px;
+	ry := py;
+	
+	// disable bullet - all these are zero - TRSE can optimise
+	bx := 0;
+	k1x := 0; // already collected
+//	k1y := 0;	
+	k2x := 0; // already collected
+//	k2y := 0;
+//	sc[ 0 ] := 0; // clear sound
+//	sc[ 1 ] := 0;
+
+	// get the flags
+	roomflags := p1[ DATA_FLAG ];
+	
+	if ( roomflags & ROOM_KEY1 = 0 ) then
+	begin
+		// get key data
+		k1x := p1[ DATA_KEY1 ] >> 4 + 3;
+		k1y := p1[ DATA_KEY1 ] & $0f;
+	end;
+	
+	if ( roomflags & ROOM_KEY2 = 0 ) then
+	begin
+		k2x := p1[ DATA_KEY2 ] >> 4 + 3;
+		k2y := p1[ DATA_KEY2 ] & $0f;
+	end;
+
+	// get enemy and flag data
+	///numEnemies := p1[ DATA_ENEMY ] + ( keys >> 2 );
+	//if (numEnemies > 16) then numEnemies := 16;
+	m_GetNumEnemiesLimited();
+
+	// set time for enemy to wait before they will move
+	enemyWait := ENEMY_WAITRESET;
+
+	// set up screen pointers
+	screenmemory := $1e03; // top left of play area
+	colormemory := $9603; // top left of play area
+	
+	// select colour and char to draw with
+	roomcolour := 3 + (random()&$03);
+	roomchar := ( room & 7 ) + ROOMTILE; // set room char tile based on room number
+
+	for jj := 0 to 2 do // two column blocks
+	begin
+	
+
+		for j := 0 to 14 do // rows
+		begin
+	
+			roomdata := p1[ j ]; // get first row of columns
+	
+			for i := 0 to 8 do // columns
+			begin
+
+				if ( roomdata & p2[ i ] <> 0 ) then 
+				begin
+					screenmemory[ i ] := roomchar;
+					colormemory[ i ] := roomcolour; 
+				end
+				else
+				begin
+					screenmemory[ i ] := 0;
+					colormemory[ i ] := WHITE;
+				end;
+
+			end;
+			
+			screenmemory := screenmemory + SCREEN_WIDTH; // next row on screen
+			colormemory := colormemory + SCREEN_WIDTH;
+
+		end;
+
+		// repeat for second half of the room
+		if ( room < 25 ) then 
+			p1 := p1 + 80 // level chars are in strips of 5 (16 pixels each) 
+		else 
+			p1 := p1 + 18; // title screen chars are next to each other
+			// note 18 because I steal bytes 14, 15, 16, 17 for BCD numbers - the depths I have to go to for RAM!!!
+		
+		screenmemory := $1e0b;
+		colormemory := $960b; 
+
+	end;
+
+	if ( room < 25 ) then 
+	begin
+	
+		Screen_DrawKeys();
+		Enemy_Init();
+		Enemy_Create();
+		
+	end;
+		 
+	// debug - to be able to complete the game
+	//keys:=TOTAL_KEYS;
+	
+end;
+
+

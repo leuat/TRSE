@@ -1,0 +1,55 @@
+
+// draw/erase (EOR) the cat sprites for ears and tail
+procedure Cat_Draw();
+begin
+
+	vbmSetPosition2( cat_ears, 184 );
+	vbmDrawSprite8E( #sprCatEars_A, #sprCatEars_B );
+	
+	vbmSetPosition2( cat_tail, 184 );
+	vbmDrawSprite8E( #sprCatTail_A, #sprCatTail_B );
+
+end;
+
+// move the cat
+procedure Cat_Update();
+begin
+
+	if ( ticks1 <> 0 ) then return;
+	
+	// move ears
+	if ( cat_delta & CATFLAG_EARS = 0 ) then
+	begin
+	
+		cat_ears := cat_ears + 1;
+		
+	end
+	else
+	begin
+	
+		cat_ears := cat_ears - 1;
+
+	end;
+
+	// move tail
+	if ( cat_delta & CATFLAG_TAIL = 0 ) then
+	begin
+	
+		cat_tail := cat_tail + 1;
+		
+	end
+	else
+	begin
+	
+		cat_tail := cat_tail - 1;
+
+	end;
+	
+	// turn around at screen edges
+	if ( cat_ears = 151 or cat_ears = 0 ) then
+		cat_delta := cat_delta xor CATFLAG_EARS;
+
+	if ( cat_tail = 151 or cat_tail = 0 ) then
+		cat_delta := cat_delta xor CATFLAG_TAIL;
+
+end;

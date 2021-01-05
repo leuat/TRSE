@@ -1,0 +1,113 @@
+
+procedure _Title_DrawRoom();
+begin
+
+	if ( ticks3 = 0 ) then Screen_DrawRoom();
+
+end;
+
+// Title screen
+procedure Title_Screen();
+begin
+	
+	room := ROOM_TITLE;
+	_Title_DrawRoom();
+
+
+	if ( joy1pressed & JOY_FIRE ) then 
+	begin
+	
+		mode := MODE_START;
+		room := 0;
+		Player_Init();
+
+	end;
+
+end;
+
+// Start screen - show all 25 rooms and reset them
+procedure Title_Start();
+begin
+
+	if ( ticks3 = 0 ) then
+	begin
+	
+		Screen_DrawRoom();
+		roomp[ DATA_FLAG ] := 0; // clear flags - keys collected
+		room := room + 1;
+		
+		//m_PlayStartSound();
+		
+		if ( room = 25 ) then 
+		begin
+			
+			room := 12;
+			
+			Screen_DrawRoom();
+			mode := MODE_GAME;
+			
+		end;
+	
+	end;
+
+end;
+
+// lost a life
+procedure Title_LostLife();
+begin
+	
+	// screenmemory
+	_Player_SetYPosScreenMemory();
+	screenmemory[ px ] := TOMBSTONE_CHAR;
+
+	if ( joy1pressed & JOY_FIRE ) then
+		if ( lives = LIVES_END ) then
+		begin
+		 
+			joy1pressed := 0; // prevent instant skip on game over
+			mode := MODE_GAMEOVER;
+			tx := 60; // use to add a delay to the game over - stop fire skipping over right away
+			
+		end
+		else
+		begin
+
+			// reset the room
+			px := rx;
+			py := ry;
+			
+			Screen_DrawRoom();
+			mode := MODE_GAME;
+			
+		end;
+
+end;
+
+
+// Game over or Game Won - wait for fire button
+procedure Title_GameOver();
+begin
+
+	if ( keys = TOTAL_KEYS ) then 
+		room := ROOM_WELLDONE
+	else
+		room := ROOM_GAMEOVER;
+		
+	_Title_DrawRoom();
+	
+	// check high score
+	if ( bcdcompare( #bcdScore, #bcdHighScore, 4) ) then
+	begin
+	
+		for i := 0 to 4 do
+			bcdHighScore[ i ] := bcdScore[ i ];
+	
+	end;
+	
+	if ( tx > 0 ) then tx := tx - 1;
+
+	if ( joy1pressed & JOY_FIRE and tx = 0 ) then mode := MODE_TITLE;
+
+end;
+
+

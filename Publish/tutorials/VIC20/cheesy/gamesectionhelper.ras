@@ -1,0 +1,296 @@
+
+
+// wait for the VBL
+procedure _gameSection_WaitVBL();
+begin
+
+	// wait for vertical blank - ticks is updated in the Vbl interrupt
+	while (ticks = oldticks) do begin end;
+	oldticks := ticks;
+
+end;
+
+// set up some common values to allow an experiment to start
+procedure _gameSection_SetupForExperiment();
+begin
+
+	// starting position
+	oldPx := 4*8;
+	oldPy := 19*8;
+	section := SECTION_EXPERIMENT;
+	gameLoop := false;
+
+end;
+
+// Test for the function keys and change section if pressed
+procedure _gameSection_TestKeys();
+begin
+
+	// F1 key
+	i := key::ReadKeyRow( key::ROW4 );
+	if ( i & key::BIT7 = 0 ) then
+	begin
+	
+		gameLevel := 0;
+		_gameSection_SetupForExperiment();
+
+	end;
+	
+	// F3 key
+	i := key::ReadKeyRow( key::ROW5 );
+	if ( i & key::BIT7 = 0 ) then
+	begin
+	
+		gameLevel := 1;
+		_gameSection_SetupForExperiment();
+
+	end;
+	
+	// F5 key
+	i := key::ReadKeyRow( key::ROW6 );
+	if ( i & key::BIT7 = 0 ) then
+	begin
+		
+		gameLevel := 2;
+		_gameSection_SetupForExperiment();
+
+	end;
+
+	if ( section <> SECTION_ROOM and section <> SECTION_GAME ) then
+	begin
+	
+		// SPACE key - used on title screens only
+		l := false;
+		i := key::ReadKeyRow( key::ROW4 );
+		if ( i & key::BIT0 = 0 ) then l := true;
+
+	
+	end;
+	
+end;
+procedure _gameSection_TestJoy();
+begin
+
+	// can use Joystick to start, pick first uncompleted level to play
+	readJoy1();
+	if ( joy1pressed = JOY_FIRE ) then
+	begin
+
+		_gameSection_SetupForExperiment();
+	
+		// pick level to play
+		if ( levelComplete[ 2 ] <= MAX_ROOMLEVEL ) then gameLevel := 2;
+		if ( levelComplete[ 1 ] <= MAX_ROOMLEVEL ) then gameLevel := 1;
+		if ( levelComplete[ 0 ] <= MAX_ROOMLEVEL ) then gameLevel := 0;
+		 
+	end;
+
+end;
+
+// clear a portion of the screen where a text message
+// will be displayed - simple dialog
+procedure _GameSection_DrawDialog();
+begin
+
+	for ii := 2 to 17 do // columns
+	begin
+
+		vbmSetColumn( ii ); // x column
+
+		for jj := 99 to 129 do // pixel rows
+		begin
+		
+			i := 255;
+			if ( jj = 99 or jj = 128 ) then i := 0;
+			if ( ii = 2 ) then i := i & %01111111; 
+			if ( ii = 16 ) then i := i & %11111110; 
+			screenmemory[ jj ] := i;
+
+		end;		
+
+	end;
+
+	vbmDrawSmallTextE( #strPressFire, #font4, 14, 118, 8 );
+
+
+end;
+
+// hold here until new fire button pressed
+procedure _GameSection_WaitForInput();
+begin
+
+	gameLoop := true;
+	while ( gameLoop ) do
+	begin
+	
+		Cat_Draw();
+		
+		_gameSection_WaitVBL();
+		
+		if ( section <> SECTION_EXPERIMENT ) then
+		begin
+		
+			i := SCREEN_BG_COLOR;
+			if ( ticks = 0 ) then SCREEN_BG_COLOR := i xor BLUE;
+
+		end;
+
+		Cat_Draw(); // erase
+		Cat_Update();
+		
+		readJoy1();
+		if ( joy1pressed = JOY_FIRE ) then gameLoop := false;
+
+	end;
+
+end;
+
+// display number of mice used
+// used on Experiment start and complete screens
+procedure _gameSection_NumberMiceUsed();
+var
+	strNumMice: cstring = ( "SUBJECT NUMBER" );
+
+begin
+
+	if ( section = SECTION_EXPERIMENTCOMPLETE ) then
+		i := 140
+	else
+		i := 111;
+
+	// number of mice used
+	vbmDrawSmallTextE( #strNumMice, #font4, 13, i, 5 );
+	vbmDrawBCD( #numMouseBCD, #ADIGIT, 7, i+7, 3 );
+
+
+end;
+
+// p1 = point to text
+// i = column
+procedure _gameSection_DrawRatingText();
+begin
+
+	vbmDrawSmallTextE( p1, #font4, i, 105, 5 );
+
+end;
+
+// display a rating
+// used on experiment complete screen
+procedure _gameSection_ShowRating();
+var
+	strRating2: cstring = ( "WOOP WOOP - CONGRATULATION ON YOUR CHEAT" );
+	bcdRating2: array[] of byte = ( $02, $00, $00 ); 
+	strRating10: cstring = ( "YOU ARE MOUSE BRUCE LEE!" );
+	bcdRating10: array[] of byte = ( $10, $00, $00 ); 
+	strRating20: cstring = ( "YOU ARE SUPER MOUSE!" );
+	bcdRating20: array[] of byte = ( $20, $00, $00 ); 
+	strRating30: cstring = ( "WELL DONE! YOU SAVED THE ECHOS" );
+	bcdRating30: array[] of byte = ( $30, $00, $00 ); 
+
+	strRatingBad: cstring = ( "WELL DONE! BUT DO BETTER NEXT TIME" );
+	
+begin
+
+	// 1 or less
+	if ( BcdCompare( #bcdRating2, #numMouseBCD, 3 ) ) then
+	begin
+	
+		p1 := #strRating2;
+		i := 0; // column to display from (so can centre)
+		_gameSection_DrawRatingText();
+		return;
+
+	end;
+	// 9 or less
+	if ( BcdCompare( #bcdRating10, #numMouseBCD, 3 ) ) then
+	begin
+	
+		p1 := #strRating10;
+		i := 8;
+		_gameSection_DrawRatingText();
+		return;
+
+	end;
+	// 19 or less
+	if ( BcdCompare( #bcdRating20, #numMouseBCD, 3 ) ) then
+	begin
+	
+		p1 := #strRating20;
+		i := 10;
+		_gameSection_DrawRatingText();
+		return;
+
+	end;
+	// 29 or less
+	if ( BcdCompare( #bcdRating30, #numMouseBCD, 3 ) ) then
+	begin
+	
+		p1 := #strRating30;
+		i := 5;
+		_gameSection_DrawRatingText();
+		return;
+
+	end;
+
+	p1 := #strRatingBad;
+	i := 3;
+	_gameSection_DrawRatingText();
+
+end;
+
+
+// clear middle area of title screen
+procedure _gameSection_ClearMiddle();
+begin
+
+	screenmemory := $1100 + 80;
+
+	for i := 0 to 20 do // columns
+	begin
+	
+		for j := 0 to 95 do // rows
+			screenmemory[ j ] := 0;
+		
+		screenmemory := screenmemory + 192; // next column
+		
+	end;
+
+end;
+
+// short delay used when switching screens
+procedure _gameSection_ScreenPause();
+begin
+
+	_gameSection_ClearMiddle();
+	
+	for i := 0 to 6 do
+		_gameSection_WaitVBL();
+
+end;
+
+// rainbow colours for middle section
+procedure _gameSection_RainbowMiddle();
+var
+	rainbow: array[] of byte = ( WHITE, CYAN, GREEN, YELLOW );
+	
+begin
+
+	colormemory := $9464;
+	
+	for j := 0 to 6 do
+	begin
+	
+		for i := 0 to 10 do
+		begin
+		
+			l := ( (ticks15 >> 2 ) + i ) & 3;
+			colormemory [ i ] := rainbow[ l ];
+			colormemory [ 19 - i ] := rainbow[ l ];
+			
+		end;
+		
+		colormemory := colormemory + 20; // next line
+			 
+	end;
+	
+end;

@@ -1,0 +1,822 @@
+/*
+
+	Player routines
+	
+	Used to draw and manage the player.  Also the core functionality that
+	drives how the player sprite interacts with the level map as a platform
+	style game. 
+
+*/
+
+
+// set up the player
+procedure Player_Init();
+begin
+
+	// set player start position
+	px := 0;		// x position 
+	py := 200;		// y position - start off screen
+	dy := 0;		// jump / fall delta
+	dx := 0;
+	playerState := PLAYERSTATE_NONE;
+	jumpCount := PLAYER_JUMPCOUNT;
+	fallCount := 0;
+	pStunCount := 0;
+	panim := PANIM_WALKRIGHT;		// animation to use
+
+
+end;
+
+// called on level / room select screen
+procedure Player_TestDoor();
+begin
+
+	Level_PlayerCentreTest();
+
+	// have we collected the key (cheese) to complete Level (Experiment)?
+	if ( k = TILEID_CHEESE ) then
+	begin
+	
+		gameLoop := false;
+			
+		// tell the system that we have collected the key
+		section := SECTION_EXPERIMENTCOMPLETE;
+
+	end;
+
+	// want to start a room?
+	if ( joy1pressed & JOY_FIRE ) then
+	begin
+
+		if ( k = TILEID_EXIT ) then
+		begin
+		
+			// p1 still points
+			gameRoom := p1[ 0 ] >> 4; // get id from upper nibble
+			
+			gameLoop := false;
+			
+			// tell the system that we have just selected a room to play
+			section := SECTION_SELECTEDROOM;
+
+			// store x/y pos to restore when completed / leave room
+			oldPx := px;
+			oldPy := py;
+			
+		end;
+
+	end;
+
+end;
+
+// draw tail facing right with clipping
+procedure Player_Tail_Right();
+begin
+
+	if ( px >= 6 ) then 
+	begin
+	
+		// can draw left side
+		vbmSetPosition2( px-6, py );
+		vbmDrawSpriteSliceE( #sprPlayerTailRight_A, 0, 8 );
+
+	end;
+	
+	// can draw right side
+	vbmSetPosition2( px+2, py );
+	vbmDrawSpriteSliceE( #sprPlayerTailRight_B, 0, 8 );
+
+end;
+// draw tail facing left with clipping
+procedure Player_Tail_Left();
+begin
+
+	// can draw left side
+	vbmSetPosition2( px+4, py );
+	vbmDrawSpriteSliceE( #sprPlayerTailLeft_A, 0, 8 );
+
+	if ( px < 149 ) then 
+	begin
+	
+		// can draw left side
+		vbmSetPosition2( px+12, py );
+		vbmDrawSpriteSliceE( #sprPlayerTailLeft_B, 0, 8 );
+
+	end;
+	
+
+end;
+// draw running tail facing right with clipping
+procedure Player_Tail_RunRight();
+begin
+
+	if ( px >= 6 ) then 
+	begin
+	
+		// can draw left side
+		vbmSetPosition2( px-6, py );
+		vbmDrawSpriteSliceE( #sprPlayerTailRun_A, 0, 8 );
+
+	end;
+	
+	// can draw right side
+	vbmSetPosition2( px+2, py );
+	vbmDrawSpriteSliceE( #sprPlayerTailRun_B, 0, 8 );
+
+end;
+// draw running tail facing left with clipping
+procedure Player_Tail_RunLeft();
+begin
+
+	// can draw left side
+	vbmSetPosition2( px+6, py );
+	vbmDrawSpriteSliceE( #sprPlayerTailRun_A, 0, 8 );
+
+	if ( px < 147 ) then 
+	begin
+	
+		// can draw left side
+		vbmSetPosition2( px+14, py );
+		vbmDrawSpriteSliceE( #sprPlayerTailRun_B, 0, 8 );
+
+	end;
+	
+
+end;
+
+// draw/erase (EOR) the player sprite
+procedure Player_Draw();
+begin
+
+	if ( py >= 184 ) then return; // do not draw anything if off bottom of screen
+
+	vbmSetPosition2( px, py );
+	
+	// using panim, decide which sprite graphic/animation to use
+	if ( panim = PANIM_WALKRIGHT) then
+	begin
+		vbmDrawSprite8E( #sprPlayerRight_A, #sprPlayerRight_B );
+		Player_Tail_RunRight();
+	end;
+	if ( panim = PANIM_WALKLEFT) then
+	begin
+		vbmDrawSprite8E( #sprPlayerLeft_A, #sprPlayerLeft_B );
+		Player_Tail_RunLeft();
+	end;
+	if ( panim = PANIM_JUMPRIGHT) then
+	begin
+		vbmDrawSprite8E( #sprPlayerJumpRight_A, #sprPlayerJumpRight_B );
+		Player_Tail_RunRight();
+	end;
+	if ( panim = PANIM_JUMPLEFT) then
+	begin
+		vbmDrawSprite8E( #sprPlayerJumpLeft_A, #sprPlayerJumpLeft_B );
+		Player_Tail_RunLeft();
+	end;
+	if ( panim = PANIM_STANDRIGHT) then
+	begin
+		if ( pStunCount > 0 ) then
+		begin
+			vbmDrawSprite8E( #sprPlayerStunRight_A, #sprPlayerStunRight_B );		
+		end
+		else
+		begin
+			vbmDrawSprite8E( #sprPlayerStandRight_A, #sprPlayerStandRight_B );
+		end;
+		Player_Tail_Right();
+	end;
+	if ( panim = PANIM_STANDLEFT) then
+	begin
+		if ( pStunCount > 0 ) then
+		begin
+			vbmDrawSprite8E( #sprPlayerStunLeft_A, #sprPlayerStunLeft_B );		
+		end
+		else
+		begin
+			vbmDrawSprite8E( #sprPlayerStandLeft_A, #sprPlayerStandLeft_B );
+		end;
+		Player_Tail_Left();
+	end;
+	if ( panim = PANIM_ONLADDER) then 
+		vbmDrawSprite8E( #sprPlayerClimb_A, #sprPlayerClimb_B );
+	
+end;
+
+// move player right if not solid block in way
+procedure Player_MoveRight();
+begin
+	
+	Level_PlayerRightTest();
+	if ( k <> TILEID_SOLID and px < 152  ) then 
+	begin
+		if ( ticks1 = 0 ) then px := px + 2;
+		panim := PANIM_WALKRIGHT;
+	end;
+	
+end;
+
+// move player left if not solid block in way
+procedure Player_MoveLeft();
+begin
+
+	Level_PlayerLeftTest();
+	if ( k <> TILEID_SOLID and px >= 2 ) then 
+	begin
+		if ( ticks1 = 0 ) then px := px - 2;
+		panim := PANIM_WALKLEFT;
+	end;
+			
+end;
+
+procedure _player_SetFall();
+begin
+
+	playerState := PLAYERSTATE_FALL;
+	fallDistance := 0; // track falling distance
+
+end;
+procedure _player_StartJump();
+begin
+
+	if (joy1pressed & JOY_FIRE ) then 
+	if (playerState <> PLAYERSTATE_FALL or 
+		(playerState = PLAYERSTATE_FALL 
+		and fallDistance < PLAYER_FALLSAVE)) then
+	begin
+		
+		if ( timer < 5 ) then Sound_PlayerJump(); // don't play on death jump
+		
+		jumpNumber := jumpNumber + 1; // how many times jumped
+		playerState := PLAYERSTATE_JUMP;
+		pauseJumpCount := 0;
+
+		jumpCount := PLAYER_JUMPCOUNT;	// reset counter
+		fallCount := 0;					// reset counter
+			
+		dy := PLAYER_JUMP;	// state delta for jump (how fast go up)
+		// player jump higher if hold only up
+		if ( joy1 & JOY_UP ) then		
+			if ( l = 1 or  
+				(joy1 & JOY_LEFT <> JOY_LEFT and joy1 & JOY_RIGHT <> JOY_RIGHT) 
+			   ) then dy := PLAYER_SUPERJUMP;
+		
+		// set correct animation (if currently standing)
+		if (panim = PANIM_STANDRIGHT) then panim := PANIM_JUMPRIGHT;
+		if (panim = PANIM_STANDLEFT) then panim := PANIM_JUMPLEFT;
+
+						// are we jumping in a direction?
+		if (joy1 & JOY_LEFT) then dx := -1;
+		if (joy1 & JOY_RIGHT) then dx := 1;
+
+	end;
+
+end;
+
+// MAIN PLAYER ROUTINE - Called by main loop every frame
+// update the player
+procedure Player_Update();
+begin
+
+	if ( py >= 184 ) then return; // do not update if off bottom of screen
+
+	// if stunned (fallen from height) skip out until counter expires
+	if ( pStunCount > 0 ) then
+	begin
+	
+		pStunCount := pStunCount - 1;
+		return;
+
+	end;
+	
+	readJoy1();
+	
+	// test if should be falling?
+	if (playerState = PLAYERSTATE_NONE) then
+	begin
+	
+		Level_PlayerFallTest();
+		if ( k < TILEID_BLANKLIKE ) then _player_SetFall();
+	
+	end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - -
+	// check if walking
+	if (playerState = PLAYERSTATE_NONE) then
+	begin	
+
+		dx := 0;
+
+		if (panim = PANIM_WALKRIGHT) then panim := PANIM_STANDRIGHT;
+		if (panim = PANIM_WALKLEFT) then panim := PANIM_STANDLEFT;
+
+		if (joy1 & JOY_RIGHT) then Player_MoveRight();
+		if (joy1 & JOY_LEFT) then Player_MoveLeft();
+		
+		// get on to ladder?
+		if (joy1 & JOY_UP) then
+		begin
+		
+			Level_PlayerFeetTest();
+			if ( k = TILEID_LADDER ) then playerState := PLAYERSTATE_LADDER;
+
+		end;
+		// get on to ladder?
+		if (joy1 & JOY_DOWN) then
+		begin
+		
+			Level_PlayerBelowFeetTest();
+			if ( k = TILEID_LADDER ) then playerState := PLAYERSTATE_LADDER;
+
+		end;
+
+		// Jump down from platform?
+		if ( joy1 & JOY_DOWN and joy1pressed & JOY_FIRE ) then
+		if ( playerState <> PLAYERSTATE_LADDER) then
+		begin
+		
+			Level_PlayerFeetOnPlatfornTest();
+			if ( k = TILEID_PLATFORM ) then 
+			begin
+			
+				// make sure there is space below
+				Level_PlayerDropDownTest();
+				if ( k < TILEID_BLANKLIKE ) then
+				begin
+				
+					_player_SetFall();
+					py := py + 5;
+					dy := PLAYER_MAXFALL;
+					jumpCount := PLAYER_JUMPCOUNT;
+					
+					fallDistance := PLAYER_FALLSAVE; // this is to prevent the jump save off platform edges triggering
+				
+				end;
+
+			end;
+
+		end;
+		
+		// start jump?
+		l := 0; // set to 1 allow long left/right jump, 0=only up
+		_player_StartJump();
+
+	end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - -
+	// control player on ladder
+	if (playerState <> PLAYERSTATE_LADDER) then pauseLadderCount := 0; // clear ladder count when not on it
+	if (playerState = PLAYERSTATE_LADDER) then
+	begin
+
+		// count up how long been on ladder
+		if ( pauseLadderCount < PLAYER_LADDERCOUNT_MAX ) then pauseLadderCount := pauseLadderCount + 1;
+
+		// gradually move the player to centre of ladder
+		Level_PlayerLadderRightTest();
+		if ( k = TILEID_LADDER ) then
+		begin
+			// ladder is to right
+			i := 4 + px - ( (px + 4) & $f8 );
+			j := 4 + px - i;
+		end
+		else
+		begin
+			// ladder is to left
+			i := 2 + px - ( (px - 4) & $f8 );
+			j := 2 + px - i;
+		end;
+		if (px > j ) then px := px - 2;
+		if (px < j ) then px := px + 2;
+
+	
+		// Should we climb up the ladder?
+		if (joy1 & JOY_UP) then
+		begin
+		
+			panim := PANIM_ONLADDER;
+			
+			// check above head to determine if can move up
+			Level_PlayerJumpTest();
+			if (k <> TILEID_SOLID) then py := py - 1;
+			// check if free still on ladder?
+			Level_PlayerFeetTest();
+			if ( k <> TILEID_LADDER ) then 
+			begin
+			
+				playerState := PLAYERSTATE_NONE;
+				panim := PANIM_STANDRIGHT;
+				
+			end;
+
+		end;
+		// Should we climb down the ladder?
+		if (joy1 & JOY_DOWN) then
+		begin
+		
+			panim := PANIM_ONLADDER;
+			
+			py := py + 1;
+			// check if feet still on ladder?
+			Level_PlayerFallTest();
+			if ( k <> TILEID_LADDER ) then 
+			begin
+			
+				playerState := PLAYERSTATE_NONE;
+				panim := PANIM_STANDLEFT;
+				
+			end;
+
+		end;
+
+		// don't allow jumping off ladder until been on it for some time
+		if ( pauseLadderCount = PLAYER_LADDERCOUNT_MAX ) then
+		begin
+		
+			// jump off ladder to right?
+			if (joy1pressed & JOY_RIGHT) then
+			begin
+		
+				playerState := PLAYERSTATE_JUMP;
+			
+				jumpCount := PLAYER_JUMPCOUNT;	// reset counter
+				fallCount := 0;					// reset counter
+			
+				dy := PLAYER_JUMPHALF;//>>1;	// state delta for jump (how fast go up)
+				dx := 1;
+
+			end;
+		
+			// jump off ladder to left?
+			if (joy1pressed & JOY_LEFT) then
+			begin
+		
+				playerState := PLAYERSTATE_JUMP;
+			
+				jumpCount := PLAYER_JUMPCOUNT;	// reset counter
+				fallCount := 0;					// reset counter
+			
+				dy := PLAYER_JUMPHALF; //>>1;	// state delta for jump (how fast go up)
+				dx := -1;
+
+			end;
+		
+		end;
+
+	end;
+	
+// - - - - - - - - - - - - - - - - - - - - - - - -
+	// Handle the falling
+	if (playerState = PLAYERSTATE_FALL) then
+	begin
+
+		// allow 'save' falling if jump as only just started
+		if ( fallDistance < PLAYER_FALLSAVE and jumpNumber = 0 ) then
+		begin
+			l := 0; // set to 1 allow long left/right jump, 0=only up
+			_player_StartJump(); 
+			// Player jumped, quit out of routine
+			if (playerState = PLAYERSTATE_JUMP) then return();
+		end;	
+
+
+		jumpCount := jumpCount - 1;	// control speed of change in the fall
+		
+		// ready to change jump rate
+		if (jumpCount = 0) then
+		begin
+			
+			jumpCount := PLAYER_JUMPCOUNT;
+			
+			dy := dy + 1;
+			if (dy > PLAYER_MAXFALL) then dy := PLAYER_MAXFALL;
+
+		end;
+		
+		if ( fallDistance < PLAYER_MAXFALLDISTANCE ) then 
+			fallDistance := fallDistance + 1;
+			
+		// update player position
+		py := py + (dy>>1); // add fall delta to y position
+			
+		// force direction when falling following a jump
+		if (dx = 1) then Player_MoveRight();
+		if (dx = -1) then Player_MoveLeft();
+		if (panim = PANIM_WALKRIGHT) then panim := PANIM_JUMPRIGHT;
+		if (panim = PANIM_WALKLEFT) then panim := PANIM_JUMPLEFT;
+
+		// only move in direction while falling for as long as jump took
+		if (fallCount > 0) then
+		begin
+			
+			fallCount := fallCount - 1;
+			if (fallCount = 0) then dx := 0;
+
+		end;
+
+		// falling onto things - only process if timer not up
+		// and if not spiked
+		if ( timer < 5 and spiked = false ) then
+		begin
+
+			// have we fallen onto a ladder?
+			//Level_PlayerFeetTest();
+			Level_PlayerFeetTestPlatform();
+			if ( k = TILEID_LADDER ) then 
+			begin
+			
+				jumpNumber := 0; // reset jump counter (allow to jump again)
+				
+				playerState := PLAYERSTATE_LADDER;
+				dx := 0;
+				
+			end;
+
+			//Level_PlayerFeetTestPlatform();
+			// test if fallen into a block, if so move back up
+			// still have the feet test result
+			if (k >= TILEID_BLANKLIKE and k <> TILEID_LADDER) then
+			begin
+		
+				jumpNumber := 0; // reset jump counter (allow to jump again)
+
+				i := py - (py & $f8);
+				py := py - i;
+				// check if on a ldder after correction
+				//Level_PlayerFeetTest();
+				Level_PlayerFeetTestPlatform();
+				if (k <> TILEID_LADDER) then
+				begin
+				
+					// fallen too far?
+					if ( fallDistance = PLAYER_MAXFALLDISTANCE ) then 
+					begin
+						Sound_PlayerLanding2();
+						pStunCount := PLAYER_STUNTIME;
+					end
+					else
+						Sound_PlayerLanding1();
+					
+					playerState := PLAYERSTATE_NONE;
+					if (panim = PANIM_JUMPRIGHT) then panim := PANIM_STANDRIGHT;
+					if (panim = PANIM_JUMPLEFT) then panim := PANIM_STANDLEFT;
+						
+				end;
+				// odd case of landing at foot of ladder
+				// this causing bug - one one point detected Level_PlayerBelowFeetTest();
+				Level_PlayerFallTest();
+				if (k & CHEESEMASK >= TILEID_BLANKLIKE) then playerState := PLAYERSTATE_NONE;
+			
+			end;
+		
+		end;
+
+	end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - -
+	// handle the jump
+	if ( playerState = PLAYERSTATE_JUMP ) then
+	begin
+	
+		if ( pauseJumpCount < PLAYER_JUMPCOUNT_MAX) then pauseJumpCount := pauseJumpCount + 1;
+		// allow delays direction just after start of jump
+		// (if not a high jump)
+		if ( dx = 0 and dy <= PLAYER_JUMP ) then
+		begin
+
+			if ( pauseJumpCount < PLAYER_JUMPCOUNT_MAX) then
+			begin
+			
+				// no direction, check if valid to specify one
+				if (joy1 & JOY_LEFT) then dx := -1;
+				if (joy1 & JOY_RIGHT) then dx := 1;
+			
+			end;
+
+		end;
+
+		jumpCount := jumpCount - 1;	// control speed of change in jump
+		fallCount := fallCount + 1;	// count how many moves jump takes to use on fall
+
+		// ready to change jump rate
+		if (jumpCount = 0) then
+		begin
+			
+			jumpCount := PLAYER_JUMPCOUNT;
+			dy := dy - 1;
+
+		end;
+			
+		// update player position
+		Level_PlayerJumpTest();
+		if ( k <> TILEID_SOLID ) then 
+			py := py - (dy>>1)	// move player up
+		else 
+		begin
+			//dy := 0;	// Cancel up delta
+			py := py + 1; // make sure don't get pushed up
+		end;
+		
+		// force direction when jumping
+		if ( dx = 1 ) then Player_MoveRight();
+		if ( dx = -1 ) then Player_MoveLeft();
+		if ( panim = PANIM_WALKRIGHT ) then panim := PANIM_JUMPRIGHT;
+		if ( panim = PANIM_WALKLEFT ) then panim := PANIM_JUMPLEFT;
+	
+		// has the jump finished?
+		if ( dy = 0 ) then 
+		begin
+		
+			// have we jumped onto a ladder?
+			Level_PlayerFeetTest();
+			if ( k <> TILEID_LADDER ) then _player_SetFall();
+
+			if ( k = TILEID_LADDER ) then 
+			begin
+			
+				playerState := PLAYERSTATE_LADDER;
+				panim := PANIM_ONLADDER;
+				
+			end;
+			
+		end;
+
+	end;
+
+	// walking sound
+	if ( panim = PANIM_WALKLEFT or panim = PANIM_WALKRIGHT ) then
+		if ( ticks15 = 0 or ticks15 = 7 ) then 
+			Sound_PlayerWalking();
+			
+	// climbing sound
+	if ( panim = PANIM_ONLADDER and ticks3 = 0 ) then
+		if ( joy1 & JOY_DOWN or joy1 & JOY_UP ) then 
+			Sound_PlayerClimbing();
+
+end;
+
+// force a jump
+procedure _player_ForceJump();
+begin
+
+	// force jump
+	joy1pressed := joy1pressed | JOY_FIRE;
+	_player_StartJump();
+
+end;
+
+// Collisions during game play
+procedure Player_LevelCollision();
+begin
+
+	if ( py > 184 ) then return; // we're not on the screen
+
+	Level_PlayerCentreTest();
+	
+	// collect cheese
+	if ( k = TILEID_CHEESE ) then
+	begin
+
+		Sound_CollectCheese();
+
+		// p1 points to where cheese is on levelmap
+		i := p1[ 0 ]  >> 4; // get high nibble with cheese Id
+		cheeseList[ nextCheeseId ] := i;
+		nextCheeseId := nextCheeseId + 1;
+		p1[ 0 ] := TILEID_BLANK;
+		
+		j := ( px + 3 ) >> 3 ;
+		k := ( py + 3 ) & $f8;
+		vbmSetColumn( j );
+		screenmemory := screenmemory + k;
+		vbmClearBlock();
+		
+		Game_ResetTimer();
+
+	end;
+
+	// hit door - exit
+	if ( k = TILEID_EXIT ) then
+	begin
+	
+		// won room - yay
+		gameLoop := false;
+		section := SECTION_ROOMWON;
+		Level_OpenDoor();
+
+	end;
+
+
+	Level_PlayerRunFeetTest();
+
+	// Walk on spring
+	if ( k = TILEID_SPRING ) then
+	begin
+	
+		// reset fall distance so don't get hurt
+		fallDistance := PLAYER_FALLSAVE;
+
+		springX := ( px + 3 ) >> 3; // column
+		springY := ( py + 3 ) & $f8; // pixel aligned
+		springTime := SPRINGTIME_RESET;
+		Level_DrawSpring();
+		
+		// force jump, allow long x jump if holding up
+		l := 1;
+		_player_ForceJump();
+
+	end;
+
+
+	Level_PlayerSpikeTest();
+
+	// hit spike
+	if ( k = TILEID_SPIKE ) then
+	begin
+	
+		// lost room - oh noes
+		// btw - leave gameLoop true, Echo will jump off screen first
+		spiked := true;
+		Sound_PlayerEek();
+
+		// force jump
+		l := 0;
+		_player_ForceJump();	
+
+	end;
+	
+
+	// if standing on collapsable
+	if ( ticks15 = 0 or ticks15 = 8 ) then
+	if ( playerState = PLAYERSTATE_NONE ) then 
+	begin
+	
+		for ii := 0 to 2 do
+		begin
+
+			if ( ii = 0 ) then
+				// test back foot
+				i := px >> 3
+			else
+				i := ( px + 6 ) >> 3;
+
+			Level_PlayerOnCollapsableTest();
+	
+			if ( k = TILEID_PLATFORM ) then
+			begin
+
+				if ( l = COLLAPSE4 ) then
+				begin
+					// erase
+					p1 := #ACOLLAPSE4;
+					Level_DrawCollapsable();
+					// remove tile from map
+					Level_SetP1ForCollapsable();
+					p1[ 0 ] := TILEID_BLANK;
+				end;
+			
+				if ( l = COLLAPSE3 ) then
+				begin
+					// erase
+					p1 := #ACOLLAPSE3;
+					Level_DrawCollapsable();
+					// draw next
+					p1 := #ACOLLAPSE4;
+					Level_DrawCollapsable();
+					// udpate level map
+					Level_SetP1ForCollapsable();
+					p1[ 0 ] := TILEID_PLATFORM + COLLAPSE4;
+				end;
+			
+				if ( l = COLLAPSE2 ) then
+				begin
+					// erase
+					p1 := #ACOLLAPSE2;
+					Level_DrawCollapsable();
+					// draw next
+					p1 := #ACOLLAPSE3;
+					Level_DrawCollapsable();
+					// udpate level map
+					Level_SetP1ForCollapsable();
+					p1[ 0 ] := TILEID_PLATFORM + COLLAPSE3;
+				end;
+		
+				if ( l = COLLAPSE1 ) then
+				begin
+					// erase
+					p1 := #ACOLLAPSE1;
+					Level_DrawCollapsable();
+					// draw next
+					p1 := #ACOLLAPSE2;
+					Level_DrawCollapsable();
+					// udpate level map
+					Level_SetP1ForCollapsable();
+					p1[ 0 ] := TILEID_PLATFORM + COLLAPSE2;
+				end;
+
+			end;
+		
+		end;
+
+	end;
+
+end;

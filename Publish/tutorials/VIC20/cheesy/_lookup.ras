@@ -1,0 +1,381 @@
+
+// -------------------------------------------------------------------------------
+// Level look up addresses - each entry points to the start of a row
+// to help the routines find the right location on the map quickly
+	levelAddr : array[ 25 ] of integer = 
+		buildtable( "LEVELMAP + ( i * 20 )" );
+
+
+// -------------------------------------------------------------------------------
+// BCD fixed values
+	bcd1: array[] of byte = ( $01, $00, $00 );	// to add or subtract a BCD value of 1
+
+
+
+// colour list for rooms
+	roomColour_list: array[ 32 ] of byte = (
+		BLACK, 	BLACK 	+ SCREEN_BG_LTBLUE 	- 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_PINK 	- 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_LTYELLOW- 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_LTGREEN - 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_LTCYAN 	- 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_LTORANGE- 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_YELLOW 	- 8,
+		BLACK, 	BLACK 	+ SCREEN_BG_LTPURPLE- 8,
+		
+		BLUE, 	BLUE	+ SCREEN_BG_LTBLUE 	- 8,
+		BLUE, 	BLUE	+ SCREEN_BG_PINK 	- 8,
+		PURPLE,	PURPLE	+ SCREEN_BG_LTYELLOW- 8,
+		PURPLE,	PURPLE	+ SCREEN_BG_LTGREEN - 8,
+		RED, 	RED 	+ SCREEN_BG_LTCYAN 	- 8,
+		RED, 	RED 	+ SCREEN_BG_LTORANGE- 8,
+		BLUE, 	BLUE 	+ SCREEN_BG_YELLOW 	- 8,
+		RED, 	RED 	+ SCREEN_BG_LTPURPLE- 8
+	);
+
+// colour list for levels
+	levelColour_list: array[ 8 ] of byte = (
+	
+		GREEN, 	GREEN +	SCREEN_BG_BLACK 	- 8,
+		
+		YELLOW,	YELLOW + SCREEN_BG_ORANGE 	- 8,
+		
+		RED, 	RED + 	SCREEN_BG_LTORANGE 	- 8
+		
+	);
+
+// -------------------------------------------------------------------------------
+// Sprite pre-shift data addresses
+
+// pre-shifted addresses for Player Right - side A / side B
+sprPlayerRight_A: array[ 4 ] of integer =
+	buildtable( "ASPRPLAYERRIGHT + ( i * 16 )" ); 
+sprPlayerRight_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERRIGHT + 8 + ( i * 16 )" );
+
+// pre-shifted addresses for Player Left - side A / side B
+sprPlayerLeft_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERLEFT + ( i * 16 )" ); 
+sprPlayerLeft_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERLEFT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Jump Right - side A / side B
+sprPlayerJumpRight_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERJUMPRIGHT + ( i * 16 )" ); 
+sprPlayerJumpRight_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERJUMPRIGHT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Jump Left - side A / side B
+sprPlayerJumpLeft_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERJUMPLEFT + ( i * 16 )" ); 
+sprPlayerJumpLeft_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERJUMPLEFT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Jump Right - side A / side B
+sprPlayerStandRight_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTANDRIGHT + ( i * 16 )" ); 
+
+sprPlayerStandRight_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTANDRIGHT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Jump Left - side A / side B
+sprPlayerStandLeft_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTANDLEFT + ( i * 16 )" ); 
+sprPlayerStandLeft_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTANDLEFT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Climb - side A / side B
+sprPlayerClimb_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERCLIMB + ( i * 16 )" ); 
+sprPlayerClimb_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERCLIMB + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Tail Right - side A / side B
+sprPlayerTailRight_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERTAILRIGHT + ( i * 16 )" ); 
+sprPlayerTailRight_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERTAILRIGHT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Tail Left - side A / side B
+sprPlayerTailLeft_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERTAILLEFT + ( i * 16 )" ); 
+sprPlayerTailLeft_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERTAILLEFT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player Tail Run - side A / side B
+sprPlayerTailRun_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERTAILRUN + ( i * 16 )" ); 
+sprPlayerTailRun_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERTAILRUN + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player stun right - side A / side B
+sprPlayerStunRight_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTUNRIGHT + ( i * 16 )" ); 
+sprPlayerStunRight_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTUNRIGHT + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for Player stun left - side A / side B
+sprPlayerStunLeft_A: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTUNLEFT + ( i * 16 )" ); 
+sprPlayerStunLeft_B: array[ 4 ] of integer = 
+	buildtable( "ASPRPLAYERSTUNLEFT + 8 + ( i * 16 )" ); 
+
+
+// pre-shifted addresses for cat ears - side A / side B
+sprCatEars_A: array[ 4 ] of integer = 
+	buildtable( "ASPRCATEARS + ( i * 16 )" ); 
+sprCatEars_B: array[ 4 ] of integer = 
+	buildtable( "ASPRCATEARS + 8 + ( i * 16 )" ); 
+
+// pre-shifted addresses for cat tail - side A / side B
+sprCatTail_A: array[ 4 ] of integer = 
+	buildtable( "ASPRCATTAIL + ( i * 16 )" ); 
+sprCatTail_B: array[ 4 ] of integer = 
+	buildtable( "ASPRCATTAIL + 8 + ( i * 16 )" ); 
+
+
+
+
+// -------------------------------------------------------------------------------
+// Music
+
+// toot - toot!
+
+
+
+// -------------------------------------------------------------------------------
+// Sound effects 
+
+// List of notes or <120 values
+// 0 = end
+// any other value number of notes to jump back to repeat forever
+
+
+
+
+// sound bank contain fx modifiers
+//
+// Action+delta, duration
+//
+SoundBank: array[ 2 ] of byte = ( 0, 0 ); // stop sound
+
+@donotremove "_sb_Timer"
+const SB_TIMER: byte = 2 - 2; // starts at index 2 (-2 because first sound play adds 2)
+const SB_TIMER_SIZE: byte = 3;
+_sb_Timer: array[ SB_TIMER_SIZE ] of byte = (
+ 
+	S_DOWN + 1,	7,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_TimeUp"
+const SB_TIMEUP: byte = SB_TIMER + SB_TIMER_SIZE; // next sound starts here
+const SB_TIMEUP_SIZE: byte = 11;
+_sb_TimeUp: array[ SB_TIMEUP_SIZE ] of byte = (
+ 
+	S_UP + 0,				11,
+	S_TOGGLESILENCE, 	5,
+	S_DOWN + 10,		1,
+	S_TOGGLESILENCE, 	1,
+	S_UP + 0, 			21,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_Platform"
+const SB_PLATFORM: byte = SB_TIMEUP + SB_TIMEUP_SIZE; // next sound starts here
+const SB_PLATFORM_SIZE: byte = 5;
+_sb_Platform: array[ SB_PLATFORM_SIZE ] of byte = (
+ 
+	S_UP + 10,		 	1,
+	S_DOWN + 5,			2,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_Solid"
+const SB_SOLID: byte = SB_PLATFORM + SB_PLATFORM_SIZE; // next sound starts here
+const SB_SOLID_SIZE: byte = 3;
+_sb_Solid: array[ SB_SOLID_SIZE ] of byte = (
+ 
+	S_UP + 0,			1,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_Cheese"
+const SB_CHEESE: byte = SB_SOLID + SB_SOLID_SIZE; // next sound starts here
+const SB_CHEESE_SIZE: byte = 3;
+_sb_Cheese: array[ SB_CHEESE_SIZE ] of byte = (
+ 
+	S_UP + 3,		 	3,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_CollectCheese"
+const SB_COLLECTCHEESE: byte = SB_CHEESE + SB_CHEESE_SIZE; // next sound starts here
+const SB_COLLECTCHEESE_SIZE: byte = 7;
+_sb_CollectCheese: array[ SB_COLLECTCHEESE_SIZE ] of byte = (
+ 
+	S_DOWN + 1,			4,
+	S_DOWN + 3,			3,
+	S_UP + 5,			1,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_Door"
+const SB_DOOR: byte = SB_COLLECTCHEESE + SB_COLLECTCHEESE_SIZE; // next sound starts here
+const SB_DOOR_SIZE: byte = 9;
+_sb_Door: array[ SB_DOOR_SIZE ] of byte = (
+ 
+	S_DOWN + 1,			10,
+	S_UP + 3,			5,
+	S_DOWN + 4,			5,
+	S_UP + 4,			5,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_PlayerAppear"
+const SB_PLAYERAPPEAR: byte = SB_DOOR + SB_DOOR_SIZE; // next sound starts here
+const SB_PLAYERAPPEAR_SIZE: byte = 3;
+_sb_PlayerAppear: array[ SB_PLAYERAPPEAR_SIZE ] of byte = (
+ 
+	S_DOWN + 3,		15,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_PlayerJump"
+const SB_PLAYERJUMP: byte = SB_PLAYERAPPEAR + SB_PLAYERAPPEAR_SIZE; // next sound starts here
+const SB_PLAYERJUMP_SIZE: byte = 3;
+_sb_PlayerJump: array[ SB_PLAYERJUMP_SIZE ] of byte = (
+ 
+	S_UP + 1,		12,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_PlayerLanding1"
+const SB_PLAYERLANDING1: byte = SB_PLAYERJUMP + SB_PLAYERJUMP_SIZE; // next sound starts here
+const SB_PLAYERLANDING1_SIZE: byte = 5;
+_sb_PlayerLanding1: array[ SB_PLAYERLANDING1_SIZE ] of byte = (
+ 
+	S_UP + 15,		1,
+	S_DOWN + 5,		2,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_PlayerLanding2"
+const SB_PLAYERLANDING2: byte = SB_PLAYERLANDING1 + SB_PLAYERLANDING1_SIZE; // next sound starts here
+const SB_PLAYERLANDING2_SIZE: byte = 17;
+_sb_PlayerLanding2: array[ SB_PLAYERLANDING2_SIZE ] of byte = (
+ 
+	S_UP + 6,		2,
+	S_DOWN + 5,		3,
+	S_UP + 4,		3,
+	S_DOWN + 4,		4,
+	S_UP + 3,		5,
+	S_DOWN + 3,		6,
+	S_UP + 2,		7,
+	S_DOWN + 1,		8,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_PlayerWalking"
+const SB_PLAYERWALKING: byte = SB_PLAYERLANDING2 + SB_PLAYERLANDING2_SIZE; // next sound starts here
+const SB_PLAYERWALKING_SIZE: byte = 3;
+_sb_PlayerWalking: array[ SB_PLAYERWALKING_SIZE ] of byte = (
+ 
+	S_DOWN + 2,		2,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_Ladder"
+const SB_LADDER: byte = SB_PLAYERWALKING + SB_PLAYERWALKING_SIZE; // next sound starts here
+const SB_LADDER_SIZE: byte = 3;
+_sb_Ladder: array[ SB_LADDER_SIZE ] of byte = (
+ 
+	S_DOWN + 5,		2,
+	S_IDLE 
+	
+);
+
+@donotremove "_sb_RoomComplete"
+const SB_ROOMCOMPLETE: byte = SB_LADDER + SB_LADDER_SIZE; // next sound starts here
+const SB_ROOMCOMPLETE_SIZE: byte = 27;
+_sb_RoomComplete: array[ SB_ROOMCOMPLETE_SIZE ] of byte = (
+ 
+	S_UP + 0,		2, // long
+	S_TOGGLESILENCE, 1,
+	S_UP + 20,		1,
+	S_TOGGLESILENCE, 1,
+
+	S_UP + 0,		1, // short
+	S_TOGGLESILENCE, 1,
+	S_UP + 20,		1,
+	S_TOGGLESILENCE, 1,
+
+	S_UP + 0,		1, // short
+	S_TOGGLESILENCE, 1,
+	S_UP + 20,		1,
+	S_TOGGLESILENCE, 1,
+
+	S_UP + 0,		12, // long
+
+	S_IDLE 
+	
+);
+@donotremove "_sb_Timer2"
+const SB_TIMER2: byte = SB_ROOMCOMPLETE + SB_ROOMCOMPLETE_SIZE; // next sound starts here
+const SB_TIMER2_SIZE: byte = 5;
+_sb_Timer2: array[ SB_TIMER2_SIZE ] of byte = (
+ 
+	S_UP + 2, 10,
+	S_DOWN + 3,	40,
+	S_IDLE 
+	
+);
+@donotremove "_sb_PlayerEek"
+const SB_PLAYEREEK: byte = SB_TIMER2 + SB_TIMER2_SIZE; // next sound starts here
+const SB_PLAYEREEK_SIZE: byte = 5;
+_sb_PlayerEek: array[ SB_PLAYEREEK_SIZE ] of byte = (
+ 
+	S_UP + 7, 		3,
+	S_DOWN + 1, 	30,
+	S_IDLE 
+	
+);
+
+
+/*
+
+const SB_WARPIN: byte = 2 - 2; // starts at index 2 (-2 because first sound play adds 2)
+const SB_WARPIN_SIZE: byte = 11;
+_sb_WarpIn: array[ SB_WARPIN_SIZE ] of byte = ( 
+	S_UP + 1, 		20,
+	S_DOWN + 10,	1,
+	S_UP + 2,		20,
+	S_DOWN + 30,	1,
+	S_UP + 4,		35, 
+	S_IDLE 
+);
+
+// offset, size of above sound
+const SB_SHINTRO: byte = SB_BGEXPLODE + SB_BGEXPLODE_SIZE;
+const SB_SHINTRO_SIZE: byte = 10; 
+_sb_ShIntro: array[ SB_SHINTRO_SIZE ] of byte = ( 
+	S_DOWN + 1, 3,
+	S_PLAY, 1,
+	S_UP + 1, 3,
+	S_PLAY, 1,
+	S_BACK+10, 0
+);
+*/
+

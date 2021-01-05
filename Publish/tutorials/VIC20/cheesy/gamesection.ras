@@ -1,0 +1,682 @@
+procedure GameSection_TRSE();
+begin
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+	vbmClearColor( BLACK );
+
+	screenmemory := $1100;
+	colormemory := $9400;
+	Compression::Decompress( #binTRSE, screenmemory );
+
+	Sound_PlayerJump();
+
+	Compression::Decompress( #binTRSEColour, colormemory );
+
+	k := 0; // time to stay on this section
+
+	while ( k < 15 ) do
+	begin
+		
+		if ( ticks15 = 0 ) then k := k + 1;		
+		_gameSection_WaitVBL();
+
+	end;
+	
+
+end;
+
+// title screen
+procedure GameSection_Title();
+var
+	strSelectExperiment: cstring = ("PRESS F-KEY");
+begin
+
+	Sound_PlayerJump();
+	
+	vbmClearColor( BLACK );
+
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK + BLACK;
+	screenmemory := $1100;
+	colormemory := $9400;
+
+	Compression::Decompress( #binTitle, screenmemory );
+	Compression::Decompress( #binTitleColour, colormemory );
+
+	// display experiment (level) progress
+	//vbmDrawSmallBCDO( levelCompleteBCD[ gameLevel ], #ADIGITSMALL, 0,0, 1 );
+	BCD_DrawLevel1Number();
+	BCD_DrawLevel2Number();
+	BCD_DrawLevel3Number();
+	
+	j := 0;
+	k := 0; // time to stay on this section
+
+	while ( section = SECTION_TITLE ) do 
+	begin
+
+		j := j + 1;
+		if ( j > 30 ) then
+		begin
+
+			vbmDrawSmallTextE( #strSelectExperiment, #font4, 14, 87, 5); //14 88
+			j := 0;
+
+		end;
+		
+		_gameSection_TestKeys();
+		_gameSection_TestJoy();
+
+		if ( ticks15 = 0 ) then k := k + 1;		
+		if ( k = 50 or l = true ) then section := SECTION_INTRO;
+		
+		_gameSection_WaitVBL();
+	
+	end;
+	
+	_gameSection_ScreenPause();
+	
+end;
+
+
+// Game intro text
+procedure GameSection_Intro();
+var
+	strIntroText: string = (
+	
+		1, 1, 85, "QUESTION:",
+		2, 2, 94, "CAN MOUSEKIND DEMONSTRATE COGNITION?"
+		
+		1, 1, 109, "MATERIALS",
+		2, 2, 118, "1. MAD SCIENTIST",
+		2, 2, 124, "2. MOUSE DNA",
+		2, 2, 130, "3. 1.21 GIGAWATTS",
+		
+		1, 1, 145, "METHOD",
+		2, 2, 154, "1. CLONE SUBJECT",
+		2, 2, 160, "2. PLACE SUBJECT IN ROOM",
+		2, 2, 166, "3. IF SUCCESS, ITERATE WITH NEXT ROOM"
+
+	);
+
+begin
+
+	p1 := #strIntroText;
+	
+	k := 0; // time to stay on this section
+
+	while ( section = SECTION_INTRO ) do 
+	begin
+		
+		if ( ticks3 = 0 ) then DrawText_Update();
+				
+		_gameSection_TestKeys();
+		_gameSection_TestJoy();
+
+		if ( ticks15 = 0 ) then k := k + 1;
+		if ( k = 65 or l = true ) then section := SECTION_INSTRUCTION;
+
+		_gameSection_WaitVBL();
+		_gameSection_RainbowMiddle();
+			
+	end;
+	
+	_gameSection_ScreenPause();
+	
+end;
+
+
+// Game instructions screen
+procedure GameSection_Instructions();
+var
+	strInstructionsText: string = (
+	
+		2, 0, 80, 	"PRESS F1", 44, " F3", 44, " F5 TO START AN EXPERIMENT.",
+					"YOU CAN COME BACK TO THE TITLE SCREEN AT",
+					"ANY TIME TO TRY ANOTHER EXPERIMENT      ",
+					"WITHOUT LOSING YOUR PROGRESS.",
+		
+		2, 0, 111, 	"CONTROL ECHO THE MOUSE WITH THE JOYSTICK", 
+					"LEARN HIS ABILITIES AS YOU GO.          ",
+					"HINT: START WITH EXPERIMENT 1.      ",
+					
+		2, 0, 135,	"COLLECT THE NEXT PIECE OF CHEESE BEFORE ",
+					"THE TIME IS UP. YOU HAVE INFINITE CLONES",
+					"BUT MUST BE SUCCESSFUL TO PROCEED.",
+					
+		2, 0, 161,	"   LEARN EACH ROOM.   DON'T HESITATE.   ",
+					"     BE PRECISE.        EXPERIMENT!"
+	);
+
+begin
+
+	p1 := #strInstructionsText;
+	
+	k := 0; // time to stay on this section
+
+	while ( section = SECTION_INSTRUCTION ) do 
+	begin
+		
+		if ( ticks3 = 0 ) then DrawText_Update();
+
+		_gameSection_TestKeys();
+		_gameSection_TestJoy();
+
+		if ( ticks15 = 0 ) then k := k + 1;
+		if ( k = 125 or l = true ) then section := SECTION_THEVIC20;
+		
+		_gameSection_WaitVBL();
+		_gameSection_RainbowMiddle();
+	
+	end;
+	
+	_gameSection_ScreenPause();
+
+end;
+
+// Game instructions screen 2
+procedure GameSection_TheVic20();
+var
+	strTheVic20Text: string = (
+	
+		1, 0, 80, 	"THE VIC 20",
+		
+		2, 0, 95, 	"SPECIAL SUPPORT FOR THEVIC20",44," THEC64 AND",
+					"THEC64 MINI:            ", 
+		
+		2, 0, 115, 	"THE JOYSTICK            ",
+		
+		2, 0, 130,	"FIRE BUTTON TO JUMP",44," STICK TO RUN       ",
+			
+		2, 0, 140,	"BUTTON A <>># - START EXPERIMENT 1      ",
+					"BUTTON B ><># - START EXPERIMENT 2      ",
+					"BUTTON C >><# - START EXPERIMENT 3      ",
+					
+		2, 0, 161,	"BUTTON # >>># - USE SAVE AND LOAD STATES",
+		2,15, 168,	               " TO STORE YOUR PROGRESS! "
+	);
+
+begin
+
+	p1 := #strTheVic20Text;
+	
+	k := 0; // time to stay on this section
+
+	while ( section = SECTION_THEVIC20 ) do 
+	begin
+	
+		if ( ticks3 = 0 ) then DrawText_Update();
+		
+		_gameSection_TestKeys();
+		_gameSection_TestJoy();
+
+		if ( ticks15 = 0 ) then k := k + 1;
+		if ( k = 115 or l = true ) then section := SECTION_THECREDITS;
+		
+		_gameSection_WaitVBL();
+		_gameSection_RainbowMiddle();
+
+	end;
+	
+	_gameSection_ScreenPause();
+
+end;
+
+// Credits
+@donotremove "strAdditional"
+procedure GameSection_TheCredits();
+var
+	strTheCredits: string = (
+	
+		1, 6, 80, 	"CREDITS",
+		
+		2, 9, 94, 	"GAME DESIGN AND CODING",
+		1, 6, 101,	28, 29,  // &e
+		2, 16, 103,	"ANDY HEWITT",
+		
+		2, 9, 117,	"DEVILISH LEVEL DESIGNS",
+		2, 14, 126,	"ROSS HEWITT",
+
+		2, 15, 140,	"GREETS TO",
+		2, 0, 148,	"AMY$ROSS$LYNNE$LEUAT$JARI$PHAZE101$BONES"
+		2, 0, 154,	"TONYROCKS$ARTSTATE$OVINE$FREEZE64$DENIAL"
+
+		2, 4, 166,	"GOTO WWW.HEWCO.UK FOR MORE GAMES"
+					
+	);
+	strAdditional: string = (
+	
+		"JARI -> JARTZA -> ASTRAL"
+
+	);
+
+begin
+
+	p1 := #strTheCredits;
+	
+	k := 0; // time to stay on this section
+
+	while ( section = SECTION_THECREDITS ) do 
+	begin
+		
+		_gameSection_TestKeys();
+		_gameSection_TestJoy();
+		
+		if ( ticks3 = 0 ) then DrawText_Update();
+
+		if ( ticks15 = 0 ) then k := k + 1;
+		if ( k = 115 or l = true ) then section := SECTION_TITLE;
+
+		_gameSection_WaitVBL();
+		_gameSection_RainbowMiddle();
+	
+	end;
+	
+	_gameSection_ScreenPause();
+
+end;
+// experiment introduction screen
+procedure GameSection_Experiment();
+var
+	strPressFireTo: cstring = ( "PRESS FIRE TO BEGIN" );
+	strExperiment1: cstring = ( "EXPERIMENT 1" );
+	strExperiment2: cstring = ( "EXPERIMENT 2" );
+	strExperiment3: cstring = ( "EXPERIMENT 3" );
+	
+	strTestOf: cstring = ( "TEST OF" );
+	strEx1: cstring = ( "INTELLIGENCE" );
+	strEx2: cstring = ( "DEXTERITY" );
+	strEx3: cstring = ( "LUCK" );
+
+	strNumRoom: cstring = ( "COMPLETED" );
+	strNumRoomOf: cstring = ( "OF" );
+	strNumRoom13: cstring = ( "12" );
+	
+begin
+
+	SCREEN_BG_COLOR := BLUE + SCREEN_BG_LTBLUE - 8;
+	vbmClearColor( BLUE );
+	vbmClear( 0 );
+
+	Sound_PlayerJump();
+	
+	// sub title
+	vbmDrawSmallTextE( #strTestOf, #font4, 16, 67, 5 );
+
+	if ( gameLevel = 0 ) then 
+	begin
+	
+		vbmDrawTextE( #strEx1, #font8, 4, 74, 8 );
+		vbmDrawBCD( #levelCompleteBCD, #ADIGIT, 7, 157, 1 );
+		
+		p1 := #strExperiment1;
+		
+	end;
+	if ( gameLevel = 1 ) then 
+	begin
+	
+		vbmDrawTextE( #strEx2, #font8, 6, 74, 8 );
+		vbmDrawBCD( #LEVELCOMPLETEBCD2, #ADIGIT, 7, 157, 1 );
+		
+		p1 := #strExperiment2;
+		
+	end;
+	if ( gameLevel = 2 ) then 
+	begin
+	
+		vbmDrawTextE( #strEx3, #font8, 8, 74, 8 );
+		vbmDrawBCD( #LEVELCOMPLETEBCD3, #ADIGIT, 7, 157, 1 );
+		
+		p1 := #strExperiment3;
+		
+	end;
+	
+	// main title
+	vbmDrawSmallTextE( #strPressFireTo, #font4, 11, 23, 5 );
+	vbmDrawTextE( p1, #font8, 4, 30, 8 );
+
+	// number of mice used?
+	_gameSection_NumberMiceUsed();
+
+	// number of rooms
+	vbmDrawSmallTextE( #strNumRoom, #font4, 15, 150, 5 );
+	vbmDrawSmallTextE( #strNumRoomOf, #font4, 19, 157, 5 );
+	vbmDrawTextE( #strNumRoom13, #font8, 11, 157, 5 );
+	
+	_GameSection_WaitForInput();
+
+	section := SECTION_ROOM;
+	gameRoom := 0;
+
+end;
+
+
+// Main game loop for Map room and Map screens/levels
+procedure GameSection_GameLoop();
+begin
+
+	Player_Init();		// set up some things for the player 
+
+	Game_Init();
+	Game_ResetCheeseArray(); // reset cheese id's for Game and Level/Room select
+	
+	Level_Draw();		// Draw the level with a title
+
+	Level_DrawSpecial();	// some levels display special text
+
+	if ( section = SECTION_GAME ) then Game_DrawTimer();
+		
+	gameLoop := true;
+	spiked := false; 	// flag not spiked
+
+	// main game loop
+	while ( gameLoop ) offpage do 
+	begin
+		
+		Player_Draw();		// draw the player sprite
+		if ( section = SECTION_GAME ) then Cat_Draw();
+		
+		_gameSection_TestKeys();
+
+		_gameSection_WaitVBL();
+
+		Player_Draw();		// erase the player sprite (EOR operation)
+		if ( section = SECTION_GAME ) then Cat_Draw();
+		
+		// process any updates of the room
+		Room_Draw();
+		
+		Player_Update();	// update the player (joystick) and move around the level
+
+		// in level room select - test for door
+		if ( section = SECTION_ROOM ) then Player_TestDoor();
+
+		// if spring is activated, count down then remove it
+		if ( springTime <> 0 ) then
+		begin
+		
+			springTime := springTime - 1;
+			// remove it
+			if ( springTime = 0 ) then Level_DrawSpring();
+				
+		end;
+
+		// if in ROOM - execute the game machanic
+		// if in ROOM SELECT, there are no timer or hazards
+		if ( section = SECTION_GAME ) then 
+		begin
+		
+			// update the cat
+			Cat_Update();
+
+			// If times not up, check if overlapping something (cheese/spike/door)
+			if ( timer < 5 ) then 
+			begin
+		
+				Game_UpdateTimer();
+				Player_LevelCollision();
+			
+			end;
+			// if timer = 5 - times up, make player jump if not falling
+			if ( timer = 5 and 
+			( playerState <> PLAYERSTATE_FALL and playerState <> PLAYERSTATE_JUMP) ) then 
+			begin
+	
+				joy1pressed := JOY_FIRE;
+				_player_StartJump();
+		
+			end;
+
+			// off bottom of screen when timer is up or hit spike
+			if ( py >= 184 and py < 200 ) then 
+			begin
+			
+				SCREEN_BG_COLOR := BLACK + SCREEN_BG_ORANGE - 8;
+				vbmClearColor( BLACK );
+
+				section := SECTION_ROOMLOST;
+				gameLoop := false; // time to leave loop
+									
+			end;
+
+
+		end;
+
+	end;
+	
+end;
+
+
+// While in a game loop on the room selection Section
+// have entered a room - work out where to go
+procedure GameSection_SelectedRoom();
+begin
+
+	// In room level select, have just selected the room wish to play
+	
+	if ( gameRoom >= 1 ) then 
+		section := SECTION_GAME
+	else
+		section := SECTION_TITLE;
+		
+end;
+
+// While in a game loop in the game Section
+// have just won by walking through a door
+procedure GameSection_RoomWon();
+begin
+
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_WHITE - 8;
+	vbmClearColor( BLACK );
+
+	Sound_RoomComplete();
+	
+	_GameSection_DrawDialog();
+	
+	vbmDrawTextE( #strRoomCompleteTitle, #font8, 3, 105, 8 );
+
+	_GameSection_WaitForInput();
+
+	// check if completed last room
+	if ( gameRoom = levelComplete[ gameLevel ] ) then
+	begin
+	
+		levelComplete[ gameLevel ] := levelComplete[ gameLevel ] + 1;
+		//bcdadd( levelCompleteBCD[ gameLevel ], #bcd1, 1 );
+		asm("
+		
+	sed
+	clc
+	ldx gameLevel
+	lda levelCompleteBCD,x
+	adc bcd1
+	sta levelCompleteBCD,x
+	cld
+	
+		");
+		
+	end;
+
+	// Just won a room being played, go back to room level select
+	section := SECTION_ROOM;
+	gameRoom := 0;
+
+end;
+
+// While in a game loop in the game Section
+// have just lost by running into a hazard or out of time
+procedure GameSection_RoomLost();
+begin
+
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_ORANGE - 8;
+	vbmClearColor( BLACK );
+	
+	Sound_TimeUp();
+	
+	_GameSection_DrawDialog();
+	
+	vbmDrawTextE( #strRoomFailedTitle, #font8, 4, 105, 8 );
+	
+	_GameSection_WaitForInput();
+
+	// Just lost a room being played, go back to room level select
+	section := SECTION_ROOM;
+	gameRoom := 0;
+	
+	// count mouse
+	bcdadd( #numMouseBCD, #bcd1, 3 );
+
+end;
+
+
+// Have completed an experiment
+// 1. show progress
+// 2. or show completed game
+procedure GameSection_ExperimentCompleted();
+var
+	strCongratulations: cstring = ( "CONGRATULATIONS!" );
+	strCompletedGame: cstring = ("YOU HAVE COMPLETED THE EXPERIMENT!");
+	strCompExp1: cstring = ( "YOU HAVE COMPLETED EXPERIMENT 1!" ); 
+	strCompExp2: cstring = ( "YOU HAVE COMPLETED EXPERIMENT 2!" ); 
+	strCompExp3: cstring = ( "YOU HAVE COMPLETED EXPERIMENT 3!" ); 
+	strNextExp: cstring = ( "COMPLETE EXPERIMENTS FOR YOUR FREEDOM!" );	
+	strCurRating: cstring = ( "CURRENT RATING" );
+	strFinRating: cstring = ( "FINAL RATING" );
+
+begin
+
+	SCREEN_BG_COLOR := GREEN + SCREEN_BG_LTYELLOW - 8;
+	vbmClearColor( GREEN );
+	vbmClear( 0 );
+
+	Sound_PlayerJump();
+
+	// congratulations title
+	vbmDrawTextE( #strCongratulations, #font8, 2, 35, 8 );
+
+	i := levelComplete[ 0 ] + levelComplete[ 1 ] + levelComplete[ 2 ];
+
+	if ( i = ALL_ROOMS_COMPLETE ) then
+	begin
+	
+		// completed game
+		vbmDrawSmallTextE( #strCompletedGame, #font4, 3, 50, 5 );
+
+		// show a current rating
+		vbmDrawTextE( #strFinRating, #font8, 4, 90, 8 );
+		_gameSection_ShowRating();
+
+		// number of mice used?
+		_gameSection_NumberMiceUsed();
+		
+
+		_GameSection_WaitForInput();
+
+		// show a picture
+
+		_GameSection_WaitForInput();
+
+		section := SECTION_TITLE;
+
+	end
+	else
+	begin
+
+		// completed experiment, but more experiments to complete
+		
+		if ( gameLevel = 0 ) then vbmDrawSmallTextE( #strCompExp1, #font4, 4, 50, 5 );
+		if ( gameLevel = 1 ) then vbmDrawSmallTextE( #strCompExp2, #font4, 4, 50, 5 );
+		if ( gameLevel = 2 ) then vbmDrawSmallTextE( #strCompExp3, #font4, 4, 50, 5 );
+	
+		vbmDrawSmallTextE( #strNextExp, #font4, 1, 65, 5 );
+
+		// show a current rating
+		vbmDrawTextE( #strCurRating, #font8, 3, 90, 8 );
+		_gameSection_ShowRating();
+
+		// number of mice used?
+		_gameSection_NumberMiceUsed();
+
+
+		_GameSection_WaitForInput();
+
+		section := SECTION_TITLE;
+
+	end;
+
+
+end;
+
+// ----------------------------------------------------------
+
+@donotremove "GameSection_Title"
+@donotremove "GameSection_Intro"
+@donotremove "GameSection_Instructions"
+@donotremove "GameSection_TheVic20"
+@donotremove "GameSection_TheCredits"
+@donotremove "GameSection_Experiment"
+@donotremove "GameSection_GameLoop"
+@donotremove "GameSection_SelectedRoom"
+@donotremove "GameSection_RoomWon"
+@donotremove "GameSection_RoomLost"
+@donotremove "GameSection_ExperimentCompleted"
+
+// Work out which section to go to next
+// called in main outer loop when a section ends
+procedure GameSection_ProcessState();
+begin
+	asm( "
+
+	ldy section ; what state to select
+
+	lda gameSectionL,y
+	sta p1
+	lda gameSectionH,y
+	sta p1+1
+	
+	jmp (p1) 
+
+gameSectionL:
+	dc.b <GameSection_Title		// SECTION_TITLE
+	dc.b <GameSection_Intro	// intro
+	dc.b <GameSection_Instructions	// instructions
+	dc.b <GameSection_TheVic20	// The Vic 20 instructions
+	dc.b <GameSection_TheCredits	// credits
+	dc.b <GameSection_Experiment // experiment introduction
+	dc.b <GameSection_GameLoop	// SECTION_ROOM
+	dc.b <GameSection_GameLoop	// SECTION_GAME
+	dc.b <GameSection_SelectedRoom	// SECTION_SELECTEDROOM
+	dc.b <GameSection_RoomWon	// SECTION_ROOMWON
+	dc.b <GameSection_RoomLost	// SECTION_ROOMLOST
+	dc.b <GameSection_ExperimentCompleted	// Completed an experiment
+	
+gameSectionH:
+	dc.b >GameSection_Title
+	dc.b >GameSection_Intro	// intro
+	dc.b >GameSection_Instructions	// instructions
+	dc.b >GameSection_TheVic20	// The Vic 20 instructions
+	dc.b >GameSection_TheCredits	// credits
+	dc.b >GameSection_Experiment	// experiment introduction
+	dc.b >GameSection_GameLoop
+	dc.b >GameSection_GameLoop
+	dc.b >GameSection_SelectedRoom
+	dc.b >GameSection_RoomWon
+	dc.b >GameSection_RoomLost
+	dc.b >GameSection_ExperimentCompleted	// Completed an experiment
+	
+	" );
+
+end;
+
+// alternative - not used and TRSE will remove as not used
+procedure GameSection_ProcessState2();
+var
+	procs : array[ 5 ] of integer;
+
+begin
+	procs[0] := proceduretopointer(GameSection_Title());
+	procs[1] := proceduretopointer(GameSection_GameLoop());
+	procs[2] := proceduretopointer(GameSection_GameLoop());
+	p1 := procs[ section ];
+	call(p1);
+	
+end;
