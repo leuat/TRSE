@@ -1,0 +1,78 @@
+unit Screen;
+var
+	const VIC_BASE: integer = $D000;
+	addr : integer;
+	bank : byte;
+
+procedure SetCharsetAddress(addr: global integer; bank:global byte);
+begin
+	poke(VIC_BASE + ^$68, 0, lo(addr));
+    poke(VIC_BASE + ^$69, 0, hi(addr));
+    poke(VIC_BASE + ^$6A, 0, bank);
+end;
+
+procedure SetScreenAddress(addr: global integer; bank:global byte);
+begin
+	poke(VIC_BASE + ^$60, 0, lo(addr));
+    poke(VIC_BASE + ^$61, 0, hi(addr));
+    poke(VIC_BASE + ^$62, 0, bank);
+end;
+
+procedure SetBank(bank : global byte);
+begin
+	asm("
+        ldy Screen_bank
+		lda #$00
+        tax 
+;        tay 
+        taz 
+        map
+	");
+end;
+
+
+procedure EnableVIC4();
+begin
+	asm("
+		lda #$47    //Enable VIC IV
+        sta $d02f
+        lda #$53
+        sta $d02f
+	");
+end;
+
+
+procedure SetFastMode();
+begin
+	asm("	   
+		lda #65
+         sta 0
+	");
+end;
+
+procedure Init();
+begin
+	asm("	
+         lda #$47
+         sta $d02f
+         lda #$53
+         sta $d02f
+         ; no interrupts
+         sei
+         
+		
+
+		 lda #$00
+        tax 
+        tay 
+        taz 
+        map
+;        eom
+
+	");
+
+
+end;
+
+
+end.

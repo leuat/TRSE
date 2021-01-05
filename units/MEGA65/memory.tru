@@ -1,0 +1,21 @@
+unit Memory;
+var
+	@donotremove zpLo
+	@donotremove zpHi
+	zpLo : pointer at $90;
+	zpHi : pointer at $92;
+	pa, pb : byte;
+	
+
+procedure Poke24(pa, pb:global byte);
+begin
+	asm(" 
+		ldz Memory_pa
+		lda Memory_pb
+		eom 
+		sta (Memory_zpLo),z
+	");
+	
+end;
+
+end.
