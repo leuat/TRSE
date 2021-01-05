@@ -211,7 +211,7 @@ public:
     QVector<QSharedPointer<Node>> Parameters(QString blockName);
     QSharedPointer<Node> ForLoop(bool inclusive);
 //    QSharedPointer<Node> WhileLoop();
-    QSharedPointer<Node> String();
+    QSharedPointer<Node> String(bool isCString);
 
     QSharedPointer<Node> Conditional(bool isWhileLoop=false);
 //    QVector<QSharedPointer<Node>> Procedure();

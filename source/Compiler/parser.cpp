@@ -1380,7 +1380,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
         Token t = m_currentToken;
         if (m_currentToken.m_type==TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
-           n = String();
+           n = String(m_currentToken.m_type==TokenType::CSTRING);
            return n;
 
         }
@@ -2700,9 +2700,8 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
 
 }
 
-QSharedPointer<Node> Parser::String()
+QSharedPointer<Node> Parser::String(bool isCString = false)
 {
-
 
     if (m_currentToken.m_type==TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
         QSharedPointer<NodeString> node = QSharedPointer<NodeString>(new NodeString(m_currentToken,QStringList()<<m_currentToken.m_value,m_currentToken.m_type==TokenType::CSTRING));
@@ -2721,16 +2720,18 @@ QSharedPointer<Node> Parser::String()
     bool done = false;
 //    lst<<m_currentToken.m_value;
     int max=0;
+    QString numID = "";
+    if (isCString)
+        numID = "*&NUM";
     while (m_currentToken.m_type!=TokenType::RPAREN) {
         //GetParsedInt(TokenType::INTEGER);
 
         if (m_currentToken.m_value=="" || m_currentToken.m_type==TokenType::ID || m_currentToken.m_type==TokenType::LPAREN)
-            m_currentToken.m_value = QString::number(GetParsedInt(TokenType::INTEGER));
+            m_currentToken.m_value = numID + QString::number(GetParsedInt(TokenType::INTEGER));
 
 /*        if (m_currentToken.m_value=="")
             m_currentToken.m_value = QString::number();
 */
-//        qDebug() << m_currentToken.m_value <<m_currentToken.getType();
 
         if (m_currentToken.m_value!="")
             lst<<m_currentToken.m_value;
@@ -2746,7 +2747,6 @@ QSharedPointer<Node> Parser::String()
     }
     Eat(); // RParen
 //    qDebug() <<m_currentToken.getType();
-
     QSharedPointer<NodeString> node = QSharedPointer<NodeString>(new NodeString(token, lst, token.m_type==TokenType::CSTRING));
     return node;
 }
@@ -3249,13 +3249,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     }
 
     if (m_currentToken.m_type == TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
+        bool isCString = m_currentToken.m_type==TokenType::CSTRING;
         Eat();
         QStringList initData;
         QStringList flags = getFlags();
 
         if (m_currentToken.m_type == TokenType::EQUALS) {
             Eat();
-            QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String());
+            QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String(isCString));
             initData = str->m_val;
         }
         QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));

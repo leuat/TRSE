@@ -370,7 +370,19 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
             }
 
         }*/
+        bool isNumber = false;
+        if (curStr.startsWith("*&NUM")) {
+            curStr = curStr.remove("*&NUM"); // Remove the number tag
+            int val = curStr.toInt(&isNumber);
+            if (isNumber) {
+                Write(" dc.b " + curStr);
+            }
+        }
+
+        if (!isNumber)
+
         if (curIdx<curStr.length()) {
+
             QString c = curStr[curIdx].toUpper();
             //qDebug() << c;
             if (m_cstr.contains(c)) {
