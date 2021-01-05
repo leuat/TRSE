@@ -1,0 +1,169 @@
+Unit Screen;
+var  
+	i: byte; 
+	@donotremove InputFilter
+	@donotremove InputResult
+	InputFilter 	: string = " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,-+#$%&*()!";
+	//InputResult    	: string = "";
+	//InputResult     : integer;
+	OutputString    : string = "";
+// ------------------------------------------------------------------------------------ //
+// -- This routine is adapted from the Codebase64 routine
+// -- https://codebase64.org/doku.php?id=base:robust_string_input
+// ------------------------------------------------------------------------------------ //
+procedure GetString(InputResult: pointer);
+begin
+	
+	asm("
+;======================================================================
+;Input a string and store it in GOTINPUT, terminated with a null byte.
+;x:a is a pointer to the allowed list of characters, null-terminated.
+;max # of chars in y returns num of chars entered in y.
+;======================================================================
+
+GETIN = $ffe4
+
+; Example usage
+FILTERED_TEXT
+	lda #>Screen_InputFilter
+	ldx #<Screen_InputFilter
+	ldy #38
+;Drop through
+; Main entry
+FILTERED_INPUT
+	sty MAXCHARS
+	stx CHECKALLOWED+1
+	sta CHECKALLOWED+2
+
+;Zero characters received.
+	lda #$00
+	sta INPUT_Y
+
+;Wait for a character.
+INPUT_GET
+	jsr GETIN
+	beq INPUT_GET
+	sta LASTCHAR
+	cmp #$14               ;Delete
+	beq DELETE
+	cmp #$0d               ;Return
+	beq INPUT_DONE
+;Check the allowed list of characters.
+	ldx #$00
+CHECKALLOWED
+	lda $FFFF,x           ;Overwritten
+	beq INPUT_GET         ;Reached end of list (0)
+	cmp LASTCHAR
+	beq INPUTOK           ;Match found
+;Not end or match, keep checking
+	inx
+	jmp CHECKALLOWED
+
+INPUTOK
+	lda LASTCHAR          ;Get the char back
+	ldy INPUT_Y
+	sta Screen_InputResult,y        ;Add it to string
+	jsr $ffd2             ;Print it();
+	inc INPUT_Y           ;Next character
+;End reached
+	lda INPUT_Y
+	cmp MAXCHARS
+	beq INPUT_DONE
+
+;Not yet.
+	jmp INPUT_GET
+
+INPUT_DONE
+	ldy INPUT_Y
+	lda #$00
+	sta Screen_InputResult,y   ;Zero-terminate
+	rts
+
+; Delete last character.
+DELETE
+;First, check if we're at the beginning.  If so, just exit.
+	lda INPUT_Y
+	bne DELETE_OK
+	jmp INPUT_GET
+
+;At least one character entered.
+DELETE_OK
+;Move pointer back.();
+	dec INPUT_Y
+;Store a zero over top of last character, just in case no other characters are entered.
+  	ldy INPUT_Y
+  	lda #$00
+  	sta Screen_InputResult,y
+;Print the delete char
+  	lda #$14
+  	jsr $ffd2
+;Wait for next char
+  	jmp INPUT_GET
+
+;=================================================
+;Some example filters
+;=================================================
+
+;IPADDRESS
+
+
+MAXCHARS
+	  dc.b $00
+
+LASTCHAR
+	  dc.b $00
+
+INPUT_Y
+	  dc.b $00
+
+;GOTINPUT
+;	  ds.b #39
+  ");
+	  
+	//GetString := InputResult;
+end;
+
+
+	
+
+function Init() : Integer;
+begin
+
+end;
+
+// ------------------------------------------------------------------------------------ //
+// -- This routine uses the kernal to position the cursor at X,Y
+// ------------------------------------------------------------------------------------ //
+procedure CursorPosition(X : byte;Y : Byte);
+begin
+	asm("
+		clc
+		ldx Screen_Y
+		ldy Screen_X
+		jsr $FFF0
+		rts
+		");
+end;
+// ------------------------------------------------------------------------------------ //
+// -- This routine uses the kernal write a string to the screen
+// ------------------------------------------------------------------------------------ //
+procedure PutString(str : pointer);
+var 
+	outbyte 	: byte;
+	out_count 	: byte;
+begin
+	outbyte := 255;
+	for out_count := 0 to 255 do
+	begin
+		//outbyte := OutputString[out_count];
+		outbyte := str[out_count];
+		if outbyte = 0 then break;
+		asm("
+			lda Screen_outbyte
+			jsr $FFD2
+			");
+	end;
+end;
+
+
+end.
