@@ -40,6 +40,8 @@ AMSTRADCPC464; Main Amstrad CPC tutorials; AMSTRADCPC464/tutorials/;<h2>Main Ams
 AMSTRADCPC464; Mørketid (demo); AMSTRADCPC464/Morketid/;<h2>Mørketid</h2><p><img src=":resources/images/morketid.png" width="300"><p>Mørketid is a full Amstrad CPC demo that was made with TRSE. The demo competed at Syntax 2020, and can be found on pouet here : https://www.pouet.net/prod.php?which=87509.<br><br>This project contains the full source code with all resources for the demo.
 
 
+MEGA65; Main Mega65 tutorials; MEGA65/Tutorials/ ;  <h2>Main Mega65 tutorials</h2><p>Recommended starting point for anybody interested in coding for the MEGA65. <p>Under construction.
+
 
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!
 OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2>The first demo made for the OK64! Presented at Revision 2020.

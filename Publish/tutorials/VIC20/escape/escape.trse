@@ -1,4 +1,4 @@
-project_path = tutorials/VIC20/escape/
+project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/VIC20/escape/
 zeropages = ,$68, $6A, $6C, $6E, $70, $72, $74, $76, $78
 temp_zeropages = ,$88, $8A, $8C, $8E
 via_zeropages = ,$64, $65, $66, $67
@@ -32,7 +32,7 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 open_files = ,loaddisk.ras, loader.ras, main.ras, chrtest.flf, lvltest.flf, spr/sprites.flf, chr/graphics.flf, lvl/lvlTitle.flf, game.asm, chr/titles.flf
-current_file = main.ras
+current_file = loader.ras
 global_defines = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086

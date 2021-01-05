@@ -3284,7 +3284,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         if (m_currentToken.m_type == TokenType::AT) {
             Eat();
             nvt->initVal = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
-            Eat();
+    //        Eat();
 
         }
         return nvt;
@@ -3312,12 +3312,13 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         if (m_currentToken.m_type == TokenType::AT) {
             Eat();
             nvt->initVal = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
-            Eat();
+//            Eat();
 
         }
 
 //        qDebug() <<"Parser typespec pointer: "  << nvt->m_arrayVarType.getType();
         nvt->VerifyFlags(isInProcedure);
+  //      qDebug() << "WTF "<<m_currentToken.getType();
 
         return nvt;
     }
