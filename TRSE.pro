@@ -179,6 +179,7 @@ SOURCES += main.cpp\
     source/dialognewproject.cpp \
     source/dialogselectcharset.cpp \
     source/dialogsimplelineedit.cpp \
+    source/formhelp.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
     source/trsedocuments/formhexedit.cpp \
@@ -381,6 +382,7 @@ HEADERS  += mainwindow.h \
     source/dialognewproject.h \
     source/dialogselectcharset.h \
     source/dialogsimplelineedit.h \
+    source/formhelp.h \
     source/toolbox.h \
     source/toolboxitem.h \
     source/trsedocuments/formhexedit.h \
@@ -521,6 +523,8 @@ FORMS    += mainwindow.ui \
     source/dialognewproject.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \
+    source/formHelp.ui \
+    source/formhelp.ui \
     source/trsedocuments/formhexedit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \

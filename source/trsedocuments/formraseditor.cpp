@@ -651,8 +651,18 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
 
-        Help(word);
+//        Help(word);
+   /*     QTextCursor tc = ui->txtEditor->textCursor();
+        tc.select(QTextCursor::WordUnderCursor);
+        QString word = tc.selectedText();
+*/
+        ui->tabOutputs->setCurrentIndex(1);
+//        ui->tabHelp->setFocus();
+        ui->widgetHelp->Search(word);
     }
+
+    if (e->key()==Qt::Key_Escape)
+        ui->tabOutputs->setCurrentIndex(0);
 
     if (e->key()==Qt::Key_F2) {
         LookupSymbolUnderCursor();
@@ -1227,4 +1237,10 @@ void FormRasEditor::on_chkDisplayAddresses_stateChanged(int arg1)
 void FormRasEditor::on_chkDisplayCycles_stateChanged(int arg1)
 {
     FillToIni();
+}
+
+void FormRasEditor::on_btnViewHelp_clicked()
+{
+    Help(ui->widgetHelp->m_currentWord);
+
 }
