@@ -72,6 +72,11 @@ FormRasEditor::~FormRasEditor()
     delete ui;
 }
 
+void FormRasEditor::FocusOnOutput()
+{
+    ui->tabOutputs->setCurrentIndex(0);
+}
+
 void FormRasEditor::setOutputText(QString text) {
     ui->txtOutput->setHtml(text);
 }
@@ -334,6 +339,7 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build(bool isShadow)
 {
     // Enforce pause between builds
+    FocusOnOutput();
     if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
         return;
     m_lastBuild = m_timer.elapsed();
@@ -657,13 +663,14 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QString word = tc.selectedText();
 */
         ui->tabOutputs->setCurrentIndex(1);
+
         ui->widgetHelp->SetFontSize(m_iniFile->getdouble("font_size"));
 //        ui->tabHelp->setFocus();
         ui->widgetHelp->Search(word);
     }
 
     if (e->key()==Qt::Key_Escape)
-        ui->tabOutputs->setCurrentIndex(0);
+        FocusOnOutput();
 
     if (e->key()==Qt::Key_F2) {
         LookupSymbolUnderCursor();

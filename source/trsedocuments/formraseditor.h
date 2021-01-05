@@ -104,6 +104,7 @@ public:
     int m_searchFromPos = 0;
     int m_currentFromPos = 0;
 
+    void FocusOnOutput();
 
     void setOutputText(QString text) override;
 
