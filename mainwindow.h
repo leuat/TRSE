@@ -269,7 +269,7 @@ public slots:
     }
 
     void UpdateRecentProjects();
-    void SaveAs();
+    bool SaveAs(QString text);
 
     bool RemoveTab(int, bool save=true);
     void LoadProject(QString filename);
@@ -430,6 +430,8 @@ private slots:
     void on_action_Comment_Uncomment_triggered();
 
     void on_actionLook_up_assembly_line_under_cursor_F3_triggered();
+
+    void on_action_Rename_current_file_triggered();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

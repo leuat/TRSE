@@ -1116,21 +1116,21 @@ void MainWindow::UpdateRecentProjects()
 
 }
 
-void MainWindow::SaveAs()
+bool MainWindow::SaveAs(QString text="Save file as")
 {
     if (m_currentDoc==nullptr)
-        return;
+        return false;
     if (m_currentPath=="")
-        return;
+        return false;
     QString ext = m_currentDoc->m_fileExtension;
 
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     QString f = ext +" Files (*."+ext+")";
-    QString filename = dialog.getSaveFileName(NULL, "Create New File",getProjectPath(),f);
+    QString filename = dialog.getSaveFileName(NULL, text,getProjectPath(),f);
 
     if (filename=="")
-        return;
+        return false;
     if (!filename.contains("."))
         filename = filename + "."+ext;
     QString orgFile;
@@ -1144,7 +1144,7 @@ void MainWindow::SaveAs()
     ui->tabMain->setTabText(ui->tabMain->currentIndex(),filename);
     updatePalette();
 
-
+    return true;
 }
 
 bool MainWindow::RemoveTab(int idx, bool save)
@@ -2480,4 +2480,14 @@ void MainWindow::on_actionLook_up_assembly_line_under_cursor_F3_triggered()
     if (m_currentDoc!=nullptr)
         m_currentDoc->LookupAssemblerUnderCursor();
 
+}
+
+void MainWindow::on_action_Rename_current_file_triggered()
+{
+    QString orgFile = m_currentPath + QDir::separator() + m_currentDoc->m_currentFileShort;
+    if (SaveAs("Rename file")) {
+//        qDebug() << orgFile;
+        QFile::remove(orgFile);
+    }
+    RefreshFileList();
 }

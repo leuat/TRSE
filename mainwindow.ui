@@ -503,6 +503,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOpen_project_location"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
+    <addaction name="action_Rename_current_file"/>
     <addaction name="actionDelete_file"/>
     <addaction name="actionClose_current_project"/>
    </widget>
@@ -775,6 +776,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionLook_up_assembly_line_under_cursor_F3">
    <property name="text">
     <string>Look up assembly line under cursor (F3)</string>
+   </property>
+  </action>
+  <action name="action_Rename_current_file">
+   <property name="text">
+    <string>&amp;Rename current file</string>
    </property>
   </action>
  </widget>
