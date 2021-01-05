@@ -221,6 +221,38 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
     as->ClearTerm();
     as->Asm("ldy #0 ; ::HandleVarBinopB16bit 0");
 
+    if (node->m_right->isPure())  {
+        as->Comment("RHS is pure, optimization");
+        node->m_left->Accept(this);
+
+        as->BinOP(node->m_op.m_type);
+        as->Term(node->m_right->getValue(as),true);
+        as->Asm("pha ");
+        as->Asm("tya ");
+        as->BinOP(node->m_op.m_type,false);
+        as->Term(node->m_right->getValue8bit(as,true),true);
+        as->Asm("tay ");
+        as->Asm("pla ");
+        return;
+        //        as->Asm("sta " + varName);
+
+
+
+/*        if (node->m_op.m_type==TokenType::PLUS) {
+
+            as->Asm("bcc "+lblword);
+            as->Asm("iny");
+
+        }
+        else {
+  //          as->Asm("bcs "+lblword);
+            as->Asm("dey");
+        }
+        as->Label(lblword);
+*/
+    }
+
+
 //    qDebug() << node->m_right
     //qDebug() << "NodeBinop : " << TokenType::getType(node->m_right->getType(as)) <<TokenType::getType(node->m_left->getType(as)) ;
 

@@ -187,7 +187,7 @@ var
 	/*fade1: array[16] of byte = (
 		6,6,  4,4, 3, 7, 1, 1,7,3,4,4,6,6);  */ 
 	text1 : string = (
-					@cmove,1,16,@ccol, 6, "VIC IS NEARING",@ccol,4," FORTY", @cpause,32
+					@cmove,1,16,@ccol, 6, "VIC IS NEARING",@ccol,4," FORTY", @cpause,32,
 					@cmove,2,18,@ccol, 6, "STILL FEELS",@ccol,2," SPIFFY", @cstart ,128, @cstart,1,@cpause,32,
 					@cmove,1,16,@ccol, 0, "VIC IS TURNING FORTY", 
 
