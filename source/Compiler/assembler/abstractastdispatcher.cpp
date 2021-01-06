@@ -137,6 +137,10 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
     QString lblFor =as->NewLabel("forloop");
     QString lblForEnd =as->NewLabel("forloopend");
     QString lblForCounter =as->NewLabel("forloopcounter");
+
+    QString lblLoopStart = as->NewLabel("loopstart");
+    QString lblLoopEnd = as->NewLabel("loopend");
+
     as->Label(lblFor);
     bool offpage = isOffPage(node, node->m_block, nullptr);
     Token t_cond = node->m_op;
@@ -160,27 +164,37 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Perform counter increase and jimps (individual for each target cpu)
     as->Label(lblForCounter);
+    as->Label(lblLoopStart);
     CompareAndJumpIfNotEqual(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
 
     as->Label(lblForEnd);
+    as->Label(lblLoopEnd);
     as->PopLabel("forloop");
     as->PopLabel("forloopend");
     as->PopLabel("forloopcounter");
 
+    as->PopLabel("loopend");// for BREAK and CONT
+    as->PopLabel("loopstart"); // for BREAK and CONT
 
 }
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
 {
+/*    QString labelStartOverAgain = as->NewLabel("while");
+    QString labelElseDone = as->NewLabel("elsedoneblock");
+  */
     if (node->m_op.m_type == TokenType::BREAK) {
-        if (as->m_labelStack["forloopend"].m_vars.count()==0)
-            ErrorHandler::e.Error("'Break' can only be called within a for / while loop", node->m_op.m_lineNumber);
-        as->Asm(getJmp(true) + " " + as->getLabel("forloopend"));
+
+        if (as->m_labelStack["loopend"].m_vars.count()!=0) // for loops
+            as->Asm(getJmp(true) + " " + as->getLabel("loopend"));
+        else
+        ErrorHandler::e.Error("'Break' can only be used within a for / while loop", node->m_op.m_lineNumber);
     }
     if (node->m_op.m_type == TokenType::CONTINUE) {
-        if (as->m_labelStack["forloopend"].m_vars.count()==0)
-            ErrorHandler::e.Error("'Continue' can only be called within a for / while loop", node->m_op.m_lineNumber);
-        as->Asm(getJmp(true) + " " + as->getLabel("forloopcounter"));
+        if (as->m_labelStack["loopstart"].m_vars.count()!=0)
+            as->Asm(getJmp(true) + " " + as->getLabel("loopstart"));
+        else
+         ErrorHandler::e.Error("'Continue' can only be used within a for / while loop", node->m_op.m_lineNumber);
     }
     if (node->m_op.m_type == TokenType::RETURN)
         as->Asm(getReturn());
@@ -208,8 +222,17 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
     QString labelElseDone = as->NewLabel("elsedoneblock");
 
     // While loops are identical to "ifs" with a loop
-    if (node->m_isWhileLoop)
+
+    QString lblLoopStart = "";
+    QString lblLoopEnd = "";
+
+
+    if (node->m_isWhileLoop)  {
         as->Label(labelStartOverAgain);
+        lblLoopStart = as->NewLabel("loopstart");
+        lblLoopEnd = as->NewLabel("loopend");
+        as->Label(lblLoopStart);
+    }
 
     // Test all binary clauses:
     QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
@@ -259,12 +282,22 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
         //        m_elseBlock->Build(as);
 
     }
+    as->Term();
+//    as->Comment("; ELSEDONE HERE "+labelElseDone);
     as->Label(labelElseDone); // Jump here if not
+    if (lblLoopEnd!="")
+        as->Label(lblLoopEnd);
 
     as->PopLabel("while");
     as->PopLabel("ConditionalTrueBlock");
     as->PopLabel("elseblock");
     as->PopLabel("elsedoneblock");
+
+    if (node->m_isWhileLoop)  { // for BREAK and CONT
+        as->PopLabel("loopstart");
+        as->PopLabel("loopend");
+    }
+
     //    as->PopLabel("conditionalfailed");
 
 }

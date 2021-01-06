@@ -4503,27 +4503,27 @@ void Methods6502::SetMemoryConfig(Assembler *as)
 {
     as->Comment("Set Memory Config");
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
 
 
-    m_node->RequireNumber(m_node->m_params[0], "SetMemoryConfig", m_node->m_op.m_lineNumber);
-    m_node->RequireNumber(m_node->m_params[1], "SetMemoryConfig", m_node->m_op.m_lineNumber);
-    m_node->RequireNumber(m_node->m_params[2], "SetMemoryConfig", m_node->m_op.m_lineNumber);
+        m_node->RequireNumber(m_node->m_params[0], "SetMemoryConfig", m_node->m_op.m_lineNumber);
+        m_node->RequireNumber(m_node->m_params[1], "SetMemoryConfig", m_node->m_op.m_lineNumber);
+        m_node->RequireNumber(m_node->m_params[2], "SetMemoryConfig", m_node->m_op.m_lineNumber);
 
 
-    int n1 = m_node->m_params[0]->getValueAsInt(as); // Kernal
-    int n2 = m_node->m_params[1]->getValueAsInt(as); // Basic
-    int n3 = m_node->m_params[2]->getValueAsInt(as); // IO
+        int n1 = m_node->m_params[0]->getValueAsInt(as); // Kernal
+        int n2 = m_node->m_params[1]->getValueAsInt(as); // Basic
+        int n3 = m_node->m_params[2]->getValueAsInt(as); // IO
 
-    if (n1==1 && n2==0 && n3 == 0)
-        n3=1; // Bit 2 must be toggled
+        if (n1==1 && n2==0 && n3 == 0)
+            n3=1; // Bit 2 must be toggled
 
-    uchar val = n1<<2 | n2<<1 | n3 << 0;
+        uchar val = n1<<2 | n2<<1 | n3 << 0;
 
-    as->Asm("lda $01");
-    as->Asm("and #%11111000");
-    as->Asm("ora #%" + QString::number(val,2));
-    as->Asm("sta $01");
+        as->Asm("lda $01");
+        as->Asm("and #%11111000");
+        as->Asm("ora #%" + QString::number(val,2));
+        as->Asm("sta $01");
 
     }
 
@@ -4583,7 +4583,7 @@ void Methods6502::StartIRQ(Assembler *as)
         as->Asm("pha");
     }
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
         m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
         QSharedPointer<NodeNumber> n = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
         if (n->m_val==1) {
@@ -4674,7 +4674,7 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
         as->Asm("pla");
 
     }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64  || Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
 
         if (isWedge)
             as->Asm("asl $D019");
@@ -5358,7 +5358,7 @@ void Methods6502::DisableInterrupts(Assembler *as)
     as->Asm("sta $d01a");
 */
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
         as->Asm("ldy #$7f    ; $7f = %01111111");
         as->Asm("sty $dc0d   ; Turn off CIAs Timer interrupts");
         as->Asm("sty $dd0d   ; Turn off CIAs Timer interrupts");
@@ -5611,7 +5611,7 @@ void Methods6502::WaitForRaster(Assembler *as)
 //    as->Asm("lda $d012 ; raster line pos");
 //    as->Asm("clc ; clear carry ");
  //   as->Label("lblTest");
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
         as->Asm("cpx $d012");
     else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
         as->Asm("cpx $9004");

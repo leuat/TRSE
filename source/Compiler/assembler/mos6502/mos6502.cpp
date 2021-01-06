@@ -1040,7 +1040,7 @@ void AsmMOS6502::OptimiseJumps()
  //               qDebug() << " " + l0;
   //              qDebug() << " " + l1;
                 m_removeLines.append(i);
-                m_removeLines.append(j);
+                //m_removeLines.append(j);
                 i++;
                 continue;
             }

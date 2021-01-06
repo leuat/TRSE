@@ -1,6 +1,6 @@
 program Rasters;
 var
-	const useKernal:byte=1;
+	const useKernal:byte=0;
 
 
 interrupt IRQ1();
@@ -30,6 +30,8 @@ begin
 end;
 
 begin
-	StartRasterChain(IRQ0(), 0,useKernal);
+	disableciainterrupts(); // prevent CIA
+	setmemoryconfig(1,0,0); // Enable all ram, turn off BASIC
+	StartRasterChain(IRQ0(), 0,useKernal); // Don't use kernal
 	Loop(); 
 end.

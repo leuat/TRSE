@@ -3,10 +3,8 @@ program Tutorial_7_80col;
 @use "Memory"
 var  
 
-@donotremove dummy1
-@donotremove dummy2
 
-   	i,j,k, x,dummy1,y,dx,dy, time,xx,add: byte; 
+   	i,j,k, x,y,dx,dy, time,xx,add: byte; 
 	int : integer;
 	zp,zp1,zp2 : pointer;
 //	cpLo, cpHi : pointer of long;
@@ -92,9 +90,23 @@ begin
 end;
 
 interrupt Raster();
+var ri : byte;
 begin
 	startirq(0);
+	//Screen::EnableVIC4();
+	//asm(" inc $D019");
+	call(sidfile_1_play);
+	add:=7; // base color = 7
+	Render();
+	add:=$40;
+	Render();
 	
+	waitforraster(100);
+//	for ri:=0 to 30 do wait(100);
+ 	call(sidfile_1_play);
+//	inc(screen_fg_col);
+//	call(sidfile_1_play);
+	inc(time);	
 	closeirq();
 end;
 
@@ -113,13 +125,15 @@ begin
 	Screen::SetCharsetAddress($9000,0);
 	PreCalculate();
 	SetupTables();
-
-//	startrasterchain(Raster(),0,0);
-
-	// Copy charset data from ram to VDC ($2000)
-	// Move to x=20, y=10 at memory address $0000 on the VDC (text matrix)
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	startrasterchain(Raster(),0,0);
+	enablerasterirq();
+	enableirq();
+	Render();
 	while (true) do begin
-		inc(time);
+/*		inc(time);
+		
 		// Move to matrix ram
 		add:=$40;
 		Render(); // Render text
@@ -128,8 +142,7 @@ begin
 		begin
 			wait(200);
 		end;
-//		asm(";balle");		
-		call(sidfile_1_play);
+		*/
 /*		// Move to color (attribute) ram
 		MoveTo80(0,0,$08);
 		add:=7; // base color = 7
