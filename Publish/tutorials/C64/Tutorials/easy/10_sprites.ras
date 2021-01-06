@@ -73,6 +73,8 @@ begin
 				3*16 + 3,   // Sustain = 16*15 + release=6
 				1 +sid_saw,  // Waveform
 				sid_saw);  // waveform 
+				
+
 
 end;
 

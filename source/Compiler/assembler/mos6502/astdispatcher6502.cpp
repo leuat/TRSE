@@ -224,7 +224,7 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
     if (node->m_right->isPure())  {
         as->Comment("RHS is pure, optimization");
         node->m_left->Accept(this);
-
+        as->Term();
         as->BinOP(node->m_op.m_type);
         as->Term(node->m_right->getValue(as),true);
         if (node->m_right->getValue8bit(as,true)=="#0") {
@@ -236,6 +236,7 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
         }
         else {
+            as->Comment("RHS is word, no optimization");
             as->Asm("pha ");
             as->Asm("tya ");
             as->BinOP(node->m_op.m_type,false);
