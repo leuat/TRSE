@@ -2109,6 +2109,13 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
     QString m = as->m_term;
 
     as->ClearTerm();
+
+    if (node->m_expr==nullptr) {
+        as->Asm("lda "+getValue(node));
+        as->Asm("ldy "+getValue(node) + " +1");
+        return;
+    }
+
     if (!LoadXYVarOrNum(node, node->m_expr,false))
     {
         if (!(m=="" || m.startsWith("lda")))
