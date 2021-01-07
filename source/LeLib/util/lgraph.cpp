@@ -171,12 +171,12 @@ void LGraph::SaveText(QString fileName) {
     if (QFile::exists(fileName))
       QFile::remove(fileName);
         QFile file(fileName);
-    qDebug() << "Saving graph " << fileName;
+//    qDebug() << "Saving graph " << fileName;
     if (file.open(QIODevice::ReadWrite|QFile::Text)) {
             QTextStream stream(&file);
 
             for (int i=0;i<m_noBins;i++) {
-                stream << m_index[i] << "  " << m_value[i] << endl;
+                stream << m_index[i] << "  " << m_value[i] << "\n";
 //                qDebug() << m_index[i] << " " << m_value[i];
             }
         }

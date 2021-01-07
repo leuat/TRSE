@@ -1,7 +1,7 @@
 #include "glwidget.h"
 #include "source/LeLib/util/util.h"
 #include <QOpenGLFunctions>
-
+#include <QDebug>
 GLWidget::GLWidget()
 {
     setMouseTracking(true);
@@ -124,7 +124,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
 
 //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
 
-           emit EmitMouseMove();
+           emit EmitMouseMove(e);
 
 
 //    emit EmitMouseMove();
@@ -133,7 +133,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
 
 void GLWidget::wheelEvent(QWheelEvent *e)
 {
-    emit EmitMouseMove();
+    emit EmitMouseMove(e);
 }
 
 bool GLWidget::eventFilter(QObject *object, QEvent *event)
@@ -143,7 +143,7 @@ bool GLWidget::eventFilter(QObject *object, QEvent *event)
         return true;
     if(object==this) {
         if (AIE_eventFilter(object,event,this)) {
-            emit EmitMouseMove();
+            emit EmitMouseMove(event);
 
         }
         return false;
@@ -161,7 +161,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *e)
 void GLWidget::mousePressEvent(QMouseEvent *e)
 {
     AIE_mousePressEvent(e);
-    emit EmitMouseMove();
+    emit EmitMouseMove(e);
 }
 
 

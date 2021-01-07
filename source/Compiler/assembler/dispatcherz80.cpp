@@ -505,7 +505,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 
         if (node->getOrgType(as)==TokenType::POINTER) {
             //as->Asm("ld a,["+node->getValue(as)+"+1]");
-            //as->Asm("ld "+hl[0]+",a");
+            //as->Asm("ld "+QString(hl[0])+",a");
             LoadAddress(node);
         }
         else if (node->getOrgType(as)==TokenType::INTEGER) {
@@ -527,16 +527,16 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             }
 
             as->Asm("ld a,["+node->getValue(as)+"]");
-            as->Asm("ld "+hl[1]+",a");
+            as->Asm("ld "+QString(hl[1])+",a");
             if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
 //                as->Asm("xor a,a");
-                as->Asm("ld "+hl[0]+",0");
+                as->Asm("ld "+QString(hl[0])+",0");
             }
             else
             {
 //                as->Asm("xor a");
-  //          as->Asm("ld "+hl[0]+",a");
-                as->Asm("ld "+hl[0]+",0");
+  //          as->Asm("ld "+QString(hl[0])+",a");
+                as->Asm("ld "+QString(hl[0])+",0");
             }
         }
 
@@ -869,9 +869,9 @@ void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
     if (n->isPointer(as)) {
         if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
             as->Asm("ld a,[" +n->getValue(as)+"]");
-            as->Asm("ld "+hl[0]+",a");
+            as->Asm("ld "+QString(hl[0])+",a");
             as->Asm("ld a,[" +n->getValue(as)+"+1]");
-            as->Asm("ld "+hl[1]+",a");
+            as->Asm("ld "+QString(hl[1])+",a");
 
         }
         else
@@ -890,9 +890,9 @@ void ASTdispatcherZ80::LoadInteger(QSharedPointer<Node> n)
 
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
         as->Asm("ld a,[" +n->getValue(as)+"]");
-        as->Asm("ld "+hl[0]+",a");
+        as->Asm("ld "+QString(hl[0])+",a");
         as->Asm("ld a,[" +n->getValue(as)+"+1]");
-        as->Asm("ld "+hl[1]+",a");
+        as->Asm("ld "+QString(hl[1])+",a");
     }
     else
     as->Asm("ld "+hl+",["+n->getValue(as)+"]");
@@ -903,9 +903,9 @@ void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
-        as->Asm("ld a,"+hl[0]+"");
+        as->Asm("ld a,"+QString(hl[0])+"");
         as->Asm("ld ["+n->getValue(as)+"], a");
-        as->Asm("ld a,"+hl[1]+"");
+        as->Asm("ld a,"+QString(hl[1])+"");
         as->Asm("ld ["+n->getValue(as)+"+1], a");
 
     }

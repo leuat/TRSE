@@ -181,7 +181,7 @@ void Assembler::SortAppendix()
 {
     /*   for (int i=0;i<m_appendix.count();i++)
         qDebug() << "appos:" << m_appendix[i].m_pos;*/
-    qSort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
+std::sort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
 }
 
 void Assembler::PushCounter()

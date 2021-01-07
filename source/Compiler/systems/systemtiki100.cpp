@@ -2,7 +2,7 @@
 #include "source/LeLib/util/tikidisk.h"
 
 extern "C" {
-    void addTikiFile (char *efn, byte user);
+    void addTikiFile (char *efn, unsigned char user);
 }
 
 void SystemTiki100::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)

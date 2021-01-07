@@ -23,7 +23,7 @@ m_pdata(NULL)
 {
     setFont(QFont("Courier", 10));
 
-    m_charWidth = fontMetrics().width(QLatin1Char('9'));
+    m_charWidth = fontMetrics().averageCharWidth();//.width(QLatin1Char('9'));
     m_charHeight = fontMetrics().height();
     Calculate();
     setFocusPolicy(Qt::StrongFocus);

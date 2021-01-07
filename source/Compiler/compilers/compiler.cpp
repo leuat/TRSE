@@ -47,8 +47,8 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
 
 
     m_tree = nullptr;
-    m_parser.m_preprocessorDefines[m_projectIni->getString("system").toUpper()]=1;
-    m_parser.m_preprocessorDefines[m_ini->getString("assembler").toUpper()]=1;
+    m_parser.m_preprocessorDefines[m_projectIni->getString("system").toUpper()]="1";
+    m_parser.m_preprocessorDefines[m_ini->getString("assembler").toUpper()]="1";
     m_parser.m_isTRU = m_isTRU;
     Parser::s_usedTRUs.clear(); // None TRU's are marked
     Parser::s_usedTRUNames.clear(); // None TRU's are marked

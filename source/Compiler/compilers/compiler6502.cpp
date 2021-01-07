@@ -260,7 +260,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
 
     }
 
-    qSort(m_assembler->blocks.begin(), m_assembler->blocks.end(),
+    std::sort(m_assembler->blocks.begin(), m_assembler->blocks.end(),
            [](const auto& a, const auto& b) { return a->m_start < b->m_start; });
 
 

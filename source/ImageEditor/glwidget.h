@@ -42,7 +42,7 @@ public:
 
 
 signals:
-    void EmitMouseMove();
+    void EmitMouseMove(QEvent* e);
     void EmitMouseRelease();
     void EmitSwapDisplayMode();
 

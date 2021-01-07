@@ -335,7 +335,7 @@ void DialogMemoryAnalyze::mouseMoveEvent(QMouseEvent *event)
 
 void DialogMemoryAnalyze::wheelEvent(QWheelEvent *event)
 {
-    zoomVal *=1+0.001f*event->delta();
+    zoomVal *=1+0.001f*event->angleDelta().y();
     zoomVal = max(1.0f, zoomVal);
     Initialize(m_blocks, m_fontSize);
 }

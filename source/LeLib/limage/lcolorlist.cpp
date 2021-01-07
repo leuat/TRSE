@@ -279,7 +279,7 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
     }
 
     // Sort colors
-   qSort(m_colorList.begin(), m_colorList.end(), sortColors);
+   std::sort(m_colorList.begin(), m_colorList.end(), sortColors);
     for (int i=0;i<m_colorList.count();i++) {
         m_list[i].color = Util::toColor(m_colorList[i]);
     }

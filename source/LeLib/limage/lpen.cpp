@@ -137,7 +137,7 @@ QWidget *LPen::createButtonSelect(QColor col, int index, int width)
     palSelect->setMaximumSize(w2,w2);
     ly->addWidget(createButton(col,index,width),0,0);
     ly->addWidget(palSelect,0,1);
-    ly->setMargin(1);
+    ly->setContentsMargins(QMargins(1,1,1,1));
 
 
     QObject::connect( palSelect, &QPushButton::clicked,  [=](){
@@ -202,8 +202,10 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
 
     QWidget* dummy = new QWidget();
     dummy->setLayout(ly);
-    ly->setMargin(2);
-    ly_small->setMargin(2);
+  //  ly->setMargin(2);
+    ly->setContentsMargins(QMargins(2,2,2,2));
+//    ly_small->setMargin(2);
+    ly_small->setContentsMargins(QMargins(2,2,2,2));
 //    dummy->setMaximumSize(1000,width*1);
     return dummy;
 

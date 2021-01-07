@@ -137,9 +137,9 @@ QString Util::BinopString(QString a) {
         ok = Util::NumberFromStringHex(lst[i+1],v);
         if (!ok)
             return pa+a+pb;
-        if (q[i]=="+")
+        if (q[i]=='+')
             val+=v;
-        if (q[i]=="-")
+        if (q[i]=='-')
             val-=v;
     }
 //    qDebug() << "BinopString  DONE ";

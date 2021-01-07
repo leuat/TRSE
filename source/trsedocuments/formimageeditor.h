@@ -179,7 +179,7 @@ private slots:
     void UpdateMulticolorImageSettings();
     void InitAspect();
     void onSwapDisplayMode();
-    void onImageMouseEvent();
+    void onImageMouseEvent(QEvent* e);
     void onPenChanged();
     void onImageMouseReleaseEvent();
 

@@ -176,7 +176,7 @@ int CodeEditor::lineNumberAreaWidth()
         ++digits;
     }
 
-    int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+    int space = 3 + fontMetrics().averageCharWidth() * digits;
 
     return space;
 }
@@ -353,7 +353,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
             else { // Backtab!
 
                 int i = s.indexOf("\t");
-                if (s>0 && i<s.count()) {
+                if (s.count()>0 && i<s.count()) {
                     if (s[i]=='\t')
                         str+=s.remove(i,1)+"\n";
                     else str+=s+"\n";

@@ -39,13 +39,13 @@ void QLabelLImage::mouseMoveEvent(QMouseEvent *e)
     if (AIE_mouseMoveEvent(e,this))
 //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
 
-       emit EmitMouseMove();
+       emit EmitMouseMove(e);
 
 }
 
 void QLabelLImage::wheelEvent(QWheelEvent *e)
 {
-    emit EmitMouseMove();
+    emit EmitMouseMove(e);
 }
 
 bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
@@ -53,7 +53,7 @@ bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
         return true;
     if(object==this) {
         if (AIE_eventFilter(object,event,this)) {
-            emit EmitMouseMove();
+            emit EmitMouseMove(event);
         }
         return false;
     }
@@ -63,14 +63,14 @@ bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
 void QLabelLImage::mouseReleaseEvent(QMouseEvent *e)
 {
     AIE_mouseReleaseEvent(e);
-    emit EmitMouseMove();
+    emit EmitMouseMove(e);
 
 }
 
 void QLabelLImage::mousePressEvent(QMouseEvent *e)
 {
     AIE_mousePressEvent(e);
-    emit EmitMouseMove();
+    emit EmitMouseMove(e);
 
 }
 

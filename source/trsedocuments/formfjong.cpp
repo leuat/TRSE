@@ -61,7 +61,7 @@ void FormFjong::UpdateFromIni()
 
     m_font.setPointSize(m_iniFile->getdouble("font_size"));
     ui->txtEditor->setFont(m_font);
-    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.width(' '));
+    ui->txtEditor->setTabStopDistance(m_iniFile->getInt("tab_width") * metrics.averageCharWidth());
 
 
 }

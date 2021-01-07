@@ -135,7 +135,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     }
 
 //    qDebug() << line.contains("\"") << line;
-    if (!(line[0]==" ") && !(line.contains("=") && !line.contains("\""))) {
+    if (!(line[0]==' ') && !(line.contains("=") && !line.contains("\""))) {
         QString lbl = line.replace(":", " ").trimmed().split(" ")[0];
         l.m_label = lbl;
         line.remove(0, lbl.length()).replace(":", " ");
@@ -250,7 +250,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         qDebug() << "PAssing" << m_constantPassLines;
     }
 */
-    QTime myTimer;
+    QTimer myTimer;
     myTimer.start();
 //    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
     emit EmitTick(" [labels] ");
@@ -721,7 +721,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
-        throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +type + "        on line " + ol.m_expr,ol );
+        throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +QString::number(type) + "        on line " + ol.m_expr,ol );
     }
 
 

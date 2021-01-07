@@ -13,7 +13,7 @@ public:
 };
 */
 extern "C" {
-    void addTikiFile (char *efn, byte user);
+    void addTikiFile (char *efn, unsigned char user);
     void InitTikiDisk(char* file);
     void SaveTikiDisk(char* file);
 

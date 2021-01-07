@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
 
     TRSEDocument::m_defaultPalette = m_defaultPalette;
-    qRegisterMetaTypeStreamOperators<CItem>("CItem");
+//    qRegisterMetaTypeStreamOperators<CItem>("CItem");
 
 
     this->setMouseTracking(true);

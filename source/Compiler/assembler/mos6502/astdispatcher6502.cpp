@@ -1652,7 +1652,7 @@ void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node>
 
 
     }
-    if (nodeB->isPure()) {
+    if (nodeB->isPure() && (1==2)) { // DISABLE this optimization - for now
         as->Comment("Optimization: switch A and B, allow for optimizer");
         as->ClearTerm();
         nodeA->m_left->Accept(this);

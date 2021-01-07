@@ -2,7 +2,7 @@
 
 #include <QString>
 #include <QStringList>
-#include <QTime>
+#include <QTimer>
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/syntax.h"
 #include "source/Compiler/Opcodes/opcodes6502.h"
@@ -109,7 +109,6 @@ public:
     QString m_orgLine="";
     OrgasmInstruction m_instruction;
     bool m_ignore = false;
-
     static bool m_inIFDEF;
 
 
@@ -167,11 +166,12 @@ public:
     int m_constantPassLines;
     int m_hasOverlappingError = false;
     QByteArray m_data;
-    QMap<QString, QRegExp*> m_regs;
+    QMap<QString, QRegularExpression*> m_regs;
     QMap<int,int> m_lineAddress;
     QString m_output;
     QString m_prevLabel = "";
 
+    QString endl = "\n";
     OrgasmError error;
 
     void SetupConstants(QSharedPointer<SymbolTable> symTab) {

@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include "source/workerthread.h"
-#include <QGLWidget>
 
 class AbstractImageEditor// : public QObject
 {

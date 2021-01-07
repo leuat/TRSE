@@ -78,6 +78,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 
 
     installEventFilter(this);
+//    setEnabled(true);
     ui->tblData->setItemDelegate(new ByteDelegate());
   //  ui->splitter->setStretchFactor(1, 0);
 
@@ -106,14 +107,14 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
 
     if (m_painterType==QtPaint) {
         delete ui->lblImage;
-        connect(ui->lblImageQt, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+        connect(ui->lblImageQt, SIGNAL(EmitMouseMove(QEvent*)), this, SLOT(onImageMouseEvent(QEvent*)));
         connect(ui->lblImageQt, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
         connect(ui->lblImageQt, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
     }
     else {
         delete ui->lblImageQt;
 
-        connect(ui->lblImage, SIGNAL(EmitMouseMove()), this, SLOT(onImageMouseEvent()));
+        connect(ui->lblImage, SIGNAL(EmitMouseMove(QEvent*)), this, SLOT(onImageMouseEvent(QEvent*)));
         connect(ui->lblImage, SIGNAL(EmitMouseRelease()), this, SLOT(onImageMouseReleaseEvent()));
         connect(ui->lblImage, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
     }
@@ -132,13 +133,15 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
 }
 
 
-void FormImageEditor::onImageMouseEvent()
+void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 {
 //    emit EmitMouseEvent();
     m_updateThread.RunContents();
     ui->splitter->setCollapsible(0,true);
  //   ui->ImageLayout->set
 
+    if (e!=nullptr && e->type()==QEvent::Wheel)
+        wheelEvent((QWheelEvent*)e);
     UpdateImage();
     if (dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
@@ -221,7 +224,7 @@ FormImageEditor::~FormImageEditor()
 
 void FormImageEditor::wheelEvent(QWheelEvent *event)
 {
-    float f = event->delta()/100.0f;
+    float f = event->angleDelta().y()/100.0f;
     if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
@@ -837,9 +840,14 @@ void FormImageEditor::Reload()
 
 bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 {
+    /*if (e->type() == QEvent::Wheel) {
+        qDebug() << "KEY EVENT "<<rand()%100 <<e;
+        wheelEvent((QWheelEvent*)e);
+//        return false;
+    }*/
+  //  return true;
     if(/*e->type() == QEvent::KeyPress || */e->type()==QEvent::ShortcutOverride) {
         const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
-//        qDebug() << "KEY EVENT "<<rand()%100;
 
 
 

@@ -1,9 +1,9 @@
 #include "raytracer.h"
 
-
 #ifndef TARGET_OS_MAC
 #include <omp.h>
 #endif
+#include <algorithm>
 
 RayTracer::RayTracer()
 {
@@ -500,7 +500,7 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 
 
         if (cnt!=0) {
-            qSort(positions);
+            std::sort(positions.begin(),positions.end());
 //            qDebug() << positions;
              int cur = 0;
              int times = 0;

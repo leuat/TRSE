@@ -6,8 +6,8 @@
 
 QT += core gui opengl qml
 QT += widgets
+QT += openglwidgets
 CONFIG += c++14
-
 
 CONFIG+=warn_off
 
