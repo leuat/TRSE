@@ -803,6 +803,11 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
     as->m_varStack.push(d0);
 }
 
+void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeProcedure> node)
+{
+    as->Asm("lea a0,"+node->m_procedure->m_procName + " ; NOT TESTED YET");
+}
+
 void ASTDispatcher68000::LoadAddress(QSharedPointer<Node> n)
 {
 /*    QSharedPointer<NodeVar> v = dynamic_cast<QSharedPointer<NodeVar>>(n);

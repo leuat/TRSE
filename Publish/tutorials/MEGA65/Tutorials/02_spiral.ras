@@ -102,8 +102,9 @@ begin
 	Render();
 	
 	waitforraster(100);
+	call(sidfile_1_play);
 //	for ri:=0 to 30 do wait(100);
- 	call(sidfile_1_play);
+// 	call(sidfile_1_play);
 //	inc(screen_fg_col);
 //	call(sidfile_1_play);
 	inc(time);	
@@ -114,7 +115,7 @@ end;
 begin
 	// Set 2 mhz mode
 	// Enable $4K-$8K
-	Screen::SetFastMode();
+//	Screen::SetFastMode();
 	Screen::Init();
 	Screen::EnableVIC4();
 	InitSid(sidfile_1_init);
@@ -122,7 +123,7 @@ begin
 //	setcharsetlocation($1800);
 //	vic_data_loc:=10;
 
-	Screen::SetCharsetAddress($9000,0);
+//	Screen::SetCharsetAddress($9000,0);
 	PreCalculate();
 	SetupTables();
 	disableciainterrupts();
@@ -142,7 +143,7 @@ begin
 		begin
 			wait(200);
 		end;
-		*/
+*/		
 /*		// Move to color (attribute) ram
 		MoveTo80(0,0,$08);
 		add:=7; // base color = 7

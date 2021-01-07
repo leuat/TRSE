@@ -60,6 +60,7 @@ public:
     void LoadVariable(QSharedPointer<NodeVar> n) override ;
     void LoadAddress(QSharedPointer<Node> n) override;
     void LoadAddress(QSharedPointer<Node> n, QString reg) override;
+    void LoadVariable(QSharedPointer<NodeProcedure> node) override;
 
     void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;

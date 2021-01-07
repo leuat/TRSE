@@ -44,7 +44,7 @@ class Node : public QEnableSharedFromThis<Node> {
 public:
 //    static QMap<QSharedPointer<Node>, QSharedPointer<Node>> s_uniqueSymbols;
     Token m_op;
-    int m_lineNumber;
+//    int m_lineNumber;
     uint level = 0;
     QString m_comment = "";
     BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;

@@ -2542,12 +2542,14 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
 //    qDebug() << "Searching for procedure : " <<m_currentToken.m_value;// << m_procedures.keys();
   //  qDebug() << "Searching for procedure : " <<m_currentToken.m_value;
     // Already defined? calling / assigning an existing procedure?
+
     if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value) || dual) {
     //    qDebug() << "FOUND";
         QString procName = m_symTab->m_gPrefix+m_currentToken.m_value; // fix prefix
         if (dual) procName = m_currentToken.m_value;;
         Token t = m_currentToken;
         Eat(TokenType::ID);
+
         // Return value from "Function"
         if (m_currentToken.m_type==TokenType::ASSIGN) { // IS function ASSIGN myProc:= ... - so return value
             // ASSIGN procedure for return value
@@ -2562,26 +2564,27 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
             isAssign=true;
             return nullptr;
         }
-        Eat(TokenType::LPAREN); // Must be a procedure call
         QVector<QSharedPointer<Node>> paramList;
-        while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
-            paramList.append(Expr());
-
-            if (m_currentToken.m_type==TokenType::COMMA)
-                Eat(TokenType::COMMA);
-            //if (m_currentToken.m_type==TokenType::SEMI)
-            //    ErrorHandler::e.Error("Syntax errror", m_currentToken.m_lineNumber);
-        }
-//        qDebug() << "Searching for :" << procName << " in " << m_procedures.keys();
-        if (!m_procedures.contains(procName))
-            ErrorHandler::e.Error("Could not find procedure :" + procName, m_currentToken.m_lineNumber);
-
         QSharedPointer<NodeProcedureDecl> p = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
-        Eat(TokenType::RPAREN);
+        if (m_currentToken.m_type!=TokenType::SEMI)  {
+            Eat(TokenType::LPAREN); // Must be a procedure call
+            while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
+                paramList.append(Expr());
 
+                if (m_currentToken.m_type==TokenType::COMMA)
+                    Eat(TokenType::COMMA);
+                //if (m_currentToken.m_type==TokenType::SEMI)
+                //    ErrorHandler::e.Error("Syntax errror", m_currentToken.m_lineNumber);
+            }
+            //        qDebug() << "Searching for :" << procName << " in " << m_procedures.keys();
+            if (!m_procedures.contains(procName))
+                ErrorHandler::e.Error("Could not find procedure :" + procName, m_currentToken.m_lineNumber);
+
+            Eat(TokenType::RPAREN);
+        }
         //p->SetParameters(paramList);
         p->m_isUsed = true;
-//        if (p->m_procName==BGMUpdateSpriteLoc)
+        //        if (p->m_procName==BGMUpdateSpriteLoc)
 
         return QSharedPointer<NodeProcedure>(new NodeProcedure(p, paramList, t));
     }
@@ -4341,7 +4344,7 @@ QSharedPointer<Node> Parser::Expr()
         int val = node->getValueAsInt(nullptr);
         Token t;
         t.m_type = node->VerifyAndGetNumericType();
-        t.m_lineNumber = node->m_lineNumber;
+        t.m_lineNumber = node->m_op.m_lineNumber;
         t.m_isReference = node->isReference();
 //        qDebug() << "IS REFERENCE" <<val <<t.m_isReference;
 //        qDebug() << "Collapsing node to " << Util::numToHex(val) << t.getType() << t.m_lineNumber << node->m_op.getType();

@@ -40,6 +40,7 @@ public:
 
     NodeProcedure(QSharedPointer<NodeProcedureDecl> proc, QVector<QSharedPointer<Node>> params, Token t );
 
+    virtual bool isReference() override { return m_op.m_isReference; }
 
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

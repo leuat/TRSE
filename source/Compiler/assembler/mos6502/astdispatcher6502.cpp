@@ -2381,6 +2381,12 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeNumber>node)
    as->Term();
 }
 
+void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeProcedure> node)
+{
+    as->Asm("lda #<"+node->m_procedure->m_procName);
+    as->Asm("ldy #>"+node->m_procedure->m_procName);
+}
+
 
 void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
     //        as->Comment("VarNode StoreVariable");

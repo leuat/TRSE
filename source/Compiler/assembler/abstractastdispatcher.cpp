@@ -498,6 +498,11 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedure> node)
 {
     node->DispatchConstructor(as);
+    if (node->isReference()) {
+//        qDebug() << "IS REFERENCE";
+        LoadVariable(node);
+        return;
+    }
 
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
         ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "

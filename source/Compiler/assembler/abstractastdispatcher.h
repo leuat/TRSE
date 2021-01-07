@@ -79,6 +79,7 @@ public:
     virtual void LoadVariable(QSharedPointer<NodeNumber> n) = 0;
     virtual void LoadAddress(QSharedPointer<Node> node) {}
     virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
+    virtual void LoadVariable(QSharedPointer<NodeProcedure> node) = 0;
 
     virtual QString getJmp(bool isOffPage) = 0;
     virtual QString getReturn() = 0;

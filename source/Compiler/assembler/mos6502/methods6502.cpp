@@ -76,14 +76,15 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     else
 
     if (Command("ProcedureToPointer")) {
-        QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+        ErrorHandler::e.Error("'ProcedureToPointer' has been deprecated. Please simply use the address of the procedure ('pointer := #myProcedure;') instead.",m_node->m_op.m_lineNumber);
+/*       QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
         if (addr==nullptr)
             ErrorHandler::e.Error("ProcedureToPointer parameter must be a procedure.", m_node->m_op.m_lineNumber);
 
         QString name = addr->m_procedure->m_procName;
         as->Asm("lda #<"+name);
         as->Asm("ldy #>"+name);
-
+*/
     }
     else
     if (Command("min"))

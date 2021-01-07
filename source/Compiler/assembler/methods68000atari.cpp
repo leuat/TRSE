@@ -12,7 +12,7 @@ void Methods68000Atari::Assemble(Assembler *as, AbstractASTDispatcher *dispatche
 
     if (Command("getscreen")) {
         if (!m_node->m_params[0]->isPureVariable())
-            ErrorHandler::e.Error("Parameter must be a pointer in which to store the screen address", m_node->m_lineNumber);
+            ErrorHandler::e.Error("Parameter must be a pointer in which to store the screen address", m_node->m_op.m_lineNumber);
         as->Comment("Getscreen");
         as->Asm("move.w  #2,-(a7)                ; get physbase");
         as->Asm("trap    #14                      ; call XBIOS");

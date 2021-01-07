@@ -479,6 +479,11 @@ void ASTdispatcherX86::LoadAddress(QSharedPointer<Node> n, QString reg)
 
 }
 
+void ASTdispatcherX86::LoadVariable(QSharedPointer<NodeProcedure> node)
+{
+    ErrorHandler::e.Error("Procedure address not implemented yet! Please bug the developer", node->m_op.m_lineNumber);
+}
+
 void ASTdispatcherX86::LoadPointer(QSharedPointer<Node> n)
 {
 
