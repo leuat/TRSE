@@ -1652,13 +1652,22 @@ void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node>
 
 
     }
+    if (nodeB->isPure()) {
+        as->Comment("Optimization: switch A and B, allow for optimizer");
+        as->ClearTerm();
+        nodeA->m_left->Accept(this);
+        as->Term();
 
-    as->ClearTerm();
-    nodeB->Accept(this);
-    as->Term();
+        as->Asm("cmp " + nodeB->getValue(as) +" ;keep");
 
-    as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
+    }
+    else {
+        as->ClearTerm();
+        nodeB->Accept(this);
+        as->Term();
 
+        as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
+    }
     int stepValue = 1; // do we have a step value?
     if (step != nullptr) {
         stepValue = step->getValueAsInt(as); //node->m_step->getValue(as);
