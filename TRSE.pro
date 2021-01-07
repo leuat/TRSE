@@ -46,7 +46,7 @@ ICON = trse.icns
 
 #QMAKE_CFLAGS_WARN_OFF
 
-macx:x86 {
+macx {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
@@ -62,7 +62,7 @@ macx:x86 {
 }
 
 # Doesn't work yet, it seems. Must copy arm stuff out manually
-macx {
+macx:arm {
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
