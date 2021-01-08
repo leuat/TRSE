@@ -6,8 +6,8 @@
 
 QT += core gui opengl qml
 QT += widgets
-
-equals($$QT_MAJOR_VERSION, 6) {
+VER = $$QT_MAJOR_VERSION
+equals(VER, 6) {
     QT += openglwidgets
 }
 message("Compiling TRSE!")
@@ -68,7 +68,7 @@ win32-g++ {
 win32-msvc*{
     QMAKE_CXXFLAGS += -openmp
     LIBS += -openmp
-    QMAKE_CXXFLAGS += -Ofast
+    QMAKE_CXXFLAGS += -Ofast -O2
     LIBS += -L$$PWD/libs/lua/ -llua
     LIBS   += -lopengl32
 

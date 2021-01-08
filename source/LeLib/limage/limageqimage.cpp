@@ -322,7 +322,7 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
         return nullptr;
     QImage* other = new QImage(x,y,QImage::Format_ARGB32);
     float aspect = m_qImage->width()/(float)m_qImage->height();
-    float m = max(m_qImage->width(), m_qImage->height());
+    float m = std::max(m_qImage->width(), m_qImage->height());
     float sx = (float)x/m;
     float sy = (float)y/m;//*aspect;
     hsvShift-=0.5;

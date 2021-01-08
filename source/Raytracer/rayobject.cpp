@@ -73,7 +73,7 @@ void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
     float bbr = m_bbRadius;
     for (AbstractRayObject* aro : m_children) {
         aro->SetLocalPos(m_localPos, m_localRotmat);
-        bbr = max(bbr, aro->m_position.length()+aro->m_bbRadius);
+        bbr = std::max(bbr, aro->m_position.length()+aro->m_bbRadius);
     }
     m_bbRadius = bbr;
 }
@@ -99,7 +99,7 @@ QVector3D AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGl
         if (dl==nullptr)
             continue;
 
-        l+= dl->m_color*pow(max(QVector3D::dotProduct(dl->m_direction.normalized(),normal),0.0f),dl->m_power)*shadows[cnt];
+        l+= dl->m_color*pow(std::max(QVector3D::dotProduct(dl->m_direction.normalized(),normal),0.0f),dl->m_power)*shadows[cnt];
         cnt++;
     }
     return l;
@@ -116,7 +116,7 @@ QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view
 
 
         QVector3D H = ((dl->m_direction.normalized()-view.normalized())).normalized();
-        l+=  dl->m_color*mat.m_shininess_strength*max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f)*shadows[cnt];
+        l+=  dl->m_color*mat.m_shininess_strength*std::max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f)*shadows[cnt];
         cnt++;
     }
     return l;
@@ -182,9 +182,9 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
             if (m_material.m_lightningType==0) {
 
                 ray->m_intensity = col*ApplyDirectionalLight(normal,globals,shadows);
-                ray->m_intensity.setX(max(ray->m_intensity.x(),globals.m_ambient.x()*col.x()));
-                ray->m_intensity.setY(max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
-                ray->m_intensity.setZ(max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
+                ray->m_intensity.setX(std::max(ray->m_intensity.x(),globals.m_ambient.x()*col.x()));
+                ray->m_intensity.setY(std::max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
+                ray->m_intensity.setZ(std::max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
                 ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material, shadows);
             }
             // No lights
@@ -393,7 +393,7 @@ float RayObjectBox::intersect(Ray *ray)
 {
     QVector3D d = Util::abss(m_localPos+ ray->m_currentPos) - m_box;// +ray->m_currentPos;
     float r=m_pNormal.x();
-    return min(max(d.x()-r,max(d.y()-r,d.z()-r)),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
+    return std::min(std::max(d.x()-r,std::max(d.y()-r,d.z()-r)),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
 }
 
 QVector3D RayObjectCylinder::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
@@ -407,7 +407,7 @@ float RayObjectCylinder::intersect(Ray *ray)
     QVector3D p = QVector3D(pos.x(), pos.z(),0);
     QVector3D d = QVector3D(p.length()-2*m_radius.x() + m_radius.y()*1.0, abs(pos.y())-m_radius.z(),0);
 
-    return min(max(d.x(),d.y()),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length() - m_radius.y();
+    return std::min(std::max(d.x(),d.y()),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length() - m_radius.y();
 }
 
 float RayObjectUnion::intersect(Ray *ray) {
@@ -432,7 +432,7 @@ float RayObjectEmpty::intersect(Ray *ray) {
             break;*/
         Ray r = *ray;// = new Ray();
         r = r.Rotate(aro->m_localRotmat,aro->m_localPos);
-        d = min(aro->intersect(&r),d);
+        d = std::min(aro->intersect(&r),d);
         if (d<=0)
             return d;
     }
@@ -516,7 +516,7 @@ float RayObjectGenMesh::Duck(Ray *ray)
     float bottom = (cpBottom).length() - m_radius.x();
 
 
-    cur = min(top, bottom);
+    cur = std::min(top, bottom);
 
 
 
@@ -529,11 +529,11 @@ float RayObjectOperation::intersect(Ray *ray)
         return (m_blend*m_o1->intersect(ray) + (1-m_blend)*m_o2->intersect(ray));
     }
     if (m_type == "max")
-        return max(m_o1->intersect(ray),m_o2->intersect(ray));
+        return std::max(m_o1->intersect(ray),m_o2->intersect(ray));
     if (m_type == "min")
-        return max(m_o1->intersect(ray),m_o2->intersect(ray));
+        return std::max(m_o1->intersect(ray),m_o2->intersect(ray));
     if (m_type == "sub")
-        return m_o1->intersect(ray)*max(-m_o2->intersect(ray),0.0f);
+        return m_o1->intersect(ray)*std::max(-m_o2->intersect(ray),0.0f);
 }
 
 float RayObjectPerlin::intersect(Ray *ray)
@@ -583,14 +583,14 @@ float RayObjectHoles::intersect(Ray *ray)
     d.setX(fmodf(abs(d.x()),m_vals.x())-m_vals.x()*0.50f);
     d.setY(fmodf(abs(d.y()),m_vals.y())-m_vals.y()*0.50f);
     d.setZ(fmodf(abs(d.z()),m_vals.z())-m_vals.z()*0.50f);
-    float cut= min(max(d.x(),max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
+    float cut= std::min(std::max(d.x(),std::max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
 
 
 /*    if (mm>0.2) return mm;
     float amp=0.9;
     float deltay = fmod(abs(d2.x()),m_vals.x())>m_vals.x()/5.0;
 */
-    return max(mm,cut);// + amp*deltay;
+    return std::max(mm,cut);// + amp*deltay;
 
 }
 
@@ -603,6 +603,6 @@ float RayObjectTrianglePrism::intersect(Ray *ray)
 {
     QVector3D p = m_localPos+ ray->m_currentPos;
     QVector3D q = Util::abss(m_localPos+ ray->m_currentPos);// +ray->m_currentPos;
-      return max(q.z()-m_box.y(),max(q.x()*0.866025f+p.y()*0.5f,-p.y())-m_box.x()*0.5f);
+      return std::max(q.z()-m_box.y(),std::max(q.x()*0.866025f+p.y()*0.5f,-p.y())-m_box.x()*0.5f);
 
 }

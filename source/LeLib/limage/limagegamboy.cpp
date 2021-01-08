@@ -19,7 +19,7 @@ void LImageGamboy::ExportBin(QFile &file)
     int size = end-start;
 
 
-    for (int i=0;i<min((m_charWidth/2)*m_charHeight,size);i++) {
+    for (int i=0;i<std::min((m_charWidth/2)*m_charHeight,size);i++) {
 //        for (int i=0;i<(m_charWidth/2)*m_charHeight;i++) {
 
         for (int k=0;k<8;k++) {

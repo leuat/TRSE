@@ -329,8 +329,8 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
           pixel[x + 1][y + 1] := pixel[x + 1][y + 1] + quant_error * 1 / 16*/
 
 
-    int height  =min(img.height(), m_height);
-    int width  =min(img.width(), m_width);
+    int height  =std::min(img.height(), m_height);
+    int width  =std::min(img.width(), m_width);
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
             QColor oldPixel = QColor(img.pixel(x,y));
@@ -357,8 +357,8 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
 
 void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma = 1.0)
 {
-    int height  =min(img.height(), m_height);
-    int width  =min(img.width(), m_width);
+    int height  =std::min(img.height(), m_height);
+    int width  =std::min(img.width(), m_width);
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 
@@ -392,9 +392,9 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
             int xp = x + y%(int)strength.z();
-            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
-            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
-            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setRed(std::min((float)pow(color.red(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setGreen(std::min((float)pow(color.green(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setBlue(std::min((float)pow(color.blue(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
@@ -1310,8 +1310,8 @@ void MultiColorImage::UpdateColorList()
 void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center)
 {
 //    return;
-    int height  =min(img.height(), m_height);
-    int width  =min(img.width(), m_width);
+    int height  =std::min(img.height(), m_height);
+    int width  =std::min(img.width(), m_width);
     //  center.setX(floor(center.x()));
     //   center.setY(floor(center.y()));
 

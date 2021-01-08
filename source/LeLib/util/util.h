@@ -59,7 +59,6 @@
 #endif
 
 
-using namespace std;
 
 class Util {
 
@@ -68,26 +67,13 @@ public:
     static QElapsedTimer globalTimer;
     static QMap<QString, long> sm_fileSizes;
 
-    static void Tokenize(const string& str,
-                         vector<string>& tokens,
-                         const string& delimiters = " ");
-
 
 
 
     static QString toString(QStringList lst);
     static unsigned long int Endian_DWord_Conversion(unsigned long int dword);
     static unsigned long int Endian_Word_Conversion(unsigned short dword);
-
-    static void string2char(string s, char* to);
-    static string toString(double d, string param);
-    static string toString(double d);
-    static string toString(int d);
     static bool CancelSignal;
-    static const char* read_textfile(string filename);
-    static void verify_file(string filename);
-    static bool verify_file_bool(string filename);
-    static string trim(string s);
     static int VerifyHexAddress(QString s);
     static QString numToHex(long v);
     static QString path;

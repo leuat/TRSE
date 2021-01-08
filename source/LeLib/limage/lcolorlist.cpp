@@ -1080,7 +1080,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
     m_layout = ly;
     Util::clearLayout(ly, true);
     int m = m_pens.count();
-    int width=60/(max(m/16,1))*(windowSize.height()/(float)1600);
+    int width=60/(std::max(m/16,1))*(windowSize.height()/(float)1600);
 //    qDebug() << width;
     if (m>200) {
         width = 24*(windowSize.height()/(float)1600);;
@@ -1154,7 +1154,7 @@ void LColorList::CreateUIOld(QLayout* ly, int type, QSize windowSize)
     m_buttonsImport.clear();
 //    m_buttons.clear();
     int xx=0, yy=0;
-    int width=40/(max(m/16,1))*(windowSize.width()/(float)1400);
+    int width=40/(std::max(m/16,1))*(windowSize.width()/(float)1400);
 //    qDebug() << width;
     if (m>200) {
         width = 16*(windowSize.width()/(float)1400);;

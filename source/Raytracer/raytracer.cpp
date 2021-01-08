@@ -206,7 +206,7 @@ void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat
                 rt->m_normal = QVector3D::crossProduct(rt->m_pos[1]-rt->m_pos[0],rt->m_pos[2]-rt->m_pos[0]).normalized();
                 if (invertN)
                     rt->m_normal*=-1;
-                rt->m_bbRadius = max(max((rt->m_pos[0]).length(),
+                rt->m_bbRadius = std::max(std::max((rt->m_pos[0]).length(),
                                      (rt->m_pos[1]).length()),
                                      (rt->m_pos[2]).length());
 
@@ -506,7 +506,7 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
              int times = 0;
              while (cnt!=0)
              {
-                int size = min(cnt,255);
+                int size = std::min(cnt,255);
                 int sizePos = data.count();
                 data.append((uchar)size);
 

@@ -663,8 +663,8 @@ void SimplexNoise::CreateNoiseData(QString file, int w, int h, int oct, float pe
             //        }
             //            float val = (1+amp);
             ba[y*w + x] = (uchar)val;
-            val = min(val,255.0f);
-            val = max(0.0f,val);
+            val = std::min(val,255.0f);
+            val = std::max(0.0f,val);
 
             //qDebug() << val;
             img.setPixelColor(x,y,QColor(val,val,val,255));

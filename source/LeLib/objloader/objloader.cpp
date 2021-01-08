@@ -73,7 +73,7 @@ void ObjLoader::Parse()
 //            m_faces.append(QVector3D(lst[1].toFloat(),lst[2].toFloat(),lst[3].toFloat()));
         }
     }
-    } catch (exception e) {
+    } catch (std::exception e) {
         throw QString("Error during parsing : " + QString(e.what()));
     }
 }

@@ -69,7 +69,7 @@ void DialogColorSelect::Init(LColor color, QVector3D bpp)
 
 int DialogColorSelect::forceInterval(int val)
 {
-    return min(((int)((val+m_interval/2)/m_interval))*m_interval,255);
+    return std::min(((int)((val+m_interval/2)/m_interval))*m_interval,255);
 }
 
 void DialogColorSelect::on_pushButton_clicked()

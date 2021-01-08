@@ -461,9 +461,9 @@ void WetBrush::Perform(int x, int y, unsigned char color, LImage *img, bool isPr
             {
                 QColor cc = Util::toColor(c3);
 
-                cc.setRed(min((float)cc.red() + mval,255.0f));
-                cc.setGreen(min((float)cc.green()+ mval,255.0f));
-                cc.setBlue(min((float)cc.blue() + mval,255.0f));
+                cc.setRed(std::min((float)cc.red() + mval,255.0f));
+                cc.setGreen(std::min((float)cc.green()+ mval,255.0f));
+                cc.setBlue(std::min((float)cc.blue() + mval,255.0f));
                 int winner = 0;
                 img->m_colorList.getClosestColor(cc, winner);
 

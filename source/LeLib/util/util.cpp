@@ -29,30 +29,6 @@ bool Util::CancelSignal = false;
 int Util::hexType = 0;
 
 
-void Util::Tokenize(const string& str,
-                      vector<string>& tokens,
-                      const string& delimiters)
-{
-  // Skip delimiters at beginning.
-  string s = str;
-  int wn= s.find(13);
-  if (wn!=-1) s.erase(wn,1);
-  
-  string::size_type lastPos = s.find_first_not_of(delimiters, 0);
-  // Find first "non-delimiter".
-  string::size_type pos     = s.find_first_of(delimiters, lastPos);
-  
-  while (string::npos != pos || string::npos != lastPos)
-    {
-      // Found a token, add it to the vector.
-      tokens.push_back(s.substr(lastPos, pos - lastPos));
-      // Skip delimiters.  Note the "not_of"
-      lastPos = s.find_first_not_of(delimiters, pos);
-      // Find next "non-delimiter"
-      pos = s.find_first_of(delimiters, lastPos);
-    }
-  
-}
 
 QString Util::toString(QStringList lst) {
     QString ret="";
@@ -73,33 +49,6 @@ unsigned long Util::Endian_Word_Conversion(unsigned short dword)
 }
 
 
-
-const char* Util::read_textfile(string filename) {
-    ifstream f(filename.c_str(), ios::in);
-    string cnt, sum;
-    sum = "";
-    while(!f.eof()) {
-        f >> cnt;
-        sum = sum + cnt;
-  }
-  f.close();       
-  return sum.c_str();           
-}
-
-
-void Util::verify_file(string filename) {
-  ifstream f(filename.c_str(), ios::in | ios::binary);
-  if (!f.is_open())
-    throw string("Unable to find file: " + filename);
-  f.close();
-}
-bool Util::verify_file_bool(string filename) {
-  ifstream f(filename.c_str(), ios::in | ios::binary);
-  if (!f.is_open())
-    return false;
-  f.close();
-  return true;
-}
 
 QString Util::BinopString(QString a) {
     QString pa ="";
@@ -233,7 +182,7 @@ QVector3D Util::fromSpherical(float r, float t, float p) {
 }
 
 QVector3D Util::floor(const QVector3D v) {
-    return QVector3D( max(0.0f, v.x()), max(0.0f,v.y()), max(0.0f,v.z())  );
+    return QVector3D( std::max(0.0f, v.x()), std::max(0.0f,v.y()), std::max(0.0f,v.z())  );
 }
 
 QVector3D Util::Rotate2D(QVector3D point, QVector3D center, float angle) {
@@ -324,18 +273,6 @@ QString Util::ReplaceWords(QString line, QString word) {
 
 
 
-string Util::trim(string strin)
-{
-    string str = strin;
-    string::size_type pos = str.find_last_not_of(' ');
-    if(pos != string::npos) {
-        str.erase(pos + 1);
-        pos = str.find_first_not_of(' ');
-        if(pos != string::npos) str.erase(0, pos);
-    }
-    else str.erase(str.begin(), str.end());
-    return str;
-}
 
 int Util::VerifyHexAddress(QString s)
 {
@@ -558,7 +495,7 @@ QVector3D Util::abss(QVector3D a)
 
 QVector3D Util::maxx(QVector3D a, QVector3D b)
 {
-    return QVector3D(max(a.x(),b.x()), max(a.y(),b.y()), max(a.z(),b.z()));
+    return QVector3D(std::max(a.x(),b.x()), std::max(a.y(),b.y()), std::max(a.z(),b.z()));
 }
 
 int Util::C64StringToInt(QString f) {
@@ -589,7 +526,7 @@ QString Util::fixFolder(QString folderName) {
     return folderName + "/";
 }
 
-string Util::c2x(int x, int y) {
+std::string Util::c2x(int x, int y) {
     std::string s;
     s = char('A' + y);
     s += std::to_string(x+1);
@@ -598,8 +535,8 @@ string Util::c2x(int x, int y) {
 
 float Util::minmax(float v, float a, float b)
 {
-    v = max(v,a);
-    v = min(v,b);
+    v = std::max(v,a);
+    v = std::min(v,b);
     return v;
 }
 
@@ -682,8 +619,8 @@ QString Util::findFileInSubDirectories(QString search, QString dir, QString exte
 }
 
 float Util::clamp(float val, const float mi, const float ma) {
-    val = min(ma, val);
-    val = max(mi, val);
+    val = std::min(ma, val);
+    val = std::max(mi, val);
     return val;
 }
 
@@ -708,8 +645,8 @@ float Util::ColorLength(QColor &c) {
 void Util::drawBox(QImage *backImage, QImage *img, int i, int j, int size, QRgb color) {
     int imageSize = img->width();
     QRgb mark = QColor(1,1,1).rgba();
-    for (int x=max(0, i-size/2);x<=min(imageSize-1, i+size/2);x++)
-        for (int y=max(0, j-size/2);y<=min(imageSize-1, j+size/2);y++) {
+    for (int x=std::max(0, i-size/2);x<=std::min(imageSize-1, i+size/2);x++)
+        for (int y=std::max(0, j-size/2);y<=std::min(imageSize-1, j+size/2);y++) {
             QColor col = QColor::fromRgba(backImage->pixel(x,y));
             if (col.red()==0) {
                 img->setPixel(x,y,color);
@@ -741,7 +678,7 @@ QString Util::getFileName(QString dir, QString baseName, QString type)
             filename = filename.replace(baseName, "");
             filename = filename.replace("."+type, "");
             int num = filename.toInt();
-            maxNumber = max(maxNumber, num);
+            maxNumber = std::max(maxNumber, num);
         }
     }
     maxNumber++;
@@ -817,7 +754,7 @@ QString Util::MilisecondToString(int ms) {
 }
 
 QVector3D Util::maxQvector3D(const QVector3D a, const QVector3D b) {
-    return QVector3D(max(a.x(), b.x()),max(a.y(), b.y()),max(a.z(), b.z()));
+    return QVector3D(std::max(a.x(), b.x()),std::max(a.y(), b.y()),std::max(a.z(), b.z()));
 }
 
 bool Util::Mollweide(QVector3D &out, float i, float j, float l0, float R, float size) {

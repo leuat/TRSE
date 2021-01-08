@@ -31,12 +31,11 @@
 #include <iostream>
 //#include <QTextEdit>
 #include <exception>
-using namespace std;
 
 class Lexer;
 
 
-class FatalErrorException: public exception
+class FatalErrorException: public std::exception
 {
 public:
     QString message;

@@ -61,8 +61,8 @@ void LGraph::getMinMaxY()
     m_miny = 1E30;
     m_maxy = -1E30;
     for (int i=0;i<m_noBins;i++) {
-        m_miny = min(m_value[i], m_miny);
-        m_maxy = max(m_value[i], m_maxy);
+        m_miny = std::min(m_value[i], m_miny);
+        m_maxy = std::max(m_value[i], m_maxy);
     }
 }
 

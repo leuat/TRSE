@@ -60,7 +60,7 @@ void DialogMemoryAnalyze::RenderSystemLabels(QPainter& p, int xstart, int fs )
 
         p.setPen(QPen(QColor(32,32,48)));
 
-        p.setFont(QFont("Courier", min(fs,height)));
+        p.setFont(QFont("Courier", std::min(fs,height)));
         p.drawText(r, Qt::AlignTop | Qt::AlignLeft, l.m_name);
     }
 
@@ -128,9 +128,9 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
         if (prevT == mb->m_name)
             scale = 1.7;//1+sin(time*0.1);
 
-        c.setRed(min(c.red()*scale,255.0f));
-        c.setGreen(min(c.green()*scale,255.0f));
-        c.setBlue(min(c.blue()*scale,255.0f));
+        c.setRed(std::min(c.red()*scale,255.0f));
+        c.setGreen(std::min(c.green()*scale,255.0f));
+        c.setBlue(std::min(c.blue()*scale,255.0f));
         p.setPen(c);
         p.setBrush(c);
 
@@ -158,9 +158,9 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
 
         int box2s = ww;
         float s2 = 0.75f;
-        c.setRed(min(c.red()*scale*s2,255.0f));
-        c.setGreen(min(c.green()*scale*s2,255.0f));
-        c.setBlue(min(c.blue()*scale*s2,255.0f));
+        c.setRed(std::min(c.red()*scale*s2,255.0f));
+        c.setGreen(std::min(c.green()*scale*s2,255.0f));
+        c.setBlue(std::min(c.blue()*scale*s2,255.0f));
 
         QRect r = Trans(x1,y0+shift/zoomVal,x2-xborder,y1-y0);
         if (r.contains(mpos)) {
@@ -199,7 +199,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
             if (mb->m_zeropages.count()!=0)
                 zp = "zp :"+zp;
             zp=zp.trimmed();
-            p.setFont(QFont("Courier", min(fontSize,height), QFont::Bold));
+            p.setFont(QFont("Courier", std::min(fontSize,height), QFont::Bold));
 
             p.drawText(Trans(x2-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
         }
@@ -336,7 +336,7 @@ void DialogMemoryAnalyze::mouseMoveEvent(QMouseEvent *event)
 void DialogMemoryAnalyze::wheelEvent(QWheelEvent *event)
 {
     zoomVal *=1+0.001f*event->angleDelta().y();
-    zoomVal = max(1.0f, zoomVal);
+    zoomVal = std::max(1.0f, zoomVal);
     Initialize(m_blocks, m_fontSize);
 }
 

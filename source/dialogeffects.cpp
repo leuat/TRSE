@@ -1576,7 +1576,7 @@ void DialogEffects::UpdateGlobals()
 
         CharsetImage* c = dynamic_cast<CharsetImage*>(m_effect->m_mc);
         if (c!=nullptr) {
-            for (int i=0;i<min(4,m_effect->m_mc->m_colorList.count());i++)
+            for (int i=0;i<std::min(4,m_effect->m_mc->m_colorList.count());i++)
                 c->SetColor(m_rt.m_globals.m_c64Colors[i],i);
         }
     }

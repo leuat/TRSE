@@ -253,8 +253,8 @@ QString LImage::GetCurrentModeString() {
 
 void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
 {
-    int height  =min(img.height(), m_height);
-    int width  =min(img.width(), m_width);
+    int height  =std::min(img.height(), m_height);
+    int width  =std::min(img.width(), m_width);
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
             QColor oldPixel = QColor(img.pixel(x,y));
@@ -281,8 +281,8 @@ void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
 
 void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma=1.0)
 {
-    int height  =min(img.height(), m_height);
-    int width  =min(img.width(), m_width);
+    int height  =std::min(img.height(), m_height);
+    int width  =std::min(img.width(), m_width);
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 
@@ -301,9 +301,9 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
             int xp = x + y%(int)strength.z();
-            color.setRed(min((float)pow(color.red(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
-            color.setGreen(min((float)pow(color.green(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
-            color.setBlue(min((float)pow(color.blue(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setRed(std::min((float)pow(color.red(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setGreen(std::min((float)pow(color.green(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
+            color.setBlue(std::min((float)pow(color.blue(),gamma) + bayer4x4(xp % size.x(),yp % size.y()),255.0f));
 
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
@@ -502,8 +502,8 @@ void LImage::Box(int x, int y, unsigned char col, int size)
 
 void LImage::RBox(int x0, int y0, int x1, int y1, unsigned char col, int size)
 {
-    if (x0>x1) swap(x0,x1);
-    if (y0>y1) swap(y0,y1);
+    if (x0>x1) std::swap(x0,x1);
+    if (y0>y1) std::swap(y0,y1);
     for (int i=0;i<x1-x0;i++)
         for (int j=0;j<y1-y0;j++) {
             if (size==0)
