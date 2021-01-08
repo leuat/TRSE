@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QListWidget>
+#include "source/trsedocuments/helpdocumentbuilder.h"
 
 namespace Ui {
 class formHelp;
@@ -37,6 +38,7 @@ public:
 
     QString m_currentType;
     QString m_currentWord = "";
+    bool m_curIsTru = false;
     int m_currentSearchItem = 0;
     int m_curTopic, m_curItem, m_idx;
 //    Highlighter* m_highlighter = nullptr;
@@ -44,12 +46,14 @@ public:
     void LoadItem(QString word);
     void FillTopics();
 
+    QString ApplyColors(QString in);
     void Search(QString txt);
     void SetFontSize(int size);
-
+    void BuildTRU(QStringList truFiles);
 
     void AppendItem(QListWidget* w, QString s);
     void SearchForItem(QString item);
+    HelpDocumentBuilder m_hdb;
 
 private slots:
 //    void on_pushButton_clicked();

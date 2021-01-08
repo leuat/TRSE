@@ -181,7 +181,7 @@ void FormFjong::keyPressEvent(QKeyEvent *e)
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
 
-        DialogHelp* dh = new DialogHelp(nullptr, word, m_defaultPalette);
+        DialogHelp* dh = new DialogHelp(nullptr, word, m_defaultPalette, QStringList());
 //        dh->setPalette(m_defaultPalette);
      //   QApplication::setPalette(m_defaultPalette);
 

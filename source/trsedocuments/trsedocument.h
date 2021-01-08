@@ -64,6 +64,8 @@ public:
 
     virtual void ToggleComment() {}
 
+    virtual void UpdateHelpText(QStringList& files) {};
+
     bool SaveChanges();
     void SaveCurrent() {
         if (m_currentSourceFile=="") {

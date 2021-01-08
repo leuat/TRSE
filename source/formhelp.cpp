@@ -3,6 +3,8 @@
 #include "source/LeLib/util/cinifile.h"
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/syntax.h"
+#include "source/trsedocuments/helpdocumentbuilder.h"
+
 
 formHelp::formHelp(QWidget *parent) :
     QWidget(parent),
@@ -13,6 +15,7 @@ formHelp::formHelp(QWidget *parent) :
     m_curItem = 0;
 
     m_helpTypes.append(HelpType("m","Methods"));
+    m_helpTypes.append(HelpType("tru","TRSE Units"));
     m_helpTypes.append(HelpType("r","Reserved words"));
     m_helpTypes.append(HelpType("c","Constants"));
     m_helpTypes.append(HelpType("p","Platform Info"));
@@ -20,6 +23,7 @@ formHelp::formHelp(QWidget *parent) :
 
     FillTopics();
     LoadItems(0);
+    ui->splitter->setSizes(QList<int>() << 250<<300<<1000);
 
 
 /*    setPalette(pal);
@@ -43,6 +47,19 @@ void formHelp::LoadItems(int idx)
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();
+
+    if (ht.id=="tru") {
+        for (auto d : m_hdb.m_documents) {
+            m_currentItems.append(d->m_name);
+            AppendItem(ui->lstItems, d->m_name);
+        }
+        m_curIsTru = true;
+        return;
+    }
+
+
+    m_curIsTru = false;
+
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
@@ -85,6 +102,18 @@ void formHelp::LoadItems(int idx)
 
 void formHelp::LoadItem(QString findword)
 {
+
+    if (m_curIsTru) {
+        for (auto d : m_hdb.m_documents) {
+            if (d->m_name == findword) {
+                ui->txtHelp->setText(ApplyColors(d->m_document));
+                return;
+            }
+        }
+        return;
+    }
+
+
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.count()==0) continue;
@@ -124,10 +153,7 @@ void formHelp::LoadItem(QString findword)
                     QString s = f.readAll();
                     f.close();
 
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+                    s = ApplyColors(s);
 
                     val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
@@ -167,10 +193,7 @@ void formHelp::LoadItem(QString findword)
                 if (QFile::exists(fn)) {
                     QString s = Util::loadTextFile(fn);
 
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+                    s = ApplyColors(s);
 
                     val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
@@ -202,10 +225,7 @@ void formHelp::LoadItem(QString findword)
                     QString s = f.readAll();
                     f.close();
 
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+                    s = ApplyColors(s);
 
                     val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
@@ -228,10 +248,7 @@ void formHelp::LoadItem(QString findword)
                     QString s = f.readAll();
                     f.close();
 
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+                    s = ApplyColors(s);
 
                     val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
@@ -253,12 +270,7 @@ void formHelp::LoadItem(QString findword)
                     f.open(QFile::ReadOnly | QFile::Text);
                     QString s = f.readAll();
                     f.close();
-
-                    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
-                    s=s.replace("</code>","</code></pre>");
-
-                    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
-
+                    s = ApplyColors(s);
                     val+="<div style=\"font-size: 10pt\">" + s + "</div>";
 
                 }
@@ -278,6 +290,17 @@ void formHelp::FillTopics()
     m_idx=0;
     for (HelpType& ht:m_helpTypes)
         AppendItem(ui->lstTopic, ht.name);
+}
+
+QString formHelp::ApplyColors(QString s)
+{
+    s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
+    s=s.replace("</code>","</code></pre>");
+
+    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
+    s=s.replace("<h1>","<h1 style=\"color: lightblue;font-size: 18pt;margin: 35px 0px 20px\">");
+
+    return s;
 }
 
 void formHelp::Search(QString txt)
@@ -361,6 +384,14 @@ void formHelp::SetFontSize(int size)
     f2.setPointSize(size);
     ui->lstTopic->setFont(f2);
     ui->txtHelp->setFontPointSize(size);
+}
+
+void formHelp::BuildTRU(QStringList truFiles)
+{
+    m_hdb.m_documents.clear();
+    for (auto s : truFiles) {
+        m_hdb.ProcessSourceFile(s);
+    }
 }
 
 void formHelp::on_lstItems_itemClicked(QListWidgetItem *item)

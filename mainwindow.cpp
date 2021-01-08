@@ -711,66 +711,27 @@ void MainWindow::RefreshFileList()
 
 
     }
-
+    m_truFilesInProject.clear();
     setupIcons();
 
     m_expandedList.clear();
     if (m_im!=nullptr)
         findExpanded(m_im.get(),m_expandedList);
-    //qDebug() << List;
-        // prepare list
-        // PS: getPersistentIndexList() function is a simple `return this->persistentIndexList()` from TreeModel model class
-/*    if (m_im!=nullptr)
-        for (QModelIndex index : m_im->)
-        {
-            if (ui->treeFiles->isExpanded(index))
-            {
-                List << index.data(Qt::DisplayRole).toString();
-            }
-        }
-*/
-//    qDebug() << m_currentPath << rand()%100;
-  //  if (m_currentPath=="")
-    //    return;
-    /*
-    if (fileSystemModel!=nullptr)
-        delete fileSystemModel;
-    fileSystemModel = new CustomFileSystemModel(this);
-
-
-    QString rootPath= getProjectPath();
-    fileSystemModel->setReadOnly(true);
-    fileSystemModel->setRootPath(rootPath);
-    fileSystemModel->setFilter(QDir::NoDotAndDotDot |
-                            QDir::AllDirs |QDir::AllEntries);
-
-    fileSystemModel->setNameFilters(QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo");
-    fileSystemModel->setNameFilterDisables(false);
-
-*/
 
     m_im = QSharedPointer<QStandardItemModel>(new QStandardItemModel());
 
 
 
 
-//        QFile f(it.next());
-  //      f.open(QIODevice::ReadOnly);
-        //qDebug() << f.fileName() << f.readAll().trimmed().toDouble() / 1000 << "MHz";
     QVector<QStandardItem*> localItem;
     QString system = m_currentProject.m_ini->getString("system");
 
     QStringList truPath = getTRUPaths();
 
-//    qDebug() << "PPATH" << getProjectPath();
     QStandardItem* root = AddTreeRoot(getProjectPath(),"Project ("+m_currentProject.m_projectName+")");
     ui->treeFiles->setHeaderHidden(true);
-//    QStandardItem* root = AddTreeRoot(getProjectPath(),"Project");
     m_im->insertRow(0,root);
     QStandardItem* trus = nullptr;
-    //qDebug() << "TRU PATH " << truPath<<QDir().exists(truPath);
-
-  //  qDebug() << "TRU 0" << truPath[0];
     if (QDir().exists(truPath[0])) {
        trus = AddTreeRoot(truPath[0],system+" library (TRSE)");
         m_im->insertRow(1,trus);
@@ -797,7 +758,8 @@ void MainWindow::RefreshFileList()
     setExpanded(m_im.get(),m_expandedList);
     m_im->sort(1);
 //    ui->treeFiles->expandAll();
-
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->UpdateHelpText(m_truFilesInProject);
 }
 
 
@@ -809,7 +771,9 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
    if (fi.isFile()) {
        QString f = file;
        if (exts.contains("*."+fi.suffix())) {
-
+           if (fi.fileName().toLower().endsWith(".tru")){
+               m_truFilesInProject.append(fi.absoluteFilePath());
+           }
           //parent->appendRow(new QStandardItem(f.split(QDir::separator()).last()));
            QString name = QDir::toNativeSeparators(f).split(QDir::separator()).last();
            QStandardItem* si = new QStandardItem(name);
@@ -1437,7 +1401,7 @@ void MainWindow::on_helpFileType()
     //ui->treeFiles->currentIndex();
     QString name = ui->treeFiles->model()->data(ui->treeFiles->currentIndex(), Qt::UserRole).toString();
 
-    DialogHelp* dh = new DialogHelp(nullptr, name.split(".").last()+"_files", m_defaultPalette);
+    DialogHelp* dh = new DialogHelp(nullptr, name.split(".").last()+"_files", m_defaultPalette,m_truFilesInProject);
     dh->show();
 
 }
@@ -1878,7 +1842,7 @@ void MainWindow::on_actionHelp_F1_triggered()
         return;
     }
 
-    DialogHelp* dh = new DialogHelp(nullptr, "", m_defaultPalette);
+    DialogHelp* dh = new DialogHelp(nullptr, "", m_defaultPalette,m_truFilesInProject);
     dh->show();
 //    dh->exec();
 }

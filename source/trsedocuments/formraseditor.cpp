@@ -72,6 +72,12 @@ FormRasEditor::~FormRasEditor()
     delete ui;
 }
 
+void FormRasEditor::UpdateHelpText(QStringList& truFiles)
+{
+    ui->widgetHelp->BuildTRU(truFiles);
+    m_truList = truFiles;
+}
+
 void FormRasEditor::FocusOnOutput()
 {
     ui->tabOutputs->setCurrentIndex(0);
@@ -662,6 +668,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
 */
+        ui->widgetHelp->BuildTRU(m_truList);
         ui->tabOutputs->setCurrentIndex(1);
 
         ui->widgetHelp->SetFontSize(m_iniFile->getdouble("font_size"));
@@ -1154,7 +1161,7 @@ void FormRasEditor::HandleBuildComplete()
 }
 
 void FormRasEditor::Help(QString word) {
-    m_help = QSharedPointer<DialogHelp>(new DialogHelp(nullptr, word, m_defaultPalette));
+    m_help = QSharedPointer<DialogHelp>(new DialogHelp(nullptr, word, m_defaultPalette,m_truList));
     m_help->SetFontSize(m_iniFile->getdouble("font_size"));
     m_help->show();
 //    delete dh;

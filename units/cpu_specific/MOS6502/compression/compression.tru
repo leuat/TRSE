@@ -1,9 +1,16 @@
 unit Compression;
-
 var
 	endd,count: integer;
 	src, dst : pointer of integer;
 
+///<p>This method will decompress the LZW-compressed source data to the target destination.
+///<br>
+///Example:
+///<code>
+/// // Deflates to $4000<br>
+///Compression::Decompress( #myCompressedData, ^$4000); 
+///</code><br>
+///Code example ENDED!
 procedure Decompress(src, dst : global pointer of integer);
 begin
 	src := src + 7;

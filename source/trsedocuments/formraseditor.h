@@ -97,12 +97,14 @@ public:
     QVector3D m_endCol = QVector3D(255,200,100);
 
     static QString m_globalOutput;
-
+    QStringList m_truList;
     MachineCodeAnalyzer m_mca;
     QString filename;
     bool isInitialized=false;
     int m_searchFromPos = 0;
     int m_currentFromPos = 0;
+
+    virtual void UpdateHelpText(QStringList&) override;
 
     void FocusOnOutput();
 

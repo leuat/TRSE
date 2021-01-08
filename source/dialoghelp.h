@@ -44,7 +44,7 @@ class DialogHelp : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogHelp(QWidget *parent, QString search, QPalette pal);
+    explicit DialogHelp(QWidget *parent, QString search, QPalette pal, QStringList truFiles);
     ~DialogHelp();
     void SetFontSize(int size);
 

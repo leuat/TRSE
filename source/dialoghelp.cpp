@@ -26,11 +26,12 @@
 #include <QFile>
 #include <QDebug>
 
-DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal) :
+DialogHelp::DialogHelp(QWidget *parent, QString txt, QPalette pal, QStringList truFiles) :
     QDialog(parent),
     ui(new Ui::DialogHelp)
 {
     ui->setupUi(this);
+    ui->widgetHelp->BuildTRU(truFiles);
     ui->widgetHelp->Search(txt);
     setWindowFlags(Qt::Window);
 

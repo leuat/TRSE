@@ -409,7 +409,7 @@ void LImageNES::CompressAndSave(QByteArray &chardata, QVector<int> &screen, int 
        f.close();
    */
 
-    qDebug() << "CHARDATA : " << chardata.count()/16;
+//    qDebug() << "CHARDATA : " << chardata.count()/16;
 //    delete ni;
 
     // return out;

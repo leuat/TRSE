@@ -172,6 +172,7 @@ public:
     QString m_currentPath;
     QString m_restrictRecentProjectsSystem = "";
     QStringList m_expandedList;
+    QStringList m_truFilesInProject;
 
     void findExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
     void setExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
