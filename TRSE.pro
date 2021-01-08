@@ -36,7 +36,7 @@ macx{
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
-    QMAKE_CXXFLAGS += -Ofast
+    QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
 
@@ -61,14 +61,14 @@ macx{
 win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
     LIBS += -fopenmp
-    QMAKE_CXXFLAGS += -Ofast
+    QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS   += -lopengl32
 
 }
 win32-msvc*{
     QMAKE_CXXFLAGS += -openmp
     LIBS += -openmp
-    QMAKE_CXXFLAGS += -Ofast -O2
+    QMAKE_CXXFLAGS_RELEASE += -Ofast -O2
     LIBS += -L$$PWD/libs/lua/ -llua
     LIBS   += -lopengl32
 
@@ -78,7 +78,7 @@ linux*{
     QMAKE_CXXFLAGS += -fopenmp
 #    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
     LIBS += -fopenmp
-    QMAKE_CXXFLAGS +=  -Ofast
+    QMAKE_CXXFLAGS_RELEASE +=  -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl
 #    LIBS += -ldl
 
@@ -164,6 +164,7 @@ SOURCES += main.cpp\
     source/toolbox.cpp \
     source/toolboxitem.cpp \
     source/trsedocuments/formhexedit.cpp \
+    source/trsedocuments/helpdocumentbuilder.cpp \
     source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
@@ -367,6 +368,7 @@ HEADERS  += mainwindow.h \
     source/toolbox.h \
     source/toolboxitem.h \
     source/trsedocuments/formhexedit.h \
+    source/trsedocuments/helpdocumentbuilder.h \
     source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \

@@ -336,13 +336,13 @@ void CharsetImage::ToRaw(QByteArray &arr)
 {
     int start = m_exportParams["Start"];
     int end = m_exportParams["End"];
-    int size = start-end;
+    int size = end-start;
 //    qDebug() << start << " " << end;
 
 //    m_colorOrderType = m_exportParams["m_"]
 
 
-    arr.resize(size*8);
+    arr.resize((size)*8);
     for (int i=start;i<end;i++) {
         PixelChar& pc = m_data[i];
         for (int j=0;j<8;j++) {

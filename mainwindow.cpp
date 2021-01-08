@@ -61,6 +61,11 @@ MainWindow::MainWindow(QWidget *parent) :
 //    qRegisterMetaTypeStreamOperators<CItem>("CItem");
 
 
+    // make me crash
+/*    int a[4];
+    for (int i=0;i<10000;i++)
+    qDebug() << a[i];
+*/
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
 //    setupIcons();

@@ -1,4 +1,4 @@
-project_path = tutorials/VIC20/cheesy/
+project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/VIC20/cheesy/
 zeropages = ,$68, $6A, $6C, $6E, $70, $72, $74, $76, $78
 temp_zeropages = ,$88, $8A, $8C, $8E
 via_zeropages = ,$64, $65, $66, $67

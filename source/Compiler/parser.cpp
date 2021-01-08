@@ -3737,14 +3737,14 @@ void Parser::HandleExport()
 
     file.open(QFile::WriteOnly);
     img->m_silentExport = true;
+
+
     if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr) {
         C64FullScreenChar* c = dynamic_cast<C64FullScreenChar*>(img);
         c->ExportMovie(file);
     }
     else
         img->ExportBin(file);
-
-
 
 
     file.close();
