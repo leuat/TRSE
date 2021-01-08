@@ -18,12 +18,25 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
 //    QString doc = "<h1>Hello World!</h1><br>"+file;
 
     QString curDoc = "";
+    bool inAddSection = false;
+
     QStringList lst = text.split("\n");
     for (QString s:lst) {
         if (s.trimmed().startsWith("///")) {
             s = s.remove("///");
             curDoc+=s;
         }
+        if (s.trimmed().startsWith("/**")) {
+            inAddSection = true;
+            continue;
+        }
+        if (s.trimmed().startsWith("**/")) {
+            inAddSection = false;
+            continue;
+        }
+        if (inAddSection)
+           curDoc +=s;
+
         if (curDoc!="")
         if (s.trimmed().toLower().startsWith("procedure") || s.trimmed().toLower().startsWith("function")) {
             QString name = unitName+"::"+s.trimmed().split(" ")[1].split("(").first();
