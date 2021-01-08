@@ -13,7 +13,8 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
     QString text = Util::loadTextFile(file);
 
     QString topic = "Units";
-    QString unitName = Util::getFileWithoutEnding(file).split(QDir::separator()).last();
+    QString unitName = Util::getFileWithoutEnding(file).replace("\\","/");
+    unitName = unitName.split("/").last();
 //    QString doc = "<h1>Hello World!</h1><br>"+file;
 
     QString curDoc = "";
