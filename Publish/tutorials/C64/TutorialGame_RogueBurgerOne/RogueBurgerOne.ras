@@ -164,29 +164,29 @@ r
 							@cclear, @cpause, "     ", @newline,@newline, "   INSTRUCTIONS", @cpause,@cpause,@cpause, @cclear,
 							"DONT DIE. ", 129, @cpause, @cpause,@cpause, 
 							@newline, " PICK UP STUFF", 134, @cpause, @cpause,
-							@newline, "  SHOOT OTHER STUFF", 130, @cpause,@cpause,@cpause,128
+							@newline, "  SHOOT OTHER STUFF", 130, @cpause,@cpause,@cpause,128,
 							@cclear, "FIND BOOSTS", @cpause, @cpause,
-							@newline, "  HEALTH", 135,  @cpause,@cpause
-							@newline, "    AMMO", 134,  @cpause,@cpause,@cpause,@cpause
+							@newline, "  HEALTH", 135,  @cpause,@cpause,
+							@newline, "    AMMO", 134,  @cpause,@cpause,@cpause,@cpause,
 							@cclear, "PROCURE UPGRADES", 128, @cpause, @cpause,
 							@newline, "  HEALTH", 136, @cpause, @cpause,
-							@newline, "    PIZZA WEAPON", 137, @cpause,@cpause,@cpause,@cpause
+							@newline, "    PIZZA WEAPON", 137, @cpause,@cpause,@cpause,@cpause,
 							@cclear, "SEARCH FOR ", @newline, "SACRED SCROLLS", 141,
 							@newline, "CONTAINING AN ANCIENT ", @newline,"SECRET RECIPE", @cpause, @cpause,
 							@newline, "SPACE BAR TO VIEW ", @cpause, @cpause,@cpause,
 
-							128, @cclear, @cpause, "DEVELOPED BY", @newline,@newline  
+							128, @cclear, @cpause, "DEVELOPED BY", @newline,@newline  ,
 							"     LEMONSPAWN", @cpause, @cpause, @cclear,
-							"MUSIC BY", @newline,@newline, "  RICHARD OF TND", @cpause, @cpause,@cpause, @cclear
-							"CODE GFX DESIGN LEVELS", @newline,"AND EVERYTHING ELSE", @newline, "BY ", @cpause, "LEUAT", @cpause, @cpause, @newline, @cpause,@cclear
-							"SPRITES BY", @newline,@newline, @cpause, "    GJENTA", @newline, @cpause, @cpause,@cpause,@cpause,@cclear
-							"DEVELOPED WITH", @newline, "  TURBO RASCAL", @newline,"    SYNTAX ERROR", @cpause, @cpause,@cpause, @cclear
+							"MUSIC BY", @newline,@newline, "  RICHARD OF TND", @cpause, @cpause,@cpause, @cclear,
+							"CODE GFX DESIGN LEVELS", @newline,"AND EVERYTHING ELSE", @newline, "BY ", @cpause, "LEUAT", @cpause, @cpause, @newline, @cpause,@cclear,
+							"SPRITES BY", @newline,@newline, @cpause, "    GJENTA", @newline, @cpause, @cpause,@cpause,@cpause,@cclear,
+							"DEVELOPED WITH", @newline, "  TURBO RASCAL", @newline,"    SYNTAX ERROR", @cpause, @cpause,@cpause, @cclear,
 							"ROGUE BURGER ONE FULL", @newline, "SOURCE CODE IS INCLUDED", @newline,"IN THE TURBO RASCAL", 
 							@newline, "DOWNLOAD PACKAGE", @cpause, @cpause, @cpause,@cclear,
 							"IN ADDITION TO SEVERAL", @newline, "OTHER TUTORIALS ON", @newline,"HOW TO DEVELOP GAMES", 
 							@newline, "AND DEMOS FOR THE ", @newline,"COMMODORE 64 IN 2018", @cpause, @cpause,@cpause, @cclear,
 							
-							"VISIT", @newline, " TURBORASCAL.COM", @newline,"  FOR C64 CODING", @cpause, @cpause,  @cpause,  @cclear
+							"VISIT", @newline, " TURBORASCAL.COM", @newline,"  FOR C64 CODING", @cpause, @cpause,  @cpause,  @cclear,
 							
 							);
 	
@@ -204,7 +204,7 @@ r
 							"ALL CONTENT WITH THE",@newline,
 							"EXCEPTION OF THE TITLE",@newline,
 							"MUSIC WAS CREATED",@newline,
-							"USING TRSE", @cpause,@cpause,@cpause, @cclear
+							"USING TRSE", @cpause,@cpause,@cpause, @cclear,
 							"THE ENTIRE GAME SOURCE",@newline,
 							"CODE WITH ALL RESOURCES",@newline,
 							"ARE INCLUDED WHEN YOU ",@newline,
