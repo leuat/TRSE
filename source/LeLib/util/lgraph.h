@@ -22,7 +22,6 @@
 #pragma once
 #include "spline.h"
 
-using namespace std;
 
 #include <QVector>
 #include <QPointF>

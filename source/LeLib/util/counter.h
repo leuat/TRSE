@@ -26,7 +26,6 @@
 #include <QElapsedTimer>
 #include "source/util/util.h"
 
-using namespace std;
 
 class Counter {
 public:

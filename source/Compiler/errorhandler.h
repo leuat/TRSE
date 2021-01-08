@@ -31,7 +31,6 @@
 #include <iostream>
 //#include <QTextEdit>
 #include <exception>
-
 using namespace std;
 
 class Lexer;

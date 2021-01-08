@@ -6,76 +6,57 @@
 
 QT += core gui opengl qml
 QT += widgets
-QT += openglwidgets
+
+equals($$QT_MAJOR_VERSION, 6) {
+    QT += openglwidgets
+}
+message("Compiling TRSE!")
+
 CONFIG += c++14
 
 CONFIG+=warn_off
 
 TARGET = trse
 TEMPLATE = app
-#CONFIG += arm64
-#CONFIG -= x86_64
 
-
-#QMAKE_APPLE_DEVICE_ARCHS=arm64
-
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
 DEFINES -= QT_DEPRECATED_WARNINGS
 
 DEFINES += USE_LUA
 
-# You can also make yopur code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-
-#QMAKE_CXXFLAGS += -fopenmp -std=c++11
-
 
 INCLUDEPATH +=$$PWD/libs/lua/include
 
-#if USE_LUA
-#LIBS
 DEPENDPATH += $$PWD/../Libs
 win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
-#QMAKE_CFLAGS_WARN_OFF
+ARCH = $$QMAKE_HOST.arch
 
-macx {
+macx{
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
-    LIBS += -L$$PWD/libs/lua/ -lluamac
+
+    contains(ARCH, arm64): {
+      message("Arme meg!")
+      QMAKE_APPLE_DEVICE_ARCHS=arm64
+      LIBS += -L$$PWD/libs/lua/ -lluamac_arm
+      CONFIG += arm64
+
+    }
+    contains(ARCH, x86) |contains(ARCH, amd64):  {
+        LIBS += -L$$PWD/libs/lua/ -lluamac
+   }
+
 
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/opt/homebrew/include/
 #   QMAKE_LFLAGS += -lomp
 #     LIBS += -L /opt/homebrew/lib
 }
-
-# Doesn't work yet, it seems. Must copy arm stuff out manually
-macx:arm {
-    QMAKE_CXXFLAGS += -openmp
-    #LIBS += -openmp
-#    ICON = trse.icns
-    QMAKE_CXXFLAGS += -Ofast
-    LIBS += -L$$PWD/libs -Ofast
-    CONFIG -= x86_64
-    QMAKE_APPLE_DEVICE_ARCHS=arm64
-    LIBS += -L$$PWD/libs/lua/ -lluamac_arm
-    CONFIG += arm64
-
-
-}
-
 
 win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
