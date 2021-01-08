@@ -24,6 +24,7 @@
 
 
 #include <QDebug>
+#include <QDate>
 #include <QThread>
 #include <QProcess>
 #include <QElapsedTimer>
