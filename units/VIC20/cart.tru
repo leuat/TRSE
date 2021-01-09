@@ -126,6 +126,12 @@ end;
 // -------------------------------------------------------------------------------
 // The magic bytes needed at address $A000
 
+/**
+<p>Creates the magic bytes needed for a Cartridge to autostart when your
+program is built into a cartridge ROM. This needs to go into address 
+$a000 and a startblock can be used to achieve this. See cart::init for a full
+explanation and instructions on setting up.</p>
+**/
 procedure Autostart() inline;
 begin
 	asm("
