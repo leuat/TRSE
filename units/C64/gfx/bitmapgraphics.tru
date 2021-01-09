@@ -166,9 +166,11 @@ end;
 
 procedure InitBitmapGraphics(pi:byte; bsta:integer);
 begin
-	p_putpixel := proceduretopointer(putpixel2());
+	//p_putpixel := proceduretopointer(putpixel2());
+	p_putpixel := #putpixel2;
 	if (pi=2) then 
-		p_putpixel := proceduretopointer(putpixel3());
+		p_putpixel := #putpixel3;
+		
 
 	bitmapstart:=bsta;
 	SetupPixelTables();
