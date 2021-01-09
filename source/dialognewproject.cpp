@@ -18,15 +18,15 @@ DialogNewProject::DialogNewProject(QSharedPointer<CIniFile> ini, QWidget *parent
         ui->leProjectDir->setText(Util::path);
 
 
-    for (int i=0;i<ui->comboBox->count();i++) {
-        QString txt = ui->comboBox->itemText(i);
+    for (int i=0;i<ui->cmbSystem->count();i++) {
+        QString txt = ui->cmbSystem->itemText(i);
         QString fn =":resources/images/" +txt+".png";
         QPixmap img(fn);
-        ui->comboBox->setItemIcon(i,img);
+        ui->cmbSystem->setItemIcon(i,img);
 
     }
     int s = 64;
-    ui->comboBox->setIconSize(QSize(s,s/1.5));
+    ui->cmbSystem->setIconSize(QSize(s,s/1.5));
 //    ui->btnOk->setFocus();
     ui->leProjectName->setFocus();
     ui->btnOk->setAutoDefault(true);
@@ -41,11 +41,6 @@ DialogNewProject::~DialogNewProject()
     delete ui;
 }
 
-void DialogNewProject::on_comboBox_currentIndexChanged(const QString &arg1)
-{
-
-    m_templates.PopulateTemplateList(ui->lstData,arg1);
-}
 
 void DialogNewProject::on_lstData_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
@@ -126,5 +121,12 @@ void DialogNewProject::on_btnSelectDir_clicked()
 
 void DialogNewProject::on_leProjectName_cursorPositionChanged(int arg1, int arg2)
 {
+
+}
+
+
+void DialogNewProject::on_cmbSystem_currentTextChanged(const QString &arg1)
+{
+    m_templates.PopulateTemplateList(ui->lstData,arg1);
 
 }

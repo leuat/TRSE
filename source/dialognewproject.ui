@@ -35,7 +35,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="cmbSystem">
           <property name="font">
            <font>
             <pointsize>16</pointsize>
@@ -193,7 +193,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>comboBox</tabstop>
+  <tabstop>cmbSystem</tabstop>
   <tabstop>txtInfo</tabstop>
   <tabstop>btnSelectDir</tabstop>
   <tabstop>leProjectName</tabstop>

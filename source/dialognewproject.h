@@ -24,7 +24,6 @@ public:
     QSharedPointer<CIniFile> m_ini;
 
 private slots:
-    void on_comboBox_currentIndexChanged(const QString &arg1);
 
     void on_lstData_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
@@ -41,6 +40,10 @@ private slots:
     void on_btnSelectDir_clicked();
 
     void on_leProjectName_cursorPositionChanged(int arg1, int arg2);
+
+
+
+    void on_cmbSystem_currentTextChanged(const QString &arg1);
 
 private:
     Ui::DialogNewProject *ui;
