@@ -2469,11 +2469,12 @@ void MainWindow::on_action_Rename_current_file_triggered()
     RefreshFileList();
 }
 
-void MainWindow::on_cmbSelectSystemRecent_activated(const QString &arg1)
+void MainWindow::on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1)
 {
     if (arg1.toLower().contains("all"))
         m_restrictRecentProjectsSystem = "";
     else
         m_restrictRecentProjectsSystem = arg1;
     UpdateRecentProjects();
+
 }

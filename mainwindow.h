@@ -436,7 +436,8 @@ private slots:
 
     void on_action_Rename_current_file_triggered();
 
-    void on_cmbSelectSystemRecent_activated(const QString &arg1);
+
+    void on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1);
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
