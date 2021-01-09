@@ -47,7 +47,7 @@ macx{
       CONFIG += arm64
 
     }
-    contains(ARCH, x86) |contains(ARCH, amd64):  {
+    contains(ARCH, x86_64) |contains(ARCH, amd64):  {
         LIBS += -L$$PWD/libs/lua/ -lluamac
    }
 
