@@ -12,7 +12,7 @@ var
 */
 
 // Compression 30 seems to fit nicely here, with 247 chars exported
-//@exportcompressed "resources/images/skull.flf" "resources/images/skull.bin" 0 0 40 25 30
+@exportcompressed "resources/images/skull.flf" "resources/images/skull.bin" 0 0 40 25 30
 
    image_screen : incbin("resources/images/skull_screen.bin", $3000);
    image_charset : incbin("resources/images/skull_charset.bin",$2000);

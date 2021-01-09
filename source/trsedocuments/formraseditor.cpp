@@ -392,9 +392,8 @@ void FormRasEditor::Build(bool isShadow)
     while (m_builderThread.isRunning()) {
 
     }
- //   m_curCol = m_startCol;
-    m_builderThread.start();
-//    m_builderThread.run();
+ //   m_builderThread.start();
+    m_builderThread.run();
 
 }
 

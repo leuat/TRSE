@@ -10,7 +10,7 @@ var
 <br>
 Example:
 <code>
- // Deflates to $4000<br>
+// Deflates to $4000
 Compression::Decompress( #myCompressedData, ^$4000); 
 </code><br>
 Code example ENDED!

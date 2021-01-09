@@ -48,8 +48,10 @@ void Lexer::FindLineNumberAndFile(int inLe, QString &file, int &outle)
 
     //    qDebug() << "input line number: " << inLe;
     //  qDebug() << "Start line: " << m_parser.m_lexer->m_includeFiles[0].m_startLine;
-    if (cur<=m_includeFiles[0].m_startLineAcc) {
-        return;
+    if (m_includeFiles.count()>0) {
+        if (cur<=m_includeFiles[0].m_startLineAcc) {
+            return;
+        }
     }
 
 
@@ -429,8 +431,7 @@ Token Lexer::GetNextToken()
             if (id.m_value.endsWith("^")) {
                 id.m_value.remove(id.m_value.count()-1,1);
                 m_text.remove(m_pos-1,1);
-                m_text.insert(m_pos-1,"[0]");
-                m_currentChar = "[";
+                m_text.insert(m_pos-1,"[0]"); m_currentChar = "[";
 
             }
 //            qDebug() << "found ID "<<id.getType() <<id.m_isPointer;
