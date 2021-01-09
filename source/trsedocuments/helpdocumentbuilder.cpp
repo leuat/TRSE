@@ -35,7 +35,7 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
             continue;
         }
         if (inAddSection)
-           curDoc +=s;
+           curDoc +=s +"\n";
 
         if (curDoc!="" && !inAddSection)
         if (s.trimmed().toLower().startsWith("procedure") || s.trimmed().toLower().startsWith("function")) {
@@ -44,9 +44,8 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
             if (s.contains("(") && s.contains(")"))
                 parameters = s.trimmed().split("(").last().split(")").first();
 
-
-
             curDoc = "<h1>"+name+"</h1><p>Parameters: <b>"+parameters+"</b><br>"+curDoc;
+
             m_documents.append(QSharedPointer<HelpDocumentBuilderDocument>(
                                    new HelpDocumentBuilderDocument(topic, name, curDoc)));
            curDoc = "";
