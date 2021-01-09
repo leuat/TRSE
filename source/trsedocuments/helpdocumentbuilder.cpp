@@ -37,7 +37,7 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
         if (inAddSection)
            curDoc +=s;
 
-        if (curDoc!="")
+        if (curDoc!="" && !inAddSection)
         if (s.trimmed().toLower().startsWith("procedure") || s.trimmed().toLower().startsWith("function")) {
             QString name = unitName+"::"+s.trimmed().split(" ")[1].split("(").first();
             QString parameters="none";
