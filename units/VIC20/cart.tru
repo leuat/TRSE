@@ -1,19 +1,31 @@
 Unit Cart;
 var 
 
-/*
 
-	INSTRUCTIONS
 
+/**
+<h3>Initialise a Cartridge build</h3>
+
+<p>Place Cart::Init as the first line in your main program to make
+then program run as a Vic 20 cartridge. See also Cart::Autostart
+which must be placed in a startblock addressed at $a000.</p>
+
+<h3>INSTRUCTIONS</h3>
+
+
+<p>
 1.	Place this under the VAR section of your main program:
+</p>
 
+<code>
 @define BUILDCRT	1		// uncomment to build for cartridge
+</code>
 
-
-
+<p>
 2.	To use, place this above Main program and procedures:
-	
-// -------------------------------------------------------------------------------
+</p>
+
+<code>	
 // The magic bytes needed at address $A000
 
 @startblock $A000 "CARTAUTOSTART"
@@ -22,36 +34,43 @@ var
 procedure cartAutostart();
 begin
 
-	Cart::Autostart();
+	cart::Autostart();
 	
 end;
 @endif
 @endblock
+</code>
 
-// -------------------------------------------------------------------------------
-
+<p>
 3.	And then this as the first line in the Main Program:
+</p>
 
+<code>
 	@ifdef BUILDCRT
 
-		Cart::Init();
+		cart::Init();
 	
 	@endif
+</code>
 
-// -------------------------------------------------------------------------------
-
+<p>
 4.	Place the required exports in your program:
+</p>
 
+<code>
 	// set which blocks of memory to export
 	// as separate 8k blocks
 //	@exportprg2bin "main.prg" "2000.prg" $2000 $4000	
 //	@exportprg2bin "main.prg" "4000.prg" $4000 $6000	
 //	@exportprg2bin "main.prg" "6000.prg" $6000 $8000	
 	@exportprg2bin "main.prg" "a000.prg" $a000 $c000
+</code>
 
-
+<p>
 5.	Set project settings
+</p>
 
+<code>
 @ifdef BUILDCRT
 	
 	// These project settings are needed to run as a cartridge build
@@ -61,8 +80,9 @@ end;
 //	@projectsettings "startaddress" $A1A0		// if just an 8k cart in A000
 	
 @endif	
-*/
+</code>
 
+**/
 procedure Init() inline;
 begin
 

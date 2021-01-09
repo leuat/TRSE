@@ -87,7 +87,7 @@ J:1*:JU,JD,JL,JR,JF,JF,1,2,SP,F1,F3,F5,EN,A,B
 procedure cartAutostart();
 begin
 
-	Cart::Autostart();
+	cart::Autostart();
 	
 end;
 @endif
@@ -118,7 +118,7 @@ begin
 
 	@ifdef BUILDCRT
 
-		Cart::Init();
+		cart::Init();
 	
 	@endif
 
