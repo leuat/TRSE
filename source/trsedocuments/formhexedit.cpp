@@ -44,7 +44,7 @@ void FormHexEdit::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QS
 }
 
 
-void FormHexEdit::on_comboBox_currentIndexChanged(const QString &arg1)
+void FormHexEdit::on_comboBox_currentTextChanged(const QString &arg1)
 {
     ui->scrollArea->BYTES_PER_LINE = arg1.toInt();
     ui->scrollArea->update();

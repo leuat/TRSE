@@ -234,7 +234,7 @@ void HexView::paintEvent(QPaintEvent *event)
 
                 for (int x=0;x<8;x++) {
                     int j = 7-x;
-//                    if (((v>>j)&1)==1)
+                    if (((v>>j)&1)==1)
                         painter.drawRect(QRect(sx+dx*x + i*(m_charWidth*1.5)*dx, yPos+dy*b-m_charHeight*0.75, dx,dy));
 
                 }
