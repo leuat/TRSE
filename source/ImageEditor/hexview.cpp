@@ -129,6 +129,8 @@ void HexView::paintEvent(QPaintEvent *event)
 
     QBrush def = painter.brush();
     QBrush selected = QBrush(m_colors->getColor("currentline"));
+    QColor textForeground = (m_colors->getColor("textcolor"));
+    QColor textSelected = (m_colors->getColor("numberscolor"));
     QByteArray data = m_pdata->getData(firstLineIdx * BYTES_PER_LINE, (lastLineIdx - firstLineIdx) * BYTES_PER_LINE);
 
     for (int lineIdx = firstLineIdx, yPos = yPosStart;  lineIdx < lastLineIdx; lineIdx += 1, yPos += m_charHeight)
@@ -137,7 +139,7 @@ void HexView::paintEvent(QPaintEvent *event)
         QString address = QString("%1").arg(lineIdx * BYTES_PER_LINE, 10, 16, QChar('0'));
         painter.drawText(m_posAddr, yPos, address);
 
-        painter.setPen(m_colors->getColor("textcolor"));
+        painter.setPen(textForeground);
 
         for(int xPos = m_posHex, i=0; i<BYTES_PER_LINE && ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) < data.size(); i++, xPos += 3 * m_charWidth)
         {
@@ -146,6 +148,7 @@ void HexView::paintEvent(QPaintEvent *event)
             {
                 painter.setBackground(selected);
                 painter.setBackgroundMode(Qt::OpaqueMode);
+                painter.setPen(textSelected);
             }
 
             QString val = QString::number((data.at((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) & 0xF0) >> 4, 16);
@@ -155,11 +158,13 @@ void HexView::paintEvent(QPaintEvent *event)
             {
                 painter.setBackground(selected);
                 painter.setBackgroundMode(Qt::OpaqueMode);
+                painter.setPen(textSelected);
             }
             else
             {
                 painter.setBackground(def);
                 painter.setBackgroundMode(Qt::OpaqueMode);
+                painter.setPen(textForeground);
             }
 
             val = QString::number((data.at((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) & 0xF), 16);
@@ -185,12 +190,18 @@ void HexView::paintEvent(QPaintEvent *event)
             ch = '.';
             pos*=2;
             painter.setBackground(def);
-            if(((pos+1) >= m_selectBegin && (pos+1) < m_selectEnd))
+            painter.setPen(textForeground);
+
+            if(((pos+1) >= m_selectBegin && (pos+1) < m_selectEnd)) {
                 painter.setBackground(selected);
+                painter.setPen(textSelected);
+            }
 
             if (m_selectBegin==m_selectEnd) { // Show current pos only
                 if (pos == (m_cursorPos&0xFFFFFFFE)) {
                     painter.setBackground(selected);
+                    painter.setPen(textSelected);
+
                 }
             }
 
@@ -218,7 +229,7 @@ void HexView::paintEvent(QPaintEvent *event)
                 for (int x=0;x<8;x++) {
                     int j = 7-x;
                     if (((v>>j)&1)==1)
-                        painter.drawRect(QRect(sx+dx*x + i*16*dx, yPos+dy*b-16, dx,dy));
+                        painter.drawRect(QRect(sx+dx*x + i*16*dx, yPos+dy*b-16, dx-1,dy-1));
 
                 }
             }
