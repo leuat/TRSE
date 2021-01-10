@@ -6,11 +6,11 @@ begin
 
 	screenmemory := $1100;
 	colormemory := $9400;
-	Compression::Decompress( #binTRSE, screenmemory );
+	crtCompression::Decompress( #binTRSE, screenmemory );
 
 	Sound_PlayerJump();
 
-	Compression::Decompress( #binTRSEColour, colormemory );
+	crtCompression::Decompress( #binTRSEColour, colormemory );
 
 	k := 0; // time to stay on this section
 
@@ -39,8 +39,8 @@ begin
 	screenmemory := $1100;
 	colormemory := $9400;
 
-	Compression::Decompress( #binTitle, screenmemory );
-	Compression::Decompress( #binTitleColour, colormemory );
+	crtCompression::Decompress( #binTitle, screenmemory );
+	crtCompression::Decompress( #binTitleColour, colormemory );
 
 	// display experiment (level) progress
 	//vbmDrawSmallBCDO( levelCompleteBCD[ gameLevel ], #ADIGITSMALL, 0,0, 1 );

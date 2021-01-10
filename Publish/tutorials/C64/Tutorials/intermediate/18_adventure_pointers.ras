@@ -1,0 +1,113 @@
+program Adventure;
+/*
+
+	This program introduces the concept of using arrays of strings
+	to define textual locations on a map for a text adventure style
+	of game.
+	
+	There are constants to define the locations, such as a field, a
+	crossroads or a wrong turn in to the CPU! Also None, to define nowhere.
+	These are just index identifiers, starting at 0 and used to give
+	each location a unique reference number.
+	
+	There is a bit of inline assembler to record the start addresses
+	of each location string, found in stringLocations.
+	
+	There is a PrintLocation procedure to extract the address of a
+	location string, then print the description.
+	
+	FINALLY, the main program shows how to display the location
+	description simply by using the constant index identifiers.
+
+*/
+var
+
+		// list of location ID's
+	const FIELD:		byte = 0;
+	const CROSSROADS:	byte = 1;
+	const CPU:			byte = 2;
+	
+	const NONE:			byte = -1;
+	
+
+	@donotremove "strField"
+	@donotremove "strCrossroads"
+	@donotremove "strCPU"
+
+	strField: 		string = ("YOU ARE IN A FIELD.");
+	strCrossroads:	string = ("YOU ARE AT A CROSSROADS.");
+	strCPU: 		string = ("YOU ARE IN THE CPU");
+
+
+	p1: pointer; // temporary pointer for general use
+	location: byte = FIELD; // starting location
+
+
+@donotremove "stringLocations"
+procedure stringLocations();
+begin
+
+	// place pointers to strings
+	// store in Low and High byte lists to make it easier
+	asm("
+	
+mapDescAddrL 
+	dc.b <strField, <strCrossroads, <strCPU
+
+mapDescAddrH 
+	dc.b >strField, >strCrossroads, >strCPU
+
+	");
+
+end;
+
+
+// print the current location
+procedure PrintLocation();
+begin
+
+	// assign p1 to string
+	asm("
+
+	ldx location
+	
+	lda mapDescAddrL,x
+	sta p1
+	lda mapDescAddrH,x
+	sta p1+1
+	
+	");
+	
+	printstring( p1, 0, 30 );
+	screenmemory := screenmemory + SCREEN_WIDTH;
+
+end;
+
+
+begin
+
+	definescreen();
+	screenmemory := #SCREEN_CHAR_LOC;	
+
+	SCREEN_BG_COL := BLACK;
+	screen_FG_COL := BLACK;
+	
+	clearscreen( WHITE, #SCREEN_COL_LOC );
+	clearscreen( 32, #SCREEN_CHAR_LOC );
+
+	// We set the default location to FIELD
+	// in the variable declaration above in the VAR area
+	PrintLocation();
+	
+	// change location explicitly to the CROSSROADS by identifier index = 1
+	location := CROSSROADS;
+	PrintLocation();
+	
+	// change location explicitly to the CPU by identifier index = 2
+	location := CPU;
+	PrintLocation();
+	
+	// hold the program here
+	loop();
+
+end.

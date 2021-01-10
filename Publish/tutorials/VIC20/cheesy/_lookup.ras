@@ -34,7 +34,7 @@
 	);
 
 // colour list for levels
-	levelColour_list: array[ 8 ] of byte = (
+	levelColour_list: array[ 6 ] of byte = (
 	
 		GREEN, 	GREEN +	SCREEN_BG_BLACK 	- 8,
 		

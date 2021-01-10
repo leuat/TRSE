@@ -65,3 +65,7 @@ open_files = ,easy/01_hello_world.ras, [external]compression.tru, [external]cart
 open_files = ,easy/01_hello_world.ras
 project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/VIC20/tutorials/
 current_file = easy/01_hello_world.ras
+open_files = ,easy/01_hello_world.ras, [external]cart.tru
+open_files = ,easy/01_hello_world.ras
+project_path = C:/src/TRSE-RELEASE/tutorials/VIC20/tutorials/
+current_file = [external]cart.tru
