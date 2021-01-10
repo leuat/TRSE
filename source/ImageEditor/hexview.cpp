@@ -176,9 +176,23 @@ void HexView::paintEvent(QPaintEvent *event)
 
         for (int xPosAscii = m_posAscii, i=0; ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) < data.size() && (i < BYTES_PER_LINE); i++, xPosAscii += m_charWidth)
         {
-            char ch = data[(lineIdx - firstLineIdx) * BYTES_PER_LINE + i];
+            int pos = (lineIdx - firstLineIdx) * BYTES_PER_LINE + i;
+            if (pos>=data.count())
+                break;
+
+            char ch = data[pos];
             if ((ch < 0x20) || (ch > 0x7e))
             ch = '.';
+            pos*=2;
+            painter.setBackground(def);
+            if(((pos+1) >= m_selectBegin && (pos+1) < m_selectEnd))
+                painter.setBackground(selected);
+
+            if (m_selectBegin==m_selectEnd) { // Show current pos only
+                if (pos == (m_cursorPos&0xFFFFFFFE)) {
+                    painter.setBackground(selected);
+                }
+            }
 
             painter.drawText(xPosAscii, yPos, QString(ch));
         }
@@ -186,6 +200,7 @@ void HexView::paintEvent(QPaintEvent *event)
         int sx = m_posAscii + BYTES_PER_LINE * m_charWidth + GAP_HEX_ASCII;;
         int dx = 2;
         int dy = 2;
+        painter.setBackground(def);
 
         painter.setPen(m_colors->getColor("cycles"));
 
@@ -422,8 +437,6 @@ void HexView::keyPressEvent(QKeyEvent *event)
 
     if(event->key() == Qt::Key_Delete)
     {
-        //m_pdata->Delete(m_cursorPos/2);
-//        m_pdata->getData()
         m_pdata->m_data.remove(m_selectBegin / 2, (m_selectEnd - m_selectBegin) / 2 + 1);
         m_isChanged = true;
     }
