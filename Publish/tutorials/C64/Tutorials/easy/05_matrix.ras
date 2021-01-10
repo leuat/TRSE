@@ -13,9 +13,9 @@ var
    	
 	const ymax:byte = 240;
 
-/*
+/**
 	Method that initializes the lookup tables used in this program
-*/
+**/
 procedure InitTables();
 begin
 	// Yadd has random values (0-255)/80 +1
@@ -28,11 +28,11 @@ begin
 
 end;
 
-/*
+/**
 	Small method that fills a color at a specific x/y value on screen.
 	Only fills the value if the y is in a valid range 0..24
 	If y is less than zero (>240), then we just cycle add with 25 
-*/
+**/
 procedure FillColor(xx,yy,cc:byte);
 begin
 	if (yy>ymax) then yy:=yy+screen_height;

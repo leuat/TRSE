@@ -12,7 +12,9 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
 
     QString text = Util::loadTextFile(file);
 
-    QString topic = "Units";
+    QString topic = "tru";
+    if (file.toLower().endsWith("ras"))
+        topic = "prg";
     QString unitName = Util::getFileWithoutEnding(file).replace("\\","/");
     unitName = unitName.split("/").last();
 //    QString doc = "<h1>Hello World!</h1><br>"+file;
@@ -41,10 +43,13 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
         if (s.trimmed().toLower().startsWith("procedure") || s.trimmed().toLower().startsWith("function")) {
             QString name = unitName+"::"+s.trimmed().split(" ")[1].split("(").first();
             QString parameters="none";
+
             if (s.contains("(") && s.contains(")"))
                 parameters = s.trimmed().split("(").last().split(")").first();
 
-            curDoc = "<h1>"+name+"</h1><p>Parameters: <b>"+parameters+"</b><br>"+curDoc;
+            if (parameters=="")
+                parameters = "none.";
+            curDoc = "<h1>"+name+"</h1><p>Parameters: <b>"+parameters+"</b><br></p>"+curDoc;
 
             m_documents.append(QSharedPointer<HelpDocumentBuilderDocument>(
                                    new HelpDocumentBuilderDocument(topic, name, curDoc)));

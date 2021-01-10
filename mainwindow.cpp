@@ -771,7 +771,7 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
    if (fi.isFile()) {
        QString f = file;
        if (exts.contains("*."+fi.suffix())) {
-           if (fi.fileName().toLower().endsWith(".tru")){
+           if (fi.fileName().toLower().endsWith(".tru") || fi.fileName().toLower().endsWith(".ras")){
                m_truFilesInProject.append(fi.absoluteFilePath());
            }
           //parent->appendRow(new QStandardItem(f.split(QDir::separator()).last()));

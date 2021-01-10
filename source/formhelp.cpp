@@ -16,6 +16,7 @@ formHelp::formHelp(QWidget *parent) :
 
     m_helpTypes.append(HelpType("m","Methods"));
     m_helpTypes.append(HelpType("tru","TRSE Units"));
+    m_helpTypes.append(HelpType("prg","Programs"));
     m_helpTypes.append(HelpType("r","Reserved words"));
     m_helpTypes.append(HelpType("c","Constants"));
     m_helpTypes.append(HelpType("p","Platform Info"));
@@ -50,8 +51,20 @@ void formHelp::LoadItems(int idx)
 
     if (ht.id=="tru") {
         for (auto d : m_hdb.m_documents) {
-            m_currentItems.append(d->m_name);
-            AppendItem(ui->lstItems, d->m_name);
+            if (d->m_topic.toLower()=="tru") {
+                m_currentItems.append(d->m_name);
+                AppendItem(ui->lstItems, d->m_name);
+            }
+        }
+        m_curIsTru = true;
+        return;
+    }
+    if (ht.id=="prg") {
+        for (auto d : m_hdb.m_documents) {
+            if (d->m_topic.toLower()=="prg") {
+                m_currentItems.append(d->m_name);
+                AppendItem(ui->lstItems, d->m_name);
+            }
         }
         m_curIsTru = true;
         return;
