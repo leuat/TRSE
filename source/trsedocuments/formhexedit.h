@@ -31,6 +31,8 @@ public:
 private slots:
     void on_comboBox_currentIndexChanged(const QString &arg1);
 
+    void on_sldSize_valueChanged(int value);
+
 private:
     Ui::FormHexEdit *ui;
 };

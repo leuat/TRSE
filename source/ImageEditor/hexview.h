@@ -61,7 +61,7 @@ class HexView: public QAbstractScrollArea
 
 
         QString valid = "abcdef0123456789";
-
+        float m_size = 1.5;
         HexView(QWidget *parent = 0);
         ~HexView();
 

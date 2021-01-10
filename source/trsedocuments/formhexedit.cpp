@@ -51,3 +51,11 @@ void FormHexEdit::on_comboBox_currentIndexChanged(const QString &arg1)
     ui->scrollArea->viewport()->update();
 
 }
+
+void FormHexEdit::on_sldSize_valueChanged(int value)
+{
+    ui->scrollArea->m_size = 1.0 + (value/100.0);
+//    qDebug() << ui->scrollArea->m_size << value;
+    ui->scrollArea->update();
+    ui->scrollArea->viewport()->update();
+}

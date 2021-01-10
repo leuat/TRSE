@@ -97,6 +97,14 @@ void HexView::paintEvent(QPaintEvent *event)
         return;
     Calculate();
     QPainter painter(viewport());
+    float dy = m_size;
+    float dx = dy;
+
+    setFont(QFont("Courier", 10.0*dy));
+
+    m_charWidth = fontMetrics().averageCharWidth();//.width(QLatin1Char('9'));
+    m_charHeight = fontMetrics().height();
+    Calculate();
 
     QSize areaSize = viewport()->size();
     QSize  widgetSize = fullSize();
@@ -112,7 +120,7 @@ void HexView::paintEvent(QPaintEvent *event)
         if(m_pdata->size() % BYTES_PER_LINE)
             lastLineIdx++;
     }
-
+    painter.setFont(font());
     painter.fillRect(event->rect(), m_colors->getColor("backgroundcolor"));
 
     QColor addressAreaColor = QColor(m_colors->getColor("linenumbersbackground"));
@@ -209,8 +217,6 @@ void HexView::paintEvent(QPaintEvent *event)
         }
 
         int sx = m_posAscii + BYTES_PER_LINE * m_charWidth + GAP_HEX_ASCII;;
-        int dx = 2;
-        int dy = 2;
         painter.setBackground(def);
 
         painter.setPen(m_colors->getColor("cycles"));
@@ -228,8 +234,8 @@ void HexView::paintEvent(QPaintEvent *event)
 
                 for (int x=0;x<8;x++) {
                     int j = 7-x;
-                    if (((v>>j)&1)==1)
-                        painter.drawRect(QRect(sx+dx*x + i*16*dx, yPos+dy*b-16, dx-1,dy-1));
+//                    if (((v>>j)&1)==1)
+                        painter.drawRect(QRect(sx+dx*x + i*(m_charWidth*1.5)*dx, yPos+dy*b-m_charHeight*0.75, dx,dy));
 
                 }
             }

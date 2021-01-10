@@ -180,6 +180,16 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0">
+      <widget class="QSlider" name="sldSize">
+       <property name="value">
+        <number>50</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="0" column="0">
@@ -195,7 +205,7 @@
           <x>0</x>
           <y>0</y>
           <width>600</width>
-          <height>375</height>
+          <height>362</height>
          </rect>
         </property>
        </widget>
