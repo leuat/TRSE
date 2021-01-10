@@ -104,6 +104,8 @@ void HexView::paintEvent(QPaintEvent *event)
 
     m_charWidth = fontMetrics().averageCharWidth();//.width(QLatin1Char('9'));
     m_charHeight = fontMetrics().height();
+    dx = m_charHeight/10.0;
+    dy = m_charHeight/10.0;
     Calculate();
 
     QSize areaSize = viewport()->size();
@@ -196,7 +198,7 @@ void HexView::paintEvent(QPaintEvent *event)
             char ch = data[pos];
             if ((ch < 0x20) || (ch > 0x7e))
             ch = '.';
-            pos*=2;
+            pos = (lineIdx * BYTES_PER_LINE + i) * 2;
             painter.setBackground(def);
             painter.setPen(textForeground);
 
@@ -226,6 +228,8 @@ void HexView::paintEvent(QPaintEvent *event)
 
         painter.setPen(m_colors->getColor("quotationcolor"));
         painter.setBrush(m_colors->getColor("quotationcolor"));
+        float ddx = dx;
+        float ddy = dy;
         for (int i=0;i<BYTES_PER_LINE/8;i++)
         {
 
@@ -235,7 +239,7 @@ void HexView::paintEvent(QPaintEvent *event)
                 for (int x=0;x<8;x++) {
                     int j = 7-x;
                     if (((v>>j)&1)==1)
-                        painter.drawRect(QRect(sx+dx*x + i*(m_charWidth*1.5)*dx, yPos+dy*b-m_charHeight*0.75, dx,dy));
+                        painter.drawRect(QRect(sx+dx*x + i*(m_charWidth*1.5)*ddx, yPos+ddy*b-m_charHeight*0.75, ddx,ddy));
 
                 }
             }
