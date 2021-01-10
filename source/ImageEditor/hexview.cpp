@@ -154,11 +154,20 @@ void HexView::paintEvent(QPaintEvent *event)
         for(int xPos = m_posHex, i=0; i<BYTES_PER_LINE && ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) < data.size(); i++, xPos += 3 * m_charWidth)
         {
             std::size_t pos = (lineIdx * BYTES_PER_LINE + i) * 2;
+            painter.setBackground(def);
+            painter.setBackgroundMode(Qt::OpaqueMode);
+            painter.setPen(textForeground);
             if(pos >= m_selectBegin && pos < m_selectEnd)
             {
                 painter.setBackground(selected);
                 painter.setBackgroundMode(Qt::OpaqueMode);
                 painter.setPen(textSelected);
+            }
+            if (m_selectBegin==m_selectEnd) { // Show current pos only
+                if ((pos)/2 == ((m_cursorPos)/2)) {
+                    painter.setBackground(selected);
+                    painter.setPen(textSelected);
+                }
             }
 
             QString val = QString::number((data.at((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) & 0xF0) >> 4, 16);
@@ -175,6 +184,12 @@ void HexView::paintEvent(QPaintEvent *event)
                 painter.setBackground(def);
                 painter.setBackgroundMode(Qt::OpaqueMode);
                 painter.setPen(textForeground);
+            }
+            if (m_selectBegin==m_selectEnd) { // Show current pos only
+                if ((pos+1)/2 == ((m_cursorPos)/2)) {
+                    painter.setBackground(selected);
+                    painter.setPen(textSelected);
+                }
             }
 
             val = QString::number((data.at((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) & 0xF), 16);
