@@ -19,7 +19,7 @@ begin
 	while (true) do
 	begin
 		screenoff();
-		Animations::RenderNextPackedFrameCompressionType2(screen_width,0,0);
+		Animations::RenderNextPackedFrameCompressionType2(#screen_char_loc, screen_width,0,0);
 		screenon();
 		for i:=0 to 100 do
 			waitforverticalblank();
