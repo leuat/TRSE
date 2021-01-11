@@ -3,11 +3,11 @@ program Tutorial1;
 @use "input"
 @use "memory"
 
-@export "resources/images/image5.flf" "resources/images/image1.bin" 256
+@export "resources/images/trse.flf" "resources/images/trse.bin" 256
 
 var  
-	image : incbin("resources/images/image1.bin");
-	palette : incbin("resources/images/image1_palette.bin");
+	image : incbin("resources/images/trse.bin");
+	palette : incbin("resources/images/trse_palette.bin");
 
 begin
 	crtc::SetMode(0);
