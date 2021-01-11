@@ -249,13 +249,16 @@ void HexView::paintEvent(QPaintEvent *event)
         {
 
             for (int b=0;b<8;b++) {
-                uchar v = data[(lineIdx - firstLineIdx) * BYTES_PER_LINE + b +i*8];
+                int pos = (lineIdx - firstLineIdx) * BYTES_PER_LINE + b +i*8;
+                if (pos<data.count()) {
+                    uchar v = data[pos];
 
-                for (int x=0;x<8;x++) {
-                    int j = 7-x;
-                    if (((v>>j)&1)==1)
-                        painter.drawRect(QRect(sx+dx*x + i*(m_charWidth*1.5)*ddx, yPos+ddy*b-m_charHeight*0.75, ddx,ddy));
+                    for (int x=0;x<8;x++) {
+                        int j = 7-x;
+                        if (((v>>j)&1)==1)
+                            painter.drawRect(QRect(sx+dx*x + i*(m_charWidth*1.5)*ddx, yPos+ddy*b-m_charHeight*0.75, ddx,ddy));
 
+                    }
                 }
             }
        }

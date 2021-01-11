@@ -32,6 +32,7 @@ ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
 
+
 macx{
     QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
@@ -48,7 +49,7 @@ macx{
 
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {
-#        LIBS += -L$$PWD/libs/lua/ -lluamac
+        LIBS += -L$$PWD/libs/lua/ -lluamac
    }
    LIBS += -L$$PWD/libs/lua/ -lluamac
 
