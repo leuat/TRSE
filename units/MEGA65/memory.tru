@@ -7,7 +7,15 @@ var
 	pa, pb : byte;
 	
 
-procedure Poke24(pa, pb:global byte);
+procedure SetCurrentMemoryBank(pa : global byte);
+begin
+	asm("
+		lda Memory_pa
+		sta Memory_zpHi
+	");
+end;
+
+procedure Poke32(pa, pb:global byte);
 begin
 	asm(" 
 		ldz Memory_pa

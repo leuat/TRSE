@@ -190,6 +190,9 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
     orgAsm->SetupConstants(m_parser.m_symTab);
     //orgAsm.Codes();
     orgAsm->Assemble(filename+".asm", filename+".prg");
+
+    if (m_assembler==nullptr)
+        return false;
   /*  if (!orgAsm.m_success) {
         return;
     }
@@ -220,7 +223,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
                 }
             }
             if (start!=end) {
-
+                if (m_assembler!=nullptr) {
                 QString name = "Code block "+QString::number(i++);
                 for (auto bl : m_assembler->userBlocks)
                     if (bl->m_start == start)
@@ -230,9 +233,9 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
 
                 m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
             }
+            }
         }
     }
-
 
     for (QSharedPointer<MemoryBlock> mb : m_assembler->blocks) {
         if (mb->m_type==MemoryBlock::USER)

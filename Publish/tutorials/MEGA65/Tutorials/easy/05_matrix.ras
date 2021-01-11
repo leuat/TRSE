@@ -1,0 +1,104 @@
+program MatrixEffect;
+@use "screen"
+@use "memory"
+var  
+   	i,j: byte; 
+   	// The ypos array will contain the current pos for each column, ranging from 0-200. These values are divided by 8
+   	// before being used as a y-coordinate
+   	ypos : array[screen_width] of byte;
+   	// Yadd contains the addition value for each column. Is reset for each cycle
+   	yadd : array[screen_width] of byte;
+   	// Screen and color address tables
+	saddr: array[screen_height] of integer = BuildTable("0x800 + i*80"); // Screen address table
+	caddr: array[screen_height] of integer = BuildTable("0xF800 + i*80"); // Screen address table
+   	sp : ^byte;
+   	
+	const ymax:byte = 240;
+
+/**
+	Method that initializes the lookup tables used in this program
+**/
+procedure InitTables();
+begin
+	// Yadd has random values (0-255)/80 +1
+	for i:=0 to screen_width do yadd[i]:=random()/80+1;
+	// ypos has values 0-128
+	for i:=0 to screen_width do ypos[i]:=random()/2;
+	// Lookup address tables for 40 column mode, screen address and color address
+
+end;
+
+/**
+	Small method that fills a color at a specific x/y value on screen.
+	Only fills the value if the y is in a valid range 0..24
+	If y is less than zero (>240), then we just cycle add with 25 
+**/
+procedure FillColor(xx,yy,cc:byte);
+begin
+	if (yy>ymax) then yy:=yy+screen_height;
+	if (yy<screen_height) then 
+	begin
+		Memory::zpLo :=caddr[yy];
+		Memory::Poke32(xx,cc);
+	end;
+end;
+
+/*
+	Renders the actual matrix effect
+*/
+procedure RenderMatrix();
+begin
+	// Look through 80 columns
+	for i:=0 to screen_width do 
+	begin
+		// Calculate actualy y screen position
+		j:=ypos[i]/8;
+		// Print random character
+		if (j<screen_height) then begin
+			sp:=AddressTable(#saddr,i,j);
+			sp^:=random()/4; // random character is located between 0 and 64
+			// sp^ is the same as sp[0]
+		end;
+		// Fill the "tail" colors
+		FillColor(i,j,light_green);
+		FillColor(i,j-1,green);
+		FillColor(i,j-2,grey);
+		FillColor(i,j-3,dark_grey);
+		FillColor(i,j-8,black);
+		
+		// increase ypos[i] with yadd[i]		
+		ypos[i]:=ypos[i]+yadd[i];
+		// Reset values when ypos is outside of the screen
+		if (ypos[i]>=ymax) then
+		begin 
+			ypos[i]:=0;
+			yadd[i]:=random()/80+1;
+		end;
+	end;	
+end;	
+
+/*
+	Main block
+*/
+begin
+	Screen::Init();
+	Screen::EnableVIC4();
+	// Point to bank #1 (where color ram is located)
+	Memory::SetCurrentMemoryBank(1);
+	// Setup screen foreground / background colors
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Clear screens	
+	clearscreen(key_space,screen_char_loc);
+	Screen::FillColorRam80(black);
+	// Initialize tables	
+	InitTables();
+	
+	// Loop effect
+	while(true) do
+	begin
+		waitforverticalblank();
+		RenderMatrix();
+
+	end;
+end.

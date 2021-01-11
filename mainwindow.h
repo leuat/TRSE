@@ -272,7 +272,7 @@ public slots:
     }
 
     void UpdateRecentProjects();
-    bool SaveAs(QString text);
+    bool SaveAs();
 
     bool RemoveTab(int, bool save=true);
     void LoadProject(QString filename);

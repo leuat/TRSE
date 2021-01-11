@@ -5519,7 +5519,12 @@ void Methods6502::ClearScreen(Assembler *as)
         ErrorHandler::e.Error("ClearScreen does currently not support pointers.",m_node->m_op.m_lineNumber);
 
     AddMemoryBlock(as,1);
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::NES || Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::NES ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65 ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
 
         QString lbl = as->NewLabel("clearloop");
         QString shift = Util::numToHex(val);
@@ -5532,7 +5537,7 @@ void Methods6502::ClearScreen(Assembler *as)
         as->Asm("sta $00fa+"+shift+",x");
         as->Asm("sta $01f4+"+shift+",x");
         as->Asm("sta $02ee+"+shift+",x");
-        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PET) {
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PET || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
             as->Asm("sta $03e8+"+shift+",x");
             as->Asm("sta $04e2+"+shift+",x");
             as->Asm("sta $05dc+"+shift+",x");

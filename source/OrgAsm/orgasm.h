@@ -175,6 +175,8 @@ public:
     OrgasmError error;
 
     void SetupConstants(QSharedPointer<SymbolTable> symTab) {
+        if (symTab == nullptr)
+            return;
         for(QString k: symTab->m_constants.keys()) {
             m_constants[k] = Util::numToHex(symTab->m_constants[k]->m_value->m_fVal);
         }

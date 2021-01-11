@@ -1,0 +1,60 @@
+program Randomness;
+@use "screen"
+@use "memory"
+var  
+	random_color,x,y,index,j,k: byte; 
+	// Array of random bytes
+	random_values : array[256] of byte = BuildTable("Math.random()*256"); 
+	// Pointer to screen and color ram
+	screenP: pointer of byte; // or just "pointer", or "^byte"
+
+
+
+
+begin
+	Screen::Init();
+	Screen::EnableVIC4();
+	// Set screen foreground and background to black. The second parameter is an offset.
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	
+	// point to start of random table
+	index:=0; 
+	// Set up the 32-bit memory pointer to color ram: $0001 F800
+	Memory::SetCurrentMemoryBank(1); // Bank $0001 
+	// infinite loop
+	while (true) do  begin
+		waitforverticalblank();
+		// Set pointer to point to beginning of screen/color ram ($0400 and $D800)
+		screenP:=#screen_char_loc;
+		Memory::zpLo:=#screen_col_loc80;
+		// loop y		
+		for y:=0 to screen_height do begin
+			// moves current screen position
+			// Select some random color
+			for x:=0 to screen_width do begin
+				// Sets both screen and color values
+				screenP[x] := random_values[index];
+				// increases screen X counter
+				// Increase by some random non-repeatable prime
+				index:=index+17;
+	    		end;
+			// Select some random color
+			random_color := random_values[k];
+			// Fill the current line in colorP with 40 bytes of random_color
+			for j:=0 to screen_width do
+			begin
+				// Pokes at the address zpHi : ZpLo[j]
+				Memory::Poke32(j,random_color);			
+			end;
+			k:=k+11;
+			//fill(colorP,random_color,screen_width);
+			// Increase screen and color pointers
+			screenP:=screenP+screen_width;
+			Memory::zpLo := Memory::zpLo + screen_width;
+		end
+	end;
+
+end.
+
+

@@ -340,6 +340,7 @@ void SymbolTable::InitBuiltins()
             Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::PET ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65 ||
             Syntax::s.m_currentSystem->m_system==AbstractSystem::NES
             ) {
 

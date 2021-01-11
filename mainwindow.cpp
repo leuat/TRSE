@@ -270,7 +270,6 @@ void MainWindow::wheelEvent(QWheelEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-
     Data::data.forceRedraw = true;
     Data::data.Redraw();
 
@@ -1093,7 +1092,7 @@ void MainWindow::UpdateRecentProjects()
 
 }
 
-bool MainWindow::SaveAs(QString text="Save file as")
+bool MainWindow::SaveAs()
 {
     if (m_currentDoc==nullptr)
         return false;
@@ -1104,7 +1103,7 @@ bool MainWindow::SaveAs(QString text="Save file as")
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     QString f = ext +" Files (*."+ext+")";
-    QString filename = dialog.getSaveFileName(NULL, text,getProjectPath(),f);
+    QString filename = dialog.getSaveFileName(NULL, "Save file as",getProjectPath(),f);
 
     if (filename=="")
         return false;
@@ -2462,7 +2461,7 @@ void MainWindow::on_actionLook_up_assembly_line_under_cursor_F3_triggered()
 void MainWindow::on_action_Rename_current_file_triggered()
 {
     QString orgFile = m_currentPath + QDir::separator() + m_currentDoc->m_currentFileShort;
-    if (SaveAs("Rename file")) {
+    if (SaveAs()) {
 //        qDebug() << orgFile;
         QFile::remove(orgFile);
     }

@@ -392,8 +392,8 @@ void FormRasEditor::Build(bool isShadow)
     while (m_builderThread.isRunning()) {
 
     }
- //   m_builderThread.start();
-    m_builderThread.run();
+    m_builderThread.start();
+ //   m_builderThread.run();
 
 }
 
@@ -519,6 +519,7 @@ void FormRasEditor::Run()
 //        qDebug() << "No amiga emulator installed";
         return;
     }
+
 
 
 

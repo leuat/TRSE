@@ -1,22 +1,35 @@
 unit Screen;
+@use "memory"
 var
 	const VIC_BASE: integer = $D000;
 	addr : integer;
-	bank : byte;
+	bank, val,y,x,j : byte;
 
-procedure SetCharsetAddress(addr: global integer; bank:global byte);
+	ytable80 : array[25] of integer = BuildTable("0x0800 + i*80");
+
+/**
+Sets the character data address at the 16-bit location given in parameter 1 with bank from parameter 2.
+**/
+procedure SetCharsetLocation(addr: global integer; bank:global byte);
 begin
 	poke(VIC_BASE + ^$68, 0, lo(addr));
     poke(VIC_BASE + ^$69, 0, hi(addr));
     poke(VIC_BASE + ^$6A, 0, bank);
 end;
 
-procedure SetScreenAddress(addr: global integer; bank:global byte);
+/**
+Sets the screen location address at the 16-bit location given in parameter 1 with bank from parameter 2.
+**/
+procedure SetScreenLocation(addr: global integer; bank:global byte);
 begin
 	poke(VIC_BASE + ^$60, 0, lo(addr));
     poke(VIC_BASE + ^$61, 0, hi(addr));
     poke(VIC_BASE + ^$62, 0, bank);
 end;
+
+/**
+Sets the current screen bank on the VIC4
+**/
 
 procedure SetBank(bank : global byte);
 begin
@@ -31,6 +44,31 @@ begin
 end;
 
 
+/**
+While regular 40-colum mode color (40x25 bytes) ram is located at $D800, color
+ram for 80-column mode is located at $0001 F800. This method uses
+the memory unit to fill the 32-bit color ram at this location with the value provided
+from parameter 1.  
+**/
+procedure FillColorRam80(val: global byte);
+begin
+	Memory::zpLo := $F800;  
+	Memory::zpHi := $0001; // 32 bit addressing through pointers
+	for y:=0 to 10 do begin // 10 * 200 = 25*80 = 2000 bytes 
+		for x:=0 to 200 do 
+		begin
+			Memory::Poke32(x,val);
+		end;
+		Memory::zpLo:=Memory::zpLo+200;
+	end;
+
+
+end;
+
+/**
+The VIC4 is hidden by default on the mega65. Use this method to make it visible for regular pokes. 
+**/
+
 procedure EnableVIC4();
 begin
 	asm("
@@ -42,6 +80,9 @@ begin
 end;
 
 
+/**
+Enables FAST mode on the Mega65
+**/
 procedure SetFastMode();
 begin
 	asm("	   
@@ -50,6 +91,9 @@ begin
 	");
 end;
 
+/**
+Initializes the screen of the mega65
+**/
 procedure Init();
 begin
 	asm("	
@@ -67,7 +111,7 @@ begin
         tay 
         taz 
         map
-;        eom
+        eom
 
 	");
 

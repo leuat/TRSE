@@ -1,0 +1,114 @@
+program PlasmaProgram;
+@use "screen"
+@use "memory"
+
+var
+
+	// some plasma variables
+	c,val,c2x, c2y,ax, ay : byte;
+	x,y : byte;
+
+// charset will be placed at $2000 in bank 1	
+	const charsetLocation: address = $4000;
+ // look in the character set
+ 	const baseCharacter:byte = $68;
+
+	// Use custom charset
+@export "resources/charsets/charset.flf" "resources/charsets/charset.bin" 256
+	charset: IncBin("resources/charsets/charset.bin",charsetLocation);
+	// nice colors
+	fade : array [] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
+	
+
+	// mini sine table
+    siny : array[screen_height] of byte; 
+	sinx : array[screen_width] of byte; 
+
+	// Lookup table for division by 16
+	lookupDiv16 : array[256] of byte = BuildTable("i/16");
+
+
+
+	const yStart:byte = 0;
+	const yEnd:byte = 25;
+	const xStart:byte = 0;
+	const xEnd:byte = 80;
+
+
+
+// Plasma procedure
+
+procedure Plasma();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to screen_height do begin 
+		siny[x]:=  sine[c2x] + sine[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+9;
+	end;
+
+	ax:=ax+2;
+	ay:=ay-3;
+
+	// Set up x-sine table
+	for x:=0 to screen_width do begin 
+		sinx[x] := sine[c2x] + sine[c2y];
+		c2x:=c2x+4;
+		c2y:=c2y+7;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	moveto(0,yStart, hi(screen_char_loc));
+	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
+	
+	Memory::zpLo:=#screen_col_loc80 + yStart*screen_width;
+	Memory::SetCurrentMemoryBank(1); // Location of color ram	
+	for y:=yStart to yEnd do 
+	begin
+		val:=siny[y];
+		for x:=xStart to xEnd do 
+		begin
+		
+			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
+			// we have created a lookup table instead!
+			c:=lookupDiv16[ (sinx[x] +val) ];
+			// Set the screen memory
+			screenmemory[x]:=c + $68;
+			// Set color memory
+			Memory::Poke32(x,fade[c]);
+		end;
+// This is the optimized version
+		// Increase screen memory pointer by 40 (next row)
+		screenmemory:=screenmemory+screen_width;
+		// Increase color pointer by 40 (next row)
+		Memory::zpLo:=Memory::zpLo+screen_width;
+	end;
+
+end;
+
+
+
+begin
+	Screen::Init();
+	Screen::EnableVIC4();
+	// Set color background
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Set charmap location at $2000
+	Screen::SetCharsetLocation(#charsetLocation,0);
+	// Copy the 16 characters rom baseCharacter to 0
+	ax:=1;
+	ay:=5;
+	Screen::SetFastMode();
+	// Clear screen and color memory
+	ClearScreen(key_space, screen_char_loc);
+	// Main loop
+	while (true) do begin
+		waitforverticalblank();
+		Plasma();
+	end;
+
+end.

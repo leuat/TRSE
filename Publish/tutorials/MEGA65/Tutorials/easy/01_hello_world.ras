@@ -1,0 +1,34 @@
+program HelloWorld;
+@use "screen"
+var  
+  	text : string = ("HELLO WORLD");
+
+begin
+	// Initialize the screen + enable VIC4
+	Screen::Init();
+	Screen::EnableVIC4();
+
+	// Set border color	
+	screen_bg_col := green;
+	// Set background color
+	screen_fg_col := black;
+
+	// Fill the screen (at screen_char_loc) with  40*25 bytes of character $20 - "space"
+	ClearScreen(key_space, screen_char_loc);
+	// Fill the 80-column mode color ram with yellow
+	Screen::FillColorRam80(yellow);
+	// Move cursor to x,y position 10,12
+//	moveto(10,12,hi(screen_char_loc));
+	moveto(10,12,hi(screen_char_loc));
+	// Print the text
+	printstring(#text,0,screen_width);
+	// Move cursor 2 rows down (2*40)
+	screenmemory:=screenmemory+2*screen_width;
+	// Print something else
+	printstring("THIS IS ANOTHER STRING",0,screen_width);
+	// Infinite loop
+
+
+	Loop(); 
+
+end.
