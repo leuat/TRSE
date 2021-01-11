@@ -8,11 +8,14 @@ var
    i, j, val, idx, k: byte;
    chunksize, chunks : byte;
    is,is2:integer;
+   
+	
+
 /*
    Renders a .flf level at map pos x,y
 */
 
-	lp,sp,mt : pointer; 
+	lp,sp,mt,org_lp : pointer; 
 
 	const temp : address = $D000;
 

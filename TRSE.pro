@@ -10,7 +10,6 @@ VER = $$QT_MAJOR_VERSION
 equals(VER, 6) {
     QT += openglwidgets
 }
-message("Compiling TRSE!")
 
 CONFIG += c++14
 

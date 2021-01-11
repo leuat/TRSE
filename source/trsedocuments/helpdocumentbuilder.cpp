@@ -49,7 +49,7 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
 
             if (parameters=="")
                 parameters = "none.";
-            curDoc = "<h1>"+name+"</h1><p>Parameters: <b>"+parameters+"</b><br></p>"+curDoc;
+            curDoc = "<h1>"+name+"</h1><p>Parameters: <b>"+parameters+"</b><br></p>"+curDoc +"<br><br>";
 
             m_documents.append(QSharedPointer<HelpDocumentBuilderDocument>(
                                    new HelpDocumentBuilderDocument(topic, name, curDoc)));

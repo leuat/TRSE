@@ -6,6 +6,11 @@ var
 
 	const storage: address= $C900;
 
+
+/**
+ This method turns the lcd ON and sets the screen data pointer to $9800. Windows are off, objects are on.
+**/
+
 procedure Set9800();
 begin
 	asm("
@@ -18,6 +23,10 @@ begin
 end;
 
 
+/**
+ Copies [ param 3 ] * 256 bytes of memory from source (param 1) to destination (param 2) during horizontal
+ blanking. This is to ensure that the screen memory won't be corrupted. 
+**/
 procedure CopyBankHB(cp1, cp2 : pointer; cwi : byte);
 begin
 	for i:=0 to cwi offpage do

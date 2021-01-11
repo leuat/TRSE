@@ -5,6 +5,8 @@ var
 
 
 @deletefile "images/trse_screen.bin"
+@deletefile "images/trse_packed.flf"
+@deletefile "images/trse_packed.bin"
 
 @spritepacker "images/trse.flf" "images/trse_packed.flf" "images/trse_screen.bin" "gameboy" 0 0 16 16 2
 
@@ -51,7 +53,8 @@ begin
 
 	delta := 64;
 	Screens::RenderOffScreen(temp, #trse_screen,0, bank_image,4,4, 16,16);
-	memcpyonhblank(temp,screen0,1024);
+	Screens::CopyBankHB(temp,screen0,4);
+//	memcpyonhblank(temp,screen0,1024);
 
 	InitVBlank(VBlank());
 	EnableVBLank();
