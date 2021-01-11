@@ -1,0 +1,62 @@
+program Tutorial1_Hello_World;
+
+@use screens
+var  
+
+
+@deletefile "images/trse_screen.bin"
+
+@spritepacker "images/trse.flf" "images/trse_packed.flf" "images/trse_screen.bin" "gameboy" 0 0 16 16 2
+
+@export "images/trse_packed.flf" "images/trse_packed.bin" 255
+
+	// Place data in one of the 16kb banks at $4000-$7FFF. 
+	// You have a *lot* of free ROM space for graphics and other data!
+	
+	const bank_image:byte = 1;
+	
+ 	trse_data : incbin("images/trse_packed.bin") bank(bank_image);
+ 	trse_screen : incbin("images/trse_screen.bin") bank(bank_image);
+
+	time,delta:byte;
+
+
+	sine : array[256] of byte = BuildTable("Math.sin((i)/256.0*3.1459*2)*127+127");
+
+	const temp : address = $CF00;
+	
+
+procedure VBlank();
+begin
+	time:=time+3;
+	if (time&7) then delta:=delta+1;
+	scrolly := sine[time]>>3;
+	scrollx := sine[time+delta]>>3;
+end;
+
+
+begin
+	// Set default palette : each of the 4 colors are defined by 2 bits : 11 = black, 00 = white.
+	background_palette:=%11010010;
+	// Set screen at $9800
+	Screens::Set9800();
+	// Copy from charbank to VRAM
+	current_bank:=bank_image;
+	// Copy $400 bytes from the ROM font to VRAM charset. MUST be done on HBLANK, or else 
+	// writing to screen ram wil lfail
+	Screens::CopyBankHB(#trse_data, vram_charset, 8); // Copy 8x$100 bytes of data
+	
+	Screens::ClearScreen(Screens::storage, $80);	
+	Screens::ClearScreen(screen0, $80);	
+
+	delta := 64;
+	Screens::RenderOffScreen(temp, #trse_screen,0, bank_image,4,4, 16,16);
+	memcpyonhblank(temp,screen0,1024);
+
+	InitVBlank(VBlank());
+	EnableVBLank();
+
+	Loop();
+
+
+end.

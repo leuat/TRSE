@@ -20,6 +20,7 @@ var
 // Exports data + color data	
 	@export "resources/images/octopus.flf" "resources/images/octopus.bin" 256
 	@export "resources/images/skull.flf" "resources/images/skull.bin" 256
+	@export "resources/images/trse.flf" "resources/images/trse.bin" 256
 	
 // Put the two images at $8000
 
@@ -44,6 +45,9 @@ var
 	
 	image2_data: IncBin("resources/images/skull.bin") compressed;
 	image2_color: IncBin("resources/images/skull_color.bin") compressed;
+
+	image3_data: IncBin("resources/images/trse.bin") compressed;
+	image3_color: IncBin("resources/images/trse_color.bin") compressed;
 
 procedure SetupImage(data, cp: pointer);
 begin
@@ -80,12 +84,17 @@ begin
 	while (true) do
 	begin
 		screen_bg_color:=blue<<4;
+		aux_color_and_volume:=8<<4;
+		SetupImage(#image3_data, #image3_color);
+		
+		screen_bg_color:=blue<<4;
 		aux_color_and_volume:=cyan<<4;
 		SetupImage(#image1_data, #image1_color);
 		
 		screen_bg_color:=blue<<4;
 		aux_color_and_volume:=white<<4;
 		SetupImage(#image2_data, #image2_color);
+
 	end;
 
 end;
