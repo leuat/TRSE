@@ -12,22 +12,23 @@ var
 
 @export "images/trse_packed.flf" "images/trse_packed.bin" 255
 
-	// Place data in one of the 16kb banks at $4000-$7FFF. 
-	// You have a *lot* of free ROM space for graphics and other data!
 	
 	const bank_image:byte = 1;
 	
+	// Place data in one of the 16kb banks at $4000-$7FFF. 
  	trse_data : incbin("images/trse_packed.bin") bank(bank_image);
  	trse_screen : incbin("images/trse_screen.bin") bank(bank_image);
 
 	time,delta:byte;
 
-
 	sine : array[256] of byte = BuildTable("Math.sin((i)/256.0*3.1459*2)*127+127");
 
 	const temp : address = $CF00;
 	
+/**
+	My Vblank!
 
+**/
 procedure VBlank();
 begin
 	time:=time+3;
@@ -54,7 +55,6 @@ begin
 	delta := 64;
 	Screens::RenderOffScreen(temp, #trse_screen,0, bank_image,4,4, 16,16);
 	Screens::CopyBankHB(temp,screen0,4);
-//	memcpyonhblank(temp,screen0,1024);
 
 	InitVBlank(VBlank());
 	EnableVBLank();

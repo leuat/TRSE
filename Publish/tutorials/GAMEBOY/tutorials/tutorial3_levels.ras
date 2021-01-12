@@ -64,11 +64,8 @@ begin
 	Screens::CopyFullCharset(#tiles);
 
 	// Set TRU data to point to level & metatiles
-	Levels::lp := #level_data;
 	Levels::mt := #metatiles;
-	
-	asm(";wtf");
-	Levels::ReadHeader();
+	Levels::ReadHeader(#level_data);
 	// Set a nice palette
 	background_palette:=%11010010;
 	object0_palette:=%11010010;

@@ -51,7 +51,9 @@ begin
 	end;
 end;
 
-
+/**
+Turns on the Gameboy Windows overlay
+**/
 procedure EnableWindow();
 begin
 	asm("
@@ -64,7 +66,9 @@ begin
 	
 end;
 
-
+/**
+	Sets the screen location at $9c00
+**/
 procedure Set9C00();
 begin
 	asm("
@@ -72,6 +76,9 @@ begin
         ld	[rLCDC],a			; enable lcd
 	");
 end;
+/**
+	Sets the screen location at $8000
+**/
 procedure Set8000();
 begin
 	asm("
@@ -80,6 +87,9 @@ begin
 	
 	");
 end;
+/**
+Turns OFF the LCD screen. Use set9800 etc to restore. 
+**/
 procedure StopLCD() inline;
 begin
 	asm("
@@ -91,6 +101,9 @@ begin
 end;
 
 
+/**
+Draws a horizontal line in screen ram (32*32) from position (hlx,hly) with height (hllen) and value (hlc). 
+**/
 procedure HLine(hlx, hly, hllen, hlc : byte) inline;
 begin
 	p1:=screen0;
@@ -104,6 +117,9 @@ begin
 end;
 
 
+/**
+Draws a vertical line in screen ram (32*32) from position (hlx,hly) with width (vllen) and value (vlc). 
+**/
 procedure VLine(vlx, vly, vllen, vlc : byte) inline;
 begin
 	p1:=screen0;
@@ -116,6 +132,10 @@ end;
 
 
 
+/**
+	Renders a screen data fragment at position (p+adde) of width w,h to position x,y on a 
+	32x32 buffer. Not safe to use on screen ram directly.
+**/
 procedure RenderScreen(p:pointer;adde,b,x,y,w,h : global byte);
 begin
 //	p1:=screen0;
@@ -204,6 +224,9 @@ begin
 end; 
 
 
+/**
+	Fills 32*32 bytes of data at [clspos] with value [cls]. Safe to write to VRAM.
+**/
 procedure ClearScreen(clspos : pointer; cls:byte);
 begin
 	zp:=storage;
@@ -216,6 +239,9 @@ begin
 	end;
 end;
 
+/**
+	Fills [vlen] bytes of data at [pvr] with value [fcls]. Safe to write to VRAM.
+**/
 procedure FillVRAM(pvr:pointer;fcls, vlen:byte);
 begin
 	zp:=storage;
@@ -225,6 +251,9 @@ begin
 end;
 
 
+/**
+	Clears the window (32x32 bytes) with value [clw].
+**/
 procedure ClearWindow(clw:byte);
 begin
 	p1:=$9C00;
@@ -237,7 +266,10 @@ begin
 	end;
 
 end;
-
+/**
+Copies a 256-character (256*8*2 = $1000) bytes of data to the standard character
+location at $9000 and $8800.
+**/
 procedure CopyFullCharset(cpfc:pointer);
 begin
 	p1:=cpfc;
@@ -248,6 +280,9 @@ begin
 end;
 
 
+/**
+Clears [param 1] out of 40 sprites by setting them to position 0.
+**/
 procedure ClearSprites(cs_n:byte);
 begin
 	p1:=$C000;
@@ -261,7 +296,9 @@ begin
 	end;
 
 end;
-
+/**
+Sets the default gameboy screen and palette. Also clears the screen and removes all sprites. 
+**/
 procedure InitDefaultScreen();
 begin
 	background_palette:=%10010011;
@@ -276,6 +313,9 @@ begin
 	Set9800();
 end;
 
+/**
+Clears the character set located at $8800-$9800
+**/
 procedure ClearVRAM();
 begin
 	fill(^$D000,0,$800);

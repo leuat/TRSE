@@ -347,6 +347,19 @@ void formHelp::SearchForItem(QString item)
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();
+
+    // First search through locally generated help
+    m_curIsTru = false;
+    for (auto d : m_hdb.m_documents) {
+        if (d->m_name.contains(item)) {
+            m_curIsTru = true;
+            LoadItem(d->m_name);
+//            ui->txtHelp->setText(ApplyColors(d->m_document));
+            return;
+        }
+    }
+
+
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
 
         s= s.simplified();

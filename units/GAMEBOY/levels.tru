@@ -11,15 +11,16 @@ var
    
 	
 
-/*
-   Renders a .flf level at map pos x,y
-*/
 
 	lp,sp,mt,org_lp : pointer; 
 
 	const temp : address = $D000;
+/**
+   Reads the header of level file and fills the various internal properties. Must be called before rendering.
+   
+**/
 
-procedure ReadHeader();
+procedure ReadHeader(lp:global pointer);
 
 begin
 //	lp := lp +13;
@@ -43,7 +44,12 @@ begin
 
 end;
 
-
+/**
+	
+Renders a full level screen with 2x2 meta tiles to memory position "temp". Level position in (x,y)
+is provided by parameter 1 and 2. 
+	
+**/
 procedure RenderLevel2x2MetaTiles(m_li2, m_lj2: byte);
 var
 
