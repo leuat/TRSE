@@ -13,6 +13,7 @@ Turbo Rascal Syntax Error full repo
 - Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
 - Copy the directory "themes" in **TRSE/Publish/source/** to the **TRSE/Release** build directory 
 - Make a symbolic link called "tutorials from your build directory to point to Publish/tutorials to access tutorial projects from the front page 
+- Make a symbolic link called "units from your build directory to point to TRSE/Units to access the TRSE library 
 - Make a symbolic link "project_templates" from your build directory to point to Publish/project_templates in order to access the "New Project" templates
 - Compile & run!
 
