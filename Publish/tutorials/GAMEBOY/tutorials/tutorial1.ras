@@ -21,7 +21,7 @@ var
 
 
 /*
-	While the Gameboy in principle is a very easy system to program for, it has a very annoying/painful
+	While the Gameboy in principle is a relatively easy system to program for, it has a quite annoying/painful
 	feature that we've tried to make much easier to manage with the help of TRSE. 
 	The Gameboy has, much like the C64,
 	a 256-character character (VRAM_CHARSET) set and a 32x32 screen (SCREEN0). 

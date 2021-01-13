@@ -32,7 +32,7 @@ DialogSplash::~DialogSplash()
 
 void DialogSplash::Init()
 {
-    QTimer::singleShot(5000, this, SLOT(CloseMe()));
+    QTimer::singleShot(m_seconds*1000, this, SLOT(CloseMe()));
     QPalette pal = palette();
 
     // set black background

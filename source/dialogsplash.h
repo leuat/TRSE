@@ -16,7 +16,7 @@ public:
     ~DialogSplash();
 
     void Init();
-
+    int m_seconds = 5;
 private:
     Ui::DialogSplash *ui;
 

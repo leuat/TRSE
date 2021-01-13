@@ -131,8 +131,8 @@ begin
 	Advanced04();
 	Advanced05();
 	Advanced06();
-	Advanced07(); // fails
+	Advanced07(); 
 	Advanced08();
-	Advanced09();
+	Advanced09();// fails
 	loop();
 end.

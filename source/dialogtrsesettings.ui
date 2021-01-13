@@ -885,225 +885,217 @@
         <attribute name="title">
          <string>Editor</string>
         </attribute>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>180</y>
-           <width>511</width>
-           <height>281</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Font settings</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_21">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="leFontSize">
-              <property name="inputMask">
-               <string>99</string>
+        <layout class="QGridLayout" name="gridLayout_24">
+         <item row="0" column="0">
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="1" column="1">
+            <widget class="QComboBox" name="cmbThemeFjong"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_47">
+             <property name="text">
+              <string>Seconds to show splash screen (0 to disable)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Window palette</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Disable project explorer colors</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="cmbTheme"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="cmbPalette">
+             <item>
+              <property name="text">
+               <string>Dark</string>
               </property>
-             </widget>
-            </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Light</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>Fjong editor color theme</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="chkDisableFileColors">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Rascal editor color theme</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="leSplashSeconds"/>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0">
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Font settings</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_21">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>Code editor font</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLineEdit" name="leFontSizeMemoryAnalyzer">
-              <property name="inputMask">
-               <string>99</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Memory Analyzer Font Size</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLineEdit" name="leCursorWidth">
-              <property name="inputMask">
-               <string>99</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="leTabWidth">
-              <property name="inputMask">
-               <string>99</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Tab width</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_36">
-              <property name="text">
-               <string>Symbol list font</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Code editor font size</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_29">
-              <property name="text">
-               <string>Text editor cursor width</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="cbmFont"/>
-            </item>
-            <item row="7" column="1">
-             <widget class="QComboBox" name="cmbFontSymbols"/>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_37">
-              <property name="text">
-               <string>Symbol list font size</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1">
-             <widget class="QLineEdit" name="leFontSizeSymbols">
-              <property name="inputMask">
-               <string>99</string>
-              </property>
-             </widget>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="leFontSize">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_27">
+                <property name="text">
+                 <string>Code editor font</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLineEdit" name="leFontSizeMemoryAnalyzer">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Memory Analyzer Font Size</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLineEdit" name="leCursorWidth">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="leTabWidth">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Tab width</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_36">
+                <property name="text">
+                 <string>Symbol list font</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Code editor font size</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_29">
+                <property name="text">
+                 <string>Text editor cursor width</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="cbmFont"/>
+              </item>
+              <item row="7" column="1">
+               <widget class="QComboBox" name="cmbFontSymbols"/>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_37">
+                <property name="text">
+                 <string>Symbol list font size</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QLineEdit" name="leFontSizeSymbols">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="gridLayoutWidget_4">
-         <property name="geometry">
-          <rect>
-           <x>50</x>
-           <y>20</y>
-           <width>481</width>
-           <height>141</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Rascal editor color theme</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cmbTheme"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_21">
-            <property name="text">
-             <string>Fjong editor color theme</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Window palette</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="cmbThemeFjong"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="cmbPalette">
-            <item>
-             <property name="text">
-              <string>Dark</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Light</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_41">
-            <property name="text">
-             <string>Disable project explorer colors</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="chkDisableFileColors">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_11">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>480</y>
-           <width>521</width>
-           <height>111</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Backup</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_23">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_22" columnstretch="1,1" columnminimumwidth="1,1">
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="chkBackup">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QGroupBox" name="groupBox_11">
+           <property name="title">
+            <string>Backup</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_23">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_43">
-              <property name="text">
-               <string>Automatically backup TRSE files in a .backup folder</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_44">
-              <property name="text">
-               <string>Numer of backup files to keep :</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="leBackupFiles"/>
+             <layout class="QGridLayout" name="gridLayout_22" columnstretch="1,1" columnminimumwidth="1,1">
+              <item row="0" column="1">
+               <widget class="QCheckBox" name="chkBackup">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_43">
+                <property name="text">
+                 <string>Automatically backup TRSE files in a .backup folder</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_44">
+                <property name="text">
+                 <string>Numer of backup files to keep :</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="leBackupFiles"/>
+              </item>
+             </layout>
             </item>
            </layout>
-          </item>
-         </layout>
-        </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_5">
         <attribute name="title">
@@ -1273,7 +1265,7 @@
         <widget class="QCheckBox" name="chkAutoInject">
          <property name="geometry">
           <rect>
-           <x>30</x>
+           <x>20</x>
            <y>30</y>
            <width>421</width>
            <height>20</height>

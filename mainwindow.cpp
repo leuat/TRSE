@@ -132,6 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splash = QSharedPointer<DialogSplash>(new DialogSplash(this));
 
 
+    m_splash->m_seconds = m_iniFile->getdouble("splash_seconds");
     QTimer::singleShot(10, this, SLOT(ShowSplash()));
 
 //    ui->qsplitter->setSizes(QList<int>() << 5<<15<<10000);
@@ -324,6 +325,11 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile->contains("tab_width"))
         m_iniFile->setFloat("tab_width", 4);
+
+
+    if (!m_iniFile->contains("splash_seconds"))
+        m_iniFile->setFloat("splash_seconds", 4);
+
 
     if (!m_iniFile->contains("editor_font"))
         m_iniFile->setString("editor_font","Courier");
@@ -706,6 +712,8 @@ void MainWindow::SetupFileList()
 
 void MainWindow::ShowSplash()
 {
+    if (m_splash->m_seconds==0)
+        return;
     m_splash->Init();
     m_splash->show();
 }

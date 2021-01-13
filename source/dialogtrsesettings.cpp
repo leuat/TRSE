@@ -76,6 +76,8 @@ void DialogTRSESettings::FillFromIni()
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
     ui->leBackupFiles->setText(QString::number((int)m_ini->getdouble("backup_files_count")));
 
+    ui->leSplashSeconds->setText(QString::number((int)m_ini->getdouble("splash_seconds")));
+
     ui->leSidplayer->setText(m_ini->getString("sidplayer"));
 
     ui->chkBackup->setChecked(m_ini->getdouble("auto_backup")==1.0);
@@ -167,6 +169,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("cpcdisk_location",ui->leCPCDisk->text());
 
     m_ini->setFloat("backup_files_count",ui->leBackupFiles->text().toInt());
+
+    m_ini->setFloat("splash_seconds",ui->leSplashSeconds->text().toInt());
 
 
     m_ini->setFloat("display_addresses", ui->chkDisplayAddresses->isChecked());
@@ -618,5 +622,11 @@ void DialogTRSESettings::on_btnMega65Emulator_clicked()
         tr("Mega 65 emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leMega65Emu->setText(filename);
+
+}
+
+void DialogTRSESettings::on_pushButton_2_clicked()
+{
+    Help("Mega65 emulator 'Xemu'", "TRSE needs to use the 'xemu' emulator in order to be able to inject programs. Download from https://github.lgb.hu/xemu/");
 
 }
