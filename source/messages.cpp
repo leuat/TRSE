@@ -152,6 +152,8 @@ void Messages::DisplayMessage(int message, bool isHelp)
         img.load(":resources/images/friday.png");
     if (m.m_severity==Message::Msg)
         img.load(":resources/images/creatures.png");
+    if (m.m_severity==Message::Welcome)
+        img.load(":resources/images/creatures.png");
 
     dm->SetMessage(m.m_message, img);
     dm->exec();

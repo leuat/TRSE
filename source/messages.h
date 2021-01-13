@@ -36,7 +36,7 @@ public:
     int m_id;
     bool m_ignore;
 
-    enum Severity {Msg, Warning, Error};
+    enum Severity {Msg, Warning, Error, Welcome};
     Severity m_severity;
 
     Message() {}

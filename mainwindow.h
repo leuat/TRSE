@@ -63,6 +63,7 @@
 #include <QStandardItemModel>
 #include <QFileSystemWatcher>
 #include <source/LeLib/lglslideshow.h>
+#include "source/dialogsplash.h"
 
 namespace Ui {
 class MainWindow;
@@ -174,6 +175,8 @@ public:
     QStringList m_expandedList;
     QStringList m_truFilesInProject;
 
+    QSharedPointer<DialogSplash> m_splash;
+
     void findExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
     void setExpanded(QAbstractItemModel* model, QStringList& lst, QModelIndex parent = QModelIndex());
 
@@ -230,6 +233,7 @@ public:
 
 
 public slots:
+    void ShowSplash();
     void RefreshFileList();
     void AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder);
 

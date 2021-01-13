@@ -44,7 +44,7 @@
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"
 #include "source/LeLib/data.h"
-
+#include "source/dialogsplash.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -129,6 +129,10 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(ShowFileContext(const QPoint &)));
 
 
+    m_splash = QSharedPointer<DialogSplash>(new DialogSplash(this));
+
+
+    QTimer::singleShot(10, this, SLOT(ShowSplash()));
 
 //    ui->qsplitter->setSizes(QList<int>() << 5<<15<<10000);
 
@@ -183,6 +187,8 @@ void MainWindow::InitOpenGLBanners()
 
     ui->glShowcase->Init();
     ui->glShowcase->setCurrentTexture();
+
+
 
 
 }
@@ -696,6 +702,12 @@ void MainWindow::ConnectDocument()
 void MainWindow::SetupFileList()
 {
     RefreshFileList();
+}
+
+void MainWindow::ShowSplash()
+{
+    m_splash->Init();
+    m_splash->show();
 }
 
 

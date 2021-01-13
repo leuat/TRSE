@@ -1,4 +1,4 @@
-program Tutorial1_Hello_World;
+program Tutorial7_Images;
 
 @use screens
 var  

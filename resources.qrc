@@ -565,5 +565,6 @@
         <file>resources/shaders/screen_showcases.vert</file>
         <file>resources/images/tutorials/cheesy.gif</file>
         <file>resources/images/tutorials/escape.png</file>
+        <file>resources/images/trse_optic.png</file>
     </qresource>
 </RCC>
