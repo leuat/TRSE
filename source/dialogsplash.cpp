@@ -16,7 +16,8 @@ DialogSplash::DialogSplash(QWidget *parent) :
           "I have only made this code longer because I have not had the time to make it shorter"<<
           "I would prefer an intelligent hell to a stupid paradise"<<
           "Kind bytes don't cost much. Yet they accomplish much." <<
-          "You always admire what you really don't understand.";
+          "You always admire what you really don't understand."<<
+          "TRSE - Everything else is something different";
 
 
 
