@@ -1,4 +1,4 @@
-program Tutorial2;
+program Tutorial2_pixels;
 @use "crtc"
 @use "input"
 
@@ -13,7 +13,10 @@ var
 	palette : incbin("resources/images/image1_palette.bin");
 	image : incbin("resources/images/image1.bin");
 
+/**
+Standard method for initializing the default screen, border and palette.
 
+**/
 procedure Init();
 begin
 	time:=0;

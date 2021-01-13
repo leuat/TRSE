@@ -15,6 +15,7 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
     QString topic = "tru";
     if (file.toLower().endsWith("ras"))
         topic = "prg";
+
     QString unitName = Util::getFileWithoutEnding(file).replace("\\","/");
     unitName = unitName.split("/").last();
 //    QString doc = "<h1>Hello World!</h1><br>"+file;
@@ -41,7 +42,10 @@ void HelpDocumentBuilder::ProcessSourceFile(QString file)
 
         if (curDoc!="" && !inAddSection)
         if (s.trimmed().toLower().startsWith("procedure") || s.trimmed().toLower().startsWith("function")) {
-            QString name = unitName+"::"+s.trimmed().split(" ")[1].split("(").first();
+            QString id = s.trimmed().split(" ")[1].split("(").first();
+            QString name = unitName+"::"+id;
+            if (topic == "prg")
+                name =  unitName + ".ras : "+id;
             QString parameters="none";
 
             if (s.contains("(") && s.contains(")"))

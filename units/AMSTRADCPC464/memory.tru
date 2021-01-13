@@ -8,7 +8,9 @@ var
 	firmware_oldstate : byte = 0;
 
 
-
+/**
+Saves the firmware interrupt handler for future use.
+**/
 procedure SaveFirmware();
 begin
 asm("
@@ -19,7 +21,10 @@ asm("
 ");
 end;
 	
-	
+/**
+Disables firmware by setting the firmware interrupt handler to RET. Remember to save the original
+handler with "SaveFirmware" if you plan to restore it at a later point. 
+**/	
 procedure DisableFirmware();
 begin
 //	if (firmware_enabled=false) then 
@@ -30,12 +35,18 @@ asm("
  im   1                        ;; [2] Set Interrupt Mode 1 (CPU will jump to 0x38 when a interrupt occurs)
  ld   hl, $C9FB               ;; [3] FB C9 (take into account little endian) => EI : RET
 
- ld ($38), hl       ;; [5] Setup new 
- ei                             ;; [1]
+ ld ($38), hl      
+ ei                             
  
 ");
 	firmware_enabled := false;
 end;
+
+
+/**
+Enables firmware handling by restoring the firmware interrupt. 
+
+**/
 
 procedure EnableFirmware();
 begin
@@ -51,7 +62,6 @@ asm("
 	firmware_enabled := true;
 
 end;
-
 
 
 procedure RequireFirmware();
@@ -72,7 +82,9 @@ begin
 
 end;
 
-
+/**
+Pushes all registers (both pairs) onto the stack. Typically used in interrupts.
+**/
 procedure PushAll() inline;
 begin
 	asm("
@@ -93,6 +105,9 @@ begin
 	");
 end;
 
+/**
+Pops all registers (both pairs) from the stack. Typically used in interrupts.
+**/
 procedure PopAll() inline;
 begin
 	asm("
@@ -113,32 +128,49 @@ begin
 
 	");
 end;
-
+/**
+Turns on interrupts. Same as "ei"
+**/
 procedure EnableInterrupts() inline;
 begin
 	asm(" ei");
 end;
 
+/**
+Turns off interrupts. Same as "di"
+**/
 procedure DisableInterrupts() inline;
 begin
 	asm(" di");
 end;
 
+/**
+Enables access to ROM, both upper ($C000-$FFFF) and lower ($0000-$4000)
+**/
 procedure EnableRom();
 begin
 	asm(" call $B900 ");
 	asm(" call $B906 ");
 end;
+/**
+Disables access to ROM, both upper ($C000-$FFFF) and lower ($0000-$4000)
+**/
 procedure DisableRom();
 begin
 	asm(" call $B903 ");
 	asm(" call $B909 ");
 end;
 
+/**
+Disables access to lower ROM ($0000-$4000)
+**/
 procedure EnableLRom();
 begin
 	asm(" call $B906 ");
 end;
+/**
+Disables access to lower ROM ($0000-$4000)
+**/
 procedure DisableLRom();
 begin
 	asm(" call $B909 ");

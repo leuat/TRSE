@@ -17,7 +17,12 @@ var
 
 	ytab : array[200] of integer = BuildTable("i*80");
 
-	
+/*
+	Pixtab1 and pixtab2 are used to correctly set pixel 0 and 1 for each byte in CPC 16-color 160x200 VRAM.
+	You'd *think* that the two 4-bit colors in each byte would be stored in an upper/lower nibble, but
+	oh no. Mr. Sugar saved every penny so *you* would be able to use this abomination of a table!
+
+*/	
 	pixtab1 : array[16] of byte=(
 %00000000,
 %10000000,
@@ -57,7 +62,9 @@ var
 %00010101,
 %01010101);
 
-
+/**
+Waits until a vertical sync has been performed.
+**/
 procedure WaitForSync();
 begin
 	asm("
@@ -74,6 +81,9 @@ wf_Sync:
     ");
 end;
 
+/*
+Waits until a horizontal sync has been performed
+*/
 procedure WaitForHSync();
 begin
 	asm("
@@ -90,7 +100,14 @@ wf_Sync:
     ");
 end;
 
-// Set screen mode
+/**
+Sets the CPC resolution mode. 
+<ul>
+<li>0: 160x200 16 color mode.</li>
+<li>1: 320x200 4 color mode.</li>
+<li>2: 640x200 2 color mode.</li>
+</ul>
+**/
 procedure SetMode(ga: global byte);
 begin
 	asm("
@@ -99,7 +116,9 @@ begin
 	");
 end;
 
-
+/**
+Synchronizes timing with VSYNC
+**/
 procedure Synchronize();
 begin
 asm("
@@ -136,6 +155,13 @@ begin
 end;
 */
 
+/**
+Sets a single color palette using hardware ports. Firmware must be disabled. 
+<ul>
+<li>Parameter 0: color index (0-15)</li>
+<li>Parameter 1: color value (0-25)</li>
+</ul>
+**/
 procedure SetSinglePaletteHW(ga, gb: global byte);
 begin
 	gb := hwConv[gb];
@@ -159,6 +185,10 @@ asm("
 	");
 end;
 
+/**
+Sets a 16-color palette using hardware ports. Parameter 1 points to a list of 16 bytes. 
+
+**/
 procedure SetPalette(pa : global pointer);
 begin
 /*	for ga:=0 to 16 do
@@ -180,7 +210,10 @@ begin
 end;
 
 
+/**
+	Sets the border color to [ parameter 1 ] using firmware. 
 
+**/
 procedure SetBorder(ga: global byte);
 begin
 	asm("
@@ -191,8 +224,9 @@ begin
 	");
 end;
 
-
-// Set screen width to 256 pixels
+/**
+Sets the width of the screen to 256 bytes. Screen hack!
+**/
 procedure SetWidth256();
 begin
 
@@ -243,7 +277,20 @@ end;
 
 
 
-
+/**
+Points the internal pointer crtc::sp to the correcy y-line in 160x200 mode 0 using [parameter 1].
+<p>The VRAM of the CPC isn't stored linearly. In mode 0 (160x200 16 colour), a line of 160 pixels takes up
+80 bytes of data. However, the next 80 bytes are located 8 rows down. In order to get 1 row down, you need to add 
+$800 to the pointer etc. Needless to say, this becomes tedious - unless you use a lookup table.
+<p>With this method, you can easily point to a specific line in vram. 
+<p>
+<code>
+// points cp to line 16 
+crtc::PointToY(16);
+// Fills 80 bytes of zero
+fill(cp,0,80); 
+</code>
+**/
 procedure PointToY(y : global byte);
 begin
 	asm("
@@ -262,6 +309,10 @@ begin
 	");
 end;
 
+/**
+Sets a pixel in mode 0 at position (x,y) with color c.
+
+**/
 procedure PutPixelMode0(x,y,col : global byte);
 begin
 	// Simply looks up the y-value and adds x
@@ -291,6 +342,16 @@ begin
 
 end;
 
+/**
+Copies a transparent image from [pa] to the screen while blending with background data located in [pb].
+The dimensions of the original data is given by [ci_width, ci_height], and the position on-screen
+by [ci_px, ci_py]. 
+<p>See the "sprite" tutorial numer 7 as an example.
+<code>
+// Copies a 32x32 sprite (#sprites) blended with background located at #background to position x,y
+crtc::CopyImageTransparent(#sprites, #background, 32,32, x, y, 0);
+</code>
+**/
 procedure CopyImageTransparent(pa,pb:global pointer; ci_width, ci_height,ci_px,ci_py, ci_pyshift: byte);
 begin
 	ga := ci_width>>1;
@@ -356,7 +417,10 @@ __contcopy
 end;
 
 
-
+/**
+Copies a portion of the screen between y-lines [paramter 1, parameter 2] to a buffer located at [parameter 3]
+<p>Note that the copy will be stored with ordered y-lines, as opposed to the internal VRAM structure.
+**/
 procedure CopyScreenToBuffer(ga, gb: global byte; pa : global pointer);
 begin
 //	zp := free2;
