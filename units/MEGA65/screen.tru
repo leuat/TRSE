@@ -4,6 +4,8 @@ var
 	const VIC_BASE: integer = $D000;
 	addr : integer;
 	bank, val,y,x,j : byte;
+	
+	spritePointerAddress: integer at $D06C;
 
 	ytable80 : array[25] of integer = BuildTable("0x0800 + i*80");
 
