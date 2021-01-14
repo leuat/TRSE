@@ -1,0 +1,86 @@
+program Fjong_example5;
+@use "screen"
+var  
+
+   	const N: byte = 8;
+   	frames: array[N] of byte = BuildTable("i*16");
+   	const maxFrames:byte=127;
+   	const spritePointerLoc: address = $1000;
+   	const spriteDataLoc: integer = $8000;
+	i,y,time,t,delta : byte;
+   	x : integer;
+	sin : array[256] of byte = buildtable( "((Math.sin(i/256*3.14159*2)*0x7f+0x7f))");
+
+	/*
+	Example 5 in the "Fjong" tutorial series.
+	Here, the fjong file will generate $2000 bytes of raw sprite data (64 bytes * 128 frames)
+	In this file, we simply load the data in at bank 1 position $2000, and change the 
+	sprite pointer location of prite 1 to the corresponding frame. 
+	
+	While this result looks cool and everything, it is a very wasteful method since there is 
+	no compression involved. 
+	
+
+*/
+@requirefile "data/example5_sprite.bin" "Please run the Fjong raytracer file 'example5_single_sprite.fjo' before compiling this program"
+
+	// Remember to run the "example5_single_sprite.fjo" fjong file to generate sprite data!
+	spritedata : incbin("data/example5_sprite.bin", spriteDataLoc);
+
+// Set up 1 sprite in the center of the screen, turn on multicolor
+procedure InitSprites();
+begin
+	// Enable a single sprite
+	SPRITE_BITMASK:=$FF;
+	SPRITE_MULTICOLOR:=$FF;
+	SPRITE_MULTICOLOR_REG1:=blue;	
+	SPRITE_MULTICOLOR_REG2:=white;
+	fill(sprite_color,purple,8);
+	// Place sprite 1 (0) in the center of the screen 
+
+	// Enable to stretch sprites
+	
+//	SPRITE_STRETCH_X:=1;
+//	SPRITE_STRETCH_Y:=1;
+
+end;
+
+procedure UpdateSprites();
+begin
+	t:=time;
+	for i:=0 to N do
+	begin		
+		Screen::Set16bitSpritePointer(#spritePointerLoc,i,frames[i],2);
+		frames[i]:=(frames[i]+1)& 127; // Cap frame at 128 frames
+		x:=sin[t]+60;
+		y:=sin[t+delta]/2+60;
+		spritepos(x,y,i);
+		t:=t+12; 
+
+	end;
+	inc(delta);
+	if (time&3=0) then inc(delta);
+end;
+
+
+interrupt UpdateRaster();
+begin
+	startirq(1);
+	UpdateSprites();
+	inc(time);
+	closeirq();
+end;
+
+begin
+	Screen::Init();
+	Screen::EnableVIC4();
+	Screen::Set40ColumnMode();
+	delta:=64;
+	clearscreen(key_space,screen_char_loc);
+	Screen::spritePointerAddress := #spritePointerLoc;
+	screen_fg_col:=black;
+	screen_bg_col:=purple;
+	InitSprites();	
+	StartRasterChain(UpdateRaster(),0,1);
+	Loop();
+end.

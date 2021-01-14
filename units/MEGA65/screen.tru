@@ -4,10 +4,25 @@ var
 	const VIC_BASE: integer = $D000;
 	addr : integer;
 	bank, val,y,x,j : byte;
-	
+	zp:^byte;
 	spritePointerAddress: integer at $D06C;
 
 	ytable80 : array[25] of integer = BuildTable("0x0800 + i*80");
+
+/**
+Sets a 16-bit sprite pointer to sprite [j] at  [x /64 + y*$4000]. For instance, 
+if you have sprites located at $8000, set the frame by calling
+<code>
+Screen::Set16bitSpritePointer( myFrame, 0, 2); // Sprite 0 at $4000*2 + myFrame 
+</code>
+**/
+procedure Set16bitSpritePointer(zp:^byte global;j,x,y:byte global);
+begin
+	j:=j*2;
+	zp[j]:=x;
+	zp[j+1]:=y; // $8000
+	poke(^$D06E,0,%10000000);
+end;
 
 /**
 Sets the character data address at the 16-bit location given in parameter 1 with bank from parameter 2.
