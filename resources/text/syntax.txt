@@ -433,7 +433,7 @@ m; StrGetFromIndex;C64, MEGA65, PLUS4, C128, VIC20, PET, X16, OK64; a, b
 # Sprite routines
 
 m; SpritePos; C64, MEGA65, PLUS4, C128 ; ib,b,b
-m; SetSpriteLoc; C64, MEGA65, PLUS4, C128; b,b,n
+m; SetSpriteLoc; C64, PLUS4, C128; b,b,n
 
 # Sound/Music routines
 

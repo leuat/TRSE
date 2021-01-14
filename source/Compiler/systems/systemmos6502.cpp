@@ -340,6 +340,10 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
 
 void SystemMOS6502::DefaultValues()
 {
+    m_startAddress = 0x2001;
+    m_programStartAddress = 0x2020;
+    m_ignoreSys = false;
+    m_stripPrg = false;
 
 }
 

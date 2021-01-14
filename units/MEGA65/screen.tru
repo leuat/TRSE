@@ -20,6 +20,33 @@ begin
 end;
 
 /**
+Sets the column mode to 40 (320x200)
+
+**/
+procedure Set40ColumnMode() inline;
+begin
+	asm("
+		lda $D031
+		and #%01111111
+		sta $d031
+	");
+end;
+
+/**
+Sets the column mode to 80 (640x200)
+
+**/
+
+procedure Set80ColumnMode() inline;
+begin
+	asm("
+		lda $D031
+		or #%10000000
+		sta $d031
+	");
+end;
+
+/**
 Sets the screen location address at the 16-bit location given in parameter 1 with bank from parameter 2.
 **/
 procedure SetScreenLocation(addr: global integer; bank:global byte);

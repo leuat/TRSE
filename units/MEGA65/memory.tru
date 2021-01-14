@@ -5,16 +5,23 @@ var
 	zpLo : pointer at $90;
 	zpHi : pointer at $92;
 	pa, pb : byte;
+	pi : integer;
 	
 
-procedure SetCurrentMemoryBank(pa : global byte);
+procedure SetCurrentMemoryBank(pi : global integer);
 begin
 	asm("
-		lda Memory_pa
+		lda Memory_pi+1
+		sta Memory_zpHi+1
+		lda Memory_pi
 		sta Memory_zpHi
 	");
 end;
+/**
+Pokes the value [ pb ] to the 32-bit address Memory::zpLo[pa] with high 16-bit address stored in zpHi. In other words.
+zpHi represents the current 65536-byte bank, while zpLo is a regular zeropage pointer.
 
+**/
 procedure Poke32(pa, pb:global byte);
 begin
 	asm(" 

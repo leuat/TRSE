@@ -17,11 +17,11 @@ DialogSplash::DialogSplash(QWidget *parent) :
           "I would prefer an intelligent hell to a stupid paradise"<<
           "Kind bytes don't cost much. Yet they accomplish much." <<
           "You always admire what you really don't understand."<<
-          "TRSE - Everything else is something different" <<
-          "TRSE - Kind of OK" <<
-          "TRSE - Not the worst choice I guess"<<
-          "TRSE - your mother would be proud. Probably." <<
-          "TRSE - What is the worst that could happen?";                               ;
+          "Everything else is something different" <<
+          "Kind of OK" <<
+          "Not the worst choice I guess"<<
+          "your mother would be proud. Probably." <<
+          "What is the worst that could happen?";                               ;
 
 
 
