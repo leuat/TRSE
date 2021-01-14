@@ -26,12 +26,12 @@ begin
 	// infinite loop
 	while (true) do  begin
 		// Set pointer to point to beginning of screen/color ram ($0400 and $D800)
-		screenP:=screen_char_loc;
+		screenP:=#screen_char_loc;
 		// loop y		
 		for y:=0 to screen_height do begin
 			// moves current screen position
 			// Select some random color
-			zp:=random_values+index;
+			zp:=#random_values+index;
 			memcpy(zp,0,screenP,80);
 			index:=index+11;
 			screenP:=screenP+screen_width;
