@@ -6,7 +6,7 @@ Turbo Rascal Syntax Error full repo
 - Qt
 
 ## Compiling
-- **IMPORTANT**: On windows, TRSE will ONLY COMPILE when using **MSVC 2017**. 2019 will fail due to some older libraries! Will be updated later.
+- On windows, install MSVC 2019. On macos, Xcode
 - First, download the Qt framework from https://www.qt.io/download. Install the latest framework (desktop application).
 - Clone this repo to a TRSE directory
   - On linux, you need to install a library that contains gl.h like mesa-common-dev (sudo apt-get install mesa-common-dev) etc
