@@ -1,0 +1,96 @@
+program Full_screen_char_compression;
+@use "screen"
+@use "memory"
+var  
+   	
+
+
+	const charLoc1:address=$2800;
+	const maxFrames : byte=16;
+
+	// Table of $800-byte charset pos for each frame (1 charset contains 2 frames!)
+	charsetTable : array[maxFrames] of integer = 
+		BuildTable("0x2800 + (Math.floor(i/2))*0x800");
+
+	
+	@requirefile "data/13_screen0.bin" "Please run the raytracer file example13_compressed_chars.fjo before compiling this program" 	
+
+	const screenPos : address = $8000;
+
+	screens1: incbin("data/13_screen0.bin",screenPos);
+	screens2: incbin("data/13_screen1.bin",screenPos+2000*1);
+	screens3: incbin("data/13_screen2.bin",screenPos+2000*2);
+	screens4: incbin("data/13_screen3.bin",screenPos+2000*3);
+	screens5: incbin("data/13_screen4.bin",screenPos+2000*4);
+	screens6: incbin("data/13_screen5.bin",screenPos+2000*5);
+	screens7: incbin("data/13_screen6.bin",screenPos+2000*6);
+	screens8: incbin("data/13_screen7.bin",screenPos+2000*7);
+	
+	charset1 : incbin("data/13_charset0.bin",charLoc1+$800*0);
+	charset2 : incbin("data/13_charset1.bin",charLoc1+$800*1);
+	charset3 : incbin("data/13_charset2.bin",charLoc1+$800*2);
+	charset4 : incbin("data/13_charset3.bin",charLoc1+$800*3);
+	charset5 : incbin("data/13_charset4.bin",charLoc1+$800*4);
+	charset6 : incbin("data/13_charset5.bin",charLoc1+$800*5);
+	charset7 : incbin("data/13_charset6.bin",charLoc1+$800*6);
+	charset8 : incbin("data/13_charset7.bin",charLoc1+$800*7);
+	
+	sp,zp:pointer;
+	i:byte;
+	frame:byte=0;
+	time:byte=0;
+
+	const screenLoc:address= $0800;	
+	
+
+
+procedure UpdateFrame();
+begin
+	// For each frame, simply set the 
+	// character set. In this example, 2 frames are contained in 1 character set
+	
+	Screen::SetCharsetLocation(charsetTable[frame],0);
+	
+	copyfullscreen(sp,#screenLoc);
+	
+	sp:=sp+1000; // Add upp to 40x25 = 1000
+ 	inc(frame);
+ 	// Reset frame
+	if(frame=maxFrames) then
+	begin
+		frame:=0;
+		sp:=#screens1;
+		
+	end;
+end;
+
+
+// Simple raster routine
+interrupt Raster();
+begin
+	startirq(0);
+	inc(time);
+	if(time&1=0) then UpdateFrame();
+	closeirq();
+end;	
+
+
+begin
+	sp:=#screens1;
+	Screen::Init();
+	Screen::EnableVIC4();
+	Screen::Set40ColumnMode();
+	setmulticolormode();
+	
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	multicolor_char_col[1]:=cyan;
+	multicolor_char_col[2]:=blue;
+	Screen::FillColorRam80(purple+8);
+
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	StartRasterchain(Raster(), 0,0);
+	Loop();
+
+end.

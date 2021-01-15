@@ -1,8 +1,6 @@
 #include "raytracer.h"
 
-#ifndef TARGET_OS_MAC
 #include <omp.h>
-#endif
 #include <algorithm>
 
 RayTracer::RayTracer()
@@ -144,14 +142,11 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
                 dir = m_camera.fisheye(x,y,w,h);;
             Ray ray(m_camera.m_camera,dir);
             ray.m_reflect=3;
-
-//            float m_z = 1E20;
-#ifndef TARGET_OS_MAC
+#ifdef USE_OMP
             int tid = omp_get_thread_num();
 #else
-        int tid = 0;
+            int tid = 0;
 #endif
-            //int tid = 0;
             RayMarchSingle(ray, Image, nullptr,m_globals.m_steps,tid, QVector3D(x,y,0));
   //          tmp[i+j*w] = ray.m_intensity;
             QColor c = Util::toColor(ray.m_intensity*256 + m_globals.m_ambient);

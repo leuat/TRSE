@@ -35,13 +35,7 @@ begin
 	SPRITE_MULTICOLOR:=$FF;
 	SPRITE_MULTICOLOR_REG1:=blue;	
 	SPRITE_MULTICOLOR_REG2:=white;
-	fill(sprite_color,purple,8);
-	// Place sprite 1 (0) in the center of the screen 
-
-	// Enable to stretch sprites
-	
-//	SPRITE_STRETCH_X:=1;
-//	SPRITE_STRETCH_Y:=1;
+	for i:=0 to N do sprite_color[i]:=i+8;
 
 end;
 

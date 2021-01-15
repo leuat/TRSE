@@ -1163,6 +1163,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     QString addr = "";
     if (m_node->m_params[0]->isPureNumeric())
         addr = m_node->m_params[0]->HexValue();
+
     if (var!=nullptr)
         addr = var->getValue(as);
 
@@ -1210,7 +1211,6 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     }
 
 
-
     as->Label(lbl);
     //LoadVar(as, 0, "x");
 
@@ -1237,6 +1237,11 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     else {
         as->Asm("in"+x+"");
         as->Term("cp"+x+" ");
+        // BUG HERE INTEGER
+        if (m_node->m_params[3]->isWord(as)) {
+            ErrorHandler::e.Error("Error: memcpy cannot take an integer as count, must be byte. ",m_node->m_op.m_lineNumber);
+//            m_node->m_params[3]->setForceType(TokenType::BYTE);
+        }
         m_node->m_params[3]->Accept(m_dispatcher);
         as->Term();
 

@@ -22,6 +22,7 @@ DEFINES -= QT_DEPRECATED_WARNINGS
 
 DEFINES += USE_LUA
 
+#DEFINES +=USE_OMP
 
 INCLUDEPATH +=$$PWD/libs/lua/include
 
@@ -33,16 +34,19 @@ ARCH = $$QMAKE_HOST.arch
 
 
 macx{
-    QMAKE_CXXFLAGS += -openmp
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
+    LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib -lomp
+    contains(DEFINES, USE_OMP) {
+      QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
+    }
 
     contains(ARCH, arm64): {
       message("Arme meg!")
- #     QMAKE_APPLE_DEVICE_ARCHS=arm64
+#      QMAKE_APPLE_DEVICE_ARCHS=arm64
  #     LIBS += -L$$PWD/libs/lua/ -lluamac_arm
  #     CONFIG += arm64
 
@@ -51,6 +55,8 @@ macx{
         LIBS += -L$$PWD/libs/lua/ -lluamac
    }
    LIBS += -L$$PWD/libs/lua/ -lluamac
+   INCLUDEPATH += /usr/local/include/
+   INCLUDEPATH += /opt/homebrew/include/
 
 
 

@@ -1,0 +1,112 @@
+globals = {
+ 	camera = { x = 0, y=4, z=4 },
+     fov = 50,
+	target = { x = 0, y=0, z=0 },
+	light0 = {   	direction = {x=1.5, y=3.2, z=-0.7 }, 
+				color = {x=0.5, y=0.55, z=0.55}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+    raymarch_steps = 90,
+	raymarch_shadow_steps = 40,
+	up = {x=1.26, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+	-- Full screen
+	resolution = { width = 160, height=200},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	output_type = 1, -- c64 type image
+	c64_multicolor = 1,
+	c64_imageType = 0, -- charset type image
+	dither = 2,
+	ditherStrength = { x = 10, y= 1, z= 1},
+	-- Four indexed colors
+	index_colors = { 0,6,3,4 }
+
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+
+-- Init is called on start  
+ 
+cur = 0
+frame = 0
+--noFrames = 24
+noFrames = 16
+
+
+
+
+function Init()
+
+	-- Render a bunch of toruses
+	for i=0, 20 do
+		-- name 
+		n = "torus"..tostring(i) 
+		-- x position
+		x = (i-10)/1.5
+		--  some nice torus values
+		AddObject("torus",n,"","MaterialBlue",x,0,0,     3.5, 0.25,0.1);
+	    s = 0.5
+		-- Rotate them 45 degrees
+		SetRotation(n,45,0,45);
+	end
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+
+	-- Find some camera/target values that look nice and loopy
+	
+	tar = 1.2-frame*0.085
+	globals.camera.x = tar
+	globals.target.x = tar
+
+
+
+end
+
+
+function Update()
+	
+
+	if (frame>=1 and frame<=noFrames) then
+		-- add every charset to the internal screen/charset
+		CompressCharset(0,40,0,25,  2, 256)
+	end
+	-- saving time!
+	if (frame&1==0 and frame>0) then 
+		-- Optimize with compression 3, hope the charset will be less than 256
+		OptimizeScreenAndCharset(40,25,256, 1	);
+		SaveScreenAndCharset("data/13_screen"..tostring(cur)..".bin", "data/13_charset"..tostring(cur)..".bin");
+		Message("SAVED")
+		cur = cur+1
+	end
+	
+	
+	UpdateScene()
+
+
+	frame=frame+1
+	
+
+
+end
