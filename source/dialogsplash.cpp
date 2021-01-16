@@ -26,7 +26,9 @@ DialogSplash::DialogSplash(QWidget *parent) :
 
 
     ui->lblText->setText(texts[rand()%texts.count()]);
-
+    // -- Bones: Trying to fix the off-center spash screen on windows
+    const QRect screen = parent->geometry();
+        this->move( screen.center() );
 
 }
 
