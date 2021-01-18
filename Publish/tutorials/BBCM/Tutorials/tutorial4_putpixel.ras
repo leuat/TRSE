@@ -1,0 +1,50 @@
+program Tutorial3_Putpixel;
+var
+@use "Screen"
+
+	i,time,j,k,m,x,y : byte=0;
+	zp:pointer;
+	
+    sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
+    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+80");
+
+
+
+begin
+	Screen::ResetStack();
+	Screen::Init();
+	RasterIRQ(Screen::DefaultIRQ());
+	Screen::SetMode2();
+	Screen::StartInterrupts();
+	Screen::SetPalette(#Screen::defaultPalette);	
+	// Clear the screen
+	Screen::FillBanks($4000,00,$40);	
+	m:=64;
+	
+	While(true) do
+	begin
+		inc(time);
+		j:=time;
+		for i:=0 to 128 do
+		begin
+			x := sinx[j];
+			y := siny[j+m]+32;
+			j:=j+1;
+			Screen::PutPixel(x,y,i&15);
+		end;	
+//		Screen::WaitForVerticalSync();
+		
+		j:=time;
+		for i:=0 to 128 do
+		begin
+			x := sinx[j];
+			y := siny[j+m]+32;
+			j:=j+1;
+			Screen::PutPixel(x,y,0);
+		end;	
+		if (time&3=1) then 
+			m:=m+1;
+
+	end;
+
+end.

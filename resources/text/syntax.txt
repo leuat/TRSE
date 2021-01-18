@@ -507,6 +507,7 @@ m; EnableIRQ; C64, MEGA65, PLUS4, C128, ATARI2600, BBCM;
 m; PreventIRQ; C64, MEGA65, PLUS4, C128, ATARI2600, BBCM;
 m; DisableCIAInterrupts; C64, MEGA65, PLUS4, C128;
 m; RasterIRQ; C64, MEGA65, PLUS4, C128 ; p,b,n
+m; RasterIRQ; BBCM; p
 m; RasterIRQWedge; C64, MEGA65, PLUS4, C128 ; p,b,n
 m; ReturnInterrupt; C64, MEGA65, PLUS4, C128, OK64, ATARI2600, BBCM;
 

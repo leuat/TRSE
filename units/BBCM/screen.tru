@@ -1,0 +1,275 @@
+unit Screen;
+var
+	@donotremove vsync
+	vsync : byte ;
+
+	crtc_mode2_org: array[13] of byte=(
+	127,64,91,40,38,0,32,34,0,7,32,8,8, 0);	
+
+	crtc_mode2: array[13] of byte=(
+	127,80,98,40,38,0,32,34,0,7,67,8,8, 0);	
+
+
+	defaultPalette : array[16] of byte = BuildTable("(i&7)*0x10 + (i^7)");
+	
+	ytab : array[300] of integer = BuildTable("0x4000 + (i&7) + Math.floor(i/8.0)*80*8");
+	xtab : array[200] of integer = BuildTable("i*8");
+
+	i,x,y : byte;
+
+	zp,screenPtr : pointer;
+	
+	pixel1Tab : array[16] of byte = (
+	%00000000,
+	%00000001,
+	%00000100,
+	%00000101,
+	%00010000,
+	%00010001,
+	%00010100,
+	%00010101,
+	%01000000,
+	%01000001,
+	%01000100,
+	%01000101,
+	%01010000,
+	%01010001,
+	%01010100,
+	%01010101);
+
+	pixel2Tab : array[16] of byte = (
+	%00000000,
+	%00000010,
+	%00001000,
+	%00001010,
+	%00100000,
+	%00100010,
+	%00101000,
+	%00101010,
+	%10000000,
+	%10000010,
+	%10001000,
+	%10001010,
+	%10100000,
+	%10100010,
+	%10101000,
+	%10101010);
+	
+
+/*
+.crtcregs
+	EQUB 127			; R0  horizontal total
+	EQUB 64				; R1  horizontal displayed - shrunk a little
+	EQUB 91				; R2  horizontal position
+	EQUB 40				; R3  sync width
+	EQUB 38				; R4  vertical total
+	EQUB 0				; R5  vertical total adjust
+	EQUB 32				; R6  vertical displayed
+	EQUB 34				; R7  vertical position
+	EQUB 0				; R8  interlace
+	EQUB 7				; R9  scanlines per row
+	EQUB 32				; R10 cursor start
+	EQUB 8				; R11 cursor end
+	EQUB HI(&4000/8)	; R12 screen start address, high
+	EQUB LO(&4000/8)	; R13 screen start address, low
+*/
+
+procedure ResetStack() inline; // Must be inline, rts fails
+begin
+	asm("
+	
+	SEI
+	TXS				; reset stack
+	STX $FE44
+	STX $FE45
+
+	");
+end;
+
+
+procedure PointToY(y:global byte);
+begin
+	zp:=#ytab;
+	if (y>=128) then 
+	begin
+		y:=y-128;
+		asm(" inc Screen_zp+1"); // Point to next page
+	end;
+	asm("
+		lda Screen_y
+		asl
+		tay
+		lda (Screen_zp),y
+		sta Screen_screenPtr
+		iny
+		lda (Screen_zp),y
+		sta Screen_screenPtr+1
+	"); 
+
+end;
+
+procedure PointToXY(px,py:byte) inline;
+begin
+	PointToY(py);
+	screenPtr := screenPtr + xtab[px];	
+end;
+
+
+procedure SetMode(zp:global pointer);
+begin
+
+	asm("
+	
+	ldy #13
+crtcloop_copy
+	sty $FE00
+	lda (Screen_zp),y
+	sta $FE01
+	dey
+	bpl crtcloop_copy
+
+	");
+
+end;
+
+/**
+
+Fill memory address at [zp] with $100*[y] of value [x]
+
+**/
+procedure FillBanks(zp:global pointer; x,y : global byte);
+begin
+	for i:=0 to y do
+	begin
+		fill(zp,x,0);
+		asm(" inc Screen_zp+1");
+	end;
+
+end;
+
+
+procedure SetMode2();
+begin
+	SetMode(#crtc_mode2);
+	asm("
+	; Set up video ULA for MODE 2
+	LDA #$F4
+	STA $FE20
+	");
+	
+end;
+
+procedure PutPixel(ppx, ppy, ppc : byte);
+begin
+	PointToY(ppy);
+	screenPtr := screenPtr + xtab[ppx/2];
+	if (ppx&0=1) then
+		i:=(screenPtr^&%01010101) | pixel2Tab[ppc]
+	else	
+		i:=(screenPtr^&%10101010) | pixel1Tab[ppc];
+	
+	screenPtr^ := i;
+
+end;
+
+
+procedure Init();
+begin
+	asm("
+	LDA #$7F
+	STA $FE4E			; disable all interrupts
+	STA $FE43					; set keyboard data direction
+	LDA #$C2
+	STA $FE4E			; enable VSync and timer interrupt
+	LDA #$0F
+	STA $FE42			; set addressable latch for writing
+	LDA #3
+	STA $FE40			; keyboard write enable
+	LDA #0
+	STA $FE4B			; timer 1 one shot mode
+	");
+end;
+
+
+procedure StartInterrupts();
+begin
+	asm(" cli");
+end;
+
+
+procedure SetPalette(zp:global pointer);
+begin
+
+asm("
+	; Set up palette for MODE 2
+	
+	ldy #15
+palloop_copy
+	lda (Screen_zp),y
+	sta $FE21
+	ora #$80
+	sta $FE21
+	dey
+	bpl palloop_copy
+
+	");
+
+end;
+
+
+interrupt DefaultIRQ();
+begin
+	asm("
+timerlengthHi		= $34
+timerlengthLo		= 00
+	
+	LDA $FE4D
+	AND #2
+	BNE irqvsync
+irqtimer
+	LDA #$40
+	STA $FE4D
+	INC Screen_vsync
+
+		
+;	LDA Screen_vsync ; some color
+;	and #15
+;	STA $FE21
+	
+	LDA $FC
+	RTI
+	
+irqvsync
+	STA $FE4D
+	LDA timerlengthLo
+	STA $FE44
+	LDA timerlengthHi
+	STA $FE45
+
+
+	LDA $FC
+	RTI
+	");
+end;
+
+
+
+
+
+
+procedure WaitForVerticalSync();
+begin
+	asm("
+	
+vsync_wait:
+	lda Screen_vsync
+	beq vsync_wait
+	lda #0
+	sta Screen_vsync
+
+	");
+end;
+
+
+
+end.

@@ -1,4 +1,4 @@
-program MyProgram;
+program Tutorial2_screen;
 var  
 	zp: pointer;
 	
@@ -43,7 +43,7 @@ loop_out:
 		inc $7C00,x
 		inc $7D00,x
 		inc $7E00,x
-		inc $7F00,x
+;		inc $7F00,x
 		inx
 		bne loop_out
 		

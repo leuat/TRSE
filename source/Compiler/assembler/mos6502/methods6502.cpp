@@ -5404,7 +5404,19 @@ void Methods6502::RasterIRQ(Assembler *as)
   //      ErrorHandler::e.Error("First parameter must be interrupt procedure!", m_node->m_op.m_lineNumber);
 
 
+
+
     QString name = addr->m_procedure->m_procName;
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::BBCM) {
+        as->Comment("RasterIRQ");
+        as->Asm("lda #<"+name);
+        as->Asm("sta $204");
+        as->Asm("lda #>"+name);
+        as->Asm("sta $205");
+        return;
+    }
+
 
     m_node->RequireNumber(m_node->m_params[2], "RasterIRQ", m_node->m_op.m_lineNumber);
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[2]);
