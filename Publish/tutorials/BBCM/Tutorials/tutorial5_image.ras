@@ -15,6 +15,7 @@ begin
 	Screen::Init();
 	Screen::SetMode2();
 	Screen::SetPalette(#Screen::defaultPalette);	
+
 	// Clear the screen
 	Screen::FillBanks($4000,00,$40);	
 	// start filling stuff!
