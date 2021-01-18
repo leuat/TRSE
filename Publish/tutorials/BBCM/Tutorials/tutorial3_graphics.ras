@@ -15,18 +15,17 @@ begin
 		j:=time&15;
 		for i:=0 to 200 do
 		begin
-			m := Screen::pixel1Tab[j] | Screen::pixel2Tab[j];
 			Screen::PointToY(i);
 			for k:=0 to 80 do 
 			begin
+				m := Screen::pixel1Tab[j] | Screen::pixel2Tab[j];
 				zp := Screen::screenPtr + Screen::xtab[k];
 				zp^:=m;
+			j:=(j+1)&15;
 			end;
 			j:=(j+1)&15;
 		end;
 		time:=time +1;
-		for j:=0 to 10 do
-		Screen::WaitForVerticalSync();		
 	end;
 
 
@@ -36,12 +35,11 @@ end;
 begin
 	Screen::ResetStack();
 	Screen::Init();
-	RasterIRQ(Screen::DefaultIRQ());
 	Screen::SetMode2();
-	Screen::StartInterrupts();
 	Screen::SetPalette(#Screen::defaultPalette);	
 	// Clear the screen
 	Screen::FillBanks($4000,00,$40);	
+	// start filling stuff!
 	FillStuff();	
 
 end.
