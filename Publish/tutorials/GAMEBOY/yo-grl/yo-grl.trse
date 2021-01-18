@@ -87,3 +87,4 @@ open_files = ,src/cubes.ras, src/packer.ras, demo.ras
 project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/yo-grl/
 open_files = ,demo.ras
 current_file = demo.ras
+open_files =, demo.ras

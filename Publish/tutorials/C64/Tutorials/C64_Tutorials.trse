@@ -63,3 +63,4 @@ open_files = ,language\01_introduction.ras, easy\01_hello_world.ras, easy/03_box
 project_path = C:/src/TRSE-RELEASE/tutorials/C64/Tutorials/
 current_file = easy\01_hello_world.ras
 open_files = ,Hello.ras
+open_files =, Hello.ras

@@ -38,3 +38,4 @@ data_header_images/main.flf = 6.9229e-310
 zeropage_colormemory = $fc
 open_files =, player.ras
 open_files =, player.ras
+open_files =, player.ras

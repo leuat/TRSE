@@ -47,3 +47,4 @@ build_list = ,
 zeropage_colormemory = $fc
 open_files =, tutorial1.ras
 open_files =, tutorial1.ras
+open_files =, tutorial1.ras

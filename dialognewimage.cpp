@@ -187,7 +187,7 @@ void DialogNewImage::on_cmbImageType_currentIndexChanged(int index)
 
 }
 
-void DialogNewImage::on_cmbSystem_currentIndexChanged(const QString &arg1)
+void DialogNewImage::on_cmbSystem_currentTextChanged(const QString &arg1)
 {
     m_currentTypes.clear();
     QStringList data;

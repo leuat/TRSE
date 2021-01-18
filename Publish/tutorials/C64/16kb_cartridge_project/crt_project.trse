@@ -36,3 +36,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 open_files =, main.ras
 open_files =, main.ras
+open_files =, main.ras

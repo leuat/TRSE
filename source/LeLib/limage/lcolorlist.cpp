@@ -126,6 +126,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 10;
   if (t==AMSTRADCPC)
       return 11;
+  if (t==BBC)
+      return 12;
 
   return 255;
 }
@@ -156,6 +158,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return NES;
     if (c==11)
         return AMSTRADCPC;
+    if (c==12)
+        return BBC;
 
     return UNSUPPORTED;
 
@@ -374,6 +378,8 @@ void LColorList::Initialize(Type t)
         InitOK64();
     if (m_type == Type::AMSTRADCPC)
         InitAmstradCPC();
+    if (m_type == Type::BBC)
+        InitBBC();
 
 
     m_metric = new LinearMetric();
@@ -805,6 +811,24 @@ void LColorList::InitAmstradCPC()
     m_list.append(LColor(QColor(0xFF,0xFF,0xFF),"Bright White"));
     //qDebug() << "Constructor called";
     InitPalettePens(16);
+}
+
+void LColorList::InitBBC()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0,0,0),"Black"));
+    m_list.append(LColor(QColor(0xFF,0x0,0x0),"Red"));
+    m_list.append(LColor(QColor(0x00,0xFF,0x0),"Green"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x0),"Yellow"));
+    m_list.append(LColor(QColor(0x00,0x0,0xFF),"Blue"));
+    m_list.append(LColor(QColor(0xFF,0x0,0xFF),"Magenta"));
+    m_list.append(LColor(QColor(0x00,0xFF,0xFF),"Cyan"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0xFF),"White"));
+    m_pens.clear();
+    for (int i=0;i<16;i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i&7,"",LPen::Dropdown, m_bpp)));
+    }
+
 }
 
 void LColorList::InitPalettePens(int cnt)

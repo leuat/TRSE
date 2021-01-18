@@ -49,6 +49,8 @@
 #include "source/LeLib/limage/limagehybridcharset.h"
 #include "source/LeLib/limage/limageamstradcpc.h"
 #include "source/LeLib/limage/limageamstradgeneric.h"
+#include "source/LeLib/limage/limagebbc.h"
+
 class LImageFactory {
 public:
     static LImage* Create(LImage* img) {

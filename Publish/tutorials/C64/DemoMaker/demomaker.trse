@@ -35,3 +35,4 @@ zeropage_colormemory = $fc
 exomizer_toggle = 0
 open_files =, demo_part2_empty.ras
 open_files =, demo_part2_empty.ras
+open_files =, demo_part2_empty.ras

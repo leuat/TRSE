@@ -160,7 +160,7 @@ void DialogImport::Convert()
                                     m_work.m_qImage->height(),
                                     m_image->m_colorList,
                                     m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
-    m_output.m_qImage->save("/Users/leuat/test.png");
+//    m_output.m_qImage->save("/Users/leuat/test.png");
 //    qDebug() << m_image->m_width << m_output.m_qImage->width() << m_work.m_qImage->width();
     //exit(1);
 //    m_image->Clear();

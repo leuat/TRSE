@@ -46,7 +46,7 @@ macx{
 
     contains(ARCH, arm64): {
       message("Arme meg!")
-#      QMAKE_APPLE_DEVICE_ARCHS=arm64
+ #     QMAKE_APPLE_DEVICE_ARCHS=arm64
  #     LIBS += -L$$PWD/libs/lua/ -lluamac_arm
  #     CONFIG += arm64
 
@@ -147,6 +147,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limageamstradcpc.cpp \
     source/LeLib/limage/limageamstradgeneric.cpp \
     source/LeLib/limage/limageatari520st.cpp \
+    source/LeLib/limage/limagebbc.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
     source/LeLib/limage/limagehybridcharset.cpp \
@@ -357,6 +358,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limageamstradcpc.h \
     source/LeLib/limage/limageamstradgeneric.h \
     source/LeLib/limage/limageatari520st.h \
+    source/LeLib/limage/limagebbc.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
     source/LeLib/limage/limagehybridcharset.h \

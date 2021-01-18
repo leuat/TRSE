@@ -29,7 +29,7 @@
 #include <QPainter>
 #include <QMatrix4x4>
 #include "source/Compiler/syntax.h"
-
+#include <omp.h>
 uchar LImage::m_copy[1024*1024];
 bool LImage::m_hasCopy = false;
 
@@ -92,6 +92,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 24;
     if (t==AmstradCPCGeneric)
         return 25;
+    if (t==BBC)
+        return 26;
 
 
     return 255;
@@ -151,6 +153,9 @@ QString LImage::TypeToString(LImage::Type t)
         return "Amstrad CPC";
     if (t==AmstradCPCGeneric)
         return "Amstrad Generic NxM";
+    if (t==BBC)
+        return "BBC";
+
 
     return "Unknown image type";
 
@@ -211,6 +216,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return AmstradCPC;
     if (c==25)
         return AmstradCPCGeneric;
+    if (c==26)
+        return BBC;
 
     return NotSupported;
 
@@ -289,6 +296,7 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 //    qDebug() << img.width();
 
     for (int y=0;y<height;y++) {
+#pragma omp parallel for
         for (int x=0;x<width;x++) {
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;

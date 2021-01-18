@@ -1,0 +1,23 @@
+program Tutorial3_Putpixel;
+var
+@use "Screen"
+@use "compression/compression"
+
+	i,time,j,k,m,x,y : byte=0;
+	zp:pointer;
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+	image_data : incbin("resources/images/image1.bin") compressed;
+
+
+begin
+	Screen::ResetStack();
+	Screen::Init();
+	Screen::SetMode2();
+	Screen::SetPalette(#Screen::defaultPalette);	
+	// Clear the screen
+	Screen::FillBanks($4000,00,$40);	
+	// start filling stuff!
+	Compression::Decompress(#image_data, $4000);
+	Loop();
+end.

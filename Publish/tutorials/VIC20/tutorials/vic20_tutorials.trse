@@ -71,3 +71,4 @@ project_path = C:/src/TRSE-RELEASE/tutorials/VIC20/tutorials/
 current_file = [external]cart.tru
 data_header_/users/leuat/code/trse/publish/tutorials/vic20/tutorials/resources/images/trse.flf = 6.46058e-314
 data_header_resources/images/trse.flf = 0
+open_files =, easy/01_hello_world.ras

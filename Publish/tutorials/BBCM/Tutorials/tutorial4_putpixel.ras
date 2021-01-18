@@ -6,7 +6,7 @@ var
 	zp:pointer;
 	
     sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
-    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+80");
+    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+100");
 
 
 
@@ -28,17 +28,18 @@ begin
 		for i:=0 to 128 do
 		begin
 			x := sinx[j];
-			y := siny[j+m]+32;
+			y := siny[j+m];
 			j:=j+1;
 			Screen::PutPixel(x,y,i&15);
 		end;	
 //		Screen::WaitForVerticalSync();
 		
 		j:=time;
+		// Clear the pixels 
 		for i:=0 to 128 do
 		begin
 			x := sinx[j];
-			y := siny[j+m]+32;
+			y := siny[j+m];
 			j:=j+1;
 			Screen::PutPixel(x,y,0);
 		end;	

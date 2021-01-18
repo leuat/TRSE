@@ -59,7 +59,7 @@ public:
     bool m_isHybridMode = false;
     bool m_supportsFooterPen = false;
     QVector3D m_bpp = QVector3D(8,8,8);
-    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC };
+    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC };
     bool m_selectClosestFromPen = true;
     QVector<int> m_enabledColors;
 
@@ -132,6 +132,7 @@ public:
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
     void InitAmstradCPC();
+    void InitBBC();
     void UpdateColors();
     void LoadFromFile(QString fileName);
 

@@ -42,3 +42,4 @@ open_files = ,07_sqrt_and_atan.ras, 08_sines.ras, 01_hello_world.ras
 open_files = ,01_hello_world.ras
 project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tutorials/PET/examples/
 current_file = 08_sines.ras
+open_files =, 01_hello_world.ras

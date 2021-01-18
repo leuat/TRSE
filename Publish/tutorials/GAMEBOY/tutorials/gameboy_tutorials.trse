@@ -56,3 +56,4 @@ project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tut
 open_files = ,tutorial1.ras
 current_file = tutorial7_image.ras
 data_header_images/trse.flf = 0
+open_files =, tutorial1.ras
