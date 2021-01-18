@@ -1,0 +1,85 @@
+program MyProgram;
+var  
+	zp: pointer;
+	
+	x,y,tangent,i,dx,dy : byte;
+	radial : integer;
+	
+	
+
+
+procedure RenderScreen();
+begin
+	// could equally well have written "screenmemory:=screen_char_loc;"
+	zp := $7C00;
+	// Set cp to point to color memory
+	// 23 rows
+	for y:=0 to 25 do begin
+		//40 columns
+		for x:=0 to 40 do begin
+			// calculate delta x and delta y from the center of the screen (20,13)
+			dx:=abs(40-x)/2;
+			dy:=abs(13-y);
+			// Calculate the "tangential" value of dx,dy. Try to plot this value indepenedntly!
+			tangent:=(atan2(40,x,12,y));
+			radial:=(dx*dx+dy*dy);
+			// Calculate the "radial" value of dx,dy. Try to plot this value indepenedntly!
+			// Combine the values to create a spiral. Ideally the (tangent
+			i:=radial/2+tangent;
+			// Ideal, (radial,tangent) should be used to lookup a seamless texture
+			// Fill screen memory with the character value
+			zp[x]:=i;
+			// Fill color data with color value based on tangent
+		end;
+		zp:=zp+40;
+	end;
+end;
+
+procedure ShiftScreenData();
+begin
+	asm("
+		ldx #0
+loop_out:
+		inc $7C00,x
+		inc $7D00,x
+		inc $7E00,x
+		inc $7F00,x
+		inx
+		bne loop_out
+		
+	");		
+
+end;
+
+
+// Main initialization routine
+begin
+	asm(" sei");
+	RenderScreen();
+	while(true) do
+		ShiftScreenData();
+
+	Loop();
+end.
+
+/*
+begin
+
+
+	
+	asm("
+	
+	SEI
+	lda #65
+	ldy #0
+topp:	
+	STA $7C00,y
+	iny
+	cpy #0
+	bne topp
+	jmp *
+
+	");
+	
+end.
+*/

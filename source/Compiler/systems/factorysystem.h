@@ -17,6 +17,7 @@
 #include "systematari2600.h"
 #include "systematari520st.h"
 #include "systemamstradcpc464.h"
+#include "systembbcm.h"
 #include "systemcoleco.h"
 #include "source/LeLib/util/cinifile.h"
 
@@ -63,6 +64,8 @@ public:
             return new SystemColeco(settings, proj);
         if (type==AbstractSystem::MEGA65)
             return new SystemMEGA65(settings, proj);
+        if (type==AbstractSystem::BBCM)
+            return new SystemBBCM(settings, proj);
 
 
         return s;

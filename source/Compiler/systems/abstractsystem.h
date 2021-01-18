@@ -90,12 +90,12 @@ public:
         if (s == PX86) return "PX86";
         if (s == GBZ80) return "GBZ80";
         if (s == Z80) return "Z80";
-        qDebug() << "SYSTEM STRING NOT FOUND for system "<<s;
+        qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return "";
     }
 
     static QString StringFromProcessor(QString s) {
-        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "MEGA65") return "MOS6502";
+        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "MEGA65" || s == "BBCM") return "MOS6502";
         if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
         if (s == "X86") return "PX86";
         if (s == "GAMEBOY") return "GBZ80";

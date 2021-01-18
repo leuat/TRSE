@@ -123,6 +123,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemamstradcpc464.cpp \
     source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systematari520st.cpp \
+    source/Compiler/systems/systembbcm.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemok64.cpp \
@@ -136,6 +137,10 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/bbc/asmexception.cpp \
+    source/LeLib/bbc/discimage.cpp \
+    source/LeLib/bbc/globaldata.cpp \
+    source/LeLib/bbc/stringutils.cpp \
     source/LeLib/lglshowcases.cpp \
     source/LeLib/lglslideshow.cpp \
     source/LeLib/limage/lcolor.cpp \
@@ -328,6 +333,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemamstradcpc464.h \
     source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systematari520st.h \
+    source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemok64.h \
@@ -341,6 +347,10 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/bbc/asmexception.h \
+    source/LeLib/bbc/discimage.h \
+    source/LeLib/bbc/globaldata.h \
+    source/LeLib/bbc/stringutils.h \
     source/LeLib/lglshowcases.h \
     source/LeLib/lglslideshow.h \
     source/LeLib/limage/lcolor.h \

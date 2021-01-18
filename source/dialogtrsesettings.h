@@ -168,6 +168,8 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_btnBBCEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

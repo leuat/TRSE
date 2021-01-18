@@ -60,6 +60,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAtari2600Emulator->setText(m_ini->getString("atari2600_emulator"));
     ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
+    ui->leBBCEmulator->setText(m_ini->getString("bbc_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leAmstradCPC464->setText(m_ini->getString("amstradcpc464_emulator"));
@@ -152,6 +153,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
     m_ini->setString("atari2600_emulator", ui->leAtari2600Emulator->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
+    m_ini->setString("bbc_emulator", ui->leBBCEmulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc464_emulator", ui->leAmstradCPC464->text());
@@ -255,7 +257,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65";
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
@@ -628,5 +630,15 @@ void DialogTRSESettings::on_btnMega65Emulator_clicked()
 void DialogTRSESettings::on_pushButton_2_clicked()
 {
     Help("Mega65 emulator 'Xemu'", "TRSE needs to use the 'xemu' emulator in order to be able to inject programs. Download from https://github.lgb.hu/xemu/");
+
+}
+
+void DialogTRSESettings::on_btnBBCEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("BBC Emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leBBCEmulator->setText(filename);
+
 
 }

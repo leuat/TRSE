@@ -94,6 +94,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     QStringList params;
 
     QString name = "emulator_additional_parameters_"+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system);
+
     if (m_iniFile->contains(name)) {
         QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
         pl.removeAll("");
@@ -129,6 +130,11 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         params<< "-autostartprgmode" << "1";
 //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
+    if (m_projectIniFile->getString("system")=="BBCM") {
+        emu = m_iniFile->getString("bbc_emulator");
+        params<< "-0" << Util::getFileWithoutEnding(fileName) + ".ssd" <<"-b";
+//        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
+    }
     if (m_projectIniFile->getString("system")=="C128") {
         emu = m_iniFile->getString("c128_emulator");
 
@@ -139,9 +145,6 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     }
     if (m_projectIniFile->getString("system")=="GAMEBOY") {
         emu = m_iniFile->getString("gameboy_emulator");
-    }
-    if (m_projectIniFile->getString("system")=="BBCM") {
-        emu = m_iniFile->getString("bbcm_emulator");
     }
     if (m_projectIniFile->getString("system")=="SPECTRUM") {
         emu = m_iniFile->getString("spectrum_emulator");
@@ -195,6 +198,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 #endif
 #ifdef __APPLE__
         base = base.remove("x16emu");
+
 #endif
 #ifdef _WIN32
         base = base.toLower();
@@ -210,15 +214,6 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         params<< "-run" << "-prg";
 
     }
-
-    if (!QFile::exists(emu)) {
-        Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
-        ui->txtOutput->setText("Could not find the emulator for system '"+m_projectIniFile->getString("system")+"'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
-        "Example: VICE 'c64','c128','xvic', 'dosbox' or NES 'mednafen'.");
-        return;
-    }
-    QProcess process;
-
 #ifdef __APPLE__
         if (emu.toLower().endsWith(".app") || emu.toLower().endsWith(".app/")) {
             if (emu.endsWith("/"))
@@ -231,6 +226,14 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         }
 
 #endif
+    if (!QFile::exists(emu)) {
+        Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
+        ui->txtOutput->setText("Could not find the emulator for system '"+m_projectIniFile->getString("system")+"'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
+        "Example: VICE 'c64','c128','xvic', 'dosbox' or NES 'mednafen'.");
+        return;
+    }
+    QProcess process;
+
 
 
     if (m_projectIniFile->getString("system")=="VIC20" || m_projectIniFile->getString("system")=="C64" || m_projectIniFile->getString("system")=="C128")
@@ -242,7 +245,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
            params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
     }
 
-    if (!(m_projectIniFile->getString("system")=="TIKI100"))
+    if (!(m_projectIniFile->getString("system")=="TIKI100" || m_projectIniFile->getString("system")=="BBCM"))
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 
