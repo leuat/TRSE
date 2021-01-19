@@ -1,0 +1,37 @@
+unit Screen;
+var
+	sp,tp : pointer;
+	x,y,i,j : byte;
+	tab40 : array[screen_height] of byte = BuildTable("i*40");
+/**
+	Returns the screen pointer 
+**/
+function getScreenPointer() inline: integer;
+begin
+	asm("
+	lda $58
+	ldy $59
+	");
+end;
+
+/**
+
+Prints 
+
+**/
+procedure PrintString(x,y : global byte;tp: global pointer);
+begin
+	sp := getScreenPointer() + tab40[y]+x;	
+	
+	while (tp^<>0) do
+	begin
+		sp^ := tp^-32;
+		sp := sp +1;
+		tp := tp +1;
+	end;
+
+end;
+
+
+
+end.
