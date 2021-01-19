@@ -19,6 +19,7 @@
 #include "systemamstradcpc464.h"
 #include "systembbcm.h"
 #include "systemcoleco.h"
+#include "systematari800.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -66,6 +67,8 @@ public:
             return new SystemMEGA65(settings, proj);
         if (type==AbstractSystem::BBCM)
             return new SystemBBCM(settings, proj);
+        if (type==AbstractSystem::ATARI800)
+            return new SystemAtari800(settings, proj);
 
 
         return s;

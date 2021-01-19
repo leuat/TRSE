@@ -77,6 +77,72 @@ void AbstractSystem::InitLabelColors() {
 
 }
 
+AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
+    if (s.toLower()=="c64")
+        return C64;
+    if (s.toLower()=="c128")
+        return C128;
+    if (s.toLower()=="pet")
+        return PET;
+    if (s.toLower()=="vic20")
+        return VIC20;
+    if (s.toLower()=="nes")
+        return NES;
+    if (s.toLower()=="bbcm")
+        return BBCM;
+    if (s.toLower()=="amiga")
+        return AMIGA;
+    if (s.toLower()=="plus4")
+        return PLUS4;
+    if (s.toLower()=="ok64")
+        return OK64;
+    if (s.toLower()=="x16")
+        return X16;
+    if (s.toLower()=="x86")
+        return X86;
+    if (s.toLower()=="gameboy")
+        return GAMEBOY;
+    if (s.toLower()=="spectrum")
+        return SPECTRUM;
+    if (s.toLower()=="tiki100")
+        return TIKI100;
+    if (s.toLower()=="atari2600")
+        return ATARI2600;
+    if (s.toLower()=="atari520st")
+        return ATARI520ST;
+    if (s.toLower()=="amstradcpc464")
+        return AMSTRADCPC464;
+    if (s.toLower()=="coleco")
+        return COLECO;
+    if (s.toLower()=="mega65")
+        return MEGA65;
+    if (s.toLower()=="atari800")
+        return ATARI800;
+}
+
+QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
+    if (s == C64) return "C64";
+    if (s == PET) return "PET";
+    if (s == VIC20) return "VIC20";
+    if (s == NES) return "NES";
+    if (s == C128) return "C128";
+    if (s == BBCM) return "BBCM";
+    if (s == AMIGA) return "AMIGA";
+    if (s == PLUS4) return "PLUS4";
+    if (s == OK64) return "OK64";
+    if (s == X16) return "X16";
+    if (s == X86) return "X86";
+    if (s == GAMEBOY) return "GAMEBOY";
+    if (s == SPECTRUM) return "SPECTRUM";
+    if (s == TIKI100) return "TIKI100";
+    if (s == ATARI2600) return "ATARI2600";
+    if (s == ATARI520ST) return "ATARI520ST";
+    if (s == AMSTRADCPC464) return "AMSTRADCPC464";
+    if (s == COLECO) return "COLECO";
+    if (s == MEGA65) return "MEGA65";
+    if (s == ATARI800) return "ATARI800";
+}
+
 void AbstractSystem::AcceptDispatcherTick(QString val)
 {
     emit EmitTick(val);

@@ -5,9 +5,19 @@ var
 
 	i,time,j,k,m,x,y : byte=0;
 	zp:pointer;
+	
 @export "resources/images/image1.flf" "resources/images/image1.bin" 256
+@export "resources/images/image2.flf" "resources/images/image2.bin" 256
 
-	image_data : incbin("resources/images/image1.bin") compressed;
+	image_data1 : incbin("resources/images/image1.bin") compressed;
+	image_data2 : incbin("resources/images/image2.bin") compressed;
+
+
+procedure WaitABit();
+begin
+	for j:=0 to 16 do
+	for i:=0 to 255 do wait(200);
+end;
 
 
 begin
@@ -17,8 +27,14 @@ begin
 	Screen::SetPalette(#Screen::defaultPalette);	
 
 	// Clear the screen
-	Screen::FillBanks($4000,00,$40);	
+	Screen::FillBanks($4000,00,$50);	
 	// start filling stuff!
-	Compression::Decompress(#image_data, $4000);
-	Loop();
+	while (true) do
+	begin
+		Compression::Decompress(#image_data1, $4000);
+		WaitABit();
+		Compression::Decompress(#image_data2, $4000);
+		WaitABit();
+		
+	end;
 end.
