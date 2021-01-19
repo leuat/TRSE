@@ -653,3 +653,14 @@ void DialogTRSESettings::on_btnAtari800Emulator_clicked()
     if (filename!="")
         ui->leAtari800Emulator->setText(filename);
 }
+
+void DialogTRSESettings::on_pushButton_4_clicked()
+{
+    Help("Atari 800 emulator","Download from : https://github.com/atari800/atari800/releases");
+}
+
+void DialogTRSESettings::on_pushButton_3_clicked()
+{
+    Help("BBC 'B2' emulator","Download from : https://github.com/tom-seddon/b2/releases");
+
+}
