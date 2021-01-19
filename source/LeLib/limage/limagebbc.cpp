@@ -1,4 +1,4 @@
-#include "LImageBBC.h"
+#include "limagebbc.h"
 
 QVector<int> LImageBBC::table160 =  {
     0b00000000,

@@ -1,5 +1,5 @@
 program Tutorial1_helloWorld;
-@use "Screen"
+@use "screen"
 var
 	text : string = "HELLO ATARI TRSE WORLD!";
 

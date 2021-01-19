@@ -1,6 +1,6 @@
 program Tutorial3_Putpixel;
 var
-@use "Screen"
+@use "screen"
 @use "compression/compression"
 
 	i,time,j,k,m,x,y : byte=0;
