@@ -57,3 +57,5 @@ open_files = ,tutorial1.ras
 current_file = tutorial7_image.ras
 data_header_images/trse.flf = 0
 open_files =, tutorial1.ras
+open_files =, tutorial1.ras
+open_files =, tutorial1.ras

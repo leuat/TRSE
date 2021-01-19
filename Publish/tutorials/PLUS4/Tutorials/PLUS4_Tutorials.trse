@@ -42,3 +42,5 @@ zeropage_colormemory = $fc
 open_files =, Hello.ras
 open_files =, Hello.ras
 open_files =, Hello.ras
+open_files =, Hello.ras
+open_files =, Hello.ras

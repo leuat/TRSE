@@ -46,3 +46,4 @@ echo "open_files =, demo.ras" >> GAMEBOY/yo-grl/yo-grl.trse
 echo "open_files =, tutorial1.ras" >> AMIGA/tutorials/tutorials.trse
 echo "open_files =, tut1.ras" >> AMSTRADCPC464/tutorials/amstrad_tutorials.trse
 echo "open_files =, main.ras" >> AMSTRADCPC464/Morketid/morketid.trse
+echo "open_files =, tutorial1_helloworld.ras" >> ATARI800/Tutorials/Tutorials.trse

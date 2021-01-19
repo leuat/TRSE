@@ -60,3 +60,5 @@ open_files = ,demo.ras
 project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/VIC20/PurplePlanetYo/
 current_file = demo.asm
 open_files =, demo.ras
+open_files =, demo.ras
+open_files =, demo.ras

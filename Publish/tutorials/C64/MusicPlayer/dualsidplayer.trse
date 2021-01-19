@@ -39,3 +39,5 @@ zeropage_colormemory = $fc
 open_files =, player.ras
 open_files =, player.ras
 open_files =, player.ras
+open_files =, player.ras
+open_files =, player.ras
