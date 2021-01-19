@@ -1,7 +1,5 @@
 #include "systembbcm.h"
-#include "source/LeLib/bbc/globaldata.h"
-#include "source/LeLib/bbc/discimage.h"
-
+#include "source/LeLib/bbc/asmexception.h"
 SystemBBCM::SystemBBCM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj)
 {
     m_processor = MOS6502;
@@ -27,25 +25,47 @@ void SystemBBCM::PostProcess(QString &text, QString filename, QString currentDir
     GlobalData::Instance().SetUseDiscImage( true );
     GlobalData::Instance().SetBootFile("CODE");
     DiscImage* di = new DiscImage(diskFileName.toStdString().c_str(),nullptr);
-    QByteArray data = Util::loadBinaryFile(filename+".prg");
-    unsigned char d[0x10000];
-    for (int i=0;i<data.count();i++)
-        d[i] = data[i];
-    di->AddFile("CODE",
-                d,
-                0x1100,0x1100,data.count()
-                );
+    AddFileToDisk(di, filename+".prg", "CODE", 0x1100);
+    if (m_projectIni->getString("d64_paw_file")!="none") {
+        BuildDiskFiles(di,currentDir,"d64_paw_file");
+    }
+
 
     delete di;
-    // Second pass
-/*    di = nullptr;
-    di = new DiscImage(diskFileName.toStdString().c_str(),diskFileName.toStdString().c_str());
-
-*/
-  //  delete di;
     GlobalData::Destroy();
 
 }
+
+bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData)
+{
+
+    QString pawFile = m_projectIni->getString(iniData);
+    CIniFile paw;
+    paw.Load(currentDir + "/"+pawFile);
+    QStringList data = paw.getStringList("data");
+    int count = data.count()/3;
+
+    for (int i=0;i<count;i++) {
+        QString orgFileName = data[3*i+1];
+
+        QString name = data[3*i];
+
+        int address = Util::NumberFromStringHex( data[3*i+2]);
+        QString fn = currentDir+"/"+orgFileName;
+        if (!QFile::exists(fn)) {
+            m_buildSuccess = false;
+
+            return false;
+        }
+        try {
+            AddFileToDisk(di,fn,name,address);
+        } catch (AsmException_FileError e) {
+            qDebug() << "ERROR when adding file '"+name+"' to disk : " <<e.Message();
+        }
+    }
+
+}
+
 
 void SystemBBCM::DefaultValues()
 {
@@ -53,5 +73,20 @@ void SystemBBCM::DefaultValues()
     m_programStartAddress = 0x1100;
     m_ignoreSys = true;
     m_stripPrg = true;
+
+}
+
+void SystemBBCM::AddFileToDisk(DiscImage *di, QString filename, QString name, int address)
+{
+    QByteArray data = Util::loadBinaryFile(filename);
+    unsigned char d[0x10000];
+    for (int i=0;i<data.count();i++)
+        d[i] = data[i];
+
+    di->AddFile(name.toStdString().c_str(),
+                d,
+                address,address,data.count()
+                );
+
 
 }

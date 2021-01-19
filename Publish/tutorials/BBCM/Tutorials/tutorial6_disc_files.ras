@@ -1,0 +1,37 @@
+program Tutorial6_disc_files;
+@use "screen"
+@use "files"
+
+var
+
+/*
+	The files specified and named in the "disk1.paw" TRSE resource file is automatically
+	added to the disc on build. 
+
+	This file simply loads 1 image file and then promptly loads the next!
+
+*/
+
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+@export "resources/images/image2.flf" "resources/images/image2.bin" 256
+
+	image1 : string=("IMAGE1",$0D);
+	image2 : string=("IMAGE2",$0D);
+
+
+
+begin
+	Screen::ResetStack();
+	Screen::Init();
+	RasterIRQ(Screen::DefaultIRQ());
+	Screen::SetMode2();
+	Screen::StartInterrupts();
+	Screen::SetPalette(#Screen::defaultPalette);	
+	// Clear the screen
+	Screen::FillBanks($4000,00,$40);	
+	while(true) do
+	begin	
+		Files::LoadFile(#image1, $4000);
+		Files::LoadFile(#image2, $4000);
+	end;
+end.
