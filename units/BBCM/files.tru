@@ -1,0 +1,28 @@
+unit Files;
+var
+	osfile : array[18] of byte;	
+
+
+procedure LoadFile(addr_file, addr_load : integer);
+begin
+	osfile[0] := lo(#addr_file);
+	osfile[1] := hi(#addr_file);
+	
+	osfile[2] := lo(#addr_load);
+	osfile[3] := hi(#addr_load);
+	
+	osfile[6] := lo(#addr_load);
+	osfile[7] := hi(#addr_load);
+	
+	asm("
+		ldx #<Files_osfile	
+		ldy #>Files_osfile	
+		lda #$FF
+		jsr $FFDD
+	");
+	
+end;
+
+
+
+end.
