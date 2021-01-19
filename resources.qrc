@@ -566,5 +566,6 @@
         <file>resources/images/tutorials/cheesy.gif</file>
         <file>resources/images/tutorials/escape.png</file>
         <file>resources/images/trse_optic.png</file>
+        <file>resources/images/ATARI800.png</file>
     </qresource>
 </RCC>

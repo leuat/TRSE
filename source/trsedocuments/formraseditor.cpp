@@ -152,6 +152,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="PLUS4") {
         emu = m_iniFile->getString("plus4_emulator");
     }
+    if (m_projectIniFile->getString("system")=="ATARI800") {
+        emu = m_iniFile->getString("atari800_emulator");
+        params<< Util::getFileWithoutEnding(fileName) + ".xex";
+    }
 
     if (m_projectIniFile->getString("system")=="OK64") {
         emu = m_iniFile->getString("ok64_emulator");
@@ -245,7 +249,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
            params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
     }
 
-    if (!(m_projectIniFile->getString("system")=="TIKI100" || m_projectIniFile->getString("system")=="BBCM"))
+    if (!(m_projectIniFile->getString("system")=="TIKI100" || m_projectIniFile->getString("system")=="BBCM" || m_projectIniFile->getString("system")=="ATARI800"))
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 

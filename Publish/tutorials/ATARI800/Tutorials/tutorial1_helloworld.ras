@@ -1,0 +1,9 @@
+program Tutorial1_helloWorld;
+@use "Screen"
+var
+	text : string = "HELLO ATARI TRSE WORLD!";
+
+begin
+	Screen::PrintString(5,5,#text);
+	Loop(); 
+end.

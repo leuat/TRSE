@@ -200,6 +200,7 @@ void Parser::InitBuiltinFunctions()
             Syntax::s.m_currentSystem->m_system == AbstractSystem::NES ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::PET ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::X16 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65 ||

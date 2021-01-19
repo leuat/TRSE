@@ -572,6 +572,7 @@ DISTFILES += \
     resources/code/x86/init_cga_scanlines.asm \
     resources/code/x86/init_playnote.asm \
     resources/images/AMIGA.png \
+    resources/images/ATAR800.png \
     resources/images/ATARI520ST.png \
     resources/images/OK64.jpg \
     resources/images/OK64.png \

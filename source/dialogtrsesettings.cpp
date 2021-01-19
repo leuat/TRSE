@@ -61,6 +61,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->leBBCEmulator->setText(m_ini->getString("bbc_emulator"));
+    ui->leAtari800Emulator->setText(m_ini->getString("atari800_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leAmstradCPC464->setText(m_ini->getString("amstradcpc464_emulator"));
@@ -154,6 +155,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("atari2600_emulator", ui->leAtari2600Emulator->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("bbc_emulator", ui->leBBCEmulator->text());
+    m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc464_emulator", ui->leAmstradCPC464->text());
@@ -257,7 +259,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
@@ -641,4 +643,13 @@ void DialogTRSESettings::on_btnBBCEmulator_clicked()
         ui->leBBCEmulator->setText(filename);
 
 
+}
+
+void DialogTRSESettings::on_btnAtari800Emulator_clicked()
+{
+
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Atari 800 Emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leAtari800Emulator->setText(filename);
 }

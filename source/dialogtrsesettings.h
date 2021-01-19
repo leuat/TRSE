@@ -170,6 +170,8 @@ private slots:
 
     void on_btnBBCEmulator_clicked();
 
+    void on_btnAtari800Emulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };
