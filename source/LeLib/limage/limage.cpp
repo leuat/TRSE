@@ -29,7 +29,7 @@
 #include <QPainter>
 #include <QMatrix4x4>
 #include "source/Compiler/syntax.h"
-#include <omp.h>
+//#include <omp.h>
 uchar LImage::m_copy[1024*1024];
 bool LImage::m_hasCopy = false;
 
