@@ -11,7 +11,7 @@ public:
     LImageBBC(LColorList::Type t);
 
 
-    static QVector<int> table160;
+    static QVector<int> table160, tablemode5;
 
 
 
@@ -22,8 +22,8 @@ public:
 
     virtual void SetMode();
     int m_colors;
-    int m_bpp;
     int m_mode;
+    int m_bpp;
     virtual void InitPens() override;
 
     void setPixel(int x, int y, unsigned int color) override;
@@ -34,7 +34,12 @@ public:
 
     void ExportBin(QFile& ofile) override;
     void LoadBin(QFile& file) override;
+    void SaveBin(QFile& file) override;
 
+    int getMode();
+    QString getMetaInfo() override;
+    void InitAfterFooter() override;
+    void InitColors();
 
 };
 

@@ -30,7 +30,7 @@ begin
 			x := sinx[j];
 			y := siny[j+m];
 			j:=j+1;
-			Screen::PutPixel(x,y,i&15);
+			Screen::PutPixelMode2(x,y,i&15);
 		end;	
 //		Screen::WaitForVerticalSync();
 		
@@ -41,7 +41,7 @@ begin
 			x := sinx[j];
 			y := siny[j+m];
 			j:=j+1;
-			Screen::PutPixel(x,y,0);
+			Screen::PutPixelMode2(x,y,0);
 		end;	
 		if (time&3=1) then 
 			m:=m+1;

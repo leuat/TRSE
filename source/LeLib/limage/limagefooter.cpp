@@ -47,6 +47,7 @@ bool LImageFooter::Load(QFile &f) {
         set(POS_CURRENT_DISPLAY_X,1);
     if (get(POS_CURRENT_DISPLAY_Y)==0)
         set(POS_CURRENT_DISPLAY_Y,1);
+
     return true;
 }
 

@@ -90,6 +90,7 @@ LImage* LImageIO::Load(QString filename)
     img->LoadBin(file);
     img->m_footer.Load(file);
     img->m_colorList.FooterToPen(&img->m_footer);
+    img->InitAfterFooter();
     file.close();
     return img;
 }

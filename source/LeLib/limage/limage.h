@@ -135,6 +135,7 @@ public:
     MetaParameter* getMetaParameter(QString name);
     virtual QString getMetaInfo() { return "";}
 
+    virtual void InitAfterFooter() {}
     virtual LColorList::Type getColorType() {
         return m_colorList.m_type;
     }

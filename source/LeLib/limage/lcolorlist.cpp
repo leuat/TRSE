@@ -379,7 +379,7 @@ void LColorList::Initialize(Type t)
     if (m_type == Type::AMSTRADCPC)
         InitAmstradCPC();
     if (m_type == Type::BBC)
-        InitBBC();
+        InitBBC(16);
 
 
     m_metric = new LinearMetric();
@@ -813,7 +813,7 @@ void LColorList::InitAmstradCPC()
     InitPalettePens(16);
 }
 
-void LColorList::InitBBC()
+void LColorList::InitBBC(int noPens)
 {
     m_list.clear();
     m_list.append(LColor(QColor(0,0,0),"Black"));
@@ -825,7 +825,7 @@ void LColorList::InitBBC()
     m_list.append(LColor(QColor(0x00,0xFF,0xFF),"Cyan"));
     m_list.append(LColor(QColor(0xFF,0xFF,0xFF),"White"));
     m_pens.clear();
-    for (int i=0;i<16;i++) {
+    for (int i=0;i<noPens;i++) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i&7,"",LPen::Dropdown, m_bpp)));
     }
 

@@ -1,0 +1,44 @@
+Unit Player;
+
+@ifndef PLAYER_LOCATION 
+
+@error "Please define 'PLAYER_LOCATION' to be either 0, 1 or 2. "
+
+@endif 
+
+var
+	// Players located in the BIN dir
+@if PLAYER_LOCATION = 2	
+	player: incbin("bin/player4C00.bin", $4C00);
+	@define PLAYER_INIT $4F00
+	@define PLAYER_PLAY $4F07
+@endif
+
+@if PLAYER_LOCATION = 1	
+	player: incbin("bin/player3000.bin", $3000);
+	@define PLAYER_INIT $3300
+	@define PLAYER_PLAY $3307
+@endif
+
+@if PLAYER_LOCATION = 0
+	player: incbin("bin/player4C00.bin", $2000);
+	@define PLAYER_INIT $2300
+	@define PLAYER_PLAY $2307
+@endif
+
+procedure PlayMusic();
+begin
+	call(^@PLAYER_PLAY);
+end;
+
+procedure InitMusic(zp:pointer);
+begin
+	asm("
+  	  ldx Player_zp
+    	  ldy Player_zp+1
+    	  jsr @PLAYER_INIT
+  	");
+end;
+
+
+end.

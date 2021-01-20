@@ -132,7 +132,7 @@ public:
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
     void InitAmstradCPC();
-    void InitBBC();
+    void InitBBC(int noColors);
     void UpdateColors();
     void LoadFromFile(QString fileName);
 

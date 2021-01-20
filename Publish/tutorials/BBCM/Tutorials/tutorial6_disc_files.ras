@@ -23,15 +23,15 @@ var
 begin
 	Screen::ResetStack();
 	Screen::Init();
+	Screen::FillBanks($5800,00,$28);	
 	RasterIRQ(Screen::DefaultIRQ());
-	Screen::SetMode2();
+	Screen::SetMode5();
 	Screen::StartInterrupts();
-	Screen::SetPalette(#Screen::defaultPalette);	
+	Screen::SetMode5Palette(#Screen::colorsRedBlue);	
 	// Clear the screen
-	Screen::FillBanks($4000,00,$40);	
 	while(true) do
 	begin	
-		Files::LoadFile(#image1, $4000);
-		Files::LoadFile(#image2, $4000);
+		Files::LoadFile(#image1, $5800);
+		Files::LoadFile(#image2, $5800);
 	end;
 end.

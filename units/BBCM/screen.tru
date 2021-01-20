@@ -4,20 +4,30 @@ var
 	vsync : byte ;
 
 	crtc_mode2_org: array[13] of byte=(
-	127,64,91,40,38,0,32,34,0,7,32,8,8, 0);	
+	127,64,91,40,38,0,32,34,0,7,32,8,6, 0);	
 
 	crtc_mode2: array[13] of byte=(
-	127,80,98,40,38,0,32,34,0,7,67,8,8, 0);	
+	127,80,98,40,38,0,   32,34,0,7,67,8,6, 0);	
 
+	crtc_mode5: array[13] of byte=(
+$3F,$28,$31,$24,$26,$00,
+$20,$22,$01,$07,$67,$08, $B,0);
+
+
+	colorsBlue : array[4] of byte = (1,2,3,7); // cyan, purple, blue, black
+	colorsRed : array[4] of byte = (0,4,6,7); // white, yellow, red, black
+	colorsRedBlue : array[4] of byte = (0,6,3,7); // white, 
 
 	defaultPalette : array[16] of byte = BuildTable("(i&7)*0x10 + (i^7)");
-	
-	ytab : array[300] of integer = BuildTable("0x4000 + (i&7) + Math.floor(i/8.0)*80*8");
+	palette: array[16] of byte = (
+$A0, $B0, $E0, $F0, $84, $94, $C4, $D4, $26, $36, $66, $76, $07, $17, $47, $57);
+	ytabMode2 : array[256] of integer = BuildTable("0x3000 + (i&7) + Math.floor(i/8.0)*80*8");
+	ytabMode5 : array[256] of integer = BuildTable("0x5800 + (i&7) + Math.floor(i/8.0)*40*8");
 	xtab : array[200] of integer = BuildTable("i*8");
 
-	i,x,y : byte;
-
-	zp,screenPtr : pointer;
+	i,x,y,j : byte;
+	ppx, ppy, ppc,ppz: byte;
+	zp,screenPtr,irqProcedure : pointer;
 	
 	pixel1Tab : array[16] of byte = (
 	%00000000,
@@ -74,6 +84,11 @@ var
 	EQUB LO(&4000/8)	; R13 screen start address, low
 */
 
+procedure Nada();
+begin
+
+end;
+
 procedure ResetStack() inline; // Must be inline, rts fails
 begin
 	asm("
@@ -87,9 +102,8 @@ begin
 end;
 
 
-procedure PointToY(y:global byte);
+procedure PointToY(zp:global pointer;y:global byte);
 begin
-	zp:=#ytab;
 	if (y>=128) then 
 	begin
 		y:=y-128;
@@ -108,11 +122,12 @@ begin
 
 end;
 
-procedure PointToXY(px,py:byte) inline;
+procedure PointToXY(zp:global pointer;px,py:byte) inline;
 begin
-	PointToY(py);
+	PointToY(zp, py);
 	screenPtr := screenPtr + xtab[px];	
 end;
+
 
 
 procedure SetMode(zp:global pointer);
@@ -159,10 +174,34 @@ begin
 	
 end;
 
-procedure PutPixel(ppx, ppy, ppc : byte);
+procedure SetMode5();
 begin
-	PointToY(ppy);
+	SetMode(#crtc_mode5);
+	asm("
+	; Set up video ULA for MODE 2
+	LDA #$C4
+	STA $FE20
+	");
+	
+end;
+
+procedure PutPixelMode2(ppx, ppy, ppc : global byte);
+begin
+	PointToY(#ytabMode2, ppy);
 	screenPtr := screenPtr + xtab[ppx/2];
+	if (ppx&0=1) then
+		i:=(screenPtr^&%01010101) | pixel2Tab[ppc]
+	else	
+		i:=(screenPtr^&%10101010) | pixel1Tab[ppc];
+	
+	screenPtr^ := i;
+
+end;
+
+procedure PutPixelMode5(ppx, ppy, ppc : global byte);
+begin
+	PointToY(#ytabMode5, ppy);
+	screenPtr := screenPtr + xtab[ppx/4];
 	if (ppx&0=1) then
 		i:=(screenPtr^&%01010101) | pixel2Tab[ppc]
 	else	
@@ -183,11 +222,12 @@ begin
 	STA $FE4E			; enable VSync and timer interrupt
 	LDA #$0F
 	STA $FE42			; set addressable latch for writing
-	LDA #3
-	STA $FE40			; keyboard write enable
+;	LDA #3
+;	STA $FE40			; keyboard write enable
 	LDA #0
 	STA $FE4B			; timer 1 one shot mode
 	");
+	irqProcedure := #Nada();
 end;
 
 
@@ -217,6 +257,22 @@ palloop_copy
 end;
 
 
+procedure SetMode5Palette(zp:global pointer);
+begin
+	for i:=0 to 16 do
+	begin
+		j:=(palette[i])&$F0; 
+		j:=j + zp[i>>2];
+		palette[i] := j;	
+	end;
+	SetPalette(#palette);
+end;
+
+
+
+
+
+
 interrupt DefaultIRQ();
 begin
 	asm("
@@ -231,7 +287,10 @@ irqtimer
 	STA $FE4D
 	INC Screen_vsync
 
-		
+	");
+	call(irqProcedure);
+
+	asm("	
 ;	LDA Screen_vsync ; some color
 ;	and #15
 ;	STA $FE21

@@ -706,8 +706,13 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
-    if (!QFile::exists(filename))
-        ErrorHandler::e.Error("Could not locate binary file for inclusion :" +filename, node->m_op.m_lineNumber);
+    if (!QFile::exists(filename)) {
+
+        filename = Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator()+  t->m_filename.replace("\\","/");        //Test in Units name
+        if (!QFile::exists(filename))
+            ErrorHandler::e.Error("Could not locate binary file for inclusion :" +t->m_filename, node->m_op.m_lineNumber);
+
+    }
 
     int size=0;
     QFile f(filename);
