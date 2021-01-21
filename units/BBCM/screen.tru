@@ -275,9 +275,13 @@ end;
 
 interrupt DefaultIRQ();
 begin
+	StartIRQ(0);
 	asm("
 timerlengthHi		= $34
 timerlengthLo		= 00
+
+	
+
 	
 	LDA $FE4D
 	AND #2
@@ -294,21 +298,19 @@ irqtimer
 ;	LDA Screen_vsync ; some color
 ;	and #15
 ;	STA $FE21
-	
-	LDA $FC
-	RTI
-	
-irqvsync
+	");	
+	CloseIRQ();	
+	returninterrupt();
+	asm("
+irqvsync:
 	STA $FE4D
 	LDA timerlengthLo
 	STA $FE44
 	LDA timerlengthHi
 	STA $FE45
-
-
-	LDA $FC
-	RTI
 	");
+
+	CloseIRQ();
 end;
 
 

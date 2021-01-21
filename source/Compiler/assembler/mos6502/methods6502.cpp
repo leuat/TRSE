@@ -4581,7 +4581,7 @@ void Methods6502::StartIRQ(Assembler *as)
 {
     as->Comment("StartIRQ");
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM) {
         as->Asm("pha");
         as->Asm("txa");
         as->Asm("pha");
@@ -4670,7 +4670,7 @@ void Methods6502::StartIRQWedge(Assembler *as)
 void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 {
     as->Comment("CloseIRQ");
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES || Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM) {
 
 
         as->Asm("pla");
@@ -4678,6 +4678,8 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
         as->Asm("pla");
         as->Asm("tax");
         as->Asm("pla");
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM)
+            as->Asm("lda $fc");
 
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64  || Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {

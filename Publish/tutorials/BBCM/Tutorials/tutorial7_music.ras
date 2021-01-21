@@ -49,6 +49,7 @@ begin
 	
 	// Init music player
 	Player::InitMusic(#music);
+	// Sets the IRQ procedure to point to the music player!
 	Screen::irqProcedure := #Player::PlayMusic;
 	
 	while(true) do

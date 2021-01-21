@@ -20,7 +20,7 @@ begin
 	// Clear the screen
 	Screen::FillBanks($4000,00,$40);	
 	m:=64;
-	
+	//Screen::DisableInterrupt();	
 	While(true) do
 	begin
 		inc(time);

@@ -127,7 +127,12 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::BBCM) {
-        Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+        //Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+        QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
+        StartMemoryBlock(org);
+        m_currentBlock->m_isMainBlock = true;
+        m_mainBlock = m_currentBlock;
+        m_source+=m_startInsertAssembler;
         return;
     }
 

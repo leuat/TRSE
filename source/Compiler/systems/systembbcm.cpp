@@ -9,7 +9,9 @@ SystemBBCM::SystemBBCM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
     m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
     m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));
 
-    m_labels.append(SystemLabel(SystemLabel::SCREEN,"Screen bank 0",0x4000,0x7FFF));
+    m_labels.append(SystemLabel(SystemLabel::SCREEN,"Screen Mode 5",0x5800,0x7FFF));
+
+    m_labels.append(SystemLabel(SystemLabel::KERNAL,"System",0x200,0x1100));
 
     m_systemColor = QColor(120,100,80);
 
@@ -73,6 +75,7 @@ void SystemBBCM::DefaultValues()
     m_programStartAddress = 0x1100;
     m_ignoreSys = true;
     m_stripPrg = true;
+    m_memorySize = 65536/2;
 
 }
 

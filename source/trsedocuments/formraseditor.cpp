@@ -133,6 +133,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="BBCM") {
         emu = m_iniFile->getString("bbc_emulator");
         params<< "-0" << Util::getFileWithoutEnding(fileName) + ".ssd" <<"-b";
+
 //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
     if (m_projectIniFile->getString("system")=="C128") {
