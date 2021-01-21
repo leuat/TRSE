@@ -111,7 +111,7 @@ public:
     QVector<QString> m_ignoreMethods;
     QSharedPointer<Lexer> m_lexer;
     Token m_currentToken, m_lastStartBlockToken;
-    QString m_inCurrentProcedure="";
+    QString m_inCurrentProcedure="main";
     bool m_isTRU = false;
     int PASS_PREPRE = 0;
     int PASS_PRE = 1;

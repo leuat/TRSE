@@ -5,8 +5,8 @@ Unit Player;
 @error "Please define 'PLAYER_LOCATION' to be either 0, 1 or 2. "
 
 @endif 
-
 var
+
 	// Players located in the BIN dir
 @if PLAYER_LOCATION = 2	
 	player: incbin("bin/player4C00.bin", $4C00);
@@ -33,6 +33,7 @@ end;
 
 procedure InitMusic(zp:pointer);
 begin
+	zp:=0;
 	asm("
   	  ldx Player_zp
     	  ldy Player_zp+1

@@ -845,7 +845,7 @@ void Parser::RemoveUnusedProcedures()
         // Make sure none of the parents are unused!
         if (isUsed) {
             // Only optimize away non-interrupts
-//            qDebug() << np->m_procName <<np->m_isUsedBy;
+//            qDebug() << "TESTING " <<np->m_procName <<np->m_isUsedBy;
             if (np->m_type==0 && !np->m_isUsedBy.contains("main")) {
                 isUsed = false; // Assume not used after all
                 for (auto s : np->m_isUsedBy) {
@@ -859,7 +859,7 @@ void Parser::RemoveUnusedProcedures()
                 }
             }
         }
-//        qDebug() << "After " <<isUsed;
+ //       qDebug() << "After " <<np->m_procName<<isUsed;
 
         if ((isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
             procs.append(n);
@@ -867,7 +867,7 @@ void Parser::RemoveUnusedProcedures()
             outputUnusedWarning = true;
             removeProcedures+=np->m_procName + ",";
             m_removedProcedures << np->m_procName;
-//            qDebug() << "REMOVING procedure " <<np->m_procName;
+  //          qDebug() << "REMOVING procedure " <<np->m_procName;
 //            if (m_procedures.contains(np->m_procName))
   //              m_procedures.remove(np->m_procName);
         }
@@ -906,10 +906,11 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
                     if (s->isUsedBy.count()>0)
                         isUsed = true;
 
-                    if (isUsed)
-                        qDebug() << "Used: " << s->m_name << s->isUsed <<s->isUsedBy;
+ //                   if (isUsed)
 
                 }
+//                qDebug() << "Used: " << s->m_name << isUsed <<s->isUsedBy;
+
                 if (!isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
                     removedSymbols.append(val);
                     m_symTab->m_symbols.remove(val);
