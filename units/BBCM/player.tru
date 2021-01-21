@@ -33,7 +33,6 @@ end;
 
 procedure InitMusic(zp:pointer);
 begin
-	zp:=0;
 	asm("
   	  ldx Player_zp
     	  ldy Player_zp+1

@@ -27,7 +27,8 @@ $A0, $B0, $E0, $F0, $84, $94, $C4, $D4, $26, $36, $66, $76, $07, $17, $47, $57);
 
 	i,x,y,j : byte;
 	ppx, ppy, ppc,ppz: byte;
-	zp,screenPtr,irqProcedure : pointer;
+	zp,screenPtr : pointer;
+	irqProcedure : pointer at $FE;
 	
 	pixel1Tab : array[16] of byte = (
 	%00000000,
