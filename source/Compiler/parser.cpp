@@ -867,6 +867,7 @@ void Parser::RemoveUnusedProcedures()
             outputUnusedWarning = true;
             removeProcedures+=np->m_procName + ",";
             m_removedProcedures << np->m_procName;
+//            qDebug() << "REMOVING procedure " <<np->m_procName;
 //            if (m_procedures.contains(np->m_procName))
   //              m_procedures.remove(np->m_procName);
         }
@@ -897,17 +898,16 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
                 QSharedPointer<Symbol> s = m_symTab->m_symbols[val];//m_symTab->Lookup(,0);
 //                qDebug() << s->m_type;
-                bool isUsed = s->isUsed;
-
-                if (isUsed) {
+                bool isUsed = false;
+                if (s->isUsed) {
                     for (QString p: m_removedProcedures)
                         if (s->isUsedBy.contains(p))
                             s->isUsedBy.removeAll(p);
                     if (s->isUsedBy.count()>0)
                         isUsed = true;
 
-                //    if (isUsed)
-                  //      qDebug() << "Used: " << s->m_name << s->isUsed <<s->isUsedBy;
+                    if (isUsed)
+                        qDebug() << "Used: " << s->m_name << s->isUsed <<s->isUsedBy;
 
                 }
                 if (!isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
