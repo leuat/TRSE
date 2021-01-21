@@ -88,7 +88,6 @@ public:
 
     QSharedPointer<AbstractSystem> m_currentSystem;
     bool m_ignoreSys = false;
-    bool m_stripPrg = false;
     void Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj);
     void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
     void SetupIllegalVariables();

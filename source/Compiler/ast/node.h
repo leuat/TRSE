@@ -49,6 +49,7 @@ public:
     QString m_comment = "";
     BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
     bool m_isUsed = false;
+    QStringList m_isUsedBy;
     bool m_forceAddress = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
     int m_forcePage = 0;

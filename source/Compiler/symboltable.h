@@ -46,6 +46,7 @@ class Symbol {
 public:
     QString m_name;
     QString m_type;
+    static QString s_currentProcedure;
     TokenType::Type m_arrayType;
     // For records
     QString m_arrayTypeText;
@@ -57,6 +58,8 @@ public:
     int m_bank = 0;
     QString m_fileName;
     bool isUsed = false;
+    void setIsUsed();
+    QStringList isUsedBy;
     QSharedPointer<PVar> m_value = nullptr;
     TokenType::Type getTokenType();
     Symbol(QString name, QString type="");

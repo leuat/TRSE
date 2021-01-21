@@ -93,6 +93,7 @@ public:
     bool m_hasBeenApplied = false;
     QString m_vicMemoryConfig;
     QString m_currentDir, m_currentFileShort;
+    QStringList m_removedProcedures;
     QVector<QStringList> m_obsoleteWarnings;
     QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;

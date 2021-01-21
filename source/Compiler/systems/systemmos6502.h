@@ -17,8 +17,6 @@ public:
 
     }
 
-    bool m_ignoreSys = false;
-    bool m_stripPrg = false;
     MachineCodeAnalyzer m_mca;
 
 

@@ -69,7 +69,9 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
     int orgFileSize = QFile(filename+".prg").size();
 
-    if (Syntax::s.m_stripPrg)
+//    qDebug() << "MOS " << Syntax::s.m_stripPrg << Syntax::s.m_ignoreSys;
+
+    if (Syntax::s.m_currentSystem->m_stripPrg)
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
 

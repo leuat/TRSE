@@ -24,6 +24,8 @@
 
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
+QString Symbol::s_currentProcedure = "";
+
 //QString SymbolTable::m_gPrefix = "";
 //QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
 
@@ -219,7 +221,10 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 
 
     }
-
+/*
+    for (QString t : m_symbols.keys())
+        qDebug() << m_symbols[t]->isUsedBy;
+*/
 }
 
 void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
@@ -434,7 +439,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
     if ((name.startsWith("$")) && !m_symbols.contains(name) ) {
         //            qDebug() << "Creating new symbol:" << name;
         QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(name, "address"));
-        s->isUsed = true;
+        s->setIsUsed();
         m_symbols[name] = s;
         return s;
     }
@@ -460,16 +465,18 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 //    qDebug() << "ISUSED " <<  name;
     if (m_symbols.contains(localName)) {
     //    qDebug() << "Found local name " << localName;
-        m_symbols[localName]->isUsed = true;
+        m_symbols[localName]->setIsUsed();
+
         if (m_symbols.contains(name))
-            m_symbols[name]->isUsed = true;
+            m_symbols[name]->setIsUsed();
         return m_symbols[localName];
 
     }
     if (m_symbols[name]==nullptr)
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>", lineNumber);
 
-    m_symbols[name]->isUsed = true;
+    m_symbols[name]->setIsUsed();
+
     return m_symbols[name];
 }
 
@@ -489,6 +496,17 @@ QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name) {
     return nullptr;
 }
 
+
+void Symbol::setIsUsed()
+{
+    isUsed = true;
+    if (Symbol::s_currentProcedure!="")
+    if (!isUsedBy.contains(Symbol::s_currentProcedure))
+        isUsedBy<<Symbol::s_currentProcedure;
+
+//    qDebug() <<"SYMBOLTABLE : "<< m_name <<isUsedBy;
+
+}
 
 TokenType::Type Symbol::getTokenType() {
     //qDebug() << "gettokentype: " <<m_name <<" : "<<m_type;

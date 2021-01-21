@@ -154,19 +154,21 @@ void Compiler6502::Init6502Assembler()
         Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
         Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
-        Syntax::s.m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
+        Syntax::s.m_currentSystem->m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
         if (Syntax::s.m_ignoreSys)
             Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->m_programStartAddress;
     } else {
-        Syntax::s.m_ignoreSys = false;
-        Syntax::s.m_stripPrg = false;
+        Syntax::s.m_currentSystem->DefaultValues();
+//        Syntax::s.m_ignoreSys = false;
+ //       Syntax::s.m_stripPrg = false;
 
     }
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI2600) {
+   /* if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI2600 ||
+          Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI2600  ) {
         Syntax::s.m_ignoreSys = true;
         Syntax::s.m_stripPrg = true;
 
-    }
+    }*/
 
 /*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         Syntax::s.m_ignoreSys = true;

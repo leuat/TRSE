@@ -37,7 +37,8 @@ void ImageLevelEditor::SetLevel(QPoint f)
 //    qDebug() << "Current colors:";
 
     for (int i=0;i<3;i++)
-        m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
+        if (i<m_currentLevel->m_ExtraData.count())
+           m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
 
 //        qDebug() << QString::number(m_currentLevel->m_ExtraData[i]);
     if (m_charset==nullptr)
@@ -45,17 +46,18 @@ void ImageLevelEditor::SetLevel(QPoint f)
 
     m_colorList.m_ignoreSetIsMulti = true;
 
-    if (!(m_type==LImage::LevelEditorNES || m_type==LImage::LevelEditorGameboy )) {
-        m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
-        m_charset->SetColor(m_currentLevel->m_ExtraData[1], 1);
-        m_charset->SetColor(m_currentLevel->m_ExtraData[2], 2);
+    if (m_currentLevel->m_ExtraData.count()>=3) {
+        if (!(m_type==LImage::LevelEditorNES || m_type==LImage::LevelEditorGameboy )) {
+            m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
+            m_charset->SetColor(m_currentLevel->m_ExtraData[1], 1);
+            m_charset->SetColor(m_currentLevel->m_ExtraData[2], 2);
+        }
+        else {
+            SetColor(m_currentLevel->m_ExtraData[0], 0);
+            SetColor(m_currentLevel->m_ExtraData[1], 1);
+            SetColor(m_currentLevel->m_ExtraData[2], 2);
+        }
     }
-    else {
-        SetColor(m_currentLevel->m_ExtraData[0], 0);
-        SetColor(m_currentLevel->m_ExtraData[1], 1);
-        SetColor(m_currentLevel->m_ExtraData[2], 2);
-    }
-
 
 /*    for (int i=0;i<3;i++) {
         if (m_extraCols[i]!=0)

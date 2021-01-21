@@ -108,7 +108,7 @@ begin
 
 	// copy loader to stack
 
-	s1 := ProcedureToPointer( Loader() );
+	s1 := #Loader;
 	d1 := $0100;
 
 	// copy to $0100 - current loader is 70 bytes in length

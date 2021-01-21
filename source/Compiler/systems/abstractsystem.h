@@ -44,6 +44,9 @@ public:
     QMap<QString, QString> m_systemParams;
     QElapsedTimer timer;
     QString m_orgOutput;
+    bool m_ignoreSys = false;
+    bool m_stripPrg = false;
+
     QMap<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;
     bool m_supportsExomizer = false;

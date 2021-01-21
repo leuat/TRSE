@@ -838,12 +838,35 @@ void Parser::RemoveUnusedProcedures()
     }*/
     for (QSharedPointer<Node> n: m_proceduresOnly) {
         QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
+//        qDebug() << "Testing for : " << np->m_procName<< np->m_isUsed << np->m_isUsedBy;
 
-        if ((np->m_isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
+
+        bool isUsed = np->m_isUsed;
+        // Make sure none of the parents are unused!
+        if (isUsed) {
+            // Only optimize away non-interrupts
+//            qDebug() << np->m_procName <<np->m_isUsedBy;
+            if (np->m_type==0 && !np->m_isUsedBy.contains("main")) {
+                isUsed = false; // Assume not used after all
+                for (auto s : np->m_isUsedBy) {
+                    for (auto n2: m_proceduresOnly) {
+                        auto np2 = qSharedPointerDynamicCast<NodeProcedureDecl>(n2);
+                        if (np2->m_procName == s) {
+                            if (np2->m_isUsed)
+                                isUsed = true;
+                        }
+                    }
+                }
+            }
+        }
+//        qDebug() << "After " <<isUsed;
+
+        if ((isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
             procs.append(n);
         else {
             outputUnusedWarning = true;
             removeProcedures+=np->m_procName + ",";
+            m_removedProcedures << np->m_procName;
 //            if (m_procedures.contains(np->m_procName))
   //              m_procedures.remove(np->m_procName);
         }
@@ -874,10 +897,23 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
                 QSharedPointer<Symbol> s = m_symTab->m_symbols[val];//m_symTab->Lookup(,0);
 //                qDebug() << s->m_type;
-                if (!s->isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
+                bool isUsed = s->isUsed;
+
+                if (isUsed) {
+                    for (QString p: m_removedProcedures)
+                        if (s->isUsedBy.contains(p))
+                            s->isUsedBy.removeAll(p);
+                    if (s->isUsedBy.count()>0)
+                        isUsed = true;
+
+                //    if (isUsed)
+                  //      qDebug() << "Used: " << s->m_name << s->isUsed <<s->isUsedBy;
+
+                }
+                if (!isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
                     removedSymbols.append(val);
                     m_symTab->m_symbols.remove(val);
-//                    qDebug() << "REMOVING " << s->m_name << s->isUsed;
+  //                  qDebug() << "REMOVING " << s->m_name << s->isUsed;
                     add = false;
                 }
 
@@ -2586,6 +2622,8 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
         }
         //p->SetParameters(paramList);
         p->m_isUsed = true;
+        if (m_inCurrentProcedure != "")
+            p->m_isUsedBy<<m_inCurrentProcedure;
         //        if (p->m_procName==BGMUpdateSpriteLoc)
 
         return QSharedPointer<NodeProcedure>(new NodeProcedure(p, paramList, t));
@@ -2776,7 +2814,6 @@ void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockN
     }
 
 }
-
 void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName)
 {
     int type=0;
@@ -2790,6 +2827,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     QString procName =m_symTab->m_gPrefix+ m_currentToken.m_value;
 
     m_inCurrentProcedure = procName;
+    Symbol::s_currentProcedure = procName;
     //qDebug() << tok.m_value  << " : " << procName;
     Eat(TokenType::ID);
     //exit(1);
@@ -2829,6 +2867,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 
     if (m_procedures[procName]!=nullptr) {
         procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
+        procDecl->m_isUsedBy = m_procedures[procName]->m_isUsedBy;
         // Make sure that the correct number of parameters + types etc are identical for the forward declared procedure
         QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
         if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
@@ -2895,6 +2934,8 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     }
 
 
+    Symbol::s_currentProcedure = "main";
+    m_inCurrentProcedure = "main";
 
 }
 

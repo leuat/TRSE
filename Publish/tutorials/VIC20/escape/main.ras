@@ -6,9 +6,6 @@ program Escape2020;
 
 */
 var  
-
-
-
 // to run without TAPE LOADER as-is (note there will be no sound)
 
 // alt + M in VICE to start monitor
@@ -68,6 +65,13 @@ var
 @donotremove "GameLoop"
 @donotremove "Title_LostLife"
 @donotremove "Title_GameOver"
+@donotremove "Enemy_Init"
+@donotremove "Enemy_Create"
+@donotremove "_Title_DrawRoom"
+//@donotremove "Player_Init"
+@donotremove "Enemy_Update"
+@donotremove "Player_Update"
+@donotremove "Bullet_Update"
 
 
 // simple state machine

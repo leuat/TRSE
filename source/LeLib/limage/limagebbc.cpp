@@ -239,7 +239,7 @@ void LImageBBC::LoadBin(QFile &file)
 {
     unsigned char m;
     file.read((char*)&m, 1);
-    qDebug() << "LOADING mode "<< m;
+//    qDebug() << "LOADING mode "<< m;
 //    m = 5;
     m_mode = m;
 
