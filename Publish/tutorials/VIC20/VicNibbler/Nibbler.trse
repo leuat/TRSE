@@ -54,3 +54,4 @@ current_file = nibbler.ras
 open_files = ,nibbler.ras
 open_files = ,nibbler.ras
 open_files = ,nibbler.ras
+open_files =, nibbler.ras
