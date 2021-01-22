@@ -62,3 +62,4 @@ current_file = demo.asm
 open_files = ,demo.ras
 open_files = ,demo.ras
 open_files = ,demo.ras
+open_files =, demo.ras

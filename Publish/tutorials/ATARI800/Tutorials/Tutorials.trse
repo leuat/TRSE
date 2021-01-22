@@ -48,3 +48,4 @@ build_list = ,
 exomizer_toggle = 0
 open_files = ,tutorial1_helloworld.ras
 open_files = ,tutorial1_helloworld.ras
+open_files =, tutorial1_helloworld.ras
