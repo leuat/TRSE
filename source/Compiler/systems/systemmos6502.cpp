@@ -138,6 +138,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     int crunchTime = timer.elapsed()- time;
 
 
+
     m_buildSuccess = true;
     m_orgOutput = "";
     if (output.toLower().contains("error")) {

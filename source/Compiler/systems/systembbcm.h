@@ -15,7 +15,7 @@ public:
 
     void DefaultValues() override;
     void AddFileToDisk(DiscImage* di, QString filename, QString name, int address);
-    bool BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData);
+    bool BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData, QString&text);
 };
 
 #endif // SYSTEMBBCM_H

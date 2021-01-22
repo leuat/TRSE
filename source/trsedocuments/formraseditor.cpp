@@ -1158,7 +1158,7 @@ void FormRasEditor::HandleBuildComplete()
     m_globalOutput =m_builderThread.m_builder->getOutput();
     emit emitSuccess();
 //    qDebug() << "EXECUTING RUN" <<m_run <<m_currentFileShort;
-
+//    qDebug() << "WOOT"  <<m_builderThread.m_builder->m_system->m_buildSuccess ;
     if (m_run) {
         m_builderThread.m_builder->AddMessage("<br>Running program...");
         HandleUpdateBuildText();
@@ -1195,28 +1195,26 @@ void BuilderThread::run()
     if (m_builder->Build( m_source ))
     {
         if (!m_builder->m_isShadow) {
-        if (!m_builder->m_currentSourceFile.toLower().endsWith(".asm"))
-            m_builder->compiler->SaveBuild(m_filename + ".asm");
-//        else {
-  //          m_builder->m_filename = m_builder->m_currentSourceFile.split(".asm")[0];
-    //    }
-//        qDebug() << m_builder->m_filename;
+            if (!m_builder->m_currentSourceFile.toLower().endsWith(".asm"))
+                m_builder->compiler->SaveBuild(m_filename + ".asm");
+            //        else {
+            //          m_builder->m_filename = m_builder->m_currentSourceFile.split(".asm")[0];
+            //    }
+            //        qDebug() << m_builder->m_filename;
 
-        m_builder->AddMessage("Assembling & compressing... ");
+            m_builder->AddMessage("Assembling & compressing... ");
 
-        //emit emitText();
-
-
-        m_builder->Assemble();
-
-        if (m_builder->m_buildSuccess) {
-            m_builder->compiler->SetupMemoryAnalyzer(Util::getFileWithoutEnding(m_filename), m_builder->m_system->m_orgAsm);
-//            qDebug() << m_builder->getOutput();
-
-        }
+            //emit emitText();
 
 
-        emit emitText();
+            m_builder->Assemble();
+            if (m_builder->m_buildSuccess) {
+                m_builder->compiler->SetupMemoryAnalyzer(Util::getFileWithoutEnding(m_filename), m_builder->m_system->m_orgAsm);
+                //            qDebug() << m_builder->getOutput();
+
+            }
+
+            emit emitText();
         }
         emit emitSuccess();
 

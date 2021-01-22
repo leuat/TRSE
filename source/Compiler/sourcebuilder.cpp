@@ -152,6 +152,7 @@ bool SourceBuilder::Assemble()
        compiler->m_assembler->m_addresses = m_system->m_addresses;
         compiler->CleanupCycleLinenumbers("",compiler->m_assembler->m_addresses,compiler->m_assembler->m_addressesOut,false);
     }
+
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
 

@@ -29,21 +29,19 @@ void SystemBBCM::PostProcess(QString &text, QString filename, QString currentDir
     DiscImage* di = new DiscImage(diskFileName.toStdString().c_str(),nullptr);
     AddFileToDisk(di, filename+".prg", "CODE", m_programStartAddress);
     if (m_projectIni->getString("d64_paw_file")!="none") {
-        BuildDiskFiles(di,currentDir,"d64_paw_file");
+        BuildDiskFiles(di,currentDir,"d64_paw_file",text);
     }
-
 
     delete di;
     GlobalData::Destroy();
-
 }
 
-bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData)
+bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData, QString& text)
 {
 
     QString pawFile = m_projectIni->getString(iniData);
     CIniFile paw;
-    paw.Load(currentDir + "/"+pawFile);
+    paw.Load(currentDir + QDir::separator()+pawFile);
     QStringList data = paw.getStringList("data");
     int count = data.count()/3;
 
@@ -53,10 +51,10 @@ bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniDa
         QString name = data[3*i];
 
         int address = Util::NumberFromStringHex( data[3*i+2]);
-        QString fn = currentDir+"/"+orgFileName;
+        QString fn = currentDir+QDir::separator()+orgFileName;
         if (!QFile::exists(fn)) {
             m_buildSuccess = false;
-
+            text+="\nError: Could not find file to include '"+fn+"/"+"' when processing paw file "+pawFile;
             return false;
         }
         try {
