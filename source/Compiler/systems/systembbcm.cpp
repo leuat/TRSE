@@ -54,7 +54,7 @@ bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniDa
         QString fn = currentDir+QDir::separator()+orgFileName;
         if (!QFile::exists(fn)) {
             m_buildSuccess = false;
-            text+="\nError: Could not find file to include '"+fn+"/"+"' when processing paw file "+pawFile;
+            text+="<br>Error: Could not find file to include '"+fn+"' when processing paw file "+pawFile+"<br>";
             return false;
         }
         try {
