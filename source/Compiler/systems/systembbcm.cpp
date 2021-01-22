@@ -27,7 +27,7 @@ void SystemBBCM::PostProcess(QString &text, QString filename, QString currentDir
     GlobalData::Instance().SetUseDiscImage( true );
     GlobalData::Instance().SetBootFile("CODE");
     DiscImage* di = new DiscImage(diskFileName.toStdString().c_str(),nullptr);
-    AddFileToDisk(di, filename+".prg", "CODE", 0x1100);
+    AddFileToDisk(di, filename+".prg", "CODE", m_programStartAddress);
     if (m_projectIni->getString("d64_paw_file")!="none") {
         BuildDiskFiles(di,currentDir,"d64_paw_file");
     }

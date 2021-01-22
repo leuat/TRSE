@@ -3,10 +3,10 @@ var
 	osfile : array[18] of byte;	
 
 
-procedure LoadFile(addr_file, addr_load : integer);
+procedure LoadFile(addr_file:integer; addr_load : integer);
 begin
-	osfile[0] := lo(#addr_file);
-	osfile[1] := hi(#addr_file);
+	osfile[0] := lo(addr_file);
+	osfile[1] := hi(addr_file);
 	
 	osfile[2] := lo(#addr_load);
 	osfile[3] := hi(#addr_load);

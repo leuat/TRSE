@@ -17,6 +17,7 @@ $20,$22,$01,$07,$67,$08, $B,0);
 	colorsBlue : array[4] of byte = (1,2,3,7); // cyan, purple, blue, black
 	colorsRed : array[4] of byte = (0,4,6,7); // white, yellow, red, black
 	colorsRedBlue : array[4] of byte = (0,6,3,7); // white, 
+	colorsBlueCyanWhite : array[4] of byte = (0,1,3,7); // cyan, purple, blue, black
 
 	defaultPalette : array[16] of byte = BuildTable("(i&7)*0x10 + (i^7)");
 	palette: array[16] of byte = (
@@ -90,6 +91,9 @@ begin
 
 end;
 
+
+
+
 procedure ResetStack() inline; // Must be inline, rts fails
 begin
 	asm("
@@ -101,6 +105,45 @@ begin
 
 	");
 end;
+/**
+
+Sets the Y-scroll register (0-16)
+**/
+procedure ScrollY(y:global byte);
+begin
+	poke(sheila_reg,0,5); // 
+	poke(sheila_write,0,y);
+
+end;
+/**
+	Sets the Y scroll-register (mod 7) and moves the screen to the corresponding line.
+
+**/
+procedure ScrollToY(y:global byte);
+begin
+	poke(sheila_reg,0,4); // 
+	poke(sheila_write,0,y>>4 + $26);
+	poke(sheila_reg,0,5); // 
+	poke(sheila_write,0,(y>>1)&7);
+end;
+
+/**
+	Set number of columns on the screen. Default $28
+**/
+procedure SetScreenColumns(x:global byte);
+begin
+	poke(sheila_reg,0,1); 
+	poke(sheila_write,0,x);
+
+end;
+
+procedure SetWindowHeight(y: global byte);
+begin
+	poke(sheila_reg,0,6); // 
+	poke(sheila_write,0,y);
+
+end;
+
 
 
 procedure PointToY(zp:global pointer;y:global byte);
@@ -232,7 +275,7 @@ begin
 end;
 
 
-procedure StartInterrupts();
+procedure StartInterrupts() inline;
 begin
 	asm(" cli");
 end;
@@ -271,7 +314,24 @@ end;
 
 
 
+procedure SetBackgroundColor(x:global byte);
+begin
+	asm("
+	lda Screen_x
+	and #15
+	sta $FE21
+	");
+end;
 
+procedure SetBorderColor(x:global byte);
+begin
+	asm("
+	lda Screen_x
+	;and #15
+//	sta $FE23 ;????
+	sta $FE23 ;????
+	");
+end;
 
 
 interrupt DefaultIRQ();
@@ -333,5 +393,13 @@ vsync_wait:
 end;
 
 
+
+procedure InitStandardScreenAndIRQ() inline;
+begin
+	ResetStack();
+	Init();
+	RasterIRQ(DefaultIRQ());
+	StartInterrupts();
+end;
 
 end.

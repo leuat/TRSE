@@ -1,0 +1,43 @@
+Unit DemoTools;
+var
+	i,j,k,time,t2:byte =0;
+	maxTime,isDone : byte = 0;
+
+
+
+
+procedure WaitABit(k:global byte);
+begin
+	for j:=0 to k do
+		for i:=0 to 255 do wait(200);
+end;
+	
+
+procedure InitEffect(maxTime : global byte);
+begin
+
+	time:=0;
+	t2:=0;
+	isDone := 0;
+end;
+
+procedure IncreaseTimer();
+begin
+	inc(time);
+	if (time&7=0) then inc(t2);
+	if (t2=maxTime) then isDone := true;
+end;
+
+
+procedure EndEffect() inline;
+begin
+@ifndef IS_DEMO
+	Loop();
+@endif
+@ifdef IS_DEMO
+	return;	
+@endif
+
+end;
+
+end.
