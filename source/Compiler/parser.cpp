@@ -1519,12 +1519,14 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     // Verify that we're not trying to screw with the variable
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
-    if (isRegister) {
-        nv->m_isRegister = true;
-        return n;
-    }
 //    if (!m_ignoreLookup)
     if (nv!=nullptr) {
+
+        if (isRegister) {
+            nv->m_isRegister = true;
+            return n;
+        }
+
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
         // If variable doesn't exist
 //        qDebug

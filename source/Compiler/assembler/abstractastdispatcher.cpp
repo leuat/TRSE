@@ -129,7 +129,14 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
     // Get name
-    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
+    if (nVar->m_left->m_isRegister )
+        ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
+
+    auto v = qSharedPointerDynamicCast<NodeVar>(nVar->m_left);
+    if (v == nullptr )
+        ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
+
+     QString var = v->getValue(as);//  m_a->Build(as);
     // Perform assigment
     node->m_a->Accept(this);
 
