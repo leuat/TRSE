@@ -557,7 +557,15 @@ void AbstractASTDispatcher::InlineProcedure(QSharedPointer<NodeProcedure> p)
     for (auto v : p->m_procedure->m_paramDecl) {
         QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
         QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
-        m_inlineParameters[var->value] = p->m_parameters[cur++];
+        if (!var->m_isRegister)
+            m_inlineParameters[var->value] = p->m_parameters[cur];
+        else {
+            QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(nv->m_varNode,
+                                                                                     p->m_parameters[cur]->m_op,
+                                                                                     p->m_parameters[cur]));
+            na->Accept(this);
+        }
+        cur++;
     }
     qSharedPointerDynamicCast<NodeBlock>(p->m_procedure->m_block)->m_ignoreDeclarations = true;
     p->m_procedure->m_block->Accept(this);
