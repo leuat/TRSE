@@ -3168,7 +3168,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         }
         if (vname.count()==3) {
             if (!node->m_right->isPure())
-                ErrorHandler::e.Error("Setting _AX and _AX, and XY register values must be pure number or variable.", node->m_op.m_lineNumber);
+                ErrorHandler::e.Error("Setting _AX and _AX, and _XY register values must be pure number or variable.", node->m_op.m_lineNumber);
 
 
             QString cmdA = "ld"+QString(vname[1]) + " "+node->m_right->getValue8bit(as,false);
