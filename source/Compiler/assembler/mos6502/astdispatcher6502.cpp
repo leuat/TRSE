@@ -2958,10 +2958,11 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
             return false;
         // Ok. Both are equal. OPTIMIZE!
         //            return false;
-
+        if (var->isPointer(as))
+            return false;
         if (LoadXYVarOrNum(var, var->m_expr,true)) {
-            as->Comment("Optimize byte array " + operand);
 
+            as->Comment("Optimize byte array " + operand);
             as->Asm(operand + getValue(var)+",x");
             return true;
         }
