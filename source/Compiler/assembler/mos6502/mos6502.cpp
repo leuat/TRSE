@@ -298,7 +298,7 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
 {
     QString n = name;
     n=n.toLower();
-    if (n=="_a" || n=="_x" || n=="_y")
+    if (n=="_a" || n=="_x" || n=="_y" || n=="_ax" || n=="_ay" || n=="_xy")
         return;
     QString t = "";
     if (initval=="")

@@ -363,6 +363,9 @@ void SymbolTable::InitBuiltins()
         Define(QSharedPointer<Symbol>(new Symbol("_a", "byte")));
         Define(QSharedPointer<Symbol>(new Symbol("_x", "byte")));
         Define(QSharedPointer<Symbol>(new Symbol("_y", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("_ax", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("_ay", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("_xy", "byte")));
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
 
