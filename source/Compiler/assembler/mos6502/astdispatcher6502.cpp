@@ -3151,6 +3151,8 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         //if (vname=="_a" || vname=="_x" || vname=="_y")
         //{
         QString reg = vname[1];
+
+        if (vname.count()==2) {
             if (reg=="x" || reg=="y") {
                 if (!node->m_right->isPure())
                     ErrorHandler::e.Error("Setting _X and _Y register values must be pure number or variable.", node->m_op.m_lineNumber);
@@ -3163,6 +3165,18 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
             as->Term();
 
             return;
+        }
+        if (vname.count()==3) {
+            if (!node->m_right->isPure())
+                ErrorHandler::e.Error("Setting _AX and _AX, and XY register values must be pure number or variable.", node->m_op.m_lineNumber);
+
+
+            QString cmdA = "ld"+QString(vname[1]) + " "+node->m_right->getValue8bit(as,false);
+            QString cmdB = "ld"+QString(vname[2]) + " "+node->m_right->getValue8bit(as,true);
+            as->Asm(cmdA);
+            as->Asm(cmdB);
+            return;
+        }
         //}
     }
     if (node->m_right->m_isRegister) {
