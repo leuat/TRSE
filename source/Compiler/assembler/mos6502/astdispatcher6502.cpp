@@ -3144,6 +3144,41 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     as->Comment("Assigning single variable : " + getValue(v));
+    QString vname = getValue(v);
+    if (v->m_isRegister) {
+        vname = vname.toLower();
+        //if (vname=="_a" || vname=="_x" || vname=="_y")
+        //{
+        QString reg = vname[1];
+            if (reg=="x" || reg=="y") {
+                if (!node->m_right->isPure())
+                    ErrorHandler::e.Error("Setting _X and _Y register values must be pure number or variable.", node->m_op.m_lineNumber);
+
+                QString cmd = "ld"+QString(reg) + " "+node->m_right->getValue(as);
+                as->Asm(cmd);
+                return;
+            }
+            node->m_right->Accept(this);
+            as->Term();
+
+            return;
+        //}
+    }
+    if (node->m_right->m_isRegister) {
+        QString reg = node->m_right->getValue(as).toLower();
+        //if (vname=="_a" || vname=="_x" || vname=="_y")
+        //{
+            if (!node->m_right->isPure())
+                ErrorHandler::e.Error("Using _A, _X and _Y register values must be pure.", node->m_op.m_lineNumber);
+
+            QString cmd = "st"+QString(reg[1]) + " "+vname;
+            as->Asm(cmd);
+
+            return;
+        //}
+    }
+
+
 //    as->Comment("Is word : " + QString::number(v->isWord(as)));
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 

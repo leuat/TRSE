@@ -271,7 +271,6 @@ QString NodeVar::getValue(Assembler* as) {
         if (as->m_symTab->m_symbols.contains(tstv))
                 v = tstv;
 
-
     }
 //    if (as!=nullptr)
 /*        if (as!=nullptr && Data::data.compilerState == Data::DISPATCHER) {

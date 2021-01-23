@@ -629,8 +629,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
     QString keep = v->value;
-
-    v->value = as->m_symTab->getCurrentProcedure()+v->value;
+    if (!v->m_isRegister)
+        v->value = as->m_symTab->getCurrentProcedure()+v->value;
 
     node->ExecuteSym(as->m_symTab);
 

@@ -34,7 +34,6 @@ class NodeVar : public Node {
 private:
 public:
     QString value;
-
     QSharedPointer<Node> m_expr = nullptr;
     //QSharedPointer<NodeVarType> m_type;
     bool m_fake16bit = false;

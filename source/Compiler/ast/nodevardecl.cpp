@@ -35,9 +35,9 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 
 //    if (qSharedPointerDynamicCast<NodeVar>(m_varNode)->m_isGlobal)
   //      return;
-
-    if (symTab->exists(varName))
-          ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
+    if (!symTab->isRegisterName(varName))
+        if (symTab->exists(varName))
+              ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
 
 
     if (typeName=="ARRAY"){

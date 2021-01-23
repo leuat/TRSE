@@ -228,11 +228,20 @@ void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 }
 
 void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
-    m_symbols[m_currentProcedure+ s->m_name] = s;
-    m_symbols[m_currentProcedure+ s->m_name]->isUsed = isUsed;
+
+//    if (isRegisterName(s->m_name))
+ //       return ;
+    QString name = m_currentProcedure+ s->m_name;
+    if (isRegisterName(s->m_name))
+        name = s->m_name;
+
+//        qDebug() << "Registering : "<<s->m_name;
+    m_symbols[name] = s;
+    m_symbols[name]->isUsed = isUsed;
+
     s->m_fileName = m_currentFilename;
     if (m_addToGlobals)
-        m_globalList.append(m_currentProcedure+ s->m_name);
+        m_globalList.append(name);
 }
 
 void SymbolTable::Delete() {
@@ -351,6 +360,9 @@ void SymbolTable::InitBuiltins()
 
         Define(QSharedPointer<Symbol>(new Symbol("screenmemory", "pointer")));
         Define(QSharedPointer<Symbol>(new Symbol("colormemory", "pointer")));
+        Define(QSharedPointer<Symbol>(new Symbol("_a", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("_x", "byte")));
+        Define(QSharedPointer<Symbol>(new Symbol("_y", "byte")));
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
 
@@ -426,7 +438,10 @@ QStringList SymbolTable::getUnusedVariables()
 QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool isAddress) {
 //            name = name.toUpper();
 
+/*    if (name.toLower()=="_a" || name.toLower()=="_x"  || name.toLower()=="_z")
+        return nullptr;
 
+*/
     if (m_constants.contains(name.toUpper())) {
         return m_constants[name.toUpper()];
     }
@@ -444,10 +459,11 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         return s;
     }
 
+    QString localName = name;
+    if (!isRegisterName(name))
+        localName = m_currentProcedure+name;
 
-
-    QString localName = m_currentProcedure+name;
-
+//    qDebug() << "SYMTAB "<< localName << name;;
 //    if (name.contains("posX"))
     //qDebug() << "SYMTAB ERROR Looking up : "<<name <<localName <<m_symbols.keys();
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
@@ -496,15 +512,24 @@ QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name) {
     return nullptr;
 }
 
+bool SymbolTable::isRegisterName(QString sn)
+{
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
+        if ((sn=="_a" || sn=="_x" || sn=="_y"))
+            return true;
+
+    return false;
+}
+
 
 void Symbol::setIsUsed()
 {
     isUsed = true;
     if (Symbol::s_currentProcedure!="")
-    if (!isUsedBy.contains(Symbol::s_currentProcedure))
-        isUsedBy<<Symbol::s_currentProcedure;
+        if (!isUsedBy.contains(Symbol::s_currentProcedure))
+            isUsedBy<<Symbol::s_currentProcedure;
 
-//    qDebug() <<"SYMBOLTABLE : "<< m_name <<isUsedBy;
+    //    qDebug() <<"SYMBOLTABLE : "<< m_name <<isUsedBy;
 
 }
 

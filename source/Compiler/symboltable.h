@@ -150,6 +150,8 @@ public:
 
     QSharedPointer<Symbol> LookupConstants(QString name);
 
+    bool isRegisterName(QString sn);
+
 };
 
 #endif // SYMBOLTABLE_H

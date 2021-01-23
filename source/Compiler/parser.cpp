@@ -27,6 +27,7 @@ QStringList Parser::s_usedTRUNames;
 QVector<QSharedPointer<Parser>> Parser::m_tpus;
 
 
+
 QString Parser::WashVariableName(QString v)
 {
   //  QString p =m_symTab->m_gPrefix;
@@ -906,6 +907,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
                     if (s->isUsedBy.count()>0)
                         isUsed = true;
 
+
  //                   if (isUsed)
 
                 }
@@ -914,7 +916,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
                 if (!isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
                     removedSymbols.append(val);
                     m_symTab->m_symbols.remove(val);
-  //                  qDebug() << "REMOVING " << s->m_name << s->isUsed;
+             //       qDebug() << "REMOVING " << s->m_name << s->isUsed;
                     add = false;
                 }
 
@@ -1364,6 +1366,9 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     QSharedPointer<Node> n = nullptr;
 
     bool isConstant = false;
+    bool isRegister = m_symTab->isRegisterName(m_currentToken.m_value);
+
+
     if (m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
         QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
@@ -1426,11 +1431,13 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         // Make sure that prefixes are added
 //        qDebug() << "PREFIX " << m_symTab->m_globalList.contains(t.m_value) << t.m_value <<  m_symTab->m_gPrefix+t.m_value ;
   //     qDebug() << m_symTab->m_globalList;
+//        qDebug() << "IS REGISTER " <<t.m_value << isRegister;
+        if (!isRegister)
+            if (!m_symTab->m_globalList.contains(t.m_value) && !isSubVar)
+ //               if (!isRegister)
+                   t.m_value = m_symTab->m_gPrefix+t.m_value;
 
-        if (!m_symTab->m_globalList.contains(t.m_value) && !isSubVar)
-            t.m_value = m_symTab->m_gPrefix+t.m_value;
-
-//        qDebug() << "PARSER" <<t.m_value << m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
+  //      qDebug() << "PARSER" <<t.m_value << m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
   //      qDebug() <<
 
 
@@ -1512,6 +1519,10 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     // Verify that we're not trying to screw with the variable
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
+    if (isRegister) {
+        nv->m_isRegister = true;
+        return n;
+    }
 //    if (!m_ignoreLookup)
     if (nv!=nullptr) {
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
@@ -2483,6 +2494,9 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
   //  RemoveComments();
     InitObsolete();
 
+    Symbol::s_currentProcedure = "main";
+    m_inCurrentProcedure = "main";
+
     if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
         StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
 
@@ -2682,8 +2696,9 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
         while (m_currentToken.m_type==TokenType::ID) {
             QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName,true);
 
-            for (QSharedPointer<Node> n: ns)
+            for (QSharedPointer<Node> n: ns) {
                 decl.append(n);
+            }
             Eat(m_currentToken.m_type);
         }
     }
@@ -3016,7 +3031,9 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     // All the vars that will be declared
     QVector<QSharedPointer<Node>> vars;
     // Make sure that prefix is added
-    m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
+    if (!m_symTab->isRegisterName(m_currentToken.m_value))
+        m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
+    //qDebug() << m_currentToken.m_value;
     vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
 
     QString varName = m_currentToken.m_value;
@@ -3042,7 +3059,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
         // Prefix
-        m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
+        if (!m_symTab->isRegisterName(m_currentToken.m_value))
+          m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
         variableNames << m_currentToken.m_value;
         vars.append(QSharedPointer<NodeVar>(new NodeVar(m_currentToken)));
         AppendComment(vars[vars.count()-1]);
@@ -3062,7 +3080,12 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
             ErrorHandler::e.Error("Illegal variable name '" + s->m_name +"' on the "+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+" (name already used in the assembler etc) ",m_currentToken.m_lineNumber);
         //if (m_isRecord)
         //qDebug() << "Defining RECORD: " << s->m_name;
-        m_symTab->Define(s ,false);
+        QString sn = s->m_name;
+        sn = sn.toLower();
+
+        if (!(sn=="_a" || sn=="_x" || sn=="_y"))
+            m_symTab->Define(s ,false);
+
         s->m_lineNumber = m_currentToken.m_lineNumber;
     }
 
@@ -3123,6 +3146,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
    for (QSharedPointer<Node> n : vars) {
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+        if (m_symTab->isRegisterName(v->value)) {
+            v->m_isRegister = true;
+        }
+
         decl->m_op.m_lineNumber = orgLineNumber;
         v->m_isGlobal = isGlobal;
   //      if (!m_isRecord)

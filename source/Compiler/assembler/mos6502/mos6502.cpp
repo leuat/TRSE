@@ -296,6 +296,10 @@ void AsmMOS6502::VarDeclHeader()
 
 void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
+    QString n = name;
+    n=n.toLower();
+    if (n=="_a" || n=="_x" || n=="_y")
+        return;
     QString t = "";
     if (initval=="")
         initval="0";

@@ -54,6 +54,7 @@ public:
     bool m_ignoreSuccess = false; // Used for binary expressions
     int m_forcePage = 0;
     static QString sForceFlag;
+    bool m_isRegister = false;
 
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
