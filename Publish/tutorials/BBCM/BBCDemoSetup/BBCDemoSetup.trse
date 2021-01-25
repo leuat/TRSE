@@ -1,5 +1,5 @@
-zeropages = ,$60, $62, $64, $68, $6A, $6C
-temp_zeropages = ,$54, $56, $58, $5A
+zeropages = ,$60,   $62,   $64,   $68,   $6A,   $6C
+temp_zeropages = ,$54,   $56,   $58,   $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -44,7 +44,7 @@ d64_paw_file_disk2 = none
 override_target_settings_basic = 0
 override_target_settings_sys = 1
 override_target_settings_prg = 1
-build_list = ,setvalue override_target_settings 1, define IS_DEMO 1, b effect1.ras, b effect2.ras, setvalue override_target_settings 0, 
+build_list = ,setvalue override_target_settings 1, define IS_DEMO 1, setvalue d64_paw_file none, b effect1.ras, b effect2.ras, setvalue override_target_settings 0, setvalue d64_paw_file disk1.paw, 
 exomizer_toggle = 0
 data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/images/image1.flf = 0
 data_header_resources/images/image1.flf = 0
