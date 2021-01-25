@@ -54,6 +54,8 @@ QString AsmMOS6502::intToHexString(int val)
 void AsmMOS6502::InitCStrings()
 {
     m_cstr.clear();
+    m_cstr["\\"] = CStringItem("\\", 28,28);
+    m_cstr["£"] = CStringItem("£", 28,28);
     m_cstr[" "] = CStringItem("32", 32,32);
     m_cstr["!"] = CStringItem("!", 33,33);
     m_cstr[""""] = CStringItem("""", 34,34);
