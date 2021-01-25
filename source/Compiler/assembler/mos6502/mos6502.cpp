@@ -362,17 +362,18 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
     int curIdx=0;
     int curLin = 0;
     int curOut = 0;
-    QString s ="\tdc.b\t";
     if (initVal.count()==0) {
-        Write(s);
+        Write("\tdc.b\t");
         return;
     }
 //    qDebug() << initVal.count();
     QString curStr = initVal[curLin];
+    QString curOutData = "";
     while (!done) {
-
+//        qDebug() << curStr;
         // First check if current is a pure number
-
+        if (curOutData == "")
+            curOutData = "\tdc.b\t";
 /*        if (curIdx==0) {
             QString cc = curStr[curIdx];
             if (cc.count()<=3 && Syntax::s.isDigitHex(cc)) {
@@ -386,28 +387,34 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
             curStr = curStr.remove("*&NUM"); // Remove the number tag
             int val = curStr.toInt(&isNumber);
             if (isNumber) {
-                Write(" dc.b " + curStr);
+                //Write(" dc.b " + curStr);
+                //qDebug() << "IS NUMBER : " << isNumber;
+                curOutData += curStr;
+                curIdx = curStr.length();
+  //              continue;
             }
         }
 
         if (!isNumber)
 
-        if (curIdx<curStr.length()) {
+            if (curIdx<curStr.length()) {
 
-            QString c = curStr[curIdx].toUpper();
-            //qDebug() << c;
-            if (m_cstr.contains(c)) {
-                uchar sc = m_cstr[c].m_screenCode;
-                s+=Util::numToHex(sc);
-                if (curOut++<8)
-                    s+=", ";
-                else {
-                    curOut=0;
-                    Write(s);
-                    s="\tdc.b\t";
+                QString c = curStr[curIdx].toUpper();
+                //qDebug() << c;
+                if (m_cstr.contains(c)) {
+                    uchar sc = m_cstr[c].m_screenCode;
+                    curOutData+=Util::numToHex(sc);
                 }
             }
+
+        if (curOut++<8)
+            curOutData+=", ";
+        else {
+            curOut=0;
+            Write(curOutData);
+            curOutData = "";
         }
+
         curIdx++;
         if (curIdx>=curStr.length()) {
             curIdx=0;
@@ -427,12 +434,13 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
 
     if (curOut!=0) {
         if (!flags.contains("no_term"))
-            Write(s + "0"); // add 0
+            Write(curOutData + "0"); // add 0
         else {
-            s.remove(s.length()-2,1);// Remove final ","
-            Write(s);
+            curOutData.remove(curOutData.length()-2,1);// Remove final ","
+            Write(curOutData);
         }
     }
+
     else
     if (!flags.contains("no_term"))
         Write("\tdc.b\t0 "); // add 0
