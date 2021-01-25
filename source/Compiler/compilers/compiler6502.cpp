@@ -289,6 +289,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
     return orgAsm->m_success;
 }
 
+
 int Compiler6502::FindEndSymbol(Orgasm &orgasm)
 {
     //    QStringList output = QString(out).split("\n");

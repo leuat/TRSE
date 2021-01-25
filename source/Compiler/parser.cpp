@@ -395,6 +395,21 @@ void Parser::InitSystemPreprocessors()
 {
     m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)] = "1";
 
+
+}
+
+void Parser::InitSystemSymbols()
+{
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
+        if (m_projectIni->contains("zeropages_userdefined")) {
+            int cur = 1;
+            for (QString s : m_projectIni->getStringList("zeropages_userdefined")) {
+                QString name = "TEMP_VAR"+QString::number(cur++);
+                        m_symTab->m_constants[name] = QSharedPointer<Symbol>(
+                                    new Symbol(name,"ADDRESS",Util::NumberFromStringHex(s)));
+            }
+        }
+
 }
 
 void Parser::PreprocessIfDefs(bool ifdef)
@@ -2490,6 +2505,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     if (!m_isTRU || m_symTab==nullptr)
         m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
 
+
     m_symTab->m_currentFilename = m_currentFileShort;
     emit EmitTick("<font color=\"grey\">Parsing pass #1 ");
     m_pass = 0;
@@ -2538,6 +2554,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_ignorePreprocessor = true;
     m_currentToken = m_lexer->GetNextToken();
     m_symTab->Initialize();
+    InitSystemSymbols();
+
     Node::m_staticBlockInfo.m_blockID=-1;
     ErrorHandler::e.m_lexer = m_lexer.get(); // for Warnings
 

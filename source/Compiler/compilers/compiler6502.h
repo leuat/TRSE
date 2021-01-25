@@ -20,6 +20,7 @@ public:
     bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) override;
 
 
+
     int FindEndSymbol(Orgasm& orgasm);
 
     QVector<int> FindBlockEndSymbols(Orgasm& orgasm);

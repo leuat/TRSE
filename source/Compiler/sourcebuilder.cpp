@@ -68,6 +68,7 @@ bool SourceBuilder::Build(QString source)
 //    qDebug() << "CREATED COMPILER " <<compiler;
     if (!m_isShadow)
         connect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+
     compiler->m_parser.m_diskFiles = getFileList();
     compiler->m_parser.m_currentDir = m_curDir;
 

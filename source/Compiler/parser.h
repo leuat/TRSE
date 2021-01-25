@@ -155,6 +155,7 @@ public:
     void Eat(TokenType::Type t);
     void VerifyToken(Token t);
     void InitSystemPreprocessors();
+    void InitSystemSymbols();
     void HandlePreprocessorInParsing();
     void StripWhiteSpaceBeforeParenthesis();
     void RemoveComments();

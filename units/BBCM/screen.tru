@@ -17,7 +17,8 @@ $20,$22,$01,$07,$67,$08, $B,0);
 	colorsBlue : array[4] of byte = (1,2,3,7); // cyan, purple, blue, black
 	colorsRed : array[4] of byte = (0,4,6,7); // white, yellow, red, black
 	colorsRedBlue : array[4] of byte = (0,6,3,7); // white, 
-	colorsBlueCyanWhite : array[4] of byte = (0,1,3,7); // cyan, purple, blue, black
+	colorsBlueCyanWhite : array[4] of byte = (0,1,3,7); // white, cyan, blue, black
+	colorsBluePurpleWhite : array[4] of byte = (0,2,3,7); // cyan, purple, blue, black
 
 	defaultPalette : array[16] of byte = BuildTable("(i&7)*0x10 + (i^7)");
 	palette: array[16] of byte = (

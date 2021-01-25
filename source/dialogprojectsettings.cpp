@@ -58,12 +58,14 @@ void DialogProjectSettings::FillFromIni()
     ui->leInternalZp3->setText(m_ini->getString("zeropage_internal3"));
     ui->leInternalZp4->setText(m_ini->getString("zeropage_internal4"));
 
+
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
 
     ui->txtGlobalDefines->setPlainText(Util::fromStringList( m_ini->getStringList("global_defines")));
 
     ui->leTempZP->setText(  fromStringList(m_ini->getStringList("temp_zeropages")));
     ui->levarZP->setText(  fromStringList(m_ini->getStringList("var_zeropages")));
+    ui->leUserDefinedtempVars->setText(fromStringList(m_ini->getStringList("zeropages_userdefined")));
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
 //    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
@@ -163,6 +165,7 @@ void DialogProjectSettings::FillFromIni()
     ui->teBuildList->document()->setPlainText(Util::fromStringList(    m_ini->getStringList("build_list")));
 
 
+
     ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
 
     ui->cmbPawInclude2->setCurrentText(m_ini->getString("d64_paw_file_disk2"));
@@ -176,6 +179,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setStringList("zeropages", toStringList(ui->leZeropages->text()));
     m_ini->setStringList("temp_zeropages", toStringList(ui->leTempZP->text()));
     m_ini->setStringList("var_zeropages", toStringList(ui->levarZP->text()));
+    m_ini->setStringList("zeropages_userdefined", toStringList(ui->leUserDefinedtempVars->text()));
 
     m_ini->setString("zeropage_screenmemory", Util::numToHex(Util::NumberFromStringHex(ui->leZeropageScreenMemory->text())));
     m_ini->setString("zeropage_colormemory", Util::numToHex(Util::NumberFromStringHex(ui->leZeropageColorMemory->text())));
@@ -196,6 +200,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("zeropage_internal3", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp3->text())));
     m_ini->setString("zeropage_internal4", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp4->text())));
 
+
     m_ini->setString("system", ui->cmbSystem->currentText());
 
 
@@ -212,6 +217,9 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("cpu_x86_system", ui->cmbX86CPU->currentText());
 
     m_ini->setFloat("pascal_settings_use_local_variables", ui->chkLocalVariables->isChecked());
+
+
+
 
     if (m_ini->getString("system")=="C128") {
         m_ini->setString("columns", ui->cmbColumns->currentText());

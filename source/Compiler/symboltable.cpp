@@ -190,6 +190,8 @@ void SymbolTable::Initialize()
 //        qDebug() << Util::numToHex(keeps[0]->m_value->m_fVal);
     }
 
+
+
 }
 
 void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
