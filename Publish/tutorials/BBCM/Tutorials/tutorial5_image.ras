@@ -3,21 +3,11 @@ var
 @use "screen"
 @use "compression/compression"
 
-	i,time,j,k,m,x,y : byte=0;
-	zp:pointer;
 	
 @export "resources/images/image1.flf" "resources/images/image1.bin" 256
-
+	// Image by Optic / Planet Jazz, Proxima, Desire
 	image_data1 : incbin("resources/images/image1.bin") compressed;
-
-
-procedure WaitABit();
-begin
-	for j:=0 to 16 do
-	for i:=0 to 255 do wait(200);
-end;
-
-
+	
 begin
 	Screen::ResetStack();
 	Screen::Init();
@@ -25,6 +15,6 @@ begin
 	Screen::SetMode5Palette(#Screen::colorsBlue);	
 
 	// start filling stuff!
-	Compression::Decompress(#image_data1, $5800);
+	Compression::Decompress(#image_data1, #mode5_vram);
 	Loop();
 end.

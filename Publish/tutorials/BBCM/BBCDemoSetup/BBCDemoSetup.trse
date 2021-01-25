@@ -1,5 +1,5 @@
-zeropages = ,$60,   $62,   $64,   $68,   $6A,   $6C
-temp_zeropages = ,$54,   $56,   $58,   $5A
+zeropages = ,$60, $62, $64, $68, $6A, $6C
+temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48

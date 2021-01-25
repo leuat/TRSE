@@ -20,14 +20,6 @@ var
 	image2 : string=("IMAGE2",$0D);
 
 
-	k,m,x,y : byte=0;
-	
-    sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
-    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+100");
-
-
-//	colors : array[4] of byte = (0,3,1,5);
-
 
 procedure WaitABit();
 begin
@@ -45,7 +37,7 @@ begin
 	Screen::SetMode5();
 	Screen::SetMode5Palette(#Screen::colorsRedBlue);	
 
-	Screen::FillBanks($5800,%00000000,$28);	
+	Screen::FillBanks(#mode5_vram,%00000000,$28);	
 	
 	// Init music player
 	Player::InitMusic(#music);
@@ -55,9 +47,9 @@ begin
 	while(true) do
 	begin	
 		//Screen::WaitForVerticalSync();
-		Files::LoadFile(#image2, $5800);
+		Files::LoadFile(#image2, #mode5_vram);
 		WaitABit();
-		Files::LoadFile(#image1, $5800);
+		Files::LoadFile(#image1, #mode5_vram);
 		WaitABit();
 
 	end;

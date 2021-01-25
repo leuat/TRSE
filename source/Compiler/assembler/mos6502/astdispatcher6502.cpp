@@ -3180,8 +3180,10 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         return;
         //}
     }
+
     if (node->m_right->m_isRegister) {
         QString reg = node->m_right->getValue(as).toLower();
+        as->Comment("Saving register "+ reg);
         //if (vname=="_a" || vname=="_x" || vname=="_y")
         //{
             if (!node->m_right->isPure())

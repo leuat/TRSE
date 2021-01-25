@@ -23,7 +23,7 @@ var
 begin
 	Screen::ResetStack();
 	Screen::Init();
-	Screen::FillBanks($5800,00,$28);	
+	Screen::FillBanks(#mode5_vram,00,$28);	
 	RasterIRQ(Screen::DefaultIRQ());
 	Screen::SetMode5();
 	Screen::StartInterrupts();
@@ -31,7 +31,7 @@ begin
 	// Clear the screen
 	while(true) do
 	begin	
-		Files::LoadFile(#image1, $5800);
-		Files::LoadFile(#image2, $5800);
+		Files::LoadFile(#image1, #mode5_vram);
+		Files::LoadFile(#image2, #mode5_vram);
 	end;
 end.
