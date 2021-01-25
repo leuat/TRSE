@@ -44,6 +44,7 @@ MEGA65; Main Mega65 tutorials; MEGA65/Tutorials/ ;  <h2>Main Mega65 tutorials</h
 MEGA65; Mega65 Demoeffects (raytracer); MEGA65/RayTracer/ ;  <h2>The Mega65 demo effect ray tracer tutorials!</h2><p> <p>Under construction.
 
 BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><p><p>Under construction.
+BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC Demo setup sample project</h2><p><p>Loader at $1100, effects at $1280. Plays music, loads effects from disk.
 ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>Under construction.
 
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2>Prelimiary tutorials, prone to change. OK64 is Leuat's very own fake 6502 computer!

@@ -1,0 +1,7 @@
+ras_include_file = packed_resources1.ras
+packed_address = $4000
+output_dir = 0
+use_exomizer3 = 0
+address_field = 0
+data = ,e1, effect1.prg, $1280, e2, effect2.prg, $1280
+data_tinycrunch = ,0, 0
