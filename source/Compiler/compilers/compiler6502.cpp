@@ -191,7 +191,7 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
  //   Orgasm orgAsm;
     orgAsm->SetupConstants(m_parser.m_symTab);
     //orgAsm.Codes();
-    orgAsm->Assemble(filename+".m", filename+".prg");
+    orgAsm->Assemble(filename+".asm", filename+".prg");
 
     if (m_assembler==nullptr)
         return false;
