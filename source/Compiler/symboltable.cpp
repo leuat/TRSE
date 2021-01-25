@@ -519,6 +519,7 @@ QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name) {
 
 bool SymbolTable::isRegisterName(QString sn)
 {
+    sn = sn.toLower();
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
         if ((sn=="_a" || sn=="_x" || sn=="_y" || sn=="_ax" || sn=="_ay" || sn=="_xy"))
             return true;

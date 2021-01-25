@@ -23,7 +23,7 @@ program Demo;
     1) in order to build the effects, click on the "Build all" button. The build list is defined in the 
     project settings / build list. 
     
-    2) After the individual effects have been compiled (to $1280), simply build and run "demo.ras"
+    2) After the individual effects have been compiled (to $1280), simply build and run "demo.ras" normally
 
 	HOW IT WORKS:
 
@@ -45,6 +45,7 @@ program Demo;
 	The files + filenames are defined in the "disk1.paw" file. This file is also defined to be the
 	build disk in the project settings target output settings. 
 
+	the various addresses used are defined as global project defines in the project settings / target settings / global defines tab
 
 */
 
