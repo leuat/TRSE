@@ -1371,7 +1371,7 @@ bool Parser::PreprocessIncludeFiles()
 
     }
     return done;
-    qDebug() <<m_lexer->m_text;
+  //  qDebug() <<m_lexer->m_text;
 }
 
 
@@ -1383,8 +1383,10 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     bool isConstant = false;
     bool isRegister = m_symTab->isRegisterName(m_currentToken.m_value);
 
+//    qDebug() << "IS REGISTER: "<< m_currentToken.m_value << isRegister;
 
-    if (m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
+
+    if (!isRegister && m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
         QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
 
