@@ -27,7 +27,9 @@ begin
 	RasterIRQ(Screen::DefaultIRQ());
 	Screen::SetMode5();
 	Screen::StartInterrupts();
-	Screen::SetMode5Palette(#Screen::colorsRedBlue);	
+	Screen::SetMode5Palette( #Screen::colorsRedBlue );
+	
+	
 	// Clear the screen
 	while(true) do
 	begin	

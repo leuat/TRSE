@@ -1059,7 +1059,8 @@ void MainWindow::OnQuit()
 void MainWindow::ForceOpenFile(QString s, int ln)
 {
     s.remove(getProjectPath());
-    while (s.startsWith("/"))
+    bool isTru = s.toLower().endsWith("tru");
+    while (s.startsWith("/") && !isTru)
         s = s.remove(0,1);
 
     if (s=="")
@@ -1068,7 +1069,9 @@ void MainWindow::ForceOpenFile(QString s, int ln)
     if (m_currentDoc!=nullptr)
          txt = m_currentDoc->m_outputText;
 
-    LoadDocument(s);
+//    qDebug() << "FIle exists : " <<QFile::exists(s) <<s;
+
+    LoadDocument(s,isTru);
     m_currentDoc->GotoLine(ln);
     FormRasEditor* fe = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (fe!=nullptr)
@@ -2286,6 +2289,7 @@ void MainWindow::GotoSymbol(QString s)
 //    qDebug() << s << m_symPointers.contains(s) << m_symPointers.keys();
     if (!m_orgSymPointers.contains(s))
         return;
+
     QSharedPointer<SymbolPointer> sp = m_orgSymPointers[s];
     ForceOpenFile(sp->m_file,sp->m_ln);
     m_currentDoc->Focus();

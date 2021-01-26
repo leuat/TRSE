@@ -467,10 +467,41 @@ void FormRasEditor::LookupSymbolUnderCursor()
     QTextCursor tc = ui->txtEditor->textCursor();
     tc.select(QTextCursor::WordUnderCursor);
     QString word = tc.selectedText();
-    tc.movePosition(QTextCursor::WordLeft);
-    QString prevWord = tc.selectedText();
-    qDebug() << prevWord << word;
+    tc.select(QTextCursor::LineUnderCursor);
+    QString block = tc.selectedText();
 
+    int pos = block.indexOf(word);
+    QString prefix = "";
+    QString postfix = "";
+    tc = ui->txtEditor->textCursor();
+    tc.select(QTextCursor::WordUnderCursor);
+    // Check for stuff like Unit::IamClicked, if so add "Unit_"
+    if (pos>2) {
+        if (block[pos-1]==':' &&block[pos-2]==':') {
+            tc.movePosition(QTextCursor::WordLeft);
+            tc.movePosition(QTextCursor::WordLeft);
+            tc.movePosition(QTextCursor::WordLeft);
+            tc.select(QTextCursor::WordUnderCursor);
+            prefix = tc.selectedText() + "_";
+
+        }
+    }
+    // Reset
+    tc = ui->txtEditor->textCursor();
+    tc.select(QTextCursor::WordUnderCursor);
+
+    pos += word.length();
+    // Check for stuff like Unit::IamClicked, if os add "_IamClicked"
+
+    if (pos<block.length()-3) {
+        if (block[pos]==':' &&block[pos+1]==':') {
+            tc.movePosition(QTextCursor::WordRight);
+            tc.select(QTextCursor::WordUnderCursor);
+            postfix = "_"+tc.selectedText();
+        }
+    }
+
+    word = prefix + word + postfix;
     emit emitGotoSymbol(word);
 }
 
