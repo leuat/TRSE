@@ -27,7 +27,7 @@ begin
 	StartIRQ(useKernal);
 	wait(5);
 	screen_fg_col:=black;
-	setcharsetlocation(tileLoc);
+	setcharsetlocation(#tileLoc);
 	MovePlayerSprite();	
 	TraverseLevels();
 	RasterIRQ(RasterBottomGame(), rasterBottomPosY,useKernal);	
@@ -64,12 +64,12 @@ begin
 
 	setcharsetlocation(tileLoc);
 
-	@levelpointer:=levelPosition;
+	@levelpointer:=#levelPosition;
 	ReadHeader();
 
 	InitMainSprite();
 
-	@levelpointer:=levelPosition;
+	@levelpointer:=#levelPosition;
 	redraw:=true;
 	
 	LoadEntities();
@@ -81,7 +81,7 @@ end;
 
 procedure InitializeGameScreen();
 begin
-	clearscreen(yellow,screen_col_loc);
+	clearscreen(yellow,#screen_col_loc);
 	moveto(2,0,hi(screen_char_loc));
 	PrintString("TOOT ORIOLE GAME",0,40);
 //	fill(^$D800,yellow,40);

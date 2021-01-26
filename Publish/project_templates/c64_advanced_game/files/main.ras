@@ -18,6 +18,7 @@ var
 	music : incsid("music/discoman.sid",2);
 
 @define levelpointer lp
+
 	lp : pointer;
 
 	// Intro data

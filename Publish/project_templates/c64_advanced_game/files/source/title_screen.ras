@@ -8,7 +8,7 @@ begin
 	setbank(vic_bank0);
 	setregularcolormode();
 	settextmode();
-	setcharsetlocation(charsetLoc);
+	setcharsetlocation(#charsetLoc);
 	hideborderx(1);
 	RasterIRQ(RasterScreenTitleBottom(),58,useKernal);
 	closeIrq();
@@ -30,12 +30,12 @@ begin
 		scroll:=7;
 		tp:=tp+1;
 		memcpy(tp,0,^$0400,40);
-		if (tp[39]=0) then tp:=introText;		
+		if (tp[39]=0) then tp:=#introText;		
 	end;
 	dec(scroll);
 	RasterIRQ(RasterScreenTitleTop(),0,useKernal);
 	
-	call(SIDFILE_1_PLAY);
+	call(sidfile_1_play);
 	Joystick(2);
 	if (joystickbutton=1) then
 	begin
@@ -51,8 +51,8 @@ end;
 
 procedure InitializeTitleScreen();
 begin
-	copyimagecolordata(image_color,1);
-	tp:=introText;
+	copyimagecolordata(#image_color,1);
+	tp:=#introText;
 	fill(^$D800,blue,40);
 	
 end;

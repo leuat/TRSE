@@ -370,7 +370,6 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
     QString curStr = initVal[curLin];
     QString curOutData = "";
     while (!done) {
-//        qDebug() << curStr;
         // First check if current is a pure number
         if (curOutData == "")
             curOutData = "\tdc.b\t";
@@ -401,6 +400,8 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
 
                 QString c = curStr[curIdx].toUpper();
                 //qDebug() << c;
+//                qDebug() << curStr << m_cstr.keys();
+
                 if (m_cstr.contains(c)) {
                     uchar sc = m_cstr[c].m_screenCode;
                     curOutData+=Util::numToHex(sc);

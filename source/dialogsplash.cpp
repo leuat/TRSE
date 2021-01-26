@@ -19,6 +19,9 @@ DialogSplash::DialogSplash(QWidget *parent) :
           "You always admire what you really don't understand."<<
           "Everything else is something different" <<
           "Kind of OK" <<
+          "Drink and be Refreshed "<<
+          "Wherever you go, there you are"<<
+          "Non fui, fui, non sum, non curo"<<
           "Not the worst choice I guess"<<
           "your mother would be proud. Probably." <<
           "What is the worst that could happen?";                               ;

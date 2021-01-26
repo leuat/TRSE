@@ -29,7 +29,7 @@ begin
 	// Fluff files have 13 byte headers
 	
 	// Go past header
-	@levelpointer := @levelpointer +13+32;
+	@levelpointer := #levelPosition + 13+32;
 
 	// Calculate position in level layout
 
@@ -49,7 +49,7 @@ begin
 	
 	for m_rl_j:=0 to m_rl_height do begin
 		for m_rl_i:=0 to m_rl_width do begin
-			m_rl_val := peek(@levelpointer,m_rl_i);
+			m_rl_val := @levelpointer[m_rl_i];
 			m_rl_idx:=m_rl_i*2;
 
 			screenmemory[m_rl_idx]:=m_rl_val;

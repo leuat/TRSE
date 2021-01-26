@@ -2,7 +2,7 @@
 procedure LoadEntities();
 begin
 	// Make sure all ID's are set to zer0
-	fill(entity_id,0, @numEntities);
+	fill(#entity_id,0, @numEntities);
 	for i:=0 to @numEntities do begin
 		if @levelpointer[0]=0 then return();
 		entity_id[i] := @levelpointer[0];
