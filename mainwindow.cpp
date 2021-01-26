@@ -963,6 +963,7 @@ void MainWindow::setupIcons()
     int c2= 224;
     int c3 =192;
     int c4 = 96;
+    int c5 = 64;
 
     if (m_iniFile!=nullptr)
     if (m_iniFile->getdouble("disable_file_colors")==1.0) {
@@ -972,7 +973,7 @@ void MainWindow::setupIcons()
 
     m_icons["ras"] = QIcon(QPixmap::fromImage(img));
 //    m_fileColors["ras"] = QColor(c1,c1,c3);
-    m_fileColors["ras"] = QColor(c4,c3,c1);
+    m_fileColors["ras"] = QColor(c1,c1,c4);
 
     m_icons["inc"] = QIcon(QPixmap::fromImage(img));
 //    m_fileColors["ras"] = QColor(c1,c1,c3);
@@ -980,7 +981,7 @@ void MainWindow::setupIcons()
 
     img.load(":resources/images/asm_icon.png");
     m_icons["asm"] = QIcon(QPixmap::fromImage(img));
-    m_fileColors["asm"] = QColor(c4,c1,c4);
+    m_fileColors["asm"] = QColor(32,120,32);
 
     img.load(":resources/images/image_icon.png");
     m_icons["flf"] = QIcon(QPixmap::fromImage(img));
