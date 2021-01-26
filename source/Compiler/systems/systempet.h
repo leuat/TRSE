@@ -6,19 +6,8 @@
 class SystemPET : public SystemMOS6502
 {
 public:
-    SystemPET(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj) {
-        m_processor = MOS6502;
-        m_system = PET;
-        DefaultValues();
-    }
-    void DefaultValues() override {
-        m_startAddress = 0x0400;
-        m_programStartAddress = 0x0410;
-        m_ignoreSys = false;
-        m_stripPrg = false;
-
-    }
-
+    SystemPET(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
+    void DefaultValues() override;
 };
 
 
