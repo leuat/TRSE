@@ -1291,7 +1291,12 @@ void Methods6502::MemCpyUnroll(Assembler* as)
     as->Comment("memcpy unrolled");
     for (int i=0;i<counter;i++) {
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER || m_node->m_params[2]->getType(as)==TokenType::POINTER)
-            as->Asm("ldy #" +QString::number(i));
+        {
+            if (i==0)
+                as->Asm("ldy #" +QString::number(i));
+            else
+                as->Asm("iny");
+        }
 
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER)
             as->Asm("lda ("+ addr +"),y");
