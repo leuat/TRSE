@@ -3008,12 +3008,12 @@ void Methods6502::PPUDump(Assembler *as, int hi, int lo, int x, int y)
   //m_node->m_params[0]->Accept(m_dispatcher);
   LoadVar(as,1);
 //  as->Asm("lda #"+Util::numToHex(hi));
-  as->Asm("sta $2006");
+  as->Asm("sta $2006;keep");
   LoadVar(as,2);
 //  m_node->m_params[1]->Accept(m_dispatcher);
   QString addr = m_node->m_params[0]->getAddress();
 //  as->Asm("lda #"+Util::numToHex(lo));
-  as->Asm("sta $2006");
+  as->Asm("sta $2006;keep");
   for (int i=0;i<y;i++) {
       as->Asm("ldx #0");
       QString lbl = as->NewLabel("PPUDump");
@@ -3034,7 +3034,7 @@ void Methods6502::PPUSingle(Assembler *as, int type )
         LoadVar(as,0);
         as->Asm("sta $2006");
         LoadVar(as,1);
-        as->Asm("sta $2006");
+        as->Asm("sta $2006;keep");
     }
     if (type==0) {
         LoadVar(as,2);
@@ -3042,7 +3042,7 @@ void Methods6502::PPUSingle(Assembler *as, int type )
     }
     if (type==2) {
         LoadVar(as,0);
-        as->Asm("sta $2007");
+        as->Asm("sta $2007;keep");
     }
 
     if (type==3) {
@@ -3051,12 +3051,12 @@ void Methods6502::PPUSingle(Assembler *as, int type )
             as->Asm("ldy #"+QString::number(m_node->m_params[0]->getValueAsInt(as)>>8));
             as->Asm("lda #"+QString::number(m_node->m_params[0]->getValueAsInt(as)&0xFF));
             as->Asm("sty $2006");
-            as->Asm("sta $2006");
+            as->Asm("sta $2006;keep");
             return;
         }
         LoadVar(as,0);
         as->Asm("sty $2006");
-        as->Asm("sta $2006");
+        as->Asm("sta $2006;keep");
     }
 
 }
@@ -3068,7 +3068,7 @@ void Methods6502::PPURead(Assembler *as)
     LoadVar(as,0);
     as->Asm("sta $2006");
     LoadVar(as,1);
-    as->Asm("sta $2006");
+    as->Asm("sta $2006;keep");
 //    QString addr = m_node->m_params[0]->getAddress();
 //    as->Asm("sta $2006");
     as->Asm("lda $2007");
@@ -3093,7 +3093,7 @@ void Methods6502::PPUDrawColumn(Assembler *as)
     LoadVar(as,1);
     as->Asm("sta $2006");
     LoadVar(as,2);
-    as->Asm("sta $2006");
+    as->Asm("sta $2006;keep");
     LoadVar(as,3);
     as->Asm("tax");
     as->Asm("ldy #0");
