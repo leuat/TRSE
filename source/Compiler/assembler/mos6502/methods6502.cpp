@@ -263,9 +263,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     }
     if (Command("Scroll")) {
         LoadVar(as,0);
-        as->Asm("sta $2005");
+        as->Asm("sta $2005;keep");
         LoadVar(as,1);
-        as->Asm("sta $2005");
+        as->Asm("sta $2005;keep");
     }
 
     if (Command("PPUBackgroundDump"))

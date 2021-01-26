@@ -467,6 +467,10 @@ void FormRasEditor::LookupSymbolUnderCursor()
     QTextCursor tc = ui->txtEditor->textCursor();
     tc.select(QTextCursor::WordUnderCursor);
     QString word = tc.selectedText();
+    tc.movePosition(QTextCursor::WordLeft);
+    QString prevWord = tc.selectedText();
+    qDebug() << prevWord << word;
+
     emit emitGotoSymbol(word);
 }
 
