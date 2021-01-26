@@ -21,7 +21,7 @@ begin
 	
 	// Move to x=20, y=10 at memory address $0000 on the VDC (text matrix)
 	MoveTo80(20,10,0);
-	print80(text1,31);
+	print80(#text1,31);
 
 
 	// Repeat for second sentence
@@ -31,7 +31,7 @@ begin
 		fill80(i+20, 5);
 	
 	MoveTo80(20,15,0);
-	print80(text2,37);
+	print80(#text2,37);
 
 
 	Loop();

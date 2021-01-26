@@ -931,7 +931,8 @@ void AsmMOS6502::OptimisePassLdx(QString x)
 //                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
 //                        if (x=="x")
 //                           qDebug () << "Removing because equal: " << l0 << ", " << l1 << "  on line " <<i;
-                        m_removeLines.append(j);
+                        if (!l1.contains(";keep"))
+                            m_removeLines.append(j);
                         curCnt++;
                         continue;
                     }
@@ -1269,11 +1270,15 @@ QString AsmMOS6502::getToken(QString s, int t)
 void AsmMOS6502::RemoveLines()
 {
     int k=0;
+//    qDebug() << "WOOOT";
     for (int i: m_removeLines) {
-        //qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
-        m_source.removeAt(i-k);
-        k++;
-        m_totalOptimizedLines++;
+  //      qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
+    //    if (!m_source[i-k].contains(";keep")) {
+            m_source.removeAt(i-k);
+            k++;
+            m_totalOptimizedLines++;
+      //  }
+        //qDebug() << "current :" <<i <<m_removeLines;
     }
     m_removeLines.clear();
 }
