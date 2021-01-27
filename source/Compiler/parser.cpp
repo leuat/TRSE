@@ -394,7 +394,7 @@ void Parser::VerifyToken(Token t)
 void Parser::InitSystemPreprocessors()
 {
     m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)] = "1";
-
+    Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 
 }
 
@@ -4316,6 +4316,10 @@ void Parser::HandleProjectSettingsPreprocessors()
     if (cmd == "ignorejmp") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("ignore_initial_jump", val.toInt());
+    }
+    if (cmd == "petmodel") {
+        m_projectIni->setString("petmodel", val);
+        Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
     }
 
     Eat(); // H

@@ -195,7 +195,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>6</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -541,6 +541,101 @@
                </property>
               </item>
              </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_11">
+          <attribute name="title">
+           <string>PET</string>
+          </attribute>
+          <widget class="QGroupBox" name="groupBox_4">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>20</y>
+             <width>621</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>System</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_14">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="gridLayout_13">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_34">
+                <property name="text">
+                 <string>Pet model:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="cbmPetSystem">
+                <item>
+                 <property name="text">
+                  <string>2001-8N</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3008</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3016</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3032</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3032B</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4016</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4032</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4032B</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>8032</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>8096</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>8296</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SuperPET</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>

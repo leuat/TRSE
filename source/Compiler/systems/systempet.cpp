@@ -39,3 +39,7 @@ void SystemPET::DefaultValues()
     m_ignoreSys = false;
     m_stripPrg = false;
 }
+
+void SystemPET::InitSystemPreprocessors(QMap<QString, QString> &defines)  {
+    defines["PET_MODEL"] = m_projectIni->getString("petmodel");
+}

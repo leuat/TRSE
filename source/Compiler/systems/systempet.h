@@ -8,6 +8,9 @@ class SystemPET : public SystemMOS6502
 public:
     SystemPET(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
     void DefaultValues() override;
+    void InitSystemPreprocessors(QMap<QString, QString>& defines) override;;
+
+
 };
 
 

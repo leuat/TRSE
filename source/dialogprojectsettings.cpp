@@ -109,6 +109,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbX86Type->setCurrentText(m_ini->getString("dosbox_x86_system"));
 
+    ui->cbmPetSystem->setCurrentText(m_ini->getString("petmodel"));
 
 
     ui->cmbX86CPU->setCurrentText(m_ini->getString("cpu_x86_system"));
@@ -194,6 +195,9 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("zeropage_decrunch2", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp2->text())));
     m_ini->setString("zeropage_decrunch3", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp3->text())));
     m_ini->setString("zeropage_decrunch4", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp4->text())));
+
+
+    m_ini->setString("petmodel", ui->cbmPetSystem->currentText());
 
     m_ini->setString("zeropage_internal1", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp1->text())));
     m_ini->setString("zeropage_internal2", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp2->text())));
@@ -360,7 +364,9 @@ void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
     if (index==8)
         ui->tabConfigs->setCurrentIndex(4);
     if (index==6)
-        ui->tabConfigs->setCurrentIndex(5);
+        ui->tabConfigs->setCurrentIndex(6);
+/*    if (index==7)
+        ui->tabConfigs->setCurrentIndex(6);*/
 }
 
 void DialogProjectSettings::on_chkIgnoreBasic_clicked(bool checked)

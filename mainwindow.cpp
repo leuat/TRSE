@@ -2121,6 +2121,14 @@ void TRSEProject::VerifyDefaults() {
 
     }
 
+    if (m_ini->getString("system")=="PET") {
+
+        if (!m_ini->contains("petmodel")) {
+            m_ini->setString("petmodel","8032");
+        }
+
+    }
+
     if (!m_ini->contains("exomize_toggle")) {
         m_ini->setFloat("exomize_toggle",0);
     }

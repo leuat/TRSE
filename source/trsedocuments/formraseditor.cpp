@@ -128,6 +128,10 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="PET") {
         emu = m_iniFile->getString("pet_emulator");
         params<< "-autostartprgmode" << "1";
+        QString petmodel = m_builderThread.m_builder->m_projectIniFile->getString("petmodel");
+        if (petmodel!="") {
+            params << "-model" << petmodel;
+        }
 //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
     if (m_projectIniFile->getString("system")=="BBCM") {

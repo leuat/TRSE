@@ -61,7 +61,7 @@ public:
 
     QString CompressLZ4(QString fileName);
 
-
+    virtual void InitSystemPreprocessors(QMap<QString, QString>& defines)  {};
     virtual QString CompressFile(QString fileName) {
         return fileName;
     }
