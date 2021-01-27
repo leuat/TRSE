@@ -128,6 +128,7 @@ void DialogTRSESettings::FillFromIni()
     //ui->chkRemoveUnusedProcedures->setChecked( m_ini->getdouble("optimizer_remove_unused_symbols")==1.0);
 
     ui->leUserDefined->setText(m_ini->getString("user_defined_command"));
+    ui->leUserDefinedParameters->setText(m_ini->getString("user_defined_command_parameters"));
 
     ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
     ui->cmbPainter->setCurrentIndex((int)m_ini->getdouble("image_painter"));
@@ -201,6 +202,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("auto_backup", ui->chkBackup->isChecked()?1:0);
 
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
+    m_ini->setString("user_defined_command_parameters",ui->leUserDefinedParameters->text());
 
     m_ini->setFloat("disable_file_colors", ui->chkDisableFileColors->isChecked()?1:0);
 
@@ -662,5 +664,14 @@ void DialogTRSESettings::on_pushButton_4_clicked()
 void DialogTRSESettings::on_pushButton_3_clicked()
 {
     Help("BBC 'B2' emulator","Download from : https://github.com/tom-seddon/b2/releases");
+
+}
+
+void DialogTRSESettings::on_btnUserDefinedCommand_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("User-defined program"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leUserDefined->setText(filename);
 
 }

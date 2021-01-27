@@ -119,8 +119,12 @@ void TRSEDocument::UserDefined()
 {
     QProcess p;
 
-    QString s = m_iniFile->getString("user_defined_command").trimmed();
-    if (s=="")
+    QString cmd = m_iniFile->getString("user_defined_command").trimmed();
+    QString paramsStr = m_iniFile->getString("user_defined_command_parameters").trimmed();
+    if (cmd=="")
+        return;
+
+    if (!QFile::exists(cmd))
         return;
 
     QString src = m_currentSourceFile;
@@ -131,10 +135,8 @@ void TRSEDocument::UserDefined()
 
 
 
-    s=s.replace("@prg", src.replace(".ras", "."+m_programEndingType));
-    QStringList params = s.split(" ");
-    QString cmd = params[0];
-    params.removeFirst();
+    paramsStr = paramsStr.replace("@prg", src.replace(".ras", "."+m_programEndingType)).trimmed();
+    QStringList params = paramsStr.split(" ");
     p.startDetached(cmd,params);
     p.waitForFinished();
 

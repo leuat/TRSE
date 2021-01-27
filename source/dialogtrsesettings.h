@@ -176,6 +176,8 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_btnUserDefinedCommand_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

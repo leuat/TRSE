@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>6</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1274,7 +1274,7 @@
           </rect>
          </property>
          <property name="text">
-          <string>User defined commands: type @prg to use the current .prg output file</string>
+          <string>User defined commands (Ctrl-T): type @prg to use the current .prg output file</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -1295,32 +1295,6 @@
          <property name="wordWrap">
           <bool>true</bool>
          </property>
-        </widget>
-        <widget class="QWidget" name="verticalLayoutWidget_2">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>340</y>
-           <width>621</width>
-           <height>63</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>User-defined command (Ctrl-T):</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="leUserDefined"/>
-            </item>
-           </layout>
-          </item>
-         </layout>
         </widget>
         <widget class="QCheckBox" name="chkAutoInject">
          <property name="geometry">
@@ -1391,6 +1365,45 @@
           </item>
           <item row="2" column="2">
            <widget class="QPushButton" name="btnSidPlayer">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="gridLayoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>330</y>
+           <width>621</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_25">
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="leUserDefined"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_50">
+            <property name="text">
+             <string>User-defined parameters:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="leUserDefinedParameters"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>User-defined program:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnUserDefinedCommand">
             <property name="text">
              <string>...</string>
             </property>
