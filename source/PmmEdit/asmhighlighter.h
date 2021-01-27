@@ -1,3 +1,7 @@
+#ifndef ASMHIGHLIGHTER_H
+#define ASMHIGHLIGHTER_H
+
+
 /*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
@@ -19,25 +23,23 @@
  *   If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef HIGHLIGHTER_H
-#define HIGHLIGHTER_H
 
 #include <QSyntaxHighlighter>
 #include <QTextDocument>
 #include <QRegularExpression>
 #include <QString>
 #include "source/LeLib/util/cinifile.h"
-#include "source/Compiler/symboltable.h"
 #include "trsehighlighter.h"
 
-class Highlighter : public TRSEHighlighter
+
+class AsmHighlighter : public TRSEHighlighter
 {
     Q_OBJECT
 
 public:
-    Highlighter(CIniFile ini, int type, QTextDocument *parent = 0);
-
+   AsmHighlighter(CIniFile ini, int type, QTextDocument *parent);
 
 };
 
-#endif // HIGHLIGHTER_H
+
+#endif // FJONGHIGHLIGHTER_H

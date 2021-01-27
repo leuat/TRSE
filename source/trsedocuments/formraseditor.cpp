@@ -643,7 +643,11 @@ void FormRasEditor::SetupHighlighter()
     ui->txtEditor->setPalette(p);
     //if (highlighter!=nullptr)
     //    delete highlighter;
-    highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
+    if (m_currentFileShort.toLower().endsWith(".ras"))
+        highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
+    else
+        highlighter = new AsmHighlighter(colors, 0, ui->txtEditor->document());
+
     QStringList ls = m_iniFile->getStringList("custom_keyword_colour");
     QColor col= Qt::white;
     if (ls.count()==3)

@@ -24,6 +24,7 @@
 
 #include <QWidget>
 #include "trsedocument.h"
+#include "source/PmmEdit/asmhighlighter.h"
 #include "source/PmmEdit/highlighter.h"
 #include "source/PmmEdit/codeeditor.h"
 #include "source/messages.h"
@@ -84,7 +85,7 @@ public:
     explicit FormRasEditor(QWidget *parent = 0);
     ~FormRasEditor();
     static bool m_broadcast;
-    Highlighter* highlighter = nullptr;
+    TRSEHighlighter* highlighter = nullptr;
     QFont m_font;
     QSharedPointer<DialogHelp> m_help = nullptr;
     bool m_isTRU = false;

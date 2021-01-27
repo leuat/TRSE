@@ -168,7 +168,9 @@ SOURCES += main.cpp\
     source/LeLib/util/spline2d.cpp \
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
+    source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
+    source/PmmEdit/trsehighlighter.cpp \
     source/dialogcolorselect.cpp \
     source/dialogexport3d.cpp \
     source/dialognewproject.cpp \
@@ -380,7 +382,9 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/spline2d.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \
+    source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \
+    source/PmmEdit/trsehighlighter.h \
     source/dialogcolorselect.h \
     source/dialogexport3d.h \
     source/dialognewproject.h \
