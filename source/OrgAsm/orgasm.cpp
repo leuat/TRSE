@@ -65,6 +65,8 @@ void Orgasm::ProcessSource()
 
 QString Orgasm::processRepeatIndex(QString s, int current)
 {
+    s = s.replace("[i+1]",QString::number(current+1));
+    s = s.replace("[i-1]",QString::number(current-1));
     s = s.replace("[i]",QString::number(current));
 //    qDebug() << current << QString::number(current) << s;
     return s;
