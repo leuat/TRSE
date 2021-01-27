@@ -37,7 +37,6 @@ public:
 
     QSharedPointer<Node> m_a=nullptr, m_b = nullptr;
     QSharedPointer<Node> m_block=nullptr;
-    int m_forcePage;
     bool m_unroll = false;
     QSharedPointer<Node> m_step = nullptr;
     int m_loopCounter=0;

@@ -40,7 +40,6 @@ public:
     QSharedPointer<Node> m_block = nullptr;
     QSharedPointer<NodeBinaryClause> m_clause = nullptr;
 
-    int m_forcePage = 0;
 
     NodeRepeatUntil(Token op, int forcePage,  QSharedPointer<NodeBinaryClause> cond, QSharedPointer<Node> block);
 

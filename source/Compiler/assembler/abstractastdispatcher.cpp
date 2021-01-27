@@ -150,6 +150,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 
     as->Label(lblFor);
     bool offpage = isOffPage(node, node->m_block, nullptr);
+
+
     Token t_cond = node->m_op;
  /*
     QSharedPointer<NodeBinaryClause> bc = new QSharedPointer<NodeBinaryClause>(
@@ -380,6 +382,8 @@ bool AbstractASTDispatcher::isOffPage(QSharedPointer<Node> node, QSharedPointer<
 
     if (node->m_forcePage == 2)
         onPage = true;
+
+//    qDebug() << "FORCEPAGE " <<node->m_forcePage;
 
     return !onPage;
 }
