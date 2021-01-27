@@ -1110,7 +1110,7 @@ void Methods6502::Peek(Assembler* as)
 
     // Optimize if numeric
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (num!=nullptr) {
+    if (num!=nullptr && m_node->m_params[0]->isPure()) {
         QString add = m_node->m_params[1]->getValue(as);
         QString org = m_node->m_params[0]->getValue(as);
         as->Asm("lda "+org + " + "+add.remove("#"));
