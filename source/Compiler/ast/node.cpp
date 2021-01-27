@@ -50,7 +50,7 @@ void Node::DispatchConstructor(Assembler *as) {
 //    qDebug() << Syntax::s.m_currentSystem->m_system << m_comment;
     if ((m_comment!="") && ok) {
         QString c = m_comment;//.replace("//","\n").replace("/*","\n").replace("\n","\n; //");
-        c = c.replace("//","\n").replace("/*","\n").replace("\n","\n; //");
+        c = c.replace("//","\n").replace("/*","\n").replace("\n","\n; //").replace("//*","\n");
         if (!c.trimmed().startsWith(";"))
             c = ";" + c;
 
