@@ -1478,7 +1478,7 @@ void MultiColorImage::CompressAndSave(QByteArray& chardata, QVector<int>& screen
     f.close();
 */
 
-    qDebug() << "CHARDATA : " << chars.count();
+//    qDebug() << "CHARDATA : " << chars.count();
     delete ni;
 
    // return out;

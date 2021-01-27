@@ -100,7 +100,7 @@ class OrgasmInstruction {
 
 class OrgasmLine {
 public:
-    enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE};
+    enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE, ORGASMCOMMAND};
 
     OLType m_type;
     int m_pos, m_lineNumber, m_rasLineNumber=0;
@@ -112,9 +112,12 @@ public:
     static bool m_inIFDEF;
 
 
+
     QString Type() {
         if (m_type==INSTRUCTION)
             return "INSTRUCTION";
+        if (m_type==ORGASMCOMMAND)
+            return "ORGASMCOMMAND";
         if (m_type==ORG)
             return "ORG";
         if (m_type==INCBIN)
@@ -139,6 +142,11 @@ public:
     OrgasmError(QString s, OrgasmLine ln) {
         msg = s;
         oline = ln;
+    }
+    OrgasmError(QString s, int line) {
+        msg = s;
+        oline.m_lineNumber = line;
+
     }
     OrgasmError() {
         msg = "";
@@ -171,6 +179,9 @@ public:
     QString m_output;
     QString m_prevLabel = "";
 
+    QString processRepeatIndex(QString s, int current);
+    QStringList processRepeatIndex(QStringList s, int current);
+
     QString endl = "\n";
     OrgasmError error;
 
@@ -196,6 +207,7 @@ public:
 
     void LoadCodes(int CPUflavor);
     void ProcessSource();
+    void ProcessUnrolling();
 
 
     OrgasmLine LexLine(int i);

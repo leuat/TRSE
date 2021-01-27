@@ -3,6 +3,7 @@
 
 bool OrgasmLine::m_inIFDEF = false;
 
+
 void Orgasm::LoadFile(QString filename) {
     LoadCodes(m_cpuFlavor);
     QFile f(filename);
@@ -10,7 +11,6 @@ void Orgasm::LoadFile(QString filename) {
     m_source=f.readAll();
 
     ProcessSource();
-
     f.close();
     m_lines = m_source.split("\n");
     m_pCounter = 0;
@@ -58,7 +58,69 @@ void Orgasm::ProcessSource()
 //        m_source = m_source.replace(r,QChar(i));
         m_source = m_source.replace(r,"\"," + QString::number(i) + ",\"");
     }
-//    qDebug() << "Orgasm::Processources took " << Util::MilisecondToString(t.elapsed());
+    //    qDebug() << "Orgasm::Processources took " << Util::MilisecondToString(t.elapsed());
+}
+
+
+
+QString Orgasm::processRepeatIndex(QString s, int current)
+{
+    s = s.replace("[i]",QString::number(current));
+//    qDebug() << current << QString::number(current) << s;
+    return s;
+}
+
+QStringList Orgasm::processRepeatIndex(QStringList s, int current)
+{
+    QStringList ret;
+    for (QString& l : s)
+       ret<<processRepeatIndex(l,current);
+    return ret;
+}
+
+
+void Orgasm::ProcessUnrolling()
+{
+    QStringList newLines;
+    QStringList repeatList;
+    bool isInRepeat = false;
+    int repeatCount = 0;
+    int ln =0;
+    for (QString& l  : m_lines) {
+        ln++;
+        if (l.toLower().simplified().startsWith("repeat")) {
+            if (isInRepeat)
+                throw OrgasmError("Cannot do nested unrolling.",ln);
+            isInRepeat = true;
+            repeatCount = l.simplified().split(" ").last().toInt();
+            if (repeatCount<=0)
+                throw OrgasmError("Repeat count must be larger than 0.",ln);
+            repeatList.clear();
+//            qDebug() << "Starting REPEAT list!";
+            continue;
+        }
+        if (l.toLower().simplified() == ("repend")) {
+            if (!isInRepeat)
+                throw OrgasmError("Not in an repeat loop.",ln);
+            isInRepeat = false;
+
+            for (int i=1;i<repeatCount;i++) {
+                newLines.append(processRepeatIndex(repeatList,i));
+            }
+            repeatCount = 0;
+            repeatList.clear();
+            continue;
+        }
+        if (isInRepeat)
+            newLines +=processRepeatIndex(l,0);
+        else
+            newLines +=l;
+        if (isInRepeat)
+            repeatList.append(l);
+
+    }
+    m_lines = newLines;
+  //  qDebug().noquote() << m_lines;
 }
 
 OrgasmLine Orgasm::LexLine(int i) {
@@ -98,6 +160,16 @@ OrgasmLine Orgasm::LexLine(int i) {
   //      qDebug() << line;
 
     line.replace("("," (");
+
+
+/*      if (line.simplified().toLower().startsWith("repeat") || line.simplified().toLower().startsWith("repend")) {
+          l.m_type = OrgasmLine::ORGASMCOMMAND;
+          l.m_ignore = true;
+           return l;
+
+        }
+*/
+
 
     if (line.simplified().toLower().startsWith("ifconst")) {
         OrgasmLine::m_inIFDEF= true;
@@ -227,6 +299,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     m_success = false;
     LoadFile(filename);
     m_olines.clear();
+    ProcessUnrolling();
 
     try {
 
