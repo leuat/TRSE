@@ -1,0 +1,135 @@
+Unit Screen;
+var
+	ch, idx, len : byte;
+	text, ptr : pointer;
+
+	// Specifies the index at which the alphabet starts in the tileset "A".."Z"
+	const AlphaTile : byte = $5A;
+	const LowerAlphaTile : byte = $5A;
+	// Specifies the index at which the hexidecimal digits starts in the tileset "0".."F"
+	const HexTile : byte = $50;
+	const DigitTile : byte = HexTile;
+	// Species the index of a space tile
+	const SpaceTile : byte = $0;
+	const ColonTile : byte = $74;
+	// Species the index of an invalid tile (for debugging)
+	const InvalidTile : byte = $20;
+
+/**
+	Reset PPU writing by reading PPUSTATUS 
+**/
+procedure Reset() inline;
+asm("
+	bit $2002
+");
+
+/**
+	Clear the screen (with value $00)
+**/
+procedure ClearScreen(); 
+begin
+	ppupointi($2000);
+	for ptr := 0 to 30*32 do begin
+		ppuwrite($0); // $22 for colortest
+	end;
+end;
+
+/**
+	Fill screen with a given value
+**/
+procedure FillScreen(ch : global byte); 
+begin
+	ppupointi($2000);
+	for ptr := 0 to 30*32 do begin
+		ppuwrite(ch); // $22 for colortest
+	end;
+end;
+
+/**
+	Set the cursor position
+**/
+procedure SetXY(idx, ch : global byte);
+begin
+	ptr := $2000 + idx + ch*32;
+	PPUPointi(ptr);
+end;
+
+procedure SetAttrXY(idx, ch : global byte);
+begin
+	ptr := $23c0 + idx + ch*16;
+	PPUPointi(ptr);
+end;
+
+procedure SetAttrY(ch : global byte);
+begin
+	ptr := $23c0 + ch*16;
+	PPUPointi(ptr);
+end;
+
+
+procedure Write(ch : global byte) inline;
+begin
+	PPUDATA := ch; 
+end;
+
+procedure WriteN(len, ch : global byte);
+begin
+	for idx := 0 to len do PPUWrite(ch);
+end;
+
+/**
+	Writes text to screen
+	Tries to userfriendly so it's very slow
+**/
+procedure WriteText(text : global pointer); 
+begin
+	ch := text^;
+	while (ch) do
+	begin
+		if (ch >= $61) then ch := AlphaTile - $61 + ch		// a..z
+		else if (ch >= $41) then ch := AlphaTile - $41 + ch	// A..Z
+		else if (ch = $3A) then ch := ColonTile				// ":"
+		else if (ch = $20) then ch := SpaceTile 			// " "
+		else if (ch >= $30) then ch := HexTile - $30 + ch	// 0..1
+		else if (ch < $20) then nop(0)						// Allow tiles 0..31 to be used in text
+		else ch := InvalidTile;								// Error
+		PPUDATA := ch; 
+		inc(text);
+		ch := text^;
+	end;	
+end;
+
+/**
+	Writes text with specified length to screen.
+**/
+procedure WriteTextL(len : global byte, text : global pointer); 
+begin
+	idx := 0;
+	while (idx < len) do
+	begin
+		PPUDATA := (AlphaTile - $41) + text[idx];
+		inc(idx);
+	end;	
+end;
+
+/**
+	Writes a hexadecimal byte to screenmemory
+**/
+procedure WriteHex(ch : global pure byte);
+begin
+	PPUDATA := $50 + ((ch & $f0) shr 4);
+	PPUDATA := $50 + (ch & $0f);
+end;
+
+/**
+	Writes a integer/pointer to screenmemory
+**/
+procedure WriteHexI(ptr : global pointer);
+begin
+	ch := hi(ptr);
+	WriteHex(ch);
+	ch := lo(ptr);
+	WriteHex(ch);
+end;
+
+end.

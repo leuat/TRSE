@@ -1,0 +1,50 @@
+/**
+	Notes:
+	Depends on including "common.tru"
+	If a test crashes it will not draw. This could be fixed by enabling the PPU during tests etc. But it's tricky.
+
+**/
+program UnitTests;
+var name : string = "Self Test"; // Name to show (Wishlist: SOME_CONSTANT_FOR_PROGRAM_NAME_STRING);
+@include "common.tru"
+
+
+procedure Test01;
+begin
+	text := "PASS";
+	PASS();
+end;
+
+procedure Test02;
+begin
+	text := "FAIL";
+	FAIL();
+end;
+
+procedure Test03;
+begin
+	text := "BEEF";
+	DebugValue($beef);
+	PASS();
+end;
+
+procedure Crash;
+begin
+	Loop();
+	text := "FAIL";
+	FAIL();
+end;
+
+procedure RunTests();
+begin
+	Test01;
+	Test02;
+	Test03;
+	//Crash; // Will not show results for any tests
+end;
+
+// Starting point after resetting the NES
+begin
+	Main();
+	Loop();
+end.
