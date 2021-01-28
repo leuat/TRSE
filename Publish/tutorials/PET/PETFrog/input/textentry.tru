@@ -1,0 +1,75 @@
+Unit Tex;
+/*
+pointer to memory to store string
+position in string
+length of string
+
+table of chars -- row/col to screencodes
+*/
+var  
+
+	tp: pointer;		// pointer to the text string
+	pos: byte;			// position of 'cursor' in the text string
+	len: byte;			// length of the text string
+
+	keyRepeat: byte;	// how fast to repeat keys
+	keyDelay: byte;		// time on first press before 
+
+	invert: byte = 128;	// set to 0 or 128
+
+	i: byte at $fd;		// temp var - gap between screenmemory and colormemory pointers
+
+	keyDown: byte at $97;	// interrupt populates key
+
+@use "input/key"
+
+
+
+procedure SetInputString( tp: global pointer, len: global byte );
+begin
+	// sets up the string to use for input 
+	// (global params handle the assignment)
+	pos := 0; // set position to start of string
+
+end;
+
+procedure ClearInputString();
+begin
+
+	for i := 0 to len do
+		tp[ i ] := 32;
+
+end;
+
+/**
+<p>Draw input string at current screenmemory pointer location.</p>
+**/
+procedure Write();
+begin
+
+	for i := 0 to len do
+		//if ( tp[ i ] >= 64 and tp[ i ] <= 96 ) then
+		//	screenmemory[ i ] := tp[ i ] - 64 | invert
+		//else
+			screenmemory[ i ] := tp[ i ] | invert;
+			
+end;
+
+procedure Read();
+begin
+
+	// read the keyboard matrix
+	Key::Read();
+
+	if ( Key::keyState = 0 ) then return; // no key pressed
+	//if ( keyDown <> 255 ) then
+	begin
+	
+		tp[ pos ] := Key::GetHeld();
+
+	end;
+
+end;
+
+
+end.

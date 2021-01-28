@@ -51,3 +51,4 @@ open_files = ,Hello.ras
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/PLUS4/Tutorials/
 current_file = easy/01_hello_world.asm
 exomizer_toggle = 0
+open_files =, Hello.ras

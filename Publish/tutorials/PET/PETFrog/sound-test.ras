@@ -1,0 +1,97 @@
+program PET_sounds;
+var  
+	//i : byte;
+	const SOUND : address = 59467;
+	const SOUND_ON : byte = 16;
+	const SOUND_OFF : byte = 0;
+	const SOUND_OCTAVE : address = 59466;
+	const SOUND_FREQ : address = 59464;
+/*
+Note	Frequency
+   octave=15	    octave=51	    octave=85
+   Oct.0	Oct.1	Oct.1	Oct.2	Oct.2	Oct.3
+B	251	    125	    251	    125	    251	    125
+C	238	    118		238		118		238		118
+C#	224	    110		224		110		224		110
+D	210		104		210		104		210		104
+D#	199		99		199		99		199		99
+E	188		93		188		93		188		93
+F	177		88		177		88		177		88
+F#	168		83		168		83		168		83
+G	158		78		158		78		158		78
+G#	149		74		149		74		149		74
+A	140		69		140		69		140		69
+A#	133		65		133		65		133		65
+*/
+
+procedure PlayNote(note : byte);
+var
+ note_duration: byte;
+begin
+	SOUND_FREQ := note;
+	for note_duration:=0 to 200 do wait(200);
+end;
+
+
+
+procedure Burp();
+begin
+	SOUND_OCTAVE := 15;
+	SOUND := SOUND_ON;
+	PlayNote(238);
+	SOUND := SOUND_OFF;
+end;
+
+begin
+
+	/* point to start of random table
+	SOUND := SOUND_ON;
+	while(1) do
+	begin
+		SOUND_OCTAVE := 51;
+		PlayNote(238);
+		PlayNote(188);
+		PlayNote(158);
+		PlayNote(188);
+		SOUND_OCTAVE := 15;
+		PlayNote(238);
+		PlayNote(188);
+		PlayNote(158);
+		PlayNote(188);
+		SOUND_OCTAVE := 51;
+		PlayNote(210);
+		PlayNote(177);
+		PlayNote(140);
+		PlayNote(177);
+		SOUND_OCTAVE := 15;
+		PlayNote(210);
+		PlayNote(177);
+		PlayNote(140);
+		PlayNote(177);
+		SOUND_OCTAVE := 51;
+		PlayNote(210);
+		PlayNote(210);
+		PlayNote(177);
+		PlayNote(140);
+		SOUND_OCTAVE := 15;
+		PlayNote(210);
+		PlayNote(210);
+		PlayNote(177);
+		PlayNote(140);
+		SOUND_OCTAVE := 51;
+		PlayNote(238);
+		PlayNote(188);
+		PlayNote(158);
+		PlayNote(188);
+		SOUND_OCTAVE := 15;
+		PlayNote(238);
+		PlayNote(188);
+		PlayNote(158);
+		PlayNote(188);
+	end;	
+	//cls();
+	loop();
+*/
+
+	Burp();
+end.

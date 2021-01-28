@@ -1,0 +1,38 @@
+Unit Crt;
+var  
+    const ti: address = $8f;
+    oldti: byte at $b9; // re-use cycle counter
+/**
+<p>Wait for the Jiffy clock to tick over which is done on an
+interrupt. This will allow your program to run at a constant
+speed approximately in line with the vertical blank refresh.</p>
+**/
+procedure WaitFrame();
+begin
+    while ( ti = oldti ) do begin end;
+    oldti := ti;
+    
+end;
+procedure WaitVblStart();
+begin
+    asm("
+    
+waitVblStart
+    lda $e840
+    and #%00100000
+    ;cmp #%00100000
+    beq waitVblStart
+    ");
+end;
+procedure WaitVblEnd();
+begin
+    asm("
+    
+waitVblEnd
+    lda $e840
+    and #%00100000
+    ;cmp #%00100000
+    bne waitVblEnd
+    ");
+end;
+end.

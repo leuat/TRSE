@@ -1,0 +1,131 @@
+program pet_tests;
+var  
+	eighty:string=("80COL");
+	forty:string=("40COL");
+	rom_4:string=("ROM4");
+	not_rom_4:string=("?ROM");
+	is_80:byte=false;
+
+procedure cursor_home();
+begin
+
+	_A:=19;
+    call(#$FFD2);
+
+end;
+
+procedure cursor_clear();
+begin
+
+	_A:=147;
+    call(#$FFD2);
+
+end;
+
+procedure cursor_return();
+begin
+
+	_A:=13;
+    call(#$FFD2);
+
+end;
+
+procedure cursor_down();
+begin
+
+	_A:=17;
+    call(#$FFD2);
+
+end;
+
+procedure basic_print(_ptr:pointer;);
+var
+	next_ch: byte;
+begin
+
+	next_ch:=0;
+	while(_ptr[next_ch]<>0) do
+	begin 
+		_A:=_ptr[next_ch];
+    		call(#$FFD2);
+    		inc(next_ch);
+	end;
+	
+	cursor_return();
+	cursor_down();
+
+end;
+
+// Tests for Rom 4 explicitly
+function is_rom_4(): byte;
+begin
+	// Register check
+	if(peek(#$91,0) & $F0 = $E0) then begin 
+		returnvalue(true); 
+	end;
+	// Alternate test
+	if(peek(^50003,0) = 160) then
+	begin
+		returnvalue(true); 
+	end; //4.0 ROMS
+	
+	// Pretty sure not v4 at this point
+	returnvalue(false); 
+end;
+
+
+// Hacky way to check for 80 column screen
+function is_80_columns(): byte;
+var  
+	char: byte; 
+	test_string:string=(147,17,43);
+	screen_pointer: pointer;
+begin
+	
+	screen_pointer:=$8000;
+
+	for char:=0 to 3 do
+	begin
+		_A:=test_string[char];
+	    call(#$FFD2);
+	end;
+	
+    if(screen_pointer[80]=43) then
+    begin
+    		returnvalue(true);
+    end
+    else
+    begin
+    		returnvalue(false);
+	end;
+	
+end;
+begin
+
+	// Hacky way to check for 80 column screen
+	is_80:=is_80_columns();	
+	cursor_down();
+	cursor_return();
+
+    if(is_80=true) then
+    begin
+    		basic_print(#eighty);
+    end
+    else
+    begin
+    		basic_print(#forty);
+	end;
+
+	cursor_down();
+		
+	// Tests for Rom 4 explicitly
+	if(is_rom_4()=true) then
+	begin
+		basic_print(#rom_4);
+	end
+	else
+	begin
+		basic_print(#not_rom_4);
+	end;
+	loop();
+end.

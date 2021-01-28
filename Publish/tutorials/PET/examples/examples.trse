@@ -55,3 +55,4 @@ zeropages_userdefined = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 0
+open_files =, 01_hello_world.ras

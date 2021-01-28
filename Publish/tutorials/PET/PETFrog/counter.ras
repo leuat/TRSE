@@ -1,0 +1,39 @@
+program counterz;
+var  
+    // Define four variables : position x, position y, time and a counter i
+   x,y,time, time2,i: byte = 0;  
+    ti: byte at $8f;
+    oldti: byte;
+begin
+    moveto(0,0,hi(screen_char_loc));
+    // infinite loop
+    ClearScreen($20, screen_char_loc);
+    
+    while (true) do
+    begin
+        
+        time2 := time2 + 1;
+        // use jiffy timer to create a almost steady speed?
+        while ( ti = oldti ) do begin end;
+        oldti := ti;
+        
+        printstring("                ",0,40);
+        // Calculate x,y some sine values (making a circle)
+        // if sine[x] then sine[x+64] is equal to cosine  
+        x:=sine[time]/6 + 12;       
+        y:=sine[time+64]/16 + 4;        
+        // move "screenmemory" cursor to x,y at screen memory $0400
+        moveto(x,y,hi(screen_char_loc));
+        i:=(time>>6)&3; // i will now have values between 0 and 3 (since time is between 0 and 255)
+        // Print some random string
+        case i of
+            0:  printstring("I AM FISH",0,40);
+            1:  printstring("ARE YOU FISH",0,40);
+            2:  printstring("ME AM CAT",0,40);
+            3:  printstring("OM NOM NOM",0,40);
+        end;
+        // Increase the timer
+        time:=time+1;
+        
+    end;
+end.

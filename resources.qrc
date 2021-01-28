@@ -567,5 +567,6 @@
         <file>resources/images/tutorials/escape.png</file>
         <file>resources/images/trse_optic.png</file>
         <file>resources/images/ATARI800.png</file>
+        <file>resources/images/billboard/b30.png</file>
     </qresource>
 </RCC>

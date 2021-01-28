@@ -1,0 +1,24 @@
+program EffingMath;
+var  
+
+	num:integer=321;
+begin
+
+	DefineScreen();	
+	ClearScreen($20, ^$8000);
+	
+	screen_char_loc:=$8000;
+	screenmemory:=$8000;
+	
+	moveto(0,0,hi(screen_char_loc));
+	printdecimal(num/100,4);
+
+	moveto(0,2,hi(screen_char_loc));
+	printdecimal(mod(num/10,10),4);
+
+	moveto(0,4,hi(screen_char_loc));
+	printdecimal(mod(num,10),4);
+
+
+end.
+	

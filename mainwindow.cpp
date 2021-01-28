@@ -182,6 +182,7 @@ void MainWindow::InitOpenGLBanners()
     ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b26.png","https://csdb.dk/release/?id=195845",""));
     ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b27.png","https://csdb.dk/release/?id=193571",""));
     ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b28.png","https://csdb.dk/release/?id=193571",""));
+    ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b30.png","https://github.com/omiq/PETFrog",""));
     ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b2.png","https://www.pouet.net/prod.php?which=85300",""));
     ui->glShowcase->m_slides.append(GLSlide(":resources/images/billboard/b4.png","https://csdb.dk/release/?id=188056",""));
 

@@ -1,0 +1,277 @@
+program ScreenTest;
+var  
+
+       	i,c: 	integer = 0; 
+       	ch : 		byte = 0;
+ 
+
+		rom4: 	cstring ="4.0 rom";
+		rom2: 	cstring ="2.0 rom";
+		arrp:	pointer;	
+
+const	KEYB: 	address = 151;	// Keys being pressed
+const	KEYBUF:	address = 158;	// Keyboard buffer
+
+KEYPRESS: byte = $FF;
+						//123456789012345678901234567890
+		by : 	cstring = "BY CHRIS GARRETT 01/2021  ";    
+		url: 	cstring = "@MAKERHACKS MAKERHACKS.COM"; 
+		over: 	cstring = "GAME OVER                 ";    
+		score: 	cstring = "YOU SCORED:               "; 
+		space: 	cstring = "PRESS SPACE TO CONTINUE   "; 
+		
+		ALIVE:byte=1;
+		WON_GAME:byte=0;   
+		
+petscii_pointer: pointer;
+
+/*
+
+  
+*/
+frogcharA: byte = 214;
+frogcharB: byte = 86;
+frog_x,frog_old_x: byte = 20;
+frog_y,frog_old_y: byte = 25;
+previous_tile: byte =32;
+
+
+arr_crockr: array[9] of byte = ( 192,162,220,220,220,220,220, 98,121,);
+str_crockr: cstring = "         ";
+arr_crockl: array[9] of byte = ( 121, 98,220,220,220,220,220,162,192,);
+str_crockl: cstring = "         ";
+arr_logl: array[5] of byte = ( 168,168,168,168,209,);
+str_logl: cstring = "         ";
+arr_logr: array[5] of byte = ( 209,169,169,169, 169,);
+str_logr: cstring = "         ";
+arr_carl: array[4] of byte = ( 240,207,208,224,);
+str_carl: cstring = "         ";
+arr_carr: array[4] of byte = ( 237,215,215,160,);
+str_carr: cstring = "         ";
+arr_truckb: array[8] of byte = ( 160,215, 98,215,241,215,253,160,);
+str_truckb: cstring = "         ";
+arr_truckt: array[8] of byte = ( 224, 96, 96, 96,254,235,238,224,);
+str_truckt: cstring = "         ";
+
+
+crock_a_x: byte = 40;
+crock_b_x: byte = 1;
+
+logo: array[52] of byte = (
+//  1    2   3  4   5   6   7   8   9  10  11  12  13
+	114, 73,112,110,112,114,110, 85, 73, 32, 32, 32, 32, 
+	107, 75,107, 32, 32, 66, 32,107, 85, 85, 73, 85, 73, 
+	113, 32,109,125, 32,113, 32, 75,113, 74, 75, 74, 66, 
+	120,120,120,120,120,120,120,120,120,120,120, 74, 75, 
+);
+ 
+
+chx,chy:byte;
+
+
+blank_river: cstring = "                           ";
+blank_road: array[12] of byte = (160,160,160,160,160,160,160,160,160);
+
+/*
+1   2   3   4   5   6   7   8   9   0   1   2   3   4   5   6   7   8   9   20  1   2   3   4   5   6   7   8   9   30  1   2   3   4   5   6   7   8   9   40   
+*/
+petscii: array[240] of byte = (
+$CF,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$F7,$D0,
+$F4,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$90,$85,$94,$86,$92,$8F,$87,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$EA,
+$F4,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$EA,
+$CC,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$EF,$FA,
+$E6,$E6,$E6,$20,$E6,$E6,$E6,$E6,$E6,$E6,$20,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$20,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$20,$E6,$E6,$E6,$E6,$E6,$20,$E6,$E6,
+$E6,$E6,$20,$20,$20,$20,$E6,$E6,$E6,$20,$20,$20,$20,$E6,$E6,$E6,$20,$20,$20,$20,$E6,$E6,$E6,$20,$20,$20,$20,$E6,$E6,$20,$20,$20,$20,$E6,$E6,$20,$20,$20,$20,$E6,
+
+$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,
+$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$C0,$A2,$DC,$DC,$DC,$DC,$DC,$62,$79,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,
+$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,
+$20,$20,$20,$20,$20,$A8,$A8,$A8,$A8,$A8,$A8,$D1,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$79,$62,$DC,$DC,$DC,$DC,$DC,$A2,$C0,$20,$20,$20,$20,$20,$20,$20,$20,
+$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,
+$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$D1,$A9,$A9,$A9,$A9,$20,$20,$20,$56,$20,$20,$20,$20,$20,$20,$20,$20,$D1,$A9,$A9,$A9,$A9,$20,$20,$20,
+
+$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,
+$68,$68,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$68,$68,$68,$68,$68,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$68,$68,$68,$20,$20,$20,$20,$20,$20,
+$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$68,
+$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,
+$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,$E3,
+$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$F0,$CF,$D0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$F0,$CF,$D0,$E0,$E0,$E0,$E0,$F0,$CF,$D0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,
+
+$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$ED,$D7,$D7,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$ED,$D7,$D7,$A0,$A0,$A0,$A0,$ED,$D7,$D7,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,
+$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,$AD,
+$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$60,$60,$60,$FE,$EB,$EE,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$E0,$A0,$A0,$A0,
+$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$D7,$62,$D7,$F1,$D7,$FD,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0,
+$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,
+$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,
+
+$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$D6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6,$E6
+);
+	
+		
+/* =============================================================================================== */
+
+
+procedure cls();
+var
+
+begin
+	ClearScreen($20, screen_char_loc);
+	moveto(0,0,hi(screen_char_loc));
+end;
+
+function getkey() : byte;
+
+begin
+
+ 	getkey:=peek(KEYB,0);
+
+end;
+		
+procedure textat(x: byte; y: byte; this_str: pointer; str_len: byte );
+var 
+	zp : pointer;
+
+begin
+	zp:= $8000 + y*40 + x;
+	MemCpyFast( this_str, 0, zp, str_len ); 
+end;
+
+procedure shit_delay();
+begin
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);	
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);		
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+		wait($ffffff);
+end;
+function getat(sx: byte; sy: byte;) : byte;
+var 
+	szp : pointer;
+
+begin
+	szp:= $8000 + sy*40 + sx;
+	getat:=szp[0]; 
+end;
+
+begin
+	DefineScreen();	
+
+	
+	screen_char_loc:=$8000;
+	screenmemory:=$8000;
+	cls();
+
+
+    // Loop through all PETSCII characters
+    fori i := 0 to 255 do
+    begin
+    		// Put the character at screen address
+        screen_char_loc[i] := i; 
+    end;
+
+	
+	moveto(2,20,hi(#$8000));
+	if(peek(^50003,0) = 160) then
+	begin
+		printnumber(4);
+	end //4.0 ROMS
+	else
+	begin
+		printnumber(2);
+	end; //2.0 ROMS
+
+
+	while (1) do
+	begin
+		frog_old_x:=frog_x;
+		frog_old_y:=frog_y;
+		KEYPRESS := getkey();
+		moveto(0,24,hi(#$8000));
+		printdecimal(KEYPRESS,2);
+		
+				if(KEYPRESS=184) then
+		begin
+			if(frog_y>0) then
+			begin
+				dec(frog_y);
+			end;
+		end;
+		
+		if(KEYPRESS=182) then
+		begin
+			if(frog_x<39) then
+			begin
+				inc(frog_x);
+			end;
+		end;
+		
+		if(KEYPRESS=178 or KEYPRESS=181) then
+		begin
+			if(frog_y<24) then
+			begin
+				inc(frog_y);
+			end;
+		end;
+
+		if(KEYPRESS=180) then
+		begin
+			if(frog_x>0) then
+			begin
+				dec(frog_x);
+			end;
+		end;
+		
+		textat(frog_old_x,frog_old_y, #previous_tile,1);
+		previous_tile:=getat(frog_x,frog_y);	
+
+		textat(frog_x,frog_y,"X",1);
+		
+		textat(10,15,#previous_tile,1);
+		moveto(14,15,hi(#$8000));
+		printdecimal(previous_tile,3);
+		
+shit_delay()
+	end;
+
+
+	/*
+	// THIS WORKS
+	screenmemory := $8000;
+	MemCpy(#petscii, 0, #screenmemory, 250 ); 
+	screenmemory := $8000+250;
+	MemCpy(#petscii, 250, #screenmemory, 250 ); 
+	screenmemory := $8000+500;
+	MemCpy(#petscii, 500, #screenmemory, 250 );
+	screenmemory := $8000+750; 
+	MemCpy(#petscii, 750, #screenmemory, 250 ); 
+
+	// THIS DOESN'T WORK
+	petscii_pointer:=#petscii;
+	CopyFullScreen(petscii_pointer, #screenmemory);
+
+	screenmemory := $8000;
+	loop();
+				
+*/
+end.
+

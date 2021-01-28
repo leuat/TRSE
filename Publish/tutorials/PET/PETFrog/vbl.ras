@@ -1,0 +1,51 @@
+program MyProgram;
+var
+	a:byte;
+    oldti,ti,ticmp:integer;
+	t:integer;
+
+
+function _ti(): integer;
+var 
+	ti_temp: integer;
+begin
+
+	    ti_temp := ti_temp + (peek(#$8D,0)*256*256);
+		ti_temp := ti_temp + (peek(#$8D,1)*256);
+	 	ti_temp := ti_temp +  peek(#$8D,2);
+		_ti:=ti_temp;
+end;
+
+begin
+	DefineScreen();	
+	screen_char_loc:=$8000;
+	screenmemory:=$8000;
+
+while(1) do
+begin
+    oldti :=_ti();
+
+	a:=peek(#$E840,0);
+	while(a=223) do
+	begin
+		a:=peek(#$E840,0);
+		moveto(0,0,hi(screen_char_loc));
+		//if(a<>255) then 
+		printdecimal(a,3);
+	end;
+
+	moveto(0,1,hi(screen_char_loc));
+	printstring("DONE",0,4);
+	moveto(0,2,hi(screen_char_loc));
+	printdecimal(oldti,2);
+	moveto(0,3,hi(screen_char_loc));
+	
+    ti :=_ti();
+	while(ti=oldti) do
+	begin
+ 	    ti :=_ti();
+	end;
+	printdecimal(ti,2);
+end;
+
+end.

@@ -1,0 +1,137 @@
+Unit Key;
+var
+	temp: byte;// at $fd;	// temp var - gap between screenmemory and colormemory pointers
+
+	keyState: byte;		// holds 0 if no key pressed
+
+	KeyRow: 		byte at $e810; @donotremove "KeyRow"
+	KeyRead: 		byte at $e812; @donotremove "KeyRead"
+	KeyInterrupt: 	byte at $e813; @donotremove "KeyInterrupt"
+
+	// there are 9 rows of keys
+	keys: 			array[ 10 ] of byte; 
+	keysLast: 		array[ 10 ] of byte;
+	keysPressed: 	array[ 10 ] of byte;
+
+	// the keyboard constants that can be used are listed here
+	@include "input/key_info_pet.ras"
+
+	// helper procedures
+	@include "input/key_helper.ras"
+	
+
+/**
+Disables the keyboard interrupt which is needed to correctly detect
+key presses and keys being held by this unit. Call once at the beginning
+of your program. Use EnableKeyInt(); to enable the interrupt again.
+**/
+procedure DisableKeyInt() inline;
+begin
+
+	KeyInterrupt := 60;
+
+end;
+/**
+Enables the keyboard interrupt returning it to its default state.
+Do this if you need to use the Kernal keyboard routines.
+**/
+procedure EnableKeyInt() inline;
+begin
+
+	KeyInterrupt := 61;
+
+end;
+
+/**
+Read the full 10 row keyboard matrix 
+and populate the keyboard flags
+**/
+procedure Read();
+begin
+
+	keyState := 0;
+
+	for temp := 0 to 10 do
+	begin
+
+		KeyRow := temp; // row to test
+		
+		asm("
+
+		lda Key_KeyRead ; get bits
+		eor #$ff ; invert so the below works
+
+		ldx Key_temp
+
+		sta Key_keys,x
+		eor Key_keysLast,x
+		and Key_keys,x
+		sta Key_keysPressed,x
+		lda Key_keys,x
+		sta Key_keysLast,x
+		
+		; record if no key pressed
+		clc
+		adc Key_keyState
+		sta Key_keyState
+		
+		");
+		
+	end;
+
+end;
+
+procedure Held( _xy: integer );
+begin
+
+	asm("
+	
+	sty Key_temp
+	lda Key_keys,x
+	and Key_temp 	; contains column 
+	
+	");
+
+end;
+
+procedure Pressed( _xy: integer );
+begin
+
+	asm("
+	
+	sty Key_temp
+	lda Key_keysPressed,x
+	and Key_temp 	; contains column 
+
+	");
+
+end;
+
+/**
+Gets a key being held. If multiple keys 
+are pressed, returns the first key found.
+**/
+procedure GetHeld();
+begin
+
+	for temp := 0 to 10 do
+	begin
+//addbreakpoint();
+		temp_var1 := _GetKeyOffset( keys[ temp ], temp );
+		if ( temp_var1 <> NOKEY ) then returnvalue( temp_var1 );
+		
+	end;
+	
+	// no key held!
+	returnvalue( NOKEY );
+
+end;
+
+procedure SetupScreenCodes();
+begin
+
+	temp_var1 := screencodes[ 0 ]; // dummy - just makes sure screencodes array is included if this procedure is called
+
+end;
+
+end.
