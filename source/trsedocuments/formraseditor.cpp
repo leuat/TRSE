@@ -643,7 +643,7 @@ void FormRasEditor::SetupHighlighter()
     ui->txtEditor->setPalette(p);
     //if (highlighter!=nullptr)
     //    delete highlighter;
-    if (m_currentFileShort.toLower().endsWith(".ras"))
+    if (m_currentFileShort.toLower().endsWith(".ras") || m_currentFileShort.toLower().endsWith(".tru"))
         highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
     else
         highlighter = new AsmHighlighter(colors, 0, ui->txtEditor->document());
