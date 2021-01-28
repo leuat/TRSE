@@ -18,3 +18,4 @@ OK64; OK64 sample project; ok64_general; <h2>OK64 sample project with SID music,
 X86; X86 8086 CGA sample project; x86_cga_general; <h2>X86 8086 CGA sample project with sprites and an image.</h2><p>NB: The X86 compiler is still very much in beta, and is considered pre-alpha / WIP until TRSE 0.14!
 ATARI2600; ATARI 2600 Sample project; atari2600_general; <h2>Simple atari 2600 project setup.</h2>
 AMIGA; Amiga 500 Sample project; amiga_general; <h2>Simple Amiga 500 project setup.</h2>
+ATARI520ST; Atari 520 ST Sample project; atari520st_general; <h2>Simple Atari 520 ST project setup.</h2>
