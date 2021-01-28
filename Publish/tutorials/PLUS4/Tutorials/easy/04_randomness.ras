@@ -8,6 +8,7 @@ var
 
 // Initialize a random table of 256 bytes
 // generator
+
 procedure InitializeRandom();
 begin
 	// same as : for x:=0 to 0 do begin..

@@ -88,7 +88,12 @@
           </item>
           <item>
            <property name="text">
-            <string>Amiga</string>
+            <string>AMIGA</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>ATARI2600</string>
            </property>
           </item>
          </widget>

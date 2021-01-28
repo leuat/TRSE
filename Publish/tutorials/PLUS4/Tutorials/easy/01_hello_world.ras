@@ -3,10 +3,10 @@ var
   	text : string = ("HELLO WORLD");
 
 begin
-		// Fill the screen (at screen_char_loc) with character $20 - "space"
-//	ClearScreen(key_space, screen_char_loc);
+	// Fill the screen (at screen_char_loc) with character $20 - "space"
+	ClearScreen(key_space, screen_char_loc);
 	// Fill the color ram with yellow
-//	ClearScreen(red, screen_col_loc);
+	ClearScreen(red, screen_col_loc);
 	// Move cursor to x,y position 10,12
 	moveto(10, 12, hi(screen_char_loc));
 	// Print the text
@@ -15,6 +15,6 @@ begin
 	screenmemory:=screenmemory + 2*screen_width;
 	// Print something else
 	printstring("THIS IS ANOTHER STRING", 0, screen_width);
-	// Infinite loop
+	// Infinite loop*/
 	Loop(); 
 end.
