@@ -25,6 +25,8 @@ VIC20; Escape2020;  VIC20/escape; <h2>Escape 2020</h2>Created by <b>AndyH [ Hewc
 PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2>Support for the Plus/4 was added in version 0.08, with a bunch of fresh and new tutorials!<br><img src=":resources/images/tutorials/plus4_tut.png" width="300"><p><i>Small disclaimer: </i>Most built-in methods are not yet updated to work for the PLUS/4. This will be added later, within a larger project setting.
 
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>TRSE currently contains 4 seperate NES example files on how to start building a NES game!
+NES; Unit tests; NES/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal 2A03 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
+
 GAMEBOY; Main Gameboy tutorials; GAMEBOY/tutorials/ ;  <h2>Main Gameboy tutorials</h2><img src=":resources/images/GAMEBOY.png" width="300"><p>Recommended starting point for anybody interested in coding for the Nintendo Gameboy!
 GAMEBOY; Yo-grl (demo); GAMEBOY/yo-grl/; <h2>Yo-grl makes a demo</h2><br><img src=":resources/images/tutorials/yogrl.png" width="300"><p>Demo that came 2nd at Solskogen 2020. Made by Leuat, 100% TRSE! <p>Full (uncensored) source code + all resources included.
 GAMEBOY; Unit tests; GAMEBOY/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal Z80 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.

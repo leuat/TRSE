@@ -1,0 +1,126 @@
+//Unit Common; // Is Include
+
+@export "tiles/game_tiles.flf" "tiles/game_tiles.bin" 256
+
+var 
+	music: incnsf("music/zelda.nsf"); // Must have music or it fails
+	i, j : byte;
+	test_count : byte;
+	text : pointer at $0300;
+	palette: incbin("tiles/game_tiles.pal");
+
+@use screen
+
+
+procedure TestReset();
+begin
+	test_count := 0;
+end;
+
+procedure WriteTestResult();
+begin
+	Screen::Reset();
+	i := 10 * (mod(test_count, 3));
+	j := 4 + test_count / 3;
+	Screen::SetXY(i + 2, j);
+	Screen::WriteText(text);
+	Screen::SetXY(i + 10, j);
+	inc(test_count);
+end;
+
+procedure DebugValue(debug_value : pointer);
+begin
+	Screen::SetXY(2,25);
+	Screen::WriteText("DEBUG: ");
+	Screen::WriteHexI(debug_value);
+	Screen::Write("H");
+end;
+
+procedure PASS();
+begin
+	WriteTestResult();
+	Screen::Write($21);
+end;
+
+procedure FAIL();
+begin
+	WriteTestResult();
+	Screen::Write($20);
+end;
+
+procedure RunTests();
+
+procedure PPUOn();
+begin
+	Screen::Reset();
+	PPUCTRL := %00010000;
+	PPUMASK := %00011110;
+end;
+
+procedure PPUOff();
+begin
+	Screen::Reset();
+	PPUCTRL := %00000000;
+	PPUMASK := %00000000;
+	Screen::Reset();
+end;
+
+procedure DrawTitle();
+begin
+	Screen::Reset();
+	Screen::ClearScreen();
+	//Screen::FillScreen($22);
+	Screen::SetXY(2,1);
+	Screen::WriteText("NES UNIT TESTS");
+	Screen::SetXY(2,2);
+	Screen::WriteText(#name);
+end;
+
+procedure DrawColors();
+begin
+	// Fill colors
+	PPUPoint($23, $c0);
+	for i := 0 to 8 do
+	begin
+		PPUWrite(%11111010);
+	end;
+	for i := 1 to 6 do 
+	begin
+		PPUWrite(%01010101);
+		PPUWrite(%01010101);
+		PPUWrite(%00010001);
+
+		PPUWrite(%01010101);
+		PPUWrite(%01010101);
+		PPUWrite(%01000100);
+
+		PPUWrite(%01010101);
+		PPUWrite(%00010001);
+	end;
+	PPUWrite(%11111111);
+	PPUWrite(%11111111);
+	for i := 0 to 6 do
+	begin
+		PPUWrite(%10101010);
+	end;
+end;
+
+procedure Main();
+begin
+	PPUOff;	
+
+	// Draw stuff
+	LoadPalette(#palette);
+	DrawTitle();
+	DrawColors();
+
+	// Run tests
+	TestReset();
+	RunTests();
+	
+	// Finalize and turn on the PPU
+	Scroll(0,-8); // Scroll up one line
+	PPUOn;
+end;
+
+//end.
