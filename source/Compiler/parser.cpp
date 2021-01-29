@@ -3105,8 +3105,17 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
         QString sn = s->m_name;
         sn = sn.toLower();
 
-        if (!(sn=="_a" || sn=="_x" || sn=="_y"))
+
+
+        if (!m_symTab->isRegisterName(sn)) {
+            if (m_symTab->LookupConstants(s->m_name.toUpper())!=nullptr)
+                ErrorHandler::e.Error("'" + s->m_name +"' is already defined as a constant.",m_currentToken.m_lineNumber);
+/*            if (s->m_name.toLower().contains("keyrow"))
+                qDebug() << m_symTab->m_constants.keys();
+            qDebug() << s->m_name;
+*/
             m_symTab->Define(s ,false);
+        }
 
         s->m_lineNumber = m_currentToken.m_lineNumber;
     }

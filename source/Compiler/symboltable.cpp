@@ -510,9 +510,17 @@ QSharedPointer<Symbol> SymbolTable::LookupVariables(QString name, int lineNumber
     return m_symbols[name];
 }
 
-QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name) {
+QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name)
+{
     if (m_constants.contains(name)) {
         return m_constants[name];
+    }
+    // Removes the current unit prefix and tests for constants.
+    if (name.startsWith(m_gPrefix.toUpper())){
+        QString n = name.remove(0,m_gPrefix.length());
+        if (m_constants.contains(n)) {
+            return m_constants[n];
+        }
     }
     return nullptr;
 }
