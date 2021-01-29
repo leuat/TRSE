@@ -114,7 +114,7 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Lead developer, creator and
- benevolent dictator</string>
+benevolent dictator</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -194,7 +194,7 @@ QA, whip,  game developer</string>
       </widget>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1,0">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1,1">
        <item row="4" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,100">
          <item>
