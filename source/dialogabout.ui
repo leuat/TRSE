@@ -164,7 +164,7 @@ QA, whip,  game developer</string>
      <item>
       <widget class="QLabel" name="lblHeader2">
        <property name="text">
-        <string>Additjonal credits</string>
+        <string>Additional credits</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
