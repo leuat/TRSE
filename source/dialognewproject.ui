@@ -101,6 +101,11 @@
             <string>ATARI520ST</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>AMSTRADCPC464</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

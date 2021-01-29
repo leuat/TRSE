@@ -24,15 +24,42 @@
 #include "source/LeLib/data.h"
 #include <QFile>
 #include <QDate>
+#include <QFontDatabase>
 
 DialogAbout::DialogAbout(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogAbout)
 {
     ui->setupUi(this);
-    ui->txtAbout->setOpenExternalLinks(true);
+    /*ui->txtAbout->setOpenExternalLinks(true);
     ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@version",Data::data.version));
     ui->txtAbout->setText( ui->txtAbout->toHtml().replace("@date", QDate::currentDate().toString()));
+*/
+
+    QFont fnt = QFont(Data::data.fontFamily, 11);
+    QFont fntH = QFont(Data::data.fontFamily, 18);
+ /*   this->setFont(fnt);
+
+    for (auto q : this->findChildren<QWidget*>())
+        q->setFont(fnt);
+*/
+    ui->lblHeader->setFont(fntH);
+    ui->lblHeader->setText("TRSE version "+Data::data.version);
+    ui->lblDate->setText("Released: "+QDate::currentDate().toString());
+    ui->lblHeader2->setFont(fntH);
+    ui->lblHeader2->setStyleSheet("QLabel { color : yellow; }");
+    ui->lblHeader->setStyleSheet("QLabel { color : yellow; }");
+    ui->lblHeader3->setStyleSheet("QLabel { color : yellow; }");
+
+    ui->lblHeader3->setFont(fntH);
+
+    QPalette pal = palette();
+
+    // set black background
+    pal.setColor(QPalette::Window, QColor(45,44,146));
+    setAutoFillBackground(true);
+
+    setPalette(pal);
 
 /*    QFile f(":resources/text/about.txt");
   //  if (QFile::exists(":resources/text/about.txt"))
@@ -52,7 +79,7 @@ DialogAbout::~DialogAbout()
 void DialogAbout::SetText(QString title, QString text)
 {
     setWindowTitle(title);
-    ui->txtAbout->setText(text);
+    //ui->txtAbout->setText(text);
 }
 
 void DialogAbout::on_pushButton_clicked()

@@ -50,6 +50,7 @@ public:
     bool requestCloseWindow = false;
     bool blink = false;
     QString currentPath;
+    QString fontFamily;
     float percent = 0;
     unsigned char currentColor = 0;
     unsigned char currentColorType = 0;

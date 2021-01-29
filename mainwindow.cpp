@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
    // m_work.m_colorList.CreateUI(ui->layoutColors,0);
     int id= QFontDatabase::addApplicationFont(":resources/fonts/c64.ttf");
-    m_fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
+    Data::data.fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
 
     TRSEDocument::m_defaultPalette = m_defaultPalette;
 //    qRegisterMetaTypeStreamOperators<CItem>("CItem");
@@ -1757,7 +1757,8 @@ void MainWindow::LoadProject(QString filename)
 */
     QImage sysImg(":resources/images/" +system+".png");
     ui->lblCommodoreImage->setPixmap(QPixmap::fromImage(sysImg));
-    QFont fnt = QFont(m_fontFamily, width()/140);
+
+    QFont fnt = QFont(Data::data.fontFamily, width()/140);
 
     ui->lblSystemName->setFont(fnt);
     ui->lblSystemName->setText(system);

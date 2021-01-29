@@ -168,7 +168,6 @@ public:
     QString m_iniFileName = "trse.ini";
     QString m_iniFileHomeDir = ".TRSE";
     QString m_keepFile = "";
-    QString m_fontFamily;
     QPalette m_defaultPalette;
     QString m_currentPath;
     QString m_restrictRecentProjectsSystem = "";

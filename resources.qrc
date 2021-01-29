@@ -568,5 +568,7 @@
         <file>resources/images/trse_optic.png</file>
         <file>resources/images/ATARI800.png</file>
         <file>resources/images/billboard/b30.png</file>
+        <file>resources/images/portraits/leuat_gb.png</file>
+        <file>resources/images/portraits/andy.png</file>
     </qresource>
 </RCC>
