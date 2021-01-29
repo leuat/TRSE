@@ -575,5 +575,7 @@
         <file>resources/images/portraits/pushead.png</file>
         <file>resources/images/portraits/brain.png</file>
         <file>resources/images/portraits/brain_small.png</file>
+        <file>resources/images/portraits/bowler_small.png</file>
+        <file>resources/images/portraits/bowler.png</file>
     </qresource>
 </RCC>
