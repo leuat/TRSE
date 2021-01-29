@@ -82,62 +82,8 @@
       <layout class="QVBoxLayout" name="verticalLayout_4"/>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="1,5,5">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap resource="../resources.qrc">:/resources/images/portraits/leuat_gb.png</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap resource="../resources.qrc">:/resources/images/portraits/andy.png</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Nicolaas E. Groeneboom
-Leuat/Proxima^Offence</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Michael Andrew Hewitt
-Andy/Hewc</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
+      <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0" columnstretch="1,1,5,9,0">
+       <item row="1" column="3">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Lead developer, creator and
@@ -149,6 +95,68 @@ Andy/Hewc</string>
         </widget>
        </item>
        <item row="1" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Nicolaas E. Groeneboom
+Leuat/Proxima^Offence</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../resources.qrc">:/resources/images/portraits/andy2.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Michael Andrew Hewitt
+Andy/Hewco</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../resources.qrc">:/resources/images/portraits/leuat2.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
         <widget class="QLabel" name="label_10">
          <property name="text">
           <string>Developer, VIC-20 guru,
@@ -158,6 +166,19 @@ QA, whip,  game developer</string>
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
+       </item>
+       <item row="1" column="0">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -173,40 +194,10 @@ QA, whip,  game developer</string>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0">
-        <widget class="QLabel" name="lblDate_5">
-         <property name="text">
-          <string>Phaze101</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="lblDate_4">
-         <property name="text">
-          <string>Damian Woroch</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0">
         <widget class="QLabel" name="lblDate_9">
          <property name="text">
           <string>Róbert Kisnémeth</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="lblDate_8">
-         <property name="text">
-          <string>Tony Brice</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -223,10 +214,10 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="lblDate_6">
+       <item row="3" column="1">
+        <widget class="QLabel" name="lblDate_8">
          <property name="text">
-          <string>Jari Tulilahti</string>
+          <string>Tony Brice</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -253,10 +244,30 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="lblDate_11">
+       <item row="3" column="0">
+        <widget class="QLabel" name="lblDate_4">
          <property name="text">
-          <string>Optic (logo)</string>
+          <string>Damian Woroch</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="lblDate_6">
+         <property name="text">
+          <string>Jari Tulilahti</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lblDate_5">
+         <property name="text">
+          <string>Phaze101</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -267,6 +278,16 @@ QA, whip,  game developer</string>
         <widget class="QLabel" name="lblDate_12">
          <property name="text">
           <string>Chris Garrett</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="lblDate_11">
+         <property name="text">
+          <string>Optic (logo)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
