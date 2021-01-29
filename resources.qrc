@@ -577,5 +577,7 @@
         <file>resources/images/portraits/brain_small.png</file>
         <file>resources/images/portraits/bowler_small.png</file>
         <file>resources/images/portraits/bowler.png</file>
+        <file>resources/images/portraits/robot_small.png</file>
+        <file>resources/images/portraits/robot.png</file>
     </qresource>
 </RCC>
