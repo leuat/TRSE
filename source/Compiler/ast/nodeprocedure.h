@@ -42,6 +42,9 @@ public:
 
     virtual bool isReference() override { return m_op.m_isReference; }
 
+    bool isAddress() override {
+        return m_op.m_isReference;
+    }
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_procedure!=nullptr)
@@ -51,6 +54,8 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
+
+    QString getValue(Assembler* as) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));

@@ -100,7 +100,7 @@ int Node::MaintainBlocks(Assembler* as)
 
 void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
     if (!n->isAddress()) {
-        ErrorHandler::e.Error(name + " requires parameter to be memory address. Did you forget a '^' symbol such as ^$D800?", ln);
+        ErrorHandler::e.Error("'"+name + "' requires parameter to be a memory address. Did you forget a '^' symbol such as ^$D800?", ln);
     }
 }
 

@@ -392,7 +392,7 @@ QA, whip,  game developer</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/nina_small.png</pixmap>
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/megane_small.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>

@@ -32,3 +32,12 @@ NodeProcedure::NodeProcedure(QSharedPointer<NodeProcedureDecl> proc, QVector<QSh
 void NodeProcedure::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_procedure ->ExecuteSym(symTab);
 }
+
+QString NodeProcedure::getValue(Assembler *as)
+{
+    if (m_op.m_isReference)
+        return "#" + m_procedure->m_procName;
+    else
+        return m_procedure->m_procName;
+
+}

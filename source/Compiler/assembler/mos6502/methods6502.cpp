@@ -2895,6 +2895,7 @@ void Methods6502::PlaySound(Assembler *as)
 
 void Methods6502::CreateInteger(Assembler *as, QString reg)
 {
+
     LoadVar(as, 0);
     as->Asm("tay");
     LoadVar(as, 1);
@@ -2903,6 +2904,19 @@ void Methods6502::CreateInteger(Assembler *as, QString reg)
 void Methods6502::LoHi(Assembler *as, bool isLo)
 {
 //    qDebug() << m_node->m_params.count();
+
+     QSharedPointer<NodeProcedure> proc = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
+    if (proc!=nullptr) {
+            QString name = proc->m_procedure->m_procName;
+            if (isLo)
+                as->Asm("lda #<"+name);
+            else
+                as->Asm("lda #>"+name);
+            return;
+
+     }
+
+
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         if (isLo)
             as->Asm("lda " + m_node->m_params[0]->getAddress());

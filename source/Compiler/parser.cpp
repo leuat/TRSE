@@ -2662,7 +2662,6 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
         if (m_inCurrentProcedure != "")
             p->m_isUsedBy<<m_inCurrentProcedure;
         //        if (p->m_procName==BGMUpdateSpriteLoc)
-
         return QSharedPointer<NodeProcedure>(new NodeProcedure(p, paramList, t));
     }
 
