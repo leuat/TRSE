@@ -48,7 +48,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
     this->setFixedWidth(this->width());
     //this->setFixedHeight(this->height());
     ui->lblHeader->setFont(fntH);
-    ui->lblHeader->setText("version "+Data::data.version);
+    ui->lblHeader->setText("Version "+Data::data.version);
     ui->lblDate->setText("Released: "+QDate::currentDate().toString());
     ui->lblHeader2->setFont(fntH);
     ui->lblHeader2->setStyleSheet("QLabel { color : yellow; }");
