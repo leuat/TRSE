@@ -579,5 +579,18 @@
         <file>resources/images/portraits/bowler.png</file>
         <file>resources/images/portraits/robot_small.png</file>
         <file>resources/images/portraits/robot.png</file>
+        <file>resources/images/portraits/hat_small.png</file>
+        <file>resources/images/portraits/hat.png</file>
+        <file>resources/images/portraits/megane_small.png</file>
+        <file>resources/images/portraits/megane.png</file>
+        <file>resources/images/portraits/prettyboy_small.png</file>
+        <file>resources/images/portraits/prettyboy.png</file>
+        <file>resources/images/portraits/hairguy_small.png</file>
+        <file>resources/images/portraits/hairguy.png</file>
+        <file>resources/images/portraits/italian_small.png</file>
+        <file>resources/images/portraits/italian.png</file>
+        <file>resources/images/portraits/nina_small.png</file>
+        <file>resources/images/portraits/ninja.png</file>
+        <file>resources/images/portraits/leuat_small.png</file>
     </qresource>
 </RCC>
