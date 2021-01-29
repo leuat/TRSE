@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>628</height>
+    <height>772</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,8 +20,20 @@
    <string>About</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
@@ -29,7 +41,7 @@
       <number>16</number>
      </property>
      <property name="topMargin">
-      <number>16</number>
+      <number>32</number>
      </property>
      <property name="rightMargin">
       <number>16</number>
@@ -70,6 +82,11 @@
      </item>
      <item>
       <widget class="QLabel" name="lblDate">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Release date</string>
        </property>
@@ -79,10 +96,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4"/>
-     </item>
-     <item>
-      <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0" columnstretch="1,1,5,9,0">
+      <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0" columnstretch="1,1,5,9">
        <item row="1" column="3">
         <widget class="QLabel" name="label_2">
          <property name="text">
@@ -193,8 +207,8 @@ QA, whip,  game developer</string>
       </widget>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="2" column="0">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1">
+       <item row="3" column="0">
         <widget class="QLabel" name="lblDate_9">
          <property name="text">
           <string>Róbert Kisnémeth</string>
@@ -204,7 +218,7 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <widget class="QLabel" name="lblDate_10">
          <property name="text">
           <string>Phead (B.B.)</string>
@@ -214,7 +228,7 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <widget class="QLabel" name="lblDate_8">
          <property name="text">
           <string>Tony Brice</string>
@@ -223,6 +237,46 @@ QA, whip,  game developer</string>
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1,100">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>80</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/brain_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_6">
+           <property name="text">
+            <string>Jari Tulilahti</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="lblDate_3">
@@ -244,20 +298,10 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="lblDate_4">
          <property name="text">
           <string>Damian Woroch</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="lblDate_6">
-         <property name="text">
-          <string>Jari Tulilahti</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -274,7 +318,7 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <widget class="QLabel" name="lblDate_12">
          <property name="text">
           <string>Chris Garrett</string>
@@ -284,7 +328,7 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="lblDate_11">
          <property name="text">
           <string>Optic (logo)</string>
@@ -308,16 +352,6 @@ QA, whip,  game developer</string>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>Magnus Lund</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
         <widget class="QLabel" name="label_19">
          <property name="text">
@@ -328,10 +362,30 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_24">
+       <item row="3" column="1">
+        <widget class="QLabel" name="label_18">
          <property name="text">
-          <string>Krill / Plush</string>
+          <string>Peter Ferrie</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>Commodore disk loader</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_25">
+         <property name="text">
+          <string>Amstrad &amp; Atari ST player</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -349,26 +403,6 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="label_18">
-         <property name="text">
-          <string>Peter Ferrie</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_15">
-         <property name="text">
-          <string>M68K compression/decompression</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_21">
          <property name="text">
@@ -379,30 +413,10 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_23">
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_24">
          <property name="text">
-          <string>Commodore disk loader</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Exomizer decruncher code</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLabel" name="label_22">
-         <property name="text">
-          <string>Rich Talbot-Watkins</string>
+          <string>Krill / Plush</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -419,20 +433,20 @@ QA, whip,  game developer</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="label_20">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_15">
          <property name="text">
-          <string>Yann Collet</string>
+          <string>M68K compression/decompression</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_25">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_13">
          <property name="text">
-          <string>Amstrad &amp; Atari ST player</string>
+          <string>Exomizer decruncher code</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -443,6 +457,36 @@ QA, whip,  game developer</string>
         <widget class="QLabel" name="label_26">
          <property name="text">
           <string> Julien Névo a.k.a Targhan/Arkos (ArkosTracker)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Yann Collet</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Magnus Lund</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>Rich Talbot-Watkins</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

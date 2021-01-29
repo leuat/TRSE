@@ -43,8 +43,12 @@ DialogAbout::DialogAbout(QWidget *parent) :
     for (auto q : this->findChildren<QWidget*>())
         q->setFont(fnt);
 */
+    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
+    this->setFixedWidth(this->width());
+    //this->setFixedHeight(this->height());
     ui->lblHeader->setFont(fntH);
-    ui->lblHeader->setText("TRSE version "+Data::data.version);
+    ui->lblHeader->setText("version "+Data::data.version);
     ui->lblDate->setText("Released: "+QDate::currentDate().toString());
     ui->lblHeader2->setFont(fntH);
     ui->lblHeader2->setStyleSheet("QLabel { color : yellow; }");

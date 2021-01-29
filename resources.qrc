@@ -573,5 +573,7 @@
         <file>resources/images/portraits/leuat2.png</file>
         <file>resources/images/portraits/andy2.png</file>
         <file>resources/images/portraits/pushead.png</file>
+        <file>resources/images/portraits/brain.png</file>
+        <file>resources/images/portraits/brain_small.png</file>
     </qresource>
 </RCC>
