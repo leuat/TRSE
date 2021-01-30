@@ -230,7 +230,7 @@ QA, whip,  game developer</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/nina_small.png</pixmap>
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/hat_small.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -257,7 +257,7 @@ QA, whip,  game developer</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/nina_small.png</pixmap>
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/brain_small.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -338,7 +338,7 @@ QA, whip,  game developer</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/nina_small.png</pixmap>
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/prettyboy_small.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -365,7 +365,7 @@ QA, whip,  game developer</string>
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/nina_small.png</pixmap>
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/italian_small.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>

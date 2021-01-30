@@ -852,8 +852,8 @@ void Parser::RemoveUnusedProcedures()
     for (QSharedPointer<Node> n:m_proceduresOnly) {
         qDebug() << qSharedPointerDynamicCast<NodeProcedureDecl>(n)->m_procName;
     }*/
-    // Nested 4 times...
-    for (int i=0;i<4;i++)
+    // 6 passes should be enough... hopefully.
+    for (int i=0;i<6;i++)
     for (QSharedPointer<Node> n: m_proceduresOnly) {
         QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
 
