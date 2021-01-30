@@ -1,0 +1,70 @@
+program Screen_UnexpandedVic20;
+@vicmemoryconfig "none"
+
+var
+	/** create a table of screen row start addresses  **/
+	screenAddr: array[ 23 ] of integer = buildtable(
+		"7680 + (i * 22)"
+	);
+	
+	i: byte; // temp var (re-use through program)
+	col: byte; // colour
+
+	const LINECHAR: byte = 100; // petscii horizontal line
+	
+
+/** Fill a line (22 characters) with a colour in colormemory **/
+procedure ColourLine( col: global byte);
+begin
+
+	for i := 0 to 22 do
+		colormemory[ i ] := col;
+
+end;
+
+/** Draw a line of characters in screenmemory **/
+procedure DrawLine( col: global byte );
+begin
+
+	for i := 0 to 22 do
+		screenmemory[ i ] := col;
+
+end;
+
+/* main program */
+begin
+
+	// Set up
+	definescreen();
+	clearscreen( 32, ^7680 );
+	SCREEN_BG_COLOR := SCREEN_BG_BLACK;	
+
+	// pick a start position and draw a string of characters
+	screenmemory := screenAddr[ 8 ]; // 7th line
+	printstring( "HELLO WORLD", 0, 11 );
+
+	// Fill this same line with RED
+	SetColorMemoryAddress(); // set colormemory := equiv screenmemory but in colour mem	
+	ColourLine( RED );
+
+	// Pick a position in the middle near the top and draw a string
+	screenmemory := screenAddr[ 2 ] + 11; // 3rd line + 11 across
+	printstring( "HI", 0, 2 );
+
+	// Set a position half way down and draw a line
+	screenmemory := screenAddr[ 10 ]; // 11th line
+	DrawLine( LINECHAR );
+
+	// Set the colormemory to match this position
+	SetColorMemoryAddress(); // set colormemory := equiv screenmemory but in colour mem
+
+	// loop forever, changing the colour of that line at random
+	while (true) do
+	begin
+
+		ColourLine( random() & 7 );
+		waitforraster( 0 );
+	
+	end;
+	
+end.
