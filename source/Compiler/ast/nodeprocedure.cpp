@@ -28,6 +28,10 @@ NodeProcedure::NodeProcedure(QSharedPointer<NodeProcedureDecl> proc, QVector<QSh
     m_op = t;
 }
 
+bool NodeProcedure::isAddress() {
+    return m_op.m_isReference;
+}
+
 
 void NodeProcedure::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_procedure ->ExecuteSym(symTab);

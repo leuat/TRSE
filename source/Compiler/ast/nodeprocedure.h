@@ -42,9 +42,7 @@ public:
 
     virtual bool isReference() override { return m_op.m_isReference; }
 
-    bool isAddress() override {
-        return m_op.m_isReference;
-    }
+    bool isAddress() override;
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_procedure!=nullptr)
@@ -63,6 +61,10 @@ public:
 
 
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
+    bool isPureNumeric() override {
+
+        return isReference(); // only return true if there are no array expressions
+    }
 
 };
 
