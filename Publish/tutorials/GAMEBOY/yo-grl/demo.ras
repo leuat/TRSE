@@ -351,7 +351,7 @@ credits1 : string = ("      When yo grl got to the end of the demo       she too
 		4, 2, 20,     
 		6,100,"An",0,    
 		4,110,"old", 0,    
-		62,120,"classic",0
+		62,120,"classic",0,
 		4,130,"indeed", 0);    
 
 	msg_wonder : string=(
