@@ -1752,6 +1752,8 @@ QSharedPointer<Node> Parser::Case()
     QSharedPointer<NodeCase> n = QSharedPointer<NodeCase>(new NodeCase(m_currentToken));
     Eat(); // Eat "case"
     n->m_variable = qSharedPointerDynamicCast<NodeVar>(Variable());
+    if (n->m_variable==nullptr)
+        ErrorHandler::e.Error("Case statements only work with variables.", m_currentToken.m_lineNumber);
     Eat(TokenType::OF);
     while (m_currentToken.m_type != TokenType::END && m_currentToken.m_type != TokenType::ELSE) {
         QSharedPointer<Node> expr = Expr();
