@@ -852,10 +852,10 @@ void Parser::RemoveUnusedProcedures()
     for (QSharedPointer<Node> n:m_proceduresOnly) {
         qDebug() << qSharedPointerDynamicCast<NodeProcedureDecl>(n)->m_procName;
     }*/
+    // Nested 4 times...
+    for (int i=0;i<4;i++)
     for (QSharedPointer<Node> n: m_proceduresOnly) {
         QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
-//        qDebug() << "Testing for : " << np->m_procName<< np->m_isUsed << np->m_isUsedBy;
-
 
         bool isUsed = np->m_isUsed;
         // Make sure none of the parents are unused!
@@ -873,9 +873,18 @@ void Parser::RemoveUnusedProcedures()
                         }
                     }
                 }
+ //               qDebug() << np->m_procName << isUsed;
             }
         }
- //       qDebug() << "After " <<np->m_procName<<isUsed;
+        np->m_isUsed = isUsed;
+
+    }
+
+
+    for (QSharedPointer<Node> n: m_proceduresOnly) {
+        QSharedPointer<NodeProcedureDecl> np = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
+        bool isUsed = np->m_isUsed;
+
 
         if ((isUsed==true) || m_doNotRemoveMethods.contains(np->m_procName))
             procs.append(n);
@@ -883,9 +892,9 @@ void Parser::RemoveUnusedProcedures()
             outputUnusedWarning = true;
             removeProcedures+=np->m_procName + ",";
             m_removedProcedures << np->m_procName;
-  //          qDebug() << "REMOVING procedure " <<np->m_procName;
-//            if (m_procedures.contains(np->m_procName))
-  //              m_procedures.remove(np->m_procName);
+//                      qDebug() << "REMOVING procedure " <<np->m_procName;
+            //            if (m_procedures.contains(np->m_procName))
+            //              m_procedures.remove(np->m_procName);
         }
     }
 

@@ -866,7 +866,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
         }
     }
 */
-    node->ReplaceInline(as, m_inlineParameters);
+    if (m_inlineParameters.count()!=0)
+        node->ReplaceInline(as, m_inlineParameters);
 
     node->VerifyParams(as);
 
