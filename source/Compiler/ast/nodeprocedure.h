@@ -61,6 +61,9 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));
     }
 
+
+    virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
+
 };
 
 

@@ -46,6 +46,7 @@ public:
             n->parseConstants(symTab);
     }
 
+    void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
 
 
 };

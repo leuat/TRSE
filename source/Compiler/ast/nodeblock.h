@@ -54,6 +54,7 @@ public:
     }
 
     void SetParameter(QString name, PVar var);
+    void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
 
     void PopZeroPointers(Assembler* as);
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

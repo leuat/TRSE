@@ -579,6 +579,7 @@ void AbstractASTDispatcher::InlineProcedure(QSharedPointer<NodeProcedure> p)
         cur++;
     }
     qSharedPointerDynamicCast<NodeBlock>(p->m_procedure->m_block)->m_ignoreDeclarations = true;
+
     p->m_procedure->m_block->Accept(this);
     m_inlineParameters.clear();
 
@@ -856,6 +857,17 @@ void AbstractASTDispatcher::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
     node->DispatchConstructor(as);
+
+/*    if (m_inlineParameters.count()!=0) {
+        // We have INLINE parameters! replace
+        for (auto p : node->m_params) {
+            p->ReplaceInline(as, m_inlineParameters);
+
+        }
+    }
+*/
+    node->ReplaceInline(as, m_inlineParameters);
+
     node->VerifyParams(as);
 
     QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);

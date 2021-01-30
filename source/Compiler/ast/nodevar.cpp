@@ -36,6 +36,20 @@ NodeVar::NodeVar(Token t, QSharedPointer<Node> expr) : Node() {
 
 }
 
+void NodeVar::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+{
+    if (m_expr!=nullptr)
+        m_expr->ReplaceInline(as,inp);
+
+/*
+    for (QString k: inp.keys()) {
+        qDebug() << "HERRE NODEVAR" << k ;
+        if (k==value) {
+            value = inp[k]->getValue(as);
+        }
+    }*/
+}
+
 
 
 TokenType::Type NodeVar::getOrgType(Assembler *as) {

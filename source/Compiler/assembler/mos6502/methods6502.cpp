@@ -2922,12 +2922,14 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
             as->Asm("lda " + m_node->m_params[0]->getAddress());
         else
             as->Asm("lda " + m_node->m_params[0]->getAddress()+"+1");
+        return;
     }
     if (m_node->m_params[0]->getType(as)==TokenType::ADDRESS) {
         if (isLo)
             as->Asm("lda #<" + m_node->m_params[0]->getAddress());
         else
             as->Asm("lda #>" + m_node->m_params[0]->getAddress());
+        return;
     }
     if (m_node->m_params[0]->getType(as)==TokenType::INTEGER) {
         if (isLo)
@@ -2939,7 +2941,17 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
             as->Asm("lda #" + Util::numToHex(m_node->m_params[0]->getValueAsInt(as)&0xFF));
         else
             as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getValueAsInt(as)>>8)&0xFF));*/
+        return;
     }
+    if (m_node->m_params[0]->getType(as)==TokenType::BYTE) {
+        if (isLo)
+            as->Asm("lda " + m_node->m_params[0]->getValue(as));
+        else
+            as->Asm("lda #0");
+
+        return;
+    }
+//    ErrorHandler::e.Error("Lo/Hi currently only supports pure values (no expressions).", m_node->m_op.m_lineNumber);
 
 }
 
@@ -6501,6 +6513,14 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
 
     QSharedPointer<Node> node = m_node->m_params[paramNo];
+
+/*
+        // Override with INLINE parameter
+//    qDebug() << node->getValue(as) << m_dispatcher->m_inlineParameters.keys();
+    if (m_dispatcher->m_inlineParameters.contains(node->getValue(as)))
+        node = m_dispatcher->m_inlineParameters[node->getValue(as)];
+*/
+
     QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
 
     if (node->isPureNumeric() && node->getValueAsInt(as)>=256 && !node->isAddress()) {

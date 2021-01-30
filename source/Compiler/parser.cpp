@@ -2643,7 +2643,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
         }
         QVector<QSharedPointer<Node>> paramList;
         QSharedPointer<NodeProcedureDecl> p = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
-        if (m_currentToken.m_type!=TokenType::SEMI)  {
+        if (m_currentToken.m_type!=TokenType::SEMI && m_currentToken.m_type!=TokenType::RPAREN)  {
             Eat(TokenType::LPAREN); // Must be a procedure call
             while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
                 paramList.append(Expr());

@@ -29,6 +29,12 @@ void NodeBlock::SetParameter(QString name, PVar var) {
     s->m_value = QSharedPointer<PVar>(new PVar(var));
 }
 
+void NodeBlock::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+{
+    if (m_compoundStatement!=nullptr)
+        m_compoundStatement->ReplaceInline(as,inp);
+}
+
 
 void NodeBlock::PopZeroPointers(Assembler *as) {
     for (QSharedPointer<Node> n: m_decl) {

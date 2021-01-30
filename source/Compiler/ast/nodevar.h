@@ -44,6 +44,7 @@ public:
     NodeVar(Token t, QSharedPointer<Node> expr);
 
     bool m_isGlobal = false;
+    void ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp) override;
 
 
     TokenType::Type getOrgType(Assembler *as);

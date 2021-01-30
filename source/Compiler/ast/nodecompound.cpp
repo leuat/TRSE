@@ -30,3 +30,9 @@ void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     }
 }
 
+void NodeCompound::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+{
+    for (auto n: children)
+        n->ReplaceInline(as, inp);
+}
+

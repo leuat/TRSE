@@ -41,3 +41,8 @@ QString NodeProcedure::getValue(Assembler *as)
         return m_procedure->m_procName;
 
 }
+
+void NodeProcedure::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+{
+    m_procedure->ReplaceInline(as,inp);
+}

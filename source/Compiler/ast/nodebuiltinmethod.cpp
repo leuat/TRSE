@@ -80,4 +80,23 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
     }
 }
 
+void NodeBuiltinMethod::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+{
+    for (int i=0;i<m_params.count();i++) {
+        auto n = m_params[i];
+ //       qDebug() << "Testing parameter pureness " <<n->isPure();
+        if (n->isPure()) {
+//            qDebug() << n->getValue(as);
+            for (QString k: inp.keys())
+            if (n->getValue(as)==k) {
+                m_params[i] = inp[k];
+            }
+
+        }
+        else
+            ErrorHandler::e.Error("TRSE currently does not support inline parameters to be in expressions in built-in methods. Please bug the developer about this", m_op.m_lineNumber);
+//        n->ReplaceInline(as,inp);
+    }
+}
+
 

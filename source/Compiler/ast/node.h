@@ -77,6 +77,9 @@ public:
         m_forceType  =t;
     }
 
+
+    virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp);
+
     virtual void ApplyFlags() {}
 
     MemoryBlockInfo m_blockInfo;

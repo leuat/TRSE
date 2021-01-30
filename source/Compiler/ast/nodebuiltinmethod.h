@@ -54,6 +54,8 @@ public:
     }
 
 
+    virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
+
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
 
     }

@@ -38,6 +38,14 @@ void Node::SwapNodes() {
     m_right = n;
 }
 
+void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp)
+{
+    if (m_left != nullptr)
+        m_left->ReplaceInline(as,inp);
+    if (m_right != nullptr)
+        m_right->ReplaceInline(as,inp);
+}
+
 void Node::DispatchConstructor(Assembler *as) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;
