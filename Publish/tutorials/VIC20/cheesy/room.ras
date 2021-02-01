@@ -1,4 +1,3 @@
-
 // game room draw
 procedure Room_Draw();
 var

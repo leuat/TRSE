@@ -59,3 +59,4 @@ project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tuto
 current_file = tutorial1.ras
 data_header_/users/leuat/code/trse/publish/tutorials/amiga/tutorials/images/trse.flf = 6.41269e-314
 data_header_images/trse.flf = 6.41269e-314
+open_files =, tutorial1.ras

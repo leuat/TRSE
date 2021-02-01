@@ -61,3 +61,4 @@ open_files = ,tut1.ras
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/ATARI520ST/tutorials/
 current_file = tut2.ras
 data_header_/users/leuat/code/trse/publish/tutorials/atari520st/tutorials/images/trseflf.flf = 6.42462e-314
+open_files =, tut1.ras

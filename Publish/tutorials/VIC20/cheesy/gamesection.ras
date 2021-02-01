@@ -3,7 +3,6 @@
 @donotremove _gameSection_SetupForExperiment
 @donotremove _gameSection_TestJoy 
 @donotremove _gameSection_ScreenPause
-@donotremove _gameSection_ClearMiddle
 
 procedure GameSection_TRSE();
 begin
@@ -696,9 +695,9 @@ var
 	procs : array[ 5 ] of integer;
 
 begin
-	procs[0] := proceduretopointer(GameSection_Title());
-	procs[1] := proceduretopointer(GameSection_GameLoop());
-	procs[2] := proceduretopointer(GameSection_GameLoop());
+	procs[0] := #GameSection_Title();
+	procs[1] := #GameSection_GameLoop();
+	procs[2] := #GameSection_GameLoop();
 	p1 := procs[ section ];
 	call(p1);
 	

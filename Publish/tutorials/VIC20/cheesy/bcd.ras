@@ -1,8 +1,5 @@
 
 @donotremove "BCD_initDrawSmallBCD"
-@donotremove "BCD_DrawLevel1Number"
-@donotremove "BCD_DrawLevel2Number"
-@donotremove "BCD_DrawLevel3Number"
 
 
 procedure BCD_initDrawSmallBCD();
