@@ -873,6 +873,10 @@ void Parser::RemoveUnusedProcedures()
                                 isUsed = true;
                         }
                     }
+
+                    if (m_doNotRemoveMethods.contains(s))
+                        isUsed = true;
+
                 }
  //               qDebug() << np->m_procName << isUsed << n->m_isUsedBy;
             }
@@ -893,7 +897,7 @@ void Parser::RemoveUnusedProcedures()
             outputUnusedWarning = true;
             removeProcedures+=np->m_procName + ",";
             m_removedProcedures << np->m_procName;
-//                      qDebug() << "REMOVING procedure " <<np->m_procName;
+ //           qDebug() << "REMOVING procedure " <<np->m_procName << np->m_isUsedBy;
             //            if (m_procedures.contains(np->m_procName))
             //              m_procedures.remove(np->m_procName);
         }
