@@ -226,7 +226,7 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         node->m_left->Accept(this);
         as->Term();
         as->BinOP(node->m_op.m_type);
-        as->Term(node->m_right->getValue(as),true);
+        as->Term(node->m_right->getValue8bit(as,false),true);
         if (node->m_right->getValue8bit(as,true)=="#0") {
             as->Comment("RHS is byte, optimization");
             QString lbl = as->NewLabel("skip");
@@ -2640,6 +2640,7 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
 */
     // Make sure that everything is a reference
     if (node->m_right->isPure()) {
+//        as->Comment("EPIC FAIL " + QString::number(qSharedPointerDynamicCast<NodeNumber>(node->m_right)!=nullptr));
         as->Asm("lda " + getValue8bit(node->m_right,false));
         as->Asm("ldx " + getValue8bit(node->m_right,true));
         as->Asm("sta " + getValue(aVar));

@@ -39,6 +39,10 @@ void NodeProcedure::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
 
 QString NodeProcedure::getValue(Assembler *as)
 {
+
+    if (m_procedure==nullptr)
+        ErrorHandler::e.Error("NodeProcedure Getvalue m_procedure is empty!",m_op.m_lineNumber);
+
     if (m_op.m_isReference)
         return "#" + m_procedure->m_procName;
     else
@@ -46,7 +50,23 @@ QString NodeProcedure::getValue(Assembler *as)
 
 }
 
+QString NodeProcedure::getValue8bit(Assembler *as, bool isHi)
+{
+    QString v = "<";
+    if (isHi) v=">";
+    if (m_op.m_isReference)
+        return v+"#" + m_procedure->m_procName;
+    else
+        return v+m_procedure->m_procName;
+
+}
+
 void NodeProcedure::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
 {
     m_procedure->ReplaceInline(as,inp);
+}
+
+bool NodeProcedure::isPureNumeric() {
+    return false;
+    return isReference();
 }

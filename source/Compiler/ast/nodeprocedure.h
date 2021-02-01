@@ -54,6 +54,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     QString getValue(Assembler* as) override;
+    QString getValue8bit(Assembler* as, bool isHi) override;
 
     void Accept(AbstractASTDispatcher* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));
@@ -61,10 +62,7 @@ public:
 
 
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
-    bool isPureNumeric() override {
-
-        return isReference(); // only return true if there are no array expressions
-    }
+    bool isPureNumeric() override;
 
 };
 

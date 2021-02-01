@@ -272,7 +272,7 @@ begin
 	LDA #0
 	STA $FE4B			; timer 1 one shot mode
 	");
-	irqProcedure := #Nada();
+	irqProcedure := #Nada;
 end;
 
 
