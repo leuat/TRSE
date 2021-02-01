@@ -1,5 +1,7 @@
 
 // draw/erase (EOR) the cat sprites for ears and tail
+@donotremove Cat_Draw
+@donotremove Cat_Update
 procedure Cat_Draw();
 begin
 

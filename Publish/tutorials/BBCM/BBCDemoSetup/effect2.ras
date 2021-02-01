@@ -12,7 +12,7 @@ var
 	time,i,j,k,t2: byte;
 	zp,keep : pointer;
 	image1 : incbin("resources/images/image2.bin") compressed;
-
+	
 	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*112+112");
 
 

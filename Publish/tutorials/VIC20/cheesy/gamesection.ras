@@ -1,3 +1,10 @@
+@donotremove _gameSection_DrawRatingText
+@donotremove _gameSection_TestKeys
+@donotremove _gameSection_SetupForExperiment
+@donotremove _gameSection_TestJoy 
+@donotremove _gameSection_ScreenPause
+@donotremove _gameSection_ClearMiddle
+
 procedure GameSection_TRSE();
 begin
 

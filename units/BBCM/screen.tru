@@ -337,6 +337,10 @@ end;
 
 interrupt DefaultIRQ();
 begin
+/*	asm(" 
+		lda $fc
+		rti
+		");*/
 	StartIRQ(0);
 	asm("
 timerlengthHi		= $34

@@ -60,7 +60,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
     QPalette pal = palette();
 
     // set black background
-    pal.setColor(QPalette::Window, QColor(45,44,146));
+    pal.setColor(QPalette::Window, QColor(45,44,157));
     setAutoFillBackground(true);
 
     setPalette(pal);

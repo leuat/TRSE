@@ -7,7 +7,8 @@
 	style game. 
 
 */
-
+@donotremove Player_Init
+@donotremove Game_Init
 
 // set up the player
 procedure Player_Init();

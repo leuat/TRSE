@@ -862,7 +862,8 @@ void Parser::RemoveUnusedProcedures()
         if (isUsed) {
             // Only optimize away non-interrupts
 //            qDebug() << "TESTING " <<np->m_procName <<np->m_isUsedBy;
-            if (np->m_type==0 && !np->m_isUsedBy.contains("main")) {
+//            if (np->m_type==0 && !np->m_isUsedBy.contains("main")) {
+                if (!np->m_isUsedBy.contains("main")) {
                 isUsed = false; // Assume not used after all
                 for (auto s : np->m_isUsedBy) {
                     for (auto n2: m_proceduresOnly) {
