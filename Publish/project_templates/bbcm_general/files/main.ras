@@ -1,0 +1,20 @@
+program BBCMProgram;
+var
+@use "screen"
+@use "compression/compression"
+
+	
+@export "images/trse.flf" "images/trse.bin" 256
+	// Image by Optic / Planet Jazz, Proxima, Desire
+	image_data1 : incbin("images/trse.bin") compressed;
+	
+begin
+	Screen::ResetStack();
+	Screen::Init();
+	Screen::SetMode5(); // Starts at $5800
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+
+	// Decompress image to the screen
+	Compression::Decompress(#image_data1, #mode5_vram);
+	Loop();
+end.
