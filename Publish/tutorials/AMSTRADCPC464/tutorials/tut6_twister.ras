@@ -11,7 +11,7 @@ var
    	table : incbin("data/twister_table.bin");
    	
 	dst,zp,tp,p1 : pointer;
-	tab : pointer of integer;   æøøøøøøøøøøøøøøøøøøøøøøøøøøøøø
+	tab : pointer of integer;   
 	text : string = ("PROXIMA WHOO THIS IS A SCROLLTEXT YES IT IS ");
     sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
 	pal : incbin("resources/images/image1_palette.bin");

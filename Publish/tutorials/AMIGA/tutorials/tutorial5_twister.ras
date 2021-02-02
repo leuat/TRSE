@@ -1,21 +1,21 @@
 program Tutorial5_Twister;
 @use "graphics"
-@requirefile "data/twister_data.bin" "Please execute the Fjong raytracer file 'tutorials5_twister.fjo' before compiling this program"
+@requirefile "data/data.bin" "Please execute the Fjong raytracer file 'twister.fjo' before compiling this program"
 
 var	
 
    	k,l,i,time,tt,t2,j: integer = 0; 
  	n : long;
  	done : integer = 0;
-   	t_tab : incbin("data/twister_table.bin");
-   	t_data : incbin("data/twister_data.bin");
+   	t_tab : incbin("data/table.bin");
+   	t_data : incbin("data/data.bin");
    	
 // 2 bitplanes
 	
    	screen_data : array[320*200] of byte chipmem;
 // Sine table
 @donotremove text   	
-	text: string = ("LEMONSPAWNANDTRSELEMONSPAWNANDTRSELEMONSPAWNANDTRSELEMONSPAWNANDTRSE");
+	text: string = ("ABCDEFGHIJKLMNABCDEFGHIJKLMNABCDEFGHIJKLMN");
 
 	table2: pointer of integer;
 		
@@ -45,11 +45,11 @@ begin
 		j:=l>>5; // j:=l/32 - find current character
 	 	j:=(tp[j]-1)&31; // Look up current character, store in j
 	 	// Look up : each charater is 32 height * 16 frames * 2 = 32*32 = shl 10 == shl 5 shl 5 
-	 	n:=j*(32*16);
+	 	n:=j*(32*32);
 	 	
 		l:=l&31;
 		// Look up actual table: Frame (k) + line (l) + letter (n)
-		k:=table2[k<<5+ l +n];
+		k:=table2[k<<6+ l +n];
 
 
 		// Copy 2x2 rows of data
