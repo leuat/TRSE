@@ -243,6 +243,11 @@ begin
 
 end;
 
+/**
+
+   WARNING NOT IMPLEMENTED YET
+   
+**/
 procedure PutPixelMode5(ppx, ppy, ppc : global byte);
 begin
 	PointToY(#ytabMode5, ppy);

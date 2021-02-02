@@ -1,0 +1,76 @@
+program Effect1;
+@use "screen"
+@use "files"
+@use "demotools"
+@use "compression/compression"
+
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+/*
+	This effect displays an image in mode 5
+*/
+
+var
+	i,j,k: byte;
+	zp : pointer;
+	image1 : incbin("resources/images/image1.bin") compressed;
+
+
+	m,x,y : byte=0;
+	
+    sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
+    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+100");
+
+
+//	colors : array[4] of byte = (0,3,1,5);
+
+
+
+
+begin
+@ifndef IS_DEMO
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+	// Clear the screen
+	Screen::FillBanks(#mode5_vram,%00000000,$28);	
+	
+	
+
+
+//Screen::WaitForVerticalSync();
+	Compression::Decompress(#image1, #mode5_vram);
+	DemoTools::WaitABit(10);
+//	Compression::Decompress(#image2, #mode5_vram);
+
+
+	DemoTools::InitEffect(12);
+	While(DemoTools::isDone = false) do
+	begin
+		DemoTools::IncreaseTimer();
+		j:=DemoTools::time;
+		for i:=0 to 128 do
+		begin
+			x := sinx[j];
+			y := siny[j+m];
+			j:=j+1;
+			Screen::PutPixelMode5(x,y,i&15);
+		end;	
+//		Screen::WaitForVerticalSync();
+		
+		j:=DemoTools::time;
+		// Clear the pixels 
+		for i:=0 to 128 do
+		begin
+			x := sinx[j];
+			y := siny[j+m];
+			j:=j+1;
+			Screen::PutPixelMode5(x,y,0);
+		end;	
+		if (DemoTools::time&3=1) then 
+			m:=m+1;
+
+	end;
+	DemoTools::EndEffect();
+end.

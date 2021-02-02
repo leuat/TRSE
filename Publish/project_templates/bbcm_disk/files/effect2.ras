@@ -1,0 +1,62 @@
+program Effect2;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+@export "resources/images/image2.flf" "resources/images/image2.bin" 256
+
+
+var
+	time,i,j,k,t2: byte;
+	zp,keep : pointer;
+	image1 : incbin("resources/images/image2.bin") compressed;
+	
+/*
+	Effect that simply displays an image
+*/
+
+
+procedure IRQ();
+begin
+
+	inc(time);
+	inc(t2);
+	if (time&3=0) then inc(t2);
+	if (time&15=0) then inc(t2);
+	
+//	Screen::ScrollToY(sinx[time*2]);
+	
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+	
+
+end;
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	// Set palette
+	Screen::SetMode5();
+	Screen::SetMode5Palette(#Screen::colorsRedBlue);	
+
+	// Set custom IRQ
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+	
+	Compression::Decompress(#image1, #mode5_vram);
+	
+
+	DemoTools::WaitABit(96);
+
+
+	// Restore original IRQ
+	Screen::irqProcedure := keep;
+	DemoTools::EndEffect();
+
+end.
