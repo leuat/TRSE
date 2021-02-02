@@ -47,7 +47,7 @@ var
 	i,j: byte = 0;
 	zp : pointer at $F8;
 	// Music by maze. not finished. 
-	music : incbin("resources/music/maze.vgc", @musicPos);
+	music : incbin("resources/music/music.vgc", @musicPos);
 	
 	// For now, simply load effect 1 and 2 over and over...
 	// Also, files must currently be 2 bytes long. Saving space.
