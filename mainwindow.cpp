@@ -582,18 +582,33 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 void MainWindow::LoadDocument(QString fileName, bool isExternal)
 {
 
+    fileName = fileName.replace("\\",QDir::separator());
+    fileName = fileName.replace("/",QDir::separator());
+    fileName = fileName.replace("\\\\",QDir::separator());
+//    qDebug() << fileName;
+
     if (!isExternal) {
         if (!QFile::exists( getProjectPath() + "/" +fileName))
             return;
         if (fileName.startsWith(QDir::separator()))
             fileName = fileName.remove(0,1);
     }
+    QString system = QDir::separator() + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator();
     QString testFilename = fileName;
+    QString fullUnitPath = QDir(Data::data.unitPath).absolutePath() ;
+    fullUnitPath = fullUnitPath.replace("\\",QDir::separator()).replace("/",QDir::separator()).replace("/",QDir::separator()).remove(Data::data.unitPath);
     if (isExternal) {
-        testFilename = "[external]"+fileName.split(QDir::separator()).last();
+//        testFilename = "[external]"+fileName.split(QDir::separator()).last();
+        testFilename = fileName;
+        testFilename = "[external]"+testFilename.remove(getProjectPath()).remove(fullUnitPath);
     }
 
+//    qDebug() << fileName;
+
+//    qDebug() << testFilename  << getProjectPath() << fullUnitPath << system;
+
     for (TRSEDocument* d: m_documents) {
+//        qDebug() << d->m_currentFileShort;
         if (d->m_currentFileShort==testFilename) {
             ui->tabMain->setCurrentWidget(d);
             return;
@@ -630,7 +645,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     editor->m_currentSourceFile = editor->m_currentSourceFile.replace(s+s,s);
 
     if (isExternal) {
-        fileName = "[external]"+fileName.split(QDir::separator()).last();
+        fileName = testFilename; //"[external]"+fileName.split(QDir::separator()).last();
     }
     editor->m_currentFileShort = fileName;
     editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
@@ -1059,9 +1074,15 @@ void MainWindow::OnQuit()
 
 void MainWindow::ForceOpenFile(QString s, int ln)
 {
+    bool isExternal = false;
+    if (s.startsWith(Data::data.unitPath+QDir::separator()))
+        isExternal = true;
+
+//    qDebug() << s <<QDir(Data::data.unitPath).absolutePath() << isExternal;
+
     s.remove(getProjectPath());
-    bool isTru = s.toLower().endsWith("tru");
-    while (s.startsWith("/") && !isTru)
+//    bool isExternal = s.toLower().endsWith("tru");
+    while (s.startsWith("/") && !isExternal)
         s = s.remove(0,1);
 
     if (s=="")
@@ -1072,7 +1093,7 @@ void MainWindow::ForceOpenFile(QString s, int ln)
 
 //    qDebug() << "FIle exists : " <<QFile::exists(s) <<s;
 
-    LoadDocument(s,isTru);
+    LoadDocument(s,isExternal);
     m_currentDoc->GotoLine(ln);
     FormRasEditor* fe = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (fe!=nullptr)
