@@ -593,14 +593,16 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
         if (fileName.startsWith(QDir::separator()))
             fileName = fileName.remove(0,1);
     }
-    QString system = QDir::separator() + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator();
+    else {
+
+    }
     QString testFilename = fileName;
     QString fullUnitPath = QDir(Data::data.unitPath).absolutePath() ;
     fullUnitPath = fullUnitPath.replace("\\",QDir::separator()).replace("/",QDir::separator()).replace("/",QDir::separator()).remove(Data::data.unitPath);
     if (isExternal) {
-//        testFilename = "[external]"+fileName.split(QDir::separator()).last();
         testFilename = fileName;
-        testFilename = "[external]"+testFilename.remove(getProjectPath()).remove(fullUnitPath);
+        testFilename = testFilename.split(Data::data.unitPath).last();
+        testFilename = "[external]"+Data::data.unitPath+testFilename.remove(getProjectPath());
     }
 
 //    qDebug() << fileName;
@@ -1074,11 +1076,19 @@ void MainWindow::OnQuit()
 
 void MainWindow::ForceOpenFile(QString s, int ln)
 {
+    QString se = QDir::separator();
+    s = s.replace(se+se,se);
     bool isExternal = false;
     if (s.startsWith(Data::data.unitPath+QDir::separator()))
         isExternal = true;
 
-//    qDebug() << s <<QDir(Data::data.unitPath).absolutePath() << isExternal;
+    if (s.contains(Data::data.unitPath+QDir::separator()+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)) ||
+       s.contains(Data::data.unitPath+QDir::separator()+ AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)) )
+            isExternal = true;
+
+
+
+//    qDebug() << s <<QDir(Data::data.unitPath).absolutePath() << isExternal << getProjectPath();
 
     s.remove(getProjectPath());
 //    bool isExternal = s.toLower().endsWith("tru");
