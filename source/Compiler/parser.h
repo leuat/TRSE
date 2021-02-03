@@ -238,6 +238,7 @@ public:
     void HandleExportBW();
     void HandleBuildPaw();
     void HandleExportPrg2Bin();
+    void HandlePBMExport();
     void HandleVBMExport();
     void HandleVBMExportColor();
     void HandleVBMExportChunk();

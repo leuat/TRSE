@@ -702,6 +702,36 @@ void MultiColorImage::ImportBin(QFile &file)
 
 }
 
+void MultiColorImage::PBMExport(QFile &file, int start, int end, int height)
+{
+    QByteArray data;
+    QVector<PixelChar*> pcList;
+
+    for (int i=start;i<end;i++) { // walk characters
+
+        // Convert to POS in charset:
+        int x = i%m_charWidthDisplay;
+        int y = height*((i/m_charWidthDisplay));
+        int pos = x + ( y * m_charWidthDisplay );
+
+        for (int j=0;j<height;j++) { // walk line height
+
+            // characters
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<8;i++) {  // process 8 pixel lines in character data
+                    data.append( PixelChar::reverse(pc.p[i]));
+                }
+            }
+            pos +=m_charWidthDisplay;
+        }
+        //        qDebug() << x << y;
+    }
+    file.write(data);
+}
+
+// exports binary in a format suitable for VBM. It arranges by a complete row at a time rather than columns of 8 rows.
 void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int isMulticolor)
 {
     QByteArray data;
@@ -814,7 +844,7 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
                     // VIC20 and Multicolor mode - swap bit
                     if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
-                    else
+                    else\
                         data.append( PixelChar::reverse(pc.p[i]));
                 }
                 pos +=m_charWidthDisplay;
