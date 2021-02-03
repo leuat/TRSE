@@ -1,0 +1,82 @@
+program Demo;
+
+
+@use "screen"
+@use "files"
+
+@define PLAYER_LOCATION 2 // Place at $4C00
+
+@use "player"
+
+/*
+
+	HOW TO COMPILE AND RUN: 
+
+    1) in order to build the effects, click on the "Build all" button. The build list is defined in the 
+    project settings / build list. 
+    
+    2) After the individual effects have been compiled (to $1280), simply build and run "demo.ras" normally
+
+	HOW IT WORKS:
+
+	This BBC Project setup works as follows:
+	 - demo.ras is the main loader. It will load files from disk as specified in the "files"
+	 string list. Each filename must terminate with a $D. 
+	 
+	 - The main loader is located between $1100 - $1280
+	 
+	 - The main loader is responisble for initialising the music player
+	 
+     - Each part (there are currently only two) are individual ras files that can run stand-alone
+     but also be compiled up for linking. 
+     
+     - Individually, the effects are compiled to $1100 as regular BBC programs, but when linked, they are compiled
+       to $1280. Use the "Build all" button to trigger linking, see the project settings/build list for details. Here,
+       the default values (of $1100) are being ignored, and $1280 is set as a target instead
+	     
+	The files + filenames are defined in the "disk1.paw" file. This file is also defined to be the
+	build disk in the project settings target output settings. 
+
+	the various addresses used are defined as global project defines in the project settings / target settings / global defines tab
+
+*/
+
+
+
+var
+	i,j: byte = 0;
+	zp : pointer at $F8;
+	// Music by maze. not finished. 
+	music : incbin("resources/music/music.vgc", @musicPos);
+	
+	// For now, simply load effect 1 and 2 over and over...
+	// Also, files must currently be 2 bytes long. Saving space.
+	files : string=(
+	"E1",$0D,
+	"E2",$0D,
+	"E1",$0D,
+	"E2",$0D,
+	"E1",$0D,
+	"E2",$0D,
+	"E1",$0D,
+	"E2",$0D,
+	);
+	
+
+begin
+	Screen::Init();
+	RasterIRQ(Screen::DefaultIRQ());
+	Screen::StartInterrupts();
+	Player::InitMusic(#music);
+	Screen::irqProcedure := #Player::PlayMusic;
+	zp:=#files;
+	// Loop through all files in the list!
+	while (zp[0]<>0) do
+	begin
+		Files::LoadFile(zp,^@codePos);
+		zp:=zp+3;
+		call(^@codePos);
+	end;
+	Loop();
+	
+end.

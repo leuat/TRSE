@@ -638,7 +638,7 @@ QA, whip,  game developer</string>
           </font>
          </property>
          <property name="text">
-          <string> Julien Névo a.k.a Targhan/Arkos (ArkosTracker)</string>
+          <string>Julien Névo a.k.a Targhan/Arkos (ArkosTracker)</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

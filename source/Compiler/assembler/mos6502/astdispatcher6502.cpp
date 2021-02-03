@@ -3151,7 +3151,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         vname = vname.toLower();
         //if (vname=="_a" || vname=="_x" || vname=="_y")
         //{
-        QString reg = vname[1];
+        QString reg = QString(vname[1]);
         as->Comment("Assigning register : " + vname);
         if (vname.count()==2) {
             if (reg=="x" || reg=="y") {
