@@ -752,6 +752,11 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 }
 
+bool FormRasEditor::isRasFile()
+{
+    return !m_isTRU;
+}
+
 void FormRasEditor::Destroy() {
       m_builderThread.quit();
 }

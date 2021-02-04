@@ -38,6 +38,7 @@
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/orgasmlexer.h"
 
+
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/Compiler/systems/factorysystem.h"
 
@@ -146,6 +147,10 @@ public:
     bool Load(QString filename) override;
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent* e) override;
+
+    bool isRasFile() override;
+
+
 
     void Destroy() override;
     void TestForCodeOverwrite(int codeEnd, QString& output);

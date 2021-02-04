@@ -413,12 +413,14 @@ void MainWindow::VerifyProjectDefaults()
 void MainWindow::UpdateSymbolTree(QString search)
 {
 
-
-    ui->treeSymbols->clear();
-
     if (m_currentDoc==nullptr) {
         return;
     }
+    if (!m_currentDoc->isRasFile())
+        return;
+
+    ui->treeSymbols->clear();
+
 
     if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
