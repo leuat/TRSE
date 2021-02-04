@@ -677,40 +677,107 @@ void MultiColorImage::ImportBin(QFile &file)
     QByteArray data = file.readAll();
     int j=0;
     if (file.fileName().contains("_data")) {
-    for (int i=0;i<1000;i++) {
-        for (int k=0;k<8;k++)
-            m_data[i].p[k] = PixelChar::reverse(data[j+k]);
+        for (int i=0;i<1000;i++) {
+            for (int k=0;k<8;k++)
+                m_data[i].p[k] = PixelChar::reverse(data[j+k]);
 
-/*        m_data[i].c[0] = 0;
-        m_data[i].c[1] = 1;
-        m_data[i].c[2] = 2;
-        m_data[i].c[3] = 3;*/
-        j+=8;
-    }
+    /*        m_data[i].c[0] = 0;
+            m_data[i].c[1] = 1;
+            m_data[i].c[2] = 2;
+            m_data[i].c[3] = 3;*/
+            j+=8;
+        }
     }
     if (file.fileName().contains("_color")) {
-    j=2;
-    for (int i=0;i<1000;i++) {
+        j=2;
+        for (int i=0;i<1000;i++) {
 
-        m_data[i].c[0] = 0;//data[j+0];
-        m_data[i].c[1] = data[j+0]&0x0F;
-        m_data[i].c[2] = data[j+0]>>4;
-        m_data[i].c[3] = data[j+1000];
-        j+=1;
-    }
+            m_data[i].c[0] = 0;//data[j+0];
+            m_data[i].c[1] = data[j+0]&0x0F;
+            m_data[i].c[2] = data[j+0]>>4;
+            m_data[i].c[3] = data[j+1000];
+            j+=1;
+        }
     }
 
 }
 
-void MultiColorImage::PBMExport(QFile &file, int start, int end, int height)
+// export small bitmap chars as large PETSCII 'block' characters (2x2 blocks per character)
+void MultiColorImage::PBMExport(QFile &file, int start, int width, int height)
 {
     QByteArray data;
     QVector<PixelChar*> pcList;
 
+    // petscii characters that represent the blocks
+    uchar petscii[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; // nibble pattern
+//    uchar petscii[16] = {32,124,126,226,108,225,128,251,123,255,97,236,98,254,252,224};
+
+//    int st = (start % m_charWidthDisplay) + (( start / m_charWidthDisplay));
+
+    // loop for height
+    for (int r = 0; r < height; r++ ) {
+
+        // walk the characters
+        for (int c = 0; c < width; c++ ) {
+
+            int pos = start + c + ( r * m_charWidthDisplay );
+            PixelChar& pc = m_data[pos];
+
+            // process the 8 rows of pixels, grouped as 2x2
+            for ( int i = 0; i < 8; i = i + 2 ) {
+
+                // UNCOMPACTED METHOD -  2 chars per 8 pixels
+                // go through the four bit blocks 2x2
+                // pairs row 0 [11 22 33 44]
+                // pairs row 1 [11 22 33 44]
+                for ( int p = 3; p >= 0; p-- ) {
+
+                    // generate a nibble 1
+                    uchar r0 = PixelChar::reverse( pc.p[ i ] ) >> ( p * 2 ) & 0b11;
+                    uchar r1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> ( p * 2 ) & 0b11) << 2;
+                    uchar petBlock = petscii[ r0 + r1 ];
+                    data.append(  petBlock );
+                }
+
+                /*
+                // COMPACT METHOD - 1 char per 8 pixels - to use in a program must be unpacked to two chars
+                // first byte, two nibbles
+                // upper nibble bits 7 and 6
+                uchar b_76_0 = (PixelChar::reverse( pc.p[ i ] ) >> 6 & 0b11);
+                uchar b_76_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> 6 & 0b11) << 2;
+                // lower nibble bits 5 and 4
+                uchar b_54_0 = (PixelChar::reverse( pc.p[ i ] ) >> 4 & 0b11) << 4;
+                uchar b_54_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> 4 & 0b11) << 6;
+                // this makes the first char block
+                uchar block0 = petscii[ b_76_0 | b_76_1 ] + petscii [ b_54_0 | b_54_1 ];
+
+                // second byte, two nibbles
+                // upper nibble bits 3 and 2
+                uchar b_32_0 = (PixelChar::reverse( pc.p[ i ] ) >> 2 & 0b11);
+                uchar b_32_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> 2 & 0b11) << 2;
+                // lower nibble bits 1 and 0
+                uchar b_10_0 = (PixelChar::reverse( pc.p[ i ] ) & 0b11) << 4;
+                uchar b_10_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) & 0b11) << 6;
+                // this makes the second char block
+                uchar block1 = petscii[ b_32_0 | b_32_1 ] + petscii [ b_10_0 | b_10_1 ];
+
+                // write two bytes
+                data.append(  block0 );
+                data.append(  block1 );
+*/
+            }
+
+        }
+
+    }
+
+    file.write(data);
+
+        /*
     for (int i=start;i<end;i++) { // walk characters
 
         // Convert to POS in charset:
-        int x = i%m_charWidthDisplay;
+        int x = i%m_charWidthDisplay; // return 0 -39
         int y = height*((i/m_charWidthDisplay));
         int pos = x + ( y * m_charWidthDisplay );
 
@@ -720,15 +787,18 @@ void MultiColorImage::PBMExport(QFile &file, int start, int end, int height)
             if (pos>=0 && pos< m_charWidth*m_charHeight) {
 
                 PixelChar& pc = m_data[pos];
-                for (int i=0;i<8;i++) {  // process 8 pixel lines in character data
-                    data.append( PixelChar::reverse(pc.p[i]));
+                for (int i=0;i<8;i=i+2) {  // process 8 pixel lines in character data
+                    //data.append( PixelChar::reverse(pc.p[i]));
+                    unsigned char r0 = PixelChar::reverse(pc.p[i]);
+                    unsigned char r1 = PixelChar::reverse(pc.p[i+1]);
                 }
             }
             pos +=m_charWidthDisplay;
         }
         //        qDebug() << x << y;
     }
-    file.write(data);
+    */
+    //file.write(data);
 }
 
 // exports binary in a format suitable for VBM. It arranges by a complete row at a time rather than columns of 8 rows.
