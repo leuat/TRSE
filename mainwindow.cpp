@@ -1069,12 +1069,17 @@ void MainWindow::OnQuit()
 {
 //    qDebug() << m_currentProject.m_ini->getStringList("open_files");
 
+    while (Data::data.isCompiling) {
+        this->thread()->sleep(25);
+    }
+
     m_currentProject.Save();
 //    qDebug() << m_currentProject.m_ini->getString("current_file");
 
 //    m_iniFile->setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
     m_iniFile->Save();
-
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->Destroy();
 }
 
 void MainWindow::ForceOpenFile(QString s, int ln)

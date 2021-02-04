@@ -53,3 +53,4 @@ open_files = ,part3.ras
 open_files = ,part3.ras
 open_files = ,part3.ras
 compile_thread = 1
+open_files =, part3.ras

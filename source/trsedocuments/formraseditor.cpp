@@ -752,6 +752,10 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 }
 
+void FormRasEditor::Destroy() {
+      m_builderThread.quit();
+}
+
 void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
 {
     for (MemoryBlock& mb: m_builderThread.m_builder->compiler->m_assembler->m_userWrittenBlocks) {
@@ -1235,6 +1239,7 @@ void FormRasEditor::ShadowBuild()
 void BuilderThread::run()
 {
     m_isRunning=true;
+    Data::data.isCompiling = true;
     if (m_builder->Build( m_source ))
     {
         if (!m_builder->m_isShadow) {
@@ -1267,6 +1272,7 @@ void BuilderThread::run()
         emit emitError();
     }
     m_isRunning=false;
+    Data::data.isCompiling = false;
 
 }
 

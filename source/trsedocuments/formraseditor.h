@@ -147,7 +147,7 @@ public:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent* e) override;
 
-    void Destroy() override {}
+    void Destroy() override;
     void TestForCodeOverwrite(int codeEnd, QString& output);
     void GotoLine(int ln) override;
 

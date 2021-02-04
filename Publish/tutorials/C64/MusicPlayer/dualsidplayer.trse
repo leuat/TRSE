@@ -50,3 +50,4 @@ open_files = ,player.ras
 open_files = ,player.ras
 open_files = ,player.ras
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/MusicPlayer/
+open_files =, player.ras
