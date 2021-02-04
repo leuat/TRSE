@@ -28,6 +28,7 @@
 #include <QFontDatabase>
 #include <QComboBox>
 #include "dialogsimplelineedit.h"
+#include "dialoginfo.h"
 
 namespace Ui {
 class DialogTRSESettings;
