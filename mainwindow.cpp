@@ -419,7 +419,6 @@ void MainWindow::UpdateSymbolTree(QString search)
     if (!m_currentDoc->isRasFile())
         return;
 
-    ui->treeSymbols->clear();
 
 
     if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
@@ -435,15 +434,19 @@ void MainWindow::UpdateSymbolTree(QString search)
         return;
 
 
-    m_symPointers.clear();
-    m_orgSymPointers.clear();
-    m_treeItems.clear();
 
 
     if (e->m_builderThread.m_builder==nullptr)
         return;
     if (e->m_builderThread.m_builder->compiler==nullptr)
         return;
+
+
+    ui->treeSymbols->clear();
+    m_symPointers.clear();
+    m_orgSymPointers.clear();
+    m_treeItems.clear();
+
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
     QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
