@@ -714,17 +714,22 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height)
 
 //    int st = (start % m_charWidthDisplay) + (( start / m_charWidthDisplay));
 
+    int blockRows = height * 4; // 2x2 pixels per bloc, so 4 rows to process per char
+
     // loop for height
-    for (int r = 0; r < height; r++ ) {
+    for (int r = 0; r < blockRows; r++ ) {
 
         // walk the characters
         for (int c = 0; c < width; c++ ) {
 
-            int pos = start + c + ( r * m_charWidthDisplay );
+            int pos = start + c + ( (r / 4) * m_charWidthDisplay );
             PixelChar& pc = m_data[pos];
 
             // process the 8 rows of pixels, grouped as 2x2
-            for ( int i = 0; i < 8; i = i + 2 ) {
+            //for ( int i = 0; i < 8; i = i + 2 ) {
+
+            // which pixel row?
+            int i = (r % 4) * 2;
 
                 // UNCOMPACTED METHOD -  2 chars per 8 pixels
                 // go through the four bit blocks 2x2
@@ -765,7 +770,6 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height)
                 data.append(  block0 );
                 data.append(  block1 );
 */
-            }
 
         }
 
