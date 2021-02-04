@@ -169,7 +169,7 @@ public:
 
     virtual void ExportFrame(QFile& file, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8) {}
 
-    virtual void PBMExport(QFile& file, int p1, int p2, int p3) {}
+    virtual void PBMExport(QFile& file, int p1, int p2, int p3, int p4) {}
 
     virtual void VBMExport(QFile& file, int p1, int p2, int p3, int p4) {}
     virtual void VBMExportColor(QFile& file, int p1, int p2, int p3, int p4) {}

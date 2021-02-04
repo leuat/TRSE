@@ -703,14 +703,14 @@ void MultiColorImage::ImportBin(QFile &file)
 }
 
 // export small bitmap chars as large PETSCII 'block' characters (2x2 blocks per character)
-void MultiColorImage::PBMExport(QFile &file, int start, int width, int height)
+void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, int exportType)
 {
     QByteArray data;
     QVector<PixelChar*> pcList;
 
     // petscii characters that represent the blocks
-    uchar petscii[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; // nibble pattern
-//    uchar petscii[16] = {32,124,126,226,108,225,128,251,123,255,97,236,98,254,252,224};
+//    uchar binscii[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; // nibble pattern
+    uchar petscii[16] = {32,124,126,226,108,225,127,251,123,255,97,236,98,254,252,224};
 
 //    int st = (start % m_charWidthDisplay) + (( start / m_charWidthDisplay));
 
@@ -731,7 +731,10 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height)
             // which pixel row?
             int i = (r % 4) * 2;
 
-                // UNCOMPACTED METHOD -  2 chars per 8 pixels
+
+            if ( exportType != 2 ) {
+
+                // UNPACKED  METHOD -  4 chars per 8 pixels
                 // go through the four bit blocks 2x2
                 // pairs row 0 [11 22 33 44]
                 // pairs row 1 [11 22 33 44]
@@ -740,36 +743,46 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height)
                     // generate a nibble 1
                     uchar r0 = PixelChar::reverse( pc.p[ i ] ) >> ( p * 2 ) & 0b11;
                     uchar r1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> ( p * 2 ) & 0b11) << 2;
-                    uchar petBlock = petscii[ r0 + r1 ];
-                    data.append(  petBlock );
+                    uchar petBlock;
+                    if ( exportType == 0 )
+                        petBlock = petscii[ r0 + r1 ];  // pet chars
+                    else
+                        petBlock = r0 + r1;  // binary representation
+
+                    data.append( petBlock );
                 }
 
-                /*
-                // COMPACT METHOD - 1 char per 8 pixels - to use in a program must be unpacked to two chars
-                // first byte, two nibbles
-                // upper nibble bits 7 and 6
-                uchar b_76_0 = (PixelChar::reverse( pc.p[ i ] ) >> 6 & 0b11);
-                uchar b_76_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> 6 & 0b11) << 2;
-                // lower nibble bits 5 and 4
-                uchar b_54_0 = (PixelChar::reverse( pc.p[ i ] ) >> 4 & 0b11) << 4;
-                uchar b_54_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> 4 & 0b11) << 6;
-                // this makes the first char block
-                uchar block0 = petscii[ b_76_0 | b_76_1 ] + petscii [ b_54_0 | b_54_1 ];
+            } else {
 
-                // second byte, two nibbles
-                // upper nibble bits 3 and 2
-                uchar b_32_0 = (PixelChar::reverse( pc.p[ i ] ) >> 2 & 0b11);
-                uchar b_32_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) >> 2 & 0b11) << 2;
-                // lower nibble bits 1 and 0
-                uchar b_10_0 = (PixelChar::reverse( pc.p[ i ] ) & 0b11) << 4;
-                uchar b_10_1 = (PixelChar::reverse( pc.p[ i + 1 ] ) & 0b11) << 6;
-                // this makes the second char block
-                uchar block1 = petscii[ b_32_0 | b_32_1 ] + petscii [ b_10_0 | b_10_1 ];
+                // COMPACT METHOD - 2 char per 8 pixels - to use in a program must be unpacked to two chars
+                // get two pixel rows
+                uchar rev0 = PixelChar::reverse( pc.p[ i ] );
+                uchar rev1 = PixelChar::reverse( pc.p[ i + 1 ] );
+
+                uchar b_76_0 = rev0 & 0b11000000;
+                uchar b_76_1 = rev1 & 0b11000000;
+                uchar b_54_0 = rev0 & 0b00110000;
+                uchar b_54_1 = rev1 & 0b00110000;
+
+                uchar b_32_0 = rev0 & 0b00001100;
+                uchar b_32_1 = rev1 & 0b00001100;
+                uchar b_10_0 = rev0 & 0b00000011;
+                uchar b_10_1 = rev1 & 0b00000011;
+
+                uchar nibbleUpperA = (b_76_1) + (b_76_0 >> 2);
+                uchar nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);
+
+                uchar nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);
+                uchar nibbleLowerB = (b_10_1 << 2) + (b_10_0);
+
+                uchar block0 = nibbleUpperA + nibbleLowerA;
+                uchar block1 = nibbleUpperB + nibbleLowerB;
 
                 // write two bytes
-                data.append(  block0 );
-                data.append(  block1 );
-*/
+                data.append( block0 );
+                data.append( block1 );
+
+            }
 
         }
 

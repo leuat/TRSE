@@ -592,5 +592,6 @@
         <file>resources/images/portraits/nina_small.png</file>
         <file>resources/images/portraits/ninja.png</file>
         <file>resources/images/portraits/leuat_small.png</file>
+        <file>resources/text/help/r/pbmexport.rtf</file>
     </qresource>
 </RCC>
