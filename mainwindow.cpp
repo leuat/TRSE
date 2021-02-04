@@ -324,6 +324,9 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("hide_exomizer_footprint"))
         m_iniFile->setFloat("hide_exomizer_footprint", 1);
 
+    if (!m_iniFile->contains("compile_thread"))
+        m_iniFile->setFloat("compile_thread",1);
+
     if (!m_iniFile->contains("tab_width"))
         m_iniFile->setFloat("tab_width", 4);
 
@@ -2086,6 +2089,7 @@ void MainWindow::on_btnBuildAll_clicked()
 void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("zeropages"))
         m_ini->setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
+
 
 
     if (!m_ini->contains("temp_zeropages"))

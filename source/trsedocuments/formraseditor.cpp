@@ -402,8 +402,10 @@ void FormRasEditor::Build(bool isShadow)
     while (m_builderThread.isRunning()) {
 
     }
-    m_builderThread.start();
- //   m_builderThread.run();
+    if (m_iniFile->getdouble("compile_thread")==1)
+       m_builderThread.start();
+    else
+       m_builderThread.run();
 
 }
 

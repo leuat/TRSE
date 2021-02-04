@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -645,6 +645,13 @@
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_19">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Compute compiled code address:</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QCheckBox" name="chkDisplayAddresses">
               <property name="text">
@@ -652,10 +659,17 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_11">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_51">
               <property name="text">
-               <string>Compute compiled code address:</string>
+               <string>Execute compiler in separate thread</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="chkCompileThread">
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>

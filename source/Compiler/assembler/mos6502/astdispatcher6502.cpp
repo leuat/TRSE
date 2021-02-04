@@ -735,7 +735,7 @@ void ASTDispatcher6502::Load16bitVariable(QSharedPointer<Node> node, QString reg
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
 {
 
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     // First, flip such that anything numeric / pure var is to the right
@@ -804,7 +804,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     QString val = getValue(node);
 
@@ -853,7 +853,7 @@ QString ASTDispatcher6502::getValue8bit(QSharedPointer<Node> n, bool isHi) {
 
 void ASTDispatcher6502::dispatch(QSharedPointer<Node> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     node->m_currentLineNumber = node->m_op.m_lineNumber;
 
 
@@ -869,7 +869,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<Node> node)
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
 
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     // Don't declare inline procedures
 
     if (node->m_isInline) {
@@ -981,18 +981,19 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarType> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 }
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
+    node->DispatchConstructor(as,this);
 
 }
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 //    exit(1);
     if (node->m_val.count()>=1 && node->m_val[0].count()>=1) {
         as->ClearTerm();
@@ -1010,6 +1011,8 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeString> node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
 {
+    node->DispatchConstructor(as,this);
+
     AbstractASTDispatcher::dispatch(node);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
@@ -1023,7 +1026,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
 /*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     AbstractASTDispatcher::dispatch(node);
 
@@ -1562,7 +1565,7 @@ bool ASTDispatcher6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QSt
 /*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     //    node->accept(this);
     //    Node::Build(as);
@@ -1961,7 +1964,7 @@ void ASTDispatcher6502::LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPoint
 /*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeConditional> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
 //    as->PushCounter();
@@ -2071,7 +2074,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeConditional> node)
 /*
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeForLoop> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
@@ -2173,7 +2176,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
 
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     QString  val = getValue(node);
     Pmm::Data::d.lineNumber = node->m_op.m_lineNumber;
@@ -2988,7 +2991,7 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeAssign> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 //    as->PushCounter();
 
@@ -3000,7 +3003,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeAssign> node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeCase> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
   //  as->PushCounter();
     bool hasElse = node->m_elseBlock!=nullptr;
     QString labelEnd = as->NewLabel("caseend");
@@ -3043,7 +3046,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeCase> node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     QString lbl = as->NewLabel("repeatUntil");
     QString lblDone = as->NewLabel("repeatUntil");
     as->Label(lbl);
@@ -3093,6 +3096,8 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeComment> node)
 {
+    node->DispatchConstructor(as,this);
+
     if (node->m_comment!="") {
 //        as->Comment("A COMMENT");
 
@@ -3318,7 +3323,7 @@ void ASTDispatcher6502::OptimizeBinaryClause(QSharedPointer<Node> node, Assemble
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     AbstractASTDispatcher::dispatch(node);
 //    as->Comment("Unary op beware!");
     if (node->m_right->isPureNumeric())

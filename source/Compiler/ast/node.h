@@ -46,6 +46,7 @@ public:
     Token m_op;
 //    int m_lineNumber;
     uint level = 0;
+    static uint s_nodeCount;
     QString m_comment = "";
     BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
     bool m_isUsed = false;
@@ -83,12 +84,10 @@ public:
     virtual void ApplyFlags() {}
 
     MemoryBlockInfo m_blockInfo;
-    Node() {
-        m_blockInfo = m_staticBlockInfo;
-    }
+    Node();
 
     virtual bool isCompoundClause() { return false; }
-    void DispatchConstructor(Assembler* as);
+    void DispatchConstructor(Assembler* as, AbstractASTDispatcher* dispatcher);
 
     int MaintainBlocks(Assembler* as);
     virtual bool isPointer(Assembler* as)  { return false;}

@@ -26,6 +26,7 @@ int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 QString Node::sForceFlag = "";
+uint Node::s_nodeCount = 0;
 
 QMap<QString, bool> Node::flags;
 QSharedPointer<SymbolTable>  Node::parserSymTab;
@@ -46,10 +47,16 @@ void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp
         m_right->ReplaceInline(as,inp);
 }
 
-void Node::DispatchConstructor(Assembler *as) {
+Node::Node() {
+    m_blockInfo = m_staticBlockInfo;
+    s_nodeCount++;
+}
+
+void Node::DispatchConstructor(Assembler *as, AbstractASTDispatcher* dispatcher) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;
     bool ok = true;
+    dispatcher->UpdateDispatchCounter();
 /*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
         ok = false;
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)

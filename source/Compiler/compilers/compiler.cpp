@@ -110,7 +110,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
     connect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
 
-    emit EmitTick("<br>Building ");
+    emit EmitTick("<br>Building []");
     if (m_tree!=nullptr)
         try {
         qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
@@ -123,6 +123,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         HandleError(e,"Error during build (dispatcher) :");
         return false;
     }
+    emit EmitTick("&100"); // Emit 100%
 
 
     for (QSharedPointer<MemoryBlock> mb:m_parser.m_userBlocks)
@@ -130,7 +131,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
 
     disconnect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
-    emit EmitTick("<br>Connecting and optimising");
+//    emit EmitTick("<br>Connecting and optimising");
 
     Connect();
 //    qDebug() << "Start address "<< Util::numToHex(system->m_startAddress);

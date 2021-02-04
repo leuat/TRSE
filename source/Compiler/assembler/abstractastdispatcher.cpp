@@ -21,17 +21,32 @@ AbstractASTDispatcher::AbstractASTDispatcher()
 {
 
 }
+
+
+void AbstractASTDispatcher::UpdateDispatchCounter()
+{
+    int p = std::min((int)((100*m_currentNode)/Node::s_nodeCount),100);
+
+    if (m_currentPercent!=p) {
+        m_currentPercent = p;
+        emit EmitTick("&"+QString::number(p));
+
+    }
+    m_currentNode++;
+//    qDebug() <<p << m_currentNode << Node::s_nodeCount;
+
+}
 /*
  *
  *  BLOCKS (VAR ... BEGIN ...  END)
  *
  * */
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
-    if (m_ticks++%8==0)
+ /*   if (m_ticks++%8==0)
         emit EmitTick(".");
+*/
 
-
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     LineNumber(node->m_op.m_lineNumber);
  //   AbstractASTDispatcher::dispatch(node);
 
@@ -121,7 +136,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
     // Must be a variable
@@ -192,6 +207,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
 /*    QString labelStartOverAgain = as->NewLabel("while");
     QString labelElseDone = as->NewLabel("elsedoneblock");
   */
+    node->DispatchConstructor(as,this);
+
     if (node->m_op.m_type == TokenType::BREAK) {
 
         if (as->m_labelStack["loopend"].m_vars.count()!=0) // for loops
@@ -224,6 +241,8 @@ QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeConditional> node)
 {
+    node->DispatchConstructor(as,this);
+
     QString labelStartOverAgain = as->NewLabel("while");
     QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
 
@@ -398,7 +417,7 @@ bool AbstractASTDispatcher::isOffPage(QSharedPointer<Node> node, QSharedPointer<
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
 
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     // Don't x<<<< inline procedures
 
     if (node->m_isInline) {
@@ -508,7 +527,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedure> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
     if (node->isReference()) {
 //        qDebug() << "IS REFERENCE";
         LoadVariable(node);
@@ -593,7 +612,7 @@ void AbstractASTDispatcher::InlineProcedure(QSharedPointer<NodeProcedure> p)
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProgram> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     NodeBuiltinMethod::m_isInitialized.clear();
     as->Program(node->m_name, node->m_param);
@@ -618,7 +637,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProgram> node)
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     LineNumber(node->m_op.m_lineNumber);
@@ -723,6 +742,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
 void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
+    node->DispatchConstructor(as,this);
+
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString filename = as->m_projectDir + "/" + t->m_filename.replace("\\","/");
@@ -785,7 +806,7 @@ void AbstractASTDispatcher::IncBin(QSharedPointer<NodeVarDecl> node) {
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeAsm> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     QStringList txt = node->m_asm.split("\n");
     as->Comment("****** Inline assembler section");
@@ -804,7 +825,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeAsm> node)
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCompound> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     as->BeginBlock();
     for (QSharedPointer<Node> n: node->children) {
@@ -856,7 +877,7 @@ void AbstractASTDispatcher::HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 /*    if (m_inlineParameters.count()!=0) {
         // We have INLINE parameters! replace
@@ -879,7 +900,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 //    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 

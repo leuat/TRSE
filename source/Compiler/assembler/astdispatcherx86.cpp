@@ -132,7 +132,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeString> node)
 
 /*void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     node->ExecuteSym(as->m_symTab);
@@ -217,7 +217,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeString> node)
 /*
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     as->PushBlock(node->m_currentLineNumber);
 
@@ -271,7 +271,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
 */
 /*void ASTdispatcherX86::dispatch(QSharedPointer<NodeProgram> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 //    as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
@@ -297,7 +297,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinaryClause> node)
 
 /*void ASTdispatcherX86::dispatch(QSharedPointer<NodeProcedure> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
@@ -319,7 +319,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinaryClause> node)
 */
 /*void ASTdispatcherX86::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     bool isInitFunction=false;
     bool isBuiltinFunction=false;
@@ -420,7 +420,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeAssign> node)
 {
 /*    if (node==nullptr)
         return;*/
-//    node->DispatchConstructor(as);
+//    node->DispatchConstructor(as,this);
     node->m_currentLineNumber = node->m_op.m_lineNumber;
 
 
@@ -441,7 +441,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeRepeatUntil> node)
 /*
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     node->VerifyParams(as);
 
