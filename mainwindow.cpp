@@ -1500,6 +1500,7 @@ void MainWindow::on_tabMain_currentChanged(int index)
     else {
         m_currentDoc=nullptr;
     }
+    UpdateSymbolTree();
 
 }
 
@@ -2344,7 +2345,9 @@ void MainWindow::GotoSymbol(QString s)
     ForceOpenFile(sp->m_file,sp->m_ln);
     m_currentDoc->Focus();
 //    qDebug() <<  s  << m_treeItems.keys();
-    ui->treeSymbols->setCurrentItem(m_treeItems[s]);
+/*    if (m_treeItems.contains(s))
+        if (ui->treeSymbols->findItems(m_treeItems[s]))*/
+        ui->treeSymbols->setCurrentItem(m_treeItems[s]);
 }
 
 void MainWindow::GotoAssemblerLine(QString s, int lineNumber)

@@ -12,7 +12,7 @@ program Demo;
 @use "files"
 
 
-@requirefile "effect1.prg" "Please run the 'Build All' command before building this file"
+@requirefile "effect1.prg" "Please run the 'Build All' command before building this file. Also, read the instructions in the comment section!"
 
 @define PLAYER_LOCATION 2 // Place at $4C00
 
