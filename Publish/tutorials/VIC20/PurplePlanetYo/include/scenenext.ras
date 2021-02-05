@@ -18,13 +18,13 @@ procedure RenderScrollerText();
 begin
 	if (tp[0]=@cmovex) then begin
 		dx:=tp[1];
-		inczp(tp,2);
+		tp:=tp+2;
 		scroll:=-1;
 		return();
 	end;
 	if (tp[0]=@ccol) then begin
 		SCREEN_BG_COLOR:=tp[1]*16+dy;
-		inczp(tp,2);
+		tp:=tp+2;
 		scroll:=-1;
 		return();
 
@@ -122,8 +122,8 @@ begin
 			end;
 			
 		end;
-		inczp(screenmemory,22);
-		inczp(zp,22);
+		screenmemory := screenmemory +22;
+		zp:=zp+22;
 	end;
 	
 
@@ -132,11 +132,11 @@ end;
 procedure ScrollerCopyScreen();
 begin
 		zp:=screenmemory;
-		inczp(zp,22);
+		zp:=zp+22;
 			for j:=0 to 20 do begin
 				memcpy(zp,0,screenmemory,16);
-				inczp(screenmemory,22);
-				inczp(zp,22);
+				screenmemory := screenmemory +22;
+				zp:=zp+22;
 			end;
 
 
@@ -169,7 +169,7 @@ begin
 		inc(scroll);
 		if (scroll=8) then begin
 			scroll:=0;
-			inczp(tp,1);
+			tp:=tp+1;
 		end;
 
 	end;

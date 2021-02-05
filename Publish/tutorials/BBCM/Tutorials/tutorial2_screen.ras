@@ -1,17 +1,18 @@
 program Tutorial2_screen;
+@use "screen"
 var  
 	zp: pointer;
 	
 	x,y,tangent,i,dx,dy : byte;
 	radial : integer;
-	
-	
 
-
+/*
+	Renders some text to the screen
+*/
 procedure RenderScreen();
 begin
 	// could equally well have written "screenmemory:=screen_char_loc;"
-	zp := $7C00;
+	zp := screen_char_loc;
 	// Set cp to point to color memory
 	// 23 rows
 	for y:=0 to 25 do begin
@@ -43,7 +44,7 @@ loop_out:
 		inc $7C00,x
 		inc $7D00,x
 		inc $7E00,x
-;		inc $7F00,x
+		inc $7F00,x
 		inx
 		bne loop_out
 		
@@ -52,34 +53,11 @@ loop_out:
 end;
 
 
-// Main initialization routine
 begin
-	asm(" sei");
+	Screen::InitStandardScreenAndIRQ();
 	RenderScreen();
 	while(true) do
 		ShiftScreenData();
 
-	Loop();
 end.
 
-/*
-begin
-
-
-	
-	asm("
-	
-	SEI
-	lda #65
-	ldy #0
-topp:	
-	STA $7C00,y
-	iny
-	cpy #0
-	bne topp
-	jmp *
-
-	");
-	
-end.
-*/

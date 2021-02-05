@@ -103,7 +103,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../resources.qrc">:/resources/images/portraits/leuat2.png</pixmap>
+          <pixmap resource="../resources.qrc">:/resources/images/portraits/turk_grey.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>false</bool>

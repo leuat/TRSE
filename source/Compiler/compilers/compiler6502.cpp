@@ -27,7 +27,7 @@ void Compiler6502::Connect()
         emit EmitTick("<br>Optimising pass: ");
         m_assembler->m_totalOptimizedLines = 0;
         for (int i=0;i<4;i++) {
-            emit EmitTick(" ["+QString::number(i)+"]");
+            emit EmitTick(" ["+QString::number(i+1)+"]");
             m_assembler->Optimise(*m_projectIni);
         }
     }

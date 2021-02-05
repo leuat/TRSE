@@ -78,9 +78,8 @@ begin
 			screenmemory[35]:=61;
 			screenmemory[36]:=62;
 		end;
-
-		inczp(screenmemory, 40);	
-		inczp(zeropage2, 40);	
+		screenmemory := screenmemory +40;
+		zeropage2 := zeropage2 + 40;
 	end;
 	// Set up main colors
 	call(SIDFILE_1_PLAY);
@@ -89,7 +88,7 @@ begin
 		for i:=6 to 34 do begin
 			screenmemory[i]:=@CreditsColors;
 		end;
-		inczp(screenmemory, 40);
+		screenmemory := screenmemory + 40;
 	end;
 
 	tmp:=275;
@@ -149,7 +148,7 @@ begin
 			screenmemory[x]:=(sinx[x] +val)/8 + 80;
 			
 		end;
-		inczp(screenmemory,40);
+		screenmemory:=screenmemory+40;
 	end;
 	
 	
@@ -264,7 +263,7 @@ begin
 
 
 	val:=zeropage4[0];
-	inczp(zeropage4,1);
+	zeropage4:=zeropage4+1;
 
 	if val=128 then begin
 		SPRITE_BITMASK:=0;
@@ -298,7 +297,8 @@ begin
 			for i:=0 to 24 do begin
 				screenmemory[i]:=$20;
 			end;
-			inczp(screenmemory,40);
+			screenmemory:=screenmemory+40;
+
 		end;
 		return();
 	end;

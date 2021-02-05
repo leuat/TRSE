@@ -75,6 +75,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
 
+//    qDebug() << "Exomizer toggle" <<m_projectIni->getdouble("exomizer_toggle");
     if (m_projectIni->getdouble("exomizer_toggle")==1 && (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)) {
         QProcess processCompress;
 

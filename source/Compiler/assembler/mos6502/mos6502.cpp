@@ -1343,6 +1343,8 @@ int AsmMOS6502::getLineCount()
             continue;
         if (s.startsWith(";"))
             continue;
+        if (s.startsWith("//"))
+            continue;
         lc++;
     }
     return lc;

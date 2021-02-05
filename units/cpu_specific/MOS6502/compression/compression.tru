@@ -11,9 +11,13 @@ var
 Example:
 <code>
 // Deflates to $4000
-Compression::Decompress( #myCompressedData, ^$4000); 
+var
+   myCompressedData : incbin("somedata.bin") compressed;
+   
+begin
+    Compression::Decompress( #myCompressedData, ^$4000); 
+    ...
 </code><br>
-Code example ENDED!
 **/
 procedure Decompress(src, dst : global pointer of integer);
 begin

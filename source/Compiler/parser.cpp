@@ -4341,27 +4341,37 @@ void Parser::HandleProjectSettingsPreprocessors()
     if (cmd == "startaddress") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setString("override_target_settings_org", val);
+        return;
     }
     if (cmd == "basicsysaddress") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setString("override_target_settings_basic", val);
+        return;
     }
     if (cmd == "ignorebasicsysstart") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("override_target_settings_sys", val.toInt());
+        return;
     }
 
     if (cmd == "stripprg") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("override_target_settings_prg", val.toInt());
+        return;
     }
     if (cmd == "ignorejmp") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("ignore_initial_jump", val.toInt());
+        return;
     }
     if (cmd == "petmodel") {
         m_projectIni->setString("petmodel", val);
         Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
+        return;
+    }
+    if (cmd == "exomize") {
+        m_projectIni->setFloat("exomizer_toggle", val.toInt());
+        return;
     }
 
     Eat(); // H

@@ -73,8 +73,8 @@ begin
 			end;
 		end;
 		inc(val);
-		inczp(zp,8);
-		inczp(p1,8);
+		zp:=zp+8;
+		p1:=p1+8;
 	//	if (j<235) then
 		j:=j+8;
 	end;
@@ -166,9 +166,9 @@ begin
 //			p1[x]:=6+8;
 		end;
 		// Increase x by 40 (next row)
-		inczp(screenmemory, 22);
-		inczp(zp, 22);
-		inczp(p1,22);
+		screenmemory:=screenmemory+22;
+		zp:=zp+22;
+		p1:=p1+22;
 	end;
 	if g1<>22 then inc(g1);
 end;

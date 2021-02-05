@@ -9,7 +9,6 @@ C64; Music Player; C64/MusicPlayer/; <h2>C64 dual SID music player example</h2><
 C64; $4k Dreams; C64/4kDreams/; <h2>$4k (16kb) cracktro example</h2><br><img src=":resources/images/tutorials/4kdreams.png" width="300"><p>Full source included.
 C64; Floskel; C64/Floskel/; <h2>Small one-filer competing in the csdb event "Most unreadable scroller compo 2019".</h2><br><img src=":resources/images/tutorials/floskel.png" width="300"><p>Full source code + resources + raytracer files included.
 C64; 16kb cartridge project; C64/16kb_cartridge_project/; <h2>16kb cartridge project</h2><p>This tutorial shows how to set up / create a 16 kb cartridge project for the commodore 64.<p>Note that for a .crt file to compile, you <b>need to have exomizer compression turned on!</b>
-C64; Turbo Rascal Units (C64); C64/tru; <h2>Turbo Rascal Unit interal library</h2><p><p>Not complete, still under construction.
 C64; Unit tests; C64/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal MOS6502 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
 
 

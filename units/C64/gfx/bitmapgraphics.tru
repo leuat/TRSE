@@ -163,7 +163,11 @@ begin
 	
 end;
 
+/**
+Initializes bitmap graphics mode, putpixel type, 
+pixel tables and clears the screen at bank 1 and 2. 
 
+**/
 procedure InitBitmapGraphics(pi:byte; bsta:integer);
 begin
 	//p_putpixel := proceduretopointer(putpixel2());

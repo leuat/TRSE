@@ -229,15 +229,20 @@ begin
 	");
 	
 end;
+/**
+
+   Puts a pixel with color [ppc] at position [ppx,ppy] in mode 2 (160x256 16 colors)
+   
+**/
 
 procedure PutPixelMode2(ppx, ppy, ppc : global byte);
 begin
 	PointToY(#ytabMode2, ppy);
 	screenPtr := screenPtr + xtab[ppx/2];
-	if (ppx&0=1) then
-		i:=(screenPtr^&%01010101) | pixel2Tab[ppc]
+	if (ppx&1=1) then
+		i:=(screenPtr^&%10101010) | pixel1Tab[ppc]
 	else	
-		i:=(screenPtr^&%10101010) | pixel1Tab[ppc];
+		i:=(screenPtr^&%01010101) | pixel2Tab[ppc];
 	
 	screenPtr^ := i;
 

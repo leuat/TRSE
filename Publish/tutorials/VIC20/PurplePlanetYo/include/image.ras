@@ -15,18 +15,18 @@ begin
 		p1:=$1400;
 
 		
-		while (j>=15) then begin inczp(p1,15*16); j:=j-15; end;
+		while (j>=15) then begin p1:=p1+15*16; j:=j-15; end;
 		j:=j*16;
-		inczp(p1, j);
+		p1:=p1+j;
 
 		j:=tp[0];
 //		j:=66;
 		if (j<>$20) then begin
 			j:=j-64;
 			zp:=@fontAddress;
-			while (j>=32) then begin inczp(zp,32*8); j:=j-32; end;
+			while (j>=32) then begin zp:=zp+32*8;j:=j-32; end;
 			j:=j*8;
-			inczp(zp, j);
+			zp:=zp+j;
 			
 //			memcpy(zp,0,p1,8);
 /*			fill(p1,0,16);
@@ -53,7 +53,7 @@ begin
 		end;
 
 		inc(i);
-		inczp(tp,1);
+		tp:=tp+1;
 	end;
 	
 
@@ -71,8 +71,8 @@ begin
 //			k:=BLUE+8;
 			screenmemory[i]:=k;
 		end;
-		inczp(screenmemory,@imageWidth);
-		inczp(zp,@imageWidth*2);
+		screenmemory := screenmemory + @imageWidth;
+		zp := zp + @imageWidth*2;
 
 	end;
 
@@ -142,7 +142,7 @@ begin
 			end;
 			for i:=0 to j do begin
 				zp[scroll]:=0;
-				inczp(zp,8);
+				zp:=zp+8;
 			end;
 			inc(tt);
 			if (tt=2) then begin inc(scroll);tt:=0;end;

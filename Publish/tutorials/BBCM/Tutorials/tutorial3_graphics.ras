@@ -1,4 +1,4 @@
-program Tutorial3_Putpixel;
+program ScreenPattern;
 var
 @use "screen"
 
@@ -10,24 +10,17 @@ procedure FillScreenPattern();
 begin
 	while (true) do
 	begin
-		zp:=$4000;
-
-		j:=time&15;
+		zp:=mode2_vram;
+		j:=time;
 		for i:=0 to 200 do
 		begin
-			// Screen::screenPtr now points to the correct Y address
-			Screen::PointToY(#Screen::ytabMode2,i);
-			for k:=0 to 80 do 
+			for k:=0 to 160 do 
 			begin
-				m := Screen::pixel1Tab[j] | Screen::pixel2Tab[j];
-				zp := Screen::screenPtr + Screen::xtab[k];
-				// Set the pixel value
-				zp[0]:=m;
-			j:=(j+1)&15;
+				Screen::PutPixelMode2(k,i, j&15);
+				j:=(j+1);
 			end;
-			j:=(j+1)&15;
+			j:=(j+1);
 		end;
-		time:=time +1;
 	end;
 
 
@@ -40,8 +33,12 @@ begin
 	Screen::SetMode2();
 	Screen::SetPalette(#Screen::defaultPalette);	
 	// Clear the screen
-	Screen::FillBanks($4000,00,$40);	
+	Screen::FillBanks(#mode2_vram,00,$40);	
 	// start filling stuff!
-	FillScreenPattern();	
+	while (true) do
+	begin
+		FillScreenPattern();	
+		inc(time)
+	end;
 
 end.
