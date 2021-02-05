@@ -1,0 +1,75 @@
+Unit Model;
+var  
+	Flags: byte;
+	
+	const ISROM4: byte 		= %10000000;
+	const IS40COL: byte 	= %01000000;
+
+	const OUTPUTCHAR: address = $ffd2;
+
+	const SCREEN80: address = $8050;
+
+	IRQFlag: byte at $91;
+	CheckAvailMem: byte at $c353;
+
+/**
+<p>Run tests to detect what model of Pet the program is running on.</p>
+<p>Model::Flags will be set and can be tested with Model::ISROM4 and Model::IS40COL.</p>
+<p>Alternatively, Is_ROM4(); and Is_40Col(); procedures will return TRUE or FALSE.</p>
+**/
+procedure Detect();
+var  
+	char: byte; 
+	test_string:string=(147,17,43);
+
+begin
+
+	// Tests by Chris Garrett
+
+	Flags := 0;
+
+	if ( IRQFlag & $f0 = $e0 or CheckAvailMem = 160 ) then
+		Flags := Flags | ISROM4;
+	
+	for char := 0 to 3 do
+	begin
+	
+		_a := test_string[ char ];
+	    call( OUTPUTCHAR );
+	    
+	end;
+		
+    if ( SCREEN80 = 32 ) then
+		Flags := Flags | IS40COL;
+		
+	returnvalue( Flags );
+		
+end;
+
+/**
+<p>Returns TRUE if 40 column display mode, otherwise 
+false if 80 column display mode.</p>
+**/
+procedure Is_40Col();
+begin
+
+	if ( Flags & IS40COL <> 0 ) then returnvalue( true );
+	
+	returnvalue( false );
+	
+end;
+
+/**
+<p>Returns TRUE if BASIC ROM version 4 is present, otherwise 
+false unknown.</p>
+**/
+procedure Is_ROM4();
+begin
+
+	if ( (Flags & ISROM4) <> 0 ) then returnvalue( true );
+	
+	returnvalue( false );
+	
+end;
+
+end.

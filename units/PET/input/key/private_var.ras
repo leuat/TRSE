@@ -1,0 +1,5 @@
+
+	temp: byte;// at $fd;	// temp var - gap between screenmemory and colormemory pointers
+
+	KeyRow: 		byte at $e810; @donotremove "KeyRow"
+	KeyRead: 		byte at $e812; @donotremove "KeyRead"

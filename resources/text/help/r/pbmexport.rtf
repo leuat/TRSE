@@ -1,0 +1,70 @@
+<h3>Description</h3>
+<p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable to be used as PETSCII blocks.</p>
+<p>
+    PBM export takes six parameters.  
+</p>
+<ul>
+    <li>The source flf file</li>
+    <li>The destination bin file to create</li>
+    <li>The start character</li>
+    <li>Width in characters</li>
+    <li>Height in characters</li>
+    <li>Mode: 0 = PETSCII characters unpacked, 1 = Binary characters unpacked, 2 = Binary characters packed</li>
+</ul>
+<p>Exports an image, up to 80 x 50 pixels for a 40x25 character display, to be used to display PETSCII
+blocks which form 2x2 blocks per character.
+</p>
+
+<h3>Example</h3>
+The follow example will export 10 characters, starting at character 0, with a character height of 2 characters 
+from the .flf charset file to a binary file.
+<code>
+program PetBlockMode;
+
+@use "output/screen"
+
+var  
+	xx, yy: byte;
+	i, j: byte;
+	p1: pointer;
+
+@projectsettings "petmodel" "3032"
+
+@pbmexport "chr/PET.flf" "chr/pet.bin" 0 4 4 0
+binPic: incbin("chr/pet.bin");
+
+begin
+
+	definescreen();
+
+	Screen::Clear();
+	
+	screenmemory := $8000;
+
+	for i := 0 to 1 do
+	begin
+	p1 := #binPic;	
+	
+	for yy := 0 to 16 do
+	begin
+	
+		for xx := 0 to 16 do
+		begin
+		j:= p1[ xx ];
+		if (j <> 32 ) then 
+			screenmemory[ xx ] :=  j;
+		end;
+		p1 := p1 + 16;
+		screenmemory := screenmemory + 40;
+
+	end;
+
+	screenmemory := screenmemory - (40*13) + 4;
+	
+	end;	
+
+	loop();
+
+end.
+
+</code>

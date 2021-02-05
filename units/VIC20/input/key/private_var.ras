@@ -1,0 +1,12 @@
+
+	temp: byte;// at $fd;	// temp var - gap between screenmemory and colormemory pointers
+
+	KeyRow: 		byte at $9120; @donotremove "KeyRow"
+	KeyRead: 		byte at $9121; @donotremove "KeyRead"
+
+	keyRowValues: array[] of byte = (
+	
+		%11111110, %11111101, %11111011, %11110111, 
+		%11101111, %11011111, %10111111, %01111111
+
+	);

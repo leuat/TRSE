@@ -1,0 +1,124 @@
+
+// *** TODO *** TODO *** TODO *** TODO *** TODO *** TODO ***
+// Constants for detecting keys on Business keyboard
+
+// row 0
+	const KBEXCLAMATION:integer = $0100; 	// ! key
+	const KBHASH:		integer = $0200; 	// # key
+	const KBPERCENT:	integer = $0400; 	// % key
+	const KBAND:		integer = $0800; 	// & key
+	const KBOPENBR:		integer = $1000; 	// ( key
+	const KBLEFTARROW:	integer = $2000; 	// left arrow key
+	const KBCLRHOME:	integer = $4000; 	// Clear Home key
+	const KBLEFTRIGHT:	integer = $8000; 	// Cursor left/right key
+
+// row 1
+	const KBDBLQUOTE:	integer = $0101; 	// " key
+	const KBDOLLAR:		integer = $0201; 	// $ key
+	const KBQUOTE:		integer = $0401; 	// ' key
+	const KBBACKSLASH:	integer = $0801; 	// \ key
+	const KBCLOSEDBR:	integer = $1001; 	// ) key
+	//const KNOKEYHERE:	integer = $2001; 	// Pet has no key here
+	const KBUPDOWN:		integer = $4001; 	// Cursor up/down key
+	const KBINSTDEL:	integer = $8001; 	// Insert/Delete key
+
+// row 2
+	const KBQ: 			integer = $0102;	// Q key
+	const KBE: 			integer = $0202;	// E key
+	const KBT: 			integer = $0402;	// T key
+	const KBU: 			integer = $0802;	// U key
+	const KBO: 			integer = $1002;	// O key
+	const KBUPARROW:	integer = $2002;	// Up arrow key
+	const KB7: 			integer = $4002;	// 7 key
+	const KB9: 			integer = $8002;	// 9 key
+
+// row 3
+	const KBW: 			integer = $0103;	// W key
+	const KBR: 			integer = $0203;	// R key
+	const KBY: 			integer = $0403;	// Y key
+	const KBI: 			integer = $0803;	// I key
+	const KBP: 			integer = $1003;	// P key
+	//const KNOKEYHERE:	integer = $2003;	// Pet has no key here
+	const KB8: 			integer = $4003;	// 8 key
+	const KBFORWARDSLASH:integer = $8003;	// / key
+
+// row 4
+	const KBA: 			integer = $0104;	// A key
+	const KBD: 			integer = $0204;	// D key
+	const KBG: 			integer = $0404;	// G key
+	const KBJ: 			integer = $0804;	// J key
+	const KBL: 			integer = $1004;	// L key
+	//const KNOKEYHERE:	integer = $2004;	// Pet has no key here
+	const KB4: 			integer = $4004;	// 4 key
+	const KB6: 			integer = $8004;	// 6 key
+
+// row 5
+	const KBS: 			integer = $0105;	// S key
+	const KBF: 			integer = $0205;	// F key
+	const KBH: 			integer = $0405;	// H key
+	const KBK: 			integer = $0805;	// K key
+	const KBCOLON:		integer = $1005;	// : key
+	//const KNOKEYHERE:	integer = $2005;	// Pet has no key here
+	const KB5: 			integer = $4005;	// 5 key
+	const KBASTERISK:	integer = $8005;	// * key
+
+// row 6
+	const KBZ: 			integer = $0106;	// Z key
+	const KBC: 			integer = $0206;	// C key
+	const KBB: 			integer = $0406;	// B key
+	const KBM: 			integer = $0806;	// M key
+	const KBSEMICOLON:	integer = $1006;	// ; key
+	const KBRETURN:		integer = $2006;	// Return key
+	const KB1: 			integer = $4006;	// 1 key
+	const KB3:			integer = $8006;	// 3 key
+
+// row 7
+	const KBX: 			integer = $0107;	// X key
+	const KBV: 			integer = $0207;	// V key
+	const KBN: 			integer = $0407;	// N key
+	const KBCOMMA: 		integer = $0807;	// , key
+	const KBQUESTION:	integer = $1007;	// ? key
+	//const KNOKEYHERE:	integer = $2007;	// Pet has no key here
+	const KB2: 			integer = $4007;	// 2 key
+	const KBPLUS:		integer = $8007;	// + key
+
+// row 8
+	const KBLSHIFT: 	integer = $0108;	// Left Shift key
+	const KBAT: 		integer = $0208;	// @ key
+	const KBCLOSEBRACE:	integer = $0408;	// ] key
+	//const KNOKEYHERE:	integer = $0808;	// Pet has no key here
+	const KBGREATER:	integer = $1008;	// > key
+	const KBRSHIFT:		integer = $2008;	// Right Shift key
+	const KB0: 			integer = $4008;	// 0 key
+	const KBMINUS:		integer = $8008;	// - key
+
+// row 9
+	const KBREVERSE:	integer = $0109;	// Reverse key
+	const KBOPENBRACE:	integer = $0209;	// [ key
+	const KBSPACE:		integer = $0409;	// Space key
+	const KBLESS:		integer = $0809;	// < key
+	const KBSEMICOLON:	integer = $1009;	// Run Stop key
+	//const KNOKEYHERE:	integer = $2009;	// Pet has no key here
+	const KBFULLSTOP:	integer = $4009;	// . key
+	const KBEQUALS:		integer = $8009;	// = key
+
+
+	// unique key / screen codes
+	const QUOTE:		byte = 34; // "
+	const DOLLAR:		byte = 36; // $
+	const COMMA:		byte = 44; // ,
+	const OPENBR:		byte = 40; // (
+	const CLOSEBR:		byte = 41; // }
+	
+	const LEFTARROW:	byte = 69; // arrow pointing left
+	const UPARROW:		byte = 70; // arrow pointing up
+
+
+	
+	
+		
+			
+	const INSDELKEY:	byte = 254; // insert / delete	
+	const NOKEY:		byte = 255;
+
+

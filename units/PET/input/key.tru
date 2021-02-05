@@ -1,0 +1,57 @@
+Unit Key;
+var
+
+// Public properties - the can be read from your program
+
+	// there are 9 rows of keys
+	keys: 			array[ 10 ] of byte; 
+	keysLast: 		array[ 10 ] of byte;
+	keysPressed: 	array[ 10 ] of byte;
+
+	// holds 0 if no key pressed
+	keyState: byte;
+
+	// private variables
+	@include "input/key/private_var.ras"
+
+	// the keyboard constants that can be used are listed here
+	@include "input/key/pet_data_graphic.ras"
+	@include "input/key/pet_data_business.ras" // data not yet defined
+
+	// helper procedures
+	@include "input/key/helper.ras"
+	
+
+
+/**
+Read the full 10 row keyboard matrix 
+and populate the keyboard flags
+**/
+procedure Read();
+
+
+/**
+<p>Returns true if the key is being held. Works with multiple keys
+held at the same time.
+**/
+procedure Held( _xy: integer );
+
+
+/**
+<p>Returns true if the key has just been pressed. Works with multiple 
+keys pressed at the same time.
+**/
+procedure Pressed( _xy: integer );
+
+
+/**
+Gets a key being held. If multiple keys 
+are pressed, returns the first key found.
+**/
+procedure GetHeld();
+
+
+	@include "input/key/implementation.ras"
+
+
+end.
