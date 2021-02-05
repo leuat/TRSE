@@ -1,19 +1,14 @@
 Unit Screen;
 var  
-	const ti: address = $8f;
-	oldti: byte at $b9; // re-use cycle counter
+	const OUTCHAR: address = $ffd2; // kernal print character
 
-/**
-<p>Wait for the Jiffy clock to tick over which is done on an
-interrupt. This will allow your program to run at a constant
-speed approximately in line with the vertical blank refresh.
-**/
-procedure WaitFrame();
+// clear screen
+procedure Clear();
 begin
 
-	while ( ti = oldti ) do begin end;
-	oldti := ti;
-	
+	_a := 147;  // clear (home) character
+	call( OUTCHAR );
+
 end;
 
 /**
