@@ -24,6 +24,7 @@
 #include "source/LeLib/util/util.h"
 #include <QFileDialog>
 #include "source/LeLib/util/util.h"
+#include "dialoghelp.h"
 #include <QStringList>
 #include <QDir>
 
@@ -83,6 +84,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leSidplayer->setText(m_ini->getString("sidplayer"));
 
     ui->chkBackup->setChecked(m_ini->getdouble("auto_backup")==1.0);
+    ui->chkCompileThread->setChecked(m_ini->getdouble("compile_thread")==1.0);
 
     ui->leCPCDisk->setText(m_ini->getString("cpcdisk_location"));
 
@@ -200,6 +202,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
     m_ini->setFloat("auto_backup", ui->chkBackup->isChecked()?1:0);
+    m_ini->setFloat("compile_thread", ui->chkCompileThread->isChecked()?1:0);
 
     m_ini->setString("user_defined_command",ui->leUserDefined->text());
     m_ini->setString("user_defined_command_parameters",ui->leUserDefinedParameters->text());
@@ -250,7 +253,8 @@ void DialogTRSESettings::FillFont(QComboBox *cbmFont, QString keep) {
 
 void DialogTRSESettings::Help(QString tit, QString text)
 {
-    DialogAbout* da = new DialogAbout();
+    DialogInfo* da = new DialogInfo();
+//    da->SetMessage(text, QImage());
     da->SetText(tit,text);
     da->exec();
 

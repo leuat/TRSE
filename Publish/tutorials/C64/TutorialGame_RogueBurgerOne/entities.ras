@@ -4,7 +4,7 @@ begin
 	zeropage5:=zeropage3;
 	if pte_idx<>0 then
 	for i:=0 to pte_idx do
-		inczp(zeropage5, m_rl_chunksize);
+		zeropage5 := zeropage5 + m_rl_chunksize;
 	
 end;
 
@@ -63,8 +63,7 @@ begin
 		end
 		else
 			val:=0; // break loop
-		inczp(@levelpointer, m_rl_chunksize);
-		
+			@levelpointer := @levelpointer + m_rl_chunksize;
 	end;
 end;
 

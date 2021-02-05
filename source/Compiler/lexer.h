@@ -60,6 +60,8 @@ public:
     QVector<FilePart> m_includeFiles;
     bool m_ignorePreprocessor, m_nextIsReference = false;
     bool m_isCurrentlyInABlockComment = false;
+    int getPositionInPercent();
+    int getTotalNumberOfLines();
 
     QString m_currentComment="";
 

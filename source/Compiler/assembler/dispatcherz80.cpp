@@ -557,7 +557,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 /*void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     //QString m_currentVar = ((NodeAssign*)m_a)->m_

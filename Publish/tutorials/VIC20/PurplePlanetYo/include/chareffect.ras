@@ -13,7 +13,7 @@ begin
 			k:=k+l;
 			zp[i]:=k;
 		end;
-		inczp(zp,22);
+		zp:=zp+22;
 	end;
 	inc(dy);
 end;
@@ -33,7 +33,7 @@ begin
 			k:=k&3 + l;
 			zp[i]:=k;
 		end;
-		inczp(zp,22);
+		zp:=zp+22;
 	end;
 
 end;

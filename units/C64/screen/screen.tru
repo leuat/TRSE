@@ -10,7 +10,9 @@ var
    	p1, sp, cp : pointer;
 	i, j, x, y, c : byte;
 
-
+/**
+	Prints a single character to the screen
+**/
 procedure PrintSingleChar( i : global byte) inline;
 begin
 	sp^ := i;
@@ -23,6 +25,9 @@ begin
 end;
 
 
+/**
+	Prints a cstring text to the screen at position [p1 + y*40 + c] with color [c]
+**/
 procedure PrintCStringColor(p1 : global pointer; x, y, c : global byte);
 begin
 	sp := #screen_char_loc + y*screen_width + x;
@@ -33,6 +38,9 @@ begin
 		
 end;
 
+/**
+	Prints a string text to the screen at position [p1 + y*40 + c] with color [c]
+**/
 procedure PrintStringColor(p1 : global pointer; x, y, c : global byte);
 begin
 	sp := #screen_char_loc + y*screen_width + x;

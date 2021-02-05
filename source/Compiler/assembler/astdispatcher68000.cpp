@@ -8,7 +8,7 @@ ASTDispatcher68000::ASTDispatcher68000()
 
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     if (node->isPureNumeric()) {
@@ -73,7 +73,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
 
 /*void ASTDispatcher68000::dispatchOld(QSharedPointer<NodeBinOP>node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     if (node->isPureNumeric()) {
         //qDebug() << "IS PURE NUMERIC BinOp";
@@ -178,7 +178,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeString> node)
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
-  //  node->DispatchConstructor(as);
+  //  node->DispatchConstructor(as,this);
 //    node->Accept(this);
 //    if (node->isMinusOne())
     if (!(node->m_op.m_type==TokenType::MINUS))
@@ -200,7 +200,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
 
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     if (t->m_flags.contains("chipmem"))
         as->m_currentBlock = as->m_chipMem;
@@ -217,7 +217,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
 /*
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
 
@@ -285,7 +285,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeVarDecl> node)
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeBlock> node)
 {
 
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
     as->PushBlock(node->m_currentLineNumber);
 
@@ -367,7 +367,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBlock> node)
 
 /*void ASTDispatcher68000::dispatch(QSharedPointer<NodeProgram> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 //    as->EndMemoryBlock();
     NodeBuiltinMethod::m_isInitialized.clear();
@@ -393,7 +393,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinaryClause> node)
 
 /*void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedure> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
@@ -415,7 +415,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinaryClause> node)
 */
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
 
@@ -549,7 +549,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeConditional> node)
 */
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 
     //QString m_currentVar = ((NodeAssign*)m_a)->m_
@@ -617,7 +617,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<Node> node)
 
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeAssign> node)
 {
-    node->DispatchConstructor(as);
+    node->DispatchConstructor(as,this);
 
 //    as->PushCounter();
 

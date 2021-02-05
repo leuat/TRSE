@@ -20,7 +20,16 @@ each other nested.
 */
 
 
+/*
+  By using these special comments, you can
+  provide help text for the next defined procedure. This will automatically
+  be compiled into the help text system on pressing "F1"
 
+*/
+/**
+	Draws a box at position (x,y) with size (a,b) filled with screen value [value] and color [color]
+
+**/
 procedure DrawBox(x, y, a, b, value, color, screen : global byte);
 begin
 	// zp points to color ram
@@ -38,6 +47,11 @@ begin
 		screenmemory:=screenmemory + screen_width;
 	end;
 end;
+
+/**
+	Draws a triangle at position (x,y) with size (a) filled with screen value [value] and color [color]
+**/
+
 
 procedure DrawTri(x, y, a, value, color, c : global byte);
 begin

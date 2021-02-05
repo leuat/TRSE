@@ -11,6 +11,9 @@ var
 	disk setup under project settings/target setup
 	*/
 	
+// Force exomizing ON
+@projectsettings "exomize" "1"
+	
 begin
 	
 	InitKrill();

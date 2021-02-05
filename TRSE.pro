@@ -173,6 +173,7 @@ SOURCES += main.cpp\
     source/PmmEdit/trsehighlighter.cpp \
     source/dialogcolorselect.cpp \
     source/dialogexport3d.cpp \
+    source/dialoginfo.cpp \
     source/dialognewproject.cpp \
     source/dialogselectcharset.cpp \
     source/dialogsimplelineedit.cpp \
@@ -387,6 +388,7 @@ HEADERS  += mainwindow.h \
     source/PmmEdit/trsehighlighter.h \
     source/dialogcolorselect.h \
     source/dialogexport3d.h \
+    source/dialoginfo.h \
     source/dialognewproject.h \
     source/dialogselectcharset.h \
     source/dialogsimplelineedit.h \
@@ -530,6 +532,7 @@ FORMS    += mainwindow.ui \
     dialogimport.ui \
     source/dialogcolorselect.ui \
     source/dialogexport3d.ui \
+    source/dialoginfo.ui \
     source/dialognewproject.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \

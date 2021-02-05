@@ -119,8 +119,13 @@ void Parser::InitObsolete()
 
 void Parser::Eat(TokenType::Type t)
 {
-    if (m_tick++%500==99)
-        emit EmitTick(".");
+//    if (m_tick++%500==99)
+//        emit EmitTick(".");
+    if (m_prevPercent!=m_lexer->getPositionInPercent()) {
+        m_prevPercent = m_lexer->getPositionInPercent();
+
+     emit EmitTick("&"+QString::number(m_prevPercent));
+    }
    //qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
@@ -2015,6 +2020,7 @@ QSharedPointer<Node> Parser::Program(QString param)
         Eat(TokenType::DOT);
 
     }
+    emit EmitTick("&100"); // 100
 
     return program;
 
@@ -2538,9 +2544,13 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     if (!m_isTRU || m_symTab==nullptr)
         m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
 
+    // Reset the node count
+    if (!m_isTRU)
+        Node::s_nodeCount = 0;
+
 
     m_symTab->m_currentFilename = m_currentFileShort;
-    emit EmitTick("<font color=\"grey\">Parsing pass #1 ");
+    emit EmitTick("<font color=\"grey\">Parsing: []");
     m_pass = 0;
   //  RemoveComments();
     InitObsolete();
@@ -2593,7 +2603,15 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     ErrorHandler::e.m_lexer = m_lexer.get(); // for Warnings
 
 
-    // Main parser
+    /* MAIN PARSER
+  _____
+ |  __ \
+ | |__) |_ _ _ __ ___  ___ _ __
+ |  ___/ _` | '__/ __|/ _ \ '__|
+ | |  | (_| | |  \__ \  __/ |
+ |_|   \__,_|_|  |___/\___|_|
+
+                                */
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
 
 
@@ -4371,27 +4389,37 @@ void Parser::HandleProjectSettingsPreprocessors()
     if (cmd == "startaddress") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setString("override_target_settings_org", val);
+        return;
     }
     if (cmd == "basicsysaddress") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setString("override_target_settings_basic", val);
+        return;
     }
     if (cmd == "ignorebasicsysstart") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("override_target_settings_sys", val.toInt());
+        return;
     }
 
     if (cmd == "stripprg") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("override_target_settings_prg", val.toInt());
+        return;
     }
     if (cmd == "ignorejmp") {
         m_projectIni->setFloat("override_target_settings", 1);
         m_projectIni->setFloat("ignore_initial_jump", val.toInt());
+        return;
     }
     if (cmd == "petmodel") {
         m_projectIni->setString("petmodel", val);
         Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
+        return;
+    }
+    if (cmd == "exomize") {
+        m_projectIni->setFloat("exomizer_toggle", val.toInt());
+        return;
     }
 
     Eat(); // H

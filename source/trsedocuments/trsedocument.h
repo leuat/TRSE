@@ -112,7 +112,7 @@ public:
 
     virtual void setOutputText(QString text) {}
     virtual void SearchInSource(QString text) {}
-
+    virtual bool isRasFile() {return false;}
 
     virtual void Destroy() = 0;
 

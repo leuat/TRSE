@@ -4,10 +4,11 @@ begin
 	zp:=@unpackAddress;
 
 	if (k<>0) then 
-		for i:=0 to k do inczp(zp, 4*4*8);
+		zp:=zp + (4*4*8)*k;
+//		for i:=0 to k do inczp(zp, 4*4*8);
 
 	p1:=$1600;
-	if (l<>0) then inczp(p1,l);
+	if (l<>0) then p1:=p1+l;//inczp(p1,l);
 	memcpy(zp,0,p1,4*4*8);
 
 end;
@@ -59,9 +60,9 @@ begin
 	p1:=$1E00; // perlin
 	j:=dy*22;
 	if (dy<>0) then begin
-		inczp(zp,j);	
-		inczp(p0,j);
-		inczp(p1,j);
+		zp:=zp+j;
+		p0:=p0+j;
+		p1:=p1+j;
 	end;
 
 	for j:=0 to 6 do begin
@@ -87,9 +88,9 @@ trall:
 
 
 		");
-		inczp(p1,22*3);
-		inczp(p0,22*3);
-		inczp(zp,22*3);
+		p1:=p1+(22*3);
+		p0:=p0+(22*3);
+		zp:=zp+(22*3);
 	end;
 
 	

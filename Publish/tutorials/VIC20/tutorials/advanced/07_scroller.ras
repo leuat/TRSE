@@ -28,7 +28,7 @@ begin
 	if (k<>0) then begin
 		if (k>31) then begin
 //			inczp(h1,31*8);
-			zp:=zp+31*8;
+			zp:=zp+(31*8);
 			k:=k-31;
 		end;
 		end;
@@ -48,7 +48,7 @@ begin
 	inc(scroll);
 
 	if (scroll=8) then begin
-		inczp(tp,1);
+		tp:=tp+1;
 		scroll:=0;
 		if (tp[0]=0) then tp:=#text;
 	end;
@@ -69,8 +69,8 @@ begin
 			screenmemory[x]:=k;
 
 		end;
-		inczp(zp,22);
-		inczp(screenmemory,22);
+		zp := zp + screen_width;;
+		screenmemory := screenmemory + screen_width;
 	end;
 	
 
@@ -91,7 +91,7 @@ begin
 		fill(zp,YELLOW,22)
 		else
 		fill(zp,YELLOW,22);
-		inczp(zp, 22);
+		zp:=zp+screen_width;
 	end;
 
 	SCREEN_BG_COLOR:=BLACK + BLACK*16;
@@ -106,16 +106,17 @@ begin
 
 	i:=sine[time*6]/48;
 
-	zp:=^@charPos+^$47*^8;
-//	zp:=^@charPos+^$57*^8;
-	if (i<>0) then
-		inczp(zp,i*8);
-	h1:=^@charPos+^@orgChar*^8;
+	zp:=@charPos+$47*8;
+	zp:=zp+i*8;
+	h1:=@charPos+@orgChar*8;
+	
 	memcpy(zp,0,h1,8);
 
 	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^8,8,k,1);
 	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^16,8,scrollx,0);
 	CopyBytesShift(^@charPos+^@orgChar*^8,^@charPos+^@charCopyPos*^8+^24,8,scrollx,2);
+
+
 end;
 
 
@@ -150,13 +151,12 @@ begin
 		
 
 		if (scrollx=1) then begin	
-			screenmemory:=^$3000+^@ScrollerY*^22;
-			h2:=screenmemory;
-			inczp(h2,1);
+			screenmemory:=$3000+@ScrollerY*22;
+			h2:=screenmemory+1;
 			for i:=0 to 8 do begin
 				memcpy(h2,0,screenmemory,21);
-				inczp(h2,22);
-				inczp(screenmemory,22);
+				h2 := h2 + screen_width;
+				screenmemory := screenmemory + screen_width;
 			end;
 
 		end;

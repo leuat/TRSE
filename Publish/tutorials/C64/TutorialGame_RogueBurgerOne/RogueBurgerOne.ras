@@ -625,8 +625,7 @@ begin
 
 		if y<>0 then
 		for j:=0 to y do begin
-			inczp(zeropage2,160);
-			inczp(zeropage2,160);
+			zeropage2 := zeropage2+320;
 //			deczp(zeropage3,160);
 //			deczp(zeropage3,160);
 
@@ -638,7 +637,7 @@ begin
 		//		zeropage3[val+7-c]:=0;
 				val:=val+8;
 			end;
-			inczp(zeropage2,160);
+			zeropage2 := zeropage2+160;
 	//		inczp(zeropage3,160);
 		end;
 

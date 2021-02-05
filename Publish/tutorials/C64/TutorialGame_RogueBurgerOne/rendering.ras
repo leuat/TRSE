@@ -20,7 +20,7 @@ begin
 		inc(ms_sshift);
 		if (ms_sshift=2) then begin
 			ms_sshift:=0;
-			inczp(zeropage1,1);
+			zeropage1 := zeropage1 +1;
 			//if (rs_text[0]=0) then inczp(rs_text,1);
 	
 		end;
@@ -55,7 +55,7 @@ begin
 		end;
 		i:=i+2;
 
-		inczp(@renderText2x2,1);
+		@renderText2x2 := @renderText2x2+1;
 		val:=@renderText2x2[0];
 
 	end;
@@ -75,8 +75,7 @@ var
 
 begin
 	// Fluff files have 13 byte headers
-	inczp(rl_levels, 13); // Fluff header
-
+	rl_levels := rl_levels + 13;
 	// Read level header info
 
 	m_rl_sizex := rl_levels[0];
@@ -97,7 +96,7 @@ begin
 	
 	// Go past header
 
-	inczp(rl_levels, 9);
+	rl_levels := rl_levels+9;
 	
 	// Calculate position in level layout
 
@@ -109,9 +108,9 @@ begin
 	// Skip levels
 	if m_rl_pos<>0 then
 	for m_rl_j:=0 to m_rl_pos do begin
-			inczp(rl_levels,m_rl_val);
-			inczp(rl_levels,m_rl_val);
-			inczp(rl_levels,m_rl_dataSize);
+		rl_levels:=rl_levels+m_rl_val;
+		rl_levels:=rl_levels+m_rl_val;
+		rl_levels:=rl_levels+m_rl_dataSize;
 	end;
 
 	// Set screen position 
@@ -131,8 +130,8 @@ begin
 			screenmemory[m_rl_idx+40]:=m_rl_val+40;
 			screenmemory[m_rl_idx+41]:=m_rl_val+41;
 		 end;
-		inczp(screenmemory, 80);
-		inczp(rl_levels,m_rl_width);
+		 screenmemory := screenmemory + 80;
+		 rl_levels := rl_levels + m_rl_width;
 	end;
 	// Then colors
 	moveto(m_rl_startx, m_rl_starty, $D8);
@@ -151,8 +150,8 @@ begin
 
 
 	 	end;
-		inczp(screenmemory,80);
-		inczp(rl_levels, m_rl_width);
+	 	screenmemory := screenmemory + 80;
+	 	rl_levels := rl_levels + m_rl_width;
 	
 	end;
 	// Set multicolor colors
@@ -164,7 +163,7 @@ begin
 	m_rl_val :=  peek(rl_levels,2);
 	poke(MULTICOLOR_CHAR_COL, 1, m_rl_val);
 
-	inczp(rl_levels, 3);
+	rl_levels:=rl_levels+3;
 
 	@levelpointer:= rl_levels;
 	// levelpointer now points to chunk data!
@@ -181,19 +180,18 @@ Renders a .flf level at map pos x,y
 
 procedure ResetLevels(rl_levelp:pointer);
 begin
-	inczp(rl_levelp, 13); // Fluff header
-	inczp(rl_levelp, 9); // Level designer header
+	rl_levelp := rl_levelp+(13+9); // header
 	m_rl_val := m_rl_width*m_rl_height;
 	k:=m_rl_sizex*m_rl_sizey;
 	if k<>0 then	
 	for m_rl_j:=0 to k do begin
-		inczp(rl_levelp,m_rl_val); // Data
-		inczp(rl_levelp,m_rl_val); // Colors
-		inczp(rl_levelp,3); // MC/BG Colors
+	rl_levelp :=rl_levelp+m_rl_val; 
+	rl_levelp :=rl_levelp+m_rl_val; 
+	rl_levelp :=rl_levelp+3 ;
 		
 		for i:=0 to m_rl_chunks do begin
 			rl_levelp[@entity_isdead]:=0;
-			inczp(rl_levelp,m_rl_chunksize);
+			rl_levelp := rl_levelp + m_rl_chunksize;
 		end;
 		//			inczp(@levelpointer,m_rl_dataSize);
 	end;

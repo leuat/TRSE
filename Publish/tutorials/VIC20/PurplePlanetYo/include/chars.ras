@@ -15,7 +15,7 @@ begin
 			");
 			zp[j]:=k;
 		end;
-		inczp(zp,8);		
+		zp:=zp+8;
 	end;
 	if (charsetShift=0) then return();
 	zp:=$1400;
@@ -48,8 +48,8 @@ begin
 		p1[5]:=k;
 
 
-		inczp(p1,8);
-		inczp(p0,8);
+		p1:=p1+8;
+		p0:=p0+8;
 	end;
 end;
 
@@ -66,23 +66,23 @@ begin
 
 	if (k=@ccol) then begin
 		textColor:=textP[1];
-		inczp(textP,2);
+		textP := textP+2;
 		return();
 	end;
 	if (k=@cstart) then begin
 		if textP[1]=128 then begin
 			musicRunning:=1;
-			inczp(textP,2);
+			textP := textP+2;
 			return();
 		end;
 		startEffect:=textP[1];
-		inczp(textP,2);
+		textP := textP+2;
 		return();
 	end;
 
 	if (k=@cpause) then begin
 		textCounter:=textP[1];
-		inczp(textP,2);
+		textP := textP+2;
 		return();
 	end;
 
@@ -91,7 +91,7 @@ begin
 		tm:=screenmemory;
 		moveto(textP[1], textP[2],$94);
 		tc:=screenmemory;
-		inczp(textP,3);
+		textP := textP+3;
 		return();
 	end;
 
@@ -116,10 +116,9 @@ begin
 
 		end;
 	end;
-	
-	inczp(tm,1);
-	inczp(tc,1);
-	inczp(textP,1);
+	tm := tm+1;
+	tc := tc+1;	
+	textP := textP +1;
 	if (textColor=0) then textCounter:=1
 	else
 		textCounter:=textCounterMax;

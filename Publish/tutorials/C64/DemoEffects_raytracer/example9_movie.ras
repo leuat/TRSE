@@ -36,7 +36,7 @@ var
 
 
 
-	const clearVal:byte= 1;
+	const clearVal:byte= 0;
 	const maxFrames: byte  = 22;
 
 	
@@ -89,7 +89,7 @@ begin
 	memcpyunroll(zp,0,p1,240);
 	zp:=zp+240;
 	p1:=p1+240;
-	memcpyunroll(zp,0,p1,160);
+	memcpyunroll(zp,0,p1,120);
 	poke(^$01,0,keep01);
 
 end;

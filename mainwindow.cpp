@@ -324,6 +324,9 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("hide_exomizer_footprint"))
         m_iniFile->setFloat("hide_exomizer_footprint", 1);
 
+    if (!m_iniFile->contains("compile_thread"))
+        m_iniFile->setFloat("compile_thread",1);
+
     if (!m_iniFile->contains("tab_width"))
         m_iniFile->setFloat("tab_width", 4);
 
@@ -386,7 +389,9 @@ void MainWindow::VerifyDefaults()
         m_iniFile->setString("ok64_emulator","bin/OK64");
     #endif
     #ifdef _WIN32
-        m_iniFile->setString("ok64_emulator","ok64.exe");
+   m_iniFile->setString("ok64_emulator","OK64\\ok64.exe");
+   if (!QFile::exists(m_iniFile->getString("ok64_emulator")))
+       m_iniFile->setString("ok64_emulator","OK64\\ok64.exe");
     #endif
 
 
@@ -410,12 +415,13 @@ void MainWindow::VerifyProjectDefaults()
 void MainWindow::UpdateSymbolTree(QString search)
 {
 
-
-    ui->treeSymbols->clear();
-
     if (m_currentDoc==nullptr) {
         return;
     }
+    if (!m_currentDoc->isRasFile())
+        return;
+
+
 
     if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
@@ -430,15 +436,19 @@ void MainWindow::UpdateSymbolTree(QString search)
         return;
 
 
-    m_symPointers.clear();
-    m_orgSymPointers.clear();
-    m_treeItems.clear();
 
 
     if (e->m_builderThread.m_builder==nullptr)
         return;
     if (e->m_builderThread.m_builder->compiler==nullptr)
         return;
+
+
+    ui->treeSymbols->clear();
+    m_symPointers.clear();
+    m_orgSymPointers.clear();
+    m_treeItems.clear();
+
     Parser* p = &e->m_builderThread.m_builder->compiler->m_parser;
     QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
     QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
@@ -883,7 +893,7 @@ void MainWindow::VerifyTRSEVersion()
 {
     if (!m_currentProject.m_ini->contains("saved_with_trse_version")) {
 
-        Messages::messages.DisplayMessage(Messages::messages.ADDRESS_UPDATE,false);
+     //   Messages::messages.DisplayMessage(Messages::messages.ADDRESS_UPDATE,false);
     }
 }
 
@@ -1066,12 +1076,17 @@ void MainWindow::OnQuit()
 {
 //    qDebug() << m_currentProject.m_ini->getStringList("open_files");
 
+    while (Data::data.isCompiling) {
+        this->thread()->sleep(25);
+    }
+
     m_currentProject.Save();
 //    qDebug() << m_currentProject.m_ini->getString("current_file");
 
 //    m_iniFile->setVec("splitpos", QVector3D(ui->splitter->sizes()[0],ui->splitter->sizes()[1],0));
     m_iniFile->Save();
-
+    if (m_currentDoc!=nullptr)
+        m_currentDoc->Destroy();
 }
 
 void MainWindow::ForceOpenFile(QString s, int ln)
@@ -1492,6 +1507,7 @@ void MainWindow::on_tabMain_currentChanged(int index)
     else {
         m_currentDoc=nullptr;
     }
+    UpdateSymbolTree();
 
 }
 
@@ -2088,6 +2104,7 @@ void TRSEProject::VerifyDefaults() {
         m_ini->setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
 
 
+
     if (!m_ini->contains("temp_zeropages"))
         m_ini->setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
 
@@ -2335,7 +2352,9 @@ void MainWindow::GotoSymbol(QString s)
     ForceOpenFile(sp->m_file,sp->m_ln);
     m_currentDoc->Focus();
 //    qDebug() <<  s  << m_treeItems.keys();
-    ui->treeSymbols->setCurrentItem(m_treeItems[s]);
+/*    if (m_treeItems.contains(s))
+        if (ui->treeSymbols->findItems(m_treeItems[s]))*/
+        ui->treeSymbols->setCurrentItem(m_treeItems[s]);
 }
 
 void MainWindow::GotoAssemblerLine(QString s, int lineNumber)

@@ -11,7 +11,7 @@ begin
 			screenmemory[x+12]:=k;
 			inc(k);
 		end;
-		inczp(screenmemory,22);
+		screenmemory := screenmemory +22;
 
 	end;
 
@@ -89,12 +89,12 @@ blah:
 			dex
 			bne  blah
 			");
-			inczp(zp2,1);
+			zp2:=zp2+1;
 			inc(xp);
 //			inc(xp);
 //			xp:=xp+3;
 		end;
-		inczp(zp2,8*7);		
+		zp2:=zp2+8*7;
 	end;
 
 end;
@@ -114,11 +114,11 @@ begin
 			lda zp+1
 			sta (p1),y
 		");	
-		inczp(zp,1);
+		zp:=zp+1;
 		inc(k);
 		if (k=8) then begin
 			k:=0;
-			inczp(zp,7*8);
+			zp:=zp+7*8;
 		end;
 		if (i=63) then 	zp:=@unpackAddress;
 

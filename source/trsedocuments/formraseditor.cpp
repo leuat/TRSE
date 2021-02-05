@@ -402,8 +402,10 @@ void FormRasEditor::Build(bool isShadow)
     while (m_builderThread.isRunning()) {
 
     }
-    m_builderThread.start();
- //   m_builderThread.run();
+    if (m_iniFile->getdouble("compile_thread")==1)
+       m_builderThread.start();
+    else
+       m_builderThread.run();
 
 }
 
@@ -748,6 +750,15 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 
 
+}
+
+bool FormRasEditor::isRasFile()
+{
+    return !m_isTRU;
+}
+
+void FormRasEditor::Destroy() {
+      m_builderThread.quit();
 }
 
 void FormRasEditor::TestForCodeOverwrite(int codeEnd, QString& output)
@@ -1233,6 +1244,7 @@ void FormRasEditor::ShadowBuild()
 void BuilderThread::run()
 {
     m_isRunning=true;
+    Data::data.isCompiling = true;
     if (m_builder->Build( m_source ))
     {
         if (!m_builder->m_isShadow) {
@@ -1265,6 +1277,7 @@ void BuilderThread::run()
         emit emitError();
     }
     m_isRunning=false;
+    Data::data.isCompiling = false;
 
 }
 

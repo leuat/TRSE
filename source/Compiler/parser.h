@@ -88,6 +88,7 @@ public:
     QVector<ParserBlock> m_parserBlocks;
     static QStringList s_usedTRUs, s_usedTRUNames;
     QMap<QString, LMacro> m_macros;
+    int m_prevPercent = -1;
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;

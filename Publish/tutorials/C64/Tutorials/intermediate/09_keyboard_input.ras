@@ -2,7 +2,7 @@ program Keyboard_input;
 var  
    	index: byte; 
 	command : array[64] of byte;
-
+	
 procedure ReadLine();
 var
 	isNotDone, renderChar : byte=true;

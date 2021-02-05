@@ -204,7 +204,7 @@ void SourceBuilder::BuildSuccesString()
     QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
 //    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
     if (compiler!=nullptr && compiler->m_parser.m_lexer!=nullptr)
-        text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->m_lines.count()) +"</b> lines of Turbo Rascal to <b>";
+        text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->getTotalNumberOfLines()) +"</b> lines of Turbo Rascal to <b>";
     if (compiler!=nullptr && compiler->m_assembler!=nullptr)
     text+=QString::number(compiler->m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
     if (m_iniFile->getdouble("post_optimize")==1 && compiler!=nullptr && compiler->m_assembler!=nullptr) {
@@ -221,6 +221,17 @@ void SourceBuilder::BuildSuccesString()
 
 void SourceBuilder::AcceptParserTick(QString val)
 {
+    if (val.startsWith("&")) {
+        val = val.remove("&");
+        int pos = m_buildString.count()-1;
+        while (m_buildString[pos]!='[' && pos>0) {
+            m_buildString.remove(pos--,1);
+        }
+        m_buildString+=" " +val + "% ]";
+
+    }
+    else
     m_buildString +=val;
+
     emit EmitBuildString();
 }

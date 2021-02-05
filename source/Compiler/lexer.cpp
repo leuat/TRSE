@@ -26,6 +26,23 @@
 #include <QFile>
 
 
+int Lexer::getPositionInPercent()
+{
+    if (m_text.count()==0)
+        return 100;
+
+    int val = (100*m_pos)/m_text.count();
+//    int val = (100*Pmm::Data::d.lineNumber)/m_lines.count();
+    return val;
+}
+
+int Lexer::getTotalNumberOfLines()
+{
+    QStringList lst = m_text.split("\n");
+    lst.removeAll("");
+    return lst.count();
+}
+
 int Lexer::getLineNumber(QString find)
 {
     QStringList  l= m_text.split("\n");

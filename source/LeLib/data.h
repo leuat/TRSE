@@ -56,6 +56,7 @@ public:
     unsigned char currentColorType = 0;
     bool currentIsColor = false;
     bool strictReferences = false;
+    bool isCompiling = false;
     static Data data;
     void Redraw();
     void UpdatePens();
