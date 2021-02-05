@@ -219,6 +219,10 @@ begin
 	
 end;
 
+/**
+	Sets mode 5 
+
+**/
 procedure SetMode5();
 begin
 	SetMode(#crtc_mode5);
@@ -229,6 +233,8 @@ begin
 	");
 	
 end;
+
+
 /**
 
    Puts a pixel with color [ppc] at position [ppx,ppy] in mode 2 (160x256 16 colors)
@@ -344,6 +350,7 @@ begin
 	");
 end;
 
+                                                                                                                                                              
 
 interrupt DefaultIRQ();
 begin

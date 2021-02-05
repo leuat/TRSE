@@ -1373,8 +1373,18 @@ bool Parser::PreprocessIncludeFiles()
                 Eat(TokenType::PREPROCESSOR);
                 QString name = m_currentToken.m_value;
   //              qDebug() << "INCLUDING " <<name;
+
+
                 QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
                 filename = filename.replace("//","/");
+                if (!QFile::exists(filename))
+                    filename =Util::path +Data::data.unitPath +QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator()+ m_currentToken.m_value;
+
+                if (!QFile::exists(filename))
+                    filename =Util::path +Data::data.unitPath + QDir::separator() +"cpu_specific" +QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+QDir::separator()+ m_currentToken.m_value;
+
+                qDebug() << filename << QFile::exists(filename);
+
                 QString text = m_lexer->loadTextFile(filename);
                 int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
                 m_lexer->m_text.insert(m_lexer->m_pos, text);
