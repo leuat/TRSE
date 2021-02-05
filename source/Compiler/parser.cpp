@@ -1374,16 +1374,19 @@ bool Parser::PreprocessIncludeFiles()
                 QString name = m_currentToken.m_value;
   //              qDebug() << "INCLUDING " <<name;
 
-
+                // First, check the local dir
                 QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
                 filename = filename.replace("//","/");
+                // Then, if the file doesn't exist, check unit SYSTEM dir
+                // BORK EVERYTHING if current stuff is a TRU
+                if (m_isTRU) filename="";
                 if (!QFile::exists(filename))
                     filename =Util::path +Data::data.unitPath +QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator()+ m_currentToken.m_value;
 
+                // Then, if the file doesn't exist, check unit PROCESSOR dir
                 if (!QFile::exists(filename))
                     filename =Util::path +Data::data.unitPath + QDir::separator() +"cpu_specific" +QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+QDir::separator()+ m_currentToken.m_value;
 
-                qDebug() << filename << QFile::exists(filename);
 
                 QString text = m_lexer->loadTextFile(filename);
                 int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
