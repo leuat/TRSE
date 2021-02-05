@@ -1,0 +1,83 @@
+program TestKeys;
+/*
+
+	Use WASD keys to move the character around the screen
+	Uses the key unit to test for any number of keys held
+	down or just pressed at the same time.
+
+*/
+
+@ignoremethod "init16x8mul"
+@ignoremethod "init16x8div"
+@ignoremethod "init8x8div"
+@ignoremethod "initeightbitmul"
+// deprecated commands - ensure not included
+@ignoremethod "initjoystick"
+@ignoremethod "initmoveto"
+
+@use "input/key"
+
+var  
+	xx, yy: byte;
+	count: byte = 0;
+	
+	const SCREENWIDTH: byte = SCREEN_WIDTH;
+
+	const PLAYER: byte = 65;
+	const SPACE: byte = 32;
+
+	// create a lookup of starting addresses for each row of the screen
+	// makes positioning things on the screen faster
+	rows: array[ SCREEN_HEIGHT ] of integer = buildtable("SCREEN_CHAR_LOC + ( i * SCREENWIDTH )");
+
+/* **** MAIN PROGRAM **** */
+begin
+
+	definescreen(); // creates two pointers- screenmemory and colormemory
+
+	clearscreen( 32, SCREEN_CHAR_LOC );
+	clearscreen( WHITE, SCREEN_COL_LOC );
+
+	SCREEN_BG_COL := BLACK;
+
+	xx := SCREEN_WIDTH / 2;
+	yy := SCREEN_HEIGHT / 2;
+
+	while ( true ) do
+	begin
+	
+		// read keyboard and update pressed state
+		Key::Read();
+
+		// slow down the player movement to only update every 4th frame
+		if ( count & 3 = 0 ) then
+		begin
+
+			// erase the player from the screen
+			screenmemory := rows[ yy ];
+			screenmemory[ xx ] := SPACE;
+		
+			// use Key::Held to test if a key is being held down
+			// use Key::Pressed to test if a key has JUST been pressed
+			// Examine the input/key/???_data.ras file for all key codes available
+			
+			// test for keys - works with any number of keys held down at the same time
+
+			if ( Key::Held( Key::KW ) and yy > 0 ) then yy := yy - 1;
+			if ( Key::Held( Key::KS ) and yy < SCREEN_HEIGHT - 1 ) then yy := yy + 1;
+			if ( Key::Held( Key::KA ) and xx > 0 ) then xx := xx - 1;
+			if ( Key::Held( Key::KD ) and xx < SCREEN_WIDTH - 1 ) then xx := xx + 1;
+
+			// draw the player on the screen
+			screenmemory := rows[ yy ];
+			screenmemory[ xx ] := PLAYER;
+
+		end;
+				
+		waitforraster( 0 );
+		count := count + 1;
+
+	end;
+
+
+end.

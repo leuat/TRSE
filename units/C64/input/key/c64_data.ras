@@ -1,0 +1,112 @@
+
+// Constants for detecting keys on Vic 20 keyboard
+
+/*
+	KEYS
+	
+		BIT	7	6	5	4	3	2	1	0
+			---	---	---	---	---	---	---	---
+*/
+
+//	ROW0 =	CDo	F5	F3	F1	F7	CRi	Ret	del
+
+	const KINSDEL:		integer = $0100; 	// Ins/Del key
+	const KRETURN:		integer = $0200; 	// Return key
+	const KCLEFTRIGHT:	integer = $0400; 	// Cursor Left/Right key
+	const KF7:			integer = $0800; 	// F7 key
+	const KF1:			integer = $1000; 	// F1 key
+	const KF3:			integer = $2000; 	// F3 key
+	const KF5:			integer = $4000; 	// F5 key
+	const KINSDEL:		integer = $8000; 	//Cursor Up/Down key
+
+//	ROW1 = 	LSh	E	S	Z	4	A	W	3
+	const K3:			integer = $0101; 	// 3 key
+	const KW:			integer = $0201; 	// W key
+	const KA:			integer = $0401; 	// A key
+	const K4:			integer = $0801; 	// 4 key
+	const KZ:			integer = $1001; 	// z key
+	const KS:			integer = $2001; 	// S key
+	const KE:			integer = $4001; 	// E key
+	const KLSHIFT:		integer = $8001; 	// Left Shift key
+
+// 	ROW2 = 	X	T	F	C	6	D	R	5
+	const K5:	 		integer = $0102;	// 5 key
+	const KR: 			integer = $0202;	// R key
+	const KD: 			integer = $0402;	// D key
+	const K6: 			integer = $0802;	// 6 key
+	const KC: 			integer = $1002;	// C key
+	const KF:			integer = $2002;	// F key
+	const KT:			integer = $4002;	// T key
+	const KX:			integer = $8002;	// X key
+
+// 	ROW3 = 	V	U	H	B	8	G	Y	7
+	const K7:			integer = $0103;	// 7 key
+	const KY:			integer = $0203;	// Y key
+	const KG:			integer = $0403;	// G key
+	const K8: 			integer = $0803;	// 8 key
+	const KB: 			integer = $1003;	// B key
+	const KH:			integer = $2003;	// H key
+	const KU:			integer = $4003;	// U key
+	const KV:			integer = $8003;	// V key
+
+//	ROW4 = 	N	O	K	M	0	J	I	9
+	const K9:	 		integer = $0104;	// 9 key
+	const KI:	 		integer = $0204;	// I key
+	const KJ:			integer = $0404;	// J key
+	const K0: 			integer = $0804;	// 0 key
+	const KM: 			integer = $1004;	// M key
+	const KK:			integer = $2004;	// K key
+	const KO:			integer = $4004;	// O key
+	const KN: 			integer = $8004;	// N key
+
+//	ROW5 =	,	@	:	.	-	L	P	+
+	const KPLUS:		integer = $0105;	// Plus key
+	const KP:			integer = $0205;	// P key
+	const KL:			integer = $0405;	// L key
+	const KMINUS: 		integer = $0805;	// - key
+	const KFULLSTOP:	integer = $1005;	// . key
+	const KCOLON:		integer = $2005;	// :
+	const KAT:	 		integer = $4005;	// @ key
+	const KCOMMA:		integer = $8005;	// , key
+
+//	ROW6 = 	/	UAr	=	RSh	Ho	;	*	Pou
+	const KPOUND:		integer = $0106;	// Pound key
+	const KASTERISK:	integer = $0206;	// Asterisk key
+	const KSEMICOLON:	integer = $0406;	// ; key
+	const KCLEARHOME:	integer = $0806;	// Clear/Home key
+	const KRSHIFT:		integer = $1006;	// Right Shift key
+	const KEQUALS:		integer = $2006;	// = key
+	const KUPARROW:		integer = $4006;	// Up Arrow key
+	const KFLASH:		integer = $8006;	// / key
+
+//	ROW7 =	Sto	Q	Cdr	Spc	2	Ctr	Lar	1
+	const K1: 			integer = $0107;	// 1 key
+	const KLEFTARROW:	integer = $0207;	// Left Arrow key
+	const KCTRL:		integer = $0407;	// Ctrl key
+	const K2:	 		integer = $0807;	// 2 key
+	const KSPACE:		integer = $1007;	// Space key
+	const KCOMMODORE:	integer = $2007;	// Commodore key
+	const KQ:			integer = $4007;	// Q key
+	const KRUNSTOP:		integer = $8007;	// Run/Stop key
+
+
+
+
+	// unique key / screen codes
+	const QUOTE:		byte = 34; // "
+	const DOLLAR:		byte = 36; // $
+	const COMMA:		byte = 44; // ,
+	const OPENBR:		byte = 40; // (
+	const CLOSEBR:		byte = 41; // }
+	
+	const LEFTARROW:	byte = 69; // arrow pointing left
+	const UPARROW:		byte = 70; // arrow pointing up
+
+
+	
+	
+		
+			
+	const INSDELKEY:	byte = 254; // insert / delete	
+	const NOKEY:		byte = 255;
+

@@ -1,0 +1,105 @@
+
+
+procedure Read();
+begin
+
+	keyState := 0;
+
+	for temp := 0 to KEY_ROWS do
+	begin
+
+		KeyRow := keyRowValues[ temp ]; // row to test
+		
+		asm("
+
+		lda Key_KeyRead ; get bits
+		eor #$ff ; invert so the below works
+
+		ldx Key_temp
+
+		sta Key_keys,x
+		eor Key_keysLast,x
+		and Key_keys,x
+		sta Key_keysPressed,x
+		lda Key_keys,x
+		sta Key_keysLast,x
+		
+		; record if no key pressed
+		clc
+		adc Key_keyState
+		sta Key_keyState
+		
+		");
+		
+	end;
+
+end;
+
+
+
+procedure Held( _xy: integer );
+begin
+
+	asm("
+	
+	sty Key_temp
+	lda Key_keys,x
+	and Key_temp 	; contains column 
+	
+	");
+
+end;
+
+
+
+procedure Pressed( _xy: integer );
+begin
+
+	asm("
+	
+	sty Key_temp
+	lda Key_keysPressed,x
+	and Key_temp 	; contains column 
+
+	");
+
+end;
+
+
+procedure GetHeld();
+var
+// Look up tables to convert key row / columns to screencodes
+// note: only text, numbers, punctuation and ins/del key are listed
+//       everything else is nokey so not detected in this table
+	screencodes_graphic: cstring = (
+	
+	"!", "#", "%", "&", OPENBR, NOKEY, NOKEY, NOKEY,
+	QUOTE, "$", "'", "\", CLOSEBR, NOKEY, NOKEY, INSDELKEY,
+	"Q", "E", "T", "U", "O", UPARROW, "7", "9",
+	"W", "R", "Y", "I", "P", NOKEY, "8", "/",
+	"A", "D", "G", "J", "L", NOKEY, "4", "6",
+	"S", "F", "H", "K", ":", NOKEY, "5", "*",
+	"Z", "C", "B", "M", ";", NOKEY, "1", "3",
+	"X", "V", "N", COMMA, "?", NOKEY, "2", "+",
+	NOKEY, "@", "]", NOKEY, ">", NOKEY, "0", "-",
+	NOKEY, "[", " ", "<", NOKEY, NOKEY, ".", "=" 
+
+	) no_term;
+
+begin
+
+//	temp := screencodes_graphic[ 0 ];
+
+	for temp := 0 to KEY_ROWS do
+	begin
+
+		temp_var1 := _GetKeyOffset( keysPressed[ temp ], temp );
+		if ( temp_var1 <> NOKEY ) then returnvalue( temp_var1 );
+		
+	end;
+	
+	// no key held!
+	returnvalue( NOKEY );
+
+end;
+

@@ -1,0 +1,59 @@
+
+// Get the lookup offset
+procedure _GetKeyOffset( _a, _y: byte );
+begin
+
+	// convert bit position to number
+	asm("
+	
+	; pass with _a containing key to check 1, 2, 4, 8, 16, 32, 64, 128
+	; and y the row offset 0 - 9
+	tax ; temp store key
+	
+	tya ; multiply row offset by 8 to find starting pos in array
+	asl
+	asl
+	asl ; *8
+	sta TEMP_VAR1
+	
+	; use temporary variable as a pointer
+	lda #>Key_screencodes_graphic
+	sta TEMP_VAR2+1 ; high byte
+	lda #<Key_screencodes_graphic
+	sta TEMP_VAR2 ; low byte
+	
+	clc
+	adc TEMP_VAR1
+	sta TEMP_VAR2
+	bcc getKey_NoOverflow
+	inc TEMP_VAR2+1 ; byte overflow, update high byte
+	
+getKey_NoOverflow
+
+	; then work out the offest 0 - 7
+	txa ; the key
+	
+	ldy #0  ; count the number of shifts
+	ldx #8	; test all 8 bits
+
+getKey_testLoop
+	lsr ; bit put in carry
+	bcs getKey_foundBit
+	iny	; counter for next bit to test
+	dex	; 
+	bne getKey_testLoop
+
+	
+getKey_foundBit
+	; x has the bit 0-7 or 8 if not found
+	cpy #8
+	beq getKey_NotFound
+	
+	lda (TEMP_VAR2),y  ; load screencode + bit offset
+	rts 
+	
+getKey_NotFound
+	lda #KEY_NOKEY ; not found
+	");
+
+end;

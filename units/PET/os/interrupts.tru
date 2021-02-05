@@ -1,0 +1,31 @@
+Unit Interrupts;
+var
+
+	interruptFlag: 	byte at $e813; @donotremove "interruptFlag"
+	
+
+/**
+<p>Disables interrupts. This prevents a number of things from running 
+including the kernal's keyboard scan and the jiffy clock TI$. 
+As these things are not running every frame you will see some speed
+benefits in your main code.
+<p>The Key unit is not affected as it polls the keyboard directly. 
+**/
+procedure Disable() inline;
+begin
+
+	interruptFlag := 60;
+
+end;
+
+/**
+<p>Enables interrupts.
+**/
+procedure Enable() inline;
+begin
+
+	interruptFlag := 61;
+
+end;
+
+end.

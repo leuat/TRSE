@@ -1,0 +1,62 @@
+Unit Screen;
+var  
+	const ti: address = $8f;
+	oldti: byte at $b9; // re-use cycle counter
+
+/**
+<p>Wait for the Jiffy clock to tick over which is done on an
+interrupt. This will allow your program to run at a constant
+speed approximately in line with the vertical blank refresh.
+**/
+procedure WaitFrame();
+begin
+
+	while ( ti = oldti ) do begin end;
+	oldti := ti;
+	
+end;
+
+/**
+<p>Wait for the Vertical Blank to start. This is when the raster beam
+has reached the bottom of the screen and is returning to the top left.
+**/
+procedure WaitVblStart();
+begin
+
+	asm("
+	
+waitVblStart
+	lda $e840
+	and #%00100000
+	;cmp #%00100000
+	beq waitVblStart
+
+	");
+
+end;
+
+/**
+<p>Wait for the Vertical Blank to end. This is after the raster beam
+has returned to the top of the screen. This procedure will be true and
+no wait while the screen is being redrawn.
+<p>Use WaitVblEnd after a WaitVblStart when needing to ensure that the
+vertical blank has completed before waiting for the next VBL. 
+This is important when your game loop takes less time than the time for
+the raster to return to the top of the screen.
+**/
+procedure WaitVblEnd();
+begin
+
+	asm("
+	
+waitVblEnd
+	lda $e840
+	and #%00100000
+	;cmp #%00100000
+	bne waitVblEnd
+
+	");
+
+end;
+
+end.

@@ -1,0 +1,123 @@
+
+// Constants for detecting keys on Graphic keyboard
+
+// row 0
+	const KEXCLAMATION:	integer = $0100; 	// ! key
+	const KHASH:		integer = $0200; 	// # key
+	const KPERCENT:		integer = $0400; 	// % key
+	const KAND:			integer = $0800; 	// & key
+	const KOPENBR:		integer = $1000; 	// ( key
+	const KLEFTARROW:	integer = $2000; 	// left arrow key
+	const KCLRHOME:		integer = $4000; 	// Clear Home key
+	const KLEFTRIGHT:	integer = $8000; 	// Cursor left/right key
+
+// row 1
+	const KDBLQUOTE:	integer = $0101; 	// " key
+	const KDOLLAR:		integer = $0201; 	// $ key
+	const KQUOTE:		integer = $0401; 	// ' key
+	const KBACKSLASH:	integer = $0801; 	// \ key
+	const KCLOSEDBR:	integer = $1001; 	// ) key
+	//const KNOKEYHERE:	integer = $2001; 	// Pet has no key here
+	const KUPDOWN:		integer = $4001; 	// Cursor up/down key
+	const KINSTDEL:		integer = $8001; 	// Insert/Delete key
+
+// row 2
+	const KQ: 			integer = $0102;	// Q key
+	const KE: 			integer = $0202;	// E key
+	const KT: 			integer = $0402;	// T key
+	const KU: 			integer = $0802;	// U key
+	const KO: 			integer = $1002;	// O key
+	const KUPARROW:		integer = $2002;	// Up arrow key
+	const K7: 			integer = $4002;	// 7 key
+	const K9: 			integer = $8002;	// 9 key
+
+// row 3
+	const KW: 			integer = $0103;	// W key
+	const KR: 			integer = $0203;	// R key
+	const KY: 			integer = $0403;	// Y key
+	const KI: 			integer = $0803;	// I key
+	const KP: 			integer = $1003;	// P key
+	//const KNOKEYHERE:	integer = $2003;	// Pet has no key here
+	const K8: 			integer = $4003;	// 8 key
+	const KFORWARDSLASH:integer = $8003;	// / key
+
+// row 4
+	const KA: 			integer = $0104;	// A key
+	const KD: 			integer = $0204;	// D key
+	const KG: 			integer = $0404;	// G key
+	const KJ: 			integer = $0804;	// J key
+	const KL: 			integer = $1004;	// L key
+	//const KNOKEYHERE:	integer = $2004;	// Pet has no key here
+	const K4: 			integer = $4004;	// 4 key
+	const K6: 			integer = $8004;	// 6 key
+
+// row 5
+	const KS: 			integer = $0105;	// S key
+	const KF: 			integer = $0205;	// F key
+	const KH: 			integer = $0405;	// H key
+	const KK: 			integer = $0805;	// K key
+	const KCOLON:		integer = $1005;	// : key
+	//const KNOKEYHERE:	integer = $2005;	// Pet has no key here
+	const K5: 			integer = $4005;	// 5 key
+	const KASTERISK:	integer = $8005;	// * key
+
+// row 6
+	const KZ: 			integer = $0106;	// Z key
+	const KC: 			integer = $0206;	// C key
+	const KB: 			integer = $0406;	// B key
+	const KM: 			integer = $0806;	// M key
+	const KSEMICOLON:	integer = $1006;	// ; key
+	const KRETURN:		integer = $2006;	// Return key
+	const K1: 			integer = $4006;	// 1 key
+	const K3:			integer = $8006;	// 3 key
+
+// row 7
+	const KX: 			integer = $0107;	// X key
+	const KV: 			integer = $0207;	// V key
+	const KN: 			integer = $0407;	// N key
+	const KCOMMA: 		integer = $0807;	// , key
+	const KQUESTION:	integer = $1007;	// ? key
+	//const KNOKEYHERE:	integer = $2007;	// Pet has no key here
+	const K2: 			integer = $4007;	// 2 key
+	const KPLUS:		integer = $8007;	// + key
+
+// row 8
+	const KLSHIFT: 		integer = $0108;	// Left Shift key
+	const KAT: 			integer = $0208;	// @ key
+	const KCLOSEBRACE:	integer = $0408;	// ] key
+	//const KNOKEYHERE:	integer = $0808;	// Pet has no key here
+	const KGREATER:		integer = $1008;	// > key
+	const KRSHIFT:		integer = $2008;	// Right Shift key
+	const K0: 			integer = $4008;	// 0 key
+	const KMINUS:		integer = $8008;	// - key
+
+// row 9
+	const KREVERSE:		integer = $0109;	// Reverse key
+	const KOPENBRACE:	integer = $0209;	// [ key
+	const KSPACE:		integer = $0409;	// Space key
+	const KLESS:		integer = $0809;	// < key
+	const KSEMICOLON:	integer = $1009;	// Run Stop key
+	//const KNOKEYHERE:	integer = $2009;	// Pet has no key here
+	const KFULLSTOP:	integer = $4009;	// . key
+	const KEQUALS:		integer = $8009;	// = key
+
+
+	// unique key / screen codes
+	const QUOTE:		byte = 34; // "
+	const DOLLAR:		byte = 36; // $
+	const COMMA:		byte = 44; // ,
+	const OPENBR:		byte = 40; // (
+	const CLOSEBR:		byte = 41; // }
+	
+	const LEFTARROW:	byte = 69; // arrow pointing left
+	const UPARROW:		byte = 70; // arrow pointing up
+
+
+	
+	
+		
+			
+	const INSDELKEY:	byte = 254; // insert / delete	
+	const NOKEY:		byte = 255;
+
+

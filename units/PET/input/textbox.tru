@@ -1,0 +1,148 @@
+Unit Textbox;
+@use "input/key"
+
+var  
+
+// --- PUBLIC PROPERTIES --------------------------------
+// change any of these directly
+
+	Invert: byte = 128;	// set to 0 or 128
+
+	Flags: byte;		// flags to customise text entry
+	
+	// use the following flags - set to enable
+	const ALPHA: byte = 128;
+	const NUMERIC: byte = 64;
+	const PUNCTUATION: byte = 32;
+
+// --- PRIVATE PROPERTIES -------------------------------
+// do not change these
+
+	tp: pointer;		// pointer to the text string
+	pos: byte;			// position of 'cursor' in the text string
+	len: byte;			// length of the text string
+
+	cursor: byte;		// flag for state of cursor flash (on or off)
+	cursorTimer: byte;	// cursor count down
+	const CURSORTIMER_RESET: byte = 25;
+
+	i: byte;			// indexer
+
+	const INSDEL: byte = 254; // value if del key pressed
+	const NOKEY: byte = 255; // value if no key is returned
+
+
+/**
+<p>Set the input string to use and define the maximum length.</p>
+<p>Use before Input::Read(); and Input::Write();</p>
+**/
+procedure SetInputString( tp: global pointer, len: global byte );
+begin
+	// sets up the string to use for input 
+	// (global params handle the assignment)
+	
+	pos := 0; // set position to start of string
+	
+	cursor := 0; // cursor off
+	cursorTimer := CURSORTIMER_RESET; 
+
+end;
+
+/**
+<p>Clear the input string with spaces.</p>
+**/
+procedure ClearInputString();
+begin
+
+	for i := 0 to len do
+		tp[ i ] := 32;
+
+end;
+
+// Internal method to time flashing a cursor
+procedure _FlashCursor();
+begin
+
+	dec( cursorTimer );
+	if ( cursorTimer = 0 ) then
+	begin
+	
+		cursorTimer := CURSORTIMER_RESET;
+		cursor := cursor xor 128;
+
+	end;
+
+end;
+
+/**
+<p>Draw input string at current screenmemory pointer location.</p>
+**/
+procedure Write();
+begin
+
+	for i := 0 to len do
+	begin
+	
+		screenmemory[ i ] := tp[ i ] | Invert;
+
+		if ( pos = i ) then 
+			screenmemory[ pos ] := screenmemory[ pos ] xor cursor;
+	
+	end;		
+
+	if ( pos < len ) then _FlashCursor();
+	
+end;
+
+/**
+<p>Execute a Key::Read() and populate the input string with the
+charaacters set to be allowed in the Flags.</p>
+**/
+procedure Read();
+begin
+
+	// read the keyboard matrix
+	Key::Read();
+
+	if ( Key::keyState = 0 ) then return; // no key pressed
+	//if ( keyDown <> 255 ) then
+	begin
+	
+		i := Key::GetHeld();
+		if ( i = NOKEY ) then return;
+		
+		if ( Flags & ALPHA = 0 and (i >= 0 and i <= 26) ) then return;
+		if ( Flags & NUMERIC = 0 and (i >= 48 and i <= 57) ) then return;
+		if ( Flags & PUNCTUATION = 0 and (i >= 27 and i <= 47) ) then return;
+		
+		if ( i = INSDEL ) then
+		begin
+		
+			if ( pos > 0 ) then
+			begin
+			
+				dec( pos );
+				tp [ pos ] := 32; // space
+
+			end;
+			return;
+			
+		end;
+
+		// i contains a valid key
+		
+		// can we insert the character?
+		if ( pos < len ) then
+		begin	
+		
+			tp[ pos ] := i;
+			inc( pos );
+			
+		end;
+
+	end;
+
+end;
+
+
+end.
