@@ -67,8 +67,8 @@ J:1*:JU,JD,JL,JR,JF,JF,1,2,SP,F1,F3,F5,EN,A,B
 
 
 @use "key"
-@use "cart"
-@use "crtcompression"
+@use "cart/cart"
+@use "cart/crtcompression"
 
 
 // -------------------------------------------------------------------------------

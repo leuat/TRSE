@@ -55,4 +55,6 @@ data_header_chr\font8x8.flf = 0
 data_header_chr\font4x8.flf = 0
 data_header_chr/title.flf = 6.95175e-310
 data_header_chr\title.flf = 0
-open_files =, game.ras
+open_files = ,main.ras
+project_path = tutorials/VIC20/cheesy/
+current_file = game.ras
