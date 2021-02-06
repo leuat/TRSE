@@ -175,7 +175,7 @@ int CodeEditor::lineNumberAreaWidth()
         max /= 10;
         ++digits;
     }
-    int space = 3 + m_metrics->maxWidth() * (digits);
+    int space = 3 + m_metrics->maxWidth() * (digits)*m_fontScale;
 
     return space;
 }
@@ -184,7 +184,7 @@ int CodeEditor::cycleNumberAreaWidth()
 {
     if (!m_displayCycles)
         return 0;
-    return m_metrics->maxWidth()*7;
+    return m_metrics->maxWidth()*7*m_fontScale;
 }
 
 int CodeEditor::AddressAreaWidth()
@@ -194,7 +194,7 @@ int CodeEditor::AddressAreaWidth()
     if (m_addresses.keys().count()==0)
         return 0;
 
-    return m_metrics->maxWidth() * 6;
+    return m_metrics->maxWidth() * 6*m_fontScale;
 
 }
 
@@ -657,7 +657,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
             painter.setPen(lineNumbersColor);
             painter.setFont(m_font);
             painter.drawText(0, top, lineNumberArea->width(), m_metrics->height(),
-                             Qt::AlignRight, number);
+                             Qt::AlignRight | Qt::AlignVCenter, number);
 
         }
 
@@ -685,7 +685,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
     painter.setFont(m_font);
 
     painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
-                 Qt::AlignLeft, "Cycles");
+                 Qt::AlignLeft  | Qt::AlignVCenter, "Cycles");
 
 //    top+=20;
     top+=m_metrics->height();
@@ -701,7 +701,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
                 QString number = QString::number(m_cycles[ln]);
                 painter.setPen(cyclesColor);
                 painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
-                             Qt::AlignLeft, number);
+                             Qt::AlignLeft | Qt::AlignVCenter, number);
             }
             if (m_blockCycles.contains(ln))
             {
@@ -712,7 +712,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
                 QString number = QString::number(m_blockCycles[ln]+val);
                 painter.setPen(blockCyclesColor);
                 painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
-                             Qt::AlignLeft, number);
+                             Qt::AlignLeft  | Qt::AlignVCenter, number);
             }
         }
 
@@ -734,7 +734,7 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     painter.setPen(cyclesColor);
     painter.drawText(0, top, addressArea->width(), m_metrics->height(),
-                 Qt::AlignLeft, "");
+                 Qt::AlignLeft | Qt::AlignVCenter, "");
 
 //    top+=20;
     top+=m_metrics->height();
@@ -751,7 +751,7 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
                     number.insert(1,"0");
                 painter.setPen(cyclesColor);
                 painter.drawText(10, top, addressArea->width(), m_metrics->height(),
-                             Qt::AlignLeft, number);
+                             Qt::AlignLeft | Qt::AlignVCenter, number);
             }
         }
 

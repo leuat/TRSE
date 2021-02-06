@@ -19,7 +19,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1037,59 +1037,10 @@
            <layout class="QGridLayout" name="gridLayout_21">
             <item row="0" column="0">
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="leFontSize">
-                <property name="inputMask">
-                 <string>99</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_27">
-                <property name="text">
-                 <string>Code editor font</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
-               <widget class="QLineEdit" name="leFontSizeMemoryAnalyzer">
-                <property name="inputMask">
-                 <string>99</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Memory Analyzer Font Size</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
+              <item row="7" column="1">
                <widget class="QLineEdit" name="leCursorWidth">
                 <property name="inputMask">
                  <string>99</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="leTabWidth">
-                <property name="inputMask">
-                 <string>99</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Tab width</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_36">
-                <property name="text">
-                 <string>Symbol list font</string>
                 </property>
                </widget>
               </item>
@@ -1100,20 +1051,21 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_29">
-                <property name="text">
-                 <string>Text editor cursor width</string>
+              <item row="6" column="1">
+               <widget class="QLineEdit" name="leFontSizeMemoryAnalyzer">
+                <property name="inputMask">
+                 <string>99</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="cbmFont"/>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Memory Analyzer Font Size</string>
+                </property>
+               </widget>
               </item>
-              <item row="7" column="1">
-               <widget class="QComboBox" name="cmbFontSymbols"/>
-              </item>
-              <item row="8" column="0">
+              <item row="9" column="0">
                <widget class="QLabel" name="label_37">
                 <property name="text">
                  <string>Symbol list font size</string>
@@ -1121,11 +1073,69 @@
                </widget>
               </item>
               <item row="8" column="1">
+               <widget class="QComboBox" name="cmbFontSymbols"/>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_52">
+                <property name="text">
+                 <string>Address / Cycle font size scale</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_36">
+                <property name="text">
+                 <string>Symbol list font</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="leTabWidth">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
                <widget class="QLineEdit" name="leFontSizeSymbols">
                 <property name="inputMask">
                  <string>99</string>
                 </property>
                </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Tab width</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="cbmFont"/>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_27">
+                <property name="text">
+                 <string>Code editor font</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="leFontSize">
+                <property name="inputMask">
+                 <string>99</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_29">
+                <property name="text">
+                 <string>Text editor cursor width</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="leFontScale"/>
               </item>
              </layout>
             </item>

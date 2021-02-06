@@ -73,6 +73,7 @@ public:
     QFontMetrics* m_metrics;
     bool m_displayCycles = true;
     bool m_displayAddresses = true;
+    float m_fontScale = 0.8;
     void SetIndent();
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();

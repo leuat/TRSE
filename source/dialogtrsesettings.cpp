@@ -122,6 +122,7 @@ void DialogTRSESettings::FillFromIni()
 
 
     ui->leFontSize->setText(QString::number((int)m_ini->getdouble("font_size")));
+    ui->leFontScale->setText(QString::number(m_ini->getdouble("font_size_scale")));
     ui->leFontSizeSymbols->setText(QString::number((int)m_ini->getdouble("font_size_symbols")));
     ui->leTabWidth->setText(QString::number((int)m_ini->getdouble("tab_width")));
 
@@ -192,6 +193,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("theme_fjong", ui->cmbThemeFjong->currentText() + ".ini");
 
     m_ini->setFloat("font_size", ui->leFontSize->text().toInt());
+    m_ini->setFloat("font_size_scale", ui->leFontScale->text().toFloat());
     m_ini->setFloat("font_size_symbols", ui->leFontSizeSymbols->text().toInt());
     m_ini->setFloat("tab_width", ui->leTabWidth->text().toInt());
     m_ini->setFloat("memory_analyzer_font_size", ui->leFontSizeMemoryAnalyzer->text().toInt());

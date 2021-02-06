@@ -319,6 +319,8 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile->contains("font_size"))
         m_iniFile->setFloat("font_size", 12);
+    if (!m_iniFile->contains("font_size_scale"))
+        m_iniFile->setFloat("font_size_scale", 0.75);
     if (!m_iniFile->contains("font_size_symbols"))
         m_iniFile->setFloat("font_size_symbols", 10);
     if (!m_iniFile->contains("hide_exomizer_footprint"))
