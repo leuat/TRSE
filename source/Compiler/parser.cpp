@@ -1390,7 +1390,7 @@ bool Parser::PreprocessIncludeFiles()
                 filename = filename.replace("//","/");
                 // Then, if the file doesn't exist, check unit SYSTEM dir
                 // BORK EVERYTHING if current stuff is a TRU
-                if (m_isTRU) filename="";
+                //if (m_isTRU) filename="";
                 if (!QFile::exists(filename))
                     filename =Util::path +Data::data.unitPath +QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+QDir::separator()+ m_currentToken.m_value;
 
