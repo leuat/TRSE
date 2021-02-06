@@ -51,6 +51,7 @@ begin
 	closeirq();
 end;
 
+
 begin
 	screen_fg_col:=black;
 	InitSprites();	

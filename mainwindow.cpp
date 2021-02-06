@@ -524,11 +524,11 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
     QColor col = bcol;
     QString ns = n;
 
-    if (ns.remove(":").trimmed().isUpper()) {
+/*    if (ns.remove(":").trimmed().isUpper()) {
         col = Qt::darkGray;
         type = "Built-in";
-    }
-    else if (name.contains("::")) {
+    }*/
+    if (name.contains("::")) {
         col = QColor(50,100,255);
         type = name.split("::").first();
     }
@@ -625,7 +625,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
 
     for (TRSEDocument* d: m_documents) {
 //        qDebug() << d->m_currentFileShort;
-        if (d->m_currentFileShort==testFilename) {
+        if (d->m_currentFileShort.toLower()==testFilename.toLower()) {
             ui->tabMain->setCurrentWidget(d);
             return;
         }
