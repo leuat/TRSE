@@ -22,7 +22,7 @@ DEFINES -= QT_DEPRECATED_WARNINGS
 
 DEFINES += USE_LUA
 
-#DEFINES +=USE_OMP
+DEFINES +=USE_OMP
 
 INCLUDEPATH +=$$PWD/libs/lua/include
 
@@ -40,6 +40,7 @@ macx{
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
     LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib -lomp
+    DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
       QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
     }
