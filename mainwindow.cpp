@@ -1907,6 +1907,10 @@ void MainWindow::on_actionClose_current_project_triggered()
     m_currentProject.Close();
     m_currentPath = "";
     RefreshFileList();
+    ui->treeSymbols->clear();
+    m_symPointers.clear();
+    m_orgSymPointers.clear();
+    m_treeItems.clear();
 }
 
 void MainWindow::on_actionHelp_F1_triggered()
