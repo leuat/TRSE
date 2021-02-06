@@ -1,4 +1,4 @@
-program PETRock;
+program PET40;
 //@use "input/key"
 //@use "output/screen"
 //@use "output/pob"
@@ -23,7 +23,7 @@ begin
 	while( true ) do
 	begin
 
-
+		// code
 		
 	end;
 	
