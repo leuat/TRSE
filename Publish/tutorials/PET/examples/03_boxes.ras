@@ -1,4 +1,7 @@
 program Boxes;
+
+@projectsettings "petmodel" "8032"
+
 var  
 	saddr: array[screen_height] of integer; // Screen address table
 	

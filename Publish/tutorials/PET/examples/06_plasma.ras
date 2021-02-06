@@ -1,5 +1,7 @@
 program Tutorial3_plasma;
 
+@projectsettings "petmodel" "8032"
+
 var
 	// some plasma variables
 	c,val,c2x, c2y,ax, ay : byte;

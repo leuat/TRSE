@@ -1,4 +1,7 @@
 program Randomness;
+
+@projectsettings "petmodel" "8032"
+
 var  
 	random_color,x,y,index: byte; 
 	// Array of random bytes

@@ -1,0 +1,49 @@
+program ModelTestExample;
+@use "os/model"
+
+/* uncomment the relevant line to tell the emulator which one to use */
+@projectsettings "petmodel" "3032"
+//@projectsettings "petmodel" "4032"
+//@projectsettings "petmodel" "8032"
+//@projectsettings "petmodel" "2001"
+
+var  
+	i: byte;
+	
+	eighty:cstring=("80 columns");
+	forty:cstring=("40 columns");
+	rom_4:cstring=("Rom 4");
+
+
+begin
+
+	DefineScreen();	
+	//screen_char_loc:=$8000;
+
+	i := Model::Detect();
+	
+
+	screenmemory:=#SCREEN_CHAR_LOC;
+
+	// Test if 40 or 80 column
+	if( Model::Is_40Col() ) then
+    begin
+    	printstring(#forty,0,10);
+    end
+    else
+    begin
+    	printstring(#eighty,0,10);
+	end;
+	
+	screenmemory:=#SCREEN_CHAR_LOC + 160;
+
+	// Tests for Rom 4 explicitly
+	if( Model::Is_ROM4() ) then
+	begin
+		screenmemory := $8000 + 160;
+		printstring(#rom_4,0,5);
+	end;
+	
+	loop();
+	
+end.

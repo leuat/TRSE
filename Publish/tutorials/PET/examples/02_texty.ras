@@ -1,4 +1,7 @@
 program Texty;
+
+@projectsettings "petmodel" "8032"
+
 var  
 	// Define four variables : position x, position y, time and a counter i
    x,y,time,i: byte = 0;  
