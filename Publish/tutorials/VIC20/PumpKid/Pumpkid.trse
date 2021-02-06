@@ -42,6 +42,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
-open_files = ,pumpkid.ras, screens.paw
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VIC20/PumpKid/
-current_file = pumpkid.ras
+open_files =, pumpkid.ras
