@@ -1071,7 +1071,16 @@ void MainWindow::OpenProjectSettings()
         LoadProject(m_currentProject.m_filename);
 
 
-//    if (m_currentProject.m_ini->getString("saved_with_trse_version"))
+    //    if (m_currentProject.m_ini->getString("saved_with_trse_version"))
+}
+
+void MainWindow::ClearSymbols()
+{
+    ui->treeSymbols->clear();
+    m_symPointers.clear();
+    m_orgSymPointers.clear();
+    m_treeItems.clear();
+
 }
 
 
@@ -1761,6 +1770,7 @@ void MainWindow::on_actionOpen_project_triggered()
 void MainWindow::LoadProject(QString filename)
 {
     CloseAll();
+    ClearSymbols();
     m_currentProject.Load(filename);
     m_currentPath = QFileInfo(QFile(filename)).absolutePath();
 
@@ -1907,10 +1917,7 @@ void MainWindow::on_actionClose_current_project_triggered()
     m_currentProject.Close();
     m_currentPath = "";
     RefreshFileList();
-    ui->treeSymbols->clear();
-    m_symPointers.clear();
-    m_orgSymPointers.clear();
-    m_treeItems.clear();
+    ClearSymbols();
 }
 
 void MainWindow::on_actionHelp_F1_triggered()

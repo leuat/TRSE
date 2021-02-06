@@ -253,6 +253,7 @@ public slots:
 
     }
     void OpenProjectSettings();
+    void ClearSymbols();
 
     void OnQuit();
 
