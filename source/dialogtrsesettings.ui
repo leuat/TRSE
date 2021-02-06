@@ -1068,7 +1068,7 @@
               <item row="9" column="0">
                <widget class="QLabel" name="label_37">
                 <property name="text">
-                 <string>Symbol list font size</string>
+                 <string>Project Explorer/Symbol list font size</string>
                 </property>
                </widget>
               </item>
@@ -1085,7 +1085,7 @@
               <item row="8" column="0">
                <widget class="QLabel" name="label_36">
                 <property name="text">
-                 <string>Symbol list font</string>
+                 <string>Project Explorer/Symbol list font</string>
                 </property>
                </widget>
               </item>

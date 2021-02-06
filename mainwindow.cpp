@@ -428,6 +428,8 @@ void MainWindow::UpdateSymbolTree(QString search)
     if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
 
+    ui->treeSymbols->setFont(QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")));
+
     m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
     FormRasEditor* fe = ((FormRasEditor*)m_currentDoc);
     if (fe)
@@ -544,7 +546,7 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
     sym->setForeground(0,QBrush(col));
     sym->setData(0,Qt::UserRole,n);
-    sym->setFont(0,QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")));
+
     m_treeItems[on] = sym;
 
     int l = ln;
@@ -762,6 +764,7 @@ void MainWindow::RefreshFileList()
     }
     m_truFilesInProject.clear();
     setupIcons();
+    ui->treeFiles->setFont(QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")) );
 
     m_expandedList.clear();
     if (m_im!=nullptr)
