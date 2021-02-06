@@ -1,4 +1,7 @@
 program HelloWorld;
+
+@projectsettings "petmodel" "8032"
+
 var  
   	text : string = ("HELLO WORLD");
 

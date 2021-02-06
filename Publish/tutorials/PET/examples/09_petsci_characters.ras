@@ -1,0 +1,71 @@
+program PETSCII_CHARS;
+@use "input/key"
+@use "output/screen"
+@use "os/model"
+
+@projectsettings "petmodel" "3032"
+
+var
+	i, j, k, l: byte;
+	ii, jj, xx, yy: byte;
+	
+
+	const OUTCHAR: address = $ffd2;
+
+	screenAddr: array[ 25 ] of integer = buildtable(
+		
+		" 0x08000 + ( i * 40 ) "
+		
+	);
+	
+
+/* main program */  
+begin
+
+	definescreen();
+	
+	_a := 147;
+	call( OUTCHAR );
+
+
+	screenmemory := screenAddr[ 0 ];
+
+	i := 0;
+
+	for yy := 0 to 13 do
+	begin
+	
+		for xx := 0 to 10 do
+		begin
+
+			if (i < 128 ) then screenmemory[ xx << 1 ] := i;
+			i := i + 1;
+
+		end;
+		
+		screenmemory := screenmemory + 80;
+
+	end;
+	
+	screenmemory := screenAddr[ 0 ] + 21;
+
+	i := 0;
+
+	for yy := 0 to 13 do
+	begin
+	
+		for xx := 0 to 10 do
+		begin
+
+			if (i < 128 ) then screenmemory[ xx << 1 ] := i + 128;
+			i := i + 1;
+
+		end;
+		
+		screenmemory := screenmemory + 80;
+
+	end;
+	
+	loop();
+
+end.

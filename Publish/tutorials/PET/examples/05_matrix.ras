@@ -1,4 +1,7 @@
 program MatrixEffect;
+
+@projectsettings "petmodel" "8032"
+
 var  
    	i,j: byte; 
    	// The ypos array will contain the current pos for each column, ranging from 0-200. These values are divided by 8

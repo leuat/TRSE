@@ -1,4 +1,7 @@
 program Sines;
+
+@projectsettings "petmodel" "8032"
+
 var  
    x,y,i,j,k,v: byte; 
    zp,tp:pointer;

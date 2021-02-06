@@ -1,4 +1,7 @@
 program tutorial_07_sqrt_and_atan;
+
+@projectsettings "petmodel" "8032"
+
 var  
 
 	// Some variables
