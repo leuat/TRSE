@@ -59,6 +59,9 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
 
     }
 
+
+
+
     // Enable shadow builds?
 /*    QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(ShadowBuild()));
@@ -317,6 +320,8 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     FillFromIni();
 
     setupEditor();
+    ui->txtEditor->m_displayCycles = m_iniFile->getdouble("display_cycles")==1;
+    ui->txtEditor->m_displayAddresses = m_iniFile->getdouble("display_addresses")==1;
 
 }
 
