@@ -8,7 +8,7 @@ xcopy /s %dir%\release\platforms trse\
 xcopy /s %dir%\release\styles trse\
 xcopy /s %dir%\release\*.dll trse\
 xcopy /s ..\source\* trse
-xcopy /s ..\..\..\OK64\Release\release trse\OK64 /y
+xcopy /s ..\..\..\OK64\Release\release trse\OK64 /y /i
 del trse\OK64\*.obj
 
 xcopy 7z.exe trse\
@@ -22,7 +22,7 @@ mkdir trse\units\
 
 xcopy /e  ..\tutorials\* trse\tutorials\
 xcopy /e  ..\project_templates\* trse\project_templates\
-xcopy /e  ..\units\* trse\units\
+xcopy /e  ..\..\units\* trse\units\
 del /s trse\tutorials\clear.* 
 xcopy /e dll\* trse\
 REM xcopy start.cmd trse\
