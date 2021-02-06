@@ -56,6 +56,3 @@ data_header_resources/images/test.flf = 0
 data_header_resources/images/proxima1.flf = 6.45312e-314
 data_header_resources/images/kid.flf = 6.45312e-314
 zeropages_userdefined = ,
-project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tutorials/BBCM/BBCDemoSetup/
-open_files = ,demo.ras, effect1.ras
-current_file = effect1.ras

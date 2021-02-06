@@ -3151,7 +3151,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     QString vname = getValue(v);
-//    as->Comment("IS REGISTER : "+Util::numToHex(v->m_isRegister) + " "+vname);
+//    as->Comm nt("IS REGISTER : "+Util::numToHex(v->m_isRegister) + " "+vname);
     if (v->m_isRegister) {
         vname = vname.toLower();
         //if (vname=="_a" || vname=="_x" || vname=="_y")

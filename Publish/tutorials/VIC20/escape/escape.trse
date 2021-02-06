@@ -53,5 +53,4 @@ data_header_chr\chars.flf = 0
 data_header_chr\screen.flf = 0
 override_target_settings_basic = 6.95131e-310
 data_header_chr/loadingtext.flf = 6.95309e-310
-open_files = ,main.ras
-project_path = tutorials/VIC20/escape/
+open_files =, main.ras
