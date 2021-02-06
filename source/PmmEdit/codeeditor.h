@@ -69,6 +69,8 @@ public:
     QAbstractItemModel *modelFromFile(const QString& fileName);
     QAbstractItemModel *modelFromTRSE(QSharedPointer<SymbolTable>  symtab, Parser* parser);
 
+    QFont m_font;
+    QFontMetrics* m_metrics;
     bool m_displayCycles = true;
     bool m_displayAddresses = true;
     void SetIndent();

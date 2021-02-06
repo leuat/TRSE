@@ -104,7 +104,7 @@ private slots:
 
     void on_btnX16Emulator_clicked();
 
-    void on_cbmFont_currentIndexChanged(const QString &arg1);
+    void on_cbmFont_currentTextChanged(const QString &arg1);
 
     void on_btnDosbox_clicked();
 
@@ -112,7 +112,7 @@ private slots:
 
     void on_btnPetEmulator_clicked();
 
-    void on_cmbFontSymbols_currentIndexChanged(const QString &arg1);
+    void on_cmbFontSymbols_currentTextChanged(const QString &arg1);
 
     void on_btnRgbAsmDir_clicked();
 

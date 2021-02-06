@@ -411,7 +411,7 @@ void DialogTRSESettings::on_btnX16Emulator_clicked()
 
 }
 
-void DialogTRSESettings::on_cbmFont_currentIndexChanged(const QString &arg1)
+void DialogTRSESettings::on_cbmFont_currentTextChanged(const QString &arg1)
 {
     m_ini->setString("editor_font", arg1);
 }
@@ -443,7 +443,7 @@ void DialogTRSESettings::on_btnPetEmulator_clicked()
 
 }
 
-void DialogTRSESettings::on_cmbFontSymbols_currentIndexChanged(const QString &arg1)
+void DialogTRSESettings::on_cmbFontSymbols_currentTextChanged(const QString &arg1)
 {
     m_ini->setString("editor_font_symbols", arg1);
 

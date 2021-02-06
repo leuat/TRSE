@@ -823,8 +823,9 @@ void FormRasEditor::UpdateFromIni()
 
     m_font.setPointSize(m_iniFile->getdouble("font_size"));
     ui->txtEditor->setFont(m_font);
+    ui->txtEditor->m_font = m_font;
+    ui->txtEditor->m_metrics = new QFontMetrics(m_font);
     ui->txtEditor->setTabStopDistance(m_iniFile->getInt("tab_width") * metrics.averageCharWidth());
-
 
 }
 

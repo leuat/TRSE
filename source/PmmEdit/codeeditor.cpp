@@ -30,7 +30,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     lineNumberArea = new LineNumberArea(this);
     cycleNumberArea = new CycleNumberArea(this);
     addressArea = new AddressArea(this);
-
+    m_metrics = new QFontMetrics(font());
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
@@ -175,8 +175,7 @@ int CodeEditor::lineNumberAreaWidth()
         max /= 10;
         ++digits;
     }
-
-    int space = 3 + fontMetrics().averageCharWidth() * digits;
+    int space = 3 + m_metrics->maxWidth() * (digits);
 
     return space;
 }
@@ -185,7 +184,7 @@ int CodeEditor::cycleNumberAreaWidth()
 {
     if (!m_displayCycles)
         return 0;
-    return 80;
+    return m_metrics->maxWidth()*7;
 }
 
 int CodeEditor::AddressAreaWidth()
@@ -194,7 +193,8 @@ int CodeEditor::AddressAreaWidth()
         return 0;
     if (m_addresses.keys().count()==0)
         return 0;
-    return 65;
+
+    return m_metrics->maxWidth() * 6;
 
 }
 
@@ -655,7 +655,8 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
             painter.setPen(lineNumbersColor);
-            painter.drawText(0, top, lineNumberArea->width(), fontMetrics().height(),
+            painter.setFont(m_font);
+            painter.drawText(0, top, lineNumberArea->width(), m_metrics->height(),
                              Qt::AlignRight, number);
 
         }
@@ -672,6 +673,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
 void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(cycleNumberArea);
+    painter.setFont(m_font);
 
     painter.fillRect(event->rect(), cyclesBackgroundColor);
 
@@ -680,11 +682,13 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     painter.setPen(cyclesColor);
-    painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
-                 Qt::AlignLeft, "#Cycles");
+    painter.setFont(m_font);
+
+    painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
+                 Qt::AlignLeft, "Cycles");
 
 //    top+=20;
-    top+=fontMetrics().height();
+    top+=m_metrics->height();
     int bottom = top + (int) blockBoundingRect(block).height();
 
     while (block.isValid() && top <= event->rect().bottom()) {
@@ -696,7 +700,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
 
                 QString number = QString::number(m_cycles[ln]);
                 painter.setPen(cyclesColor);
-                painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
+                painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
                              Qt::AlignLeft, number);
             }
             if (m_blockCycles.contains(ln))
@@ -707,7 +711,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
                     val+=m_cycles[ln];
                 QString number = QString::number(m_blockCycles[ln]+val);
                 painter.setPen(blockCyclesColor);
-                painter.drawText(0, top, cycleNumberArea->width(), fontMetrics().height(),
+                painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
                              Qt::AlignLeft, number);
             }
         }
@@ -721,6 +725,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
 
 void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
     QPainter painter(addressArea);
+    painter.setFont(m_font);
 
     painter.fillRect(event->rect(), cyclesBackgroundColor);
 
@@ -728,11 +733,11 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
     int blockNumber = block.blockNumber();
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     painter.setPen(cyclesColor);
-    painter.drawText(0, top, addressArea->width(), fontMetrics().height(),
+    painter.drawText(0, top, addressArea->width(), m_metrics->height(),
                  Qt::AlignLeft, "");
 
 //    top+=20;
-    top+=fontMetrics().height();
+    top+=m_metrics->height();
     int bottom = top + (int) blockBoundingRect(block).height();
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
@@ -745,7 +750,7 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
                 for (int i=0;i<5-number.count();i++)
                     number.insert(1,"0");
                 painter.setPen(cyclesColor);
-                painter.drawText(10, top, addressArea->width(), fontMetrics().height(),
+                painter.drawText(10, top, addressArea->width(), m_metrics->height(),
                              Qt::AlignLeft, number);
             }
         }
