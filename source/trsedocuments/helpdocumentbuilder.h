@@ -3,6 +3,9 @@
 
 #include <QString>
 #include <QSharedPointer>
+#include <QVector>
+
+class HelpDocumentBuilderDocument;
 
 class HelpDocumentBuilderDocument {
     public:
