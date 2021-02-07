@@ -666,6 +666,24 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
             prevNumber = false;
             continue;
         }
+        if (m_currentToken.m_type==TokenType::BITOR) {
+            str = str+ "|";
+            Eat();
+            prevNumber = false;
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::BITAND) {
+            str = str+ "&";
+            Eat();
+            prevNumber = false;
+            continue;
+        }
+        if (m_currentToken.m_type==TokenType::XOR) {
+            str = str+ "^";
+            Eat();
+            prevNumber = false;
+            continue;
+        }
         if (m_currentToken.m_type==TokenType::MUL) {
             str = str+ "*";
             Eat();
