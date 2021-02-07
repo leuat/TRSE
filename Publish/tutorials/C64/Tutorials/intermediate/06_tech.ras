@@ -64,10 +64,10 @@ begin
 		memcpyunroll(p2,0,zp2,7);
 		zp2[7]:=k2;
 
-		zp:=zp+8;
-		p1:=p1+8;
-		zp2:=zp2+8;
-		p2:=p2+8;
+		zp+=8;
+		p1+=8;
+		zp2+=8;
+		p2+=8;
 	end;
 		
 end;

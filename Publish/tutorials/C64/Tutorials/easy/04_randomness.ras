@@ -40,7 +40,7 @@ begin
 				screenP[x] := random_values[index];
 				// increases screen X counter
 				// Increase by some random non-repeatable prime
-				index:=index+17;
+				index+=17;
 	    		end;
 			// Select some random color
 			random_color := random_values[index];

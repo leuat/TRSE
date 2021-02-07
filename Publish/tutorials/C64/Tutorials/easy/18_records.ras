@@ -85,7 +85,7 @@ begin
  		if (monsters[i].x<>screen_width-1) then
 			if (j=3) then dx:=1; // Wall X
 
-		k:=k+11;			
+		k+=11;			
 		j:=randomTable[k];
 		
 		if (monsters[i].y<>0) then // Wall Y
@@ -94,8 +94,8 @@ begin
 		if (monsters[i].y<>screen_height-1) then // Wall Y
 			if (j=3) then dy:=1;
 			
-		monsters[i].x:=monsters[i].x+dx;
-		monsters[i].y:=monsters[i].y+dy;
+		monsters[i].x+=dx;
+		monsters[i].y+=dy;
 	end;	
 
 end;
@@ -124,7 +124,7 @@ begin
 		
 		for i:=0 to 4 do
 			waitforverticalblank();
-		shift:=shift+1; // Some prime number
+		shift+=1; // Some prime number
 	end;	
 
 	Loop();

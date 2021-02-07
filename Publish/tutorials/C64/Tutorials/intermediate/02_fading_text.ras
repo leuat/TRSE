@@ -85,7 +85,7 @@ begin
 	while (textPtr[0]<>0) do begin
 		colorPtr[i]:=0; // Should be black!
 		val:=textPtr[0];
-		if (val>64) then val:=val-64; // Petscii/c64 codes conversion
+		if (val>64) then val-=64; // Petscii/c64 codes conversion
 		screenmemory[i]:=val;
 		inc(i);
 		textPtr:=textPtr+1;
@@ -108,7 +108,7 @@ procedure UpdateTextColors();
 begin
 	for i:=0 to maxx do begin
 		if (text[i].time<>0) then begin // is active: update color 
-			text[i].time:=text[i].time-1; // damn dec doesn't work
+			text[i].time-=1; 
 			moveto(text[i].x, text[i].y, hi(screen_col_loc));
 			fill(screenmemory,colors[text[i].time],text[i].len);
 		end;

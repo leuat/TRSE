@@ -88,8 +88,8 @@ begin
 
 			");		
 @endif
-		screenmemory:=screenmemory+160;
-		colorzp:=colorzp+160;
+		screenmemory+=160;
+		colorzp+=160;
 	end;
 
 	for i:=0 to screen_width do begin

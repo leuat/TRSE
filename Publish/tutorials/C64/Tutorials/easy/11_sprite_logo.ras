@@ -45,11 +45,11 @@ begin
 		if (i=4) then begin
 			x:=org_x;
 			// Sprites are strethed, so double width / height
-			y:=y+21*2; 
+			y+=21*2; 
 		end;
 		spritepos(x,y,i);
 		// Sprites are strethed, so double width / height
-		x:=x+24*2;
+		x+=24*2;
 	end;
 end;
 
@@ -74,7 +74,7 @@ end;
 procedure RenderText();
 begin
 	// Move screen pointer to upper left pointer
-	moveto(0,0,hi(screen_char_loc));
+	moveto(0,0,hi(#screen_char_loc));
 	// text pointer pointing to text
 	tp:=#text;
 	// go through 25 rows
@@ -89,7 +89,7 @@ begin
 			tp:=tp+1;
 	
 		end;
-		screenmemory:=screenmemory+screen_width;
+		screenmemory+=screen_width;
 	end
 end;
 

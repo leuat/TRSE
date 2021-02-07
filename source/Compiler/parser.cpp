@@ -1427,9 +1427,10 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     bool isRegister = m_symTab->isRegisterName(m_currentToken.m_value);
 
 //    qDebug() << "IS REGISTER: "<< m_currentToken.m_value << isRegister;
+//    qDebug() << "SUBVAR  "<< isSubVar << m_currentToken.m_value;
 
-
-    if (!isRegister && m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
+    // Subvar can't be CONST
+    if (!isSubVar && !isRegister && m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
         QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
 
@@ -1493,7 +1494,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
   //     qDebug() << m_symTab->m_globalList;
 //        qDebug() << "IS REGISTER " <<t.m_value << isRegister;
         if (!isRegister)
-            if (!m_symTab->m_globalList.contains(t.m_value) && !isSubVar)
+            if (!m_symTab->m_globalList.contains(t.m_value))
  //               if (!isRegister)
                    t.m_value = m_symTab->m_gPrefix+t.m_value;
 
@@ -1607,12 +1608,12 @@ QSharedPointer<Node> Parser::SubVariable(QString parent)
     QString fix = m_symTab->m_gPrefix;
  //   qDebug() << "SUBVAR ORG " <<fix << parent << m_symTab->m_symbols.keys();
     QSharedPointer<Symbol> s = m_symTab->Lookup(parent,m_currentToken.m_lineNumber);
-   // qDebug() << "SUBVAR TYPE " <<s->m_arrayTypeText;
+//    qDebug() << "SUBVAR TYPE " <<s->m_arrayTypeText << parent;
     QString recordType = s->m_type;
     if (recordType.toLower()=="array")
         recordType = s->m_arrayTypeText;
     m_symTab->m_gPrefix = recordType+"_";
-    QSharedPointer<Node> n = Variable(false);
+    QSharedPointer<Node> n = Variable(true);
     m_symTab->m_gPrefix = fix;
   //  qDebug() << "DONE";
     return n;
@@ -1699,6 +1700,7 @@ QSharedPointer<Node> Parser::AssignStatement()
 
 
     if (m_currentToken.m_type==TokenType::ASSIGNOP) {
+        // A += 2; etc
         QString op_command = m_currentToken.m_value;
         Eat(TokenType::ASSIGNOP);
         QSharedPointer<Node> right = Expr();
@@ -1713,21 +1715,14 @@ QSharedPointer<Node> Parser::AssignStatement()
         return na;
 
     }
+    // Regular assign
     Eat(TokenType::ASSIGN);
     QSharedPointer<Node> right = Expr();
     QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(left, t, right));
 
     // Verify that assign statement is OK
     auto s = getSymbol(left);
-//    qDebug() << "TYPE  "<<s->m_type;
-/*    if (s!=nullptr)
-        if (s->m_type.toLower()=="array" && !left->isArrayIndex())
-            ErrorHandler::e.Error("Cannot assign array to a value", left->m_op.m_lineNumber);
-  */
-/*    if (!left->isArrayIndex()) {
-        if (left->isPointer())
-    }
-  */
+
     na->m_right->ApplyFlags();// make sure integer:=byte*byte works
     return na;
 

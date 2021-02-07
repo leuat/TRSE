@@ -46,7 +46,7 @@ begin
 			zp[j] := 0;
 		end;
 		zp[4] := charsetVals[i];
-		zp:=zp + 8;
+		zp+=8;
 	end;
 
 end;
@@ -60,7 +60,7 @@ begin
 		stars[i].dx := rands[j]&63; // 0-64 (will be divided by 8)
 		stars[i].color := starColors[j&7];  // 0-7
 		stars[i].ddx := rands[i]&7+1;  // 1-8
-		j:=j+11; // just some random shift
+		j+=11; // just some random shift
 	end;
 end;
 
@@ -69,7 +69,7 @@ procedure InitializeRand();
 begin
 	for i:=0 to 0 do begin
 		rands[i]:=random()/2;
-		if (rands[i]>80) then rands[i]:=rands[i]-80;
+		if (rands[i]>80) then rands[i]-=80;
 	end;
 
 end;
@@ -94,8 +94,8 @@ begin
 			cp[x]:=stars[i].color;
 
 		end;
-		screenmemory:=screenmemory+screen_width;
-		cp:=cp+screen_width;
+		screenmemory += screen_width;
+		cp += screen_width;
 	end;
 end;
 
@@ -106,7 +106,7 @@ begin
 	for i:=0 to noStars do begin
 		dx:=stars[i].dx-stars[i].ddx;
 		if dx>127 then begin
-			stars[i].x:=stars[i].x-1;
+			stars[i].x-=1;
 			if stars[i].x>127 then begin	
 				stars[i].x:=39;
 				stars[i].ddx:=rands[time]&7+1;

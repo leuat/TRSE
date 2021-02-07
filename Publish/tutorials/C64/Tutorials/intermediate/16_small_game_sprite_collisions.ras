@@ -56,7 +56,7 @@ procedure GetRandomLocation();
 begin
 	enemy.next_x := mod(random(),160);
 	enemy.next_y := mod(random(),200);	
-	enemy.next_y:=enemy.next_y + 32;
+	enemy.next_y+=32;
 	ii := enemy.next_x;
 	spritepos(ii*2, enemy.next_y, useTarget);
 	SetSpriteLoc(useTarget, @spriteLoc/64 + 3, useBank);
@@ -69,11 +69,11 @@ begin
 	moveto(0,24,hi(screen_char_loc));
 	fill(screenmemory,key_space,40); // clear 
 	printstring("PLAYER ",0,40);
-	screenmemory := screenmemory + 7;
+	screenmemory+= 7;
 	printdecimal(scorePlayer,2);
-	screenmemory := screenmemory + 10;
+	screenmemory+= 10;
 	printstring("ENEMY ",0,40);
-	screenmemory := screenmemory + 7;
+	screenmemory+= 7;
 	printdecimal(scoreEnemy,2);
 end;
 

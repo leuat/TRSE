@@ -25,7 +25,7 @@ begin
 		
 		i:=i+8;
 
-		x_position:=x_position+1;		
+		x_position+=1;
 		if (x_position=screen_width) then begin
 			x_position:=0;
 			clearscreen(key_space,screen_char_loc);

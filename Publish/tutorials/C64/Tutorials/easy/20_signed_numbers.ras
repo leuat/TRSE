@@ -52,22 +52,22 @@ begin
 	for i:=0 to noBalls do
 	begin
 		// update X position, simple enough : when colliding with a wall, reverse velocity dx:=-dx;
-		balls[i].x := balls[i].x + balls[i].dx;
+		balls[i].x += balls[i].dx;
 		if (balls[i].x >= screen_width-1 or balls[i].x <= 0) then 
 			balls[i].dx := -balls[i].dx;	 //reversd!
 			
 		// Update y-position, use some simple physics
 		// Y position is increased by the velocity
-		balls[i].y := balls[i].y + balls[i].dy;
+		balls[i].y += balls[i].dy;
 		// Velocity is decreased with acceleration -1 (falling down)
-		balls[i].dy := balls[i].dy -1;
+		balls[i].dy -= 1;
 		
 		// if the particle hits the lower wall, then 
 		// This step requires a signed byte!
 		if (balls[i].y<0) then
 		begin
 			// Move to above y=0
-			balls[i].y := balls[i].y&3; 
+			balls[i].y &=3; 
 			// reverse velocity, add some dampening (-2)
 			balls[i].dy := -balls[i].dy -2;
 		end;

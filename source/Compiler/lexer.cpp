@@ -149,27 +149,10 @@ void Lexer::Advance()
         m_finished = true;
     }
     else {
-
         m_currentChar = m_text[m_pos];
-        //if (Pmm::Data::d.lineNumber<m_lines.count())
         if (m_currentChar=="\n") {
-            //qDebug() << "Increase linenumber to " << Pmm::Data::d.lineNumber;
-
-          /*  if (!m_ignorePreprocessor)
-            for (FilePart& fp: m_includeFiles)
-                if (fp.m_startLine==Pmm::Data::d.lineNumber) {
-                    qDebug() << "Found " << fp.m_name << ", skipping " << fp.m_count;
-                    Pmm::Data::d.lineNumber+=fp.m_count;
-                }
-*/
             Pmm::Data::d.lineNumber ++;
-
-            //if (Pmm::Data::d.lineNumber<m_lines.count())
-            //Pmm::Data::d.currentLineText = m_lines[Pmm::Data::d.lineNumber];
             m_localPos = 0;
-
-
-
 
         }
 
@@ -337,14 +320,6 @@ Token Lexer::String()
 QString Lexer::peek()
 {
     int k=m_pos+1;
-/*    bool done = false;
-    while (k+1<m_text.length() && !done) {
-        k++;
-        done = true;
-        if (m_text[k]==" ")
-            done = false;
-    }
-*/
     if (k>=m_text.length())
         return "";
     return QString(m_text[k]);
@@ -359,55 +334,55 @@ void Lexer::Initialize()
     m_pos = 0;
     m_localPos = 0;
 }
+/*
+ *
+ * GetNextToken is the main "tokenizer" that transforms the stream
+ * of characters into streams of tokens.
+*/
 
 Token Lexer::GetNextToken()
 {
     while (!m_finished) {
+        // Ignore whitespace
         if (m_currentChar==" " || m_currentChar=="\n" || m_currentChar=="\t") {
             SkipWhiteSpace();
             continue;
         }
+        // Ignore tab
         if (m_currentChar == "\t" ) {
             Advance();
             continue;
         }
 
+        // Ignore comments
         if (m_currentChar=="/") {
             if (peek()=="*") {
                 m_isCurrentlyInABlockComment = true;
                 Advance();
                 Advance();
                 SkipComment();
-      //          QString s = m_currentComment;
-        //        m_currentComment = "";
-          //      return Token(TokenType::COMMENT,s);
                 continue;
             }
 
         }
 
+        // end comments
         if (m_currentChar=="/") {
             if (peek()=="/") {
                 SkipUntilNewLine();
-    //            QString s = m_currentComment;
-  //              m_currentComment = "";
-//                return Token(TokenType::COMMENT,s);
                 continue;
             }
 
         }
+        // Generate string
         if (m_currentChar=="\"") {
             Advance();
             return String();
         }
 
+        // Generate preprocessor
         if (m_currentChar=="@") {
             Advance();
-/*            if (m_ignorePreprocessor) {
-                SkipUntilNewLine();
-                continue;
-            }
-            else*/
                 return Preprocessor();
         }
 
@@ -432,11 +407,9 @@ Token Lexer::GetNextToken()
             bool ok=true;
             Token number = Number(ok);
 
-//            qDebug() << " IS NUM " <<number.m_intVal;
             if (ok)
                 return number;
             else {
-                // Roll back evential ^s
                 m_currentChar = keep;
                 m_pos = pos;
                 m_prevPos = ppos;
@@ -445,30 +418,28 @@ Token Lexer::GetNextToken()
 
         if (Syntax::s.isAlpha(m_currentChar) || m_currentChar=="$" || (m_currentChar =="^" && Syntax::s.isAlpha(peek()))) {
             Token id =_Id();
+
             if (id.m_value.endsWith("^")) {
+                // Replaces p^ with p[0]
                 id.m_value.remove(id.m_value.count()-1,1);
                 m_text.remove(m_pos-1,1);
                 m_text.insert(m_pos-1,"[0]"); m_currentChar = "[";
 
             }
-//            qDebug() << "found ID "<<id.getType() <<id.m_isPointer;
-/*            if (id.m_value.startsWith("^")) {
-                id.m_value.remove(0,1);
-                id.m_isPointer = true;
-                qDebug() << "Adding pointer : " << id.m_value << id.m_type;
-            }*/
             return id;
         }
-
+        // Assign statement a:=b;
         if (m_currentChar==":" && peek()=="=") {
             Advance();
             Advance();
             return Token(TokenType::ASSIGN,":=");
         }
+
         if (m_currentChar==":") {
             Advance();
             return Token(TokenType::COLON, ":");
         }
+        // Assign next to be a reference
         if (m_currentChar=="#") {
             Advance();
             m_nextIsReference = true;

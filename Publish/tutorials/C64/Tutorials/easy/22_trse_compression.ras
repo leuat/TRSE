@@ -40,8 +40,8 @@ procedure SetupImage(data, color : pointer);
 begin
 	// Clear the screen & color ram first
 	clearbitmap(^$6000,32);	
-	clearscreen(black,^$D800);
-	clearscreen(black,^$4400);
+	clearscreen(black,#screen_col_loc);
+	clearscreen(black,#screen_char_loc2);
 	// Decompress the color data
 	Compression::Decompress(color, #colorAddress); 
 	// Copy color data to color ram at $4400 and $D800

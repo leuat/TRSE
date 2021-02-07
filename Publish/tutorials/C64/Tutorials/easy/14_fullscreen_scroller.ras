@@ -40,16 +40,16 @@ begin
 	dst:=#screen_char_loc+screen_width-1;
 // src to the current column of the noise data
 	src:=#noiseData;
-	src:=src + curColumn;
+	src+= curColumn;
 	// print 25 rows
 	for i:=0 to screen_height do begin
 		// divide by some value
 		dst[0]:=src[0]/8 + charVal-5;
 		// Goto next row
-		dst:=dst+screen_width;
-		src:=src+screen_width;
+		dst+=screen_width;
+		src+=screen_width;
 	end;
-	curColumn:=curColumn+1;
+	curColumn+=1;
 	if (curColumn=screen_width) then curColumn:=0;
 end;
 
@@ -60,8 +60,8 @@ begin
 	dst:=#screen_char_loc;
 	for i:=0 to screen_height do begin
 		memcpyunroll(src,0,dst,screen_width-1);	
-		src:=src+screen_width;
-		dst:=dst+screen_width;
+		src+=screen_width;
+		dst+=screen_width;
 	end;
 end;
 

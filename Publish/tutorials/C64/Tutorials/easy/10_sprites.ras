@@ -27,7 +27,7 @@ begin
 	screen_bg_col:=purple;
 	screen_fg_col:=black;
 	clearscreen(key_space, screen_char_loc);
-	moveto(1,23,hi(screen_char_loc));
+	moveto(1,23,hi(#screen_char_loc));
 	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
 end;   
 
@@ -50,8 +50,9 @@ end;
 procedure UpdateSprite();
 begin
 	// Update sprite position based on joystick values
-	sprite_x:=sprite_x + joystickright - joystickleft;
-	sprite_y:=sprite_y + joystickdown - joystickup;
+	asm(";here");
+	sprite_x+= +joystickright - joystickleft;
+	sprite_y+= +joystickdown - joystickup;
 	// Update the sprite position on screen for sprite number @useSprite	
 	SpritePos(sprite_x, sprite_y, useSprite);
 	

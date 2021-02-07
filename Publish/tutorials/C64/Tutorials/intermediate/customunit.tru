@@ -43,8 +43,8 @@ begin
 			screenmemory[j]:=value;
 			zp[j]:=color;
 		end;
-		zp:=zp + screen_width;
-		screenmemory:=screenmemory + screen_width;
+		zp+= screen_width;
+		screenmemory+= screen_width;
 	end;
 end;
 
@@ -68,8 +68,8 @@ begin
 			screenmemory[j]:=value;
 			zp[j]:=color;
 		end;
-		zp:=zp + screen_width;
-		screenmemory:=screenmemory + screen_width;
+		zp+= screen_width;
+		screenmemory+= screen_width;
 		if (k<c) then inc(k);
 	end;
 end;

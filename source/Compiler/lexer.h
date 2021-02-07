@@ -29,6 +29,12 @@
 
 #include "errorhandler.h"
 
+
+/*
+ * Class Filepart contains information of the various @include files, and are used
+ * extensively for looking up in error messages / symbol lists etc
+ *
+*/
 class FilePart {
 public:
     QString m_name;
@@ -44,7 +50,12 @@ public:
     }
 };
 
-
+/*
+ *
+ * The main lexing class. Transforms streams of text into tokens that are parsed with parser.h
+ *
+ *
+ * */
 class Lexer
 {
 
@@ -60,6 +71,7 @@ public:
     QVector<FilePart> m_includeFiles;
     bool m_ignorePreprocessor, m_nextIsReference = false;
     bool m_isCurrentlyInABlockComment = false;
+
     int getPositionInPercent();
     int getTotalNumberOfLines();
 
@@ -72,26 +84,31 @@ public:
 
     QVector<uint> m_stack;
 
-
+    // Initialises the parser
+    void Initialize();
+    // Pushes and pops internal states
     void PushState();
     void PopState();
 
     Lexer();
     Lexer(QString text, QStringList lines, QString path);
-
-    void Error(QString text);
+    // Advances to the next character in the string
     void Advance();
+    // Various skips
     void SkipWhiteSpace();
     void SkipComment();
     void SkipUntilNewLine();
+    // Appends a text file to the source code
     QString loadTextFile(QString filename);
+
+    // Token factories
     Token Number(bool& isOk);
+    // ID is anything that is a word
     Token _Id();
     Token Preprocessor();
     Token String();
     QString peek();
-    void Initialize();
-
+    // GetNextToken is the main "tokenizer" that transforms the stream of characters into streams of tokens.
     Token GetNextToken();
 
 };

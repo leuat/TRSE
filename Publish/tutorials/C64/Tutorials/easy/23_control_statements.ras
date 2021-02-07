@@ -18,7 +18,7 @@ begin
 	for k:=0 to 10 do
 	begin
 
-		inc(^$D020);
+		inc(screen_bg_col);
 		// Wait a bit!
 		ClearScreen(key_space, #screen_char_loc);
 		moveto(18,10,hi(screen_char_loc));

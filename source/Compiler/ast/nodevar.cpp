@@ -278,7 +278,7 @@ QString NodeVar::getValue(Assembler* as) {
                 ErrorHandler::e.Error("Could not find of record type : "+type + " of " + v,m_op.m_lineNumber);
         //QSharedPointer<SymbolTable>  t = as->m_symTab->m_records[type];
         if (qSharedPointerDynamicCast<NodeVar>(m_subNode)==nullptr)
-            ErrorHandler::e.Error("Field unknown!", m_op.m_lineNumber);
+            ErrorHandler::e.Error("Unknown subnode: '"+m_subNode->getValue(as)+"'", m_op.m_lineNumber);
 //        qDebug() << v << m_op.m_lineNumber << qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;
 
         v =v + "_"+type+"_"+qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;//m_subNode->getValue(as);

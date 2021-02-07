@@ -99,9 +99,9 @@ begin
 @endif
 		end;
 		// Increase screen memory pointer by 40 (next row)
-		screenmemory:=screenmemory+screen_width;
+		screenmemory+=+screen_width;
 		// Increase color pointer by 40 (next row)
-		colorP:=colorP+screen_width;
+		colorP+=screen_width;
 	end;
 
 end;
