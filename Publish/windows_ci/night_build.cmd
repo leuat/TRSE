@@ -1,4 +1,4 @@
-echo off
+#echo off
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 set dir=C:\Users\leuat\Documents\GitHub\TRSE_AT_NIGHT
 set qt=\Qt\6.0.1\msvc2019_64\bin\
@@ -8,8 +8,8 @@ set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC
 rmdir /s /q %dir%
 cd %dir%
 git clone https://github.com/leuat/TRSE.git %dir%
-mkdir Release
-cd Release
+mkdir %dir%\Release
+cd %dir%\Release
 echo "Qmake.."
 %qt%\qmake.exe %dir%\trse.pro %dir%\Release
 echo "Compiling.."
