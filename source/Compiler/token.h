@@ -29,7 +29,7 @@
 
 class TokenType {
 public:
-#define no_types 114
+#define no_types 115
 
     enum Type {
         NONE, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN,
@@ -48,7 +48,7 @@ public:
         GLOBAL, WRAM, HRAM, ALIGNED,BANK, SPRRAM, INLINE, BUILDTABLE,
         USES, FUNCTION, COMPRESSED,
         PPURE, PURE_VARIABLE, PURE_NUMBER, NO_TERM,MACRO, REFERENCE, SIGNED,
-        BREAK, CONTINUE, RETURN
+        BREAK, CONTINUE, RETURN, ASSIGNOP
 
     };
 
@@ -91,6 +91,9 @@ public:
 
     Token(TokenType::Type t, QString val, bool isRef=false);
     Token(TokenType::Type t, long val, bool isRef=false);
+
+    static TokenType::Type getBinopTokenTypeFromString(QString c);
+
 
 };
 

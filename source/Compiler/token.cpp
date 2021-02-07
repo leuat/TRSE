@@ -37,7 +37,7 @@ QString TokenType::types[no_types] = {
             "UNTIL", "CONST", "COMMENT", "ABSOLUTE", "LENGTH", "RECORD", "UNIT", "GLOBAL",
             "WRAM", "HRAM", "ALIGNED", "BANK", "SPRRAM","INLINE", "BUILDTABLE", "USES", "FUNCTION", "COMPRESSED",
             "PURE", "PURE_VARIABLE", "PURE_NUMBER", "NO_TERM","MACRO", "REFERENCE", "SIGNED",
-            "BREAK", "CONTINUE", "RETURN"
+            "BREAK", "CONTINUE", "RETURN", "ASSIGNOP"
 
 };
 
@@ -77,6 +77,26 @@ Token::Token(TokenType::Type t, long val, bool isRef) {
     m_lineNumber = Pmm::Data::d.lineNumber;
     m_currentLineText = Pmm::Data::d.currentLineText;
     m_isReference = isRef;
+
+}
+
+TokenType::Type Token::getBinopTokenTypeFromString(QString c) {
+    if (c=="+")
+        return TokenType::PLUS;
+    if (c=="-")
+        return TokenType::MINUS;
+    if (c=="/")
+        return TokenType::DIV;
+    if (c=="*")
+        return TokenType::MUL;
+    if (c=="&")
+        return TokenType::BITAND;
+    if (c=="|")
+        return TokenType::BITOR;
+    if (c=="^")
+        return TokenType::XOR;
+
+    return TokenType::NADA;
 
 }
 

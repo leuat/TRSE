@@ -519,27 +519,69 @@ Token Lexer::GetNextToken()
         }
 
         if (m_currentChar=="+") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
             Advance();
             return Token(TokenType::PLUS, "+");
         }
         if (m_currentChar=="-") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
             Advance();
             return Token(TokenType::MINUS, "-");
         }
         if (m_currentChar=="&") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
             Advance();
             return Token(TokenType::BITAND, "&");
         }
         if (m_currentChar=="|") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
             Advance();
             return Token(TokenType::BITOR, "|");
         }
 
         if (m_currentChar=="*") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
             Advance();
             return Token(TokenType::MUL, "*");
         }
         if (m_currentChar=="/") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
             Advance();
             return Token(TokenType::DIV, "/");
         }

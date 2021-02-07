@@ -1673,8 +1673,7 @@ QSharedPointer<Node> Parser::AssignStatement()
     QSharedPointer<Node> left = Variable();
     Token token = m_currentToken;
 
-
-    if (m_currentToken.m_type!=TokenType::ASSIGN) {
+    if (m_currentToken.m_type!=TokenType::ASSIGN && m_currentToken.m_type!=TokenType::ASSIGNOP) {
 //        qDebug() << m_currentToken;
         // First, check if similar procedure exists
         QString val = t.m_value;
@@ -1696,6 +1695,23 @@ QSharedPointer<Node> Parser::AssignStatement()
 
 
         ErrorHandler::e.Error("Error assigning variable <b>'" + t.m_value+  "'</b>, did you forget a colon or mistype? Syntax should be: <b>'a := b;'</b>." , token.m_lineNumber);
+    }
+
+
+    if (m_currentToken.m_type==TokenType::ASSIGNOP) {
+        QString op_command = m_currentToken.m_value;
+        Eat(TokenType::ASSIGNOP);
+        QSharedPointer<Node> right = Expr();
+        Token op = m_currentToken;
+        op.m_type = Token::getBinopTokenTypeFromString(op_command);
+        QSharedPointer<NodeBinOP> binop = QSharedPointer<NodeBinOP>(new NodeBinOP(left, op,right));
+
+        QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(left, t, binop));
+
+        auto s = getSymbol(left);
+        na->m_right->ApplyFlags();// make sure integer:=byte*byte works
+        return na;
+
     }
     Eat(TokenType::ASSIGN);
     QSharedPointer<Node> right = Expr();
