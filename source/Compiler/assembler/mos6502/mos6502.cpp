@@ -180,20 +180,11 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         }
         else {
             Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
-    //        qDebug() << "START ADDRESS " << Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
-
             Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-            QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
-
-            QString extra = "";
-/*            if (s.count()<5)
-                extra=", $00";
-            Asm(".byte     $00, $00,0,0"+ extra);   // 6, 4, )*/
             Asm(".byte     $00");   // 6, 4, )*/
 
             Nl();
             }
-//        Asm("ORG " + Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
         EndMemoryBlock();
   //      Comment("End of SYS memory block, starting new");
         StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
