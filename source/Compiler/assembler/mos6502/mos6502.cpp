@@ -152,18 +152,12 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     Nl();
 
 
-//    QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
     QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
     StartMemoryBlock(org);
 
-//    qDebug() << "MOS6502 PROGRAM ORG " << org << Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
-
-//    Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1));
 
 
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
-        // 2064
-//        Asm(".byte    $0E, $08, $0A, $00, $9E, $20, $28");
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
 
@@ -187,7 +181,6 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         else {
             Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
     //        qDebug() << "START ADDRESS " << Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
-
 
             Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
             QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);

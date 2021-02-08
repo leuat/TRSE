@@ -2,7 +2,6 @@ program skull_charset_image;
 var  
    i: byte; 
    t2:byte=64;
-   
 /*
 	ExportCompressed takes the follow paramters:
 	X start, Y start, width, height, compression level
