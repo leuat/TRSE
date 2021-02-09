@@ -179,10 +179,22 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
 
         }
         else {
+
+            // new method
+            Asm(".byte $00 ; fill $xxx0");
+            Asm( ".byte $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
+            Asm( ".byte $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
+            Asm(".byte $0a ; line 10");
+            Asm(".byte $00, $9e, $20 ; SYS token");
+            // write PETSCII / ASCII representation of address to call
+            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+            Asm(".byte $00, $00, $00 ; end of program");
+
+            /* // old method
             Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
             Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-            Asm(".byte     $00");   // 6, 4, )*/
-
+            Asm(".byte     $00");   // 6, 4, )
+            */
             Nl();
             }
         EndMemoryBlock();
