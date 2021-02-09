@@ -182,7 +182,6 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
             Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
             Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
             Asm(".byte     $00");   // 6, 4, )*/
-
             Nl();
             }
         EndMemoryBlock();
