@@ -10,7 +10,7 @@ public:
         m_processor = MOS6502;
         m_system = C128;
         m_systemColor = QColor(20,100,80);
-        m_startAddress = 0x01C00;
+        m_startAddress = 0x01C01;
         m_programStartAddress = 0x1C10;
 
     }

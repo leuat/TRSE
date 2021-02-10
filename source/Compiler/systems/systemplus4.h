@@ -13,7 +13,7 @@ public:
         DefaultValues();
     }
     void DefaultValues() override {
-        m_startAddress = 0x1000;
+        m_startAddress = 0x1001;
         m_programStartAddress = 0x1010;
         m_ignoreSys = false;
         m_stripPrg = false;

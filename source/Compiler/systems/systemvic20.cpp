@@ -15,18 +15,18 @@ void SystemVIC20::DefaultValues()
         param = m_projectIni->getString("vic_memory_config");
 //    qDebug() << "VIC20 " << param;
     if (param=="none") {
-        m_startAddress = 0x1000;
+        m_startAddress = 0x1001;
         m_programStartAddress = 0x1010;
         m_memoryType = 0;
     }
     else if (param=="3k") {
-        m_startAddress = 0x0400;
+        m_startAddress = 0x0401;
         m_programStartAddress = 0x0410;
         m_memoryType = 0;
     }
     else
     {
-        m_startAddress = 0x1200;
+        m_startAddress = 0x1201;
         m_programStartAddress = 0x1210;
         m_memoryType = 1;
    }
