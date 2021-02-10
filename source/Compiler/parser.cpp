@@ -1874,6 +1874,7 @@ QSharedPointer<Node> Parser::BinaryClause()
             || m_currentToken.m_type==TokenType::DO
             || m_currentToken.m_type==TokenType::AND
             || m_currentToken.m_type==TokenType::OR
+            || m_currentToken.m_type==TokenType::SEMI
             || m_currentToken.m_type==TokenType::XOR
             || m_currentToken.m_type==TokenType::OFFPAGE
             || m_currentToken.m_type==TokenType::ONPAGE)  {
