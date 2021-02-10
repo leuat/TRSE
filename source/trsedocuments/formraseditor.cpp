@@ -327,6 +327,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     ui->txtEditor->m_displayCycles = m_iniFile->getdouble("display_cycles")==1;
     ui->txtEditor->m_displayAddresses = m_iniFile->getdouble("display_addresses")==1;
 
+
 }
 
 
@@ -364,6 +365,7 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build(bool isShadow)
 {
     // Enforce pause between builds
+
     FocusOnOutput();
     if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
         return;
@@ -375,6 +377,8 @@ void FormRasEditor::Build(bool isShadow)
 
     if (!isShadow)
         SaveCurrent();
+
+//    VerifyCommodoreStartChange();
 
 
     if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier))
@@ -535,6 +539,27 @@ void FormRasEditor::ToggleComment()
 void FormRasEditor::Setup()
 {
     setupEditor();
+}
+
+void FormRasEditor::VerifyCommodoreStartChange()
+{
+    if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::PET)) return;
+
+    QString iniField = "ignoremessage_commodore_start_change";
+    if (m_projectIniFile->getdouble("override_target_settings")==1) {
+        if (!(m_projectIniFile->contains(iniField) && m_projectIniFile->getdouble(iniField)==1)) {
+            qDebug() << "HERE" << m_projectIniFile->getdouble("override_target_settings");
+            DialogCustomWarning* d = new DialogCustomWarning();
+            d->Init("Project Warning","A BASIC SYS start address has been specified in the project settings that is invalid."
+" Please use [default] instead.",iniField,m_projectIniFile.get());
+            d->exec();
+            delete d;
+        }
+    }
 }
 
 void FormRasEditor::Focus() {

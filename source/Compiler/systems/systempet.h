@@ -10,6 +10,10 @@ public:
     void DefaultValues() override;
     void InitSystemPreprocessors(QMap<QString, QString>& defines) override;;
 
+    int getDefaultBasicAddress() override {
+        return 0x401;
+    };
+    bool isCommodoreSystem() override  {return true;}
 
 };
 

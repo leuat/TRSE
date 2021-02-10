@@ -183,6 +183,7 @@ SOURCES += main.cpp\
     source/formhelp.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
+    source/trsedocuments/dialogcustomwarning.cpp \
     source/trsedocuments/formhexedit.cpp \
     source/trsedocuments/helpdocumentbuilder.cpp \
     source/tutorials.cpp \
@@ -399,6 +400,7 @@ HEADERS  += mainwindow.h \
     source/formhelp.h \
     source/toolbox.h \
     source/toolboxitem.h \
+    source/trsedocuments/dialogcustomwarning.h \
     source/trsedocuments/formhexedit.h \
     source/trsedocuments/helpdocumentbuilder.h \
     source/tutorials.h \
@@ -541,6 +543,7 @@ FORMS    += mainwindow.ui \
     source/dialogsimplelineedit.ui \
     source/dialogsplash.ui \
     source/formhelp.ui \
+    source/trsedocuments/dialogcustomwarning.ui \
     source/trsedocuments/formhexedit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \

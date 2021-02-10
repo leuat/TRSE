@@ -80,9 +80,13 @@ public:
         return true;
     }
 
+    virtual bool isCommodoreSystem()  {return false;}
+    virtual int getDefaultBasicAddress() { return 0;}
+
     void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false);
 
     static void InitLabelColors();
+ //   virtual bool hasFixedProgramAddress() {return true;}
 
     enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800, MSX};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80};

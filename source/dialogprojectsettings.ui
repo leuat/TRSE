@@ -1093,9 +1093,9 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_23">
+           <widget class="QLabel" name="lblBasicStub">
             <property name="text">
-             <string>Program start address</string>
+             <string>Basic stub location</string>
             </property>
            </widget>
           </item>
@@ -1121,9 +1121,9 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_31">
+           <widget class="QLabel" name="lblProgramStartAddress">
             <property name="text">
-             <string>BASIC SYS start address</string>
+             <string>Program start address</string>
             </property>
            </widget>
           </item>
