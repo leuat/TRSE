@@ -184,12 +184,8 @@ void Compiler6502::Init6502Assembler()
         Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));
     }
 
-    if (Syntax::s.m_currentSystem->isCommodoreSystem()) {
-        // Always override
+    if (Syntax::s.m_currentSystem->isCommodoreSystem() && !Syntax::s.m_ignoreSys)
         Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->getDefaultBasicAddress();
-        qDebug() << "START ADDRESS BASIC " << Syntax::s.m_currentSystem->m_startAddress;
-
-    }
 
 
 }
