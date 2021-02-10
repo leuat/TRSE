@@ -166,7 +166,7 @@ public:
     QVector<Appendix> m_extraBlocks;
     QSharedPointer<Appendix> m_chipMem;
     QSharedPointer<Appendix> m_hram;
-    QSharedPointer<Appendix> m_wram, m_sprram;
+    QSharedPointer<Appendix> m_wram, m_sprram, m_ram;
     QMap<QString,QSharedPointer<Appendix>> m_banks;
     QMap<QString, QString> m_lastRegister; // Last registers set
 

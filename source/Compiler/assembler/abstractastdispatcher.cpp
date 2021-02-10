@@ -719,7 +719,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 
                         if (t->m_flag==1 && (!as->m_symTab->m_records.contains(typeVal)))
                             typeVal="const";
-
                         as->DeclareVariable(v->value, typeVal, t->initVal,t->m_position);
 
                         if (t->m_flag==1)

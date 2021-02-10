@@ -26,6 +26,9 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("poke")) {
         Poke(as);
     }
+    if (Command("call")) {
+        Call(as);
+    }
     else
     if (Command("memcpy"))
         MemCpy(as,false);
@@ -351,6 +354,13 @@ void MethodsZ80::Poke(Assembler *as)
     as->Asm("add hl,de");
     LoadVar(as,2);
     as->Asm("ld [hl],a");
+
+}
+
+void MethodsZ80::Call(Assembler *as)
+{
+ //   LoadVar(as,0);
+    as->Asm("call "+m_node->m_params[0]->getValue(as));
 
 }
 

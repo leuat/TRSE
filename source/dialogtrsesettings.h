@@ -179,6 +179,10 @@ private slots:
 
     void on_btnUserDefinedCommand_clicked();
 
+    void on_btnMSXEmulator_clicked();
+
+    void on_btnHelpMSX_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

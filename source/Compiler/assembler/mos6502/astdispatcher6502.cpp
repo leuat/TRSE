@@ -799,9 +799,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
  *
  *  */
 
-
-
-
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 {
     node->DispatchConstructor(as,this);
@@ -819,10 +816,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
         return;
 
     }
-
-
     if (as->m_term=="")
-
         as->Term("lda " + val);
     else
         as->Term(val);

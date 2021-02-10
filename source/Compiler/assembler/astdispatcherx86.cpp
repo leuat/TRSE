@@ -604,7 +604,10 @@ void ASTdispatcherX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY || Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
         as->Write(v->getValue(as)+ ": ds  2" ,0);
     else
-        as->Write(v->getValue(as)+ ": dw  0,0",0);
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86)
+            as->Write(v->getValue(as)+ ": dw  0,0" ,0);
+        else
+            as->Write(v->getValue(as)+ ": dw  0",0);
 
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 

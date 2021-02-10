@@ -128,6 +128,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systembbcm.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemgameboy.cpp \
+    source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systemspectrum.cpp \
@@ -343,6 +344,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemgameboy.h \
+    source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systemspectrum.h \

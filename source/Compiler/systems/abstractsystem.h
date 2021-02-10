@@ -84,7 +84,7 @@ public:
 
     static void InitLabelColors();
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800, MSX};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80};
 
     static QString StringFromProcessor(Processor s) {
@@ -102,7 +102,7 @@ public:
         if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
         if (s == "X86") return "PX86";
         if (s == "GAMEBOY") return "GBZ80";
-        if (s == "AMSTRADCPC464" || s == "TIKI100" || s == "SPECTRUM" || s =="COLECO") return "Z80";
+        if (s == "AMSTRADCPC464" || s == "TIKI100" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
         qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
         return "";
     }

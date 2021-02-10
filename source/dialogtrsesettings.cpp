@@ -65,6 +65,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAtari800Emulator->setText(m_ini->getString("atari800_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
+    ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAmstradCPC464->setText(m_ini->getString("amstradcpc464_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
@@ -160,6 +161,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("bbc_emulator", ui->leBBCEmulator->text());
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
+    m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc464_emulator", ui->leAmstradCPC464->text());
@@ -267,7 +269,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
@@ -679,5 +681,20 @@ void DialogTRSESettings::on_btnUserDefinedCommand_clicked()
         tr("User-defined program"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leUserDefined->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnMSXEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("MSX Emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leMSXEmulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnHelpMSX_clicked()
+{
+    Help("MSX Emulator","For windows: http://www.emulator-zone.com/doc.php/msx/bluemsx.html. Macos : https://github.com/CocoaMSX/CocoaMSX. ");
 
 }

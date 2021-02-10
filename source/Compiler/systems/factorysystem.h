@@ -20,6 +20,7 @@
 #include "systembbcm.h"
 #include "systemcoleco.h"
 #include "systematari800.h"
+#include "systemmsx.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -69,6 +70,8 @@ public:
             return new SystemBBCM(settings, proj);
         if (type==AbstractSystem::ATARI800)
             return new SystemAtari800(settings, proj);
+        if (type==AbstractSystem::MSX)
+            return new SystemMSX(settings, proj);
 
 
         return s;

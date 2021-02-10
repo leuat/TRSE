@@ -406,6 +406,9 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
     if (t->m_flags.contains("sprram"))
         as->m_currentBlock = as->m_sprram;
 
+    if (t->m_flags.contains("ram"))
+        as->m_currentBlock = as->m_ram;
+
     if (t->m_flags.contains("bank")) {
         QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
         if (!as->m_banks.contains(bnk)) {

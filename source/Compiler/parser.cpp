@@ -61,6 +61,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::COMPRESSED] = "compressed";
     m_typeFlags[TokenType::WRAM] = "wram";
     m_typeFlags[TokenType::SPRRAM] = "sprram";
+    m_typeFlags[TokenType::RAM] = "ram";
     m_typeFlags[TokenType::HRAM] = "hram";
     m_typeFlags[TokenType::ALIGNED] = "aligned";
     m_typeFlags[TokenType::NO_TERM] = "no_term";
