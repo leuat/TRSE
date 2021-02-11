@@ -3225,7 +3225,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
         }
     }
     // Set all types and array types, sizes
-    for (QSharedPointer<Symbol> s: syms) {
+    for (auto s: syms) {
        s->m_type = typeNode->m_op.m_value;
        s->m_flags = typeNode->m_flags;
        s->m_bank = typeNode->m_bank;
@@ -3240,10 +3240,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        }
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
+//       qDebug() << "FLAGS " << s->m_flags << s->m_name << " " <<s->m_type;
        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD) {
            s->m_arrayTypeText = typeNode->m_arrayVarType.m_value;
   //         s->m_flags = typeNode->m_flags;
-//           qDebug() << "FLAGS " << s->m_flags;
 
        }
     }

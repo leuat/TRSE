@@ -227,6 +227,7 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         as->Term();
         as->BinOP(node->m_op.m_type);
         as->Term(node->m_right->getValue8bit(as,false),true);
+        as->Comment("Testing for byte:  " + node->m_right->getValue8bit(as,true));
         if (node->m_right->getValue8bit(as,true)=="#0") {
             as->Comment("RHS is byte, optimization");
             QString lbl = as->NewLabel("skip");
