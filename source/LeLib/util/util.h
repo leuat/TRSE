@@ -111,6 +111,7 @@ public:
     static QByteArray loadBinaryFile(QString filename);
 
     static void CopyFile(QString i, QString o);
+    static void CopyFileBytes(QString i, QString o);
 
     static bool CopyRecursively(QString sourceFolder, QString destFolder);
 

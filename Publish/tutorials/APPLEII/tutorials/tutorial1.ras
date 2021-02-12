@@ -1,4 +1,5 @@
 program Tutorial1;
+@use "Screen"
 var
 	i,j,l,k:byte;	
 	zp:pointer;
@@ -24,9 +25,30 @@ begin
 
 end;
 
+procedure MoveToY();
+begin
+//	ptr:=ytab[y]+x;
+end;
+procedure TestFill();
+begin
+	for l:=0 to 10 do
+	begin
+		Screen::MoveToY(l,0);
+		Screen::ptr:=Screen::ptr+40;
+		//MoveToY();
+		//Screen::ptr:=$0400;
+//		Screen::ptr[0]:=$20+l;	
+		Screen::ptr[l]:=$20;	
+		for i:=0 to 60 do
+			wait(255);
+	end;
+//	Loop();
+end;
+
 
 begin
-
+	TestFill();
+	
 	FunFill(0,1);	 // Fill with some chars
 	FunFill($20,0);	 // Fill with space
 	// Print message

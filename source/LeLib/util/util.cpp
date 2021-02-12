@@ -424,7 +424,16 @@ void Util::CopyFile(QString i, QString o) {
         ff.remove();
     }
     QFile::copy(i,o);
+    QFile::setPermissions(i, QFileDevice::ReadOwner|QFileDevice::WriteOwner);
+}
 
+void Util::CopyFileBytes(QString i, QString o) {
+    if (QFile::exists(o)) {
+        QFile ff(o);
+        ff.remove();
+    }
+    QByteArray a = loadBinaryFile(i);
+    SaveByteArray(a,o);
 }
 
 bool Util::CopyRecursively(QString sourceFolder, QString destFolder)

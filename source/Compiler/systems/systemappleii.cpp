@@ -1,4 +1,6 @@
 #include "systemappleii.h"
+#include <QProcess>
+
 SystemAppleII::SystemAppleII(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : SystemMOS6502(settings, proj) {
     m_processor = MOS6502;
     m_system = APPLEII;
@@ -14,6 +16,7 @@ void SystemAppleII::DefaultValues()
     m_programStartAddress = 0x0810;
     m_ignoreSys = true;
     m_stripPrg = true;
+//    m_projectIni->setFloat("ignore_initial_jump",0);
 }
 void SystemAppleII::PostProcess(QString &text, QString file, QString currentDir)
 {
@@ -29,7 +32,7 @@ void SystemAppleII::PostProcess(QString &text, QString file, QString currentDir)
 
 */
     QByteArray d = Util::loadBinaryFile(file+".prg");
-/*    QByteArray h;
+    QByteArray h;
     uchar  header[]={0x00, 0x05,0x16,0x00, // magic num
                      0,2,0,0,//version
                      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  // filler
@@ -54,13 +57,46 @@ void SystemAppleII::PostProcess(QString &text, QString file, QString currentDir)
     Util::WriteInt32(h, 0x803); // start address?
 
     h.append(d);
-    */
-    QByteArray disk = Util::loadBinaryFile(":resources/bin/apple2/disk.do");
+
+/*    QByteArray disk = Util::loadBinaryFile(":resources/bin/apple2/disk.do");
     for (int i=0;i<d.size();i++) {
         disk[0x7100 + i] = d[i];
     }
     disk[0xb8D] = (d.size()>>8)&0xff;
     disk[0xb8E] = (d.size())&0xff;
 
-    Util::SaveByteArray(disk, file+".do");
+    Util::SaveByteArray(disk, file+".do");*/
+    Util::SaveByteArray(h, file+".bin");
+    Util::CopyFile(":resources/bin/apple2/ac.jar","ac.jar");
+    Util::CopyFileBytes(":resources/bin/apple2/stripped.do",file+".do");
+    QString tout;
+    QStringList params = QStringList() << "-jar" << "ac.jar" <<"-as" <<file+".do" <<"HIWORLD" <<"BIN";
+
+//    "-as" << file+".do"<<"HIWORLD" <<"BIN ";
+    QString p = " " +file+".do HIWORLD BIN ";
+//    qDebug() << params;
+   /* StartProcess("java",
+                 params, tout);;*/
+
+    QProcess process;
+    process.setStandardInputFile("f1");
+ //   process.setReadChannel(SeparateChannels);
+    QByteArray inp;
+    //inp.append(p.toUtf8());
+    inp.append(Util::loadBinaryFile(file+".bin"));
+    Util::SaveByteArray(inp,"f1");
+
+    process.start("java", params);
+
+
+    process.waitForFinished();
+ //   qDebug() << process.readAllStandardError();
+   // qDebug() << process.readAllStandardOutput();
+    QFile::remove("ac.jar");
+    QFile::remove("f1");
+
+
+
+
 }
+
