@@ -1,4 +1,4 @@
-program balle;
+program Tutorial1;
 var
 	i,j,l,k:byte;	
 	zp:pointer;
