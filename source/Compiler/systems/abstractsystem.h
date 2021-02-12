@@ -88,7 +88,7 @@ public:
     static void InitLabelColors();
  //   virtual bool hasFixedProgramAddress() {return true;}
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800, MSX};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800, MSX, APPLEII};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80};
 
     static QString StringFromProcessor(Processor s) {
@@ -102,7 +102,7 @@ public:
     }
 
     static QString StringFromProcessor(QString s) {
-        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "MEGA65" || s == "BBCM" || s=="ATARI800") return "MOS6502";
+        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "MEGA65" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII") return "MOS6502";
         if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
         if (s == "X86") return "PX86";
         if (s == "GAMEBOY") return "GBZ80";

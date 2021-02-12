@@ -333,6 +333,21 @@ int Util::isEqual(QColor a, QColor b) {
     return 1;
 }
 
+void Util::WriteInt32(QByteArray &ba, int val)
+{
+    ba.append((val>>24)&0xFF);
+    ba.append((val>>16)&0xFF);
+    ba.append((val>>8)&0xFF);
+    ba.append((val)&0xFF);
+
+}
+void Util::WriteInt16(QByteArray &ba, int val)
+{
+    ba.append((val>>8)&0xFF);
+    ba.append((val)&0xFF);
+
+}
+
 QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst)
 {
     QStringList fixList;

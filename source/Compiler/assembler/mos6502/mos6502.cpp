@@ -156,7 +156,6 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     StartMemoryBlock(org);
 
 
-
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {

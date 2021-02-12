@@ -178,6 +178,17 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     }
     if (m_projectIniFile->getString("system")=="MSX") {
         emu = m_iniFile->getString("msx_emulator");
+    }
+    if (m_projectIniFile->getString("system")=="APPLEII") {
+        emu = m_iniFile->getString("appleii_emulator");
+        QString fn = Util::getFileWithoutEnding(fileName) + ".do";
+        if (QFile::exists(fn))
+            fn = QFileInfo(fn).absoluteFilePath();
+
+        if (emu.toLower().contains("microm8")) {
+            params = QStringList() <<"-launch" <<fn;
+            qDebug() << params;
+        }
 
     }
     if (m_projectIniFile->getString("system")=="COLECO") {

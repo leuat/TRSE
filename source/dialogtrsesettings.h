@@ -183,6 +183,10 @@ private slots:
 
     void on_btnHelpMSX_clicked();
 
+    void on_btnApple2Help_clicked();
+
+    void on_btnAppleII_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

@@ -1,0 +1,36 @@
+program balle;
+var
+	i,j,l,k:byte;	
+	zp:pointer;
+	msg : cstring=("HELLO BLOODY APPLE WORLD FROM TRSE"); 
+
+procedure FunFill(start,incVal : byte);
+begin
+	zp:=$0400;	
+	j:=start;
+	for l:=0 to 8 do
+	begin	
+		for k:=0 to 3 do
+		begin
+			fill(zp,j,40);
+			j+=incVal;
+			zp:=zp+40;
+			for i:=0 to 60 do
+				wait(255);
+		end;
+		// Yeah. Hurrah!
+		zp:=zp + 8;
+	end
+
+end;
+
+
+begin
+
+	FunFill(0,1);	 // Fill with some chars
+	FunFill($20,0);	 // Fill with space
+	// Print message
+	memcpy(#msg,0,^$0400+42,34);
+	Loop();
+end.
+

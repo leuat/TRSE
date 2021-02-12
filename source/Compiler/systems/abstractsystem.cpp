@@ -120,6 +120,10 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return ATARI800;
     if (s.toLower()=="msx")
         return MSX;
+    if (s.toLower()=="appleii")
+        return APPLEII;
+
+    return C64;
 }
 
 QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
@@ -144,6 +148,8 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == MEGA65) return "MEGA65";
     if (s == MSX) return "MSX";
     if (s == ATARI800) return "ATARI800";
+    if (s == APPLEII) return "APPLEII";
+    return "";
 }
 
 void AbstractSystem::AcceptDispatcherTick(QString val)

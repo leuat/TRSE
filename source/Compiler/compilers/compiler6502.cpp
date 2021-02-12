@@ -162,7 +162,7 @@ void Compiler6502::Init6502Assembler()
             Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->m_programStartAddress;
     } else {
         Syntax::s.m_currentSystem->DefaultValues();
-//        Syntax::s.m_ignoreSys = false;
+        Syntax::s.m_ignoreSys = Syntax::s.m_currentSystem->m_ignoreSys;
  //       Syntax::s.m_stripPrg = false;
 
     }
