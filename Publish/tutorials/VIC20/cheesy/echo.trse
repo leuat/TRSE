@@ -56,5 +56,5 @@ data_header_chr\font4x8.flf = 0
 data_header_chr/title.flf = 6.95175e-310
 data_header_chr\title.flf = 0
 open_files = ,main.ras, game.ras
-project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tutorials/VIC20/cheesy/
-current_file = main.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VIC20/cheesy/
+current_file = game.ras

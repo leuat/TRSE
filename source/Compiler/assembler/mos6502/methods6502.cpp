@@ -4489,11 +4489,17 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
     // isWord doesn't work
     QString addx="";
     if (v!=nullptr && v->m_expr!=nullptr) {
+        fix = v->getArrayType(as)==TokenType::INTEGER;
+        if (!fix && v->m_expr->isPureNumeric()) {
+            as->Comment("Inc/dec array with constant index fix");
+            as->Asm(cmd + " " +m_node->m_params[0]->getValue(as)+ " + " + v->m_expr->getValue(as));
+            return;
+        }
+
         as->ClearTerm();
         v->m_expr->Accept(m_dispatcher);
         as->Term();
         addx=",x";
-        fix = v->getArrayType(as)==TokenType::INTEGER;
         if (fix)
             as->Asm("asl");
         as->Asm("tax");
