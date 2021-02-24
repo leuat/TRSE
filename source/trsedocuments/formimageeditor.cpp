@@ -2478,7 +2478,7 @@ void FormImageEditor::on_btnSelectDefaultClearItm_clicked()
 
 }
 
-void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
+void FormImageEditor::on_cmbCharWidth_currentTextChanged(const QString &arg1)
 {
     if (m_work.m_currentImage->m_image->getCharset()==nullptr)
         return;

@@ -296,7 +296,7 @@ private slots:
     void on_btnShiftUp_clicked();
     void on_btnClear_clicked();
     void on_btnSelectDefaultClearItm_clicked();
-    void on_cmbCharWidth_currentIndexChanged(const QString &arg1);
+    void on_cmbCharWidth_currentTextChanged(const QString &arg1);
     void on_lstCharMap_itemClicked(QTableWidgetItem *item);
     void Aspect1();
     void AspectDone();

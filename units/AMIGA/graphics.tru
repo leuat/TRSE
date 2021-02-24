@@ -13,7 +13,6 @@ begin
 	// Setup image copper list (4 bitplanes, 40*40 modulo 120
 	if (bpl=4) then
 	begin
-		asm(";jadda");
 		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40;
