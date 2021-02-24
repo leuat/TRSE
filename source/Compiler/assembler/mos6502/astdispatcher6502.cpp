@@ -2280,6 +2280,15 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     else
         as->Comment("Load Unknown type array");
 
+    // Optimization : ldx #3, lda a,x   FIX
+    if (s->m_arrayType==TokenType::BYTE && node->m_expr!=nullptr) {
+        if (node->m_expr->isPureNumeric()) {
+            as->ClearTerm();
+            as->Asm("lda "+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
+            return;
+        }
+    }
+
     QString m = as->m_term;
     if (node->m_expr==nullptr) {
         ErrorHandler::e.Error("Unknown operation with address!",node->m_op.m_lineNumber);

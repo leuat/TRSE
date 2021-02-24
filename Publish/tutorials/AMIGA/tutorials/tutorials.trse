@@ -48,5 +48,5 @@ zeropage_colormemory = $fc
 data_header_/users/leuat/code/trse/publish/tutorials/amiga/tutorials/images/trse.flf = 6.41269e-314
 data_header_images/trse.flf = 6.41269e-314
 open_files = ,images/font.flf, tutorial7_grid.ras, twister.fjo, tutorial2.ras, tutorial1.ras, [external]units/AMIGA/graphics.tru
-project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tutorials/AMIGA/tutorials/
-current_file = tutorial7_grid.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMIGA/tutorials/
+current_file = tutorial2.ras
