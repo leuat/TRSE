@@ -58,4 +58,6 @@ data_header_resources/images/octopus2.flf = 6.91519e-310
 data_header_resources/images/paint.flf = 0
 zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 2001-8N
-open_files =, Hello.ras
+open_files = ,easy/06_plasma.ras, easy/05_matrix.ras, easy/03_boxes.ras, Hello.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
+current_file = easy/05_matrix.ras
