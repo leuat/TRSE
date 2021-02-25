@@ -598,5 +598,7 @@
         <file>resources/images/APPLEII.png</file>
         <file>resources/bin/apple2/stripped.do</file>
         <file>resources/bin/apple2/ac.jar</file>
+        <file>resources/images/portraits/dead_astronaut_small.png</file>
+        <file>resources/images/portraits/dead_astronaut.png</file>
     </qresource>
 </RCC>
