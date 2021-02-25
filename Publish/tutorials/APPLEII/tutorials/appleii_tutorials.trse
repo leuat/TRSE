@@ -1,4 +1,3 @@
-project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tutorials/APPLEII/tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fd
@@ -32,8 +31,6 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
-open_files = ,[external]units/APPLEII/screen.tru, tutorial1.asm, tutorial1.ras, test.ras, test.asm, test.prg
-current_file = tutorial1.ras
 var_zeropages = ,
 zeropages_userdefined = ,
 global_defines = ,

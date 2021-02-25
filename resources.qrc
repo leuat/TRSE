@@ -600,5 +600,6 @@
         <file>resources/bin/apple2/ac.jar</file>
         <file>resources/images/portraits/dead_astronaut_small.png</file>
         <file>resources/images/portraits/dead_astronaut.png</file>
+        <file>resources/images/portraits/turk_grey.png</file>
     </qresource>
 </RCC>
