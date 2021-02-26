@@ -1,0 +1,75 @@
+program Interferens;
+@use "graphics"
+var  
+
+	// Number of bitplanes	
+	const bpl : byte = 4;
+
+   	i, isDone,curFrame, time, time2: integer = 0; 
+   	data : incbin("data/tutorial9.bin") chipmem;
+   	
+	image_palette : incbin("images/palette.bin");
+	ptr : pointer of byte;
+	
+	sinx : 	array[256] of integer = buildtable( "((Math.sin((i)/256*3.14159*2)*0x7f + 0x7f))");
+	// Animation number of frames
+	const maxFrames : integer = 15;
+	
+	imgTab : array[maxFrames+1] of long = BuildTable("i*40*256");
+	
+@export "images/logo.flf" "images/logo.bin" 256
+
+	image : incbin("images/logo.bin") chipmem;	
+	
+procedure RenderFrame2(t1,t2,div1 : integer;adde:integer);
+begin
+		curFrame := sinx[ t1 & $FF ]/div1;
+		ptr := #data ;
+		ptr += imgTab[curFrame&maxFrames];
+		
+		if (adde=0) then
+			SetCopperList32(ptr, #copper_bitplane0);
+			
+		if (adde=1) then
+			SetCopperList32(ptr, #copper_bitplane1);
+			
+		if (adde=2) then
+			SetCopperList32(ptr, #copper_bitplane2);
+			
+		if (adde=3) then
+			SetCopperList32(ptr, #copper_bitplane3);
+
+end;
+
+begin
+	setpalette(#image_palette,#copper_palette,16);
+	poke16(#copper_palette,2+1*0,$1010);	
+	poke16(#copper_palette,2+4*1,$0800);	
+	poke16(#copper_palette,2+4*2,$0F16);	
+	poke16(#copper_palette,2+4*3,$0FA2);	
+
+	// Set bpl 3 colors 8-15 to yellow!	
+	for i:=0 to 8 do
+	begin
+		poke16(#copper_palette,2+4*(i+8),$0FA2);	
+	end;
+
+	SetCopperList32(#image, #copper_bitplane3);
+
+
+	time := 0;	
+	while (isDone=0) do begin
+	
+		RenderFrame2(time, time*2,4,0);
+		RenderFrame2(time*2, time2,5,1);
+		RenderFrame2(time2, time2,6,2);
+		
+		ApplyCopperList();
+		WaitVerticalBlank();	
+
+		time+=1;
+		time2+=1;
+		if (time&1=1) then time2+=1;
+	end;
+
+end.
