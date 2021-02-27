@@ -120,6 +120,7 @@ public:
     QPixmap CreateColorIcon(int col, int s);
 
     void CopyFrom(LColorList* other);
+    void CopyFromKeep(LColorList* other);
     void InitC64_org();
     void InitC64();
     void InitC64Multicolor();

@@ -1149,12 +1149,16 @@ void MultiColorImage::InitPens() {
     }
 
     if (m_colorList.m_type==LColorList::VIC20 && m_type == LImage::LevelEditor) {
-
-        if (m_charset==nullptr)
+        if (m_charset==nullptr) {
             m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+        }
         else {
+//            QVector<int> keep = m_charset->m_colorList.getPenList();
             m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
             m_colorList.CopyFrom(&m_charset->m_colorList);
+  //          for (int i=0;i<keep.count();i++)
+    //          m_colorList.setPen(i,keep[i]);
+//            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
         }
         setBackground(getBackground());
         return;

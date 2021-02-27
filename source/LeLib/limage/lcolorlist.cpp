@@ -477,7 +477,6 @@ void LColorList::SetVIC20Pens(bool m_isMulticolor)
         if (i>=oldList.count())
             oldList.append(i);
     }
-//    qDebug()<< "OLD LIST " <<oldList;
     m_pens.clear();
     LPen::Type type = LPen::DisplayAllExceptAlreadySelected;
 
@@ -485,8 +484,18 @@ void LColorList::SetVIC20Pens(bool m_isMulticolor)
         type = LPen::DisplayAll;
 
 
+    bool allZero = true;
+    for (auto v : oldList)
+        if (v!=0)
+            allZero = false;
+
+//    qDebug() << oldList;
+    if (allZero)
+        return;
+
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Border",LPen::Dropdown)));
+//    qDebug() << "BORDER:  "<<oldList[1];
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"AUX",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
 
@@ -554,15 +563,32 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_list.count();i++)
         m_list[i] = other->m_list[i];
 
-//    m_pens = other->m_pens;
     m_pens.resize(other->m_pens.count());
-    for (int i=0;i<m_pens.count();i++)
+    for (int i=0;i<m_pens.count();i++) {
         m_pens[i] = other->m_pens[i];
+    }
 
 
 
-//    m_curPal = other->m_curPal;
-//    m_nesPPU = other->m_nesPPU;
+}
+
+void LColorList::CopyFromKeep(LColorList *other)
+{
+
+    m_list.resize(other->m_list.count());
+    for (int i=0;i<m_list.count();i++)
+        m_list[i] = other->m_list[i];
+
+    QVector<int> vals;
+    for (auto p:m_pens)
+        vals<< p->m_colorIndex;
+    m_pens.resize(other->m_pens.count());
+    for (int i=0;i<m_pens.count();i++) {
+        m_pens[i] = other->m_pens[i];
+        m_pens[i]->m_colorIndex = vals[i];
+    }
+
+
 
 }
 
@@ -1162,6 +1188,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
 
 
         QWidget* widget = nullptr;
+//        qDebug() << "PEN COLOR:  " << getPen(i);
         widget = m_pens[i]->CreateUI(getPenColour(i),width,xx,yy, m_list);
 
         if (widget!=nullptr) {

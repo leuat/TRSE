@@ -183,11 +183,12 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 
 void FormImageEditor::onPenChanged()
 {
-//    if (m_work.m_currentImage->m_image->m_colorList.getPen(1)==2)
-  //      return;
-//    m_work.m_currentImage->m_image->setBackground(m_work.m_currentImage->m_image->getBackground())
+
+
     m_work.m_currentImage->m_image->InitPens();
     m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+//    qDebug() << "INITING PENS";
+
     onImageMouseEvent();
 
 }
@@ -585,6 +586,12 @@ void FormImageEditor::Initialize()
 
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
+
+    //for (int i=0;i<100;i++)
+    //    Data::data.UpdatePens();
+    QTimer::singleShot(50, this, SLOT(onPenChanged()));
+
+//    m_work.m_currentImage->m_image->m_colorList.m_pens[1].
 
 }
 

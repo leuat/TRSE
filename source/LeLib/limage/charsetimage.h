@@ -116,7 +116,7 @@ public:
 
     void setBackground(unsigned int col) override;
 
-    virtual void InitPens() override;
+//    virtual void InitPens() override;
 
 
 /*    void FlipHorizontal() override;
