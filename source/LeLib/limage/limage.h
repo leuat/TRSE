@@ -207,7 +207,7 @@ public:
     bool m_updateCharsetPosition = false;
     bool m_forcePaintColorAndChar = true;
 
-    QPoint m_copySize = QPoint(512,512);
+    static QPoint m_copySize;
     static uchar m_copy[];
 
     virtual int getGridWidth() {

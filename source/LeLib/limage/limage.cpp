@@ -32,7 +32,7 @@
 //#include <omp.h>
 uchar LImage::m_copy[1024*1024];
 bool LImage::m_hasCopy = false;
-
+QPoint LImage::m_copySize = QPoint(512,512);
 LImage::LImage(LColorList::Type t)
 {
     m_colorList.Initialize(t);
