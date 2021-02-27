@@ -191,6 +191,10 @@ void FormImageEditor::onPenChanged()
 
     onImageMouseEvent();
 
+    updateCharSet();
+    Data::data.Redraw();
+    onImageMouseEvent();
+
 }
 
 void FormImageEditor::onImageMouseReleaseEvent()

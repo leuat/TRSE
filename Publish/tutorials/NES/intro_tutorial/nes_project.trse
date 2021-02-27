@@ -53,4 +53,4 @@ zeropage_colormemory = $fc
 exomizer_toggle = 0
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/NES/intro_tutorial/
 open_files = ,tiles/game_tiles.flf
-current_file = 0
+current_file = tiles/game_tiles.flf
