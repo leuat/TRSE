@@ -215,4 +215,12 @@ void LImageVIC20::FixUp(QByteArray &ba) {
     }
 }
 
+void LImageVIC20::InitPens() {
+    qDebug() << "VIC20 override pens";
+    m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+
+    setBackground(getBackground());
+
+}
+
 

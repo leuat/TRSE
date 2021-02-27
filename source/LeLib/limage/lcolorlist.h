@@ -111,6 +111,7 @@ public:
     void Initialize(Type t);
 
     void SetC64Pens(bool m_isMulticolor, bool m_isCharset);
+    void SetVIC20Pens(bool m_isMulticolor);
     void SetC64SpritePen(bool m_isMulticolor);
 
     void InitNESPens();

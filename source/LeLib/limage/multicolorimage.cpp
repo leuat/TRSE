@@ -1109,6 +1109,13 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
 
 }
 
+void MultiColorImage::SetHybridMode(bool checked) {
+    LImage::SetHybridMode(checked);
+    if (m_charset!=nullptr)
+        m_charset->SetHybridMode(checked);
+
+}
+
 int MultiColorImage::getCharAtPos(QPoint p, float zoom, QPointF center)
 {
 
@@ -1141,6 +1148,18 @@ void MultiColorImage::InitPens() {
 
     }
 
+    if (m_colorList.m_type==LColorList::VIC20 && m_type == LImage::LevelEditor) {
+
+        if (m_charset==nullptr)
+            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+        else {
+            m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+            m_colorList.CopyFrom(&m_charset->m_colorList);
+        }
+        setBackground(getBackground());
+        return;
+    }
+
     if (m_colorList.m_type==LColorList::C64 || m_colorList.m_type==LColorList::VIC20) {
         if (m_charset==nullptr)
             m_colorList.SetC64Pens(m_bitMask == 0b11,(m_type==LImage::LImage::Type::CharMapMulticolor));
@@ -1149,12 +1168,18 @@ void MultiColorImage::InitPens() {
             m_colorList.CopyFrom(&m_charset->m_colorList);
         }
 
-//        qDebug() << "HERE" <<m_charset;
     }
-/*    qDebug() << "SETTING BACKGROUND " << getBackground();
-    for (int i=0;i<2;i++) {
-        qDebug() << "CURRENT PENS " << m_colorList.getPen(i);
-    }*/
+
+/*    if (m_colorList.m_type==LColorList::VIC20) {
+        if (m_charset==nullptr)
+            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+        else {
+            m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+            m_colorList.CopyFrom(&m_charset->m_colorList);
+        }
+
+    }
+*/
     setBackground(getBackground());
 
 }

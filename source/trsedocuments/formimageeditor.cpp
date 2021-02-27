@@ -532,6 +532,7 @@ void FormImageEditor::Initialize()
 
     if (m_work.m_currentImage->m_image->m_type==LImage::Type::MultiColorBitmap ||
        m_work.m_currentImage->m_image->m_type==LImage::Type::HiresBitmap ||
+//            m_work.m_currentImage->m_image->m_type==LImage::Type::LevelEditor ||
             m_work.m_currentImage->m_image->m_type==LImage::Type::CharMapMulticolor
             ) {
 
@@ -2506,8 +2507,7 @@ void FormImageEditor::on_chkHybrid_clicked(bool checked)
     if (checked) {
         ui->chkDisplayMulticolor->setChecked(false);
     }
-    m_work.m_currentImage->m_image->m_colorList.m_isHybridMode = checked;
-
+    m_work.m_currentImage->m_image->SetHybridMode(checked);
     ui->chkDisplayMulticolor->setVisible(!checked);
     onPenChanged();
 }

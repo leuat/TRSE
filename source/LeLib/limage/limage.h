@@ -261,6 +261,11 @@ public:
     }
 
 
+    virtual void SetHybridMode(bool checked) {
+        m_colorList.m_isHybridMode = checked;
+
+    }
+
     virtual void ConstrainColours(QVector<int>& cols) {
 
 

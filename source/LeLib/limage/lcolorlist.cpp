@@ -469,6 +469,45 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
 
 }
 
+void LColorList::SetVIC20Pens(bool m_isMulticolor)
+{
+    QVector<int> oldList = getPenList();
+    // Make sure old data is kept!
+    for (int i=0;i<4;i++) {
+        if (i>=oldList.count())
+            oldList.append(i);
+    }
+//    qDebug()<< "OLD LIST " <<oldList;
+    m_pens.clear();
+    LPen::Type type = LPen::DisplayAllExceptAlreadySelected;
+
+    if ((m_isMulticolor && m_isCharset) || m_isHybridMode)
+        type = LPen::DisplayAll;
+
+
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Border",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"AUX",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
+
+
+
+
+    if (!m_isMulticolor && !m_isHybridMode) {
+        m_pens[1]->Hide(true);
+        m_pens[2]->Hide(true);
+    }
+    else { // IS multicolor
+        if (m_type == VIC20 && !m_isHybridMode) {
+            //m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
+            m_pens[3]->m_and =0x7;
+        }
+ //       if (m_type == C64)
+
+    }
+
+}
+
 void LColorList::InitNESPens()
 {
     QVector<int> oldList = getPenList();

@@ -101,6 +101,9 @@ public:
     void LoadCharset(QString file, int skipBttes) override;
     bool isMultiColor() override { return m_bitMask==0b11; }
 
+    virtual void SetHybridMode(bool checked) override;
+
+
     virtual int getCharAtPos(QPoint p, float zoom, QPointF center) override;
     void setHybrid();
 

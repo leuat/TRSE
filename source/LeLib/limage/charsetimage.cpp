@@ -832,3 +832,8 @@ void CharsetImage::setBackground(unsigned int col)
         m_charset->setBackground(col);
 }
 
+void CharsetImage::InitPens()
+{
+    MultiColorImage::InitPens();
+}
+
