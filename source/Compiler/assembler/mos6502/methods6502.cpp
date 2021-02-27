@@ -5669,7 +5669,7 @@ void Methods6502::WaitForRaster(Assembler *as)
     as->Comment("wait for raster");
 //    LoadVar(as, 0,"", "ldx ");
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
  //       m_node->m_params[0]->setForceType(TokenType::BYTE);
         if (m_node->m_params[0]->isPureNumeric()) {
             int val =  m_node->m_params[0]->getValueAsInt(as);
@@ -5697,7 +5697,7 @@ void Methods6502::WaitForRaster(Assembler *as)
         }
 
     }
-
+*/
     LoadVar(as,0);
     as->Asm("tax");
 //    as->Asm("lda $d012 ; raster line pos");
