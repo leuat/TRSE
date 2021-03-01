@@ -1401,12 +1401,72 @@
      <item>
       <widget class="QCheckBox" name="chkGrid">
        <property name="text">
-        <string>Grid (z)</string>
+        <string>Display grid (z)</string>
        </property>
        <property name="checked">
         <bool>false</bool>
        </property>
       </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QComboBox" name="cbmGridSize">
+         <item>
+          <property name="text">
+           <string>1x1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1x2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1x3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x3</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Grid size:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QCheckBox" name="chkBackgroundArea">

@@ -285,6 +285,9 @@ public:
 
     virtual void CopyChar();
 
+    void SetGridSize(QString size);
+    QString getGridSize();
+
     virtual void PasteChar();
 
   //  virtual void Delete() {}

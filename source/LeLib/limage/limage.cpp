@@ -358,6 +358,18 @@ void LImage::CopyChar()
 
 }
 
+void LImage::SetGridSize(QString size)
+{
+    QStringList data = size.split("x"); // should be of the format WxH
+    m_footer.set(LImageFooter::POS_GRID_SCALE_X,data[0].toInt());
+    m_footer.set(LImageFooter::POS_GRID_SCALE_Y,data[1].toInt());
+}
+
+QString LImage::getGridSize()
+{
+    return QString::number(m_footer.get(LImageFooter::POS_GRID_SCALE_X))+"x"+QString::number(m_footer.get(LImageFooter::POS_GRID_SCALE_Y));
+}
+
 void LImage::PasteChar()
 {
     if (!m_hasCopy)
