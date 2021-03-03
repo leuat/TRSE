@@ -681,23 +681,23 @@ void LColorList::InitVIC20()
 {
     m_list.clear();
 
-
-    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
-    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
-    m_list.append(LColor(QColor(0x78, 0x29, 0x22),""));
-    m_list.append(LColor(QColor(0x87, 0xd6, 0xdd),""));
-    m_list.append(LColor(QColor(0xaa, 0x5f, 0xb6),""));
-    m_list.append(LColor(QColor(0x55, 0xa0, 0x49),""));
-    m_list.append(LColor(QColor(0x40, 0x31, 0x8d),""));
-    m_list.append(LColor(QColor(0xbf, 0xce, 0x72),""));
-    m_list.append(LColor(QColor(0xaa, 0x74, 0x49),""));
-    m_list.append(LColor(QColor(0xea, 0xb4, 0x89),""));
-    m_list.append(LColor(QColor(0xb8, 0x69, 0x62),""));
-    m_list.append(LColor(QColor(0xc7, 0xff, 0xff),""));
-    m_list.append(LColor(QColor(0xea, 0x9f, 0xf6),""));
-    m_list.append(LColor(QColor(0x94, 0xe0, 0x89),""));
-    m_list.append(LColor(QColor(0x80, 0x71, 0xcc),""));
-    m_list.append(LColor(QColor(0xff, 0xff, 0xb2),""));
+    // updated with vice colours
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));    // black
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),"")); // white ffffff
+    m_list.append(LColor(QColor(0xb8, 0x21, 0x12),"")); // red b82212
+    m_list.append(LColor(QColor(0x70, 0xf2, 0xfb),"")); // cyan 70f2fb
+    m_list.append(LColor(QColor(0xad, 0x25, 0xff),"")); // purple ad25ff
+    m_list.append(LColor(QColor(0x7b, 0xef, 0x00),"")); // green 7bef00
+    m_list.append(LColor(QColor(0x3b, 0x24, 0xff),"")); // blue 3b24ff
+    m_list.append(LColor(QColor(0xf8, 0xff, 0x00),"")); // yellow f8ff00
+    m_list.append(LColor(QColor(0xcd, 0x6f, 0x00),"")); // orange cd6f00
+    m_list.append(LColor(QColor(0xff, 0xc5, 0x51),"")); // light orange ffc551
+    m_list.append(LColor(QColor(0xff, 0x9b, 0x91),"")); // pink ff9b91
+    m_list.append(LColor(QColor(0xab, 0xff, 0xff),"")); // light cyan abffff
+    m_list.append(LColor(QColor(0xff, 0x92, 0xff),"")); // light purple ff92ff
+    m_list.append(LColor(QColor(0xbd, 0xff, 0x3c),"")); // light green bdff3c
+    m_list.append(LColor(QColor(0xa1, 0x90, 0xff),"")); // light blue a190ff
+    m_list.append(LColor(QColor(0xff, 0xff, 0x49),"")); // light yellow ffff49
 
 
     for (int i=0;i<8;i++)
