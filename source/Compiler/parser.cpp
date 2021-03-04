@@ -3363,6 +3363,11 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         Token arrayType = m_currentToken;
         VerifyTypeSpec(arrayType);
         TokenType::Type dataType = m_currentToken.m_type;
+        if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 &&
+                dataType == TokenType::POINTER) {
+            QString ie = "<br><font color=\"grey\">Example:<br>anIntegerArray[i]:=#data;<br>aPointer := anIntegerArray[i];</font>";
+            ErrorHandler::e.Error("Cannot have arrays of (zeropage) pointers on the 6502. Instead, please use an array of integers, and then assign a pointer to the (integer) array item."+ie,m_currentToken.m_lineNumber);
+        }
         Eat(m_currentToken.m_type);
         flags<< getFlags();
         QStringList data;
