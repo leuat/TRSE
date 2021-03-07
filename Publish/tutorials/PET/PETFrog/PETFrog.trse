@@ -45,5 +45,3 @@ cpu_x86_system = 8086
 override_target_settings_basic = 0
 zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 8032
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/PET/PETFrog/
-open_files = ,petfrog.ras
