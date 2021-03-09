@@ -56,6 +56,7 @@
 #include "source/LeLib/util/tool.h"
 #include "source/LeLib/limage/compression.h"
 #include "source/LeLib/util/SimplexNoise.h"
+#include "source/LeLib/ttrfile.h"
 //#include "source/Compiler/sourcebuilder.h"
 
 class ParserBlock {

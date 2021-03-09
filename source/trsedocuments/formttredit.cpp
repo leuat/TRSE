@@ -6,7 +6,9 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
     ui(new Ui::FormTTREdit)
 {
     ui->setupUi(this);
-    m_programEndingType = "ttr";
+    m_programEndingType = "trt";
+    m_fileExtension = "trt";
+
 }
 
 FormTTREdit::~FormTTREdit()
@@ -35,6 +37,14 @@ void FormTTREdit::SaveCurrentInstrument()
         }
         m_ttr.m_instruments[m_currentInstrument] = ba;
     }
+
+}
+
+void FormTTREdit::InitTRT(int channels, int rows)
+{
+    m_ttr.Initialize(channels, rows);
+    FillGUIFromData();
+    ReloadPatterns();
 
 }
 
@@ -206,7 +216,7 @@ void FormTTREdit::on_cmbInstruments_currentIndexChanged(int index)
 
 void FormTTREdit::on_btnNewPattern_clicked()
 {
-    m_ttr.InsertPattern(ui->cmbPatterns->currentIndex());
+    m_ttr.InsertPattern(m_ttr.m_patterns.count());
     ReloadPatterns();
 }
 
@@ -227,7 +237,7 @@ void FormTTREdit::on_btnSetInstrument_clicked()
 void FormTTREdit::on_btnNewOrder_clicked()
 {
     ApplyCurrentOrder();
-    m_ttr.InsertOrder();
+    m_ttr.InsertOrder(m_ttr.m_orders.count());
     ignoreApplyPatterns = true;
     ReloadOrders();
     ignoreApplyPatterns = false;

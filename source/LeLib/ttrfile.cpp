@@ -4,6 +4,18 @@ TTRFile::TTRFile()
 {
 }
 
+void TTRFile::Initialize(int channels, int rows)
+{
+    m_patterns.clear();
+    m_orders.clear();
+    m_noChannels = channels;
+    m_patternLength = rows;
+    m_currentInstrument = 0;
+    m_currentOrder = 0;
+    InsertPattern(0);
+    InsertOrder(0);
+}
+
 void TTRFile::InsertPattern(int pos) {
     QByteArray ba;
     ba.resize(m_patternLength*m_noChannels);
@@ -11,7 +23,7 @@ void TTRFile::InsertPattern(int pos) {
     m_patterns.insert(pos,ba);
     for (QByteArray& ba: m_orders){
         for (int i=0;i<ba.count();i++)
-            if ((uchar)ba[i]>=pos)
+            if ((uchar)ba[i]>pos)
                 ba[i]++;
     }
 }
@@ -24,7 +36,7 @@ void TTRFile::DeletePattern(int pos)
     m_patterns.removeAt(pos);
     for (QByteArray& ba: m_orders){
         for (int i=0;i<ba.count();i++)
-            if ((uchar)ba[i]>=pos)
+            if ((uchar)ba[i]>pos)
                 ba[i]--;
     }
 
@@ -83,6 +95,34 @@ void TTRFile::Save(QString filename) {
         o.append(c.toLatin1());
 
     o.append((char)0);
+
+
+    Util::SaveByteArray(o,filename);
+}
+
+void TTRFile::Export(QString filename, int type)
+{
+    if (type==1)
+        ExportVIC20(filename);
+}
+
+void TTRFile::ExportVIC20(QString filename)
+{
+    QByteArray o;
+    // Header first:
+    o.append(m_noChannels);
+    o.append(m_patternLength);
+    o.append(m_orders.count());
+    int pos = m_orders.size()*m_noChannels; // Start of patterns
+    Util::appendInt16(o,pos); // pattern start
+
+    for (QByteArray& ba: m_orders)
+        o.append(ba);
+
+    for (QByteArray& ba: m_patterns) {
+        for (int i=0;i<m_patternLength;i++)
+            o.append(ba[i*m_noBytesPerLine]); // Only add first byte - ignore rest
+    }
 
 
     Util::SaveByteArray(o,filename);
@@ -217,19 +257,19 @@ void TTRFile::LoadPSF(QString filename) {
 
 }
 
-void TTRFile::InsertOrder()
+void TTRFile::InsertOrder(int pos)
 {
     QByteArray ba;
     ba.resize(m_noChannels);
     ba.fill(0);
-    m_orders.insert(m_currentOrder,ba);
+    m_orders.insert(pos,ba);
 //    m_currentOrder++;
 
 }
 
 void TTRFile::DeleteOrder()
 {
-    qDebug() << "Removing from :"  <<m_currentOrder;
+//    qDebug() << "Removing from :"  <<m_currentOrder;
     if (m_orders.count()>1)
         m_orders.removeAt(m_currentOrder);
 

@@ -179,6 +179,7 @@ SOURCES += main.cpp\
     source/dialogexport3d.cpp \
     source/dialoginfo.cpp \
     source/dialognewproject.cpp \
+    source/dialognewtrt.cpp \
     source/dialogselectcharset.cpp \
     source/dialogsimplelineedit.cpp \
     source/dialogsplash.cpp \
@@ -401,6 +402,7 @@ HEADERS  += mainwindow.h \
     source/dialogexport3d.h \
     source/dialoginfo.h \
     source/dialognewproject.h \
+    source/dialognewtrt.h \
     source/dialogselectcharset.h \
     source/dialogsimplelineedit.h \
     source/dialogsplash.h \
@@ -549,6 +551,7 @@ FORMS    += mainwindow.ui \
     source/dialogexport3d.ui \
     source/dialoginfo.ui \
     source/dialognewproject.ui \
+    source/dialognewtrt.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \
     source/dialogsplash.ui \

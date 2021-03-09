@@ -7,6 +7,8 @@ FormHexEdit::FormHexEdit(QWidget *parent) :
 {
     ui->setupUi(this);
     m_programEndingType = "bin";
+    m_fileExtension = "bin";
+
 }
 
 FormHexEdit::~FormHexEdit()

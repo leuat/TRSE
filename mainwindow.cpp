@@ -2591,3 +2591,39 @@ void MainWindow::on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1
     UpdateRecentProjects();
 
 }
+
+void MainWindow::on_actionTRSE_Tracker_File_trt_triggered()
+{
+
+    if (m_currentProject.m_filename=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_PROJECT);
+        return;
+    }
+
+    DialogNewTRT* dNew = new DialogNewTRT(this);
+    dNew->exec();
+    if (dNew->cancel) {
+        delete dNew;
+        return;
+    }
+    FormTTREdit* editor = new FormTTREdit(this);
+    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
+    editor->m_currentSourceFile = "";
+    editor->m_currentFileShort = "";
+    editor->InitTRT(dNew->getChannels(), dNew->getRows());
+    ui->tabMain->addTab(editor, "New TRT");
+
+    editor->setFocus();
+    editor->showMaximized();
+
+    ui->tabMain->setCurrentWidget(editor);
+
+    //m_iniFile->setString("current_file", fileName);
+    //m_buildSuccess = false;
+    ui->tabMain->setTabsClosable(true);
+    m_documents.append(editor);
+    m_currentDoc = editor;
+    ConnectDocument();
+    delete dNew;
+
+}

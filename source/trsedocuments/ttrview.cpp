@@ -144,7 +144,7 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
         int semitone = octave*12 + note;
         d[pos] = 0x80 | semitone;
     }
-    qDebug() << note << octave <<Util::numToHex(d[pos]);
+//    qDebug() << note << octave <<Util::numToHex(d[pos]);
     if (vol!=-1)
         d[pos+1] = (uchar)0x80 | (uchar)vol;
 

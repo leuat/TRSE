@@ -65,7 +65,7 @@
 #include <QFileSystemWatcher>
 #include <source/LeLib/lglslideshow.h>
 #include "source/dialogsplash.h"
-
+#include "source/dialognewtrt.h"
 namespace Ui {
 class MainWindow;
 }
@@ -443,6 +443,8 @@ private slots:
 
 
     void on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1);
+
+    void on_actionTRSE_Tracker_File_trt_triggered();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

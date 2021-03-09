@@ -1,0 +1,35 @@
+program TRT_Music_player;
+@use "TrtPlayer"
+var  
+
+@export "resources/music/example10_music.trt" "resources/music/music_vic20.bin" 1 
+
+	music : incbin("resources/music/music_vic20.bin");
+	i:byte;
+
+begin
+	// Setup screen foreground / background colors
+	screen_bg_color:=screen_bg_blue;
+	
+	// Clear screens	
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(black,screen_col_loc);
+	// Initialize tables	
+	
+	// Loop effect
+	TrtPlayer::Initialize(#music);
+	while(true) do
+	begin
+		waitforraster(0);	
+		TrtPlayer::Play();
+		moveto(8,4,hi(screen_char_loc));
+//		screenmemory[0]:=$0;
+		printdecimal(TrtPlayer::curRow,1);
+		moveto(4,4,hi(screen_char_loc));
+		screenmemory[0]:=0;
+		printnumber(TrtPlayer::curOrder);
+	end;
+	
+	
+	
+end.

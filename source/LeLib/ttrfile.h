@@ -276,15 +276,19 @@ E = Unused?
     const int POS_START_OF_TEXT = POS_START_OF_PATTERNS+2;
     const int INSTRUMENT_SIZE = 16;
 
+    void Initialize(int channels, int rows);
+
     void InsertPattern(int pos);
     void DeletePattern(int pos);
 
     QVector<QByteArray> getCurrentPattern();
     void Save(QString filename);
+    void Export(QString filename, int type);
+    void ExportVIC20(QString filename);
     void Load(QString filename);
     void LoadPSF(QString filename);
 
-    void InsertOrder();
+    void InsertOrder(int pos);
     void DeleteOrder();
 };
 

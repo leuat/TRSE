@@ -29,6 +29,8 @@ public:
     void Destroy() override {}
     void SaveCurrentInstrument();
 
+    void InitTRT(int channels, int rows);
+
     bool Load(QString filename) override;
     void Save(QString filename) override;
 
@@ -65,6 +67,7 @@ private slots:
     void ReloadInstruments();
 
     void on_btnDeletePattern_clicked();
+
 
 private:
     Ui::FormTTREdit *ui;

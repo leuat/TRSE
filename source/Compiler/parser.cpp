@@ -3918,6 +3918,15 @@ void Parser::HandleExport()
     if (!QFile::exists(inFile)) {
         ErrorHandler::e.Error("File not found : "+inFile,ln);
     }
+
+    if (inFile.toLower().endsWith(".trt")) {
+        TTRFile ttr;
+        ttr.Load(inFile);
+        ttr.Export(outFile, param2);
+        return;
+    }
+
+
     LImage* img = LImageIO::Load(inFile);
     if (dynamic_cast<CharsetImage*>(img)!=nullptr) {
         img->m_exportParams["Start"] = param1;
