@@ -2,7 +2,6 @@
 
 TTRFile::TTRFile()
 {
-
 }
 
 void TTRFile::InsertPattern(int pos) {
@@ -10,6 +9,25 @@ void TTRFile::InsertPattern(int pos) {
     ba.resize(m_patternLength*m_noChannels);
     ba.fill(0);
     m_patterns.insert(pos,ba);
+    for (QByteArray& ba: m_orders){
+        for (int i=0;i<ba.count();i++)
+            if ((uchar)ba[i]>=pos)
+                ba[i]++;
+    }
+}
+
+void TTRFile::DeletePattern(int pos)
+{
+    if (m_patterns.count()<=1)
+        return;
+
+    m_patterns.removeAt(pos);
+    for (QByteArray& ba: m_orders){
+        for (int i=0;i<ba.count();i++)
+            if ((uchar)ba[i]>=pos)
+                ba[i]--;
+    }
+
 }
 
 QVector<QByteArray> TTRFile::getCurrentPattern() {
@@ -21,6 +39,8 @@ QVector<QByteArray> TTRFile::getCurrentPattern() {
     QVector<QByteArray> patt;
     if (m_currentOrder>=m_orders.count())
         return patt;
+   if (m_currentOrder==-1)
+       m_currentOrder=0;
     for (uchar c: m_orders[m_currentOrder])
         patt.append(m_patterns[c]);
     return patt;
@@ -194,5 +214,26 @@ void TTRFile::LoadPSF(QString filename) {
     }
     qDebug() << "Patterns: " << m_patterns.count();
 
+
+}
+
+void TTRFile::InsertOrder()
+{
+    QByteArray ba;
+    ba.resize(m_noChannels);
+    ba.fill(0);
+    m_orders.insert(m_currentOrder,ba);
+//    m_currentOrder++;
+
+}
+
+void TTRFile::DeleteOrder()
+{
+    qDebug() << "Removing from :"  <<m_currentOrder;
+    if (m_orders.count()>1)
+        m_orders.removeAt(m_currentOrder);
+
+    if (m_currentOrder>=m_orders.count())
+        m_currentOrder = m_orders.count()-1;
 
 }

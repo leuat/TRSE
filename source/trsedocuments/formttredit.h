@@ -20,9 +20,12 @@ public:
     TTRFile m_ttr;
     CIniFile m_colors;
     QString m_rawFilename;
+    bool ignoreApplyPatterns = false;
     int m_currentInstrument = -1;
     QVector<WidgetPattern*> m_curPatterns;
     QVector<int> m_curPatternValues;
+    QMap<QString,QString> m_instruments;
+
     void Destroy() override {}
     void SaveCurrentInstrument();
 
@@ -35,6 +38,7 @@ public:
 
     void FillGUIFromData();
     void ApplyCurrentOrder();
+    void LoadPredefinedInstruments();
 
 private slots:
 
@@ -48,6 +52,19 @@ private slots:
     void on_cmbInstruments_currentIndexChanged(int index);
 
     void on_btnNewPattern_clicked();
+
+    void on_cmbPredefinedInstrument_currentIndexChanged(int index);
+
+    void on_btnSetInstrument_clicked();
+
+
+    void on_btnNewOrder_clicked();
+
+    void on_btnDeleteOrder_clicked();
+    void ReloadOrders();
+    void ReloadInstruments();
+
+    void on_btnDeletePattern_clicked();
 
 private:
     Ui::FormTTREdit *ui;

@@ -133,26 +133,36 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
 //    qDebug() << lst;
  //   qDebug() << note << octave << inst;
 
-    if (note!=-1) {
+/*    qDebug() << "BEFORE ";
+    for (int i=0;i<4;i++)
+        qDebug() << Util::numToHex(d[pos+i]);
+*/
+    for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
+        d[pos+i]=0;
+
+    if (note!=-1 && octave!=-1) {
         int semitone = octave*12 + note;
         d[pos] = 0x80 | semitone;
     }
-    else
-        d[pos] = 0;
-
+    qDebug() << note << octave <<Util::numToHex(d[pos]);
     if (vol!=-1)
-        d[pos+1] = 0x80 | (uchar)vol;
+        d[pos+1] = (uchar)0x80 | (uchar)vol;
 
     if (inst!=-1) {
-        d[pos+1] |= 0x40;
+        d[pos+1] |= (uchar)0x40;
         d[pos+2] = ((uchar)inst&0xf)<<4;
     }
+    if (note==-1)
+        d[pos+1]=0;
     if (cmd!=-1 && par!=-1) {
         d[pos+2] |= ((uchar)cmd)&0xf;
         d[pos+3] = (uchar)par;
     }
 
-
+  /*  qDebug() << "AFTER";
+    for (int i=0;i<4;i++)
+        qDebug() << Util::numToHex((uchar)d[pos+i]);
+*/
 }
 
 void TTRView::setData(QSharedPointer<DataStorage> pData)
@@ -413,9 +423,9 @@ void TTRView::paintEvent(QPaintEvent *event)
         return;
 
     if (m_columnColors.count()==0) {
-        m_columnColors.append(m_colors->getColor("textcolor")); // notes
-        m_columnColors.append(m_colors->getColor("keywordcolor")); // octave
         m_columnColors.append(m_colors->getColor("builtinfunctioncolor")); // volume
+        m_columnColors.append(m_colors->getColor("keywordcolor")); // octave
+        m_columnColors.append(m_colors->getColor("textcolor")); // notes
         m_columnColors.append(m_colors->getColor("quotationcolor")); // instr
         m_columnColors.append(m_colors->getColor("symbolscolor")); // instr
         m_columnColors.append(m_colors->getColor("cycles")); // instr

@@ -74,20 +74,37 @@ void FormTTREdit::FillGUIFromData()
     //ui->leInstruments->setText(Util::toString(Util::ByteArrayToHexQStringList(m_ttr.m_instruments)));
     //ui->leOrders->setText(Util::toString(Util::ByteArrayToHexQStringList(m_ttr.m_orders)));
 
-    QComboBox* cmb = ui->cmbPattern;
-    cmb->clear();
-    for (int i=0;i<m_ttr.m_orders.count();i++) {
-        cmb->addItem(QString::number(i));
-    }
+    ReloadOrders();
+    ReloadInstruments();
 
-    cmb = ui->cmbInstruments;
-    cmb->clear();
-    for (int i=0;i<m_ttr.m_instruments.count();i++) {
-        cmb->addItem(QString::number(i));
-    }
+    LoadPredefinedInstruments();
 
 
     ReloadPatterns();
+
+}
+void FormTTREdit::LoadPredefinedInstruments()
+{
+    QStringList lst = Util::loadTextFile(":resources/text/adlib_instruments.txt").split("\n");
+    for (QString s:lst) {
+        if (s.trimmed()=="")
+            continue;
+        if (s.startsWith("#"))
+            continue;
+        QStringList d = s.split(" ");
+        QString name = d[0];
+/*        QStringList data = d[1].split(",");
+        QByteArray ba = Util::HexQStringListToByteArray(data);
+        qDebug() << ba;*/
+        m_instruments[name] = d[1];
+
+    }
+
+    QComboBox* cmb = ui->cmbPredefinedInstrument;
+    cmb->clear();
+    for (QString s: m_instruments.keys())
+        cmb->addItem(s);
+
 
 }
 
@@ -96,7 +113,14 @@ void FormTTREdit::ReloadPatterns()
     Util::clearLayout(ui->lyTrackers);
     m_curPatterns.clear();
     m_curPatternValues.clear();
+    ui->cmbPatterns->clear();
+    for (int i=0;i<m_ttr.m_patterns.count();i++)
+        ui->cmbPatterns->addItem(QString::number(i));
+
     QVector<QByteArray> curPatt = m_ttr.getCurrentPattern();
+
+
+
     for (int i=0;i<curPatt.count();i++) {
         WidgetPattern* wp = new WidgetPattern();
         //ui->scrollArea->m_colors = &m_colors;
@@ -141,7 +165,7 @@ void FormTTREdit::ApplyCurrentOrder()
     for (int i=0;i<m_curPatterns.count();i++) {
 //        int pat = m_curPatterns[i]->getPatternCmb()->currentIndex();
         int pat = m_curPatternValues[i];
-        qDebug() << "CurrentPat To Save" << pat;
+//        qDebug() << "CurrentPat To Save" << pat;
         m_ttr.m_patterns[pat] = m_curPatterns[i]->getData();
         order.append(pat);
     }
@@ -149,9 +173,11 @@ void FormTTREdit::ApplyCurrentOrder()
 }
 
 
+
 void FormTTREdit::on_cmbPattern_currentIndexChanged(int index)
 {
-    ApplyCurrentOrder();
+    if (!ignoreApplyPatterns)
+        ApplyCurrentOrder();
     m_ttr.m_currentOrder = index;
     ReloadPatterns();
 }
@@ -180,6 +206,75 @@ void FormTTREdit::on_cmbInstruments_currentIndexChanged(int index)
 
 void FormTTREdit::on_btnNewPattern_clicked()
 {
-    m_ttr.InsertPattern(m_ttr.m_patterns.count());
+    m_ttr.InsertPattern(ui->cmbPatterns->currentIndex());
     ReloadPatterns();
+}
+
+void FormTTREdit::on_cmbPredefinedInstrument_currentIndexChanged(int index)
+{
+    //qDebug() << index;
+}
+
+void FormTTREdit::on_btnSetInstrument_clicked()
+{
+
+//    QByteArray ba = m_ttr.getPredefinedInstrument(ui->cmbPredefinedInstrument->currentIndex());
+
+    ui->leInstrumentData->setText(m_instruments[ui->cmbPredefinedInstrument->currentText()]);
+    ui->leInstrument->setText(ui->cmbPredefinedInstrument->currentText());
+}
+
+void FormTTREdit::on_btnNewOrder_clicked()
+{
+    ApplyCurrentOrder();
+    m_ttr.InsertOrder();
+    ignoreApplyPatterns = true;
+    ReloadOrders();
+    ignoreApplyPatterns = false;
+}
+
+void FormTTREdit::on_btnDeleteOrder_clicked()
+{
+    ApplyCurrentOrder();
+    m_ttr.DeleteOrder();
+    ignoreApplyPatterns = true;
+    ReloadOrders();
+    ignoreApplyPatterns = false;
+}
+
+void FormTTREdit::ReloadOrders()
+{
+    int keep = m_ttr.m_currentOrder;
+    QComboBox* cmb = ui->cmbPattern;
+    cmb->clear();
+    for (int i=0;i<m_ttr.m_orders.count();i++) {
+        cmb->addItem(QString::number(i));
+    }
+    if (keep!=-1)
+        cmb->setCurrentIndex(keep);
+
+}
+
+void FormTTREdit::ReloadInstruments()
+{
+
+    QComboBox* cmb;
+    cmb = ui->cmbInstruments;
+    cmb->clear();
+    for (int i=0;i<m_ttr.m_instruments.count();i++) {
+        cmb->addItem(QString::number(i));
+    }
+
+    if (m_ttr.m_currentInstrument!=-1)
+        cmb->setCurrentIndex(m_ttr.m_currentInstrument);
+
+
+
+}
+
+void FormTTREdit::on_btnDeletePattern_clicked()
+{
+    m_ttr.DeletePattern(ui->cmbPatterns->currentIndex());
+    ReloadPatterns();
+
 }
