@@ -848,6 +848,7 @@ std::size_t TTRView::cursorPos(const QPoint &position)
 
         int firstLineIdx = 0;
         if (verticalScrollBar()) firstLineIdx = verticalScrollBar() -> value();
+        firstLineIdx--;
         int y = (position.y() / m_charHeight) * 2 * BYTES_PER_LINE;
         pos = x + y + firstLineIdx * BYTES_PER_LINE * 2;
     }
