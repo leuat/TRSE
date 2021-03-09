@@ -18,7 +18,7 @@ void TTRFile::Initialize(int channels, int rows)
 
 void TTRFile::InsertPattern(int pos) {
     QByteArray ba;
-    ba.resize(m_patternLength*m_noChannels);
+    ba.resize(m_patternLength*m_noBytesPerLine);
     ba.fill(0);
     m_patterns.insert(pos,ba);
     for (QByteArray& ba: m_orders){

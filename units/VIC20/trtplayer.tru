@@ -60,14 +60,18 @@ begin
 		if (j&$80 <>0) then
 		begin
 			j:= j &$7F; // Semitone
-			if (j<>$7f) then
+			octave := j/12;
+			if (octave<3) then
 			begin
-				// We have a note!
-				note := mod(j,12);
-				octave := j/12;
-				j := notes[3*note + octave];
-				poke(^$900a,i,j); // Play note!				
-			end;		
+				if (j<>$7f) then
+				begin
+					// We have a note!
+					note := mod(j,12);
+					j := notes[3*note + octave];
+					poke(^$900a,i,j); // Play note!				
+				end;		
+			end
+			else poke(^$900a,i,0);
 			
 		end;				
 	end;

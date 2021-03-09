@@ -26,7 +26,7 @@ class TTRView: public QAbstractScrollArea
 
 
         QString validHex = "abcdef0123456789-";
-        QString validNotes1 = "cdefgab-";
+        QString validNotes1 = "cdefgab-s";
         QString validNotes2 = "# -";
         QVector<QColor> m_columnColors;
         float m_size = 1.5;
