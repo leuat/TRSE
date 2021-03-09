@@ -129,9 +129,9 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
 
 
 //    qDebug() << note << pos << d.size();
-    qDebug() << "packline : "<<pos;
-    qDebug() << lst;
-    qDebug() << note << octave << inst;
+//    qDebug() << "packline : "<<pos;
+//    qDebug() << lst;
+ //   qDebug() << note << octave << inst;
 
     if (note!=-1) {
         int semitone = octave*12 + note;
@@ -494,17 +494,25 @@ void TTRView::paintEvent(QPaintEvent *event)
         QString address = QString("%1").arg(lineIdx, 2, 16, QChar('0'));
         painter.drawText(m_posAddr, yPos, address);
 
+        if (((lineIdx+1)&3)==0) {
+            painter.setPen(QColor(64,64,64));
+            painter.drawLine(QLine(m_posAddr,yPos+3,event->rect().right(),yPos+3));
+        }
+
         painter.setBackground(def);
         std::size_t pos = (lineIdx * DISPLAY_DATA_PER_LINE);
         QString line = UnpackLine(data, pos);
 
+
+
         if (m_cursorPos/(BYTES_PER_LINE*2)==lineIdx) {
             painter.setBackground(selected);
-            m_curLinePos = lineIdx;
+            m_curLinePos = pos;
 //            painter.setPen(textSelected);
         }
         int xp = m_posHex;
         int lp = 0;
+        if (line!="")
         for (int i=0;i<BYTES_PER_LINE;i++){
             painter.setPen(m_columnColors[i]);
             painter.drawText(xp, yPos, QString(line[lp])+QString(line[lp+1]));
@@ -767,30 +775,16 @@ void TTRView::keyPressEvent(QKeyEvent *event)
             if (validHex.contains(t))
                 line[curPSet] = t[0];
 
-
+        if (line[1]=='-') line[1] = ' ';
 
 //        qDebug() << line;
          PackLine(m_pdata->m_data,m_curLinePos,line);
 
-/*
-        if (m_cursorPos/8==lineIdx) {
-            painter.setBackground(selected);
-//            painter.setPen(textSelected);
-        }
-
-        painter.drawText(m_posHex, yPos, line);
-
-        if (m_cursorPos/8==lineIdx) {
-            painter.setBackground(selected);
-            painter.setPen(textSelected);
-            int pp = m_cursorPos%8;
-            pp += (int)(pp/2);
-            painter.drawText(m_posHex+m_charWidth*pp, yPos, line[pp]);
-        }
-
-  */
-
-        setCursorPos(m_cursorPos + 1);
+/*         setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);
+         resetSelection(m_cursorPos);
+         setVisible = true;
+*/
+        setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);
         resetSelection(m_cursorPos);
         setVisible = true;
         m_isChanged = true;

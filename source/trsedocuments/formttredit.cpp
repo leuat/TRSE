@@ -141,6 +141,7 @@ void FormTTREdit::ApplyCurrentOrder()
     for (int i=0;i<m_curPatterns.count();i++) {
 //        int pat = m_curPatterns[i]->getPatternCmb()->currentIndex();
         int pat = m_curPatternValues[i];
+        qDebug() << "CurrentPat To Save" << pat;
         m_ttr.m_patterns[pat] = m_curPatterns[i]->getData();
         order.append(pat);
     }
@@ -175,4 +176,10 @@ void FormTTREdit::on_cmbInstruments_currentIndexChanged(int index)
     QByteArray ba = m_ttr.m_instruments[index].mid(0,11);
     ui->leInstrumentData->setText(Util::toString(Util::ByteArrayToHexQStringList(ba)));
     m_currentInstrument = index;
+}
+
+void FormTTREdit::on_btnNewPattern_clicked()
+{
+    m_ttr.InsertPattern(m_ttr.m_patterns.count());
+    ReloadPatterns();
 }

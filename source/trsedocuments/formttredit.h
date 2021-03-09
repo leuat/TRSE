@@ -47,6 +47,8 @@ private slots:
 
     void on_cmbInstruments_currentIndexChanged(int index);
 
+    void on_btnNewPattern_clicked();
+
 private:
     Ui::FormTTREdit *ui;
 };
