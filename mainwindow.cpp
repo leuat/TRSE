@@ -650,6 +650,9 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     if (fileName.contains(".bin") || fileName.contains(".prg"))  {
         editor = new FormHexEdit(this);
     }
+    if (fileName.contains(".trt"))  {
+        editor = new FormTTREdit(this);
+    }
     editor->m_currentDir = m_currentPath+"/";
     if (!isExternal)
         editor->m_currentSourceFile = getProjectPath() + "/" + fileName;
@@ -1019,6 +1022,10 @@ void MainWindow::setupIcons()
     img.load(":resources/images/image_icon.png");
     m_icons["flf"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["flf"] = QColor(c1,c4,c4);
+
+    img.load(":resources/images/image_icon.png");
+    m_icons["trt"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["trt"] = QColor(c4,c5,c1);
 
     img.load(":resources/images/paw_icon.png");
     m_icons["paw"] = QIcon(QPixmap::fromImage(img));
@@ -1411,7 +1418,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
@@ -1472,7 +1479,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")
-        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid") ) {
+        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid")|| file.toLower().endsWith(".trt") ) {
         LoadDocument(path + file);
     }
 

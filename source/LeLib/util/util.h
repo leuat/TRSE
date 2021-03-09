@@ -217,6 +217,12 @@ public:
 
     inline static bool Mollweide(QVector3D& out, float i, float j, float l0, float R, float size);
 
+    static int getInt16(QByteArray& ba, int pos);
+    static void setInt16(QByteArray& ba, int pos, int val);
+    static void appendInt16(QByteArray& ba, int val);
+
+    static QStringList ByteArrayToHexQStringList(QByteArray& ba);
+    static QByteArray HexQStringListToByteArray(QStringList& lst);
 
     static QPoint mapToWindow(QWidget *from, QPoint pt);
 

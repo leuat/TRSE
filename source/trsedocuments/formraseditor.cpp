@@ -632,7 +632,7 @@ void FormRasEditor::Run()
     if (m_projectIniFile->getString("system")=="SPECTRUM")
         filename = m_currentSourceFile.split(ft)[0] + ".tap";
     if (m_projectIniFile->getString("system")=="X86")
-        filename = m_currentSourceFile.split(ft)[0] + ".com";
+        filename = m_currentSourceFile.split(ft)[0] + ".exe";
     if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (m_projectIniFile->getString("system")=="MSX")

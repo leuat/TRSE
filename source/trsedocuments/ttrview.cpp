@@ -1,4 +1,4 @@
-#include "hexview.h"
+#include "ttrview.h"
 
 #include <QScrollBar>
 #include <QPainter>
@@ -17,7 +17,7 @@ const int GAP_ADR_HEX = 10;
 const int GAP_HEX_ASCII = 16;
 
 
-HexView::HexView(QWidget *parent):
+TTRView::TTRView(QWidget *parent):
 QAbstractScrollArea(parent),
 m_pdata(NULL)
 {
@@ -30,55 +30,163 @@ m_pdata(NULL)
 }
 
 
-HexView::~HexView()
+TTRView::~TTRView()
 {
-    if(m_pdata)
-        delete m_pdata;
 }
 
-void HexView::Calculate()
+
+void TTRView::Calculate()
 {
-    m_hexPause = 00;
+    m_hexPause = 02;
     m_posAddr = 0;
-    m_posHex = 10 * m_charWidth + GAP_ADR_HEX;
-    m_posAscii = m_posHex + (1+BYTES_PER_LINE)*3 * m_charWidth + GAP_HEX_ASCII + m_hexPause;
+    m_posHex = 4 * m_charWidth + GAP_ADR_HEX;
+    //    m_posAscii = m_posHex + (1+BYTES_PER_LINE)*3 * m_charWidth + GAP_HEX_ASCII + m_hexPause;
 
-    setMinimumWidth(m_posAscii + (BYTES_PER_LINE * m_charWidth));
+    //  qDebug() <<
+    //    setMinimumWidth(m_posAscii + (BYTES_PER_LINE * m_charWidth));
 
 }
 
-void HexView::setData(DataStorage *pData)
+QString TTRView::UnpackLine(QByteArray &d, int pos)
 {
-    verticalScrollBar()->setValue(0);
-    if(m_pdata)
-        delete m_pdata;
+    if (pos+4>d.count())
+        return "";
+//    qDebug() << "unpackline : "<<pos;
+    QByteArray line = d.mid(pos,4);
+    int semitone = 0;
+    int note = -1;
+    int octave = 0;
+    int volume = 0;
+    int instr = 0;
+    int command = 0;
+    int param = 0;
+
+    QString s = "";
+    if ((line[0] & 0x80)) {
+        semitone = line[0] & 0x7f;
+        if (semitone == 0x7f)
+            note = -1;
+        else {
+            note = semitone % 12;
+            octave = semitone / 12;
+        }
+    }
+
+    if (line[1] & 0x80)
+      volume = line[1] & 0x3f;
+
+    if (line[1] & 0x40)
+        instr = (line[2] & 0xf0) >> 4;
+
+    command = line[2] & 0x0f;
+    param = (uchar)line[3];
+
+
+//            return (note, octave, instr, volume, command, param)
+
+    QString oct = QString("%1").arg(octave, 2, 16, QChar('0'));
+    QString inst = QString("%1").arg(instr, 2, 16, QChar('0'));
+    QString vol = QString("%1").arg(volume, 2, 16, QChar('0'));
+    QString cmd = QString("%1").arg(command, 2, 16, QChar('0'));
+    QString par = QString("%1").arg(param, 2, 16, QChar('0'));
+    QString n = "--";
+    if (note!=-1)
+        n = notes[note];
+    QString l = n + " " + oct + " "+inst + " " +vol + " " +cmd + " " +par;
+
+    return l;
+
+    //    return Util::toString(Util::ByteArrayToHexQStringList(line));
+}
+
+void TTRView::PackLine(QByteArray &d, int pos, QString line)
+{
+    QStringList lst = line.trimmed().simplified().split(" ");
+    //if (lst[0]!="--" )
+    int note = -1;
+    lst[0] = lst[0].toUpper();
+    if (lst[0].count()==1) lst[0]+=" ";
+    if (notes.contains(lst[0]))
+        note = notes.indexOf(lst[0]);
+
+
+    //QString l = n + " " + oct + " " +vol + " " +cmd + " " +par;
+
+    bool ok;
+    int octave = lst[1].toInt(&ok,16);
+    if (!ok)
+        octave = -1;
+    int inst = lst[2].toInt(&ok,16);
+    if (!ok)
+        inst = -1;
+    int vol = lst[3].toInt(&ok,16);
+    if (!ok) vol = -1;
+    int cmd = lst[4].toInt(&ok,16);
+    if (!ok) cmd = -1;
+
+    int par = lst[5].toInt(&ok,16);
+    if (!ok) par = -1;
+
+
+//    qDebug() << note << pos << d.size();
+    qDebug() << "packline : "<<pos;
+    qDebug() << lst;
+    qDebug() << note << octave << inst;
+
+    if (note!=-1) {
+        int semitone = octave*12 + note;
+        d[pos] = 0x80 | semitone;
+    }
+    else
+        d[pos] = 0;
+
+    if (vol!=-1)
+        d[pos+1] = 0x80 | (uchar)vol;
+
+    if (inst!=-1) {
+        d[pos+1] |= 0x40;
+        d[pos+2] = ((uchar)inst&0xf)<<4;
+    }
+    if (cmd!=-1 && par!=-1) {
+        d[pos+2] |= ((uchar)cmd)&0xf;
+        d[pos+3] = (uchar)par;
+    }
+
+
+}
+
+void TTRView::setData(QSharedPointer<DataStorage> pData)
+{
     m_pdata = pData;
+    verticalScrollBar()->setValue(0);
     m_cursorPos = 0;
     resetSelection(0);
 }
 
 
-void HexView::showFromOffset(std::size_t offset)
+void TTRView::showFromOffset(std::size_t offset)
 {
     if(m_pdata && offset < m_pdata->size())
     {
         setCursorPos(offset * 2);
 
         int cursorY = m_cursorPos / (2 * BYTES_PER_LINE);
-
+        if (verticalScrollBar()!=nullptr)
         verticalScrollBar() -> setValue(cursorY);
     }
 }
 
-void HexView::clear()
+void TTRView::clear()
 {
-    verticalScrollBar()->setValue(0);
+    if (verticalScrollBar()!=nullptr)
+        verticalScrollBar()->setValue(0);
 }
 
 
-QSize HexView::fullSize() const
+
+QSize TTRView::fullSize() const
 {
-    if(!m_pdata)
+    if(m_pdata==nullptr)
         return QSize(0, 0);
 
     std::size_t width = m_posAscii + (BYTES_PER_LINE * m_charWidth);
@@ -91,10 +199,15 @@ QSize HexView::fullSize() const
     return QSize(width, height);
 }
 
-void HexView::paintEvent(QPaintEvent *event)
-{
-    if(!m_pdata)
+
+void TTRView::paintEventOld(QPaintEvent *event) {
+    if(m_pdata==nullptr)
         return;
+    if (m_pdata->size()==0)
+        return;
+    if (m_colors==nullptr)
+        return;
+
     Calculate();
     QPainter painter(viewport());
     float dy = m_size;
@@ -107,13 +220,15 @@ void HexView::paintEvent(QPaintEvent *event)
     dx = m_charHeight/10.0;
     dy = m_charHeight/10.0;
     Calculate();
-
     QSize areaSize = viewport()->size();
     QSize  widgetSize = fullSize();
-    verticalScrollBar()->setPageStep(areaSize.height() / m_charHeight);
-    verticalScrollBar()->setRange(0, (widgetSize.height() - areaSize.height()) / m_charHeight + 1);
+    int firstLineIdx = 0;
+    if (verticalScrollBar()!=nullptr) {
+        verticalScrollBar()->setPageStep(areaSize.height() / m_charHeight);
+        verticalScrollBar()->setRange(0, (widgetSize.height() - areaSize.height()) / m_charHeight + 1);
+        firstLineIdx = verticalScrollBar() -> value();
+    }
 
-    int firstLineIdx = verticalScrollBar() -> value();
 
     int lastLineIdx = firstLineIdx + areaSize.height() / m_charHeight;
     if(lastLineIdx > m_pdata->size() / BYTES_PER_LINE)
@@ -122,6 +237,9 @@ void HexView::paintEvent(QPaintEvent *event)
         if(m_pdata->size() % BYTES_PER_LINE)
             lastLineIdx++;
     }
+
+
+
     painter.setFont(font());
     painter.fillRect(event->rect(), m_colors->getColor("backgroundcolor"));
 
@@ -131,7 +249,7 @@ void HexView::paintEvent(QPaintEvent *event)
     int linePos = m_posAscii - (GAP_HEX_ASCII / 2);
     painter.setPen(m_colors->getColor("cycles"));
 
-    painter.drawLine(linePos, event->rect().top(), linePos, height());
+//    painter.drawLine(linePos, event->rect().top(), linePos, height());
 
     painter.setPen(m_colors->getColor("textcolor"));
 
@@ -145,12 +263,15 @@ void HexView::paintEvent(QPaintEvent *event)
 
     for (int lineIdx = firstLineIdx, yPos = yPosStart;  lineIdx < lastLineIdx; lineIdx += 1, yPos += m_charHeight)
     {
+
         painter.setPen(m_colors->getColor("numberscolor"));
-        QString address = QString("%1").arg(lineIdx * BYTES_PER_LINE, 10, 16, QChar('0'));
+//        QString address = QString("%1").arg(lineIdx * BYTES_PER_LINE, 10, 16, QChar('0'));
+ //       painter.drawText(m_posAddr, yPos, address);
+        QString address = QString("%1").arg(lineIdx, 2, 16, QChar('0'));
         painter.drawText(m_posAddr, yPos, address);
 
         painter.setPen(textForeground);
-
+        int cnt=0;
         for(int xPos = m_posHex, i=0; i<BYTES_PER_LINE && ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) < data.size(); i++, xPos += 3 * m_charWidth)
         {
             std::size_t pos = (lineIdx * BYTES_PER_LINE + i) * 2;
@@ -198,11 +319,12 @@ void HexView::paintEvent(QPaintEvent *event)
             painter.setBackground(def);
             painter.setBackgroundMode(Qt::OpaqueMode);
 
-            if (i==8) xPos+=m_hexPause;
+//            if (i==4) xPos+=m_hexPause;
+            if ((i&3)==3) xPos+=m_charWidth*2;
 
 
         }
-        painter.setPen(m_colors->getColor("symbolscolor"));
+/*        painter.setPen(m_colors->getColor("symbolscolor"));
 
         for (int xPosAscii = m_posAscii, i=0; ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) < data.size() && (i < BYTES_PER_LINE); i++, xPosAscii += m_charWidth)
         {
@@ -262,7 +384,7 @@ void HexView::paintEvent(QPaintEvent *event)
                 }
             }
        }
-
+        */
 
     }
 
@@ -272,13 +394,153 @@ void HexView::paintEvent(QPaintEvent *event)
         int y = m_cursorPos / (2 * BYTES_PER_LINE);
         y -= firstLineIdx;
         int cursorX = (((x / 2) * 3) + (x % 2)) * m_charWidth + m_posHex;
+        cursorX += (int)(x/8)*m_charWidth*2;
         int cursorY = y * m_charHeight + 4;
         painter.fillRect(cursorX, cursorY, 2, m_charHeight, m_colors->getColor("textcolor"));
     }
 }
 
 
-void HexView::keyPressEvent(QKeyEvent *event)
+
+
+void TTRView::paintEvent(QPaintEvent *event)
+{
+    if(m_pdata==nullptr)
+        return;
+    if (m_pdata->size()==0)
+        return;
+    if (m_colors==nullptr)
+        return;
+
+    if (m_columnColors.count()==0) {
+        m_columnColors.append(m_colors->getColor("textcolor")); // notes
+        m_columnColors.append(m_colors->getColor("keywordcolor")); // octave
+        m_columnColors.append(m_colors->getColor("builtinfunctioncolor")); // volume
+        m_columnColors.append(m_colors->getColor("quotationcolor")); // instr
+        m_columnColors.append(m_colors->getColor("symbolscolor")); // instr
+        m_columnColors.append(m_colors->getColor("cycles")); // instr
+    }
+    Calculate();
+    QPainter painter(viewport());
+    float dy = m_size;
+    float dx = dy;
+
+    setFont(QFont("Courier", 10.0*dy));
+
+    m_charWidth = fontMetrics().averageCharWidth();//.width(QLatin1Char('9'));
+    m_charHeight = fontMetrics().height();
+    dx = m_charHeight/10.0;
+    dy = m_charHeight/10.0;
+    Calculate();
+    QSize areaSize = viewport()->size();
+    QSize  widgetSize = fullSize();
+    int firstLineIdx = 0;
+    if (verticalScrollBar()!=nullptr) {
+        verticalScrollBar()->setPageStep(areaSize.height() / m_charHeight);
+        verticalScrollBar()->setRange(0, (widgetSize.height() - areaSize.height()) / m_charHeight + 1);
+        firstLineIdx = verticalScrollBar() -> value();
+    }
+
+
+    int lastLineIdx = firstLineIdx + areaSize.height() / m_charHeight;
+    if(lastLineIdx > m_pdata->size() / DISPLAY_DATA_PER_LINE)
+    {
+        lastLineIdx = m_pdata->size() / DISPLAY_DATA_PER_LINE;
+        if(m_pdata->size() % DISPLAY_DATA_PER_LINE)
+            lastLineIdx++;
+    }
+
+
+
+    painter.setFont(font());
+    painter.fillRect(event->rect(), m_colors->getColor("backgroundcolor"));
+
+    QColor addressAreaColor = QColor(m_colors->getColor("linenumbersbackground"));
+    painter.fillRect(QRect(m_posAddr, event->rect().top(), m_posHex - GAP_ADR_HEX + 2 , height()), addressAreaColor);
+
+    int linePos = m_posAscii - (GAP_HEX_ASCII / 2);
+    painter.setPen(m_colors->getColor("cycles"));
+
+//    painter.drawLine(linePos, event->rect().top(), linePos, height());
+
+    painter.setPen(m_colors->getColor("textcolor"));
+
+    int yPosStart = m_charHeight*2;
+
+    QBrush def = painter.brush();
+    QBrush selected = QBrush(m_colors->getColor("currentline"));
+//    QColor textForeground = (m_colors->getColor("textcolor"));
+
+
+    QColor textSelected = (m_colors->getColor("numberscolor"));
+    QByteArray data = m_pdata->getData(firstLineIdx * BYTES_PER_LINE, (lastLineIdx - firstLineIdx) * BYTES_PER_LINE);
+
+    painter.setBackgroundMode(Qt::OpaqueMode);
+
+    painter.setPen(textSelected);
+    painter.setBackground(def);
+//    QString l = n + " " + oct + " "+inst + " " +vol + " " +cmd + " " +par;
+    painter.setFont(QFont("Courier", 8.0*dy));
+
+    painter.drawText(m_posAddr, m_charHeight, "    note oct ins vol cmd par");
+
+    painter.setFont(font());
+
+    for (int lineIdx = firstLineIdx, yPos = yPosStart;  lineIdx < lastLineIdx; lineIdx += 1, yPos += m_charHeight)
+    {
+        painter.setPen(m_colors->getColor("numberscolor"));
+//        QString address = QString("%1").arg(lineIdx * BYTES_PER_LINE, 10, 16, QChar('0'));
+ //       painter.drawText(m_posAddr, yPos, address);
+        QString address = QString("%1").arg(lineIdx, 2, 16, QChar('0'));
+        painter.drawText(m_posAddr, yPos, address);
+
+        painter.setBackground(def);
+        std::size_t pos = (lineIdx * DISPLAY_DATA_PER_LINE);
+        QString line = UnpackLine(data, pos);
+
+        if (m_cursorPos/(BYTES_PER_LINE*2)==lineIdx) {
+            painter.setBackground(selected);
+            m_curLinePos = lineIdx;
+//            painter.setPen(textSelected);
+        }
+        int xp = m_posHex;
+        int lp = 0;
+        for (int i=0;i<BYTES_PER_LINE;i++){
+            painter.setPen(m_columnColors[i]);
+            painter.drawText(xp, yPos, QString(line[lp])+QString(line[lp+1]));
+            xp+=m_charWidth*3;
+            lp+=3;
+        }
+
+        if (m_cursorPos/(BYTES_PER_LINE*2)==lineIdx) {
+            painter.setBackground(selected);
+            painter.setPen(textSelected);
+            int pp = m_cursorPos%(BYTES_PER_LINE*2);
+//            int po = pp/2;
+            pp += (int)(pp/2);
+            painter.drawText(m_posHex+m_charWidth*pp, yPos, line[pp]);
+        }
+
+
+
+
+
+        }
+/*    if (hasFocus())
+    {
+        int x = (m_cursorPos % (2 * BYTES_PER_LINE));
+        int y = m_cursorPos / (2 * BYTES_PER_LINE);
+        y -= firstLineIdx;
+        int cursorX = (((x / 2) * 3) + (x % 2)) * m_charWidth + m_posHex;
+        cursorX += (int)(x/8)*m_charWidth*2;
+        int cursorY = y * m_charHeight + 4;
+        painter.fillRect(cursorX, cursorY, 2, m_charHeight, m_colors->getColor("textcolor"));
+    }
+    */
+}
+
+
+void TTRView::keyPressEvent(QKeyEvent *event)
 {
     bool setVisible = false;
     if (m_doc!=nullptr)
@@ -473,7 +735,7 @@ void HexView::keyPressEvent(QKeyEvent *event)
 
 
     QString t = event->text();
-
+/*
     if(event->key() == Qt::Key_Delete)
     {
         m_pdata->m_data.remove(m_selectBegin / 2, (m_selectEnd - m_selectBegin) / 2 + 1);
@@ -486,22 +748,48 @@ void HexView::keyPressEvent(QKeyEvent *event)
         m_isChanged = true;
     }
 
-
-    if (valid.contains(t) && t!="") {
-        uchar val = m_pdata->getData(m_cursorPos/2,1)[0];
-        bool ok;
-        int shift = 0;
-        if ((m_cursorPos&1)==0) {
-            val = val & 0x0F;
-            shift = 4;
+*/
+    if (t!="") {
+        t = t.toLower();
+        QString line = UnpackLine(m_pdata->m_data,m_curLinePos);
+//        qDebug() << line;
+        int curP = (m_cursorPos%(BYTES_PER_LINE*2));
+        int curPSet = curP + (int)(curP/2);
+        if (curP==0){
+            if (validNotes1.contains(t))
+                line[curPSet] = t[0];
+        } else
+        if (curP==1){
+            if (validNotes2.contains(t))
+                line[curPSet] = t[0];
         }
-        else val = val & 0xF0;
-        val = val | t.toInt(&ok,16)<<shift;
+        else
+            if (validHex.contains(t))
+                line[curPSet] = t[0];
 
-        if (m_pdata!=nullptr)
-           m_pdata->setData(m_cursorPos/2,val);
 
-//        qDebug() << Util::numToHex(val) << t;
+
+//        qDebug() << line;
+         PackLine(m_pdata->m_data,m_curLinePos,line);
+
+/*
+        if (m_cursorPos/8==lineIdx) {
+            painter.setBackground(selected);
+//            painter.setPen(textSelected);
+        }
+
+        painter.drawText(m_posHex, yPos, line);
+
+        if (m_cursorPos/8==lineIdx) {
+            painter.setBackground(selected);
+            painter.setPen(textSelected);
+            int pp = m_cursorPos%8;
+            pp += (int)(pp/2);
+            painter.drawText(m_posHex+m_charWidth*pp, yPos, line[pp]);
+        }
+
+  */
+
         setCursorPos(m_cursorPos + 1);
         resetSelection(m_cursorPos);
         setVisible = true;
@@ -519,7 +807,7 @@ void HexView::keyPressEvent(QKeyEvent *event)
     viewport() -> update();
 }
 
-void HexView::mouseMoveEvent(QMouseEvent * event)
+void TTRView::mouseMoveEvent(QMouseEvent * event)
 {
     int actPos = cursorPos(event->pos());
     setCursorPos(actPos);
@@ -528,7 +816,7 @@ void HexView::mouseMoveEvent(QMouseEvent * event)
     viewport() -> update();
 }
 
-void HexView::mousePressEvent(QMouseEvent * event)
+void TTRView::mousePressEvent(QMouseEvent * event)
 {
     int cPos = cursorPos(event->pos());
 
@@ -543,10 +831,9 @@ void HexView::mousePressEvent(QMouseEvent * event)
 }
 
 
-std::size_t HexView::cursorPos(const QPoint &position)
+std::size_t TTRView::cursorPos(const QPoint &position)
 {
     int pos = -1;
-
     if ((position.x() >= m_posHex) && (position.x() < (m_posHex + HEXCHARS_IN_LINE * m_charWidth)))
     {
         int x = (position.x() - m_posHex) / m_charWidth;
@@ -555,7 +842,8 @@ std::size_t HexView::cursorPos(const QPoint &position)
         else
             x = ((x / 3) * 2) + 1;
 
-        int firstLineIdx = verticalScrollBar() -> value();
+        int firstLineIdx = 0;
+        if (verticalScrollBar()) firstLineIdx = verticalScrollBar() -> value();
         int y = (position.y() / m_charHeight) * 2 * BYTES_PER_LINE;
         pos = x + y + firstLineIdx * BYTES_PER_LINE * 2;
     }
@@ -563,13 +851,13 @@ std::size_t HexView::cursorPos(const QPoint &position)
 }
 
 
-void HexView::resetSelection()
+void TTRView::resetSelection()
 {
     m_selectBegin = m_selectInit;
     m_selectEnd = m_selectInit;
 }
 
-void HexView::resetSelection(int pos)
+void TTRView::resetSelection(int pos)
 {
     if (pos < 0)
         pos = 0;
@@ -579,7 +867,7 @@ void HexView::resetSelection(int pos)
     m_selectEnd = pos;
 }
 
-void HexView::setSelection(int pos)
+void TTRView::setSelection(int pos)
 {
     if (pos < 0)
         pos = 0;
@@ -597,7 +885,7 @@ void HexView::setSelection(int pos)
 }
 
 
-void HexView::setCursorPos(int position)
+void TTRView::setCursorPos(int position)
 {
     if(position < 0)
         position = 0;
@@ -605,9 +893,9 @@ void HexView::setCursorPos(int position)
     int maxPos = 0;
     if(m_pdata)
     {
-        maxPos = m_pdata->size() * 2;
-        if(m_pdata->size() % BYTES_PER_LINE)
-            maxPos++;
+        maxPos = m_pdata->size() * 2/(DISPLAY_DATA_PER_LINE/(float)BYTES_PER_LINE)-1;
+        //if(m_pdata->size() % BYTES_PER_LINE)
+          //  maxPos++;
     }
 
     if(position > maxPos)
@@ -616,7 +904,7 @@ void HexView::setCursorPos(int position)
     m_cursorPos = position;
 }
 
-void HexView::ensureVisible()
+void TTRView::ensureVisible()
 {
     QSize areaSize = viewport()->size();
 
@@ -633,49 +921,3 @@ void HexView::ensureVisible()
 
 
 
-DataStorageArray::DataStorageArray(const QByteArray &arr)
-{
-    m_data = arr;
-}
-
-void DataStorageArray::setData(std::size_t position, unsigned char val)
-{
-//    if (position<m_data.length())
-        m_data[(int)position] = val;
-}
-
-QByteArray DataStorageArray::getData(std::size_t position, std::size_t length)
-{
-    return m_data.mid(position, length);
-}
-
-
-std::size_t DataStorageArray::size()
-{
-    return m_data.count();
-}
-
-
-DataStorageFile::DataStorageFile(const QString &fileName): m_file(fileName)
-{
-    m_file.open(QIODevice::ReadOnly);
-    if(!m_file.isOpen())
-        throw std::runtime_error(std::string("Failed to open file `") + fileName.toStdString() + "`");
-}
-
-void DataStorageFile::setData(std::size_t position, unsigned char val)
-{
-
-}
-
-QByteArray DataStorageFile::getData(std::size_t position, std::size_t length)
-{
-    m_file.seek(position);
-    return m_file.read(length);
-}
-
-
-std::size_t DataStorageFile::size()
-{
-    return m_file.size();
-}

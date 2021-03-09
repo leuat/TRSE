@@ -7,65 +7,32 @@
  *
  * */
 
-#ifndef Q_HEX_VIEWER_H_
-#define Q_HEX_VIEWER_H_
+#ifndef Q_TTR_VIEWER_H_
+#define Q_TTR_VIEWER_H_
 
 #include <QAbstractScrollArea>
 #include <QByteArray>
 #include <QFile>
 #include "source/trsedocuments/trsedocument.h"
 #include "source/LeLib/util/cinifile.h"
-
-class DataStorage
-{
-    public:
-        virtual ~DataStorage() {}
-        virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
-        virtual void setData(std::size_t position, unsigned char val) = 0;
-        virtual std::size_t size() = 0;
-    void Insert(int index, uchar val) {
-        m_data.insert(index,val);
-    }
-    void Delete(int index) {
-        m_data.remove(index,1);
-    }
-    QByteArray    m_data;
-};
-
-
-class DataStorageArray: public DataStorage
-{
-    public:
-        DataStorageArray(const QByteArray &arr);
-        virtual void setData(std::size_t position, unsigned char val);
-        virtual QByteArray getData(std::size_t position, std::size_t length);
-        virtual std::size_t size();
-};
-
-class DataStorageFile: public DataStorage
-{
-    public:
-        DataStorageFile(const QString &fileName);
-        virtual void setData(std::size_t position, unsigned char val);
-        virtual QByteArray getData(std::size_t position, std::size_t length);
-        virtual std::size_t size();
-    private:
-        QFile      m_file;
-};
-
-
-class HexView: public QAbstractScrollArea
+#include "source/ImageEditor/hexview.h"
+#include <QSharedPointer>
+class TTRView: public QAbstractScrollArea
 
 {
     public:
         TRSEDocument* m_doc = nullptr;
+        QStringList notes = QStringList() << "C "<<"C#"<<"D "<<"D#"<<"E "<<"F "<<"F#"<<"G "<<"G#"<<"A "<<"A#"<<"B ";
 
 
-
-        QString valid = "abcdef0123456789";
+        QString validHex = "abcdef0123456789-";
+        QString validNotes1 = "cdefgab-";
+        QString validNotes2 = "# -";
+        QVector<QColor> m_columnColors;
         float m_size = 1.5;
-        HexView(QWidget *parent = 0);
-        ~HexView();
+        int m_curLinePos;
+        TTRView(QWidget *parent = 0);
+        ~TTRView();
 
         void setWidgetResizable(bool) {
 
@@ -77,24 +44,30 @@ class HexView: public QAbstractScrollArea
 
         CIniFile* m_colors = nullptr;
 
-        int BYTES_PER_LINE = 16;
+        int DISPLAY_DATA_PER_LINE = 4;
+        int BYTES_PER_LINE = 6;
         void Calculate();
 
         bool m_isChanged = false;
+        QString UnpackLine(QByteArray& d, int pos );
+        void PackLine(QByteArray& d, int pos, QString line);
+signals:
+        void emitSave();
 
     public slots:
-        void setData(DataStorage *pData);
+        void setData(QSharedPointer<DataStorage> pData);
         void clear();
         void showFromOffset(std::size_t offset);
 
     protected:
         void paintEvent(QPaintEvent *event);
+        void paintEventOld(QPaintEvent *event);
         void keyPressEvent(QKeyEvent *event);
         void mouseMoveEvent(QMouseEvent *event);
         void mousePressEvent(QMouseEvent *event);
 
 public:
-        DataStorage          *m_pdata = nullptr;
+        QSharedPointer<DataStorage>          m_pdata;
 private:
         std::size_t           m_posAddr;
         std::size_t           m_posHex;
@@ -117,6 +90,7 @@ private:
         void ensureVisible();
         void setCursorPos(int pos);
         std::size_t cursorPos(const QPoint &position);
+
 };
 
 #endif

@@ -17,7 +17,7 @@ FormHexEdit::~FormHexEdit()
 bool FormHexEdit::Load(QString filename) {
     m_data = Util::loadBinaryFile(filename);
     m_rawFilename = filename;
-    ui->scrollArea->setData(new HexView::DataStorageArray(m_data));
+    ui->scrollArea->setData(new DataStorageArray(m_data));
     return true;
 }
 

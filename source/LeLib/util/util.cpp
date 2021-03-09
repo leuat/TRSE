@@ -799,6 +799,42 @@ bool Util::Mollweide(QVector3D &out, float i, float j, float l0, float R, float 
 
 }
 
+int Util::getInt16(QByteArray &ba, int pos)
+{
+    return ((uchar)ba[pos+1]<<8) | (uchar)ba[pos];
+}
+
+void Util::setInt16(QByteArray &ba, int pos, int val)
+{
+    ba[pos+1] = (val>>8)&0xFF;
+    ba[pos] = (val)&0xFF;
+}
+
+void Util::appendInt16(QByteArray &ba, int val)
+{
+    ba.append((val)&0xFF);
+    ba.append((val>>8)&0xFF);
+
+}
+
+QStringList Util::ByteArrayToHexQStringList(QByteArray &ba)
+{
+    QStringList l;
+    for (int i=0;i<ba.size();i++) {
+        l<<Util::numToHex((uchar)ba[i]).remove("$");
+    }
+    return l;
+}
+
+QByteArray Util::HexQStringListToByteArray(QStringList &lst)
+{
+    QByteArray ba;
+    for (QString s:lst) {
+        ba.append((uchar)Util::NumberFromStringHex(s));
+    }
+    return ba;
+}
+
 QPoint Util::mapToWindow(QWidget *from, QPoint pt) {
     QWidget *wnd = from->window();
     while(from && from!=wnd){

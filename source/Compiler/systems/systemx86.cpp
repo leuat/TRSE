@@ -17,15 +17,18 @@ void SystemX86::Assemble(QString &text, QString filename, QString currentDir, QS
        // -kick1hunks  -o example$1 -nosym source$1.asm
   //      params << "-kick1hunks";
     //    params << "-Fhunkexe";
-        params << "-o" << filename + ".com";
+        params << "-o" << filename + ".exe";
         params << filename+".asm";
        // qDebug() << params;
         process.start(m_settingsIni->getString("nasm"), params);
         process.waitForFinished();
         output = process.readAllStandardOutput();
-        //qDebug() << output;
-        output = process.readAllStandardError();
-
+        output+= process.readAllStandardError();
+//        qDebug() << output;
+/*        output = process.readAllStandardError();
+        process.start(m_settingsIni->getString("nasm"), QStringList() << filename + ".obj" << filename + ".exe");
+        process.waitForFinished();
+*/
 
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();

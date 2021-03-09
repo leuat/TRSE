@@ -165,6 +165,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/limage/ssim.cpp \
+    source/LeLib/ttrfile.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
     source/LeLib/util/lz4/lz4hc.c \
@@ -186,7 +187,10 @@ SOURCES += main.cpp\
     source/toolboxitem.cpp \
     source/trsedocuments/dialogcustomwarning.cpp \
     source/trsedocuments/formhexedit.cpp \
+    source/trsedocuments/formttredit.cpp \
     source/trsedocuments/helpdocumentbuilder.cpp \
+    source/trsedocuments/ttrview.cpp \
+    source/trsetracker/widgetpattern.cpp \
     source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
@@ -383,6 +387,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/limage/ssim.h \
+    source/LeLib/ttrfile.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
     source/LeLib/util/lz4/lz4hc.h \
@@ -404,7 +409,10 @@ HEADERS  += mainwindow.h \
     source/toolboxitem.h \
     source/trsedocuments/dialogcustomwarning.h \
     source/trsedocuments/formhexedit.h \
+    source/trsedocuments/formttredit.h \
     source/trsedocuments/helpdocumentbuilder.h \
+    source/trsedocuments/ttrview.h \
+    source/trsetracker/widgetpattern.h \
     source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \
@@ -547,6 +555,7 @@ FORMS    += mainwindow.ui \
     source/formhelp.ui \
     source/trsedocuments/dialogcustomwarning.ui \
     source/trsedocuments/formhexedit.ui \
+    source/trsedocuments/formttredit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
     source/dialogtrsesettings.ui \
@@ -563,7 +572,8 @@ FORMS    += mainwindow.ui \
     source/dialogeffects.ui \
     source/trsedocuments/formfjong.ui \
     source/dialogcolors.ui \
-    source/dialogprojectbuilder.ui
+    source/dialogprojectbuilder.ui \
+    source/trsetracker/widgetpattern.ui
 
 RESOURCES += \
     resources.qrc
