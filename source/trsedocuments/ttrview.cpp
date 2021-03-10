@@ -113,7 +113,10 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
     //QString l = n + " " + oct + " " +vol + " " +cmd + " " +par;
 
     bool ok;
+    lst[1][0] = '0';
     int octave = lst[1].toInt(&ok,16);
+    if (octave>9)
+        octave = 9;
     if (!ok)
         octave = -1;
     int inst = lst[2].toInt(&ok,16);
@@ -789,13 +792,8 @@ void TTRView::keyPressEvent(QKeyEvent *event)
 
         if (line[1]=='-') line[1] = ' ';
 
-//        qDebug() << line;
          PackLine(m_pdata->m_data,m_curLinePos,line);
 
-/*         setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);
-         resetSelection(m_cursorPos);
-         setVisible = true;
-*/
         setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);
         resetSelection(m_cursorPos);
         setVisible = true;
