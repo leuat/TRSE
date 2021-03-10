@@ -20,6 +20,8 @@
 class TTRView: public QAbstractScrollArea
 
 {
+    Q_OBJECT
+
     public:
         TRSEDocument* m_doc = nullptr;
         QStringList notes = QStringList() << "C "<<"C#"<<"D "<<"D#"<<"E "<<"F "<<"F#"<<"G "<<"G#"<<"A "<<"A#"<<"B ";
@@ -31,6 +33,7 @@ class TTRView: public QAbstractScrollArea
         QVector<QColor> m_columnColors;
         float m_size = 1.5;
         int m_curLinePos;
+
         TTRView(QWidget *parent = 0);
         ~TTRView();
 
@@ -51,8 +54,6 @@ class TTRView: public QAbstractScrollArea
         bool m_isChanged = false;
         QString UnpackLine(QByteArray& d, int pos );
         void PackLine(QByteArray& d, int pos, QString line);
-signals:
-        void emitSave();
 
     public slots:
         void setData(QSharedPointer<DataStorage> pData);
@@ -68,6 +69,12 @@ signals:
 
 public:
         QSharedPointer<DataStorage>          m_pdata;
+        void setCursorPos(int pos);
+        void resetSelection();
+        void resetSelection(int pos);
+        void setSelection(int pos);
+        void ensureVisible();
+
 private:
         std::size_t           m_posAddr;
         std::size_t           m_posHex;
@@ -84,12 +91,12 @@ private:
 
 
         QSize fullSize() const;
-        void resetSelection();
-        void resetSelection(int pos);
-        void setSelection(int pos);
-        void ensureVisible();
-        void setCursorPos(int pos);
         std::size_t cursorPos(const QPoint &position);
+
+signals:
+        void emitSave();
+        void emitChangeTriggered();
+        void emitMove(int direction, int pos);
 
 };
 

@@ -128,15 +128,6 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
     if (!ok) par = -1;
 
 
-//    qDebug() << note << pos << d.size();
-//    qDebug() << "packline : "<<pos;
-//    qDebug() << lst;
- //   qDebug() << note << octave << inst;
-
-/*    qDebug() << "BEFORE ";
-    for (int i=0;i<4;i++)
-        qDebug() << Util::numToHex(d[pos+i]);
-*/
     for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
         d[pos+i]=0;
 
@@ -514,7 +505,7 @@ void TTRView::paintEvent(QPaintEvent *event)
         QString line = UnpackLine(data, pos);
 
 
-
+        if (hasFocus())
         if (m_cursorPos/(BYTES_PER_LINE*2)==lineIdx) {
             painter.setBackground(selected);
             m_curLinePos = pos;
@@ -522,6 +513,7 @@ void TTRView::paintEvent(QPaintEvent *event)
         }
         int xp = m_posHex;
         int lp = 0;
+
         if (line!="")
         for (int i=0;i<BYTES_PER_LINE;i++){
             painter.setPen(m_columnColors[i]);
@@ -530,6 +522,7 @@ void TTRView::paintEvent(QPaintEvent *event)
             lp+=3;
         }
 
+        if (hasFocus())
         if (m_cursorPos/(BYTES_PER_LINE*2)==lineIdx) {
             painter.setBackground(selected);
             painter.setPen(textSelected);
@@ -555,6 +548,7 @@ void TTRView::paintEvent(QPaintEvent *event)
         painter.fillRect(cursorX, cursorY, 2, m_charHeight, m_colors->getColor("textcolor"));
     }
     */
+
 }
 
 
@@ -568,12 +562,20 @@ void TTRView::keyPressEvent(QKeyEvent *event)
 /*****************************************************************************/
     if(event->matches(QKeySequence::MoveToNextChar))
     {
+        if (((m_cursorPos+1)%(BYTES_PER_LINE*2))==0) {
+            emit emitMove(1,m_cursorPos-(m_cursorPos)%(BYTES_PER_LINE*2));
+            return;
+        }
         setCursorPos(m_cursorPos + 1);
         resetSelection(m_cursorPos);
         setVisible = true;
     }
     if(event->matches(QKeySequence::MoveToPreviousChar))
     {
+        if (((m_cursorPos)%(BYTES_PER_LINE*2))==0) {
+            emit emitMove(-1,m_cursorPos+((BYTES_PER_LINE*2))-1);
+            return;
+        }
         setCursorPos(m_cursorPos - 1);
         resetSelection(m_cursorPos);
         setVisible = true;
@@ -809,6 +811,7 @@ void TTRView::keyPressEvent(QKeyEvent *event)
         ensureVisible();
 
     viewport() -> update();
+    emit emitChangeTriggered();
 }
 
 void TTRView::mouseMoveEvent(QMouseEvent * event)
@@ -895,6 +898,7 @@ void TTRView::setCursorPos(int position)
     if(position < 0)
         position = 0;
 
+
     int maxPos = 0;
     if(m_pdata)
     {
@@ -905,6 +909,7 @@ void TTRView::setCursorPos(int position)
 
     if(position > maxPos)
         position = maxPos;
+
 
     m_cursorPos = position;
 }

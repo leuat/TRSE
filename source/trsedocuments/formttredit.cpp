@@ -9,6 +9,8 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
     m_programEndingType = "trt";
     m_fileExtension = "trt";
 
+
+
 }
 
 FormTTREdit::~FormTTREdit()
@@ -137,7 +139,7 @@ void FormTTREdit::ReloadPatterns()
         m_curPatterns.append(wp);
         ui->lyTrackers->addWidget(wp);
         wp->SetData(this,&m_colors, QSharedPointer<DataStorageArray>(
-                        new DataStorageArray(curPatt[i])));
+                        new DataStorageArray(curPatt[i])),m_ttr.m_orders[m_ttr.m_currentOrder][i],i);
 
 
 
@@ -148,6 +150,8 @@ void FormTTREdit::ReloadPatterns()
 
         cmb->setCurrentIndex((uchar)m_ttr.m_orders[m_ttr.m_currentOrder][i]);
         connect(wp, SIGNAL(emitReloadPatterns()), this, SLOT(UpdatePatterns()));
+        connect(wp, SIGNAL(emitUpdatePatterns(WidgetPattern*, int)), this, SLOT(HandleUpdatePatterns(WidgetPattern*, int)));
+        connect(wp, SIGNAL(emitMove(int,int,int)), this, SLOT(HandleMove(int,int,int)));
         m_curPatternValues.append((uchar)m_ttr.m_orders[m_ttr.m_currentOrder][i]);
 
     }
@@ -163,6 +167,32 @@ void FormTTREdit::UpdatePatterns()
     }
 
     ReloadPatterns();
+}
+
+void FormTTREdit::HandleUpdatePatterns(WidgetPattern* wp, int pattern)
+{
+//    qDebug() << "Ready to handle pattern " << pattern;
+    QByteArray data = wp->getData();
+    for (auto w : m_curPatterns) {
+        if (w!=wp)
+            if (w->m_curPattern==pattern)
+                w->UpdateData(data);
+        w->RefreshAll();
+    }
+}
+
+void FormTTREdit::HandleMove(int dir, int pos, int col)
+{
+//    qDebug() << "READY TO MOVE FROM "<<col;
+
+    int i =(col+dir)%m_ttr.m_noChannels;
+    if (i<0) i=m_ttr.m_noChannels-1;
+    WidgetPattern* wp = m_curPatterns[i];
+    //qDebug() << pos;
+    wp->SetCursorPosition(pos);
+    for (auto w: m_curPatterns)
+        w->RefreshAll();
+//    wp->Set
 }
 
 void FormTTREdit::ApplyCurrentOrder()

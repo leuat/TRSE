@@ -17,14 +17,24 @@ public:
 
     QComboBox* getPatternCmb();
 
-    void SetData(TRSEDocument* doc, CIniFile* colors, QSharedPointer<DataStorage> ds);
+    void SetData(TRSEDocument* doc, CIniFile* colors, QSharedPointer<DataStorage> ds, int curPatt, int curColumn);
+    void UpdateData(QByteArray& ba);
     QByteArray& getData();
+    int m_curPattern, m_curColumn;
+    void RefreshAll();
+    void SetCursorPosition(int pos);
 
 private slots:
     void on_cbmPattern_currentIndexChanged(int index);
+    void PropagateUpdate();
+    void acceptMove(int direction, int pos);
+
 
 signals:
     void emitReloadPatterns();
+    void emitUpdatePatterns(WidgetPattern* who, int curPattern);
+    void emitMove(int dir, int pos, int curColumn);
+
 
 private:
     Ui::WidgetPattern *ui;

@@ -42,10 +42,13 @@ public:
     void ApplyCurrentOrder();
     void LoadPredefinedInstruments();
 
+
 private slots:
 
     void ReloadPatterns();
     void UpdatePatterns();
+    void HandleUpdatePatterns(WidgetPattern*, int);
+    void HandleMove(int dir, int pos, int col);
 
 
 
