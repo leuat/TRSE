@@ -117,8 +117,10 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
     int octave = lst[1].toInt(&ok,16);
     if (octave>9)
         octave = 9;
+
     if (!ok)
         octave = -1;
+
     int inst = lst[2].toInt(&ok,16);
     if (!ok)
         inst = -1;
@@ -129,6 +131,7 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
 
     int par = lst[5].toInt(&ok,16);
     if (!ok) par = -1;
+
 
 
     for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
@@ -774,10 +777,12 @@ void TTRView::keyPressEvent(QKeyEvent *event)
 */
     if (t!="") {
         t = t.toLower();
-        QString line = UnpackLine(m_pdata->m_data,m_curLinePos);
-//        qDebug() << line;
         int curP = (m_cursorPos%(BYTES_PER_LINE*2));
         int curPSet = curP + (int)(curP/2);
+        bool isNote =  curP<3;
+        QString line = UnpackLine(m_pdata->m_data,m_curLinePos);
+
+//        qDebug() << line;
         if (curP==0){
             if (validNotes1.contains(t))
                 line[curPSet] = t[0];
@@ -792,6 +797,17 @@ void TTRView::keyPressEvent(QKeyEvent *event)
 
         if (line[1]=='-') line[1] = ' ';
 
+        if (notesOnly.contains(line[1]))  {
+            line[0] = line[1];
+            line[1] = ' ';
+        }
+
+        if (!isNote) // Update keepsake data if it isn't a note
+            m_lastLine = line;
+        else {
+            if (m_lastLine!="")
+                line = line.mid(0,3) + m_lastLine.mid(3,m_lastLine.count());
+        }
          PackLine(m_pdata->m_data,m_curLinePos,line);
 
         setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);

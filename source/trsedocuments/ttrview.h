@@ -29,10 +29,15 @@ class TTRView: public QAbstractScrollArea
 
         QString validHex = "abcdef0123456789-";
         QString validNotes1 = "cdefgab-s";
+        QString notesOnly = "cdefgab";
         QString validNotes2 = "# -";
         QVector<QColor> m_columnColors;
         float m_size = 1.5;
         int m_curLinePos;
+        int m_curOctave;
+        int m_curCmd;
+        int m_curEffect;
+        int m_curInstrument;
 
         TTRView(QWidget *parent = 0);
         ~TTRView();
@@ -52,6 +57,7 @@ class TTRView: public QAbstractScrollArea
         void Calculate();
 
         bool m_isChanged = false;
+        QString m_lastLine="";
         QString UnpackLine(QByteArray& d, int pos );
         void PackLine(QByteArray& d, int pos, QString line);
 
