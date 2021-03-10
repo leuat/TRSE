@@ -31,6 +31,7 @@ class TTRView: public QAbstractScrollArea
         QString validNotes1 = "cdefgab-s";
         QString notesOnly = "cdefgab";
         QString validNotes2 = "# -";
+        QString validInput = validHex + validNotes1 + validNotes2;
         QVector<QColor> m_columnColors;
         float m_size = 1.5;
         int m_curLinePos;

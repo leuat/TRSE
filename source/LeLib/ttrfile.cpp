@@ -2,6 +2,15 @@
 
 TTRFile::TTRFile()
 {
+    m_header.resize(HEADER_SIZE);
+    m_header.fill(0);
+}
+
+void TTRFile::AddInstrument()
+{
+    QByteArray ba;
+    ba.resize(0x20);
+    m_instruments.append(ba);
 }
 
 void TTRFile::Initialize(int channels, int rows)
@@ -62,10 +71,11 @@ void TTRFile::Save(QString filename) {
     QByteArray o;
     // Header first:
     o.append("TRT");
-    o.append((char)1);
+    o.append((char)2);
     o.append(m_noChannels);
     o.append(m_patternLength);
     o.append(m_noBytesPerLine);
+    o.append(m_header);
     // Name and artist - to do
 //    for (int i=0;i<0x20;i++) o.append((char)0);
     int startI = POS_START_OF_INSTRUMENTS+SIZE_OF_METADATA;
@@ -140,12 +150,13 @@ void TTRFile::Load(QString filename) {
     m_noChannels = (uchar)d[4];
     m_patternLength = (uchar)d[5];
     m_noBytesPerLine = (uchar)d[6];
-
-    int startI = Util::getInt16(d,POS_START_OF_INSTRUMENTS);
-    int startSPFX = Util::getInt16(d,POS_START_OF_SPFX);
-    int startOrders = Util::getInt16(d,POS_START_OF_ORDERS);
-    int startPatterns = Util::getInt16(d,POS_START_OF_PATTERNS);
-    int startText = Util::getInt16(d,POS_START_OF_TEXT);
+    m_header = d.mid(7,HEADER_SIZE);
+    int d2 = 0; // shift used when upgrading stuff
+    int startI = Util::getInt16(d,POS_START_OF_INSTRUMENTS+d2);
+    int startSPFX = Util::getInt16(d,POS_START_OF_SPFX+d2);
+    int startOrders = Util::getInt16(d,POS_START_OF_ORDERS+d2);
+    int startPatterns = Util::getInt16(d,POS_START_OF_PATTERNS+d2);
+    int startText = Util::getInt16(d,POS_START_OF_TEXT+d2);
 
 
 //    startText = 1505;

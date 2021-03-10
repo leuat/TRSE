@@ -72,6 +72,8 @@ private slots:
     void on_btnDeletePattern_clicked();
 
 
+    void on_btnNewOrder_2_clicked();
+
 private:
     Ui::FormTTREdit *ui;
 };

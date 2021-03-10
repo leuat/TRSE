@@ -39,6 +39,9 @@ macx{
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
+#    QMAKE_LFLAGS += -F /Library/Frameworks
+#    LIBS += -framework SDL2
+
     LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib -lomp
     DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
@@ -59,6 +62,7 @@ macx{
    INCLUDEPATH += /usr/local/include/
    INCLUDEPATH += /opt/homebrew/include/
 
+#   LIBS +=  -L/Users/leuat/code/sdl-x86/Versions/A -lSDL2
 
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/opt/homebrew/include/
@@ -191,6 +195,7 @@ SOURCES += main.cpp\
     source/trsedocuments/formttredit.cpp \
     source/trsedocuments/helpdocumentbuilder.cpp \
     source/trsedocuments/ttrview.cpp \
+    source/trsetracker/ttrplayer.cpp \
     source/trsetracker/widgetpattern.cpp \
     source/tutorials.cpp \
     source/workerthread.cpp \
@@ -414,6 +419,7 @@ HEADERS  += mainwindow.h \
     source/trsedocuments/formttredit.h \
     source/trsedocuments/helpdocumentbuilder.h \
     source/trsedocuments/ttrview.h \
+    source/trsetracker/ttrplayer.h \
     source/trsetracker/widgetpattern.h \
     source/tutorials.h \
     source/workerthread.h \

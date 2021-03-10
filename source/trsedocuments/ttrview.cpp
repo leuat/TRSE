@@ -721,7 +721,24 @@ void TTRView::keyPressEvent(QKeyEvent *event)
         setVisible = true;
     }
 
+    if (event->key()==Qt::Key_I)
+    {
+        int pos = m_cursorPos/(BYTES_PER_LINE*2)*DISPLAY_DATA_PER_LINE;
+        m_pdata->m_data.remove(m_pdata->m_data.count()-DISPLAY_DATA_PER_LINE,DISPLAY_DATA_PER_LINE);
+        for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
+        m_pdata->m_data.insert(pos,(char)0);
+        setVisible = true;
+    }
 
+//    if (event->matches(QKeySequence::Delete))
+     if (event->key()==Qt::Key_Backspace)
+    {
+        int pos = m_cursorPos/(BYTES_PER_LINE*2)*DISPLAY_DATA_PER_LINE;
+        m_pdata->m_data.remove(pos,DISPLAY_DATA_PER_LINE);
+        for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
+        m_pdata->m_data.insert(m_pdata->m_data.count(),(char)0);
+        setVisible = true;
+    }
 
     if (event->matches(QKeySequence::Copy))
     {
@@ -775,7 +792,7 @@ void TTRView::keyPressEvent(QKeyEvent *event)
     }
 
 */
-    if (t!="") {
+    if (t!="" && (validInput.contains(t.toLower()))) {
         t = t.toLower();
         int curP = (m_cursorPos%(BYTES_PER_LINE*2));
         int curPSet = curP + (int)(curP/2);

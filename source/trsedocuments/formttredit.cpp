@@ -318,3 +318,9 @@ void FormTTREdit::on_btnDeletePattern_clicked()
     ReloadPatterns();
 
 }
+
+void FormTTREdit::on_btnNewOrder_2_clicked()
+{
+    m_ttr.AddInstrument();
+    ReloadInstruments();
+}

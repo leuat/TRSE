@@ -15,10 +15,10 @@ kNumLinesInPatternShift	equ	5		; (1<<5) == 32
 kNumBytesInLine		equ	4
 kNumBytesInLineShift	equ	2		; (1<<2) == 4
 koNumChannels		equ	0x04		; Offsets of fields in header
-koStartOfInstruments	equ	0x7
-koStartOfOrders		equ	0x9
-koStartOfSpFx		equ	0xb
-koStartOfPatterns	equ	0xd
+koStartOfInstruments	equ	0x7+64
+koStartOfOrders		equ	0x9+64
+koStartOfSpFx		equ	0xb+64
+koStartOfPatterns	equ	0xd+64
 
 ; ----- Constants for the instrument format -----
 koCarrier		equ	0
