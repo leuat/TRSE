@@ -547,6 +547,7 @@ m; memcpyb; X86; a,a,i
 m; memcpyw; X86; a,a,i
 m; SetCgaPalette; X86; i
 m; toPointer;x86;i,i
+m; ptr;x86;i,i
 m; hi; x86;a
 m; lo; x86;a
 m; nosound; x86;
@@ -555,6 +556,9 @@ m; ReadKey; X86;
 m; KeyPressed; X86;
 m; DrawLineCGA; X86; a, i,i,i,i, b
 m; InstallKeyboardIRQ; X86;
+m; SetInterrupt; X86; b, p
+m; StartIRQ; X86;
+m; CloseIRQ; X86;
 
 m; playnote; x86; b
 

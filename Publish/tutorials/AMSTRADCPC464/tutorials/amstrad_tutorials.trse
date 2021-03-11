@@ -54,4 +54,6 @@ data_header_resources/images/sprites.flf = 6.92484e-310
 data_header_resources/images/sprite1.flf = 6.92316e-310
 data_header_resources/images/background.flf = 6.92316e-310
 data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc464/tutorials/resources/images/trse.flf = 6.48302e-314
-open_files =, tut1.ras
+open_files = -1
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC464/tutorials/
+current_file = tut1.ras

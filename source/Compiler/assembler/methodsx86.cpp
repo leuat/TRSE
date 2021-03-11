@@ -40,6 +40,22 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("scrollx")) {
         ScrollX(as);
     }
+    if (Command("startirq")) {
+        as->Asm("pusha");
+        as->Asm("push ds");
+        as->Asm("mov ax,192h ; reset DS ");
+        as->Asm("mov ds,ax");
+
+
+//        as->Asm("mov ax,[ds_register_saved]");
+  //      as->Asm("mov ds,ax");
+    }
+    if (Command("closeirq")) {
+        as->Asm("mov al,20h");
+        as->Asm("out 20h,al");
+        as->Asm("pop ds");
+        as->Asm("popa");
+    }
     if (Command("setpalette")) {
         as->Asm("mov dx,3c8h");
         LoadVar(as,0);
@@ -156,7 +172,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("int 10h");
     }
 
-    if (Command("topointer")) {
+    if (Command("topointer") || Command("ptr")) {
         LoadVar(as,0);
         disp->PushX();
         LoadVar(as,1);
@@ -251,6 +267,22 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("mov ah,25h");
 //        as->Asm("lea dx, ["+name+"]");
         as->Asm("lea dx, [init_keyboard_irq]");
+        as->Asm("int 21h");
+
+        as->Asm("sti");
+
+    }
+    if (Command("SetInterrupt")) {
+
+        as->Asm("cli");
+//        QSharedPointer<NodeProcedure> addr = (QSharedPointer<NodeProcedure>)dynamic_cast<QSharedPointer<NodeProcedure>>(m_node->m_params[0]);
+  //      QString name = addr->m_procedure->m_procName;
+
+        as->Comment("Install new ISR");
+        as->Asm("mov al," + m_node->m_params[0]->getValue(as));
+        as->Asm("mov ah,25h");
+//        as->Asm("lea dx, ["+name+"]");
+        as->Asm("mov dx, "+m_node->m_params[1]->getValue(as));
         as->Asm("int 21h");
 
         as->Asm("sti");

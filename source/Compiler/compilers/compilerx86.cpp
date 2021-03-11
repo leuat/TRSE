@@ -5,7 +5,9 @@ void CompilerX86::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 {
     m_assembler = QSharedPointer<AsmX86>(new AsmX86());//
     m_dispatcher = QSharedPointer<ASTdispatcherX86>(new ASTdispatcherX86());
+
     m_assembler->Asm("CPU "+m_projectIni->getString("cpu_x86_system"));
+
 
 
 

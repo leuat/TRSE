@@ -147,7 +147,7 @@ public:
 
 
     QString getReturn() override { return "ret";}
-    QString getReturnInterrupt() override { return "reti";}
+    QString getReturnInterrupt() override { return "iret";}
 
 
 };

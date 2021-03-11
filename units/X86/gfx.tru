@@ -4,11 +4,11 @@ var
 Procedure Hline (x1,x2,y:global integer;color:global byte;addr:global integer);
 begin
 asm
-  cmp [Gfx_y],200
-  jge @@nei
+  ;cmp [Gfx_y],200
+  ;jge @@nei
 
-  cmp [Gfx_y],0
-  jle @@nei
+  ;cmp [Gfx_y],0
+  ;jle @@nei
 
 
   Mov Bx,[Gfx_x1]
@@ -33,9 +33,9 @@ asm
   shr   cx,1
   jnc   @start
   stosb
-@Start :
+@start:
   rep   stosw
-  Sti
+  sti
 @@nei:
 end;
 end;

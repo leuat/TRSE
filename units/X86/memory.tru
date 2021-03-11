@@ -1,7 +1,7 @@
 unit Memory;
 var
 	i1 : integer;
-
+	const DEFAULT_TIMER : integer = 23863;
 procedure Poke8(_bx:integer; _di:integer;_ah:byte) inline;
 begin
 	asm
@@ -11,6 +11,20 @@ begin
 end;
 
 
+procedure SetTimer(ticks : integer);
+begin
+  asm cli end;
+  asm("
+  	  mov al,$36
+  	  out $43,al
+  	  mov dx,$40
+  	  mov ax,[Memory_ticks]
+  	  out $40,al
+  	  mov al,ah
+  	  out $40,al
+  ");
+  asm sti end;
+end;
 
 
 end.

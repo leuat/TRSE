@@ -6,15 +6,16 @@ var
 	const buf1Addr : integer = $8000;
 	const buf2Addr : integer = $7000;
 	buffer1, buffer2 : pointer;
-	
+	@donotremove source	
+	@donotremove dest
 	source,dest:pointer of integer;
 
 
 procedure InitVGABuffers();
 begin
 
-	buffer1 := toPointer(buf1Addr,0);
-	buffer2 := toPointer(buf2Addr,0);
+	buffer1 := ptr(buf1Addr,0);
+	buffer2 := ptr(buf2Addr,0);
 end;
 
 
@@ -41,13 +42,23 @@ end;
 procedure CopyVGABuffer32bit(source,dest:global pointer of integer);
 begin
   asm
-    push    ds
+  	cld
+  	push ds
     les di,[Screen_dest]
-
     lds si,[Screen_source]
+    mov ecx, 16000
+    rep movsd
+    pop ds
+  end;
+end;
+
+
+procedure ClearBuffer32bit(dest:global pointer of integer;_ax:integer);
+begin
+  asm
+    les di,[Screen_dest]
     mov     cx, 16000
-    db $66; Rep MovsW
-    pop     ds
+    rep stosD
   end;
 end;
 
@@ -71,6 +82,30 @@ begin
 		mov ax,[Screen_i]
 		int $10
 	");
+end;
+
+
+procedure PrintAx();
+begin
+asm
+printAx:		push	cx
+			mov	cx,4
+.printDigit:		
+			rol	ax,4
+			push	ax
+			movzx	eax,al
+			and	al,0xf
+			mov	al,[eax+.higits]
+			mov	ah,0x0E
+			int	10h
+			pop	ax
+			loop	.printDigit
+			pop	cx
+			ret
+.higits:		db	"0","1","2","3","4","5","6","7"
+			db	"8","9","a","b","c","d","e","f"
+
+end;
 end;
 
 end.

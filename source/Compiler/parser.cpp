@@ -3672,9 +3672,7 @@ QSharedPointer<Node> Parser::InlineAssembler()
     }
     t.m_value = m_currentToken.m_value;
     QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
-    qDebug().noquote() << m_currentToken.m_value;
     Eat(TokenType::STRING);
-    qDebug() << m_currentToken.getType() << m_currentToken.m_value;
     if (pascalStyleAsm) {
         Eat(TokenType::END);
     }

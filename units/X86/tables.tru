@@ -1,0 +1,7 @@
+unit Tables;
+var
+
+    sine256 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*127+128)");
+
+
+end.

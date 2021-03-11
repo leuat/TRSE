@@ -43,7 +43,12 @@ void AsmX86::Program(QString name, QString vicParam)
     m_source+=m_startInsertAssembler;
     Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
     m_hash = "";
-
+/*    Asm("jmp save_ds_register");
+    Write("ds_register_saved: dw 0",0);
+    Write("save_ds_register:",0);
+    Asm("mov ax,ds");
+    Asm("mov [ds_register_saved],ax");
+*/
 }
 
 void AsmX86::EndProgram()

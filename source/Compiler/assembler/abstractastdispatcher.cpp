@@ -502,10 +502,14 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
 
     if (!isInitFunction) {
+
         if (node->m_type==0) {
             as->Asm(getReturn());
         }
-        else as->Asm(getReturnInterrupt());
+        else {
+ //           as->Asm(endInterrupt());
+            as->Asm(getReturnInterrupt());
+        }
     }
 
     if (node->m_curMemoryBlock!=nullptr) {

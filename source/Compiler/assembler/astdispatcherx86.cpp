@@ -775,3 +775,4 @@ void ASTdispatcherX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
     as->Asm(m_jne+lblJump);
 
 }
+

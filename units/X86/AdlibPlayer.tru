@@ -67,9 +67,9 @@ numChannels		db	0x09
 
 ; ----- Variables updated during playback ----
 ; Global
-playing:		db	0x00		; Play/Stop
+playing:			db	0x00		; Play/Stop
 aOrder:			dw	0x0000
-pos:			db	0x00
+pos:				db	0x00
 ticks:			db	0x00
 speed:			db	0x06
 
@@ -131,11 +131,15 @@ tick:
 			; Apply fx to all channels
 .skip:			xor	ch,ch
 			mov	cl,[numChannels]
+
 .updateChannel:		dec	cl
 			call	lookUpLine
 			call	applyEffect
 			call	applySpFx
 			call	applyVRegs
+
+			
+
 			and	cl,cl
 			jnz	.updateChannel
 			; Tick.
@@ -305,6 +309,7 @@ applyInstr:		; Get new-bits from line
 .notNew:		ret
 
 applyEffect:		;ret
+
 			mov	ax,[bx+2]		; ah=param
 			and	al,0x0F			; al=cmd
 			movzx	si,al
@@ -388,6 +393,8 @@ applyVRegs:
 			add	si,ax			; apply coarse tuning
 			; convert from semitone to f-number and octave
 			xor	ch,ch
+			
+
 .normalize:		cmp	si,12
 			jb	.done
 			sub	si,12
