@@ -1,0 +1,117 @@
+program Adlib;
+@use "AdlibPlayer"
+@use "Screen"
+@use "Memory"
+@use "gfx"
+@use "tables"
+var  
+	song: incbin("music/song1.trt");
+	i,x,x1,x2,y,j,j2,px,time: integer;
+	ri,rj : integer; // used in raster
+	cols : array[256*3] of byte;
+	
+	
+procedure InitScreen();
+begin
+	x:=0;
+	y:=0;
+	for i:=0 to 320*200 do
+	begin
+		j:=(x+y)&63;
+		j:=Tables::sine256[(x*6)&$FF]/7;
+		j+= Tables::sine256[(y*7)&$FF]/9;
+		j:=j&63;
+		Memory::Poke8(Screen::buf2Addr,i,j);
+		x+=1;
+		if (x=320) then
+		begin
+			x:=0;
+			y+=1;
+		end;
+	end;	
+
+end;
+
+
+procedure HLines();
+begin
+//	Procedure Hline (x1,x2,y:global integer;color:global byte;addr:global integer);
+	j:=time*3;
+	j2:=time*2;
+	px:=Tables::sine256[(time*3)&$FF]/3;
+	for i:=0 to 200 do
+	begin
+		x1:=Tables::sine256[j&$FF]/4+40+px;
+		x2:=Tables::sine256[(j2)&$FF]/4+160+px;
+		
+		Gfx::Hline(x1,x2,i,i&63+64,Screen::buf1Addr);
+		
+		j2+=4;
+		j+=3;
+		
+	end;
+
+end;
+
+
+procedure SetupCyclingPalette();
+begin
+	rj:=time;
+	// First 64 colors are pinkish
+	for ri:=0 to 32 do
+	begin
+		rj:=(ri+time)&63;
+		Screen::SetColor(rj,ri*2,ri/6,ri);
+		Screen::SetColor(63-rj,ri*2,ri/6,ri);
+	end;
+
+end;
+
+
+interrupt RasterIRQ();
+begin
+	StartIRQ();
+	AdlibPlayer::Play();
+	SetupCyclingPalette();
+	CloseIRQ();
+end;
+
+
+procedure SetupStaticPalette();
+begin
+	// next 64 colors are pinkish
+	for i:=0 to 32 do
+	begin
+		Screen::SetColor(i+64,i,i/6,i*2);
+		Screen::SetColor(64+63-i,i,i/6,i*2);
+	end;
+end;
+
+begin
+	Screen::SetMode($13);
+	Screen::InitVGABuffers();
+	// Render background screen (some sine stuff)
+	InitScreen();	
+	// Set up palette
+	SetupStaticPalette();	
+	
+	AdlibPlayer::Initialize(#song);
+	Memory::SetTimer(Memory::Default_Timer);
+	SetInterrupt($8, RasterIRQ());
+	// Main loop
+	while (true) do
+	begin
+		// Copy main buffer to Screen (Screen::VGA)
+		Screen::CopyVGABuffer32bit(ptr(Screen::buf1Addr,0), ptr(Screen::VGA,0));
+		waitforverticalblank();
+		// Sine wobble shift in background		
+		j:=Tables::sine256[(time*4)&255]/2 +127;
+		// Copy background over to buffer		
+		Screen::CopyVGABuffer32bit(ptr(Screen::buf2Addr,j), ptr(Screen::buf1Addr,0));
+		// Draw h-lines
+		HLines();		
+		time+=1;		
+		
+	end;
+	AdlibPlayer::Stop();	
+end.
