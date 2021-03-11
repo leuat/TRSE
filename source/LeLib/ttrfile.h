@@ -26,6 +26,8 @@ public:
     const int HEADER_SIZE = 64;
 
     void AddInstrument();
+    static const int HEADER_POS_CURRENTTYPE = 0;
+    QStringList systemTypes = QStringList() << "Adlib" << "VIC20";
 
 
     /*

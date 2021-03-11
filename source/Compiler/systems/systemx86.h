@@ -14,6 +14,15 @@ public:
         m_system = X86;
         m_startAddress = 0x100;
         m_programStartAddress = m_startAddress;
+
+        m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
+        m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
+        m_registers << "_ax"<<"_bx" <<"_cx" <<"_dx";
+        m_registers << "_ah"<<"_bh" <<"_ch" <<"_dh";
+        m_registers << "_al"<<"_bl" <<"_cl" <<"_dl";
+//        m_registers << "_es"<<"_di" <<"_ds" <<"_si";
+        m_registers << "_di" <<"_si";
+
     }
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);

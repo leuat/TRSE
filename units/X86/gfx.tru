@@ -1,0 +1,44 @@
+unit Gfx;
+var
+	x1,x2,y,color, addr : integer;
+Procedure Hline (x1,x2,y:global integer;color:global byte;addr:global integer);
+begin
+asm
+  cmp [Gfx_y],200
+  jge @@nei
+
+  cmp [Gfx_y],0
+  jle @@nei
+
+
+  Mov Bx,[Gfx_x1]
+  Mov Dx,[Gfx_x2]
+
+  Cld
+
+  Cli
+  mov   ax,[Gfx_addr]
+  mov   es,ax
+  mov   ax,[Gfx_y]
+  mov   di,ax
+  shl   ax,8
+  shl   di,6
+  add   di,ax
+  add   di,[Gfx_x1]
+
+  mov   al,[Gfx_color]
+  mov   ah,al
+  mov   cx,Dx
+  sub   cx,Bx
+  shr   cx,1
+  jnc   @start
+  stosb
+@Start :
+  rep   stosw
+  Sti
+@@nei:
+end;
+end;
+
+
+end.

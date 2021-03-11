@@ -9,7 +9,7 @@ TTRFile::TTRFile()
 void TTRFile::AddInstrument()
 {
     QByteArray ba;
-    ba.resize(0x20);
+    ba.resize(INSTRUMENT_SIZE);
     m_instruments.append(ba);
 }
 
@@ -151,7 +151,7 @@ void TTRFile::Load(QString filename) {
     m_patternLength = (uchar)d[5];
     m_noBytesPerLine = (uchar)d[6];
     m_header = d.mid(7,HEADER_SIZE);
-    int d2 = 0; // shift used when upgrading stuff
+    int d2 = 0; // -64 shift used when upgrading stuff
     int startI = Util::getInt16(d,POS_START_OF_INSTRUMENTS+d2);
     int startSPFX = Util::getInt16(d,POS_START_OF_SPFX+d2);
     int startOrders = Util::getInt16(d,POS_START_OF_ORDERS+d2);

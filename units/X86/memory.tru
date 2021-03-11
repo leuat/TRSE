@@ -1,0 +1,16 @@
+unit Memory;
+var
+	i1 : integer;
+
+procedure Poke8(_bx:integer; _di:integer;_ah:byte) inline;
+begin
+	asm
+		mov es,bx
+		mov es:[di],ah	
+	end;
+end;
+
+
+
+
+end.

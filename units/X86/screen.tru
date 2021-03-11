@@ -1,0 +1,76 @@
+unit Screen;
+var
+	i,j,k : integer;
+	color,red,green,blue : byte;
+	const VGA : integer = $A000;
+	const buf1Addr : integer = $8000;
+	const buf2Addr : integer = $7000;
+	buffer1, buffer2 : pointer;
+	
+	source,dest:pointer of integer;
+
+
+procedure InitVGABuffers();
+begin
+
+	buffer1 := toPointer(buf1Addr,0);
+	buffer2 := toPointer(buf2Addr,0);
+end;
+
+
+	
+ procedure SetColor(color,red,green,blue:global byte);
+ begin
+  asm
+    Cli
+    mov dx,$3c8
+    mov al,[Screen_color]
+    out dx,al
+    inc dx
+    mov al,[Screen_red]
+    out dx,al
+    mov al,[Screen_green]
+    out dx,al
+    mov al,[Screen_blue]
+    out dx,al
+    Sti
+   end;
+ 
+end;
+
+procedure CopyVGABuffer32bit(source,dest:global pointer of integer);
+begin
+  asm
+    push    ds
+    les di,[Screen_dest]
+
+    lds si,[Screen_source]
+    mov     cx, 16000
+    db $66; Rep MovsW
+    pop     ds
+  end;
+end;
+
+procedure CopyVGABuffer16bit(source,dest:global pointer of integer);
+begin
+  asm
+    push    ds
+    les di,[Screen_dest]
+    lds si,[Screen_source]
+    
+    mov     cx, 32000
+    Rep MovsW
+    pop     ds
+  end;
+end;
+
+
+procedure SetMode(i : global integer);
+begin
+	asm("
+		mov ax,[Screen_i]
+		int $10
+	");
+end;
+
+end.

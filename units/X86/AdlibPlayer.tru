@@ -52,7 +52,7 @@ koModulatorBaseVol	equ	6
 koModulatorExtraVol	equ	7	
 
 
-	mov	word ax,[AdlibPlayer_song+2]
+	mov	word ax,[AdlibPlayer_song]
 	mov	word [aSong],ax
 	call reset
 	mov	byte [playing],0x01

@@ -97,11 +97,12 @@ public:
 
     }
     virtual QString getX86Value(Assembler* as, QSharedPointer<Node> n) {
-        if (n->isPureVariable())
+        if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
 
     }
+
 
     virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         if (bop->m_op.m_type == TokenType::PLUS)

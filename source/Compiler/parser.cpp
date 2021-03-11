@@ -2978,8 +2978,8 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         Eat(TokenType::COLON);
         funcType = TypeSpec(false,QStringList());
         auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
-        if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte")) {
-            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte' and 'integer'",t->m_op.m_lineNumber);
+        if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte"|| t->value.toLower()=="long")) {
+            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer' and 'long'",t->m_op.m_lineNumber);
         }
 
 
@@ -3650,17 +3650,37 @@ QSharedPointer<Node> Parser::InlineAssembler()
 {
     Token t = m_currentToken;
     Eat(TokenType::ASM);
-    Eat(TokenType::LPAREN);
-    if (m_currentToken.m_type!=TokenType::STRING)
-        ErrorHandler::e.Error("Inline assembler must be enclosed as a string");
+    bool pascalStyleAsm = false;
+    // Original pascal-style ASM without (" ");
+    if (m_currentToken.m_type!=TokenType::LPAREN){
+        //qDebug() <<m_currentToken.m_value;
+        QString org = m_currentToken.m_value;
+        m_currentToken = m_lexer->InlineAsm();
+        //qDebug() <<m_currentToken.m_value;
+        m_currentToken.m_value = org + m_currentToken.m_value;
+        pascalStyleAsm = true;
 
+    }
+    else {
+        Eat(TokenType::LPAREN);
+        if (m_currentToken.m_type!=TokenType::STRING)
+            ErrorHandler::e.Error("Inline assembler must be enclosed as a string");
+
+    }
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502) {
         VerifyInlineSymbols6502(m_currentToken.m_value);
     }
     t.m_value = m_currentToken.m_value;
     QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
+    qDebug().noquote() << m_currentToken.m_value;
     Eat(TokenType::STRING);
-    Eat(TokenType::RPAREN);
+    qDebug() << m_currentToken.getType() << m_currentToken.m_value;
+    if (pascalStyleAsm) {
+        Eat(TokenType::END);
+    }
+    else {
+        Eat(TokenType::RPAREN);
+    }
     return n;
 }
 

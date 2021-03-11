@@ -40,6 +40,7 @@ public:
     AbstractSystem() {
 
     }
+    QStringList m_registers;
     AbstractSystem(AbstractSystem* a);
     QMap<QString, QString> m_systemParams;
     QElapsedTimer timer;

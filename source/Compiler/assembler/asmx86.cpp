@@ -70,7 +70,7 @@ void AsmX86::DeclareArray(QString name, QString type, int count, QStringList dat
 // array  resb  251*256  ;251 ROWS X 256 COLUMNS.
 
      if (data.count()==0 && pos!="") {
-         Write(name + " = " + pos);
+         Write(name + " equ " + pos);
          return;
      }
 

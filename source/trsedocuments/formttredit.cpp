@@ -9,7 +9,11 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
     m_programEndingType = "trt";
     m_fileExtension = "trt";
 
-
+    QComboBox* cmb = ui->cbmSystem;
+    cmb->clear();
+    for (int i=0;i<m_ttr.systemTypes.count();i++) {
+        cmb->addItem(m_ttr.systemTypes[i]);
+    }
 
 }
 
@@ -93,6 +97,8 @@ void FormTTREdit::FillGUIFromData()
 
 
     ReloadPatterns();
+
+    ui->cbmSystem->setCurrentIndex(m_ttr.m_header[TTRFile::HEADER_POS_CURRENTTYPE]);
 
 }
 void FormTTREdit::LoadPredefinedInstruments()
@@ -228,6 +234,8 @@ void FormTTREdit::on_cmbInstruments_currentIndexChanged(int index)
     // First, save old
     SaveCurrentInstrument();
     QString txt = "";
+    if (index<0)
+        return;
     for (int i=11;i<m_ttr.m_instruments[index].count();i++)
         txt+=QChar(m_ttr.m_instruments[index][i]);
 
@@ -323,4 +331,9 @@ void FormTTREdit::on_btnNewOrder_2_clicked()
 {
     m_ttr.AddInstrument();
     ReloadInstruments();
+}
+
+void FormTTREdit::on_cbmSystem_currentIndexChanged(int index)
+{
+    m_ttr.m_header[TTRFile::HEADER_POS_CURRENTTYPE] = (uchar)index;
 }

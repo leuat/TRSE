@@ -520,19 +520,44 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
 
+    QString vname = getValue(var);
+//    as->Comm nt("IS REGISTER : "+Util::numToHex(v->m_isRegister) + " "+vname);
+    if (var->m_isRegister) {
+        vname = vname.toLower();
+        if (!node->m_right->isPure())
+            ErrorHandler::e.Error("When assigning registers, RHS needs to be pure numeric or variable",node->m_op.m_lineNumber);
+
+        QString reg = vname.remove(0,1);
+//        as->Comment("Assigning register : " + vname);
+
+        as->Asm("mov "+reg+", "+getX86Value(as,node->m_right));
+        return "";
+        //}
+    }
+
+
 
     if (var->isPointer(as)) {
         if (node->m_right->isPureVariable()) {
-            as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
-            as->Asm("mov ["+var->getValue(as)+"], ds");
-            as->Asm("mov ["+var->getValue(as)+"+2], si");
+            if (node->m_right->isPointer(as)) {
+                as->Asm("les di, ["+node->m_right->getValue(as)+"]");
+                as->Asm("mov ["+var->getValue(as)+"+2], es");
+                as->Asm("mov ["+var->getValue(as)+"], di");
+            }
+            else {
+//                as->Asm("lea si, "+node->m_right->getValue(as));
+//                as->Asm("cld");
+                as->Asm("lea si, "+node->m_right->getValue(as));
+                as->Asm("mov ["+var->getValue(as)+"+2], ds");
+                as->Asm("mov ["+var->getValue(as)+"], si");
+            }
             return "";
         }
         else{
             node->m_right->Accept(this);
 
-            as->Asm("mov ["+var->getValue(as)+"], ax");
-            as->Asm("mov ["+var->getValue(as)+"+2], bx");
+            as->Asm("mov ["+var->getValue(as)+"+2], ax");
+            as->Asm("mov ["+var->getValue(as)+"], bx");
         }
         return "";
     }

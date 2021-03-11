@@ -53,6 +53,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("out dx,al");
         as->Asm("Sti");
     }
+/*    if (Command("poke")) {
+        Poke(as);
+    }*/
     if (Command("setpixel")) {
 /*        Procedure Putpixel (X,Y : Integer; Col : Byte; P :Pointer);
         BEGIN
@@ -289,11 +292,12 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
 
         if (m_node->m_params[paramNo]->isPureVariable()) {
             if (m_node->m_params[paramNo]->isPointer(as)) {
-                as->Asm("push ax");
+                as->Asm("l"+es+" "+ di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
+/*                as->Asm("push ax");
                 as->Asm("mov ax,["+m_node->m_params[paramNo]->getValue(as)+"]");
                 as->Asm("mov "+es+",ax");
                 as->Asm("pop ax");
-                as->Asm("mov "+di+",["+m_node->m_params[paramNo]->getValue(as)+"+2]");
+                as->Asm("mov "+di+",["+m_node->m_params[paramNo]->getValue(as)+"+2]");*/
                 return;
             }
 
@@ -411,3 +415,34 @@ void MethodsX86::MemCpy(Assembler *as, QString type)
 
 }
 
+/*void MethodsX86::Poke(Assembler* as)
+{
+    if (m_node->m_params[0]->isPureNumeric() &&
+            m_node->m_params[1]->isPureNumeric() &&
+            m_node->m_params[1]->getValueAsInt(as)==0) {
+
+        LoadVar(as,2);
+        as->Asm("ld ["+m_node->m_params[0]->getValue(as)+"],a");
+        return;
+    }
+
+
+    LoadAddress(as,0);
+    //        as->Asm("ld a,"+m_node->m_params[1]->getValue(as));
+    as->Term();
+    if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0) {
+        LoadVar(as,2);
+        as->Asm("ld [hl],a");
+        return;
+    }
+    LoadVar(as,1);
+    as->Term();
+    as->Asm("ld e,a");
+    as->Asm("ld d,0");
+    as->Asm("add hl,de");
+    LoadVar(as,2);
+    as->Asm("ld [hl],a");
+
+
+}
+*/

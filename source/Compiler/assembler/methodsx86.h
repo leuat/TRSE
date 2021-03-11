@@ -37,6 +37,8 @@ public:
 
     void InitPlaynote(Assembler* as);
 
+//    void Poke(Assembler* as);
+
 };
 
 #endif // METHODSX86_H

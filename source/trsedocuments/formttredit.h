@@ -74,6 +74,8 @@ private slots:
 
     void on_btnNewOrder_2_clicked();
 
+    void on_cbmSystem_currentIndexChanged(int index);
+
 private:
     Ui::FormTTREdit *ui;
 };
