@@ -292,6 +292,7 @@ E = Unused?
     void Save(QString filename);
     void Export(QString filename, int type);
     void ExportVIC20(QString filename);
+    void ExportVIC20C(QString filename);
     void Load(QString filename);
     void LoadPSF(QString filename);
 

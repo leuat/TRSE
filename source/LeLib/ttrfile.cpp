@@ -114,8 +114,11 @@ void TTRFile::Export(QString filename, int type)
 {
     if (type==1)
         ExportVIC20(filename);
+    if (type==2)
+        ExportVIC20C(filename);
 }
 
+// exports to the Vic 20 as a note and octave directly from the TRT data
 void TTRFile::ExportVIC20(QString filename)
 {
     QByteArray o;
@@ -136,6 +139,60 @@ void TTRFile::ExportVIC20(QString filename)
 
 
     Util::SaveByteArray(o,filename);
+}
+
+// exports to the Vic 20 as a fixed 4 track, with notes converted ready to play
+void TTRFile::ExportVIC20C(QString filename)
+{
+
+    const unsigned char NOTETABLE[ 37 ] = {
+        255, 134, 141, 147, 153, 159, 164, 170, 174, 179, 183, 187,
+        191, 195, 198, 201, 204, 207, 210, 212, 215, 217, 219, 221,
+        223, 225, 226, 228, 230, 231, 232, 234, 235, 236, 237, 238,
+        239
+    };
+
+    int noChannels = m_noChannels > 4 ? 4 : m_noChannels;
+
+    QByteArray o;
+    // Header first:
+    o.append( noChannels ); // fixed at 4 max
+    o.append( m_patternLength );
+    o.append( m_orders.count() );
+    int pos = m_orders.size() * noChannels; // Start of patterns
+    Util::appendInt16( o, pos ); // pattern start
+
+    for ( QByteArray& ba: m_orders )
+        o.append( ba );
+
+    for ( QByteArray& ba: m_patterns ) {
+        for ( int i = 0; i < m_patternLength; i++ ) {
+            unsigned char snd = ba[ i * m_noBytesPerLine ];  // get first byte of music data (other 3 are not used for VIC)
+            if ( (snd & 0x80) != 0 ) {
+                snd = snd & 0x7f;
+                //qDebug() << "snd=" << snd;
+                unsigned char octave = snd / 12;
+                //qDebug() << "oct=" << octave;
+                if ( octave < 3 ) {
+
+                    o.append( NOTETABLE[ snd ] );
+                    //qDebug() << "con=" << NOTETABLE[ snd ];
+
+                } 
+                
+            } else {
+
+                snd = 0x00;
+                o.append( snd );
+                //qDebug() << "con=0";
+
+            }
+            //o.append( ba[ i * m_noBytesPerLine ] ); // Only add first byte of music data - ignore rest
+        }
+    }
+
+    Util::SaveByteArray( o, filename );
+
 }
 
 void TTRFile::Load(QString filename) {
