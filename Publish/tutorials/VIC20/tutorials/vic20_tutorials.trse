@@ -65,5 +65,5 @@ data_header_/users/leuat/code/trse/publish/tutorials/vic20/tutorials/resources/i
 data_header_resources/images/trse.flf = 0
 zeropages_userdefined = ,$88, $8A, $8C, $8E
 open_files = ,resources/music/mystic_runner.ras, resources/music/example10_music.trt, easy/10_trt_music_player.ras, [external]units/VIC20/trtplayer.tru
-project_path = /Users/leuat/code/TRSE/DebugX86/trse.app/Contents/MacOS/../../tutorials/VIC20/tutorials/
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VIC20/tutorials/
 current_file = resources/music/example10_music.trt
