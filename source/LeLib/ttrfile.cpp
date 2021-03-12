@@ -166,6 +166,7 @@ void TTRFile::ExportVIC20C(QString filename)
         o.append( ba );
 
     for ( QByteArray& ba: m_patterns ) {
+
         for ( int i = 0; i < m_patternLength; i++ ) {
             unsigned char snd = ba[ i * m_noBytesPerLine ];  // get first byte of music data (other 3 are not used for VIC)
             if ( (snd & 0x80) != 0 ) {
@@ -194,26 +195,7 @@ void TTRFile::ExportVIC20C(QString filename)
             //o.append( ba[ i * m_noBytesPerLine ] ); // Only add first byte of music data - ignore rest
         }
     }
-/*
-        j := zp[curRow];
-        if (j&$80 <>0) then
-        begin
-            j:= j &$7F; // Semitone
-            octave := j/12;
-            if (octave<3) then
-            begin
-                if (j<>$7f) then
-                begin
-                    // We have a note!
-                    note := mod(j,12);
-                    j := notes[3*note + octave];
-                    poke(^$900a,i,j); // Play note!
-                end;
-            end
-            else poke(^$900a,i,0);
 
-        end;
-  */
     Util::SaveByteArray( o, filename );
 
 }
