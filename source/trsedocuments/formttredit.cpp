@@ -173,7 +173,7 @@ void FormTTREdit::UpdatePatterns()
     for (int i=0;i<m_curPatterns.count();i++) {
         m_ttr.m_orders[m_ttr.m_currentOrder][i] = m_curPatterns[i]->getPatternCmb()->currentIndex();
     }
-
+    ReloadOrders();
     ReloadPatterns();
 }
 
@@ -310,7 +310,7 @@ void FormTTREdit::ReloadOrders()
         QString s = QStringLiteral("%1").arg(i, 2, 10, QLatin1Char('0'));
         s+=": ";
         for (uchar b : m_ttr.m_orders[i])
-            s+= QStringLiteral("%1").arg(i, 2, 10, QLatin1Char('0')) + " - ";
+            s+= QStringLiteral("%1").arg(b, 2, 10, QLatin1Char('0')) + " - ";
 
         s.remove(s.length()-3,3);
         lst->addItem(s);
