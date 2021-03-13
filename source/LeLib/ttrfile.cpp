@@ -205,6 +205,7 @@ void TTRFile::Load(QString filename) {
   //      qDebug() << i << QString::number((uchar)d[i]);
     m_version = (uchar)d[3];
     m_noChannels = (uchar)d[4];
+
     m_patternLength = (uchar)d[5];
     m_noBytesPerLine = (uchar)d[6];
     m_header = d.mid(7,HEADER_SIZE);
@@ -234,7 +235,7 @@ void TTRFile::Load(QString filename) {
     c = startOrders;
     for (int j=0;j<noOrders;j++) {
         QByteArray ib;
-        for (int i=0;i<4;i++)
+        for (int i=0;i<m_noChannels;i++)
             ib.append(d[c++]);
         m_orders.append(ib);
     }
