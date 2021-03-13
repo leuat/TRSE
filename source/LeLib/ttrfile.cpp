@@ -33,7 +33,7 @@ void TTRFile::InsertPattern(int pos) {
     for (QByteArray& ba: m_orders){
         for (int i=0;i<ba.count();i++)
             if ((uchar)ba[i]>pos)
-                ba[i]++;
+                ba[i]=ba[i]+1;
     }
 }
 
@@ -46,7 +46,7 @@ void TTRFile::DeletePattern(int pos)
     for (QByteArray& ba: m_orders){
         for (int i=0;i<ba.count();i++)
             if ((uchar)ba[i]>pos)
-                ba[i]--;
+                ba[i]=ba[i]-1;
     }
 
 }
@@ -257,7 +257,7 @@ void TTRFile::Load(QString filename) {
     bool done = false;
 //    qDebug() << cnt << d.count();;
     while (!done && cnt<d.count()) {
-        if (d[cnt]!=0)
+        if ((uchar)d[cnt]!=0)
             m_text +=QChar(d[cnt]);
         else done = true;
         if (cnt++>=d.count())

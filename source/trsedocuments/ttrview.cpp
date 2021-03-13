@@ -146,13 +146,13 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
         d[pos+1] = (uchar)0x80 | (uchar)vol;
 
     if (inst!=-1) {
-        d[pos+1] |= (uchar)0x40;
+        d[pos+1] = d[pos+1]|(uchar)0x40;
         d[pos+2] = ((uchar)inst&0xf)<<4;
     }
     if (note==-1)
         d[pos+1]=0;
     if (cmd!=-1 && par!=-1) {
-        d[pos+2] |= ((uchar)cmd)&0xf;
+        d[pos+2] = d[pos+2]| (((uchar)cmd)&0xf);
         d[pos+3] = (uchar)par;
     }
 
@@ -535,7 +535,8 @@ void TTRView::paintEvent(QPaintEvent *event)
             int pp = m_cursorPos%(BYTES_PER_LINE*2);
 //            int po = pp/2;
             pp += (int)(pp/2);
-            painter.drawText(m_posHex+m_charWidth*pp, yPos, line[pp]);
+            QString val = QString(line[pp]);
+            painter.drawText(m_posHex+m_charWidth*pp, yPos, val);
         }
 
 
