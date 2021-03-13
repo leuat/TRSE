@@ -105,7 +105,7 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
     //if (lst[0]!="--" )
     int note = -1;
     lst[0] = lst[0].toUpper();
-    if (lst[0].count()==1) lst[0]+=" ";
+    if (lst[0].count()==1) lst[0]+="-";
     if (notes.contains(lst[0]))
         note = notes.indexOf(lst[0]);
 

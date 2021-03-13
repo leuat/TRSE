@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,1,0,0,100">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,1,1,1,1,1,1000">
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -46,43 +46,53 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="grpOrder">
            <property name="title">
             <string>Order</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_8">
             <item row="0" column="0">
-             <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="0">
-               <widget class="QComboBox" name="cmbPattern"/>
+             <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,1">
+              <item row="2" column="1">
+               <layout class="QGridLayout" name="gridLayout_12">
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="btnNewOrder">
+                  <property name="text">
+                   <string>Add</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="btnDeleteOrder">
+                  <property name="text">
+                   <string>Delete</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="btnOrderMoveUp">
+                  <property name="text">
+                   <string>Move up</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="btnOrderMoveDown">
+                  <property name="text">
+                   <string>Move down</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="1" column="1">
-               <widget class="QPushButton" name="btnOrderMoveUp">
-                <property name="text">
-                 <string>Move up</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QPushButton" name="btnOrderMoveDown">
-                <property name="text">
-                 <string>Move down</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QPushButton" name="btnNewOrder">
-                <property name="text">
-                 <string>Add</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QPushButton" name="btnDeleteOrder">
-                <property name="text">
-                 <string>Delete</string>
+              <item row="2" column="0">
+               <widget class="QListWidget" name="lstOrders">
+                <property name="font">
+                 <font>
+                  <family>Courier New</family>
+                 </font>
                 </property>
                </widget>
               </item>
@@ -92,7 +102,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_2">
+          <widget class="QGroupBox" name="grpPatterns">
            <property name="title">
             <string>Patterns</string>
            </property>
@@ -209,7 +219,18 @@
      </widget>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="2" column="0">
+    <layout class="QGridLayout" name="gridLayout_11">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btnPlay">
+       <property name="text">
+        <string>Play</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QHBoxLayout" name="lyTrackers"/>

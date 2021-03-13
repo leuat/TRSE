@@ -161,6 +161,8 @@ void FormTTREdit::ReloadPatterns()
         m_curPatternValues.append((uchar)m_ttr.m_orders[m_ttr.m_currentOrder][i]);
 
     }
+    ui->grpOrder->setTitle("Orders : "+QString::number(m_ttr.m_orders.count()));
+    ui->grpPatterns->setTitle("Patterns : "+QString::number(m_ttr.m_patterns.count()));
     //    ui->lyTrackers->re
 }
 
@@ -293,13 +295,28 @@ void FormTTREdit::on_btnDeleteOrder_clicked()
 void FormTTREdit::ReloadOrders()
 {
     int keep = m_ttr.m_currentOrder;
-    QComboBox* cmb = ui->cmbPattern;
+/*    QComboBox* cmb = ui->cmbPattern;
     cmb->clear();
     for (int i=0;i<m_ttr.m_orders.count();i++) {
         cmb->addItem(QString::number(i));
     }
     if (keep!=-1)
         cmb->setCurrentIndex(keep);
+
+    */
+    QListWidget* lst = ui->lstOrders;
+    lst->clear();
+    for (int i=0;i<m_ttr.m_orders.count();i++) {
+        QString s = QStringLiteral("%1").arg(i, 2, 10, QLatin1Char('0'));
+        s+=": ";
+        for (uchar b : m_ttr.m_orders[i])
+            s+= QStringLiteral("%1").arg(i, 2, 10, QLatin1Char('0')) + " - ";
+
+        s.remove(s.length()-3,3);
+        lst->addItem(s);
+    }
+    if (keep!=-1)
+        lst->setCurrentRow(keep);
 
 }
 
@@ -336,4 +353,22 @@ void FormTTREdit::on_btnNewOrder_2_clicked()
 void FormTTREdit::on_cbmSystem_currentIndexChanged(int index)
 {
     m_ttr.m_header[TTRFile::HEADER_POS_CURRENTTYPE] = (uchar)index;
+}
+
+void FormTTREdit::on_btnPlay_clicked()
+{
+    if (m_player.m_isPlaying) {
+        m_player.Stop();
+        ui->btnPlay->setText("Play");
+    }
+    else {
+        m_player.Play();
+        ui->btnPlay->setText("Stop");
+    }
+}
+
+void FormTTREdit::on_lstOrders_currentRowChanged(int currentRow)
+{
+    m_ttr.m_currentOrder = currentRow;
+    ReloadPatterns();
 }

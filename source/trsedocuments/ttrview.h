@@ -24,7 +24,7 @@ class TTRView: public QAbstractScrollArea
 
     public:
         TRSEDocument* m_doc = nullptr;
-        QStringList notes = QStringList() << "C "<<"C#"<<"D "<<"D#"<<"E "<<"F "<<"F#"<<"G "<<"G#"<<"A "<<"A#"<<"B ";
+        QStringList notes = QStringList() << "C-"<<"C#"<<"D-"<<"D#"<<"E-"<<"F-"<<"F#"<<"G-"<<"G#"<<"A-"<<"A#"<<"B-";
 
 
         QString validHex = "abcdef0123456789-";

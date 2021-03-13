@@ -5,6 +5,7 @@
 #include "trsedocument.h"
 #include "source/LeLib/ttrfile.h"
 #include "source/trsetracker/widgetpattern.h"
+#include "source/trsetracker/ttrplayer.h"
 
 namespace Ui {
 class FormTTREdit;
@@ -25,6 +26,7 @@ public:
     QVector<WidgetPattern*> m_curPatterns;
     QVector<int> m_curPatternValues;
     QMap<QString,QString> m_instruments;
+    TTRPlayer m_player;
 
     void Destroy() override {}
     void SaveCurrentInstrument();
@@ -75,6 +77,10 @@ private slots:
     void on_btnNewOrder_2_clicked();
 
     void on_cbmSystem_currentIndexChanged(int index);
+
+    void on_btnPlay_clicked();
+
+    void on_lstOrders_currentRowChanged(int currentRow);
 
 private:
     Ui::FormTTREdit *ui;

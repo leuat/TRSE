@@ -169,6 +169,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/limage/ssim.cpp \
+    source/LeLib/miniaudio.c \
     source/LeLib/ttrfile.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
@@ -393,6 +394,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/limage/ssim.h \
+    source/LeLib/miniaudio.h \
     source/LeLib/ttrfile.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
