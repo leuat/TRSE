@@ -1,0 +1,280 @@
+unit Compression;
+var
+	i,j,k,bit,tag, bits_left : integer;	
+	pint : ^integer;
+	src,dst : pointer of byte;	
+	result : integer = 1;
+	dist_size : integer = 2;
+	len, off : integer;
+	inb, outb,p : pointer;
+		
+//static unsigned int
+
+function blz_getbit():integer;
+begin
+	if (bits_left<>0) then
+		bits_left -=1
+	else
+	begin
+		k:=src[0];
+		j:=src[1];
+		asm
+			mov al,[Compression_k]
+			mov ah,[Compression_j]
+			mov [Compression_tag],ax
+			
+			
+		end;
+		
+		//tag := src[0] + j*256;
+		src +=2;
+		bits_left := 15;
+	end;
+	j:=tag&$8000;
+	if (j<>0) then bit:=1 else bit:=0;
+	tag:=tag*2;
+	blz_getbit := bit;	
+end;
+
+
+function blz_getgamma():integer;
+begin
+	result := result*2 + blz_getbit();
+	while (blz_getbit()<>0) do
+	begin
+		result := result*2 + blz_getbit();
+	end;
+		
+	blz_getgamma := result;
+	
+end;
+
+
+procedure DecompressAgh(src, dst : global pointer; size:integer);
+begin
+
+	dist_size := 1;
+
+	bits_left := 0;
+
+	src:=src+4;
+	dst[0] := src[0];
+	
+	
+	while (dist_size <> 16000) do
+	begin
+		if (blz_getbit()=0) then
+		begin
+			len := blz_getgamma() + 2;
+			off := blz_getgamma() - 2;
+
+			pint := src;
+			off := (off *256 );
+			off += pint[0]+1;
+			src:=src+1;
+			
+			
+			asm(";here");
+			p:=dst;
+			//p:=dst - off;
+			asm("
+				mov ax,[Compression_off]
+				sub [Compression_p],ax
+			");
+			for i:=0 to len do
+			begin
+				dst[0]:=p[0];
+				dst+=1;
+				p+=1;
+			end;
+			
+		
+			dist_size += len;
+		
+		end
+		
+		else 
+		begin
+			dst[0]:=src[0];
+//			dst[1]:=dist_size;
+			dst+=1;
+			src+=1;
+			dist_size+=1;
+		end
+				
+	end;
+
+end;
+
+procedure Decompress(inb,outb:global pointer);
+begin
+
+asm("
+; Decompresses Y. Collet's LZ4 compressed stream data in 16-bit real mode.
+; Optimized for 8088/8086 CPUs.
+; Code by Trixter/Hornet (trixter@oldskool.org) on 20130105
+; Updated 20190617 -- thanks to Peter Ferrie, Terje Mathsen,
+; and Axel Kern for suggestions and improvements!
+; Updated 20190630: Fixed an alignment bug in lz4_decompress_small
+; Updated 20200314: Speed updates from Pavel Zagrebin
+
+
+;---------------------------------------------------------------
+; function lz4_decompress(Compression_inb,Compression_outb:pointer):word;
+;
+; Decompresses an LZ4 stream file with a compressed chunk 64K or less in size.
+; Input:
+;   DS:SI Location of source data.  DWORD magic header and DWORD chunk size
+;         must be intact; it is best to load the entire LZ4 file into this
+;         location before calling this code.
+;
+; Output:
+;   ES:DI Decompressed data.  If using an entire 64K segment, decompression
+;         is safe because overruns will wrap around the segment.
+;   AX    Size of decompressed data.
+;
+; Trashes AX, BX, CX, DX, SI, DI
+;         ...so preserve what you need before calling this code.
+;---------------------------------------------------------------
+;Speed optimization history (decompression times in microseconds @ 4.77 MHz):
+;before segment fixups: shuttle 108976 text 48742 broken code, invalid output
+; after segment fixups: shuttle 112494 text 50940                 -
+; after match copy opt: shuttle 110971 text 49890                 +
+; after misc opt:       shuttle 109707 text 49056                 +
+; after rep stosb opt:  shuttle 104877 text 51435                 +
+; after rep stosw opt:  shuttle 104918 text 51412 robotron 365292 -+*
+; after match+RLE opt:  shuttle  94274 text 49641 robotron 345426 +++
+; after token unpack:   shuttle  93418 text 49140 robotron 342696 +++
+; after accum opt:      shuttle  91992 text 48213 robotron 336635 +++
+; after dx regswap opt: shuttle  90461 text 47218 robotron 330449 +++
+; after repmovsb only:  shuttle  96231 text 46472 robotron 333068 -+- aborted
+; after 1-byteRLE only: shuttle  96201 text 46472 robotron 333270 -+- aborted
+; after cmp cl, -> al,: shuttle  90091 text 46894 robotron 327713 +++
+; after likely(ll<15):  shuttle  89378 text 46487 robotron 323677 +++
+; after ll=0 removechk: shuttle  90880 text 47957 robotron 323375 --+ aborted
+; after likely(ml<15):  shuttle  89205 text 45388 robotron 317959 +++
+; after mov r,ax->xchg: shuttle  88462 text 44963 robotron 315099 +++
+; after es:movsw:       shuttle  90408 text 45295 robotron 321030 --- aborted
+; after mcopy shortcir: shuttle  89710 text 45597 robotron 319660 --- aborted
+; after rep es: movsb:  shuttle  88907 text 45076 robotron 316138 --- aborted
+; after main lp unroll: shuttle  86153 text 43502 robotron 307923 +++
+;Peter Ferrie is credited with the following suggestions/speedups:
+; remove unnecess. xor: shuttle  85781 text 43487 robotron 307660 +++
+; xor ax,ax->xchg ax,r: shuttle  85037 text 43035 robotron 304574 +++
+;Terje Mathisen is credited with the following suggestions/speedups:
+; RLE overshoot->adjus: shuttle  85022 text 43035 robotron 304571 +0+
+;---------------------------------------------------------------
+;Pavel Zagrebin is credited with the following speedups:
+; Changing the end-of-file comparison to self-modifying offset
+; push ds;pop ds->mov ds,bp
+; adc cx,cx;rep movsb->jnc
+; NOTE:  I can't explain it, but with no extraneous background interrupts,
+; timings are taking longer than normal on my IBM 5160.  So, we have to
+; reset our timing numbers here:
+; Old timings:          shuttle  85038 text 45720 robotron 307796 ---
+; After Pavel's speedups:
+; New timings:          shuttle  81982 text 43664 robotron 296081 +++
+
+;PROC    lz4_decompress          NEAR
+;ARG     Compression_inb:DWORD, Compression_outb:DWORD
+
+
+        push    ds              ;preserve compiler assumptions
+        les     di,[Compression_outb]       ;load target buffer
+        lds     si,[Compression_inb]        ;load source buffer
+        cld                     ;make strings copy forward
+        lodsw
+        lodsw                   ;skip magic number, smaller than add si,4
+        lodsw                   ;load chunk size low 16-bit word
+        xchg    bx,ax           ;BX = size of compressed chunk
+        add     bx,si           ;BX = threshold to stop decompression
+        lodsw                   ;load chunk size high 16-bit word
+        or      ax,ax           ;is high word non-zero?
+        jnz     @@done          ;If so, chunk too big or malformed, abort
+@@parsetoken:                   ;CX=0 here because of REP at end of loop
+        lodsb                   ;grab token to AL
+        mov     dx,ax           ;preserve packed token in DX
+@@copyliterals:
+        mov     cx,4            ;set full CX reg to ensure CH is 0
+        shr     al,cl           ;unpack upper 4 bits
+	        call    buildfullcount  ;build full literal count if necessary
+@@doliteralcopy:                  ;src and dst might overlap so do this by bytes
+        rep     movsb           ;if cx=0 nothing happens
+
+;At this point, we might be done; all LZ4 data ends with five literals and the
+;offset token is ignored.  If we're at the end of our compressed chunk, stop.
+
+        cmp     si,bx           ;are we at the end of our compressed chunk?
+        jae     @@done          ;if so, jump to exit; otherwise, process match
+@@copymatches:
+        lodsw                   ;AX = match offset
+        xchg    dx,ax           ;AX = packed token, DX = match offset
+        and     al,0Fh          ;unpack match length token
+        call    buildfullcount  ;build full match count if necessary
+@@domatchcopy:
+        push    ds
+        push    si              ;ds:si saved, xchg with ax would destroy ah
+        mov     si,di
+        sub     si,dx
+        push    es
+        pop     ds              ;ds:si points at match; es:di points at dest
+        add     cx,4            ;minmatch = 4
+                                ;Can't use MOVSWx2 because [es:di+1] is unknown
+        rep     movsb           ;copy match run if any left
+        pop     si
+        pop     ds              ;ds:si restored
+        jmp     @@parsetoken
+
+buildfullcount:
+                                ;CH has to be 0 here to ensure AH remains 0
+        cmp     al,0Fh          ;test if unpacked literal length token is 15?
+        xchg    cx,ax           ;CX = unpacked literal length token; flags unchanged
+        jne     builddone       ;if AL was not 15, we have nothing to build
+buildloop:
+        lodsb                   ;load a byte
+        add     cx,ax           ;add it to the full count
+        cmp     al,0FFh         ;was it FF?
+        je      buildloop       ;if so, keep going
+builddone:
+        retn
+
+@@done:
+        sub     di,[dword Compression_outb];subtract original offset from where we are now
+        xchg    ax,di           ;AX = decompressed size
+        pop     ds              ;restore compiler assumptions
+        ret
+
+
+
+; Must declare this in the code segment.
+SHR4table:
+        DB 00h,00h,00h,00h,00h,00h,00h,00h,00h,00h,00h,00h,00h,00h,00h,00h
+        DB 01h,01h,01h,01h,01h,01h,01h,01h,01h,01h,01h,01h,01h,01h,01h,01h
+        DB 02h,02h,02h,02h,02h,02h,02h,02h,02h,02h,02h,02h,02h,02h,02h,02h
+        DB 03h,03h,03h,03h,03h,03h,03h,03h,03h,03h,03h,03h,03h,03h,03h,03h
+        DB 04h,04h,04h,04h,04h,04h,04h,04h,04h,04h,04h,04h,04h,04h,04h,04h
+        DB 05h,05h,05h,05h,05h,05h,05h,05h,05h,05h,05h,05h,05h,05h,05h,05h
+        DB 06h,06h,06h,06h,06h,06h,06h,06h,06h,06h,06h,06h,06h,06h,06h,06h
+        DB 07h,07h,07h,07h,07h,07h,07h,07h,07h,07h,07h,07h,07h,07h,07h,07h
+        DB 08h,08h,08h,08h,08h,08h,08h,08h,08h,08h,08h,08h,08h,08h,08h,08h
+        DB 09h,09h,09h,09h,09h,09h,09h,09h,09h,09h,09h,09h,09h,09h,09h,09h
+        DB 0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah,0Ah
+        DB 0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh,0Bh
+        DB 0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch,0Ch
+        DB 0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh,0Dh
+        DB 0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh,0Eh
+        DB 0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh,0Fh
+
+
+
+
+
+
+");
+end;
+
+
+
+
+
+end.
