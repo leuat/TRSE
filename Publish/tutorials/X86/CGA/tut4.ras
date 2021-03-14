@@ -26,8 +26,8 @@ begin
 		for t:=0 to 6 do
 		begin
 			k:=t*44;
-			y:=sine[time+k]/4 + 10;
-			x:=sine[time+64+delta+k]/2+120;
+			y:=sine[(time+k)&255]/4 + 10;
+			x:=sine[(time+64+delta+k)&255]/2+120;
 			drawsprite_cga_cat(#data, screen_cga,x,y);
 		end;
 		

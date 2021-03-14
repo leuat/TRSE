@@ -79,9 +79,11 @@ public:
         return "jmp";
     }
     QString getCallSubroutine() override { return "call"; }
-
+    bool m_isPurePointer = false;
     virtual QString getAx(QSharedPointer<Node> n) {
         QString a = m_regs[m_lvl];
+
+
         if (n->m_forceType==TokenType::INTEGER)
             return a+"x";
         if (n->getType(as)==TokenType::INTEGER)

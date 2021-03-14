@@ -236,6 +236,7 @@ public:
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleCompress();
     void HandleExportParallaxData();
     void HandleExportBW();
     void HandleBuildPaw();

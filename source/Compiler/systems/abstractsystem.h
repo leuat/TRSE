@@ -60,7 +60,11 @@ public:
 
 //    virtual void getEmulatorAndParams(QString emulator, QStringList params) = 0;
 
-    QString CompressLZ4(QString fileName);
+    QString CompressLZ4(QString fileName) {
+        CompressLZ4(fileName, fileName +"_c");
+    }
+    QString CompressLZ4(QString fileName, QString outFileName);
+
 
     virtual void InitSystemPreprocessors(QMap<QString, QString>& defines)  {};
     virtual QString CompressFile(QString fileName) {

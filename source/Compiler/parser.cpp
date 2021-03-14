@@ -1020,6 +1020,12 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="compress") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="export") {
             Eat();
             Eat();
@@ -2307,6 +2313,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="compress") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleCompress();
               }
               else if (m_currentToken.m_value.toLower() =="export_parallax_data") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3974,6 +3984,17 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleCompress()
+{
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    Syntax::s.m_currentSystem->CompressLZ4(inFile,outFile);
 
 }
 

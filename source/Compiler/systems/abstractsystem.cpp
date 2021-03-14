@@ -8,10 +8,11 @@ QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
 }
 
-QString AbstractSystem::CompressLZ4(QString fileName) {
+QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
     QString old = fileName;
     QByteArray in = Util::loadBinaryFile(fileName);
-    fileName = fileName+ "_c";
+    fileName = outFileName;
+
     QByteArray out;
     out.resize(65536);
     //LZ4LIB_API int LZ4_compress_default(const char* src, char* dst, int srcSize, int dstCapacity);

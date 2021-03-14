@@ -174,9 +174,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     if (Command("topointer") || Command("ptr")) {
         LoadVar(as,0);
-        disp->PushX();
+        as->Asm("mov es,ax");
         LoadVar(as,1);
-        disp->PopX();
+        as->Asm("mov di,ax");
     }
 
     if (Command("hi")) {
