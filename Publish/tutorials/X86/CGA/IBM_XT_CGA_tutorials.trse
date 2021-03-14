@@ -44,5 +44,5 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/X86/CGA/
-open_files = ,tut2.asm
-current_file = tut2.ras
+open_files = ,tut2.ras, tut2.asm
+current_file = tut2.asm

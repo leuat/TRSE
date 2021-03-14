@@ -128,6 +128,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 11;
   if (t==BBC)
       return 12;
+  if (t==VGA)
+      return 13;
 
   return 255;
 }
@@ -160,6 +162,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return AMSTRADCPC;
     if (c==12)
         return BBC;
+    if (c==13)
+        return VGA;
 
     return UNSUPPORTED;
 
@@ -380,6 +384,10 @@ void LColorList::Initialize(Type t)
         InitAmstradCPC();
     if (m_type == Type::BBC)
         InitBBC(16);
+    if (m_type == Type::VGA)
+        InitVGA();
+
+
 
 
     m_metric = new LinearMetric();
@@ -747,6 +755,26 @@ void LColorList::InitCGA1_HIGH()
 }
 
 void LColorList::InitOK64()
+{
+    m_list.clear();
+    float s = 1; // saturation
+    for (int i=0;i<256;i++) {
+        int b = (i&0b11100000);
+        int g = (i&0b00011000)<<3;
+        int r = (i&0b00000111)<<5;
+
+        int c = (r+g+b)/3;
+        r = Util::minmax(c+(r-c)*s,0,255);
+        g = Util::minmax(c+(g-c)*s,0,255);
+        b = Util::minmax(c+(b-c)*s,0,255);
+
+        m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
+    }
+    DefaultPen(LPen::FixedSingle);
+
+}
+
+void LColorList::InitVGA()
 {
     m_list.clear();
     float s = 1; // saturation

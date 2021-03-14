@@ -1,0 +1,44 @@
+unit File;
+var
+	fp : pointer;
+	val : integer;
+	handle, size  : integer;
+
+function Open(fp:global pointer):integer;
+begin
+	asm
+	mov ah, $3D
+	mov al, 0 ; open attribute: 0 - read-only, 1 - write-only, 2 -read&write
+	mov dx, word [File_fp] ; ASCIIZ filename to open
+	int 21h
+	mov [File_val],ax
+	end;
+	Open := val;
+end;	
+
+procedure Read(handle, size :global integer;dst : ^integer);
+begin
+	asm
+	cli
+	mov ah, 0x3F
+	mov bx, [File_handle]
+	mov cx, [File_size] ; number of bytes to read
+	mov dx, [File_dst] ; were to put read data
+	push ds
+	lds dx,[File_dst]	
+	int 21h	
+	pop ds
+	sti
+	end;
+end;	
+
+procedure Close(handle: global integer);
+begin
+	asm
+	mov ah, 0x3E
+	mov bx, [File_handle] ; file handle
+	int 21h	
+	end;
+end; 
+
+end.

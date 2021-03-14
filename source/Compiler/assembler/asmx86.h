@@ -29,6 +29,7 @@ public:
     void BinOP(TokenType::Type t, bool clearFlag=true) override;
     int CodeSizeEstimator(QStringList& lines) override {return 0;}
 
+    void DeclareString(QString name, QStringList initVal, QStringList flags) override;
 
     QString String(QStringList lst, bool term) override;
     void Label(QString s) override;

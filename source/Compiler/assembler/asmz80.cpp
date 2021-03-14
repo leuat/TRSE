@@ -219,7 +219,6 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 }
 
 void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {
-//    qDebug() << "HERE" << name << initVal;
     Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
 }
 

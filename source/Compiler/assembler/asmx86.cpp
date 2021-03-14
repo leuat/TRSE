@@ -196,9 +196,32 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
 
 }
 
+void AsmX86::DeclareString(QString name, QStringList initVal, QStringList flags) {
+    Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
+}
+
 QString AsmX86::String(QStringList lst, bool term)
 {
-    return "";
+    QString res;
+    QString mark = "db";
+
+    for (QString s:lst) {
+        bool ok=false;
+        uchar val = s.toInt(&ok);
+        if (!ok)
+            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+
+        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+
+        /*        if (s!=lst.last())
+                    res=res + "\n";
+        */
+
+    }
+    if (term)
+        res=res + "\t"+mark+"\t0";
+    m_term +=res;
+    return res;
 }
 
 void AsmX86::Label(QString s)

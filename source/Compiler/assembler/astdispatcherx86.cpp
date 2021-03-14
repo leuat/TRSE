@@ -85,7 +85,25 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
 
     QString ending = "]";
     if (node->m_expr!=nullptr) {
-        as->Asm("mov ah,0");
+        if (node->isPointer(as)) {
+//            as->Asm("push ax");
+            as->Asm("les di,["+node->getValue(as)+ "]");
+            node->m_expr->Accept(this);
+            as->Asm("add di,ax");
+            if (node->getArrayType(as)==TokenType::INTEGER)
+                as->Asm("shl di,1 ; Accomodate for word");
+
+
+  //          as->Asm("pop ax");
+            if (node->isWord(as))
+                as->Asm("mov ax, word [es:di]");
+            else
+                as->Asm("mov al, byte [es:di]");
+            return;
+        }
+        if (node->is8bitValue(as))
+            as->Asm("mov ah,0");
+        node->m_expr->setForceType(TokenType::INTEGER);
         node->m_expr->Accept(this);
         as->Asm("mov di,ax");
         if (node->getArrayType(as)==TokenType::INTEGER)
@@ -537,7 +555,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
 
-    if (var->isPointer(as)) {
+    if (var->isPointer(as) && !var->isArrayIndex()) {
         if (node->m_right->isPureVariable()) {
             if (node->m_right->isPointer(as)) {
                 as->Asm("les di, ["+node->m_right->getValue(as)+"]");
@@ -561,6 +579,29 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         }
         return "";
     }
+
+    // Set pointer value
+    if (var->isPointer(as) && var->isArrayIndex()) {
+
+        // TO DO: Optimize special cases
+        node->m_right->Accept(this);
+
+        as->Term();
+        as->Asm("les di, ["+var->getValue(as)+"]");
+        as->Asm("push ax");
+        var->m_expr->Accept(this);
+        as->Term();
+        as->Asm("mov bx,ax");
+
+        as->Asm("pop ax");
+        if (var->isWord(as))
+           as->Asm("mov [es:di+bx],ax");
+        else
+            as->Asm("mov [es:di+bx],al");
+        return "";
+
+    }
+
 
     if (var->isArrayIndex()) {
         // Is an array
@@ -614,9 +655,9 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         return "";
     }
 */
-
+    as->ClearTerm();
     node->m_right->Accept(this);
-
+    as->Term();
     as->Asm("mov ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
     return "";
 }

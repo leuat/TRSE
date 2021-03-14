@@ -34,7 +34,8 @@ begin
 		if (time=128) then setcgapalette($100);
 
 		// Calculate an y sine				
-		y:=sine[time]/8;
+		asm(";here");
+		y:=sine[time&$FF]/8;
 		// Multiply with scanlines
 		y:=y*80;
 
@@ -46,7 +47,7 @@ begin
 
 
 		// Calculate an y sine with shift
-		y:=sine[time+64]/8;
+		y:=sine[(time+64)&$FF]/8;
 		// Multiply with scanlines
 		y:=y*80;
 

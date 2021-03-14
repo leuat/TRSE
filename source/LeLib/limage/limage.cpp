@@ -94,6 +94,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 25;
     if (t==BBC)
         return 26;
+    if (t==VGA)
+        return 27;
 
 
     return 255;
@@ -155,6 +157,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Amstrad Generic NxM";
     if (t==BBC)
         return "BBC";
+    if (t==VGA)
+        return "VGA";
 
 
     return "Unknown image type";
@@ -218,6 +222,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return AmstradCPCGeneric;
     if (c==26)
         return BBC;
+    if (c==27)
+        return VGA;
 
     return NotSupported;
 
