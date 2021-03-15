@@ -1,14 +1,20 @@
 unit BeePlay;
 @use "screen"
+@use "tables"
 var
 	ptrOrder, ptrPattern, zp : pointer;
 	noChannels,j,note,octave,oct : byte;
 	
-	i,noRows,val : integer;
+	i,noRows,val,decayLength,distort : integer;
 	curOrder, noOrder, curRow, speed, counter,k : integer;
 
 
-	curNotes : array[4] of integer=(0,0,0,0);
+	curNotes : array[4] of integer=(0,0,0,0,0,0);
+	curDecay : array[4] of integer=(0,0,0,0,0,0);
+	curDistort : array[4] of integer=(0,0,0,0,0,0);
+	
+
+
 	curN : integer = 0;
 
 	@donotremove noteTable
@@ -18,6 +24,8 @@ var
 	$7120,$6ac7,$64c6,$5f1e,
 	$59c9,$54be,$4ffc,$4b7d
 	);
+	
+
 	
 	pow2 : array[8] of integer = (1,2,4,8,16,32,64,128,256,512);
 
@@ -52,8 +60,9 @@ begin
 	zp:=zp+3;
 	ptrPattern := zp + noOrder;
 	zp:=zp+2;
+	decayLength := 3;
 	
-	speed := 4;
+	speed := 3;
 	counter :=0;
 	ptrOrder := zp;
 	curOrder := 0;
@@ -66,32 +75,42 @@ end;
 
 procedure Play();
 begin
+	// Get note of current channel
+	val:=curDecay[curN];
+	// Advance to next channel		
+	val-=1;
+	if (val=0) then curNotes[curN]:=0;
+
+
 	i:=curNotes[curN];
+	/*
+	distort := curDistort[curN];
+	curDistort[curN] := distort+10;
+	*/
+
+	if (val<255) then curDecay[curN]:=val;
+	
 	curN:=curN+1;
 	if (curN = noChannels) then
 		curN := 0;
-	if (i=255 or i=0) then
-	begin
 	
+	if (i=255 or i=0) then
+		return; 
+		
 
-		return;
-	end;		
+
+	// Calculate octave		
 	oct := i/12;
 	while (i>12) do i:=i-12;
-	if (i=12) then i:=0;
-	
-	//oct:=12-oct;	
+	// Look up note
 	val := noteTable[i];
-	
-	Screen::PrintInt(i);
-	Screen::PrintChar(13);
-	
 
-//	oct:=oct+3;
-//	i:=4-oct;
+//	val := val + Tables::sineDistort[distort];
+
+	// Tweak octave
 	i:=oct-2;
 	val := val>>i;
-	
+	// Beep ahoy!	
 	Beep(val);
 		
 
@@ -99,41 +118,37 @@ end;
 
 procedure Update();
 begin
+	// Advance counter
 	counter:=counter+1;
 	if (counter<speed) then
 		return;
 		
 	counter := 0;
-	//for i:=0 to noChannels do
+	// Calculate new notes for each channel
 	for i:=0 to noChannels do
 	begin
 		// Get current order
 		j := ptrOrder[curOrder+i];
+		// Get pattern
 		zp := ptrPattern + j*noRows;
-//		zp+= toPointer(0,j*noRows);	
-		// get note:
+		// Get data from row
 		j := zp[curRow];
-//		j:=curRow|$80;
-		k:=j&$80;
-		if (k <>0) then
+		// Do we have a note?
+		if (j&$80 <>0) then
 		begin
 			j:= j &$7F; // Semitone
 			octave := j/12;
-//			if (octave<8) then
-//			begin
-				if (j<>$7f) then
-				begin
-					val:=j;
-					asm mov [BeePlay_val+1], byte 0 end; 
-//					if (i=1) then
-					curNotes[i] := val;
-				end;		
-/*			end
-			else curNotes[i]:=255;
-*/			
-			// else stop sound
+			if (j<>$7f) then
+			begin
+				val:=j;
+				asm mov [BeePlay_val+1], byte 0 end; 
+				curNotes[i] := val;
+				curDecay[i] := decayLength;
+//				curDistort[i] := 0;
+			end;		
 		
-		end;	
+		end;
+//		else curNotes[i]:=0;
 				
 	end;
 	

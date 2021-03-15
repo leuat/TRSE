@@ -855,6 +855,7 @@ void ASTdispatcherX86::BuildToCmp(QSharedPointer<Node> node)
         } else
         {
             as->Comment("Compare two vars optimization");
+
             if (node->m_right->isPureVariable()) {
                 //QString wtf = as->m_regAcc.Get();
                 LoadVariable(node->m_right);
@@ -864,8 +865,8 @@ void ASTdispatcherX86::BuildToCmp(QSharedPointer<Node> node)
 
                 return;
             }
-            else
-                node->m_right->Accept(this);
+            node->m_right->Accept(this);
+            as->Term();
 
             as->Asm("cmp  "+node->m_left->getValue(as) +"," + getAx(node->m_right));
 
@@ -873,11 +874,22 @@ void ASTdispatcherX86::BuildToCmp(QSharedPointer<Node> node)
             return;
         }
     }
+    QString ax = getAx(node->m_left);
+    QString bx = "b"+ QString(ax[1]);
+    node->m_left->Accept(this);
+    as->Term();
+    if (node->m_right->isPure()) {
+        as->Asm("cmp  "+ax+", " + getX86Value(as,node->m_right));
+        return;
 
+    }
+    as->Comment("Evaluate full expression");
+    as->Asm("push ax");
     node->m_right->Accept(this);
+    as->Term();
+    as->Asm("pop bx");
 
-
-    as->Asm("cmp  "+node->m_left->getValue(as) +"," + getAx(node->m_right));
+    as->Asm("cmp "+ax+","+bx);
 
 //    TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left, as->m_varStack.pop());
 

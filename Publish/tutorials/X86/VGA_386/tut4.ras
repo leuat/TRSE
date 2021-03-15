@@ -1,0 +1,39 @@
+program Tut4_BeePlayer;
+
+/*
+
+	BeePlay - the DOS Beeper Player! 
+
+*/
+
+@use "beeplay"
+@use "memory"
+
+// Automatically export music in BEEPlayer format
+@export "music/song1.trt" "music/song1.bin" 3
+var  
+	song: incbin("music/song1.bin");
+
+
+// Simple music player
+interrupt RasterIRQ();
+begin
+	StartIRQ();
+	BeePlay::Update();
+	BeePlay::Play();
+	CloseIRQ();
+end;
+
+
+begin
+	BeePlay::Initialize(#song);
+	
+	BeePlay::speed := 3;
+	Memory::SetTimer(23860);
+	SetInterrupt($8, RasterIRQ());
+	// Loop infinitely
+	while (true) do
+	begin
+		waitforverticalblank();
+	end;
+end.
