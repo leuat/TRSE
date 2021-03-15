@@ -33,14 +33,14 @@ void LImageOK64::Initialize(int width, int height)
 void LImageOK64::setPixel(int x, int y, unsigned int color)
 {
     if (x<0 || x>=m_width) return;
-    if (y<0 || x>=m_height) return;
+    if (y<0 || y>=m_height) return;
     m_data[x+y*m_width] = (uchar)color;
 }
 
 unsigned int LImageOK64::getPixel(int x, int y)
 {
     if (x<0 || x>=m_width) return 0;
-    if (y<0 || x>=m_height) return 0;
+    if (y<0 || y>=m_height) return 0;
     return (uchar)m_data[x+y*m_width];
 
 }

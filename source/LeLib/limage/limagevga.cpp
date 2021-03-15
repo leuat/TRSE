@@ -17,6 +17,8 @@ LImageVGA::LImageVGA(LColorList::Type t)  : LImageOK64(t)
     m_supports.displayBackground = false;
     m_width = 320;
     m_height = 200;
+    m_scaleX = 1;
+    m_scale = 1;
     m_type = LImage::Type::VGA;
 
 }

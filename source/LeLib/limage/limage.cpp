@@ -300,7 +300,6 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 
 //    qDebug() << img.width();
-
     for (int y=0;y<height;y++) {
 #pragma omp parallel for
         for (int x=0;x<width;x++) {
