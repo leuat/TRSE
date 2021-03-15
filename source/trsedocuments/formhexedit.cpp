@@ -61,3 +61,27 @@ void FormHexEdit::on_sldSize_valueChanged(int value)
     ui->scrollArea->update();
     ui->scrollArea->viewport()->update();
 }
+
+void FormHexEdit::on_btnExport_clicked()
+{
+    m_data = ui->scrollArea->m_pdata->m_data;
+    int start = Util::NumberFromStringHex(ui->leStart->text());
+    if (start<0) start = 0;
+    int end = Util::NumberFromStringHex(ui->leEnd->text());
+    if (end>m_data.count())
+        end = m_data.count();
+    int len = end-start;
+    if (len<=0)
+        return;
+    QByteArray ba = m_data.mid(start,len);
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    QString f = "Binary files (*.*)";
+    QString filename = dialog.getSaveFileName(NULL, "Save file as",m_currentDir,f);
+
+    if (filename=="")
+        return;
+
+    Util::SaveByteArray(ba,filename);
+
+}

@@ -33,6 +33,8 @@ private slots:
 
     void on_sldSize_valueChanged(int value);
 
+    void on_btnExport_clicked();
+
 private:
     Ui::FormHexEdit *ui;
 };
