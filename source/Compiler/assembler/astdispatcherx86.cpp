@@ -553,7 +553,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 
 
-
+    as->ClearTerm();
 
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
@@ -587,16 +587,19 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             else {
 //                as->Asm("lea si, "+node->m_right->getValue(as));
 //                as->Asm("cld");
-                as->Asm("lea si, "+node->m_right->getValue(as));
+                as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
+                //as->Asm("mov si, "+node->m_right->getValue(as));
                 as->Asm("mov ["+var->getValue(as)+"+2], ds");
                 as->Asm("mov ["+var->getValue(as)+"], si");
             }
             return "";
         }
         else{
-            m_isPurePointer = true;
+            as->Comment("Setting PURE POINTER");
+//            m_isPurePointer = true;
             node->m_right->Accept(this);
-            m_isPurePointer = false;
+  //          m_isPurePointer = false;
+            as->Comment("Setting PURE POINTER ends");
 
             as->Asm("mov ["+var->getValue(as)+"+2], es");
             as->Asm("mov ["+var->getValue(as)+"], di");

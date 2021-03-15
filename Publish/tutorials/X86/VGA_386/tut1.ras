@@ -1,6 +1,6 @@
 program Adlib;
 @use "AdlibPlayer"
-@use "Memory"
+@use "memory"
 var  
 	song: incbin("music/song1.trt");
 

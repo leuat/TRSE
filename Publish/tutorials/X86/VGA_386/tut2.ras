@@ -1,7 +1,7 @@
 program Adlib;
 @use "AdlibPlayer"
-@use "Screen"
-@use "Memory"
+@use "screen"
+@use "memory"
 @use "gfx"
 @use "tables"
 var  

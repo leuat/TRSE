@@ -34,14 +34,14 @@ begin
 		if (time=128) then setcgapalette($100);
 
 		// Calculate an y sine				
-		asm(";here");
 		y:=sine[time&$FF]/8;
 		// Multiply with scanlines
 		y:=y*80;
 
 
-		// Copy scanlines 0 data			
-		p1:=ptr(hi(#data), lo(#data) + y);		
+		// Copy scanlines 0 data	
+		asm(";here");		
+		p1:=ptr(hi(#data), lo(#data)+y);		
 		// Copy image data (only every single scanline, )
 		memcpyw(p1,p2, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
 

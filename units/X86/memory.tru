@@ -4,10 +4,10 @@ var
 	const DEFAULT_TIMER : integer = 23863;
 procedure Poke8(_bx:integer; _di:integer;_ah:byte) inline;
 begin
-	asm
+	asm("
 		mov es,bx
-		mov es:[di],ah	
-	end;
+		mov [es:di],ah	
+	");
 end;
 
 
