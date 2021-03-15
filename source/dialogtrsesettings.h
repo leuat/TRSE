@@ -187,6 +187,8 @@ private slots:
 
     void on_btnAppleII_clicked();
 
+    void on_btnLZ4_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

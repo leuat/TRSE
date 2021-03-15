@@ -3994,7 +3994,15 @@ void Parser::HandleCompress()
     QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
     Eat(TokenType::STRING);
 
-    Syntax::s.m_currentSystem->CompressLZ4(inFile,outFile);
+    QString lz4 = m_settingsIni->getString("lz4");
+    if (!QFile::exists(lz4))
+        ErrorHandler::e.Error("In order to compress files, please set up the 'lz4' path in the 'Utilities' section in the TRSE settings panel.", m_currentToken.m_lineNumber);
+
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+    QString out, err;
+    QStringList params = QStringList() << "-l" << inFile << outFile;
+    Syntax::s.m_currentSystem->StartProcess(lz4,params,out,true);
 
 }
 

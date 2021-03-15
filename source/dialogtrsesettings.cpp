@@ -81,6 +81,8 @@ void DialogTRSESettings::FillFromIni()
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
     ui->leBackupFiles->setText(QString::number((int)m_ini->getdouble("backup_files_count")));
 
+    ui->leLZ4->setText(m_ini->getString("lz4"));
+
     ui->leSplashSeconds->setText(QString::number((int)m_ini->getdouble("splash_seconds")));
 
     ui->leSidplayer->setText(m_ini->getString("sidplayer"));
@@ -168,6 +170,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc464_emulator", ui->leAmstradCPC464->text());
     m_ini->setString("coleco_emulator", ui->leColecoEmulator->text());
+    m_ini->setString("lz4",ui->leLZ4->text());
     //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
 
@@ -713,5 +716,14 @@ void DialogTRSESettings::on_btnAppleII_clicked()
         tr("Apple II emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leAppleIIEmulator->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnLZ4_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("LZ4 executable"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leLZ4->setText(filename);
 
 }
