@@ -192,6 +192,12 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
     if (t == TokenType::DIV) {
         m_term = "div ";
     }
+    if (t == TokenType::SHR) {
+        m_term = "shr ";
+    }
+    if (t == TokenType::SHL) {
+        m_term = "shl ";
+    }
 
 
 }

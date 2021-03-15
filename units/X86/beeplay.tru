@@ -1,0 +1,156 @@
+unit BeePlay;
+@use "screen"
+var
+	ptrOrder, ptrPattern, zp : pointer;
+	noChannels,j,note,octave,oct : byte;
+	
+	i,noRows,val : integer;
+	curOrder, noOrder, curRow, speed, counter,k : integer;
+
+
+	curNotes : array[4] of integer=(0,0,0,0);
+	curN : integer = 0;
+
+	@donotremove noteTable
+	noteTable : array[] of integer = 
+	(
+ 	$8e88,$8683,$7ef6,$77d8,
+	$7120,$6ac7,$64c6,$5f1e,
+	$59c9,$54be,$4ffc,$4b7d
+	);
+	
+	pow2 : array[8] of integer = (1,2,4,8,16,32,64,128,256,512);
+
+
+
+procedure Beep( bi : integer );
+begin
+	asm("
+
+    mov     al, 182         ; Prepare the speaker for the
+    out     43h, al         ;  note.
+    mov ax,[BeePlay_bi]
+                        ;  for middle C.
+    out     042h, al         ; Output low byte.
+    mov     al, ah          ; Output high byte.
+    out     042h, al
+	in      al, 61h         
+    or      al, 00000011b   ; Set bits 1 and 0.
+    out     61h, al         ; Send new value.
+	");	
+end; 
+
+
+procedure Initialize( zp : global pointer );
+begin
+	noChannels := zp[0];
+	noRows := zp[1];
+	asm mov [BeePlay_noRows+1], byte 0 end;
+	
+	noOrder := zp[2];
+	noOrder *=noChannels;
+	zp:=zp+3;
+	ptrPattern := zp + noOrder;
+	zp:=zp+2;
+	
+	speed := 4;
+	counter :=0;
+	ptrOrder := zp;
+	curOrder := 0;
+	curRow := 0;
+	curOrder := 0;
+	init_playnote();
+
+end;
+
+
+procedure Play();
+begin
+	i:=curNotes[curN];
+	curN:=curN+1;
+	if (curN = noChannels) then
+		curN := 0;
+	if (i=255 or i=0) then
+	begin
+	
+
+		return;
+	end;		
+	oct := i/12;
+	while (i>12) do i:=i-12;
+	if (i=12) then i:=0;
+	
+	//oct:=12-oct;	
+	val := noteTable[i];
+	
+	Screen::PrintInt(i);
+	Screen::PrintChar(13);
+	
+
+//	oct:=oct+3;
+//	i:=4-oct;
+	i:=oct-2;
+	val := val>>i;
+	
+	Beep(val);
+		
+
+end;
+
+procedure Update();
+begin
+	counter:=counter+1;
+	if (counter<speed) then
+		return;
+		
+	counter := 0;
+	//for i:=0 to noChannels do
+	for i:=0 to noChannels do
+	begin
+		// Get current order
+		j := ptrOrder[curOrder+i];
+		zp := ptrPattern + j*noRows;
+//		zp+= toPointer(0,j*noRows);	
+		// get note:
+		j := zp[curRow];
+//		j:=curRow|$80;
+		k:=j&$80;
+		if (k <>0) then
+		begin
+			j:= j &$7F; // Semitone
+			octave := j/12;
+//			if (octave<8) then
+//			begin
+				if (j<>$7f) then
+				begin
+					val:=j;
+					asm mov [BeePlay_val+1], byte 0 end; 
+//					if (i=1) then
+					curNotes[i] := val;
+				end;		
+/*			end
+			else curNotes[i]:=255;
+*/			
+			// else stop sound
+		
+		end;	
+				
+	end;
+	
+	curRow:=curRow+1;
+	
+	if (curRow=32) then
+	begin
+		curRow:=0;
+		curOrder:=curOrder + noChannels;
+		if (curOrder=noOrder) then
+		begin
+			curOrder:=0;//Reset to start of song
+		end;
+		
+	end;	
+
+end;
+
+
+end.

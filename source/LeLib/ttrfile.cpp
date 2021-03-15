@@ -116,6 +116,8 @@ void TTRFile::Export(QString filename, int type)
         ExportVIC20(filename);
     if (type==2)
         ExportVIC20C(filename);
+    if (type==3)
+        ExportBeep(filename);
 }
 
 // exports to the Vic 20 as a note and octave directly from the TRT data
@@ -135,6 +137,33 @@ void TTRFile::ExportVIC20(QString filename)
     for (QByteArray& ba: m_patterns) {
         for (int i=0;i<m_patternLength;i++)
             o.append(ba[i*m_noBytesPerLine]); // Only add first byte - ignore rest
+    }
+
+
+    Util::SaveByteArray(o,filename);
+}
+
+// exports to the Vic 20 as a note and octave directly from the TRT data
+void TTRFile::ExportBeep(QString filename)
+{
+    QByteArray o;
+    // Header first:
+    o.append(m_noChannels);
+    o.append(m_patternLength);
+    o.append(m_orders.count());
+    int pos = m_orders.size()*m_noChannels; // Start of patterns
+    Util::appendInt16(o,pos); // pattern start
+
+    for (QByteArray& ba: m_orders)
+        o.append(ba);
+
+    for (QByteArray& ba: m_patterns) {
+        for (int i=0;i<m_patternLength;i++) {
+            char c = ba[i*m_noBytesPerLine];
+            char vol = ba[i*m_noBytesPerLine+1];
+            if ((vol&0x3f)!=0) c=0;
+            o.append(c); // Only add first byte - ignore rest
+        }
     }
 
 

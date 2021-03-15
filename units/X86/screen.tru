@@ -112,6 +112,16 @@ begin
 	");
 end;
 
+procedure PrintChar(ch : byte);
+begin
+	asm
+			mov	al,[Screen_ch]
+			mov	ah,0x0E
+			int	10h
+	
+	end;
+end;
+
 
 procedure PrintAx();
 begin
@@ -133,6 +143,8 @@ printAx:		push	cx
 			pop	ax
 			loop	.printDigit
 			pop	cx
+			
+
 			popa
 			pop ds
 			ret
@@ -140,6 +152,16 @@ printAx:		push	cx
 			db	"8","9","a","b","c","d","e","f"
 
 end;
+end;
+
+
+procedure PrintInt(i:global integer);
+begin
+	asm
+		mov ax,[Screen_i]
+	end;
+	PrintAx();
+	
 end;
 
 end.

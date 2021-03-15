@@ -56,6 +56,12 @@ public:
     void setForceType(TokenType::Type t) override;
 
 
+    bool isPointer(Assembler *as) override
+    {
+        return m_left->isPointer(as) | m_right->isPointer(as);
+
+    }
+
     QString getAddress() override {
         return HexValue();
     }

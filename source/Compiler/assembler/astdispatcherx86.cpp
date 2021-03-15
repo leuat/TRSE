@@ -13,13 +13,15 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
     if (node->m_right->isWord(as))
         node->m_left->setForceType(TokenType::INTEGER);
     as->ClearTerm();
-    if (node->isPureNumeric()) {
-        as->Asm("mov "+getAx(node)+", " + node->getValue(as) + "; binop is pure numeric");
-        return;
-    }
-    if (node->isPureVariable()) {
-        as->Asm("mov "+getAx(node)+", [" + node->getValue(as)+"] ; binop is pure variable");
-        return;
+    if (!node->isPointer(as)) {
+        if (node->isPureNumeric()) {
+            as->Asm("mov "+getAx(node)+", " + node->getValue(as) + "; binop is pure numeric");
+            return;
+        }
+        if (node->isPureVariable()) {
+            as->Asm("mov "+getAx(node)+", [" + node->getValue(as)+"] ; binop is pure variable");
+            return;
+        }
     }
 /*    if (!node->m_left->isPure() && node->m_right->isPure()) {
         QSharedPointer<Node> t = node->m_right;
@@ -47,16 +49,64 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         as->m_term = "";
         return;
     }
+    if (node->m_left->isPointer(as) || node->m_right->isPointer(as)) {
+        // Treat as pointers
+        // Make sure left is pointer
+        if (!node->m_left->isPointer(as)) {
+            auto n = node->m_right;
+            node->m_right = node->m_left;
+            node->m_left = n;
+        }
+        as->ClearTerm();
+        as->BinOP(node->m_op.m_type);
+        QString bop = as->m_term;
+        as->ClearTerm();
+
+        if (node->m_right->isPointer(as)) {
+            if (!node->m_right->isPure())
+                ErrorHandler::e.Error("Pointers can only add / sub with other pure pointers.", node->m_op.m_lineNumber);
+
+            QString r = node->m_right->getValue(as);
+            as->Comment("RHS is pure pointer as well! "+r);
+            node->m_left->Accept(this); // Should always be a pointer
+            as->Term();
+
+            as->Asm("mov ax,es");
+            as->Asm(bop+" ax,["+r+"+2]");
+            as->Asm("mov es,ax");
+            as->Asm(bop+" di,["+r+"]");
+            return;
+        }
+
+        as->Comment("RHS is NOT pointer, only updating DI");
+        as->ClearTerm();
+        node->m_right->Accept(this);
+        as->Term();
+        if (!node->m_left->isPure())
+            ErrorHandler::e.Error("LHS of equation must be pure pointer and not a binary operation!", node->m_op.m_lineNumber);
+
+        node->m_left->Accept(this); // Should always be a PURE pointer
+        as->Asm(bop+" di,ax");
+
+        return;
+    }
+
+
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
     if (m_isPurePointer)
         bx = "di";
 
     PushX();
-    as->ClearTerm();
+    if (node->m_op.m_type==TokenType::SHR || node->m_op.m_type==TokenType::SHL)
+        PushX();
     node->m_right->Accept(this);
 //    as->Term();
     QString ax = getAx(node->m_right);
+    if (node->m_op.m_type==TokenType::SHR || node->m_op.m_type==TokenType::SHL) {
+       PopX();
+       ax = "cl";
+    }
     PopX();
     as->BinOP(node->m_op.m_type);
 
@@ -806,11 +856,11 @@ void ASTdispatcherX86::BuildToCmp(QSharedPointer<Node> node)
         {
             as->Comment("Compare two vars optimization");
             if (node->m_right->isPureVariable()) {
-                QString wtf = as->m_regAcc.Get();
+                //QString wtf = as->m_regAcc.Get();
                 LoadVariable(node->m_right);
                 //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
                 //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
-                as->Asm("cmp  "+node->m_left->getValue(as) +"," + getAx(node->m_right));
+                as->Asm("cmp  ["+node->m_left->getValue(as) +"]," + getAx(node->m_right));
 
                 return;
             }
