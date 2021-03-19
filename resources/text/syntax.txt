@@ -543,8 +543,9 @@ m; ScrollX; X86; b
 m; SetPalette; X86; b,b,b,b
 m; SetPixel; X86; a, i,i,b
 m; SetPixelCGA; X86; a, i,i,b
-m; memcpyb; X86; a,a,i
-m; memcpyw; X86; a,a,i
+m; memcpy8; X86; a,a,i
+m; memcpy16; X86; a,a,i
+m; memcpy32; X86; a,a,i
 m; SetCgaPalette; X86; i
 m; toPointer;x86;i,i
 m; ptr;x86;i,i

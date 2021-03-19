@@ -158,11 +158,14 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     }
 
-    if (Command("memcpyb"))
+    if (Command("memcpy8"))
         MemCpy(as, "b");
 
-    if (Command("memcpyw"))
+    if (Command("memcpy16"))
         MemCpy(as,"w");
+
+    if (Command("memcpy32"))
+        MemCpy(as,"d");
 
     if (Command("setcgapalette")) {
         as->Asm("mov ah, 0Bh");
@@ -438,13 +441,16 @@ void MethodsX86::AddInitMethod(Assembler *as, QString name, QString file)
 void MethodsX86::MemCpy(Assembler *as, QString type)
 {
     as->Comment("Memcpy");
+    as->Asm("push ds");
     LoadVar(as,2);
+
     as->Asm("push ax");
-    LoadAddress(as, 0,true);
     LoadAddress(as, 1,false);
+    LoadAddress(as, 0,true);
     as->Asm("pop cx");
 
     as->Asm("rep movs"+type);
+    as->Asm("pop ds");
 
 }
 

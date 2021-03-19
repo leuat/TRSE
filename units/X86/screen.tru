@@ -6,7 +6,10 @@ var
 	const VGA : integer = $A000;
 	const buf1Addr : integer = $8000;
 	const buf2Addr : integer = $7000;
-	buffer1, buffer2 : pointer;
+	const buf3Addr : integer = $6000;
+	const buf4Addr : integer = $5000;
+	const buf5Addr : integer = $4000;
+	buffer1, buffer2, buffer3, buffer4, buffer5 : pointer;
 	@donotremove source	
 	@donotremove dest
 	source,dest:pointer of integer;
@@ -18,6 +21,9 @@ begin
 
 	buffer1 := ptr(buf1Addr,0);
 	buffer2 := ptr(buf2Addr,0);
+	buffer3 := ptr(buf3Addr,0);
+	buffer4 := ptr(buf4Addr,0);
+	buffer5 := ptr(buf5Addr,0);
 end;
 
  procedure SetColor(color,red,green,blue:global byte);

@@ -185,7 +185,8 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeUnaryOp> node)
         node->m_right->Accept(this);
     else {
         QSharedPointer<NodeNumber>n = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
-        n->m_val*=-1;
+        if (n!=nullptr)
+           n->m_val*=-1;
         node->m_right->Accept(this);
     }
 

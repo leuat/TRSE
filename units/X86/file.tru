@@ -1,6 +1,6 @@
 unit File;
 var
-	fp : pointer;
+	fp,tp : pointer;
 	val : integer;
 	handle, size  : integer;
 
@@ -15,6 +15,9 @@ begin
 	end;
 	Open := val;
 end;	
+
+
+
 
 procedure Read(handle, size :global integer;dst : ^integer);
 begin
@@ -40,5 +43,14 @@ begin
 	int 21h	
 	end;
 end; 
+
+
+procedure ReadAll(fp,tp:global pointer);
+begin
+	handle := Open(fp);
+	Read(handle, 64000, tp);
+	Close(handle);
+end;
+
 
 end.
