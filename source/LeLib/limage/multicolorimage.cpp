@@ -839,7 +839,7 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
                 PixelChar& pc = m_data[pos];
                 for (int i=0;i<8;i++) {  // process 8 pixel lines in character data
                     // VIC20 and Multicolor mode - swap bit
-                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7 )
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
                     else
                         data.append( PixelChar::reverse(pc.p[i]));
@@ -851,6 +851,8 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
     }
     file.write(data);
 }
+
+// exports the colour map, useful for screens
 void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int height, int lineHeight)
 {
 
@@ -883,33 +885,9 @@ void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int heig
     }
     file.write(cdata);
 
-/*
-    for (int i=start;i<end;i++) { // walk characters
-
-        // Convert to POS in charset:
-        int x = i%m_charWidthDisplay;
-        int y = height*((i/m_charWidthDisplay));
-        int pos = x+y*m_charWidthDisplay;
-
-        // colour
-        int line = y  % 1;
-        if (m_colorList.m_type == LColorList::VIC20) line = y % 2; // for colour data
-
-        if (line == 0) { // process colour lines (will be every even line if vic 20)
-            if (pos>=0 && pos< m_charWidth*m_charHeight) {
-                PixelChar& pc = m_data[pos];
-                cdata.append( pc.c[ 3 ] ); // char selection colour
-            }
-        }
-
-        pos +=m_charWidthDisplay;
-
-        //        qDebug() << x << y;
-    }
-    file.write(cdata);
-    */
 }
 
+// exports a screen in VBM format,
 void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int height, int isMulticolor)
 {
     QByteArray data;
@@ -929,9 +907,9 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
                 PixelChar& pc = m_data[pos];
                 for (int i=0;i<8;i++) {
                     // VIC20 and Multicolor mode - swap bit
-                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
-                    else\
+                    else
                         data.append( PixelChar::reverse(pc.p[i]));
                 }
                 pos +=m_charWidthDisplay;
