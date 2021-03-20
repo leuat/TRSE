@@ -29,7 +29,7 @@
 
 class TokenType {
 public:
-#define no_types 116
+#define no_types 117
 
     enum Type {
         NONE, INTEGER, PLUS, MINUS, MUL, DIV, LPAREN,
@@ -48,7 +48,7 @@ public:
         GLOBAL, WRAM, HRAM, ALIGNED,BANK, SPRRAM, INLINE, BUILDTABLE,
         USES, FUNCTION, COMPRESSED,
         PPURE, PURE_VARIABLE, PURE_NUMBER, NO_TERM,MACRO, REFERENCE, SIGNED,
-        BREAK, CONTINUE, RETURN, ASSIGNOP, RAM
+        BREAK, CONTINUE, RETURN, ASSIGNOP, RAM, TYPE
 
     };
 

@@ -206,8 +206,10 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
         if (node->getOrgType(as)!=TokenType::INTEGER)
             accomodate = true;
 
-        if (accomodate && !node->isPointer(as))
-            as->Asm("mov ah,0 ; forcetype clear high bit");
+        if (accomodate && !node->isPointer(as)) {
+            QString aa = getAx(node)[0];
+            as->Asm("mov "+QString(ax[0])+"h,0 ; forcetype clear high bit");
+        }
     }
 //    qDebug() << "ORG " <<TokenType::getType(node->getOrgType(as)) << "   : " << node->getValue(as);
   //  qDebug() << "FT " <<TokenType::getType(node->m_forceType);

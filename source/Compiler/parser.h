@@ -130,6 +130,9 @@ public:
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree;
+
+    QMap<QString, QSharedPointer<Node>> m_types;
+
     QString WashVariableName(QString v);
 
 
@@ -209,6 +212,7 @@ public:
 //    void AppendComment(QSharedPointer<Node> n);
 
     QVector<QSharedPointer<Node>> ConstDeclaration();
+    QSharedPointer<Node> TypeDeclaration();
     //QSharedPointer<Node> LogicalClause();
     QSharedPointer<Node> Block(bool useOwnSymTab, QString blockName="");
     QSharedPointer<Node> BlockNoCompound(bool useOwnSymTab, QString blockName="");

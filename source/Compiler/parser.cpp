@@ -2938,10 +2938,13 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
 void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName) {
     Eat(TokenType::VAR);
 //      qDebug() << "PARSER INSIDE " <<isMain  <<m_currentToken.getType();
-    while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT) {
+    while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT || m_currentToken.m_type == TokenType::TYPE) {
 
         if (m_currentToken.m_type == TokenType::CONSTANT) {
             ConstDeclaration();
+        } else
+        if (m_currentToken.m_type == TokenType::TYPE) {
+            TypeDeclaration();
         }
         else {
 
@@ -3140,6 +3143,23 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
     return QVector<QSharedPointer<Node>>();
 }
 
+QSharedPointer<Node>  Parser::TypeDeclaration()
+{
+    Eat(TokenType::TYPE);
+    QString name = m_currentToken.m_value;
+    Eat();
+    Eat(TokenType::EQUALS);
+    QSharedPointer<Node> typeSpec = TypeSpec(false,QStringList());
+    if (m_types.contains(name))
+        ErrorHandler::e.Error("Type already defined: "+name,m_currentToken.m_lineNumber);
+
+    m_types[name] = typeSpec;
+
+//    qDebug() << m_types.keys();
+
+    return typeSpec;
+}
+
 
 
 QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, bool isProcedureParams)
@@ -3332,7 +3352,11 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 {
     Token t = m_currentToken;
 
-
+    if (m_types.contains(t.m_value)) {
+        QString n = t.m_value;
+        Eat();
+        return m_types[n];
+    }
 
     if (m_currentToken.m_type == TokenType::INCBIN || m_currentToken.m_type == TokenType::INCSID || m_currentToken.m_type == TokenType::INCNSF) {
         Eat();

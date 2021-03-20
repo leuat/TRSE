@@ -4,7 +4,10 @@ unit AdlibPlayer;
 var
 
 
+/**
+	Initializes the adlib song located at parameter #1 (pointer)
 
+**/
 procedure Initialize(song:pointer);
 begin
 	asm("
@@ -460,13 +463,30 @@ setAdlibRegister:
 end;
 
 
+/**
+	Updates the adlib tune. Should be called once per raster update, so 
+	include this in an IRQ. See "tut3.ras" in the VGA examples.  
+	
+   <code>
+// Simple music player
+interrupt RasterIRQ();
+begin
+	StartIRQ();
+	AdlibPlayer::Play();
+	CloseIRQ();
+end;
+</code>
+
+**/
 procedure Play() inline;
 begin
 	asm( " call	tick");
 	
 end;
 
-
+/**
+	Stops any adlib sound
+**/
 procedure Stop();
 begin
 	asm("

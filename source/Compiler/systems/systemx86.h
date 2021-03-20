@@ -22,7 +22,7 @@ public:
         m_registers << "_al"<<"_bl" <<"_cl" <<"_dl";
 //        m_registers << "_es"<<"_di" <<"_ds" <<"_si";
         m_registers << "_di" <<"_si";
-
+        m_hasVariableColorPalette = true;
     }
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);

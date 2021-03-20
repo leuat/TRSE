@@ -1,0 +1,26 @@
+unit Matrix3;
+
+var
+	type matrix3 = array[9] of integer;
+			
+      
+
+
+procedure matmul(a:matrix3; b:matrix3);
+begin
+/*	for j:=0 to 3 do
+		for i:=0 to 3 do
+			temp[i][j] := a[i][0] * b[0][j] + a[i][1] * b[1][j] +
+                         a[i][2] * b[2][j] + a[i][3] * b[3][j];
+
+	for i:=0 to 3  do
+		for j:=0 to 3 do
+			a[i][j] := temp[i][j];
+			*/
+end;
+
+
+
+
+
+end.
