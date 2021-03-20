@@ -1,9 +1,9 @@
 program Adlib;
-@use "AdlibPlayer"
-@use "screen"
-@use "memory"
-@use "gfx"
-@use "tables"
+@use "music/adlibplayer"
+@use "system/screen"
+@use "system/memory"
+@use "gfx/gfx"
+@use "system/tables"
 var  
 	song: incbin("music/song1.trt");
 	i,x,x1,x2,y,j,j2,px,time: integer;

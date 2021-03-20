@@ -6,8 +6,8 @@ program Tut4_BeePlayer;
 
 */
 
-@use "beeplay"
-@use "memory"
+@use "music/beeplay"
+@use "system/memory"
 
 // Automatically export music in BEEPlayer format
 @export "music/song1.trt" "music/song1.bin" 3

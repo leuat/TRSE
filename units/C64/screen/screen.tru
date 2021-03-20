@@ -1,12 +1,12 @@
 Unit Screen;
-
+var
 /*
 
 	Library for char-based screen handling
 
 */
 
-var
+//var
    	p1, sp, cp : pointer;
 	i, j, x, y, c : byte;
 	i2 : integer;

@@ -1,6 +1,6 @@
 unit BeePlay;
-@use "screen"
-@use "tables"
+@use "system/screen"
+@use "system/tables"
 var
 	ptrOrder, ptrPattern, zp : pointer;
 	noChannels,j,note,octave,oct : byte;

@@ -1,0 +1,14 @@
+unit Lib3d;
+@use "matrix"
+var
+
+	object = record
+		pos: 	
+
+	end;
+
+
+
+
+
+end.

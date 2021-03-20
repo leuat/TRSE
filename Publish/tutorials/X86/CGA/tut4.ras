@@ -20,7 +20,7 @@ begin
 	time:=0;
 	delta:=0;
 	// Copy image to screen
-	memcpyw(#data,screen_cga,8000);
+	memcpy16(#data,screen_cga,8000);
 	while(true) do
 	begin
 		for t:=0 to 6 do

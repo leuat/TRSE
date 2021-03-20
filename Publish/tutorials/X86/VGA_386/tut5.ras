@@ -1,12 +1,12 @@
 program Tutorial5_Fonts;
-@use "file"
-@use "AdlibPlayer"
-@use "screen"
-@use "memory"
-@use "gfx"
-@use "tables"
-@use "compression"
-@use "fonts"
+@use "system/file"
+@use "music/adlibplayer"
+@use "system/screen"
+@use "system/memory"
+@use "gfx/gfx"
+@use "system/tables"
+@use "system/compression"
+@use "gfx/fonts"
 
 var  
 	song: incbin("music/song1.trt");

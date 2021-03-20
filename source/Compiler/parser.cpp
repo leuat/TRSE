@@ -127,7 +127,7 @@ void Parser::Eat(TokenType::Type t)
 
      emit EmitTick("&"+QString::number(m_prevPercent));
     }
-   //qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
+//   qDebug() << m_currentToken.m_value << m_currentToken.m_intVal;
     if (m_currentToken.m_type == t) {
         m_currentToken = m_lexer->GetNextToken();
 //        if (m_pass==2)
@@ -2782,7 +2782,6 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
         return nullptr;
-
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
 
     int pos = m_currentToken.m_lineNumber;
@@ -2936,10 +2935,11 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
 
 
 void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName) {
-    Eat(TokenType::VAR);
-//      qDebug() << "PARSER INSIDE " <<isMain  <<m_currentToken.getType();
+    if (m_currentToken.m_type == TokenType::VAR)
+        Eat(TokenType::VAR);
+      qDebug() << "PARSER INSIDE "  <<m_currentToken.getType() << m_currentToken.m_value;
     while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT || m_currentToken.m_type == TokenType::TYPE) {
-
+        qDebug() << m_currentToken.getType() << m_currentToken.m_value;
         if (m_currentToken.m_type == TokenType::CONSTANT) {
             ConstDeclaration();
         } else
@@ -2955,7 +2955,6 @@ void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockN
         }
         Eat(TokenType::SEMI);
     }
-
 }
 void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName)
 {
@@ -3088,13 +3087,29 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
 {
     QVector<QSharedPointer<Node>> decl;
 
-//    qDebug() << "PARSER " <<isMain <<m_currentToken.getType();
+//    qDebug() << "PARSER " <<isMain <<m_currentToken.getType() << blockName;
   /*  if (isMain)
         if (m_currentToken.m_type!=TokenType::VAR)
             ErrorHandler::e.Error("Main program must start with 'var' keyword",m_currentToken.m_lineNumber);
 
 */
 
+/*
+    while (m_currentToken.m_type!=TokenType::BEGIN) {
+
+        if ((m_currentToken.m_type==TokenType::PROCEDURE
+                || m_currentToken.m_type==TokenType::FUNCTION
+                || m_currentToken.m_type==TokenType::WEDGE
+                || m_currentToken.m_type==TokenType::INTERRUPT
+                ) && isMain){
+            ProcDeclarations(decl, blockName);
+        }
+        else {
+            VarDeclarations(decl, blockName);
+
+        }
+    }
+*/
 
     while (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type == TokenType::WEDGE  || m_currentToken.m_type==TokenType::FUNCTION || m_currentToken.m_type==TokenType::VAR) {
         if (m_currentToken.m_type==TokenType::VAR) {
@@ -3105,6 +3120,9 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
             ProcDeclarations(decl, blockName);
         }
     }
+
+
+
 //    }
    // qDebug() << "Finally:" << m_currentToken.getType();
     if (m_currentToken.m_type!=TokenType::BEGIN && isMain && hasBlock)

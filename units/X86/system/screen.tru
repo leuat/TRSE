@@ -1,5 +1,5 @@
 unit Screen;
-@use "file"
+@use "system/file"
 var
 	i,j,k,handle : integer;
 	color,red,green,blue : byte;

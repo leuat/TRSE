@@ -9,11 +9,11 @@ program Tut3;
 
 */
 
-@use "file"
-@use "AdlibPlayer"
-@use "screen"
-@use "memory"
-@use "compression"
+@use "system/file"
+@use "music/adlibplayer"
+@use "system/screen"
+@use "system/memory"
+@use "system/compression"
 var  
 	song: incbin("music/song1.trt");
 
