@@ -3146,7 +3146,7 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
 QSharedPointer<Node>  Parser::TypeDeclaration()
 {
     Eat(TokenType::TYPE);
-    QString name = m_currentToken.m_value;
+    QString name = m_symTab->m_gPrefix+m_currentToken.m_value;
     Eat();
     Eat(TokenType::EQUALS);
     QSharedPointer<Node> typeSpec = TypeSpec(false,QStringList());
@@ -3352,11 +3352,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 {
     Token t = m_currentToken;
 
-    if (m_types.contains(t.m_value)) {
+    if (m_types.contains(t.m_value) || m_types.contains(m_symTab->m_gPrefix+t.m_value)) {
         QString n = t.m_value;
+        if (!m_types.contains(t.m_value))
+            n = m_symTab->m_gPrefix+t.m_value;
         Eat();
         return m_types[n];
     }
+
 
     if (m_currentToken.m_type == TokenType::INCBIN || m_currentToken.m_type == TokenType::INCSID || m_currentToken.m_type == TokenType::INCNSF) {
         Eat();
@@ -4629,7 +4632,10 @@ void Parser::HandleUseTPU(QString fileName)
 
 
     m_symTab->Merge(p->m_symTab.get(),true);
-
+    // Merge types as well
+    for (QString s: p->m_types.keys()) {
+        m_types[s] = p->m_types[s];
+    }
     m_doNotRemoveMethods.append(p->m_doNotRemoveMethods);
     m_ignoreBuiltinFunctionTPU.append(p->m_ignoreBuiltinFunctionTPU);
 //    m_userBlocks.append(p->m_userBlocks);

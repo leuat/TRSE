@@ -1,7 +1,10 @@
-unit Matrix3;
+unit Matrix;
 
 var
 	type mat3 = array[9] of integer;
+			
+      
+
 
 procedure matmul(a:mat3; b:mat3);
 begin
