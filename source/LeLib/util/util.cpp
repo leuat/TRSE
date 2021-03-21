@@ -257,7 +257,10 @@ QColor Util::toColor(QVector3D c) {
 QString Util::GetSystemPrefix()
 {
     QString dir = "";
-
+    dir = QApplication::applicationDirPath();
+    if (dir.toLower().endsWith("release") || dir.toLower().endsWith("debug"))
+        dir = "";
+    else dir+=QDir::separator();
 #ifdef __linux__
     dir = Util::path;
 #endif

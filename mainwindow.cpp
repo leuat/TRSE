@@ -135,6 +135,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splash->m_seconds = m_iniFile->getdouble("splash_seconds");
     QTimer::singleShot(10, this, SLOT(ShowSplash()));
 
+//    setWindowTitle(Util::GetSystemPrefix());
+
+
 //    ui->qsplitter->setSizes(QList<int>() << 5<<15<<10000);
 
 }

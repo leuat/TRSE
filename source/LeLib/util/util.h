@@ -42,6 +42,7 @@
 #include <QLayout>
 #include <QLayoutItem>
 #include <QWidget>
+#include <QApplication>
 
 //#include "random.h"
 
