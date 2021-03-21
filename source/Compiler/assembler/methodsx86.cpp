@@ -183,12 +183,12 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     }
 
     if (Command("hi")) {
-        LoadAddress(as,0,true);
-        as->Asm("mov "+disp->getAx(m_node)+",ds");
+        LoadAddress(as,0,false);
+        as->Asm("mov "+disp->getAx(m_node)+",es");
     }
     if (Command("lo")) {
-        LoadAddress(as,0,true);
-        as->Asm("mov "+disp->getAx(m_node)+",si");
+        LoadAddress(as,0,false);
+        as->Asm("mov "+disp->getAx(m_node)+",di");
     }
     if (Command("nosound")) {
         as->Comment("No sound");

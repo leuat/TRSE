@@ -45,8 +45,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
  /*   if (m_ticks++%8==0)
         emit EmitTick(".");
 */
-
     node->DispatchConstructor(as,this);
+    as->ClearTerm();
     LineNumber(node->m_op.m_lineNumber);
  //   AbstractASTDispatcher::dispatch(node);
 

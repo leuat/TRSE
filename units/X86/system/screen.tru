@@ -1,14 +1,10 @@
 unit Screen;
 @use "system/file"
+@use "system/memory"
 var
-	i,j,k,handle : integer;
+	i,j,k,handle,noBuffers : integer;
 	color,red,green,blue : byte;
 	const VGA : integer = $A000;
-	const buf1Addr : integer = $8000;
-	const buf2Addr : integer = $7000;
-	const buf3Addr : integer = $6000;
-	const buf4Addr : integer = $5000;
-	const buf5Addr : integer = $4000;
 	buffer1, buffer2, buffer3, buffer4, buffer5 : pointer;
 	@donotremove source	
 	@donotremove dest
@@ -16,14 +12,18 @@ var
 		
 
 
-procedure InitVGABuffers();
+procedure InitVGABuffers(noBuffers:global integer);
 begin
-
-	buffer1 := ptr(buf1Addr,0);
-	buffer2 := ptr(buf2Addr,0);
-	buffer3 := ptr(buf3Addr,0);
-	buffer4 := ptr(buf4Addr,0);
-	buffer5 := ptr(buf5Addr,0);
+	if (noBuffers>0) then
+		buffer1 := Memory::GetMem($FFF);
+	if (noBuffers>1) then
+		buffer2 := Memory::GetMem($FFF);
+	if (noBuffers>2) then
+		buffer3 := Memory::GetMem($FFF);
+	if (noBuffers>3) then
+		buffer4 := Memory::GetMem($FFF);
+	if (noBuffers>4) then
+		buffer5 := Memory::GetMem($FFF);
 end;
 
  procedure SetColor(color,red,green,blue:global byte);
@@ -59,7 +59,6 @@ begin
 	
 	for i:=0 to $300 do 
 	begin
-		asm(";here");
 		tp[i]:=tp[i]/4;
 	end;		
 	j:=0;

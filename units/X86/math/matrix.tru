@@ -1,12 +1,14 @@
 unit Matrix;
-@use "tables"
+@use "system/tables"
+@use "math/vector"
 var
 
 	type mat3 = array[12] of integer;
 	type mat2 = array[4] of integer;
 	type matp = pointer of integer;
 
-	temp : mat3;	
+	temp : mat3;
+	vtmp : Vector::vec4;	
 	i,j,k,v,angle : integer;
 	c, s : integer;
 	
@@ -28,6 +30,18 @@ begin
 
 	memcpy32(#temp,a,6);
 			
+end;
+
+procedure MatMulVec3( a : global matp; vec, res: Vector::vec3 );
+begin
+	for i:=0 to 3 do
+	begin
+		v:=a[k+0] * vec[0];
+		v+=a[k+1] * vec[1];
+		v+=a[k+2] * vec[2];
+		res[i] := v;
+        k:=k+4;
+     end;
 end;
 
 procedure Normalize3(a : global matp);

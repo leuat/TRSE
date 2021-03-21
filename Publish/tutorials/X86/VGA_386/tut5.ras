@@ -48,16 +48,17 @@ end;
 
 procedure Init();
 begin
+	Memory::Init();
 	Screen::SetMode($13);
-	Screen::InitVGABuffers();
+	Screen::InitVGABuffers(3);
 	Screen::SetPaletteFromFile(#palette1);		
 	// Load and decompress image
 	File::ReadAll(#filename1,Screen::buffer3);
 	Compression::Decompress(Screen::buffer3,Screen::buffer2);
 	
 	// Load and decompress font
-	fontP := ptr(Screen::buf4Addr,0);
-	File::ReadAll(#font1_file, ptr(Screen::buf3Addr,0));
+	fontP := Screen::buffer4;
+	File::ReadAll(#font1_file, Screen::buffer3);
 	Compression::Decompress(Screen::buffer3,Screen::buffer4);
 	
 end;
@@ -97,7 +98,7 @@ begin
 		Screen::CopyVGABuffer32bit(Screen::buffer1, ptr(Screen::VGA,0));
 		// Copy image to buffer (clear)
 
-		Screen::CopyVGABuffer32bit(ptr(Screen::buf2Addr,0), Screen::buffer1);
+		Screen::CopyVGABuffer32bit(Screen::buffer2, Screen::buffer1);
      	// Draw that funky text!)		
 		Fonts::addValue:=time; // text color
 		Fonts::PrintString(tp0, Tables::sine256[(time*4)&255]/2,120,Screen::buffer1);		

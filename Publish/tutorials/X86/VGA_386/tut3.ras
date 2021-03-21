@@ -41,8 +41,9 @@ end;
 
 
 begin
+	Memory::Init();
 	Screen::SetMode($13);
-	Screen::InitVGABuffers();
+	Screen::InitVGABuffers(3);
 	// Load palette from file
 	Screen::SetPaletteFromFile(#palette1);		
 

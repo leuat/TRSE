@@ -1,10 +1,15 @@
 unit Lib3d;
-@use "matrix"
+@use "math/matrix"
 var
 
 	object = record
-		pos: 	
-
+	
+		pos,rot: Vector::vec3;
+		noVertices : integer;
+		noFaces : integer;
+		
+		vertices, vertices_rot : pointer of integer;
+		faces : pointer of integer;
 	end;
 
 

@@ -6,7 +6,7 @@ program Adlib;
 @use "system/tables"
 var  
 	song: incbin("music/song1.trt");
-	i,x,x1,x2,y,j,j2,px,time: integer;
+	i,x,x1,x2,y,j,j2,px,time,h: integer;
 	ri,rj : integer; // used in raster
 	cols : array[256*3] of byte;
 	
@@ -15,13 +15,14 @@ procedure InitScreen();
 begin
 	x:=0;
 	y:=0;
+	h := hi(Screen::buffer2);
 	for i:=0 to 320*200 do
 	begin
 		j:=(x+y)&63;
 		j:=Tables::sine256[(x*6)&$FF]/7;
 		j+= Tables::sine256[(y*7)&$FF]/9;
 		j:=j&63;
-		Memory::Poke8(Screen::buf2Addr,i,j);
+		Memory::Poke8(h,i,j);
 		x+=1;
 		if (x=320) then
 		begin
@@ -44,7 +45,7 @@ begin
 		x1:=Tables::sine256[j&$FF]/4+40+px;
 		x2:=Tables::sine256[(j2)&$FF]/4+160+px;
 		
-		Gfx::Hline(x1,x2,i,i&63+64,Screen::buf1Addr);
+		Gfx::Hline(x1,x2,i,i&63+64,Screen::buffer1);
 		
 		j2+=4;
 		j+=3;
@@ -88,8 +89,10 @@ begin
 end;
 
 begin
+	Memory::Init();
 	Screen::SetMode($13);
-	Screen::InitVGABuffers();
+	Screen::InitVGABuffers(3);
+	
 	// Render background screen (some sine stuff)
 	InitScreen();	
 	// Set up palette
@@ -102,12 +105,13 @@ begin
 	while (true) do
 	begin
 		// Copy main buffer to Screen (Screen::VGA)
-		Screen::CopyVGABuffer32bit(ptr(Screen::buf1Addr,0), ptr(Screen::VGA,0));
+		Screen::CopyVGABuffer32bit(Screen::buffer1, ptr(Screen::VGA,0));
 		waitforverticalblank();
 		// Sine wobble shift in background		
 		j:=Tables::sine256[(time*4)&255]/2 +127;
 		// Copy background over to buffer		
-		Screen::CopyVGABuffer32bit(ptr(Screen::buf2Addr,j), ptr(Screen::buf1Addr,0));
+//		Screen::CopyVGABuffer32bit(Screen::buffer2 +j, Screen::buffer1);
+		Screen::CopyVGABuffer32bit(Screen::buffer2, Screen::buffer1);
 		// Draw h-lines
 		HLines();		
 		time+=1;		

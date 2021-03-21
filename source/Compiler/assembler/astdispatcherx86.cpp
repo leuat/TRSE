@@ -687,7 +687,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::INTEGER);
     }
 
-
+//    as->Comment("CUR TERM : " +as->m_term);
     as->ClearTerm();
 
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);

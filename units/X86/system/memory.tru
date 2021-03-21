@@ -1,7 +1,9 @@
 unit Memory;
 var
 	i1 : integer;
+	p1 : pointer;
 	const DEFAULT_TIMER : integer = 23863;
+
 procedure Poke8(_bx:integer; _di:integer;_ah:byte) inline;
 begin
 	asm("
@@ -25,6 +27,45 @@ begin
   ");
   asm sti end;
 end;
+
+
+procedure Init();
+begin
+	asm
+	mov	dx,ss		; Stack segment
+	mov	bx,128 / 16 + 1 ; stack size in paragraphs
+	add	bx,dx		; BX = end
+	mov	ax,es		; ES = PSP (start)
+	sub	bx,ax		; BX = new size in paragraphs
+	mov	ah,$4A
+	int	21h
+	; Allocate some memory up to 1024*2
+	mov ah,$48
+	mov bx, $2000-$160-$3D
+	int $21
+	end;
+end;
+
+function GetMem(blocks: integer):long;
+begin
+	asm
+		mov ah,$48
+		mov bx, [Memory_blocks]
+		int $21
+		mov [Memory_i1],ax
+	end;	
+	GetMem := ptr(i1,0);
+end;
+
+procedure Release(rp: pointer);
+begin
+	asm
+		mov ah,$49
+		mov bx, [Memory_rp+2]
+		int $21
+	end;	
+end;
+
 
 
 end.

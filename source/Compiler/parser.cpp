@@ -2937,9 +2937,7 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
 void Parser::VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blockName) {
     if (m_currentToken.m_type == TokenType::VAR)
         Eat(TokenType::VAR);
-      qDebug() << "PARSER INSIDE "  <<m_currentToken.getType() << m_currentToken.m_value;
     while (m_currentToken.m_type==TokenType::ID || m_currentToken.m_type == TokenType::CONSTANT || m_currentToken.m_type == TokenType::TYPE) {
-        qDebug() << m_currentToken.getType() << m_currentToken.m_value;
         if (m_currentToken.m_type == TokenType::CONSTANT) {
             ConstDeclaration();
         } else
@@ -2990,7 +2988,8 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         Eat(TokenType::COLON);
         funcType = TypeSpec(false,QStringList());
         auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
-        if (!(t->value.toLower()=="integer" || t->value.toLower()=="byte"|| t->value.toLower()=="long")) {
+        QStringList allowed = QStringList() << "integer" <<"byte" <<"long";
+        if (!(allowed.contains(t->value.toLower()))) {
             ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer' and 'long'",t->m_op.m_lineNumber);
         }
 
