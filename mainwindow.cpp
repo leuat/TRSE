@@ -1218,6 +1218,16 @@ bool MainWindow::SaveAs()
     return true;
 }
 
+void MainWindow::SaveAllRas()
+{
+    for (auto doc:m_documents) {
+        if (dynamic_cast<FormRasEditor*>(doc)!=nullptr)
+            if (doc->m_currentSourceFile!="")
+                if (!doc->m_currentFileShort.toLower().endsWith("asm"))
+                   doc->SaveCurrent();
+    }
+}
+
 bool MainWindow::RemoveTab(int idx, bool save)
 {
     if (idx==0)

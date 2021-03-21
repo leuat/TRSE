@@ -251,7 +251,7 @@ public slots:
     void acceptBuild() {
         //ui->lblBuild->setHidden(false);
         //QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
-
+        SaveAllRas();
     }
     void OpenProjectSettings();
     void ClearSymbols();
@@ -278,6 +278,7 @@ public slots:
 
     void UpdateRecentProjects();
     bool SaveAs();
+    void SaveAllRas();
 
     bool RemoveTab(int, bool save=true);
     void LoadProject(QString filename);
