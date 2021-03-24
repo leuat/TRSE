@@ -4,7 +4,7 @@
 <li>Beta testing and serious improvement by <font color="#FF7080">pushead</font>/<font color="#6080B0">hokuto force</font>
 </ul>
 This product is still very much in its infancy, so expect lots and lots of bugs.  
-Please report any faults to <b><font color="#FF7080">leuat@irio.co.uk</font></b></a>
+Please report any faults to <b><font color="#FF7080">leuat@irio.co.uk</font></b>.</a>
 
 
  
