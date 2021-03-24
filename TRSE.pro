@@ -170,7 +170,8 @@ SOURCES += main.cpp\
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/limage/ssim.cpp \
-    source/LeLib/miniaudio.c \
+#    source/LeLib/miniaudio.c \
+#    source/LeLib/miniaudio_engine.c \
     source/LeLib/ttrfile.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
@@ -190,6 +191,7 @@ SOURCES += main.cpp\
     source/dialogsimplelineedit.cpp \
     source/dialogsplash.cpp \
     source/formhelp.cpp \
+    source/mynth/ma_context.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
     source/trsedocuments/dialogcustomwarning.cpp \
@@ -324,6 +326,7 @@ SOURCES += main.cpp\
     source/Raytracer/particles.cpp \
     source/Compiler/sourcebuilder.cpp \
     source/Compiler/projectbuilder.cpp \
+    source/mynth/mynthesizer.cpp \
     source/dialogprojectbuilder.cpp
 
 
@@ -416,6 +419,10 @@ HEADERS  += mainwindow.h \
     source/dialogsimplelineedit.h \
     source/dialogsplash.h \
     source/formhelp.h \
+#    source/LeLib/miniaudio_engine.h \
+    source/mynth/ma_context.h \
+    source/mynth/mynth_osc.h \
+    source/mynth/mynthesizer.h \
     source/toolbox.h \
     source/toolboxitem.h \
     source/trsedocuments/dialogcustomwarning.h \

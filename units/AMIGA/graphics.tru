@@ -12,12 +12,22 @@ begin
 	poke16(#copper_resolution, 0 , j); // $4000  = bitplanes, $200 = colours
 	// Set palette at copper palette location, 16 colors
 	// Setup image copper list (4 bitplanes, 40*40 modulo 120
-	if (bpl=4) then
+	if (bpl=5) then
 	begin
 		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane3);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane4);
+		poke16(#copper_mod_even,0,160);
+		poke16(#copper_mod_odd,0,160);
+	end;
+	if (bpl=4) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane3);
 		poke16(#copper_mod_even,0,120);
 		poke16(#copper_mod_odd,0,120);
 	end;
@@ -53,6 +63,14 @@ begin
 	poke16(#copper_mod_odd,0,0);
 	// Set palette at copper palette location, 16 colors
 	// Setup image copper list (4 bitplanes, 40*40 modulo 120
+	if (bpl=5) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane3);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane4);
+	end;
 	if (bpl=4) then
 	begin
 		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;

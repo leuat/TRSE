@@ -522,9 +522,7 @@ void Parser::PreprocessIfDefs(bool ifdef)
 void Parser::PreprocessConstants()
 {
     QString txt;
-    //qDebug() << "Here";
     for (QString s: m_lexer->m_text.split("\n")) {
-//        qDebug() << s;
         QVector<QString> numbers;
 
         QString cur = "";
@@ -2273,6 +2271,7 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="ignoresystemheaders") {
                   Eat(TokenType::PREPROCESSOR);
                   Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]="1";
+                  Data::data.demomode = true;
               }
 
               else if (m_currentToken.m_value.toLower() =="userdata") {
@@ -2592,6 +2591,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_removeUnusedDecls = removeUnusedDecls;
     Node::m_curMemoryBlock = nullptr; //
     Node::m_staticBlockInfo.m_blockID = -1;
+    if (!m_isTRU)
+        Data::data.demomode = false;
 
     m_vicMemoryConfig = m_projectIni->getString("vic_memory_config");
 
@@ -4008,6 +4009,8 @@ void Parser::HandleExport()
         img->m_exportParams["Start"] = param1;
         img->m_exportParams["End"] = param2;
     }
+    img->m_exportParams["export1"] = param2;
+
     if (QFile::exists(outFile))
         QFile::remove(outFile);
 

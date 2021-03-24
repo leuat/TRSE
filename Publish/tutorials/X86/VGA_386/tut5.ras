@@ -26,7 +26,7 @@ var
 
 // Random image of Roberto Carlos doing his thing
 	
-@export "images/image2.flf" "images/image2.bin" 256
+@export "images/image2.flf" "image2.bin" 256
 @compress "images/image2.bin" "image2_c.bin"
 
 /*

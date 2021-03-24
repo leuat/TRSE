@@ -1,3 +1,6 @@
+	rts
+
+
 ;** PROCEDURES
 ; d6 = src shift
 ; d1 = dst x
@@ -22,7 +25,7 @@ blitter:
     bne.s   .litwait
 
     move.w  d0,BLTCON0(a6)  ; Set registers; BLTCON0
-    move.l  a0,BLTAPTH(a6) ; src
+    move.l  a0,BLTAPTH(a6) ; src 
     move.l  a1,BLTBPTH(a6) ; BLT Dest PTR
     move.l  a1,BLTCPTH(a6) ; BLT Dest PTR
     move.l  a1,BLTDPTH(a6) ; BLT Dest PTR
@@ -35,40 +38,43 @@ blitter:
 
 
 ; storage for 32-bit addresses and data
-        CNOP 0,4
+	CNOP 0,4
 oldview:	dc.l 0
 oldcopper:	dc.l 0
 gfxbase:	dc.l 0
 frame:          dc.l 0
 
 ; storage for 16-bit data
-        CNOP 0,4
+	CNOP 0,4
 olddmareq:	dc.w 0
 oldintreq:	dc.w 0
 oldintena:	dc.w 0
 oldadkcon:	dc.w 0
 
 copper_index    dc.w 0
-        CNOP 0,4
+	CNOP 0,4
 gfxname: dc.b 'graphics.library',0
 
 
 
+    if Absolute=0
+    section datachip,data_c
+    endc
 
 Chip:
 
     even
 cop:
     dc.w    $008e
-diwstrt:
+copper_diwstrt:
     dc.w    $2c81,$0090
-diwstop:
+copper_diwstop:
     dc.w    $2cc1
 
-
+    
     dc.w    $0092
 ddfstrt:
-;
+; 
     dc.w    $0038,$0094
 ddfstop:
     dc.w    $00d0
@@ -83,7 +89,7 @@ copper_mod_odd:
 
 
 
-
+    
 copper_spritestruct0:
     dc.w $120,0, $122,0
 copper_spritestruct1:
@@ -170,9 +176,12 @@ copbplcon0
 ; Set bitplane  B
    dc.w    $0100
 copper_resolution
-   dc.w     $4200
+   dc.w     $4200 
 copper_custom:
-    dc.l    $fffffffe
+   dc.w	$ffdf, $fffe
+   dc.w	$2401, $fffe
+   dc.w	$0100, $0200
+   dc.l    $fffffffe
 
 
 ;    dc.l    $2d01fffe, $01800000

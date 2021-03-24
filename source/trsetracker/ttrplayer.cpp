@@ -1,62 +1,33 @@
 #include "ttrplayer.h"
 
-#define DEVICE_FORMAT       ma_format_f32
-#define DEVICE_CHANNELS     2
-#define DEVICE_SAMPLE_RATE  48000
-
-void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
-{
-    ma_audio_buffer* pSineWave;
-    pSineWave = (ma_audio_buffer*)pDevice->pUserData;
-
-    //ma_waveform_read_pcm_frames(pSineWave, pOutput, frameCount);
-    qDebug() << pSineWave;
-     ma_data_source_read_pcm_frames(pSineWave, pOutput, frameCount, NULL, true);
-
-//     ma_decoder_read_pcm_frames(pSineWave, pOutput, frameCount);
-    (void)pInput;   /* Unused. */
-}
-
 
 TTRPlayer::TTRPlayer()
 {
 
-    sineWaveConfig = ma_waveform_config_init(DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, ma_waveform_type_sine, 0.2, 220);
-    ma_waveform_init(&sineWaveConfig, &sineWave);
-
-//    allocationCallbacks = ma_allocation_callbacks_init_default();
-    for (int i=0;i<size;i++)
-        m_data[i] = rand()%10000;
-
-    bufferConfig = ma_audio_buffer_config_init(
-        DEVICE_FORMAT,
-        DEVICE_CHANNELS,
-        1,
-        m_data,
-        &allocationCallbacks);
-
-
-
-
-    ma_result result = ma_audio_buffer_init(&bufferConfig, &buffer);
-    if (result!=MA_SUCCESS) {
-        qDebug() << "COULD not initialize bufferconfig";
+    m_instruments.Load(Util::GetSystemPrefix()+QDir::separator()+"themes"+QDir::separator()+"instruments.txt");
+/*    {
+        ColumnData &col = test_tracker_column.steps;
+        col.resize(16);
+        col[0].note = 40;
+        col[1].note_off = true;
+        col[2].note = 47;
+        col[5].note_off = true;
+        col[6].note = 43;
+        col[8].note = 40;
+        col[9].note = 41;
+        col[10].note_off = true;
+        col[11].note = 47;
+        col[12].note = 43;
     }
-
-    deviceConfig = ma_device_config_init(ma_device_type_playback);
-    deviceConfig.playback.format   = DEVICE_FORMAT;
-    deviceConfig.playback.channels = DEVICE_CHANNELS;
-    deviceConfig.sampleRate        = DEVICE_SAMPLE_RATE;
-    deviceConfig.dataCallback      = data_callback;
-//    deviceConfig.pUserData         = &sineWave;
-    deviceConfig.pUserData         = &bufferConfig;
-
-
+*/
 
 }
 
 TTRPlayer::~TTRPlayer()
 {
+    for (auto& voc : mynthesizer.voices) {
+        mynth::voice_shutdown(voc);
+    }
 
 }
 
@@ -64,25 +35,144 @@ TTRPlayer::~TTRPlayer()
 void TTRPlayer::run()
 {
     while (m_isPlaying){
-        msleep(1000);
+        msleep(100);
         if (!m_isPlaying)
             return;
+
         Play();
     }
 }
 
+
+
+
 void TTRPlayer::Play() {
-    if (m_isPlaying)
-        return;
-    ma_device_init(NULL, &deviceConfig, &device);
-    ma_device_start(&device);
-    m_isPlaying = true;
+
+//    PlayNote(60,12);
+    //qDebug() << m_curOrder << m_curRow;
+    for (int i=0;i<m_ttr->m_noChannels;i++) {
+        int patt = m_ttr->m_orders[m_curOrder][i];
+        QByteArray& p = m_ttr->m_patterns[patt];
+        PlayNote(i,p.mid(m_curRow*m_ttr->m_noBytesPerLine,m_ttr->m_noBytesPerLine));
+    }
+    m_curRow++;
+    if (m_curRow==m_ttr->m_patternLength) {
+        m_curRow = 0;
+        m_curOrder+=1;
+        if (m_curOrder ==m_ttr->m_orders.count())
+            m_curOrder = 0;
+    }
+}
+
+void TTRPlayer::PlayNote(int channel,QByteArray data)
+{
+//    PlayNote(channel,0,0);
+    int instr = (data[2] & 0xf0) >> 4;
+    int trsI = m_ttr->getTRSEInstrument(instr);
+    PlayNote(channel,data[0]&0x7F,256,m_instruments.m_instruments[trsI]);
+}
+
+void TTRPlayer::PlayNote(int channel, int midi_note, int velocity, QSharedPointer<TRSEInstrument> ins)
+{
+    int n = channel;
+    mynth::SynthCommand cmd;										// New command
+    jam_context.adsr.time[0] = ins->a;
+    jam_context.adsr.time[1] = ins->d;
+    jam_context.adsr.time[2] = ins->s;
+    jam_context.adsr.time[3] = ins->r;
+
+    jam_context.adsr.level[0] = ins->l0;
+    jam_context.adsr.level[1] = ins->l1;
+    jam_context.adsr.level[2] = ins->l2;
+
+    jam_context.wavemixer[0] = ins->w0;
+    jam_context.wavemixer[1] = ins->w1;
+    jam_context.wavemixer[2] = ins->w2;
+    jam_context.wavemixer[3] = ins->w3;
+    midi_note +=12*ins->oct;
+    cmd.active = true;										// Tells the synth this is a new command
+    cmd.gate_set = true;
+    cmd.gate = velocity > 0;								// Gate: Sound is on
+    cmd.freq = mynth::TET12(midi_note);							// 12-TET = translate midi note to frequency
+    cmd.velocity = velocity / 128.f;						// MIDI velocity, 0-128. Not used
+    // adsr
+    cmd.adsr_set = true;									// Let synth know we're supplying a new ADSR
+    cmd.adsr = jam_context.adsr;							// Copy ADSR
+    // wave mixer
+    cmd.wavemixer_set = true;
+    memcpy(cmd.wavemixer,									// Copy oscillator mixer
+           jam_context.wavemixer, sizeof(mynth::Wavemixer));
+    // vibrato
+//    mynth::set_adsr(cmd, jam_context.adsr);
+    cmd.vibrato_set = true;
+    cmd.vibrato = jam_context.vibrato;						// Copy vibrato
+    // internal jam_context
+    jam_context.mono_last_frequency = cmd.freq;
+    jam_context.mono_last_note = midi_note;
+    // Submit command to synth
+//    mynth::note_off(mynthesizer.voices[jam_context.mono_channel+n], cmd);
+    mynth::voice_command(mynthesizer.voices[jam_context.mono_channel+n], cmd);
+//    mynth::note_on(mynthesizer.voices[jam_context.mono_channel+n], cmd,cmd.freq);
+
+
 }
 
 void TTRPlayer::Stop()
 {
     if (!m_isPlaying)
         return;
-    ma_device_uninit(&device);
     m_isPlaying = false;
+}
+
+void TTRPlayer::StartPlaying()
+{
+    Stop();
+    msleep(10);
+    m_curRow = 0;
+    m_isPlaying = true;
+    if (!m_initialized) {
+        msleep(10);
+        audio_init();
+        for (auto& voc : mynthesizer.voices) {
+            mynth::voice_init(&audio_engine, voc);
+            ma_sound_start(&voc.sound);
+        }
+        m_initialized = true;
+    }
+
+
+
+    start();
+}
+
+void TRSEInstruments::Load(QString fname)
+{
+    m_instruments.clear();
+    QStringList lst = Util::loadTextFile(fname).split("\n");
+    for (QString s : lst) {
+        s = s.trimmed().simplified();
+        if (s=="" || s.startsWith("#"))
+            continue;
+        QStringList in = s.split(" ");
+        if (in.count()!=14) {
+            qDebug() << "incorrect instrument at : " <<s;
+            continue;
+        }
+        QSharedPointer<TRSEInstrument> ins = QSharedPointer<TRSEInstrument>(new TRSEInstrument);
+        ins->name = in[0];
+        ins->a = in[1].toFloat();
+        ins->d = in[2].toFloat();
+        ins->s = in[3].toFloat();
+        ins->r = in[4].toFloat();
+        ins->l0 = in[5].toFloat();
+        ins->l1 = in[6].toFloat();
+        ins->l2 = in[7].toFloat();
+        ins->w0 = in[8].toFloat();
+        ins->w1 = in[9].toFloat();
+        ins->w2 = in[10].toFloat();
+        ins->w3 = in[11].toFloat();
+        ins->oct = in[12].toFloat();
+        ins->vibrato = in[13].toFloat();
+        m_instruments.append(ins);
+    }
 }

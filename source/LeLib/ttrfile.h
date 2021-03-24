@@ -23,7 +23,18 @@ public:
     int m_patternLength = 0x20;
     int m_version = 0x1;
 
+
     const int HEADER_SIZE = 64;
+
+    const int TRSE_INSTR_START = 48+7;
+
+
+    int getTRSEInstrument(int i) {
+        return m_header[TRSE_INSTR_START+i];
+    }
+    void setTRSEInstrument(int i,uchar j) {
+        m_header[TRSE_INSTR_START+i] = j;
+    }
 
     void AddInstrument();
     static const int HEADER_POS_CURRENTTYPE = 0;

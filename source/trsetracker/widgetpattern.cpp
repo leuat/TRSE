@@ -8,6 +8,7 @@ WidgetPattern::WidgetPattern(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->Pattern,SIGNAL(emitChangeTriggered()),this,SLOT(PropagateUpdate()));
     connect(ui->Pattern,SIGNAL(emitMove(int,int)),this,SLOT(acceptMove(int,int)));
+    connect(ui->Pattern,SIGNAL(emitSound(QByteArray)),this,SLOT(acceptSound(QByteArray)));
 }
 
 WidgetPattern::~WidgetPattern()

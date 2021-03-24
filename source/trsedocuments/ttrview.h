@@ -102,6 +102,7 @@ private:
 
 signals:
         void emitSave();
+        void emitSound(QByteArray sound);
         void emitChangeTriggered();
         void emitMove(int direction, int pos);
 

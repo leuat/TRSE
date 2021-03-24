@@ -827,6 +827,8 @@ void TTRView::keyPressEvent(QKeyEvent *event)
                 line = line.mid(0,3) + m_lastLine.mid(3,m_lastLine.count());
         }
          PackLine(m_pdata->m_data,m_curLinePos,line);
+         if (isNote)
+             emit emitSound(m_pdata->m_data.mid(m_curLinePos,DISPLAY_DATA_PER_LINE));
 
         setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);
         resetSelection(m_cursorPos);

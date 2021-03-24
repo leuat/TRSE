@@ -2,18 +2,34 @@ unit Lib3d;
 @use "math/matrix"
 var
 
-	object = record
-	
-		pos,rot: Vector::vec3;
+	i,n,v:integer;
+	mesh3d = record
+	//	pos,rot: Vector::vec3;
+		posx,posy,posz:integer;
+		rotx,roty,rotz:integer;
 		noVertices : integer;
 		noFaces : integer;
 		
 		vertices, vertices_rot : pointer of integer;
 		faces : pointer of integer;
 	end;
+	
+	const MAX : integer = 10;
 
+	objects : array[ MAX ] of mesh3d;
 
-
+procedure Allocate(i,n,v: global integer);
+begin
+	objects[i].posx:=0;
+	objects[i].posy:=0;
+	objects[i].posz:=0;
+	objects[i].rotx:=0;
+	objects[i].roty:=0;
+	objects[i].rotz:=0;
+	objects[i].noVertices:=v;
+	objects[i].noFaces:=n;
+	objects[i].vertices = Memory::GetMem(v*2*3);
+end;
 
 
 end.

@@ -28,9 +28,12 @@ private slots:
     void on_cbmPattern_currentIndexChanged(int index);
     void PropagateUpdate();
     void acceptMove(int direction, int pos);
-
+    void acceptSound(QByteArray ba) {
+        emit emitSound(m_curColumn, ba);
+    }
 
 signals:
+    void emitSound(int, QByteArray sound);
     void emitReloadPatterns();
     void emitUpdatePatterns(WidgetPattern* who, int curPattern);
     void emitMove(int dir, int pos, int curColumn);

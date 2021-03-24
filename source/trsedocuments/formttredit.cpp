@@ -14,6 +14,7 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
     for (int i=0;i<m_ttr.systemTypes.count();i++) {
         cmb->addItem(m_ttr.systemTypes[i]);
     }
+    m_player.m_ttr = &m_ttr;
 
 }
 
@@ -126,6 +127,11 @@ void FormTTREdit::LoadPredefinedInstruments()
 
 }
 
+void FormTTREdit::acceptSound(int channel, QByteArray sound)
+{
+    m_player.PlayNote(channel, sound);
+}
+
 void FormTTREdit::ReloadPatterns()
 {
     Util::clearLayout(ui->lyTrackers);
@@ -158,6 +164,7 @@ void FormTTREdit::ReloadPatterns()
         connect(wp, SIGNAL(emitReloadPatterns()), this, SLOT(UpdatePatterns()));
         connect(wp, SIGNAL(emitUpdatePatterns(WidgetPattern*, int)), this, SLOT(HandleUpdatePatterns(WidgetPattern*, int)));
         connect(wp, SIGNAL(emitMove(int,int,int)), this, SLOT(HandleMove(int,int,int)));
+        connect(wp, SIGNAL(emitSound(int,QByteArray)), this, SLOT(acceptSound(int, QByteArray)));
         m_curPatternValues.append((uchar)m_ttr.m_orders[m_ttr.m_currentOrder][i]);
 
     }
@@ -252,6 +259,23 @@ void FormTTREdit::on_cmbInstruments_currentIndexChanged(int index)
     QByteArray ba = m_ttr.m_instruments[index].mid(0,11);
     ui->leInstrumentData->setText(Util::toString(Util::ByteArrayToHexQStringList(ba)));
     m_currentInstrument = index;
+
+
+
+    //qDebug() << index;
+    int j = m_currentInstrument;
+    m_currentInstrument = -1;
+    QComboBox* cmb;
+    cmb = ui->cmbTRSEInstrument;
+    cmb->clear();
+    for (int i=0;i<m_player.m_instruments.m_instruments.count();i++) {
+        cmb->addItem(m_player.m_instruments.m_instruments[i]->name);
+    }
+    m_currentInstrument = j;
+    if (m_currentInstrument!=-1)
+        cmb->setCurrentIndex(m_ttr.getTRSEInstrument(m_currentInstrument));
+
+
 }
 
 void FormTTREdit::on_btnNewPattern_clicked()
@@ -262,7 +286,10 @@ void FormTTREdit::on_btnNewPattern_clicked()
 
 void FormTTREdit::on_cmbPredefinedInstrument_currentIndexChanged(int index)
 {
-    //qDebug() << index;
+
+
+
+
 }
 
 void FormTTREdit::on_btnSetInstrument_clicked()
@@ -335,6 +362,16 @@ void FormTTREdit::ReloadInstruments()
 
 
 
+
+
+}
+void FormTTREdit::on_cmbTRSEInstrument_currentIndexChanged(int index)
+{
+//    qDebug() << "BB" <<m_currentInstrument <<index;
+    if (index<0)
+        return;
+
+    m_ttr.setTRSEInstrument(m_currentInstrument,index);
 }
 
 void FormTTREdit::on_btnDeletePattern_clicked()
@@ -362,7 +399,8 @@ void FormTTREdit::on_btnPlay_clicked()
         ui->btnPlay->setText("Play");
     }
     else {
-        m_player.Play();
+        m_player.m_curOrder = m_ttr.m_currentOrder;
+        m_player.StartPlaying();
         ui->btnPlay->setText("Stop");
     }
 }
@@ -372,3 +410,4 @@ void FormTTREdit::on_lstOrders_currentRowChanged(int currentRow)
     m_ttr.m_currentOrder = currentRow;
     ReloadPatterns();
 }
+

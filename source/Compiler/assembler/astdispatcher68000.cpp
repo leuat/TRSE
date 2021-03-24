@@ -1238,11 +1238,12 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
         size = f.size();  //when file does open.
         f.close();
     }
+    QString wname = filename;
     if (t->m_position=="") {
         as->Asm(" 	CNOP 0,4");
 
         as->Label(v->getValue(as));
-        as->Asm("incbin \"" + filename + "\"");
+        as->Asm("incbin \"" + wname + "\"");
         as->Asm(" 	CNOP 0,4");
     }
     else {
@@ -1256,7 +1257,7 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
         as->Asm(" 	CNOP 0,4");
 
         as->Label(v->getValue(as));
-        as->Asm("incbin \"" + filename + "\"");
+        as->Asm("incbin \"" + wname + "\"");
         as->Asm(" 	CNOP 0,4");
 /*        bool ok;
         int start=0;

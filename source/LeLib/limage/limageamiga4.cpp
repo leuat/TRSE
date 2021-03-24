@@ -67,9 +67,19 @@ void LImageAmiga::ExportBin(QFile &file)
 
         }
     }
-
+    int type = m_exportParams["export1"];
     QByteArray cData;
-    for (int y=0;y<m_height;y++) {
+    if (type==1) { // NON_interleaved
+        for (int i=0;i<nobp;i++)
+         for (int y=0;y<m_height;y++) { // interleaved
+                for (int j=0;j<40;j++)
+                    cData.append(data[i][j+y*40]);
+
+        }
+
+    }
+    else
+    for (int y=0;y<m_height;y++) { // interleaved
         for (int i=0;i<nobp;i++)
             for (int j=0;j<40;j++)
                 cData.append(data[i][j+y*40]);

@@ -47,6 +47,9 @@ public:
 
 private slots:
 
+
+    void acceptSound(int, QByteArray sound);
+
     void ReloadPatterns();
     void UpdatePatterns();
     void HandleUpdatePatterns(WidgetPattern*, int);
@@ -81,6 +84,8 @@ private slots:
     void on_btnPlay_clicked();
 
     void on_lstOrders_currentRowChanged(int currentRow);
+
+    void on_cmbTRSEInstrument_currentIndexChanged(int index);
 
 private:
     Ui::FormTTREdit *ui;

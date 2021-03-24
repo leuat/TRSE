@@ -34,7 +34,6 @@ ADKCONR2		EQU		$010
 INTENAR2		EQU		$01c
 INTREQR2		EQU		$01e
 
-
 DMACON		EQU		$dff096
 ADKCON		EQU		$dff09e
 INTENA		EQU		$dff09a
@@ -52,8 +51,3 @@ INTREQ2		EQU		$09c
 
 
 init:
-	; store data in hardwareregisters ORed with $8000
-        ;(bit 15 is a write-set bit when values are written back into the system)
-
-
-

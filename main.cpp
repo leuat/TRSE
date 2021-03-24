@@ -91,7 +91,6 @@ void TanTable(QString fn) {
     f.open(QFile::WriteOnly);
     QByteArray b;
     float ss = 0.8;
-    float PI = 3.14159265;
     float div = 1.0f;
     for (int i=0;i<256;i++) {
 //        b.append(1+tan((i/256.0)*3.14159265/2 + 3.14159)*127+128);
