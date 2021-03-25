@@ -1,5 +1,6 @@
 unit Lib3d;
 @use "math/matrix"
+@use "system/memory"
 var
 
 	i,n,v:integer;
@@ -28,7 +29,7 @@ begin
 	objects[i].rotz:=0;
 	objects[i].noVertices:=v;
 	objects[i].noFaces:=n;
-	objects[i].vertices = Memory::GetMem(v*2*3);
+	objects[i].vertices := Memory::GetMem(v*2*3);
 end;
 
 

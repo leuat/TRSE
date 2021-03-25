@@ -45,7 +45,7 @@ public:
     char m_data[size];
     Mynthesizer mynthesizer;
     TRSEInstruments m_instruments;
-    bool m_initialized = false;
+    static bool m_initialized;// = false;
 
     enum class JamMode {
         Mono
@@ -63,11 +63,7 @@ public:
     } jam_context;
 
 
-    void Initialize(TTRFile* ttr) {
-        m_ttr = ttr;
-        m_curRow = 0;
-        m_curOrder = 0;
-    }
+    void Initialize(TTRFile* ttr);
 
     void Play();
     void PlayNote(int channel, QByteArray data);

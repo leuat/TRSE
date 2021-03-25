@@ -88,6 +88,12 @@ public:
     virtual bool isCommodoreSystem()  {return false;}
     virtual int getDefaultBasicAddress() { return 0;}
 
+    virtual bool is486() { return false;}
+    virtual bool is386() { return false;}
+    virtual bool is286() { return false;}
+    virtual bool is8088() { return false;}
+
+
     void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false);
 
     static void InitLabelColors();

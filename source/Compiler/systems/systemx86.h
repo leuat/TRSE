@@ -9,12 +9,13 @@
 class SystemX86 : public AbstractSystem
 {
 public:
+    QString m_cpu;
     SystemX86(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
         m_processor = PX86;
         m_system = X86;
         m_startAddress = 0x100;
         m_programStartAddress = m_startAddress;
-
+        m_cpu = m_projectIni->getString("cpu_x86_system");
         m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
         m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
         m_registers << "_ax"<<"_bx" <<"_cx" <<"_dx";
@@ -30,6 +31,12 @@ public:
     virtual bool is8bit() {
         return false;
     }
+
+    virtual bool is486() override;
+    virtual bool is386() override;
+    virtual bool is286() override;
+    virtual bool is8088() override;
+
 };
 
 

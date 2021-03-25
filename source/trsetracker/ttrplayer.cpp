@@ -1,5 +1,6 @@
 #include "ttrplayer.h"
 
+bool TTRPlayer::m_initialized = false;
 
 TTRPlayer::TTRPlayer()
 {
@@ -25,10 +26,33 @@ TTRPlayer::TTRPlayer()
 
 TTRPlayer::~TTRPlayer()
 {
+    if (m_initialized)
     for (auto& voc : mynthesizer.voices) {
         mynth::voice_shutdown(voc);
+        m_initialized = false;
     }
 
+}
+
+void TTRPlayer::Initialize(TTRFile *ttr) {
+    m_ttr = ttr;
+    m_curRow = 0;
+    m_curOrder = 0;
+    if (!m_initialized) {
+        msleep(10);
+        audio_init();
+        int i=0;
+        for (auto& voc : mynthesizer.voices) {
+            qDebug() << "A TTRPLAYER crash : " <<i++;
+            mynth::voice_init(&audio_engine, voc);
+            qDebug() << "B";
+//            msleep(10);
+            ma_sound_start(&voc.sound);
+            qDebug() << "C";
+        }
+        m_initialized = true;
+    }
+    qDebug() << "Done";
 }
 
 
@@ -48,7 +72,7 @@ void TTRPlayer::run()
 
 void TTRPlayer::Play() {
 
-//    PlayNote(60,12);
+    //    PlayNote(60,12);
     //qDebug() << m_curOrder << m_curRow;
     for (int i=0;i<m_ttr->m_noChannels;i++) {
         int patt = m_ttr->m_orders[m_curOrder][i];
@@ -69,6 +93,7 @@ void TTRPlayer::PlayNote(int channel,QByteArray data)
 //    PlayNote(channel,0,0);
     int instr = (data[2] & 0xf0) >> 4;
     int trsI = m_ttr->getTRSEInstrument(instr);
+    if ((data[0]&0x80)==0x80)
     PlayNote(channel,data[0]&0x7F,256,m_instruments.m_instruments[trsI]);
 }
 
@@ -130,15 +155,7 @@ void TTRPlayer::StartPlaying()
     msleep(10);
     m_curRow = 0;
     m_isPlaying = true;
-    if (!m_initialized) {
-        msleep(10);
-        audio_init();
-        for (auto& voc : mynthesizer.voices) {
-            mynth::voice_init(&audio_engine, voc);
-            ma_sound_start(&voc.sound);
-        }
-        m_initialized = true;
-    }
+
 
 
 

@@ -1,5 +1,6 @@
 #include "formttredit.h"
 #include "ui_formttredit.h"
+#include "source/trsetracker/dialogtrseinstrumenteditor.h"
 
 FormTTREdit::FormTTREdit(QWidget *parent) :
     TRSEDocument(parent),
@@ -14,7 +15,6 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
     for (int i=0;i<m_ttr.systemTypes.count();i++) {
         cmb->addItem(m_ttr.systemTypes[i]);
     }
-    m_player.m_ttr = &m_ttr;
 
 }
 
@@ -82,6 +82,7 @@ void FormTTREdit::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QS
     //ui->sc
 
     m_colors.Load(Util::GetSystemPrefix() + "themes/" + m_iniFile->getString("theme"));
+    m_player.Initialize(&m_ttr);
 
 }
 
@@ -129,6 +130,7 @@ void FormTTREdit::LoadPredefinedInstruments()
 
 void FormTTREdit::acceptSound(int channel, QByteArray sound)
 {
+
     m_player.PlayNote(channel, sound);
 }
 
@@ -187,6 +189,7 @@ void FormTTREdit::UpdatePatterns()
 void FormTTREdit::HandleUpdatePatterns(WidgetPattern* wp, int pattern)
 {
 //    qDebug() << "Ready to handle pattern " << pattern;
+    ApplyCurrentOrder();
     QByteArray data = wp->getData();
     for (auto w : m_curPatterns) {
         if (w!=wp)
@@ -220,7 +223,6 @@ void FormTTREdit::ApplyCurrentOrder()
     for (int i=0;i<m_curPatterns.count();i++) {
 //        int pat = m_curPatterns[i]->getPatternCmb()->currentIndex();
         int pat = m_curPatternValues[i];
-//        qDebug() << "CurrentPat To Save" << pat;
         m_ttr.m_patterns[pat] = m_curPatterns[i]->getData();
         order.append(pat);
     }
@@ -411,3 +413,11 @@ void FormTTREdit::on_lstOrders_currentRowChanged(int currentRow)
     ReloadPatterns();
 }
 
+
+void FormTTREdit::on_btnTRSEInstruments_clicked()
+{
+    DialogTRSEInstrumentEditor* d = new DialogTRSEInstrumentEditor(&m_player,m_ttr.getTRSEInstrument(m_currentInstrument));
+    d->exec();
+    ReloadInstruments();
+    on_cmbInstruments_currentIndexChanged(ui->cmbTRSEInstrument->currentIndex());
+}

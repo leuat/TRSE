@@ -41,7 +41,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         ScrollX(as);
     }
     if (Command("startirq")) {
-        as->Asm("pusha");
+        PushPopAll(as,true);
         as->Asm("push ds");
         as->Asm("mov ax,192h ; reset DS ");
         as->Asm("mov ds,ax");
@@ -54,7 +54,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("mov al,20h");
         as->Asm("out 20h,al");
         as->Asm("pop ds");
-        as->Asm("popa");
+        PushPopAll(as,false);
     }
     if (Command("setpalette")) {
         as->Asm("mov dx,3c8h");
@@ -293,6 +293,41 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     }
 
 }
+
+void MethodsX86::PushPopAll(Assembler* as,bool isPush)
+{
+
+    if (Syntax::s.m_currentSystem->is286()) {
+        if (isPush)
+            as->Asm("pusha");
+        else
+            as->Asm("popa");
+        return;
+    }
+
+    if (isPush) {
+        as->Asm("push ax");
+        as->Asm("push bx");
+        as->Asm("push cx");
+        as->Asm("push dx");
+        as->Asm("push es");
+        as->Asm("push di");
+        as->Asm("push ds");
+        as->Asm("push si");
+    }
+    else {
+        as->Asm("pop si");
+        as->Asm("pop ds");
+        as->Asm("pop di");
+        as->Asm("pop es");
+        as->Asm("pop dx");
+        as->Asm("pop cx");
+        as->Asm("pop bx");
+        as->Asm("pop ax");
+    }
+
+}
+
 
 bool MethodsX86::Command(QString name)
 {

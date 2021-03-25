@@ -17,7 +17,7 @@ public:
 
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser) override;
 
-
+    void PushPopAll(Assembler* as, bool isPush);
 
 
     bool Command(QString name) override;

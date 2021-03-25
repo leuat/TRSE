@@ -103,3 +103,34 @@ void SystemX86::PostProcess(QString &text, QString file, QString currentDir)
     text = output;
 
 }
+
+bool SystemX86::is486()
+{
+    if (m_cpu=="8088" || m_cpu=="8086" || m_cpu=="286" || m_cpu=="386")
+        return false;
+
+    return true;
+}
+
+bool SystemX86::is386()
+{
+    if (m_cpu=="8088" || m_cpu=="8086" || m_cpu=="286")
+        return false;
+
+    return true;
+
+}
+
+bool SystemX86::is286()
+{
+    if (m_cpu=="8088" || m_cpu=="8086")
+        return false;
+
+    return true;
+
+}
+
+bool SystemX86::is8088()
+{
+    return m_cpu=="8088";
+}

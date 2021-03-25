@@ -1,9 +1,9 @@
 #define STB_VORBIS_HEADER_ONLY
-#include "stb_vorbis.c"    /* Enables Vorbis decoding. */
+#include "../extras/stb_vorbis.c"    /* Enables Vorbis decoding. */
 
 #define MA_DEBUG_OUTPUT
 #define MA_IMPLEMENTATION
-#include "miniaudio.h"
+#include "../miniaudio.h"
 #include "miniaudio_engine.h"
 
 typedef struct
@@ -219,7 +219,7 @@ int main(int argc, char** argv)
 #else
 #endif
 #undef STB_VORBIS_HEADER_ONLY
-#include "stb_vorbis.c"
+#include "../extras/stb_vorbis.c"
 #if defined(_MSC_VER) && !defined(__clang__)
     #pragma warning(pop)
 #else

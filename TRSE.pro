@@ -199,6 +199,7 @@ SOURCES += main.cpp\
     source/trsedocuments/formttredit.cpp \
     source/trsedocuments/helpdocumentbuilder.cpp \
     source/trsedocuments/ttrview.cpp \
+    source/trsetracker/dialogtrseinstrumenteditor.cpp \
     source/trsetracker/ttrplayer.cpp \
     source/trsetracker/widgetpattern.cpp \
     source/tutorials.cpp \
@@ -430,6 +431,7 @@ HEADERS  += mainwindow.h \
     source/trsedocuments/formttredit.h \
     source/trsedocuments/helpdocumentbuilder.h \
     source/trsedocuments/ttrview.h \
+    source/trsetracker/dialogtrseinstrumenteditor.h \
     source/trsetracker/ttrplayer.h \
     source/trsetracker/widgetpattern.h \
     source/tutorials.h \
@@ -593,6 +595,7 @@ FORMS    += mainwindow.ui \
     source/trsedocuments/formfjong.ui \
     source/dialogcolors.ui \
     source/dialogprojectbuilder.ui \
+    source/trsetracker/dialogtrseinstrumenteditor.ui \
     source/trsetracker/widgetpattern.ui
 
 RESOURCES += \

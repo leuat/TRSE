@@ -9,7 +9,7 @@ var
 	j: byte;
 
 	@donotremove y_lookup
-	y_lookup : array[201] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
+	y_lookup : array[200] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
 	// Lookup for mode 0 pixel 0
 	
 	hwConv : array[26] of byte = (

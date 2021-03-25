@@ -87,6 +87,8 @@ private slots:
 
     void on_cmbTRSEInstrument_currentIndexChanged(int index);
 
+    void on_btnTRSEInstruments_clicked();
+
 private:
     Ui::FormTTREdit *ui;
 };

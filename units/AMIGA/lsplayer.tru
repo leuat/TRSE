@@ -1,8 +1,8 @@
-unit LSPLayer;
+unit LSPlayer;
 var
 
 
-procedure Init( music : pointer );
+procedure Init( music, bank : pointer of integer );
 begin
 	
 
@@ -37,6 +37,10 @@ begin
 
 	opt o-		; switch off ALL optimizations (we don't want vasm to change some code size, and all optimizations are done!)
 
+	move.l LSPlayer_bank,a1
+	move.l LSPlayer_music,a0
+	suba.l a2,a2
+	
 LSP_MusicDriver:
 			bra.w	.LSP_PlayerInit
 
@@ -232,6 +236,14 @@ sizeof_LSPVars:		rs.w	0
 
 ");
 
+end;
+
+procedure Play();
+begin
+	asm("
+		lea $dff0a0,a6
+	bsr LSP_MusicDriver+4 : LSP player tick (call once per frame)
+	");
 end;
 
 end.
