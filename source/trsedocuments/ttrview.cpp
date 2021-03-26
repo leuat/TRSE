@@ -517,6 +517,12 @@ void TTRView::paintEvent(QPaintEvent *event)
             m_curLinePos = pos;
 //            painter.setPen(textSelected);
         }
+        if (lineIdx==m_curPlayerLine) {
+            painter.setBackground(selected);
+//            m_curLinePos = pos;
+            painter.setPen(textSelected);
+        }
+
         int xp = m_posHex;
         int lp = 0;
 

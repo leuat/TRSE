@@ -43,16 +43,11 @@ void TTRPlayer::Initialize(TTRFile *ttr) {
         audio_init();
         int i=0;
         for (auto& voc : mynthesizer.voices) {
-            qDebug() << "A TTRPLAYER crash : " <<i++;
             mynth::voice_init(&audio_engine, voc);
-            qDebug() << "B";
-//            msleep(10);
             ma_sound_start(&voc.sound);
-            qDebug() << "C";
         }
         m_initialized = true;
     }
-    qDebug() << "Done";
 }
 
 
@@ -86,6 +81,7 @@ void TTRPlayer::Play() {
         if (m_curOrder ==m_ttr->m_orders.count())
             m_curOrder = 0;
     }
+    emit emitUpdateRow(m_curRow);
 }
 
 void TTRPlayer::PlayNote(int channel,QByteArray data)
@@ -144,6 +140,8 @@ void TTRPlayer::PlayNote(int channel, int midi_note, int velocity, QSharedPointe
 
 void TTRPlayer::Stop()
 {
+    m_curRow = 0;
+    emit emitUpdateRow(-1);
     if (!m_isPlaying)
         return;
     m_isPlaying = false;

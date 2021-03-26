@@ -39,6 +39,7 @@ class TTRView: public QAbstractScrollArea
         int m_curCmd;
         int m_curEffect;
         int m_curInstrument;
+        int m_curPlayerLine = -1;
 
         TTRView(QWidget *parent = 0);
         ~TTRView();

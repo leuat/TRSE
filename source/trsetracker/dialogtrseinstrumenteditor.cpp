@@ -136,3 +136,8 @@ void DialogTRSEInstrumentEditor::on_sldRelease_2_sliderMoved(int position)
 {
     PlayNote();
 }
+
+void DialogTRSEInstrumentEditor::on_pushButton_clicked()
+{
+    close();
+}

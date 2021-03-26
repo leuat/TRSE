@@ -62,6 +62,10 @@ void WidgetPattern::SetCursorPosition(int pos)
        RefreshAll();
 }
 
+void WidgetPattern::SetCurrentRow(int row) {
+    ui->Pattern->m_curPlayerLine = row;
+}
+
 void WidgetPattern::on_cbmPattern_currentIndexChanged(int index)
 {
     emit emitReloadPatterns();

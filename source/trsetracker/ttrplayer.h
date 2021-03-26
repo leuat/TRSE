@@ -35,6 +35,7 @@ public:
 
 class TTRPlayer : public QThread
 {
+    Q_OBJECT
 public:
     TTRPlayer();
     ~TTRPlayer();
@@ -72,7 +73,8 @@ public:
     void StartPlaying();
 
     void run() override;
-
+signals:
+    void emitUpdateRow(int row);
 
 };
 

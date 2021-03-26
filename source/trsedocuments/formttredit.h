@@ -48,6 +48,8 @@ public:
 private slots:
 
 
+    void HandleUpdateCurrentRows(int row);
+
     void acceptSound(int, QByteArray sound);
 
     void ReloadPatterns();
@@ -55,6 +57,7 @@ private slots:
     void HandleUpdatePatterns(WidgetPattern*, int);
     void HandleMove(int dir, int pos, int col);
 
+    void keyPressEvent(QKeyEvent *e) override;
 
 
     void on_cmbPattern_currentIndexChanged(int index);
@@ -88,6 +91,7 @@ private slots:
     void on_cmbTRSEInstrument_currentIndexChanged(int index);
 
     void on_btnTRSEInstruments_clicked();
+
 
 private:
     Ui::FormTTREdit *ui;

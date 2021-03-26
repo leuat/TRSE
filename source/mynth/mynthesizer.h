@@ -89,7 +89,7 @@ float lerp01(float a, float b, float f)
 
     // miniaudio datasource.
 	struct VoiceDataSource {
-		ma_data_source_callbacks ds; // must be first!
+        ma_data_source_callbacks ds = {0}; // must be first!
 		ma_uint32 pSampleRate;
 		float t = 0.f;
 		double period = 0.f;

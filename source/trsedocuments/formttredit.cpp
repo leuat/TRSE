@@ -15,6 +15,7 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
     for (int i=0;i<m_ttr.systemTypes.count();i++) {
         cmb->addItem(m_ttr.systemTypes[i]);
     }
+    connect(&m_player, SIGNAL(emitUpdateRow(int)), this, SLOT(HandleUpdateCurrentRows(int)));
 
 }
 
@@ -128,6 +129,15 @@ void FormTTREdit::LoadPredefinedInstruments()
 
 }
 
+void FormTTREdit::HandleUpdateCurrentRows(int row)
+{
+    for (auto w: m_curPatterns) {
+        w->SetCurrentRow(row);
+        w->RefreshAll();
+    }
+
+}
+
 void FormTTREdit::acceptSound(int channel, QByteArray sound)
 {
 
@@ -210,7 +220,14 @@ void FormTTREdit::HandleMove(int dir, int pos, int col)
     wp->SetCursorPosition(pos);
     for (auto w: m_curPatterns)
         w->RefreshAll();
-//    wp->Set
+    //    wp->Set
+}
+
+void FormTTREdit::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key()==Qt::Key_F5) {
+        on_btnPlay_clicked();
+    }
 }
 
 void FormTTREdit::ApplyCurrentOrder()
@@ -398,12 +415,12 @@ void FormTTREdit::on_btnPlay_clicked()
 {
     if (m_player.m_isPlaying) {
         m_player.Stop();
-        ui->btnPlay->setText("Play");
+        ui->btnPlay->setText("Play (F5)");
     }
     else {
         m_player.m_curOrder = m_ttr.m_currentOrder;
         m_player.StartPlaying();
-        ui->btnPlay->setText("Stop");
+        ui->btnPlay->setText("Stop (F5)");
     }
 }
 
