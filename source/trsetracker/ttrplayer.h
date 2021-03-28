@@ -74,6 +74,22 @@ public:
     void PlayNote(int channel, int midi_note, int velocity, QSharedPointer<TRSEInstrument> ins);
     void Stop();
     void StartPlaying();
+    void StopSound() {
+        for (auto& voc : mynthesizer.voices) {
+            ma_sound_stop(&voc.sound);
+        }
+
+    }
+
+    void StartSound(int channel) {
+        ma_sound_start(&mynthesizer.voices[channel].sound);
+    }
+    void StartSound() {
+        for (auto& voc : mynthesizer.voices) {
+            ma_sound_start(&voc.sound);
+        }
+
+    }
 
     void run() override;
 signals:

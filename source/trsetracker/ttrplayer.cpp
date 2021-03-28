@@ -98,8 +98,10 @@ void TTRPlayer::PlayNote(int channel,QByteArray data)
         qDebug() << "ERROR : Trying to play instrument "<<trsI<< " which is out of bounds!";
         return;
     }
-    if ((data[0]&0x80)==0x80)
-    PlayNote(channel,data[0]&0x7F,256,m_instruments.m_instruments[trsI]);
+    if ((data[0]&0x80)==0x80) {
+        StartSound(channel);
+        PlayNote(channel,data[0]&0x7F,256,m_instruments.m_instruments[trsI]);
+    }
 }
 
 void TTRPlayer::PlayNote(int channel, int midi_note, int velocity, QSharedPointer<TRSEInstrument> ins)
@@ -150,9 +152,11 @@ void TTRPlayer::PlayNote(int channel, int midi_note, int velocity, QSharedPointe
 void TTRPlayer::Stop()
 {
     m_curRow = 0;
+
     emit emitUpdateRow(-1);
     if (!m_isPlaying)
         return;
+    StopSound();
     m_isPlaying = false;
 }
 
@@ -162,7 +166,7 @@ void TTRPlayer::StartPlaying()
     msleep(10);
     m_curRow = 0;
     m_isPlaying = true;
-
+    StartSound();
 
 
 
