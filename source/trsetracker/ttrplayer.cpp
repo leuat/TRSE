@@ -4,8 +4,9 @@ bool TTRPlayer::m_initialized = false;
 
 TTRPlayer::TTRPlayer()
 {
-
-    m_instruments.Load(Util::GetSystemPrefix()+QDir::separator()+"themes"+QDir::separator()+"instruments.txt");
+    QString instruments = Util::GetSystemPrefix()+QDir::separator()+"themes"+QDir::separator()+"instruments.txt";
+//    qDebug() << instruments << QFile::exists(instruments);
+    m_instruments.Load(instruments);
 /*    {
         ColumnData &col = test_tracker_column.steps;
         col.resize(16);
@@ -91,7 +92,12 @@ void TTRPlayer::PlayNote(int channel,QByteArray data)
 {
 //    PlayNote(channel,0,0);
     int instr = (data[2] & 0xf0) >> 4;
+
     int trsI = m_ttr->getTRSEInstrument(instr);
+    if (trsI>=m_instruments.m_instruments.count()) {
+        qDebug() << "ERROR : Trying to play instrument "<<trsI<< " which is out of bounds!";
+        return;
+    }
     if ((data[0]&0x80)==0x80)
     PlayNote(channel,data[0]&0x7F,256,m_instruments.m_instruments[trsI]);
 }
