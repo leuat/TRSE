@@ -14,11 +14,11 @@ struct Mynthesizer {
 class TRSEInstrument {
 public:
     QString name;
-    float a,d,s,r;
-    float l0, l1, l2;
-    float w0,w1,w2,w3;
-    int oct;
-    float vibrato;
+    float a=0.1,d=0.1,s=0.1,r=0.1;
+    float l0=0.3, l1=0, l2=1;
+    float w0=0,w1=0,w2=1,w3=0;
+    int oct =0;
+    float vibrato=0;
     TRSEInstrument() {
 
     }

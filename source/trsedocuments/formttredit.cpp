@@ -268,8 +268,9 @@ void FormTTREdit::on_cmbInstruments_currentIndexChanged(int index)
     // First, save old
     SaveCurrentInstrument();
     QString txt = "";
-    if (index<0)
+    if (index<0 || index>=m_ttr.m_instruments.count())
         return;
+//    qDebug() << (m_ttr.m_instruments[index].count());
     for (int i=11;i<m_ttr.m_instruments[index].count();i++)
         txt+=QChar(m_ttr.m_instruments[index][i]);
 
