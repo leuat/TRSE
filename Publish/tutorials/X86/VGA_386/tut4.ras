@@ -10,9 +10,9 @@ program Tut4_BeePlayer;
 @use "system/memory"
 
 // Automatically export music in BEEPlayer format
-@export "music/song1.trt" "music/song1.bin" 3
+@export "music/bubble.trt" "music/bubble.bin" 3
 var  
-	song: incbin("music/song1.bin");
+	song: incbin("music/bubble.bin");
 
 
 // Simple music player
@@ -27,7 +27,7 @@ end;
 
 begin
 	BeePlay::Initialize(#song);
-	
+	BeePlay::octShift:=0-1;	
 	BeePlay::speed := 3;
 	Memory::SetTimer(23860);
 	SetInterrupt($8, RasterIRQ());

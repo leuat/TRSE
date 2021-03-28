@@ -4,7 +4,7 @@ unit BeePlay;
 var
 	ptrOrder, ptrPattern, zp : pointer;
 	noChannels,j,note,octave,oct : byte;
-	
+	octShift: byte = 2;
 	i,noRows,val,decayLength,distort : integer;
 	curOrder, noOrder, curRow, speed, counter,k : integer;
 
@@ -108,7 +108,7 @@ begin
 //	val := val + Tables::sineDistort[distort];
 
 	// Tweak octave
-	i:=oct-2;
+	i:=oct-octShift;
 	val := val>>i;
 	// Beep ahoy!	
 	Beep(val);
@@ -154,7 +154,7 @@ begin
 	
 	curRow:=curRow+1;
 	
-	if (curRow=32) then
+	if (curRow=noRows) then
 	begin
 		curRow:=0;
 		curOrder:=curOrder + noChannels;
