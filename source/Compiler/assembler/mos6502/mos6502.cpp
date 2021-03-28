@@ -386,6 +386,7 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
                 //Write(" dc.b " + curStr);
                 //qDebug() << "IS NUMBER : " << isNumber;
                 curOutData += curStr;
+                if (!flags.contains("invert")) curOutData += "+128";
                 curIdx = curStr.length();
   //              continue;
             }
@@ -402,6 +403,7 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
                 if (m_cstr.contains(c)) {
                     uchar sc = m_cstr[c].m_screenCode;
                     curOutData+=Util::numToHex(sc);
+                    if (!flags.contains("invert")) curOutData += "+128";
                 }
             }
 
