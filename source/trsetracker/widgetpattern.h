@@ -33,11 +33,14 @@ private slots:
         emit emitSound(m_curColumn, ba);
     }
 
+    void on_chkSilent_clicked(bool checked);
+
 signals:
     void emitSound(int, QByteArray sound);
     void emitReloadPatterns();
     void emitUpdatePatterns(WidgetPattern* who, int curPattern);
     void emitMove(int dir, int pos, int curColumn);
+    void emitSilent(int curColumn, bool isSilent);
 
 
 private:

@@ -80,3 +80,8 @@ void WidgetPattern::acceptMove(int direction, int pos)
 {
     emit emitMove(direction,pos,m_curColumn);
 }
+
+void WidgetPattern::on_chkSilent_clicked(bool checked)
+{
+    emit emitSilent(m_curColumn, checked);
+}

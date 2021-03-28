@@ -177,6 +177,7 @@ void FormTTREdit::ReloadPatterns()
         connect(wp, SIGNAL(emitUpdatePatterns(WidgetPattern*, int)), this, SLOT(HandleUpdatePatterns(WidgetPattern*, int)));
         connect(wp, SIGNAL(emitMove(int,int,int)), this, SLOT(HandleMove(int,int,int)));
         connect(wp, SIGNAL(emitSound(int,QByteArray)), this, SLOT(acceptSound(int, QByteArray)));
+        connect(wp, SIGNAL(emitSilent(int,bool)), this, SLOT(HandleSilent(int, bool)));
         m_curPatternValues.append((uchar)m_ttr.m_orders[m_ttr.m_currentOrder][i]);
 
     }
@@ -221,6 +222,11 @@ void FormTTREdit::HandleMove(int dir, int pos, int col)
     for (auto w: m_curPatterns)
         w->RefreshAll();
     //    wp->Set
+}
+
+void FormTTREdit::HandleSilent(int col, bool isSilent)
+{
+    m_player.m_silentChannels[col] = isSilent;
 }
 
 void FormTTREdit::keyPressEvent(QKeyEvent *e)
@@ -437,4 +443,5 @@ void FormTTREdit::on_btnTRSEInstruments_clicked()
     d->exec();
     ReloadInstruments();
     on_cmbInstruments_currentIndexChanged(ui->cmbTRSEInstrument->currentIndex());
+    m_player.m_instruments.Save();
 }

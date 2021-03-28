@@ -48,6 +48,8 @@ void TTRPlayer::Initialize(TTRFile *ttr) {
         }
         m_initialized = true;
     }
+    m_silentChannels.resize(m_ttr->m_noChannels);
+    m_silentChannels.fill(false);
 }
 
 
@@ -72,7 +74,8 @@ void TTRPlayer::Play() {
     for (int i=0;i<m_ttr->m_noChannels;i++) {
         int patt = m_ttr->m_orders[m_curOrder][i];
         QByteArray& p = m_ttr->m_patterns[patt];
-        PlayNote(i,p.mid(m_curRow*m_ttr->m_noBytesPerLine,m_ttr->m_noBytesPerLine));
+        if (!m_silentChannels[i])
+            PlayNote(i,p.mid(m_curRow*m_ttr->m_noBytesPerLine,m_ttr->m_noBytesPerLine));
     }
     m_curRow++;
     if (m_curRow==m_ttr->m_patternLength) {
@@ -163,6 +166,7 @@ void TTRPlayer::StartPlaying()
 void TRSEInstruments::Load(QString fname)
 {
     m_instruments.clear();
+    m_fileName = fname;
     QStringList lst = Util::loadTextFile(fname).split("\n");
     for (QString s : lst) {
         s = s.trimmed().simplified();
@@ -190,4 +194,40 @@ void TRSEInstruments::Load(QString fname)
         ins->vibrato = in[13].toFloat();
         m_instruments.append(ins);
     }
+}
+
+void TRSEInstruments::Save()
+{
+    QString s;
+    for (auto& t : m_instruments) {
+        s+=t->name;
+        s+=" " +QString::number(t->a);
+        s+=" " +QString::number(t->d);
+        s+=" " +QString::number(t->s);
+        s+=" " +QString::number(t->r);
+        s+=" " +QString::number(t->l0);
+        s+=" " +QString::number(t->l1);
+        s+=" " +QString::number(t->l2);
+        s+=" " +QString::number(t->w0);
+        s+=" " +QString::number(t->w1);
+        s+=" " +QString::number(t->w2);
+        s+=" " +QString::number(t->w3);
+        s+=" " +QString::number(t->oct);
+        s+=" " +QString::number(t->vibrato);
+        s+="\n";
+    }
+
+    Util::SaveTextFile(m_fileName,s);
+}
+
+void TRSEInstruments::New() {
+    auto i = QSharedPointer<TRSEInstrument>(new TRSEInstrument);
+    i->name = "New instrument";
+    i->w0 = 0.8;
+    i->a = 0.01;
+    i->l0 = 0.3;
+    i->l0 = 0.3;
+    i->l1 = 0.3;
+    i->l2 = 1;
+    m_instruments.append(i);
 }

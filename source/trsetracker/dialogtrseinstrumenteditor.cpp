@@ -141,3 +141,12 @@ void DialogTRSEInstrumentEditor::on_pushButton_clicked()
 {
     close();
 }
+
+void DialogTRSEInstrumentEditor::on_btnNew_clicked()
+{
+    FillFromGUI();
+    m_player->m_instruments.New();
+    m_currentInstrument = m_player->m_instruments.m_instruments.count()-1;
+    UpdateList();
+    FillToGUI();
+}

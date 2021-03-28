@@ -28,8 +28,10 @@ public:
 class TRSEInstruments {
 public:
     QVector<QSharedPointer<TRSEInstrument>> m_instruments;
+    QString m_fileName = "";
     void Load(QString fname);
-
+    void Save();
+    void New();
 };
 
 
@@ -47,6 +49,7 @@ public:
     Mynthesizer mynthesizer;
     TRSEInstruments m_instruments;
     static bool m_initialized;// = false;
+    QVector<bool> m_silentChannels;
 
     enum class JamMode {
         Mono

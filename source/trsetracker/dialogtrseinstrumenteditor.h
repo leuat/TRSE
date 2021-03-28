@@ -45,6 +45,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_btnNew_clicked();
+
 private:
     Ui::DialogTRSEInstrumentEditor *ui;
 
