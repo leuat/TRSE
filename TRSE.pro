@@ -853,6 +853,7 @@ DISTFILES += \
     resources/text/help/r/incsid.rtf \
     resources/text/help/r/integer.rtf \
     resources/text/help/r/interrupt.rtf \
+    resources/text/help/r/invert.rtf \
     resources/text/help/r/long.rtf \
     resources/text/help/r/of.rtf \
     resources/text/help/r/offpage.rtf \

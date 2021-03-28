@@ -1,6 +1,7 @@
 <h3>Description</h3>
 <p>Character string using PETSCII values.  For example, A = 1 instead of 65.</p>
 <p>no_term can be added to supress the zero terminating byte if required.</p>
+<p>invert can be added to set inverse flag to inverted characters.</p>
 
 
 <h3>Example 1</h3>
@@ -24,4 +25,15 @@ cs : cstring no_term = ("TRSE SPEAK PETSCII");
 cs	
 	dc.b	$14, $12, $13, $5, $20, $13, $10, $5, $1
 	dc.b	$b, $20, $10, $5, $14, $13, $3, $9, $9
+</code>
+
+<h3>Example 3</h3>
+
+<code>
+cs : cstring no_term invert = ("TRSE SPEAK PETSCII");
+
+// ASM generated:
+cs
+        dc.b	$94, $92, $93, $85, $a0, $93, $90, $85, $81
+        dc.b	$8b, $a0, $90, $85, $94, $93, $83, $89, $89
 </code>

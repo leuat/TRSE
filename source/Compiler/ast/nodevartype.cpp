@@ -74,7 +74,7 @@ void NodeVarType::VerifyFlags(bool isProcedureParameter) {
         if (f=="invert") {
             // only works for cstrings
             if (!(m_op.m_type==TokenType::CSTRING))
-                ErrorHandler::e.Error("Type flag 'invert' is only allowed for strings.",m_op.m_lineNumber);
+                ErrorHandler::e.Error("Type flag 'invert' is only allowed for cstrings.",m_op.m_lineNumber);
         }
     }
     // Individual type tests

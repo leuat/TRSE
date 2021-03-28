@@ -370,23 +370,16 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
         // First check if current is a pure number
         if (curOutData == "")
             curOutData = "\tdc.b\t";
-/*        if (curIdx==0) {
-            QString cc = curStr[curIdx];
-            if (cc.count()<=3 && Syntax::s.isDigitHex(cc)) {
-                s+=cc + ", ";
-                curIdx = cc.length();
-            }
 
-        }*/
         bool isNumber = false;
         if (curStr.startsWith("*&NUM")) {
             curStr = curStr.remove("*&NUM"); // Remove the number tag
             int val = curStr.toInt(&isNumber);
+            if (flags.contains("invert")) val |= +128;
             if (isNumber) {
                 //Write(" dc.b " + curStr);
                 //qDebug() << "IS NUMBER : " << isNumber;
                 curOutData += curStr;
-                if (!flags.contains("invert")) curOutData += "+128";
                 curIdx = curStr.length();
   //              continue;
             }
@@ -402,8 +395,9 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
 
                 if (m_cstr.contains(c)) {
                     uchar sc = m_cstr[c].m_screenCode;
+                    if (flags.contains("invert")) sc |= 128;
                     curOutData+=Util::numToHex(sc);
-                    if (!flags.contains("invert")) curOutData += "+128";
+
                 }
             }
 
