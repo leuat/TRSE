@@ -5,7 +5,7 @@
 #include "source/LeLib/ttrfile.h"
 #include <QBuffer>
 #include "source/mynth/mynthesizer.h"
-#include "util.h"
+#include "source/LeLib/util/util.h"
 
 struct Mynthesizer {
     mynth::Voice voices[4];

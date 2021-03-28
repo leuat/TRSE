@@ -1,5 +1,6 @@
 #include "mynthesizer.h"
-
+#include <stdio.h>
+#include <string.h>
 // Recalculate the ADSR envelope whenever it is needed
 void mynth::calculate_adsr(VoiceDataSource* pb) {
         ADSRState& state = pb->adsr_state;

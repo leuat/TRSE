@@ -207,7 +207,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             accomodate = true;
 
         if (accomodate && !node->isPointer(as)) {
-            QString aa = getAx(node)[0];
+            QString aa = QString(getAx(node)[0]);
             as->Asm("mov "+QString(ax[0])+"h,0 ; forcetype clear high bit");
         }
     }
