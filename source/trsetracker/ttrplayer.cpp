@@ -42,12 +42,11 @@ void TTRPlayer::Initialize(TTRFile *ttr) {
     if (!m_initialized) {
         msleep(10);
         audio_init();
-        int i=0;
-        for (auto& voc : mynthesizer.voices) {
-            mynth::voice_init(&audio_engine, voc);
-            ma_sound_start(&voc.sound);
-        }
         m_initialized = true;
+    }
+    for (auto& voc : mynthesizer.voices) {
+        mynth::voice_init(&audio_engine, voc);
+        ma_sound_start(&voc.sound);
     }
     m_silentChannels.resize(m_ttr->m_noChannels);
     m_silentChannels.fill(false);
