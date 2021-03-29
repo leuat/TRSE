@@ -83,6 +83,7 @@ void TTRPlayer::Play() {
         m_curOrder+=1;
         if (m_curOrder ==m_ttr->m_orders.count())
             m_curOrder = 0;
+        emit emitUpdateOrder(m_curOrder);
     }
     emit emitUpdateRow(m_curRow);
 }

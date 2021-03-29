@@ -16,6 +16,7 @@ FormTTREdit::FormTTREdit(QWidget *parent) :
         cmb->addItem(m_ttr.systemTypes[i]);
     }
     connect(&m_player, SIGNAL(emitUpdateRow(int)), this, SLOT(HandleUpdateCurrentRows(int)));
+    connect(&m_player, SIGNAL(emitUpdateOrder(int)), this, SLOT(HandleUpdateOrder(int)));
 
 }
 
@@ -227,6 +228,11 @@ void FormTTREdit::HandleMove(int dir, int pos, int col)
 void FormTTREdit::HandleSilent(int col, bool isSilent)
 {
     m_player.m_silentChannels[col] = isSilent;
+}
+
+void FormTTREdit::HandleUpdateOrder(int order)
+{
+    ui->lstOrders->setCurrentRow(order);
 }
 
 void FormTTREdit::keyPressEvent(QKeyEvent *e)

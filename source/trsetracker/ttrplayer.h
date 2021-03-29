@@ -94,6 +94,7 @@ public:
     void run() override;
 signals:
     void emitUpdateRow(int row);
+    void emitUpdateOrder(int order);
 
 };
 

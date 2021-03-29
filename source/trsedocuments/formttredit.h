@@ -57,6 +57,7 @@ private slots:
     void HandleUpdatePatterns(WidgetPattern*, int);
     void HandleMove(int dir, int pos, int col);
     void HandleSilent(int col, bool isSilent);
+    void HandleUpdateOrder(int order);
 
     void keyPressEvent(QKeyEvent *e) override;
 
