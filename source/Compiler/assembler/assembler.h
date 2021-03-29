@@ -273,6 +273,7 @@ public:
     QString byte = "dc.b";
     QString word = "dc.w";
     QString llong = "dc.l";
+    QString ppointer = "dc.w";
 
     Assembler();
     virtual ~Assembler();

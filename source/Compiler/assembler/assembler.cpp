@@ -354,7 +354,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
                 //qDebug() << "WTF " <<s->m_name <<s->m_type;
                 // Build the name
                 QString n = name + "_" + st->m_name+"_"+s->m_name;
-                QString w = n;
+                QString w = n+"";
                 //            QString t = byte;
                 //
                 //                  t= word;
@@ -389,6 +389,10 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             QString t = byte;
             if (s->m_type.toLower()=="integer")
                 t= word;
+            if (s->m_type.toLower()=="pointer")
+                t= ppointer;
+            if (s->m_type.toLower()=="long")
+                t= llong;
 
             w = w+ "\t"+t + "\t0";
 

@@ -177,6 +177,9 @@ public:
     virtual bool typeIsArray(Assembler* as) {
         return false;
     }
+    virtual bool typeIsArrayOfPointer(Assembler* as) {
+        return false;
+    }
 
     virtual void VerifyReferences(Assembler* as);
     virtual bool isSigned(Assembler* as);

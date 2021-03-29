@@ -10,11 +10,11 @@ class AsmX86 : public Assembler
 public:
     AsmX86();
     ~AsmX86() {}
-
+/*
     QString byte = "db";
     QString word = "dw";
     QString llong = "dl";
-
+*/
 
     void Connect() override;
 

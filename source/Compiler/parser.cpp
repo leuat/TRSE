@@ -2592,6 +2592,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_removeUnusedDecls = removeUnusedDecls;
     Node::m_curMemoryBlock = nullptr; //
     Node::m_staticBlockInfo.m_blockID = -1;
+    LabelStack::m_labelCount = 0;
     if (!m_isTRU)
         Data::data.demomode = false;
 

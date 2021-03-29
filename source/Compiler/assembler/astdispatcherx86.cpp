@@ -136,11 +136,28 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
     }
     QString ending = "]";
     if (node->m_expr!=nullptr) {
+        if (node->getArrayType(as)==TokenType::POINTER) {
+            as->Comment("Looking up array of pointer");
+
+            node->m_expr->setForceType(TokenType::INTEGER);
+            node->m_expr->Accept(this);
+            as->Asm("mov bx,ax");
+            as->Asm("shl bx,2");
+
+            as->Asm("lea si,"+node->getValue(as)+ "");
+            as->Asm("mov di,[ds:si+bx]");
+            as->Asm("mov ax,[ds:si+bx+2]");
+            as->Asm("mov es,ax");
+//            as->Asm("mov di,cx");
+
+            return;
+        }
+
         if (node->isPointer(as)) {
 //            as->Asm("push ax");
             as->Asm("les di,["+node->getValue(as)+ "]");
             if (node->m_expr->isPureNumeric()) {
-                as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+"]");
+                as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+"*" + getIndexScaleVal(as,node)+"]");
                 if (!node->isWord(as))
                     as->Asm("mov ah,0"); // Force byte
                 return;
@@ -148,6 +165,8 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             }
             if (node->m_expr->isPureVariable() && !node->m_expr->isArrayIndex()) {
                 as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
+                if (node->isWord(as))
+                    as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
                 as->Asm("mov ax, word [es:di]");
                 if (!node->isWord(as))
                     as->Asm("mov ah,0");
@@ -158,7 +177,8 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             node->m_expr->Accept(this);
             as->Asm("add di,ax");
             if (node->getArrayType(as)==TokenType::INTEGER)
-                as->Asm("shl di,1 ; Accomodate for word");
+//                as->Asm("shl di,1 ; Accomodate for word");
+                  as->Asm("add di,ax");
 
 
   //          as->Asm("pop ax");
@@ -594,6 +614,15 @@ void ASTdispatcherX86::LoadVariable(QSharedPointer<NodeNumber>n)
 
 }
 
+QString ASTdispatcherX86::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+{
+    if (var->isWord(as))
+        return "2";
+    if (var->isLong(as))
+        return "4";
+    return "1";
+}
+
 QString ASTdispatcherX86::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
 
@@ -623,6 +652,24 @@ QString ASTdispatcherX86::getAx(QString a, QSharedPointer<Node> n) {
     return a+"l";
 
 
+}
+
+QString ASTdispatcherX86::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
+    if (bop->m_op.m_type == TokenType::PLUS)
+        return "add";
+    if (bop->m_op.m_type == TokenType::MINUS)
+        return "sub";
+    if (bop->m_op.m_type == TokenType::BITOR)
+        return "or";
+    if (bop->m_op.m_type == TokenType::BITAND)
+        return "and";
+    if (bop->m_op.m_type == TokenType::XOR)
+        return "xor";
+    if (bop->m_op.m_type == TokenType::DIV)
+        return "idiv";
+    if (bop->m_op.m_type == TokenType::MUL)
+        return "imul";
+    return " UNKNOWN BINARY OPERATION";
 }
 
 QString ASTdispatcherX86::getEndType(Assembler *as, QSharedPointer<Node> v)
@@ -754,6 +801,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
     if (var->isPointer(as) && var->isArrayIndex()) {
 
         // TO DO: Optimize special cases
+
         as->ClearTerm();
         node->m_right->Accept(this);
 
@@ -761,12 +809,15 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         as->Asm("les di, ["+var->getValue(as)+"]");
         if (var->m_expr->isPureNumeric()) {
 
-            as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"]"+getAx("a",var));
+            as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(as,var)+"],"+getAx("a",var));
             return "";
 
         }
         if (var->m_expr->isPureVariable() && var->m_expr->isWord(as)) {
             as->Asm("add di,["+var->m_expr->getValue(as)+"]");
+            if (var->isWord(as))
+                as->Asm("add di,["+var->m_expr->getValue(as)+"]");
+
             as->Asm("mov [es:di],"+getAx("a",var));
 
             return "";
@@ -777,6 +828,8 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         var->m_expr->setForceType(TokenType::INTEGER);
         var->m_expr->Accept(this);
         as->Term();
+        if (var->isWord(as))
+            as->Asm("shl ax,1");
         as->Asm("mov bx,ax");
 
         as->Asm("pop ax");
@@ -789,6 +842,28 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 
     if (var->isArrayIndex()) {
         // Is an array
+        if (var->getArrayType(as)==TokenType::POINTER) {
+            as->Comment("Assign value to pointer array");
+            node->m_right->Accept(this);
+            var->m_expr->Accept(this);
+            as->Asm("shl ax,2 ; pointer lookup");
+            as->Asm("mov bx,ax");
+            as->Asm("lea si,"+var->getValue(as));
+            as->Asm("mov [ds:si+bx],di ; store in pointer array");
+            as->Asm("mov [ds:si+bx+2],es");
+/*
+            as->Asm("mov bx,ax");
+            as->Asm("shl bx,2");
+
+            as->Asm("lea si,"+node->getValue(as)+ "");
+            as->Asm("mov di,[ds:si+bx]");
+            as->Asm("mov ax,[ds:si+bx+2]");
+            as->Asm("mov es,ax");
+  */
+
+            return "";
+        }
+        as->Comment("Assign value to regular array");
         node->m_right->Accept(this);
         as->Asm("push ax");
         var->m_expr->Accept(this);
@@ -815,7 +890,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
    // as->Comment("Testing for : a:=a+ expr " + QString::number(bop!=nullptr));
    // if (bop!=nullptr)
      //  as->Comment(TokenType::getType(bop->getType(as)));
-    if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS)) {
+    if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::BITOR || bop->m_op.m_type==TokenType::BITAND || bop->m_op.m_type==TokenType::XOR )) {
   //      as->Comment("PREBOP searching for "+var->getValue(as));
         if (bop->ContainsVariable(as,var->getValue(as))) {
             // We are sure that a:=a ....

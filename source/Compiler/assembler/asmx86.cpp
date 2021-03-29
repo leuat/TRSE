@@ -3,6 +3,11 @@
 AsmX86::AsmX86()
 {
     m_hash = "";
+    byte="db";
+    word="dw";
+    llong ="dd";
+    ppointer ="dd";
+
 }
 
 void AsmX86::Connect() {
@@ -65,6 +70,11 @@ void AsmX86::Write(QString str, int level)
 void AsmX86::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
     QString t = byte;
+
+    if (DeclareRecord(name,type,count,data,pos))
+        return;
+
+
     if (type.toLower()=="integer")
         t = word;
     if (type.toLower()=="byte")
@@ -187,10 +197,10 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
         m_term = "xor ";
     }
     if (t == TokenType::MUL) {
-        m_term = "mul ";
+        m_term = "imul ";
     }
     if (t == TokenType::DIV) {
-        m_term = "div ";
+        m_term = "idiv ";
     }
     if (t == TokenType::SHR) {
         m_term = "shr ";

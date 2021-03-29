@@ -67,6 +67,8 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
 
+    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
+
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
 
@@ -92,17 +94,7 @@ public:
     }
 
 
-    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
-        if (bop->m_op.m_type == TokenType::PLUS)
-            return "add";
-        if (bop->m_op.m_type == TokenType::MINUS)
-            return "sub";
-        if (bop->m_op.m_type == TokenType::DIV)
-            return "div";
-        if (bop->m_op.m_type == TokenType::MUL)
-            return "mul";
-        return " UNKNOWN BINARY OPERATION";
-    }
+    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
 
     void PushX() {
         if (m_lvl==3)
