@@ -27,7 +27,8 @@ begin
 				a0 := bb[i<<2+k];
 				v+=aa[k<<2+j]*a0;
 			end;
-			cc[(j<<2)+i] := v/128;
+//			cc[(j<<2)+i] := v/128;
+ 			cc[(j<<2)+i] := v>>7;
         end;
     end;
 end;

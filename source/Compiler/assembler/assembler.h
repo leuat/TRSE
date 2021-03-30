@@ -252,7 +252,7 @@ public:
 
     }
 
-    virtual int getLineCount() {return m_source.count();}
+    virtual int getLineCount();
     int CountCycles(QString s);
     virtual int CountInstructionCycle(QStringList s) {return 0;}
 

@@ -206,10 +206,10 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
         m_term = "idiv ";
     }
     if (t == TokenType::SHR) {
-        m_term = "shr ";
+        m_term = "sar ";
     }
     if (t == TokenType::SHL) {
-        m_term = "shl ";
+        m_term = "sal ";
     }
 
 

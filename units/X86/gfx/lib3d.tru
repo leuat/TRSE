@@ -139,9 +139,7 @@ begin
 		
 	p1 := objects[ii].vertices;
 	p2 := objects[ii].faces;
-//	asm("xor dx,dx");
 	dx:=256/f1;
-//	asm("xor dx,dx");
 	dy:=256/f2;
 	k2:=32;
 	for i:=0 to f2 do
@@ -153,20 +151,16 @@ begin
 		begin
 			xx:=Tables::sine128[k&255];
 			yy:=Tables::sine128[(k+64)&255];
-			xx:=xx/r1;
-			yy:=yy/r1;
 			
 			vert[2]:=0;
-			vert[1]:=yy+r2;
-			vert[0]:=xx;
+			vert[1]:=yy/r1+r2;
+			vert[0]:=xx/r1;
 			
 			Matrix::MatMulVec3(#rotMat,#vert,p1);
-
+			
 			p1[0]/=256;
 			p1[1]/=256;
 			p1[2]/=256;
-
-
 
 			k+=dx;			
 			p1:=p1+6;		
@@ -228,15 +222,6 @@ begin
 		vr+=4;
 		v1+=6;		
 	end;
-/*		asm(";here");
-	vr := objects[i].points;
-	for j:=0 to objects[i].noVertices do
-	begin
-		vr[0] := j*8;		
-		vr[1] := (j*8);
-		vr+=(2*2);
-	end;*/
-
 
 
 end;

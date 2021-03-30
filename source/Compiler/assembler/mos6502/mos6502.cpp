@@ -1323,24 +1323,6 @@ bool AsmMOS6502::ContainsBranches(QString l1)
 
 }
 
-int AsmMOS6502::getLineCount()
-{
-    int lc = 0;
-    for (QString s: m_source) {
-        s=s.remove("\n");
-        s=s.remove("\t");
-        s=s.trimmed();
-        if (s=="")
-            continue;
-        if (s.startsWith(";"))
-            continue;
-        if (s.startsWith("//"))
-            continue;
-        lc++;
-    }
-    return lc;
-}
-
 int AsmMOS6502::CountInstructionCycle(QStringList s)
 {
     MOSOperation op = GetOperand(s);

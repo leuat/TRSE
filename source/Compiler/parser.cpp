@@ -2189,7 +2189,6 @@ QSharedPointer<Node> Parser::Term()
         Eat(m_currentToken.m_type);
 
         node = QSharedPointer<NodeBinOP>(new NodeBinOP(node, t, Factor()));
-
     }
     return node;
 }
@@ -4708,6 +4707,21 @@ QSharedPointer<Node> Parser::Expr()
 //        qDebug() << node->m_op.getType();
 //        t.m_type = TokenType::CON
     }
+/*
+ *
+ *  Experimental: replace DIV with SHR
+    if (qSharedPointerDynamicCast<NodeBinOP>(node)!=nullptr)
+    if (node->m_op.m_type==TokenType::DIV) {
+        if (node->m_right->isPureNumeric()) {
+            int val = node->m_right->getValueAsInt(nullptr);
+            if (div2s.contains(val)) {
+                node->m_op.m_type = TokenType::SHR;
+                qSharedPointerDynamicCast<NodeNumber>(node->m_right)->m_val = div2s.indexOf(val)+1;
+            }
+        }
+    }
+*/
+
 
     return node;
 }

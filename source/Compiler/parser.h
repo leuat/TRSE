@@ -85,7 +85,7 @@ class Parser : public QObject {
     Q_OBJECT
 public:
     int m_tick = 0;
-
+    QVector<int> div2s = QVector<int>() <<2 <<4<<8<<16<<32<<64<<128<<256<<512<<1024;
     QVector<ParserBlock> m_parserBlocks;
     static QStringList s_usedTRUs, s_usedTRUNames;
     QMap<QString, LMacro> m_macros;

@@ -226,12 +226,30 @@ void Assembler::PopBlock(int ln)
 
 }
 
+int Assembler::getLineCount() {
+    int lc = 0;
+    for (QString s: m_source) {
+        s=s.remove("\n");
+        s=s.remove("\t");
+        s=s.trimmed().simplified();
+        if (s=="")
+            continue;
+        if (s.startsWith(";"))
+            continue;
+        if (s.startsWith("//"))
+            continue;
+        lc++;
+    }
+    return lc;
+
+}
+
 int Assembler::CountCycles(QString s)
 {
     QStringList lst = s.split("\n");
     int n=0;
     for (QString s : lst) {
-//        s=s.remove("\t");
+        //        s=s.remove("\t");
         s=s.trimmed();
         if (s=="") continue;
         if (s.startsWith(";")) continue;

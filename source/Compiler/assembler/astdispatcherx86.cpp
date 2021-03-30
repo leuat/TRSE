@@ -12,6 +12,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         node->m_right->setForceType(TokenType::INTEGER);
     if (node->m_right->isWord(as))
         node->m_left->setForceType(TokenType::INTEGER);
+
     as->ClearTerm();
     if (!node->isPointer(as)) {
         if (node->isPureNumeric()) {
@@ -94,11 +95,27 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         return;
     }
 
+    if (node->m_right->isPure() && (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS || node->m_op.m_type==TokenType::BITAND || node->m_op.m_type==TokenType::BITOR || node->m_op.m_type==TokenType::XOR)) {
+        as->Comment("RHS is pure optimization");
 
+        as->ClearTerm();
+        node->m_left->Accept(this);
+        as->Term();
+        as->BinOP(node->m_op.m_type);
+
+        as->Asm(as->m_term + " ax, "+getX86Value(as,node->m_right));
+        as->ClearTerm();
+        return;
+
+    }
+
+
+    as->Comment("Generic add/sub");
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
     if (m_isPurePointer)
         bx = "di";
+
 
     PushX();
     if (node->m_op.m_type==TokenType::SHR || node->m_op.m_type==TokenType::SHL)
