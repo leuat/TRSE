@@ -6,13 +6,13 @@ var
 
 function Open(fp:global pointer):integer;
 begin
-	asm
+	asm("
 	mov ah, $3D
 	mov al, 0 ; open attribute: 0 - read-only, 1 - write-only, 2 -read&write
 	mov dx, word [File_fp] ; ASCIIZ filename to open
 	int 21h
 	mov [File_val],ax
-	end;
+	");
 	Open := val;
 end;	
 
@@ -21,7 +21,7 @@ end;
 
 procedure Read(handle, size :global integer;dst : ^integer);
 begin
-	asm
+	asm("
 	cli
 	mov ah, 0x3F
 	mov bx, [File_handle]
@@ -32,16 +32,16 @@ begin
 	int 21h	
 	pop ds
 	sti
-	end;
+	");
 end;	
 
 procedure Close(handle: global integer);
 begin
-	asm
+	asm("
 	mov ah, 0x3E
 	mov bx, [File_handle] ; file handle
 	int 21h	
-	end;
+	");
 end; 
 
 

@@ -138,6 +138,11 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
     CleanupBlockLinenumbers();
 
+    if (m_assembler->m_optimiser!=nullptr) {
+        m_assembler->m_source = m_assembler->m_optimiser->PostOptimize(m_assembler->m_source);
+        m_assembler->m_totalOptimizedLines+=m_assembler->m_optimiser->m_linesOptimized;
+    }
+
     WarningUnusedVariables();
     // Make sure records aren't deleted in copy
     m_assembler->m_symTab->m_records.clear();

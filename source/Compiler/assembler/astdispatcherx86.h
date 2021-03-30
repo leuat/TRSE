@@ -77,6 +77,10 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jne ";
 
+    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+        if (n->isWord(as)) return "word"; else return "byte";
+    }
+
     QString getJmp(bool isOffPage) override {
         return "jmp";
     }

@@ -125,6 +125,8 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
+    source/Compiler/optimiser/postoptimiser.cpp \
+    source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/systems/systemamstradcpc464.cpp \
     source/Compiler/systems/systemappleii.cpp \
     source/Compiler/systems/systematari2600.cpp \
@@ -355,6 +357,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
+    source/Compiler/optimiser/postoptimiser.h \
+    source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/systems/systemamstradcpc464.h \
     source/Compiler/systems/systemappleii.h \
     source/Compiler/systems/systematari2600.h \

@@ -40,6 +40,14 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("scrollx")) {
         ScrollX(as);
     }
+    if (Command("mod")) {
+        LoadVar(as,1);
+        as->Asm("mov bx,ax");
+        LoadVar(as,0);
+        as->Asm("div bx");
+        as->Asm("mov ax,dx");
+
+    }
     if (Command("startirq")) {
         PushPopAll(as,true);
         as->Asm("push ds");

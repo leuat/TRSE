@@ -91,6 +91,7 @@ public:
 
     int MaintainBlocks(Assembler* as);
     virtual bool isPointer(Assembler* as)  { return false;}
+    virtual bool isPurePointer(Assembler* as)  { return false;}
     virtual bool is8bitValue(Assembler* as) { return true; }
     TokenType::Type m_forceType = TokenType::NADA;
 

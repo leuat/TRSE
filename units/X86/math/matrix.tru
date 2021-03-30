@@ -15,23 +15,21 @@ var
 	m,a:matp;
 	
 
-procedure MatMul3( a,b : matp );
+procedure MatMul3( aa,bb,cc : matp );
 begin
 	for j:=0 to 4 do
 	begin
-		k:=0;
 		for i:=0 to 4 do
 		begin
-			v:=a[k+0] * b[0+j];
-			v+=a[k+1] * b[4+j];
-			v+=a[k+2] * b[8+j];
-			temp[k+j] := v/256;
-             k:=k+4;
+			v:=0;		
+			for k:=0 to 4 do
+			begin
+				a0 := bb[i<<2+k];
+				v+=aa[k<<2+j]*a0;
+			end;
+			cc[(j<<2)+i] := v/128;
         end;
     end;
-
-	memcpy32(#temp,a,6);
-			
 end;
 procedure Print(m:global matp);
 begin
@@ -68,23 +66,17 @@ end;
 
 procedure MatMulVec3( a : global matp; vec, res: Vector::vecp );
 begin
+
+
 	v0:=vec[0];
 	v1:=vec[1];
 	v2:=vec[2];
 	
-
-	k:=0;
-//	Print(a);
-//	PrintVec(vec);
 	for i:=0 to 3 do
 	begin
-//		asm(";here");
-/*		v:=a[0]*v0;
-		v+=a[1]*v1;
-		v+=a[2]*v2;
-*/
 		asm("
 			les di,[Matrix_a]
+			
 			mov ax,[Matrix_v0]
 			mov bx,[es:di+0]
 			imul bx
@@ -101,28 +93,9 @@ begin
 			add [Matrix_v],ax
 
 			");
-		
-//		v:=v/128;
-/*	asm("
-	mov ax,[Matrix_v]
-	mov bx,256
-	xor dx,dx
-	cwd
-	
-	idiv bx
-	mov [Matrix_v],ax
-
-
-	");*/
 		res[i] := v;
 		a+=(4*2);
      end;
-/*	PrintVec(res);
-     while (true) do
-     begin
-     
-	end;
-*/
 end;
 
 procedure Normalize3(a : global matp);
@@ -144,10 +117,10 @@ procedure Identity(m:global matp);
 begin
 	k:=0;
 	for i:=0 to 16 do m[i]:=0;
-	m[0]:=256;
-	m[5]:=256;
-	m[10]:=256;
-	m[15]:=256;
+	m[0]:=127;
+	m[5]:=127;
+	m[10]:=127;
+	m[15]:=127;
 	
 end;
 
@@ -164,8 +137,8 @@ end;
 
 procedure RotateX(m:global matp; angle:global integer);
 begin
-	c := Tables::sine256[angle&255];
-	s := Tables::sine256[(angle+64)&255];
+	c := Tables::sine128[angle&255];
+	s := Tables::sine128[(angle+64)&255];
 
 	Identity(m);	
 	m[5]:=c;
@@ -173,8 +146,21 @@ begin
 	m[9]:=s;
 	m[10]:=c;
 end;
-/*
 
+procedure RotateY(m:global matp; angle:global integer);
+begin
+	c := Tables::sine128[angle&255];
+	s := Tables::sine128[(angle+64)&255];
+
+	Identity(m);	
+	asm(";balle");
+	m[0]:=c;
+	m[2]:=0-s;
+	m[8]:=s;
+	m[10]:=c;
+end;
+
+/*
 procedure matrotatey(var m:matrix;angle : double);
 var
 	c, s:double;

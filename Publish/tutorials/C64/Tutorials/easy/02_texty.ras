@@ -4,7 +4,6 @@ var
    x,y,time,i: byte = 0;  
 
 
-
 begin
  	// First, fill color ram with white
 	ClearScreen(white, screen_col_loc);

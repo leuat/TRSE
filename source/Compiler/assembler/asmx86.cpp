@@ -1,4 +1,5 @@
 #include "asmx86.h"
+#include "source/Compiler/optimiser/postoptimizerx86.h"
 
 AsmX86::AsmX86()
 {
@@ -7,6 +8,7 @@ AsmX86::AsmX86()
     word="dw";
     llong ="dd";
     ppointer ="dd";
+    m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserX86());
 
 }
 
@@ -200,6 +202,7 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
         m_term = "imul ";
     }
     if (t == TokenType::DIV) {
+//        m_term = "xor dx,dx \n\tidiv ";
         m_term = "idiv ";
     }
     if (t == TokenType::SHR) {

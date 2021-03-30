@@ -155,6 +155,11 @@ bool NodeVar::isPointer(Assembler *as)
 
 }
 
+bool NodeVar::isPurePointer(Assembler *as)
+{
+    return (isPointer(as) && (m_expr==nullptr));
+}
+
 bool NodeVar::DataEquals(QSharedPointer<Node> other) {
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(other);
     if (var==nullptr)

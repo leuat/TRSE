@@ -31,6 +31,7 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/symboltable.h"
 #include "source/LeLib/util/cinifile.h"
+#include "source/Compiler/optimiser/postoptimiser.h"
 
 class MemoryBlock {
   public:
@@ -169,6 +170,8 @@ public:
     QSharedPointer<Appendix> m_wram, m_sprram, m_ram;
     QMap<QString,QSharedPointer<Appendix>> m_banks;
     QMap<QString, QString> m_lastRegister; // Last registers set
+
+    QSharedPointer<PostOptimiser> m_optimiser = nullptr;
 
     bool m_countCycles = false;
     int m_noBanks = 0;

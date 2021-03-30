@@ -78,6 +78,26 @@ void ObjLoader::Parse()
     }
 }
 
+QString ObjLoader::ExportX86(QString fname, float scale, QVector3D shift)
+{
+    if (QFile::exists(fname))
+        QFile::remove(fname);
+
+    unsigned int *verts = new unsigned int[3*m_vertices.count()];
+    for (int i=0;i<m_vertices.count();i++) {
+//        qDebug() << m_vertices[i];
+        verts[3*i+0] = ((int)(m_vertices[i].x()*scale+shift.x()));
+        verts[3*i+1] = ((int)(m_vertices[i].y()*scale+shift.y()));
+        verts[3*i+2] = ((int)(m_vertices[i].z()*scale+shift.z()));
+    }
+    QByteArray ba;
+    ba.append((char*)verts);
+    qDebug() <<  "count: "<< ba.count();
+    delete[] verts;
+
+
+}
+
 QString ObjLoader::ExportAmigaLinesFromFaces(QString faces, float minLength)
 {
     if (QFile::exists(faces))
