@@ -101,9 +101,9 @@ begin
 		Screen::CopyVGABuffer32bit(Screen::buffer2, Screen::buffer1);
      	// Draw that funky text!)		
 		Fonts::addValue:=time; // text color
-		Fonts::PrintString(tp0, Tables::sine256[(time*4)&255]/2,120,Screen::buffer1);		
+		Fonts::PrintString(tp0, Tables::sine256[(time*1)&255]/4+80,120,Screen::buffer1);		
 		Fonts::addValue:=time+64;
-		Fonts::PrintString(tp1, Tables::sine256[(time*3+64)&255]/2,160,Screen::buffer1);		
+		Fonts::PrintString(tp1, Tables::sine256[(time*2+64)&255]/4+80,160,Screen::buffer1);		
 		// advance text pointers
 		if (time&127=127) then
 		begin

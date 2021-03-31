@@ -25,13 +25,19 @@ var
 	
 	const MAX : integer = 10;
 
-	rotMat,rotx,roty,rotz : Matrix::mat3;
+	rotMat,rotx,roty,rotz, tempMat : Matrix::mat3;
 	objects : array[ MAX ] of mesh;
 	v1,vr : Vector::vecp;
 	
 	p1,p2 : pointer of integer;	
 	vert : array[4] of integer;//Vector::vec3;
+/**
+	Allocates memory for a 3D object.
+	i: object number
+	v: number of vertices
+	n: number of faces
 
+**/
 procedure Allocate(i,v,n: global integer);
 begin
 	objects[i].posx:=0;
@@ -49,87 +55,16 @@ begin
 	
 //	objects[i].points := ptr($8000,0);
 end;
+/**
+Generate a 3D torus.<br>
+ii : object number
+f1 : number of vertices in lesser rings
+f2 : number of vertices in greater ring
+r1 : scaling of lesser rings
+r2 : with of great ring
+renderType: renderType_lines (polygons not supported yet)
 
-procedure Box(i, size: global integer);
-begin
-	Allocate(i, 8,12);
-	p1 := objects[i].vertices;
-	msize := 0-size;
-	p1[0] := size;	
-	p1[1] := size;	
-	p1[2] := size;	
-	
-	p1[3] := msize;	
-	p1[4] := size;	
-	p1[5] := size;	
-
-	p1[6] := size;	
-	p1[7] := msize;	
-	p1[8] := size;	
-	
-	p1[9] := msize;	
-	p1[10] := msize;	
-	p1[11] := size;	
-
-	p1[12] := size;	
-	p1[13] := size;	
-	p1[14] := msize;	
-	
-	p1[15] := msize;	
-	p1[16] := size;	
-	p1[17] := msize;	
-
-	p1[18] := size;	
-	p1[19] := msize;	
-	p1[20] := msize;	
-	
-	p1[21] := msize;	
-	p1[22] := msize;	
-	p1[23] := msize;	
-	
-	p1:=objects[i].faces;
-	p1[0]:=3*0;
-	p1[1]:=2*2;
-	p1[2]:=1*2;
-
-	p1[3]:=3*2;
-	p1[4]:=2*2;
-	p1[5]:=1*2;
-
-
-	p1[6]:=2*2;
-	p1[7]:=1*2;
-	p1[8]:=0*2;
-
-	p1[9]:=2*2;
-	p1[10]:=1*2;
-	p1[11]:=0*2;
-
-
-
-
-	p1[12]:=1*2;
-	p1[13]:=5*2;
-	p1[14]:=4*2;
-
-	p1[15]:=5*2;
-	p1[16]:=4*2;
-	p1[17]:=0*2;
-
-
-
-	p1[18]:=2*2;
-	p1[19]:=6*2;
-	p1[20]:=5*2;
-
-	p1[21]:=6*2;
-	p1[22]:=5*2;
-	p1[23]:=1*2;
-
-
-end;
-
-
+**/
 procedure Torus(ii,f1,f2,r1,r2, renderType : global integer);
 begin
 	if (renderType=RenderType_lines) then
@@ -204,7 +139,13 @@ begin
 	end;
 end;
 
+/**
+  Projects the rotated vertices of an object from 3D to the screen. Simple divide-by-z method.
+  i: object
+  cz,cy : position on screen
+  cz : z-translation
 
+**/
 procedure ProjectSimple(i,cx,cy,cz: global integer);
 begin
 	v1 := objects[i].vertices_rot;
@@ -235,14 +176,21 @@ begin
 	begin
 		xx := vr[0];
 		yy := vr[1];
-		Gfx::DrawLine(xx,yy,xx+2,yy+2, 0, p1);
+		//Don't have no putpixel yet
+		Gfx::DrawLine(xx,yy,xx,yy, 0, p1);
 		vr:=vr+4;
 	end;
 	
 end;
-
-procedure RenderLines(i,cx: global integer;p2:global pointer);
+/**
+	Render projected 2D points as lines.
+	i: object ID
+	cx: color
+	p2: pointer to a render buffer 
 	
+
+**/
+procedure RenderWireframe(i,cx: global integer;p2:global pointer);
 begin
 	vr := objects[i].points;
 	p1 := objects[i].faces;
@@ -250,26 +198,25 @@ begin
 	begin
 		k1:=p1[0];		
 		k2:=p1[1];
-		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], 0, p2);
+		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], cx, p2);
 		p1:=p1+4;
 	end;
 	
 end;
 
-procedure Rotate(i, xx,yy,zz : global integer);
+procedure RotateEuler(i, xx,yy,zz : global integer);
 begin
 	Matrix::RotateX(#rotx,xx);
-//	Matrix::Identity(#rotx);
 	Matrix::RotateY(#roty,yy);
-//	Matrix::Identity(#roty);
-//	Matrix::RotateX(rotz,zz);
-	Matrix::MatMul3(#roty,#rotx,#rotMat);
-	//Matrix::RotateY(rotMat,yy);
+	Matrix::RotateZ(#rotz,zz);
+	
+	Matrix::MatMul4(#roty,#rotx,#tempMat);
+	Matrix::MatMul4(#rotz,#tempMat,#rotMat);
 /*
-	while (true) do begin end;
 	Matrix::Print(#rotx);
 	Matrix::Print(#roty);
 	Matrix::Print(#rotMat);
+	while (true) do begin end;
 */
 	
 	v1 := objects[i].vertices;
@@ -277,11 +224,11 @@ begin
 	
 	for j:=0 to objects[i].noVertices do
 	begin
+		// Rotate each vertex!
 		Matrix::MatMulVec3(#rotMat,v1,vr);
 		vr:=vr+6;
 		v1:=v1+6;		
 	end;
-	// Done!
 
 end;
 
