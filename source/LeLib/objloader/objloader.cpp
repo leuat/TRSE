@@ -95,7 +95,7 @@ QString ObjLoader::ExportX86(QString fname, float scale, QVector3D shift)
     qDebug() <<  "count: "<< ba.count();
     delete[] verts;
 
-
+    return "";
 }
 
 QString ObjLoader::ExportAmigaLinesFromFaces(QString faces, float minLength)
