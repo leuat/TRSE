@@ -712,11 +712,10 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
 //    uchar binscii[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; // nibble pattern
     uchar petscii[16] = {32,124,126,226,108,225,127,251,123,255,97,236,98,254,252,224};
 
-//    int st = (start % m_charWidthDisplay) + (( start / m_charWidthDisplay));
-
     width = width & 0b11111110; // must be even as we export in pairs, round down
     int charWidth = ( ( width - 1 ) / 8 ) + 1; // how many character blocks
 
+//    int blockRows = height * 4; // 2x2 pixels per bloc, so 4 rows to process per char
     height = height & 0b11111110; // must be even as we export in pairs, round down
     int charHeight = height / 2; // export in pairs
 
@@ -769,6 +768,8 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
                 // get two pixel rows
                 uchar rev0 = PixelChar::reverse( pc.p[ i ] );
                 uchar rev1 = PixelChar::reverse( pc.p[ i + 1 ] );
+//                uchar rev0 = pc.p[ i ];
+//                uchar rev1 = pc.p[ i + 1 ];
 
                 uchar b_76_0 = rev0 & 0b11000000;
                 uchar b_76_1 = rev1 & 0b11000000;
@@ -786,18 +787,18 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
                 uchar nibbleUpperB = 0;
                 uchar nibbleLowerB = 0;
 
-                if ( end >= 3 ) nibbleUpperA = (b_76_1) + (b_76_0 >> 2);        // upper nibble
-                if ( end >= 2 ) nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);   // lower nibble
+                if ( end <= 3 ) nibbleUpperA = (b_76_1) + (b_76_0 >> 2);        // upper nibble
+                if ( end <= 2 ) nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);   // lower nibble
 
-                if ( end >= 1 ) nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);   // upper nibble
-                if ( end >= 0 ) nibbleLowerB = (b_10_1 << 2) + (b_10_0);        // lower nibble
+                if ( end <= 1 ) nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);   // upper nibble
+                if ( end <= 0 ) nibbleLowerB = (b_10_1 << 2) + (b_10_0);        // lower nibble
 
                 uchar block0 = nibbleUpperA + nibbleLowerA;
                 uchar block1 = nibbleUpperB + nibbleLowerB;
 
                 // write upto two bytes
-                if ( end >= 2 ) data.append( block0 );
-                if ( end >= 0 ) data.append( block1 );
+                data.append( block0 );
+                if ( end <= 1 ) data.append( block1 );
 
             }
 
