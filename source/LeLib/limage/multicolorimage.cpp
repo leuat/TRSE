@@ -786,11 +786,11 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
                 uchar nibbleUpperB = 0;
                 uchar nibbleLowerB = 0;
 
-                if ( end >= 3 ) nibbleUpperA = (b_76_1) + (b_76_0 >> 2);
-                if ( end >= 2 ) nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);
+                if ( end >= 3 ) nibbleUpperA = (b_76_1) + (b_76_0 >> 2);        // upper nibble
+                if ( end >= 2 ) nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);   // lower nibble
 
-                if ( end >= 1 ) nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);
-                if ( end >= 0 ) nibbleLowerB = (b_10_1 << 2) + (b_10_0);
+                if ( end >= 1 ) nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);   // upper nibble
+                if ( end >= 0 ) nibbleLowerB = (b_10_1 << 2) + (b_10_0);        // lower nibble
 
                 uchar block0 = nibbleUpperA + nibbleLowerA;
                 uchar block1 = nibbleUpperB + nibbleLowerB;
