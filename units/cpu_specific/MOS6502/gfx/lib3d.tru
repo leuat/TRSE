@@ -1,0 +1,175 @@
+unit Lib3d;
+@use "gfx"
+@use "matrix"
+var
+	object3d = record
+		// All pointers
+		vertices : integer;
+		vertices_rot : integer;
+		faces : integer;
+		points_old : integer;
+		points_new : integer;
+		color : integer;
+		noVerts : byte;
+		noFaces,curDraw : byte;
+	end;
+	const N:integer = 2;
+	objects : array[N] of object3d;
+
+	ppo,ppn,fp,cp,ip : pointer;
+	startPos,curPos : integer = $8000;
+	
+	i,j,k,f,v,i1,i2,cx,cy,cz : byte;
+	xx,yy,zz:integer signed;
+
+
+
+procedure FlipPointPointers(i : global byte);
+begin
+	if (objects[i].curDraw=1) then 
+	begin
+		ppo:=objects[i].points_new; 
+		ppn:=objects[i].points_old; 
+	end
+	else
+	begin
+		ppo:=objects[i].points_old; 
+		ppn:=objects[i].points_new; 
+	end;
+
+	objects[i].curDraw:=(objects[i].curDraw+1)&1;
+
+end;
+
+
+
+procedure InitializeData(startPos: global integer);
+begin
+	curPos := startPos;
+end;
+
+procedure AllocateWireframe(i,f,v : global byte);
+begin
+	objects[i].vertices := curPos;
+	curPos += v*3; // 3 bytes per vertex
+	objects[i].vertices_rot := curPos;
+	curPos += v*3; // 3 bytes per vertex
+	objects[i].faces := curPos;
+	curPos += f*2; // 2 bytes per frame
+	objects[i].points_old := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].points_new := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].color := curPos;
+	curPos += v; // 2 bytes per point
+	objects[i].noVerts := v;
+	objects[i].noFaces := f;
+end;
+
+
+
+procedure RenderWireframe(i:global byte);
+begin
+	fp := objects[i].faces;
+	cp := objects[i].color;
+	k:=0;
+
+	for j:=0 to objects[i].noFaces do
+	begin
+		i1 := fp[k];
+		i2 := fp[k+1];
+		k+=2;
+		
+		Gfx::Line(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],0);		
+		Gfx::Line(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],cp[j]);		
+	end;
+	
+
+end;
+
+
+procedure FillColors(i,f:global byte);
+begin
+	fp := objects[i].color;
+	fill(fp,f,objects[i].noFaces);
+end;
+
+procedure LoadObject(i:global byte; fp: global pointer);
+begin
+	v:=fp[0];
+	f:=fp[1];
+	objects[i].noVerts := v;
+	objects[i].noFaces := f;
+	fp+=2;
+	
+	objects[i].vertices := fp;
+	fp:=fp + v*3;
+	objects[i].faces := fp;
+
+	objects[i].vertices_rot := curPos;
+	curPos += v*6; // rotated are integer
+	
+	objects[i].points_old := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].points_new := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].color := curPos;
+	curPos += v; // 2 bytes per point
+	
+
+end;
+
+procedure ProjectSimple(i,cx,cy,cz: global integer);
+begin
+	fp := objects[i].vertices;
+	cp := ppn;
+	
+	for j:=0 to objects[i].noVerts do
+	begin
+		asm(";here");
+/*		zz:=fp[2];
+		xx:=fp[0];
+		yy:=fp[1];
+		
+		xx:=xx*256;
+		yy:=yy*256;*/
+		asm("
+			ldy #0
+			ldx #0
+			lda (Lib3d_fp),y
+			sta Lib3d_xx+1		
+			stx Lib3d_xx
+			
+			ldy #1
+			lda (Lib3d_fp),y
+			sta Lib3d_yy+1		
+			stx Lib3d_yy
+
+			ldy #2
+			lda (Lib3d_fp),y
+			sta Lib3d_zz		
+			stx Lib3d_zz+1
+
+		");	
+
+
+//		zz:=zz*256;
+
+//		zz:=zz+200;
+		zz:=256 + zz;
+		asm(";idiv");
+		xx:=xx/zz;
+		yy:=yy/zz;
+		
+		cp[0] := xx+cx;		
+		cp[1] := yy+cy;
+		
+		cp+=2;
+		fp+=3;		
+	end;
+
+
+end;
+
+
+end.

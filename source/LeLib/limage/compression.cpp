@@ -1,5 +1,7 @@
 #include "compression.h"
 #include "source/LeLib/limage/limageamstradcpc.h"
+#include "source/LeLib/limage/limagebbc.h"
+
 Compression::Compression()
 {
 
@@ -65,6 +67,29 @@ void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int
 
             PixelChar& pc = img.m_data[40*(yy/8)+xx];
             data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+
+}
+
+void Compression::AddToDataBBCMode5(QByteArray &data, LImage *img, int xp, int yp, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=4) {
+            int xx = xp+x;
+            int yy = yp+y;
+
+//            uchar val  = img.m_colorList.getIndex(QColor(img.getPixel(xx,yy)));
+            uchar pixel1  = img->getPixel(xx,yy);
+            uchar pixel2  = img->getPixel(xx+1,yy);
+            uchar pixel3  = img->getPixel(xx+2,yy);
+            uchar pixel4  = img->getPixel(xx+3,yy);
+            uchar c = LImageBBC::tablemode5[pixel4] |
+                    LImageBBC::tablemode5[pixel3]<<1 |
+                    LImageBBC::tablemode5[pixel2]<<2 |
+                    LImageBBC::tablemode5[pixel1]<<3;
+
+//            qDebug() << QString::number(val) << QColor(img.getPixel(xx,yy));
+            data.append(c);
         }
 
 }

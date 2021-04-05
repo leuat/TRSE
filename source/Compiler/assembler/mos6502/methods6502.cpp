@@ -871,6 +871,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("init16x8mul"))
             InitMul16x8(as);
 
+    if (Command("init8x8muls")) {
+        as->Asm("S_T1 = "+as->m_internalZP[0]);
+        as->Asm("S_T2 = "+as->m_internalZP[1]);
+        as->Asm("S_PRODUCT = "+as->m_internalZP[2]);
+        as->IncludeFile(":resources/code/6502/mul8bit_signed.asm");
+    }
+
     if (Command("init16x8div"))
             InitDiv16x8(as);
 
@@ -1575,6 +1582,10 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Asm("txa");
 //    as->Asm("ldy #0");
     as->Asm("rts");
+
+
+
+
     as->Label(l);
     as->PopLabel("multiply_eightbit");
 
@@ -6646,6 +6657,7 @@ void Methods6502::VDCInit(Assembler *as)
     as->PopLabel("vdc_init");
 
 }
+
 
 
 // initialise the Bcd Print Digit code

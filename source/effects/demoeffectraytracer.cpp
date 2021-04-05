@@ -28,6 +28,10 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_CGA) {
+       m_mc = new LImageCGA(LColorList::CGA1_HIGH);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+   }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_AMSTRAD) {
        m_mc = new LImageAmstradGeneric(LColorList::AMSTRADCPC);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
@@ -124,7 +128,7 @@ void DemoEffectRaytracer::Render(QImage &img)
     int h = m_rt->m_globals.m_orgHeight;
 
     m_rt->Raymarch(m_img, w,h);
-
+    m_rt->Render(m_img);
 
 
 
@@ -170,6 +174,9 @@ void DemoEffectRaytracer::Render(QImage &img)
     if (m_outputType==RayTracerGlobals::output_type_VGA)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
+    if (m_outputType==RayTracerGlobals::output_type_CGA)
+        ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+
     if (m_outputType==RayTracerGlobals::output_type_BINARY)
         ConvertToBIN(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
@@ -179,6 +186,7 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     if (m_outputType==RayTracerGlobals::output_type_CHARSET)
         ConvertToCharset(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
+
 
 /*
     if (m_outputType==RayTracerGlobals::output_type_GAMEBOY)

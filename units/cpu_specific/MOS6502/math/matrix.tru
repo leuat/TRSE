@@ -1,0 +1,150 @@
+unit Matrix;
+@use "tables"
+@use "vector"
+var
+
+	type mat3 = array[16] of integer;
+	type mat2 = array[4] of integer;
+	type matp = integer;
+
+	temp : mat3;
+	vtmp : Vector::vec4;	
+	@donotremove angle
+	i,j,k,v,angle,v0,v1,v2,a0 : byte;
+	c, s : integer;
+	m,a:matp;
+	p1 : pointer of integer;
+	
+/**
+	Multiply two 4x4 matrices aa and bb, result in cc
+**/
+
+/*procedure MatMul4( aa,bb,cc : matp );
+begin
+	for j:=0 to 4 do
+	begin
+		for i:=0 to 4 do
+		begin
+			v:=0;		
+			for k:=0 to 4 do
+			begin
+				a0 := bb[i<<2+k];
+				v+=aa[k<<2+j]*a0;
+			end;
+//			cc[(j<<2)+i] := v/128;
+ 			cc[(j<<2)+i] := v>>7;
+        end;
+    end;
+end;
+*/
+/**
+	Prints the conents of a 4x4 matrix to screen.
+	For debugging purposes.
+
+/**
+	Multiplies a matrix 'a' with a vector3 'vec' with result in 'res'.
+
+**/
+/*procedure MatMulVec3( a : global matp; vec, res: Vector::vecp );
+begin
+
+
+	v0:=vec[0];
+	v1:=vec[1];
+	v2:=vec[2];
+	
+	for i:=0 to 3 do
+	begin
+		asm("
+			les di,[Matrix_a]
+			
+			mov ax,[Matrix_v0]
+			mov bx,[es:di+0]
+			imul bx
+			mov [Matrix_v],ax
+			
+			mov ax,[Matrix_v1]
+			mov bx,[es:di+2]
+			imul bx
+			add [Matrix_v],ax
+			
+			mov ax,[Matrix_v2]
+			mov bx,[es:di+4]
+			imul bx
+			add [Matrix_v],ax
+
+			");
+		res[i] := v;
+		a+=(4*2);
+     end;
+end;
+
+procedure Normalize3(a : global matp);
+begin
+	asm("
+		mov cx,12
+		les di,[Matrix_a]
+norm:
+		mov ax,[es:di]
+		xchg al,ah
+		mov ah,0
+		stosw
+		loop norm			
+	");
+end;
+
+*/
+procedure Identity(m:global matp);
+begin
+	k:=0;
+	p1:=m;
+	for i:=0 to 16 do p1[i]:=0;
+	p1[0]:=127;
+	p1[5]:=127;
+	p1[10]:=127;
+	p1[15]:=127;
+	
+end;
+
+
+
+procedure RotateX(m:global matp; angle:global integer);
+begin
+	c := Tables::sine128[angle&255];
+	s := Tables::sine128[(angle+64)&255];
+	
+	Identity(m);	
+	p1:=m;
+	p1[5]:=c;
+	p1[6]:=0-s;
+	p1[9]:=s;
+	p1[10]:=c;
+end;
+
+procedure RotateY(m:global matp; angle:global integer);
+begin
+	c := Tables::sine128[angle&255];
+	s := Tables::sine128[(angle+64)&255];
+
+	Identity(m);	
+	p1:=m;
+	p1[0]:=c;
+	p1[2]:=0-s;
+	p1[8]:=s;
+	p1[10]:=c;
+end;
+
+procedure RotateZ(m:global matp; angle:global integer);
+begin
+	c := Tables::sine128[angle&255];
+	s := Tables::sine128[(angle+64)&255];
+
+	Identity(m);	
+	p1:=m;
+	p1[0]:=c;
+	p1[1]:=s;
+	p1[4]:=0-s;
+	p1[5]:=c;
+end;
+
+end.

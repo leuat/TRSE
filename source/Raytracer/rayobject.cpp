@@ -1,5 +1,5 @@
 #include "rayobject.h"
-
+#include <QPainter>
 SimplexNoise AbstractRayObject::m_sn;
 
 
@@ -605,4 +605,87 @@ float RayObjectTrianglePrism::intersect(Ray *ray)
     QVector3D q = Util::abss(m_localPos+ ray->m_currentPos);// +ray->m_currentPos;
       return std::max(q.z()-m_box.y(),std::max(q.x()*0.866025f+p.y()*0.5f,-p.y())-m_box.x()*0.5f);
 
+}
+
+void RayObjectRegular3D::Save6502(QString file, float scale) {
+    if (QFile::exists(file))
+        QFile::remove(file);
+
+    QByteArray data;
+    data.append(m_vertices.count());
+    data.append(m_faces.count());
+    for (int i=0;i<m_vertices.count();i++) {
+        data.append(m_vertices[i].y()*scale);
+        data.append(m_vertices[i].x()*scale);
+        data.append(m_vertices[i].z()*scale);
+    }
+    if (m_isWireframe)
+    for (int i=0;i<m_faces.count();i++) {
+        data.append(m_faces[i]*2);
+    }
+
+    Util::SaveByteArray(data,file);
+}
+
+void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
+    m_rotVertices.resize(m_vertices.count());
+    m_projected.resize(m_vertices.count());
+    cam.setupViewmatrix();
+    QMatrix4x4 pvm = cam.m_projection*cam.m_viewMatrix*m_rotmat;
+    for (int i=0;i<m_vertices.count();i++) {
+        QVector3D r = pvm*m_vertices[i];
+        r.setX(img.width()/2*r.x()+ img.width()/2);
+        r.setY(img.height()/2*r.y() + img.height()/2);
+        m_projected[i] = r;
+    }
+    QPainter p;
+    p.begin(&img);
+    p.setPen(Qt::white);
+
+    if (m_isWireframe) {
+        int k=0;
+        for (int i=0;i<m_faces.count()/2;i++) {
+            int a = m_faces[k];
+            int b = m_faces[k+1];
+            p.drawLine(m_projected[a].x(),m_projected[a].y(),
+                       m_projected[b].x(),m_projected[b].y());
+            k+=2;
+        }
+    }
+    p.end();
+
+}
+
+void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe)
+{
+    m_isWireframe = isWireframe;
+    m_faces.clear();
+    m_colors.clear();
+
+    m_vertices.clear();
+    for (int i=0;i<c1;i++) {
+        float ang1 = (i/(float)c1)*2*3.14159;
+        for (int j=0;j<c2;j++) {
+            float ang2 = (j/(float)c2)*2*3.14159;
+            QVector3D xx(cos(ang2)*r1+r2,sin(ang2)*r1,0);
+            QQuaternion q = QQuaternion::fromEulerAngles(QVector3D(0,ang1/3.14159/2*360,0));
+            QVector3D v = q*xx;
+
+            m_vertices.append(v);
+        }
+
+    }
+
+    if (m_isWireframe) {
+        for (int i=0;i<c1;i++) {
+            for (int j=0;j<c2;j++) {
+                m_faces.append(i*c1 + j);
+                m_faces.append(i*c1 + (j+1)%c2);
+                m_faces.append(i*c1 + j);
+                m_faces.append(((i+1)%c1)*c1 + j);
+                m_colors.append(1);
+            }
+        }
+
+    }
 }

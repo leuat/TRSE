@@ -60,7 +60,7 @@ QMatrix4x4 Camera::GetRotationMatrix() {
     M = m_viewMatrix;
     //    M.translate(m_camera);
 
-    qDebug() << M;
+//    qDebug() << M;
 
 
     //    M = m_viewMatrix.inverted();

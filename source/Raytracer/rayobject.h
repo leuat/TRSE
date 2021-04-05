@@ -10,7 +10,7 @@
 #include "material.h"
 #include <QQuaternion>
 #include "source/LeLib/objloader/objloader.h"
-
+#include "camera.h"
 class AbstractRayObject
 {
 public:
@@ -46,6 +46,11 @@ public:
 
     }
 
+    virtual void Save6502(QString file, float scale) {}
+
+    virtual void Render(Camera& cam, QImage& img) {
+
+    }
 
     QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, float l);
 
@@ -350,5 +355,28 @@ public:
     float intersect(Ray* ray) override;
 
 };
+
+
+class RayObjectRegular3D : public AbstractRayObject {
+public:
+    QVector<QVector3D> m_vertices, m_rotVertices, m_projected;
+
+    QVector<int> m_faces;
+    QVector<int> m_colors;
+    QVector<int> m_visible;
+    bool m_isWireframe = true;
+
+    virtual void Save6502(QString file, float scale);
+
+    void Render(Camera& cam, QImage& img) override;
+    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe);
+
+    float intersect(Ray* ray) override {
+        return -1;
+    }
+
+};
+
+
 
 #endif // RAYOBJECT_H

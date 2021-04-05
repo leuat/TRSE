@@ -1002,6 +1002,15 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="splitfile") {
+            Eat();
+
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="setvalue") {
             Eat();
             Eat();
@@ -2240,6 +2249,27 @@ void Parser::PreprocessSingle() {
 //                  if (m_pass == PASS_PRE)
   //                    qDebug() << "Defined: " << key << val;
 
+              }
+              if (m_currentToken.m_value.toLower() == "splitfile") {
+                  Eat(TokenType::PREPROCESSOR);
+                  QString in = m_currentDir+QDir::separator()+ m_currentToken.m_value;
+                  Eat(TokenType::STRING);
+                  QString f1 = m_currentDir+QDir::separator()+m_currentToken.m_value;
+                  Eat(TokenType::STRING);
+                  QString f2 = m_currentDir+QDir::separator()+m_currentToken.m_value;
+                  Eat(TokenType::STRING);
+
+                  int split = m_currentToken.m_intVal;
+
+
+                  Eat(TokenType::INTEGER_CONST);
+                  QByteArray ba = Util::loadBinaryFile(in);
+                  if (split>=ba.count())
+                      ErrorHandler::e.Error("splitfile split position must be lower than file size!",m_currentToken.m_lineNumber);
+                  QByteArray b1 = ba.mid(0,split);
+                  QByteArray b2 = ba.mid(split,ba.count());
+                  Util::SaveByteArray(b1, f1);
+                  Util::SaveByteArray(b2, f2);
               }
               if (m_currentToken.m_value.toLower() =="setvalue") {
                   Eat(TokenType::PREPROCESSOR);

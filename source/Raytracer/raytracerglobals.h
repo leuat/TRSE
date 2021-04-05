@@ -88,6 +88,7 @@ public:
     static const int output_type_GAMEBOY = 5;
     static const int output_type_AMSTRAD = 6;
     static const int output_type_CHARSET = 7;
+    static const int output_type_CGA = 8;
 
     enum CameraType {regular, fisheye};
     CameraType m_type = regular;
