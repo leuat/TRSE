@@ -714,13 +714,17 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
 
 //    int st = (start % m_charWidthDisplay) + (( start / m_charWidthDisplay));
 
-    int blockRows = height * 4; // 2x2 pixels per bloc, so 4 rows to process per char
+    width = width & 0b11111110; // must be even as we export in pairs, round down
+    int charWidth = ( ( width - 1 ) / 8 ) + 1; // how many character blocks
+
+    height = height & 0b11111110; // must be even as we export in pairs, round down
+    int charHeight = height / 2; // export in pairs
 
     // loop for height
-    for (int r = 0; r < blockRows; r++ ) {
+    for (int r = 0; r < charHeight; r++ ) {
 
         // walk the characters
-        for (int c = 0; c < width; c++ ) {
+        for (int c = 0; c < charWidth; c++ ) {
 
             int pos = start + c + ( (r / 4) * m_charWidthDisplay );
             PixelChar& pc = m_data[pos];
@@ -731,14 +735,21 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
             // which pixel row?
             int i = (r % 4) * 2;
 
+            // end pos in 8 bits to process 3 = first pair (76xxxxxx), 2 = first two pairs (7654xxxx), 1 = first three pairs (765432xx), 0 = all four pairs (76543210)
+            int end = 0;
+            // last char, trim the number of bit pairs 0-3
+            if ( c == charWidth - 1 ) {
+                end = 3 - ( ( ( width - 1 ) & 7 ) >> 1 );
+            }
 
             if ( exportType != 2 ) {
 
-                // UNPACKED  METHOD -  4 chars per 8 pixels
+                // UNPACKED  METHOD -  upto 4 chars per 8 pixels
                 // go through the four bit blocks 2x2
+                //        bits [76 54 32 10]
                 // pairs row 0 [11 22 33 44]
                 // pairs row 1 [11 22 33 44]
-                for ( int p = 3; p >= 0; p-- ) {
+                for ( int p = 3; p >= end; p-- ) {
 
                     // generate a nibble 1
                     uchar r0 = PixelChar::reverse( pc.p[ i ] ) >> ( p * 2 ) & 0b11;
@@ -769,18 +780,24 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
                 uchar b_10_0 = rev0 & 0b00000011;
                 uchar b_10_1 = rev1 & 0b00000011;
 
-                uchar nibbleUpperA = (b_76_1) + (b_76_0 >> 2);
-                uchar nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);
+                uchar nibbleUpperA = 0;
+                uchar nibbleLowerA = 0;
 
-                uchar nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);
-                uchar nibbleLowerB = (b_10_1 << 2) + (b_10_0);
+                uchar nibbleUpperB = 0;
+                uchar nibbleLowerB = 0;
+
+                if ( end >= 3 ) nibbleUpperA = (b_76_1) + (b_76_0 >> 2);
+                if ( end >= 2 ) nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);
+
+                if ( end >= 1 ) nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);
+                if ( end >= 0 ) nibbleLowerB = (b_10_1 << 2) + (b_10_0);
 
                 uchar block0 = nibbleUpperA + nibbleLowerA;
                 uchar block1 = nibbleUpperB + nibbleLowerB;
 
-                // write two bytes
-                data.append( block0 );
-                data.append( block1 );
+                // write upto two bytes
+                if ( end >= 2 ) data.append( block0 );
+                if ( end >= 0 ) data.append( block1 );
 
             }
 
@@ -790,32 +807,6 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
 
     file.write(data);
 
-        /*
-    for (int i=start;i<end;i++) { // walk characters
-
-        // Convert to POS in charset:
-        int x = i%m_charWidthDisplay; // return 0 -39
-        int y = height*((i/m_charWidthDisplay));
-        int pos = x + ( y * m_charWidthDisplay );
-
-        for (int j=0;j<height;j++) { // walk line height
-
-            // characters
-            if (pos>=0 && pos< m_charWidth*m_charHeight) {
-
-                PixelChar& pc = m_data[pos];
-                for (int i=0;i<8;i=i+2) {  // process 8 pixel lines in character data
-                    //data.append( PixelChar::reverse(pc.p[i]));
-                    unsigned char r0 = PixelChar::reverse(pc.p[i]);
-                    unsigned char r1 = PixelChar::reverse(pc.p[i+1]);
-                }
-            }
-            pos +=m_charWidthDisplay;
-        }
-        //        qDebug() << x << y;
-    }
-    */
-    //file.write(data);
 }
 
 // exports binary in a format suitable for VBM. It arranges by a complete row at a time rather than columns of 8 rows.
