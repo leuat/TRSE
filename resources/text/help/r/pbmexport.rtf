@@ -1,5 +1,6 @@
 <h3>Description</h3>
-<p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable to be used as PETSCII blocks.</p>
+<p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable to be
+used as PETSCII blocks.</p>
 <p>
     PBM export takes six parameters.  
 </p>
@@ -12,12 +13,14 @@
     <li>Mode: 0 = PETSCII characters unpacked, 1 = Binary characters unpacked, 2 = Binary characters packed</li>
 </ul>
 <p>Exports an image, up to 80 x 50 pixels for a 40x25 character display, to be used to display PETSCII
-blocks which form 2x2 blocks per character.
+blocks which form 2x2 blocks per character. The output data will be either the acual PETSCII character codes
+(mode 0) or the binary equivalents for use with the PBM unit. Data is exported in column then row order.
 </p>
 
 <h3>Example</h3>
-The follow example will export 10 characters, starting at character 0, with a character height of 2 characters 
-from the .flf charset file to a binary file.
+The following example will export 16 characters, starting at character 0, with a character height of 4 characters
+from the .flf charset file to a binary file in mode 0, so the data are the PETSCII screen codes that can be
+poked directly to the screen.
 <code>
 program PetBlockMode;
 
