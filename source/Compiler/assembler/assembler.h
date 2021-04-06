@@ -175,6 +175,7 @@ public:
 
     bool m_countCycles = false;
     int m_noBanks = 0;
+    static int m_prevCycles;
 
 
 

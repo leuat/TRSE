@@ -205,8 +205,22 @@ void SourceBuilder::BuildSuccesString()
 //    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
     if (compiler!=nullptr && compiler->m_parser.m_lexer!=nullptr)
         text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->getTotalNumberOfLines()) +"</b> lines of Turbo Rascal to <b>";
-    if (compiler!=nullptr && compiler->m_assembler!=nullptr)
-    text+=QString::number(compiler->m_assembler->getLineCount()) + "</b> lines of assembler instructions (and variables/labels)<br>";
+    if (compiler!=nullptr && compiler->m_assembler!=nullptr) {
+        int prevCnt = Assembler::m_prevCycles;
+        int cnt = compiler->m_assembler->getLineCount();
+        Assembler::m_prevCycles = cnt;
+        QString extraText="";
+        if (abs(prevCnt-cnt)/(float)cnt<0.3) {
+            int add = cnt-prevCnt;
+            if (add<0)
+                extraText+="<font color=\"green\">("+QString::number(add)+" lines)</font>";
+            else
+                if (add>0)
+                    extraText+="<font color=\"yellow\">(+"+QString::number(add)+" lines)</font>";
+        }
+
+        text+=QString::number(cnt) + "</b> lines of assembler instructions (and variables/labels) " + extraText + "<br>";
+    }
     if (m_iniFile->getdouble("post_optimize")==1 && compiler!=nullptr && compiler->m_assembler!=nullptr) {
 
         text+="Post-optimized away <b>" + QString::number(compiler->m_assembler->m_totalOptimizedLines) +"</b> lines of assembler instructions ";

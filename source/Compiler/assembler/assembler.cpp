@@ -226,6 +226,8 @@ void Assembler::PopBlock(int ln)
 
 }
 
+int Assembler::m_prevCycles = 0;
+
 int Assembler::getLineCount() {
     int lc = 0;
     for (QString s: m_source) {
