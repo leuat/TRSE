@@ -1,0 +1,310 @@
+unit Gfx;
+@use "screen"
+
+var
+
+
+
+	ai,bi : byte;
+	d, currbank:byte;
+	low, high, k, i,cx,cy: byte;
+	
+	xadd,index, bitmapstart,yadd,yadds : integer;
+	
+
+	addr,p_putpixel : pointer;
+	
+	zp: pointer;
+	
+	x1, y1,x2, y2,delx,xi,color,dx,dy,v2,v,val : byte at $20;
+
+	const yadd:integer = 320-7;
+	yaddTab : array[8] of integer=(320-7,1,1,1,1,1,1,1);
+
+@donotremove color
+
+procedure PutPixelMode5();
+begin
+	Screen::PointToY(#Screen::ytabMode5, y1);
+	Screen::screenPtr+= Screen::xtab4[x1];
+/*	
+	val :=(x1&3);
+	v := Screen::pixel5Tab[val<<2+color];
+	v2:=(Screen::screenPtr^ & Screen::mode5Clear[val]);
+	Screen::screenPtr^ := v2 | v;
+*/
+
+	asm("
+
+	lda Gfx_x1
+	and #3
+	asl
+	asl
+	adc Gfx_color
+	tax
+	lda Screen_pixel5Tab,x
+	sta $20
+
+
+	ldy #0
+	lda Gfx_x1
+	and #$3
+	tax
+	lda (Screen_screenPtr),y
+	and Screen_mode5Clear,x
+	ora $20
+	sta (Screen_screenPtr),y
+
+	");
+	
+end;
+
+procedure PutPixelMode5Clear();
+begin
+	Screen::PointToY(#Screen::ytabMode5, y1);
+	Screen::screenPtr+= Screen::xtab4[x1];
+//	val:=x1&3;
+//	val :=(x1&3);
+//asm(";here");
+//	Screen::screenPtr^:=(Screen::screenPtr^ & Screen::mode5Clear[x1&3]);
+
+	asm("
+	ldy #0
+	lda Gfx_x1
+	and #$3
+	tax
+	lda (Screen_screenPtr),y
+	and Screen_mode5Clear,x
+	sta (Screen_screenPtr),y
+
+	");
+end;
+
+procedure PutPixelRaw();
+begin
+/*	val :=(x1&3);
+	v2:=(Screen::screenPtr^ & Screen::mode5Clear[val]);
+	Screen::screenPtr^ := Screen::pixel5TabInv[val+color] | v2; 
+*/
+
+asm("
+	lda Gfx_x1
+	and #$3
+	sta Gfx_val
+	tax
+	ldy #$0
+	lda (Screen_screenPtr),y
+	and Screen_mode5Clear,x
+	
+	sta Gfx_v2
+	;lda Gfx_val
+	txa		
+
+	clc
+	adc Gfx_color
+	
+	tax
+	lda Screen_pixel5TabInv,x
+	ora Gfx_v2
+	sta (Screen_screenPtr),y
+	
+	");	
+
+
+end;
+
+procedure CleanPixelRaw();
+begin
+	val :=(x1&3);
+	Screen::screenPtr^&=(Screen::mode5Clear[val]);
+end;
+
+/*
+procedure Line ( x1, y1, x2, y2, color : global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	
+	if (color=0) then
+	begin 
+		p_putpixel:=#PutPixelMode5Clear;
+	end
+	else 
+		p_putpixel := #PutPixelMode5;
+
+	
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+	begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
+	
+	if y1 < y2 then begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	else
+	begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	
+	if (y1=y2) then return;
+	if (x1=x2) then return;
+
+   	  call(p_putpixel);
+   	  
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		bi := dy;
+		d := bi - dx/2s;
+		while x1 <> x2 do begin
+			if d <128 do begin
+
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + bi;
+			
+			x1 :=  x1 + xi;
+			call(p_putpixel);
+		end;
+	end
+	else
+		begin // dy > dx
+		ai := (dx - dy);
+		bi := dx;
+		d := bi - dy/2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;
+			end
+			else
+				d := d+  bi;
+			
+			y1 := y1 + yi;
+			call(p_putpixel);
+		end;
+		
+	end;
+end;
+*/
+procedure Line ( x1, y1, x2, y2, color : global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	
+	if (color=0) then 
+	begin
+		p_putpixel := #CleanPixelRaw;
+	end
+	else
+		p_putpixel := #PutPixelRaw;
+		
+	color := color<<2;
+	delx := 0;		
+	if (y1>99) then y1:=99;
+	if (y2>99) then y2:=99;
+	if y1 > y2 then 
+	begin
+		swap(x1,x2);
+		swap(y1,y2);
+	end;
+	
+	dy := y2 - y1;
+	y1*=2;
+	y2*=2;
+	Screen::PointToY(#Screen::ytabMode5, y1);
+	Screen::screenPtr+= Screen::xtab4[x1];
+
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+		xadd := 8;
+	end
+	else
+	begin
+		xi := 255;
+		xadd:=65535-7;
+		dx := x1 - x2;
+		delx:=1;
+	end;
+	
+   	call(p_putpixel);
+   	
+	if (y1=y2) then return;
+	if (x1=x2) then return;
+
+   	  
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		bi := dy;
+		d := bi - dx>>1;
+		
+		while x1 <> x2 do begin
+			if d <128 do begin
+
+				y1 := y1 + 1;
+				Screen::screenPtr+=yaddTab[y1&7];
+				y1 := y1 + 1;
+				Screen::screenPtr+=yaddTab[y1&7];
+				
+				d := d + ai;
+			end
+			else
+				d := d + bi;
+				x1 :=  x1 + xi;
+
+				if ((x1+delx)&3=0) then 
+					Screen::screenPtr+=xadd;
+	
+				call(p_putpixel);
+				
+		end;
+	end
+	
+	else
+		begin // dy > dx
+		ai := (dx - dy);
+		bi := dx;
+		d := bi - dy>>1;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				
+				if ((x1+delx)&3=0) then 
+					Screen::screenPtr+=xadd;
+					
+				d := d + ai;
+			end
+			else
+				d := d+  bi;
+				y1 := y1 + 1;
+				Screen::screenPtr+=yaddTab[y1&7];
+				
+				call(p_putpixel);
+
+				
+				y1 := y1 + 1;
+				Screen::screenPtr+=yaddTab[y1&7];
+			//	call(p_putpixel);
+
+		end;
+		
+	end;
+	
+end;
+
+end.

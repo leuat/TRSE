@@ -338,6 +338,12 @@ public:
     void ClearTerm() {
         m_term = "";
     }
+
+    /**
+     * Special optimization stuff
+     *
+    **/
+
 };
 
 #endif // ASSEMBLER_H

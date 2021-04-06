@@ -613,7 +613,7 @@ void RayObjectRegular3D::Save6502(QString file, float scale) {
 
     QByteArray data;
     data.append(m_vertices.count());
-    data.append(m_faces.count());
+    data.append(m_faces.count()/2);
     for (int i=0;i<m_vertices.count();i++) {
         data.append(m_vertices[i].y()*scale);
         data.append(m_vertices[i].x()*scale);

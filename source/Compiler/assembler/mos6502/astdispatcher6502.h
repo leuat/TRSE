@@ -123,6 +123,9 @@ public:
 
     void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 
+
+
+
   //  void LogicalClause(QSharedPointer<Node> node);
 
 
@@ -187,7 +190,7 @@ public:
     bool IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
 
     bool IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString labelSuccess, QString labelFail);
-
+    bool IsSimpleAssignPointerExpression(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
     void AssignVariable(QSharedPointer<NodeAssign>node);
 
 //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);

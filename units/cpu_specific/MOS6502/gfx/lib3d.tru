@@ -1,6 +1,7 @@
 unit Lib3d;
-@use "gfx"
-@use "matrix"
+@use "math/signedmath"
+@use "gfx/gfx"
+@use "math/matrix"
 var
 	object3d = record
 		// All pointers
@@ -12,15 +13,18 @@ var
 		color : integer;
 		noVerts : byte;
 		noFaces,curDraw : byte;
+		rotmat:integer;
 	end;
-	const N:integer = 2;
+	const N:integer = 10;
 	objects : array[N] of object3d;
 
-	ppo,ppn,fp,cp,ip : pointer;
+	ppo,ppn,fp,cp : pointer;
+	ip:pointer of integer;
 	startPos,curPos : integer = $8000;
 	
-	i,j,k,f,v,i1,i2,cx,cy,cz : byte;
-	xx,yy,zz:integer signed;
+	
+	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte;
+	xx,yy,iz:integer;
 
 
 
@@ -53,7 +57,7 @@ begin
 	objects[i].vertices := curPos;
 	curPos += v*3; // 3 bytes per vertex
 	objects[i].vertices_rot := curPos;
-	curPos += v*3; // 3 bytes per vertex
+	curPos += v*6; // 3 bytes per vertex
 	objects[i].faces := curPos;
 	curPos += f*2; // 2 bytes per frame
 	objects[i].points_old := curPos;
@@ -62,6 +66,8 @@ begin
 	curPos += v*2; // 2 bytes per point
 	objects[i].color := curPos;
 	curPos += v; // 2 bytes per point
+	objects[i].rotmat := curPos;
+	curPos += 4*4*2; // 32 bytes per matrix
 	objects[i].noVerts := v;
 	objects[i].noFaces := f;
 end;
@@ -114,58 +120,59 @@ begin
 	objects[i].points_new := curPos;
 	curPos += v*2; // 2 bytes per point
 	objects[i].color := curPos;
-	curPos += v; // 2 bytes per point
+	curPos += f; // 2 bytes per point
+	objects[i].rotmat := curPos;
+	curPos += 4*4*2; // 32 bytes per matrix
 	
 
 end;
 
+procedure RotateVertices(i:global byte);
+var
+	mat : integer;
+begin
+
+	fp := objects[i].vertices;
+	ip := objects[i].vertices_rot;
+	mat := objects[i].rotmat;
+		
+	for j:=0 to objects[i].noVerts do
+	begin
+		Matrix::MatMulVec3(mat, fp, ip);
+		fp:=fp+3;
+		ip:=ip+6;
+	end;
+
+end;
+
+
 procedure ProjectSimple(i,cx,cy,cz: global integer);
 begin
-	fp := objects[i].vertices;
+	ip := objects[i].vertices_rot;
 	cp := ppn;
 	
 	for j:=0 to objects[i].noVerts do
 	begin
-		asm(";here");
-/*		zz:=fp[2];
-		xx:=fp[0];
-		yy:=fp[1];
-		
-		xx:=xx*256;
-		yy:=yy*256;*/
-		asm("
-			ldy #0
-			ldx #0
-			lda (Lib3d_fp),y
-			sta Lib3d_xx+1		
-			stx Lib3d_xx
+
+
+
+		iz:=SignedMath::Divs16x8(ip[0],127);
+		zz:=SignedMath::Divs16x8(zz,4);
+		zz :=zz+cz;
+		xx:=SignedMath::Divs16x8(ip[1],zz);
+		yy:=SignedMath::Divs16x8(ip[2],zz);
 			
-			ldy #1
-			lda (Lib3d_fp),y
-			sta Lib3d_yy+1		
-			stx Lib3d_yy
-
-			ldy #2
-			lda (Lib3d_fp),y
-			sta Lib3d_zz		
-			stx Lib3d_zz+1
-
-		");	
+		cp[0] := lo(xx)+cx;		
+		cp[1] := lo(yy)+cy;
 
 
-//		zz:=zz*256;
-
-//		zz:=zz+200;
-		zz:=256 + zz;
-		asm(";idiv");
-		xx:=xx/zz;
-		yy:=yy/zz;
-		
-		cp[0] := xx+cx;		
-		cp[1] := yy+cy;
-		
+/*		i1:=fp[0]+fp[2];
+		i2:=fp[1];
+		cp[0] := i1+cx;		
+		cp[1] := i2+cy;
+*/		
 		cp+=2;
-		fp+=3;		
+		ip+=6;		
 	end;
 
 
