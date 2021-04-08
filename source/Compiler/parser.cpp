@@ -930,7 +930,7 @@ void Parser::RemoveUnusedProcedures()
 
     if (outputUnusedWarning) {
         removeProcedures.remove(removeProcedures.count()-1,1);
-        ErrorHandler::e.Warning(removeProcedures);
+//        ErrorHandler::e.Warning(removeProcedures);
     }
 
 
@@ -986,7 +986,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
             if (i!=removedSymbols.count()-1)
                 s=s+", ";
         }
-        ErrorHandler::e.Warning(s);
+//        ErrorHandler::e.Warning(s);
     }
 
 }

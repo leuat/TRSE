@@ -151,6 +151,12 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
     if (v == nullptr )
         ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
 
+//    qDebug() <<(Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502);
+  //  qDebug() <<nVar->isWord(as) << nVar->getValue(as);
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 && nVar->m_left->isWord(as)) {
+        ErrorHandler::e.Warning("Using integer '"+nVar->m_left->getValue(as)+"' as a for loop index can result in unpredictable behavior on the 6502. Please keep to using byte indicies, and use pointers to cover data > 255 bytes. See the TRSE tutorials for examples.", node->m_op.m_lineNumber);
+    }
+
      QString var = v->getValue(as);//  m_a->Build(as);
     // Perform assigment
     node->m_a->Accept(this);
