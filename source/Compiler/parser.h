@@ -236,6 +236,7 @@ public:
     void HandleExportPalette();
     void HandleSetCompressionWeights();
     void HandleMacro();
+    void HandleExecute();
     void HandlePerlinNoise();
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
@@ -253,7 +254,6 @@ public:
     void HandleSpriteCompiler();
     void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
-    void HandleExecute();
     void HandleAKGCompiler();
     void HandleUseTPU(QString fileName);
     void Eat();

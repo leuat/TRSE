@@ -1034,6 +1034,12 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="execute") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="export") {
             Eat();
             Eat();
@@ -1114,11 +1120,6 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
-        }
-        if (m_currentToken.m_value=="execute") {
-            Eat();
-            Eat();
-            return;
         }
         if (m_currentToken.m_value=="spritepacker") {
             Eat();
@@ -2333,6 +2334,10 @@ void Parser::PreprocessSingle() {
                   Eat(TokenType::PREPROCESSOR);
                   HandleAKGCompiler();
               }
+              else if (m_currentToken.m_value.toLower()=="execute") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExecute();
+              }
 
 
               else if (m_currentToken.m_value.toLower() =="ignoremethod") {
@@ -2414,10 +2419,6 @@ void Parser::PreprocessSingle() {
                   HandleImportChar();
               }
 
-              else if (m_currentToken.m_value.toLower() =="execute") {
-                  Eat(TokenType::PREPROCESSOR);
-                  HandleExecute();
-              }
 
               else if (m_currentToken.m_value.toLower() =="startassembler") {
                   Eat(TokenType::PREPROCESSOR);
@@ -3994,6 +3995,17 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 
 }
 
+void Parser::HandleExecute() {
+    QString exec = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString pstr =m_currentToken.m_value;
+    QStringList params = pstr.trimmed().simplified().split(" ");
+    Eat(TokenType::STRING);
+    QString out;
+    Syntax::s.m_currentSystem->StartProcess(exec,params,out,true);
+
+
+}
 
 void Parser::HandleExport()
 {
@@ -4608,7 +4620,7 @@ void Parser::HandleProjectSettingsPreprocessors()
     Eat(); // H
 }
 
-void Parser::HandleExecute()
+/*void Parser::HandleExecute()
 {
     QStringList ls = m_currentToken.m_value.split(" ");
     Eat();
@@ -4617,7 +4629,7 @@ void Parser::HandleExecute()
     QString out;
     Syntax::s.m_currentSystem->StartProcess(f,ls,out);
 }
-
+*/
 
 void Parser::HandleUseTPU(QString fileName)
 {
