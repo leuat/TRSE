@@ -61,7 +61,13 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
         as->Asm("ld hl,"+str);
         as->Asm("ld de,"+getValue(left));
         as->Label(lblCpy);
-        as->Asm("ld a,[hl+]");
+        if (isGB())
+            as->Asm("ld a,[hl+]");
+        else {
+            as->Asm("ld a,[hl]");
+            as->Asm("inc hl");
+
+        }
         as->Asm("ld [de],a");
         as->Asm("inc de");
   //      as->Asm("dec c");
