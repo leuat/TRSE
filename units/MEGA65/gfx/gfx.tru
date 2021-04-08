@@ -1,0 +1,260 @@
+unit Gfx;
+
+@use "math/math"
+
+var
+	const bank1 : address = $2000;
+	const bank2 : address = $6000;
+
+//	const bank1_screen : address = bank1+$400;
+//	const bank2_screen : address = bank2+$400;
+
+
+	xtablelow: array[160] of byte;
+	xtablehigh: array[160] of byte;
+	ytablelow: array[200] of byte;
+	ytablehigh: array[200] of byte;
+
+	mask: array[200] of byte;
+	//	xi, yi: byte;
+
+	dx,dy,ai,bi,xi,yi,color : byte;
+	d, currbank:byte;
+	low, high, k, i, val : byte;
+	index, bitmapstart : integer;
+	
+
+	addr,p_putpixel : pointer;
+	
+	zp: pointer;
+	
+	x1, y1, x2, y2 : byte;
+
+
+
+
+procedure putpixel3();
+begin
+	asm("
+	ldy Gfx_y1
+	ldx Gfx_x1
+	
+	lda Gfx_ytablelow,y
+	sta Gfx_addr
+	
+	lda Gfx_ytablehigh,y
+	clc
+	adc Gfx_currbank
+	sta Gfx_addr+1
+	
+	ldy Gfx_xtablelow,x
+	
+	lda (Gfx_addr),y
+	ora Gfx_mask,x
+	sta (Gfx_addr),y
+	
+	");
+	
+	
+end;
+
+
+procedure putpixel2();
+begin
+	asm("
+	ldy Gfx_y1
+	ldx Gfx_x1
+	
+	lda Gfx_ytablelow,y
+	clc
+	adc Gfx_xtablelow,x
+	sta Gfx_addr
+	
+	lda Gfx_ytablehigh,y
+	adc Gfx_currbank
+	adc Gfx_xtablehigh,x
+	sta Gfx_addr+1
+	
+	ldy #$00
+	lda (Gfx_addr),y
+	
+	ora Gfx_mask,x
+	sta (Gfx_addr),y
+	");
+	
+end;
+
+
+/*procedure putpixel(_pixx,_pixy:byte);
+begin
+	asm("
+	ldy _pixy
+	ldx _pixx
+	
+	lda ytablelow,y
+	clc
+	adc xtablelow,x
+	sta addr
+	
+	lda ytablehigh,y
+	adc xtablehigh,x
+	sta addr+1
+	
+	lda addr
+	clc
+	adc <@bitmapstart
+	sta addr
+	
+	lda addr+1
+	adc >@bitmapstart
+	sta addr+1
+	
+	ldy $00
+	lda (addr),y
+	ora (zeropage5),y
+	sta (addr),y
+	");
+end;
+*/
+procedure SetupPixelTables();
+begin
+	low:=0;
+	high:=0;
+	k:=0;
+	index:=$00;
+	zp := #index;
+	
+	for i:=0 to 160 do begin
+		xtablelow[i] := zp[0];
+		xtablehigh[i] := zp[1];
+		k:=k+2;
+		if k=8 then begin
+			index:=index+8;
+			k:=0;
+			
+		end;
+	end;
+//	asm(";here");
+	
+	index := bitmapstart;
+	k:=0;
+	for i:=0 to 200 do begin
+		
+		ytablelow[i] := zp[0];
+		ytablehigh[i] := zp[1];
+		k:=k+1;
+		index:=index+1;
+		if k=8 then begin
+			index:=index+312;
+			k:=0;
+		end;
+		
+	end;
+	
+	for i:=0 to 200 do begin
+		k:=3-i&3;
+		val:=0;
+		togglebit(val, k*2, 1);
+		togglebit(val, k*2+1, 1);
+		mask[i] := val;
+//		maskClear[i] := $FF-val;
+		
+	end;
+	
+end;
+
+/**
+Initializes bitmap graphics mode, putpixel type, 
+pixel tables and clears the screen at bank 1 and 2. 
+
+**/
+procedure InitBitmapGraphics(pi:byte; bsta:integer);
+begin
+	//p_putpixel := proceduretopointer(putpixel2());
+	p_putpixel := #putpixel2;
+	if (pi=2) then 
+		p_putpixel := #putpixel3;
+		
+
+	bitmapstart:=bsta;
+	SetupPixelTables();
+	setbitmapmode();
+	setmulticolormode();
+	clearbitmap(#bank1,32);
+	clearbitmap(#bank2,32);
+
+end;
+
+
+
+procedure Line ( x1, y1, x2, y2, color : global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	//if (y1>=200 or y1>=200) then return;
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+		begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
+	
+	if y1 < y2 then begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	
+	else
+		begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	call(p_putpixel);
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		bi := dy;
+		d := bi - dx/2;
+		while x1 <> x2 do begin
+			if d <128 do begin
+
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + bi;
+			
+			x1 :=  x1 + xi;
+			call(p_putpixel);
+		end;
+	end
+	else
+		begin // dy > dx
+		ai := (dx - dy);
+		bi := dx;
+		d := bi - dy/2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;
+				
+			end
+			else
+				d := d+  bi;
+			
+			
+			y1 := y1 + yi;
+			call(p_putpixel);
+		end;
+		
+	end;
+end;
+
+
+
+end.

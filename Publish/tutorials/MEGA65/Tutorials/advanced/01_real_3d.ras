@@ -1,4 +1,4 @@
-program real3d;
+program Real3D;
 
 
 @define lib3d_yscale2 1 // Pixels wider than height
@@ -11,7 +11,7 @@ program real3d;
 @define max3dobjects 1
 
 @use "gfx/lib3d"
-
+@use "screen"
 
 var
 	bb,x1,x2,y1,y2,l,i,j,k,f,x3,y3,time,time2,t: byte;
@@ -71,6 +71,9 @@ begin
 end;
 
 begin
+	Screen::Init();
+	Screen::EnableVIC4();
+	Screen::Set40ColumnMode();
 
 	disableciainterrupts(); // prevent CIA
 	preventirq();
@@ -87,8 +90,8 @@ begin
 	SCREEN_BG_COL:=BLUE;
 	SCREEN_FG_COL:=RED;
 	
-	clearscreen(YELLOW,screen_col_loc);
-	clearscreen(BLUE,screen_char_loc2);
+//	clearscreen(YELLOW,screen_col_loc);
+//	clearscreen(BLUE,screen_char_loc2);
 
 
 	// Setup 3D

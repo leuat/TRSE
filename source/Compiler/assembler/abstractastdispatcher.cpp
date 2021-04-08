@@ -504,7 +504,9 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
     if (node->m_returnValue!=nullptr) {
         if (node->m_returnType->getValue(as).toLower()=="integer")
             node->m_returnType->setForceType(TokenType::INTEGER);
+        as->ClearTerm();
         node->m_returnValue->Accept(this);
+        as->Term();
     }
 
     if (!isInitFunction) {

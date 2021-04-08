@@ -1772,8 +1772,9 @@ QSharedPointer<Node> Parser::Statement()
     else if (m_currentToken.m_type == TokenType::ID) {
         bool isAssign;
         node = FindProcedure(isAssign);
-        if (isAssign)
+        if (isAssign) {
             return Empty();
+        }
 
         if (node==nullptr)
             node = BuiltinFunction();

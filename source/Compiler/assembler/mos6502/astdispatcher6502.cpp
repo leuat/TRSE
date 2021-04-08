@@ -3269,7 +3269,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     }
 
     as->Comment("Assigning single variable : " + getValue(v));
-
+    as->ClearTerm();
 //    as->Comment("Is word : " + QString::number(v->isWord(as)));
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 

@@ -1,5 +1,5 @@
-zeropages = ,$02, $04, $08, $16, $18, $0B, $0D, $10, $12, $22, $24, $68
-temp_zeropages = ,$54, $56, $58, $5A
+zeropages = ,$02,  $04,  $08,  $16,  $18,  $0B,  $0D,  $10,  $12,  $22,  $24,  $68, $6A,  $6C,  $6E, $70, $72, 
+temp_zeropages = ,$54,  $56,  $58,  $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -45,5 +45,7 @@ build_list = ,
 exomizer_toggle = 0
 data_header_resources/charsets/charset.flf = 3.00862e-314
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/MEGA65/Tutorials/
-open_files = ,easy/13_multicolor_images.asm, easy/05_matrix.ras, easy/13_multicolor_images.ras, easy/06_plasma.ras
-current_file = easy/05_matrix.ras
+open_files = ,easy/13_multicolor_images.ras, advanced/01_real_3d.ras, easy/06_plasma.ras
+current_file = advanced/01_real_3d.ras
+zeropages_userdefined = ,
+petmodel = 2001-8N
