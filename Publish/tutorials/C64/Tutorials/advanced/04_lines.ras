@@ -1,7 +1,7 @@
 program Tutorial11_Lines;
 // The unit is accessible in the C64 Turbl Rascal Units project from the front page 
 
-@use "gfx/bitmapgraphics"
+@use "gfx/gfx"
 
 var
 	i: byte=5;
@@ -20,17 +20,17 @@ var
 
 procedure SwitchDrawBank();
 begin
-	if BitmapGraphics::currbank=0 then begin
-		BitmapGraphics::currbank := $40;
+	if Gfx::currbank=0 then begin
+		Gfx::currbank := $40;
 		SetBank(VIC_BANK0);
-		clearbitmap(#BitmapGraphics::bank2_screen, 22); // Clear a certain window only
+		clearbitmap(#Gfx::bank2_screen, 22); // Clear a certain window only
 	end
 	
 	else
 	begin
-		BitmapGraphics::currbank:=0;
+		Gfx::currbank:=0;
 		SetBank(VIC_BANK1);
-		clearbitmap(#BitmapGraphics::bank1_screen, 22);
+		clearbitmap(#Gfx::bank1_screen, 22);
 	end;
 	
 end;
@@ -40,18 +40,18 @@ procedure UpdateRaster();
 	
 begin
 	SwitchDrawBank();
-	BitmapGraphics::Line(xp[0],yp[0],xp[1],yp[1]);
-	BitmapGraphics::Line(xp[1],yp[1],xp[2],yp[2]);
-	BitmapGraphics::Line(xp[2],yp[2],xp[0],yp[0]);
+	Gfx::Line(xp[0],yp[0],xp[1],yp[1],0);
+	Gfx::Line(xp[1],yp[1],xp[2],yp[2],0);
+	Gfx::Line(xp[2],yp[2],xp[0],yp[0],0);
 
 	i:=8;
-	BitmapGraphics::Line(xp[0]+i,yp[0]+i,xp[1]+i,yp[1]+i);
-	BitmapGraphics::Line(xp[1]+i,yp[1]+i,xp[2]+i,yp[2]+i);
-	BitmapGraphics::Line(xp[2]+i,yp[2]+i,xp[0]+i,yp[0]+i);
+	Gfx::Line(xp[0]+i,yp[0]+i,xp[1]+i,yp[1]+i,0);
+	Gfx::Line(xp[1]+i,yp[1]+i,xp[2]+i,yp[2]+i,0);
+	Gfx::Line(xp[2]+i,yp[2]+i,xp[0]+i,yp[0]+i,0);
 
-	BitmapGraphics::Line(xp[0]+i,yp[0]+i,xp[0],yp[0]);
-	BitmapGraphics::Line(xp[1]+i,yp[1]+i,xp[1],yp[1]);
-	BitmapGraphics::Line(xp[2]+i,yp[2]+i,xp[2],yp[2]);
+	Gfx::Line(xp[0]+i,yp[0]+i,xp[0],yp[0],0);
+	Gfx::Line(xp[1]+i,yp[1]+i,xp[1],yp[1],0);
+	Gfx::Line(xp[2]+i,yp[2]+i,xp[2],yp[2],0);
 	
 
 	for i:=0 to 3 do begin
@@ -71,8 +71,8 @@ end;
 
 begin	
 	screen_bg_col:=black;
-	BitmapGraphics::currbank :=0; // Current bitmap bank (added to high bit of putpixel)
-	BitmapGraphics::InitBitmapGraphics(1, #BitmapGraphics::bank1);
+	Gfx::currbank :=0; // Current bitmap bank (added to high bit of putpixel)
+	Gfx::InitBitmapGraphics(1, #Gfx::bank1);
 	vic_data_loc:=$18;
 	
 	setmulticolormode();

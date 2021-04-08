@@ -483,7 +483,8 @@ void DialogImport::on_btnImport_2_clicked()
 {
     // Generate font
 //    m_bf.Test();
-    m_bf.Init(m_image->m_width, m_image->m_height);
+    m_bf.Init(m_image->m_width*m_image->m_scale, m_image->m_height);
+//    qDebug() << m_image->m_width << m_image->m_height;
     m_bf.RenderFont(ui->cmbFonts->currentText(),ui->leFontSize->text().toInt(),QFont::Normal,
                     ui->leFontCharsPerLine->text().toInt(),
                     ui->leFontCharsPerLColumn->text().toInt(),

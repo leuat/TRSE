@@ -9,10 +9,9 @@ var
 	type matp = pointer of integer;
 
 	@donotremove angle
-	i,j,k,angle,v0,v1,v2,a0 : byte;
-	c, s : integer;
+	v:integer;// at $31;
+	c,s,ci,cj,ck, i,j,k,angle,v0,v1,v2,a0 : byte at @matrix_zeropage;
 	m:matp;
-	v:integer;
 	p1,pb : pointer of byte;
 	res : pointer of integer;
 	
@@ -51,10 +50,7 @@ begin
 			v:=0;		
 			for k:=0 to 6 step 2 do
 			begin
-				v0:=i<<2+k;
-				v1:=k<<2+j;
-				a0 := p1[v0];
-				v+=SignedMath::Muls8x8(pb[v1],a0);
+				v+=SignedMath::Muls8x8(pb[i<<2+k],p1[k<<2+j]);
 			end;
 			v:=SignedMath::Divs16x8(v,127);
  			m[v2] := v;
@@ -88,6 +84,8 @@ begin
 		res[i] := v;
 		pb+=(4*2);
      end;
+
+
 end;
 /*
 procedure Normalize3(a : global matp);

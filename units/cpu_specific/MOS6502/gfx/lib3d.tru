@@ -15,16 +15,17 @@ var
 		noFaces,curDraw : byte;
 		rotmat:integer;
 	end;
-	const N:integer = 10;
-	objects : array[N] of object3d;
-
-	ppo,ppn,fp,cp : pointer;
+	objects : array[@max3dobjects] of object3d;
+	
+	ppo,ppn,fp,cp : pointer of byte;
 	ip:pointer of integer;
-	startPos,curPos : integer = $8000;
+	zdiv : integer = 127;
+	zdiv2 : integer = 4;
 	
-	
-	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte;
+	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte at @lib3d_zeropage;
+	clearLines : byte = true;
 	xx,yy,iz:integer;
+	startPos,curPos : integer = $8000;
 
 
 
@@ -85,8 +86,9 @@ begin
 		i1 := fp[k];
 		i2 := fp[k+1];
 		k+=2;
-		
-		Gfx::Line(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],0);		
+@ifdef lib3d_clearlines
+			Gfx::Line(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
+@endif			
 		Gfx::Line(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],cp[j]);		
 	end;
 	
@@ -111,7 +113,6 @@ begin
 	objects[i].vertices := fp;
 	fp:=fp + v*3;
 	objects[i].faces := fp;
-
 	objects[i].vertices_rot := curPos;
 	curPos += v*6; // rotated are integer
 	
@@ -122,7 +123,7 @@ begin
 	objects[i].color := curPos;
 	curPos += f; // 2 bytes per point
 	objects[i].rotmat := curPos;
-	curPos += 4*4*2; // 32 bytes per matrix
+	curPos += (4*4*2); // 32 bytes per matrix
 	
 
 end;
@@ -146,31 +147,26 @@ begin
 end;
 
 
-procedure ProjectSimple(i,cx,cy,cz: global integer);
+procedure ProjectSimple(i,cx,cy,cz,zdiv: global integer);
 begin
 	ip := objects[i].vertices_rot;
 	cp := ppn;
 	
 	for j:=0 to objects[i].noVerts do
 	begin
-
-
-
-		iz:=SignedMath::Divs16x8(ip[0],127);
-		zz:=SignedMath::Divs16x8(zz,4);
-		zz :=zz+cz;
+	
+		iz:=SignedMath::Divs16x8(ip[0],zdiv);
+		zz :=lo(iz)+cz;
 		xx:=SignedMath::Divs16x8(ip[1],zz);
+@ifdef lib3d_yscale2 
+		zz/=2;
+@endif
+		
 		yy:=SignedMath::Divs16x8(ip[2],zz);
 			
 		cp[0] := lo(xx)+cx;		
 		cp[1] := lo(yy)+cy;
 
-
-/*		i1:=fp[0]+fp[2];
-		i2:=fp[1];
-		cp[0] := i1+cx;		
-		cp[1] := i2+cy;
-*/		
 		cp+=2;
 		ip+=6;		
 	end;

@@ -7,8 +7,8 @@ unit SignedMath;
 
 var
 	@donotremove PRODUCT
-	PRODUCT: integer at $20;
-	T1,T2,neg: byte at $22; // temp value area	
+	PRODUCT: integer at @signedmath_zeropage;
+	T1,T2,neg: byte at @signedmath_zeropage+2; // temp value area	
 	
 	@donotremove square1_lo
 	@donotremove square1_hi
@@ -91,8 +91,7 @@ end;
 
 procedure Divs16x8(PRODUCT:global integer; T1 : global byte);
 begin
-asm(";wtf");
-	if (PRODUCT>=32768) then 
+	if (hi(PRODUCT)>=128) then 
 	begin
 		neg:=true;
 		PRODUCT := 0 - PRODUCT;
@@ -102,12 +101,16 @@ asm(";wtf");
 	PRODUCT := PRODUCT/T1;
 	
 	if (neg=true) then 
-		PRODUCT := 0 - PRODUCT;
+		PRODUCT := 0 - PRODUCT
+	else
+		asm("
+		lda SignedMath_PRODUCT
 		
-	asm(" 
+		");		
+/*	asm(" 
 		lda SignedMath_PRODUCT
 		ldy SignedMath_PRODUCT+1
 	");
-	
+*/	
 end;
 end.

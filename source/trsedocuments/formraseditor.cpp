@@ -362,7 +362,7 @@ void FormRasEditor::setupEditor()
 //    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.width(' '));
 
 //    qDebug() << "FILE " <<m_currentSourceFile;
-    if (m_currentFileShort.contains("[external]")) {
+    if (m_currentFileShort.contains("[ext]")) {
         ui->txtOutput->setHtml("<font color=\"#FF8020\"><b>WARNING: </b></font>You are currently editing an <font color=\"#FF8020\">internal and global TRSE unit</font> that is probably being used by other projects. </font>");
     }
 

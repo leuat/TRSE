@@ -619,7 +619,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     if (isExternal) {
         testFilename = fileName;
         testFilename = testFilename.split(Data::data.unitPath).last();
-        testFilename = "[external]"+Data::data.unitPath+testFilename.remove(getProjectPath());
+        testFilename = "[ext]"+Data::data.unitPath+testFilename.remove(getProjectPath());
     }
 
 //    qDebug() << fileName;
@@ -2132,6 +2132,7 @@ void MainWindow::on_btnBuildAll_clicked()
 {
     if (m_currentProject.m_filename=="")
         return;
+    SaveAllRas();
     BuildAll();
 }
 

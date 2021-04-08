@@ -365,11 +365,11 @@ public:
     QVector<int> m_colors;
     QVector<int> m_visible;
     bool m_isWireframe = true;
-
+    int m_type = 0;
     virtual void Save6502(QString file, float scale);
 
     void Render(Camera& cam, QImage& img) override;
-    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe);
+    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type);
 
     float intersect(Ray* ray) override {
         return -1;

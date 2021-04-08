@@ -656,12 +656,12 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
 
 }
 
-void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe)
+void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type)
 {
     m_isWireframe = isWireframe;
     m_faces.clear();
     m_colors.clear();
-
+    m_type = type;
     m_vertices.clear();
     for (int i=0;i<c1;i++) {
         float ang1 = (i/(float)c1)*2*3.14159;
@@ -679,10 +679,14 @@ void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool 
     if (m_isWireframe) {
         for (int i=0;i<c1;i++) {
             for (int j=0;j<c2;j++) {
-                m_faces.append(i*c1 + j);
-                m_faces.append(i*c1 + (j+1)%c2);
-                m_faces.append(i*c1 + j);
-                m_faces.append(((i+1)%c1)*c1 + j);
+                if ((m_type&1)==1) {
+                m_faces.append(i*c2 + j);
+                m_faces.append(i*c2 + (j+1)%c2);
+                }
+                if ((m_type&2)==2) {
+                   m_faces.append(i*c2 + j);
+                   m_faces.append(((i+1)%c1)*c2 + j);
+                }
                 m_colors.append(1);
             }
         }

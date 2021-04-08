@@ -480,7 +480,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
 //        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.;;
-        ErrorHandler::e.Error("Ccould not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
+        ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
 //    qDebug() << "ISUSED " <<  name;

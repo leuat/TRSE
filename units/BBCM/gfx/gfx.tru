@@ -213,8 +213,8 @@ begin
 		
 	color := color<<2;
 	delx := 0;		
-	if (y1>99) then y1:=99;
-	if (y2>99) then y2:=99;
+	//if (y1>99) then y1:=99;
+	//if (y2>99) then y2:=99;
 	if y1 > y2 then 
 	begin
 		swap(x1,x2);
@@ -242,8 +242,8 @@ begin
 	
    	call(p_putpixel);
    	
-	if (y1=y2) then return;
-	if (x1=x2) then return;
+//	if (y1=y2) then return;
+//	if (x1=x2) then return;
 
    	  
 	if dx >= dy then begin
