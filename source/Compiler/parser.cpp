@@ -2772,6 +2772,9 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
             auto node = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
             if (!node->m_isFunction)
                 ErrorHandler::e.Error("Only functions can have intrinsic return values.",m_currentToken.m_lineNumber);
+            if (node->m_returnValue!=nullptr)
+                ErrorHandler::e.Error("You can only set the return value once in the scope of the function.",m_currentToken.m_lineNumber);
+
             node->m_returnValue = Expr();
             isAssign=true;
             return nullptr;
