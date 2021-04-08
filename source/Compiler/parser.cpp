@@ -3743,7 +3743,7 @@ QSharedPointer<Node> Parser::InlineAssembler()
         QString org = m_currentToken.m_value;
         m_currentToken = m_lexer->InlineAsm();
         //qDebug() <<m_currentToken.m_value;
-        m_currentToken.m_value = org + m_currentToken.m_value;
+        m_currentToken.m_value = "\t"+org + m_currentToken.m_value;
         pascalStyleAsm = true;
 
     }
