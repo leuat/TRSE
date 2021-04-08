@@ -3418,11 +3418,37 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         QString binFile = m_currentToken.m_value;
         Eat();
         QString position ="";
+        int start =0, len =0;
+        bool requireSplit = false;
         if (m_currentToken.m_type==TokenType::COMMA) {
             Eat();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
         }
+        if (m_currentToken.m_type==TokenType::COMMA) {
+            Eat();
+            start = GetParsedInt(TokenType::LONG);
+            len = -1;
+            if (m_currentToken.m_type==TokenType::COMMA) {
+                Eat(TokenType::COMMA);
+                len = GetParsedInt(TokenType::LONG);
+            }
+            requireSplit = true;
+        }
         Eat(TokenType::RPAREN);
+
+
+        if (requireSplit) {
+            QString f = m_currentDir+QDir::separator()+binFile;
+            if (!QFile::exists(f))
+               ErrorHandler::e.Error("Could not find file for inclusion: "+f, m_currentToken.m_lineNumber);
+            QString of = Util::getFileWithoutEnding(f) + "_split.bin";
+            QByteArray ba = Util::loadBinaryFile(f);
+            if (len==-1)
+                len = ba.size();
+            QByteArray res = ba.mid(start,len);
+            Util::SaveByteArray(res,of);
+            binFile = Util::getFileWithoutEnding(binFile)+"_split.bin";
+        }
 
  //       qDebug() << "LOOKING FOR FLAGS WITH INCBIN "<< binFile;
         QStringList flags = getFlags();

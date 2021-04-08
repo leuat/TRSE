@@ -39,7 +39,7 @@ NodeVarType::NodeVarType(Token t, QStringList data) : Node() {
 
 }
 
-NodeVarType::NodeVarType(Token t, QString filename, QString position) : Node() {
+NodeVarType::NodeVarType(Token t, QString filename, QString position ) : Node() {
     m_op = t;
     value = t.m_value;
     m_filename = filename;

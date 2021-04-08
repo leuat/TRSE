@@ -9,4 +9,9 @@
         charset1: incbin("charsets/charset1.bin", @charsetPosition);
         mySprites:incbin("sprites/sprites.bin", $3200);
         levels: incbin("levels/level1.flf", @levelPosition);
+
+        charset2: incbin("charsets/charset1.bin", @charsetPosition, skipBytes);
+
+        charset3: incbin("charsets/charset1.bin", @charsetPosition, skipBytes, length);
+
 </code>
