@@ -25,7 +25,7 @@ Data Data::data;
 
 Data::Data()
 {
-    version = "0.12.3";
+    version = "0.12.4";
 }
 
 void Data::Redraw()

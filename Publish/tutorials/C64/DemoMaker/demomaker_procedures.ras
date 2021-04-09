@@ -17,7 +17,7 @@ procedure IncTime();
 begin
 	inc(time);
 	if (time&1=0) then inc(time2);
-	if (time&63=0) then time4:=time4+1;
+	if (time&63=0) then time4+=1;
 
 
 end;
@@ -143,7 +143,7 @@ end;
 
 procedure UpdateMainloop();
 begin
-	while (1<2) do begin
+	while (true) do begin
 		if initComplete=0 then begin
 			// Make sure that everything is black
 			SPRITE_BITMASK:=0;
