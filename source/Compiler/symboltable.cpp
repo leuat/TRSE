@@ -296,6 +296,7 @@ void SymbolTable::InitBuiltins()
     // Define global methods here
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INTEGER","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("WORD","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("BOOLEAN","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("LONG","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("REAL","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("BYTE","")));

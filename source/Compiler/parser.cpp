@@ -1481,6 +1481,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="WORD") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
+        if (s->m_type=="BOOLEAN") m_currentToken.m_type=TokenType::BYTE;
         if (s->m_type=="STRING") m_currentToken.m_type=TokenType::STRING;
         if (s->m_type=="CSTRING") m_currentToken.m_type=TokenType::CSTRING;
 
@@ -3645,7 +3646,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     Eat();
     // Is regular single byte / pointer
-
     QString position = "";
     if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
         Eat();
@@ -3679,6 +3679,12 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     }
     VerifyTypeSpec(t);
+
+    if (t.m_type == TokenType::BOOLEAN) {
+        qDebug() << "Replace bool with byte";
+        t.m_value="BYTE";
+        t.m_type = TokenType::BYTE;
+    }
 
     QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));
     nvt->VerifyFlags(isInProcedure);
