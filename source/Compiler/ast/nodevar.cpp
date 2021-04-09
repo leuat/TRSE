@@ -54,6 +54,7 @@ void NodeVar::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &
 
 TokenType::Type NodeVar::getOrgType(Assembler *as) {
 
+
     if (as==nullptr) {
         // Use parser symbtab
         TokenType::Type t = m_op.m_type;
@@ -67,9 +68,15 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
         return t;
     }
 
+//    if (m_subNode!=nullptr)
+  //      return qSharedPointerDynamicCast<NodeVar>(m_subNode)->getOrgType(as);
+
+
     TokenType::Type t = m_op.m_type;
-    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
-        t= as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
+    if (as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)!=nullptr)
+        t= as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->getTokenType();
+
+//    qDebug() << "NodeVar TYPE " +getValue(as) + "  "+as->m_symTab->Lookup(value, m_op.m_lineNumber)->m_type << " " << as->m_symTab->Lookup(value, m_op.m_lineNumber)->m_arrayTypeText;
 
     return t;
 }
@@ -146,6 +153,11 @@ bool NodeVar::isPointer(Assembler *as)
 {
     return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType()==TokenType::POINTER;
 
+}
+
+bool NodeVar::isPurePointer(Assembler *as)
+{
+    return (isPointer(as) && (m_expr==nullptr));
 }
 
 bool NodeVar::DataEquals(QSharedPointer<Node> other) {
@@ -280,7 +292,7 @@ QString NodeVar::getValue(Assembler* as) {
         if (qSharedPointerDynamicCast<NodeVar>(m_subNode)==nullptr)
             ErrorHandler::e.Error("Unknown subnode: '"+m_subNode->getValue(as)+"'", m_op.m_lineNumber);
 //        qDebug() << v << m_op.m_lineNumber << qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;
-
+//        qDebug() << "GET TYPE "<< v << "  " <<type << qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;
         v =v + "_"+type+"_"+qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;//m_subNode->getValue(as);
     }
     if (as->m_symTab->getCurrentProcedure()!="") {

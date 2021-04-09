@@ -35,6 +35,8 @@ FormPaw::FormPaw(QWidget *parent) :
     ui->tabData->setColumnWidth(3, 40);
     ui->chkExomizer3->setVisible(false);
     m_type = PAW;
+    m_fileExtension = "paw";
+
     m_pawData = QSharedPointer<CIniFile>(new CIniFile);
 }
 

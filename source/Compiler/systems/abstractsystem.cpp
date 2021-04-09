@@ -8,10 +8,11 @@ QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
 }
 
-QString AbstractSystem::CompressLZ4(QString fileName) {
+QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
     QString old = fileName;
     QByteArray in = Util::loadBinaryFile(fileName);
-    fileName = fileName+ "_c";
+    fileName = outFileName;
+
     QByteArray out;
     out.resize(65536);
     //LZ4LIB_API int LZ4_compress_default(const char* src, char* dst, int srcSize, int dstCapacity);
@@ -118,6 +119,12 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return MEGA65;
     if (s.toLower()=="atari800")
         return ATARI800;
+    if (s.toLower()=="msx")
+        return MSX;
+    if (s.toLower()=="appleii")
+        return APPLEII;
+
+    return C64;
 }
 
 QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
@@ -140,7 +147,10 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == AMSTRADCPC464) return "AMSTRADCPC464";
     if (s == COLECO) return "COLECO";
     if (s == MEGA65) return "MEGA65";
+    if (s == MSX) return "MSX";
     if (s == ATARI800) return "ATARI800";
+    if (s == APPLEII) return "APPLEII";
+    return "";
 }
 
 void AbstractSystem::AcceptDispatcherTick(QString val)

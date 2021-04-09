@@ -48,7 +48,7 @@ public:
   //  void dispatch(QSharedPointer<NodeProcedure> node) override;
     void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
    // void dispatch(QSharedPointer<NodeConditional> node) override;
-    void dispatch(QSharedPointer<NodeForLoop> node) override;
+ //   void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
     void dispatch(QSharedPointer<NodeAssign> node) override;

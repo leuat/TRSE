@@ -59,7 +59,7 @@ public:
     bool m_isHybridMode = false;
     bool m_supportsFooterPen = false;
     QVector3D m_bpp = QVector3D(8,8,8);
-    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC };
+    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC, VGA };
     bool m_selectClosestFromPen = true;
     QVector<int> m_enabledColors;
 
@@ -111,6 +111,7 @@ public:
     void Initialize(Type t);
 
     void SetC64Pens(bool m_isMulticolor, bool m_isCharset);
+    void SetVIC20Pens(bool m_isMulticolor);
     void SetC64SpritePen(bool m_isMulticolor);
 
     void InitNESPens();
@@ -119,6 +120,7 @@ public:
     QPixmap CreateColorIcon(int col, int s);
 
     void CopyFrom(LColorList* other);
+    void CopyFromKeep(LColorList* other);
     void InitC64_org();
     void InitC64();
     void InitC64Multicolor();
@@ -127,6 +129,7 @@ public:
     void InitCGA1_LOW();
     void InitCGA1_HIGH();
     void InitOK64();
+    void InitVGA();
     void InitNES();
     void InitNES4();
     void InitCGA2_LOW();

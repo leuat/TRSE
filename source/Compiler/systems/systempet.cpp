@@ -34,7 +34,7 @@ SystemPET::SystemPET(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
 
 void SystemPET::DefaultValues()
 {
-    m_startAddress = 0x0400;
+    m_startAddress = getDefaultBasicAddress();
     m_programStartAddress = 0x0410;
     m_ignoreSys = false;
     m_stripPrg = false;

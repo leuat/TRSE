@@ -17,15 +17,18 @@ void SystemX86::Assemble(QString &text, QString filename, QString currentDir, QS
        // -kick1hunks  -o example$1 -nosym source$1.asm
   //      params << "-kick1hunks";
     //    params << "-Fhunkexe";
-        params << "-o" << filename + ".com";
+        params << "-o" << filename + ".exe";
         params << filename+".asm";
        // qDebug() << params;
         process.start(m_settingsIni->getString("nasm"), params);
         process.waitForFinished();
         output = process.readAllStandardOutput();
-        //qDebug() << output;
-        output = process.readAllStandardError();
-
+        output+= process.readAllStandardError();
+//        qDebug() << output;
+/*        output = process.readAllStandardError();
+        process.start(m_settingsIni->getString("nasm"), QStringList() << filename + ".obj" << filename + ".exe");
+        process.waitForFinished();
+*/
 
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
@@ -99,4 +102,35 @@ void SystemX86::PostProcess(QString &text, QString file, QString currentDir)
     }
     text = output;
 
+}
+
+bool SystemX86::is486()
+{
+    if (m_cpu=="8088" || m_cpu=="8086" || m_cpu=="286" || m_cpu=="386")
+        return false;
+
+    return true;
+}
+
+bool SystemX86::is386()
+{
+    if (m_cpu=="8088" || m_cpu=="8086" || m_cpu=="286")
+        return false;
+
+    return true;
+
+}
+
+bool SystemX86::is286()
+{
+    if (m_cpu=="8088" || m_cpu=="8086")
+        return false;
+
+    return true;
+
+}
+
+bool SystemX86::is8088()
+{
+    return m_cpu=="8088";
 }

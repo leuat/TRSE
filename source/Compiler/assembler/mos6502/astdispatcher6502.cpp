@@ -227,6 +227,7 @@ void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         as->Term();
         as->BinOP(node->m_op.m_type);
         as->Term(node->m_right->getValue8bit(as,false),true);
+        as->Comment("Testing for byte:  " + node->m_right->getValue8bit(as,true));
         if (node->m_right->getValue8bit(as,true)=="#0") {
             as->Comment("RHS is byte, optimization");
             QString lbl = as->NewLabel("skip");
@@ -799,9 +800,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinOP>node)
  *
  *  */
 
-
-
-
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 {
     node->DispatchConstructor(as,this);
@@ -819,10 +817,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
         return;
 
     }
-
-
     if (as->m_term=="")
-
         as->Term("lda " + val);
     else
         as->Term(val);
@@ -1548,7 +1543,40 @@ bool ASTDispatcher6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QSt
 
 //    as->m_lblFailed="";
   //  as->m_lblSuccess="";
-  //  return true;
+    //  return true;
+}
+
+bool ASTDispatcher6502::IsSimpleAssignPointerExpression(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign> node)
+{
+    if (var->getType(as)!=TokenType::POINTER)
+        return false;
+    if (var->m_expr==nullptr)
+        return false;
+
+    if (var->getArrayType(as)==TokenType::INTEGER) {
+        if (!node->m_right->isPure())
+            return false; // for now, only pure RHS expr
+        as->Comment("Is simple pointer assigning : p[n] := expr");
+        // First, set up y:
+        if (!var->m_expr->isPureNumeric()) {
+            as->ClearTerm();
+            var->m_expr->Accept(this);
+            as->Term();
+            as->Asm("asl");
+            as->Asm("tay");
+        }
+        else as->Asm("ldy #"+QString::number(var->m_expr->getValueAsInt(as)*2));
+        as->Asm("lda "+node->m_right->getValue8bit(as,false));
+        as->Asm("sta ("+var->getValue(as)+"),y");
+        as->Asm("iny");
+        as->Asm("lda "+node->m_right->getValue8bit(as,true));
+        as->Asm("sta ("+var->getValue(as)+"),y");
+        return true;
+    }
+
+
+
+    return false;
 }
 
 
@@ -2285,6 +2313,15 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     else
         as->Comment("Load Unknown type array");
 
+    // Optimization : ldx #3, lda a,x   FIX
+    if (s->m_arrayType==TokenType::BYTE && node->m_expr!=nullptr) {
+        if (node->m_expr->isPureNumeric()) {
+            as->ClearTerm();
+            as->Asm("lda "+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
+            return;
+        }
+    }
+
     QString m = as->m_term;
     if (node->m_expr==nullptr) {
         ErrorHandler::e.Error("Unknown operation with address!",node->m_op.m_lineNumber);
@@ -2449,9 +2486,14 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
 
 
             // Optimize for number or pure var
-            if (node->m_expr->getType(as)==TokenType::INTEGER_CONST) {
+            if (node->m_expr->getType(as)==TokenType::INTEGER_CONST && node->getArrayType(as)!=TokenType::INTEGER) {
                 //qDebug() << "StoreVariable:: HER";
                 as->ClearTerm();
+
+                // Special case: if POINTER
+
+
+
                 as->Term("ld"+secondReg +" ");
                 node->m_expr->Accept(this);
                 as->Term();
@@ -2460,12 +2502,26 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 if (node->getArrayType(as)==TokenType::INTEGER) {
                     as->Asm("in"+secondReg);
                     as->Asm("tya");
+//                    as->Asm("sta " +pa + getValue(node)+ pb + "," + secondReg);
+
                     as->Asm("sta "  + getValue(node) + "," + secondReg);
                 }
                 return;
             }
             // Just regular var optimize
             // Regular expression
+
+            // Special case: p[5] := something;
+/*            if (node->isPointer(as) && node->m_expr->getType(as)==TokenType::INTEGER_CONST && node->getArrayType(as)==TokenType::INTEGER)
+            {
+                as->Comment("Integer const pointer set to expression");
+                QString val = QString::number(node->m_expr->getValueAsInt(as)*2);
+                as->ReplacePrevLdyWithLdx();
+//                if (node->)
+                return;
+            }
+*/
+
             QString tya ="tya";
             if (node->isPointer(as) && node->getArrayType(as)==TokenType::INTEGER) {
                 as->Comment("Storing integer to a pointer of integer, need to move data in y to x");
@@ -2964,6 +3020,16 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
         //            return false;
         if (var->isPointer(as))
             return false;
+
+        if (var->m_expr->isPureNumeric()) {
+            as->ClearTerm();
+
+            as->Comment("Optimize operand array with const index " + operand);
+            as->Asm(operand + getValue(var)+" + "+var->m_expr->getValue(as));
+            return true;
+
+        }
+
         if (LoadXYVarOrNum(var, var->m_expr,true)) {
 
             as->Comment("Optimize byte array " + operand);
@@ -3203,7 +3269,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     }
 
     as->Comment("Assigning single variable : " + getValue(v));
-
+    as->ClearTerm();
 //    as->Comment("Is word : " + QString::number(v->isWord(as)));
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 
@@ -3272,7 +3338,8 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     if (IsSimpleIncDec(v,  node))
         return;
 
-
+    if (IsSimpleAssignPointerExpression(v,node))
+        return;
 
 //    if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr && (!(v->isPointer(as) && v->getArrayType(as)==TokenType::INTEGER))) {
     if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr) {

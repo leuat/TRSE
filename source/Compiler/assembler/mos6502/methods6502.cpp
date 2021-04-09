@@ -871,6 +871,13 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("init16x8mul"))
             InitMul16x8(as);
 
+    if (Command("init8x8muls")) {
+        as->Asm("S_T1 = "+as->m_internalZP[0]);
+        as->Asm("S_T2 = "+as->m_internalZP[1]);
+        as->Asm("S_PRODUCT = "+as->m_internalZP[2]);
+        as->IncludeFile(":resources/code/6502/mul8bit_signed.asm");
+    }
+
     if (Command("init16x8div"))
             InitDiv16x8(as);
 
@@ -1575,6 +1582,10 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Asm("txa");
 //    as->Asm("ldy #0");
     as->Asm("rts");
+
+
+
+
     as->Label(l);
     as->PopLabel("multiply_eightbit");
 
@@ -4489,11 +4500,17 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
     // isWord doesn't work
     QString addx="";
     if (v!=nullptr && v->m_expr!=nullptr) {
+        fix = v->getArrayType(as)==TokenType::INTEGER;
+        if (!fix && v->m_expr->isPureNumeric()) {
+            as->Comment("Inc/dec array with constant index fix");
+            as->Asm(cmd + " " +m_node->m_params[0]->getValue(as)+ " + " + v->m_expr->getValue(as));
+            return;
+        }
+
         as->ClearTerm();
         v->m_expr->Accept(m_dispatcher);
         as->Term();
         addx=",x";
-        fix = v->getArrayType(as)==TokenType::INTEGER;
         if (fix)
             as->Asm("asl");
         as->Asm("tax");
@@ -5662,6 +5679,36 @@ void Methods6502::WaitForRaster(Assembler *as)
 {
     as->Comment("wait for raster");
 //    LoadVar(as, 0,"", "ldx ");
+
+/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+ //       m_node->m_params[0]->setForceType(TokenType::BYTE);
+        if (m_node->m_params[0]->isPureNumeric()) {
+            int val =  m_node->m_params[0]->getValueAsInt(as);
+             if (val<=255) {
+                as->Asm("bit $D011");
+                as->Asm("bpl *-3");
+                as->Asm("bit $D011");
+                as->Asm("bmi *-3");
+                as->Asm("ldx "+Util::numToHex(val));
+                as->Asm("tax");
+                as->Asm("cpx $d012");
+                return;
+            }
+            else
+            if (val<=255) {
+                as->Asm("bit $D011");
+                as->Asm("bmi *-3");
+                as->Asm("bit $D011");
+                as->Asm("bpl *-3");
+                as->Asm("ldx "+Util::numToHex(val&0xFF));
+                as->Asm("tax");
+                as->Asm("cpx $d012");
+                return;
+            }
+        }
+
+    }
+*/
     LoadVar(as,0);
     as->Asm("tax");
 //    as->Asm("lda $d012 ; raster line pos");
@@ -6610,6 +6657,7 @@ void Methods6502::VDCInit(Assembler *as)
     as->PopLabel("vdc_init");
 
 }
+
 
 
 // initialise the Bcd Print Digit code

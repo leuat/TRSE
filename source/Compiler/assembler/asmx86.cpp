@@ -1,8 +1,15 @@
 #include "asmx86.h"
+#include "source/Compiler/optimiser/postoptimizerx86.h"
 
 AsmX86::AsmX86()
 {
     m_hash = "";
+    byte="db";
+    word="dw";
+    llong ="dd";
+    ppointer ="dd";
+    m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserX86());
+
 }
 
 void AsmX86::Connect() {
@@ -43,7 +50,12 @@ void AsmX86::Program(QString name, QString vicParam)
     m_source+=m_startInsertAssembler;
     Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
     m_hash = "";
-
+/*    Asm("jmp save_ds_register");
+    Write("ds_register_saved: dw 0",0);
+    Write("save_ds_register:",0);
+    Asm("mov ax,ds");
+    Asm("mov [ds_register_saved],ax");
+*/
 }
 
 void AsmX86::EndProgram()
@@ -60,6 +72,11 @@ void AsmX86::Write(QString str, int level)
 void AsmX86::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
     QString t = byte;
+
+    if (DeclareRecord(name,type,count,data,pos))
+        return;
+
+
     if (type.toLower()=="integer")
         t = word;
     if (type.toLower()=="byte")
@@ -70,7 +87,7 @@ void AsmX86::DeclareArray(QString name, QString type, int count, QStringList dat
 // array  resb  251*256  ;251 ROWS X 256 COLUMNS.
 
      if (data.count()==0 && pos!="") {
-         Write(name + " = " + pos);
+         Write(name + " equ " + pos);
          return;
      }
 
@@ -182,18 +199,48 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
         m_term = "xor ";
     }
     if (t == TokenType::MUL) {
-        m_term = "mul ";
+        m_term = "imul ";
     }
     if (t == TokenType::DIV) {
-        m_term = "div ";
+//        m_term = "xor dx,dx \n\tidiv ";
+        m_term = "idiv ";
+    }
+    if (t == TokenType::SHR) {
+        m_term = "sar ";
+    }
+    if (t == TokenType::SHL) {
+        m_term = "sal ";
     }
 
 
 }
 
+void AsmX86::DeclareString(QString name, QStringList initVal, QStringList flags) {
+    Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
+}
+
 QString AsmX86::String(QStringList lst, bool term)
 {
-    return "";
+    QString res;
+    QString mark = "db";
+
+    for (QString s:lst) {
+        bool ok=false;
+        uchar val = s.toInt(&ok);
+        if (!ok)
+            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+
+        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+
+        /*        if (s!=lst.last())
+                    res=res + "\n";
+        */
+
+    }
+    if (term)
+        res=res + "\t"+mark+"\t0";
+    m_term +=res;
+    return res;
 }
 
 void AsmX86::Label(QString s)

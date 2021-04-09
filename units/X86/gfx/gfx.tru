@@ -1,0 +1,229 @@
+unit Gfx;
+var
+	x1,x2,y,color: integer;
+	addr:pointer;
+
+
+
+
+
+procedure PutPixel (x1,y : global integer; color : global Byte); 
+begin
+  asm
+    mov     bx,[Gfx_x1]
+    mov     dx,[Gfx_y]
+    mov     di,bx
+    mov     bx, dx                  ; bx = dx
+    shl     dx, 8
+    shl     bx, 6
+    add     dx, bx                  ; dx = dx + bx (ie y*320)
+    add     di, dx                  ; finalise location
+    Dec     Di
+    mov     al, [Gfx_color]
+    stosb
+    end;
+end;
+
+
+
+Procedure DrawLine(a,b,c,d:integer;color:global byte;where:pointer); 
+var i,s,d1x,d1y,d2x,d2y,u,v,m,n:integer;
+	@donotremove s
+	@donotremove d1x
+	@donotremove d1y
+	@donotremove d2x
+	@donotremove d2y
+	@donotremove y
+	@donotremove v
+	@donotremove m
+	@donotremove n
+
+begin
+     asm
+     Mov Ax,[Gfx_a]
+     Cmp Ax,[Gfx_c]
+     Jne @@Nopes
+     Mov Ax,[Gfx_b]
+     Cmp Ax,[Gfx_d]
+     Jne @@Nopes
+     Mov AX,$A000
+     Mov Es,Ax
+     Mov AX,320
+     Mul word [Gfx_b]
+     Add Ax,[Gfx_a]
+     Mov Di,Ax
+     Mov Al,[Gfx_color]
+     StosB
+     Jmp @@Ending
+
+@@Nopes:
+     Jmp @@There
+@@Sgn:
+     Cmp Ax,0
+     Jg @@Plus
+     Jl @@Neg
+@@Plus:   Mov Ax,1
+     Jmp @@Ferds
+@@Neg:Mov Ax,-1
+@@Ferds:Ret
+
+@@There:
+
+        Mov Ax,[Gfx_c]
+        Sub Ax,[Gfx_a]
+        Mov [Gfx_u],Ax
+        Call @@Sgn
+        Mov [Gfx_d1x],Ax
+        Mov [Gfx_d2x],Ax
+
+        Mov Ax,[Gfx_d]
+        Sub Ax,[Gfx_b]
+        Mov [Gfx_v],Ax
+        Call @@Sgn
+        Mov [Gfx_d1y],Ax
+        Mov [Gfx_d2y],word 0
+
+        Mov Ax,[Gfx_u]
+        Cmp Ax,0
+        Jg @@Not1
+        Sub Ax,[Gfx_u]
+        Sub Ax,[Gfx_u]
+@@Not1: Mov [Gfx_m],Ax
+
+        Mov Ax,[Gfx_v]
+        Cmp Ax,0
+        Jg @@Not2
+        Sub Ax,[Gfx_v]
+        Sub Ax,[Gfx_v]
+@@Not2: Mov [Gfx_n],Ax
+
+        Mov AX,word [Gfx_where+2]
+        Mov Es,Ax
+     Mov Ax,[Gfx_m]
+     Cmp Ax,[Gfx_n]
+     Ja @@Hmm
+
+              Mov Ax,[Gfx_v]
+
+              Call @@Sgn
+              Mov [Gfx_d2y],Ax
+
+              Mov [Gfx_d2x],word 0
+              Mov Ax,[Gfx_v]
+              Cmp Ax,0
+              Jnl @@Vidr
+              Sub Ax,[Gfx_v]
+              Sub Ax,[Gfx_v]
+          @@Vidr:
+              Mov [Gfx_m],Ax
+
+              Mov Ax,[Gfx_u]
+              Cmp Ax,0
+              Jnl @@Vidr2
+              Sub Ax,[Gfx_u]
+              Sub Ax,[Gfx_u]
+          @@Vidr2:
+              Mov [Gfx_n],Ax
+@@Hmm:
+          Mov ax,[Gfx_m]
+          Shr Ax,1
+          Mov [Gfx_s],Ax
+  
+         Mov Cx,[Gfx_m]
+@@Luup:
+         Cmp [Gfx_a],word 319
+         Ja @@DoNo
+
+         Cmp [Gfx_b],word 199
+         Ja @@DoNo
+         Cmp [Gfx_b],word 0
+         Jle @@DoNo
+
+
+         Mov     bx,[Gfx_a]
+         Mov     dx,[Gfx_b]
+         Mov     di,bx
+         Mov     bx, dx                  ;
+         Shl     dx, 8
+         Shl     bx, 6
+         Add     dx, bx                  ;
+         Add     di, dx                  ; finalise location
+         Mov     al, [Gfx_color]
+ ;        Cli
+;         add es:[di],al
+         mov es:[di],al
+
+         inc di
+  ;       Sti
+@@DoNo:
+
+         Mov Ax,[Gfx_s]
+         Mov Bx,[Gfx_a]
+         Mov Dx,[Gfx_b]
+
+         Add Ax,[Gfx_n]     ;S:=S+N
+
+         Cmp Ax,[Gfx_m]        ;IF S<M then goto @@Not
+         Jbe @@Not
+
+         Sub Ax,[Gfx_m]         ;S:=S-M
+         Add Bx,[Gfx_d1x]       ;A:=A+D2X
+         Add Dx,[Gfx_d1y]       ;B:=B+D2Y
+         Jmp @@Ferd       ;Else
+@@Not:                    ;Do @@Not
+         Add Bx,[Gfx_d2x]       ;A:=A+D2X
+         Add Dx,[Gfx_d2y]       ;B:=B+D2Y
+@@Ferd:
+         Mov [Gfx_s],Ax
+         Mov [Gfx_a],Bx
+         Mov [Gfx_b],Dx
+
+         Loop @@Luup
+@@Ending:
+	end;
+end;
+
+
+
+
+Procedure Hline (x1,x2,y:global integer;color:global byte;addr:global pointer);
+begin
+asm
+  ;cmp [Gfx_y],200
+  ;jge @@nei
+
+  ;cmp [Gfx_y],0
+  ;jle @@nei
+
+
+  Mov Bx,[Gfx_x1]
+  Mov Dx,[Gfx_x2]
+
+  Cld
+
+  Cli
+  mov   ax,[Gfx_addr+2]
+  mov   es,ax
+  mov   ax,[Gfx_y]
+  mov   di,ax
+  shl   ax,8
+  shl   di,6
+  add   di,ax
+  add   di,[Gfx_x1]
+
+  mov   al,[Gfx_color]
+  mov   ah,al
+  mov   cx,Dx
+  sub   cx,Bx
+  shr   cx,1
+  jnc   @start
+  stosb
+@start:
+  rep   stosw
+  sti
+@@nei:
+end;
+end;
+
+
+end.

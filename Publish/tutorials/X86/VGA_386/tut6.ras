@@ -1,0 +1,63 @@
+program Example3D;
+@use "system/screen"
+@use "system/memory"
+@use "gfx/gfx"
+@use "system/tables"
+@use "gfx/lib3d"
+
+var  
+	k,i,x,x1,x2,y1,y2,y,j,j2,px,time: integer;
+	p : pointer;
+	
+	
+procedure SetupPalette();
+begin
+	// next 64 colors are pinkish
+	for i:=0 to 32 do
+	begin
+		Screen::SetColor(i,i*2,i/3,i);
+		Screen::SetColor(63-i,i*2,i/3,i);
+	end;
+end;
+	
+
+procedure Init();
+begin
+	Screen::SetMode($13);
+	Screen::InitVGABuffers(5);
+	// Draws the background buffer
+	for i:=0 to 256 do
+	begin
+		Gfx::DrawLine(0,i,319,i+56,i/4,Screen::buffer2);
+	end;
+end;
+
+
+begin
+	Memory::Init();
+	Init();
+	SetupPalette();
+	// Create a torus!	
+	Lib3d::Torus(0, 16,16,3,160,Lib3d::renderType_lines);		
+
+
+	while (true) do
+	begin
+		waitforverticalblank();
+		//Copy back buffers to the screen etc
+		Screen::CopyVGABuffer32bit(Screen::buffer1, ptr(Screen::VGA,0));
+		// Clear back buffer
+		Screen::CopyVGABuffer32bit(Screen::buffer2, Screen::buffer1);
+		// Rotate object 0 		
+		Lib3d::RotateEuler(0,time,time*2,0-time);
+		// Some sine waves		
+		k:=Tables::sine256[(time*3)&255]/4;
+		// Project points in object 0 to 2D, move to position 160,100,200+k
+		Lib3d::ProjectSimple(0, 160,100, 200+k);
+
+		// Render as lines
+		Lib3d::RenderWireframe(0, time, Screen::buffer1);		
+		time+=1;		
+		
+	end;
+end.

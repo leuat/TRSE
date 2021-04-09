@@ -1,0 +1,67 @@
+program Tut3;
+
+/*
+
+	This example demonstrates how to 
+	a) load a compressed file
+	b) decompress the data to a location
+
+
+*/
+
+@use "system/file"
+@use "music/adlibplayer"
+@use "system/screen"
+@use "system/memory"
+@use "system/compression"
+var  
+	song: incbin("music/song1.trt");
+
+
+// Automatically export image	
+@export "images/image1.flf" "images/image1.bin" 256
+// Lz4-compress the image to a new file
+@compress "images/image1.bin" "images/image1_c.bin"
+
+	
+	filename1 : string="IMAGES/IMAGE1_C.BIN";
+	// Palette file is automatically exported as well
+	palette1 : string="IMAGES/IMAGE1.PAL";
+	f1 : integer;
+	
+
+
+// Simple music player
+interrupt RasterIRQ();
+begin
+	StartIRQ();
+	AdlibPlayer::Play();
+	CloseIRQ();
+end;
+
+
+begin
+	Memory::Init();
+	Screen::SetMode($13);
+	Screen::InitVGABuffers(3);
+	// Load palette from file
+	Screen::SetPaletteFromFile(#palette1);		
+
+	// Open compressed file and read all to a buffer
+	f1 := File::Open(#filename1);
+	File::Read(f1, 32000, Screen::buffer1);
+	File::Close(f1);
+	// Decomress data from buffer to screen	
+	Compression::Decompress(Screen::buffer1,ptr(screen_vga,0));
+
+	// Setup music	
+	AdlibPlayer::Initialize(#song);
+	Memory::SetTimer(23863);
+	SetInterrupt($8, RasterIRQ());
+	// Loop infinitely
+	while (true) do
+	begin
+		waitforverticalblank();
+	end;
+	AdlibPlayer::Stop();	
+end.

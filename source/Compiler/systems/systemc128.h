@@ -10,9 +10,14 @@ public:
         m_processor = MOS6502;
         m_system = C128;
         m_systemColor = QColor(20,100,80);
-        m_startAddress = 0x01C00;
+        m_startAddress =getDefaultBasicAddress();
         m_programStartAddress = 0x1C10;
 
     }
+    int getDefaultBasicAddress() override {
+        return 0x1C01;
+    };
+    bool isCommodoreSystem() override  {return true;}
+
 };
 #endif // SYSTEMC128_H

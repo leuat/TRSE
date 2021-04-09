@@ -1,27 +1,46 @@
 <h3>Description</h3>
-<p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable to be used as PETSCII blocks.</p>
+
+<p>Preprocessor that exports a TRSE character image file (.flf) to binary on build in a format suitable to be
+used as PETSCII blocks in the PBM unit. The PBM unit creates a low-resolution bitmap using PETSCII blocks.</p>
+
+<p>A CBM/PET computer (earlier models) have 40 x 25 character displays but cannot redefine those characters
+as is possible with the Vic 20, C64/128 and C16/Plus4, but does have graphic characters, some of which contain
+4x4 pixel blocks in various patterns. Using 16 of these patterns (including space) it is possible to make a
+pseudo-bitmap in a resolution of 80 x 50 blocks.</p>
+
+<p>PBM can be used on any commodore 8-bit computer that supports PETSCII characters. The C64 also has a 40 x 25 character
+display. The Vic 20 has only a 22 x 23 character display (which can be made a little bigger) so it's PBM
+resolution would be 44 x 46.</p>
+
 <p>
     PBM export takes six parameters.  
 </p>
 <ul>
     <li>The source flf file</li>
     <li>The destination bin file to create</li>
-    <li>The start character</li>
-    <li>Width in characters</li>
-    <li>Height in characters</li>
-    <li>Mode: 0 = PETSCII characters unpacked, 1 = Binary characters unpacked, 2 = Binary characters packed</li>
+    <li>The start character to export</li>
+    <li>Width in pixels from start character (must be even number)</li>
+    <li>Height in pixels from start character (must be even number)</li>
+    <li>Mode: 0, 1 or 2.<br />
+        0 = PETSCII screen code characters unpacked,<br />
+        1 = Binary characters unpacked (0-15),<br />
+        2 = Binary characters packed (two characters in one byte, 0-15 in the lower and the upper nibble)</li>
 </ul>
-<p>Exports an image, up to 80 x 50 pixels for a 40x25 character display, to be used to display PETSCII
-blocks which form 2x2 blocks per character.
+<p>Exports an image to be used to display PETSCII blocks which form 2x2 blocks per character.
+The output data will be either the acual PETSCII character codes (mode 0) or the binary equivalents
+for use with the PBM unit. Data is exported in column then row order.
 </p>
 
 <h3>Example</h3>
-The follow example will export 10 characters, starting at character 0, with a character height of 2 characters 
-from the .flf charset file to a binary file.
+The following example will exports 32 x 32 pixels into 16 x 16 PETSCII character blocks (mode 0)
+from the .flf charset file. As this is using mode 0 the data are PETSCII screen codes that can be
+poked directly to the screen.
 <code>
-program PetBlockMode;
+// Example for the CBM/PET 40 column display
+program PetsciiBlockMode;
 
 @use "output/screen"
+@use "output/pbm" // pbm unit not used in this example, check out example files for more info on this unit
 
 var  
 	xx, yy: byte;
@@ -30,7 +49,11 @@ var
 
 @projectsettings "petmodel" "3032"
 
-@pbmexport "chr/PET.flf" "chr/pet.bin" 0 4 4 0
+// export 32 pixels wide, 32 pixels tall (from character 0) in mode 0
+// generating 16 character columns and 16 character rows for a total of 256 bytes
+
+@pbmexport "chr/PET.flf" "chr/pet.bin" 0 32 32 0
+
 binPic: incbin("chr/pet.bin");
 
 begin
@@ -41,27 +64,23 @@ begin
 	
 	screenmemory := $8000;
 
-	for i := 0 to 1 do
-	begin
 	p1 := #binPic;	
 	
+        // draw the PETSCII screen codes to the screen
 	for yy := 0 to 16 do
 	begin
 	
 		for xx := 0 to 16 do
 		begin
-		j:= p1[ xx ];
-		if (j <> 32 ) then 
+                j := p1[ xx ];
+                // treat character 32 (space) as transparent (optional)
+                if (j &lt;&gt; 32 ) then
 			screenmemory[ xx ] :=  j;
 		end;
 		p1 := p1 + 16;
 		screenmemory := screenmemory + 40;
 
 	end;
-
-	screenmemory := screenmemory - (40*13) + 4;
-	
-	end;	
 
 	loop();
 

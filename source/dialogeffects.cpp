@@ -155,6 +155,47 @@ static int AddLight(lua_State *L) {
 }
 
 
+static int AddObjectRegular(lua_State *L)
+{
+    if (!VerifyFjongParameters(L,"AddObjectRegular"))
+        return 0;
+
+    int args = lua_gettop(L);
+    QString object = QString::fromStdString(lua_tostring(L,1)).toLower();
+    Material mat = Material(QVector3D(1,1,1),50,0.5, 0,0,"");
+    QString name = lua_tostring(L,2);
+    QString parent = lua_tostring(L,3);
+    QString material = lua_tostring(L,4);
+    RayObjectRegular3D* obj = nullptr;
+    int N = 5;
+
+    if (object=="torus_wire") {
+        ValidateNoParameters("AddObject (torus)",L,N+4);
+        obj = new RayObjectRegular3D();
+//        qDebug() << object << lua_tonumber(L,N);
+        obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
+                           lua_tonumber(L,N+2),
+                           lua_tonumber(L,N+3),true,lua_tonumber(L,N+4));
+
+
+    }
+    if (obj==nullptr) return 1;
+
+    obj->m_name= name;
+    if (parent=="") {
+        obj->m_id = m_rt.m_objects.count();
+        m_rt.m_objects.append(obj);
+    }
+    else {
+        AbstractRayObject* aro = m_rt.Find(parent);
+        if (aro==nullptr) {
+            m_error +="<br>Error in AddObject: Could not find parent object '" + parent+  "'\n";
+            return 0;
+        }
+        aro->m_children.append(obj);
+    }
+    return 1;
+}
 
 static int AddObject(lua_State *L)
 {
@@ -508,6 +549,21 @@ static int SetRotation(lua_State *L)
     return 0;
 }
 
+static int Save3DObject(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="<br>Error in SetRotation : Could not find object '" + name;;
+        return 0;
+    }
+    QString fname = m_currentDir+"/"+lua_tostring(L,2);
+
+    aro->Save6502(fname,lua_tonumber(L,3));
+    return 0;
+}
+
 static int SetID(lua_State *L)
 {
 //    int n = lua_gettop(L);
@@ -727,6 +783,16 @@ static int AddToData(lua_State* L) {
 
     if (m_effect!=nullptr)
        m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
+static int AddBBCMode5LineToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddBBCMode5LineToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+       m_compression.AddToDataBBCMode5(m_charData, m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -1338,6 +1404,7 @@ void DialogEffects::LoadScript(QString file)
 
 
     lua_register(m_script->L, "AddObject", AddObject);
+    lua_register(m_script->L, "AddObjectRegular", AddObjectRegular);
     lua_register(m_script->L, "SetRotation", SetRotation);
     lua_register(m_script->L, "SetID", SetID);
     lua_register(m_script->L, "SetPosition", SetPosition);
@@ -1347,6 +1414,7 @@ void DialogEffects::LoadScript(QString file)
 
     // Data registration
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "AddBBCMode5LineToData", AddBBCMode5LineToData);
     lua_register(m_script->L, "AddVGALineToData", AddToDataVGA);
 
     lua_register(m_script->L, "SaveRawData", SaveData);
@@ -1376,6 +1444,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorOut", ExportDiffAsUnrolledBitmapColorOut);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorIn", ExportDiffAsUnrolledBitmapColorIn);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorInAddress", ExportDiffAsUnrolledBitmapColorInAddress);
+
+    lua_register(m_script->L, "Save3DObject", Save3DObject);
 
     lua_register(m_script->L, "SaveMulticolorImage", SaveMulticolorImage);
     lua_register(m_script->L, "SaveKoalaImage", SaveKoalaImage);

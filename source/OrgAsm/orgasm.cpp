@@ -94,7 +94,13 @@ void Orgasm::ProcessUnrolling()
             if (isInRepeat)
                 throw OrgasmError("Cannot do nested unrolling.",ln);
             isInRepeat = true;
-            repeatCount = l.simplified().split(" ").last().toInt();
+            QString last = l.simplified().split(" ").last();
+            bool ok;
+            repeatCount = last.toInt(&ok);
+//            qDebug() << last << ok;
+            if (!ok)
+                throw OrgasmError("Repeat count must be a number.",ln);
+
             if (repeatCount<=0)
                 throw OrgasmError("Repeat count must be larger than 0.",ln);
             repeatList.clear();
@@ -301,9 +307,9 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     m_success = false;
     LoadFile(filename);
     m_olines.clear();
-    ProcessUnrolling();
 
     try {
+        ProcessUnrolling();
 
     for (int i=0;i<m_lines.count();i++) {
         if (m_lines[i]=="") continue;

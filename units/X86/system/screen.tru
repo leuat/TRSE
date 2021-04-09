@@ -1,0 +1,175 @@
+unit Screen;
+@use "system/file"
+@use "system/memory"
+var
+	i,j,k,handle,noBuffers : integer;
+	color,red,green,blue : byte;
+	const VGA : integer = $A000;
+	buffer1, buffer2, buffer3, buffer4, buffer5 : pointer;
+	@donotremove source	
+	@donotremove dest
+	source,dest:pointer of integer;
+		
+
+
+procedure InitVGABuffers(noBuffers:global integer);
+begin
+	if (noBuffers>0) then
+		buffer1 := Memory::GetMem($FFF);
+	if (noBuffers>1) then
+		buffer2 := Memory::GetMem($FFF);
+	if (noBuffers>2) then
+		buffer3 := Memory::GetMem($FFF);
+	if (noBuffers>3) then
+		buffer4 := Memory::GetMem($FFF);
+	if (noBuffers>4) then
+		buffer5 := Memory::GetMem($FFF);
+end;
+
+ procedure SetColor(color,red,green,blue:global byte);
+ begin
+  asm
+    Cli
+    mov dx,$3c8
+    mov al,[Screen_color]
+    out dx,al
+    inc dx
+    mov al,[Screen_red]
+    out dx,al
+    mov al,[Screen_green]
+    out dx,al
+    mov al,[Screen_blue]
+    out dx,al
+    Sti
+   end;
+ 
+end;
+
+
+procedure SetPaletteFromFile(fp:pointer);
+@donotremove colbuf
+var
+	colbuf :array[256*30] of byte;
+	tp : pointer of byte;
+begin
+	tp := #colbuf;
+	handle := File::Open(fp);
+	File::Read(handle, $300, #colbuf);
+	File::Close(handle);
+	
+	for i:=0 to $300 do 
+	begin
+		tp[i]:=tp[i]/4;
+	end;		
+	j:=0;
+	for i:=0 to $100 do
+	begin
+		SetColor(i, tp[j], tp[j+1], tp[j+2]);
+		j+=3;
+	end;
+
+end;
+
+	
+
+procedure CopyVGABuffer32bit(source,dest:global pointer of integer);
+begin
+  asm
+  	cld
+  	push ds
+    les di,[Screen_dest]
+    lds si,[Screen_source]
+    mov ecx, 16000
+    rep movsd
+    pop ds
+  end;
+end;
+
+
+procedure ClearBuffer32bit(dest:global pointer of integer;_ax:integer);
+begin
+  asm
+    les di,[Screen_dest]
+    mov     cx, 16000
+    rep stosD
+  end;
+end;
+
+procedure CopyVGABuffer16bit(source,dest:global pointer of integer);
+begin
+  asm
+    push    ds
+    les di,[Screen_dest]
+    lds si,[Screen_source]
+    
+    mov     cx, 32000
+    Rep MovsW
+    pop     ds
+  end;
+end;
+
+
+procedure SetMode(i : global integer);
+begin
+	asm("
+		mov ax,[Screen_i]
+		int $10
+	");
+end;
+
+procedure PrintChar(ch : byte);
+begin
+	asm
+			mov	al,[Screen_ch]
+			mov	ah,0x0E
+			int	10h
+	
+	end;
+end;
+
+
+
+
+
+procedure PrintAx();
+begin
+asm
+	push ds
+	pusha
+	mov bx,$192
+	mov ds,bx
+printAx:		push	cx
+			mov	cx,4
+.printDigit:		
+			rol	ax,4
+			push	ax
+			movzx	eax,al
+			and	al,0xf
+			mov	al,[eax+.higits]
+			mov	ah,0x0E
+			int	10h
+			pop	ax
+			loop	.printDigit
+			pop	cx
+			
+
+			popa
+			pop ds
+			ret
+.higits:		db	"0","1","2","3","4","5","6","7"
+			db	"8","9","a","b","c","d","e","f"
+
+end;
+end;
+
+
+procedure PrintInt(i:global integer);
+begin
+	asm
+		mov ax,[Screen_i]
+	end;
+	PrintAx();
+	
+end;
+
+end.

@@ -40,6 +40,30 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("scrollx")) {
         ScrollX(as);
     }
+    if (Command("mod")) {
+        LoadVar(as,1);
+        as->Asm("mov bx,ax");
+        LoadVar(as,0);
+        as->Asm("div bx");
+        as->Asm("mov ax,dx");
+
+    }
+    if (Command("startirq")) {
+        PushPopAll(as,true);
+        as->Asm("push ds");
+        as->Asm("mov ax,192h ; reset DS ");
+        as->Asm("mov ds,ax");
+
+
+//        as->Asm("mov ax,[ds_register_saved]");
+  //      as->Asm("mov ds,ax");
+    }
+    if (Command("closeirq")) {
+        as->Asm("mov al,20h");
+        as->Asm("out 20h,al");
+        as->Asm("pop ds");
+        PushPopAll(as,false);
+    }
     if (Command("setpalette")) {
         as->Asm("mov dx,3c8h");
         LoadVar(as,0);
@@ -53,6 +77,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("out dx,al");
         as->Asm("Sti");
     }
+/*    if (Command("poke")) {
+        Poke(as);
+    }*/
     if (Command("setpixel")) {
 /*        Procedure Putpixel (X,Y : Integer; Col : Byte; P :Pointer);
         BEGIN
@@ -139,11 +166,14 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     }
 
-    if (Command("memcpyb"))
+    if (Command("memcpy8"))
         MemCpy(as, "b");
 
-    if (Command("memcpyw"))
+    if (Command("memcpy16"))
         MemCpy(as,"w");
+
+    if (Command("memcpy32"))
+        MemCpy(as,"d");
 
     if (Command("setcgapalette")) {
         as->Asm("mov ah, 0Bh");
@@ -153,20 +183,20 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("int 10h");
     }
 
-    if (Command("topointer")) {
+    if (Command("topointer") || Command("ptr")) {
         LoadVar(as,0);
-        disp->PushX();
+        as->Asm("mov es,ax");
         LoadVar(as,1);
-        disp->PopX();
+        as->Asm("mov di,ax");
     }
 
     if (Command("hi")) {
-        LoadAddress(as,0,true);
-        as->Asm("mov "+disp->getAx(m_node)+",ds");
+        LoadAddress(as,0,false);
+        as->Asm("mov "+disp->getAx(m_node)+",es");
     }
     if (Command("lo")) {
-        LoadAddress(as,0,true);
-        as->Asm("mov "+disp->getAx(m_node)+",si");
+        LoadAddress(as,0,false);
+        as->Asm("mov "+disp->getAx(m_node)+",di");
     }
     if (Command("nosound")) {
         as->Comment("No sound");
@@ -253,8 +283,59 @@ void MethodsX86::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         as->Asm("sti");
 
     }
+    if (Command("SetInterrupt")) {
+
+        as->Asm("cli");
+//        QSharedPointer<NodeProcedure> addr = (QSharedPointer<NodeProcedure>)dynamic_cast<QSharedPointer<NodeProcedure>>(m_node->m_params[0]);
+  //      QString name = addr->m_procedure->m_procName;
+
+        as->Comment("Install new ISR");
+        as->Asm("mov al," + m_node->m_params[0]->getValue(as));
+        as->Asm("mov ah,25h");
+//        as->Asm("lea dx, ["+name+"]");
+        as->Asm("mov dx, "+m_node->m_params[1]->getValue(as));
+        as->Asm("int 21h");
+
+        as->Asm("sti");
+
+    }
 
 }
+
+void MethodsX86::PushPopAll(Assembler* as,bool isPush)
+{
+
+    if (Syntax::s.m_currentSystem->is286()) {
+        if (isPush)
+            as->Asm("pusha");
+        else
+            as->Asm("popa");
+        return;
+    }
+
+    if (isPush) {
+        as->Asm("push ax");
+        as->Asm("push bx");
+        as->Asm("push cx");
+        as->Asm("push dx");
+        as->Asm("push es");
+        as->Asm("push di");
+        as->Asm("push ds");
+        as->Asm("push si");
+    }
+    else {
+        as->Asm("pop si");
+        as->Asm("pop ds");
+        as->Asm("pop di");
+        as->Asm("pop es");
+        as->Asm("pop dx");
+        as->Asm("pop cx");
+        as->Asm("pop bx");
+        as->Asm("pop ax");
+    }
+
+}
+
 
 bool MethodsX86::Command(QString name)
 {
@@ -272,6 +353,7 @@ void MethodsX86::LoadVar(Assembler *as, int paramNo)
     }
 
     m_node->m_params[paramNo]->Accept(m_dispatcher);
+    as->Term();
 
 }
 
@@ -289,16 +371,17 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
 
         if (m_node->m_params[paramNo]->isPureVariable()) {
             if (m_node->m_params[paramNo]->isPointer(as)) {
-                as->Asm("push ax");
+                as->Asm("l"+es+" "+ di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
+/*                as->Asm("push ax");
                 as->Asm("mov ax,["+m_node->m_params[paramNo]->getValue(as)+"]");
                 as->Asm("mov "+es+",ax");
                 as->Asm("pop ax");
-                as->Asm("mov "+di+",["+m_node->m_params[paramNo]->getValue(as)+"+2]");
+                as->Asm("mov "+di+",["+m_node->m_params[paramNo]->getValue(as)+"+2]");*/
                 return;
             }
 
-        as->Asm("mov ax,ds");
-        as->Asm("mov es,ax");
+//        as->Asm("mov ax,ds");
+ //       as->Asm("mov es,ax");
 
         as->Asm("lea "+di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
         return;
@@ -401,13 +484,47 @@ void MethodsX86::AddInitMethod(Assembler *as, QString name, QString file)
 void MethodsX86::MemCpy(Assembler *as, QString type)
 {
     as->Comment("Memcpy");
+    as->Asm("push ds");
     LoadVar(as,2);
+
     as->Asm("push ax");
-    LoadAddress(as, 0,true);
     LoadAddress(as, 1,false);
+    LoadAddress(as, 0,true);
     as->Asm("pop cx");
 
     as->Asm("rep movs"+type);
+    as->Asm("pop ds");
 
 }
 
+/*void MethodsX86::Poke(Assembler* as)
+{
+    if (m_node->m_params[0]->isPureNumeric() &&
+            m_node->m_params[1]->isPureNumeric() &&
+            m_node->m_params[1]->getValueAsInt(as)==0) {
+
+        LoadVar(as,2);
+        as->Asm("ld ["+m_node->m_params[0]->getValue(as)+"],a");
+        return;
+    }
+
+
+    LoadAddress(as,0);
+    //        as->Asm("ld a,"+m_node->m_params[1]->getValue(as));
+    as->Term();
+    if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0) {
+        LoadVar(as,2);
+        as->Asm("ld [hl],a");
+        return;
+    }
+    LoadVar(as,1);
+    as->Term();
+    as->Asm("ld e,a");
+    as->Asm("ld d,0");
+    as->Asm("add hl,de");
+    LoadVar(as,2);
+    as->Asm("ld [hl],a");
+
+
+}
+*/

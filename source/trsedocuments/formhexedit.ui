@@ -166,19 +166,37 @@
        </item>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Display width (bytes)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Move around with arrow keys. 0-9 A-F to edit. &quot;i&quot; to insert, &quot;Delete&quot; to remove item</string>
-       </property>
-      </widget>
+     <item row="3" column="0">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="leStart">
+         <property name="inputMask">
+          <string>HHHHHHHHH</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="leEnd">
+         <property name="inputMask">
+          <string>HHHHHHHHH</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Export start address:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>end:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="0" column="0">
       <widget class="QSlider" name="sldSize">
@@ -190,10 +208,31 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Display width (bytes)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Move around with arrow keys. 0-9 A-F to edit. &quot;i&quot; to insert, &quot;Delete&quot; to remove item</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Scale text</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="btnExport">
+       <property name="text">
+        <string>Export range to file</string>
        </property>
       </widget>
      </item>
@@ -212,7 +251,7 @@
           <x>0</x>
           <y>0</y>
           <width>600</width>
-          <height>361</height>
+          <height>329</height>
          </rect>
         </property>
        </widget>

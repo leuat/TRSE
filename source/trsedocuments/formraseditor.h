@@ -43,11 +43,12 @@
 #include "source/Compiler/systems/factorysystem.h"
 
 #include "source/Compiler/sourcebuilder.h"
-
+#include "dialogcustomwarning.h"
 #include <QThread>
 #include <QElapsedTimer>
 #include <QSharedPointer>
 #include <QTimer>
+
 namespace Ui {
     class FormRasEditor;
 }
@@ -120,6 +121,7 @@ public:
     void Build(bool isShadow=false) override;
     bool BuildDiskFiles(QStringList& d64Params, QString data);
     void Setup();
+    void VerifyCommodoreStartChange();
 
     void Focus() override;
 

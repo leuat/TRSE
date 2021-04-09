@@ -1,0 +1,22 @@
+unit Math;
+var
+
+function fixedDiv(d1, d2 : long) : long;
+begin
+asm
+  db $66; xor dx, dx
+  mov cx, word ptr D1 + 2
+  or cx, cx
+  jns @S
+  db $66; dec dx
+ @S:
+  mov dx, cx
+  mov ax, word ptr D1
+  db $66; shl ax, 16
+  db $66; idiv word ptr d2
+  db $66; mov dx, ax
+  db $66; shr dx, 16
+end;
+end;
+
+end.

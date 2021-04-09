@@ -31,6 +31,7 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/symboltable.h"
 #include "source/LeLib/util/cinifile.h"
+#include "source/Compiler/optimiser/postoptimiser.h"
 
 class MemoryBlock {
   public:
@@ -166,12 +167,15 @@ public:
     QVector<Appendix> m_extraBlocks;
     QSharedPointer<Appendix> m_chipMem;
     QSharedPointer<Appendix> m_hram;
-    QSharedPointer<Appendix> m_wram, m_sprram;
+    QSharedPointer<Appendix> m_wram, m_sprram, m_ram;
     QMap<QString,QSharedPointer<Appendix>> m_banks;
     QMap<QString, QString> m_lastRegister; // Last registers set
 
+    QSharedPointer<PostOptimiser> m_optimiser = nullptr;
+
     bool m_countCycles = false;
     int m_noBanks = 0;
+    static int m_prevCycles;
 
 
 
@@ -249,7 +253,7 @@ public:
 
     }
 
-    virtual int getLineCount() {return m_source.count();}
+    virtual int getLineCount();
     int CountCycles(QString s);
     virtual int CountInstructionCycle(QStringList s) {return 0;}
 
@@ -273,6 +277,7 @@ public:
     QString byte = "dc.b";
     QString word = "dc.w";
     QString llong = "dc.l";
+    QString ppointer = "dc.w";
 
     Assembler();
     virtual ~Assembler();
@@ -334,6 +339,12 @@ public:
     void ClearTerm() {
         m_term = "";
     }
+
+    /**
+     * Special optimization stuff
+     *
+    **/
+
 };
 
 #endif // ASSEMBLER_H

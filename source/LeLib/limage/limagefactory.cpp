@@ -24,8 +24,6 @@
 
 LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
 
-    //        qDebug() << "LIMageIO :: create " << colorType;
-
 
     if (t == LImage::Type::QImageBitmap)
         return new LImageQImage(colorType);
@@ -61,6 +59,7 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageAmiga(colorType,1);
     if (t == LImage::Type::OK64_256x256)
         return new LImageOK64(colorType);
+
     if (t == LImage::Type::X16_640x480)
         return new LImageX16(colorType);
     if (t == LImage::Type::NES)
@@ -85,6 +84,9 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageAmstradGeneric(colorType);
     if (t == LImage::Type::BBC)
         return new LImageBBC(colorType);
+    if (t == LImage::Type::VGA) {
+        return new LImageVGA(colorType);
+    }
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

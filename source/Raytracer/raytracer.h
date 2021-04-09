@@ -22,6 +22,7 @@ public:
     enum Pass { Image, Reflect, Shadow};
 //    void Raytrace(QImage& img);
     void Raymarch(QImage& img, int w, int h);
+    void Render(QImage& img);
 
     void LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name, bool invertN);
 

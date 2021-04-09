@@ -35,6 +35,7 @@ public:
     void Load(QString fn);
 
     void Parse();
+    QString ExportX86(QString fname, float scale, QVector3D shift);
 
     QString ExportAmigaVerts(QString vertices, float scale, QVector3D shift);
     QString ExportAmigaVertexNormals(QString filename, float scale);

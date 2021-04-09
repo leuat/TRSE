@@ -6,6 +6,7 @@ AsmZ80::AsmZ80()
     m_hram = QSharedPointer<Appendix>(new Appendix);
     m_wram = QSharedPointer<Appendix>(new Appendix);
     m_sprram = QSharedPointer<Appendix>(new Appendix);
+    m_ram = QSharedPointer<Appendix>(new Appendix);
 
     m_wram->Append("i_input_current:	DS	1",0);
     m_wram->Append("i_input_previous:	DS	1",0);
@@ -13,6 +14,7 @@ AsmZ80::AsmZ80()
     m_hram->m_isMainBlock = true;
     m_wram->m_isMainBlock = true;
     m_sprram->m_isMainBlock = true;
+    m_ram->m_isMainBlock = true;
     byte = "db";
     word = "dw";
     llong = "dl";
@@ -113,7 +115,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
   */
 
         //Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
-        if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram) {
+        if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram || m_currentBlock==m_ram) {
             Write(name+":" +"\t ds "+QString::number(count),0);
             m_currentBlock->m_dataSize+=count;
 
@@ -217,7 +219,6 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 }
 
 void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {
-//    qDebug() << "HERE" << name << initVal;
     Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
 }
 

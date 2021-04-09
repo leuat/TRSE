@@ -135,6 +135,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splash->m_seconds = m_iniFile->getdouble("splash_seconds");
     QTimer::singleShot(10, this, SLOT(ShowSplash()));
 
+//    setWindowTitle(Util::GetSystemPrefix());
+
+
 //    ui->qsplitter->setSizes(QList<int>() << 5<<15<<10000);
 
 }
@@ -616,7 +619,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     if (isExternal) {
         testFilename = fileName;
         testFilename = testFilename.split(Data::data.unitPath).last();
-        testFilename = "[external]"+Data::data.unitPath+testFilename.remove(getProjectPath());
+        testFilename = "[ext]"+Data::data.unitPath+testFilename.remove(getProjectPath());
     }
 
 //    qDebug() << fileName;
@@ -649,6 +652,9 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     }
     if (fileName.contains(".bin") || fileName.contains(".prg"))  {
         editor = new FormHexEdit(this);
+    }
+    if (fileName.contains(".trt"))  {
+        editor = new FormTTREdit(this);
     }
     editor->m_currentDir = m_currentPath+"/";
     if (!isExternal)
@@ -1020,6 +1026,10 @@ void MainWindow::setupIcons()
     m_icons["flf"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["flf"] = QColor(c1,c4,c4);
 
+    img.load(":resources/images/image_icon.png");
+    m_icons["trt"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["trt"] = QColor(c4,c5,c1);
+
     img.load(":resources/images/paw_icon.png");
     m_icons["paw"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["paw"] = QColor(c2,c4,c3);
@@ -1206,6 +1216,16 @@ bool MainWindow::SaveAs()
     updatePalette();
 
     return true;
+}
+
+void MainWindow::SaveAllRas()
+{
+    for (auto doc:m_documents) {
+        if (dynamic_cast<FormRasEditor*>(doc)!=nullptr)
+            if (doc->m_currentSourceFile!="")
+                if (!doc->m_currentFileShort.toLower().endsWith("asm"))
+                   doc->SaveCurrent();
+    }
 }
 
 bool MainWindow::RemoveTab(int idx, bool save)
@@ -1411,7 +1431,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
@@ -1472,7 +1492,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
     if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")
-        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid") ) {
+        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid")|| file.toLower().endsWith(".trt") ) {
         LoadDocument(path + file);
     }
 
@@ -2112,6 +2132,7 @@ void MainWindow::on_btnBuildAll_clicked()
 {
     if (m_currentProject.m_filename=="")
         return;
+    SaveAllRas();
     BuildAll();
 }
 
@@ -2582,5 +2603,41 @@ void MainWindow::on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1
     else
         m_restrictRecentProjectsSystem = arg1;
     UpdateRecentProjects();
+
+}
+
+void MainWindow::on_actionTRSE_Tracker_File_trt_triggered()
+{
+
+    if (m_currentProject.m_filename=="") {
+        Messages::messages.DisplayMessage(Messages::messages.NO_PROJECT);
+        return;
+    }
+
+    DialogNewTRT* dNew = new DialogNewTRT(this);
+    dNew->exec();
+    if (dNew->cancel) {
+        delete dNew;
+        return;
+    }
+    FormTTREdit* editor = new FormTTREdit(this);
+    editor->InitDocument(nullptr, m_iniFile, m_currentProject.m_ini);
+    editor->m_currentSourceFile = "";
+    editor->m_currentFileShort = "";
+    editor->InitTRT(dNew->getChannels(), dNew->getRows());
+    ui->tabMain->addTab(editor, "New TRT");
+
+    editor->setFocus();
+    editor->showMaximized();
+
+    ui->tabMain->setCurrentWidget(editor);
+
+    //m_iniFile->setString("current_file", fileName);
+    //m_buildSuccess = false;
+    ui->tabMain->setTabsClosable(true);
+    m_documents.append(editor);
+    m_currentDoc = editor;
+    ConnectDocument();
+    delete dNew;
 
 }

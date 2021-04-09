@@ -1,0 +1,86 @@
+unit TrtPlayer;
+
+var
+	ptrOrder, ptrPattern, zp : pointer;
+	i, j, k : byte;
+	
+	noChannels, noRows : byte; 
+	curOrder, noOrder, curRow : byte; 
+	
+	// how fast to play the tune
+	speed, counter : byte;
+	
+	// set what voices to assign to each channel
+	chMap: array[ 4 ] of byte = ( 0, 1, 2, 3 );
+	
+
+procedure Initialize( zp : global pointer );
+begin
+	noChannels := zp[ 0 ];	// how many channels
+	noRows := zp[ 1 ];		// how many rows
+	noOrder := zp[ 2 ]; // * noChannels;	// number of orders
+	if ( noChannels = 2 ) then noOrder := noOrder << 1; // * 2
+	if ( noChannels = 4 ) then noOrder := noOrder << 2; // * 4
+
+	// set volume, leave aux colour intact
+	i:=peek(^$900E,0);
+	i:=i | (15);
+	poke(^$900E,0,i);	
+	
+	zp:=zp+5; //3 + 2
+	
+	ptrPattern := zp + noOrder; // skip past the order array to the pattern data
+
+	// controls the speed of the music playback
+	speed := 8;
+	counter := 0;
+	
+	ptrOrder := zp;  // current order pointer
+	curOrder := 0; // order number
+	curRow := 0; // row within pattern
+ 
+end;
+
+
+procedure Play();
+begin
+
+	// delay until read next row in the pattern
+	counter := counter + 1;
+	if ( counter < speed ) then
+		return;
+		
+	counter := 0;
+	
+	for i:=0 to noChannels do
+	begin
+	
+		// Get current order
+		j := ptrOrder[ curOrder + i ];
+		
+		// Point to correct pattern
+		if ( noRows = 8 ) then k := j << 3; // 8 rows per pattern
+		if ( noRows = 16 ) then k := j << 4; // 16 rows per pattern
+		if ( noRows = 32 ) then k := j << 5; // 32 rows per pattern
+		zp := ptrPattern + k;	
+		
+		j := zp[ curRow ]; // get note
+		k := chMap[ i ]; // what voice channel to play on
+		poke( ^$900a, k, j ); // Play note!
+		
+	end;
+	
+	curRow:=curRow+1;
+	if ( curRow = noRows ) then
+	begin
+	
+		curRow := 0;
+		curOrder := curOrder + noChannels;
+		if (curOrder=noOrder) then curOrder := 0; //Reset to start of song
+
+	end;	
+
+end;
+
+
+end.

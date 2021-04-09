@@ -17,7 +17,7 @@ public:
 
     void Assemble(Assembler* as, AbstractASTDispatcher* dispenser) override;
 
-
+    void PushPopAll(Assembler* as, bool isPush);
 
 
     bool Command(QString name) override;
@@ -36,6 +36,8 @@ public:
     void MemCpy(Assembler* as, QString type);
 
     void InitPlaynote(Assembler* as);
+
+//    void Poke(Assembler* as);
 
 };
 

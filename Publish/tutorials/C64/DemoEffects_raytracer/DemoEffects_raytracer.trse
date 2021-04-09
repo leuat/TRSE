@@ -40,4 +40,6 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 compile_thread = 1
-open_files =, example5_single_sprite.ras, example5_single_sprite.fjo
+open_files = ,example4.fjo, example5_single_sprite.ras, example5_single_sprite.fjo
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/DemoEffects_raytracer/
+current_file = example4.fjo

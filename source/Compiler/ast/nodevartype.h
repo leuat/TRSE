@@ -44,7 +44,7 @@ public:
 
     NodeVarType(Token t, QString position,   Token arrayVarType,QStringList data);
     NodeVarType(Token t, QStringList data);
-    NodeVarType(Token t,  QString filename, QString position );
+    NodeVarType(Token t,  QString filename, QString position);
     NodeVarType(Token t,  QString initvalue );
 
     QString getValue(Assembler* as) override {

@@ -9,6 +9,10 @@ public:
     SystemC64(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) ;
     void DefaultValues() override;
 
+    int getDefaultBasicAddress() override {
+        return 0x801;
+    };
+    bool isCommodoreSystem() override  {return true;}
 
 
 };

@@ -67,6 +67,8 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
 
+    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
+
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
 
@@ -75,45 +77,28 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jne ";
 
+    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+        if (n->isWord(as)) return "word"; else return "byte";
+    }
+
     QString getJmp(bool isOffPage) override {
         return "jmp";
     }
     QString getCallSubroutine() override { return "call"; }
+    bool m_isPurePointer = false;
+    virtual QString getAx(QSharedPointer<Node> n);
+        virtual QString getAx(QString a, QSharedPointer<Node> n);
 
-    virtual QString getAx(QSharedPointer<Node> n) {
-        QString a = m_regs[m_lvl];
-        if (n->m_forceType==TokenType::INTEGER)
-            return a+"x";
-        if (n->getType(as)==TokenType::INTEGER)
-            return a+"x";
-        if (n->getType(as)==TokenType::ADDRESS)
-            return a+"x";
-        if (n->getType(as)==TokenType::INTEGER_CONST)
-            if (n->isWord(as))
-            return a+"x";
-//        if (n->isPureNumeric())
-  //          if (n->getValue()
-        return a+"l";
 
-    }
     virtual QString getX86Value(Assembler* as, QSharedPointer<Node> n) {
-        if (n->isPureVariable())
+        if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
 
     }
 
-    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
-        if (bop->m_op.m_type == TokenType::PLUS)
-            return "add";
-        if (bop->m_op.m_type == TokenType::MINUS)
-            return "sub";
-        if (bop->m_op.m_type == TokenType::DIV)
-            return "div";
-        if (bop->m_op.m_type == TokenType::MUL)
-            return "mul";
-        return " UNKNOWN BINARY OPERATION";
-    }
+
+    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
 
     void PushX() {
         if (m_lvl==3)
@@ -146,8 +131,10 @@ public:
 
 
     QString getReturn() override { return "ret";}
-    QString getReturnInterrupt() override { return "reti";}
+    QString getReturnInterrupt() override { return "iret";}
 
+
+    void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
 
 };
 #endif // ASTdispatcherX86_H

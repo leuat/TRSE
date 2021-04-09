@@ -49,7 +49,7 @@ begin
 	end;
 
 	centerx:=sine[kb]/2 + 50;
-	centery:=sine[kb+64]/3;
+	centery:=sine[(kb+64)&$FF]/3;
 
 	x:=sine[ka]/3;
 	y:=sine[ka+64]/3;

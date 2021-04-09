@@ -712,15 +712,18 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
 //    uchar binscii[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; // nibble pattern
     uchar petscii[16] = {32,124,126,226,108,225,127,251,123,255,97,236,98,254,252,224};
 
-//    int st = (start % m_charWidthDisplay) + (( start / m_charWidthDisplay));
+    width = width & 0b11111110; // must be even as we export in pairs, round down
+    int charWidth = ( ( width - 1 ) / 8 ) + 1; // how many character blocks
 
-    int blockRows = height * 4; // 2x2 pixels per bloc, so 4 rows to process per char
+//    int blockRows = height * 4; // 2x2 pixels per bloc, so 4 rows to process per char
+    height = height & 0b11111110; // must be even as we export in pairs, round down
+    int charHeight = height / 2; // export in pairs
 
     // loop for height
-    for (int r = 0; r < blockRows; r++ ) {
+    for (int r = 0; r < charHeight; r++ ) {
 
         // walk the characters
-        for (int c = 0; c < width; c++ ) {
+        for (int c = 0; c < charWidth; c++ ) {
 
             int pos = start + c + ( (r / 4) * m_charWidthDisplay );
             PixelChar& pc = m_data[pos];
@@ -731,14 +734,21 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
             // which pixel row?
             int i = (r % 4) * 2;
 
+            // end pos in 8 bits to process 3 = first pair (76xxxxxx), 2 = first two pairs (7654xxxx), 1 = first three pairs (765432xx), 0 = all four pairs (76543210)
+            int end = 0;
+            // last char, trim the number of bit pairs 0-3
+            if ( c == charWidth - 1 ) {
+                end = 3 - ( ( ( width - 1 ) & 7 ) >> 1 );
+            }
 
             if ( exportType != 2 ) {
 
-                // UNPACKED  METHOD -  4 chars per 8 pixels
+                // UNPACKED  METHOD -  upto 4 chars per 8 pixels
                 // go through the four bit blocks 2x2
+                //        bits [76 54 32 10]
                 // pairs row 0 [11 22 33 44]
                 // pairs row 1 [11 22 33 44]
-                for ( int p = 3; p >= 0; p-- ) {
+                for ( int p = 3; p >= end; p-- ) {
 
                     // generate a nibble 1
                     uchar r0 = PixelChar::reverse( pc.p[ i ] ) >> ( p * 2 ) & 0b11;
@@ -758,6 +768,8 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
                 // get two pixel rows
                 uchar rev0 = PixelChar::reverse( pc.p[ i ] );
                 uchar rev1 = PixelChar::reverse( pc.p[ i + 1 ] );
+//                uchar rev0 = pc.p[ i ];
+//                uchar rev1 = pc.p[ i + 1 ];
 
                 uchar b_76_0 = rev0 & 0b11000000;
                 uchar b_76_1 = rev1 & 0b11000000;
@@ -769,18 +781,24 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
                 uchar b_10_0 = rev0 & 0b00000011;
                 uchar b_10_1 = rev1 & 0b00000011;
 
-                uchar nibbleUpperA = (b_76_1) + (b_76_0 >> 2);
-                uchar nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);
+                uchar nibbleUpperA = 0;
+                uchar nibbleLowerA = 0;
 
-                uchar nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);
-                uchar nibbleLowerB = (b_10_1 << 2) + (b_10_0);
+                uchar nibbleUpperB = 0;
+                uchar nibbleLowerB = 0;
+
+                if ( end <= 3 ) nibbleUpperA = (b_76_1) + (b_76_0 >> 2);        // upper nibble
+                if ( end <= 2 ) nibbleLowerA = (b_54_1 >> 2) + (b_54_0 >> 4);   // lower nibble
+
+                if ( end <= 1 ) nibbleUpperB = (b_32_1 << 4) + (b_32_0 << 2);   // upper nibble
+                if ( end <= 0 ) nibbleLowerB = (b_10_1 << 2) + (b_10_0);        // lower nibble
 
                 uchar block0 = nibbleUpperA + nibbleLowerA;
                 uchar block1 = nibbleUpperB + nibbleLowerB;
 
-                // write two bytes
+                // write upto two bytes
                 data.append( block0 );
-                data.append( block1 );
+                if ( end <= 1 ) data.append( block1 );
 
             }
 
@@ -790,32 +808,6 @@ void MultiColorImage::PBMExport(QFile &file, int start, int width, int height, i
 
     file.write(data);
 
-        /*
-    for (int i=start;i<end;i++) { // walk characters
-
-        // Convert to POS in charset:
-        int x = i%m_charWidthDisplay; // return 0 -39
-        int y = height*((i/m_charWidthDisplay));
-        int pos = x + ( y * m_charWidthDisplay );
-
-        for (int j=0;j<height;j++) { // walk line height
-
-            // characters
-            if (pos>=0 && pos< m_charWidth*m_charHeight) {
-
-                PixelChar& pc = m_data[pos];
-                for (int i=0;i<8;i=i+2) {  // process 8 pixel lines in character data
-                    //data.append( PixelChar::reverse(pc.p[i]));
-                    unsigned char r0 = PixelChar::reverse(pc.p[i]);
-                    unsigned char r1 = PixelChar::reverse(pc.p[i+1]);
-                }
-            }
-            pos +=m_charWidthDisplay;
-        }
-        //        qDebug() << x << y;
-    }
-    */
-    //file.write(data);
 }
 
 // exports binary in a format suitable for VBM. It arranges by a complete row at a time rather than columns of 8 rows.
@@ -839,7 +831,7 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
                 PixelChar& pc = m_data[pos];
                 for (int i=0;i<8;i++) {  // process 8 pixel lines in character data
                     // VIC20 and Multicolor mode - swap bit
-                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7 )
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
                     else
                         data.append( PixelChar::reverse(pc.p[i]));
@@ -851,6 +843,8 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
     }
     file.write(data);
 }
+
+// exports the colour map, useful for screens
 void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int height, int lineHeight)
 {
 
@@ -883,33 +877,9 @@ void MultiColorImage::VBMExportColor(QFile &file, int start, int width, int heig
     }
     file.write(cdata);
 
-/*
-    for (int i=start;i<end;i++) { // walk characters
-
-        // Convert to POS in charset:
-        int x = i%m_charWidthDisplay;
-        int y = height*((i/m_charWidthDisplay));
-        int pos = x+y*m_charWidthDisplay;
-
-        // colour
-        int line = y  % 1;
-        if (m_colorList.m_type == LColorList::VIC20) line = y % 2; // for colour data
-
-        if (line == 0) { // process colour lines (will be every even line if vic 20)
-            if (pos>=0 && pos< m_charWidth*m_charHeight) {
-                PixelChar& pc = m_data[pos];
-                cdata.append( pc.c[ 3 ] ); // char selection colour
-            }
-        }
-
-        pos +=m_charWidthDisplay;
-
-        //        qDebug() << x << y;
-    }
-    file.write(cdata);
-    */
 }
 
+// exports a screen in VBM format,
 void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int height, int isMulticolor)
 {
     QByteArray data;
@@ -929,9 +899,9 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
                 PixelChar& pc = m_data[pos];
                 for (int i=0;i<8;i++) {
                     // VIC20 and Multicolor mode - swap bit
-                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor ==1)
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
-                    else\
+                    else
                         data.append( PixelChar::reverse(pc.p[i]));
                 }
                 pos +=m_charWidthDisplay;
@@ -1109,6 +1079,13 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
 
 }
 
+void MultiColorImage::SetHybridMode(bool checked) {
+    LImage::SetHybridMode(checked);
+    if (m_charset!=nullptr)
+        m_charset->SetHybridMode(checked);
+
+}
+
 int MultiColorImage::getCharAtPos(QPoint p, float zoom, QPointF center)
 {
 
@@ -1141,6 +1118,22 @@ void MultiColorImage::InitPens() {
 
     }
 
+    if (m_colorList.m_type==LColorList::VIC20 && m_type == LImage::LevelEditor) {
+        if (m_charset==nullptr) {
+            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+        }
+        else {
+//            QVector<int> keep = m_charset->m_colorList.getPenList();
+            m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+            m_colorList.CopyFrom(&m_charset->m_colorList);
+  //          for (int i=0;i<keep.count();i++)
+    //          m_colorList.setPen(i,keep[i]);
+//            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+        }
+        setBackground(getBackground());
+        return;
+    }
+
     if (m_colorList.m_type==LColorList::C64 || m_colorList.m_type==LColorList::VIC20) {
         if (m_charset==nullptr)
             m_colorList.SetC64Pens(m_bitMask == 0b11,(m_type==LImage::LImage::Type::CharMapMulticolor));
@@ -1149,12 +1142,18 @@ void MultiColorImage::InitPens() {
             m_colorList.CopyFrom(&m_charset->m_colorList);
         }
 
-//        qDebug() << "HERE" <<m_charset;
     }
-/*    qDebug() << "SETTING BACKGROUND " << getBackground();
-    for (int i=0;i<2;i++) {
-        qDebug() << "CURRENT PENS " << m_colorList.getPen(i);
-    }*/
+
+/*    if (m_colorList.m_type==LColorList::VIC20) {
+        if (m_charset==nullptr)
+            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+        else {
+            m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+            m_colorList.CopyFrom(&m_charset->m_colorList);
+        }
+
+    }
+*/
     setBackground(getBackground());
 
 }

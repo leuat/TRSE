@@ -107,7 +107,9 @@ public:
     Token _Id();
     Token Preprocessor();
     Token String();
+    Token InlineAsm();
     QString peek();
+    QString peek(int n);
     // GetNextToken is the main "tokenizer" that transforms the stream of characters into streams of tokens.
     Token GetNextToken();
 

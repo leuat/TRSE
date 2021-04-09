@@ -1,6 +1,7 @@
 program Music;
+@use "Screen"
 var
-	sidfile: incsid("resources/sid/courier.sid",2);
+	sidfile: incsid("resources/music/courier30.sid",2);
 	const useKernal:byte=0;
 
 /*
@@ -20,6 +21,8 @@ begin
 end;
 
 begin
+	Screen::Init();
+	Screen::EnableVIC4();
 	InitSid(sidfile_1_init);
 	setmemoryconfig(1,0,useKernal);
 	StartRasterChain(Raster1(),$50,useKernal);

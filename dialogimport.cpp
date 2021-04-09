@@ -160,6 +160,8 @@ void DialogImport::Convert()
                                     m_work.m_qImage->height(),
                                     m_image->m_colorList,
                                     m_contrast, m_shift, m_hsv, m_saturation, m_scale, useDither);
+
+
 //    m_output.m_qImage->save("/Users/leuat/test.png");
 //    qDebug() << m_image->m_width << m_output.m_qImage->width() << m_work.m_qImage->width();
     //exit(1);
@@ -204,7 +206,6 @@ void DialogImport::Convert()
         orgCols.CopyFrom(&org->m_colorList);
         m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4.0;
         m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4.0;
-
     }
 
 
@@ -482,7 +483,8 @@ void DialogImport::on_btnImport_2_clicked()
 {
     // Generate font
 //    m_bf.Test();
-    m_bf.Init(m_image->m_width, m_image->m_height);
+    m_bf.Init(m_image->m_width*m_image->m_scale, m_image->m_height);
+//    qDebug() << m_image->m_width << m_image->m_height;
     m_bf.RenderFont(ui->cmbFonts->currentText(),ui->leFontSize->text().toInt(),QFont::Normal,
                     ui->leFontCharsPerLine->text().toInt(),
                     ui->leFontCharsPerLColumn->text().toInt(),

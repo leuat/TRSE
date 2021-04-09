@@ -24,6 +24,7 @@ public:
     virtual void FixUp(QByteArray& ba);
 
 
+//    void InitPens() override;
 
 };
 

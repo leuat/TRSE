@@ -183,12 +183,17 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 
 void FormImageEditor::onPenChanged()
 {
-//    if (m_work.m_currentImage->m_image->m_colorList.getPen(1)==2)
-  //      return;
-//    m_work.m_currentImage->m_image->setBackground(m_work.m_currentImage->m_image->getBackground())
+
+
     m_work.m_currentImage->m_image->InitPens();
     m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+//    qDebug() << "INITING PENS";
+
     onImageMouseEvent();
+
+    updateCharSet();
+    Data::data.Redraw();
+//    onImageMouseEvent();
 
 }
 
@@ -467,6 +472,7 @@ void FormImageEditor::UpdateGrid()
 /*    if (!m_updateThread.m_drawGrid)
         return;
 */
+ //   qDebug() << xs << ys;
     m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,
                       m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
 //    qDebug() << m_work.m_currentImage->m_image->m_scaleX;
@@ -532,6 +538,7 @@ void FormImageEditor::Initialize()
 
     if (m_work.m_currentImage->m_image->m_type==LImage::Type::MultiColorBitmap ||
        m_work.m_currentImage->m_image->m_type==LImage::Type::HiresBitmap ||
+//            m_work.m_currentImage->m_image->m_type==LImage::Type::LevelEditor ||
             m_work.m_currentImage->m_image->m_type==LImage::Type::CharMapMulticolor
             ) {
 
@@ -574,6 +581,9 @@ void FormImageEditor::Initialize()
     //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
 //    SetSingleCharsetEdit();
 
+    QString gridSize = m_work.m_currentImage->m_image->getGridSize();
+    if (gridSize!="0x0")
+        ui->cbmGridSize->setCurrentText(gridSize);
 
     updateCharSet();
 
@@ -584,6 +594,12 @@ void FormImageEditor::Initialize()
 
 
     QTimer::singleShot(50, this, SLOT(InitAspect()));
+
+    //for (int i=0;i<100;i++)
+    //    Data::data.UpdatePens();
+    QTimer::singleShot(50, this, SLOT(onPenChanged()));
+
+//    m_work.m_currentImage->m_image->m_colorList.m_pens[1].
 
 }
 
@@ -1044,6 +1060,7 @@ void FormImageEditor::on_chkGrid_clicked(bool checked)
     m_updateThread.m_drawGrid=checked;
     SetFooterData(LImageFooter::POS_DISPLAY_GRID,m_updateThread.m_drawGrid);
 
+    UpdateGrid();
     Data::data.Redraw();
     Data::data.forceRedraw = true;
     emit onImageMouseEvent();
@@ -2478,7 +2495,7 @@ void FormImageEditor::on_btnSelectDefaultClearItm_clicked()
 
 }
 
-void FormImageEditor::on_cmbCharWidth_currentIndexChanged(const QString &arg1)
+void FormImageEditor::on_cmbCharWidth_currentTextChanged(const QString &arg1)
 {
     if (m_work.m_currentImage->m_image->getCharset()==nullptr)
         return;
@@ -2506,8 +2523,15 @@ void FormImageEditor::on_chkHybrid_clicked(bool checked)
     if (checked) {
         ui->chkDisplayMulticolor->setChecked(false);
     }
-    m_work.m_currentImage->m_image->m_colorList.m_isHybridMode = checked;
-
+    m_work.m_currentImage->m_image->SetHybridMode(checked);
     ui->chkDisplayMulticolor->setVisible(!checked);
     onPenChanged();
+}
+
+void FormImageEditor::on_cbmGridSize_currentTextChanged(const QString &arg1)
+{
+    m_work.m_currentImage->m_image->SetGridSize(arg1);
+    UpdateGrid();
+    Data::data.Redraw();
+    onImageMouseEvent();
 }

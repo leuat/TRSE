@@ -1,4 +1,4 @@
-unit BitmapGraphics;
+unit Gfx;
 
 @use "math/math"
 
@@ -6,8 +6,8 @@ var
 	const bank1 : address = $2000;
 	const bank2 : address = $6000;
 
-	const bank1_screen : address = bank1+$400;
-	const bank2_screen : address = bank2+$400;
+//	const bank1_screen : address = bank1+$400;
+//	const bank2_screen : address = bank2+$400;
 
 
 	xtablelow: array[160] of byte;
@@ -18,7 +18,7 @@ var
 	mask: array[200] of byte;
 	//	xi, yi: byte;
 
-	dx,dy,ai,bi,xi,yi : byte;
+	dx,dy,ai,bi,xi,yi,color : byte;
 	d, currbank:byte;
 	low, high, k, i, val : byte;
 	index, bitmapstart : integer;
@@ -36,22 +36,22 @@ var
 procedure putpixel3();
 begin
 	asm("
-	ldy BitmapGraphics_y1
-	ldx BitmapGraphics_x1
+	ldy Gfx_y1
+	ldx Gfx_x1
 	
-	lda BitmapGraphics_ytablelow,y
-	sta BitmapGraphics_addr
+	lda Gfx_ytablelow,y
+	sta Gfx_addr
 	
-	lda BitmapGraphics_ytablehigh,y
+	lda Gfx_ytablehigh,y
 	clc
-	adc BitmapGraphics_currbank
-	sta BitmapGraphics_addr+1
+	adc Gfx_currbank
+	sta Gfx_addr+1
 	
-	ldy BitmapGraphics_xtablelow,x
+	ldy Gfx_xtablelow,x
 	
-	lda (BitmapGraphics_addr),y
-	ora BitmapGraphics_mask,x
-	sta (BitmapGraphics_addr),y
+	lda (Gfx_addr),y
+	ora Gfx_mask,x
+	sta (Gfx_addr),y
 	
 	");
 	
@@ -62,24 +62,24 @@ end;
 procedure putpixel2();
 begin
 	asm("
-	ldy BitmapGraphics_y1
-	ldx BitmapGraphics_x1
+	ldy Gfx_y1
+	ldx Gfx_x1
 	
-	lda BitmapGraphics_ytablelow,y
+	lda Gfx_ytablelow,y
 	clc
-	adc BitmapGraphics_xtablelow,x
-	sta BitmapGraphics_addr
+	adc Gfx_xtablelow,x
+	sta Gfx_addr
 	
-	lda BitmapGraphics_ytablehigh,y
-	adc BitmapGraphics_currbank
-	adc BitmapGraphics_xtablehigh,x
-	sta BitmapGraphics_addr+1
+	lda Gfx_ytablehigh,y
+	adc Gfx_currbank
+	adc Gfx_xtablehigh,x
+	sta Gfx_addr+1
 	
 	ldy #$00
-	lda (BitmapGraphics_addr),y
+	lda (Gfx_addr),y
 	
-	ora BitmapGraphics_mask,x
-	sta (BitmapGraphics_addr),y
+	ora Gfx_mask,x
+	sta (Gfx_addr),y
 	");
 	
 end;
@@ -187,12 +187,12 @@ end;
 
 
 
-procedure Line ( x1, y1, x2, y2 : global byte);
+procedure Line ( x1, y1, x2, y2, color : global byte);
 begin
 	dx:=0;
 	dy:=0;
 	d:=0;
-	
+	//if (y1>=200 or y1>=200) then return;
 	if x1 < x2 then begin
 		xi := 1;
 		dx := x2 - x1;

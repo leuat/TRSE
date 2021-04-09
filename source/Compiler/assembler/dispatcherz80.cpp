@@ -61,7 +61,13 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
         as->Asm("ld hl,"+str);
         as->Asm("ld de,"+getValue(left));
         as->Label(lblCpy);
-        as->Asm("ld a,[hl+]");
+        if (isGB())
+            as->Asm("ld a,[hl+]");
+        else {
+            as->Asm("ld a,[hl]");
+            as->Asm("inc hl");
+
+        }
         as->Asm("ld [de],a");
         as->Asm("inc de");
   //      as->Asm("dec c");
@@ -405,6 +411,9 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVarDecl> node)
 
     if (t->m_flags.contains("sprram"))
         as->m_currentBlock = as->m_sprram;
+
+    if (t->m_flags.contains("ram"))
+        as->m_currentBlock = as->m_ram;
 
     if (t->m_flags.contains("bank")) {
         QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1

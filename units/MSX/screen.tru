@@ -1,0 +1,44 @@
+unit Screen;
+var
+	a,b,c : byte ram;
+	p1 : pointer ram;
+
+
+procedure SetColors(	a,b,c : global byte );
+begin
+	poke(forclr,0,a); // Text color
+	poke(bakclr,0,b); // background color
+	poke(bdrclr,0,c); // border color
+	call(chgclr); // Set colors
+end;
+
+procedure PrintString(p1:global pointer);
+begin
+	asm("
+	ld hl,[Screen_p1]
+_PrintLoop:
+	ld	a,(hl)		; Load the byte from memory at address indicated by HL to A.
+	and	a		; Same as CP 0 but faster.
+	ret	z		; Back behind the call print if A = 0
+	call	CHPUT		; Call the routine to display a character.
+	inc	hl		; Increment the HL value.
+	jr	_PrintLoop		; Relative jump to the address in the label Print.
+	
+	");
+end;
+
+
+procedure ClearScreen() inline;
+begin
+	asm(" XOR A");
+	call(CLS);
+end;
+
+procedure Wait(a: global byte);
+begin
+	for c:=0 to a do
+		for b:=0 to 255 do
+			asm(" nop");
+end;
+
+end.

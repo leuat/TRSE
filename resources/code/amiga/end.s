@@ -196,9 +196,12 @@ copbplcon0
    dc.w    $0100
 copper_resolution
    dc.w     $4200 
-copper_custom:
-    dc.l    $fffffffe
 
+copper_custom:
+    dc.w	$ffdf, $fffe
+    dc.w	$2401, $fffe
+    dc.w	$0100, $0200
+    dc.l    $fffffffe
 
 ;    dc.l    $2d01fffe, $01800000
  ;   dc.l    $8001fffe, $01002200

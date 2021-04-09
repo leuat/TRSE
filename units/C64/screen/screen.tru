@@ -1,14 +1,15 @@
 Unit Screen;
-
+var
 /*
 
 	Library for char-based screen handling
 
 */
 
-var
+//var
    	p1, sp, cp : pointer;
 	i, j, x, y, c : byte;
+	i2 : integer;
 
 /**
 	Prints a single character to the screen
@@ -52,6 +53,32 @@ begin
 		if (j>64 and j<64+32) then j:=j-64;
 		PrintSingleChar(j);
 	end;
+end;
+
+
+procedure WaitForRaster( i2 : global integer); 
+begin
+	
+	asm("	
+wait_for_raster:    
+	ldx Screen_i2
+ 	cpx $d012
+    bne *-3 
+
+	lda Screen_i2+1
+	clc
+	ror
+	ror
+	
+	sta Screen_c ; temp var
+	
+	lda $d011
+	and #%10000000
+	cmp Screen_c
+	
+	bne wait_for_raster
+	");
+
 end;
 
 end.

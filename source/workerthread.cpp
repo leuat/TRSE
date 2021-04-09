@@ -292,8 +292,14 @@ void WorkerThread::Continue()
 
 void WorkerThread::CreateGrid()
 {
-    if (m_drawGrid)
-        m_grid->CreateGrid(m_work->m_currentImage->m_image->getGridWidth(),m_work->m_currentImage->m_image->getGridHeight(),m_gridColor,2, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y())*m_gridScale,m_work->m_currentImage->m_image->m_scaleX);
+    if (m_drawGrid) {
+        int xs = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_X);
+        int ys = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_Y);
+        if (xs==0) xs++;
+        if (ys==0) ys++;
+
+        m_grid->CreateGrid(m_work->m_currentImage->m_image->getGridWidth()/xs,m_work->m_currentImage->m_image->getGridHeight()/ys,m_gridColor,2, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y())*m_gridScale,m_work->m_currentImage->m_image->m_scaleX);
+    }
     else
         m_grid->m_qImage->fill(0);
 }

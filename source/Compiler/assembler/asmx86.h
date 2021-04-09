@@ -10,11 +10,11 @@ class AsmX86 : public Assembler
 public:
     AsmX86();
     ~AsmX86() {}
-
+/*
     QString byte = "db";
     QString word = "dw";
     QString llong = "dl";
-
+*/
 
     void Connect() override;
 
@@ -29,6 +29,7 @@ public:
     void BinOP(TokenType::Type t, bool clearFlag=true) override;
     int CodeSizeEstimator(QStringList& lines) override {return 0;}
 
+    void DeclareString(QString name, QStringList initVal, QStringList flags) override;
 
     QString String(QStringList lst, bool term) override;
     void Label(QString s) override;

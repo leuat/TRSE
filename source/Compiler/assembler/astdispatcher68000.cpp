@@ -185,7 +185,8 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeUnaryOp> node)
         node->m_right->Accept(this);
     else {
         QSharedPointer<NodeNumber>n = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
-        n->m_val*=-1;
+        if (n!=nullptr)
+           n->m_val*=-1;
         node->m_right->Accept(this);
     }
 
@@ -547,7 +548,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeConditional> node)
 
 }
 */
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
+/*void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as,this);
 
@@ -590,7 +591,7 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeForLoop> node)
 
 
 }
-
+*/
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeVar> node)
 {
 //    LoadVariable(node);
@@ -1090,6 +1091,20 @@ bool ASTDispatcher68000::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node
 void ASTDispatcher68000::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
 
+    //IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
+    //Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
+    QString var = nodeA->m_left->getValue(as);
+    QString stepVal = "#1";
+    if (step!=nullptr) {
+        if (!step->isPure())
+            ErrorHandler::e.Error("Step value must be either a variable or numeric!");
+        stepVal = step->getValue(as);
+    }
+    TransformVariable(as,"add",var, stepVal);
+    LoadVariable(nodeB);
+    TransformVariable(as,"cmp",as->m_varStack.pop(),var);
+    as->Asm("bne "+lblJump);
+
 }
 
 
@@ -1223,11 +1238,12 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
         size = f.size();  //when file does open.
         f.close();
     }
+    QString wname = filename;
     if (t->m_position=="") {
         as->Asm(" 	CNOP 0,4");
 
         as->Label(v->getValue(as));
-        as->Asm("incbin \"" + filename + "\"");
+        as->Asm("incbin \"" + wname + "\"");
         as->Asm(" 	CNOP 0,4");
     }
     else {
@@ -1241,7 +1257,7 @@ void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {
         as->Asm(" 	CNOP 0,4");
 
         as->Label(v->getValue(as));
-        as->Asm("incbin \"" + filename + "\"");
+        as->Asm("incbin \"" + wname + "\"");
         as->Asm(" 	CNOP 0,4");
 /*        bool ok;
         int start=0;

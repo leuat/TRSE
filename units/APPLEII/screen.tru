@@ -1,0 +1,22 @@
+unit Screen;
+
+var
+	x,y, i,j : byte;
+//	ytab : array[20] of integer = BuildTable("0x0400 + 7*40*(i%7)");
+	ytab : array[20] of integer = BuildTable("0x0400 + 40*i");
+	ptr : pointer;
+/*	
+procedure MoveToY(x,y : global byte);
+begin
+//	ptr:=ytab[y]+x;
+end;
+*/
+procedure MoveToY(x,y : global byte);
+begin
+	ptr:=ytab[y]+x;
+end;
+
+
+end.
+
+

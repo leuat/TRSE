@@ -593,5 +593,16 @@
         <file>resources/images/portraits/ninja.png</file>
         <file>resources/images/portraits/leuat_small.png</file>
         <file>resources/text/help/r/pbmexport.rtf</file>
+        <file>resources/images/MSX.png</file>
+        <file>resources/bin/apple2/disk.do</file>
+        <file>resources/images/APPLEII.png</file>
+        <file>resources/bin/apple2/stripped.do</file>
+        <file>resources/bin/apple2/ac.jar</file>
+        <file>resources/images/portraits/dead_astronaut_small.png</file>
+        <file>resources/images/portraits/dead_astronaut.png</file>
+        <file>resources/images/portraits/turk_grey.png</file>
+        <file>resources/text/adlib_instruments.txt</file>
+        <file>resources/text/help/r/invert.rtf</file>
+        <file>resources/code/6502/mul8bit_signed.asm</file>
     </qresource>
 </RCC>

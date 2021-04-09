@@ -1,6 +1,6 @@
 Unit DemoTools;
 var
-	i,j,k,time,t2:byte =0;
+	i,j,k,time,t2,trans:byte =0;
 	maxTime,isDone : byte = 0;
 
 
@@ -15,7 +15,7 @@ end;
 
 procedure InitEffect(maxTime : global byte);
 begin
-
+	trans:=maxTime;
 	time:=0;
 	t2:=0;
 	isDone := 0;
@@ -26,6 +26,7 @@ begin
 	inc(time);
 	if (time&7=0) then inc(t2);
 	if (t2=maxTime) then isDone := true;
+	trans:=maxTime-t2;
 end;
 
 

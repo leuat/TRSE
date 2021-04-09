@@ -69,7 +69,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
 //    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
-
+    UpdateSystem();
 
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
     //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
@@ -307,6 +307,7 @@ void DialogProjectSettings::on_pushButton_clicked()
     Messages::messages.DisplayMessage(Messages::messages.PROJECT_BUILDER_HELP,true);
 }
 
+
 void DialogProjectSettings::on_btnNESLoadCharFile_2_clicked()
 {
 
@@ -365,12 +366,34 @@ void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
         ui->tabConfigs->setCurrentIndex(4);
     if (index==6)
         ui->tabConfigs->setCurrentIndex(6);
+
+    UpdateSystem();
 /*    if (index==7)
         ui->tabConfigs->setCurrentIndex(6);*/
+}
+void DialogProjectSettings::UpdateSystem()
+{
+    QString s = ui->cmbSystem->currentText().toLower();
+    if (s=="C64" || s=="C128" || s =="VIC20" || s=="PET" || s=="PLUS4") {
+        ui->leProgramStartAddress->setVisible(false);
+        ui->leBasicStartAddress->setVisible(true);
+        ui->lblBasicStub->setVisible(false);
+        ui->lblProgramStartAddress->setVisible(true);
+        ui->lblProgramStartAddress->setText("Program start address");
+    }
+    else {
+        ui->leProgramStartAddress->setVisible(true);
+        ui->leBasicStartAddress->setVisible(false);
+        ui->lblBasicStub->setVisible(true);
+        ui->lblProgramStartAddress->setVisible(false);
+        ui->lblBasicStub->setText("Program start address");
+
+    }
+
 }
 
 void DialogProjectSettings::on_chkIgnoreBasic_clicked(bool checked)
 {
-    ui->leBasicStartAddress->setEnabled(!checked);
-    ui->leBasicStartAddress->setVisible(!checked);
+//    ui->leBasicStartAddress->setEnabled(!checked);
+//    ui->leBasicStartAddress->setVisible(!checked);
 }

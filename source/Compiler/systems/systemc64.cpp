@@ -28,7 +28,7 @@ SystemC64::SystemC64(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
 
 void SystemC64::DefaultValues()
 {
-    m_startAddress = 0x0800;
+    m_startAddress = getDefaultBasicAddress();
     m_programStartAddress = 0x0810;
     m_ignoreSys = false;
     m_stripPrg = false;

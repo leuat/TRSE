@@ -157,7 +157,6 @@ public:
     bool ContainsBranches(QString l1);
 
 
-    int getLineCount() override;
 
 
     MOSOperation GetOperand(QStringList s);

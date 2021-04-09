@@ -257,7 +257,10 @@ QColor Util::toColor(QVector3D c) {
 QString Util::GetSystemPrefix()
 {
     QString dir = "";
-
+    dir = QApplication::applicationDirPath();
+    if (dir.toLower().endsWith("release") || dir.toLower().endsWith("debug"))
+        dir = "";
+    else dir+=QDir::separator();
 #ifdef __linux__
     dir = Util::path;
 #endif
@@ -331,6 +334,21 @@ int Util::isEqual(QColor a, QColor b) {
         return 0;
 
     return 1;
+}
+
+void Util::WriteInt32(QByteArray &ba, int val)
+{
+    ba.append((val>>24)&0xFF);
+    ba.append((val>>16)&0xFF);
+    ba.append((val>>8)&0xFF);
+    ba.append((val)&0xFF);
+
+}
+void Util::WriteInt16(QByteArray &ba, int val)
+{
+    ba.append((val>>8)&0xFF);
+    ba.append((val)&0xFF);
+
 }
 
 QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst)
@@ -409,7 +427,16 @@ void Util::CopyFile(QString i, QString o) {
         ff.remove();
     }
     QFile::copy(i,o);
+    QFile::setPermissions(i, QFileDevice::ReadOwner|QFileDevice::WriteOwner);
+}
 
+void Util::CopyFileBytes(QString i, QString o) {
+    if (QFile::exists(o)) {
+        QFile ff(o);
+        ff.remove();
+    }
+    QByteArray a = loadBinaryFile(i);
+    SaveByteArray(a,o);
 }
 
 bool Util::CopyRecursively(QString sourceFolder, QString destFolder)
@@ -773,6 +800,42 @@ bool Util::Mollweide(QVector3D &out, float i, float j, float l0, float R, float 
 */
     return false;
 
+}
+
+int Util::getInt16(QByteArray &ba, int pos)
+{
+    return ((uchar)ba[pos+1]<<8) | (uchar)ba[pos];
+}
+
+void Util::setInt16(QByteArray &ba, int pos, int val)
+{
+    ba[pos+1] = (val>>8)&0xFF;
+    ba[pos] = (val)&0xFF;
+}
+
+void Util::appendInt16(QByteArray &ba, int val)
+{
+    ba.append((val)&0xFF);
+    ba.append((val>>8)&0xFF);
+
+}
+
+QStringList Util::ByteArrayToHexQStringList(QByteArray &ba)
+{
+    QStringList l;
+    for (int i=0;i<ba.size();i++) {
+        l<<Util::numToHex((uchar)ba[i]).remove("$");
+    }
+    return l;
+}
+
+QByteArray Util::HexQStringListToByteArray(QStringList &lst)
+{
+    QByteArray ba;
+    for (QString s:lst) {
+        ba.append((uchar)Util::NumberFromStringHex(s));
+    }
+    return ba;
 }
 
 QPoint Util::mapToWindow(QWidget *from, QPoint pt) {

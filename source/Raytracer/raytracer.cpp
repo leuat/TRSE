@@ -88,6 +88,13 @@ int cmpfunc (const AbstractRayObject * a, AbstractRayObject * b) {
 */
 
 
+void RayTracer::Render(QImage &img)
+{
+    for (auto* o : m_objects)
+        if (dynamic_cast<RayObjectRegular3D*>(o)!=nullptr){
+            o->Render(m_camera,img);
+        }
+}
 
 
 
@@ -165,6 +172,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
 */
 }
+
 
 void RayTracer::LoadMesh(QString fn, float scale, QVector3D orgPos, Material mat, QString name, bool invertN)
 {

@@ -39,7 +39,7 @@ NodeVarType::NodeVarType(Token t, QStringList data) : Node() {
 
 }
 
-NodeVarType::NodeVarType(Token t, QString filename, QString position) : Node() {
+NodeVarType::NodeVarType(Token t, QString filename, QString position ) : Node() {
     m_op = t;
     value = t.m_value;
     m_filename = filename;
@@ -70,6 +70,11 @@ void NodeVarType::VerifyFlags(bool isProcedureParameter) {
             // only works for strings
             if (!(m_op.m_type==TokenType::STRING  || m_op.m_type==TokenType::CSTRING))
                 ErrorHandler::e.Error("Type flag 'no_term' is only allowed for strings.",m_op.m_lineNumber);
+        }
+        if (f=="invert") {
+            // only works for cstrings
+            if (!(m_op.m_type==TokenType::CSTRING))
+                ErrorHandler::e.Error("Type flag 'invert' is only allowed for cstrings.",m_op.m_lineNumber);
         }
     }
     // Individual type tests

@@ -12,8 +12,12 @@ public:
         m_system = PLUS4;
         DefaultValues();
     }
+    int getDefaultBasicAddress() override {
+        return 0x1001;
+    };
+
     void DefaultValues() override {
-        m_startAddress = 0x1000;
+        m_startAddress = getDefaultBasicAddress();
         m_programStartAddress = 0x1010;
         m_ignoreSys = false;
         m_stripPrg = false;

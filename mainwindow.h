@@ -48,6 +48,7 @@
 #include "source/trsedocuments/formfjong.h"
 #include "source/trsedocuments/formpaw.h"
 #include "source/trsedocuments/formhexedit.h"
+#include "source/trsedocuments/formttredit.h"
 #include "source/dialogtrsesettings.h"
 #include "source/messages.h"
 #include "source/LeLib/limage/movieconverter.h"
@@ -64,7 +65,7 @@
 #include <QFileSystemWatcher>
 #include <source/LeLib/lglslideshow.h>
 #include "source/dialogsplash.h"
-
+#include "source/dialognewtrt.h"
 namespace Ui {
 class MainWindow;
 }
@@ -190,7 +191,7 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid";
+    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt";
 
     TRSEDocument* m_currentDoc = nullptr;
 
@@ -250,7 +251,7 @@ public slots:
     void acceptBuild() {
         //ui->lblBuild->setHidden(false);
         //QTimer::singleShot(500, ui->lblBuild, &QLabel::hide);
-
+        SaveAllRas();
     }
     void OpenProjectSettings();
     void ClearSymbols();
@@ -277,6 +278,7 @@ public slots:
 
     void UpdateRecentProjects();
     bool SaveAs();
+    void SaveAllRas();
 
     bool RemoveTab(int, bool save=true);
     void LoadProject(QString filename);
@@ -442,6 +444,8 @@ private slots:
 
 
     void on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1);
+
+    void on_actionTRSE_Tracker_File_trt_triggered();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

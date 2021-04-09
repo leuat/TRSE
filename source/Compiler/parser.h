@@ -56,6 +56,7 @@
 #include "source/LeLib/util/tool.h"
 #include "source/LeLib/limage/compression.h"
 #include "source/LeLib/util/SimplexNoise.h"
+#include "source/LeLib/ttrfile.h"
 //#include "source/Compiler/sourcebuilder.h"
 
 class ParserBlock {
@@ -84,7 +85,7 @@ class Parser : public QObject {
     Q_OBJECT
 public:
     int m_tick = 0;
-
+    QVector<int> div2s = QVector<int>() <<2 <<4<<8<<16<<32<<64<<128<<256<<512<<1024;
     QVector<ParserBlock> m_parserBlocks;
     static QStringList s_usedTRUs, s_usedTRUNames;
     QMap<QString, LMacro> m_macros;
@@ -129,6 +130,9 @@ public:
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree;
+
+    QMap<QString, QSharedPointer<Node>> m_types;
+
     QString WashVariableName(QString v);
 
 
@@ -208,6 +212,7 @@ public:
 //    void AppendComment(QSharedPointer<Node> n);
 
     QVector<QSharedPointer<Node>> ConstDeclaration();
+    QSharedPointer<Node> TypeDeclaration();
     //QSharedPointer<Node> LogicalClause();
     QSharedPointer<Node> Block(bool useOwnSymTab, QString blockName="");
     QSharedPointer<Node> BlockNoCompound(bool useOwnSymTab, QString blockName="");
@@ -231,10 +236,12 @@ public:
     void HandleExportPalette();
     void HandleSetCompressionWeights();
     void HandleMacro();
+    void HandleExecute();
     void HandlePerlinNoise();
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleCompress();
     void HandleExportParallaxData();
     void HandleExportBW();
     void HandleBuildPaw();
@@ -247,7 +254,6 @@ public:
     void HandleSpriteCompiler();
     void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
-    void HandleExecute();
     void HandleAKGCompiler();
     void HandleUseTPU(QString fileName);
     void Eat();

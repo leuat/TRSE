@@ -16,48 +16,50 @@
 #include "source/trsedocuments/trsedocument.h"
 #include "source/LeLib/util/cinifile.h"
 
+class DataStorage
+{
+    public:
+        virtual ~DataStorage() {}
+        virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
+        virtual void setData(std::size_t position, unsigned char val) = 0;
+        virtual std::size_t size() = 0;
+    void Insert(int index, uchar val) {
+        m_data.insert(index,val);
+    }
+    void Delete(int index) {
+        m_data.remove(index,1);
+    }
+    QByteArray    m_data;
+};
+
+
+class DataStorageArray: public DataStorage
+{
+    public:
+        DataStorageArray(const QByteArray &arr);
+        virtual void setData(std::size_t position, unsigned char val);
+        virtual QByteArray getData(std::size_t position, std::size_t length);
+        virtual std::size_t size();
+};
+
+class DataStorageFile: public DataStorage
+{
+    public:
+        DataStorageFile(const QString &fileName);
+        virtual void setData(std::size_t position, unsigned char val);
+        virtual QByteArray getData(std::size_t position, std::size_t length);
+        virtual std::size_t size();
+    private:
+        QFile      m_file;
+};
+
+
 class HexView: public QAbstractScrollArea
 
 {
     public:
         TRSEDocument* m_doc = nullptr;
 
-        class DataStorage
-        {
-            public:
-                virtual ~DataStorage() {}
-                virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
-                virtual void setData(std::size_t position, unsigned char val) = 0;
-                virtual std::size_t size() = 0;
-            void Insert(int index, uchar val) {
-                m_data.insert(index,val);
-            }
-            void Delete(int index) {
-                m_data.remove(index,1);
-            }
-            QByteArray    m_data;
-        };
-
-
-        class DataStorageArray: public DataStorage
-        {
-            public:
-                DataStorageArray(const QByteArray &arr);
-                virtual void setData(std::size_t position, unsigned char val);
-                virtual QByteArray getData(std::size_t position, std::size_t length);
-                virtual std::size_t size();
-        };
-
-        class DataStorageFile: public DataStorage
-        {
-            public:
-                DataStorageFile(const QString &fileName);
-                virtual void setData(std::size_t position, unsigned char val);
-                virtual QByteArray getData(std::size_t position, std::size_t length);
-                virtual std::size_t size();
-            private:
-                QFile      m_file;
-        };
 
 
         QString valid = "abcdef0123456789";
@@ -92,7 +94,7 @@ class HexView: public QAbstractScrollArea
         void mousePressEvent(QMouseEvent *event);
 
 public:
-        DataStorage          *m_pdata;
+        DataStorage          *m_pdata = nullptr;
 private:
         std::size_t           m_posAddr;
         std::size_t           m_posHex;

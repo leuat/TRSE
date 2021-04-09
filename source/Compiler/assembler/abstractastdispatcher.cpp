@@ -45,8 +45,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
  /*   if (m_ticks++%8==0)
         emit EmitTick(".");
 */
-
     node->DispatchConstructor(as,this);
+    as->ClearTerm();
     LineNumber(node->m_op.m_lineNumber);
  //   AbstractASTDispatcher::dispatch(node);
 
@@ -150,6 +150,12 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
     auto v = qSharedPointerDynamicCast<NodeVar>(nVar->m_left);
     if (v == nullptr )
         ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
+
+//    qDebug() <<(Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502);
+  //  qDebug() <<nVar->isWord(as) << nVar->getValue(as);
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 && nVar->m_left->isWord(as)) {
+        ErrorHandler::e.Warning("Using integer '"+nVar->m_left->getValue(as)+"' as a for loop index can result in unpredictable behavior on the 6502. Please keep to using byte indicies, and use pointers to cover data > 255 bytes. See the TRSE tutorials for examples.", node->m_op.m_lineNumber);
+    }
 
      QString var = v->getValue(as);//  m_a->Build(as);
     // Perform assigment
@@ -498,14 +504,20 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedureDecl> node)
     if (node->m_returnValue!=nullptr) {
         if (node->m_returnType->getValue(as).toLower()=="integer")
             node->m_returnType->setForceType(TokenType::INTEGER);
+        as->ClearTerm();
         node->m_returnValue->Accept(this);
+        as->Term();
     }
 
     if (!isInitFunction) {
+
         if (node->m_type==0) {
             as->Asm(getReturn());
         }
-        else as->Asm(getReturnInterrupt());
+        else {
+ //           as->Asm(endInterrupt());
+            as->Asm(getReturnInterrupt());
+        }
     }
 
     if (node->m_curMemoryBlock!=nullptr) {
@@ -719,7 +731,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 
                         if (t->m_flag==1 && (!as->m_symTab->m_records.contains(typeVal)))
                             typeVal="const";
-
                         as->DeclareVariable(v->value, typeVal, t->initVal,t->m_position);
 
                         if (t->m_flag==1)

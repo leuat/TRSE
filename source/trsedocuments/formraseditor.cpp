@@ -176,6 +176,21 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         emu = m_iniFile->getString("amstradcpc464_emulator");
 
     }
+    if (m_projectIniFile->getString("system")=="MSX") {
+        emu = m_iniFile->getString("msx_emulator");
+    }
+    if (m_projectIniFile->getString("system")=="APPLEII") {
+        emu = m_iniFile->getString("appleii_emulator");
+        QString fn = Util::getFileWithoutEnding(fileName) + ".do";
+        if (QFile::exists(fn))
+            fn = QFileInfo(fn).absoluteFilePath();
+
+        if (emu.toLower().contains("microm8")) {
+            params = QStringList() <<"-launch" <<fn;
+            qDebug() << params;
+        }
+
+    }
     if (m_projectIniFile->getString("system")=="COLECO") {
         emu = m_iniFile->getString("coleco_emulator");
 
@@ -323,6 +338,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     ui->txtEditor->m_displayCycles = m_iniFile->getdouble("display_cycles")==1;
     ui->txtEditor->m_displayAddresses = m_iniFile->getdouble("display_addresses")==1;
 
+
 }
 
 
@@ -346,7 +362,7 @@ void FormRasEditor::setupEditor()
 //    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.width(' '));
 
 //    qDebug() << "FILE " <<m_currentSourceFile;
-    if (m_currentFileShort.contains("[external]")) {
+    if (m_currentFileShort.contains("[ext]")) {
         ui->txtOutput->setHtml("<font color=\"#FF8020\"><b>WARNING: </b></font>You are currently editing an <font color=\"#FF8020\">internal and global TRSE unit</font> that is probably being used by other projects. </font>");
     }
 
@@ -360,6 +376,7 @@ void FormRasEditor::Compress()
 void FormRasEditor::Build(bool isShadow)
 {
     // Enforce pause between builds
+
     FocusOnOutput();
     if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
         return;
@@ -371,6 +388,8 @@ void FormRasEditor::Build(bool isShadow)
 
     if (!isShadow)
         SaveCurrent();
+
+//    VerifyCommodoreStartChange();
 
 
     if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier))
@@ -533,6 +552,27 @@ void FormRasEditor::Setup()
     setupEditor();
 }
 
+void FormRasEditor::VerifyCommodoreStartChange()
+{
+    if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::PET)) return;
+
+    QString iniField = "ignoremessage_commodore_start_change";
+    if (m_projectIniFile->getdouble("override_target_settings")==1) {
+        if (!(m_projectIniFile->contains(iniField) && m_projectIniFile->getdouble(iniField)==1)) {
+            qDebug() << "HERE" << m_projectIniFile->getdouble("override_target_settings");
+            DialogCustomWarning* d = new DialogCustomWarning();
+            d->Init("Project Warning","A BASIC SYS start address has been specified in the project settings that is invalid."
+" Please use [default] instead.",iniField,m_projectIniFile.get());
+            d->exec();
+            delete d;
+        }
+    }
+}
+
 void FormRasEditor::Focus() {
     ui->txtEditor->setFocus();
 }
@@ -592,9 +632,11 @@ void FormRasEditor::Run()
     if (m_projectIniFile->getString("system")=="SPECTRUM")
         filename = m_currentSourceFile.split(ft)[0] + ".tap";
     if (m_projectIniFile->getString("system")=="X86")
-        filename = m_currentSourceFile.split(ft)[0] + ".com";
+        filename = m_currentSourceFile.split(ft)[0] + ".exe";
     if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
+    if (m_projectIniFile->getString("system")=="MSX")
+        filename = m_currentSourceFile.split(ft)[0] + ".rom";
     if (m_projectIniFile->getString("system")=="COLECO")
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (m_projectIniFile->getString("system")=="TIKI100")

@@ -317,9 +317,33 @@ Token Lexer::String()
 
 }
 
+Token Lexer::InlineAsm()
+{
+    QString result="";
+    bool finished = false;
+    while (!finished) {
+        result +=m_currentChar;
+        QString next3  =peek(1) + peek(2) + peek(3)+peek(4);
+        if (next3.toLower()=="end;")
+            finished = true;
+        Advance();
+    }
+    return Token(TokenType::STRING, result);
+
+}
+
+
 QString Lexer::peek()
 {
     int k=m_pos+1;
+    if (k>=m_text.length())
+        return "";
+    return QString(m_text[k]);
+}
+
+QString Lexer::peek(int n)
+{
+    int k=m_pos+n;
     if (k>=m_text.length())
         return "";
     return QString(m_text[k]);

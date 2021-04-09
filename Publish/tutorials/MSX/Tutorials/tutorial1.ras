@@ -1,0 +1,25 @@
+program Tutorial1;
+@use "Screen"
+var
+
+	text : string = "WHOO TRSE ON THE MSX";	
+	
+	v1,zero1,zero2,v2,v3: byte ram;
+	
+
+
+
+begin
+	Screen::ClearScreen();
+	Screen::SetColors(2,0,0); // text, bg, border
+	
+	Screen::PrintString(#text);
+	Screen::Wait(100);
+	v1:=13;
+	while (true) do
+	begin
+		Screen::PrintString(v1);
+		v1:=v1+1;
+		Screen::Wait(16);
+	end;
+end.

@@ -156,7 +156,6 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
     StartMemoryBlock(org);
 
 
-
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
@@ -181,11 +180,11 @@ void AsmMOS6502::Program(QString programName, QString vicConfig)
         else {
 
             // new method
-            Asm(".byte $00 ; fill $xxx0");
+            //Asm(".byte $00 ; fill $xxx0");
             Asm( ".byte $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
             Asm( ".byte $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
-            Asm(".byte $0a ; line 10");
-            Asm(".byte $00, $9e, $20 ; SYS token");
+            Asm(".byte $0a, $00 ; line 10 (lo, hi)");
+            Asm(".byte $9e, $20 ; SYS token and a space");
             // write PETSCII / ASCII representation of address to call
             Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
             Asm(".byte $00, $00, $00 ; end of program");
@@ -371,18 +370,12 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
         // First check if current is a pure number
         if (curOutData == "")
             curOutData = "\tdc.b\t";
-/*        if (curIdx==0) {
-            QString cc = curStr[curIdx];
-            if (cc.count()<=3 && Syntax::s.isDigitHex(cc)) {
-                s+=cc + ", ";
-                curIdx = cc.length();
-            }
 
-        }*/
         bool isNumber = false;
         if (curStr.startsWith("*&NUM")) {
             curStr = curStr.remove("*&NUM"); // Remove the number tag
             int val = curStr.toInt(&isNumber);
+            if (flags.contains("invert")) val |= +128;
             if (isNumber) {
                 //Write(" dc.b " + curStr);
                 //qDebug() << "IS NUMBER : " << isNumber;
@@ -402,7 +395,9 @@ void AsmMOS6502::DeclareCString(QString name, QStringList initVal, QStringList f
 
                 if (m_cstr.contains(c)) {
                     uchar sc = m_cstr[c].m_screenCode;
+                    if (flags.contains("invert")) sc |= 128;
                     curOutData+=Util::numToHex(sc);
+
                 }
             }
 
@@ -1326,24 +1321,6 @@ bool AsmMOS6502::ContainsBranches(QString l1)
             || l1.startsWith("jmp") || l1.startsWith("bra")
             || l1.startsWith("beq") || l1.startsWith("bvc");
 
-}
-
-int AsmMOS6502::getLineCount()
-{
-    int lc = 0;
-    for (QString s: m_source) {
-        s=s.remove("\n");
-        s=s.remove("\t");
-        s=s.trimmed();
-        if (s=="")
-            continue;
-        if (s.startsWith(";"))
-            continue;
-        if (s.startsWith("//"))
-            continue;
-        lc++;
-    }
-    return lc;
 }
 
 int AsmMOS6502::CountInstructionCycle(QStringList s)

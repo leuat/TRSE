@@ -101,7 +101,7 @@ public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
-                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC, AmstradCPCGeneric, BBC};
+                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC, AmstradCPCGeneric, BBC, VGA};
 
 
     enum WriteType { Color, Character };
@@ -207,7 +207,7 @@ public:
     bool m_updateCharsetPosition = false;
     bool m_forcePaintColorAndChar = true;
 
-    QPoint m_copySize = QPoint(512,512);
+    static QPoint m_copySize;
     static uchar m_copy[];
 
     virtual int getGridWidth() {
@@ -261,6 +261,11 @@ public:
     }
 
 
+    virtual void SetHybridMode(bool checked) {
+        m_colorList.m_isHybridMode = checked;
+
+    }
+
     virtual void ConstrainColours(QVector<int>& cols) {
 
 
@@ -279,6 +284,9 @@ public:
     virtual void RenderEffect(QMap<QString, float> params) {}
 
     virtual void CopyChar();
+
+    void SetGridSize(QString size);
+    QString getGridSize();
 
     virtual void PasteChar();
 

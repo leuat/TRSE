@@ -44,6 +44,7 @@ public:
     bool redrawInput=false;
     bool forceRedraw = false;
     bool redrawFileList = false;
+    bool demomode = false;
     bool abort = false;
     int imageEvent = 0;
     bool requestSaveAs = false;

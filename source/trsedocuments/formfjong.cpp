@@ -8,6 +8,7 @@ FormFjong::FormFjong(QWidget *parent) :
     ui->setupUi(this);
 
     m_type = FJONG;
+    m_fileExtension = "fjo";
 
     ui->txtEditor->setFont(m_font);
 }

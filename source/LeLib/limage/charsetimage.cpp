@@ -87,7 +87,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_updateCharsetPosition = true;
     m_colorList.m_isCharset = true;
     EnsureSystemColours();
-    InitPens();
+//    InitPens();
 
 }
 
@@ -832,3 +832,8 @@ void CharsetImage::setBackground(unsigned int col)
         m_charset->setBackground(col);
 }
 
+/*void CharsetImage::InitPens()
+{
+    MultiColorImage::InitPens();
+}
+*/

@@ -128,6 +128,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 11;
   if (t==BBC)
       return 12;
+  if (t==VGA)
+      return 13;
 
   return 255;
 }
@@ -160,6 +162,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return AMSTRADCPC;
     if (c==12)
         return BBC;
+    if (c==13)
+        return VGA;
 
     return UNSUPPORTED;
 
@@ -380,6 +384,10 @@ void LColorList::Initialize(Type t)
         InitAmstradCPC();
     if (m_type == Type::BBC)
         InitBBC(16);
+    if (m_type == Type::VGA)
+        InitVGA();
+
+
 
 
     m_metric = new LinearMetric();
@@ -435,8 +443,8 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
     }
     if (m_type==VIC20) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Border",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"AUX",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"AUX",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Border",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
     }
 
@@ -462,6 +470,54 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
                 //m_pens[3]->m_and =0x255;
 
             }
+        }
+ //       if (m_type == C64)
+
+    }
+
+}
+
+void LColorList::SetVIC20Pens(bool m_isMulticolor)
+{
+    QVector<int> oldList = getPenList();
+    // Make sure old data is kept!
+    for (int i=0;i<4;i++) {
+        if (i>=oldList.count())
+            oldList.append(i);
+    }
+    m_pens.clear();
+    LPen::Type type = LPen::DisplayAllExceptAlreadySelected;
+
+    if ((m_isMulticolor && m_isCharset) || m_isHybridMode)
+        type = LPen::DisplayAll;
+
+
+    bool allZero = true;
+    for (auto v : oldList)
+        if (v!=0)
+            allZero = false;
+
+//    qDebug() << oldList;
+    if (allZero)
+        return;
+
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"AUX",LPen::Dropdown)));
+//    qDebug() << "BORDER:  "<<oldList[1];
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Border",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
+
+
+
+
+    if (!m_isMulticolor && !m_isHybridMode) {
+        m_pens[1]->Hide(true);
+        m_pens[2]->Hide(true);
+    }
+    else { // IS multicolor
+        if (m_type == VIC20 && !m_isHybridMode) {
+            //m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
+            m_pens[3]->m_and =0x7;
         }
  //       if (m_type == C64)
 
@@ -515,15 +571,32 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_list.count();i++)
         m_list[i] = other->m_list[i];
 
-//    m_pens = other->m_pens;
     m_pens.resize(other->m_pens.count());
-    for (int i=0;i<m_pens.count();i++)
+    for (int i=0;i<m_pens.count();i++) {
         m_pens[i] = other->m_pens[i];
+    }
 
 
 
-//    m_curPal = other->m_curPal;
-//    m_nesPPU = other->m_nesPPU;
+}
+
+void LColorList::CopyFromKeep(LColorList *other)
+{
+
+    m_list.resize(other->m_list.count());
+    for (int i=0;i<m_list.count();i++)
+        m_list[i] = other->m_list[i];
+
+    QVector<int> vals;
+    for (auto p:m_pens)
+        vals<< p->m_colorIndex;
+    m_pens.resize(other->m_pens.count());
+    for (int i=0;i<m_pens.count();i++) {
+        m_pens[i] = other->m_pens[i];
+        m_pens[i]->m_colorIndex = vals[i];
+    }
+
+
 
 }
 
@@ -616,23 +689,23 @@ void LColorList::InitVIC20()
 {
     m_list.clear();
 
-
-    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
-    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
-    m_list.append(LColor(QColor(0x78, 0x29, 0x22),""));
-    m_list.append(LColor(QColor(0x87, 0xd6, 0xdd),""));
-    m_list.append(LColor(QColor(0xaa, 0x5f, 0xb6),""));
-    m_list.append(LColor(QColor(0x55, 0xa0, 0x49),""));
-    m_list.append(LColor(QColor(0x40, 0x31, 0x8d),""));
-    m_list.append(LColor(QColor(0xbf, 0xce, 0x72),""));
-    m_list.append(LColor(QColor(0xaa, 0x74, 0x49),""));
-    m_list.append(LColor(QColor(0xea, 0xb4, 0x89),""));
-    m_list.append(LColor(QColor(0xb8, 0x69, 0x62),""));
-    m_list.append(LColor(QColor(0xc7, 0xff, 0xff),""));
-    m_list.append(LColor(QColor(0xea, 0x9f, 0xf6),""));
-    m_list.append(LColor(QColor(0x94, 0xe0, 0x89),""));
-    m_list.append(LColor(QColor(0x80, 0x71, 0xcc),""));
-    m_list.append(LColor(QColor(0xff, 0xff, 0xb2),""));
+    // updated with vice colours
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));    // black
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),"")); // white ffffff
+    m_list.append(LColor(QColor(0xb8, 0x21, 0x12),"")); // red b82212
+    m_list.append(LColor(QColor(0x70, 0xf2, 0xfb),"")); // cyan 70f2fb
+    m_list.append(LColor(QColor(0xad, 0x25, 0xff),"")); // purple ad25ff
+    m_list.append(LColor(QColor(0x7b, 0xef, 0x00),"")); // green 7bef00
+    m_list.append(LColor(QColor(0x3b, 0x24, 0xff),"")); // blue 3b24ff
+    m_list.append(LColor(QColor(0xf8, 0xff, 0x00),"")); // yellow f8ff00
+    m_list.append(LColor(QColor(0xcd, 0x6f, 0x00),"")); // orange cd6f00
+    m_list.append(LColor(QColor(0xff, 0xc5, 0x51),"")); // light orange ffc551
+    m_list.append(LColor(QColor(0xff, 0x9b, 0x91),"")); // pink ff9b91
+    m_list.append(LColor(QColor(0xab, 0xff, 0xff),"")); // light cyan abffff
+    m_list.append(LColor(QColor(0xff, 0x92, 0xff),"")); // light purple ff92ff
+    m_list.append(LColor(QColor(0xbd, 0xff, 0x3c),"")); // light green bdff3c
+    m_list.append(LColor(QColor(0xa1, 0x90, 0xff),"")); // light blue a190ff
+    m_list.append(LColor(QColor(0xff, 0xff, 0x49),"")); // light yellow ffff49
 
 
     for (int i=0;i<8;i++)
@@ -682,6 +755,26 @@ void LColorList::InitCGA1_HIGH()
 }
 
 void LColorList::InitOK64()
+{
+    m_list.clear();
+    float s = 1; // saturation
+    for (int i=0;i<256;i++) {
+        int b = (i&0b11100000);
+        int g = (i&0b00011000)<<3;
+        int r = (i&0b00000111)<<5;
+
+        int c = (r+g+b)/3;
+        r = Util::minmax(c+(r-c)*s,0,255);
+        g = Util::minmax(c+(g-c)*s,0,255);
+        b = Util::minmax(c+(b-c)*s,0,255);
+
+        m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
+    }
+    DefaultPen(LPen::FixedSingle);
+
+}
+
+void LColorList::InitVGA()
 {
     m_list.clear();
     float s = 1; // saturation
@@ -1123,6 +1216,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
 
 
         QWidget* widget = nullptr;
+//        qDebug() << "PEN COLOR:  " << getPen(i);
         widget = m_pens[i]->CreateUI(getPenColour(i),width,xx,yy, m_list);
 
         if (widget!=nullptr) {

@@ -11,9 +11,12 @@ class SystemMOS6502 : public AbstractSystem
 {
 public:
     SystemMOS6502(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
-        m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
-        m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
+        m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert";
+        m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global";
         m_supportsExomizer = true;
+        m_registers << "_a"<<"_x" <<"_y" <<"_ax" <<"_ay" <<"_xy";
+        m_canRunAsmFiles = true;
+
 
     }
 

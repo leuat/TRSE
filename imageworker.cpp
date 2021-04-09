@@ -34,6 +34,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Charmap", "c64",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
 //    m_types.append(ImageType("Hires Charmap", "c64",LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Charmap", "vic20",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
+    m_types.append(ImageType("PBM Image", "pet",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
 //    m_types.append(ImageType("Hires Charmap", "vic20",LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation", "c64",LImage::Type::FullScreenChar,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation", "vic20",LImage::Type::FullScreenChar,LColorList::Type::C64));
@@ -60,6 +61,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("160x200 16 color Amstrad CPC", "amstradcpc464",LImage::Type::AmstradCPC,LColorList::Type::AMSTRADCPC));
     m_types.append(ImageType("generic NxM color Amstrad", "amstradcpc464",LImage::Type::AmstradCPCGeneric,LColorList::Type::AMSTRADCPC));
     m_types.append(ImageType("BBC Image", "bbcm",LImage::Type::BBC,LColorList::Type::BBC));
+    m_types.append(ImageType("VGA 320x200", "x86",LImage::Type::VGA, LColorList::Type::VGA));
 
 //    m_types.append(ImageType("Hybrid multicolor/hires charset", "c64",LImage::Type::HybridCharset,LColorList::Type::C64));
   //  m_types.append(ImageType("Hybrid multicolor/hires charset", "vic20",LImage::Type::HybridCharset,LColorList::Type::VIC20));
@@ -133,7 +135,6 @@ void ImageWorker::New(LImage* img, int image)
 //    exit(1);
 
     m_currentImage = new ImageEdit(img, &m_types[image], "New Image");
-
     m_currentImage->Initialize(img);
     m_images.append(m_currentImage);
     m_currentImage->m_fileName="";

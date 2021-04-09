@@ -40,12 +40,14 @@ public:
     AbstractSystem() {
 
     }
+    QStringList m_registers;
     AbstractSystem(AbstractSystem* a);
     QMap<QString, QString> m_systemParams;
     QElapsedTimer timer;
     QString m_orgOutput;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
+    bool m_canRunAsmFiles = false;
 
     QMap<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;
@@ -59,7 +61,11 @@ public:
 
 //    virtual void getEmulatorAndParams(QString emulator, QStringList params) = 0;
 
-    QString CompressLZ4(QString fileName);
+    QString CompressLZ4(QString fileName) {
+        return CompressLZ4(fileName, fileName +"_c");
+    }
+    QString CompressLZ4(QString fileName, QString outFileName);
+
 
     virtual void InitSystemPreprocessors(QMap<QString, QString>& defines)  {};
     virtual QString CompressFile(QString fileName) {
@@ -80,11 +86,21 @@ public:
         return true;
     }
 
+    virtual bool isCommodoreSystem()  {return false;}
+    virtual int getDefaultBasicAddress() { return 0;}
+
+    virtual bool is486() { return false;}
+    virtual bool is386() { return false;}
+    virtual bool is286() { return false;}
+    virtual bool is8088() { return false;}
+
+
     void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false);
 
     static void InitLabelColors();
+ //   virtual bool hasFixedProgramAddress() {return true;}
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC464, COLECO, MEGA65, ATARI800, MSX, APPLEII};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80};
 
     static QString StringFromProcessor(Processor s) {
@@ -98,11 +114,11 @@ public:
     }
 
     static QString StringFromProcessor(QString s) {
-        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "MEGA65" || s == "BBCM" || s=="ATARI800") return "MOS6502";
+        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "MEGA65" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII") return "MOS6502";
         if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
         if (s == "X86") return "PX86";
         if (s == "GAMEBOY") return "GBZ80";
-        if (s == "AMSTRADCPC464" || s == "TIKI100" || s == "SPECTRUM" || s =="COLECO") return "Z80";
+        if (s == "AMSTRADCPC464" || s == "TIKI100" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
         qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
         return "";
     }

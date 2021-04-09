@@ -177,7 +177,7 @@ public:
 
     void VDCWrite(Assembler* as);
     void VDCInit(Assembler* as);
-
+    void Muls8x8(Assembler* as);
 
 
 

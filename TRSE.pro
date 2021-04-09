@@ -39,6 +39,9 @@ macx{
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
+#    QMAKE_LFLAGS += -F /Library/Frameworks
+#    LIBS += -framework SDL2
+
     LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib -lomp
     DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
@@ -59,6 +62,7 @@ macx{
    INCLUDEPATH += /usr/local/include/
    INCLUDEPATH += /opt/homebrew/include/
 
+#   LIBS +=  -L/Users/leuat/code/sdl-x86/Versions/A -lSDL2
 
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/opt/homebrew/include/
@@ -121,13 +125,17 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
+    source/Compiler/optimiser/postoptimiser.cpp \
+    source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/systems/systemamstradcpc464.cpp \
+    source/Compiler/systems/systemappleii.cpp \
     source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systematari520st.cpp \
     source/Compiler/systems/systematari800.cpp \
     source/Compiler/systems/systembbcm.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemgameboy.cpp \
+    source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systemspectrum.cpp \
@@ -159,10 +167,14 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagemetachunk.cpp \
     source/LeLib/limage/limagenes.cpp \
     source/LeLib/limage/limageok64.cpp \
+    source/LeLib/limage/limagevga.cpp \
     source/LeLib/limage/limagex16.cpp \
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
     source/LeLib/limage/ssim.cpp \
+#    source/LeLib/miniaudio.c \
+#    source/LeLib/miniaudio_engine.c \
+    source/LeLib/ttrfile.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
     source/LeLib/util/lz4/lz4hc.c \
@@ -176,14 +188,22 @@ SOURCES += main.cpp\
     source/dialogexport3d.cpp \
     source/dialoginfo.cpp \
     source/dialognewproject.cpp \
+    source/dialognewtrt.cpp \
     source/dialogselectcharset.cpp \
     source/dialogsimplelineedit.cpp \
     source/dialogsplash.cpp \
     source/formhelp.cpp \
+    source/mynth/ma_context.cpp \
     source/toolbox.cpp \
     source/toolboxitem.cpp \
+    source/trsedocuments/dialogcustomwarning.cpp \
     source/trsedocuments/formhexedit.cpp \
+    source/trsedocuments/formttredit.cpp \
     source/trsedocuments/helpdocumentbuilder.cpp \
+    source/trsedocuments/ttrview.cpp \
+    source/trsetracker/dialogtrseinstrumenteditor.cpp \
+    source/trsetracker/ttrplayer.cpp \
+    source/trsetracker/widgetpattern.cpp \
     source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
@@ -309,6 +329,7 @@ SOURCES += main.cpp\
     source/Raytracer/particles.cpp \
     source/Compiler/sourcebuilder.cpp \
     source/Compiler/projectbuilder.cpp \
+    source/mynth/mynthesizer.cpp \
     source/dialogprojectbuilder.cpp
 
 
@@ -336,13 +357,17 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
+    source/Compiler/optimiser/postoptimiser.h \
+    source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/systems/systemamstradcpc464.h \
+    source/Compiler/systems/systemappleii.h \
     source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systematari520st.h \
     source/Compiler/systems/systematari800.h \
     source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemgameboy.h \
+    source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systemspectrum.h \
@@ -374,10 +399,13 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagemetachunk.h \
     source/LeLib/limage/limagenes.h \
     source/LeLib/limage/limageok64.h \
+    source/LeLib/limage/limagevga.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
     source/LeLib/limage/ssim.h \
+    source/LeLib/miniaudio.h \
+    source/LeLib/ttrfile.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
     source/LeLib/util/lz4/lz4hc.h \
@@ -391,14 +419,25 @@ HEADERS  += mainwindow.h \
     source/dialogexport3d.h \
     source/dialoginfo.h \
     source/dialognewproject.h \
+    source/dialognewtrt.h \
     source/dialogselectcharset.h \
     source/dialogsimplelineedit.h \
     source/dialogsplash.h \
     source/formhelp.h \
+#    source/LeLib/miniaudio_engine.h \
+    source/mynth/ma_context.h \
+    source/mynth/mynth_osc.h \
+    source/mynth/mynthesizer.h \
     source/toolbox.h \
     source/toolboxitem.h \
+    source/trsedocuments/dialogcustomwarning.h \
     source/trsedocuments/formhexedit.h \
+    source/trsedocuments/formttredit.h \
     source/trsedocuments/helpdocumentbuilder.h \
+    source/trsedocuments/ttrview.h \
+    source/trsetracker/dialogtrseinstrumenteditor.h \
+    source/trsetracker/ttrplayer.h \
+    source/trsetracker/widgetpattern.h \
     source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \
@@ -535,11 +574,14 @@ FORMS    += mainwindow.ui \
     source/dialogexport3d.ui \
     source/dialoginfo.ui \
     source/dialognewproject.ui \
+    source/dialognewtrt.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \
     source/dialogsplash.ui \
     source/formhelp.ui \
+    source/trsedocuments/dialogcustomwarning.ui \
     source/trsedocuments/formhexedit.ui \
+    source/trsedocuments/formttredit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
     source/dialogtrsesettings.ui \
@@ -556,7 +598,9 @@ FORMS    += mainwindow.ui \
     source/dialogeffects.ui \
     source/trsedocuments/formfjong.ui \
     source/dialogcolors.ui \
-    source/dialogprojectbuilder.ui
+    source/dialogprojectbuilder.ui \
+    source/trsetracker/dialogtrseinstrumenteditor.ui \
+    source/trsetracker/widgetpattern.ui
 
 RESOURCES += \
     resources.qrc
@@ -813,6 +857,7 @@ DISTFILES += \
     resources/text/help/r/incsid.rtf \
     resources/text/help/r/integer.rtf \
     resources/text/help/r/interrupt.rtf \
+    resources/text/help/r/invert.rtf \
     resources/text/help/r/long.rtf \
     resources/text/help/r/of.rtf \
     resources/text/help/r/offpage.rtf \

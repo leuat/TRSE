@@ -17,16 +17,16 @@ begin
 	
 
 	
-	memcpyw(#data,screen_cga, 8000); // Display the original image. 
+	memcpy16(#data,screen_cga, 8000); // Display the original image. 
 	//Wait a bit
 	for y:=0 to 80 do waitforverticalblank();
 
 
 	// Set p2 to point to the center of the screen somewhere	
 	// Point to scanlines 0
-	p2:=toPointer($B850,0);
+	p2:=ptr($B850,0);
 	// Point to scanlines 2
-	p3:=toPointer($BA40,0);
+	p3:=ptr($BA40,0);
 	while (true) do
 	begin
 		// Cycle the two palettes at various intervals
@@ -34,27 +34,27 @@ begin
 		if (time=128) then setcgapalette($100);
 
 		// Calculate an y sine				
-		y:=sine[time]/8;
+		y:=sine[time&$FF]/8;
 		// Multiply with scanlines
 		y:=y*80;
 
 
-		// Copy scanlines 0 data			
-		p1:=toPointer(hi(#data), lo(#data) + y);		
+		// Copy scanlines 0 data	
+		p1:=ptr(hi(#data), lo(#data)+y);		
 		// Copy image data (only every single scanline, )
-		memcpyw(p1,p2, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
+		memcpy16(p1,p2, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
 
 
 		// Calculate an y sine with shift
-		y:=sine[time+64]/8;
+		y:=sine[(time+64)&$FF]/8;
 		// Multiply with scanlines
 		y:=y*80;
 
 
 		// Copy scanlines 2 data			
-		p1:=toPointer(hi(#data), lo(#data)+70*80-y);		
+		p1:=ptr(hi(#data), lo(#data)+70*80-y);		
 		// Copy image data (only every single scanline, )
-		memcpyw(p1,p3, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
+		memcpy16(p1,p3, 40*70); // Copy the data, 70 lines in total (70*40 words = 70*40*2 bytes)
 		// Wait for vertical blank		
 		waitforverticalblank();
 

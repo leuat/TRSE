@@ -32,7 +32,7 @@
 //#include <omp.h>
 uchar LImage::m_copy[1024*1024];
 bool LImage::m_hasCopy = false;
-
+QPoint LImage::m_copySize = QPoint(512,512);
 LImage::LImage(LColorList::Type t)
 {
     m_colorList.Initialize(t);
@@ -94,6 +94,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 25;
     if (t==BBC)
         return 26;
+    if (t==VGA)
+        return 27;
 
 
     return 255;
@@ -155,6 +157,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Amstrad Generic NxM";
     if (t==BBC)
         return "BBC";
+    if (t==VGA)
+        return "VGA";
 
 
     return "Unknown image type";
@@ -218,6 +222,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return AmstradCPCGeneric;
     if (c==26)
         return BBC;
+    if (c==27)
+        return VGA;
 
     return NotSupported;
 
@@ -294,7 +300,6 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 
 //    qDebug() << img.width();
-
     for (int y=0;y<height;y++) {
 #pragma omp parallel for
         for (int x=0;x<width;x++) {
@@ -356,6 +361,18 @@ void LImage::CopyChar()
         }
     m_hasCopy = true;
 
+}
+
+void LImage::SetGridSize(QString size)
+{
+    QStringList data = size.split("x"); // should be of the format WxH
+    m_footer.set(LImageFooter::POS_GRID_SCALE_X,data[0].toInt());
+    m_footer.set(LImageFooter::POS_GRID_SCALE_Y,data[1].toInt());
+}
+
+QString LImage::getGridSize()
+{
+    return QString::number(m_footer.get(LImageFooter::POS_GRID_SCALE_X))+"x"+QString::number(m_footer.get(LImageFooter::POS_GRID_SCALE_Y));
 }
 
 void LImage::PasteChar()

@@ -80,6 +80,17 @@ void DialogExport3D::on_pushButton_4_clicked()
 
         }
 
+        if (ui->comboBox->currentText()=="X86") {
+
+            Message(obj.ExportAmigaVerts(base+"_verts.bin",scale,shift*-1));
+            Message(obj.ExportAmigaFaces(base+"_faces.bin"));
+            Message(obj.ExportAmigaLinesFromFaces(base+"_lines.bin",minLineLength));
+            Message(obj.ExportAmigaNormalsLines(base+"_line_normals.bin",64.0f));
+            Message(obj.ExportAmigaFaceNormals(base+"_face_normals.bin",64.0f));
+        //Message(obj.ExportAmigaFaceNormals(base+"_line_normals.bin",64.0f));
+        }
+
+
         Message("Conversion OK.\n");
     } catch (QString s) {
         Message(s);

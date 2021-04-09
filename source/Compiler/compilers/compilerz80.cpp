@@ -16,10 +16,27 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
         Syntax::s.m_currentSystem->m_programStartAddress = 0x300; // Unpack address
 
 
-//    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_Z80_system"));
+    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_Z80_system"));
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
+        /*        m_assembler->Asm("db $FE     ; magic number");
+        m_assembler->Asm("dw msx_prg_begin ; begin address   ");
+        m_assembler->Asm("dw msx_prg_end - 1 ; end   ");
+        m_assembler->Asm("dw msx_prg_begin ; execute   ");
+        m_assembler->Label("msx_prg_begin");*/
+
+        m_assembler->Asm("db \"AB\"		; ID for auto-executable ROM");
+        m_assembler->Asm("dw msx_prg_start		; Main program execution address.");
+        m_assembler->Asm("dw 0		; STATEMENT");
+        m_assembler->Asm("dw 0		; DEVICE");
+        m_assembler->Asm("dw 0		; TEXT");
+        m_assembler->Asm("dw 0,0,0	; Reserved    ");
+        m_assembler->Label("msx_prg_start");
+    }
+
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
         m_assembler->Asm(" jp $8000");
@@ -33,11 +50,13 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 
     }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464 ||
+        Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM ||
+        Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
+        ) {
         m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
         m_assembler->WriteConstants();
     }
-
 
     // Init default stuff
 
@@ -54,11 +73,16 @@ void CompilerZ80::Connect()
     m_assembler->EndMemoryBlock();
 
 
+
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
+        m_assembler->m_ram->m_source.insert(0," org $e000 ; RAM ");
+        m_assembler->m_source <<m_assembler->m_ram->m_source;
+
+
+    }
+
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm("end");//+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-
-
-
 
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO) {
@@ -86,11 +110,12 @@ bool CompilerZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
         return;
     }
     */
-
     QProcess process;
     QString assembler = m_ini->getString("pasmo");
     QString output;
     Syntax::s.m_currentSystem->StartProcess(assembler, QStringList() << "-1"<< filename+".asm" <<filename+".bin", output, true);
+    if (m_assembler==nullptr)
+        return true;
 
     QVector<QSharedPointer<MemoryBlock>> nb;
     for (QSharedPointer<MemoryBlock> mb: m_assembler->blocks) {

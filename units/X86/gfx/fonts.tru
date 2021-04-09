@@ -1,0 +1,101 @@
+unit Fonts;
+var
+
+	font_size_x, font_size_y, font_columns : integer;
+
+	lookup : array[64] of integer;
+	data,dst,dst2,src : pointer of byte;
+	tp : pointer of byte;
+	x,y,c,i,xx,shift,len,yy : integer;
+	@donotremove maskColor
+	@donotremove addValue
+	addValue,maskColor : byte = 0;
+
+	const WRITETYPE_DIRECT :integer = 0;
+	const WRITETYPE_MASK :integer = 1;
+	const DEFAULT_SHIFT : integer = 32;
+	writeType : integer = WRITETYPE_DIRECT;	
+
+
+
+procedure Init(data:global pointer of byte; font_size_x, font_size_y, font_columns,shift: global integer);
+begin
+	y:=0;
+	xx:=0;
+	c:=0;
+	len:=font_size_x>>2;
+	for i:=0 to 64 do
+	begin
+		c:=xx+y;
+		lookup[i]:=c;
+		x+=1;
+		xx+=font_size_x;
+		if (x=font_columns) then
+		begin
+			x:=0;
+			xx:=0;
+			y+=font_size_y*320;		
+		end;
+	end;
+
+end;
+
+
+procedure PrintChar(c : global integer; dst: global pointer of byte);
+begin
+	src := data;
+	src+=lookup[c-shift];
+//	font_size_x:=16;
+//	font_size_y:=20;
+	if (writeType = WRITETYPE_DIRECT) then
+	for i:=0 to font_size_y do
+	begin
+		memcpy32(src,dst,len);
+		src:=src+320;
+		dst:=dst+320;
+	end;
+	if (writeType = WRITETYPE_MASK) then
+	
+	for i:=0 to font_size_y do
+	begin
+		asm("
+		mov dl,byte [Fonts_addValue]
+		push ds
+		mov ax, [Fonts_font_size_x]
+		mov bl, [Fonts_maskColor]
+		push ax
+		les di,[Fonts_dst]
+		lds si,[Fonts_src]
+		pop cx
+@fsb_topp:
+		lodsb
+		cmp al,bl
+		jl @fsb_nxt
+		add al,dl
+		mov [es:di],al
+@fsb_nxt:
+		inc di
+		loop @fsb_topp
+		
+		pop ds
+		
+		");
+//		memcpy32(src,dst,len);
+		src:=src+320;
+		dst:=dst+320;
+	end;
+end;
+
+
+procedure PrintString(tp:global pointer; x,y : global integer; dst2: global pointer);
+begin
+	dst2:=dst2 + y*320;
+	dst2+=x;
+	while (tp[0]<>0) do
+	begin
+		PrintChar(tp[0],dst2);
+		dst2 += font_size_x;
+		tp += 1;
+	end;
+end;
+end.

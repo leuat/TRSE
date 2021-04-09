@@ -9,6 +9,8 @@ public:
     QString param;
     SystemVIC20(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
     void DefaultValues();
+    int getDefaultBasicAddress() override;;
+    bool isCommodoreSystem() override  {return true;}
 
 };
 

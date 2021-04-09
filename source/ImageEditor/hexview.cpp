@@ -47,7 +47,7 @@ void HexView::Calculate()
 
 }
 
-void HexView::setData(HexView::DataStorage *pData)
+void HexView::setData(DataStorage *pData)
 {
     verticalScrollBar()->setValue(0);
     if(m_pdata)
@@ -633,49 +633,49 @@ void HexView::ensureVisible()
 
 
 
-HexView::DataStorageArray::DataStorageArray(const QByteArray &arr)
+DataStorageArray::DataStorageArray(const QByteArray &arr)
 {
     m_data = arr;
 }
 
-void HexView::DataStorageArray::setData(std::size_t position, unsigned char val)
+void DataStorageArray::setData(std::size_t position, unsigned char val)
 {
 //    if (position<m_data.length())
         m_data[(int)position] = val;
 }
 
-QByteArray HexView::DataStorageArray::getData(std::size_t position, std::size_t length)
+QByteArray DataStorageArray::getData(std::size_t position, std::size_t length)
 {
     return m_data.mid(position, length);
 }
 
 
-std::size_t HexView::DataStorageArray::size()
+std::size_t DataStorageArray::size()
 {
     return m_data.count();
 }
 
 
-HexView::DataStorageFile::DataStorageFile(const QString &fileName): m_file(fileName)
+DataStorageFile::DataStorageFile(const QString &fileName): m_file(fileName)
 {
     m_file.open(QIODevice::ReadOnly);
     if(!m_file.isOpen())
         throw std::runtime_error(std::string("Failed to open file `") + fileName.toStdString() + "`");
 }
 
-void HexView::DataStorageFile::setData(std::size_t position, unsigned char val)
+void DataStorageFile::setData(std::size_t position, unsigned char val)
 {
 
 }
 
-QByteArray HexView::DataStorageFile::getData(std::size_t position, std::size_t length)
+QByteArray DataStorageFile::getData(std::size_t position, std::size_t length)
 {
     m_file.seek(position);
     return m_file.read(length);
 }
 
 
-std::size_t HexView::DataStorageFile::size()
+std::size_t DataStorageFile::size()
 {
     return m_file.size();
 }

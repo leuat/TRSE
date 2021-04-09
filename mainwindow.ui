@@ -497,8 +497,8 @@ p, li { white-space: pre-wrap; }
      <addaction name="action_TRU_Unit_source_file"/>
      <addaction name="actionImage"/>
      <addaction name="actionPaw_packed_resource_file"/>
-     <addaction name="separator"/>
      <addaction name="actionFjong_Raymarcher_document"/>
+     <addaction name="actionTRSE_Tracker_File_trt"/>
     </widget>
     <addaction name="menuNew"/>
     <addaction name="actionNew_project"/>
@@ -573,12 +573,12 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRas_source_file">
    <property name="text">
-    <string>Ras source file</string>
+    <string>Ras source file (.ras)</string>
    </property>
   </action>
   <action name="actionImage">
    <property name="text">
-    <string>Image/Charset/Sprite</string>
+    <string>Image/Charset/Sprite (.flf)</string>
    </property>
   </action>
   <action name="actionSearch">
@@ -667,7 +667,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPaw_packed_resource_file">
    <property name="text">
-    <string>Paw packed resource file</string>
+    <string>Paw packed resource file (.paw)</string>
    </property>
   </action>
   <action name="actionProject_Settings">
@@ -698,7 +698,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionFjong_Raymarcher_document">
    <property name="text">
-    <string>Fjong Raymarcher document</string>
+    <string>Fjong Raymarcher document (.fjo)</string>
    </property>
   </action>
   <action name="actionWavefront_obj_to_amiga_converter">
@@ -758,7 +758,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_TRU_Unit_source_file">
    <property name="text">
-    <string>&amp;TRU Unit source file</string>
+    <string>&amp;TRU Unit source file (.tru)</string>
    </property>
   </action>
   <action name="actionTRSE_Showcases">
@@ -784,6 +784,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_Rename_current_file">
    <property name="text">
     <string>&amp;Rename current file</string>
+   </property>
+  </action>
+  <action name="actionTRSE_Tracker_File_trt">
+   <property name="text">
+    <string>TRSE Music Tracker File (.trt)</string>
    </property>
   </action>
  </widget>

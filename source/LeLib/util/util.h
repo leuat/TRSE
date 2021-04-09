@@ -42,6 +42,7 @@
 #include <QLayout>
 #include <QLayoutItem>
 #include <QWidget>
+#include <QApplication>
 
 //#include "random.h"
 
@@ -87,6 +88,8 @@ public:
 
     static int isEqual(QColor a, QColor b);
 
+    static void WriteInt32(QByteArray& ba, int val);
+    static void WriteInt16(QByteArray& ba, int val);
 
     static QStringList fixStringListSplitWithCommaThatContainsStrings(QStringList lst);
 
@@ -109,6 +112,7 @@ public:
     static QByteArray loadBinaryFile(QString filename);
 
     static void CopyFile(QString i, QString o);
+    static void CopyFileBytes(QString i, QString o);
 
     static bool CopyRecursively(QString sourceFolder, QString destFolder);
 
@@ -214,6 +218,12 @@ public:
 
     inline static bool Mollweide(QVector3D& out, float i, float j, float l0, float R, float size);
 
+    static int getInt16(QByteArray& ba, int pos);
+    static void setInt16(QByteArray& ba, int pos, int val);
+    static void appendInt16(QByteArray& ba, int val);
+
+    static QStringList ByteArrayToHexQStringList(QByteArray& ba);
+    static QByteArray HexQStringListToByteArray(QStringList& lst);
 
     static QPoint mapToWindow(QWidget *from, QPoint pt);
 

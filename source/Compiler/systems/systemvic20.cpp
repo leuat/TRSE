@@ -11,25 +11,11 @@ SystemVIC20::SystemVIC20(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
 void SystemVIC20::DefaultValues()
 {
     param = m_projectIni->getString("temp_vic_memory_config");
+    m_startAddress = getDefaultBasicAddress();
+    m_programStartAddress = m_startAddress+0xF;
     if (param=="")
         param = m_projectIni->getString("vic_memory_config");
-//    qDebug() << "VIC20 " << param;
-    if (param=="none") {
-        m_startAddress = 0x1000;
-        m_programStartAddress = 0x1010;
-        m_memoryType = 0;
-    }
-    else if (param=="3k") {
-        m_startAddress = 0x0400;
-        m_programStartAddress = 0x0410;
-        m_memoryType = 0;
-    }
-    else
-    {
-        m_startAddress = 0x1200;
-        m_programStartAddress = 0x1210;
-        m_memoryType = 1;
-   }
+
     m_labels.clear();
 
 
@@ -108,4 +94,24 @@ void SystemVIC20::DefaultValues()
     m_ignoreSys = false;
     m_stripPrg = false;
 
+}
+
+int SystemVIC20::getDefaultBasicAddress() {
+
+    param = m_projectIni->getString("temp_vic_memory_config");
+    if (param=="")
+        param = m_projectIni->getString("vic_memory_config");
+    m_memoryType = 0;
+
+    if (param=="none")
+        return 0x1001;
+    else
+        if (param=="3k")
+            return 0x0401;
+        else {
+            m_memoryType = 1;
+            return 0x1201;
+        }
+
+    //   return QVector<int>() <<0x1001<<0x401<< 0x1201;
 }

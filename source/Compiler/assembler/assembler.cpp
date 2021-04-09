@@ -226,12 +226,32 @@ void Assembler::PopBlock(int ln)
 
 }
 
+int Assembler::m_prevCycles = 0;
+
+int Assembler::getLineCount() {
+    int lc = 0;
+    for (QString s: m_source) {
+        s=s.remove("\n");
+        s=s.remove("\t");
+        s=s.trimmed().simplified();
+        if (s=="")
+            continue;
+        if (s.startsWith(";"))
+            continue;
+        if (s.startsWith("//"))
+            continue;
+        lc++;
+    }
+    return lc;
+
+}
+
 int Assembler::CountCycles(QString s)
 {
     QStringList lst = s.split("\n");
     int n=0;
     for (QString s : lst) {
-//        s=s.remove("\t");
+        //        s=s.remove("\t");
         s=s.trimmed();
         if (s=="") continue;
         if (s.startsWith(";")) continue;
@@ -354,7 +374,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
                 //qDebug() << "WTF " <<s->m_name <<s->m_type;
                 // Build the name
                 QString n = name + "_" + st->m_name+"_"+s->m_name;
-                QString w = n;
+                QString w = n+"";
                 //            QString t = byte;
                 //
                 //                  t= word;
@@ -389,6 +409,10 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             QString t = byte;
             if (s->m_type.toLower()=="integer")
                 t= word;
+            if (s->m_type.toLower()=="pointer")
+                t= ppointer;
+            if (s->m_type.toLower()=="long")
+                t= llong;
 
             w = w+ "\t"+t + "\t0";
 

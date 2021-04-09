@@ -1,7 +1,8 @@
 unit Graphics;
 var
-	pa : pointer of integer;
+	pa,pb : pointer of integer;
 	bpl,j,i : integer;
+	const height: integer = 200;
  /*
 	Sets up the copper list to point to the screen 
 */
@@ -11,13 +12,22 @@ begin
 	poke16(#copper_resolution, 0 , j); // $4000  = bitplanes, $200 = colours
 	// Set palette at copper palette location, 16 colors
 	// Setup image copper list (4 bitplanes, 40*40 modulo 120
-	if (bpl=4) then
+	if (bpl=5) then
 	begin
-		asm(";jadda");
 		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40;
 		SetCopperList32(pa, #copper_bitplane3);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane4);
+		poke16(#copper_mod_even,0,160);
+		poke16(#copper_mod_odd,0,160);
+	end;
+	if (bpl=4) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane3);
 		poke16(#copper_mod_even,0,120);
 		poke16(#copper_mod_odd,0,120);
 	end;
@@ -45,5 +55,67 @@ begin
 end;
 
 
+procedure SetupNonInterlacedScreen(pa:global pointer of integer; bpl : global integer);
+begin
+	j:=$1000*bpl | $200;
+	poke16(#copper_resolution, 0 , j); // $4000  = bitplanes, $200 = colours
+	poke16(#copper_mod_even,0,0);
+	poke16(#copper_mod_odd,0,0);
+	// Set palette at copper palette location, 16 colors
+	// Setup image copper list (4 bitplanes, 40*40 modulo 120
+	if (bpl=5) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane3);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane4);
+	end;
+	if (bpl=4) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane3);
+	end;
+	if (bpl=3) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane2);
+	end;
+	if (bpl=2) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);
+		pa:=pa+(40*256);
+		
+		SetCopperList32(pa, #copper_bitplane1);
+	end;
+	if (bpl=1) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);
+	end;
+end;
+/*
+procedure CopySingleBitplaneData(pa,pb : global ^integer; bpl, j : global integer);
+begin
+	asm("
+		move.l Graphics_pa,a0	 ; src
+		move.l Graphics_pb,a1	 ; dst
+		move.w j,d5 ; 	count
+		move.q #0,d4
+		move.w #40,d4 ; 	bpl
+		mul.w j,d4
+		sub.w #40,d4 ; d4 contains bitplane add 
+csb_loop:
+		move.l #10,d3
+csb_inner:
+		move.l (a0)+,(a1)+
+		dbf d3,csb_inner
+		add.l d4,a1 ; Add bitplane offset
+		
+	");	
 
+end;
+*/
 end.

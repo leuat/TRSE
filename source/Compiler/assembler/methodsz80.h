@@ -28,6 +28,7 @@ public:
     void Fill(Assembler* as);
     void MemCpy(Assembler* as, bool isCont);
     void Poke(Assembler* as);
+    void Call(Assembler* as);
     void SetSprite(Assembler* as, int type);
     void InitSpriteFromData(Assembler *as, int type);
     void LoadSong(Assembler* as);

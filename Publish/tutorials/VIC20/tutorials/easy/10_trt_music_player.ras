@@ -1,0 +1,81 @@
+program TRT_Music_player;
+/*
+
+	Tracker for the Vic 20 supports (limitations for speed):
+	
+	1, 2 or 4 channels
+	8, 16 or 32 rows per pattern
+	64 patterns
+	
+	can remap which Vic 20 voice is used to play each channel with
+	TrtPlayer::chMap array.
+	
+	Vic 20 voices (each voice overlaps two octaves):
+	
+	0 = lowest three octaves
+	1 = mid three octaves
+	2 = upper three octaves
+	3 = white noise channel
+
+*/
+
+/* use the TrtPlayer unit, found in the global units folder */
+@use "TrtPlayer"
+
+var  
+
+	// export the song from the tracker into a BIN format
+	// only export first two channels
+	@export "resources/music/bubble.trt" 
+			"resources/music/music_vic20.bin" 2 
+
+	music: incbin("resources/music/music_vic20.bin");
+
+begin
+
+	// Setup screen foreground / background colors
+	screen_bg_color := screen_bg_blue + black;
+	
+	// Clear screens	
+	clearscreen( key_space, screen_char_loc );
+	clearscreen( black, screen_col_loc);
+	
+	// Set music to play and speed
+	TrtPlayer::Initialize( #music );
+	TrtPlayer::speed := 5;
+	
+/* these are the defaults: what voice to map to a channel in the song
+
+	TrtPlayer::chMap[ 0 ] := 0;
+	TrtPlayer::chMap[ 1 ] := 1;
+*/
+
+	while( true ) do
+	begin
+	
+		waitforraster( 60 );	
+
+		// change colours to show how much time the routine is using		
+		screen_bg_color := screen_bg_blue + purple;
+
+		// ready to play next note?
+		TrtPlayer::Play();
+	
+		// change colours back - size of colour on screen indicates time used	
+		screen_bg_color := screen_bg_blue + black;
+
+
+		// display row number in current pattern
+		moveto( 8, 4, hi( screen_char_loc ) );
+		printdecimal( TrtPlayer::curRow, 1 );
+
+		// display which order number on, which defines which patterns to play
+		moveto( 4, 4, hi( screen_char_loc ) );
+		screenmemory[0] := 0;
+		printnumber( TrtPlayer::curOrder );
+		
+	end;
+	
+	
+	
+end.

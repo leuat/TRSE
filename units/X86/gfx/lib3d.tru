@@ -1,0 +1,236 @@
+unit Lib3d;
+@use "math/matrix"
+@use "system/memory"
+@use "gfx/gfx"
+var
+
+	idx,renderType,r1,r2,i,j,n,v,ii,msize,size,xx,yy,zz,cx,cy,cz,k1,k2,k,k3,f1,f2,f3,f4,dx,dy,k4:integer;
+	
+	const rendertype_lines : integer = 1;
+	const rendertype_triangle : integer = 2;
+	
+	mesh = record
+	//	pos,rot: Vector::vec3;
+		posx,posy,posz:integer;
+		rotx,roty,rotz:integer;
+		noVertices : integer;
+		noFaces : integer;
+		
+		// vertices + rotated data
+		vertices, vertices_rot : pointer of integer; 
+		faces : pointer of integer;
+		// 2D points
+		points : pointer of integer;
+	end;
+	
+	const MAX : integer = 10;
+
+	rotMat,rotx,roty,rotz, tempMat : Matrix::mat3;
+	objects : array[ MAX ] of mesh;
+	v1,vr : Vector::vecp;
+	
+	p1,p2 : pointer of integer;	
+	vert : array[4] of integer;//Vector::vec3;
+/**
+	Allocates memory for a 3D object.
+	i: object number
+	v: number of vertices
+	n: number of faces
+
+**/
+procedure Allocate(i,v,n: global integer);
+begin
+	objects[i].posx:=0;
+	objects[i].posy:=0;
+	objects[i].posz:=0;
+	objects[i].rotx:=0;
+	objects[i].roty:=0;
+	objects[i].rotz:=0;
+	objects[i].noVertices:=v;
+	objects[i].noFaces:=n;
+	objects[i].vertices := Memory::GetMem(v*6);
+	objects[i].faces := Memory::GetMem(v*6);
+	objects[i].points := Memory::GetMem(v*4); // 2D
+	objects[i].vertices_rot := Memory::GetMem(v*6);
+	
+//	objects[i].points := ptr($8000,0);
+end;
+/**
+Generate a 3D torus.<br>
+ii : object number
+f1 : number of vertices in lesser rings
+f2 : number of vertices in greater ring
+r1 : scaling of lesser rings
+r2 : with of great ring
+renderType: renderType_lines (polygons not supported yet)
+
+**/
+procedure Torus(ii,f1,f2,r1,r2, renderType : global integer);
+begin
+	if (renderType=RenderType_lines) then
+		Allocate(ii,f1*f2,(f1-1)*(f2-1))
+	else
+		Allocate(ii,f1*f2,(f1-1)*(f2-1));
+		
+	p1 := objects[ii].vertices;
+	p2 := objects[ii].faces;
+	dx:=256/f1;
+	dy:=256/f2;
+	k2:=32;
+	for i:=0 to f2 do
+	begin
+		Matrix::RotateX(#rotMat,k2);	
+//		Matrix::Identity(rotMat);	
+		k:=0;
+		for j:=0 to f1 do
+		begin
+			xx:=Tables::sine128[k&255];
+			yy:=Tables::sine128[(k+64)&255];
+			
+			vert[2]:=0;
+			vert[1]:=yy/r1+r2;
+			vert[0]:=xx/r1;
+			
+			Matrix::MatMulVec3(#rotMat,#vert,p1);
+			
+			p1[0]/=256;
+			p1[1]/=256;
+			p1[2]/=256;
+
+			k+=dx;			
+			p1:=p1+6;		
+		end;
+		k2+=dy;
+	end;
+
+	k:=0;
+	idx:=0;			
+	if (renderType=renderType_lines) then
+	begin
+		k2:=(f1)*2;
+		for i:=0 to f2 do
+		begin
+			if (i+1=f2) then k2:=0; // Point back to first
+			
+			cx:=k;
+			k4:=k+2;
+			
+			for j:=0 to f1 do
+			begin
+				if (j=f1-1) then k4:=cx;
+				p2[idx]:=k;		
+				p2[idx+1]:=k4;		
+				
+				p2[idx+2]:=k;		
+				p2[idx+3]:=k2;
+				
+				idx+=4;
+				
+				k+=2;		
+				k2+=2;
+				k4+=2;
+			end;
+			//k+=4;
+			//k2+=4;
+
+		end;
+		objects[	ii].noFaces := idx;
+
+	end;
+end;
+
+/**
+  Projects the rotated vertices of an object from 3D to the screen. Simple divide-by-z method.
+  i: object
+  cz,cy : position on screen
+  cz : z-translation
+
+**/
+procedure ProjectSimple(i,cx,cy,cz: global integer);
+begin
+	v1 := objects[i].vertices_rot;
+	vr := objects[i].points;
+	for j:=0 to objects[i].noVertices do
+	begin
+		zz:=v1[2];
+		zz:=zz/256+cz;
+
+		xx:=v1[1]/zz;
+		yy:=v1[0]/zz;
+		vr[0] := xx+cx;		
+		vr[1] := yy+cy;
+		
+		vr+=4;
+		v1+=6;		
+	end;
+
+
+end;
+
+
+procedure RenderPoints(i: global integer;p1:global pointer);
+	
+begin
+	vr := objects[i].points;
+	for j:=0 to objects[i].noVertices do
+	begin
+		xx := vr[0];
+		yy := vr[1];
+		//Don't have no putpixel yet
+		Gfx::DrawLine(xx,yy,xx,yy, 0, p1);
+		vr:=vr+4;
+	end;
+	
+end;
+/**
+	Render projected 2D points as lines.
+	i: object ID
+	cx: color
+	p2: pointer to a render buffer 
+	
+
+**/
+procedure RenderWireframe(i,cx: global integer;p2:global pointer);
+begin
+	vr := objects[i].points;
+	p1 := objects[i].faces;
+	for j:=0 to objects[i].noFaces do
+	begin
+		k1:=p1[0];		
+		k2:=p1[1];
+		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], cx, p2);
+		p1:=p1+4;
+	end;
+	
+end;
+
+procedure RotateEuler(i, xx,yy,zz : global integer);
+begin
+	Matrix::RotateX(#rotx,xx);
+	Matrix::RotateY(#roty,yy);
+	Matrix::RotateZ(#rotz,zz);
+	
+	Matrix::MatMul4(#roty,#rotx,#tempMat);
+	Matrix::MatMul4(#rotz,#tempMat,#rotMat);
+/*
+	Matrix::Print(#rotx);
+	Matrix::Print(#roty);
+	Matrix::Print(#rotMat);
+	while (true) do begin end;
+*/
+	
+	v1 := objects[i].vertices;
+	vr := objects[i].vertices_rot;
+	
+	for j:=0 to objects[i].noVertices do
+	begin
+		// Rotate each vertex!
+		Matrix::MatMulVec3(#rotMat,v1,vr);
+		vr:=vr+6;
+		v1:=v1+6;		
+	end;
+
+end;
+
+
+end.

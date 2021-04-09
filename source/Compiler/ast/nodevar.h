@@ -54,6 +54,7 @@ public:
     TokenType::Type getArrayType(Assembler* as) override;
 
     bool isPointer(Assembler* as) override;
+    bool isPurePointer(Assembler* as) override;
 
     bool DataEquals(QSharedPointer<Node> other) override;
     bool isWord(Assembler* as) override;

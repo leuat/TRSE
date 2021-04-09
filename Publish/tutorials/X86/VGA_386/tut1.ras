@@ -1,0 +1,24 @@
+program Adlib;
+@use "music/adlibplayer"
+@use "system/memory"
+var  
+	song: incbin("music/song1.trt");
+
+interrupt Raster();
+begin
+	startirq();
+	AdlibPlayer::Play();
+	closeirq();
+end;
+
+begin
+	AdlibPlayer::Initialize(#song);
+	// Set timer raster interrupt to point to Raster()
+	SetInterrupt($8,Raster());	
+	//Set the timer to 1 VSync
+	Memory::SetTimer(Memory::Default_Timer);
+	while (true) do
+	begin
+		waitforverticalblank();
+	end;
+end.
