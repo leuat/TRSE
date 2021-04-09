@@ -110,12 +110,12 @@ bool CompilerZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
         return;
     }
     */
-    if (m_assembler==nullptr)
-        return true;
     QProcess process;
     QString assembler = m_ini->getString("pasmo");
     QString output;
     Syntax::s.m_currentSystem->StartProcess(assembler, QStringList() << "-1"<< filename+".asm" <<filename+".bin", output, true);
+    if (m_assembler==nullptr)
+        return true;
 
     QVector<QSharedPointer<MemoryBlock>> nb;
     for (QSharedPointer<MemoryBlock> mb: m_assembler->blocks) {
