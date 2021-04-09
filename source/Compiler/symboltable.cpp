@@ -308,6 +308,7 @@ void SymbolTable::InitBuiltins()
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCSID","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("INCNSF","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("RECORD","")));
+    Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("CLASS","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("GLOBAL","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("PURE","")));
     Define(QSharedPointer<Symbol>(new BuiltInTypeSymbol("PURE_VARIABLE","")));
@@ -480,7 +481,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
-//        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.;;
+        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.keys();;
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
@@ -532,6 +533,11 @@ bool SymbolTable::isRegisterName(QString sn)
     return Syntax::s.m_currentSystem->m_registers.contains(sn);
 }
 
+bool SymbolTable::isThisPointer(QString sn)
+{
+    return sn.toLower().endsWith("_this");
+}
+
 
 void Symbol::setIsUsed()
 {
@@ -570,6 +576,8 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::INCSID;
     if (m_type.toLower()=="record")
         return TokenType::RECORD;
+    if (m_type.toLower()=="class")
+        return TokenType::CLASS;
     if (m_type.toLower()=="global")
         return TokenType::GLOBAL;
     if (m_type.toLower()=="pure")

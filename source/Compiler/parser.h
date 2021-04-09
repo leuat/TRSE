@@ -190,7 +190,7 @@ public:
     QSharedPointer<Node> Variable(bool isSubVar=false);
     QSharedPointer<Node> SubVariable(QString parent);
     QSharedPointer<Node> Empty();
-    void Record(QString name);
+    QVector<QSharedPointer<Node>> Record(QString name);
 //    QSharedPointer<Node> Record();
     QSharedPointer<Node> Case();
     QSharedPointer<Node> AssignStatement();

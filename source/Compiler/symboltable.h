@@ -101,6 +101,7 @@ public:
     QString m_gPrefix;
     QString m_currentFilename="";
     bool m_addToGlobals = false;
+    bool m_isClass = false;
     ~SymbolTable();
 
     QString getCurrentProcedure()  {
@@ -151,6 +152,7 @@ public:
     QSharedPointer<Symbol> LookupConstants(QString name);
 
     bool isRegisterName(QString sn);
+    bool isThisPointer(QString sn);
 
 };
 

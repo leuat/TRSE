@@ -44,6 +44,7 @@ Highlighter::Highlighter(CIniFile ini, int type, QTextDocument *parent)
     //    else
          keywordPatterns<<s;
     }
+    keywordPatterns << "\\bthis\\b";
 
     foreach (const QString &pattern, keywordPatterns) {
         rule.pattern = QRegularExpression(pattern,QRegularExpression::CaseInsensitiveOption);

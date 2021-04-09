@@ -1659,9 +1659,11 @@ QSharedPointer<Node> Parser::Empty()
     return QSharedPointer<Node>(new NoOp());
 }
 
-void Parser::Record(QString name)
+QVector<QSharedPointer<Node>> Parser::Record(QString name)
 {
-    Eat(TokenType::RECORD);
+    QVector<QSharedPointer<Node>> decls;
+    bool isClass = m_currentToken.m_type==TokenType::CLASS;
+    Eat();
 //    SymbolTable
     QSharedPointer<SymbolTable>  record = QSharedPointer<SymbolTable> (new SymbolTable());
     record->m_symbols.clear();
@@ -1670,27 +1672,74 @@ void Parser::Record(QString name)
     record->setName(name);
     QString oldPrefix = m_symTab->m_gPrefix;
     m_symTab->m_gPrefix=name+"_";
-//    qDebug() << "RECORD PREFIX " <<m_symTab->m_gPrefix;
-    //m_symTab->m_gPrefix="";
     m_isRecord = true;
-    //QSharedPointer<SymbolTable> oldTab;
-  //  oldTab = m_symTab;
-   // m_symTab = record;
+    bool first = true;
+
+
+    if (isClass) {
+        QString of = m_symTab->m_gPrefix;
+        m_symTab->m_gPrefix = "";
+        auto s = QSharedPointer<Symbol>(new Symbol(name+"_this",name));
+        m_symTab->m_gPrefix = of;
+        m_symTab->Define(s);
+
+    }
+
     while (m_currentToken.m_type!=TokenType::END) {
-        QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
-        for (QSharedPointer<Node> n : vars) {
-            QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
-            QSharedPointer<NodeVarType> typ = qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode);
-            QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
-            QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
-            s->m_arrayType = typ->m_arrayVarType.m_type;
-            s->m_arrayTypeText = typ->m_arrayVarTypeText;
-            s->m_flags = typ->m_flags;
-            record->Define(s);
-            record->m_orderedByDefinition.append(var->value);
-//            qDebug() << "RECORD PPEND " <<var->value << s->m_flags;
+
+
+        if (isClass) {
+            if (m_currentToken.m_type==TokenType::PROCEDURE) {
+                QVector<QSharedPointer<Node>> procs;
+
+                ProcDeclarations(procs,"");
+
+                for (auto& n:procs) {
+                    auto p = qSharedPointerDynamicCast<NodeProcedureDecl>(n);
+                    p->m_class = name;
+                    p->m_isStatic = false;
+                    // First parameter to *always* point to the current object
+                    Token varToken = m_currentToken;
+                    varToken.m_type = TokenType::ID;
+                    varToken.m_value = name+"_this";
+                    Token typeToken = m_currentToken;
+                    typeToken.m_type = TokenType::RECORD;
+                    typeToken.m_value = name;
+                    auto var = QSharedPointer<NodeVar>(new NodeVar(varToken));
+                    auto type = QSharedPointer<NodeVarType>(new NodeVarType(typeToken,""));
+                    if (!first)
+                        type->m_flags<<"global"; // Make "this" global on 2nd+ params
+
+
+                    auto paramSelf = QSharedPointer<NodeVarDecl>(new NodeVarDecl(var,type));
+
+                    p->m_paramDecl.insert(0,paramSelf);
+                    if (first)
+                       decls.append(paramSelf);
+                    first = false;
+   //                 qDebug() << "HERE" << name << paramSelf<<p->m_paramDecl.count();
+
+ //                   p->m_paramDecl.insert(0,paramSelf);
+                }
+            }
+
         }
-        Eat(TokenType::SEMI);
+        if (m_currentToken.m_type!=TokenType::END && m_currentToken.m_type!=TokenType::PROCEDURE && m_currentToken.m_type!=TokenType::FUNCTION) {
+            QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
+            for (QSharedPointer<Node> n : vars) {
+                QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
+                QSharedPointer<NodeVarType> typ = qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode);
+                QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
+                QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
+                s->m_arrayType = typ->m_arrayVarType.m_type;
+                s->m_arrayTypeText = typ->m_arrayVarTypeText;
+                s->m_flags = typ->m_flags;
+                record->Define(s);
+                record->m_orderedByDefinition.append(var->value);
+    //            qDebug() << "RECORD PPEND " <<var->value << s->m_flags;
+            }
+            Eat(TokenType::SEMI);
+        }
 
     }
     m_isRecord = false;
@@ -1699,6 +1748,7 @@ void Parser::Record(QString name)
 
     Eat(TokenType::END);
 //    Eat(TokenType::SEMI);
+    return decls;
 }
 
 
@@ -2682,7 +2732,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Node::flags.clear();
 
     m_lexer->Initialize();
-
+//    qDebug() << "B1 "<<m_symTab->m_symbols.keys();
     m_lexer->m_ignorePreprocessor = true;
     m_currentToken = m_lexer->GetNextToken();
     m_symTab->Initialize();
@@ -3115,7 +3165,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 
     Symbol::s_currentProcedure = "main";
     m_inCurrentProcedure = "main";
-
+    decl.append(procDecl);
 }
 
 
@@ -3246,9 +3296,9 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     // Declare a record?
     if (m_currentToken.m_type==TokenType::EQUALS) {
         Eat(TokenType::EQUALS);
-        if (m_currentToken.m_type==TokenType::RECORD) {
-            Record(varName);
-            return QVector<QSharedPointer<Node> >();
+        if (m_currentToken.m_type==TokenType::RECORD || m_currentToken.m_type==TokenType::CLASS) {
+            return Record(varName);
+
         }
         ErrorHandler::e.Error("Unknown declaration : " +m_currentToken.m_value);
     }
@@ -3284,7 +3334,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 
 
 
-        if (!m_symTab->isRegisterName(sn)) {
+        if (!m_symTab->isRegisterName(sn))
+        {
             if (m_symTab->LookupConstants(s->m_name.toUpper())!=nullptr)
                 ErrorHandler::e.Error("'" + s->m_name +"' is already defined as a constant.",m_currentToken.m_lineNumber);
 /*            if (s->m_name.toLower().contains("keyrow"))
