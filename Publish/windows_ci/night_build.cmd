@@ -11,7 +11,7 @@ git clone https://github.com/leuat/TRSE.git %dir%
 
 mkdir %dir%\Release
 cd %dir%\Release
-git checkout development
+REM git checkout development
 echo "Qmake.."
 %qt%\qmake.exe %dir%\trse.pro %dir%\Release
 echo "Compiling.."
