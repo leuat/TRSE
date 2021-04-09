@@ -47,6 +47,7 @@ public:
     QString m_orgOutput;
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
+    bool m_canRunAsmFiles = false;
 
     QMap<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;

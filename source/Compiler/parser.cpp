@@ -3681,9 +3681,9 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     VerifyTypeSpec(t);
 
     if (t.m_type == TokenType::BOOLEAN) {
-        qDebug() << "Replace bool with byte";
+//        qDebug() << "Replace bool with byte";
         t.m_value="BYTE";
-        t.m_type = TokenType::BYTE;
+       t.m_type = TokenType::BYTE;
     }
 
     QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));

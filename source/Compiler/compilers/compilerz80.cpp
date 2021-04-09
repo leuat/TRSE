@@ -110,7 +110,8 @@ bool CompilerZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
         return;
     }
     */
-
+    if (m_assembler==nullptr)
+        return true;
     QProcess process;
     QString assembler = m_ini->getString("pasmo");
     QString output;
