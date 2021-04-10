@@ -52,6 +52,7 @@ public:
     QMap<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;
     bool m_supportsExomizer = false;
+    bool m_allowRecordPointers = false;
     QString m_exomizerName = "Exomize";
 
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;

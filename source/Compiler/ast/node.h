@@ -72,6 +72,8 @@ public:
 
     virtual bool isReference() { return false;}
 
+    virtual void ApplyHack(Assembler* as);
+
     virtual bool containsPointer(Assembler* as) {return false;}
 
     virtual void setForceType(TokenType::Type t) {

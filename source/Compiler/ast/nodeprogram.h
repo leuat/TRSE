@@ -50,6 +50,12 @@ public:
     }
 
 
+    void ApplyHack(Assembler *as) override
+    {
+        Node::ApplyHack(as);
+        if (m_NodeBlock!=nullptr)
+            m_NodeBlock->ApplyHack(as);
+    }
 
 
 

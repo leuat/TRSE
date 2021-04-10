@@ -39,6 +39,14 @@ void Node::SwapNodes() {
     m_right = n;
 }
 
+void Node::ApplyHack(Assembler *as)
+{
+    if (m_left!=nullptr)
+        m_left->ApplyHack(as);
+    if (m_right!=nullptr)
+        m_right->ApplyHack(as);
+}
+
 void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp)
 {
     if (m_left != nullptr)

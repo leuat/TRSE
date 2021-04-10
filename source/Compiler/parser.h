@@ -89,10 +89,16 @@ public:
     QVector<ParserBlock> m_parserBlocks;
     static QStringList s_usedTRUs, s_usedTRUNames;
     QMap<QString, LMacro> m_macros;
+    QString m_procPrefix = "";
     int m_prevPercent = -1;
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;
+    bool m_breakSubvar = false;
+    QString m_addInitialReferenceToProcedureCall = "";
+
+    QString m_currentClass ="";
+
     QString m_vicMemoryConfig;
     QString m_currentDir, m_currentFileShort;
     QStringList m_removedProcedures;
@@ -205,6 +211,8 @@ public:
     QSharedPointer<Node> FindProcedure(bool& isAssign);
     QSharedPointer<Node> BinaryClause();
 
+
+    bool isRecord(Token& t);
     bool nextIsExpr();
 
     void AppendComment(QSharedPointer<Node> n);

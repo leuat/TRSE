@@ -93,6 +93,9 @@ public:
 
     virtual bool UseBlocks() { return false;}
 
+    virtual QString resolveTemporaryClassPointer(QString name, int mul, int &res) { return "";}
+
+
     void virtual dispatch(QSharedPointer<NodeConditional> node);
 
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage);

@@ -65,6 +65,12 @@ public:
             m_compoundStatement->parseConstants(symTab);
     }
 
+    void ApplyHack(Assembler *as) override
+    {
+        Node::ApplyHack(as);
+        if (m_compoundStatement!=nullptr)
+            m_compoundStatement->ApplyHack(as);
+    }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 

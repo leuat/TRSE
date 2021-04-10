@@ -831,8 +831,13 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 
 
 QString ASTDispatcher6502::getValue(QSharedPointer<Node> n) {
+
+
+
     if (m_inlineParameters.contains(n->getValue(as)))
         return m_inlineParameters[n->getValue(as)]->getValue(as);
+
+//    HackPointer(as,n);
 
     return n->getValue(as);
 }
@@ -844,6 +849,7 @@ QString ASTDispatcher6502::getValue8bit(QSharedPointer<Node> n, bool isHi) {
 
     return n->getValue8bit(as,isHi);
 }
+
 
 
 void ASTDispatcher6502::dispatch(QSharedPointer<Node> node)
@@ -2643,60 +2649,18 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
 
     node->VerifyReferences(as);
 
+
 //    if (!node->m_right->isAddress())
   //      ErrorHandler::e.Error("Must be address", node->m_op.m_lineNumber);
     if (IsSimpleIncDec(aVar,  node))
         return;
 
-/*
 
-    if (bVar==nullptr && !node->m_right->isPureNumeric()) {
-
-        //ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
-//        if (!node->m_right->isAddress())
-  //          ErrorHandler::e.Error("Error assigning pointer: right-hand must be variable or number", node->m_op.m_lineNumber);
-
-        node->m_right->forceWord();
-        node->m_right->setForceType(TokenType::INTEGER);
-        as->Term();
-        node->m_right->Accept(this);
-        as->Term();
-     //  as->Comment(";end");
-        as->Asm("sta " + getValue(aVar));
-        as->Asm("sty "+ getValue(aVar)+"+1");
-        return;
-    }
-*/
+    // If you are doing a pointer assignment, make sure that you are pointing to the same structures
 
 
 
-//    if (bVar!=nullptr) {
 
-/*        if (bVar->getType(as)!=TokenType::POINTER) {
-//            if (bVar->m_op.m_type==TokenType::ADDRESS) {
-                as->Asm("lda #<" + getValue(bVar));
-                as->Asm("ldx #>" + getValue(bVar));
-                as->Asm("sta " + getValue(aVar));
-                as->Asm("stx "+ getValue(aVar)+"+1");
-                return;
-  //          }
-        }
-        else
-        {
-            as->Asm("lda " + getValue(bVar));
-            as->Asm("ldx " + getValue(bVar) + "+1");
-            as->Asm("sta " + getValue(aVar));
-            as->Asm("stx "+ getValue(aVar)+"+1");
-            return;
-        }*/
-
-/*    if (node->m_right->isPureVariable()) {
-        if (!node->m_right->isPointer(as))
-        if (!node->m_right->isReference())
-            if (!node->m_right->isArrayIndex())
-                ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+node->m_right->getValue(as)+")</font>",node->m_op.m_lineNumber);
-    }
-*/
     // Make sure that everything is a reference
     if (node->m_right->isPure()) {
 //        as->Comment("EPIC FAIL " + QString::number(qSharedPointerDynamicCast<NodeNumber>(node->m_right)!=nullptr));
@@ -3172,6 +3136,49 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeComment> node)
 
 }
 
+QString ASTDispatcher6502::resolveTemporaryClassPointer(QString name, int mul, int& res)
+{
+    // pm_POINTER_Monster_x
+    QStringList lst = name.split("_POINTER_");
+    QString orgPointer = lst[0];
+    QString recordName = lst[1].split("_").first();
+    QString var = name;
+    var = var.remove(orgPointer+"_POINTER_");
+
+
+
+    auto record = as->m_symTab->m_records[recordName];
+    res = record->getShiftedPositionOfVariable(var,1);
+    return orgPointer;
+
+/*    as->ClearTerm();
+    as->Comment("Resolving temporary class pointer");
+    QString zp = as->m_internalZP.Get();
+    if (sizeShift==0) {
+        as->Asm("lda "+orgPointer);
+        as->Asm("sta "+zp);
+        as->Asm("lda "+orgPointer+"+1");
+        as->Asm("sta "+zp+"+1");
+
+        return zp;
+
+    }
+    else {
+
+        as->Asm("lda "+orgPointer);
+        as->Asm("clc");
+        as->Asm("adc #"+Util::numToHex(sizeShift&0xFF));
+        as->Asm("sta "+zp);
+        as->Asm("lda "+orgPointer+"+1");
+        as->Asm("adc #"+Util::numToHex((sizeShift>>8)&0xFF));
+        as->Asm("sta "+zp+"+1");
+    }
+    as->m_internalZP.Pop(zp);
+*/
+
+    //return zp;
+}
+
 bool ASTDispatcher6502::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi)
 {
     if (node->isPure()) {
@@ -3188,6 +3195,37 @@ bool ASTDispatcher6502::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo
 
 
 
+void ASTDispatcher6502::HackPointer(Assembler *as, QSharedPointer<Node> n)
+{
+    if (n==nullptr)
+        return;
+
+    auto v = qSharedPointerDynamicCast<NodeVar>(n);
+
+    if (v==nullptr)
+        return;
+
+    if (v->getValue(as).contains("_POINTER_")) {
+
+        as->Comment("Assigning pointer of record/class for " +v->getValue(as));
+        int val = 0;
+        QString zp = resolveTemporaryClassPointer(v->getValue(as),1,val); // For now, only allow to point to single objects
+
+        //return;
+        // simply hack value
+        v->value = zp;
+        v->setForceType(TokenType::POINTER);
+        v->m_op.m_type=TokenType::POINTER;
+        Token t = v->m_op;
+        t.m_type = TokenType::INTEGER;
+        t.m_value = Util::numToHex(val);
+        t.m_intVal = val;
+        v->m_ignoreLookup = true;
+        v->m_expr = QSharedPointer<NodeNumber>(new NodeNumber(t,val));
+
+    }
+
+}
 
 
 void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
@@ -3206,6 +3244,8 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 //    qDebug() << TokenType::getType(num->getType(as));
 
 
+    node->ApplyHack(as);
+
     if (num!=nullptr) {
         as->Comment("Assigning memory location");
         v = QSharedPointer<NodeVar>(new NodeVar(num->m_op)); // Create a variable copy
@@ -3215,8 +3255,15 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         //return num->HexValue();
     }
 
+    bool ignoreLookup = false;
 
+//    HackPointer(as,v);
+
+//    qDebug() << "DISP 1";
     QString vname = getValue(v);
+
+  //  qDebug() << "DISP 2";
+
 //    as->Comm nt("IS REGISTER : "+Util::numToHex(v->m_isRegister) + " "+vname);
     if (v->m_isRegister) {
         vname = vname.toLower();
@@ -3271,7 +3318,8 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     as->Comment("Assigning single variable : " + getValue(v));
     as->ClearTerm();
 //    as->Comment("Is word : " + QString::number(v->isWord(as)));
-    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
+    if (!ignoreLookup)
+       QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 
     // Trying to assign a PURE record
     if (v->isRecord(as) && !v->isRecordData(as)) {
@@ -3288,17 +3336,26 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         return;
     }
 
+
+
     // POINTER = RECORD errors
     if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as)) {
 //        if (!node->m_left->isArrayIndex())
   //          ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
-        if (!node->m_right->isRecordData(as))
-            ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
+        if (!node->m_right->isRecordData(as)) {
+            if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+               ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
+
+            as->Comment("Assigning pointer to record/class");
+
+        }
+
  //       if (node->)
     }
     // Variable = POINTER
     if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as))) {
-        ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
+        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+            ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
     }
 
 
@@ -3309,7 +3366,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
             return;
 
         }
-
         AssignPointer(node);
         return;
     }

@@ -50,6 +50,7 @@ public:
     void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
+    QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
 
 
     bool Evaluate16bitExpr(QSharedPointer<Node> node, QString& lo, QString& hi);
@@ -65,7 +66,7 @@ public:
 
     bool UseBlocks() override { return true;}
 
-
+    void HackPointer(Assembler* as, QSharedPointer<Node> node);
 
     /*
      *

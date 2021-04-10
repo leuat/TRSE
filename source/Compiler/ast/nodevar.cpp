@@ -151,6 +151,8 @@ TokenType::Type NodeVar::getArrayType(Assembler *as)
 
 bool NodeVar::isPointer(Assembler *as)
 {
+    if (m_forceType==TokenType::POINTER)
+        return true;
     return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType()==TokenType::POINTER;
 
 }
@@ -158,6 +160,43 @@ bool NodeVar::isPointer(Assembler *as)
 bool NodeVar::isPurePointer(Assembler *as)
 {
     return (isPointer(as) && (m_expr==nullptr));
+}
+
+void NodeVar::ApplyHack(Assembler *as)
+{
+//    qDebug() << value;
+    if (getValue(as).contains("_POINTER_")) {
+
+        as->Comment("Assigning pointer of record/class for " +getValue(as));
+//        QString zp = resolveTemporaryClassPointer(v->getValue(as),1,val); // For now, only allow to point to single objects
+        QString name = getValue(as);
+        QStringList lst = name.split("_POINTER_");
+        QString orgPointer = lst[0];
+        QString recordName = lst[1].split("_").first();
+        QString var = name;
+        var = var.remove(orgPointer+"_POINTER_");
+
+
+
+        auto record = as->m_symTab->m_records[recordName];
+        int val = record->getShiftedPositionOfVariable(var,1);
+        QString zp = orgPointer;
+
+
+        //return;
+        // simply hack value
+        value = zp;
+        setForceType(TokenType::POINTER);
+        m_op.m_type=TokenType::POINTER;
+        Token t = m_op;
+        t.m_type = TokenType::INTEGER;
+        t.m_value = Util::numToHex(val);
+        t.m_intVal = val;
+        m_ignoreLookup = true;
+        m_expr = QSharedPointer<NodeNumber>(new NodeNumber(t,val));
+
+    }
+
 }
 
 bool NodeVar::DataEquals(QSharedPointer<Node> other) {
@@ -271,28 +310,30 @@ QString NodeVar::getTypeText(Assembler *as)
 
 QString NodeVar::getValue(Assembler* as) {
     QString v= value;
-//    return v;
-//    qDebug() << v;
-    if (m_subNode!=nullptr) {
-        QSharedPointer<Symbol> s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
+//    if (v.startsWith("$"))
+  //      return v;
+    if (m_ignoreLookup)
+        return v;
+
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
+    if (m_subNode!=nullptr) { // has subnode a.b
+//        QSharedPointer<Symbol> s = as->m_symTab->Lookup(v,m_op.m_lineNumber,true);
 
         QString type = s->m_type;
         if ((m_expr!=nullptr) && !m_ignoreRecordExpr) { // Has array indices
             type = s->m_arrayTypeText;
-//            qDebug() << v << type;
-  //          qDebug() << as->m_symTab->m_symbols.keys();
-//            exit(1);
-    }
+        }
 
-//        qDebug() << "NodeVar getValue"
+        QString test = type;
+        if (type.toLower()=="pointer")
+            test = s->m_pointsTo;
 
-        if (!as->m_symTab->m_records.contains(type))
-                ErrorHandler::e.Error("Could not find of record type : "+type + " of " + v,m_op.m_lineNumber);
-        //QSharedPointer<SymbolTable>  t = as->m_symTab->m_records[type];
+        if (!as->m_symTab->m_records.contains(test))
+            ErrorHandler::e.Error("Could not find record type : "+type + " of " + v,m_op.m_lineNumber);
+
         if (qSharedPointerDynamicCast<NodeVar>(m_subNode)==nullptr)
             ErrorHandler::e.Error("Unknown subnode: '"+m_subNode->getValue(as)+"'", m_op.m_lineNumber);
-//        qDebug() << v << m_op.m_lineNumber << qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;
-//        qDebug() << "GET TYPE "<< v << "  " <<type << qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;
+
         v =v + "_"+type+"_"+qSharedPointerDynamicCast<NodeVar>(m_subNode)->value;//m_subNode->getValue(as);
     }
     if (as->m_symTab->getCurrentProcedure()!="") {
@@ -302,27 +343,16 @@ QString NodeVar::getValue(Assembler* as) {
                 v = tstv;
 
     }
-//    if (as!=nullptr)
-/*        if (as!=nullptr && Data::data.compilerState == Data::DISPATCHER) {
-            QString t = as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type.toLower();
-//            qDebug() << v<< "TYPE" << as->m_symTab->Lookup(v, m_op.m_lineNumber)->m_type <<m_op.getType();
-            if (m_op.m_type!=TokenType::ADDRESS) // const screen_bg_col etc
-            if (!as->m_symTab->m_constants.contains(v))
-            if ((t=="address") || t=="incbin"  || t=="incsid" || t=="incnsf")
-                if (!isReference() && !isArrayIndex() && !isPointer(as))
-                    ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v+")</font>",m_op.m_lineNumber);
 
-        }
-*/
-
-//    int a;
-  //      int* c=a;
-
-//    qDebug() << "NodeVar:: getValue : " << value << "  "  << TokenType::getType(getType(as));
-//    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
-//    if (m_forceAddress && !(getType(as)==TokenType::POINTER)) return "#" + v;
     if (isReference() && Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000) return "#" + v;
 //    if (m_forceAddress && !(isPointer(as))) return "#" + v;
+    if (isReference()&&as->m_symTab->m_records.contains(s->m_type)) {
+        // Trying to access a raw record/class as a pointer
+        QSharedPointer<SymbolTable> r = as->m_symTab->m_records[s->m_type];
+        // name the first object
+        v = v+"_"+s->m_type+"_"+r->m_symbols.keys().first();
+    }
+ //   qDebug() << "NODEVAR GETVALUE " <<v << s->m_type;
     return v;
 }
 

@@ -481,7 +481,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
-        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.keys();;
+//        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.keys();;
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
@@ -536,6 +536,34 @@ bool SymbolTable::isRegisterName(QString sn)
 bool SymbolTable::isThisPointer(QString sn)
 {
     return sn.toLower().endsWith("_this");
+}
+
+int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
+{
+    if (!m_orderedByDefinition.contains(var))
+        ErrorHandler::e.Error("Record/class '"+m_name+"' does not contain any variable '"+var +"'");
+
+    int cnt = 0;
+    int cur = 0;
+    while (m_orderedByDefinition[cur]!=var) {
+        cur+=1;
+        cnt+= m_symbols[m_orderedByDefinition[cur]]->getCountingLength()*mul;
+
+    }
+
+    return cnt;
+
+}
+
+int SymbolTable::getSize()
+{
+    int cnt = 0;
+    for (QString s: m_orderedByDefinition) {
+        cnt+= m_symbols[s]->getCountingLength();
+    }
+
+    return cnt;
+
 }
 
 
@@ -610,11 +638,18 @@ Symbol::Symbol(QString name, QString type, QString var) {
 }
 
 int Symbol::getLength() {
-    int l = 1;
-    if (m_value->m_type == TokenType::INTEGER ||TokenType::INTEGER_CONST)
-        l = 2;
- //   qDebug() << m_type << m_size <<l;
     return m_size;
+}
+
+int Symbol::getCountingLength()
+{
+    int l = 1;
+    if (m_value->m_type == TokenType::INTEGER || m_value->m_type==TokenType::INTEGER_CONST)
+        l = 2;
+    if (m_value->m_type == TokenType::LONG )
+        l = 4;
+ //   qDebug() << m_type << m_size <<l;
+    return l;
 }
 
 SymbolPointer::SymbolPointer() {}

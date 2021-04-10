@@ -37,7 +37,8 @@ QString TokenType::types[no_types] = {
             "UNTIL", "CONST", "COMMENT", "ABSOLUTE", "LENGTH", "RECORD", "UNIT", "GLOBAL",
             "WRAM", "HRAM", "ALIGNED", "BANK", "SPRRAM","INLINE", "BUILDTABLE", "USES", "FUNCTION", "COMPRESSED",
             "PURE", "PURE_VARIABLE", "PURE_NUMBER", "NO_TERM", "INVERT","MACRO", "REFERENCE", "SIGNED",
-            "BREAK", "CONTINUE", "RETURN", "ASSIGNOP", "RAM", "TYPE", "BOOLEAN", "CLASS", "PUBLIC", "PRIVATE"
+            "BREAK", "CONTINUE", "RETURN", "ASSIGNOP", "RAM", "TYPE", "BOOLEAN", "CLASS", "PUBLIC", "PRIVATE",
+            "SIZEOF"
 
 };
 

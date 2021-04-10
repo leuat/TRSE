@@ -39,6 +39,7 @@ public:
     bool m_fake16bit = false;
     QSharedPointer<Node> m_subNode = nullptr;
     bool m_ignoreRecordExpr = false;
+    bool m_ignoreLookup = false;
     NodeVar(Token t);
 
     NodeVar(Token t, QSharedPointer<Node> expr);
@@ -55,6 +56,9 @@ public:
 
     bool isPointer(Assembler* as) override;
     bool isPurePointer(Assembler* as) override;
+
+    void ApplyHack(Assembler* as) override;
+
 
     bool DataEquals(QSharedPointer<Node> other) override;
     bool isWord(Assembler* as) override;

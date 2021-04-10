@@ -84,6 +84,8 @@ public:
     QString m_syntaxData; // File syntax data
     QString m_systemString;
 
+    QString thisName = "this";
+
     QMap<QString, bool> m_reservedWordsRegularFont;
 
     QSharedPointer<AbstractSystem> m_currentSystem;

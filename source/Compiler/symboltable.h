@@ -52,6 +52,7 @@ public:
     QString m_arrayTypeText;
     QStringList m_flags;
     bool m_constIsPrefixed = false;
+    QString m_pointsTo = "";
     int m_org = 0;
     int m_size = 0;
     int m_lineNumber;
@@ -66,6 +67,7 @@ public:
     Symbol(QString name, QString type, long var);
     Symbol(QString name, QString type, QString var);
     int getLength();
+    int getCountingLength();
     // Nested symbols = records
 };
 
@@ -154,6 +156,8 @@ public:
     bool isRegisterName(QString sn);
     bool isThisPointer(QString sn);
 
+    int getShiftedPositionOfVariable(QString var,int mul);
+    int getSize();
 };
 
 #endif // SYMBOLTABLE_H
