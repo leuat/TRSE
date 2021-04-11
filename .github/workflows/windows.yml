@@ -8,6 +8,7 @@ jobs:
       - uses: jurplel/install-qt-action@v2
         with:
           arch: win64_mingw81
+      - run: pacman -S mingw-w64-x86_64-lua
       - run: qmake TRSE.pro
       - run: cat Makefile.Release
       - run: make
