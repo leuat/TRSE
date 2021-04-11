@@ -135,7 +135,7 @@ public:
     QMap<TokenType::Type, QString> m_typeFlags;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
-    QSharedPointer<Node> m_tree;
+    QSharedPointer<Node> m_tree = nullptr, m_currentExpr = nullptr;
 
     QMap<QString, QSharedPointer<Node>> m_types;
 
@@ -162,6 +162,7 @@ public:
     QJSEngine m_jsEngine;
 
     void Delete();
+
     void InitObsolete();
     void Eat(TokenType::Type t);
     void VerifyToken(Token t);
@@ -192,11 +193,13 @@ public:
     void VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
     void ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
 
+    QSharedPointer<Node> ApplyClassVariable(QSharedPointer<Node> var);
 
     QSharedPointer<Node> Variable(bool isSubVar=false);
     QSharedPointer<Node> SubVariable(QString parent);
     QSharedPointer<Node> Empty();
     QVector<QSharedPointer<Node>> Record(QString name);
+//    QVector<QSharedPointer<Node>> Class(QString name);
 //    QSharedPointer<Node> Record();
     QSharedPointer<Node> Case();
     QSharedPointer<Node> AssignStatement();

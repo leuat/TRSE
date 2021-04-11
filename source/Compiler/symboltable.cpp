@@ -546,8 +546,8 @@ int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
     int cnt = 0;
     int cur = 0;
     while (m_orderedByDefinition[cur]!=var) {
-        cur+=1;
         cnt+= m_symbols[m_orderedByDefinition[cur]]->getCountingLength()*mul;
+        cur+=1;
 
     }
 
@@ -644,12 +644,21 @@ int Symbol::getLength() {
 int Symbol::getCountingLength()
 {
     int l = 1;
-    if (m_value->m_type == TokenType::INTEGER || m_value->m_type==TokenType::INTEGER_CONST)
+    if (m_type.toLower() == "integer")
         l = 2;
-    if (m_value->m_type == TokenType::LONG )
+    if (m_type.toLower() == "long")
         l = 4;
- //   qDebug() << m_type << m_size <<l;
+//    qDebug() << m_type << m_size <<l <<m_value;
     return l;
+}
+
+QString Symbol::getEndType()
+{
+    if (m_type.toLower()=="array")
+        return m_arrayTypeText;
+    if (m_type.toLower()=="pointer")
+        return m_pointsTo;
+    return m_type;
 }
 
 SymbolPointer::SymbolPointer() {}

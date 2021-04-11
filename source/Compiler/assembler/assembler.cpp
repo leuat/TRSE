@@ -365,6 +365,8 @@ void Assembler::IncludeFile(QString pfile)
 bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList data, QString pos)
 {
     if (m_symTab->m_records.contains(type)) {
+        if (m_symTab->m_records[type]->m_isClass)
+            return false;
         if (pos!="") {
             int p = Util::NumberFromStringHex(pos);
 
@@ -439,6 +441,22 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
         return true;
     }
     return false;
+}
+
+bool Assembler::DeclareClass(QString name, QString type, int count, QStringList data, QString pos)
+{
+    if (m_symTab->m_records.contains(type)) {
+        if (!m_symTab->m_records[type]->m_isClass)
+            return false;
+
+        QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+        Label(name + ":");
+        Asm("org "+name+"+" +QString::number(st->getSize()*count));
+
+        return true;
+    }
+    return false;
+
 }
 
 void Assembler::WriteConstants()

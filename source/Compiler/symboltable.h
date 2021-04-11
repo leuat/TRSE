@@ -68,6 +68,7 @@ public:
     Symbol(QString name, QString type, QString var);
     int getLength();
     int getCountingLength();
+    QString getEndType();
     // Nested symbols = records
 };
 

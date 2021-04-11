@@ -1,0 +1,143 @@
+program Classes;
+var  
+   i,j,shift,k: byte = 0;
+	dx,dy : byte;
+   saddr: array[screen_height] of integer; // Screen address table
+/*
+	The famous MCMC random walk!	
+
+*/	
+	randomTable : array[256] of byte;
+
+	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
+	monster_type = class
+		prevx, prevy : byte; // previous position of monster
+		x,y : byte; // Current position of monster 
+		color : byte; // Current colour of monster
+		// if you try to declare arrays within a record, you'll get an error message if you try to
+		// create another array of the record type
+
+
+
+
+		procedure Update();
+		begin		
+			this.prevx := this.x;
+			this.prevy := this.y;
+			j:=randomTable[k];
+			dx:=0;
+			dy:=0;
+
+	 		if (this.x<>0) then
+	 			if (j=0) then dx:=-1;
+	 		if (this.x<>screen_width-1) then
+				if (j=3) then dx:=1; // Wall X
+
+			k+=11;			
+			j:=randomTable[k];
+
+			if (this.y<>0) then // Wall Y
+				if (j=0) then dy:=-1;
+
+			if (this.y<>screen_height-1) then // Wall Y
+				if (j=3) then dy:=1;
+
+			this.x+=dx;
+			this.y+=dy;
+		end;
+
+
+		procedure Render(rchar:byte);
+		begin
+			moveto(this.prevx, this.prevy,hi(screen_char_loc));
+			screenmemory[0]:=key_space;
+			moveto(this.x, this.y,hi(screen_char_loc));
+			screenmemory[0]:=rchar;
+			screenmemory+=$D400;
+			screenmemory[0]:=this.color;
+	
+		end;
+		
+	end;
+
+
+	// Number of walkers
+	const no : byte = 32;
+	// Monster array allocation will fail if it is an array. 
+	monsters : array[no] of monster_type;
+	// The following is allowed even if monster_type contains an array
+	singleMonster : monster_type;
+
+	pm : pointer of monster_type;
+
+/*
+	Initialize all the monsters
+*/
+procedure InitMonsters();
+begin
+	for i:=0 to no do
+	begin
+		pm:=#monsters[i];
+		pm.x:=mod(random(),screen_width); // Random x-position
+		pm.y:=mod(random(),screen_height); // Random t-position
+		pm.prevx := pm.x;
+		pm.prevy := pm.y;
+		pm.color:=mod(random(),14)+blue+1; // Random colour excluding background
+	end;
+
+end;
+/*
+	Render all the monsters by first erasing the old position, then paining the new
+*/
+procedure RenderMonsters(render_char:byte);
+begin
+	for i:=0 to no do
+	begin
+		monsters[i].Render(render_char);
+	end;	
+
+end;
+
+
+
+// Random walk: up, down,left,right, stop at walls
+// Uses a lookup random table to decide which direction to go
+procedure UpdateMonsters();
+begin
+	k:=shift;
+	for i:=0 to no do
+	begin
+		monsters[i].Update();
+		
+	end;	
+
+end;
+
+ 
+begin
+	// Initialize
+	screen_bg_col:=blue;
+	screen_fg_col:=blue;
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(black,screen_col_loc);
+	DefineScreen();
+	// Initialize tables
+	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
+	for i:=0 to 256 do 
+		randomTable[i]:=random()&3;
+
+		
+	InitMonsters();
+	// Loop	
+	while (true) do
+	begin
+		UpdateMonsters();
+		RenderMonsters(0);// 'at' sign
+		// Wait a bit each frame
+		for i:=0 to 4 do
+			waitforverticalblank();
+		shift+=1; // Some prime number
+	end;	
+
+	Loop();
+end.

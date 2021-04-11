@@ -333,6 +333,7 @@ public:
 
 
     virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
+    virtual bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos);
 
     void WriteConstants();
 

@@ -66,6 +66,7 @@ public:
     bool isByte(Assembler* as) override;
     bool containsPointer(Assembler* as) override;
     bool isRecord(Assembler* as) override;
+    bool isClass(Assembler* as) override;
     bool isRecordData(Assembler* as) override;
 
     virtual bool isReference() override { return m_op.m_isReference; }
