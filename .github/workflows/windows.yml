@@ -5,8 +5,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ilammy/msvc-dev-cmd@v1
       - uses: jurplel/install-qt-action@v2
+        with:
+          arch: win64_mingw81
       - run: qmake TRSE.pro
       - run: cat Makefile.Release
       - run: make
