@@ -74,7 +74,7 @@ win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast
-    LIBS += $$PWD/libs/lua/liblua.a
+    LIBS += $$PWD/libs/lua/lua.lib
     LIBS += -lopengl32
 
 }
