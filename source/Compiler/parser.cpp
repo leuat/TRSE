@@ -3303,9 +3303,10 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 
     QString type = s->getEndType();
     auto sv = qSharedPointerDynamicCast<NodeVar>(v->m_subNode);
+    if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
+        return v;
 
     if (sv!=nullptr) { // class.property translates to class[pos_in_memory];
-    if (m_symTab->m_records.contains(type))
     {
         QString subVar = sv->value;
 //        QString vname = subVar.remove(s->m_type+"_");
