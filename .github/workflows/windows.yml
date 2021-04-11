@@ -13,7 +13,9 @@ jobs:
           arch: win64_mingw81
       - run: qmake TRSE.pro
       - run: ls D:/a/TRSE/TRSE/libs/lua
-      - run: ls libs/lua
+      - run: nm libs/lua/liblua.a | grep lua_tonumberx
+      - run: nm libs/lua/lua.lib | grep lua_tonumberx
+      - run: nm libs/lua/libluamac.a | grep lua_tonumberx
       - run: make
       # All the steps below are not necessary (for now) but document what needs
       # to be done for TRSE to work under linux.
