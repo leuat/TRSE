@@ -5,10 +5,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          install: mingw-w64-x86_64-lua
       - uses: jurplel/install-qt-action@v2
         with:
           arch: win64_mingw81
-      - run: pacman -S mingw-w64-x86_64-lua
       - run: qmake TRSE.pro
       - run: cat Makefile.Release
       - run: make
