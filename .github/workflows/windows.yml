@@ -12,7 +12,6 @@ jobs:
         with:
           arch: win64_mingw81
       - run: qmake TRSE.pro
-      - run: cat Makefile.Release
       - run: make
       # All the steps below are not necessary (for now) but document what needs
       # to be done for TRSE to work under linux.
