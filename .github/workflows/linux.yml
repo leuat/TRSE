@@ -7,7 +7,6 @@ jobs:
       - uses: actions/checkout@v2
       - run: sudo apt-get install qt5-qmake qtdeclarative5-dev
       - run: qmake CONFIG+=debug TRSE.pro
-      - run: qmake CONFIG+=debug TRSE.pro
       - run: make
       # All the steps below are not necessary (for now) but document what needs
       # to be done for TRSE to work under linux.
