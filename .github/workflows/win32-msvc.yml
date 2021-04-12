@@ -9,7 +9,7 @@ jobs:
       - uses: jurplel/install-qt-action@v2
         with:
           version: '6.0.1'
-          tools: 'tools_ifw,4.0,qt.tools.ifw.40 tools_qtcreator,4.14,qt.tools.qtcreator'
+          tools: 'tools_ifw,4,qt.tools.ifw.40 tools_qtcreator,4,qt.tools.qtcreator'
 
       # Build TRSE
       - shell: cmd
