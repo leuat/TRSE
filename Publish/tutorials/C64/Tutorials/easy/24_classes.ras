@@ -13,6 +13,8 @@ var
 		prevx, prevy : byte; // previous position of monster
 		x,y : byte; // Current position of monster 
 		color : byte; // Current colour of monster
+		name : array[6] of byte; // Classes supports arrays		
+
 		// if you try to declare arrays within a record, you'll get an error message if you try to
 		// create another array of the record type
 
@@ -25,15 +27,15 @@ var
 			dx:=0;
 			dy:=0;
 
-	 		if (this.x<>0) then
+	 		if (this.x<>1) then
 	 			if (j=0) then dx:=-1;
-	 		if (this.x<>screen_width-1) then
+	 		if (this.x<>screen_width-2) then
 				if (j=3) then dx:=1; // Wall X
 
 			k+=11;			
 			j:=randomTable[k];
 
-			if (this.y<>0) then // Wall Y
+			if (this.y<>1) then // Wall Y
 				if (j=0) then dy:=-1;
 
 			if (this.y<>screen_height-1) then // Wall Y
@@ -46,12 +48,32 @@ var
 
 		procedure Render(rchar:byte);
 		begin
+			// Clear previous stuff
 			moveto(this.prevx, this.prevy,hi(screen_char_loc));
 			screenmemory[0]:=key_space;
+			screenmemory-=41;
+			screenmemory[0]:=key_space;
+			screenmemory[1]:=key_space;
+			screenmemory[2]:=key_space;
+			
+			// Paint char!
 			moveto(this.x, this.y,hi(screen_char_loc));
 			screenmemory[0]:=rchar;
+			// Paint colors 
 			screenmemory+=$D400;
 			screenmemory[0]:=this.color;
+			screenmemory-=41;
+			// Text color
+			screenmemory[0]:=this.color;
+			screenmemory[1]:=this.color;
+			screenmemory[2]:=this.color;
+			
+			
+			// Paint text
+			moveto(this.x-1, this.y-1,hi(screen_char_loc));
+			// Print name
+			for j:=0 to 3 do
+				screenmemory[j] := this.name[j];
 	
 		end;
 		
@@ -59,7 +81,7 @@ var
 
 
 	// Number of walkers
-	const no : byte = 32;
+	const no : byte = 16;
 	// Monster array allocation will fail if it is an array. 
 	monsters : array[no] of Monster;
 	// The following is allowed even if Monster contains an array
@@ -79,6 +101,11 @@ begin
 		pm.y:=mod(random(),screen_height); // Random t-position
 		pm.prevx := pm.x;
 		pm.prevy := pm.y;
+		// Produce a random name of 3 chars
+		pm.name[0] := random()/16+1;
+		pm.name[1] := random()/16+1;
+		pm.name[2] := random()/16+1;
+		pm.name[3] := 0;
 		pm.color:=mod(random(),14)+blue+1; // Random colour excluding background
 	end;
 

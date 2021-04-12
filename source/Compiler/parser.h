@@ -229,6 +229,7 @@ public:
 
 
     bool isRecord(Token& t);
+    bool isClass(Token& t);
     bool nextIsExpr();
 
     void AppendComment(QSharedPointer<Node> n);

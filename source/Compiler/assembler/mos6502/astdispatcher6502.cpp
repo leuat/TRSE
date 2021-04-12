@@ -3383,7 +3383,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 //        if (!node->m_left->isArrayIndex())
   //          ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as)) {
-            if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+//            if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
                ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
 
             as->Comment("Assigning pointer to record/class");
@@ -3394,7 +3394,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     }
     // Variable = POINTER
     if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as))) {
-        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+ //       if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
             ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
     }
 

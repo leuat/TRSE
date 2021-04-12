@@ -1,21 +1,19 @@
 program Sprites;
 @use "crtc"
 var  
-   time,x,y: byte; 
+   time,x,y,cnt: byte; 
 	t2:byte = 64;
 
 @export "resources/images/sprite1.flf" "resources/images/sprite1.bin" 256
 @export "resources/images/background.flf" "resources/images/background.bin" 256
 
 	const background : address = $6000;
-	sprites : incbin("resources/images/sprite1.bin");
+	spriteData : incbin("resources/images/sprite1.bin");
 	palette : incbin("resources/images/sprite1_palette.bin");
 	bg : incbin("resources/images/background.bin",background);
 
     siny : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/1.5");
     sinx : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/3.5");
-
-	
 
 
 interrupt MainRaster();
@@ -24,7 +22,7 @@ begin
 	x:= sinx[time];
 	y:= 40+siny[t2];
 	Memory::EnableLRom();
-	crtc::CopyImageTransparent(#sprites, #background, 32,32, x, y, 0);
+	crtc::CopyImageTransparent(#spriteData, #background, 32,32, x, y, 0);
 	Memory::DisableLRom();
 	time:=time+1;
 	t2:=t2+1;
@@ -32,7 +30,6 @@ begin
 	Memory::EnableInterrupts();
 	Memory::PopAll();
 end;
-
 
 begin
 	crtc::SetBorder(0);
@@ -43,10 +40,10 @@ begin
 	memcpy(#bg,^$C000,80*200);
 	// Copy back to background in a format that the sprite renderer can use
 	crtc::CopyScreenToBuffer(0,200,#background);
+	
 
 //	fill(#background,0,80*150);
 	crtc::Synchronize();
-
 	RasterIRQ(MainRaster());
 	
 	Loop();

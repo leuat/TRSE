@@ -16,7 +16,7 @@ public:
         m_supportsExomizer = true;
         m_registers << "_a"<<"_x" <<"_y" <<"_ax" <<"_ay" <<"_xy";
         m_canRunAsmFiles = true;
-        m_allowRecordPointers = true; // EXPERIMENTAL
+        m_allowClasses = true; // EXPERIMENTAL
 
 
     }

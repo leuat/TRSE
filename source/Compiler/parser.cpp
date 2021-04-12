@@ -1495,7 +1495,10 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         QSharedPointer<Node> expr = nullptr;
         if (m_currentToken.m_type==TokenType::LBRACKET) {
             Eat(TokenType::LBRACKET);
+            auto org = m_symTab->m_gPrefix;
+            m_symTab->m_gPrefix ="";
             expr = Expr();
+            m_symTab->m_gPrefix = org;
             Eat(TokenType::RBRACKET);
          }
         QSharedPointer<Node> subVar = nullptr;
@@ -1573,7 +1576,12 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         else
             {
                 Eat(TokenType::LBRACKET);
-                QSharedPointer<Node> expr = Expr();
+                //QSharedPointer<Node> expr = Expr();
+                auto org = m_symTab->m_gPrefix;
+                m_symTab->m_gPrefix ="";
+
+                auto expr = Expr();
+                m_symTab->m_gPrefix = org;
                 Eat(TokenType::RBRACKET);
 
 
@@ -1823,6 +1831,10 @@ QSharedPointer<Node> Parser::AssignStatement()
     QSharedPointer<Node> arrayIndex = nullptr;
     Token t = m_currentToken;
     QSharedPointer<Node> left = Variable();
+
+    if (t.m_isReference)
+        ErrorHandler::e.Error("Assignment '"+t.m_value+"' cannot be a reference. " , t.m_lineNumber);
+
     // test if left is procedure after all
     if (qSharedPointerDynamicCast<NodeProcedure>(left)!=nullptr)
         return left; //is a procedure type m.Draw();
@@ -2047,12 +2059,16 @@ QSharedPointer<Node> Parser::BinaryClause()
 
 bool Parser::isRecord(Token &t)
 {
-    if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
-        return false;
 
     return m_symTab->m_records.contains(m_currentToken.m_value);
 
 //    return false;
+
+}
+
+bool Parser::isClass(Token &t)
+{
+    return isRecord(t) && m_symTab->m_records[t.m_value]->m_isClass;
 
 }
 
@@ -2898,7 +2914,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
 
 //    qDebug() << m_symTab->m_symbols.keys();
-    m_projectIni->setString("temp_vic_memory_config",m_vicMemoryConfig);
+    m_projectIni->setString("temp_vic_fapmemory_config",m_vicMemoryConfig);
     return root;
 }
 
@@ -3346,7 +3362,6 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     if (!v)
         return var;
 
-
     QSharedPointer<Symbol> s = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
 
     QString type = s->getEndType();
@@ -3354,17 +3369,19 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
         return v;
 
+
     if (sv!=nullptr) { // class.property translates to class[pos_in_memory];
     {
         QString subVar = sv->value;
-//        QString vname = subVar.remove(s->m_type+"_");
+        // Ok we have a subvar: pm.x
+
         int shiftInternal = m_symTab->m_records[type]->getShiftedPositionOfVariable(subVar,1);
-        // Replace "m" with "m+3" etc
-//        v->value = v->value + " + " + Util::numToHex(shift);
+        int dataLength = m_symTab->m_records[type]->m_symbols[subVar]->getCountingLength();
         if (v->m_expr!=nullptr) {
             if (v->m_expr->isPureNumeric())
                 shiftInternal+=v->m_expr->getValueAsInt(nullptr)*m_symTab->m_records[type]->getSize();
             else {
+                // For now, disallow looking up an object in a array with generic index
 
                 /* Here, magic happes:
                  * replace
@@ -3398,8 +3415,25 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
                 ErrorHandler::e.Error("Class array indices not supported yet. Please use pointers.",m_currentToken.m_lineNumber);
             }
         }
-        v->m_subNode = nullptr;
         v->m_expr = CreateNumber(shiftInternal);
+
+
+        if (sv->m_expr!=nullptr) {
+            // Uh oh! We are looking up something
+            // like pm.data[ index ] - make a binop of *shift* and the index.
+            // pm.data[index] := pm[shift + index];
+            if (dataLength!=1) // uh oh we need to mul with datalength
+                sv->m_expr = CreateBinop(TokenType::MUL,sv->m_expr,CreateNumber(dataLength));
+            v->m_expr = CreateBinop(TokenType::PLUS, sv->m_expr,v->m_expr);
+        }
+        v->m_subNode = nullptr;
+
+        if (v->isReference()) {
+            auto rhs = v->m_expr;
+            v->m_expr = nullptr;
+            v->m_op.m_isReference = false;
+            return CreateBinop(TokenType::PLUS,v,rhs);
+        }
 //        qDebug() << "Parser applying class to "<<v->value <<v->m_expr->getValueAsInt(nullptr);
 
 //        return QSharedPointer<NodeBinOP>(new NodeBinOP(var,t,num));
@@ -3922,7 +3956,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,""));
         nvt->m_arrayVarType.m_type = m_currentToken.m_type;
 
-        if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG  || isRecord(m_currentToken))) {
+        if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG  || isClass(m_currentToken))) {
             ErrorHandler::e.Error("Must point to either byte, integers, long (m68k/mega65).",m_currentToken.m_lineNumber);
         }
         Eat();
@@ -3952,8 +3986,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             Eat();
             TokenType::Type typ = m_currentToken.m_type;
             QString val = m_currentToken.m_value;
-            if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG  || isRecord(m_currentToken))) {
-                ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs (m68k).",m_currentToken.m_lineNumber);
+            if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG  || isClass(m_currentToken))) {
+                ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs and classes.",m_currentToken.m_lineNumber);
             }
 
             Eat();

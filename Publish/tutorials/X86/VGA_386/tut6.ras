@@ -51,9 +51,9 @@ begin
 		// Rotate object 0 		
 		Lib3d::RotateEuler(0,time,time*2,0-time);
 		// Some sine waves		
-		k:=Tables::sine256[(time*3)&255]/4;
+		k:=Tables::sine256[(time*3)&255]/2;
 		// Project points in object 0 to 2D, move to position 160,100,200+k
-		Lib3d::ProjectSimple(0, 160,100, 200+k);
+		Lib3d::ProjectSimple(0, 160,100, 128+k);
 
 		// Render as lines
 		Lib3d::RenderWireframe(0, time, Screen::buffer1);		
