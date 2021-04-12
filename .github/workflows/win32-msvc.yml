@@ -13,7 +13,7 @@ jobs:
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
           qmake TRSE.pro
-          make
+          D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -f Makefile.Release
 
       # TODO(ColinPitrat): Review all this
       # All the steps below are not necessary (for now) but document what needs
