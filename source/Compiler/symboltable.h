@@ -25,11 +25,13 @@
 #include <QString>
 #include <QMap>
 #include <QDebug>
+#include <QStack>
 #include "errorhandler.h"
 #include "pvar.h"
 #include "token.h"
 #include "syntax.h"
 #include "source/LeLib/util/util.h"
+#include "source/LeLib/util/utilclasses.h"
 
 class SymbolPointer : public QObject {
     Q_OBJECT
@@ -96,6 +98,9 @@ public:
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;
     QMap<QString, QString> m_extraAtSymbols;
+//    QStack<QString> m_tempPointers;
+    Stack m_tempPointers;
+
 
     QStringList m_orderedByDefinition;
 

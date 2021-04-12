@@ -18,8 +18,6 @@ var
 		// create another array of the record type
 
 
-
-
 		procedure Update();
 		begin		
 			this.prevx := this.x;
@@ -78,7 +76,7 @@ begin
 	for i:=0 to no do
 	begin
 		pm:=#monsters[i];
-		pm.x:=mod(random(),screen_width); // Random x-position
+		monsters[i].x:=mod(random(),screen_width); // Random x-position
 		pm.y:=mod(random(),screen_height); // Random t-position
 		pm.prevx := pm.x;
 		pm.prevy := pm.y;
@@ -86,6 +84,34 @@ begin
 	end;
 
 end;
+
+/*
+// ORIGINAL CODE BY DEVELOPER
+procedure UpdateSomeStuff();
+begin
+	for i:=0 to no-1 do
+	begin
+		monsters[i].prevx := monsters[i+1].x;
+		monsters[i].prevy := monsters[i+1].y;
+	end;
+end;
+
+// TRANSFORMED BY COMPILER
+procedure UpdateSomeStuff();
+begin
+	for i:=0 to no-1 do
+	begin
+		zp1 := #monsters[i];
+		zp2 := #monsters[i+1];
+		zp1.prevx := zp2.x;
+		zp1 := #monsters[i];
+		zp2 := #monsters[i+1];
+		zp1.prevy := zp2.y;
+	end;
+end;
+
+*/
+
 /*
 	Render all the monsters by first erasing the old position, then paining the new
 */

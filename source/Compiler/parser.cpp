@@ -37,6 +37,7 @@ QString Parser::WashVariableName(QString v)
 
 }
 
+
 QSharedPointer<Symbol> Parser::getSymbol(QSharedPointer<Node> var)
 {
     auto v = qSharedPointerDynamicCast<NodeVar>(var);
@@ -2120,11 +2121,14 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 
 QVector<QSharedPointer<Node>> Parser::StatementList()
 {
+    // Keep the current statement list for optimizations
+    QVector<QSharedPointer<Node>> results;
+    m_currentStatementList = &results;
 
     QSharedPointer<Node> node = Statement();
-    QVector<QSharedPointer<Node>> results;
     if (node!=nullptr)
-    results.append(node);
+        results.append(node);
+
     while (m_currentToken.m_type == TokenType::SEMI) {
         Eat(TokenType::SEMI);
         QSharedPointer<Node> n = Statement();
@@ -2135,6 +2139,7 @@ QVector<QSharedPointer<Node>> Parser::StatementList()
     if (m_currentToken.m_type==TokenType::ID)
 //        ErrorHandler::e.Error("Parser::Statementlist SYNTAX ERROR : Token should not be ID", m_currentToken.m_lineNumber);
     ErrorHandler::e.Error("Did you forget a semicolon? (Token should not be ID in Parser)", m_currentToken.m_lineNumber);
+    m_currentStatementList = nullptr;
 
 
     return results;
@@ -3292,6 +3297,40 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     decl.append(procDecl);
 }
 
+QSharedPointer<NodeNumber> Parser::CreateNumber(int i)
+{
+    Token t = m_currentToken;
+    t.m_type=TokenType::INTEGER_CONST;
+    t.m_intVal = i;
+    return QSharedPointer<NodeNumber>(new NodeNumber(t,i));
+}
+
+QSharedPointer<NodeVar> Parser::CreateVariable(QString v)
+{
+    Token t = m_currentToken;
+    t.m_type=TokenType::ID;
+    t.m_value = v;
+    t.m_intVal = 0;
+
+    return QSharedPointer<NodeVar>(new NodeVar(t));
+
+}
+
+QSharedPointer<NodeBinOP> Parser::CreateBinop(TokenType::Type tt, QSharedPointer<Node> left, QSharedPointer<Node> right)
+{
+    Token t = m_currentToken;
+    t.m_type = tt;
+    return QSharedPointer<NodeBinOP>(new NodeBinOP(left,t,right));
+}
+
+QSharedPointer<NodeAssign> Parser::CreateAssign(QSharedPointer<Node> left, QSharedPointer<Node> right)
+{
+    Token t = m_currentToken;
+    t.m_type = TokenType::ASSIGN;
+    return QSharedPointer<NodeAssign>(new NodeAssign(left,t,right));
+
+}
+
 QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 {
     auto v = qSharedPointerDynamicCast<NodeVar>(var);
@@ -3317,17 +3356,41 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
             if (v->m_expr->isPureNumeric())
                 shiftInternal+=v->m_expr->getValueAsInt(nullptr)*m_symTab->m_records[type]->getSize();
             else {
+
+                /* Here, magic happes:
+                 * replace
+                 *
+                 * monster[i].x:=10
+                 *
+                 * with
+                 *
+                 * tempPointer1:=#monster[i];
+                 * tempPonter1.x := 10;
+                 *
+                 * */
+/*                QString tmp1 = m_symTab->m_tempPointers.pop();
+                if (!m_symTab->m_symbols.contains(tmp1)) {
+                    auto sym = QSharedPointer<Symbol>(new Symbol(tmp1,"POINTER"));
+                    m_symTab->Define(sym);
+                    sym->m_pointsTo = type;
+
+                }
+
+                auto ptr = CreateVariable(tmp1);
+                auto refVal = CreateVariable(v->value);
+                refVal->m_expr = v->m_expr;
+                // but no subvar
+                refVal->m_op.m_isReference = true;
+                m_currentStatementList->append(CreateAssign(ptr,refVal));
+                m_symTab->m_tempPointers.push(tmp1);
+                return CreateVariable(tmp1);
+*/
+                // Force the user to handle the pointers instead. Don't worry about it!
                 ErrorHandler::e.Error("Class array indices not supported yet. Please use pointers.",m_currentToken.m_lineNumber);
             }
         }
         v->m_subNode = nullptr;
-        Token t = m_currentToken;
-        t.m_type=TokenType::PLUS;
-        Token tn = m_currentToken;
-        tn.m_type=TokenType::INTEGER_CONST;
-        tn.m_intVal = shiftInternal;
-        auto num = QSharedPointer<NodeNumber>(new NodeNumber(tn,shiftInternal));
-        v->m_expr = num;
+        v->m_expr = CreateNumber(shiftInternal);
 //        qDebug() << "Parser applying class to "<<v->value <<v->m_expr->getValueAsInt(nullptr);
 
 //        return QSharedPointer<NodeBinOP>(new NodeBinOP(var,t,num));
@@ -3343,25 +3406,10 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         v->m_expr = nullptr;
         int size = m_symTab->m_records[type]->getSize();
 
-        Token t = m_currentToken;
-        t.m_type=TokenType::MUL;
-        Token tn = m_currentToken;
-        tn.m_type=TokenType::INTEGER_CONST;
-//        tn.m_intVal = size;
-        auto nodeClassSize = QSharedPointer<NodeNumber>(new NodeNumber(tn,size));
-        auto bopShift = QSharedPointer<NodeBinOP>(new NodeBinOP(nodeCounter,t,nodeClassSize));
-
-  //      qDebug() << v->value << v->m_expr << v->isReference();
-//        qDebug() << size << nodeCounter->getValueAsInt(nullptr);
-        // Outer bop
-
-        t.m_type=TokenType::PLUS;
-
-        return QSharedPointer<NodeBinOP>(new NodeBinOP(var,t,bopShift));
-
-//        qDebug() << "Parser applying class to "<<v->value <<v->m_expr->getValueAsInt(nullptr);
-
-//        return QSharedPointer<NodeBinOP>(new NodeBinOP(var,t,num));
+        // var + i*sizeOf(class)
+        auto nodeClassSize = CreateNumber(size);
+        auto bopShift = CreateBinop(TokenType::MUL,nodeCounter,nodeClassSize);
+        return CreateBinop(TokenType::PLUS, var,bopShift);
 
     }
     return v;

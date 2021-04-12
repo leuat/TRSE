@@ -103,6 +103,10 @@ void SymbolTable::Initialize()
         keeps.append(m_constants["STOP_MUSIC"]);
     }
 
+    m_tempPointers.m_vars.clear();
+    for (int i=0;i<100;i++)
+        m_tempPointers.push("tempPointer"+QString::number(i));
+
     QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system).toLower();
 //    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {

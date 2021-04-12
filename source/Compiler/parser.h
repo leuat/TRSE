@@ -136,16 +136,29 @@ public:
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree = nullptr, m_currentExpr = nullptr;
-
+    QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
     QMap<QString, QSharedPointer<Node>> m_types;
 
     QString WashVariableName(QString v);
+
+
+    /*
+     * Small Node Factory
+     *
+     * */
+    QSharedPointer<NodeNumber> CreateNumber(int i);
+    QSharedPointer<NodeVar> CreateVariable(QString v);
+    QSharedPointer<NodeBinOP> CreateBinop(TokenType::Type t, QSharedPointer<Node> left, QSharedPointer<Node> right);
+    QSharedPointer<NodeAssign> CreateAssign(QSharedPointer<Node> left, QSharedPointer<Node> right);
+
+
 
 
     QSharedPointer<Symbol> getSymbol(QSharedPointer<Node> var);
 
     QVector<QString> m_ignoreBuiltinFunctionTPU;
     static QVector<QSharedPointer<Parser>> m_tpus;
+
 
     QStringList getFlags();
 
