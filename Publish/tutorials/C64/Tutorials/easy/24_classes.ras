@@ -2,7 +2,6 @@ program Classes;
 var  
    i,j,shift,k: byte = 0;
 	dx,dy : byte;
-   saddr: array[screen_height] of integer; // Screen address table
 /*
 	The famous MCMC random walk!	
 
@@ -85,32 +84,6 @@ begin
 
 end;
 
-/*
-// ORIGINAL CODE BY DEVELOPER
-procedure UpdateSomeStuff();
-begin
-	for i:=0 to no-1 do
-	begin
-		monsters[i].prevx := monsters[i+1].x;
-		monsters[i].prevy := monsters[i+1].y;
-	end;
-end;
-
-// TRANSFORMED BY COMPILER
-procedure UpdateSomeStuff();
-begin
-	for i:=0 to no-1 do
-	begin
-		zp1 := #monsters[i];
-		zp2 := #monsters[i+1];
-		zp1.prevx := zp2.x;
-		zp1 := #monsters[i];
-		zp2 := #monsters[i+1];
-		zp1.prevy := zp2.y;
-	end;
-end;
-
-*/
 
 /*
 	Render all the monsters by first erasing the old position, then paining the new
@@ -148,7 +121,6 @@ begin
 	clearscreen(black,screen_col_loc);
 	DefineScreen();
 	// Initialize tables
-	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
 	for i:=0 to 256 do 
 		randomTable[i]:=random()&3;
 
