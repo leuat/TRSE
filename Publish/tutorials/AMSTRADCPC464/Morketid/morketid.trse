@@ -78,4 +78,5 @@ data_header_images/forest3.flf = 0
 data_header_images/forest_bg.flf = 6.93842e-310
 data_header_images/forest_fg.flf = 6.93842e-310
 data_header_images/logo_keep.flf = 6.90119e-310
-open_files =, main.ras
+open_files = ,main.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC464/Morketid/

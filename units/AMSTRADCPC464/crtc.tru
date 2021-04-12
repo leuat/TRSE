@@ -162,6 +162,8 @@ Sets a single color palette using hardware ports. Firmware must be disabled.
 <li>Parameter 1: color value (0-25)</li>
 </ul>
 **/
+
+
 procedure SetSinglePaletteHW(ga, gb: global byte);
 begin
 	gb := hwConv[gb];

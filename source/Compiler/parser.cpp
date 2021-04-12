@@ -861,9 +861,9 @@ void Parser::VerifyTypeSpec(Token& t)
             ErrorHandler::e.Error("Unknown type : "+t.m_value, m_currentToken.m_lineNumber);
 
         //return;
-        //if (!ok)
-         //   m_symTab->Lookup(t.m_value,t.m_lineNumber);
-
+/*        if (!ok)
+            m_symTab->Lookup(t.m_value,t.m_lineNumber);
+*/
     } catch (FatalErrorException fe) {
         fe.message = "Unknown type specification : " +t.m_value;
         throw fe;
@@ -1499,8 +1499,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         QSharedPointer<Node> expr = nullptr;
         if (m_currentToken.m_type==TokenType::LBRACKET) {
             Eat(TokenType::LBRACKET);
-            auto org = m_symTab->m_gPrefix;
-            m_symTab->m_gPrefix ="";
+            QString org = m_symTab->m_gPrefix;
+            //m_symTab->m_gPrefix ="";
             expr = Expr();
             m_symTab->m_gPrefix = org;
             Eat(TokenType::RBRACKET);
@@ -1548,7 +1548,9 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
  //               if (!isRegister)
                    t.m_value = m_symTab->m_gPrefix+t.m_value;
 
-  //      qDebug() << "PARSER" <<t.m_value << m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
+
+
+        qDebug() << "PARSER2: " <<t.m_value << m_symTab->m_gPrefix <<m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
   //      qDebug() <<
 
 
@@ -1581,8 +1583,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             {
                 Eat(TokenType::LBRACKET);
                 //QSharedPointer<Node> expr = Expr();
-                auto org = m_symTab->m_gPrefix;
-                m_symTab->m_gPrefix ="";
+                QString org = m_symTab->m_gPrefix;
+                //m_symTab->m_gPrefix ="";
 
                 auto expr = Expr();
                 m_symTab->m_gPrefix = org;
@@ -3201,7 +3203,6 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     bool isInline = false;
     QString procName =m_procPrefix+ m_symTab->m_gPrefix+ m_currentToken.m_value;
 
-
 //    qDebug() <<"Declaring procedure;: "<<procName;
 
     m_inCurrentProcedure = procName;
@@ -3678,11 +3679,12 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        if (typeNode->m_data.count()!=0) // Replace with actual data count
            size = typeNode->m_data.count();
        typeNode->m_declaredCount = size;
+
        s->setSizeFromCountOfData(size);
 
 
 
-//        qDebug() << s->m_name<<s->m_size;
+//        qDebug() << "Declaring :" <<s->m_name<<s->m_size;
 
     }
 /*
