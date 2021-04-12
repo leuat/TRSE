@@ -2,8 +2,7 @@ name: nightly
 
 on:
   schedule:
-    # TODO(ColinPitrat): change back to '42 21 * * *'
-    - cron: '*/5 21 * * *'
+    - cron: '42 22 * * *'
 
 # Triggers the nightly builds by tagging master branch
 # We have to use a dedicated access token because events raised by workflows
