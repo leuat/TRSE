@@ -16,18 +16,15 @@ jobs:
 
       # Build TRSE
       - run: qmake TRSE.pro
-      - run: ls -l D:/a/TRSE/TRSE/libs/lua
-      - run: ls -l libs/lua
-      - run: nm libs/lua/liblua.a | grep lua_tonumberx
-      - run: nm libs/lua/lua.lib | grep lua_tonumberx
       - run: make
 
+      # TODO(ColinPitrat): Review all this
       # All the steps below are not necessary (for now) but document what needs
       # to be done for TRSE to work under linux.
       # cf. README.md
-      - run: copy TRSE/Publish/source/themes TRSE/Release/
+      - run: copy Publish/source/themes release/
       # This should be a symbolic link
-      - run: copy TRSE/Publish/tutorials TRSE/Release/
-      - run: copy TRSE/Units TRSE/Units/
+      - run: copy Publish/tutorials release/
+      # Not clear what should be done about units
       # Now you're ready to run:
-      # ./bin/trse
+      # ./release/trse.exe
