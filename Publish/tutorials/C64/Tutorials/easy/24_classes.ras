@@ -76,7 +76,7 @@ begin
 	for i:=0 to no do
 	begin
 		pm:=#monsters[i];
-		monsters[i].x:=mod(random(),screen_width); // Random x-position
+		pm.x:=mod(random(),screen_width); // Random x-position
 		pm.y:=mod(random(),screen_height); // Random t-position
 		pm.prevx := pm.x;
 		pm.prevy := pm.y;
