@@ -24,8 +24,8 @@ jobs:
           delete_release: false
           tag_name: "nightly"
         env:
-          GITHUB_TOKEN: ${{ secrets.NIGHTLY_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.NIGHTLY_TOKEN }}
       - uses: tvdias/github-tagger@v0.0.1
         with:
-          repo-token: "${{ secrets.NIGHTLY_ACCESS_TOKEN }}"
+          repo-token: "${{ secrets.NIGHTLY_TOKEN }}"
           tag: "nightly"
