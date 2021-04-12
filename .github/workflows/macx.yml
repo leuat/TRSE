@@ -8,8 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-      # Just to test
-      - run: brew install sdl2 freetype zlib libpng gnu-sed
+      - run: brew update
       - run: brew install qt
 
       - run: qmake TRSE.pro
