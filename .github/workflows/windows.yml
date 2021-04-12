@@ -12,7 +12,7 @@ jobs:
       # Build lua, the checked-in version doesn't seem to work
       - run: curl -R -O http://www.lua.org/ftp/lua-5.4.3.tar.gz
       - run: tar zxf lua-5.4.3.tar.gz
-      - run: cd lua-5.4.3 && make all test && cp src/liblua.a ../libs/lua/
+      - run: cd lua-5.4.3 && make UNAME=mingw all test && cp src/liblua.a ../libs/lua/
 
       # Build TRSE
       - run: qmake TRSE.pro
@@ -20,7 +20,7 @@ jobs:
       - run: ls -l libs/lua
       - run: nm libs/lua/liblua.a | grep lua_tonumberx
       - run: nm libs/lua/lua.lib | grep lua_tonumberx
-      - run: make UNAME=mingw
+      - run: make
 
       # All the steps below are not necessary (for now) but document what needs
       # to be done for TRSE to work under linux.
