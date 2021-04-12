@@ -559,17 +559,6 @@ int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
 
 }
 
-int SymbolTable::getSize()
-{
-    int cnt = 0;
-    for (QString s: m_orderedByDefinition) {
-        cnt+= m_symbols[s]->getCountingLength();
-    }
-
-    return cnt;
-
-}
-
 
 void Symbol::setIsUsed()
 {
@@ -645,14 +634,24 @@ int Symbol::getLength() {
     return m_size;
 }
 
+void Symbol::setSizeFromCountOfData(int cnt)
+{
+    m_size = std::max(cnt,1);
+    m_size*=getCountingLength();
+
+
+}
+
 int Symbol::getCountingLength()
 {
+    QString type = getEndType();
     int l = 1;
-    if (m_type.toLower() == "integer")
+    if (type.toLower() == "integer")
         l = 2;
-    if (m_type.toLower() == "long")
+    if (type.toLower() == "long")
         l = 4;
-//    qDebug() << m_type << m_size <<l <<m_value;
+
+
     return l;
 }
 
@@ -664,6 +663,19 @@ QString Symbol::getEndType()
         return m_pointsTo;
     return m_type;
 }
+
+
+int SymbolTable::getSize()
+{
+    int cnt = 0;
+    for (QString s: m_orderedByDefinition) {
+        cnt+= m_symbols[s]->m_size;
+    }
+
+    return cnt;
+
+}
+
 
 SymbolPointer::SymbolPointer() {}
 

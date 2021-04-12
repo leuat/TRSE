@@ -1501,7 +1501,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         QSharedPointer<Node> subVar = nullptr;
         if (m_currentToken.m_type==TokenType::DOT) {
             Eat();
-            subVar = SubVariable(t.m_value);
+            subVar = SubVariable(t.m_value, nullptr);
             if (m_breakSubvar) {
                 // Is procedure
                 m_breakSubvar=false;
@@ -1557,7 +1557,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             QSharedPointer<Node> subVar = nullptr;
             if (m_currentToken.m_type==TokenType::DOT) {
                 Eat();
-                subVar = SubVariable(t.m_value);
+                subVar = SubVariable(t.m_value, nullptr);
                 if (m_breakSubvar) {
                     // Is procedure
                     m_breakSubvar=false;
@@ -1576,14 +1576,13 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                 QSharedPointer<Node> expr = Expr();
                 Eat(TokenType::RBRACKET);
 
-                m_currentExpr = expr;
 
 
                 QSharedPointer<Node> subVar = nullptr;
                 if (m_currentToken.m_type==TokenType::DOT) {
                     Eat();
 //                    qDebug() << "H1";
-                    subVar = SubVariable(t.m_value);
+                    subVar = SubVariable(t.m_value, expr);
                     if (m_breakSubvar) {
                         // Is procedure
                         m_breakSubvar=false;
@@ -1662,7 +1661,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     return ApplyClassVariable(n);
 }
 
-QSharedPointer<Node> Parser::SubVariable(QString parent)
+QSharedPointer<Node> Parser::SubVariable(QString parent,QSharedPointer<Node> parentExpr = nullptr)
 {
     QString fix = m_symTab->m_gPrefix;
  //   qDebug() << "SUBVAR ORG " <<fix << parent << m_symTab->m_symbols.keys();
@@ -1680,7 +1679,7 @@ QSharedPointer<Node> Parser::SubVariable(QString parent)
 //            qDebug() << "A";
             // Make sure that the FIRST parameter is a reference to the parent!
             m_addInitialReferenceToProcedureCall = parent;
-            QSharedPointer<Node> node = FindProcedure(isAssign);
+            QSharedPointer<Node> node = FindProcedure(isAssign, parentExpr);
             m_addInitialReferenceToProcedureCall = "";
             m_breakSubvar = true;
   //          qDebug() << "B" <<node ;
@@ -1796,11 +1795,14 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
                 QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
                 QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
                 s->m_arrayType = typ->m_arrayVarType.m_type;
-                s->m_arrayTypeText = typ->m_arrayVarTypeText;
+                s->m_arrayTypeText = TokenType::getType(s->m_arrayType);
                 s->m_flags = typ->m_flags;
+                s->m_type = typ->m_op.m_value;
+
                 record->Define(s);
+                s->setSizeFromCountOfData(typ->m_declaredCount);
+//                qDebug() << s->m_name << s->m_size << s->m_arrayTypeText << s->m_type;
                 record->m_orderedByDefinition.append(var->value);
-    //            qDebug() << "RECORD PPEND " <<var->value << s->m_flags;
             }
             Eat(TokenType::SEMI);
         }
@@ -1890,7 +1892,7 @@ QSharedPointer<Node> Parser::Statement()
     }
     else if (m_currentToken.m_type == TokenType::ID) {
         bool isAssign;
-        node = FindProcedure(isAssign);
+        node = FindProcedure(isAssign, nullptr);
         if (isAssign) {
             return Empty();
         }
@@ -2314,7 +2316,7 @@ QSharedPointer<Node> Parser::Factor()
     if (t.m_type == TokenType::ID) {
 //        qDebug() << "FINDING PROCEDURE IN TERM: " << t.m_value;
         bool isAssign;
-        QSharedPointer<Node> node = FindProcedure(isAssign);
+        QSharedPointer<Node> node = FindProcedure(isAssign, nullptr);
         if (node!=nullptr)
             return node;
         node = BuiltinFunction();
@@ -2901,7 +2903,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 }
 
 
-QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
+QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> parentExpr = nullptr)
 {
     isAssign = false;
 
@@ -2973,8 +2975,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign)
                 classRef.m_isReference = true;
             // Inserts extra FIRST parameter
              auto nv = QSharedPointer<NodeVar>(new NodeVar(classRef));
-             nv->m_expr = m_currentExpr;
-             m_currentExpr = nullptr; // Reset
+             nv->m_expr = parentExpr;
 //             qDebug() << nv->m_expr->getValue(nullptr);
             paramList.insert(0,ApplyClassVariable(nv));
         }
@@ -3330,7 +3331,15 @@ QSharedPointer<NodeAssign> Parser::CreateAssign(QSharedPointer<Node> left, QShar
     return QSharedPointer<NodeAssign>(new NodeAssign(left,t,right));
 
 }
-
+/*
+ *  This method transforms class variables into "flat" structures
+ *  ie
+ *  pm := #objects[i] ->  pm := #objects + i*sizeOf(Object)
+ *  pm.y := 10  -> pm[3] := 10;
+ *
+ *
+ *
+ */
 QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 {
     auto v = qSharedPointerDynamicCast<NodeVar>(var);
@@ -3405,7 +3414,6 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         auto nodeCounter = v->m_expr;
         v->m_expr = nullptr;
         int size = m_symTab->m_records[type]->getSize();
-
         // var + i*sizeOf(class)
         auto nodeClassSize = CreateNumber(size);
         auto bopShift = CreateBinop(TokenType::MUL,nodeCounter,nodeClassSize);
@@ -3609,19 +3617,12 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
         }
     }
     // Set all types and array types, sizes
-    for (auto s: syms) {
+    for (auto& s: syms) {
        s->m_type = typeNode->m_op.m_value;
        s->m_flags = typeNode->m_flags;
        s->m_bank = typeNode->m_bank;
-       if (typeNode->m_data.count()!=0)
-           s->m_size = typeNode->m_data.count();
-       else {
-           s->m_size = 1;
-           if (s->m_type.toLower()=="integer")
-               s->m_size =2;
-           if (s->m_type.toLower()=="long")
-               s->m_size =4;
-       }
+
+
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
 //       qDebug() << "FLAGS " << s->m_flags << s->m_name << " " <<s->m_type;
@@ -3633,7 +3634,32 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        if (s->m_type=="POINTER")
             s->m_pointsTo = typeNode->m_arrayVarType.m_value;
 
+
+        // Finally, calculate sizes
+       int size = typeNode->m_declaredCount;
+       if (typeNode->m_data.count()!=0) // Replace with actual data count
+           size = typeNode->m_data.count();
+       typeNode->m_declaredCount = size;
+       s->setSizeFromCountOfData(size);
+
+
+
+//        qDebug() << s->m_name<<s->m_size;
+
     }
+/*
+//       qDebug()  << s->m_size <<typeNode->m_declaredCount;
+       if (typeNode->m_data.count()!=0)
+           s->m_size = typeNode->m_data.count();
+
+       else {
+           s->m_size = 1;
+           if (s->m_type.toLower()=="integer")
+               s->m_size =2;
+           if (s->m_type.toLower()=="long")
+               s->m_size =4;
+       }
+  */
 
 
 
@@ -3859,12 +3885,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         if (m_symTab->m_records.contains( arrayType.m_value)) {
             arrayType.m_type = TokenType::RECORD;
             if (m_symTab->m_records[arrayType.m_value]->ContainsArrays())
-                ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
+                if (!m_symTab->m_records[arrayType.m_value]->m_isClass)
+                    ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
         }
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,position, arrayType,data));
         nt->m_flags = flags;
         nt->VerifyFlags(isInProcedure);
+        nt->m_declaredCount = count;
         return nt;
 
 

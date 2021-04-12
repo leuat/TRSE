@@ -135,7 +135,7 @@ public:
     QMap<TokenType::Type, QString> m_typeFlags;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
-    QSharedPointer<Node> m_tree = nullptr, m_currentExpr = nullptr;
+    QSharedPointer<Node> m_tree = nullptr;
     QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
     QMap<QString, QSharedPointer<Node>> m_types;
 
@@ -209,7 +209,7 @@ public:
     QSharedPointer<Node> ApplyClassVariable(QSharedPointer<Node> var);
 
     QSharedPointer<Node> Variable(bool isSubVar=false);
-    QSharedPointer<Node> SubVariable(QString parent);
+    QSharedPointer<Node> SubVariable(QString parent,QSharedPointer<Node> parentExpr);
     QSharedPointer<Node> Empty();
     QVector<QSharedPointer<Node>> Record(QString name);
 //    QVector<QSharedPointer<Node>> Class(QString name);
@@ -224,7 +224,7 @@ public:
     QSharedPointer<Node> RepeatUntil();
     QSharedPointer<Node> Expr();
     QSharedPointer<Node> Term();
-    QSharedPointer<Node> FindProcedure(bool& isAssign);
+    QSharedPointer<Node> FindProcedure(bool& isAssign,QSharedPointer<Node> parentExpr);
     QSharedPointer<Node> BinaryClause();
 
 

@@ -9,7 +9,7 @@ var
 	randomTable : array[256] of byte;
 
 	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
-	monster_type = class
+	Monster = class
 		prevx, prevy : byte; // previous position of monster
 		x,y : byte; // Current position of monster 
 		color : byte; // Current colour of monster
@@ -61,11 +61,11 @@ var
 	// Number of walkers
 	const no : byte = 32;
 	// Monster array allocation will fail if it is an array. 
-	monsters : array[no] of monster_type;
-	// The following is allowed even if monster_type contains an array
-	singleMonster : monster_type;
+	monsters : array[no] of Monster;
+	// The following is allowed even if Monster contains an array
+	singleMonster : Monster;
 
-	pm : pointer of monster_type;
+	pm : pointer of Monster;
 
 /*
 	Initialize all the monsters
@@ -107,7 +107,6 @@ begin
 	for i:=0 to no do
 	begin
 		monsters[i].Update();
-		
 	end;	
 
 end;

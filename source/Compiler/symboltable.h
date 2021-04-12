@@ -68,8 +68,14 @@ public:
     Symbol(QString name, QString type="");
     Symbol(QString name, QString type, long var);
     Symbol(QString name, QString type, QString var);
+    // Returns m_size
     int getLength();
+    // Sets total size of symbol ( no_elements * size of data )
+    void setSizeFromCountOfData(int cnt);
+    // Returns single element counting length (byte=1, integer = 2 etc)
     int getCountingLength();
+
+    // Returns final type, regardless of being a base type, pointer or array (ie returns BYTE, INT or LONG)
     QString getEndType();
     // Nested symbols = records
 };
