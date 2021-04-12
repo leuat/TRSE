@@ -854,11 +854,15 @@ void Parser::VerifyTypeSpec(Token& t)
             t.m_value = m_symTab->m_gPrefix+t.m_value;
             ok=true;
         }
+//        qDebug() << "IS OK : "<<t.m_value << ok;
 
+        if (!ok)
+        if (!Syntax::s.m_currentSystem->m_allowedBaseTypes.contains(t.m_value))
+            ErrorHandler::e.Error("Unknown type : "+t.m_value, m_currentToken.m_lineNumber);
 
         //return;
-        if (!ok)
-            m_symTab->Lookup(t.m_value,t.m_lineNumber);
+        //if (!ok)
+         //   m_symTab->Lookup(t.m_value,t.m_lineNumber);
 
     } catch (FatalErrorException fe) {
         fe.message = "Unknown type specification : " +t.m_value;

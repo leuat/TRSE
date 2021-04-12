@@ -43,6 +43,7 @@ public:
     QStringList m_registers;
     AbstractSystem(AbstractSystem* a);
     QMap<QString, QString> m_systemParams;
+    QStringList m_allowedBaseTypes = QStringList() <<"BYTE"<<"ADDRESS"<<"INTEGER"<<"POINTER"<<"ARRAY";
     QElapsedTimer timer;
     QString m_orgOutput;
     bool m_ignoreSys = false;
