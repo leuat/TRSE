@@ -7,10 +7,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1
       - uses: jurplel/install-qt-action@v2
+
       # Build TRSE
-      - run: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvarsall.bat" x86_amd64
-      - run: qmake TRSE.pro
-      - run: make
+      - shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+          qmake TRSE.pro
+          make
 
       # TODO(ColinPitrat): Review all this
       # All the steps below are not necessary (for now) but document what needs
