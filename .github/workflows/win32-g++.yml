@@ -1,5 +1,5 @@
-name: windows
-on: [push]
+name: win32-g++
+on: [push, pull_request]
 jobs:
   build:
     runs-on: windows-latest
