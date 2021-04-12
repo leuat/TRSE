@@ -3,7 +3,7 @@ name: linux
 on:
   push:
     tags:
-      - '*'
+      - '**'
 
 jobs:
   build:
