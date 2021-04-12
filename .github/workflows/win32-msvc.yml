@@ -1,0 +1,24 @@
+name: win32-msvc
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: microsoft/setup-msbuild@v1
+      - uses: jurplel/install-qt-action@v2
+      # Build TRSE
+      - run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+      - run: qmake TRSE.pro
+      - run: make
+
+      # TODO(ColinPitrat): Review all this
+      # All the steps below are not necessary (for now) but document what needs
+      # to be done for TRSE to work under linux.
+      # cf. README.md
+      - run: copy Publish/source/themes release/
+      # This should be a symbolic link
+      - run: copy Publish/tutorials release/
+      # Not clear what should be done about units
+      # Now you're ready to run:
+      # ./release/trse.exe
