@@ -19,7 +19,4 @@ jobs:
       - run: ln -s Publish/tutorials tutorials
       - run: ln -s Publish/source/themes themes
       # Don't create the project_templates because it's already there
-      - run: mkdir bin 
-      - run: mv trse bin/
-      # Now you're ready to run:
-      # ./bin/trse
+      # The resulting binary is in trse.app/Contents/MacOS/trse
