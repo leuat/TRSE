@@ -1,6 +1,9 @@
 name: macx
 
-on: [push]
+on:
+  push:
+    tags:
+      - *
 
 jobs:
   build:

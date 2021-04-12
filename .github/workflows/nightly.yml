@@ -1,0 +1,16 @@
+name: nightly
+
+on:
+  schedule:
+    # TODO(ColinPitrat): change back to '42 21 * * *'
+    - cron: '*/10 21 * * *'
+
+# Triggers the nightly builds by tagging master branch
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: "nightly"
