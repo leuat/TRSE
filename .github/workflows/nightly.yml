@@ -6,6 +6,15 @@ on:
     - cron: '*/5 21 * * *'
 
 # Triggers the nightly builds by tagging master branch
+# We have to use a dedicated access token because events raised by workflows
+# using GITHUB_TOKEN do not trigger other workflows:
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#about-workflow-events
+# To create the token, see:
+# https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
+# And then to create the secret containing it, see:
+# https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository
+# Unfortunately, there's no way to limit the access token to a single repository
+# or to just be allowed to tag, so this solution is not great.
 jobs:
   tag:
     runs-on: ubuntu-latest
@@ -15,8 +24,8 @@ jobs:
           delete_release: false
           tag_name: "nightly"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.NIGHTLY_ACCESS_TOKEN }}
       - uses: tvdias/github-tagger@v0.0.1
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: "${{ secrets.NIGHTLY_ACCESS_TOKEN }}"
           tag: "nightly"
