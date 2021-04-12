@@ -3,7 +3,7 @@ name: nightly
 on:
   schedule:
     # TODO(ColinPitrat): change back to '42 21 * * *'
-    - cron: '*/10 21 * * *'
+    - cron: '*/5 21 * * *'
 
 # Triggers the nightly builds by tagging master branch
 jobs:
