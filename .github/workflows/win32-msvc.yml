@@ -7,12 +7,22 @@ jobs:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1
       - uses: jurplel/install-qt-action@v2
+        with:
+          version: '6.0.1'
+          tools: 'tools_ifw,4.0,qt.tools.ifw.40 tools_qtcreator,4.14.1-0,qt.tools.qtcreator'
 
       # Build TRSE
       - shell: cmd
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+          echo "Calling qmake"
           qmake TRSE.pro
+          echo "Calling jom"
+          dir D:\a\TRSE\
+          dir D:\a\TRSE\Qt\
+          dir D:\a\TRSE\Qt\Tools\
+          dir D:\a\TRSE\Qt\Tools\QtCreator\
+          dir D:\a\TRSE\Qt\Tools\QtCreator\bin\
           D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -f Makefile.Release
 
       # TODO(ColinPitrat): Review all this
