@@ -25,6 +25,7 @@ public:
         m_registers << "_di" <<"_si";
         m_hasVariableColorPalette = true;
         m_allowClasses = true;
+        m_allowedBaseTypes<<"LONG";
     }
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
