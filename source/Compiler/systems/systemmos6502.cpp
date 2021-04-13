@@ -270,14 +270,19 @@ void SystemMOS6502::CreateDisk(QString currentDir, QString filename, QString ini
         d64Params << "-write" <<filename+".prg" << f;
 
     if (m_projectIni->getString(iniData)!="none") {
-        if (!BuildDiskFiles(currentDir, d64Params,iniData))
+        if (!BuildDiskFiles(currentDir, d64Params,iniData)) {
+            qDebug() << "SystemMos6502 : Could not build disk!";
             return;
+        }
 
 
         QProcess process1541;
         //     qDebug() <<"Building disk with: " << d64Params;
         process1541.start(m_settingsIni->getString("c1541"), d64Params  );
         process1541.waitForFinished();
+/*        qDebug() << "c1541 output";
+        qDebug() << process1541.readAllStandardError();
+        qDebug() << process1541.readAllStandardOutput();*/
     }
 
 }

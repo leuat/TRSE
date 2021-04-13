@@ -4466,6 +4466,29 @@ void Methods6502::IncMax(Assembler *as, QString cmd)
 
 void Methods6502::IncDec(Assembler *as, QString cmd)
 {
+
+    /*
+     * KEEP IT SIMPLE
+     *
+    */
+    Token t = m_node->m_op;
+    t.m_type = TokenType::PLUS;
+    if (cmd.toLower()=="dec")
+        t.m_type = TokenType::MINUS;
+    Token n = m_node->m_op;
+    n.m_type=TokenType::INTEGER_CONST;
+    Token na = m_node->m_op;
+    na.m_type=TokenType::INTEGER_CONST;
+    // manually building  P0 := P0 +- 1;
+    auto num = QSharedPointer<NodeNumber>(new NodeNumber(n,1));
+    auto bop = QSharedPointer<NodeBinOP>(new NodeBinOP(m_node->m_params[0],t,num));
+    auto assign = QSharedPointer<NodeAssign>(new NodeAssign(m_node->m_params[0],na,bop));
+    assign->Accept(m_dispatcher);
+    return;
+
+/*
+
+
     QString lbl = as->NewLabel("incdec");
 //    m_node->RequireAddress(m_node->m_params[0], "Inc/Dec", m_node->m_op.m_lineNumber);
     QSharedPointer<NodeNumber> n = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
@@ -4477,25 +4500,6 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
     if (n!=nullptr && n->getType(as)!=TokenType::ADDRESS)
         ErrorHandler::e.Error("Inc / Dec requires an address / variable", m_node->m_op.m_lineNumber);
 
-    /*
-    if (v!=nullptr && v->m_expr!=nullptr) {
-        as->ClearTerm();
-        v->m_expr->Accept(m_dispatcher);
-        as->Term();
-        as->Asm("tax");
-        as->Asm(cmd +" " + v->getValue(as) + ",x");
-        if (v->isWord(as)) {
-            as->Asm("bcc " + lbl);
-            as->Asm("inx");
-            as->Asm(cmd+ " " + v->getValue(as) + ",x");
-            as->Label(lbl);
-
-        }
-        return;
-
-    }
-
-    */
     bool fix = false;
     // isWord doesn't work
     QString addx="";
@@ -4540,16 +4544,10 @@ void Methods6502::IncDec(Assembler *as, QString cmd)
 
 
 
-    /*as->ClearTerm();
-    as->Term(cmd + " ");
-    m_node->m_params[0]->Accept(m_dispatcher);
-    as->Term();
-*/
-
 
 
     as->PopLabel("incdec");
-
+*/
 }
 
 

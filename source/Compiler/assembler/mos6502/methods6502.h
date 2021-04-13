@@ -17,6 +17,7 @@
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodenumber.h"
 
+
 class Methods6502 : public AbstractMethods
 {
 public:

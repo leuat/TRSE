@@ -9,15 +9,14 @@ var
 	randomTable : array[256] of byte;
 
 	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
+	
+
+
 	Monster = class
 		prevx, prevy : byte; // previous position of monster
 		x,y : byte; // Current position of monster 
 		color : byte; // Current colour of monster
 		name : array[6] of byte; // Classes supports arrays		
-
-		// if you try to declare arrays within a record, you'll get an error message if you try to
-		// create another array of the record type
-
 
 		procedure Update();
 		begin		

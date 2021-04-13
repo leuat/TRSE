@@ -1500,7 +1500,9 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         if (m_currentToken.m_type==TokenType::LBRACKET) {
             Eat(TokenType::LBRACKET);
             QString org = m_symTab->m_gPrefix;
-            //m_symTab->m_gPrefix ="";
+            //qDebug() << "PARSER " <<org;
+            if (isSubVar)
+                m_symTab->m_gPrefix ="";
             expr = Expr();
             m_symTab->m_gPrefix = org;
             Eat(TokenType::RBRACKET);
@@ -1550,7 +1552,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
 
 
-        qDebug() << "PARSER2: " <<t.m_value << m_symTab->m_gPrefix <<m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
+       // qDebug() << "PARSER2: " <<t.m_value << m_symTab->m_gPrefix <<m_symTab->m_globalList.contains(t.m_value) << m_symTab->m_gPrefix;
   //      qDebug() <<
 
 
@@ -1584,7 +1586,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                 Eat(TokenType::LBRACKET);
                 //QSharedPointer<Node> expr = Expr();
                 QString org = m_symTab->m_gPrefix;
-                //m_symTab->m_gPrefix ="";
+                if (isSubVar)
+                    m_symTab->m_gPrefix ="";
 
                 auto expr = Expr();
                 m_symTab->m_gPrefix = org;
