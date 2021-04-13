@@ -56,4 +56,4 @@ data_header_resources/images/background.flf = 6.92316e-310
 data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc464/tutorials/resources/images/trse.flf = 6.48302e-314
 open_files = ,test.ras, tut1.ras, tut4_music.ras, tut7_sprites.asm, tut7_sprites.ras, [ext]units/AMSTRADCPC464/memory.tru, [ext]units/AMSTRADCPC464/crtc.tru, [external]units/cpu_specific/Z80/compression.tru
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC464/tutorials/
-current_file = tut7_sprites.ras
+current_file = test.asm

@@ -39,6 +39,8 @@ QString Parser::WashVariableName(QString v)
 
 QString Parser::VerifyVariableName(QString v)
 {
+    if (m_isTRU)
+        return v;
     if (Syntax::s.m_currentSystem->m_renameVariables.contains(v.toLower())) {
         return Syntax::s.m_currentSystem->m_renamedVariablePrefix+v;
     }
