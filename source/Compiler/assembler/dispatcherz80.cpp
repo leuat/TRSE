@@ -46,14 +46,9 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
     //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
     //  as->Label(lbl);
 
-    //    qDebug() << "IS POINTER " << isPointer;
     if (isPointer) {
-        //      qDebug() << "HERE";
         as->Asm("ld hl,"+str);
-        as->Asm("ld a,h");
-        as->Asm("ld ["+getValue(left)+"],a");
-        as->Asm("ld a,l");
-        as->Asm("ld ["+getValue(left)+"],a");
+        as->Asm("ld ["+getValue(left)+"],hl");
     }
     else {
 

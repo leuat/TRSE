@@ -14,6 +14,7 @@ begin
 	// Move cursor 2 rows down (2*40)
 	screenmemory+=2*screen_width;
 	// Print something else
+	asm(";test");
 	printstring("THIS IS ANOTHER STRING",0,40);
 	// Infinite loop
 	Loop(); 
