@@ -604,5 +604,6 @@
         <file>resources/text/adlib_instruments.txt</file>
         <file>resources/text/help/r/invert.rtf</file>
         <file>resources/code/6502/mul8bit_signed.asm</file>
+        <file>resources/code/Z80/init.s</file>
     </qresource>
 </RCC>

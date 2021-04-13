@@ -50,9 +50,9 @@ macx{
 
     contains(ARCH, arm64): {
       message("Arme meg!")
- #     QMAKE_APPLE_DEVICE_ARCHS=arm64
- #     LIBS += -L$$PWD/libs/lua/ -lluamac_arm
- #     CONFIG += arm64
+      QMAKE_APPLE_DEVICE_ARCHS=arm64
+      LIBS += -L$$PWD/libs/lua/ -lluamac_arm
+      CONFIG += arm64
 
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {

@@ -68,6 +68,7 @@ void CompilerZ80::Connect()
 {
     m_assembler->m_source<<m_parser.m_parserAppendix;
     m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
+    m_assembler->IncludeFile(":resources/code/Z80/init.s");
     m_assembler->Connect();
 
     m_assembler->EndMemoryBlock();
