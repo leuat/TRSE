@@ -1,4 +1,4 @@
-#include "source/Compiler/optimiser/postoptimizerZ80.h"
+#include "source/Compiler/optimiser/postoptimizerz80.h"
 #include <QDebug>
 
 PostOptimiserZ80::PostOptimiserZ80()
