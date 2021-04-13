@@ -47,6 +47,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
         //if (symTab->m_records.contains(typeNode->m_arrayVarType.m_value))
         if (typeNode->m_arrayVarType.m_type==TokenType::RECORD)
             typeName = typeNode->m_arrayVarType.m_value;
+
     }
 
     QSharedPointer<Symbol> typeSymbol = symTab->Lookup(typeName, m_op.m_lineNumber);
@@ -59,7 +60,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 //        qDebug() << "EXECUTESYM " << typeSymbol->m_name << varName;
         QSharedPointer<SymbolTable>  ns = symTab->m_records[typeSymbol->m_name];
 
-            for (QSharedPointer<Symbol> s : ns->m_symbols) {
+            for (QSharedPointer<Symbol>& s : ns->m_symbols) {
                 QSharedPointer<Symbol> ns = QSharedPointer<Symbol>(new Symbol(varName + "_" + typeSymbol->m_name + "_"+s->m_name, s->m_type));
 //                typeNode = ns->m_t
 //
@@ -75,10 +76,13 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 
 //                    qDebug() << "Defining : "<<varName + "_" + typeSymbol->m_name + "_"+ns->m_name << ns->m_type << TokenType::getType(ns->m_arrayType);
                 }*/
-                ns->m_flags = typeNode->m_flags;
+                ns->m_flags = typeNode->m_flags ;
                 ns->m_flags<< s->m_flags;
                 ns->m_bank = typeNode->m_bank;
+                ns->m_size = s->m_size;
+//                ns->setSizeFromCountOfData(typeNode->m_declaredCount);
 
+//                qDebug() << "NODEVARDECL Defining "<<ns->m_name << ns->m_size << s->m_size;
                 symTab->Define(ns);
             }
     }
@@ -91,6 +95,10 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     varSymbol->m_flags = typeNode->m_flags;
     varSymbol->m_bank = typeNode->m_bank;
     varSymbol->m_pointsTo = typeNode->m_arrayVarType.m_value;
+   // varSymbol->m_size = typeSymbol->m_size;
+    varSymbol->setSizeFromCountOfData(typeNode->m_declaredCount);
+//    qDebug() <<"NODEVARDECL " <<varSymbol->m_name <<varSymbol->m_size <<typeNode->m_declaredCount;
+
 
     symTab->Define(varSymbol,isFlaggedAsUsed);
 

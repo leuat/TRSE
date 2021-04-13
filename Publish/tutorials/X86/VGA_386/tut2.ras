@@ -44,7 +44,6 @@ begin
 	begin
 		x1:=Tables::sine256[j&$FF]/4+40+px;
 		x2:=Tables::sine256[(j2)&$FF]/4+160+px;
-		
 		Gfx::Hline(x1,x2,i,i&63+64,Screen::buffer1);
 		
 		j2+=4;
@@ -110,8 +109,8 @@ begin
 		// Sine wobble shift in background		
 		j:=Tables::sine256[(time*4)&255]/2 +127;
 		// Copy background over to buffer		
-//		Screen::CopyVGABuffer32bit(Screen::buffer2 +j, Screen::buffer1);
-		Screen::CopyVGABuffer32bit(Screen::buffer2, Screen::buffer1);
+		Screen::CopyVGABuffer32bit(Screen::buffer2 +j, Screen::buffer1);
+//		Screen::CopyVGABuffer32bit(Screen::buffer2, Screen::buffer1);
 		// Draw h-lines
 		HLines();		
 		time+=1;		

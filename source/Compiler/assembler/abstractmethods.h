@@ -18,6 +18,9 @@ public:
 
     virtual bool Command(QString name) = 0;
 
+    // Platform independent
+    void IncDec(Assembler *as, QString cmd);
+
 
 };
 

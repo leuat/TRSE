@@ -225,6 +225,9 @@ void AsmMOS6502::DeclareArray(QString name, QString type, int count, QStringList
 
     if (DeclareRecord(name,type,count,data,pos))
         return;
+    if (DeclareClass(name,type,count,data,pos))
+        return;
+
 
 
 
@@ -301,6 +304,8 @@ void AsmMOS6502::DeclareVariable(QString name, QString type, QString initval, QS
     if (initval=="")
         initval="0";
     if (DeclareRecord(name,type,1,QStringList(),position))
+         return;
+    if (DeclareClass(name,type,1,QStringList(),position))
          return;
 
     if (type.toLower()=="const") {

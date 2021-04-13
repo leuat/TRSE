@@ -135,17 +135,30 @@ public:
     QMap<TokenType::Type, QString> m_typeFlags;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
-    QSharedPointer<Node> m_tree;
-
+    QSharedPointer<Node> m_tree = nullptr;
+    QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
     QMap<QString, QSharedPointer<Node>> m_types;
 
     QString WashVariableName(QString v);
+
+
+    /*
+     * Small Node Factory
+     *
+     * */
+    QSharedPointer<NodeNumber> CreateNumber(int i);
+    QSharedPointer<NodeVar> CreateVariable(QString v);
+    QSharedPointer<NodeBinOP> CreateBinop(TokenType::Type t, QSharedPointer<Node> left, QSharedPointer<Node> right);
+    QSharedPointer<NodeAssign> CreateAssign(QSharedPointer<Node> left, QSharedPointer<Node> right);
+
+
 
 
     QSharedPointer<Symbol> getSymbol(QSharedPointer<Node> var);
 
     QVector<QString> m_ignoreBuiltinFunctionTPU;
     static QVector<QSharedPointer<Parser>> m_tpus;
+
 
     QStringList getFlags();
 
@@ -162,6 +175,7 @@ public:
     QJSEngine m_jsEngine;
 
     void Delete();
+
     void InitObsolete();
     void Eat(TokenType::Type t);
     void VerifyToken(Token t);
@@ -192,11 +206,13 @@ public:
     void VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
     void ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
 
+    QSharedPointer<Node> ApplyClassVariable(QSharedPointer<Node> var);
 
     QSharedPointer<Node> Variable(bool isSubVar=false);
-    QSharedPointer<Node> SubVariable(QString parent);
+    QSharedPointer<Node> SubVariable(QString parent,QSharedPointer<Node> parentExpr);
     QSharedPointer<Node> Empty();
     QVector<QSharedPointer<Node>> Record(QString name);
+//    QVector<QSharedPointer<Node>> Class(QString name);
 //    QSharedPointer<Node> Record();
     QSharedPointer<Node> Case();
     QSharedPointer<Node> AssignStatement();
@@ -208,11 +224,12 @@ public:
     QSharedPointer<Node> RepeatUntil();
     QSharedPointer<Node> Expr();
     QSharedPointer<Node> Term();
-    QSharedPointer<Node> FindProcedure(bool& isAssign);
+    QSharedPointer<Node> FindProcedure(bool& isAssign,QSharedPointer<Node> parentExpr);
     QSharedPointer<Node> BinaryClause();
 
 
     bool isRecord(Token& t);
+    bool isClass(Token& t);
     bool nextIsExpr();
 
     void AppendComment(QSharedPointer<Node> n);

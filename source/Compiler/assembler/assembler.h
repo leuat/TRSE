@@ -32,6 +32,7 @@
 #include "source/Compiler/symboltable.h"
 #include "source/LeLib/util/cinifile.h"
 #include "source/Compiler/optimiser/postoptimiser.h"
+#include "source/LeLib/util/utilclasses.h"
 
 class MemoryBlock {
   public:
@@ -67,19 +68,6 @@ class MemoryBlock {
 
 
 
-class Stack {
-public:
-    QVector<QString> m_vars;
-
-    QString m_current;
-    void push(QString s) {
-        m_vars.push_back(s);
-        m_current = s;
-    }
-    QString pop();
-  public:
-        QString current() const;
-};
 class LabelStack {
 public:
     QVector<QString> m_vars;
@@ -128,33 +116,6 @@ public:
 
 };
 
-class RegisterStack {
-public:
-//    QStringList m_registers;
-    QStringList m_free;
-    QStringList m_occupied;
-//    QVector<QString> m_latest;
-    QString m_latest;
-    RegisterStack() {}
-    RegisterStack(QStringList vals) {
-        m_free = vals;
-    }
-    int m_current = 0;
-    QString Get();
-    QString Get(int i) {
-        if (i<m_free.count())
-            return m_free[i];
-        throw QString("RegisterStack::Get internal error: index out of bounds when retrieving stack");
-    }
-    void Pop(QString reg);
-
-    int count() {
-        return m_free.count();
-    }
-
-    QString operator[] (int i) {return Get(i);}
-
-};
 
 class Assembler
 {
@@ -333,6 +294,7 @@ public:
 
 
     virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
+    virtual bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos);
 
     void WriteConstants();
 

@@ -1,4 +1,5 @@
 #include "asmz80.h"
+#include "source/Compiler/optimiser/postoptimizerz80.h"
 
 AsmZ80::AsmZ80()
 {
@@ -19,6 +20,7 @@ AsmZ80::AsmZ80()
     word = "dw";
     llong = "dl";
 
+    m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserZ80());
 
 }
 

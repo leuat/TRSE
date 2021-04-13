@@ -25,11 +25,13 @@
 #include <QString>
 #include <QMap>
 #include <QDebug>
+#include <QStack>
 #include "errorhandler.h"
 #include "pvar.h"
 #include "token.h"
 #include "syntax.h"
 #include "source/LeLib/util/util.h"
+#include "source/LeLib/util/utilclasses.h"
 
 class SymbolPointer : public QObject {
     Q_OBJECT
@@ -66,8 +68,15 @@ public:
     Symbol(QString name, QString type="");
     Symbol(QString name, QString type, long var);
     Symbol(QString name, QString type, QString var);
+    // Returns m_size
     int getLength();
+    // Sets total size of symbol ( no_elements * size of data )
+    void setSizeFromCountOfData(int cnt);
+    // Returns single element counting length (byte=1, integer = 2 etc)
     int getCountingLength();
+
+    // Returns final type, regardless of being a base type, pointer or array (ie returns BYTE, INT or LONG)
+    QString getEndType();
     // Nested symbols = records
 };
 
@@ -95,6 +104,9 @@ public:
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;
     QMap<QString, QString> m_extraAtSymbols;
+//    QStack<QString> m_tempPointers;
+    Stack m_tempPointers;
+
 
     QStringList m_orderedByDefinition;
 

@@ -62,7 +62,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
 
 }
 
-void AbstractSystem::InitLabelColors() {
+    void AbstractSystem::InitLabelColors() {
     m_labelColors[SystemLabel::IO] = QColor(255,128,50);
     m_labelColors[SystemLabel::SID] = QColor(255,255,128);
     m_labelColors[SystemLabel::VIC] = QColor(64,128,255);

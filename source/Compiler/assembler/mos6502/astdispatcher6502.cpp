@@ -2154,6 +2154,9 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
     QSharedPointer<NodeNumber> number = qSharedPointerDynamicCast<NodeNumber>(node->m_expr);
     QString m = as->m_term;
 
+
+
+
     as->ClearTerm();
 
     if (node->m_expr==nullptr) {
@@ -2310,17 +2313,19 @@ void ASTDispatcher6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         return;
 */
     }
-
+    bool unknownType = false;
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
 
     else if (s->m_arrayType==TokenType::BYTE)
         as->Comment("Load Byte array");
-    else
-        as->Comment("Load Unknown type array");
+    else {
+        as->Comment("Load Unknown type array, assuming BYTE");
+        unknownType = true;
+    }
 
     // Optimization : ldx #3, lda a,x   FIX
-    if (s->m_arrayType==TokenType::BYTE && node->m_expr!=nullptr) {
+    if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric()) {
             as->ClearTerm();
             as->Asm("lda "+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
@@ -2387,6 +2392,10 @@ void ASTDispatcher6502::LoadVariable(QSharedPointer<NodeVar> node) {
                 ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.",m_op.m_lineNumber);
     */
     TokenType::Type t = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType();
+    QString type = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->m_type;
+    if (as->m_symTab->m_records.contains(type))
+        t = TokenType::ADDRESS; // Working with a CLASS directly (not pointer)
+//    qDebug() << "LoadVariable: "<<pp;
     if (t==TokenType::ADDRESS || t==TokenType::STRING || t==TokenType::CSTRING || t==TokenType::INCBIN) {
         LoadByteArray(node);
         return;
@@ -2650,13 +2659,27 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     node->VerifyReferences(as);
 
 
+    // If you are doing a pointer assignment, make sure that you are pointing to the same structures
+//    if (node->m_right->isArrayIndex())
+/*    {
+        // && node->m_right->isArrayOfRecord()) {
+        auto n = node->m_right;
+
+        qDebug() << "HERE pointer to array struct";
+        qDebug() << n->isRecord(as);
+        qDebug() << n->isArrayIndex();
+        qDebug() << n->isReference();
+
+    }
+*/
+
+
 //    if (!node->m_right->isAddress())
   //      ErrorHandler::e.Error("Must be address", node->m_op.m_lineNumber);
+
     if (IsSimpleIncDec(aVar,  node))
         return;
 
-
-    // If you are doing a pointer assignment, make sure that you are pointing to the same structures
 
 
 
@@ -2664,6 +2687,8 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     // Make sure that everything is a reference
     if (node->m_right->isPure()) {
 //        as->Comment("EPIC FAIL " + QString::number(qSharedPointerDynamicCast<NodeNumber>(node->m_right)!=nullptr));
+//        if (node->m_right->isPointer(as))
+  //          node->m_right->m_op.
         as->Asm("lda " + getValue8bit(node->m_right,false));
         as->Asm("ldx " + getValue8bit(node->m_right,true));
         as->Asm("sta " + getValue(aVar));
@@ -2906,6 +2931,8 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 
     // right first is var
 
+ //   qDebug() << rterm->m_op.getType();
+
     QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
     if (rvar==nullptr)
         return false;
@@ -2928,6 +2955,10 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
 
     if (isPureNumber)
         num = rterm->m_right->getValueAsInt(as);
+
+    // #array[i]
+//    if (rterm->isReference() && rterm->isArrayIndex())
+  //      return false;
 
 
 //    qDebug() << "HERE;" << num;
@@ -3232,14 +3263,23 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+//    QSharedPointer<NodeBinOP> varBop = qSharedPointerDynamicCast<NodeBinOP>(node->m_left);
     //        qDebug() << "AssignVariable: " <<getValue(v) << " : " << TokenType::getType( v->getType(as));
 
+    // Possible to do m+2 := 3;
+  /*  if (varBop) {
+        v = qSharedPointerDynamicCast<NodeVar>(varBop->m_left);
+        int n = varBop->m_right->getValueAsInt(as);
+    }
+*/
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
 
     if (v==nullptr && num == nullptr)
         ErrorHandler::e.Error("Left value not variable or memory address! ", node->m_op.m_lineNumber);
     if (num!=nullptr && num->getType(as)!=TokenType::ADDRESS)
         ErrorHandler::e.Error("Left value must be either variable or memory address, not a constant.", node->m_op.m_lineNumber);
+
+
 
 //    qDebug() << TokenType::getType(num->getType(as));
 
@@ -3322,7 +3362,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
        QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 
     // Trying to assign a PURE record
-    if (v->isRecord(as) && !v->isRecordData(as)) {
+    if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
         if (!node->m_right->isRecord(as))
             ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
         if (v->getTypeText(as)!=node->m_right->getTypeText(as))
@@ -3343,18 +3383,18 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 //        if (!node->m_left->isArrayIndex())
   //          ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as)) {
-            if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+//            if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
                ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
 
             as->Comment("Assigning pointer to record/class");
-
+ //           as->Comment(getValue(node->m_right));
         }
 
  //       if (node->)
     }
     // Variable = POINTER
-    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as))) {
-        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as)) && !node->m_right->isClass(as)) {
+//        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
             ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
     }
 

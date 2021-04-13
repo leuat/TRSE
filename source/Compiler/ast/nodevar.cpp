@@ -162,10 +162,12 @@ bool NodeVar::isPurePointer(Assembler *as)
     return (isPointer(as) && (m_expr==nullptr));
 }
 
+
 void NodeVar::ApplyHack(Assembler *as)
 {
+    return;
 //    qDebug() << value;
-    if (getValue(as).contains("_POINTER_")) {
+/*    if (getValue(as).contains("_POINTER_")) {
 
         as->Comment("Assigning pointer of record/class for " +getValue(as));
 //        QString zp = resolveTemporaryClassPointer(v->getValue(as),1,val); // For now, only allow to point to single objects
@@ -179,6 +181,8 @@ void NodeVar::ApplyHack(Assembler *as)
 
 
         auto record = as->m_symTab->m_records[recordName];
+        auto s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
+//        qDebug() <<value <<s->getLength()<<s->m_size;
         int val = record->getShiftedPositionOfVariable(var,1);
         QString zp = orgPointer;
 
@@ -196,7 +200,7 @@ void NodeVar::ApplyHack(Assembler *as)
         m_expr = QSharedPointer<NodeNumber>(new NodeNumber(t,val));
 
     }
-
+*/
 }
 
 bool NodeVar::DataEquals(QSharedPointer<Node> other) {
@@ -253,6 +257,16 @@ bool NodeVar::isRecord(Assembler *as)
         t = s->m_arrayTypeText;
     }
     return as->m_symTab->m_records.contains(t);
+}
+
+bool NodeVar::isClass(Assembler *as)
+{
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    QString t = s->m_type;
+    if (t=="address") {
+        t = s->m_arrayTypeText;
+    }
+    return as->m_symTab->m_records.contains(t) && as->m_symTab->m_records[t]->m_isClass;
 }
 
 
@@ -346,12 +360,18 @@ QString NodeVar::getValue(Assembler* as) {
 
     if (isReference() && Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000) return "#" + v;
 //    if (m_forceAddress && !(isPointer(as))) return "#" + v;
-    if (isReference()&&as->m_symTab->m_records.contains(s->m_type)) {
+    QString test = s->m_type;
+    if (s->m_type.toLower()=="pointer" || s->m_type.toLower()=="address")
+        test = s->m_pointsTo;
+
+//    qDebug() << value<<isReference() <<as->m_symTab->m_records.contains(test)<<test;
+    // The following was used for trying to get pointers to records (point to 1st element)
+/*    if (isReference()&&as->m_symTab->m_records.contains(test)) {
         // Trying to access a raw record/class as a pointer
-        QSharedPointer<SymbolTable> r = as->m_symTab->m_records[s->m_type];
+        QSharedPointer<SymbolTable> r = as->m_symTab->m_records[test];
         // name the first object
-        v = v+"_"+s->m_type+"_"+r->m_symbols.keys().first();
-    }
+        v = v+"_"+test+"_"+r->m_symbols.keys().first();
+    }*/
  //   qDebug() << "NODEVAR GETVALUE " <<v << s->m_type;
     return v;
 }

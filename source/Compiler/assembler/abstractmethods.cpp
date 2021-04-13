@@ -1,6 +1,36 @@
 #include "abstractmethods.h"
+#include "source/Compiler/ast/nodenumber.h"
+#include "source/Compiler/ast/nodebinop.h"
+#include "source/Compiler/ast/nodeassign.h"
+
 
 AbstractMethods::AbstractMethods()
 {
+
+}
+
+void AbstractMethods::IncDec(Assembler *as, QString cmd)
+{
+
+    /*
+         * KEEP IT SIMPLE
+         *
+         * Replaces inc(P) with P =P + 1 syntactically (and dec)
+         *
+        */
+    Token t = m_node->m_op;
+    t.m_type = TokenType::PLUS;
+    if (cmd.toLower()=="dec")
+        t.m_type = TokenType::MINUS;
+    Token n = m_node->m_op;
+    n.m_type=TokenType::INTEGER_CONST;
+    Token na = m_node->m_op;
+    na.m_type=TokenType::INTEGER_CONST;
+    // manually building  P0 := P0 +- 1;
+    auto num = QSharedPointer<NodeNumber>(new NodeNumber(n,1));
+    auto bop = QSharedPointer<NodeBinOP>(new NodeBinOP(m_node->m_params[0],t,num));
+    auto assign = QSharedPointer<NodeAssign>(new NodeAssign(m_node->m_params[0],na,bop));
+    assign->Accept(m_dispatcher);
+    return;
 
 }

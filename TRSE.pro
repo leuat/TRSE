@@ -124,6 +124,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/factorycompiler.cpp \
     source/Compiler/optimiser/postoptimiser.cpp \
     source/Compiler/optimiser/postoptimizerx86.cpp \
+    source/Compiler/optimiser/postoptimizerz80.cpp \
     source/Compiler/systems/systemamstradcpc464.cpp \
     source/Compiler/systems/systemappleii.cpp \
     source/Compiler/systems/systematari2600.cpp \
@@ -178,6 +179,7 @@ SOURCES += main.cpp\
     source/LeLib/util/spline2d.cpp \
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
+    source/LeLib/util/utilclasses.cpp \
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/PmmEdit/trsehighlighter.cpp \
@@ -356,6 +358,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/factorycompiler.h \
     source/Compiler/optimiser/postoptimiser.h \
     source/Compiler/optimiser/postoptimizerx86.h \
+    source/Compiler/optimiser/postoptimizerz80.h \
     source/Compiler/systems/systemamstradcpc464.h \
     source/Compiler/systems/systemappleii.h \
     source/Compiler/systems/systematari2600.h \
@@ -409,6 +412,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/spline2d.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \
+    source/LeLib/util/utilclasses.h \
     source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \
     source/PmmEdit/trsehighlighter.h \

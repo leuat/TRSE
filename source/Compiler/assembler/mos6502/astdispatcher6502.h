@@ -68,6 +68,9 @@ public:
 
     void HackPointer(Assembler* as, QSharedPointer<Node> node);
 
+
+
+
     /*
      *
      * NodeBinOP Specific functions

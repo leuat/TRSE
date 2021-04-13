@@ -103,6 +103,10 @@ void SymbolTable::Initialize()
         keeps.append(m_constants["STOP_MUSIC"]);
     }
 
+    m_tempPointers.m_vars.clear();
+    for (int i=0;i<100;i++)
+        m_tempPointers.push("tempPointer"+QString::number(i));
+
     QString currentSystem = AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system).toLower();
 //    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
@@ -546,20 +550,9 @@ int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
     int cnt = 0;
     int cur = 0;
     while (m_orderedByDefinition[cur]!=var) {
-        cur+=1;
         cnt+= m_symbols[m_orderedByDefinition[cur]]->getCountingLength()*mul;
+        cur+=1;
 
-    }
-
-    return cnt;
-
-}
-
-int SymbolTable::getSize()
-{
-    int cnt = 0;
-    for (QString s: m_orderedByDefinition) {
-        cnt+= m_symbols[s]->getCountingLength();
     }
 
     return cnt;
@@ -641,16 +634,48 @@ int Symbol::getLength() {
     return m_size;
 }
 
+void Symbol::setSizeFromCountOfData(int cnt)
+{
+    m_size = std::max(cnt,1);
+    m_size*=getCountingLength();
+
+
+}
+
 int Symbol::getCountingLength()
 {
+    QString type = getEndType();
     int l = 1;
-    if (m_value->m_type == TokenType::INTEGER || m_value->m_type==TokenType::INTEGER_CONST)
+    if (type.toLower() == "integer")
         l = 2;
-    if (m_value->m_type == TokenType::LONG )
+    if (type.toLower() == "long")
         l = 4;
- //   qDebug() << m_type << m_size <<l;
+
+
     return l;
 }
+
+QString Symbol::getEndType()
+{
+    if (m_type.toLower()=="array")
+        return m_arrayTypeText;
+    if (m_type.toLower()=="pointer")
+        return m_pointsTo;
+    return m_type;
+}
+
+
+int SymbolTable::getSize()
+{
+    int cnt = 0;
+    for (QString s: m_orderedByDefinition) {
+        cnt+= m_symbols[s]->m_size;
+    }
+
+    return cnt;
+
+}
+
 
 SymbolPointer::SymbolPointer() {}
 

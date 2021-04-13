@@ -24,6 +24,7 @@ public:
 //        m_registers << "_es"<<"_di" <<"_ds" <<"_si";
         m_registers << "_di" <<"_si";
         m_hasVariableColorPalette = true;
+        m_allowClasses = true;
     }
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);

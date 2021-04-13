@@ -1,0 +1,166 @@
+program Classes;
+var  
+   i,j,shift,k: byte = 0;
+	dx,dy : byte;
+/*
+	The famous MCMC random walk!	
+
+*/	
+	randomTable : array[256] of byte;
+
+	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
+	
+
+
+	Monster = class
+		prevx, prevy : byte; // previous position of monster
+		x,y : byte; // Current position of monster 
+		color : byte; // Current colour of monster
+		name : array[6] of byte; // Classes supports arrays		
+
+		procedure Update();
+		begin		
+			this.prevx := this.x;
+			this.prevy := this.y;
+			j:=randomTable[k];
+			dx:=0;
+			dy:=0;
+
+	 		if (this.x<>1) then
+	 			if (j=0) then dx:=-1;
+	 		if (this.x<>screen_width-2) then
+				if (j=3) then dx:=1; // Wall X
+
+			k+=11;			
+			j:=randomTable[k];
+
+			if (this.y<>1) then // Wall Y
+				if (j=0) then dy:=-1;
+
+			if (this.y<>screen_height-1) then // Wall Y
+				if (j=3) then dy:=1;
+
+			this.x+=dx;
+			this.y+=dy;
+		end;
+
+
+		procedure Render(rchar:byte);
+		begin
+			// Clear previous stuff
+			moveto(this.prevx, this.prevy,hi(screen_char_loc));
+			screenmemory[0]:=key_space;
+			screenmemory-=41;
+			screenmemory[0]:=key_space;
+			screenmemory[1]:=key_space;
+			screenmemory[2]:=key_space;
+			
+			// Paint char!
+			moveto(this.x, this.y,hi(screen_char_loc));
+			screenmemory[0]:=rchar;
+			// Paint colors 
+			screenmemory+=$D400;
+			screenmemory[0]:=this.color;
+			screenmemory-=41;
+			// Text color
+			screenmemory[0]:=this.color;
+			screenmemory[1]:=this.color;
+			screenmemory[2]:=this.color;
+			
+			
+			// Paint text
+			moveto(this.x-1, this.y-1,hi(screen_char_loc));
+			// Print name
+			for j:=0 to 3 do
+				screenmemory[j] := this.name[j];
+	
+		end;
+		
+	end;
+
+
+	// Number of walkers
+	const no : byte = 16;
+	// Monster array allocation will fail if it is an array. 
+	monsters : array[no] of Monster;
+	// The following is allowed even if Monster contains an array
+	singleMonster : Monster;
+
+	pm : pointer of Monster;
+
+/*
+	Initialize all the monsters
+*/
+procedure InitMonsters();
+begin
+	for i:=0 to no do
+	begin
+		pm:=#monsters[i];
+		pm.x:=mod(random(),screen_width); // Random x-position
+		pm.y:=mod(random(),screen_height); // Random t-position
+		pm.prevx := pm.x;
+		pm.prevy := pm.y;
+		// Produce a random name of 3 chars
+		pm.name[0] := random()/16+1;
+		pm.name[1] := random()/16+1;
+		pm.name[2] := random()/16+1;
+		pm.name[3] := 0;
+		pm.color:=mod(random(),14)+blue+1; // Random colour excluding background
+	end;
+
+end;
+
+
+/*
+	Render all the monsters by first erasing the old position, then paining the new
+*/
+procedure RenderMonsters(render_char:byte);
+begin
+	for i:=0 to no do
+	begin
+		monsters[i].Render(render_char);
+	end;	
+
+end;
+
+
+
+// Random walk: up, down,left,right, stop at walls
+// Uses a lookup random table to decide which direction to go
+procedure UpdateMonsters();
+begin
+	k:=shift;
+	for i:=0 to no do
+	begin
+		monsters[i].Update();
+	end;	
+
+end;
+
+ 
+begin
+	// Initialize
+	screen_bg_col:=blue;
+	screen_fg_col:=blue;
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(black,screen_col_loc);
+	DefineScreen();
+	// Initialize tables
+	for i:=0 to 256 do 
+		randomTable[i]:=random()&3;
+
+		
+	InitMonsters();
+	// Loop	
+	while (true) do
+	begin
+		UpdateMonsters();
+		RenderMonsters(0);// 'at' sign
+		// Wait a bit each frame
+		for i:=0 to 4 do
+			waitforverticalblank();
+		shift+=1; // Some prime number
+	end;	
+
+	Loop();
+end.

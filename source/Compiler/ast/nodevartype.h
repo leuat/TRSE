@@ -41,7 +41,7 @@ public:
     QString m_filename, m_position="";
     QString initVal ="0";
     int m_flag = 0;
-
+    int m_declaredCount = 0;
     NodeVarType(Token t, QString position,   Token arrayVarType,QStringList data);
     NodeVarType(Token t, QStringList data);
     NodeVarType(Token t,  QString filename, QString position);
