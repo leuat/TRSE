@@ -18,7 +18,7 @@ SystemGameboy::SystemGameboy(QSharedPointer<CIniFile> settings, QSharedPointer<C
 
     m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"wram" <<"hram" <<"sprram" << "bank";
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global" << "wram";
-
+    m_renameVariables.clear();
 
 }
 
