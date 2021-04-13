@@ -74,7 +74,8 @@ win32-g++ {
     QMAKE_CXXFLAGS += -fopenmp
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast
-    LIBS   += -lopengl32
+    LIBS += $$PWD/libs/lua/liblua.a
+    LIBS += -lopengl32
 
 }
 win32-msvc*{
@@ -82,8 +83,7 @@ win32-msvc*{
     LIBS += -openmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast -O2
     LIBS += -L$$PWD/libs/lua/ -llua
-    LIBS   += -lopengl32
-
+    LIBS += -lopengl32
 }
 
 linux*{
@@ -92,9 +92,6 @@ linux*{
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE +=  -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl
-#    LIBS += -ldl
-
-
 }
 
 

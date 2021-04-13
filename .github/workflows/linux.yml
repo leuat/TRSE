@@ -1,0 +1,26 @@
+name: linux
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install qt5-qmake qtdeclarative5-dev
+
+      - run: qmake TRSE.pro
+      - run: make
+
+      # All the steps below are not necessary (for now) but document what needs
+      # to be done for TRSE to work under linux.
+      - run: ln -s Publish/tutorials tutorials
+      - run: ln -s Publish/source/themes themes
+      # Don't create the project_templates because it's already there
+      - run: mkdir bin 
+      - run: mv trse bin/
+      # Now you're ready to run:
+      # ./bin/trse

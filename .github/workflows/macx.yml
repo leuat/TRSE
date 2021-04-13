@@ -1,0 +1,25 @@
+name: macx
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: brew update
+      - run: brew install qt libomp
+
+      - run: qmake TRSE.pro
+      - run: make
+
+      # All the steps below are not necessary (for now) but document what needs
+      # to be done for TRSE to work under MacOS X.
+      - run: ln -s Publish/tutorials tutorials
+      - run: ln -s Publish/source/themes themes
+      # Don't create the project_templates because it's already there
+      # The resulting binary is in trse.app/Contents/MacOS/trse

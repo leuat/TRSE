@@ -5,6 +5,7 @@
 #include <QString>
 #include <QStringList>
 #include <QMap>
+#include <QVector>
 
 
 class SourceLine {
@@ -16,7 +17,7 @@ public:
     bool m_potentialOptimise = false;
 
     QMap<QString, QString> m_changeRegs;
-    SourceLine();
+    SourceLine() = default;
     SourceLine(int lnr, QString line) {
         m_lineNumber = lnr;
         m_orgLine = line;
