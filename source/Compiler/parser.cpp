@@ -37,6 +37,14 @@ QString Parser::WashVariableName(QString v)
 
 }
 
+QString Parser::VerifyVariableName(QString v)
+{
+    if (Syntax::s.m_currentSystem->m_renameVariables.contains(v.toLower())) {
+        return Syntax::s.m_currentSystem->m_renamedVariablePrefix+v;
+    }
+    return v;
+}
+
 
 QSharedPointer<Symbol> Parser::getSymbol(QSharedPointer<Node> var)
 {
@@ -1471,6 +1479,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     if (m_currentToken.m_value == Syntax::s.thisName)
         m_currentToken.m_value = m_currentClass+"_"+m_currentToken.m_value;
 
+    m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
+    // Rename "i" with "_var_i" for disallowed variables (Z80, GB)
 
     // Subvar can't be CONST
     if (!isSubVar && !isRegister && m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
@@ -3574,6 +3584,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 
 
     int orgLineNumber = m_currentToken.m_lineNumber+1;
+    m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
 
     // All the vars that will be declared
     QVector<QSharedPointer<Node>> vars;
@@ -3606,6 +3617,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     while (m_currentToken.m_type == TokenType::COMMA) {
         Eat(TokenType::COMMA);
         // Prefix
+        m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
+
         if (!m_symTab->isRegisterName(m_currentToken.m_value))
           m_currentToken.m_value = m_symTab->m_gPrefix+m_currentToken.m_value;
         variableNames << m_currentToken.m_value;

@@ -12,6 +12,7 @@ public:
         m_allowedGlobalTypeFlags << "compressed" <<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
         m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
         m_exomizerName ="Compress executable";
+        m_renameVariables << "a" <<"b"<<"c"<<"d"<<"i"<<"af"<<"bc"<<"de"<<"hl"<<"ix"<<"iy";
 //        m_allowClasses = true;
     }
 

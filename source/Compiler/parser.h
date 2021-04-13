@@ -140,6 +140,8 @@ public:
     QMap<QString, QSharedPointer<Node>> m_types;
 
     QString WashVariableName(QString v);
+    QString VerifyVariableName(QString v);
+
 
 
     /*
