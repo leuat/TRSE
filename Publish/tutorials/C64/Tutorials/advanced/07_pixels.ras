@@ -1,6 +1,6 @@
 program Pixels;
 var  
-@use "gfx/bitmapgraphics"
+@use "gfx/gfx"
    i,x,y,shift: byte = 0; 
    ix : integer;
    time,t1,t2 : byte = 0;
@@ -15,10 +15,10 @@ begin
 
 	x:=sine3[t1];
 	y:=sine3[t2];
-	BitmapGraphics::x1:=sine[time]/4+x;
-	BitmapGraphics::y1:=sine[time+64+shift]/4+y;
+	Gfx::x1:=sine[time]/4+x;
+	Gfx::y1:=sine[time+64+shift]/4+y;
 	// Put that pixel!	
-	BitmapGraphics::putpixel2();
+	Gfx::putpixel2();
 
 	// Some funky phase shifts
 	inc(time);
@@ -30,7 +30,7 @@ begin
 	// Clear at certain intervals
 	if (time=0) then 
 	begin
-		clearbitmap(#BitmapGraphics::bank1,24);
+		clearbitmap(#Gfx::bank1,24);
 	end;
 end;
 
@@ -39,9 +39,9 @@ end;
 begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
-	BitmapGraphics::InitBitmapGraphics(0, #BitmapGraphics::bank1);
+	Gfx::InitBitmapGraphics(0, #Gfx::bank1);
 	vic_data_loc:=$18;
-	BitmapGraphics::currbank :=$0; // Current bitmap bank (added to high bit of putpixel)
+	Gfx::currbank :=$0; // Current bitmap bank (added to high bit of putpixel)
 	ClearScreen(white, screen_col_loc);
 	ClearScreen(white | white*16, ^$0400);
 	while (true) do

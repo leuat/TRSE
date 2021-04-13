@@ -23,14 +23,14 @@ begin
 	if Gfx::currbank=0 then begin
 		Gfx::currbank := $40;
 		SetBank(VIC_BANK0);
-		clearbitmap(#Gfx::bank2_screen, 22); // Clear a certain window only
+		clearbitmap(#Gfx::bank2, 26); // Clear a certain window only
 	end
 	
 	else
 	begin
 		Gfx::currbank:=0;
 		SetBank(VIC_BANK1);
-		clearbitmap(#Gfx::bank1_screen, 22);
+		clearbitmap(#Gfx::bank1, 26);
 	end;
 	
 end;
