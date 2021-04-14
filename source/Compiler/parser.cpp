@@ -734,7 +734,6 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
 //            qDebug() << "Looking for constant " << m_currentToken.m_value.toUpper();
   //          qDebug() << m_symTab->m_constants.keys();
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
-//            qDebug() << " FOUND = " << (s==nullptr) << m_currentToken.m_value.toUpper();
 
               if (s==nullptr) {
                   done=true;
@@ -3151,7 +3150,6 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     Token token(TokenType::STRING, m_currentToken.m_value);
     //m_currentToken.m_type = TokenType::STRING;
     QStringList lst;
-    bool done = false;
 //    lst<<m_currentToken.m_value;
     int max=0;
     QString numID = "";
@@ -3889,6 +3887,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     if (m_currentToken.m_value!="") {
                         if (m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr)) {
                             data<<m_currentToken.m_value;
+                            m_symTab->m_symbols[m_currentToken.m_value]->isUsed = true;
+                            m_symTab->m_symbols[m_currentToken.m_value]->isUsedBy <<m_inCurrentProcedure;
                             found = true;
                         }
                         //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
