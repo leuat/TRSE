@@ -4429,7 +4429,7 @@ void Parser::HandleExecute() {
     QStringList params = pstr.trimmed().simplified().split(" ");
     Eat(TokenType::STRING);
     QString out;
-    Syntax::s.m_currentSystem->StartProcess(exec,params,out,true);
+    Syntax::s.m_currentSystem->StartProcess(exec,params,out,true,m_currentDir);
 
 
 }
