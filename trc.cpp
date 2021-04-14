@@ -6,8 +6,6 @@
 
 
 ClascExec::ClascExec(int argc, char *argv[]) {
-    Out("Welcome to the TRSE CLI (command-line interface) assembler/compiler!");
-    Out("");
     app = new QApplication(argc, argv);
     app->setOrganizationDomain("lemonspawn.com");
     app->setApplicationName("TRSE");
@@ -61,7 +59,6 @@ int ClascExec::Perform()
   //          m_settings.Load(m_vals["settings"]);
             auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
             QString iniFileName = path +QDir::separator()+ "trse.ini";
-            Out(iniFileName);
 
             if (QFile::exists(iniFileName))
                m_settings->Load(iniFileName);
@@ -147,6 +144,8 @@ int ClascExec::Assemble(QString file)
 
 void ClascExec::PrintUsage()
 {
+    Out("Welcome to the TRSE CLI (command-line interface) assembler/compiler!");
+    Out("");
     Out("Usage: ");
     Out("");
     Out("trse -cli op=[ operation types ] input_file=[ source file ] output_file=[ optional output file ].... [ type specific operation parameters ]");
