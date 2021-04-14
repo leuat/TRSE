@@ -57,8 +57,6 @@ public:
     bool isPointer(Assembler* as) override;
     bool isPurePointer(Assembler* as) override;
 
-    void ApplyHack(Assembler* as) override;
-
 
     bool DataEquals(QSharedPointer<Node> other) override;
     bool isWord(Assembler* as) override;

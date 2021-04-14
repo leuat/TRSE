@@ -46,12 +46,6 @@ public:
             n->parseConstants(symTab);
     }
 
-    void ApplyHack(Assembler *as) override
-    {
-        Node::ApplyHack(as);
-        for (auto p:children)
-            p->ApplyHack(as);
-    }
 
 
     void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;

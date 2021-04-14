@@ -577,7 +577,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeProcedure> node)
 
     for (int i=0; i<node->m_parameters.count();i++) {
         // Assign all variables
-        node->m_parameters[i]->ApplyHack(as);
+//        node->m_parameters[i]->ApplyHack(as);
         QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
         QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
         na->Accept(this);
@@ -903,8 +903,6 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBuiltinMethod> node)
         node->ReplaceInline(as, m_inlineParameters);
 
 
-    for (auto p : node->m_params)
-        p->ApplyHack(as);
 
     node->VerifyParams(as);
     QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);

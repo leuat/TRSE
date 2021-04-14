@@ -3284,7 +3284,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 //    qDebug() << TokenType::getType(num->getType(as));
 
 
-    node->ApplyHack(as);
 
     if (num!=nullptr) {
         as->Comment("Assigning memory location");

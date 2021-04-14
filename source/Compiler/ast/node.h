@@ -39,77 +39,103 @@ public:
         m_blockID = -1;
     }
 };
-
+/*
+ *
+ * The main base class for the entire Abstract Syntax Tree (AST) in TRSE
+ * Every node must inherit from this base class.
+ *
+ *
+ * */
 class Node : public QEnableSharedFromThis<Node> {
 public:
-//    static QMap<QSharedPointer<Node>, QSharedPointer<Node>> s_uniqueSymbols;
+    // Token contains node type data and values from the parser
     Token m_op;
+
 //    int m_lineNumber;
     uint level = 0;
     static uint s_nodeCount;
+    // Comments associated with current node.
     QString m_comment = "";
     BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
+    // Toggle nodes as "used" and "used by" - necessary for the optimizer for
+    // automatic removal of nodes
     bool m_isUsed = false;
     QStringList m_isUsedBy;
+
+    // Forced values
     bool m_forceAddress = false;
+
     bool m_ignoreSuccess = false; // Used for binary expressions
+    // Force page for conditionals (while/if/repeat until etc)
     int m_forcePage = 0;
     static QString sForceFlag;
+    // Is the current node a register? (applicable to variables only)
     bool m_isRegister = false;
 
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
     static QSharedPointer<SymbolTable>  parserSymTab;
-
+    // Base node has 2 children: left and right
     QSharedPointer<Node> m_left = nullptr;
     QSharedPointer<Node> m_right = nullptr;
-
+    // Swaps left and right nodes
     void SwapNodes();
 
     bool m_isWord = false;
+    // Current block information
     static MemoryBlockInfo m_staticBlockInfo;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
 
+    MemoryBlockInfo m_blockInfo;
+
+    TokenType::Type m_forceType = TokenType::NADA;
+    // Line number for keeping track of current cycles
+    static int m_currentLineNumber;
+
+    /*
+     *
+     *  Methods
+     *
+     * */
+
+    Node();
+    // called manually on each dispatch visitor
+    void DispatchConstructor(Assembler* as, AbstractASTDispatcher* dispatcher);
+    // Makes sure that the node and blocks are in sync
+    int MaintainBlocks(Assembler* as);
+
+
+    // And now for a ton of methods that can/should be implemented by all the subclasses
+
+    virtual void ForceAddress();
+
     virtual bool isReference() { return false;}
 
-    virtual void ApplyHack(Assembler* as);
-
+    // Does the expression contain a pointer? (ie turn 16/32 bit)
     virtual bool containsPointer(Assembler* as) {return false;}
 
+    // Force a specific type to be set for this node
     virtual void setForceType(TokenType::Type t) {
         m_forceType  =t;
     }
 
-
+    // Replaces inline variables with the macro parameter
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp);
 
+    // Apply type flags to node
     virtual void ApplyFlags() {}
 
-    MemoryBlockInfo m_blockInfo;
-    Node();
-
+    // Only returns true of is a compound clause
     virtual bool isCompoundClause() { return false; }
-    void DispatchConstructor(Assembler* as, AbstractASTDispatcher* dispatcher);
 
-    int MaintainBlocks(Assembler* as);
+
     virtual bool isPointer(Assembler* as)  { return false;}
     virtual bool isPurePointer(Assembler* as)  { return false;}
     virtual bool is8bitValue(Assembler* as) { return true; }
-    TokenType::Type m_forceType = TokenType::NADA;
-
-    int m_cycleCounter;
-    static int m_currentLineNumber;
     virtual void ExecuteSym(QSharedPointer<SymbolTable> symTab) = 0;
     virtual bool DataEquals(QSharedPointer<Node> other) { return false;}
     virtual QString HexValue() {return "0";}
     virtual int numValue() { return 0;}
-    virtual void ForceAddress() {
-        m_forceAddress = true;
-        if (m_left!=nullptr)
-            m_left->ForceAddress();
-        if (m_right!=nullptr)
-            m_right->ForceAddress();
-    }
 
     virtual QString getAddress() {return "";}
 
@@ -137,7 +163,7 @@ public:
     virtual bool isVariable() { // Variable with possible expressions
         return false;
     }
-/*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}
+    /*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}
     virtual void StoreVariable(AbstractASTDispatcher* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {
         return m_op.m_type;
@@ -160,10 +186,7 @@ public:
 
     void RequireAddress(QSharedPointer<Node> n,QString name, int ln);
 
-    void RequireNumber(QSharedPointer<Node> n,QString name, int ln) {
-        if (!n->isPureNumeric())
-            ErrorHandler::e.Error(name + " requires parameter to be pure numeric", ln);
-    }
+    void RequireNumber(QSharedPointer<Node> n,QString name, int ln);
 
     virtual bool isWord(Assembler* as) { return false;}
     virtual bool isLong(Assembler* as) { return false;}

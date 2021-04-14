@@ -5072,13 +5072,14 @@ void Parser::HandleUseTPU(QString fileName)
 
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
-    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Syntax::s.m_systemString+ QDir::separator();
+    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+ QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+ QDir::separator();
+
     QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);
 
 
     if (fname == "" || !QFile::exists(fname)) {
-        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fileName,m_currentToken.m_lineNumber);
+        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fileName + " ( Tried dirs: " + Util::toString(dirs) +")",m_currentToken.m_lineNumber);
     }
     s_usedTRUs.append(fileName);
 //    qDebug() << "ADDING" << fileName;

@@ -163,45 +163,6 @@ bool NodeVar::isPurePointer(Assembler *as)
 }
 
 
-void NodeVar::ApplyHack(Assembler *as)
-{
-    return;
-//    qDebug() << value;
-/*    if (getValue(as).contains("_POINTER_")) {
-
-        as->Comment("Assigning pointer of record/class for " +getValue(as));
-//        QString zp = resolveTemporaryClassPointer(v->getValue(as),1,val); // For now, only allow to point to single objects
-        QString name = getValue(as);
-        QStringList lst = name.split("_POINTER_");
-        QString orgPointer = lst[0];
-        QString recordName = lst[1].split("_").first();
-        QString var = name;
-        var = var.remove(orgPointer+"_POINTER_");
-
-
-
-        auto record = as->m_symTab->m_records[recordName];
-        auto s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
-//        qDebug() <<value <<s->getLength()<<s->m_size;
-        int val = record->getShiftedPositionOfVariable(var,1);
-        QString zp = orgPointer;
-
-
-        //return;
-        // simply hack value
-        value = zp;
-        setForceType(TokenType::POINTER);
-        m_op.m_type=TokenType::POINTER;
-        Token t = m_op;
-        t.m_type = TokenType::INTEGER;
-        t.m_value = Util::numToHex(val);
-        t.m_intVal = val;
-        m_ignoreLookup = true;
-        m_expr = QSharedPointer<NodeNumber>(new NodeNumber(t,val));
-
-    }
-*/
-}
 
 bool NodeVar::DataEquals(QSharedPointer<Node> other) {
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(other);

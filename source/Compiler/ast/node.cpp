@@ -39,14 +39,6 @@ void Node::SwapNodes() {
     m_right = n;
 }
 
-void Node::ApplyHack(Assembler *as)
-{
-    if (m_left!=nullptr)
-        m_left->ApplyHack(as);
-    if (m_right!=nullptr)
-        m_right->ApplyHack(as);
-}
-
 void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp)
 {
     if (m_left != nullptr)
@@ -119,6 +111,14 @@ int Node::MaintainBlocks(Assembler* as)
 
 }
 
+void Node::ForceAddress() {
+    m_forceAddress = true;
+    if (m_left!=nullptr)
+        m_left->ForceAddress();
+    if (m_right!=nullptr)
+        m_right->ForceAddress();
+}
+
 
 
 void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
@@ -127,10 +127,15 @@ void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
     }
 }
 
+void Node::RequireNumber(QSharedPointer<Node> n, QString name, int ln) {
+    if (!n->isPureNumeric())
+        ErrorHandler::e.Error(name + " requires parameter to be pure numeric", ln);
+}
+
 bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractASTDispatcher* dispatcher)
 {
     //QSharedPointer<Assembler> as =
-//    AsmMOS6502 tmpAsm;
+    //    AsmMOS6502 tmpAsm;
   //  tmpAsm.m_symTab = as->m_symTab;
 //    ASTDispatcher6502 dispatcher;
 //    dispatcher.as = &tmpAsm;

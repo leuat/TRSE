@@ -265,7 +265,8 @@ QString Util::GetSystemPrefix()
     dir = Util::path;
 #endif
 #ifdef __APPLE__
-    dir = Util::path;
+//    dir = Util::path;
+    dir = QApplication::applicationDirPath()+"/../../";
 #endif
     return dir;
 }
