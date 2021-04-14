@@ -263,6 +263,7 @@ QString Util::GetSystemPrefix()
     else dir+=QDir::separator();
 #ifdef __linux__
     dir = Util::path;
+    dir = QApplication::applicationDirPath()+"/../";
 #endif
 #ifdef __APPLE__
 //    dir = Util::path;

@@ -6,6 +6,7 @@ var
 	// "Proxim" logo created by The Diad^Proxima
 	
 
+@export "images/logo.flf" "images/logo.bin" 256   	
    	logo_image : incbin("images/logo.bin") chipmem;
    	
 	/*
