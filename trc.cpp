@@ -104,14 +104,13 @@ int ClascExec::CompileFromProject(QString sourceFile)
     QString source = Util::loadTextFile(sourceFile);
 //    Out(QDir::currentPath());
     m_builder = new SourceBuilder(m_settings,m_project, QDir::currentPath()+"/", sourceFile);
-    int failure=0;
+    m_failure=0;
     if (!m_builder->Build(source)) {
-        failure=1;
+        m_failure=1;
     }
     else {
         m_builder->Assemble();
         m_failure = !m_builder->m_assembleSuccess;
-
     }
 //    if (m_outputFile!="")
   //      QFile::rename(m_builder->m_filename+".asm", m_outputFile);
@@ -120,7 +119,7 @@ int ClascExec::CompileFromProject(QString sourceFile)
         doc.setHtml( m_builder->getOutput() );
         Out(doc.toPlainText());
     }
-    return failure;
+    return m_failure;
 }
 
 int ClascExec::Assemble(QString file)
