@@ -3634,6 +3634,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     bool isGlobal = preflags.contains("global");
 
     // NOW do the syms define
+//    qDebug() << "PARSER "<<isGlobal << variableNames;
     if (!isGlobal)
     for (QSharedPointer<Symbol> s: syms) {
         if (Syntax::s.m_illegaVariableNames.contains(s->m_name))
