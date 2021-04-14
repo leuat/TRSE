@@ -5,6 +5,7 @@ var
 
 	// "Proxim" logo created by The Diad^Proxima
 	
+
    	logo_image : incbin("images/logo.bin") chipmem;
    	
 	/*
@@ -16,7 +17,7 @@ var
        3. After having created the bitmap image, select "Palette" and change number of bitplanes to "1".
        4. When exporting the font, it should consist of 1 bitplane 320x200 = 8000 bytes of binary data. 
 	*/	
-   	
+@export "images/font.flf" "images/font.bin" 256   	
    	font : incbin("images/font.bin") chipmem;
 
 	// Sine table. Will be replaced with built-in sine methods later. 

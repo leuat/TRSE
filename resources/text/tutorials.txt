@@ -57,6 +57,7 @@ OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2>The first demo 
 OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system source</h2>Simple source code for the extremely basic KOS - (O)K Operating System.
 TIKI100; Tiki 100 tutorials; TIKI100/tutorials/;  <h2>Main TIKI 100 tutorials</h2><p><img src=":resources/images/TIKI100.png" width="300">The TIKI 100 was a little-known (and failed) 1980s computer from Norway. A perfect match for TRSE!<br><br>  Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2><p><img src=":resources/images/PET.png" width="300">The official PET tutorials!
+PET; Pet Bitmap Mode examples; PET/pbm_examples/;<h2>Pet Bitmap Mode examples</h2><p><img src=":resources/images/PET.png" width="300">Bitmap mode tutorials for the PET!
 PET; PETFrog; PET/PETFrog/;<h2>PET Frog game</h2><p><img src=":resources/images/billboard/b30.png" width="300"><p>PET Frog for the VIC-20!<p>By Chris Garrett
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.

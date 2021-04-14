@@ -1512,7 +1512,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             Eat(TokenType::LBRACKET);
             QString org = m_symTab->m_gPrefix;
             //qDebug() << "PARSER " <<org;
-            if (isSubVar)
+ //           if (isSubVar && !m_symTab->m_gPrefix.startsWith("localVariable"))
                 m_symTab->m_gPrefix ="";
             expr = Expr();
             m_symTab->m_gPrefix = org;
@@ -1757,7 +1757,8 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
     if (isClass) {
         QString of = m_symTab->m_gPrefix;
-        m_symTab->m_gPrefix = "";
+//        if (!m_symTab->m_gPrefix.startsWith("localVariable"))
+            m_symTab->m_gPrefix = "";
         auto s = QSharedPointer<Symbol>(new Symbol(name+"_"+Syntax::s.thisName,name));
         m_symTab->m_gPrefix = of;
         m_symTab->Define(s);

@@ -1,9 +1,17 @@
 from subprocess import Popen, PIPE
 import subprocess
 import os
+import sys
 
 #trse = "/opt/homebrew/bin/trse"
-trse = "/Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/trse"
+#trse = "/Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/trse"
+
+if len(sys.argv) != 2:
+	print("Usage: python validate_all.py [ trse exe file] ")
+	print("must be run in the 'validate_all' directory.")
+	exit(1)
+trse = sys.argv[1]
+
 lp = "../tutorials/"
 
 
@@ -15,6 +23,70 @@ def fillRasList(idx,path):
 	for file in os.listdir(lp+tests[idx][0]+"/"+path):
 		if file.endswith(".ras"):
 			tests[idx][1].append(path+"/"+file)
+
+
+
+# AMIGA
+
+tests.append([ "AMIGA/tutorials",[]])
+fillRasList(len(tests)-1,".")
+
+# ATARI
+
+tests.append([ "ATARI520ST/tutorials",[]])
+fillRasList(len(tests)-1,".")
+
+# BBC
+
+tests.append([ "BBCM/Tutorials",[]])
+fillRasList(len(tests)-1,".")
+# Has dependencies, ignore
+#tests.append([ "BBCM/BBCDemoSetup",["demo.ras"]])
+
+# MEGA64
+
+tests.append([ "MEGA65/Tutorials",[]])
+fillRasList(len(tests)-1,".")
+
+# ATARI2600
+
+tests.append([ "ATARI2600/tutorials",[]])
+fillRasList(len(tests)-1,".")
+
+
+
+
+# X86
+
+tests.append([ "X86/CGA",[]])
+fillRasList(len(tests)-1,".")
+
+tests.append([ "X86/VGA_386",[]])
+fillRasList(len(tests)-1,".")
+
+
+
+# PET
+
+# fails for some reason
+#tests.append([ "PET/examples/",[]])
+#fillRasList(len(tests)-1,".")
+
+tests.append([ "PET/pbm_examples/",[]])
+fillRasList(len(tests)-1,".")
+
+tests.append([ "PET/PETFrog/",["petfrog.ras"]])
+
+# NES
+
+tests.append([ "NES/intro_tutorial/",[]])
+fillRasList(len(tests)-1,".")
+
+# OK64
+
+tests.append([ "OK64/Tutorials/",[]])
+fillRasList(len(tests)-1,".")
+tests.append([ "OK64/OkComputer/",["main.ras"]])
 
 # ************ BUILD TEST LIST 
 # C64 
@@ -30,7 +102,22 @@ fillRasList(len(tests)-1,".")
 
 tests.append([ "VIC20/PurplePlanetYo",["demo.ras"]])
 tests.append([ "VIC20/VicNibbler",["nibbler.ras"]])
+tests.append([ "VIC20/cheesy",["main.ras"]])
+tests.append([ "VIC20/PumpKid",["pumpkid.ras"]])
+tests.append([ "VIC20/tutorials",[]])
+fillRasList(len(tests)-1,".")
 
+# Gameboy
+
+tests.append([ "GAMEBOY/tutorials",[]])
+fillRasList(len(tests)-1,".")
+tests.append([ "GAMEBOY/yo-grl",["demo.ras"]])
+
+# CPC
+
+tests.append([ "AMSTRADCPC464/Morketid",["main.ras"]])
+tests.append([ "AMSTRADCPC464/tutorials",[]])
+fillRasList(len(tests)-1,".")
 
 
 def c(path,f1):

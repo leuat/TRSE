@@ -33,7 +33,7 @@ var
  %10010000, 
 ) at $FF00;	
 
-@include "yo-grl.ras"
+@include "yo-grl.inc"
 
 procedure ColorStuff();
 begin

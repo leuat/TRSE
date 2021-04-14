@@ -28,9 +28,17 @@ void AbstractMethods::IncDec(Assembler *as, QString cmd)
     na.m_type=TokenType::INTEGER_CONST;
     // manually building  P0 := P0 +- 1;
     auto num = QSharedPointer<NodeNumber>(new NodeNumber(n,1));
-    auto bop = QSharedPointer<NodeBinOP>(new NodeBinOP(m_node->m_params[0],t,num));
-    auto assign = QSharedPointer<NodeAssign>(new NodeAssign(m_node->m_params[0],na,bop));
+    auto org = m_node->m_params[0];
+    auto var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+    if (var!=nullptr) {
+        if (var->m_subNode==nullptr)
+            var->value = var->getValue(as);
+    }
+    auto bop = QSharedPointer<NodeBinOP>(new NodeBinOP(org,t,num));
+    auto assign = QSharedPointer<NodeAssign>(new NodeAssign(org,na,bop));
     assign->Accept(m_dispatcher);
+
+
     return;
 
 }

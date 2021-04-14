@@ -9,7 +9,7 @@ var
 	i,j, time,k,l:byte at $80;
 	const height : byte = 8;
 	
-@include "yo-grl.ras"
+@include "yo-grl.inc"
 
 procedure ColorStuff();
 begin
