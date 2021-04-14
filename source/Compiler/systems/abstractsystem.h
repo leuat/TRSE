@@ -100,7 +100,7 @@ public:
     virtual bool is8088() { return false;}
 
 
-    void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false);
+    void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false, QString currentDir = "");
 
     static void InitLabelColors();
  //   virtual bool hasFixedProgramAddress() {return true;}

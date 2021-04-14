@@ -48,9 +48,11 @@ QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
 }
 
 
-void AbstractSystem::StartProcess(QString file, QStringList params, QString& output, bool standardOutput ) {
+void AbstractSystem::StartProcess(QString file, QStringList params, QString& output, bool standardOutput, QString currentDir) {
     // qDebug() << params;
     QProcess process;
+    if (currentDir != "")
+        process.setWorkingDirectory(currentDir);
     process.start(file, params);
     process.waitForFinished();
     //    qDebug() << process.readAllStandardOutput();;
