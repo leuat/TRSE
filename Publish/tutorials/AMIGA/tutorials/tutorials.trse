@@ -47,6 +47,4 @@ build_list = ,
 zeropage_colormemory = $fc
 data_header_/users/leuat/code/trse/publish/tutorials/amiga/tutorials/images/trse.flf = 6.41269e-314
 data_header_images/trse.flf = 6.41269e-314
-open_files = ,tutorial7_grid.ras, tutorial2.ras, fjong/tutorial9_copper_effect.fjo, tutorial9_copper_effect.ras, tutorial1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMIGA/tutorials/
-current_file = tutorial9_copper_effect.ras
+open_files =, tutorial1.ras

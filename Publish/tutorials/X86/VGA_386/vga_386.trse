@@ -1,4 +1,3 @@
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/X86/VGA_386/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fd
@@ -32,8 +31,6 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
-open_files = ,tut2.ras, music/bubble.trt, music/song1.trt, tut4.ras, [ext]units/X86/system/tables.tru, [external]units/X86/math/matrix.tru, [external]units/X86/gfx/lib3d.tru, [external]units/X86/music/beeplay.tru, [external]units/X86/system/memory.tru, [external]units/X86/gfx/gfx.tru, [external]units/X86/adlibplayer.tru, [external]units/X86/tables.tru, [external]units/X86/beeplay.tru, example1_music_irq.ras
-current_file = tut3.ras
 var_zeropages = ,
 zeropages_userdefined = ,
 global_defines = ,

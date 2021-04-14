@@ -12,12 +12,14 @@
 class ClascExec {
 public:
     QStringList m_args;
-    CIniFile m_project, m_settings;
+    QSharedPointer<CIniFile> m_project, m_settings;
     QMap<QString,QString> m_vals;
     SourceBuilder* m_builder = nullptr;
     QString m_outputFile = "";
+    QApplication* app = nullptr;
     bool m_hasError = false;
     int m_failure = 0;
+    //QCoreApplication* core = nullptr;
     ClascExec(int argc, char *argv[]);
 
     void RequireParam(QString param);

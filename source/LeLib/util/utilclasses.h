@@ -4,6 +4,9 @@
 #include <QString>
 #include <QVector>
 #include <QStringList>
+#include "source/LeLib/util/cinifile.h"
+#include <QDir>
+
 
 class Stack {
 public:
@@ -47,6 +50,10 @@ public:
 
     QString operator[] (int i) {return Get(i);}
 
+
+
 };
+
+
 
 #endif // UTILCLASSES_H

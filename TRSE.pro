@@ -329,7 +329,8 @@ SOURCES += main.cpp\
     source/Compiler/sourcebuilder.cpp \
     source/Compiler/projectbuilder.cpp \
     source/mynth/mynthesizer.cpp \
-    source/dialogprojectbuilder.cpp
+    source/dialogprojectbuilder.cpp \
+    trc.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -566,7 +567,8 @@ HEADERS  += mainwindow.h \
     source/Raytracer/particles.h \
     source/Compiler/sourcebuilder.h \
     source/Compiler/projectbuilder.h \
-    source/dialogprojectbuilder.h
+    source/dialogprojectbuilder.h \
+    trc.h
 
 FORMS    += mainwindow.ui \
     dialognewimage.ui \

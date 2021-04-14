@@ -2,20 +2,19 @@
 #include <QDebug>
 #include <QTextDocument>
 #include <stdio.h>
+#include <QStandardPaths>
 
-int main(int argc, char *argv[])
-{
-//    QCoreApplication app(argc, argv);
-    ClascExec ras(argc, argv);
-    return ras.Perform();
-  //  return app.exec();
-}
 
 ClascExec::ClascExec(int argc, char *argv[]) {
-    Out("Welcome to trc, the TRSE command-line assembler/compiler!");
+    Out("Welcome to the TRSE CLI (command-line interface) assembler/compiler!");
     Out("");
-
-    for (int i=1;i<argc;i++) {
+    app = new QApplication(argc, argv);
+    app->setOrganizationDomain("lemonspawn.com");
+    app->setApplicationName("TRSE");
+ //   core = new QCoreApplication(argc,argv);
+   // this->core = core;
+    // first values are "trse" and "-cli", so start at 2
+    for (int i=2;i<argc;i++) {
         m_args.append(QString(argv[i]));
         QStringList l = QString(argv[i]).split("=");
         if (l.count()!=2) {
@@ -45,6 +44,9 @@ int ClascExec::Perform()
 {
     if (m_hasError)
         return 1;
+    m_settings = QSharedPointer<CIniFile>(new CIniFile());
+    m_project = QSharedPointer<CIniFile>(new CIniFile());
+
 
     try {
         RequireFile("input_file");
@@ -54,11 +56,26 @@ int ClascExec::Perform()
             m_outputFile = m_vals["output_file"];
 
         if (op=="project") {
-            RequireFile("settings");
+//            RequireFile("settings");
             RequireFile("project");
-            m_settings.Load(m_vals["settings"]);
+  //          m_settings.Load(m_vals["settings"]);
+            auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+            QString iniFileName = path +QDir::separator()+ "trse.ini";
+            Out(iniFileName);
 
-            m_project.Load(m_vals["project"]);
+            if (QFile::exists(iniFileName))
+               m_settings->Load(iniFileName);
+            else {
+                Out("Could not load TRSE settings! Please make sure you have started TRSE as a windowed application at least once before using the CLI.");
+                return false;
+            }
+            // Set some settings params
+            // Turn off threaded compliation
+            m_settings->setFloat("compile_thread",0);
+
+
+
+            m_project->Load(m_vals["project"]);
             m_failure = CompileFromProject(m_vals["input_file"]);
         }
         else
@@ -84,13 +101,13 @@ int ClascExec::Perform()
 
 int ClascExec::CompileFromProject(QString sourceFile)
 {
-    QString system = m_project.getString("system");
+    QString system = m_project->getString("system");
     Out("Compiling '"+sourceFile+"' for system: " +system);
     Out("");
-    Syntax::s.Init(AbstractSystem::SystemFromString(system),&m_settings, &m_project);
+    Syntax::s.Init(AbstractSystem::SystemFromString(system),m_settings, m_project);
     QString source = Util::loadTextFile(sourceFile);
 //    Out(QDir::currentPath());
-    m_builder = new SourceBuilder(&m_settings, &m_project, QDir::currentPath()+"/", sourceFile);
+    m_builder = new SourceBuilder(m_settings,m_project, QDir::currentPath()+"/", sourceFile);
     int failure=0;
     if (!m_builder->Build(source)) {
         failure=1;
@@ -127,7 +144,7 @@ void ClascExec::PrintUsage()
 {
     Out("Usage: ");
     Out("");
-    Out("trc op=[ operation types ] input_file=[ source file ] output_file=[ optional output file ].... [ type specific operation parameters ]");
+    Out("trse -cli op=[ operation types ] input_file=[ source file ] output_file=[ optional output file ].... [ type specific operation parameters ]");
     Out("Valid operation types are: project, orgasm");
     Out("");
     Out("Examples: ");

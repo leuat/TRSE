@@ -24,7 +24,8 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include <QSettings>
-
+#include "trc.h"
+/*
 void ConvertPerlin(QString input, QString out, float div) {
     QImage img;
     img.load(input);
@@ -133,18 +134,8 @@ void ColumnTab()
     f.close();
 
 }
-
-void fixCurrentDir(QString execFile) {
-    QStringList al = execFile.split(QDir::separator());
-    al.removeLast();
-    QString dir = QDir::separator();
-    for (QString s : al)
-        dir +=s+QDir::separator();
-
-    QDir::setCurrent(dir);
-
-}
-
+*/
+/*
 
 void CircleAndAtan(QString f1, QString f2, int w, int h) {
     QByteArray b1,b2;
@@ -179,23 +170,29 @@ void TestSSIM() {
 
 
 //https://www.c64-wiki.com/wiki/Commodore_Plus/4
+*/
+
+void fixCurrentDir(QString execFile) {
+    QStringList al = execFile.split(QDir::separator());
+    al.removeLast();
+    QString dir = QDir::separator();
+    for (QString s : al)
+        dir +=s+QDir::separator();
+
+    QDir::setCurrent(dir);
+
+}
 
 int main(int argc, char *argv[])
 {
-//    ConvertAllObjs();
-//    qDebug() << Util::BinopString("#$C");
-//    ConvertPerlin("perlin512.jpg","perlin64.bin",8);
-//    ColumnTab();
-//    RandTable("rnd256.bin");
-//    CircleAndAtan("/home/leuat/Dropbox/TRSE/gameboytest/data/circle.bin","/home/leuat/Dropbox/TRSE/gameboytest/data/atan.bin",16,16);
-/*    Tool::PathTool("/home/leuat/Pictures/pathtest/pathtest",
-                   "/home/leuat/Dropbox/TRSE/SummerOfSquid/data/path",320,8);*/
+    if (argc>=2) {
+        if (QString(argv[1])=="-cli") {
+            ClascExec ras(argc, argv);
+            return ras.Perform();
+        }
+    }
 
-//    TestSSIM();
 
-  //  exit(1);
-
-    //CreatePerlin("/home/leuat/Dropbox/TRSE/ECM/data/perlin80.dat",80,50,6,1,1,127);
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");

@@ -2451,6 +2451,7 @@ void MainWindow::LoadIniFile()
 
     m_iniFile->isMainSettings = true;
     auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+//    qDebug() << "MAIN " <<path;
     if (!QDir().exists(path)) {
         QDir().mkdir(path);
     }
