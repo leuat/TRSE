@@ -13,7 +13,7 @@ SSIM::SSIM()
 
 double SSIM::CalcSSIM(SSIM *other)
 {
-    double d = 1.0-pow(calcLuminosity(other),weight_luminosity)*pow(calcContrast(other), weight_contrast)*pow(calcStructure(other), weight_structure);
+    double d = 1.0-std::pow(calcLuminosity(other),weight_luminosity)*std::pow(calcContrast(other), weight_contrast)*pow(calcStructure(other), weight_structure);
     return std::max(d,0.0);
     //    return calcStructure(other);
 }
