@@ -164,7 +164,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("mov bx,ax");
             as->Asm("shl bx,2");
 
-            as->Asm("lea si,"+node->getValue(as)+ "");
+            as->Asm("lea si,["+node->getValue(as)+ "]");
             as->Asm("mov di,[ds:si+bx]");
             as->Asm("mov ax,[ds:si+bx+2]");
             as->Asm("mov es,ax");
@@ -904,8 +904,8 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             var->m_expr->Accept(this);
             as->Asm("shl ax,2 ; pointer lookup");
             as->Asm("mov bx,ax");
-            as->Asm("lea si,"+var->getValue(as));
-            as->Asm("mov [ds:si+bx],di ; store in pointer array");
+            as->Asm("lea si,["+var->getValue(as)+"]");
+            as->Asm("mov [ds:si+bx],di ; store in psointer array");
             as->Asm("mov [ds:si+bx+2],es");
 /*
             as->Asm("mov bx,ax");
