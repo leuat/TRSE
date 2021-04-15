@@ -151,7 +151,7 @@ begin
          Mov     al, [Gfx_color]
  ;        Cli
 ;         add es:[di],al
-         mov es:[di],al
+         mov [es:di],al
 
          inc di
   ;       Sti

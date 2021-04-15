@@ -1,5 +1,5 @@
-zeropages = ,$02,   $04,   $08,   $16,   $0B,   $0D,   $10,   $12,   $22,   $24,   $68
-temp_zeropages = ,$54,   $56,   $58,   $5A
+zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
+temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fd
 zeropage_colormemory = $fb
 zeropage_decrunch1 = $47
@@ -49,5 +49,5 @@ data_header_images/image1.flf = 6.41903e-314
 data_header_/users/leuat/code/trse/publish/tutorials/x86/vga_386/image2.flf = 6.47908e-314
 data_header_fonts/font1.flf = 6.47908e-314
 project_path = /home/leuat/code/TRSE/Release/../tutorials/X86/VGA_386/
-open_files = ,tut6.asm, tut5.ras, tut4.ras, tut1.ras, tut6.ras
+open_files = ,[ext]units/X86/gfx/gfx.tru, tut6.asm, tut5.ras, tut4.ras, tut1.ras, tut6.ras
 current_file = tut6.asm
