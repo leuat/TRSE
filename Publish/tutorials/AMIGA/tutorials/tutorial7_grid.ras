@@ -9,7 +9,9 @@ var
    	@donotremove LineMode
    	ii,ij,l2,k2:long;
 	curBuf : integer = 0;
+	
 	sin : array[256] of byte = buildtable("Math.sin(i/256.0*2*3.14159)*127 +127");
+	
 	p1 : pointer of long;
    	pi : pointer of integer;
 
@@ -30,6 +32,7 @@ var
 	
 
 	const size : byte = 8;
+	
 	vcount: long = size*size;
 	const max : integer = size*size+1;
 	vertices_T : array[3*max] of long;
@@ -62,7 +65,7 @@ var
 
 
 
-procedure RenderObjectLines(ro_list:pointer of integer,ro_count : long);
+procedure RenderObjectLines(ro_list:pointer of integer,ro_count : integer);
 var
 	ro_ri : integer = 0;
 	ro_x1,ro_x2, ro_y1, ro_y2 : long = 0;
@@ -78,6 +81,7 @@ begin
 		move.l #-$8000,$dff072
 		move.w #40,$dff060
 		");
+		
 	for ro_ri:=0 to ro_count do begin
 			i:=ro_list[ro_idx];
 			j:=ro_list[ro_idx+1];
@@ -87,7 +91,7 @@ begin
 			
 			ro_x2:=PVert[j];
 			ro_y2:=PVert[j+1];
-
+			
 			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, screen, 40);
 	
 		ro_idx:=ro_idx+2; // two shorts per line
@@ -233,6 +237,7 @@ begin
 		for j:=0 to size do
 		begin
 			sy:=j-size/2;
+
 			p1[k2]:=sx*32;
 			k2:=k2+1;
 			

@@ -13,8 +13,8 @@ var
 
 @donotremove LineMode
 
-@define IS_LOVE 1
-//@define IS_TEAPOT 1
+//@define IS_LOVE 1
+@define IS_TEAPOT 1
 //@define IS_FOX 1
 
 
@@ -28,6 +28,7 @@ var
 	sin256: array[256] of byte = ($80,$83,$86,$89,$8c,$8f,$92,$95,$98,$9b,$9e,$a2,$a5,$a7,$aa,$ad,$b0,$b3,$b6,$b9,$bc,$be,$c1,$c4,$c6,$c9,$cb,$ce,$d0,$d3,$d5,$d7,$da,$dc,$de,$e0,$e2,$e4,$e6,$e8,$ea,$eb,$ed,$ee,$f0,$f1,$f3,$f4,$f5,$f6,$f8,$f9,$fa,$fa,$fb,$fc,$fd,$fd,$fe,$fe,$fe,$ff,$ff,$ff,$ff,$ff,$ff,$ff,$fe,$fe,$fe,$fd,$fd,$fc,$fb,$fa,$fa,$f9,$f8,$f6,$f5,$f4,$f3,$f1,$f0,$ee,$ed,$eb,$ea,$e8,$e6,$e4,$e2,$e0,$de,$dc,$da,$d7,$d5,$d3,$d0,$ce,$cb,$c9,$c6,$c4,$c1,$be,$bc,$b9,$b6,$b3,$b0,$ad,$aa,$a7,$a5,$a2,$9e,$9b,$98,$95,$92,$8f,$8c,$89,$86,$83,$80,$7c,$79,$76,$73,$70,$6d,$6a,$67,$64,$61,$5d,$5a,$58,$55,$52,$4f,$4c,$49,$46,$43,$41,$3e,$3b,$39,$36,$34,$31,$2f,$2c,$2a,$28,$25,$23,$21,$1f,$1d,$1b,$19,$17,$15,$14,$12,$11,$f,$e,$c,$b,$a,$9,$7,$6,$5,$5,$4,$3,$2,$2,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$2,$2,$3,$4,$5,$5,$6,$7,$9,$a,$b,$c,$e,$f,$11,$12,$14,$15,$17,$19,$1b,$1d,$1f,$21,$23,$25,$28,$2a,$2c,$2f,$31,$34,$36,$39,$3b,$3e,$41,$43,$46,$49,$4c,$4f,$52,$55,$58,$5a,$5d,$61,$64,$67,$6a,$6d,$70,$73,$76,$79,$7c);
 
 	screen,offscreen: pointer of long;
+	ss : pointer;
 
 	// Rotation matrices  3 x 3 = 9 longs
 	rotmat, rotX, rotY, rotZ,rotmatA : array[9] of long;
@@ -46,7 +47,7 @@ var
 	verticesLineList : incbin("objects/teapot_lines.bin");
 	normals : incbin("objects/teapot_line_normals.bin");
 	vcount: long = 301;
-	lcount : long = 850;
+	lcount : integer = 850;
 	zpos : long = 400;
 
 @endif
@@ -56,7 +57,7 @@ var
 	verticesLineList : incbin("objects/fox_lines.bin");
 	normals : incbin("objects/fox_line_normals.bin");
 	vcount: long = 291;
-	lcount : long = 860;
+	lcount : integer = 860;
 	zpos : long = 600;
 	
 @endif
@@ -66,13 +67,14 @@ var
 	verticesLineList : incbin("objects/love_lines.bin");
 	normals : incbin("objects/love_line_normals.bin");
 	vcount: long = 92;
-	lcount : long = 270;
+	lcount : integer = 270;
 	zpos : long = 150;
 
 @endif
 
-	normals_T : array[1024] of long;
-	vertices_T : array[900] of long;
+	ro_ri : integer = 0;
+	normals_T : array[1024*2] of long;
+	vertices_T : array[900*2] of long;
 	
    	// Allocate screen memory, 2 screens (1 is back buffer)
    	
@@ -84,15 +86,16 @@ var
 	converted to a TRSE method later on. 
 
 */
+
 @donotremove RenderObjectLines
-procedure RenderObjectLines(ro_obj:pointer of long; ro_normals:pointer of byte; ro_list:pointer of integer, ro_count : long; cxx, cyy, czz : long);
+procedure RenderObjectLines(ro_obj:pointer of long; ro_normals:pointer of byte; ro_list:pointer of integer, ro_count : integer; cxx, cyy, czz : long);
 var
 
-	ro_ri : integer = 0;
 	ro_x1,ro_y1,ro_x2,ro_y2, ro_z2:long = 0;
+	@donotremove ro_tmp
+	@donotremove ro_z1	
 	ro_z1,ro_tmp:byte;
 	ro_idx, ro_nidx : integer = 0;
-	ss : pointer;
 	
 begin
 	ss:=screen+40; // Draw every second 
@@ -114,15 +117,16 @@ begin
 			bgt ro_skipp
 
 		");
-
+	
 			// Project vertices to screen				
-			ProjectToScreen(ro_obj,ro_list[ro_idx], ro_x1, ro_y1);
-			ProjectToScreen(ro_obj,ro_list[ro_idx+1], ro_x2, ro_y2);
+			ProjectToScreen(ro_obj, ro_list[ro_idx],   ro_x1, ro_y1);
+			ProjectToScreen(ro_obj, ro_list[ro_idx+1], ro_x2, ro_y2);
 //			WaitForBlitter();
 			if (tt=0) then
 			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, ss, 80)
 			else
 			DrawLine(ro_x1,ro_y1,ro_x2,ro_y2, screen, 80);
+	
 			
 		asm("ro_skipp");
 
@@ -179,6 +183,7 @@ end;
 /*
 	Flips rendering buffer and updates copper list & pointers
 */
+
 procedure FlipBuffers();
 begin
 	if (curBuf=0) then begin
@@ -196,8 +201,6 @@ begin
 	curBuf:=(curBuf+1)&1;
 
 end;
-
-
 
 
 /*
@@ -246,13 +249,15 @@ begin
 	// Set line modulo
 //	poke16(^$dff060,0,80);
 
-
+	
 end;
 
 
 begin
 	PerformInit();
 	time:=128;
+	FlipBuffers();
+	fill(screen,0,20*256);
 	
 	jj:=0;
 	while (isDone=0) do begin

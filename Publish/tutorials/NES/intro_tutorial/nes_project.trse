@@ -51,3 +51,6 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 exomizer_toggle = 0
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/NES/intro_tutorial/
+open_files = ,tutorial_4_hello_scrolling.ras, tutorial_3_hello_level.ras
+current_file = tutorial_4_hello_scrolling.ras
