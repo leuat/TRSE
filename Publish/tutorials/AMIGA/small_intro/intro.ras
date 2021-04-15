@@ -1,0 +1,310 @@
+program SmallAmigaIntro;
+@use "lsplayer"
+@use "graphics"
+var  
+	m,current_time, isDone, time, transition, transition_time, shift, txtCnt,addx:integer;
+
+	music1 : incbin("music/P61.you_make_me_") chipmem;
+
+	// Number of bitplanes	
+	
+	const bpl : integer = 5;
+   	n2,l,l2,xx,yp,y,i, curFrame,time2,j,k: integer = 0; 
+   	data : incbin("background.bin") chipmem;
+   	
+@export "images/logo.flf" "images/logo.pal" 256
+
+	palette : incbin("images/logo.pal");
+	@donotremove rest
+	rest : array[32] of integer;
+	pp : pointer of integer;
+	curColors : array[32] of integer;
+	src,dst,ptr,p1 : pointer of integer;
+	orgStart : integer = $2c81;
+	orgEnd : integer = $2cc1;
+	
+	sin16 : 	array[256] of integer = buildtable( "((Math.sin((i)/256*3.14159*2)*0x7f + 0x7f))/16");
+	siny : 	array[256] of integer = buildtable( "((Math.sin((i)/256*3.14159*2)*0x7f + 0x7f))/16");
+	// Animation number of frames
+	const maxFrames : integer = 15;
+	
+	imgTab : array[maxFrames+1] of long = BuildTable("i*40*256");
+	
+	@donotremove text
+	font : incbin("textsprites1.bin");
+	text : string ="                                            WELCOME TO A QUICK LITTLE COMPOFILLER    MAZE HERE      NOXS AND I JUST WANTED TO USE THIS CUTE LITTLE CHIPTUNE TO SOMETHING OTHER THEN ON A SOON COMING CHIPPACK      WE MIGHT SAY THIS IS A LITTLE TEASER ON WHAT TO EXPECT ON THAT CHIPPACK      WHAT CHIPPACK YOU SAY     WELL DIGITAL CHIPS OFCOURSE       ANYWAY A BIG THANKS TO LEUAT FOR CODING THIS LITTLE PIECE AND TO LOWLIFE FOR FIXING A LOGO IN A HURRY      LESS THEN ONE HOUR TILL DEADLINE AND IM STILL SITTING HERE WRITING ON THIS SCROLLTEXT    I THINK I NEED TO END NOW SINCE THIS TUNE IS NOT THAT LONG     SO NO NEED FOR A VERY LONG SCROLLTEXT     SO SEE YA ALL ON THE NEXT DESIRE PRODUCTION     MAZE OUT          THIS INTRO WAS CREATED USING TRSE                                ";
+@export "images/logo.flf" "images/logo.bin" 1 
+
+	image : incbin("images/logo.bin") chipmem;	
+	@donotremove bpl5
+	// Last bitplane
+	bpl5 : array[40*256] of byte chipmem;
+ 
+
+
+
+procedure RenderLetter(char, fr, xpos,ypos : integer);
+var
+	charTab :array[32] of long = BuildTable("i*2*16*16");
+	frameTab :array[32] of long = BuildTable("i*2*16");
+	tab : array[256] of integer =BuildTable("i*40");
+begin
+	dst := #image;
+	dst:=dst + 40*256*3;
+	dst:=dst + xpos*1;
+	ptr:=dst;
+	dst:=dst + 40*210;
+	
+//	begin
+	asm("
+		move.l dst,a1
+		rept 48
+		move.w #$0,(a1)+
+		add.l #40-2,a1
+		endr
+	");
+	
+	if (char=32) then return;
+	
+	dst := ptr + tab[ypos];
+
+//	return;	
+//	end;
+	i := char - 65;
+	src := #font;
+	src:=src+charTab[i];
+	src:=src+frameTab[fr&15];
+	
+	asm("
+		move.l src,a0
+		move.l dst,a1
+		
+
+;		move.l #15,d3
+;toppers:		
+		rept 16
+		move.w (a0)+,(a1)+
+		add.l #40-2,a1
+		endr
+;		dbf d3,toppers
+		
+	");
+
+end;
+
+procedure RenderText();
+begin
+	xx:=0;
+	yp := 212;
+	l:=0-time*5;
+	l2:=time*3;
+	l:=l+txtCnt*17;
+	l2:=l2+txtCnt*31;
+	for j:=0 to 20 do
+	begin
+/*		bb:=j;
+		k:=text[bb];
+		k:=k>>8;*/
+		y := siny[l&255] + siny[l2&255];
+		asm("
+			lea text,a0
+			moveq #0,d2
+			move.w j,d2
+			add.w txtCnt,d2
+			
+			moveq #0,d0
+			move.b (a0,d2),d0
+			move.w d0,k
+		");			
+		
+		RenderLetter(k, (sin16[(l+80)&255]+sin16[(l2+80)&255])/2, xx,yp+y);
+//		RenderLetter(k, 7, xx,yp);
+		xx:=xx+2;		
+		l:=l+17;
+		l2:=l2+31;
+	end;
+
+end;
+
+procedure InitTime(it_t,it_tt:integer);
+begin
+	current_time:=it_t;
+	isDone:=0;
+	time:=0;
+	transition:=0;
+	transition_time := it_tt;
+end;
+
+procedure UpdateTime();
+begin
+	if (current_time<>0) then begin
+		current_time:=current_time-1;
+	end
+	else
+		isDone:=1;
+		
+	if(current_time<transition_time) then transition:=1;
+	time:=time+1;
+end;
+
+
+	
+procedure RenderFrame2(t1,t2,div1 : integer;adde:integer);
+begin
+	curFrame := time;//sinx[ t1 & $FF ]/div1;
+	ptr := #data ;
+	ptr += imgTab[curFrame&maxFrames];
+	SetCopperList32(ptr, #copper_bitplane4);
+end;
+
+procedure InitCopperList();
+var
+	row : integer = 0;
+begin
+	
+	row:=7;
+	j:=time;
+	l:=0;
+	y:=$000F;// Color background start
+	InitCustomCopperList(); // Message start custom copper list
+	
+	k:=15-(shift)&15;
+	k:=k<<4;
+	AddCopperCommand(copper_diwstrt,orgStart+16);
+	AddCopperCommand(copper_diwstop,orgEnd-16);
+	AddCopperCommand(COPPER_SCROLL, 0);
+	AddCopperCommand($F4CF, COPPER_WAIT_FOR_RASTER);
+//	AddCopperCommand(COPPER_PALETTE_START+2,$00F0); 
+	AddCopperCommand($0BDF, COPPER_WAIT_FOR_RASTER);
+
+AddCopperCommand(COPPER_SCROLL, k);
+	 		 	
+
+	EndCustomCopperList();
+
+end;
+procedure FadeIn();
+
+interrupt VBlank();
+begin
+	
+	PlayP61Module();
+	setpalette(#curColors,#copper_palette,31);
+
+	RenderFrame2(time2, time2,6,5);
+	WaitVerticalBlank();	
+//	LSPlayer::Play();
+	ApplyCopperList();
+	time+=1;
+	time2+=1;
+	if (time&1=1) then time2+=1;
+	RenderText();
+	if (time&3=0) then
+		PlayP61Module();
+	InitCopperList();
+		
+	if (time&3=0) then FadeIn();
+
+		shift:=shift+2;
+
+	if (shift=16) then 
+	begin
+		txtCnt +=1;
+		asm("
+			lea text,a0
+			moveq #0,d2
+			move.w j,d2
+			add.w txtCnt,d2
+			add.w #16,d2
+			
+			moveq #0,d0
+			move.b (a0,d2),d0
+			move.w d0,k
+		
+		");
+		if (k=0) then txtCnt:=0;
+		shift := 0;
+		
+	end;
+
+
+end;
+
+
+procedure InitEffect1();
+begin
+//	Graphics::SetupNonInterlacedScreen(#bpl5,5);
+	ptr:=#image;
+	ptr:=ptr+40*10;
+	Graphics::SetupNonInterlacedScreen(ptr,5);
+	
+
+
+	p1:=#palette;
+	k:=2;
+	for i:=0 to 16 do
+	begin
+		j:=p1[i];
+		if (i=6) then j:=$EA5;
+		p1[i+16]:=j;
+
+	end;
+	setpalette(#curColors,#copper_palette,31);
+end;
+
+
+
+procedure FadeIn();
+begin
+	p1:=#palette;
+	for i:=0 to 32 do
+	begin
+		k:=curColors[i];
+		l:=p1[i];
+		n2:=0;
+		
+		j:=k&$F;
+		m:=l&$F;
+		if (j<m) then if j<14 then j:=j+1;
+		n2:=n2|j;
+
+		k:=k>>4;
+		l:=l>>4;
+
+		j:=k&$F;
+		m:=l&$F;
+		if (j<m) then if j<14 then j:=j+1;
+		n2:=n2 + (j<<4);
+
+
+		k:=k>>4;
+		l:=l>>4;
+
+		j:=k&$F;
+		m:=l&$F;
+		if (j<m) then if j<14 then j:=j+1;
+		n2:=n2 + (j<<8);
+	
+
+		curColors[i]:=n2;
+		
+	end;
+
+end;
+
+
+
+
+begin	
+    InitP61PlayerInternal();
+	InitP61Module(#music1);
+	vbirq(VBlank());
+	EnableInterrupt(VB_IRQ);
+	
+	InitEffect1();
+	
+	asm("
+		bra *
+	");	
+end.
+

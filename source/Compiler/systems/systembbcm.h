@@ -12,7 +12,7 @@ class SystemBBCM : public SystemMOS6502
 public:
     SystemBBCM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
     void PostProcess(QString &text, QString filename, QString currentDir) override;
-
+    int m_totalSize = 0;
     void DefaultValues() override;
     void AddFileToDisk(DiscImage* di, QString filename, QString name, int address);
     bool BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData, QString&text);

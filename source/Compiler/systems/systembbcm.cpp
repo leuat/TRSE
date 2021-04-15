@@ -80,10 +80,13 @@ void SystemBBCM::DefaultValues()
 void SystemBBCM::AddFileToDisk(DiscImage *di, QString filename, QString name, int address)
 {
     QByteArray data = Util::loadBinaryFile(filename);
-    unsigned char d[0x10000];
+    unsigned char d[0x60000];
     for (int i=0;i<data.count();i++)
         d[i] = data[i];
 
+    m_totalSize+=data.count();
+//    qDebug() << "Current size: " <<m_totalSize;
+  //  qDebug() << "Adding to disk:" << name << data.count();
     di->AddFile(name.toStdString().c_str(),
                 d,
                 address,address,data.count()

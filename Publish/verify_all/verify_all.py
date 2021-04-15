@@ -30,6 +30,7 @@ def fillRasList(idx,path):
 
 tests.append([ "AMIGA/tutorials",[]])
 fillRasList(len(tests)-1,".")
+tests.append([ "AMIGA/small_intro",["intro.ras"]])
 
 # ATARI
 

@@ -115,13 +115,13 @@ begin
 	objects[i].faces := fp;
 	objects[i].vertices_rot := curPos;
 	curPos += v*6; // rotated are integer
+	objects[i].color := curPos;
+	curPos += f; // 1 byte per face
 	
 	objects[i].points_old := curPos;
 	curPos += v*2; // 2 bytes per point
 	objects[i].points_new := curPos;
 	curPos += v*2; // 2 bytes per point
-	objects[i].color := curPos;
-	curPos += f; // 2 bytes per point
 	objects[i].rotmat := curPos;
 	curPos += (4*4*2); // 32 bytes per matrix
 	

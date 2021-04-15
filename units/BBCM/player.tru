@@ -14,6 +14,13 @@ var
 	@define PLAYER_PLAY $4F07
 @endif
 
+	// Players located in the BIN dir
+@if PLAYER_LOCATION = 20	
+	player: incbin("bin/player4C00.bin") compressed;
+	@define PLAYER_INIT $4F00
+	@define PLAYER_PLAY $4F07
+@endif
+
 @if PLAYER_LOCATION = 1	
 	player: incbin("bin/player3000.bin", $3000);
 	@define PLAYER_INIT $3300
@@ -31,7 +38,7 @@ begin
 	call(^@PLAYER_PLAY);
 end;
 
-procedure InitMusic(zp:pointer);
+procedure InitMusic(zp:integer);
 begin
 	asm("
   	  ldx Player_zp

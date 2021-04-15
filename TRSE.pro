@@ -634,6 +634,7 @@ DISTFILES += \
     resources/images/OK64.jpg \
     resources/images/OK64.png \
     resources/images/PLUS4.png \
+    resources/images/amiga_intro.png \
     resources/images/tutorials/floskel.png \
     resources/text/about.txt \
     resources/text/Documentation.txt \

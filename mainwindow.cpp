@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(qApp, SIGNAL(aboutToQuit()), m_updateThread, SLOT(OnQuit()));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(OnQuit()));
 
+
     UpdateRecentProjects();
     SetupFileList();
 
