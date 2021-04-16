@@ -326,7 +326,7 @@ bool CIniFile::getBool(QString name) {
             return false;
         }
     }
-    qDebug() << "CIniFile: Could not find parameter " + name;
+    //qDebug() << "CIniFile: Could not find parameter " + name;
     return false;
 }
 

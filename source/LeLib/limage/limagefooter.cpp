@@ -30,7 +30,7 @@ void LImageFooter::toggle(int pos) {
 
 bool LImageFooter::Load(QFile &f) {
     if (f.atEnd()) {
-        qDebug() << "No footer in .flf file "<<f.fileName();
+//        qDebug() << "No footer in .flf file "<<f.fileName();
         return false;
     }
     QByteArray b = f.readAll();

@@ -157,8 +157,7 @@ void ClascExec::PrintUsage()
     Out("Examples: ");
     Out("  compile a project with a main source file: ");
     Out("       trc op=project project=myDemo.trse input_file=main_demo.ras");
-    Out("   Use a custom settings file: ");
-    Out("       trc op=project settings=trse.ini project=myDemo.trse input_file=main_demo.ras");
+    Out("   Use a custom settings file: "); Out("       trc op=project settings=trse.ini project=myDemo.trse input_file=main_demo.ras");
     Out("");
     Out("  Use OrgAsm to assemble an .asm to .prg: ");
     Out("     trc op=orgasm   input_file=main_demo.asm");
