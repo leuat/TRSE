@@ -21,7 +21,7 @@ jobs:
           tar -xzf vasm.tar.gz
           cd vasm
           make CPU=m68k SYNTAX=mot -j 2
-          cd..
+          cd ..
           # rgbasm (GameBoy)
           git clone https://github.com/gbdev/rgbds.git
           cd rgbds
@@ -29,7 +29,7 @@ jobs:
           git checkout tags/v0.4.2
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build -j 2
-          cd..
+          cd ..
           # pasmo
           wget http://pasmo.speccy.org/bin/pasmo-0.5.4.beta2.tgz
           tar -xzf pasmo-0.5.4.beta2.tgz
@@ -38,7 +38,7 @@ jobs:
           make -j 2
           make install
           mv pasmo-0.5.4.beta2 pasmo
-          cd..
+          cd ..
           # patch dirs
           sed -i "s,^vasmm=.*,vasmm=${PWD}/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir=.*,gameboy_rgbasm_dir=${PWD}/rgbasm/build/src," Publish/publish_linux/trse.ini
