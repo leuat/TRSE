@@ -160,7 +160,7 @@ for v in tests:
 	for file in v[1]:
 		if (c(directory,file)==1):
 			print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
-			failed.append(v)
+			failed.append([directory, file])
 
 if failed:
 	for f in failed:
