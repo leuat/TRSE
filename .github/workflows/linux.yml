@@ -19,6 +19,7 @@ jobs:
       - run: |
           mkdir bin
           cp trse bin/
+          ln -s Publish/tutorials tutorials
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
