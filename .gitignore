@@ -1,3 +1,7 @@
-
+*.o
+moc_*.cpp
+ui_*.h
+Makefile
+trse
 TRSE.pro.user
 Publish/tutorials/C64/Tutorials/.backup/units_00_keyboard_unit.ras/backup_Fri Feb 5 21_53_09 2021.bak
