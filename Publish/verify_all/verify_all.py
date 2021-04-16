@@ -145,7 +145,7 @@ def c(path,f1):
 
 
 #	process = Popen([trse, '-cli',  ], stdout=PIPE, stderr=PIPE)
-	result = subprocess.run([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stderr=subprocess.STDOUT)
+	result = subprocess.run([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stdout=PIPE, stderr=subprocess.STDOUT)
 	if result.stdout: print(result.stdout)
 	return result.returncode
 
