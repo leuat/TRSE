@@ -44,6 +44,7 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
     output+="<br>";
     if (!QFile::exists(assembler) || !QFile::exists(link) || !QFile::exists(fix)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the RGBASM assembler directory in the TRSE settings panel.</font>";
+        m_buildSuccess = false;
         return;
     }
 //    Util::CopyFile(":resources/bin/gbt-player/gbt_player.o",currentDir+"/gbt_player.o");

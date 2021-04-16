@@ -6,11 +6,19 @@ import sys
 #trse = "/opt/homebrew/bin/trse"
 #trse = "/Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/trse"
 
-if len(sys.argv) != 2:
+assemble = "yes"
+
+if len(sys.argv) < 2:
 	print("Usage: python validate_all.py [ trse exe file] ")
 	print("must be run in the 'validate_all' directory.")
 	exit(1)
 trse = sys.argv[1]
+
+if len(sys.argv)>=3:
+	if (sys.argv[2] == "no_assembling"):
+		assemble="no"
+	
+
 
 lp = "../tutorials/"
 
@@ -137,7 +145,7 @@ def c(path,f1):
 
 	
 #	process = Popen([trse, '-cli',  ], stdout=PIPE, stderr=PIPE)
-	return  subprocess.call([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1])
+	return  subprocess.call([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble])
 
 #	print(rVal)
 #	stdout, stderr = process.communicate()

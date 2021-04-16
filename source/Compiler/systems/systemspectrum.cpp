@@ -11,6 +11,7 @@ void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDi
     QString assembler = m_settingsIni->getString("pasmo");
     if (!QFile::exists(assembler)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
+        m_buildSuccess = false;
         return;
     }
 

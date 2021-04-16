@@ -26,7 +26,7 @@ public:
     void RequireFile(QString param);
 
     int Perform();
-    int CompileFromProject(QString sourceFile);
+    int CompileFromProject(QString sourceFile, bool assemble);
     int Assemble(QString file);
 
     void PrintUsage();

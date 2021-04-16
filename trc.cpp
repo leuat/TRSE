@@ -49,6 +49,8 @@ int ClascExec::Perform()
     try {
         RequireFile("input_file");
         RequireParam("op");
+        if (!m_vals.contains("assemble"))
+            m_vals["assemble"] = "yes";
         QString op = m_vals["op"].toLower();
         if (m_vals.contains("output_file"))
             m_outputFile = m_vals["output_file"];
@@ -77,7 +79,7 @@ int ClascExec::Perform()
 
 
             m_project->Load(m_vals["project"]);
-            m_failure = CompileFromProject(m_vals["input_file"]);
+            m_failure = CompileFromProject(m_vals["input_file"],m_vals["assemble"]=="yes");
         }
         else
             if (op=="orgasm") {
@@ -100,7 +102,7 @@ int ClascExec::Perform()
     return m_failure;
 }
 
-int ClascExec::CompileFromProject(QString sourceFile)
+int ClascExec::CompileFromProject(QString sourceFile, bool assemble)
 {
     QString system = m_project->getString("system");
     Out("Compiling '"+sourceFile+"' for system: " +system);
@@ -113,8 +115,10 @@ int ClascExec::CompileFromProject(QString sourceFile)
         m_failure=1;
     }
     else {
-        m_builder->Assemble();
-        m_failure = !m_builder->m_assembleSuccess;
+        if (assemble) {
+            m_builder->Assemble();
+            m_failure = !m_builder->m_assembleSuccess;
+        }
     }
 //    if (m_outputFile!="")
   //      QFile::rename(m_builder->m_filename+".asm", m_outputFile);
@@ -155,9 +159,12 @@ void ClascExec::PrintUsage()
     Out("Valid operation types are: project, orgasm");
     Out("");
     Out("Examples: ");
-    Out("  compile a project with a main source file: ");
+    Out("  compile + assemble a project with a main source file: ");
     Out("       trc op=project project=myDemo.trse input_file=main_demo.ras");
-    Out("   Use a custom settings file: "); Out("       trc op=project settings=trse.ini project=myDemo.trse input_file=main_demo.ras");
+    Out("   Use a custom settings file: ");
+    Out("       trc op=project settings=trse.ini project=myDemo.trse input_file=main_demo.ras");
+    Out("   To only compile and not perform any assembling, use the 'assemble=no' option  ");
+    Out("       trc project=myDemo.trse input_file=main_demo.ras no_assembling");
     Out("");
     Out("  Use OrgAsm to assemble an .asm to .prg: ");
     Out("     trc op=orgasm   input_file=main_demo.asm");
