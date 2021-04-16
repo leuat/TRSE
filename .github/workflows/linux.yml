@@ -36,8 +36,8 @@ jobs:
           cd pasmo-0.5.4.beta2
           ./configure
           make -j 2
-          mv pasmo-0.5.4.beta2 pasmo
           cd ..
+          mv pasmo-0.5.4.beta2 pasmo
           # patch dirs
           sed -i "s,^vasmm=.*,vasmm=${PWD}/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir=.*,gameboy_rgbasm_dir=${PWD}/rgbasm/build/src," Publish/publish_linux/trse.ini
