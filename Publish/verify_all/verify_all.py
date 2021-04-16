@@ -17,7 +17,7 @@ trse = sys.argv[1]
 if len(sys.argv)>=3:
 	if (sys.argv[2] == "no_assembling"):
 		assemble="no"
-	
+
 
 
 lp = "../tutorials/"
@@ -170,7 +170,7 @@ for v in tests:
 		if "auto_generated" not in file:
 			if (c(directory,file)!=0):
 				print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
-			  failed.append([directory, file])
+				failed.append([directory, file])
 
 if failed:
 	for f in failed:
