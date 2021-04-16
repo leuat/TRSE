@@ -158,7 +158,7 @@ for v in tests:
 
 	os.chdir(lp+directory)
 	for file in v[1]:
-		if (c(directory,file)==1):
+		if (c(directory,file)!=0):
 			print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
 			failed.append([directory, file])
 
