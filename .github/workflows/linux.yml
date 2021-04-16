@@ -25,4 +25,4 @@ jobs:
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
-          python3 ../Publish/verify_all/verify_all.py `pwd`/trse
+          DISPLAY=:0.0 python3 ../Publish/verify_all/verify_all.py `pwd`/trse
