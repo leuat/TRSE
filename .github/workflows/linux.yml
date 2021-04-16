@@ -11,10 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt-get install qt5-qmake qtdeclarative5-dev
-      # For tests
-      - run: sudo apt-get install lz4 python3 xvfb
 
-      - run: |
+      # For 'Verify all' tests
+      - run: sudo apt-get install lz4 python3 xvfb
+      - name: Build assemblers (vasm, rgbasm, pasmo)
+        run: |
           mkdir tools
           cd tools
           # vasm (Atari)
@@ -44,9 +45,11 @@ jobs:
           sed -i "s,^vasmm =.*,vasmm=${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir=${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
           sed -i "s,^pasmo =.*,pasmo=${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
+
       - run: qmake TRSE.pro
       - run: make
-      - name: Verify tutorials
+
+      - name: Verify all
         run: |
           mkdir bin
           cp trse bin/
