@@ -39,6 +39,7 @@ void SystemMSX::Assemble(QString &text, QString filename, QString currentDir, QS
     QString assembler = m_settingsIni->getString("pasmo");
     if (!QFile::exists(assembler)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
+        m_buildSuccess = false;
         return;
     }
 /*    if (!QFile::exists(m_settingsIni->getString("cpcdisk_location"))) {

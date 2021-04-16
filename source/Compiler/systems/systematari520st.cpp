@@ -10,6 +10,7 @@ void SystemAtari520ST::Assemble(QString &text, QString filename, QString current
     if (!QFile::exists(m_settingsIni->getString("vasmm"))) {
         //Messages::messages.DisplayMessage(Messages::messages.NO_VASMM);
         text  += "<br><font color=\"#FF6040\">Please set up a link to the VASMM assembler in the TRSE settings panel.</font>";
+        m_buildSuccess = false;
         return;
     }
 
