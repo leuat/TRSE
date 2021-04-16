@@ -145,7 +145,7 @@ def c(path,f1):
 
 
 #	process = Popen([trse, '-cli',  ], stdout=PIPE, stderr=PIPE)
-	return  subprocess.run([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stdout=PIPE, stderr=PIPE)
+	return subprocess.run([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stdout=PIPE, stderr=PIPE).returncode
 
 #	print(rVal)
 #	stdout, stderr = process.communicate()
