@@ -34,9 +34,8 @@ jobs:
           wget http://pasmo.speccy.org/bin/pasmo-0.5.4.beta2.tgz
           tar -xzf pasmo-0.5.4.beta2.tgz
           cd pasmo-0.5.4.beta2
-          ./configure --prefix=/home/cpitrat/Perso/CPC/coding/install
+          ./configure
           make -j 2
-          make install
           mv pasmo-0.5.4.beta2 pasmo
           cd ..
           # patch dirs
