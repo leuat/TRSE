@@ -40,25 +40,10 @@ jobs:
           cd ..
           mv pasmo-0.5.4.beta2 pasmo
           cd ..
-          pwd
-          ls
-          echo ${PWD}
           # patch dirs
-          echo "sed"
           sed -i "s,^vasmm =.*,vasmm=${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir=${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
           sed -i "s,^pasmo =.*,pasmo=${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
-          echo "cat"
-          cat Publish/publish_linux/trse.ini
-          echo "greps"
-          grep vasmm Publish/publish_linux/trse.ini
-          grep pasmo Publish/publish_linux/trse.ini
-          grep gameboy_rgbasm_dir Publish/publish_linux/trse.ini
-          echo "ls"
-          ls ${PWD}/tools
-          ls ${PWD}/tools/vasm/vasmm68k_mot
-          ls ${PWD}/tools/rgbds/build/src
-          ls ${PWD}/tools/pasmo/pasmo
       - run: qmake TRSE.pro
       - run: make
       - name: Verify tutorials
