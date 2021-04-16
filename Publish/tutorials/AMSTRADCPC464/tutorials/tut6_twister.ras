@@ -14,6 +14,7 @@ var
 	tab : pointer of integer;   
 	text : string = ("PROXIMA WHOO THIS IS A SCROLLTEXT YES IT IS ");
     sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256 
 	pal : incbin("resources/images/image1_palette.bin");
 	charLookup : array[32] of integer = BuildTable("(2*16*16*i)");
 	frameLookup : array[16] of integer = BuildTable("(2*16*i)");

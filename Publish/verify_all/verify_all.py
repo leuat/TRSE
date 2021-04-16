@@ -157,9 +157,11 @@ for v in tests:
 
 	os.chdir(lp+directory)
 	for file in v[1]:
-		if (c(directory,file)==1):
-			print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
-			exit(1)
+		# ignore auto-generated files
+		if "auto_generated" not in file:
+			if (c(directory,file)==1):
+				print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
+				exit(1)
 
 
 

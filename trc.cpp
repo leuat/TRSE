@@ -56,15 +56,19 @@ int ClascExec::Perform()
         if (op=="project") {
 //            RequireFile("settings");
             RequireFile("project");
-  //          m_settings.Load(m_vals["settings"]);
-            auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-            QString iniFileName = path +QDir::separator()+ "trse.ini";
-
-            if (QFile::exists(iniFileName))
-               m_settings->Load(iniFileName);
+            if (m_vals.contains("settings")) {
+                m_settings->Load(m_vals["settings"]);
+            }
             else {
-                Out("Could not load TRSE settings! Please make sure you have started TRSE as a windowed application at least once before using the CLI.");
-                return false;
+                auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+                QString iniFileName = path +QDir::separator()+ "trse.ini";
+
+                if (QFile::exists(iniFileName))
+                    m_settings->Load(iniFileName);
+                else {
+                    Out("Could not load TRSE settings! Please make sure you have started TRSE as a windowed application at least once before using the CLI.");
+                    return false;
+                }
             }
             // Set some settings params
             // Turn off threaded compliation
@@ -152,7 +156,9 @@ void ClascExec::PrintUsage()
     Out("");
     Out("Examples: ");
     Out("  compile a project with a main source file: ");
-    Out("     trc op=project   settings=~/.TRSE/fluff64.ini project=myDemo.trse input_file=main_demo.ras");
+    Out("       trc op=project project=myDemo.trse input_file=main_demo.ras");
+    Out("   Use a custom settings file: ");
+    Out("       trc op=project settings=trse.ini project=myDemo.trse input_file=main_demo.ras");
     Out("");
     Out("  Use OrgAsm to assemble an .asm to .prg: ");
     Out("     trc op=orgasm   input_file=main_demo.asm");
