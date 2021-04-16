@@ -135,7 +135,7 @@ def c(path,f1):
 		print("Could not find file : "+path+" : " +f1)
 		return 1
 
-	
+
 #	process = Popen([trse, '-cli',  ], stdout=PIPE, stderr=PIPE)
 	return  subprocess.call([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1])
 
@@ -150,6 +150,7 @@ orgPath = os.getcwd()
 print(orgPath)
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
+failed = []
 for v in tests:
 	directory = v[0]
 	print("Project: "+directory)
@@ -159,8 +160,12 @@ for v in tests:
 	for file in v[1]:
 		if (c(directory,file)==1):
 			print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
-			exit(1)
+			failed.append(v)
 
+if failed:
+	for f in failed:
+		print(" FAILED: %s" % f)
+	exit(1)
 
 
 
@@ -172,7 +177,7 @@ print("(_____  )| |   | || |      | |      |  __)   (_____  )(_____  )")
 print("      ) || |   | || |      | |      | (            ) |      ) |")
 print("/\____) || (___) || (____/\| (____/\| (____/\/\____) |/\____) |")
 print("\_______)(_______)(_______/(_______/(_______/\_______)\_______)")
-                                                               
+
 
 
 
