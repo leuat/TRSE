@@ -16,21 +16,13 @@ jobs:
 
       - run: qmake TRSE.pro
       - run: make
-      - run: |
+      - name: Verify tutorials
+        run: |
           mkdir bin
           cp trse bin/
           ln -s Publish/tutorials tutorials
+          ln -s Publish/source/themes themes
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
           python3 ../Publish/verify_all/verify_all.py `pwd`/trse
-
-      # All the steps below are not necessary (for now) but document what needs
-      # to be done for TRSE to work under linux.
-      - run: ln -s Publish/tutorials tutorials
-      - run: ln -s Publish/source/themes themes
-      # Don't create the project_templates because it's already there
-      - run: mkdir bin 
-      - run: mv trse bin/
-      # Now you're ready to run:
-      # ./bin/trse
