@@ -16,6 +16,7 @@ jobs:
 
       - run: |
           mkdir tools
+          cd tools
           # vasm (Atari)
           wget http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
           tar -xzf vasm.tar.gz
@@ -38,18 +39,24 @@ jobs:
           make -j 2
           cd ..
           mv pasmo-0.5.4.beta2 pasmo
+          cd ..
           pwd
           ls
           echo ${PWD}
           # patch dirs
+          echo "sed"
           sed -i "s,^vasmm=.*,vasmm=${PWD}/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir=.*,gameboy_rgbasm_dir=${PWD}/rgbasm/build/src," Publish/publish_linux/trse.ini
           sed -i "s,^pasmo=.*,pasmo=${PWD}/pasmo/pasmo," Publish/publish_linux/trse.ini
+          echo "cat"
+          cat Publish/publish_linux/trse.ini
+          echo "greps"
           grep vasmm Publish/publish_linux/trse.ini
           grep pasmo Publish/publish_linux/trse.ini
           grep gameboy_rgbasm_dir Publish/publish_linux/trse.ini
+          echo "ls"
           ls ${PWD}
-          ls ${PWD}/vasm/vasmm68k
+          ls ${PWD}/vasm/vasmm68k_mot
           ls ${PWD}/rgbasm/build/src
           ls ${PWD}/pasmo/pasmo
       - run: qmake TRSE.pro
