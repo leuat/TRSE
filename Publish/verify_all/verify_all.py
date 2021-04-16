@@ -9,7 +9,7 @@ import sys
 assemble = "yes"
 
 if len(sys.argv) < 2:
-	print("Usage: python validate_all.py [ trse exe file] ")
+	print("Usage: python validate_all.py [ trse exe file] [no_assembling (optional) ]")
 	print("must be run in the 'validate_all' directory.")
 	exit(1)
 trse = sys.argv[1]

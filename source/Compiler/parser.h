@@ -23,7 +23,7 @@
 #define PARSER_H
 
 #include <QJSEngine>
-
+#include <QProcess>
 #include "source/Compiler/ast/ast.h"
 #include "source/Compiler/lexer.h"
 #include <QRegularExpression>
@@ -52,7 +52,9 @@
 #include "source/Compiler/ast/nodecontrolstatement.h"
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/limage/c64fullscreenchar.h"
+#ifndef CLI_VERSION
 #include "source/trsedocuments/formpaw.h"
+#endif
 #include "source/LeLib/util/tool.h"
 #include "source/LeLib/limage/compression.h"
 #include "source/LeLib/util/SimplexNoise.h"
