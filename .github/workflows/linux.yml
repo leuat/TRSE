@@ -47,7 +47,7 @@ jobs:
           sed -i "s,^pasmo =.*,pasmo=${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
 
       - run: qmake TRSE.pro
-      - run: make
+      - run: make -j 2 -k
 
       - name: Verify all
         run: |
