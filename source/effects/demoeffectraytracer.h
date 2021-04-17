@@ -9,7 +9,7 @@
 #include "source/LeLib/limage/limagegamboy.h"
 #include "source/LeLib/limage/limageamstradgeneric.h"
 #include "source/LeLib/limage/c64fullscreenchar.h"
-#include "source/LeLib/limage/limagecga.h"'
+#include "source/LeLib/limage/limagecga.h"
 #include <QMatrix3x3>
 
 class DemoEffectRaytracer : public AbstractDemoEffect

@@ -712,18 +712,17 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                 l2[0] = l2[0].replace("<"+sym,"$"+QString::number(i&0xFF,16));
                 break;
             }
-            else
-                if (tst==(">"+sym)) {
-                    l2[0] = l2[0].replace(">"+sym,"$"+QString::number((i>>8)&0xFF,16));
-                    break;
-                }
+            if (tst==(">"+sym)) {
+                l2[0] = l2[0].replace(">"+sym,"$"+QString::number((i>>8)&0xFF,16));
+                break;
+            }
 
-                l2[0] = OrgasmData::ReplaceWord(l2[0],sym,"$"+QString::number(i,16));
-                if (org!=l2[0]) {
-                    m_symbolsList.move(cur,0);
-                    break;
-                }
-                cur++;
+            l2[0] = OrgasmData::ReplaceWord(l2[0],sym,"$"+QString::number(i,16));
+            if (org!=l2[0]) {
+                m_symbolsList.move(cur,0);
+                break;
+            }
+            cur++;
         }
 
         expr = l2[0];

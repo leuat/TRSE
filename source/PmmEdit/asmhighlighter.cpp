@@ -74,7 +74,7 @@ AsmHighlighter::AsmHighlighter(CIniFile ini, int type, QTextDocument *parent)
 //    rule.pattern = QRegularExpression("#[0-9a-f#\\\$%]+",QRegularExpression::CaseInsensitiveOption);
 //    rule.pattern = QRegularExpression("(\\b\\$[0-9a-f]+)||(\\b[0-9]+)",QRegularExpression::CaseInsensitiveOption);
 //    rule.pattern = QRegularExpression("(?!(\\\^))(\\\$)?\\b[0-9a-f]+\\b",QRegularExpression::CaseInsensitiveOption);
-    rule.pattern = QRegularExpression("((\\\$)\\b([0-9a-f]+)\\b)|(\\b([0-9]+)\\b)",QRegularExpression::CaseInsensitiveOption);
+    rule.pattern = QRegularExpression(R"!(((\$)\b([0-9a-f]+)\b)|(\b([0-9]+)\b))!",QRegularExpression::CaseInsensitiveOption);
     rule.format = numberFormat;
     highlightingRules.append(rule);
 
@@ -83,7 +83,7 @@ AsmHighlighter::AsmHighlighter(CIniFile ini, int type, QTextDocument *parent)
     addressFormat.setForeground(m_colors.getColor("addresscolor"));
 //    rule.pattern = QRegularExpression("(?!#)(\\\$[0-9a-f]+)|\\b[0-9]+\\b",QRegularExpression::CaseInsensitiveOption);
 //    rule.pattern = QRegularExpression("(\\b\\$[0-9a-f]+\\b)|(\\b[0-9]+\\b)",QRegularExpression::CaseInsensitiveOption);
-    rule.pattern = QRegularExpression("\\\^(\\\$)?\\b([0-9a-f]+)\\b",QRegularExpression::CaseInsensitiveOption);
+    rule.pattern = QRegularExpression(R"!(\^(\$)?\b([0-9a-f]+)\b)!",QRegularExpression::CaseInsensitiveOption);
     rule.format = addressFormat;
     highlightingRules.append(rule);
 
@@ -96,7 +96,7 @@ AsmHighlighter::AsmHighlighter(CIniFile ini, int type, QTextDocument *parent)
 
     symbolsFormat.setFontWeight(QFont::Normal);
     symbolsFormat.setForeground(m_colors.getColor("symbolscolor"));
-    rule.pattern = QRegularExpression("[\\\+\\\-:=\\\/\\\*\\\(\\\)\\\<\\\>\\\[\\\]]",QRegularExpression::CaseInsensitiveOption);
+    rule.pattern = QRegularExpression(R"!([\+\-:=\/\*\(\)\<\>\[\]])!",QRegularExpression::CaseInsensitiveOption);
     rule.format = symbolsFormat;
     highlightingRules.append(rule);
 

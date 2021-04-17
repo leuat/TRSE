@@ -139,7 +139,7 @@ void LImageSprites::ToRaw(QByteArray &arr)
 
 QPoint LImageSprites::getXY(int x, int y)
 {
-    int xx,yy, shiftx, shifty,i,j;
+    int xx(0),yy(0), shiftx, shifty,i,j;
 /*
     if (m_currentMode!=CHARSET2x2) {
 

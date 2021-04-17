@@ -5197,35 +5197,34 @@ void Methods6502::InitSqrt16(Assembler *as)
 {
     if (as->m_internalZP.count()<4)
         return;
-        as->Label("sqrt16_init");
-        as->Asm("ldy #$01 ");
+    as->Label("sqrt16_init");
+    as->Asm("ldy #$01 ");
 
 
-        as->Asm("sty " + as->m_internalZP[2]);
-        as->Asm("dey");
-        as->Asm("sty "+as->m_internalZP[3]+" ; msby of first odd number (sqrt = 0)");
-        as->Label("sqrt16_again");
-        as->Asm("sec");
-        as->Asm("lda "+as->m_internalZP[0]+" ; save remainder in X register");
-        as->Asm("tax ; subtract odd lo from integer lo");
-        as->Asm("sbc "+as->m_internalZP[2]+"");
-        as->Asm("sta "+as->m_internalZP[0]+"");
-        as->Asm("lda "+as->m_internalZP[1]+" ; subtract odd hi from integer hi");
-        as->Asm("sbc "+as->m_internalZP[3]+"");
-        as->Asm("sta "+as->m_internalZP[1]+" ; is subtract result negative?");
-        as->Asm("bcc sqrt16_nomore ; no. increment square root");
-        as->Asm("iny");
-        as->Asm("lda "+as->m_internalZP[2]+" ; calculate next odd number");
-        as->Asm("adc #$01");
-        as->Asm("sta "+as->m_internalZP[2]+"");
-        as->Asm("bcc sqrt16_again");
-        as->Asm("inc "+as->m_internalZP[3]+"");
-        as->Asm("jmp sqrt16_again");
-        as->Label("sqrt16_nomore");
-        as->Asm("sty "+as->m_internalZP[0]+" ; all done, store square root");
-        as->Asm("stx "+as->m_internalZP[1]+" ; and remainder");
-        //as->Asm("rts");
-
+    as->Asm("sty " + as->m_internalZP[2]);
+    as->Asm("dey");
+    as->Asm("sty "+as->m_internalZP[3]+" ; msby of first odd number (sqrt = 0)");
+    as->Label("sqrt16_again");
+    as->Asm("sec");
+    as->Asm("lda "+as->m_internalZP[0]+" ; save remainder in X register");
+    as->Asm("tax ; subtract odd lo from integer lo");
+    as->Asm("sbc "+as->m_internalZP[2]+"");
+    as->Asm("sta "+as->m_internalZP[0]+"");
+    as->Asm("lda "+as->m_internalZP[1]+" ; subtract odd hi from integer hi");
+    as->Asm("sbc "+as->m_internalZP[3]+"");
+    as->Asm("sta "+as->m_internalZP[1]+" ; is subtract result negative?");
+    as->Asm("bcc sqrt16_nomore ; no. increment square root");
+    as->Asm("iny");
+    as->Asm("lda "+as->m_internalZP[2]+" ; calculate next odd number");
+    as->Asm("adc #$01");
+    as->Asm("sta "+as->m_internalZP[2]+"");
+    as->Asm("bcc sqrt16_again");
+    as->Asm("inc "+as->m_internalZP[3]+"");
+    as->Asm("jmp sqrt16_again");
+    as->Label("sqrt16_nomore");
+    as->Asm("sty "+as->m_internalZP[0]+" ; all done, store square root");
+    as->Asm("stx "+as->m_internalZP[1]+" ; and remainder");
+    //as->Asm("rts");
 }
 
 void Methods6502::InitAtan2(Assembler *as)

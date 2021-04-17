@@ -56,6 +56,7 @@ bool LImageIO::Save(QString filename, LImage* img)
     img->m_colorList.PenToFooter(&img->m_footer);
     img->m_footer.Save(file);
     file.close();
+    return true;
 }
 
 LImage* LImageIO::Load(QString filename)
