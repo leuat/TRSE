@@ -6,7 +6,6 @@
 #include <QDebug>
 #include "lcolorlist.h"
 #include "ssim.h"
-#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 class PixelChar {// : public SSIM {
 public:

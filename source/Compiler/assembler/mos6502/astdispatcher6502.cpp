@@ -3347,6 +3347,17 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
             if (!node->m_right->isPure())
                 ErrorHandler::e.Error("Using _A, _X and _Y register values must be pure.", node->m_op.m_lineNumber);
 
+            if (reg=="_ax") {
+                as->Asm("sta "+vname);
+                as->Asm("stx "+vname+"+1");
+                return;
+            }
+            if (reg=="_ay") {
+                as->Asm("sta "+vname);
+                as->Asm("sty "+vname+"+1");
+                return;
+            }
+
             QString cmd = "st"+QString(reg[1]) + " "+vname;
             as->Asm(cmd);
 

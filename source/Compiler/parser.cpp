@@ -4658,6 +4658,7 @@ void Parser::HandleExportCompressed()
 
 void Parser::HandleBuildPaw()
 {
+#ifndef CLI_VERSION
     int ln = m_currentToken.m_lineNumber;
     QString inFile = m_currentDir+"/"+ m_currentToken.m_value; //    QString inFile = m_currentToken.m_value;form
     Eat(TokenType::STRING);
@@ -4669,6 +4670,7 @@ void Parser::HandleBuildPaw()
     fp.m_pawData->Load(inFile);
 
     fp.BuildSingle();
+#endif
 }
 
 void Parser::HandleExportPrg2Bin()

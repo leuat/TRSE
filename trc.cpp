@@ -51,6 +51,7 @@ int ClascExec::Perform()
         RequireParam("op");
         if (!m_vals.contains("assemble"))
             m_vals["assemble"] = "yes";
+
         QString op = m_vals["op"].toLower();
         if (m_vals.contains("output_file"))
             m_outputFile = m_vals["output_file"];

@@ -38,7 +38,7 @@ internal_timer:
 
 
 ; Copies 8 bytes on HBLank
-internal_copy_hblank8
+internal_copy_hblank8:
     ld a, [de]
     inc de
     ld b, a
@@ -88,7 +88,7 @@ waitfor_hblank_internal:
     ret
 
 
-internal_copy_hblank4
+internal_copy_hblank4:
     ld a, [de]
     inc de
     ld b, a
@@ -120,7 +120,7 @@ waitfor_hblank_internal4:
 
 
 ; Copies 8 bytes on HBLank
-internal_copy_hblank_exp
+internal_copy_hblank_exp:
 
 
 
@@ -293,7 +293,7 @@ start:
 	di					; disable interrupts
 	ld	sp,$E000			; setup stack
 
-.wait_vbl					; wait for vblank to properly disable lcd
+.wait_vbl:					; wait for vblank to properly disable lcd
 	ld	a,[rLY]	
 	cp	$90
 	jr	nz,.wait_vbl
@@ -336,9 +336,9 @@ finit_fill:
 	inc	b
 	inc	c
 	jr	.skip
-.fill
+.fill:
 	ld	[hl+],a
-.skip
+.skip:
 	dec	c
 	jr	nz,.fill
 	dec	b

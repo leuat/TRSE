@@ -191,7 +191,8 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt";
+    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt";
+    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt";
 
     TRSEDocument* m_currentDoc = nullptr;
 
@@ -446,6 +447,10 @@ private slots:
     void on_cmbSelectSystemRecent_currentTextChanged(const QString &arg1);
 
     void on_actionTRSE_Tracker_File_trt_triggered();
+
+    void on_checkBox_stateChanged(int arg1);
+
+    void on_chkShowAllFiles_clicked();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

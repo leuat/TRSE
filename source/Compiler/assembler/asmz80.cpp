@@ -16,10 +16,14 @@ AsmZ80::AsmZ80()
     m_wram->m_isMainBlock = true;
     m_sprram->m_isMainBlock = true;
     m_ram->m_isMainBlock = true;
+
     byte = "db";
     word = "dw";
     llong = "dl";
-
+/*    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY) {
+        byte = "ld [b @:]";
+    }
+*/
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserZ80());
 
 }
@@ -221,7 +225,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 }
 
 void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {
-    Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
+    Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
 void AsmZ80::BinOP(TokenType::Type t, bool clearFlag)
@@ -355,7 +359,7 @@ QString AsmZ80::String(QStringList lst, bool term)
 {
 
     QString res;
-    QString mark = "db";
+    QString mark = byte;
 
     for (QString s:lst) {
         bool ok=false;

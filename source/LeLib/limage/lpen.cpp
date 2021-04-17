@@ -125,6 +125,8 @@ QWidget *LPen::createButtonNumber(QColor col, int index, int width) {
 
 QWidget *LPen::createButtonSelect(QColor col, int index, int width)
 {
+#ifndef CLI_VERSION
+
     QWidget* w = new QWidget();
     QGridLayout* ly = new QGridLayout();
 
@@ -155,6 +157,9 @@ QWidget *LPen::createButtonSelect(QColor col, int index, int width)
     w->setLayout(ly);
 
     return w;
+#else
+    return nullptr;
+#endif
 }
 
 QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
