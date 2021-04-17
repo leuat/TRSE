@@ -640,7 +640,7 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
 //    for (int i=0;i<m_charWidth*m_charHeight;i++) {
 //        uchar c = (uchar)m_data[i].c[3];
-        uchar c;
+        uchar c = 0;
         if (charC==3)
             c = (uchar)m_data[i+j*m_charWidth].c[charC];
         if (charC==1) {
