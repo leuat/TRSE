@@ -22,6 +22,7 @@ void Orgasm::LoadCodes(int CPUFlavor)
 {
     QString filename = ":/resources/text/opcodes.txt";
     if (CPUFlavor==2) filename = ":/resources/text/opcodes_GS4510.txt";
+    if (CPUFlavor==3) filename = ":/resources/text/opcodes_z80.txt";
     QFile f(filename);
 
 //    int num_states[3] {11,11,13};
@@ -138,6 +139,8 @@ OrgasmLine Orgasm::LexLine(int i) {
 //    line = line.replace("//",";");
     line = line.replace("\t", " ");
     line = line.replace("dc.b", ".byte");
+    line = line.replace("dw", ".word");
+    line = line.replace("db", ".byte");
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");

@@ -335,7 +335,7 @@ int CIniFile::getInt(QString name) {
         if (items[i].name==name.toLower().trimmed())
             return (int)items[i].dval;
     }
-    qDebug() << "CIniFile: Could not find parameter " + name;
+//    qDebug() << "CIniFile: Could not find parameter " + name;
     return 0;
 }
 
@@ -344,7 +344,7 @@ double CIniFile::getdouble(QString name) {
         if (items[i].name==name.toLower().trimmed())
             return items[i].dval;
     }
-    qDebug() << "CIniFile: Could not find parameter " + name;
+  //  qDebug() << "CIniFile: Could not find parameter " + name;
     return 0;
 }
 

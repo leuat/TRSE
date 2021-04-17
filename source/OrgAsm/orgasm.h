@@ -27,7 +27,7 @@ class OrgasmInstruction {
         Type m_type;
         int m_size = 0;
 //        enum Pass { passSymbol, passCompile };
-
+        bool m_bracketsAroundVariables = false;
 
         void Init(QStringList lst) {
             m_opCode = lst[0];
@@ -202,6 +202,7 @@ public:
     static const int CPUFLAVOR_6502_STOCK = 0;
     static const int CPUFLAVOR_6502_ILLEGAL = 1;
     static const int CPUFLAVOR_GS4510 = 2;
+    static const int CPUFLAVOR_Z80 = 3;
 
     int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
 
@@ -224,7 +225,7 @@ public:
     void ProcessWordData(OrgasmLine& ol);
     void ProcessOrgData(OrgasmLine& ol);
     void ProcessIncBin(OrgasmLine& ol);
-    void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
+    virtual void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
     void SaveSymbolsList(QString dupFile);
 signals:
     void EmitTick(QString val);

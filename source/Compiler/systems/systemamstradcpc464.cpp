@@ -60,6 +60,9 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
     QProcess process;
     StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
 
+//    AssembleZOrgasm(output,filename,currentDir,symTab);
+
+
     if (!QFile::exists(filename+".bin")) {
         text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
         text+=output;
