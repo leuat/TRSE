@@ -99,7 +99,11 @@ int ClascExec::Perform()
         return 1;
     }
 
-
+    if (m_failure) {
+        QTextDocument doc;
+        doc.setHtml( m_builder->getOutput() );
+        Out(doc.toPlainText());
+    }
     return m_failure;
 }
 
