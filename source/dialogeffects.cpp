@@ -1329,9 +1329,7 @@ static int CompressAndSaveHorizontalData(lua_State* L) {
     else
         ba = m_charData;
 
-
-
-        m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1,lua_tonumber(L,6),m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
+    m_compression.OptimizeAndPackCharsetData(ba, packedData, table, lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,5)==1,lua_tonumber(L,6),m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
 
 
     QFile f(m_currentDir+"/"+lua_tostring(L,3));
