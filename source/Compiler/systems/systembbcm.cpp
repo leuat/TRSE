@@ -38,12 +38,12 @@ void SystemBBCM::PostProcess(QString &text, QString filename, QString currentDir
 
 bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData, QString& text)
 {
-
     QString pawFile = m_projectIni->getString(iniData);
     CIniFile paw;
     paw.Load(currentDir + QDir::separator()+pawFile);
     QStringList data = paw.getStringList("data");
     int count = data.count()/3;
+    std::cout << "data: " << data.join(",").toStdString() << " - count: " << count << std::endl;
 
     for (int i=0;i<count;i++) {
         QString orgFileName = data[3*i+1];
@@ -63,7 +63,7 @@ bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniDa
             qDebug() << "ERROR when adding file '"+name+"' to disk : " <<e.Message();
         }
     }
-
+    return true;
 }
 
 
