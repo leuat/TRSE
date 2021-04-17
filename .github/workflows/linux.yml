@@ -50,7 +50,7 @@ jobs:
         run: |
           # PREFIX is here for the AppImage build
           qmake PREFIX=/usr TRSE.pro
-          make -j 2
+          make -j 2 -k
 
       - name: Verify tutorials
         run: |
