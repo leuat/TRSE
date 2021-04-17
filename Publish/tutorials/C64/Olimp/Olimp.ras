@@ -1,0 +1,1381 @@
+program Olimp;
+var
+ /*********************************************************
+				Program version information
+ **********************************************************/
+
+    const VersionMajor : byte = 1;
+    const VersionMinor : byte = 1;
+	VersionString : array[4] of byte = ($16, VersionMajor+$30, $2E, VersionMinor + $30);
+
+ /*********************************************************
+			Program constants and variables
+ **********************************************************/
+
+	// main state machine states
+	const stateRun : byte = 1;
+	const stateManual : byte = 2;
+	const stateStop : byte = 3;
+	const stateEdit : byte = 4;
+	const stateHelp : byte = 5;
+	mainState : byte = stateStop;
+
+	// screen and color addresses
+	@define ScreenChr $0400
+	@define ScreenCol $D800
+
+	// main screen
+	@define MemMainScreen $4000
+	VarMainScreen : IncBin("main_screen.bin", @MemMainScreen);
+
+	// charset
+	@export "font.flf" "font.bin" 256
+	@define MemCharset1 $3000
+	VarCharset1 : IncBin("font.bin", @MemCharset1);
+
+
+	// sprite for sequence editing
+	@export "cursor.flf" "cursor.bin" 1
+	@define MemSprite $3800
+	VarSprite : IncBin("cursor.bin", @MemSprite);
+	sprite_x : integer = 0;
+	sprite_y : byte = 0;
+
+	// arrays for conversion from PETSCII to screen codes
+	Petscii2Screen : array[32] of byte = BuildTable("i+0*32+128"); @donotremove Petscii2Screen
+	Petscii2Screen2 : array[32] of byte = BuildTable("i+1*32"); @donotremove Petscii2Screen2
+	Petscii2Screen3 : array[32] of byte = BuildTable("i+2*32+-64"); @donotremove Petscii2Screen3
+	Petscii2Screen4 : array[32] of byte = BuildTable("i+3*32-32"); @donotremove Petscii2Screen4
+	Petscii2Screen5 : array[32] of byte = BuildTable("i+4*32+64"); @donotremove Petscii2Screen5
+	Petscii2Screen6 : array[32] of byte = BuildTable("i+5*32-64"); @donotremove Petscii2Screen6
+	Petscii2Screen7 : array[32] of byte = BuildTable("i+6*32-128"); @donotremove Petscii2Screen7
+	Petscii2Screen8 : array[32] of byte = BuildTable("i != 31 ? i+7*32-128 : 94"); @donotremove Petscii2Screen8
+
+	// spinner for sequence running
+	@define spinNumber 8
+	spinChars : array[@spinNumber+1] of byte = ($F8, $F9, $FA, $FB, $FC, $FD, $FE, $FF, $5C);
+	spinCnt1 : byte = 0;
+	spinCnt2 : byte = 0;
+	spinCnt3 : byte = 0;
+	spinLocation1 : byte at @ScreenChr+2+9*40;
+	spinLocation2 : byte at @ScreenChr+4+9*40;
+
+	// current program status
+	statusLocation : array[6] of byte at @ScreenChr+0+9*40;
+	statusStop : string = ($20, $20, $5C, $20, $5C, $20);
+	statusEdit : string = (" EDIT ");
+	statusManu : string = ("MANUAL");
+
+	// inputs and outputs on screen
+	ScreenInputs : array[] of byte at $D800+21+2*40;
+	ScreenOutputs : array[] of byte at $D800+31+2*40;
+	const IOColorOn : byte = 5;
+	const IOColorOff : byte = 2;
+	@define IOInputs $DE00 // $00A1 //$DE00
+	@define IOOutputs $DE00
+
+	// default CIA #1 timer fires 60 times a second
+	// sequence timers needs updating 10 times a second
+	const TimerWait : byte = 6;
+
+	// max number of sequences and commands in sequence	
+	const SequencesNo : byte = 26;	// number of sequences
+	const CommandsNo : byte = 26;	// number of commands in a sequence
+	
+	// arrays for all sequences
+	memSeqCommand : array[CommandsNo*SequencesNo] of byte at $5000; //= (0);	// command
+	memSeqData : array[CommandsNo*SequencesNo] of byte at $5300; //= (0);		// first argument
+	memSeqData2 : array[CommandsNo*SequencesNo] of byte at $5600; //= (0);	// second argument
+	memSeqData3 : array[CommandsNo*SequencesNo] of byte at $5900; //= (0);	// helper for 0-$FF hex values
+	// pointers for sequence arrays
+	seqCommand : pointer;
+	seqData : pointer;
+	seqData2 : pointer;
+	seqData3 : pointer;
+
+	// sequences data
+	seqCnt : array[SequencesNo] of byte at $0400+14+8*40;		// sequence counters (used for wait commands)
+	seqCyclic : array[SequencesNo] of byte = (0);				// is sequence cyclic
+	seqTimerStarted : array[SequencesNo] of byte = (0);		// is timer started for the sequence
+	seqTimer : array[SequencesNo] of byte = (0);				// timers for each sequence
+
+	// interrupt variables
+	seqTimerCnt : byte;		// timer counter used by interrupt routine
+	TimerWaitCnt : byte;		// wait counter used by interrupt routine
+/*
+	// pwm testing
+	pwmValue : byte = 1;		// pwm value 0-5
+	pwmCounter : byte = 1;	// incremented by 1 on every interrupt
+	@define pwmCounterMax 5	// max value for pwm
+*/
+	// masks used for inputs and outputs
+	IOMasks : array[8] of byte = BuildTable("1<<i");		
+
+	// arrays for inputs, outputs, counters, variables
+	inputs : array[32] of byte = (0);	// 32 inputs
+	outputs : array[32] of byte = (0);	// 32 outputs
+	vars : array[8] of byte = (0);		// 8 variables
+	counters : array[8] of byte = (0);	// 8 counters
+	value : byte;						// variable used for get/set procedures
+	scrVars : array[8] of byte at $0400 + 14 +40*7;			// screen location for vars
+	scrCounters : array[8] of byte at $0400 + 32 +40*7;		// screen location for counters
+	scrInputOutput : array[] of byte at $0400 + 24 + 1*40;	// screen location for inputs and outputs
+
+	// main sequence loop variables
+	cmdPtr : pointer;					// pointer to command procedure
+	runI : byte;							// index in current sequence
+	runIndex : byte;						// current index of current sequence
+	runStart : integer;					// current offset from start of first sequence
+	runCmd, runDat : byte;				// current command and first argument byte
+	runSStack : array[16] of byte;		// stack for sequence numbers
+	runIStack : array[16] of byte;		// stack for sequence index
+	runStackTop : byte = 0;				// current stack top
+	runJ, runK : byte;					// helper variables
+	runSeq : byte = 0;					// current sequence
+	runWait : byte = 0;					// wait indicator
+	runManualOutput : byte = 1;			// do [a-pA-P] control outputs or inputs
+
+	// display and user interaction variables
+	prSeq : byte;						// first sequence to display
+	prSeqI : byte;						// counter for print sequences
+	prSeqJ : byte;						// counter for print sequences
+	prSeqK : byte;						// counter for print sequences
+	keyPetscii : byte;					// key from keyboard, petscii
+	keyScreen : byte;					// key from keyboard, screen code
+	keyDecoded : byte;					// key from keyboard, converted to IO, var, hex, ...
+	const screenSeqsX : byte = 14;		// coordinates of sequence list on screen
+	const screenSeqsY : byte = 13;
+	const crsrUp : byte = $91;			// PETSCII key codes
+	const crsrDown : byte = $11;
+	const crsrLeft : byte = $9D;
+	const crsrRight : byte = $1D;
+	const keyReturn : byte = $0D;
+	const keyInsDel : byte = $14;
+	const keyClrHome : byte = $13;
+	const keyRStop : byte = $03;
+	editCursorX, editCursorY : byte;		// cursor position inside sequences list while editing
+	editPhase : byte;					// do we edit command (0), first (1) or second (2) paremeter
+	const seqBadValue : byte = $3F;		// value used during command editing to indicate that argument isn't defined
+	editBadValues : byte = 0; 			// do we have bad values in sequences
+	// used for displaying current cursor position in index pane
+	editXPos : array[CommandsNo] of byte at $D800 + 14 + 11*40;
+		
+	/*	VICE keys
+		LEFT 	- End
+		UP		- PgDown
+		POUND 	- Backslash
+		COMMOD	- Tab
+		RSTOP	- Esc
+	*/
+
+	// command codes and argument types
+	const commandsNumber : byte = 20;	// number of commands implemented as special chars
+	//                                                *   /   @   #   !   +   -   $   ?   %   <   >   &   =   ^  LEF PND  :   [   ]
+	//                                                80  81  82  83  84  85  86  87  88  89  8A  8B  8C  8D  8E  8F  90  91  92  93
+	commandsChars : array[commandsNumber] of byte = ($2A,$2F,$00,$23,$21,$2B,$2D,$24,$63,$25,$3C,$3E,$26,$3D,$1E,$1F,$1C,$3A,$5B,$5D);	// screen codes
+	commandsArgs  : array[commandsNumber] of byte = ($01,$01,$22,$03,$03,$03,$00,$00,$34,$34,$05,$05,$88,$88,$88,$22,$63,$37,$07,$07); 	// type of first (0-3) and second (4-7) argument
+	// $0 no argument
+	// $1 [a-pA-P] * /	input
+	// $2 [hex][hex] @ left hex value
+	// $3 [a-z] # ! + step/sequence
+	// $4 [a-pA-P2-9] ? % input/var
+	// $5 [1-4] >< input group
+	// $6 [0-9] pound mode
+	// $7 [s-z] : [ ] counter
+	// $8 [a-pA-P0-9] & ^ =
+	// $9 [a-pA-P0-9s-z] MOVE from, set counter
+
+
+ /*********************************************************
+				Physical inputs and outputs
+ **********************************************************/
+
+// reads physical inputs and fills inputs array
+procedure ReadInputs();
+var readInpi, readInpj, readInpk, readInpscr, readInpval : byte;
+begin
+	readInpk := 0;
+	readInpscr := 0;
+	for readInpi := 0 to 4 do begin
+		readInpval := peek(^@IOInputs,readInpi);
+		for readInpj := 0 to 8 do begin
+			if readInpval & IOMasks[readInpj] then begin
+				inputs[readInpk] := 1;
+				ScreenInputs[readInpscr] := IOColorOn;
+			end else begin
+				inputs[readInpk] := 0;
+				ScreenInputs[readInpscr] := IOColorOff;
+			end;
+			Inc(readInpk);
+			Inc(readInpscr);
+		end;
+		readInpscr := readInpscr + 32;
+	end;
+end;
+
+// writes outputs array to physical outputs
+procedure WriteOutputs();
+var wrOuti, wrOutj, wrOutk, wrOutval, wrOutscr : byte;
+begin
+	wrOutk := 0;
+	wrOutscr := 0;
+	for wrOuti := 0 to 4 do begin
+		wrOutval := 0;
+		for wrOutj := 0 to 8 do begin
+			if outputs[wrOutk] then begin
+				wrOutval := wrOutval + IOMasks[wrOutj];
+				ScreenOutputs[wrOutscr] := IOColorOn;
+			end else
+				ScreenOutputs[wrOutscr] := IOColorOff;
+			Inc(wrOutk);
+			Inc(wrOutscr);
+		end;
+		wrOutscr := wrOutscr + 32;
+		poke(^@IOOutputs,wrOuti,wrOutval);
+	end;
+end;
+
+
+ /*********************************************************
+				Helper procedures and functions
+ **********************************************************/
+
+// convert seqData and seqData2 chars to one hex value
+function GetHex() : byte;
+var lobyte, hibyte : byte;
+begin
+	lobyte := seqData2[runIndex];
+	if lobyte > $40 then begin
+		lobyte := lobyte - $41 + 10;
+	end else if lobyte > $2F then begin
+		lobyte := lobyte - $30;
+	end else
+		lobyte := lobyte -1 + 10;
+	hibyte := seqData[runIndex];
+	if hibyte > $40 then begin
+		hibyte := hibyte - $41 + 10;
+	end else if hibyte > $2F then begin
+		hibyte := hibyte - $30;
+	end else
+		hibyte := hibyte - 1 + 10;
+	GetHex := hibyte << 4 + lobyte;
+end;
+
+//		$00-$1F - input/output
+//		$20-$2F - notning
+//		$30-$3F - 0-9, ? (bad value)
+//		$41-$46 - hex digit A-F
+//		$50-$57 - counter
+//		$80-$93 - command
+//		$E0-$F9 - index of command/sequence
+
+// helper for reading value of input or variable
+procedure getVarIO(idxg : byte pure) inline;
+begin
+	if idxg < $20 then value := inputs[idxg]				// inputs 1-32
+	else if idxg > $4F then value := counters[idxg - $50]	// counters
+	else if idxg > $31 then value := vars[idxg - $32]		// vars
+	else value := idxg - $30;							// 0 or 1
+end;
+
+// helper for writing value to output or variable
+procedure setVarIO(idxs : byte pure) inline;
+begin
+	if idxs < $20 then outputs[idxs] := value				// outputs 1-32
+	else if idxs > $4F then counters[idxs - $50] := value	// counters
+	else vars[idxs - $32] := value;						// vars
+end;
+
+// helper for reading value of output for maunal mode
+procedure getOutput(idxo : byte pure) inline;
+begin
+	if idxo > $C0 then value := outputs[idxo - $C1 + 16]	// inputs 17-32 A-P
+	else if idxo > $40 then value := outputs[idxo - $41]	// inputs 1-16 a-p
+end;
+
+// helper for setting sequence pointers based on runSeq
+procedure setSeqPointers() inline;
+begin
+	runStart := runSeq * CommandsNo;
+	seqCommand := #memSeqCommand + runStart;
+	seqData := #memSeqData + runStart;
+	seqData2 := #memSeqData2 + runStart;
+	seqData3 := #memSeqData3 + runStart;
+end;
+
+ /*********************************************************
+						Commands
+ **********************************************************/
+
+// waits for input to become 1
+@donotremove "cmdWaitInput1"
+procedure cmdWaitInput1();	// $80
+begin
+	getVarIO(runDat);
+	if value <> 0 then Inc(runIndex)
+	else runWait := 1;
+end;
+
+// waits for input to become 0
+@donotremove "cmdWaitInput0"
+procedure cmdWaitInput0();	//$81
+begin
+	getVarIO(runDat);
+	if value = 0 then Inc(runIndex)
+	else runWait := 1;
+end;
+
+// waits for timer to expire
+@donotremove "cmdWaitTime"
+procedure cmdWaitTime();		//$82
+begin
+	if seqTimerStarted[runSeq] = 0 then begin
+		// setup the timer
+		seqTimer[runSeq] := seqData3[runIndex];
+		seqTimerStarted[runSeq] := 1;
+		// wait at this step
+		runWait := 1;
+	end else begin
+		if seqTimer[runSeq] = 0 then begin
+			// timer has finished, go to next step
+			Inc(runIndex);
+			seqTimerStarted[runSeq] := 0;
+		end else begin
+			// wait at this step
+			runWait := 1;
+		end;
+	end;
+end;
+
+// jumps to another step in current sequence
+@donotremove "cmdGoto"
+procedure cmdGoto();		//$83
+begin
+	runIndex := runDat & $1F;
+end;
+
+// jumps to step in another sequence
+@donotremove "cmdGotoSeq"
+procedure cmdGotoSeq();		//$84
+begin
+	runSeq := runDat & $1F;
+	runIndex := seqData2[runIndex] & $1F;
+	setSeqPointers();
+end;
+
+// calls step in another sequence
+@donotremove "cmdCall"
+procedure cmdCall();		//$85
+begin
+	runSStack[runStackTop] := runSeq;
+	runIStack[runStackTop] := runIndex + 1;
+	Inc(runStackTop);	// TODO: stack protection
+	runSeq := runDat & $1F;
+	runIndex := seqData2[runIndex] & $1F;
+	setSeqPointers();
+end;
+
+// returns from call
+@donotremove "cmdReturn"
+procedure cmdReturn();		//$86
+begin
+	Dec(runStackTop);	// TODO: stack protection
+	runSeq := runSStack[runStackTop];
+	runIndex := runIStack[runStackTop];
+	setSeqPointers();
+end;
+
+// finishes execution of current sequence
+@donotremove "cmdFinishSeq"
+procedure cmdFinishSeq();		//$87
+begin
+	runIndex := CommandsNo;
+end;
+
+// jumps if input or variable is set to 1
+@donotremove "cmdIf1"
+procedure cmdIf1();		//$88
+begin
+	getVarIO(runDat);
+	if value <> 0 then runIndex := seqData2[runIndex] & $1F
+	else Inc(runIndex);
+end;
+
+// jumps if input or variable is set to 0
+@donotremove "cmdIf0"
+procedure cmdIf0();		//$89
+begin
+	getVarIO(runDat);
+	if value = 0 then runIndex := seqData2[runIndex] & $1F
+	else Inc(runIndex);
+end;
+
+// copies group (1-4) of 8 inputs to vars
+@donotremove "cmdInputs2Vars"
+procedure cmdInputs2Vars();		//$8A
+begin
+	runK := (runDat - $31) * 8;
+	for runJ := 0 to 8 do begin
+		vars[runJ] := inputs[runK];
+		Inc(runK);
+	end;
+	Inc(runIndex);
+end;
+
+// copies vars to group (1-4) of 8 inputs
+@donotremove "cmdVars2Inputs"
+procedure cmdVars2Inputs();		//$8B
+begin
+	runK := (runDat - $31) * 8;
+	for runJ := 0 to 8 do begin
+		inputs[runK] := vars[runJ];
+		Inc(runK);
+	end;
+	Inc(runIndex);
+end;
+
+// performs AND betwen two variables or variable and input
+@donotremove "cmdAnd"
+procedure cmdAnd();		//$8C
+begin
+	runJ := seqData2[runIndex];
+	getVarIO(runJ);
+	runK := value;
+	getVarIO(runDat);
+	value := runK & value;
+	runDat := $39;
+	setVarIO(runDat);
+	Inc(runIndex);
+end;
+
+// performs OR betwen two variables or variable and input
+@donotremove "cmdOr"
+procedure cmdOr();		//$8D
+begin
+	runJ := seqData2[runIndex];
+	getVarIO(runJ);
+	runK := value;
+	getVarIO(runDat);
+	value := runK | value;
+	runDat := $39;
+	setVarIO(runDat);
+	Inc(runIndex);
+end;
+
+// performs XOR betwen two variables or variable and input
+@donotremove "cmdXor"
+procedure cmdXor();		//$8E
+begin
+	runJ := seqData2[runIndex];
+	getVarIO(runJ);
+	runK := value;
+	getVarIO(runDat);
+	value := runK xor value;
+	runDat := $39;
+	setVarIO(runDat);
+	Inc(runIndex);
+end;
+
+// sets all vars to hex value
+@donotremove "cmdSetVars"
+procedure cmdSetVars();	// $8F
+var i, j, k, val : byte;
+begin
+	//val := seqData2[runIndex];
+	val := GetHex();
+	for i := 0 to 8 do begin
+		if val & IOMasks[i] then
+			vars[i] := 1
+		else
+			vars[i] := 0;
+	end;
+	Inc(runIndex);
+end;
+
+// sets sequence's cyclic status
+@donotremove "cmdSetCyclic"
+procedure cmdSetCyclic(); // $90
+begin
+	seqCyclic[runDat & $1F] := seqData2[runIndex] - $30;
+	Inc(runIndex);
+end;
+
+// decrease counter if greater than 0, otherwise jump
+@donotremove "cmdDecCounter"
+procedure cmdDecCounter(); // $91
+begin
+	runK := runDat & $07;
+	if counters[runK] > 0 then begin
+		Dec(counters[runK]);
+		Inc(runIndex);
+	end else	
+		runIndex := seqData2[runIndex] & $1F; 
+end;
+
+// copy counter [s-z] to vars
+@donotremove "cmdCounter2Vars"
+procedure cmdCounter2Vars(); // $92
+begin
+end;
+
+// copy vars to counter [s-z]
+@donotremove "cmdVars2Counter"
+procedure cmdVars2Counter(); // $93
+begin
+end;
+
+// pointers to command procedures
+@donotremove "cmdPointers"
+procedure cmdPointers();
+begin
+	asm("
+cmdPointersL 
+	dc.b <cmdWaitInput1, <cmdWaitInput0, <cmdWaitTime
+	dc.b <cmdGoto, <cmdGotoSeq, <cmdCall, <cmdReturn, <cmdFinishSeq
+	dc.b <cmdIf1, <cmdIf0, <cmdInputs2Vars, <cmdVars2Inputs
+	dc.b <cmdAnd, <cmdOr, <cmdXor, <cmdSetVars, <cmdSetCyclic
+	dc.b <cmdDecCounter, <cmdCounter2Vars, <cmdVars2Counter
+
+cmdPointersH 
+	dc.b >cmdWaitInput1, >cmdWaitInput0, >cmdWaitTime
+	dc.b >cmdGoto, >cmdGotoSeq, >cmdCall, >cmdReturn, >cmdFinishSeq
+	dc.b >cmdIf1, >cmdIf0, >cmdInputs2Vars, >cmdVars2Inputs
+	dc.b >cmdAnd, >cmdOr, >cmdXor, >cmdSetVars, >cmdSetCyclic
+	dc.b >cmdDecCounter, >cmdCounter2Vars, >cmdVars2Counter
+	");
+end;
+
+ /*********************************************************
+					Sequence run loop
+ **********************************************************/
+
+procedure RunSequences();
+begin
+	runSeq := 0;
+	// go through all sequences
+	while runSeq < SequencesNo do begin
+		// automatically execute only cyclic sequences
+		if seqCyclic[runSeq] = 0 then begin
+			Inc(runSeq);
+			continue;
+		end;
+
+		// run commands in one sequence		
+		setSeqPointers();
+		runIndex := seqCnt[runSeq]-1;	// screen code for 'a' is 1
+		runWait := 0;
+		while (runIndex < CommandsNo) do begin
+			runCmd := seqCommand[runIndex];
+			runDat := seqData[runIndex];
+			// executing one of commands from commandsChars
+			if runCmd > $7F then begin
+				runCmd := runCmd - $80;
+				// assign cmdPtr to command procedure
+				asm("
+					ldx runCmd
+					lda cmdPointersL,x
+					sta cmdPtr
+					lda cmdPointersH,x
+					sta cmdPtr+1
+				");
+				call(cmdPtr);
+				// finish execution if sequence needs to wait
+				if runWait <> 0 then break;
+			end
+			// executing move value or set counter
+			else begin
+				if runCmd > $4F then begin
+					// set counter
+					value := seqData3[runIndex];
+					setVarIO(runCmd);
+				end else begin
+					// move value
+					getVarIO(runCmd);
+					setVarIO(runDat);
+				end;
+				Inc(runIndex);
+			end; 
+		end;
+		if runWait = 0 then
+			seqCnt[runSeq] := 1
+		else
+			seqCnt[runSeq] := runIndex + 1;
+		Inc(runSeq);
+	end;
+end;
+
+ /*********************************************************
+	   CIA interrupt that handles all sequence timers
+ **********************************************************/
+
+// using default CIA #1 timer
+@donotremove "UpdateTimers"
+procedure UpdateTimers();
+begin
+/*
+	if pwmCounter <= pwmValue then
+		outputs[31] := 1
+	else
+		outputs[31] := 0;
+	Inc(pwmCounter);
+	if pwmCounter > @pwmCounterMax then
+		pwmCounter := 1;
+*/
+	if TimerWaitCnt <> 0 then
+		Dec(TimerWaitCnt)
+	else begin
+		TimerWaitCnt := TimerWait;
+		for seqTimerCnt := 0 to SequencesNo do begin
+			if seqTimer[seqTimerCnt] <> 0 then
+				Dec(seqTimer[seqTimerCnt]);
+		end;
+	end;
+	asm("	jmp $EA31");
+end;
+
+ /*********************************************************
+			Screen drawing and user interaction
+ **********************************************************/
+
+// drawing of main screen
+procedure MainScreen();
+begin
+	asm("
+		ldx #00
+MainScreenFill:
+		lda @MemMainScreen,x
+		sta @ScreenChr,x
+		lda @MemMainScreen+$100,x
+		sta @ScreenChr+$100,x
+		lda @MemMainScreen+$200,x
+		sta @ScreenChr+$200,x
+		lda @MemMainScreen+$300-24,x
+		sta @ScreenChr+$300-24,x
+
+		lda @MemMainScreen+1000,x
+		sta @ScreenCol,x
+		lda @MemMainScreen+1000+$100,x
+		sta @ScreenCol+$100,x
+		lda @MemMainScreen+1000+$200,x
+		sta @ScreenCol+$200,x
+		lda @MemMainScreen+1000+$300-24,x
+		sta @ScreenCol+$300-24,x
+
+		inx
+		bne MainScreenFill
+	");
+	MoveTo(0, 5, hi(^@ScreenChr));
+	for runI := 0 to 4 do
+		screenmemory[runI] := VersionString[runI];
+end;
+
+// converts code from sequence arrays to screen code for displaying
+// Values used for command/data arrays:
+//		$00-$1F - input/output
+//		$20-$2F - notning
+//		$30-$3F - 0-9, ? (bad value)
+//		$41-$46 - hex digit A-F
+//		$50-$57 - counter
+//		$80-$93 - command
+//		$E0-$F9 - index of command/sequence
+function codeToScreen(code : byte) : byte;
+begin
+
+	if code > $DF then
+		keyDecoded := code - $E0 + $01
+	else if code > $7F then
+		keyDecoded := commandsChars[code & $7F]
+	else if code > $4F then
+		keyDecoded := code - $50 + $13
+	else if code > $40 then
+		keyDecoded := code
+	else if code > $2F then
+		keyDecoded := code
+	else if code > $1F then
+		keyDecoded := code
+	else if code > $0F then
+		keyDecoded := code + $41-$10
+	else
+		keyDecoded := code + $01;
+	codeToScreen := keyDecoded;
+end;
+
+procedure PrintSequences();
+begin
+	MoveTo(screenSeqsX-2, screenSeqsY,hi(^@ScreenChr));
+	for prSeqI := 0 to 4 do begin
+		runSeq := prSeq + prSeqI;
+		screenmemory[0] := runSeq + 1;	
+		prSeqK := 2;
+		setSeqPointers();
+		//runIndex := runStart;
+		for runI := 0 to SequencesNo do begin
+			runCmd := seqCommand[runI];
+			screenmemory[prSeqK] := codeToScreen(runCmd);
+			prSeqJ := prSeqK + 40;
+			screenmemory[prSeqJ] := codeToScreen(seqData[runI]);
+			prSeqJ := prSeqK + 80;
+			screenmemory[prSeqJ] := codeToScreen(seqData2[runI]);
+			Inc(prSeqK);
+		end;
+		screenmemory := screenmemory + 3*40;
+	end;
+	MoveTo(14, 9,hi(^@ScreenChr));
+	for runJ := 0 to SequencesNo do begin
+		if seqCyclic[runJ] <> 0 then prSeqJ := $7A
+		else prSeqJ := $20;
+		screenmemory[runJ] := prSeqJ;
+	end;
+/*
+	runSeq := 0;
+	setSeqPointers();
+	MoveTo(14, 6,hi(^@ScreenChr));
+	for runJ := 0 to CommandsNo do begin
+		screenmemory[runJ] := seqData[runJ];
+		screenmemory[runJ+40] := seqData2[runJ];
+		screenmemory[runJ+160] := seqData3[runJ];
+	end;*/
+end;
+
+procedure ReadKey(); // inline;
+begin
+	asm("
+		jsr $FFE4
+		sta keyPetscii
+		beq ReadKeyEnd
+		//sta $0400
+		tax
+		lda Petscii2Screen,x
+		sta keyScreen
+		//sta $0401
+		txa
+ReadKeyEnd
+	");
+end;
+
+// decode keybress based on allowed values for command
+// Values used for command/data arrays:
+//		$00-$1F - input/output
+//		$20-$2F - notning
+//		$30-$3F - 0-9, ? (bad value)
+//		$41-$46 - hex digit A-F
+//		$50-$57 - counter
+//		$80-$93 - command
+//		$E0-$F9 - index of command/sequence
+function processKeyPress(cfg : byte) : byte;
+begin
+	keyDecoded := $FF;
+	case cfg of
+		// [a-pA-P] input
+		1 : if keyPetscii >= $C1 then begin
+				if keyPetscii <= $D0 then keyDecoded := keyPetscii - $C1 + $10;	// A-P -> $10-$1F
+			end else if keyPetscii >= $41 then begin
+				if keyPetscii <= $50 then keyDecoded := keyPetscii - $41;			// a-p -> $00-$0F
+			end;
+		// [hex] hex value
+		2 :	if keyPetscii > $C0 then begin
+				if keyPetscii < $C7 then keyDecoded := keyPetscii - $C1 + $41;	// A-F -> $41-$46
+			end else if keyPetscii > $40 then begin
+				if keyPetscii < $47 then keyDecoded := keyPetscii;				// a-f -> $41-$46
+			end else if keyPetscii > $2F then begin
+				if keyPetscii < $3A then keyDecoded := keyPetscii;				// 0-9 -> $30-$39
+			end;
+		// [a-z] step or sequence
+		3 : if keyPetscii >= $41 then begin
+				if keyPetscii <= $5A then keyDecoded := keyPetscii - $41 + $E0;	// a-z -> $E0-$F9
+			end;
+		// [a-pA-P2-9] output or var
+		4 : if keyPetscii >= $C1 then begin
+				if keyPetscii <= $D0 then keyDecoded := keyPetscii - $C1 + $10;	// A-P -> $10-$1F
+			end else if keyPetscii >= $41 then begin
+				if keyPetscii <= $50 then keyDecoded := keyPetscii - $41;			// a-p -> $00-$0F
+			end else if keyPetscii >= $32 then begin
+				if keyPetscii <= $39 then keyDecoded := keyPetscii;				// 2-9 -> $32-$39
+			end;
+		// [1-4] input group
+		5 : if keyPetscii >= $31 then begin
+				if keyPetscii <= $34 then keyDecoded := keyPetscii;				// 1-4 -> $31-$34
+			end;
+		// [0-9] sequence cyclic mode
+		6 : if keyPetscii >= $31 then begin
+				if keyPetscii <= $39 then keyDecoded := keyPetscii;				// 0-9 -> $30-$39
+			end;
+		// [s-z] counter
+		7 :	if keyPetscii > $52 then begin
+				if keyPetscii < $5B then keyDecoded := keyPetscii - $53 + $50;	// s-z -> $50-$57
+			end;
+		// [a-pA-P0-9] input, 0/1 or var
+		8 : if keyPetscii >= $C1 then begin
+				if keyPetscii <= $D0 then keyDecoded := keyPetscii - $C1 + $10;	// A-P -> $10-$1F
+			end else if keyPetscii >= $41 then begin
+				if keyPetscii <= $50 then keyDecoded := keyPetscii - $41;			// a-p -> $00-$0F
+			end else if keyPetscii >= $30 then begin
+				if keyPetscii <= $39 then keyDecoded := keyPetscii;				// 0-9 -> $30-$39
+			end;
+		// [a-pA-P0-9s-z] input, 0/1, var or counter
+		9 : if keyPetscii >= $C1 then begin
+				if keyPetscii <= $D0 then keyDecoded := keyPetscii - $C1 + $10;	// A-P -> $10-$1F
+			end else if keyPetscii > $52 then begin
+				if keyPetscii < $5B then keyDecoded := keyPetscii - $53 + $50;	// s-z -> $50-$57
+			end else if keyPetscii >= $41 then begin
+				if keyPetscii <= $50 then keyDecoded := keyPetscii - $41;			// a-p -> $00-$0F
+			end else if keyPetscii >= $30 then begin
+				if keyPetscii <= $39 then keyDecoded := keyPetscii;				// 0-9 -> $32-$39
+			end;
+	end;
+	processKeyPress := keyDecoded;
+end;
+
+// manual control of outputs
+procedure manualOutput();
+var outputIdx : byte;
+begin
+	if keyPetscii > $C0 then begin
+		if  keyPetscii < $D1 then begin
+			outputIdx := keyPetscii-$C1+16;
+			value := outputs[outputIdx] xor 1;
+			setVarIO(outputIdx);
+		end;
+	end	else if keyPetscii > $40 then begin
+		if  keyPetscii < $51 then begin
+			outputIdx := keyPetscii-$41;
+			value := outputs[outputIdx] xor 1;
+			setVarIO(outputIdx);
+		end;
+	end;
+end;
+
+// manual control of inputs
+procedure manualInput();
+var inputIdx : byte;
+begin
+	if keyPetscii > $C0 then begin
+		if  keyPetscii < $D1 then begin
+			inputIdx := keyPetscii-$C1+16;
+			value := inputs[inputIdx] xor 1;
+			inputs[inputIdx] := value;
+		end;
+	end	else if keyPetscii > $40 then begin
+		if  keyPetscii < $51 then begin
+			inputIdx := keyPetscii-$41;
+			value := inputs[inputIdx] xor 1;
+			inputs[inputIdx] := value;
+		end;
+	end;
+	// display inputs
+	runK := 0;
+	runIndex := 0;
+	for runI := 0 to 4 do begin
+		for runJ := 0 to 8 do begin
+			if inputs[runIndex] <> 0 then
+				ScreenInputs[runK] := IOColorOn
+			else
+				ScreenInputs[runK] := IOColorOff;
+			Inc(runK);
+			Inc(runIndex);
+		end;
+		runK := runK + 32;
+	end;
+end;
+
+ /*********************************************************
+		   			Sequences running
+ **********************************************************/
+
+// selects manual control of inputs or outputs
+procedure selectManualIO();
+begin
+	runManualOutput := runManualOutput xor 1;
+	if runManualOutput = 0 then begin
+		scrInputOutput[0] := $1E;
+		scrInputOutput[1] := $1E;
+		scrInputOutput[10] := $20;
+		scrInputOutput[11] := $20;
+	end else begin
+		scrInputOutput[0] := $20;
+		scrInputOutput[1] := $20;
+		scrInputOutput[10] := $1E;
+		scrInputOutput[11] := $1E;
+	end;
+end;
+
+// run sequences state
+procedure stateRunProc();
+begin
+	for runK := 0 to 6 do statusLocation[runK] := statusStop[runK];
+	if editBadValues then begin
+		mainState := stateEdit;
+		//setStatus(msgBadValues);
+		return;
+	end;
+	spinCnt1 := 0;
+	spinCnt2 := 0;
+	spinCnt3 := 0;
+	runManualOutput := 0;
+	selectManualIO();
+	while(1) do begin
+		if runManualOutput <> 0 then begin
+			ReadInputs();
+			ReadKey();
+			manualOutput();
+		end else begin
+			ReadKey();
+			manualInput();
+		end;
+		RunSequences();
+		WriteOutputs();
+		if keyPetscii = $86 then begin
+			mainState := stateStop;
+			break;
+		end;
+		if keyPetscii = $85 then
+			selectManualIO();
+		// spin 1 is changed on every call to RunSequences
+		spinLocation1 := spinChars[spinCnt1];
+		Inc(spinCnt1);
+		if spinCnt1 > @spinNumber-1 then begin
+			spinCnt1 := 0;
+		end;
+		// spin 2 is changed on every 10th call to RunSequences
+		Inc(spinCnt2);
+		if spinCnt2 > 10 then begin
+			spinCnt2 := 0;
+			spinLocation2 := spinChars[spinCnt3];
+			Inc(spinCnt3);
+			if spinCnt3 > @spinNumber-1 then spinCnt3 := 0;
+		end;
+		// update vars and counters on screen
+		for runI := 0 to 8 do begin
+			scrVars[runI] := vars[runI] + $30;
+			runJ := counters[runI];
+			if runJ > 15 then
+				scrCounters[runI] := $1E
+			else if runJ > 9 then
+				scrCounters[runI] := runJ + $41 - 10
+			else
+				scrCounters[runI] := runJ + $30;
+		end;
+	end;
+	spinLocation1 := spinChars[@spinNumber];
+	spinLocation2 := spinChars[@spinNumber];
+	scrInputOutput[0] := $20;
+	scrInputOutput[1] := $20;
+	scrInputOutput[10] := $20;
+	scrInputOutput[11] := $20;
+end;
+
+ /*********************************************************
+	   			Manual setting of outputs
+ **********************************************************/
+
+// manual outputs state
+procedure stateManualProc();
+begin
+	for runK := 0 to 6 do statusLocation[runK] := statusManu[runK];
+	while(1) do begin
+		ReadInputs();
+		ReadKey();
+		manualOutput();
+		if keyPetscii = $87 then begin
+			mainState := stateEdit;
+			break;
+		end
+		else if keyPetscii = $86 then begin
+			mainState := stateStop;
+			break;
+		end
+		else if keyPetscii = $85 then begin
+			mainState := stateRun;
+			break;
+		end;
+		WriteOutputs();
+	end;
+end;
+
+ /*********************************************************
+	   			Idle state of the program
+ **********************************************************/
+
+// idle state
+procedure stateStopProc();
+begin
+	for runK := 0 to 6 do statusLocation[runK] := statusStop[runK];
+	while(1) do begin
+		ReadInputs();
+		ReadKey();
+		if keyPetscii = $85 then begin
+			mainState := stateRun;
+			break;
+		end
+		else if keyPetscii = $87 then begin
+			mainState := stateEdit;
+			break;
+		end
+		else if keyPetscii = $88 then begin
+			mainState := stateManual;
+			break;
+		end
+		else if keyPetscii = $8C then begin
+			mainState := stateHelp;
+			break;
+		end;
+	end;
+end;
+
+ /*********************************************************
+		   			Editing of sequences
+ **********************************************************/
+
+// move cursor one position down
+procedure editCursorDown();
+begin
+	Inc(editCursorY);
+	if editCursorY > 11 then begin
+		editCursorY := 11;
+		Inc(prSeq);
+		if prSeq > SequencesNo-4 then prSeq := SequencesNo-4
+		else PrintSequences();
+	end;
+end;
+
+// move cursor one position up
+procedure editCursorUp();
+begin
+	Dec(editCursorY);
+	if editCursorY > 11 then begin
+		editCursorY := 0;
+		Dec(prSeq);
+		if prSeq > SequencesNo-4 then prSeq := 0	// if prSeq goes below 0, it will be $FF
+		else PrintSequences();
+	end;
+end;
+
+// insert empty command into a sequence
+procedure editInsert();
+begin
+	setSeqPointers();
+	runIndex := CommandsNo-1;
+	// only insert if last command is '$'
+	if seqCommand[runIndex] = $87 then begin
+		// move all commands from cursor position
+		runJ := CommandsNo-1;
+		runK := runIndex;
+		while runJ > editCursorX do begin
+			seqCommand[runK] := seqCommand[runK-1];
+			seqData[runK] := seqData[runK-1];
+			seqData2[runK] := seqData2[runK-1];
+			seqData3[runK] := seqData3[runK-1];
+			// update jumps
+			runCmd := seqCommand[runK];
+			if (((runCmd = $83) or (runCmd = $88)) or ((runCmd = $89) or (runCmd = $91))) then begin
+				runCmd := runCmd & $7F;
+				if (commandsArgs[runCmd] & $0F) = $03 then begin
+					runI := seqData[runK] & $1F;
+					if runI >= editCursorX then begin
+						if runI < (CommandsNo-1) then
+							seqData[runK] := runI + $E1;
+					end;
+				end;
+				if (commandsArgs[runCmd] >> 4) = $03 then begin
+					runI := seqData2[runK] & $1F;
+					if runI >= editCursorX then begin
+						if runI < (CommandsNo-1) then
+							seqData2[runK] := runI + $E1;
+					end;
+				end;
+			end;
+			Dec(runJ);
+			Dec(runK);
+		end;
+		// new empty command
+		seqCommand[runK] := $87;
+		seqData[runK] := $20;
+		seqData2[runK] := $20;
+		seqData3[runK] := $20;
+		PrintSequences();
+	end;
+end;
+
+// delete a command from sequence
+procedure editDelete();
+begin
+	setSeqPointers();
+	// decrease bad values counter if deleted command had them
+	if seqData[editCursorX] = seqBadValue then
+		Dec(editBadValues);
+	if seqData2[editCursorX] = seqBadValue then
+		Dec(editBadValues);
+	// move all commands from cursor position
+	for runK := editCursorX to CommandsNo-1 do begin
+		seqCommand[runK] := seqCommand[runK+1];
+		seqData[runK] := seqData[runK+1];
+		seqData2[runK] := seqData2[runK+1];
+		seqData3[runK] := seqData3[runK+1];
+		// update jumps
+		runCmd := seqCommand[runK];
+		if (((runCmd = $83) or (runCmd = $88)) or ((runCmd = $89) or (runCmd = $91))) then begin
+			runCmd := runCmd & $7F;
+			if (commandsArgs[runCmd] & $0F) = $03 then begin
+				runI := seqData[runK];
+				if runI >= editCursorX then seqData[runK] := runI - 1;
+			end;
+			if (commandsArgs[runCmd] >> 4) = $03 then begin
+				runI := seqData2[runK];
+				if runI >= editCursorX then seqData2[runK] := runI - 1;
+			end;
+		end;
+	end;
+	// last command becomes empty
+	runK := CommandsNo - 1;
+	seqCommand[runK] := $87;
+	seqData[runK] := $20;
+	seqData2[runK] := $20;
+	seqData3[runK] := $20;
+	PrintSequences();
+end;
+
+// get command of first char for move value or set counter
+function KeyToCommand() : byte;
+begin
+	keyDecoded := $FF;
+	for runJ := 0 to commandsNumber do begin
+		if keyScreen = commandsChars[runJ] then begin
+			keyDecoded := runJ | $80;
+			break;
+		end
+	end;
+	if keyDecoded = $FF then
+		processKeyPress(9);
+	KeyToCommand := keyDecoded;
+end;
+
+// enter new command
+procedure editItemCommand();
+begin
+	if KeyToCommand() <> $FF then begin
+		setSeqPointers();
+		runIndex := editCursorX;
+		seqCommand[runIndex] := keyDecoded;
+		// decrease bad values counter if previous command had them
+		if seqData[runIndex] = seqBadValue then
+			Dec(editBadValues);
+		seqData[runIndex] := $20;
+		if seqData2[runIndex] = seqBadValue then
+			Dec(editBadValues);
+		seqData2[runIndex] := $20;
+		// command from commandsChars
+		if keyDecoded > $7F then begin
+			runI := commandsArgs[keyDecoded & $7F];
+			if  runI & $0F then begin
+				seqData[runIndex] := seqBadValue;
+				Inc(editBadValues);
+			end;
+			if  runI & $F0 then begin
+				seqData2[runIndex] := seqBadValue;
+				Inc(editBadValues);
+			end;
+		// move value or set counter
+		end else begin
+			seqData[runIndex] := seqBadValue;
+			Inc(editBadValues);
+			if keyDecoded > $4F then begin
+				seqData2[runIndex] := seqBadValue;
+				Inc(editBadValues);
+			end;
+		end;
+		PrintSequences();
+	end;
+end;
+
+// edit first parameter
+procedure editItemData();
+begin
+	setSeqPointers();
+	runIndex := editCursorX;
+	runCmd := seqCommand[runIndex];
+	if runCmd < $80 then begin
+		if runCmd > $4F then begin
+			if processKeyPress(2) <> $FF then begin
+				if seqData[runIndex] = seqBadValue then
+					Dec(editBadValues);
+				seqData[runIndex] := keyDecoded;
+			end;
+		end	else begin
+			if processKeyPress(4) <> $FF then begin
+				if seqData[runIndex] = seqBadValue then
+					Dec(editBadValues);
+				seqData[runIndex] := keyDecoded;
+			end;
+		end;
+	end else begin
+		if processKeyPress(commandsArgs[runCmd & $7F] & $0F) <> $FF then begin
+			if seqData[runIndex] = seqBadValue then
+				Dec(editBadValues);
+			seqData[runIndex] := keyDecoded;
+		end;
+	end;
+	// calculate value in case parameter 1 and 2 are hex number
+	runI := GetHex();
+	seqData3[runIndex] := runI;
+	PrintSequences();
+end;
+
+// edit second parameter
+procedure editItemData2();
+begin
+	setSeqPointers();
+	runIndex := editCursorX;
+	runCmd := seqCommand[runIndex];
+	if runCmd < $40 then return;
+	if runCmd < $80 then begin
+		if processKeyPress(2) <> $FF then begin
+			if seqData2[runIndex] = seqBadValue then
+				Dec(editBadValues);
+			seqData2[runIndex] := keyDecoded;
+		end;
+	end else begin
+		if processKeyPress(commandsArgs[runCmd & $7F] >> 4) <> $FF then begin
+			if seqData2[runIndex] = seqBadValue then
+				Dec(editBadValues);
+			seqData2[runIndex] := keyDecoded;
+		end;
+	end;
+	// calculate value in case parameter 1 and 2 are hex number
+	runI := GetHex();
+	seqData3[runIndex] := runI;
+	PrintSequences();
+end;
+
+// editing state
+procedure stateEditProc();
+begin
+	for runK := 0 to 6 do statusLocation[runK] := statusEdit[runK];
+	while (1) do begin
+		ReadInputs();
+		ReadKey();
+		// indicate position in index pane
+		editXPos[editCursorX] := 1;
+		// red border if there are bad values
+		// sequence being edited
+		runSeq := editCursorY/3;
+		// do we edit command, first or second parameter
+		editPhase := editCursorY - runSeq*3;
+		runSeq := runSeq + prSeq;
+		// moving around
+		case keyPetscii of
+			$85 : begin mainState := stateRun; break; end;
+			$86 : begin mainState := stateStop; break; end;
+			$88 : begin mainState := stateManual; break; end;
+			$8C : begin mainState := stateHelp; break; end;
+			crsrRight : begin
+				editXPos[editCursorX] := 5;
+				Inc(editCursorX);
+				if editCursorX > 25 then editCursorX := 0;
+			end;
+			crsrLeft : begin
+				editXPos[editCursorX] := 5;
+				Dec(editCursorX);
+				if editCursorX > 25 then editCursorX := 25;
+			end;
+			crsrDown : editCursorDown();
+			crsrUp : editCursorUp();
+			keyInsDel : editInsert();
+			keyClrHome : editDelete();
+			keyRStop : begin
+				seqCyclic[runSeq] := seqCyclic[runSeq] xor 1;
+				PrintSequences();
+			end;
+			// default value when no key is pressed
+			0 : begin end;
+		// command editing
+		else begin
+			case editPhase of
+				0:	editItemCommand();
+				1:	editItemData();
+				2:	editItemData2();
+			end;
+			if editBadValues <> 0 then screen_bg_col:=red
+			else screen_bg_col:=black;
+		end;
+		// position sprite on current character
+		sprite_x := (screenSeqsX + editCursorX)*8 + 23;
+		sprite_y := (screenSeqsY + editCursorY)*8 + 49;
+		SpritePos(sprite_x,sprite_y,0);
+		//if keyPetscii <> 0 then begin
+		//	if editBadValues <> 0 then screen_bg_col:=red
+		//	else screen_bg_col:=black;
+		//end;
+	end;
+	editXPos[editCursorX] := 5;
+	SpritePos(0,0,0);
+end;
+
+ /*********************************************************
+		   			Program help
+ **********************************************************/
+
+procedure stateHelpProc();
+begin
+	mainState := stateStop;
+end;
+
+ /*********************************************************
+		   			Main program code
+ **********************************************************/
+
+begin
+	setcharsetlocation(@MemCharset1);
+	MainScreen();
+	SetSpriteLoc(0,@MemSprite/64,0);
+	SpritePos(0,0,0);
+	sprite_multicolor:=$00;
+	sprite_color[0]:=yellow;
+	togglebit(sprite_bitmask,0,1);	
+	
+	//CopyFullScreen(^@ScreenChr, ^@MemMainScreen);
+	//CopyFullScreen(^@ScreenCol, ^@MemMainScreen+1000);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	editCursorX := 0;
+	editCursorY := 0;
+	for runSeq := 0 to SequencesNo do begin
+		seqCyclic[runSeq] := 0;
+		seqTimer[runSeq] := 0;
+		seqTimerStarted[runSeq] := 0;
+		seqCnt[runSeq] := 1;
+		setSeqPointers();
+		fori runI := 0 to CommandsNo do begin
+			seqCommand[runI] := $87;
+			seqData[runI] := $20;
+			seqData2[runI] := $20;
+		end;
+	end;
+	// set all outputs to 0
+	for runI := 0 to 32 do begin
+		outputs[runI] := 0;
+	end;
+	// setup timers interrupt
+	TimerWaitCnt := TimerWait;
+	asm("
+		sei
+		lda #<UpdateTimers
+		sta $0314
+		lda #>UpdateTimers
+		sta $0315
+		cli
+	");
+	// main program loop
+	prSeq := 0;
+	PrintSequences();
+	mainState := stateStop;
+	editBadValues := 0;
+	while(1) do begin
+		case mainState of
+			stateRun : stateRunProc();
+			stateManual : stateManualProc();
+			stateStop : stateStopProc();
+			stateEdit : stateEditProc();
+			stateHelp : stateHelpProc();
+		end;
+	end;
+end.
