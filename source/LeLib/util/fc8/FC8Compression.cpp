@@ -174,7 +174,7 @@ uint32_t FC8::Encode(const uint8_t *in, uint32_t insize, uint8_t *out, uint32_t 
 {
     uint8_t *src, *inEnd, *dst, *outEnd, symbol;
     uint32_t compressedSize, backrefSize;
-    uint32_t length, offset = 0, symbolCost, i;
+    uint32_t length, offset = 0, symbolCost = 0, i;
     uint8_t* pRunLengthByte = NULL;
     uint32_t literalRunLength = 0;
     search_accel_t *sa = (search_accel_t*) 0;
