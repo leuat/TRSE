@@ -37,7 +37,7 @@ char AbstractDemoEffect::FadeColorTo(char c, char tar, int speed, int start)
         uchar c2 = (c&0b11110000)>>4;
         uchar tc1 = tar&0b00001111;
         uchar tc2 = (tar&0b11110000)>>4;
-        int i1, i2,t1=0,t2=0;
+        int i1=0, i2=0, t1=0, t2=0;
         for (int i=start;i<32;i++) {
             if (fromBlack[i]==c1) i1 = i;
             if (fromBlack[i]==c2) i2 = i;
