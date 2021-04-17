@@ -107,7 +107,7 @@ void MovieConverter::ConvertPacked(QString dir, QString baseName, QString fileEx
     QStringList images = directory.entryList(QStringList() << "*."+fileExtension,QDir::Files);
     int cur=1;
     int val = 0;
-    int lowest = 1E20;
+    int lowest = INT_MAX;
     for (QString img: images) {
         QString first = img.remove(baseName);
         first = Util::getFileWithoutEnding(first);

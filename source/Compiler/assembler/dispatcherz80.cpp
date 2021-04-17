@@ -864,7 +864,7 @@ QString ASTdispatcherZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     if (bop->m_op.m_type == TokenType::MUL)
         return "mul";*/
     ErrorHandler::e.Error("Unknown binary operation : " + bop->m_op.getType(),bop->m_op.m_lineNumber);
-//    return " UNKNOWN BINARY OPERATION";
+    return "UNKNOWN BINARY OPERATION";
 }
 
 void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)

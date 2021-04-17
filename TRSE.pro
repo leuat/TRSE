@@ -13,8 +13,6 @@ equals(VER, 6) {
 
 CONFIG += c++14
 
-CONFIG+=warn_off
-
 TARGET = trse
 TEMPLATE = app
 
@@ -87,10 +85,11 @@ win32-msvc*{
 }
 
 linux*{
-    QMAKE_CXXFLAGS += -fopenmp
-#    QMAKE_CXXFLAGS +=  -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-noreturn
+    QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
+    # TODO(ColinPitrat): Progressively fix and activate the most valuable warnings
+    QMAKE_CXXFLAGS += -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-field-initializers -Wno-unused-function -Wno-unused-but-set-variable -Wno-catch-value -Wno-unused-value -Wno-type-limits
     LIBS += -fopenmp
-    QMAKE_CXXFLAGS_RELEASE +=  -Ofast
+    QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl
 }
 

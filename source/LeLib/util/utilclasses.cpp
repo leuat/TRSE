@@ -30,6 +30,7 @@ QString RegisterStack::Get() {
     //    qDebug() << "NO FREE REGISTERS :  RegisterStack::Get()";
     //  exit(1);
     ErrorHandler::e.Error("NO FREE Registers (shouldn't happen)",0);
+    return QString();
 }
 
 void RegisterStack::Pop(QString reg) {
