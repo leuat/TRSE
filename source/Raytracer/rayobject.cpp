@@ -255,8 +255,10 @@ QVector3D AbstractRayObject::ReflectMarch(AbstractRayObject *me, QVector3D isp, 
         }
 
         I=I+ray.m_intensity;
+        // TODO(ColinPitrat): This is very suspicious: we always return on the first iteration of the loop?!
         return I;///(float)N;
     }
+    return I;
 }
 
 QVector3D AbstractRayObject::CalcMarchNormal(QVector3D &pos)
@@ -534,6 +536,8 @@ float RayObjectOperation::intersect(Ray *ray)
         return std::max(m_o1->intersect(ray),m_o2->intersect(ray));
     if (m_type == "sub")
         return m_o1->intersect(ray)*std::max(-m_o2->intersect(ray),0.0f);
+    // TODO(ColinPitrat): Is this really what we want to return by default?
+    return 0.0;
 }
 
 float RayObjectPerlin::intersect(Ray *ray)
