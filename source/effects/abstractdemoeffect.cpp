@@ -14,7 +14,7 @@ char AbstractDemoEffect::FadeColor(char c, int speed)
     int fromBlack[] = {0x00,0x06,0x09,0x0b,0x02,0x04,0x08,0x0c,0x0e,0x0a,0x05,0x0f,0x03,0x07,0x0d,0x01,0x0d,0x07,0x03,0x0f,0x05,0x0a,0x0e,0x0c,0x08,0x04,0x02,0x0b,0x09,0x06,0x00,0x00};
     uchar c1 = c&0b00001111;
     uchar c2 = (c&0b11110000)>>4;
-    int i1, i2;
+    int i1=0, i2=0;
     if (speed==0) speed=1;
     for (int i=0;i<16;i++) {
         if (fromBlack[i]==c1) i1 = i;
@@ -37,7 +37,7 @@ char AbstractDemoEffect::FadeColorTo(char c, char tar, int speed, int start)
         uchar c2 = (c&0b11110000)>>4;
         uchar tc1 = tar&0b00001111;
         uchar tc2 = (tar&0b11110000)>>4;
-        int i1, i2,t1=0,t2=0;
+        int i1=0, i2=0, t1=0, t2=0;
         for (int i=start;i<32;i++) {
             if (fromBlack[i]==c1) i1 = i;
             if (fromBlack[i]==c2) i2 = i;
