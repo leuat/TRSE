@@ -30,7 +30,6 @@ ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
 
-
 macx{
     #LIBS += -openmp
 #    ICON = trse.icns
@@ -91,6 +90,13 @@ linux*{
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl
+
+    # TODO(ColinPitrat): Complete the `make install` for linux.
+    bin.path = $$PREFIX/bin
+    bin.files += $$TARGET
+    share.path = $$PREFIX/share
+    share.files += $$PWD/Publish/publish_linux/share/*
+    INSTALLS += bin share
 }
 
 

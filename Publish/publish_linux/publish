@@ -1,3 +1,4 @@
+set -x
 rm -rf trse
 find ../tutorials/ -name "*.prg" -type f -delete
 find ../tutorials/ -name "*.asm" -type f -delete
@@ -6,18 +7,31 @@ mkdir trse/
 mkdir trse/bin
 mkdir trse/tutorials/
 mkdir trse/units/
-cp -r ../../Release/trse trse/bin
-cp -r ../../Release/lib trse/bin
-#cp -r ../../Release/plugins trse/bin
-cp -r plugins trse/bin
+
+if [ "$1" = "nightly" ]
+then
+  cp -r ../../trse trse/bin
+  # Copy all the libs needed to run TRSE to be sure the right version is avilable.
+  ldd trse | awk '{ print $3 }' | sort -u | xargs -I _ cp _ trse/bin/
+  # Copy all the plugins listed in plugins.txt
+  mkdir trse/plugins
+  while read plugin
+  do
+    lib=$(find /usr/lib* | grep "$plugin" | head -n 1)
+    cp "$lib" "trse/plugins/$plugin"
+  done < plugins.txt
+else
+  cp -r ../../Release/trse trse/bin
+  cp -r ../../Release/lib trse/bin
+  cp -r lib trse/bin/
+  #cp -r ../../Release/plugins trse/bin
+  cp -r plugins trse/bin
+fi
+
+# Copy the themes
 cp -r ../source/* trse/
-cp -r ../tutorials/RasLib trse/tutorials/
-
 cp -r ../tutorials/* trse/tutorials
-cp -r ../units/* trse/units
 cp -r ../project_templates trse/project_templates
-cp -r lib trse/bin/
+cp -r ../../units/* trse/units
 cp trse.sh trse
-tar -cvf trse_linux64.tar trse
-gzip trse_linux64.tar
-
+tar -cvzf trse_linux64.tar.gz trse
