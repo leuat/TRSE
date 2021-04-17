@@ -891,6 +891,12 @@ QStandardItem* MainWindow::AddTreeRoot(QString path, QString name)
     QDirIterator it(path,QStringList(), QDir::NoDotAndDotDot | QDir::Dirs);
 //    if (m_expandedList.contains(path))
 
+    QStringList exts = exts_few;
+    if (ui->chkShowAllFiles->isChecked())
+        exts = exts_all;
+
+
+
     while (it.hasNext()) {
         AddTreeFileItem(root,it.next(),exts);
        }
@@ -1803,6 +1809,7 @@ void MainWindow::LoadProject(QString filename)
     VerifyProjectDefaults();
 //    m_iniFile->setString("project_path", getProjectPath());
     m_iniFile->addStringList("recent_projects", filename, true);
+    ui->chkShowAllFiles->setChecked(m_currentProject.m_ini->getdouble("show_all_files")==1.0);
 
     RefreshFileList();
 /*
@@ -2222,7 +2229,8 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("exomize_toggle")) {
         m_ini->setFloat("exomize_toggle",0);
     }
-
+    if (!m_ini->contains("show_all_files"))
+        m_ini->setFloat("show_all_files",1);
 
     if (m_ini->getString("system")=="X86") {
         if (!m_ini->contains("dosbox_x86_system"))
@@ -2643,5 +2651,23 @@ void MainWindow::on_actionTRSE_Tracker_File_trt_triggered()
     m_currentDoc = editor;
     ConnectDocument();
     delete dNew;
+
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+/*    if (m_currentProject.m_filename=="")
+        return;
+    m_currentProject.m_ini->setFloat("show_all_files",ui->chkShowAllFiles->isChecked());
+    RefreshFileList();
+    qDebug() << "HERE";*/
+}
+
+void MainWindow::on_chkShowAllFiles_clicked()
+{
+    if (m_currentProject.m_filename=="")
+        return;
+    m_currentProject.m_ini->setFloat("show_all_files",ui->chkShowAllFiles->isChecked());
+    RefreshFileList();
 
 }

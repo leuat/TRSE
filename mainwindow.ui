@@ -55,6 +55,16 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QCheckBox" name="chkShowAllFiles">
+              <property name="text">
+               <string>Show all</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
