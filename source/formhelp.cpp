@@ -370,7 +370,7 @@ void formHelp::SearchForItem(QString item)
         QStringList data = s.split(";");
         if (data[1].toLower().startsWith(item.toLower())) {
             //HelpType ht = m_helpTypes[idx];
-            int idx;
+            int idx = 0;
             for (int i=0;i<m_helpTypes.count();i++)
                 if (m_helpTypes[i].id.toLower()==data[0].toLower())
                     idx=i;
