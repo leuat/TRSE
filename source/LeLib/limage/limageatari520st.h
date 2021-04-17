@@ -6,7 +6,6 @@
 class LImageAtari520ST : public LImageAmiga
 {
 public:
-#define CHECK_BIT(var,pos) (((var) & (1<<(pos)))>>pos)
 
     LImageAtari520ST(LColorList::Type t, int type);
 

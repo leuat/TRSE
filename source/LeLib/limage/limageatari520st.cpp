@@ -1,5 +1,7 @@
 #include "limageatari520st.h"
 
+#define CHECK_BIT(var,pos) (((var) & (1<<(pos)))>>pos)
+
 
 LImageAtari520ST::LImageAtari520ST(LColorList::Type t, int type)  : LImageAmiga(t,type)
 {
