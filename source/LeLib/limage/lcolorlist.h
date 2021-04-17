@@ -25,7 +25,7 @@
 #include <QColor>
 #include <QVector>
 #include <QString>
-//#ifndef NO_GUI
+//#ifndef CLI_VERSION
 #include <QComboBox>
 #include <QPushButton>
 #include <QLayout>
