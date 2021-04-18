@@ -63,7 +63,7 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
                                  m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
 
 
-    } catch (FatalErrorException e) {
+    } catch (const FatalErrorException& e) {
         HandleError(e, "Error during parsing");
     }
 
@@ -91,7 +91,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
             m_dispatcher->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
 
 
-    } catch (FatalErrorException e) {
+    } catch (const FatalErrorException& e) {
         HandleError(e,"Error during pre-build");
         return false;
     }
@@ -120,7 +120,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 //        qDebug() << "Compiler.cpp DISPATCHER starts";
         m_tree->Accept(m_dispatcher.get());
 
-    } catch (FatalErrorException e) {
+    } catch (const FatalErrorException& e) {
         HandleError(e,"Error during build (dispatcher) :");
         return false;
     }

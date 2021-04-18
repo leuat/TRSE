@@ -1063,7 +1063,7 @@ void Methods6502::Poke(Assembler* as)
     //m_node->RequireAddress(m_node->m_params[0],"Poke", m_node->m_op.m_lineNumber);
     AddMemoryBlock(as,0);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (num!=nullptr!=0 && num->m_val==0) {
+    if (num!=nullptr && num->m_val==0) {
         as->Comment("Optimization: shift is zero");
         LoadVar(as,2);
         SaveVar(as,0);
@@ -1071,7 +1071,7 @@ void Methods6502::Poke(Assembler* as)
     }
     // Optimization #2 : if parameter is num AND parameter 2 is num, just add
     QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (num2!=nullptr!=0 && num!=nullptr) {
+    if (num2!=nullptr && num!=nullptr) {
         as->Comment("Optimization: both storage and shift are constant");
         LoadVar(as,2);
         //SaveVar(as,0);
@@ -3423,7 +3423,7 @@ void Methods6502::Clearsound(Assembler *as)
     as->Asm("sta 54272+6" );
     as->Asm("sta 54272+7+6" );
     as->Asm("sta 54272+14+6" );
-/*    as->Asm("sei");
+    as->Asm("sei");
     as->Asm("lda #$ea");
     as->Asm("sta $0315 ");
     as->Asm("lda #$31");

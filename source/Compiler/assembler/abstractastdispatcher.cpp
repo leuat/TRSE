@@ -659,6 +659,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
 
         if (ret==3) node->m_curMemoryBlock = nullptr;
         if (node->m_curMemoryBlock!=nullptr)
+        {
             if (as->m_currentBlock!=nullptr) {
                 if (node->m_curMemoryBlock==nullptr) {
                     bool ok;
@@ -670,6 +671,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeVarDecl> node)
             }
             else
                 node->m_curMemoryBlock=nullptr;
+        }
     }
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
