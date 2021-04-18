@@ -138,7 +138,7 @@ __wait2:
 __wait3:
 	in a,(c)
 	rra
-jr nc,__wait3
+	jr nc,__wait3
 ");
 end;
 

@@ -403,11 +403,14 @@ void MainWindow::VerifyDefaults()
     #endif
 
 
-    if (!m_iniFile->contains("optimizer_remove_unused_symbols"))
-     m_iniFile->setFloat("optimizer_remove_unused_symbols",0);
+   if (!m_iniFile->contains("optimizer_remove_unused_symbols"))
+       m_iniFile->setFloat("optimizer_remove_unused_symbols",0);
 
-    if (!m_iniFile->contains("assembler"))
-        m_iniFile->setString("assembler","OrgAsm");
+   if (!m_iniFile->contains("assembler"))
+       m_iniFile->setString("assembler","OrgAsm");
+
+   if (!m_iniFile->contains("assembler_z80"))
+       m_iniFile->setString("assembler_z80","Pasmo");
 
     m_iniFile->filename = m_iniFileName;
 

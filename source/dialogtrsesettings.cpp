@@ -138,6 +138,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leUserDefinedParameters->setText(m_ini->getString("user_defined_command_parameters"));
 
     ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
+    ui->cmbAssemblerZ80->setCurrentText(m_ini->getString("assembler_z80"));
     ui->cmbPainter->setCurrentIndex((int)m_ini->getdouble("image_painter"));
 
 }
@@ -232,6 +233,7 @@ void DialogTRSESettings::FillToIni()
 
 
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
+    m_ini->setString("assembler_z80", ui->cmbAssemblerZ80->currentText());
 
     m_ini->setStringList("custom_keyword_list", ui->leKeywords->text().split(","));
     m_ini->setStringList("custom_keyword_colour", ui->leColour->text().split(","));

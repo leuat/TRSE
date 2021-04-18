@@ -9,7 +9,7 @@ ZOrgasm::ZOrgasm()
 QString ZOrgasm::Process(QString s)
 {
 //    qDebug() << "Processing : " <<s;
-    QString expr = s;
+    QString expr = s.trimmed();
     if (expr.trimmed()=="")
         return "";
 
@@ -25,16 +25,53 @@ QString ZOrgasm::Process(QString s)
     QString oexpr = expr;
     expr = expr.replace("<","").replace(">","");
     if (!(expr.startsWith("(") && expr.endsWith(")"))) {
+        if (m_regs.contains(expr))
+            return expr;
         bool hasHash = false;
         if (expr.simplified().startsWith("#"))
             hasHash = true;
 
-        qDebug() << "PROCESS: " <<expr <<oexpr << repl;
+//        qDebug() << "PROCESS: " <<expr <<oexpr << repl;
         expr = OrgasmData::BinopExpr(oexpr, val, repl);
-        qDebug() << "AFTER: " <<expr <<oexpr << repl;
+  //      qDebug() << "AFTER: " <<expr <<oexpr << repl;
         if (hasHash)
             expr = "#"+expr;
     }
+    if (m_passType==OrgasmData::PASS_SYMBOLS) {
+        QString tst = expr;
+        QString org = expr;
+        int cur = 0;
+        if (!tst.startsWith("$"))
+            for (QString& sym : m_symbolsList)
+            {
+                //            qDebug() << "Testing for symbol " << sym << tst;
+//                qDebug() << "Contains symbol: " <<tst <<sym;
+                if (!tst.contains(sym))
+                    continue;
+
+
+                int i = m_symbols[sym];
+                if (tst==("<"+sym)) {
+                    expr = expr.replace("<"+sym,"$"+QString::number(i&0xFF,16));
+                    break;
+                }
+                if (tst==(">"+sym)) {
+                   expr = expr.replace(">"+sym,"$"+QString::number((i>>8)&0xFF,16));
+                    break;
+                }
+
+                expr = OrgasmData::ReplaceWord(expr,sym,"$"+QString::number(i,16));
+                if (org!=expr) {
+                    m_symbolsList.move(cur,0);
+                    break;
+                }
+                cur++;
+            }
+
+    }
+
+
+
 
 /*    if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
         throw OrgasmError("Unknown operation: " +orgExpr,ol);
@@ -46,7 +83,7 @@ QString ZOrgasm::Process(QString s)
 void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 {
     //    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
-
+//    qDebug() << "START " <<ol.m_instruction.m_opCode<< ol.m_expr;
     QString expr = ol.m_expr;
     QString orgexpr = expr;
     QByteArray data;
@@ -72,14 +109,16 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     }
     // Fix up jr nz, balle
+    //    if (opCode=="org")
+    //      return false;
+
     if (ol.m_instruction.m_opCode=="jr" || ol.m_instruction.m_opCode=="jp") {
         if (expr.contains(","))
         {
-
             ol.m_instruction.m_opCode = ol.m_instruction.m_opCode+"_"+expr.split(",").first().trimmed();
             expr = expr.split(",").last().trimmed();
             ol.m_expr = expr;
-            qDebug() << "**** REPLACE :" << ol.m_instruction.m_opCode<< expr;
+    //        qDebug() << "**** REPLACE :" << ol.m_instruction.m_opCode<< expr;
         }
     }
     QString orgExpr = expr;
@@ -91,67 +130,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             l2[0] = OrgasmData::ReplaceWord(l2[0],c,m_constants[c]);
 
         }
-
-
-        QString tst = l2[0];
-        QString org = l2[0];
-  //      qDebug() << "ZORG 2" <<l2;
-        tst = tst.replace("#", "").simplified();
-        int cur = 0;
-        if (!tst.startsWith("$"))
-            for (QString& sym : m_symbolsList)
-            {
-                //            qDebug() << "Testing for symbol " << sym << tst;
-//                qDebug() << "Contains symbol: " <<tst <<sym;
-                if (!tst.contains(sym))
-                    continue;
-
-
-                int i = m_symbols[sym];
-                if (tst==("<"+sym)) {
-                    l2[0] = l2[0].replace("<"+sym,"$"+QString::number(i&0xFF,16));
-                    break;
-                }
-                if (tst==(">"+sym)) {
-                    l2[0] = l2[0].replace(">"+sym,"$"+QString::number((i>>8)&0xFF,16));
-                    break;
-                }
-
-                l2[0] = OrgasmData::ReplaceWord(l2[0],sym,"$"+QString::number(i,16));
-                if (org!=l2[0]) {
-                    m_symbolsList.move(cur,0);
-                    break;
-                }
-                cur++;
-            }
-
-        expr = l2[0];
-        if (l2.count()>1)
-            expr+=","+l2[1];
-
-//        qDebug() << "ORGASM " <<expr << org << ol.m_expr;
-/*
-        if (expr!="" && !isRegister(org)) {
-            long val = 0;
-            QString repl = "$1000";
-            if (expr.contains("<") || expr.contains(">"))
-                repl= "#$10";
-            QString oexpr = expr;
-            expr = expr.replace("<","").replace(">","");
-            if (!(expr.startsWith("(") && expr.endsWith(")"))) {
-                bool hasHash = false;
-                if (expr.simplified().startsWith("#"))
-                    hasHash = true;
-                expr = OrgasmData::BinopExpr(oexpr, val, repl);
-                if (hasHash)
-                    expr = "#"+expr;
-            }
-
-            if (val==-1 && pd==OrgasmData::PASS_SYMBOLS) {
-                throw OrgasmError("Unknown operation: " +orgExpr,ol);
-            }
-
-        }*/
     }
 
 
@@ -168,13 +146,12 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     OrgasmInstruction::Type type = OrgasmInstruction::imp;
     MOSOperandCycle cyc;
 
-    //    if (opCode=="org")
-    //      return false;
-
+    // transform ld a,b to "ld<a>b (none)"
+    // ld a,10  to  ld<a 10 (imm)
     if (expr.contains(",")) {
         QStringList lst = expr.split(",");
-        QString a1 = lst[0].toLower().simplified().trimmed();
-        QString a2 = lst[1].toLower().simplified().trimmed();
+        QString a1 = lst[0].simplified().trimmed();
+        QString a2 = lst[1].simplified().trimmed();
         if (isRegister(a1)) {
             m_opCode +="<"+a1;
             expr = a2;
@@ -189,18 +166,39 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 
     }
-    if (isRegister(expr)) {
+    // if the extra expression is a register, attach it
+    if (isRegister(expr.trimmed())) {
+//        qDebug() << "IS REGISTER : "<<m_opCode<<expr;
         m_opCode +="<"+expr;
         expr = "";
 
     }
     else expr = Process(expr);
 
+    expr = expr.trimmed();
+    m_opCode = m_opCode.trimmed();
 
     expr = expr.remove("[");
     expr = expr.remove("]");
-    qDebug() << "OPCODE  " <<m_opCode << expr;
 
+    // Finally, check if (c) or (d) or (e) etc
+    QString test = expr;
+    test = test.remove("(").remove(")");
+    if (m_regs.contains(test)) {
+        // Uh oh: look out for "in a,(c)"
+        m_opCode+=">"+expr;
+        expr = "";
+    }
+    // "Special" registers: discern between ld hl,val and ld hl,(val) by adding a "()"
+    if (expr.startsWith("(")) {
+        if (m_opCode.endsWith("<hl"))
+            m_opCode+="()";
+    }
+
+
+
+    qDebug() << "OPCODE  " <<m_opCode << expr;
+    //qDebug() << m_opCodes.m_opCycles.keys();
 
 
     if (m_opCodes.m_opCycles.contains(m_opCode))
@@ -208,15 +206,22 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     else {
         if (m_opCode =="cpu" || m_opCode=="end")
             return; // Ignore
+    //    qDebug() << "WOOOT "<<m_opCode<<m_opCodes.m_opCycles.contains(m_opCode);
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
-
     if (cyc.m_opcodes.count()==0)
         throw OrgasmError("Opcode illegal or not implemented yet: '" + m_opCode + "' on line '" + orgexpr+"'",ol);
 
 
-    if (expr!="")
+    if (expr!="") {
         type =  ol.m_instruction.getTypeFromParamsZ80(expr);
+        if (m_opCode.startsWith("jp") || m_opCode.startsWith("call")) {
+            type = OrgasmInstruction::abs;
+//            qDebug() << "Replacing to ABS " << m_opCode <<expr;
+
+        }
+
+    }
     else
         type = OrgasmInstruction::none;
 
@@ -231,33 +236,47 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         throw OrgasmError("Unknown or non-implemented opcode: " + m_opCode,ol);
 
     int code = cyc.m_opcodes[(int)type];
-    qDebug() <<"OPCODE: " << Util::numToHex(code) << type;
+    // Type not found? then go ABS!
+    if (code==0) {
+        code = cyc.m_opcodes[(int)OrgasmInstruction::abs];
+        type = OrgasmInstruction::abs;
+    }
+/*
+    if (m_opCode.endsWith("<hl")) {
+            qDebug() <<Util::numToHex(m_pCounter) <<"OPCODE: " << m_opCode <<expr<<Util::numToHex(code) << type <<expr;
+    }
+*/
+//    qDebug() <<"OPCODE: " << m_opCode <<Util::numToHex(code) << type <<expr;
 
 
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
-        qDebug() << "ERROR on line : " << m_opCode + " " +expr;
+        qDebug() << "ERROR on line : " << m_opCode + " " +expr << "Type:"<<type;
         throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +QString::number(type) + "        on line " + ol.m_expr,ol );
     }
 
 
-
+    // 16-bit data val to add (or 8)
     int val=0;
     if (type!=OrgasmInstruction::none) {
         QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
-        val = Util::NumberFromStringHex(num);
-        qDebug() << "VAL : "<<val << num << expr;
+        val = Util::NumberFromStringHex(Util::BinopString(num));
+//        qDebug() << "VAL : "<<val << num << expr;
     }
 
-
+    // 16-bit extra OP code
     if (code>=0x100)
         data.append((code>>8)&0xff);
 
     data.append(code&0xFF);
-    if (code==0x18) qDebug() << " *************** HERE **************** ";
-
-    if (m_opCode.startsWith("jr_") ) {
+    /*
+    if (code==0x32) {
+        qDebug() << " *************** HERE **************** ";
+        qDebug() << "VAL : "<<Util::numToHex(val) << m_opCode << expr;
+    }
+*/  // Relative jump
+    if (m_opCode.startsWith("jr") ) {
         int diff = (val)-m_pCounter-2;
-        qDebug() << " ****** RELATIVE: " <<diff <<m_pCounter;
+//        qDebug() << " ****** RELATIVE: " <<m_opCode<<expr<< diff <<m_pCounter;
         if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
             throw OrgasmError("Branch out of range : " +QString::number(diff) + " :" + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber)+"<br>Please remember that you can use the keyword <b>'offpage'</b> in your block to let OrgAsm know that the code should perform off-page jumps.",ol);
         }
@@ -265,7 +284,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     else
 
-        if (type==OrgasmInstruction::zp || type==OrgasmInstruction::zpx || type==OrgasmInstruction::zpy || type == OrgasmInstruction::izx || type == OrgasmInstruction::izy || type == OrgasmInstruction::izz|| type==OrgasmInstruction::imm) {
+        if (type==OrgasmInstruction::imm) {
             data.append(val);
         }
         else

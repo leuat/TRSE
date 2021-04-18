@@ -140,8 +140,8 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("\t", " ");
     line = line.replace("dc.b", ".byte");
     if (m_cpuFlavor==CPUFLAVOR_Z80) {
-        line = line.replace("dw", ".word");
-        line = line.replace("db", ".byte");
+//        line = line.replace("dw", ".word");
+  //      line = line.replace(" db", ".byte");
     }
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
@@ -269,9 +269,10 @@ OrgasmLine Orgasm::LexLine(int i) {
         //qDebug() << l.m_expr;
         return l;
     }
-    if (lst[0].toLower()==".byte") {
+    if (lst[0].toLower()==".byte" || lst[0].toLower()=="db") {
         l.m_type = OrgasmLine::BYTE;
         l.m_expr = line.replace(".byte", "").trimmed();//.simplified();
+        l.m_expr = line.replace(" db ", "").trimmed();//.simplified();
         return l;
     }
     if (lst[0].toLower()=="ds.b") {
@@ -279,21 +280,24 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_expr = line.replace("ds.b", "").trimmed();//.simplified();
         return l;
     }
-    if (lst[0].toLower()==".word") {
+    if (lst[0].toLower()==".word" || lst[0].toLower()=="dw") {
         l.m_type = OrgasmLine::WORD;
         l.m_expr = line.replace(".word", "").trimmed();//.simplified();
+        l.m_expr = line.replace(" dw ", "").trimmed();//.simplified();
         return l;
     }
-
-
     l.m_type = OrgasmLine::INSTRUCTION;
     l.m_instruction.Init(lst);
+
 /*    if (lst.count()>1)
         l.m_expr = lst[1];*/
     l.m_expr="";
     // z80 hack
     for (int i=0;i<lst.count()-1;i++)
         l.m_expr +=lst[i+1] + " ";
+
+//    if (lst[0].contains("jr"))
+  //      qDebug() <<l.m_instruction.m_opCode<<l.m_expr;
 
     //        l.m.l.m_instruction.getTypeFromParams(lst[1]);
     //      l.m_op
@@ -448,7 +452,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
     for (OrgasmLine& ol : m_olines) {
         if (ol.m_type == OrgasmLine::CONSTANT)
             continue;
-
+//        qDebug() << "OG : "<<ol.m_instruction.m_opCode;
         if (ol.m_label!="" && pt == OrgasmData::PASS_LABELS) {
 //            qDebug() << "Writing to label: " << ol.m_label << Util::numToHex(m_pCounter);
             if (m_constants.contains(ol.m_label)) {
@@ -808,7 +812,6 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     int code = cyc.m_opcodes[(int)type];
 
-
     if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
         throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +QString::number(type) + "        on line " + ol.m_expr,ol );
@@ -965,9 +968,10 @@ OrgasmInstruction::Type OrgasmInstruction::getTypeFromParamsZ80(QString s) {
         return none;
 
 
-    if (!s.startsWith("(") && !s.startsWith("$"))
-        return imm;
+    if ((s.startsWith("(") || s.startsWith("[")))
+        return abs;
 
+    return imm;
     s = s.replace("[","(");
     s = s.replace("]",")");
 

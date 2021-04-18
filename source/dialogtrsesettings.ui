@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>664</height>
+    <height>702</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -757,32 +757,6 @@
               <string>Assembler selection MOS6502 (C64, C128, NES, VIC20, PET, BBC)</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_6">
-              <item row="3" column="0">
-               <widget class="QGroupBox" name="groupBox_8">
-                <property name="title">
-                 <string>X86 assembler</string>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_15">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_35">
-                   <property name="text">
-                    <string>NASM location</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="leNasm"/>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QPushButton" name="btnNasm">
-                   <property name="text">
-                    <string>...</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
               <item row="0" column="0">
                <layout class="QVBoxLayout" name="verticalLayout_7">
                 <item>
@@ -812,7 +786,33 @@
                 </item>
                </layout>
               </item>
-              <item row="6" column="0">
+              <item row="4" column="0">
+               <widget class="QGroupBox" name="groupBox_8">
+                <property name="title">
+                 <string>X86 assembler</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_15">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_35">
+                   <property name="text">
+                    <string>NASM location</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="leNasm"/>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QPushButton" name="btnNasm">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="7" column="0">
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="title">
                  <string>External 6502 Assembler &amp; tools</string>
@@ -883,7 +883,37 @@
                 </layout>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="5" column="0">
+               <widget class="QGroupBox" name="groupBox_9">
+                <property name="title">
+                 <string>Gameboy RGB assembler</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_16">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_38">
+                   <property name="text">
+                    <string>RGB Asm directory:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLineEdit" name="leRGBAsmDir">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QPushButton" name="btnRgbAsmDir">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="3" column="0">
                <widget class="QGroupBox" name="groupBox_4">
                 <property name="title">
                  <string>Assembler Motorola 68000 (Amiga/Atari ST etc)</string>
@@ -947,44 +977,14 @@
                 </layout>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="label_17">
                 <property name="text">
                  <string>OrgAsm is TRSE's built-in assembler. Use Dasm if something goes wrong</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QGroupBox" name="groupBox_9">
-                <property name="title">
-                 <string>Gameboy RGB assembler</string>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_16">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_38">
-                   <property name="text">
-                    <string>RGB Asm directory:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="leRGBAsmDir">
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QPushButton" name="btnRgbAsmDir">
-                   <property name="text">
-                    <string>...</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="5" column="0">
+              <item row="6" column="0">
                <widget class="QGroupBox" name="groupBox_10">
                 <property name="title">
                  <string>Z80 Pasmo assembler</string>
@@ -1013,6 +1013,31 @@
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item row="1" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,2">
+                <item>
+                 <widget class="QLabel" name="label_55">
+                  <property name="text">
+                   <string>Z80 Assembler</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="cmbAssemblerZ80">
+                  <item>
+                   <property name="text">
+                    <string>Pasmo</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>ZOrgAsm</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </widget>

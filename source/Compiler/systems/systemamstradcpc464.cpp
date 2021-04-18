@@ -39,8 +39,11 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
     int codeEnd = 0;
 
     output+="<br>";
+    bool useOrgasm = m_settingsIni->getString("assembler_z80")!="Pasmo";
+
+
     QString assembler = m_settingsIni->getString("pasmo");
-    if (!QFile::exists(assembler)) {
+    if (!useOrgasm && !QFile::exists(assembler)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
         m_buildSuccess = false;
         return;
@@ -57,10 +60,12 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
   /*  if (QFile::exists(filename+".dsk"))
         QFile::remove(filename+".dsk");
 */
-    QProcess process;
-    StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
-
-//    AssembleZOrgasm(output,filename,currentDir,symTab);
+    if (useOrgasm)
+        AssembleZOrgasm(output,filename,currentDir,symTab);
+    else {
+        QProcess process;
+        StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
+    }
 
 
     if (!QFile::exists(filename+".bin")) {
