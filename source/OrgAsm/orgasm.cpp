@@ -291,6 +291,7 @@ OrgasmLine Orgasm::LexLine(int i) {
 /*    if (lst.count()>1)
         l.m_expr = lst[1];*/
     l.m_expr="";
+    // z80 hack
     for (int i=0;i<lst.count()-1;i++)
         l.m_expr +=lst[i+1] + " ";
 
@@ -357,7 +358,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         out.close();
     }
     m_output = "Complete.";
-
+//    qDebug() << Util::numToHex( m_data[0]) << Util::numToHex( m_data[1]);
 
     }
     catch (OrgasmError e) {
@@ -438,6 +439,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
 {
     m_pCounter = 0;
 //    return;
+    m_passType = pt;
     for (QString k:m_constants.keys())
         m_constList.append(k);
 
@@ -616,8 +618,10 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
 {
     if (m_pCounter == 0) {
         int val = Util::NumberFromStringHex(ol.m_expr);
-        m_data.append(val&0xFF);
-        m_data.append((val>>8)&0xFF);
+        if (m_cpuFlavor!=CPUFLAVOR_Z80) {
+            m_data.append(val&0xFF);
+            m_data.append((val>>8)&0xFF);
+        }
         m_pCounter = val;
         return;
     }
@@ -738,6 +742,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
         if (expr!="") {
             long val = 0;
+            // Replace with *something* temporary
             QString repl = "$1000";
             if (expr.contains("<") || expr.contains(">"))
                 repl= "#$10";
@@ -951,4 +956,43 @@ QString OrgasmData::BinopExpr(QString& expr, long& val, QString rep)
 /*    if (hasHash)
         expr = "#"+expr;*/
     return expr;
+}
+
+OrgasmInstruction::Type OrgasmInstruction::getTypeFromParamsZ80(QString s) {
+    s=s.toLower();
+    //        qDebug() << " Getting type from : " << s;
+    if (s=="")
+        return none;
+
+
+    if (!s.startsWith("(") && !s.startsWith("$"))
+        return imm;
+
+    s = s.replace("[","(");
+    s = s.replace("]",")");
+
+    long i = 0;
+    bool ok;
+    if (s.contains(",")) {
+        ok = Util::NumberFromStringHex(s.split(",")[0],i);
+    }
+    else
+    {
+        ok = Util::NumberFromStringHex(s,i);
+    }
+
+    if (!ok)
+        i  = 0x1000; // Force using address
+
+    return abs;
+    /*            if (!s.contains("(") && i>=256 && !s.contains(")") && !s.contains(",x") && !s.contains(",y")) {
+
+                return abs;
+
+            }
+            if (s.contains("(")&&i>=256 && s.contains(")") && !s.contains(","))
+                return ind;
+*/
+
+    return none;
 }
