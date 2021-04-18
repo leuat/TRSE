@@ -85,8 +85,8 @@ win32-msvc*{
 
 linux*{
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
-    # TODO(ColinPitrat): Progressively fix and activate the most valuable warnings
-    QMAKE_CXXFLAGS += -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare -Wno-comment -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-missing-field-initializers -Wno-unused-function -Wno-unused-but-set-variable -Wno-catch-value -Wno-unused-value -Wno-type-limits
+    # TODO(ColinPitrat): Progressively fix and activate the most valuable warnings. Looseley ordered so that the last ones are the most valuable to remove.
+    QMAKE_CXXFLAGS += -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-unused-but-set-variable -Wno-unused-value -Wno-sign-compare -Wno-missing-field-initializers -Wno-parentheses -Wno-delete-non-virtual-dtor -Wno-type-limits -Wno-stringop-overflow
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl
