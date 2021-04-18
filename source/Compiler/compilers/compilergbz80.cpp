@@ -75,10 +75,10 @@ bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
         int a = d.split(":")[0].toInt(&ok,16);
         QString b = d.split(":")[1];
         int val = Util::NumberFromStringHex("$"+b);
-        if (val>codeStart & val <0x4000)
+        if (val>codeStart && val <0x4000)
             maxB1=val;
 
-        if (val>varStart & val <0xFFFF)
+        if (val>varStart && val <0xFFFF)
             maxV1=val;
 
         if (val>=0x4000 && val<=0x7FFF) {
