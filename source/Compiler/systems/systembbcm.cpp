@@ -59,7 +59,7 @@ bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniDa
         }
         try {
             AddFileToDisk(di,fn,name,address);
-        } catch (AsmException_FileError e) {
+        } catch (const AsmException_FileError& e) {
             qDebug() << "ERROR when adding file '"+name+"' to disk : " <<e.Message();
         }
     }

@@ -3423,7 +3423,7 @@ void Methods6502::Clearsound(Assembler *as)
     as->Asm("sta 54272+6" );
     as->Asm("sta 54272+7+6" );
     as->Asm("sta 54272+14+6" );
-/*    as->Asm("sei");
+    as->Asm("sei");
     as->Asm("lda #$ea");
     as->Asm("sta $0315 ");
     as->Asm("lda #$31");

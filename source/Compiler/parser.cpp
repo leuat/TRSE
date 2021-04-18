@@ -873,7 +873,7 @@ void Parser::VerifyTypeSpec(Token& t)
 /*        if (!ok)
             m_symTab->Lookup(t.m_value,t.m_lineNumber);
 */
-    } catch (FatalErrorException fe) {
+    } catch (FatalErrorException& fe) {
         fe.message = "Unknown type specification : " +t.m_value;
         throw fe;
     }
@@ -2102,7 +2102,7 @@ bool Parser::nextIsExpr()
     try {
         QSharedPointer<Node> val = Expr();
     }
-    catch(FatalErrorException fe) {
+    catch(const FatalErrorException& fe) {
         ret = false;
     }
   //  qDebug() << "Next is EXPRESSION : " << ret;
@@ -3727,7 +3727,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
             try {
                m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
-            } catch (FatalErrorException fe) {
+            } catch (FatalErrorException& fe) {
                 fe.message = fe.message + "When using the <font color=\"yellow\">global</font> keyword, the variable must in question must be declared in the global variable scope. ";
                 throw fe;
             }
@@ -4104,7 +4104,7 @@ QSharedPointer<Node> Parser::BuiltinFunction()
                 QString pname = m_currentToken.m_value;
                 try {
                     paramList.append(Expr());
-                } catch (FatalErrorException fe) {
+                } catch (FatalErrorException& fe) {
                     QString em = "Could not find symbol '<font color=\"#FF8000\">" + prev + "</font>'<br>";
                     QString similarSymbol = m_symTab->findSimilarSymbol(prev,65,2,m_procedures.keys());
                     if (similarSymbol!="") {
@@ -5122,7 +5122,7 @@ void Parser::HandleUseTPU(QString fileName)
                              ,m_vicMemoryConfig,
                              Util::fromStringList(m_projectIni->getStringList("global_defines")),
                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
-    }catch (FatalErrorException e)
+    } catch (FatalErrorException& e)
     {
         e.message = "<font color=\"#FFB030\">Error during compiling the Turbo Rascal Unit file : '</font><font color=\"yellow\">" +fileName + "</font>'<font color=\"#FFB030\"> on line " +QString::number(e.linenr)+ "</font><br><font color=\"red\">"+e.message+"</font>";
         e.linenr = m_currentToken.m_lineNumber;
