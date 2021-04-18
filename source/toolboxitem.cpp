@@ -445,7 +445,7 @@ void WetBrush::Perform(int x, int y, unsigned char color, LImage *img, bool isPr
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
 
-            float mval = matrix[(i)&7 + (j&7)*8]/4.0;
+            float mval = matrix[(i&7) + (j&7)*8]/4.0;
             int d = m/2;
             float xx = i-d;
             float yy = (j-d);
