@@ -27,7 +27,7 @@ class OrgasmInstruction {
         Type m_type;
         int m_size = 0;
 //        enum Pass { passSymbol, passCompile };
-
+        bool m_bracketsAroundVariables = false;
 
         void Init(QStringList lst) {
             m_opCode = lst[0];
@@ -84,6 +84,49 @@ class OrgasmInstruction {
             if (s.contains("(")&&i>=256 && s.contains(")") && !s.contains(","))
                 return ind;
 
+
+            return none;
+        }
+
+
+        Type getTypeFromParamsZ80(QString s) {
+            s=s.toLower();
+            //        qDebug() << " Getting type from : " << s;
+            if (s=="")
+                return none;
+
+            if (!s.startsWith("("))
+                return imm;
+            long i = 0;
+            bool ok;
+            if (s.contains(",")) {
+                ok = Util::NumberFromStringHex(s.split(",")[0],i);
+            }
+            else
+            {
+                ok = Util::NumberFromStringHex(s,i);
+            }
+
+            if (!ok)
+                i  = 0x1000; // Force using address
+
+/*            if (s.contains("(") && s.contains(",x)")) {
+                return izx;
+            }
+            if (s.contains("(") && s.contains("),y"))
+                return izy;
+            if (s.contains("(") && s.contains("),z"))
+                return izz;
+                */
+            return abs;
+/*            if (!s.contains("(") && i>=256 && !s.contains(")") && !s.contains(",x") && !s.contains(",y")) {
+
+                return abs;
+
+            }
+            if (s.contains("(")&&i>=256 && s.contains(")") && !s.contains(","))
+                return ind;
+*/
 
             return none;
         }
@@ -202,6 +245,7 @@ public:
     static const int CPUFLAVOR_6502_STOCK = 0;
     static const int CPUFLAVOR_6502_ILLEGAL = 1;
     static const int CPUFLAVOR_GS4510 = 2;
+    static const int CPUFLAVOR_Z80 = 3;
 
     int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
 
@@ -224,7 +268,7 @@ public:
     void ProcessWordData(OrgasmLine& ol);
     void ProcessOrgData(OrgasmLine& ol);
     void ProcessIncBin(OrgasmLine& ol);
-    void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
+    virtual void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
     void SaveSymbolsList(QString dupFile);
 signals:
     void EmitTick(QString val);

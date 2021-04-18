@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=TRSE
+GenericName=TRSE (Turbo Rascal Syntax error, ";" expected but "BEGIN")
+Comment=Development suite for 8/16 bits line of computers
+Comment[fr]=Suite de développement pour ordinateurs 8/16 bits
+Icon=trse
+Exec=trse
+Terminal=false
+Categories=Development;

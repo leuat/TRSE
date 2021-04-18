@@ -30,7 +30,6 @@ ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
 
-
 macx{
     #LIBS += -openmp
 #    ICON = trse.icns
@@ -91,6 +90,13 @@ linux*{
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs/lua/ -llua -ldl
+
+    # TODO(ColinPitrat): Complete the `make install` for linux.
+    bin.path = $$PREFIX/bin
+    bin.files += $$TARGET
+    share.path = $$PREFIX/share
+    share.files += $$PWD/Publish/publish_linux/share/*
+    INSTALLS += bin share
 }
 
 
@@ -180,6 +186,7 @@ SOURCES += main.cpp\
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
     source/LeLib/util/utilclasses.cpp \
+    source/OrgAsm/zorgasm.cpp \
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/PmmEdit/trsehighlighter.cpp \
@@ -415,6 +422,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \
     source/LeLib/util/utilclasses.h \
+    source/OrgAsm/zorgasm.h \
     source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \
     source/PmmEdit/trsehighlighter.h \

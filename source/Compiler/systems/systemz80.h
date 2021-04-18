@@ -17,6 +17,7 @@ public:
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
     virtual void PostProcess(QString& text, QString file, QString currentDir);
+    virtual void AssembleZOrgasm(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
 
     QString CompressFile(QString fileName) override;
 };
