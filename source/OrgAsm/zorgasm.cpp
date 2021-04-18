@@ -19,7 +19,7 @@ QString ZOrgasm::Process(QString s)
     long val = 0;
     QString repl = "";
     if (m_passType==OrgasmData::PASS_LABELS)
-        repl = "($1000)";
+        repl = "$1000";
     if (expr.contains("<") || expr.contains(">"))
         repl= "#$10";
     QString oexpr = expr;
@@ -191,15 +191,15 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     // "Special" registers: discern between ld hl,val and ld hl,(val) by adding a "()"
     if (expr.startsWith("(")) {
-        if (m_opCode.endsWith("<hl"))
+        if (m_opCode.endsWith("<hl") || m_opCode.endsWith("<bc") || m_opCode.endsWith("<a") || m_opCode.endsWith("<iy") || m_opCode.endsWith("<ix"))
             m_opCode+="()";
     }
 
 
-
-    qDebug() << "OPCODE  " <<m_opCode << expr;
+/*    if (m_opCode=="ld<a>(iy)")
+        qDebug() << "OPCODE  " <<m_opCode << expr ;
     //qDebug() << m_opCodes.m_opCycles.keys();
-
+*/
 
     if (m_opCodes.m_opCycles.contains(m_opCode))
         cyc = m_opCodes.m_opCycles[m_opCode];
@@ -226,7 +226,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         type = OrgasmInstruction::none;
 
 
-
     // Override types or pass symbol
     //    if (pass==OrgasmData::PASS_LABELS) {
     /*        if (m_opCode == "jmp" || m_opCode=="jsr")
@@ -241,6 +240,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         code = cyc.m_opcodes[(int)OrgasmInstruction::abs];
         type = OrgasmInstruction::abs;
     }
+
+
 /*
     if (m_opCode.endsWith("<hl")) {
             qDebug() <<Util::numToHex(m_pCounter) <<"OPCODE: " << m_opCode <<expr<<Util::numToHex(code) << type <<expr;
@@ -263,6 +264,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 //        qDebug() << "VAL : "<<val << num << expr;
     }
 
+
+
     // 16-bit extra OP code
     if (code>=0x100)
         data.append((code>>8)&0xff);
@@ -274,6 +277,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         qDebug() << "VAL : "<<Util::numToHex(val) << m_opCode << expr;
     }
 */  // Relative jump
+
+
     if (m_opCode.startsWith("jr") ) {
         int diff = (val)-m_pCounter-2;
 //        qDebug() << " ****** RELATIVE: " <<m_opCode<<expr<< diff <<m_pCounter;
@@ -294,6 +299,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             }
     if (pd != OrgasmData::PASS_SYMBOLS)
         expr = orgExpr;
+
+    if (m_opCode=="ld<a>(iy)")
+        data.append(val);
 
 
 

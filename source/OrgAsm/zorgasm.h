@@ -13,7 +13,7 @@ class ZOrgasm : public Orgasm
 public:
     ZOrgasm();
     void ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd) override;
-    QStringList m_regs = QStringList() << "a" <<"b"<<"c"<<"d"<<"af"<<"bc"<<"hl"<<"de"<< "z" <<"h" <<"l"<<"e";
+    QStringList m_regs = QStringList() << "a" <<"b"<<"c"<<"d"<<"af"<<"bc"<<"hl"<<"de"<< "z" <<"h" <<"l"<<"e"<<"ix"<<"iy";
     bool isRegister(QString str) {
         return m_regs.contains(str.toLower());
     };

@@ -60,8 +60,11 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
   /*  if (QFile::exists(filename+".dsk"))
         QFile::remove(filename+".dsk");
 */
-    if (useOrgasm)
+    if (useOrgasm) {
         AssembleZOrgasm(output,filename,currentDir,symTab);
+        QProcess process;
+        StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin_ok", output);
+    }
     else {
         QProcess process;
         StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
