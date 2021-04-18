@@ -5,10 +5,7 @@ program Text;
 
 var
   hw_i: byte=0;
-  bo: byte;
-  joy1: byte;
-  joy2: byte;
-  ch: byte;
+  ch: byte=0;
   matrix: array[8] of byte;
   message: string = ("Print a pointer");
 
@@ -68,7 +65,7 @@ begin
   text::SetCharMatrix(108, #matrix);
   text::PutChar(108);
 
-  // Reprint Hello, world with the modified 'l' char
+  // Print Hello, world with the modified 'l' char
   text::MoveCursorTo(1, 7);
   text::Print("Hello, world!\r\n");
   input::WaitKey();
@@ -79,16 +76,15 @@ begin
   text::MoveCursorTo(1, 10);
   text::PutChar(ch);
 
-  // Enable cursor
-  text::EnableCursor(1);
-  input::WaitKey();
-
-
   text::MoveCursorTo(8, 7);
   ch := text::GetChar();
   text::MoveCursorTo(2, 10);
   text::PutChar(ch);
-   input::WaitKey();
+  input::WaitKey();
+
+  // Enable cursor
+  text::EnableCursor(1);
+  input::WaitKey();
 
   // Disable cursor
   text::EnableCursor(0);
@@ -98,10 +94,10 @@ begin
   text::MoveCursorTo(1, 11);
   text::Print("GetPen: ");
   text::PutChar(text::GetPen()+48);
-   text::MoveCursorTo(1, 12);
+  text::MoveCursorTo(1, 12);
   text::Print("GetPaper: ");
-  text::PutChar(text::GetPaper()+48);    
-   text::MoveCursorTo(1, 13);
+  text::PutChar(text::GetPaper()+48);
+  text::MoveCursorTo(1, 13);
   text::SetPen(3);
   text::Print("SetPen 3\r\n");
   text::SetPaper(2);
@@ -111,7 +107,7 @@ begin
   text::PutChar(text::GetPen()+48);
   text::MoveCursorTo(1, 16);
   text::Print("GetPaper: ");
-  text::PutChar(text::GetPaper()+48);    
+  text::PutChar(text::GetPaper()+48);
   input::WaitKey();
 
   // Swap colors
@@ -142,23 +138,23 @@ begin
   text::Print("Print after hard reset");
   input::WaitKey();
 
-  // Window
-  for hw_i := 0 to 8 do 
+  // Windows
+  for hw_i := 0 to 8 do
   begin
     text::SelectWindow(hw_i);
     text::SetWindow(hw_i, 3*hw_i, 8+hw_i, 3*hw_i+2);
     text::SetPaper(hw_i);
-    text::SetPen(hw_i+8);        
+    text::SetPen(hw_i+8);
     text::ClearWindow();
     text::Print("Window #");
   end;
   input::WaitKey();
 
-  for hw_i := 0 to 8 do 
+  for hw_i := 0 to 8 do
   begin
     text::SelectWindow(hw_i);
     text::MoveCursorTo(9, 1);
     text::PutChar(48+hw_i);
-  end;   
+  end;
   input::WaitKey();
 end.
