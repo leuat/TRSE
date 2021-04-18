@@ -24,7 +24,7 @@ public:
 
 
 
-    QVector<uchar> m_opcodes;
+    QVector<int> m_opcodes;
 
     MOSOperandCycle() {}
     MOSOperandCycle(QString name, int implied, int immediate, int absolute, int abswp, int zp, int zpwp) {

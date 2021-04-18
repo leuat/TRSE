@@ -5047,6 +5047,10 @@ void Parser::HandleProjectSettingsPreprocessors()
         m_projectIni->setFloat("exomizer_toggle", val.toInt());
         return;
     }
+    if (cmd == "system") {
+        m_projectIni->setString("system", val);
+        return;
+    }
 
     Eat(); // H
 }

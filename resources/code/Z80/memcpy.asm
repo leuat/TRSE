@@ -8,9 +8,8 @@ z80_copy_mem:
     sub     c
     and     15
     add     a,a
-    ld      (z80_lp_entry),a
-    jr      $
-z80_lp_entry    equ $-1
+    ld      (z80_copy_lp-1),a
+    jr      z80_copy_lp ; will be overwritten
 z80_copy_lp:
     ldi
     ldi

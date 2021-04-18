@@ -58,9 +58,9 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         QFile::remove(filename+".dsk");
 */
     QProcess process;
-    StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
+//    StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
 
-//    AssembleZOrgasm(output,filename,currentDir,symTab);
+    AssembleZOrgasm(output,filename,currentDir,symTab);
 
 
     if (!QFile::exists(filename+".bin")) {

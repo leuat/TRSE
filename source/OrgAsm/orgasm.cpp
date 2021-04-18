@@ -36,7 +36,7 @@ void Orgasm::LoadCodes(int CPUFlavor)
         if (s=="") continue;
         if (s.startsWith("#")) continue;
         QStringList lst = s.split(",");
-        QVector<uchar> opCodes;
+        QVector<int> opCodes;
         for (int i=0;i<lst.count()-1;i++) {
             bool ok;
             int code = lst[i+1].toInt(&ok, 16);
@@ -139,8 +139,10 @@ OrgasmLine Orgasm::LexLine(int i) {
 //    line = line.replace("//",";");
     line = line.replace("\t", " ");
     line = line.replace("dc.b", ".byte");
-    line = line.replace("dw", ".word");
-    line = line.replace("db", ".byte");
+    if (m_cpuFlavor==CPUFLAVOR_Z80) {
+        line = line.replace("dw", ".word");
+        line = line.replace("db", ".byte");
+    }
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
