@@ -28,7 +28,7 @@
      <property name="childrenCollapsible">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutImageWidget">
       <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,200,0">
        <item>
         <widget class="QLabel" name="lblName">
@@ -104,7 +104,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutToolsWidget">
       <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="1,20">
        <property name="spacing">
         <number>0</number>
@@ -1411,6 +1411,13 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Grid size:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QComboBox" name="cbmGridSize">
          <item>
           <property name="text">
@@ -1457,13 +1464,6 @@
            <string>3x3</string>
           </property>
          </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Grid size:</string>
-         </property>
         </widget>
        </item>
       </layout>
