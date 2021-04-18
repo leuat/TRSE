@@ -7,15 +7,14 @@ var
    q: pointer;
 
 /*
-	Joystick bits
+  Joystick bits
 
-	0 = Up
-	1 = Down
-	2 = Left
-	3 = Right
-	4 = Fire 1
-	5 = Fire 2
-
+  0 = Up
+  1 = Down
+  2 = Left
+  3 = Right
+  4 = Fire 1
+  5 = Fire 2
 */
 
 const JOYUP: byte = 1;
@@ -27,24 +26,24 @@ const JOYFIRE2: byte = 32;
 
 /*
 TODO(ColinPitrat):
-   BB0C KM_CHAR_RETURN   in: A=char (writeback max one char to keybuf)
-   BB0F KM_SET_EXPAND    in: B=code, HL=ptr to new string, C=length
-   BB12 KM_GET_EXPAND    in: A=code (0-1F,80-9F), L=index, out:A=char, cy,zf
-   BB15 KM_EXP_BUF_RESET in: de=begin, hl=length of buffer, out: cy: 1=okay
-   BB21 KM_GET_LOCKS     out: H=caps lock (caps), L=shift lock (ctrl+caps)
-   BB24 KM_GET_JOYSTICK  out: H=joystick 0, L=joystick 1
-   BB27 KM_SET_TRANSLATE in: A=keyno, B=char (normal)
-   BB2A KM_GET_TRANSLATE in: A=keyno, out: A=char (normal)
-   BB2D KM_SET_SHIFT     in: A=keyno, B=char (with shift)
-   BB30 KM_GET_SHIFT     in: A=keyno, out: A=char (with shift)
-   BB33 KM_SET_CTRL      in: A=keyno, B=char (with control)
-   BB36 KM_GET_CTRL      in: A=keyno, out: A=char (with control)
-   BB39 KM_SET_REPEAT    in: A=keyno, B=repeat flag (FFh=on)
-   BB3C KM_GET_REPEAT    in: A=keyno, out: nz=repeat
-   BB42 KM_GET_DELAY     out: H=1st delay, L=repeat delay
-   BB45 KM_ARM_BREAK     in: de=procedure, c=ROM config
-   BB48 KM_DISARM_BREAK  in: none
-   BB4B KM_BREAK_EVENT
+  BB0C KM_CHAR_RETURN   in: A=char (writeback max one char to keybuf)
+  BB0F KM_SET_EXPAND    in: B=code, HL=ptr to new string, C=length
+  BB12 KM_GET_EXPAND    in: A=code (0-1F,80-9F), L=index, out:A=char, cy,zf
+  BB15 KM_EXP_BUF_RESET in: de=begin, hl=length of buffer, out: cy: 1=okay
+  BB21 KM_GET_LOCKS     out: H=caps lock (caps), L=shift lock (ctrl+caps)
+  BB24 KM_GET_JOYSTICK  out: H=joystick 0, L=joystick 1
+  BB27 KM_SET_TRANSLATE in: A=keyno, B=char (normal)
+  BB2A KM_GET_TRANSLATE in: A=keyno, out: A=char (normal)
+  BB2D KM_SET_SHIFT     in: A=keyno, B=char (with shift)
+  BB30 KM_GET_SHIFT     in: A=keyno, out: A=char (with shift)
+  BB33 KM_SET_CTRL      in: A=keyno, B=char (with control)
+  BB36 KM_GET_CTRL      in: A=keyno, out: A=char (with control)
+  BB39 KM_SET_REPEAT    in: A=keyno, B=repeat flag (FFh=on)
+  BB3C KM_GET_REPEAT    in: A=keyno, out: nz=repeat
+  BB42 KM_GET_DELAY     out: H=1st delay, L=repeat delay
+  BB45 KM_ARM_BREAK     in: de=procedure, c=ROM config
+  BB48 KM_DISARM_BREAK  in: none
+  BB4B KM_BREAK_EVENT
  */
 
 // Resets the keyboard manager.
