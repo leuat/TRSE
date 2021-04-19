@@ -1,0 +1,15 @@
+iconengines/qsvgicon.dll
+iconengines/qsvgicond.dll
+imageformats/qgif.dll
+imageformats/qicns.dll
+imageformats/qico.dll
+imageformats/qjpeg.dll
+imageformats/qsvg.dll
+imageformats/qsvgd.dll
+imageformats/qtga.dll
+imageformats/qtiff.dll
+imageformats/qwbmp.dll
+imageformats/qwebp.dll
+platforms/qminimal.dll
+platforms/qminimalegl.dll
+platforms/qoffscreen.dll
