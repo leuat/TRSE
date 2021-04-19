@@ -467,7 +467,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     else {
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
-    qDebug() << m_opCode << Util::numToHex(code) <<expr << value << ol.m_orgLine << type;
+//    qDebug() << m_opCode << Util::numToHex(code) <<expr << value << ol.m_orgLine << type;
 
     // calculate the actual data
     int val=0;
