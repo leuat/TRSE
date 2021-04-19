@@ -306,35 +306,24 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 {
-    //    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
-//    qDebug() << "START " <<ol.m_instruction.m_opCode<< ol.m_expr;
     ol.m_expr = ol.m_expr.replace("&","$");
     QString expr = ol.m_expr;
     QString orgexpr = expr;
     QByteArray data;
     ol.m_instruction.m_opCode = ol.m_instruction.m_opCode.toLower();
 
-    if (ol.m_instruction.m_opCode=="processor")
-        return;
-    //    qDebug() << line;
-
-    if (ol.m_instruction.m_opCode=="org")
+    if (m_ignoreCommands.contains(ol.m_instruction.m_opCode))
         return;
 
-
-
+    // Relative jump to current address
     if (expr.contains("*")) {
-        //        line = line.replace("*", Util::numToHex(pCounter));
         QString add = expr;//expr.simplified().split(" ")[1].replace(" ", "");
         add = add.replace("*", Util::numToHex(m_pCounter));
         add = Util::BinopString(add);
         expr = add;//expr.split(" ")[0] + " " + add;
-        //    qDebug() << "* : " << expr;
 
     }
-    // Fix up jr nz, balle
-    //    if (opCode=="org")
-    //      return false;
+    // Fix up jr nz, something
 
     if (ol.m_instruction.m_opCode=="jr" || ol.m_instruction.m_opCode=="jp") {
         if (expr.contains(","))
@@ -342,14 +331,14 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             ol.m_instruction.m_opCode = ol.m_instruction.m_opCode+" "+expr.split(",").first().trimmed();
             expr = expr.split(",").last().trimmed();
             ol.m_expr = expr;
-    //        qDebug() << "**** REPLACE :" << ol.m_instruction.m_opCode<< expr;
         }
     }
+
+    // Insert constants
     QString orgExpr = expr;
     //    if (pass==OrgasmData::PASS_SYMBOLS)
     {
         QStringList l2 = expr.simplified().split(",");
-//        qDebug() << "ZORG 1" <<l2;
         for (QString& c : m_constList) {
             l2[0] = OrgasmData::ReplaceWord(l2[0],c,m_constants[c]);
 
@@ -357,17 +346,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
 
 
-
-
-
-    //    qDebug() << " ** " << line;
-
+    // Get opcode
     QString m_opCode = ol.m_instruction.m_opCode;
-
-
-
-
-    OrgasmInstruction::Type type = OrgasmInstruction::imp;
     MOSOperandCycle cyc;
 
     // transform ld a,b to "ld<a>b (none)"
@@ -408,7 +388,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         }
 
     // Determine type
-    type = OrgasmInstruction::none;
+    OrgasmInstruction::Type type = OrgasmInstruction::none;
     if (m_opCode.contains("*"))
         type = OrgasmInstruction::imm;
 
@@ -453,9 +433,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (m_opCodes.contains(m_opCode))
         code = m_opCodes[m_opCode];
     else {
-        if (m_opCode =="cpu" || m_opCode=="end")
-            return; // Ignore
-
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
 
