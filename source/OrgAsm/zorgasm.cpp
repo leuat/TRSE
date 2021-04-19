@@ -32,6 +32,7 @@ QString ZOrgasm::Process(QString s)
             hasHash = true;
 //        qDebug() << "PROCESS: " <<expr <<oexpr << repl;
         expr = OrgasmData::BinopExpr(oexpr, val, repl);
+
   //      qDebug() << "AFTER: " <<expr <<oexpr << repl;
         if (hasHash)
             expr = "#"+expr;
@@ -83,6 +84,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 {
     //    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
 //    qDebug() << "START " <<ol.m_instruction.m_opCode<< ol.m_expr;
+    ol.m_expr = ol.m_expr.replace("&","$");
     QString expr = ol.m_expr;
     QString orgexpr = expr;
     QByteArray data;
@@ -94,7 +96,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     if (ol.m_instruction.m_opCode=="org")
         return;
-
 
 
 
@@ -277,8 +278,10 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     int val=0;
     if (type!=OrgasmInstruction::none) {
         QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
+//        Util::m_currentForceConversionType = 16; // FORCE ALWAYS HEX
         val = Util::NumberFromStringHex(Util::BinopString(num));
-//        qDebug() << "VAL : "<<val << num << expr;
+        if (code==0x3E)
+            qDebug() << "VAL : "<<m_opCode<<expr<< Util::numToHex(val) << num << expr;
 /*        if (m_opCode=="cp") {
             qDebug() << "OPCODE  " <<m_opCode << expr << num <<val;
         }*/

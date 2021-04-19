@@ -27,6 +27,7 @@ QString Util::path = "";
 QElapsedTimer Util::globalTimer;
 bool Util::CancelSignal = false;
 int Util::hexType = 0;
+//int Util::m_currentForceConversionType = 10;
 
 
 
@@ -145,7 +146,7 @@ bool Util::NumberFromStringHex(QString s, long &num) {
             if (s.toLower().startsWith("%"))
                 val= s.remove("%").toLong(&ok, 2);
             else
-                val = s.toInt(&ok,  10);
+                val = s.toInt(&ok, 10);
 
     if (type==1)  val = (val)&0xFF;
     if (type==2)  val = (val>>8)&0xFF;
