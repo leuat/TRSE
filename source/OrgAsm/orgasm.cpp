@@ -220,13 +220,37 @@ OrgasmLine Orgasm::LexLine(int i) {
         return l;
 
     }
+/*
+    if (!(line[0]==' ') && !(line.contains("=") && !line.contains("\""))) {
+        QString lbl = line.split(":").first().trimmed().simplified();
+        line = line.remove(lbl+":");
+        line=line.trimmed();
+        if (line.startsWith(":"))
+            line.remove(0,1);
+        l.m_label = lbl;
 
+        qDebug() <<"LABEL " <<lbl <<line;
+    }
+
+  */
 //    qDebug() << line.contains("\"") << line;
     if (!(line[0]==' ') && !(line.contains("=") && !line.contains("\""))) {
-        QString lbl = line.replace(":", " ").trimmed().split(" ")[0];
+        QString ll= line;
+        QString lbl = ll.replace(":", " ").trimmed().split(" ")[0];
         l.m_label = lbl;
-        line.remove(0, lbl.length()).replace(":", " ");
+        line.remove(0, lbl.length());
+        if (line.startsWith(":"))
+            line = line.remove(0,1);
 
+//        qDebug() <<"LABEL " <<lbl <<line;
+    }
+    if (m_cpuFlavor==CPUFLAVOR_Z80) {
+        if (line.trimmed().simplified().split(" ").first().endsWith(":")) {
+            QString lbl = line.trimmed().simplified().split(" ").first().remove(":");
+            l.m_label = lbl;
+            line.remove(lbl+":");
+
+        }
     }
 
     if (line.simplified().startsWith(";") || line.simplified()=="" || line.simplified().startsWith("//")) {
@@ -277,9 +301,10 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_expr = line.replace(" db ", "").trimmed();//.simplified();
         return l;
     }
-    if (lst[0].toLower()=="ds.b") {
+    if (lst[0].toLower()=="ds.b" || lst[0].toLower()=="ds") {
         l.m_type = OrgasmLine::PADBYTE;
         l.m_expr = line.replace("ds.b", "").trimmed();//.simplified();
+        l.m_expr = line.replace("ds", "").trimmed();//.simplified();
         return l;
     }
     if (lst[0].toLower()==".word" || lst[0].toLower()=="dw") {
@@ -556,12 +581,21 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
         }
         else {
             QString str = s;
-            str = str.remove("\"");
+//            str = str.remove("\"");
+            str = str.remove(0,1);
+            str = str.remove(str.count()-1,1);
+            str = str.replace("\\n","\n");
+            str = str.replace("\\r","\r");
+
             for (int i=0;i<str.length();i++) {
+
                 int c = str.at(i).toLatin1();
                 m_data.append((uchar)c);
                 m_pCounter++;
-
+/*                if (str.at(i)==':') {
+                    qDebug() << " Value : "<<c <<Util::numToHex(c);
+                }
+*/
             }
   //          exit(1);
 

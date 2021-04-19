@@ -14,28 +14,23 @@ QString ZOrgasm::Process(QString s)
         return "";
 
     expr = expr.replace("[","(").replace("]",")");
-
+    expr = expr.replace("(+","(");
 //    qDebug() << "Processing: " << expr;
     long val = 0;
     QString repl = "";
     if (m_passType==OrgasmData::PASS_LABELS)
         repl = "$1000";
     if (expr.contains("<") || expr.contains(">"))
-        repl= "#$10";
+        repl= "$10";
+    expr = expr.replace("#","$");
     QString oexpr = expr;
     expr = expr.replace("<","").replace(">","");
     if (!(expr.startsWith("(") && expr.endsWith(")"))) {
         if (m_regs.contains(expr))
             return expr;
-        bool hasHash = false;
-        if (expr.simplified().startsWith("#"))
-            hasHash = true;
 //        qDebug() << "PROCESS: " <<expr <<oexpr << repl;
         expr = OrgasmData::BinopExpr(oexpr, val, repl);
 
-  //      qDebug() << "AFTER: " <<expr <<oexpr << repl;
-        if (hasHash)
-            expr = "#"+expr;
     }
     if (m_passType==OrgasmData::PASS_SYMBOLS) {
         QString tst = expr;
@@ -277,10 +272,11 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // 16-bit data val to add (or 8)
     int val=0;
     if (type!=OrgasmInstruction::none) {
-        QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
+        QString num = expr.split(",")[0].replace("#","$").replace("(","").replace(")","");
 //        Util::m_currentForceConversionType = 16; // FORCE ALWAYS HEX
+
         val = Util::NumberFromStringHex(Util::BinopString(num));
-//        if (code==0x3E)
+//        if (code==0x32)
   //          qDebug() << "VAL : "<<m_opCode<<expr<< Util::numToHex(val) << num << expr;
 /*        if (m_opCode=="cp") {
             qDebug() << "OPCODE  " <<m_opCode << expr << num <<val;

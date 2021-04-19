@@ -25,7 +25,7 @@ var
 	
 	In order for the program to work on a disk, you need to turn this exomizer toggle *off* 
 */
-//@setvalue exomizer_toggle 1
+@setvalue exomizer_toggle 1
 
 /*
 	Write your music using arkos tracker 2, export as regular akg files. 
