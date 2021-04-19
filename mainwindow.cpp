@@ -2006,10 +2006,13 @@ void MainWindow::on_actionPaw_packed_resource_file_triggered()
     dialog.setFileMode(QFileDialog::AnyFile);
     QString f = "Paw Files (*.paw)";
     QString filename = dialog.getSaveFileName(NULL, "Create New File",getProjectPath(),f);
-    if (filename=="")
+    if (filename=="") {
+        qDebug() << "Could not create new paw file : empty filename provided";
         return;
-    if (!filename.toLower().endsWith(".paw"))
-        return;
+    }
+    if (!filename.toLower().endsWith(".paw")) {
+        filename = filename + ".paw";
+    }
     QString orgFile;
 
 /*    filename = filename.remove(getProjectPath());
@@ -2030,7 +2033,7 @@ void MainWindow::on_actionPaw_packed_resource_file_triggered()
         s<< "ras_include_file = packed_resources1.ras\n";
         s<< "packed_address = $4000  \n";
 
-    }else
+    } else
         qDebug() << "Could not create new paw file : "<<fn;
 
     file.close();
