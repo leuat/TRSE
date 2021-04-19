@@ -25,7 +25,7 @@ var
 	
 	In order for the program to work on a disk, you need to turn this exomizer toggle *off* 
 */
-@setvalue exomizer_toggle 1
+//@setvalue exomizer_toggle 1
 
 /*
 	Write your music using arkos tracker 2, export as regular akg files. 
@@ -52,7 +52,7 @@ var
 
 	// Variables used in the demo
 	ftime, done,i1,n,j,time, transition,col,rasterTime,size,frame,scroll: byte = 0; 
-	c2x,c2y,aax,aay,x,y,val,x1,y1,c1,c2,yy,ready : byte = 0;
+	c2x,c2y,aax,aay,x,y,val,x1,y1,c1,c2,c0,yy,ready : byte = 0;
 	maxTime, timeCounter,k,ll,curText : byte = 0;
 	text_x, text_y,twait: byte = 0;
 

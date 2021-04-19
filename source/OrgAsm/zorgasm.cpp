@@ -280,8 +280,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
 //        Util::m_currentForceConversionType = 16; // FORCE ALWAYS HEX
         val = Util::NumberFromStringHex(Util::BinopString(num));
-        if (code==0x3E)
-            qDebug() << "VAL : "<<m_opCode<<expr<< Util::numToHex(val) << num << expr;
+//        if (code==0x3E)
+  //          qDebug() << "VAL : "<<m_opCode<<expr<< Util::numToHex(val) << num << expr;
 /*        if (m_opCode=="cp") {
             qDebug() << "OPCODE  " <<m_opCode << expr << num <<val;
         }*/

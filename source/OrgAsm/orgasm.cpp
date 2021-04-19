@@ -147,6 +147,8 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
     line = line.replace(" EQU ", " = ");
+    line = line.replace(" equ ", " = ");
+
     //line = line.replace("ds.w", ".word");
  //   line = line.replace("equ", "=");
 //    line = line.replace("EQU", "=");
@@ -532,9 +534,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             if (pt==OrgasmData::PASS_SYMBOLS) {
                 //            qDebug() << "Before "<< s;
                 for (QString& c: m_symbolsList)
-                    if (s.contains(c)) {
-                        //                  qDebug() << c;
-                        //exit(1);
+                    if (s.contains(c) && !s.trimmed().startsWith("$")) {
                         s = OrgasmData::ReplaceWord(s,c,Util::numToHex(m_symbols[c]));
 
                     }
