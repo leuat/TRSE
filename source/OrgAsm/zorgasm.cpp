@@ -350,10 +350,13 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QString m_opCode = ol.m_instruction.m_opCode;
     MOSOperandCycle cyc;
 
-    // transform ld a,b to "ld<a>b (none)"
-    // ld a,10  to  ld<a 10 (imm)
+    // Force () instead of []
     expr = expr.replace("[","(").replace("]",")");
     QString value = 0;
+    // Treat instructions of the type ld a,b
+    // WashforOpcode returns "**","(**)" or just the register a,b,(hl) etc
+    // WasForOpcode also calculates the one free value parameter
+
     if (expr.contains(",")) {
         QStringList lst = expr.split(",");
         QString a1 = WashForOpcode(lst[0].simplified().trimmed(),value);
@@ -361,8 +364,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         m_opCode +=" "+a1+","+a2;
         expr = "";
     }
-
+    // Still have an expression?
     if (expr!="") {
+        // Wash it for (**) etc and get the value
         QString a1 = WashForOpcode(expr.simplified().trimmed(),value);
         // Now double test:
         QString addChar = " ";
@@ -373,28 +377,29 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     // Remover extra "*" at the end of jrs)
 
-    // Determine if immediate
+    // After washed, imms are always **. Determine if immediate is 8-bit *
     if (!m_opCode.contains("(**)") && !m_opCode.startsWith("jp ") && !m_opCode.startsWith("call"))
         if (m_opCode.contains("**")) {
             bool is8bit = true;
             for (QString& s:m_16bitRegs)
                 if (m_opCode.contains(s))
                     is8bit = false;
-
-            if (is8bit) {
-                qDebug() << "Replacing: "<<m_opCode;
+            // Replace ** with * - 8 bit instruction
+            if (is8bit)
                 m_opCode = m_opCode.replace("**","*");
-            }
+
         }
 
     // Determine type
     OrgasmInstruction::Type type = OrgasmInstruction::none;
+    // Imm 8 bit
     if (m_opCode.contains("*"))
         type = OrgasmInstruction::imm;
-
+    // imm 16 bit
     if (m_opCode.contains("**"))
         type = OrgasmInstruction::abs;
-
+    // jr is special: will get marked with a 16-bit address, but is
+    // actually only 8-bit relative. Remove a * if needed.
     if (m_opCode.startsWith("jr")) {
         if (m_opCode.endsWith("**"))
            m_opCode.remove(m_opCode.count()-1,1);
@@ -403,7 +408,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     /*
      *
      * STRANGE INSTRUCTIONS
-     *
+     * need strange care
      *
     */
     m_opCode = m_opCode.trimmed();
@@ -430,18 +435,12 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 //    qDebug() << m_opCode << expr << value << ol.m_orgLine << type;
 
     int code = 0;
+    // Get actual code
     if (m_opCodes.contains(m_opCode))
         code = m_opCodes[m_opCode];
     else {
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
-
-
-    if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
-        qDebug() << "ERROR on line : " << m_opCode + " " +expr << "Type:"<<type;
-        throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +QString::number(type) + "        on line " + ol.m_expr,ol );
-    }
-
 
     // calculate the actual data
     int val=0;
@@ -450,9 +449,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         val = Util::NumberFromStringHex(Util::BinopString(num));
     }
 
-    // Write opcode
+    // Write opcode to data
 
-    // 16-bit extra OP code
+    // 16-bit extra opcode
     if (code>=0x100)
         data.append((code>>8)&0xff);
     // 8 bit part

@@ -15,6 +15,7 @@ public:
     void ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd) override;
     QStringList m_regs = QStringList() << "a" <<"b"<<"c"<<"d"<<"af"<<"bc"<<"hl"<<"de"<< "z" <<"h" <<"l"<<"e"<<"ix"<<"iy"<<"sp";
     QStringList m_16bitRegs = QStringList() << "af"<<"bc"<<"hl"<<"de"<<"ix"<<"iy"<<"sp";
+    QStringList m_ignoreCommands = QStringList() << "processor" <<"cpu" <<"org" << "end";
     bool isRegister(QString str) {
         return m_regs.contains(str.toLower());
     };
