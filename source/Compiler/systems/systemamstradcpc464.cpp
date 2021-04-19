@@ -36,10 +36,11 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
 {
     QString output;
     int time = timer.elapsed();
-    int codeEnd = 0;
 
     output+="<br>";
-    bool useOrgasm = m_settingsIni->getString("assembler_z80")!="Pasmo";
+    bool useOrgasm = false;
+    if (m_settingsIni->contains("assembler_z80"))
+            useOrgasm = m_settingsIni->getString("assembler_z80")!="Pasmo";
 
 
     QString assembler = m_settingsIni->getString("pasmo");
@@ -61,6 +62,7 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         QFile::remove(filename+".dsk");
 */
     if (useOrgasm) {
+    //    qDebug() << "Using ZORGASM " << m_settingsIni->getString("assembler_z80");
         AssembleZOrgasm(output,filename,currentDir,symTab);
         QProcess process;
         StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin_ok", output);

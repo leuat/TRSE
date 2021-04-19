@@ -33,6 +33,12 @@ def fillRasList(idx,path):
 			tests[idx][1].append(path+"/"+file)
 
 
+# CPC
+
+tests.append([ "AMSTRADCPC464/Morketid",["main.ras"]])
+tests.append([ "AMSTRADCPC464/tutorials",[]])
+fillRasList(len(tests)-1,".")
+
 
 # AMIGA
 
@@ -124,11 +130,6 @@ tests.append([ "GAMEBOY/tutorials",[]])
 fillRasList(len(tests)-1,".")
 tests.append([ "GAMEBOY/yo-grl",["demo.ras"]])
 
-# CPC
-
-tests.append([ "AMSTRADCPC464/Morketid",["main.ras"]])
-tests.append([ "AMSTRADCPC464/tutorials",[]])
-fillRasList(len(tests)-1,".")
 
 
 def c(path,f1):
