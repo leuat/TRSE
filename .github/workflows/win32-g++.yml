@@ -15,21 +15,14 @@ jobs:
           arch: win64_mingw81
 
       # Build lua, the checked-in version doesn't seem to work
-      - run: curl -R -O http://www.lua.org/ftp/lua-5.4.3.tar.gz
-      - run: tar zxf lua-5.4.3.tar.gz
-      - run: cd lua-5.4.3 && make UNAME="echo mingw" all test && cp src/liblua.a ../libs/lua/
+      - name: Build lua
+        run: |
+          curl -R -O http://www.lua.org/ftp/lua-5.4.3.tar.gz
+          tar zxf lua-5.4.3.tar.gz
+          cd lua-5.4.3 && make UNAME="echo mingw" all test && cp src/liblua.a ../libs/lua/
 
       # Build TRSE
-      - run: qmake TRSE.pro
-      - run: make
-
-      # TODO(ColinPitrat): Review all this
-      # All the steps below are not necessary (for now) but document what needs
-      # to be done for TRSE to work under linux.
-      # cf. README.md
-      - run: copy Publish/source/themes release/
-      # This should be a symbolic link
-      - run: copy Publish/tutorials release/
-      # Not clear what should be done about units
-      # Now you're ready to run:
-      # ./release/trse.exe
+      - name: Build TRSE
+        run: |
+          qmake TRSE.pro
+          make -j 2
