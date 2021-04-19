@@ -21,6 +21,7 @@ void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDi
     QStringList params;
     StartProcess(assembler, QStringList() << "-1" << "--tapbas" << filename+".asm" <<filename+".tap", output);
 
+   // PerformAssembling(filename,text,currentDir,symTab);
     if (!QFile::exists(filename+".tap")) {
         text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
         text+=output;

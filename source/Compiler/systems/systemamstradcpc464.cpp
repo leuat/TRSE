@@ -38,40 +38,8 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
     int time = timer.elapsed();
 
     output+="<br>";
-    bool useOrgasm = false;
-    if (m_settingsIni->contains("assembler_z80"))
-            useOrgasm = m_settingsIni->getString("assembler_z80")!="Pasmo";
 
-
-    QString assembler = m_settingsIni->getString("pasmo");
-    if (!useOrgasm && !QFile::exists(assembler)) {
-        text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
-        m_buildSuccess = false;
-        return;
-    }
-/*    if (!QFile::exists(m_settingsIni->getString("cpcdisk_location"))) {
-        text  += "<br><font color=\"#FF6040\">Please set up a link to the CPCDiskXP disk utility TRSE 'Utilities' settings panel.</font>";
-        return;
-
-    }
-*/
-    if (QFile::exists(filename+".bin"))
-        QFile::remove(filename+".bin");
-
-  /*  if (QFile::exists(filename+".dsk"))
-        QFile::remove(filename+".dsk");
-*/
-    if (useOrgasm) {
-    //    qDebug() << "Using ZORGASM " << m_settingsIni->getString("assembler_z80");
-        AssembleZOrgasm(output,filename,currentDir,symTab);
-        QProcess process;
-        StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin_ok", output);
-    }
-    else {
-        QProcess process;
-        StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
-    }
-
+    PerformAssembling(filename,text,currentDir,symTab);
 
     if (!QFile::exists(filename+".bin")) {
         text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
@@ -136,10 +104,15 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
         code = code.replace("@START", Util::numToHex(actualStart));
         code = code.replace("@FILE", fn);
 //        code = code.replace("@UNPACKCODE", "$F000");
-        QString codeFile = QFileInfo(fn).dir().path()+QDir::separator() + "_unpack.asm";
+        QString codeFile = QFileInfo(fn).dir().path()+QDir::separator() + "_unpack";
         Util::SaveTextFile(codeFile, code);
         QFile::remove(filename+".bin");
-        StartProcess(assembler, QStringList() << codeFile <<filename+".bin", output);
+//        QString temp;
+        PerformAssembling(codeFile,text,currentDir,symTab);
+        Util::CopyFile(codeFile+".bin",filename+".bin");
+        QFile::remove(codeFile+".bin");
+
+//        StartProcess(assembler, QStringList() << codeFile <<filename+".bin", output);
 
 
     }
