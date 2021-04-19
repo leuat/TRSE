@@ -54,7 +54,8 @@ jobs:
           done < ../plugins.txt
           echo "Copy all required libs"
           ldd trse.exe | awk '{ print $3 }' | sort -u | xargs -I _ cp _ ./
-          zip trse_win.zip trse
+          cd ..
+          7z a trse_win.zip trse
 
       - name: Publish zip
         uses: ColinPitrat/update-release@master
