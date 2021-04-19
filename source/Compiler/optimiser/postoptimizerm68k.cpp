@@ -82,10 +82,7 @@ void PostOptimiserM68K::Analyze(SourceLine &line) {
         w = l[1];
 
     if (cmd=="lea") {
-//        qDebug() <<s<<w;
-
         line.m_changeRegs[par[1]] = par[0];
-//        line.m_changeRegs["es"] = par[1];
         line.m_potentialOptimise = true;
     }
 }

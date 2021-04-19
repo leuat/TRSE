@@ -22,7 +22,6 @@ void Orgasm::LoadCodes(int CPUFlavor)
 {
     QString filename = ":/resources/text/opcodes.txt";
     if (CPUFlavor==2) filename = ":/resources/text/opcodes_GS4510.txt";
-    if (CPUFlavor==3) filename = ":/resources/text/opcodes_z80.txt";
     QFile f(filename);
 
 //    int num_states[3] {11,11,13};
