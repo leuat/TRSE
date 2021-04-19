@@ -290,8 +290,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
         FixBackTab(e);
 //        QPlainTextEdit::keyPressEvent(e);
 //        return;
-//        e->ignore();
-      //  return;
+        return;
     }
     if (!(c && c->popup()->isVisible()))
     if (e->key()==Qt::Key_Return ) {
