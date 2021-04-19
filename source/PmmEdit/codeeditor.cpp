@@ -288,9 +288,6 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 //    if (Qt::Key_Tab && (e->modifiers() & Qt::ShiftModifier))
     if (e->key() == Qt::Key_Backtab) {
         FixBackTab(e);
-//        QPlainTextEdit::keyPressEvent(e);
-//        return;
-        return;
     }
     if (!(c && c->popup()->isVisible()))
     if (e->key()==Qt::Key_Return ) {
@@ -534,6 +531,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
 
         c->complete(cr); // popup it up!
+        return;
 }
 
 void CodeEditor::focusInEvent(QFocusEvent *e)
