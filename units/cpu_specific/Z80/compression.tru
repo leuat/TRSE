@@ -105,15 +105,15 @@ LZ4_Version4:
 	inc		hl
 	ld 		a,(hl)
 	inc		hl
-	cp		#22
+	cp		#$22
 	jr		nz, LZ4_version_not_supported
 	ld		a,(hl)
 	inc		hl
-	cp		#4D
+	cp		#$4D
 	jr		nz, LZ4_version_not_supported
 	ld		a,(hl)
 	inc		hl
-	cp		#18
+	cp		#$18
 	jr		nz, LZ4_version_not_supported
 ; parse version 1.41 spec header
 	ld		a,(hl)
@@ -139,7 +139,7 @@ LZ4_no_preset_dictionary:
 	ld		a,(hl)
 	inc		hl
 ; strip reserved bits (and #70) and check if block max size is set to 64kb (4)
-	and		#40
+	and		#$40
 	jr		z, LZ4_version_not_supported
 ; skip header checksum
 	inc		bc
@@ -151,15 +151,15 @@ LZ4_LegacyVersion2:
 	inc		hl
 	ld		a,(hl)
 	inc		hl
-	cp		#21
+	cp		#$21
 	jr		nz, LZ4_version_not_supported
 	ld		a,(hl)
 	inc		hl
-	cp		#4c
+	cp		#$4c
 	jr		nz, LZ4_version_not_supported
 	ld		a,(hl)
 	inc		hl
-	cp		#18
+	cp		#$18
 	jr		nz, LZ4_version_not_supported
 LZ4_start_decompression:
 	add		hl,bc
@@ -203,10 +203,10 @@ LZ4_GetToken:
 	rlca
 	rlca
 ; copy literals
-	and		#f							; token can be max 15 - mask out unimportant bits
+	and		#$f							; token can be max 15 - mask out unimportant bits
 	jr		z,LZ4_skipcalc   			; there is no literals, skip calculation of literal size
 	ld		c,a							; set the count for calculation
-	cp		#f							; if literal size <15
+	cp		#$f							; if literal size <15
 	jr		nz, LZ4_copyliterals		; copy literal, else
 ; calculate total literal size by adding contents of following bytes
 	push	de							; store destination
@@ -220,7 +220,7 @@ LZ4_calcloop:
 	inc		de
 	ld		c,a							; set bc to the length of literal
 	add		hl,bc						; add it to the total literal length
-	cp		#ff							; if literal=255
+	cp		#$ff							; if literal=255
 	jr		z,LZ4_calcloop				; continue calculating the total literal size
 	ld		b,h							; store total literal size to copy in bc
 	ld		c,l
@@ -241,7 +241,7 @@ LZ4_skipcalc:
 	push	bc							; store end address of compressed data
 
 ; Copy Matches
-	and		#f							; token can be max 15 - mask out unimportant bits. resets also c flag for sbc later
+	and		#$f							; token can be max 15 - mask out unimportant bits. resets also c flag for sbc later
 ; get the offset
 	ld		c,(hl)
 	inc		hl
@@ -256,7 +256,7 @@ LZ4_skipcalc:
 
 	ld		b,0     					; load bc with the token
 	ld		c,a
-	cp		#f							; if matchlength <15
+	cp		#$f							; if matchlength <15
 	jr nz, LZ4_copymatches				; copy matches. else 
 
 ; calculate total matchlength by adding additional bytes
@@ -269,7 +269,7 @@ LZ4_calcloop2:
 	inc		de
 	ld		c,a							; set bc to the matchlength
 	add		hl,bc						; add it to the total match length
-	cp		#ff							; if matchlength=255
+	cp		#$ff							; if matchlength=255
 	jr		z,LZ4_calcloop2				; continue calculating the total match length		
 	ld		b,h							; store total matchlength to copy in bc
 	ld		c,l			 

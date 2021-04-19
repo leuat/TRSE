@@ -30,7 +30,6 @@ QString ZOrgasm::Process(QString s)
         bool hasHash = false;
         if (expr.simplified().startsWith("#"))
             hasHash = true;
-
 //        qDebug() << "PROCESS: " <<expr <<oexpr << repl;
         expr = OrgasmData::BinopExpr(oexpr, val, repl);
   //      qDebug() << "AFTER: " <<expr <<oexpr << repl;
@@ -148,6 +147,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     // transform ld a,b to "ld<a>b (none)"
     // ld a,10  to  ld<a 10 (imm)
+
+
     if (expr.contains(",")) {
         QStringList lst = expr.split(",");
         QString a1 = lst[0].simplified().trimmed();
@@ -191,8 +192,24 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     // "Special" registers: discern between ld hl,val and ld hl,(val) by adding a "()"
     if (expr.startsWith("(")) {
-        if (m_opCode.endsWith("<hl") || m_opCode.endsWith("<bc") || m_opCode.endsWith("<a") || m_opCode.endsWith("<iy") || m_opCode.endsWith("<ix"))
+        if (m_opCode.endsWith("<hl") ||
+                m_opCode.endsWith("<bc") ||
+                m_opCode.endsWith("<de") ||
+                m_opCode.endsWith("<a") ||
+                m_opCode.endsWith("<iy") ||
+                m_opCode.endsWith("<ix"))
             m_opCode+="()";
+    }
+    /*
+     *
+     * STRANGE INSTRUCTIONS
+     *
+     *
+    */
+    // Account for strange instructions: im 0 and im 1
+    if (m_opCode=="im" || m_opCode.startsWith("bit")) {
+        m_opCode+="_"+expr;
+        expr = "";
     }
 
 
@@ -262,8 +279,10 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         QString num = expr.split(",")[0].replace("#","").replace("(","").replace(")","");
         val = Util::NumberFromStringHex(Util::BinopString(num));
 //        qDebug() << "VAL : "<<val << num << expr;
+/*        if (m_opCode=="cp") {
+            qDebug() << "OPCODE  " <<m_opCode << expr << num <<val;
+        }*/
     }
-
 
 
     // 16-bit extra OP code
