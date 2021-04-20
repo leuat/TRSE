@@ -20,17 +20,8 @@ if [ "$1" = "nightly" ]
 then
   ls /usr/local/plugins
   find /usr/local/ | grep libqjpeg.dylib
-  echo " ==== First macdeployqt ===="
-  macdeployqt . -verbose=3
-  # Try running it a second time as some people reports it finds plugin on the second try
-  echo " ==== Second macdeployqt ===="
-  macdeployqt . -verbose=3
-  # Correct plugin dir is /usr/local//Cellar/qt/6.0.3/share/qt/plugins/
-  echo " ==== Third macdeployqt (with libpath = plugins) ===="
-  macdeployqt . -verbose=3 -libpath=/usr/local//Cellar/qt/6.0.3/share/qt/plugins/
-  echo " ==== Fourth macdeployqt (with libpath = qt) ===="
-  macdeployqt . -verbose=3 -libpath=/usr/local//Cellar/qt/6.0.3/share/qt/
-
+  # Correct plugin dir is /usr/local/Cellar/qt/6.0.3/share/qt/plugins/
+  macdeployqt . -verbose=3 -libpath=/usr/local/Cellar/qt/6.0.3/share/qt/plugins/
 else
   rm *.ini
   ~/Qt/5.15.0/clang_64/bin/macdeployqt .
