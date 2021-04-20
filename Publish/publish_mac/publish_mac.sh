@@ -18,7 +18,7 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
-  macdeployqt -verbose=3 .
+  macdeployqt . -verbose=3
 else
   rm *.ini
   ~/Qt/5.15.0/clang_64/bin/macdeployqt .
