@@ -1,3 +1,5 @@
+#!/bin/bash
+set -x
 rm -rf trse
 mkdir trse
 if [ "$1" = "nightly" ]
@@ -21,6 +23,7 @@ then
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
   # Correct plugin dir is /usr/local/Cellar/qt/6.0.3/share/qt/plugins/
   $macdeployqt . -verbose=3
+  $macdeployqt . -verbose=3 -always-overwrite
 else
   rm *.ini
   ~/Qt/5.15.0/clang_64/bin/macdeployqt .
