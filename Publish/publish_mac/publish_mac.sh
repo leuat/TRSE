@@ -18,6 +18,8 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
+  ls /usr/local/plugins
+  find /usr/local/ | grep libqjpeg.dylib
   macdeployqt . -verbose=3
 else
   rm *.ini
