@@ -4,9 +4,6 @@ on:
   push:
     tags:
       - '**'
-    # TODO(ColinPitrat): Remove this after validation
-    branches:
-      - '**'
 
 jobs:
   build:
