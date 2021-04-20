@@ -21,7 +21,7 @@ then
   ls /usr/local/plugins
   find /usr/local/ | grep libqjpeg.dylib
   # Correct plugin dir is /usr/local/Cellar/qt/6.0.3/share/qt/plugins/
-  macdeployqt . -verbose=3 -libpath=/usr/local/Cellar/qt/6.0.3/share/qt/plugins/
+  macdeployqt . -verbose=3 -libpath=/usr/local/Cellar/qt/6.0.3/share/qt/
 else
   rm *.ini
   ~/Qt/5.15.0/clang_64/bin/macdeployqt .
