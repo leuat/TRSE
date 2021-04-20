@@ -351,7 +351,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     MOSOperandCycle cyc;
     // Force () instead of []
     expr = expr.replace("[","(").replace("]",")");
-    QString value = 0;
+    QString value = "";
+    QString value2 = "";
     // Treat instructions of the type ld a,b
     // WashforOpcode returns "**","(**)" or just the register a,b,(hl) etc
     // WasForOpcode also calculates the one free value parameter
@@ -359,7 +360,11 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (expr.contains(",")) {
         QStringList lst = expr.split(",");
         QString a1 = WashForOpcode(lst[0].simplified().trimmed(),value);
-        QString a2 = WashForOpcode(lst[1].simplified().trimmed(),value);
+        QString a2 = WashForOpcode(lst[1].simplified().trimmed(),value2);
+        if (value=="") {
+            value = value2;
+            value2 ="";
+        }
         m_opCode +=" "+a1+","+a2;
         expr = "";
     }
@@ -421,7 +426,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     /*
      *
      * STRANGE INSTRUCTIONS
-     * need strange care
+     * needs special care
+     * because they
+     * are fragile
      *
     */
 
@@ -432,13 +439,32 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         type = OrgasmInstruction::none;
     }
     if (m_opCode.startsWith("bit ") || m_opCode.startsWith("res ") ||  m_opCode.startsWith("set ")) {
-        m_opCode = m_opCode.split(" ").first()+ " " +QString::number(Util::NumberFromStringHex(value))+","+m_opCode.split(",")[1];
-        value = "";
-        expr = "";
+  //      qDebug() <<"BIT before " <<m_opCode<<value << expr<<ol.m_orgLine;
+        if (m_opCode.contains("+*)")) { // uh oh handle ix iy+*
+            m_opCode = m_opCode.replace("**",QString(ol.m_orgLine.trimmed().simplified()[4]));
+            value = value2;
+            value2 = "";
+        }
+        else {
+            m_opCode = m_opCode.split(" ").first()+ " " +QString::number(Util::NumberFromStringHex(value))+","+m_opCode.split(",")[1];
+            value = "";
+            expr = "";
+        }
+
         type = OrgasmInstruction::none;
+        if (m_opCode.contains("+*")) // contains ix+* etc
+            type = OrgasmInstruction::imm;
+
     }
     if (m_opCode.startsWith("rst")) {
-        m_opCode = "rst "+value.mid(1,3)+"h";
+//        qDebug() << "RST " << m_opCode<<value;
+        if (value.startsWith("$"))
+           m_opCode = "rst "+value.mid(1,3)+"h";
+        else
+            m_opCode = "rst "+value;
+
+        if (pd!=OrgasmData::PASS_SYMBOLS)
+            m_opCode = "rst 00h";
         value = "";
         expr = "";
         type = OrgasmInstruction::none;
@@ -456,6 +482,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         type = OrgasmInstruction::none;
     }
     m_opCode = m_opCode.toLower();
+//    qDebug() <<"OP: " <<m_opCode <<value<<expr <<ol.m_orgLine;
 
 
 
@@ -467,39 +494,59 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     else {
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
-//    qDebug() << m_opCode << Util::numToHex(code) <<expr << value << ol.m_orgLine << type;
-
+/*    if (code==0xddcb46)
+       qDebug() << m_opCode << Util::numToHex(code) <<expr << value<<value2 << ol.m_orgLine << type;
+*/
     // calculate the actual data
     int val=0;
+    int val2=0;
+    bool hasValue2 = value2!="";
     if (type!=OrgasmInstruction::none) {
         QString num = value.replace("#","$").replace("(","").replace(")","");
         val = Util::NumberFromStringHex(Util::BinopString(num));
     }
+    if (hasValue2) {
+        QString num = value2.replace("#","$").replace("(","").replace(")","");
+        val2 = Util::NumberFromStringHex(Util::BinopString(num));
+    }
 
     // Write opcode to data
 
-    // 16-bit extra opcode
+    // 32-bit extra opcode
+    bool is32bit = false;
+    if (code>=0x10000) {
+        data.append((code>>16)&0xff);
+        is32bit = true;
+    }
     if (code>=0x100)
         data.append((code>>8)&0xff);
+
     // 8 bit part
-    data.append(code&0xFF);
+    if (!is32bit)
+       data.append(code&0xFF);
 
 
     // OPERANDS:
 
     // A relative jump? (jr)
     if (type==OrgasmInstruction::rel)  {
-        int diff = (val)-m_pCounter-2;
-//        qDebug() << " ****** RELATIVE: " <<m_opCode<<expr<< diff <<m_pCounter;
-        if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
-            throw OrgasmError("Branch out of range : " +QString::number(diff) + " :" + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber)+"<br>Please remember that you can use the keyword <b>'offpage'</b> in your block to let OrgAsm know that the code should perform off-page jumps.",ol);
+        if (val<=0xFF)
+            data.append((uchar)val);
+        else {
+            int diff = (val)-m_pCounter-2;
+            //        qDebug() << " ****** RELATIVE: " <<m_opCode<<expr<< diff <<m_pCounter;
+            if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
+                throw OrgasmError("Branch out of range : " +QString::number(diff) + " :" + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber)+"<br>Please remember that you can use the keyword <b>'offpage'</b> in your block to let OrgAsm know that the code should perform off-page jumps.",ol);
+            }
+            data.append((uchar)diff);
         }
-        data.append((uchar)diff);
     }
     else
         // Immediate 8-bit vale?
         if (type==OrgasmInstruction::imm) {
             data.append(val);
+            if (hasValue2)
+                data.append(val2);
         }
         else
             // 16-bit value?
@@ -510,6 +557,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (pd != OrgasmData::PASS_SYMBOLS)
         expr = orgExpr;
 
+    // 8 bit part in 32-bit code
+    if (is32bit)
+       data.append(code&0xFF);
 
 
     if (data.count()>0) {

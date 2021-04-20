@@ -74,10 +74,8 @@ void SystemZ80::PerformAssembling(QString filename, QString &text,QString curren
 
 
     if (useOrgasm) {
-    //    qDebug() << "Using ZORGASM " << m_settingsIni->getString("assembler_z80");
         AssembleZOrgasm(text,filename,currentDir,symTab);
-  //      QProcess process;
-    //    StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin_ok", text);
+
     }
     else {
         QProcess process;
