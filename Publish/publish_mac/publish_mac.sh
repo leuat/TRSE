@@ -18,10 +18,12 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
+  which macdeployqt
+  find /usr/local/Cellar/qt | grep macdeployqt
   ls /usr/local/plugins
   find /usr/local/ | grep libqjpeg.dylib
   # Correct plugin dir is /usr/local/Cellar/qt/6.0.3/share/qt/plugins/
-  macdeployqt . -verbose=3 -libpath=/usr/local/Cellar/qt/6.0.3/share/qt/
+  macdeployqt . -verbose=3 -libpath=/usr/local/Cellar/
 else
   rm *.ini
   ~/Qt/5.15.0/clang_64/bin/macdeployqt .
