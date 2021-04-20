@@ -21,9 +21,15 @@ cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
-  # Correct plugin dir is /usr/local/Cellar/qt/6.0.3/share/qt/plugins/
-  $macdeployqt . -verbose=3
-  $macdeployqt . -verbose=3 -always-overwrite
+  $macdeployqt .
+  find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib"
+  find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib" | while read plugin_file
+  do
+    plugin=$(echo "$plugin_file" | sed 's,.*/plugins/,,')
+    echo "Copying $plugin"
+    mkdir -p $(dirname "./Contents/PlugIns/${plugin}")
+    cp "${plugin_file}" "./Contents/PlugIns/${plugin}"
+  done
 else
   rm *.ini
   ~/Qt/5.15.0/clang_64/bin/macdeployqt .
