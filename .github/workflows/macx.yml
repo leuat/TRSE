@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - '**'
+    # TODO(ColinPitrat): Remove this after validation
+    branches:
+      - '**'
 
 jobs:
   build:
@@ -15,11 +18,14 @@ jobs:
       - run: brew install qt libomp
 
       - run: qmake TRSE.pro
-      - run: make
+      - run: make -j 3
 
-      # All the steps below are not necessary (for now) but document what needs
-      # to be done for TRSE to work under MacOS X.
-      - run: ln -s Publish/tutorials tutorials
-      - run: ln -s Publish/source/themes themes
-      # Don't create the project_templates because it's already there
-      # The resulting binary is in trse.app/Contents/MacOS/trse
+      - run: cd Publish/publish_mac && ./publish_mac.sh nightly
+      - uses: ColinPitrat/update-release@master
+        with:
+          release: nightly
+          message: Nightly build
+          body: The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
+          files: Publish/publish_mac/trse_osx.tar.gz
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}

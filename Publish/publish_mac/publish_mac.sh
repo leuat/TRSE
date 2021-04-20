@@ -1,20 +1,46 @@
 rm -rf trse
 mkdir trse
-cp -r ../../Release/trse.app trse/
-cp -r  ../source/* trse/trse.app/
-cp -r  ../source/* trse/trse.app/	
-cp -r ../tutorials trse/trse.app/
-cp -r ../units trse/trse.app/
-cp -r ../project_templates trse/trse.app/
-cp -r ~/code/OK64/Release/OK64.app  trse/
-cd trse/trse.app
- ~/Qt/5.15.0/clang_64/bin/macdeployqr .
- rm *.ini
- cd ../../
- find trse -name '*.prg' -delete
- find trse -name '*.asm' -delete
- find trse -name '*.sym' -delete
-tar -cvf trse_osx.tar trse/trse.app trse/OK64.app
-gzip trse_osx.tar
-scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
+if [ "$1" = "nightly" ]
+then
+  cp -r ../../trse.app trse/
+else
+  cp -r ../../Release/trse.app trse/
+fi
 
+cp -r Contents trse/trse.app
+
+# Copy themes, tutorials, units and templates
+cp -r  ../source/* trse/trse.app/
+cp -r ../tutorials trse/trse.app/
+cp -r ../../units trse/trse.app/
+cp -r ../project_templates trse/trse.app/
+
+cd trse/trse.app
+rm *.ini
+if [ "$1" = "nightly" ]
+then
+  macdeployqt .
+else
+  ~/Qt/5.15.0/clang_64/bin/macdeployqt .
+fi
+cd ../../
+
+if [ "$1" = "nightly" ]
+then
+  echo "Skipping OK64 for now"
+else
+  cp -r ~/code/OK64/Release/OK64.app  trse/
+  # No cleanup needed on nightly, git repo should be clean at checkout
+  find trse -name '*.prg' -delete
+  find trse -name '*.asm' -delete
+  find trse -name '*.sym' -delete
+fi
+
+# TODO(ColinPitrat): Deliver OK64 too?
+if [ "$1" = "nightly" ]
+then
+  tar -cvzf trse_osx.tar.gz trse/trse.app
+else
+  tar -cvzf trse_osx.tar.gz trse/trse.app trse/OK64.app
+  scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
+fi
