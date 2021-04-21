@@ -209,7 +209,7 @@ public:
 
     int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
 
-    void LoadCodes(int CPUflavor);
+    virtual void LoadCodes(int CPUflavor);
     void ProcessSource();
     void ProcessUnrolling();
 

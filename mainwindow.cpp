@@ -412,6 +412,10 @@ void MainWindow::VerifyDefaults()
    if (!m_iniFile->contains("assembler_z80"))
        m_iniFile->setString("assembler_z80","Pasmo");
 
+    // If something else is set, enforce Pasmo
+    if (!(m_iniFile->getString("assembler_z80")=="OrgAsm" || m_iniFile->getString("assembler_z80")=="Pasmo"))
+       m_iniFile->setString("assembler_z80","Pasmo");
+
     m_iniFile->filename = m_iniFileName;
 
 }

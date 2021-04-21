@@ -52,17 +52,6 @@ jobs:
           qmake PREFIX=/usr TRSE.pro
           make -j 2 -k
 
-      - name: Verify tutorials
-        run: |
-          mkdir bin
-          cp trse bin/
-          ln -s Publish/tutorials tutorials
-          ln -s Publish/source/themes themes
-          mkdir -p ~/.local/share/TRSE
-          cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
-          cd bin
-          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse
-
       # Construct and publish the linux binary package
       - name: Build tar.gz
         run: cd Publish/publish_linux && ./publish nightly
@@ -106,3 +95,15 @@ jobs:
           files: Publish/publish_linux/TRSE-nightly-x86_64.AppImage
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify tutorials
+        run: |
+          mkdir bin
+          cp trse bin/
+          ln -s Publish/tutorials tutorials
+          ln -s Publish/source/themes themes
+          mkdir -p ~/.local/share/TRSE
+          cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
+          cd bin
+          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse
+

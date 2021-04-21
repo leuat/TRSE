@@ -87,9 +87,9 @@ void DialogProjectSettings::FillFromIni()
     ui->chkPassPhaPla->setChecked(m_ini->getdouble("post_optimizer_passphapla")==1);
     ui->chkPassCmp0->setChecked(m_ini->getdouble("post_optimizer_passcmp")==1);
 
-    if (m_ini->getString("system")=="C128") {
+//    if (m_ini->getString("system")=="C128") {
         ui->cmbColumns->setCurrentText(QString::number(m_ini->getdouble("columns")));
-    }
+  //  }
 
     if (m_ini->getString("system")=="NES") {
         ui->cmbNES16KBlocks->setCurrentText(QString::number(m_ini->getdouble("nes_16k_blocks")));
@@ -100,10 +100,10 @@ void DialogProjectSettings::FillFromIni()
     }
 
 
-    if (m_ini->getString("system")=="VIC20") {
+//    if (m_ini->getString("system")=="VIC20") {
         ui->tabConfigs->setCurrentWidget(ui->tabVic20);
         ui->leViaZP->setText(  fromStringList(m_ini->getStringList("via_zeropages")));
-    }
+ //   }
 
     ui->cmbVic20Config->setCurrentText(m_ini->getString("vic_memory_config"));
 
@@ -225,16 +225,16 @@ void DialogProjectSettings::FillToIni()
 
 
 
-    if (m_ini->getString("system")=="C128") {
+    //if (m_ini->getString("system")=="C128") {
         m_ini->setString("columns", ui->cmbColumns->currentText());
 
-    }
-    if (m_ini->getString("system")=="VIC20") {
+   // }
+//    if (m_ini->getString("system")=="VIC20") {
 
         m_ini->setString("vic_memory_config",ui->cmbVic20Config->currentText());
         m_ini->setStringList("via_zeropages", toStringList(ui->leViaZP->text()));
 
-    }
+  //  }
 
     if (m_ini->getString("system")=="NES") {
         m_ini->setFloat("nes_16k_blocks",ui->cmbNES16KBlocks->currentText().toInt());
