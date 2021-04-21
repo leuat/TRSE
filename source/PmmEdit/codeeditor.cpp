@@ -145,7 +145,7 @@ QAbstractItemModel *CodeEditor::modelFromTRSE(QSharedPointer<SymbolTable> symtab
 // This method handles both the automatic indent, handling
 // of automatic "end" addition or just keeping the current
 // indent.
-void CodeEditor::SetIndent()
+void CodeEditor::SetIndent(bool shift)
 {
     QTextCursor cursor = textCursor();
     QString line = textCursor().block().text();
@@ -163,9 +163,21 @@ void CodeEditor::SetIndent()
     }
 
     // Automatic indent. First sanity check if we're at the end of line
-    qDebug() << cursor.atBlockEnd();
     if(!cursor.atBlockEnd()) {
         insertPlainText("\n");
+        return;
+    }
+
+    // The autocomplete & indent is enabled only for .RAS and .TRU files and
+    // when either enabled in settings or shift-entered
+    bool enable = (m_autoComplete | shift) & (m_fileType == RAS || m_fileType == TRU);
+    qDebug() << "autocomplete enable " << enable;
+
+    // Only keep the current indent if not enabled
+    if (!enable)
+    {
+        insertPlainText("\n");
+        insertPlainText(space);
         return;
     }
 
@@ -395,7 +407,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 {
     // Indent handling
     if (!(c && c->popup()->isVisible()) && e->key()==Qt::Key_Return) {
-        SetIndent();
+        SetIndent(e->modifiers() & Qt::ShiftModifier);
         return;
     }
 

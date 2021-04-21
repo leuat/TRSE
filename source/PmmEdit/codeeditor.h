@@ -80,7 +80,7 @@ public:
 
 
     // Handle indenting automatically if enabled in settings
-    void SetIndent();
+    void SetIndent(bool shift);
     // Tab/Backtab handling in editor
     void TabBackTab(QKeyEvent* e, bool back);
     void lineNumberAreaPaintEvent(QPaintEvent *event);
