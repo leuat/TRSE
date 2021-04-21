@@ -192,7 +192,9 @@ void CodeEditor::SetIndent()
         insertPlainText(space);
         insertPlainText("end");
         // Special handling for "." after "begin"
-        if (lastWord == "begin" && !(cursor.document()->toPlainText().contains("end.",Qt::CaseInsensitive)))
+        if (lastWord == "begin"
+                && !(cursor.document()->toPlainText().contains("end.",Qt::CaseInsensitive))
+                && (cursor.document()->toPlainText().trimmed().startsWith("program", Qt::CaseInsensitive)))
         {
             insertPlainText(".");
         }
@@ -240,6 +242,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
         int pos = cursor.position();
         cursor.setPosition(anchor);
         cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
 
         // Save new anchor to the beginning of the selection and move
         // cursor to make new selection from begin->end
