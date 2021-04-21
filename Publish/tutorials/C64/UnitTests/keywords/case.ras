@@ -39,6 +39,7 @@ begin
 		15: i:=10;
 		24: i:=0;
 	end;
+	
 
 	text := "T1:";
 	if (i=10) then PASS() else FAIL();

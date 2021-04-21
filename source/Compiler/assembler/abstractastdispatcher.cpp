@@ -960,7 +960,8 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCase> node)
         // Print the current statement block
         node->m_statements[i]->Accept(this);
         // Jump to the end, done with case
-        as->Asm(getJmp(true)+" "+labelEnd);
+        if (i!=node->m_conditionals.count()-1 || hasElse)
+            as->Asm(getJmp(true)+" "+labelEnd);
         as->Label(labelNext);
     }
     // Print else blockl

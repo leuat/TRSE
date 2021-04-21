@@ -815,7 +815,7 @@ void MainWindow::RefreshFileList()
     }
     // Global
     if (QDir().exists(truPath[2])) {
-       trus = AddTreeRoot(truPath[2],"global library");
+       trus = AddTreeRoot(truPath[2],"Global library");
         m_im->insertRow(3,trus);
     }
 
