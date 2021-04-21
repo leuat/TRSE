@@ -74,21 +74,17 @@ public:
     bool m_displayCycles = true;
     bool m_displayAddresses = true;
     float m_fontScale = 0.8;
+    // Handle indenting automatically if enabled in settings
     void SetIndent();
+    // Tab/Backtab handling in editor
+    void TabBackTab(QKeyEvent* e, bool back);
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
-
     void cycleNumberAreaPaintEvent(QPaintEvent *event);
     int cycleNumberAreaWidth();
     int AddressAreaWidth();
-
     void addressAreaPaintEvent(QPaintEvent *event);
-
     void ToggleComments();
-
-
-    void FixBackTab(QKeyEvent* e);
-
     void InitCompleter(QSharedPointer<SymbolTable>  m_symTab, Parser* parser);
 
     QMap<int,int> m_cycles, m_blockCycles;

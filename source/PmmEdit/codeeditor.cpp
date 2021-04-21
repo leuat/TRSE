@@ -56,7 +56,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 void CodeEditor::setCompleter(QCompleter *c)
 {
     if (c)
-        QObject::disconnect(c, 0, this, 0);
+        QObject::disconnect(c, nullptr, this, nullptr);
 
     c = completer();
 
@@ -142,30 +142,172 @@ QAbstractItemModel *CodeEditor::modelFromTRSE(QSharedPointer<SymbolTable> symtab
 
 }
 
+// This method handles both the automatic indent, handling
+// of automatic "end" addition or just keeping the current
+// indent.
 void CodeEditor::SetIndent()
 {
-    QTextCursor cursor;
-      QString line=textCursor().block().text();
-      QString space;
-      QChar c;
-      int size=line.size();
+    QTextCursor cursor = textCursor();
+    QString line = textCursor().block().text();
+    QString space, lastWord, firstWord;
+    QChar c;
+    int size=line.size();
 
-  // search for white spaces at the beginning of the line
-      for(int i=0; i<size; i++)
-          {
-          c=line[i];
+    // search for white spaces at the beginning of the line
+    for(int i = 0; i < size; i++) {
+        c = line[i];
+        if(!c.isSpace()) {
+            space = line.left(i);
+            break;
+        }
+    }
 
-          if(! c.isSpace())
-              {
-              space=line.left(i);
-              break;
-              }
-          }
-      insertPlainText("\n");
-      insertPlainText(space);
+    // Automatic indent. First sanity check if we're at the end of line
+    qDebug() << cursor.atBlockEnd();
+    if(!cursor.atBlockEnd()) {
+        insertPlainText("\n");
+        return;
+    }
+
+    // First split line into words,
+    // then store the first and last word if there is any.
+    QStringList splitLine = line.trimmed().split(" ");
+    if (!splitLine.isEmpty()) {
+        firstWord = splitLine.first().toLower();
+        lastWord = splitLine.last().toLower();
+    }
+
+    // Indent and automatically insert "end" for certain
+    // words. If there is begin and document contains no
+    // "end." then that is inserted instead semicolon-version.
+    if ((lastWord == "begin")
+            || lastWord == "record"
+            || lastWord == "class"
+            || lastWord == "asm"
+            || (firstWord == "case" && lastWord == "of"))
+    {
+        insertPlainText("\n\t");
+        insertPlainText(space);
+        insertPlainText("\n");
+        insertPlainText(space);
+        insertPlainText("end");
+        // Special handling for "." after "begin"
+        if (lastWord == "begin" && !(cursor.document()->toPlainText().contains("end.",Qt::CaseInsensitive)))
+        {
+            insertPlainText(".");
+        }
+        else
+        {
+            insertPlainText(";");
+        }
+        // Move cursor to the end of the previous line to make typing
+        // a breeze.
+        cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, 1);
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor, 1);
+        setTextCursor(cursor);
+    }
+    // Don't insert the "end" after var, just indent
+    else if (lastWord == "var")
+    {
+        insertPlainText("\n\t");
+        insertPlainText(space);
+    }
+    else
+    {
+        // If nothing else, just keep the old indent
+        insertPlainText("\n");
+        insertPlainText(space);
+    }
 }
 
+// Handle tab and backtab in code editor.
+// Supports both single-line and selection.
+void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
+{
+    QTextCursor cursor = textCursor();
 
+    qDebug() << "backtab " << back;
+    qDebug() << "hasSelection " << cursor.hasSelection();
+    qDebug() << "atBlockStart " << cursor.atBlockStart();
+
+    // Check if we actually have selection or just tab/backtab
+    // press in single line and handle them separately.
+    if (cursor.hasSelection())
+    // We have selection, handle multiple line indent/unindent
+    {
+        // Find out the selection start and end
+        int anchor = cursor.anchor();
+        int pos = cursor.position();
+        cursor.setPosition(anchor);
+        cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+
+        // Save new anchor to the beginning of the selection and move
+        // cursor to make new selection from begin->end
+        anchor = cursor.anchor();
+        cursor.setPosition(pos, QTextCursor::KeepAnchor);
+
+        // Get selected text and split into lines
+        QString str = cursor.selection().toPlainText();
+        QStringList lines = str.split("\n");
+
+
+        if (back)
+        // Selection backtab handling
+        {
+            for (int i=0; i < lines.size(); i++)
+            {
+                if (lines[i].startsWith("\t") || lines[i].startsWith(" "))
+                {
+                    lines[i].remove(0, 1);
+                    pos--;
+                }
+            }
+        }
+        else
+        // Selection forward tab handling
+        {
+            for (int i=0; i < lines.size(); i++)
+            {
+                lines[i].insert(0, "\t");
+                pos++;
+            }
+        }
+
+        // Move cursors back to selection and insert
+        // new content
+        str = lines.join("\n");
+        cursor.removeSelectedText();
+        cursor.insertText(str);
+
+        // Move cursor to make new selection of inserted text
+        cursor.setPosition(anchor);
+        cursor.setPosition(pos, QTextCursor::KeepAnchor);
+        setTextCursor(cursor);
+    }
+    else
+    // Single line tab handling
+    {
+        if (back)
+        // Backtab handling for single line
+        {
+            QString line = textCursor().block().text();
+            if (line.startsWith("\t") || line.startsWith(" "))
+            {
+                int pos = cursor.position();
+                cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor, 1);
+                cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
+                cursor.removeSelectedText();
+                cursor.setPosition(pos - 1);
+            }
+        }
+        else
+        // Forward single tab is simple
+        {
+            insertPlainText("\t");
+        }
+    }
+    return;
+}
 
 int CodeEditor::lineNumberAreaWidth()
 {
@@ -198,42 +340,6 @@ int CodeEditor::AddressAreaWidth()
 
 }
 
-void CodeEditor::FixBackTab(QKeyEvent *e)
-{
-
-    QTextCursor cur = textCursor();
-    int pos = cur.position();
-    int anchor = cur.anchor();
-    cur.setPosition(pos);
-
-    cur.setPosition(pos-1,QTextCursor::KeepAnchor);
-    setTextCursor(cur);
-    cur = textCursor();
-
-
-    if (cur.selectedText()=="\t") {
-        cur.removeSelectedText();
-        cur.setPosition(anchor-1);
-        cur.setPosition(pos-1,QTextCursor::KeepAnchor);
-    }
-    else {
-        cur.setPosition(anchor) ;
-        cur.setPosition(anchor-1,QTextCursor::KeepAnchor);
-        if (cur.selectedText() == "\t") {
-            cur.removeSelectedText();
-            cur.setPosition(anchor-1);
-            cur.setPosition(pos-1,QTextCursor::KeepAnchor);
-        }
-        else {
-
-            // Its not a tab, so reset the selection to what it was
-            cur.setPosition(anchor);
-            cur.setPosition(pos,QTextCursor::KeepAnchor);
-        }
-    }
-    setTextCursor(cur);
-
-}
 void CodeEditor::InitCompleter(QSharedPointer<SymbolTable>  symTab, Parser* parser)
 {
 
@@ -284,208 +390,34 @@ void CodeEditor::updateCycleNumberAreaWidth(int /* newBlockCount */)
 
 void CodeEditor::keyPressEvent(QKeyEvent *e)
 {
-
-//    if (Qt::Key_Tab && (e->modifiers() & Qt::ShiftModifier))
-    if (e->key() == Qt::Key_Backtab) {
-        FixBackTab(e);
-    }
-    if (!(c && c->popup()->isVisible()))
-    if (e->key()==Qt::Key_Return ) {
+    // Indent handling
+    if (!(c && c->popup()->isVisible()) && e->key()==Qt::Key_Return) {
         SetIndent();
-        //exit(1);
         return;
     }
 
 
+    // Handle completer popup
     if (c && c->popup()->isVisible()) {
-            // The following keys are forwarded by the completer to the widget
-           switch (e->key()) {
-           case Qt::Key_Enter:
-
-
-           case Qt::Key_Return:
-           case Qt::Key_Escape:
-           case Qt::Key_Tab:
-
-           case Qt::Key_Backtab:
-                e->ignore();
-                return; // let the completer do default behavior
-           default:
-               break;
-           }
-        }
-    else {
-
+        // The following keys are forwarded by the completer to the widget
+       switch (e->key()) {
+       case Qt::Key_Enter:
+       case Qt::Key_Return:
+       case Qt::Key_Escape:
+       case Qt::Key_Tab:
+       case Qt::Key_Backtab:
+            e->ignore();
+            return; // let the completer do default behavior
+       default:
+           break;
+       }
     }
 
-
-//    if (!(e->modifiers() & Qt::ControlModifier))
-    // Tab selection
-
+    // Tab/Backtab Handling
     if (e->key()==Qt::Key_Tab || e->key()==Qt::Key_Backtab) {
-        QTextCursor cursor = textCursor();
-        int lineCopy = cursor.anchor();
-        if (cursor.position()<lineCopy)
-            lineCopy =cursor.position();
-        QString txt = cursor.selectedText();
-        txt = txt.replace("\u2029","\n");
-        // Damn hack.. above won't work on windows
-        for (int i=0;i<txt.count();i++) {
-            if (txt.at(i).unicode()==8233)
-                txt[i] ='\n';
-        }
-
-        QStringList lst = txt.split('\n');
-
-        QString str="";
-        bool removeLast = false;
-        for (QString& s: lst) {
-            if (e->key()==Qt::Key_Tab) {
-                if (s.trimmed()!="")
-                    str+="\t"+s+"\n";
-                else str+="\n";
-                removeLast = true;
-            }
-            else { // Backtab!
-
-                int i = s.indexOf("\t");
-                if (s.count()>0 && i<s.count()) {
-                    if (s[i]=='\t')
-                        str+=s.remove(i,1)+"\n";
-                    else str+=s+"\n";
-                }
-
-            }
-        }
-        if (removeLast)
-            str.remove(str.length()-1,1);
-
-        if(cursor.hasSelection())
-        {
-
-            cursor.beginEditBlock();
-            cursor.insertText(str);
-            cursor.setPosition(lineCopy, QTextCursor::KeepAnchor);
-            cursor.endEditBlock();
-            setTextCursor(cursor);
-
-            return;
-        }
-
-  /*      static QChar par(0x2029); // Qt uses paragraph separators
-        QTextCursor cursor = textCursor();
-        QString selected = cursor.selectedText();
-        qint32 amountOfLines = selected.count(par) + 1;
-        static QString tab = QString(" ").repeated(4);
-        QKeyEvent* event = e;
-
-        // Adds tabs in front of the selected block(s)
-        if (event->key() == Qt::Key_Tab && !textCursor().selectedText().isEmpty()) {
-            // Retrieves the amount of lines within the selected text
-            QTextCursor cursor = textCursor();
-            QString selected = cursor.selectedText();
-            qint32 amountOfLines = selected.count(par) + 1;
-
-            // Does not do anything if only one line is selected
-            if (amountOfLines == 1) {
-                return;
-            }
-
-            // Selects the start of the current line and retrieves the position
-            int linePos, lineCopy;
-            cursor.setPosition(cursor.selectionStart());
-            cursor.movePosition(QTextCursor::StartOfLine);
-            linePos = lineCopy = cursor.position();
-            cursor.beginEditBlock();
-
-            // Inserts tabs for each selected line
-            for (int i = 0; i < amountOfLines; ++i) {
-                cursor.setPosition(linePos);
-                cursor.insertText(tab);
-                cursor.movePosition(QTextCursor::Down);
-                cursor.movePosition(QTextCursor::StartOfLine);
-                linePos = cursor.position();
-            }
-
-            // Selects all the text
-            cursor.movePosition(QTextCursor::Down);
-            cursor.movePosition(QTextCursor::EndOfLine);
-            cursor.setPosition(lineCopy, QTextCursor::KeepAnchor);
-            cursor.endEditBlock();
-            setTextCursor(cursor);
-            return;
-        }
-
-        // Removes tabs in front of selected block(s)
-        if (event->key() == Qt::Key_Backtab && !textCursor().selectedText().isEmpty()) {
-            // Retrieves the amount of lines within the selected text
-            QTextCursor cursor = textCursor();
-            QString selected = cursor.selectedText();
-            qint32 amountOfLines = selected.count(par) + 1;
-
-            // Does not do anything if only one line is selected
-            if (amountOfLines == 1) {
-                return;
-            }
-
-            // Retrieves the start of the selection
-            int start = 0, line, diff, copy;
-            cursor.setPosition(cursor.selectionStart());
-            cursor.movePosition(QTextCursor::StartOfLine);
-            copy = cursor.position();
-
-            if (selected.at(0).isSpace()) {
-                cursor.movePosition(QTextCursor::NextWord);
-                start = cursor.position();
-            }
-
-            cursor.clearSelection();
-            cursor.beginEditBlock();
-
-            // Removes a tab from each line
-            for (int i = 0; i < amountOfLines; ++i) {
-                cursor.setPosition(start);
-                cursor.movePosition(QTextCursor::StartOfLine);
-                line = cursor.position();
-                cursor.setPosition(start);
-
-                if (start == line) {
-                    continue;   // nothing to remove
-                }
-
-                diff = qMin(4, start - line);
-                for (int i = 0; i < diff; ++i) {
-                    cursor.deletePreviousChar();
-                }
-
-                // Finds position of the first word in the next line
-                cursor.movePosition(QTextCursor::Down);
-                cursor.movePosition(QTextCursor::StartOfLine);
-                cursor.movePosition(QTextCursor::NextWord);
-                cursor.movePosition(QTextCursor::StartOfWord);
-                start = cursor.position();
-            }
-
-            // Selects all the text
-            cursor.movePosition(QTextCursor::Down);
-            cursor.movePosition(QTextCursor::EndOfLine);
-            cursor.setPosition(copy, QTextCursor::KeepAnchor);
-            cursor.endEditBlock();
-            setTextCursor(cursor);
-            return;
-        }
-
-        // Replaces a tab with four whitespaces
-        if (event->key() == Qt::Key_Tab) {
-            QTextCursor cursor = textCursor();
-            cursor.insertText(QString(" ").repeated(4));
-            setTextCursor(cursor);
-            return;
-        }
-
-*/
+        TabBackTab(e, e->key()==Qt::Key_Backtab);
+        return;
     }
-
 
     if ((e->modifiers() & Qt::ControlModifier)) {
         c->popup()->hide();
@@ -499,39 +431,35 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
         c->popup()->hide();
         return;
     }
-        bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_Space); // CTRL+E
-        if (!c || !isShortcut) // do not process the shortcut when we have a completer
+
+    bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_Space); // CTRL+E
+    if (!c || !isShortcut) // do not process the shortcut when we have a completer
             QPlainTextEdit::keyPressEvent(e);
-//    We also handle other modifiers and shortcuts for which we do not want the completer to respond to.
 
-        const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
-        if (!c || (ctrlOrShift && e->text().isEmpty()))
-            return;
-
-        static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
-        bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
-        QString completionPrefix = textUnderCursor();
-//        completionPrefix= completionPrefix.remove("\t");
-  //      completionPrefix= completionPrefix.remove(" ");
-       // qDebug() << completionPrefix;
-        if (!isShortcut && (hasModifier || e->text().isEmpty()|| completionPrefix.length() < 3
-                          || eow.contains(e->text().right(1)))) {
-            c->popup()->hide();
-            return;
-        }
-
-        if (completionPrefix != c->completionPrefix()) {
-            c->setCompletionPrefix(completionPrefix);
-            c->popup()->setCurrentIndex(c->completionModel()->index(0, 0));
-        }
-
-        QRect cr = cursorRect();
-        cr.setWidth(c->popup()->sizeHintForColumn(0)
-                    + c->popup()->verticalScrollBar()->sizeHint().width());
-
-
-        c->complete(cr); // popup it up!
+    //    We also handle other modifiers and shortcuts for which we do not want the completer to respond to.
+    const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
+    if (!c || (ctrlOrShift && e->text().isEmpty()))
         return;
+
+    static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+    bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
+    QString completionPrefix = textUnderCursor();
+    if (!isShortcut && (hasModifier || e->text().isEmpty()|| completionPrefix.length() < 3
+                      || eow.contains(e->text().right(1)))) {
+        c->popup()->hide();
+        return;
+    }
+
+    if (completionPrefix != c->completionPrefix()) {
+        c->setCompletionPrefix(completionPrefix);
+        c->popup()->setCurrentIndex(c->completionModel()->index(0, 0));
+    }
+
+    QRect cr = cursorRect();
+    cr.setWidth(c->popup()->sizeHintForColumn(0)
+            + c->popup()->verticalScrollBar()->sizeHint().width());
+
+    c->complete(cr); // popup it up!
 }
 
 void CodeEditor::focusInEvent(QFocusEvent *e)
