@@ -244,7 +244,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
         // Save new anchor to the beginning of the selection and move
         // cursor to make new selection from begin->end
         anchor = cursor.anchor();
-        cursor.setPosition(pos, QTextCursor::KeepAnchor);
+        cursor.setPosition(pos - 1, QTextCursor::KeepAnchor);
 
         // Get selected text and split into lines
         QString str = cursor.selection().toPlainText();
