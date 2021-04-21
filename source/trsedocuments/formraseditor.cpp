@@ -877,6 +877,7 @@ void FormRasEditor::UpdateFromIni()
     m_font.setPointSize(m_iniFile->getdouble("font_size")*m_iniFile->getdouble("font_size_scale"));
     ui->txtEditor->m_fontScale = m_iniFile->getdouble("font_size_scale");
     ui->txtEditor->m_font = m_font;
+    ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete")==1;
 
 }
 
