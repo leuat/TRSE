@@ -210,6 +210,7 @@ void CodeEditor::SetIndent(bool shift)
             if (loc == -1) loc = lines[i].length();
             if (lines[i].isEmpty()) continue;
             if (loc < txtPos) break;
+            if (lines[i].trimmed().contains("begin", Qt::CaseInsensitive)) break;
             if (lines[i].trimmed().contains("end", Qt::CaseInsensitive)) hasEnd = true;
         }
 
