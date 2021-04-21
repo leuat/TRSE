@@ -1088,7 +1088,20 @@ bool ASTDispatcher68000::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node
 
 }
 
-void ASTDispatcher68000::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+void ASTDispatcher68000::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
+{
+
+    //IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
+    //Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
+    QString var = nodeA->m_left->getValue(as);
+    LoadVariable(nodeB);
+    TransformVariable(as,"cmp",as->m_varStack.pop(),var);
+    as->Asm("bne "+lblJump);
+
+}
+
+
+void ASTDispatcher68000::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
 
     //IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));

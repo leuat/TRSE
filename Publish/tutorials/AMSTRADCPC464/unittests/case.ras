@@ -1,0 +1,19 @@
+program testcase;
+@use "text"
+
+var
+	i,j : byte;
+
+begin
+
+
+	i:=3;
+	j:=15;
+	case j of 
+		0: text::Print("WRONG");
+		15: text::Print("CORRECT");
+		0: text::Print("WRONG");
+	end;
+	text::Reset
+	loop();
+end.

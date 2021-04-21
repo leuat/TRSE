@@ -82,7 +82,8 @@ public:
 //    void dispatch(QSharedPointer<NodeConditional> node) override;
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed,QString lblSuccess, bool forcePage);
 
-    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+    void CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB,QString lblJump, bool isOffpage) override;
 
     QString getReturn() override { return "ret";}
     QString getReturnInterrupt() override { return "reti";}

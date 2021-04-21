@@ -8,9 +8,10 @@ var
    p: pointer;
    user_defined_char_initialized: byte=0;
 
-// Resets the text VDU.
-// If c = 0, do a partial reset (text VDU indirections and control code table)
-// If c != 0, do a full reset (same + select stream 0, reset paper and pen colors, move cursor to top left, ...)
+/** Resets the text VDU.
+ If c = 0, do a partial reset (text VDU indirections and control code table)
+ If c != 0, do a full reset (same + select stream 0, reset paper and pen colors, move cursor to top left, ...)
+ **/
 procedure Reset(c: global byte);
 begin
   if c = 0 then

@@ -47,7 +47,6 @@ public:
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
     void dispatch(QSharedPointer<NodeAssign> node) override;
-    void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
@@ -149,7 +148,8 @@ public:
 
     void SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
 
-    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+    void CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
+    void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage) override;
 
     void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 

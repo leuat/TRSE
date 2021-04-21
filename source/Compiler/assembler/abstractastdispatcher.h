@@ -68,7 +68,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeCase> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeCase> node);
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
     virtual void dispatch(QSharedPointer<NodeComment> node) = 0;
     virtual void dispatch(QSharedPointer<NodeControlStatement> node);
@@ -104,7 +104,8 @@ public:
 
     bool isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2);
 
-    virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) = 0;
+    virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage) = 0;
+    virtual void CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) =0;
 
 
     virtual void dispatch(QSharedPointer<NodeProcedureDecl> node);

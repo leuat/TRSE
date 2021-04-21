@@ -39,3 +39,7 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
+show_all_files = 1
+open_files = ,keywords/case.asm, keywords/case.ras, structures/classes.ras, arithmetic/integer.ras, arithmetic/muldiv.ras
+current_file = keywords/case.ras
