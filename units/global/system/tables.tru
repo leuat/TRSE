@@ -4,7 +4,6 @@ var
     sine256 : array[256] of integer = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*255)");
     sine128 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*127)");
     sine320 : array[320] of byte = BuildTable("(Math.sin(i/320.0*Math.PI*2.0)*127+128)");
-    sineDistort : array[1024] of integer = BuildTable("((Math.sin(i/50.2)*1270+1280))");
 	bits: array[8] of byte=(%00000001,%00000010,%00000100,%00001000,%00010000,%00100000,%01000000,%10000000);
 
 

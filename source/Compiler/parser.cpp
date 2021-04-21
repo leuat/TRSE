@@ -564,14 +564,9 @@ void Parser::PreprocessConstants()
 void Parser::ApplyTPUBefore()
 {
     for (QSharedPointer<Parser> p: m_tpus) {
-//        QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
         for (QString k : p->m_procedures.keys()) {
             m_procedures[k] = p->m_procedures[k];
-//            m_symTab->m_globalList.append(k);
-//            qDebug() << "Adding TPU : " << k;
         }
-//        for (QString k : p->m_procedures.keys())
-  //          m_procedures[k] = p->m_procedures[k];
 
     }
 }
@@ -2726,16 +2721,6 @@ void Parser::PreprocessSingle() {
                           replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
 
                       }
-  //                    qDebug() << replaceLine;
-
-                      // Now load all disk files
-  //                    CIniFile paw;
-    //                  paw.Load()
-
-
-  //_Installer_Binary: 		incbin ("bin/install-c64.bin",$5000);
-    //                  qDebug() << replaceLine;
-  //                    qDebug() << Util::numToHex(loaderPos);
                       QString orgL =  m_lexer->m_lines[ln];
 
 
@@ -5073,10 +5058,6 @@ void Parser::HandleProjectSettingsPreprocessors()
 
 void Parser::HandleUseTPU(QString fileName)
 {
-    //QString fname = m_currentDir + QDir::separator() + fileName+".tru";
-
-//    if (m_isTRU)
-  //      ErrorHandler::e.Error("TRSE Unit files cannot include other unit files")
 
     if (s_usedTRUs.contains(fileName)) {
         return;
@@ -5086,6 +5067,7 @@ void Parser::HandleUseTPU(QString fileName)
     dirs << m_currentDir + QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+ QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+ QDir::separator();
+    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+"global"+ QDir::separator();
 
     QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);
 

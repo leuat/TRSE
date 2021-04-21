@@ -803,14 +803,20 @@ void MainWindow::RefreshFileList()
     ui->treeFiles->setHeaderHidden(true);
     m_im->insertRow(0,root);
     QStandardItem* trus = nullptr;
+    // System specific
     if (QDir().exists(truPath[0])) {
-       trus = AddTreeRoot(truPath[0],system+" library (TRSE)");
+       trus = AddTreeRoot(truPath[0],system+" library");
         m_im->insertRow(1,trus);
     }
-    //qDebug() << "TRU 1" << truPath[1];
+    // CPU-specific
     if (QDir().exists(truPath[1])) {
-       trus = AddTreeRoot(truPath[1],Syntax::s.m_currentSystem->StringFromProcessor(system)+" library (TRSE)");
+       trus = AddTreeRoot(truPath[1],Syntax::s.m_currentSystem->StringFromProcessor(system)+" library");
         m_im->insertRow(2,trus);
+    }
+    // Global
+    if (QDir().exists(truPath[2])) {
+       trus = AddTreeRoot(truPath[2],"global library");
+        m_im->insertRow(3,trus);
     }
 
    m_im->setHorizontalHeaderLabels(QStringList() << "1" <<"2");
@@ -1319,19 +1325,25 @@ QString MainWindow::getProjectPath()
 QStringList MainWindow::getTRUPaths()
 {
     QStringList paths;
+    // Current project searched first
     QString system = m_currentProject.m_ini->getString("system").toUpper();
     QString s =  Util::path + QDir::separator() + Data::data.unitPath + QDir::separator() + system+ QDir::separator();
     s = s.replace("\\\\","\\");
     if (s.startsWith("\\")) s = s.remove(0,1);
 //    qDebug() << "TRU path "<<s;
 
-
+    // Then, system dir
     QString s2 =  Util::path + QDir::separator() + Data::data.unitPath+QDir::separator() + Data::data.cpuUnitPath + QDir::separator() + Syntax::s.m_currentSystem->StringFromProcessor(system) +  QDir::separator();
     s2 = s2.replace("\\\\","\\");
     if (s2.startsWith("\\")) s2 = s2.remove(0,1);
 
+    // Finally, global path
+    QString s3 =  Util::path + QDir::separator() + Data::data.unitPath+QDir::separator() + "global" +  QDir::separator();
+    s3 = s3.replace("\\\\","\\");
+    if (s3.startsWith("\\")) s3 = s3.remove(0,1);
 
-    paths <<s << s2;
+
+    paths <<s << s2 << s3;
     return paths;
 
 }
@@ -1490,15 +1502,15 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     // Finally load file!
     QStringList tru = getTRUPaths();// QDir::separator()+m_currentProject.m_ini->getString("system")+QDir::separator()+"tru";
-    tru[0] = tru[0].remove(Util::path);
-    tru[1] = tru[1].remove(Util::path);
+    for (auto& s:tru)
+        s = s.remove(Util::path);
+
     QString file = QDir::toNativeSeparators(index.data(Qt::UserRole).toString());
+
     file = file.replace("\\\\","\\");
     file = file.replace("//","/");
-//    qDebug() << "CLICKED "<<file;
-//    qDebug() << "CLICKED2 "<<tru;
 
-    if (file.contains(tru[0]) ||file.contains(tru[1])) {
+    if (file.contains(tru[0]) ||file.contains(tru[1])||file.contains(tru[2])) {
         LoadDocument(file,true);
         return;
     }
@@ -1890,8 +1902,9 @@ void MainWindow::LoadProject(QString filename)
 
     m_watcher = QSharedPointer<QFileSystemWatcher>(new QFileSystemWatcher());
     m_watcher->addPath(getProjectPath());
-    m_watcher->addPath(getTRUPaths()[0]);
-    m_watcher->addPath(getTRUPaths()[1]);
+    QStringList lst = getTRUPaths();
+    for (auto s:lst)
+       m_watcher->addPath(s);
 
 
     QObject::connect(m_watcher.get(), SIGNAL(directoryChanged(QString)), this, SLOT(RefreshFileList()));
