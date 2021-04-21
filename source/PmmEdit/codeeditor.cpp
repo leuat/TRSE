@@ -174,8 +174,10 @@ void CodeEditor::SetIndent(bool shift)
     // Only keep the current indent if not enabled
     if (!enable)
     {
+        cursor.beginEditBlock();
         insertPlainText("\n");
         insertPlainText(space);
+        cursor.endEditBlock();
         return;
     }
 
@@ -196,6 +198,7 @@ void CodeEditor::SetIndent(bool shift)
             || lastWord == "asm"
             || (firstWord == "case" && lastWord == "of"))
     {
+        cursor.beginEditBlock();
         insertPlainText("\n\t");
         insertPlainText(space);
 
@@ -236,18 +239,23 @@ void CodeEditor::SetIndent(bool shift)
             cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor, 1);
             setTextCursor(cursor);
         }
+        cursor.endEditBlock();
     }
     // Don't insert the "end" after var, just indent
     else if (lastWord == "var")
     {
+        cursor.beginEditBlock();
         insertPlainText("\n\t");
         insertPlainText(space);
+        cursor.endEditBlock();
     }
     else
     {
         // If nothing else, just keep the old indent
+        cursor.beginEditBlock();
         insertPlainText("\n");
         insertPlainText(space);
+        cursor.endEditBlock();
     }
 }
 
