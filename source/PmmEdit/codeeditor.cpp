@@ -150,17 +150,16 @@ void CodeEditor::SetIndent(bool shift)
     QTextCursor cursor = textCursor();
     QString line = textCursor().block().text();
     QString space, lastWord, firstWord;
-    QChar c;
-    int size=line.size();
+    int txtPos;
 
-    // search for white spaces at the beginning of the line
-    for(int i = 0; i < size; i++) {
-        c = line[i];
-        if(!c.isSpace()) {
-            space = line.left(i);
-            break;
-        }
+    // Find out where contents of line begin, after
+    // the indent space
+    txtPos = line.indexOf(QRegExp("\\S"), 0);
+    if (txtPos == -1)
+    {
+        txtPos = line.length();
     }
+    space = line.left(txtPos);
 
     // Automatic indent. First sanity check if we're at the end of line
     if(!cursor.atBlockEnd()) {
@@ -199,25 +198,44 @@ void CodeEditor::SetIndent(bool shift)
     {
         insertPlainText("\n\t");
         insertPlainText(space);
-        insertPlainText("\n");
-        insertPlainText(space);
-        insertPlainText("end");
-        // Special handling for "." after "begin"
-        if (lastWord == "begin"
-                && !(cursor.document()->toPlainText().contains("end.",Qt::CaseInsensitive))
-                && (cursor.document()->toPlainText().trimmed().startsWith("program", Qt::CaseInsensitive)))
+
+        // Find if we already have end on right place
+        bool hasEnd = false;
+        int loc = 0;
+        QString endTxt = cursor.document()->toPlainText().mid(cursor.position());
+        QStringList lines = endTxt.split("\n");
+        for (int i=0; i < lines.size(); i++)
         {
-            insertPlainText(".");
+            loc = lines[i].indexOf(QRegExp("\\S"), 0);
+            if (loc == -1) loc = lines[i].length();
+            if (lines[i].isEmpty()) continue;
+            if (loc < txtPos) break;
+            if (lines[i].trimmed().contains("begin", Qt::CaseInsensitive) && loc == txtPos) break;
+            if (lines[i].trimmed().contains("end", Qt::CaseInsensitive) && loc == txtPos) hasEnd = true;
         }
-        else
-        {
-            insertPlainText(";");
+
+        // Only add "end" if we don't have it already
+        if (!hasEnd) {
+            insertPlainText("\n");
+            insertPlainText(space);
+            insertPlainText("end");
+            // Special handling for "." after "begin"
+            if (lastWord == "begin"
+                    && !(cursor.document()->toPlainText().contains("end.",Qt::CaseInsensitive))
+                    && (cursor.document()->toPlainText().trimmed().startsWith("program", Qt::CaseInsensitive)))
+            {
+                insertPlainText(".");
+            }
+            else
+            {
+                insertPlainText(";");
+            }
+            // Move cursor to the end of the previous line to make typing
+            // a breeze.
+            cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, 1);
+            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor, 1);
+            setTextCursor(cursor);
         }
-        // Move cursor to the end of the previous line to make typing
-        // a breeze.
-        cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, 1);
-        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor, 1);
-        setTextCursor(cursor);
     }
     // Don't insert the "end" after var, just indent
     else if (lastWord == "var")
@@ -239,10 +257,6 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
 {
     QTextCursor cursor = textCursor();
 
-/*    qDebug() << "backtab " << back;
-    qDebug() << "hasSelection " << cursor.hasSelection();
-    qDebug() << "atBlockStart " << cursor.atBlockStart();
-*/
     // Check if we actually have selection or just tab/backtab
     // press in single line and handle them separately.
     if (cursor.hasSelection())
@@ -263,7 +277,6 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
         // Get selected text and split into lines
         QString str = cursor.selection().toPlainText();
         QStringList lines = str.split("\n");
-
 
         if (back)
         // Selection backtab handling
