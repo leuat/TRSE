@@ -416,6 +416,8 @@ void MainWindow::VerifyDefaults()
     if (!(m_iniFile->getString("assembler_z80")=="OrgAsm" || m_iniFile->getString("assembler_z80")=="Pasmo"))
        m_iniFile->setString("assembler_z80","Pasmo");
 
+   if (!m_iniFile->contains("editor_autocomplete"))
+       m_iniFile->setFloat("editor_autocomplete",1);
 
     m_iniFile->filename = m_iniFileName;
 
