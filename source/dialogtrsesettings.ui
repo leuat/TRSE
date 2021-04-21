@@ -25,7 +25,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1053,34 +1053,17 @@
         <layout class="QGridLayout" name="gridLayout_24">
          <item row="0" column="0">
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="1" column="1">
-            <widget class="QComboBox" name="cmbThemeFjong"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_47">
+           <item row="3" column="2">
+            <widget class="QCheckBox" name="chkDisableFileColors">
              <property name="text">
-              <string>Seconds to show splash screen (0 to disable)</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Window palette</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_41">
-             <property name="text">
-              <string>Disable project explorer colors</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
+           <item row="0" column="2">
             <widget class="QComboBox" name="cmbTheme"/>
            </item>
-           <item row="2" column="1">
+           <item row="2" column="2">
             <widget class="QComboBox" name="cmbPalette">
              <item>
               <property name="text">
@@ -1094,17 +1077,10 @@
              </item>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_21">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_47">
              <property name="text">
-              <string>Fjong editor color theme</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QCheckBox" name="chkDisableFileColors">
-             <property name="text">
-              <string/>
+              <string>Seconds to show splash screen (0 to disable)</string>
              </property>
             </widget>
            </item>
@@ -1115,8 +1091,46 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_56">
+             <property name="text">
+              <string>Editor auto complete:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Disable project explorer colors</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>Fjong editor color theme</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
             <widget class="QLineEdit" name="leSplashSeconds"/>
+           </item>
+           <item row="1" column="2">
+            <widget class="QComboBox" name="cmbThemeFjong"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Window palette</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QCheckBox" name="chkAutoComplete">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>

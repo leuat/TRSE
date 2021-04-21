@@ -337,7 +337,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     setupEditor();
     ui->txtEditor->m_displayCycles = m_iniFile->getdouble("display_cycles")==1;
     ui->txtEditor->m_displayAddresses = m_iniFile->getdouble("display_addresses")==1;
-
+    ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete")==1;
 
 }
 
@@ -1122,7 +1122,15 @@ bool FormRasEditor::Load(QString filename)
         SetText(file.readAll());
     }
     file.close();
+    ui->txtEditor->m_fileType = CodeEditor::RAS;
     m_isTRU = filename.toLower().endsWith(".tru");
+    if (m_isTRU)
+        ui->txtEditor->m_fileType = CodeEditor::TRU;
+    if (filename.toLower().endsWith(".asm"))
+        ui->txtEditor->m_fileType = CodeEditor::ASM;
+    if (filename.toLower().endsWith(".inc"))
+        ui->txtEditor->m_fileType = CodeEditor::INC;
+
     ShadowBuild();
     return true;
 }

@@ -74,6 +74,11 @@ public:
     bool m_displayCycles = true;
     bool m_displayAddresses = true;
     float m_fontScale = 0.8;
+    enum FileType {RAS, TRU, INC, ASM, FJO};
+    FileType m_fileType = RAS;
+    bool m_autoComplete = true;
+
+
     // Handle indenting automatically if enabled in settings
     void SetIndent();
     // Tab/Backtab handling in editor

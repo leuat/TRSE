@@ -50,6 +50,7 @@ bool FormFjong::Load(QString filename)
     }
     file.close();
     UpdateFromIni();
+    ui->txtEditor->m_fileType = CodeEditor::FJO;
     SetupHighlighter();
     ui->txtEditor->m_textChanged = false;
     m_documentIsChanged = false;
