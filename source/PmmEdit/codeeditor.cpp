@@ -21,7 +21,7 @@
 
 
 #include <QtWidgets>
-
+#include <QRegularExpression>
 #include "codeeditor.h"
 
 
@@ -154,7 +154,7 @@ void CodeEditor::SetIndent(bool shift)
 
     // Find out where contents of line begin, after
     // the indent space
-    txtPos = line.indexOf(QRegExp("\\S"), 0);
+    txtPos = line.indexOf(QRegularExpression("\\S"), 0);
     if (txtPos == -1)
     {
         txtPos = line.length();
@@ -206,7 +206,7 @@ void CodeEditor::SetIndent(bool shift)
         QStringList lines = endTxt.split("\n");
         for (int i=0; i < lines.size(); i++)
         {
-            loc = lines[i].indexOf(QRegExp("\\S"), 0);
+            loc = lines[i].indexOf(QRegularExpression("\\S"), 0);
             if (loc == -1) loc = lines[i].length();
             if (lines[i].isEmpty()) continue;
             if (loc < txtPos) break;
