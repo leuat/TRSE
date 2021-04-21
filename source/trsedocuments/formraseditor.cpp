@@ -380,11 +380,19 @@ void FormRasEditor::Build(bool isShadow)
     FocusOnOutput();
     if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
         return;
+
     m_lastBuild = m_timer.elapsed();
     if (m_builderThread.m_isRunning) {
         return;
     }
     m_builderThread.quit();
+
+
+    if (m_currentSourceFile.toLower().endsWith(".inc")) {
+        ui->txtOutput->setText("You cannot compile include files");
+        return;
+    }
+
 
     if (!isShadow)
         SaveCurrent();
@@ -692,7 +700,10 @@ void FormRasEditor::SetupHighlighter()
     ui->txtEditor->setPalette(p);
     //if (highlighter!=nullptr)
     //    delete highlighter;
-    if (m_currentFileShort.toLower().endsWith(".ras") || m_currentFileShort.toLower().endsWith(".tru"))
+    if (m_currentFileShort.toLower().endsWith(".ras") ||
+            m_currentFileShort.toLower().endsWith(".tru") ||
+            m_currentFileShort.toLower().endsWith(".inc")
+            )
         highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
     else
         highlighter = new AsmHighlighter(colors, 0, ui->txtEditor->document());
