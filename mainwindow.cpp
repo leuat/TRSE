@@ -1753,7 +1753,10 @@ void MainWindow::on_actionNew_project_triggered()
 //    qDebug() << "MainWindow " <<src;
   //  qDebug() << "MainWindow " <<dst;
     QString projectFile = dst + np->m_project+".trse";
-    QFile::copy(src+"/project.trse",projectFile);
+    QString srcFile = src + "/project.trse";
+    if (!QFile::copy(srcFile, projectFile)) {
+      qDebug() << "Couldn't copy '" << srcFile << "'. Is the project_templates directory properly setup?";
+    }
     Util::CopyRecursively(src + "/files/", dst);
     UpdateRecentProjects();
     LoadProject(projectFile);
