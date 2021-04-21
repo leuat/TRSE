@@ -239,10 +239,10 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
 {
     QTextCursor cursor = textCursor();
 
-    qDebug() << "backtab " << back;
+/*    qDebug() << "backtab " << back;
     qDebug() << "hasSelection " << cursor.hasSelection();
     qDebug() << "atBlockStart " << cursor.atBlockStart();
-
+*/
     // Check if we actually have selection or just tab/backtab
     // press in single line and handle them separately.
     if (cursor.hasSelection())
