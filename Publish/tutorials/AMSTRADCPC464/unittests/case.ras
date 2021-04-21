@@ -1,25 +1,26 @@
 program testcase;
-@use "text"
-@use "crtc"
+//@use "text"
+//@use "crtc"
 var
 	i,j,k : byte;
 
 	l,ik : integer;
 	zp, p : pointer;
-	
+/*	
 procedure PutPixel(x:integer;y:byte);
 begin
 	x:=x>>2;
 	crtc::PutPixelMode0(x,y,1);
 	
 end;
-
+*/
 
 begin
 	asm(";here0");
 	p:=#i;
 	p[0] := 10;
-	zp:=p+1;
+//	p[1] := 10;
+/*	zp:=p+1;
 	crtc_SetMode(0);
 	i:=3;
 	j:=15;
@@ -40,6 +41,6 @@ begin
 	end;
 	
 	
-	
+*/	
 	loop();
 end.
