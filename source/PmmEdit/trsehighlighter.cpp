@@ -91,8 +91,10 @@ void TRSEHighlighter::AppendSymboltable(QList<QString> procs)
         m_cur = highlightingRules.count();
     }
     QStringList keywordPatterns;
-
-    procedureFormat.setForeground(m_colors.getColor("builtinfunctioncolor"));
+    if (m_colors.contains("functioncolor"))
+        procedureFormat.setForeground(m_colors.getColor("functioncolor"));
+    else
+        procedureFormat.setForeground(m_colors.getColor("builtinfunctioncolor"));
 //    procedureFormat.setFontWeight(QFont::Bold);
     keywordPatterns.clear();
 
