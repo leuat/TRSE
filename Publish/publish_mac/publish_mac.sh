@@ -8,7 +8,7 @@ cp -r ../units trse/trse.app/
 cp -r ../project_templates trse/trse.app/
 cp -r ~/code/OK64/Release/OK64.app  trse/
 cd trse/trse.app
- ~/Qt/5.15.0/clang_64/bin/macdeployqr .
+ ~/Qt/6.0.1/clang_64/bin/macdeployqt .
  rm *.ini
  cd ../../
  find trse -name '*.prg' -delete

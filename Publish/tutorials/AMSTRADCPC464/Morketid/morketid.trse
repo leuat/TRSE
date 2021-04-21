@@ -81,4 +81,4 @@ data_header_images/logo_keep.flf = 6.90119e-310
 open_files = ,source/creds.ras, main.asm, main.ras, [ext]units/AMSTRADCPC464/crtc.tru
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC464/Morketid/
 show_all_files = 1
-current_file = main.ras
+current_file = main.asm

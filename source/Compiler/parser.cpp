@@ -2241,9 +2241,11 @@ QSharedPointer<Node> Parser::Program(QString param)
     else
         block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
-    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
 
-    ApplyTPUAfter(block->m_decl,m_proceduresOnly);
+
+    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
+//    if (block!=nullptr)
+        ApplyTPUAfter(block->m_decl,m_proceduresOnly);
 
     if (!m_isTRU) {
         Eat(TokenType::DOT);
@@ -3031,9 +3033,12 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 /*    if (m_currentToken.m_type!=TokenType::VAR  && m_currentToken.m_type!=TokenType::BEGIN)
         return nullptr;
 */
-
+    // Main block
+//    qDebug() <<blockName <<m_inCurrentProcedure;
+    if (m_inCurrentProcedure!="main")
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
         return nullptr;
+
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
 
     int pos = m_currentToken.m_lineNumber;

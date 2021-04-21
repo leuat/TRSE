@@ -51,3 +51,7 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 exomizer_toggle = 0
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/NES/intro_tutorial/
+show_all_files = 1
+open_files = ,tutorial_2_hello_sprites.ras, tutorial_1_hello_nes.ras
+current_file = tutorial_2_hello_sprites.ras
