@@ -20,8 +20,8 @@ var
     d) In TRSE, use the "compile_akg_music" pre-processor command to compile the music + player using the "mySong" base name
        to a format that TRSE can recognize. Also specify the desired memory location, somewhere *after* your code.
     e) The compiler has generated a .bin file - include this one 
-    f) Music play/init locations are automatically extracted. All you need to do is call music::InitMusic(track) and
-       call music::PlayMusic() on each frame.  
+    f) Music play/init locations are automatically extracted. All you need to do is call Music::InitMusic(track) and
+       call Music::PlayMusic() on each frame.  
 
 */	
 
@@ -38,7 +38,7 @@ begin
 	rast:=rast+1;
 	if (rast=6) then // Only play every 6th interrupt
 	begin
-		music::PlayMusic();
+		Music::PlayMusic();
 		rast := 0;
 	end;
 	Memory::EnableInterrupts();
@@ -46,17 +46,17 @@ begin
 end;
 
 begin
-	crtc::SetBorder(0);
-	crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Crtc::SetMode(0);
 	
 	Memory::DisableLRom();
 	
 	// Set up colortab1
-	music::InitMusic(#some_song,0);
-	crtc::Synchronize();
+	Music::InitMusic(#some_song,0);
+	Crtc::Synchronize();
 	RasterIRQ(MainRaster());
 	
-	crtc::SetPalette(#palette);
+	Crtc::SetPalette(#palette);
 	
 
 	memcpy(#image, screen, $3FFF);

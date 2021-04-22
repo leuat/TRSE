@@ -1,4 +1,4 @@
-Unit text;
+Unit Text;
 var  
    c: byte=0;
    x: byte=0;
@@ -48,7 +48,7 @@ end;
 procedure PutChar(c: global byte);
 begin
   asm("
-    ld a, [text_c]
+    ld a, [Text_c]
     call #bb5a
   ")
 end;
@@ -58,7 +58,7 @@ end;
 procedure PutControlChar(c: global byte);
 begin
   asm("
-    ld a, [text_c]
+    ld a, [Text_c]
     call #bb5d
   ")
 end;
@@ -70,7 +70,7 @@ function GetChar():byte;
 begin
   asm("
     call #bb60
-    ld [text_c], a
+    ld [Text_c], a
   ");
   GetChar := c;
 end;
@@ -80,7 +80,7 @@ end;
 procedure Print(p: global pointer);
 begin
     asm("
-      ld hl, [text_p]
+      ld hl, [Text_p]
     text_print_loop:
       ld a, (hl)
       cp 0
@@ -97,7 +97,7 @@ end;
 procedure PrintControl(p: global pointer);
 begin
   asm("
-    ld hl, [text_p]
+    ld hl, [Text_p]
   text_print_control_loop:
     ld a, (hl)
     cp 0
@@ -132,9 +132,9 @@ end;
 procedure MoveCursorTo(x: global byte, y: global byte);
 begin
   asm("
-    ld a, [text_x]
+    ld a, [Text_x]
     call #bb6f
-    ld a, [text_y]
+    ld a, [Text_y]
     call #bb72
   ");
 end;
@@ -148,7 +148,7 @@ function GetPen():byte;
 begin
   asm("
     call #bb93
-    ld [text_c], a
+    ld [Text_c], a
   ");
   GetPen := c;
 end;
@@ -157,7 +157,7 @@ end;
 procedure SetPen(c: global byte);
 begin
   asm("
-    ld a, [text_c]
+    ld a, [Text_c]
     call #bb90
   ");
 end;
@@ -167,7 +167,7 @@ function GetPaper():byte;
 begin
   asm("
     call #bb99
-    ld [text_c], a
+    ld [Text_c], a
   ");
   GetPaper := c;
 end;
@@ -176,7 +176,7 @@ end;
 procedure SetPaper(c: global byte);
 begin
   asm("
-    ld a, [text_c]
+    ld a, [Text_c]
     call #bb96
   ");
 end;
@@ -194,7 +194,7 @@ end;
 procedure SetTransparent(c: global byte);
 begin
   asm("
-    ld a, [text_c]
+    ld a, [Text_c]
     call #bb9f
   ");
 end;
@@ -205,7 +205,7 @@ function GetTransparent():byte;
 begin
   asm("
     call #bba2
-    ld [text_c], a
+    ld [Text_c], a
   ");
   GetTransparent := c;
 end;
@@ -232,7 +232,7 @@ begin
   asm("
     ld d, 0
     ld e, 0
-    ld hl, text_user_defined_char_matrix
+    ld hl, Text_user_defined_char_matrix
     call #bbab
   ");
 end;
@@ -245,8 +245,8 @@ procedure SetCharMatrix(c: global byte, p: global pointer);
 begin
   if c < 240 then EnableUserDefinedChar();
   asm("
-    ld a, [text_c]
-    ld hl, [text_p]
+    ld a, [Text_c]
+    ld hl, [Text_p]
     call #bba8
   ");
 end;
@@ -266,7 +266,7 @@ TODO(ColinPitrat): Any use for these?
 procedure SelectWindow(c: global byte);
 begin
   asm("
-    ld a, [text_c]
+    ld a, [Text_c]
     call #bbb4
   ");
 end;
@@ -276,13 +276,13 @@ end;
 procedure SetWindow(x: global byte, y: global byte, x2: global byte, y2: global byte);
 begin
   asm("
-    ld a, [text_x]
+    ld a, [Text_x]
     ld h, a
-    ld a, [text_y]
+    ld a, [Text_y]
     ld l, a
-    ld a, [text_x2]
+    ld a, [Text_x2]
     ld d, a
-    ld a, [text_y2]
+    ld a, [Text_y2]
     ld e, a
     call #bb66
   ");

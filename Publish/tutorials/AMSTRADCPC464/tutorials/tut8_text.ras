@@ -11,32 +11,32 @@ var
 
 begin
   // Set 160x200 16-color mode
-  crtc::SetMode(0);
+  Crtc::SetMode(0);
   // Set black border
-  crtc::SetBorder(0);
+  Crtc::SetBorder(0);
 
   // Write digits from 0 to 10
-  for hw_i := 48 to 58 do text::PutChar(hw_i);
-  input::WaitKey();
+  for hw_i := 48 to 58 do Text::PutChar(hw_i);
+  Input::WaitKey();
 
   // Print with immediate value
-  text::MoveCursorTo(3, 3);
-  text::Print("Print a string\r\n");
-  input::WaitKey();
+  Text::MoveCursorTo(3, 3);
+  Text::Print("Print a string\r\n");
+  Input::WaitKey();
 
   // Print with a string variable
-  text::Print(#message);
-  input::WaitKey();
+  Text::Print(#message);
+  Input::WaitKey();
 
   // Ring the bell
-  text::MoveCursorTo(1, 5);
-  text::Print("Hear the bell ");
-  text::PutChar(7);
-  input::WaitKey();
-  text::MoveCursorTo(1, 6);
-  text::Print("See the bell ");
-  text::PutControlChar(7);
-  input::WaitKey();
+  Text::MoveCursorTo(1, 5);
+  Text::Print("Hear the bell ");
+  Text::PutChar(7);
+  Input::WaitKey();
+  Text::MoveCursorTo(1, 6);
+  Text::Print("See the bell ");
+  Text::PutControlChar(7);
+  Input::WaitKey();
 
   // Redefine a char in the default allowed user-definable char
   matrix[0] := 1;
@@ -48,8 +48,8 @@ begin
   matrix[6] := 127;
   matrix[7] := 255;
 
-  text::SetCharMatrix(250, #matrix);
-  text::PutChar(250);
+  Text::SetCharMatrix(250, #matrix);
+  Text::PutChar(250);
 
   // Redefine a char not in the default allowed user-definable char
   matrix[0] := 255;
@@ -62,99 +62,99 @@ begin
   matrix[7] := 0;
 
   // Redefine the 'l' to horizontal lines
-  text::SetCharMatrix(108, #matrix);
-  text::PutChar(108);
+  Text::SetCharMatrix(108, #matrix);
+  Text::PutChar(108);
 
   // Print Hello, world with the modified 'l' char
-  text::MoveCursorTo(1, 7);
-  text::Print("Hello, world!\r\n");
-  input::WaitKey();
+  Text::MoveCursorTo(1, 7);
+  Text::Print("Hello, world!\r\n");
+  Input::WaitKey();
 
   // Copy 'Hw' from line 5 to line 10
-  text::MoveCursorTo(1, 7);
-  ch := text::GetChar();
-  text::MoveCursorTo(1, 10);
-  text::PutChar(ch);
+  Text::MoveCursorTo(1, 7);
+  ch := Text::GetChar();
+  Text::MoveCursorTo(1, 10);
+  Text::PutChar(ch);
 
-  text::MoveCursorTo(8, 7);
-  ch := text::GetChar();
-  text::MoveCursorTo(2, 10);
-  text::PutChar(ch);
-  input::WaitKey();
+  Text::MoveCursorTo(8, 7);
+  ch := Text::GetChar();
+  Text::MoveCursorTo(2, 10);
+  Text::PutChar(ch);
+  Input::WaitKey();
 
   // Enable cursor
-  text::EnableCursor(1);
-  input::WaitKey();
+  Text::EnableCursor(1);
+  Input::WaitKey();
 
   // Disable cursor
-  text::EnableCursor(0);
-  input::WaitKey();
+  Text::EnableCursor(0);
+  Input::WaitKey();
 
   // One more time with colors
-  text::MoveCursorTo(1, 11);
-  text::Print("GetPen: ");
-  text::PutChar(text::GetPen()+48);
-  text::MoveCursorTo(1, 12);
-  text::Print("GetPaper: ");
-  text::PutChar(text::GetPaper()+48);
-  text::MoveCursorTo(1, 13);
-  text::SetPen(3);
-  text::Print("SetPen 3\r\n");
-  text::SetPaper(2);
-  text::Print("SetPaper 2\r\n");
-  text::MoveCursorTo(1, 15);
-  text::Print("GetPen: ");
-  text::PutChar(text::GetPen()+48);
-  text::MoveCursorTo(1, 16);
-  text::Print("GetPaper: ");
-  text::PutChar(text::GetPaper()+48);
-  input::WaitKey();
+  Text::MoveCursorTo(1, 11);
+  Text::Print("GetPen: ");
+  Text::PutChar(Text::GetPen()+48);
+  Text::MoveCursorTo(1, 12);
+  Text::Print("GetPaper: ");
+  Text::PutChar(Text::GetPaper()+48);
+  Text::MoveCursorTo(1, 13);
+  Text::SetPen(3);
+  Text::Print("SetPen 3\r\n");
+  Text::SetPaper(2);
+  Text::Print("SetPaper 2\r\n");
+  Text::MoveCursorTo(1, 15);
+  Text::Print("GetPen: ");
+  Text::PutChar(Text::GetPen()+48);
+  Text::MoveCursorTo(1, 16);
+  Text::Print("GetPaper: ");
+  Text::PutChar(Text::GetPaper()+48);
+  Input::WaitKey();
 
   // Swap colors
-  text::SwapPenPaper();
-  text::MoveCursorTo(1, 17);
-  text::Print("Swap pen and paper");
-  input::WaitKey();
-  text::SwapPenPaper();
+  Text::SwapPenPaper();
+  Text::MoveCursorTo(1, 17);
+  Text::Print("Swap pen and paper");
+  Input::WaitKey();
+  Text::SwapPenPaper();
 
   // Transparent/opaque background
-  text::MoveCursorTo(1, 18);
-  text::Print("Background");
-  text::MoveCursorTo(1, 18);
-  text::SetTransparent(1);
-  text::SetPen(5);
-  text::Print("transparent");
-  input::WaitKey();
-  text::MoveCursorTo(1, 18);
-  text::SetTransparent(0);
-  text::Print("opaque");
-  input::WaitKey();
+  Text::MoveCursorTo(1, 18);
+  Text::Print("Background");
+  Text::MoveCursorTo(1, 18);
+  Text::SetTransparent(1);
+  Text::SetPen(5);
+  Text::Print("transparent");
+  Input::WaitKey();
+  Text::MoveCursorTo(1, 18);
+  Text::SetTransparent(0);
+  Text::Print("opaque");
+  Input::WaitKey();
 
   // We have both kinds of reset
-  text::Reset(0);
-  text::Print("Print after soft reset");
-  input::WaitKey();
-  text::Reset(1);
-  text::Print("Print after hard reset");
-  input::WaitKey();
+  Text::Reset(0);
+  Text::Print("Print after soft reset");
+  Input::WaitKey();
+  Text::Reset(1);
+  Text::Print("Print after hard reset");
+  Input::WaitKey();
 
   // Windows
   for hw_i := 0 to 8 do
   begin
-    text::SelectWindow(hw_i);
-    text::SetWindow(hw_i, 3*hw_i, 8+hw_i, 3*hw_i+2);
-    text::SetPaper(hw_i);
-    text::SetPen(hw_i+8);
-    text::ClearWindow();
-    text::Print("Window #");
+    Text::SelectWindow(hw_i);
+    Text::SetWindow(hw_i, 3*hw_i, 8+hw_i, 3*hw_i+2);
+    Text::SetPaper(hw_i);
+    Text::SetPen(hw_i+8);
+    Text::ClearWindow();
+    Text::Print("Window #");
   end;
-  input::WaitKey();
+  Input::WaitKey();
 
   for hw_i := 0 to 8 do
   begin
-    text::SelectWindow(hw_i);
-    text::MoveCursorTo(9, 1);
-    text::PutChar(48+hw_i);
+    Text::SelectWindow(hw_i);
+    Text::MoveCursorTo(9, 1);
+    Text::PutChar(48+hw_i);
   end;
-  input::WaitKey();
+  Input::WaitKey();
 end.

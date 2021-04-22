@@ -22,7 +22,7 @@ begin
 	x:= sinx[time];
 	y:= 40+siny[t2];
 	Memory::EnableLRom();
-	crtc::CopyImageTransparent(#spriteData, #background, 32,32, x, y, 0);
+	Crtc::CopyImageTransparent(#spriteData, #background, 32,32, x, y, 0);
 	Memory::DisableLRom();
 	time:=time+1;
 	t2:=t2+1;
@@ -32,18 +32,18 @@ begin
 end;
 
 begin
-	crtc::SetBorder(0);
-	crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Crtc::SetMode(0);
 	Memory::DisableFirmware();
 	Memory::DisableLRom();
-	crtc::SetPalette(#palette);
+	Crtc::SetPalette(#palette);
 	memcpy(#bg,^$C000,80*200);
 	// Copy back to background in a format that the sprite renderer can use
-	crtc::CopyScreenToBuffer(0,200,#background);
+	Crtc::CopyScreenToBuffer(0,200,#background);
 	
 
 //	fill(#background,0,80*150);
-	crtc::Synchronize();
+	Crtc::Synchronize();
 	RasterIRQ(MainRaster());
 	
 	Loop();

@@ -1,4 +1,4 @@
-Unit input;
+Unit Input;
 var  
    c: byte;
    d: byte;
@@ -67,7 +67,7 @@ function WaitChar():byte;
 begin
   asm("
     call #bb06
-    ld [input_c], a
+    ld [Input_c], a
   ");
   WaitChar := c;
 end;
@@ -81,14 +81,14 @@ begin
   asm("
     call #bb09
     jp nc, input_read_char_no_key
-    ld hl, [input_p]
+    ld hl, [Input_p]
     ld (hl), a
     ld a, 1
-    ld [input_c], a
+    ld [Input_c], a
     jp input_read_char_finished
   input_read_char_no_key:
     ld a, 0
-    ld [input_c], a
+    ld [Input_c], a
   input_read_char_finished:
   ");
   ReadChar := c;
@@ -100,7 +100,7 @@ function WaitKey():byte;
 begin
   asm("
     call #bb18
-    ld [input_c], a
+    ld [Input_c], a
   ");
   WaitKey := c;
 end;
@@ -114,14 +114,14 @@ begin
   asm("
     call #bb1b
     jp nc, input_read_key_no_key
-    ld hl, [input_p]
+    ld hl, [Input_p]
     ld (hl), a
     ld a, 1
-    ld [input_c], a
+    ld [Input_c], a
     jp input_read_key_finished
   input_read_key_no_key:
     ld a, 0
-    ld [input_c], a
+    ld [Input_c], a
   input_read_key_finished:
   ");
   ReadKey := c;
@@ -133,7 +133,7 @@ end;
 function TestKey(c: global byte):byte;
 begin
   asm("
-    ld a, [input_c]
+    ld a, [Input_c]
     call #bb1e
     jp nz, input_test_key_pressed
     ld a, 0
@@ -141,7 +141,7 @@ begin
   input_test_key_pressed:
     ld a, 1
   input_test_key_finished:
-    ld [input_d], a
+    ld [Input_d], a
   ");
   TestKey := d;
 end;
@@ -153,9 +153,9 @@ end;
 procedure SetRepeatDelay(c: global byte, d: global byte);
 begin
   asm("
-    ld a, [input_c]
+    ld a, [Input_c]
     ld h, a
-    ld a, [input_d]
+    ld a, [Input_d]
     ld l, a
     call #bb3f
   ");
@@ -165,9 +165,9 @@ procedure GetJoysticks(p: global pointer, q: global pointer);
 begin
   asm("
     call #bb24
-    ld de, [input_p]
+    ld de, [Input_p]
     ld (de), a
-    ld de, [input_q]
+    ld de, [Input_q]
     ld a, l
     ld (de), a
   ");

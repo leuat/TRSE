@@ -10,7 +10,7 @@ var
 procedure PutPixel(x:integer;y:byte);
 begin
 	x:=x>>2;
-	crtc::PutPixelMode0(x,y,1);
+	Crtc::PutPixelMode0(x,y,1);
 	
 end;
 
@@ -20,13 +20,13 @@ begin
 	p:=#i;
 	p[0] := 10;
 	zp:=p+1;
-	crtc_SetMode(0);
+	Crtc_SetMode(0);
 	i:=3;
 	j:=15;
 	case j of 
-		0: text::Print("WRONG");
-		15: text::Print("CORRECT");
-		0: text::Print("WRONG");
+		0: Text::Print("WRONG");
+		15: Text::Print("CORRECT");
+		0: Text::Print("WRONG");
 	end;
 	ik:=0;
 	for k:=0 to 100 do
@@ -35,7 +35,7 @@ begin
 		asm(";here");
 		PutPixel(ik,k+10);
 		ik+=1;
-//		crtc_WaitForSync();
+//		Crtc_WaitForSync();
 		
 	end;
 	

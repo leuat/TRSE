@@ -1,8 +1,8 @@
 
 procedure InitRegularMode();
 begin
-	crtc::SetMode(0);
-	crtc::SetBorder(0);
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
 end;
 
 
@@ -24,13 +24,13 @@ begin
 		y:=70;
 		for k:=0 to size do
 		begin
-			crtc::PointToY(k+40);
+			Crtc::PointToY(k+40);
 			ll := sine32[ n];
 			if (ll>y) then ll:=y;
 			if (ll>160) then ll:=8;
 //			if (ll<8) then ll:=8;
-			p1:=zp + crtc::ytab[ll];
-			memcpy(p1,crtc::sp,80);
+			p1:=zp + Crtc::ytab[ll];
+			memcpy(p1,Crtc::sp,80);
 			n:=n+1;
 					
 
@@ -39,11 +39,11 @@ begin
 			for j:=0 to 5 do
 			begin
 				ll := sine32[ n+ c1];
-				p1:=zp + crtc::ytab[ll];
+				p1:=zp + Crtc::ytab[ll];
 				p1:=p1 + c2;
 
-				memcpy(p1,crtc::sp,16);
-				crtc::sp:=crtc::sp+16;
+				memcpy(p1,Crtc::sp,16);
+				Crtc::sp:=Crtc::sp+16;
 				c1:=c1+15;
 				c2:=c2+8;
 //				p1:=p1+8;
@@ -58,7 +58,7 @@ end;
 procedure EffectProximaImage();
 begin
 	Compression::Decompress(#proxima, $7A00);
-//	crtc::CopyImageTransparent(free2,free, 160,55,0,50,0);
+//	Crtc::CopyImageTransparent(free2,free, 160,55,0,50,0);
 	fill(^$7000,0,$A00);
 	textp:=#text1;
 	//memcpy(pp,#screen,2000);	
@@ -84,8 +84,8 @@ end;
 procedure EffectMoveText();
 begin
 	zp:=#free;
-//	crtc::CopyScreenToBuffer(text1[2],text1[2]+8,free);
-	crtc::CopyScreenToBuffer(140,156,#free);
+//	Crtc::CopyScreenToBuffer(text1[2],text1[2]+8,free);
+	Crtc::CopyScreenToBuffer(140,156,#free);
 //	fill(#free,$E5,80*16);
 	fill(#free2,0,80*24);
 	x:=text[1];
@@ -105,7 +105,7 @@ begin
 		y:=sine32[j]+110;
 		WaitForReady();
 		
-		crtc::CopyImageTransparent(#free,#free2,160,16,x,y,y-2);
+		Crtc::CopyImageTransparent(#free,#free2,160,16,x,y,y-2);
 		if (time&3=0) then size:=size +1;
 		ready := false;			
 		k:=time;
@@ -113,7 +113,7 @@ begin
 		for ll:=0 to 10 do
 		begin
 			j:=Random::Random1();
-			p1 := #free + crtc::ytab[j&15];
+			p1 := #free + Crtc::ytab[j&15];
 			j:=Random::Random1();
 			p1[j&127]:=0;
 		end;
@@ -125,9 +125,9 @@ begin
 
 			for n:=0 to 4 do
 			begin					
-				crtc::PointToY(c2+n);
-				j:=crtc::pixtab1[n] | crtc::pixtab2[n];
-				fill(crtc::sp,j,80);
+				Crtc::PointToY(c2+n);
+				j:=Crtc::pixtab1[n] | Crtc::pixtab2[n];
+				fill(Crtc::sp,j,80);
 			end;
 //			if (time&1=0) then
 		end;
@@ -150,11 +150,11 @@ begin
 	zp := free2;
 	for j:=0 to 100 do
 	begin
-		crtc::PointToY(j);
-		memcpy(crtc::sp,zp,80);
+		Crtc::PointToY(j);
+		memcpy(Crtc::sp,zp,80);
 		zp:=zp+80;
 	end;*/
-	crtc::CopyScreenToBuffer(0,100,free2);
+	Crtc::CopyScreenToBuffer(0,100,free2);
 	zp:=free + 40*58;
 	ll:=0;
 	while (done=false) do
@@ -165,7 +165,7 @@ begin
 		WaitForReady();
 //		memcpy(^$8000,^$C000,$800);	
 		
-		crtc::CopyImageTransparent(free, free2, 80, size, x, y,0);	
+		Crtc::CopyImageTransparent(free, free2, 80, size, x, y,0);	
 		
 		if (transition = 0) then 
 		begin
@@ -192,7 +192,7 @@ procedure PutPixel(x,y,col : global byte);
 begin
 	// Simply looks up the y-value and adds x
 	asm("
-		ld hl,crtc_y_lookup
+		ld hl,Crtc_y_lookup
 		ld bc,[y]
 		add hl,bc
 		add hl,bc
@@ -221,12 +221,12 @@ begin
 		leaves[j].val := ll>>6+2;
 		leaves[j].cnt := 0;
 	end;
-//	crtc::CopyScreenToBuffer(0,100,free2);
+//	Crtc::CopyScreenToBuffer(0,100,free2);
 	size:=false;
 	for j:=0 to noLeaves do
 	begin
 	asm("
-		ld hl,crtc_y_lookup
+		ld hl,Crtc_y_lookup
 		ld bc,[y]
 		add hl,bc
 		add hl,bc
@@ -274,9 +274,9 @@ begin
 		ll:=Random::Random1();
 		if (time&7=0) then 
 		begin
-			crtc::SetSinglePaletteHW(13,$0d);
-			if (ll>160) then crtc::SetSinglePaletteHW(13,$1A);
-			if (ll>220) then crtc::SetSinglePaletteHW(13,$19);
+			Crtc::SetSinglePaletteHW(13,$0d);
+			if (ll>160) then Crtc::SetSinglePaletteHW(13,$1A);
+			if (ll>220) then Crtc::SetSinglePaletteHW(13,$19);
 		end;
 		
 //		if (time&7=0) then

@@ -288,30 +288,30 @@ begin
 	end;
 	if (curChar<>224) then
 	begin	
-//		crtc::PointToY(curText<<1+text_y);
-//		crtc::sp:=crtc::sp + text_x;
-		//memcpy(tzp,crtc::sp,4);
+//		Crtc::PointToY(curText<<1+text_y);
+//		Crtc::sp:=Crtc::sp + text_x;
+		//memcpy(tzp,Crtc::sp,4);
 		p1 := tzp;
 		ty := text_y;
 		for k:=0 to 8 do
 		begin
-			crtc::PointToY(ty);
+			Crtc::PointToY(ty);
 			ty:=ty+2;
-			crtc::sp:=crtc::sp + text_x;
-			crtc::sp:=crtc::sp+curText>>1;
+			Crtc::sp:=Crtc::sp + text_x;
+			Crtc::sp:=Crtc::sp+curText>>1;
 
 			ll := p1[0];
 			ll:=ll>>curText;
 			p1:=p1+40;
-			n:=0;//crtc::sp[k];
+			n:=0;//Crtc::sp[k];
 			c2 := coltabp[curText+k>>1];
 			c1 := coltabp[curText+1];
 			if (ll&1=1) then 
 			begin
 				if (curText&1=0) then
-				n:=crtc::pixtab1[c1] else n:=crtc::pixtab2[c2];
+				n:=Crtc::pixtab1[c1] else n:=Crtc::pixtab2[c2];
 			end;
-			crtc::sp[0] := crtc::sp[0] | n;
+			Crtc::sp[0] := Crtc::sp[0] | n;
 		end;
 
 		
@@ -369,11 +369,11 @@ begin
 	begin
 		for y:=0 to 200 do
 		begin
-			crtc::PointToY(y);
+			Crtc::PointToY(y);
 			c1:=x-y>>2;
-			if (c1<80) then crtc::sp[c1]:=0;
+			if (c1<80) then Crtc::sp[c1]:=0;
 			c1:=130-x-y>>2;
-			if (c1<80) then crtc::sp[c1]:=0;
+			if (c1<80) then Crtc::sp[c1]:=0;
 		end;
 	end;
 end;
@@ -395,16 +395,16 @@ begin
 			k := free[x];
 			if (k<200) then
 			begin
-				crtc::PointToY(k);
-				crtc::sp:=crtc::sp+ll;
-				fill(crtc::sp,0,4);
+				Crtc::PointToY(k);
+				Crtc::sp:=Crtc::sp+ll;
+				fill(Crtc::sp,0,4);
 			end;
 			k:=200-k;
 			if (k<200) then
 			begin
-				crtc::PointToY(k);
-				crtc::sp:=crtc::sp+ll;
-				fill(crtc::sp,0,4);
+				Crtc::PointToY(k);
+				Crtc::sp:=Crtc::sp+ll;
+				fill(Crtc::sp,0,4);
 			end;
 			k:=free[x];
 			
@@ -444,20 +444,20 @@ begin
 	// Initialize everything
 	coltabp := #coltab1;
 	// Set black border
-	crtc::SetBorder(0);
+	Crtc::SetBorder(0);
 	InitRegularMode();
 	Memory::SaveFirmware();
 	Memory::DisableFirmware();
 	// Turn OFF firmware. Use ports instead of firmware
 		
 	// Set up music
-	music::InitMusic(#music,0);
+	Music::InitMusic(#music,0);
 	// Synchronize and start the raster
-	crtc::Synchronize();
+	Crtc::Synchronize();
 	RasterIRQ(Raster());
 	
 	// Set the palette (using ports, not firmware)
-	crtc::SetPalette(#palette);
+	Crtc::SetPalette(#palette);
 
 
 	/*
@@ -490,7 +490,7 @@ begin
 
 	// cabin + logo "Mørketid"
 	InitEffect(8);
-	crtc::SetPalette(#cabin_palette); // Cabin palette is slightly different
+	Crtc::SetPalette(#cabin_palette); // Cabin palette is slightly different
 	EffectIntroImage(#cabin); // Fade-in image	
 	InitEffect(34); 
 	EffectLogo();	// Displays "mørketid" as a sprite
@@ -500,7 +500,7 @@ begin
 	ClearScreen3();
 	
 	// Change palette to the regular one
-	crtc::SetPalette(#palette);
+	Crtc::SetPalette(#palette);
 	// "proxima" twister
 	InitEffect(8);
 	EffectIntroImage(#image1);	 // fadein image with trees
@@ -509,7 +509,7 @@ begin
 	ClearScreen2();
 
 	// Greetings effect	
-	crtc::SetPalette(#palette);
+	Crtc::SetPalette(#palette);
 	InitEffect(150);
 	EffectGreets();
 	ClearScreen();

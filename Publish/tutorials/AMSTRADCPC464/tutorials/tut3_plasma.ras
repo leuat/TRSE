@@ -138,7 +138,7 @@ end;
 procedure FillCell(xx,yy,col : byte);
 begin
 	col:=div16_merged[col]; // Lookup  merged[col/16]
-	zp:=crtc::sp;
+	zp:=Crtc::sp;
 	zp[xx]:=col;
 	zp:=zp+2048*2; // 2 lines down
 	zp[xx]:=col;	
@@ -153,8 +153,8 @@ begin
 	y1:=0;
 	for y:=0 to sy do begin
 		val:=siny[y];
-		crtc::PointToY(y1);
-		crtc::sp:=crtc::sp+(40-sx)/2;
+		Crtc::PointToY(y1);
+		Crtc::sp:=Crtc::sp+(40-sx)/2;
 		x1:=0;
 		for x:=0 to sx do 
 		begin
@@ -174,19 +174,19 @@ begin
 	aax:=1;
 	aay:=5;
 
-	crtc::SetMode(0);
-	crtc::SetBorder(0);
-	crtc::Synchronize();
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
 	Memory::DisableInterrupts();
 
 	// Sets the palette
 	for j:=0 to 8 do
 	begin
-		crtc::SetSinglePaletteHW(j,palette[j]);
-		crtc::SetSinglePaletteHW(15-j,palette[j]);	
+		Crtc::SetSinglePaletteHW(j,palette[j]);
+		Crtc::SetSinglePaletteHW(15-j,palette[j]);	
 	end;
 	for j:=0 to 16 do
-		mergetab[j]:=crtc::pixtab1[j] | crtc::pixtab2[j];
+		mergetab[j]:=Crtc::pixtab1[j] | Crtc::pixtab2[j];
 	for j:=0 to 256 do
 	begin
 		x1:=div16_merged[j];

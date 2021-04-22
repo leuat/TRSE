@@ -48,13 +48,13 @@ begin
 
 
 		// Copy 2 rows of data
-		crtc::PointToY(y);
-		crtc::sp:=crtc::sp+36;
-		memcpy(zp,crtc::sp,8);
+		Crtc::PointToY(y);
+		Crtc::sp:=Crtc::sp+36;
+		memcpy(zp,Crtc::sp,8);
 		y:=y+1;
-		crtc::PointToY(y);
-		crtc::sp:=crtc::sp+36;
-		memcpy(zp,crtc::sp,8);
+		Crtc::PointToY(y);
+		Crtc::sp:=Crtc::sp+36;
+		memcpy(zp,Crtc::sp,8);
 		y:=y+1;
 		
 
@@ -64,16 +64,16 @@ end;
 
 
 begin
-	crtc::SetMode(0);
-	crtc::SetBorder(0);
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
 	Memory::DisableFirmware();
-	crtc::Synchronize();
+	Crtc::Synchronize();
 	Memory::DisableInterrupts();
 	
 	time := 0;	
 //	for j:=0 to 15 do
-//		crtc::SetSinglePaletteHW(j,j);	
-	crtc::SetPalette(#pal);
+//		Crtc::SetSinglePaletteHW(j,j);	
+	Crtc::SetPalette(#pal);
 	while (true) do
 	begin
 		RenderTwister(time);

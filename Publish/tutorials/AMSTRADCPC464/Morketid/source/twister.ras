@@ -45,13 +45,13 @@ begin
 
 
 		// Copy 2x2 rows of data
-		crtc::PointToY(y);
-		crtc::sp:=crtc::sp+8;
-		memcpy(zp,crtc::sp,8);
+		Crtc::PointToY(y);
+		Crtc::sp:=Crtc::sp+8;
+		memcpy(zp,Crtc::sp,8);
 		y:=y+1;
-		crtc::PointToY(y);
-		crtc::sp:=crtc::sp+8;
-		memcpy(zp,crtc::sp,8);
+		Crtc::PointToY(y);
+		Crtc::sp:=Crtc::sp+8;
+		memcpy(zp,Crtc::sp,8);
 		y:=y+1;
 
 		
@@ -61,9 +61,9 @@ begin
 	begin
 	for j:=0 to 4 do
 	begin
-	crtc::PointToY(y);
-	crtc::sp:=crtc::sp+8;
-	fill(crtc::sp,0,8);
+	Crtc::PointToY(y);
+	Crtc::sp:=Crtc::sp+8;
+	fill(Crtc::sp,0,8);
 	y:=y+1;
 	end;
 	end;
@@ -85,7 +85,7 @@ begin
 		begin
 		
 		end;
-		//		crtc::WaitForSync();
+		//		Crtc::WaitForSync();
 		RenderTwister(ftime);
 
 		if (transition=0) then
