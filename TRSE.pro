@@ -33,6 +33,7 @@ ARCH = $$QMAKE_HOST.arch
 macx{
     QT -= dbus
     CONFIG -= qdbus
+    CONFIG += warn_off
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS_RELEASE += -Ofast
@@ -70,6 +71,7 @@ macx{
 }
 
 win32-g++ {
+    CONFIG += warn_off
     QMAKE_CXXFLAGS += -fopenmp
     LIBS += -fopenmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast
@@ -78,6 +80,7 @@ win32-g++ {
 
 }
 win32-msvc*{
+    CONFIG += warn_off
     QMAKE_CXXFLAGS += -openmp
     LIBS += -openmp
     QMAKE_CXXFLAGS_RELEASE += -Ofast -O2
