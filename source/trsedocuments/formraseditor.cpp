@@ -172,8 +172,8 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
     if (m_projectIniFile->getString("system")=="ATARI2600") {
         emu = m_iniFile->getString("atari2600_emulator");
     }
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
-        emu = m_iniFile->getString("amstradcpc464_emulator");
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC") {
+        emu = m_iniFile->getString("amstradcpc_emulator");
 
     }
     if (m_projectIniFile->getString("system")=="MSX") {
@@ -274,7 +274,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC") {
 /*        QString cs = m_currentFileShort;
         cs = cs.toUpper().remove(".RAS");
         params << "-a" << "run\""+cs+".BIN";*/
@@ -641,7 +641,7 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".tap";
     if (m_projectIniFile->getString("system")=="X86")
         filename = m_currentSourceFile.split(ft)[0] + ".exe";
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
+    if (m_projectIniFile->getString("system")=="AMSTRADCPC")
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (m_projectIniFile->getString("system")=="MSX")
         filename = m_currentSourceFile.split(ft)[0] + ".rom";

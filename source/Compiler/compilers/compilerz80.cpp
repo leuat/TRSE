@@ -11,7 +11,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
     }
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464)
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
     if (m_projectIni->getdouble("exomizer_toggle")==1.0)
         Syntax::s.m_currentSystem->m_programStartAddress = 0x300; // Unpack address
 
@@ -50,7 +50,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 
     }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464 ||
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC ||
         Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM ||
         Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
         ) {
@@ -92,7 +92,7 @@ void CompilerZ80::Connect()
         m_assembler->m_source <<m_assembler->m_wram->m_source;
     }
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
 //        m_assembler->IncludeFile(":resources/code/amstrad/playerakg.asm");
     }
 

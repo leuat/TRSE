@@ -113,8 +113,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return ATARI2600;
     if (s.toLower()=="atari520st")
         return ATARI520ST;
-    if (s.toLower()=="amstradcpc464")
-        return AMSTRADCPC464;
+    if (s.toLower()=="amstradcpc")
+        return AMSTRADCPC;
     if (s.toLower()=="coleco")
         return COLECO;
     if (s.toLower()=="mega65")
@@ -146,7 +146,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == TIKI100) return "TIKI100";
     if (s == ATARI2600) return "ATARI2600";
     if (s == ATARI520ST) return "ATARI520ST";
-    if (s == AMSTRADCPC464) return "AMSTRADCPC464";
+    if (s == AMSTRADCPC) return "AMSTRADCPC";
     if (s == COLECO) return "COLECO";
     if (s == MEGA65) return "MEGA65";
     if (s == MSX) return "MSX";

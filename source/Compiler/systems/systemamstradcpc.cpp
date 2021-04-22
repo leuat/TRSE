@@ -1,9 +1,9 @@
-#include "systemamstradcpc464.h"
+#include "systemamstradcpc.h"
 #include "source/LeLib/util/lz4/lz4.h"
 #include "source/Compiler/errorhandler.h"
-SystemAmstradCPC464::SystemAmstradCPC464(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj) {
+SystemAmstradCPC::SystemAmstradCPC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj) {
     m_processor = Z80;
-    m_system = AMSTRADCPC464;
+    m_system = AMSTRADCPC;
 
 /*    m_labels.append(SystemLabel(SystemLabel::SCREEN,"Screen",0x8000,0x8FFF));
     m_labels.append(SystemLabel(SystemLabel::SCREEN,"Video ram",0x9000,0x9FFF));
@@ -32,7 +32,7 @@ SystemAmstradCPC464::SystemAmstradCPC464(QSharedPointer<CIniFile> settings, QSha
 
 }
 
-void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
+void SystemAmstradCPC::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;
     int time = timer.elapsed();
@@ -130,7 +130,7 @@ void SystemAmstradCPC464::Assemble(QString &text, QString filename, QString curr
 
 }
 
-void SystemAmstradCPC464::PostProcess(QString &text, QString file, QString currentDir)
+void SystemAmstradCPC::PostProcess(QString &text, QString file, QString currentDir)
 {
 
 }

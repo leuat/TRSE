@@ -131,7 +131,7 @@ SOURCES += main.cpp\
     source/Compiler/optimiser/postoptimizerm68k.cpp \
     source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/optimiser/postoptimizerz80.cpp \
-    source/Compiler/systems/systemamstradcpc464.cpp \
+    source/Compiler/systems/systemamstradcpc.cpp \
     source/Compiler/systems/systemappleii.cpp \
     source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systematari520st.cpp \
@@ -368,7 +368,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/optimiser/postoptimizerm68k.h \
     source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/optimiser/postoptimizerz80.h \
-    source/Compiler/systems/systemamstradcpc464.h \
+    source/Compiler/systems/systemamstradcpc.h \
     source/Compiler/systems/systemappleii.h \
     source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systematari520st.h \
