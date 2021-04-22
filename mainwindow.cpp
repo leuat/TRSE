@@ -1412,6 +1412,10 @@ void MainWindow::CreateNewSourceFile(QString type)
             s<< "end;\n\n";
             s<< "end.\n";
         }
+        if (type=="inc") {
+            QTextStream s(&file);
+            s<< "// Put your data or procedures in here\n";
+        }
     }
 
     file.close();
@@ -2467,6 +2471,12 @@ void MainWindow::on_action_TRU_Unit_source_file_triggered()
 {
     CreateNewSourceFile("tru");
 }
+
+void MainWindow::on_action_include_source_file_triggered()
+{
+    CreateNewSourceFile("inc");
+}
+
 
 void MainWindow::LoadIniFile()
 {
