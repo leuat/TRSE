@@ -67,7 +67,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
-    ui->leAmstradCPC464->setText(m_ini->getString("amstradcpc464_emulator"));
+    ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
@@ -170,7 +170,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
-    m_ini->setString("amstradcpc464_emulator", ui->leAmstradCPC464->text());
+    m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
     m_ini->setString("coleco_emulator", ui->leColecoEmulator->text());
     m_ini->setString("lz4",ui->leLZ4->text());
     //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
@@ -278,7 +278,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC464"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
@@ -598,12 +598,12 @@ void DialogTRSESettings::on_btnAmstradCMC464_clicked()
     QString filename = QFileDialog::getOpenFileName(this,
         tr("Amstrad CPC 464 emulator 'Caprice' location"), m_ini->getString("project_path"), "*");
     if (filename!="")
-        ui->leAmstradCPC464->setText(filename);
+        ui->leAmstradCPC->setText(filename);
 
 
 }
 
-void DialogTRSESettings::on_btnHelpAmstradCPC464_clicked()
+void DialogTRSESettings::on_btnHelpAmstradCPC_clicked()
 {
     Help("Amstrad CPC 464 Emulator 'Caprice'", "TRSE needs to use the 'Caprice' emulator in order to be able to inject programs.");
 

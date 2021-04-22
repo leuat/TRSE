@@ -2498,7 +2498,11 @@ void MainWindow::LoadIniFile()
     if (QFile::exists(m_iniFileName)) {
        m_iniFile->Load(m_iniFileName);
 //       qDebug() << "Loading NEW file type "<<m_iniFileName;
-
+       if (m_iniFile->getString("amstradcpc464_emulator") != "" &&
+           m_iniFile->getString("amstradcpc_emulator") == "") {
+           qDebug() << "Transparently migrating amstradcpc464_emulator to amstradcpc_emulator. See https://github.com/leuat/TRSE/pull/604.";
+           m_iniFile->setString("amstradcpc_emulator", m_iniFile->getString("amstradcpc464_emulator"));
+       }
     }
     else {
         if (QFile::exists(m_iniFileNameOld)) {

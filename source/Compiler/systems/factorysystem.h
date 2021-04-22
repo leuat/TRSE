@@ -16,7 +16,7 @@
 #include "systemtiki100.h"
 #include "systematari2600.h"
 #include "systematari520st.h"
-#include "systemamstradcpc464.h"
+#include "systemamstradcpc.h"
 #include "systembbcm.h"
 #include "systemcoleco.h"
 #include "systematari800.h"
@@ -61,8 +61,8 @@ public:
             return new SystemAtari2600(settings, proj);
         if (type==AbstractSystem::ATARI520ST)
             return new SystemAtari520ST(settings, proj);
-        if (type==AbstractSystem::AMSTRADCPC464)
-            return new SystemAmstradCPC464(settings, proj);
+        if (type==AbstractSystem::AMSTRADCPC)
+            return new SystemAmstradCPC(settings, proj);
         if (type==AbstractSystem::COLECO)
             return new SystemColeco(settings, proj);
         if (type==AbstractSystem::MEGA65)

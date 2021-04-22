@@ -84,7 +84,7 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
 
     }
     else if (Command("rasterirq")) {
-        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC464) {
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
             QSharedPointer<NodeProcedure> proc = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
 
             as->Asm("di");

@@ -35,8 +35,8 @@ def fillRasList(idx,path):
 
 # CPC
 
-tests.append([ "AMSTRADCPC464/Morketid",["main.ras"]])
-tests.append([ "AMSTRADCPC464/tutorials",[]])
+tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
+tests.append([ "AMSTRADCPC/tutorials",[]])
 fillRasList(len(tests)-1,".")
 
 
