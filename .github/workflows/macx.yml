@@ -14,6 +14,7 @@ jobs:
       - uses: jurplel/install-qt-action@v2
       #- run: brew update
       #- run: brew install qt libomp
+      - run: brew install libomp
 
       - run: qmake TRSE.pro
       - run: make -j 3
