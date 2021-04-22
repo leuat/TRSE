@@ -28,9 +28,14 @@ then
   ls /usr/local/opt/qt/
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
   $macdeployqt .
-  cp -r /usr/local/Cellar/qt/6.0.3/share/qt/QtDBus.framework "./Contents/Frameworks/" || echo "cp failed"
+  # macdeployqt should copy all the needed frameworks, but it fails to do so
+  qt_frameworks_dir=$(find /usr/local/Cellar/qt/ -name Frameworks | head -n 1)
+  echo "All frameworks found:"
+  ls ${qt_frameworks_dir}
+  cp -r ${qt_frameworks_dir}/QtDBus.framework "./Contents/Frameworks/" || echo "cp QtDBus.framework failed"
   echo "All plugins found:"
   find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib"
+  # macdeployqt should also copy all the needed plugins, but it fails to do so
   find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib" | while read plugin_file
   do
     plugin=$(echo "$plugin_file" | sed 's,.*/plugins/,,')
