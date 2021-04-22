@@ -22,12 +22,16 @@ then
   echo "All frameworks found (and a bit more):"
   find /usr/local/opt/ | grep "libdbus.*dylib"
   find /usr/local/Cellar/  | grep "libdbus.*dylib"
+  ldd Contents/MacOS/trse || echo "ldd failed"
+  otool Contents/MacOS/trse || echo "otool failed"
   echo "In homebrew Qt:"
   ls /usr/local/Cellar/qt/6.0.3/share/qt/
   echo "In local Qt:"
   ls /usr/local/opt/qt/
+  which macdeployqt
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
-  $macdeployqt .
+  #$macdeployqt .
+  macdeployqt .
   git clone https://github.com/arl/macdeployqtfix.git
   qtdir=$(ls /usr/local/Cellar/qt/ | head -n 1)
   python macdeployqtfix/macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
