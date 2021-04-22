@@ -113,7 +113,7 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return ATARI2600;
     if (s.toLower()=="atari520st")
         return ATARI520ST;
-    if (s.toLower()=="amstradcpc")
+    if (s.toLower()=="amstradcpc" || s.toLower()=="amstradcpc464")
         return AMSTRADCPC;
     if (s.toLower()=="coleco")
         return COLECO;
