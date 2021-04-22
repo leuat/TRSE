@@ -19,37 +19,11 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
-  echo "All frameworks found (and a bit more):"
-  find /usr/local/opt/ | grep "libdbus.*dylib"
-  find /usr/local/Cellar/  | grep "libdbus.*dylib"
-  ldd Contents/MacOS/trse || echo "ldd failed"
-  otool Contents/MacOS/trse || echo "otool failed"
-  echo "In homebrew Qt:"
-  ls /usr/local/Cellar/qt/6.0.3/share/qt/
-  echo "In local Qt:"
-  ls /usr/local/opt/qt/
-  which macdeployqt
-  macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
-  #$macdeployqt .
   macdeployqt .
-  git clone https://github.com/arl/macdeployqtfix.git
-  qtdir=$(ls /usr/local/Cellar/qt/ | head -n 1)
-  python macdeployqtfix/macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
+  #git clone https://github.com/arl/macdeployqtfix.git
+  #qtdir=$(ls /usr/local/Cellar/qt/ | head -n 1)
+  #python macdeployqtfix/macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
   # macdeployqt should copy all the needed frameworks, but it fails to do so
-  qt_frameworks_dir=$(find /usr/local/Cellar/qt/ -name Frameworks | head -n 1)
-  echo "All frameworks found:"
-  ls ${qt_frameworks_dir}
-  cp -r ${qt_frameworks_dir}/QtDBus.framework "./Contents/Frameworks/" || echo "cp QtDBus.framework failed"
-  echo "All plugins found:"
-  find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib"
-  # macdeployqt should also copy all the needed plugins, but it fails to do so
-  find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib" | while read plugin_file
-  do
-    plugin=$(echo "$plugin_file" | sed 's,.*/plugins/,,')
-    mkdir -p $(dirname "./Contents/PlugIns/${plugin}")
-    echo "Copying '${plugin_file}' to '../Contents/PlugIns/${plugin}'"
-    cp "${plugin_file}" "./Contents/PlugIns/${plugin}"
-  done
 else
   rm *.ini
   ~/Qt/6.0.1/clang_64/bin/macdeployqt .
