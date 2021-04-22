@@ -174,8 +174,10 @@ void CodeEditor::SetIndent(bool shift)
     // Only keep the current indent if not enabled
     if (!enable)
     {
+        cursor.beginEditBlock();
         insertPlainText("\n");
         insertPlainText(space);
+        cursor.endEditBlock();
         return;
     }
 
@@ -196,6 +198,7 @@ void CodeEditor::SetIndent(bool shift)
             || lastWord == "asm"
             || (firstWord == "case" && lastWord == "of"))
     {
+        cursor.beginEditBlock();
         insertPlainText("\n\t");
         insertPlainText(space);
 
@@ -236,18 +239,23 @@ void CodeEditor::SetIndent(bool shift)
             cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor, 1);
             setTextCursor(cursor);
         }
+        cursor.endEditBlock();
     }
     // Don't insert the "end" after var, just indent
     else if (lastWord == "var")
     {
+        cursor.beginEditBlock();
         insertPlainText("\n\t");
         insertPlainText(space);
+        cursor.endEditBlock();
     }
     else
     {
         // If nothing else, just keep the old indent
+        cursor.beginEditBlock();
         insertPlainText("\n");
         insertPlainText(space);
+        cursor.endEditBlock();
     }
 }
 
@@ -262,17 +270,15 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
     if (cursor.hasSelection())
     // We have selection, handle multiple line indent/unindent
     {
-        // Find out the selection start and end
-        int anchor = cursor.anchor();
-        int pos = cursor.position();
-        cursor.setPosition(anchor);
-        cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+        // Find out the selection start and end, expand
+        // to beginning and end of line if needed
+        int start = cursor.selectionStart();
+        int end = cursor.selectionEnd();
+        cursor.setPosition(start, QTextCursor::MoveAnchor);
         cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
-
-        // Save new anchor to the beginning of the selection and move
-        // cursor to make new selection from begin->end
-        anchor = cursor.anchor();
-        cursor.setPosition(pos - 1, QTextCursor::KeepAnchor);
+        cursor.setPosition(end - 1, QTextCursor::KeepAnchor);
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        setTextCursor(cursor);
 
         // Get selected text and split into lines
         QString str = cursor.selection().toPlainText();
@@ -286,7 +292,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
                 if (lines[i].startsWith("\t") || lines[i].startsWith(" "))
                 {
                     lines[i].remove(0, 1);
-                    pos--;
+                    end--;
                 }
             }
         }
@@ -296,19 +302,22 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
             for (int i=0; i < lines.size(); i++)
             {
                 lines[i].insert(0, "\t");
-                pos++;
             }
         }
 
         // Move cursors back to selection and insert
         // new content
         str = lines.join("\n");
+        cursor.beginEditBlock();
         cursor.removeSelectedText();
         cursor.insertText(str);
+        cursor.endEditBlock();
 
         // Move cursor to make new selection of inserted text
-        cursor.setPosition(anchor);
-        cursor.setPosition(pos, QTextCursor::KeepAnchor);
+        cursor.setPosition(start, QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
+        cursor.setPosition(end - 1, QTextCursor::KeepAnchor);
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
         setTextCursor(cursor);
     }
     else

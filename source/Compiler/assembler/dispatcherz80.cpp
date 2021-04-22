@@ -1170,11 +1170,18 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
         }
         else
         {
-            as->Asm("xor a");
-            as->Asm("ld d,a");
-            var->m_expr->Accept(this);
-            as->Asm("ld e,a");
-            as->Asm("add hl,de");
+            if (var->m_expr->isPureNumeric()) {
+                as->Comment("; index is pure number optimization");
+                as->Asm("ld de,"+var->m_expr->getValue(as));
+            }
+            else {
+                as->Comment(";general 8-bit expression for the index");
+                as->Asm("xor a");
+                as->Asm("ld d,a");
+                var->m_expr->Accept(this);
+                as->Asm("ld e,a");
+                as->Asm("add hl,de");
+            }
         }
         if (!node->m_right->isPure()) {
             as->Asm("pop af");
