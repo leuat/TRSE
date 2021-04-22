@@ -20,8 +20,8 @@ cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
   echo "All frameworks found (and a bit more):"
-  find /usr/local/opt/qt/ | grep "libdbus.*dylib"
-  find /usr/local/Cellar/qt/  | grep "libdbus.*dylib"
+  find /usr/local/opt/ | grep "libdbus.*dylib"
+  find /usr/local/Cellar/  | grep "libdbus.*dylib"
   echo "In homebrew Qt:"
   ls /usr/local/Cellar/qt/6.0.3/share/qt/
   echo "In local Qt:"
