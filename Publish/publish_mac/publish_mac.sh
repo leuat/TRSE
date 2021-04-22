@@ -19,6 +19,8 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
+  echo "All frameworks found (and a bit more):"
+  ls /usr/local/opt/qt/lib/
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
   $macdeployqt .
   echo "All plugins found:"
