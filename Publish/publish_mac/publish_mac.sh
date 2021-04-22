@@ -20,14 +20,17 @@ cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
   echo "All frameworks found (and a bit more):"
-  find /usr/local/opt/qt/ -name QtDBus.framework
-  find /usr/local/Cellar/qt/ -name QtDBus.framework
+  find /usr/local/opt/qt/ | grep "libdbus.*dylib"
+  find /usr/local/Cellar/qt/  | grep "libdbus.*dylib"
   echo "In homebrew Qt:"
   ls /usr/local/Cellar/qt/6.0.3/share/qt/
   echo "In local Qt:"
   ls /usr/local/opt/qt/
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
   $macdeployqt .
+  git clone https://github.com/arl/macdeployqtfix.git
+  qtdir=$(ls /usr/local/Cellar/qt/ | head -n 1)
+  python macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
   # macdeployqt should copy all the needed frameworks, but it fails to do so
   qt_frameworks_dir=$(find /usr/local/Cellar/qt/ -name Frameworks | head -n 1)
   echo "All frameworks found:"
