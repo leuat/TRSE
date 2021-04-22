@@ -21,10 +21,13 @@ if [ "$1" = "nightly" ]
 then
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
   $macdeployqt .
+  echo "All plugins found:"
+  find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib"
   find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib" | while read plugin_file
   do
     plugin=$(echo "$plugin_file" | sed 's,.*/plugins/,,')
     mkdir -p $(dirname "./Contents/PlugIns/${plugin}")
+    echo "Copying '${plugin_file}' to '../Contents/PlugIns/${plugin}'"
     cp "${plugin_file}" "./Contents/PlugIns/${plugin}"
   done
 else
