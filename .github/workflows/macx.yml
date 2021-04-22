@@ -11,8 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-      - run: brew update
-      - run: brew install qt libomp
+      - uses: jurplel/install-qt-action@v2
+      #- run: brew update
+      #- run: brew install qt libomp
 
       - run: qmake TRSE.pro
       - run: make -j 3
