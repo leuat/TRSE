@@ -20,10 +20,15 @@ cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
   echo "All frameworks found (and a bit more):"
-  ls /usr/local/Cellar/qt/
+  find /usr/local/opt/qt/ -name QtDBus.framework
+  find /usr/local/Cellar/qt/ -name QtDBus.framework
+  echo "In homebrew Qt:"
+  ls /usr/local/Cellar/qt/6.0.3/share/qt/
+  echo "In local Qt:"
+  ls /usr/local/opt/qt/
   macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
   $macdeployqt .
-  cp -r /usr/local/Cellar/qt/QtDBus.framework "./Contents/Frameworks/" || echo "cp failed"
+  cp -r /usr/local/Cellar/qt/6.0.3/share/qt/QtDBus.framework "./Contents/Frameworks/" || echo "cp failed"
   echo "All plugins found:"
   find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib"
   find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib" | while read plugin_file
