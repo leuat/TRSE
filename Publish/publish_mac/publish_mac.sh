@@ -30,7 +30,7 @@ then
   $macdeployqt .
   git clone https://github.com/arl/macdeployqtfix.git
   qtdir=$(ls /usr/local/Cellar/qt/ | head -n 1)
-  python macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
+  python macdeployfixit/macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
   # macdeployqt should copy all the needed frameworks, but it fails to do so
   qt_frameworks_dir=$(find /usr/local/Cellar/qt/ -name Frameworks | head -n 1)
   echo "All frameworks found:"
@@ -66,7 +66,7 @@ fi
 # TODO(ColinPitrat): Deliver OK64 too?
 if [ "$1" = "nightly" ]
 then
-  tar -czf trse_osx.tar.gz trse/trse.app
+  tar -cvzf trse_osx.tar.gz trse/trse.app
 else
   tar -cvzf trse_osx.tar.gz trse/trse.app trse/OK64.app
   scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
