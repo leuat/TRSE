@@ -32,6 +32,7 @@ ARCH = $$QMAKE_HOST.arch
 
 macx{
     QT -= dbus
+    CONFIG -= qdbus
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS_RELEASE += -Ofast
