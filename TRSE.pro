@@ -31,7 +31,7 @@ ICON = trse.icns
 ARCH = $$QMAKE_HOST.arch
 
 macx{
-    CONFIG -= qdbus
+    QT -= dbus
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS_RELEASE += -Ofast
