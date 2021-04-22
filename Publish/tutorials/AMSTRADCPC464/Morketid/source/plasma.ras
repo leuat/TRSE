@@ -119,16 +119,16 @@ begin
 
 /*	for j:=0 to 8 do
 	begin
-		crtc::SetSinglePaletteHW(j,plasmaPalette[j]);
-		crtc::SetSinglePaletteHW(15-j,plasmaPalette[j]);	
+		Crtc::SetSinglePaletteHW(j,plasmaPalette[j]);
+		Crtc::SetSinglePaletteHW(15-j,plasmaPalette[j]);	
 	end;*/
 
 	for j:=0 to 256 do
 	begin
 		x1:=j>>4;
 		
-		k := crtc::pixtab2[x1];
-		ll := crtc::pixtab1[x1];
+		k := Crtc::pixtab2[x1];
+		ll := Crtc::pixtab1[x1];
 
 		div16_merged[j]:=k | ll;//mergetab[x1]; 
 	end;

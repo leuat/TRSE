@@ -1,13 +1,13 @@
-Unit music;
+Unit Music;
 var 
    val : byte;
    p:pointer;
 procedure InitMusic(p:global pointer;val:global byte);
 begin
 	asm("
-	   ld hl, [music_p]
+	   ld hl, [Music_p]
 	   ld l,a
-	   ld a,[music_val]              
+	   ld a,[Music_val]              
        call INIT_MUSIC 		
 	");
 end;

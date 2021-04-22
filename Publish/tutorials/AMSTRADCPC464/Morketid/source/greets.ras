@@ -6,22 +6,22 @@ procedure RenderGreets();
 begin
 	y1 := greets_y+16;
 
-/*	c1 := crtc::pixtab1[6];
-	c1:=c1 | crtc::pixtab2[15];*/
-	c1 := crtc::pixtab1[15-scroll];
-	c1:=c1 | crtc::pixtab2[6];
+/*	c1 := Crtc::pixtab1[6];
+	c1:=c1 | Crtc::pixtab2[15];*/
+	c1 := Crtc::pixtab1[15-scroll];
+	c1:=c1 | Crtc::pixtab2[6];
 	zp := tzp;
-	crtc::PointToY(y1);
-	crtc::sp:=crtc::sp+79;
+	Crtc::PointToY(y1);
+	Crtc::sp:=Crtc::sp+79;
 
 	for k:=0 to 8 do
 	begin
 		ll:=zp^>>scroll;
-		n:=0;//crtc::sp[k];
+		n:=0;//Crtc::sp[k];
 		if (ll&1=1) then n:=c1;
 		asm("
 			ld de,$800
-			ld hl,[crtc_sp]
+			ld hl,[Crtc_sp]
 			ld a,[n]
 			ld [hl],a
 			add hl,de		
@@ -35,7 +35,7 @@ begin
 
 		");		
 
-		crtc::sp:=crtc::sp+80;
+		Crtc::sp:=Crtc::sp+80;
 		zp:=zp+40;		
 
 	end;
@@ -67,18 +67,18 @@ begin
 	
 	for j:=0 to 54 do
 	begin
-		crtc::PointToY(y1+k);
-		zp:=crtc::sp+1;
-		crtc::PointToY(y1);
+		Crtc::PointToY(y1+k);
+		zp:=Crtc::sp+1;
+		Crtc::PointToY(y1);
 		asm("
-			ld de,[crtc_sp]
+			ld de,[Crtc_sp]
 			ld hl,[zp]
 
 			ld bc,79
 			call z80_copy_mem
 ;			
 		");
-	//	memcpy(zp,crtc::sp,79);
+	//	memcpy(zp,Crtc::sp,79);
 		y1:=y1+2;
 		
 	end;

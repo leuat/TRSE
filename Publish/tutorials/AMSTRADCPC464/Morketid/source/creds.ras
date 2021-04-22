@@ -4,11 +4,11 @@ procedure CopyCredsOrg(k : global byte);
 begin
 	for j:=0 to 57 do
 		begin
-			crtc::PointToY(k);
-			n := crtc::sp[0];
-			zp:=crtc::sp +1;
-			memcpy(zp,crtc::sp,79);
-			crtc::sp[79]:=n;
+			Crtc::PointToY(k);
+			n := Crtc::sp[0];
+			zp:=Crtc::sp +1;
+			memcpy(zp,Crtc::sp,79);
+			Crtc::sp[79]:=n;
 			k:=k+2;
 		end
 	
@@ -21,7 +21,7 @@ begin
 	p1:=$1000+80;
 	zp:=$2600+80;
 //	y:=sine32[c1]>>1;
-	//zp := zp + crtc::ytab[y];
+	//zp := zp + Crtc::ytab[y];
 	//while (ll>80) do ll:=ll-80;
 	if (yy=0) then
 	begin
@@ -37,14 +37,14 @@ begin
 
 	for j:=0 to 62 do
 		begin
-			crtc::PointToY(k);
-			crtc::sp:=crtc::sp+5;
-			//memcpy(zp,crtc::sp,79);
+			Crtc::PointToY(k);
+			Crtc::sp:=Crtc::sp+5;
+			//memcpy(zp,Crtc::sp,79);
 			asm("
 				ld hl,[p1]
 				exx
 				ld hl,[zp]
-				ld de,[crtc_sp]
+				ld de,[Crtc_sp]
 				ld bc,70
 cccl:
 				ld a,[hl]
@@ -82,16 +82,16 @@ begin
 
 	k:=0;
 
-//	crtc::SetPalette(#treePal);
+//	Crtc::SetPalette(#treePal);
 
 	for j:=0 to 15 do 
-		crtc::SetSinglePaletteHW(j,0); // Text
+		Crtc::SetSinglePaletteHW(j,0); // Text
 
-	crtc::SetSinglePaletteHW(4,x); // Text
-	crtc::SetSinglePaletteHW(5,y); // Text
+	Crtc::SetSinglePaletteHW(4,x); // Text
+	Crtc::SetSinglePaletteHW(5,y); // Text
 		
 
-	crtc::SetSinglePaletteHW(15,c1); // Text
+	Crtc::SetSinglePaletteHW(15,c1); // Text
 
 	Compression::Decompress(#forest_bg, $1000);
 	Compression::Decompress(#forest_fg, $2600);

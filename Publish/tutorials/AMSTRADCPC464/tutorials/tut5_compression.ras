@@ -43,19 +43,19 @@ end;
 
 begin
 	
-	crtc::SetMode(0);
-	crtc::SetBorder(0);
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
 	Memory::DisableFirmware();
-	crtc::Synchronize();
+	Crtc::Synchronize();
 	Memory::DisableInterrupts();	
 	while (true) do
 	begin
-		crtc::SetPalette(#palette1);
+		Crtc::SetPalette(#palette1);
 		// Decompress first image directly to the screen
 		Compression::Decompress(#image1, screen);
 		// wait a bit
 		Sleep(30);		
-		crtc::SetPalette(#palette2);
+		Crtc::SetPalette(#palette2);
 		// Decompress second image
 		Compression::Decompress(#image2, screen);
 		Sleep(30);		

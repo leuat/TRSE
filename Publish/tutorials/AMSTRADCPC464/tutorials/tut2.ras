@@ -21,11 +21,11 @@ procedure Init();
 begin
 	time:=0;
 	// Mode 0 : 160x200 16 cols
-	crtc::SetMode(0);
-	crtc::SetBorder(0);
-	crtc::Synchronize();
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
 	Memory::DisableInterrupts();
-	crtc::SetPalette(#palette);
+	Crtc::SetPalette(#palette);
 end;
 
 
@@ -40,7 +40,7 @@ begin
 		xx:=sinx[time];
 		yy:=siny[time+shift];
 		// Put some pixels!		
-		crtc::PutPixelMode0(xx,yy,col);		
+		Crtc::PutPixelMode0(xx,yy,col);		
 		
 		time:=time+1;
 		
