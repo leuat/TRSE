@@ -106,11 +106,11 @@ tests.append([ "OK64/OkComputer/",["main.ras"]])
 # ************ BUILD TEST LIST 
 # C64 
 tests.append([ "C64/TutorialGame_RogueBurgerOne",["RogueBurgerOne.ras"]])
-# TODO(ColinPitrat): Uncomment those 4 lines once fixed: Missing units/cpu_specific/MOS6502/05_paw_resources_auto_generated.ras
-#tests.append([ "C64/Tutorials",[]])
-#fillRasList(len(tests)-1,"easy")
+tests.append([ "C64/Tutorials",[]])
+fillRasList(len(tests)-1,"easy")
+# TODO(ColinPitrat): Uncomment this once all includes from 05_paw_resources_auto_generated.ras are available in the repository.
 #fillRasList(len(tests)-1,"intermediate")
-#fillRasList(len(tests)-1,"advanced")
+fillRasList(len(tests)-1,"advanced")
 tests.append([ "C64/DemoEffects_raytracer",[]])
 fillRasList(len(tests)-1,".")
 
@@ -119,8 +119,7 @@ fillRasList(len(tests)-1,".")
 tests.append([ "VIC20/PurplePlanetYo",["demo.ras"]])
 tests.append([ "VIC20/VicNibbler",["nibbler.ras"]])
 tests.append([ "VIC20/cheesy",["main.ras"]])
-# TODO(ColinPitrat): Uncomment once fixed. Missing compressed//titleScrn_c.bin
-#tests.append([ "VIC20/PumpKid",["pumpkid.ras"]])
+tests.append([ "VIC20/PumpKid",["pumpkid.ras"]])
 tests.append([ "VIC20/tutorials",[]])
 fillRasList(len(tests)-1,".")
 
