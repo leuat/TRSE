@@ -12,10 +12,10 @@ ASTdispatcherZ80::ASTdispatcherZ80()
 
 
 void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
-{   node->m_left->setForceType(TokenType::NADA);
+{   node->m_left->setForceType(TokenType::INTEGER);
     node->m_left->Accept(this);
-    as->Asm("ld l,a");
-    as->Asm("ld h,0");
+//    as->Asm("ld l,a");
+//    as->Asm("ld h,0");
     if (!node->m_right->isPureNumeric())
         ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
 
@@ -169,9 +169,13 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
     }
     else {
         bop->m_right->Accept(this);
-
-        as->Asm("ld d,h");
-        as->Asm("ld e,l");
+        if (isGB()) {
+            as->Asm("ld d,h");
+            as->Asm("ld e,l");
+        }
+        else {
+            as->Asm("ex de,hl");
+        }
     }
     LoadVariable(var); // Load address into hl
     if (bop->m_op.m_type==TokenType::PLUS) {
@@ -344,7 +348,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
     if (node->m_right->isWord(as)) {
         as->Comment("Generic 16-bit binop");
-
+//        if (node->m_right->isWord(as))
+  //          as->Asm("ld d,0");
         node->m_right->Accept(this);
         if (isGB()) {
             as->Asm("push hl");
@@ -480,6 +485,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
 /*        if (node->isWord(as))
             as->Asm("rlca"); // *2 for integer arrays
   */
+        as->Term();
         as->Asm("ld e,a");
         as->Asm("ld d,0");
   //      as->Asm("ld hl,"+node->getValue(as));
@@ -544,7 +550,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             //node->Accept(this);
             as->Comment("Integer");
             LoadInteger(node);
-
+//            as->Comment("Integer loaded");
 
         }
         else {
@@ -693,6 +699,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
             as->Term();
+
             as->Asm("ld [+"+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
             return "";
         }
@@ -823,10 +830,14 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
         as->Comment("Integer assignment ");
-        as->Asm("ld a,h");
-        as->Asm("ld ["+name+"+1],a");
-        as->Asm("ld a,l");
-        as->Asm("ld ["+name+"],a");
+        if (!isGB())
+            as->Asm("ld ["+name+"],hl");
+        else {
+            as->Asm("ld a,h");
+            as->Asm("ld ["+name+"+1],a");
+            as->Asm("ld a,l");
+            as->Asm("ld ["+name+"],a");
+        }
         return "";
     }
     node->m_right->Accept(this);
@@ -1082,9 +1093,9 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
                         as->Comment("RHS is pure constant of $100");
                         as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
-                        as->Asm("ld a,[ "+var->value+"]");
+                        as->Asm("ld a,[ "+var->value+"+1]");
                         as->Asm("add a,b");
-                        as->Asm("ld [ "+var->value+"],a");
+                        as->Asm("ld [ "+var->value+"+1],a");
                         return;
 
                     }
@@ -1176,8 +1187,8 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
             }
             else {
                 as->Comment(";general 8-bit expression for the index");
-                as->Asm("xor a");
-                as->Asm("ld d,a");
+//                as->Asm("xor a");
+                as->Asm("ld d,0");
                 var->m_expr->Accept(this);
                 as->Asm("ld e,a");
                 as->Asm("add hl,de");

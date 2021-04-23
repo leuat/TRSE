@@ -19,14 +19,7 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
-  macdeployqt=$(find /usr/local/Cellar/qt | grep "/macdeployqt$")
-  $macdeployqt .
-  find /usr/local/Cellar/qt | grep "/plugins/.*\.dylib" | while read plugin_file
-  do
-    plugin=$(echo "$plugin_file" | sed 's,.*/plugins/,,')
-    mkdir -p $(dirname "./Contents/PlugIns/${plugin}")
-    cp "${plugin_file}" "./Contents/PlugIns/${plugin}"
-  done
+  macdeployqt .
 else
   rm *.ini
   ~/Qt/6.0.1/clang_64/bin/macdeployqt .
@@ -47,7 +40,7 @@ fi
 # TODO(ColinPitrat): Deliver OK64 too?
 if [ "$1" = "nightly" ]
 then
-  tar -czf trse_osx.tar.gz trse/trse.app
+  tar -cvzf trse_osx.tar.gz trse/trse.app
 else
   tar -cvzf trse_osx.tar.gz trse/trse.app trse/OK64.app
   scp trse_osx.tar.gz leuat@www.irio.co.uk:www.irio.co.uk/trse/latest_snapshots/
