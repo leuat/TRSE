@@ -20,10 +20,6 @@ cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
   macdeployqt .
-  #git clone https://github.com/arl/macdeployqtfix.git
-  #qtdir=$(ls /usr/local/Cellar/qt/ | head -n 1)
-  #python macdeployqtfix/macdeployqtfix.py . "${qtdir}" || echo "macdeployqtfix failed"
-  # macdeployqt should copy all the needed frameworks, but it fails to do so
 else
   rm *.ini
   ~/Qt/6.0.1/clang_64/bin/macdeployqt .
