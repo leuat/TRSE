@@ -823,10 +823,13 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
         as->Comment("Integer assignment ");
+        as->Asm("ld ["+name+"],hl");
+        /*
         as->Asm("ld a,h");
         as->Asm("ld ["+name+"+1],a");
         as->Asm("ld a,l");
         as->Asm("ld ["+name+"],a");
+*/
         return "";
     }
     node->m_right->Accept(this);
