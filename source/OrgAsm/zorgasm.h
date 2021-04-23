@@ -4,7 +4,8 @@
 
 #include "orgasm.h"
 /*
- *  The Unfinished Z80 assembler!
+ *  The finished Z80 assembler!
+ *  (hopefully)
  *
 */
 

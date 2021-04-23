@@ -90,7 +90,7 @@ void FormRasEditor::setOutputText(QString text) {
     ui->txtOutput->setHtml(text);
 }
 
-void FormRasEditor::ExecutePrg(QString fileName, QString system)
+void FormRasEditor::ExecutePrg(QString fileName)
 {
     QString emu = m_iniFile->getString("emulator");
 
@@ -107,16 +107,16 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
     QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
     if (QFile::exists(debugFile) && (
-                m_projectIniFile->getString("system")=="VIC20" ||
-                m_projectIniFile->getString("system")=="C64"||
-                m_projectIniFile->getString("system")=="C128"||
-                m_projectIniFile->getString("system")=="PET" ||
-                m_projectIniFile->getString("system")=="OK64"
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::PET ||
+                Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64
                 ))
         params<<"-moncommands"<<debugFile;
 
 
-    if (m_projectIniFile->getString("system")=="VIC20") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20) {
         emu = m_iniFile->getString("vic20_emulator");
         params<< "-autostartprgmode" << "1";
         if (m_builderThread.m_builder==nullptr || m_builderThread.m_builder->compiler==nullptr)
@@ -126,7 +126,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
             params<< "-memory" << m_builderThread.m_builder->compiler->m_parser.m_vicMemoryConfig;
 
     }
-    if (m_projectIniFile->getString("system")=="PET") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PET) {
         emu = m_iniFile->getString("pet_emulator");
         params<< "-autostartprgmode" << "1";
         QString petmodel = m_builderThread.m_builder->m_projectIniFile->getString("petmodel");
@@ -135,51 +135,51 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         }
 //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
-    if (m_projectIniFile->getString("system")=="BBCM") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM) {
         emu = m_iniFile->getString("bbc_emulator");
         params<< "-0" << Util::getFileWithoutEnding(fileName) + ".ssd" <<"-b";
 
 //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
     }
-    if (m_projectIniFile->getString("system")=="C128") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
         emu = m_iniFile->getString("c128_emulator");
 
         //params << "-" + m_projectIniFile->getString("columns")+"col";
     }
-    if (m_projectIniFile->getString("system")=="NES") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
         emu = m_iniFile->getString("nes_emulator");
     }
-    if (m_projectIniFile->getString("system")=="GAMEBOY") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY) {
         emu = m_iniFile->getString("gameboy_emulator");
     }
-    if (m_projectIniFile->getString("system")=="SPECTRUM") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM) {
         emu = m_iniFile->getString("spectrum_emulator");
     }
-    if (m_projectIniFile->getString("system")=="PLUS4") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
         emu = m_iniFile->getString("plus4_emulator");
     }
-    if (m_projectIniFile->getString("system")=="ATARI800") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800) {
         emu = m_iniFile->getString("atari800_emulator");
         params<< Util::getFileWithoutEnding(fileName) + ".xex";
     }
 
-    if (m_projectIniFile->getString("system")=="OK64") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64) {
         emu = m_iniFile->getString("ok64_emulator");
     }
-    if (m_projectIniFile->getString("system")=="TIKI100") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
         emu = m_iniFile->getString("tiki100_emulator");
     }
-    if (m_projectIniFile->getString("system")=="ATARI2600") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600) {
         emu = m_iniFile->getString("atari2600_emulator");
     }
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
-        emu = m_iniFile->getString("amstradcpc464_emulator");
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
+        emu = m_iniFile->getString("amstradcpc_emulator");
 
     }
-    if (m_projectIniFile->getString("system")=="MSX") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
         emu = m_iniFile->getString("msx_emulator");
     }
-    if (m_projectIniFile->getString("system")=="APPLEII") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::APPLEII) {
         emu = m_iniFile->getString("appleii_emulator");
         QString fn = Util::getFileWithoutEnding(fileName) + ".do";
         if (QFile::exists(fn))
@@ -191,12 +191,12 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
         }
 
     }
-    if (m_projectIniFile->getString("system")=="COLECO") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO) {
         emu = m_iniFile->getString("coleco_emulator");
 
     }
 
-    if (m_projectIniFile->getString("system")=="X86") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
         emu = m_iniFile->getString("dosbox");
         QString type = m_projectIniFile->getString("dosbox_x86_system");
         if (type.toLower()!="default")
@@ -210,12 +210,12 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 
 
-    if (m_projectIniFile->getString("system")=="MEGA65") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
         params  <<"-besure" <<"-prgmode" <<"65"<< "-prg";
         emu = m_iniFile->getString("mega65_emulator");
     }
 
-    if (m_projectIniFile->getString("system")=="X16") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X16) {
         emu = m_iniFile->getString("x16_emulator");
         QString base = emu;
 #ifdef __linux__
@@ -253,7 +253,7 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 #endif
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
-        ui->txtOutput->setText("Could not find the emulator for system '"+m_projectIniFile->getString("system")+"'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
+        ui->txtOutput->setText("Could not find the emulator for system '" + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system) + "'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
         "Example: VICE 'c64','c128','xvic', 'dosbox' or NES 'mednafen'.");
         return;
     }
@@ -261,20 +261,20 @@ void FormRasEditor::ExecutePrg(QString fileName, QString system)
 
 
 
-    if (m_projectIniFile->getString("system")=="VIC20" || m_projectIniFile->getString("system")=="C64" || m_projectIniFile->getString("system")=="C128")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 || Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::C128)
         if (m_iniFile->getdouble("auto_inject")==1.0) {
            params << "-autostartprgmode" << "1";
         }
 
-    if (m_projectIniFile->getString("system")=="TIKI100") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
            params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
     }
 
-    if (!(m_projectIniFile->getString("system")=="TIKI100" || m_projectIniFile->getString("system")=="BBCM" || m_projectIniFile->getString("system")=="ATARI800"))
+    if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100 || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM || Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800))
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
 /*        QString cs = m_currentFileShort;
         cs = cs.toUpper().remove(".RAS");
         params << "-a" << "run\""+cs+".BIN";*/
@@ -337,7 +337,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     setupEditor();
     ui->txtEditor->m_displayCycles = m_iniFile->getdouble("display_cycles")==1;
     ui->txtEditor->m_displayAddresses = m_iniFile->getdouble("display_addresses")==1;
-
+    ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete")==1;
 
 }
 
@@ -380,11 +380,19 @@ void FormRasEditor::Build(bool isShadow)
     FocusOnOutput();
     if (abs(m_timer.elapsed()-m_lastBuild)<250) // 250 ms beteen each try
         return;
+
     m_lastBuild = m_timer.elapsed();
     if (m_builderThread.m_isRunning) {
         return;
     }
     m_builderThread.quit();
+
+
+    if (m_currentSourceFile.toLower().endsWith(".inc")) {
+        ui->txtOutput->setText("You cannot compile include files");
+        return;
+    }
+
 
     if (!isShadow)
         SaveCurrent();
@@ -625,21 +633,21 @@ void FormRasEditor::Run()
     if (m_currentSourceFile.toLower().endsWith(".tru"))
         ft =".tru";
     QString filename = m_currentSourceFile.split(ft)[0] + "."+ m_projectIniFile->getString("output_type");
-    if (m_projectIniFile->getString("system")=="NES")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
         filename = m_currentSourceFile.split(ft)[0] + ".nes";
-    if (m_projectIniFile->getString("system")=="GAMEBOY")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
         filename = m_currentSourceFile.split(ft)[0] + ".gb";
-    if (m_projectIniFile->getString("system")=="SPECTRUM")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
         filename = m_currentSourceFile.split(ft)[0] + ".tap";
-    if (m_projectIniFile->getString("system")=="X86")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86)
         filename = m_currentSourceFile.split(ft)[0] + ".exe";
-    if (m_projectIniFile->getString("system")=="AMSTRADCPC464")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
-    if (m_projectIniFile->getString("system")=="MSX")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX)
         filename = m_currentSourceFile.split(ft)[0] + ".rom";
-    if (m_projectIniFile->getString("system")=="COLECO")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
-    if (m_projectIniFile->getString("system")=="TIKI100")
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100)
         filename = m_currentDir+ "disk.dsk";
 
 
@@ -648,7 +656,7 @@ void FormRasEditor::Run()
         ui->txtOutput->setHtml("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
     }
     else
-        ExecutePrg(filename, m_projectIniFile->getString("system"));
+        ExecutePrg(filename);
 
     m_run = false;
 
@@ -692,7 +700,10 @@ void FormRasEditor::SetupHighlighter()
     ui->txtEditor->setPalette(p);
     //if (highlighter!=nullptr)
     //    delete highlighter;
-    if (m_currentFileShort.toLower().endsWith(".ras") || m_currentFileShort.toLower().endsWith(".tru"))
+    if (m_currentFileShort.toLower().endsWith(".ras") ||
+            m_currentFileShort.toLower().endsWith(".tru") ||
+            m_currentFileShort.toLower().endsWith(".inc")
+            )
         highlighter = new Highlighter(colors, 0, ui->txtEditor->document());
     else
         highlighter = new AsmHighlighter(colors, 0, ui->txtEditor->document());
@@ -877,6 +888,7 @@ void FormRasEditor::UpdateFromIni()
     m_font.setPointSize(m_iniFile->getdouble("font_size")*m_iniFile->getdouble("font_size_scale"));
     ui->txtEditor->m_fontScale = m_iniFile->getdouble("font_size_scale");
     ui->txtEditor->m_font = m_font;
+    ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete")==1;
 
 }
 
@@ -1122,7 +1134,15 @@ bool FormRasEditor::Load(QString filename)
         SetText(file.readAll());
     }
     file.close();
+    ui->txtEditor->m_fileType = CodeEditor::RAS;
     m_isTRU = filename.toLower().endsWith(".tru");
+    if (m_isTRU)
+        ui->txtEditor->m_fileType = CodeEditor::TRU;
+    if (filename.toLower().endsWith(".asm"))
+        ui->txtEditor->m_fileType = CodeEditor::ASM;
+    if (filename.toLower().endsWith(".inc"))
+        ui->txtEditor->m_fileType = CodeEditor::INC;
+
     ShadowBuild();
     return true;
 }
@@ -1244,7 +1264,7 @@ void FormRasEditor::HandleBuildComplete()
 
         ui->txtEditor->InitCompleter(m_builderThread.m_builder->compiler->m_assembler->m_symTab, &m_builderThread.m_builder->compiler->m_parser);
 
-    if (m_projectIniFile->getString("system")=="NES") {
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
         BuildNes(Util::getFileWithoutEnding(m_currentSourceFile));
     }
     HandleErrorDialogs(ErrorHandler::e.m_teOut);

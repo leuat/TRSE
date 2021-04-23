@@ -14,6 +14,6 @@ ln -s  ../../project_templates Release$1/trse.app/project_templates
 
 ln -s  ../../Publish/source/themes Debug$1/trse.app/themes
 ln -s  ../../Publish/tutorials Debug$1/trse.app/tutorials
-ln -s  ../../units Debug/trse.app$1/units
+ln -s  ../../units Debug$1/trse.app/units
 ln -s  ../../project_templates Debug$1/trse.app/project_templates
 

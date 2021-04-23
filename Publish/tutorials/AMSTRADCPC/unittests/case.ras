@@ -1,0 +1,46 @@
+program testcase;
+//@use "text"
+//@use "crtc"
+var
+	i,j,k : byte;
+
+	l,ik : integer;
+	zp, p : pointer;
+/*	
+procedure PutPixel(x:integer;y:byte);
+begin
+	x:=x>>2;
+	Crtc::PutPixelMode0(x,y,1);
+	
+end;
+*/
+
+begin
+	asm(";here0");
+	p:=#i;
+	p[0] := 10;
+//	p[1] := 10;
+/*	zp:=p+1;
+	Crtc_SetMode(0);
+	i:=3;
+	j:=15;
+	case j of 
+		0: Text::Print("WRONG");
+		15: Text::Print("CORRECT");
+		0: Text::Print("WRONG");
+	end;
+	ik:=0;
+	for k:=0 to 100 do
+	begin
+	
+		asm(";here");
+		PutPixel(ik,k+10);
+		ik+=1;
+//		Crtc_WaitForSync();
+		
+	end;
+	
+	
+*/	
+	loop();
+end.

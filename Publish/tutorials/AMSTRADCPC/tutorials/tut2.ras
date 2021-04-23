@@ -1,0 +1,57 @@
+program Tutorial2_pixels;
+@use "crtc"
+@use "input"
+
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+
+var  
+	done,i1,j,xx,yy,col,shift: byte; 
+	time : byte=0;
+    sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
+    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*100+99");
+	palette : incbin("resources/images/image1_palette.bin");
+	image : incbin("resources/images/image1.bin");
+
+/**
+Standard method for initializing the default screen, border and palette.
+
+**/
+procedure Init();
+begin
+	time:=0;
+	// Mode 0 : 160x200 16 cols
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+	Crtc::SetPalette(#palette);
+end;
+
+
+begin
+	Init();
+	// Copy image data to the screen
+	memcpy(#image, screen, $4000);
+	col:=1;
+	shift:=time+64;
+	while (done=0) do
+	begin
+		xx:=sinx[time];
+		yy:=siny[time+shift];
+		// Put some pixels!		
+		Crtc::PutPixelMode0(xx,yy,col);		
+		
+		time:=time+1;
+		
+		// Cycling fun!
+		if (time&32 = 0) then shift:=shift+1;
+		
+		if (time=0) then 
+		begin 
+			col:=(col+1)&15;
+			shift:=shift+1;
+		end;	
+	end;	
+
+end.

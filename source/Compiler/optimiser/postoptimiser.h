@@ -15,6 +15,7 @@ public:
     bool m_isLabel = false;
     bool m_remove = false;
     bool m_potentialOptimise = false;
+    bool m_forceOptimise = false;
 
     QMap<QString, QString> m_changeRegs;
     SourceLine() = default;

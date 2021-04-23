@@ -1,0 +1,150 @@
+procedure CalculatePlasmaTables();
+begin
+
+	c2x:=aax;
+	c2y:=aay;
+	
+	// Set up y-sine table
+	x1:=time<<2;
+	for x:=0 to sy do begin 
+		i1:=sin[c2x] + sin[c2y];
+		siny[x]:=i1+x1; 
+		c2x:=c2x+7;
+		c2y:=c2y+9;
+	end;
+
+	aax:=aax+3;
+	aay:=aay-5;
+
+	// Set up x-sine table
+	for x:=0 to sx do begin 
+		i1 := sin[c2x] + sin[c2y];
+		sinx[x] := i1;
+		c2x:=c2x+5;
+		c2y:=c2y+11;
+
+	end;
+
+
+end;
+
+// Plasma procedure, optimized
+
+procedure PlasmaOptimized();
+begin
+		
+	y1:=0;
+	x1:=0;
+	// Start
+	for x:=0 to sx do begin
+		val:=sinx[x];
+		// Set up pushed hl to point to $C000 + 2*x
+		asm("
+			ld d,$C0
+			ld a,[x]
+			add a,a ; *2
+			ld e,a
+			
+						
+			push de ; use as HL on stack
+			; de and b won't be modified at all
+			ld de,$1000 ; d = 16 hi bit = 16*$100 = $800*2
+;			ld de,$FFF ; d = 16 hi bit = 16*$100 = $800*2
+			ld b,0
+			ld iy,siny
+
+		");
+		for y:=0 to yy do begin
+		
+//			c1:=(siny[y]+val);
+			asm("
+	
+		
+;			ld b,0
+			ld a,[val]
+			ld c,a
+			ld a,[iy] ; siny[y]
+			add a,c ; +val
+			inc iy
+			
+
+
+			ld hl,div16_merged		
+;			ld b,0
+;			ld a,[c1]
+			ld c,a
+			add hl,bc
+			ld a,[hl] ; val, usually stored in 'tmp'
+;			ld [tmp],a		
+
+
+			pop hl
+			
+			ld c,80 ; b is 0
+			add hl,bc
+					
+			push hl
+	
+
+;			ld de,$1000 ; d = 16 hi bit = 16*$100 = $800*2
+
+
+;			ld a,[tmp]
+			ld [hl],a
+			add hl,de ; Add 2048*2
+			ld [hl],a
+			add hl,de ; Add 2048*2
+			ld [hl],a
+
+
+		
+				");
+
+		end;
+		asm(" pop de");
+	end;
+
+end;
+
+
+
+
+
+
+procedure InitPlasma();
+begin
+	time:=0;
+	aax:=1;
+	aay:=5;
+
+/*	for j:=0 to 8 do
+	begin
+		Crtc::SetSinglePaletteHW(j,plasmaPalette[j]);
+		Crtc::SetSinglePaletteHW(15-j,plasmaPalette[j]);	
+	end;*/
+
+	for j:=0 to 256 do
+	begin
+		x1:=j>>4;
+		
+		k := Crtc::pixtab2[x1];
+		ll := Crtc::pixtab1[x1];
+
+		div16_merged[j]:=k | ll;//mergetab[x1]; 
+	end;
+end;
+
+procedure PlasmaEffect();
+begin
+	InitPlasma();
+	yy:=1;
+	while (done=false) do
+	begin	
+		WaitForReady();
+		CalculatePlasmaTables();
+		PlasmaOptimized();
+		if (yy<sy) then yy:=yy+1;
+		ready := false;			
+		
+	end;	
+end;

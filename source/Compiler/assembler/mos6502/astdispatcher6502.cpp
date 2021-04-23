@@ -3062,48 +3062,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeAssign> node)
 
 }
 
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeCase> node)
-{
-    node->DispatchConstructor(as,this);
-  //  as->PushCounter();
-    bool hasElse = node->m_elseBlock!=nullptr;
-    QString labelEnd = as->NewLabel("caseend");
-    for (int i=0;i<node->m_conditionals.count();i++) {
-        QString labelNext = as->NewLabel("casenext");
-        as->PopLabel("casenext");
-
-        if (node->m_conditionals[i]->isPure()) {
-            node->m_variable->Accept(this);
-            as->Term();
-            as->Asm("cmp " + getValue(node->m_conditionals[i]) +" ;keep");
-
-        }
-        else { // General term
-            node->m_conditionals[i]->Accept(this);
-            as->Term();
-            QString compare = as->StoreInTempVar("temp1");
-            node->m_variable->Accept(this);
-            as->Term();
-            as->Asm("cmp " + compare +" ;keep");
-        }
-        as->Asm("bne "+labelNext);
-
-        node->m_statements[i]->Accept(this); // RUN the current block
-
-        as->Asm("jmp "+labelEnd);
-
-
-        as->Label(labelNext);
-    }
-    if (hasElse)
-        node->m_elseBlock->Accept(this);
-
-    as->Label(labelEnd);
-
-    as->PopLabel("caseend");
-
-    //    as->PopCounter(node->m_op.m_lineNumber);
-}
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
@@ -3521,7 +3479,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeUnaryOp> node)
 }
 
 
-void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+void ASTDispatcher6502::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
     /*    if (!isOffPage)
         SmallLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);
@@ -3559,6 +3517,28 @@ void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSh
 
 
 
+}
+
+
+void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
+{
+        if (!nodeA->isPure())
+            ErrorHandler::e.Error("Compare must be pure variable",nodeA->m_op.m_lineNumber);
+//        if (nodeA->isWord(as))
+  //          ErrorHandler::e.Error("Integer compares not supported yet on the 6502",nodeA->m_op.m_lineNumber);
+        if (nodeA->isWord(as))
+            nodeB->setForceType(TokenType::INTEGER);
+        as->ClearTerm();
+        nodeB->Accept(this);
+        as->Term();
+        as->Asm("cmp " + nodeA->getValue(as) +" ;keep");
+        as->Asm("bne " +lblJump);
+        if (nodeA->isWord(as)) {
+            as->Asm("cpy " + nodeA->getValue(as) +"+1 ;keep");
+            as->Asm("bne " +lblJump);
+
+        }
+        return;
 }
 
 void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QSharedPointer<Node> expr)

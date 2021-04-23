@@ -1,0 +1,69 @@
+program Tutorial4_music;
+@use "crtc"
+@use "input"
+@use "music"
+@use "memory"
+
+
+@export "resources/images/image4.flf" "resources/images/image1.bin" 256
+
+var  
+	image : incbin("resources/images/image1.bin");
+	palette : incbin("resources/images/image1_palette.bin");
+	@donotremove music
+
+/*
+  How to do music: 
+    a) Download Arkos Tracker 2
+    b) Create a 3-track song
+    c) Export as AKG, type "source file", with some main filename like "mySong"
+    d) In TRSE, use the "compile_akg_music" pre-processor command to compile the music + player using the "mySong" base name
+       to a format that TRSE can recognize. Also specify the desired memory location, somewhere *after* your code.
+    e) The compiler has generated a .bin file - include this one 
+    f) Music play/init locations are automatically extracted. All you need to do is call Music::InitMusic(track) and
+       call Music::PlayMusic() on each frame.  
+
+*/	
+
+@compile_akg_music "resources/music/song1" $8800
+	some_song : incbin("resources/music/song1.bin", $8800);
+	
+	j1,j2,time,rast : byte = 0;
+
+
+interrupt MainRaster();
+begin
+	Memory::PushAll();
+	
+	rast:=rast+1;
+	if (rast=6) then // Only play every 6th interrupt
+	begin
+		Music::PlayMusic();
+		rast := 0;
+	end;
+	Memory::EnableInterrupts();
+	Memory::PopAll();
+end;
+
+begin
+	Crtc::SetBorder(0);
+	Crtc::SetMode(0);
+	
+	Memory::DisableLRom();
+	
+	// Set up colortab1
+	Music::InitMusic(#some_song,0);
+	Crtc::Synchronize();
+	RasterIRQ(MainRaster());
+	
+	Crtc::SetPalette(#palette);
+	
+
+	memcpy(#image, screen, $3FFF);
+	
+	while (true) do
+	begin
+		time:=time+1;
+	end;	
+
+end.

@@ -1,0 +1,73 @@
+/*
+
+Classes lookup and referencing unit tests
+
+*/
+
+program Case;
+var  
+	sc, co : pointer; 			// screen and colour RAM pointers
+	text: string = "T:    ";	// text to display when writing a test result
+	@define COLUMNWIDTH 5
+
+
+/*--------------------------------------------------------------------------------------------
+
+	VARIABLES FOR USE IN UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+
+@include "common.ras"
+
+var
+	i,j: byte;
+	i2,j2 : integer;
+
+/*--------------------------------------------------------------------------------------------
+
+	UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+
+procedure Test1();
+begin
+	j:=15;
+	case j of
+		4: i:=5;
+		15: i:=10;
+		24: i:=0;
+	end;
+	
+
+	text := "T1:";
+	if (i=10) then PASS() else FAIL();
+end;
+
+// Integer test
+procedure Test2();
+begin
+	j2:=15000;
+	case j2 of
+		4: i2:=5;
+		15000: i2:=10;
+		24: i2:=0;
+	end;
+
+	text := "T2:";
+	if (i2=10) then PASS() else FAIL();
+end;
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+begin
+
+	// initialise everything
+	Initialise();
+	
+	// Mul and div
+	Test1();
+	Test2();
+	loop();
+end.

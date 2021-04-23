@@ -1,0 +1,66 @@
+program Tutorial5_compression;
+@use "crtc"
+@use "input"
+@use "compression"
+
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+@export "resources/images/image3.flf" "resources/images/image2.bin" 256
+
+
+/*
+	TRSE has since version 0.11.3 got a built-in lossless LZ4 compression system for 
+	the 6502, Z80 and M68K systems. 
+	
+	You compress a resource automatically by adding the "compressed" flag to an 
+	included data file. This file will be LZ4-compressed to a hidden binary
+	file (with ending "_c") and included instead of the original file.
+	
+	In order to decompress this file, simpy use the "compression/compression" library and
+	call "Decompress" with two parameters: the address of the data and the address to unpack to.  
+
+	Since LZ4-compression is lossless, please remember that less noisy/detailed resources compress 
+	better than detailed ones. 
+
+*/
+
+
+
+var  
+	// By adding the "compressed" flag, the resource will automatically be compressed and included
+	image1 : incbin("resources/images/image1.bin") compressed;
+	palette1 : incbin("resources/images/image1_palette.bin");
+	image2 : incbin("resources/images/image2.bin") compressed;
+	palette2 : incbin("resources/images/image2_palette.bin");
+	j, k : byte;
+
+procedure Sleep(sl : byte);
+begin
+	for k:=0 to sl do
+		for j:=0 to 255 do
+			wait(30);
+
+end;
+
+begin
+	
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Memory::DisableFirmware();
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();	
+	while (true) do
+	begin
+		Crtc::SetPalette(#palette1);
+		// Decompress first image directly to the screen
+		Compression::Decompress(#image1, screen);
+		// wait a bit
+		Sleep(30);		
+		Crtc::SetPalette(#palette2);
+		// Decompress second image
+		Compression::Decompress(#image2, screen);
+		Sleep(30);		
+	end;
+		
+	Loop();
+
+end.

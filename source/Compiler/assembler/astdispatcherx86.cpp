@@ -562,11 +562,11 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeAssign> node)
 
 }
 
-void ASTdispatcherX86::dispatch(QSharedPointer<NodeCase> node)
+/*void ASTdispatcherX86::dispatch(QSharedPointer<NodeCase> node)
 {
     ErrorHandler::e.Error("Case not implemented yet", node->m_op.m_lineNumber);
 }
-
+*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
     ErrorHandler::e.Error("Repeat-until not implemented yet", node->m_op.m_lineNumber);
@@ -1124,7 +1124,7 @@ void ASTdispatcherX86::BuildToCmp(QSharedPointer<Node> node)
 
 }
 
-void ASTdispatcherX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+void ASTdispatcherX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
     QString var = nodeA->m_left->getValue(as);
     if (step!=nullptr) {
@@ -1149,4 +1149,16 @@ void ASTdispatcherX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
     as->Asm(m_jne+lblJump);
 
 }
+
+void ASTdispatcherX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
+{
+    LoadVariable(nodeA);
+    PushX();
+    LoadVariable(nodeB);
+    PopX();
+    as->Asm(m_cmp+getAx(nodeB)+","+getAx(nodeA));
+    as->Asm(m_jne+lblJump);
+
+}
+
 

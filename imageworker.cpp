@@ -35,6 +35,7 @@ ImageWorker::ImageWorker()
 //    m_types.append(ImageType("Hires Charmap", "c64",LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Charmap", "vic20",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
     m_types.append(ImageType("PBM Image", "pet",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
+    m_types.append(ImageType("Level Editor", "pet",LImage::Type::LevelEditor,LColorList::Type::C64));
 //    m_types.append(ImageType("Hires Charmap", "vic20",LImage::Type::CharmapRegular,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation", "c64",LImage::Type::FullScreenChar,LColorList::Type::C64));
     m_types.append(ImageType("Screen animation", "vic20",LImage::Type::FullScreenChar,LColorList::Type::C64));
@@ -58,8 +59,8 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Meta Tile Editor", "gameboy",LImage::Type::LMetaChunk, LColorList::Type::NES));
     m_types.append(ImageType("Gameboy Level Editor", "gameboy",LImage::Type::LevelEditorGameboy,LColorList::Type::NES));
     m_types.append(ImageType("320x200 16 color Atari ST", "atari520st",LImage::Type::ATARI320x200,LColorList::Type::C64));
-    m_types.append(ImageType("160x200 16 color Amstrad CPC", "amstradcpc464",LImage::Type::AmstradCPC,LColorList::Type::AMSTRADCPC));
-    m_types.append(ImageType("generic NxM color Amstrad", "amstradcpc464",LImage::Type::AmstradCPCGeneric,LColorList::Type::AMSTRADCPC));
+    m_types.append(ImageType("160x200 16 color Amstrad CPC", "amstradcpc",LImage::Type::AmstradCPC,LColorList::Type::AMSTRADCPC));
+    m_types.append(ImageType("generic NxM color Amstrad", "amstradcpc",LImage::Type::AmstradCPCGeneric,LColorList::Type::AMSTRADCPC));
     m_types.append(ImageType("BBC Image", "bbcm",LImage::Type::BBC,LColorList::Type::BBC));
     m_types.append(ImageType("VGA 320x200", "x86",LImage::Type::VGA, LColorList::Type::VGA));
 

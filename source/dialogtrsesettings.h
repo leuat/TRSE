@@ -155,9 +155,9 @@ private slots:
 
     void on_btn68kTargetDirAtariST_clicked();
 
-    void on_btnAmstradCMC464_clicked();
+    void on_btnAmstradCPC_clicked();
 
-    void on_btnHelpAmstradCPC464_clicked();
+    void on_btnHelpAmstradCPC_clicked();
 
     void on_btnColecoEmulator_clicked();
 

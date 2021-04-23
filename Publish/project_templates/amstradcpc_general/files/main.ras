@@ -1,0 +1,28 @@
+program Tutorial1;
+@use "crtc"
+@use "memory"
+
+// TRSE image by Optic
+// Automatically export trse.flf to a native CPC binary
+@export "images/trse.flf" "images/trse.bin" 256
+
+var  
+// Include the exported image data + palette
+	image : incbin("images/trse.bin");
+	palette : incbin("/images/trse_palette.bin");
+
+begin
+	// Set 160x200 16-color mode
+	Crtc::SetMode(0);
+	// Set black border
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+	// Set palette
+	Crtc::SetPalette(#palette);
+	// Copy image to screen 
+	memcpy(#image, screen, $4000);
+	// halt the computer
+	Loop();
+
+end.

@@ -1,0 +1,211 @@
+program Tutorial3_Plasma;
+@use "crtc"
+@use "input"
+
+// Turn on / off optimizing. Understanding the unoptimized version is much easier!
+@define OPTIMIZED 1 // 0 (off) or 1 (on)
+
+var  
+	done,i1,j,time,tmp: byte; 
+	c2x,c2y,aax,aay,x,y,val,x1,y1,c1 : byte;
+
+	const sx : byte = 39;
+	const sy : byte = 22;
+
+    siny : array[sy] of byte = (0); 
+	sinx : array[sx] of byte = (0); 
+	mergetab : array[16] of byte = (0);
+	// Lookup table for division by 16
+	@donotremove div16
+    sin : array[256] of byte = BuildTable("((Math.sin(i/256.0*Math.PI*2.0)*127+127))*1.0");
+    div16_merged : array[256] of byte = BuildTable("i/16");
+    div16 : array[256] of byte = BuildTable("i/16");
+	
+	palette : array[8] of byte = (0, 1, 2 ,5,  11,8,25,26,26,26,26,26);	
+	zp : pointer;
+
+
+// Fills a certain cell
+
+
+
+procedure CalculatePlasmaTables();
+begin
+	c2x:=aax;
+	c2y:=aay;
+	
+	// Set up y-sine table
+	x1:=time<<2;
+	for x:=0 to sy do begin 
+		i1:=sin[c2x] + sin[c2y];
+		siny[x]:=i1+x1; 
+		c2x:=c2x+7;
+		c2y:=c2y+9;
+	end;
+
+	aax:=aax+3;
+	aay:=aay-5;
+
+	// Set up x-sine table
+	for x:=0 to sx do begin 
+		i1 := sin[c2x] + sin[c2y];
+		sinx[x] := i1;
+		c2x:=c2x+5;
+		c2y:=c2y+11;
+
+	end;
+
+
+end;
+
+// Plasma procedure, optimized
+
+procedure PlasmaOptimized();
+begin
+		
+	y1:=0;
+	x1:=0;
+	// Start
+	for x:=0 to sx do begin
+		val:=sinx[x];
+		// Set up pushed hl to point to $C000 + 2*x
+		asm("
+			ld d,$C0
+			ld a,[x]
+			add a,a ; *2
+			ld e,a
+			
+						
+			push de ; use as HL on stack
+			; de and b won't be modified at all
+			ld de,$1000 ; d = 16 hi bit = 16*$100 = $800*2
+;			ld de,$FFF ; d = 16 hi bit = 16*$100 = $800*2
+			ld b,0
+			ld iy,siny
+
+		");
+		for y:=0 to sy do begin
+		
+//			c1:=(siny[y]+val);
+			asm("
+			
+;			ld b,0
+			ld a,[val]
+			ld c,a
+			ld a,[iy] ; siny[y]
+			add a,c ; +val
+			inc iy
+			
+
+
+			ld hl,div16_merged		
+;			ld b,0
+;			ld a,[c1]
+			ld c,a
+			add hl,bc
+			ld a,[hl] ; val, usually stored in 'tmp'
+;			ld [tmp],a		
+
+
+			pop hl
+			ld c,80 ; b is 0
+			add hl,bc
+			push hl
+	
+
+;			ld de,$1000 ; d = 16 hi bit = 16*$100 = $800*2
+
+
+;			ld a,[tmp]
+			ld [hl],a
+			add hl,de ; Add 2048*2
+			ld [hl],a
+			add hl,de ; Add 2048*2
+			ld [hl],a
+	
+		
+				");
+
+		end;
+		asm(" pop de");
+	end;
+
+end;
+
+
+
+// Reeeeeally slow method
+procedure FillCell(xx,yy,col : byte);
+begin
+	col:=div16_merged[col]; // Lookup  merged[col/16]
+	zp:=Crtc::sp;
+	zp[xx]:=col;
+	zp:=zp+2048*2; // 2 lines down
+	zp[xx]:=col;	
+	zp:=zp+2048*2; // 2 lines down
+	zp[xx]:=col;	
+end;
+
+
+procedure Plasma();
+begin
+	
+	y1:=0;
+	for y:=0 to sy do begin
+		val:=siny[y];
+		Crtc::PointToY(y1);
+		Crtc::sp:=Crtc::sp+(40-sx)/2;
+		x1:=0;
+		for x:=0 to sx do 
+		begin
+			FillCell(x1,y1,sinx[x]+val);
+			x1:=x1+2;
+		end;
+		y1:=y1+8;
+	end;
+
+end;
+
+
+
+procedure Init();
+begin
+	time:=0;
+	aax:=1;
+	aay:=5;
+
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+
+	// Sets the palette
+	for j:=0 to 8 do
+	begin
+		Crtc::SetSinglePaletteHW(j,palette[j]);
+		Crtc::SetSinglePaletteHW(15-j,palette[j]);	
+	end;
+	for j:=0 to 16 do
+		mergetab[j]:=Crtc::pixtab1[j] | Crtc::pixtab2[j];
+	for j:=0 to 256 do
+	begin
+		x1:=div16_merged[j];
+		div16_merged[j]:=mergetab[x1]; 
+	end;
+end;
+
+begin
+	Init();
+	while (done=0) do
+	begin
+		CalculatePlasmaTables();
+		time:=time+1;
+		
+		@if OPTIMIZED = 1 
+			PlasmaOptimized();
+		@else
+			Plasma();
+		@endif
+	end;	
+
+end.

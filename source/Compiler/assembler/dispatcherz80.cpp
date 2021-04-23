@@ -81,7 +81,7 @@ QString ASTdispatcherZ80::getJmp(bool isOffPage) {
     return "jp";
 }
 
-void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
+void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
 
 
@@ -122,6 +122,33 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
     else
         as->Asm("jp nz,"+lblJump);
 }
+
+void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
+{
+    QString var = nodeA->getValue(as);
+
+    if (!nodeB->isPureNumeric()) {
+        as->ClearTerm();
+        nodeB->Accept(this);
+        as->Term();
+        as->Asm("ld c,a");
+    }
+
+
+    nodeA->Accept(this);
+    as->Term();
+    if (!nodeB->isPureNumeric())
+        as->Asm(m_cmp+"c");
+    else
+        as->Asm(m_cmp+nodeB->getValue(as));
+
+
+    if (!isOffPage)
+        as->Asm("jr nz,"+lblJump);
+    else
+        as->Asm("jp nz,"+lblJump);
+}
+
 
 void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointer<NodeVar> var)
 {
@@ -633,7 +660,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     if (node->m_left->isWord(as)) {
         node->m_right->setForceType(TokenType::INTEGER);
     }
-
+    as->ClearTerm();
 
     if (qSharedPointerDynamicCast<NodeString>(node->m_right))
     {
@@ -665,6 +692,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         // Optimization : array[ constant ] := expr
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
+            as->Term();
             as->Asm("ld [+"+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
             return "";
         }
@@ -696,7 +724,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             node->m_right->Accept(this);
 
         as->Asm("ld [hl],a");
-
+        return "";
 
 
 //        ErrorHandler::e.Error("Array indicies not implemented yet");
@@ -796,9 +824,9 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
         as->Comment("Integer assignment ");
         as->Asm("ld a,h");
-        as->Asm("ld ["+name+"],a");
-        as->Asm("ld a,l");
         as->Asm("ld ["+name+"+1],a");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+name+"],a");
         return "";
     }
     node->m_right->Accept(this);
@@ -1142,11 +1170,18 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
         }
         else
         {
-            as->Asm("xor a");
-            as->Asm("ld d,a");
-            var->m_expr->Accept(this);
-            as->Asm("ld e,a");
-            as->Asm("add hl,de");
+            if (var->m_expr->isPureNumeric()) {
+                as->Comment("; index is pure number optimization");
+                as->Asm("ld de,"+var->m_expr->getValue(as));
+            }
+            else {
+                as->Comment(";general 8-bit expression for the index");
+                as->Asm("xor a");
+                as->Asm("ld d,a");
+                var->m_expr->Accept(this);
+                as->Asm("ld e,a");
+                as->Asm("add hl,de");
+            }
         }
         if (!node->m_right->isPure()) {
             as->Asm("pop af");

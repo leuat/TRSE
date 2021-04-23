@@ -564,14 +564,9 @@ void Parser::PreprocessConstants()
 void Parser::ApplyTPUBefore()
 {
     for (QSharedPointer<Parser> p: m_tpus) {
-//        QSharedPointer<NodeProgram> np = qSharedPointerDynamicCast<NodeProgram>(p->m_tree);
         for (QString k : p->m_procedures.keys()) {
             m_procedures[k] = p->m_procedures[k];
-//            m_symTab->m_globalList.append(k);
-//            qDebug() << "Adding TPU : " << k;
         }
-//        for (QString k : p->m_procedures.keys())
-  //          m_procedures[k] = p->m_procedures[k];
 
     }
 }
@@ -2241,9 +2236,11 @@ QSharedPointer<Node> Parser::Program(QString param)
     else
         block = qSharedPointerDynamicCast<NodeBlock>(BlockNoCompound(true));
 
-    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
 
-    ApplyTPUAfter(block->m_decl,m_proceduresOnly);
+
+    QSharedPointer<NodeProgram> program = QSharedPointer<NodeProgram>(new NodeProgram(progName,  param, block));
+//    if (block!=nullptr)
+        ApplyTPUAfter(block->m_decl,m_proceduresOnly);
 
     if (!m_isTRU) {
         Eat(TokenType::DOT);
@@ -2724,16 +2721,6 @@ void Parser::PreprocessSingle() {
                           replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
 
                       }
-  //                    qDebug() << replaceLine;
-
-                      // Now load all disk files
-  //                    CIniFile paw;
-    //                  paw.Load()
-
-
-  //_Installer_Binary: 		incbin ("bin/install-c64.bin",$5000);
-    //                  qDebug() << replaceLine;
-  //                    qDebug() << Util::numToHex(loaderPos);
                       QString orgL =  m_lexer->m_lines[ln];
 
 
@@ -3031,9 +3018,12 @@ QSharedPointer<Node> Parser::Block(bool useOwnSymTab, QString blockName)
 /*    if (m_currentToken.m_type!=TokenType::VAR  && m_currentToken.m_type!=TokenType::BEGIN)
         return nullptr;
 */
-
+    // Main block
+//    qDebug() <<blockName <<m_inCurrentProcedure;
+    if (m_inCurrentProcedure!="main")
     if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::INTERRUPT || m_currentToken.m_type==TokenType::WEDGE || m_currentToken.m_type==TokenType::FUNCTION)
         return nullptr;
+
     QVector<QSharedPointer<Node>> decl =  Declarations(useOwnSymTab, blockName);
 
     int pos = m_currentToken.m_lineNumber;
@@ -5068,10 +5058,6 @@ void Parser::HandleProjectSettingsPreprocessors()
 
 void Parser::HandleUseTPU(QString fileName)
 {
-    //QString fname = m_currentDir + QDir::separator() + fileName+".tru";
-
-//    if (m_isTRU)
-  //      ErrorHandler::e.Error("TRSE Unit files cannot include other unit files")
 
     if (s_usedTRUs.contains(fileName)) {
         return;
@@ -5081,6 +5067,7 @@ void Parser::HandleUseTPU(QString fileName)
     dirs << m_currentDir + QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+ QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+ QDir::separator();
+    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+"global"+ QDir::separator();
 
     QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);
 

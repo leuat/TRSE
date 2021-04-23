@@ -114,7 +114,7 @@ public:
     void setOutputText(QString text) override;
 
     void LoadRasFile(QString fileName);
-    void ExecutePrg(QString fileName,  QString system);
+    void ExecutePrg(QString fileName);
     void InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
     void setupEditor();
     void Compress();

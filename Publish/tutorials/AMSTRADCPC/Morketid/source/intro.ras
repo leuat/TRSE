@@ -1,0 +1,287 @@
+
+procedure InitRegularMode();
+begin
+	Crtc::SetMode(0);
+	Crtc::SetBorder(0);
+end;
+
+
+procedure EffectIntroImage(pp : pointer);
+begin
+	Compression::Decompress(pp, screen);
+	//memcpy(pp,#screen,2000);	
+	while (done=false) do
+	begin
+		
+	end;
+end;
+
+procedure UpdateProximaWobble();
+begin
+		
+		zp := $7A00 - (160*8);
+		n := time;
+		y:=70;
+		for k:=0 to size do
+		begin
+			Crtc::PointToY(k+40);
+			ll := sine32[ n];
+			if (ll>y) then ll:=y;
+			if (ll>160) then ll:=8;
+//			if (ll<8) then ll:=8;
+			p1:=zp + Crtc::ytab[ll];
+			memcpy(p1,Crtc::sp,80);
+			n:=n+1;
+					
+
+/*			c1 := 0;
+			c2:=0;
+			for j:=0 to 5 do
+			begin
+				ll := sine32[ n+ c1];
+				p1:=zp + Crtc::ytab[ll];
+				p1:=p1 + c2;
+
+				memcpy(p1,Crtc::sp,16);
+				Crtc::sp:=Crtc::sp+16;
+				c1:=c1+15;
+				c2:=c2+8;
+//				p1:=p1+8;
+			end;*/
+			zp:=zp+80;
+			y:=y-1;
+		end;
+
+end;
+
+
+procedure EffectProximaImage();
+begin
+	Compression::Decompress(#proxima, $7A00);
+//	Crtc::CopyImageTransparent(free2,free, 160,55,0,50,0);
+	fill(^$7000,0,$A00);
+	textp:=#text1;
+	//memcpy(pp,#screen,2000);	
+	size:=1;
+	while (done=false) do
+	begin
+		WaitForReady();
+		UpdatePrintText();
+		UpdatePrintText();
+		UpdatePrintText();
+		UpdateProximaWobble();			
+		
+//		if (transition=0) then
+	//	begin
+			if (size<70) then size:=size+1;	
+	//	end
+		//	else if (size<>1) then size:=size-1;	
+			
+		ready := false;
+	end;
+end;
+
+procedure EffectMoveText();
+begin
+	zp:=#free;
+//	Crtc::CopyScreenToBuffer(text1[2],text1[2]+8,free);
+	Crtc::CopyScreenToBuffer(140,156,#free);
+//	fill(#free,$E5,80*16);
+	fill(#free2,0,80*24);
+	x:=text[1];
+	y:=text[2];
+	size:=64;
+	k:=0;
+	c2:=44;
+	c1:=0;
+//	for j:=0 to 100 do 
+	//	j:= Random::Random1();	
+	
+	while (done=false) do
+	begin
+		x:=sine32[time];
+		x:=x+70;
+		j:=time+size;
+		y:=sine32[j]+110;
+		WaitForReady();
+		
+		Crtc::CopyImageTransparent(#free,#free2,160,16,x,y,y-2);
+		if (time&3=0) then size:=size +1;
+		ready := false;			
+		k:=time;
+		
+		for ll:=0 to 10 do
+		begin
+			j:=Random::Random1();
+			p1 := #free + Crtc::ytab[j&15];
+			j:=Random::Random1();
+			p1[j&127]:=0;
+		end;
+/*		if (c2<120) then
+		begin
+			j:=0;
+			c1:=c1+1;
+			if (c1&1=0) then c2:=c2+1;
+
+			for n:=0 to 4 do
+			begin					
+				Crtc::PointToY(c2+n);
+				j:=Crtc::pixtab1[n] | Crtc::pixtab2[n];
+				fill(Crtc::sp,j,80);
+			end;
+//			if (time&1=0) then
+		end;
+	*/	
+	end;
+end;
+
+
+procedure EffectLogo();
+begin
+//	Compression::Decompress(epp, screen);
+	Compression::Decompress(#logo, free);
+	//memcpy(#logo,^$8000,1100);
+//	memcpy(^$C000,^$8000,$800);	
+	//keep:=free2;
+	size := 1;
+	// Grab a backup
+	// 100 lines, $2000 bytes.. damn
+/*	
+	zp := free2;
+	for j:=0 to 100 do
+	begin
+		Crtc::PointToY(j);
+		memcpy(Crtc::sp,zp,80);
+		zp:=zp+80;
+	end;*/
+	Crtc::CopyScreenToBuffer(0,100,free2);
+	zp:=free + 40*58;
+	ll:=0;
+	while (done=false) do
+	begin
+		x:=sine32[time]>>1+26;
+		y:=sine32[time+64+ll]>>1;
+		if (time&3=0) then ll:=ll+1;
+		WaitForReady();
+//		memcpy(^$8000,^$C000,$800);	
+		
+		Crtc::CopyImageTransparent(free, free2, 80, size, x, y,0);	
+		
+		if (transition = 0) then 
+		begin
+			if (size<60) then size:=size+1;
+		end
+		else
+		begin
+			
+			if (size<>1) then 
+			begin
+				size:=size-1;
+				zp:=zp-40;
+				fill(zp,0,80);
+			end;
+		end;
+		ready := false;
+		
+//	Compression::Decompress(epp, screen);
+	end;
+
+end;
+
+procedure PutPixel(x,y,col : global byte);
+begin
+	// Simply looks up the y-value and adds x
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[y]
+		add hl,bc
+		add hl,bc
+		ld de,p1
+		ldi
+		ldi
+			
+		
+	");
+	p1:=p1+x>>1;
+	n := p1[0];
+	p1[0] := col;	
+
+end;
+
+procedure EffectLeaf(textp : global pointer);
+begin
+	for j:=0 to noLeaves do
+	begin
+		ll := Random::Random1();
+		leaves[j].x := ll>>1 + 20;
+		ll := Random::Random1();
+		leaves[j].y := ll>>1 + 30;
+		ll := Random::Random1();
+		leaves[j].val := ll>>5+8;
+		leaves[j].val := ll>>6+2;
+		leaves[j].cnt := 0;
+	end;
+//	Crtc::CopyScreenToBuffer(0,100,free2);
+	size:=false;
+	for j:=0 to noLeaves do
+	begin
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[y]
+		add hl,bc
+		add hl,bc
+		ld de,p1
+		ldi
+		ldi
+			
+		
+	");
+	p1:=p1+x>>1;
+	n := p1[0];
+	leaves[j].keep := n;
+	
+	end;
+	while (done=false) do
+	begin
+		WaitForReady();
+				
+		UpdatePrintText();	
+		for j:=0 to noLeaves do
+		begin
+			leaves[j].cnt := leaves[j].cnt +1;
+			if (leaves[j].cnt>=leaves[j].val) then
+			begin
+				PutPixel(leaves[j].x, leaves[j].y,leaves[j].keep);
+							
+				leaves[j].x := leaves[j].x -1;
+				if (time&j>4) then
+				leaves[j].y := leaves[j].y +1;
+				if (leaves[j].x <20 or leaves[j].y>150) then 
+				begin 
+					ll:=Random::Random1()>>1 + 30; 
+					leaves[j].x:=ll; 
+					ll:=Random::Random1()>>2 + 30; 
+					leaves[j].y:=ll; 
+				end;
+//				if (leaves[j].y >140) then begin ll:=0; end;
+				
+				leaves[j].cnt := 0;
+				PutPixel(leaves[j].x, leaves[j].y,0);
+				leaves[j].keep := n;
+			end;
+		end;		
+		size:=true;
+		ll:=Random::Random1();
+		if (time&7=0) then 
+		begin
+			Crtc::SetSinglePaletteHW(13,$0d);
+			if (ll>160) then Crtc::SetSinglePaletteHW(13,$1A);
+			if (ll>220) then Crtc::SetSinglePaletteHW(13,$19);
+		end;
+		
+//		if (time&7=0) then
+//			DestroyTest();
+		ready := false;
+	end;
+
+end;

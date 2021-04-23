@@ -508,7 +508,7 @@
         <file>resources/code/coleco/footer.asm</file>
         <file>resources/shaders/screen_slider.vert</file>
         <file>resources/shaders/screen_slider.frag</file>
-        <file>resources/images/AMSTRADCPC464.png</file>
+        <file>resources/images/AMSTRADCPC.png</file>
         <file>resources/code/amstrad/playerakg.asm</file>
         <file>resources/bin/rasm.exe</file>
         <file>resources/code/amstrad/playerakg_soundeffects.asm</file>

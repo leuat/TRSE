@@ -29,7 +29,7 @@ then
   done
 else
   rm *.ini
-  ~/Qt/5.15.0/clang_64/bin/macdeployqt .
+  ~/Qt/6.0.1/clang_64/bin/macdeployqt .
 fi
 cd ../../
 

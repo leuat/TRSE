@@ -413,6 +413,8 @@ private slots:
 
     void on_action_TRU_Unit_source_file_triggered();
 
+    void on_action_include_source_file_triggered();
+
     void on_actionRas_source_file_triggered();
 
     void on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);

@@ -132,6 +132,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // Treat instructions of the type ld a,b
     // WashforOpcode returns "**","(**)" or just the register a,b,(hl) etc
     // WasForOpcode also calculates the one free value parameter
+    // (actually some very few opcodes have 2 input parameters)
 
     if (expr.contains(",")) {
         QStringList lst = expr.split(",");
@@ -179,7 +180,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     m_opCode = m_opCode.replace("out (**)","out (*)");
     m_opCode = m_opCode.replace("in a,(**)","in a,(*)");
 
-
+    // Missing your favorite opcode? Try a brand new one without the extra "*". What a hack, but works!
     if (!m_opCodes.contains(m_opCode))
         if (m_opCode.endsWith("**"))
             m_opCode.remove(m_opCode.count()-1,1);
@@ -204,7 +205,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
      * STRANGE INSTRUCTIONS
      * needs special care
      * because they
-     * are fragile
+     * are fragile flowers
      *
     */
 
@@ -232,6 +233,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             type = OrgasmInstruction::imm;
 
     }
+    // What a silly-looking opcode
     if (m_opCode.startsWith("rst")) {
 //        qDebug() << "RST " << m_opCode<<value;
         if (value.startsWith("$"))
@@ -246,10 +248,12 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         type = OrgasmInstruction::none;
     }
     if (m_opCode.startsWith("ret ")) {
-        m_opCode = ol.m_orgLine.toLower().trimmed().simplified();        value = "";
+        m_opCode = ol.m_orgLine.toLower().trimmed().simplified();
+        value = "";
         expr = "";
         type = OrgasmInstruction::none;
     }
+    // is out (c),0 really a thing at all?
     if (m_opCode.startsWith("out (c)") ) {
         if (value=="0")
             m_opCode = "out (c),0";
@@ -264,7 +268,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 
     int code = 0;
-    // Get actual code
+    // Get actual opcode
     if (m_opCodes.contains(m_opCode))
         code = m_opCodes[m_opCode];
     else {
@@ -273,14 +277,16 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 /*    if (code==0xddcb46)
        qDebug() << m_opCode << Util::numToHex(code) <<expr << value<<value2 << ol.m_orgLine << type;
 */
-    // calculate the actual data
+    // calculate the parameter numeric values
     int val=0;
     int val2=0;
     bool hasValue2 = value2!="";
+
     if (type!=OrgasmInstruction::none) {
         QString num = value.replace("#","$").replace("(","").replace(")","");
         val = Util::NumberFromStringHex(Util::BinopString(num));
     }
+    // Second strange value?
     if (hasValue2) {
         QString num = value2.replace("#","$").replace("(","").replace(")","");
         val2 = Util::NumberFromStringHex(Util::BinopString(num));
@@ -288,12 +294,13 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     // Write opcode to data
 
-    // 32-bit extra opcode
+    // 24-bit extra opcode
     bool is32bit = false;
     if (code>=0x10000) {
         data.append((code>>16)&0xff);
         is32bit = true;
     }
+    // Append 16-bit opcode
     if (code>=0x100)
         data.append((code>>8)&0xff);
 
@@ -306,9 +313,11 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     // A relative jump? (jr)
     if (type==OrgasmInstruction::rel)  {
+        // ooh this one might fail for relative jumps <$100.. is that a thing?
         if (val<=0xFF)
             data.append((uchar)val);
         else {
+            // Get the relative address
             int diff = (val)-m_pCounter-2;
             //        qDebug() << " ****** RELATIVE: " <<m_opCode<<expr<< diff <<m_pCounter;
             if (abs(diff)>=128 && pd==OrgasmData::PASS_SYMBOLS) {
@@ -326,7 +335,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
                 data.append(val2);
         }
         else
-            // 16-bit value?
+            // 16-bit abs value?
             if (type==OrgasmInstruction::abs) {
                 data.append(val&0xFF);
                 data.append((val>>8)&0xFF);
@@ -371,8 +380,9 @@ void ZOrgasm::LoadCodes(int CPUflavor)
 }
 /*
  *
- * Wash parameter for opcode
- * ie (a) iy de etc are return as-is
+ * Washes parameter for opcode
+ * for instance: (a) iy de etc are returned as is
+ * (iy + #10) returned as "(iy+*)
  * anything else (**) or **
  *
 */
@@ -417,4 +427,5 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value)
     // Symbols are also addresses
     return "**";
 }
+
 

@@ -1,0 +1,529 @@
+program Morketid;
+
+/*
+	This is the full source code of "Mørketid", a demo for the Amstrad CPC 464.
+	Mørketid was released at the Syntax 2020 demo party.
+	
+	Youtube: https://www.youtube.com/watch?v=I0G5IxSBQl4
+	Pouet: https://www.pouet.net/prod.php?which=87509
+
+	Code & gfx by Nicolaas Groeneboom (leuat)
+	Music by Michael P. Bridgewater (Mibri)
+	
+	This demo is written entirely in TRSE, and should compile
+	out-of the box.
+*/
+
+var
+
+// Always COMPRESS when not using DISK (compress executable toggle)
+
+/*
+	When the "compress executable" toggle is on, TRSE will compress the compiled code to a
+	new binary and add a deflater tode to 0x4000 when starting Caprice 32. This is in order to overcome
+	the memory limitation that 0x0000 - 0x3FFF is not available (error with injection in cap32? hmm).
+	
+	In order for the program to work on a disk, you need to turn this exomizer toggle *off* 
+*/
+@setvalue exomizer_toggle 1
+
+/*
+	Write your music using arkos tracker 2, export as regular akg files. 
+	
+	The proeprocessor toggle "compile_akg_music" will compile the .akg file with the player to a binary. 
+	You'll now have populated the "INIT_MUSIC" and "PLAY_MUSIC" constant addresses for music
+	playback
+*/
+@compile_akg_music "music/mibri" $9000
+	music : incbin("music/mibri.bin", $9000);
+
+	// Some places to use as buffers
+	const free : address = $B000;
+	const free2 : address = $7000;
+	// const values
+	const sx : byte = 39;
+	const sy : byte = 24;
+
+	// Records
+	particle = record
+		x,y,val,cnt,keep : byte;
+	end;
+
+
+	// Variables used in the demo
+	ftime, done,i1,n,j,time, transition,col,rasterTime,size,frame,scroll: byte = 0; 
+	c2x,c2y,aax,aay,x,y,val,x1,y1,c1,c2,c0,yy,ready : byte = 0;
+	maxTime, timeCounter,k,ll,curText : byte = 0;
+	text_x, text_y,twait: byte = 0;
+
+	
+
+	@donotremove sinx
+	@donotremove siny
+    siny : array[sy] of byte = (0); 
+	sinx : array[sx] of byte = (0); 
+	
+    sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
+    sin : array[256] of byte = BuildTable("((Math.sin(i/256.0*Math.PI*2.0)*127+127))*1.0");
+    div16_merged : array[256] of byte at $B000;//= BuildTable("i/16");
+	
+	zp,p1,tp,textp,coltabp : pointer;
+	tzp : pointer; // Used exclusively for text
+
+	coltab1 : array[16] of byte = (14,15,15,9,9,6,6,3,3,3);
+
+	const noLeaves:byte = 48;
+	leaves : array[noLeaves] of particle at (free);
+
+	@userdata $8000 $8FFF "Scratch buffer"
+
+	@userdata $B000 $B800 "Scratch buffer"
+
+
+
+// Export all image / charset files as binaies
+var  
+@export "images/image5.flf" "images/image1.bin" 256
+@export "images/forest_bg.flf" "images/forest_bg.bin" 256
+@export "images/forest_fg.flf" "images/forest_fg.bin" 256
+@export "images/autumn1.flf" "images/autumn1.bin" 256
+@export "images/autumn2.flf" "images/autumn2.bin" 256
+@export "images/autumn3.flf" "images/autumn3.bin" 256
+@export "images/autumn4.flf" "images/autumn4.bin" 256
+@export "images/proxima.flf" "images/proxima.bin" 256
+@export "images/cabin.flf" "images/cabin.bin" 256
+@export "images/logo.flf" "images/logo.bin" 256
+
+// Export font as 1-bit to save some space
+@exportblackwhite "charset/charset1.flf" "charset/charsetBW.bin" 0 0 320 8
+
+
+/*
+
+	Text data
+
+*/
+
+  @define cmove 129
+  @define cwait 130
+
+  text1 : string =(@cmove,10,140,@cwait,255,"COLD AND DAMP");
+  text2 : string =(@cmove,9,0,@cwait,128,     "AUTUMN HAS ENDED", 
+  				   @cwait, 16,@cmove, 10, 184, "DARKNESS AWAITS");
+
+  textCredits : string =(@cmove,108,110,@cwait,150,"MUSIC",@cwait,16, " MIBRI", 
+  				   @cwait, 32,@cmove, 112, 130, "CODE",@cwait,16," LEUAT",
+  				   @cwait, 32,@cmove, 116, 150, "GFX",@cwait,16," LEUAT");
+
+  textEnd : string =(@cmove,40,120,
+  					  @cwait,80,"M%RKETID",
+  					  @cmove,32,140,"BY PROXIMA",@cwait,32,
+  					  @cmove,16,160,"MADE WITH TRSE");
+//  					  @cmove,56,180,"TRSE");
+
+
+	greets : string=("   ATLANTIS BONZAI BOOZE CALAMITY CENSOR DARKLITE DSR FLT GP HF LETHARGY MAYDAY MSL NAH OFF ONS PVM RIFT SAMAR SLIPSTREAM TRIAD UP              ");
+
+
+/*
+
+	Binary data / images
+
+*/
+
+var  
+	logo : incbin("images/logo.bin") compressed;
+//	palette_sharon : incbin("images/sharon_palette.bin");
+
+	palette : incbin("images/image1_palette.bin");
+	cabin_palette : incbin("images/cabin_palette.bin");
+	cabin : incbin("images/cabin.bin") compressed;
+	proxima : incbin("images/proxima.bin",$7000) compressed;
+	image1 : incbin("images/autumn1.bin") compressed;
+	image2 : incbin("images/autumn2.bin") compressed;
+	image4 : incbin("images/autumn4.bin") compressed;
+	forest_fg : incbin("images/forest_fg.bin") compressed;
+	forest_bg : incbin("images/forest_bg.bin") compressed;
+	charset : incbin("charset/charsetBW.bin");
+
+
+/*
+
+	TRU usage
+*/
+
+@use "crtc"
+@use "input"
+@use "compression"
+@use "music"
+@use "memory"
+@use "random"
+
+
+
+/*
+
+ Initializes a new effect, resetting time and counters
+ 
+*/
+procedure InitEffect(maxTime:global integer);
+begin
+	time:=0;
+	done:=false;	
+	transition:=0;
+	timeCounter := 0;
+end;
+
+
+
+/*
+
+	Updates common timers
+	 
+*/
+procedure UpdateCommon();
+begin
+	time:=time+1;
+	if (time&15=0) then timeCounter:=timeCounter+1;
+	
+	if (timeCounter>=maxTime) then done:=true;
+	if (timeCounter+20>=maxTime) then transition:=1;
+
+end;
+
+/*
+	Hack method that simply waits outside a raster until the "ready" flag is set
+*/
+procedure WaitForReady();
+begin
+	while (ready=false) do begin end;
+end;
+
+
+
+@donotremove Raster
+
+/*
+
+	Main update method in raster. Simply calls music + updates timers
+ 
+*/
+
+procedure UpdateRaster();
+begin
+	asm("
+		call PLAY_MUSIC 
+		");
+	UpdateCommon();		
+
+end;
+
+
+/*
+
+	Main raster interrupt used in this demo
+ 
+*/
+
+interrupt Raster();
+begin
+	// Push everything onto the stack
+	Memory::PushAll();
+	
+	rasterTime := rasterTime+1;
+	// Raster is called 6 times per frame
+	if (rasterTime=6) then
+	begin
+		rasterTime:=0;
+		// Only update music + timers 1 time per frame
+		UpdateRaster();
+	end;
+	// At rastertime 2, enable the "ready" flag (once per raster clear)
+	if (rasterTime = 2) then ready := true; // Intiialize raster stuff
+
+	// Make sure interrupts are enabled again
+	Memory::EnableInterrupts();
+	// Pop everything
+	Memory::PopAll();
+	
+end;	
+
+/*
+
+	Updates text printed to the screen ("COLD AND DAMP" etc)
+ 
+*/
+
+procedure UpdatePrintText();
+var
+	curChar,ty : byte;
+begin
+	if (textp^=0) then return(); // Text done
+	if (twait<>0) then
+	begin
+		twait := twait -1;
+		return();
+	end;
+	if (textp^ = @cmove) then
+	begin
+		text_x := textp[1];
+		text_y := textp[2];
+		textp := textp+3;
+		return();
+	end;
+	if (textp^ = @cwait) then
+	begin
+		twait := textp[1];
+		textp := textp+2;
+		return();
+	end;
+	// Print character
+	if (curText=0) then
+	begin
+		curChar:=textp^-64; // find char
+		if (curChar=(256-64+$25)) then // Ø
+			curChar := 37;
+		tzp := #charset + curChar; // lookup in data
+//		tshift := (j&1)<<2; 
+	end;
+	if (curChar<>224) then
+	begin	
+//		Crtc::PointToY(curText<<1+text_y);
+//		Crtc::sp:=Crtc::sp + text_x;
+		//memcpy(tzp,Crtc::sp,4);
+		p1 := tzp;
+		ty := text_y;
+		for k:=0 to 8 do
+		begin
+			Crtc::PointToY(ty);
+			ty:=ty+2;
+			Crtc::sp:=Crtc::sp + text_x;
+			Crtc::sp:=Crtc::sp+curText>>1;
+
+			ll := p1[0];
+			ll:=ll>>curText;
+			p1:=p1+40;
+			n:=0;//Crtc::sp[k];
+			c2 := coltabp[curText+k>>1];
+			c1 := coltabp[curText+1];
+			if (ll&1=1) then 
+			begin
+				if (curText&1=0) then
+				n:=Crtc::pixtab1[c1] else n:=Crtc::pixtab2[c2];
+			end;
+			Crtc::sp[0] := Crtc::sp[0] | n;
+		end;
+
+		
+	end;
+
+	curText:=curText+1;
+	if (curText=8) then
+	begin
+		text_x:=text_x+4;
+		textp:=textp+1;
+		curText := 0;
+	end;
+end;
+
+
+
+/*
+
+	Main text updating method
+ 
+*/
+
+
+procedure EffectPrintText(textp : global pointer);
+begin
+	while (done=false) do
+	begin
+		WaitForReady();
+		UpdatePrintText();	
+		ready := false;
+	end;
+
+end;
+
+/*
+
+	Simple clearscreen
+	 
+*/
+
+procedure ClearScreen();
+begin
+	fill(^$C000,0,80*200);
+end;
+
+/*
+
+	Various screen clearing methods used in the demo
+ 
+*/
+
+procedure ClearScreen2();
+begin
+	for x:=0 to 130 do
+	begin
+		for y:=0 to 200 do
+		begin
+			Crtc::PointToY(y);
+			c1:=x-y>>2;
+			if (c1<80) then Crtc::sp[c1]:=0;
+			c1:=130-x-y>>2;
+			if (c1<80) then Crtc::sp[c1]:=0;
+		end;
+	end;
+end;
+
+
+procedure ClearScreen3();
+begin
+	for x:=0 to 20 do 
+	begin
+		k:=Random::Random1();
+		free[x]:=200+k>>3;
+	end;
+	for y:=0 to 255 do
+	begin
+		ll:=0;
+		WaitForReady();
+		for x:=0 to 20 do
+		begin
+			k := free[x];
+			if (k<200) then
+			begin
+				Crtc::PointToY(k);
+				Crtc::sp:=Crtc::sp+ll;
+				fill(Crtc::sp,0,4);
+			end;
+			k:=200-k;
+			if (k<200) then
+			begin
+				Crtc::PointToY(k);
+				Crtc::sp:=Crtc::sp+ll;
+				fill(Crtc::sp,0,4);
+			end;
+			k:=free[x];
+			
+			k:=k+1;
+			free[x]:=k;
+			ll:=ll+4;
+		end;
+	end;
+end;
+
+
+/*
+
+	Include files that contains all the actual code for the various effects
+	Not really cleaned up yet
+ 
+*/
+
+
+@include "source/greets.ras"
+@include "source/twister.ras"
+@include "source/intro.ras"
+@include "source/plasma.ras"
+@include "source/creds.ras"
+
+
+
+
+/*
+
+	MAIN PROGRAM STARTS HERE
+ 
+*/
+
+
+begin
+	// Initialize everything
+	coltabp := #coltab1;
+	// Set black border
+	Crtc::SetBorder(0);
+	InitRegularMode();
+	Memory::SaveFirmware();
+	Memory::DisableFirmware();
+	// Turn OFF firmware. Use ports instead of firmware
+		
+	// Set up music
+	Music::InitMusic(#music,0);
+	// Synchronize and start the raster
+	Crtc::Synchronize();
+	RasterIRQ(Raster());
+	
+	// Set the palette (using ports, not firmware)
+	Crtc::SetPalette(#palette);
+
+
+	/*
+
+		DEMO STATRTS HERE	
+
+	*/
+
+	
+	// PROXIMA presents
+	InitEffect(24);  // effect lasts 24 ticks
+	EffectProximaImage(); 
+
+	// Move text + logo	
+	InitEffect(20);
+	EffectMoveText();
+	ClearScreen();
+
+
+
+
+	// AUTUMN HAS NENDED
+	InitEffect(1); 
+	EffectIntroImage(#image4); // Fadein image 4 (cabin)
+	InitEffect(50);
+	EffectLeaf(#text2);	 /// "autumn has ended" text + leaves 
+	ClearScreen3();
+
+
+
+	// cabin + logo "Mørketid"
+	InitEffect(8);
+	Crtc::SetPalette(#cabin_palette); // Cabin palette is slightly different
+	EffectIntroImage(#cabin); // Fade-in image	
+	InitEffect(34); 
+	EffectLogo();	// Displays "mørketid" as a sprite
+	// Plasma effect directly afterwards
+	InitEffect(32);
+	PlasmaEffect(); // Plasma effect 
+	ClearScreen3();
+	
+	// Change palette to the regular one
+	Crtc::SetPalette(#palette);
+	// "proxima" twister
+	InitEffect(8);
+	EffectIntroImage(#image1);	 // fadein image with trees
+	InitEffect(46);
+	Twister();	 // Do the twister!
+	ClearScreen2();
+
+	// Greetings effect	
+	Crtc::SetPalette(#palette);
+	InitEffect(150);
+	EffectGreets();
+	ClearScreen();
+	
+	// End credits parallax trees #1
+	InitEffect(110);
+	EffectCreds(0,5,1,$19,#textCredits);
+	ClearScreen3();
+	
+	// End credits parallax trees #2
+	InitEffect(180);
+	EffectCreds(1,15,3,$12,#textEnd);
+
+	ClearScreen();
+	// Demo ends!
+	Loop();
+end.

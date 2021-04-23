@@ -195,7 +195,7 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeForLoop> node)
     // Perform counter increase and jimps (individual for each target cpu)
     as->Label(lblForCounter);
     as->Label(lblLoopStart);
-    CompareAndJumpIfNotEqual(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
+    CompareAndJumpIfNotEqualAndIncrementCounter(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
 
     as->Label(lblForEnd);
     as->Label(lblLoopEnd);
@@ -943,5 +943,33 @@ void AbstractASTDispatcher::LineNumber(int ln) {
     if (m_outputLineNumbers)
         as->Comment("LineNumber: "+QString::number(ln));
 
+}
+
+
+void AbstractASTDispatcher::dispatch(QSharedPointer<NodeCase> node)
+{
+    node->DispatchConstructor(as,this);
+    bool hasElse = node->m_elseBlock!=nullptr;
+    QString labelEnd = as->NewLabel("caseend");
+    // Loop through all the conditionals in the case statement
+    for (int i=0;i<node->m_conditionals.count();i++) {
+        QString labelNext = as->NewLabel("casenext");
+        as->PopLabel("casenext");
+        // perform the actual CPU-dependent comparison of the two numbers
+        CompareAndJumpIfNotEqual(node->m_variable, node->m_conditionals[i], labelNext,false);
+        // Print the current statement block
+        node->m_statements[i]->Accept(this);
+        // Jump to the end, done with case
+        if (i!=node->m_conditionals.count()-1 || hasElse)
+            as->Asm(getJmp(true)+" "+labelEnd);
+        as->Label(labelNext);
+    }
+    // Print else blockl
+    if (hasElse)
+        node->m_elseBlock->Accept(this);
+
+    as->Label(labelEnd);
+
+    as->PopLabel("caseend");
 }
 

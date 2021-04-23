@@ -1,0 +1,33 @@
+Unit Music;
+var 
+   val : byte;
+   p:pointer;
+procedure InitMusic(p:global pointer;val:global byte);
+begin
+	asm("
+	   ld hl, [Music_p]
+	   ld l,a
+	   ld a,[Music_val]              
+       call INIT_MUSIC 		
+	");
+end;
+
+procedure PlayMusic();
+begin
+	asm("
+       call PLAY_MUSIC 		
+	");
+
+end;
+
+procedure StopMusic();
+begin
+	asm("
+       call STOP_MUSIC 		
+	");
+
+
+end;
+
+
+end.

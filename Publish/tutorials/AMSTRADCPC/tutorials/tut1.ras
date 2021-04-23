@@ -1,0 +1,43 @@
+program Tutorial1;
+@use "crtc"
+@use "input"
+@use "memory"
+/*
+
+ Hi there, and welcome to the first tutorial for the amstrad CPC in TRSE!
+ 
+ First of all, in order to compile these programs you'll need two things installed:
+   - pasmo z80 assembler (https://pasmo.speccy.org)
+   - caprice 32. You will need a newer release that supports injection.
+   - make sure you set up a link to these programs in the TRSE settings dialoge panel
+   
+ Afterwards, every tutorial / sample project in TRSE should run without problems!
+ 
+ Press "F1" on unit methods for help
+
+*/
+
+// TRSE image by Optic
+// Automatically export trse.flf to a native CPC binary
+@export "resources/images/trse.flf" "resources/images/trse.bin" 256
+
+var  
+// Include the exported image data + palette
+	image : incbin("resources/images/trse.bin");
+	palette : incbin("resources/images/trse_palette.bin");
+
+begin
+	// Set 160x200 16-color mode
+	Crtc::SetMode(0);
+	// Set black border
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+	// Set palette
+	Crtc::SetPalette(#palette);
+	// Copy image to screen 
+	memcpy(#image, screen, $4000);
+	// halt the computer
+	Loop();
+
+end.
