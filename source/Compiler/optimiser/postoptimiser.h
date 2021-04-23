@@ -31,7 +31,7 @@ class PostOptimiser : public QObject
 public:
     QVector<SourceLine> m_lines;
     PostOptimiser();
-    int m_noPasses = 1;
+    int m_noPasses = 2;
     int m_linesOptimized = 0;
     QMap<QString, QString> m_regs;
     QStringList m_registers;

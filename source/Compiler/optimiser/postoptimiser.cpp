@@ -8,14 +8,18 @@ PostOptimiser::PostOptimiser()
 
 
 QStringList PostOptimiser::PostOptimize(QStringList& src) {
-    CreateLines(src);
+    QStringList ret = src;
+    m_linesOptimized = 0;
 
-    for (int i=0;i<m_noPasses;i++)
+    for (int i=0;i<m_noPasses;i++) {
+        CreateLines(ret);
         Passes();
+        ret.clear();
+        for (SourceLine& l:m_lines)
+            ret<<l.m_orgLine;
 
-    QStringList ret;
-    for (SourceLine& l:m_lines)
-        ret<<l.m_orgLine;
+    }
+
 
     return ret;
 }
@@ -43,7 +47,6 @@ void PostOptimiser::Passes()
 void PostOptimiser::PassRegisterChanges()
 {
     m_regs.clear();
-    m_linesOptimized = 0;
     for (int i=0;i<m_lines.count()-1;i++) {
         SourceLine& cur = m_lines[i];
 
@@ -60,13 +63,13 @@ void PostOptimiser::PassRegisterChanges()
 
 
 
-        if (cur.m_potentialOptimise) {
+        if (cur.m_potentialOptimise || cur.m_forceOptimise) {
             bool allequals = true;
     //        qDebug() << "Testing: " <<cur.m_orgLine;
             for (QString s: cur.m_changeRegs.keys()) {
-      //          qDebug() << s << cur.m_changeRegs[s] <<m_regs.contains(s);
+//                qDebug() << "CONTAINS " <<s << cur.m_changeRegs[s] <<m_regs.contains(s);
                 if (m_regs.contains(s)) {
-        //            qDebug() << "Comparing : "<<s<<m_regs[s]<<cur.m_changeRegs[s];
+  //                  qDebug() << "   Comparing : "<<s<<m_regs[s]<<cur.m_changeRegs[s];
                     if (m_regs[s] != cur.m_changeRegs[s])
                         allequals = false;
                     if (m_regs[s]=="")
@@ -75,6 +78,7 @@ void PostOptimiser::PassRegisterChanges()
                 else allequals = false;
             }
             if (allequals || cur.m_forceOptimise) {
+    //            qDebug() << "REMOVING " <<cur.m_orgLine;
                 cur.m_remove = true;
             }
         }
@@ -96,10 +100,10 @@ void PostOptimiser::RemoveAllFlagged()
         if (!l.m_remove)
             nlst.append(l);
         else {
-//            qDebug() << "Removing : "<<l.m_lineNumber << l.m_orgLine;
+ //           qDebug() << "Removing : "<<l.m_lineNumber << l.m_orgLine;
             if (!l.m_orgLine.contains(";REMOVAL"))
                 l.m_orgLine+=";REMOVAL";
-            //nlst.append(l);
+           // nlst.append(l);
             m_linesOptimized++;
         }
     m_lines = nlst;

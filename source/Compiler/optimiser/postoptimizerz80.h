@@ -13,6 +13,7 @@ public:
 
     QString prevCmd="";
     QStringList prevPar;
+    SourceLine* prevLine = nullptr;
 
     void Analyze(SourceLine& line);
     void ChangeReg(SourceLine& line, QString reg, QString val);
