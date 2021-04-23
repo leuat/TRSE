@@ -105,12 +105,13 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
         code = code.replace("@FILE", fn);
 //        code = code.replace("@UNPACKCODE", "$F000");
         QString codeFile = QFileInfo(fn).dir().path()+QDir::separator() + "_unpack";
-        Util::SaveTextFile(codeFile, code);
+        Util::SaveTextFile(codeFile+".asm", code);
         QFile::remove(filename+".bin");
 //        QString temp;
         PerformAssembling(codeFile,text,currentDir,symTab);
         Util::CopyFile(codeFile+".bin",filename+".bin");
         QFile::remove(codeFile+".bin");
+        QFile::remove(codeFile+".asm");
 
 //        StartProcess(assembler, QStringList() << codeFile <<filename+".bin", output);
 

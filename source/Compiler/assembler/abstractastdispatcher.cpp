@@ -363,6 +363,7 @@ void AbstractASTDispatcher::HandleCompoundBinaryClause(QSharedPointer<Node> node
             else
             if (node->m_op.m_type == TokenType::GREATEREQUAL)
                 node->m_op.m_type = TokenType::LESSEQUAL;
+
             as->Comment("Swapped comparison expressions");
         }
 

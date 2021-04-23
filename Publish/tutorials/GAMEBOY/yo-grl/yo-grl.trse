@@ -86,3 +86,4 @@ zeropage_colormemory = $fc
 open_files = ,demo.asm, demo.ras
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/yo-grl/
 current_file = demo.ras
+show_all_files = 1
