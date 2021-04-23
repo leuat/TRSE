@@ -140,6 +140,7 @@ begin
 	col:=div16_merged[col]; // Lookup  merged[col/16]
 	zp:=Crtc::sp;
 	zp[xx]:=col;
+	asm(";here2");
 	zp:=zp+2048*2; // 2 lines down
 	zp[xx]:=col;	
 	zp:=zp+2048*2; // 2 lines down

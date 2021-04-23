@@ -38,9 +38,8 @@ begin
 		ll:=(k-tt); // Current shift & text position in y
 		j:=ll>>4; // Twister yeah!
 	 	j:=(tp[j]-1)&31; // Look up current character, store in j
-	 	
 		tab :=#table + frameLookup[frame];
-		tab :=tab + charLookup[j];
+		tab :=tab +charLookup[j];
 		
 	
 		zp :=tab[ll&15];

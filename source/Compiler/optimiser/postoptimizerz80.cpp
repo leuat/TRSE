@@ -1,5 +1,6 @@
 #include "source/Compiler/optimiser/postoptimizerz80.h"
 #include <QDebug>
+#include "source/LeLib/util/util.h"
 
 PostOptimiserZ80::PostOptimiserZ80()
 {
@@ -59,8 +60,10 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
         if (m_registers.contains(reg))
         {
             // Don't assume "mov ax,dx" to hold
+
             if (!m_registers.contains(par[1]))
                 line.m_potentialOptimise = true;
+
             if (par[1].contains("[") || par[1].contains("("))
                 line.m_potentialOptimise = false;
 
@@ -72,6 +75,52 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
                 }
             }
 
+//            if (line.m_potentialOptimise)
+  //              qDebug() << "Changinbg : " <<reg<<par[1];
+
+            ChangeReg(line, reg, par[1]);
+
+        }
+    }
+
+
+    if (cmd=="ex") {
+//        qDebug() << "h0 " << line.m_orgLine << cmd << prevLine << par;
+
+        if (par.count()>=2 && prevLine!=nullptr)
+        {
+            /*Replaces:
+                 * ld hl,$10
+                 * ex de,hl
+                 *
+                 * with
+                 *
+                 * ld de,$10
+                */
+
+            if (par[0]=="de" && par[1]=="hl") {
+//                qDebug() << "h1 " << line.m_orgLine << prevLine->m_orgLine;;
+                if (prevPar.count()>=2 && prevCmd == "ld" && prevPar[0]=="hl") {
+  //                  qDebug() << "h2 " << prevLine->m_orgLine;
+                    line.m_potentialOptimise = true;
+                    line.m_forceOptimise = true;
+                    prevLine->m_orgLine = "\t"+prevLine->m_orgLine.trimmed().simplified().replace("hl,","de,");
+
+                    prevLine->m_changeRegs["de"] = line.m_changeRegs["hl"];
+                    prevLine->m_changeRegs.remove("hl");
+                    prevLine->m_potentialOptimise = false;
+                    prevLine->m_forceOptimise = false;
+
+                }
+                if (prevPar.count()>=2 && prevCmd == "ex" && prevPar[0]=="de" && prevPar[1]=="hl")
+                {
+                    prevLine->m_forceOptimise = true;
+                    line.m_forceOptimise = true;
+                }
+
+            }
+        }
+
 
  /*           if (m_lastMemoryStoredValue.contains(reg))
 /             if (par[1]==m_lastMemoryStoredValue[reg]) {
@@ -81,9 +130,7 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
              }
 */
 //            qDebug() << "Changing reg: "<<reg<<par[1];
-            ChangeReg(line, reg, par[1]);
 //            line.m_changeRegs[reg] = par[1];
-        }
   /*      else if (par.count()>=2){
             QString r2  =par[1];
             if (m_registers.contains(r2)) {
@@ -105,6 +152,8 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
     }
     prevCmd = cmd;
     prevPar = par;
+    prevLine = &line;
+
 /*
 
     if (cmd=="les" || cmd=="lea") {
@@ -121,8 +170,26 @@ void PostOptimiserZ80::ChangeReg(SourceLine &line, QString reg, QString val)
     line.m_changeRegs[reg] = val;
 //    if (reg[1]=='h' || reg[1]=='l')
     if (reg.count()>=2) {
-        line.m_changeRegs[QString(reg[0])] = "";
-        line.m_changeRegs[QString(reg[1])] = "";
+        if (val.startsWith("$")) {
+        line.m_changeRegs[QString(reg[0])] = Util::NumberFromStringHex(val)&0xFF;
+        line.m_changeRegs[QString(reg[1])] = (Util::NumberFromStringHex(val)>>8)&0xFF;
+        }
+        else {
+            line.m_changeRegs[QString(reg[0])] = "";
+            line.m_changeRegs[QString(reg[1])] = "";
+        }
+    }
+
+    // setting ld a,b etc.. to a register.. cancel value
+    if (m_registers.contains(val)) {
+        line.m_changeRegs[reg]  ="";
+        if (reg.count()>=2) {
+            line.m_changeRegs[QString(reg[0])] = "";
+            line.m_changeRegs[QString(reg[1])] = "";
+
+        }
+        line.m_potentialOptimise = false;
+
     }
 /*    if (reg[1]=='x') {
         line.m_changeRegs[QString(reg[0])+"l"] = "";
