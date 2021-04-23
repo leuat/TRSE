@@ -492,7 +492,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1380</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -505,6 +505,7 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="actionRas_source_file"/>
      <addaction name="action_TRU_Unit_source_file"/>
+     <addaction name="action_include_source_file"/>
      <addaction name="actionImage"/>
      <addaction name="actionPaw_packed_resource_file"/>
      <addaction name="actionFjong_Raymarcher_document"/>
@@ -799,6 +800,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionTRSE_Tracker_File_trt">
    <property name="text">
     <string>TRSE Music Tracker File (.trt)</string>
+   </property>
+  </action>
+  <action name="action_include_source_file">
+   <property name="text">
+    <string>Include file (.inc)</string>
    </property>
   </action>
  </widget>

@@ -30,6 +30,8 @@ jobs:
           mkdir Publish/publish_win/trse
           cd Publish/publish_win/trse
           cp ../../../release/trse.exe .
+          # Copy themes, tutorials, project_templates and units
+          cp -r ../../source/* .
           cp -r ../../tutorials .
           cp -r ../../project_templates .
           cp -r ../../../units .
@@ -48,8 +50,8 @@ jobs:
               echo "  - ${lib} NOT FOUND"
             else
               echo "  - ${lib} (${plugin})"
-              mkdir -p $(dirname "plugins/${plugin}")
-              cp "${lib}" "plugins/${plugin}"
+              mkdir -p $(dirname "${plugin}")
+              cp "${lib}" "${plugin}"
             fi
           done < ../plugins.txt
           echo "Copy all required libs"

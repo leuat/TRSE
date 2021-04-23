@@ -13,3 +13,5 @@ imageformats/qwebp.dll
 platforms/qminimal.dll
 platforms/qminimalegl.dll
 platforms/qoffscreen.dll
+platforms/qwindows.dll
+styles/qwindowsvistastyle.dll
