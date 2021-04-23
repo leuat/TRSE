@@ -12,7 +12,7 @@ ASTdispatcherZ80::ASTdispatcherZ80()
 
 
 void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
-{   node->m_left->setForceType(TokenType::NADA);
+{   node->m_left->setForceType(TokenType::INTEGER);
     node->m_left->Accept(this);
 //    as->Asm("ld l,a");
 //    as->Asm("ld h,0");
@@ -823,13 +823,14 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
         as->Comment("Integer assignment ");
-        as->Asm("ld ["+name+"],hl");
-        /*
-        as->Asm("ld a,h");
-        as->Asm("ld ["+name+"+1],a");
-        as->Asm("ld a,l");
-        as->Asm("ld ["+name+"],a");
-*/
+        if (!isGB())
+            as->Asm("ld ["+name+"],hl");
+        else {
+            as->Asm("ld a,h");
+            as->Asm("ld ["+name+"+1],a");
+            as->Asm("ld a,l");
+            as->Asm("ld ["+name+"],a");
+        }
         return "";
     }
     node->m_right->Accept(this);

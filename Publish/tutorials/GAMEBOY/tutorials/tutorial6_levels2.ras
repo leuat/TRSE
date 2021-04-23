@@ -72,13 +72,14 @@ begin
 	y:=py/8;
 	y:=y+colldiry;
 	x:=x+colldirx;
-	p1:=Levels::temp;
-	p1:=p1+y*32;
+		
+	p1:=Levels::temp+y*32;
 	i:=p1[x];
 	blockr:=0;
 	blockl:=0;
 	blockdown:=0;
 	blockup:=0;
+	
 	if (i<>$24) then
 	begin
 		if (colldirx=1) then blockr:=1;
@@ -86,9 +87,10 @@ begin
 		if (colldiry=1) then blockup:=1;
 		if (colldiry=255) then blockdown:=1;
 	end;	
-	
-//	p1[x]:=1;
-
+/*	p1:=screen0;
+	p1:=p1+y*32;
+	p1[x] := i;	
+	*/
 end;
 
 
@@ -127,7 +129,6 @@ begin
 			spritex:=px-(128-32);
 		end;
 	end;	
-	
 	setsprite(#sprGirl,spritex,spritey, 2,30);
 	// Advance to next sprite		
 	colldirx := 0;	
