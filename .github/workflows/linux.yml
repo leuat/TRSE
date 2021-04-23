@@ -40,11 +40,19 @@ jobs:
           make -j 2
           cd ..
           mv pasmo-0.5.4.beta2 pasmo
+          # exomizer
+          wget https://bitbucket.org/magli143/exomizer/wiki/downloads/exomizer-3.1.0.zip
+          unzip exomizer-3.1.0.zip -d exomizer
+          cd exomizer/src
+          make -j 2
+          cd ..
+          # leave tools directory
           cd ..
           # patch dirs
-          sed -i "s,^vasmm =.*,vasmm=${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
-          sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir=${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
-          sed -i "s,^pasmo =.*,pasmo=${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
+          sed -i "s,^vasmm =.*,vasmm = ${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
+          sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir = ${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
+          sed -i "s,^pasmo =.*,pasmo = ${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
+          sed -i "s,^exomizer =.*,exomizer = ${PWD}/tools/exomizer/src/exomizer," Publish/publish_linux/trse.ini
 
       - name: Build TRSE
         run: |
