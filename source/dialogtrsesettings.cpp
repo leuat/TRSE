@@ -593,10 +593,10 @@ void DialogTRSESettings::on_btn68kTargetDirAtariST_clicked()
 
 }
 
-void DialogTRSESettings::on_btnAmstradCMC464_clicked()
+void DialogTRSESettings::on_btnAmstradCPC_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("Amstrad CPC 464 emulator 'Caprice' location"), m_ini->getString("project_path"), "*");
+        tr("Amstrad CPC emulator 'Caprice' location"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leAmstradCPC->setText(filename);
 
@@ -605,7 +605,7 @@ void DialogTRSESettings::on_btnAmstradCMC464_clicked()
 
 void DialogTRSESettings::on_btnHelpAmstradCPC_clicked()
 {
-    Help("Amstrad CPC 464 Emulator 'Caprice'", "TRSE needs to use the 'Caprice' emulator in order to be able to inject programs.");
+    Help("Amstrad CPC Emulator 'Caprice'", "TRSE needs to use the 'Caprice' emulator in order to be able to inject programs.");
 
 }
 

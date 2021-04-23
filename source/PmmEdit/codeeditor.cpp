@@ -169,7 +169,7 @@ void CodeEditor::SetIndent(bool shift)
 
     // The autocomplete & indent is enabled only for .RAS and .TRU files and
     // when either enabled in settings or shift-entered
-    bool enable = (m_autoComplete | shift) & (m_fileType == RAS || m_fileType == TRU);
+    bool enable = (m_autoComplete | shift) & (m_fileType == RAS || m_fileType == TRU || m_fileType == INC);
 
     // Only keep the current indent if not enabled
     if (!enable)
