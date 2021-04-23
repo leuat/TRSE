@@ -14,8 +14,8 @@ ASTdispatcherZ80::ASTdispatcherZ80()
 void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
 {   node->m_left->setForceType(TokenType::NADA);
     node->m_left->Accept(this);
-    as->Asm("ld l,a");
-    as->Asm("ld h,0");
+//    as->Asm("ld l,a");
+//    as->Asm("ld h,0");
     if (!node->m_right->isPureNumeric())
         ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
 
@@ -544,7 +544,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             //node->Accept(this);
             as->Comment("Integer");
             LoadInteger(node);
-
+//            as->Comment("Integer loaded");
 
         }
         else {
