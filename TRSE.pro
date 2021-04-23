@@ -31,8 +31,6 @@ ICON = trse.icns
 ARCH = $$QMAKE_HOST.arch
 
 macx{
-    QT -= dbus
-    CONFIG -= qdbus
     CONFIG += warn_off
     #LIBS += -openmp
 #    ICON = trse.icns
