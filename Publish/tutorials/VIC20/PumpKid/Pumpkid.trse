@@ -44,5 +44,5 @@ exomizer_toggle = 0
 zeropage_colormemory = $fc
 open_files = ,screens_packed.ras, screen.ras, screens.paw, pumpkid.ras
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/VIC20/PumpKid/
-current_file = screen.ras
+current_file = screens.paw
 show_all_files = 1
