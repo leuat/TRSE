@@ -4,4 +4,38 @@ ui_*.h
 Makefile
 trse
 TRSE.pro.user
+
 Publish/tutorials/C64/Tutorials/.backup/units_00_keyboard_unit.ras/backup_Fri Feb 5 21_53_09 2021.bak
+
+# Some FLF are checked-in but this one is generated
+Publish/tutorials/GAMEBOY/tutorials/images/trse_packed.flf
+
+# Some generated binaries without special extensions
+Publish/tutorials/AMIGA/tutorials/tutorial1
+Publish/tutorials/AMIGA/tutorials/tutorial2
+Publish/tutorials/AMIGA/tutorials/tutorial3
+Publish/tutorials/AMIGA/tutorials/tutorial4_3D
+Publish/tutorials/AMIGA/tutorials/tutorial5_twister
+Publish/tutorials/AMIGA/tutorials/tutorial6_sprites
+Publish/tutorials/AMIGA/tutorials/tutorial7_grid
+Publish/tutorials/AMIGA/tutorials/tutorial7_grid
+Publish/tutorials/AMIGA/tutorials/tutorial8_compression
+Publish/tutorials/AMIGA/tutorials/tutorial9_copper_effect
+Publish/tutorials/AMSTRADCPC/Morketid/_unpack
+
+# Those extensions should only be generated
+Publish/tutorials/**/*.asm
+Publish/tutorials/**/*.gb
+Publish/tutorials/**/*.sym
+Publish/tutorials/**/*.ssd
+Publish/tutorials/**/*.tos
+
+# Those files have only 1 file checked-in, mistake?
+Publish/tutorials/**/*.pal
+Publish/tutorials/**/*.prg
+
+# Those are problematic: some files with these extensions are checked-in
+#Publish/tutorials/**/*.bin
+#Publish/tutorials/**/*.bin_c
+#Publish/tutorials/**/*.chr
+#Publish/tutorials/**/*.dat
