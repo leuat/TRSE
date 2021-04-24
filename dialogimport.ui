@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1195</width>
-    <height>575</height>
+    <height>718</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Import image</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
+  <layout class="QGridLayout" name="gridLayout_6" columnstretch="1,1">
    <item row="0" column="0" colspan="2">
     <widget class="QGroupBox" name="grpColors">
      <property name="title">

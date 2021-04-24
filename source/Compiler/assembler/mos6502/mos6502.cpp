@@ -1268,7 +1268,7 @@ void AsmMOS6502::RemoveLines()
     int k=0;
 //    qDebug() << "WOOOT";
     for (int i: m_removeLines) {
-  //      qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
+//        qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
     //    if (!m_source[i-k].contains(";keep")) {
             m_source.removeAt(i-k);
             k++;

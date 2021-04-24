@@ -2,8 +2,14 @@ unit Text;
 @use "system/tables"
 var
 
-	fontLookup: array[32] of integer = BuildTable("(i%20) + Math.floor(i/20)*8*20");
-	zp,wp:pointer;
+	fontLookup: array[32] of integer = BuildTable("(i%20) + Math.floor(i/20)*8*40");
+	int N = 8;
+	//                                            ! "  #  $   % &   '  (       )  *    +    ,      -   .    /   0     1    2     3     3   4   5   6              
+	fontLookupHammerfist: array[64] of integer = (8,16,32,48,64,80, 96, 104, 112, 120, 136, 152, 160,  176,184, 200, 216, 232,  248,  272
+	fontLookupHammerfistW: array[64] of integer = (1,2,2,2,  2, 2, 1,   1,     1,  2, 2,    1,    2,   1,  2,   2,    2,  2,     2,    
+	
+	
+	
 	datap, writep: integer;
 	dx,i,j,k,l,m,charWidth, charHeight: byte;
 	
@@ -46,6 +52,27 @@ begin
 				m:=Tables::bits[k];
 				if (l&m=m) then Screen::PutPixelMode5(x+dx,y+j,col);
 				dx+=1;				
+			end;
+		end;
+		zp+=20;
+	end;
+end;
+procedure DrawCharMode5Funky(c,x,y,col: byte);
+begin
+	zp:=	datap + fontLookup[c];
+	for j:=0 to charHeight do
+	begin
+		dx:=0;
+		for i:=0 to charWidth do
+		begin
+			l:=zp[i];
+			for k:=0 to 8 do
+			begin
+				m:=Tables::bits[k];
+				if (l&m=m) then Screen::PutPixelMode5(x+dx,y+j,col);
+				dx+=1;				
+	//			inc(col);
+	//			if (col=4) then col:=1;
 			end;
 		end;
 		zp+=20;

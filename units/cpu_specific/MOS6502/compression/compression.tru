@@ -126,20 +126,20 @@ c_q1
 getput
 	jsr	getsrc
 
-putdst
+putdst:
 	sta 	(Compression_dst),y
 	inc	Compression_dst
 	bne	c_p1
 	inc	Compression_dst+1
-c_p1
+c_p1:
 	rts
 
-getsrc
-	lda 	(Compression_src),y
+getsrc:
+	lda (Compression_src),y
 	inc	Compression_src
 	bne	c_p2
 	inc	Compression_src+1
-c_p2
+c_p2:
 	");
 
 end;
