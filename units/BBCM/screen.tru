@@ -15,7 +15,12 @@ $20,$22,$01,$07,$67,$08, $B,0);
 
 
 	colorsBlue : array[4] of byte = (1,2,3,7); // cyan, purple, blue, black
+	
+	colorsBlack : array[4] of byte = (7,7,7,7); // white, yellow, red, black
 	colorsRed : array[4] of byte = (0,4,6,7); // white, yellow, red, black
+	colorsAllRed : array[4] of byte = (6,6,6,7); // white, yellow, red, black
+	colorsRedYellow : array[4] of byte = (4,4,6,7); // white, yellow, red, black
+	
 	colorsRedBlue : array[4] of byte = (0,6,3,7); // white, 
 	colorsBlueCyanWhite : array[4] of byte = (0,1,3,7); // white, cyan, blue, black
 	colorsBluePurpleWhite : array[4] of byte = (0,2,3,7); // cyan, purple, blue, black

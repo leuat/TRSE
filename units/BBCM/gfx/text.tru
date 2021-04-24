@@ -2,17 +2,40 @@ unit Text;
 @use "system/tables"
 var
 
-	fontLookup: array[32] of integer = BuildTable("(i%20) + Math.floor(i/20)*8*40");
-	int N = 8;
-	//                                            ! "  #  $   % &   '  (       )  *    +    ,      -   .    /   0     1    2     3     3   4   5   6              
-	fontLookupHammerfist: array[64] of integer = (8,16,32,48,64,80, 96, 104, 112, 120, 136, 152, 160,  176,184, 200, 216, 232,  248,  272
-	fontLookupHammerfistW: array[64] of integer = (1,2,2,2,  2, 2, 1,   1,     1,  2, 2,    1,    2,   1,  2,   2,    2,  2,     2,    
+	fontLookup: array[32] of integer = BuildTable("(i%20) + Math.floor(i/20)*10*40");
+	const N:integer = 8;
 	
+//	const L1 : integer=40*8*3;
+//	const L2 : integer=320*6;
+	const L1 : integer=0;
+	const L2 : integer=320*3;
+	zp,wp:pointer;
+	/*
+	//                   
+	@donotremove fontLookupHammerfist1
+	@donotremove fontLookupHammerfist2
+	@donotremove fontLookupHammerfistW1
+	@donotremove fontLookupHammerfistW2
+	//
+	
+//                                                          ! "  #  $   % &   '  (       )  *    +    ,      -   .    /   0     1    2     3     4   5   6   7              
+//	fontLookupHammerfist: array[] of integer = (8,16,32,48,64,80, 96, 104, 112, 120, 136, 152, 160,  176,184, 200, 216, 232,  248,  264, 280,206); 
+ //	fontLookupHammerfist1: array[] of integer = (L1+0,L1+16,L1+32,L1+40,L1+48,L1+64,L1+80, L1+96,L1+112,  L1+128,L1+128+16*1,L1+128+16*2, L1+128+16*3,L1+128+16*4,L1+128+16*4,L1+128+16*5,L1+128+16*6,L1+128+16*7,L1+128+16*8,L1+136+16*8,L1+136+16*9); 
+ 
+//	fontLookupHammerfist: array[] of integer = (1,2,4,6,8,10, 12, 13, 14, 15, 17, 19, 20,  22,23, 25, 26, 28,  31,  33, 35, 37); 
+ 	fontLookupHammerfist: array[] of integer = (L1+0,L1+16/8,L1+32/8,L1+40/8,L1+48/8,L1+64/8,L1+80/8, L1+96/8,L1+112/8,  L1+128/8,L1+128/8+2*1,L1+128/8+2*2, L1+128/8+2*3,L1+128/8+2*4,L1+128/8+2*4,L1+128/8+2*5,L1+128/8+2*6,L1+128/8+2*7,L1+128/8+2*8,L1+136/8+2*8,L1+136/8+2*9); 
+ 	fontLookupHammerfist2: array[15] of integer = BuildTable("320*6+i*2"); 
+ 	
+//	fontLookupHammerfistW: array[] of byte = (1,2,2,2,  2, 2, 1,   1,     1,  2, 2,    1,    2,   1,  2,   2,    2,  2,     2,    2,   2, 2);
+	fontLookupHammerfistW: array[] of byte = (2,   2,     2,   1,    1,    2,     2 ,   2,    2,       2,         2 ,        2,           2,            2,         2   ,        2,         2,          2        ,    1,          2,        2 );
+	fontLookupHammerfistW2: array[15] of byte = BuildTable("2");
+	//                                              7    8     9     ;      :     <     =     >     ?         @        A            B           C         D          E            F          G          H             I          J            K
+	*/
 	
 	
 	datap, writep: integer;
 	dx,i,j,k,l,m,charWidth, charHeight: byte;
-	
+	c,x,y,col : byte;
 	// Writer variables
 	cwait,posx,posy : byte;
 	curCol : byte = 1;
@@ -38,7 +61,7 @@ begin
 end;
 
 
-procedure DrawCharMode5(c,x,y,col: byte);
+procedure DrawCharMode5(c,x,y,col: global byte);
 begin
 	zp:=	datap + fontLookup[c];
 	for j:=0 to charHeight do
@@ -57,9 +80,11 @@ begin
 		zp+=20;
 	end;
 end;
-procedure DrawCharMode5Funky(c,x,y,col: byte);
+
+procedure DrawCharMode5Funky(c,x,y,col: global byte);
 begin
 	zp:=	datap + fontLookup[c];
+//	charWidth := fontLookupHammerfistW[c]/2;
 	for j:=0 to charHeight do
 	begin
 		dx:=0;
