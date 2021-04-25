@@ -66,6 +66,20 @@ macx{
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/opt/homebrew/include/
 #   QMAKE_LFLAGS += -lomp
 #     LIBS += -L /opt/homebrew/lib
+
+    DEPLOY = $$(DEPLOY)
+    contains(DEPLOY, yes) {
+        message("Deployment, copy files!")
+        UNITS.files = $$PWD/units
+        UNITS.path = .
+        TUTORIALS.files = $$PWD/Publish/tutorials
+        TUTORIALS.path = .
+        TEMPLATES.files = $$PWD/Publish/project_templates
+        TEMPLATES.path = .
+        THEMES.files = $$PWD/Publish/source/themes
+        THEMES.path = .
+        QMAKE_BUNDLE_DATA += UNITS TUTORIALS TEMPLATES THEMES
+    }
 }
 
 win32-g++ {
