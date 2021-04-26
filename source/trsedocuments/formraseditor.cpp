@@ -296,7 +296,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
         }
         QString amstradcpc_options = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_options");
         params << amstradcpc_options.split(' ');
-        qDebug() << "Command line: '" << params << "'";
 //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
         process.setWorkingDirectory(QFileInfo(emu).path());
 //        qDebug() << "Setting working dir to "<<QFileInfo(emu).path();
