@@ -202,7 +202,7 @@ public:
     unsigned char m_minCol = 1;
     float m_importScaleX = 1;
     float m_importScaleY = 1;
-    int m_currentChar;
+    unsigned int m_currentChar;
     // Updates charset position in editor
     bool m_updateCharsetPosition = false;
     bool m_forcePaintColorAndChar = true;
