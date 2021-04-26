@@ -5073,7 +5073,7 @@ void Parser::HandleUseTPU(QString fileName)
 
 
     if (fname == "" || !QFile::exists(fname)) {
-        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fileName + " ( Tried dirs: " + Util::toString(dirs) +")",m_currentToken.m_lineNumber);
+        ErrorHandler::e.Error("Could not find TRU file for inclusion : "+fileName + " <br><br>( Tried dirs: " + Util::toString(dirs) +")",m_currentToken.m_lineNumber);
     }
     s_usedTRUs.append(fileName);
 //    qDebug() << "ADDING" << fileName;

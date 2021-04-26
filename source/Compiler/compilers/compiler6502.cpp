@@ -28,8 +28,7 @@ void Compiler6502::Connect()
         m_assembler->m_totalOptimizedLines = 0;
         for (int i=0;i<4;i++) {
             emit EmitTick(" ["+QString::number(i+1)+"]");
-            m_assembler->Optimise(*m_projectIni);
-        }
+            m_assembler->Optimise(*m_projectIni); }
     }
 
     CleanupCycleLinenumbers("", m_assembler->m_cycles, m_assembler->m_cyclesOut);
@@ -38,7 +37,11 @@ void Compiler6502::Connect()
 //    qDebug() << m_assembler->m_addresses.keys();
 
     CleanupBlockLinenumbers();
-
+/*    for (QString&s : m_assembler->m_source) {
+        s = s.replace("sta(","sta (");
+        s = s.replace("lda(","lda (");
+    }
+    */
 }
 
 void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles)

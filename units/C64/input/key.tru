@@ -51,6 +51,6 @@ are pressed, returns the first key found.
 procedure GetHeld();
 
 
-@include "input\key\implementation.ras"
+@include "input/key/implementation.ras"
 
 end.

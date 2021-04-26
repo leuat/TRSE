@@ -150,7 +150,7 @@ void CodeEditor::SetIndent(bool shift)
     QTextCursor cursor = textCursor();
     QString line = textCursor().block().text();
     QString space, lastWord, firstWord;
-    int txtPos;
+    qsizetype txtPos;
 
     // Find out where contents of line begin, after
     // the indent space
@@ -204,7 +204,7 @@ void CodeEditor::SetIndent(bool shift)
 
         // Find if we already have end on right place
         bool hasEnd = false;
-        int loc = 0;
+        qsizetype loc = 0;
         QString endTxt = cursor.document()->toPlainText().mid(cursor.position());
         QStringList lines = endTxt.split("\n");
         for (int i=0; i < lines.size(); i++)
@@ -214,7 +214,9 @@ void CodeEditor::SetIndent(bool shift)
             if (lines[i].isEmpty()) continue;
             if (loc < txtPos) break;
             if (lines[i].trimmed().contains("begin", Qt::CaseInsensitive) && loc == txtPos) break;
-            if (lines[i].trimmed().contains("end", Qt::CaseInsensitive) && loc == txtPos) hasEnd = true;
+            if (lines[i].trimmed().contains("end", Qt::CaseInsensitive)
+                    && !lines[i].trimmed().contains("endif", Qt::CaseInsensitive)
+                    && loc == txtPos) hasEnd = true;
         }
 
         // Only add "end" if we don't have it already
