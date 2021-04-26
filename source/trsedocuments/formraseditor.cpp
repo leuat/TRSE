@@ -174,7 +174,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
         emu = m_iniFile->getString("amstradcpc_emulator");
-
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
         emu = m_iniFile->getString("msx_emulator");
@@ -283,6 +282,21 @@ void FormRasEditor::ExecutePrg(QString fileName)
         if (m_projectIniFile->getdouble("exomizer_toggle")==1)
             num = 0x4000; /// Always start at 0x4000
         params << "-o" << "0x"+QString::number(num,16);
+
+        QString amstradcpc_model = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_model");
+        QMap<QString, QString> caprice32_models = {
+          { "464", "0" },
+          { "664", "1" },
+          { "6128", "2" },
+          { "6128 Plus", "3" },
+        };
+        amstradcpc_model = caprice32_models[amstradcpc_model];
+        if (amstradcpc_model != "") {
+            params << "-O" << "system.model=" + amstradcpc_model;
+        }
+        QString amstradcpc_options = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_options");
+        params << amstradcpc_options.split(' ');
+        qDebug() << "Command line: '" << params << "'";
 //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
         process.setWorkingDirectory(QFileInfo(emu).path());
 //        qDebug() << "Setting working dir to "<<QFileInfo(emu).path();

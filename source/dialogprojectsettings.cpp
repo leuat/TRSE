@@ -111,6 +111,8 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cbmPetSystem->setCurrentText(m_ini->getString("petmodel"));
 
+    ui->cmbAmstradCPCModel->setCurrentText(m_ini->getString("amstradcpc_model"));
+    ui->leAmstradCPCOptions->setText(m_ini->getString("amstradcpc_options"));
 
     ui->cmbX86CPU->setCurrentText(m_ini->getString("cpu_x86_system"));
 //    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
@@ -198,6 +200,9 @@ void DialogProjectSettings::FillToIni()
 
 
     m_ini->setString("petmodel", ui->cbmPetSystem->currentText());
+
+    m_ini->setString("amstradcpc_model", ui->cmbAmstradCPCModel->currentText());
+    m_ini->setString("amstradcpc_options", ui->leAmstradCPCOptions->text());
 
     m_ini->setString("zeropage_internal1", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp1->text())));
     m_ini->setString("zeropage_internal2", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp2->text())));
