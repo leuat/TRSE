@@ -27,6 +27,8 @@ jobs:
       - name: Build zip
         shell: bash
         run: |
+          # TODO(ColinPitrat): Remove debug info
+          find /c/Windows/SYSTEM32 | grep -i opengl
           mkdir Publish/publish_win/trse
           cd Publish/publish_win/trse
           cp ../../../release/trse.exe .
