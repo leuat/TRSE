@@ -56,17 +56,17 @@ jobs:
               ldd "${lib}"
               echo "    Non ignored:"
               grep --help
-              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt || echo "ldd | grep failed"
               echo "    Cleaned list:"
-              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }'
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' || echo "ldd | grep | awk failed"
               echo "    Copying its dependencies:"
-              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u || echo "ldd | grep | awk | sort failed"
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"' || echo "ldd | grep | awk | sort | xargs bash failed"
             fi
           done < ../plugins.txt
           echo "Copy all required libs"
-          ldd trse.exe | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-          ldd trse.exe | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+          ldd trse.exe | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u || echo "ldd | grep | awk | sort failed"
+          ldd trse.exe | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"' || echo "ldd | grep | awk | sort | xargs bashfailed"
           # This find | rm shouldn't be needed once the mechanism to ignore undesired DLLs works
           echo "Remove DLLs that shouldn't be included: "
           cat ../ignore_dlls.txt
