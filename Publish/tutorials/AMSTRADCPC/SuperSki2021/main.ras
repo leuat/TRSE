@@ -1,0 +1,445 @@
+program SuperSki2021;
+@use "crtc"
+@use "format"
+@use "input"
+@use "random"
+@use "sound"
+@use "text"
+
+// TODO(ColinPitrat): Make this a bit faster and less flickering:
+//  - we could do less checks about whether the flags are visible by doing it at gate level, and this could be moved outside of the drawing loop too by checking only "color" field
+//  - we could have less gates (only 4 should do), making things faster
+//  - we could precompute all that needs to be displayed, wait for VSync and then execute all the char updates with as little processing as possible
+//  - alternatively, we could update skier just after vsync: this is the char that flicker the most
+
+// Automatically export titleScreen.flf to a native CPC binary
+@export "images/titleScreen.flf" "images/titleScreen.bin" 256
+
+var  
+    // Include the exported image data + palette
+	image : incbin("images/titleScreen.bin");
+	palette : incbin("images/titleScreen_palette.bin");
+
+    const LEFT: byte = 0;
+    const DOWNLEFT: byte = 1;
+    const DOWN: byte = 2;
+    const DOWNRIGHT: byte = 3;
+    const RIGHT: byte = 4;
+    
+    gate_type = record
+      y : byte;      // Gate position (necessarily horizontal)
+	  x1, x2: byte;  // Flags horizontal position
+  	  color: byte;   // Gates alternate between blue and red. First one always red.
+  	  scored: byte;  // Remember whether the gate was counted in score
+    end;
+
+    key: byte=0;
+    // Skier pos
+	skier_x : byte = 0;
+	skier_y : byte = 0;
+	skier_o : byte = LEFT;
+	
+	gates : array[8] of gate_type;
+	
+	idx_i : byte;
+	
+    speed : byte = 0;
+    	speed_str : array[6] of byte;  // TODO(ColinPitrat): Remove this - for debugging only
+   	
+    frame_wait : byte = 0;
+
+    frames : byte = 0;
+ 	time : byte = 0;
+ 	time_str : array[6] of byte;
+
+ 	score : byte = 0; // TODO(ColinPitrat): Replace by an integer
+ 	score_str : array[6] of byte;
+ 	
+ 	success_snd : array[9] of byte;
+ 	missed_snd : array[9] of byte;
+	
+procedure SetCharSymbol(c: byte, m0: byte, m1: byte, m2: byte, m3: byte, m4: byte, m5: byte, m6: byte, m7: byte);
+var
+    matrix: array[8] of byte;
+begin
+    matrix[0] := m0;
+    matrix[1] := m1;
+    matrix[2] := m2;
+    matrix[3] := m3;
+    matrix[4] := m4;
+    matrix[5] := m5;
+    matrix[6] := m6;
+    matrix[7] := m7;
+    Text::SetCharMatrix(c, #matrix);
+end;
+
+procedure InitSymbols();
+begin
+    SetCharSymbol(239, 128, 192, 224, 240, 248, 128, 128, 128); // Flag
+    SetCharSymbol(240,   3,   3,   3,   1,   7,  11,  11,  19); // Human top left
+    SetCharSymbol(241, 128, 128, 128,   0, 192, 160, 160, 144); // Human top right
+    SetCharSymbol(242,   4,   4,   4,   0,   0,   0,   0,   0); // Human bottom left
+    SetCharSymbol(243,  64,  64,  64,   0,   0,   0,   0,   0); // Human bottom right
+    SetCharSymbol(244,   0,  64,  63,  16,  15,   0,   0,   0); // Skis to the left, left part
+    SetCharSymbol(245,   0,   0, 252,   0, 255,   0,   0,   0); // Skis to the left, right part
+    SetCharSymbol(246,   0,   0,   1,  76,  48,  19,  12,   0); // Skis to the bottom-left, left part
+    SetCharSymbol(247,  16, 195,  12,  48, 192,   0,   0,   0); // Skis to the bottom-left, right part
+    SetCharSymbol(248,   0,   0,   0,   0,   0,   0,   4,   4); // Skis down, top-left part
+    SetCharSymbol(249,   0,   0,   0,   0,   0,   0,  64,  64); // Skis down, top-right part
+    SetCharSymbol(250,   4,   4,   4,   4,   4,   4,   4,   0); // Skis down, bottom-left part
+    SetCharSymbol(251,  64,  64,  64,  64,  64,  64,  64,   0); // Skis down, bottom-right part
+    SetCharSymbol(252,  12, 195,  48,  12,   3,   0,   0,   0); // Skis to the bottom-right, left part
+    SetCharSymbol(253,   0,   0, 192,  50,  12, 200,  48,   0); // Skis to the bottom-right, right part
+    SetCharSymbol(254,   0,   0,  63,   0, 255,   0,   0,   0); // Skis to the right, left part
+    SetCharSymbol(255,   0,   2, 252,   8, 240,   0,   0,   0); // Skis to the right, right part    
+end;
+
+procedure InitColors();
+begin
+    Crtc::SetMode(1);
+    Crtc::SetBorder(26);
+    Crtc::SetInk(0, 26); // White for snow
+    Crtc::SetInk(1, 0);  // Black for skis
+    Crtc::SetInk(2, 6);  // Red for skier and every other flag
+    Crtc::SetInk(3, 1);  // Blue for every other flag
+end;
+
+procedure InitGate(ig_g, ig_color, ig_y, ig_x1: byte);
+begin
+	gates[ig_g].color := ig_color;
+	gates[ig_g].y := ig_y;
+	gates[ig_g].x1 := ig_x1;
+	gates[ig_g].x2 := ig_x1 + 10;
+	gates[ig_g].scored := 0;
+end;
+
+procedure InitGates();
+begin
+  InitGate(0, 2, 10, 10);
+  InitGate(1, 3, 20, 18);
+  InitGate(2, 2, 30, 11);
+  InitGate(3, 3, 40, 20);
+end;
+
+procedure InitSounds();
+begin
+	// TODO(ColinPitrat): Better sounds
+	success_snd[0] := 1;  // channel
+	success_snd[1] := 0;  // volume enveloppe
+	success_snd[2] := 0;  // tone enveloppe
+	success_snd[3] := 90; // period (low byte)
+	success_snd[4] := 0;  // period (high byte)
+	success_snd[5] := 0;  // noise period
+	success_snd[6] := 15; // start volume
+	success_snd[7] := 10; // duration (low byte)
+	success_snd[8] := 0;  // duration (high byte)
+	
+	missed_snd[0] := 1;
+	missed_snd[1] := 0;
+	missed_snd[2] := 0;
+	missed_snd[3] := 145; // 400
+	missed_snd[4] := 1;   //
+	missed_snd[5] := 0;
+	missed_snd[6] := 15;
+	missed_snd[7] := 15;
+	missed_snd[8] := 0;
+end;
+
+procedure InitGame();
+begin
+    InitSymbols();
+    InitSounds();
+    InitColors();
+    InitGates();
+    Text::EnableCursor(0);
+    key := 0;
+
+	skier_x := 20;
+	skier_y := 4;
+	skier_o := LEFT;
+			
+    speed := 10;
+    frame_wait := 10;
+
+    frames := 0;
+ 	time := 200;
+ 	score := 0;
+end;
+
+procedure ShowMan(mx: byte, my: byte);
+begin
+  Text::SetPen(2);
+  Text::MoveCursorTo(mx, my);
+  Text::PutChar(240);
+  Text::PutChar(241);
+  Text::MoveCursorTo(mx, my+1);
+  Text::PutChar(242);
+  Text::PutChar(243);
+end;
+
+procedure ShowSkis(sx: byte, sy: byte, so: byte);
+begin
+  Text::SetPen(1);
+  Text::MoveCursorTo(sx, sy);
+  if so = DOWN then begin
+    Text::PutChar(248);
+    Text::PutChar(249);
+  end else begin
+  	// Erase just in case previous frame was "DOWN"
+    Text::PutChar(128);
+    Text::PutChar(128);
+  end;
+  Text::MoveCursorTo(sx, sy+1);
+  if so = LEFT then begin
+    Text::PutChar(244);
+    Text::PutChar(245);
+  end else if so = DOWNLEFT then begin
+    Text::PutChar(246);
+    Text::PutChar(247);
+  end else if so = DOWN then begin
+    Text::PutChar(250);
+    Text::PutChar(251);
+  end else if so = DOWNRIGHT then begin
+      Text::PutChar(252);
+      Text::PutChar(253);
+  end else if so = RIGHT then begin
+      Text::PutChar(254);
+      Text::PutChar(255);
+  end else begin
+    Text::Print("Oups, that's an error");
+    Input::WaitKey();
+  end;
+end;
+
+procedure ShowSkier(ssx: byte, ssy: byte, sso: byte);
+begin
+  ShowSkis(ssx, ssy, sso);
+  ShowMan(ssx, ssy);
+end;
+
+procedure HideSkier(hsx: byte, hsy: byte);
+begin
+  Text::MoveCursorTo(hsx, hsy);
+  Text::PutChar(128);
+  Text::PutChar(128);
+  Text::MoveCursorTo(hsx, hsy+1);
+  Text::PutChar(128);
+  Text::PutChar(128);
+end;
+
+procedure UpdateSkier();
+begin
+  if (skier_o = DOWNLEFT and skier_x > 1) then skier_x -= 1;
+  if (skier_o = DOWNRIGHT and skier_x < 39) then skier_x += 1;
+end;
+
+procedure ShowFlag(fx, fy: byte);
+begin
+  // TODO(ColinPitrat): Another place where "<= 25" breaks everything so "< 26"
+  if (fy > 0 and fy < 26) then
+  begin
+    Text::MoveCursorTo(fx, fy);
+    Text::PutChar(239);
+  end;
+end;
+
+procedure HideFlag(hfx, hfy: byte);
+begin
+  // TODO(ColinPitrat): Another place where "<= 25" breaks everything so "< 26"
+  if (hfy > 0 and hfy < 26) then
+  begin
+    Text::MoveCursorTo(hfx, hfy);
+    Text::PutChar(128);
+  end;
+end;
+
+procedure HideGate(hg: byte);
+begin
+  Text::SetPen(gates[hg].color);
+  HideFlag(gates[hg].x1, gates[hg].y);
+  HideFlag(gates[hg].x2, gates[hg].y);
+end;
+
+procedure ShowGate(sg: byte);
+begin
+  Text::SetPen(gates[sg].color);
+  ShowFlag(gates[sg].x1, gates[sg].y);
+  ShowFlag(gates[sg].x2, gates[sg].y);
+end;
+
+procedure UpdateGate(ug: byte);
+var
+	update_gate_new_x : byte;
+begin
+  if (skier_o <> LEFT and skier_o <> RIGHT) then gates[ug].y -= 1;
+  if (gates[ug].y = skier_y and gates[ug].scored = 0) then
+  begin
+	  // TODO(ColinPitrat): Switch the x > (x1-1) to x >= x1 once the bug that generates wrong assembler is fixed.
+	  // Note: no bug opened yet!!! Investigate more or open bug
+	  if (skier_x > (gates[ug].x1-1) and gates[ug].x2 > skier_x) then
+	  begin
+		  // TODO(ColinPitrat): Fix the comparison (it's using cp which compares a, this should do a subc:
+		  // https://github.com/leuat/TRSE/issues/583
+		  Sound::Play(#success_snd);
+		  // TODO(ColinPitrat): Replace 255 by a higher value - make this a const MAX_SCORE
+		  if score < 255 then score += 1;
+		  time += (speed - 2);
+          if time > 200 then time := 200;
+		  gates[ug].scored := 1;
+	  end
+	  else
+	  begin
+		  Sound::Play(#missed_snd);
+		  gates[ug].scored := 1;
+	  end;
+  end;
+  // TODO(ColinPitrat): Here too, using <= 1 instead of < 2 breaks the game completely!
+  if gates[ug].y < 2 then
+  begin
+    update_gate_new_x := 32;
+    while update_gate_new_x > 30 do update_gate_new_x := (Random::Random1() & 31) + 1;
+    InitGate(ug, gates[ug].color, 40, update_gate_new_x);
+  end;
+end;
+
+procedure HideSprites();
+var
+  idx_hg: byte;
+begin
+  Text::SetTransparent(0);
+  HideSkier(skier_x, skier_y);
+  for idx_hg := 0 to 8 do
+  begin
+    if gates[idx_hg].color <> 0 then
+    begin
+      HideGate(idx_hg);
+    end;
+  end;
+end;
+
+procedure UpdateAndShowSprites();
+var
+  idx_ug: byte;
+begin
+  Text::SetTransparent(1);
+  UpdateSkier();
+  ShowSkier(skier_x, skier_y, skier_o);
+  for idx_ug := 0 to 8 do
+  begin
+    if gates[idx_ug].color <> 0 then
+    begin      
+      UpdateGate(idx_ug);
+      ShowGate(idx_ug);
+    end;
+  end;
+end;
+
+procedure ShowScore();
+begin
+	Text::SetTransparent(0);
+    Text::SetPen(3);
+	
+	Text::MoveCursorTo(1, 1);
+	Text::Print("TIME: ");
+	Format::Btos(time, #time_str);
+	Text::Print(#time_str);
+	Text::Print(" ");  // Ensure we erase the last digit when going down.
+
+	/*
+	Text::MoveCursorTo(13, 1);
+	Text::Print("SPEED: ");
+	Format::Itos(speed, #speed_str);
+	Text::Print(#speed_str);
+	Text::Print(" ");  // Ensure we erase the last digit when going down.
+	*/
+	
+	Text::MoveCursorTo(29, 1);
+	Text::Print("SCORE: ");
+	Format::Itos(score, #score_str);
+	Text::Print(#score_str);
+end;
+
+procedure ComputeFrameWait();
+begin
+  speed := (score >> 1);
+  if speed < 9 then
+    speed := 10 - speed
+  else
+    speed := 2;
+  frame_wait := speed;
+  if skier_o = DOWN then frame_wait := frame_wait >> 1;
+end;
+
+procedure GameOver();
+begin
+	Text::SetPen(2);
+	Text::MoveCursorTo(15, 11);
+	Text::Print("GAME OVER");
+	Text::SetPen(3);
+	Text::MoveCursorTo(11, 13);
+	Text::Print("Play again? (y/n)");
+	while ((key <> 78 and key <> 89) and (key <> 110 and key <> 121)) do key := Input::WaitKey();
+	// This will make the game stop
+	if (key <> 89 and key <> 121) then
+	begin
+		key := 252;
+	end;
+end;
+
+procedure TitleScreen();
+begin
+	// Set 160x200 16-color mode
+	Crtc::SetMode(0);
+	// Set black border
+	Crtc::SetBorder(0);
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+	// Set palette
+	Crtc::SetPalette(#palette);
+	// Copy image to screen 
+	memcpy(#image, screen, $4000);
+	// Wait some random amount of time.
+	// Variables names have no meaning, we just reuse existing ones.
+	for time := 0 to 4 do
+		for key := 0 to 255 do
+		    for frames := 0 to 255 do
+		    	    asm("nop");
+	// TODO(ColinPitrat): Would love to have some music, but if I do anything else than waiting, the palette is messed up. Not sure why.
+	Memory::EnableInterrupts();
+end;
+
+begin
+   TitleScreen();
+   InitGame();
+	  
+   while key <> 252 do
+   begin
+ 	  Crtc::WaitForSync();
+	  HideSprites();
+      UpdateAndShowSprites();
+      ShowScore();
+      key := 0;
+      Input::ReadKey(#key);
+      // TODO(ColinPitrat): Provide a way to "push on ski poles". Maybe by pressing UP then LEFT to go left (without going down at all) while being stopped.
+      if key = 240 then skier_o := LEFT                                      // Up key stops 
+      else if key = 241 then skier_o := DOWN                                 // Down key goes straight down 
+      else if (key = 242 and skier_o > LEFT) then skier_o := skier_o - 1     // Left key turns more to the left
+      else if (key = 243 and skier_o < RIGHT) then skier_o := skier_o + 1;   // Right key turns more to the right
+      ComputeFrameWait();
+      for idx_i := 0 to frame_wait do 
+	   begin	
+		   Crtc::WaitForSync();
+		   frames += 1;
+		   if frames > 10 then
+		   begin
+			   frames := 0;
+			   time -= 1;
+		   end;
+      end;
+	  if time = 0 then
+	  begin	
+	     GameOver();
+	     if key <> 252 then InitGame();
+	  end;
+   end;
+end.
