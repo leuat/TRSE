@@ -128,6 +128,18 @@ begin
 		wp+=2;
 		return;
 	end;	
+	if (c=setSpeed) then
+	begin
+		speed := wp[1];
+		wp+=2;
+		return;
+	end;	
+	if (c=pause) then
+	begin
+		cwait := wp[1];
+		wp+=2;
+		return;
+	end;	
 
 	if (c=moveTo) then
 	begin

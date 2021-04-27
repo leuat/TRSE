@@ -100,6 +100,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
     if (m_iniFile->contains(name)) {
         QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
+        qDebug() << "Additional params: "<<pl;
         pl.removeAll("");
         params<<pl;
     }

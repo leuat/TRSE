@@ -25,6 +25,7 @@ var
 	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte at @lib3d_zeropage;
 	clearLines : byte = true;
 	xx,yy,iz:integer;
+	first : byte = 0;
 	startPos,curPos : integer = $8000;
 
 
@@ -87,11 +88,12 @@ begin
 		i2 := fp[k+1];
 		k+=2;
 @ifdef lib3d_clearlines
+		if (first=1) then
 			Gfx::Line(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
 @endif			
 		Gfx::Line(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],cp[j]);		
 	end;
-	
+	first := 1;	
 
 end;
 

@@ -1644,7 +1644,6 @@ QString MainWindow::FindPathInProjectFolders(const QModelIndex &index)
     QModelIndex cur = index.parent();
     int cnt=0;
     while (cur.data().toString().toLower()!=test) {
-
         path=cur.data().toString() + "/" + path;
         cur = cur.parent();
         if (cnt++>20)

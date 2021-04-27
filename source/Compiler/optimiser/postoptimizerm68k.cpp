@@ -24,13 +24,13 @@ void PostOptimiserM68K::Analyze(SourceLine &line) {
         return;
 
 
-    if (!line.m_orgLine.startsWith("\t") && s.contains(":")) {
+    if (!line.m_orgLine.startsWith("\t")) {
 //        qDebug() << "IS LABEL : "<<s <<line.m_orgLine;
         line.m_isLabel = true;
+
     }
 
     s = s.remove("word").remove("byte").simplified().split(";").first().simplified();
-
     QStringList lst = s.split(" ");
     if (lst.count()==0)
         return;
