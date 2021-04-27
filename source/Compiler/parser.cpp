@@ -5033,6 +5033,14 @@ void Parser::HandleProjectSettingsPreprocessors()
         Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
         return;
     }
+    if (cmd == "amstradcpc_model") {
+        m_projectIni->setString("amstradcpc_model", val);
+        return;
+    }
+    if (cmd == "amstradcpc_options") {
+        m_projectIni->setString("amstradcpc_options", val);
+        return;
+    }
     if (cmd == "exomize") {
         m_projectIni->setFloat("exomizer_toggle", val.toInt());
         return;
