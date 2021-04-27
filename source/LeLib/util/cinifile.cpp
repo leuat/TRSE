@@ -212,8 +212,9 @@ QStringList CIniFile::getStringList(QString name) {
 }
 
 void CIniFile::setString(QString name, QString val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].strval = val;
             return;
         }
@@ -227,8 +228,9 @@ void CIniFile::setString(QString name, QString val) {
 }
 
 void CIniFile::setFloat(QString name, float val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].dval = val;
             items[i].strval = "";
             return;
@@ -244,8 +246,9 @@ void CIniFile::setFloat(QString name, float val) {
 }
 
 void CIniFile::setVec(QString name, QVector3D val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].vec = val;
             return;
         }
@@ -259,8 +262,9 @@ void CIniFile::setVec(QString name, QVector3D val) {
 }
 
 void CIniFile::addStringList(QString name, QString val, bool isUnique) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             if (isUnique)
                 AddUniqueString(&items[i], val);
             else {
@@ -283,8 +287,9 @@ void CIniFile::addStringList(QString name, QString val, bool isUnique) {
 }
 
 void CIniFile::setStringList(QString name, QStringList val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].lst = val;
             items[i].strval = "";
             return;

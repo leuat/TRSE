@@ -270,15 +270,15 @@ void FormRasEditor::ExecutePrg(QString fileName)
            params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
     }
 
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
+        params << "-i";
+    }
+
     if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100 || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM || Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800))
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
-/*        QString cs = m_currentFileShort;
-        cs = cs.toUpper().remove(".RAS");
-        params << "-a" << "run\""+cs+".BIN";*/
-        params.insert(0,"-i");
         int num = Syntax::s.m_currentSystem->m_programStartAddress;
         if (m_projectIniFile->getdouble("exomizer_toggle")==1)
             num = 0x4000; /// Always start at 0x4000
