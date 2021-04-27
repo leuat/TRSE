@@ -1,0 +1,89 @@
+Unit Sound;
+var  
+  ptr: pointer;
+  n: byte;
+
+/*
+TODO(ColinPitrat):
+ BCAD SOUND_CHECK     ;in: A=channel mask, out: A=channel status
+ BCB0 SOUND_ARM_EVENT
+ BCB3 SOUND_RELEASE   ;in: A=channel mask
+ BCB6 SOUND_PAUSE
+ BCB9 SOUND_UNPAUSE
+ BCC2 SOUND_GET_ENV   ;in: A=number (1..15), out: HL=data
+ BCC5 SOUND_GET_ENT   ;in: A=number (1..15), out: HL=data
+ */
+
+// Resets the sound manager by clearing the sound queues and abandoning any current sound.
+procedure Reset();
+begin
+	asm("
+		call #bca7
+	");
+end;
+
+// Plays a sound.
+// Pointer points to an array of 9 bytes with:
+//  byte 0: channel (Bit0-2=ChannelA-C, Bit3-5=RendevousA..C, Bit6=Hold, Bit7=Flush)
+//  byte 1: volume envelope to use, 0 = none
+//  byte 2: tone envelope to use, 0 = none
+//  byte 3: tone period (low byte)
+//  byte 4: tone period (high byte - 4 bits - up to 0xF)
+//  byte 5: noise period, (0..31), 0 = none
+//  byte 6: start volume, (0..15)
+//  byte 7: duration (low byte) in 1/100th of seconds - 0 = endless / until end of env?
+//  byte 8: duration (high byte) - negative = repeat env -N times?
+procedure Play(ptr: global pointer);
+begin
+  asm("
+    ld hl, [Sound_ptr]
+    call #bcaa
+  ");
+end;
+
+// Creates/modifies a volume envelope.
+// n is the envelope number (1..15)
+// ptr (must be >3FFFh) points to an array of 4 to 16 bytes with:
+//  byte 0: bits 6-0: Number of 3-byte parameters (1..5)
+//          bit 7: 0=software envelope, 1=hardware envelope
+// and then for each group of 3 bytes for software envelope:
+//  byte 0: Number of steps (1..127)
+//  byte 1: Step delta (-15..15)
+//  byte 2: Step duration in 1/100th seconds (0..255, where 0 = 256)
+// and for each group of 3 bytes for hardware envelope:
+//  byte 0: PSG Envelope Shape (0..15), plus 80h
+//  byte 1: PSG Envelope Frequency, upper 8bit
+//  byte 2: PSG Envelope Frequency, lower 8bit
+procedure SetEnv(n: global byte, ptr: global pointer);
+begin
+	asm("
+	  ld a, [Sound_n]
+	  ld hl, [Sound_ptr]
+	  call #bcbc
+	")
+end;
+
+// Creates/modifies a tone envelope.
+// n is the envelope number (1..15)
+// ptr (must be >3FFFh) points to an array of 4 to 16 bytes with:
+//  byte 0: bits 5-0: Number of 3-byte parameters (1..5)
+//          bit 6: 0=one shot, 1=repeat
+//          bit 7: 0=software envelope, 1=hardware envelope
+// and then for each group of 3 bytes for software envelope:
+//  byte 0: Number of steps (1..239)
+//  byte 1: Step delta (-128..127)
+//  byte 2: Step duration in 1/100th seconds (0..255, where 0 = 256)
+// and for each group of 3 bytes for hardware envelope:
+//  byte 0: Upper 4bit of frequency, plus F0h
+//  byte 1: Lower 8bit of frequency
+//  byte 2: Duration (in 1/100 seconds) (0..256, where 0 = 256)
+procedure SetEnt(n: global byte, ptr: global pointer);
+begin
+	asm("
+	  ld a, [Sound_n]
+	  ld hl, [Sound_ptr]
+	  call #bcbf
+	")
+end;
+
+end.

@@ -1,0 +1,191 @@
+unit Format;
+var
+  i : integer;
+  b : byte;
+  s : pointer;
+
+/**
+  Format the 16 bits unsigned integer i as a string in decimal and put the result in the buffer in s.
+  You must plan for at least 6 chars in s. The resulting string is null-terminated.
+**/
+procedure Btos(b : global byte, s : global pointer);
+var
+	btos_e: byte;
+begin
+  asm("
+    ld a, 0
+    ld h, a
+    ld a, [Format_b]
+    ld l, a
+    ld de, [Format_s]
+    ld a, 0
+    ld [Format_btos_e], a
+	ld bc, -10000
+	call	 format_btos_digit
+	ld bc,-1000
+	call format_btos_digit
+	ld bc,-100
+	call format_btos_digit
+	ld c,-10
+	call format_btos_digit
+	ld a, 1
+	ld [Format_btos_e], a
+	ld c,-1
+	call format_btos_digit
+	ld a, 0
+	ld (de), a
+	ret
+format_btos_digit:
+	ld a,'0'-1
+format_btos_inc:
+	inc a
+	add hl, bc
+	jr c, format_btos_inc
+	sbc hl, bc
+    ; Do not skip 0 if they are not leading or if it's the last one
+	ld ixh, a
+	ld a, [Format_btos_e]
+	cp 1
+	ld a, ixh
+	jp z, format_btos_do_not_skip	
+    ; Do not print leading 0
+	cp '0'
+	jp z, format_btos_skip
+	ld ixh, a
+	ld a, 1
+	ld [Format_btos_e], a
+	ld a, ixh
+format_btos_do_not_skip:
+	ld (de), a
+	inc de
+format_btos_skip:
+	ret
+  ");
+end;
+
+/**
+  Format the 8 bits unsigned integer b as a string in decimal and put the result in the buffer in s.
+  You must plan for at least 4 chars in s. The resulting string is null-terminated.
+**/
+procedure PaddedBtos(b : global byte, s : global pointer);
+begin
+  asm("
+    ld a, 0
+    ld h, a
+    ld a, [Format_b]
+    ld l, a
+	ld de, [Format_s]
+	ld bc,-100
+	call format_paddedbtos_digit
+	ld bc,-10
+	call format_paddedbtos_digit
+	ld bc,-1
+	call format_paddedbtos_digit
+	ld a, 0
+	ld (de), a
+	ret
+format_paddedbtos_digit: 
+	ld a,'0'-1
+format_paddedbtos_inc:
+	inc a
+	add hl, bc
+	jr c, format_paddedbtos_inc
+	sbc hl, bc
+	ld (de), a
+	inc de
+	ret
+  ");
+end;
+
+/**
+  Format the 16 bits unsigned integer i as a string in decimal and put the result in the buffer in s.
+  You must plan for at least 6 chars in s. The resulting string is null-terminated.
+**/
+procedure Itos(i : global integer, s : global pointer);
+var
+	itos_e: byte;
+begin
+  asm("
+    ld hl, [Format_i]
+    ld de, [Format_s]
+    ld a, 0
+    ld [Format_itos_e], a
+	ld bc, -10000
+	call	 format_itos_digit
+	ld bc,-1000
+	call format_itos_digit
+	ld bc,-100
+	call format_itos_digit
+	ld c,-10
+	call format_itos_digit
+	ld a, 1
+	ld [Format_itos_e], a
+	ld c,-1
+	call format_itos_digit
+	ld a, 0
+	ld (de), a
+	ret
+format_itos_digit:
+	ld a,'0'-1
+format_itos_inc:
+	inc a
+	add hl, bc
+	jr c, format_itos_inc
+	sbc hl, bc
+    ; Do not skip 0 if they are not leading or if it's the last one
+	ld ixh, a
+	ld a, [Format_itos_e]
+	cp 1
+	ld a, ixh
+	jp z, format_itos_do_not_skip	
+    ; Do not print leading 0
+	cp '0'
+	jp z,format_itos_skip
+	ld ixh, a
+	ld a, 1
+	ld [Format_itos_e], a
+	ld a, ixh
+format_itos_do_not_skip:
+	ld (de), a
+	inc de
+format_itos_skip:
+	ret
+  ");
+end;
+
+/**
+  Format the 16 bits unsigned integer i as a fixed width string (with leading zeros) in decimal and put the result in the buffer in s.
+  You must plan for 6 chars in s. The resulting string is null-terminated.
+**/
+procedure PaddedItos(i : global integer, s : global pointer);
+begin
+  asm("
+	ld hl, [Format_i]
+	ld de, [Format_s]
+	ld bc,-10000
+	call format_paddeditos_digit
+	ld bc,-1000
+	call format_paddeditos_digit
+	ld bc,-100
+	call format_paddeditos_digit
+	ld c,-10
+	call format_paddeditos_digit
+	ld c,-1
+	call format_paddeditos_digit
+	ld a, 0
+	ld (de), a
+	ret
+format_paddeditos_digit: 
+	ld a,'0'-1
+format_paddeditos_inc:
+	inc a
+	add hl, bc
+	jr c, format_paddeditos_inc
+	sbc hl,bc
+	ld (de), a
+	inc de
+	ret
+  ");
+end;
+
+end.
