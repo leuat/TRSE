@@ -112,6 +112,30 @@ fillRasList(len(tests)-1,"intermediate")
 fillRasList(len(tests)-1,"advanced")
 tests.append([ "C64/DemoEffects_raytracer",[]])
 fillRasList(len(tests)-1,".")
+tests.append([ "C64/16kb_cartridge_project", []]);
+fillRasList(len(tests)-1,".")
+tests.append([ "C64/4kDreams", ["intro.ras"]]);
+tests.append([ "C64/DemoEffects_raytracer", []]);
+fillRasList(len(tests)-1,".")
+# Fails with various errors
+#tests.append([ "C64/DemoMaker", []]);
+#fillRasList(len(tests)-1,".")
+tests.append([ "C64/Disk_loader_project", []]);
+fillRasList(len(tests)-1,".")
+tests.append([ "C64/Floskel", []]);
+fillRasList(len(tests)-1,".")
+tests.append([ "C64/MusicPlayer", []]);
+fillRasList(len(tests)-1,".")
+tests.append([ "C64/Olimp", []]);
+fillRasList(len(tests)-1,".")
+tests.append([ "C64/TutorialGame_Introduction", []]);
+fillRasList(len(tests)-1,".")
+tests.append([ "C64/UnitTests", []]);
+fillRasList(len(tests)-1,"arithmetic")
+fillRasList(len(tests)-1,"conditional")
+fillRasList(len(tests)-1,"keywords")
+fillRasList(len(tests)-1,"structures")
+
 
 # VIC 20
 
