@@ -39,8 +39,9 @@ jobs:
           # qt_lib_dir must be retrieved before copying the DLLs as after that, all the DLLs are resolved locally
           qt_lib_dir=$(ldd trse.exe | awk '{ print $3 }' | grep "/Qt/" | sed 's,/Qt/.*,/Qt/,' | head -n 1)
           echo "qt_lib_dir: '${qt_lib_dir}'"
-          # The file is converted to dos format at checkout, we don't want the carriage returns.
+          # The files are converted to dos format at checkout, we don't want the carriage returns.
           dos2unix ../plugins.txt
+          dos2unix ../ignore_dlls.txt
           while read plugin
           do
             echo "  Looking for '${plugin}'"
@@ -52,10 +53,14 @@ jobs:
               echo "  - ${lib} (${plugin})"
               mkdir -p $(dirname "${plugin}")
               cp "${lib}" "${plugin}"
+              echo "    Copying its dependencies:"
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
             fi
           done < ../plugins.txt
-          echo "Copy all required libs"
-          ldd trse.exe | awk '{ print $3 }' | sort -u | xargs -I _ cp _ ./
+          echo "Copy trse.exe dependencies"
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
           cd ..
           7z a trse_win.zip trse
 
