@@ -55,17 +55,17 @@ jobs:
               echo "    All its dependencies:"
               ldd "${lib}"
               echo "    Non ignored:"
-              ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt 
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt
               echo "    Cleaned list:"
-              ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }'
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }'
               echo "    Copying its dependencies:"
-              ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-              ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
             fi
           done < ../plugins.txt
           echo "Copy all required libs"
-          ldd trse.exe | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-          ldd trse.exe | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
           cd ..
           7z a trse_win.zip trse
 
