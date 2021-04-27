@@ -5,10 +5,8 @@ combase.dll
 crypt32.dll
 cryptbase.dll
 cryptsp.dll
-d3d11.dll
 dnsapi.dll
 dwmapi.dll
-dxgi.dll
 gdi32.dll
 gdi32full.dll
 glu32.dll
@@ -23,7 +21,6 @@ netutils.dll
 nsi.dll
 ntdll.dll
 ole32.dll
-opengl32.dll
 powrprof.dll
 profapi.dll
 rpcrt4.dll
