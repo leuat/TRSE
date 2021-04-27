@@ -44,6 +44,7 @@ ATARI520ST; Main Atari 520 ST tutorials; ATARI520ST/tutorials/;<h2>Main Atari 52
 
 AMSTRADCPC; Main Amstrad CPC tutorials; AMSTRADCPC/tutorials/;<h2>Main Amstrad CPC</h2><p><img src=":resources/images/AMSTRADCPC.png" width="300"><p>Amstrad CPC main example files!
 AMSTRADCPC; Mørketid (demo); AMSTRADCPC/Morketid/;<h2>Mørketid</h2><p><img src=":resources/images/morketid.png" width="300"><p>Mørketid is a full Amstrad CPC demo that was made with TRSE. The demo competed at Syntax 2020, and can be found on pouet here : https://www.pouet.net/prod.php?which=87509.<br><br>This project contains the full source code with all resources for the demo.
+AMSTRADCPC; SuperSki2021 (text game); AMSTRADCPC/SuperSki2021/;<h2>SuperSki2021</h2><p><img src=":resources/images/superski2021.png" width="300"><p>SuperSki2021 is a small Amstrad CPC game in text mode (using user defined char) in Mode 1 that was made with TRSE and demonstrates the usage of some Amstrad CPC and z80 units.<br><br>Note: The game is not optimized. This is not a good showcase of what TRSE can achieve!
 AMSTRADCPC; Unit tests; AMSTRADCPC/unittests/;<h2>Unit tests</h2>Will contain z80/CPC unit tests.
 
 
