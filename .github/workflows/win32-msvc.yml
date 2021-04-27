@@ -55,7 +55,7 @@ jobs:
             fi
           done < ../plugins.txt
           echo "Copy all required libs"
-          ldd trse.exe | awk '{ print $3 }' | sort -u | xargs -I _ cp _ ./
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ cp _ ./
           cd ..
           7z a trse_win.zip trse
 
