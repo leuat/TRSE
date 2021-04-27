@@ -39,7 +39,7 @@ jobs:
           # qt_lib_dir must be retrieved before copying the DLLs as after that, all the DLLs are resolved locally
           qt_lib_dir=$(ldd trse.exe | awk '{ print $3 }' | grep "/Qt/" | sed 's,/Qt/.*,/Qt/,' | head -n 1)
           echo "qt_lib_dir: '${qt_lib_dir}'"
-          # The file is converted to dos format at checkout, we don't want the carriage returns.
+          # The files are converted to dos format at checkout, we don't want the carriage returns.
           dos2unix ../plugins.txt
           dos2unix ../ignore_dlls.txt
           while read plugin
@@ -53,27 +53,14 @@ jobs:
               echo "  - ${lib} (${plugin})"
               mkdir -p $(dirname "${plugin}")
               cp "${lib}" "${plugin}"
-              echo "    All its dependencies:"
-              ldd "${lib}"
-              echo "    Non ignored:"
-              grep --help
-              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt || echo "ldd | grep failed"
-              echo "    Cleaned list:"
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' || echo "ldd | grep | awk failed"
               echo "    Copying its dependencies:"
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u || echo "ldd | grep | awk | sort failed"
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"' || echo "ldd | grep | awk | sort | xargs bash failed"
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
             fi
           done < ../plugins.txt
           echo "Copy all required libs"
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u || echo "ldd | grep | awk | sort failed"
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"' || echo "ldd | grep | awk | sort | xargs bashfailed"
-          # This find | rm shouldn't be needed once the mechanism to ignore undesired DLLs works
-          echo "Remove DLLs that shouldn't be included: "
-          cat ../ignore_dlls.txt
-          find . || echo "find failed"
-          find . | grep -f ../ignore_dlls.txt || echo "find | grep failed"
-          find . | grep -f ../ignore_dlls.txt | xargs rm || echo "find | grep | xargs failed"
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
           cd ..
           7z a trse_win.zip trse
 
