@@ -27,8 +27,6 @@ jobs:
       - name: Build zip
         shell: bash
         run: |
-          # TODO(ColinPitrat): Remove debug info
-          find /c/Windows/SYSTEM32 | grep -i opengl
           mkdir Publish/publish_win/trse
           cd Publish/publish_win/trse
           cp ../../../release/trse.exe .
@@ -60,7 +58,7 @@ jobs:
               ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
             fi
           done < ../plugins.txt
-          echo "Copy all required libs"
+          echo "Copy trse.exe dependencies"
           ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
           ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
           cd ..
