@@ -51,15 +51,15 @@ jobs:
             else
               echo "  - ${lib} (${plugin})"
               mkdir -p $(dirname "${plugin}")
-              cp "${lib}" "${plugin}"
+              cp -u "${lib}" "${plugin}"
               echo "    Copying its dependencies:"
               ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ cp _ ./
+              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ cp -u _ ./
             fi
           done < ../plugins.txt
           echo "Copy all required libs"
           ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ cp _ ./
+          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ cp -u _ ./
           cd ..
           7z a trse_win.zip trse
 
