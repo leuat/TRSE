@@ -52,6 +52,12 @@ jobs:
               echo "  - ${lib} (${plugin})"
               mkdir -p $(dirname "${plugin}")
               cp "${lib}" "${plugin}"
+              echo "    All its dependencies:"
+              ldd "${lib}"
+              echo "    Non ignored:"
+              ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt 
+              echo "    Cleaned list:"
+              ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }'
               echo "    Copying its dependencies:"
               ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
               ldd "${lib}" | grep -v -i -e -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
