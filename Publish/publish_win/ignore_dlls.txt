@@ -10,6 +10,7 @@ dwmapi.dll
 gdi32.dll
 gdi32full.dll
 glu32.dll
+imm32.dll
 iphlpapi.dll
 kernel32.dll
 kernel.appcore.dll
@@ -21,6 +22,7 @@ netutils.dll
 nsi.dll
 ntdll.dll
 ole32.dll
+oleaut32.dll
 powrprof.dll
 profapi.dll
 rpcrt4.dll
@@ -39,3 +41,4 @@ windows.storage.dll
 winmmbase.dll
 winmm.dll
 ws2_32.dll
+wtsapi32.dll
