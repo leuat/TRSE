@@ -56,21 +56,23 @@ jobs:
               ldd "${lib}"
               echo "    Non ignored:"
               grep --help
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt
               echo "    Cleaned list:"
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }'
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }'
               echo "    Copying its dependencies:"
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+              ldd "${lib}" | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
             fi
           done < ../plugins.txt
           echo "Copy all required libs"
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+          ldd trse.exe | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
+          ldd trse.exe | grep -v -i -F -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
           # This find | rm shouldn't be needed once the mechanism to ignore undesired DLLs works
           echo "Remove DLLs that shouldn't be included: "
-          find . | grep -f ../ignore_dlls.txt
-          find . | grep -f ../ignore_dlls.txt | xargs rm
+          cat ../ignore_dlls.txt
+          find . || echo "find failed"
+          find . | grep -f ../ignore_dlls.txt || echo "find | grep failed"
+          find . | grep -f ../ignore_dlls.txt | xargs rm || echo "find | grep | xargs failed"
           cd ..
           7z a trse_win.zip trse
 
