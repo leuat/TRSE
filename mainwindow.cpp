@@ -2258,6 +2258,12 @@ void TRSEProject::VerifyDefaults() {
 
     }
 
+    if (m_ini->getString("system")=="AMSTRADCPC") {
+        if (!m_ini->contains("amstradcpc_model")) {
+            m_ini->setString("amstradcpc_model","464");
+        }
+    }
+
     if (!m_ini->contains("exomize_toggle")) {
         m_ini->setFloat("exomize_toggle",0);
     }

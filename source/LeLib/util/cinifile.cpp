@@ -44,23 +44,22 @@ void CIniFile::Load(QString fname) {
 
         QString line = f.readLine();
 
-
-
-        QStringList tok = line.split("=");
-        if (tok.size()==2) {
+        QString name = line.section('=', 0, 0);
+        QString strval = line.section('=', 1);
+        if (!name.isEmpty() && !strval.isEmpty()) {
             CItem it;
             it.dval = -1;
-            it.name = tok[0].toLower().trimmed();
-            it.strval = tok[1].trimmed();
+            it.name = name.trimmed();
+            it.strval = strval.trimmed();
             bool ok;
-            it.dval  = tok[1].toFloat(&ok);
+            it.dval  = strval.toFloat(&ok);
             if (ok) {
                 it.strval="";
             }
             else it.dval = 0;
 
-            if (tok[1].split(":").count()==3) {
-                QStringList v = tok[1].split(":");
+            if (strval.split(":").count()==3) {
+                QStringList v = strval.split(":");
                 it.vec.setX( v[0].toFloat());
                 it.vec.setY( v[1].toFloat());
                 it.vec.setZ( v[2].toFloat());
@@ -68,10 +67,10 @@ void CIniFile::Load(QString fname) {
 
 //            qDebug() << "Loading :  " << it.name;
 
-            if (tok[1].split(",").count()!=1) {
+            if (strval.split(",").count()!=1) {
                 it.strval = "";
                 it.dval = -1;
-                it.lst = tok[1].split(",");
+                it.lst = strval.split(",");
                 it.lst.removeFirst();
                 for (QString& s : it.lst) {
                     s = s.trimmed();
@@ -82,6 +81,8 @@ void CIniFile::Load(QString fname) {
             }
 //            qDebug() << it.name << it.lst;
             items.push_back(it);
+        } else {
+            qDebug() << "Couldn't parse line '" << line << "' in " << fname;
         }
     }
     file.close();
@@ -212,8 +213,9 @@ QStringList CIniFile::getStringList(QString name) {
 }
 
 void CIniFile::setString(QString name, QString val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].strval = val;
             return;
         }
@@ -227,8 +229,9 @@ void CIniFile::setString(QString name, QString val) {
 }
 
 void CIniFile::setFloat(QString name, float val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].dval = val;
             items[i].strval = "";
             return;
@@ -244,8 +247,9 @@ void CIniFile::setFloat(QString name, float val) {
 }
 
 void CIniFile::setVec(QString name, QVector3D val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].vec = val;
             return;
         }
@@ -259,8 +263,9 @@ void CIniFile::setVec(QString name, QVector3D val) {
 }
 
 void CIniFile::addStringList(QString name, QString val, bool isUnique) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             if (isUnique)
                 AddUniqueString(&items[i], val);
             else {
@@ -283,8 +288,9 @@ void CIniFile::addStringList(QString name, QString val, bool isUnique) {
 }
 
 void CIniFile::setStringList(QString name, QStringList val) {
+    name = name.toLower().trimmed();
     for (int i=0;i<items.size();i++) {
-        if (items[i].name==name.toLower().trimmed()) {
+        if (items[i].name==name) {
             items[i].lst = val;
             items[i].strval = "";
             return;

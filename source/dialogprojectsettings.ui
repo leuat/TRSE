@@ -650,6 +650,64 @@
            </layout>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab_AmstradCPC">
+          <attribute name="title">
+           <string>Amstrad CPC</string>
+          </attribute>
+          <widget class="QWidget" name="gridLayoutWidget_AmstradCPC">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>781</width>
+             <height>71</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_15">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>Amstrad CPC model:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="cmbAmstradCPCModel">
+              <item>
+               <property name="text">
+                <string>464</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>664</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>6128</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>6128 Plus</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_31">
+              <property name="text">
+               <string>Additional command line options:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="leAmstradCPCOptions"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_9">
