@@ -13,7 +13,7 @@ jobs:
       - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
 
       # For 'Verify all' tests
-      - run: sudo apt-get install lz4 python3 xvfb
+      - run: sudo apt-get install lz4 python3 xvfb vice
       - name: Build assemblers (vasm, rgbasm, pasmo)
         run: |
           mkdir tools
@@ -53,6 +53,9 @@ jobs:
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir = ${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
           sed -i "s,^pasmo =.*,pasmo = ${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
           sed -i "s,^exomizer =.*,exomizer = ${PWD}/tools/exomizer/src/exomizer," Publish/publish_linux/trse.ini
+          c1541=$(which c1541)
+          echo "Found c1541 in: '${c1541}'"
+          sed -i "s,^c1541 =.*,c1541 = ${c1541}," Publish/publish_linux/trse.ini
 
       - name: Build TRSE
         run: |
