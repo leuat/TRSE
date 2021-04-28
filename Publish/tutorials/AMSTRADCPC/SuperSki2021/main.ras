@@ -377,7 +377,7 @@ begin
 	Text::Print("GAME OVER");
 	Text::SetPen(3);
 	Text::MoveCursorTo(11, 13);
-	Text::Print("Play again? (y/n)");
+	Text::Print("Play again?(y/n)");
 	while ((key <> 78 and key <> 89) and (key <> 110 and key <> 121)) do key := Input::WaitKey();
 	// This will make the game stop
 	if (key <> 89 and key <> 121) then
@@ -411,7 +411,9 @@ end;
 begin
    TitleScreen();
    InitGame();
-	  
+	asm("
+;balle: db $00,$01,$02,$03
+	");	  
    while key <> 252 do
    begin
  	  Crtc::WaitForSync();

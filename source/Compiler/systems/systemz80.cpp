@@ -75,6 +75,8 @@ void SystemZ80::PerformAssembling(QString filename, QString &text,QString curren
 
     if (useOrgasm) {
         AssembleZOrgasm(text,filename,currentDir,symTab);
+        QProcess process;
+        StartProcess(assembler, QStringList() << filename+".asm" <<filename+"_pasmo.bin", text);
 
     }
     else {

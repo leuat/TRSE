@@ -262,6 +262,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         type = OrgasmInstruction::none;
     }
     m_opCode = m_opCode.toLower();
+
 //    qDebug() <<"OP: " <<m_opCode <<value<<expr <<ol.m_orgLine;
 
 
@@ -274,9 +275,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     else {
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
-/*    if (code==0xddcb46)
-       qDebug() << m_opCode << Util::numToHex(code) <<expr << value<<value2 << ol.m_orgLine << type;
-*/
+//    if (code==0x3E)
+  //     qDebug() << Util::numToHex(m_pCounter)<<  m_opCode << Util::numToHex(code) <<expr << value<<value2 << ol.m_orgLine << type;
+
     // calculate the parameter numeric values
     int val=0;
     int val2=0;
