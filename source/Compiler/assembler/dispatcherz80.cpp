@@ -178,6 +178,14 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
         }
     }
     LoadVariable(var); // Load address into hl
+    //    as->Comment(";Comment : "+node->m_left->isWord(as)+TokenType::getType(node->m_left->m_forceType));
+        if (!var->isWord(as)) {
+            as->Comment(";var is 8-bit, compensate");
+            as->Asm("ld l,a");
+            as->Asm("ld h,0");
+        }
+
+
     if (bop->m_op.m_type==TokenType::PLUS) {
         as->Asm(getPlusMinus(bop->m_op)+" hl,de");
         StoreAddress(var);
@@ -357,7 +365,11 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         }
         else
             as->Asm("ex de,hl");
+
         node->m_left->Accept(this);
+        as->Term();
+
+
         if (node->m_op.m_type == TokenType::PLUS) {
             as->Asm("add hl,de");
             return;
@@ -520,12 +532,18 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
         ending = "+di]";*/
 
     }
+
     if (!node->isWord(as)) {
+//        as->Comment("HERE") ;
         if (node->isPureVariable())
             as->Asm("ld a,["+node->getValue(as)+"]");
         else
             as->Asm("ld a,"+node->getValue(as));
 
+  /*      if (node->m_forceType==TokenType::INTEGER) {
+            as->Comment("; Byte, but forced to be integer");
+        }
+*/
         return;
     }
     // 16 bit all
@@ -550,7 +568,6 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             //node->Accept(this);
             as->Comment("Integer");
             LoadInteger(node);
-//            as->Comment("Integer loaded");
 
         }
         else {
@@ -847,6 +864,9 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         as->Asm("ld [hl], a");
         return "";
     }
+    if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
+        as->Asm("ld l,a ; word assigned to byte");
+    }
 
     as->Asm("ld ["+name + "], "+getAx(node->m_left));
     return "";
@@ -945,6 +965,12 @@ void ASTdispatcherZ80::LoadInteger(QSharedPointer<Node> n)
 void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
+    if (!n->isWord(as)) {
+        as->Comment("Stored address is byte, not var: compensate");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+n->getValue(as)+"],a");
+        return;
+    }
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
         as->Asm("ld a,"+QString(hl[0])+"");
         as->Asm("ld ["+n->getValue(as)+"], a");

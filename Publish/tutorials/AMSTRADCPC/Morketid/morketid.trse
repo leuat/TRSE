@@ -82,3 +82,4 @@ open_files = ,source/creds.ras, main.ras, main.asm, [ext]units/AMSTRADCPC/Crtc.t
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/Morketid/
 show_all_files = 1
 current_file = main.ras
+amstradcpc_model = 464
