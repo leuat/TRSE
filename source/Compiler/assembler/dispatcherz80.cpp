@@ -1209,6 +1209,7 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
             if (var->m_expr->isPureNumeric()) {
                 as->Comment("; index is pure number optimization");
                 as->Asm("ld de,"+var->m_expr->getValue(as));
+                as->Asm("add hl,de");
             }
             else {
                 as->Comment(";general 8-bit expression for the index");
