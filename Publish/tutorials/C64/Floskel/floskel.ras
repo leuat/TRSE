@@ -78,7 +78,8 @@ var
 
 	// Pointers used
 	p1,src,dst,txt,spr,psmall:pointer;
-
+	@donotremove code
+	code : pointer;
 // Calculates the stretching table for each frame
 procedure CalcStretch();
 begin
