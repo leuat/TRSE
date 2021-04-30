@@ -43,6 +43,7 @@ begin
 	asm("
   	  ldx Player_zp
     	  ldy Player_zp+1
+	  clc
     	  jsr @PLAYER_INIT
   	");
 end;

@@ -84,8 +84,6 @@ QString ASTdispatcherZ80::getJmp(bool isOffPage) {
 void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
 
-
-
     QString var = nodeA->m_left->getValue(as);
 
     if (!nodeB->isPureNumeric()) {
@@ -137,6 +135,7 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
 
     nodeA->Accept(this);
     as->Term();
+
     if (!nodeB->isPureNumeric())
         as->Asm(m_cmp+"c");
     else

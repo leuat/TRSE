@@ -16,7 +16,7 @@ var
 	zp: pointer;
 	ip : pointer of integer;
 	x1, y1,x2, y2,delx,xi,color,dx,dy,v2,v,val : byte at $20;
-
+	shiftX : integer = 0;
 	const yadd:integer = 320-7;
 	yaddTab : array[8] of integer=(320-7,1,1,1,1,1,1,1);
 
@@ -151,6 +151,18 @@ begin
 		
 
 end;
+
+procedure ClearLineSlow(y1,color : global byte);
+begin
+	Screen::PointToY(#Screen::ytabMode5,y1);
+	for i:=0 to 40 do
+	begin
+		Screen::screenPtr[0]:=color;
+		Screen::screenPtr+=8;
+	end;
+
+end;
+
 
 procedure ClearChunkFast(y1, color : global byte);
 begin
@@ -379,7 +391,7 @@ begin
 	y1*=2;
 	y2*=2;
 	Screen::PointToY(#Screen::ytabMode5, y1);
-	Screen::screenPtr+= Screen::xtab4[x1];
+	Screen::screenPtr+= Screen::xtab4[x1]+shiftX;
 
 	if x1 < x2 then begin
 		xi := 1;

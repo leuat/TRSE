@@ -12,7 +12,10 @@ var
 	crtc_mode5: array[13] of byte=(
 $3F,$28,$31,$24,$26,$00,
 $20,$22,$01,$07,$67,$08, $B,0);
-
+	
+	crtc_mode4: array[13] of byte=(
+$3F, $28, $31, $24, $26, $00,
+$20, $22, $01, $07, $67, $08,	$B,0);
 
 	colorsBlue : array[4] of byte = (1,2,3,7); // cyan, purple, blue, black
 	
@@ -28,6 +31,8 @@ $20,$22,$01,$07,$67,$08, $B,0);
 	defaultPalette : array[16] of byte = BuildTable("(i&7)*0x10 + (i^7)");
 	palette: array[16] of byte = (
 $A0, $B0, $E0, $F0, $84, $94, $C4, $D4, $26, $36, $66, $76, $07, $17, $47, $57);
+	palette4: array[16] of byte = (
+$80, $90, $A0, $B0, $C0, $D0, $E0, $F0, $07, $17, $27, $37, $47, $57, $67, $77 );
 	ytabMode2 : array[256] of integer = BuildTable("0x3000 + (i&7) + Math.floor(i/8.0)*80*8");
 	ytabMode5 : array[256] of integer = BuildTable("0x5800 + (i&7) + Math.floor(i/8.0)*40*8");
 	xtab : array[200] of integer = BuildTable("i*8");
@@ -321,6 +326,16 @@ begin
 	");
 	
 end;
+procedure SetMode4();
+begin
+	SetMode(#crtc_mode4);
+	asm("
+	; Set up video ULA for MODE 4
+	LDA #$88
+	STA $FE20
+	");
+	
+end;
 
 
 /**
@@ -413,6 +428,18 @@ begin
 		palette[i] := j;	
 	end;
 	SetPalette(#palette);
+end;
+
+procedure SetPalette4(x,y:global byte);
+begin
+	zp:=#x;
+	for i:=0 to 16 do
+	begin
+		j:=(palette4[i])&$F0; 
+		j:=j + zp[i>>3];
+		palette4[i] := j;	
+	end;
+	SetPalette(#palette4);
 end;
 
 

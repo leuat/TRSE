@@ -33,4 +33,6 @@ ignore_initial_jump = 0
 output_type = prg
 exomizer_toggle = 0
 zeropage_colormemory = $fc
-open_files =, floskel.ras
+open_files = ,floskel.ras
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/Floskel/
+show_all_files = 1

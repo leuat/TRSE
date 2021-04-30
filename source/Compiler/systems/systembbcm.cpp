@@ -43,7 +43,7 @@ bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniDa
     paw.Load(currentDir + QDir::separator()+pawFile);
     QStringList data = paw.getStringList("data");
     int count = data.count()/3;
-    std::cout << "data: " << data.join(",").toStdString() << " - count: " << count << std::endl;
+//    std::cout << "data: " << data.join(",").toStdString() << " - count: " << count << std::endl;
 
     for (int i=0;i<count;i++) {
         QString orgFileName = data[3*i+1];
