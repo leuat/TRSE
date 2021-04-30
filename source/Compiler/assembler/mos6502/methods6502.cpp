@@ -6179,7 +6179,10 @@ void Methods6502::BlockMemCpy(Assembler *as)
         as->Label(lbl);
 
         for (int i=0;i<v;i++) {
-            as->Asm("lda $"+QString::number(m_node->m_params[0]->getValueAsInt(as) + i*256,16)+",y");
+            if (m_node->m_params[0]->isPureNumeric())
+                as->Asm("lda $"+QString::number(m_node->m_params[0]->getValueAsInt(as) + i*256,16)+",y");
+            else
+                as->Asm("lda #"+m_node->m_params[0]->getValue(as) +"+$"+ QString::number(i*256,16)+",y");
             as->Asm("sta $"+QString::number((int)to->m_val + i*256,16)+",y");
         }
 

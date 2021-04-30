@@ -5,7 +5,7 @@ begin
 		p1:=$7000;
 		p2:=$6800+^@scene2charval*^8;
 		if (tVal<>0) then begin
-		inczp(p1,tVal*8);
+			p1:=tVal*8;
 		end;
 		memcpy(p1,0,p2,8); // Copy single character
 		inc(tVal);
@@ -40,7 +40,7 @@ begin
 //			i:=6;
 			screenmemory[b]:=i+@scene2charval;
 		end;
-		inczp(screenmemory,40);
+		screenmemory+=40;
 	end;
 end;
 

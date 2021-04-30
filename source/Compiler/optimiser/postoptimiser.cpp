@@ -103,7 +103,7 @@ void PostOptimiser::RemoveAllFlagged()
  //           qDebug() << "Removing : "<<l.m_lineNumber << l.m_orgLine;
             if (!l.m_orgLine.contains(";REMOVAL"))
                 l.m_orgLine+=";REMOVAL";
-           // nlst.append(l);
+           //e nlst.append(l);
             m_linesOptimized++;
         }
     m_lines = nlst;

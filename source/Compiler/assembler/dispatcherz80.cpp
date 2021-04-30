@@ -10,16 +10,21 @@ ASTdispatcherZ80::ASTdispatcherZ80()
     m_jne = "jr nz,";
 }
 
-
+/*
+ * Methods than handle all 16 bit SHR and SHL operations
+ *
+ */
 void ASTdispatcherZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
 {   node->m_left->setForceType(TokenType::INTEGER);
     node->m_left->Accept(this);
 //    as->Asm("ld l,a");
 //    as->Asm("ld h,0");
+    // sorry!
     if (!node->m_right->isPureNumeric())
         ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
 
     int val = node->m_right->getValueAsInt(as);
+    // Shl: simply add hl N times
     if (node->m_op.m_type == TokenType::SHL) {
         for (int i=0;i<val;i++)
             as->Asm("add hl,hl");
@@ -36,23 +41,19 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
 
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    //    QString lbl = as->NewLabel("stringassign");
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
-    //    as->Asm("jmp " + lbl);
     QString strAssign = str + "\tdb \"" + right->m_op.m_value + "\",0";
+    // Temp vars are place with variables in the code, no need for a jmp
     as->m_tempVars<<strAssign;
-    //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
-    //  as->Label(lbl);
 
     if (isPointer) {
         as->Asm("ld hl,"+str);
         as->Asm("ld ["+getValue(left)+"],hl");
     }
     else {
-
-//        as->Asm("ld c,0");
+        // If not a pointer, copy everything
         as->Asm("ld hl,"+str);
         as->Asm("ld de,"+getValue(left));
         as->Label(lblCpy);
@@ -80,11 +81,13 @@ QString ASTdispatcherZ80::getJmp(bool isOffPage) {
         return "jr";
     return "jp";
 }
-
+/*
+ *
+ * Main method used in for loops. Will increase a counter in nodeA->m_left (from for a:=0 ...)
+ * and then compare with the end value, jump if not equal
+ */
 void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
-
-
 
     QString var = nodeA->m_left->getValue(as);
 
@@ -95,7 +98,8 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
         as->Asm("ld c,a");
     }
 
-
+    // If step is a number, load it here
+    // Post optimizer should take care of stuff
     if (step!=nullptr) {
         step->Accept(this);
         as->Asm("ld d,a");
@@ -104,6 +108,7 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
     QString ax = getAx(nodeA->m_left);
   //  PopX();
     as->Asm(m_mov+ax+",["+var+"]");
+
     if (step==nullptr)
         as->Asm("add "+ax+",1");
     else
@@ -137,6 +142,7 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
 
     nodeA->Accept(this);
     as->Term();
+
     if (!nodeB->isPureNumeric())
         as->Asm(m_cmp+"c");
     else
@@ -149,18 +155,26 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSha
         as->Asm("jp nz,"+lblJump);
 }
 
-
+/*
+ * Handles a:=a op b  for 16 bit values
+ *
+ *
+ */
 void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointer<NodeVar> var)
 {
     as->Comment("16 bit BINOP");
+    /*
+     * First case : is the RHS of the binary operation pure?
+     */
     if (bop->m_right->isPure()) {
         as->Comment("RHS is pure ");
+        // a := a + $200 etc
         if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
             as->Comment("RHS is pure constant of $100");
             as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
-            as->Asm("ld a,[ "+var->value+"]");
+            as->Asm("ld a,[ "+var->value+"+1]");
             as->Asm("add a,b");
-            as->Asm("ld [ "+var->value+"],a");
+            as->Asm("ld [ "+var->value+"+1],a");
             return;
 
         }
@@ -178,6 +192,13 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
         }
     }
     LoadVariable(var); // Load address into hl
+    //    as->Comment(";Comment : "+node->m_left->isWord(as)+TokenType::getType(node->m_left->m_forceType));
+        if (!var->isWord(as)) {
+            as->Comment(";var is 8-bit, compensate");
+            as->Asm("ld l,a");
+            as->Asm("ld h,0");
+        }
+    // Plus is easy!
     if (bop->m_op.m_type==TokenType::PLUS) {
         as->Asm(getPlusMinus(bop->m_op)+" hl,de");
         StoreAddress(var);
@@ -357,7 +378,11 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         }
         else
             as->Asm("ex de,hl");
+
         node->m_left->Accept(this);
+        as->Term();
+
+
         if (node->m_op.m_type == TokenType::PLUS) {
             as->Asm("add hl,de");
             return;
@@ -481,13 +506,18 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ld a,[hl]");
             return;
         }
+        if (node->m_expr->isPureNumeric()) {
+            as->Asm("ld de,"+node->m_expr->getValue(as));
+        }
+        else {
         node->m_expr->Accept(this);
-/*        if (node->isWord(as))
-            as->Asm("rlca"); // *2 for integer arrays
-  */
-        as->Term();
-        as->Asm("ld e,a");
-        as->Asm("ld d,0");
+    /*        if (node->isWord(as))
+                as->Asm("rlca"); // *2 for integer arrays
+      */
+            as->Term();
+            as->Asm("ld e,a ; variable is 8-bit");
+            as->Asm("ld d,0");
+        }
   //      as->Asm("ld hl,"+node->getValue(as));
         LoadAddress(node);
         as->Asm("add hl,de");
@@ -520,12 +550,18 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
         ending = "+di]";*/
 
     }
+
     if (!node->isWord(as)) {
+//        as->Comment("HERE") ;
         if (node->isPureVariable())
             as->Asm("ld a,["+node->getValue(as)+"]");
         else
             as->Asm("ld a,"+node->getValue(as));
 
+  /*      if (node->m_forceType==TokenType::INTEGER) {
+            as->Comment("; Byte, but forced to be integer");
+        }
+*/
         return;
     }
     // 16 bit all
@@ -550,7 +586,6 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
             //node->Accept(this);
             as->Comment("Integer");
             LoadInteger(node);
-//            as->Comment("Integer loaded");
 
         }
         else {
@@ -847,6 +882,9 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         as->Asm("ld [hl], a");
         return "";
     }
+    if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
+        as->Asm("ld l,a ; word assigned to byte");
+    }
 
     as->Asm("ld ["+name + "], "+getAx(node->m_left));
     return "";
@@ -945,6 +983,12 @@ void ASTdispatcherZ80::LoadInteger(QSharedPointer<Node> n)
 void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
+    if (!n->isWord(as)) {
+        as->Comment("Stored address is byte, not var: compensate");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+n->getValue(as)+"],a");
+        return;
+    }
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
         as->Asm("ld a,"+QString(hl[0])+"");
         as->Asm("ld ["+n->getValue(as)+"], a");
@@ -1184,6 +1228,7 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
             if (var->m_expr->isPureNumeric()) {
                 as->Comment("; index is pure number optimization");
                 as->Asm("ld de,"+var->m_expr->getValue(as));
+                as->Asm("add hl,de");
             }
             else {
                 as->Comment(";general 8-bit expression for the index");

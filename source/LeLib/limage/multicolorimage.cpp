@@ -42,6 +42,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_height = 200;
     m_scaleX = 2;
     //m_data.resize(m_charWidth*m_charHeight);
+    m_colorList.m_supportsFooterPen = true;
 
     Clear();
     m_type = LImage::Type::MultiColorBitmap;

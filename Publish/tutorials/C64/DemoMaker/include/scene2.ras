@@ -17,7 +17,7 @@ begin
 //			i:=6;
 			screenmemory[b]:=i+@scene2charval;
 		end;
-		inczp(screenmemory,40);
+		screenmemory+=40;
 	end;
 end;
 

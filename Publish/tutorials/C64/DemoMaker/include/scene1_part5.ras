@@ -7,14 +7,11 @@ begin
 
 		moveto(0,tVal, $48);
 		zp1:=screenmemory;
-		inczp(zp1,2);
+		zp1+=2;
 		moveto(0,tVal, $44);
 		memcpy(zp1, 0, screenmemory, 40);
 		// Copy color $D800 data
-		inczp(zp1,250);
-		inczp(zp1,250);
-		inczp(zp1,250);
-		inczp(zp1,250);
+		zp1+=1000;
 		moveto(0,tVal, $D8);
 		memcpy(zp1, 0, screenmemory, 40);
 		if (time&1=0) then
@@ -31,8 +28,8 @@ begin
 				zp1[39-b]:=0;
 				screenmemory[b]:=0;
 				screenmemory[39-b]:=0;
-				inczp(zp1,40);
-				inczp(screenmemory,40);
+				zp1+=40;
+				screenmemory+=40;
 			end;
 			if (time&1=0) then
 			inc(b);

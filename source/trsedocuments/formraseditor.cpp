@@ -100,6 +100,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
     if (m_iniFile->contains(name)) {
         QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
+//        qDebug() << "Additional params: "<<pl;
         pl.removeAll("");
         params<<pl;
     }
@@ -401,11 +402,6 @@ void FormRasEditor::Build(bool isShadow)
     m_builderThread.quit();
 
 
-    if (m_currentSourceFile.toLower().endsWith(".inc")) {
-        ui->txtOutput->setText("You cannot compile include files");
-        return;
-    }
-
 
     if (!isShadow)
         SaveCurrent();
@@ -422,6 +418,13 @@ void FormRasEditor::Build(bool isShadow)
         }
 
     }
+
+    if (m_currentSourceFile.toLower().endsWith(".inc")) {
+        ui->txtOutput->setText("You cannot compile include files");
+        return;
+    }
+
+
 
 //    if (m_builderThread.m_builder!=nullptr)
   //      delete m_builderThread.m_builder;

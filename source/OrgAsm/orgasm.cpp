@@ -68,6 +68,7 @@ QString Orgasm::processRepeatIndex(QString s, int current)
     s = s.replace("[i+1]",QString::number(current+1));
     s = s.replace("[i-1]",QString::number(current-1));
     s = s.replace("[i]",QString::number(current));
+    s = s.replace("[i*8]",QString::number(current*8));
 //    qDebug() << current << QString::number(current) << s;
     return s;
 }
@@ -408,10 +409,10 @@ void Orgasm::PassReplaceConstants()
 {
     //    if (m_constantPassLines==0)
     for (OrgasmLine& ol : m_olines) {
-        if (ol.m_type != OrgasmLine::CONSTANT) {
+        if (ol.m_type != OrgasmLine::CONSTANT && ol.m_type!= OrgasmLine::INCBIN) {
             for (QString k : m_constList) {
                 if (ol.m_expr.contains(k))
-                ol.m_expr =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
+                    ol.m_expr =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
             }
 
         }

@@ -30,7 +30,6 @@ begin
 
 
 ;unpacker variables, no need to change these
-delta_d	=	$B4
 
 
 	ldy	#0
@@ -140,8 +139,10 @@ getsrc:
 	bne	c_p2
 	inc	Compression_src+1
 c_p2:
-	");
+	rts
+delta_d:	db	$B4
 
+	");
 end;
 
 

@@ -37,6 +37,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
 //    m_data = new PixelChar[m_charWidth*m_charHeight];
     Clear();
     m_type = LImage::Type::CharMapMulticolor;
+    m_colorList.m_supportsFooterPen = true;
     SetColor(1,1);
     SetColor(2,2);
     SetColor(5,3);
@@ -87,6 +88,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_updateCharsetPosition = true;
     m_colorList.m_isCharset = true;
     EnsureSystemColours();
+    InitPens();
 //    InitPens();
 
 }

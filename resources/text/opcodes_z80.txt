@@ -563,6 +563,24 @@ set 7,h -> 0xcbfc
 set 7,l -> 0xcbfd
 set 7,(hl) -> 0xcbfe
 set 7,a -> 0xcbff
+
+ld ixh,a -> 0xDD67
+ld ixl,b -> 0xDD68
+ld ixl,c -> 0xDD69
+ld ixl,d -> 0xDD6a
+ld ixl,e -> 0xDD6b
+
+
+ld ixl,a -> 0xDD6F
+ld ixh,b -> 0xDD60
+ld ixh,c -> 0xDD61
+ld ixh,d -> 0xDD62
+ld ixh,e -> 0xDD63
+
+ld a,ixh -> 0xDD7C
+ld a,ixl -> 0xDD7D
+
+
 add ix,bc -> 0xdd09
 add ix,de -> 0xdd19
 ld ix,** -> 0xdd21

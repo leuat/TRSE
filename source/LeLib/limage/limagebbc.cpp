@@ -56,6 +56,13 @@ void LImageBBC::SetMode()
         m_colors = 16;
     }
 
+    if (getMode() == 4) {
+        Initialize(320,256);
+        m_bpp = 1;
+        m_scaleX = 1;
+        m_colors = 2;
+    }
+
     if (getMode() == 5) {
         Initialize(160,256);
         m_scaleX = 1;
@@ -228,6 +235,22 @@ void LImageBBC::ExportBin(QFile &ofile)
             }
         }
     }
+    if (getMode() == 4) {
+        int dy = 0;
+        for (int y=0;y<m_height;y+=8) {
+            for (int x=0;x<m_width;x+=8) {
+                //int pixel = ((dy+y)/10)&15;
+                for (int y2=0;y2<8;y2++) {
+    //                qDebug() << x << (y+dy+y2);
+                    uchar c=0;
+                    for (int i=0;i<8;i++)
+                        c |= getPixel(x+i,y+dy+y2)<<(7-i);
+
+                    data.append(c);
+                  }
+            }
+        }
+    }
 
 
 
@@ -287,8 +310,9 @@ QString LImageBBC::getMetaInfo()
     //    if (mode!=0) m_mode = mode;
     //   qDebug() << m_mode;
     QString s="Current modes supported: \n";
-    s+="Mode 2: 160x200 16 colors (20kb) \n";
-    s+="Mode 5: 160x200 4 colors (10kb) \n";
+    s+="Mode 2: 160x256 16 colors (20kb) \n";
+    s+="Mode 4: 320x256 2 colors (10kb) \n";
+    s+="Mode 5: 160x256 4 colors (10kb) \n";
     SetMode();
     return s;
 }

@@ -54,7 +54,15 @@ unsigned long Util::Endian_Word_Conversion(unsigned short dword)
 QString Util::BinopString(QString a) {
     QString pa ="";
     QString pb = "";
+    QString str = "0123456789$#%abcdefABCDEF <>";
     a=a.simplified().trimmed();
+
+    if (a.contains("'")) {
+      for (QChar c:str)
+          a = a.replace("'"+QString(c)+"'",Util::numToHex(c.toLatin1()));
+    }
+
+
     if (a.contains("(")) {
         a = a.replace("(","").replace(")","");
         pa = "(";
@@ -69,7 +77,6 @@ QString Util::BinopString(QString a) {
     QStringList lst = b.replace("+","|").replace("-","|").split("|");
 
     QString q=a;
-    QString str = "0123456789$#%abcdefABCDEF <>";
     for (int i=0;i<str.length();i++)
         q=q.replace(str[i],"");
 
