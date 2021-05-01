@@ -188,4 +188,33 @@ format_paddeditos_inc:
   ");
 end;
 
+/**
+  Format the 8 bits unsigned integer b as a string in binary and put the result in the buffer in s.
+  You must plan for at least 9 chars in s. The resulting string is null-terminated.
+**/
+procedure PaddedBinaryBtos(b : global byte, s : global pointer);
+begin
+  asm("
+    ld a, [Format_b]
+    ld b, a
+	ld hl, [Format_s]
+	ld a, 0
+	; a contains the number of bits printed
+	; b contains the byte to print
+	; hl points to the string
+format_paddedbinarybtos_loop
+	rl b
+	jr c,format_paddedbinarybtos_one
+	ld (hl), 48
+	jr format_paddedbinarybtos_next
+format_paddedbinarybtos_one:
+	ld (hl), 49
+format_paddedbinarybtos_next:
+	inc a
+	inc hl
+	cp 8
+	jr nz, format_paddedbinarybtos_loop
+  ");
+end;
+
 end.
