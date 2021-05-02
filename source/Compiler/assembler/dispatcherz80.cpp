@@ -90,42 +90,90 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
 {
 
     QString var = nodeA->m_left->getValue(as);
-
-    if (!nodeB->isPureNumeric()) {
-        as->ClearTerm();
-        nodeB->Accept(this);
-        as->Term();
-        as->Asm("ld c,a");
-    }
-
-    // If step is a number, load it here
-    // Post optimizer should take care of stuff
-    if (step!=nullptr) {
-        step->Accept(this);
-        as->Asm("ld d,a");
-    }
-//    PushX();
-    QString ax = getAx(nodeA->m_left);
   //  PopX();
-    as->Asm(m_mov+ax+",["+var+"]");
 
-    if (step==nullptr)
-        as->Asm("add "+ax+",1");
-    else
-        as->Asm("add "+ax+",d");
+    if (nodeA->m_left->isWord(as)) {
+        if (!nodeB->isPure())
+            ErrorHandler::e.Error("16 bit index counter target must be pure numeric or variable!",nodeB->m_op.m_lineNumber);
 
-    as->Asm(m_mov+"["+var+"],"+ax);
+        QString ax = "hl";
+        if (step!=nullptr) {
+            as->Comment("; 16 bit counter with STEP");
+            step->setForceType(TokenType::INTEGER);
+            step->Accept(this);
+            as->Comment(";here");
+            as->Asm("ex de,hl");
+            nodeA->m_left->Accept(this);
+            as->Asm("add hl,de");
 
-    if (!nodeB->isPureNumeric())
+        }
+        else {
+            as->Comment("; 16 bit counter without STEP");
+            nodeA->m_left->Accept(this);
+            as->Term();
+            as->Asm("inc "+ax);
+
+        }
+        as->Asm(m_mov+"["+var+"],"+ax);
+
+        as->Asm("ld c,l");
+        as->Asm("ld a,"+nodeB->getValue8bit(as,false));
         as->Asm(m_cmp+"c");
-    else
-        as->Asm(m_cmp+nodeB->getValue(as));
+
+        if (!isOffPage)
+            as->Asm("jr nz,"+lblJump);
+        else
+            as->Asm("jp nz,"+lblJump);
+
+        as->Asm("ld c,h");
+        as->Asm("ld a,"+nodeB->getValue8bit(as,true));
+        as->Asm(m_cmp+"c");
+
+        if (!isOffPage)
+            as->Asm("jr nz,"+lblJump);
+        else
+            as->Asm("jp nz,"+lblJump);
+
+        return;
+    }
+
+//    QString var = nodeA->m_left->getValue(as);
+
+        if (!nodeB->isPureNumeric()) {
+            as->ClearTerm();
+            nodeB->Accept(this);
+            as->Term();
+            as->Asm("ld c,a");
+        }
+
+        // If step is a number, load it here
+        // Post optimizer should take care of stuff
+        if (step!=nullptr) {
+            step->Accept(this);
+            as->Asm("ld d,a");
+        }
+    //    PushX();
+        QString ax = getAx(nodeA->m_left);
+      //  PopX();
+        as->Asm(m_mov+ax+",["+var+"]");
+
+        if (step==nullptr)
+            as->Asm("add "+ax+",1");
+        else
+            as->Asm("add "+ax+",d");
+
+        as->Asm(m_mov+"["+var+"],"+ax);
+
+        if (!nodeB->isPureNumeric())
+            as->Asm(m_cmp+"c");
+        else
+            as->Asm(m_cmp+nodeB->getValue(as));
 
 
-    if (!isOffPage)
-        as->Asm("jr nz,"+lblJump);
-    else
-        as->Asm("jp nz,"+lblJump);
+        if (!isOffPage)
+            as->Asm("jr nz,"+lblJump);
+        else
+            as->Asm("jp nz,"+lblJump);
 }
 
 void ASTdispatcherZ80::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
@@ -948,11 +996,12 @@ void ASTdispatcherZ80::LoadAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
     if (n->isPointer(as)) {
-        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
+        if (isGB()) {
             as->Asm("ld a,[" +n->getValue(as)+"]");
             as->Asm("ld "+QString(hl[0])+",a");
             as->Asm("ld a,[" +n->getValue(as)+"+1]");
             as->Asm("ld "+QString(hl[1])+",a");
+
 
         }
         else
@@ -969,7 +1018,7 @@ void ASTdispatcherZ80::LoadInteger(QSharedPointer<Node> n)
 {
     QString hl =getHL();
 
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
+    if (isGB()) {
         as->Asm("ld a,[" +n->getValue(as)+"]");
         as->Asm("ld "+QString(hl[0])+",a");
         as->Asm("ld a,[" +n->getValue(as)+"+1]");
@@ -989,7 +1038,7 @@ void ASTdispatcherZ80::StoreAddress(QSharedPointer<Node> n)
         as->Asm("ld ["+n->getValue(as)+"],a");
         return;
     }
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::GBZ80) {
+    if ( isGB()) {
         as->Asm("ld a,"+QString(hl[0])+"");
         as->Asm("ld ["+n->getValue(as)+"], a");
         as->Asm("ld a,"+QString(hl[1])+"");
@@ -1136,10 +1185,19 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                     as->Comment("RHS is pure ");
                     if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
                         as->Comment("RHS is pure constant of $100");
+                        if (isGB()) {
                         as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
-                        as->Asm("ld a,[ "+var->value+"+1]");
+                        as->Asm("ld a,[ "+var->value+"]");
                         as->Asm("add a,b");
-                        as->Asm("ld [ "+var->value+"+1],a");
+                        as->Asm("ld [ "+var->value+"],a");
+                        }
+                        else {
+                            as->Asm("ld b,"+Util::numToHex(bop->m_right->getValueAsInt(as)>>8));
+                            as->Asm("ld a,[ "+var->value+"+1]");
+                            as->Asm("add a,b");
+                            as->Asm("ld [ "+var->value+"+1],a");
+
+                        }
                         return;
 
                     }
@@ -1231,19 +1289,46 @@ void ASTdispatcherZ80::HandleAssignPointers(QSharedPointer<NodeAssign> node)
                 as->Asm("add hl,de");
             }
             else {
-                as->Comment(";general 8-bit expression for the index");
-//                as->Asm("xor a");
-                as->Asm("ld d,0");
-                var->m_expr->Accept(this);
-                as->Asm("ld e,a");
-                as->Asm("add hl,de");
+                if (var->m_expr->isWord(as)) {
+                    as->Comment(";general 16-bit expression for the index");
+                    as->Asm("ex de,hl ;keep");
+                    var->m_expr->Accept(this);
+                    as->Asm("ex de,hl");
+                    as->Asm("add hl,de");
+                }
+                else {
+                    as->Comment(";general 8-bit expression for the index");
+    //                as->Asm("xor a");
+                    as->Asm("ld d,0");
+                    var->m_expr->Accept(this);
+                    as->Asm("ld e,a");
+                    as->Asm("add hl,de");
+                }
             }
         }
         if (!node->m_right->isPure()) {
             as->Asm("pop af");
         }
-        else node->m_right->Accept(this);
+        else
+            if (node->m_right->isWord(as)) {
+                if (node->m_right->isPure()) {
+                    as->Comment("Optimization: rhs is integer, but pure");
+                    if (node->m_right->isPureVariable())
+                        as->Asm("ld a,["+node->m_right->getValue(as)+"]");
+                    else // is number
+                        as->Asm("ld a,"+Util::numToHex(node->m_right->getValueAsInt(as)&0xFF));
 
+                }
+                else {
+                    as->Asm("push hl");
+                    node->m_right->Accept(this);
+                    as->Term();
+                    as->Asm("ld a,l");
+                    as->Asm("pop hl");
+                }
+            }
+            else
+                node->m_right->Accept(this);
         as->Asm("ld [hl],a"); // Store in pointer
 
         return;

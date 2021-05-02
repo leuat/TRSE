@@ -84,7 +84,7 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
     }
 
 
-    if (cmd=="ex") {
+    if (cmd=="ex" && line.m_orgLine.contains(";keep")) {
 //        qDebug() << "h0 " << line.m_orgLine << cmd << prevLine << par;
 
         if (par.count()>=2 && prevLine!=nullptr)

@@ -69,10 +69,9 @@ begin
 	
 	// memcpy(font, vram_charset, $400); // WILL FAIL ON REAL HARDWARE!
 
-
 	// Fill with some empty character ($80)
 	// Clear both the screen and temporary address. 
-	Screens::ClearScreen(Screens::storage, $80);	
+	Screens::ClearScreen(Screens::storage, $81);	
 	Screens::ClearScreen(screen0, $80);	
 
 	// Print text to buffer
