@@ -5,6 +5,9 @@ var
 	t,j,la : byte=0;
 	p1:pointer;
 	
+	
+	
+	
 /*
 
  Test : Proof-of-concept that the ZX Spectrum can be included in TRSE

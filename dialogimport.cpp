@@ -48,8 +48,11 @@ DialogImport::~DialogImport()
 void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType, LImage* img)
 {
     m_imageType = imageType;
+//    qDebug() << "Currenttype: " <<QString::number(LImage::TypeToChar(m_imageType)) <<m_image->m_width<<img->m_width;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
+//    qDebug() << m_image->m_width << m_imageType;
+
     if (!Syntax::s.m_currentSystem->m_hasVariableColorPalette)
         ui->chkGenPal->setVisible(false);
 //    m_image->m_colorList.CopyFrom(&img->m_colorList);
@@ -154,7 +157,6 @@ void DialogImport::Convert()
     }
 
 
-//    qDebug() << m_output.m_qImage->width();
 
     m_output.m_qImage = img->Resize(m_work.m_qImage->width(),
                                     m_work.m_qImage->height(),

@@ -230,6 +230,7 @@ LImage::Type LImage::CharToType(unsigned char c)
         return VGA;
     if (c==28)
         return Spectrum;
+
     return NotSupported;
 
 }

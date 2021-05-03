@@ -98,6 +98,7 @@ public:
     void SetTwoColors(QVector3D base1, QVector3D base2);
     Metric* m_metric = nullptr;
     void EnableColors(QVector<int>& cols);
+    void EnableAllColors(bool val);
 
     void CreateUIOld(QLayout* ly, int type, QSize windowSize);
 

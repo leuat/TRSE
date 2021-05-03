@@ -224,6 +224,16 @@ void LColorList::EnableColors(QVector<int> &cols)
 
 }
 
+void LColorList::EnableAllColors(bool val)
+{
+    m_enabledColors.clear();
+    for (int i=0;i<m_list.count();i++) {
+            m_list[i].inUse = val;
+            if (val)
+                m_enabledColors.append(i);
+    }
+}
+
 bool sortColors(const QVector3D &s1, const QVector3D &s2)
 {
     return s1.x()+s1.y()+s1.z() < s2.x()+s2.y()+s2.z();
@@ -692,6 +702,8 @@ void LColorList::InitSPECTRUM()
 //    m_background = m_list[0];
   //  DefaultPen(LPen::FixedSingle);
     QVector<int> oldList = getPenList();
+    if (oldList.count()<=2)
+        oldList <<0<<1;
     m_pens.clear();
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
     auto type = LPen::DisplayAll;
