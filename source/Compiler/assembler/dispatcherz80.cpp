@@ -931,7 +931,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         return "";
     }
     if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
-        as->Asm("ld l,a ; word assigned to byte");
+        as->Asm("ld a,l ; word assigned to byte");
     }
 
     as->Asm("ld ["+name + "], "+getAx(node->m_left));
