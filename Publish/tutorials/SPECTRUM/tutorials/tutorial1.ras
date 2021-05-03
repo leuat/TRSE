@@ -1,4 +1,5 @@
 program ZXTest;
+@use "screen"
 var
 	k,l,m : byte=0;
 	t,j,la : byte=0;
@@ -13,16 +14,14 @@ var
 
 var
 //	ytab : array[192] of integer=BuildTable("0x4000 + (i&7)*256 + Math.floor(i/8)*32");
-	ytab : array[192] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
-	cytab : array[24] of integer=BuildTable("0x5800+i*32 ");
 
 // Fill some random stuff to VRAM. 
 procedure ClearScreen(v:byte);
 begin
 	for l:=0 to 192 do
 	begin
-		p1:=ytab[l];
-		fill(p1,t,32);
+		p1:=Screen::ytab[l];
+		fill(p1,t+l,32);
 
 	end;
 	
@@ -30,13 +29,9 @@ begin
 end;
 
 begin
-	// Some pattern
-	t:=%11000000;
-//	sp:=1;
 	while (true) do
 	begin
 		ClearScreen(t);		
-		
 		
 		t:=t+1;
 	end;
