@@ -95,7 +95,7 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     QFile::remove(filename+".sym");
     QFile::remove(player);
     QFile::remove(snd);
-//    QFile::remove(asmFile);
+    QFile::remove(asmFile);
 //    qDebug() << rasm << QFile::exists(rasm);
 
 

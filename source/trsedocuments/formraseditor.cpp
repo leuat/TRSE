@@ -288,7 +288,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
         if (m_projectIniFile->getdouble("exomizer_toggle")==1)
             num = 0x4000; /// Always start at 0x4000
         params << "-o" << "0x"+QString::number(num,16);
-
         QString amstradcpc_model = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_model");
         QMap<QString, QString> caprice32_models = {
           { "464", "0" },
