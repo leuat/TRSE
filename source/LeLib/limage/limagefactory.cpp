@@ -84,9 +84,11 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageAmstradGeneric(colorType);
     if (t == LImage::Type::BBC)
         return new LImageBBC(colorType);
-    if (t == LImage::Type::VGA) {
+    if (t == LImage::Type::VGA)
         return new LImageVGA(colorType);
-    }
+    if (t == LImage::Type::Spectrum)
+        return new LImageSpectrum(colorType);
+
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

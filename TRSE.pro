@@ -188,6 +188,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagemetachunk.cpp \
     source/LeLib/limage/limagenes.cpp \
     source/LeLib/limage/limageok64.cpp \
+    source/LeLib/limage/limagespectrum.cpp \
     source/LeLib/limage/limagevga.cpp \
     source/LeLib/limage/limagex16.cpp \
     source/LeLib/limage/lpen.cpp \
@@ -425,6 +426,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagemetachunk.h \
     source/LeLib/limage/limagenes.h \
     source/LeLib/limage/limageok64.h \
+    source/LeLib/limage/limagespectrum.h \
     source/LeLib/limage/limagevga.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \

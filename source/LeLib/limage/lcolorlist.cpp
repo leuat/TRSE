@@ -130,6 +130,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 12;
   if (t==VGA)
       return 13;
+  if (t==SPECTRUM)
+      return 14;
 
   return 255;
 }
@@ -164,6 +166,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return BBC;
     if (c==13)
         return VGA;
+    if (c==14)
+        return SPECTRUM;
 
     return UNSUPPORTED;
 
@@ -386,6 +390,8 @@ void LColorList::Initialize(Type t)
         InitBBC(16);
     if (m_type == Type::VGA)
         InitVGA();
+    if (m_type == Type::SPECTRUM)
+        InitSPECTRUM();
 
 
 
@@ -652,6 +658,44 @@ void LColorList::InitC64()
     m_background = m_list[0];
 //    DefaultPen();
     m_pens.clear();
+
+}
+
+void LColorList::InitSPECTRUM()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+
+    m_list.append(LColor(QColor(0x00, 0x22, 0xc7),""));
+
+    m_list.append(LColor(QColor(0xd6, 0x28, 0x16),""));
+
+    m_list.append(LColor(QColor(0xd4, 0x33, 0xc7),""));
+
+    m_list.append(LColor(QColor(0x0, 0xc5, 0x25),""));
+
+    m_list.append(LColor(QColor(0x0, 0xc7, 0xc9),""));
+
+    m_list.append(LColor(QColor(0xcc, 0xc8, 0x2a),""));
+
+    m_list.append(LColor(QColor(0xca, 0xca, 0xca),""));
+
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0x0, 0x2b, 0xfb),""));
+    m_list.append(LColor(QColor(0xff, 0x33, 0x1c),""));
+    m_list.append(LColor(QColor(0xff, 0x40, 0xfc),""));
+    m_list.append(LColor(QColor(0x0, 0xf9, 0x2f),""));
+    m_list.append(LColor(QColor(0x0, 0xfb, 0xfe),""));
+    m_list.append(LColor(QColor(0xff, 0xfc, 0x36),""));
+    m_list.append(LColor(QColor(0xff, 0xff, 0xff),""));
+
+//    m_background = m_list[0];
+  //  DefaultPen(LPen::FixedSingle);
+    QVector<int> oldList = getPenList();
+    m_pens.clear();
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+    auto type = LPen::DisplayAll;
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"Free colour",type)));
 
 }
 
