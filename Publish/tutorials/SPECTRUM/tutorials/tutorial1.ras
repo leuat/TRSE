@@ -1,6 +1,6 @@
 program ZXTest;
 var
-	k : byte=0;
+	k,l,m : byte=0;
 	t,j,la : byte=0;
 	p1:pointer;
 	
@@ -11,18 +11,19 @@ var
  
 */
 
+var
+//	ytab : array[192] of integer=BuildTable("0x4000 + (i&7)*256 + Math.floor(i/8)*32");
+	ytab : array[192] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
+	cytab : array[24] of integer=BuildTable("0x5800+i*32 ");
+
 // Fill some random stuff to VRAM. 
 procedure ClearScreen(v:byte);
 begin
-	p1:=vram;
-	la:=v;
-	for k:=0 to 24 do
+	for l:=0 to 192 do
 	begin
-		fill(p1,la,$100);
-		asm(";here");
-		p1:=p1+$100;
-		asm(";done");
-		la:=la<<1;
+		p1:=ytab[l];
+		fill(p1,t,32);
+
 	end;
 	
 
@@ -35,7 +36,9 @@ begin
 	while (true) do
 	begin
 		ClearScreen(t);		
-		t:=t<<1;
+		
+		
+		t:=t+1;
 	end;
 	Loop(); 
 end.

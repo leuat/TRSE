@@ -50,5 +50,5 @@ data_header_/users/leuat/code/trse/publish/tutorials/x86/vga_386/image2.flf = 6.
 data_header_fonts/font1.flf = 6.47908e-314
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/X86/VGA_386/
 show_all_files = 1
-open_files = 2.17841e-314
-current_file = tut6.ras
+open_files = ,tut3.ras, [ext]units/X86/system/screen.tru, tut2.asm, tut2.ras, tut1.ras, tut5.ras, tut6.ras
+current_file = tut3.ras
