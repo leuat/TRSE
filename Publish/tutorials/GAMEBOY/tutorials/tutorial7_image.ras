@@ -25,7 +25,7 @@ var
 	sine : array[256] of byte = BuildTable("Math.sin((i)/256.0*3.1459*2)*127+127");
 
 	const temp : address = $CF00;
-	
+	kk : integer;
 /**
 	My Vblank!
 
@@ -61,6 +61,5 @@ begin
 	EnableVBLank();
 
 	Loop();
-
 
 end.

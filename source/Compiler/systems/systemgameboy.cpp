@@ -96,6 +96,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
 
         output+="<br>";
 
+
+
 /*        process.start(link, params);
         process.waitForFinished();
         //output+= process.readAllStandardOutput();

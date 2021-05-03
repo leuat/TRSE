@@ -96,7 +96,6 @@ begin
 	InitScreen();	
 	// Set up palette
 	SetupStaticPalette();	
-	
 	AdlibPlayer::Initialize(#song);
 	Memory::SetTimer(Memory::Default_Timer);
 	SetInterrupt($8, RasterIRQ());

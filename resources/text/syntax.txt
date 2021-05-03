@@ -192,6 +192,7 @@ c; PAD_BUTTON_SELECT; GAMEBOY; b; 4
 # ************************** SPECTRUM, MSX,  TIKI100
 
 c; VRAM ; SPECTRUM, MSX,  TIKI100; a; $4000
+c; CRAM ; SPECTRUM, MSX,  TIKI100; a; $5800
 
 
 

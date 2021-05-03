@@ -1,0 +1,9 @@
+unit Screen;
+var
+	ytab : array[192] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
+	ytab_color : array[24] of integer=BuildTable("0x5800+i*32 ");
+
+
+
+
+end.

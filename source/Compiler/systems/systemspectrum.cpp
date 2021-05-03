@@ -8,7 +8,7 @@ void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDi
 
 
     output+="<br>";
-    QString assembler = m_settingsIni->getString("pasmo");
+/*    QString assembler = m_settingsIni->getString("pasmo");
     if (!QFile::exists(assembler)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
         m_buildSuccess = false;
@@ -20,9 +20,10 @@ void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDi
     QProcess process;
     QStringList params;
     StartProcess(assembler, QStringList() << "-1" << "--tapbas" << filename+".asm" <<filename+".tap", output);
+*/
+    PerformAssembling(filename,text,currentDir,symTab);
 
-   // PerformAssembling(filename,text,currentDir,symTab);
-    if (!QFile::exists(filename+".tap")) {
+    if (!QFile::exists(filename+".bin")) {
         text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
         text+=output;
         m_buildSuccess = false;

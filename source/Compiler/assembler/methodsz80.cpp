@@ -224,11 +224,17 @@ void MethodsZ80::Fill(Assembler *as)
 {
     as->Comment("Loading param 2 ");
     LoadVar(as,2,"bc");
+    if (!m_node->m_params[1]->isPure()) {
+        as->Asm("push bc");
+    }
     as->Comment("Loading param 0 ");
     LoadAddress(as, 0);
 
     as->Comment("Loading param 1 ");
     LoadVar(as,1);
+    if (!m_node->m_params[1]->isPure()) {
+        as->Asm("pop bc");
+    }
 
     QString lblFill = "."+as->NewLabel("fill");
     QString lblSkip = "."+as->NewLabel("skip");

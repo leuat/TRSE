@@ -155,6 +155,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM) {
         emu = m_iniFile->getString("spectrum_emulator");
+        if (emu.toLower().contains("retro")) {
+  //          qDebug() << "HERE";
+            params<<"-b=zx48k"<<"-j=0x8000"<<"-l=0x8000";
+        }
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
         emu = m_iniFile->getString("plus4_emulator");
@@ -187,7 +191,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
         if (emu.toLower().contains("microm8")) {
             params = QStringList() <<"-launch" <<fn;
-            qDebug() << params;
+//            qDebug() << params;
         }
 
     }
@@ -315,10 +319,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
 //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
 #ifdef __APPLE__
 //    qDebug() << emu << params;
+//    qDebug() << emu << params;
     if (emu.endsWith(".app")) {
         process.setArguments(params);
         process.setProgram(emu);
-//        qDebug() << emu << params;
         process.startDetached();
     }
     else process.startDetached(emu, params);
@@ -654,7 +658,7 @@ void FormRasEditor::Run()
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
         filename = m_currentSourceFile.split(ft)[0] + ".gb";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
-        filename = m_currentSourceFile.split(ft)[0] + ".tap";
+        filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86)
         filename = m_currentSourceFile.split(ft)[0] + ".exe";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)

@@ -549,7 +549,7 @@ void DialogTRSESettings::on_btnHelpGB_clicked()
 
 void DialogTRSESettings::on_btnHelpZX_clicked()
 {
-    Help("ZX Spectrum Emulator", "Your favorite speccy emulator. <br>We recommend using Fuse for linux <a href=\"http://fuse-emulator.sourceforge.net/\">http://fuse-emulator.sourceforge.net/</a> or speccy for windows <a href=\"https://fms.komkon.org/Speccy/\">https://fms.komkon.org/Speccy/</a>.");
+    Help("ZX Spectrum Emulator", "Please use https://www.retrovirtualmachine.org/en/ ");
 }
 
 void DialogTRSESettings::on_btnHelpTiki_clicked()
