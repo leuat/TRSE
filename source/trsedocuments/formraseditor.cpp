@@ -157,7 +157,8 @@ void FormRasEditor::ExecutePrg(QString fileName)
         emu = m_iniFile->getString("spectrum_emulator");
         if (emu.toLower().contains("retro")) {
   //          qDebug() << "HERE";
-            params<<"-b=zx48k"<<"-j=0x8000"<<"-l=0x8000";
+            QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
+            params<<"-b=zx48k"<<"-j=0x"+addr<<"-l=0x"+addr;
         }
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {

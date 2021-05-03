@@ -366,6 +366,20 @@ void MethodsZ80::Poke(Assembler *as)
 void MethodsZ80::Call(Assembler *as)
 {
  //   LoadVar(as,0);
+    if (m_node->m_params[0]->isPointer(as)) {
+        if (!m_node->m_params[0]->isPure())
+            ErrorHandler::e.Error("Parameter 1 must be a pure pointer or number",m_node->m_op.m_lineNumber);
+
+        QString lblCall = "."+as->NewLabel("call");
+        QString lblContinue = "."+as->NewLabel("continue");
+        as->Asm("call "+lblCall);
+        as->Asm("jp "+lblContinue);
+        as->Label(lblCall);
+        as->Asm("ld hl,["+m_node->m_params[0]->getValue(as)+"]");
+        as->Asm("jp [hl]");
+        as->Label(lblContinue);
+        return;
+    }
     as->Asm("call "+m_node->m_params[0]->getValue(as));
 
 }

@@ -96,7 +96,9 @@ void SymbolTable::Initialize()
   //  m_constants.clear();
 
     QVector<QSharedPointer<Symbol>> keeps;
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC && m_constants.contains("INIT_MUSIC")) {
+    if (
+            (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC || Syntax::s.m_currentSystem->m_system==AbstractSystem::SPECTRUM)
+            && m_constants.contains("INIT_MUSIC")) {
         // Addresses change due to compiler
         keeps.append(m_constants["INIT_MUSIC"]);
         keeps.append(m_constants["PLAY_MUSIC"]);
@@ -187,7 +189,10 @@ void SymbolTable::Initialize()
 //    qDebug()  << Util::numToHex(m_constants["KEY_2"]->m_value->m_fVal);
 
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC && keeps.count()==3) {
+    if (
+            (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::SPECTRUM)
+            && keeps.count()==3) {
         m_constants["INIT_MUSIC"] = keeps[0];
         m_constants["PLAY_MUSIC"] = keeps[1];
         m_constants["STOP_MUSIC"] = keeps[2];

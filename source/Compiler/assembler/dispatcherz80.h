@@ -90,5 +90,11 @@ public:
 
     void HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointer<NodeVar> var);
 
+    void LoadVariable(QSharedPointer<NodeProcedure> node) override;
+
+    void LoadVariable(QSharedPointer<NodeVar> n) override;
+    void LoadVariable(QSharedPointer<Node> n) override;
+
+
 };
 #endif // ASTdispatcherX86_H

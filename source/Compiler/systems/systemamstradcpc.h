@@ -15,6 +15,10 @@ public:
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
     virtual void PostProcess(QString& text, QString file, QString currentDir);
+    QString getArkosTrackerSystemString() override {
+        return "PLY_AKG_HARDWARE_CPC = 1\n";
+    }
+
 };
 
 #endif // SYSTEMAMSTRADCPC_H
