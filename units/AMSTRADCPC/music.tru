@@ -6,7 +6,7 @@ procedure InitMusic(p:global pointer;val:global byte);
 begin
 	asm("
 	   ld hl, [Music_p]
-	   ld l,a
+;	   ld l,a
 	   ld a,[Music_val]              
        call INIT_MUSIC 		
 	");

@@ -1,9 +1,66 @@
 unit Screen;
 var
-	ytab : array[192] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
+	ytab : array[193] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
 	ytab_color : array[24] of integer=BuildTable("0x5800+i*32 ");
+	i:byte;
 
 
+procedure BorderColor(_a:byte);
+begin
+	asm("
+		ld bc,#fe
+;        ld a,7
+        out (c),a
+
+	");	
+end;
+
+
+procedure ClearDefaultIRQ(pos:pointer;intPos:pointer);
+begin
+		asm("
+        ;Initializes IM2, gets rid of the system interrupt.
+        di
+        ld hl,[Screen_pos]	;HL points to the IM2 Lookup table.
+        ld a,h
+        ld i,a		;Set I= high(pos).
+        im 2		;Switch to vectorized interrupts.
+        ");
+        for i:=0 to 256 do
+		begin
+			pos[0]:=lo(intPos);
+			pos[1]:=hi(intPos);
+			pos:=pos+2;
+		end; 
+		intPos[0]:=$fb;
+		intPos[1]:=$c9;
+		asm(" ei");
+        /*
+        inc a
+        ex de,hl
+        ld hl,[Screen_intPos]
+Im2FillLut: 
+		ld a,l
+	    ld (de),a	;Fills the IM2 LUT with l.
+        inc e		;All INT will jump to .
+		ld a,h
+	    ld (de),a	;Fills the IM2 LUT with h.
+        inc e		;All INT will jump to #$7989.
+        jr nz,Im2FillLut
+        
+        inc d
+		ld a,l
+        ld (de),a
+        inc e		;All INT will jump to .
+		ld a,h
+	    ld (de),a	;Fills the IM2 LUT with h.
+	
+;        ld sp,$
+		");
+//		pos[$181]:=$fb; // ei
+//		pos[$182]:=$c9; // ret
+*/
+	end;
 
 
 end.

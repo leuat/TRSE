@@ -23,7 +23,7 @@ public:
     virtual void PostProcess(QString& text, QString file, QString currentDir);
 
     QString getArkosTrackerSystemString() override {
-        return " PLY_AKG_HARDWARE_SPECTRUM = 1 \n";
+        return "PLY_AKG_HARDWARE_SPECTRUM = 1\n";
     }
 
 };

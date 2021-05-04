@@ -92,6 +92,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         return;
 
     // Relative jump to current address
+    if (expr.trimmed().endsWith("$")) { expr=expr.replace("$","*"); }
     if (expr.contains("*")) {
         QString add = expr;//expr.simplified().split(" ")[1].replace(" ", "");
         add = add.replace("*", Util::numToHex(m_pCounter));

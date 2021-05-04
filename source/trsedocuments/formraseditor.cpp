@@ -158,7 +158,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         if (emu.toLower().contains("retro")) {
   //          qDebug() << "HERE";
             QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
-            params<<"-b=zx48k"<<"-j=0x"+addr<<"-l=0x"+addr;
+            params<<"-b=zx128k"<<"-j=0x"+addr<<"-l=0x"+addr;
         }
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
