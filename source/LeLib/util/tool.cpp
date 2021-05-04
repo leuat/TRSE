@@ -14,6 +14,7 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     if ((!QFile::exists(filename+".asm")) && (!QFile::exists(filename+".inc")))
         return false;
 
+
     if ((QFile::exists(filename+".asm"))) {
         Util::CopyFile(filename+".asm",filename+".inc");
         if ((QFile::exists(filename+"_playerconfig.asm")))
@@ -52,8 +53,7 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     qout<<"include \""+filename+".inc\" \n";
     qout<<"include \""+filename + "_playerconfig.inc\" \n";
 
-
-    qout<<"PLY_AKG_HARDWARE_CPC = 1\n";
+    qout<<Syntax::s.m_currentSystem->getArkosTrackerSystemString();
     qout<<"include \""+player+"\" \n";
 
     file.close();

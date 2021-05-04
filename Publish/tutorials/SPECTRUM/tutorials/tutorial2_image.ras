@@ -1,0 +1,12 @@
+program ZXTest;
+@use "compression"
+@export "resources/images/trse.flf" "resources/images/trse.bin" 256
+	
+
+var
+	image:incbin("resources/images/trse.bin") compressed;
+	
+begin
+	Compression_Decompress(#image,#vram);
+	Loop(); 
+end.

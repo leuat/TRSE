@@ -272,6 +272,22 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
 
 }
 
+void ASTdispatcherZ80::LoadVariable(QSharedPointer<NodeProcedure> node)
+{
+    as->Asm("ld hl,"+node->m_procedure->m_procName);
+}
+
+void ASTdispatcherZ80::LoadVariable(QSharedPointer<NodeVar> n)
+{
+    n->Accept(this);
+}
+
+void ASTdispatcherZ80::LoadVariable(QSharedPointer<Node> n)
+{
+    n->Accept(this);
+
+}
+
 
 
 

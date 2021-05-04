@@ -41,7 +41,7 @@ LImageQImage::LImageQImage(LColorList::Type t)  : LImage(t)
 
 void LImageQImage::LoadBin(QFile& file)
 {
-    m_width = 320;
+//    m_width = 320;
 //    m_height = 200;
     m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
     unsigned char *data = new unsigned char[m_width*m_height];

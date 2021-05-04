@@ -72,6 +72,7 @@ public:
     QString CompressLZ4(QString fileName, QString outFileName);
 
 
+    virtual QString getArkosTrackerSystemString() {};
     virtual void InitSystemPreprocessors(QMap<QString, QString>& defines)  {};
     virtual QString CompressFile(QString fileName) {
         return fileName;

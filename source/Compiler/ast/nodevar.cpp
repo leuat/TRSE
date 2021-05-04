@@ -262,13 +262,17 @@ QString NodeVar::getValue8bit(Assembler *as, bool isHi) {
         else
             return "#<"+getValue(as);
     }
-
+    QString pa="";
+    QString pb="";
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80){
+        pa="(";pb=")";
+    }
     if (isHi) {
         if (getOrgType(as)==TokenType::BYTE)
             return "#0";
-       return getValue(as)+"+1";
+       return pa+getValue(as)+"+1"+pb;
     }
-    else return getValue(as);
+    else return pa+getValue(as)+pb;
 }
 
 

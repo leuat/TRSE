@@ -96,6 +96,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 26;
     if (t==VGA)
         return 27;
+    if (t==Spectrum)
+        return 28;
 
 
     return 255;
@@ -159,6 +161,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "BBC";
     if (t==VGA)
         return "VGA";
+    if (t==Spectrum)
+        return "Spectrum";
 
 
     return "Unknown image type";
@@ -224,6 +228,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return BBC;
     if (c==27)
         return VGA;
+    if (c==28)
+        return Spectrum;
 
     return NotSupported;
 
