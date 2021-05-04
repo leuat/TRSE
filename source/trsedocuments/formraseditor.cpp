@@ -158,7 +158,9 @@ void FormRasEditor::ExecutePrg(QString fileName)
         if (emu.toLower().contains("retro")) {
   //          qDebug() << "HERE";
             QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
-            params<<"-b=zx128k"<<"-j=0x"+addr<<"-l=0x"+addr;
+            int model = m_projectIniFile->getdouble("spectrum_model");
+            QStringList models = QStringList() <<"zx16k" << "zx48k"<<"zx128k";
+            params<<"-b="+models[model]<<"-j=0x"+addr<<"-l=0x"+addr;
         }
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
