@@ -114,6 +114,7 @@ public:
     QStringList m_globalList;
     QString m_gPrefix;
     QString m_currentFilename="";
+    QStringList m_extraMonCommands;
     bool m_addToGlobals = false;
     bool m_isClass = false;
     ~SymbolTable();

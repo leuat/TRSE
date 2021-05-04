@@ -1,34 +1,4 @@
-/*
-
-Multiplication / division unit testing
-
-*/
-
-program MulDiv;
-var  
-	sc, co : pointer; 			// screen and colour RAM pointers
-	text: string = "TEST    ";	// text to display when writing a test result
-	@define COLUMNWIDTH 5
-
-
-/*--------------------------------------------------------------------------------------------
-
-	VARIABLES FOR USE IN UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
-
-	v1, v2,v3,rb : byte;
-	i1, i2,ri : integer;
-	p1, p2,rp : pointer;
-
-@include "common.ras"
-
-
-
-
-/*--------------------------------------------------------------------------------------------
-
-	UNIT TESTS
+/*	UNIT TESTS
 	
 ----------------------------------------------------------------------------------------------*/
 
@@ -230,12 +200,11 @@ begin
 end;
 
 
-//--------------------------------------------------------------------------------------------
-/* MAIN PROGRAM */
+procedure MulDivTests();
 begin
 
 	// initialise everything
-	Initialise();
+	Initialise("MULDIV TESTS");
 	
 	// Mul and div
 
@@ -260,5 +229,6 @@ begin
 	IntCombConst19();
 	IntShift20();
 	IntShift21();
-	loop();
-end.
+	WaitABit();
+
+end;

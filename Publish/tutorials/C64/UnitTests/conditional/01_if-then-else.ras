@@ -1,30 +1,4 @@
-/*
 
-Summary:
-
-	Unit tests in this program are for IF conditional tests.
-
-Description:
-
-	Testing > >= < <= = <>
-	Testing unsigned Bytes
-
-*/
-program IfThenElseTest01;
-var  
-	sc, co : pointer; 			// screen and colour RAM pointers
-	text: string = "TEST    ";	// text to display when writing a test result
-	@define COLUMNWIDTH 10
-
-
-/*--------------------------------------------------------------------------------------------
-
-	VARIABLES FOR USE IN UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
-
-	v1, v2, v3, v4  : byte;
-	i1,i2,i3,i4 : integer;
 
 @include "common.ras"
 
@@ -343,10 +317,11 @@ end;
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
+procedure IfTests();
 begin
 
 	// initialise everything
-	Initialise();
+	Initialise("IF TESTS");
 	
 	// Greater than conditional tests 
 	GT1_GreaterThan_True();
@@ -408,9 +383,9 @@ begin
 	AdvancedI2();
 	AdvancedI3();
 	AdvancedI4();
+	WaitABit();
 
 //	BranchSize1();
 
 
-	loop();
-end.
+end;

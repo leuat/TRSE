@@ -1,36 +1,3 @@
-program Integers;
-/*
-
-Integer unit testing
-
-*/
-var  
-	sc, co : pointer; 			// screen and colour RAM pointers
-	text: string = "TEST    ";	// text to display when writing a test result
-	@define COLUMNWIDTH 5
-
-
-/*--------------------------------------------------------------------------------------------
-
-	VARIABLES FOR USE IN UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
-
-	v1, v2,v3,rb : byte;
-	i1, i2,ri : integer;
-	p1, p2,rp : pointer;
-	a1,a2 : array[10] of integer;
-	
-@include "common.ras"
-
-
-
-
-/*--------------------------------------------------------------------------------------------
-
-	UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
 
 // greater than
 procedure T01();
@@ -183,9 +150,10 @@ end;
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
+procedure IntegerTests();
 begin
 	// initialise everything
-	Initialise();
+	Initialise("INTEGER TESTS");
 	
 	T01();
 	T02();
@@ -204,6 +172,6 @@ begin
 	T12();
 	T13();
 	T14();
+	WaitABit();
 	
-	loop();
-end.
+end;

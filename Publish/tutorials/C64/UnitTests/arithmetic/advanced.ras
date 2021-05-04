@@ -1,36 +1,3 @@
-/*
-
-Summary:
-
-	Pointer and 16 bit addition + multiplication
-	
-*/
-program AdvancedUnitTest;
-var  
-	sc, co : pointer; 			// screen and colour RAM pointers
-	text: string = "TEST    ";	// text to display when writing a test result
-	@define COLUMNWIDTH 5
-
-
-/*--------------------------------------------------------------------------------------------
-
-	VARIABLES FOR USE IN UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
-
-	v1, v2,v3,rb : byte;
-	i1, i2,ri : integer;
-	p1, p2,rp : pointer;
-
-
-@include "common.ras"
-
-
-/*--------------------------------------------------------------------------------------------
-
-	UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
 
 procedure Advanced01();
 begin
@@ -118,13 +85,12 @@ begin
 end;
 
 
-
-//--------------------------------------------------------------------------------------------
+procedure AdvancedTests();
 /* MAIN PROGRAM */
 begin
 
 	// initialise everything
-	Initialise();
+	Initialise("ADVANCED TESTS");
 	Advanced01();
 	Advanced02();
 	Advanced03();
@@ -133,6 +99,6 @@ begin
 	Advanced06();
 	Advanced07(); 
 	Advanced08();
-	Advanced09();// fails
-	loop();
-end.
+//	Advanced09();// fails
+	WaitABit();
+end;

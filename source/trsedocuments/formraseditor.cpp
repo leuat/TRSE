@@ -591,7 +591,7 @@ void FormRasEditor::VerifyCommodoreStartChange()
     QString iniField = "ignoremessage_commodore_start_change";
     if (m_projectIniFile->getdouble("override_target_settings")==1) {
         if (!(m_projectIniFile->contains(iniField) && m_projectIniFile->getdouble(iniField)==1)) {
-            qDebug() << "HERE" << m_projectIniFile->getdouble("override_target_settings");
+          //  qDebug() << "HERE" << m_projectIniFile->getdouble("override_target_settings");
             DialogCustomWarning* d = new DialogCustomWarning();
             d->Init("Project Warning","A BASIC SYS start address has been specified in the project settings that is invalid."
 " Please use [default] instead.",iniField,m_projectIniFile.get());

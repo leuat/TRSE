@@ -8,7 +8,7 @@
 */ 
 //--------------------------------------------------------------------------------------------
 // Initialisation  
-procedure Initialise();
+procedure Initialise(zp:pointer);
 begin
 	DefineScreen();
 	SCREEN_BG_COL := BLACK;
@@ -17,6 +17,10 @@ begin
 	co := #SCREEN_COL_LOC;
 	clearscreen(32, SCREEN_CHAR_LOC);
 	clearscreen(WHITE, SCREEN_COL_LOC);
+	moveto(0,0,04);
+	printstring(zp,0,40);
+	sc+=80;
+	co+=80;
 end;
 // Print POSITIVE result of a test - ptext must be 8 characters or less
 procedure PASS();
@@ -39,10 +43,16 @@ begin
 	
 	sc := sc + @COLUMNWIDTH;
 	co := co + @COLUMNWIDTH;
+	poke(^$8000,0,0);
 end;
 //--------------------------------------------------------------------------------------------
 
-
+procedure WaitABit();
+begin
+	for v2:=0 to 4 do
+	for v1:=0 to 255 do wait(250);
+	
+end;
 
 procedure DebugValue(v:integer);
 begin

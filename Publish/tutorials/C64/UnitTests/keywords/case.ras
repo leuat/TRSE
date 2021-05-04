@@ -1,29 +1,3 @@
-/*
-
-Classes lookup and referencing unit tests
-
-*/
-
-program Case;
-var  
-	sc, co : pointer; 			// screen and colour RAM pointers
-	text: string = "T:    ";	// text to display when writing a test result
-	@define COLUMNWIDTH 5
-
-
-/*--------------------------------------------------------------------------------------------
-
-	VARIABLES FOR USE IN UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
-
-
-@include "common.ras"
-
-var
-	i,j: byte;
-	i2,j2 : integer;
-
 /*--------------------------------------------------------------------------------------------
 
 	UNIT TESTS
@@ -61,13 +35,14 @@ end;
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
+procedure CaseTests();
 begin
 
 	// initialise everything
-	Initialise();
+	Initialise("CASE");
 	
 	// Mul and div
 	Test1();
 	Test2();
-	loop();
-end.
+	WaitABit();
+end;

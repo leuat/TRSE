@@ -1026,6 +1026,11 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="addmonitorcommand") {
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="compile_akg_music") {
             Eat();
             Eat();
@@ -2469,6 +2474,14 @@ void Parser::PreprocessSingle() {
                   Util::SaveByteArray(b1, f1);
                   Util::SaveByteArray(b2, f2);
               }
+              if (m_currentToken.m_value.toLower() =="addmonitorcommand") {
+                  Eat(TokenType::PREPROCESSOR);
+                  QString cmd = m_currentToken.m_value;
+                  Eat();
+                  m_symTab->m_extraMonCommands.append(cmd);
+
+              }
+
               if (m_currentToken.m_value.toLower() =="setvalue") {
                   Eat(TokenType::PREPROCESSOR);
                   QString key = m_currentToken.m_value;
