@@ -4,6 +4,7 @@ var
 	@donotremove none
 	@donotremove none2
 	ga,gb,col,pix,x,none,y,none2 : byte=0; 
+	xi : integer=0;
 	@donotremove sp
 	pa,sp,pb,p1 : pointer;
 	j: byte;
@@ -319,7 +320,6 @@ end;
 
 /**
 Sets a pixel in mode 0 at position (x,y) with color c.
-
 **/
 procedure PutPixelMode0(x,y,col : global byte);
 begin
@@ -333,21 +333,88 @@ begin
 		ld de,Crtc_pa
 		ldi
 		ldi
-			
-		
 	");
-//	pix :=x &1;
+	// 2 pixels per byte
 	pa:=pa+x>>1;
-	
-    ga := pa[0];
-    
+
+	ga := pa[0];
+
 	if (x&1=0) then
 		ga := ga & 85 + pixtab1[col]
-  	else
+	else
 		ga := ga & 170 + pixtab2[col];
 
-	 pa[0]:=ga;
+	pa[0]:=ga;
+end;
 
+/**
+Sets a pixel in mode 1 at position (x,y) with color c.
+**/
+procedure PutPixelMode1(xi: global integer, y,col : global byte);
+begin
+	// Simply looks up the y-value and adds x
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[Crtc_y]
+		add hl,bc
+		add hl,bc
+
+		ld de,Crtc_pa
+		ldi
+		ldi
+	");
+	// 4 pixels per byte
+	pa:=pa+(xi>>2);
+
+	ga := pa[0];
+
+	x := xi; // Take the lower byte because 16-bit shifts are not supported
+	x := 3 - (x & 3);
+	j := 0;
+	if (col & 1) <> 0 then j += 16;
+	if (col & 2) <> 0 then j += 1;
+	j := j << x;
+	// col masks in the pixel's bits for this color
+	col := j;
+	// J masks out the pixel's bits
+	j := j ^ $ff;
+
+	ga := (ga & j) | col;
+
+	pa[0]:=ga;
+end;
+
+/**
+Sets a pixel in mode 2 at position (x,y) with color c.
+**/
+procedure PutPixelMode2(xi: global integer, y,col : global byte);
+begin
+	// Simply looks up the y-value and adds x
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[Crtc_y]
+		add hl,bc
+		add hl,bc
+
+		ld de,Crtc_pa
+		ldi
+		ldi
+	");
+	// 8 pixels per byte
+	pa:=pa+(xi>>3);
+
+	ga := pa[0];
+
+	x := xi; // Take the lower byte because 16-bit shifts are not supported
+	x := 7 - (x & 7);
+	j := 1 << x;
+	if (col <> 0) then col := j;
+	// J masks out the pixel's bit
+	j := j ^ $ff;
+
+	ga := (ga & j) | col;
+
+	pa[0]:=ga;
 end;
 
 /**
