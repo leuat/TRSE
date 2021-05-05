@@ -467,7 +467,6 @@ begin
 
 	*/
 
-	loop();
 	
 	// PROXIMA presents
 	InitEffect(24);  // effect lasts 24 ticks
