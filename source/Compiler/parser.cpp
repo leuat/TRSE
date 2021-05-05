@@ -1814,18 +1814,20 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
  //                   p->m_paramDecl.insert(0,paramSelf);
                 }
+
             }
 
         }
         if (m_currentToken.m_type!=TokenType::END && m_currentToken.m_type!=TokenType::PROCEDURE && m_currentToken.m_type!=TokenType::FUNCTION) {
             QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
             for (QSharedPointer<Node> n : vars) {
+
                 QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
                 QSharedPointer<NodeVarType> typ = qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode);
                 QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
                 QSharedPointer<Symbol> s = QSharedPointer<Symbol>(new Symbol(var->value, typ->value));
                 s->m_arrayType = typ->m_arrayVarType.m_type;
-                s->m_arrayTypeText = TokenType::getType(s->m_arrayType);
+                s->m_arrayTypeText = typ->m_arrayVarType.m_value;
                 s->m_flags = typ->m_flags;
                 s->m_type = typ->m_op.m_value;
 
@@ -1833,11 +1835,16 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
                 s->setSizeFromCountOfData(typ->m_declaredCount);
 //                qDebug() << s->m_name << s->m_size << s->m_arrayTypeText << s->m_type;
                 record->m_orderedByDefinition.append(var->value);
+//                n->ExecuteSym(m_symTab);
             }
             Eat(TokenType::SEMI);
         }
 
     }
+//    qDebug() << "************ PARSER Calculating size "<<name <<record->getSize();;
+
+    SymbolTable::s_classSizes[name] = record->getSize();
+//    qDebug() << "Size: " <<name<<SymbolTable::s_classSizes[name];
     m_currentClass = "";
     m_isRecord = false;
 //    m_symTab = oldTab;
@@ -3392,14 +3399,18 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
         return v;
 
-
+    bool isArray = s->m_type.toLower()=="array";
+//    qDebug() << "IS ARRAY: "<<v->value<<isArray;
     if (sv!=nullptr) { // class.property translates to class[pos_in_memory];
     {
         QString subVar = sv->value;
         // Ok we have a subvar: pm.x
-
+        bool subvarIsArray = m_symTab->m_records[type]->m_symbols[subVar]->m_type.toLower()=="array";
+//        qDebug() << "VAR "<<v->value<<subVar<< m_symTab->m_records[type]->m_symbols[subVar]->m_type <<subvarIsArray;
         int shiftInternal = m_symTab->m_records[type]->getShiftedPositionOfVariable(subVar,1);
         int dataLength = m_symTab->m_records[type]->m_symbols[subVar]->getCountingLength();
+        if (isArray && v->m_expr == nullptr)
+            ErrorHandler::e.Error("'"+v->value+"' is an array, did you forget the index? ('"+v->value+"[i]' etc)",var->m_op.m_lineNumber);
         if (v->m_expr!=nullptr) {
             if (v->m_expr->isPureNumeric())
                 shiftInternal+=v->m_expr->getValueAsInt(nullptr)*m_symTab->m_records[type]->getSize();
@@ -3445,6 +3456,9 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
             // Uh oh! We are looking up something
             // like pm.data[ index ] - make a binop of *shift* and the index.
             // pm.data[index] := pm[shift + index];
+            // Check if actually an array:
+            //qDebug() <<"END TYPE " <<type << subVar<<m_symTab->m_records[type]->m_symbols[subVar]->m_type;
+            if (subvarIsArray) dataLength=1;
             if (dataLength!=1) // uh oh we need to mul with datalength
                 sv->m_expr = CreateBinop(TokenType::MUL,sv->m_expr,CreateNumber(dataLength));
             v->m_expr = CreateBinop(TokenType::PLUS, sv->m_expr,v->m_expr);
@@ -3686,9 +3700,10 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
-//       qDebug() << "FLAGS " << s->m_flags << s->m_name << " " <<s->m_type;
+//       qDebug() << "FLAGS " << s->m_name << " " <<s->m_type<<s->m_arrayTypeText;
        if (typeNode->m_arrayVarType.m_type==TokenType::RECORD) {
            s->m_arrayTypeText = typeNode->m_arrayVarType.m_value;
+//           qDebug() << "TYPE RECORD "<<s->m_name<<  s->m_arrayTypeText;
   //         s->m_flags = typeNode->m_flags;
 
        }

@@ -106,6 +106,7 @@ public:
     QMap<QString, QString> m_extraAtSymbols;
 //    QStack<QString> m_tempPointers;
     Stack m_tempPointers;
+    static QMap<QString,int> s_classSizes;
 
 
     QStringList m_orderedByDefinition;
