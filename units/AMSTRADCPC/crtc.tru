@@ -7,7 +7,7 @@ var
 	xi : integer=0;
 	@donotremove sp
 	pa,sp,pb,p1 : pointer;
-	j: byte;
+	j,k: byte;
 
 	@donotremove y_lookup
 	y_lookup : array[200] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
@@ -371,15 +371,14 @@ begin
 	x := xi; // Take the lower byte because 16-bit shifts are not supported
 	x := 3 - (x & 3);
 	j := 0;
-	if (col & 1) <> 0 then j += 16;
-	if (col & 2) <> 0 then j += 1;
+	if (col & 1) <> 0 then j |= 16;
+	if (col & 2) <> 0 then j |= 1;
+	// j masks in the pixel's bits for this color
 	j := j << x;
-	// col masks in the pixel's bits for this color
-	col := j;
-	// J masks out the pixel's bits
-	j := j ^ $ff;
+	// k masks out the pixel's bits
+	k := ($11 << x) ^ $ff;
 
-	ga := (ga & j) | col;
+	ga := (ga & k) | j;
 
 	pa[0]:=ga;
 end;
