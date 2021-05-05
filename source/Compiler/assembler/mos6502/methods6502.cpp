@@ -1314,7 +1314,7 @@ void Methods6502::MemCpyUnroll(Assembler* as)
         as->ClearTerm();
 
 
-        if (m_node->m_params[2]->isPureNumeric()) {
+        if (m_node->m_params[2]->isPureNumeric() || m_node->m_params[2]->isReference()) {
             as->Asm("sta " +m_node->m_params[2]->getValue(as) +" +  " +Util::numToHex(i));
 
         }

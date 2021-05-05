@@ -25,9 +25,9 @@ public:
     QMap<QString,int> m_opCodes;
     QString m_opCode;
 
-    QString WashForOpcode(QString s, QString& value);
+    QString WashForOpcode(QString s, QString& value,OrgasmLine& ol);
 
-    QString Process(QString s);
+    QString Process(QString s, OrgasmLine& ol);
 };
 
 #endif // ZORGASM_H

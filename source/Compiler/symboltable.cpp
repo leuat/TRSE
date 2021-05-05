@@ -25,6 +25,8 @@
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QString Symbol::s_currentProcedure = "";
+QMap<QString,int> SymbolTable::s_classSizes;
+
 
 //QString SymbolTable::m_gPrefix = "";
 //QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
@@ -554,12 +556,13 @@ int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
 
     int cnt = 0;
     int cur = 0;
+
     while (m_orderedByDefinition[cur]!=var) {
-        cnt+= m_symbols[m_orderedByDefinition[cur]]->getCountingLength()*mul;
+        cnt+= m_symbols[m_orderedByDefinition[cur]]->m_size*mul;
         cur+=1;
 
     }
-
+ //   qDebug() << "Counting length for "<<var<<cnt;
     return cnt;
 
 }
@@ -642,7 +645,10 @@ int Symbol::getLength() {
 void Symbol::setSizeFromCountOfData(int cnt)
 {
     m_size = std::max(cnt,1);
+  //  if (getEndType().toLower()=="record")
+    //    return;
     m_size*=getCountingLength();
+    //qDebug() << "SYMBOL " <<m_name<< getCountingLength()<<cnt<<m_size<<getEndType()<<m_type<<m_arrayTypeText<<m_pointsTo;
 
 
 }
@@ -650,6 +656,11 @@ void Symbol::setSizeFromCountOfData(int cnt)
 int Symbol::getCountingLength()
 {
     QString type = getEndType();
+
+    if (SymbolTable::s_classSizes.contains(type)) {
+//        qDebug() << "SYMBOL END TYPE "<<type<<SymbolTable::s_classSizes[type];
+        return SymbolTable::s_classSizes[type];
+    }
     int l = 1;
     if (type.toLower() == "integer")
         l = 2;
@@ -675,6 +686,7 @@ int SymbolTable::getSize()
     int cnt = 0;
     for (QString s: m_orderedByDefinition) {
         cnt+= m_symbols[s]->m_size;
+//        qDebug() << "Size of "<<s <<m_symbols[s]->m_size;
     }
 
     return cnt;

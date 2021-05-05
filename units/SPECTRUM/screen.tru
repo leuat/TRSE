@@ -2,17 +2,81 @@ unit Screen;
 var
 	ytab : array[193] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
 	ytab_color : array[24] of integer=BuildTable("0x5800+i*32 ");
-	i:byte;
+	@donotremove ytab
+	@donotremove tabpow
+	tabpow: array[] of byte = (128,64,32,16,8,4,2,1);
+	i,j:byte;
+	x,y,x2,y2 : byte;
+	zp:pointer;
 
 
+	
 procedure BorderColor(_a:byte);
 begin
 	asm("
 		ld bc,#fe
-;        ld a,7
         out (c),a
 
 	");	
+end;
+
+
+procedure ClearScreen(x,y : global byte);
+begin
+	fill(#vram, x, $1800);
+	fill(#cram, y, 768);
+end;
+
+procedure SetColor(x,y,i : global byte);
+begin
+	zp:=ytab_color[y];
+	zp[x] := i;
+end;
+
+procedure PutPixel(x,y : global byte);
+begin
+	asm("
+	push de
+	push hl
+	push bc
+	push af
+	ld      hl,Screen_tabpow
+    ld      a,(Screen_x)
+    and     7       ; x mod 8
+    ld      b,0
+    ld      c,a
+    add     hl,bc
+    ld      a,(hl)
+    ld      e,a     ; e contains one bit set
+
+    ld      ix,Screen_ytab
+    ld      a,(Screen_y)
+    ld      b,0
+    ld      c,a
+    add     ix,bc
+    add     ix,bc
+    ld      a,(ix)      ; table lookup
+    ld      l,a
+    inc     ix
+    ld      a,(ix)      ; table lookup
+    ld      h,a
+
+    ld      a,(Screen_x)
+    srl     a
+    srl     a
+    srl     a           ; x/8.
+
+    or      l
+    ld      l,a         ; + x/8.
+
+    ld      a,(hl)
+    or      e           ; or = superposition mode.
+    ld      (hl),a      ; set the pixel.	
+    pop af
+	pop bc
+	pop hl
+	pop de	
+		");
 end;
 
 

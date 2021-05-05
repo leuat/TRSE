@@ -130,6 +130,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeCompound> node);
 
     void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign> node);
+    void HandleNodeAssignCopyClass(QSharedPointer<NodeAssign> node);
 
     void dispatch(QSharedPointer<NodeBuiltinMethod> node);
 

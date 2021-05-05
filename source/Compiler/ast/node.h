@@ -147,6 +147,7 @@ public:
     virtual bool isRecord(Assembler* as)  {
         return false;
     }
+    virtual bool isRecord(QSharedPointer<SymbolTable> s, QString& typ) {typ=""; return false;}
     virtual bool isClass(Assembler* as)  {
         return false;
     }

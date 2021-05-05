@@ -259,7 +259,7 @@ public:
     QSharedPointer<Node> BuiltinFunction();
     QSharedPointer<Node> Constant();
     QSharedPointer<Node> InlineAssembler();
-
+    QSharedPointer<Node> AssignStatementBetweenObjects(QSharedPointer<Node> left,QSharedPointer<Node> right);
     QStringList m_parserAppendix;
 
 

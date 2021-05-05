@@ -1,0 +1,26 @@
+program Tutorial3_graphics;
+
+@use "music"
+@use "screen"
+@use "compression"
+@use "memory"
+@use "gfx"
+
+var
+	time:byte;
+	
+procedure Update();
+begin
+	time+=1;	
+	Memory::VSync();
+	Gfx::Circle(128,96,time);		
+end;
+	
+begin
+	Screen::ClearScreen(0,7);	
+	while (true) do
+	begin
+		Update();
+	end;	
+
+end.

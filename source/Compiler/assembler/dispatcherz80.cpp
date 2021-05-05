@@ -81,6 +81,11 @@ QString ASTdispatcherZ80::getJmp(bool isOffPage) {
         return "jr";
     return "jp";
 }
+
+bool ASTdispatcherZ80::UseBlocks() {
+    return (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM);
+}
 /*
  *
  * Main method used in for loops. Will increase a counter in nodeA->m_left (from for a:=0 ...)

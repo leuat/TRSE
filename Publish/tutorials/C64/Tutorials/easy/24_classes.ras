@@ -8,47 +8,47 @@ var
 */	
 	randomTable : array[256] of byte;
 
-	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
-	
-
+	Point = class
+		x,y : byte;		
+	end;
 
 	Monster = class
-		prevx, prevy : byte; // previous position of monster
-		x,y : byte; // Current position of monster 
+		
+		prevPos,pos : Point;
 		color : byte; // Current colour of monster
 		name : array[6] of byte; // Classes supports arrays		
-
+		
 		procedure Update();
 		begin		
-			this.prevx := this.x;
-			this.prevy := this.y;
+			this.prevPos.x := this.pos.x;
+			this.prevPos.y := this.pos.y;
 			j:=randomTable[k];
 			dx:=0;
 			dy:=0;
 
-	 		if (this.x<>1) then
+	 		if (this.pos.x<>1) then
 	 			if (j=0) then dx:=-1;
-	 		if (this.x<>screen_width-2) then
+	 		if (this.pos.x<>screen_width-2) then
 				if (j=3) then dx:=1; // Wall X
 
 			k+=11;			
 			j:=randomTable[k];
 
-			if (this.y<>1) then // Wall Y
+			if (this.pos.y<>1) then // Wall Y
 				if (j=0) then dy:=-1;
 
-			if (this.y<>screen_height-1) then // Wall Y
+			if (this.pos.y<>screen_height-1) then // Wall Y
 				if (j=3) then dy:=1;
 
-			this.x+=dx;
-			this.y+=dy;
+			this.pos.x+=dx;
+			this.pos.y+=dy;
 		end;
 
 
 		procedure Render(rchar:byte);
 		begin
 			// Clear previous stuff
-			moveto(this.prevx, this.prevy,hi(screen_char_loc));
+			moveto(this.prevPos.x, this.prevPos.y,hi(screen_char_loc));
 			screenmemory[0]:=key_space;
 			screenmemory-=41;
 			screenmemory[0]:=key_space;
@@ -56,7 +56,7 @@ var
 			screenmemory[2]:=key_space;
 			
 			// Paint char!
-			moveto(this.x, this.y,hi(screen_char_loc));
+			moveto(this.pos.x, this.pos.y,hi(screen_char_loc));
 			screenmemory[0]:=rchar;
 			// Paint colors 
 			screenmemory+=$D400;
@@ -69,7 +69,7 @@ var
 			
 			
 			// Paint text
-			moveto(this.x-1, this.y-1,hi(screen_char_loc));
+			moveto(this.pos.x-1, this.pos.y-1,hi(screen_char_loc));
 			// Print name
 			for j:=0 to 3 do
 				screenmemory[j] := this.name[j];
@@ -91,15 +91,17 @@ var
 /*
 	Initialize all the monsters
 */
+
+
 procedure InitMonsters();
 begin
 	for i:=0 to no do
 	begin
 		pm:=#monsters[i];
-		pm.x:=mod(random(),screen_width); // Random x-position
-		pm.y:=mod(random(),screen_height); // Random t-position
-		pm.prevx := pm.x;
-		pm.prevy := pm.y;
+		pm.pos.x:=mod(random(),screen_width); // Random x-position
+		pm.pos.y:=mod(random(),screen_height); // Random t-position
+		pm.prevPos.x := pm.pos.x;
+		pm.prevPos.y := pm.pos.y;
 		// Produce a random name of 3 chars
 		pm.name[0] := random()/16+1;
 		pm.name[1] := random()/16+1;
@@ -139,6 +141,7 @@ end;
 
  
 begin
+	
 	// Initialize
 	screen_bg_col:=blue;
 	screen_fg_col:=blue;

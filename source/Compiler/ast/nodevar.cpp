@@ -220,6 +220,23 @@ bool NodeVar::isRecord(Assembler *as)
     return as->m_symTab->m_records.contains(t);
 }
 
+bool NodeVar::isRecord(QSharedPointer<SymbolTable> sym, QString& str)
+{
+    QSharedPointer<Symbol> s = sym->Lookup(value,m_op.m_lineNumber,true);
+    QString t = s->m_type;
+    if (t.toLower()=="address") {
+        t = s->m_arrayTypeText;
+    }
+    if (t.toLower()=="array") {
+        t = s->m_arrayTypeText;
+    }
+
+    str = t;
+    return sym->m_records.contains(t);
+
+}
+
+
 bool NodeVar::isClass(Assembler *as)
 {
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
