@@ -30,6 +30,8 @@ jobs:
       - name: Build notification
         if: failed()
         uses: adamkdean/simple-slack-notify@master
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           channel: #bugs
           text: "[GitHub Actions Notification] MacOS build failed: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
