@@ -5,8 +5,10 @@ program Tutorial9_Mandelbrot;
 @use "screen"
 var
 	// We use a integer for screen_width and screen_x to make it simpler to switch to Mode 1 or 2
-	const screen_width: integer = 255;
-	const screen_height: byte = 191;
+//	const screen_width: integer = 256;
+	//const screen_height: byte = 192;
+	const screen_width: integer = 64;
+	const screen_height: byte = 64;
 	
 	const float_size: byte = 2;
 	min_x: array[float_size] of byte;
@@ -109,7 +111,10 @@ begin
  				SmallFloat::Add(#y, #zy, #cy);
 			end;
 			if (col<>15) then
+			begin
 				Screen::PutPixel(screen_x, screen_y);
+				Screen::SetColor(screen_x, screen_y,col);
+			end;
 		end;
 	end;
 	// Now admire the result!
