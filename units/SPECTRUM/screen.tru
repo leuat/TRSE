@@ -4,7 +4,6 @@ var
 	ytab_color : array[24] of integer=BuildTable("0x5800+i*32 ");
 	@donotremove ytab
 	@donotremove tabpow
-	cytab : array[24] of integer = BuildTable("0x5800 + 32*i");	
 	tabpow: array[] of byte = (128,64,32,16,8,4,2,1);
 	i,j:byte;
 	x,y : byte;
@@ -28,31 +27,14 @@ begin
 	fill(#cram, y, 768);
 end;
 
-procedure SetColor(x,y,i : global byte) inline;
+procedure SetColor(x,y,i : global byte);
 begin
-	zp:=cytab[y];
-	zp[x] := i;
+	zp:=ytab_color[y>>3];
+	zp[x>>3] := i;
 end;
 
 procedure PutPixel(x,y : global byte);
 begin
-	/*
-	zp:=ytab[y];
-	zp += x>>3;
-	i:=pixeltab[x&7];
-	j:=pixeltabInv[x&7];
-	asm("
-		ld a,[Screen_i]
-		ld b,a
-		ld a,[Screen_j]
-		ld c,a
-		ld hl,[Screen_zp]
-		ld a,(hl)
-		and c
-		or b
-		ld (hl),a
-	");	
-	*/
 	asm("
 	ld      hl,Screen_tabpow
     ld      a,(Screen_x)
@@ -63,22 +45,7 @@ begin
     ld      a,(hl)
     ld      e,a     ; e contains one bit set
 
-;    ld      hl,Screen_tabindex
-;    ld      a,(Screen_y)
-;    ld      b,0
-;    ld      c,a
-;    add     hl,bc
-;    ld      a,(hl)      ; table lookup
-
-;    ld      h,0
-;    ld      l,a
-;    add     hl,hl
-;    add     hl,hl
-;    add     hl,hl
-;    add     hl,hl
-;    add     hl,hl       ; x32 (16 bits)
-
-     ld  ix,Screen_ytab
+    ld  ix,Screen_ytab
     ld      a,(Screen_y)
     ld      b,0
     ld      c,a
@@ -89,7 +56,6 @@ begin
     inc     ix
     ld      a,(ix)      ; table lookup
     ld      h,a
- ;   set     6,h         ; adds the screen start address (16384)
 
     ld      a,(Screen_x)
     srl     a
