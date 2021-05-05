@@ -1,0 +1,72 @@
+program Tutorial4_music;
+
+@use "music"
+@use "screen"
+@use "compression"
+@use "memory"
+
+
+//@export "resources/images/image4.flf" "resources/images/image1.bin" 256
+
+var  
+//	image : incbin("resources/images/image1.bin");
+	@donotremove music
+@export "resources/images/image12.flf" "resources/images/trse.bin" 256
+	irq : array[2] of byte;
+
+	image:incbin("resources/images/trse.bin") compressed;
+	i:byte;
+	zp:pointer;
+/*
+  How to do music: 
+    a) Download Arkos Tracker 2
+    b) Create a 3-track song
+    c) Export as AKG, type "source file", with some main filename like "mySong"
+    d) In TRSE, use the "compile_akg_music" pre-processor command to compile the music + player using the "mySong" base name
+       to a format that TRSE can recognize. Also specify the desired memory location, somewhere *after* your code.
+    e) The compiler has generated a .bin file - include this one 
+    f) Music play/init locations are automatically extracted. All you need to do is call Music::InitMusic(track) and
+       call Music::PlayMusic() on each frame.  
+
+*/	
+
+// Place music at $A000
+@compile_akg_music "resources/music/beeb" $A800
+
+	some_song : incbin("resources/music/beeb.bin",$A800);
+@donotremove dummy
+	
+	j1,j2,time : byte = 0;
+	
+
+
+procedure Update();
+begin
+	
+	Memory::VSync();
+	Screen::BorderColor(3);
+	Music_PlayMusic();
+	Screen::BorderColor(0);
+		
+	zp:=Screen::ytab[time];
+	j2+=1;
+	if (time>=191) then begin time:=0; j2:=j2<<1;end;
+	fill(zp,j2,4);		
+		
+end;
+	
+begin
+	Memory::EnableBank(4);
+	
+	Screen::ClearDefaultIRQ($FC00,#irq);
+	Music::InitMusic(#some_song,0);
+	
+	Compression_Decompress(#image,#vram);
+	j2:=%10101010;
+	while (true) do
+	begin
+		time+=1;
+		Update();
+	end;	
+
+end.

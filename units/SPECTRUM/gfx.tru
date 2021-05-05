@@ -1,0 +1,121 @@
+unit Gfx;
+@use "screen"
+var
+	@donotremove xc
+	@donotremove yc
+	@donotremove rc
+	xc,yc,rc : byte;
+	@donotremove Screen_PutPixel
+	
+procedure Circle(xc,yc,rc : global byte);
+begin
+	asm("
+
+    ;; (b,c) stores the current arc point coordinates (x,y)
+    ld      a,(Gfx_rc)
+    ld      b,a     ; x = r
+    ld      c,0     ; y = 0
+    ld      hl,0    ; error = 0 (I need 16 bits)
+
+    ld      a,(Gfx_xc)
+    ld      d,a
+    ld      a,(Gfx_yc)
+    ld      e,a     ; (d,e) contains the center coordinates (xc, yc)
+
+    ld      a,b
+    and     a
+    jr      z,outloop   ; if radius = 0, we exit
+
+loop:
+    ld      a,d
+    add     a,b
+    ld      (Screen_x),a       ; xo + x
+    ld      a,e
+    add     a,c
+    ld      (Screen_y),a       ; yo + y
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ld      a,e
+    sub     c
+    ld      (Screen_y),a       ; yo - y
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ld      a,d
+    sub     b
+    ld      (Screen_x),a       ; xo - x
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ld      a,e
+    add     a,c
+    ld      (Screen_y),a       ; yo + y
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ;; ---------------------
+
+    ld      a,d
+    add     a,c
+    ld      (Screen_x),a       ; xo + y
+    ld      a,e
+    add     a,b
+    ld      (Screen_y),a       ; yo + x
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ld      a,e
+    sub     b
+    ld      (Screen_y),a       ; yo - x
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ld      a,d
+    sub     c
+    ld      (Screen_x),a       ; xo - y
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+
+    ld      a,e
+    add     a,b
+    ld      (Screen_y),a       ; yo + x
+    call    Screen_PutPixel        ; (xo + x, yo + y)
+    ;; -----------------------
+
+    push    bc
+    ld      b,0
+    add     hl,bc
+    add     hl,bc
+    inc     hl      ; error += 1 + 2*y
+    pop     bc
+    inc     c       ; y++
+
+    push    hl
+    push    bc
+    ld      c,b
+    ld      b,0
+    scf
+    ccf                 ; clear carry flag
+    sbc     hl,bc       ; error - x
+    dec     hl
+    bit     7,h         ; is error - x <= 0 ?
+    pop     bc
+    pop     hl
+    jr      nz,skip1    ; if error - x <= 0, skip
+
+    push    bc
+    ld      c,b
+    ld      b,0
+    scf
+    ccf
+    sbc     hl,bc
+    sbc     hl,bc
+    inc     hl
+    pop     bc      ; error += 1 - 2*x
+    dec     b       ; x--
+
+skip1:
+
+    ld      a,b
+    cp      c       ; if y >= x, then exit
+    jr      nc,loop
+
+outloop:
+	");
+end;
+
+end.

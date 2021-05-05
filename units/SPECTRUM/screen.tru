@@ -6,7 +6,7 @@ var
 	@donotremove tabpow
 	tabpow: array[] of byte = (128,64,32,16,8,4,2,1);
 	i,j:byte;
-	x,y : byte;
+	x,y,x2,y2 : byte;
 	zp:pointer;
 
 
@@ -36,6 +36,10 @@ end;
 procedure PutPixel(x,y : global byte);
 begin
 	asm("
+	push de
+	push hl
+	push bc
+	push af
 	ld      hl,Screen_tabpow
     ld      a,(Screen_x)
     and     7       ; x mod 8
@@ -68,7 +72,10 @@ begin
     ld      a,(hl)
     or      e           ; or = superposition mode.
     ld      (hl),a      ; set the pixel.	
-	
+    pop af
+	pop bc
+	pop hl
+	pop de	
 		");
 end;
 

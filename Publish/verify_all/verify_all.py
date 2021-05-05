@@ -131,10 +131,10 @@ fillRasList(len(tests)-1,".")
 tests.append([ "C64/TutorialGame_Introduction", []]);
 fillRasList(len(tests)-1,".")
 tests.append([ "C64/UnitTests", ["unittests.ras"]]);
-fillRasList(len(tests)-1,"arithmetic")
-fillRasList(len(tests)-1,"conditional")
-fillRasList(len(tests)-1,"keywords")
-fillRasList(len(tests)-1,"structures")
+#fillRasList(len(tests)-1,"arithmetic")
+#fillRasList(len(tests)-1,"conditional")
+#fillRasList(len(tests)-1,"keywords")
+#fillRasList(len(tests)-1,"structures")
 
 
 # VIC 20

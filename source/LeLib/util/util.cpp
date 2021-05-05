@@ -679,6 +679,34 @@ float Util::ColorLength(QColor &c) {
     return sqrt(c.red()*c.red() + c.green()*c.green() + c.blue()*c.blue());
 }
 
+bool Util::isNumber(QString s)
+{
+    int base = 10;
+    if (s.startsWith("$")) {
+        base = 16;
+        s = s.remove("$");
+    }
+    if (s.startsWith("0x")) {
+        base = 16;
+        s = s.remove("0x");
+    }
+    if (s.startsWith("#")) {
+        base = 16;
+        s = s.remove("#");
+    }
+    if (s.startsWith("%")) {
+        base = 2;
+        s = s.remove("%");
+    }
+    if (s.startsWith("0b")) {
+        base = 2;
+        s = s.remove("0b");
+    }
+    bool ok = false;
+    int i = s.toInt(&ok,base);
+    return ok;
+}
+
 void Util::drawBox(QImage *backImage, QImage *img, int i, int j, int size, QRgb color) {
     int imageSize = img->width();
     QRgb mark = QColor(1,1,1).rgba();
