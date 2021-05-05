@@ -7,8 +7,8 @@ unit SmallFloat;
 	That's very poor precision, so don't use it to send a man on Mars.
 	Moreover, at the time of writing, handling of Nan, infinites and overflow is missing, so really, don't rely on it!
 
-  The main repository for this and the test cases are available at https://github.com/ColinPitrat/CPCMisc/tree/main/TRSE/Mandelbrot
-  Do not change this file without changing the upstream version and running the tests.
+  The test cases for this unit are available at https://github.com/ColinPitrat/CPCMisc/tree/main/TRSE/Mandelbrot
+  Do not submit changes this file without running the tests.
 
 	Lessons learnt:
  	- Having the sign with the mantissa rather than the exponent would be easier. The exponent would be aligned on a bit. Testing for 0 would be much easier.
