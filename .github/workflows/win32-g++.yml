@@ -28,7 +28,7 @@ jobs:
           make -j 2
 
       - name: Build notification
-        if: failed()
+        if: failure()
         uses: adamkdean/simple-slack-notify@master
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
