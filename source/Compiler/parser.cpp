@@ -1855,6 +1855,64 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
     return decls;
 }
 
+// Doesn't currently work. Think about it.
+
+QSharedPointer<Node> Parser::AssignStatementBetweenObjects(QSharedPointer<Node> left, QSharedPointer<Node> right)
+{
+    QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(left);
+    if (var!=nullptr  && var->m_subNode==nullptr && var->isPureObject) {
+        QString t1,t2;
+//        qDebug() << "HERE " << t2  <<var->value<<var->isRecord(m_symTab,t1)<<t1;
+        if (var->isRecord(m_symTab,t1)) {// && m_symTab->m_records[t1]->m_isClass) {
+
+            if (!right->isRecord(m_symTab,t2) || (t1!=t2))
+                ErrorHandler::e.Error("Can only assign an object of a record/class to another object of the same type",left->m_op.m_lineNumber);
+
+            QSharedPointer<NodeVar> varR = qSharedPointerDynamicCast<NodeVar>(right);
+/*
+            auto cpd = QSharedPointer<NodeCompound>(new NodeCompound(m_currentToken));
+            Token t = m_currentToken;
+            t.m_type = TokenType::ASSIGN;
+            qDebug() << "HERE2 "<<t1 << t2  <<var->value;
+            qDebug() << m_symTab->m_symbols.keys();
+            for (auto& s: m_symTab->m_records[t1]->m_symbols) {
+//                qDebug() << s->m_name;
+                QString n = s->m_name;
+              //  n = n.remove(t1+"_");
+                var->m_subNode = CreateVariable(n);
+                varR->m_subNode = CreateVariable(n);
+                var = qSharedPointerDynamicCast<NodeVar>(ApplyClassVariable(var));
+                varR = qSharedPointerDynamicCast<NodeVar>(ApplyClassVariable(varR));
+                cpd->children.append(QSharedPointer<NodeAssign>(new
+                                                                NodeAssign(var,t,varR)));
+                qDebug() << "Appending "<<n;
+
+//                left.m_ex
+//                QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(left, t, right));
+
+//                var->m_subNode
+            }
+            return cpd;
+  */
+             QVector<QSharedPointer<Node>> params;
+            left->m_op.m_isReference = true;
+            right->m_op.m_isReference = true;
+            int size = m_symTab->m_records[t1]->getSize();
+            if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
+                params<<right<<CreateNumber(0)<<left<<CreateNumber(size);
+            if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80)
+                params<<right<<left<<CreateNumber(size);
+            return QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod("memcpyunroll",params,&Syntax::s.builtInFunctions["memcpyunroll"]));
+            // guaranteed that both are the same!
+//                Node
+
+                // Doesn't currently work
+            }
+    }
+    return nullptr;
+}
+
+
 QSharedPointer<Node> Parser::AssignStatement()
 {
     QSharedPointer<Node> arrayIndex = nullptr;
@@ -1914,7 +1972,19 @@ QSharedPointer<Node> Parser::AssignStatement()
     // Regular assign
     Eat(TokenType::ASSIGN);
     QSharedPointer<Node> right = Expr();
+
+    // Test for object2 := object2;
+    /*
+     * Doesn't work. Bloody hard!
+
+    auto n = AssignStatementBetweenObjects(left,right);
+    if (n!=nullptr)
+        return n;
+    */
     QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(left, t, right));
+
+    // Test for assigning records / classes : a := b; where both are records
+
 
     // Verify that assign statement is OK
     auto s = getSymbol(left);
@@ -3393,9 +3463,25 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         return var;
 
     QSharedPointer<Symbol> s = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
+    QString t1;
 
     QString type = s->getEndType();
     auto sv = qSharedPointerDynamicCast<NodeVar>(v->m_subNode);
+
+    if (var->isRecord(m_symTab,t1) && sv==nullptr)
+        v->isPureObject = true;
+
+/*    qDebug() << "VAR " <<v->value;
+    if (sv!=nullptr)
+        qDebug() << "SVAR " <<sv->value <<sv->isRecord(m_symTab,t1) <<t1;
+*/
+    if (sv!=nullptr && sv->isRecord(m_symTab,t1)) {
+        sv->isPureObject = true;
+        v->isPureObject = true;
+//        qDebug() << "PURE ";
+  //      qDebug() << "SVAR " <<sv->value <<sv->isRecord(m_symTab,t1) <<t1;
+    }
+
     if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
         return v;
 
@@ -3409,8 +3495,14 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 //        qDebug() << "VAR "<<v->value<<subVar<< m_symTab->m_records[type]->m_symbols[subVar]->m_type <<subvarIsArray;
         int shiftInternal = m_symTab->m_records[type]->getShiftedPositionOfVariable(subVar,1);
         int dataLength = m_symTab->m_records[type]->m_symbols[subVar]->getCountingLength();
+//        if (subvarIsArray) dataLength=1;
+        if (m_symTab->m_records[type]->m_isClass)
+            dataLength = 1;
+//        qDebug() << "HERE" <<dataLength<<shiftInternal <<v->value<<subVar<<(v->m_expr==nullptr)<<(v->m_subNode==nullptr)<<subvarIsArray;
+
         if (isArray && v->m_expr == nullptr)
             ErrorHandler::e.Error("'"+v->value+"' is an array, did you forget the index? ('"+v->value+"[i]' etc)",var->m_op.m_lineNumber);
+
         if (v->m_expr!=nullptr) {
             if (v->m_expr->isPureNumeric())
                 shiftInternal+=v->m_expr->getValueAsInt(nullptr)*m_symTab->m_records[type]->getSize();
@@ -3449,6 +3541,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
                 ErrorHandler::e.Error("Class array indices not supported yet. Please use pointers.",m_currentToken.m_lineNumber);
             }
         }
+
+
         v->m_expr = CreateNumber(shiftInternal);
 
 
@@ -4216,6 +4310,7 @@ QSharedPointer<Node> Parser::InlineAssembler()
     }
     return n;
 }
+
 
 void Parser::HandleImportChar()
 {

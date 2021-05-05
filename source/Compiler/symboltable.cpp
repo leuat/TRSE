@@ -562,7 +562,7 @@ int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
         cur+=1;
 
     }
-//    qDebug() << "Counting length for "<<var<<cnt;
+ //   qDebug() << "Counting length for "<<var<<cnt;
     return cnt;
 
 }

@@ -64,9 +64,10 @@ public:
     bool isByte(Assembler* as) override;
     bool containsPointer(Assembler* as) override;
     bool isRecord(Assembler* as) override;
+    bool isRecord(QSharedPointer<SymbolTable> s, QString& str) override;
     bool isClass(Assembler* as) override;
     bool isRecordData(Assembler* as) override;
-
+    bool isPureObject = false;
     virtual bool isReference() override { return m_op.m_isReference; }
 
     void forceWord() override {
