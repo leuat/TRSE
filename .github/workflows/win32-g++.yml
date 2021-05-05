@@ -26,3 +26,10 @@ jobs:
         run: |
           qmake TRSE.pro
           make -j 2
+
+      - name: Build notification
+        if: failed()
+        uses: adamkdean/simple-slack-notify@master
+        with:
+          channel: #bugs
+          text: "[GitHub Actions Notification] MinGW build failed: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
