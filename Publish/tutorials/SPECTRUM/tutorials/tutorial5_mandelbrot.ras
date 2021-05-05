@@ -109,7 +109,7 @@ begin
  				SmallFloat::Add(#y, #zy, #cy);
 			end;
 			if (col<>15) then
-			Screen::PutPixel(screen_x, screen_y);
+				Screen::PutPixel(screen_x, screen_y);
 		end;
 	end;
 	// Now admire the result!
