@@ -1,42 +1,49 @@
-program ZXTest;
+program Pixels;
 @use "screen"
 var
-	k,l,m : byte=0;
-	t,j,la : byte=0;
-	p1:pointer;
 	
-	
-	
-	
-/*
+   i,x,y,shift,x1,y1,cnt: byte = 0; 
+   ix : integer;
+   time,t1,t2 : byte = 0;
+   // A suitable sine function (sin(t)/3)
+   sine3 : array[256] of byte = BuildTable("(Math.sin(i/(256.0)*3.14156265*2.0)*0x7F+0x7F)/2");
+   sine2 : array[256] of byte = BuildTable("(Math.sin(i/(256.0)*3.14156265*2.0)*0x7F+0x7F)");
+   p : ^byte;   
 
- Test : Proof-of-concept that the ZX Spectrum can be included in TRSE
- Please contact me if you are interested in developing the library for this computer
- 
-*/
+// Simple pixel example, no double buffering
 
-var
-//	ytab : array[192] of integer=BuildTable("0x4000 + (i&7)*256 + Math.floor(i/8)*32");
-
-// Fill some random stuff to VRAM. 
-procedure ClearScreen(v:byte);
+procedure LoopPixels();
 begin
-	for l:=0 to 192 do
+
+	x:=sine3[t1];
+	y:=sine3[t2];
+	x1:=sine2[time]>>1+x;
+	y1:=sine2[time+64+shift]>>2+y;
+	// Put that pixel!	
+	Screen::PutPixel(x1,y1);
+
+	// Some funky phase shifts
+	time+=1;
+	t1+=1;
+	t2:=t2+2;
+	if (time&211=0) then t1+=1;
+	if (time&63=0) then t2+=1;
+	if (time&31=0) then shift+=1;
+	// Clear at certain intervals
+	if (time=0) then 
 	begin
-		p1:=Screen::ytab[l];
-		fill(p1,t+l,32);
-
+		Screen::ClearScreen(0,cnt&15);
+		cnt+=1;
+		
 	end;
-	
-
 end;
 
+
+
 begin
+	Screen_BorderColor(0);
+	Screen::ClearScreen(0,0);
 	while (true) do
-	begin
-		ClearScreen(t);		
-		
-		t:=t+1;
-	end;
-	Loop(); 
+		LoopPixels();
+
 end.
