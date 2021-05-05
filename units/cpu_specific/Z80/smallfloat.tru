@@ -1,0 +1,693 @@
+unit SmallFloat;
+/**
+	SmallFloat provides 16-bits (2 bytes) floating point numbers.
+	They have 1 bit for sign, 8 bits for exponent and 7 bits for mantissa.
+	This is simpler to implement than IEEE 754 floats (32 bits - 4 bytes) because we can get out with bytes multiplication, result being on 16 bits.
+	This allows for numbers ranging from ~2^-127 to 2^127 with a precision of 8 significant binary digits, which roughly correspond to 3 decimal digits.
+	That's very poor precision, so don't use it to send a man on Mars.
+	Moreover, at the time of writing, handling of Nan, infinites and overflow is missing, so really, don't rely on it!
+
+	Lessons learnt:
+ 	- Having the sign with the mantissa rather than the exponent would be easier. The exponent would be aligned on a bit. Testing for 0 would be much easier.
+ 	- Having automated testing is _very_ important to detect regressions early whenever you touch something.
+ 	- Extracting pieces of logic (e.g integer multiplication / division routines) would have make things easier.
+ 	- Constructing from string is not very hard, should have provided it from the start!
+**/
+var
+	result, f1, f2 : pointer;
+	fromstring_f : pointer;
+	internal_f, internal_f2: array[2] of byte;
+	ten: array[2] of byte;
+	s: pointer;
+	b, negative, decimal, internal_b: byte;
+	i: integer;
+
+/**
+	Copy the value of f2 to f1.
+**/
+procedure Assign(f1, f2: global pointer);
+begin
+	f1[0] := f2[0];
+	f1[1] := f2[1];
+end;
+
+/**
+	Create a 2 bytes floating point number from a byte.
+	First argument: float to create
+	Second argument: unsigned integer value byte
+**/
+procedure FromU8(f1: global pointer, b: global byte);
+begin
+	asm("
+		ld hl, [SmallFloat_f1]
+		ld a, [SmallFloat_b]
+
+		or a
+		jr nz, smallfloat_fromu8_not_null
+
+		; Handle the 0 separately as we'll be looking for a non-zero bit
+		ld (hl),a
+		inc hl
+		ld (hl),a
+		ret
+
+smallfloat_fromu8_not_null:
+		ld b,$7F+9  ;Initial exponent
+
+smallfloat_fromu8_find_first_bit_set:
+		dec b
+		sla a
+		jr nc, smallfloat_fromu8_find_first_bit_set
+
+		; At this point, b contains the exponent, a contains the mantissa
+		; We need to:
+		;  - shift last bit of b as first bit of c
+		;  - shift sign (0) as first bit of b
+
+		ccf   ; We'll shift a 0 for the sign
+		rr b  ; Shift in the sign (0) shift out the lsb of the exponent
+		rra   ; Shift the lsb of the exponent into the mantissa
+		ld (hl),a
+		inc hl
+		ld (hl),b
+
+		ret
+	");
+end;
+
+/**
+	Create a 2 bytes floating point number from an integer.
+	First argument: float to create
+	Second argument: unsigned integer
+**/
+procedure FromU16(f1: global pointer, i: global integer);
+begin
+	asm("
+		ld hl, [SmallFloat_i]
+		ex de, hl
+		ld hl, [SmallFloat_f1]
+
+		ld a, d
+		cp 0
+		jr nz, smallfloat_fromu16_not_null
+		ld a, e
+		cp 0
+		jr nz, smallfloat_fromu16_not_null
+
+		; Handle the 0 separately as we'll be looking for a non-zero bit
+		ld (hl), 0
+		inc hl
+		ld (hl), 0
+		ret
+
+smallfloat_fromu16_not_null:
+		ld b,$7F+17  ;Initial exponent
+
+smallfloat_fromu16_find_first_bit_set:
+		dec b
+		rl e
+		rl d
+		jr nc, smallfloat_fromu16_find_first_bit_set
+
+		; At this point, b contains the exponent, d contains the mantissa
+		; We need to:
+		;  - shift last bit of b as first bit of d
+		;  - shift sign (0) as first bit of b
+
+		ccf   ; We'll shift a 0 for the sign
+		rr b  ; Shift in the sign (0) shift out the lsb of the exponent
+		rr d   ; Shift the lsb of the exponent into the mantissa
+		ld (hl),d
+		inc hl
+		ld (hl),b
+
+		ret
+	");
+end;
+
+/**
+	Switch the sign of a float number.
+	First argument: float to negate
+**/
+procedure Neg(f1: global pointer);
+begin
+	asm("
+		; We just need to flip the sign, which is the hsb of the high byte
+		ld ix, [SmallFloat_f1]
+		ld a, (ix+1)
+		xor $80
+		ld (ix+1), a
+	");
+end;
+
+/**
+	Compare f1 with f2 and returns:
+ 	- -1 if f1 < f2
+ 	- 0 if f1 == f2
+ 	- 1 if f1 > f2
+**/
+function Compare(f1, f2: global pointer):byte;
+begin
+	asm("
+		ld ix, [SmallFloat_f1]
+		ld iy, [SmallFloat_f2]
+
+		; Handle special case of 0 (0 == -0)
+		ld a, (ix)
+		rla
+		ld a, (ix+1)
+		rla
+		cp 0
+		jr nz, smallfloat_compare_nonzero
+		ld a, (iy)
+		rla
+		ld a, (iy+1)
+		rla
+		cp 0
+		jr z, smallfloat_compare_equal
+
+smallfloat_compare_nonzero:
+		; Compare signs
+		ld a, (ix+1)
+		and $80
+		ld b, a
+		ld a, (iy+1)
+		and $80
+		cp b
+		jr z, smallfloat_compare_same_signs
+		jr c, smallfloat_compare_lower
+		jr smallfloat_compare_greater
+
+smallfloat_compare_same_signs:
+		; The sign is in A. Store it in H for later.
+		ld h, a
+		; Compare the 7 hsb of the exponent (just ignore the sign, it's the same)
+		ld a, (ix+1)
+		ld b, a
+		ld a, (iy+1)
+		cp b
+		jr z, smallfloat_compare_exponents_equal
+		jr c, smallfloat_compare_abs_greater
+		jr smallfloat_compare_abs_lower
+
+		; This is actually only the 7 hgb of the exponent that are equals, compare the 8th bit at the same time as the mantissa
+smallfloat_compare_exponents_equal:
+		ld a, (ix)
+		ld b, a
+		ld a, (iy)
+		cp b
+		jr z, smallfloat_compare_equal
+		jr c, smallfloat_compare_abs_greater
+		jr smallfloat_compare_abs_lower
+
+; f1 is smaller than f2 if they are positives
+smallfloat_compare_abs_lower:
+		ld a, h
+		cp 0
+		jr nz,smallfloat_compare_greater
+smallfloat_compare_lower:
+		ld a, $ff
+		ld [SmallFloat_b], a
+		jr smallfloat_compare_finished
+
+smallfloat_compare_equal:
+		ld a, 0
+		ld [SmallFloat_b], a
+		jr smallfloat_compare_finished
+
+; f1 is bigger than f2 if they are positives
+smallfloat_compare_abs_greater:
+		ld a, h
+		cp 0
+		jr nz,smallfloat_compare_lower
+smallfloat_compare_greater:
+		ld a, 1
+		ld [SmallFloat_b], a
+		jr smallfloat_compare_finished
+
+smallfloat_compare_finished:
+	");
+	Compare := b;
+end;
+
+/**
+	Add two floats f1 and f2 and put the result in the first argument.
+	Note: Result must not be the same float as f1 or f2.
+	Overflow, underflow, Nan and infinities are not well handled (yet?).
+**/
+procedure Add(result, f1, f2: global pointer);
+begin
+	asm("
+		ld iy, [SmallFloat_result]
+
+ 		; Load exponents and compare them
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		rla  ; Put hsb in carry
+		ld a, (ix+1)
+		rla
+		cp 0
+		jp z, smallfloat_add_f2_zero
+		ld h, a  ; We now have the biased exponent of f2 in H
+
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		rla  ; Put hsb in carry
+		ld a, (ix+1)
+		rla
+		cp 0
+		jp z, smallfloat_add_f1_zero
+		ld d, a  ; We now have the biased exponent of f1 in D
+
+		cp h
+		jr c, smallfloat_add_exchange      ; A (exp(f1)) < H (exp(f2))
+		jr nz, smallfloat_add_no_exchange  ; A (exp(f1)) > H (exp(f2))
+
+		; Exponents are equals, compare mantissas
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		rla ; Remove exponent bit
+		ld l, a
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		rla ; Remove exponent bit
+		ld e, a
+		cp l
+		jr nc, smallfloat_add_no_exchange  ; |f1| >= |f2|
+
+smallfloat_add_exchange:
+		; |f1| < |f2| so load f2 in the result, f1 in IX
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		ld (iy), a
+		ld a, (ix+1)
+		ld (iy+1), a
+		ld ix, [SmallFloat_f1]
+		; Exchange H and D so that H contains the smaller float's exponent
+		ex de, hl
+		jr smallfloat_add_exchange_done
+
+smallfloat_add_no_exchange:
+		; |f1| >= |f2|, we load f1 in the result, f2 in IX
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		ld (iy), a
+		ld a, (ix+1)
+		ld (iy+1), a
+		ld ix, [SmallFloat_f2]
+
+smallfloat_add_exchange_done:
+		; Load mantissas in L (small float) and E (big float)
+		ld a, (ix)
+		or $80  ; Add the implicit 1 at the beginning of the mantissa
+		ld l, a
+		ld a, (iy)
+		or $80  ; Add the implicit 1 at the beginning of the mantissa
+		ld e, a
+
+		; Increment the smaller float's exponent and shift its mantissa until exponents are equals
+		ld a, h
+smallfloat_add_shift_exponent_loop:
+		cp d
+		jr nc, smallfloat_add_shift_exponent_loop_end
+		inc a
+		srl l
+		jr z, smallfloat_add_shift_exponent_loop_end  ; Shortcut if adding insignificant number
+		jr smallfloat_add_shift_exponent_loop
+
+		; STATE: H has smaller's float exponent
+		;        D has bigger's float exponent
+		;        L has smaller's float mantissa shifted
+		;        E has bigger's float mantissa
+		;        IY points to result set to bigger number in absolute value
+		;        IX points to smaller number in absolute value
+
+smallfloat_add_shift_exponent_loop_end:
+
+		; Compare the signs to know if we should add or substract
+		ld a, (ix+1)
+		and $80
+		ld b, a
+		ld a, (iy+1)
+		and $80
+		xor b
+		jr z, smallfloat_add_same_sign
+
+		; Opposite signs, we must substract
+		ld a, e
+		sub l
+		jr z, smallfloat_add_result_zero
+		; Need to shift A left until expulsing a 1 and adapt the exponent
+		inc d     ; Increment the exponent because we'll decrement it one too many time in the loop
+smallfloat_add_sub_shift_exponent_loop:
+		dec d
+		sla a
+		jr nc, smallfloat_add_sub_shift_exponent_loop
+		; Put back exponent lsb in mantissa's byte hsb
+		rr d
+		rr a
+		; Restore sign
+		ld c, a
+		ld a, (iy+1)
+		and $80
+		res 7, d
+		or d
+		; Write back result
+		ld (iy+1), a
+		ld (iy), c
+		jr smallfloat_add_finished
+
+smallfloat_add_same_sign:
+		ld a, e
+		add a, l
+		jr nc, smallfloat_add_no_overflow
+		; TODO(ColinPitrat): Handle exponent overflow
+		; The addition made the mantissa overflow. The hsb is 'lost' in carry.
+		; Adjust exponent and move its lsb into the low byte.
+		inc d     ; Account for the overflow
+		rr d
+		rr a
+		; Restore sign
+		ld c, a
+		ld a, (iy+1)
+		and $80
+		res 7, d
+		or d
+		; Write back result
+		ld (iy+1), a
+		ld (iy), c
+		jr smallfloat_add_finished
+
+smallfloat_add_no_overflow:
+		; The addition didn't make the mantissa overflow.
+		; Replace the hsb with the lsb of the exponent.
+		and $7F    ; Reset hsb (not part of mantissa)
+		ld c, a    ; Temporarily save mantissa in c
+		ld a, (iy)
+		and $80    ; Keep only hsb
+		or c       ; Mix exponent lsb and mantissa
+		ld (iy), a ; Write back result
+		; Exponent of 'bigger' float not touched, no need to restore sign
+		jr smallfloat_add_finished
+
+smallfloat_add_f1_zero:
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		ld (iy), a
+		ld a, (ix+1)
+		ld (iy+1), a
+		jr smallfloat_add_finished
+
+smallfloat_add_f2_zero:
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		ld (iy), a
+		ld a, (ix+1)
+		ld (iy+1), a
+		jr smallfloat_add_finished
+
+smallfloat_add_result_zero:
+		ld (iy), 0
+		ld (iy+1), 0
+		jr smallfloat_add_finished
+
+smallfloat_add_finished:
+	");
+end;
+
+/**
+	Substract the float f2 from f1 and put the result in the first argument.
+	Note: Result must not be the same float as f1 or f2.
+	Overflow, underflow, Nan and infinities are not well handled (yet?).
+**/
+procedure Substract(substract_result, substract_f1, substract_f2: pointer);
+begin
+		Assign(#internal_f, substract_f2);
+		Neg(#internal_f);
+		Add(substract_result, substract_f1, #internal_f);
+end;
+
+/**
+	Multiply two floats f1 and f2 and put the result in the first argument.
+	Overflow, underflow, Nan and infinities are not well handled (yet?).
+**/
+procedure Multiply(result, f1, f2: global pointer);
+begin
+	asm("
+		ld iy, [SmallFloat_result]
+
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		or $80  ; Add the implicit 1 at the beginning of the mantissa
+		ld h, a
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		or $80  ; Add the implicit 1 at the beginning of the mantissa
+		ld e, a
+
+		; Multiply H and E, 16-bits result in HL
+smallfloat_multiply_mantissa:
+		ld d,0
+		ld l,d
+		ld b,8
+smallfloat_multiply_mantissa_loop:
+		rl l
+		rl h
+		jr nc, smallfloat_multiply_mantissa_noadd
+		add hl,de
+smallfloat_multiply_mantissa_noadd:
+		djnz smallfloat_multiply_mantissa_loop
+
+		; Shift HL until getting rid of the first 1.
+		; By definition of the mantissa it's either the first or second bit.
+		; B contains the number of shifts, to be substracted from the exponents sum.
+		ld b, 0
+		ccf    ; Not really needed, we'll drop L anyway
+		rl l
+		rl h
+		jr c, smallfloat_fromu8_hlready
+		inc b
+		ccf    ; Not really needed, we'll drop L anyway
+		rl l
+		rl h
+smallfloat_fromu8_hlready:
+		; H now contains the mantissa but still needs to be shifted one right with the lsb of the exponent inserted in first position.
+
+		; Now add exponents and substract b
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		rla  ; Put hsb in carry
+		ld a, (ix+1)
+		rla
+		cp 0
+		jr z, smallfloat_multiply_result_zero
+		sub $7F  ; We now have the exponent
+		ld c, a
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		rla  ; Put hsb in carry
+		ld a, (ix+1)
+		rla
+		cp 0
+		jr z, smallfloat_multiply_result_zero
+		sub $7f  ; We now have the exponent
+		add a, c
+		; TODO(ColinPitrat): Handle overflow (infinity). Complex case: sub b should be done first in some cases, second in others
+		sub b
+		add a, $7f
+		rra   ; Put lsb in carry
+		rr h
+		ld (iy), h
+		ld (iy+1), a
+
+		; Last but not least, handle the signs
+		ld ix, [SmallFloat_f1]
+		ld a, (ix+1)
+		ld ix, [SmallFloat_f2]
+		xor (ix+1)
+		bit 7,a
+		jr z, smallfloat_multiply_positive
+		set 7, (iy+1)
+		jr smallfloat_multiply_finished
+smallfloat_multiply_positive:
+		res 7, (iy+1)
+		jr smallfloat_multiply_finished
+
+smallfloat_multiply_result_zero:
+		ld (iy), 0
+		ld (iy+1), 0
+		jr smallfloat_multiply_finished
+
+smallfloat_multiply_finished:
+	");
+end;
+
+/**
+	Divide a float f1 by another f2 and put the result in the first argument.
+	Overflow, underflow, Nan and infinities are not well handled (yet?).
+**/
+procedure Divide(result, f1, f2: global pointer);
+begin
+	asm("
+		ld iy, [SmallFloat_result]
+
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		or $80  ; Add the implicit 1 at the beginning of the mantissa
+		ld b, a
+		ld c, 0
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		or $80  ; Add the implicit 1 at the beginning of the mantissa
+		ld d, 0
+		ld e, a
+
+		; Divide 16-bit value BC by DE, result in BC (rest in HL, unused - TODO(ColinPitrat): we could use it to round)
+		; Because both mantissa have the hsb to 1, the division can either:
+		;  - have only the lsb set in B
+		;  - have no bit set in B in which case hsb of C will be set: a left shift is needed
+		; After that, we'll keep just C and have to shift it right and integrate the exponent bit later.
+smallfloat_divide_mantissa:
+		ld hl,0
+		ld a,b
+		ld b,8
+smallfloat_divide_mantissa_loop1:
+		rla
+		adc hl,hl
+		sbc hl,de
+		jr nc, smallfloat_divide_mantissa_noadd1
+		add hl,de
+smallfloat_divide_mantissa_noadd1:
+		djnz smallfloat_divide_mantissa_loop1
+		rla
+		cpl
+		ld b,a
+		ld a,c
+		ld c,b
+		ld b,8
+smallfloat_divide_mantissa_loop2:
+		rla
+		adc hl,hl
+		sbc hl,de
+		jr nc,smallfloat_divide_mantissa_noadd2
+		add hl,de
+smallfloat_divide_mantissa_noadd2:
+		djnz smallfloat_divide_mantissa_loop2
+		rla
+		cpl
+		ld b,c
+		ld c,a
+
+		ld d, 1 ; Initialize number of shifts needed
+		ld a, b
+
+		; Adjust mantissa to remove hsb and keep number of shifts done in D to adjust exponent later
+		cp $0
+		jr nz, smallfloat_divide_mantissa_adjusted
+		sll c
+		dec d
+
+smallfloat_divide_mantissa_adjusted:
+		ld h, c
+		; H now contains the mantissa but still needs to be shifted one right with the lsb of the exponent inserted in first position.
+
+		; Now diff exponents and substract D
+		ld ix, [SmallFloat_f2]
+		ld a, (ix)
+		rla  ; Put hsb in carry
+		ld a, (ix+1)
+		rla
+		; TODO(ColinPitrat): Handle divide by 0
+		sub $7f  ; We now have the exponent
+		ld c, a
+		ld ix, [SmallFloat_f1]
+		ld a, (ix)
+		rla  ; Put hsb in carry
+		ld a, (ix+1)
+		rla
+		cp 0
+		jr z, smallfloat_divide_result_zero
+		sub $7f  ; We now have the exponent adjusted for d value
+		sub c
+		; TODO(ColinPitrat): Handle overflow
+		add a, d
+		add a, $7f
+		rra   ; Put lsb in carry
+		rr h
+
+		ld (iy), h
+		ld (iy+1), a
+
+		; Last but not least, handle the signs
+		ld ix, [SmallFloat_f1]
+		ld a, (ix+1)
+		ld ix, [SmallFloat_f2]
+		xor (ix+1)
+		bit 7,a
+		jr z, smallfloat_divide_positive
+		set 7, (iy+1)
+		jr smallfloat_divide_finished
+smallfloat_divide_positive:
+		res 7, (iy+1)
+		jr smallfloat_divide_finished
+
+smallfloat_divide_result_zero:
+		ld (iy), 0
+		ld (iy+1), 0
+		jr smallfloat_divide_finished
+
+smallfloat_divide_finished:
+	");
+end;
+
+/**
+	Create a 2 bytes floating point number from a string.
+	First argument: float to create
+	Second argument: string representing the initial value (null-terminated)
+	Stops on the first invalid char (valid char are digits + a single . and optionally a - as first char).
+	BUG: This produces suboptimal values (e.g 65500 will give 64768, because it'll try to add 500 to 65000 which is lower than the rounding error of 512)
+**/
+procedure FromString(fromstring_f, s: global pointer);
+begin
+	FromU8(#ten, 10);
+	FromU8(fromstring_f, 0);
+	negative := 0;
+	decimal := 0;
+	if s^ = $2d then
+	begin
+		negative := 1;
+		s += 1;
+	end;
+	while s^ <> 0 do
+	begin
+		if s^ = $2e then
+		begin
+			decimal := 1;
+			s += 1;
+			continue;
+		end;
+		if (s^ < 48 or s > 57) then break;
+		internal_b := s^ - 48;
+		s += 1;
+		FromU8(#internal_f, internal_b);
+		if decimal <> 0 then
+		begin
+			for b := 0 to decimal do
+			begin
+				Divide(#internal_f2, #internal_f, #ten);
+				Assign(#internal_f, #internal_f2);
+			end;
+			Assign(#internal_f2, fromstring_f);
+			Add(fromstring_f, #internal_f2, #internal_f);
+			decimal += 1;
+		end
+		else
+		begin
+			Multiply(#internal_f2, fromstring_f, #ten);
+			Add(fromstring_f, #internal_f2, #internal_f);
+		end;
+	end;
+	if negative <> 0 then Neg(fromstring_f);
+end;
+
+end.
