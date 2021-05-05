@@ -7,8 +7,12 @@ var
 	xc,yc,rc : byte;
 	@donotremove Screen_PutPixel
 	
+
+
+
 procedure Circle(xc,yc,rc : global byte);
 begin
+	
 	asm("
 
     ;; (b,c) stores the current arc point coordinates (x,y)
@@ -116,6 +120,7 @@ skip1:
 
 outloop:
 	");
+	
+	
 end;
-
 end.

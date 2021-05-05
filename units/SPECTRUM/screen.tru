@@ -29,8 +29,8 @@ end;
 
 procedure SetColor(x,y,i : global byte);
 begin
-	zp:=ytab_color[y>>3];
-	zp[x>>3] := i;
+	zp:=ytab_color[y];
+	zp[x] := i;
 end;
 
 procedure PutPixel(x,y : global byte);
@@ -49,7 +49,7 @@ begin
     ld      a,(hl)
     ld      e,a     ; e contains one bit set
 
-    ld  ix,Screen_ytab
+    ld      ix,Screen_ytab
     ld      a,(Screen_y)
     ld      b,0
     ld      c,a

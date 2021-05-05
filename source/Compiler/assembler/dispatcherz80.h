@@ -76,7 +76,7 @@ public:
 
     void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
     QString getJmp(bool isOffPage) override;
-    bool UseBlocks() override { return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY ; }
+    bool UseBlocks() override;
 
 
 //    void dispatch(QSharedPointer<NodeConditional> node) override;

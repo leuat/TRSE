@@ -1385,6 +1385,7 @@ void Parser::HandlePreprocessorInParsing()
         Node::m_staticBlockInfo.m_blockPos = pb.pos;
         Node::m_staticBlockInfo.m_blockName = name;
         m_pass = i;
+
       //  if (i == PASS_CODE)
     //    qDebug() << "HandleCurrent StartBlock " << Node::m_staticBlockInfo.m_blockPos;
 

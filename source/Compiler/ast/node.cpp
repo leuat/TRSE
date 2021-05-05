@@ -95,13 +95,13 @@ int Node::MaintainBlocks(Assembler* as)
         return 0;
     }
     if (as->m_currentBlock==nullptr) {
-        //qDebug() << "Starting block at " << m_blockInfo.m_blockPos ;
+        qDebug() << "Starting block at " << m_blockInfo.m_blockPos ;
         as->StartMemoryBlock(m_blockInfo.m_blockPos);
         return 1;
     }
     if (as->m_currentBlock!=nullptr) {
         if (m_blockInfo.m_blockPos!=as->m_currentBlock->m_pos) {
-          //  qDebug() << "Switchingblocks at " << m_blockInfo.m_blockPos << as->m_currentBlock->m_pos ;
+            qDebug() << "Switchingblocks at " << m_blockInfo.m_blockPos << as->m_currentBlock->m_pos ;
             as->StartMemoryBlock(m_blockInfo.m_blockPos);
             return 3;
         }

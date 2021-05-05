@@ -7,13 +7,13 @@ program Tutorial3_graphics;
 @use "gfx"
 
 var
-	x,y,time:byte;
-
+	time:byte;
+	
 procedure Update();
 begin
 	time+=1;	
 	Memory::VSync();
-	Gfx::Circle(127,96,60);		
+	Gfx::Circle(128,96,time);		
 end;
 	
 begin

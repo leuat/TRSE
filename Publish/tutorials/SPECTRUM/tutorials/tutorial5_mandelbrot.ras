@@ -1,8 +1,8 @@
-program Tutorial9_Mandelbrot;
-// Change to video.scr_tube=0 and uncomment SetColorPalette below (line 85) for the color version
-// You can also draw in mode 1 or 2 by changing SetMode(X), PutPixelModeX and adapting col (line 127 and 139)
+program Tutorial5_Mandelbrot;
+
 @use "smallfloat"
 @use "screen"
+
 var
 	// We use a integer for screen_width and screen_x to make it simpler to switch to Mode 1 or 2
 	const screen_width: integer = 256;
@@ -111,7 +111,7 @@ begin
 			if (col<>15) then
 			begin
 				Screen::PutPixel(screen_x, screen_y);
-				Screen::SetColor(screen_x, screen_y,col);
+				Screen::SetColor(screen_x>>3, screen_y>>3,col);
 			end;
 		end;
 	end;
