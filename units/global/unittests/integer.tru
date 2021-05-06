@@ -1,0 +1,179 @@
+Unit IntegerTest;
+var
+
+// greater than
+procedure T01();
+begin
+	Vars::i1:=5000;
+	Vars::i2:=5000;
+	Vars::text := "01:"; if Vars::i1>=Vars::i2 then Common::PASS() else Common::FAIL();
+end;
+
+// equals than
+procedure T02();
+begin
+	Vars::i1:=5000;
+	Vars::i2:=5000;
+	Vars::text := "02:"; if Vars::i1=Vars::i2 then Common::PASS() else Common::FAIL();
+end;
+
+// greater equals than
+procedure T03();
+begin
+	Vars::i1:=5000;
+	Vars::i2:=5000;
+	Vars::text := "03:"; if Vars::i1>Vars::i2 then Common::FAIL() else Common::PASS();
+end;
+
+// less than
+procedure T04();
+begin
+	Vars::i1:=5000;
+	Vars::i2:=5000;
+	Vars::text := "04:"; if Vars::i1<Vars::i2 then Common::FAIL() else Common::PASS();
+end;
+
+
+// less or equals than
+procedure T05();
+begin
+	Vars::i1:=5000;
+	Vars::i2:=5000;
+	Vars::text := "05:"; if Vars::i1<=Vars::i2 then Common::PASS() else Common::FAIL();
+end;
+
+// less or equals than
+procedure T06();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=5000;
+	Vars::text := "06:"; if Vars::i1<=Vars::i2 then Common::PASS() else Common::FAIL();
+end;
+
+
+// less than
+procedure T066();
+begin
+	Vars::i1:=$2000;
+	asm(";wtf");
+	Vars::text := "07:"; if (Vars::i1<>$2001) then Common::PASS() else Common::FAIL();
+end;
+
+
+// plus Simple
+procedure T07();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=2000;
+	Vars::i1:=Vars::i1 + Vars::i2;
+	Vars::text := "08:"; if Vars::i1=3000 then Common::PASS() else Common::FAIL();
+end;
+
+// minus Simple
+procedure T08();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=2000;
+	Vars::i1:=Vars::i1 - Vars::i2;
+	Vars::text := "09:"; if Vars::i1=64536 then Common::PASS() else Common::FAIL();
+end;
+
+// plus semi advanced
+procedure T09();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=2000;
+	Vars::i1:=Vars::i1*2 + Vars::i2;
+	Vars::text := "10:"; if Vars::i1=4000 then Common::PASS() else Common::FAIL();
+end;
+
+// minus semi advanced
+procedure T10();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=4000;
+	Vars::i1:=Vars::i1*2 - Vars::i2;
+	Vars::text := "11:"; if Vars::i1=63536 then Common::PASS() else Common::FAIL();
+end;
+
+
+// plus advanced
+procedure T11();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=4000;
+	Vars::i1:=Vars::i1*3 + Vars::i2*2+ 500;
+	Vars::text := "12:"; if Vars::i1=11500 then Common::PASS() else Common::FAIL();
+end;
+
+
+// minus advanced
+procedure T12();
+begin
+	Vars::i1:=1000;
+	Vars::i2:=4000;
+	Vars::i1:=Vars::i1*3 - Vars::i2*2+  1000 - Vars::i2;
+	Vars::text := "13:"; if Vars::i1=57536 then Common::PASS() else Common::FAIL();
+end;
+
+
+
+// Arrays
+procedure T13();
+begin
+	Vars::a1[1]:=1000;
+	Vars::a2[2]:=10000;
+	Vars::v1:=1;
+	Vars::v2:=0;
+	asm(";prob");
+	//Vars::a2[Vars::v2]:=Vars::a1[Vars::v1]+Vars::a2[Vars::v1+1];
+	asm(" ldy #0");
+	asm(" ldy #0");
+	asm(" ldy #0");
+	asm(" ldy #0");
+	Vars::a2[Vars::v2]:=Vars::a1[Vars::v1] + Vars::a2[Vars::v1+1];
+	Vars::i1:=Vars::a2[Vars::v2];
+	Vars::text := "13:"; if Vars::i1=11000 then Common::PASS() else Common::FAIL();
+//	DebugValue(Vars::i1);
+end;
+
+// Arrays 2
+procedure T14();
+begin
+	Vars::a1[1]:=10000;
+	Vars::a2[1]:=1000;
+	Vars::v1:=1;
+	Vars::v2:=0;
+	Vars::a2[Vars::v2]:=Vars::a1[2*Vars::v1-1]*2-Vars::a2[Vars::v1]*3;
+	Vars::i1:=Vars::a2[Vars::v2];
+	Vars::text := "14:"; if Vars::i1=17000 then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure Exec();
+begin
+	// initialise everything
+	Common::Initialise("INTEGER TESTS");
+	
+	T01();
+	T02();
+	T03();
+	T04();
+	T05();
+	T06();
+
+	T066();
+	T07();
+	T08();
+	T09();
+	T10();
+	
+	T11();
+	T12();
+	T13();
+	T14();
+	Common::WaitABit();
+	
+end;
+
+end.

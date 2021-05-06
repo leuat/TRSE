@@ -208,7 +208,7 @@ void SymbolTable::Initialize()
 void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 {
     for (QString k : other->m_records.keys()) {
-        if (m_records.contains(k))
+        if (m_records.contains(k) && m_externalRecords.contains(k))
             ErrorHandler::e.Error("Record already defined : '"+k+"'");
         m_records[k] = other->m_records[k];
     }

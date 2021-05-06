@@ -2167,6 +2167,10 @@ bool Parser::isRecord(Token &t)
 
 bool Parser::isClass(Token &t)
 {
+/*    qDebug() <<t.m_value;
+    if (m_symTab->m_records.contains(t.m_value))
+        qDebug() <<t.m_value <<isRecord(t)<<m_symTab->m_records[t.m_value]->m_isClass;
+*/
     return isRecord(t) && m_symTab->m_records[t.m_value]->m_isClass;
 
 }
@@ -3481,6 +3485,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 //        qDebug() << "PURE ";
   //      qDebug() << "SVAR " <<sv->value <<sv->isRecord(m_symTab,t1) <<t1;
     }
+    qDebug() << "PARSER END TYPE "<< m_currentFileShort<<s->m_name <<var->isRecord(m_symTab,t1) << type <<m_symTab->m_records.contains(type);
 
     if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
         return v;
@@ -4124,6 +4129,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         if (m_currentToken.m_type == TokenType::OF) {
             Eat();
             TokenType::Type typ = m_currentToken.m_type;
+            m_currentToken.m_value = m_symTab->m_gPrefix+ m_currentToken.m_value;
             QString val = m_currentToken.m_value;
             if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG  || isClass(m_currentToken))) {
                 ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs and classes.",m_currentToken.m_lineNumber);
@@ -5224,6 +5230,8 @@ void Parser::HandleUseTPU(QString fileName)
 
 
     p->m_symTab->m_symbols = m_symTab->m_symbols;
+    p->m_symTab->m_records = m_symTab->m_records;
+    p->m_symTab->m_externalRecords = m_symTab->m_records.keys();
 
 //    qDebug() << "Copying over: " << m_procedures.keys();
     p->m_procedures = m_procedures;

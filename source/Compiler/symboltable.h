@@ -116,6 +116,7 @@ public:
     QString m_gPrefix;
     QString m_currentFilename="";
     QStringList m_extraMonCommands;
+    QStringList m_externalRecords; // used for keeping track of merging records from units
     bool m_addToGlobals = false;
     bool m_isClass = false;
     ~SymbolTable();

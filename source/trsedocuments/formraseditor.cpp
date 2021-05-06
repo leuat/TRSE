@@ -156,7 +156,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM) {
         emu = m_iniFile->getString("spectrum_emulator");
         if (emu.toLower().contains("retro")) {
-  //          qDebug() << "HERE";
             QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
             int model = m_projectIniFile->getdouble("spectrum_model");
             QStringList models = QStringList() <<"zx16k" << "zx48k"<<"zx128k";

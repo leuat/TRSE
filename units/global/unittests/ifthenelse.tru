@@ -1,0 +1,393 @@
+Unit IfThenElse;
+var
+
+/*--------------------------------------------------------------------------------------------
+
+	UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+// when Vars::v1 is greater than Vars::v2
+procedure GT1_GreaterThan_True();
+begin
+	Vars::v1 := 100; Vars::v2 := 50;
+	Vars::text := "   GT 1:"; if Vars::v1 > Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure GT2_GreaterThan_False();
+begin
+	Vars::v1 := 10; Vars::v2 := 50;
+	Vars::text := "   GT 2:"; if Vars::v1 > Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure GT3_GreaterThan_False();
+begin
+	Vars::v1 := 50; Vars::v2 := 50;
+	Vars::text := "   GT 3:"; if Vars::v1 > Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure GT4_GreaterThan_False();
+begin
+	Vars::v1 := 0; Vars::v2 := 255;
+	Vars::text := "   GT 4:"; if Vars::v1 > Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure GT5_GreaterThan_True();
+begin
+	Vars::v1 := 255; Vars::v2 := 0;
+	Vars::text := "   GT 5:"; if Vars::v1 > Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure GTE1_GreaterEqual_True();
+begin
+	Vars::v1 := 51; Vars::v2 := 50;
+	Vars::text := "  GTE 1:"; if Vars::v1 >= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure GTE2_GreaterThan_False();
+begin
+	Vars::v1 := 49; Vars::v2 := 50;
+	Vars::text := "  GTE 2:"; if Vars::v1 >= Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure GTE3_GreaterThan_True();
+begin
+	Vars::v1 := 50; Vars::v2 := 50;
+	Vars::text := "  GTE 3:"; if Vars::v1 >= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure GTE4_GreaterThan_False();
+begin
+	Vars::v1 := 0; Vars::v2 := 255;
+	Vars::text := "  GTE 4:"; if Vars::v1 >= Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure GTE5_GreaterThan_True();
+begin
+	Vars::v1 := 255; Vars::v2 := 0;
+	Vars::text := "  GTE 5:"; if Vars::v1 >= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is less than Vars::v2
+procedure LT1_LessThan_True();
+begin
+	Vars::v1 := 49; Vars::v2 := 50;
+	Vars::text := "   LT 1:"; if Vars::v1 < Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not less than Vars::v2
+procedure LT2_LessThan_False();
+begin
+	Vars::v1 := 51; Vars::v2 := 50;
+	Vars::text := "   LT 2:"; if Vars::v1 < Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure LT3_LessThan_False();
+begin
+	Vars::v1 := 50; Vars::v2 := 50;
+	Vars::text := "   LT 3:"; if Vars::v1 < Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure LT4_LessThan_True();
+begin
+	Vars::v1 := 0; Vars::v2 := 255;
+	Vars::text := "   LT 4:"; if Vars::v1 < Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure LT5_LessThan_False();
+begin
+	Vars::v1 := 255; Vars::v2 := 0;
+	Vars::text := "   LT 5:"; if Vars::v1 < Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+
+// when Vars::v1 is less than Vars::v2
+procedure LTE1_LessEqual_True();
+begin
+	Vars::v1 := 49; Vars::v2 := 50;
+	Vars::text := "  LTE 1:"; if Vars::v1 <= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not less or equal to Vars::v2
+procedure LTE2_LessThan_False();
+begin
+	Vars::v1 := 51; Vars::v2 := 50;
+	Vars::text := "  LTE 2:"; if Vars::v1 <= Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure LTE3_LessThan_True();
+begin
+	Vars::v1 := 50; Vars::v2 := 50;
+	Vars::text := "  LTE 3:"; if Vars::v1 <= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure LTE4_LessThan_True();
+begin
+	Vars::v1 := 0; Vars::v2 := 255;
+	Vars::text := "  LTE 4:"; if Vars::v1 <= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure LTE5_LessThan_False();
+begin
+	Vars::v1 := 255; Vars::v2 := 0;
+	Vars::text := "  LTE 5:"; if Vars::v1 <= Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+
+// when Vars::v1 is equal to Vars::v2
+procedure EQ1_EqualTo_True();
+begin
+	Vars::v1 := 255; Vars::v2 := 255;
+	Vars::text := "   EQ 1:"; if Vars::v1 = Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not equal to Vars::v2
+procedure EQ2_EqualTo_False();
+begin
+	Vars::v1 := 0; Vars::v2 := 255;
+	Vars::text := "   EQ 2:"; if Vars::v1 = Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+
+// when Vars::v1 is not equal to Vars::v2
+procedure NEQ1_NotEqualTo_True();
+begin
+	Vars::v1 := 5; Vars::v2 := 6;
+	Vars::text := "  NEQ 1:"; if Vars::v1 <> Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not equal to Vars::v2
+procedure NEQ2_NotEqualTo_False();
+begin
+	Vars::v1 := 5; Vars::v2 := 5;
+	Vars::text := "  NEQ 2:"; if Vars::v1 <> Vars::v2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+
+procedure Advanced1();
+begin
+	Vars::v1 := 5; Vars::v2 := 5;
+	Vars::v3:=5; Vars::v4:=4;
+	
+	Vars::text := "  ADV 1:";if (Vars::v1 >= Vars::v2 and Vars::v3<>5) then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+
+procedure Advanced2();
+begin
+	Vars::v1 := 5; Vars::v2 := 5;
+	Vars::v3:=5; Vars::v4:=4;
+	Vars::text := "  ADV 2:"; if (Vars::v1 = Vars::v2 and (Vars::v3<>5 or Vars::v4=4)) then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure IGT1_GreaterThan_True();
+begin
+	Vars::i1 := 1000; Vars::i2 := 500;
+	Vars::text := "   GI 1:"; if Vars::i1 > Vars::i2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure IGT2_GreaterThan_False();
+begin
+	Vars::i1 := 100; Vars::i2 := 500;
+	Vars::text := "   GI 2:"; if Vars::i1 > Vars::i2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure IGT3_GreaterThan_False();
+begin
+	Vars::i1 := 500; Vars::i2 := 500;
+	Vars::text := "   GI 3:"; if Vars::i1 > Vars::i2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure IGT4_GreaterThan_False();
+begin
+	Vars::i1 := 0; Vars::i2 := 2550;
+	Vars::text := "   GI 4:"; if Vars::i1 > Vars::i2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure IGT5_GreaterThan_True();
+begin
+	Vars::i1 := 2550; Vars::i2 := 0;
+	Vars::text := "   GI 5:"; if Vars::i1 > Vars::i2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure IGTE1_GreaterEqual_True();
+begin
+	Vars::i1 := 510; Vars::i2 := 500;
+	Vars::text := "  GIE 1:"; if Vars::i1 >= Vars::i2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure IGTE2_GreaterThan_False();
+begin
+	Vars::i1 := 490; Vars::i2 := 500;
+	Vars::text := "  GIE 2:"; if Vars::i1 >= Vars::i2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure IGTE3_GreaterThan_True();
+begin
+	Vars::i1 := 500; Vars::i2 := 500;
+	Vars::text := "  GIE 3:"; if Vars::i1 >= Vars::i2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure IGTE4_GreaterThan_False();
+begin
+	Vars::i1 := 0; Vars::i2 := 2550;
+	Vars::text := "  GIE 4:"; if Vars::i1 >= Vars::i2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure IGTE5_GreaterThan_True();
+begin
+	Vars::i1 := 2550; Vars::i2 := 513;
+	Vars::text := "  GIE 5:"; if Vars::i1 >= Vars::i2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure AdvancedI1();
+begin
+	Vars::i1 := 5000; Vars::i2 := 4000; Vars::i3:=3000;
+	Vars::text := "   AI 1:"; if (Vars::i1 >= Vars::i2 and Vars::i3=3000)  then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure AdvancedI2();
+begin
+	Vars::i1 := 5000; Vars::i2 := 5000; Vars::i3:=3000;
+	Vars::text := "   AI 2:"; if (Vars::i1 > Vars::i2 or Vars::i3=5000) then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure AdvancedI3();
+begin
+	Vars::i1 := 5000; Vars::i2 := 5000; Vars::i3:=3000;
+	Vars::text := "   AI 3:"; if (Vars::i1 = Vars::i2 or (Vars::i3=3000 and Vars::i1>=5000)) then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure BranchSize1();
+begin
+	Vars::text := "   B1:"; if (7 > 5)  then begin Common::PASS(); nop(120);end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure AdvancedI4();
+begin
+	Vars::i1:=$600;
+	Vars::v1:=$F0;	
+	Vars::text := "   AI:"; ;if ((Vars::i1 > $501) and (Vars::i1 < $551)) then Common::FAIL() else Common::PASS();
+//	Vars::text := "   AI:"; asm(";bummer");if ((Vars::i1 > $551)) then Common::FAIL() else Common::PASS();
+//	Vars::text := "   AI:"; asm(";bummer");if (Vars::v1 > $20 and Vars::v1 < $50) then Common::FAIL() else Common::PASS();
+end;
+
+
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+
+	// initialise everything
+	Common::Initialise("IF TESTS");
+	
+	// Greater than conditional tests 
+	GT1_GreaterThan_True();
+	GT2_GreaterThan_False();
+	GT3_GreaterThan_False();
+	GT4_GreaterThan_False();
+	GT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	GTE1_GreaterEqual_True();
+	GTE2_GreaterThan_False();
+	GTE3_GreaterThan_True();
+	GTE4_GreaterThan_False();
+	GTE5_GreaterThan_True();
+
+	// Less than conditional tests
+	LT1_LessThan_True();
+	LT2_LessThan_False();
+	LT3_LessThan_False();
+	LT4_LessThan_True();
+	LT5_LessThan_False();
+
+	// Less than or equal to conditional tests
+	LTE1_LessEqual_True();
+	LTE2_LessThan_False();
+	LTE3_LessThan_True();
+	LTE4_LessThan_True();
+	LTE5_LessThan_False();
+	
+	// Equal to conditional tests
+	EQ1_EqualTo_True();
+	EQ2_EqualTo_False();
+
+	// Not Equal to conditional tests
+	NEQ1_NotEqualTo_True();
+	NEQ2_NotEqualTo_False();
+
+	Advanced1();
+	Advanced2();
+
+
+
+
+	// Greater than conditional tests 
+	IGT1_GreaterThan_True();
+	IGT2_GreaterThan_False();
+	IGT3_GreaterThan_False();
+	IGT4_GreaterThan_False();
+	IGT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	IGTE1_GreaterEqual_True();
+	IGTE2_GreaterThan_False();
+	IGTE3_GreaterThan_True();
+	IGTE4_GreaterThan_False();
+	IGTE5_GreaterThan_True();
+
+	AdvancedI1();
+	AdvancedI2();
+	AdvancedI3();
+	AdvancedI4();
+	Common::WaitABit();
+
+//	BranchSize1();
+
+
+end;
+
+
+end.

@@ -3349,7 +3349,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     // POINTER = RECORD errors
-    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as)) {
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
 //        if (!node->m_left->isArrayIndex())
   //          ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as)) {

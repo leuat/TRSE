@@ -1,0 +1,46 @@
+unit CaseTest;
+var
+
+procedure Test1();
+begin
+	Vars::j:=15;
+	case Vars::j of
+		4: Vars::i:=5;
+		15: Vars::i:=10;
+		24: Vars::i:=0;
+	end;
+	
+
+	Vars::text := "T1:";
+	if (Vars::i=10) then Common::PASS() else Common::FAIL();
+end;
+
+// Integer test
+procedure Test2();
+begin
+	Vars::j2:=15000;
+	case Vars::j2 of
+		4: Vars::i2:=5;
+		15000: Vars::i2:=10;
+		24: Vars::i2:=0;
+	end;
+
+	Vars::text := "T2:";
+	if (Vars::i2=10) then Common::PASS() else Common::FAIL();
+end;
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+
+	// initialise everything
+	Common::Initialise("CASE");
+	
+	// Mul and div
+	Test1();
+	Test2();
+	Common::WaitABit();
+end;
+
+end.

@@ -1,83 +1,14 @@
-/*
-
-Summary:
-
-	Pointer and 16 bit addition + multiplication
-	
-*/
-
-
-
-program UnitTests6502;
-var  
-	sc, co : pointer; 			// screen and colour RAM pointers
-	text: string = "TEST    ";	// text to display when writing a test result
-	@define COLUMNWIDTH 5
-
-	v1, v2,v3,rb,v4 : byte;
-	i1, i2,i3,i4,ri, j2 : integer;
-	p1, p2,rp : pointer;
-	a1,a2 : array[10] of integer;
-	j,i : byte;
-
-	Monster = class
-		x,y : byte;
-		ival : integer;
-		byteData : array[5] of byte;
-		c : byte;
-		intData : array[7] of integer;
-	end;
-
-
-	m : Monster;
-	const NN : integer = 10;
-	monsters: array[ NN ] of Monster;
-	pm : pointer of Monster;
-	zp: pointer;
+Program UnitTests6502;
+@use "unittests/unittests"
 
 
 @addmonitorcommand "command 1  \"save  \\\"/Users/leuat/code/TRSE/Publish/tutorials/C64/UnitTests/results.bin\\\" 0 8000 8000 \" ; quit "
 
 
-@include "common.ras"
-@include "arithmetic/advanced.ras"
-@include "arithmetic/integer.ras"
-@include "arithmetic/muldiv.ras"
-@include "conditional/01_if-then-else.ras"
-@include "keywords/case.ras"
-@include "structures/classes.ras"
-
-
-/*--------------------------------------------------------------------------------------------
-
-	UNIT TESTS
-	
-----------------------------------------------------------------------------------------------*/
-
-var
-//	allTests: array[] of integer = (#AdvancedTests);
-	const noTests :byte = 6;
-	currentTest : byte = 0;
-	isDone: boolean = false;
-
 begin
-	poke(^$8000,0,1); // all pass
-	while (peek(^$8000,0)=1 and isDone = false) do
-	begin
-		clearscreen(key_space,#screen_char_loc);
-		if (currentTest=0) then AdvancedTests();
-		if (currentTest=1) then IntegerTests();
-		if (currentTest=2) then MulDivTests();
-		if (currentTest=3) then IfTests();
-		if (currentTest=4) then CaseTests();
-		if (currentTest=5) then ClassTests();
-		
-		currentTest+=1;
-		if (currentTest>=noTests) then
-			isDone := true;
-		
-	end;
-	// Enabling the breakpoing will trigger VICE to dump memory at $8000 to a file (FAIL/PASS)
+	Unittests::Exec();
+	//Enabling the breakpoing will trigger VICE to dump memory at $8000 to a file (FAIL/PASS)
 //	addbreakpoint();
 	loop();
+
 end.

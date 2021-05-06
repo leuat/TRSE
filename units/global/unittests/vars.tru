@@ -1,0 +1,30 @@
+unit Vars;
+var  
+	sc, co : pointer; 			// screen and colour RAM pointers
+	text: string = "TEST    ";	// text to display when writing a test result
+	@define COLUMNWIDTH 5
+
+	v1, v2,v3,rb,v4 : byte;
+	i1, i2,i3,i4,ri, j2 : integer;
+	p1, p2,rp : pointer;
+	a1,a2 : array[10] of integer;
+	j,i : byte;
+
+	Monster = class
+		x,y : byte;
+		ival : integer;
+		byteData : array[5] of byte;
+		c : byte;
+		intData : array[7] of integer;
+	end;
+
+
+	pm : pointer of Monster;
+	m : Monster;
+	const NN : integer = 10;
+	monsters: array[ NN ] of Monster;
+	zp: pointer;
+
+
+
+end.

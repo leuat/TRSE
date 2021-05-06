@@ -1,6 +1,6 @@
 program ZXTest;
 @use "compression"
-@export "resources/images/trse.flf" "resources/images/trse.bin" 256
+@export "resources/images/image12.flf" "resources/images/trse.bin" 256
 	
 
 var
