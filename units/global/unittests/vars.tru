@@ -10,7 +10,7 @@ var
 	a1,a2 : array[10] of integer;
 	j,i : byte;
 
-
+@ifndef AMSTRADCPC
 	Point = class
 		x,y : byte;
 		procedure Move2( pm1, pm2 : byte);
@@ -41,7 +41,6 @@ var
 	const NN : integer = 10;
 	monsters: array[ NN ] of Monster;
 	zp: pointer;
-
-
+@endif
 
 end.
