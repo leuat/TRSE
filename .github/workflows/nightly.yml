@@ -17,6 +17,7 @@ on:
 jobs:
   tag:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: dev-drprasad/delete-tag-and-release@v0.2.0
         with:
