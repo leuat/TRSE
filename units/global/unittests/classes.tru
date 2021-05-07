@@ -9,7 +9,7 @@ var
 	
 ----------------------------------------------------------------------------------------------*/
 
-
+// Direct assignment
 procedure CTest1();
 begin
 	Vars::m.x := 10;
@@ -17,6 +17,7 @@ begin
 	if (Vars::m.x=10) then Common::PASS() else Common::FAIL();
 end;
 
+// Direct access 
 procedure CTest2();
 begin
 	Vars::m.x := 100;
@@ -27,7 +28,7 @@ begin
 end;
 
 /*
-  Test pointers
+  Test pointers, indirect assignment
 */
 procedure CTest3();
 begin
@@ -42,6 +43,7 @@ begin
 end;
 
 
+// Indirect assignment integer 
 procedure CTest4();
 begin
 	Vars::pm:=#Vars::monsters[8];
@@ -56,9 +58,10 @@ begin
 	Vars::pm.pos.y:=5;	
 	Vars::text := "T5:";
 	Vars::zp:=#Vars::monsters;
-	if (Vars::zp[sizeof(Vars::Monster)*8+1]=5) then Common::PASS() else Common::FAIL();
+	if (Vars::zp[sizeof(Vars::Monster)*8+5]=5) then Common::PASS() else Common::FAIL();
 end;
 
+// Indirect method call
 procedure CTest6();
 begin
 	Vars::pm:=#Vars::monsters[8];
@@ -66,16 +69,17 @@ begin
 	Vars::text := "T6:";
 	if (Vars::pm.x=11 and Vars::pm.y=12) then Common::PASS() else Common::FAIL();
 end;
-/*
+
 procedure CTest7();
 begin
 	Vars::pm:=#Vars::monsters[8];
-	Vars::pm.pos.Move2(11,12);
+	asm(";here");
+	Vars::pm.pos.Move2(15,16);
 	Vars::text := "T7:";
-	if (Vars::pm.x=11 and Vars::pm.y=12) then Common::PASS() else Common::FAIL();
+	if (Vars::pm.pos.x=15 and Vars::pm.pos.y=16) then Common::PASS() else Common::FAIL();
 end;
 
-*/
+
 procedure Exec();
 begin
 
@@ -89,7 +93,7 @@ begin
 	CTest4();
 	CTest5();
 	CTest6();
-	// CTest7(); // Fails for now 
+    CTest7(); 
 	Common::WaitABit();
 
 end;

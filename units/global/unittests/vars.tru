@@ -22,12 +22,13 @@ var
 	end;
 
 	Monster = class
-		pos: Point;
 		x,y : byte;
 		ival : integer;
+		pos: Point;
 		byteData : array[5] of byte;
 		c : byte;
 		intData : array[7] of integer;
+	//	more : array[3] of Point;		
 		procedure Move1( m1, m2 : byte);
 		begin
 			this.x := m1;

@@ -120,6 +120,7 @@ procedure RenderMonsters(render_char:byte);
 begin
 	for i:=0 to no do
 	begin
+		// Direct call
 		monsters[i].Render(render_char);
 	end;	
 
@@ -134,7 +135,9 @@ begin
 	k:=shift;
 	for i:=0 to no do
 	begin
-		monsters[i].Update();
+		// Indirect call
+		pm:=#monsters[i];
+		pm.Update();
 	end;	
 
 end;

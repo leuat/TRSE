@@ -853,7 +853,7 @@ void Parser::VerifyTypeSpec(Token& t)
         bool ok = false;
         if (m_symTab->m_records.contains(t.m_value))
             ok=true;
-
+        // What about
         if (m_symTab->m_records.contains(m_symTab->m_gPrefix+t.m_value)) {
             t.m_value = m_symTab->m_gPrefix+t.m_value;
             ok=true;
@@ -973,7 +973,8 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
                 QSharedPointer<Symbol> s = m_symTab->m_symbols[val];//m_symTab->Lookup(,0);
 //                qDebug() << s->m_type;
-                bool isUsed = false;
+                bool isUsed = s->m_doNotOptimize;
+
                 if (s->isUsed) {
                     for (QString p: m_removedProcedures)
                         if (s->isUsedBy.contains(p))
@@ -1536,11 +1537,12 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         if (m_currentToken.m_type==TokenType::DOT) {
             Eat();
             subVar = SubVariable(t.m_value, nullptr);
-            if (m_breakSubvar) {
+/*            if (m_breakSubvar) {
                 // Is procedure
                 m_breakSubvar=false;
                 return subVar;
             }
+            */
         }
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
@@ -1594,11 +1596,12 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             if (m_currentToken.m_type==TokenType::DOT) {
                 Eat();
                 subVar = SubVariable(t.m_value, nullptr);
-                if (m_breakSubvar) {
+/*                if (m_breakSubvar) {
                     // Is procedure
                     m_breakSubvar=false;
                     return subVar;
                 }
+                */
 
 
             }
@@ -1625,11 +1628,12 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                     Eat();
 //                    qDebug() << "H1";
                     subVar = SubVariable(t.m_value, expr);
-                    if (m_breakSubvar) {
+/*                    if (m_breakSubvar) {
                         // Is procedure
                         m_breakSubvar=false;
                         return subVar;
                     }
+                    */
 
   //                  qDebug() << "H2";
                 }
@@ -1720,15 +1724,23 @@ QSharedPointer<Node> Parser::SubVariable(QString parent,QSharedPointer<Node> par
             bool isAssign;
 //            qDebug() << "A";
             // Make sure that the FIRST parameter is a reference to the parent!
+//            parent = parent.replace("ull","pu");
             m_addInitialReferenceToProcedureCall = parent;
+            QString keep = m_symTab->m_gPrefix;
+            m_symTab->m_gPrefix = "";
+ //           qDebug() << "Testing for procname " <<procName<< parent<<parentExpr<<m_symTab->m_gPrefix;
             QSharedPointer<Node> node = FindProcedure(isAssign, parentExpr);
+            m_symTab->m_gPrefix = keep;
+   //         qDebug() <<m_procedures.keys() <<node;
             m_addInitialReferenceToProcedureCall = "";
-            m_breakSubvar = true;
+//            m_breakSubvar = true;
+//            qDebug() << "Found subvar procedure "<<procName;
   //          qDebug() << "B" <<node ;
-
-            if (node!=nullptr)
-                return node;
-            return Empty();
+            m_currentProcedureCall = node;
+//            if (node!=nullptr)
+  //              return node;
+//            qDebug() << "WE ARE DONE?";
+            return nullptr;//Empty();
             // YES we are!
 
         }
@@ -1775,7 +1787,8 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
             m_symTab->m_gPrefix = "";
         auto s = QSharedPointer<Symbol>(new Symbol(name+"_"+Syntax::s.thisName,name));
         m_symTab->m_gPrefix = of;
-        m_symTab->Define(s);
+        m_symTab->Define(s,true);
+        s->m_doNotOptimize = true;
 
     }
     record->m_isClass = isClass;
@@ -1929,15 +1942,35 @@ QSharedPointer<Node> Parser::AssignStatementBetweenObjects(QSharedPointer<Node> 
 QSharedPointer<Node> Parser::AssignStatement()
 {
     QSharedPointer<Node> arrayIndex = nullptr;
+    m_currentProcedureCall = nullptr;
     Token t = m_currentToken;
     QSharedPointer<Node> left = Variable();
 
     if (t.m_isReference)
         ErrorHandler::e.Error("Assignment '"+t.m_value+"' cannot be a reference. " , t.m_lineNumber);
 
+
     // test if left is procedure after all
     if (qSharedPointerDynamicCast<NodeProcedure>(left)!=nullptr)
         return left; //is a procedure type m.Draw();
+
+
+    if (m_currentProcedureCall!=nullptr) {
+        // ooh we had a variable of type a.b.c.Move();
+        auto p = qSharedPointerDynamicCast<NodeProcedure>(m_currentProcedureCall);
+//        left->setForceReference(true);
+        auto v = qSharedPointerDynamicCast<NodeVar>(left);
+        // Transform to a reference..
+        auto s =m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
+        if (s->m_type.toLower()!="pointer")
+            left->m_op.m_isReference = true; // IMPORTANT : first parameter is THIS, so it needs to be a pointer
+        left = ApplyClassVariable(left);
+
+        p->m_parameters.insert(0,left);
+        return p;
+
+    }
+
 
     Token token = m_currentToken;
 
@@ -2027,6 +2060,7 @@ QSharedPointer<Node> Parser::Statement()
 //            node = Constant();
         if (node==nullptr)
             node = AssignStatement();
+
 
     }
     else if (m_currentToken.m_type == TokenType::ADDRESS) {
@@ -3108,9 +3142,9 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
                 classRef.m_isReference = true;
             // Inserts extra FIRST parameter
              auto nv = QSharedPointer<NodeVar>(new NodeVar(classRef));
-             nv->m_expr = parentExpr;
+/*             nv->m_expr = parentExpr;
 //             qDebug() << nv->m_expr->getValue(nullptr);
-            paramList.insert(0,ApplyClassVariable(nv));
+            paramList.insert(0,ApplyClassVariable(nv));*/
         }
 
         return QSharedPointer<NodeProcedure>(new NodeProcedure(p, paramList, t));
@@ -3477,14 +3511,25 @@ QSharedPointer<NodeAssign> Parser::CreateAssign(QSharedPointer<Node> left, QShar
 QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 {
     auto v = qSharedPointerDynamicCast<NodeVar>(var);
+/*    auto proc = qSharedPointerDynamicCast<NodeProcedure>(var);
+    if (proc!=nullptr)
+        qDebug() << " IS PROCECURE " << proc->getValue(nullptr);*/
     if (!v)
         return var;
+
+
 
     QSharedPointer<Symbol> s = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
     QString t1;
 
+
     QString type = s->getEndType();
     auto sv = qSharedPointerDynamicCast<NodeVar>(v->m_subNode);
+    auto proc = qSharedPointerDynamicCast<NodeProcedure>(v->m_subNode);
+
+    if (proc!=nullptr)  {
+        qDebug() <<"*** IS PROC WRONG" <<proc->m_procedure->m_procName;
+    }
 
     if (var->isRecord(m_symTab,t1) && sv==nullptr)
         v->isPureObject = true;
