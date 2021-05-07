@@ -225,7 +225,6 @@ def UnitTests():
 				print("******* SEVERE ERROR : 6502 Execution unit test FAILED! Please fix up unittest.prg")
 			else:
 				print("6502 Unittest SUCCESS!")
-				print("6502 Unittest SUCCESS!")
 
 
 
