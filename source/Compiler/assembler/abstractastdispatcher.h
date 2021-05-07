@@ -73,7 +73,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeComment> node) = 0;
     virtual void dispatch(QSharedPointer<NodeControlStatement> node);
 
-    virtual QString getValue(QSharedPointer<Node> n);
+//    virtual QString getValue(QSharedPointer<Node> n);
     virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
     virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
 
@@ -140,6 +140,13 @@ public:
 
     virtual void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) {}
 
+
+    virtual bool Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi);
+
+
+    QString getValue(QSharedPointer<Node> n);
+
+    QString getValue8bit(QSharedPointer<Node> n, bool isHi);
 
 public:
 signals:

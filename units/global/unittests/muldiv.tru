@@ -209,16 +209,8 @@ begin
 
 	ByteMulByte01();
 	ByteMulBytePow202();
-	ByteDivBytePow203();
-	ByteDivByte04();
-	ByteMulMul05();
 	IntByteMul06();
 	IntMulPow07();
-	IntDivByte08();
-	IntDivInt09();
-	IntDivPow210();
-	IntDivMix11();
-	IntDivMix12();
 	IntMulMix13(); // fails?
 	IntMulInt14(); // Not implemented, fails
 	IntMulAdvancedMix15(); // fails
@@ -228,6 +220,20 @@ begin
 	IntCombConst19();
 	IntShift20();
 	IntShift21();
+	
+	@ifndef AMSTRADCPC
+	
+	ByteMulMul05();
+	ByteDivBytePow203();
+	ByteDivByte04();
+	IntDivByte08();
+	IntDivPow210();
+	IntDivInt09();
+	IntDivMix11();
+	IntDivMix12();
+	
+	@endif
+	
 	Common::WaitABit();
 
 end;

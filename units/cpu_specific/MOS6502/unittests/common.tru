@@ -2,7 +2,20 @@ unit Common;
 var
 	
 	@define COLUMNWIDTH 5
+
+// Called at the beginning of the testing
+procedure TestInit();
+begin
+	poke(^$8000,0,0); // all pass
+end;
+
+// Called at the beginning of each test suite (multiple test cases grouped together)
+procedure TestSuiteInit();
+begin
+	clearscreen(key_space,#screen_char_loc);
+end;
 	
+// TODO(ColinPitrat): Unused? Remove?
 procedure Initialise(zp:pointer);
 begin
 	DefineScreen();
@@ -17,6 +30,13 @@ begin
 	Vars::sc+=80;
 	Vars::co+=80;
 end;
+
+// Returns 0 if everything passed so far, 1 if there's been a failure.
+function Status() : byte;
+begin
+  Status := peek(^$8000,0);
+end;
+
 // Print POSITIVE result of a test - ptext must be 8 characters or less
 procedure PASS();
 begin
@@ -28,6 +48,7 @@ begin
 	Vars::sc := Vars::sc + @COLUMNWIDTH;
 	Vars::co := Vars::co + @COLUMNWIDTH;
 end;
+
 // Print NEGATIVE result of a test - ftext must be 8 characters or less
 procedure FAIL();
 begin

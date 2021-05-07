@@ -830,25 +830,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeNumber>node)
 
 
 
-QString ASTDispatcher6502::getValue(QSharedPointer<Node> n) {
-
-
-
-    if (m_inlineParameters.contains(n->getValue(as)))
-        return m_inlineParameters[n->getValue(as)]->getValue(as);
-
-//    HackPointer(as,n);
-
-    return n->getValue(as);
-}
-
-QString ASTDispatcher6502::getValue8bit(QSharedPointer<Node> n, bool isHi) {
-
-    if (m_inlineParameters.contains(n->getValue(as)))
-        return m_inlineParameters[n->getValue(as)]->getValue8bit(as,isHi);
-
-    return n->getValue8bit(as,isHi);
-}
 
 
 
@@ -3169,19 +3150,6 @@ QString ASTDispatcher6502::resolveTemporaryClassPointer(QString name, int mul, i
     //return zp;
 }
 
-bool ASTDispatcher6502::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi)
-{
-    if (node->isPure()) {
-        lo = getValue8bit(node,false);
-        hi = getValue8bit(node,true);
-        return true;
-    }
-    node->Accept(this);
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
-    lo = lbl;
-    hi = lbl+"+1";
-    return false;
-}
 
 
 

@@ -363,7 +363,10 @@ begin
 
 
 
-
+	// Integer comparison not supported on the z80 yet
+	@ifndef AMSTRADCPC
+	
+	
 	// Greater than conditional tests 
 	IGT1_GreaterThan_True();
 	IGT2_GreaterThan_False();
@@ -378,10 +381,15 @@ begin
 	IGTE4_GreaterThan_False();
 	IGTE5_GreaterThan_True();
 
+
 	AdvancedI1();
+
+	
 	AdvancedI2();
 	AdvancedI3();
 	AdvancedI4();
+		@endif
+	
 	Common::WaitABit();
 
 //	BranchSize1();

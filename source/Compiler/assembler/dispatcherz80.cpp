@@ -293,6 +293,150 @@ void ASTdispatcherZ80::LoadVariable(QSharedPointer<Node> n)
 
 }
 
+void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+{
+
+    as->Comment("Binary clause INTEGER: " + node->m_op.getType());
+    QString lbl2 = lblFailed;
+    QString lbl1 = lblSuccess;
+
+/*    QString lo1,lo2,hi1,hi2;
+    Evaluate16bitExpr(node->m_left,lo1,hi1);
+    Evaluate16bitExpr(node->m_right,lo2,hi2);
+*/
+
+
+
+    QString bcs ="bcs ";
+    QString bcc ="bcc ";
+    if (node->isSigned(as)) {
+        ErrorHandler::e.Error("Signed integer comparison on the z80 not implemented. Please bug Leuat!", node->m_op.m_lineNumber);
+    }
+
+
+    if (node->m_op.m_type==TokenType::EQUALS) {
+        node->m_left->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_right->Accept(this);
+        as->Asm("sbc hl,de");
+        as->Asm("jr c,"+lblFailed);
+ //       as->Asm("jp ");
+        return;
+    }
+    if (node->m_op.m_type==TokenType::NOTEQUALS) {
+        node->m_left->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_right->Accept(this);
+        as->Asm("sbc hl,de");
+        as->Asm("jr nc,"+lblSuccess);
+        as->Asm("jp "+lblFailed);
+        return;
+    }
+    if (node->m_op.m_type==TokenType::LESS) {
+        node->m_left->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_right->Accept(this);
+        as->Asm("inc de");
+        as->Asm("sbc hl,de");
+        as->Asm("jr c,"+lblFailed);
+ //       as->Asm("jp ");
+        return;
+    }
+    if (node->m_op.m_type==TokenType::LESSEQUAL) {
+        node->m_left->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_right->Accept(this);
+        as->Asm("sbc hl,de");
+        as->Asm("jr c,"+lblFailed);
+ //       as->Asm("jp ");
+        return;
+    }
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        node->m_left->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_right->Accept(this);
+        as->Asm("sbc hl,de");
+        as->Asm("jr c,"+lblFailed);
+ //       as->Asm("jp ");
+        return;
+    }
+    if (node->m_op.m_type==TokenType::GREATER) {
+        node->m_left->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_right->Accept(this);
+        as->Asm("inc de");
+        as->Asm("sbc hl,de");
+        as->Asm("jr c,"+lblFailed);
+ //       as->Asm("jp ");
+        return;
+    }
+    ErrorHandler::e.Error("This 16-bit Compare instruction is not implemented yet! Please bug Leuat ("+node->m_op.getType()+") ",node->m_op.m_lineNumber);
+//    BuildToCmp(node);
+
+/*
+
+    as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
+    if (node->m_op.m_type==TokenType::GREATER) {
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm(bcc + lbl2);
+        //    as->Asm("beq " + lbl2);
+        as->Asm("bne " + lbl1);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2 +" ;keep");
+        as->Asm(bcc + lbl2);
+        as->Asm("beq " + lbl2);
+    }
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm(bcc + lbl2);
+        as->Asm("bne " + lbl1);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2 +" ;keep");
+        as->Asm(bcc + lbl2);
+    }
+    if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm(bcc + lbl1);
+        as->Asm("bne " + lbl2);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2+" ;keep");
+        if (node->m_op.m_type==TokenType::LESSEQUAL)
+            as->Asm("beq "+lbl1);
+        as->Asm(bcs + lbl2);
+
+
+
+    }
+    if (node->m_op.m_type==TokenType::EQUALS) {
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm("bne " + lbl2);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2+" ;keep");
+        as->Asm("bne " + lbl2);
+        as->Asm("jmp " + lbl1);
+    }
+    if (node->m_op.m_type==TokenType::NOTEQUALS){
+        //            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
+        QString lblPass1  = as->NewLabel("pass1");
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm("beq " + lblPass1);
+        as->Asm("jmp " + lbl1);
+        as->Label(lblPass1);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2+" ;keep");
+        as->Asm("beq " + lbl2);
+        as->Asm("jmp " + lbl1);
+        as->PopLabel("pass1");
+
+    }
+    */
+}
+
 
 
 
@@ -346,29 +490,29 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
             //                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
 
-                if (node->m_left->isPure()) {
-                    m_useNext ="de";
-                    node->m_left->Accept(this);
-                }
-                else {
-                    node->m_left->Accept(this);
-                    as->Asm("ld d,h");
-                    as->Asm("ld e,l");
-                }
-                node->m_right->setForceType(TokenType::BYTE);
-                node->m_right->Accept(this);
-//                as->Asm("ld a,l");
-                as->Asm("ld hl,0");
-                as->Asm("ld c,0");
-                as->Asm("call mul_16x8");
-//                as->Asm("ld a,l");
+            if (node->m_left->isPure()) {
+                m_useNext ="de";
+                node->m_left->Accept(this);
+            }
+            else {
+                node->m_left->Accept(this);
+                as->Asm("ld d,h");
+                as->Asm("ld e,l");
+            }
+            node->m_right->setForceType(TokenType::BYTE);
+            node->m_right->Accept(this);
+            //                as->Asm("ld a,l");
+            as->Asm("ld hl,0");
+            as->Asm("ld c,0");
+            as->Asm("call mul_16x8");
+            //                as->Asm("ld a,l");
 
 
 
-//            }
+            //            }
 
-//            ErrorHandler::e.Error("Generic 16-bit multiplication is not implemented yet!",  node->m_op.m_lineNumber);
-              return;
+            //            ErrorHandler::e.Error("Generic 16-bit multiplication is not implemented yet!",  node->m_op.m_lineNumber);
+            return;
         }
         node->m_left->Accept(this);
         QString bx = getAx(node->m_left);
@@ -409,7 +553,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         }
         node->m_left->Accept(this);
 
-//            ErrorHandler::e.Error("bit shifting on the Z80 must have constant numeric values!", node->m_op.m_lineNumber);
+        //            ErrorHandler::e.Error("bit shifting on the Z80 must have constant numeric values!", node->m_op.m_lineNumber);
         int num = node->m_right->getValueAsInt(as);
         if (node->m_op.m_type == TokenType::SHR)
             as->Asm("and "+Util::numToHex(0xFF^(int)(pow(2,num)-1)));
@@ -438,8 +582,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
     if (node->m_right->isWord(as)) {
         as->Comment("Generic 16-bit binop");
-//        if (node->m_right->isWord(as))
-  //          as->Asm("ld d,0");
+        //        if (node->m_right->isWord(as))
+        //          as->Asm("ld d,0");
         node->m_right->Accept(this);
         if (isGB()) {
             as->Asm("push hl");
@@ -463,7 +607,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         }
         ErrorHandler::e.Error("TRSE currently does not support the following 16-bit binary opreation : "+node->m_op.getType(),node->m_op.m_lineNumber);
 
-//        as->Asm(getBinaryOperation(node)+" hl,de");
+        //        as->Asm(getBinaryOperation(node)+" hl,de");
 
         return;
     }
@@ -475,9 +619,9 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
     as->Asm("pop af");
     as->Asm(getBinaryOperation(node)+" b");
 
-//    as->Asm("ld b,a");
+    //    as->Asm("ld b,a");
 
-/*    as->Comment(";balle binop");
+    /*    as->Comment(";balle binop");
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
 
@@ -962,14 +1106,14 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 QString ASTdispatcherZ80::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
     if (n->m_forceType==TokenType::INTEGER)
-        return "bc";
+        return "hl";
     if (n->getType(as)==TokenType::INTEGER)
-        return "bc";
+        return "hl";
     if (n->getType(as)==TokenType::ADDRESS)
         return "hl";
     if (n->getType(as)==TokenType::INTEGER_CONST)
         if (n->isWord(as))
-            return "bc";
+            return "hl";
     //        if (n->isPureNumeric())
     //          if (n->getValue()
     return a;
@@ -1083,6 +1227,12 @@ void ASTdispatcherZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSucces
 
     as->Comment("Binary clause core: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
+
+    if (node->isWord(as)) {
+        BinaryClauseInteger(node,lblSuccess, lblFailed, offPage);
+        return;
+    }
+
 
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
         auto n = node->m_right;

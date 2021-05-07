@@ -92,6 +92,8 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 {
     if (DeclareRecord(name,type,count,data,pos))
         return;
+    if (DeclareClass(name,type,count,data,pos))
+        return;
 
 
     QString t = byte;
@@ -187,8 +189,17 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
         t = byte;
     }
 
+//    if (DeclareRecord(name,type,1,QStringList(),position))
+  //       return;
+    if (DeclareClass(name,type,1,QStringList(),position))
+         return;
+
+
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
+
+
+
 
 //    qDebug() << "IS WRAM " <<(m_currentBlock==m_wram) << name;
     if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram) {

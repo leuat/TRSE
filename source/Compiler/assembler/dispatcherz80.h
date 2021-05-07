@@ -96,5 +96,9 @@ public:
     void LoadVariable(QSharedPointer<Node> n) override;
 
 
+    void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
+
+
+
 };
 #endif // ASTdispatcherX86_H

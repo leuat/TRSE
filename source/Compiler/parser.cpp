@@ -2429,7 +2429,6 @@ QSharedPointer<Node> Parser::Factor()
         if (m_symTab->m_records.contains(varName))
         {
             len = m_symTab->m_records[varName]->getSize();
-            qDebug() << "PARSER "<<varName<<len;
         }
         else {
             QSharedPointer<Symbol> s = m_symTab->Lookup(varName,m_currentToken.m_lineNumber);

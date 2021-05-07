@@ -51,11 +51,10 @@ begin
 end;
 
 
-// less than
+// notequals than
 procedure T066();
 begin
 	Vars::i1:=$2000;
-	asm(";wtf");
 	Vars::text := "07:"; if (Vars::i1<>$2001) then Common::PASS() else Common::FAIL();
 end;
 
@@ -66,6 +65,7 @@ begin
 	Vars::i1:=1000;
 	Vars::i2:=2000;
 	Vars::i1:=Vars::i1 + Vars::i2;
+	asm(";here");
 	Vars::text := "08:"; if Vars::i1=3000 then Common::PASS() else Common::FAIL();
 end;
 
@@ -167,11 +167,13 @@ begin
 	T08();
 	T09();
 	T10();
-	
+/*	
 	T11();
 	T12();
 	T13();
 	T14();
+	
+	*/
 	Common::WaitABit();
 	
 end;

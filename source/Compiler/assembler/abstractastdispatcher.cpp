@@ -231,11 +231,11 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
     if (node->m_op.m_type == TokenType::RETURN)
         as->Asm(getReturn());
 }
-
+/*
 QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
     return n->getValue(as);
 }
-
+*/
 
 /*
  *
@@ -972,6 +972,40 @@ void AbstractASTDispatcher::LineNumber(int ln) {
     if (m_outputLineNumbers)
         as->Comment("LineNumber: "+QString::number(ln));
 
+}
+
+bool AbstractASTDispatcher::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi)
+{
+    if (node->isPure()) {
+        lo = getValue8bit(node,false);
+        hi = getValue8bit(node,true);
+        return true;
+    }
+    node->Accept(this);
+    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+    lo = lbl;
+    hi = lbl+"+1";
+    return false;
+}
+
+QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
+
+
+
+    if (m_inlineParameters.contains(n->getValue(as)))
+        return m_inlineParameters[n->getValue(as)]->getValue(as);
+
+    //    HackPointer(as,n);
+
+    return n->getValue(as);
+}
+
+QString AbstractASTDispatcher::getValue8bit(QSharedPointer<Node> n, bool isHi) {
+
+    if (m_inlineParameters.contains(n->getValue(as)))
+        return m_inlineParameters[n->getValue(as)]->getValue8bit(as,isHi);
+
+    return n->getValue8bit(as,isHi);
 }
 
 

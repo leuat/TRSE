@@ -450,7 +450,7 @@ bool Assembler::DeclareClass(QString name, QString type, int count, QStringList 
             return false;
 
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
-        Label(name + ":");
+        Label(name);
         Asm("org "+name+"+" +QString::number(st->getSize()*count));
 
         return true;

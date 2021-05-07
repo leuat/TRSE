@@ -52,12 +52,8 @@ public:
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
 
 
-    bool Evaluate16bitExpr(QSharedPointer<Node> node, QString& lo, QString& hi);
 
 
-    QString getValue(QSharedPointer<Node> n) override;
-
-    QString getValue8bit(QSharedPointer<Node> n, bool isHi);
 
     QString getJmp(bool isOffPage) override {
         return "jmp";

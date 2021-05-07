@@ -55,6 +55,4 @@ var
 	monsters: array[ NN ] of Monster;
 	zp: pointer;
 
-
-
 end.
