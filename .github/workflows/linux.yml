@@ -66,6 +66,9 @@ jobs:
           x64=$(which x64)
           echo "Found x64 in: '${x64}'"
           sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
+          # Temporary: test x64
+          $x64 -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
+          $x64 -console -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
 
       - name: Build TRSE
         run: |
@@ -126,7 +129,8 @@ jobs:
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
-          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse `which x64`
+          #xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse `which x64`
+          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse do_not_use_x64_for_now
 
       - name: Build notification
         if: failure()
