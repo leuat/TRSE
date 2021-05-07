@@ -121,7 +121,9 @@ begin
 	for i:=0 to no do
 	begin
 		// Direct call
-		monsters[i].Render(render_char);
+		pm:=#monsters[i];
+		pm.Render(render_char);
+//		monsters[i].Render(render_char);
 	end;	
 
 end;
