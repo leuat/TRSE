@@ -206,9 +206,8 @@ def UnitTests():
 		resultFile = path+"/results.bin"
 		if (os.path.exists(resultFile)):
 			os.remove(resultFile)
-		
-		result = subprocess.call([x64,"-console","-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], stdout=PIPE, stderr=subprocess.STDOUT)
-		time.sleep(4)
+
+		result = subprocess.call([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], stdout=PIPE, stderr=subprocess.STDOUT)
 #		print(os.path.exists(resultFile))
 		with open(resultFile, "rb") as f:
 			data = array('B')
@@ -220,7 +219,7 @@ def UnitTests():
 			else:
 				print("6502 Unittest SUCCESS!")
 
-				
+
 
 def CompileTests():
 	for v in tests:
@@ -235,13 +234,15 @@ def CompileTests():
 				if (c(directory,file)!=0):
 					print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
 					failed.append([directory, file])
+		os.chdir(orgPath)
 
 
 
-UnitTests()
-CompileTests()
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
+CompileTests()
+print("Running tests...")
+UnitTests()
 
 
 if failed:
