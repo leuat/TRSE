@@ -211,7 +211,7 @@ def UnitTests():
 		try:
 			result = subprocess.run([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
-		except subprocess.TimeoutExpired err:
+		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for unit tests expired.")
 			failed.append([path, "unittest.prg"])
 			if err.stdout: print(err.stdout.decode('utf-8'))
