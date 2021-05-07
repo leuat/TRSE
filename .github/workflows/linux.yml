@@ -67,9 +67,6 @@ jobs:
           echo "Found x64 in: '${x64}'"
           sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
           # Temporary: test x64
-          $x64 -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
-          pid=$!
-          sleep 60 && kill -9 pid
           xvfb-run --auto-servernum $x64 -console -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg&
           pid=$!
           sleep 60 && kill -9 pid
