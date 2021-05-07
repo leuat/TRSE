@@ -62,6 +62,7 @@ end;
 procedure CTest6();
 begin
 	Vars::pm:=#Vars::monsters[8];
+	asm(";fail1");
 	Vars::pm.Move1(11,12);
 	Vars::text := "T6:";
 	if (Vars::pm.x=11 and Vars::pm.y=12) then Common::PASS() else Common::FAIL();

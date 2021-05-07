@@ -96,7 +96,8 @@ public:
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;
-    bool m_breakSubvar = false;
+    //bool m_breakSubvar = false;
+    QSharedPointer<Node> m_currentProcedureCall;
     QString m_addInitialReferenceToProcedureCall = "";
 
     QString m_currentClass ="";

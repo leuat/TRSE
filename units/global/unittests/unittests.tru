@@ -23,12 +23,12 @@ begin
 	while (peek(^$8000,0)=0 and isDone = false) do
 	begin
 		clearscreen(key_space,#screen_char_loc);
-		if (currentTest=0) then AdvancedMath::Exec();
+		if (currentTest=0) then Classes::Exec();
+		if (currentTest=5) then AdvancedMath::Exec();
 		if (currentTest=1) then CaseTest::Exec();
 		if (currentTest=2) then IfThenElse::Exec();
 		if (currentTest=3) then IntegerTest::Exec();
 		if (currentTest=4) then MulDiv::Exec();
-		if (currentTest=5) then Classes::Exec();
 		
 		currentTest+=1;
 		if (currentTest>=noTests) then
