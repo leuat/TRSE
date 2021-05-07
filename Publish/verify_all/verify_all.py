@@ -2,6 +2,8 @@ from subprocess import Popen, PIPE
 import subprocess
 import os
 import sys
+import time
+from array import array
 
 #trse = "/opt/homebrew/bin/trse"
 #trse = "/Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/trse"
@@ -9,13 +11,15 @@ import sys
 assemble = "yes"
 
 if len(sys.argv) < 2:
-	print("Usage: python validate_all.py [ trse exe file] [no_assembling (optional) ]")
+	print("Usage: python validate_all.py [ trse exe file] [ x64 vice emulator ] [no_assembling (optional) ]")
 	print("must be run in the 'validate_all' directory.")
 	exit(1)
-trse = sys.argv[1]
 
-if len(sys.argv)>=3:
-	if (sys.argv[2] == "no_assembling"):
+trse = sys.argv[1]
+x64 = sys.argv[2]
+
+if len(sys.argv)>=4:
+	if (sys.argv[3] == "no_assembling"):
 		assemble="no"
 
 
@@ -179,25 +183,66 @@ def c(path,f1):
 #	print stdout
 
 
+def HackSymbolFileChangeDir(symFile, path):
+	with open(symFile, "r") as f:
+		contents = f.read()
+
+	contents = contents.replace("$DIR",path)
+
+	with open(symFile, "w") as f:
+		f.write(contents)
 
 
+failed = []
 orgPath = os.getcwd()
 print(orgPath)
+
+
+def UnitTests():
+	if os.path.exists(x64):
+		path =  os.path.abspath(lp+'C64/UnitTests/')
+		test6502 =  path + "/unittests"
+		HackSymbolFileChangeDir(test6502+".sym",path)
+		resultFile = path+"/results.bin"
+		if (os.path.exists(resultFile)):
+			os.remove(resultFile)
+		
+		result = subprocess.call([x64,"-console","-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], stdout=PIPE, stderr=subprocess.STDOUT)
+		time.sleep(4)
+#		print(os.path.exists(resultFile))
+		with open(resultFile, "rb") as f:
+			data = array('B')
+			# byte 2 should have 0 for success 
+			data.fromfile(f, 3)
+			if (data[2]==1):
+				failed.append([path, "unittest.prg"])
+				print("******* SEVERE ERROR : 6502 Execution unit test FAILED! Please fix up unittest.prg")
+			else:
+				print("6502 Unittest SUCCESS!")
+
+				
+
+def CompileTests():
+	for v in tests:
+		directory = v[0]
+		print("Project: "+directory)
+		os.chdir(orgPath)
+
+		os.chdir(lp+directory)
+		for file in v[1]:
+			# ignore auto-generated files
+			if "auto_generated" not in file:
+				if (c(directory,file)!=0):
+					print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
+					failed.append([directory, file])
+
+
+
+UnitTests()
+CompileTests()
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
-failed = []
-for v in tests:
-	directory = v[0]
-	print("Project: "+directory)
-	os.chdir(orgPath)
 
-	os.chdir(lp+directory)
-	for file in v[1]:
-		# ignore auto-generated files
-		if "auto_generated" not in file:
-			if (c(directory,file)!=0):
-				print("******* FAIL ERROR when trying to compile "+file+" in project "+directory)
-				failed.append([directory, file])
 
 if failed:
 	for f in failed:

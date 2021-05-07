@@ -19,8 +19,8 @@ var
 
 procedure Exec();
 begin
-	poke(^$8000,0,1); // all pass
-	while (peek(^$8000,0)=1 and isDone = false) do
+	poke(^$8000,0,0); // all pass
+	while (peek(^$8000,0)=0 and isDone = false) do
 	begin
 		clearscreen(key_space,#screen_char_loc);
 		if (currentTest=0) then AdvancedMath::Exec();

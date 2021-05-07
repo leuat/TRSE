@@ -1,14 +1,12 @@
 Program UnitTests6502;
 @use "unittests/unittests"
 
-
-@addmonitorcommand "command 1  \"save  \\\"/Users/leuat/code/TRSE/Publish/tutorials/C64/UnitTests/results.bin\\\" 0 8000 8000 \" ; quit "
-
+@addmonitorcommand "command 1  \"save \\\"$DIR/results.bin\\\" 0 8000 8000  ; quit \"  "
 
 begin
 	Unittests::Exec();
 	//Enabling the breakpoing will trigger VICE to dump memory at $8000 to a file (FAIL/PASS)
-//	addbreakpoint();
+	addbreakpoint();
 	loop();
 
 end.

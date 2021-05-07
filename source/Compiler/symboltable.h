@@ -114,6 +114,7 @@ public:
     QString m_name="";
     QStringList m_globalList;
     QString m_gPrefix;
+    QString m_currentUnit = "";
     QString m_currentFilename="";
     QStringList m_extraMonCommands;
     QStringList m_externalRecords; // used for keeping track of merging records from units

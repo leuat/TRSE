@@ -858,6 +858,18 @@ void Parser::VerifyTypeSpec(Token& t)
             t.m_value = m_symTab->m_gPrefix+t.m_value;
             ok=true;
         }
+
+        if (m_symTab->m_records.contains(m_symTab->m_currentUnit+t.m_value)) {
+            t.m_value = m_symTab->m_currentUnit+t.m_value;
+            ok=true;
+        }
+
+/*        QString test = m_+t.m_value;
+        if (m_symTab->m_records.contains(test)) {
+            t.m_value = test;
+            ok=true;
+        }
+*/
 //        qDebug() << "IS OK : "<<t.m_value << ok;
 
         if (!ok)
@@ -870,6 +882,7 @@ void Parser::VerifyTypeSpec(Token& t)
 */
     } catch (FatalErrorException& fe) {
         fe.message = "Unknown type specification : " +t.m_value;
+        qDebug() <<m_symTab->m_records.keys() <<m_symTab->m_gPrefix<<t.m_value;
         throw fe;
     }
 }
@@ -1819,9 +1832,9 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
         }
         if (m_currentToken.m_type!=TokenType::END && m_currentToken.m_type!=TokenType::PROCEDURE && m_currentToken.m_type!=TokenType::FUNCTION) {
+//            qDebug() << "A "<<m_symTab->m_gPrefix;
             QVector<QSharedPointer<Node>> vars = VariableDeclarations("");
             for (QSharedPointer<Node> n : vars) {
-
                 QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(n);
                 QSharedPointer<NodeVarType> typ = qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode);
                 QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
@@ -2310,6 +2323,7 @@ QSharedPointer<Node> Parser::Program(QString param)
 
     if (m_isTRU) {
         m_symTab->m_gPrefix = progName+"_";
+        m_symTab->m_currentUnit = m_symTab->m_gPrefix;
         if (s_usedTRUNames.contains(progName))
             ErrorHandler::e.Error("TRU '"+progName+"' is already defined! ",m_currentToken.m_lineNumber);
         s_usedTRUNames.append(progName);

@@ -10,12 +10,29 @@ var
 	a1,a2 : array[10] of integer;
 	j,i : byte;
 
+
+	Point = class
+		x,y : byte;
+		procedure Move2( pm1, pm2 : byte);
+		begin
+			this.x := pm1;
+			this.y := pm2;			
+		end;
+		
+	end;
+
 	Monster = class
+		pos: Point;
 		x,y : byte;
 		ival : integer;
 		byteData : array[5] of byte;
 		c : byte;
 		intData : array[7] of integer;
+		procedure Move1( m1, m2 : byte);
+		begin
+			this.x := m1;
+			this.y := m2;			
+		end;
 	end;
 
 

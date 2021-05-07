@@ -38,13 +38,13 @@ begin
 	
 	Vars::sc := Vars::sc + @COLUMNWIDTH;
 	Vars::co := Vars::co + @COLUMNWIDTH;
-	poke(^$8000,0,0);
+	poke(^$8000,0,1);
 end;
 //--------------------------------------------------------------------------------------------
 
 procedure WaitABit();
 begin
-	for Vars::v1:=0 to 255 do wait(250);
+	for Vars::v1:=0 to 32 do wait(250);
 	
 end;
 
