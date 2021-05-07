@@ -39,7 +39,9 @@ begin
 	
 	// Mul and div
 	Test1();
+	@ifndef AMSTRADCPC
 	Test2();
+	@endif
 	Common::WaitABit();
 end;
 
