@@ -53,6 +53,11 @@ jobs:
           tar -xzf vice-3.5.tar.gz
           mkdir -p ~/.config/vice/
           cp -r vice-3.5/data/* ~/.config/vice/
+          # Build Caprice32 (Amstrad CPC emulator)
+          git clone https://github.com/ColinPitrat/caprice32.git
+          cd caprice32
+          make -j 2
+          cd ..
           # leave tools directory
           cd ..
           # patch dirs
@@ -127,8 +132,7 @@ jobs:
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
-          #xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse `which x64`
-          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse do_not_use_x64_for_now
+          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse `which x64` `pwd`/tools/caprice32/cap32
 
       - name: Build notification
         if: failure()
