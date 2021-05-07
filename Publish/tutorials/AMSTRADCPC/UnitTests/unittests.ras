@@ -1,0 +1,31 @@
+Program UnitTestsAmstradCPC;
+@projectsettings "amstradcpc_options" "-O system.printer=1 -O file.printer_file=/tmp/printer.dat"
+@use "unittests/unittests"
+@use "unittests/common"
+
+procedure TestResult(s : pointer);
+begin
+	Text::Print(s);
+	asm("
+		ld hl, [s]
+unit_tests_print_loop:
+		ld a, (hl)
+		cp 0
+		jr z, unit_tests_print_finished
+unit_tests_print_retry:
+		call #bd2b
+		jr nc, unit_tests_print_retry   ; Printer busy, must retry char
+		inc hl
+		jp unit_tests_print_loop
+unit_tests_print_finished:
+	");
+end;
+
+begin
+        Unittests::Exec();
+        if Common::cpc_unittests_status = 0 then
+        		TestResult("SUCCESS\r\n")
+        	else
+        		TestResult("FAILURE\r\n");
+        loop();
+end.

@@ -12,14 +12,15 @@ from array import array
 assemble = "yes"
 
 if len(sys.argv) < 2:
-	print("Usage: python validate_all.py [ trse exe file] [ x64 vice emulator ] [no_assembling (optional) ]")
+	print("Usage: python validate_all.py [ trse exe file] [ x64 vice emulator ] [ cap32 emulator ] [no_assembling (optional) ]")
 	print("must be run in the 'validate_all' directory.")
 	exit(1)
 
 trse = sys.argv[1]
 x64 = sys.argv[2]
+cap32 = sys.argv[3]
 
-if len(sys.argv)>=4:
+if len(sys.argv)>=5:
 	if (sys.argv[3] == "no_assembling"):
 		assemble="no"
 
@@ -43,6 +44,7 @@ def fillRasList(idx,path):
 tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
 tests.append([ "AMSTRADCPC/tutorials",[]])
 fillRasList(len(tests)-1,".")
+tests.append([ "AMSTRADCPC/UnitTests", ["unittests.ras"]]);
 
 
 # AMIGA
@@ -199,7 +201,7 @@ orgPath = os.getcwd()
 print(orgPath)
 
 
-def UnitTests():
+def C64UnitTests():
 	if os.path.exists(x64):
 		path =  os.path.abspath(lp+'C64/UnitTests/')
 		test6502 =  path + "/unittests"
@@ -226,6 +228,38 @@ def UnitTests():
 			else:
 				print("6502 Unittest SUCCESS!")
 
+
+def CPCUnitTests():
+	if os.path.exists(cap32):
+		path =  os.path.abspath(lp+'AMSTRADCPC/UnitTests/')
+		os.chdir(os.path.dirname(cap32))
+		resultFile = os.path.dirname(cap32)+"/printer.dat"
+		if (os.path.exists(resultFile)):
+			os.remove(resultFile)
+
+		try:
+			print([cap32,"-i",path+"/unittests.bin","-o","0x4000",])
+			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+			if result.stdout: print(result.stdout.decode('utf-8'))
+		except subprocess.TimeoutExpired as err:
+			print("ERROR: Timeout for unit tests expired.")
+			failed.append([path, "unittests.ras"])
+			if err.stdout: print(err.stdout.decode('utf-8'))
+#		print(os.path.exists(resultFile))
+		with open(resultFile, "r") as f:
+			result = f.read().strip()
+			print(result)
+			if result != "SUCCESS":
+				failed.append([path, "unittests.ras"])
+				print("******* SEVERE ERROR : Amstrad CPC Execution unit test FAILED! Please fix up unittests.ras: %s" % lines[-1])
+			else:
+				print("Amstrad CPC Unittest SUCCESS!")
+		os.chdir(orgPath)
+
+
+def UnitTests():
+	C64UnitTests();
+	CPCUnitTests();
 
 
 def CompileTests():
