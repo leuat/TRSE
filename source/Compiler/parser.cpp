@@ -1962,9 +1962,19 @@ QSharedPointer<Node> Parser::AssignStatement()
         auto v = qSharedPointerDynamicCast<NodeVar>(left);
         // Transform to a reference..
         auto s =m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
-        if (s->m_type.toLower()!="pointer")
-            left->m_op.m_isReference = true; // IMPORTANT : first parameter is THIS, so it needs to be a pointer
+        //qDebug() << s->m_name << s->m_type << s->m_arrayTypeText <<s->m_pointsTo <<s->m_type.toLower();
         left = ApplyClassVariable(left);
+        if (s->m_type.toLower()!="pointer")
+            left->setReference(true);
+        if (!left->isReference()) {
+//            qDebug() << "IS REFERENCE ";
+            if (v->m_expr!=nullptr) {
+                auto add = v->m_expr;
+                v->m_expr = nullptr;
+                left = CreateBinop(TokenType::PLUS,v,add);
+
+            }
+        }
 
         p->m_parameters.insert(0,left);
         return p;
@@ -2419,6 +2429,7 @@ QSharedPointer<Node> Parser::Factor()
         if (m_symTab->m_records.contains(varName))
         {
             len = m_symTab->m_records[varName]->getSize();
+            qDebug() << "PARSER "<<varName<<len;
         }
         else {
             QSharedPointer<Symbol> s = m_symTab->Lookup(varName,m_currentToken.m_lineNumber);

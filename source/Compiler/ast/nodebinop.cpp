@@ -127,6 +127,9 @@ void NodeBinOP::SwapVariableFirst()
     }
 }
 
+bool NodeBinOP::isReference() {
+    return m_left->isReference() || m_right->isReference() || m_op.m_isReference; }
+
 bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
 {
     if (m_right->isPureVariable() && m_right->getValue(as)==var) {

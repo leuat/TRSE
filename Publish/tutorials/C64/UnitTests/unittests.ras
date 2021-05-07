@@ -6,7 +6,6 @@ Program UnitTests6502;
 begin
 	Unittests::Exec();
 	//Enabling the breakpoing will trigger VICE to dump memory at $8000 to a file (FAIL/PASS)
-	addbreakpoint();
+	//addbreakpoint();
 	loop();
-
 end.

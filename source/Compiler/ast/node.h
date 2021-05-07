@@ -110,6 +110,7 @@ public:
     virtual void ForceAddress();
 
     virtual bool isReference() { return false;}
+    virtual void setReference(bool ref);
 
     // Does the expression contain a pointer? (ie turn 16/32 bit)
     virtual bool containsPointer(Assembler* as) {return false;}
@@ -217,8 +218,9 @@ public:
 };
 
 
+
 class NoOp : public Node {
-    public:
+public:
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
 
     }

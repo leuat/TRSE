@@ -10,8 +10,20 @@ var
 	a1,a2 : array[10] of integer;
 	j,i : byte;
 
+	Mini = class
+		a:integer;
+		b:byte;
+		
+		procedure IncA();
+		begin
+			this.a+=this.b;
+		end;
+		
+	end;
+
 
 	Point = class
+		minis : array[2] of Mini;
 		x,y : byte;
 		procedure Move2( pm1, pm2 : byte);
 		begin

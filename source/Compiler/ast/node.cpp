@@ -178,3 +178,12 @@ bool Node::isSigned(Assembler *as) {
 
     return isSigned;
 }
+
+void Node::setReference(bool ref) {
+    m_op.m_isReference = ref;
+    if (m_left!=nullptr)
+        m_left->setReference(ref);
+    if (m_right!=nullptr)
+        m_right->setReference(ref);
+
+}

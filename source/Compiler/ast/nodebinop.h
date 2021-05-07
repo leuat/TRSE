@@ -77,8 +77,7 @@ public:
 
     void SwapVariableFirst();
 
-    virtual bool isReference() override {
-        return m_left->isReference() || m_right->isReference(); }
+    virtual bool isReference() override;
 
     bool ContainsVariable(Assembler* as, QString var);
 

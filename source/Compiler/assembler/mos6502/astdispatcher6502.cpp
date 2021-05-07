@@ -2150,6 +2150,7 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeForLoop> node)
 
 
 void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
+//    qDebug() << "Dispatcher 6502 loadpointer " <<node->value<<node->isReference();
     as->Comment("Load pointer array");
     QSharedPointer<NodeNumber> number = qSharedPointerDynamicCast<NodeNumber>(node->m_expr);
     QString m = as->m_term;

@@ -38,7 +38,7 @@ begin
 	Vars::pm.byteData[3]:=2;
 	Vars::text := "T3:";
 	Vars::zp:=#Vars::monsters + sizeof(Vars::Monster)*8;
-	Vars::j := Vars::zp[4+3+2];
+	Vars::j := Vars::zp[4+3+2 + 6];
 	if (Vars::j=2) then Common::PASS() else Common::FAIL();
 end;
 
@@ -54,11 +54,11 @@ end;
 
 procedure CTest5();
 begin
-	Vars::pm:=#Vars::monsters[8];
+	Vars::pm:=#Vars::monsters[4];
 	Vars::pm.pos.y:=5;	
 	Vars::text := "T5:";
 	Vars::zp:=#Vars::monsters;
-	if (Vars::zp[sizeof(Vars::Monster)*8+5]=5) then Common::PASS() else Common::FAIL();
+	if (Vars::zp[sizeof(Vars::Monster)*4 + (5+6)]=5) then Common::PASS() else Common::FAIL();
 end;
 
 // Indirect method call
@@ -70,13 +70,29 @@ begin
 	if (Vars::pm.x=11 and Vars::pm.y=12) then Common::PASS() else Common::FAIL();
 end;
 
+// Indirect method call from withing another class
 procedure CTest7();
 begin
-	Vars::pm:=#Vars::monsters[8];
-	asm(";here");
+	Vars::pm:=#Vars::monsters[5];
 	Vars::pm.pos.Move2(15,16);
 	Vars::text := "T7:";
 	if (Vars::pm.pos.x=15 and Vars::pm.pos.y=16) then Common::PASS() else Common::FAIL();
+end;
+
+
+// Direct array method call from withing another class within....
+procedure CTest8();
+begin
+	Vars::pm:=#Vars::monsters[3];
+	asm(";here");
+//	Vars::pm.pos.Move2(15,16);
+	Vars::text := "T8:";
+	Vars::pm.pos.minis[1].a:=10;
+	Vars::pm.pos.minis[1].b:=20;
+	Vars::pm.pos.minis[1].IncA(); // calculates a+=b, so A should be 30
+	Vars::zp:=#Vars::monsters;
+	//if (Vars::pm.pos.minis[1].a=30 and Vars::zp[ sizeof(Vars::Monster)*3 + (4 + 5)]=30) then Common::PASS() else Common::FAIL();
+	if (Vars::pm.pos.minis[1].a=30) then Common::PASS() else Common::FAIL();
 end;
 
 
@@ -94,6 +110,7 @@ begin
 	CTest5();
 	CTest6();
     CTest7(); 
+    CTest8();
 	Common::WaitABit();
 
 end;
