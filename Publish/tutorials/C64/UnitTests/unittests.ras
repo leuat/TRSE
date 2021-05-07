@@ -5,6 +5,6 @@ Program UnitTests6502;
 
 begin
 	Unittests::Exec();
-//	addbreakpoint();
+	addbreakpoint();
 	loop();
 end.

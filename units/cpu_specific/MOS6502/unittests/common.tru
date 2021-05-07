@@ -1,4 +1,5 @@
 unit Common;
+@use "unittests/vars"
 var
 	
 	@define COLUMNWIDTH 5
