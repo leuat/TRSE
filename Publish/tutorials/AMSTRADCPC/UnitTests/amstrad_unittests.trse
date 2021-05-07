@@ -56,3 +56,6 @@ data_header_resources/images/background.flf = 6.92316e-310
 data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc/tutorials/resources/images/trse.flf = 6.48302e-314
 show_all_files = 1
 amstradcpc_model = 464
+project_path = /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/bin/../tutorials/AMSTRADCPC/UnitTests/
+open_files = ,unittests.ras, [ext]units/global/unittests/case.tru, [ext]units/global/unittests/unittests.tru, [ext]units/AMSTRADCPC/unittests/common.tru
+current_file = [ext]units/global/unittests/unittests.tru
