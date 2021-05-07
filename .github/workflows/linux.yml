@@ -46,6 +46,11 @@ jobs:
           cd exomizer/src
           make -j 2
           cd ../..
+          # Install ROMs to be able to run VICE
+          wget https://sourceforge.net/projects/vice-emu/files/releases/vice-3.5.tar.gz/download -O vice-3.5.tar.gz
+          tar -xzf vice-3.5.tar.gz
+          mkdir -p ~/.config/vice/
+          cp -r vice-3.5/data/* ~/.config/vice/
           # leave tools directory
           cd ..
           # patch dirs
@@ -56,6 +61,9 @@ jobs:
           c1541=$(which c1541)
           echo "Found c1541 in: '${c1541}'"
           sed -i "s,^c1541 =.*,c1541 = ${c1541}," Publish/publish_linux/trse.ini
+          x64=$(which x64)
+          echo "Found x64 in: '${x64}'"
+          sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
 
       - name: Build TRSE
         run: |
@@ -116,5 +124,5 @@ jobs:
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
-          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse
+          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py `pwd`/trse `which x64`
 
