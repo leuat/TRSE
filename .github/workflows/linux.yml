@@ -14,7 +14,7 @@ jobs:
       - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
 
       # For 'Verify all' tests
-      # dbus-x11, at-spi2-core and libavformat58 seem to be required by vice
+      # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
       - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3
       - name: Build assemblers (vasm, rgbasm, pasmo)
         run: |
@@ -66,10 +66,6 @@ jobs:
           x64=$(which x64)
           echo "Found x64 in: '${x64}'"
           sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
-          # Temporary: test x64
-          xvfb-run --auto-servernum $x64 -console -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg&
-          pid=$!
-          sleep 60 && kill -9 $pid
 
 
       - name: Build TRSE
