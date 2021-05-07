@@ -6,9 +6,9 @@ on:
       - '**'
 
 jobs:
-  timeout-minutes: 30
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev

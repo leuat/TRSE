@@ -6,9 +6,9 @@ on:
       - '**'
 
 jobs:
-  timeout-minutes: 30
   build:
     runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1

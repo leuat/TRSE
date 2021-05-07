@@ -15,9 +15,9 @@ on:
 # Unfortunately, there's no way to limit the access token to a single repository
 # or to just be allowed to tag, so this solution is not great.
 jobs:
-  timeout-minutes: 5
   tag:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: dev-drprasad/delete-tag-and-release@v0.2.0
         with:
