@@ -207,7 +207,7 @@ def UnitTests():
 		if (os.path.exists(resultFile)):
 			os.remove(resultFile)
 
-		result = subprocess.call([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], stdout=PIPE, stderr=subprocess.STDOUT)
+		result = subprocess.call([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=60, stdout=PIPE, stderr=subprocess.STDOUT)
 #		print(os.path.exists(resultFile))
 		with open(resultFile, "rb") as f:
 			data = array('B')
