@@ -1,3 +1,4 @@
+# vim: set noexpandtab:
 from subprocess import Popen, PIPE
 import subprocess
 import os
@@ -209,11 +210,11 @@ def UnitTests():
 
 		try:
 			result = subprocess.run([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
-                        if result.stdout: print(result.stdout.decode('utf-8'))
+			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired err:
 			print("ERROR: Timeout for unit tests expired.")
 			failed.append([path, "unittest.prg"])
-                        if err.stdout: print(err.stdout.decode('utf-8'))
+			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
 		with open(resultFile, "rb") as f:
 			data = array('B')
@@ -223,6 +224,7 @@ def UnitTests():
 				failed.append([path, "unittest.prg"])
 				print("******* SEVERE ERROR : 6502 Execution unit test FAILED! Please fix up unittest.prg")
 			else:
+				print("6502 Unittest SUCCESS!")
 				print("6502 Unittest SUCCESS!")
 
 
