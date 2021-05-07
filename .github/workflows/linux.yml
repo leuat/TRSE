@@ -69,7 +69,7 @@ jobs:
           # Temporary: test x64
           xvfb-run --auto-servernum $x64 -console -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg&
           pid=$!
-          sleep 60 && kill -9 pid
+          sleep 60 && kill -9 $pid
 
 
       - name: Build TRSE
