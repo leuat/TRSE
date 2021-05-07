@@ -207,7 +207,12 @@ def UnitTests():
 		if (os.path.exists(resultFile)):
 			os.remove(resultFile)
 
-		result = subprocess.call([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+		try:
+			result = subprocess.run([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+		except subprocess.TimeoutExpired:
+			print("ERROR: Timeout for unit tests expired.")
+			failed.append([path, "unittest.prg"])
+		if result.stdout: print(result.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
 		with open(resultFile, "rb") as f:
 			data = array('B')
