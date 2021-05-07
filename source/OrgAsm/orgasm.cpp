@@ -930,6 +930,9 @@ void Orgasm::SaveSymbolsList(QString filename)
                 stream << "break " << Util::numToHex(m_symbols[s])<<endl;
             }
         }
+        for (QString& s: m_extraMonCommands) {
+                stream << s<<endl;
+        }
 
 
     }

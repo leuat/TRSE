@@ -1,0 +1,111 @@
+unit Memory;
+var
+	src, dst : pointer;
+	len : integer;
+	@donotremove firmware
+
+
+
+/**
+Pushes all registers (both pairs) onto the stack. Typically used in interrupts.
+**/
+procedure PushAll() inline;
+begin
+	asm("
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	push iy
+	exx
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	push iy
+	exx
+	");
+end;
+
+/**
+Pops all registers (both pairs) from the stack. Typically used in interrupts.
+**/
+procedure PopAll() inline;
+begin
+	asm("
+	exx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+	pop bc
+	pop af
+	exx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+	pop bc
+	pop af
+
+	");
+end;
+/**
+Turns on interrupts. Same as "ei"
+**/
+procedure EnableInterrupts() inline;
+begin
+	asm(" ei");
+end;
+
+/**
+Turns off interrupts. Same as "di"
+**/
+procedure DisableInterrupts() inline;
+begin
+	asm(" di");
+end;
+
+procedure EnableBank(b:byte);
+begin
+	asm("
+     ld      a,[Memory_b]               ;Select bank 4
+     ld       d,a
+     LD      A,(0x5b5c)      ;Previous value of port
+     AND     0xf8
+     or      d
+     LD      BC,0x7ffd
+     DI
+     LD      (0x5b5c),A
+     OUT     (C),A
+     EI	
+	");	
+end;
+
+
+procedure VSync() inline;
+begin
+	asm("
+	halt
+
+        ;Waits for the electron beam to be in the upper border.
+        djnz $
+        djnz $
+
+	");
+end;
+
+
+procedure Wait() inline;
+begin
+	asm("
+	ei
+    nop
+    halt
+    di
+	");	
+end;
+
+end.

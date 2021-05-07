@@ -186,7 +186,7 @@
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>130</y>
+           <y>80</y>
            <width>221</width>
            <height>41</height>
           </rect>
@@ -199,13 +199,13 @@
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>180</y>
-           <width>821</width>
-           <height>281</height>
+           <y>160</y>
+           <width>981</width>
+           <height>261</height>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>6</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -704,6 +704,49 @@
             </item>
             <item row="1" column="1">
              <widget class="QLineEdit" name="leAmstradCPCOptions"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_12">
+          <attribute name="title">
+           <string>Spectrum</string>
+          </attribute>
+          <widget class="QWidget" name="gridLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>771</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_16" columnstretch="1,3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_23">
+              <property name="text">
+               <string>Spectrum model</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="cbmSpectrumModel">
+              <item>
+               <property name="text">
+                <string>Zx Spectrum 16k</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Zx Spectrum 48k</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Zx Spectrum 128k</string>
+               </property>
+              </item>
+             </widget>
             </item>
            </layout>
           </widget>

@@ -25,6 +25,8 @@
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QString Symbol::s_currentProcedure = "";
+QMap<QString,int> SymbolTable::s_classSizes;
+
 
 //QString SymbolTable::m_gPrefix = "";
 //QMap<QString,QSharedPointer<Symbol>> SymbolTable::m_constants;
@@ -96,7 +98,9 @@ void SymbolTable::Initialize()
   //  m_constants.clear();
 
     QVector<QSharedPointer<Symbol>> keeps;
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC && m_constants.contains("INIT_MUSIC")) {
+    if (
+            (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC || Syntax::s.m_currentSystem->m_system==AbstractSystem::SPECTRUM)
+            && m_constants.contains("INIT_MUSIC")) {
         // Addresses change due to compiler
         keeps.append(m_constants["INIT_MUSIC"]);
         keeps.append(m_constants["PLAY_MUSIC"]);
@@ -187,7 +191,10 @@ void SymbolTable::Initialize()
 //    qDebug()  << Util::numToHex(m_constants["KEY_2"]->m_value->m_fVal);
 
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC && keeps.count()==3) {
+    if (
+            (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMSTRADCPC ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::SPECTRUM)
+            && keeps.count()==3) {
         m_constants["INIT_MUSIC"] = keeps[0];
         m_constants["PLAY_MUSIC"] = keeps[1];
         m_constants["STOP_MUSIC"] = keeps[2];
@@ -201,7 +208,7 @@ void SymbolTable::Initialize()
 void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 {
     for (QString k : other->m_records.keys()) {
-        if (m_records.contains(k))
+        if (m_records.contains(k) && m_externalRecords.contains(k))
             ErrorHandler::e.Error("Record already defined : '"+k+"'");
         m_records[k] = other->m_records[k];
     }
@@ -549,12 +556,13 @@ int SymbolTable::getShiftedPositionOfVariable(QString var, int mul)
 
     int cnt = 0;
     int cur = 0;
+
     while (m_orderedByDefinition[cur]!=var) {
-        cnt+= m_symbols[m_orderedByDefinition[cur]]->getCountingLength()*mul;
+        cnt+= m_symbols[m_orderedByDefinition[cur]]->m_size*mul;
         cur+=1;
 
     }
-
+ //   qDebug() << "Counting length for "<<var<<cnt;
     return cnt;
 
 }
@@ -637,7 +645,10 @@ int Symbol::getLength() {
 void Symbol::setSizeFromCountOfData(int cnt)
 {
     m_size = std::max(cnt,1);
+  //  if (getEndType().toLower()=="record")
+    //    return;
     m_size*=getCountingLength();
+    //qDebug() << "SYMBOL " <<m_name<< getCountingLength()<<cnt<<m_size<<getEndType()<<m_type<<m_arrayTypeText<<m_pointsTo;
 
 
 }
@@ -645,6 +656,11 @@ void Symbol::setSizeFromCountOfData(int cnt)
 int Symbol::getCountingLength()
 {
     QString type = getEndType();
+
+    if (SymbolTable::s_classSizes.contains(type)) {
+//        qDebug() << "SYMBOL END TYPE "<<type<<SymbolTable::s_classSizes[type];
+        return SymbolTable::s_classSizes[type];
+    }
     int l = 1;
     if (type.toLower() == "integer")
         l = 2;
@@ -670,6 +686,7 @@ int SymbolTable::getSize()
     int cnt = 0;
     for (QString s: m_orderedByDefinition) {
         cnt+= m_symbols[s]->m_size;
+//        qDebug() << "Size of "<<s <<m_symbols[s]->m_size;
     }
 
     return cnt;

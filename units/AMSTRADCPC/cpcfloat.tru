@@ -1,0 +1,311 @@
+unit CPCFloat;
+/**
+	CPCFloat provides 40-bits (5 bytes) floating point numbers implemented by the CPC.
+	This uses the same API as smallfloat so this can be used as a drop-in replacement, replacing SmallFloat with CPCFloat.
+	It's much more precise (31 bits mantissa instead of 7 bits) but quite slower.
+	Storing the floats takes more space but the code being in the RAM of the CPC anyway, it can lead to smaller code.
+**/
+var
+	FLO_COPY, FLO_INT_TO_REAL, FLO_ADD, FLO_SUB, FLO_MUL, FLO_DIV, FLO_NEG, FLO_CMP : integer;
+	result, f1, f2 : pointer;
+	substract_f3: array[5] of byte;
+	internal_f, internal_f2: array[5] of byte;
+	ten: array[5] of byte;
+	negative, decimal, internal_b: byte;
+	s, fromstring_f: pointer;
+	i: integer;
+	b: byte;
+
+/*
+ Implemented:
+ 464  664  6128
+ BD3D BD5E BD61 FLO_COPY [HL]=[DE], A=exponent
+ BD40 BD61 BD64 FLO_int to real  ;DE=dest, HL=unsigned16bit, A.7=sign
+ BD58 BD79 BD7C FLO_ ADD [HL]=[HL]+[DE]
+ BD5E BD7F BD82 FLO_SUB2  [HL]=[DE]-[HL] (swapped operands)
+ BD61 BD82 BD85 FLO_MUL   [HL]=[HL]*[DE]
+ BD64 BD85 BD88 FLO_DIV   [HL]=[HL]/[DE]
+ BD6A BD8B BD8E FLO_COMPARE [HL]-[DE]
+ BD6D BD8E BD91 FLO_NEG
+
+ Not yet implemented:
+ 464  664  6128
+ BD43 BD64 BD67 FLO_ 4-byte to real
+ BD46 BD67 BD6A FLO_ real to int
+ BD49 BD6A BD6D FLO_ round
+ BD4C BD6D BD70 FLO_ FIX
+ BD4F BD70 BD73 FLO_ INT
+ BD52 BD73 BD76 FLO_ prepare for decimal
+ BD55 BD76 BD79 FLO_ mul 10^A
+ BD70 BD91 BD94 FLO_SGN
+ BD73 BD94 BD97 FLO_DEG/RAD  ;in: A=00h=RAD, FFh=DEG
+ BD76 BD97 BD9A FLO_PI    [HL]=PI
+ BD79 BD9A BD9D FLO_SQRT  [HL]=[HL]^0.5
+ BD7C BD9D BDA0 FLO_POT   [HL]=[HL]^[DE]
+ BD7F BDA0 BDA3 FLO_LOG   [HL]=LOG([HL])
+ BD82 BDA3 BDA6 FLO_LOG10 [HL]=LOG10([HL])
+ BD85 BDA6 BDA9 FLO_EXP   [HL]=EXP([HL])
+ BD88 BDA9 BDAC FLO_SIN   [HL]=SIN([HL])
+ BD8B BDAC BDAF FLO_COS   [HL]=COS([HL])
+ BD8E BDAF BDB2 FLO_TAN   [HL]=TAN([HL])
+ BD91 BDB2 BDB5 FLO_ATN   [HL]=ATN([HL])
+ BD94 BDB5 BDB8 FLO_5-byte to REAL
+ BD97 BDB8 BDBB FLO_RND_INIT        ;seed=89656C07h
+ BD9A BDBB BDBE FLO_RND_SEED        ;seed=89656C07h xor [HL]
+ BD9D BD7C BD7F FLO_RND              ;\on 664/6128 these are "inserted"
+ BDA0 BD88 BD8B FLO_RND last value   ;/in the above "N/A" locations
+ 
+ Left aside:
+ BD5B N/A  N/A  FLO_SUB1  [HL]=[HL]-[DE] - Although more convenient than SUB2, it's not available on 664 and 6128
+ BD67 N/A  N/A  FLO_SHIFT [HL]=[HL]*2^A  - Not available on 664 and 6128
+ */
+
+/**
+	Initializes the floating point unit (initializes addresses).
+**/
+procedure Init();
+begin
+	asm("
+		jp cpcfloat_init_skip_jp_ix
+cpcfloat_jp_ix:
+		jp [ix]
+cpcfloat_init_skip_jp_ix:
+	");
+	// Prober ROM to determine version
+	for internal_b := 0 to 255 do
+	begin
+		asm("
+			ld a, [CPCFloat_internal_b]  ; Any value but 7 should do, we try multiple if needed
+			ld c, a
+			call #B915
+			ld [CPCFloat_negative], a    ; ROM class: we want 128 for built-in BASIC ROM
+			ld a, h
+			ld [CPCFloat_b], a           ; ROM version
+		");
+		if negative = 128 then break;
+	end;
+	// Ideally, here, if negative <> 128 we'd raise an error because we didn't find any built-in ROM
+	// In practice, this shouldn't happen so let's just ignore this for now.
+	if b = 0 then // 464
+	begin	
+		FLO_COPY := $BD3D;
+		FLO_INT_TO_REAL := $BD40;
+		FLO_ADD := $BD58;
+		FLO_SUB := $BD5E;
+		FLO_MUL := $BD61;
+		FLO_DIV := $BD64;
+		FLO_NEG := $BD6D;
+		FLO_CMP := $BD6A;
+	end;
+	if b = 1 then // 664
+	begin
+		FLO_COPY := $BD5E;
+		FLO_INT_TO_REAL := $BD61;
+		FLO_ADD := $BD79;
+		FLO_SUB := $BD7F;
+		FLO_MUL := $BD82;
+		FLO_DIV := $BD85;
+		FLO_NEG := $BD8E;
+		FLO_CMP := $BD8B;
+	end;
+	if (b = 2 or b = 4) then // 6128 or 6128+
+	begin
+		FLO_COPY := $BD61;
+		FLO_INT_TO_REAL := $BD64;
+		FLO_ADD := $BD7C;
+		FLO_SUB := $BD82;
+		FLO_MUL := $BD85;
+		FLO_DIV := $BD88;
+		FLO_NEG := $BD91;
+		FLO_CMP := $BD8E;
+	end;
+end;
+
+/**
+	Copy the value of f2 to f1.
+**/
+procedure Assign(f1, f2: global pointer);
+begin
+	asm("
+		ld hl, [CPCFloat_f1]
+		ld de, [CPCFloat_f2]
+		ld ix, [CPCFloat_FLO_COPY]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Create a floating point number from a byte.
+	First argument: float to create
+	Second argument: unsigned integer value byte
+**/
+procedure FromU8(f1: global pointer, b: global byte);
+begin
+	asm("
+		ld de, [CPCFloat_f1]
+		ld a, [CPCFloat_b]
+		ld l, a
+		ld h, 0
+		ld a, 0  ; Positive
+		ld ix, [CPCFloat_FLO_INT_TO_REAL]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Create a floating point number from an integer.
+	First argument: float to create
+	Second argument: unsigned integer
+**/
+procedure FromU16(f1: global pointer, i: global integer);
+begin
+	asm("
+		ld de, [CPCFloat_f1]
+		ld hl, [CPCFloat_i]
+		ld a, 0  ; Positive
+		ld ix, [CPCFloat_FLO_INT_TO_REAL]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Switch the sign of a float number.
+	First argument: float to negate
+**/
+procedure Neg(f1: global pointer);
+begin
+	asm("
+		ld hl, [CPCFloat_f1]
+		ld ix, [CPCFloat_FLO_NEG]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Compare f1 with f2 and returns:
+	 - -1 if f1 < f2
+	 - 0 if f1 == f2
+	 - 1 if f1 > f2
+**/
+function Compare(f1, f2: global pointer):byte;
+begin
+	asm("
+		ld hl, [CPCFloat_f1]
+		ld de, [CPCFloat_f2]
+		ld ix, [CPCFloat_FLO_CMP]
+		call cpcfloat_jp_ix
+		ld [CPCFloat_b], a
+	");
+	Compare := b;
+end;
+
+/**
+	Add two floats f1 and f2 and put the result in the first argument.
+**/
+procedure Add(add_result, add_f1, add_f2: pointer);
+begin
+	Assign(add_result, add_f1);
+	asm("
+		ld hl, [CPCFloat_add_result]
+		ld de, [CPCFloat_add_f2]
+		ld ix, [CPCFloat_FLO_ADD]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Substract the float f2 from f1 and put the result in the first argument.
+**/
+procedure Substract(substract_result, substract_f1, substract_f2: pointer);
+begin
+	Assign(substract_result, substract_f1);
+	asm("
+		ld hl, [CPCFloat_substract_result]
+		ld de, [CPCFloat_substract_f2]
+		ld ix, [CPCFloat_FLO_SUB]
+		call cpcfloat_jp_ix
+		; Result in HL is DE-HL, so need to neg it
+		ld ix, [CPCFloat_FLO_NEG]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Multiply two floats f1 and f2 and put the result in the first argument.
+**/
+procedure Multiply(multiply_result, multiply_f1, multiply_f2: pointer);
+begin
+	Assign(multiply_result, multiply_f1);
+	asm("
+		ld hl, [CPCFloat_multiply_result]
+		ld de, [CPCFloat_multiply_f2]
+		ld ix, [CPCFloat_FLO_MUL]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Divide a float f1 by another f2 and put the result in the first argument.
+**/
+procedure Divide(divide_result, divide_f1, divide_f2: pointer);
+begin
+	Assign(divide_result, divide_f1);
+	asm("
+		ld hl, [CPCFloat_divide_result]
+		ld de, [CPCFloat_divide_f2]
+		ld ix, [CPCFloat_FLO_DIV]
+		call cpcfloat_jp_ix
+	");
+end;
+
+/**
+	Create a 5 bytes floating point number from a string.
+	First argument: float to create
+	Second argument: string representing the initial value (null-terminated)
+	Stops on the first invalid char (valid char are digits + a single . and optionally a - as first char).
+	BUG: This produces suboptimal values due to the lost precision when adding small values to large ones. It would be better to handle digits from right to left.
+**/
+procedure FromString(fromstring_f, s: global pointer);
+begin
+	FromU8(#ten, 10);
+	FromU8(fromstring_f, 0);
+	negative := 0;
+	decimal := 0;
+	if s^ = $2d then
+	begin
+		negative := 1;
+		s += 1;
+	end;
+	while s^ <> 0 do
+	begin
+		if s^ = $2e then
+		begin
+			decimal := 1;
+			s += 1;
+			continue;
+		end;
+		if (s^ < 48 or s > 57) then break;
+		internal_b := s^ - 48;
+		s += 1;
+		FromU8(#internal_f, internal_b);
+		if decimal <> 0 then
+		begin
+			for b := 0 to decimal do
+			begin
+				Divide(#internal_f2, #internal_f, #ten);
+				Assign(#internal_f, #internal_f2);
+			end;
+			Assign(#internal_f2, fromstring_f);
+			Add(fromstring_f, #internal_f2, #internal_f);
+			decimal += 1;
+		end
+		else
+		begin
+			Multiply(#internal_f2, fromstring_f, #ten);
+			Add(fromstring_f, #internal_f2, #internal_f);
+		end;
+	end;
+	if negative <> 0 then Neg(fromstring_f);
+end;
+
+end.

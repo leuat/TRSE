@@ -56,3 +56,4 @@ data_header_resources/images/test.flf = 0
 data_header_resources/images/proxima1.flf = 6.45312e-314
 data_header_resources/images/kid.flf = 6.45312e-314
 zeropages_userdefined = ,
+show_all_files = 1

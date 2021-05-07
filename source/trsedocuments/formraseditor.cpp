@@ -156,8 +156,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM) {
         emu = m_iniFile->getString("spectrum_emulator");
         if (emu.toLower().contains("retro")) {
-  //          qDebug() << "HERE";
-            params<<"-b=zx48k"<<"-j=0x8000"<<"-l=0x8000";
+            QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
+            int model = m_projectIniFile->getdouble("spectrum_model");
+            QStringList models = QStringList() <<"zx16k" << "zx48k"<<"zx128k";
+            params<<"-b="+models[model]<<"-j=0x"+addr<<"-l=0x"+addr;
         }
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
@@ -287,7 +289,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
         if (m_projectIniFile->getdouble("exomizer_toggle")==1)
             num = 0x4000; /// Always start at 0x4000
         params << "-o" << "0x"+QString::number(num,16);
-
         QString amstradcpc_model = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_model");
         QMap<QString, QString> caprice32_models = {
           { "464", "0" },
@@ -591,7 +592,7 @@ void FormRasEditor::VerifyCommodoreStartChange()
     QString iniField = "ignoremessage_commodore_start_change";
     if (m_projectIniFile->getdouble("override_target_settings")==1) {
         if (!(m_projectIniFile->contains(iniField) && m_projectIniFile->getdouble(iniField)==1)) {
-            qDebug() << "HERE" << m_projectIniFile->getdouble("override_target_settings");
+          //  qDebug() << "HERE" << m_projectIniFile->getdouble("override_target_settings");
             DialogCustomWarning* d = new DialogCustomWarning();
             d->Init("Project Warning","A BASIC SYS start address has been specified in the project settings that is invalid."
 " Please use [default] instead.",iniField,m_projectIniFile.get());

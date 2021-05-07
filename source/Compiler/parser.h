@@ -105,6 +105,7 @@ public:
     QString m_currentDir, m_currentFileShort;
     QStringList m_removedProcedures;
     QVector<QStringList> m_obsoleteWarnings;
+    QStringList m_monitorCommands;
     QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     QStringList m_diskFiles;
@@ -258,7 +259,7 @@ public:
     QSharedPointer<Node> BuiltinFunction();
     QSharedPointer<Node> Constant();
     QSharedPointer<Node> InlineAssembler();
-
+    QSharedPointer<Node> AssignStatementBetweenObjects(QSharedPointer<Node> left,QSharedPointer<Node> right);
     QStringList m_parserAppendix;
 
 

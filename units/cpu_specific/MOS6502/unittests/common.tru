@@ -1,0 +1,60 @@
+unit Common;
+var
+	
+	@define COLUMNWIDTH 5
+	
+procedure Initialise(zp:pointer);
+begin
+	DefineScreen();
+	SCREEN_BG_COL := BLACK;
+	SCREEN_FG_COL := BLACK;
+	Vars::sc := #SCREEN_CHAR_LOC;
+	Vars::co := #SCREEN_COL_LOC;
+	clearscreen(32, SCREEN_CHAR_LOC);
+	clearscreen(WHITE, SCREEN_COL_LOC);
+	moveto(0,0,04);
+	printstring(zp,0,40);
+	Vars::sc+=80;
+	Vars::co+=80;
+end;
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+	screenmemory := Vars::sc;
+	PrintString(#Vars::text, 0, 12);
+	Vars::sc[2] := $53; // heart
+	Vars::co[2] := GREEN;
+	
+	Vars::sc := Vars::sc + @COLUMNWIDTH;
+	Vars::co := Vars::co + @COLUMNWIDTH;
+end;
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+	screenmemory := Vars::sc;
+	PrintString(#Vars::text, 0, 12);
+	Vars::sc[2] := $56; // cross
+	Vars::co[2] := RED;
+	
+	Vars::sc := Vars::sc + @COLUMNWIDTH;
+	Vars::co := Vars::co + @COLUMNWIDTH;
+	poke(^$8000,0,1);
+end;
+//--------------------------------------------------------------------------------------------
+
+procedure WaitABit();
+begin
+	for Vars::v1:=0 to 32 do wait(250);
+	
+end;
+
+procedure DebugValue(v:integer);
+begin
+	moveto(5,15,04);
+	printdecimal(v,5); 
+
+end;
+
+end.
+
+

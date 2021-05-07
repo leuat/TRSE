@@ -13,14 +13,19 @@ public:
         m_processor = Z80;
         m_system = SPECTRUM;
 
-        m_startAddress = 0x8000;
-        m_programStartAddress = 0x8000;
+        m_startAddress = 0x6000;
+        m_programStartAddress = 0x6000;
     }
 
 
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
     virtual void PostProcess(QString& text, QString file, QString currentDir);
+
+    QString getArkosTrackerSystemString() override {
+        return "PLY_AKG_HARDWARE_SPECTRUM = 1\n";
+    }
+
 };
 
 

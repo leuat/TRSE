@@ -81,6 +81,11 @@ QString ASTdispatcherZ80::getJmp(bool isOffPage) {
         return "jr";
     return "jp";
 }
+
+bool ASTdispatcherZ80::UseBlocks() {
+    return (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY ||
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM);
+}
 /*
  *
  * Main method used in for loops. Will increase a counter in nodeA->m_left (from for a:=0 ...)
@@ -269,6 +274,22 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
     as->Asm("ld ["+var->value+"+1],a");
 //    StoreVariable(var);
 
+
+}
+
+void ASTdispatcherZ80::LoadVariable(QSharedPointer<NodeProcedure> node)
+{
+    as->Asm("ld hl,"+node->m_procedure->m_procName);
+}
+
+void ASTdispatcherZ80::LoadVariable(QSharedPointer<NodeVar> n)
+{
+    n->Accept(this);
+}
+
+void ASTdispatcherZ80::LoadVariable(QSharedPointer<Node> n)
+{
+    n->Accept(this);
 
 }
 

@@ -553,5 +553,16 @@ void LabelStack::push() {
     m_vars.push_back(m_current);
 }
 
+void LabelStack::pop() {
+    if (m_vars.count()==0) {
+                    ErrorHandler::e.Error("Trying to pop labelstack from zero : " + m_current);
+        return;
+    }
+    m_vars.remove(m_vars.count()-1);
+    if (m_vars.count()!=0)
+        m_current = m_vars[m_vars.count()-1];
+
+}
+
 MemoryBlock::~MemoryBlock() {
 }

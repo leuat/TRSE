@@ -55,6 +55,4 @@ data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/im
 data_header_resources/images/test.flf = 0
 zeropages_userdefined = ,
 petmodel = 2001-8N
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/BBCM/Tutorials/
 show_all_files = 1
-open_files = ,tutorial7_music.ras

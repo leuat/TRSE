@@ -3339,15 +3339,17 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
             ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
 
         // Copy record:
-        HandleNodeAssignCopyRecord(node);
-
+        if (!v->isClass(as))
+            HandleNodeAssignCopyRecord(node);
+        else
+            HandleNodeAssignCopyClass(node);
         return;
     }
 
 
 
     // POINTER = RECORD errors
-    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as)) {
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
 //        if (!node->m_left->isArrayIndex())
   //          ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as)) {

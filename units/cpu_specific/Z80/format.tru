@@ -1,191 +1,244 @@
 unit Format;
 var
-  i : integer;
-  b : byte;
-  s : pointer;
+	i : integer;
+	b : byte;
+	s, s2 : pointer;
 
 /**
-  Format the 16 bits unsigned integer i as a string in decimal and put the result in the buffer in s.
-  You must plan for at least 6 chars in s. The resulting string is null-terminated.
+	Copy the string s at the location pointed by s2.
+	The result will be null-terminated.
+	There must be enough space in the target for the copy to be done.
+	Returns the number of byte written to s2.
 **/
-procedure Btos(b : global byte, s : global pointer);
-var
-	btos_e: byte;
+function Strcpy(s, s2 : global pointer):byte;
 begin
-  asm("
-    ld a, 0
-    ld h, a
-    ld a, [Format_b]
-    ld l, a
-    ld de, [Format_s]
-    ld a, 0
-    ld [Format_btos_e], a
-	ld bc, -10000
-	call	 format_btos_digit
-	ld bc,-1000
-	call format_btos_digit
-	ld bc,-100
-	call format_btos_digit
-	ld c,-10
-	call format_btos_digit
-	ld a, 1
-	ld [Format_btos_e], a
-	ld c,-1
-	call format_btos_digit
-	ld a, 0
-	ld (de), a
-	ret
-format_btos_digit:
-	ld a,'0'-1
-format_btos_inc:
-	inc a
-	add hl, bc
-	jr c, format_btos_inc
-	sbc hl, bc
-    ; Do not skip 0 if they are not leading or if it's the last one
-	ld ixh, a
-	ld a, [Format_btos_e]
-	cp 1
-	ld a, ixh
-	jp z, format_btos_do_not_skip	
-    ; Do not print leading 0
-	cp '0'
-	jp z, format_btos_skip
-	ld ixh, a
-	ld a, 1
-	ld [Format_btos_e], a
-	ld a, ixh
-format_btos_do_not_skip:
-	ld (de), a
-	inc de
-format_btos_skip:
-	ret
-  ");
+	b := 0;
+	while s^ <> 0 do
+	begin
+		s2^ := s^;
+		s2 += 1;
+		s += 1;
+		b += 1;
+	end;
+	s2^ := 0;
+	Strcpy := b;
 end;
 
 /**
-  Format the 8 bits unsigned integer b as a string in decimal and put the result in the buffer in s.
-  You must plan for at least 4 chars in s. The resulting string is null-terminated.
+	Copy the string s at the end of the string pointed to by s2.
+	The result will be null-terminated.
+	The existing string in the target must be null-terminated before calling.
+	There must be enough space in the target for the copy to be done.
+	Returns the number of byte written to s2.
 **/
-procedure PaddedBtos(b : global byte, s : global pointer);
+function Append(s, s2 : global pointer):byte;
 begin
-  asm("
-    ld a, 0
-    ld h, a
-    ld a, [Format_b]
-    ld l, a
-	ld de, [Format_s]
-	ld bc,-100
-	call format_paddedbtos_digit
-	ld bc,-10
-	call format_paddedbtos_digit
-	ld bc,-1
-	call format_paddedbtos_digit
-	ld a, 0
-	ld (de), a
-	ret
-format_paddedbtos_digit: 
-	ld a,'0'-1
-format_paddedbtos_inc:
-	inc a
-	add hl, bc
-	jr c, format_paddedbtos_inc
-	sbc hl, bc
-	ld (de), a
-	inc de
-	ret
-  ");
+	b := 0;
+	while s2^ <> 0 do
+	begin
+		s2 += 1;
+	end;
+	while s^ <> 0 do
+	begin
+		s2^ := s^;
+		s2 += 1;
+		s += 1;
+		b += 1;
+	end;
+	s2^ := 0;
+	Append := b;
 end;
 
 /**
-  Format the 16 bits unsigned integer i as a string in decimal and put the result in the buffer in s.
-  You must plan for at least 6 chars in s. The resulting string is null-terminated.
+	Format the 16 bits unsigned integer i as a string in decimal and put the result in the buffer in s.
+	You must plan for at least 6 chars in s. The resulting string is null-terminated.
+	Returns the number of non-null bytes written (between 1 and 5).
 **/
-procedure Itos(i : global integer, s : global pointer);
+function Itos(i : global integer, s : global pointer):byte;
 var
-	itos_e: byte;
+	itos_e: byte;	// Whether to write 0 digits (i.e a significant digit has already been printed or it's the last digit)
+	itos_l: byte;	// Number of digits written for return value
 begin
-  asm("
-    ld hl, [Format_i]
-    ld de, [Format_s]
-    ld a, 0
-    ld [Format_itos_e], a
-	ld bc, -10000
-	call	 format_itos_digit
-	ld bc,-1000
-	call format_itos_digit
-	ld bc,-100
-	call format_itos_digit
-	ld c,-10
-	call format_itos_digit
-	ld a, 1
-	ld [Format_itos_e], a
-	ld c,-1
-	call format_itos_digit
-	ld a, 0
-	ld (de), a
-	ret
+	asm("
+		ld hl, [Format_i]
+		ld de, [Format_s]
+		ld a, 0
+		ld [Format_itos_e], a
+		ld bc, -10000
+		call	 format_itos_digit
+		ld bc,-1000
+		call format_itos_digit
+		ld bc,-100
+		call format_itos_digit
+		ld c,-10
+		call format_itos_digit
+		ld a, 1
+		ld [Format_itos_e], a
+		ld c,-1
+		call format_itos_digit
+		; Null terminate the string
+		ld a, 0
+		ld (de), a
+		; Substract the address of the 0 from the start of the string to get # of bytes written
+		ld hl, [Format_s]
+		ex de, hl
+		sbc hl, de
+		ld a, l
+		ld [Format_itos_l], a		; The result necessarily fits on one byte
+		jp format_itos_finished
 format_itos_digit:
-	ld a,'0'-1
+		ld a,'0'-1
 format_itos_inc:
-	inc a
-	add hl, bc
-	jr c, format_itos_inc
-	sbc hl, bc
-    ; Do not skip 0 if they are not leading or if it's the last one
-	ld ixh, a
-	ld a, [Format_itos_e]
-	cp 1
-	ld a, ixh
-	jp z, format_itos_do_not_skip	
-    ; Do not print leading 0
-	cp '0'
-	jp z,format_itos_skip
-	ld ixh, a
-	ld a, 1
-	ld [Format_itos_e], a
-	ld a, ixh
+		inc a
+		add hl, bc
+		jr c, format_itos_inc
+		sbc hl, bc
+		; Do not skip 0 if they are not leading or if it's the last one
+		ld ixh, a
+		ld a, [Format_itos_e]
+		cp 1
+		ld a, ixh
+		jp z, format_itos_do_not_skip
+		; Do not print leading 0
+		cp '0'
+		jp z,format_itos_skip
+		ld ixh, a
+		ld a, 1
+		ld [Format_itos_e], a
+		ld a, ixh
 format_itos_do_not_skip:
-	ld (de), a
-	inc de
+		ld (de), a
+		inc de
 format_itos_skip:
-	ret
-  ");
+		ret
+format_itos_finished:
+	");
+	Itos := itos_l;
 end;
 
 /**
-  Format the 16 bits unsigned integer i as a fixed width string (with leading zeros) in decimal and put the result in the buffer in s.
-  You must plan for 6 chars in s. The resulting string is null-terminated.
+	Format the 16 bits unsigned integer i as a fixed width string (with leading zeros) in decimal and put the result in the buffer in s.
+	You must plan for 6 chars in s. The resulting string is null-terminated.
+	Returns the number of non-null bytes written (always 5);
 **/
-procedure PaddedItos(i : global integer, s : global pointer);
+function PaddedItos(i : global integer, s : global pointer):byte;
 begin
-  asm("
-	ld hl, [Format_i]
-	ld de, [Format_s]
-	ld bc,-10000
-	call format_paddeditos_digit
-	ld bc,-1000
-	call format_paddeditos_digit
-	ld bc,-100
-	call format_paddeditos_digit
-	ld c,-10
-	call format_paddeditos_digit
-	ld c,-1
-	call format_paddeditos_digit
-	ld a, 0
-	ld (de), a
-	ret
-format_paddeditos_digit: 
-	ld a,'0'-1
+	asm("
+		ld hl, [Format_i]
+		ld de, [Format_s]
+		ld bc,-10000
+		call format_paddeditos_digit
+		ld bc,-1000
+		call format_paddeditos_digit
+		ld bc,-100
+		call format_paddeditos_digit
+		ld c,-10
+		call format_paddeditos_digit
+		ld c,-1
+		call format_paddeditos_digit
+		ld a, 0
+		ld (de), a
+		jp format_paddeditos_finished
+format_paddeditos_digit:
+		ld a,'0'-1
 format_paddeditos_inc:
-	inc a
-	add hl, bc
-	jr c, format_paddeditos_inc
-	sbc hl,bc
-	ld (de), a
-	inc de
-	ret
-  ");
+		inc a
+		add hl, bc
+		jr c, format_paddeditos_inc
+		sbc hl,bc
+		ld (de), a
+		inc de
+		ret
+format_paddeditos_finished:
+	");
+	PaddedItos := 5;
 end;
+
+/**
+	Format the 8 bits unsigned integer b as a string in decimal and put the result in the buffer in s.
+	You must plan for at least 4 chars in s. The resulting string is null-terminated.
+	Returns the number of non-null bytes written (between 1 and 3);
+**/
+function Btos(b : global byte, s : global pointer):byte;
+begin
+	Btos := Itos(b, s);
+end;
+
+/**
+	Format the 8 bits unsigned integer b as a fixed width string (with leading zeros) in decimal and put the result in the buffer in s.
+	You must plan for at least 4 chars in s. The resulting string is null-terminated.
+	Returns the number of non-null bytes written (always 3);
+**/
+function PaddedBtos(b : global byte, s : global pointer):byte;
+begin
+	asm("
+		ld a, 0
+		ld h, a
+		ld a, [Format_b]
+		ld l, a
+		ld de, [Format_s]
+		ld bc,-100
+		call format_paddedbtos_digit
+		ld bc,-10
+		call format_paddedbtos_digit
+		ld bc,-1
+		call format_paddedbtos_digit
+		ld a, 0
+		ld (de), a
+		jp format_paddedbtos_finished
+format_paddedbtos_digit:
+		ld a,'0'-1
+format_paddedbtos_inc:
+		inc a
+		add hl, bc
+		jr c, format_paddedbtos_inc
+		sbc hl, bc
+		ld (de), a
+		inc de
+		ret
+format_paddedbtos_finished:
+	");
+	PaddedBtos := 3;
+end;
+
+/**
+	Format the 8 bits unsigned integer b as a string in binary and put the result in the buffer in s.
+	You must plan for at least 9 chars in s. The resulting string is null-terminated.
+**/
+function PaddedBinaryBtos(b : global byte, s : global pointer):byte;
+begin
+	asm("
+		ld a, [Format_b]
+		ld b, a
+		ld hl, [Format_s]
+		ld a, 0
+		; a contains the number of bits printed
+		; b contains the byte to print
+		; hl points to the string
+format_paddedbinarybtos_loop
+		rl b
+		jr c,format_paddedbinarybtos_one
+		ld (hl), 48
+		jr format_paddedbinarybtos_next
+format_paddedbinarybtos_one:
+		ld (hl), 49
+format_paddedbinarybtos_next:
+		inc a
+		inc hl
+		cp 8
+		jr nz, format_paddedbinarybtos_loop
+	");
+end;
+
+/**
+	Format the 8 bits unsigned integer b as a string in binary and put the result in the buffer in s.
+	You must plan for at least 9 chars in s. The resulting string is null-terminated.
+	// TODO(ColinPitrat): Decide whether to always include a separator between bytes or make it optional and how to handle it
+**/
+/*
+function PaddedBinaryItos(i : global integer, s : global pointer):byte;
+begin
+end;
+*/
 
 end.

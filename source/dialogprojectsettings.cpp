@@ -114,6 +114,7 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbAmstradCPCModel->setCurrentText(m_ini->getString("amstradcpc_model"));
     ui->leAmstradCPCOptions->setText(m_ini->getString("amstradcpc_options"));
 
+    ui->cbmSpectrumModel->setCurrentIndex(m_ini->getdouble("spectrum_model"));
     ui->cmbX86CPU->setCurrentText(m_ini->getString("cpu_x86_system"));
 //    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
 
@@ -203,6 +204,8 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setString("amstradcpc_model", ui->cmbAmstradCPCModel->currentText());
     m_ini->setString("amstradcpc_options", ui->leAmstradCPCOptions->text());
+
+    m_ini->setFloat("spectrum_model", ui->cbmSpectrumModel->currentIndex());
 
     m_ini->setString("zeropage_internal1", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp1->text())));
     m_ini->setString("zeropage_internal2", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp2->text())));
@@ -371,6 +374,8 @@ void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
         ui->tabConfigs->setCurrentIndex(4);
     if (index==6)
         ui->tabConfigs->setCurrentIndex(6);
+    if (index==9)
+        ui->tabConfigs->setCurrentIndex(8);
 
     UpdateSystem();
 /*    if (index==7)

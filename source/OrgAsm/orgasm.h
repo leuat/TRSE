@@ -114,7 +114,6 @@ public:
     bool m_ignore = false;
     static bool m_inIFDEF;
 
-
     QString Type() {
         if (m_type==INSTRUCTION)
             return "INSTRUCTION";
@@ -161,6 +160,7 @@ class Orgasm  : public QObject{
     Q_OBJECT
 public:
 
+    QStringList m_extraMonCommands;
     int m_curRasLine = 0;
     QString m_source;
     QStringList m_lines;

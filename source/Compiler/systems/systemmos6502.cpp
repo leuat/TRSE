@@ -39,6 +39,8 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             m_orgAsm->SetupConstants(symTab);
         if (symTab!=nullptr)
             m_orgAsm->m_extraSymbols = symTab->m_extraAtSymbols;
+
+        m_orgAsm->m_extraMonCommands = symTab->m_extraMonCommands;
         m_orgAsm->Assemble(filename+".asm", filename+".prg");
 
         disconnect(m_orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));

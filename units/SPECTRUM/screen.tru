@@ -1,9 +1,130 @@
 unit Screen;
 var
-	ytab : array[192] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
+	ytab : array[193] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
 	ytab_color : array[24] of integer=BuildTable("0x5800+i*32 ");
+	@donotremove ytab
+	@donotremove tabpow
+	tabpow: array[] of byte = (128,64,32,16,8,4,2,1);
+	i,j:byte;
+	x,y,x2,y2 : byte;
+	zp:pointer;
 
 
+	
+procedure BorderColor(_a:byte);
+begin
+	asm("
+		ld bc,#fe
+        out (c),a
+
+	");	
+end;
+
+
+procedure ClearScreen(x,y : global byte);
+begin
+	fill(#vram, x, $1800);
+	fill(#cram, y, 768);
+end;
+
+procedure SetColor(x,y,i : global byte);
+begin
+	zp:=ytab_color[y];
+	zp[x] := i;
+end;
+
+procedure PutPixel(x,y : global byte);
+begin
+	asm("
+	push de
+	push hl
+	push bc
+	push af
+	ld      hl,Screen_tabpow
+    ld      a,(Screen_x)
+    and     7       ; x mod 8
+    ld      b,0
+    ld      c,a
+    add     hl,bc
+    ld      a,(hl)
+    ld      e,a     ; e contains one bit set
+
+    ld      ix,Screen_ytab
+    ld      a,(Screen_y)
+    ld      b,0
+    ld      c,a
+    add     ix,bc
+    add     ix,bc
+    ld      a,(ix)      ; table lookup
+    ld      l,a
+    inc     ix
+    ld      a,(ix)      ; table lookup
+    ld      h,a
+
+    ld      a,(Screen_x)
+    srl     a
+    srl     a
+    srl     a           ; x/8.
+
+    or      l
+    ld      l,a         ; + x/8.
+
+    ld      a,(hl)
+    or      e           ; or = superposition mode.
+    ld      (hl),a      ; set the pixel.	
+    pop af
+	pop bc
+	pop hl
+	pop de	
+		");
+end;
+
+
+procedure ClearDefaultIRQ(pos:pointer;intPos:pointer);
+begin
+		asm("
+        ;Initializes IM2, gets rid of the system interrupt.
+        di
+        ld hl,[Screen_pos]	;HL points to the IM2 Lookup table.
+        ld a,h
+        ld i,a		;Set I= high(pos).
+        im 2		;Switch to vectorized interrupts.
+        ");
+        for i:=0 to 256 do
+		begin
+			pos[0]:=lo(intPos);
+			pos[1]:=hi(intPos);
+			pos:=pos+2;
+		end; 
+		intPos[0]:=$fb;
+		intPos[1]:=$c9;
+		asm(" ei");
+        /*
+        inc a
+        ex de,hl
+        ld hl,[Screen_intPos]
+Im2FillLut: 
+		ld a,l
+	    ld (de),a	;Fills the IM2 LUT with l.
+        inc e		;All INT will jump to .
+		ld a,h
+	    ld (de),a	;Fills the IM2 LUT with h.
+        inc e		;All INT will jump to #$7989.
+        jr nz,Im2FillLut
+        
+        inc d
+		ld a,l
+        ld (de),a
+        inc e		;All INT will jump to .
+		ld a,h
+	    ld (de),a	;Fills the IM2 LUT with h.
+	
+;        ld sp,$
+		");
+//		pos[$181]:=$fb; // ei
+//		pos[$182]:=$c9; // ret
+*/
+	end;
 
 
 end.

@@ -18,7 +18,7 @@ ZOrgasm::ZOrgasm()
  * then replace with $4004
  *
 */
-QString ZOrgasm::Process(QString s)
+QString ZOrgasm::Process(QString s, OrgasmLine& ol)
 {
 //    qDebug() << "Processing : " <<s;
     QString expr = s.trimmed();
@@ -48,10 +48,13 @@ QString ZOrgasm::Process(QString s)
         QString tst = expr;
         QString org = expr;
         int cur = 0;
+        bool ok =  false;
+    //      tst = tst.replace("(","");
+      //    tst = tst.replace(")","");
+
         if (!tst.startsWith("$"))
             for (QString& sym : m_symbolsList)
             {
-                //            qDebug() << "Testing for symbol " << sym << tst;
 //                qDebug() << "Contains symbol: " <<tst <<sym;
                 if (!tst.contains(sym))
                     continue;
@@ -60,20 +63,27 @@ QString ZOrgasm::Process(QString s)
                 int i = m_symbols[sym];
                 if (tst==("<"+sym)) {
                     expr = expr.replace("<"+sym,"$"+QString::number(i&0xFF,16));
+                    ok = true;
                     break;
                 }
                 if (tst==(">"+sym)) {
                    expr = expr.replace(">"+sym,"$"+QString::number((i>>8)&0xFF,16));
+                   ok = true;
                     break;
                 }
 
                 expr = OrgasmData::ReplaceWord(expr,sym,"$"+QString::number(i,16));
                 if (org!=expr) {
                     m_symbolsList.move(cur,0);
+                    ok = true;
                     break;
                 }
                 cur++;
             }
+        if (!ok && !Util::isNumber(tst) && !tst.startsWith("($")) {
+            throw OrgasmError("Symbol '"+tst+"' undefined",ol);
+        }
+
 
     }
     return expr;
@@ -92,6 +102,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         return;
 
     // Relative jump to current address
+    if (expr.trimmed().endsWith("$")) { expr=expr.replace("$","*"); }
     if (expr.contains("*")) {
         QString add = expr;//expr.simplified().split(" ")[1].replace(" ", "");
         add = add.replace("*", Util::numToHex(m_pCounter));
@@ -136,8 +147,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     if (expr.contains(",")) {
         QStringList lst = expr.split(",");
-        QString a1 = WashForOpcode(lst[0].simplified().trimmed(),value);
-        QString a2 = WashForOpcode(lst[1].simplified().trimmed(),value2);
+        QString a1 = WashForOpcode(lst[0].simplified().trimmed(),value,ol);
+        QString a2 = WashForOpcode(lst[1].simplified().trimmed(),value2,ol);
         if (value=="") {
             value = value2;
             value2 ="";
@@ -148,7 +159,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // Still have an expression?
     if (expr!="") {
         // Wash it for (**) etc and get the value
-        QString a1 = WashForOpcode(expr.simplified().trimmed(),value);
+        QString a1 = WashForOpcode(expr.simplified().trimmed(),value,ol);
         // Now double test:
         QString addChar = " ";
 
@@ -387,7 +398,7 @@ void ZOrgasm::LoadCodes(int CPUflavor)
  * anything else (**) or **
  *
 */
-QString ZOrgasm::WashForOpcode(QString test, QString &value)
+QString ZOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
 {
     if (test=="")
         return "";
@@ -420,7 +431,7 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value)
     if (isRegister(t))
         return test;
 
-    value = Process(test);
+    value = Process(test,ol);
     // everything else starting with ( is an address **
     if (test.startsWith("(")) {
         return "(**)";

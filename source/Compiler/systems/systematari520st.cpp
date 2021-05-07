@@ -29,7 +29,6 @@ void SystemAtari520ST::Assemble(QString &text, QString filename, QString current
     params << "-no-opt";
     params << "-Ftos";
 
-
     // qDebug() << params;
     process.start(m_settingsIni->getString("vasmm"), params);
     process.waitForFinished();

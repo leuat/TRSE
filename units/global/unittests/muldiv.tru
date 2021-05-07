@@ -1,0 +1,235 @@
+unit MulDiv;
+var
+
+// Byte mul byte
+procedure ByteMulByte01();
+begin
+	Vars::v1 := 15; 
+	Vars::v2 := 9;
+	Vars::rb:=Vars::v1*Vars::v2;
+	Vars::text := "01:"; if Vars::rb=135 then Common::PASS() else Common::FAIL();
+end;
+
+// Byte mul byte power of two
+procedure ByteMulBytePow202();
+begin
+	Vars::v1 := 15;
+	Vars::rb:=Vars::v1*4;
+	Vars::text := "02:"; if Vars::rb=60 then Common::PASS() else Common::FAIL();
+end;
+
+procedure ByteDivBytePow203();
+begin
+	Vars::v1 := 100;
+	Vars::rb:=Vars::v1/4;
+	Vars::text := "03:"; if Vars::rb=25 then Common::PASS() else Common::FAIL();
+end;
+
+// Byte mul div power
+procedure ByteDivByte04();
+begin
+	Vars::v1 := 100;
+	Vars::v2 := 5;
+	Vars::rb:=Vars::v1/Vars::v2;
+	Vars::text := "04:"; if Vars::rb=20 then Common::PASS() else Common::FAIL();
+end;
+
+
+// Byte mul mul
+procedure ByteMulMul05();
+begin
+	Vars::v1 := 3;
+	Vars::v2 := 4;
+	Vars::v3 := 5;
+	Vars::rb:=(Vars::v1-1)*Vars::v2*(Vars::v3+1);
+	Vars::text := "05:"; if Vars::rb=48 then Common::PASS() else Common::FAIL();
+end;
+
+// Byte mul mul
+procedure IntByteMul06();
+begin
+	Vars::i1 := 1010;
+	Vars::v1 := 3;
+	Vars::ri := Vars::i1*Vars::v1;
+	Vars::text := "06:"; 
+	if (Vars::ri=3030) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure IntMulPow07();
+begin
+	Vars::i1 := 1010;
+	Vars::v1 := 4;
+	Vars::ri := Vars::i1*Vars::v1;
+	Vars::text := "07:"; 
+	if (Vars::ri=4040) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure IntDivByte08();
+begin
+	Vars::i1 := 615;
+	Vars::v1 := 5;
+	Vars::v2 := Vars::i1/Vars::v1;
+	Vars::text := "08:"; 
+	if (Vars::v2=123) then Common::PASS() else Common::FAIL();
+end;
+
+procedure IntDivInt09();
+begin
+	Vars::i1 := 60000;
+	Vars::i2 := 1000;
+	Vars::i1 := Vars::i1/Vars::i2;
+	Vars::text := "09:"; 
+	if (Vars::i1=60) then Common::PASS() else Common::FAIL();
+end;
+
+procedure IntDivPow210();
+begin
+	Vars::i1 := 60000;
+	Vars::i1 := Vars::i1/4;
+	Vars::text := "10:"; 
+	if (Vars::i1=15000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+procedure IntDivMix11();
+begin
+	Vars::i1 := 60000;
+	Vars::v1:=100;
+	Vars::i1:=Vars::i1/Vars::v1;
+	Vars::text := "11:"; 
+	if (Vars::i1=600) then Common::PASS() else Common::FAIL();
+end;
+
+procedure IntDivMix12();
+begin
+	Vars::i1 := 20000;
+	Vars::v1:=200;
+	Vars::v1:=Vars::i1/Vars::v1;
+	Vars::text := "12:"; 
+	if (Vars::v1=100) then Common::PASS() else Common::FAIL();
+end;
+
+procedure IntMulMix13();
+begin
+	Vars::i1 := 200;
+	Vars::v1:=100;
+	Vars::i1:=Vars::i1*Vars::v1;
+	Vars::text := "13:"; 
+	if (Vars::i1=20000) then Common::PASS() else Common::FAIL();
+end;
+
+// Fails. Integer * integer
+procedure IntMulInt14();
+begin
+	Vars::i1 := 10;
+	Vars::i2 := 10;
+	Vars::i1:=Vars::i1*Vars::i2;
+	Vars::text := "14:"; 
+	if (Vars::i1=100) then Common::PASS() else Common::FAIL();
+end;
+
+
+
+// Fails. Integer * byte * byte
+procedure IntMulAdvancedMix15();
+begin
+	Vars::i1 := 10;
+	Vars::v1 := 10;
+	Vars::v2 := 10;
+	Vars::i1:=Vars::i1*Vars::v1*Vars::v2;
+	Vars::text := "15:";
+	if (Vars::i1=1000) then Common::PASS() else Common::FAIL();
+end;
+
+procedure ByteMulAdvanced16();
+begin
+	Vars::v1:=2;
+	Vars::v2 := 3;
+	Vars::v3 := 4;
+	Vars::v1:=Vars::v1*Vars::v2*(Vars::v3-1);
+	Vars::text := "16:";
+	if (Vars::v1=18) then Common::PASS() else Common::FAIL();
+end;
+
+procedure IntMulConst17();
+begin
+	Vars::v1:=10;
+	Vars::i1:=Vars::v1*5;
+	Vars::text := "17:";
+	if (Vars::i1=50) then Common::PASS() else Common::FAIL();
+
+
+end;
+
+
+procedure IntCombConst18();
+begin
+	Vars::v1:=10;
+	Vars::i1:=200 + 1000+Vars::v1*5;
+	Vars::text := "18:";
+	if (Vars::i1=1250) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure IntCombConst19();
+begin
+	Vars::v1:=10;
+	Vars::i1:=(200 + 1000+Vars::v1*5)*4;
+	Vars::text := "19:";
+	if (Vars::i1=5000) then Common::PASS() else Common::FAIL();
+end;
+
+procedure IntShift20();
+begin
+	Vars::i1:=10;
+	Vars::i1:=Vars::i1<<7;
+	Vars::text := "20:";
+	if (Vars::i1=1280) then Common::PASS() else Common::FAIL();
+//	DebugValue(Vars::i1);
+end;
+
+procedure IntShift21();
+begin
+	Vars::i1:=1280;
+	Vars::i1:=Vars::i1>>7;
+	Vars::text := "21:";
+	if (Vars::i1=10) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure Exec();
+begin
+
+	// initialise everything
+	Common::Initialise("MULDIV TESTS");
+	
+	// Mul and div
+
+	ByteMulByte01();
+	ByteMulBytePow202();
+	ByteDivBytePow203();
+	ByteDivByte04();
+	ByteMulMul05();
+	IntByteMul06();
+	IntMulPow07();
+	IntDivByte08();
+	IntDivInt09();
+	IntDivPow210();
+	IntDivMix11();
+	IntDivMix12();
+	IntMulMix13(); // fails?
+	IntMulInt14(); // Not implemented, fails
+	IntMulAdvancedMix15(); // fails
+	ByteMulAdvanced16();
+	IntMulConst17();
+	IntCombConst18();
+	IntCombConst19();
+	IntShift20();
+	IntShift21();
+	Common::WaitABit();
+
+end;
+
+end.

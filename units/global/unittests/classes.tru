@@ -1,0 +1,97 @@
+Unit Classes;
+var
+
+
+
+/*--------------------------------------------------------------------------------------------
+
+	UNIT TESTS
+	
+----------------------------------------------------------------------------------------------*/
+
+
+procedure CTest1();
+begin
+	Vars::m.x := 10;
+	Vars::text := "T1:";
+	if (Vars::m.x=10) then Common::PASS() else Common::FAIL();
+end;
+
+procedure CTest2();
+begin
+	Vars::m.x := 100;
+	Vars::m.Move1(Vars::m.x+10,0);
+	Vars::text := "T2:";
+	Vars::m.y := Vars::m.x;
+	if (Vars::m.y=110) then Common::PASS() else Common::FAIL();
+end;
+
+/*
+  Test pointers
+*/
+procedure CTest3();
+begin
+	Vars::pm:=#Vars::monsters[8];
+	
+	Vars::pm.x := 10;
+	Vars::pm.byteData[3]:=2;
+	Vars::text := "T3:";
+	Vars::zp:=#Vars::monsters + sizeof(Vars::Monster)*8;
+	Vars::j := Vars::zp[4+3+2];
+	if (Vars::j=2) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure CTest4();
+begin
+	Vars::pm:=#Vars::monsters[8];
+	Vars::pm.intData[1]:=3;
+	Vars::text := "T4:";
+	if (Vars::monsters[8].intData[1]=3) then Common::PASS() else Common::FAIL();
+end;
+
+procedure CTest5();
+begin
+	Vars::pm:=#Vars::monsters[8];
+	Vars::pm.pos.y:=5;	
+	Vars::text := "T5:";
+	Vars::zp:=#Vars::monsters;
+	if (Vars::zp[sizeof(Vars::Monster)*8+1]=5) then Common::PASS() else Common::FAIL();
+end;
+
+procedure CTest6();
+begin
+	Vars::pm:=#Vars::monsters[8];
+	Vars::pm.Move1(11,12);
+	Vars::text := "T6:";
+	if (Vars::pm.x=11 and Vars::pm.y=12) then Common::PASS() else Common::FAIL();
+end;
+/*
+procedure CTest7();
+begin
+	Vars::pm:=#Vars::monsters[8];
+	Vars::pm.pos.Move2(11,12);
+	Vars::text := "T7:";
+	if (Vars::pm.x=11 and Vars::pm.y=12) then Common::PASS() else Common::FAIL();
+end;
+
+*/
+procedure Exec();
+begin
+
+	// initialise everything
+	Common::Initialise("TEST CLASSES");
+	
+	// Mul and div
+	CTest1();
+	CTest2();
+	CTest3();
+	CTest4();
+	CTest5();
+	CTest6();
+	// CTest7(); // Fails for now 
+	Common::WaitABit();
+
+end;
+
+end.

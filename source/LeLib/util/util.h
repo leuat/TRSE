@@ -179,6 +179,8 @@ public:
     static QColor Gamma(QColor c, float exp, float shift);
     static float ColorLength(QColor& c);
 
+    static bool isNumber(QString s);
+
     static void drawBox(QImage* backImage, QImage* img, int i, int j, int size, QRgb color);
 
 /*    static QVector<int> ShuffleArray(QVector<int>& a)

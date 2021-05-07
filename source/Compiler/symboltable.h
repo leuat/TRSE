@@ -106,6 +106,7 @@ public:
     QMap<QString, QString> m_extraAtSymbols;
 //    QStack<QString> m_tempPointers;
     Stack m_tempPointers;
+    static QMap<QString,int> s_classSizes;
 
 
     QStringList m_orderedByDefinition;
@@ -113,7 +114,10 @@ public:
     QString m_name="";
     QStringList m_globalList;
     QString m_gPrefix;
+    QString m_currentUnit = "";
     QString m_currentFilename="";
+    QStringList m_extraMonCommands;
+    QStringList m_externalRecords; // used for keeping track of merging records from units
     bool m_addToGlobals = false;
     bool m_isClass = false;
     ~SymbolTable();

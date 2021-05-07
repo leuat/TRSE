@@ -177,4 +177,14 @@ begin
 end;
 
 
+procedure VSync();
+begin
+	asm("
+	ei
+    nop
+    halt
+    di
+	");	
+end;
+
 end.

@@ -220,6 +220,23 @@ bool NodeVar::isRecord(Assembler *as)
     return as->m_symTab->m_records.contains(t);
 }
 
+bool NodeVar::isRecord(QSharedPointer<SymbolTable> sym, QString& str)
+{
+    QSharedPointer<Symbol> s = sym->Lookup(value,m_op.m_lineNumber,true);
+    QString t = s->m_type;
+    if (t.toLower()=="address") {
+        t = s->m_arrayTypeText;
+    }
+    if (t.toLower()=="array") {
+        t = s->m_arrayTypeText;
+    }
+
+    str = t;
+    return sym->m_records.contains(t);
+
+}
+
+
 bool NodeVar::isClass(Assembler *as)
 {
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
@@ -262,13 +279,17 @@ QString NodeVar::getValue8bit(Assembler *as, bool isHi) {
         else
             return "#<"+getValue(as);
     }
-
+    QString pa="";
+    QString pb="";
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80){
+        pa="(";pb=")";
+    }
     if (isHi) {
         if (getOrgType(as)==TokenType::BYTE)
             return "#0";
-       return getValue(as)+"+1";
+       return pa+getValue(as)+"+1"+pb;
     }
-    else return getValue(as);
+    else return pa+getValue(as)+pb;
 }
 
 

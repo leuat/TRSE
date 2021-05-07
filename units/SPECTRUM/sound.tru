@@ -1,0 +1,31 @@
+unit Sound;
+var
+
+
+procedure Zap();
+begin
+	asm("
+	
+zap:
+	ld d,16		;speaker = bit 4
+	ld e,0		;distance between speaker move counter
+	ld b,255	;overall length counter
+blp0:	ld a,d
+	and 248		;keep border colour the same
+	out (254),a	;move the speaker in or out depending on bit 4
+	cpl		;toggle, so we alternative between speaker in and out to make sound
+	ld d,a		;store it
+	ld c,e		;now a pause
+blp1:	dec c
+	jr nz,blp1
+	dec e		;change to inc e to reverse the sound, or remove to make it a note
+	djnz blp0	;repeat B=255 times
+	ret
+	;
+		
+	");
+	
+end;
+	
+	
+end.

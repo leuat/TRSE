@@ -40,4 +40,5 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 exomizer_toggle = 0
+show_all_files = 1
 open_files =, Hello.ras

@@ -21,6 +21,7 @@ void SystemAmiga::Assemble(QString &text, QString filename, QString currentDir, 
     // -kick1hunks  -o example$1 -nosym source$1.asm
     params << "-kick1hunks";
     params << "-Fhunkexe";
+    params << "-spaces";
     params << "-o" << filename;
     params << filename+".asm";
     // qDebug() << params;

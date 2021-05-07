@@ -76,7 +76,7 @@ public:
 
     void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
     QString getJmp(bool isOffPage) override;
-    bool UseBlocks() override { return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY ; }
+    bool UseBlocks() override;
 
 
 //    void dispatch(QSharedPointer<NodeConditional> node) override;
@@ -89,6 +89,12 @@ public:
     QString getReturnInterrupt() override { return "reti";}
 
     void HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointer<NodeVar> var);
+
+    void LoadVariable(QSharedPointer<NodeProcedure> node) override;
+
+    void LoadVariable(QSharedPointer<NodeVar> n) override;
+    void LoadVariable(QSharedPointer<Node> n) override;
+
 
 };
 #endif // ASTdispatcherX86_H

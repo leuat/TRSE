@@ -25,6 +25,7 @@ var
 	
 	In order for the program to work on a disk, you need to turn this exomizer toggle *off* 
 */
+
 @setvalue exomizer_toggle 1
 
 /*
@@ -458,7 +459,7 @@ begin
 	
 	// Set the palette (using ports, not firmware)
 	Crtc::SetPalette(#palette);
-
+	
 
 	/*
 

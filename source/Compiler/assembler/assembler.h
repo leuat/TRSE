@@ -76,15 +76,7 @@ public:
 
     QMap<QString, bool> sNumbersUsed;
     void push();
-    void pop() {
-        if (m_vars.count()==0) {
-            ErrorHandler::e.Error("Trying to pop labelstack from zero : " + m_current);
-        }
-        m_vars.remove(m_vars.count()-1);
-        if (m_vars.count()!=0)
-            m_current = m_vars[m_vars.count()-1];
-
-    }
+    void pop();
 };
 
 class Appendix {
