@@ -15,8 +15,8 @@ jobs:
 
       # For 'Verify all' tests
       # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
-      # libsdl2-dev, libfreetype6-dev, zlib-devel and libpng-devel are needed to build Caprice32
-      - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib-devel libpng-devel
+      # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
+      - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
       - name: Build assemblers (vasm, rgbasm, pasmo)
         run: |
           mkdir tools
