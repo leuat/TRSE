@@ -14,8 +14,8 @@ jobs:
       - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
 
       # For 'Verify all' tests
-      # dbus-x11 seems to be required by vice
-      - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11
+      # dbus-x11 and at-spi2-core seem to be required by vice
+      - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core
       - name: Build assemblers (vasm, rgbasm, pasmo)
         run: |
           mkdir tools
