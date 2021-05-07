@@ -218,6 +218,8 @@ def C64UnitTests():
 			failed.append([path, "unittest.prg"])
 			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
+		if (not os.path.exists(resultFile)):
+			time.sleep(4)
 		with open(resultFile, "rb") as f:
 			data = array('B')
 			# byte 2 should have 0 for success 
@@ -281,6 +283,7 @@ def CompileTests():
 
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
+UnitTests()
 CompileTests()
 print("Running tests...")
 UnitTests()
