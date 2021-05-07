@@ -3485,7 +3485,6 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 //        qDebug() << "PURE ";
   //      qDebug() << "SVAR " <<sv->value <<sv->isRecord(m_symTab,t1) <<t1;
     }
-    qDebug() << "PARSER END TYPE "<< m_currentFileShort<<s->m_name <<var->isRecord(m_symTab,t1) << type <<m_symTab->m_records.contains(type);
 
     if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
         return v;
