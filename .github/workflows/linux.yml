@@ -14,8 +14,8 @@ jobs:
       - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
 
       # For 'Verify all' tests
-      # dbus-x11 and at-spi2-core seem to be required by vice
-      - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core
+      # dbus-x11, at-spi2-core and libavformat58 seem to be required by vice
+      - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core libavformat58
       - name: Build assemblers (vasm, rgbasm, pasmo)
         run: |
           mkdir tools
@@ -67,8 +67,8 @@ jobs:
           echo "Found x64 in: '${x64}'"
           sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
           # Temporary: test x64
-          $x64 -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
-          $x64 -console -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
+          xvfb-run --auto-servernum $x64 -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
+          xvfb-run --auto-servernum $x64 -console -autostartprgmode 1 -moncommands /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.sym /home/cpitrat/Perso/CPC/CPCMisc/tools/TRSE/tutorials/C64/UnitTests/unittests.prg
 
       - name: Build TRSE
         run: |
