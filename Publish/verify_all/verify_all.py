@@ -69,14 +69,25 @@ def ParseOptions():
 
 def ParseTrseIni(trse_ini):
 	global options
+	print("Parsing %s" % trse_ini)
 	with open(trse_ini) as f:
 		for line in f.readlines():
 			for opt in options:
-				if line.startswith('%s = ', opt.trse_ini_key):
-					opt.value = line.split('=')[1].strip()
+				if not opt.trse_ini_key:
+					continue
+				if line.startswith('%s = ' % opt.trse_ini_key):
+					value = line.split('=')[1].strip()
+					print("Found '%s': '%s' (%s)" % (opt.name, value, opt.trse_ini_key))
+					if opt.value:
+						print("Option '%s' already set to '%s', not overriding with '%s'" % (opt.name, opt.value, value))
+						break
+					opt.value = value
+					break
 
 
 ParseOptions()
+if GetOption('trse.ini'):
+	ParseTrseIni(GetOption('trse.ini'))
 
 trse = GetOption('trse')
 x64 = GetOption('x64')
@@ -287,6 +298,8 @@ def C64UnitTests():
 				print("******* SEVERE ERROR : 6502 Execution unit test FAILED! Please fix up unittest.prg")
 			else:
 				print("6502 Unittest SUCCESS!")
+	else:
+		print("Skipping C64 tests: emulator path '%s'" % x64)
 
 
 def CPCUnitTests():
@@ -299,7 +312,7 @@ def CPCUnitTests():
 
 		try:
 			print([cap32,"-i",path+"/unittests.bin","-o","0x4000",])
-			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000","-a","CAP32_WAITBREAK CAP32_EXIT"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for unit tests expired.")
@@ -315,6 +328,8 @@ def CPCUnitTests():
 			else:
 				print("Amstrad CPC Unittest SUCCESS!")
 		os.chdir(orgPath)
+	else:
+		print("Skipping CPC tests: emulator path '%s'" % cap32)
 
 
 def UnitTests():
@@ -341,7 +356,6 @@ def CompileTests():
 
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
-UnitTests()
 CompileTests()
 print("Running tests...")
 UnitTests()
