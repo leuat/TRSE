@@ -281,7 +281,9 @@ def C64UnitTests():
 			os.remove(resultFile)
 
 		try:
-			result = subprocess.run([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+			# Note: we deactivate sound so that it works on GitHub Actions
+			# Yes, '+sound' means deactivate sound ...
+			result = subprocess.run([x64,"+sound","-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for unit tests expired.")
