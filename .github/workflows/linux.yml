@@ -136,6 +136,9 @@ jobs:
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
           xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini || true
+          echo "=== unittests.sym content ==="
+          cat tutorials/C64/UnitTests/unittests.sym
+          echo "=== Running x64 ==="
           xvfb-run --auto-servernum strace $(which x64) -autostartprgmode 1 -moncommands tutorials/C64/UnitTests/unittests.sym tutorials/C64/UnitTests/unittests.prg&
           pid=$!
           sleep 30 && kill -9 $pid
