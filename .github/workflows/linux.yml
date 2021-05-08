@@ -75,18 +75,6 @@ jobs:
           sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
           cap32=`pwd`/tools/caprice32/cap32
           sed -i "s,^amstradcpc_emulator =.*,amstradcpc_emulator = ${cap32}," Publish/publish_linux/trse.ini
-          xvfb-run --auto-servernum strace $x64 -autostartprgmode 1 -moncommands invalid_path/unittests.sym invalid_path/unittests.prg&
-          pid=$!
-          sleep 30 && kill -9 $pid
-          echo "Now with -console"
-          xvfb-run --auto-servernum $x64 -console -autostartprgmode 1 -moncommands invalid_path/unittests.sym invalid_path/unittests.prg&
-          pid=$!
-          sleep 30 && kill -9 $pid
-          echo "Now without -console"
-          xvfb-run --auto-servernum $x64 -autostartprgmode 1 -moncommands invalid_path/unittests.sym invalid_path/unittests.prg&
-          pid=$!
-          sleep 30 && kill -9 $pid
-
 
       - name: Build TRSE
         run: |
@@ -148,6 +136,9 @@ jobs:
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
           xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
+          xvfb-run --auto-servernum strace $(which x64) -autostartprgmode 1 -moncommands tutorials/C64/UnitTests/unittests.sym tutorials/C64/UnitTests/unittests.prg&
+          pid=$!
+          sleep 30 && kill -9 $pid
 
       - name: Build notification
         if: failure()
