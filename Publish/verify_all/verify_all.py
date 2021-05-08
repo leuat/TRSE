@@ -69,14 +69,25 @@ def ParseOptions():
 
 def ParseTrseIni(trse_ini):
 	global options
+	print("Parsing %s" % trse_ini)
 	with open(trse_ini) as f:
 		for line in f.readlines():
 			for opt in options:
-				if line.startswith('%s = ', opt.trse_ini_key):
-					opt.value = line.split('=')[1].strip()
+				if not opt.trse_ini_key:
+					continue
+				if line.startswith('%s = ' % opt.trse_ini_key):
+					value = line.split('=')[1].strip()
+					print("Found '%s': '%s' (%s)" % (opt.name, value, opt.trse_ini_key))
+					if opt.value:
+						print("Option '%s' already set to '%s', not overriding with '%s'" % (opt.name, opt.value, value))
+						break
+					opt.value = value
+					break
 
 
 ParseOptions()
+if GetOption('trse.ini'):
+	ParseTrseIni(GetOption('trse.ini'))
 
 trse = GetOption('trse')
 x64 = GetOption('x64')
