@@ -24,11 +24,11 @@ begin
 		Common::TestSuiteInit();
 		if (currentTest=0) then Classes::Exec();
 		if (currentTest=1) then CaseTest::Exec();
-		if (currentTest=2) then IfThenElse::Exec();
-		if (currentTest=4) then MulDiv::Exec();
+		if (currentTest=5) then IfThenElse::Exec();
+		if (currentTest=2) then MulDiv::Exec();
 		
 		if (currentTest=3) then IntegerTest::Exec();
-		if (currentTest=5) then AdvancedMath::Exec();
+		if (currentTest=4) then AdvancedMath::Exec();
 		
 		currentTest+=1;
 		if (currentTest>=noTests) then

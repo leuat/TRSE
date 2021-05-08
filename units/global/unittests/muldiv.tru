@@ -155,11 +155,12 @@ end;
 
 procedure IntMulConst17();
 begin
+	
 	Vars::v1:=10;
 	Vars::i1:=Vars::v1*5;
 	Vars::text := "17:";
 	if (Vars::i1=50) then Common::PASS() else Common::FAIL();
-
+//	Text::Print(Vars::i1);
 
 end;
 
@@ -212,6 +213,7 @@ begin
 	IntByteMul06();
 	IntMulPow07();
 	IntMulMix13(); // fails?
+	// Z80 lacks int*int
 	IntMulInt14(); // Not implemented, fails
 	IntMulAdvancedMix15(); // fails
 	ByteMulAdvanced16();
@@ -220,6 +222,7 @@ begin
 	IntCombConst19();
 	IntShift20();
 	IntShift21();
+	
 	
 	@ifndef AMSTRADCPC
 	
