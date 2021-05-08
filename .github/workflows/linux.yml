@@ -141,7 +141,7 @@ jobs:
           find .. | grep ".sym" | grep C64 | grep -i unit | grep -i test || echo "find 2 failed"
           cat ../tutorials/C64/UnitTests/unittests.sym || echo "cat failed"
           #echo "=== Running x64 ==="
-          xvfb-run --auto-servernum strace $(which x64) -autostartprgmode 1 -moncommands ../tutorials/C64/UnitTests/unittests.sym ../tutorials/C64/UnitTests/unittests.prg&
+          xvfb-run --auto-servernum strace --string-limit=1024 $(which x64) -autostartprgmode 1 -moncommands ../tutorials/C64/UnitTests/unittests.sym ../tutorials/C64/UnitTests/unittests.prg&
           pid=$!
           sleep 30 && kill -9 $pid
 
