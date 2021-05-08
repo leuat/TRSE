@@ -356,7 +356,6 @@ def CompileTests():
 
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
-UnitTests()
 CompileTests()
 print("Running tests...")
 UnitTests()
