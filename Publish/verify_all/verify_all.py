@@ -1,4 +1,4 @@
-# vim: set noexpandtab:
+# vim: set noexpandtab sw=4 ts=4:
 from subprocess import Popen, PIPE
 import subprocess
 import os
@@ -6,31 +6,90 @@ import sys
 import time
 from array import array
 
-#trse = "/opt/homebrew/bin/trse"
-#trse = "/Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/trse"
 
-assemble = "yes"
+class Option(object):
 
-if len(sys.argv) < 2:
-	print("Usage: python validate_all.py [ trse exe file] [ x64 vice emulator ] [ cap32 emulator ] [no_assembling (optional) ]")
+	def __init__(self, name, desc, default_value = None, trse_ini_key = None):
+		self.name = name
+		self.default_value = default_value
+		self.value = default_value
+		self.desc = desc
+		self.trse_ini_key = trse_ini_key
+
+
+options = [
+	Option('trse', 'Path to the TRSE binary. Required.'),
+	Option('trse.ini', 'Path to the trse.ini file. If provided, used to determine all tools path although later options can override them.'),
+	Option('x64', 'Path to the x64 binary (VICE emulator for C64)', trse_ini_key='emulator'),
+	Option('cap32', 'Path to the cap32 binary (Amstrad CPC emulator)', trse_ini_key='amstradcpc_emulator'),
+	Option('assemble', 'Whether to assemble when compiling ("yes" or "no")', default_value='yes'),
+]
+
+
+def Usage(rc):
+	print("Usage: python validate_all.py --trse [trse exe file] <--trse.ini [ trse.ini ]> <--x64 [ x64 vice emulator ]> <--cap32 [ cap32 emulator ]> <--assemble [yes | no]>")
 	print("must be run in the 'validate_all' directory.")
-	exit(1)
+	for opt in options:
+		print("  %s: %s [default: %s]" % (opt.name, opt.desc, opt.default_value))
+	exit(rc)
 
-trse = sys.argv[1]
-x64 = sys.argv[2]
-cap32 = sys.argv[3]
 
-if len(sys.argv)>=5:
-	if (sys.argv[3] == "no_assembling"):
-		assemble="no"
+def GetOption(name):
+	for opt in options:
+		if opt.name == name:
+			return opt.value
+	raise KeyError("Unknown option '%s'" % name)
 
+
+def ParseOptions():
+	global options
+	valid = True
+	i = 1
+	while i < len(sys.argv):
+		opt = sys.argv[i]
+		i += 1
+		try:
+			optarg = sys.argv[i]
+			for o in options:
+				if opt == '--%s' % o.name:
+					print("Set '%s' to '%s'" % (o.name, optarg))
+					o.value = optarg
+					i += 1
+					break
+			else:
+				print("Unrecognized option '%s'" % opt)
+				valid = False
+		except IndexError:
+			print("Option without value: '%s'" % opt)
+			valid = False
+			break
+	if not valid:
+		Usage(1)
+
+
+def ParseTrseIni(trse_ini):
+	global options
+	with open(trse_ini) as f:
+		for line in f.readlines():
+			for opt in options:
+				if line.startswith('%s = ', opt.trse_ini_key):
+					opt.value = line.split('=')[1].strip()
+
+
+ParseOptions()
+
+trse = GetOption('trse')
+x64 = GetOption('x64')
+cap32 = GetOption('cap32')
+assemble = GetOption('assemble')
+if not trse:
+	Usage(1)
 
 
 lp = "../tutorials/"
 
 
 tests = [ ]
-
 
 
 def fillRasList(idx,path):
@@ -176,7 +235,6 @@ def c(path,f1):
 		return 1
 
 
-#	process = Popen([trse, '-cli',  ], stdout=PIPE, stderr=PIPE)
 	result = subprocess.run([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stdout=PIPE, stderr=subprocess.STDOUT)
 	if result.stdout: print(result.stdout.decode('utf-8'))
 	return result.returncode
@@ -202,7 +260,7 @@ print(orgPath)
 
 
 def C64UnitTests():
-	if os.path.exists(x64):
+	if x64 and os.path.exists(x64):
 		path =  os.path.abspath(lp+'C64/UnitTests/')
 		test6502 =  path + "/unittests"
 		HackSymbolFileChangeDir(test6502+".sym",path)
@@ -232,7 +290,7 @@ def C64UnitTests():
 
 
 def CPCUnitTests():
-	if os.path.exists(cap32):
+	if cap32 and os.path.exists(cap32):
 		path =  os.path.abspath(lp+'AMSTRADCPC/UnitTests/')
 		os.chdir(os.path.dirname(cap32))
 		resultFile = os.path.dirname(cap32)+"/printer.dat"
