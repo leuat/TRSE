@@ -22,11 +22,10 @@ unit_tests_print_finished:
 end;
 
 begin
-	Unittests::Exec();
-	if Common::cpc_unittests_status = 0 then
-		TestResult("SUCCESS\r\n")
-	else
-		TestResult("FAILURE\r\n");
-	Common::WaitABit();
-	call(^0); // Will unblock CAP32_WAITBREAK in Caprice
+        Unittests::Exec();
+        if Common::cpc_unittests_status = 0 then
+        		TestResult("SUCCESS\r\n")
+        	else
+        		TestResult("FAILURE\r\n");
+        loop();
 end.

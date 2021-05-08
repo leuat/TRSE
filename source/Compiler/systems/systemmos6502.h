@@ -24,9 +24,11 @@ public:
     MachineCodeAnalyzer m_mca;
 
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    virtual void PostProcess(QString& text, QString file, QString currentDir);
+    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+    virtual void PostProcess(QString& text, QString file, QString currentDir) override;
 
+
+    virtual bool AllowPointerInStructs() override {return false;}
 
     bool VerifyMachineCodeZP(QString fname);
 
