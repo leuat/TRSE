@@ -271,6 +271,7 @@ print(orgPath)
 
 
 def C64UnitTests():
+	os.chdir(orgPath)
 	if x64 and os.path.exists(x64):
 		path =  os.path.abspath(lp+'C64/UnitTests/')
 		test6502 =  path + "/unittests"
@@ -280,7 +281,9 @@ def C64UnitTests():
 			os.remove(resultFile)
 
 		try:
-			result = subprocess.run([x64,"-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+			# Note: we deactivate sound so that it works on GitHub Actions
+			# Yes, '+sound' means deactivate sound ...
+			result = subprocess.run([x64,"+sound","-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for unit tests expired.")
@@ -303,6 +306,7 @@ def C64UnitTests():
 
 
 def CPCUnitTests():
+	os.chdir(orgPath)
 	if cap32 and os.path.exists(cap32):
 		path =  os.path.abspath(lp+'AMSTRADCPC/UnitTests/')
 		os.chdir(os.path.dirname(cap32))
