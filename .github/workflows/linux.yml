@@ -137,11 +137,13 @@ jobs:
           cd bin
           xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini || true
           echo "=== unittests.sym content ==="
-          cat tutorials/C64/UnitTests/unittests.sym
-          echo "=== Running x64 ==="
-          xvfb-run --auto-servernum strace $(which x64) -autostartprgmode 1 -moncommands tutorials/C64/UnitTests/unittests.sym tutorials/C64/UnitTests/unittests.prg&
-          pid=$!
-          sleep 30 && kill -9 $pid
+          find . -name unittests.sym || echo "find failed"
+          find . | grep ".sym" | grep C64 | grep -i unit | grep -i test || echo "find 2 failed"
+          cat tutorials/C64/UnitTests/unittests.sym || echo "cat failed"
+          #echo "=== Running x64 ==="
+          #xvfb-run --auto-servernum strace $(which x64) -autostartprgmode 1 -moncommands tutorials/C64/UnitTests/unittests.sym tutorials/C64/UnitTests/unittests.prg&
+          #pid=$!
+          #sleep 30 && kill -9 $pid
 
       - name: Build notification
         if: failure()
