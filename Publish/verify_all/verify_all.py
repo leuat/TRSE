@@ -287,6 +287,8 @@ def C64UnitTests():
 				print("******* SEVERE ERROR : 6502 Execution unit test FAILED! Please fix up unittest.prg")
 			else:
 				print("6502 Unittest SUCCESS!")
+	else:
+		print("Skipping C64 tests: emulator path '%s'" % x64)
 
 
 def CPCUnitTests():
@@ -315,6 +317,8 @@ def CPCUnitTests():
 			else:
 				print("Amstrad CPC Unittest SUCCESS!")
 		os.chdir(orgPath)
+	else:
+		print("Skipping CPC tests: emulator path '%s'" % cap32)
 
 
 def UnitTests():
