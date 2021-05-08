@@ -299,7 +299,7 @@ def CPCUnitTests():
 
 		try:
 			print([cap32,"-i",path+"/unittests.bin","-o","0x4000",])
-			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
+			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000","-a","CAP32_WAITBREAK CAP32_EXIT"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for unit tests expired.")
