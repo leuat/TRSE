@@ -105,3 +105,40 @@ mul_16x8_s7:
 mul_16x8_s8:
     ret
 
+
+div_16x8
+;div_hl_c:
+   xor	a
+   ld	b, 16
+
+_loop:
+   add	hl, hl
+   rla
+   jr	c, $+5
+   cp	c
+   jr	c, $+4
+
+   sub	c
+   inc	l
+
+   djnz	_loop
+
+   ret
+
+
+div_16x16:
+   ld	hl, 0
+   ld	b, 16
+
+_loop16:
+   sll	c
+   rla
+   adc	hl, hl
+   sbc	hl, de
+   jr	nc, $+4
+   add	hl, de
+   dec	c
+
+   djnz	_loop16
+
+   ret

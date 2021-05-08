@@ -57,7 +57,7 @@ data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc/tutorials/resour
 show_all_files = 1
 amstradcpc_model = 464
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/unittests/
-open_files = ,unittests.ras, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/muldiv.tru, [ext]units/global/unittests/integer.tru, [ext]units/global/unittests/vars.tru, [ext]units/AMSTRADCPC/text.tru, [ext]units/global/unittests/ifthenelse.tru, [ext]units/global/unittests/advanced_math.tru, [ext]units/global/unittests/classes.tru, [ext]units/global/unittests/vars.asm, [ext]units/cpu_specific/Z80/format.tru
+open_files = ,[ext]units/global/unittests/muldiv.tru, unittests.asm, unittests.ras, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/integer.tru, [ext]units/global/unittests/vars.tru, [ext]units/AMSTRADCPC/text.tru, [ext]units/global/unittests/ifthenelse.tru, [ext]units/global/unittests/advanced_math.tru, [ext]units/global/unittests/classes.tru, [ext]units/global/unittests/vars.asm, [ext]units/cpu_specific/Z80/format.tru
 current_file = unittests.ras
 zeropages_userdefined = ,
 petmodel = 2001-8N
