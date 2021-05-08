@@ -271,6 +271,7 @@ print(orgPath)
 
 
 def C64UnitTests():
+	os.chdir(orgPath)
 	if x64 and os.path.exists(x64):
 		path =  os.path.abspath(lp+'C64/UnitTests/')
 		test6502 =  path + "/unittests"
@@ -303,6 +304,7 @@ def C64UnitTests():
 
 
 def CPCUnitTests():
+	os.chdir(orgPath)
 	if cap32 and os.path.exists(cap32):
 		path =  os.path.abspath(lp+'AMSTRADCPC/UnitTests/')
 		os.chdir(os.path.dirname(cap32))
