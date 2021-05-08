@@ -18,6 +18,10 @@ end;
 	
 procedure Initialise(zp:pointer);
 begin
+  Text::Print("\r\n");
+  Text::Print(zp);
+  Text::Print("\r\n");
+  Text::Print("\r\n");
 end;
 
 function Status() : byte;
@@ -42,7 +46,7 @@ end;
 
 procedure WaitABit();
 begin
-  for Vars::v1:=0 to 32 do for Vars::v2:=0 to 255 do asm("nop");
+//  for Vars::v1:=0 to 16 do for Vars::v2:=0 to 255 do asm("nop");
 end;
 
 procedure DebugValue(v:integer);

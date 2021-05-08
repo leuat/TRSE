@@ -273,10 +273,98 @@ begin
 end;
 
 
+
+/*
+
+ Integer LESS THAN
+
+*/
+
+// when Vars::v1 is greater than Vars::v2
+procedure ILT1_GreaterThan_True();
+begin
+	Vars::i1 := 1000; Vars::i2 := 500;
+	Vars::text := "   LI 1:"; if Vars::i2 < Vars::i1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure ILT2_GreaterThan_False();
+begin
+	Vars::i1 := 100; Vars::i2 := 500;
+	Vars::text := "   LI 2:"; if Vars::i2 < Vars::i1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure ILT3_GreaterThan_False();
+begin
+	Vars::i1 := 500; Vars::i2 := 500;
+	Vars::text := "   LI 3:"; if Vars::i2 < Vars::i1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure ILT4_GreaterThan_False();
+begin
+	Vars::i1 := 0; Vars::i2 := 2550;
+	Vars::text := "   LI 4:"; if Vars::i2 < Vars::i1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure ILT5_GreaterThan_True();
+begin
+	Vars::i1 := 2550; Vars::i2 := 0;
+	Vars::text := "   LI 5:"; if Vars::i2 < Vars::i1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure ILTE1_GreaterEqual_True();
+begin
+	Vars::i1 := 510; Vars::i2 := 500;
+	Vars::text := "  LIE 1:"; if Vars::i2 <= Vars::i1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure ILTE2_GreaterThan_False();
+begin
+	Vars::i1 := 490; Vars::i2 := 500;
+	Vars::text := "  LIE 2:"; if Vars::i2 <= Vars::i1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure ILTE3_GreaterThan_True();
+begin
+	Vars::i1 := 500; Vars::i2 := 500;
+	Vars::text := "  LIE 3:"; if Vars::i2 <= Vars::i1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure ILTE4_GreaterThan_False();
+begin
+	Vars::i1 := 0; Vars::i2 := 2550;
+	Vars::text := "  LIE 4:"; if Vars::i2 <= Vars::i1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure ILTE5_GreaterThan_True();
+begin
+	Vars::i1 := 2550; Vars::i2 := 513;
+	Vars::text := "  LIE 5:"; if Vars::i2 <= Vars::i1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+
+
+
+
+
+
+
+
 // when Vars::v1 is 255 and Vars::v2 is 0
 procedure AdvancedI1();
 begin
 	Vars::i1 := 5000; Vars::i2 := 4000; Vars::i3:=3000;
+//	Vars::text := "   AI 1:"; if (Vars::i1 >= Vars::i2 and Vars::i3=3000)  then begin Common::PASS(); end else begin Common::FAIL(); end;
 	Vars::text := "   AI 1:"; if (Vars::i1 >= Vars::i2 and Vars::i3=3000)  then begin Common::PASS(); end else begin Common::FAIL(); end;
 end;
 
@@ -307,7 +395,19 @@ procedure AdvancedI4();
 begin
 	Vars::i1:=$600;
 	Vars::v1:=$F0;	
-	Vars::text := "   AI:"; ;if ((Vars::i1 > $501) and (Vars::i1 < $551)) then Common::FAIL() else Common::PASS();
+	Vars::text := "   AI4:"; 
+	if ((Vars::i1 > $501) and (Vars::i1 < $551)) then Common::FAIL() else Common::PASS();
+//	Vars::text := "   AI:"; asm(";bummer");if ((Vars::i1 > $551)) then Common::FAIL() else Common::PASS();
+//	Vars::text := "   AI:"; asm(";bummer");if (Vars::v1 > $20 and Vars::v1 < $50) then Common::FAIL() else Common::PASS();
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure AdvancedI5();
+begin
+	Vars::i1:=$600;
+	Vars::v1:=$F0;	
+	Vars::text := "   AI5:"; 
+	if ((Vars::i1 > $700) or (Vars::i1 < $400)) then Common::FAIL() else Common::PASS();
 //	Vars::text := "   AI:"; asm(";bummer");if ((Vars::i1 > $551)) then Common::FAIL() else Common::PASS();
 //	Vars::text := "   AI:"; asm(";bummer");if (Vars::v1 > $20 and Vars::v1 < $50) then Common::FAIL() else Common::PASS();
 end;
@@ -364,11 +464,11 @@ begin
 
 
 	// Integer comparison not supported on the z80 yet
-	@ifndef AMSTRADCPC
 	
 	
 	// Greater than conditional tests 
 	IGT1_GreaterThan_True();
+
 	IGT2_GreaterThan_False();
 	IGT3_GreaterThan_False();
 	IGT4_GreaterThan_False();
@@ -382,12 +482,29 @@ begin
 	IGTE5_GreaterThan_True();
 
 
+	// Integer less than conditional tests 
+	ILT1_GreaterThan_True();
+	ILT2_GreaterThan_False();
+	ILT3_GreaterThan_False();
+	ILT4_GreaterThan_False();
+	ILT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	ILTE1_GreaterEqual_True();
+	ILTE2_GreaterThan_False();
+	ILTE3_GreaterThan_True();
+	ILTE4_GreaterThan_False();
+	ILTE5_GreaterThan_True();
+
+
 	AdvancedI1();
 
 	
 	AdvancedI2();
 	AdvancedI3();
 	AdvancedI4();
+	AdvancedI5();
+		@ifndef AMSTRADCPC
 		@endif
 	
 	Common::WaitABit();

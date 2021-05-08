@@ -164,9 +164,12 @@ begin
 
 	T066();
 	T07();
+	@ifndef AMSTRADCPC
+	// z80 doesn't have 16x8 mul yet, I think
 	T08();
 	T09();
 	T10();
+	@endif
 /*	
 	T11();
 	T12();

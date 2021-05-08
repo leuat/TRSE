@@ -293,7 +293,7 @@ void ASTdispatcherZ80::LoadVariable(QSharedPointer<Node> n)
 
 }
 
-void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool offPage)
 {
 
     as->Comment("Binary clause INTEGER: " + node->m_op.getType());
@@ -313,14 +313,54 @@ void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lb
         ErrorHandler::e.Error("Signed integer comparison on the z80 not implemented. Please bug Leuat!", node->m_op.m_lineNumber);
     }
 
+    QString p = "r";
+    if (offPage)
+        p="p";
+    as->Term();
+    if (node->m_right->isPureNumeric())
+        node->m_right->setForceType(TokenType::INTEGER);
+    if (node->m_left->isPureNumeric())
+        node->m_left->setForceType(TokenType::INTEGER);
 
-    if (node->m_op.m_type==TokenType::EQUALS) {
+    if (node->m_op.m_type!=TokenType::LESSEQUAL) {
+        node->m_right->Accept(this);
+        as->Asm("ex de,hl");
+        node->m_left->Accept(this);
+        as->Asm("sbc hl,de");
+    }
+
+    if (node->m_op.m_type==TokenType::EQUALS)
+        as->Asm("j"+p+" nz," + lblFailed);
+    if (node->m_op.m_type==TokenType::NOTEQUALS)
+        as->Asm("j"+p+" z, " + lblFailed);
+    if (node->m_op.m_type==TokenType::LESS) {
+        as->Asm("j"+p+" nc," + lblFailed);
+//        as->Asm("j"+p+" z, " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::GREATER) {
+        as->Asm("j"+p+" c, " + lblFailed);
+        as->Asm("j"+p+" z, " + lblFailed);
+    }
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        as->Asm("j"+p+" c, " + lblFailed);
+
+    }
+    if (node->m_op.m_type==TokenType::LESSEQUAL) {
         node->m_left->Accept(this);
         as->Asm("ex de,hl");
         node->m_right->Accept(this);
         as->Asm("sbc hl,de");
-        as->Asm("jr c,"+lblFailed);
- //       as->Asm("jp ");
+
+        as->Asm("j"+p+" c," + lblFailed);
+//      as->Asm("j"+p+" z, " + lblFailed);
+//        as->Asm("j"+p+" z," + lblFailed);
+
+    }
+
+
+/*
+    if (node->m_op.m_type==TokenType::EQUALS) {
+        as->Asm(jp+"nc,"+lblFailed);
         return;
     }
     if (node->m_op.m_type==TokenType::NOTEQUALS) {
@@ -328,8 +368,9 @@ void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lb
         as->Asm("ex de,hl");
         node->m_right->Accept(this);
         as->Asm("sbc hl,de");
-        as->Asm("jr nc,"+lblSuccess);
-        as->Asm("jp "+lblFailed);
+        as->Asm("jr c,"+lblFailed);
+//        as->Asm("jr c,"+lblSuccess);
+  //      as->Asm("jp "+lblFailed);
         return;
     }
     if (node->m_op.m_type==TokenType::LESS) {
@@ -355,22 +396,24 @@ void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lb
         node->m_left->Accept(this);
         as->Asm("ex de,hl");
         node->m_right->Accept(this);
+        as->Asm("inc de");
         as->Asm("sbc hl,de");
-        as->Asm("jr c,"+lblFailed);
+        as->Asm("jr nc,"+lblFailed);
  //       as->Asm("jp ");
         return;
     }
     if (node->m_op.m_type==TokenType::GREATER) {
+        as->Comment("Integer greater then");
         node->m_left->Accept(this);
         as->Asm("ex de,hl");
         node->m_right->Accept(this);
-        as->Asm("inc de");
         as->Asm("sbc hl,de");
-        as->Asm("jr c,"+lblFailed);
+        as->Asm("jr nc,"+lblFailed);
  //       as->Asm("jp ");
         return;
     }
-    ErrorHandler::e.Error("This 16-bit Compare instruction is not implemented yet! Please bug Leuat ("+node->m_op.getType()+") ",node->m_op.m_lineNumber);
+    */
+//    ErrorHandler::e.Error("This 16-bit Compare instruction is not implemented yet! Please bug Leuat ("+node->m_op.getType()+") ",node->m_op.m_lineNumber);
 //    BuildToCmp(node);
 
 /*
@@ -481,6 +524,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 node->m_left->Accept(this);
                 as->Asm("ld h,a");
                 as->Asm("ld l,0");
+ //               as->Asm("clc");
                 as->Asm("call mul_8x8");
                 as->Asm("ld a,l");
 
@@ -504,6 +548,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
             //                as->Asm("ld a,l");
             as->Asm("ld hl,0");
             as->Asm("ld c,0");
+   //         as->Asm("clc");
             as->Asm("call mul_16x8");
             //                as->Asm("ld a,l");
 
