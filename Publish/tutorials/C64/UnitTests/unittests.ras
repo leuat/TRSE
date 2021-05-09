@@ -5,6 +5,8 @@ Program UnitTests6502;
 
 begin
 	Unittests::Exec();
+	@ifdef __CI
 	addbreakpoint();
+	@endif
 	loop();
 end.

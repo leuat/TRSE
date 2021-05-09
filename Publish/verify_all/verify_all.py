@@ -109,6 +109,12 @@ def fillRasList(idx,path):
 			tests[idx][1].append(path+"/"+file)
 
 
+# SPECTRUM
+
+tests.append([ "Spectrum/tutorials/",[]])
+fillRasList(len(tests)-1,".")
+
+
 # CPC
 
 tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
