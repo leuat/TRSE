@@ -489,8 +489,8 @@ void C64FullScreenChar::ExportMovie(QFile &file)
     uchar skipChar = cur;
 
 
-    qDebug() << "endChar " << endChar;
-    qDebug() << "skipChar " << skipChar;
+//    qDebug() << "endChar " << endChar;
+  //  qDebug() << "skipChar " << skipChar;
 //    char endChar = (char)m_exportParams["EndChar"];
   //  char skipChar = (char)m_exportParams["SkipChar"];
 
