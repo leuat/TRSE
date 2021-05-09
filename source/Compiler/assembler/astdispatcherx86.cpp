@@ -8,11 +8,16 @@ ASTdispatcherX86::ASTdispatcherX86()
 
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
 {
-    if (node->m_left->isWord(as))
-        node->m_right->setForceType(TokenType::INTEGER);
-    if (node->m_right->isWord(as))
-        node->m_left->setForceType(TokenType::INTEGER);
+        if (node->m_left->isWord(as) && !node->m_right->isPointer(as))
+            node->m_right->setForceType(TokenType::INTEGER);
+        if (node->m_right->isWord(as) && !node->m_left->isPointer(as))
+            node->m_left->setForceType(TokenType::INTEGER);
 
+/*        if (node->m_left->isWord(as))
+            node->m_right->setForceType(TokenType::INTEGER);
+        if (node->m_right->isWord(as))
+            node->m_left->setForceType(TokenType::INTEGER);
+*/
     as->ClearTerm();
     if (!node->isPointer(as)) {
         if (node->isPureNumeric()) {
@@ -66,10 +71,30 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         as->ClearTerm();
 
         if (node->m_right->isPointer(as)) {
-            if (!node->m_right->isPure())
-                ErrorHandler::e.Error("Pointers can only add / sub with other pure pointers.", node->m_op.m_lineNumber);
+            if (!node->m_right->isPure()) {
+//                ErrorHandler::e.Error("Pointers can only add / sub with other pure pointers.", node->m_op.m_lineNumber);
+                as->Comment("Interesting..");
+                as->ClearTerm();
+                node->m_right->Accept(this);
+                as->Asm("push ax");
+
+                QString ax =getAx(node->m_right);
+                as->Comment("Interesting ends");
+                node->m_left->Accept(this);
+
+                QString bx =getAx(node->m_left);
+                as->Asm("pop bx");
+                as->Asm(bop + " ax,bx");
+                return;
+
+            }
 
             QString r = node->m_right->getValue(as);
+            if (!node->m_right->isPointer(as)) {
+                node->m_right->setForceType(TokenType::INTEGER);
+                as->Comment("RHS is pure integer");
+                return;
+            }
             as->Comment("RHS is pure pointer as well! "+r);
             node->m_left->Accept(this); // Should always be a pointer
             as->Term();
@@ -84,6 +109,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         as->Comment("RHS is NOT pointer, only updating DI");
 
         as->ClearTerm();
+//        node->m_right->setForceType(TokenType::INTEGER);
         node->m_right->Accept(this);
         as->Term();
         if (!node->m_left->isPure())
@@ -101,9 +127,12 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         as->ClearTerm();
         node->m_left->Accept(this);
         as->Term();
+        as->Comment("Forcetype IS POINTER: "+QString::number(node->m_forceType==TokenType::POINTER));
         as->BinOP(node->m_op.m_type);
-
-        as->Asm(as->m_term + " ax, "+getX86Value(as,node->m_right));
+        QString ax = "ax";
+        if (node->m_left->isReference())
+            ax="di";
+        as->Asm(as->m_term + " "+ax+", "+getX86Value(as,node->m_right));
         as->ClearTerm();
         return;
 
@@ -156,8 +185,9 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
     }
     QString ending = "]";
     if (node->m_expr!=nullptr) {
-        if (node->getArrayType(as)==TokenType::POINTER) {
-            as->Comment("Looking up array of pointer");
+
+        if (node->getArrayType(as)==TokenType::POINTER && node->m_classApplied==false) {
+            as->Comment("Looking up array of pointer : "+node->value);
 
             node->m_expr->setForceType(TokenType::INTEGER);
             node->m_expr->Accept(this);
@@ -168,13 +198,13 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("mov di,[ds:si+bx]");
             as->Asm("mov ax,[ds:si+bx+2]");
             as->Asm("mov es,ax");
-//            as->Asm("mov di,cx");
+            //            as->Asm("mov di,cx");
 
             return;
         }
 
         if (node->isPointer(as)) {
-//            as->Asm("push ax");
+            //            as->Asm("push ax");
             as->Asm("les di,["+node->getValue(as)+ "]");
             if (node->m_expr->isPureNumeric()) {
                 as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+"*" + getIndexScaleVal(as,node)+"]");
@@ -197,11 +227,11 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             node->m_expr->Accept(this);
             as->Asm("add di,ax");
             if (node->getArrayType(as)==TokenType::INTEGER)
-//                as->Asm("shl di,1 ; Accomodate for word");
-                  as->Asm("add di,ax");
+                //                as->Asm("shl di,1 ; Accomodate for word");
+                as->Asm("add di,ax");
 
 
-  //          as->Asm("pop ax");
+            //          as->Asm("pop ax");
             if (node->isWord(as))
                 as->Asm("mov ax, word [es:di]; Is word");
             else
@@ -218,6 +248,21 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("shl di,1 ; Accomodate for word");
         ending = "+di]";
     }
+
+/*    if (node->m_forceType==TokenType::POINTER && !node->isPointer(as)) {
+        as->Comment("Force type is POINTER, converting");
+        as->Asm("mov es,0");
+        as->Asm("mov di, [" + node->getValue(as)+"]");
+        return;
+    }
+*/
+    if (node->isReference()) {
+        as->Asm("lea di, " + node->getValue(as)+"");
+        as->Asm("push ds");
+        as->Asm("pop es");
+        return;
+    }
+
     if (node->isPointer(as) && !node->isArrayIndex()) {
         as->Asm("les di, [" + node->getValue(as)+"]");
         return;
@@ -264,161 +309,6 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeString> node)
 
 
 
-/*void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarDecl> node)
-{
-    node->DispatchConstructor(as,this);
-
-
-    node->ExecuteSym(as->m_symTab);
-
-
-    if (qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode)->m_flags.count()==0) {
-    int ret = node->MaintainBlocks(as);
-
-
-
-    if (ret==3) node->m_curMemoryBlock = nullptr;
-//    qDebug() << "NodeVarDecl new memory block "  << ret;
-    if (node->m_curMemoryBlock!=nullptr)
-  //      qDebug() << node->m_curMemoryBlock->m_start;
-    if (as->m_currentBlock!=nullptr) {
-    //    qDebug() <<as->m_currentBlock->m_pos;
-        if (node->m_curMemoryBlock==nullptr) {
-            bool ok;
-            QString p = as->m_currentBlock->m_pos;
-            int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
-            as->blocks.append(node->m_curMemoryBlock);
-        }
-    }
-    else
-        node->m_curMemoryBlock=nullptr;
-   }
-
-
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-
-    if (t->m_op.m_type==TokenType::ARRAY) {
-        as->DeclareArray(v->getValue(as), t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        node->m_dataSize=t->m_op.m_intVal;
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_type="address";
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
-    }else
-    if (t->m_op.m_type==TokenType::STRING) {
-        as->DeclareString(v->getValue(as), t->m_data);
-    }
-    else
-    if (t->m_op.m_type==TokenType::INCBIN) {
-//        if (node->m_curMemoryBlock!=nullptr)
-  //          ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-
-        IncBin(as,node);
-
-    }
-    else
-    if (t->m_op.m_type==TokenType::POINTER) {
-//        if (node->m_curMemoryBlock!=nullptr)
-  //          ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-//        DeclarePointer(node);
- //       as->DecaareP
-        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
-            as->Write(v->getValue(as)+ ": ds  2" ,0);
-        else
-            as->Asm(v->getValue(as)+ ": dw  0,0" );
-//        as->DeclareVariable(v->getValue(as), "long", "0", t->m_position);
-
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
-
-    }else {
-        node->m_dataSize=1;
-        if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
-        if (t->getValue(as).toLower()=="long") node->m_dataSize = 4;
-        as->DeclareVariable(v->getValue(as), t->value, t->initVal, t->m_position);
-    }
-
-
-    if (node->m_curMemoryBlock!=nullptr) {
-        node->m_curMemoryBlock->m_end+=node->m_dataSize;
-    }
-
-    as->m_currentBlock = nullptr;
-
-}
-
-*/
-
-/*
-void ASTdispatcherX86::dispatch(QSharedPointer<NodeBlock> node)
-{
-    node->DispatchConstructor(as,this);
-
-    as->PushBlock(node->m_currentLineNumber);
-
-
-    bool blockLabel = false;
-    bool blockProcedure = false;
-    bool hasLabel = false;
-
-    QString label = as->NewLabel("block");
-
-
-    if (node->m_decl.count()!=0) {
-        as->Asm(m_jmp+ label);
-        hasLabel = true;
-        //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
-    }
-    for (QSharedPointer<Node> n: node->m_decl) {
-        if (qSharedPointerDynamicCast<QSharedPointer<NodeVarDecl>>(n)==nullptr) {
-            if (!blockProcedure) // Print label at end of vardecl
-            {
-                if (n->m_op.m_lineNumber!=0) {
-                    //                      as->PopBlock(n->m_op.m_lineNumber);
-                    blockProcedure = true;
-                    //   qDebug() << "pop" << n->m_op.m_lineNumber << " " << TokenType::getType(n->getType(as));
-                }
-
-            }
-
-        }
-        n->Accept(this);
-
-    }
-    as->VarDeclEnds();
-
-    if (!blockLabel && hasLabel) {
-        as->Label(label);
-
-    }
-
-    if (node->forceLabel!="")
-        as->Label(node->forceLabel);
-
-
-    if (node->m_compoundStatement!=nullptr)
-        node->m_compoundStatement->Accept(this);
-
-
-    as->PopBlock(node->m_currentLineNumber);
-
-}
-*/
-/*void ASTdispatcherX86::dispatch(QSharedPointer<NodeProgram> node)
-{
-    node->DispatchConstructor(as,this);
-
-//    as->EndMemoryBlock();
-    NodeBuiltinMethod::m_isInitialized.clear();
-    as->Program(node->m_name, node->m_param);
-  //  as->m_source << node->m_initJumps;
-    node->m_NodeBlock->m_isMainBlock = true;
-    node->m_NodeBlock->Accept(this);
-
-//    qDebug() << as->m_currentBlock;
-    as->EndProgram();
-
-}
-*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeVarType> node)
 {
 
@@ -428,121 +318,6 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinaryClause> node)
 {
 
 }
-
-/*void ASTdispatcherX86::dispatch(QSharedPointer<NodeProcedure> node)
-{
-    node->DispatchConstructor(as,this);
-
-
-    if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
-        ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
-                              + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
-                              + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
-
-    for (int i=0; i<node->m_parameters.count();i++) {
-        // Assign all variables
-        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
-        QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
-        na->Accept(this);
-//        na->Build(as);
-    }
-
-    as->Asm("call " + node->m_procedure->m_procName);
-
-}
-*/
-/*void ASTdispatcherX86::dispatch(QSharedPointer<NodeProcedureDecl> node)
-{
-    node->DispatchConstructor(as,this);
-
-    bool isInitFunction=false;
-    bool isBuiltinFunction=false;
-    if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
-        isBuiltinFunction = true;
-        isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
-    }
-
-    as->Asm("");
-    as->Asm("");
-    as->Comment("***********  Defining procedure : " + node->m_procName);
-    QString type = (isBuiltinFunction) ? "Built-in function" : "User-defined procedure";
-    as->Comment("   Procedure type : " + type);
-    if (isBuiltinFunction) {
-        type = (isInitFunction) ? "yes" : "no";
-        as->Comment("   Requires initialization : " + type);
-    }
-    as->Asm("");
-    QString endLabel = "";
-
-    if (!isInitFunction) {
-    if (node->m_block!=nullptr) {
-        QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
-        if (b!=nullptr)
-            b->forceLabel=node->m_procName;
-        node->m_block->Accept(this);
-//        node->m_block->Build(as);
-    }
-    }
-    as->Asm("ret");
-
-
-
-}
-*/
-/*
-void ASTdispatcherX86::dispatch(QSharedPointer<NodeConditional> node)
-{
-    QString labelStartOverAgain = as->NewLabel("while");
-    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
-
-    QString labelElse = as->NewLabel("elseblock");
-    QString labelElseDone = as->NewLabel("elsedoneblock");
-    // QString labelFailed = as->NewLabel("conditionalfailed");
-
-//    qDebug() << "HMM";
-
-    if (node->m_isWhileLoop)
-        as->Label(labelStartOverAgain);
-
-    // Test all binary clauses:
-    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
-
-
-        QString failedLabel = labelElseDone;
-        if (node->m_elseBlock!=nullptr)
-            failedLabel = labelElse;
-
-    BuildSimple(bn,  lblstartTrueBlock,  failedLabel,node->m_forcePage==1);
-
-    // Start main block
-    as->Label(lblstartTrueBlock); // This means skip inside
-
-    node->m_block->Accept(this);
-
-    if (node->m_elseBlock!=nullptr)
-        as->Asm(m_jmp + labelElseDone);
-
-    // If while loop, return to beginning of conditionals
-    if (node->m_isWhileLoop)
-        as->Asm(m_jmp + labelStartOverAgain);
-
-    // An else block?
-    if (node->m_elseBlock!=nullptr) {
-        as->Label(labelElse);
-        node->m_elseBlock->Accept(this);
-//        m_elseBlock->Build(as);
-
-    }
-    as->Label(labelElseDone); // Jump here if not
-
-    as->PopLabel("while");
-    as->PopLabel("ConditionalTrueBlock");
-    as->PopLabel("elseblock");
-    as->PopLabel("elsedoneblock");
-//    as->PopLabel("conditionalfailed");
-
-}
-*/
 
 
 void ASTdispatcherX86::dispatch(QSharedPointer<Node> node)
@@ -562,32 +337,11 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeAssign> node)
 
 }
 
-/*void ASTdispatcherX86::dispatch(QSharedPointer<NodeCase> node)
-{
-    ErrorHandler::e.Error("Case not implemented yet", node->m_op.m_lineNumber);
-}
-*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
     ErrorHandler::e.Error("Repeat-until not implemented yet", node->m_op.m_lineNumber);
 
 }
-/*
-void ASTdispatcherX86::dispatch(QSharedPointer<NodeBuiltinMethod> node)
-{
-    node->DispatchConstructor(as,this);
-
-    node->VerifyParams(as);
-
-
-    QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(Syntax::s.m_currentSystem->m_system);
-    methods->m_node = node;
-    methods->Assemble(as,this);
-
-
-
-}
-*/
 void ASTdispatcherX86::dispatch(QSharedPointer<NodeComment> node)
 {
 
@@ -729,7 +483,22 @@ void ASTdispatcherX86::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
         as->Asm("sta "+getValue(left)+"+1");*/
     }
     else {
-        ErrorHandler::e.Error("String copying not yet implemented, can only be assigned as pointers.", node->m_op.m_lineNumber);
+//        ErrorHandler::e.Error("String copying not yet implemented, can only be assigned as pointers.", node->m_op.m_lineNumber);
+        as->Comment("String copy!");
+//        as->
+        if (left->isPointer(as))
+            as->Asm("les di,["+left->getValue(as)+"]");
+        else
+            as->Asm("lea di,"+left->getValue(as)+"");
+        as->Term();
+
+        as->Asm("push ds");
+        as->Asm("pop es");
+        as->Asm("lea si,"+str);
+        as->Asm("mov cx, "+Util::numToHex(right->m_op.m_value.count()+2));
+        as->Asm("rep movsb");
+//        as->Asm("pop ds");
+
 /*        as->Asm("ldx #0");
         as->Label(lblCpy);
         as->Asm("lda " + str+",x");
@@ -760,13 +529,14 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
 
-    if (!var->isPurePointer(as) && node->m_right->isPurePointer(as)) {
-        ErrorHandler::e.Error("Cannot assign pointer to variable "+var->getValue(as),var->m_op.m_lineNumber);
-    }
-    if (!var->isPurePointer(as) && node->m_right->isPurePointer(as)) {
-        ErrorHandler::e.Error("Cannot assign pointer to variable "+var->getValue(as),var->m_op.m_lineNumber);
-    }
+    QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(var), node->m_op.m_lineNumber, var->isAddress());
 
+    if (!var->isPurePointer(as) && node->m_right->isPurePointer(as)) {
+        ErrorHandler::e.Error("Cannot assign pointer to variable "+var->getValue(as),var->m_op.m_lineNumber);
+    }
+    if (!var->isPurePointer(as) && node->m_right->isPurePointer(as)) {
+        ErrorHandler::e.Error("Cannot assign pointer to variable "+var->getValue(as),var->m_op.m_lineNumber);
+    }
 
     QString vname = getValue(var);
 //    as->Comm nt("IS REGISTER : "+Util::numToHex(v->m_isRegister) + " "+vname);
@@ -783,6 +553,17 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         //}
     }
 
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
+        AssignString(node,node->m_left->isPointer(as));
+        return "";
+    }
+
+
+    if (var->m_writeType==TokenType::INTEGER) {
+        node->m_right->setForceType(TokenType::INTEGER);
+    }
+    if (var->m_writeType==TokenType::LONG)
+        node->m_right->setForceType(TokenType::LONG);
 
 
     if (var->isPointer(as) && !var->isArrayIndex()) {
@@ -796,6 +577,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         as->Comment("Assigning pointer");
 
         QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
+//        node->m_right->setForceType(TokenType::POINTER);
         if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::BITOR || bop->m_op.m_type==TokenType::BITAND || bop->m_op.m_type==TokenType::XOR )) {
             if (bop->m_left->getValue(as)==var->getValue(as)) {
 
@@ -818,11 +600,6 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         }
 
 
-        if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
-            AssignString(node,node->m_left->isPointer(as));
-            return "";
-        }
-
 
 
         if (node->m_right->isPureVariable()) {
@@ -842,8 +619,10 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             return "";
         }
         else{
-            as->Comment("Setting PURE POINTER");
+            as->Comment("Setting PURE POINTER "+QString::number(node->isPointer(as)));
 //            m_isPurePointer = true;
+ //           if (node->m_left->isPointer(as))
+   //            node->m_right->setForceType(TokenType::POINTER);
             node->m_right->Accept(this);
   //          m_isPurePointer = false;
             as->Comment("Setting PURE POINTER ends");
@@ -860,6 +639,9 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         // TO DO: Optimize special cases
 
         as->ClearTerm();
+        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_writeType));
+        if (var->isWord(as))
+            node->m_right->setForceType(TokenType::INTEGER);
         node->m_right->Accept(this);
 
         as->Term();
@@ -896,8 +678,11 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 
     }
 
+
+
     if (var->isArrayIndex()) {
         // Is an array
+        as->Asm(";Is array index");
         if (var->getArrayType(as)==TokenType::POINTER) {
             as->Comment("Assign value to pointer array");
             node->m_right->Accept(this);
@@ -1152,11 +937,14 @@ void ASTdispatcherX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
 
 void ASTdispatcherX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
+    if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
     LoadVariable(nodeA);
+    QString ax = getAx(nodeA);
     PushX();
     LoadVariable(nodeB);
+    QString bx = getAx(nodeB);
     PopX();
-    as->Asm(m_cmp+getAx(nodeB)+","+getAx(nodeA));
+    as->Asm(m_cmp+ax+","+bx);
     as->Asm(m_jne+lblJump);
 
 }

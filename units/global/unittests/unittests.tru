@@ -6,13 +6,14 @@ Unit Unittests;
 @use "unittests/classes"
 @use "unittests/ifthenelse"
 @use "unittests/muldiv"
+
 @use "unittests/advanced_math"
 
 
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests :byte = 6;
+	const noTests :byte = 5;
 	currentTest : byte = 0;
 	isDone: boolean = false;
 
@@ -24,14 +25,14 @@ begin
 		Common::TestSuiteInit();
 		if (currentTest=0) then Classes::Exec();
 		if (currentTest=1) then CaseTest::Exec();
-		if (currentTest=5) then IfThenElse::Exec();
-		if (currentTest=2) then MulDiv::Exec();
-		
+		if (currentTest=5) then MulDiv::Exec();
+		if (currentTest=2) then IfThenElse::Exec();
 		if (currentTest=3) then IntegerTest::Exec();
+		@ifndef X86
 		if (currentTest=4) then AdvancedMath::Exec();
-		
+		@endif
 		currentTest+=1;
-		if (currentTest>=noTests) then
+		if (currentTest>noTests) then
 			isDone := true;
 		
 	end;

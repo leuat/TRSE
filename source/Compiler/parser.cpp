@@ -3531,6 +3531,16 @@ QSharedPointer<Node> Parser::CreateBinop(TokenType::Type tt, QSharedPointer<Node
         if (right==nullptr)
             return left;
     }
+    if (left->isPureNumeric() && right->isPureNumeric()) {
+        if (t.m_type==TokenType::PLUS)
+            return CreateNumber(left->numValue()+right->numValue());
+        if (t.m_type==TokenType::MINUS)
+            return CreateNumber(left->numValue()-right->numValue());
+        if (t.m_type==TokenType::MUL)
+            return CreateNumber(left->numValue()*right->numValue());
+        if (t.m_type==TokenType::DIV)
+            return CreateNumber(left->numValue()/right->numValue());
+   }
 
     return QSharedPointer<NodeBinOP>(new NodeBinOP(left,t,right));
 }
@@ -3573,8 +3583,19 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     auto type = s->getEndType();
 
     // Only apply to variables that are in CLASSES
-    if (!(m_symTab->m_records.contains(type) && m_symTab->m_records[type]->m_isClass))
+    if (!(m_symTab->m_records.contains(type) && m_symTab->m_records[type]->m_isClass)) {
+//        qDebug() << "PARSER  type "<< type <<v->value<<s->getEndType();
+        QString et = s->getEndType();
+        v->m_writeType = TokenType::BYTE;
+        if (et.toLower()=="integer")
+            v->m_writeType = TokenType::INTEGER;
+        if (et.toLower()=="long")
+            v->m_writeType = TokenType::LONG;
+
+//        qDebug() << "PARSER  return type "<<  v->value<<TokenType::getType(v->m_writeType);
+
         return v;
+    }
 
     bool isArray = s->m_type.toLower()=="array";
     if (isArray && v->m_expr==nullptr && !v->isReference()) {
@@ -3596,7 +3617,6 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         else
             v->m_expr = CreateBinop(TokenType::MUL,v->m_expr,nodeClassSize);
     }
-
 
     // Has a subnode? Calculate shift and go down the rabbid hole!
     if (sv!=nullptr) {
@@ -3621,8 +3641,14 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         if (v->m_expr==nullptr)
             v->m_expr = CreateNumber(0);
 
+        // Propagate 8/16/32 bit write type
+        v->m_writeType = sv->m_writeType;
+  //      qDebug() << "PARSER  type "<< type <<v->value<<TokenType::getType(v->m_writeType);
+
 
         v->m_subNode = nullptr; // REMOVE subnode
+    } else {
+        // Leaf node : What type is this?
 
     }
 

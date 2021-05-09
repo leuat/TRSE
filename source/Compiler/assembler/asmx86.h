@@ -36,6 +36,8 @@ public:
 
     QString GetOrg(int pos) override;
 
+    bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos) override;
+
 
 
 };

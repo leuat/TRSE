@@ -75,6 +75,8 @@ void AsmX86::DeclareArray(QString name, QString type, int count, QStringList dat
 
     if (DeclareRecord(name,type,count,data,pos))
         return;
+    if (DeclareClass(name,type,count,data,pos))
+        return;
 
 
     if (type.toLower()=="integer")
@@ -155,6 +157,9 @@ void AsmX86::DeclareVariable(QString name, QString type, QString initval, QStrin
     if (type.toLower()=="byte") {
         t = byte;
     }
+
+    if (DeclareClass(name,type,1,QStringList(),position))
+         return;
 
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
@@ -251,4 +256,20 @@ void AsmX86::Label(QString s)
 QString AsmX86::GetOrg(int pos)
 {
     return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
+}
+
+bool AsmX86::DeclareClass(QString name, QString type, int count, QStringList data, QString pos)
+{
+    if (m_symTab->m_records.contains(type)) {
+        if (!m_symTab->m_records[type]->m_isClass)
+            return false;
+
+        QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+        Write(name + ": times " +QString::number(st->getSize()*count)+" db 0");
+//        Asm("[org "+name+"+" +QString::number(st->getSize()*count)+"]");
+
+        return true;
+    }
+    return false;
+
 }

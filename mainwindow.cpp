@@ -818,6 +818,8 @@ void MainWindow::RefreshFileList()
        trus = AddTreeRoot(truPath[2],"Global library");
         m_im->insertRow(3,trus);
     }
+//    qDebug() << "Global TRU path : "<<truPath[1];
+  //  qDebug() << "Global TRU path : "<<truPath[2];
 
    m_im->setHorizontalHeaderLabels(QStringList() << "1" <<"2");
   //  ui->treeFiles->hideColumn(2);

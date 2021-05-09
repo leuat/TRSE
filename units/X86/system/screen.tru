@@ -128,6 +128,20 @@ begin
 end;
 
 
+procedure Print(zp:pointer);
+begin
+	while (zp^<>0) do
+	begin
+		PrintChar(zp^);
+		zp+=1;
+	end;
+end;
+
+procedure NewLine();
+begin
+	PrintChar(10);
+	PrintChar(13);
+end;
 
 
 

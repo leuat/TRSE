@@ -1,0 +1,17 @@
+Program UnitTestsX86;
+@projectsettings "amstradcpc_options" "-O system.printer=1 -O file.printer_file=/tmp/printer.dat"
+@use "unittests/unittests"
+@use "unittests/common"
+
+begin
+        Unittests::Exec();
+/*        if Common::unittests_status = 0 then
+        		TestResult("SUCCESS\r\n")
+        	else
+        		TestResult("FAILURE\r\n");
+  */      		
+        	while (true) do
+        	begin
+	        	
+        	end;
+end.

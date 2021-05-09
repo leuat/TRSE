@@ -3,7 +3,6 @@ program Adlib;
 @use "system/memory"
 var  
 	song: incbin("music/song1.trt");
-
 interrupt Raster();
 begin
 	startirq();
