@@ -328,7 +328,7 @@ def CPCUnitTests():
 			print(result)
 			if result != "SUCCESS":
 				failed.append([path, "unittests.ras"])
-				print("******* SEVERE ERROR : Amstrad CPC Execution unit test FAILED! Please fix up unittests.ras: %s" % lines[-1])
+				print("******* SEVERE ERROR : Amstrad CPC Execution unit test FAILED! Please fix up unittests.ras: %s" % result)
 			else:
 				print("Amstrad CPC Unittest SUCCESS!")
 		os.chdir(orgPath)
