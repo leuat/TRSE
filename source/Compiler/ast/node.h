@@ -64,7 +64,7 @@ public:
 
     // Forced values
     bool m_forceAddress = false;
-
+    bool m_classApplied = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
     // Force page for conditionals (while/if/repeat until etc)
     int m_forcePage = 0;

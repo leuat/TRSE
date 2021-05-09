@@ -849,7 +849,15 @@ int Parser::findPage()
 
 void Parser::VerifyTypeSpec(Token& t)
 {
+    if (m_isTRU) {
+        if (t.m_value.startsWith(m_symTab->m_gPrefix))
+            t.m_value.remove(m_symTab->m_gPrefix);
+    }
+    if (Syntax::s.keywords.contains(m_symTab->strip(t.m_value).toLower())) {
+        ErrorHandler::e.Error("'"+m_symTab->strip(t.m_value).toLower()+"' is a reserved keyword, not a type.",m_currentToken.m_lineNumber);
+    }
     try {
+
         bool ok = false;
         if (m_symTab->m_records.contains(t.m_value))
             ok=true;
@@ -873,16 +881,34 @@ void Parser::VerifyTypeSpec(Token& t)
 //        qDebug() << "IS OK : "<<t.m_value << ok;
 
         if (!ok)
-        if (!Syntax::s.m_currentSystem->m_allowedBaseTypes.contains(t.m_value))
-            ErrorHandler::e.Error("Unknown type : "+t.m_value, m_currentToken.m_lineNumber);
+        if (!Syntax::s.m_currentSystem->m_allowedBaseTypes.contains(t.m_value)) {
+            QString val = t.m_value;
+//            ErrorHandler::e.Error("Unknown type : "+t.m_value, m_currentToken.m_lineNumber);
+                QString similarSymbol = m_symTab->findSimilarSymbol(val,65,2,m_procedures.keys());
+                QString em = "Unknown or illegal type : '"+val.remove(m_symTab->m_gPrefix)+"'. ";
+                if (similarSymbol!="") {
+                    em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
+                }
+                qDebug() << "HERE "<<t.m_value;
+
+                ErrorHandler::e.Error(em,m_currentToken.m_lineNumber);
+        }
 
         //return;
 /*        if (!ok)
             m_symTab->Lookup(t.m_value,t.m_lineNumber);
 */
     } catch (FatalErrorException& fe) {
-        fe.message = "Unknown type specification : " +t.m_value;
-        qDebug() <<m_symTab->m_records.keys() <<m_symTab->m_gPrefix<<t.m_value;
+        QString val = t.m_value;
+//            ErrorHandler::e.Error("Unknown type : "+t.m_value, m_currentToken.m_lineNumber);
+            QString similarSymbol = m_symTab->findSimilarSymbol(val,65,2,m_procedures.keys());
+            QString em = "Unknown or illegal type : '"+val.remove(m_symTab->m_gPrefix)+"'. ";
+            if (similarSymbol!="") {
+                em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
+            }
+
+            ErrorHandler::e.Error(em,m_currentToken.m_lineNumber);
+  //      qDebug() <<m_symTab->m_records.keys() <<m_symTab->m_gPrefix<<t.m_value;
         throw fe;
     }
 }
@@ -3510,20 +3536,129 @@ QSharedPointer<NodeAssign> Parser::CreateAssign(QSharedPointer<Node> left, QShar
 
 }
 /*
- *  This method transforms class variables into "flat" structures
+ *  This recursive method transforms class variables into "flat" structures
  *  ie
  *  pm := #objects[i] ->  pm := #objects + i*sizeOf(Object)
  *  pm.y := 10  -> pm[3] := 10;
  *
- *
+ *  Note: it is the very *heart* of OOP in TRSE!
  *
  */
 QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 {
     auto v = qSharedPointerDynamicCast<NodeVar>(var);
-/*    auto proc = qSharedPointerDynamicCast<NodeProcedure>(var);
-    if (proc!=nullptr)
-        qDebug() << " IS PROCECURE " << proc->getValue(nullptr);*/
+   if (!v)
+        return var;
+
+    if (v->m_classApplied)
+        return v;
+
+    QSharedPointer<Symbol> s = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
+    QString t1;
+
+    auto sv = qSharedPointerDynamicCast<NodeVar>(v->m_subNode);
+    auto type = s->getEndType();
+
+//    qDebug() << "START WITH "<<v->value;
+    if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
+        return v;
+
+
+
+    bool isArray = s->m_type.toLower()=="array";
+
+    // objects[i].pos[2].y
+    // objects[ sizeof(Object)*i].pos[2].y
+
+//    v->m_expr = nullptr;
+    int size = m_symTab->m_records[type]->getSize();
+    // var + i*sizeOf(class)
+
+    // First add shift
+    int shiftInternal = 0;
+
+
+//    qDebug() << "Shift Internal "<< shiftInternal <<"Has expr : " <<(v->m_expr!=nullptr);
+
+    // After shift, we look up the NEW type and size
+
+/*    QSharedPointer<Symbol> s2 = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
+    QString newType = s2->getEndType();
+    if (m_symTab->m_records.contains(newType) && newType!=type)
+    {
+        size = m_symTab->m_records[newType]->getSize();
+        qDebug() << "** UH OH, subnode is object of size" <<size;
+        type = newType;
+    }
+    QString washed = v->value;
+    washed = washed.remove(type+"_");*/
+    if (size!=0 && v->m_expr!=nullptr) {
+        // objects[i].a. -> objects[i*sizeof(Object)].a
+        //qDebug() << "NEED A MUL BABY "<<size <<v->m_expr->numValue();
+        auto nodeClassSize = CreateNumber(size);
+        if (v->m_expr->isPureNumeric() && v->m_expr->numValue()==0) {
+
+        }
+        else
+            v->m_expr = CreateBinop(TokenType::MUL,v->m_expr,nodeClassSize);
+    }
+
+
+
+    if (sv!=nullptr) {
+//        qDebug() << "In subnode: Calculating SHIFT "<<type<<sv->value;
+         shiftInternal = m_symTab->m_records[type]->getShiftedPositionOfVariable(sv->value,1);
+
+        if (shiftInternal!=0) {
+//            qDebug() << "internal shift for var "+sv->value+" : Adding "<<shiftInternal;
+            if (v->m_expr!=nullptr)
+                v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,CreateNumber(shiftInternal));
+            else
+                v->m_expr = CreateNumber(shiftInternal);
+        }
+
+
+  //      qDebug() <<  "***** SUBNODE PUSH "<<v->value;
+        auto node = ApplyClassVariable(sv);
+    //    qDebug() <<  "***** SUBNODE POP"<<v->value;
+        auto sv2 = qSharedPointerDynamicCast<NodeVar>(node);
+        node = sv2->m_expr;
+        if (node!=nullptr) {
+            if (v->m_expr!=nullptr)
+                v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,node);
+            else
+                v->m_expr = node;
+        }
+        if (v->m_expr==nullptr)
+            v->m_expr = CreateNumber(0);
+
+
+        v->m_subNode = nullptr; // REMOVE subnode
+
+    }
+
+
+
+
+    v->m_classApplied = true;
+    if (v->m_expr == nullptr)
+        return v;
+    //qDebug() << "FINAL "<<v->value  << v->m_expr->numValue();
+    if (!v->isReference())
+        return v;
+    // REFERENCE! )
+
+    //qDebug() << "IS REFERECE";
+    auto add = v->m_expr;
+    v->m_expr = nullptr;
+
+    return CreateBinop(TokenType::PLUS, v,add);
+
+}
+/*
+QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
+{
+    auto v = qSharedPointerDynamicCast<NodeVar>(var);
     if (!v)
         return var;
 
@@ -3538,16 +3673,12 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     auto proc = qSharedPointerDynamicCast<NodeProcedure>(v->m_subNode);
 
     if (proc!=nullptr)  {
-        qDebug() <<"*** IS PROC WRONG" <<proc->m_procedure->m_procName;
+//        qDebug() <<"*** IS PROC WRONG" <<proc->m_procedure->m_procName;
     }
 
     if (var->isRecord(m_symTab,t1) && sv==nullptr)
         v->isPureObject = true;
 
-/*    qDebug() << "VAR " <<v->value;
-    if (sv!=nullptr)
-        qDebug() << "SVAR " <<sv->value <<sv->isRecord(m_symTab,t1) <<t1;
-*/
     if (sv!=nullptr && sv->isRecord(m_symTab,t1)) {
         sv->isPureObject = true;
         v->isPureObject = true;
@@ -3571,17 +3702,17 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 //        if (subvarIsArray) dataLength=1;
         if (m_symTab->m_records[type]->m_isClass)
             dataLength = 1;
-//        qDebug() << "HERE" <<dataLength<<shiftInternal <<v->value<<subVar<<(v->m_expr==nullptr)<<(v->m_subNode==nullptr)<<subvarIsArray;
 
         if (isArray && v->m_expr == nullptr)
             ErrorHandler::e.Error("'"+v->value+"' is an array, did you forget the index? ('"+v->value+"[i]' etc)",var->m_op.m_lineNumber);
 
         if (v->m_expr!=nullptr) {
-            if (v->m_expr->isPureNumeric())
+            if (v->m_expr->isPureNumeric()) {
                 shiftInternal+=v->m_expr->getValueAsInt(nullptr)*m_symTab->m_records[type]->getSize();
+            }
             else {
                 // For now, disallow looking up an object in a array with generic index
-
+*/
                 /* Here, magic happes:
                  * replace
                  *
@@ -3610,6 +3741,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
                 m_symTab->m_tempPointers.push(tmp1);
                 return CreateVariable(tmp1);
 */
+                /*
                 // Force the user to handle the pointers instead. Don't worry about it!
                 ErrorHandler::e.Error("Class array indices not supported yet. Please use pointers.",m_currentToken.m_lineNumber);
             }
@@ -3626,6 +3758,9 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
             // Check if actually an array:
             //qDebug() <<"END TYPE " <<type << subVar<<m_symTab->m_records[type]->m_symbols[subVar]->m_type;
             if (subvarIsArray) dataLength=1;
+            int dataLength = m_symTab->m_records[type]->m_symbols[subVar]->getCountingLength();
+            qDebug() << "HERE" <<dataLength<<shiftInternal <<v->value<<subVar<<(v->m_expr==nullptr)<<(v->m_subNode==nullptr)<<subvarIsArray;
+
             if (dataLength!=1) // uh oh we need to mul with datalength
                 sv->m_expr = CreateBinop(TokenType::MUL,sv->m_expr,CreateNumber(dataLength));
             v->m_expr = CreateBinop(TokenType::PLUS, sv->m_expr,v->m_expr);
@@ -3661,7 +3796,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     return v;
 }
 
-
+*/
 
 QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockName, bool hasBlock )
 {
@@ -4203,10 +4338,9 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             Eat();
             TokenType::Type typ = m_currentToken.m_type;
             m_currentToken.m_value = m_symTab->m_gPrefix+ m_currentToken.m_value;
+            VerifyTypeSpec(m_currentToken);
             QString val = m_currentToken.m_value;
-            if (!(m_currentToken.m_type==TokenType::INTEGER || m_currentToken.m_type==TokenType::BYTE || m_currentToken.m_type==TokenType::LONG  || isClass(m_currentToken))) {
-                ErrorHandler::e.Error("TRSE currently only supports pointers to bytes, integers and longs and classes.",m_currentToken.m_lineNumber);
-            }
+
 
             Eat();
             nvt->m_arrayVarType.m_type = typ;

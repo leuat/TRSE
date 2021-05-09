@@ -80,6 +80,9 @@ begin
 end;
 
 
+var
+	tp : pointer of Vars::Mini;
+	
 // Direct array method call from withing another class within....
 procedure CTest8();
 begin
@@ -89,9 +92,31 @@ begin
 	Vars::pm.pos.minis[1].a:=10;
 	Vars::pm.pos.minis[1].b:=20;
 	Vars::pm.pos.minis[1].IncA(); // calculates a+=b, so A should be 30
-	Vars::zp:=#Vars::monsters;
-	//if (Vars::pm.pos.minis[1].a=30 and Vars::zp[ sizeof(Vars::Monster)*3 + (4 + 5)]=30) then Common::PASS() else Common::FAIL();
 	if (Vars::pm.pos.minis[1].a=30) then Common::PASS() else Common::FAIL();
+end;
+
+// Direct access in array of objects using PYTHON syntax
+procedure CTest9();
+begin
+	
+	Vars::v1:=3;
+	Vars::pm:=#Vars::monsters[Vars::v1];
+	// Direct use
+	Vars_Monster_Move1(#Vars::monsters[Vars::v1],25,24);
+	Vars::text := "T9:";
+	if (Vars::pm.y=24 and Vars::pm.x=25) then Common::PASS() else Common::FAIL();
+end;
+
+// Direct access in array of objects using C++ syntax
+procedure CTest10();
+begin
+	
+	Vars::v1:=3;
+	Vars::pm:=#Vars::monsters[Vars::v1];
+	// Direct use
+//	Vars::monsters[Vars::v1].Move1(25,24);
+	Vars::text := "T9:";
+	if (Vars::pm.y=24 and Vars::pm.x=25) then Common::PASS() else Common::FAIL();
 end;
 
 
@@ -109,8 +134,10 @@ begin
 	CTest5();
 	CTest6();
     CTest7(); 
+    CTest9(); 
+    CTest10(); 
     // Fails for now - FIX UP
-//    CTest8();    
+    CTest8();    
 	Common::WaitABit();
 
 end;

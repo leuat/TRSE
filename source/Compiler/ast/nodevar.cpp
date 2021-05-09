@@ -324,8 +324,8 @@ QString NodeVar::getValue(Assembler* as) {
         if (type.toLower()=="pointer")
             test = s->m_pointsTo;
 
-        if (!as->m_symTab->m_records.contains(test))
-            ErrorHandler::e.Error("Could not find record type : "+type + " of " + v,m_op.m_lineNumber);
+//        if (!as->m_symTab->m_records.contains(test))
+  //          ErrorHandler::e.Error("Could not find record type : "+type + " of " + v,m_op.m_lineNumber);
 
         if (qSharedPointerDynamicCast<NodeVar>(m_subNode)==nullptr)
             ErrorHandler::e.Error("Unknown subnode: '"+m_subNode->getValue(as)+"'", m_op.m_lineNumber);

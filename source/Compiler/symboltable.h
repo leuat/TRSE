@@ -170,6 +170,9 @@ public:
 
     QSharedPointer<Symbol> LookupConstants(QString name);
 
+    // Strips a variable of the prefix
+    QString strip(QString val);
+
     bool isRegisterName(QString sn);
     bool isThisPointer(QString sn);
 

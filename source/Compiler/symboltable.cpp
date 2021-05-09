@@ -428,15 +428,24 @@ bool SymbolTable::exists(QString name) {
 
 QString SymbolTable::findSimilarSymbol(QString sim, float percentage, int n, QStringList procedures)
 {
+    sim = sim.remove(m_gPrefix);
+    for (QString s:m_records.keys()) {
+        s = s.remove(m_gPrefix);
+        if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
+            return s;
+    }
     for (QString s:m_symbols.keys()) {
+        s = s.remove(m_gPrefix);
         if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
             return s;
     }
     for (QString s:procedures) {
+        s = s.remove(m_gPrefix);
         if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
             return s;
     }
     for (QString s:m_constants.keys()) {
+        s = s.remove(m_gPrefix);
         if (Util::QStringIsSimilar(sim,s,percentage,n,Qt::CaseInsensitive))
             return s;
     }
@@ -536,6 +545,11 @@ QSharedPointer<Symbol> SymbolTable::LookupConstants(QString name)
         }
     }
     return nullptr;
+}
+
+QString SymbolTable::strip(QString val)
+{
+    return val.remove(m_gPrefix);
 }
 
 bool SymbolTable::isRegisterName(QString sn)

@@ -11,8 +11,8 @@ var
 	j,i : byte;
 
 	Mini = class
-		a:integer;
-		b:byte;
+		a:integer; // 4   // 7
+		b:byte;    // 6   // 9
 		
 		procedure IncA();
 		begin
