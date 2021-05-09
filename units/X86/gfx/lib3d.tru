@@ -4,20 +4,20 @@ unit Lib3d;
 @use "gfx/gfx"
 var
 
-	idx,renderType,r1,r2,i,j,n,v,ii,msize,size,xx,yy,zz,cx,cy,cz,k1,k2,k,k3,f1,f2,f3,f4,dx,dy,k4:integer;
+	idx,renderType,r1,r2,i,j,n,v,ii,msize,size,xx,yy,zz,cx,cy,cz,k1,k2,k,k3,f1,f2,f3,f4,dx,dy,k4:signed integer;
 	
 	const rendertype_lines : integer = 1;
 	const rendertype_triangle : integer = 2;
 	
 	mesh = record
 	//	pos,rot: Vector::vec3;
-		posx,posy,posz:integer;
-		rotx,roty,rotz:integer;
+		posx,posy,posz:signed integer;
+		rotx,roty,rotz:signed integer;
 		noVertices : integer;
 		noFaces : integer;
 		
 		// vertices + rotated data
-		vertices, vertices_rot : pointer of integer; 
+		vertices, vertices_rot : pointer of signed integer; 
 		faces : pointer of integer;
 		// 2D points
 		points : pointer of integer;
@@ -29,8 +29,8 @@ var
 	objects : array[ MAX ] of mesh;
 	v1,vr : Vector::vecp;
 	
-	p1,p2 : pointer of integer;	
-	vert : array[4] of integer;//Vector::vec3;
+	p1,p2 : pointer of signed integer;	
+	vert : array[4] of signed integer;//Vector::vec3;
 /**
 	Allocates memory for a 3D object.
 	i: object number

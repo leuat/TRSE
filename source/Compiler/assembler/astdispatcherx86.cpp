@@ -41,19 +41,38 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         QString bx = getAx(node->m_left);
 
         PushX();
+        QString sign = "";
+        bool isSigned = false;
+        if (node->m_left->isSigned(as)||node->m_right->isSigned(as)) {
+            sign = "i";
+            isSigned = true;
+        }
         if (node->m_op.m_type == TokenType::DIV) {
-//            node->m_right->setForceType(TokenType::BYTE);
-            if (node->m_right->isWord(as))
-               as->Asm("xor dx,dx");
-            as->Asm("cwd");
+            //            node->m_right->setForceType(TokenType::BYTE);
+            if (node->m_right->isWord(as)) {
+                as->Asm("xor dx,dx");
+                if (isSigned)
+                    as->Asm("cwd");
+            }
+            else {
+                if (isSigned) as->Asm("cbw");
+                as->Asm("xor ah,ah");
+            }
         }
         node->m_right->Accept(this);
 
         QString ax = getAx(node->m_right);
         PopX();
         as->BinOP(node->m_op.m_type);
-
-        as->Asm(as->m_term + " " +  ax);
+        if (bx[0]!="a")  {
+            as->Asm("push ax");
+            as->Asm("mov ax,"+bx);
+        }
+        as->Asm(sign+as->m_term +" " +  ax);
+        if (bx[0]!="a")  {
+            as->Asm("mov "+bx+",ax");
+            as->Asm("pop ax");
+        }
         as->m_term = "";
         return;
     }
@@ -126,10 +145,10 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
 
         as->ClearTerm();
         node->m_left->Accept(this);
+        QString ax = getAx(node);
         as->Term();
         as->Comment("Forcetype IS POINTER: "+QString::number(node->m_forceType==TokenType::POINTER));
         as->BinOP(node->m_op.m_type);
-        QString ax = "ax";
         if (node->m_left->isReference())
             ax="di";
         as->Asm(as->m_term + " "+ax+", "+getX86Value(as,node->m_right));
@@ -828,15 +847,29 @@ void ASTdispatcherX86::BuildSimple(QSharedPointer<Node> node,  QString lblSucces
     //    as->Asm("pha"); // Push that baby
 
     BuildToCmp(node);
-
+    QString jg ="jg ";
+    QString jl ="jl ";
+    QString jge ="jge ";
+    QString jle ="jle ";
+    if (!(node->m_left->isSigned(as) || node->m_right->isSigned(as))) {
+        jg = "ja ";
+        jl = "jb ";
+        jge = "jae ";
+        jle = "jbe ";
+    }
     if (node->m_op.m_type==TokenType::EQUALS)
         as->Asm("jne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("je " + lblFailed);
     if (node->m_op.m_type==TokenType::LESS)
-        as->Asm("jg " + lblFailed);
+        as->Asm(jge  + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm("jl " + lblFailed);
+        as->Asm(jle  + lblFailed);
+
+    if (node->m_op.m_type==TokenType::LESSEQUAL)
+        as->Asm(jg  + lblFailed);
+    if (node->m_op.m_type==TokenType::GREATEREQUAL)
+        as->Asm(jl  + lblFailed);
 
 
 

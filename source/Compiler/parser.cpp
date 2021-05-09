@@ -4350,15 +4350,18 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
         if (m_currentToken.m_type == TokenType::OF) {
             Eat();
+            QStringList flags = getFlags();
+
             TokenType::Type typ = m_currentToken.m_type;
             m_currentToken.m_value = m_symTab->m_gPrefix+ m_currentToken.m_value;
             VerifyTypeSpec(m_currentToken);
             QString val = m_currentToken.m_value;
-
+            nvt->m_flags <<flags;
 
             Eat();
             nvt->m_arrayVarType.m_type = typ;
             nvt->m_arrayVarType.m_value = val;
+
 //            qDebug() <<"HERE points to " <<TokenType::getType(typ) <<val;
 
         }

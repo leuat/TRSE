@@ -7,7 +7,6 @@ begin
 	Vars::v1 := 15; 
 	Vars::v2 := 9;
 	Vars::rb:=Vars::v1*Vars::v2;
-	asm(";strcopy");
 	Vars::text := "01:"; if Vars::rb=135 then Common::PASS() else Common::FAIL();
 end;
 
@@ -229,11 +228,12 @@ begin
 	ByteDivBytePow203();
 	ByteDivByte04();
 	IntDivByte08();
-	IntDivPow210();
 	IntDivInt09();
+	IntDivPow210();
 	IntDivMix11();
 	IntDivMix12();
 	
+	IntMulAdvancedMix15();
 	
 	Common::WaitABit();
 

@@ -204,11 +204,11 @@ void AsmX86::BinOP(TokenType::Type t, bool clearFlag)
         m_term = "xor ";
     }
     if (t == TokenType::MUL) {
-        m_term = "imul ";
+        m_term = "mul ";
     }
     if (t == TokenType::DIV) {
 //        m_term = "xor dx,dx \n\tidiv ";
-        m_term = "idiv ";
+        m_term = "div ";
     }
     if (t == TokenType::SHR) {
         m_term = "sar ";

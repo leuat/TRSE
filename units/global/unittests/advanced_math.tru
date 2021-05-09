@@ -89,6 +89,7 @@ begin
 
 	// initialise everything
 	Common::Initialise("ADVANCED TESTS");
+	
 	Advanced01();
 	Advanced02();
 	@ifndef AMSTRADCPC

@@ -3,15 +3,15 @@ unit Matrix;
 @use "math/vector"
 var
 
-	type mat3 = array[16] of integer;
-	type mat2 = array[4] of integer;
-	type matp = pointer of integer;
+	type mat3 = array[16] of signed integer;
+	type mat2 = array[4] of signed integer;
+	type matp = pointer of signed integer;
 
 	temp : mat3;
 	vtmp : Vector::vec4;	
 	@donotremove angle
-	i,j,k,v,angle,v0,v1,v2,a0 : integer;
-	c, s : integer;
+	i,j,k,v,angle,v0,v1,v2,a0 : signed integer;
+	c, s : signed integer;
 	m,a:matp;
 	
 /**

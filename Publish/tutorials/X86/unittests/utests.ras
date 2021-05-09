@@ -3,13 +3,21 @@ Program UnitTestsX86;
 @use "unittests/unittests"
 @use "unittests/common"
 
+
+procedure TestResult(txt:pointer);
+begin
+	Screen::NewLine();
+	Screen::Print(txt);	
+	Screen::NewLine();
+end;
+
 begin
         Unittests::Exec();
-/*        if Common::unittests_status = 0 then
-        		TestResult("SUCCESS\r\n")
+        if Common::unittests_status = 0 then
+        		TestResult("SUCCESS!")
         	else
-        		TestResult("FAILURE\r\n");
-  */      		
+        		TestResult("FAILURE!");
+       		
         	while (true) do
         	begin
 	        	

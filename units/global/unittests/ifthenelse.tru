@@ -435,7 +435,6 @@ begin
 	GTE3_GreaterThan_True();
 	GTE4_GreaterThan_False();
 	GTE5_GreaterThan_True();
-
 	// Less than conditional tests
 	LT1_LessThan_True();
 	LT2_LessThan_False();
@@ -504,9 +503,6 @@ begin
 	AdvancedI3();
 	AdvancedI4();
 	AdvancedI5();
-		@ifndef AMSTRADCPC
-		@endif
-	
 	Common::WaitABit();
 
 //	BranchSize1();
