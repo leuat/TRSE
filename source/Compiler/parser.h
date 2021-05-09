@@ -154,7 +154,7 @@ public:
      * */
     QSharedPointer<NodeNumber> CreateNumber(int i);
     QSharedPointer<NodeVar> CreateVariable(QString v);
-    QSharedPointer<NodeBinOP> CreateBinop(TokenType::Type t, QSharedPointer<Node> left, QSharedPointer<Node> right);
+    QSharedPointer<Node> CreateBinop(TokenType::Type t, QSharedPointer<Node> left, QSharedPointer<Node> right);
     QSharedPointer<NodeAssign> CreateAssign(QSharedPointer<Node> left, QSharedPointer<Node> right);
 
 

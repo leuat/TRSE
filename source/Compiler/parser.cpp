@@ -1992,15 +1992,15 @@ QSharedPointer<Node> Parser::AssignStatement()
         left = ApplyClassVariable(left);
         if (s->m_type.toLower()!="pointer")
             left->setReference(true);
-        if (!left->isReference()) {
-//            qDebug() << "IS REFERENCE ";
-            if (v->m_expr!=nullptr) {
-                auto add = v->m_expr;
-                v->m_expr = nullptr;
-                left = CreateBinop(TokenType::PLUS,v,add);
 
-            }
+        //        if (!left->isReference()) {
+        if (v->m_expr!=nullptr) {
+            auto add = v->m_expr;
+            v->m_expr = nullptr;
+            left = CreateBinop(TokenType::PLUS,v,add);
+
         }
+        //      }
 
         p->m_parameters.insert(0,left);
         return p;
@@ -3521,10 +3521,17 @@ QSharedPointer<NodeVar> Parser::CreateVariable(QString v)
 
 }
 
-QSharedPointer<NodeBinOP> Parser::CreateBinop(TokenType::Type tt, QSharedPointer<Node> left, QSharedPointer<Node> right)
+QSharedPointer<Node> Parser::CreateBinop(TokenType::Type tt, QSharedPointer<Node> left, QSharedPointer<Node> right)
 {
     Token t = m_currentToken;
     t.m_type = tt;
+    if (t.m_type==TokenType::PLUS) {
+        if (left==nullptr)
+            return right;
+        if (right==nullptr)
+            return left;
+    }
+
     return QSharedPointer<NodeBinOP>(new NodeBinOP(left,t,right));
 }
 
@@ -3535,19 +3542,25 @@ QSharedPointer<NodeAssign> Parser::CreateAssign(QSharedPointer<Node> left, QShar
     return QSharedPointer<NodeAssign>(new NodeAssign(left,t,right));
 
 }
+
+
+
+
+
 /*
- *  This recursive method transforms class variables into "flat" structures
+ *  Note: this recursive method is the very *heart* of OOP in TRSE!
+ *
+ *  The method transforms class variables into "flat" structures
  *  ie
  *  pm := #objects[i] ->  pm := #objects + i*sizeOf(Object)
- *  pm.y := 10  -> pm[3] := 10;
+ *  pm[3].y := 10  -> pm[3*sizeof(Class) + y_shift] := 10;
  *
- *  Note: it is the very *heart* of OOP in TRSE!
  *
  */
 QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 {
     auto v = qSharedPointerDynamicCast<NodeVar>(var);
-   if (!v)
+    if (!v)
         return var;
 
     if (v->m_classApplied)
@@ -3559,41 +3572,18 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     auto sv = qSharedPointerDynamicCast<NodeVar>(v->m_subNode);
     auto type = s->getEndType();
 
-//    qDebug() << "START WITH "<<v->value;
-    if (!(m_symTab->m_records.contains(type) &&m_symTab->m_records[type]->m_isClass))
+    // Only apply to variables that are in CLASSES
+    if (!(m_symTab->m_records.contains(type) && m_symTab->m_records[type]->m_isClass))
         return v;
 
 
-
-    bool isArray = s->m_type.toLower()=="array";
-
-    // objects[i].pos[2].y
-    // objects[ sizeof(Object)*i].pos[2].y
-
-//    v->m_expr = nullptr;
+    // Get size of current class
     int size = m_symTab->m_records[type]->getSize();
-    // var + i*sizeOf(class)
-
-    // First add shift
-    int shiftInternal = 0;
 
 
-//    qDebug() << "Shift Internal "<< shiftInternal <<"Has expr : " <<(v->m_expr!=nullptr);
+    // Look up objects[i].a. -> objects[i*sizeof(Object)].a (mul with size)
 
-    // After shift, we look up the NEW type and size
-
-/*    QSharedPointer<Symbol> s2 = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
-    QString newType = s2->getEndType();
-    if (m_symTab->m_records.contains(newType) && newType!=type)
-    {
-        size = m_symTab->m_records[newType]->getSize();
-        qDebug() << "** UH OH, subnode is object of size" <<size;
-        type = newType;
-    }
-    QString washed = v->value;
-    washed = washed.remove(type+"_");*/
     if (size!=0 && v->m_expr!=nullptr) {
-        // objects[i].a. -> objects[i*sizeof(Object)].a
         //qDebug() << "NEED A MUL BABY "<<size <<v->m_expr->numValue();
         auto nodeClassSize = CreateNumber(size);
         if (v->m_expr->isPureNumeric() && v->m_expr->numValue()==0) {
@@ -3604,31 +3594,26 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     }
 
 
-
+    // Has a subnode? Calculate shift and go down the rabbid hole!
     if (sv!=nullptr) {
-//        qDebug() << "In subnode: Calculating SHIFT "<<type<<sv->value;
-         shiftInternal = m_symTab->m_records[type]->getShiftedPositionOfVariable(sv->value,1);
-
-        if (shiftInternal!=0) {
-//            qDebug() << "internal shift for var "+sv->value+" : Adding "<<shiftInternal;
-            if (v->m_expr!=nullptr)
+        //        qDebug() << "In subnode: Calculating SHIFT "<<type<<sv->value;
+        int shiftInternal = m_symTab->m_records[type]->getShiftedPositionOfVariable(sv->value,1);
+        // internalshift is the offset of the variable position in the class
+        if (shiftInternal!=0)
+            //            qDebug() << "internal shift for var "+sv->value+" : Adding "<<shiftInternal;
                 v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,CreateNumber(shiftInternal));
-            else
-                v->m_expr = CreateNumber(shiftInternal);
-        }
 
 
-  //      qDebug() <<  "***** SUBNODE PUSH "<<v->value;
+        //      qDebug() <<  "***** SUBNODE PUSH "<<v->value;
         auto node = ApplyClassVariable(sv);
-    //    qDebug() <<  "***** SUBNODE POP"<<v->value;
+        //    qDebug() <<  "***** SUBNODE POP"<<v->value;
         auto sv2 = qSharedPointerDynamicCast<NodeVar>(node);
         node = sv2->m_expr;
+
         if (node!=nullptr) {
-            if (v->m_expr!=nullptr)
-                v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,node);
-            else
-                v->m_expr = node;
+            v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,node);
         }
+
         if (v->m_expr==nullptr)
             v->m_expr = CreateNumber(0);
 
@@ -3648,7 +3633,6 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         return v;
     // REFERENCE! )
 
-    //qDebug() << "IS REFERECE";
     auto add = v->m_expr;
     v->m_expr = nullptr;
 

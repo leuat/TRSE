@@ -58,4 +58,4 @@ show_all_files = 1
 amstradcpc_model = 464
 open_files = ,tut9_mandelbrot.ras, tut1.ras
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/tutorials/
-current_file = tut9_mandelbrot.ras
+current_file = tut1.ras

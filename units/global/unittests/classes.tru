@@ -113,10 +113,11 @@ begin
 	
 	Vars::v1:=3;
 	Vars::pm:=#Vars::monsters[Vars::v1];
+	
 	// Direct use
-//	Vars::monsters[Vars::v1].Move1(25,24);
-	Vars::text := "T9:";
-	if (Vars::pm.y=24 and Vars::pm.x=25) then Common::PASS() else Common::FAIL();
+	Vars::monsters[Vars::v1].Move1(11,13);
+	Vars::text := "T10:";
+	if (Vars::pm.y=13 and Vars::pm.x=11) then Common::PASS() else Common::FAIL();
 end;
 
 

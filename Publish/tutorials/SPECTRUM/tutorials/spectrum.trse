@@ -60,4 +60,4 @@ vic_memory_config = none
 via_zeropages = ,
 open_files = ,tutorial5_mandelbrot.ras, tutorial2_image.ras, tutorial3_graphics.ras, tutorial1.ras
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/SPECTRUM/tutorials/
-current_file = tutorial2_image.ras
+current_file = tutorial5_mandelbrot.ras
