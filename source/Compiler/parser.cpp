@@ -3571,15 +3571,15 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 
     auto sv = qSharedPointerDynamicCast<NodeVar>(v->m_subNode);
     auto type = s->getEndType();
-    bool isArray = s->m_type.toLower()=="array";
-    if (isArray && v->m_expr==nullptr && !v->isReference()) {
-        ErrorHandler::e.Error("Variable '"+v->value+"' is an array and must be indexed",v->m_op.m_lineNumber);
-    }
 
     // Only apply to variables that are in CLASSES
     if (!(m_symTab->m_records.contains(type) && m_symTab->m_records[type]->m_isClass))
         return v;
 
+    bool isArray = s->m_type.toLower()=="array";
+    if (isArray && v->m_expr==nullptr && !v->isReference()) {
+        ErrorHandler::e.Error("Variable '"+v->value+"' is an array and must be indexed",v->m_op.m_lineNumber);
+    }
 
     // Get size of current class
     int size = m_symTab->m_records[type]->getSize();
