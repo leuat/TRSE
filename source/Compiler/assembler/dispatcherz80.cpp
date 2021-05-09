@@ -555,9 +555,12 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 node->m_right->Accept(this);
                 as->Asm("ld e,a");
                 as->Asm("ld d,0");
+                bool isAdvanced = !node->m_left->isPure();
+                if (isAdvanced) as->Asm("push de");
                 node->m_left->Accept(this);
                 as->Asm("ld h,a");
                 as->Asm("ld l,0");
+                if (isAdvanced) as->Asm("pop de");
  //               as->Asm("clc");
                 as->Asm("call mul_8x8");
                 as->Asm("ld a,l");

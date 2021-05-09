@@ -223,13 +223,7 @@ begin
 	IntShift20();
 	IntShift21();
 	
-	
-	@ifndef AMSTRADCPC
-	
 	ByteMulMul05();
-	
-		@endif
-
 	
 	ByteDivBytePow203();
 	ByteDivByte04();
