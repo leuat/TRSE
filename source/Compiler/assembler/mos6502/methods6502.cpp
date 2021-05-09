@@ -382,14 +382,8 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
 
     }
 
-    if (Command("Nop")) {
-        if (!m_node->m_params[0]->isPureNumeric())
-            ErrorHandler::e.Error("Nop() requires a pure numeric value.",m_node->m_op.m_lineNumber);
-        int val = Util::NumberFromStringHex(m_node->m_params[0]->getValue(as).remove("#"));
-        for (int i=0;i<val;i++)
-            as->Asm("nop");
-    }
-
+    if (Command("Nop"))
+        Nop(as);
     if (Command("KernalInterrupt")) {
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4)
             as->Asm("jmp $fcc3        ; return to kernal interrupt routine");

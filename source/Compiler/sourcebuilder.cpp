@@ -29,7 +29,7 @@ bool SourceBuilder::Build(QString source)
     compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
 
 
-
+    compiler->ApplyOptions(m_options);
 
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;

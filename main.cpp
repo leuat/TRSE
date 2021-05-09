@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
     fixCurrentDir(QString(argv[0]));
     a.setStyle(QStyleFactory::create("Fusion"));
     MainWindow w;
-    for (int i=0;   i<argc;i++)
+    for (int i=0; i<argc;i++)
         w.m_commandParams+=QString(argv[i]);
     w.show();
     w.AfterStart(oldCurDir);

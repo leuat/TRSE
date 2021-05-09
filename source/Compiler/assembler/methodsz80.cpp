@@ -39,6 +39,11 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     else
     if (Command("memcpy"))
         MemCpy(as,false);
+
+    if (Command("Nop"))
+        Nop(as);
+
+
     if (Command("memcpycont"))
         MemCpy(as,true);
     else

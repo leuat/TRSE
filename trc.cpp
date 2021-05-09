@@ -13,15 +13,32 @@ ClascExec::ClascExec(int argc, char *argv[]) {
    // this->core = core;
     // first values are "trse" and "-cli", so start at 2
     for (int i=2;i<argc;i++) {
-        m_args.append(QString(argv[i]));
-        QStringList l = QString(argv[i]).split("=");
-        if (l.count()!=2) {
-            qInfo() << "Error : parameters must be of the format  'p1=someting'";
-            m_hasError = true;
-            break;
+        auto s = QString(argv[i]);
+        if (s.startsWith("--")) {
+            QString opt = s.remove("--");
+            if (opt.toLower()=="define") {
+                if (i==argc-1) {
+                    qInfo() << "Error : define requires a parameter '--define X86'";
+                    m_hasError = true;
+                    break;
+                }
+                i+=1;
+                auto arg = QString(argv[i]);
+                m_options[s] = QStringList()<<arg;
+            }
         }
         else
-        m_vals[l[0].toLower().trimmed()] = l[1].trimmed();
+        {
+            m_args.append(s);
+            QStringList l = s.split("=");
+            if (l.count()!=2) {
+                qInfo() << "Error : parameters must be of the format  'p1=someting'";
+                m_hasError = true;
+                break;
+            }
+            else
+                m_vals[l[0].toLower().trimmed()] = l[1].trimmed();
+        }
     }
 }
 
@@ -115,6 +132,7 @@ int ClascExec::CompileFromProject(QString sourceFile, bool assemble)
     QString source = Util::loadTextFile(sourceFile);
 //    Out(QDir::currentPath());
     m_builder = new SourceBuilder(m_settings,m_project, QDir::currentPath()+"/", sourceFile);
+    m_builder->m_options = m_options;
     m_failure=0;
     if (!m_builder->Build(source)) {
         m_failure=1;

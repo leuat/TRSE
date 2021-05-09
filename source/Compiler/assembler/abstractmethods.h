@@ -21,6 +21,17 @@ public:
     // Platform independent
     void IncDec(Assembler *as, QString cmd);
 
+    void Nop(Assembler* as) {
+        if (!m_node->m_params[0]->isPureNumeric())
+            ErrorHandler::e.Error("Nop() requires a pure numeric value.",m_node->m_op.m_lineNumber);
+        int val = Util::NumberFromStringHex(m_node->m_params[0]->getValue(as).remove("#"));
+        for (int i=0;i<val;i++)
+            as->Asm("nop");
+    }
+
+
+
+
 
 };
 

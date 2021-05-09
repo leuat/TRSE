@@ -246,7 +246,7 @@ def c(path,f1):
 		return 1
 
 
-	result = subprocess.run([trse,"-cli",'op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stdout=PIPE, stderr=subprocess.STDOUT)
+	result = subprocess.run([trse,"-cli",'--define','__CI','op=project','project='+projectFile,'input_file='+f1,'assemble='+assemble], stdout=PIPE, stderr=subprocess.STDOUT)
 	if result.stdout: print(result.stdout.decode('utf-8'))
 	return result.returncode
 

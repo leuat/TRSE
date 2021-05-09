@@ -229,6 +229,21 @@ void Compiler::WarningUnusedVariables()
 
 }
 
+void Compiler::ApplyOptions(QMap<QString, QStringList> &opt) {
+    for (auto& s: opt.keys()) {
+        if (s.toLower()=="define") {
+            QStringList lst = opt[s];
+            if (lst.count()==1) {
+                m_parser.m_preprocessorDefines[lst[0]]="1";
+            }
+            if (lst.count()==2)
+                m_parser.m_preprocessorDefines[lst[0]]=lst[1];
+
+        }
+    }
+
+}
+
 void Compiler::AcceptDispatcherTick(QString val)
 {
     emit EmitTick(val);

@@ -14,6 +14,7 @@ public:
     QStringList m_args;
     QSharedPointer<CIniFile> m_project, m_settings;
     QMap<QString,QString> m_vals;
+    QMap<QString,QStringList> m_options;
     SourceBuilder* m_builder = nullptr;
     QString m_outputFile = "";
     QApplication* app = nullptr;
