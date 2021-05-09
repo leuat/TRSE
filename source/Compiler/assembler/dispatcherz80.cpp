@@ -257,7 +257,12 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
         StoreAddress(var);
         return;
     }
+    if (!isGB()) {
+        as->Asm("sbc hl,de");
+        StoreAddress(var);
+        return;
 
+    }
     as->Asm("ld a,l");
     as->Asm("or a");
     as->Asm("sub e");
@@ -666,8 +671,12 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         else
             as->Asm("ex de,hl");
 
+        bool advanced = !node->m_left->isPure();
+
+        if (advanced) as->Asm("push de");
         node->m_left->Accept(this);
         as->Term();
+        if (advanced) as->Asm("pop de");
 
 
         if (node->m_op.m_type == TokenType::PLUS) {
