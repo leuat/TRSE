@@ -227,6 +227,10 @@ begin
 	@ifndef AMSTRADCPC
 	
 	ByteMulMul05();
+	
+		@endif
+
+	
 	ByteDivBytePow203();
 	ByteDivByte04();
 	IntDivByte08();
@@ -235,7 +239,6 @@ begin
 	IntDivMix11();
 	IntDivMix12();
 	
-	@endif
 	
 	Common::WaitABit();
 

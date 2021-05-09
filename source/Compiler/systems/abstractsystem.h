@@ -100,6 +100,8 @@ public:
     virtual bool is286() { return false;}
     virtual bool is8088() { return false;}
 
+    virtual bool AllowPointerInStructs() {return true;}
+
 
     void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false, QString currentDir = "");
 

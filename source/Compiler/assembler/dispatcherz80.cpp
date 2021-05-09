@@ -511,8 +511,37 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
         if (node->m_op.m_type == TokenType::DIV) {
             //            node->m_right->setForceType(TokenType::BYTE);
-            ErrorHandler::e.Error("Generic division is not implemented yet!",  node->m_op.m_lineNumber);
+//            ErrorHandler::e.Error("Generic division is not implemented yet!",  node->m_op.m_lineNumber);
             //            as->Asm("cwd");
+            if (node->m_left->isWord(as) && node->m_right->isWord(as)) {
+
+                node->m_right->Accept(this);
+                as->Asm("ex de,hl");
+                node->m_left->Accept(this);
+//                as->Asm("ld ac,hl");
+                as->Asm("ld a,h");
+                as->Asm("ld c,l");
+    //               as->Asm("clc");
+                as->Asm("call div_16x16");
+                as->Asm("ld h,a");
+                as->Asm("ld l,c");
+
+ //               as->Asm("ld hl,ac");
+
+                return;
+            }
+
+            node->m_right->Accept(this);
+            as->Asm("ld c,a");
+            node->m_left->setForceType(TokenType::INTEGER);
+            node->m_left->Accept(this);
+//               as->Asm("clc");
+            as->Asm("call div_16x8");
+            as->Asm("ld a,l");
+            return;
+
+
+
         }
         if (node->m_op.m_type == TokenType::MUL) {
             QString skip1 = as->NewLabel("skip1");
