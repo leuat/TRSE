@@ -111,7 +111,7 @@ def fillRasList(idx,path):
 
 # SPECTRUM
 
-tests.append([ "Spectrum/tutorials/",[]])
+tests.append([ "SPECTRUM/tutorials/",[]])
 fillRasList(len(tests)-1,".")
 
 
