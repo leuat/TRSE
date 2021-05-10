@@ -18,7 +18,7 @@ jobs:
       # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
       # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
       - run: sudo apt-get install lz4 python3 xvfb vice dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
-      - name: Build assemblers (vasm, rgbasm, pasmo)
+      - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
           mkdir tools
           cd tools
@@ -36,14 +36,6 @@ jobs:
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build -j 2
           cd ..
-          # pasmo
-          wget http://pasmo.speccy.org/bin/pasmo-0.5.4.beta2.tgz
-          tar -xzf pasmo-0.5.4.beta2.tgz
-          cd pasmo-0.5.4.beta2
-          ./configure
-          make -j 2
-          cd ..
-          mv pasmo-0.5.4.beta2 pasmo
           # exomizer
           wget https://bitbucket.org/magli143/exomizer/wiki/downloads/exomizer-3.1.0.zip
           unzip exomizer-3.1.0.zip -d exomizer
@@ -65,7 +57,6 @@ jobs:
           # patch dirs
           sed -i "s,^vasmm =.*,vasmm = ${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir = ${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
-          sed -i "s,^pasmo =.*,pasmo = ${PWD}/tools/pasmo/pasmo," Publish/publish_linux/trse.ini
           sed -i "s,^exomizer =.*,exomizer = ${PWD}/tools/exomizer/src/exomizer," Publish/publish_linux/trse.ini
           c1541=$(which c1541)
           echo "Found c1541 in: '${c1541}'"
