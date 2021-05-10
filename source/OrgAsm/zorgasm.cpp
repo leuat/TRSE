@@ -106,6 +106,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QString tst = expr.remove(" ");
     if (tst.contains("$+") || tst.contains("$-")) { expr=expr.replace("$","*"); }
 
+
     if (expr.contains("*")) {
         QString add = expr;//expr.simplified().split(" ")[1].replace(" ", "");
         add = add.replace("*", Util::numToHex(m_pCounter));
