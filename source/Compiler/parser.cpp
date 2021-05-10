@@ -1732,7 +1732,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         }
 
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
-//        nv->value = s->m_name; // make sure that variable name is proper
+        nv->value = s->m_name; // make sure that variable name is proper
         // If variable doesn't exist
 //        qDebug
         if (s==nullptr) {
