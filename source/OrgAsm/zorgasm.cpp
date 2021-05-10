@@ -80,7 +80,7 @@ QString ZOrgasm::Process(QString s, OrgasmLine& ol)
                 }
                 cur++;
             }
-        if (!ok && !Util::isNumber(tst) && !tst.startsWith("($")){ // && !tst.startsWith("*")) {
+        if (!ok && !Util::isNumber(tst) && !tst.startsWith("($") && !tst.startsWith("(0x")){ // && !tst.startsWith("*")) {
             throw OrgasmError("Symbol '"+tst+"' undefined",ol);
         }
 

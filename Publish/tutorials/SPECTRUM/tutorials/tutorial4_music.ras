@@ -10,7 +10,7 @@ program Tutorial4_music;
 
 var  
 //	image : incbin("resources/images/image1.bin");
-	@donotremove music
+@donotremove music
 @export "resources/images/image12.flf" "resources/images/trse.bin" 256
 	irq : array[2] of byte;
 
@@ -29,9 +29,9 @@ var
        call Music::PlayMusic() on each frame.  
 
 */	
-
 // Place music at $A000
 @compile_akg_music "resources/music/beeb" $A800
+
 
 	some_song : incbin("resources/music/beeb.bin",$A800);
 @donotremove dummy

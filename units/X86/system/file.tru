@@ -1,6 +1,7 @@
-unit File;@use "system/screen"
+unit File;
+
+@use "system/screen"
 var
-	var
 	fp,tp : pointer;
 	val,size,val2 : integer;
 	src,dst: pointer;

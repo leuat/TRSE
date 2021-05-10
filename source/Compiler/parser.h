@@ -143,6 +143,9 @@ public:
     QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
     QMap<QString, QSharedPointer<Node>> m_types;
 
+    bool m_doNotPrefix = false;
+    QStringList m_doNotPrefixSymbols;
+
     QString WashVariableName(QString v);
     QString VerifyVariableName(QString v);
 

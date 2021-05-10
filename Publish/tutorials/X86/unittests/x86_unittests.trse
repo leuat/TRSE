@@ -57,8 +57,8 @@ data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc/tutorials/resour
 show_all_files = 1
 amstradcpc_model = 464
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/X86/UnitTests/
-open_files = ,[ext]units/X86/system/memory.tru, utests.ras, [ext]units/global/unittests/ifthenelse.tru, [ext]units/global/unittests/case.tru, [ext]units/global/unittests/integer.tru, [ext]units/global/unittests/muldiv.tru, [ext]units/global/unittests/advanced_math.tru, unittests/common.tru, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/vars.tru, [ext]units/global/unittests/vars.asm, [ext]units/AMSTRADCPC/text.tru, [ext]units/cpu_specific/Z80/format.tru
-current_file = utests.ras
+open_files = ,utests.ras, unittests/common.tru, [ext]units/X86/system/screen.tru, [ext]units/X86/system/file.tru, [ext]units/X86/system/memory.tru, [ext]units/global/unittests/ifthenelse.tru, [ext]units/global/unittests/case.tru, [ext]units/global/unittests/integer.tru, [ext]units/global/unittests/muldiv.tru, [ext]units/global/unittests/advanced_math.tru, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/vars.tru, [ext]units/global/unittests/vars.asm, [ext]units/AMSTRADCPC/text.tru, [ext]units/cpu_specific/Z80/format.tru
+current_file = unittests/common.tru
 zeropages_userdefined = ,
 petmodel = 2001-8N
 amstradcpc_options = 0

@@ -7,7 +7,7 @@ Program UnitTestsX86;
 
 var
 	f : File::File;
-	p:pointer;
+	
 procedure TestResult(txt:pointer);
 begin
 	Screen::NewLine();
@@ -19,8 +19,7 @@ procedure SaveResult();
 begin
 	f.Create("RESULT.BIN");
 	f.Open("RESULT.BIN",File::W);
-	p:=#Common::unittests_status;
-	f.Write(1,p);
+	f.Write(1,#Common::unittests_status);
 	f.Close();
 end;
 

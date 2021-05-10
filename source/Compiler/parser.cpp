@@ -56,7 +56,7 @@ QSharedPointer<Symbol> Parser::getSymbol(QSharedPointer<Node> var)
     QString val = v->value;
     val = val.replace("#","");
     auto s = m_symTab->Lookup(val,v->m_op.m_lineNumber);
-    v->value = s->m_name;
+//    v->value = s->m_name;
    return s;
 
 }
@@ -891,7 +891,7 @@ void Parser::VerifyTypeSpec(Token& t)
                 if (similarSymbol!="") {
                     em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
                 }
-                qDebug() << "HERE "<<t.m_value;
+//                qDebug() << "HERE "<<t.m_value;
 
                 ErrorHandler::e.Error(em,m_currentToken.m_lineNumber);
         }
@@ -1273,6 +1273,14 @@ void Parser::HandlePreprocessorInParsing()
         if (m_currentToken.m_value=="donotremove") {
             Eat();
             m_doNotRemoveMethods.append(m_symTab->m_gPrefix+m_currentToken.m_value);
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="donotprefixunit") {
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="donotprefix") {
             Eat();
             return;
         }
@@ -1724,7 +1732,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         }
 
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
-        nv->value = s->m_name; // make sure that variable name is proper
+//        nv->value = s->m_name; // make sure that variable name is proper
         // If variable doesn't exist
 //        qDebug
         if (s==nullptr) {
@@ -1805,6 +1813,8 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 //    SymbolTable
     QSharedPointer<SymbolTable>  record = QSharedPointer<SymbolTable> (new SymbolTable());
     record->m_symbols.clear();
+/*    if (m_doNotPrefixSymbols.contains(name.remove(0,m_symTab->m_currentUnit.count())))
+        name = name.remove(0,m_symTab->m_currentUnit.count());*/
     m_symTab->m_records[name] = record;
     //m_symTab->Define(new Symbol(name,"record"));
     record->setName(name);
@@ -2399,8 +2409,10 @@ QSharedPointer<Node> Parser::Program(QString param)
     QSharedPointer<NodeBlock> block;
 
     if (m_isTRU) {
-        m_symTab->m_gPrefix = progName+"_";
-        m_symTab->m_currentUnit = m_symTab->m_gPrefix;
+        if (!m_doNotPrefix) {
+            m_symTab->m_gPrefix = progName+"_";
+            m_symTab->m_currentUnit = m_symTab->m_gPrefix;
+        }
         if (s_usedTRUNames.contains(progName))
             ErrorHandler::e.Error("TRU '"+progName+"' is already defined! ",m_currentToken.m_lineNumber);
         s_usedTRUNames.append(progName);
@@ -2731,6 +2743,17 @@ void Parser::PreprocessSingle() {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
               }
+              else if (m_currentToken.m_value.toLower() =="donotprefixunit") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_doNotPrefix = true;
+
+              }
+              else if (m_currentToken.m_value.toLower() =="donotprefix") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_doNotPrefixSymbols.append(m_currentToken.m_value);
+
+              }
+
               else if (m_currentToken.m_value.toLower() =="compress") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleCompress();

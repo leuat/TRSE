@@ -115,6 +115,7 @@ public:
     QString m_name="";
     QStringList m_globalList;
     QString m_gPrefix;
+    bool m_ignorePrefixWhenMerging = false;
     QString m_currentUnit = "";
     QString m_currentFilename="";
     QStringList m_extraMonCommands;
