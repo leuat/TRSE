@@ -284,7 +284,7 @@ begin
 			s += 1;
 			continue;
 		end;
-		if (s^ < 48 or s > 57) then break;
+		if (s^ < 48 or s^ > 57) then break;
 		internal_b := s^ - 48;
 		s += 1;
 		FromU8(#internal_f, internal_b);
