@@ -92,8 +92,8 @@ begin
 	Advanced01();
 	Advanced02();
 	Advanced03();
-	Advanced04();
 	@ifndef AMSTRADCPC
+	Advanced04();
 	Advanced05();
 	Advanced06();
 	Advanced07(); 

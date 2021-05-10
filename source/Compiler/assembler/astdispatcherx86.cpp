@@ -259,13 +259,40 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
         }
         if (node->is8bitValue(as))
             as->Asm("mov ah,0 ; Accomodate for byte");
-
+/*
         node->m_expr->setForceType(TokenType::INTEGER);
         node->m_expr->Accept(this);
         as->Asm("mov di,ax");
         if (node->getArrayType(as)==TokenType::INTEGER)
             as->Asm("shl di,1 ; Accomodate for word");
         ending = "+di]";
+        */
+        node->m_expr->setForceType(TokenType::INTEGER);
+
+        if (node->m_expr->isPure()) {
+            if (node->m_expr->isPureNumeric()) {
+                int mul = 1;
+                if (node->getArrayType(as)==TokenType::INTEGER)
+                    mul = 2;
+                if (node->getArrayType(as)==TokenType::LONG)
+                    mul = 4;
+                as->Asm("mov di,"+Util::numToHex(node->m_expr->getValueAsInt(as)*mul));
+            }
+            else {
+
+                as->Asm("mov di,"+getX86Value(as,node->m_expr));
+                if (node->getArrayType(as)==TokenType::INTEGER)
+                    as->Asm("shl di,1 ; Accomodate for word");
+            }
+        }
+        else {
+            node->m_expr->Accept(this);
+            as->Asm("mov di,ax");
+            if (node->getArrayType(as)==TokenType::INTEGER)
+                as->Asm("shl di,1 ; Accomodate for word");
+        }
+        ending = "+di]";
+
     }
 
 /*    if (node->m_forceType==TokenType::POINTER && !node->isPointer(as)) {
@@ -724,7 +751,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             return "";
         }
         as->Comment("Assign value to regular array");
-        node->m_right->Accept(this);
+/*        node->m_right->Accept(this);
         as->Asm("push ax");
         var->m_expr->setForceType(TokenType::INTEGER);
         var->m_expr->Accept(this);
@@ -733,6 +760,27 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("shl di,1");
         as->Asm("pop ax");
         as->Asm("mov ["+var->getValue(as) + "+di], "+getAx(node->m_left));
+*/
+
+        node->m_right->Accept(this);
+        if (var->m_expr->isPure()) {
+            var->m_expr->setForceType(TokenType::INTEGER);
+            as->Asm("mov di,"+getX86Value(as,var->m_expr));
+            if (var->isWord(as))
+                as->Asm("shl di,1");
+        }
+        else {
+            as->Asm("push ax");
+            var->m_expr->setForceType(TokenType::INTEGER);
+            var->m_expr->Accept(this);
+            as->Asm("mov di,ax");
+            if (var->isWord(as))
+                as->Asm("shl di,1");
+            as->Asm("pop ax");
+        }
+        as->Asm("mov ["+var->getValue(as) + "+di], "+getAx(node->m_left));
+
+
         return "";
     }
 

@@ -1556,6 +1556,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
  //           if (isSubVar && !m_symTab->m_gPrefix.startsWith("localVariable"))
                 m_symTab->m_gPrefix ="";
             expr = Expr();
+            expr->m_isIndex = true;
             m_symTab->m_gPrefix = org;
             Eat(TokenType::RBRACKET);
          }
@@ -1644,6 +1645,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                     m_symTab->m_gPrefix ="";
 
                 auto expr = Expr();
+                expr->m_isIndex = true;
                 m_symTab->m_gPrefix = org;
                 Eat(TokenType::RBRACKET);
 
