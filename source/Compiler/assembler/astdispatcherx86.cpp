@@ -64,12 +64,12 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeBinOP>node)
         QString ax = getAx(node->m_right);
         PopX();
         as->BinOP(node->m_op.m_type);
-        if (bx[0]!="a")  {
+        if (bx[0]!='a')  {
             as->Asm("push ax");
             as->Asm("mov ax,"+bx);
         }
         as->Asm(sign+as->m_term +" " +  ax);
-        if (bx[0]!="a")  {
+        if (bx[0]!='a')  {
             as->Asm("mov "+bx+",ax");
             as->Asm("pop ax");
         }
