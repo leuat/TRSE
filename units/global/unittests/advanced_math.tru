@@ -27,7 +27,7 @@ begin
 	Vars::v1:=1;
 	Vars::p2[Vars::v1]:=2;
 	Vars::p1:=$0400;
-
+	asm(";fail");
 	Vars::p1:=Vars::p1 + Vars::p2[Vars::v1];
 	Vars::text := "04:"; if Vars::p1=$0402 then Common::PASS() else Common::FAIL();
 end;
@@ -38,7 +38,6 @@ begin
 	Vars::p2[1]:=$20;
 	Vars::v1:=1;
 	Vars::p1:=$0400;
-	asm(";here");
 	Vars::p1:=Vars::p1 + Vars::p2[1]*2;
 
 	Vars::text := "05:"; if Vars::p1=$0440 then Common::PASS() else Common::FAIL();
@@ -92,9 +91,9 @@ begin
 	
 	Advanced01();
 	Advanced02();
-	@ifndef AMSTRADCPC
 	Advanced03();
 	Advanced04();
+	@ifndef AMSTRADCPC
 	Advanced05();
 	Advanced06();
 	Advanced07(); 
