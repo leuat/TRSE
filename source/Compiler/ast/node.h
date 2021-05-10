@@ -61,7 +61,8 @@ public:
     // automatic removal of nodes
     bool m_isUsed = false;
     QStringList m_isUsedBy;
-
+    // Used in x86 to specity if is an index or not
+    bool m_isIndex = false;
     // Forced values
     bool m_forceAddress = false;
     bool m_classApplied = false;

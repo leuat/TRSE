@@ -127,10 +127,6 @@ begin
 	Vars::v2:=0;
 	asm(";prob");
 	//Vars::a2[Vars::v2]:=Vars::a1[Vars::v1]+Vars::a2[Vars::v1+1];
-	asm(" ldy #0");
-	asm(" ldy #0");
-	asm(" ldy #0");
-	asm(" ldy #0");
 	Vars::a2[Vars::v2]:=Vars::a1[Vars::v1] + Vars::a2[Vars::v1+1];
 	Vars::i1:=Vars::a2[Vars::v2];
 	Vars::text := "13:"; if Vars::i1=11000 then Common::PASS() else Common::FAIL();
@@ -164,18 +160,17 @@ begin
 
 	T066();
 	T07();
-//	@ifndef AMSTRADCPC
 	T08();
 	T09();
 	T10();
 //	@endif
-/*	
+	
 	T11();
 	T12();
-	T13();
-	T14();
+	//T13();
+	//T14();
 	
-	*/
+	
 	Common::WaitABit();
 	
 end;
