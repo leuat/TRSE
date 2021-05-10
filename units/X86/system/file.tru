@@ -1,56 +1,110 @@
-unit File;
+unit File;@use "system/screen"
 var
+	var
 	fp,tp : pointer;
-	val : integer;
-	handle, size  : integer;
+	val,size,val2 : integer;
+	src,dst: pointer;
+	attr:byte;
+	
+	const R :byte = 0;
+	const W :byte = 1;
+	const RW :byte = 2;
+	
+	File = class
+		
+		handle,err  : integer;
 
-function Open(fp:global pointer):integer;
-begin
-	asm("
-	mov ah, $3D
-	mov al, 0 ; open attribute: 0 - read-only, 1 - write-only, 2 -read&write
-	mov dx, word [File_fp] ; ASCIIZ filename to open
-	int 21h
-	mov [File_val],ax
-	");
-	Open := val;
-end;	
+	// TRSE's first proper class
+		
+	procedure Open(File::fp:global pointer; File::attr: global byte);
+		begin
+			asm("
+			mov ah, $3D
+			mov al, [File_attr] ; open attribute: 0 - read-only, 1 - write-only, 2 -read&write
+			mov dx, word [File_fp] ; ASCIIZ filename to open
+			int 21h
+			mov [File_val],ax
+			");
+			this.handle := val;
+		end;	
+
+	procedure Create(File::fp:global pointer);
+		begin
+			asm("
+			mov ah, $3C
+			mov cx,0
+			mov dx, word [File_fp] ; ASCIIZ filename to open
+			int 21h
+			mov [File_val],ax
+			");
+		end;	
+		
+
+		
+	procedure Read(File::size :global integer;File::dst : global ^integer);
+		begin
+			val:=this.handle;
+			asm("
+			cli
+			mov ah, 0x3F
+			mov bx, [File_val]
+			mov cx, [File_size] ; number of bytes to read
+			mov dx, [File_dst] ; were to put read data
+			push ds
+			lds dx,[File_dst]	
+			int 21h	
+			mov [File_val2],ax
+			pop ds
+			sti
+			");
+			this.err := File::val2;
+		end;	
+		
+	procedure Write(File::size :global integer;File::src : global ^integer);
+		begin
+			val:=this.handle;
+			asm("
+			cli
+			mov ah, 0x40
+			mov bx, [File_val]
+			mov cx, [File_size] ; number of bytes to read
+			mov dx, [File_src] ; were to put read data
+			;push ds
+			;lds dx,[File_src]	
+			int 21h	
+			mov [File_val2],ax
+			;pop ds
+			sti
+			");
+			this.err := File::val2;
+		end;	
+		
+		procedure Close();
+		begin
+			val:=this.handle;
+			asm("
+			mov ah, 0x3E
+			mov bx, [File_val] ; file handle
+			int 21h	
+			");
+		end; 
+		
+		
+	
+	end;
 
 
+	file : File;
+	
+	// Static quick method
+	
+	procedure ReadAll(fp,tp: global pointer);
+	begin
+		file.Open(fp,R);
+		file.Read(64000, tp);
+		file.Close();
+	end;
 
-
-procedure Read(handle, size :global integer;dst : ^integer);
-begin
-	asm("
-	cli
-	mov ah, 0x3F
-	mov bx, [File_handle]
-	mov cx, [File_size] ; number of bytes to read
-	mov dx, [File_dst] ; were to put read data
-	push ds
-	lds dx,[File_dst]	
-	int 21h	
-	pop ds
-	sti
-	");
-end;	
-
-procedure Close(handle: global integer);
-begin
-	asm("
-	mov ah, 0x3E
-	mov bx, [File_handle] ; file handle
-	int 21h	
-	");
-end; 
-
-
-procedure ReadAll(fp,tp:global pointer);
-begin
-	handle := Open(fp);
-	Read(handle, 64000, tp);
-	Close(handle);
-end;
 
 
 end.

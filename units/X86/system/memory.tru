@@ -67,5 +67,12 @@ begin
 end;
 
 
+procedure Quit() inline;
+begin
+	asm("
+	mov ah,$4C 
+    int $21	
+    ");
+end;
 
 end.

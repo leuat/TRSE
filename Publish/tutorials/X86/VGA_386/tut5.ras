@@ -1,5 +1,4 @@
 program Tutorial5_Fonts;
-@use "system/file"
 @use "music/adlibplayer"
 @use "system/screen"
 @use "system/memory"
@@ -22,7 +21,7 @@ var
 	// da cheesy text
 	cheesy_text: string=("TU ERES",0,"MI HERMANO",0,"DEL ALMA",0,"REALMENTE",0,"EL AMIGO",0,0,255);	
 	tp,tp0, tp1:pointer;
-	f1 : integer;
+	f1 : File::File;
 
 // Random image of Roberto Carlos doing his thing
 	
@@ -50,10 +49,13 @@ procedure Init();
 begin
 	Memory::Init();
 	Screen::SetMode($13);
-	Screen::InitVGABuffers(3);
+	Screen::InitVGABuffers(4);
 	Screen::SetPaletteFromFile(#palette1);		
 	// Load and decompress image
 	File::ReadAll(#filename1,Screen::buffer3);
+
+
+
 	Compression::Decompress(Screen::buffer3,Screen::buffer2);
 	
 	// Load and decompress font

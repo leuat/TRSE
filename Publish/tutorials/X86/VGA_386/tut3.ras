@@ -9,7 +9,6 @@ program Tut3;
 
 */
 
-@use "system/file"
 @use "music/adlibplayer"
 @use "system/screen"
 @use "system/memory"
@@ -27,7 +26,7 @@ var
 	filename1 : string="IMAGES/IMAGE1_C.BIN";
 	// Palette file is automatically exported as well
 	palette1 : string="IMAGES/IMAGE1.PAL";
-	f1 : integer;
+	f1 : File::File;
 	
 
 
@@ -48,9 +47,7 @@ begin
 	Screen::SetPaletteFromFile(#palette1);		
 
 	// Open compressed file and read all to a buffer
-	f1 := File::Open(#filename1);
-	File::Read(f1, 32000, Screen::buffer1);
-	File::Close(f1);
+	File::ReadAll(#filename1, Screen::buffer1);
 	// Decomress data from buffer to screen	
 	Compression::Decompress(Screen::buffer1,ptr(screen_vga,0));
 

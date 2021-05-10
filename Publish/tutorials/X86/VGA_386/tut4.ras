@@ -29,7 +29,7 @@ begin
 	BeePlay::Initialize(#song);
 	BeePlay::octShift:=0-1;	
 	BeePlay::speed := 3;
-	Memory::SetTimer(23860);
+	Memory::SetTimer(33860);
 	SetInterrupt($8, RasterIRQ());
 	// Loop infinitely
 	while (true) do

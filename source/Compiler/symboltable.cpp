@@ -208,8 +208,8 @@ void SymbolTable::Initialize()
 void SymbolTable::Merge(SymbolTable *other, bool mergeConstants)
 {
     for (QString k : other->m_records.keys()) {
-        if (m_records.contains(k) && m_externalRecords.contains(k))
-            ErrorHandler::e.Error("Record already defined : '"+k+"'");
+//        if (m_records.contains(k) && m_externalRecords.contains(k))
+  //          ErrorHandler::e.Error("Record already defined : '"+k+"'");
         m_records[k] = other->m_records[k];
     }
     for (QString k : other->m_symbols.keys()) {
@@ -469,6 +469,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         return nullptr;
 
 */
+
     if (m_constants.contains(name.toUpper())) {
         return m_constants[name.toUpper()];
     }
@@ -490,10 +491,15 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
     if (!isRegisterName(name))
         localName = m_currentProcedure+name;
 
+    QString localUnitName = name;
+    if (!isRegisterName(name))
+        localUnitName = m_currentUnit+name;
+
 //    qDebug() << "SYMTAB "<< localName << name;;
 //    if (name.contains("posX"))
     //qDebug() << "SYMTAB ERROR Looking up : "<<name <<localName <<m_symbols.keys();
-    if (!m_symbols.contains(name) && !m_symbols.contains(localName)) {
+
+    if (!m_symbols.contains(name) && !m_symbols.contains(localName)&& !m_symbols.contains(localUnitName)) {
         QString similarSymbol = findSimilarSymbol(name,85,2,QStringList());
         name = name.remove(m_gPrefix);
         similarSymbol = similarSymbol.remove(m_gPrefix);
@@ -504,6 +510,10 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 //        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.keys();;
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
+    }
+    if (m_symbols.contains(localUnitName) && !m_symbols.contains(name)) {
+//        qDebug() << "SWITCHING FROM "<<name <<localUnitName;
+        name = localUnitName;
     }
 //    qDebug() << "ISUSED " <<  name;
     if (m_symbols.contains(localName)) {

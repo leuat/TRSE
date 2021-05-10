@@ -2,7 +2,8 @@ unit Screen;
 @use "system/file"
 @use "system/memory"
 var
-	i,j,k,handle,noBuffers : integer;
+	i,j,k,noBuffers : integer;
+	f : File::File;
 	color,red,green,blue : byte;
 	const VGA : integer = $A000;
 	buffer1, buffer2, buffer3, buffer4, buffer5 : pointer;
@@ -53,10 +54,13 @@ var
 	tp : pointer of byte;
 begin
 	tp := #colbuf;
-	handle := File::Open(fp);
+/*	handle := File::Open(fp);
 	File::Read(handle, $300, #colbuf);
 	File::Close(handle);
-	
+*/
+	f.Open(fp,File::R);
+	f.Read($300,#colbuf);
+	f.Close();	
 	for i:=0 to $300 do 
 	begin
 		tp[i]:=tp[i]/4;

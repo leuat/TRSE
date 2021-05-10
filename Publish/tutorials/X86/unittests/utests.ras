@@ -1,9 +1,13 @@
 Program UnitTestsX86;
 @projectsettings "amstradcpc_options" "-O system.printer=1 -O file.printer_file=/tmp/printer.dat"
+@use "system/memory"
 @use "unittests/unittests"
 @use "unittests/common"
+@use "system/file"
 
-
+var
+	f : File::File;
+	p:pointer;
 procedure TestResult(txt:pointer);
 begin
 	Screen::NewLine();
@@ -11,15 +15,22 @@ begin
 	Screen::NewLine();
 end;
 
+procedure SaveResult();
 begin
-        Unittests::Exec();
-        if Common::unittests_status = 0 then
-        		TestResult("SUCCESS!")
-        	else
-        		TestResult("FAILURE!");
-       		
-        	while (true) do
-        	begin
-	        	
-        	end;
+	f.Create("RESULT.BIN");
+	f.Open("RESULT.BIN",File::W);
+	p:=#Common::unittests_status;
+	f.Write(1,p);
+	f.Close();
+end;
+
+begin
+	Unittests::Exec();
+	if Common::unittests_status = 0 then
+		TestResult("SUCCESS!")
+	else
+	TestResult("FAILURE!");
+
+	SaveResult();
+	Memory::Quit();	       		
 end.

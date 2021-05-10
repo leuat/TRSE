@@ -55,7 +55,9 @@ QSharedPointer<Symbol> Parser::getSymbol(QSharedPointer<Node> var)
         return nullptr;
     QString val = v->value;
     val = val.replace("#","");
-   return m_symTab->Lookup(val,v->m_op.m_lineNumber);
+    auto s = m_symTab->Lookup(val,v->m_op.m_lineNumber);
+    v->value = s->m_name;
+   return s;
 
 }
 
@@ -1668,6 +1670,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
                 n = QSharedPointer<NodeVar>(new NodeVar(t, expr));
                 qSharedPointerDynamicCast<NodeVar>(n)->m_subNode = subVar;
                 QSharedPointer<Symbol> s = m_symTab->Lookup(qSharedPointerDynamicCast<NodeVar>(n)->value,m_currentToken.m_lineNumber);
+                qSharedPointerDynamicCast<NodeVar>(n)->value = s->m_name; // make sure that variable name is proper
 
                 if (expr!=nullptr && t.m_isReference && !m_symTab->m_records.contains(s->getEndType())) {
                     // change  arr[i] to #arr +i
@@ -1721,6 +1724,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         }
 
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
+        nv->value = s->m_name; // make sure that variable name is proper
         // If variable doesn't exist
 //        qDebug
         if (s==nullptr) {
@@ -1826,7 +1830,7 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
         if (isClass) {
             m_currentClass = name;
-            if (m_currentToken.m_type==TokenType::PROCEDURE) {
+            if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::FUNCTION || m_currentToken.m_type==TokenType::INTERRUPT) {
                 QVector<QSharedPointer<Node>> procs;
 
                 QString of = m_symTab->m_gPrefix;
@@ -1990,6 +1994,7 @@ QSharedPointer<Node> Parser::AssignStatement()
         auto v = qSharedPointerDynamicCast<NodeVar>(left);
         // Transform to a reference..
         auto s =m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
+        v->value = s->m_name;
         //qDebug() << s->m_name << s->m_type << s->m_arrayTypeText <<s->m_pointsTo <<s->m_type.toLower();
         left = ApplyClassVariable(left);
         if (s->m_type.toLower()!="pointer")
@@ -3104,6 +3109,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
 //    qDebug() << m_symTab->m_symbols.keys();
     m_projectIni->setString("temp_vic_fapmemory_config",m_vicMemoryConfig);
+//    qDebug() << m_symTab->m_symbols.keys();
     return root;
 }
 
@@ -3114,17 +3120,21 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
 
     Token procToken = m_currentToken;
     bool dual = false;
+    bool triple = false;
     // TRUs can also search for other TRU names without prefix
     if (m_isTRU)
         dual = m_procedures.contains(m_currentToken.m_value);
+    if (m_isTRU)
+        triple = m_procedures.contains(m_symTab->m_currentUnit+m_currentToken.m_value);
 
 //    qDebug() << "Searching for procedure : " <<m_currentToken.m_value;// << m_procedures.keys();
   //  qDebug() << "Searching for procedure : " <<m_currentToken.m_value;
     // Already defined? calling / assigning an existing procedure?
 
-    if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value) || dual) {
+    if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value) || dual || triple) {
     //    qDebug() << "FOUND";
         QString procName = m_symTab->m_gPrefix+m_currentToken.m_value; // fix prefix
+        if (triple) procName = m_symTab->m_currentUnit+m_currentToken.m_value;;
         if (dual) procName = m_currentToken.m_value;;
         Token t = m_currentToken;
         Eat(TokenType::ID);
