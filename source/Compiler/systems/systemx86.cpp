@@ -8,6 +8,7 @@ void SystemX86::Assemble(QString &text, QString filename, QString currentDir, QS
 
     if (!QFile::exists(m_settingsIni->getString("nasm"))) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the NASM assembler in the TRSE settings panel.</font>";
+        m_buildSuccess = false;
         return;
     }
 

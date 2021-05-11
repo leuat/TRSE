@@ -4,12 +4,19 @@ var
 
 @export "images/trse.flf"	 "images/trse.bin" 256
 
+	test=class
+		x,y : integer;
+	end;
+
    	i,j,k, isDone: integer = 0; 
    	image : incbin("images/trse.bin") chipmem;
 	image_palette : incbin("images/trse.pal");
+	
+	t:test;
 // Some random image   	
 
 begin
+	t.x:=10;
 	// Set to default interleaved 4-bpl screen
 	Graphics::SetupDefaultScreen(#image,4);	
 	setpalette(#image_palette,#copper_palette,16);

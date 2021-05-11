@@ -125,9 +125,9 @@ void Parser::Delete()
 void Parser::InitObsolete()
 {
     m_obsoleteWarnings.clear();
-    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be deprecated from 0.09. Please use 'Random()' instead. ");
-    m_obsoleteWarnings.append(QStringList() << "inczp"<<"Funtion 'IncZP()' is scheduled to be deprecated from 0.09. Please use 'zp:=zp+value;' to increase pointers instead. ");
-    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be deprecated from 0.09. Please use 'PrintString()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "rand"<<"Funtion 'Rand()' is scheduled to be deprecated. Please use 'Random()' instead. ");
+    m_obsoleteWarnings.append(QStringList() << "getkey"<<"Funtion 'GetKey()' is scheduled to be deprecated soon. Please use the generic system units instead (input/key) etc ");
+//    m_obsoleteWarnings.append(QStringList() << "writeln"<<"Funtion 'Writeln()' is scheduled to be deprecated from 0.09. Please use 'PrintString()' instead. ");
 //    m_obsoleteWarnings.append(QStringList() << "copycharsetfromrom"<<"Funtion 'CopyCharsetFromROM()' is scheduled to be deprecated from 0.09. ");
 }
 
@@ -3608,15 +3608,17 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 
     // Only apply to variables that are in CLASSES
     if (!(m_symTab->m_records.contains(type) && m_symTab->m_records[type]->m_isClass)) {
-//        qDebug() << "PARSER  type "<< type <<v->value<<s->getEndType();
-        QString et = s->getEndType();
-        v->m_writeType = TokenType::BYTE;
-        if (et.toLower()=="integer")
-            v->m_writeType = TokenType::INTEGER;
-        if (et.toLower()=="long")
-            v->m_writeType = TokenType::LONG;
-
-//        qDebug() << "PARSER  return type "<<  v->value<<TokenType::getType(v->m_writeType);
+        // Important : if this is a class variable, then set the WRITETYPE as
+        // the entire thing is being transformed to writing to a pointer
+        if (s->m_isClassVariable) {
+            QString et = s->getEndType();
+            if (et.toLower()=="byte")
+                v->m_writeType = TokenType::BYTE;
+            if (et.toLower()=="integer")
+                v->m_writeType = TokenType::INTEGER;
+            if (et.toLower()=="long")
+                v->m_writeType = TokenType::LONG;
+        }
 
         return v;
     }
@@ -3998,7 +4000,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     for (QSharedPointer<Symbol> s: syms) {
         if (Syntax::s.m_illegaVariableNames.contains(s->m_name))
             ErrorHandler::e.Error("Illegal variable name '" + s->m_name +"' on the "+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+" (name already used in the assembler etc) ",m_currentToken.m_lineNumber);
-        //if (m_isRecord)
+        if (m_isRecord)
+            s->m_isClassVariable = true;
         //qDebug() << "Defining RECORD: " << s->m_name;
         QString sn = s->m_name;
         sn = sn.toLower();
@@ -4151,6 +4154,15 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 {
     Token t = m_currentToken;
+    // So here is something interesting: if you're in a class on the m68k, 
+    // then if you have defined a byte it MUST become an integer due to the alignment requires 
+    bool forceByteAlignment =(Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000 && m_isRecord);
+
+    if (forceByteAlignment && t.m_type==TokenType::BYTE) {
+        t.m_type = TokenType::INTEGER;
+        t.m_value = "INTEGER";
+        m_currentToken = t;
+    }
 
     if (m_types.contains(t.m_value) || m_types.contains(m_symTab->m_gPrefix+t.m_value)) {
         QString n = t.m_value;
@@ -4307,6 +4319,12 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                 if (!m_symTab->m_records[arrayType.m_value]->m_isClass)
                     ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
         }
+        // m68k alignment for byte arrays
+        if (forceByteAlignment && arrayType.m_type==TokenType::BYTE && (t.m_intVal&1)==1) {
+            t.m_intVal+=1;
+            if (data.count()!=0)
+                data.append("0");
+        }
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,position, arrayType,data));
         nt->m_flags = flags;
@@ -4444,6 +4462,11 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 //        qDebug() << "Replace bool with byte";
         t.m_value="BYTE";
        t.m_type = TokenType::BYTE;
+       if (forceByteAlignment) {
+           t.m_value="INTEGER";
+          t.m_type = TokenType::INTEGER;
+
+       }
     }
 
     QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));

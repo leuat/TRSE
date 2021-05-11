@@ -53,6 +53,7 @@ public:
     // For records
     QString m_arrayTypeText;
     QStringList m_flags;
+    bool m_isClassVariable = false;
     bool m_doNotOptimize = false;
     bool m_constIsPrefixed = false;
     QString m_pointsTo = "";

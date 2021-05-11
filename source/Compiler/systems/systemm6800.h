@@ -13,6 +13,9 @@ public:
     virtual bool is8bit() override {
         return false;
     }
+    int getPointerSize() override {
+        return 32;
+    }
 
     QString CompressFile(QString fileName) override {
         QString old = fileName;

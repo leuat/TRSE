@@ -40,7 +40,7 @@ public:
     QSharedPointer<Node> m_subNode = nullptr;
     bool m_ignoreRecordExpr = false;
     bool m_ignoreLookup = false;
-    TokenType::Type m_writeType;
+    TokenType::Type m_writeType = TokenType::NADA;
     NodeVar(Token t);
 
     NodeVar(Token t, QSharedPointer<Node> expr);

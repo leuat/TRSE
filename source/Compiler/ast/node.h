@@ -185,7 +185,13 @@ public:
     virtual int getValueAsInt(Assembler* as) {
         return Util::NumberFromStringHex(getValue(as));
     }
+    virtual int getArrayDataSize(Assembler* as) {
+        if (getArrayType(as)==TokenType::INTEGER) return 2;
+        if (getArrayType(as)==TokenType::LONG) return 4;
+        if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
+        return 1;
 
+    }
 
     void RequireAddress(QSharedPointer<Node> n,QString name, int ln);
 

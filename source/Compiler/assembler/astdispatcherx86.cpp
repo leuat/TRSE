@@ -303,7 +303,7 @@ void ASTdispatcherX86::dispatch(QSharedPointer<NodeVar> node)
     }
 */
     if (node->isReference()) {
-        as->Asm("lea di, " + node->getValue(as)+"");
+        as->Asm("mov di, " + node->getValue(as)+"");
         as->Asm("push ds");
         as->Asm("pop es");
         return;
@@ -535,7 +535,7 @@ void ASTdispatcherX86::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
         if (left->isPointer(as))
             as->Asm("les di,["+left->getValue(as)+"]");
         else
-            as->Asm("lea di,"+left->getValue(as)+"");
+            as->Asm("mov di,"+left->getValue(as)+"");
         as->Term();
 
         as->Asm("push ds");

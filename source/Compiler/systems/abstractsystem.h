@@ -99,6 +99,9 @@ public:
     virtual bool is386() { return false;}
     virtual bool is286() { return false;}
     virtual bool is8088() { return false;}
+    virtual int getPointerSize() {
+        return 16;
+    }
 
     virtual bool AllowPointerInStructs() {return true;}
 
