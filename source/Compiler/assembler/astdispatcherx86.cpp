@@ -540,7 +540,7 @@ void ASTdispatcherX86::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
 
         as->Asm("push ds");
         as->Asm("pop es");
-        as->Asm("lea si,"+str);
+        as->Asm("mov si,"+str);
         as->Asm("mov cx, "+Util::numToHex(right->m_op.m_value.count()+2));
         as->Asm("rep movsb");
 //        as->Asm("pop ds");
