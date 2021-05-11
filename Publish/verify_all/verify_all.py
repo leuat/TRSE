@@ -325,7 +325,7 @@ def DOSUnitTests():
 			os.remove(resultFile)
 
 		try:
-			result = subprocess.run([dosbox,"-noautoexec","-exit",path+"/utests.exe"], timeout=5, stdout=PIPE, stderr=subprocess.STDOUT)
+			result = subprocess.run([dosbox,"-noautoexec","-exit",path+"/utests.exe"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for DOS unit tests expired.")
