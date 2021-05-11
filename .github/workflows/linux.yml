@@ -130,8 +130,7 @@ jobs:
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
-          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini || echo "tests failed"
-          cat -n ../tutorials/X86/unittests/utests.asm
+          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
 
       - name: Build notification
         if: failure()
