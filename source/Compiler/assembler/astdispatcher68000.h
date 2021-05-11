@@ -52,7 +52,7 @@ public:
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
     void dispatch(QSharedPointer<NodeAssign> node) override;
-    void dispatch(QSharedPointer<NodeCase> node) override;
+ //   void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     //void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
@@ -103,6 +103,8 @@ public:
 
     QString getReturn() override { return "rts";}
     QString getReturnInterrupt() override { return "rti";}
+
+    void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
 
 
 };

@@ -4,8 +4,9 @@
 
 QString Stack::pop() {
     if (m_vars.count()==0) {
-        qDebug() << "Trying to POP stack from 0";
-        exit(1);
+        qDebug() << "Trying to POP stack from 0 CONTACT leuat@irio.co.uk this shouldn't happen EVER";
+        return "NADA empty popped stack BUG contact leuat@.irio.co.uk";
+//        exit(1);
     }
     m_current=m_vars[m_vars.count()-1];
     //m_vars.removeLast();

@@ -20,7 +20,13 @@ var
 procedure Exec();
 begin
 	Common::TestInit();
+@ifndef ATARI520ST
 	while (Common::Status() = 0 and isDone = false) do
+@endif
+	
+@ifdef ATARI520ST
+	while (Common::unittests_status = 0 and isDone = false) do
+@endif 
 	begin
 		Common::TestSuiteInit();
 		if (currentTest=0) then Classes::Exec();
@@ -33,7 +39,7 @@ begin
 		if (currentTest=4) then AdvancedMath::Exec();
 		@endif
 		currentTest+=1;
-		
+				
 		if (currentTest>=noTests) then
 			isDone := true;
 		

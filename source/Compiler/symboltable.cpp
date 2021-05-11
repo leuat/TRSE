@@ -498,6 +498,8 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 //    qDebug() << "SYMTAB "<< localName << name;;
 //    if (name.contains("posX"))
     //qDebug() << "SYMTAB ERROR Looking up : "<<name <<localName <<m_symbols.keys();
+    name = name.remove("#");
+
 
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)&& !m_symbols.contains(localUnitName)) {
         QString similarSymbol = findSimilarSymbol(name,85,2,QStringList());

@@ -9,13 +9,69 @@ AsmM68000::AsmM68000()
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserM68K());
 }
 
+void AsmM68000::Connect() {
+    // Connect with temp vars
+    QStringList newSource;
+    for (int i=0;i<m_varDeclEndsLineNumber;i++) {
+        newSource<<m_source[i];
+    }
+    newSource << " ; Temp vars section";
+    Asm(" 	CNOP 0,4");
+    newSource<< m_tempVars;
+    Asm(" 	CNOP 0,4");
+    newSource << " ; Temp vars section ends";
+    for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
+        newSource<<m_source[i];
+    }
+    m_source = newSource;
+    //m_source<<m_appendix;
+    //    m_appendix.append(m_ extraBlocks);
+    SortAppendix();
+
+    //  qDebug() << m_appendix[0].m_source;
+    QStringList pre;
+    for (int i=0;i<m_appendix.count();i++) {
+
+        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
+            pre <<m_appendix[i]->m_source;
+        else m_source << m_appendix[i]->m_source;
+
+    }
+
+    m_source.removeAll("");
+    m_appendix.clear();
+
+    m_source = QStringList() <<pre << m_source;
+
+
+
+
+}
+
 void AsmM68000::Program(QString name, QString vicParam)
 {
-  /*  if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
+    /*  if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))
         IncludeFile(":resources/code/amiga/init.s");
     else
         IncludeFile(":resources/code/amiga/init_stripped.s");
         */
+}
+
+bool AsmM68000::DeclareClass(QString name, QString type, int count, QStringList data, QString pos)
+{
+    if (m_symTab->m_records.contains(type)) {
+        if (!m_symTab->m_records[type]->m_isClass)
+            return false;
+
+        QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+
+        Asm(" 	CNOP 0,4");
+        Label(name + "\tdcb.b\t"+QString::number(st->getSize()*count ));
+
+        return true;
+    }
+    return false;
+
 }
 
 /*void AsmM68000::EndProgram()
@@ -35,17 +91,19 @@ void AsmM68000::DeclareArray(QString name, QString type, int count, QStringList 
     if (DeclareRecord(name,type,count,data,pos))
         return;
 
+    if (DeclareClass(name,type,count,data,pos))
+        return;
 
 
     if (data.count()==0 && pos=="") {
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
-        if (type.toLower()=="integer")
-            t = "blk.w";
-        if (type.toLower()=="byte")
-            t = "blk.b";
+            if (type.toLower()=="integer")
+                t = "blk.w";
+            if (type.toLower()=="byte")
+                t = "blk.b";
 
-        if (type.toLower()=="string")
-            t = "blk.b";
+            if (type.toLower()=="string")
+                t = "blk.b";
 
         if (type.toLower()=="long")
             t = "blk.l";
@@ -111,6 +169,10 @@ void AsmM68000::DeclareVariable(QString name, QString type, QString initval, QSt
         t = byte;
     if (type.toLower()=="long")
         t = llong;
+
+    if (DeclareClass(name,type,1,QStringList() <<initval,position))
+        return;
+
 
 
     if (t=="")

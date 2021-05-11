@@ -1,0 +1,25 @@
+unit Screen;
+var
+	zp:pointer;
+	nl : string=(13,10,0);
+procedure Print(zp:global pointer);
+begin
+	asm("
+	move.l 	Screen_zp,-(sp)	
+	move.w 	#9,-(sp)
+	trap 	#1
+	addq.l 	#6,sp
+	");
+end;
+
+procedure NewLine();
+begin
+	Print(#nl);	
+end;
+
+procedure PrintInt(it:integer);
+begin
+	Print("PRINTINT NOT IMPLEMENTED");	
+end;
+	
+end.

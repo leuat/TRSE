@@ -627,12 +627,12 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeAssign> node)
   //  as->PopCounter(node->m_op.m_lineNumber);
 
 }
-
+/*
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeCase> node)
 {
     ErrorHandler::e.Error("case not implemented for m68K yet", node->m_op.m_lineNumber);
 }
-
+*/
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
     ErrorHandler::e.Error("Repeat-until not implemented yet", node->m_op.m_lineNumber);
@@ -1093,10 +1093,53 @@ void ASTDispatcher68000::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QS
 
     //IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
     //Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
-    QString var = nodeA->m_left->getValue(as);
+
+    QString var = nodeA->getValue(as);
     LoadVariable(nodeB);
     TransformVariable(as,"cmp",as->m_varStack.pop(),var);
     as->Asm("bne "+lblJump);
+
+}
+
+void ASTDispatcher68000::AssignString(QSharedPointer<NodeAssign> node, bool isPointer) {
+
+    QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
+    QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    //    QString lbl = as->NewLabel("stringassign");
+    QString str = as->NewLabel("stringassignstr");
+    QString lblCpy=as->NewLabel("stringassigncpy");
+
+    //    as->Asm("jmp " + lbl);
+    QString strAssign = str + "\t dc.b  \"" + right->m_op.m_value + "\",0";
+    as->m_tempVars<<strAssign;
+    //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
+    //  as->Label(lbl);
+
+    //    qDebug() << "IS POINTER " << isPointer;
+    if (isPointer) {
+        //      qDebug() << "HERE";
+
+
+        as->Asm("move.l #"+str+","+left->getValue(as));
+    }
+    else {
+//                ErrorHandler::e.Error("String copying not yet implemented, can only be assigned as pointers.", node->m_op.m_lineNumber);
+        as->Comment("String copy!");
+        as->Asm("move.l #"+str+",a0");
+        as->Asm("move.l #"+left->value+",a1");
+        as->Label(lblCpy);
+        as->Asm("move.b (a0)+,(a1)+");
+        as->Asm("tst.b (a0)");
+        as->Asm("beq.b "+lblCpy);
+        as->Asm("move.b #0,(a1)");
+
+
+
+        //        as-
+        //LoadVariable(left);
+    }
+    as->PopLabel("stringassignstr");
+    as->PopLabel("stringassigncpy");
 
 }
 
@@ -1135,6 +1178,10 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
         ErrorHandler::e.Error("Node assign: right hand must be expression", node->m_op.m_lineNumber);
 
 
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
+        AssignString(node,node->m_left->isPointer(as));
+        return "";
+    }
 
 
     if (node->m_left->getType(as)==TokenType::INTEGER) {
@@ -1161,7 +1208,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 //        ErrorHandler::e.Error("Left is null pointer, should not happen! ", node->m_op.m_lineNumber);
     //}
     if (v!=nullptr)
-    if (v->isRecord(as) && !v->isRecordData(as)) {
+    if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
         if (!node->m_right->isRecord(as))
             ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
         if (v->getTypeText(as)!=node->m_right->getTypeText(as))
@@ -1177,7 +1224,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
     }
 
     // POINTER = RECORD errors
-    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as)) {
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
         if (!node->m_left->isArrayIndex())
             ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as))
@@ -1185,7 +1232,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
  //       if (node->)
     }
     // Variable = POINTER
-    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as))) {
+    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as)) && !node->m_right->isClass(as)) {
         ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
     }
 

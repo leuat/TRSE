@@ -138,6 +138,15 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splash->m_seconds = m_iniFile->getdouble("splash_seconds");
     QTimer::singleShot(10, this, SLOT(ShowSplash()));
 
+    QString t0 = "Number of computer systems supported in TRSE: "+QString::number(ui->cmbSelectSystem->count());
+    QString t1 = "Number of sample projects: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "tutorials/",QStringList() <<"trse"));
+    QString t2 = "Total number of example source files: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "tutorials/",QStringList() <<"ras"<<"inc"));
+    QString t3 = "Total number of units: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "units/",QStringList()<<"tru"));
+
+
+//    ui->lblBrag1->setText(t0);
+    ui->lblBrag2->setText(t0 + "\n" +t1+ "\n" + t2 + "\n" + t3);
+
 //    setWindowTitle(Util::GetSystemPrefix());
 
 

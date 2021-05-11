@@ -927,6 +927,21 @@ bool Util::fileChanged(QString filename)
 
 }
 
+int Util::CountFilesInAllDirectories(QString dir, QStringList fileTypes)
+{
+    int cnt = 0;
+    QDirIterator it(dir , QDir::Files , QDirIterator::Subdirectories); //QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot
+    while (it.hasNext())
+    {
+        QString s = it.next();
+        for (QString& ft: fileTypes)
+          if (s.toLower().endsWith("."+ft))
+              cnt+=1;
+        if (fileTypes.count()==0) cnt++;
+    }
+    return cnt;
+}
+
 
 
 float Util::smoothstep(float edge0, float edge1, float x)
@@ -936,4 +951,5 @@ float Util::smoothstep(float edge0, float edge1, float x)
     // Evaluate polynomial
     return x*x*(3 - 2 * x);
 }
+
 

@@ -30,6 +30,7 @@ void AsmM68000::EndProgram()
 void CompilerM68K::Connect()
 {
     //        m_assembler->blocks.append(m_assembler->m_chipMem);
+    m_assembler->Connect();
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA) {
         if (!Syntax::s.m_currentSystem->m_systemParams.contains("ignoresystemheaders"))

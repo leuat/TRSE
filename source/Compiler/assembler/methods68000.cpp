@@ -22,6 +22,12 @@ void Methods68000::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
     if (Command("Fill"))
         Fill(as);
 
+    if (Command("Nop"))
+        Nop(as);
+
+    if (Command("Loop"))
+        as->Asm("bra * ; loop like (�/%");
+
 
     if (Command("initmatmul3x3"))
         as->IncludeFile(":resources/code/amiga/matmul.s");

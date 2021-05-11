@@ -1,0 +1,65 @@
+unit Common;
+@use "system/screen"
+@use "unittests/vars"
+var
+  unittests_common_string : string = ("               ");
+  unittests_status : byte = 0;
+
+procedure Initialise(zp:pointer);
+begin
+    Screen::NewLine();
+	Screen::Print(zp);
+    Screen::NewLine();
+end;
+
+// Called at the beginning of the testing
+procedure TestInit();
+begin
+	Screen::Print("TRSE M68K Unit Tests!");
+    Screen::NewLine();
+end;
+
+// Called at the beginning of each test suite (multiple test cases grouped together)
+procedure TestSuiteInit();
+begin
+end;
+
+
+function Status() : byte;
+begin
+	Status := unittests_status;
+end;
+
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+  Screen::Print(#Vars::text);
+  Screen::Print(": PASS");
+  Screen::NewLine();
+end;
+
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+  Screen::Print(#Vars::text);
+  Screen::Print(": FAIL");
+  Screen::NewLine();
+  unittests_status := 1;
+end;
+
+procedure WaitABit();
+begin
+end;
+
+procedure DebugValue(v:integer);
+begin
+  // TODO(ColinPitrat): Print value to screen
+//  Format::Itos(v, #cpc_unittests_common_string);
+  Screen::PrintInt(v);
+  Screen::NewLine();
+
+end;
+
+end.
+
+

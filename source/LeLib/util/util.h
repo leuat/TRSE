@@ -234,6 +234,8 @@ public:
 
     static bool fileChanged(QString filename);
 
+    static int CountFilesInAllDirectories(QString dir, QStringList fileTypes);
+
 };
 
 
