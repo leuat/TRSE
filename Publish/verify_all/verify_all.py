@@ -96,7 +96,7 @@ cap32 = GetOption('cap32')
 assemble = GetOption('assemble')
 dosbox = GetOption('dosbox')
 
-if (dosbox.endswith(".app")): 
+if (dosbox.endswith(".app")):
 	dosbox+="/Contents/MacOS/DOSBox"
 
 if not trse:
@@ -161,13 +161,13 @@ fillRasList(len(tests)-1,".")
 
 
 # X86
-
 tests.append([ "X86/CGA",[]])
 fillRasList(len(tests)-1,".")
 
 tests.append([ "X86/VGA_386",[]])
 fillRasList(len(tests)-1,".")
 
+tests.append([ "X86/unittests", ["utests.ras"]])
 
 
 # PET
@@ -326,13 +326,12 @@ def DOSUnitTests():
 
 		try:
 			# dosbox timeout per design
+			print([dosbox,"-noautoexec",path+"/utests.exe"])
 			result = subprocess.run([dosbox,"-noautoexec",path+"/utests.exe"], timeout=5, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			# dosbox timeout per design, not error
-
-			#print("ERROR: Timeout for DOS unit tests expired.")
-			#failed.append([path, "utests.exe"])
+			print("Timeout (expected) for DOS unit tests.")
 			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
 		if (not os.path.exists(resultFile)):
