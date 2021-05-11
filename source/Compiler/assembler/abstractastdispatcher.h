@@ -125,7 +125,7 @@ public:
 
     virtual void AssignString(QSharedPointer<NodeAssign> node)  {}
     // Assigning a pure pointer  ptr := #someAddress + blah;
-    virtual bool AssignPointer(QSharedPointer<NodeAssign> node)  {}
+    virtual bool AssignPointer(QSharedPointer<NodeAssign> node)  { return false;}
 
     virtual bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) {return false;}
 
