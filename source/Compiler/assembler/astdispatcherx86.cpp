@@ -562,7 +562,7 @@ void ASTdispatcherX86::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
 
 
 
-QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
+void ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 {
 
     if (node->m_left->isWord(as)) {
@@ -595,13 +595,13 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 //        as->Comment("Assigning register : " + vname);
 
         as->Asm("mov "+reg+", "+getX86Value(as,node->m_right));
-        return "";
+        return;
         //}
     }
 
     if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
         AssignString(node,node->m_left->isPointer(as));
-        return "";
+        return;
     }
 
 
@@ -634,14 +634,14 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
                 as->ClearTerm();
                 if (bop->m_right->isPureNumeric()) {
                     as->Asm(bopCmd + " ["+var->getValue(as)+"], word "+bop->m_right->getValue(as));
-                    return "";
+                    return;
                 }
                 bop->m_right->Accept(this);
                 as->Term();
                 as->Asm(bopCmd + " ["+var->getValue(as)+"], ax");
 
 
-                return "";
+                return;
             }
         }
 
@@ -662,7 +662,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
                 as->Asm("mov ["+var->getValue(as)+"+2], ds");
                 as->Asm("mov ["+var->getValue(as)+"], si");
             }
-            return "";
+            return;
         }
         else{
             as->Comment("Setting PURE POINTER "+QString::number(node->isPointer(as)));
@@ -676,7 +676,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("mov ["+var->getValue(as)+"+2], es");
             as->Asm("mov ["+var->getValue(as)+"], di");
         }
-        return "";
+        return;
     }
 
     // Set pointer value
@@ -695,7 +695,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         if (var->m_expr->isPureNumeric()) {
 
             as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(as,var)+"],"+getAx("a",var));
-            return "";
+            return;
 
         }
         if (var->m_expr->isPureVariable() && var->m_expr->isWord(as)) {
@@ -705,7 +705,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 
             as->Asm("mov [es:di],"+getAx("a",var));
 
-            return "";
+            return;
 
         }
 
@@ -720,7 +720,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         as->Asm("pop ax");
 
         as->Asm("mov [es:di+bx],"+getAx("a",var));
-        return "";
+        return;
 
     }
 
@@ -748,7 +748,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("mov es,ax");
   */
 
-            return "";
+            return;
         }
         as->Comment("Assign value to regular array");
 /*        node->m_right->Accept(this);
@@ -781,7 +781,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
         as->Asm("mov ["+var->getValue(as) + "+di], "+getAx(node->m_left));
 
 
-        return "";
+        return;
     }
 
 //    if (var->getValue())
@@ -790,7 +790,7 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
 
     if (node->m_right->isPureNumeric()) {
         as->Asm("mov ["+var->getValue(as)+ "], "+type+ " "+node->m_right->getValue(as));
-        return "";
+        return;
     }
     // Check for a:=a+2;
     QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
@@ -806,26 +806,26 @@ QString ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             if (bop->m_right->isPureNumeric()) {
                 as->Comment("'a:=a + const'  optimization ");
                 as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
-                return "";
+                return;
             }
             as->Comment("'a:=a + expression'  optimization ");
             bop->m_right->Accept(this);
             as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+getAx(var));
-            return "";
+            return;
         }
         // Check for a:=a+
 
     }
 /*    if (node->m_right->isPureVariable()) {
         as->Asm("mov ["+var->getValue(as)+ "],   " +getX86Value(as,node->m_right));
-        return "";
+        return;
     }
 */
     as->ClearTerm();
     node->m_right->Accept(this);
     as->Term();
     as->Asm("mov ["+qSharedPointerDynamicCast<NodeVar>(node->m_left)->getValue(as) + "], "+getAx(node->m_left));
-    return "";
+    return;
 }
 
 void ASTdispatcherX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)

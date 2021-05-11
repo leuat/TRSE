@@ -926,75 +926,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 }
 
-/*void ASTdispatcherZ80::dispatch(QSharedPointer<NodeForLoop> node)
-{
-    node->DispatchConstructor(as,this);
 
-
-    //QString m_currentVar = ((NodeAssign*)m_a)->m_
-    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-
-
-    if (nVar==nullptr)
-        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
-
-    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
-    //    qDebug() << "Starting for";
-    node->m_a->Accept(this);
-    //  qDebug() << "accepted";
-
-    //    LoadVariable(node->m_a);
-    //  TransformVariable()
-    //QString to = m_b->Build(as);
-    QString to = "";
-    if (node->m_b->isPure())
-        //    if (qSharedPointerDynamicCast<NodeNumber>(node->m_b) != nullptr)
-        to = node->m_b->getValue(as);
-    //  if (qSharedPointerDynamicCast<NodeVar>(node->m_b) != nullptr)
-    //    to = (qSharedPointerDynamicCast<NodeVar>node->m_b)->getValue(as);
-
-    //    as->m_stack["for"].push(var);
-    QString lblFor =as->NewLabel("forloop");
-    as->Label(lblFor);
-    //    qDebug() << "end for";
-
-
-    if (nVar->m_left->isWord(as))
-        node->m_b->setForceType(TokenType::INTEGER);
-
-    node->m_block->Accept(this);
-    QString ax = getA(nVar->m_left);
-    if (!node->m_b->isPureNumeric()) {
-        as->ClearTerm();
-        node->m_b->Accept(this);
-        as->Term();
-        as->Asm("ld c,a");
-    }
-
-    as->Asm(m_mov+ax+",["+var+"]");
-    as->Asm("add "+ax+",1");
-    as->Asm(m_mov+"["+var+"],"+ax);
-    if (!node->m_b->isPureNumeric())
-        as->Asm(m_cmp+ax+",c");
-    else
-        as->Asm(m_cmp+ax+"," + node->m_b->getValue(as));
-
-    bool offpage = node->m_forcePage;
-    if (!node->verifyBlockBranchSize(as, node->m_block, nullptr, this))
-        offpage = true;
-
-    if (!offpage)
-        as->Asm("jr nz,"+lblFor);
-    else
-        as->Asm("jp nz,"+lblFor);
-
-    as->PopLabel("forloop");
-
-}
-
-*/
-
-QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
+void ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 {
 
     if (node->m_left->isWord(as)) {
@@ -1005,7 +938,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     if (qSharedPointerDynamicCast<NodeString>(node->m_right))
     {
         AssignString(node,node->m_left->isPointer(as));
-        return "";
+        return;
     }
 
 
@@ -1016,14 +949,14 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         node->m_right->Accept(this);
         as->Term();
         as->Asm("ld ["+node->m_left->getValue(as)+"],a");
-        return "";
+        return;
 
     }
 
 
     if (var->isPointer(as)) {
         HandleAssignPointers(node);
-        return "";
+        return;
     }
 
     if (var->isArrayIndex() && !var->isWord(as)) {
@@ -1035,7 +968,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Term();
 
             as->Asm("ld [+"+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
-            return "";
+            return;
         }
         // GENERIC expression
 
@@ -1065,7 +998,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             node->m_right->Accept(this);
 
         as->Asm("ld [hl],a");
-        return "";
+        return;
 
 
 //        ErrorHandler::e.Error("Array indicies not implemented yet");
@@ -1091,7 +1024,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     if (node->m_right->isPureNumeric() && !var->isWord(as)) {
         as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
         as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
-        return "";
+        return;
     }
     // Check for a:=a+2;
     QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
@@ -1108,7 +1041,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             // Handle 16 bit op
             if (bop->isWord(as)) {
                 HandleAeqAopB16bit(bop,var);
-                return "";
+                return;
             }
 
 
@@ -1118,7 +1051,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
                 as->Asm("ld a,["+var->getValue(as)+"]");
                 as->Asm(getBinaryOperation(bop)  +bop->m_right->getValue(as));
                 as->Asm("ld ["+var->getValue(as)+"], a");
-                return "";
+                return;
             }
             as->Comment("'a:=a + expression'  optimization ");
             bop->m_right->Accept(this);
@@ -1127,7 +1060,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm(getBinaryOperation(bop) + " b");
             as->Asm("ld ["+var->getValue(as)+"], a");
 
-            return "";
+            return;
         }
         // Check for a:=a+
 
@@ -1159,7 +1092,7 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("ld a,d");
             as->Asm("inc hl");
             as->Asm("ld [hl],a");
-            return "";
+            return;
         }
 
 
@@ -1172,21 +1105,21 @@ QString ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("ld a,l");
             as->Asm("ld ["+name+"],a");
         }
-        return "";
+        return;
     }
     node->m_right->Accept(this);
 
 
     if (node->m_left->isArrayIndex()) {
         as->Asm("ld [hl], a");
-        return "";
+        return;
     }
     if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
         as->Asm("ld a,l ; word assigned to byte");
     }
 
     as->Asm("ld ["+name + "], "+getAx(node->m_left));
-    return "";
+    return;
 }
 
 QString ASTdispatcherZ80::getAx(QSharedPointer<Node> n) {

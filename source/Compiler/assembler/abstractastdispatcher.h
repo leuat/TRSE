@@ -63,7 +63,7 @@ public:
     virtual void dispatch(QSharedPointer<Node> node) = 0;
     virtual void dispatch(QSharedPointer<NodeString> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
-    virtual void dispatch(QSharedPointer<NodeAssign> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeAssign> node);
     virtual void dispatch(QSharedPointer<NodeBlock> node);
     virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
@@ -94,6 +94,48 @@ public:
     virtual bool UseBlocks() { return false;}
 
     virtual QString resolveTemporaryClassPointer(QString name, int mul, int &res) { return "";}
+
+
+
+
+    /*
+     *  Probably the most important method in all of TRSE
+     *  Abstract AssignVariable
+     *  Handles *all*  A:=B; operations in TRSE
+     *  WIP
+    */
+
+    virtual void AssignVariable(QSharedPointer<NodeAssign> node);
+
+    /* Here follows methods that are used & requirede by assignvariable
+       These are currently defined, but will be pure virtual when the method
+       complete
+
+    */
+
+    void AssignPureRecords(QSharedPointer<NodeAssign> node );
+    void ValidateAssignStatement(QSharedPointer<NodeAssign> node);
+
+    // Virtual methods
+
+    // var := _ax;
+    virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) {}
+    // _ax := var;
+    virtual void AssignToRegister(QSharedPointer<NodeAssign> node) {}
+
+    virtual void AssignString(QSharedPointer<NodeAssign> node)  {}
+    // Assigning a pure pointer  ptr := #someAddress + blah;
+    virtual void AssignPointer(QSharedPointer<NodeAssign> node)  {}
+
+    virtual bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) {return false;}
+
+    virtual bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) {return false;}
+
+    virtual bool StoreVariableSimplified(QSharedPointer<Node> n) {return false;}
+
+
+    /* The rest
+     */
 
 
     void virtual dispatch(QSharedPointer<NodeConditional> node);

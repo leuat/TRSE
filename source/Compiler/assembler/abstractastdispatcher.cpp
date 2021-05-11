@@ -36,13 +36,18 @@ void AbstractASTDispatcher::UpdateDispatchCounter()
 //    qDebug() <<p << m_currentNode << Node::s_nodeCount;
 
 }
+
+void AbstractASTDispatcher::dispatch(QSharedPointer<NodeAssign> node)  {
+    node->DispatchConstructor(as,this);
+    AssignVariable(node);
+}
 /*
  *
  *  BLOCKS (VAR ... BEGIN ...  END)
  *
  * */
 void AbstractASTDispatcher::dispatch(QSharedPointer<NodeBlock> node) {
- /*   if (m_ticks++%8==0)
+    /*   if (m_ticks++%8==0)
         emit EmitTick(".");
 */
     node->DispatchConstructor(as,this);
@@ -231,6 +236,152 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
     if (node->m_op.m_type == TokenType::RETURN)
         as->Asm(getReturn());
 }
+
+
+
+void AbstractASTDispatcher::ValidateAssignStatement(QSharedPointer<NodeAssign> node)
+{
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+
+    if (v==nullptr && num == nullptr)
+        ErrorHandler::e.Error("Left value not variable or memory address! ", node->m_op.m_lineNumber);
+    if (num!=nullptr && num->getType(as)!=TokenType::ADDRESS)
+        ErrorHandler::e.Error("Left value must be either variable or memory address, not a constant.", node->m_op.m_lineNumber);
+
+    // Verify pointer integrity
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
+        if (!node->m_right->isRecordData(as)) {
+               ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
+
+            as->Comment("Assigning pointer to record/class");
+        }
+
+    }
+    if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as)) && !node->m_right->isClass(as)) {
+//        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+            ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
+    }
+
+    // Double check
+    if (node->m_right==nullptr)
+         ErrorHandler::e.Error("Right hand of assign statement must be expression.", node->m_op.m_lineNumber);
+
+    // Ignore this one, as it is used a lot
+/*    if (v->getTypeText(as).toLower()=="array" && v->m_expr==nullptr) {
+
+    }
+  */
+}
+
+void AbstractASTDispatcher::AssignPureRecords(QSharedPointer<NodeAssign> node)
+{
+    auto v = node->m_left;
+    if (!node->m_right->isRecord(as))
+        ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+    if (v->getTypeText(as)!=node->m_right->getTypeText(as))
+        ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+    if (node->m_right->isRecordData(as))
+        ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+
+    // Copy record:
+    if (!v->isClass(as))
+        HandleNodeAssignCopyRecord(node);
+    else
+        HandleNodeAssignCopyClass(node);
+
+}
+
+
+
+void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
+{
+    // Begin by validating all nodes
+    ValidateAssignStatement(node);
+    as->ClearTerm();
+
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+
+    if (num!=nullptr) {
+        as->Comment("Assigning memory location");
+        v = QSharedPointer<NodeVar>(new NodeVar(num->m_op)); // Create a variable copy
+        v->value = num->HexValue();
+    }
+
+    bool ignoreLookup = false;
+
+    // Get variable name
+    QString vname = getValue(v);
+
+    // ****** REGISTERS TO
+    if (v->m_isRegister) {
+        as->Comment("Assigning to register");
+        AssignToRegister(node);
+        return;
+    }
+
+    // ****** REGISTERS FROM
+    if (node->m_right->m_isRegister) {
+        as->Comment("Assigning from register");
+        AssignFromRegister(node);
+        return;
+    }
+
+    // ****** RECORDS AND CLASSES DIRECT ASSIGNMENT
+    if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
+        as->Comment("Assigning pure records/classes");
+        AssignPureRecords(node);
+        return;
+    }
+
+    // ****** STRINGS
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
+        as->Comment("Assigning a string : " + getValue(v));
+        AssignString(node);
+        return;
+    }
+
+    // ****** RAW POINTERS
+    if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
+        as->Comment("Assigning a pointer: " + getValue(v));
+        AssignPointer(node);
+        return;
+    }
+
+    if (!ignoreLookup)
+       QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
+
+
+
+
+//    if (node->m_left->isWord(as))
+
+    if (node->m_left->isWord(as)) {
+//        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
+        node->m_right->setForceType(TokenType::INTEGER);
+    }
+    // For constant i:=i+1;
+    if (IsSimpleIncDec(node))
+        return;
+
+    if (IsSimpleAssignPointerExpression(node))
+        return;
+
+     if (StoreVariableSimplified(node))
+        return;
+
+
+    node->m_right->Accept(this);
+    as->Term();
+    as->Comment("Calling storevariable on generic assign expression");
+    StoreVariable(v);
+
+    return;
+
+}
+
+
 /*
 QString AbstractASTDispatcher::getValue(QSharedPointer<Node> n) {
     return n->getValue(as);

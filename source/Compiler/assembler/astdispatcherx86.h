@@ -112,7 +112,7 @@ public:
     }
     QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
-    virtual QString AssignVariable(QSharedPointer<NodeAssign> node);
+    void AssignVariable(QSharedPointer<NodeAssign> node) override;
 
 
 

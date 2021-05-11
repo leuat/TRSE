@@ -51,7 +51,6 @@ public:
  //   void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
-    void dispatch(QSharedPointer<NodeAssign> node) override;
  //   void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     //void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
@@ -82,7 +81,7 @@ public:
 
     QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
-    QString AssignVariable(QSharedPointer<NodeAssign> node);
+    void AssignVariable(QSharedPointer<NodeAssign> node) override;
     void IncBin(QSharedPointer<NodeVarDecl> node) override;
 
 //    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);

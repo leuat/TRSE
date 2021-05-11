@@ -616,23 +616,6 @@ void ASTDispatcher68000::dispatch(QSharedPointer<Node> node)
 
 }
 
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeAssign> node)
-{
-    node->DispatchConstructor(as,this);
-
-//    as->PushCounter();
-
-    AssignVariable(node);
-
-  //  as->PopCounter(node->m_op.m_lineNumber);
-
-}
-/*
-void ASTDispatcher68000::dispatch(QSharedPointer<NodeCase> node)
-{
-    ErrorHandler::e.Error("case not implemented for m68K yet", node->m_op.m_lineNumber);
-}
-*/
 void ASTDispatcher68000::dispatch(QSharedPointer<NodeRepeatUntil> node)
 {
     ErrorHandler::e.Error("Repeat-until not implemented yet", node->m_op.m_lineNumber);
@@ -1199,7 +1182,7 @@ void ASTDispatcher68000::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPoin
 }
 
 
-QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
+void ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     //        qDebug() << "AssignVariable: " <<v->getValue(as) << " : " << TokenType::getType( v->getType(as));
@@ -1215,7 +1198,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
         AssignString(node,node->m_left->isPointer(as));
-        return "";
+        return;
     }
 
 
@@ -1255,7 +1238,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 //        HandleNodeAssignCopyRecord(node);
         ErrorHandler::e.Error("RECORD ASSIGNMENT NOT IMPLEMENTED YET", v->m_op.m_lineNumber);
 
-        return "";
+        return;
     }
 
     // POINTER = RECORD errors
@@ -1277,11 +1260,11 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     // Handle A = A op #num;
     if (HandleSimpleAeqAopConst(node))
-        return "";
+        return;
 
     // Handle A = B (op #num);
     if (HandleSimpleAeqBopConst(node))
-        return "";
+        return;
 
 
 
@@ -1304,7 +1287,7 @@ QString ASTDispatcher68000::AssignVariable(QSharedPointer<NodeAssign> node) {
     while (as->m_varStack.m_vars.count()!=0)
         as->m_varStack.pop();
 
-    return "";
+    return;
 }
 
 void ASTDispatcher68000::IncBin(QSharedPointer<NodeVarDecl> node) {

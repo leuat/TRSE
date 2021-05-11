@@ -46,9 +46,10 @@ public:
    // void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
-    void dispatch(QSharedPointer<NodeAssign> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
+    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
 
 
@@ -170,7 +171,6 @@ public:
     void LoadVariable(QSharedPointer<NodeProcedure> node) override;
 
     void StoreVariable(QSharedPointer<NodeVar> node) override;
-    void StoreVariableSimplified(QSharedPointer<NodeVar> node, QSharedPointer<Node> expr);
 
     /*
      *
@@ -180,31 +180,46 @@ public:
      *
     */
 
-    void AssignString(QSharedPointer<NodeAssign>node, bool isPointer);
+    bool StoreVariableSimplified(QSharedPointer<Node> assignNode) override;
 
-    void AssignPointer(QSharedPointer<NodeAssign>node);
+    void AssignString(QSharedPointer<NodeAssign>node) override;
 
-    bool isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
-    bool isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
+    void AssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    bool IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
+    bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
 
-    bool IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString labelSuccess, QString labelFail);
-    bool IsSimpleAssignPointerExpression(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
-    void AssignVariable(QSharedPointer<NodeAssign>node);
-
-//    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
-
+    bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) override;
 
     void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
 
 
+    bool isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
+    bool isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
+    bool IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString labelSuccess, QString labelFail);
 
     QString getReturn() override { return "rts";}
     QString getReturnInterrupt() override { return "rti";}
 
 
-    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+
+
+/*
+ *
+ *  ASSIGNVARIABLE STUFF
+ *
+ * */
+
+//    void AssignVariable(QSharedPointer<NodeAssign>node) override;
+
+
+    virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
+    virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
+
+
+
+    //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
+
+
 
 };
 

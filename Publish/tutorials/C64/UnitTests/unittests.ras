@@ -8,10 +8,12 @@ begin
 	@ifdef __CI
 	addbreakpoint();
 	@endif
+	@ifndef __CI
 	moveto(5,24,04);
 	if (peek(^$8000,0)=0) then
 		printstring("COMPLETE AND UTTER SUCCESS!",0,40)
 	else
 		printstring("TOTAL FAILURE!",0,40);
 	loop();
+	@endif
 end.

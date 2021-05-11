@@ -48,7 +48,7 @@ public:
 //    void dispatch(QSharedPointer<NodeForLoop> node);
 
 
-    QString AssignVariable(QSharedPointer<NodeAssign> node) override;
+    void AssignVariable(QSharedPointer<NodeAssign> node) override;
 
     bool isGB() {return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY; }
 

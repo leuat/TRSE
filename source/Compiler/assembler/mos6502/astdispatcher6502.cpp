@@ -1533,8 +1533,12 @@ bool ASTDispatcher6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QSt
     //  return true;
 }
 
-bool ASTDispatcher6502::IsSimpleAssignPointerExpression(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign> node)
+bool ASTDispatcher6502::IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign> node)
 {
+    auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    if (var==nullptr)
+        return false;
+
     if (var->getType(as)!=TokenType::POINTER)
         return false;
     if (var->m_expr==nullptr)
@@ -2595,8 +2599,9 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
 }
 
 
-void ASTDispatcher6502::AssignString(QSharedPointer<NodeAssign> node, bool isPointer) {
+void ASTDispatcher6502::AssignString(QSharedPointer<NodeAssign> node) {
 
+    bool isPointer = node->m_left->isPointer(as);
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 //    QString lbl = as->NewLabel("stringassign");
@@ -2639,38 +2644,13 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeVar> aVar = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
     node->VerifyReferences(as);
-
-
-    // If you are doing a pointer assignment, make sure that you are pointing to the same structures
-//    if (node->m_right->isArrayIndex())
-/*    {
-        // && node->m_right->isArrayOfRecord()) {
-        auto n = node->m_right;
-
-        qDebug() << "HERE pointer to array struct";
-        qDebug() << n->isRecord(as);
-        qDebug() << n->isArrayIndex();
-        qDebug() << n->isReference();
-
-    }
-*/
-
-
-//    if (!node->m_right->isAddress())
-  //      ErrorHandler::e.Error("Must be address", node->m_op.m_lineNumber);
-
-    if (IsSimpleIncDec(aVar,  node))
+    if (IsSimpleIncDec(node))
         return;
 
 
 
-
-
-    // Make sure that everything is a reference
     if (node->m_right->isPure()) {
-//        as->Comment("EPIC FAIL " + QString::number(qSharedPointerDynamicCast<NodeNumber>(node->m_right)!=nullptr));
-//        if (node->m_right->isPointer(as))
-  //          node->m_right->m_op.
+
         as->Asm("lda " + getValue8bit(node->m_right,false));
         as->Asm("ldx " + getValue8bit(node->m_right,true));
         as->Asm("sta " + getValue(aVar));
@@ -2682,29 +2662,16 @@ void ASTDispatcher6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     }
     // Generic expression
 
-  /*  if (node->m_right->isPureNumeric()) {
-        as->Asm("lda #" + QString::number(((int)node->m_right->numValue()) & 255));
-        as->Asm("ldx #" + QString::number(((int)node->m_right->numValue()>>8) & 255) );
-        as->Asm("sta " + getValue(aVar));
-        as->Asm("stx "+ getValue(aVar)+"+1");
-        return;
-
-    }*/
     node->m_right->forceWord();
     node->m_right->setForceType(TokenType::INTEGER);
-//    qDebug() << "ARGH HERE";
     as->Term();
     node->m_right->Accept(this);
     as->Term();
- //  as->Comment(";end");
     as->Asm("sta " + getValue(aVar));
-//    if (node->m_right->isWord(as))
-        as->Asm("sty "+ getValue(aVar)+"+1");
-  //  else
-    //    ErrorHandler::e.Warning("Assigning an 8-bit value to pointer. Is this intentional?", node->m_op.m_lineNumber);
+    as->Asm("sty "+ getValue(aVar)+"+1");
 
     return;
-     ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);
+//     ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);
 
 }
 
@@ -2904,9 +2871,12 @@ bool ASTDispatcher6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QShare
 
 
 
-bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign> node) {
+bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     // Right is binop
 //    return false;
+    auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    if (var==nullptr)
+        return false;
     QSharedPointer<NodeBinOP> rterm = qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
     if (rterm==nullptr)
         return false;
@@ -3032,17 +3002,6 @@ bool ASTDispatcher6502::IsSimpleIncDec(QSharedPointer<NodeVar> var, QSharedPoint
  *
 */
 
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeAssign> node)
-{
-    node->DispatchConstructor(as,this);
-
-//    as->PushCounter();
-
-    AssignVariable(node);
-
-  //  as->PopCounter(node->m_op.m_lineNumber);
-
-}
 
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
@@ -3185,7 +3144,7 @@ void ASTDispatcher6502::HackPointer(Assembler *as, QSharedPointer<Node> n)
 
 }
 
-
+/*
 void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
@@ -3194,11 +3153,6 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     //        qDebug() << "AssignVariable: " <<getValue(v) << " : " << TokenType::getType( v->getType(as));
 
     // Possible to do m+2 := 3;
-  /*  if (varBop) {
-        v = qSharedPointerDynamicCast<NodeVar>(varBop->m_left);
-        int n = varBop->m_right->getValueAsInt(as);
-    }
-*/
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
 
     if (v==nullptr && num == nullptr)
@@ -3341,7 +3295,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
 
         if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
-            AssignString(node,node->m_left->isPointer(as));
+            AssignString(node);
             return;
 
         }
@@ -3351,7 +3305,7 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     if (qSharedPointerDynamicCast<NodeString>(node->m_right) && v->m_expr==nullptr)
     {
-        AssignString(node,node->m_left->isPointer(as));
+        AssignString(node);
         return;
     }
     if (node->m_right==nullptr)
@@ -3370,18 +3324,14 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
         node->m_right->setForceType(TokenType::INTEGER);
     }
     // For constant i:=i+1;
-    if (IsSimpleIncDec(v,  node))
+    if (IsSimpleIncDec(node))
         return;
 
-    if (IsSimpleAssignPointerExpression(v,node))
+    // p[i]:=10;
+    if (IsSimpleAssignPointerExpression(node))
         return;
-
-//    if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr && (!(v->isPointer(as) && v->getArrayType(as)==TokenType::INTEGER))) {
-    if (!v->isWord(as) && node->m_right->isPure() && v->m_expr!=nullptr) {
-        StoreVariableSimplified(v, node->m_right);
+    if (StoreVariableSimplified(node))
         return;
-    }
-
 
     node->m_right->Accept(this);
     as->Term();
@@ -3389,6 +3339,52 @@ void ASTDispatcher6502::AssignVariable(QSharedPointer<NodeAssign> node) {
     StoreVariable(v);
 
     return;
+}
+*/
+void ASTDispatcher6502::AssignFromRegister(QSharedPointer<NodeAssign> node)
+{
+    QString vname = node->m_left->getValue(as);
+
+    QString reg = node->m_right->getValue(as).toLower();
+    //if (vname=="_a" || vname=="_x" || vname=="_y")
+    //{
+    if (!node->m_right->isPure())
+        ErrorHandler::e.Error("Using _A, _X and _Y register values must be pure.", node->m_op.m_lineNumber);
+
+    if (reg=="_ax") {
+        as->Asm("sta "+vname);
+        as->Asm("stx "+vname+"+1");
+        return;
+    }
+    if (reg=="_ay") {
+        as->Asm("sta "+vname);
+        as->Asm("sty "+vname+"+1");
+        return;
+    }
+
+    QString cmd = "st"+QString(reg[1]) + " "+vname;
+    as->Asm(cmd);
+}
+
+void ASTDispatcher6502::AssignToRegister(QSharedPointer<NodeAssign> node)
+{
+    QString vname = node->m_left->getValue(as).toLower();
+    //if (vname=="_a" || vname=="_x" || vname=="_y")
+    //{
+    QString reg = QString(vname[1]);
+    as->Comment("Assigning register : " + vname);
+    if (vname.count()==2) {
+        if (reg=="x" || reg=="y") {
+            if (!node->m_right->isPure())
+                ErrorHandler::e.Error("Setting _X and _Y register values must be pure number or variable.", node->m_op.m_lineNumber);
+
+            QString cmd = "ld"+QString(reg) + " "+node->m_right->getValue(as);
+            as->Asm(cmd);
+            return;
+        }
+        node->m_right->Accept(this);
+        as->Term();
+    }
 }
 
 void ASTDispatcher6502::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler* as)
@@ -3512,9 +3508,19 @@ void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSh
         return;
 }
 
-void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QSharedPointer<Node> expr)
+bool ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<Node> assignNode)
 {
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_expr);
+    QSharedPointer<NodeVar> node = qSharedPointerDynamicCast<NodeVar>(assignNode->m_left);
+    auto expr = assignNode->m_right;
+    if (node==nullptr)
+        return false;
+
+    if (!(!node->isWord(as) && expr->isPure() && node->m_expr!=nullptr))
+        return false;
+
+//    as->Comment("Simplified storevariable");
+
 
     if(node->getType(as)!=TokenType::POINTER)
     if (node->m_expr->isPureNumeric()) {
@@ -3527,7 +3533,7 @@ void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QS
         expr->Accept(this);
         as->Term();
         as->Asm("sta " + getValue(node)+" + " +Util::numToHex(pos));
-        return;
+        return true;
     }
 
     QString secondReg="x";
@@ -3557,7 +3563,7 @@ void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QS
         as->Asm("iny");
         as->Asm("txa");
         as->Asm("sta ("+getValue(node)+"),y");
-        return;
+        return true;
 
     }
     as->Asm("ta" + secondReg);
@@ -3565,5 +3571,6 @@ void ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeVar> node, QS
     expr->Accept(this);
     as->Term();
     as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
+    return true;
 
 }
