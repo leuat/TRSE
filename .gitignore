@@ -27,6 +27,7 @@ Publish/tutorials/AMSTRADCPC/Morketid/_unpack
 
 # Those extensions should only be generated
 Publish/tutorials/**/*.asm
+Publish/tutorials/**/*.exe
 Publish/tutorials/**/*.gb
 Publish/tutorials/**/*.sym
 Publish/tutorials/**/*.ssd
