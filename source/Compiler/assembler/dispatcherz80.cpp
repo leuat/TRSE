@@ -807,7 +807,7 @@ void ASTdispatcherZ80::StoreVariable(QSharedPointer<NodeVar> node)
 
 bool ASTdispatcherZ80::StoreVariableSimplified(QSharedPointer<Node> assignNode)
 {
-
+    return false;
 }
 
 
