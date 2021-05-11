@@ -32,8 +32,10 @@ ARCH = $$QMAKE_HOST.arch
 
 macx{
     CONFIG += warn_off
+
     #LIBS += -openmp
 #    ICON = trse.icns
+    QMAKE_CXXFLAGS += -Werror=return-type
     QMAKE_CXXFLAGS_RELEASE += -Ofast
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
