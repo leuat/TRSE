@@ -56,6 +56,3 @@ dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 0
 show_all_files = 1
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMIGA/small_intro/
-open_files = ,intro.ras
-current_file = intro.ras

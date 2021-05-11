@@ -22,12 +22,13 @@ options = [
 	Option('trse.ini', 'Path to the trse.ini file. If provided, used to determine all tools path although later options can override them.'),
 	Option('x64', 'Path to the x64 binary (VICE emulator for C64)', trse_ini_key='emulator'),
 	Option('cap32', 'Path to the cap32 binary (Amstrad CPC emulator)', trse_ini_key='amstradcpc_emulator'),
+	Option('dosbox', 'Path to the dosbox binary (DOS emulator)', trse_ini_key='dosbox'),
 	Option('assemble', 'Whether to assemble when compiling ("yes" or "no")', default_value='yes'),
 ]
 
 
 def Usage(rc):
-	print("Usage: python validate_all.py --trse [trse exe file] <--trse.ini [ trse.ini ]> <--x64 [ x64 vice emulator ]> <--cap32 [ cap32 emulator ]> <--assemble [yes | no]>")
+	print("Usage: python validate_all.py --trse [trse exe file] <--trse.ini [ trse.ini ]> <--x64 [ x64 vice emulator ]> <--cap32 [ cap32 emulator ]> <--dosbox [ dosbox emulator ]> <--assemble [yes | no]>")
 	print("must be run in the 'validate_all' directory.")
 	for opt in options:
 		print("  %s: %s [default: %s]" % (opt.name, opt.desc, opt.default_value))
@@ -93,6 +94,11 @@ trse = GetOption('trse')
 x64 = GetOption('x64')
 cap32 = GetOption('cap32')
 assemble = GetOption('assemble')
+dosbox = GetOption('dosbox')
+
+if (dosbox.endswith(".app")): 
+	dosbox+="/Contents/MacOS/DOSBox"
+
 if not trse:
 	Usage(1)
 
@@ -310,6 +316,40 @@ def C64UnitTests():
 	else:
 		print("Skipping C64 tests: emulator path '%s'" % x64)
 
+def DOSUnitTests():
+	os.chdir(orgPath)
+	if dosbox and os.path.exists(dosbox):
+		path =  os.path.abspath(lp+'X86/unittests/')
+		resultFile = path+"/RESULT.BIN"
+		if (os.path.exists(resultFile)):
+			os.remove(resultFile)
+
+		try:
+			# dosbox timeout per design
+			result = subprocess.run([dosbox,"-noautoexec",path+"/utests.exe"], timeout=5, stdout=PIPE, stderr=subprocess.STDOUT)
+			if result.stdout: print(result.stdout.decode('utf-8'))
+		except subprocess.TimeoutExpired as err:
+			# dosbox timeout per design, not error
+
+			#print("ERROR: Timeout for DOS unit tests expired.")
+			#failed.append([path, "utests.exe"])
+			if err.stdout: print(err.stdout.decode('utf-8'))
+#		print(os.path.exists(resultFile))
+		if (not os.path.exists(resultFile)):
+			time.sleep(1)
+		with open(resultFile, "rb") as f:
+			data = array('B')
+			# byte 2 should have 0 for success 
+			data.fromfile(f, 1)
+			if (data[0]==1):
+				failed.append([path, "utests.exe"])
+				print("******* SEVERE ERROR : DOS Execution unit test FAILED! Please fix up unittests")
+			else:
+				print("DOS Unittest SUCCESS!")
+	else:
+		print("Skipping DOS tests: emulator path '%s'" % dosbox)
+
+
 
 def CPCUnitTests():
 	os.chdir(orgPath)
@@ -321,7 +361,7 @@ def CPCUnitTests():
 			os.remove(resultFile)
 
 		try:
-			print([cap32,"-i",path+"/unittests.bin","-o","0x4000",])
+			#print([cap32,"-i",path+"/unittests.bin","-o","0x4000",])
 			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000","-a","CAP32_WAITBREAK CAP32_EXIT"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
@@ -343,6 +383,7 @@ def CPCUnitTests():
 
 
 def UnitTests():
+	DOSUnitTests();
 	C64UnitTests();
 	CPCUnitTests();
 

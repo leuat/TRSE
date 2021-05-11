@@ -48,6 +48,4 @@ zeropage_colormemory = $fc
 data_header_/users/leuat/code/trse/publish/tutorials/amiga/tutorials/images/trse.flf = 6.41269e-314
 data_header_images/trse.flf = 6.41269e-314
 show_all_files = 1
-open_files = ,tutorial4_3D.ras, tutorial2.ras, tutorial1.ras
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMIGA/tutorials/
-current_file = tutorial6_sprites.ras
+open_files =, tutorial1.ras

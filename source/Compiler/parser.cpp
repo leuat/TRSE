@@ -215,18 +215,7 @@ void Parser::InitBuiltinFunctions()
    }
 
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::NES ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::PET ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::X16 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM  ) {
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 ) {
 /*        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");
