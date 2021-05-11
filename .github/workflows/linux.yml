@@ -17,7 +17,7 @@ jobs:
       # For 'Verify all' tests
       # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
       # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
-      - run: sudo apt-get install lz4 python3 xvfb vice dosbox dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
+      - run: sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
           mkdir tools
@@ -68,6 +68,8 @@ jobs:
           sed -i "s,^amstradcpc_emulator =.*,amstradcpc_emulator = ${cap32}," Publish/publish_linux/trse.ini
           dosbox=$(which dosbox)
           sed -i "s,^dosbox =.*,dosbox = ${dosbox}," Publish/publish_linux/trse.ini
+          nasm=$(which nasm)
+          sed -i "s,^nasm =.*,nasm = ${nasm}," Publish/publish_linux/trse.ini
 
       - name: Build TRSE
         run: |
