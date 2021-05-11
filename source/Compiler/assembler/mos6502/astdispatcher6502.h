@@ -170,7 +170,6 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> node) override;
     void LoadVariable(QSharedPointer<NodeProcedure> node) override;
 
-    void StoreVariable(QSharedPointer<NodeVar> node) override;
 
     /*
      *
@@ -179,18 +178,23 @@ public:
      *
      *
     */
+    void StoreVariable(QSharedPointer<NodeVar> node) override;
 
     bool StoreVariableSimplified(QSharedPointer<Node> assignNode) override;
 
     void AssignString(QSharedPointer<NodeAssign>node) override;
 
-    void AssignPointer(QSharedPointer<NodeAssign>node) override;
+    bool AssignPointer(QSharedPointer<NodeAssign>node) override;
 
     bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
 
     bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) override;
 
     void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+
+    virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
+
+    virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
 
 
     bool isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
@@ -201,19 +205,6 @@ public:
     QString getReturnInterrupt() override { return "rti";}
 
 
-
-
-/*
- *
- *  ASSIGNVARIABLE STUFF
- *
- * */
-
-//    void AssignVariable(QSharedPointer<NodeAssign>node) override;
-
-
-    virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
-    virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
 
 
 

@@ -48,7 +48,36 @@ public:
 //    void dispatch(QSharedPointer<NodeForLoop> node);
 
 
+//    void AssignVariable(QSharedPointer<NodeAssign> node) override;
+
+    /*
+     *
+     * NodeAssign
+     *
+     *
+     *
+    */
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
+
+
+    void AssignString(QSharedPointer<NodeAssign>node) override;
+
+    bool AssignPointer(QSharedPointer<NodeAssign>node) override;
+
+    bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
+
+    bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) override;
+
+    virtual void GenericAssign(QSharedPointer<NodeAssign> node) override;
+
+
+    virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
+
+    virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
+
+    void StoreVariable(QSharedPointer<NodeVar> node) override;
+
+    bool StoreVariableSimplified(QSharedPointer<Node> assignNode) override;
 
     bool isGB() {return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY; }
 
@@ -68,13 +97,11 @@ public:
 
     void BuildToCmp(QSharedPointer<Node> node) override;
 
-    void HandleAssignPointers(QSharedPointer<NodeAssign> node);
 
     QString getPlusMinus(Token t);
     void Handle16bitShift(QSharedPointer<NodeBinOP>node);
 
 
-    void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
     QString getJmp(bool isOffPage) override;
     bool UseBlocks() override;
 

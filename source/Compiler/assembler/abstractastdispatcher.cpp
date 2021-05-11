@@ -274,6 +274,27 @@ void AbstractASTDispatcher::ValidateAssignStatement(QSharedPointer<NodeAssign> n
   */
 }
 
+void AbstractASTDispatcher::GenericAssign(QSharedPointer<NodeAssign> node) {
+    node->m_right->Accept(this);
+    as->Term();
+    as->Comment("Calling storevariable on generic assign expression");
+//    StoreVariable(VarOrNum(node->m_left));
+    StoreVariable(VarOrNum(node->m_left));
+}
+
+QSharedPointer<NodeVar> AbstractASTDispatcher::VarOrNum(QSharedPointer<Node> node)
+{
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node);
+
+    if (num!=nullptr) {
+        as->Comment("Assigning memory location");
+        v = QSharedPointer<NodeVar>(new NodeVar(num->m_op)); // Create a variable copy
+        v->value = num->HexValue();
+    }
+    return v;
+}
+
 void AbstractASTDispatcher::AssignPureRecords(QSharedPointer<NodeAssign> node)
 {
     auto v = node->m_left;
@@ -299,16 +320,8 @@ void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
     // Begin by validating all nodes
     ValidateAssignStatement(node);
     as->ClearTerm();
-
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
-
-    if (num!=nullptr) {
-        as->Comment("Assigning memory location");
-        v = QSharedPointer<NodeVar>(new NodeVar(num->m_op)); // Create a variable copy
-        v->value = num->HexValue();
-    }
-
+    auto v = VarOrNum(node->m_left);
+    node->m_left = v;
     bool ignoreLookup = false;
 
     // Get variable name
@@ -343,9 +356,7 @@ void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 
     // ****** RAW POINTERS
-    if (node->m_left->getType(as)==TokenType::POINTER && v->m_expr==nullptr) {
-        as->Comment("Assigning a pointer: " + getValue(v));
-        AssignPointer(node);
+    if (AssignPointer(node)) {
         return;
     }
 
@@ -364,20 +375,15 @@ void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
     // For constant i:=i+1;
     if (IsSimpleIncDec(node))
         return;
-
+    // p[i] := 10;
     if (IsSimpleAssignPointerExpression(node))
         return;
-
+    //a:=5;
      if (StoreVariableSimplified(node))
         return;
 
+    GenericAssign(node);
 
-    node->m_right->Accept(this);
-    as->Term();
-    as->Comment("Calling storevariable on generic assign expression");
-    StoreVariable(v);
-
-    return;
 
 }
 

@@ -141,14 +141,14 @@ begin
 	CTest1();
 	CTest2();
 	CTest3();
-/*	CTest4();
+	CTest4();
 	CTest5();
 	CTest6();
     CTest7(); 
     CTest8();    
     CTest9(); 
     CTest10();
- */
+ 
     // Fails for now - FIX UP
 	Common::WaitABit();
 

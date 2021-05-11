@@ -332,7 +332,7 @@ def DOSUnitTests():
 			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
 		if (not os.path.exists(resultFile)):
-			time.sleep(1)
+			time.sleep(8)
 		with open(resultFile, "rb") as f:
 			data = array('B')
 			# byte 2 should have 0 for success 

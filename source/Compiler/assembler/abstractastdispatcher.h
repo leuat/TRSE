@@ -125,7 +125,7 @@ public:
 
     virtual void AssignString(QSharedPointer<NodeAssign> node)  {}
     // Assigning a pure pointer  ptr := #someAddress + blah;
-    virtual void AssignPointer(QSharedPointer<NodeAssign> node)  {}
+    virtual bool AssignPointer(QSharedPointer<NodeAssign> node)  {}
 
     virtual bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) {return false;}
 
@@ -133,10 +133,11 @@ public:
 
     virtual bool StoreVariableSimplified(QSharedPointer<Node> n) {return false;}
 
+    virtual void GenericAssign(QSharedPointer<NodeAssign> node);
 
     /* The rest
      */
-
+    QSharedPointer<NodeVar> VarOrNum(QSharedPointer<Node> node);
 
     void virtual dispatch(QSharedPointer<NodeConditional> node);
 
