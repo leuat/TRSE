@@ -298,7 +298,7 @@ def C64UnitTests():
 			result = subprocess.run([x64,"+sound","-autostartprgmode","1","-moncommands",test6502+".sym",test6502+".prg",], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
-			print("ERROR: Timeout for unit tests expired.")
+			print("ERROR: Timeout for C64 unit tests expired.")
 			failed.append([path, "unittest.prg"])
 			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
@@ -325,13 +325,10 @@ def DOSUnitTests():
 			os.remove(resultFile)
 
 		try:
-			# dosbox timeout per design
-			print([dosbox,"-noautoexec",path+"/utests.exe"])
-			result = subprocess.run([dosbox,"-noautoexec",path+"/utests.exe"], timeout=5, stdout=PIPE, stderr=subprocess.STDOUT)
+			result = subprocess.run([dosbox,"-noautoexec","-exit",path+"/utests.exe"], timeout=5, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
-			# dosbox timeout per design, not error
-			print("Timeout (expected) for DOS unit tests.")
+			print("ERROR: Timeout for DOS unit tests expired.")
 			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
 		if (not os.path.exists(resultFile)):
@@ -364,7 +361,7 @@ def CPCUnitTests():
 			result = subprocess.run([cap32,"-O","system.printer=1","-O","file.printer_file=printer.dat","-i",path+"/unittests.bin","-o","0x4000","-a","CAP32_WAITBREAK CAP32_EXIT"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT)
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
-			print("ERROR: Timeout for unit tests expired.")
+			print("ERROR: Timeout for CPC unit tests expired.")
 			failed.append([path, "unittests.ras"])
 			if err.stdout: print(err.stdout.decode('utf-8'))
 #		print(os.path.exists(resultFile))
