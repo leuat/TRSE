@@ -415,7 +415,7 @@ def GBUnitTests():
 			while more_output:
 				try:
 					line = q.get_nowait().decode('utf-8')
-					print('<%s>' % line)
+					#print('<%s>' % line)
 					if 'c800: fe ed c0 ff ee' in line:
 						result = 'SUCCESS'
 						finished = True
