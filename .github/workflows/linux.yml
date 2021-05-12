@@ -55,7 +55,7 @@ jobs:
           make -j 2
           cd ..
           # Build SameBoy (GameBoy emulator): requires rgbasm (built before)
-          export PATH=`pwd`/rgbds/:$PATH
+          export PATH=`pwd`/rgbds/build/src:$PATH
           git clone https://github.com/LIJI32/SameBoy.git
           cd SameBoy
           make -j 2
