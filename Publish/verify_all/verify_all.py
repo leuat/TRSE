@@ -242,6 +242,7 @@ fillRasList(len(tests)-1,".")
 tests.append([ "GAMEBOY/tutorials",[]])
 fillRasList(len(tests)-1,".")
 tests.append([ "GAMEBOY/yo-grl",["demo.ras"]])
+tests.append([ "GAMEBOY/UnitTests",["unittests.ras"]])
 
 
 
