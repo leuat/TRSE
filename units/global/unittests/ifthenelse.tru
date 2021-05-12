@@ -387,7 +387,7 @@ end;
 // when Vars::v1 is 255 and Vars::v2 is 0
 procedure BranchSize1();
 begin
-	Vars::text := "   B1:"; if (7 > 5)  then begin Common::PASS(); nop(120);end else begin Common::FAIL(); end;
+	Vars::text := "   B1:"; if (7 > 5)  then begin Common::PASS(); end else begin Common::FAIL(); end;
 end;
 
 // when Vars::v1 is 255 and Vars::v2 is 0
