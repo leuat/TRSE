@@ -238,7 +238,11 @@ void AbstractASTDispatcher::dispatch(QSharedPointer<NodeControlStatement> node)
 }
 
 
-
+/*
+ *
+ * Performs generic validation of assign stataement
+ *
+ */
 void AbstractASTDispatcher::ValidateAssignStatement(QSharedPointer<NodeAssign> node)
 {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -274,6 +278,12 @@ void AbstractASTDispatcher::ValidateAssignStatement(QSharedPointer<NodeAssign> n
   */
 }
 
+/*
+ *
+ * Default generic assign statement (default for the c64)
+ *
+ */
+
 void AbstractASTDispatcher::GenericAssign(QSharedPointer<NodeAssign> node) {
     node->m_right->Accept(this);
     as->Term();
@@ -281,7 +291,14 @@ void AbstractASTDispatcher::GenericAssign(QSharedPointer<NodeAssign> node) {
 //    StoreVariable(VarOrNum(node->m_left));
     StoreVariable(VarOrNum(node->m_left));
 }
-
+/*
+ *
+ * Used in the beginning of node assignment: if the variable
+ * assigned to is a *number* (memory address), simply replace
+ * name of the variable with the number value. Used in
+ * screen_bg_col:=red etc where "screen_bg_col" is a memory address (const)
+ *
+ */
 QSharedPointer<NodeVar> AbstractASTDispatcher::VarOrNum(QSharedPointer<Node> node)
 {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node);
@@ -294,7 +311,19 @@ QSharedPointer<NodeVar> AbstractASTDispatcher::VarOrNum(QSharedPointer<Node> nod
     }
     return v;
 }
-
+/*
+ *
+ * How to handle assignments between pure objects, ie
+ * Monster = record
+ * ...
+ * end;
+ * a,b : Monster;
+ *
+ * a:=b;
+ *
+ * NB Classes not supported yet
+ *
+ */
 void AbstractASTDispatcher::AssignPureRecords(QSharedPointer<NodeAssign> node)
 {
     auto v = node->m_left;
@@ -313,7 +342,14 @@ void AbstractASTDispatcher::AssignPureRecords(QSharedPointer<NodeAssign> node)
 
 }
 
-
+/*
+ *
+ * One of the main hearts of TRSE: the abstract AssignVariable statement
+ * generator. Current users: 6502 and Z80. Be sure to implement the rest soon!
+ *
+ * Handles everything of tye type A := B; in TRSE. Which is.. 96% of the language.
+ *
+ */
 
 void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
 {
@@ -355,23 +391,20 @@ void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
     }
 
-    // ****** RAW POINTERS
+    // ****** Pointer handling
     if (AssignPointer(node)) {
         return;
     }
-
+    // Lookup for a type check
     if (!ignoreLookup)
        QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 
-
-
-
-//    if (node->m_left->isWord(as))
 
     if (node->m_left->isWord(as)) {
 //        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->setForceType(TokenType::INTEGER);
     }
+
     // For constant i:=i+1;
     if (IsSimpleIncDec(node))
         return;
@@ -383,7 +416,6 @@ void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
 
     GenericAssign(node);
-
 
 }
 

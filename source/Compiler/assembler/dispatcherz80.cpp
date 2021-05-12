@@ -823,7 +823,6 @@ bool ASTdispatcherZ80::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
         if (bop->ContainsVariable(as,var->getValue(as))) {
             // We are sure that a:=a ....
             // first, check if a:=a + number
-            //            as->Comment("In BOP");
 
             // Handle 16 bit op
             if (bop->isWord(as)) {

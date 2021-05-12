@@ -736,7 +736,7 @@ void ASTdispatcherX86::AssignVariable(QSharedPointer<NodeAssign> node)
             as->Asm("shl ax,2 ; pointer lookup");
             as->Asm("mov bx,ax");
             as->Asm("lea si,["+var->getValue(as)+"]");
-            as->Asm("mov [ds:si+bx],di ; store in psointer array");
+            as->Asm("mov [ds:si+bx],di ; store in pointer array");
             as->Asm("mov [ds:si+bx+2],es");
 /*
             as->Asm("mov bx,ax");

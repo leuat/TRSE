@@ -76,7 +76,6 @@ begin
 
 	// Print text to buffer
 	Screens::PrintText(#Screens::storage,3,3, 0, #text1);
-
 	
 	// Copy buffer to screen - again, only on HBLANK!
 	Screens::CopyBankHB(#Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
