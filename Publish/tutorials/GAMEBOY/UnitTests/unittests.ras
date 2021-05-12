@@ -1,0 +1,33 @@
+Program UnitTestsGameboy;
+@use "unittests/unittests"
+@use "unittests/common"
+
+procedure TestResult(vb : byte);
+begin
+	if vb = 0 then
+	begin
+		Poke(^$C800, 0, $FE);
+		Poke(^$C801, 0, $ED);
+		Poke(^$C802, 0, $C0);
+		Poke(^$C803, 0, $FF);
+		Poke(^$C804, 0, $EE);
+	end
+	else
+	begin
+		Poke(^$C800, 0, $BA);
+		Poke(^$C801, 0, $DB);
+		Poke(^$C802, 0, $AD);
+		Poke(^$C803, 0, $C0);
+		Poke(^$C804, 0, $DE);
+	end;
+end;
+
+
+begin
+	Unittests::Exec();
+	if Common::gb_unittests_status = 0 then
+		TestResult(0)
+	else
+		TestResult(1);
+	loop();
+end.

@@ -1,0 +1,48 @@
+unit Common;
+@use "unittests/vars"
+var
+  gb_unittests_common_string : array[9] of byte;
+  gb_unittests_status : byte;
+
+// Called at the beginning of the testing
+procedure TestInit();
+begin
+end;
+
+// Called at the beginning of each test suite (multiple test cases grouped together)
+procedure TestSuiteInit();
+begin
+end;
+	
+procedure Initialise(zp:pointer);
+begin
+end;
+
+function Status() : byte;
+begin
+	Status := gb_unittests_status;
+end;
+
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+end;
+
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+  gb_unittests_status := 1;
+end;
+
+procedure WaitABit();
+begin
+//  for Vars::v1:=0 to 16 do for Vars::v2:=0 to 255 do asm("nop");
+end;
+
+procedure DebugValue(v:integer);
+begin
+end;
+
+end.
+
+
