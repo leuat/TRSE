@@ -44,7 +44,7 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node, bool isPoin
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
-    QString strAssign = str + "\tdb \"" + right->m_op.m_value + "\",0";
+    QString strAssign = str + ": db \"" + right->m_op.m_value + "\",0";
     // Temp vars are place with variables in the code, no need for a jmp
     as->m_tempVars<<strAssign;
 
