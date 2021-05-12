@@ -23,7 +23,7 @@ options = [
 	Option('x64', 'Path to the x64 binary (VICE emulator for C64)', trse_ini_key='emulator'),
 	Option('cap32', 'Path to the cap32 binary (Amstrad CPC emulator)', trse_ini_key='amstradcpc_emulator'),
 	Option('dosbox', 'Path to the dosbox binary (DOS emulator)', trse_ini_key='dosbox'),
-	Option('sameboy', 'Path to the sameboy binary (GameBoy emulator)', trse_ini_key='sameboy'),
+	Option('sameboy', 'Path to the sameboy binary (GameBoy emulator)', trse_ini_key='gameboy_emulator'),
 	Option('assemble', 'Whether to assemble when compiling ("yes" or "no")', default_value='yes'),
 ]
 
