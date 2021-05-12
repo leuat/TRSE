@@ -13,12 +13,14 @@ Unit Unittests;
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests :byte = 6;
-	currentTest : byte = 0;
-	isDone: boolean = false;
+	const noTests : byte = 6;
+	currentTest : byte;
+	isDone: boolean;
 
 procedure Exec();
 begin
+	currentTest := 0;
+	isDone := false;
 	Common::TestInit();
 @ifndef ATARI520ST
 	while (Common::Status() = 0 and isDone = false) do
@@ -29,7 +31,9 @@ begin
 @endif 
 	begin
 		Common::TestSuiteInit();
+		@ifndef GAMEBOY  // Fails because of `org`
 		if (currentTest=0) then Classes::Exec();
+		@endif
 		if (currentTest=1) then CaseTest::Exec();
 		if (currentTest=5) then MulDiv::Exec();
 		if (currentTest=2) then IfThenElse::Exec();

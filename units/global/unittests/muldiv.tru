@@ -1,4 +1,5 @@
 unit MulDiv;
+@use "unittests/vars"
 var
 
 // Byte mul byte
@@ -202,29 +203,34 @@ end;
 
 procedure Exec();
 begin
-
+	@ifndef GAMEBOY  // Fails because ld hl,Var is not supported on GBZ80
 	// initialise everything
 	Common::Initialise("MULDIV TESTS");
+	@endif
 	
 	// Mul and div
-
 	ByteMulByte01();
 	ByteMulBytePow202();
+	@ifndef GAMEBOY  // Doesn't work because of `ex`
 	IntByteMul06();
 	IntMulPow07();
-	IntMulMix13(); // fails?
+	IntMulMix13();
 	// Z80 lacks int*int
 	IntMulInt14(); // Not implemented, fails
 	IntMulAdvancedMix15(); // fails
+	@endif
 	ByteMulAdvanced16();
+	@ifndef GAMEBOY
 	IntMulConst17();
 	IntCombConst18();
 	IntCombConst19();
 	IntShift20();
 	IntShift21();
+	@endif
 	
 	ByteMulMul05();
-	
+
+	@ifndef GAMEBOY
 	ByteDivBytePow203();
 	ByteDivByte04();
 	IntDivByte08();
@@ -234,6 +240,7 @@ begin
 	IntDivMix12();
 	
 	IntMulAdvancedMix15();
+	@endif
 	
 	Common::WaitABit();
 

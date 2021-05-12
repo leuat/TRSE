@@ -33,14 +33,17 @@ end;
 /* MAIN PROGRAM */
 procedure Exec();
 begin
-
+	@ifndef GAMEBOY  // Fails because `ld hl,Var` is not supported on GBZ80
 	// initialise everything
 	Common::Initialise("CASE");
+	@endif
 	
 	// Mul and div
 	Test1();
+	@ifndef GAMEBOY
 	@ifndef AMSTRADCPC
 	Test2();
+	@endif
 	@endif
 	Common::WaitABit();
 end;

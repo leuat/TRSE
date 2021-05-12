@@ -418,17 +418,19 @@ end;
 /* MAIN PROGRAM */
 procedure Exec();
 begin
-
+	@ifndef GAMEBOY  // Fails because ld hl,Var is not supported on GBZ80
 	// initialise everything
 	Common::Initialise("IF TESTS");
-	
+	@endif
+
 	// Greater than conditional tests 
 	GT1_GreaterThan_True();
 	GT2_GreaterThan_False();
 	GT3_GreaterThan_False();
 	GT4_GreaterThan_False();
 	GT5_GreaterThan_True();
-	
+
+
 	// Greater than or equal to conditional tests
 	GTE1_GreaterEqual_True();
 	GTE2_GreaterThan_False();
@@ -460,10 +462,7 @@ begin
 	Advanced1();
 	Advanced2();
 
-
-
-	// Integer comparison not supported on the z80 yet
-	
+	@ifndef GAMEBOY  // Fails because of `ex`
 	
 	// Greater than conditional tests 
 	IGT1_GreaterThan_True();
@@ -503,6 +502,8 @@ begin
 	AdvancedI3();
 	AdvancedI4();
 	AdvancedI5();
+	@endif
+
 	Common::WaitABit();
 
 //	BranchSize1();

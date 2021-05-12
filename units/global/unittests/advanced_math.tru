@@ -1,4 +1,6 @@
 unit AdvancedMath;
+@use "unittests/vars"
+@use "unittests/common"
 var
 procedure Advanced01();
 begin
@@ -85,10 +87,12 @@ end;
 */
 procedure Exec();
 begin
-
+	@ifndef GAMEBOY  // Fails because `ld hl,Var` is not supported on GBZ80
 	// initialise everything
 	Common::Initialise("ADVANCED TESTS");
+	@endif
 	
+	@ifndef GAMEBOY  // Fails because of `ex`
 	Advanced01();
 	Advanced02();
 	Advanced03();
@@ -98,6 +102,7 @@ begin
 	Advanced06();
 	Advanced07(); 
 	Advanced08();
+	@endif
 	@endif
 //	Advanced09();// fails
 	Common::WaitABit();
