@@ -20,8 +20,6 @@ jobs:
       - run: sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
-          # TODO(ColinPitrat): Remove nasm version, for debug only
-          nasm --version
           mkdir tools
           cd tools
           # vasm (Atari)
@@ -67,10 +65,8 @@ jobs:
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir = ${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
           sed -i "s,^exomizer =.*,exomizer = ${PWD}/tools/exomizer/src/exomizer," Publish/publish_linux/trse.ini
           c1541=$(which c1541)
-          echo "Found c1541 in: '${c1541}'"
           sed -i "s,^c1541 =.*,c1541 = ${c1541}," Publish/publish_linux/trse.ini
           x64=$(which x64)
-          echo "Found x64 in: '${x64}'"
           sed -i "s,^emulator =.*,emulator = ${x64}," Publish/publish_linux/trse.ini
           cap32=`pwd`/tools/caprice32/cap32
           sed -i "s,^amstradcpc_emulator =.*,amstradcpc_emulator = ${cap32}," Publish/publish_linux/trse.ini
