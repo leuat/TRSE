@@ -1,0 +1,332 @@
+Unit txt;
+var
+
+	i:byte=0;
+	temp_address_p: pointer;
+	ytab : array[25] of integer=(
+		0,0,0,0,0,0,
+		0,0,0,0,0,0,
+		0,0,0,0,0,0,
+		0,0,0,0,0,0);
+	screen_memory: pointer;
+	max_digits,next_digit: integer;
+	temp_num_p: pointer;
+	temp_num: integer;
+	temp_i: byte=0;
+	this_bbc: byte=0;
+
+@ifdef BBCM
+	// Address Locations of operating system functions
+	const	OSBYTE: address =  $FFF4; // Entry point for OSBYTE (AKA VDU command) http://beebwiki.mdfs.net/OSBYTE
+	const 	OSWRCH: address =  $FFEE; // Print the char in accumulator 
+	const 	OSNEWL: address =  $FFE7; // Newline carriage return + new line
+	const 	OSASCI: address =  $FFE3; // Print text + CRNL at ch13 in string
+	const	CRTC_V: address =  $FE00; // Video controller register
+	const	SCR_MO: address =  $FE20; // screen mode register 
+	const	OSRDCH: address =  $FFE0; // Read Character
+	const	CUR_OF: address =  $FE01; // Cursor off
+
+	// BBC cursors		        
+   const CUR_U: byte = $8B;
+   const CUR_D: byte = $8A;
+   const CUR_L: byte = $88;
+   const CUR_R: byte = $89;
+
+@endif
+
+@ifdef APPLEII
+   
+// Apple II cursors		        
+   const CUR_U: byte = 11;
+   const CUR_D: byte = 10;
+   const CUR_L: byte = 8;
+   const CUR_R: byte = 21;
+
+@endif
+
+@ifdef PET
+   
+// PET numeric keypad cursors		        
+   const CUR_U: byte = 56;
+   const CUR_D: byte = 53;
+   const CUR_L: byte = 52;
+   const CUR_R: byte = 54;
+
+
+@endif
+
+@ifdef VIC20
+   
+// VIC QAOP		        
+   const CUR_U: byte = 81;
+   const CUR_D: byte = 65;
+   const CUR_L: byte = 79;
+   const CUR_R: byte = 80;
+
+@endif
+
+@ifdef C64
+   
+// C64 QAOP		        
+   const CUR_U: byte = 81;
+   const CUR_D: byte = 65;
+   const CUR_L: byte = 79;
+   const CUR_R: byte = 80;
+
+@endif
+
+@ifdef ATARI800
+   
+// Atari cursors		        
+   const CUR_U: byte = 28;
+   const CUR_D: byte = 29;
+   const CUR_L: byte = 30;
+   const CUR_R: byte = 31;
+
+@endif
+
+
+// Function prototypes
+  	procedure cls();
+	procedure cursor_home();
+	procedure move_to(_text_x: byte, _text_y: byte);
+	procedure wait_vsync();
+	procedure text_colour(_chosen_text_colour: byte);
+	procedure print_string(in_str: pointer, CRLF: byte = True);
+	function get_key():byte;
+	procedure wait_key();
+	procedure clear_buffer();
+	procedure beep();
+	procedure DefineScreen();
+    procedure put_char_at(_atx,_aty,_atchar:byte);
+    procedure put_ch(CH:byte);
+    function get_char_at(_col,_row:byte):byte;
+	function str_compare(str1,str2:pointer):byte;
+	procedure put_dec_at(_natx,_naty,_nat:byte);
+	procedure print_dec(_in_n:byte, _add_cr:byte);
+	function str_to_dec(_in_str:pointer):byte;
+	function get_dec():integer;
+	procedure cursor_on();
+	procedure cursor_off();
+
+
+
+
+@ifdef APPLEII
+   @include "apple_text_mode.ras"
+@endif
+
+@ifdef ATARI800
+   @include "atari_text_mode.ras"
+@endif
+
+@ifdef BBCM
+   @include "bbc_text_mode.ras"
+@endif
+
+@ifdef PET
+   @include "pet_text_mode.ras"
+@endif
+
+@ifdef VIC20
+   @include "vic_text_mode.ras"
+@endif
+
+@ifdef C64
+   @include "c64_text_mode.ras"
+@endif
+
+
+	// Compare two strings for equality
+	function str_compare(str1,str2:pointer):byte;
+	var
+		si:byte=0;
+		_match:byte=False;
+	begin
+		si:=0;
+		_match:=False;
+
+		while(str1[si]>0 and str1[si]<>155) do
+		begin
+			if(str1[si]=str2[si]) then
+			begin
+				_match:=True;
+			end
+			else
+			begin	
+				_match:=False;
+			end;
+
+			inc(si);
+		end;
+
+		returnvalue(_match);
+	end;
+
+
+	procedure put_dec_at(_natx,_naty,_nat:byte);
+	var
+		tnat:byte;
+	begin
+	
+		max_digits:=0;
+		next_digit:=0;
+		temp_num_p:=0;
+		temp_num:=0;
+		temp_i:=0;
+
+		if(_nat>9) then
+		begin	
+			temp_num:=_nat;
+			while(temp_num>1) do
+			begin
+				inc(max_digits);
+				temp_num:=temp_num/10;
+			end;
+
+			if(_nat >= 100) then 
+			begin
+				// Left
+				temp_num:=_nat/100;
+				put_char_at(_natx,_naty,temp_num+48);
+
+				// middle 
+				temp_num:=(_nat-100)/10;
+				if(temp_num>9) then temp_num:=temp_num-10;
+				put_char_at(_natx+1,_naty,temp_num+48);
+
+				// right digit
+				temp_num:=_nat-(_nat/(10)*10);
+				put_char_at(_natx+2,_naty,temp_num+48);
+				move_to(_natx+3,_naty);
+			end
+			else
+			begin
+
+				// left digit
+				temp_num:=_nat/(10);
+				put_char_at(_natx,_naty,temp_num+48);
+
+				// right digit 
+				temp_num:=_nat-(_nat/(10)*10);
+				put_char_at(_natx+1,_naty,temp_num+48);
+				move_to(_natx+2,_naty);
+			end;
+
+
+		end
+		else
+		begin
+			put_char_at(_natx,_naty,_nat+48);
+			move_to(_natx+1,_naty);
+		end;
+	end;
+
+@ifndef ATARI800
+	procedure print_dec(_in_n:byte, _add_cr:byte);
+	begin
+		
+		next_digit:=0;
+		temp_num_p:=0;
+		temp_num:=0;
+		temp_i:=0;
+
+		if(_in_n>9) then
+		begin	
+
+			if(_in_n > 99) then 
+			begin
+				// Left
+				temp_num:=_in_n/100;
+				put_ch(temp_num+48);
+
+				// middle 
+				// 12
+				temp_num:=_in_n/10-((_in_n/100)*10);
+				if(temp_num>9) then temp_num:=temp_num-10;
+				put_ch(temp_num+48);
+
+				// right digit
+				temp_num:=mod(_in_n,10);
+				put_ch(temp_num+48);
+
+			end
+			else
+			begin
+
+				// left digit
+				temp_num:=_in_n/10;
+				put_ch(temp_num+48);
+
+				// right digit
+				temp_num:=_in_n-((_in_n/10)*10);
+				put_ch(temp_num+48);
+			end;
+
+		end
+		else
+		begin
+			put_ch(_in_n+48);
+		end;
+
+		if(_add_cr) then cursor_return();
+	end;
+@endif
+
+@ifdef ATARI800
+
+	procedure print_dec(_in_n:byte, _add_cr:byte);
+	var
+		tx,ty:integer;
+	begin
+		tx:=createinteger(peek(^86,0),peek(^85,0));
+		ty:=peek(^84,0);
+		_A:=0;
+		_X:=0;
+		_Y:=0;
+		put_dec_at(tx,ty,_in_n);
+		if(_add_cr=True) then cursor_return;
+	end;
+
+@endif
+
+	function str_to_dec(_in_str:pointer):byte;
+	begin
+
+		next_digit:=0;
+		temp_num:=0;
+		temp_i:=0;
+		max_digits:=0;
+
+		while(_in_str[max_digits]>0) do
+		begin
+			inc(max_digits);
+		end;
+		dec(max_digits);
+
+		for temp_i:=0 to max_digits do
+		begin
+
+			if(_in_str[temp_i]=48) then
+			begin
+				next_digit:=0;
+			end
+			else
+			begin
+				next_digit:=_in_str[temp_i]-48;
+			end;
+
+			temp_num:=(temp_num*10)+next_digit;
+		end;
+
+		returnvalue(temp_num);
+	end;	
+
+	function get_dec():integer;
+	begin
+		temp_num_p:=get_string();
+		returnvalue(str_to_dec(temp_num_p));
+	end;
+
+
+end.

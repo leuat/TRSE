@@ -42,3 +42,4 @@ Publish/tutorials/**/*.prg
 #Publish/tutorials/**/*.bin_c
 #Publish/tutorials/**/*.chr
 #Publish/tutorials/**/*.dat
+.DS_Store
