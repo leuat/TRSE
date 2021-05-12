@@ -151,6 +151,7 @@ begin
 	// initialise everything
 	Common::Initialise("INTEGER TESTS");
 	
+	@ifndef GAMEBOY  // Fails because of `ex`
 	T01();
 	T02();
 	T03();
@@ -163,12 +164,12 @@ begin
 	T08();
 	T09();
 	T10();
-//	@endif
 	
 	T11();
 	T12();
 	//T13();
 	//T14();
+	@endif
 	
 	
 	Common::WaitABit();

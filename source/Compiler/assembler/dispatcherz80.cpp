@@ -45,13 +45,14 @@ void ASTdispatcherZ80::AssignString(QSharedPointer<NodeAssign> node) {
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
-    QString strAssign = str + "\tdb \"" + right->m_op.m_value + "\",0";
+    QString strAssign = str + ": db \"" + right->m_op.m_value + "\",0";
     // Temp vars are place with variables in the code, no need for a jmp
     as->m_tempVars<<strAssign;
 
     if (isPointer) {
         as->Asm("ld hl,"+str);
-        as->Asm("ld ["+getValue(left)+"],hl");
+        LoadPointer(left);
+//        as->Asm("ld ["+getValue(left)+"],hl");
     }
     else {
         // If not a pointer, copy everything
@@ -108,7 +109,8 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
             step->setForceType(TokenType::INTEGER);
             step->Accept(this);
             as->Comment(";here");
-            as->Asm("ex de,hl");
+//            as->Asm("ex de,hl");
+            ExDeHl();
             nodeA->m_left->Accept(this);
             as->Asm("add hl,de");
 
@@ -237,13 +239,7 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
     }
     else {
         bop->m_right->Accept(this);
-        if (isGB()) {
-            as->Asm("ld d,h");
-            as->Asm("ld e,l");
-        }
-        else {
-            as->Asm("ex de,hl");
-        }
+        ExDeHl();
     }
     LoadVariable(var); // Load address into hl
     //    as->Comment(";Comment : "+node->m_left->isWord(as)+TokenType::getType(node->m_left->m_forceType));
@@ -259,7 +255,7 @@ void ASTdispatcherZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QShared
         return;
     }
     if (!isGB()) {
-        as->Asm("sbc hl,de");
+        SbcHlDe();
         StoreAddress(var);
         return;
 
@@ -330,9 +326,11 @@ void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lb
 
     if (node->m_op.m_type!=TokenType::LESSEQUAL) {
         node->m_right->Accept(this);
-        as->Asm("ex de,hl");
+        ExDeHl();
+//        as->Asm("ex de,hl");
         node->m_left->Accept(this);
-        as->Asm("sbc hl,de");
+//        as->Asm("sbc hl,de");
+        SbcHlDe();
     }
 
     if (node->m_op.m_type==TokenType::EQUALS)
@@ -353,9 +351,11 @@ void ASTdispatcherZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lb
     }
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
         node->m_left->Accept(this);
-        as->Asm("ex de,hl");
+//        as->Asm("ex de,hl");
+        ExDeHl();
         node->m_right->Accept(this);
-        as->Asm("sbc hl,de");
+//        as->Asm("sbc hl,de");
+        SbcHlDe();
 
         as->Asm("j"+p+" c," + lblFailed);
 //      as->Asm("j"+p+" z, " + lblFailed);
@@ -402,7 +402,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
             if (node->m_left->isWord(as) && node->m_right->isWord(as)) {
 
                 node->m_right->Accept(this);
-                as->Asm("ex de,hl");
+//                as->Asm("ex de,hl");
+                ExDeHl();
                 node->m_left->Accept(this);
 //                as->Asm("ld ac,hl");
                 as->Asm("ld a,h");
@@ -548,12 +549,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
         //        if (node->m_right->isWord(as))
         //          as->Asm("ld d,0");
         node->m_right->Accept(this);
-        if (isGB()) {
-            as->Asm("push hl");
-            as->Asm("pop de");
-        }
-        else
-            as->Asm("ex de,hl");
+        ExDeHl();
 
         bool advanced = !node->m_left->isPure();
 
@@ -568,7 +564,8 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
             return;
         }
         if (node->m_op.m_type == TokenType::MINUS) {
-            as->Asm("sbc hl,de");
+//            as->Asm("sbc hl,de");
+            SbcHlDe();
             return;
 
         }
@@ -698,7 +695,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("inc hl");
                 as->Asm("ld a,[hl]");
                 as->Asm("ld d,a");
-                as->Asm("ex de,hl");
+                ExDeHl();
         }
 
         return;
@@ -789,6 +786,35 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 
 }
+
+void ASTdispatcherZ80::ExDeHl()
+{
+    if (isGB()) {
+        as->Asm("push hl");
+        as->Asm("pop de");
+    }
+    else
+        as->Asm("ex de,hl");
+
+}
+
+void ASTdispatcherZ80::SbcHlDe()
+{
+    if (isGB()) {
+        as->Asm("ld a,l");
+        as->Asm("or a");
+        as->Asm("sub e");
+
+        as->Asm("ld l,a");
+        as->Asm("ld a,h");
+
+        as->Asm("sbc a,d");
+    }
+    else
+        as->Asm("sbc hl,de");
+
+}
+
 
 
 void ASTdispatcherZ80::AssignFromRegister(QSharedPointer<NodeAssign> node)
@@ -954,14 +980,7 @@ void ASTdispatcherZ80::GenericAssign(QSharedPointer<NodeAssign> node)
 
 
         as->Comment("Integer assignment ");
-        if (!isGB())
-            as->Asm("ld ["+name+"],hl");
-        else {
-            as->Asm("ld a,h");
-            as->Asm("ld ["+name+"+1],a");
-            as->Asm("ld a,l");
-            as->Asm("ld ["+name+"],a");
-        }
+        LoadPointer(var);
         return;
     }
     node->m_right->Accept(this);
@@ -981,6 +1000,22 @@ void ASTdispatcherZ80::GenericAssign(QSharedPointer<NodeAssign> node)
 void ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 {
     AbstractASTDispatcher::AssignVariable(node);
+}
+
+void ASTdispatcherZ80::LoadPointer(QSharedPointer<Node> node)
+{
+
+    QString name = getValue(node);
+    as->Comment("Loading pointer");
+    if (!isGB())
+        as->Asm("ld ["+name+"],hl");
+    else {
+        as->Asm("ld a,h");
+        as->Asm("ld ["+name+"],a");
+        as->Asm("ld a,l");
+        as->Asm("ld ["+name+"+1],a");
+    }
+
 }
 
 

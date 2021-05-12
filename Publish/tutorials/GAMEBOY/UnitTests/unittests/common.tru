@@ -1,0 +1,110 @@
+unit Common;
+@use "unittests/vars"
+@use "screens"
+var
+  gb_unittests_common_string : array[9] of byte;
+  gb_unittests_status : byte;
+  sc:pointer;
+  curx, cury : byte;
+// Automatically export the character image
+@export "charset.flf" "charset.bin" 256
+
+	// Place data in one of the 16kb banks at $4000-$7FFF. 
+	// You have a *lot* of free ROM space for graphics and other data!
+	
+	const charBank : byte = 1;
+    font : incbin("charset.bin") bank(charBank);
+	const COLUMNWIDTH:byte=5;
+	text: array[COLUMNWIDTH] of byte wram;	
+	
+	
+procedure Advance();
+begin
+	sc := sc + COLUMNWIDTH;
+	curx:=curx+ COLUMNWIDTH;
+	
+	if (curx>15) then
+	begin
+		curx:=0;
+		cury+=1;
+		sc := #Screens::storage;
+		sc+= 32*cury;
+	end;
+end;
+
+	
+	
+// Called at the beginning of the testing
+
+procedure TestInit();
+begin
+	sc := #Screens::storage;
+	// Set default palette : each of the 4 colors are defined by 2 bits : 11 = black, 00 = white.
+	background_palette:=%10010011;
+	Screens::Set9800();
+	Screens::CopyBankHB(#font, vram_charset, 8); // Copy 4x$100 bytes of data
+	Screens::ClearScreen(#screens::storage, $80);
+	Screens::ClearScreen(screen0, $80);
+	
+end;
+
+// Called at the beginning of each test suite (multiple test cases grouped together)
+procedure TestSuiteInit();
+begin
+end;
+	
+procedure Initialise(zp:pointer);
+begin
+	Screens::ClearScreen(#screens::storage, $80);
+	Screens::ClearScreen(screen0, $80);
+	Screens::PrintText(#Screens::storage,0,0, 0, zp);
+	Screens::CopyBankHB(#Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
+	curx:=0;
+	cury:=1;
+	sc := #Screens::storage+32;
+	
+end;
+
+function Status() : byte;
+begin
+	Status := gb_unittests_status;
+end;
+
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+	//screenmemory := sc;
+	Screens::PrintText(sc,0,0,0,#text);
+	sc[2] := $44; // heart
+	Screens::CopyBankHB(#Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
+	
+	Advance();
+end;
+
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+//screenmemory := sc;
+	Screens::PrintText(sc,0,0,0,#text);
+	sc[2] := $45; // heart
+	Screens::CopyBankHB(#Screens::storage, screen0, 4); // Copy 4x$100 bytes of data to the screen
+	
+	Advance();	
+	
+  gb_unittests_status := 1;
+end;
+
+
+
+procedure WaitABit();
+begin
+//  for Vars::v1:=0 to 16 do for Vars::v2:=0 to 255 do asm("nop");
+end;
+
+procedure DebugValue(v:integer);
+begin
+end;
+
+end.
+
+

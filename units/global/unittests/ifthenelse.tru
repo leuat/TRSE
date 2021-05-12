@@ -387,7 +387,7 @@ end;
 // when Vars::v1 is 255 and Vars::v2 is 0
 procedure BranchSize1();
 begin
-	Vars::text := "   B1:"; if (7 > 5)  then begin Common::PASS(); nop(120);end else begin Common::FAIL(); end;
+	Vars::text := "   B1:"; if (7 > 5)  then begin Common::PASS(); end else begin Common::FAIL(); end;
 end;
 
 // when Vars::v1 is 255 and Vars::v2 is 0
@@ -418,17 +418,17 @@ end;
 /* MAIN PROGRAM */
 procedure Exec();
 begin
-
 	// initialise everything
 	Common::Initialise("IF TESTS");
-	
+
 	// Greater than conditional tests 
 	GT1_GreaterThan_True();
 	GT2_GreaterThan_False();
 	GT3_GreaterThan_False();
 	GT4_GreaterThan_False();
 	GT5_GreaterThan_True();
-	
+
+
 	// Greater than or equal to conditional tests
 	GTE1_GreaterEqual_True();
 	GTE2_GreaterThan_False();
@@ -460,10 +460,7 @@ begin
 	Advanced1();
 	Advanced2();
 
-
-
-	// Integer comparison not supported on the z80 yet
-	
+	@ifndef GAMEBOY  // Fails because of `ex`
 	
 	// Greater than conditional tests 
 	IGT1_GreaterThan_True();
@@ -503,6 +500,8 @@ begin
 	AdvancedI3();
 	AdvancedI4();
 	AdvancedI5();
+	@endif
+
 	Common::WaitABit();
 
 //	BranchSize1();

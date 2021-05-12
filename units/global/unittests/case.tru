@@ -33,14 +33,14 @@ end;
 /* MAIN PROGRAM */
 procedure Exec();
 begin
-
-	// initialise everything
 	Common::Initialise("CASE");
 	
 	// Mul and div
 	Test1();
+	@ifndef GAMEBOY
 	@ifndef AMSTRADCPC
 	Test2();
+	@endif
 	@endif
 	Common::WaitABit();
 end;

@@ -57,7 +57,13 @@ public:
      *
      *
     */
+
+    void ExDeHl();
+    void SbcHlDe();
+
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
+
+    void LoadPointer(QSharedPointer<Node> node) override;
 
 
     void AssignString(QSharedPointer<NodeAssign>node) override;

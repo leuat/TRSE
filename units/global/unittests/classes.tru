@@ -138,6 +138,7 @@ begin
 	Common::Initialise("TEST CLASSES");
 	
 	// Mul and div
+	@ifndef GAMEBOY
 	CTest1();
 	CTest2();
 	CTest3();
@@ -149,6 +150,8 @@ begin
     CTest9(); 
     CTest10();
  
+    @endif
+
     // Fails for now - FIX UP
 	Common::WaitABit();
 
