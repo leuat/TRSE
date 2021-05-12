@@ -23,12 +23,13 @@ options = [
 	Option('x64', 'Path to the x64 binary (VICE emulator for C64)', trse_ini_key='emulator'),
 	Option('cap32', 'Path to the cap32 binary (Amstrad CPC emulator)', trse_ini_key='amstradcpc_emulator'),
 	Option('dosbox', 'Path to the dosbox binary (DOS emulator)', trse_ini_key='dosbox'),
+	Option('sameboy', 'Path to the sameboy binary (GameBoy emulator)', trse_ini_key='sameboy'),
 	Option('assemble', 'Whether to assemble when compiling ("yes" or "no")', default_value='yes'),
 ]
 
 
 def Usage(rc):
-	print("Usage: python validate_all.py --trse [trse exe file] <--trse.ini [ trse.ini ]> <--x64 [ x64 vice emulator ]> <--cap32 [ cap32 emulator ]> <--dosbox [ dosbox emulator ]> <--assemble [yes | no]>")
+	print("Usage: python validate_all.py --trse [trse exe file] <--trse.ini [ trse.ini ]> <--x64 [ x64 vice emulator ]> <--cap32 [ cap32 emulator ]> <--dosbox [ dosbox emulator ]> <--sameboy [ sameboy emulator ]> <--assemble [yes | no]>")
 	print("must be run in the 'validate_all' directory.")
 	for opt in options:
 		print("  %s: %s [default: %s]" % (opt.name, opt.desc, opt.default_value))
@@ -95,6 +96,7 @@ x64 = GetOption('x64')
 cap32 = GetOption('cap32')
 assemble = GetOption('assemble')
 dosbox = GetOption('dosbox')
+sameboy = GetOption('sameboy')
 
 if (dosbox.endswith(".app")):
 	dosbox+="/Contents/MacOS/DOSBox"
@@ -378,10 +380,67 @@ def CPCUnitTests():
 		print("Skipping CPC tests: emulator path '%s'" % cap32)
 
 
+import threading
+import queue
+
+def enqueue_output(out, queue):
+	for line in iter(out.readline, b''):
+		queue.put(line)
+	out.close()
+
+def GBUnitTests():
+	os.chdir(orgPath)
+	if sameboy and os.path.exists(sameboy):
+		path =  os.path.abspath(lp+'GAMEBOY/UnitTests/')
+		testrun = subprocess.Popen([sameboy,path+"/unittests.gb"], stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=0)
+		q = queue.Queue()
+		t = threading.Thread(target=enqueue_output, args=(testrun.stdout, q))
+		#t.daemon = True # thread dies with the program
+		t.start()
+		# Let some time for sameboy to setup and debugger to properly answer
+		time.sleep(2)
+		result = None
+		begin = time.time()
+		timeout = 10*60
+		finished = False
+		while not finished:
+			time.sleep(1)
+			testrun.send_signal(2)
+			# Ask multiple times so that more output is generated, fighting buffering
+			for i in range(10):
+				testrun.stdin.write(b'examine $c800\n')
+			testrun.stdin.write(b'continue\n')
+			more_output = True
+			while more_output:
+				try:
+					line = q.get_nowait().decode('utf-8')
+					#print('<%s>' % line)
+					if 'c800: fe ed c0 ff ee' in line:
+						result = 'SUCCESS'
+						finished = True
+						break
+					if 'c800: ba db ad c0 de' in line:
+						result = 'FAILURE'
+						failed.append([path, "unittests.ras"])
+						finished = True
+						break
+				except queue.Empty:
+					more_output = False
+			if time.time() - begin > timeout:
+				print("ERROR: Timeout for CPC unit tests expired.")
+				result = 'TIMEOUT'
+				failed.append([path, "unittests.ras"])
+				break
+		print(result)
+		testrun.send_signal(9)
+		t.join()
+
+
 def UnitTests():
 	DOSUnitTests();
 	C64UnitTests();
 	CPCUnitTests();
+	GBUnitTests();
 
 
 def CompileTests():
