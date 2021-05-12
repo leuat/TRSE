@@ -52,6 +52,12 @@ jobs:
           cd caprice32
           make -j 2
           cd ..
+          # Build SameBoy (GameBoy emulator): requires rgbasm (built before)
+          export PATH=`pwd`/rgbds/:$PATH
+          git clone https://github.com/LIJI32/SameBoy.git
+          cd SameBoy
+          make -j 2
+          cd ..
           # leave tools directory
           cd ..
           # patch dirs
@@ -70,6 +76,7 @@ jobs:
           sed -i "s,^dosbox =.*,dosbox = ${dosbox}," Publish/publish_linux/trse.ini
           nasm=$(which nasm)
           sed -i "s,^nasm =.*,nasm = ${nasm}," Publish/publish_linux/trse.ini
+          sed -i "s,^gameboy_emulator =.*,gameboy_emulator = ${PWD}/tools/SameBoy/build/bin/SDL/sameboy," Publish/publish_linux/trse.ini
 
       - name: Build TRSE
         run: |
