@@ -3,6 +3,9 @@ Program UnitTestsX86;
 @use "unittests/unittests"
 @use "unittests/common"
 
+var
+	tst:array[100] of byte;
+	@donotremove tst	
 procedure TestResult(txt:pointer);
 begin
 end;

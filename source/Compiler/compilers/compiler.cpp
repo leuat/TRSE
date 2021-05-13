@@ -46,7 +46,6 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     m_parser.m_lexer = m_lexer;
     ErrorHandler::e.m_displayWarnings = m_ini->getdouble("display_warnings")==1;
 
-    connect(&m_parser, SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
 
     m_tree = nullptr;
     m_parser.m_preprocessorDefines[m_projectIni->getString("system").toUpper()]="1";
@@ -133,7 +132,6 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
 
     disconnect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
-    disconnect(&m_parser, SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
 //    emit EmitTick("<br>Connecting and optimising");
 
     Connect();
@@ -249,9 +247,4 @@ void Compiler::ApplyOptions(QMap<QString, QStringList> &opt) {
 void Compiler::AcceptDispatcherTick(QString val)
 {
     emit EmitTick(val);
-}
-
-void Compiler::AcceptRequestSystemChange(QString val)
-{
-    emit emitRequestSystemChange(val);
 }

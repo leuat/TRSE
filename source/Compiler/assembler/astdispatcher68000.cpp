@@ -653,8 +653,6 @@ void ASTDispatcher68000::StoreVariable(QSharedPointer<NodeVar> n)
         if (n->m_expr->isPureNumeric()) {
             as->Comment("StoreVariable pure numeric optimization");
             int val = n->m_expr->getValueAsInt(as)*n->getArrayDataSize(as);
-            as->Comment("expr : " +QString::number(n->m_expr->getValueAsInt(as)));
-            as->Comment("data size : " +QString::number(n->getArrayDataSize(as)));
 /*            if (n->getArrayType(as)==TokenType::INTEGER)
                 val*=2;
             if (n->getArrayType(as)==TokenType::LONG)
@@ -1150,7 +1148,7 @@ void ASTDispatcher68000::AssignString(QSharedPointer<NodeAssign> node, bool isPo
         as->Label(lblCpy);
         as->Asm("move.b (a0)+,(a1)+");
         as->Asm("tst.b (a0)");
-        as->Asm("bne.b "+lblCpy);
+        as->Asm("beq.b "+lblCpy);
         as->Asm("move.b #0,(a1)");
 
 
@@ -1358,31 +1356,22 @@ void ASTDispatcher68000::BuildSimple(QSharedPointer<Node> node,  QString lblSucc
     //    as->Asm("pha"); // Push that baby
 
     BuildToCmp(node);
-    QString bge = "bge";
-    QString bgt = "bgt";
-    QString ble = "ble";
-    QString blt = "blt";
-    if (!(node->m_left->isSigned(as) || node->m_right->isSigned(as))) {
-        bge = "bhs";
-        bgt = "bhi";
-        ble = "bls";
-        blt = "blo";
-    }
+
     if (node->m_op.m_type==TokenType::EQUALS)
         as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
         as->Asm("beq " + lblFailed);
 
     if (node->m_op.m_type==TokenType::LESS)
-        as->Asm(bge+" " + lblFailed);
+        as->Asm("bge " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm(ble+" " + lblFailed);
+        as->Asm("ble " + lblFailed);
 
 
     if (node->m_op.m_type==TokenType::LESSEQUAL)
-        as->Asm(bgt+" " + lblFailed);
+        as->Asm("bgt " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATEREQUAL)
-        as->Asm(blt+" " + lblFailed);
+        as->Asm("blt " + lblFailed);
 
 
 

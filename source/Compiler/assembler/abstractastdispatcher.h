@@ -129,16 +129,11 @@ public:
 
     virtual bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) {return false;}
 
-    virtual bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) {return false;}
+    virtual bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) {return false;}
 
-    virtual bool StoreVariableSimplified(QSharedPointer<NodeAssign> n) {return false;}
+    virtual bool StoreVariableSimplified(QSharedPointer<Node> n) {return false;}
 
     virtual void GenericAssign(QSharedPointer<NodeAssign> node);
-
-    virtual bool IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)  { return false;}
-
-    virtual bool IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node) { return false;}
-
 
     /* The rest
      */

@@ -165,9 +165,8 @@ void AsmM68000::DeclareVariable(QString name, QString type, QString initval, QSt
     QString t = "";
     if (type.toLower()=="integer")
         t = word;
-    if (type.toLower()=="byte") {
+    if (type.toLower()=="byte")
         t = byte;
-    }
     if (type.toLower()=="long")
         t = llong;
 
@@ -181,9 +180,6 @@ void AsmM68000::DeclareVariable(QString name, QString type, QString initval, QSt
     if (initval=="")
         initval="0";
     Write(name +"\t" + t + "\t"+initval);
-    if (t==byte)
-        Asm(" 	CNOP 0,4");
-
 
 }
 

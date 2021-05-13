@@ -40,7 +40,7 @@ public:
     virtual bool is8088() override;
 
     int getPointerSize() override {
-        return 4;
+        return 32;
     }
 
 

@@ -180,7 +180,7 @@ public:
     */
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 
-    bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
+    bool StoreVariableSimplified(QSharedPointer<Node> assignNode) override;
 
     void AssignString(QSharedPointer<NodeAssign>node) override;
 
@@ -188,7 +188,7 @@ public:
 
     bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
 
-    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
+    bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) override;
 
     void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
 

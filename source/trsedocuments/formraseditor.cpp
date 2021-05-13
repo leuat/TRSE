@@ -440,15 +440,12 @@ void FormRasEditor::Build(bool isShadow)
         delete m_builderThread.m_builder;
     }
 */
-    if (m_builderThread.m_builder!=nullptr) {
+    if (m_builderThread.m_builder!=nullptr)
         disconnect(m_builderThread.m_builder.get(), SIGNAL(EmitBuildString()), this, SLOT(AcceptBuildString()));
-        disconnect(m_builderThread.m_builder.get(), SIGNAL(emitRequestSystemChange(QString)), this, SLOT(AcceptRequestSystemChange(QString)));
-    }
 
     m_builderThread.m_builder = QSharedPointer<SourceBuilder>(new SourceBuilder(m_iniFile, m_projectIniFile, m_currentDir, m_currentSourceFile));
     m_builderThread.m_builder->m_isShadow = isShadow;
     connect(m_builderThread.m_builder.get(), SIGNAL(EmitBuildString()), this, SLOT(AcceptBuildString()));
-    connect(m_builderThread.m_builder.get(), SIGNAL(emitRequestSystemChange(QString)), this, SLOT(AcceptRequestSystemChange(QString)));
 
 
     emit requestBuild();
@@ -1323,12 +1320,6 @@ void FormRasEditor::Help(QString word) {
     m_help->show();
 //    delete dh;
 
-}
-
-void FormRasEditor::AcceptRequestSystemChange(QString val)
-{
-   emit emitRequestSystemChange(val);
-   Build();
 }
 
 void FormRasEditor::ShadowBuild()

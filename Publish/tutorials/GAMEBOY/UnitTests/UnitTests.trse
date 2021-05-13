@@ -46,4 +46,4 @@ zeropage_colormemory = $fc
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/UnitTests/
 show_all_files = 1
 open_files = ,unittests.asm, unittests/common.tru, unittests.ras, [ext]units/GAMEBOY/screens.tru, [ext]units/global/unittests/case.tru, [ext]units/global/unittests/unittests.tru
-current_file = unittests/common.tru
+current_file = unittests.ras

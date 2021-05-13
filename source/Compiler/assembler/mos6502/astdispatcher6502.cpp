@@ -1533,7 +1533,7 @@ bool ASTDispatcher6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QSt
     //  return true;
 }
 
-bool ASTDispatcher6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
+bool ASTDispatcher6502::IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     if (var==nullptr)
@@ -3322,7 +3322,7 @@ void ASTDispatcher6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSh
         return;
 }
 
-bool ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
+bool ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<Node> assignNode)
 {
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_expr);
     QSharedPointer<NodeVar> node = qSharedPointerDynamicCast<NodeVar>(assignNode->m_left);

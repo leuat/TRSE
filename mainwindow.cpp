@@ -761,7 +761,6 @@ void MainWindow::ConnectDocument()
         connect(m_currentDoc, SIGNAL(OpenOtherFile(QString, int )), this, SLOT(ForceOpenFile(QString , int)));
         connect(m_currentDoc, SIGNAL(emitGotoSymbol(QString)), this, SLOT(GotoSymbol(QString)));
         connect(m_currentDoc, SIGNAL(emitGotoAssemblerLine(QString, int)), this, SLOT(GotoAssemblerLine(QString, int)));
-        connect(m_currentDoc, SIGNAL(emitRequestSystemChange(QString)), this, SLOT(AcceptRequestSystemChange(QString)));
     }
 
 }
@@ -943,25 +942,6 @@ void MainWindow::VerifyTRSEVersion()
 
      //   Messages::messages.DisplayMessage(Messages::messages.ADDRESS_UPDATE,false);
     }
-}
-
-void MainWindow::AcceptRequestSystemChange(QString system)
-{
-    system = system.toUpper();
-    // Ensure faulty systems aren't applied
-    AbstractSystem::System sys = AbstractSystem::SystemFromString(system);
-    system = AbstractSystem::StringFromSystem(sys);
-
-    m_currentProject.m_ini->setString("system",system);
-    Syntax::s.m_systemString = system;
-    Syntax::s.Init(sys,m_iniFile, m_currentProject.m_ini);
-    QTimer::singleShot(200, this, SLOT(UpdateOutputSystemChange()));
-
-}
-void MainWindow::UpdateOutputSystemChange()
-{
-    m_currentDoc->setOutputText("Current system changed to "+m_currentProject.m_ini->getString("system")+"! Please rebuild to apply.");
-
 }
 
 void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder)
@@ -1493,7 +1473,6 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     contextMenu.exec(mapToGlobal(pos));
 
 }
-
 
 void MainWindow::FindFileDialog()
 {

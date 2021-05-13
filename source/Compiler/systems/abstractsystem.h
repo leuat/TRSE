@@ -100,7 +100,7 @@ public:
     virtual bool is286() { return false;}
     virtual bool is8088() { return false;}
     virtual int getPointerSize() {
-        return 2;
+        return 16;
     }
 
     virtual bool AllowPointerInStructs() {return true;}

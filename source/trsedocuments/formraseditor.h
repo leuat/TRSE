@@ -185,9 +185,7 @@ signals:
     void OpenOtherFile(QString filename, int ln);
     void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
     void emitFailure();
-    void emitRequestSystemChange(QString val);
 private slots:
-    void AcceptRequestSystemChange(QString val);
     void ShadowBuild();
 
     void on_leSearch2_textChanged();

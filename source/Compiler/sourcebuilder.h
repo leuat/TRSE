@@ -60,10 +60,8 @@ private:
 public:
 signals:
     void EmitBuildString();
-    void emitRequestSystemChange(QString);
 public slots:
     void AcceptParserTick(QString val);
-    void AcceptRequestSystemChange(QString val);
 
 };
 

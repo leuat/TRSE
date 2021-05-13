@@ -37,10 +37,18 @@ public:
 //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     virtual void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
+   // void dispatch(QSharedPointer<NodeVarDecl> node) override;
+ //   void dispatch(QSharedPointer<NodeBlock> node) override;
+ //   void dispatch(QSharedPointer<NodeProgram> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
+    //void dispatch(QSharedPointer<NodeProcedure> node) override;
+   // void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
+ //   void dispatch(QSharedPointer<NodeConditional> node) override;
+    //void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
+    void dispatch(QSharedPointer<NodeAssign> node) override;
     //void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
 //    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
@@ -48,6 +56,7 @@ public:
 
 
 
+    void StoreVariable(QSharedPointer<NodeVar> n) override;
     void LoadVariable(QSharedPointer<NodeVar> n) override ;
     void LoadAddress(QSharedPointer<Node> n) override;
     void LoadAddress(QSharedPointer<Node> n, QString reg) override;
@@ -91,10 +100,19 @@ public:
 
     virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
 
-    void PushX();
-    void PopX();
+    void PushX() {
+        if (m_lvl==3)
+            ErrorHandler::e.Error("Error in X86 dispatcher PopX : trying to push regstack from max");
+        m_lvl++;
+    }
+    void PopX() {
+        if (m_lvl==0)
+            ErrorHandler::e.Error("Error in X86 dispatcher PopX : trying to pop regstack from zero");
+        m_lvl--;
+    }
     QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
+    void AssignVariable(QSharedPointer<NodeAssign> node) override;
 
 
 
@@ -116,41 +134,8 @@ public:
     QString getReturn() override { return "ret";}
     QString getReturnInterrupt() override { return "iret";}
 
-    /*
-     *
-     * Node Assign stuff
-     *
-     *
-     */
 
-
-    void StoreVariable(QSharedPointer<NodeVar> node) override;
-
-    bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
-
-    void AssignString(QSharedPointer<NodeAssign>node) override;
-
-    bool AssignPointer(QSharedPointer<NodeAssign>node) override;
-
-    void GenericAssign(QSharedPointer<NodeAssign> node) override;
-
-    bool IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node) override;
-
-    bool IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node) override;
-
-    bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
-
-    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
-
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
-
-    virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
-
-    virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
-
-
-
-
+    void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
 
 };
 #endif // ASTdispatcherX86_H
