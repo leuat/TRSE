@@ -3043,6 +3043,9 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_pass = PASS_PRE;
     done = PreprocessIncludeFiles();
     PreprocessAll();
+    if (m_abort)
+        return nullptr;
+
     ApplyTPUBefore();
 //    qDebug().noquote() << "SOURCE" << m_lexer->m_text;
 //    PreprocessConstants();
@@ -5447,7 +5450,13 @@ void Parser::HandleProjectSettingsPreprocessors()
         return;
     }
     if (cmd == "system") {
-        m_projectIni->setString("system", val);
+        if (m_projectIni->getString("system")!=val) {
+            m_abort = true;
+     //       Syntax::s.Init(AbstractSystem::SystemFromString(val),m_settingsIni, m_projectIni);
+            emit emitRequestSystemChange(val);
+        }
+
+
         return;
     }
 

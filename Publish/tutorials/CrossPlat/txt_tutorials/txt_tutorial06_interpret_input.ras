@@ -1,0 +1,40 @@
+program interpret;
+@projectsettings "system" APPLEII
+@use "text/txt"
+@use txt
+var  
+   i: byte =0; 
+   user_input: pointer;
+   pass: string = ("PASSWORD",0);
+   pp: pointer;
+   match: byte = False;
+
+begin
+	
+	txt::cls();
+	
+
+	txt::print_string("ENTER PASSWORD", True);
+	user_input:=txt::get_string();
+
+	txt::print_string(" ", True);
+	
+	match:=txt::str_compare(user_input,#pass);
+	
+	txt::print_string(" ", True);
+
+	if(match=True) then
+	begin
+		txt::print_string("YES! ", False);
+		txt::print_string(user_input, True);
+	end
+	else
+	begin
+		txt::print_string("WRONG ", False);
+		txt::print_string(user_input, True);
+	end;
+
+
+	
+	loop();
+end.

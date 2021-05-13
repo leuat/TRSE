@@ -132,9 +132,11 @@ public:
     int PASS_OTHER = 4;
 
     int m_pass = 0, m_acc=0;
+
     bool m_ignoreAll = false;
     bool m_isRecord = false;
     bool m_removeUnusedDecls = false;
+    bool m_abort = false;
     QStringList  m_initJumps;
     QMap<TokenType::Type, QString> m_typeFlags;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
@@ -307,7 +309,7 @@ public:
 
 signals:
     void EmitTick(QString val);
-
+    void emitRequestSystemChange(QString system);
 };
 
 

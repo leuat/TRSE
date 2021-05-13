@@ -306,9 +306,11 @@ signals:
 
 private slots:
 
+   void AcceptRequestSystemChange(QString system);
+
    void ShowContextMenu(const QPoint &pos);
    void ShowFileContext(const QPoint &pos);
-
+    void UpdateOutputSystemChange();
     void FindFileDialog();
     void GotoSymbol(QString s);
     void GotoAssemblerLine(QString s, int lineNumber);
