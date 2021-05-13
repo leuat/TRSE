@@ -125,6 +125,13 @@
 
 	end;
 
+	// CR
+	procedure cursor_return();
+	begin
+		call(OSNEWL);
+		
+	end;
+
 
 	procedure mode_1();
 	begin
