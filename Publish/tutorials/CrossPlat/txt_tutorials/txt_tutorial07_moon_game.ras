@@ -1,0 +1,169 @@
+program game;
+@projectsettings "system" "APPLEII"
+@use "text/txt"
+
+var
+	
+	
+	instruction_str: string = ("USE CURSORS/QAOP",0);
+	total_loot_count: byte=0;
+	total_trap_count: byte=0;
+	collected_loot_count: byte=0;
+	key_press: byte=0;
+	game_running: byte=true;
+	lives:byte=3;
+	charat:byte;
+	i,x,y,oldx,oldy: byte;
+	this_row: integer;
+
+
+
+	procedure init();
+	begin
+		// Clear screen,
+		txt::cls();
+		txt::cursor_off();
+		txt::move_to(3,0);
+		txt::print_string(#instruction_str, False);
+
+		lives:=3;
+		game_running:=true;
+		total_loot_count:=20;
+		total_trap_count:=total_loot_count*6;
+		collected_loot_count:=0;
+			
+		// Side borders
+		fori y:= 0 to 23 do
+		begin
+			txt::put_char_at(0,y,35);
+			txt::put_char_at(21,y,35);		
+		end;
+		
+		// Loot
+		for i:=0 to total_loot_count do
+		begin
+			txt::put_char_at(mod(random(), 20)+1,mod(random(), 21)+1,36);
+		end;
+	
+	
+		// Traps
+		for i:=0 to total_trap_count do
+		begin
+			x:=mod(random(), 20)+1;
+			y:=mod(random(), 22)+1;
+			if(txt::get_char_at(x,y)=$20) then txt::put_char_at(x,y,42);
+		end;
+		
+		
+		// Initialise start position
+		x:=10;
+		y:=10;	
+		txt::put_char_at(x,y,64);
+	end;
+
+begin
+	
+	while(1) do
+	begin
+		init();
+	
+		// Main loop
+		while(game_running) do
+		begin
+			
+			// Update lives left
+			txt::put_dec_at(20,0,lives);
+
+			// Update loot to get
+			txt::move_to(1,0);
+			txt::print_string("  ",False);
+			txt::put_dec_at(1,0,total_loot_count-collected_loot_count);
+			
+			
+			// Get keyboard input
+			key_press:=txt::get_key();
+			
+			txt::move_to(3,0);
+			txt::print_string(#instruction_str, False);
+	
+				// Backup the current position			
+				oldx:=x;
+				oldy:=y;
+	
+				// Check the pressed key
+				case key_press of
+			       
+					// Cursor keys defined in unit		        
+	    			    txt::CUR_U: if(y>0) then dec(y);
+			        txt::CUR_D: if(y<23) then inc(y);
+	   			    txt::CUR_L: if(x>0) then dec(x);
+			        txt::CUR_R: if(x<21) then inc(x);
+			   
+				end;
+				
+	
+				// Find out if the space we want to move to
+				// is empty or if it contains anything special
+				charat:=txt::get_char_at(x,y);
+				
+				
+				// $20 is space
+				case charat of
+				$20:		txt::put_char_at(x,y,64);
+				  0:		txt::put_char_at(x,y,64);
+				36:
+					begin
+							
+						// loot
+						txt::move_to(3,0);
+						txt::print_string(" LOOT ACQUIRED! ", False);
+						txt::put_char_at(x,y,64);
+						inc(collected_loot_count);
+	
+					end;
+					
+				42:
+					begin
+						// trap
+						txt::move_to(3,0);
+						txt::print_string("   LIVE LOST!   ", False);
+						txt::put_char_at(x,y,64);
+						dec(lives);
+					end;	
+				else
+				begin
+					x:=oldx;
+					y:=oldy;
+				end;
+				
+				
+	
+				if(collected_loot_count=total_loot_count or lives=0) then 
+				begin
+					game_running:=false;
+					
+				end;	
+			
+			end;
+		
+		// End screen
+		txt::cls();
+		txt::move_to(0,4);
+		txt::print_string("GAME OVER!", True);		
+		
+		if(lives=0) then 
+		begin
+
+			txt::print_string("YOU LOSE!", True);
+		end
+		else
+		begin
+			txt::print_string("YOU WIN!", True);
+		end;
+
+		txt::wait_key();
+
+	end;
+		
+end.
+

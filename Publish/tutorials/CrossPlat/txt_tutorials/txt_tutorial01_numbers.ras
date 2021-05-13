@@ -1,0 +1,44 @@
+program numbers;
+@projectsettings "system" "APPLEII"
+
+@use "text/txt"
+var  
+   i: byte; 
+
+begin
+	txt::cls();
+	txt::cursor_off();
+	
+	
+	while(1) do
+	begin
+	
+		txt::move_to(0,0);	
+		txt::print_string(" ", True);	
+		fori i:=0 to 9 do
+		begin
+			txt::print_dec(i,True);
+		end;
+	
+	
+		fori i:=10 to 22 do
+		begin
+			txt::move_to(4,i-9);
+			txt::print_dec(i,False);
+		end;
+	
+		fori i:=100 to 110 do
+		begin
+			txt::move_to(8,i-99);
+			txt::print_dec(i,False);
+		end;
+	
+		fori i:=200 to 210 do
+		begin
+			txt::move_to(12,i-199);
+			txt::print_dec(i,False);
+		end;
+
+nop(1000);
+	end;
+end.

@@ -111,30 +111,8 @@ var
 
 
 
+   @include "text/text_include.inc"
 
-@ifdef APPLEII
-   @include "apple_text_mode.ras"
-@endif
-
-@ifdef ATARI800
-   @include "atari_text_mode.ras"
-@endif
-
-@ifdef BBCM
-   @include "bbc_text_mode.ras"
-@endif
-
-@ifdef PET
-   @include "pet_text_mode.ras"
-@endif
-
-@ifdef VIC20
-   @include "vic_text_mode.ras"
-@endif
-
-@ifdef C64
-   @include "c64_text_mode.ras"
-@endif
 
 
 	// Compare two strings for equality

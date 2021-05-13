@@ -45,6 +45,10 @@ void MethodsZ80::Assemble(Assembler *as, AbstractASTDispatcher *dispatcher)
         Nop(as);
 
 
+    if (Command("AddBreakpoint")) {
+        as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));
+    }
+
     if (Command("memcpycont"))
         MemCpy(as,true);
     else

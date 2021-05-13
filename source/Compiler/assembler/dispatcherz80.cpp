@@ -791,11 +791,12 @@ void ASTdispatcherZ80::ExDeHl()
 {
     if (isGB()) {
         as->Asm("push hl");
+        as->Asm("push de");
+        as->Asm("pop hl");
         as->Asm("pop de");
     }
     else
         as->Asm("ex de,hl");
-
 }
 
 void ASTdispatcherZ80::SbcHlDe()
@@ -831,7 +832,7 @@ void ASTdispatcherZ80::StoreVariable(QSharedPointer<NodeVar> node)
 
 }
 
-bool ASTdispatcherZ80::StoreVariableSimplified(QSharedPointer<Node> assignNode)
+bool ASTdispatcherZ80::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
 {
     return false;
 }
@@ -879,7 +880,7 @@ bool ASTdispatcherZ80::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
     return false;
 }
 
-bool ASTdispatcherZ80::IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign> node)
+bool ASTdispatcherZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     if (var==nullptr)
@@ -1004,7 +1005,6 @@ void ASTdispatcherZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 
 void ASTdispatcherZ80::LoadPointer(QSharedPointer<Node> node)
 {
-
     QString name = getValue(node);
     as->Comment("Loading pointer");
     if (!isGB())

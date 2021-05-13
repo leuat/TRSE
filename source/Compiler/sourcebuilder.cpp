@@ -27,6 +27,7 @@ bool SourceBuilder::Build(QString source)
                                         m_iniFile, m_projectIniFile));
 
     compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
+    connect(compiler.get(), SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
 
 
     compiler->ApplyOptions(m_options);
@@ -81,6 +82,8 @@ bool SourceBuilder::Build(QString source)
     */
 
     compiler->Parse(source,lst, m_currentSourceFile);
+//    if (compiler->m_tree==nullptr)
+  //      return true;
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
     if (m_currentSourceFile.toLower().endsWith(".ras"))
@@ -107,6 +110,8 @@ bool SourceBuilder::Build(QString source)
         disconnect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
     if (!m_isShadow)
         disconnect(compiler.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
+
+    disconnect(compiler.get(), SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
 
 
 
@@ -248,4 +253,9 @@ void SourceBuilder::AcceptParserTick(QString val)
     m_buildString +=val;
 
     emit EmitBuildString();
+}
+
+void SourceBuilder::AcceptRequestSystemChange(QString val)
+{
+    emit emitRequestSystemChange(val);
 }

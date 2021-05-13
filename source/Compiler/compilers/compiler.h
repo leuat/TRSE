@@ -76,8 +76,10 @@ public:
 public:
 signals:
     void EmitTick(QString val);
+    void emitRequestSystemChange(QString val);
 public slots:
     void AcceptDispatcherTick(QString val);
+    void AcceptRequestSystemChange(QString val);
 };
 
 #endif // Compiler_H
