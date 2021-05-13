@@ -546,7 +546,7 @@ void ASTdispatcherX86::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool ASTdispatcherX86::AssignPointer(QSharedPointer<NodeAssign> node)
 {
-
+    return false;
 }
 
 void ASTdispatcherX86::GenericAssign(QSharedPointer<NodeAssign> node)
