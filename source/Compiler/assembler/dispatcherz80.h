@@ -72,7 +72,7 @@ public:
 
     bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
 
-    bool IsSimpleAssignPointerExpression(QSharedPointer<NodeAssign>node) override;
+    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
     virtual void GenericAssign(QSharedPointer<NodeAssign> node) override;
 
@@ -83,7 +83,7 @@ public:
 
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 
-    bool StoreVariableSimplified(QSharedPointer<Node> assignNode) override;
+    bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
 
     bool isGB() {return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY; }
 
