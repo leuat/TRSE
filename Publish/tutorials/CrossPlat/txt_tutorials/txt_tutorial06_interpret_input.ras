@@ -1,5 +1,5 @@
 program interpret;
-@projectsettings "system" APPLEII
+@projectsettings "system" C64
 @use "text/txt"
 @use txt
 var  

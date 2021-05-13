@@ -1,5 +1,5 @@
 program game;
-@projectsettings "system" C64
+@projectsettings "system" "APPLEII"
 @use "text/txt"
 
 var

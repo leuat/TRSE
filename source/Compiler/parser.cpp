@@ -1,4 +1,5 @@
-   /*
+
+/*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
  * Copyright (C) 2018  Nicolaas Ervik Groeneboom (nicolaas.groeneboom@gmail.com)
@@ -3613,14 +3614,24 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     if (!(m_symTab->m_records.contains(type) && m_symTab->m_records[type]->m_isClass)) {
         // Important : if this is a class variable, then set the WRITETYPE as
         // the entire thing is being transformed to writing to a pointer
+        int scale = 1;
         if (s->m_isClassVariable) {
             QString et = s->getEndType();
             if (et.toLower()=="byte")
                 v->m_writeType = TokenType::BYTE;
-            if (et.toLower()=="integer")
+            if (et.toLower()=="integer") {
                 v->m_writeType = TokenType::INTEGER;
-            if (et.toLower()=="long")
+                scale = 2;
+            }
+            if (et.toLower()=="long") {
                 v->m_writeType = TokenType::LONG;
+                scale = 4;
+            }
+        }
+        // Apply int/long, but only once
+        if (v->m_expr!=nullptr && scale !=1 && !v->m_scaleApplied) {
+           v->m_expr = CreateBinop(TokenType::MUL,v->m_expr,CreateNumber(scale));
+            v->m_scaleApplied = true;
         }
 
         return v;
@@ -3635,10 +3646,10 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     int size = m_symTab->m_records[type]->getSize();
 
 
+
     // Look up objects[i].a. -> objects[i*sizeof(Object)].a (mul with size)
 
     if (size!=0 && v->m_expr!=nullptr) {
-        //qDebug() << "NEED A MUL BABY "<<size <<v->m_expr->numValue();
         auto nodeClassSize = CreateNumber(size);
         if (v->m_expr->isPureNumeric() && v->m_expr->numValue()==0) {
 
@@ -3656,7 +3667,6 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
             //            qDebug() << "internal shift for var "+sv->value+" : Adding "<<shiftInternal;
                 v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,CreateNumber(shiftInternal));
 
-
         //      qDebug() <<  "***** SUBNODE PUSH "<<v->value;
         auto node = ApplyClassVariable(sv);
         //    qDebug() <<  "***** SUBNODE POP"<<v->value;
@@ -3664,6 +3674,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         node = sv2->m_expr;
 
         if (node!=nullptr) {
+//            qDebug() << "Adding : "<<QString::number(v->m_expr->getValueAsInt(nullptr))<<" to " <<QString::number(node->getValueAsInt(nullptr));
+//            qDebug() << "Adding : "<<QString::number(node->getValueAsInt(nullptr));
             v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,node);
         }
 
@@ -4323,10 +4335,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
         }
         // m68k alignment for byte arrays
+  //      qDebug() << "Before:" <<t.m_intVal <<data.count() << t.m_type;
         if (forceByteAlignment && arrayType.m_type==TokenType::BYTE && (t.m_intVal&1)==1) {
             t.m_intVal+=1;
             if (data.count()!=0)
                 data.append("0");
+            count = t.m_intVal;
+//            qDebug() << "After:" <<t.m_intVal <<data.count() << t.m_type;
+
         }
 
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,position, arrayType,data));

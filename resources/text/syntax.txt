@@ -15,7 +15,7 @@
 
 # debugger methods
 
-m; addbreakpoint; C64, MEGA65, PLUS4, C128, VIC20, PET, OK64;
+m; addbreakpoint; C64, MEGA65, PLUS4, C128, VIC20, PET, OK64, AMSTRADCPC;
 
 # init functions
 m; initrandom; C64, MEGA65, X16,PLUS4, C128, APPLEII ;

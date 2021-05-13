@@ -35,17 +35,17 @@ var
 
 	Monster = class
 		x,y : byte;
-		// 2
+		// 2    4
 		ival : integer;
-		//4
+		//4     6 
 		pos: Point;
-		// c 
+		// c    18 
 		byteData : array[5] of byte;
-		// 11
+		// 11   24
 		c : byte;
-		// 12 
+		// 12   26 
 		intData : array[7] of integer;
-		// 20 
+		// 20   40  0 $2A
 	//	more : array[3] of Point;		
 		procedure Move1( m1, m2 : byte);
 		begin

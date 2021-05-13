@@ -14,7 +14,7 @@ public:
         return false;
     }
     int getPointerSize() override {
-        return 32;
+        return 4;
     }
 
     QString CompressFile(QString fileName) override {
