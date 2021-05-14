@@ -906,14 +906,9 @@ void Orgasm::SaveSymbolsList(QString filename)
 
         stream<<"; labels" << endl;
         for (QString s: m_symbolsList) {
-            if (!s.startsWith("trse_breakpoint"))
+            if (!s.startsWith("trse_breakpoint") && !s.startsWith("trse_disassemble"))
                 if (!isSet[m_symbols[s]]) {
                     stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
-                    isSet[m_symbols[s]]=true;
-                }
-            if (!s.startsWith("trse_disassemble"))
-                if (!isSet[m_symbols[s]]) {
-                    stream << "d  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
                     isSet[m_symbols[s]]=true;
                 }
         }
@@ -933,6 +928,9 @@ void Orgasm::SaveSymbolsList(QString filename)
         for (QString s: m_symbolsList) {
             if (s.startsWith("trse_breakpoint")) {
                 stream << "break " << Util::numToHex(m_symbols[s])<<endl;
+            }
+            if (s.startsWith("trse_disassemble")) {
+                stream << "d " << Util::numToHex(m_symbols[s])<<endl;
             }
         }
         for (QString& s: m_extraMonCommands) {
