@@ -131,6 +131,7 @@ public:
             return "WORD";
         if (m_type==LABELONLY)
             return "LABELONLY";
+        return "";
     }
 
 };
