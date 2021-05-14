@@ -126,6 +126,14 @@
 	end;
 
 
+	//CURSOR Carriage Return
+	procedure cursor_return();
+	begin
+
+		call(OSNEWL);
+
+	end;
+
 	procedure mode_1();
 	begin
 
@@ -315,7 +323,7 @@
 		p_input_buffer[bp]:=0;
 	end;
 	
-	txt::cursor_off();
+	cursor_off();
 	returnvalue(p_input_buffer);
 
    end;
