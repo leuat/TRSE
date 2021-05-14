@@ -87,26 +87,163 @@ var
 
 
 // Function prototypes
+
+	/**
+	
+	Clear screen and initialise pointers 
+	Required for move_to etc
+		
+	**/
   	procedure cls();
+
+	/**
+
+	Place the cursor at 0,0 top left of screen
+	
+	**/
 	procedure cursor_home();
+
+
+	/**
+	
+	Place the cursor at X, Y screen position
+	
+	**/
 	procedure move_to(_text_x: byte, _text_y: byte);
+	
+	/**
+	
+	Wait for vertical blank (not yet implemented)
+	
+	**/
 	procedure wait_vsync();
+
+
+	/**
+	
+	Set the text colour (not available on all platforms)	
+	
+	**/
 	procedure text_colour(_chosen_text_colour: byte);
+	
+	
+	/**
+
+	Output a string at the current cursor location.
+	Set Carriage Return on/off	
+	
+	**/
 	procedure print_string(in_str: pointer, CRLF: byte = True);
+
+	/**
+
+	Get a character input from the keyboard	
+	
+	**/
 	function get_key():byte;
+
+	/**
+	
+	Wait for a key press	
+	
+	**/
 	procedure wait_key();
+
+	/**
+
+	Clear the keyboard buffer	
+	
+	**/
 	procedure clear_buffer();
+
+	/**
+	
+	Make a beep sound (not available on all platforms)
+	
+	**/
 	procedure beep();
+
+	/**
+	
+	Helper to set up screen pointers etc
+	
+	**/
 	procedure DefineScreen();
+
+	/**
+	
+	Put a character at a X, Y screen coordinate
+	
+	**/
     procedure put_char_at(_atx,_aty,_atchar:byte);
-    procedure put_ch(CH:byte);
+
+    
+	/**
+	
+	Put a character at current cursor position
+	
+	**/
+	procedure put_ch(CH:byte);
+
+
+	/**
+	
+	Return the character at chosen screen position
+	
+	**/
     function get_char_at(_col,_row:byte):byte;
+    
+
+	/**
+	
+	Compare two strings for equality
+	
+	**/
 	function str_compare(str1,str2:pointer):byte;
+
+
+	/**
+	
+	Output a string representation of a decimal number at chosen position
+	
+	**/
 	procedure put_dec_at(_natx,_naty,_nat:byte);
+
+
+	/**
+	
+	Output a string representation of a decimal number at current cursor position
+	Set if you want carriage return true/false
+	
+	**/
 	procedure print_dec(_in_n:byte, _add_cr:byte);
+
+	/**
+	
+	Convert string to decimal number
+	
+	**/
 	function str_to_dec(_in_str:pointer):byte;
+
+	/**
+	
+	Get numeric input from keyboard
+	
+	**/
 	function get_dec():integer;
+
+	/**
+	
+	Show flashing cursor
+	
+	**/
 	procedure cursor_on();
+
+	/**
+	
+	Hide flashing cursor
+	
+	**/
 	procedure cursor_off();
 
 
