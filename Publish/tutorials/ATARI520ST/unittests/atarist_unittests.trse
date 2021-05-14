@@ -53,5 +53,5 @@ override_target_settings_prg = 0
 build_list = ,
 exomizer_toggle = 0
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/ATARI520ST/unittests/
-open_files = ,utests.asm, utests.ras, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/classes.tru, [ext]units/global/unittests/ifthenelse.tru, [ext]units/global/unittests/vars.tru
-current_file = utests.ras
+open_files = ,utests.asm, utests.ras, [ext]units/global/unittests/case.tru, [ext]units/global/unittests/classes.tru, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/ifthenelse.tru, [ext]units/global/unittests/vars.tru
+current_file = utests.asm

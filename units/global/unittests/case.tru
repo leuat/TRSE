@@ -19,6 +19,7 @@ end;
 procedure Test2();
 begin
 	Vars::j2:=15000;
+	asm(";fail");
 	case Vars::j2 of
 		4: Vars::i2:=5;
 		15000: Vars::i2:=10;
