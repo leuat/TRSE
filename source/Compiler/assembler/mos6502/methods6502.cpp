@@ -110,6 +110,9 @@ void Methods6502::Assemble(Assembler *as, AbstractASTDispatcher* dispatcher) {
     if (Command("AddBreakpoint")) {
         as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));
     }
+    if (Command("disassemble")) {
+        as->Label("trse_disassemble_"+QString::number(as->m_currentBreakpoint++));
+    }
 
 
     if (Command("CreatePointer"))

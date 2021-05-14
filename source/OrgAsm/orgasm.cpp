@@ -911,6 +911,11 @@ void Orgasm::SaveSymbolsList(QString filename)
                     stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
                     isSet[m_symbols[s]]=true;
                 }
+            if (!s.startsWith("trse_disassemble"))
+                if (!isSet[m_symbols[s]]) {
+                    stream << "d  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
+                    isSet[m_symbols[s]]=true;
+                }
         }
         for (QString s: m_extraSymbols.keys()) {
             stream << "al  " << m_extraSymbols[s] << " ."<< s << endl;
