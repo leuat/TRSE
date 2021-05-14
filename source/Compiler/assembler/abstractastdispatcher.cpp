@@ -408,12 +408,23 @@ void AbstractASTDispatcher::AssignVariable(QSharedPointer<NodeAssign> node)
     // For constant i:=i+1;
     if (IsSimpleIncDec(node))
         return;
-    // p[i] := 10;
-    if (IsSimpleAssignPointerExpression(node))
-        return;
-    //a:=5;
+
+    //a:=5; some simplest case
      if (StoreVariableSimplified(node))
         return;
+
+    // p := #data;
+    if (IsSimpleAssignPointer(node))
+        return;
+
+    // p[i] := 10;
+    if (IsAssignPointerWithIndex(node))
+        return;
+
+    // arr[i] := 10;
+    if (IsAssignArrayWithIndex(node))
+        return;
+
 
     GenericAssign(node);
 

@@ -1,0 +1,36 @@
+program Get_String_Test;
+@projectsettings "system" C64
+@use "text/txt"
+var  
+   i: byte; 
+   user_input: pointer;
+	myint: integer;
+
+begin
+	
+	txt::cls();
+	txt::cursor_off();
+	
+	txt::move_to(0,0);
+
+	
+	// String input
+	txt::print_string("WELCOME, WHAT IS YOUR NAME?", True);
+	user_input:=txt::get_string();
+	txt::print_string("HELLO ", False);
+	txt::print_string(user_input, True);
+
+	// Number input
+	txt::print_string(" ", True);
+	txt::print_string("WHAT IS YOUR AGE?", True);
+	i:=txt::get_dec();
+	txt::move_to(0,7);
+	txt::print_string(" ", True);
+	txt::print_dec(i, False);
+	txt::print_string("? WOW, YOU DON'T LOOK A DAY", True);
+	txt::print_string("OLDER THAN ", False);
+	txt::print_dec(i-1, True); 
+
+
+	loop();
+end.

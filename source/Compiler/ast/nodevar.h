@@ -40,6 +40,7 @@ public:
     QSharedPointer<Node> m_subNode = nullptr;
     bool m_ignoreRecordExpr = false;
     bool m_ignoreLookup = false;
+    bool m_scaleApplied = false; // used for class array index scaling in parser
     TokenType::Type m_writeType = TokenType::NADA;
     NodeVar(Token t);
 
