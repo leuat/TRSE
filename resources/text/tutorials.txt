@@ -66,7 +66,7 @@ PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorial
 PET; Pet Bitmap Mode examples; PET/pbm_examples/;<h2>Pet Bitmap Mode examples</h2><p><img src=":resources/images/PET.png" width="300">Bitmap mode tutorials for the PET!
 PET; PETFrog; PET/PETFrog/;<h2>PET Frog game</h2><p><img src=":resources/images/billboard/b30.png" width="300"><p>PET Frog for the VIC-20!<p>By Chris Garrett
 #CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
-CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/cross-platform.png" width="200"><p>
+CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/crossplatform.png" width="200"><p>
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.
 C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
 
