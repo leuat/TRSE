@@ -238,7 +238,7 @@ void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags)
     Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
-void AsmZ80::BinOP(TokenType::Type t, bool clearFlag)
+void AsmZ80::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         m_term = "add ";

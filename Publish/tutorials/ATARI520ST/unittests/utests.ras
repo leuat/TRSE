@@ -1,10 +1,13 @@
 Program UnitTestsX86;
+
 @projectsettings "amstradcpc_options" "-O system.printer=1 -O file.printer_file=/tmp/printer.dat"
 @use "unittests/unittests"
 @use "unittests/common"
 
 procedure TestResult(txt:pointer);
 begin
+  Screen::Print(txt);
+  Screen::NewLine();
 end;
 
 
@@ -13,6 +16,6 @@ begin
 	if Common::unittests_status = 0 then
 		TestResult("SUCCESS!")
 	else
-	TestResult("FAILURE!");
+		TestResult("FAILURE!");
 	loop();
 end.

@@ -29,7 +29,6 @@ begin
 	Vars::v1:=1;
 	Vars::p2[Vars::v1]:=2;
 	Vars::p1:=$0400;
-	asm(";fail");
 	Vars::p1:=Vars::p1 + Vars::p2[Vars::v1];
 	Vars::text := "04:"; if Vars::p1=$0402 then Common::PASS() else Common::FAIL();
 end;
@@ -97,8 +96,10 @@ begin
 	@ifndef AMSTRADCPC
 	Advanced04();
 	Advanced05();
+	@ifndef ATARI520ST
 	Advanced06();
 	Advanced07(); 
+	@endif
 	Advanced08();
 	@endif
 	@endif

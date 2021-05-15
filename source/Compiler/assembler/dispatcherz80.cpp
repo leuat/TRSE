@@ -485,7 +485,7 @@ void ASTdispatcherZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
         QString ax = getAx(node->m_right);
         PopX();
-        as->BinOP(node->m_op.m_type);
+        as->BinOP(node->m_op.m_type,node->isSigned(as));
 
         as->Asm(as->m_term + " " +  ax);
         as->m_term = "";

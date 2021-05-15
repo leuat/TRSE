@@ -180,6 +180,9 @@ void AsmM68000::DeclareVariable(QString name, QString type, QString initval, QSt
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
     if (initval=="")
         initval="0";
+
+
+
     Write(name +"\t" + t + "\t"+initval);
     if (t==byte)
         Asm(" 	CNOP 0,4");
@@ -205,10 +208,10 @@ void AsmM68000::BinOP(TokenType::Type t, bool clearFlag)
         v = "or";
 
     if (t == TokenType::MUL)
-        v = "muls";
+        v = "mulu";
 
     if (t == TokenType::DIV)
-        v = "divs";
+        v = "divu";
 
     if (t == TokenType::SHR)
         v = "lsr";

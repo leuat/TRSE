@@ -19,7 +19,12 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
     }
 
 
-    as->BinOP(node->m_op.m_type);
+    as->BinOP(node->m_op.m_type,node->isSigned(as));
+
+
+    if (node->m_left->isWord(as) && node->m_right->isByte(as) && node->m_op.m_type==TokenType::MUL)
+        node->SwapNodes();
+
     QString op = as->m_varStack.pop();
     QString d0 = as->m_regAcc.Get();
     bool adv = false;
@@ -37,12 +42,30 @@ void ASTDispatcher68000::dispatch(QSharedPointer<NodeBinOP>node) {
     //    m_clearFlag=false;
   //  }
     node->m_left->Accept(this);
-    TransformVariable(as,"move"+getEndType(as,node->m_left, node->m_right),d0 + "     ; BOP move",as->m_varStack.pop());
+    QString endtype = getEndType(as,node->m_left, node->m_right);
+    if (node->m_left->isByte(as))
+        endtype =".b";
+    TransformVariable(as,"move"+endtype,d0 + "     ; BOP move",as->m_varStack.pop());
+
+
 
 //    qDebug() << "NodeBinOp : " << op;
   //  as->Comment("NodeBinop  : " +op);
-    if (op.toLower().contains("mul") || op.toLower().contains("div"))
-        op = op+".w";
+    if (op.toLower().contains("mul") || op.toLower().contains("div")) {
+            op+=".w";
+        if (node->isSigned(as))
+            op = op.replace("u","s");
+        auto nv = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+        if (nv)
+            as->Comment("ORG TYPE of "+nv->value+" "+TokenType::getType(nv->getOrgType(as)));
+        if (!node->m_left->isWord(as) || !node->m_right->isWord(as)) {
+            adv = true;
+            as->Comment("LHS is byte, so initiate advanced op");
+
+
+        }
+    }
+
     else op=op + getEndType(as,node->m_left, node->m_right);//+m_lastSize;//+".l";
 
 //    as->Comment("d0 used:" +d0);
@@ -799,7 +822,7 @@ void ASTDispatcher68000::LoadVariable(QSharedPointer<NodeVar> n)
     }
 
     QString d0 = as->m_regAcc.Get();
-    if (m_clearFlag) {
+    if (m_clearFlag || n->isByte(as)) {
 //        as->Comment("LoadVariable:: Clearing");
         TransformVariable(as,"move.l",d0,"#0");
 
@@ -1116,7 +1139,7 @@ void ASTDispatcher68000::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QS
 
     QString var = nodeA->getValue(as);
     LoadVariable(nodeB);
-    TransformVariable(as,"cmp",as->m_varStack.pop(),var);
+    TransformVariable(as,"cmp"+getEndType(as,nodeA),as->m_varStack.pop(),var);
     as->Asm("bne "+lblJump);
 
 }
@@ -1176,9 +1199,9 @@ void ASTDispatcher68000::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPoin
             ErrorHandler::e.Error("Step value must be either a variable or numeric!");
         stepVal = step->getValue(as);
     }
-    TransformVariable(as,"add",var, stepVal);
+    TransformVariable(as,"add"+getEndType(as,nodeA),var, stepVal);
     LoadVariable(nodeB);
-    TransformVariable(as,"cmp",as->m_varStack.pop(),var);
+    TransformVariable(as,"cmp"+getEndType(as,nodeA),as->m_varStack.pop(),var);
     as->Asm("bne "+lblJump);
 
 }

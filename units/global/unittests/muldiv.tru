@@ -8,6 +8,7 @@ begin
 	Vars::v1 := 15; 
 	Vars::v2 := 9;
 	Vars::rb:=Vars::v1*Vars::v2;
+	
 	Vars::text := "01:"; if Vars::rb=135 then Common::PASS() else Common::FAIL();
 end;
 
@@ -71,6 +72,7 @@ procedure IntDivByte08();
 begin
 	Vars::i1 := 615;
 	Vars::v1 := 5;
+	asm(";fail");
 	Vars::v2 := Vars::i1/Vars::v1;
 	Vars::text := "08:"; 
 	if (Vars::v2=123) then Common::PASS() else Common::FAIL();
