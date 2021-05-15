@@ -73,26 +73,28 @@ bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
         QString d = lst[i].split(" ")[0];
         bool ok = true;
         int a = d.split(":")[0].toInt(&ok,16);
-        QString b = d.split(":")[1];
-        int val = Util::NumberFromStringHex("$"+b);
-        if (val>codeStart && val <0x4000)
-            maxB1=val;
+        auto spl = d.split(":");
+        if (spl.count()>1) {
+            QString b = spl[1];
+            int val = Util::NumberFromStringHex("$"+b);
+            if (val>codeStart && val <0x4000)
+                maxB1=val;
 
-        if (val>varStart && val <0xFFFF)
-            maxV1=val;
+            if (val>varStart && val <0xFFFF)
+                maxV1=val;
 
-        if (val>=0x4000 && val<=0x7FFF) {
-            // We're in BANK territory!
-            if (!banks.contains(a)) {
-                banks[a] = QSharedPointer<MemoryBlock>(
-                            new MemoryBlock(0x4000, 0x4000, MemoryBlock::DATA, "B"+QString::number(a,16)));
-                banks[a]->m_bank = a;
+            if (val>=0x4000 && val<=0x7FFF) {
+                // We're in BANK territory!
+                if (!banks.contains(a)) {
+                    banks[a] = QSharedPointer<MemoryBlock>(
+                                new MemoryBlock(0x4000, 0x4000, MemoryBlock::DATA, "B"+QString::number(a,16)));
+                    banks[a]->m_bank = a;
 
+                }
+                QSharedPointer<MemoryBlock> bank = banks[a];
+                bank->m_end = val;
             }
-            QSharedPointer<MemoryBlock> bank = banks[a];
-            bank->m_end = val;
         }
-
 
 
         done=++i>=lst.count();

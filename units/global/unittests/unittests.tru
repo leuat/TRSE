@@ -34,12 +34,12 @@ begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
 		if (currentTest=0) then Classes::Exec();
+		if (currentTest=6) then ForLoop::Exec();
 		@endif
 		if (currentTest=1) then CaseTest::Exec();
 		if (currentTest=5) then MulDiv::Exec();
 		if (currentTest=2) then IfThenElse::Exec();
 		if (currentTest=3) then IntegerTest::Exec();
-		if (currentTest=6) then ForLoop::Exec();
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=4) then AdvancedMath::Exec();

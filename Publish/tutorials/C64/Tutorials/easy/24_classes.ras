@@ -17,6 +17,22 @@ var
 		prevPos,pos : Point;
 		color : byte; // Current colour of monster
 		name : array[6] of byte; // Classes supports arrays		
+
+
+		procedure Init();
+		begin
+			this.pos.x:=mod(random(),screen_width); // Random x-position
+			this.pos.y:=mod(random(),screen_height); // Random t-position
+			this.prevPos.x := this.pos.x;
+			this.prevPos.y := this.pos.y;
+		// Produce a random name of 3 chars
+			this.name[0] := random()/16+1;
+			this.name[1] := random()/16+1;
+			this.name[2] := random()/16+1;
+			this.name[3] := 0;
+			this.color:=mod(random(),14)+blue+1; // Random colour excluding background
+		end;
+		
 		
 		procedure Update();
 		begin		
@@ -76,6 +92,7 @@ var
 	
 		end;
 		
+		
 	end;
 
 
@@ -97,17 +114,7 @@ procedure InitMonsters();
 begin
 	for i:=0 to no do
 	begin
-		pm:=#monsters[i];
-		pm.pos.x:=mod(random(),screen_width); // Random x-position
-		pm.pos.y:=mod(random(),screen_height); // Random t-position
-		pm.prevPos.x := pm.pos.x;
-		pm.prevPos.y := pm.pos.y;
-		// Produce a random name of 3 chars
-		pm.name[0] := random()/16+1;
-		pm.name[1] := random()/16+1;
-		pm.name[2] := random()/16+1;
-		pm.name[3] := 0;
-		pm.color:=mod(random(),14)+blue+1; // Random colour excluding background
+		monsters[i].Init();
 	end;
 
 end;
@@ -135,9 +142,7 @@ begin
 	k:=shift;
 	for i:=0 to no do
 	begin
-		// Indirect call
-		pm:=#monsters[i];
-		pm.Update();
+		monsters[i].Update();
 	end;	
 
 end;
