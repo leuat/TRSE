@@ -1163,6 +1163,8 @@ void ASTdispatcherX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
         as->Asm("add ["+var+"],cx");
 
     LoadVariable(nodeB);
+    if (isInclusive)
+        as->Asm("add "+getAx(nodeB)+",1");
     as->Asm(m_cmp+getAx(nodeB)+","+getWordByteType(as,nodeA->m_left)+" ["+var+"]");
     as->Asm(m_jne+lblJump);
 

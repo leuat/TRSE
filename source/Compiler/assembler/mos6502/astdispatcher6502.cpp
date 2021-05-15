@@ -1661,6 +1661,9 @@ void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node>
                                                                                         comp, false));
 
 
+        if (inclusive)
+            nodeB = NodeFactory::CreateBinop(t,TokenType::PLUS,nodeB,NodeFactory::CreateNumber(t,1));
+
 
         QSharedPointer<NodeBinaryClause> clause = QSharedPointer<NodeBinaryClause>(
                     new NodeBinaryClause(t_clause,nodeA->m_left, nodeB));
@@ -1694,6 +1697,8 @@ void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node>
     int stepValue = 1; // do we have a step value?
     if (step != nullptr) {
         stepValue = step->getValueAsInt(as); //node->m_step->getValue(as);
+        if (stepValue==0)
+            stepValue =1;
     }
     if (inclusive) {    // inclusive version will END after the TO value
 

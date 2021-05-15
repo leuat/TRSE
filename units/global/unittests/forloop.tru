@@ -1,0 +1,102 @@
+unit ForLoop;
+var
+
+// regular for loop
+procedure Test1();
+begin
+	Vars::text := "T1:";
+	for Vars::v1:=0 to 240 do 
+	begin
+		
+	end;
+	if (Vars::v1=240) then Common::PASS() else Common::FAIL();
+end;
+
+// regular fori loop
+procedure Test2();
+begin
+	Vars::text := "T2:";
+	fori Vars::v1:=0 to 240 do 
+	begin
+		
+	end;
+	if (Vars::v1=241) then Common::PASS() else Common::FAIL();
+end;
+
+
+// regular for loop integer
+procedure Test3();
+begin
+	Vars::text := "T3:";
+	for Vars::i1:=0 to 1000 do 
+	begin
+		
+	end;
+	if (Vars::i1=1000) then Common::PASS() else Common::FAIL();
+end;
+
+// regular for loop integer
+procedure Test4();
+begin
+	Vars::text := "T4:";
+	fori Vars::i1:=0 to 1000 do 
+	begin
+		
+	end;
+	if (Vars::i1=1001) then Common::PASS() else Common::FAIL();
+end;
+
+
+// step byte
+procedure Test5();
+begin
+	Vars::text := "T5:";
+	Vars::v2 := 0;
+	for Vars::v1:=0 to 240 step 4 do 
+	begin
+		Vars::v2+=1;
+	end;
+	if (Vars::v2=240/4) then Common::PASS() else Common::FAIL();
+end;
+
+// step word
+procedure Test6();
+begin
+	Vars::text := "T5:";
+	Vars::v2 := 0;
+	for Vars::i1:=0 to 1000 step 4 do 
+	begin
+		Vars::v2+=1;
+	end;
+	if (Vars::v2=250) then Common::PASS() else Common::FAIL();
+end;
+
+// step word
+procedure Test7();
+begin
+	Vars::text := "T6:";
+	Vars::v2 := 1;
+	for Vars::v1:=0 to 20 step Vars::v2 do 
+	begin
+		Vars::v2+=1;
+	end;
+	if (Vars::v2=6) then Common::PASS() else Common::FAIL();
+end;
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("FOR LOOP");
+	
+	Test1();
+	Test2();
+	Test3();
+	Test4();
+	Test5();
+	Test6();
+	Test7();
+	Common::WaitABit();
+end;
+
+end.

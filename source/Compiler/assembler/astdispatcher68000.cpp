@@ -1,5 +1,5 @@
 #include "astdispatcher68000.h"
-
+#include "source/Compiler/ast/nodefactory.h"
 
 ASTDispatcher68000::ASTDispatcher68000()
 {
@@ -1189,19 +1189,18 @@ void ASTDispatcher68000::AssignString(QSharedPointer<NodeAssign> node, bool isPo
 
 void ASTDispatcher68000::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
-
-    //IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
-    //Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
-    QString var = nodeA->m_left->getValue(as);
-    QString stepVal = "#1";
-    if (step!=nullptr) {
-        if (!step->isPure())
-            ErrorHandler::e.Error("Step value must be either a variable or numeric!");
-        stepVal = step->getValue(as);
-    }
-    TransformVariable(as,"add"+getEndType(as,nodeA),var, stepVal);
+    auto var = nodeA->m_left;
+    if (step==nullptr) step = NodeFactory::CreateNumber(var->m_op,1);
+    auto increaseCounter = NodeFactory::CreateAssign(var->m_op, var, NodeFactory::CreateBinop(var->m_op,TokenType::PLUS,var, step));
+    as->Comment("Create increasecounter");
+    increaseCounter->Accept(this);
+    as->Comment("end increasecounter");
     LoadVariable(nodeB);
-    TransformVariable(as,"cmp"+getEndType(as,nodeA),as->m_varStack.pop(),var);
+    QString d0 = as->m_varStack.pop();
+    if (isInclusive)
+        TransformVariable(as,"add",d0,"#1");
+
+    TransformVariable(as,"cmp"+getEndType(as,var),d0,var->getValue(as));
     as->Asm("bne "+lblJump);
 
 }

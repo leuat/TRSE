@@ -1957,9 +1957,9 @@ QSharedPointer<Node> Parser::AssignStatementBetweenObjects(QSharedPointer<Node> 
             right->m_op.m_isReference = true;
             int size = m_symTab->m_records[t1]->getSize();
             if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
-                params<<right<<CreateNumber(0)<<left<<CreateNumber(size);
+                params<<right<<NodeFactory::CreateNumber(m_currentToken,0)<<left<<NodeFactory::CreateNumber(m_currentToken,size);
             if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80)
-                params<<right<<left<<CreateNumber(size);
+                params<<right<<left<<NodeFactory::CreateNumber(m_currentToken,size);
             return QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod("memcpyunroll",params,&Syntax::s.builtInFunctions["memcpyunroll"]));
             // guaranteed that both are the same!
 //                Node
@@ -2004,7 +2004,7 @@ QSharedPointer<Node> Parser::AssignStatement()
         if (v->m_expr!=nullptr) {
             auto add = v->m_expr;
             v->m_expr = nullptr;
-            left = CreateBinop(TokenType::PLUS,v,add);
+            left = NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS,v,add);
 
         }
         //      }
@@ -3530,57 +3530,6 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     decl.append(procDecl);
 }
 
-QSharedPointer<NodeNumber> Parser::CreateNumber(int i)
-{
-    Token t = m_currentToken;
-    t.m_type=TokenType::INTEGER_CONST;
-    t.m_intVal = i;
-    return QSharedPointer<NodeNumber>(new NodeNumber(t,i));
-}
-
-QSharedPointer<NodeVar> Parser::CreateVariable(QString v)
-{
-    Token t = m_currentToken;
-    t.m_type=TokenType::ID;
-    t.m_value = v;
-    t.m_intVal = 0;
-
-    return QSharedPointer<NodeVar>(new NodeVar(t));
-
-}
-
-QSharedPointer<Node> Parser::CreateBinop(TokenType::Type tt, QSharedPointer<Node> left, QSharedPointer<Node> right)
-{
-    Token t = m_currentToken;
-    t.m_type = tt;
-    if (t.m_type==TokenType::PLUS) {
-        if (left==nullptr)
-            return right;
-        if (right==nullptr)
-            return left;
-    }
-    if (left->isPureNumeric() && right->isPureNumeric()) {
-        if (t.m_type==TokenType::PLUS)
-            return CreateNumber(left->numValue()+right->numValue());
-        if (t.m_type==TokenType::MINUS)
-            return CreateNumber(left->numValue()-right->numValue());
-        if (t.m_type==TokenType::MUL)
-            return CreateNumber(left->numValue()*right->numValue());
-        if (t.m_type==TokenType::DIV)
-            return CreateNumber(left->numValue()/right->numValue());
-   }
-
-    return QSharedPointer<NodeBinOP>(new NodeBinOP(left,t,right));
-}
-
-QSharedPointer<NodeAssign> Parser::CreateAssign(QSharedPointer<Node> left, QSharedPointer<Node> right)
-{
-    Token t = m_currentToken;
-    t.m_type = TokenType::ASSIGN;
-    return QSharedPointer<NodeAssign>(new NodeAssign(left,t,right));
-
-}
-
 
 
 
@@ -3630,7 +3579,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         }
         // Apply int/long, but only once
         if (v->m_expr!=nullptr && scale !=1 && !v->m_scaleApplied) {
-           v->m_expr = CreateBinop(TokenType::MUL,v->m_expr,CreateNumber(scale));
+           v->m_expr = NodeFactory::CreateBinop(m_currentToken,TokenType::MUL,v->m_expr,NodeFactory::CreateNumber(m_currentToken,scale));
             v->m_scaleApplied = true;
         }
 
@@ -3650,12 +3599,12 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     // Look up objects[i].a. -> objects[i*sizeof(Object)].a (mul with size)
 
     if (size!=0 && v->m_expr!=nullptr) {
-        auto nodeClassSize = CreateNumber(size);
+        auto nodeClassSize = NodeFactory::CreateNumber(m_currentToken,size);
         if (v->m_expr->isPureNumeric() && v->m_expr->numValue()==0) {
 
         }
         else
-            v->m_expr = CreateBinop(TokenType::MUL,v->m_expr,nodeClassSize);
+            v->m_expr = NodeFactory::CreateBinop(m_currentToken,TokenType::MUL,v->m_expr,nodeClassSize);
     }
 
     // Has a subnode? Calculate shift and go down the rabbid hole!
@@ -3665,7 +3614,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         // internalshift is the offset of the variable position in the class
         if (shiftInternal!=0)
             //            qDebug() << "internal shift for var "+sv->value+" : Adding "<<shiftInternal;
-                v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,CreateNumber(shiftInternal));
+                v->m_expr = NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS,v->m_expr,NodeFactory::CreateNumber(m_currentToken,shiftInternal));
 
         //      qDebug() <<  "***** SUBNODE PUSH "<<v->value;
         auto node = ApplyClassVariable(sv);
@@ -3676,11 +3625,11 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         if (node!=nullptr) {
 //            qDebug() << "Adding : "<<QString::number(v->m_expr->getValueAsInt(nullptr))<<" to " <<QString::number(node->getValueAsInt(nullptr));
 //            qDebug() << "Adding : "<<QString::number(node->getValueAsInt(nullptr));
-            v->m_expr = CreateBinop(TokenType::PLUS,v->m_expr,node);
+            v->m_expr = NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS,v->m_expr,node);
         }
 
         if (v->m_expr==nullptr)
-            v->m_expr = CreateNumber(0);
+            v->m_expr = NodeFactory::CreateNumber(m_currentToken,0);
 
         // Propagate 8/16/32 bit write type
         v->m_writeType = sv->m_writeType;
@@ -3707,7 +3656,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     auto add = v->m_expr;
     v->m_expr = nullptr;
 
-    return CreateBinop(TokenType::PLUS, v,add);
+    return NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS, v,add);
 
 }
 /*

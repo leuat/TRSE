@@ -24,6 +24,7 @@
 #include "source/Compiler/ast/nodecase.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "methods6502.h"
+#include "source/Compiler/ast/nodefactory.h"
 #include <QChar>
 #include "source/Compiler/assembler/factorymethods.h"
 

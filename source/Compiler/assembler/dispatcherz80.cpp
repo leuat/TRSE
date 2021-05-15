@@ -126,6 +126,8 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
 
         as->Asm("ld c,l");
         as->Asm("ld a,"+nodeB->getValue8bit(as,false));
+        if (isInclusive)
+            as->Asm("inc a");
         as->Asm(m_cmp+"c");
 
         if (!isOffPage)
@@ -151,6 +153,8 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
             as->ClearTerm();
             nodeB->Accept(this);
             as->Term();
+            if (isInclusive)
+                as->Asm("inc a");
             as->Asm("ld c,a");
         }
 
@@ -161,6 +165,9 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
             as->Asm("ld d,a");
         }
     //    PushX();
+        QString inc = "";
+        if (isInclusive)
+            inc = "+1";
         QString ax = getAx(nodeA->m_left);
       //  PopX();
         as->Asm(m_mov+ax+",["+var+"]");
@@ -175,7 +182,7 @@ void ASTdispatcherZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointe
         if (!nodeB->isPureNumeric())
             as->Asm(m_cmp+"c");
         else
-            as->Asm(m_cmp+nodeB->getValue(as));
+            as->Asm(m_cmp+nodeB->getValue(as)+inc);
 
 
         if (!isOffPage)

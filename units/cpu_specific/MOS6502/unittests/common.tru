@@ -77,6 +77,13 @@ begin
 
 end;
 
+procedure DebugByte(bb:byte);
+begin
+	moveto(5,15,04);
+	printnumber(bb); 
+
+end;
+
 end.
 
 

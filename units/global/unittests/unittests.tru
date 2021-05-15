@@ -6,6 +6,7 @@ Unit Unittests;
 @use "unittests/classes"
 @use "unittests/ifthenelse"
 @use "unittests/muldiv"
+@use "unittests/forloop"
 
 @use "unittests/advanced_math"
 
@@ -13,7 +14,7 @@ Unit Unittests;
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests : byte = 6;
+	const noTests : byte = 7;
 	currentTest : byte;
 	isDone: boolean;
 
@@ -38,6 +39,7 @@ begin
 		if (currentTest=5) then MulDiv::Exec();
 		if (currentTest=2) then IfThenElse::Exec();
 		if (currentTest=3) then IntegerTest::Exec();
+		if (currentTest=6) then ForLoop::Exec();
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=4) then AdvancedMath::Exec();

@@ -1,4 +1,3 @@
-project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/CrossPlat/txt_tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fd
@@ -33,8 +32,6 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
-open_files = ,[ext]units/cpu_specific/MOS6502/text/txt.tru, txt_tutorial08_beeb_model_detect.ras, txt_tutorial07_moon_game.ras, txt_tutorial06_interpret_input.ras, txt_tutorial05_get_string.ras, txt_tutorial04_move_char.ras, txt_tutorial02_wait_keypress.ras, txt_tutorial01_numbers.ras, txt_tutorial01_hello.ras, [ext]units/APPLEII/text/text_include.inc, [ext]units/BBCM/bbc_text_mode.ras, [ext]units/cpu_specific/MOS6502/txt.tru
-current_file = [ext]units/cpu_specific/MOS6502/text/txt.tru
 output_type = prg
 var_zeropages = ,
 zeropages_userdefined = ,

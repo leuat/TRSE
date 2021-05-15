@@ -60,6 +60,4 @@ zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 2001-8N
 show_all_files = 1
 data_header_/users/leuat/code/trse/publish/tutorials/c64/tutorials/resources/images/hammerfist.flf = 2.55794e-314
-open_files = ,easy/02_texty.ras, easy/03_boxes.ras, Hello.ras
-project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
-current_file = easy/03_boxes.ras
+open_files =, Hello.ras

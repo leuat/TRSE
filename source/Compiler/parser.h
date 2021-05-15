@@ -59,6 +59,9 @@
 #include "source/LeLib/limage/compression.h"
 #include "source/LeLib/util/SimplexNoise.h"
 #include "source/LeLib/ttrfile.h"
+
+#include "source/Compiler/ast/nodefactory.h"
+
 //#include "source/Compiler/sourcebuilder.h"
 
 class ParserBlock {
@@ -153,14 +156,6 @@ public:
 
 
 
-    /*
-     * Small Node Factory
-     *
-     * */
-    QSharedPointer<NodeNumber> CreateNumber(int i);
-    QSharedPointer<NodeVar> CreateVariable(QString v);
-    QSharedPointer<Node> CreateBinop(TokenType::Type t, QSharedPointer<Node> left, QSharedPointer<Node> right);
-    QSharedPointer<NodeAssign> CreateAssign(QSharedPointer<Node> left, QSharedPointer<Node> right);
 
 
 
