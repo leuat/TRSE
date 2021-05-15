@@ -3262,6 +3262,7 @@ QSharedPointer<Node> Parser::BlockNoCompound(bool useOwnSymTab, QString blockNam
 
 QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
 {
+    m_inProcedureVariableDecl = true;
     QVector<QSharedPointer<Node>> decl;
     if (m_currentToken.m_type==TokenType::LPAREN) {
         Eat(TokenType::LPAREN);
@@ -3275,6 +3276,7 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
         }
     }
     //Eat(TokenType::RPAREN);
+    m_inProcedureVariableDecl = false;
     return decl;
 }
 
@@ -3553,6 +3555,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     if (v->m_classApplied)
         return v;
 
+//    qDebug() << v->value;
+
     QSharedPointer<Symbol> s = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);
     QString t1;
 
@@ -3655,6 +3659,7 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 
     auto add = v->m_expr;
     v->m_expr = nullptr;
+
 
     return NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS, v,add);
 
@@ -4322,7 +4327,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     // ^byte, ^integer
     if (m_currentToken.m_isPointer) {
-        if (m_isRecord && !Syntax::s.m_currentSystem->AllowPointerInStructs())
+
+        if (m_isRecord && !Syntax::s.m_currentSystem->AllowPointerInStructs() && !m_inProcedureVariableDecl)
             ErrorHandler::e.Error("You cannot declare pointers in records/classes on this CPU type. Please use an integer to store the address instead, and assign a pointer to it when required.  ",m_currentToken.m_lineNumber);
 
         t.m_type = TokenType::POINTER;
@@ -4350,7 +4356,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     }
 
     if (m_currentToken.m_type == TokenType::POINTER) {
-        if (m_isRecord && !Syntax::s.m_currentSystem->AllowPointerInStructs())
+        if (m_isRecord && !Syntax::s.m_currentSystem->AllowPointerInStructs() && !m_inProcedureVariableDecl)
             ErrorHandler::e.Error("You cannot declare pointers in records/classes on this CPU type. Please use an integer to store the address instead, and assign a pointer to it when required.  ",m_currentToken.m_lineNumber);
 //        QString type;
         Eat();

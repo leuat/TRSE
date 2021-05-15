@@ -49,6 +49,7 @@ public:
     bool m_isGlobal = false;
     void ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp) override;
 
+    TokenType::Type getWriteType()  override { return m_writeType; }
 
     TokenType::Type getOrgType(Assembler *as);
 

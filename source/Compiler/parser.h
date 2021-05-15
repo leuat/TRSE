@@ -96,9 +96,11 @@ public:
     QMap<QString, LMacro> m_macros;
     QString m_procPrefix = "";
     int m_prevPercent = -1;
+
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;
+    bool m_inProcedureVariableDecl = false;
     //bool m_breakSubvar = false;
     QSharedPointer<Node> m_currentProcedureCall;
     QString m_addInitialReferenceToProcedureCall = "";

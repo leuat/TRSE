@@ -141,6 +141,18 @@ public:
 
     virtual QString getAddress() {return "";}
 
+    virtual TokenType::Type getWriteType() {
+        TokenType::Type t1=TokenType::NADA,t2=TokenType::NADA;
+        if (m_left!=nullptr)
+            t1 = m_left->getWriteType();
+        if (m_left!=nullptr)
+            t2 = m_left->getWriteType();
+
+        if (t1!=TokenType::NADA) return t1;
+        if (t2!=TokenType::NADA) return t2;
+        return TokenType::NADA;
+    }
+
     virtual void forceWord() {}
     virtual QString getTypeText(Assembler* as) {return "";}
     virtual bool isPure() {

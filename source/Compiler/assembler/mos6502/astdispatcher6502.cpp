@@ -1545,6 +1545,31 @@ bool ASTDispatcher6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     if (var->m_expr==nullptr)
         return false;
 
+
+    if (var->m_writeType==TokenType::INTEGER) {
+        as->Comment("Writing an integer class pointer");
+//        node->m_right->setForceType(TokenType::INTEGER);
+        as->ClearTerm();
+        node->m_right->Accept(this);
+        as->Term();
+        as->Asm("pha");
+        as->Asm("tya");
+        as->Asm("tax");
+        as->Asm("pla");
+        as->Asm("pha");
+        var->m_expr->Accept(this);
+        as->Term();
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("sta ("+var->getValue(as)+"),y");
+        as->Asm("iny");
+        as->Asm("txa");
+        as->Asm("sta ("+var->getValue(as)+"),y");
+
+        return true;
+    }
+
+
     if (var->getArrayType(as)==TokenType::INTEGER) {
         if (!node->m_right->isPure())
             return false; // for now, only pure RHS expr
@@ -2167,7 +2192,7 @@ void ASTDispatcher6502::LoadPointer(QSharedPointer<NodeVar> node) {
         if (!(m=="" || m.startsWith("lda")))
             as->Asm("pla");
     }
-    if (node->getArrayType(as)==TokenType::INTEGER) {
+    if (node->getArrayType(as)==TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
         as->Asm("lda (" + getValue(node)+"),y");
         as->Asm("pha");
         as->Asm("iny");
@@ -2227,14 +2252,22 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVar> node)
         if (s->getTokenType()==TokenType::POINTER && as->m_term=="") {
             isOK = false;
         }
-//        qDebug() << "HERE " <<as->m_term << node->isReference() << val;
+
         if (((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN || node->isReference())  && as->m_term=="")) {
+            if (!node->isPointer(as)) {
             as->Asm("lda #<" + val);
             as->Asm("ldy #>" + val);
+            }
+            else {
+                as->Asm("lda " + val);
+                as->Asm("ldy " + val + "+1");
+
+            }
             return;
         }
         if (node->m_fake16bit && s->getTokenType()==TokenType::BYTE )
             as->Asm("ldy #0 ; Fake 16 bit");
+
         as->Variable(val, isOK);
     }
 
@@ -2489,11 +2522,11 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 pb=")";
                 as->Comment("Storing to a pointer");
             }
-
+            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
 
 
             // Optimize for number or pure var
-            if (node->m_expr->getType(as)==TokenType::INTEGER_CONST && node->getArrayType(as)!=TokenType::INTEGER) {
+            if (node->m_expr->getType(as)==TokenType::INTEGER_CONST && node->getArrayType(as)!=TokenType::INTEGER && node->m_writeType!=TokenType::INTEGER) {
                 //qDebug() << "StoreVariable:: HER";
                 as->ClearTerm();
 
@@ -2559,7 +2592,7 @@ void ASTDispatcher6502::StoreVariable(QSharedPointer<NodeVar> node) {
             if (usePush)
                 as->Asm("pla");
             as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
-            if (node->getArrayType(as)==TokenType::INTEGER) {
+            if (node->getArrayType(as)==TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
                 if (pa=="") {
                     as->Asm(tya);
                     as->Asm("sta " + getValue(node)+"+1,"+ secondReg);
@@ -3336,6 +3369,8 @@ bool ASTDispatcher6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assig
         return false;
 
     if (!(!node->isWord(as) && expr->isPure() && node->m_expr!=nullptr))
+        return false;
+    if (node->m_writeType != TokenType::BYTE)
         return false;
 
 //    as->Comment("Simplified storevariable");

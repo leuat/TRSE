@@ -41,8 +41,8 @@ QSharedPointer<Node> NodeFactory::CreateBinop(Token t,TokenType::Type tt, QShare
         if (t.m_type==TokenType::DIV)
             return CreateNumber(t,left->numValue()/right->numValue());
    }
-
-    return QSharedPointer<NodeBinOP>(new NodeBinOP(left,t,right));
+    auto v= QSharedPointer<NodeBinOP>(new NodeBinOP(left,t,right));
+    return v;
 }
 
 QSharedPointer<NodeAssign> NodeFactory::CreateAssign(Token t,QSharedPointer<Node> left, QSharedPointer<Node> right)

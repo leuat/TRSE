@@ -733,7 +733,7 @@ void AsmMOS6502::Variable(QString v, bool isByte)
         Comment("integer assignment NodeVar");
 //        if (m_term=="")
             m_term = "ldy ";
-        m_term+=v + "+1 ; Next one";
+        m_term+=v + "+1 ; keep";
         Term();
 //        Asm("tay");
         Term("lda "+v);
