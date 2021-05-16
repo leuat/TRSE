@@ -17,3 +17,5 @@ Turbo Rascal Syntax Error full repo
 - Make a symbolic link "project_templates" from your build directory to point to Publish/project_templates in order to access the "New Project" templates
 - Compile & run!
 
+# Source code information
+A compiler UML diagram can be found here: https://github.com/leuat/TRSE/blob/master/uml/compiler.png
