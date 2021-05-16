@@ -1,0 +1,119 @@
+@startuml
+!theme amiga
+title TRSE compiler
+left to right direction
+namespace CodeGen #508050 {
+    abstract class  "AbstractCodeGen"
+    class "CodeGenX86"
+    class "CodeGenZ80"
+    class "CodeGen68k"
+    class "CodeGen6502"
+    CodeGenX86 --|> AbstractCodeGen
+    CodeGen6502 --|> AbstractCodeGen
+    CodeGen68k --|> AbstractCodeGen
+    CodeGenZ80 --|> AbstractCodeGen
+}
+
+namespace Assembler #508080 {
+    abstract class  "Assembler"
+    class "AsmX86"
+    class "AsmZ80"
+    class "Asm68k"
+    class "Asm6502"
+    AsmX86 -left-|> Assembler
+    Asm6502 -left-|> Assembler
+    AsmZ80 --|> Assembler
+    Asm68k --|> Assembler
+}
+namespace Systems #505070 {
+    abstract class  "AbstractSystem"
+    class  "SystemMos6502"
+    SystemMos6502 --|> AbstractSystem
+    class  "SystemZ80"
+    SystemZ80 --|> AbstractSystem
+    class  "Systemm68000"
+    Systemm68000 --|> AbstractSystem
+    class  "SystemX86"
+    SystemX86 --|> AbstractSystem
+
+    class "SystemC64"
+    SystemC64 --|> SystemMos6502
+    class "SystemBBCM"
+    SystemBBCM --|> SystemMos6502
+    class "SystemVIC20"
+    SystemVIC20 --|> SystemMos6502
+    class "SystemAmstradCPC"
+    SystemAmstradCPC --|> SystemZ80
+    class "SystemSpectrum"
+    SystemSpectrum --|> SystemZ80
+   class "SystemAmiga"
+    SystemAmiga --|> Systemm68000
+   class "SystemAtari520ST"
+    SystemAtari520ST --|> Systemm68000
+
+}
+namespace Compiler #805050 {
+    abstract class "Compiler"
+    class "Compiler6502"
+    Compiler6502 --|>Compiler
+    class "CompilerZ80"
+    CompilerZ80 --|>Compiler
+    class "Compilerm68k"
+    Compilerm68k --|>Compiler
+    class "CompilerX86"
+    CompilerX86 --|>Compiler
+    class "CompilerGBZ80"
+    CompilerGBZ80 --|>Compiler
+}
+
+class "SourceBuilder"
+
+
+Systems.AbstractSystem -right-* SourceBuilder
+Compiler.Compiler --* SourceBuilder
+
+namespace Parser #805080 {
+
+    class "Parser"
+    class "Lexer"
+    Lexer --* Parser
+
+}
+
+Node.Node -up-* Compiler
+CodeGen.AbstractCodeGen --* Compiler
+Assembler.Assembler --* Compiler
+Parser.Parser --* Compiler
+
+namespace Node #808050 {
+    abstract class "Node"
+
+    class NodeVar 
+    NodeVar --|> Node
+    class NodeBinOP 
+    NodeBinOP --|> Node
+    class NodeBlock
+    NodeBlock --|> Node
+    class NodeProcedure
+    NodeProcedure -right-|> Node
+
+    class NodeProcedureDecl
+    NodeProcedureDecl -right-|> Node
+
+    class NodeAsm
+    NodeAsm -up-|> Node
+
+    class NodeBuiltinMethod
+    NodeBuiltinMethod --|> Node
+
+    class NodeConditional
+    NodeConditional -up-|> Node
+
+    class NodeBinaryClause
+    NodeBinaryClause -left-|> Node
+
+    class NodeNumber
+    NodeNumber -left-|> Node
+}
+
+@enduml
