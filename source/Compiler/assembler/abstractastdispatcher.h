@@ -139,6 +139,17 @@ public:
 
     virtual bool IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node) { return false;}
 
+    void IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<Node> var);
+
+
+
+    // handle a small loop
+    void SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
+
+    // handle a large loop
+    void LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
+
+
 
     /* The rest
      */

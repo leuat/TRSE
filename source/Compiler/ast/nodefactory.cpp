@@ -52,3 +52,43 @@ QSharedPointer<NodeAssign> NodeFactory::CreateAssign(Token t,QSharedPointer<Node
 
 }
 
+QSharedPointer<NodeAsm> NodeFactory::CreateAsm(Token t, QString text)
+{
+    t.m_value = text;
+    return QSharedPointer<NodeAsm>(new NodeAsm(t));
+
+}
+
+QSharedPointer<NodeCompound> NodeFactory::CreateCompound(Token t)
+{
+    return QSharedPointer<NodeCompound>(new NodeCompound(t));
+}
+
+QSharedPointer<NodeBlock> NodeFactory::CreateBlock(Token t, QSharedPointer<Node> comp)
+{
+    return QSharedPointer<NodeBlock>(new NodeBlock(t,QVector<QSharedPointer<Node>>(),
+                                                                                        comp, false));
+
+}
+
+QSharedPointer<NodeBinaryClause> NodeFactory::CreateBinaryClause(Token t, TokenType::Type clause, QSharedPointer<Node> left, QSharedPointer<Node> right) {
+    t.m_type = clause;
+    return QSharedPointer<NodeBinaryClause>(new NodeBinaryClause(t,left, right));
+}
+
+QSharedPointer<NodeConditional> NodeFactory::CreateConditional(Token t, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isLarge) {
+    return QSharedPointer<NodeConditional>(
+                new NodeConditional(t,isLarge,clause,block,false));
+}
+
+QSharedPointer<NodeBlock> NodeFactory::CreateBlockFromStatements(Token t, QVector<QSharedPointer<Node> > statementlist) {
+    auto comp = CreateCompound(t);
+    comp->children = statementlist;
+    return CreateBlock(t,comp);
+}
+
+QSharedPointer<NodeConditional> NodeFactory::CreateSingleConditional(Token t,TokenType::Type clause,  bool isLarge, QSharedPointer<Node> left, QSharedPointer<Node> right, QSharedPointer<Node> block) {
+    auto binaryclause = CreateBinaryClause(t,clause,left,right);
+    return CreateConditional(t,binaryclause,block,isLarge);
+}
+

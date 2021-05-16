@@ -38,8 +38,27 @@ public:
     static QSharedPointer<NodeVar> CreateVariable(Token t,QString v);
     static QSharedPointer<Node> CreateBinop(Token t,TokenType::Type type, QSharedPointer<Node> left, QSharedPointer<Node> right);
     static QSharedPointer<NodeAssign> CreateAssign(Token t,QSharedPointer<Node> left, QSharedPointer<Node> right);
+    static QSharedPointer<NodeAsm> CreateAsm(Token t, QString text);
+    static QSharedPointer<NodeCompound> CreateCompound(Token t);
+    static QSharedPointer<NodeBlock> CreateBlock(Token t, QSharedPointer<Node> comp);
+    static QSharedPointer<NodeBinaryClause> CreateBinaryClause(Token t, TokenType::Type clause, QSharedPointer<Node> left, QSharedPointer<Node> right);
+    static QSharedPointer<NodeConditional> CreateConditional(Token t, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isLarge);
+
+    // Combined stuff
+
+    static QSharedPointer<NodeBlock> CreateBlockFromStatements(Token t, QVector<QSharedPointer<Node>> statementlist);
+    static QSharedPointer<NodeConditional> CreateSingleConditional(Token t, TokenType::Type clause, bool isLarge, QSharedPointer<Node> left, QSharedPointer<Node> right, QSharedPointer<Node> block);
 
 
+/*
+
+
+
+
+    QSharedPointer<NodeConditional> cond = QSharedPointer<NodeConditional>(
+                new NodeConditional(t,isLarge,clause,block,false));
+
+  */
 
 };
 

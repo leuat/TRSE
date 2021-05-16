@@ -15,6 +15,8 @@
 #include "source/Compiler/ast/nodecontrolstatement.h"
 #include "source/Compiler/assembler/abstractmethods.h"
 #include "source/Compiler/assembler/factorymethods.h"
+#include "source/Compiler/ast/nodefactory.h"
+
 #include "source/LeLib/util/fc8/FC8Compression.h"
 
 AbstractASTDispatcher::AbstractASTDispatcher()
@@ -290,6 +292,59 @@ void AbstractASTDispatcher::GenericAssign(QSharedPointer<NodeAssign> node) {
     as->Comment("Calling storevariable on generic assign expression");
 //    StoreVariable(VarOrNum(node->m_left));
     StoreVariable(VarOrNum(node->m_left));
+}
+
+void AbstractASTDispatcher::IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<Node> var) {
+
+    // no STEP included in FOR TO DO, we assume STEP 1
+
+    if (step==nullptr) step = NodeFactory::CreateNumber(var->m_op,1);
+    auto bop = NodeFactory::CreateBinop(var->m_op,TokenType::PLUS,var,step);
+    auto assign = NodeFactory::CreateAssign(var->m_op,var,bop);
+    assign->Accept(this);
+
+}
+
+void AbstractASTDispatcher::SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive)
+{
+    QString loopDone = as->NewLabel("forLoopDone");
+    //  Compare(as);
+    //  as->Asm("beq "+loopDone);
+
+    node->m_block->Accept(this);
+    as->m_stack["for"].pop();
+    IncreaseCounter(node->m_step,var);
+
+    as->Label(loopDone);
+
+    as->m_labelStack["for"].pop();
+    as->m_labelStack["forLoopDone"].pop();
+
+}
+
+void AbstractASTDispatcher::LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive)
+{
+    QString loopForFix = as->NewLabel("forLoopFix");
+    QString loopDone = as->NewLabel("forLoopDone");
+    QString loopNotDone = as->NewLabel("forLoopNotDone");
+
+    as->Label(loopForFix);
+    node->m_block->Accept(this);
+    as->m_stack["for"].pop();
+
+    IncreaseCounter(node->m_step,var);
+    //    Compare(node, var, true, loopDone, loopNotDone, inclusive);
+
+    as->Label(loopNotDone);
+    as->Asm(getJmp(true) + " " + as->getLabel("for"));
+
+    as->Label(loopDone);
+
+    as->m_labelStack["for"].pop();
+    as->m_labelStack["forLoopFix"].pop();
+    as->m_labelStack["forLoopDone"].pop();
+    as->m_labelStack["forLoopNotDone"].pop();
+
 }
 /*
  *

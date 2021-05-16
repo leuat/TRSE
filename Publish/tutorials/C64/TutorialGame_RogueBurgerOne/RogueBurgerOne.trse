@@ -49,4 +49,5 @@ data_header_images/titlescreen2.flf = 6.95335e-310
 zeropage_colormemory = $fc
 compile_thread = 1
 show_all_files = 1
-open_files =, RogueBurgerOne.ras
+open_files = ,RogueBurgerOne.ras
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/TutorialGame_RogueBurgerOne/

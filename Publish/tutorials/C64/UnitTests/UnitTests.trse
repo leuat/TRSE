@@ -51,3 +51,6 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 override_target_settings_basic = 0
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
+open_files = ,unittests.ras, [ext]units/global/unittests/classes.tru
+current_file = unittests.ras

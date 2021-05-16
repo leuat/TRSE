@@ -1,6 +1,17 @@
 Unit Classes;
 var
 
+	StrItem = class
+		str: integer;
+	end;
+	
+	
+	StringList = class
+		curLen: byte;
+		items : array[64] of StrItem;
+		
+		
+	end;
 
 
 /*--------------------------------------------------------------------------------------------

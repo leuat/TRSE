@@ -129,76 +129,6 @@ void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->PopLabel("jmprightvarInteger");
     as->PopTempVar();
 }
-/*
-void ASTDispatcher6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
-
-
-    as->m_labelStack["wordAdd"].push();
-    QString lblword = as->getLabel("wordAdd");
-
-    //QString lbl = as->NewLabel("rightvarInteger");
-    QString lblJmp = as->NewLabel("jmprightvarInteger");
-
-
-    as->Comment("Generic 16 bit op");
-
-
-    as->ClearTerm();
-    as->Asm("ldy #0");
-//    qDebug() <<node->m_left->m_op.m_value;
-  //  exit(1);
-//    node->m_right->forceWord();
-    node->m_right->Accept(this);
-
-    // 255 + k - j doesn't work
-    as->Term();
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
-
-    //    as->Asm("sta " +lbl);
-//    as->Asm("sty " +lbl+"+1"); // J is stored
-    as->Term();
-
-    //as->Variable(getValue(v), false);
-    //as->Asm("lda " + getValue(v) + "+1");
-    node->m_left->m_isWord = true;
-    node->m_left->Accept(this);
-    as->Term();
-    as->Comment("Low bit binop:");
-    as->BinOP(node->m_op.m_type);
-    as->Term(lbl, true); // high bit added to a
-
-    if (node->m_op.m_type==TokenType::PLUS) {
-        as->Asm("bcc "+lblword);
-        as->Asm("inc " +lbl+"+1");
-    }
-    else {
-        as->Asm("bcs "+lblword);
-        as->Asm("inc  " +lbl+"+1");
-    }
-
-    as->Label(lblword);
-    as->Asm("sta "+lbl);
-    as->Comment("High-bit binop");
-    as->Asm("tya");
-
-    //    as->BinOP(m_op.m_type);
-//    if (node->m_op.m_type==TokenType::PLUS)
-    as->BinOP(node->m_op.m_type);
-
-    as->Term(lbl+"+1",true);
-    //    as->Asm("lda #0");
-
-    as->Asm("tay");
-    as->Asm("lda "+lbl);
-
-
-    as->PopLabel("wordAdd");
-
-    //as->PopLabel("rightvarInteger");
-    as->PopLabel("jmprightvarInteger");
-    as->PopTempVar();
-}
-*/
 void ASTDispatcher6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
 
@@ -847,119 +777,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<Node> node)
 
 
 
-/*
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeProcedureDecl> node)
-{
-
-    node->DispatchConstructor(as,this);
-    // Don't declare inline procedures
-
-    if (node->m_isInline) {
-        // Only declare variables in SYMTAB
-        for (QSharedPointer<Node> n: qSharedPointerDynamicCast<NodeBlock>(node->m_block)->m_decl) {
-            // Print label at end of vardecl
-            auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
-            if (vd!=nullptr)
-                vd->ExecuteSym(as->m_symTab);
-
-        }
-        return;
-    }
-
-    as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
-    int ln = node->m_currentLineNumber;
-//    as->PushCounter();
-//    if (node->m_curMemoryBlock!=nullptr)
-  //      qDebug() << node->m_procName << "IS IN BLOCK " << node->m_curMemoryBlock->m_name << " STARTING AT " << Util::numToHex(node->m_curMemoryBlock->m_start);
-
-    // In case memory block is acive
-
-
-//    qDebug() << node->m_procName << node->m_curMemoryBlock << as->m_currentBlock;
-
-    int ret = node->MaintainBlocks(as);
-    if (ret==3) node->m_curMemoryBlock=nullptr;
-    if (as->m_currentBlock!=nullptr) {
-        if (node->m_curMemoryBlock==nullptr) {
-            bool ok;
-//            qDebug() << "Creating new block procedure for " << m_procName;
-            QString p = as->m_currentBlock->m_pos;
-            int pos = p.remove("$").toInt(&ok, 16);
-            node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
-            as->blocks.append(node->m_curMemoryBlock);
-        }
-    }
-    else {
-        //node->m_curMemoryBlock=nullptr;
-    }
-
-
-    //MaintainBlocks(as);
-    if (node->m_block==nullptr) {  // Is builtin procedure
-        node->m_block = QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod(node->m_procName, QVector<QSharedPointer<Node>>(), nullptr));
-//        Node::s_uniqueSymbols[node->m_block] = node->m_block; // Mark for deletion
-
-    }
-
-    bool isInitFunction=false;
-    bool isBuiltinFunction=false;
-    if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
-        isBuiltinFunction = true;
-        isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
-//        as->EndMemoryBlock();
-
-    }
-
-    as->Asm("");
-    as->Asm("");
-    as->Comment("***********  Defining procedure : " + node->m_procName);
-    QString type = (isBuiltinFunction) ? "Built-in function" : "User-defined procedure";
-    as->Comment("   Procedure type : " + type);
-    if (isBuiltinFunction) {
-        type = (isInitFunction) ? "yes" : "no";
-        as->Comment("   Requires initialization : " + type);
-    }
-    as->Asm("");
-    as->m_currentBlockName = node->m_procName;
-
-    if (!isInitFunction) {
-        //as->Asm("jmp afterProc_" + m_procName);
-
-
-        //as->Label(m_procName);
-    }
-
-    if (node->m_block!=nullptr) {
-        QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
-        if (b!=nullptr) {
-            b->forceLabel=node->m_procName;
-            b->m_isProcedure = true;
-        }
-        node->m_block->Accept(this);
-//        node->Delete();
-//        node->s_uniqueSymbols[node->m_block] = node->m_block;
-
-
-//        delete node;
-//        node->m_block->Build(as);
-    }
-    if (!isInitFunction) {
-        if (node->m_type==0) {
-            as->Asm("rts");
-        }
-        else as->Asm("rti");
-    }
-
-    if (node->m_curMemoryBlock!=nullptr) {
-        node->m_curMemoryBlock->m_end+=10;
-    }
-
-    as->m_symTab->ExitProcedureScope(false);
-  //  as->PopCounter(ln);
-}
-
-*/
-
 
 void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarType> node)
 {
@@ -1003,109 +820,6 @@ void ASTDispatcher6502::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
 }
-
-
-/*
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeBlock> node)
-{
-    node->DispatchConstructor(as,this);
-
-    AbstractASTDispatcher::dispatch(node);
-
-
-    // In case memory block is acive
-    //as->EndMemoryBlock();
-    int ln = node->m_op.m_lineNumber-1;
-    if (ln==0) ln++;
-    as->PushBlock(node->m_currentLineNumber);
-
-
-
-
-    bool blockLabel = false;
-    bool blockProcedure = false;
-    bool hasLabel = false;
-
-    QString label = as->NewLabel("block");
-
-
-    if (!node->m_ignoreDeclarations) {
-
-        if (node->m_decl.count()!=0) {
-            if (node->m_isMainBlock && !as->m_ignoreInitialJump)
-                as->Asm("jmp " + label);
-            hasLabel = true;
-        }
-
-
-        for (QSharedPointer<Node> n: node->m_decl) {
-            // Print label at end of vardecl
-            if (qSharedPointerDynamicCast<NodeVarDecl>(n)==nullptr) {
-                if (!blockProcedure) // Print label at end of vardecl
-                {
-                    if (n->m_op.m_lineNumber!=0) {
-                        //                      as->PopBlock(n->m_op.m_lineNumber);
-                        blockProcedure = true;
-                        //   qDebug() << "pop" << n->m_op.m_lineNumber << " " << TokenType::getType(n->getType(as));
-                    }
-
-                }
-
-            }
-            n->Accept(this);
-
-        }
-        as->VarDeclEnds();
-    }
-    as->PushCounter();
-
-    if (node->m_isMainBlock) {
-        int ret = node->MaintainBlocks(as);
-//        if (ret==2)
-  //          as->m_currentBlock = nullptr;
-
-        as->m_currentBlockName="MainProgram";
-//        as->EndMemoryBlock();
-    }
-
-
- //   as->EndMemoryBlock();
-    if (!blockLabel && hasLabel)
-        as->Label(label);
-    if (node->forceLabel!="")
-        as->Label(node->forceLabel);
-
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
-        as->IncludeFile(":resources/code/nes_init.asm");
-
-
-    if (node->m_compoundStatement!=nullptr)
-        node->m_compoundStatement->Accept(this);
-
-    as->PopBlock(node->m_currentLineNumber);
-    if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
-        as->StartMemoryBlock("$FFFA");
-        as->IncludeFile(":resources/code/nes_end.asm");
-        as->EndMemoryBlock();
-    }
-    if (node->m_isMainBlock)
-        as->Label("EndSymbol");
-
-
-    node->PopZeroPointers(as);
-    as->PopCounter(ln);
-}
-
-*/
-
-/*
- *
- *
- *  NODE VARDECL
- *
- *
- *
- * */
 
 
 
@@ -1292,37 +1006,12 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
 {
 
     as->Comment("Binary clause INTEGER: " + node->m_op.getType());
-    //    as->Asm("pha"); // Push that baby
-/*
-    QSharedPointer<NodeVar> varb = qSharedPointerDynamicCast<NodeVar>(node->m_right);
-
-    QSharedPointer<NodeNumber> numb = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
-
-
-    QSharedPointer<NodeVar> vara = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-*/
-    /*
-    if (!node->m_left->isPure())
-        ErrorHandler::e.Error("Integer comparison: only pure integer number / variable is supported", node->m_op.m_lineNumber);
-
-    if (!node->m_right->isPure())
-        ErrorHandler::e.Error("Integer comparison: only pure integer number / variable is supported", node->m_op.m_lineNumber);
-*/
     QString lbl2 = lblFailed;
     QString lbl1 = lblSuccess;
 
     QString lo1,lo2,hi1,hi2;
     Evaluate16bitExpr(node->m_left,lo1,hi1);
     Evaluate16bitExpr(node->m_right,lo2,hi2);
-/*    lo1 = getValue8bit(node->m_left,false);
-    hi1 = getValue8bit(node->m_left,true);
-
-    lo2 = getValue8bit(node->m_right,false);
-    hi2 = getValue8bit(node->m_right,true);
-*/
-    //m_left->Build(as);
-    //as->Term();
-
 
 
 
@@ -1351,22 +1040,6 @@ void ASTDispatcher6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lb
            as->Asm("sbc " + lo2 + " ");
            as->Asm("bcs "+lblFailed);
             return;
-/*
-           SEC
-                LDA NUM1H  ; compare high bytes
-                SBC NUM2H
-                BVC LABEL1 ; the equality comparison is in the Z flag here
-                EOR #$80   ; the Z flag is affected here
-         LABEL1 BMI LABEL4 ; if NUM1H < NUM2H then NUM1 < NUM2
-                BVC LABEL2 ; the Z flag was affected only if V is 1
-                EOR #$80   ; restore the Z flag to the value it had after SBC NUM2H
-         LABEL2 BNE LABEL3 ; if NUM1H <> NUM2H then NUM1 > NUM2 (so NUM1 >= NUM2)
-                LDA NUM1L  ; compare low bytes
-                SBC NUM2L
-                BCC LABEL4 ; if NUM1L < NUM2L then NUM1 < NUM2
-         LABEL3
-  */
-
 
        }
        ErrorHandler::e.Error("Signed integer comparison: only 'less' (&le;) is currently implemented.", node->m_op.m_lineNumber);
@@ -1600,109 +1273,29 @@ bool ASTDispatcher6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 
 
-/*
- *
- *
- *  NODE BINARY CLAUSE
- *
- */
-
-/*
-void ASTDispatcher6502::dispatch(QSharedPointer<NodeBinaryClause> node)
-{
-    node->DispatchConstructor(as,this);
-
-    //    node->accept(this);
-    //    Node::Build(as);
-
-    // First, check the byte
-    if (node->m_op.m_type==TokenType::AND || node->m_op.m_type == TokenType::OR) {
-        LogicalClause(node);
-        //qDebug() << "NodeBinaryClause dispatch ";
-    }
-    else
-        if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type == TokenType::GREATER ||
-                node->m_op.m_type==TokenType::EQUALS || node->m_op.m_type == TokenType::NOTEQUALS
-                || node->m_op.m_type==TokenType::LESSEQUAL || node->m_op.m_type == TokenType::GREATEREQUAL )
-        {
-
-            if (node->m_left->getType(as)==TokenType::INTEGER || (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->isArrayIndex())) {
-                BinaryClauseInteger(node);
-            }
-            else
-                BinaryClause(node);
-        }
-        else
-            ErrorHandler::e.Error("Unknown compare type : '" + node->m_op.m_value+"'. Did you mean '=' or '>' etc?",node->m_op.m_lineNumber);
-
-}
 
 
-
-void ASTDispatcher6502::LogicalClause(QSharedPointer<Node> node)
-{
-    if (qSharedPointerDynamicCast<NodeBinaryClause>(node->m_left)==nullptr)
-        ErrorHandler::e.Error("Logical clause: left hand term must be binary clause");
-
-    if (qSharedPointerDynamicCast<NodeBinaryClause>(node->m_right)==nullptr)
-        ErrorHandler::e.Error("Logical clause: right hand term must be binary clause");
-
-
-    // Test for optimization : if left and right are pure
-
-
-    node->m_left->Accept(this);
-    QString tmpVar = as->StoreInTempVar("logical_class_temp");
-    node->m_right->Accept(this);
-    if (node->m_op.m_type==TokenType::AND)
-        as->Asm("and " + tmpVar);
-
-    if (node->m_op.m_type==TokenType::OR)
-        as->Asm("ora " + tmpVar);
-
-
-    as->PopTempVar();
-
-    //as->Asm("lda " + tmpVar);
-
-    // Done comparing!
-}
-
-*/
 void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
 
     if (nodeA->m_left->isWord(as)) {
         Token t = nodeA->m_op;
-        Token t_asm = nodeA->m_op;
-        Token t_clause = nodeA->m_op;
-        t_clause.m_type = TokenType::NOTEQUALS;
-        t_asm.m_value = "  jmp " + loopNotDone + "\n";
-        auto nasm = QSharedPointer<NodeAsm>(new NodeAsm(t_asm));
-        QSharedPointer<NodeCompound> comp = QSharedPointer<NodeCompound>(new NodeCompound(t));
-        comp->children.append(nasm);
 
-        QSharedPointer<NodeBlock> block = QSharedPointer<NodeBlock>(new NodeBlock(t,QVector<QSharedPointer<Node>>(),
-                                                                                        comp, false));
-
+        auto nasm = NodeFactory::CreateAsm(t,"  jmp " + loopNotDone + "\n");
+        auto block = NodeFactory::CreateBlockFromStatements(t,QVector<QSharedPointer<Node>>() <<nasm);
 
         if (inclusive)
             nodeB = NodeFactory::CreateBinop(t,TokenType::PLUS,nodeB,NodeFactory::CreateNumber(t,1));
 
+        auto cond = NodeFactory::CreateSingleConditional(t,TokenType::NOTEQUALS,isLarge,nodeA->m_left, nodeB,block);
 
-        QSharedPointer<NodeBinaryClause> clause = QSharedPointer<NodeBinaryClause>(
-                    new NodeBinaryClause(t_clause,nodeA->m_left, nodeB));
-
-        QSharedPointer<NodeConditional> cond = QSharedPointer<NodeConditional>(
-                    new NodeConditional(t,isLarge,clause,block,false));
 
         as->Comment("Executing integer comparison " + nodeB->getValue(as));
         cond->Accept(this);
         return;
 
-
-
     }
+
     if (nodeB->isPure() && (1==2)) { // DISABLE this optimization - for now
         as->Comment("Optimization: switch A and B, allow for optimizer");
         as->ClearTerm();
@@ -1784,161 +1377,8 @@ void ASTDispatcher6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node>
         return;
     }
 
-/* // FOR loops with word values not currently supported
-    ErrorHandler::e.Error("Compare word not implemented in for loops");
-
-    // Is word:
-// Branch to   LABEL2 if NUM1 < NUM2
-
-    QString label1 = as->NewLabel("forWordLabel1");
-    QString label2 =as->getLabel("for");
-//    QString tvar = as->NewLabel("forWordVar");
-    as->ClearTerm();
-
-    as->Comment("Compare integers");
-    node->m_b->Accept(this);
-    as->Term();
-    QString tvar = as->StoreInTempVar("wordVar","word");
-
-  //  as->Asm("lda "+as->m_stack["for"].current());
-
-    QString counter = as->m_stack["for"].current();
-
-    as->Asm("lda " + counter+"+1");
-    as->Asm("cmp " + tvar+" +1 ");
-    as->Asm("bcc " + label2);
-    as->Asm("bne " + label1);
-    as->Asm("lda " + counter);
-    as->Asm("cmp " + tvar);
-    as->Asm("bcc "+  label2);
-    as->Label(label1);
-// Branches to LABEL2 if NUM1 < NUM2
-
-*/
-
-/*    LDA NUM1H  ; compare high bytes
-             CMP NUM2H
-             BCC LABEL2 ; if NUM1H < NUM2H then NUM1 < NUM2
-             BNE LABEL1 ; if NUM1H <> NUM2H then NUM1 > NUM2 (so NUM1 >= NUM2)
-             LDA NUM1L  ; compare low bytes
-             CMP NUM2L
-             BCC LABEL2 ; if NUM1L < NUM2L then NUM1 < NUM2
-
-
-    as->PopLabel("forWordLabel1");*/
-//    as->PopLabel("forWordVar");
 }
 
-void ASTDispatcher6502::IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<NodeVar> var) {
-
-    // no STEP included in FOR TO DO, we assume STEP 1
-    if (step==nullptr) {
-
-        if (!var->isWord(as)) {
-            as->Asm("inc " + var->getValue(as));
-        }
-        else {
-            as->Asm("inc " + var->getValue(as));
-            QString lbl = as->NewLabel("lblCounterWord");
-            as->Asm("bne "+lbl);
-            as->Asm("inc " + var->getValue(as) +"+1");
-
-            as->Label(lbl);
-
-            as->PopLabel("lblCounterWord");
-
-        }
-
-    } else {
-
-
-
-
-        // STEP included in FOR TO DO statement
-        int stepValue = step->getValueAsInt(as);
-        //stepValue = node->m_step->getInteger();
-        //qDebug() << node->m_step->numValue();
-        //qDebug() << node->m_step->getInteger();
-
-        if (var->isWord(as)) {
-            if (stepValue == 1) {
-                as->Asm("inc " + var->getValue(as));
-                QString lbl = as->NewLabel("lblCounterWord");
-                as->Asm("bne "+lbl);
-                as->Asm("inc " + var->getValue(as) +"+1");
-
-                as->Label(lbl);
-
-                as->PopLabel("lblCounterWord");
-                return;
-
-            }
-            if (stepValue == 255) {
-                as->Comment("Decrement word counter");
-                as->Asm("lda " + var->getValue(as));
-                QString lbl = as->NewLabel("lblCounterWord");
-                as->Asm("bne "+lbl);
-                as->Asm("dec " + var->getValue(as) +"+1");
-
-                as->Label(lbl);
-                as->Asm("dec " + var->getValue(as));
-
-                as->PopLabel("lblCounterWord");
-                return;
-
-            }
-            if (!step->isPure())
-                ErrorHandler::e.Error("16 bit counters in for loops can only have integer steps", var->m_op.m_lineNumber);
-
-            QString lbl = as->NewLabel("lblCounterWord");
-            as->Asm("clc");
-            as->Asm("lda " + var->getValue(as));
-            as->Asm("adc #" + Util::numToHex(stepValue));
-            as->Asm("sta " + var->getValue(as));
-
-            as->Asm("lda " + var->getValue(as)+"+1");
-            as->Asm("adc #0");
-            as->Asm("sta " + var->getValue(as)+"+1");
-
-            as->PopLabel("lblCounterWord");
-            return;
-
-
-        }
-
-        // if 1 or -1 we can optimise!
-        if (stepValue == 1) {
-
-            as->Asm("inc " + var->getValue(as));
-
-        } else if (stepValue == -1) {
-
-            as->Asm("dec " + var->getValue(as));
-
-        } else {
-            // Larger +ve/-ve STEP
-
-            // Handles a -ve and +ve step as a byte, eg: -1 == 255
-            as->Asm("clc");
-            as->Asm("lda " + var->getValue(as));
-            as->ClearTerm();
-            as->Term("adc ");
-            step->Accept(this);
-            //            m_step->Build(as);
-            as->Term();
-
-            if (var->isWord(as)) {
-                    QString lbl = as->NewLabel("lblCounterWord");
-                    as->Asm("bcc "+lbl);
-                    as->Asm("inc " + var->getValue(as) +"+1");
-                    as->Label(lbl);
-                    as->PopLabel("lblCounterWord");
-            }
-            as->Asm("sta "+var->getValue(as));
-
-        }
-
-    }
 
 
 
@@ -1946,55 +1386,6 @@ void ASTDispatcher6502::IncreaseCounter(QSharedPointer<Node> step, QSharedPointe
    //         ErrorHandler::e.Error("Error: Loop with step other than 1,-1 cannot have loopy/loopx flag");
         // Is word
 
-
-}
-
-// handle a small loop
-void ASTDispatcher6502::SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive)
-{
-    QString loopDone = as->NewLabel("forLoopDone");
-    //  Compare(as);
-    //  as->Asm("beq "+loopDone);
-
-    node->m_block->Accept(this);
-    as->m_stack["for"].pop();
-    IncreaseCounter(node->m_step,var);
-  //  Compare(node, var, false, loopDone, nullptr, inclusive);
-
-//    as->Asm("jmp " + as->getLabel("for"));
-
-    as->Label(loopDone);
-
-    as->m_labelStack["for"].pop();
-    as->m_labelStack["forLoopDone"].pop();
-
-}
-
-// handle a large loop
-void ASTDispatcher6502::LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive)
-{
-    QString loopForFix = as->NewLabel("forLoopFix");
-    QString loopDone = as->NewLabel("forLoopDone");
-    QString loopNotDone = as->NewLabel("forLoopNotDone");
-
-    as->Label(loopForFix);
-    node->m_block->Accept(this);
-    as->m_stack["for"].pop();
-
-    IncreaseCounter(node->m_step,var);
-//    Compare(node, var, true, loopDone, loopNotDone, inclusive);
-
-    as->Label(loopNotDone);
-    as->Asm("jmp " + as->getLabel("for"));
-
-    as->Label(loopDone);
-
-    as->m_labelStack["for"].pop();
-    as->m_labelStack["forLoopFix"].pop();
-    as->m_labelStack["forLoopDone"].pop();
-    as->m_labelStack["forLoopNotDone"].pop();
-
-}
 
 
 
