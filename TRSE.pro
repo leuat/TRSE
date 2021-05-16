@@ -316,7 +316,7 @@ SOURCES += main.cpp\
     source/Compiler/misc/machinecodeanalyzer.cpp \
     source/dialogprojectsettings.cpp \
     source/OrgAsm/orgasm.cpp \
-    source/Compiler/Opcodes/opcodes6502.cpp \
+    source/Compiler/opcodes/opcodes6502.cpp \
     source/OrgAsm/orgasmlexer.cpp \
     source/dialogdonate.cpp \
     source/dialogfindfile.cpp \
@@ -560,7 +560,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/misc/machinecodeanalyzer.h \
     source/dialogprojectsettings.h \
     source/OrgAsm/orgasm.h \
-    source/Compiler/Opcodes/opcodes6502.h \
+    source/Compiler/opcodes/opcodes6502.h \
     source/OrgAsm/orgasmlexer.h \
     source/dialogdonate.h \
     source/dialogfindfile.h \
@@ -596,8 +596,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemm6800.h \
     source/Compiler/systems/systemamiga.h \
     source/Compiler/codegen/codegen_m68k.h \
-    source/Compiler/assembler/Asm68000.h \
-    source/Compiler/assembler/methods68000.h \
+    source/Compiler/assembler/asm68000.h \
     source/dialogcolors.h \
     source/LeLib/limage/bitmapfont.h \
     source/Raytracer/particles.h \

@@ -5,7 +5,7 @@
 #include <QTimer>
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/syntax.h"
-#include "source/Compiler/Opcodes/opcodes6502.h"
+#include "source/Compiler/opcodes/opcodes6502.h"
 #include "source/Compiler/symboltable.h"
 #include <QSharedPointer>
 

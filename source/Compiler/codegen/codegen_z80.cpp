@@ -1659,7 +1659,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         return true;
     }
     ErrorHandler::e.Error("Pointers must be assigned to variables or addresses.",node->m_op.m_lineNumber);
-
+    return false;
 }
 
 
