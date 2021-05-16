@@ -47,7 +47,7 @@ void Methods68000Atari::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     }
     if (Command("initmusic")) {
 //        ;    move.l  #ym_file,a0              ; start of ym file
-        m_dispatcher->LoadAddress(m_node->m_params[0]);
+        m_codeGen->LoadAddress(m_node->m_params[0]);
         as->Asm("jsr internal_initmusic");
     }
     if (Command("updatemusic")) {
@@ -87,13 +87,13 @@ void Methods68000Atari::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         * First find the address of the word at which the line starts.
         holine_holine
 */
-        m_node->m_params[0]->Accept(m_dispatcher);
+        m_node->m_params[0]->Accept(m_codeGen);
         Asm(as,"move.w",as->m_varStack.pop(),"d2");
-        m_node->m_params[1]->Accept(m_dispatcher);
+        m_node->m_params[1]->Accept(m_codeGen);
         Asm(as,"move.w",as->m_varStack.pop(),"d3");
-        m_node->m_params[2]->Accept(m_dispatcher);
+        m_node->m_params[2]->Accept(m_codeGen);
         Asm(as,"move.w",as->m_varStack.pop(),"d1");
-        m_node->m_params[3]->Accept(m_dispatcher);
+        m_node->m_params[3]->Accept(m_codeGen);
         Asm(as,"move.w",as->m_varStack.pop(),"d4");
         //as->Asm("lea gfx_phys_tbl_y,a4");
         as->Asm("bsr holine_holine");

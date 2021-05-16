@@ -38,7 +38,7 @@ void Methods68000Amiga::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     }
     if (Command("InitP61Module")) {
         as->Asm("movem.l	d0-a6,-(sp)");
-        m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
+        m_codeGen->LoadAddress(m_node->m_params[0],"a0");
         //as->Asm("lea Module1,a0
         as->Asm("sub.l a1,a1");
         as->Asm("sub.l a2,a2");

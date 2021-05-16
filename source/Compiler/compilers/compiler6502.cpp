@@ -4,7 +4,7 @@ void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 {
     m_assembler = QSharedPointer<Asm6502>(new Asm6502());
     m_assembler->m_zbyte = 0x10;
-    m_dispatcher = QSharedPointer<CodeGen6502>(new CodeGen6502());
+    m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
     Init6502Assembler();
     LabelStack::m_labelCount = 0;
 }

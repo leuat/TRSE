@@ -42,7 +42,7 @@ void Methods6502C64::Jammer(Assembler *as)
 {
     as->Comment("Jammer");
     QString lbl = as->NewLabel("jammer");
-    m_node->m_params[0]->Accept(m_dispatcher);
+    m_node->m_params[0]->Accept(m_codeGen);
     as->Term();
     //;sta     $7000
     as->Asm("cmp $d012");
@@ -50,7 +50,7 @@ void Methods6502C64::Jammer(Assembler *as)
     as->Asm("bcs "+lbl);
     as->Asm("lda #$02");
     as->Asm("sta     $0400");
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_node->m_params[1]->Accept(m_codeGen);
     as->Term();
     as->Asm("sta     $d020");
     as->Asm("sta     $d021");
@@ -71,7 +71,7 @@ void Methods6502C64::FLD(Assembler *as)
 
     QString lbl = as->NewLabel("fld");
     as->Comment("FLD effect");
-    m_node->m_params[0]->Accept(m_dispatcher);
+    m_node->m_params[0]->Accept(m_codeGen);
     as->Term();
     as->Asm("tax");
 

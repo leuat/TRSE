@@ -17,7 +17,7 @@ public:
 
     bool Command(QString name) override;
     void Asm(Assembler* as, QString cmd, QString a, QString b, QSharedPointer<Node> n) {
-        as->Asm(cmd + m_dispatcher->getEndType(as,n) + " " + a +","+b);
+        as->Asm(cmd + m_codeGen->getEndType(as,n) + " " + a +","+b);
     }
     void Asm(Assembler* as, QString cmd, QString a, QString b) {
         as->Asm(cmd + " " + a +","+b);

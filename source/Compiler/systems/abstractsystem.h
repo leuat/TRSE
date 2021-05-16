@@ -77,7 +77,7 @@ public:
     virtual QString CompressFile(QString fileName) {
         return fileName;
     }
-    Orgasm* m_orgAsm = nullptr;
+    QSharedPointer<Orgasm> m_orgAsm = nullptr;
 
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;

@@ -332,10 +332,13 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
         node->m_left->setForceType(TokenType::INTEGER);
 
     if (node->m_op.m_type!=TokenType::LESSEQUAL) {
+        node->m_right->setForceType(TokenType::INTEGER);
         node->m_right->Accept(this);
-        ExDeHl();
+        as->Asm("push hl");
 //        as->Asm("ex de,hl");
+        node->m_left->setForceType(TokenType::INTEGER);
         node->m_left->Accept(this);
+        as->Asm("pop de");
 //        as->Asm("sbc hl,de");
         SbcHlDe();
     }
@@ -359,8 +362,10 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
         node->m_left->Accept(this);
 //        as->Asm("ex de,hl");
-        ExDeHl();
+//        ExDeHl();
+        as->Asm("push hl");
         node->m_right->Accept(this);
+        as->Asm("pop de");
 //        as->Asm("sbc hl,de");
         SbcHlDe();
 
@@ -688,7 +693,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
   //      as->Asm("ld hl,"+node->getValue(as));
         LoadAddress(node);
         as->Asm("add hl,de");
-        if (node->isWord(as))
+        if (node->isWord(as) && node->m_writeType==TokenType::NADA)
             as->Asm("add hl,de");
 
 
@@ -760,7 +765,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 
             if (node->isReference()) {
 //                as->Comment("")
-                as->Asm("ld "+hl+","+node->getValue(as));
+                as->Asm("ld hl,"+node->getValue(as));
                 return;
 
             }
@@ -839,8 +844,8 @@ void CodeGenZ80::StoreVariable(QSharedPointer<NodeVar> node)
 
 }
 
-bool CodeGenZ80::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
-{
+bool CodeGenZ80::StoreVariableSimplified(QSharedPointer<NodeAssign> node) {
+
     return false;
 }
 
@@ -893,15 +898,28 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     if (var==nullptr)
         return false;
 
+    if (var->isArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
+        if (var->m_expr->isPureNumeric()) {
+            node->m_right->Accept(this);
+            as->Asm("ld a,l");
+            as->Asm("ld ["+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
+            as->Asm("ld a,h");
+            as->Asm("ld ["+var->getValue(as)+"+"+var->m_expr->getValue(as)+"+1],a");
+            return true;
+        }
+        else ErrorHandler::e.Error("Storing writetype index not supported yet ",node->m_op.m_lineNumber);
+    }
+
+
     if ((var->isArrayIndex() && !var->isWord(as))) {
         // Is an array
-
+        as->Comment("Storing to array");
         // Optimization : array[ constant ] := expr
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
             as->Term();
 
-            as->Asm("ld [+"+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
+            as->Asm("ld ["+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
             return true;
         }
         // GENERIC expression
@@ -1443,6 +1461,32 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         return false;
     node->VerifyReferences(as);
 
+
+/*    if (var->isPointer(as) && var->m_writeType==TokenType::INTEGER && var->isArrayIndex()) {
+        as->Comment("Writing an integer class pointer");
+        as->ClearTerm();
+        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->Accept(this);
+        as->Term();
+        as->Asm("push hl");
+        LoadAddress(var);
+        as->Asm("push hl");
+        var->m_expr->setForceType(TokenType::INTEGER);
+        var->m_expr->Accept(this);
+        as->Term();
+        as->Asm("pop de");
+        as->Asm("add hl,de");
+        as->Term();
+
+        as->Asm("pop de");
+        as->Asm("ld [hl],e");
+        as->Asm("inc hl");
+        as->Asm("ld [hl],d");
+
+        return true;
+    }
+*/
+
     if (!var->isArrayIndex()) {
 
         // P := Address / variable
@@ -1570,9 +1614,11 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             else {
                 if (var->m_expr->isWord(as)) {
                     as->Comment(";general 16-bit expression for the index");
-                    as->Asm("ex de,hl ;keep");
+  //                  as->Asm("ex de,hl ;keep");
+                    as->Asm("push hl");
                     var->m_expr->Accept(this);
-                    as->Asm("ex de,hl");
+                    as->Asm("pop de");
+    //                as->Asm("ex de,hl");
                     as->Asm("add hl,de");
                 }
                 else {

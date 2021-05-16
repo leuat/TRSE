@@ -479,7 +479,7 @@ void Methods6502Vic20::Assemble(Assembler *as, AbstractCodeGen *dispenser)
 void Methods6502Vic20::PlayVIC20Sid(Assembler *as)
 {
     as->Term("jsr ");
-    m_node->m_params[0]->Accept(m_dispatcher);
+    m_node->m_params[0]->Accept(m_codeGen);
     as->Term();
     as->Asm("jsr vic20_playsid_init");
 
@@ -10167,11 +10167,11 @@ void Methods6502Vic20::VIAIRQ(Assembler *as)
     //    as->Asm("sta pointers_vic_raster+6");
     as->Asm("sta "+as->m_replaceValues["@VIA_ZP4"]);
 
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_node->m_params[1]->Accept(m_codeGen);
     as->Term();
     //    as->Asm("sta timers_vic_raster+1");
     as->Asm("sta "+as->m_replaceValues["@VIA_ZP1"]);
-    m_node->m_params[2]->Accept(m_dispatcher);
+    m_node->m_params[2]->Accept(m_codeGen);
     as->Term();
     //    as->Asm("sta timers_vic_raster+3");
     as->Asm("sta "+as->m_replaceValues["@VIA_ZP2"]);

@@ -155,7 +155,7 @@ public:
    */
     void LoadPointer(QSharedPointer<NodeVar> node);
 
-    bool LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<Node> other, bool isx);
+    bool LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<Node> other, bool isx, bool scale);
 
     void LoadByteArray(QSharedPointer<NodeVar> node);
 

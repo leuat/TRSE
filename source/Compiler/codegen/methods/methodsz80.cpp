@@ -7,7 +7,7 @@ MethodsZ80::MethodsZ80()
 
 void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 {
-    m_dispatcher = dispatcher;
+    m_codeGen = dispatcher;
 /*    if (Command("Writeln")) {
         as->Writeln();
 
@@ -15,7 +15,7 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->EndWriteln();
     }
 */
-  //   CodeGenZ80* disp = dynamic_cast<CodeGenZ80*>(m_dispatcher);
+  //   CodeGenZ80* disp = dynamic_cast<CodeGenZ80*>(m_codeGen);
     as->ClearTerm();
     if (Command("fill"))
         Fill(as);
@@ -211,16 +211,16 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo, QString s)
         }
 
 //   qDebug() << "ISN " << qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[paramNo]);
-   m_dispatcher->m_useNext = s;
-   m_node->m_params[paramNo]->Accept(m_dispatcher);
+   m_codeGen->m_useNext = s;
+   m_node->m_params[paramNo]->Accept(m_codeGen);
 
 
 }
 
 void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 {
-    m_dispatcher->m_useNext = reg;
-    m_dispatcher->LoadAddress(m_node->m_params[paramNo]);
+    m_codeGen->m_useNext = reg;
+    m_codeGen->LoadAddress(m_node->m_params[paramNo]);
 
 
 /*    if (m_node->m_params[paramNo]->isPure()) {
@@ -540,7 +540,7 @@ void MethodsZ80::InitSpriteFromData(Assembler *as, int type)
     as->Comment("InitSpriteFromData");
     LoadAddress(as,1);
     as->Asm("ld d,0");
-    m_node->m_params[2]->Accept(m_dispatcher);
+    m_node->m_params[2]->Accept(m_codeGen);
 //    as->Asm("ld a,["+m_node->m_params[2]->getValue(as)+"]");
     as->Asm("ld e,a");
     as->Asm("add hl,de");
@@ -659,7 +659,7 @@ void MethodsZ80::MemCpyOnHBLank(Assembler *as, QString jlbl, int div)
         as->Asm("ld a, "+Util::numToHex(ceil(cnt/(float)div)));
     else {
         as->Comment("hblank non-const");
-        m_node->m_params[2]->Accept(m_dispatcher);
+        m_node->m_params[2]->Accept(m_codeGen);
 //        LoadVar(as,2);
         as->Asm("rrca");
         as->Asm("rrca");

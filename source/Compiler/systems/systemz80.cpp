@@ -16,16 +16,13 @@ void SystemZ80::AssembleZOrgasm(QString &text, QString filename, QString current
     QString output;
 
 
-    if (m_orgAsm !=nullptr)
-        delete m_orgAsm;
 
-
-    m_orgAsm = new ZOrgasm();
+    m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
 
     m_orgAsm->m_cpuFlavor = Orgasm::CPUFLAVOR_Z80;
 
     emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
-    connect(m_orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+    connect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
 /*    if (symTab!=nullptr)
         m_orgAsm->SetupConstants(symTab);
 */
@@ -34,7 +31,7 @@ void SystemZ80::AssembleZOrgasm(QString &text, QString filename, QString current
 
     m_orgAsm->Assemble(filename+".asm", filename+".bin");
 
-    disconnect(m_orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+    disconnect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
     output = m_orgAsm->m_output;
     if (m_orgAsm->m_hasOverlappingError) {
         output = m_orgAsm->error.msg;

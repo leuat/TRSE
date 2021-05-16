@@ -2,16 +2,27 @@ Unit Classes;
 var
 
 	StrItem = class
+		a: byte;
 		str: integer;
+//		c : array[3] of byte;
 	end;
 	
 	
 	StringList = class
 		curLen: byte;
-		items : array[64] of StrItem;
+		items : array[16] of StrItem;	
 		
-		
+		procedure Add(zp:pointer);
+		begin
+			this.items[this.curLen].str := zp;
+			this.curLen+=1;
+		end;
+	
 	end;
+	
+	sl: StringList;	
+	text : string=("TEXT");
+
 
 
 /*--------------------------------------------------------------------------------------------
@@ -145,8 +156,25 @@ begin
 	
 	// Direct use
 	Vars::monsters[Vars::v1].Move1(11,13);
-	Vars::text := "T10:";
+	Vars::text := "TA:";
 	if (Vars::pm.y=13 and Vars::pm.x=11) then Common::PASS() else Common::FAIL();
+end;
+
+
+
+
+// "This" assign array with int value mix
+procedure CTest11();
+begin
+	sl.curLen := 0;
+	sl.Add("HELLO");
+	sl.Add(#text);
+	
+	Vars::text := "C1:";
+	Vars::i1 := sl.items[1].str;
+	
+	if (Vars::i1=#text) then Common::PASS() else Common::FAIL();
+	Common::DebugValue(sl.items[1].str);
 end;
 
 
@@ -169,6 +197,9 @@ begin
     CTest9(); 
     CTest10();
  
+    @endif
+	@ifdef C64
+    CTest11(); // ADD still fails on the cpc.. damn
     @endif
 
     // Fails for now - FIX UP

@@ -36,7 +36,7 @@ void AbstractMethods::IncDec(Assembler *as, QString cmd)
     }
     auto bop = QSharedPointer<NodeBinOP>(new NodeBinOP(org,t,num));
     auto assign = QSharedPointer<NodeAssign>(new NodeAssign(org,na,bop));
-    assign->Accept(m_dispatcher);
+    assign->Accept(m_codeGen);
 
 
     return;

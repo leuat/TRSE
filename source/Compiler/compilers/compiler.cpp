@@ -89,7 +89,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         InitAssemblerAnddispatcher(system);
         m_assembler->m_curDir = project_dir;
         if (system->m_processor==AbstractSystem::MOS6502)
-            m_dispatcher->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
+            m_codeGen->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
 
 
     } catch (const FatalErrorException& e) {
@@ -109,17 +109,17 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
 
-    connect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+    connect(m_codeGen.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
 
     emit EmitTick("<br>Building []");
     if (m_tree!=nullptr)
         try {
         qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
-        m_dispatcher->as = m_assembler.get();
+        m_codeGen->as = m_assembler.get();
         // Visit that AST node tree baby!
         Data::data.compilerState = Data::DISPATCHER;
 //        qDebug() << "Compiler.cpp DISPATCHER starts";
-        m_tree->Accept(m_dispatcher.get());
+        m_tree->Accept(m_codeGen.get());
 
     } catch (const FatalErrorException& e) {
         HandleError(e,"Error during build (dispatcher) :");
@@ -132,7 +132,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         m_assembler->blocks.append(mb);
 
 
-    disconnect(m_dispatcher.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+    disconnect(m_codeGen.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
     disconnect(&m_parser, SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
 //    emit EmitTick("<br>Connecting and optimising");
 

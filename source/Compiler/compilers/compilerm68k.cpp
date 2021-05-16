@@ -4,8 +4,8 @@
 void CompilerM68K::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<Asm68000>(new Asm68000());//
-    m_dispatcher = QSharedPointer<CodeGen68k>(new CodeGen68k());
-    m_dispatcher->m_outputLineNumbers = false;
+    m_codeGen = QSharedPointer<CodeGen68k>(new CodeGen68k());
+    m_codeGen->m_outputLineNumbers = false;
 
     if (Data::data.demomode)
         Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]=(char)1;

@@ -7,7 +7,7 @@ MethodsX86::MethodsX86()
 
 void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 {
-    m_dispatcher = dispatcher;
+    m_codeGen = dispatcher;
 /*    if (Command("Writeln")) {
         as->Writeln();
 
@@ -15,7 +15,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->EndWriteln();
     }
 */
-     CodeGenX86* disp = dynamic_cast<CodeGenX86*>(m_dispatcher);
+     CodeGenX86* disp = dynamic_cast<CodeGenX86*>(m_codeGen);
 
     if (Command("waitforverticalblank"))
         WaitForVerticalBlank(as);
@@ -352,7 +352,7 @@ void MethodsX86::LoadVar(Assembler *as, int paramNo)
   //      qDebug() << "LOADVAR FORCE WORD "<<paramNo ;
     }
 
-    m_node->m_params[paramNo]->Accept(m_dispatcher);
+    m_node->m_params[paramNo]->Accept(m_codeGen);
     as->Term();
 
 }
@@ -393,7 +393,7 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
         return;
     }
     ErrorHandler::e.Error("Parameter "+QString::number(paramNo)+" must be address (variable, number or pointer)");
-  //  m_node->m_params[paramNo]->Accept(m_dispatcher);
+  //  m_node->m_params[paramNo]->Accept(m_codeGen);
 
 }
 

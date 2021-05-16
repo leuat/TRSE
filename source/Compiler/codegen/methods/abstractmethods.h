@@ -12,7 +12,7 @@ public:
     AbstractMethods();
 
 
-    AbstractCodeGen* m_dispatcher;
+    AbstractCodeGen* m_codeGen;
     QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
     virtual void Assemble(Assembler *as, AbstractCodeGen *dispatcher) = 0;
 

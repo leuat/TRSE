@@ -85,14 +85,60 @@ public:
     }
 };
 
+/*
+ *
+ *
+ *
+ *
+ *
+ *  Main parser class!
+ *  Parses .ras file to the Abstract Syntax Tree (Abstract Machine).
+ *
+ *  Main methods:
+ *   - Parse. Returns the root of the AST
+ *
+ *
+ *
+ *
+ */
+
 
 class Parser : public QObject {
     Q_OBJECT
 public:
+
+    QSharedPointer<Lexer> m_lexer;
+    QStringList m_diskFiles;
+    QStringList m_parserAppendix;
+    QSharedPointer<SymbolTable>  m_symTab = nullptr;
+    QString m_initAssembler = "";
+    QMap<QString, QSharedPointer<Node>> m_procedures;
+    QMap<QString, QString> m_preprocessorDefines;
+    static QStringList s_usedTRUs, s_usedTRUNames;
+    QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
+    QString m_currentDir, m_currentFileShort;
+    bool m_isTRU = false;
+    static QVector<QSharedPointer<Parser>> m_tpus;
+    QString m_vicMemoryConfig;
+    QStringList m_initJumps;
+    QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
+
+
+    QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
+    Parser();
+    Parser(QSharedPointer<Lexer> l, QSharedPointer<CIniFile> projectFile) {
+        m_lexer = l;
+        m_projectIni = projectFile;
+    }
+    ~Parser() {
+        Delete();
+    }
+
+
+private:
     int m_tick = 0;
     QVector<int> div2s = QVector<int>() <<2 <<4<<8<<16<<32<<64<<128<<256<<512<<1024;
     QVector<ParserBlock> m_parserBlocks;
-    static QStringList s_usedTRUs, s_usedTRUNames;
     QMap<QString, LMacro> m_macros;
     QString m_procPrefix = "";
     int m_prevPercent = -1;
@@ -107,17 +153,11 @@ public:
 
     QString m_currentClass ="";
 
-    QString m_vicMemoryConfig;
-    QString m_currentDir, m_currentFileShort;
     QStringList m_removedProcedures;
     QVector<QStringList> m_obsoleteWarnings;
     QStringList m_monitorCommands;
-    QMap<QString, QSharedPointer<Node>> m_procedures;
-    QMap<QString, QString> m_preprocessorDefines;
-    QStringList m_diskFiles;
     QStringList m_warningsGiven;
     QStringList m_doNotRemoveMethods;
-    QString m_initAssembler = "";
     // Preprocessor stuff
     QVector<QString> m_lastKey;
     QVector<bool> m_lastIfdef;
@@ -126,10 +166,8 @@ public:
     QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;
-    QSharedPointer<Lexer> m_lexer;
     Token m_currentToken, m_lastStartBlockToken;
     QString m_inCurrentProcedure="main";
-    bool m_isTRU = false;
     int PASS_PREPRE = 0;
     int PASS_PRE = 1;
     int PASS_FIRST = 10;
@@ -142,10 +180,7 @@ public:
     bool m_isRecord = false;
     bool m_removeUnusedDecls = false;
     bool m_abort = false;
-    QStringList  m_initJumps;
     QMap<TokenType::Type, QString> m_typeFlags;
-    QSharedPointer<SymbolTable>  m_symTab = nullptr;
-    QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QSharedPointer<Node> m_tree = nullptr;
     QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
     QMap<QString, QSharedPointer<Node>> m_types;
@@ -165,21 +200,11 @@ public:
     QSharedPointer<Symbol> getSymbol(QSharedPointer<Node> var);
 
     QVector<QString> m_ignoreBuiltinFunctionTPU;
-    static QVector<QSharedPointer<Parser>> m_tpus;
 
 
     QStringList getFlags();
 
 
-    Parser();
-    Parser(QSharedPointer<Lexer> l, QSharedPointer<CIniFile> projectFile) {
-        m_lexer = l;
-        m_projectIni = projectFile;
-    }
-    ~Parser() {
-        Delete();
-    }
-    QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
     QJSEngine m_jsEngine;
 
     void Delete();
@@ -210,7 +235,6 @@ public:
 
     void RemoveUnusedProcedures();
     void RemoveUnusedSymbols(QSharedPointer<NodeProgram> root);
-    QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     void VarDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
     void ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString blokName);
 
@@ -263,7 +287,6 @@ public:
     QSharedPointer<Node> Constant();
     QSharedPointer<Node> InlineAssembler();
     QSharedPointer<Node> AssignStatementBetweenObjects(QSharedPointer<Node> left,QSharedPointer<Node> right);
-    QStringList m_parserAppendix;
 
 
     void HandleExportPalette();

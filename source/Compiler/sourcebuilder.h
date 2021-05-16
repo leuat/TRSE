@@ -9,6 +9,22 @@
 #include <QSharedPointer>
 
 
+
+/*
+ *
+ *
+ *  Main wrapper class used for building .ras source files. Used by both the IDE and the CLI.
+ *
+ *  Main point: Contains the compiler, the system.
+ *
+ *  Main methods:
+ *   - Build
+ *   - Assemble
+ *
+ *  emits build success/failure strings and compiler ticks.
+ *
+ */
+
 class SourceBuilder : public QObject
 {
     Q_OBJECT

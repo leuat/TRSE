@@ -4,7 +4,7 @@
 void CompilerGBZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
-    m_dispatcher = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
+    m_codeGen = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
     //    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_GBZ80_system"));
 
     m_assembler->IncludeFile(":resources/code/gameboy/defs.s");

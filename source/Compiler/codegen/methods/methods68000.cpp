@@ -7,7 +7,7 @@ Methods68000::Methods68000()
 
 void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 {
-    m_dispatcher = dispatcher;
+    m_codeGen = dispatcher;
 
     if (Command("InitProjectAllVertices")) {
         as->IncludeFile(":resources/code/amiga/init_projectall.s");
@@ -65,7 +65,7 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         //m_node->setForceType(TokenType::ADDRESS);
         if (m_node->m_params[0]->isPureVariable())
             m_node->m_params[0]->ForceAddress();
-        m_node->m_params[0]->Accept(m_dispatcher);
+        m_node->m_params[0]->Accept(m_codeGen);
       }
 
 
@@ -98,10 +98,10 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     }
     if (Command("abs")) {
         QString lbl = as->NewLabel("abs");
-        m_node->m_params[0]->Accept(m_dispatcher);
+        m_node->m_params[0]->Accept(m_codeGen);
         QString var = as->m_varStack.pop();
         QString reg = as->m_regAcc.Get();
-        QString e = m_dispatcher->getEndType(as,m_node->m_params[0]);
+        QString e = m_codeGen->getEndType(as,m_node->m_params[0]);
         if (var!=reg)
             as->Asm("move"+e + " "+var+","+ reg);
         as->Asm("cmp"+e+" #0,"+reg);
@@ -158,7 +158,7 @@ void Methods68000::LoadVariable(Assembler* as, QString cmd, QSharedPointer<Node>
         Asm(as,cmd,n->getValue(as),d0);
     }
     else {
-        n->Accept(m_dispatcher);
+        n->Accept(m_codeGen);
         Asm(as,cmd,as->m_varStack.pop(),d0);
     }
 
@@ -183,19 +183,19 @@ void Methods68000::DrawLine(Assembler *as)
     jsr drawLine
   */
     as->Comment("DrawLine method");
-    m_node->m_params[0]->Accept(m_dispatcher);
+    m_node->m_params[0]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d0");
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_node->m_params[1]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d1");
-    m_node->m_params[2]->Accept(m_dispatcher);
+    m_node->m_params[2]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d2");
-    m_node->m_params[3]->Accept(m_dispatcher);
+    m_node->m_params[3]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d3");
-    m_node->m_params[5]->Accept(m_dispatcher);
+    m_node->m_params[5]->Accept(m_codeGen);
     Asm(as,"move.w",as->m_varStack.pop(),"d5");
-    //m_node->m_params[4]->Accept(m_dispatcher);
+    //m_node->m_params[4]->Accept(m_codeGen);
     //Asm(as,"lea",as->m_varStack.pop(),"a0");
-    m_dispatcher->LoadAddress(m_node->m_params[4]);
+    m_codeGen->LoadAddress(m_node->m_params[4]);
     Asm(as,"move.l",as->m_varStack.pop(),"a0");
     as->Asm("lea	$dff000,a6");
     as->Asm("jsr drawLine");
@@ -206,13 +206,13 @@ void Methods68000::DrawLine(Assembler *as)
 void Methods68000::Fill(Assembler *as)
 {
     as->Comment("Fill method");
-    m_node->m_params[2]->Accept(m_dispatcher);
+    m_node->m_params[2]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d0");
     m_node->m_params[1]->setForceType(TokenType::LONG);
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_node->m_params[1]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d2");
-//    m_node->m_params[0]->Accept(m_dispatcher);
-    m_dispatcher->LoadAddress(m_node->m_params[0]);
+//    m_node->m_params[0]->Accept(m_codeGen);
+    m_codeGen->LoadAddress(m_node->m_params[0]);
     Asm(as,"move.l",as->m_varStack.pop(),"a0");
 
     QString lbl = as->NewLabel("fill");
@@ -228,11 +228,11 @@ void Methods68000::Poke(Assembler *as, QString bb)
     QString a0 = as->m_regMem.Get();
     as->Comment("Poke command");
     //LoadAddress(as,m_node->m_params[0],a0);
-    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
-   // m_dispatcher->LoadVariable(m_node->m_params[2]);
-    m_node->m_params[2]->Accept(m_dispatcher);
+    m_codeGen->LoadAddress(m_node->m_params[0],a0);
+   // m_codeGen->LoadVariable(m_node->m_params[2]);
+    m_node->m_params[2]->Accept(m_codeGen);
     QString val = as->m_varStack.pop();
-//    m_node->m_params[2]->Accept(m_dispatcher);
+//    m_node->m_params[2]->Accept(m_codeGen);
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
     if (num!=nullptr) {
         if (num->m_val==0) {
@@ -247,11 +247,11 @@ void Methods68000::Poke(Assembler *as, QString bb)
 
     }
   */
-//    m_node->m_params[2]->Accept(m_dispatcher);
+//    m_node->m_params[2]->Accept(m_codeGen);
 
 //    Asm(as,"move",as->m_varStack.pop(),d0);
-//    m_dispatcher->LoadVariable(m_node->m_params[1]);
-    m_node->m_params[1]->Accept(m_dispatcher);
+//    m_codeGen->LoadVariable(m_node->m_params[1]);
+    m_node->m_params[1]->Accept(m_codeGen);
     Asm(as,"add.w",as->m_varStack.pop(),a0 + "; "+val);
     as->Asm("move"+bb+" "+ val +","+"("+a0+")");
 
@@ -272,7 +272,7 @@ void Methods68000::SetCopperList32(Assembler *as)
   //  Asm(as,"move.l",a0,d0);
 
     as->Comment("setcopperlist32");
-    m_dispatcher->LoadAddress(m_node->m_params[0]);
+    m_codeGen->LoadAddress(m_node->m_params[0]);
     Asm(as,"move.l",as->m_varStack.pop(),d0);
 
     Asm(as,"move.l",addr,a0);
@@ -307,12 +307,12 @@ void Methods68000::Memcpy(Assembler *as)
 
     LoadVariable(as, "move.w",m_node->m_params[4], d0);
 //    LoadVariable(as, "lea", m_node->m_params[0], a0);
-    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
- //   m_dispatcher->LoadAddress()
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_codeGen->LoadAddress(m_node->m_params[0],a0);
+ //   m_codeGen->LoadAddress()
+    m_node->m_params[1]->Accept(m_codeGen);
 
     if (!(m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0))
-       Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
+       Asm(as,"add"+m_codeGen->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
 
 
     bool ok = true;
@@ -321,12 +321,12 @@ void Methods68000::Memcpy(Assembler *as)
             ok = false;
         }
     }
-//    qDebug() << "HERE" << m_dispatcher->getEndType(as,m_node->m_params[3]);
+//    qDebug() << "HERE" << m_codeGen->getEndType(as,m_node->m_params[3]);
   //  qDebug()  << a1;
-    m_dispatcher->LoadAddress(m_node->m_params[2],a1);
-     m_node->m_params[3]->Accept(m_dispatcher);
+    m_codeGen->LoadAddress(m_node->m_params[2],a1);
+     m_node->m_params[3]->Accept(m_codeGen);
     if (ok)
-        Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
+        Asm(as,"add"+m_codeGen->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
 
     as->Label(lbl);
     as->Asm("move"+ending+" ("+a0+")+,("+a1+")+");
@@ -358,18 +358,18 @@ void Methods68000::MemcpyUnroll(Assembler *as)
     if (type==2) ending=".w";
     if (type==4) ending=".l";
 
-    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
- //   m_dispatcher->LoadAddress()
-    m_node->m_params[1]->Accept(m_dispatcher);
-    Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
+    m_codeGen->LoadAddress(m_node->m_params[0],a0);
+ //   m_codeGen->LoadAddress()
+    m_node->m_params[1]->Accept(m_codeGen);
+    Asm(as,"add"+m_codeGen->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
 
 
-    m_dispatcher->LoadAddress(m_node->m_params[2],a1);
+    m_codeGen->LoadAddress(m_node->m_params[2],a1);
     bool ok = true;
     if (m_node->m_params[3]->isPureNumeric() && m_node->m_params[3]->getValueAsInt(as)==0)
         ok = false;
     if (ok)
-        Asm(as,"add"+m_dispatcher->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
+        Asm(as,"add"+m_codeGen->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
     for (int i=0;i<cnt;i++)
         as->Asm("move"+ending+" ("+a0+")+,("+a1+")+");
 
@@ -419,8 +419,8 @@ void Methods68000::ABlit(Assembler *as, bool isFiller)
 
     as->Asm("lea     $dff000,a6 ; Hardware registers");
 
-    m_dispatcher->LoadAddress(m_node->m_params[0], "a0"); // src
-    m_dispatcher->LoadAddress(m_node->m_params[1], "a1"); // dst
+    m_codeGen->LoadAddress(m_node->m_params[0], "a0"); // src
+    m_codeGen->LoadAddress(m_node->m_params[1], "a1"); // dst
     LoadVariable(as,"move.w",m_node->m_params[2], "d6"); // Offset
     LoadVariable(as,"move.w",m_node->m_params[3], "d1"); // dst x
     LoadVariable(as,"move.w",m_node->m_params[4], "d2"); // dst y
@@ -451,16 +451,16 @@ void Methods68000::ABlit(Assembler *as, bool isFiller)
 
 void Methods68000::AddCopperCommand(Assembler* as)
 {
-    m_node->m_params[0]->Accept(m_dispatcher);
+    m_node->m_params[0]->Accept(m_codeGen);
     Asm(as,"move.w",as->m_varStack.pop(),"(a5)+");
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_node->m_params[1]->Accept(m_codeGen);
     Asm(as,"move.w",as->m_varStack.pop(),"(a5)+");
 
 }
 
 void Methods68000::SkipCopperCommands(Assembler *as)
 {
-    m_node->m_params[0]->Accept(m_dispatcher);
+    m_node->m_params[0]->Accept(m_codeGen);
     Asm(as,"add.l",as->m_varStack.pop(),"a5");
 
 }
@@ -471,9 +471,9 @@ void Methods68000::MatMul(Assembler *as)
     ;move.l mm_mat1,a1
     ;move.l mm_mat2,a2
 */
-    m_dispatcher->LoadAddress(m_node->m_params[2],"a0");
-    m_dispatcher->LoadAddress(m_node->m_params[0],"a1");
-    m_dispatcher->LoadAddress(m_node->m_params[1],"a2");
+    m_codeGen->LoadAddress(m_node->m_params[2],"a0");
+    m_codeGen->LoadAddress(m_node->m_params[0],"a1");
+    m_codeGen->LoadAddress(m_node->m_params[1],"a2");
     as->Asm("jsr matmul_call");
 
 }
@@ -485,12 +485,12 @@ void Methods68000::SetRotation(Assembler *as, QString mat)
     QString d1 = as->m_regAcc.Get();
     QString d2 = as->m_regAcc.Get();
     as->Comment("Set 3x3 matrix multiplication FAST");
-    m_dispatcher->LoadAddress(m_node->m_params[0],a0);
+    m_codeGen->LoadAddress(m_node->m_params[0],a0);
     if (mat!="id") {
         as->Asm("");
-        m_dispatcher->LoadVariable(m_node->m_params[1]);
+        m_codeGen->LoadVariable(m_node->m_params[1]);
         as->Asm("move.l " + as->m_varStack.pop() +","+d0);
-        m_dispatcher->LoadVariable(m_node->m_params[2]);
+        m_codeGen->LoadVariable(m_node->m_params[2]);
         as->Asm("move.l " + as->m_varStack.pop() +","+d1);
         as->Asm("moveq.l #0,"+d2);
         as->Asm("sub.w "+d1+","+d2);
@@ -545,14 +545,14 @@ void Methods68000::MatMulVec(Assembler *as)
     moveq.l #0,d6
   */
     as->Comment("MatMulVec call");
-    m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
-    m_dispatcher->LoadAddress(m_node->m_params[1],"a1");
-    m_dispatcher->LoadAddress(m_node->m_params[2],"a2");
+    m_codeGen->LoadAddress(m_node->m_params[0],"a0");
+    m_codeGen->LoadAddress(m_node->m_params[1],"a1");
+    m_codeGen->LoadAddress(m_node->m_params[2],"a2");
     as->Asm("moveq.l #0,d6");
     as->Asm("moveq.l #4,d5");
     as->Asm("moveq.l #8,d4");
-    m_node->m_params[3]->Accept(m_dispatcher);
-//    m_dispatcher->LoadVariable(m_node->m_params[3]);
+    m_node->m_params[3]->Accept(m_codeGen);
+//    m_codeGen->LoadVariable(m_node->m_params[3]);
     as->Asm("move.l "+ as->m_varStack.pop()+",d7");
 
 //    moveq.l #0,d6
@@ -563,14 +563,14 @@ void Methods68000::MatMulVec(Assembler *as)
 void Methods68000::MatMulVecNormalZ(Assembler *as, bool isZonly)
 {
     as->Comment("MatMulVec normal z only");
-    m_dispatcher->LoadAddress(m_node->m_params[0],"a0");
-    m_dispatcher->LoadAddress(m_node->m_params[1],"a1");
-    m_dispatcher->LoadAddress(m_node->m_params[2],"a2");
-    m_node->m_params[3]->Accept(m_dispatcher);
-//    m_dispatcher->LoadVariable(m_node->m_params[3]);
+    m_codeGen->LoadAddress(m_node->m_params[0],"a0");
+    m_codeGen->LoadAddress(m_node->m_params[1],"a1");
+    m_codeGen->LoadAddress(m_node->m_params[2],"a2");
+    m_node->m_params[3]->Accept(m_codeGen);
+//    m_codeGen->LoadVariable(m_node->m_params[3]);
     as->Asm("  moveq.l #0,d7");
 
-    as->Asm("move"+m_dispatcher->getEndType(as,m_node->m_params[3])+" "+ as->m_varStack.pop()+",d7");
+    as->Asm("move"+m_codeGen->getEndType(as,m_node->m_params[3])+" "+ as->m_varStack.pop()+",d7");
 
 //    moveq.l #0,d6
     //	move.w index,d6
@@ -584,22 +584,22 @@ void Methods68000::ProjectToScreen(Assembler *as)
 {
     as->Comment("Project to screen init");
     as->Asm("moveq.l #0,d4");
-    m_node->m_params[1]->Accept(m_dispatcher);
+    m_node->m_params[1]->Accept(m_codeGen);
     as->Asm("move.w "+as->m_varStack.pop() + ",d4");
-    m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
+    m_codeGen->LoadAddress(m_node->m_params[0], "a0");
 
 
     as->IncludeFile(":resources/code/amiga/simpleproject.s");
 
 
-    m_node->m_params[2]->Accept(m_dispatcher);
+    m_node->m_params[2]->Accept(m_codeGen);
     as->Asm("move.l d5,"+as->m_varStack.pop());
-    m_node->m_params[3]->Accept(m_dispatcher);
+    m_node->m_params[3]->Accept(m_codeGen);
     as->Asm("move.l d6,"+as->m_varStack.pop());
-    m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
+    m_codeGen->LoadAddress(m_node->m_params[0], "a0");
 
 
-//    m_dispatcher->StoreVariable(
+//    m_codeGen->StoreVariable(
 /*    move.l ro_obj,a0
 
 
@@ -623,19 +623,19 @@ void Methods68000::EnableInterrupt(Assembler *as)
 
 void Methods68000::ProjectAllVertices(Assembler *as)
 {
-    m_dispatcher->LoadVariable(m_node->m_params[3]);
+    m_codeGen->LoadVariable(m_node->m_params[3]);
     as->Asm("move.l " + as->m_varStack.pop() +",pa_cxx");
-    m_dispatcher->LoadVariable(m_node->m_params[4]);
+    m_codeGen->LoadVariable(m_node->m_params[4]);
     as->Asm("move.l " + as->m_varStack.pop() +",pa_cyy");
-    m_dispatcher->LoadVariable(m_node->m_params[5]);
+    m_codeGen->LoadVariable(m_node->m_params[5]);
     as->Asm("move.l " + as->m_varStack.pop() +",pa_czz");
 
-    m_dispatcher->LoadVariable(m_node->m_params[2]);
+    m_codeGen->LoadVariable(m_node->m_params[2]);
     as->Asm("move.l " + as->m_varStack.pop() +",d3");
 
 
-    m_dispatcher->LoadAddress(m_node->m_params[0], "a0");
-    m_dispatcher->LoadAddress(m_node->m_params[1], "a2");
+    m_codeGen->LoadAddress(m_node->m_params[0], "a0");
+    m_codeGen->LoadAddress(m_node->m_params[1], "a2");
     as->Asm("jsr call_pall");
 
 /*            move.l pa_vert,a2

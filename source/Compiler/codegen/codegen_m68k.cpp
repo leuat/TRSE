@@ -240,69 +240,6 @@ void CodeGen68k::dispatch(QSharedPointer<NodeVarDecl> node)
 
 
 
-/*
-    node->DispatchConstructor(as,this);
-
-
-
-
-
-    node->ExecuteSym(as->m_symTab);
-
-
-
-    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-  //  qDebug() << t->m_flags;
-    if (t->m_flags.contains("chipmem")) {
-        as->m_currentBlock = as->m_chipMem;
-//        qDebug() << "CURRENTBLOCK IS CHIPMEM";
-    }
-
-    if (t->m_op.m_type==TokenType::ARRAY) {
-        as->DeclareArray(v->getValue(as), t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);
-        node->m_dataSize=t->m_op.m_intVal;
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_type="address";
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
-    }else
-    if (t->m_op.m_type==TokenType::STRING) {
-        as->DeclareString(v->getValue(as), t->m_data);
-
-    }
-    else
-    if (t->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(v->getValue(as), t->m_data);
-        node->m_dataSize = 0;
-        for (QString s: t->m_data)
-            node->m_dataSize+=s.count();
-        node->m_dataSize++; // 0 end
-    }
-    else
-    if (t->m_op.m_type==TokenType::INCBIN) {
-//        if (node->m_curMemoryBlock!=nullptr)
-  //          ErrorHandler::e.Error("IncBin can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-
-        IncBin(node);
-
-    }
-    else
-    if (t->m_op.m_type==TokenType::POINTER) {
-    //    if (node->m_curMemoryBlock!=nullptr)
-      //      ErrorHandler::e.Error("Pointers can not be declared within a user-defined memory block :",node->m_op.m_lineNumber);
-        DeclarePointer(node);
-        as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
-
-    }else {
-        node->m_dataSize=1;
-        if (t->getValue(as).toLower()=="integer") node->m_dataSize = 2;
-        if (t->getValue(as).toLower()=="long") node->m_dataSize = 4;
-        as->DeclareVariable(v->getValue(as), t->value, t->initVal, t->m_position);
-    }
-
-
-
-    as->m_currentBlock = nullptr;
-    */
 
 }
 
@@ -389,22 +326,6 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBlock> node)
 
 }
 
-/*void CodeGen68k::dispatch(QSharedPointer<NodeProgram> node)
-{
-    node->DispatchConstructor(as,this);
-
-//    as->EndMemoryBlock();
-    NodeBuiltinMethod::m_isInitialized.clear();
-    as->Program(node->m_name, node->m_param);
-  //  as->m_source << node->m_initJumps;
-    node->m_NodeBlock->m_isMainBlock = true;
-    node->m_NodeBlock->Accept(this);
-
-//    qDebug() << as->m_currentBlock;
-    as->EndProgram();
-
-}
-*/
 void CodeGen68k::dispatch(QSharedPointer<NodeVarType> node)
 {
 
@@ -415,28 +336,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinaryClause> node)
 
 }
 
-/*void CodeGen68k::dispatch(QSharedPointer<NodeProcedure> node)
-{
-    node->DispatchConstructor(as,this);
 
-
-    if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
-        ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
-                              + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
-                              + QString::number(node->m_parameters.count()) + ".", node->m_op.m_lineNumber);
-
-    for (int i=0; i<node->m_parameters.count();i++) {
-        // Assign all variables
-        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
-        QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
-        na->Accept(this);
-//        na->Build(as);
-    }
-
-    as->Asm("jsr " + node->m_procedure->m_procName);
-
-}
-*/
 void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
 {
     node->DispatchConstructor(as,this);
@@ -516,105 +416,6 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 
 }
-/*
-void CodeGen68k::dispatch(QSharedPointer<NodeConditional> node)
-{
-    QString labelStartOverAgain = as->NewLabel("while");
-    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
-
-    QString labelElse = as->NewLabel("elseblock");
-    QString labelElseDone = as->NewLabel("elsedoneblock");
-    // QString labelFailed = as->NewLabel("conditionalfailed");
-
-//    qDebug() << "HMM";
-
-    if (node->m_isWhileLoop)
-        as->Label(labelStartOverAgain);
-
-    // Test all binary clauses:
-    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
-
-
-        QString failedLabel = labelElseDone;
-        if (node->m_elseBlock!=nullptr)
-            failedLabel = labelElse;
-
-    BuildSimple(bn,  failedLabel);
-
-    // Start main block
-    as->Label(lblstartTrueBlock); // This means skip inside
-
-    node->m_block->Accept(this);
-
-    if (node->m_elseBlock!=nullptr)
-        as->Asm("bra " + labelElseDone);
-
-    // If while loop, return to beginning of conditionals
-    if (node->m_isWhileLoop)
-        as->Asm("bra " + labelStartOverAgain);
-
-    // An else block?
-    if (node->m_elseBlock!=nullptr) {
-        as->Label(labelElse);
-        node->m_elseBlock->Accept(this);
-//        m_elseBlock->Build(as);
-
-    }
-    as->Label(labelElseDone); // Jump here if not
-
-    as->PopLabel("while");
-    as->PopLabel("ConditionalTrueBlock");
-    as->PopLabel("elseblock");
-    as->PopLabel("elsedoneblock");
-//    as->PopLabel("conditionalfailed");
-
-
-}
-*/
-/*void CodeGen68k::dispatch(QSharedPointer<NodeForLoop> node)
-{
-    node->DispatchConstructor(as,this);
-
-
-    //QString m_currentVar = ((NodeAssign*)m_a)->m_
-    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-
-
-    if (nVar==nullptr)
-        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
-
-    QString var = qSharedPointerDynamicCast<NodeVar>(nVar->m_left)->getValue(as);//  m_a->Build(as);
-//    qDebug() << "Starting for";
-    node->m_a->Accept(this);
-  //  qDebug() << "accepted";
-
-//    LoadVariable(node->m_a);
-  //  TransformVariable()
-    //QString to = m_b->Build(as);
-    QString to = "";
-    if (qSharedPointerDynamicCast<NodeNumber>(node->m_b) != nullptr)
-        to = QString::number(((qSharedPointerDynamicCast<NodeNumber>(node->m_b)))->m_val);
-    if (qSharedPointerDynamicCast<NodeVar>(node->m_b) != nullptr)
-        to = qSharedPointerDynamicCast<NodeVar>(node->m_b)->getValue(as);
-
-//    as->m_stack["for"].push(var);
-    QString lblFor =as->NewLabel("forloop");
-    as->Label(lblFor);
-//    qDebug() << "end for";
-
-
-
-    node->m_block->Accept(this);
-    TransformVariable(as,"add",var, "#1");
-    LoadVariable(node->m_b);
-    TransformVariable(as,"cmp",as->m_varStack.pop(),var);
-    as->Asm("bne "+lblFor);
-
-    as->PopLabel("forloop");
-
-
-}
-*/
 void CodeGen68k::dispatch(QSharedPointer<NodeVar> node)
 {
 //    LoadVariable(node);
@@ -840,40 +641,22 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeProcedure> node)
 
 void CodeGen68k::LoadAddress(QSharedPointer<Node> n)
 {
-/*    QSharedPointer<NodeVar> v = dynamic_cast<QSharedPointer<NodeVar>>(n);
-    if (v==nullptr) {
-        n->ForceAddress();
-        LoadVariable(n);
-        return;
-    }*/
     n->ForceAddress();
     QString a0 = as->m_regMem.Get();
-  //  as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
     as->m_varStack.push(a0);
     as->m_regMem.Pop(a0);
-
-//    QString v = n->getLiteral(as);
 
 }
 
 void CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
 {
-    /*    QSharedPointer<NodeVar> v = dynamic_cast<QSharedPointer<NodeVar>>(n);
-        if (v==nullptr) {
-            n->ForceAddress();
-            LoadVariable(n);
-            return;
-        }*/
     n->ForceAddress();
-//    as->Comment("LoadAddress: move start with literal: " +n->getLiteral(as));
     if (n->isPureNumeric() && n->isAddress()) {
         TransformVariable(as,"move.l",a0,"#"+n->getValue(as));
         return;
     }
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
-
-    //    QString v = n->getLiteral(as);
 
 }
 
@@ -944,12 +727,7 @@ void CodeGen68k::TransformVariable(Assembler *as, QString op, QString n, QShared
 void CodeGen68k::TransformVariable(Assembler* as, QString op, QString n, QString val)
 {
     QString flag="";
-/*    if (val.count()==2 && val.startsWith("d") && n.count()==2 && n.startsWith("d"))
-        flag = ".l";
-    if (op.contains("."))
-        flag = "";*/
     as->Asm(op+flag +" "+val + "," + n);
-    //qDebug() << " ** OP : " << op +" "+val + "," + n;
 }
 
 QString CodeGen68k::getEndType(Assembler *as, QSharedPointer<Node> v) {
@@ -957,15 +735,6 @@ QString CodeGen68k::getEndType(Assembler *as, QSharedPointer<Node> v) {
     if (v->m_forceType==TokenType::LONG)
         return ".l";
 
-
-/*
-    TokenType::Type tt = v->getType(as);
-    if (tt==TokenType::INTEGER)
-        return ".w";
-    if (tt==TokenType::LONG)
-        return ".l";
-    return ".b";
-*/
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(v);
 
@@ -989,7 +758,6 @@ QString CodeGen68k::getEndType(Assembler *as, QSharedPointer<Node> v) {
 //            as->Comment("GetEndType : is array of type : " +TokenType::getType(t));
             if (t==TokenType::IF) {
   //              as->Comment("Lookup : is type " + TokenType::getType(s->getTokenType()));
-//                t = TokenType::LONG;  // Default pointer is INTEGER
                 if (s->getTokenType()==TokenType::STRING)
                     t = TokenType::BYTE;
             }

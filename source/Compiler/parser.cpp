@@ -3652,6 +3652,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
     v->m_classApplied = true;
     if (v->m_expr == nullptr)
         return v;
+    if (v->m_expr->isPureNumeric())
+        v->m_expr = NodeFactory::CreateNumber(v->m_op,v->m_expr->getValueAsInt(nullptr));
     //qDebug() << "FINAL "<<v->value  << v->m_expr->numValue();
     if (!v->isReference())
         return v;

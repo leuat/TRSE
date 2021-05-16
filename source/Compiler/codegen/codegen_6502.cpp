@@ -1226,17 +1226,18 @@ bool CodeGen6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
         node->m_right->Accept(this);
         as->Term();
         as->Asm("pha");
+//        as->Asm("tax");
         as->Asm("tya");
-        as->Asm("tax");
-        as->Asm("pla");
         as->Asm("pha");
+  //      as->Asm("txa");
         var->m_expr->Accept(this);
         as->Term();
         as->Asm("tay");
         as->Asm("pla");
-        as->Asm("sta ("+var->getValue(as)+"),y");
         as->Asm("iny");
-        as->Asm("txa");
+        as->Asm("sta ("+var->getValue(as)+"),y");
+        as->Asm("dey");
+        as->Asm("pla");
         as->Asm("sta ("+var->getValue(as)+"),y");
 
         return true;
@@ -1573,7 +1574,7 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
         return;
     }
 
-    if (!LoadXYVarOrNum(node, node->m_expr,false))
+    if (!LoadXYVarOrNum(node, node->m_expr,false,true))
     {
         if (!(m=="" || m.startsWith("lda")))
             as->Asm("pha");
@@ -1666,7 +1667,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
 
 
 
-bool CodeGen6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<Node> other, bool isx) {
+bool CodeGen6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<Node> other, bool isx, bool scale) {
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(other);
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(other);
@@ -1683,7 +1684,7 @@ bool CodeGen6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<No
 
 
     if (var!=nullptr && var->m_expr == nullptr) {
-            if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
+            if (s->m_arrayType==TokenType::INTEGER && scale) // integer array index is *2 (two bytes per array slot)
             {
                 //as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
                 as->Asm("lda "+ getValue(var));
@@ -1699,7 +1700,9 @@ bool CodeGen6502::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<No
     if (isNumber) {
 //        qDebug() << "LoadXYVarorNum HERE ";
         if (s->m_arrayType==TokenType::INTEGER) {
-            as->Asm(operand + "#" + QString::number(other->getValueAsInt(as) * 2) + " ; watch for bug, Integer array has max index of 128");
+            int s = 1;
+            if (scale) s=2;
+            as->Asm(operand + "#" + QString::number(other->getValueAsInt(as) * s) + " ; watch for bug, Integer array has max index of 128");
         }
         else
             as->Asm(operand  + getValue(other));
@@ -1730,6 +1733,13 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
 */
     }
     bool unknownType = false;
+    bool scale = true;
+    if (node->m_writeType!=TokenType::NADA) {
+        s->m_arrayType = node->m_writeType;
+        s->m_arrayTypeText = TokenType::getType(node->m_writeType);
+        scale = false;
+    }
+
     if (s->m_arrayType==TokenType::INTEGER)
         as->Comment("Load Integer array");
 
@@ -1754,7 +1764,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         ErrorHandler::e.Error("Unknown operation with address!",node->m_op.m_lineNumber);
     }
     as->ClearTerm();
-    if (!LoadXYVarOrNum(node, node->m_expr,true))
+    if (!LoadXYVarOrNum(node, node->m_expr,true,scale))
     {
         // calculation version, eg: index+2  or 3+2
 
@@ -1765,7 +1775,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         //as->Asm("pha");
         node->m_expr->Accept(this);
         as->Term();
-        if (s->m_arrayType==TokenType::INTEGER) // integer array index is *2 (two bytes per array slot)
+        if (s->m_arrayType==TokenType::INTEGER && scale) // integer array index is *2 (two bytes per array slot)
             as->Asm("asl");
         as->Asm("tax");
         if (m_flag1)
@@ -2417,7 +2427,7 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
 
         }
 
-        if (LoadXYVarOrNum(var, var->m_expr,true)) {
+        if (LoadXYVarOrNum(var, var->m_expr,true,true)) {
 
             as->Comment("Optimize byte array " + operand);
             as->Asm(operand + getValue(var)+",x");

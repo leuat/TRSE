@@ -25,16 +25,14 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         // codeEnd=FindEndSymbol(output);
     }
     else if (m_settingsIni->getString("assembler").toLower()=="orgasm") {
-        if (m_orgAsm !=nullptr)
-            delete m_orgAsm;
 
-        m_orgAsm = new Orgasm();
+        m_orgAsm = QSharedPointer<Orgasm>(new Orgasm());
 
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
            m_orgAsm->m_cpuFlavor = Orgasm::CPUFLAVOR_GS4510;
 
         emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
-        connect(m_orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+        connect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
         if (symTab!=nullptr)
             m_orgAsm->SetupConstants(symTab);
         if (symTab!=nullptr)
@@ -43,7 +41,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         m_orgAsm->m_extraMonCommands = symTab->m_extraMonCommands;
         m_orgAsm->Assemble(filename+".asm", filename+".prg");
 
-        disconnect(m_orgAsm, SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+        disconnect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
         output = m_orgAsm->m_output;
         if (m_orgAsm->m_hasOverlappingError) {
             output = m_orgAsm->error.msg;
@@ -111,30 +109,13 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
         if (m_settingsIni->getdouble("hide_exomizer_footprint")==1)
             exoParams << "-n";
 
-
-        /*            if (Syntax::s.m_ignoreSys) {
-                QString laddr = "none";
-                laddr = "0x8000";
-    //                laddr = "0x"+QString::number(Syntax::s.m_startAddress+1+16992    ,16);
-                exoParams = QStringList() << "mem" <<"-l"+laddr << fn+"@"+startAddress.replace("$","0x")<< "-o" << fn ;
-                qDebug() << exoParams;
-                target ="";
-            }
-    */
-        //            QStringList exoParams = QStringList() << "sfx" << "$0810"  << fn<< "-o" << fn ;
-//         qDebug() << m_settingsIni->getString("exomizer") << exoParams;
- //       qDebug() << "Starting exomizer";
         emit EmitTick("Exomizing ...");
 
         processCompress.start(m_settingsIni->getString("exomizer"), exoParams  );
         processCompress.waitForFinished();
-   //     qDebug() << processCompress.readAllStandardError() << processCompress.readAllStandardOutput();
-     //   qDebug() << "*** END EXO";
     }
 
 
-    //        if (Syntax::s.m_stripPrg)
-    //         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
 
     int size = QFile(filename+".prg").size();

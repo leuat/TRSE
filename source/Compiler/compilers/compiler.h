@@ -35,43 +35,71 @@
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/OrgAsm/orgasm.h"
-
+/*
+ *
+ *
+ *
+ *  Main compiler class.
+ *
+ *  Main objects:
+ *   - Parser
+ *   - Lexer
+ *   - Assembler
+ *   - Code generator
+ *
+ *  Main methods:
+ *   - Parse
+ *   - Build
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 class Compiler : public QObject
 {
     Q_OBJECT
+
 public:
     QSharedPointer<Node> m_tree = nullptr;
     QSharedPointer<Assembler> m_assembler = nullptr;
-    QSharedPointer<AbstractCodeGen> m_dispatcher = nullptr;
+    QSharedPointer<AbstractCodeGen> m_codeGen = nullptr;
 
     Parser m_parser;
     QSharedPointer<Lexer> m_lexer;
     QSharedPointer<CIniFile> m_ini, m_projectIni;
     FatalErrorException recentError;
+    bool m_isTRU = false;
+
+
+
     Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni);
     Compiler() {}
     virtual ~Compiler();
 
-    bool m_isTRU = false;
+    void Parse(QString text, QStringList lst, QString fname);
+    bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
+    void CleanupBlockLinenumbers();
+    virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles=true) {}
+    virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) { return true;}
+
+    void SaveBuild(QString filename);
+    void ApplyOptions(QMap<QString,QStringList>& opt);
+
+private:
+
 
     virtual void InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) = 0;
     virtual void Connect() = 0;
 
 
-    virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) { return true;}
-
-    void Parse(QString text, QStringList lst, QString fname);
-    bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
-    void CleanupBlockLinenumbers();
-    void SaveBuild(QString filename);
     void HandleError(FatalErrorException fe, QString se);
 //    void Destroy();
 //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
     void WarningUnusedVariables();
 
-    void ApplyOptions(QMap<QString,QStringList>& opt);
 
-    virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles=true) {}
 public:
 signals:
     void EmitTick(QString val);
