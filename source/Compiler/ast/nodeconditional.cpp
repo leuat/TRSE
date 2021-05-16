@@ -20,7 +20,7 @@
 */
 
 #include "nodeconditional.h"
-#include "source/Compiler/assembler/mos6502/mos6502.h"
+#include "source/Compiler/assembler/asm6502.h"
 
 
 NodeConditional::NodeConditional(Token op, int forcePage, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isWhile, QSharedPointer<Node> elseBlock) :Node(){

@@ -27,7 +27,7 @@ void NodeProgram::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_NodeBlock->ExecuteSym(symTab);
 }
 
-void NodeProgram::Accept(AbstractASTDispatcher *dispatcher) {
+void NodeProgram::Accept(AbstractCodeGen *dispatcher) {
     dispatcher->dispatch(qSharedPointerDynamicCast<NodeProgram>(sharedFromThis()));
 
 

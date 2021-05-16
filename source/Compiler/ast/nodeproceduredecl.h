@@ -29,7 +29,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodeblock.h"
 #include "source/Compiler/ast/nodevardecl.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeProcedureDecl : public Node {
 public:
@@ -65,7 +65,7 @@ public:
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedureDecl>(sharedFromThis()));
     }
 

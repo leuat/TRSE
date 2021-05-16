@@ -84,7 +84,7 @@ bool NodeNumber::is8bitValue(Assembler* as)
     return m_val<256 && m_op.m_type == TokenType::INTEGER_CONST;
 }
 
-/*void NodeNumber::LoadVariable(AbstractASTDispatcher* dispatcher) {
+/*void NodeNumber::LoadVariable(AbstractCodeGen* dispatcher) {
     dispatcher->as->ClearTerm();
     dispatcher->as->Term("lda ");
     Accept(dispatcher);

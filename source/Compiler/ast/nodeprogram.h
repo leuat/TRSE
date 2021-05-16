@@ -31,7 +31,7 @@
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodeblock.h"
 #include "source/Compiler/ast/nodeproceduredecl.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeProgram : public Node {
 public:
@@ -55,7 +55,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
 
-    void Accept(AbstractASTDispatcher* dispatcher) override;
+    void Accept(AbstractCodeGen* dispatcher) override;
 
 };
 

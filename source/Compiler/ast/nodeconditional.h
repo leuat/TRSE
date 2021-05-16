@@ -30,7 +30,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include <QVector>
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeConditional : public Node {
 public:
@@ -80,7 +80,7 @@ public:
        m_block->ExecuteSym(symTab);
     }
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeConditional>(sharedFromThis()));
     }
 

@@ -28,7 +28,7 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodevartype.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeVar : public Node {
 private:
@@ -118,13 +118,13 @@ public:
     bool isAddress() override;
 
     bool isSigned(Assembler* as) override;
-/*    void LoadVariable(AbstractASTDispatcher* dispatcher) override;
+/*    void LoadVariable(AbstractCodeGen* dispatcher) override;
     void LoadPointer(Assembler* as);
 
-    void StoreVariable(AbstractASTDispatcher* dispatcher) override;
+    void StoreVariable(AbstractCodeGen* dispatcher) override;
 */
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override;
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVar>(sharedFromThis()));
     }
 

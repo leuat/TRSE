@@ -25,7 +25,7 @@ public:
         if (m_elseBlock!=nullptr)
            m_elseBlock->ExecuteSym(symTab);
     }
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeCase>(sharedFromThis()));
     }
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

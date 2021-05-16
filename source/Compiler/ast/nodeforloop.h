@@ -30,7 +30,7 @@
 #include "source/Compiler/ast/nodeassign.h"
 #include "source/Compiler/ast/nodevar.h"
 
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeForLoop : public Node {
 public:
@@ -63,7 +63,7 @@ public:
     }
 
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeForLoop>(sharedFromThis()));
     }
 

@@ -22,7 +22,7 @@
 #ifndef NODEBLOCK_H
 #define NODEBLOCK_H
 
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 #include "source/Compiler/token.h"
 #include "source/Compiler/pvar.h"
@@ -68,7 +68,7 @@ public:
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBlock>(sharedFromThis()));
     }
 

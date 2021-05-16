@@ -31,7 +31,7 @@
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodeunaryop.h"
 
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 
 class NodeBinOP : public Node {
@@ -107,7 +107,7 @@ public:
     int BothPureNumbersBinOp(Assembler *as);
 
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBinOP>(sharedFromThis()));
     };
 

@@ -23,7 +23,7 @@
 #define NODEBINARYCLAUSE_H
 
 #include "node.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 
 class NodeBinaryClause : public Node
@@ -40,7 +40,7 @@ public:
 
 
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBinaryClause>(sharedFromThis()));
     }
 

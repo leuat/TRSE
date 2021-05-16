@@ -3,8 +3,8 @@
 
 void CompilerM68K::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
-    m_assembler = QSharedPointer<AsmM68000>(new AsmM68000());//
-    m_dispatcher = QSharedPointer<ASTDispatcher68000>(new ASTDispatcher68000());
+    m_assembler = QSharedPointer<Asm68000>(new Asm68000());//
+    m_dispatcher = QSharedPointer<CodeGen68k>(new CodeGen68k());
     m_dispatcher->m_outputLineNumbers = false;
 
     if (Data::data.demomode)
@@ -22,7 +22,7 @@ void CompilerM68K::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 
 }
 
-void AsmM68000::EndProgram()
+void Asm68000::EndProgram()
 {
 
 }

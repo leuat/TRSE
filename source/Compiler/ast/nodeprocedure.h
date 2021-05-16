@@ -31,7 +31,7 @@
 #include "source/Compiler/ast/nodeproceduredecl.h"
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodeassign.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeProcedure : public Node {
 public:
@@ -56,7 +56,7 @@ public:
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, bool isHi) override;
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));
     }
 

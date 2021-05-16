@@ -33,7 +33,7 @@
 #include "source/Compiler/ast/nodevararray.h"
 #include "source/Compiler/ast/nodebinop.h"
 
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 //class NodeBinop;
 
@@ -48,7 +48,7 @@ public:
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeAssign>(sharedFromThis()));
     }
 /*    void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

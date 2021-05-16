@@ -26,9 +26,9 @@
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/assembler/assembler.h"
-#include "source/Compiler/assembler/mos6502/mos6502.h"
+#include "source/Compiler/assembler/asm6502.h"
 #include "source/LeLib/data.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 
 class MemoryBlockInfo {
@@ -101,7 +101,7 @@ public:
 
     Node();
     // called manually on each dispatch visitor
-    void DispatchConstructor(Assembler* as, AbstractASTDispatcher* dispatcher);
+    void DispatchConstructor(Assembler* as, AbstractCodeGen* dispatcher);
     // Makes sure that the node and blocks are in sync
     int MaintainBlocks(Assembler* as);
 
@@ -178,8 +178,8 @@ public:
     virtual bool isVariable() { // Variable with possible expressions
         return false;
     }
-    /*    virtual void LoadVariable(AbstractASTDispatcher* dispatcher) {}
-    virtual void StoreVariable(AbstractASTDispatcher* dispatcher) {}*/
+    /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
+    virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {
         return m_op.m_type;
     }
@@ -187,7 +187,7 @@ public:
         return m_op.m_type;
     }
     virtual bool isArrayIndex() { return false; }
-    virtual void Accept(AbstractASTDispatcher* dispatcher) = 0;
+    virtual void Accept(AbstractCodeGen* dispatcher) = 0;
     virtual QString getLiteral(Assembler* as) {return "";}
     virtual bool isAddress() { return false;}
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
@@ -217,7 +217,7 @@ public:
     virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }
 
-    bool verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractASTDispatcher* disp);
+    bool verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractCodeGen* disp);
     virtual TokenType::Type VerifyAndGetNumericType();
 
 
@@ -243,7 +243,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
 
     }
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(sharedFromThis());
     }
 
@@ -258,7 +258,7 @@ class NodeComment : public Node {
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
 
     }
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(sharedFromThis());
     }
 

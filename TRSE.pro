@@ -29,9 +29,9 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-
+QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
-#    CONFIG += warn_off
+    CONFIG += warn_off
 
     #LIBS += -openmp
 #    ICON = trse.icns
@@ -124,23 +124,30 @@ linux*{
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageworker.cpp \
-    source/Compiler/assembler/abstractmethods.cpp \
+    source/Compiler/assembler/asm6502.cpp \
+    source/Compiler/assembler/asm68000.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
-    source/Compiler/assembler/astdispatcherx86.cpp \
-    source/Compiler/assembler/dispatcherz80.cpp \
-    source/Compiler/assembler/factorymethods.cpp \
-    source/Compiler/assembler/methods68000atari.cpp \
-    source/Compiler/assembler/methods6800amiga.cpp \
-    source/Compiler/assembler/methodsz80.cpp \
-    source/Compiler/assembler/mos6502/methods6502c64.cpp \
-    source/Compiler/assembler/mos6502/methods6502ok64.cpp \
-    source/Compiler/assembler/mos6502/methods6502vic20.cpp \
-    source/Compiler/assembler/methodsx86.cpp \
     source/Compiler/ast/nodecase.cpp \
     source/Compiler/ast/nodecontrolstatement.cpp \
     source/Compiler/ast/nodefactory.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
+    source/Compiler/codegen/abstractcodegen.cpp \
+    source/Compiler/codegen/codegen_6502.cpp \
+    source/Compiler/codegen/codegen_m68k.cpp \
+    source/Compiler/codegen/codegen_x86.cpp \
+    source/Compiler/codegen/codegen_z80.cpp \
+    source/Compiler/codegen/methods/abstractmethods.cpp \
+    source/Compiler/codegen/methods/factorymethods.cpp \
+    source/Compiler/codegen/methods/methods6502.cpp \
+    source/Compiler/codegen/methods/methods6502c64.cpp \
+    source/Compiler/codegen/methods/methods6502ok64.cpp \
+    source/Compiler/codegen/methods/methods6502vic20.cpp \
+    source/Compiler/codegen/methods/methods68000.cpp \
+    source/Compiler/codegen/methods/methods68000atari.cpp \
+    source/Compiler/codegen/methods/methods6800amiga.cpp \
+    source/Compiler/codegen/methods/methodsx86.cpp \
+    source/Compiler/codegen/methods/methodsz80.cpp \
     source/Compiler/compilers/compiler6502.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
@@ -258,9 +265,7 @@ SOURCES += main.cpp\
     source/Compiler/symboltable.cpp \
     source/Compiler/syntax.cpp \
     source/Compiler/token.cpp \
-    source/Compiler/assembler/asmpascal.cpp \
     source/Compiler/assembler/assembler.cpp \
-    source/Compiler/assembler/mos6502/mos6502.cpp \
     source/Compiler/ast/ast.cpp \
     source/Compiler/ast/node.cpp \
     source/Compiler/ast/nodeasm.cpp \
@@ -318,9 +323,6 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagevic20.cpp \
     source/LeLib/limage/limagesprites2.cpp \
     source/LeLib/limage/limagecontainer.cpp \
-    source/Compiler/assembler/abstractastdispatcher.cpp \
-    source/Compiler/assembler/mos6502/astdispatcher6502.cpp \
-    source/Compiler/assembler/mos6502/methods6502.cpp \
     source/dialogeffects.cpp \
     source/effects/abstractdemoeffect.cpp \
     source/effects/demoeffecttwister.cpp \
@@ -348,9 +350,6 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemc128.cpp \
     source/Compiler/systems/systemm6800.cpp \
     source/Compiler/systems/systemamiga.cpp \
-    source/Compiler/assembler/astdispatcher68000.cpp \
-    source/Compiler/assembler/AsmM68000.cpp \
-    source/Compiler/assembler/methods68000.cpp \
     source/dialogcolors.cpp \
     source/LeLib/limage/bitmapfont.cpp \
     source/Raytracer/particles.cpp \
@@ -363,23 +362,31 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     imageworker.h \
-    source/Compiler/assembler/abstractmethods.h \
+    source/Compiler/assembler/asm68000.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
-    source/Compiler/assembler/astdispatcherx86.h \
-    source/Compiler/assembler/dispatcherz80.h \
-    source/Compiler/assembler/factorymethods.h \
-    source/Compiler/assembler/methods68000atari.h \
-    source/Compiler/assembler/methods6800amiga.h \
-    source/Compiler/assembler/methodsz80.h \
-    source/Compiler/assembler/mos6502/methods6502c64.h \
-    source/Compiler/assembler/mos6502/methods6502ok64.h \
-    source/Compiler/assembler/mos6502/methods6502vic20.h \
-    source/Compiler/assembler/methodsx86.h \
+    source/Compiler/codegen/codegen_x86.h \
+    source/Compiler/codegen/codegen_z80.h \
     source/Compiler/ast/nodecase.h \
     source/Compiler/ast/nodecontrolstatement.h \
     source/Compiler/ast/nodefactory.h \
     source/Compiler/ast/noderepeatuntil.h \
+    source/Compiler/codegen/abstractcodegen.h \
+    source/Compiler/codegen/codegen_6502.h \
+    source/Compiler/codegen/codegen_m68k.h \
+    source/Compiler/codegen/codegen_x86.h \
+    source/Compiler/codegen/codegen_z80.h \
+    source/Compiler/codegen/methods/abstractmethods.h \
+    source/Compiler/codegen/methods/factorymethods.h \
+    source/Compiler/codegen/methods/methods6502.h \
+    source/Compiler/codegen/methods/methods6502c64.h \
+    source/Compiler/codegen/methods/methods6502ok64.h \
+    source/Compiler/codegen/methods/methods6502vic20.h \
+    source/Compiler/codegen/methods/methods68000.h \
+    source/Compiler/codegen/methods/methods68000atari.h \
+    source/Compiler/codegen/methods/methods6800amiga.h \
+    source/Compiler/codegen/methods/methodsx86.h \
+    source/Compiler/codegen/methods/methodsz80.h \
     source/Compiler/compilers/compiler6502.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerm68k.h \
@@ -499,9 +506,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/symboltable.h \
     source/Compiler/syntax.h \
     source/Compiler/token.h \
-    source/Compiler/assembler/asmpascal.h \
     source/Compiler/assembler/assembler.h \
-    source/Compiler/assembler/mos6502/mos6502.h \
+    source/Compiler/assembler/asm6502.h \
     source/Compiler/ast/ast.h \
     source/Compiler/ast/node.h \
     source/Compiler/ast/nodeasm.h \
@@ -561,9 +567,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagevic20.h \
     source/LeLib/limage/limagesprites2.h \
     source/LeLib/limage/limagecontainer.h \
-    source/Compiler/assembler/abstractastdispatcher.h \
-    source/Compiler/assembler/mos6502/astdispatcher6502.h \
-    source/Compiler/assembler/mos6502/methods6502.h \
+    source/Compiler/codegen/codegen_6502.h \
     source/dialogeffects.h \
     source/effects/abstractdemoeffect.h \
     source/effects/demoeffecttwister.h \
@@ -591,8 +595,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemc128.h \
     source/Compiler/systems/systemm6800.h \
     source/Compiler/systems/systemamiga.h \
-    source/Compiler/assembler/astdispatcher68000.h \
-    source/Compiler/assembler/AsmM68000.h \
+    source/Compiler/codegen/codegen_m68k.h \
+    source/Compiler/assembler/Asm68000.h \
     source/Compiler/assembler/methods68000.h \
     source/dialogcolors.h \
     source/LeLib/limage/bitmapfont.h \

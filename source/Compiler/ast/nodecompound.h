@@ -27,7 +27,7 @@
 #include "source/Compiler/pvar.h"
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 #include "source/Compiler/ast/node.h"
 
 class NodeCompound : public Node {
@@ -38,7 +38,7 @@ public:
     }
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeCompound>(sharedFromThis()));
     }
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

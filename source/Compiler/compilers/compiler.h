@@ -23,15 +23,14 @@
 #define Compiler_H
 
 #include "../parser.h"
-#include "source/Compiler/assembler/mos6502/mos6502.h"
-#include "source/Compiler/assembler/AsmM68000.h"
-#include "source/Compiler/assembler/asmpascal.h"
+#include "source/Compiler/assembler/asm6502.h"
+#include "source/Compiler/assembler/asm68000.h"
 #include "source/Compiler/assembler/asmx86.h"
 #include "source/Compiler/assembler/asmz80.h"
-#include "source/Compiler/assembler/mos6502/astdispatcher6502.h"
-#include "source/Compiler/assembler/astdispatcher68000.h"
-#include "source/Compiler/assembler/astdispatcherx86.h"
-#include "source/Compiler/assembler/dispatcherz80.h"
+#include "source/Compiler/codegen/codegen_6502.h"
+#include "source/Compiler/codegen/codegen_m68k.h"
+#include "source/Compiler/codegen/codegen_x86.h"
+#include "source/Compiler/codegen/codegen_z80.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"
@@ -43,7 +42,7 @@ class Compiler : public QObject
 public:
     QSharedPointer<Node> m_tree = nullptr;
     QSharedPointer<Assembler> m_assembler = nullptr;
-    QSharedPointer<AbstractASTDispatcher> m_dispatcher = nullptr;
+    QSharedPointer<AbstractCodeGen> m_dispatcher = nullptr;
 
     Parser m_parser;
     QSharedPointer<Lexer> m_lexer;

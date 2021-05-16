@@ -4,7 +4,7 @@
 void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
-    m_dispatcher = QSharedPointer<ASTdispatcherZ80>(new ASTdispatcherZ80());
+    m_dispatcher = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
     m_dispatcher->m_outputLineNumbers = false;
 
     if (m_projectIni->getdouble("override_target_settings")==1) {

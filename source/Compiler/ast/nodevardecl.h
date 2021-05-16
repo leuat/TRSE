@@ -32,7 +32,7 @@
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/misc/sidfile.h"
 #include "source/LeLib/util/util.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeVarDecl : public Node {
 public:
@@ -63,7 +63,7 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVarDecl>(sharedFromThis()));
     }
 

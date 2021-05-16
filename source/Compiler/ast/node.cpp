@@ -20,7 +20,7 @@
 */
 
 #include "node.h"
-#include "source/Compiler/assembler/mos6502/astdispatcher6502.h"
+#include "source/Compiler/codegen/codegen_6502.h"
 
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
@@ -52,7 +52,7 @@ Node::Node() {
     s_nodeCount++;
 }
 
-void Node::DispatchConstructor(Assembler *as, AbstractASTDispatcher* dispatcher) {
+void Node::DispatchConstructor(Assembler *as, AbstractCodeGen* dispatcher) {
     //        m_blockInfo = m_staticBlockInfo;s
     m_currentLineNumber = m_op.m_lineNumber;
     bool ok = true;
@@ -132,12 +132,12 @@ void Node::RequireNumber(QSharedPointer<Node> n, QString name, int ln) {
         ErrorHandler::e.Error(name + " requires parameter to be pure numeric", ln);
 }
 
-bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractASTDispatcher* dispatcher)
+bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractCodeGen* dispatcher)
 {
     //QSharedPointer<Assembler> as =
-    //    AsmMOS6502 tmpAsm;
+    //    Asm6502 tmpAsm;
   //  tmpAsm.m_symTab = as->m_symTab;
-//    ASTDispatcher6502 dispatcher;
+//    CodeGen6502 dispatcher;
 //    dispatcher.as = &tmpAsm;
     auto app = QSharedPointer<Appendix>(new Appendix);
     auto keep = as->m_currentBlock;

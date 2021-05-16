@@ -25,7 +25,7 @@
 #include "node.h"
 
 
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 
 class NodeAsm : public Node
 {
@@ -42,7 +42,7 @@ public:
 
     }
 
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeAsm>(sharedFromThis()));
     }
 

@@ -40,7 +40,7 @@
 #include "source/LeLib/limage/limageio.h"
 #include <QMessageBox>
 #include <QSettings>
-#include "source/Compiler/assembler/mos6502/mos6502.h"
+#include "source/Compiler/assembler/asm6502.h"
 #include "source/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
@@ -2212,12 +2212,12 @@ void MainWindow::on_btnBuildAll_clicked()
 
 void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("zeropages"))
-        m_ini->setStringList("zeropages", AsmMOS6502::m_defaultZeroPointers.split(","));
+        m_ini->setStringList("zeropages", Asm6502::m_defaultZeroPointers.split(","));
 
 
 
     if (!m_ini->contains("temp_zeropages"))
-        m_ini->setStringList("temp_zeropages", AsmMOS6502::m_defaultTempZeroPointers.split(","));
+        m_ini->setStringList("temp_zeropages", Asm6502::m_defaultTempZeroPointers.split(","));
 
     if (!m_ini->contains("zeropage_screenmemory"))
         m_ini->setString("zeropage_screenmemory","$fd");
@@ -2322,7 +2322,7 @@ void TRSEProject::VerifyDefaults() {
             m_ini->setString("vic_memory_config","none");
 
         if (!m_ini->contains("via_zeropages")) {
-            m_ini->setStringList("via_zeropages", AsmMOS6502::m_defaultViaZeroPointers.split(","));
+            m_ini->setStringList("via_zeropages", Asm6502::m_defaultViaZeroPointers.split(","));
         }
 
     }

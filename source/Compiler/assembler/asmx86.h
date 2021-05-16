@@ -2,7 +2,6 @@
 #define ASMX86_H
 
 
-
 #include "source/Compiler/assembler/assembler.h"
 
 class AsmX86 : public Assembler

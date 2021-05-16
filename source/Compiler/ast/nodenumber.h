@@ -27,7 +27,7 @@
 #include "source/Compiler/pvar.h"
 #include "source/Compiler/symboltable.h"
 #include "source/Compiler/errorhandler.h"
-#include "source/Compiler/assembler/abstractastdispatcher.h"
+#include "source/Compiler/codegen/abstractcodegen.h"
 #include "source/Compiler/ast/node.h"
 
 
@@ -54,7 +54,7 @@ public:
         m_op.m_type = TokenType::INTEGER_CONST;
     }
 
-    //void LoadVariable(AbstractASTDispatcher* dispatcher) override;
+    //void LoadVariable(AbstractCodeGen* dispatcher) override;
 
     int numValue() override { return m_val;}
 
@@ -79,7 +79,7 @@ public:
     bool isMinusOne() override;
 
     bool isOne() override;
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeNumber>(sharedFromThis()));
     }
 

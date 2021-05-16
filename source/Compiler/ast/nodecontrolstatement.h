@@ -19,7 +19,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
         m_right->ExecuteSym(symTab);
     }
-    void Accept(AbstractASTDispatcher* dispatcher) override {
+    void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeControlStatement>(sharedFromThis()));
     }
 
