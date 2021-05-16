@@ -124,9 +124,9 @@ end;
 procedure PrintChar(ch : byte);
 begin
 	asm
-			mov	al,[Screen_ch]
-			mov	ah,0x0E
-			int	10h
+		mov	al,[Screen_ch]
+		mov	ah,0x0E
+		int	10h
 	
 	end;
 end;

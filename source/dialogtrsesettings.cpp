@@ -44,8 +44,6 @@ void DialogTRSESettings::FillFromIni()
     FillFont(ui->cbmFont, m_ini->getString("editor_font"));
     FillFont(ui->cmbFontSymbols, m_ini->getString("editor_font_symbols"));
 
-
-
     ui->leDosbox->setText(m_ini->getString("dosbox"));
     ui->leVasmm->setText(m_ini->getString("vasmm"));
     ui->leNasm->setText(m_ini->getString("nasm"));
@@ -69,6 +67,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
+    ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
@@ -171,6 +170,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
+    m_ini->setString("qemu_directory",ui->leQemuDir->text());
     m_ini->setString("coleco_emulator", ui->leColecoEmulator->text());
     m_ini->setString("lz4",ui->leLZ4->text());
     //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
@@ -278,8 +278,10 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"QEMU" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
+        if (data[i]=="QEMU")
+            continue;
         QPushButton* btn = new QPushButton("params");
         ui->grdEmulators->addWidget(btn,i,4);
         QString name = "emulator_additional_parameters_"+data[i];
@@ -729,5 +731,19 @@ void DialogTRSESettings::on_btnLZ4_clicked()
         tr("LZ4 executable"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leLZ4->setText(filename);
+
+}
+
+void DialogTRSESettings::on_btnQemuHelp_clicked()
+{
+
+}
+
+void DialogTRSESettings::on_btnQemu_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Qemu directory"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leQemuDir->setText(filename);
 
 }

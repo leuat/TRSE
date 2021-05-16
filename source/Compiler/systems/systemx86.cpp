@@ -15,21 +15,36 @@ void SystemX86::Assemble(QString &text, QString filename, QString currentDir, QS
     //qDebug() << m_settingsIni->getString("assembler");
         QProcess process;
         QStringList params;
-       // -kick1hunks  -o example$1 -nosym source$1.asm
-  //      params << "-kick1hunks";
-    //    params << "-Fhunkexe";
-        params << "-o" << filename + ".exe";
-        params << filename+".asm";
-       // qDebug() << params;
+        bool qemu = false;
+        if (m_projectIni->contains("qemu") && m_projectIni->getString("qemu").startsWith("qemu")) {
+            params << "-f"<< "bin";
+            params << filename+".asm";
+            params << "-o" << filename + ".bin";
+            qemu = true;
+        }
+        else
+        {
+            params << "-o" << filename + ".exe";
+            params << filename+".asm";
+        }
         process.start(m_settingsIni->getString("nasm"), params);
         process.waitForFinished();
         output = process.readAllStandardOutput();
         output+= process.readAllStandardError();
-//        qDebug() << output;
-/*        output = process.readAllStandardError();
-        process.start(m_settingsIni->getString("nasm"), QStringList() << filename + ".obj" << filename + ".exe");
-        process.waitForFinished();
-*/
+
+
+        if (qemu) {
+            QByteArray boot = Util::loadBinaryFile(":resources/bin/bootsect.bin");
+//            qDebug() <<boot.count();
+            QByteArray data = Util::loadBinaryFile(filename+".bin");
+            boot.append(data);
+            Util::SaveByteArray(boot,filename+".bin");
+
+        }
+
+
+
+
 
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();

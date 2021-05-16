@@ -1,6 +1,6 @@
 #include "asmx86.h"
 #include "source/Compiler/optimiser/postoptimizerx86.h"
-
+#include <QRegularExpression>
 
 
 AsmX86::AsmX86()
@@ -50,7 +50,8 @@ void AsmX86::Connect() {
 void AsmX86::Program(QString name, QString vicParam)
 {
     m_source+=m_startInsertAssembler;
-    Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
+    if (Syntax::s.m_currentSystem->m_programStartAddress!=0)
+        Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
     m_hash = "";
 /*    Asm("jmp save_ds_register");
     Write("ds_register_saved: dw 0",0);
@@ -67,8 +68,15 @@ void AsmX86::EndProgram()
 
 void AsmX86::Write(QString str, int level)
 {
-    QString s = str.replace("$","0x");
-    Assembler::Write(s,level);
+    QRegularExpression regexp("\\$\\b[0-9a-fA-F]+\\b");
+    if (str.contains(regexp))
+        str = str.replace("$","0x");
+//    QString s = str.replace(regexp,"0x");
+  //  if (s.contains("$"))
+//        qDebug() << s;
+//if (s!=str)     qDebug() <<s;
+    //QString s = str.replace("$","0x");
+    Assembler::Write(str,level);
 }
 
 void AsmX86::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)

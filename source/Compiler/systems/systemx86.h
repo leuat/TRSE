@@ -14,6 +14,11 @@ public:
         m_processor = PX86;
         m_system = X86;
         m_startAddress = 0x100;
+        if (m_projectIni->contains("qemu") && m_projectIni->getString("qemu").startsWith("qemu")){
+            m_startAddress = 0x7c00;
+            m_startAddress = 0x1000;
+        }
+
         m_programStartAddress = m_startAddress;
         m_cpu = m_projectIni->getString("cpu_x86_system");
         m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";

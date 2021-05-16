@@ -68,6 +68,7 @@ void DialogProjectSettings::FillFromIni()
     ui->leUserDefinedtempVars->setText(fromStringList(m_ini->getStringList("zeropages_userdefined")));
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
+    ui->cmbQuemu->setCurrentText(m_ini->getString("qemu"));
 //    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
     UpdateSystem();
 
@@ -203,6 +204,7 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("petmodel", ui->cbmPetSystem->currentText());
 
     m_ini->setString("amstradcpc_model", ui->cmbAmstradCPCModel->currentText());
+    m_ini->setString("qemu",ui->cmbQuemu->currentText());
     m_ini->setString("amstradcpc_options", ui->leAmstradCPCOptions->text());
 
     m_ini->setFloat("spectrum_model", ui->cbmSpectrumModel->currentIndex());

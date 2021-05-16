@@ -49,144 +49,11 @@
         <attribute name="title">
          <string>Target system</string>
         </attribute>
-        <widget class="QComboBox" name="cmbSystem">
-         <property name="geometry">
-          <rect>
-           <x>90</x>
-           <y>40</y>
-           <width>141</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <item>
-          <property name="text">
-           <string>C64</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>PLUS4</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>C128</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>VIC20</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>NES</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>AMIGA</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>PET</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>X86</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>MEGA65</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>SPECTRUM</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>OK64</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>AMSTRADCPC</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>GAMEBOY</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>TIKI100</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>ATARI520ST</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>ATARI2600</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>COLECO</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>X16</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>BBCM</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>ATARI800</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>MSX</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>APPLEII</string>
-          </property>
-         </item>
-        </widget>
-        <widget class="QLabel" name="label">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>30</y>
-           <width>54</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>System:</string>
-         </property>
-        </widget>
         <widget class="QLabel" name="label_2">
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>80</y>
+           <y>150</y>
            <width>221</width>
            <height>41</height>
           </rect>
@@ -199,9 +66,9 @@
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>160</y>
+           <y>190</y>
            <width>981</width>
-           <height>261</height>
+           <height>231</height>
           </rect>
          </property>
          <property name="currentIndex">
@@ -751,6 +618,160 @@
            </layout>
           </widget>
          </widget>
+        </widget>
+        <widget class="QWidget" name="gridLayoutWidget_7">
+         <property name="geometry">
+          <rect>
+           <x>34</x>
+           <y>30</y>
+           <width>551</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_17">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>System:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cmbSystem">
+            <item>
+             <property name="text">
+              <string>C64</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PLUS4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>C128</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>VIC20</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AMIGA</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PET</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>X86</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>MEGA65</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SPECTRUM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>OK64</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AMSTRADCPC</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GAMEBOY</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TIKI100</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATARI520ST</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATARI2600</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>COLECO</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>X16</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BBCM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ATARI800</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>MSX</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>APPLEII</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_35">
+            <property name="text">
+             <string>QEMU project (X86 only)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="cmbQuemu">
+            <item>
+             <property name="text">
+              <string>No</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>qemu-system-i386</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_9">

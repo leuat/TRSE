@@ -203,11 +203,21 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
-        emu = m_iniFile->getString("dosbox");
-        QString type = m_projectIniFile->getString("dosbox_x86_system");
-        if (type.toLower()!="default")
-            params << "-machine" << type;
-        params << "-noautoexec";
+        if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu")) {
+            emu = m_iniFile->getString("qemu_directory")+QDir::separator()+m_projectIniFile->getString("qemu");
+            params<<"-fda";
+            qDebug() << emu;
+#ifdef _WIN32
+            emu+=".exe";
+#endif
+        }
+        else {
+            emu = m_iniFile->getString("dosbox");
+            QString type = m_projectIniFile->getString("dosbox_x86_system");
+            if (type.toLower()!="default")
+                params << "-machine" << type;
+            params << "-noautoexec";
+        }
 
 #ifdef _WIN32
         //        params << "-noconsole";
@@ -664,8 +674,12 @@ void FormRasEditor::Run()
         filename = m_currentSourceFile.split(ft)[0] + ".gb";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86)
-        filename = m_currentSourceFile.split(ft)[0] + ".exe";
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
+        if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu"))
+            filename = m_currentSourceFile.split(ft)[0] + ".bin";
+        else
+            filename = m_currentSourceFile.split(ft)[0] + ".exe";
+    }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX)

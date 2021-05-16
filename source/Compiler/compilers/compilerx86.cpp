@@ -11,7 +11,6 @@ void CompilerX86::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 
 
-
 }
 
 void CompilerX86::Connect()

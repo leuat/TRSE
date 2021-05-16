@@ -189,6 +189,10 @@ private slots:
 
     void on_btnLZ4_clicked();
 
+    void on_btnQemuHelp_clicked();
+
+    void on_btnQemu_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

@@ -609,5 +609,6 @@
         <file>resources/images/amiga_intro.png</file>
         <file>resources/text/opcodes_z80.txt</file>
         <file>resources/images/tutorials/olimp.jpg</file>
+        <file>resources/bin/bootsect.bin</file>
     </qresource>
 </RCC>
