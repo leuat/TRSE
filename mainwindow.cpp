@@ -47,7 +47,7 @@
 #include "source/Compiler/compilers/compiler.h"
 #include "source/LeLib/data.h"
 #include "source/dialogsplash.h"
-
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1492,9 +1492,9 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action4, SIGNAL(triggered()), this, SLOT(on_duplicate_file()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
     contextMenu.addAction(&action1);
-    contextMenu.addAction(&action3);
     contextMenu.addAction(&action4);
     contextMenu.addAction(&action5);
+    contextMenu.addAction(&action3);
 
     contextMenu.exec(mapToGlobal(pos));
 
@@ -1630,14 +1630,52 @@ void MainWindow::UpdateFailure()
     m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
 }
 
-void MainWindow::on_duplciate_file()
+void MainWindow::on_duplicate_file()
 {
+    QModelIndex qlst = ui->treeFiles->currentIndex();
+    if (qlst.data().toString()=="")
+        return;
+    QString path = getProjectPath() + FindPathInProjectFolders(qlst);
+    QString filename = path + qlst.data().toString();
+    if (!QFile::exists(filename))
+        return;
+    int i = 1;
+    QString nf = filename;
+    nf = nf.replace(".ras",QString::number(i)+".ras");
+    while (QFile::exists(nf)) {
+        i++;
+        nf = filename;
+        nf = filename.replace(".ras",QString::number(i)+".ras");
+    }
+    Util::CopyFile(filename,nf);
+    qDebug() << "copying" << filename<<nf;
+    RefreshFileList();
 
 }
 
 void MainWindow::on_rename_file()
 {
 
+    QModelIndex qlst = ui->treeFiles->currentIndex();
+    if (qlst.data().toString()=="")
+        return;
+    QString path = getProjectPath() + FindPathInProjectFolders(qlst);
+    QString filename = qlst.data().toString();
+
+    bool ok;
+        QString text = QInputDialog::getText(this, tr("New filename"),
+                                             tr("New name"), QLineEdit::Normal,
+                                             filename, &ok);
+    if (ok && !text.isEmpty()) {
+        QString of = path + filename;
+        QString nf = path + text;
+        if (of.endsWith(".ras") && !nf.endsWith(".ras"))
+            nf = nf+".ras";
+        if (of.endsWith(".tru") && !nf.endsWith(".tru"))
+            nf = nf+".tru";
+        QFile::rename(of,nf);
+        RefreshFileList();
+    }
 }
 
 // New source file
