@@ -10,22 +10,27 @@ AsmARM::AsmARM()
     word="dw";
     llong ="dd";
     ppointer ="dd";
-    m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserX86());
+    //m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserX86());
+    m_ignoreInitialJump = true;
 
 }
 
 void AsmARM::Connect() {
     // Connect with temp vars
     QStringList newSource;
+    newSource<<(".global _start");
+    newSource<<(".align 2");
+    newSource<<("_start:");
+
+    for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
+        newSource<<m_source[i];
+    }
     for (int i=0;i<m_varDeclEndsLineNumber;i++) {
         newSource<<m_source[i];
     }
     newSource << " ; Temp vars section";
     newSource<< m_tempVars;
     newSource << " ; Temp vars section ends";
-    for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
-        newSource<<m_source[i];
-    }
     m_source = newSource;
     //m_source<<m_appendix;
     //    m_appendix.append(m_ extraBlocks);
@@ -231,13 +236,13 @@ void AsmARM::BinOP(TokenType::Type t, bool clearFlag)
 }
 
 void AsmARM::DeclareString(QString name, QStringList initVal, QStringList flags) {
-    Write(name +"\t" + String(initVal,!flags.contains("no_term")),0);
+    Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
 QString AsmARM::String(QStringList lst, bool term)
 {
     QString res;
-    QString mark = "db";
+    QString mark = ".ascii";
 
     for (QString s:lst) {
         bool ok=false;
@@ -253,7 +258,7 @@ QString AsmARM::String(QStringList lst, bool term)
 
     }
     if (term)
-        res=res + "\t"+mark+"\t0";
+        res=res + "\t.byte\t0";
     m_term +=res;
     return res;
 }

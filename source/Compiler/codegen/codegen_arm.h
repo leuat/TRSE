@@ -60,9 +60,9 @@ public:
     QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
     int m_lvl = 0;
-    QStringList m_regs = QStringList({"a","b","c","d"});
+    QStringList m_regs = QStringList({"r1","r2","r3","r4"});
 
-    QString m_jmp = "jmp ";
+    QString m_jmp = "b ";
     QString m_mov = "mov ";
     QString m_cmp = "cmp ";
     QString m_jne = "jne ";
@@ -72,10 +72,11 @@ public:
     }
 
     QString getJmp(bool isOffPage) override {
-        return "jmp";
+        return "b";
     }
-    QString getCallSubroutine() override { return "call"; }
+    QString getCallSubroutine() override;
     bool m_isPurePointer = false;
+
     virtual QString getAx(QSharedPointer<Node> n);
         virtual QString getAx(QString a, QSharedPointer<Node> n);
 
@@ -112,7 +113,7 @@ public:
     virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB,QString lblJump, bool isOffpage) override;
 
 
-    QString getReturn() override { return "ret";}
+    QString getReturn() override;
     QString getReturnInterrupt() override { return "iret";}
 
     /*

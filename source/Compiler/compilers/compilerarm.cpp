@@ -14,6 +14,8 @@ void CompilerArm::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 void CompilerArm::Connect()
 {
+    m_assembler->Connect();
+
 
 }
 

@@ -442,6 +442,10 @@ QString CodeGenARM::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
     return "1";
 }
 
+QString CodeGenARM::getCallSubroutine() {
+    return "bl";
+}
+
 QString CodeGenARM::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
 
@@ -1183,5 +1187,7 @@ void CodeGenARM::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPoi
     as->Asm(m_jne+lblJump);
 
 }
+
+QString CodeGenARM::getReturn() { return "ret";}
 
 
