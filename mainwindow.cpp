@@ -1564,8 +1564,7 @@ void MainWindow::onImageMouseMove()
 void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 {
 
-
-    QString path = m_currentPath;//  FindPathInProjectFolders(index);
+    QString path = FindPathInProjectFolders(index);
 
     // Finally load file!
     QStringList tru = getTRUPaths();// QDir::separator()+m_currentProject.m_ini->getString("system")+QDir::separator()+"tru";
@@ -1573,6 +1572,9 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
         s = s.remove(Util::path);
 
     QString file = QDir::toNativeSeparators(index.data(Qt::UserRole).toString());
+
+    if (QDir(path+file).exists()) // is a directory, abort
+        return;
 
     file = file.replace("\\\\","\\");
     file = file.replace("//","/");
@@ -1591,6 +1593,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")
         || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid")|| file.toLower().endsWith(".trt") ) {
+
         LoadDocument(path + file);
     }
 
@@ -1826,7 +1829,7 @@ void MainWindow::on_actionDelete_file_triggered()
         RefreshFileList();
     }
 }
-/*
+
 QString MainWindow::FindPathInProjectFolders(const QModelIndex &index)
 {
     // Find file in path.. ugh
@@ -1846,7 +1849,7 @@ QString MainWindow::FindPathInProjectFolders(const QModelIndex &index)
     }
     return path;
 }
-*/
+
 void MainWindow::BuildAll()
 {
 
