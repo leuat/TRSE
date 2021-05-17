@@ -66,6 +66,8 @@
 #include <source/LeLib/lglslideshow.h>
 #include "source/dialogsplash.h"
 #include "source/dialognewtrt.h"
+#include "source/LeLib/util/util.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -330,6 +332,7 @@ private slots:
 
     void on_new_ras_file();
     void on_new_tru_file();
+    void on_new_inc_file();
 
     void on_duplicate_file();
 

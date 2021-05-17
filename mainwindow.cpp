@@ -33,7 +33,6 @@
 #include <QTextCursor>
 #include <QFontMetrics>
 #include "source/LeLib/data.h"
-#include "source/LeLib/util/util.h"
 #include <QWheelEvent>
 #include "dialognewimage.h"
 #include "source/dialogabout.h"
@@ -1500,6 +1499,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QAction action1("Delete file", this);
     QAction action4("Duplicate file", this);
     QAction action6("New .ras file", this);
+    QAction action61("New .inc file", this);
     QAction action7("New .tru file", this);
     QAction action5("Rename file", this);
     QAction action8("New folder", this);
@@ -1508,6 +1508,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action3, SIGNAL(triggered()), this, SLOT(on_helpFileType()));
     connect(&action4, SIGNAL(triggered()), this, SLOT(on_duplicate_file()));
     connect(&action6, SIGNAL(triggered()), this, SLOT(on_new_ras_file()));
+    connect(&action61, SIGNAL(triggered()), this, SLOT(on_new_inc_file()));
     connect(&action7, SIGNAL(triggered()), this, SLOT(on_new_tru_file()));
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
@@ -1674,7 +1675,7 @@ void MainWindow::on_duplicate_file()
         nf = filename;
         nf = filename.replace(".ras",QString::number(i)+".ras");
     }
-    Util::CopyFile(filename,nf);
+    Util::CopyFileMSVCBug(filename,nf);
     RefreshFileList();
 
 }
@@ -1761,6 +1762,10 @@ void MainWindow::on_new_file(QString name)
 void MainWindow::on_new_ras_file()
 {
     on_new_file("ras");
+}
+void MainWindow::on_new_inc_file()
+{
+    on_new_file("inc");
 }
 
 void MainWindow::on_new_tru_file()

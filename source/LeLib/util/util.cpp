@@ -440,6 +440,10 @@ void Util::CopyFile(QString i, QString o) {
     QFile::setPermissions(i, QFileDevice::ReadOwner|QFileDevice::WriteOwner);
 }
 
+void Util::CopyFileMSVCBug(QString i, QString o) {
+    CopyFile(i,o);
+}
+
 void Util::CopyFileBytes(QString i, QString o) {
     if (QFile::exists(o)) {
         QFile ff(o);
