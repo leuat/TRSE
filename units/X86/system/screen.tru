@@ -16,15 +16,29 @@ var
 procedure InitVGABuffers(noBuffers:global integer);
 begin
 	if (noBuffers>0) then
-		buffer1 := Memory::GetMem($FFF);
+		buffer1 := Memory::GetBlockMem($FFF);
 	if (noBuffers>1) then
-		buffer2 := Memory::GetMem($FFF);
+		buffer2 := Memory::GetBlockMem($FFF);
 	if (noBuffers>2) then
-		buffer3 := Memory::GetMem($FFF);
+		buffer3 := Memory::GetBlockMem($FFF);
 	if (noBuffers>3) then
-		buffer4 := Memory::GetMem($FFF);
+		buffer4 := Memory::GetBlockMem($FFF);
 	if (noBuffers>4) then
-		buffer5 := Memory::GetMem($FFF);
+		buffer5 := Memory::GetBlockMem($FFF);
+end;
+
+procedure InitVGABuffersNo21(noBuffers:global integer);
+begin
+	if (noBuffers>0) then
+		buffer1 := ptr($2000,0);
+	if (noBuffers>1) then
+		buffer2 := ptr($3000,0);
+	if (noBuffers>2) then
+		buffer3 := ptr($4000,0);
+	if (noBuffers>3) then
+		buffer4 := ptr($5000,0);
+	if (noBuffers>4) then
+		buffer5 := ptr($6000,0);
 end;
 
  procedure SetColor(color,red,green,blue:global byte);

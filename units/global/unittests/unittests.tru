@@ -7,6 +7,7 @@ Unit Unittests;
 @use "unittests/ifthenelse"
 @use "unittests/muldiv"
 @use "unittests/forloop"
+@use "unittests/registers"
 
 @use "unittests/advanced_math"
 
@@ -14,7 +15,7 @@ Unit Unittests;
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests : byte = 7;
+	const noTests : byte = 8;
 	currentTest : byte;
 	isDone: boolean;
 
@@ -44,6 +45,8 @@ begin
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=4) then AdvancedMath::Exec();
 		@endif
+		if (currentTest=7) then Registers::Exec();
+
 		currentTest+=1;
 				
 		if (currentTest>=noTests) then

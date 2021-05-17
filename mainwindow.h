@@ -327,6 +327,9 @@ private slots:
     void UpdateFailure();
 
 
+    void on_duplciate_file();
+
+    void on_rename_file();
 
     void on_actionDelete_file_triggered();
 

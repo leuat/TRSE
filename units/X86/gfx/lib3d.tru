@@ -49,8 +49,8 @@ begin
 	objects[i].noVertices:=v;
 	objects[i].noFaces:=n;
 	objects[i].vertices := Memory::GetMem(v*6);
-	objects[i].faces := Memory::GetMem(v*6);
-	objects[i].points := Memory::GetMem(v*4); // 2D
+	objects[i].faces := Memory::GetMem(n*6);
+	objects[i].points := Memory::GetMem(v*8); // 2D
 	objects[i].vertices_rot := Memory::GetMem(v*6);
 	
 //	objects[i].points := ptr($8000,0);

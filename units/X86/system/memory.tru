@@ -3,6 +3,10 @@ var
 	i1 : integer;
 	p1 : pointer;
 	const DEFAULT_TIMER : integer = 23863;
+	
+@ifdef QEMU
+	curMem : integer;
+@endif
 
 procedure Poke8(_bx:integer; _di:integer;_ah:byte) inline;
 begin
@@ -31,6 +35,7 @@ end;
 
 procedure Init();
 begin
+@ifndef QEMU
 	asm
 	mov	dx,ss		; Stack segment
 	mov	bx,128 / 16 + 1 ; stack size in paragraphs
@@ -44,10 +49,37 @@ begin
 	mov bx, $2000-$160-$3D
 	int $21
 	end;
+@endif
+@ifdef QEMU
+	curMem:=$2000; // $2000
+@endif
 end;
 
-function GetMem(blocks: integer):long;
+function GetBlockMem(blocks: integer):long;
 begin
+	@ifndef QEMU
+	asm
+		mov ah,$48
+		mov bx, [Memory_blocks]
+		int $21
+		mov [Memory_i1],ax
+	end;	
+	GetBlockMem := ptr(i1,0);
+	@endif
+	@ifdef QEMU
+	GetBlockMem :=ptr(curMem,0);
+	curMem+=blocks;
+	@endif
+end;
+
+function GetMem(blocks: global integer):long;
+begin
+	// Bug?
+	blocks:=blocks/4;
+	if (blocks=0) then blocks:=1;
+//	blocks+=1;
+
+	@ifndef QEMU
 	asm
 		mov ah,$48
 		mov bx, [Memory_blocks]
@@ -55,24 +87,35 @@ begin
 		mov [Memory_i1],ax
 	end;	
 	GetMem := ptr(i1,0);
+	@endif
+	
+	
+	@ifdef QEMU
+	GetMem :=ptr(curMem,0);
+	curMem+=blocks;
+	@endif
 end;
 
 procedure Release(rp: pointer);
 begin
+	@ifndef QEMU
 	asm
 		mov ah,$49
 		mov bx, [Memory_rp+2]
 		int $21
 	end;	
+	@endif
 end;
 
 
 procedure Quit() inline;
 begin
+	@ifndef QEMU
 	asm("
 	mov ah,$4C 
     int $21	
     ");
+    @endif
 end;
 
 end.

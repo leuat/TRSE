@@ -205,7 +205,9 @@ void FormRasEditor::ExecutePrg(QString fileName)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
         if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu")) {
             emu = m_iniFile->getString("qemu_directory")+QDir::separator()+m_projectIniFile->getString("qemu");
-            params<<"-fda";
+            //params<<"-fda";
+            params<<"-boot" <<"c";
+
             qDebug() << emu;
 #ifdef _WIN32
             emu+=".exe";

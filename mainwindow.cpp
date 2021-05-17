@@ -1484,11 +1484,17 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QMenu contextMenu(tr("Menu"), this);
 
     QAction action1("Delete file", this);
+    QAction action4("Duplicate file", this);
+    QAction action5("Rename file", this);
     QAction action3("Help - what is this type of file?", this);
     connect(&action1, SIGNAL(triggered()), this, SLOT(on_actionDelete_file_triggered()));
     connect(&action3, SIGNAL(triggered()), this, SLOT(on_helpFileType()));
+    connect(&action4, SIGNAL(triggered()), this, SLOT(on_duplicate_file()));
+    connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
     contextMenu.addAction(&action1);
     contextMenu.addAction(&action3);
+    contextMenu.addAction(&action4);
+    contextMenu.addAction(&action5);
 
     contextMenu.exec(mapToGlobal(pos));
 
@@ -1622,6 +1628,16 @@ void MainWindow::on_btnSave_3_clicked()
 void MainWindow::UpdateFailure()
 {
     m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
+}
+
+void MainWindow::on_duplciate_file()
+{
+
+}
+
+void MainWindow::on_rename_file()
+{
+
 }
 
 // New source file

@@ -37,6 +37,12 @@ void SystemX86::Assemble(QString &text, QString filename, QString currentDir, QS
             QByteArray boot = Util::loadBinaryFile(":resources/bin/bootsect.bin");
 //            qDebug() <<boot.count();
             QByteArray data = Util::loadBinaryFile(filename+".bin");
+            int noSectors = (data.count()/512)+1;
+            for (int i=0;i<boot.count();i++) {
+                if ((char)boot[i]==0x70)
+                    boot[i] = noSectors;
+            }
+//            qDebug() <<noSectors;
             boot.append(data);
             Util::SaveByteArray(boot,filename+".bin");
 
