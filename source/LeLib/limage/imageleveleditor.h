@@ -183,6 +183,7 @@ public:
     QPoint m_currentLevelPos = QPoint(0,0);
     CharmapLevel* m_currentLevel = nullptr;
     QVector<CharmapLevel*> m_levels;
+    bool first = false;
     bool m_isRightButtonClick = false;
     CharmapLevel* getLevel(int i, int j);
     CharmapGlobalData m_meta;
@@ -200,6 +201,8 @@ public:
     ImageLevelEditor(LColorList::Type t);
 //    void Initialize(CharmapGlobalData meta);
     void ReInitialize() override;
+
+    void InitPens() override;
 
     QString GetCurrentDataString() override;
 

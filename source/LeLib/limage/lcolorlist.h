@@ -50,6 +50,7 @@ private:
     QVector<int> m_multicolors;
     int m_currentType = 0;
     QVector<QSharedPointer<LPen>> m_pens;
+    bool firstTime=true;
 
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
@@ -181,7 +182,7 @@ public:
     QLayout* m_layout = nullptr;
     void CreateUI(QLayout* ly, int type);
     void CreateUI(QLayout* ly, int type, QSize windowSize);
-
+    void UpdateUI();
 public slots:
     void handleButtonImport(int data);
 

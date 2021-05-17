@@ -94,6 +94,11 @@ void LColorList::SetMulticolor(int index, int col)
         CreateUI(m_layout,m_currentType,m_windowSize);
 
 }
+void LColorList::UpdateUI()
+{
+    CreateUI(m_layout,m_currentType,m_windowSize);
+}
+
 
 void LColorList::SetPPUColors(char c1, int idx)
 {
@@ -437,6 +442,7 @@ void LColorList::SetC64SpritePen(bool m_isMulticolor) {
 void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
 {
     QVector<int> oldList = getPenList();
+//    qDebug() << "In SetC64Pens "<<oldList<<this;
     // Make sure old data is kept!
     for (int i=0;i<4;i++) {
         if (i>=oldList.count())

@@ -35,17 +35,25 @@ void ImageLevelEditor::SetLevel(QPoint f)
     m_currentLevel = m_levels[f.x() + f.y()*m_meta.m_sizex];
 
 //    qDebug() << "Current colors:";
-
+    first = false;
     for (int i=0;i<3;i++)
-        if (i<m_currentLevel->m_ExtraData.count())
+        if (i<m_currentLevel->m_ExtraData.count()) {
            m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
+           if (m_charset!=nullptr)
+               m_charset->m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
+        }
+
+//    qDebug() << "** Manual INIPENS" <<m_colorList.getPenList() <<&m_colorList;
+//    MultiColorImage::InitPens();
+    m_colorList.UpdateUI();
+
+  //  qDebug() << "** Manual INIPENS end";
 
 //        qDebug() << QString::number(m_currentLevel->m_ExtraData[i]);
     if (m_charset==nullptr)
         return;
 
     m_colorList.m_ignoreSetIsMulti = true;
-
     if (m_currentLevel->m_ExtraData.count()>=3) {
         if (!(m_type==LImage::LevelEditorNES || m_type==LImage::LevelEditorGameboy )) {
             m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
@@ -64,6 +72,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
             qDebug() << "Extra data" << QString::number(m_extraCols[i]);
     }
 */
+    first = true;
 }
 
 ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
@@ -108,6 +117,8 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_supports.displayCharOperations = false;
     m_supports.displayDefaultClearButton = true;
 
+
+    m_colorList.m_supportsFooterPen = true;
     m_metaParams.append(new MetaParameter("screen_width","Screen width",20,2,1000));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",10,2,1000));
     m_metaParams.append(new MetaParameter("levels_x","Levels x",4,1,100));
@@ -148,6 +159,7 @@ void ImageLevelEditor::ReInitialize()
 
 }
 
+
 QString ImageLevelEditor::GetCurrentDataString() {
     int curPos = (m_currentLevelPos.x() + m_currentLevelPos.y()*m_meta.m_sizex);
     return " Room " + QString::number(m_currentLevelPos.x())+","+QString::number(m_currentLevelPos.y())
@@ -165,16 +177,26 @@ void ImageLevelEditor::CtrlLeftShift(int x, int y)
 
 
 }
+void ImageLevelEditor::InitPens()
+{
+    if (first) {
+        SetColor(m_colorList.getPen(0),0);
+        SetColor(m_colorList.getPen(1),1);
+        SetColor(m_colorList.getPen(2),2);
+    }
+    MultiColorImage::InitPens();
+//    SetLevel(m_currentLevelPos);
+}
 
 void ImageLevelEditor::SetColor(uchar col, uchar idx)
 {
     if (m_charset==nullptr)
         return;
 
-//    qDebug() << "SetColor being set..." << QString::number(col) << " and " << QString::number(idx);
 
     if (m_currentLevel->m_ExtraData.count()>=3) {
         m_currentLevel->m_ExtraData[idx] = col;
+//        qDebug() << "Setting : "<<QString::number(idx) << " to col " <<QString::number(col);
     }
     /*
     m_extraCols[idx] = col;
@@ -276,7 +298,7 @@ void ImageLevelEditor::LoadBin(QFile &file)
     m_charHeight = m_meta.m_height;
     m_charWidthDisplay = m_meta.m_width;
     m_charHeightDisplay = m_meta.m_height;
-
+    first=true;
 }
 
 void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
