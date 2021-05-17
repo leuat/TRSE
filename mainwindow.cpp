@@ -1516,6 +1516,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     contextMenu.addAction(&action4);
     contextMenu.addAction(&action5);
     contextMenu.addAction(&action6);
+    contextMenu.addAction(&action61);
     contextMenu.addAction(&action7);
     contextMenu.addAction(&action8);
     contextMenu.addAction(&action3);
