@@ -887,7 +887,7 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
    }
    else
    if (fi.isDir()) {
-//       qDebug() << "DIR " << file;
+//       qDebug() << "DIR " << file<<"HAS NEXT";
        QDirIterator iterator(fi.absoluteFilePath(), exts, QDir::NoDotAndDotDot | QDir::AllEntries, QDirIterator::Subdirectories);
        if (iterator.hasNext()) {
          QStandardItem* it = new QStandardItem(fi.fileName());
@@ -895,7 +895,7 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
          QBrush b;
          b.setColor(m_fileColors["dir"]);
          it->setForeground(b);
-         //it->setData(finfo.absoluteFilePath(), QtCore.Qt.UserRole)
+         it->setData(fi.absoluteFilePath().remove(m_currentPath), Qt::UserRole);
          QStandardItem* srt = new QStandardItem("AAAAA" + fi.fileName());
 
          parent->appendRow(QList<QStandardItem*>() <<it << srt);
@@ -905,6 +905,20 @@ void MainWindow::AddTreeFileItem(QStandardItem *parent, QString file, QStringLis
 
          //it->sortChildren(0);
         }
+       else
+       {
+           QStandardItem* it = new QStandardItem(fi.fileName());
+           it->setEditable(false);
+           QBrush b;
+           b.setColor(m_fileColors["dir"]);
+           it->setForeground(b);
+           it->setData(fi.absoluteFilePath().remove(m_currentPath), Qt::UserRole);
+           //it->setData(finfo.absoluteFilePath(), QtCore.Qt.UserRole)
+           QStandardItem* srt = new QStandardItem("AAAAA" + fi.fileName());
+
+           parent->appendRow(QList<QStandardItem*>() <<it << srt);
+
+       }
 
     }
    for (QList<QStandardItem*> si : lstFiles) {
@@ -1485,15 +1499,24 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 
     QAction action1("Delete file", this);
     QAction action4("Duplicate file", this);
+    QAction action6("New .ras file", this);
+    QAction action7("New .tru file", this);
     QAction action5("Rename file", this);
+    QAction action8("New folder", this);
     QAction action3("Help - what is this type of file?", this);
     connect(&action1, SIGNAL(triggered()), this, SLOT(on_actionDelete_file_triggered()));
     connect(&action3, SIGNAL(triggered()), this, SLOT(on_helpFileType()));
     connect(&action4, SIGNAL(triggered()), this, SLOT(on_duplicate_file()));
+    connect(&action6, SIGNAL(triggered()), this, SLOT(on_new_ras_file()));
+    connect(&action7, SIGNAL(triggered()), this, SLOT(on_new_tru_file()));
+    connect(&action8, SIGNAL(triggered()), this, SLOT(on_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
     contextMenu.addAction(&action1);
     contextMenu.addAction(&action4);
     contextMenu.addAction(&action5);
+    contextMenu.addAction(&action6);
+    contextMenu.addAction(&action7);
+    contextMenu.addAction(&action8);
     contextMenu.addAction(&action3);
 
     contextMenu.exec(mapToGlobal(pos));
@@ -1540,7 +1563,7 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 {
 
 
-    QString path = FindPathInProjectFolders(index);
+    QString path = m_currentPath;//  FindPathInProjectFolders(index);
 
     // Finally load file!
     QStringList tru = getTRUPaths();// QDir::separator()+m_currentProject.m_ini->getString("system")+QDir::separator()+"tru";
@@ -1630,15 +1653,19 @@ void MainWindow::UpdateFailure()
     m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
 }
 
+
 void MainWindow::on_duplicate_file()
 {
     QModelIndex qlst = ui->treeFiles->currentIndex();
-    if (qlst.data().toString()=="")
+    if (qlst.data(Qt::UserRole).toString()=="")
         return;
-    QString path = getProjectPath() + FindPathInProjectFolders(qlst);
-    QString filename = path + qlst.data().toString();
+
+    QString path = getProjectPath();
+    QString filename = path + qlst.data(Qt::UserRole).toString();
+
     if (!QFile::exists(filename))
         return;
+
     int i = 1;
     QString nf = filename;
     nf = nf.replace(".ras",QString::number(i)+".ras");
@@ -1648,19 +1675,20 @@ void MainWindow::on_duplicate_file()
         nf = filename.replace(".ras",QString::number(i)+".ras");
     }
     Util::CopyFile(filename,nf);
-    qDebug() << "copying" << filename<<nf;
     RefreshFileList();
 
 }
+
 
 void MainWindow::on_rename_file()
 {
 
     QModelIndex qlst = ui->treeFiles->currentIndex();
-    if (qlst.data().toString()=="")
+    if (qlst.data(Qt::UserRole).toString()=="")
         return;
-    QString path = getProjectPath() + FindPathInProjectFolders(qlst);
-    QString filename = qlst.data().toString();
+
+    QString path = getProjectPath();
+    QString filename = qlst.data(Qt::UserRole).toString();
 
     bool ok;
         QString text = QInputDialog::getText(this, tr("New filename"),
@@ -1678,6 +1706,68 @@ void MainWindow::on_rename_file()
     }
 }
 
+void MainWindow::on_new_folder()
+{
+    QModelIndex qlst = ui->treeFiles->currentIndex();
+    QString path = getProjectPath();
+
+    QString fn = qlst.data(Qt::UserRole).toString();
+    QString subPath = "";
+    if (QDir(path+fn).exists())
+        subPath = fn+QDir::separator();
+
+    QString filename = "new";
+    bool ok;
+        QString text = QInputDialog::getText(this, tr("New folder"),
+                                             tr("New folder"), QLineEdit::Normal,
+                                             filename, &ok);
+    if (ok && !text.isEmpty()) {
+
+        QDir dir = QDir(path+subPath+text);
+        if (!dir.exists())
+            dir.mkpath(".");
+
+        RefreshFileList();
+    }
+
+}
+
+void MainWindow::on_new_file(QString name)
+{
+    QModelIndex qlst = ui->treeFiles->currentIndex();
+    QString fn = qlst.data(Qt::UserRole).toString();
+
+
+    QString path = getProjectPath();
+    QString subPath = "";
+    if (QDir(path+fn).exists())
+        subPath = fn+QDir::separator();
+
+    QString filename = "new."+name;
+    bool ok;
+        QString text = QInputDialog::getText(this, tr("New file"),
+                                             tr("New file"), QLineEdit::Normal,
+                                             filename, &ok);
+    if (ok && !text.isEmpty()) {
+        QString nf = path + subPath +text;
+        if (!nf.endsWith("."+name))
+            nf+="."+name;
+        Util::SaveTextFile(nf,"");
+        RefreshFileList();
+    }
+
+}
+
+void MainWindow::on_new_ras_file()
+{
+    on_new_file("ras");
+}
+
+void MainWindow::on_new_tru_file()
+{
+    on_new_file("tru");
+}
+
 // New source file
 void MainWindow::on_actionRas_source_file_triggered()
 {
@@ -1690,12 +1780,21 @@ void MainWindow::on_actionDelete_file_triggered()
     QModelIndex qlst = ui->treeFiles->currentIndex();
     if (qlst.data().toString()=="")
         return;
-    QString path = getProjectPath() + FindPathInProjectFolders(qlst);
-    QString filename = qlst.data().toString();
+//    qDebug() << qlst.data(Qt::UserRole).toStringList();
+    QString path = getProjectPath();
+    QString filename = qlst.data(Qt::UserRole).toString();
+
+
+
+
 
     QMessageBox msgBox;
+    bool isDir = QDir(path+filename).exists();
+    QString dirWarning ="";
+    if (isDir)
+        dirWarning = "\nALL FILES IN SUBFOLDERS WILL BE DELETED!";
     msgBox.setWindowTitle("Warning");
-    msgBox.setInformativeText("Are you sure you wish to delete '"+filename+"'");
+    msgBox.setInformativeText("Are you sure you wish to delete '"+filename+"'"+dirWarning);
     msgBox.setText("Warning!                                         ");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -1713,11 +1812,15 @@ void MainWindow::on_actionDelete_file_triggered()
                 }
 
         }
+        if (isDir) {
+            QDir d(path+filename);
+            d.removeRecursively();
+        }
 
         RefreshFileList();
     }
 }
-
+/*
 QString MainWindow::FindPathInProjectFolders(const QModelIndex &index)
 {
     // Find file in path.. ugh
@@ -1737,7 +1840,7 @@ QString MainWindow::FindPathInProjectFolders(const QModelIndex &index)
     }
     return path;
 }
-
+*/
 void MainWindow::BuildAll()
 {
 

@@ -326,8 +326,14 @@ private slots:
 
     void UpdateFailure();
 
+    void on_new_file(QString name);
+
+    void on_new_ras_file();
+    void on_new_tru_file();
 
     void on_duplicate_file();
+
+    void on_new_folder();
 
     void on_rename_file();
 
@@ -462,7 +468,7 @@ private slots:
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 
-    QString FindPathInProjectFolders(const QModelIndex &index);
+//    QString FindPathInProjectFolders(const QModelIndex &index);
 
     void BuildAll();
 
