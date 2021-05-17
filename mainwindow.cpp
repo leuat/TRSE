@@ -1502,6 +1502,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QAction action61("New .inc file", this);
     QAction action7("New .tru file", this);
     QAction action5("Rename file", this);
+    QAction action51("Add existing file", this);
     QAction action8("New folder", this);
     QAction action3("Help - what is this type of file?", this);
     connect(&action1, SIGNAL(triggered()), this, SLOT(on_actionDelete_file_triggered()));
@@ -1512,12 +1513,14 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action7, SIGNAL(triggered()), this, SLOT(on_new_tru_file()));
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
+    connect(&action51, SIGNAL(triggered()), this, SLOT(on_add_existing_file()));
     contextMenu.addAction(&action1);
     contextMenu.addAction(&action4);
     contextMenu.addAction(&action5);
     contextMenu.addAction(&action6);
     contextMenu.addAction(&action61);
     contextMenu.addAction(&action7);
+    contextMenu.addAction(&action51); // add existing file
     contextMenu.addAction(&action8);
     contextMenu.addAction(&action3);
 
@@ -1760,6 +1763,27 @@ void MainWindow::on_new_file(QString name)
         Util::SaveTextFile(nf,"");
         RefreshFileList();
     }
+
+}
+
+void MainWindow::on_add_existing_file()
+{
+    QFileDialog dialog;
+    QString filename = dialog.getOpenFileName(this, "Import existing file",getProjectPath(),"*.*");
+    if (filename=="")
+        return;
+
+    QModelIndex qlst = ui->treeFiles->currentIndex();
+    QString fn = qlst.data(Qt::UserRole).toString();
+
+    QString path = getProjectPath();
+    if (QDir(path+fn).exists())
+        path += fn+QDir::separator();
+
+    QString filenameShort = QFileInfo(filename).fileName();
+    QString nf = path +filenameShort;
+    Util::CopyFileMSVCBug(filename,nf);
+    RefreshFileList();
 
 }
 

@@ -330,9 +330,12 @@ private slots:
 
     void on_new_file(QString name);
 
+    void on_add_existing_file();
+
     void on_new_ras_file();
     void on_new_tru_file();
     void on_new_inc_file();
+
 
     void on_duplicate_file();
 
