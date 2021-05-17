@@ -3,6 +3,13 @@ var
 
 @ifdef C64
 
+/*
+
+  C64 TESTS
+
+
+*/
+
 procedure R01(_a, _x, _y : byte);
 begin
 	Vars::v1:=_a;
@@ -19,6 +26,20 @@ begin
 	if (Vars::i1=#Vars::text) then Common::PASS() else Common::FAIL();
 end;
 
+procedure R03(_ay : byte);
+begin
+	Vars::i1:=_ay;
+	Vars::text := "03:"; 
+	if (Vars::i1=#Vars::text) then Common::PASS() else Common::FAIL();
+end;
+
+procedure R04(_xy : byte);
+begin
+	Vars::i1:=_xy;
+	Vars::text := "04:"; 
+	if (Vars::i1=#Vars::text) then Common::PASS() else Common::FAIL();
+end;
+
 @endif
 
 procedure Exec();
@@ -29,6 +50,8 @@ begin
 	@ifdef C64  // Fails because of `ex`
 	R01(5,7,255);
 	R02(#Vars::text);
+	R03(#Vars::text);
+	R04(#Vars::text);
 	@endif
 	
 	

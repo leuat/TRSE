@@ -34,6 +34,7 @@ GAMEBOY; Yo-grl (demo); GAMEBOY/yo-grl/; <h2>Yo-grl makes a demo</h2><br><img sr
 GAMEBOY; Unit tests; GAMEBOY/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal Z80 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
 
 X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p><img src=":resources/images/X86.png" width="300"><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
+X86; X86 Simple OS; X86/X86-OS/; <h2>Write your own X86 OS using TRSE</h2><p><img src=":resources/images/X86.png" width="300"><p>Did you know that it is possible to write a fully functional i386-X86 OS using TRSE? In this simple tutorials, we show you how.
 X86; VGA (386) + Adlib tutorials; X86/VGA_386/; <h2>Main 386 VGA + Adlib player tutorials</h2><p><img src=":resources/images/X86.png" width="300"><p>Preliminary 386 DOS tutorials.
 X86; Unit tests; X86/unittests/;<h2>Unit tests</h2>X86 Unit tests
 

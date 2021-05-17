@@ -1,0 +1,30 @@
+program SmallOS;
+@use "system/screen"
+var
+/*
+	First: Make sure you have QEMU installed, and point to the correct qemu directory path in
+	the TRSE settings panel.
+	
+	When QUEMU has been installed, you can now build + run this tutorials. 
+	
+	TRSE will automatically attach a 1-sector boot loader to this file, and submit everything
+	as a raw file to qemu. The VM will then load the boot sector, which triggers a loading of the 
+	kernel (this file) - and then execute it. The kernel starts at $1000:0000.
+	
+	For now, TRSE only supports 16-bit real-mode.
+
+	Have fun! Remember - you don't have any DOS, so no interrupt 21h to do things. You're on your
+	own - with direct access to the bios. 
+
+	If you happen to create anything with this setup, don't hesitate contacting leuat@irio.co.uk!
+
+
+
+*/	
+begin
+	Screen::Print("No DOS! No Linux! No Windows!");
+	Screen::NewLine();
+	Screen::Print("This is a message from a brand new OS running directly on X86 hardware");
+	
+	asm(" jmp $");
+end.
