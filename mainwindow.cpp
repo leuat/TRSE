@@ -1514,15 +1514,16 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
     connect(&action51, SIGNAL(triggered()), this, SLOT(on_add_existing_file()));
-    contextMenu.addAction(&action1);
-    contextMenu.addAction(&action4);
-    contextMenu.addAction(&action5);
-    contextMenu.addAction(&action6);
-    contextMenu.addAction(&action61);
-    contextMenu.addAction(&action7);
+
+    contextMenu.addAction(&action8); // New Folder
+    contextMenu.addAction(&action6); // New RAS
+    contextMenu.addAction(&action61); // New INC
+    contextMenu.addAction(&action7); // New TRU
     contextMenu.addAction(&action51); // add existing file
-    contextMenu.addAction(&action8);
-    contextMenu.addAction(&action3);
+    contextMenu.addAction(&action5); // Rename
+    contextMenu.addAction(&action4); // Duplicate
+    contextMenu.addAction(&action1); // Delete
+    contextMenu.addAction(&action3); // Help
 
     contextMenu.exec(mapToGlobal(pos));
 
