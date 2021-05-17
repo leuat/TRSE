@@ -22,6 +22,7 @@
 #include "systematari800.h"
 #include "systemmsx.h"
 #include "systemappleii.h"
+#include "systemm1arm.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -73,8 +74,8 @@ public:
             return new SystemAtari800(settings, proj);
         if (type==AbstractSystem::MSX)
             return new SystemMSX(settings, proj);
-        if (type==AbstractSystem::APPLEII)
-            return new SystemAppleII(settings, proj);
+        if (type==AbstractSystem::M1ARM)
+            return new SystemM1ARM(settings, proj);
 
 
         return s;

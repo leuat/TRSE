@@ -126,6 +126,7 @@ SOURCES += main.cpp\
     imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
+    source/Compiler/assembler/asmarm.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
     source/Compiler/ast/nodecase.cpp \
@@ -134,6 +135,7 @@ SOURCES += main.cpp\
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/codegen/abstractcodegen.cpp \
     source/Compiler/codegen/codegen_6502.cpp \
+    source/Compiler/codegen/codegen_arm.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
     source/Compiler/codegen/codegen_x86.cpp \
     source/Compiler/codegen/codegen_z80.cpp \
@@ -149,6 +151,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/methods/methodsx86.cpp \
     source/Compiler/codegen/methods/methodsz80.cpp \
     source/Compiler/compilers/compiler6502.cpp \
+    source/Compiler/compilers/compilerarm.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
     source/Compiler/compilers/compilerx86.cpp \
@@ -160,12 +163,14 @@ SOURCES += main.cpp\
     source/Compiler/optimiser/postoptimizerz80.cpp \
     source/Compiler/systems/systemamstradcpc.cpp \
     source/Compiler/systems/systemappleii.cpp \
+    source/Compiler/systems/systemarm.cpp \
     source/Compiler/systems/systematari2600.cpp \
     source/Compiler/systems/systematari520st.cpp \
     source/Compiler/systems/systematari800.cpp \
     source/Compiler/systems/systembbcm.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemgameboy.cpp \
+    source/Compiler/systems/systemm1arm.cpp \
     source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemplus4.cpp \
@@ -363,8 +368,10 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
+    source/Compiler/assembler/asmarm.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
+    source/Compiler/codegen/codegen_arm.h \
     source/Compiler/codegen/codegen_x86.h \
     source/Compiler/codegen/codegen_z80.h \
     source/Compiler/ast/nodecase.h \
@@ -388,6 +395,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/methods/methodsx86.h \
     source/Compiler/codegen/methods/methodsz80.h \
     source/Compiler/compilers/compiler6502.h \
+    source/Compiler/compilers/compilerarm.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerm68k.h \
     source/Compiler/compilers/compilerx86.h \
@@ -399,12 +407,14 @@ HEADERS  += mainwindow.h \
     source/Compiler/optimiser/postoptimizerz80.h \
     source/Compiler/systems/systemamstradcpc.h \
     source/Compiler/systems/systemappleii.h \
+    source/Compiler/systems/systemarm.h \
     source/Compiler/systems/systematari2600.h \
     source/Compiler/systems/systematari520st.h \
     source/Compiler/systems/systematari800.h \
     source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemgameboy.h \
+    source/Compiler/systems/systemm1arm.h \
     source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemplus4.h \

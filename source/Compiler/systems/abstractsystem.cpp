@@ -125,6 +125,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return MSX;
     if (s.toLower()=="appleii")
         return APPLEII;
+    if (s.toLower()=="m1arm")
+        return M1ARM;
 
     return C64;
 }
@@ -152,7 +154,39 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == MSX) return "MSX";
     if (s == ATARI800) return "ATARI800";
     if (s == APPLEII) return "APPLEII";
+    if (s == M1ARM) return "M1ARM";
     return "";
+}
+
+bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QString error, QString &text)
+{
+    QString output;
+    int time = timer.elapsed();
+    int codeEnd = 0;
+
+    if (!QFile::exists(assembler)) {
+        text  += "<br><font color=\"#FF6040\">"+error+"</font>";
+        m_buildSuccess = false;
+        return false;
+    }
+
+    //qDebug() << m_settingsIni->getString("assembler");
+    QProcess process;
+//    QStringList params;
+  //  params << filename+".asm";
+//    qDebug() << "Assembling with "<<assembler;
+    process.start(assembler, params);
+    process.waitForFinished();
+    output = process.readAllStandardOutput();
+    output+= process.readAllStandardError();
+    if (output.contains("error"))
+        m_buildSuccess = false;
+    int assembleTime = timer.elapsed()- time;
+    time = timer.elapsed();
+
+    text+=output;
+    return m_buildSuccess;
+
 }
 
 void AbstractSystem::AcceptDispatcherTick(QString val)

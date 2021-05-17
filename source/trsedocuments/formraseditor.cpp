@@ -332,8 +332,16 @@ void FormRasEditor::ExecutePrg(QString fileName)
 #endif
     //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
 #ifdef __APPLE__
-    //    qDebug() << emu << params;
-    //    qDebug() << emu << params;
+
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM) {
+
+//        process.startDetached("zsh",QStringList() <<"-c" <<fileName);
+        process.startDetached("open",QStringList()<<"-a"<<"Terminal"<<fileName);
+        QString output(process.readAllStandardOutput());
+        return;
+    }
+
+
     if (emu.endsWith(".app")) {
         process.setArguments(params);
         process.setProgram(emu);
@@ -684,6 +692,8 @@ void FormRasEditor::Run()
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
         filename = m_currentSourceFile.split(ft)[0] + ".bin";
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM)
+        filename = m_currentSourceFile.split(ft)[0];
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX)
         filename = m_currentSourceFile.split(ft)[0] + ".rom";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)

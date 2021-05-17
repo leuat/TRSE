@@ -748,6 +748,11 @@
               <string>APPLEII</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>M1ARM</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="0">

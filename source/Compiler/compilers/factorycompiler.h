@@ -6,6 +6,7 @@
 #include "compilerx86.h"
 #include "compilerz80.h"
 #include "compilergbz80.h"
+#include "compilerarm.h"
 
 class FactoryCompiler
 {
