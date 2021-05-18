@@ -4223,6 +4223,11 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             if (m_currentToken.m_type==TokenType::BUILDTABLE) {
                 data = BuildTable(count, dataType);
             }
+            else
+            if (m_currentToken.m_type==TokenType::BUILDTABLE2D) {
+                data = BuildTable2D(count, dataType);
+                count = data.size();
+            }
             else {
                 Eat(TokenType::LPAREN);
                 while (m_currentToken.m_type!=TokenType::RPAREN) {
@@ -4636,6 +4641,65 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
 
         QJSValueList args;
         args << i;
+        QJSValue ret = fun.call(args);
+
+
+        if (ret.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+//        data << Util::numToHex(ret.toInt()&0xFF);
+ //       if ()
+//        data << Util::numToHex(ret.toInt()&0xFF);
+//        qDebug() <<  ret.toInt();
+        data << Util::numToHex(ret.toInt()&AND);
+    }
+
+    return data;
+}
+
+
+
+QStringList Parser::BuildTable2D(int cnt,TokenType::Type type)
+{
+    Eat(TokenType::BUILDTABLE2D);
+
+
+
+    Eat(TokenType::LPAREN);
+    int x = GetParsedInt(TokenType::INTEGER);
+    Eat(TokenType::COMMA);
+    int y = GetParsedInt(TokenType::INTEGER);
+
+    if (x==0 || y==0)
+        ErrorHandler::e.Error("Width / height of 2d table cannot be zero.",m_currentToken.m_lineNumber);
+    Eat(TokenType::COMMA);
+    QString sentence = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QStringList data;
+    QJSEngine m_jsEngine;
+    int AND = 0xFFFF;
+//    qDebug() << "PARSER " <<TokenType::getType(type);
+    if (type==TokenType::BYTE)
+        AND = 0xFF;
+    if (type==TokenType::LONG)
+        AND = 0xFFFFFFFF;
+
+    QString consts = "";
+    for (QString key:m_symTab->m_constants.keys())
+        consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
+
+    for (int j=0;j<y;j++)
+    for (int i=0;i<x;i++) {
+        QString str = sentence;
+//        str = str.replace("i",QString::number(i));
+//        QJSValue ret = m_jsEngine.evaluate(str);
+        QJSValue fun = m_jsEngine.evaluate("(function(i,j) { "+consts+";return "+str+"; })");
+        if (fun.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+        QJSValueList args;
+        args << i;
+        args << j;
         QJSValue ret = fun.call(args);
 
 
