@@ -1044,7 +1044,7 @@ void CodeGenARM::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY || Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
         as->Write(v->getValue(as)+ ": ds  2" ,0);
     else
-        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ARM)
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM)
             as->Write(v->getValue(as)+ ": dw  0,0" ,0);
         else
             as->Write(v->getValue(as)+ ": dw  0",0);
