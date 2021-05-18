@@ -21,5 +21,5 @@ void CompilerArm::Connect()
 
 bool CompilerArm::SetupMemoryAnalyzer(QString filename, Orgasm *orgAsm)
 {
-
+    return true;
 }
