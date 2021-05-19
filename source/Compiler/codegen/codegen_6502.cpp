@@ -114,6 +114,7 @@ void CodeGen6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
 
     //    as->BinOP(m_op.m_type);
 //    if (node->m_op.m_type==TokenType::PLUS)
+  //      as->Asm("clc");
     as->BinOP(node->m_op.m_type,false);
 
     as->Term(lbl+"+1",true);
@@ -130,14 +131,11 @@ void CodeGen6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->PopTempVar();
 }
 void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
-
-
     as->m_labelStack["wordAdd"].push();
     QString lblword = as->getLabel("wordAdd");
 
     //QString lbl = as->NewLabel("rightvarInteger");
     //        QString lblJmp = as->NewLabel("jmprightvarInteger");
-
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
     //as->Asm("jmp " + lblJmp);
@@ -158,12 +156,21 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
         as->BinOP(node->m_op.m_type);
         as->Term(node->m_right->getValue8bit(as,false),true);
         as->Comment("Testing for byte:  " + node->m_right->getValue8bit(as,true));
-        if (node->m_right->getValue8bit(as,true)=="#0") {
+        if (node->m_right->getValue8bit(as,true)=="#0" ) {
             as->Comment("RHS is byte, optimization");
             QString lbl = as->NewLabel("skip");
-            as->Asm("bcc "+lbl);
-            as->Asm("iny");
+            if (node->m_op.m_type==TokenType::PLUS) {
+                as->Asm("bcc "+lbl);
+                as->Asm("iny");
+            }
+            if (node->m_op.m_type==TokenType::MINUS) {
+                as->Asm("bcs "+lbl);
+                as->Asm("dey");
+            }
+//            if (node->m_op.m_type==TokenType::MINUS)
+  //              as->Asm("dey ; or dey?");
             as->Label(lbl);
+
 
         }
         else {
@@ -576,7 +583,6 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
 
 
 //    qDebug() << node->m_op.m_value;
-
     // check if both are constant values:
     if (!isWord16) {
         as->Comment("8 bit binop");

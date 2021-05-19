@@ -332,6 +332,8 @@ void FormRasEditor::ExecutePrg(QString fileName)
 #endif
     //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
 #ifdef __APPLE__
+    if (emu.startsWith("x"))
+        QProcess::execute("killall",QStringList() << QFileInfo(emu).fileName());
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM) {
 

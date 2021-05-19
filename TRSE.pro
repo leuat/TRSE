@@ -577,7 +577,6 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagevic20.h \
     source/LeLib/limage/limagesprites2.h \
     source/LeLib/limage/limagecontainer.h \
-    source/Compiler/codegen/codegen_6502.h \
     source/dialogeffects.h \
     source/effects/abstractdemoeffect.h \
     source/effects/demoeffecttwister.h \

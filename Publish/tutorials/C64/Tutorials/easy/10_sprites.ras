@@ -50,9 +50,8 @@ end;
 procedure UpdateSprite();
 begin
 	// Update sprite position based on joystick values
-	asm(";here");
-	sprite_x+= +joystickright - joystickleft;
-	sprite_y+= +joystickdown - joystickup;
+	sprite_x+= (joystickright - joystickleft);
+	sprite_y+= joystickdown - joystickup;
 	// Update the sprite position on screen for sprite number @useSprite	
 	SpritePos(sprite_x, sprite_y, useSprite);
 	
