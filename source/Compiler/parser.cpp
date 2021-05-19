@@ -4633,8 +4633,6 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
 
     for (int i=0;i<cnt;i++) {
         QString str = sentence;
-//        str = str.replace("i",QString::number(i));
-//        QJSValue ret = m_jsEngine.evaluate(str);
         QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
         if (fun.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
@@ -4647,10 +4645,6 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
         if (ret.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
-//        data << Util::numToHex(ret.toInt()&0xFF);
- //       if ()
-//        data << Util::numToHex(ret.toInt()&0xFF);
-//        qDebug() <<  ret.toInt();
         data << Util::numToHex(ret.toInt()&AND);
     }
 

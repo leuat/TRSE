@@ -45,8 +45,8 @@ public:
 
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;
-    void FlipVertical() override;
-    void FlipHorizontal() override;
+//    void FlipVertical() override;
+  //  void FlipHorizontal() override;
 
 //    void CopyChar();
 

@@ -454,13 +454,14 @@ void LImageSprites2::ToggleSpriteMulticolor()
 void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
     LSprite* s = ((LSprite*)m_items[m_current]);
-    float wx = (s->m_width*s->m_pcWidth*8);
-    float wy = (int)((s->m_height*s->m_pcHeight*8.0));
+    double wx = (s->m_width*s->m_pcWidth*8);
+    double wy = (int)((s->m_height*s->m_pcHeight*8.0));
     LSprite n;
     n.Init(s->m_width, s->m_height);
+    n.m_data  =s->m_data;
     n.m_header = s->m_header;
-    //for (int i=0;i<4;i++)
-      //  SetColor(m_extraCols[i],i,n);
+    n.m_pcHeight = s->m_pcHeight;
+    n.m_pcWidth = s->m_pcWidth;
 
 
 
@@ -474,15 +475,17 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
         if (iy<0)
            ddy*=-1;
     }
+    int step=1;
+    if (m_bitMask==0b11) step=2;
 
     for (float y=0;y<wy;y++) {
-        for (float x=0;x<wx;x++) {
+        for (float x=0;x<wx;x+=step) {
 
-            float i = ((x+ddx)/(wx));
-            float j = ((y+ddy)/(wy));
+            double i = ((x+ddx)/(wx));
+            double j = ((y+ddy)/(wy));
 
-            float ii = ((x+ix+ddx)/(wx));
-            float jj = ((y+iy+ddy)/(wy));
+            double ii = ((x+ix+ddx)/(wx));
+            double jj = ((y+iy+ddy)/(wy));
 
 
             if (jj>=1) jj-=1;
@@ -491,8 +494,10 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
             if (ii<0) ii+=1;
 
             unsigned int u = s->getPixel(ii,jj,m_bitMask);
+
             if (flip==1)
                 n.setPixel(i,1-j,u, m_bitMask);
+
             if (flip==0)
                 n.setPixel(1-i,j,u, m_bitMask);
             if (flip==3) {
@@ -515,7 +520,6 @@ void LImageSprites2::FlipHorizontal()
 void LImageSprites2::FlipVertical()
 {
     MegaTransform(0,0,0);
-
 }
 
 void LImageSprites2::Transform(int x, int y)
