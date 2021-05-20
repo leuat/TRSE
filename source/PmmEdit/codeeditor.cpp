@@ -211,7 +211,7 @@ void CodeEditor::SetIndent(bool shift)
         {
             loc = lines[i].indexOf(QRegularExpression("\\S"), 0);
             if (loc == -1) loc = lines[i].length();
-            if (lines[i].isEmpty()) continue;
+            if (lines[i].trimmed().isEmpty()) continue;
             if (loc < txtPos) break;
             if (lines[i].trimmed().contains("begin", Qt::CaseInsensitive) && loc == txtPos) break;
             if (lines[i].trimmed().contains("end", Qt::CaseInsensitive)
