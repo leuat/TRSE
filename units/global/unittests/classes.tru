@@ -4,6 +4,11 @@ var
 	StrItem = class
 		a: byte;
 		str: integer;
+		
+		function getValue() : integer;
+		begin
+			StrItem::getValue := this.str;
+		end;
 //		c : array[3] of byte;
 	end;
 	
@@ -164,7 +169,7 @@ end;
 
 
 // "This" assign array with int value mix
-procedure CTest11();
+procedure CTestC1();
 begin
 	sl.curLen := 0;
 	sl.Add("HELLO");
@@ -175,7 +180,23 @@ begin
 	
 	
 	if (Vars::i1=#text) then Common::PASS() else Common::FAIL();
-	Common::DebugValue(sl.items[1].str);
+end;
+
+
+// Test that int return values from classes actually work
+procedure CTestC2();
+begin
+	Vars::v1:=1;
+	
+	sl.items[Vars::v2].str:=$56AB;
+
+	Vars::i2 := 0;
+	Vars::i2 := sl.items[Vars::v2].str;
+	Vars::i1 := 0;
+	Vars::i1 := sl.items[Vars::v1].getValue();
+	Vars::text := "C2:";
+	
+	if (Vars::i1=Vars::i2) then Common::PASS() else Common::FAIL();
 end;
 
 
@@ -196,11 +217,14 @@ begin
     CTest7(); 
     CTest8();    
     CTest9(); 
+    
     CTest10();
  
     @endif
 	@ifdef C64
-    CTest11(); // ADD still fails on the cpc.. damn
+	// Implement this
+    CTestC1(); // ADD still fails on the cpc.. damn
+    CTestC2();
     @endif
 
     // Fails for now - FIX UP

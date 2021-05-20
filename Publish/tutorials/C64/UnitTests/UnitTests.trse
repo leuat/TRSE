@@ -1,4 +1,4 @@
-zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
+zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68, $6A, $6C, $6E, $70
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
@@ -51,6 +51,8 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 override_target_settings_basic = 0
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
-open_files = ,[ext]units/global/unittests/vars.tru, [ext]units/global/unittests/forloop.tru, unittests.ras, [ext]units/global/unittests/classes.tru
+project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
+open_files = ,[ext]units/global/unittests/classes.tru, unittests.ras, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/vars.tru, [ext]units/global/unittests/forloop.tru
 current_file = unittests.ras
+qemu = No
+spectrum_model = 0
