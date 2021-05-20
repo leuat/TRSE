@@ -83,6 +83,23 @@ begin
 	if (Vars::v2=6) then Common::PASS() else Common::FAIL();
 end;
 
+
+// to value
+procedure Test8();
+begin
+	Vars::text := "T7:";
+	Vars::v2 := 0;
+	Vars::v3:=3;
+	Vars::p1:=$4000;
+	Vars::p1[Vars::v3]:=20;
+	for Vars::v1:=0 to Vars::p1[Vars::v3] step 2 do 
+	begin
+		Vars::v2+=1;
+	end;
+	if (Vars::v2=10) then Common::PASS() else Common::FAIL();
+end;
+
+
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
@@ -96,6 +113,7 @@ begin
 	Test5();
 	Test6();
 	Test7();
+	Test8();
 	Common::WaitABit();
 end;
 

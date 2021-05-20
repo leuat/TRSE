@@ -553,7 +553,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionSearch_in_symbols_c_g"/>
     <addaction name="actionLook_up_symbol_F2"/>
     <addaction name="actionLook_up_assembly_line_under_cursor_F3"/>
-    <addaction name="actionReplace"/>
     <addaction name="action_Comment_Uncomment"/>
     <addaction name="actionAuto_ident"/>
     <addaction name="actionProject_Settings"/>

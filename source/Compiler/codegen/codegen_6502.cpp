@@ -1314,10 +1314,22 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     }
     else {
         as->ClearTerm();
-        nodeB->Accept(this);
-        as->Term();
 
-        as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
+        if (!nodeA->isPureVariable() || nodeA->isArrayIndex()) {
+            as->Comment("Compare variable is complex, storing in temp variable");
+            nodeA->m_left->Accept(this);
+            as->Term();
+            QString temp = as->StoreInTempVar("compare_temp");
+            as->ClearTerm();
+            nodeB->Accept(this);
+            as->Term();
+            as->Asm("cmp "+temp+" ;keep");
+        }
+        else {
+            nodeB->Accept(this);
+            as->Term();
+            as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
+        }
     }
     int stepValue = 1; // do we have a step value?
     if (step != nullptr) {

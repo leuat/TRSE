@@ -11,6 +11,7 @@ program Tutorial4_music;
 var  
 //	image : incbin("resources/images/image1.bin");
 @donotremove music
+
 @export "resources/images/image12.flf" "resources/images/trse.bin" 256
 	irq : array[2] of byte;
 

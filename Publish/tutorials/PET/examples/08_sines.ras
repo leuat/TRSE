@@ -6,7 +6,6 @@ var
    x,y,i,j,k,v: byte; 
    zp,tp:pointer;
    
-//   vals : array[8] of byte = ($20, $2E, $25,  $A6, $A0);
    vals : array[8] of byte = ($20, $2E,  $A6, $A0, $A0, $A6, $2E, $20);
    list : array[256] of byte;
 

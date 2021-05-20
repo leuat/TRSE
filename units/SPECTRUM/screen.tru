@@ -27,6 +27,16 @@ begin
 	fill(#cram, y, 768);
 end;
 
+procedure FillScreen(x,y,x2  : global byte);
+begin
+	for i:=x to y do
+	begin
+		zp:=ytab[i];
+		fill(zp, x2, 32);
+	end;
+end;
+
+
 procedure SetColor(x,y,i : global byte);
 begin
 	zp:=ytab_color[y];

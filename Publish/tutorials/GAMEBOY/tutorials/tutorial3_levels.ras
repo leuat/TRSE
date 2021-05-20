@@ -77,10 +77,6 @@ begin
 	Screens::InitDefaultScreen();
 	current_bank:=levelBank;
 
-	asm("
-		ld hl, tiles
-	");
-
 	InitLevelData();
 	RenderLevel(0,0);
 

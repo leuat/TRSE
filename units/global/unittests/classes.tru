@@ -173,6 +173,7 @@ begin
 	Vars::text := "C1:";
 	Vars::i1 := sl.items[1].str;
 	
+	
 	if (Vars::i1=#text) then Common::PASS() else Common::FAIL();
 	Common::DebugValue(sl.items[1].str);
 end;

@@ -44,3 +44,5 @@ override_target_settings_basic = 6.95268e-310
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 show_all_files = 1
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/UnitTests/
+open_files = ,unittests.ras

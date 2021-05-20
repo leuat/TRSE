@@ -93,10 +93,12 @@ void LImageSpectrum::OrdererdDither(QImage &img, LColorList &colors, QVector3D s
             winners.resize(16);
             for (int i=0;i<winners.count();i++)
                 winners[i] = QPoint(i,0);
+
             for (int j=0;j<8;j++) {
                 for (int i=0;i<8;i++) {
                     int w = m_qImage->pixel(i+ix,j+iy);
-                    winners[w].setY(winners[w].y()+1);
+                    if (w<winners.count())
+                        winners[w].setY(winners[w].y()+1);
                 }
             }
             std::sort(winners.begin(), winners.end(),sortFunc);
