@@ -36,6 +36,10 @@ jobs:
           cp -r ../../tutorials .
           cp -r ../../project_templates .
           cp -r ../../../units .
+          # opengl32sw.dll is not available on the GitHub machine but seems
+          # necessary for windows machine that don't have hardware acceleration
+          # and don't have the DLL on the system directory from another source
+          cp ../dll/opengl32sw.dll ./
           echo "Copy all required plugins"
           # qt_lib_dir must be retrieved before copying the DLLs as after that, all the DLLs are resolved locally
           qt_lib_dir=$(ldd trse.exe | awk '{ print $3 }' | grep "/Qt/" | sed 's,/Qt/.*,/Qt/,' | head -n 1)
