@@ -610,5 +610,6 @@
         <file>resources/text/opcodes_z80.txt</file>
         <file>resources/images/tutorials/olimp.jpg</file>
         <file>resources/bin/bootsect.bin</file>
+        <file>resources/images/crossplatform.png</file>
     </qresource>
 </RCC>
