@@ -74,6 +74,8 @@ public:
             return new SystemAtari800(settings, proj);
         if (type==AbstractSystem::MSX)
             return new SystemMSX(settings, proj);
+        if (type==AbstractSystem::APPLEII)
+            return new SystemAppleII(settings, proj);
         if (type==AbstractSystem::M1ARM)
             return new SystemM1ARM(settings, proj);
 

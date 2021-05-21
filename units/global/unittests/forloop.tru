@@ -90,7 +90,12 @@ begin
 	Vars::text := "T7:";
 	Vars::v2 := 0;
 	Vars::v3:=3;
+	@ifndef X86
 	Vars::p1:=$4000;
+	@endif
+	@ifdef X86
+	Vars::p1 := ptr($3000,0);
+	@endif
 	Vars::p1[Vars::v3]:=20;
 	for Vars::v1:=0 to Vars::p1[Vars::v3] step 2 do 
 	begin
@@ -113,7 +118,9 @@ begin
 	Test5();
 	Test6();
 	Test7();
+	@ifndef X86
 	Test8();
+	@endif
 	Common::WaitABit();
 end;
 

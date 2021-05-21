@@ -4784,7 +4784,6 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 {
     //qDebug() << "Calling macro " << name << m_currentToken.m_value;
     Eat();
-    //qDebug() << "mac " << name << m_currentToken.m_value;
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
@@ -4810,8 +4809,10 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 
     //  qDebug() << m_pass;
     // Ignore calling macros in pass 1. Or perhaps pass 0? hm
+    qDebug() << "mac1 " << name << m_currentToken.m_value;
     if (ignore)
         return;
+    qDebug() << "mac2 " << name << m_currentToken.m_value;
 
     /*    QString consts = "";
     for (QString key:m_symTab->m_constants.keys())
@@ -4827,8 +4828,10 @@ void Parser::HandleCallMacro(QString name, bool ignore)
                                      "\n function Write(__v) {__oo=__oo+__v; } "
                                      "\n function write(__v) {__oo=__oo+__v; } "
                                      "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
+    qDebug() <<m_macros[name].str;
     if (fun.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
 
     QJSValueList args;
     // Add parameters

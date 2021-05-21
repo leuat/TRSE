@@ -32,6 +32,7 @@ Syntax::Syntax()
 
 void Syntax::Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj)
 {
+
     m_currentSystem = QSharedPointer<AbstractSystem>(FactorySystem::Create(s,m_ini, m_proj));
 /*    if (s==AbstractSystem::BBCM) {
         m_startAddress = 0x02000;
@@ -53,6 +54,8 @@ void Syntax::Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSha
 void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem)
 {
     list.clear();
+    if (m_currentSystem==nullptr)
+        return;
     QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem->m_system).toLower();
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
