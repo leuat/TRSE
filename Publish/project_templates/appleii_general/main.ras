@@ -1,0 +1,10 @@
+program Tutorial1;
+@use "text/txt"
+var  
+
+begin
+
+    txt::print_string("Hello World", True);
+    loop();
+
+end.
