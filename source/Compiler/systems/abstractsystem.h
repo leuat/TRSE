@@ -7,6 +7,7 @@
 #include <QMap>
 //#include "source/OrgAsm/orgasm.h"
 #include <QElapsedTimer>
+#include "source/Compiler/token.h"
 
 class Orgasm;
 
@@ -102,8 +103,11 @@ public:
     virtual int getPointerSize() {
         return 2;
     }
+    virtual TokenType::Type getPointerType() { return TokenType::Type::INTEGER;}
 
     virtual bool AllowPointerInStructs() {return true;}
+
+
 
 
     void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false, QString currentDir = "");

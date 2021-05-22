@@ -3,7 +3,12 @@ var
 
 	StrItem = class
 		a: byte;
+		@ifndef X86
 		str: integer;
+		@endif
+		@ifdef X86
+		str: pointer;
+		@endif
 		
 		function getValue() : integer;
 		begin
@@ -14,17 +19,16 @@ var
 	
 	
 	StringList = class
-		curLen: byte;
 		items : array[16] of StrItem;	
+		curLen: byte;
 		
 		procedure Add(zp:pointer);
 		begin
-			this.items[this.curLen].str := zp;
+			this.items[ this.curLen ].str := zp;
 			this.curLen+=1;
 		end;
 	
 	end;
-	
 	sl: StringList;	
 	text : string=("TEXT");
 
@@ -161,7 +165,7 @@ begin
 	
 	// Direct use
 	Vars::monsters[Vars::v1].Move1(11,13);
-	Vars::text := "TA:";
+	Vars::text := "C0:";
 	if (Vars::pm.y=13 and Vars::pm.x=11) then Common::PASS() else Common::FAIL();
 end;
 
@@ -169,17 +173,22 @@ end;
 
 
 // "This" assign array with int value mix
+
+
+
 procedure CTestC1();
+var
+zp:pointer;
 begin
 	sl.curLen := 0;
-	sl.Add("HELLO");
+	sl.Add("HALLO");
 	sl.Add(#text);
-	
+	sl.Add("BALL");
+
+	zp := sl.items[2].str;
 	Vars::text := "C1:";
-	Vars::i1 := sl.items[1].str;
-	
-	
-	if (Vars::i1=#text) then Common::PASS() else Common::FAIL();
+
+	if (zp[0]=66) then Common::PASS() else Common::FAIL();
 end;
 
 
@@ -226,6 +235,15 @@ begin
     CTestC1(); // ADD still fails on the cpc.. damn
 //    CTestC2(); // FAILS fix
     @endif
+
+
+	@ifdef X86
+	// Implement this
+    CTestC1(); // ADD still fails on the cpc.. damn
+//    CTestC2(); // FAILS fix
+//      CTestC2(); // FAILS fix
+  @endif
+
 
     // Fails for now - FIX UP
 	Common::WaitABit();

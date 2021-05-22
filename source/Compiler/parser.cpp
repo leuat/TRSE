@@ -3570,6 +3570,10 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         int scale = 1;
         if (s->m_isClassVariable) {
             QString et = s->getEndType();
+            if (s->m_type.toLower()=="pointer") {
+                v->m_writeType = Syntax::s.m_currentSystem->getPointerType();
+                scale = Syntax::s.m_currentSystem->getPointerSize();
+            }
             if (et.toLower()=="byte")
                 v->m_writeType = TokenType::BYTE;
             if (et.toLower()=="integer") {

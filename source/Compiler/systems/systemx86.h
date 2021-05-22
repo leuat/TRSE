@@ -47,6 +47,7 @@ public:
     int getPointerSize() override {
         return 4;
     }
+    virtual TokenType::Type getPointerType() override { return TokenType::Type::LONG;}
 
 
 };

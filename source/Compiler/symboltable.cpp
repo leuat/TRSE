@@ -684,7 +684,6 @@ int Symbol::getCountingLength()
     QString type = getEndType();
 
     if (SymbolTable::s_classSizes.contains(type)) {
-//        qDebug() << "SYMBOL END TYPE "<<type<<SymbolTable::s_classSizes[type];
         return SymbolTable::s_classSizes[type];
     }
     int l = 1;
@@ -692,6 +691,9 @@ int Symbol::getCountingLength()
         l = 2;
     if (type.toLower() == "long")
         l = 4;
+    // Actual pointer
+    if (type.toLower() == "pointer")
+        return Syntax::s.m_currentSystem->getPointerSize();
 
 
     return l;
@@ -701,8 +703,11 @@ QString Symbol::getEndType()
 {
     if (m_type.toLower()=="array")
         return m_arrayTypeText;
-    if (m_type.toLower()=="pointer")
-        return m_pointsTo;
+    if (m_type.toLower()=="pointer") {
+        if (m_pointsTo!="")
+            return m_pointsTo;
+        else return "pointer";
+    }
     return m_type;
 }
 
