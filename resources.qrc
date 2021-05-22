@@ -611,5 +611,6 @@
         <file>resources/images/tutorials/olimp.jpg</file>
         <file>resources/bin/bootsect.bin</file>
         <file>resources/images/crossplatform.png</file>
+        <file>resources/code/fjong_template.fjo</file>
     </qresource>
 </RCC>

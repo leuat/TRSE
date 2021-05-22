@@ -54,6 +54,8 @@ const CHAR_8c00: byte   = %00000011;
 	const SCREEN_PARAMS: address	= $03f0;		// Put params here just in case
 	pa, pb, pc, pd, pe, pf: byte at SCREEN_PARAMS;	// parameters for methods
 
+	ytab : array[screen_height] of integer = BuildTable("SCREEN_CHAR_LOC + i*SCREEN_WIDTH");
+
 
 @ifdef SCREENWIDTH
 	@RAISEERROR "SCREENWIDTH:byte constant missing. Set to width of screen, eg: 22"

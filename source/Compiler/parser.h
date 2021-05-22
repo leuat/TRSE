@@ -315,6 +315,7 @@ private:
     void Eat();
     void HandleImportChar();
     QStringList BuildTable(int cnt, TokenType::Type type);
+    QStringList BuildSineTable(int cnt, TokenType::Type type);
     QStringList BuildTable2D(int cnt, TokenType::Type type);
 
     int getParsedNumberOrConstant();

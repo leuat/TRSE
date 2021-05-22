@@ -4224,6 +4224,10 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                 data = BuildTable(count, dataType);
             }
             else
+            if (m_currentToken.m_type==TokenType::BUILDSINETABLE) {
+                data = BuildSineTable(count, dataType);
+            }
+            else
             if (m_currentToken.m_type==TokenType::BUILDTABLE2D) {
                 data = BuildTable2D(count, dataType);
                 count = data.size();
@@ -4651,6 +4655,49 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
     return data;
 }
 
+QStringList Parser::BuildSineTable(int cnt,TokenType::Type type)
+{
+    Eat(TokenType::BUILDSINETABLE);
+    if (cnt==0)
+        ErrorHandler::e.Error("BuildTable must have at least 1 element in array.",m_currentToken.m_lineNumber);
+
+
+    Eat(TokenType::LPAREN);
+    int amplitude = GetParsedInt(TokenType::INTEGER);
+    Eat();
+    QStringList data;
+    QJSEngine m_jsEngine;
+    int AND = 0xFFFF;
+//    qDebug() << "PARSER " <<TokenType::getType(type);
+    if (type==TokenType::BYTE)
+        AND = 0xFF;
+    if (type==TokenType::LONG)
+        AND = 0xFFFFFFFF;
+
+    QString consts = "";
+    for (QString key:m_symTab->m_constants.keys())
+        consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
+
+    QString amp = QString::number(amplitude);
+    for (int i=0;i<cnt;i++) {
+        QString str = "Math.sin(i/"+QString::number(cnt)+".0*Math.PI*2)*"+amp + " +"+amp;
+        QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
+        if (fun.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+        QJSValueList args;
+        args << i;
+        QJSValue ret = fun.call(args);
+
+
+        if (ret.isError())
+            ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
+
+        data << Util::numToHex(ret.toInt()&AND);
+    }
+
+    return data;
+}
 
 
 QStringList Parser::BuildTable2D(int cnt,TokenType::Type type)

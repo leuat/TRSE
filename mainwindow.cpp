@@ -1501,6 +1501,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QAction action6("New .ras file", this);
     QAction action61("New .inc file", this);
     QAction action7("New .tru file", this);
+    QAction action71("New .fjo ray tracer file", this);
     QAction action5("Rename file", this);
     QAction action51("Add existing file", this);
     QAction action8("New folder", this);
@@ -1511,6 +1512,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action6, SIGNAL(triggered()), this, SLOT(on_new_ras_file()));
     connect(&action61, SIGNAL(triggered()), this, SLOT(on_new_inc_file()));
     connect(&action7, SIGNAL(triggered()), this, SLOT(on_new_tru_file()));
+    connect(&action71, SIGNAL(triggered()), this, SLOT(on_new_fjo_file()));
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
     connect(&action51, SIGNAL(triggered()), this, SLOT(on_add_existing_file()));
@@ -1519,6 +1521,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     contextMenu.addAction(&action6); // New RAS
     contextMenu.addAction(&action61); // New INC
     contextMenu.addAction(&action7); // New TRU
+    contextMenu.addAction(&action71); // New fjo
     contextMenu.addAction(&action51); // add existing file
     contextMenu.addAction(&action5); // Rename
     contextMenu.addAction(&action4); // Duplicate
@@ -1761,8 +1764,12 @@ void MainWindow::on_new_file(QString name)
         QString nf = path + subPath +text;
         if (!nf.endsWith("."+name))
             nf+="."+name;
-        Util::SaveTextFile(nf,"");
+        if (name!="fjo")
+            Util::SaveTextFile(nf,"");
+        else Util::CopyFile(":resources/code/fjong_template.fjo",nf);
+
         RefreshFileList();
+        LoadDocument(nf.remove(path));
     }
 
 }
@@ -1795,6 +1802,11 @@ void MainWindow::on_new_ras_file()
 void MainWindow::on_new_inc_file()
 {
     on_new_file("inc");
+}
+
+void MainWindow::on_new_fjo_file()
+{
+    on_new_file("fjo");
 }
 
 void MainWindow::on_new_tru_file()
