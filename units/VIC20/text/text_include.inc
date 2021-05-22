@@ -222,7 +222,7 @@
 		if(CRLF) then
 		begin
 			cursor_return();
-			cursor_down();
+			//cursor_down();
 		end;
 	end;
 	
