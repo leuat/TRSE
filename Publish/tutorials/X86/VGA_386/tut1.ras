@@ -14,17 +14,14 @@ begin
 end;
 
 begin
-	p:=ptr(0,$21*4);
-//	p+=2;
-	Screen::PrintInt(p^);	
-	Screen::NewLine();
 	AdlibPlayer::Initialize(#song);
 	// Set timer raster interrupt to point to Raster()
-//	SetInterrupt($8,Raster());	
+	SetInterrupt($8,Raster());	
 	//Set the timer to 1 VSync
 	Memory::SetTimer(Memory::Default_Timer);
 	while (true) do
 	begin
 		waitforverticalblank();
 	end;
+	
 end.

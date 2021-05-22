@@ -1766,7 +1766,7 @@ void MainWindow::on_new_file(QString name)
             nf+="."+name;
         if (name!="fjo")
             Util::SaveTextFile(nf,"");
-        else Util::CopyFile(":resources/code/fjong_template.fjo",nf);
+        else Util::CopyFileMSVCBug(":resources/code/fjong_template.fjo",nf);
 
         RefreshFileList();
         LoadDocument(nf.remove(path));

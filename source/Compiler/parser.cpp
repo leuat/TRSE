@@ -4665,6 +4665,7 @@ QStringList Parser::BuildSineTable(int cnt,TokenType::Type type)
     Eat(TokenType::LPAREN);
     int amplitude = GetParsedInt(TokenType::INTEGER);
     Eat();
+    Eat(TokenType::RPAREN);
     QStringList data;
     QJSEngine m_jsEngine;
     int AND = 0xFFFF;

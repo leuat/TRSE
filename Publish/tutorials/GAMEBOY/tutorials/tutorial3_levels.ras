@@ -25,7 +25,7 @@ var
 	time,x,y,curLevel  : byte;
 
 	// Generate a sine table
-    sine : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*0x7f+0x7F");
+    sine : array[256] of byte = BuildSineTable(127);
 
 
 procedure RenderLevel(x,y : global byte);
