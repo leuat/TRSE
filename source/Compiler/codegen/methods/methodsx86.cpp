@@ -44,6 +44,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         LoadVar(as,1);
         as->Asm("mov bx,ax");
         LoadVar(as,0);
+        as->Asm("xor dx,dx");
         as->Asm("div bx");
         as->Asm("mov ax,dx");
 
@@ -66,18 +67,18 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     }
     if (Command("setpalette")) {
         as->Asm("mov dx,3c8h");
-        LoadVar(as,0);
-        as->Asm("out dx,al");
-        as->Asm("inc dx");
-        LoadVar(as,1);
-        as->Asm("out dx,al");
-        LoadVar(as,2);
-        as->Asm("out dx,al");
-        LoadVar(as,3);
-        as->Asm("out dx,al");
-        as->Asm("Sti");
+        for (int i=0;i<4;i++) {
+            if (!m_node->m_params[i]->isPure())
+                as->Asm("push dx");
+            LoadVar(as,i);
+            if (!m_node->m_params[i]->isPure())
+                as->Asm("pop dx");
+            as->Asm("out dx,al");
+            if (i==0)
+                as->Asm("inc dx");
+        }
     }
-/*    if (Command("poke")) {
+    /*    if (Command("poke")) {
         Poke(as);
     }*/
     if (Command("setpixel")) {
