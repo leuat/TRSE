@@ -6,7 +6,7 @@ xcopy /s %dir%\release\*.exe trse\
 xcopy /s %dir%\release\iconengines trse\
 xcopy /s %dir%\release\platforms trse\
 xcopy /s %dir%\release\styles trse\
-xcopy /s %dir%\release\*.dll trse\
+xcopy /s %dir%\release\*.dll trse\ /y /i
 xcopy /s ..\source\* trse
 xcopy /s ..\..\..\OK64\Release\release trse\OK64 /y /i
 del trse\OK64\*.obj
