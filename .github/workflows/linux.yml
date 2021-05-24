@@ -38,7 +38,7 @@ jobs:
           cd ..
           # exomizer
           wget https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
-          unzip exomizer-3.1.1.zip -d exomizer
+          unzip 3.1.1.zip -d exomizer
           cd exomizer/src
           make -j 2
           cd ../..
