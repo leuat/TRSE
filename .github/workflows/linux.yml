@@ -21,27 +21,27 @@ jobs:
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
           mkdir tools
-          cd tools
+          pushd tools
           # vasm (Atari)
           wget http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
           tar -xzf vasm.tar.gz
-          cd vasm
+          pushd vasm
           make CPU=m68k SYNTAX=mot -j 2
-          cd ..
+          popd
           # rgbasm (GameBoy)
           git clone https://github.com/gbdev/rgbds.git
-          cd rgbds
+          pushd rgbds
           # v0.5 removes GLOBAL keyword
           git checkout tags/v0.4.2
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build -j 2
-          cd ..
+          popd
           # exomizer
           wget https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
           unzip 3.1.1.zip -d exomizer
-          cd exomizer/*/src
+          pushd exomizer/*/src
           make -j 2
-          cd ../..
+          popd
           # Install ROMs to be able to run VICE
           wget https://sourceforge.net/projects/vice-emu/files/releases/vice-3.5.tar.gz/download -O vice-3.5.tar.gz
           tar -xzf vice-3.5.tar.gz
@@ -49,17 +49,17 @@ jobs:
           cp -r vice-3.5/data/* ~/.config/vice/
           # Build Caprice32 (Amstrad CPC emulator)
           git clone https://github.com/ColinPitrat/caprice32.git
-          cd caprice32
+          pushd caprice32
           make -j 2
-          cd ..
+          popd
           # Build SameBoy (GameBoy emulator): requires rgbasm (built before)
           export PATH=`pwd`/rgbds/build/src:$PATH
           git clone https://github.com/LIJI32/SameBoy.git
-          cd SameBoy
+          pushd SameBoy
           make -j 2
-          cd ..
+          popd
           # leave tools directory
-          cd ..
+          popd
           # patch dirs
           sed -i "s,^vasmm =.*,vasmm = ${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir = ${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
