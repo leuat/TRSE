@@ -37,8 +37,8 @@ jobs:
           cmake --build build -j 2
           cd ..
           # exomizer
-          wget https://bitbucket.org/magli143/exomizer/wiki/downloads/exomizer-3.1.0.zip
-          unzip exomizer-3.1.0.zip -d exomizer
+          wget https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
+          unzip exomizer-3.1.1.zip -d exomizer
           cd exomizer/src
           make -j 2
           cd ../..
