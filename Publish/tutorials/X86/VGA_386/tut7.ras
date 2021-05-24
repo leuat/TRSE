@@ -1,0 +1,52 @@
+program lines;
+@use "system/screen"
+@use "math/random"
+@use "gfx/gfx"
+var
+	x1,y1,x2,y2 : integer;
+	time, color : integer;
+	i,j,shift : integer;
+	
+	const width: integer = 63;
+	
+	sinx : array[256] of integer = BuildSineTable(320-width);
+	siny : array[256] of integer = BuildSineTable(200-width);
+	
+	sx,sy : integer;
+	
+procedure SetCoolPalette();
+begin
+	for i:=0 to 64 do
+	begin
+		// divide 256 colors into 4 different ones
+		setpalette(i,i,i/4,i/8); // red
+		setpalette(i+64,i/8,i/4,i); // blue
+		setpalette(i+128,i/8,i,i/4); // green
+		setpalette(i+192,i,i/4,i/2); // purpleish
+	end;
+end;
+
+	
+begin
+	Screen::SetMode($13); // VGA 320 x 200	
+	Random::Init(1); // some random seed	
+	SetCoolPalette();
+	while (true) do
+	begin
+//		waitforverticalblank();
+
+		sx := sinx[(time*2)&255];
+		sy := siny[(time*3+shift)&255];
+		
+		x1 := mod(Random::Random(),width)+sx;
+		y1 := mod(Random::Random(),width)+sy;
+		x2 := mod(Random::Random(),width)+sx;
+		y2 := mod(Random::Random(),width)+sy;
+		
+		Gfx::DrawLine(x1,y1,x2,y2, color, ptr(Screen::VGA,0)); // Draw directly to the screen
+		color+=1;
+		if (time&63=0) then shift+=1;
+		time+=1;
+		
+	end;
+end.
