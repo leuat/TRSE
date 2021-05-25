@@ -6,12 +6,13 @@
 AsmARM::AsmARM()
 {
     m_hash = "";
-    byte="db";
-    word="dw";
-    llong ="dd";
-    ppointer ="dd";
+    byte=".byte";
+    word=".word";
+    llong =".word";
+    ppointer =".word";
     //m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserX86());
     m_ignoreInitialJump = true;
+
 
 }
 
@@ -19,8 +20,10 @@ void AsmARM::Connect() {
     // Connect with temp vars
     QStringList newSource;
     newSource<<(".global _start");
-    newSource<<(".align 2");
+    newSource<<(".align 4");
     newSource<<("_start:");
+    newSource<<("       b block1");
+
 
     for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
         newSource<<m_source[i];
@@ -161,6 +164,7 @@ void AsmARM::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     if (initval=="")
         initval = "0";
+    Write(".align 4");
     if (type.toLower()=="const") {
         Write(name + " equ " + initval,0);
         return;
@@ -236,6 +240,7 @@ void AsmARM::BinOP(TokenType::Type t, bool clearFlag)
 }
 
 void AsmARM::DeclareString(QString name, QStringList initVal, QStringList flags) {
+    Write(".align 4");
     Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
@@ -287,4 +292,20 @@ bool AsmARM::DeclareClass(QString name, QString type, int count, QStringList dat
     }
     return false;
 
+}
+
+QString AsmARM::NewLabel(QString s) {
+    if (s.toLower().contains("block"))
+        return Assembler::NewLabel(s);
+    m_curLabel++;
+    return QString::number(m_curLabel);
+}
+
+void AsmARM::PopLabel(QString s) {
+    if (s.contains("block")) {
+        Assembler::PopLabel(s);
+        return;
+    }
+
+    m_curLabel--;
 }

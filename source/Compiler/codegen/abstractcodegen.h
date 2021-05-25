@@ -81,8 +81,8 @@ public:
     virtual void LoadVariable(QSharedPointer<NodeVar> n) = 0;
     virtual void LoadVariable(QSharedPointer<Node> n) = 0;
     virtual void LoadVariable(QSharedPointer<NodeNumber> n) = 0;
-    virtual void LoadAddress(QSharedPointer<Node> node) {}
-    virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
+    virtual QString LoadAddress(QSharedPointer<Node> node) {return "";}
+    virtual QString LoadAddress(QSharedPointer<Node> node,QString reg) {return "";}
     virtual void LoadVariable(QSharedPointer<NodeProcedure> node) = 0;
 
     virtual QString getJmp(bool isOffPage) = 0;

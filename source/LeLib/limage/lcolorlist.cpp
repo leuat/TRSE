@@ -470,6 +470,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
     }
 
+
     if (!m_isMulticolor && !m_isHybridMode) {
         m_pens[1]->Hide(true);
         m_pens[2]->Hide(true);
@@ -481,7 +482,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         }
 
         if (m_type==C64) {
-            if (m_isCharset && !m_isHybridMode) {
+            if (m_isCharset && !m_isHybridMode && !m_isLevelEditor ) {
                 m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
                 m_pens[3]->m_and =0x7;
 
@@ -597,13 +598,15 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_pens.count();i++) {
         m_pens[i] = other->m_pens[i];
     }
-
+    m_isLevelEditor = other->m_isLevelEditor;
 
 
 }
 
 void LColorList::CopyFromKeep(LColorList *other)
 {
+
+    m_isLevelEditor = other->m_isLevelEditor;
 
     m_list.resize(other->m_list.count());
     for (int i=0;i<m_list.count();i++)

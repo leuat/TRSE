@@ -63,15 +63,9 @@ end;
 
 
 begin
-	Crtc::SetMode(0);
-	Crtc::SetBorder(0);
-	Memory::DisableFirmware();
-	Crtc::Synchronize();
-	Memory::DisableInterrupts();
+	Crtc::InitDefault(0);
 	
 	time := 0;	
-//	for j:=0 to 15 do
-//		Crtc::SetSinglePaletteHW(j,j);	
 	Crtc::SetPalette(#pal);
 	while (true) do
 	begin

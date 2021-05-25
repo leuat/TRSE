@@ -1,5 +1,6 @@
 program Sprites;
 @use "crtc"
+@use "compression"
 var  
    time,x,y,cnt: byte; 
 	t2:byte = 64;
@@ -10,34 +11,37 @@ var
 	const background : address = $6000;
 	spriteData : incbin("resources/images/sprite1.bin");
 	palette : incbin("resources/images/sprite1_palette.bin");
-	bg : incbin("resources/images/background.bin",background);
+	bg : incbin("resources/images/background.bin") compressed;
 
-    siny : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/1.5");
-    sinx : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/3.5");
+    siny : array[256] of byte = BuildSineTable(120);
+    sinx : array[256] of byte = BuildSineTable(60);
+
+
 
 
 interrupt MainRaster();
 begin
 	Memory::PushAll();
+	
 	x:= sinx[time];
 	y:= 40+siny[t2];
+	
 	Memory::EnableLRom();
 	Crtc::CopyImageTransparent(#spriteData, #background, 32,32, x, y, 0);
 	Memory::DisableLRom();
+	
 	time:=time+1;
 	t2:=t2+1;
 	if (time&3=0) then t2:=t2+1;
 	Memory::EnableInterrupts();
+	
 	Memory::PopAll();
 end;
 
 begin
-	Crtc::SetBorder(0);
-	Crtc::SetMode(0);
-	Memory::DisableFirmware();
-	Memory::DisableLRom();
+	Crtc::InitDefault(0);
 	Crtc::SetPalette(#palette);
-	memcpy(#bg,^$C000,80*200);
+	Compression::Decompress(#bg, ^$C000);
 	// Copy back to background in a format that the sprite renderer can use
 	Crtc::CopyScreenToBuffer(0,200,#background);
 	

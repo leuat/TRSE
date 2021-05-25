@@ -1278,7 +1278,7 @@ QString CodeGenZ80::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     return "UNKNOWN BINARY OPERATION";
 }
 
-void CodeGenZ80::LoadAddress(QSharedPointer<Node> n)
+QString CodeGenZ80::LoadAddress(QSharedPointer<Node> n)
 {
     QString hl =getHL();
     if (n->isPointer(as)) {
@@ -1298,6 +1298,7 @@ void CodeGenZ80::LoadAddress(QSharedPointer<Node> n)
 
     }
     else as->Asm("ld "+hl+"," +n->getValue(as));
+    return "";
 }
 
 void CodeGenZ80::LoadInteger(QSharedPointer<Node> n)

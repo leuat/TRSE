@@ -161,7 +161,6 @@ public:
 
 
     void LoadVariable(QSharedPointer<NodeVar> node) override;
-    void LoadAddress(QSharedPointer<Node> node) override;
     void LoadVariable(QSharedPointer<Node> node) override;
     void LoadVariable(QSharedPointer<NodeNumber> node) override;
     void LoadVariable(QSharedPointer<NodeProcedure> node) override;

@@ -1869,10 +1869,6 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
     return;
 }
 
-void CodeGen6502::LoadAddress(QSharedPointer<Node> node)
-{
-
-}
 
 void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
 {

@@ -21,10 +21,7 @@ procedure Init();
 begin
 	time:=0;
 	// Mode 0 : 160x200 16 cols
-	Crtc::SetMode(0);
-	Crtc::SetBorder(0);
-	Crtc::Synchronize();
-	Memory::DisableInterrupts();
+	Crtc::InitDefault(0);
 	Crtc::SetPalette(#palette);
 end;
 

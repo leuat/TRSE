@@ -94,7 +94,7 @@ public:
 
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
-    void LoadAddress(QSharedPointer<Node> n) override;
+    QString LoadAddress(QSharedPointer<Node> n) override;
     void LoadInteger(QSharedPointer<Node> n);
     void StoreAddress(QSharedPointer<Node> n);
     QString getHL();

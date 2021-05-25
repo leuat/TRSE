@@ -37,6 +37,10 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("VGAclearScreen32")) {
         ClearScreen(as,32);
     }
+    if (Command("inc"))
+        IncDec(as, "inc");
+
+
     if (Command("scrollx")) {
         ScrollX(as);
     }

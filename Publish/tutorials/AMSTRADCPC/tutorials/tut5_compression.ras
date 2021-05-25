@@ -43,11 +43,7 @@ end;
 
 begin
 	
-	Crtc::SetMode(0);
-	Crtc::SetBorder(0);
-	Memory::DisableFirmware();
-	Crtc::Synchronize();
-	Memory::DisableInterrupts();	
+	Crtc::InitDefault(0);
 	while (true) do
 	begin
 		Crtc::SetPalette(#palette1);

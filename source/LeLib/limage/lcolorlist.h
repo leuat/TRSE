@@ -59,6 +59,7 @@ public:
     bool m_isCharset = false;
     bool m_isHybridMode = false;
     bool m_supportsFooterPen = false;
+    bool m_isLevelEditor = false;
     QVector3D m_bpp = QVector3D(8,8,8);
     enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC, VGA, SPECTRUM };
     bool m_selectClosestFromPen = true;

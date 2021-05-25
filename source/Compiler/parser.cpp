@@ -2449,6 +2449,7 @@ QSharedPointer<Node> Parser::Factor()
         }
         Token t = m_currentToken;
         t.m_intVal = s->getLength();
+        qDebug() << "PARSER HERE " <<s->m_value->m_strVal<< s->m_size;
         t.m_type  = TokenType::INTEGER_CONST;
         Eat();
         Eat(TokenType::RPAREN);
@@ -4015,6 +4016,13 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        s->m_flags = typeNode->m_flags;
        s->m_bank = typeNode->m_bank;
 
+       if (s->m_type=="STRING") {
+//           s->m_size = typeNode->m_op.m_value;
+           int len = 0;
+           for (QString& s: typeNode->m_data)
+               len+=s.count();
+           s->m_size = len;
+       }
 
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);

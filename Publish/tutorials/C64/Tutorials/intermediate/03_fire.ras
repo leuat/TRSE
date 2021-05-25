@@ -48,7 +48,7 @@ begin
 	for y:=0 to 5 do begin // 160*4
 	//	 Original code
 @if OPTIMIZED = 0
-		for x:=0 to 160 onpage do begin
+		for x:=0 to 160 do begin
 			// This is the main method for calculating "fire" : current neighbouring values+ lower value
 			val:=screenmemory[x+39]+screenmemory[x+40]+screenmemory[x+41] + screenmemory[x+80];
 			val:=val/4;

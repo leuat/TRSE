@@ -77,8 +77,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
     if (!node->m_ignoreDeclarations) {
 
         if (node->m_decl.count()!=0) {
-            if (node->m_isMainBlock && !as->m_ignoreInitialJump)
+            if (node->m_isMainBlock && !as->m_ignoreInitialJump) {
                 as->Asm(getJmp(true)+" " + label);
+            }
+
             hasLabel = true;
         }
 
