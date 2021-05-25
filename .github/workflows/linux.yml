@@ -61,7 +61,7 @@ jobs:
           # leave tools directory
           popd
           # patch dirs
-          exomizer=`ls ${PWD}/exomizer/*/src/exomizer`
+          exomizer=`ls ${PWD}/tools/exomizer/*/src/exomizer`
           sed -i "s,^vasmm =.*,vasmm = ${PWD}/tools/vasm/vasmm68k_mot," Publish/publish_linux/trse.ini
           sed -i "s,^gameboy_rgbasm_dir =.*,gameboy_rgbasm_dir = ${PWD}/tools/rgbds/build/src," Publish/publish_linux/trse.ini
           sed -i "s,^exomizer =.*,exomizer = ${exomizer}," Publish/publish_linux/trse.ini
