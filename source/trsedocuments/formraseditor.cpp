@@ -115,6 +115,8 @@ void FormRasEditor::ExecutePrg(QString fileName)
                 Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64
                 ))
         params<<"-moncommands"<<debugFile;
+    if (QFile::exists(debugFile) && Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
+        params << "-s" << debugFile;
 
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20) {
