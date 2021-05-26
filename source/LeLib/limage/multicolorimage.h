@@ -145,7 +145,7 @@ public:
     void Initialize(int width, int height) override {}
     virtual void CopyImageData(LImage* img) override;
 
-    void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
+    void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 
     void Release() override {}
     virtual void RenderEffect(QMap<QString, float> params);

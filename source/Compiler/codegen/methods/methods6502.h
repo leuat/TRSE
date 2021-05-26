@@ -35,7 +35,7 @@ public:
     void Peek(Assembler* as);
     void Modulo(Assembler* as);
     void MemCpy(Assembler* as, bool isFast);
-    void MemCpyUnroll(Assembler* as);
+    void MemCpyUnroll(Assembler* as, bool isReverse);
     void Rand(Assembler* as);
     void Random(Assembler* as);
 

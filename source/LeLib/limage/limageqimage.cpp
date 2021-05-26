@@ -215,29 +215,32 @@ QImage* LImageQImage::ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effec
     return res;
 }
 
-void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, float zoom, QPointF center, float scale)
+void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoom, QPointF center, double scale)
 {
 
-    int width = m_qImage->width();
-    int height = m_qImage->height();
+    double width = m_qImage->width();
+    double height = m_qImage->height();
     QColor col2=QColor(20,30,40,255);
     QColor c;
     m_qImage->fill(QColor(0,0,0,0));
-    center.setX(-0.1+center.x()/(float)m_width*width/scale);
-    center.setY(-0.1+center.y()/(float)m_height*height);
+    center.setX(center.x()/(double)m_width*width/scale);
+    center.setY(center.y()/(double)m_height*height);
+
+//    double xp = (((i-center.x())*(double)zoom)+ center.x());
+  //  double yp = (((j-center.y())*(double)zoom)+ center.y());
+
     for (float i=1;i<x;i++)
         for (float j = 0;j<height;j++) {
-            float xp = (width/((float)x))*(i);
+            double xp = (width/((double)(x)))*(i);
 
             xp = (xp - scale*center.x())/zoom + scale*center.x();
-           float yp = j;
-
+            double yp = j;
 
             c = color;
             if ((int)j%strip>=strip/2)
                 c= col2;
-           if (xp>=0 && xp<width && yp>=0 && yp<height)
-            m_qImage->setPixel(xp, yp, c.rgba());
+            if (xp>=0 && xp<width && yp>=0 && yp<height)
+                m_qImage->setPixel(xp, yp, c.rgba());
         }
 
     // width lines
@@ -407,7 +410,7 @@ QImage *LImageQImage::Blur(float blurRadius)
 
 }
 
-void LImageQImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center)
+void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center)
 {
 #pragma omp parallel for
     for (int i=0;i<m_width;i++)

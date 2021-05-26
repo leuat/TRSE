@@ -377,7 +377,7 @@ public:
 
     void Box(int x, int y, unsigned char col, int size);
 
-    virtual void ToQImage(LColorList& lst, QImage& img, float zoom = 1, QPointF center = QPointF(160,100)) = 0;
+    virtual void ToQImage(LColorList& lst, QImage& img, double zoom = 1, QPointF center = QPointF(160,100)) = 0;
 
     virtual void CopyFrom(LImage* img);
 

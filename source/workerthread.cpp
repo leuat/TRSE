@@ -200,13 +200,16 @@ void WorkerThread::UpdateImage(LImage * mc)
        return;
    if (mc==nullptr)
        return;
+
+   int sc = 1;
+
     if (m_tmpImage == nullptr) {
-        m_tmpImage = new QImage(mc->m_width,mc->m_height,QImage::Format_ARGB32);
+        m_tmpImage = new QImage(mc->m_width*sc,mc->m_height*sc,QImage::Format_ARGB32);
     }
 
-    if (m_tmpImage->width()!=mc->m_width || m_tmpImage->height()!=mc->m_height) {
+    if (m_tmpImage->width()!=mc->m_width*sc || m_tmpImage->height()!=mc->m_height*sc) {
         delete m_tmpImage;
-        m_tmpImage = new QImage(mc->m_width,mc->m_height,QImage::Format_ARGB32);
+        m_tmpImage = new QImage(mc->m_width*sc,mc->m_height*sc,QImage::Format_ARGB32);
 
     }
 

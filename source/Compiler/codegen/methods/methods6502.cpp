@@ -817,7 +817,11 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
         MemCpy(as,true);
 
     if (Command("memcpyunroll"))
-        MemCpyUnroll(as);
+        MemCpyUnroll(as,false);
+
+    if (Command("memcpyunrollreverse"))
+        MemCpyUnroll(as,true);
+
 
     if (Command("memcpylarge"))
         MemCpyLarge(as);
@@ -1257,7 +1261,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
 
 }
 
-void Methods6502::MemCpyUnroll(Assembler* as)
+void Methods6502::MemCpyUnroll(Assembler* as, bool isReverse)
 {
     //as->ClearTerm();
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
@@ -1291,9 +1295,16 @@ void Methods6502::MemCpyUnroll(Assembler* as)
         bp2=")";
     }
 
-
+    int start = 0;
+    int end = counter;
+    int inc = 1;
+    if (isReverse) {
+        start = counter-1;
+        end = 0;
+        inc = -1;
+    }
     as->Comment("memcpy unrolled");
-    for (int i=0;i<counter;i++) {
+    for (int i=start;i<end;i+=inc) {
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER || m_node->m_params[2]->getType(as)==TokenType::POINTER)
         {
             if (i==0)

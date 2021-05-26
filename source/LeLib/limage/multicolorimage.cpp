@@ -1424,7 +1424,7 @@ void MultiColorImage::UpdateColorList()
 }
 
 
-void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center)
+void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center)
 {
 //    return;
     int height  =std::min(img.height(), m_height);
@@ -1443,6 +1443,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, float zoom, QPointF
             //          float yp = floor(((j-center.y())*zoom) + center.y());
             double xp = (((i-center.x())*(double)zoom)+ center.x());
             double yp = (((j-center.y())*(double)zoom)+ center.y());
+
 
             unsigned int col = 0;
             if (xp>=0 && xp<width && yp>=0 && yp<height)

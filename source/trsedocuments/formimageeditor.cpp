@@ -473,8 +473,8 @@ void FormImageEditor::UpdateGrid()
         return;
 */
  //   qDebug() << xs << ys;
-    m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->m_width,
-                      m_updateThread.m_gridScale*m_work.m_currentImage->m_image->m_height);
+    m_grid.Initialize(m_updateThread.m_gridScale *m_work.m_currentImage->m_image->GetWidth(),
+                      m_updateThread.m_gridScale*m_work.m_currentImage->m_image->GetHeight());
 //    qDebug() << m_work.m_currentImage->m_image->m_scaleX;
     m_updateThread.CreateGrid();
 //    m_grid.ApplyToLabel(ui->lblGrid);
