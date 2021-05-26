@@ -51,6 +51,3 @@ data_header_screens.flf = 6.92305e-310
 charset_screens.flf = /home/zzarko/Programming/Olimp/Olimp/font.flf
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 show_all_files = 1
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/Olimp/
-open_files = ,Olimp.ras
-current_file = Olimp.ras

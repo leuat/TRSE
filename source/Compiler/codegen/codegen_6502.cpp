@@ -1315,8 +1315,8 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     else {
         as->ClearTerm();
 
-        if (!nodeA->isPureVariable() || nodeA->isArrayIndex()) {
-            as->Comment("Compare variable is complex, storing in temp variable");
+        if (!nodeA->m_left->isPureVariable() || nodeA->m_left->isArrayIndex()) {
+            as->Comment("Compare variable is complex, storing in temp variable : "+nodeA->getValue(as));
             nodeA->m_left->Accept(this);
             as->Term();
             QString temp = as->StoreInTempVar("compare_temp");
@@ -1937,7 +1937,7 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 pb=")";
                 as->Comment("Storing to a pointer");
             }
-            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
+//            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
 
 
             // Optimize for number or pure var
