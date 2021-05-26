@@ -361,12 +361,33 @@ void LImage::CopyChar()
                        m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*32);
 
 //   m_copySize = QPoint(256,256);
+/*
+   m_isHybridTemp = false;
+   bool multi = m_bitMask==0b11;
+   if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1)
+   {
+       m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
+       setMultiColor(false);
+       m_isHybridTemp = true;
+   }
+*/
     for (int y=0;y<m_copySize.y();y++)
         for (int x=0;x<m_copySize.x();x++) {
             m_copy[x+y*m_copySize.x()] = getPixel((float)x/(float)m_copySize.x()*(float)m_width,
                                                   (float)y/(float)m_copySize.y()*(float)m_height);
+//            if (m_copy[x+y*m_copySize.x()]>8)
+  //          qDebug() << QString::number(m_copy[x+y*m_copySize.x()]);
         }
     m_hasCopy = true;
+
+  /*  if (m_isHybridTemp) {
+       m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
+       setMultiColor(false);
+       m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,1);
+   }
+   m_isHybridTemp = false;
+*/
+
 
 }
 
@@ -444,19 +465,19 @@ void LImage::Clear() {
 }
 void LImage::PushHybrid()
 {
+
     m_isHybridTemp = false;
     if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
         m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
-        m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,1);
-        setMultiColor(true);
+        setMultiColor(false);
         m_isHybridTemp = true;
     }
+
 }
 
 void LImage::PopHybrid()
 {
     if (m_isHybridTemp) {
-        m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
         setMultiColor(false);
         m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,1);
     }
@@ -471,6 +492,12 @@ void LImage::ShiftXY(int dx, int dy)
     PushHybrid();
     CopyChar();
 
+/*    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+        dx*=2;
+    }*/
+    if (m_isHybridTemp) {
+        dx*=2;
+    }
 
     dx*=m_bitMask==0b11?2:1;
 
