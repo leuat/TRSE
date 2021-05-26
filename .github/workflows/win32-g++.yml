@@ -3,7 +3,7 @@ name: win32-g++
 on:
   push:
     tags:
-      - '**'
+      - 'nightly'
 
 jobs:
   build:

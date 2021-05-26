@@ -3,7 +3,7 @@ name: linux
 on:
   push:
     tags:
-      - '**'
+      - 'nightly'
 
 jobs:
   build:

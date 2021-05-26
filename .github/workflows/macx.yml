@@ -3,7 +3,7 @@ name: macx
 on:
   push:
     tags:
-      - '**'
+      - 'nightly'
 
 jobs:
   build:

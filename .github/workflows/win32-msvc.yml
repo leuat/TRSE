@@ -3,7 +3,7 @@ name: win32-msvc
 on:
   push:
     tags:
-      - '**'
+      - 'nightly'
 
 jobs:
   build:
