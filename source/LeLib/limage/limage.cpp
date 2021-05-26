@@ -262,6 +262,7 @@ void LImage::CtrlLeftShift(int x, int y) {
     Data::data.currentColor = getPixel(x,y);
 }
 
+
 QString LImage::GetCurrentModeString() {
     /*    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
     if (m_currentMode==CHARSET2x2) return "2x2 charset mode";
@@ -394,6 +395,7 @@ void LImage::PasteChar()
 }
 
 void LImage::FlipHorizontal() {
+    PushHybrid();
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
         for (int x=m_copySize.x()-1;x>=0;x--) {
@@ -402,9 +404,11 @@ void LImage::FlipHorizontal() {
                      m_copy[m_copySize.x()-1-x+y*m_copySize.x()]);
         }
 
+    PopHybrid();
 }
 
 void LImage::FlipVertical() {
+    PushHybrid();
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
         for (int x=0;x<m_copySize.x();x++) {
@@ -414,10 +418,11 @@ void LImage::FlipVertical() {
         }
 
 
-
+    PopHybrid();
 }
 
 void LImage::Transform(int tx, int ty) {
+    PushHybrid();
 
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
@@ -427,7 +432,7 @@ void LImage::Transform(int tx, int ty) {
                      m_copy[(x+tx)%m_width+((y+ty)%m_height)*m_copySize.x()]);
         }
 
-
+    PopHybrid();
 }
 
 void LImage::Clear() {
@@ -437,12 +442,35 @@ void LImage::Clear() {
         }
 
 }
+void LImage::PushHybrid()
+{
+    m_isHybridTemp = false;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+        m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
+        m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,1);
+        setMultiColor(true);
+        m_isHybridTemp = true;
+    }
+}
+
+void LImage::PopHybrid()
+{
+    if (m_isHybridTemp) {
+        m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
+        setMultiColor(false);
+        m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,1);
+    }
+    m_isHybridTemp = false;
+
+}
 
 
 void LImage::ShiftXY(int dx, int dy)
 {
-    CopyChar();
    // qDebug() <<m_copySize;
+    PushHybrid();
+    CopyChar();
+
 
     dx*=m_bitMask==0b11?2:1;
 
@@ -465,6 +493,7 @@ void LImage::ShiftXY(int dx, int dy)
 
                      m_copy[x+y*m_copySize.x()]);
         }
+    PopHybrid();
 
 }
 

@@ -190,6 +190,12 @@ public:
     bool m_silentExport=false;
     int m_width;
     int m_height;
+    bool m_isHybridTemp;
+
+
+    void PushHybrid();
+    void PopHybrid();
+
     float m_scaleX = 1.0f;
 
 //    unsigned int m_border=0, m_background=0;
