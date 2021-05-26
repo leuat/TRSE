@@ -2784,6 +2784,12 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
                   Eat(TokenType::PREPROCESSOR);
                   m_vicMemoryConfig = m_currentToken.m_value;
+                  m_projectIni->setString("vic_memory_config", m_vicMemoryConfig);
+                  Syntax::s.m_currentSystem->m_projectIni->setString("vic_memory_config", m_vicMemoryConfig);
+                  Syntax::s.Reload();
+                  Syntax::s.m_currentSystem->DefaultValues();
+                  m_symTab->Initialize();
+
                   Eat();
               }
               else if (m_currentToken.m_value.toLower() =="pbmexport") {

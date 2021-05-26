@@ -8,7 +8,7 @@ class SystemVIC20 : public SystemMOS6502
 public:
     QString param;
     SystemVIC20(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
-    void DefaultValues();
+    void DefaultValues() override;
     int getDefaultBasicAddress() override;;
     bool isCommodoreSystem() override  {return true;}
 

@@ -116,6 +116,8 @@ public:
     void SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
     void SetupKeys();
     void LoadSyntaxData();
+    void Reload();
+
 
     QString puredigit = "0123456789^";
     QString digit = "^0123456789$%";
