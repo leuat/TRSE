@@ -1044,7 +1044,7 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
 void MultiColorImage::LoadCharset(QString file, int skipBytes)
 {
     if (!QFile::exists(file)) {
-//        qDebug() << "Could not find file " << file;
+        qDebug() << "MultiColorImage : Could not find file " << file;
         return;
     }
 
@@ -1065,6 +1065,7 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
         m_charset = dynamic_cast<CharsetImage*>(img);
     }
     m_charsetFilename = file;
+ //   qDebug()<< "Setting name to : " <<m_charsetFilename;
     if (m_charset==nullptr)
         return;
 
@@ -1375,7 +1376,9 @@ void MultiColorImage::ForceBackgroundColor(int col, int swapCol)
 void MultiColorImage::AppendSaveBinCharsetFilename(QFile &file)
 {
     QString  fn = m_charsetFilename;
+    fn = QFileInfo(fn).absoluteFilePath();
     QByteArray fd =  QByteArray(fn.remove(Data::data.currentPath).toLatin1());
+//    qDebug() << fn <<Data::data.currentPath<<fn.remove(Data::data.currentPath);
 
     uchar len = fd.count();
     file.write( ( char * )( &len ),  1 );

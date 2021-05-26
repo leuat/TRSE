@@ -2064,7 +2064,7 @@ void MainWindow::LoadProject(QString filename)
     CloseAll();
     ClearSymbols();
     m_currentProject.Load(filename);
-    m_currentPath = QFileInfo(QFile(filename)).absolutePath();
+    m_currentPath = QFileInfo(QFile(filename)).canonicalPath();
 
 
 
