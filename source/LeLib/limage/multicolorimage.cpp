@@ -1038,7 +1038,6 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
     }
 
 
-
 }
 
 void MultiColorImage::LoadCharset(QString file, int skipBytes)

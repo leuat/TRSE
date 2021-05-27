@@ -5137,8 +5137,8 @@ void Parser::HandleExportCompressed()
   //  file.open(QFile::WriteOnly);
     img->m_silentExport = true;
     img->ExportCompressed(screenFile, charFile, colorFile);
-//    if (img->m_exportMessage!="")
-  //      ErrorHandler::e.Warning(img->m_exportMessage,m_currentToken.m_lineNumber);
+    if (img->m_exportMessage!="")
+        ErrorHandler::e.Warning(img->m_exportMessage,0);
 
 
 

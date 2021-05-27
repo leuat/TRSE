@@ -1,5 +1,5 @@
 program part8_Adding_entities;
-@use Levels
+@use "gfx/Levels"
 var  
 
 // levels are loaded to/from $5000
@@ -104,15 +104,13 @@ begin
 
 	setcharsetlocation(@charsetPosition);
 
-	Levels::lp:=@levelPosition;
-	Levels::ReadHeader();
+	Levels::ReadHeader(@levelPosition);
 	Levels::starty:=2;
 end;
 
 procedure PlayerBackgroundCollide();
 	
 begin
-	asm(";woot");
 	tmp:=player_x-12;
 	i:=tmp/8;
 	j:=(player_y-38)/8;
@@ -257,7 +255,6 @@ begin
 
 
 	if redraw=1 then begin
-		Levels::lp:=@levelPosition;
 		Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 		LoadEntities();
 		InitEntities();

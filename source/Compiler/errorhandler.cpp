@@ -34,9 +34,12 @@ void ErrorHandler::Warning(QString str, int lineNumber) {
     if (m_lexer!=nullptr) {
         int linenr = Pmm::Data::d.lineNumber;
         QString file = "";
-        m_lexer->FindLineNumberAndFile(linenr, file, linenr);
-        if (linenr!=0 && !m_lexer->m_finished) ln = " at line " + QString::number(linenr);
-        if (file!="") ln +=" in file '"+file+"'";
+        if (m_lexer!=nullptr && lineNumber!=0) {
+            m_lexer->FindLineNumberAndFile(linenr, file, linenr);
+
+            if (linenr!=0 && !m_lexer->m_finished) ln = " at line " + QString::number(linenr);
+            if (file!="") ln +=" in file '"+file+"'";
+        }
 
     }
     else
