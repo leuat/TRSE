@@ -23,6 +23,7 @@ nsi.dll
 ntdll.dll
 ole32.dll
 oleaut32.dll
+opengl32.dll
 powrprof.dll
 profapi.dll
 rpcrt4.dll
