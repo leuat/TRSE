@@ -5,6 +5,8 @@ combase.dll
 crypt32.dll
 cryptbase.dll
 cryptsp.dll
+d3d11.dll
+dxgi.dll
 dnsapi.dll
 dwmapi.dll
 gdi32.dll
