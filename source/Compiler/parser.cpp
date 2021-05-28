@@ -718,6 +718,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
             prevNumber = true;
         }
         else {
+
 //            qDebug() << "Looking for constant " << m_currentToken.m_value.toUpper();
   //          qDebug() << m_symTab->m_constants.keys();
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
@@ -733,10 +734,9 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
                prevNumber = true;
 
                Eat();
-              }
 
      //             ErrorHandler::e.Error("Value required to be a number or a constant.",m_currentToken.m_lineNumber);
-
+            }
         }
     }
 //    if (p!=0)
@@ -4256,10 +4256,17 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     bool found = false;
                     // First check if symbol exists:
                     if (m_currentToken.m_value!="") {
-                        if (m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr)) {
+                        if ((m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr))) {
                             data<<m_currentToken.m_value;
+
                             m_symTab->m_symbols[m_currentToken.m_value]->isUsed = true;
                             m_symTab->m_symbols[m_currentToken.m_value]->isUsedBy <<m_inCurrentProcedure;
+                            found = true;
+                        }
+                        if (m_procedures.contains(m_currentToken.m_value)) {
+                            data<<m_currentToken.m_value;
+                            m_procedures[m_currentToken.m_value]->m_isUsed = true;
+                            m_procedures[m_currentToken.m_value]->m_isUsedBy<< m_inCurrentProcedure;
                             found = true;
                         }
                         //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
