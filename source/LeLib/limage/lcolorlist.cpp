@@ -24,6 +24,7 @@
 #include <QPalette>
 #include <QSignalMapper>
 #include "source/LeLib/util/util.h"
+#include <cmath>
 LColorList::LColorList()
 {
 }
@@ -1051,6 +1052,26 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
     float d = 1E20;
     //    qDebug() << "WHOO";
     winner = 0;
+    if (m_customPalette.count()!=0) {
+        // OMG we have a custom palette! let's use it!
+        int val = (col.red() + col.green() + col.blue())/3;
+//        int chunk = 256/m_customPalette.count();
+        float pos = (val/256.0)*m_customPalette.count();
+        int idx = floor(pos);
+        pos-=idx;
+
+        QColor c1 = m_list[ m_customPalette[idx]].color;
+        if (idx<m_customPalette.count()-1)
+            idx++;
+        QColor c2 = m_list[m_customPalette[idx]].color;
+
+        col.setRed(Util::lerp(pos,(float)c1.red(),(float)c2.red()));
+        col.setGreen(Util::lerp(pos,(float)c1.green(),(float)c2.green()));
+        col.setBlue(Util::lerp(pos,(float)c1.blue(),(float)c2.blue()));
+
+    }
+
+
     if (m_selectClosestFromPen) {
 
         for (int i=0;i<m_pens.count();i++) {

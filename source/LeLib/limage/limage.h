@@ -129,6 +129,7 @@ public:
 
     QMap<GUIType, QString> m_GUIParams;
 
+
     virtual bool isNes() {return false;}
 
     QVector<MetaParameter*> m_metaParams;
@@ -191,6 +192,7 @@ public:
     int m_width;
     int m_height;
     bool m_isHybridTemp;
+
 
 
     void PushHybrid();

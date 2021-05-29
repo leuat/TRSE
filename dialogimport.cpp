@@ -224,8 +224,16 @@ void DialogImport::Convert()
 
 //    qDebug() << "IMG WIDTH " <<m_output.m_qImage->width();
 
+    if (ui->chkCustom->isChecked()) {
+        auto lst = ui->leCustomPalette->text().split("," );
+        m_image->m_colorList.m_customPalette = Util::HexQStringListToByteArray(lst);
+    }
+
     m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
 
+    if (ui->chkCustom->isChecked()) {
+        m_image->m_colorList.m_customPalette = QByteArray();
+    }
 
 
     if (m_output.m_qImage!=nullptr)  {
@@ -631,5 +639,23 @@ void DialogImport::on_leScaleY_textChanged(const QString &arg1)
 {
     UpdateSliders();
     //UpdateOutput();
+
+}
+
+void DialogImport::on_chkCustom_stateChanged(int arg1)
+{
+    UpdateSliders();
+}
+
+void DialogImport::on_leCustomPalette_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+
+}
+
+
+void DialogImport::on_comboBox_currentIndexChanged(int index)
+{
+    ui->leCustomPalette->setText(m_customPalettes[index]);
 
 }
