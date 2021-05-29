@@ -1,0 +1,217 @@
+globals = {
+ 	camera = { x = 23, y=0, z=0 },
+     fov = 60,
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = {x=1, y=0.0, z=0 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	up = { x=0, y=1, z = 0},
+--	ambient = { x = 00.0, y = 00.0, z = 00.0 },
+	ambient = { x = 1, y = 1.0, z = 1.0 },
+     raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+--	resolution = { width = 168, height=105},
+	resolution = { width = 320, height=8*8},
+--	resolution = { width = 320, height=200},
+	aspect = 0.79,
+	output_type = 1,
+	c64_multicolor = 0,
+	c64_imageType = 0,
+	dither = 2,
+	ditherStrength = { x = 0, y= 1, z= 1},
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,1 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=2 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialWhite = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialGreen = {
+   color = { x=0, y=1, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 64
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+text = "PRX"
+render = 0
+charname = "char"
+
+cnt = 100
+
+function getName(a,i)
+	return a..tostring(i);
+end
+
+function Init()
+ypos = {}
+mbox = 0
+--[[
+--	AddObject("box","d1","","MaterialWhite",0,0,0,  1,1,1);
+--	AddObject("torus","d1","","MaterialWhite",0,0,0,  1,0.5,1);
+	ClearAllObjects();
+	render=0
+		s = 1.3
+--    if (globals.camera.z<30) then
+--		AddObject("box","d1","","MaterialWhite",0,0,0,   1,1,1);
+		for i=1, cnt do
+			AddObject("box",getName("d",i),"","MaterialWhite",0,0,0,   1,11.5*s,1);
+		end
+		
+		w = 30
+		wy = 8
+		for i=1, mbox do
+			x = math.random(w)-w/2;
+			y = math.random(wy)-wy/2+8;
+			table.insert(ypos,y);
+			bx = 0.1 + math.random(5)/10.0
+			AddObject("box",getName("b",i),"","MaterialBlack",-1,y+5,x,   0.1,bx*3,bx);
+		end
+
+		render = 1
+	--end
+
+	UpdateScene()
+	]]--
+end
+
+
+
+
+function UpdateScene()
+
+--[[
+  	t = ((frame)/(noFrames+7))/(3.14159*4)
+
+--	tt = t*3.14159*2
+	if (render==0) then return; end
+	tt = t*360.0/4
+--	SetRotation("d1",0,0,0);
+--	SetRotation("d1",tt+45,tt,0);
+--	SetRotation("d1",-tt*5,tt,tt+89.9);
+	--SetRotation("d1",tt,0,0);
+	a=2 + cos(t)*0.7
+	for i=1, cnt do
+
+--		SetRotation(getName(i),cos(tt*0.2)*10,0,0);
+		yh = cos((i*0.05+tt))*2*a
+		yh = yh - cos(1+(i*0.121-tt*2))*0.5*a
+--		SetPosition(getName(i),0,t*30+yh,(i-cnt/2)*0.3);
+		SetPosition(getName("d",i),0,yh+15,(i-cnt/2)*0.245);
+	end
+	a = 1
+	for i=1, mbox do
+		j = (i/mbox)*cnt
+		yh = cos((j*0.05+tt))*2*a
+		yh = yh - cos(1+(j*0.121-tt*2))*0.5*a
+		SetPosition(getName("b",i),-2,ypos[i]+yh,(i-0.5-mbox/2)*5);
+		
+--		SetRotation(getName("b",i),(i+tt)*100,0,0);
+	end;
+--	a = (24.3-23*sqrt(sqrt((t))))
+
+    a = 1
+--	globals.camera.y = globals.camera.y+0.12
+--	globals.target.y = globals.target.y+0.12
+
+--	globals.camera.z = globals.camera.z+0.1*(globals.camera.z+1)
+--	globals.camera.z = globals.camera.z0.1*(globals.camera.z+1)
+	
+
+--	globals.camera.x = 2*a
+--	if (frame==0) then globals.camera.x = 20000 end
+--	globals.camera.x = 4
+--	globals.target.z = -2
+]]--
+end
+
+function PostProcess()
+	if (frame>noFrames+1) then 
+		return;
+	end
+	wy = output.resolution.height
+	wx = output.resolution.width
+	th = frame/noFrames*3.14159*2
+	sy = wy/8
+	for i=0, wx do
+		t = i/wx*3.14159
+		h = wy/2 + sin(th+t)*sy + cos(th-t)*sy
+		h = h + sin((th+t)*2)*sy/2  + cos((th-t)*4)*sy/2
+		DrawLine(i,h,i,output.resolution.height, 255, 255,1,1);
+	end	
+
+end
+
+
+function Update()
+	
+	if (frame==noFrames-2) then
+--		ClearAllObjects();
+		render=0
+	end;
+	if (hasSaved == 0) then 
+		frame=frame+1
+
+		CompressCharset(0,40,0,8,  0.01, 64)
+
+		if (frame == noFrames) then			
+			Message("DONE");
+		    -- width, height, number of chars (64), compression level (0.15, produces <64 chars), compression type SSIM (1) not SSIM
+--			OptimizeScreenAndCharset(40,8,  64, 0.15, 1);
+			OptimizeScreenAndCharset(40,8,  64, 3, 0);
+			SaveScreenAndCharset("data/wavecolors_screen.bin", "data/wavecolors_charset.bin");
+			hasSaved = 1
+		end
+
+	end
+	UpdateScene()
+
+	
+
+
+end

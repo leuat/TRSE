@@ -1,0 +1,494 @@
+program BGScroll;
+@use "demounit"
+@use "tables/luminosities"
+var  
+   	trans,i,j,k,y,l,m,n,c2,tt,t2,adde2,wx,ww: byte = 0;
+   	finalCol : byte = 17; 
+   	
+	const sy: byte = 100;
+	const dy: byte = 6;
+
+	const rasterStart : byte=sy-70;
+
+	rasterPos : array[3] of byte=(sy-dy,sy+21*2-dy,sy+21*4-dy);
+
+   	sx,ii: integer;
+   	 c1 : byte;
+	curCol2 : byte = 4;
+	curCol1 : byte = 4;
+
+	curColSpr1 : byte = 4;
+	curColSpr2 : byte = 4;
+	curColSpr3 : byte = 4;
+	 
+   	 
+// mm : byte at $42;
+
+@define charLoc1 $5000
+@define charLoc2 $5800
+@define charLoc3 $6000
+@define charLoc4 $6800
+
+@startblock $8000 "SCREENS"
+	screens1: incbin("data/screen_hand0.bin");
+	screens2: incbin("data/screen_hand1.bin");
+	screens3: incbin("data/screen_hand2.bin");
+	screens4: incbin("data/screen_hand3.bin");
+@endblock
+
+
+@ifndef IS_DEMO
+// music : incsid("../demo_system/music/happynewyear.sid",2);
+@endif
+
+@export "images/hand_sprite2.flf" "images/hand_sprite2.bin" 24
+
+@define spriteLoc $7800
+	sprites1 : incbin("images/hand_sprite2.bin", @spriteLoc);
+//	sprites2 : incbin("images/hand_sprite.bin", @spriteLoc-$4000);
+
+	charset1 : incbin("data/charset_hand0.bin",@charLoc1);
+	charset2 : incbin("data/charset_hand1.bin",@charLoc2);
+	charset3 : incbin("data/charset_hand2.bin",@charLoc3);
+	charset4 : incbin("data/charset_hand3.bin",@charLoc4);
+	sp,zp3,p1,zp2,locp,spritep,cp:pointer;
+	frame,adde,adde2:byte=0;
+	time:byte=0;
+	scroll:byte=0;
+	maxScroll : byte=30;
+	xx:integer;
+	@define screenLoc $4400
+	mul1000 : array[16] of integer = BuildTable("i*1000");
+	cols : array[256] of byte = (0);
+	
+	sprLocs : array[8*3] of byte;
+	sprData : array[$11*3] of byte;
+
+
+
+//   	lumi: array[32] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+
+/*	@startblock $8500 "Cols"
+	@include "data/unroll0.ras"
+	@include "data/unroll1.ras"
+	@include "data/unroll2.ras"
+	@include "data/unroll3.ras"
+	@include "data/unroll4.ras"
+	@include "data/unroll5.ras"
+	@include "data/unroll6.ras"
+	@include "data/unroll7.ras"
+	@endblock*/
+var
+	curl,curRaster : byte=0;
+	
+
+	
+	maxFrames : byte=16;
+	zp : Pointer;
+//	sprtab : array[1024] of byte;
+
+
+
+
+procedure SetFrame(frame: global byte);
+begin
+	frame:=frame&15;
+	sp:=#screens1 + mul1000[frame];	
+
+end;
+
+/*procedure CopyColor();
+begin
+	case frame of
+		0 : unroll0_unroll();
+		1 : unroll1_unroll();
+		2 : unroll2_unroll();
+		3 : unroll3_unroll();
+		4 : unroll4_unroll();
+		5 : unroll5_unroll();
+		6 : unroll6_unroll();
+		7 : unroll7_unroll();
+	end;
+end;
+*/
+@startblock $2000 "Unrolled memcpy"
+
+
+procedure UpdateSingleFrame();
+begin
+	if (curCol2=4) then return;
+	i:=peek(^$01,0);
+	EnableAllRam();
+
+	memcpyunroll(sp,0,cp,110);
+//	asm(" inc sp+1 ");
+	sp:=sp+110;
+	cp:=cp+110;
+	poke(^01,0,i);	
+
+end;
+
+procedure UpdateSingleFrameLast();
+begin
+	if (curCol2=4) then return;
+	i:=peek(^$01,0);
+	EnableAllRam();
+
+	memcpyunroll(sp,0,cp,256);
+	asm(" inc sp+1 ");
+	asm(" inc cp+1 ");
+	memcpyunroll(sp,0,cp,256);
+	asm(" inc sp+1 ");
+	asm(" inc cp+1 ");
+	memcpyunroll(sp,0,cp,40);
+	poke(^01,0,i);	
+
+end;
+
+procedure UpdateRest();
+begin
+	i:=peek(^$01,0);
+	EnableAllRam();
+	//screen_bg_col:=blue;
+	memcpyunroll(sp,0,cp,256);
+	asm(" inc sp+1 ");
+	asm(" inc cp+1 ");
+//	memcpyunroll(sp,0,cp,40);
+	poke(^01,0,i);	
+//	screen_bg_col:=red;
+
+end;
+
+procedure UpdateFrame();
+begin
+	if (curCol2=4) then return;
+	i:=(frame>>2)&3;
+	if (i=0) then setcharsetlocation($1000);
+	if (i=1) then setcharsetlocation($1800);
+	if (i=2) then setcharsetlocation($2000);
+	if (i=3) then setcharsetlocation($2800);
+
+/*	i:=peek(^$01,0);
+	EnableAllRam();
+
+	memcpyunroll(sp,0,^@screenLoc,256);
+	asm(" inc sp+1 ");
+	memcpyunroll(sp,0,^@screenLoc+^256,256);
+	asm(" inc sp+1 ");
+	memcpyunroll(sp,0,^@screenLoc+^256*^2,256);
+		asm(" inc sp+1 ");
+//	end;
+	memcpyunroll(sp,0,^@screenLoc+^256*^3,232-4);
+	poke(^01,0,i);	*/
+end;
+
+
+var
+	curOutY : byte = 24;
+	
+procedure UpdateFinalColorsOut();
+begin
+	if (curOutY>250) then return;
+	if (trans<>1) then return;
+	if (curCol2<>4) then return;
+//	if (curColOut<>4) then dec(curColOut);
+	
+/*	zp:=$0400 + curOutY*40;
+	fill(zp,0,80);
+	zp:=$4400 + curOutY*40;
+	fill(zp,0,80);
+*/	
+	zp:=$D800 + curOutY*40;
+	fill(zp,2+8,40);
+
+	dec(curOutY);
+//	dec(curOutY);
+end;
+
+/*
+
+procedure UpdateFrame();
+begin
+	if (frame=4) then setcharsetlocation($1800);
+	if (frame=0) then setcharsetlocation($1000);
+//	copyfullscreen(sp,^$4400);
+	memcpyunroll(sp,0,^@screenLoc,256);
+	asm(" inc sp+1 ");
+	memcpyunroll(sp,0,^@screenLoc+^256,256);
+	asm(" inc sp+1 ");
+	memcpyunroll(sp,0,^@screenLoc+^256*^2,88);
+	sp:=sp+88;
+	inc(frame);
+//	maxFrames := 1;	
+	if(frame=maxFrames) then
+	begin
+		frame:=0;
+		sp:=#screens1;	
+		adde:=adde+1;
+//		if (adde2&1) then
+//		adde:=adde+1;
+		cp:=#col1;		
+	end;
+end;
+
+*/
+
+
+@endblock
+
+
+//@startblock $3400 "Code"
+procedure UpdateColors();
+begin
+
+	multicolor_char_col[2]:=Luminosities::fromBlack[curCol2];
+	multicolor_char_col[1]:=Luminosities::fromBlack[curCol1];;
+
+	sprite_multicolor_reg1:=Luminosities::fromBlack[curColSpr1];
+	sprite_multicolor_reg2:=Luminosities::fromBlack[curColSpr2];
+//	sprite_multicolor_reg2:=yellow;
+	fill(sprite_color,Luminosities::fromBlack[curColSpr3],8);
+
+	if (trans=0) then
+	begin	
+	if (curCol1<>31) then inc(curCol1);
+	if (curCol2<>17) then inc(curCol2);
+	
+	if (curColSpr3<>31) then inc(curColSpr3); // brown
+	if (curColSpr2<>15) then inc(curColSpr2); // yellow
+//	if (curColSpr1<>31) then inc(curColSpr1); // brown
+
+	end
+	else
+	begin
+	if (curCol1<>4) then dec(curCol1);
+	if (curCol2<>4) then dec(curCol2);
+
+	if (curColSpr3<>4) then dec(curColSpr3); // brown
+	if (curColSpr2<>4) then dec(curColSpr2); // yellow
+
+	end;
+
+end;
+
+
+
+
+/*
+procedure UpdateSpriteColors();
+begin
+	j:=time;
+	for i:=0 to 4 do
+	begin	
+		k:=Luminosities::fromBlue[(j+i)&31];
+		sprite_color[i]:=k;	
+		sprite_color[i+4]:=k;	
+	end;
+end;
+*/
+interrupt RasterNext();
+
+procedure UpdateSprites();
+begin
+	zp:=#sprData;
+	j:=sx + sine[time*2]>>2;
+	for i:=0 to 8 step 2 do
+	begin
+		zp[i]:=j;			
+		zp[i+8]:=j;			
+		zp[i+$11]:=j;			
+		zp[i+$11+8]:=j;			
+		zp[i+$11*2]:=j;			
+		zp[i+$11*2+8]:=j;			
+		j:=j+24;
+	end;
+end;
+
+interrupt Raster();
+begin
+	DemoUnit::StartDemoIRQ();
+	//screen_bg_col:=black;
+//	setbank(vic_bank1);
+//	screen_fg_col:=lumi[curl];
+	if (curl<>0) then dec(curl);
+	if (time&31=0) then curl:=12;
+	hidebordery(0);
+	hideborderx(0);
+	
+	@ifndef IS_DEMO
+//	call(SIDFILE_1_PLAY);
+//	if (time>128) then trans:=1;
+	@endif
+//	CopyColor();
+	UpdateColors();
+
+	UpdateFrame();
+	UpdateSprites();
+//	UpdateRest();
+	SetFrame(tt);
+	cp:=@screenLoc;
+	@ifdef IS_DEMO
+		call(^@callPos);
+		if (peek(^@transition,0)<8) then trans:=1;
+	@endif
+@ifndef IS_DEMO
+	if (time=128) then
+		trans:=1;
+
+@endif		
+	curRaster := 0;
+	spritep := #sprData;
+	locp := #sprLocs;
+
+	if (ww<>0) then dec(ww);
+	if (keypressed(KEY_SPACE)) then
+	begin
+		if (ww=0) then begin inc(wx); ww:=8; end;
+	end;
+
+	
+	RasterIRQ(RasterNext(),	rasterPos[curRaster],0);
+	inc(time);
+	tt:=-time;
+//	tt := sine[time]>>2 - time;
+
+//	waitforraster(240);
+//	UpdateSpritePos();	
+	DemoUnit::CloseDemoIRQ();
+end;	
+
+interrupt RasterNext();
+begin
+	DemoUnit::StartDemoIRQ();
+//	waitnoraster(1);
+	wait(1);
+	memcpyunroll(spritep,0,^$D000,$11);
+	memcpyunroll(locp,0,^$47f8,8);
+	spritep:=spritep+$11;
+	locp:=locp+8;
+	inc(curRaster);	
+//	screen_bg_col := curRaster;
+	if (curRaster<>3) then
+	begin
+		UpdateSingleFrame();		
+		RasterIRQ(RasterNext(),	rasterPos[curRaster],0);
+	end
+	else
+	begin
+		UpdateSingleFrameLast();		
+		UpdateFinalColorsOut();
+		RasterIRQ(Raster(),rasterStart,0);
+
+	end;
+/*	if (curRaster=2) then
+	begin
+//		screen_bg_col:=blue;
+		setbank(vic_bank0);
+	end;
+*/
+//	screen_bg_col:=curRaster;
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+
+
+procedure SetSpritePos();
+begin
+	zp := #sprLocs;
+	zp2 := #sprData;
+	n :=@spriteLoc/64;
+	y := sy;
+	sx:=120;	
+	for l:=0 to 3 do
+	begin
+		k:=0;
+		for j:=0 to 2 do
+		begin
+			ii:=sx;
+
+			for i:=0 to 4 do
+			begin
+				spritepos(ii,y,k);		
+				k:=k+1;
+				ii:=ii+24;
+			end;	
+			y:=y+21;
+		end;
+		for i:=0 to 8 do
+		begin
+			setspriteloc(i,n,1);
+			n:=n+1;
+		end;
+		memcpy(^$47f8,0,zp,8);
+		memcpy(^$d000,0,zp2,$11);
+		zp:=zp+8;
+		zp2:=zp2+$11;
+	end;
+
+	n :=@spriteLoc/64+4*4;
+	for i:=0 to 8 do
+	begin
+		setspriteloc(i,n,0);
+		n:=n+1;
+	end;
+
+end;
+
+var
+	spriteCol : array[8] of byte = 
+	(
+	blue, purple, cyan, blue,
+	blue, purple, cyan, blue);
+
+procedure InitSprites();
+begin
+	
+	fill(sprite_color,0,8);
+	sx := 100;
+//	SetSpritePos();
+	sprite_stretch_x:=0;
+	sprite_multicolor:=$ff;
+	
+	sprite_multicolor_reg1:=red;
+	sprite_multicolor_reg2:=red;
+	fill(sprite_color,red,8);
+	sprite_bitmask:=$ff;
+end;
+
+
+//@endblock
+
+begin
+	sp:=#screens1;
+	InitSprites();
+	SetSpritePos();
+	screen_bg_col:=black;
+	screen_fg_col:=red;
+	multicolor_char_col[2]:=red;
+	multicolor_char_col[1]:=red;
+	clearscreen(yellow+8,^$D800);
+	clearscreen(3,^$4400);
+	setbank(vic_bank1);
+	setmulticolormode();
+	setcharsetlocation(@charLoc1);
+@ifndef IS_DEMO
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	asm("
+		lda $01
+		sta @keepPos
+	");
+//	initsid(SIDFILE_1_INIT);	
+@endif
+//	fill(^$4400 + 1000-4,0,4);
+	sp:=#screens1;
+	//waitforverticalblank();
+	//SetFrame(0);
+	StartRasterchain(Raster(), rasterStart,0);
+
+	
+//	DemoUnit::Endd();	
+	DemoUnit::EnddClear();	
+
+end.

@@ -1,0 +1,844 @@
+program PetsciiAnimations;
+// The unit is accessible in the C64 Turbl Rascal Units project from the front page 
+@use "animation/animation"
+@use "tables/luminosities"
+@use "demounit"
+var  
+	 ii : integer;
+	trans,ss,t2,rtime,keep,sx,sy,shift,x,y,f,c,tmp,px,py,frame,i,j,k,l,m,curl2,curline,cury2,hasDrawn:byte=0;
+	curFg : byte = 17;
+	l_start: byte=0;
+	l_end : byte = 3;
+	const animPos : address = $5c00;
+	zp,zp2,sp : pointer;
+	curpos,curposCol : pointer;
+	const scrollStartRaster : byte = 246;	
+
+	text : cstring = "P R O X I M A   &   D E S I R E";
+
+// Images are imported using TRSE's petscii importer. Check out the .flf file!
+// You can create your own petscii animation frames by simply importing a .png or .jpg in the
+// TRSE image editor. 
+@export "images/petscii2.flf" "images/petscii_opening.trm" 2
+	sinx : 	array[256] of byte = buildtable( "((Math.sin((i)/256*3.14159*2)*0x7f/12 + 0x7f))") at $3b00;
+
+	anim: incbin("images/petscii_opening.trm",animPos);
+@ifndef IS_DEMO
+ music : incsid("../demo_system/music/moskou4.sid",2);
+@endif
+
+	time, val, color, colorShift : byte = 0;  
+	curcol:byte=2;
+	g_currentBank: byte = 0;
+	temp_colorCopy : array[40] of byte;
+@define sprloc1 $2400
+@define sprloc2 $5800
+
+@export "images/presents.flf" "images/presents.bin" 8
+	spr1 : incbin("images/presents.bin",@sprloc1);
+	spr2 : incbin("images/presents.bin",@sprloc2);
+
+@export "charsets/petscii.flf" "charsets/petscii.bin" 256
+
+	@donotremove charset
+	charset : incbin("charsets/petscii.bin",$1000+$4000);
+	g_vscroll : byte;
+
+//@define datap $2000
+//@define colp $2800
+
+@define datap1 $F800
+@define datap2 $3C00
+@define datap3 $4800
+@define colp $C200
+
+var	
+	const char : byte = 80;
+	pcols : array[3] of byte =(17,15,18);
+
+/*
+
+	SCROLL LOGO DATA
+
+*/
+
+	data : incbin("data/pet_screen.bin",$7000);
+//	tab : incbin("data/pet_table.bin",$BE00);
+
+	tab : incbin("data/pet_table.bin",$2800);
+	
+	izp : pointer of integer;
+	frameTab : array[64] of integer = BuildTable("(12*2*(i%63))+12*2"); 
+	letterTab : array[32] of integer = BuildTable("12*2*i*64");
+	cur,alldone : byte = 0;	
+	tab40: array[40] of integer = BuildTable("i*40");
+	tab48: array[256] of byte = BuildTable("(i/2)&63");
+	
+
+
+	cols : array[8] of byte = (
+//	brown, orange, green, yellow, light_green, green, orange,brown
+//	black, brown, green, green, green, green, brown, black
+//	black,black,black,black,black,black,black,black,black
+	green,green,green,green,green,green,green,green,green
+	);
+
+	particle = record
+		x,y,dx : byte;
+	end;
+
+	const nopart : byte=40;
+	pp : array[nopart] of particle;
+
+
+	curSprite: byte=0;
+
+const xsize : byte = 12;
+const ysize : byte = 12;
+const rpos: byte= 250;
+
+const temp: address = $Fc00;
+
+var
+ ll,st : byte;
+
+
+procedure Music();
+begin
+	@ifdef IS_DEMO
+		call(^@callPos);
+		
+	if (peek(^@transition,0)<8) then trans:=1;
+	
+	@endif
+	
+	@ifndef IS_DEMO
+	call(SIDFILE_1_PLAY);
+	DemoUnit::TimingTest();
+//	if (peek(^@transition,0)<8) then trans:=1;
+	@endif
+end;
+
+
+procedure SwitchBank();
+begin
+	if g_currentBank=0 then 
+		SetBank(VIC_BANK1)
+	else 
+		SetBank(VIC_BANK0);
+
+	g_currentBank:=(g_currentBank+1)&1;
+	inc(curline);
+end;
+
+procedure CopyColor( ul2_copycolor:byte );
+
+begin
+	 if ul2_copycolor=0 then begin
+		// First, copy the missing line
+		memcpyfast(screen_col_loc+^$208, 0, #temp_colorCopy, 40);
+		copyhalfscreen(screen_col_loc, screen_col_loc+^40,13, 1,1);
+	end
+	else begin 
+		copyhalfscreen(screen_col_loc+^14*^40 , screen_col_loc+^15*^40,10,1,1);
+		memcpyfast(#temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
+
+	end;
+end;
+
+// Copy screen data
+procedure CopyScreen(ul_:byte);
+begin
+
+	if g_currentBank=0  offpage then begin
+		if ul_=0 then
+			copyhalfscreen(screen_char_loc + ^520, screen_char_loc2 + ^40 + ^520,11, 1,1)
+		else
+			copyhalfscreen(screen_char_loc, screen_char_loc2 + ^40, 13, 1,1);
+
+	end;
+	if g_currentBank=1 offpage then begin
+		if ul_=0 then 
+			copyhalfscreen(screen_char_loc2+^520, screen_char_loc + ^40 + ^520, 11, 1,1)
+		else
+			copyhalfscreen(screen_char_loc2, screen_char_loc + ^40,13, 1,1);
+	end;
+
+end;
+
+
+
+/*
+	Main method. Increases the scroll value. 
+	Makes sure that various parts of the screen are copied
+	for various values of the scroll register (since copying all data + color data would be impossible).
+
+*/
+procedure VerticalScroll();
+begin
+		g_vscroll:=(g_vscroll+1)&7;
+
+		if g_vscroll=0 then begin
+//			WaitForRaster(150);
+			// Copy color data on scroll=0, but do it when the raster has passed
+		end;
+		
+		waitnoraster(1);
+		scrolly(g_vscroll);
+		if g_vscroll=0 then SwitchBank();
+		if g_vscroll=1 then CopyScreen(1);
+		if g_vscroll=4 then CopyScreen(0);
+		if g_vscroll=0 then begin
+			CopyColor(0);
+			CopyColor(1);
+		end;	
+
+//		waitForRaster(251);
+		waitnoraster(1);
+
+
+
+end;
+
+
+
+// Print a single line at the top of the screen on the current bank
+procedure PrintLine();
+begin
+
+	zp:=$0400;
+	if g_currentBank=0 then
+		zp:=zp + $4000;
+
+	
+	memcpyunroll(curpos,0,zp,40);
+	curpos := curpos - 40;
+	
+end;
+
+procedure PrintColorLine();
+begin
+
+	zp:=$0400;
+	if g_currentBank=0 then
+		zp:=zp + $4000;
+
+	
+	memcpyunroll(curpos,0,zp,40);
+	curpos := curpos - 40;
+	
+	fill(curposCol,yellow,20);
+	curposCol := curposCol + 20;
+
+end;
+
+// Raster update
+
+var
+	cury : integer = 2;
+
+procedure UpdateSprites();
+begin
+	j := 255;
+	ii:=100;
+	for i:=0 to 8 do
+	begin
+		spritepos(ii,j,i);	
+		ii:=ii+24;
+	end;
+end;
+
+procedure UpdateSpritesY();
+begin
+	j := time+8;
+	for i:=0 to 16 step 2 do
+	begin
+		poke(^$d001,i,j);
+//		spritepos(ii,j,i);	
+	end;
+end;
+
+procedure InitSprites();
+begin
+	sprite_bitmask:=$FF;
+	fill(sprite_color,white,8);
+	for i:=0 to 8 do setspriteloc(i,(@sprloc2)/64+i,1);		
+	for i:=0 to 8 do setspriteloc(i,(@sprloc1)/64+i,0);		
+	UpdateSprites();	
+	sprite_multicolor := 0;
+
+end;
+
+var
+	stadd : array[3] of byte = (7,3,5); 
+procedure RenderLetter(c,x,y,f,ss : global byte);
+begin
+//	sp := (@offscreen-40*size)+tab40[y] + x;		
+	sp := $0400;
+	if (g_currentBank=1) then sp:=sp+$4000;
+	sp := sp + tab40[y] + x;		
+	k:=0;
+//	cy := y;
+	y:=8;
+	k:=f;
+	ll:=0;
+	st:=(0-time)+x*4;;
+	
+	for i:=0 to ss do
+	begin
+//		if (y>=ysize and y<(25+ysize)) then
+		//begin
+		
+		k:=f + sinx[st];
+			izp := #tab + letterTab[c] +frameTab[k&63] + ll;
+			zp := #data + izp[0];
+			memcpyunroll(zp,0,sp,xsize);
+		//end;
+		sp:=sp+40;
+		izp:=izp+2;
+		y:=y+1;
+		ll:=ll+2;
+		st:=st+stadd[j];
+	end;
+
+end;
+
+var
+	heights : array[3] of byte = (250,240,230);
+
+procedure FillCols();
+begin
+	zp:=$D800+2;
+	for i:=0 to 16 do
+	begin
+		j := Luminosities::fromBlack[pcols[0]];
+		fill(zp,j,12);	zp:=zp+12;
+		j := Luminosities::fromBlack[pcols[1]];
+		fill(zp,j,12);	zp:=zp+12;
+		j := Luminosities::fromBlack[pcols[2]];
+		fill(zp,j,12);	zp:=zp+16;
+	end;
+
+end;
+
+var
+	curf : byte = 0;
+	posd8 : array[4] of integer=BuildTable("0xD800 + 2 + i*12+40*4");
+	
+procedure ClearCols();
+begin
+	if (curf>=3) then return;
+	
+	k:=pcols[curf];
+	if (pcols[curf]<>4) then dec(pcols[curf]) else begin inc(curf); return; end;
+	zp:=posd8[curf];
+	l_start := curf+1;
+	
+	j := Luminosities::fromBlack[pcols[curf]];
+//	if (curf=2) then fill(sprite_color,j,8);
+	for i:=0 to 12 do
+	begin
+		fill(zp,j,12);	zp:=zp+40;
+	end;
+
+end;
+
+var 
+	curSprCol : byte = 15;
+
+procedure ClearSprites();
+begin
+	if (curSprCol=1) then
+	begin
+		sprite_bitmask:=0;
+		return;
+	end;
+	j := Luminosities::fromBlack[curSprCol];
+	fill(sprite_color,j,8);
+	curSprCol := curSprCol-1;
+end;
+
+procedure UpdateRenderLetter();
+begin
+	l:=0-frame;
+	px:=2;
+	py:=4;
+//	if (l_start<l_end) then
+	for j:=0 to 3 do
+	begin
+		m:=heights[j];
+		if (m-4<127) then		
+		begin
+			m:=m-4;
+			if (m>12) then m:=12;
+			if (m>0 and j>=l_start) then
+			RenderLetter(j, px,py,tab48[l],m);
+//			moveto(0,1,04);
+//			printdecimal(l_start,2);
+		end;
+		if (time&3=0) then
+			if (heights[j]<>32) then inc(heights[j]);
+			
+	
+/*		if trans=1 then
+		if (time&3=0) then
+			if (heights[j]<>250) then dec(heights[j]);*/
+		l:=l+3;
+		px:=px+xsize;
+	end;	
+		if (trans=1) then
+		begin
+			ClearCols();
+		end;
+
+	alldone := 1;	
+	
+end;
+
+procedure UpdateCounters();
+begin
+//if (cur=0) then
+//		sy:=sy+1;
+	tmp := 7-(sy)&7;
+	
+	if (sy=ysize*8) then
+	begin
+		sy:=0;
+		shift:=shift+(3*(40/xsize));
+	end;
+	frame:=frame+1;
+//	if (frame>250) then frame:=00;
+	
+end;
+
+
+procedure UpdateText();
+begin
+	UpdateCounters();
+
+	UpdateRenderLetter();
+end;
+
+
+
+procedure UpdateSubTextFade();
+var
+	copied : byte= false;
+	curTextCol:byte = 4;
+	curTextTar : byte = 4;
+	const pos : integer = 40*20+4;
+
+begin
+	if (trans=1) then curTextTar := 3;
+	if (curTextCol=curTextTar) then return;
+	
+	j:=Luminosities::fromBlack[curTextCol];
+	if (curTextCol>curTextTar) then dec(curTextCol);
+	if (curTextCol<curTextTar) then inc(curTextCol);
+	fill(^$D800+pos,j,36);
+	if (copied = false) then
+	begin
+		memcpy(#text,0,^$0400 + pos,31);
+	end;
+end;
+
+interrupt RasterLogo();
+var ri,t3 : byte;
+begin
+	DemoUnit::StartDemoIRQ();
+	scrolly(3);
+	hidebordery(0);
+	Music();
+	@ifndef IS_DEMO
+//	if (time>250) then trans:=1;
+
+		if (t3=46) then trans:=1;
+		
+	@endif	
+	if (t3>8) then ClearSprites();
+	UpdateText();	
+	if (t3=36) then
+		curTextTar := 16;
+		
+	UpdateSubTextFade();
+			
+	inc(rtime);
+	inc(time);
+	if (time&7=0) then inc(t3);
+
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+
+
+
+
+procedure RenderNext(ssp,ccp:pointer;trm_data_width, trm_xpos, trm_ypos:byte);
+var
+   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
+   trm_s : pointer;
+begin
+	
+	trm_m:=0;
+	Animations::trm_zp := Animations::trm_zp + 1;
+	trm_i:=Animations::trm_zp[0];
+
+	trm_dw:=trm_data_width;
+	trm_sw:=screen_width-trm_dw;
+	
+	for trm_pass:=0 to 2 do begin
+		case trm_pass of
+			0:	trm_s:=ssp+trm_xpos;
+			1:	trm_s:=ccp+trm_xpos;
+		end;
+	trm_s:=trm_s+screen_width*trm_ypos;
+	while (Animations::trm_zp[0]<>Animations::trm_endChar) do begin
+		if (Animations::trm_zp[0] = Animations::trm_skipChar) then begin
+			trm_s := trm_s + Animations::trm_zp[1]; 
+			Animations::trm_zp:=Animations::trm_zp+2; 
+		end
+		else 
+		begin
+			trm_s[0]:=Animations::trm_zp[0];
+			trm_s := trm_s + 1;
+			Animations::trm_zp:=Animations::trm_zp+1; 
+		end;
+//		g0:=zp[0];
+
+	end;
+	Animations::trm_zp:=Animations::trm_zp+1; //inczp(zp,1);
+//	g0:=0;
+	end;
+
+	if (Animations::trm_hasTimeStamps) then Animations::trm_zp:=Animations::trm_zp+1;
+
+	inc(Animations::trm_curFrame);
+/*	if (Animations::trm_curFrame=Animations::trm_maxFrames) then 
+	begin
+		Animations::trm_curFrame:=0;
+		Animations::trm_zp:=int2ptr(Animations::trm_orgPos+7);
+
+	end;*/
+end;
+
+@define charsetLoc $2800
+
+
+var 
+	contScrollDone : byte =0;
+
+interrupt ContinueScroll();
+
+begin
+	DemoUnit::StartDemoIRQ();
+	//if (curline<25) then
+	//else begin hidebordery(0);scrolly(0); end;
+	if (curcol=28) then 	hideBorderY(0);
+	Music();	
+	time:=time+1;
+	if (time&15=0) then inc(t2);
+	
+	if (curline<26) then
+	begin
+		hideBorderY(1);
+		VerticalScroll();
+		UpdateSpritesY();
+		if (curline=25) then if (g_vscroll=3) then curline := 26;
+		
+	// Only print a new color line when scrolling index is 0
+/*	if g_vscroll=0 then 
+		printColor();
+	*/	
+	// Only print a new line when scrolling index is 7
+
+		if g_vscroll=7 then 
+			PrintColorLine();
+
+	end
+	else
+		begin
+//			RasterIRQ(RasterColorChange(),0,0);
+			waitnoraster(1);
+			wait(9);
+			screen_bg_col:=Luminosities::fromBlack[curcol];
+			if (curcol<>31) then inc(curcol);
+			RasterIRQ(ContinueScroll(),0,0);
+
+		end;
+		
+//	if (t2>25) then ClearSprites();
+	if (t2>26) then contScrollDone := true;
+	if (t2>22 and curFg<>3) then
+	begin
+		i:=Luminosities_fromBlack[curFg];
+		dec(curFg);
+		fill(^$D800,i,250);
+		fill(^$D800+250,i,250);
+		fill(^$D800+250+256,i,40);
+	end;	
+	if (contScrollDone) then
+	begin 
+	//	preventirq();
+		RasterIRQ(RasterLogo(),0,0);
+		clearscreen(key_space,^$0400);
+		clearscreen(key_space,^$4400);
+//		fill(^$4400+1000,1,40);		
+		FillCols();
+		
+	//	enableirq();
+//		enablerasterirq();*/
+	end;
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+interrupt RasterAnim();
+begin
+	DemoUnit::StartDemoIRQ();
+	screen_bg_col:=red;
+	screen_fg_col:=red;
+/*	if (g_currentBank=1) then
+	begin
+		CopyFullScreen(^$4400,^$0400);
+		SwitchBank();
+	end;*/
+	setbank(VIC_BANK1);	
+	
+	
+	//if (hasDrawn) then	
+		Music();	
+	
+	if (time=31 and hasDrawn = false) then 
+	begin
+//		Animations::RenderNextPackedFrameCompressionType2($4400,screen_width,0,0);
+		copyfullscreen(^@colp + 1000,^$D800);
+	end;
+	if (time=32 and hasDrawn = false) then 
+	begin
+		copyfullscreen(^@datap2,^$4400);
+		hasDrawn := true;
+	
+	end;
+
+	if (time=128) then
+	begin
+		curline := 0;
+		curpos := @datap3 + 1000-40;
+		curposCol := $d800;
+		t2:=0;
+		RasterIRQ(ContinueScroll(),scrollStartRaster+2,0);
+		time:=0;
+	end;
+	inc(time);
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+interrupt RasterColorChange();
+begin
+	DemoUnit::StartDemoIRQ();
+	screen_bg_col:=red;
+	screen_fg_col:=red;
+	if (cury<255) then
+	begin
+		waitnoraster(cury);
+		wait(10);
+	end
+	else
+	begin
+		waitnoraster(255);
+		if (cury<>0) then
+			waitnoraster(cury-255);
+		waitnoraster(1);
+		wait(9);
+		
+	end;
+	screen_bg_col:=light_blue;
+	screen_fg_col:=blue;
+	Music();	
+	cury:=cury+2;
+	inc(cury2);
+	if (cury>290) then
+	begin
+		RasterIRQ(RasterAnim(),0,0);	
+//		InitSprites();
+//		CopyFullScreen(^$4400,^$0400);
+//		RasterIRQ(RasterLogo(),0,0);
+		time:=0;
+	end;	
+	j:=cury2;
+	if (cury>50) then
+	begin
+		if (j&3=0) then
+		begin
+			if (curl2<25) then
+				inc(curl2);
+		end;
+		if (curl2<25) then
+		begin
+			i:=(j&3)*2+1;
+			zp:=$D800 + 40*curl2;
+			k:=Luminosities::fromBlack[i+8];
+			fill(zp,k,40);
+		end;
+	end;
+	DemoUnit::CloseDemoIRQ();
+end;
+
+interrupt Update();
+
+begin
+	DemoUnit::StartDemoIRQ();
+	hideBorderY(1);
+	Music();	
+	time:=time+1;
+
+	if (curline<25) then
+	begin
+
+		VerticalScroll();
+		
+	// Only print a new color line when scrolling index is 0
+/*	if g_vscroll=0 then 
+		printColor();
+	*/	
+	// Only print a new line when scrolling index is 7
+	if g_vscroll=7 then 
+		PrintLine();
+
+
+	end
+	else
+		begin
+			RasterIRQ(RasterColorChange(),0,0);
+		end;
+	
+	DemoUnit::CloseDemoIRQ();
+end;
+
+procedure ConvertScreen();
+begin
+		zp:=$0400+40*24;
+		zp2:=@datap1+40*24;
+		waitforraster(0);
+		for j:=0 to 25 do
+		begin
+	for i:=0 to 255 do
+	begin
+//			if (i&3=0) then
+//				waitforraster(0);
+			asm("
+				ldy #0
+topp1:				
+				lda (zp2),y
+				cmp (zp),y
+				beq t_cont
+				clc
+				lda #1
+				adc (zp),y
+				sta (zp),y
+						
+t_cont:
+				iny
+				cpy #40
+				bne topp1
+			");
+			
+		end;
+			zp:=zp-40;
+			zp2:=zp2-40;
+		
+	end;
+end;
+
+var
+
+	tt1 : cstring = " IN SOVIET RUSSIA      ";
+	tt2 : cstring = "  DEMO MAKES YOU";
+
+procedure QuickStart();
+begin
+	zp:=$0400 + 40*12 + 8;
+	sp := #tt1;
+	for i:=0 to 42 do
+	begin
+		zp[0] := sp[0];
+		zp:=zp+1;
+		sp:=sp+1;
+		if (sp[0]=0) then
+		begin
+			sp:=#tt2;
+		zp:=$0400 + 40*15 + 8;
+		end;
+		for j:=0 to 9 do waitforraster(0);
+	end;
+//		for j:=0 to 30 do waitforraster(0);
+end;
+
+interrupt Empty();
+begin
+	DemoUnit_StartDemoIRQ();
+	
+	Music();
+	DemoUnit_CloseDemoIRQ();
+end;
+
+
+
+begin
+//	screen_bg_col:=black;
+//	screen_fg_col:=black;
+
+	@ifndef IS_DEMO
+	
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	i := peek(^$01,0);
+	poke(^@keepPos,0,i);
+	initsid(SIDFILE_1_INIT);	
+	
+	@endif
+	
+//	StartRasterChain(RasterLogo(), scrollStartRaster,0);
+//	Loop();
+
+	Animations::ReadAnimationHeader(#anim);
+	RenderNext(@datap1, @colp, screen_width,0,0);
+	copyfullscreen(^@datap1,^@datap2);
+	copyfullscreen(^@colp,^@colp+1000);
+	RenderNext(@datap2, @colp+1000, screen_width,0,0);
+	copyfullscreen(^@datap2,^@datap3);
+	copyfullscreen(^@colp+1000,^@colp+2000);
+	RenderNext(@datap3, @colp+2000, screen_width,0,0);
+/*	Animations::RenderNextPackedFrameCompressionType2($0400,screen_width,0,0);
+	for j:=0 to 50 do
+	for i:=0 to 255 do wait(200);
+	Animations::RenderNextPackedFrameCompressionType2($0400,screen_width,0,0);
+	for j:=0 to 50 do
+	for i:=0 to 255 do wait(200);
+	Animations::RenderNextPackedFrameCompressionType2($0400,screen_width,0,0);
+	for j:=0 to 50 do
+	for i:=0 to 255 do wait(200);
+	Animations::RenderNextPackedFrameCompressionType2($0400,screen_width,0,0);
+	loop();
+	*/
+
+
+//	ConvertScreen();
+	curpos := @datap1+24*40;
+	curposCol := @colp+24*40;
+	InitSprites();
+//	waitforraster(255);
+	StartRasterChain(Empty(), 0,0);
+	QuickStart();
+	setcharsetlocation($1000);
+
+
+//	StartRasterChain(Update(), scrollStartRaster,0);
+	RasterIRQ(Update(), scrollStartRaster,0);
+	poke(^@curBorderY,0,0);
+	DemoUnit::EnddClear();
+//	DemoUnit::Endd();
+end.

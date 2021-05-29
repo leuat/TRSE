@@ -1,0 +1,526 @@
+program MyProgram;
+@use "demounit"
+@use "tables/luminosities"
+var  
+   rtime,b,i,j,k,l,m,o,ra,time,s1,s2,s3,s4,balle,t,line,shift,cur,tt,ccnt,curColFade,trans: byte = 0; 
+   iout : byte;
+   sine2 : array[256] of byte;
+@define noData 11
+	xdata : array[@noData*16] of byte;
+	curLine,clearCnt : byte = 0;
+	border : array[100] of byte = 
+	(0,0,0,0,6,6,3,6,3,6,3,3,7,3,7,7,7,1,3,3,6,3,6,3,6,6,0,0);
+	
+	lumi:  array[34] of byte = ($00,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+	sprStart : byte =0;
+
+
+	targetColors: array[10] of byte = (12, 10,8,6 ,  12, 10,8,6,   13, 1   );
+	currentColours: array[10] of byte = (0,0,0,0,0,0,0,0,0,0 );
+	cols: array[256] of byte;
+//	cols2: array[256] of byte;
+@donotremove b
+		per : incbin("data/ak47_screen.bin");
+
+
+
+@export "images/ded.flf" "images/poster1.bin" 256
+
+    colPos : incbin("images/poster1_color.bin", $3000);
+    balle_data : incbin("images/poster1_data.bin", $6000);
+
+	tp,zp,sp,zp2,zp3,zp4: pointer;
+	jj,ii,curCol : byte = 0;
+
+
+@define start 30
+
+@define sstep 21
+	sprite : incbin("data/twist.bin", $5000);
+	
+@ifndef IS_DEMO
+ music : incsid("../demo_system/music/moskou.sid",2);
+@endif
+
+procedure SetSprites(b:byte);
+begin
+	for i:=0 to 8 do 
+	begin
+		setspriteloc(i,$1000/64+b,1);
+		b:=(b+7)&31;
+	end;
+end;
+
+	
+procedure InitSprites();
+begin
+	sprite_bitmask:=$00;
+	/*sprite_color[0]:=cyan;
+	sprite_color[4]:=cyan;
+	
+	sprite_color[1]:=green;
+	sprite_color[5]:=green;
+	
+	sprite_color[2]:=light_blue;
+	sprite_color[6]:=light_blue;
+	
+	sprite_color[3]:=orange;
+	sprite_color[7]:=orange;
+	*/
+	fill(sprite_color,black,8);
+	for i:=0 to 4 do
+		setspriteloc(i,$1000/64,1);
+	for i:=0 to 4 do
+		setspriteloc(i+4,$1000/64,1);
+	sprite_multicolor:=$FF;
+	sprite_multicolor_reg2:=yellow;
+	sprite_multicolor_reg1:=blue;
+	
+	sprite_multicolor_reg2:=black;
+	sprite_multicolor_reg1:=black;
+
+end;
+
+
+procedure InitData();
+begin
+	zp:=#xdata;
+	k:=time*4;
+//	j:=34;
+	for i:=0 to @noData do
+	begin
+		zp[1] := j;
+		zp[3] := j;
+		zp[5] := j;
+		zp[7] := j;
+		j:=j+@sstep/2+1;
+		
+		zp[9] := j;
+		zp[11] := j;
+		zp[13] := j;
+		zp[15] := j;
+		j:=j+@sstep/2;
+		
+		zp:=zp+16;
+	end;
+	zp:=#xdata;
+end;
+
+
+procedure CalcData();
+  
+begin
+	zp:=#xdata;
+	tt:=time+cur;
+	k:=tt*2;
+//	l:=0-tt*3;
+//	t:=sine[k]/4-40;
+	t:=0;
+	j:=@start+shift;
+	for i:=0 to @noData do
+	begin
+		zp[1] := j;
+		zp[3] := j;
+		zp[5] := j;
+		zp[7] := j;
+		j:=j+@sstep/2+1;
+		
+		zp[9] := j;
+		zp[11] := j;
+		zp[13] := j;
+		zp[15] := j;
+		j:=j+@sstep/2;
+		
+
+	
+		zp[0] := sine2[k];
+		zp[2] := sine2[k+s2];
+		zp[4] := sine2[k+s3];
+		zp[6] := sine2[k+s4];
+		k:=k+2;
+		zp:=zp+8;
+		zp[0] := sine2[k];
+		zp[2] := sine2[k+s2];
+		zp[4] := sine2[k+s3];
+		zp[6] := sine2[k+s4];
+		k:=k+1;
+//		l:=l+4;
+		zp:=zp+8;
+	end;
+	zp:=#xdata;
+end;
+
+procedure UpdateColours();
+begin
+//	if (time&1<>0) then
+	//	return();
+	if (ccnt>16) then return();
+	ccnt:=ccnt+1;
+	for i:=0 to 10 do
+	begin
+		if (currentColours[i]<targetColors[i]) then
+			currentColours[i]:=currentColours[i]+1;
+		if (i<8) then
+			sprite_color[i]:= lumi[currentColours[i]];
+	end;
+	sprite_multicolor_reg2:= lumi[currentColours[8]];
+	sprite_multicolor_reg1:= lumi[currentColours[9]];
+
+	sprite_bitmask:=$ff;
+
+end;
+
+
+interrupt Raster();
+begin
+	startirq(0);
+	if (ra>=234) then
+	begin
+		dec(shift);
+
+		if (shift=255) then
+		begin
+			shift:=21;
+			cur:=cur+2;
+		end;
+//		shift:=mod(0-time,21);
+		ra:=30+shift;
+		inc(time);	
+//		screen_bg_col:=green;
+		if (sprStart>=2) then 
+			UpdateColours();
+		CalcData();
+		
+			
+		inc(sprStart);
+
+
+//		InitData();		
+//		s2:=s2-1;
+		s3:=s3+1;
+		s4:=s4+1;
+//		balle:=0;
+//		if (curLine<250) then inc(curLine);
+	//	screen_bg_col:=yellow;
+	@ifdef IS_DEMO
+		call(^@callPos);
+	@endif
+	hideborderx(0);
+@ifndef IS_DEMO
+	call(SIDFILE_1_PLAY);
+@endif
+		//screen_bg_col:=0;
+	
+
+		line:=0-time;
+//		inc(^$D020);
+	end;
+//	if (balle=19) then 	UpdateColours();
+	inc(balle);
+	ra:=ra+@sstep;
+	asm("
+		sta $d012
+	");
+//	RasterIRQ(Raster(),ra,0);
+	line:=line+2;
+	memcpyunroll(zp,0,^$D000,16);
+	zp:=zp+16;
+	b:=line&31;
+	for i:=0 to 8 do 
+	begin
+		setspriteloc(i,$1000/64+b,1);
+		b:=(b+7)&31;
+	end;
+	
+//	SetSprites(line&31);
+//	waitnoraster(1);
+//	wait(3);
+//	SCREEN_FG_COL:=BLACK;
+	//if (ra<curLine) then sprite_bitmask:=0 else sprite_bitmask:=$ff;
+	hidebordery(1);
+	closeirq();
+end;
+//@define colPos $3000
+// Initialize colors
+procedure InitCols2();
+begin
+	for i:=0 to 64 do begin
+		j:=i+24;
+		cols[i]:=(Luminosities::fromBlack[j&31] &$0F);// | (fromBlack[(j)&31]&$F0) ;
+	end;
+/*	for i:=0 to 256 do
+	begin
+		j:=i+64;
+		cols2[i]:=(Luminosities::fromBlack[j&31] &$0F);// | (fromBlack[(j)&31]&$F0) ;
+	
+	end;*/
+end;
+
+procedure UpdateColorsIn();
+begin
+	// moveto
+	screenmemory:=$4400;
+	tp:=$D800;
+	zp:=#colPos+2;
+	sp:=#per;
+	zp2:=#colPos+2 + 1000;
+	for jj:=0 to 10 do begin
+		for ii:=0 to 100 do begin
+			asm("
+
+			ldy ii
+			lda (sp),y
+			sbc curColFade
+			sta $50
+			cmp #8
+			bcs cont2
+			tax
+			lda cols,x
+;			lda #6
+			sta (screenmemory),y
+			sta (tp),y
+			jmp jadda
+			
+cont2:		;lda $50
+			cmp #220
+			bcc jadda
+			lda (zp),y
+			sta (screenmemory),y
+			lda (zp2),y
+			sta (tp),y
+
+jadda:
+			
+");
+/*			k:=(sp[ii] - curCol);
+			if (k<64) then begin
+				screenmemory[ii] := cols[k];
+			end else
+			if k>240 then begin
+				screenmemory[ii] := zp[ii];
+				tp[ii]:=zp2[ii];
+			end;
+*/
+					
+		end;
+		zp:=zp+100;
+		zp2:=zp2+100;
+		screenmemory:=screenmemory+100;
+		sp:=sp+100;
+		tp:=tp+100;
+	end;
+	
+//	if (time&3=0) then if curCol<16 then inc(curCol);
+end;
+
+
+procedure UpdateColorsOut();
+begin
+	// moveto
+	screenmemory:=$4400;
+	tp:=$D800;
+	zp:=#colPos+2;
+	sp:=#per;
+	zp2:=#colPos+2 + 1000;
+	for jj:=0 to 10 do begin
+		for ii:=0 to 100 do begin
+			asm("
+
+			ldy ii
+			lda (sp),y
+			adc curColFade
+			sta $50
+			cmp #4
+			bcs cont2o
+			tax
+			lda cols,x
+;			lda #6
+			sta (screenmemory),y
+			sta (tp),y
+			jmp jadda_o
+			
+cont2o:		;lda $50
+			cmp #220
+			bcc jadda_o
+			lda #0
+			sta (screenmemory),y
+			sta (tp),y
+
+jadda_o:
+			
+");
+/*			k:=(sp[ii] - curCol);
+			if (k<64) then begin
+				screenmemory[ii] := cols[k];
+			end else
+			if k>240 then begin
+				screenmemory[ii] := zp[ii];
+				tp[ii]:=zp2[ii];
+			end;
+*/
+					
+		end;
+		zp:=zp+100;
+		zp2:=zp2+100;
+		screenmemory:=screenmemory+100;
+		sp:=sp+100;
+		tp:=tp+100;
+	end;
+	
+//	if (time&3=0) then if curCol<16 then inc(curCol);
+end;
+
+
+begin
+	definescreen();
+@ifndef IS_DEMO
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	initsid(SIDFILE_1_INIT);
+@endif
+	hideborderx(0);
+	@ifdef IS_DEMO
+	poke(^@curBorderY,0,1);	
+	@endif
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	setbank(VIC_BANK1);
+	clearscreen(0,^$4400);
+	clearscreen(0,^$D800);
+	VIC_DATA_LOC:=$18;
+//	poke(^$D01b,0,$FF);
+	setbitmapmode();
+	setmulticolormode();
+	curCol:=120;
+	sprite_bitmask:=0;
+	hidebordery(1);
+	InitCols2();
+	while curColFade<190 do
+	begin
+		UpdateColorsIn();
+		waitforverticalblank();
+		curColFade:=curColFade+4;
+	end;
+	sprite_stretch_x:=0;
+	sprite_stretch_y:=0;
+	//copyimagecolordata(^$3000,1);
+//	clearscreen(key_space, ^$4400);
+	for i:=0 to 0 do sine2[i]:=sine[i]/2 + 30;
+//	sprite_stretch_y:=$FF;
+//	sprite_stretch_x:=$FF;
+
+	InitSprites();
+	j:=@start;
+	InitData();
+	CalcData();
+	s1:=0;
+	s2:=64;
+	s3:=128;
+	s4:=192;
+	ra:=16;
+	zp:=#xdata;
+//	disableciainterrupts();
+	//setmemoryconfig(1,0,0);
+//	waitforverticalblank();
+	sprite_bitmask:=0;
+	poke(^$D010,0,0);
+	
+//	DemoUnit::EnddClear();	
+	zp3:=#sprite;
+	trans:=false;
+//	sprite_bitmask:=255;
+	
+	waitforraster(240);	
+	StartRasterChain(Raster(),0,0);
+	setbitmapmode();
+	setmulticolormode();
+	hidebordery(1);
+	while (true) do
+	begin
+/*		@ifndef IS_DEMO
+		if (time>64) then trans:=true;
+		@endif		
+*/		
+		waitforraster(240);
+	//	hidebordery(1);
+//		waitnoraster(1);
+			
+		if (trans=1) then
+		begin
+			if (clearCnt<32) do
+			begin
+				fill(zp3,0,64);
+				zp3:=zp3+64;
+				clearCnt:=clearCnt+1;
+				if (clearCnt=32) then begin
+//					PreventIRQ();
+					waitforraster(250);
+					DemoUnit::curBorderY:=1;
+					RasterIRQ(DemoUnit::RasterClear(),0,0);
+					curColFade := 190;
+				end;
+			end
+			else
+			begin
+				if (curColFade>10) then
+				begin
+					curColFade:=curColFade-4;
+					UpdateColorsOut();
+				end;							
+			end;
+		end;
+
+		@ifndef IS_DEMO
+			inc(rtime);
+//			screen_bg_col:=rtime;
+			
+			if (rtime>4) then
+			begin
+			sprite_bitmask:=0;
+			clearscreen(black,^$D800);
+			clearscreen(black,^$4400);
+			RasterIRQ(DemoUnit::RasterClear(),0,0);
+			waitforraster(0);
+			setcharsetlocation($1000);
+			settextmode();
+			
+//			setregularcolormode();
+			setbank(vic_bank0);
+			clearscreen(key_space,^$0400);
+			loop();
+			end;
+
+		@endif 
+
+	
+		@ifdef IS_DEMO
+		//call(^@outerCall);
+		j:=peek(^@transition,0);
+		if (j>1 and j<=22) then trans:=true;
+	//	if (peek(^@transition,0)=22) then trans := true;
+
+
+		asm(" 
+			jsr @outerCall
+			beq pp_cnt2
+			");
+			RasterIRQ(DemoUnit::RasterClear(),0,0);
+			waitforraster(0);
+			setcharsetlocation($1000);
+			settextmode();
+			setregularcolormode();
+			setbank(vic_bank0);
+			clearscreen(key_space,^$0400);
+//			setregularcolormode();
+	
+			asm("
+			jmp $810
+pp_cnt2:
+		
+		");
+	//	inc(^$D020);
+		@endif
+	//	waitforverticalblank();
+	end;
+
+end.

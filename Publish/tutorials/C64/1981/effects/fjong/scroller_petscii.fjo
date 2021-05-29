@@ -1,0 +1,223 @@
+upp = 00.4
+str = 1
+
+globals = {
+	camera = { x = 0.5, y=0.20, z=6.0 },
+	fov = 19, 
+	target = { x = 0.5, y=0.20, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=0, y=upp, z=2 }, 
+				color = {x=str, y=str, z=str}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 0,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+--	resolution = { width = 10*8, height=10*8},
+	resolution = { width = 8*12, height=8*12},
+--	output_type = 7, -- charset type
+	output_type = 7, -- charset type
+	charset = "charsets/petscii_limit.flf",
+	ignorechars = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31},
+--	charset = "charsets/petscii.flf",
+--	charset = "rom",
+--	charset = "charsets/main.flf",
+--	charset = "charsets/charset.bin",
+--	charset = "charsets/petscii_limit.flf",
+--	charset = "charsets/charset.bin",	
+	c64_multicolor = 0,
+	c64_imageType = 0, -- charset type image
+	dither = 2,
+	aspect = 0.85,
+	ditherStrength = { x = 14, y= 2, z= 2},
+	index_colors = { 0,4 }
+}
+
+m1 = 0.5
+Material0 = {
+   color = { x=m1, y=m1, z=m1 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0
+}
+
+c = 1.2
+Material2 = {
+	color = { x=c, y=c, z=c },
+	reflection = 0.0,
+	shininess = 60,
+	shininess_intensity = 1 
+
+}
+
+
+GroundMaterial = {
+	color = { x=0.9, y=0.9, z=0.1 },
+	reflection = 0.0,
+	shininess = 400,
+	shininess_intensity = 0 
+
+}
+
+
+-- Init is called on start  
+
+
+ 
+function Init()
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.2,0.2, 3 )
+--  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,12,0.5 )
+
+--	font = "charsets/fantasy.flf"
+--	font = "charsets/kofler.bin"
+--	font = "charsets/romplus.flf"
+	font = "rom"
+
+	z = 0
+	x = -0.4
+	y = 0
+	w = 0.75
+	w = 0.5
+	if (char==1) then w=w*0.4 end
+--	if char~=25 then
+	text = {16,38,4}
+	--c = string.sub(text,char+1,char+2)
+	--c2 = string.byte(c)-64
+	c2 = text[char+1]
+	AddObject("char","char1", "", "Material2",  font, c2,   
+x,y,-z,            -- position
+0.55,0.6,0.0,      -- width xyz 
+w,0.31,0.27  -- stretch xyz
+);          
+
+
+--[[
+	AddObject("char","char2", "", "Material2",  font, char+1,   
+0,0,z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+]]--
+--	jj = sin(char+1)*10
+	jj = 0
+	SetRotation("char1",0,45,jj);
+
+--	AddObject("box","box2","","Material0", 0,0,0  , 10, 2 ,0.1);
+
+	--SetRotation("char2",0,45+90,jj);
+
+--	end
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/(noFrames))*3.14159*2+3.1415/2;--*2 
+--  	t = t*0.50 + 3.1415/2
+	r = 12
+	r = 13
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+--	globals.up.x = sin(t)
+--	globals.up.y = cos(t)
+--	globals.up.z = 0
+--	globals.up.x = 0
+--	globals.up.y = 1
+--	globals.up.z = 0
+--	t=t+3.14159/4
+--[[	
+	if (frame<16) then
+		t=0.3
+	else
+		t=-0.3
+	end
+--	t=t
+]]--
+	--t =  0--3.14/2
+ 	dt = 0.0
+ 	ll = str
+	t = t -dt
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+--    SetLight(0,  sin(t), 0,  cos(t),   ll,ll,ll)
+
+	t = t +dt*2
+
+--    SetLight(1,  sin(t), -upp,  cos(t),   ll,ll,ll)
+ --   SetLight(2,  sin(t), upp,  cos(t),   ll,ll,ll)
+	t = t -dt*2
+  --  SetLight(3,  sin(t), -upp,  cos(t),   ll,ll,ll)
+
+
+--[[	SetRotation("char1",0,(t*180+90),0);
+	SetRotation("char2",0,(t*180+90),0);
+	SetRotation("cyl1",0,(t*180+45)*2,0);
+	t=t*3.14159*2;
+	r=1
+	SetPosition("char1",cos(t)*r,0,sin(t)*r);
+	t=t+3.14159
+	SetPosition("char2",cos(t)*r,0,sin(t)*r);
+--	SetPosition("char1",0,0,0);
+]]--
+
+end
+
+
+function Update()
+	
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+		if char == 3 then 
+--			globals.isPaused = 1
+		CompressAndSaveHorizontalData(output.resolution.width/8 ,1, "data/pet_screen.bin","data/pet_table.bin");
+--			SaveRawData("data/pal.bin");
+		--	CompressAndSaveHorizontalData(6,2, "data/screen_sprite.bin","data/table_sprite.bin");
+
+
+
+			Message("Files written")
+			
+		end
+		ClearAllObjects()
+		Init()
+	end
+
+	UpdateGraphics()
+	frame=frame+1
+	--AddScreenPetscii();
+--	if (frame>0) then
+	AddC64FullScreen();
+--	end
+--    AddScreenData() 
+
+--	if (frame ~= noFrames) then 
+--		AddC64LineToData(0,0,6,21)
+--	end
+	
+
+
+end

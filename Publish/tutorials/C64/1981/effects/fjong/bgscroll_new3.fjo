@@ -1,0 +1,268 @@
+globals = {
+	camera = { x = 0, y=0, z=2 },
+     fov = 90,
+	target = { x = 0, y=1.0, z=0 },
+	
+-- 	camera = { x = 0, y=0, z=10 },
+--     fov = 40,
+--	target = { x = 0, y=5.0, z=0 },
+
+
+	light0 = {   	direction = {x=-0.5, y=2.2, z=0.60 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.8, y = 0.0, z = 0.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=1, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+	resolution = { width = 160, height=200},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	output_type = 1,
+	c64_multicolor = 1,
+	c64_imageType = 0,
+	dither = 2,
+	ditherStrength = { x = 0, y= 1, z= 1},
+
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,0,0,6 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialWhite = {
+   color = { x=2, y=2, z=2 },
+	reflection = 0.9,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialGreen = {
+   color = { x=0, y=1, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 8
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+text = "PRX"
+
+cur = 0
+
+charname = "char"
+
+scale = 1
+
+function Init()
+
+	w = -0.06
+	xx = -0
+	--[[
+	AddObject("cylinder","d1","","MaterialBlack",0,0,0+xx, 0.4,0,0.15);
+	SetRotation("d1",0,0,90);
+
+	AddObject("box","l1","","MaterialBlack",w,-2.5,-1.8+xx, 0.11,0.01,0.6);
+	AddObject("box","l2","","MaterialBlack",w,-2.0,-1.8+xx, 0.11,0.01,0.6);
+	AddObject("box","l3","","MaterialBlack",w,-1.5,-1.8+xx, 0.11,0.01,0.6);
+
+	AddObject("box","ll1","","MaterialBlack",w,-2.5,0.9+xx, 0.11,0.01,1.2);
+	AddObject("box","ll2","","MaterialBlack",w,-2.0,0.9+xx, 0.11,0.01,1.2);
+	AddObject("box","ll3","","MaterialBlack",w,-1.5,0.9+xx, 0.11,0.01,1.2);
+
+
+--	AddObject("box","d1","","MaterialWhite",0,0,0+xx, 0.12,1,1);
+	AddObject("box","d2","","MaterialWhite",w,-2.0,-1.8+xx, 0.11,0.8,0.8);
+	AddObject("box","d2","","MaterialWhite",w,-2.0,1+xx,  0.11,0.8,1.6);
+
+
+	AddObject("cylinder","c1","","MaterialBlack",0,2,-0+xx, 0.12, 0,0.6);
+
+	AddObject("box","disk","","MaterialBlue",0,0,0+xx, 0.1,3,3);
+	]]--
+
+--	AddObject("sphere","s1","", "MaterialBlue", 0,0,0, 4);	
+--	AddObject("torus","s1","", "MaterialBlue", 0,0,0, 4,2);	
+
+--	for i=0, 16 do
+	for i=0, 16 do
+		n = "box"..tostring(i)
+		n2 = "box2"..tostring(i)
+		n3 = "box3"..tostring(i)
+		x = (i-5)/1.5
+		AddObject("box",n,"","MaterialBlue",x*scale,-3.2,0, 0.12, 2.7,0.00001);
+
+		AddObject("box",n2,"","MaterialBlue",x*scale,0.6,1.1,   0.12, 1.5,0.00001);
+
+		SetID(n,i);
+		SetID(n2,i);
+--		AddObject("box",n3,"","MaterialBlue",x*scale,-8,-1, 0.12, 2.2,0.00001);
+
+--		AddObject("box",n2,"","MaterialBlue",x*scale*4,-3,0, 0.10, 30,0.01);
+	    s = 0.5
+--		AddObject("box",n3,"","MaterialBlue",x,-3,0, s, s,s);
+		
+		SetRotation(n2,-45,0,0);
+	--	SetRotation(n3,-20,0,0);
+	end
+	s = 0.5
+	
+	
+
+--	AddObject("box","c1","","MaterialBlack",0,-2,-2,   s,s,s);
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+
+  	t = ((frame)/(noFrames-1)) 
+
+	tt = t*3.14159*2
+	dt = -0.0
+--	globals.light0.direction.x = cos(tt+dt)
+--	globals.light0.direction.z = sin(tt+dt)
+	r=11
+	
+	l = globals.camera.x*globals.camera.x + globals.camera.y*globals.camera.y + globals.camera.z*globals.camera.z;
+	l = math.sqrt(l)
+		
+
+--	globals.camera.y = 8+frame*0.2*4
+--	globals.camera.z = 8+frame*0.2*4
+
+	tar = -1.2+frame*0.082*scale
+--	tar = 0
+	globals.camera.x = tar
+	globals.target.x = tar
+
+	r = 0.02
+--	globals.up.x = 1+sin(tt)*r;
+--	globals.up.y = 1+cos(tt)*r;
+
+--	globals.camera.x = 8;
+--	globals.camera.z = 8;
+
+	j=t*360
+--	SetRotation("disk",j,j,90) --box
+--	SetRotation("d1",j,j,90) --box
+
+--[[
+	for i=1, string.len(text) do
+		j=t*180 + i*45/2
+		k=t*180
+		SetRotation(charname .. tostring(i),0,j,0)
+	end
+]]--
+end
+
+pos = 0
+
+NP = 1
+
+px = { 80, 80, 150 }
+py = { 100, 40, 120 }
+dx = { 0,0,0 }
+dy = { output.resolution.height/noFrames,
+output.resolution.height/noFrames,
+output.resolution.height/noFrames }
+
+function PostProcess();
+--[[
+	for x=0,0 do
+	for y=0, 0 do
+	
+	for j=1, NP do
+	
+	xx = (x)*160
+	yy = (y)*100
+
+  	t = ((frame)/(noFrames-1)) 
+	tt = t*3.14159*2 + j
+	r = 0.1
+	s1 = 1 + cos(tt)*r
+	s2 = 1 + sin(tt)*r
+  	DrawCircle(px[j]+xx,py[j]+yy, 50*s1,80*s2,128,0,0);
+  	DrawCircle(px[j]+xx,py[j]+yy, 30*s1,50*s2,255,0,0);
+	end
+	end
+	end
+	
+	for j=1, NP do
+--	  	py[j] = py[j] - dy[j]
+
+	end
+]]--
+end
+
+function Update()
+	
+		if (frame<noFrames+1) then 
+		Save2DInfo("data/bgframe_2d_".. tostring(frame-1) ..".bin",0xD800,253, "data/unroll"..tostring(frame-1)..".ras");
+		end
+
+	if (frame>=1) then
+		CompressCharset(0,40,0,25,  0, 1000)
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	if (frame==noFrames/2 or frame==noFrames) then 
+--		SaveRawData("data/ballsprite.bin");
+--		CompressScreenAndCharset(40,25,1000, 250);
+		OptimizeScreenAndCharset(40,25,1000, 3);
+		SaveScreenAndCharset("data/screen_bgnew"..tostring(cur)..".bin", "data/charset_bgnew"..tostring(cur)..".bin");
+		cur = cur+1
+		Message("SAVED")
+
+	end	
+	---if (frame<noFrames) then
+--	end
+
+	
+		UpdateScene()
+--		pos = pos + 0x4000
+
+	frame=frame+1
+	
+
+
+end

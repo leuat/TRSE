@@ -1,0 +1,451 @@
+program OpeningTest;
+@use "demounit"
+@use "compression/compression"
+var  
+
+	@export "images/p0.flf" "images/p0.bin" 1000
+	@export "images/p1.flf" "images/p1.bin" 1000
+	@export "images/p2.flf" "images/p2.bin" 1000
+
+//	@export "images/sleigh.flf" "images/sleigh.bin" 8 
+
+	@define dataLoc1 $8000
+	@define dataLoc2 $A000
+	@define dataLoc3 $C000
+
+	data0 : incbin("images/p0.bin",@dataLoc1);
+	data1 : incbin("images/p1.bin",@dataLoc2);
+
+@startblock $2000 "orgData"
+//	data0 : incbin("images/p0.bin") compressed;
+//	data1 : incbin("images/p1.bin") compressed;
+	data2 : incbin("images/p2.bin") compressed;
+@endblock
+
+var
+ 	@define sprLoc $1000
+	sprite : incbin("data/disksprite.bin",@sprLoc);
+
+@startblock $5000 "Code"
+   	trans, i, i2,time,k,x,y,z,column,keep,j,time2, spriteTrigger,curFrame: byte = 0; 
+	in:integer;
+	sx,ii : integer;
+	sy : byte;
+	curX : integer = 480;   
+	sprPtr : pointer;
+	bp,zp,zp2,cp,dp:pointer;
+	curBank : byte=0;
+	scroll : byte = 15;	
+	src, dst,csrc, cdst : pointer;
+	lumi: array[32] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+	curCol : byte = 0;
+	curTar : byte = 17;
+	
+//	@userdata $8000 $A000 "Image 1"
+//	@userdata $A000 $C000 "Image 2"
+	@userdata $C000 $E000 "Image 3"
+
+//	@define dataLoc4 $E000
+	
+	@define spriteLoc $F00
+
+//	data3 : incbin("images/p0.bin", @dataLoc4);
+
+/*	sleigh0 : incbin("images/sleigh.bin", @spriteLoc);
+	sleigh1 : incbin("images/sleigh.bin", @spriteLoc2);
+	*/
+@userdata $400 $800 "Screen o"
+@userdata $4400 $4800 "Screen 1"
+
+
+@ifndef IS_DEMO
+ music : incsid("../demo_system/music/happynewyear.sid",2);
+@endif
+
+	
+	
+//@include "moon_resources.ras"
+
+
+/*@setvalue override_target_settings 1
+@setvalue ignore_initial_jump 0
+@setvalue override_target_settings_sys 0
+@setvalue override_target_settings_prg 0
+@setvalue override_target_settings_org $1016
+@setvalue override_target_settings_basic $1000
+*/
+
+
+//@startblock $1600 "Main code"
+
+procedure RenderColumn();
+begin
+	dp:=src+8*38;
+	i:=mod(column,40);
+	zp:=@dataLoc1;
+	if (column>=40) then zp:=@dataLoc2;
+	if (column>=80) then zp:=@dataLoc3;
+//	if (column>=120) then zp:=@dataLoc4;
+	if (column>120) then i:=39;	
+	zp:=zp+ i<<3;
+//	keep:=peek(^$01,0);
+	enableallram();
+	for i:=0 to 25 do
+	begin
+		memcpyunroll(zp,0,dp,8);
+		zp:=zp+320;
+		dp:=dp+320;
+
+	end;
+	setmemoryconfig(1,0,0);
+	//poke(^$01,0,keep);
+	inc(column);
+end;
+
+
+procedure FlipBank();
+begin
+		if (curBank=1) then
+		begin 	
+			setbank(vic_bank1);
+		end
+		else 
+		begin
+			  setbank(vic_bank0);
+		end;	  
+
+end;
+
+
+
+
+procedure UpdateScroll();
+begin
+	
+//	dec(scroll);
+	scroll:=scroll-2;
+//	enableallram();
+	for i:=0 to 4 do
+	begin
+		memcpyunroll(src,0,dst,256);		
+		asm ( " inc src+1");
+		asm ( " inc dst+1");
+	end;
+/*	memcpyunroll(src,0,dst,256);		
+	asm ( " inc src+1");
+	asm ( " inc dst+1");
+*/
+/*	memcpyunroll(csrc,0,cdst,63);		
+	csrc:=csrc+63;
+	cdst:=cdst+63;*/
+//	memcpyunroll(csrc,0,cdst,39);		
+
+
+	
+	if (scroll=$FF) then 
+	begin
+		scroll:=15;
+		
+		curBank:=(curBank+1)&1;
+		if (curBank=1) then
+		begin 	
+			src:=$6008;
+			dst:=$2000;
+		end
+		else 
+		begin
+			src:=$2008;
+			dst:=$6000;
+		end;	  
+		RenderColumn();
+	end;
+end;
+//@endblock 
+
+
+//@startblock $5800 "Main 2 code"
+
+/*procedure SetSprite(x:integer;yp,spr: byte);
+begin
+	in:=x-80;
+	y:=yp;
+	for i:=0 to 4 do
+	begin
+		spritepos(in,y,i+spr);
+		in:=in+48;
+		if (i=1) then
+		begin
+			in:=x-80;
+			y:=y+21;
+		end;
+		
+	end;
+end;
+
+
+procedure MaintainSprites();
+begin
+	sprite_bitmask:=$00;
+	if (time2=50) then begin spriteTrigger:=1; curX:=400; end;
+	if (time2=200) then begin spriteTrigger:=1; curX:=400; end;
+	if (spriteTrigger=0) then return();
+	y:=random()/128;
+	SetSprite(curX, 190+y, 0);
+	sprite_bitmask:=$FF;
+//	if (time&1=0) then
+		curX:=curX-1;
+	if (curX>5000) then spriteTrigger:=0;
+end;
+
+
+*/
+
+procedure SetSpritePos();
+begin
+	y := sy;
+	k:=0;
+	for j:=0 to 2 do
+	begin
+		ii:=sx;
+		
+		for i:=0 to 4 do
+		begin
+			spritepos(ii,y,k);		
+			k:=k+1;
+			ii:=ii+24;
+		end;	
+		y:=y+21;
+	end;
+
+end;
+
+procedure CopySprites();
+
+interrupt Raster();
+begin
+	StartIRQ(0);
+	//DemoUnit::StartDemoIRQ();
+	setbitmapmode();
+	scrollx(scroll/2);
+	hideborderx(1);
+	FlipBank();
+@ifndef IS_DEMO
+	call(SIDFILE_1_PLAY);
+	if (time>127) then trans:=1;
+@endif	
+@ifdef IS_DEMO
+	call(^@callPos);
+	if (peek(^@transition,0)<2) then trans:=1;
+@endif
+	inc(time);
+	if (time&1=0) then inc(time2);
+	if (time&7=0) then inc(time2);
+//	if (time&7=0) then inc(time2);	
+//	MaintainSprites();	
+
+
+	UpdateScroll();
+//	SetSpritePos();
+	sy:=sine[time]>>3 + 80;	
+	sx:=sine[time+64]>>3 + 60;	
+	sx:=sx + sine[time2+64]>>1;	
+	CopySprites();
+//	DemoUnit::CloseDemoIRQ();
+	CloseIRQ();
+end;
+
+
+
+procedure InitSprites();
+var n:byte;
+begin
+	sprite_bitmask:=0;
+	sprite_multicolor :=0;
+	sprite_stretch_x:=0;
+	sprite_stretch_y:=0;
+/*	sprite_multicolor_reg1[0]:=yellow;
+	sprite_multicolor_reg1[1]:=red;*/
+	fill(sprite_color,0,8);
+//	ii:=80;
+//	j:=80;
+//	n:=0;
+	k:=@spriteLoc/64;
+	spritepos(35,52,0);
+	setspriteloc(n,k,0);
+	setspriteloc(n,k,1);
+	/*for i:=0 to 2 do 
+	begin
+		spritepos(ii,j,n);
+		spritepos(ii+24,j,n+1);
+		setspriteloc(n,k + n,0);
+		setspriteloc(n,k + n,1);
+		n:=n+1;
+		setspriteloc(n,k + n,0);
+		setspriteloc(n,k + n,1);
+		n:=n+1;
+		j:=j+21;
+	end;*/
+	sprPtr := @sprLoc;	
+	
+end;
+
+
+var
+	l:byte;
+
+
+
+
+procedure EnddClear();
+begin
+	while (true) do
+	begin
+		@ifdef IS_DEMO
+		//call(^@outerCall);
+		asm(" 
+			jsr @outerCall
+			beq pp_cnt2
+			");
+	//		inc(^$d020);
+			RasterIRQ(DemoUnit::RasterClear(),0,0);
+			waitforraster(210);
+//			waitforraster(0);
+//			waitforraster(0);
+			screen_fg_col:=black;
+//			settextmode();
+//			setregularcolormode();
+			clearscreen(key_space,^$0400);
+			setbank(vic_bank0);
+			setcharsetlocation($1000);
+	
+			asm("
+			jmp $810
+pp_cnt2:
+		
+		");
+	//	inc(^$D020);
+		@endif
+	//	waitforverticalblank();
+	end;
+
+end;
+
+procedure Run();
+begin
+//	poke(^$4C00,0,5);	
+
+
+@ifndef IS_DEMO
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	preventirq();
+	asm("
+		lda $01
+		sta @keepPos
+	");
+	initsid(SIDFILE_1_INIT);
+@endif
+//	screen_bg_col:=black;
+	EnableAllRam();
+	
+//	Compression::Decompress(#data0, @dataLoc1);
+//	Compression::Decompress(#data1, @dataLoc2);
+	Compression::Decompress(#data2, @dataLoc3);
+	i:=peek(^@keepPos,0);
+	poke(^$01,0,i);	
+	waitforraster(0);
+//	screen_bg_col:=red;
+	
+	InitSprites();
+//	i:=blue |( light_blue*16);
+//	i:=light_blue |( blue*16);
+//	screenoff();
+	zp:=$2000;
+	zp2:=$6000;
+	j:=%10101010;
+	for i:=0 to 32 do
+	begin
+		fill(zp,j,0);
+		asm(" inc zp+1");
+		fill(zp2,j,0);
+		asm(" inc zp2+1");
+	end;
+	setregularcolormode();
+//	clearbitmap(^$2000,32);
+//	clearbitmap(^$6000,32);
+//	screen_bg_col:=yellow;
+	waitforraster(0);
+	vic_data_loc:=$18;
+	clearscreen(0,^$4400);
+	clearscreen(0,^$0400);
+	setbitmapmode();
+	setmulticolormode();
+	waitforraster(0);
+	setbank(vic_bank1);
+	screen_bg_col:=black;
+	
+	//screen_bg_col:=1;
+//	vic_data_loc:=$18;
+//	screen_bg_col:=3;
+//	multicolor_char_col[0] := black;
+//	inc(^$D020);
+//	clearscreen(red,^$D800);
+	src:=$2008;
+	dst:=$6000;
+	csrc:=$0401;
+	cdst:=$4401;
+//	waitforraster(0);
+
+//	inc(screen_bg_col);
+	waitforraster(0);
+	RasterIRQ(Raster(),0,0);
+	
+	screen_fg_col:=red;
+//	multicolor_char_col[2] := light_grey;
+//	multicolor_char_col[1] := black;
+	//multicolor_char_col[2] := red;
+	//multicolor_char_col[1] := red;
+	//for i2:=0 to 7 do
+	//	wait(200);
+	clearscreen(yellow,^$D800);
+	l := light_grey*16;
+	clearscreen(l,^$0400);
+	clearscreen(l,^$4400);
+	enableirq();
+	enablerasterirq();
+
+	EnddClear();
+
+
+end;
+
+
+//@endblock
+
+
+//@startblock $F800 "Unrolled copy spr"
+
+procedure CopySprites();
+begin
+	zp2:=@spriteLoc;
+	if (curBank = 1) then zp2:=zp2+$4000;
+	memcpyunroll(sprPtr,0,zp2,64);
+	sprPtr:=sprPtr+64;
+//	asm(" inc sprPtr +1");
+	curFrame:=(curFrame+1)&63;
+	if (curFrame = 0) then
+		sprPtr := @sprLoc;	
+		
+	
+	sprite_color := lumi[curCol];
+	if (curCol = 0) then sprite_bitmask:=0 else sprite_bitmask:=1;
+	if (curCol>curTar) then dec(curCol);
+	if (curCol<curTar) then inc(curCol);
+	if(trans=1) then curTar := 0;
+end;
+
+@endblock
+
+begin
+	Run();	
+end.

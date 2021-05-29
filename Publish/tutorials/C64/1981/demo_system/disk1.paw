@@ -1,0 +1,7 @@
+ras_include_file = packed_resources1.ras
+packed_address = $4000
+output_dir = output/
+use_exomizer3 = 1
+address_field = none
+data = ,s1, ../effects/sprite_twisters.prg, $c01, s2, ../effects/moscow.prg, $c01, s3, ../effects/bgscroll_hands2.prg, $c01, s4, external/TheEnd_012.prg, $c01, s5, ../effects/poster_scroll.prg, $c01, s6, ../effects/basic_fader.prg, $c01, s7, ../effects/transition_wave.prg, $c01, m1, music/_happynewyear.dat, $e000, s8, ../effects/petscii_shower.prg, $c01, s9, ../effects/bgscroll_new4.prg, $c01, s10, ../effects/planet.prg, $c01
+data_tinycrunch = ,1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1
