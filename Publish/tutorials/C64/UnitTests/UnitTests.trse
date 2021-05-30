@@ -53,6 +53,3 @@ via_zeropages = ,
 override_target_settings_basic = 0
 qemu = No
 spectrum_model = 0
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
-open_files = ,unittests.asm, unittests.ras, [ext]units/global/unittests/muldiv.tru, [ext]units/global/unittests/case.tru
-current_file = unittests.asm

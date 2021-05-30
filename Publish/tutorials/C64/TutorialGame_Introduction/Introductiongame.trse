@@ -39,6 +39,4 @@ exomizer_toggle = 0
 zeropage_colormemory = $fc
 compile_thread = 1
 show_all_files = 1
-open_files = ,part9.ras, part3.ras
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/TutorialGame_Introduction/
-current_file = part3.ras
+open_files =, part3.ras
