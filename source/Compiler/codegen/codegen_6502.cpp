@@ -1,3 +1,4 @@
+
 #include "codegen_6502.h"
 
 CodeGen6502::CodeGen6502()
@@ -340,9 +341,11 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
         node->m_left->Accept(this);
         as->Term();
         m_flag1=true;
+
         as->BinOP(node->m_op.m_type);
         node->m_right->Accept(this);
         as->Term();
+
         m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
         return true;
@@ -1771,8 +1774,11 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     // Optimization : ldx #3, lda a,x   FIX
     if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric()) {
+            QString op = "lda ";
+            if (as->m_term!="")
+                op = as->m_term + " ";
             as->ClearTerm();
-            as->Asm("lda "+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
+            as->Asm(op+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
             return;
         }
     }

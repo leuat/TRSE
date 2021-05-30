@@ -1238,6 +1238,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node)
 void AbstractCodeGen::LineNumber(int ln) {
     if (m_outputLineNumbers)
         as->Comment("LineNumber: "+QString::number(ln));
+    if (m_outputSource)
+        if (ln<m_rasSource.count())
+           as->Comment(m_rasSource[ln]);
 
 }
 

@@ -55,6 +55,8 @@ public:
     QMap< QString,QSharedPointer<Node>> m_inlineParameters;
     bool m_flag1 = false;
     bool m_outputLineNumbers = true;
+    bool m_outputSource = false; // Turned off for now
+    QStringList m_rasSource;
 
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch

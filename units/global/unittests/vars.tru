@@ -3,7 +3,7 @@ var
 	sc, co : pointer; 			// screen and colour RAM pointers
 	text: string = "TEST                 ";	// text to display when writing a test result
 	@define COLUMNWIDTH 5
-
+	barr : array[10] of byte;
 	v1, v2,v3,rb,v4 : byte;
 	i1, i2,i3,i4,ri, j2 : integer;
 	p1, p2,rp : pointer;

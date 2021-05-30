@@ -607,6 +607,21 @@
         </item>
         <item>
          <property name="text">
+          <string>Full</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gray</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Flames</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Rainbow</string>
          </property>
         </item>
