@@ -24,7 +24,7 @@ jobs:
           pushd tools
           # vasm (Atari)
           # wget http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
-	  wget https://www.irio.co.uk/div/vasm.tar.gz
+          wget https://www.irio.co.uk/div/vasm.tar.gz
           tar -xzf vasm.tar.gz
           pushd vasm
           make CPU=m68k SYNTAX=mot -j 2
