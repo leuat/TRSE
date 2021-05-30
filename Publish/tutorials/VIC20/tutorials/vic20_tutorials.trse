@@ -65,4 +65,6 @@ data_header_/users/leuat/code/trse/publish/tutorials/vic20/tutorials/resources/i
 data_header_resources/images/trse.flf = 0
 zeropages_userdefined = ,$88, $8A, $8C, $8E
 show_all_files = 1
-open_files =, easy/01_hello_world.ras
+open_files = ,easy/08_charset_compression.ras, easy/01_hello_world.ras
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/VIC20/tutorials/
+current_file = easy/01_hello_world.ras

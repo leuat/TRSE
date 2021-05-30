@@ -51,3 +51,6 @@ override_target_settings_basic = 3.02903e-314
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/CrossPlat/txt_tutorials/
+open_files = 2.18461e-314
+current_file = txt_tutorial07_moon_game.ras
