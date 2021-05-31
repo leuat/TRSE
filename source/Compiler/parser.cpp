@@ -2318,12 +2318,38 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
         ErrorHandler::e.Error("Expected THEN or DO after conditional", linenum);
     }
 
+    // April's fools
+    bool isPerhaps = false;
+    if (m_currentToken.m_type==TokenType::PERHAPS) {
+        isPerhaps = true;
+        if (m_isFirstPerhaps) {
+            //InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
+            auto name = "initrandom256";
+            m_procedures[name] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, name), name));
+
+            m_isFirstPerhaps = false;
+        }
+        Eat();
+    }
+
     QSharedPointer<Node> block = Block(false);
+
 
     QSharedPointer<Node> nodeElse = nullptr;
     if (m_currentToken.m_type==TokenType::ELSE) {
         Eat(TokenType::ELSE);
         nodeElse = Block(false);
+    }
+
+    if (isPerhaps) {
+        auto left = NodeFactory::CreateBuiltin(m_currentToken, "random", QVector<QSharedPointer<Node>>());
+        QDate date = QDateTime::currentDateTime().date();
+        float t = (date.dayOfWeek()+m_perhapsShift++)/7.0*2*3.14159265;
+        int testVal = 64+ 128*(cos(t)+1)/2;
+
+        auto randCond = NodeFactory::CreateSingleConditional(m_currentToken,TokenType::GREATER,false,left,NodeFactory::CreateNumber(m_currentToken,testVal),block);
+        block = randCond;
+
     }
 
     return QSharedPointer<NodeConditional>(new NodeConditional(t, forcePage, clause, block, isWhileLoop, nodeElse));
@@ -4883,10 +4909,10 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 
     //  qDebug() << m_pass;
     // Ignore calling macros in pass 1. Or perhaps pass 0? hm
-    qDebug() << "mac1 " << name << m_currentToken.m_value;
+//    qDebug() << "mac1 " << name << m_currentToken.m_value;
     if (ignore)
         return;
-    qDebug() << "mac2 " << name << m_currentToken.m_value;
+  //  qDebug() << "mac2 " << name << m_currentToken.m_value;
 
     /*    QString consts = "";
     for (QString key:m_symTab->m_constants.keys())

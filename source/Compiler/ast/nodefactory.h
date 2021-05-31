@@ -43,7 +43,7 @@ public:
     static QSharedPointer<NodeBlock> CreateBlock(Token t, QSharedPointer<Node> comp);
     static QSharedPointer<NodeBinaryClause> CreateBinaryClause(Token t, TokenType::Type clause, QSharedPointer<Node> left, QSharedPointer<Node> right);
     static QSharedPointer<NodeConditional> CreateConditional(Token t, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isLarge);
-
+    static QSharedPointer<NodeBuiltinMethod> CreateBuiltin(Token t, QString name,QVector<QSharedPointer<Node>> paramList);
     // Combined stuff
 
     static QSharedPointer<NodeBlock> CreateBlockFromStatements(Token t, QVector<QSharedPointer<Node>> statementlist);

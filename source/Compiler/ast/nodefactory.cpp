@@ -81,6 +81,14 @@ QSharedPointer<NodeConditional> NodeFactory::CreateConditional(Token t, QSharedP
                 new NodeConditional(t,isLarge,clause,block,false));
 }
 
+QSharedPointer<NodeBuiltinMethod> NodeFactory::CreateBuiltin(Token t, QString procName, QVector<QSharedPointer<Node>> paramList)
+{
+    auto n = QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]));
+    n->m_op.m_lineNumber = t.m_lineNumber;
+    return n;
+
+}
+
 QSharedPointer<NodeBlock> NodeFactory::CreateBlockFromStatements(Token t, QVector<QSharedPointer<Node> > statementlist) {
     auto comp = CreateCompound(t);
     comp->children = statementlist;
