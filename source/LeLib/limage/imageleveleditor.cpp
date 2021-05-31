@@ -287,9 +287,6 @@ void ImageLevelEditor::LoadBin(QFile &file)
             l->m_ColorData = file.read(m_meta.dataSize());
         if (m_meta.m_extraDataSize!=0)
             l->m_ExtraData = file.read(m_meta.m_extraDataSize);
-
-
-
 //        for (int i=0;i<m_meta.m_extraDataSize;i++)
   //          qDebug() << "Saving extracol: " <<QString::number(l->m_ExtraData[i]);
 

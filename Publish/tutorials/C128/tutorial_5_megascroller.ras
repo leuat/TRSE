@@ -100,7 +100,7 @@ begin
 		// point to the correct char in memory, each char is 2x2 x 8 bytes, so 16 bytes in total
 		
 		if (val<>0) then
-			for i:=0 to val do inczp(zeropage1, 16);
+			zeropage1+=val*16;
 		
 		
 		
@@ -116,18 +116,16 @@ begin
 //			c:=val2;
 			screenmemory[39]:=c;
 			screenmemory:=screenmemory+screen_width;
-			inczp(screenmemory,40);
 			
 		end;
 		// The next char is located 1 row below, so 40*8 = 320 = 160x2 bytes ahead
-		inczp(zeropage1, 160);
-		inczp(zeropage1, 160);
+		zeropage1+=320;
 		// Repeat drawing
 		for i:=0 to 8 do begin
 			c:=$20;
 			if (getbit(zeropage1[i], shiftx)=1) then c:=val2;
 			screenmemory[39]:=c;
-			inczp(screenmemory,40);
+			screenmemory+=screen_width;
 			
 		end;
 		end
@@ -135,7 +133,7 @@ begin
 				c:=$20;
 			for i:=0 to 16 do begin
 				screenmemory[39]:=c;
-				inczp(screenmemory,40);
+			screenmemory+=screen_width;
 			
 			end;
 
@@ -149,7 +147,7 @@ begin
 				else begin
 				// Reset and increase text pointer!
 				scrollsplit:=0;
-				inczp(@textpointer,1);
+				@textpointer+=1;
 				if @textpointer[0]=0 then @textpointer:=#text;
 			end;
 			

@@ -4030,6 +4030,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
            s->m_size = len;
        }
 
+
+
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
 //       qDebug() << "FLAGS " << s->m_name << " " <<s->m_type<<s->m_arrayTypeText;

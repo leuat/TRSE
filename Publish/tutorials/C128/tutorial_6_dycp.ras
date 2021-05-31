@@ -73,7 +73,7 @@ begin
 		zpc:=zpc+32; 
 		// inczp is kinda slow, so try to only call when absolutely necessary, here at every 7 steps
 		if zpc=224 then begin
-			inczp(zeropage2, 224);
+			zeropage2+=224;
 			zpc:=0;
 		end;
 		shift:=shift +7;
@@ -132,7 +132,7 @@ innerlabbe:
 		end;
 		zpc:=zpc+32;
 		if zpc=224 then begin
-			inczp(zeropage2, 224);
+			zeropage2+=224;
 			zpc:=0;
 		end;
 		shift:=shift +7;
@@ -217,7 +217,7 @@ begin
 	if scroll>=128 then begin
 		fill(zeropage4, 0, 0);
 		scroll:=7;
-		inczp(zeropage5, 1);
+		zeropage5+=1;
 	end;
 	
 end;
