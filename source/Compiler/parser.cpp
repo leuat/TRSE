@@ -4048,8 +4048,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        if (typeNode->m_data.count()!=0) // Replace with actual data count
            size = typeNode->m_data.count();
        typeNode->m_declaredCount = size;
-
-       s->setSizeFromCountOfData(size);
+       if (s->m_type!="STRING")
+           s->setSizeFromCountOfData(size);
 
 
 
