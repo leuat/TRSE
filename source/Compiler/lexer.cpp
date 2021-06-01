@@ -332,6 +332,25 @@ Token Lexer::InlineAsm()
 
 }
 
+Token Lexer::Macro()
+{
+    QString result="";
+    bool finished = false;
+    while (!finished) {
+        result +=m_currentChar;
+        QString next3  =peek(1) + peek(2) + peek(3)+peek(4)+peek(5)+peek(6)+peek(7)+peek(8);
+//        qDebug() <<next3;
+        if (next3=="")
+            finished = true;
+        if (next3.toLower().trimmed()=="endmacro")
+            finished = true;
+
+        Advance();
+    }
+    return Token(TokenType::STRING, result);
+
+}
+
 
 QString Lexer::peek()
 {

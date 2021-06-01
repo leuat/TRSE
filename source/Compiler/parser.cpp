@@ -1035,8 +1035,12 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
 void Parser::HandlePreprocessorInParsing()
 {
-    if (m_pass>=PASS_CODE) {
+    if (m_currentToken.m_value.toLower()=="macro") {
+        Eat();
+        HandleMacro();
+    }
 
+    if (m_pass>=PASS_CODE) {
         if (m_currentToken.m_value=="define") {
             Eat();
             Eat();
@@ -1158,12 +1162,6 @@ void Parser::HandlePreprocessorInParsing()
             return;
         }
         if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
-            Eat();
-            Eat();
-        }
-        if (m_currentToken.m_value.toLower()=="macro") {
-            Eat();
-            Eat();
             Eat();
             Eat();
         }
@@ -2797,6 +2795,7 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="macro") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleMacro();
+
               }
               else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
                   Eat(TokenType::PREPROCESSOR);
@@ -4383,9 +4382,18 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String(isCString));
             initData = str->m_val;
         }
+        QString position="";
+        if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
+            Eat();
+            position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+        }
+
+
         QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
         str->m_flags = flags;
         str->VerifyFlags(isInProcedure);
+        if (position!="")
+            str->m_position = position;
         return str;
     }
 
@@ -4851,9 +4859,22 @@ void Parser::HandleMacro()
     Eat(TokenType::STRING);
     m.noParams = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
+
+    QString org = m_currentToken.m_value.toLower();
+    m_currentToken = m_lexer->Macro();
+    m_currentToken.m_value = "\t"+org  + " "+ m_currentToken.m_value;
+
     m.str = m_currentToken.m_value;
-    Eat(TokenType::STRING);
+    m.str = m.str.remove(m.str.length()-1,1);
+//    qDebug() << m.str;
+
+
     m_macros[name.toLower()] = m;
+
+    Eat();
+    Eat(); // endmacro
+  //  qDebug() << m_currentToken.m_value;
+
 //    qDebug() << "MACRO "<<m.str;
 
 }
