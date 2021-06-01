@@ -1446,7 +1446,6 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPoint
             double xp = (((i-center.x())*(double)zoom)+ center.x());
             double yp = (((j-center.y())*(double)zoom)+ center.y());
 
-
             unsigned int col = 0;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
                 col = getPixel(xp,yp);

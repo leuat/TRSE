@@ -23,8 +23,9 @@ end;
 procedure Exec();
 begin
 	Common::Initialise("STRINGS");
-
+	@ifndef X86
 	Test1();
+	@endif
 	@ifdef C64
 	Test2();
 	@endif

@@ -3,6 +3,7 @@ var
 
 
 // memory inc test
+	@ifndef X86
 procedure Test1();
 begin
 	poke(^$4000,0,10);
@@ -11,6 +12,7 @@ begin
 	
 	if (peek(^$4000,0)=11) then Common::PASS() else Common::FAIL();
 end;
+	@endif
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
