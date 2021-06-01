@@ -1,0 +1,36 @@
+unit Strings;
+var
+	teststr1: string = "HEISANN";
+@ifdef C64
+	teststr2: cstring = "HEISANN DU";
+@endif
+
+procedure Test1();
+begin
+	Vars::text := "T1:";
+	if (length(teststr1)=7) then Common::PASS() else Common::FAIL();
+end;
+
+@ifdef C64
+procedure Test2();
+begin
+	Vars::text := "T1:";
+	if (sizeof(teststr2)=10) then Common::PASS() else Common::FAIL();
+end;
+@endif
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("STRINGS");
+
+	Test1();
+	@ifdef C64
+	Test2();
+	@endif
+	
+	// Mul and div
+	Common::WaitABit();
+end;
+
+end.

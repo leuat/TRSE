@@ -495,6 +495,8 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
     if (!isRegisterName(name))
         localUnitName = m_currentUnit+name;
 
+
+
 //    qDebug() << "SYMTAB "<< localName << name;;
 //    if (name.contains("posX"))
     //qDebug() << "SYMTAB ERROR Looking up : "<<name <<localName <<m_symbols.keys();
@@ -509,7 +511,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
-//        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< localName <<m_symbols.keys();;
+     //   qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< m_currentProcedure<<localName <<m_symbols.keys();;
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }

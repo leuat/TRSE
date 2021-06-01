@@ -1733,7 +1733,6 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             ErrorHandler::e.Error("Variable '<b>" +nv->value + "</b>' is neither a pointer nor an array.",nv->m_op.m_lineNumber);
 
     }
-
     return ApplyClassVariable(n);
 }
 
@@ -3320,6 +3319,7 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
         Eat(TokenType::FORI);
     else
         Eat(TokenType::FOR);
+
     QSharedPointer<Node> a = AssignStatement();
     Eat(TokenType::TO);
     QSharedPointer<Node> b = Expr();
