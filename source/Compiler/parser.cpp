@@ -5732,7 +5732,7 @@ QSharedPointer<Node> Parser::Expr()
 
     }
 
-    if (!node->isReference() && node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
+    if (node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
         // Calculate and COLLAPSE. Easier on the dispatcher.
         int val = node->getValueAsInt(nullptr);
         Token t;
