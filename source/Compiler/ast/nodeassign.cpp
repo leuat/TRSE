@@ -27,11 +27,11 @@ NodeAssign::NodeAssign(QSharedPointer<Node> left, Token t, QSharedPointer<Node> 
     m_op = t;
     m_left = left;
    // qDebug() << "NodeAssign " <<TokenType::getType(m_left->getType(nullptr)) << (qSharedPointerDynamicCast<NodeVar>m_left)->getValue(as);
-    if (m_left->getType(nullptr)==TokenType::INTEGER) {// || m_left->getType(nullptr)==TokenType::POINTER) {
+//    if (m_left->getType(nullptr)==TokenType::INTEGER) {// || m_left->getType(nullptr)==TokenType::POINTER) {
  //       qDebug() << "::NodeAssign INTEGER";
 //        m_right->setForceType(TokenType::INTEGER);
 //        m_right->setForceType(m_left->getType(nullptr));
-    }
+  //  }
 
 }
 
