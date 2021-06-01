@@ -1,5 +1,5 @@
-zeropages = ,$14,  $16,  $0B,  $0D,  $10,  $12,  $22,  $24,  $68,  $6A,  $6C
-temp_zeropages = ,$54,  $56,  $58,  $5A
+zeropages = ,$14, $16, $0B, $0D, $10, $12, $22, $24, $68, $6A, $6C
+temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
 zeropage_colormemory = $fc
 zeropage_decrunch1 = $47
@@ -144,3 +144,6 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
+project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/C64/1981/effects/
+open_files = ,sprite_twisters.asm, sprite_twisters.ras
+current_file = sprite_twisters.ras

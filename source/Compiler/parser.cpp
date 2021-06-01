@@ -2475,7 +2475,7 @@ QSharedPointer<Node> Parser::Factor()
         }
         Token t = m_currentToken;
         t.m_intVal = s->getLength();
-        qDebug() << "PARSER HERE " <<s->m_value->m_strVal<< s->m_size;
+//        qDebug() << "PARSER HERE " <<s->m_value->m_strVal<< s->m_size;
         t.m_type  = TokenType::INTEGER_CONST;
         Eat();
         Eat(TokenType::RPAREN);
@@ -4048,7 +4048,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        s->m_flags = typeNode->m_flags;
        s->m_bank = typeNode->m_bank;
 
-       if (s->m_type=="STRING") {
+       if (s->m_type=="STRING" || s->m_type=="CSTRING") {
 //           s->m_size = typeNode->m_op.m_value;
            int len = 0;
            for (QString& s: typeNode->m_data)
@@ -4076,7 +4076,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        if (typeNode->m_data.count()!=0) // Replace with actual data count
            size = typeNode->m_data.count();
        typeNode->m_declaredCount = size;
-       if (s->m_type!="STRING")
+       if (s->m_type!="STRING" && s->m_type!="CSTRING")
            s->setSizeFromCountOfData(size);
 
 
@@ -5711,7 +5711,7 @@ QSharedPointer<Node> Parser::Expr()
 
     }
 
-    if (node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
+    if (!node->isReference() && node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
         // Calculate and COLLAPSE. Easier on the dispatcher.
         int val = node->getValueAsInt(nullptr);
         Token t;

@@ -2350,15 +2350,17 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeBinOP> rterm = qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
     if (rterm==nullptr)
         return false;
-
     // right first is var
 
  //   qDebug() << rterm->m_op.getType();
 
-    QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+
+/*    QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+    as->Comment("Test Inc dec "+QString::number(rvar==nullptr));
     if (rvar==nullptr)
         return false;
-
+*/
+    auto rvar = rterm->m_left;
 //    qDebug() << "IsSimpleIncDec test";
 
     // DANGEROUS
@@ -2419,19 +2421,24 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     if (operand=="")
         return false; // other operand
 
+    as->Comment("Test Inc dec D");
 
 
-    if (var->m_expr==nullptr && rvar->m_expr==nullptr) {
+    if (!var->isArrayIndex() && !rvar->isArrayIndex()) {
         as->Asm(operand +getValue(var));
+
         return true;
     }
     else {
-        if (rvar->m_expr==nullptr)
+        if (!rvar->isArrayIndex())
             return false;
         if (var->m_expr==nullptr)
             return false;
         // BOTH must have expressions
-        if (!rvar->m_expr->DataEquals(var->m_expr))
+        auto rv = qSharedPointerDynamicCast<NodeVar>(rvar);
+        if (rv==nullptr)
+                return false;
+        if (!rv->m_expr->DataEquals(var->m_expr))
             return false;
         // Ok. Both are equal. OPTIMIZE!
         //            return false;

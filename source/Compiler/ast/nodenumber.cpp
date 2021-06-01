@@ -58,7 +58,11 @@ QString NodeNumber::getValue(Assembler* as) {
         if (as!=nullptr)
             hash = as->m_hash;
         if (isAddress()) return HexValue(); else return hash + HexValue();
-    }
+}
+
+bool NodeNumber::isReference() {
+    return m_op.m_isReference;// || isAddress();
+}
 
 QString NodeNumber::getValue8bit(Assembler *as, bool isHi) {
     QString hash = "";

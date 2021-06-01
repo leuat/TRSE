@@ -1121,7 +1121,7 @@ void Methods6502::Peek(Assembler* as)
     if (num!=nullptr && m_node->m_params[0]->isPure()) {
         QString add = m_node->m_params[1]->getValue(as);
         QString org = m_node->m_params[0]->getValue(as);
-        as->Asm("lda "+org + " + "+add.remove("#"));
+        as->Asm("lda "+org + " + "+add.remove("#") + ";keep");
 /*        as->ClearTerm();
         as->Term("lda ");
         m_node->m_params[0]->Accept(m_codeGen);
