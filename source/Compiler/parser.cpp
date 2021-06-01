@@ -1432,7 +1432,7 @@ void Parser::HandlePreprocessorInParsing()
         return;
     }
     if (m_macros.contains(m_currentToken.m_value.toLower())) {
-        HandleCallMacro(m_currentToken.m_value.toLower(), true);
+        HandleCallMacro(m_currentToken.m_value.toLower(), m_pass==PASS_CODE);
     }
 
 
@@ -4887,7 +4887,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
-    //qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
+//    qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
     // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
         QString val = m_currentToken.m_value;
