@@ -2065,8 +2065,19 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 //    QString lbl = as->NewLabel("stringassign");
+
+/*    if (isPointer && node->m_left->isArrayIndex()) {
+        right->Accept(this);
+
+        as->Asm("sta ("+ getValue(left)+"),y");
+        return;
+
+    }
+*/
+
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
+
 
 //    as->Asm("jmp " + lbl);
     QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
@@ -2075,7 +2086,7 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
   //  as->Label(lbl);
 
 //    qDebug() << "IS POINTER " << isPointer;
-    if (isPointer) {
+    if (isPointer && node->m_left->isArrayIndex()==false) {
   //      qDebug() << "HERE";
         as->Asm("lda #<"+str);
         as->Asm("sta "+getValue(left));
@@ -2083,7 +2094,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
         as->Asm("sta "+getValue(left)+"+1");
     }
     else {
-
         as->Asm("ldx #0");
         as->Label(lblCpy);
         as->Asm("lda " + str+",x");
