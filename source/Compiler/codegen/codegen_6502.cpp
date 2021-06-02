@@ -525,7 +525,7 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
         LoadVariable(node->m_left);
 //        if (!node->m_left->isWord(as))
         as->Term();
-//        if (!node->m_left->getO(as))
+//        if (!node->m_left->isWord(as))
   //          as->Asm("ldy #0");
 
         as->Asm("sta mul16x8_num1");
@@ -1770,7 +1770,9 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         as->Comment("Load Unknown type array, assuming BYTE");
         unknownType = true;
     }
-
+    if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
+        as->Asm("ldy #0 ; lhs is byte, but integer required");
+    }
     // Optimization : ldx #3, lda a,x   FIX
     if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric()) {

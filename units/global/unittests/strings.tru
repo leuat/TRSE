@@ -17,6 +17,13 @@ begin
 	Vars::text := "T1:";
 	if (sizeof(teststr2)=10) then Common::PASS() else Common::FAIL();
 end;
+procedure Test3();
+begin
+	Vars::p1 := $4000;
+	Vars::p1[4] :="A";
+	Vars::text := "T1:";
+	if (Vars::p1[4]=1) then Common::PASS() else Common::FAIL();
+end;
 @endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
@@ -28,6 +35,7 @@ begin
 	@endif
 	@ifdef C64
 	Test2();
+	Test3();
 	@endif
 	
 	// Mul and div

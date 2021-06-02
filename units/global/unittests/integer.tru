@@ -146,6 +146,20 @@ begin
 end;
 
 
+// Arrays 2
+procedure TMIX1();
+begin
+	Vars::a1[1]:=10000;
+	Vars::a2[1]:=1000;
+	Vars::v1:=7;
+	Vars::v2:=0;
+	Vars::v2:=Vars::p1[5]; // use y
+	Vars::i1 := Vars::v1*2;
+	
+	Vars::text := "14:"; if Vars::i1=14 then Common::PASS() else Common::FAIL();
+end;
+
+
 procedure Exec();
 begin
 	// initialise everything
@@ -167,6 +181,8 @@ begin
 	
 	T11();
 	T12();
+	
+	TMIX1();
 	//T13();
 	//T14();
 	@endif
