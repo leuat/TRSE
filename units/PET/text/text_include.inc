@@ -124,6 +124,7 @@
 			tmp_key_count:=peek(^$9E,0);
 		end;	
 
+		tmp_key_count:=0;
 		clear_buffer();
 	end;
 
