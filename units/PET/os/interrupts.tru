@@ -2,7 +2,10 @@ Unit Interrupts;
 var
 
 	interruptFlag: 	byte at $e813; @donotremove "interruptFlag"
-	
+	@donotremove org_orq
+	org_irq : pointer;
+	isInitialised : boolean = false;
+	irq_address : integer at $90;
 
 /**
 <p>Disables interrupts. This prevents a number of things from running 
@@ -27,5 +30,57 @@ begin
 	interruptFlag := 61;
 
 end;
+
+/**
+<p>Starts an IRQ	
+**/
+procedure StartIRQ() inline;
+begin
+	asm("
+	pha
+	txa
+	pha
+	tya
+	pha
+	");
+end;
+
+
+/**
+<p>Ends an IRQ
+**/
+procedure CloseIRQ() inline;
+begin
+	asm("
+	pla 
+	tay
+	pla 
+	tax
+	pla
+
+	jmp (Interrupts_org_irq)
+	");
+end;
+
+procedure RasterIRQ(addr:integer);
+begin
+	if (isInitialised = false) then
+	begin
+		asm("
+		lda $90
+		sta Interrupts_org_irq
+		lda $91
+		sta Interrupts_org_irq+1
+	 	");
+	 	isInitialised := true;
+	end;		
+					
+	asm("	sei	");
+	irq_address:=addr;
+	asm("	cli	");
+			
+		
+end;
+
 
 end.
