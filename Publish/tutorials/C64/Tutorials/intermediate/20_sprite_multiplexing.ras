@@ -1,0 +1,95 @@
+program multiplex;
+@use "tables/luminosities"
+var
+@export "resources/sprites/octo.flf" "resources/sprites/octo.bin" 8
+
+	data:incbin("resources/sprites/octo.bin",$3000);
+	
+	i,j,k,time,y : byte;
+	ypos:byte=80;
+	x,xpos:integer;
+	
+	sprPosUpper, sprPosLower : array[$11] of byte;
+	sprLocUpper, sprLocLower : array[8] of byte;
+	
+	sinx : array[128] of integer = buildsinetable(160);
+	
+
+procedure InitSprites(xpos:global integer);
+begin
+	k:=$3000/64;
+	y:=ypos;
+	for j:=0 to 2 do
+	begin
+		x:=xpos;
+		for  i:=0 to 4 do
+		begin
+			spritepos(x,y,j*4+i);
+			setspriteloc(j*4+i,k,0);
+			k+=1;
+			x+=24 ; // sprite width
+		end	;
+		y+=21;
+	end;
+	memcpy(^$D000,0,#sprPosUpper,$11);
+	memcpy(^$07F8,0,#sprLocUpper,8);
+	
+	for j:=0 to 2 do
+	begin
+		x:=xpos;
+		for  i:=0 to 4 do
+		begin
+			spritepos(x,y,j*4+i);
+			setspriteloc(j*4+i,k,0);
+			k+=1;
+			x+=24 ; // sprite width
+		end	;
+		y+=21;
+	end;
+	memcpy(^$D000,0,#sprPosLower,$11);
+	memcpy(^$07F8,0,#sprLocLower,8);
+
+	
+end;
+
+	
+interrupt RasterLower(); // forward declare	
+	
+interrupt RasterUpper();
+begin
+	startirq(1);
+	memcpy(#sprPosUpper,0,^$D000,$11);
+	memcpy(#sprLocUpper,0,^$07F8,8);
+	
+	RasterIRQ(RasterLower(), ypos +21*2 -4,1);
+	
+	closeirq();
+end;
+
+
+interrupt RasterLower();
+begin
+	startirq(1);
+	// fails if we turn off unroll copying
+	memcpyunroll(#sprPosLower,0,^$D000,$11);
+	memcpyunroll(#sprLocLower,0,^$07F8,8);
+	
+	RasterIRQ(RasterUpper(), 0,1);
+	
+	waitforraster(160);
+	InitSprites(sinx[time]+50);
+	j:=Luminosities::fromBlack[time&31];
+	fill(sprite_color,j,8);
+	time+=1;
+	closeirq();
+end;
+	
+	
+begin
+	sprite_bitmask:=$ff;
+	sprite_multicolor:=0;
+	fill(sprite_color,white,8);
+	InitSprites(80);
+	startrasterchain(RasterUpper(),0,1);
+	loop();
+end.

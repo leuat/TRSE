@@ -262,6 +262,7 @@ void LImage::CtrlLeftShift(int x, int y) {
     Data::data.currentColor = getPixel(x,y);
 }
 
+
 QString LImage::GetCurrentModeString() {
     /*    if (m_currentMode==CHARSET1x1) return "1x1 charset mode";
     if (m_currentMode==CHARSET2x2) return "2x2 charset mode";
@@ -360,12 +361,33 @@ void LImage::CopyChar()
                        m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*32);
 
 //   m_copySize = QPoint(256,256);
+/*
+   m_isHybridTemp = false;
+   bool multi = m_bitMask==0b11;
+   if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1)
+   {
+       m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
+       setMultiColor(false);
+       m_isHybridTemp = true;
+   }
+*/
     for (int y=0;y<m_copySize.y();y++)
         for (int x=0;x<m_copySize.x();x++) {
             m_copy[x+y*m_copySize.x()] = getPixel((float)x/(float)m_copySize.x()*(float)m_width,
                                                   (float)y/(float)m_copySize.y()*(float)m_height);
+//            if (m_copy[x+y*m_copySize.x()]>8)
+  //          qDebug() << QString::number(m_copy[x+y*m_copySize.x()]);
         }
     m_hasCopy = true;
+
+  /*  if (m_isHybridTemp) {
+       m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
+       setMultiColor(false);
+       m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,1);
+   }
+   m_isHybridTemp = false;
+*/
+
 
 }
 
@@ -394,6 +416,7 @@ void LImage::PasteChar()
 }
 
 void LImage::FlipHorizontal() {
+    PushHybrid();
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
         for (int x=m_copySize.x()-1;x>=0;x--) {
@@ -402,9 +425,11 @@ void LImage::FlipHorizontal() {
                      m_copy[m_copySize.x()-1-x+y*m_copySize.x()]);
         }
 
+    PopHybrid();
 }
 
 void LImage::FlipVertical() {
+    PushHybrid();
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
         for (int x=0;x<m_copySize.x();x++) {
@@ -414,10 +439,11 @@ void LImage::FlipVertical() {
         }
 
 
-
+    PopHybrid();
 }
 
 void LImage::Transform(int tx, int ty) {
+    PushHybrid();
 
     CopyChar();
     for (int y=0;y<m_copySize.y();y++)
@@ -427,7 +453,7 @@ void LImage::Transform(int tx, int ty) {
                      m_copy[(x+tx)%m_width+((y+ty)%m_height)*m_copySize.x()]);
         }
 
-
+    PopHybrid();
 }
 
 void LImage::Clear() {
@@ -437,12 +463,41 @@ void LImage::Clear() {
         }
 
 }
+void LImage::PushHybrid()
+{
+
+    m_isHybridTemp = false;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+        m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,0);
+        setMultiColor(false);
+        m_isHybridTemp = true;
+    }
+
+}
+
+void LImage::PopHybrid()
+{
+    if (m_isHybridTemp) {
+        setMultiColor(false);
+        m_footer.set(LImageFooter::POS_DISPLAY_HYBRID,1);
+    }
+    m_isHybridTemp = false;
+
+}
 
 
 void LImage::ShiftXY(int dx, int dy)
 {
-    CopyChar();
    // qDebug() <<m_copySize;
+    PushHybrid();
+    CopyChar();
+
+/*    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
+        dx*=2;
+    }*/
+    if (m_isHybridTemp) {
+        dx*=2;
+    }
 
     dx*=m_bitMask==0b11?2:1;
 
@@ -465,6 +520,7 @@ void LImage::ShiftXY(int dx, int dy)
 
                      m_copy[x+y*m_copySize.x()]);
         }
+    PopHybrid();
 
 }
 

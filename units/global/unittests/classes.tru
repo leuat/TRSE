@@ -12,6 +12,7 @@ var
 		
 		function getValue() : integer;
 		begin
+			Common::DebugValue(this.str);
 			StrItem::getValue := this.str;
 		end;
 //		c : array[3] of byte;
@@ -199,10 +200,13 @@ begin
 	
 	sl.items[Vars::v2].str:=$56AB;
 
+
 	Vars::i2 := 0;
 	Vars::i2 := sl.items[Vars::v2].str;
 	Vars::i1 := 0;
+	asm(";fail");
 	Vars::i1 := sl.items[Vars::v1].getValue();
+	asm(";failEnd");
 	Vars::text := "C2:";
 	
 	if (Vars::i1=Vars::i2) then Common::PASS() else Common::FAIL();

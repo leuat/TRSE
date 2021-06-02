@@ -24,6 +24,7 @@
 #include <QPalette>
 #include <QSignalMapper>
 #include "source/LeLib/util/util.h"
+#include <cmath>
 LColorList::LColorList()
 {
 }
@@ -470,6 +471,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
     }
 
+
     if (!m_isMulticolor && !m_isHybridMode) {
         m_pens[1]->Hide(true);
         m_pens[2]->Hide(true);
@@ -481,7 +483,7 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         }
 
         if (m_type==C64) {
-            if (m_isCharset && !m_isHybridMode) {
+            if (m_isCharset && !m_isHybridMode && !m_isLevelEditor ) {
                 m_pens[3]->m_restricted = QVector<int>() << 8<<9<<10<<11<<12<<13<<14<<15;
                 m_pens[3]->m_and =0x7;
 
@@ -597,13 +599,15 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_pens.count();i++) {
         m_pens[i] = other->m_pens[i];
     }
-
+    m_isLevelEditor = other->m_isLevelEditor;
 
 
 }
 
 void LColorList::CopyFromKeep(LColorList *other)
 {
+
+    m_isLevelEditor = other->m_isLevelEditor;
 
     m_list.resize(other->m_list.count());
     for (int i=0;i<m_list.count();i++)
@@ -1048,6 +1052,26 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
     float d = 1E20;
     //    qDebug() << "WHOO";
     winner = 0;
+    if (m_customPalette.count()!=0) {
+        // OMG we have a custom palette! let's use it!
+        int val = (col.red() + col.green() + col.blue())/3;
+//        int chunk = 256/m_customPalette.count();
+        float pos = (val/256.0)*m_customPalette.count();
+        int idx = floor(pos);
+        pos-=idx;
+
+        QColor c1 = m_list[ m_customPalette[idx]].color;
+        if (idx<m_customPalette.count()-1)
+            idx++;
+        QColor c2 = m_list[m_customPalette[idx]].color;
+
+        col.setRed(Util::lerp(pos,(float)c1.red(),(float)c2.red()));
+        col.setGreen(Util::lerp(pos,(float)c1.green(),(float)c2.green()));
+        col.setBlue(Util::lerp(pos,(float)c1.blue(),(float)c2.blue()));
+
+    }
+
+
     if (m_selectClosestFromPen) {
 
         for (int i=0;i<m_pens.count();i++) {

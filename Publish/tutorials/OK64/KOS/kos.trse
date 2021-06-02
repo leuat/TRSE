@@ -43,4 +43,5 @@ var_zeropages = ,
 dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 6.95279e-310
+show_all_files = 1
 open_files =, kos.ras

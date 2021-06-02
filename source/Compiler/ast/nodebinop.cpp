@@ -44,7 +44,6 @@ NodeBinOP::NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> r
             }
         }
     }
-
     ApplyFlags();
 }
 
@@ -70,8 +69,9 @@ bool NodeBinOP::is8bitValue(Assembler *as)
 void NodeBinOP::ApplyFlags()
 {
 //    qDebug() << "::NodeBinop Applying Flags";
-    bool a = m_left->isWord(nullptr);
-    bool b = m_right->isWord(nullptr);
+
+    //bool a = m_left->isWord(nullptr);
+    //bool b = m_right->isWord(nullptr);
 
    // qDebug() << "::NodeBinop a b " << a << b;
 

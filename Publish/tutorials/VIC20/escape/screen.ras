@@ -121,9 +121,10 @@ begin
 		begin
 	
 			roomdata := p1[ j ]; // get first row of columns
-	
+			asm(";AA");	
 			for i := 0 to 8 do // columns
 			begin
+			asm(";BB");	
 
 				if ( roomdata & p2[ i ] <> 0 ) then 
 				begin

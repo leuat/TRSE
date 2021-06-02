@@ -154,8 +154,8 @@ unsigned int LImageSprites2::getPixel(int x, int y)
     LSprite* s = (LSprite*)m_items[m_current];
 //    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
 
-    float fx = x/(float)m_width;
-    float fy = y/(float)m_height;
+    double fx = x/(double)m_width;
+    double fy = y/(double)m_height;
 
 //    if (rand()%100>98)
   //      qDebug() <<s->getPixel(fx,fy,m_bitMask);
@@ -220,7 +220,7 @@ QByteArray LSprite::ToQByteArray(int mask) {
     return data;
 }
 
-PixelChar *LSprite::GetSetData(float x, float y, float &ix, float &iy, uchar bitMask)
+PixelChar *LSprite::GetSetData(double x, double y, double &ix, double &iy, uchar bitMask)
 {
     ix = x*m_width*3.0f;
     iy = y*m_height*3.0f/24*21.0f;
@@ -249,9 +249,9 @@ PixelChar *LSprite::GetSetData(float x, float y, float &ix, float &iy, uchar bit
 
 }
 
-void LSprite::setPixel(float x, float y, uchar color, uchar bitMask)
+void LSprite::setPixel(double x, double y, uchar color, uchar bitMask)
 {
-    float ix, iy;
+    double ix, iy;
     PixelChar* pc = GetSetData(x,y,ix,iy, bitMask);
     if (pc==nullptr)
         return;
@@ -259,9 +259,9 @@ void LSprite::setPixel(float x, float y, uchar color, uchar bitMask)
 
 }
 
-uchar LSprite::getPixel(float x, float y, uchar bitMask)
+uchar LSprite::getPixel(double x, double y, uchar bitMask)
 {
-    float ix, iy;
+    double ix, iy;
     PixelChar* pc = GetSetData(x,y,ix,iy, bitMask);
     if (pc==nullptr)
         return 0;
@@ -417,6 +417,7 @@ void LImageSprites2::PasteChar()
 
 }
 
+
 void LImageSprites2::InitPens()
 {
     LSprite* s = ((LSprite*)m_items[m_current]);
@@ -431,7 +432,7 @@ void LImageSprites2::InitPens()
 
 }
 
-void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
+void LImageSprites2::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
     LSprite* s = ((LSprite*)m_items[m_current]);
     CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
@@ -440,6 +441,17 @@ void LImageSprites2::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF 
 
     MultiColorImage::ToQImage(lst,img,zoom,center);
 }
+
+int LImageSprites2::getGridWidth() {
+    return m_items[m_current]->m_width*24;
+}
+
+int LImageSprites2::getGridHeight(){
+
+    return m_items[m_current]->m_height*21;
+}
+
+
 
 void LImageSprites2::ToggleSpriteMulticolor()
 {

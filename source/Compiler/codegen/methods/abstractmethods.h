@@ -3,7 +3,7 @@
 
 #include <QSharedPointer>
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-
+#include "source/Compiler/ast/nodefactory.h"
 
 
 class AbstractMethods

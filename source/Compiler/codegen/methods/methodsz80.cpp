@@ -44,6 +44,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("Nop"))
         Nop(as);
 
+    if (Command("inc"))
+        IncDec(as, "inc");
 
     if (Command("AddBreakpoint")) {
         as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));

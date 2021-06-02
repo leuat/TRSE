@@ -28,7 +28,7 @@ public:
 
     void setPixel(int x, int y, unsigned int color) override;
 
-    void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
+    void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 
 //    void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma=1.0) override;
 

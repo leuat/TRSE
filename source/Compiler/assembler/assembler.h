@@ -224,9 +224,9 @@ public:
 
     QString getLabel(QString s);
     QString m_hash = "#";
-    QString NewLabel(QString s);
+    virtual QString NewLabel(QString s);
 
-    void PopLabel(QString s);
+    virtual void PopLabel(QString s);
     QString byte = "dc.b";
     QString word = "dc.w";
     QString llong = "dc.l";

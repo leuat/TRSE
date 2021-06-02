@@ -94,7 +94,7 @@ end;
 procedure InitRandom();
 begin
 	for i:=0 to 256 do
-		rands[i]:=Random()/18;
+		rands[i]:=Random()/16;
 
 end;
 

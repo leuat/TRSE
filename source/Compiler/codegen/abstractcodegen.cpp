@@ -77,8 +77,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
     if (!node->m_ignoreDeclarations) {
 
         if (node->m_decl.count()!=0) {
-            if (node->m_isMainBlock && !as->m_ignoreInitialJump)
+            if (node->m_isMainBlock && !as->m_ignoreInitialJump) {
                 as->Asm(getJmp(true)+" " + label);
+            }
+
             hasLabel = true;
         }
 
@@ -450,7 +452,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 
     // ****** STRINGS
-    if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->isArrayIndex()) {
         as->Comment("Assigning a string : " + getValue(v));
         AssignString(node);
         return;
@@ -1236,6 +1238,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node)
 void AbstractCodeGen::LineNumber(int ln) {
     if (m_outputLineNumbers)
         as->Comment("LineNumber: "+QString::number(ln));
+    if (m_outputSource)
+        if (ln<m_rasSource.count())
+           as->Comment(m_rasSource[ln]);
 
 }
 

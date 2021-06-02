@@ -639,25 +639,25 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeProcedure> node)
     as->Asm("lea a0,"+node->m_procedure->m_procName + " ; NOT TESTED YET");
 }
 
-void CodeGen68k::LoadAddress(QSharedPointer<Node> n)
+QString CodeGen68k::LoadAddress(QSharedPointer<Node> n)
 {
     n->ForceAddress();
     QString a0 = as->m_regMem.Get();
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
     as->m_varStack.push(a0);
     as->m_regMem.Pop(a0);
-
+    return "";
 }
 
-void CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
+QString CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
 {
     n->ForceAddress();
     if (n->isPureNumeric() && n->isAddress()) {
         TransformVariable(as,"move.l",a0,"#"+n->getValue(as));
-        return;
+        return "";
     }
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
-
+    return "";
 }
 
 void CodeGen68k::LoadPointer(QSharedPointer<Node> n)

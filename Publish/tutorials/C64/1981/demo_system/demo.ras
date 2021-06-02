@@ -1,0 +1,425 @@
+program Demo1981;
+/*
+	This is the full 1981 demo by Proxima 
+	code by Leuat (Nicolaas Groeneboom) and Pushead (End credits)
+	Music by Maze
+	PETSCII by Worrior1
+	Graphics by Optic and Hammerfist
+	
+
+	In order to compile this demo, follow these steps:
+
+	a) open the corresponding "1981 demo effects". This is where all the individual demo
+	effect are, and you can compile and run them individually. However, in order to compile
+	up the full demo, you must press the "Build all" button in the lower left corner.
+	
+	b) When all the demo effects have been built, open up this project. You now need to 
+	compress all the demo effects before they are added to the disk. *** NB Make sure you have 
+	python and tinycrunch installed for this! When these are installed, simply open the "disk1.paw"
+	and press ctrl+B to build (or, compress all the effects using tinycrunch)
+	
+	c) you can now compile and run the main demo by simply ctrl+R. Make sure you have exomizer
+	enabled. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+var
+	
+   	currentBg,curbg,advance,keep, keep2,k,isInitialized,i,j,ldr,curtar: byte = 0;
+   	clearcnt : byte = 255;
+   	playmusic : byte = 1;
+	currentScene : byte = 1;
+	curBorderY : byte = 0;
+ 	music: incsid("music/moskou4.sid",2);
+ //	music: incsid("music/happynewyear.sid",2);
+	clearcols1 : array[4] of byte = ($0,$6,3,$1);
+ 
+	p1,p2,zp:pointer;
+
+//@buildpaw "disk1.paw"
+
+
+
+@use KrillsLoader $0200 $2000 $4000
+
+@define scene_poster 1
+@define scene_moscow 2
+@define scene_bgscroll 3
+@define scene_theend 4
+@define scene_posterscroll 5
+@define scene_fader 6
+@define scene_waves 7
+@define scene_petscii 9
+@define scene_knowledge 10
+@define scene_planet 11
+
+
+
+@donotremove MainUpdate
+@donotremove UpdateMusic
+@donotremove OuterLoop
+@donotremove Test1
+@donotremove Test2
+
+/*
+	
+
+*/
+
+
+	order : array[] of byte = (
+
+		@scene_fader,115,0,2,0,
+//		@scene_fader,83,0,2,0,
+		@scene_petscii,11,2,0,2, // inter
+		
+
+//		@scene_fader,90,0,2,0,
+		@scene_bgscroll,32,0, 7,2,
+		
+		@scene_petscii,8,4,0,2, // kosmos
+//		@scene_knowledge,26,0,0,2,
+		@scene_knowledge,36,0,0,2,
+		
+		@scene_petscii,12,5, 2,2, // Brezhnev
+		@scene_posterscroll,84,0,0,0,
+//		@scene_petscii,7W,1, 0,0,
+		@scene_waves,29,1,0,0,
+
+		@scene_moscow,68,0,2,2,
+		@scene_petscii,6,3,2,2, // Marx
+		
+		@scene_poster,47,0, 0,0,
+//		@scene_waves,17,1,0,0,
+		@scene_planet,40,0,0,0,
+		@scene_theend,200,	0,0,0
+		
+		);
+		
+
+
+interrupt NMI();
+begin
+end;
+
+
+@startblock $FE00 "ClearCode"
+var
+
+	fromBlack:  array[32] of byte = ($00,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$00,$00);
+	ktab : array[25] of integer = buildtable("40*i");
+
+
+
+procedure SetFG();
+begin
+	screen_fg_col:=fromBlack[curbg];
+	if (curbg>curtar) then dec(curbg);
+	if (curbg<curtar) then inc(curbg);
+end;
+
+procedure ClearOut();
+var 
+begin
+	if (clearcnt>30) then
+		return;
+		
+	for j:=0 to 4 do
+	begin
+		k:=clearcnt-4+j;
+		if (k<25 and k>=0) do
+		begin 
+			zp := $D800 + ktab[k];//k*40;
+			fill(zp,clearcols1[j],40);
+			zp := $0400 + ktab[k];
+			if (j=0) then
+				fill(zp,key_space,40);
+		end;
+	end;
+	inc(clearcnt);
+end;
+procedure UpdateMusic();
+
+procedure RasterInside();
+begin
+//	screen_bg_col:=white;
+	if (curBorderY=0) then
+		hidebordery(0)
+		else
+		hidebordery(1);
+//	StartIRQ(0);
+	if (isInitialized=1 and playmusic) then 
+		UpdateMusic()
+	else clearsound();
+//	screen_bg_col:=black;
+
+end;
+
+@endblock
+
+
+
+@define useKernal 0
+
+@define programStart $B00
+
+procedure LocalStartIRQ() inline;
+begin
+asm("
+		pha
+		txa
+		pha
+		tya
+		pha
+		lda 01
+		sta keep2 ; $815
+		lda keep   ; $814
+		sta 01
+		asl $d019
+");
+end;
+
+procedure LocalCloseIRQ() inline;
+begin
+	poke(^$01,0,keep2);
+	closeirq();
+end;
+
+
+
+interrupt RasterMain();
+begin
+	LocalStartIRQ();
+	RasterInside();	
+
+	//LocalCloseIRQ();
+//	poke(^$01,0,kp2);
+//	closeirq();
+	LocalCloseIRQ();
+end;
+
+
+
+
+
+@startblock $B00 "Main Update"
+
+procedure MainUpdate();
+var
+	transition, curData, time, time2, timeStop : byte = 0;
+	volume:byte=15;
+begin
+/*	transition:=0;
+	if (time2<1) then transition:=1;
+	if (time2+1=timeStop) then transition:=2;*/
+	if (isInitialized=1) then 
+		UpdateMusic();
+	inc(time);
+	if (time&15=0) then inc(time2);
+	if (timeStop<>0) then begin
+			if (time2>=timeStop) then advance:=1;
+		//if (time2+1=timeStop) then transition:=1;
+		transition:=abs(time2-timeStop);
+		//if (transition>=31) then transition:=0;
+	end;
+//	inc(^$D020);			
+//	if (currentScene>=3) then begin
+end;
+
+procedure UpdateMusic();
+begin
+//	call(^$E003); 
+	call(sidfile_1_play);
+end;
+
+
+
+@endblock
+
+
+@startblock $BA0 "Main Loop Update"
+
+
+
+procedure OuterLoop();
+begin
+	//if (advance=1) then call(^$810);
+	asm(" lda advance");
+end;
+
+@endblock
+
+
+procedure StartChain();
+begin
+//	waitforraster(240);
+	StartRasterChain(RasterMain(), 0,@useKernal); // play music while loading
+end;
+
+
+
+
+begin
+	//MainUpdate();
+	// Test();
+	advance:=0;
+/*		asm(" lda #0 
+	sta $d011");
+*/	
+//	screen_bg_col:=1;	
+	ldr:=(currentScene-1)*5;
+	if (isInitialized<>0) offpage then begin
+		StartChain();
+//		screenoff();
+//		SCREEN_FG_COL:=BLACK;
+		SPRITE_BITMASK:=0;
+		clearcnt :=255;
+		
+		if (order[ldr]=@scene_petscii) then
+		begin
+//			screenoff();
+//			clearscreen($20,^$0400);
+//			clearscreen(screen_fg_col,^$D800);
+			poke(^$D018, 0, $14);
+			poke(^$D01B, 0, 00);
+//			screenon();
+		end
+		else
+//		setbank(VIC_BANK0);
+//		settextmode();
+	//	setcharsetlocation($1000);
+		poke(^$D01B, 0, 00);
+//		poke(^$D018,0,$E5);
+//		poke(^$D011,0,$1B);
+//		fill(^$D000,0,16);
+//		setregularcolormode();
+		time:=0;
+		time2:=0;
+		transition:=0;
+	//	screenoff();
+	end else begin
+//	if (isInitialized=0) then begin	
+	   // Trap NMI interrupts
+/*    asm("
+    lda     #<nmi
+    sta     $0318
+    lda     #>nmi
+    sta     $0319
+    ");
+*/		
+		NMIIRQ(NMI());				
+//		preventirq();
+	//	disableciainterrupts();
+		InitKrill();
+//	PreventIRQ();
+//	disableciainterrupts();
+
+	end;	
+//	end;
+	setmemoryconfig(1,@useKernal,0);
+	keep:=peek(^$01,0);
+	poke(^$A0,0,keep);
+	
+
+/*	if (curSong=1) then begin
+		isInitialized:=0;
+		//StartRasterChain(RasterMain(), 0,@useKernal); // play music while loading
+		StartChain();
+		clearsound();
+		KrillLoad(m2);
+		inc(curSong);
+//		currentScene:=11;
+	
+	end;
+	*/
+	if (currentScene=13) then
+	begin
+		playmusic := false;
+//		inc(^$D020);
+		KrillLoad(#m1);
+//		blockmemcpy(^$1000, ^$E000, 20);
+		initsid(SIDFILE_1_INIT);
+		playmusic := true;		
+	//	dec(^$D020);
+	end;
+
+	if (isInitialized=0) then begin	
+		initsid(SIDFILE_1_INIT);
+//		StartRasterChain(RasterMain(), 0,@useKernal); // play music while loading
+	//	StartChain();
+		preventirq();
+		disableciainterrupts();
+		isInitialized:=1;
+		volume:=15;
+		
+	end;
+
+	zp:=#s1;
+	timeStop:=order[ldr+1];
+	curData := order[ldr+2];
+	currentBg := order[ldr +4];
+	poke(^$B01,0,curData);
+	if (order[ldr-5]=@scene_petscii) then begin clearcnt := 0; end;
+	i:=order[ldr]-1;
+	while (i<>0) then begin
+		while zp[0]<>0 then 
+			zp:=zp+1;
+		zp:=zp+1;
+		dec(i);
+	end;
+	
+	
+//	screen_bg_col:=white;
+	KrillLoadCompressed(zp);
+	//screen_bg_col:=blue;
+	inc(currentScene);
+//	advance:=0;
+	//screenon();
+//	screen_bg_col:=blue;
+//	call(^$c01);
+	k:=currentBg;
+	j:=order[ldr+3];
+	for i:=0 to 16 do 
+	begin
+		if j=fromBlack[i] then curbg :=i;
+		if k=fromBlack[i] then curtar :=i;
+	end;
+//	FindFG();
+	if (clearcnt<>255) then
+	begin
+		for i:=0 to 36 do
+		begin
+			if (i&1=0) then
+				SetFG();		
+
+			ClearOut();
+//			inc(clearcnt);
+			waitforraster(0);
+			waitforraster(240);
+		end;
+	
+	end;
+	//screen_bg_col:=0;	
+
+	asm( " jmp $c01");
+
+end.

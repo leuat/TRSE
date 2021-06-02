@@ -1,5 +1,5 @@
 program part6_RenderLevel;
-@use Levels
+@use "gfx/Levels"
 
 var
 
@@ -48,8 +48,7 @@ begin
 	setcharsetlocation(@charsetPosition);
 	// Make sure that the level pointer points to level data location
 	// Read header data
-	Levels::lp := @levelPosition;
-	Levels::ReadHeader();
+	Levels::ReadHeader(@levelPosition);
 	Levels::starty:=2;
 end;
 
@@ -71,7 +70,6 @@ begin
 	end;
 
 	if (i=10) then begin
-		Levels::lp:=@levelPosition;
 		screenoff();
 		Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,$04);
 		screenon();

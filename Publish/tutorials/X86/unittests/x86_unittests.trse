@@ -64,5 +64,5 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/X86/unittests/
-open_files = ,[ext]units/global/unittests/classes.tru, utests.ras, utests.asm
+open_files = ,utests.ras, [ext]units/global/unittests/strings.tru, [ext]units/global/unittests/various.tru
 current_file = utests.ras

@@ -1,0 +1,353 @@
+program PetsciiAnimations;
+// The unit is accessible in the C64 Turbl Rascal Units project from the front page 
+@use "animation/animation"
+@use "tables/luminosities"
+@use "compression/compression"
+@use "demounit"
+var  
+
+
+
+@export "ville_petscii3.flf" "images/ville_petscii.trm" 2
+@export "images/brezhnev.flf" "images/brezhnev.trm" 2
+
+var
+	const animPos : address = $2000;
+	anim: incbin("images/ville_petscii.trm",animPos);
+	brev: incbin("images/brezhnev.trm") compressed;
+	
+@ifndef IS_DEMO
+//	 music : incsid("../demo_system/music/moskou.sid",2);
+@endif
+
+	cur,curf,tar,time, val, color, colorShift : byte = 0;  
+	g_currentBank: byte = 0;
+
+//	bgcols : array[8] of byte = (red,yellow,red, white,black);
+	bgcols : array[8] of byte = (red,yellow,black, white,black);
+	
+@export "charsets/petscii.flf" "charsets/petscii.bin" 256
+
+@define colp $5000
+@define datap $6000
+
+procedure RenderNext(trm_data_width, trm_xpos, trm_ypos:byte);
+var
+   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
+   trm_s : pointer;
+begin
+	
+	trm_m:=0;
+	Animations::trm_zp := Animations::trm_zp + 1;
+	trm_i:=Animations::trm_zp[0];
+
+	trm_dw:=trm_data_width;
+	trm_sw:=screen_width-trm_dw;
+	
+	for trm_pass:=0 to 2 do begin
+		case trm_pass of
+			0:	trm_s:=@datap+trm_xpos;
+			1:	trm_s:=@colp+trm_xpos;
+		end;
+	trm_s:=trm_s+screen_width*trm_ypos;
+	while (Animations::trm_zp[0]<>Animations::trm_endChar) do begin
+		if (Animations::trm_zp[0] = Animations::trm_skipChar) then begin
+			trm_s := trm_s + Animations::trm_zp[1]; 
+			Animations::trm_zp:=Animations::trm_zp+2; 
+		end
+		else 
+		begin
+			trm_s[0]:=Animations::trm_zp[0];
+			trm_s := trm_s + 1;
+			Animations::trm_zp:=Animations::trm_zp+1; 
+		end;
+//		g0:=zp[0];
+
+	end;
+	Animations::trm_zp:=Animations::trm_zp+1; //inczp(zp,1);
+//	g0:=0;
+	end;
+
+	if (Animations::trm_hasTimeStamps) then Animations::trm_zp:=Animations::trm_zp+1;
+
+	inc(Animations::trm_curFrame);
+/*	if (Animations::trm_curFrame=Animations::trm_maxFrames) then 
+	begin
+		Animations::trm_curFrame:=0;
+		Animations::trm_zp:=int2ptr(Animations::trm_orgPos+7);
+
+	end;*/
+end;
+
+@define charsetLoc $2800
+
+
+
+//@startblock $B800 "Inter code"
+var	
+	const char : byte = 80;
+	const NN : byte = 165;
+	split : byte = 0;	
+	i,j,k,l,curl2,curline,cury2:byte=0;
+	tp,sp,zp,zp2 : pointer;
+	curpos : pointer;
+	cols : array[256] of byte;
+	jj,ii,starcol : byte = 0;
+//	curColFade : byte = 56;
+	curColFade : byte = 70;
+	perlin : incbin("data/c.bin");
+	
+procedure UpdateColorsIn();
+begin
+	// moveto
+	if (split=0) then
+	begin
+		screenmemory:=$0400;
+		tp:=$D800;
+		zp:=@colp;
+		sp:=#perlin;
+	end;
+	inc(split);
+	if (split=3) then
+	begin
+		split:=0;
+		curColFade:=curColFade +4;
+
+	end;	
+	j:=167;
+	if (split=0) then j:=166;
+	for jj:=0 to 2 do begin
+		for ii:=0 to j do begin
+			asm("
+
+			ldy ii
+			lda (sp),y
+			sbc curColFade
+			sta $50
+			cmp #64
+			bcs cont2
+			tax
+			lda cols,x
+;			sta (screenmemory),y
+			sta (tp),y
+			jmp jadda
+			
+cont2:		;lda $50
+			cmp #220
+			bcc jadda
+;			lda (zp),y
+;			sta (screenmemory),y
+			lda (zp),y
+			sta (tp),y
+
+jadda:
+			
+");
+/*			k:=(sp[ii] - curCol);
+			if (k<64) then begin
+				screenmemory[ii] := cols[k];
+			end else
+			if k>240 then begin
+				screenmemory[ii] := zp[ii];
+				tp[ii]:=zp2[ii];
+			end;
+*/
+					
+		end;
+		zp:=zp+j;
+		zp2:=zp2+j;
+		screenmemory:=screenmemory+j;
+		sp:=sp+j;
+		tp:=tp+j;
+	end;
+	
+//	if (time&3=0) then if curCol<16 then inc(curCol);
+end;
+
+procedure Music();
+begin
+	@ifdef IS_DEMO
+		call(^@callPos);
+	@endif
+	@ifndef IS_DEMO
+//	call(SIDFILE_1_PLAY);
+	@endif
+
+end;
+
+
+interrupt RasterAnim();
+begin
+	DemoUnit::StartDemoIRQ();
+/*	if (g_currentBank=1) then
+	begin
+		CopyFullScreen(^$4400,^$0400);
+		SwitchBank();
+	end;*/
+	setcharsetlocation($1000);
+	Music();	
+	setbank(VIC_BANK0);	
+	if (curColFade<240) then
+	begin
+		UpdateColorsIn();
+	end;
+	inc(time);
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+
+var
+	fadeColsToWhite : array[8] of byte =(blue,dark_grey,light_blue,green,cyan,light_green,yellow,white);
+	fadeColsFromYellow : array[8] of byte =(blue,dark_grey,light_blue,green,cyan,light_green,yellow,yellow);
+	fadeColsRedToBlue : array[8] of byte =(blue,light_blue,green,cyan,light_green,yellow,light_red,red);
+	fadeColsFromWhite : array[8] of byte =(white, yellow, light_green, cyan, green, light_blue, dark_grey, blue, black);
+//	fadeColsFromYellow : array[8] of byte =(yellow, yellow, light_green, cyan, green, light_blue, dark_grey, blue, black);
+	
+	@donotremove fadeColsToWhite
+	@donotremove fadeColsFromWhite
+	@donotremove fadeColsFromYellow
+	@donotremove fadeColsRedToBlue
+	
+	colTypes : array[5] of integer=(fadeColsRedToBlue,
+								   fadeColsFromYellow,
+								   fadeColsFromWhite,
+//								   fadeColsRedToBlue,
+								   fadeColsToWhite,
+								   fadeColsFromWhite);
+
+
+//@endblock
+procedure InitCols2();
+begin
+	
+	zp := colTypes[curf-1];
+
+	for i:=0 to 64 do begin
+		j:=i>>2;
+		cols[i]:=(zp[j&7]);
+		if (i>31) then cols[i]:=screen_fg_col;
+	end;
+
+end;
+
+
+
+
+// Raster update
+
+var
+	cury : integer = 2;
+
+
+
+procedure RenderFrame();
+begin
+
+//	screenoff();
+	//if (Animations::trm_curFrame<Animations::trm_maxFrames) then
+//		if (time&63=0) then 
+			RenderNext(screen_width,0,0);
+//	screenon();
+end;
+
+/*
+interrupt RasterMain();
+begin
+	DemoUnit::StartDemoIRQ();
+	
+	@ifdef IS_DEMO	
+	call(^@callPos);
+@endif
+@ifndef IS_DEMO
+	call(SIDFILE_1_PLAY);
+@endif
+
+
+	DemoUnit::CloseDemoIRQ();
+end;
+*/
+
+begin
+//	screen_bg_col:=black;
+//	screen_fg_col:=black;
+	DefineScreen();
+	@ifndef IS_DEMO
+//	vic_data_loc:=$18;
+	setbank(vic_bank0);
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	i := peek(^$01,0);
+	poke(^@keepPos,0,i);
+//	initsid(SIDFILE_1_INIT);	
+	
+	@endif
+	setcharsetlocation($1000);
+
+	curf:=peek(^$b01,0);
+	@ifndef IS_DEMO
+		curf := 1;
+	@endif
+	if (curf=1) then hideborderx(1);
+	screen_bg_col:=0;
+	tar:=bgcols[curf-1];
+//	tar := 7;	
+	j:=peek(^@curBg,0);
+//	j:=6;
+	for i:=0 to 16 do
+	begin
+		if (Luminosities::fromBlack[i]=j) then k:=i;
+		if (Luminosities::fromBlack[i]=tar) then l:=i;
+	end;
+//	k:=6;
+	//l:=14;
+	while (k<>l) do
+	begin
+		screen_fg_col:=Luminosities::fromBlack[k];
+		if (l > k) then inc(k);
+		if (l < k) then dec(k);
+		for i:=0 to 1 do
+		begin
+			waitforraster(0);
+			waitforraster(255);
+		end;
+	end;
+	screen_fg_col:=Luminosities::fromBlack[k];
+//	screen_fg_col:=;
+
+
+	setregularcolormode();
+	settextmode();	
+	clearscreen(key_space,^$0400);
+	clearscreen(tar,^$D800);
+	clearscreen(0,^@colp);
+	
+	if (curf=5) then
+	begin
+		clearscreen(0,^$D800);
+		Compression::Decompress(#brev, $5000);
+		Animations::ReadAnimationHeader($5000);
+		RenderFrame();
+	end;
+//	if (curf=3) then RenderFrame();
+	
+	if (curf<5) then
+	begin	
+		Animations::ReadAnimationHeader(#anim);
+		for i:=0 to curf do
+			RenderFrame();
+	end;		
+	copyfullscreen(^@datap,^$0400);
+	InitCols2();
+		
+//	clearscreen(0,^$D800);
+
+//	StartRasterChain(RasterMain(),0,0);
+		
+	StartRasterChain(RasterAnim(), 0,0);
+	poke(^@curBorderY,0,0);
+	DemoUnit::Endd();
+	
+
+end.

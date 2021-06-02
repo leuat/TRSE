@@ -202,6 +202,18 @@ begin
 end;
 
 
+procedure Array1();
+begin
+	Vars::barr[3] := 10;
+	Vars::barr[7] := 7;
+	Vars::v1 := Vars::barr[3] + Vars::barr[7];
+	Vars::text := "A1:";
+	if (Vars::v1=17) then Common::PASS() else Common::FAIL();
+end;
+
+
+
+
 procedure Exec();
 begin
 	// initialise everything
@@ -228,6 +240,9 @@ begin
 	@endif
 	
 	ByteMulMul05();
+	
+	Array1();
+	
 
 	@ifndef GAMEBOY
 	ByteDivBytePow203();

@@ -294,7 +294,7 @@ void LImageMetaChunk::PasteChar()
     *getCur() = m_copy;
 }
 
-/*void LImageMetaChunk::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
+/*void LImageMetaChunk::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
 
 }

@@ -55,6 +55,8 @@ public:
     QMap< QString,QSharedPointer<Node>> m_inlineParameters;
     bool m_flag1 = false;
     bool m_outputLineNumbers = true;
+    bool m_outputSource = false; // Turned off for now
+    QStringList m_rasSource;
 
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch
@@ -81,8 +83,8 @@ public:
     virtual void LoadVariable(QSharedPointer<NodeVar> n) = 0;
     virtual void LoadVariable(QSharedPointer<Node> n) = 0;
     virtual void LoadVariable(QSharedPointer<NodeNumber> n) = 0;
-    virtual void LoadAddress(QSharedPointer<Node> node) {}
-    virtual void LoadAddress(QSharedPointer<Node> node,QString reg) {}
+    virtual QString LoadAddress(QSharedPointer<Node> node) {return "";}
+    virtual QString LoadAddress(QSharedPointer<Node> node,QString reg) {return "";}
     virtual void LoadVariable(QSharedPointer<NodeProcedure> node) = 0;
 
     virtual QString getJmp(bool isOffPage) = 0;

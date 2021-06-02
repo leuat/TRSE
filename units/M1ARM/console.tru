@@ -1,0 +1,60 @@
+Unit Console;
+var
+	text_clearscreen : string ="\033[2J";
+	
+
+
+procedure PrintChar(c:integer);
+begin
+	asm("
+	    mov X0, #1     // 1 = StdOut
+        adrp x3, localVariable_Console_Print_Console_p@PAGE // string to print
+ 	    add x3, x3, localVariable_Console_Print_Console_p@PAGEOFF
+		ldr x1,[x3]
+ 	    mov x2,#1
+        mov X16, #4     // MacOS write system call
+        svc 0     // Call linux to output the string
+	
+	");
+end;
+	
+	
+procedure Print(p : pointer);
+begin
+	while (p[0]<>0) do
+	begin
+		PrintChar(p^);
+		p+=1;
+	end;	
+end;
+	
+		
+/*procedure Print(p : pointer;l : integer);
+begin
+	asm("
+	    mov X0, #1     // 1 = StdOut
+        adrp x3, localVariable_Console_Print_Console_p@PAGE // string to print
+ 	    add x3, x3, localVariable_Console_Print_Console_p@PAGEOFF
+		ldr x1,[x3]
+		
+        adrp x3, localVariable_Console_Print_Console_l@PAGE // string to print
+ 	    add x3, x3, localVariable_Console_Print_Console_l@PAGEOFF
+ 	    
+ 	    ldr x2,[x3]
+ 	    mov x3,#0
+        mov X16, #4     // MacOS write system call
+        svc 0     // Call linux to output the string
+	
+	");
+end;
+*/
+
+
+procedure ClearScreen();
+begin
+//	Print(#text_clearscreen,1);
+end;	
+	
+	
+	
+end.

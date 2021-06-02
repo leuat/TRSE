@@ -1,0 +1,226 @@
+c1 = 0.7
+globals = {
+ 	camera = { x = 0, y=0, z=3.6 },
+     fov = 45,
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = {x=-0.2, y=0.2, z=1 }, 
+				color = {x=c1, y=c1, z=c1}, 
+				power = 1.5,
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=0, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+scale = 4
+
+
+-- 10*24
+output = {
+	resolution = { width = 24/3*scale, height=10*8},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	output_type = 1,
+	c64_multicolor = 1,
+	c64_imageType = 0,
+	dither = 2,
+	ditherStrength = { x = 10, y= 1, z= 1},
+
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,3,6,2 }
+}
+
+ll = 1
+
+
+MaterialBlue1 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1, y=1, z=1},
+	texture = "images/S_2.png"
+}
+
+MaterialBlue2 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1, y=1, z=1},
+	texture = "images/A_2.png"
+}
+
+
+MaterialBlue3 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1, y=1, z=1},
+	texture = "images/N_1.png"
+}
+
+MaterialBlue4 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1.0, y=1.0, z=1},
+	texture = "images/T_2.png"
+}
+
+
+
+
+MaterialSide = {
+   color = { x=1, y=1.0, z=1 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 16
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+count = 3
+
+cur = 0
+
+charname = "char"
+	n = "box"
+	n2 = "box2"
+
+
+speed = 1
+
+function Init()
+--	AddObject("torus",n,"","MaterialBlue",0,0,0, 1,1,1);
+	ClearAllObjects()
+	done = 0
+	a1 = 0
+	a2 = 0
+	a3 = 0
+	rscale = 1
+	radd = 0
+	if (cur==2) then
+	
+		AddObject("box",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 1.2,1,0.3);
+		speed = 1.9
+		
+		done = 1
+	end
+--[[	if (cur==3) then
+	
+		AddObject("cylinder",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 0.6,0.2,0.7);
+		speed = 2
+		a1 = 180
+		
+		done = 1
+	end
+]]--	
+	if (done==0) then	
+		AddObject("box",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 1,1,1);
+		sc = 0.9
+		speed = 1
+	end
+
+--	AddObject("box",n2,"","MaterialSide",0,0,0, sc,sc,sc);
+--	AddObject("perlin",n,"","MaterialBlack",n,0.03,5,0);
+--	AddObject("perlin","torus1","","Material1",  "torus1", 0.03,5,0);
+--	AddObject("sphere",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 1.5,0.9,1);
+
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+    t = frame/noFrames*90.0+180;
+--    if (cur==0 or cur==2) then
+	SetRotation(n,t*speed+a1,a2,a3)
+	--SetRotation(n2,t,0,0)
+	--end
+	if (cur==1) then
+	SetRotation(n,180,t*speed+90,0)
+--	SetRotation(n2,180,t+90,0)
+   
+	end;
+    if (cur==2) then
+	SetRotation(n,t*speed+180,0)
+--	SetRotation(n2,180,t+90,0)
+   
+	end;
+end
+
+
+function Update()
+	
+
+	if (frame>=1) then
+--		CompressCharset(0,40,0,25,  3, 256)
+-- add in binary form
+		for y = 0, output.resolution.height/8-1 do
+		for x = 0, output.resolution.width/scale-1 do
+			for yy = 0, 7 do
+				AddC64LineToData(x,y*8+yy,1,1)
+			end
+		end
+		end
+	
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	if (frame==noFrames and cur<=3) then 
+		if (cur==0) then SaveRawData("data/s_mc.bin"); end;
+		if (cur==1) then SaveRawData("data/a_mc.bin"); end;
+		if (cur==2) then SaveRawData("data/n_mc.bin"); end;
+		if (cur==3) then SaveRawData("data/t_mc.bin"); end;
+	--	OptimizeScreenAndCharset(40,25,256, 1);
+	--	SaveScreenAndCharset("data/screen"..tostring(cur)..".bin", "data/charset"..tostring(cur)..".bin");
+		cur = cur+1
+		Message("SAVED")
+		frame = 0
+		if (cur<4) then
+			Init()
+		end
+	end	
+	---if (frame<noFrames) then
+		UpdateScene()
+--	end
+
+
+	frame=frame+1
+	
+
+
+end

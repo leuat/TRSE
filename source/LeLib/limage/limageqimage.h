@@ -55,7 +55,7 @@ public:
     double getL() override {return 8;}
 
 
-    virtual void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
+    virtual void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
 
     void ExportBlackWhite(QFile &file, int p1, int p2, int p3, int p4) override;
@@ -78,7 +78,7 @@ public:
     QImage* Blur(float rad);
     QImage* ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effect);
 
-    void CreateGrid(int x, int y, QColor color, int strip,float zoom, QPointF center, float scale);
+    void CreateGrid(int x, int y, QColor color, int strip,double zoom, QPointF center, double scale);
 
 
     void CopyFrom(LImage *img) override;

@@ -129,6 +129,7 @@ public:
 
     QMap<GUIType, QString> m_GUIParams;
 
+
     virtual bool isNes() {return false;}
 
     QVector<MetaParameter*> m_metaParams;
@@ -190,6 +191,13 @@ public:
     bool m_silentExport=false;
     int m_width;
     int m_height;
+    bool m_isHybridTemp;
+
+
+
+    void PushHybrid();
+    void PopHybrid();
+
     float m_scaleX = 1.0f;
 
 //    unsigned int m_border=0, m_background=0;
@@ -371,7 +379,7 @@ public:
 
     void Box(int x, int y, unsigned char col, int size);
 
-    virtual void ToQImage(LColorList& lst, QImage& img, float zoom = 1, QPointF center = QPointF(160,100)) = 0;
+    virtual void ToQImage(LColorList& lst, QImage& img, double zoom = 1, QPointF center = QPointF(160,100)) = 0;
 
     virtual void CopyFrom(LImage* img);
 

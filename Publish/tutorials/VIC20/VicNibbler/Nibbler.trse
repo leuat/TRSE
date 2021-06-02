@@ -47,4 +47,5 @@ ignore_initial_jump = 0
 data_header_bin/chars.flf = 6.95265e-310
 data_header_bin\chars.flf = 6.95265e-310
 zeropage_colormemory = $fc
+show_all_files = 1
 open_files =, nibbler.ras

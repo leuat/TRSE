@@ -1,3 +1,4 @@
+
 #include "codegen_6502.h"
 
 CodeGen6502::CodeGen6502()
@@ -340,9 +341,11 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
         node->m_left->Accept(this);
         as->Term();
         m_flag1=true;
+
         as->BinOP(node->m_op.m_type);
         node->m_right->Accept(this);
         as->Term();
+
         m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
         return true;
@@ -522,7 +525,7 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
         LoadVariable(node->m_left);
 //        if (!node->m_left->isWord(as))
         as->Term();
-//        if (!node->m_left->getO(as))
+//        if (!node->m_left->isWord(as))
   //          as->Asm("ldy #0");
 
         as->Asm("sta mul16x8_num1");
@@ -1315,8 +1318,8 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     else {
         as->ClearTerm();
 
-        if (!nodeA->isPureVariable() || nodeA->isArrayIndex()) {
-            as->Comment("Compare variable is complex, storing in temp variable");
+        if (!nodeA->m_left->isPureVariable() || nodeA->m_left->isArrayIndex()) {
+            as->Comment("Compare variable is complex, storing in temp variable : "+nodeA->getValue(as));
             nodeA->m_left->Accept(this);
             as->Term();
             QString temp = as->StoreInTempVar("compare_temp");
@@ -1767,12 +1770,17 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         as->Comment("Load Unknown type array, assuming BYTE");
         unknownType = true;
     }
-
+    if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
+        as->Asm("ldy #0 ; lhs is byte, but integer required");
+    }
     // Optimization : ldx #3, lda a,x   FIX
     if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric()) {
+            QString op = "lda ";
+            if (as->m_term!="")
+                op = as->m_term + " ";
             as->ClearTerm();
-            as->Asm("lda "+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
+            as->Asm(op+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
             return;
         }
     }
@@ -1869,10 +1877,6 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
     return;
 }
 
-void CodeGen6502::LoadAddress(QSharedPointer<Node> node)
-{
-
-}
 
 void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
 {
@@ -1941,7 +1945,7 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 pb=")";
                 as->Comment("Storing to a pointer");
             }
-            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
+//            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
 
 
             // Optimize for number or pure var
@@ -2063,8 +2067,19 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 //    QString lbl = as->NewLabel("stringassign");
+
+/*    if (isPointer && node->m_left->isArrayIndex()) {
+        right->Accept(this);
+
+        as->Asm("sta ("+ getValue(left)+"),y");
+        return;
+
+    }
+*/
+
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
+
 
 //    as->Asm("jmp " + lbl);
     QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
@@ -2073,7 +2088,7 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
   //  as->Label(lbl);
 
 //    qDebug() << "IS POINTER " << isPointer;
-    if (isPointer) {
+    if (isPointer && node->m_left->isArrayIndex()==false) {
   //      qDebug() << "HERE";
         as->Asm("lda #<"+str);
         as->Asm("sta "+getValue(left));
@@ -2081,7 +2096,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
         as->Asm("sta "+getValue(left)+"+1");
     }
     else {
-
         as->Asm("ldx #0");
         as->Label(lblCpy);
         as->Asm("lda " + str+",x");
@@ -2348,15 +2362,17 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeBinOP> rterm = qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
     if (rterm==nullptr)
         return false;
-
     // right first is var
 
  //   qDebug() << rterm->m_op.getType();
 
-    QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+
+/*    QSharedPointer<NodeVar> rvar = qSharedPointerDynamicCast<NodeVar>(rterm->m_left);
+    as->Comment("Test Inc dec "+QString::number(rvar==nullptr));
     if (rvar==nullptr)
         return false;
-
+*/
+    auto rvar = rterm->m_left;
 //    qDebug() << "IsSimpleIncDec test";
 
     // DANGEROUS
@@ -2417,19 +2433,24 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     if (operand=="")
         return false; // other operand
 
+    as->Comment("Test Inc dec D");
 
 
-    if (var->m_expr==nullptr && rvar->m_expr==nullptr) {
+    if (!var->isArrayIndex() && !rvar->isArrayIndex()) {
         as->Asm(operand +getValue(var));
+
         return true;
     }
     else {
-        if (rvar->m_expr==nullptr)
+        if (!rvar->isArrayIndex())
             return false;
         if (var->m_expr==nullptr)
             return false;
         // BOTH must have expressions
-        if (!rvar->m_expr->DataEquals(var->m_expr))
+        auto rv = qSharedPointerDynamicCast<NodeVar>(rvar);
+        if (rv==nullptr)
+                return false;
+        if (!rv->m_expr->DataEquals(var->m_expr))
             return false;
         // Ok. Both are equal. OPTIMIZE!
         //            return false;

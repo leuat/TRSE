@@ -71,7 +71,6 @@ public:
     QVector<FilePart> m_includeFiles;
     bool m_ignorePreprocessor, m_nextIsReference = false;
     bool m_isCurrentlyInABlockComment = false;
-
     int getPositionInPercent();
     int getTotalNumberOfLines();
 
@@ -108,6 +107,7 @@ public:
     Token Preprocessor();
     Token String();
     Token InlineAsm();
+    Token Macro();
     QString peek();
     QString peek(int n);
     // GetNextToken is the main "tokenizer" that transforms the stream of characters into streams of tokens.

@@ -1,0 +1,157 @@
+upp = 0.4
+str = 1
+amb = 0.0
+globals = {
+	camera = { x = 0.0, y=4.0, z=6.0 },
+	fov = 19, 
+	target = { x = 0.0, y=2.1, z=0 },
+	up = { x=-0, y=1, z=0 },
+	light0 = {   	direction = {x=-0, y=upp, z=2 }, 
+				color = {x=str, y=str, z=str}, 
+			},
+	ambient = { x = amb, y = amb, z = amb },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+	
+	sky = 0,
+	shadow_scale = 1,
+		isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+--	resolution = { width = 10*8, height=10*8},
+	resolution = { width = 40*8, height=8*12},
+--	output_type = 7, -- charset type
+	aspect = 2.0,
+	
+	output_type = 7, -- charset type
+	charset = "charsets/petscii_limit.flf",
+	ignorechars = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31},
+
+--	charset = "rom",
+--	charset = "charsets/main.flf",
+--	charset = "charsets/charset.bin",
+--	charset = "charsets/petscii_limit.flf",
+--	charset = "charsets/charset.bin",	
+	c64_multicolor = 0,
+	c64_imageType = 0, -- charset type image
+	dither = 2,
+	ditherStrength = { x = 12, y= 1, z= 2},
+--	index_colors = { 0,4,6,3 }
+	index_colors = { 0,6 }
+}
+
+
+c = 1
+ss = 0.2
+sx = ss/0.5
+Material2 = {
+	color = { x=c, y=c, z=c },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0,
+	uvtype = "sphere_map",
+	texture = "images/earth.jpg",
+	
+	uv_scale = {x = ss, y=0-sx, z=1},
+--	uv_shift = {x = 0.5, y=0.223, z=1}
+}
+
+
+
+-- Init is called on start  
+
+
+ 
+function Init()
+	AddObject("sphere","char1", "", "Material2", -0, 0,0, 5,0,0,0);
+	SetRotation("char1",20,0,0);  
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/(noFrames))*3.14159*2+3.1415/2;--*2 
+  	
+
+  	--t=t/2
+--  	t = t*0.50 + 3.1415/2
+--    t = t / 2.0
+	r = 12
+	r = 13
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	
+--	globals.camera.y = cos(t+1.0)*r*0.5
+--	t=t+3.14159/4
+--[[	
+	if (frame<16) then
+		t=0.3
+	else
+		t=-0.3
+	end
+--	t=t
+]]--
+	--t =  0--3.14/2
+ 	dt = 0.0
+ 	ll = str
+	t = t -dt
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+--    SetLight(0,  sin(t), 0,  cos(t),   ll,ll,ll)
+
+	t = t +dt*2
+
+--    SetLight(1,  sin(t), -upp,  cos(t),   ll,ll,ll)
+ --   SetLight(2,  sin(t), upp,  cos(t),   ll,ll,ll)
+	t = t -dt*2
+  --  SetLight(3,  sin(t), -upp,  cos(t),   ll,ll,ll)
+
+
+--[[	SetRotation("char1",0,(t*180+90),0);
+	SetRotation("char2",0,(t*180+90),0);
+	SetRotation("cyl1",0,(t*180+45)*2,0);
+	t=t*3.14159*2;
+	r=1
+	SetPosition("char1",cos(t)*r,0,sin(t)*r);
+	t=t+3.14159
+	SetPosition("char2",cos(t)*r,0,sin(t)*r);
+--	SetPosition("char1",0,0,0);
+]]--
+
+end
+
+
+function Update()
+	
+
+	if (frame==noFrames+3) then 
+		hasSaved = 1
+		SaveScreenAndCharset("data/planet.bin","data/nada.bin");
+		Message("SAVED")
+	--	Message("You can exit now");
+	end	
+
+	UpdateGraphics()
+	frame=frame+1
+	
+--	AddScreen(0,0,40,10);
+	if (frame>1) then
+		AddC64FullScreen();
+	end
+
+
+end

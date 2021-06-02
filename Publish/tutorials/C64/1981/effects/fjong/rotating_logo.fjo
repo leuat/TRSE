@@ -1,0 +1,204 @@
+upp = -0.5
+str = 1
+
+globals = {
+	camera = { x = 0.5, y=-0.20, z=6.0 },
+	fov = 19, 
+	target = { x = 0.5, y=-0.20, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=0, y=upp, z=2 }, 
+				color = {x=str, y=str, z=str}, 
+			},
+	ambient = { x = 0.4, y = 0.4, z = 0.4 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 0,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+--	resolution = { width = 10*8, height=10*8},
+	resolution = { width = 24, height=21},
+--	output_type = 7, -- charset type
+	output_type = 1, -- charset type
+	charset = "charsets/petscii_limit.flf",
+--	charset = "rom",
+--	charset = "charsets/main.flf",
+--	charset = "charsets/charset.bin",
+--	charset = "charsets/petscii_limit.flf",
+--	charset = "charsets/charset.bin",	
+	c64_multicolor = 0,
+	c64_imageType = 0, -- charset type image
+	dither = 2,
+	aspect = 0.85,
+	ditherStrength = { x = 12, y= 1, z= 2},
+--	index_colors = { 0,4,6,3 }
+	index_colors = { 0,6 }
+}
+
+
+c = 0.5
+Material2 = {
+	color = { x=c, y=c, z=c },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 1 
+
+}
+
+
+
+-- Init is called on start  
+
+
+ 
+function Init()
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.2,0.2, 3 )
+--  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,12,0.5 )
+
+--	font = "charsets/fantasy.flf"
+--	font = "charsets/kofler.bin"
+--	font = "charsets/romplus.flf"
+
+	z = 0
+	x = -0.4
+	y = 0
+	w = 0.75
+	w = 0.02
+--	if char~=25 then
+	text = "PRX"
+	c = string.sub(text,char+1,char+2)
+	ss = 0.25*0.7
+	ss = 0.56
+	t = 16
+	ss2 = 0.8
+	AddObject("image","char1", "", "Material2",  "images/hammersickle.png", t,t,   
+x,y,-z,            -- position
+0.55*ss,0.6*ss,0.0,      -- width xyz 
+w,0.31*ss*ss2,0.31*ss*ss2  -- stretch xyz
+);          
+
+
+--[[
+	AddObject("char","char2", "", "Material2",  font, char+1,   
+0,0,z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+]]--
+--	jj = sin(char+1)*10
+	jj = 0
+	SetRotation("char1",0,25,0);
+
+--	AddObject("box","box2","","Material0", 0,0,0  , 10, 2 ,0.1);
+
+	--SetRotation("char2",0,45+90,jj);
+
+--	end
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/(noFrames))*3.14159*2+3.1415/2;--*2 
+  	--t=t/2
+--  	t = t*0.50 + 3.1415/2
+	r = 12
+	r = 13
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	globals.camera.y = cos(t+1.0)*r*0.5
+--	t=t+3.14159/4
+--[[	
+	if (frame<16) then
+		t=0.3
+	else
+		t=-0.3
+	end
+--	t=t
+]]--
+	--t =  0--3.14/2
+ 	dt = 0.1
+ 	ll = str
+	t = t -dt
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+--    SetLight(0,  sin(t), 0,  cos(t),   ll,ll,ll)
+
+	t = t +dt*2
+
+--    SetLight(1,  sin(t), -upp,  cos(t),   ll,ll,ll)
+ --   SetLight(2,  sin(t), upp,  cos(t),   ll,ll,ll)
+	t = t -dt*2
+  --  SetLight(3,  sin(t), -upp,  cos(t),   ll,ll,ll)
+
+
+--[[	SetRotation("char1",0,(t*180+90),0);
+	SetRotation("char2",0,(t*180+90),0);
+	SetRotation("cyl1",0,(t*180+45)*2,0);
+	t=t*3.14159*2;
+	r=1
+	SetPosition("char1",cos(t)*r,0,sin(t)*r);
+	t=t+3.14159
+	SetPosition("char2",cos(t)*r,0,sin(t)*r);
+--	SetPosition("char1",0,0,0);
+]]--
+
+end
+
+
+function Update()
+	
+
+	if (frame==noFrames) then 
+		hasSaved = 1
+		SaveRawData("data/disksprite.bin");
+		Message("SAVED")
+		Message("You can exit now");
+	end	
+
+	UpdateGraphics()
+	frame=frame+1
+	--AddScreenPetscii();
+--	if (frame>0) then
+	--AddC64FullScreen();
+--	end
+--    AddScreenData() 
+
+--	if (frame ~= noFrames) then 
+		AddC64LineToData(0,0,3,21)
+		AddC64LineToData(0,0,1,1)
+		--#1
+--[[		AddC64LineToData(3,0,3,21)
+		AddC64LineToData(0,0,1,1)
+		--#2
+		AddC64LineToData(0,21,3,21)
+		AddC64LineToData(0,0,1,1)
+		--#3
+		AddC64LineToData(3,21,3,21)
+		AddC64LineToData(0,0,1,1)
+		
+]]--
+--	end
+	
+
+
+end

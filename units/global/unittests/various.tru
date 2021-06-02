@@ -1,0 +1,30 @@
+unit Various;
+var
+
+
+// memory inc test
+	@ifndef X86
+procedure Test1();
+begin
+	poke(^$4000,0,10);
+	inc(^$4000);	
+	Vars::v1:=peek(^$4000,0);
+	
+	if (peek(^$4000,0)=11) then Common::PASS() else Common::FAIL();
+end;
+	@endif
+
+//--------------------------------------------------------------------------------------------
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("VARIOUS");
+	
+	// Mul and div
+	@ifndef X86
+	Test1();
+	@endif
+	Common::WaitABit();
+end;
+
+end.

@@ -463,17 +463,6 @@ void CodeGenX86::LoadVariable(QSharedPointer<NodeVar> n)
 {
     n->Accept(this);
 }
-
-void CodeGenX86::LoadAddress(QSharedPointer<Node> n)
-{
-
-}
-
-void CodeGenX86::LoadAddress(QSharedPointer<Node> n, QString reg)
-{
-
-}
-
 void CodeGenX86::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
     ErrorHandler::e.Error("Procedure address not implemented yet! Please bug the developer", node->m_op.m_lineNumber);

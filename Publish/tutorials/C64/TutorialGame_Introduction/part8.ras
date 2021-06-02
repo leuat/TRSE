@@ -1,5 +1,5 @@
 program part8_Collisions;
-@use Levels
+@use "gfx/Levels"
 
 // levels are loaded to/from $5000
 @define levelPosition $5000
@@ -90,8 +90,7 @@ begin
 
 	setcharsetlocation(@charsetPosition);
 
-	Levels::lp:=@levelPosition;
-	Levels::ReadHeader();
+	Levels::ReadHeader(@levelPosition);
 	Levels::starty:=2;
 
 end;
@@ -174,7 +173,6 @@ begin
 
 
 	if redraw=1 then begin
-		Levels::lp:=@levelPosition;
 		Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 		redraw:=0;
 	end;

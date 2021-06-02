@@ -1,0 +1,212 @@
+upp = 1
+str = 1.0
+
+globals = {
+	camera = { x = 0.0, y=6.20, z=6.0 },
+	fov = 20, 
+	target = { x = 0.0, y=0.20, z=0 },
+	up = { x=0.1, y=1, z=0 },
+	light0 = {   	direction = {x=0, y=upp, z=1 }, 
+				color = {x=str, y=str, z=str}, 
+			},
+	ambient = { x = 0.1, y = 0.1, z = 0.5 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+	resolution = { width = 24, height=21},
+	output_type = 1, -- c64 type image
+	c64_multicolor = 1,
+	c64_imageType = 0, -- charset type image
+	dither = 2,
+	aspect = 0.8,
+	ditherStrength = { x = 50, y= 1, z= 1},
+	index_colors = { 0,4,3,6 }
+}
+
+
+cc= 0.5
+Material1 = {
+   color = { x=cc, y=cc, z=cc },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0
+}
+
+
+k = 0.7
+Material2 = {
+	color = { x=k, y=k, z=k },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0 
+
+}
+
+
+GroundMaterial = {
+	color = { x=0.9, y=0.9, z=0.1 },
+	reflection = 0.0,
+	shininess = 400,
+	shininess_intensity = 0 
+
+}
+
+
+-- Init is called on start  
+
+function Init()
+
+	if (char==0) then
+		AddObject("torus","tor","","Material2", 0,0,0, 1.8,1,0)
+		SetRotation("tor",0,45,65);
+	end
+	if (char==1) then
+		AddObject("torus","tor","","Material2", 0,0,0, 2.2,0.2,0)
+		SetRotation("tor",0,45,90);
+	end
+
+end
+ 
+function InitChar()
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.2,0.2, 3 )
+--  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,12,0.5 )
+
+	font = "charsets/fantasy.flf"
+	font = "charsets/main.flf"
+	font = "rom"
+	font = "charsets/cyrillic.flf"
+
+	z = 0
+	x = -0.4
+	y = 0
+	w = 0.75
+--	if char~=25 then
+
+--	AddObject("box","Box1","","Material1", 0,0,0, 1,10, 0.1);
+
+	AddObject("char","char1", "", "Material2",  font, char+1,   
+x,y,-z,            -- position
+0.55,0.6,0.0,      -- width xyz 
+w,0.31,0.27  -- stretch xyz
+);          
+
+
+--[[
+	AddObject("char","char2", "", "Material2",  font, char+1,   
+0,0,z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+]]--
+--	jj = sin(char+1)*10
+	jj = 0
+	SetRotation("char1",0,45,jj);
+
+	--SetRotation("char2",0,45+90,jj);
+
+--	end
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+
+
+function UpdateGraphics()
+
+--  	t = ((frame+24)/(noFrames))*3.14159*2+3.1515/2;--*2 
+  	t = ((frame)/(noFrames))*3.14159*2+3.1515/2;--*2 
+--  	t = t*0.50-2.5-- + 3.1415/3
+	r = 12
+	r = 14
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	t=t+3.14159/4
+--[[	
+	if (frame<16) then
+		t=0.3
+	else
+		t=-0.3
+	end
+--	t=t
+]]--
+--[[
+	t =  0--3.14/2
+ 	dt = 1
+ 	ll = str
+	t = t -dt
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+--    SetLight(0,  sin(t), 0,  cos(t),   ll,ll,ll)
+
+	t = t +dt*2
+
+    SetLight(1,  sin(t), -upp,  cos(t),   ll,ll,ll)
+    SetLight(2,  sin(t), upp,  cos(t),   ll,ll,ll)
+	t = t -dt*2
+    SetLight(3,  sin(t), -upp,  cos(t),   ll,ll,ll)
+]]--
+
+--[[	SetRotation("char1",0,(t*180+90),0);
+	SetRotation("char2",0,(t*180+90),0);
+	SetRotation("cyl1",0,(t*180+45)*2,0);
+	t=t*3.14159*2;
+	r=1
+	SetPosition("char1",cos(t)*r,0,sin(t)*r);
+	t=t+3.14159
+	SetPosition("char2",cos(t)*r,0,sin(t)*r);
+--	SetPosition("char1",0,0,0);
+]]--
+
+end
+
+
+function Update()
+	
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+		if char == 2 then 
+--			globals.isPaused = 1
+		--CompressAndSaveHorizontalData(16,3, "data/screen.bin","data/table.bin");
+--			SaveRawData("data/pal.bin");
+			CompressAndSaveHorizontalData(6,3, "data/screen_sprite.bin","data/table_sprite.bin");
+
+
+
+			Message("Files written")
+			
+		end
+		ClearAllObjects()
+		Init()
+	end
+
+	UpdateGraphics()
+	frame=frame+1
+
+--	if (frame ~= noFrames) then 
+		AddC64LineToData(0,0,6,21)
+--	end
+	
+
+
+end

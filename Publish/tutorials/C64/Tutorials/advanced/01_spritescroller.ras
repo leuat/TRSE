@@ -39,6 +39,8 @@ var
 // Position of included charset
 @define charsetLoc $1400
 
+@export "resources/charsets/charset_16x16.flf" "resources/charsets/charset_16x16.bin" 256
+
 	charset : incbin("resources/charsets/charset_16x16.bin", @charsetLoc);
 
 // Position of generated chars (right after)
@@ -99,6 +101,7 @@ begin
 			textSprite_x[i]:=textSprite_x[i] -1;
 			k:=textSprite_t[i];
 			textSprite_y[i]:=@spriteScrollerYPos + temp2[k];
+			asm(";here");
 			ms_x:=textSprite_x[i]*2;
 			spritepos(ms_x, textSprite_y[i], i);
 			textSprite_t[i]:=textSprite_t[i]+3;

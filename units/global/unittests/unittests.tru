@@ -8,6 +8,8 @@ Unit Unittests;
 @use "unittests/muldiv"
 @use "unittests/forloop"
 @use "unittests/registers"
+@use "unittests/various"
+@use "unittests/strings"
 
 @use "unittests/advanced_math"
 
@@ -15,7 +17,7 @@ Unit Unittests;
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests : byte = 8;
+	const noTests : byte = 10;
 	currentTest : byte;
 	isDone: boolean;
 
@@ -46,6 +48,8 @@ begin
 		if (currentTest=4) then AdvancedMath::Exec();
 		@endif
 		if (currentTest=7) then Registers::Exec();
+		if (currentTest=8) then Various::Exec();
+		if (currentTest=9) then Strings::Exec();
 
 		currentTest+=1;
 				

@@ -37,6 +37,11 @@ public:
 
     bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos) override;
 
+    int m_curLabel = 1;
+    QString NewLabel(QString s) override;
+
+    void PopLabel(QString s) override;
+
 
 
 };

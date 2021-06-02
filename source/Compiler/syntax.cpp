@@ -51,6 +51,18 @@ void Syntax::Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSha
 }
 
 
+void Syntax::Reload()
+{
+    SetupReservedWords(reservedWords,"r",false);
+    SetupReservedWords(reservedWordsFjong,"rf",true);
+    SetupBuiltinFunctions(builtInFunctions, m_currentSystem->m_system,"m",false);
+    SetupBuiltinFunctions(builtinFunctionsFjong, m_currentSystem->m_system,"f",true);
+    SetupKeys();
+    SetupIllegalVariables();
+
+}
+
+
 void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem)
 {
     list.clear();
@@ -236,6 +248,7 @@ void Syntax::LoadSyntaxData()
 
 
 }
+
 
 bool Syntax::isNumeric(QString s) {
     bool ok;

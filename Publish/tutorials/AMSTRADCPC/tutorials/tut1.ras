@@ -28,11 +28,7 @@ var
 
 begin
 	// Set 160x200 16-color mode
-	Crtc::SetMode(0);
-	// Set black border
-	Crtc::SetBorder(0);
-	Crtc::Synchronize();
-	Memory::DisableInterrupts();
+	Crtc::InitDefault(0);
 	// Set palette
 	Crtc::SetPalette(#palette);
 	// Copy image to screen 

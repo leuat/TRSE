@@ -1,0 +1,47 @@
+program m1armtest;
+@use "console"
+var
+	text: string="Hello TRSE m1 world!***\010\013";
+	@donotremove i
+	i,j:integer;
+	tp:pointer;
+
+
+
+
+
+
+begin
+//	Console::ClearScreen();
+	for i:=0 to 10 do	
+		Console::Print(#text);
+	
+	asm(";here");
+	
+	asm(";HEND");
+	/*
+	
+	Console::ClearScreen();
+	i:=10;
+	
+	j:=i*10 + i*6;
+	
+	for i:=0 to 10 do	
+		Console::Print(#text);
+
+	*/	
+	asm("
+
+_inf:
+		b _inf
+
+        mov     X0, #0      // Use 0 return code
+        mov     X16, #1     // Service command code 1 terminates this program
+        svc     0           // Call MacOS to terminate the program
+        
+.data
+.align 4
+test: .word 0
+	
+	");
+end.

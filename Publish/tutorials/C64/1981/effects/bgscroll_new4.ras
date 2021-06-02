@@ -1,0 +1,418 @@
+program BGScroll;
+@use "demounit"
+@use "tables/luminosities"
+var  
+   	trans,i,j,k,y,l,m,n,c2,tt,t2,adde2,start,t3: byte = 0; 
+//   	tadd : array[4] of byte = (1,2,1,2);
+   	tadd : array[4] of byte = (1,4,1,4);
+   	 c1 : byte;
+	curCol : byte = 4;
+	curTar : byte = 17;   	 
+
+	curSprCol : byte = 4;
+	curSprTar : byte = 31;
+
+	curSprCol2 : byte = 4;
+	curSprTar2 : byte = 4;
+
+ mm : byte at $42;
+
+@define charLoc1 $4800
+@define colPos $F600
+
+
+@export "images/knowledge2.flf" "images/bgscroll_sprites.bin" 8
+@define sprloc $7800
+	spr1 : incbin("images/bgscroll_sprites.bin",@sprloc);
+
+
+@startblock $1000 "SCREENS"
+	screens1: incbin("data/screen4_bgnew0_0.bin");
+	screens2: incbin("data/screen4_bgnew1_0.bin");
+	screens3: incbin("data/screen4_bgnew0_1.bin");
+@endblock
+@startblock $9D00 "SCREENS2"
+	screens4: incbin("data/screen4_bgnew1_1.bin");
+	screens5: incbin("data/screen4_bgnew0_2.bin");
+	screens6: incbin("data/screen4_bgnew1_2.bin");
+@endblock
+
+	charset1 : incbin("data/charset4_bgnew0_0.bin",@charLoc1);
+	charset2 : incbin("data/charset4_bgnew1_0.bin",@charLoc1+$800*1);
+	charset3 : incbin("data/charset4_bgnew0_1.bin",@charLoc1+$800*2);
+	charset4 : incbin("data/charset4_bgnew1_1.bin",@charLoc1+$800*3);
+	charset5 : incbin("data/charset4_bgnew0_2.bin",@charLoc1+$800*4);
+	charset6 : incbin("data/charset4_bgnew1_2.bin",@charLoc1+$800*5);
+	
+	zp2,zp3,p1,cp,tcp,tzp:pointer;
+	frame,adde,adde2:byte=0;
+	time:byte=0;
+	scroll:byte=0;
+	maxScroll : byte=30;
+	xx:integer;
+	@define spriteLoc $2000
+	@define screenLoc $4400
+	mul1000 : array[8] of integer = BuildTable("i*1000");
+	
+	curType : byte=0;
+	
+	curShift : byte =0;
+	
+	const curMax : byte = 32;
+
+//   	lumi: array[32] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+
+var
+	curl : byte=0;
+	
+@ifndef IS_DEMO
+ 	music: incsid("../demo_system/music/moskou.sid",2);
+@endif
+
+	
+	maxFrames : byte=8;
+//	text : string=("         PROXIMA       ",0,"         ");
+	text : string=("               MINIMUM WAGE DEMO EFFECTS         ",0,"         ");
+	mp,tp,zp,tp2,sp : Pointer;
+
+@startblock $4000 "Exttacode"
+
+procedure UpdateState();
+begin
+	curShift:=curShift+tadd[curType];
+	if (curShift = curMax) then
+	begin
+		curShift := 0;
+		curType := curType+1;
+		if (curType=4) then curType := 0;
+//		frame:=0;
+	end;
+//	screen_bg_col:=frame;
+end;
+
+
+procedure Endd();
+begin
+	while (true) do
+	begin
+//		inc(^$D020);
+	//	inc(^$D021);
+		call(^$BA0);
+		waitforverticalblank();
+	end;
+end;
+
+
+procedure SetFrame(frame: global byte);
+begin
+	frame:=frame&7;
+	sp:=#screens1 + mul1000[frame];	
+	if (curType=2) then
+	begin
+		sp:=sp + 8000;
+		if (frame>=4) then sp:=#screens4 +  mul1000[frame&3];;
+	
+	end;
+	if (curType=3) then
+	begin
+		sp:=#screens5 +  mul1000[(1+frame)&7];;
+	end;
+	if (curType=1) then
+	begin
+		sp:=#screens5 +  mul1000[(6-frame)&7];;
+	end;
+end;
+
+@endblock
+
+@startblock $8000 "Unrolled memcpy"
+
+
+procedure UpdateFrame();
+begin
+	if (curCol = 4) then return;
+	if (curType=0) then
+	begin
+	if (frame>=4) then setcharsetlocation($1000)
+	else setcharsetlocation($800);
+	end;
+	if (curType=2) then
+	begin
+		if (frame>=4) then setcharsetlocation($2000)
+		else setcharsetlocation($1800);
+	end;
+	
+	if (curType=3) then
+	begin
+		if ((frame)>=3) then setcharsetlocation($3000)
+		else setcharsetlocation($2800);
+		if (frame=7) then setcharsetlocation($2800);
+	end;
+
+	if (curType=1) then
+	begin
+		if (frame<3) then setcharsetlocation($3000)
+		else setcharsetlocation($2800);
+		if (frame=7) then setcharsetlocation($3000);
+	end;
+
+
+	memcpyunroll(sp,0,^@screenLoc,256);
+	asm(" inc sp+1 ");
+	memcpyunroll(sp,0,^@screenLoc+^256,256);
+	asm(" inc sp+1 ");
+	memcpyunroll(sp,0,^@screenLoc+^256*^2,256);
+		asm(" inc sp+1 ");
+//	end;
+	memcpyunroll(sp,0,^@screenLoc+^256*^3,232);
+	
+end;
+
+
+@endblock
+
+procedure UpdateColors();
+
+begin
+	multicolor_char_col[2]:=Luminosities::fromBlack[curCol];
+	if (curCol<curTar) then inc(curCol);
+	if (curCol>curTar) then dec(curCol);
+	
+	if (trans=1) then
+	begin
+		curTar := 4;
+	end;
+end;
+
+
+
+procedure UpdateSprites();
+procedure UpdateSpriteColors();
+
+interrupt Raster();
+begin
+	startirq(0);
+//	screen_fg_col:=lumi[curl];
+//	if (curl<>0) then dec(curl);
+//	if (time&31=0) then curl:=12;
+	hidebordery(0);
+
+	if (start) then
+	begin	
+		UpdateColors();
+		UpdateFrame();
+		UpdateState();
+		SetFrame(tt);
+		UpdateSprites();	
+//	inc(screen_bg_col);
+//		tt:=sine[t2*5]>>3 + t2;
+//	tt := sine[time]>>2 - time;
+	
+		if (curType=0 or curType=2) then
+		begin
+			tt:=tt+1;
+		end
+		else
+//			if (time&1=1) then 
+				inc(tt);
+
+//		adde := tt>>3;
+
+	end;
+	UpdateSprites();		
+	UpdateSpriteColors();
+
+//	start:=1;
+
+	@ifndef IS_DEMO
+	if (time>200) then trans:=1;
+	@endif
+
+@ifdef IS_DEMO
+	call(^@callPos);
+	if (peek(^@transition,0)<2) then trans:=1;
+@endif
+//	setmulticolormode();
+	if (t3=4) then curSprTar2 := 31;	
+	if (t3=5) then curSprTar := 4;	
+	if (t3=10) then curSprTar2 := 4;	
+	if (t3=4) then start:=1;
+	@ifndef IS_DEMO
+		call(SIDFILE_1_PLAY);
+	@endif
+//	screen_bg_col:=blue;
+//	UpdateColor();
+//	screen_bg_col:=black;
+	inc(time);
+	if (time&31=0) then inc(t3);	
+//	waitforraster(240);
+//	UpdateSpritePos();	
+	closeirq();
+end;	
+
+procedure Init();
+begin
+	sp:=#screens1;
+	tp:=#text;
+//	setmulticolormode();
+	screen_bg_col:=black;
+	screen_fg_col:=red;
+	sprite_multicolor:=0;
+//	setmulticolormode();
+	multicolor_char_col[2]:=black;
+	multicolor_char_col[1]:=black;
+	multicolor_char_col[2]:=Luminosities::fromBlack[curCol];
+	multicolor_char_col[1]:=black;
+//	clearscreen(red,^$D800);
+	zp:=@colPos;
+	setregularcolormode();
+	waitforraster(0);
+	clearscreen(red+8,^$D800);
+	setmulticolormode();
+	setbank(vic_bank1);
+	
+
+/*	for i:=0 to 64 do
+	begin
+		j:=Luminosities::fromBlack[i&31];
+		fill(zp,j,40);
+		zp:=zp+40;
+	end;*/
+//	clearscreen($15,^$4400);
+
+end;
+@startblock $CC00 "Extra code"
+var 
+	int:integer;
+	cur : byte=4;
+	
+	sine32 : array[32] of integer = buildtable( "((Math.sin(i/32*3.14159*0.5)*0x7f+0x7f)/12)");
+
+
+procedure UpdateSprites();
+begin
+//	if (curSprCol=tarSprCol and curSprCol2 = tarSprCol2) then return;
+	j := 140;
+	int:=60+ sine32[curSprCol];
+	//k:=curColFade;
+	for i:=0 to 8 do
+	begin
+//		j:=220-siney[k];
+//		j:=160;
+		if (i=5) then
+		begin
+			int:=190+ sine32[curSprCol2];
+//			j := 120+ sine32[curSprCol2];
+		end;
+		spritepos(int,j,i);	
+		int:=int+24;
+//		k:=k+8;
+	end;
+end;
+procedure UpdateSpriteColors();
+begin
+	i:=$ff;
+	if (curSprCol = 4) then
+		i:=i&%11100000;
+	if (curSprCol2 = 4) then
+		i:=i&%00001111;
+	sprite_bitmask:=i;
+	sprite_multicolor:=0;	
+	
+	j := Luminosities::fromBlack[curSprCol];
+	fill(sprite_color,j,4);
+	j := Luminosities::fromBlack[curSprCol2];
+	fill(sprite_color+5,j,3);
+	if (curSprCol<curSprTar) then inc(curSprCol);
+	if (curSprCol>curSprTar) then dec(curSprCol);
+	if (curSprCol2<curSprTar2) then inc(curSprCol2);
+	if (curSprCol2>curSprTar2) then dec(curSprCol2);
+	
+end;
+
+@endblock
+procedure InitSprites();
+begin
+	sprite_bitmask:=$00;
+	for i:=0 to 8 do setspriteloc(i,(@sprloc-$4000)/64+i,1);		
+	UpdateSpriteColors();	
+	UpdateSprites();	
+//	fill(sprite_color,1,8);
+	sprite_multicolor := 0;
+
+end;
+
+procedure EnddClear();
+begin
+	while (true) do
+	begin
+		@ifdef IS_DEMO
+		//call(^@outerCall);
+		asm(" 
+			jsr @outerCall
+			beq pp_cnt2
+			");
+	//		inc(^$d020);
+//			RasterIRQ(Empty(),0,0);
+//			waitforraster(0);
+//			waitforraster(0);
+			//settextmode();
+			//setregularcolormode();
+			waitforraster(250);
+			RasterIRQ(DemoUnit::RasterClear(),0,0);
+			setcharsetlocation($1000);
+			setbank(vic_bank0);
+			clearscreen(key_space,^$0400);
+//			setregularcolormode();
+	
+			asm("
+			jmp $810
+pp_cnt2:
+		
+		");
+	//	inc(^$D020);
+		@endif
+		
+
+		@ifndef IS_DEMO
+		//call(^@outerCall);
+		if (time>200+48) then
+		begin
+			RasterIRQ(DemoUnit::RasterClear(),0,0);
+			waitforraster(0);
+			setcharsetlocation($1000);
+			setbank(vic_bank0);
+			clearscreen(key_space,^$0400);
+			loop();
+//			setregularcolormode();
+		end;	
+	//	inc(^$D020);
+		@endif
+
+
+
+	//	waitforverticalblank();
+	end;
+
+end;
+
+
+begin
+	Init();
+//	screen_bg_col:=white;
+	DemoUnit::curBorderY := 1;
+//	setcharsetlocation(@charLoc1);
+@ifndef IS_DEMO
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	initsid(SIDFILE_1_INIT);
+@endif
+	InitSprites();
+	sp:=#screens1;
+	waitforverticalblank();
+	SetFrame(0);
+	StartRasterchain(Raster(), 250,0);
+		
+	
+	EnddClear();	
+end.

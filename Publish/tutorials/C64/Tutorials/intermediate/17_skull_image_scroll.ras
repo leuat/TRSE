@@ -108,6 +108,9 @@ begin
 	closeirq();
 end;
 
+
+
+
 begin
 	SetupScreen();
 	setcharsetlocation($2000);

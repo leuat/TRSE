@@ -128,7 +128,11 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_metaParams.append(new MetaParameter("data_extra","Extra data",3,0,1000));
     m_metaParams.append(new MetaParameter("use_colors","Colour data is stored with level data",1,1,1));
 
+    m_colorList.m_isLevelEditor = true;
+
     EnsureSystemColours();
+//    m_colorList.SetC64Pens(m_meta.m_displayMultiColor,true);
+//    m_colorList.SetC64Pens(mul)
 }
 
 void ImageLevelEditor::ReInitialize()
@@ -283,9 +287,6 @@ void ImageLevelEditor::LoadBin(QFile &file)
             l->m_ColorData = file.read(m_meta.dataSize());
         if (m_meta.m_extraDataSize!=0)
             l->m_ExtraData = file.read(m_meta.m_extraDataSize);
-
-
-
 //        for (int i=0;i<m_meta.m_extraDataSize;i++)
   //          qDebug() << "Saving extracol: " <<QString::number(l->m_ExtraData[i]);
 
@@ -712,6 +713,8 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         renderPathGrid = c->renderPathGrid;
         m_scale = c->m_scale;
         m_colorList.CopyFrom(&c->m_colorList);
+        m_colorList.m_isLevelEditor = mc->m_colorList.m_isLevelEditor;;
+
     }
     else
     LImage::CopyFrom(mc);
@@ -723,6 +726,8 @@ void ImageLevelEditor::onFocus()
     if (m_charsetFilename!="") {
         LoadCharset(m_charsetFilename,0);
         setMultiColor(m_meta.m_displayMultiColor);
+        if (m_charset!=nullptr)
+            m_charset->m_colorList.m_isLevelEditor = true;
     }
 
 }

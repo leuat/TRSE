@@ -62,10 +62,10 @@ public:
         m_data.resize(m_height*m_width*m_pcWidth*m_pcHeight);
         m_header.resize(HEADER_SIZE);
     }
-    PixelChar* GetSetData(float x, float y, float& ix, float& iy, uchar bitMask);
+    PixelChar* GetSetData(double x, double y, double& ix, double& iy, uchar bitMask);
 
-    void setPixel(float x, float y, uchar color, uchar bitMask);
-    uchar getPixel(float x, float y, uchar bitMask);
+    void setPixel(double x, double y, uchar color, uchar bitMask);
+    uchar getPixel(double x, double y, uchar bitMask);
 
 
 };
@@ -121,8 +121,9 @@ public:
    }
 
 
-    void InitPens() override;
-   void ToQImage(LColorList& lst, QImage& img, float zoom, QPointF center) override;
+
+   void InitPens() override;
+   void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 
 
    void ToggleSpriteMulticolor();
@@ -135,6 +136,8 @@ public:
    virtual void Transform(int x, int y) override;
    virtual int getContainerCount() override {return m_items.count();}
 
+   virtual int getGridWidth() override;
+   virtual int getGridHeight()  override;
 
 
    virtual void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma = 1.0) override;

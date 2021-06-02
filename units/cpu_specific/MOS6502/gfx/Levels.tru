@@ -10,15 +10,17 @@ var
    Renders a .flf level at map pos x,y
 */
 
-	@define levelpointer lp
-	@define colorpointer cp
 	cp,lp,cdp : pointer; 
+	orgLevelPos: integer;
+
+@define levelpointer lp
+@define colorpointer cp
 
 
-
-procedure ReadHeader();
+procedure ReadHeader(orgLevelPos:global integer);
 
 begin
+	@levelpointer := orgLevelPos;
 	@levelpointer := @levelpointer +13;
 
 	// Read level header info
@@ -46,9 +48,11 @@ end;
 procedure RenderColorLevel(m_li, m_lj, m_screen: byte);
 begin
 	// Fluff files have 13 byte headers
+
+	@levelpointer := orgLevelPos;
 	
 	// Go past header
-	@levelpointer := @levelpointer +32;
+	@levelpointer := @levelpointer +32+13;
 
 	// Calculate position in level layout
 
@@ -113,6 +117,7 @@ procedure RenderCharsetColorLevel(m_li2, m_lj2, m_screen2: byte);
 var
 
 begin
+	@levelpointer := orgLevelPos;
 	// Fluff files have 13 byte headers
 	@levelpointer:=@levelpointer+(32+13);
 //	inczp(@levelpointer, 32+13);

@@ -9,6 +9,7 @@ var
 	pa,sp,pb,p1 : pointer;
 	j,k: byte;
 
+
 	@donotremove y_lookup
 	y_lookup : array[200] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
 	// Lookup for mode 0 pixel 0
@@ -100,6 +101,7 @@ wf_Sync:
     di
     ");
 end;
+
 
 /**
 Sets the CPC resolution mode. 
@@ -504,6 +506,19 @@ begin
 		memcpy(sp,pa,80);
 		pa:=pa+80;
 	end;
+end;
+
+procedure InitDefault(ga:global byte);
+begin
+	SetBorder(0); // black border
+	SetMode(ga); // 160x200 bitmap	
+	
+	Memory::DisableFirmware(); 
+	Memory::DisableLRom();
+
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+	
 end;
 
 

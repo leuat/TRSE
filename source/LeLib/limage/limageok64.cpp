@@ -67,7 +67,7 @@ void LImageOK64::LoadBin(QFile &f)
 
 }
 
-void LImageOK64::ToQImage(LColorList &lst, QImage &img, float zoom, QPointF center)
+void LImageOK64::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {

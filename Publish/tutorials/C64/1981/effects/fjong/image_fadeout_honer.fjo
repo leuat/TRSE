@@ -1,0 +1,110 @@
+globals = {
+	camera = { x = 0, y=0, z=2 },
+     fov = 90,
+	target = { x = 0, y=1.0, z=0 },
+	
+-- 	camera = { x = 0, y=0, z=10 },
+--     fov = 40,
+--	target = { x = 0, y=5.0, z=0 },
+
+
+
+
+	light0 = {   	direction = {x=-0.5, y=2.2, z=0.60 }, 
+				color = {x=1, y=1, z=1}, 
+			},	
+	ambient = { x = 0.8, y = 0.0, z = 0.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=1, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+	resolution = { width = 40, height=25},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	output_type = 1,
+	c64_multicolor = 0,
+	c64_imageType = 0,
+	dither = 2,
+	ditherStrength = { x = 0, y= 1, z= 1},
+
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,0,0,6 }
+}
+
+
+--noFrames = 24
+noFrames = 200
+frame = 0
+
+MaterialBlue = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+function Init()
+
+	--	AddObject("box","b0","","MaterialBlue",0,0,0,  1,1,1);
+
+	DeleteFile("data/hone_out.ras")
+end
+
+function UpdateScene();
+
+
+	
+
+end
+
+
+function PostProcess();
+	
+	if (frame>noFrames+1) then 
+		return;
+	end
+	s = 30/(math.pow(frame,1.64))
+
+	sx = 20*s
+	sy = 20*s
+	rot = -frame/140.0-1
+--	whoo("")
+	DrawImage("/home/leuat/Pictures/penis.png",
+	output.resolution.width/2*0, output.resolution.height/2*0, 
+	sx,sy, 
+	rot) 
+
+-- 	DrawCircle(50,50, 50,80,128,0,0)
+ 
+end
+
+function Update()
+	
+	if (frame<noFrames+1) then 
+		
+	ExportDiffAsUnrolledBitmapColorOut("data/hone_out.ras","images/palhoner_color.bin",
+		"clear_frame"..tostring(frame),
+		"waitfunc",
+		0x0400,0,0,40,25,3)
+		Message("saved .. " ..tostring(frame))
+
+	end
+
+	
+		UpdateScene()
+
+
+
+	frame=frame+1
+	
+
+end

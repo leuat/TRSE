@@ -1,5 +1,5 @@
 program part7_RenderLevel;
-@use Levels
+@use "gfx/Levels"
 var  
 /*
 	In this tutorial, we combine part 3 (sprites) with level rendering
@@ -83,8 +83,7 @@ begin
 
 	setcharsetlocation(@charsetPosition);
 
-	Levels::lp:=@levelPosition;
-	Levels::ReadHeader();
+	Levels::ReadHeader(@levelPosition);
 	Levels::starty:=2;
 end;
 
@@ -141,7 +140,6 @@ begin
 	end;
 
 	if redraw=1 then begin
-		Levels::lp:=@levelPosition;
 		Levels::RenderCharsetColorLevel(curLevel_x,curLevel_y,hi(screen_char_loc));
 		redraw:=0;
 	end;

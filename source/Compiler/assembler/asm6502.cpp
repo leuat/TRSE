@@ -354,6 +354,19 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
 void Asm6502::DeclareString(QString name, QStringList initval, QStringList flags)
 {
 //    qDebug() << "Asm6502 FLAGS " <<flags <<!flags.contains("no_term");
+
+/*    QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
+    app->Append("org " + pos,1);
+    for (int i=0;i<lst.count();i++)
+        app->Append(lst[i],0);
+
+    int p = Util::NumberFromStringHex(pos);
+
+    blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(p,p+count, MemoryBlock::ARRAY, name)));
+
+    m_appendix.append(app);
+*/
+
     Write(name +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
 }

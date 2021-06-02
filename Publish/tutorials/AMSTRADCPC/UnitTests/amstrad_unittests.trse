@@ -65,3 +65,4 @@ vic_memory_config = none
 via_zeropages = ,
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/UnitTests/
 open_files = ,unittests.ras
+current_file = unittests.ras

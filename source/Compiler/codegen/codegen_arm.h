@@ -48,8 +48,8 @@ public:
 
 
     void LoadVariable(QSharedPointer<NodeVar> n) override ;
-    void LoadAddress(QSharedPointer<Node> n) override;
-    void LoadAddress(QSharedPointer<Node> n, QString reg) override;
+    QString LoadAddress(QSharedPointer<Node> n) override;
+    QString LoadAddress(QSharedPointer<Node> n, QString reg) override;
     void LoadVariable(QSharedPointer<NodeProcedure> node) override;
 
     virtual void LoadPointer(QSharedPointer<Node> n);
@@ -57,10 +57,12 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
 
+
+
     QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
     int m_lvl = 0;
-    QStringList m_regs = QStringList({"r1","r2","r3","r4"});
+    QStringList m_regs = QStringList({"x0","x1","x2","x3","x4","x4","x5","x6","x7","x8","x9","x10","x11"});
 
     QString m_jmp = "b ";
     QString m_mov = "mov ";
@@ -77,8 +79,14 @@ public:
     QString getCallSubroutine() override;
     bool m_isPurePointer = false;
 
-    virtual QString getAx(QSharedPointer<Node> n);
-        virtual QString getAx(QString a, QSharedPointer<Node> n);
+    virtual QString getReg();
+
+    void ldr (QString x0, QString x1);
+    void str (QString x0, QString x1);
+    void Binop (QString bop, QString x0, QString x1, QString x2);
+
+
+    QString BinopVariableNumber(QSharedPointer<Node> n, QString value, TokenType::Type type);
 
 
     virtual QString getARMValue(Assembler* as, QSharedPointer<Node> n) {
@@ -91,8 +99,8 @@ public:
 
     virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
 
-    void PushX();
-    void PopX();
+    QString PushReg();
+    void PopReg();
     QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
 
@@ -123,6 +131,8 @@ public:
      *
      */
 
+
+    void PrintBop(TokenType::Type type, QString x0, QString x1, QString value);
 
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 

@@ -718,6 +718,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
             prevNumber = true;
         }
         else {
+
 //            qDebug() << "Looking for constant " << m_currentToken.m_value.toUpper();
   //          qDebug() << m_symTab->m_constants.keys();
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
@@ -733,10 +734,9 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
                prevNumber = true;
 
                Eat();
-              }
 
      //             ErrorHandler::e.Error("Value required to be a number or a constant.",m_currentToken.m_lineNumber);
-
+            }
         }
     }
 //    if (p!=0)
@@ -1035,8 +1035,12 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
 void Parser::HandlePreprocessorInParsing()
 {
-    if (m_pass>=PASS_CODE) {
+    if (m_currentToken.m_value.toLower()=="macro") {
+        Eat();
+        HandleMacro();
+    }
 
+    if (m_pass>=PASS_CODE) {
         if (m_currentToken.m_value=="define") {
             Eat();
             Eat();
@@ -1158,12 +1162,6 @@ void Parser::HandlePreprocessorInParsing()
             return;
         }
         if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
-            Eat();
-            Eat();
-        }
-        if (m_currentToken.m_value.toLower()=="macro") {
-            Eat();
-            Eat();
             Eat();
             Eat();
         }
@@ -1432,7 +1430,7 @@ void Parser::HandlePreprocessorInParsing()
         return;
     }
     if (m_macros.contains(m_currentToken.m_value.toLower())) {
-        HandleCallMacro(m_currentToken.m_value.toLower(), true);
+        HandleCallMacro(m_currentToken.m_value.toLower(), m_pass==PASS_CODE);
     }
 
 
@@ -1733,7 +1731,6 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             ErrorHandler::e.Error("Variable '<b>" +nv->value + "</b>' is neither a pointer nor an array.",nv->m_op.m_lineNumber);
 
     }
-
     return ApplyClassVariable(n);
 }
 
@@ -2318,12 +2315,38 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
         ErrorHandler::e.Error("Expected THEN or DO after conditional", linenum);
     }
 
+    // April's fools
+    bool isPerhaps = false;
+    if (m_currentToken.m_type==TokenType::PERHAPS) {
+        isPerhaps = true;
+        if (m_isFirstPerhaps) {
+            //InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
+            auto name = "initrandom256";
+            m_procedures[name] = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(Token(TokenType::PROCEDURE, name), name));
+
+            m_isFirstPerhaps = false;
+        }
+        Eat();
+    }
+
     QSharedPointer<Node> block = Block(false);
+
 
     QSharedPointer<Node> nodeElse = nullptr;
     if (m_currentToken.m_type==TokenType::ELSE) {
         Eat(TokenType::ELSE);
         nodeElse = Block(false);
+    }
+
+    if (isPerhaps) {
+        auto left = NodeFactory::CreateBuiltin(m_currentToken, "random", QVector<QSharedPointer<Node>>());
+        QDate date = QDateTime::currentDateTime().date();
+        float t = (date.dayOfWeek()+m_perhapsShift++)/7.0*2*3.14159265;
+        int testVal = 64+ 128*(cos(t)+1)/2;
+
+        auto randCond = NodeFactory::CreateSingleConditional(m_currentToken,TokenType::GREATER,false,left,NodeFactory::CreateNumber(m_currentToken,testVal),block);
+        block = randCond;
+
     }
 
     return QSharedPointer<NodeConditional>(new NodeConditional(t, forcePage, clause, block, isWhileLoop, nodeElse));
@@ -2449,6 +2472,7 @@ QSharedPointer<Node> Parser::Factor()
         }
         Token t = m_currentToken;
         t.m_intVal = s->getLength();
+//        qDebug() << "PARSER HERE " <<s->m_value->m_strVal<< s->m_size;
         t.m_type  = TokenType::INTEGER_CONST;
         Eat();
         Eat(TokenType::RPAREN);
@@ -2771,6 +2795,7 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="macro") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleMacro();
+
               }
               else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
                   Eat(TokenType::PREPROCESSOR);
@@ -2783,6 +2808,12 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower()=="vicmemoryconfig") {
                   Eat(TokenType::PREPROCESSOR);
                   m_vicMemoryConfig = m_currentToken.m_value;
+                  m_projectIni->setString("vic_memory_config", m_vicMemoryConfig);
+                  Syntax::s.m_currentSystem->m_projectIni->setString("vic_memory_config", m_vicMemoryConfig);
+                  Syntax::s.Reload();
+                  Syntax::s.m_currentSystem->DefaultValues();
+                  m_symTab->Initialize();
+
                   Eat();
               }
               else if (m_currentToken.m_value.toLower() =="pbmexport") {
@@ -3287,6 +3318,7 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
         Eat(TokenType::FORI);
     else
         Eat(TokenType::FOR);
+
     QSharedPointer<Node> a = AssignStatement();
     Eat(TokenType::TO);
     QSharedPointer<Node> b = Expr();
@@ -4015,6 +4047,15 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        s->m_flags = typeNode->m_flags;
        s->m_bank = typeNode->m_bank;
 
+       if (s->m_type=="STRING" || s->m_type=="CSTRING") {
+//           s->m_size = typeNode->m_op.m_value;
+           int len = 0;
+           for (QString& s: typeNode->m_data)
+               len+=s.count();
+           s->m_size = len;
+       }
+
+
 
        s->m_arrayType = typeNode->m_arrayVarType.m_type;
        s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
@@ -4034,8 +4075,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
        if (typeNode->m_data.count()!=0) // Replace with actual data count
            size = typeNode->m_data.count();
        typeNode->m_declaredCount = size;
-
-       s->setSizeFromCountOfData(size);
+       if (s->m_type!="STRING" && s->m_type!="CSTRING")
+           s->setSizeFromCountOfData(size);
 
 
 
@@ -4242,10 +4283,17 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     bool found = false;
                     // First check if symbol exists:
                     if (m_currentToken.m_value!="") {
-                        if (m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr)) {
+                        if ((m_symTab->m_symbols.contains(m_currentToken.m_value) && (m_symTab->LookupConstants(m_currentToken.m_value.toUpper())==nullptr))) {
                             data<<m_currentToken.m_value;
+
                             m_symTab->m_symbols[m_currentToken.m_value]->isUsed = true;
                             m_symTab->m_symbols[m_currentToken.m_value]->isUsedBy <<m_inCurrentProcedure;
+                            found = true;
+                        }
+                        if (m_procedures.contains(m_currentToken.m_value)) {
+                            data<<m_currentToken.m_value;
+                            m_procedures[m_currentToken.m_value]->m_isUsed = true;
+                            m_procedures[m_currentToken.m_value]->m_isUsedBy<< m_inCurrentProcedure;
                             found = true;
                         }
                         //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
@@ -4334,9 +4382,18 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String(isCString));
             initData = str->m_val;
         }
+        QString position="";
+        if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
+            Eat();
+            position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+        }
+
+
         QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
         str->m_flags = flags;
         str->VerifyFlags(isInProcedure);
+        if (position!="")
+            str->m_position = position;
         return str;
     }
 
@@ -4551,7 +4608,7 @@ QSharedPointer<Node> Parser::InlineAssembler()
         //qDebug() <<m_currentToken.m_value;
         QString org = m_currentToken.m_value;
         m_currentToken = m_lexer->InlineAsm();
-        //qDebug() <<m_currentToken.m_value;
+
         m_currentToken.m_value = "\t"+org + m_currentToken.m_value;
         pascalStyleAsm = true;
 
@@ -4667,7 +4724,7 @@ QStringList Parser::BuildSineTable(int cnt,TokenType::Type type)
 
 
     Eat(TokenType::LPAREN);
-    int amplitude = GetParsedInt(TokenType::INTEGER);
+    int amplitude = GetParsedInt(TokenType::INTEGER)/2;
 //    Eat(TokenType::RPAREN);
     QStringList data;
     QJSEngine m_jsEngine;
@@ -4802,9 +4859,22 @@ void Parser::HandleMacro()
     Eat(TokenType::STRING);
     m.noParams = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
+
+    QString org = m_currentToken.m_value.toLower();
+    m_currentToken = m_lexer->Macro();
+    m_currentToken.m_value = "\t"+org  + " "+ m_currentToken.m_value;
+
     m.str = m_currentToken.m_value;
-    Eat(TokenType::STRING);
+    m.str = m.str.remove(m.str.length()-1,1);
+//    qDebug() << m.str;
+
+
     m_macros[name.toLower()] = m;
+
+    Eat();
+    Eat(); // endmacro
+  //  qDebug() << m_currentToken.m_value;
+
 //    qDebug() << "MACRO "<<m.str;
 
 }
@@ -4838,7 +4908,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
-    //qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
+//    qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
     // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
         QString val = m_currentToken.m_value;
@@ -4860,10 +4930,10 @@ void Parser::HandleCallMacro(QString name, bool ignore)
 
     //  qDebug() << m_pass;
     // Ignore calling macros in pass 1. Or perhaps pass 0? hm
-    qDebug() << "mac1 " << name << m_currentToken.m_value;
+//    qDebug() << "mac1 " << name << m_currentToken.m_value;
     if (ignore)
         return;
-    qDebug() << "mac2 " << name << m_currentToken.m_value;
+  //  qDebug() << "mac2 " << name << m_currentToken.m_value;
 
     /*    QString consts = "";
     for (QString key:m_symTab->m_constants.keys())
@@ -5123,8 +5193,8 @@ void Parser::HandleExportCompressed()
   //  file.open(QFile::WriteOnly);
     img->m_silentExport = true;
     img->ExportCompressed(screenFile, charFile, colorFile);
-//    if (img->m_exportMessage!="")
-  //      ErrorHandler::e.Warning(img->m_exportMessage,m_currentToken.m_lineNumber);
+    if (img->m_exportMessage!="")
+        ErrorHandler::e.Warning(img->m_exportMessage,0);
 
 
 

@@ -46,7 +46,7 @@ public:
     bool isWord(Assembler* as) override;
 
     QString getValue(Assembler* as) override;
-    virtual bool isReference() override { return m_op.m_isReference; }
+    virtual bool isReference() override;
 
     QString getValue8bit(Assembler* as, bool isHi) override;
 

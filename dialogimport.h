@@ -51,6 +51,13 @@ public:
     int matrixSizeX = 2;
     int matrixSizeY = 1;
 
+    QStringList m_customPalettes = QStringList() << "0,6,4,3,13,7,1"
+            << "0,9,2,4,8,10,15,1"
+            << "0,6,9,2,4,5,3,7"
+            << "0,6,11,12,15,1"
+            << "0,2,11,8,15,7,1"
+            << "$00,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01";
+
     QPointF m_scale = QPointF(1,1);
 
     bool isPetscii = false;
@@ -146,6 +153,13 @@ private slots:
     void on_leScaleX_textChanged(const QString &arg1);
 
     void on_leScaleY_textChanged(const QString &arg1);
+
+    void on_chkCustom_stateChanged(int arg1);
+
+    void on_leCustomPalette_textChanged(const QString &arg1);
+
+
+    void on_comboBox_currentIndexChanged(int index);
 
 private:
     Ui::DialogImport *ui;

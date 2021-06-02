@@ -1,0 +1,283 @@
+globals = {
+	camera = { x = 0, y=0, z=8 },
+     fov = 90,
+	target = { x = 0, y=0.0, z=0 },
+	
+-- 	camera = { x = 0, y=0, z=10 },
+--     fov = 40,
+--	target = { x = 0, y=5.0, z=0 },
+
+
+	light0 = {   	direction = {x=-0.5, y=2.2, z=0.60 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 1, y = 1, z = 1 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=1, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+	resolution = { width = 160, height=200},
+--	resolution = { width = 320, height=200},
+	aspect = 0.48,
+	output_type = 1,
+	c64_multicolor = 1,
+	c64_imageType = 0,
+	dither = 2,
+	ditherStrength = { x = 0, y= 1, z= 1},
+
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,7,1,2 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=0 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialWhite = {
+   color = { x=2, y=2, z=2 },
+	reflection = 0.9,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialGreen = {
+   color = { x=0, y=1, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 16
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+text = "PRX"
+
+cur = 0
+
+charname = "char"
+
+scale = 1
+
+ N = 16
+function Init()
+
+	w = -0.06
+	xx = -0
+	--[[
+	AddObject("cylinder","d1","","MaterialBlack",0,0,0+xx, 0.4,0,0.15);
+	SetRotation("d1",0,0,90);
+
+	AddObject("box","l1","","MaterialBlack",w,-2.5,-1.8+xx, 0.11,0.01,0.6);
+	AddObject("box","l2","","MaterialBlack",w,-2.0,-1.8+xx, 0.11,0.01,0.6);
+	AddObject("box","l3","","MaterialBlack",w,-1.5,-1.8+xx, 0.11,0.01,0.6);
+
+	AddObject("box","ll1","","MaterialBlack",w,-2.5,0.9+xx, 0.11,0.01,1.2);
+	AddObject("box","ll2","","MaterialBlack",w,-2.0,0.9+xx, 0.11,0.01,1.2);
+	AddObject("box","ll3","","MaterialBlack",w,-1.5,0.9+xx, 0.11,0.01,1.2);
+
+
+--	AddObject("box","d1","","MaterialWhite",0,0,0+xx, 0.12,1,1);
+	AddObject("box","d2","","MaterialWhite",w,-2.0,-1.8+xx, 0.11,0.8,0.8);
+	AddObject("box","d2","","MaterialWhite",w,-2.0,1+xx,  0.11,0.8,1.6);
+
+
+	AddObject("cylinder","c1","","MaterialBlack",0,2,-0+xx, 0.12, 0,0.6);
+
+	AddObject("box","disk","","MaterialBlue",0,0,0+xx, 0.1,3,3);
+	]]--
+
+--	AddObject("sphere","s1","", "MaterialBlue", 0,0,0, 4);	
+--	AddObject("torus","s1","", "MaterialBlue", 0,0,0, 4,2);	
+
+--	for i=0, 16 do
+	for i=0, N do
+		n = "box"..tostring(i)
+		x = (i-5)/1.5
+		AddObject("box",n,"","MaterialBlue",0,-0,0, 0.25, 10,0.00001);
+		
+
+--		AddObject("box",n2,"","MaterialBlue",x*scale,0.6,1.1,   0.12, 1.5,0.00001);
+
+		SetID(n,i);
+--		SetID(n2,i);
+--		AddObject("box",n3,"","MaterialBlue",x*scale,-8,-1, 0.12, 2.2,0.00001);
+
+--		AddObject("box",n2,"","MaterialBlue",x*scale*4,-3,0, 0.10, 30,0.01);
+	    s = 0.5
+--		AddObject("box",n3,"","MaterialBlue",x,-3,0, s, s,s);
+		
+		j = i/N*360
+
+		SetRotation(n,70,0,j);
+	--	SetRotation(n3,-20,0,0);
+	end
+	s = 0.5
+	
+	
+
+--	AddObject("box","c1","","MaterialBlack",0,-2,-2,   s,s,s);
+
+	UpdateScene()
+
+end
+
+
+
+
+
+function UpdateScene()
+
+  	t = ((frame)/(noFrames)) 
+
+	tt = t*3.14159*2.0
+	dt = -0.0
+--	globals.light0.direction.x = cos(tt+dt)
+--	globals.light0.direction.z = sin(tt+dt)
+	r=11
+	
+	l = globals.camera.x*globals.camera.x + globals.camera.y*globals.camera.y + globals.camera.z*globals.camera.z;
+	l = math.sqrt(l)
+		
+
+--	globals.camera.y = 8+frame*0.2*4
+--	globals.camera.z = 8+frame*0.2*4
+
+	tar = -1.2+frame*0.082*scale
+--	tar = 0
+--	globals.camera.x = tar
+--	globals.target.x = tar
+
+	tt = tt / (N)
+	globals.up.x = cos(tt);
+	globals.up.y = sin(tt);
+	r = 0.02
+--	globals.up.x = 1+sin(tt)*r;
+--	globals.up.y = 1+cos(tt)*r;
+
+--	globals.camera.x = 8;
+--	globals.camera.z = 8;
+
+	j=t*360
+--	SetRotation("disk",j,j,90) --box
+--	SetRotation("d1",j,j,90) --box
+
+--[[
+	for i=1, string.len(text) do
+		j=t*180 + i*45/2
+		k=t*180
+		SetRotation(charname .. tostring(i),0,j,0)
+	end
+]]--
+end
+
+pos = 0
+
+NP = 1
+
+px = { 80, 80, 150 }
+py = { 100, 40, 120 }
+dx = { 0,0,0 }
+dy = { output.resolution.height/noFrames,
+output.resolution.height/noFrames,
+output.resolution.height/noFrames }
+
+
+
+
+function PostProcess()
+	
+--	s = 30/(math.pow(frame,1.8))
+
+	sx = 320
+	sy = 200
+	rot = 0
+--	rot = -frame/25
+--	whoo("")
+--	DrawImage("/home/leuat/Pictures/hand3.png",
+--	DrawImage("/Users/leuat/pic/hand2.png",
+	DrawImage("/Users/leuat/Dropbox/TRSE/1981/effects/images/statues.png",
+	0, 25, 
+  0.98,1, 
+	0) 
+	R = 50
+	rr = 0.5
+	t = frame/noFrames*3.14159*2
+	xx = R*(1+rr*cos(t))
+	yy = R*(1+rr*sin(t))
+--	DrawCircle(80,100,xx,yy, 0,0,0)
+--	DrawCircle(80,100,xx*0.6,yy*0.3, 255,255,0)
+
+
+-- 	DrawCircle(50,50, 50,80,128,0,0)
+ 
+end
+
+
+
+function Update()
+	
+		if (frame<noFrames+1) then 
+		Save2DInfo("data/bgframe_2d_".. tostring(frame-1) ..".bin",0xD800,253, "data/unroll"..tostring(frame-1)..".ras");
+		end
+
+	if (frame>=1) then
+		CompressCharset(0,40,0,25,  0, 1000)
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	if (frame==noFrames/2 or frame==noFrames or frame==noFrames/4 or frame==noFrames*3/4) then 
+--		SaveRawData("data/ballsprite.bin");
+--		CompressScreenAndCharset(40,25,1000, 250);
+--		OptimizeScreenAndCharset(40,25,1000, 5);
+--		OptimizeScreenAndCharset(40,25,1000, 0.10,1);
+--		OptimizeScreenAndCharset(40,25,1000, 0.16, 1);
+		OptimizeScreenAndCharset(40,25,1000, 4); --4
+ 		SaveScreenAndCharset("data/screen_hand"..tostring(cur)..".bin", "data/charset_hand"..tostring(cur)..".bin");
+		cur = cur+1
+		Message("SAVED")
+
+	end	
+	---if (frame<noFrames) then
+--	end
+
+	
+		UpdateScene()
+--		pos = pos + 0x4000
+
+	frame=frame+1
+	
+
+
+end

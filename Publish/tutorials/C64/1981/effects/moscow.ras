@@ -1,0 +1,1020 @@
+program MegaScroller;
+@use "tables/luminosities"
+@use "demounit"
+@use "tables/luminosities"
+//
+var
+	// Various
+	zp,zp2,sp,zp3,sprzp,loczp : pointer;	
+	@define charsetLoc1 $6000
+	//@define charsetLoc2 $6000
+	@define fontLoc $3800
+	@define sloc $8000
+	@userdata $8000 $9800
+	@define sloc2 $A000
+var
+	const sprLoc : address = $4800;
+	
+	const bcol : byte = white;
+
+
+	sprCountTree : byte = 0;
+
+	// Place charset on both bank 0 and 1
+//	charset: IncBin("charsets/charset.bin",@charsetLoc1);
+	//charset1_2: IncBin("charsets/charset.bin",@charsetLoc2);
+	// 2x2 font included at some random position
+@export "charsets/cyrillic_charset_hammer.flf" "charsets/charset_16x16.bin" 256 
+var
+	font: IncBin("charsets/charset_16x16.bin",@fontLoc);
+
+@ifndef IS_DEMO
+	music: incsid("../demo_system/music/moskou2.sid",2);
+@endif
+
+//@export "images/building.flf" "images/tanks.bin" 10
+@export "images/moscow_sprites.flf" "images/tanks.bin" 16
+
+@export_parallax_data "images/parallax3.flf" "data/parallax2.bin" 0 1 40 21 1 1 %01010101
+
+//@startblock  $4000 "Code"
+	trans,curVal,time,l,x,dx,dy,c,val,i,j, scroll,scroll2,scrollsplit,val2,k,sprCnt : byte = 0;
+	kk,radial,ii : integer;
+	badd:byte=0;
+	stop:byte=0;
+	curBg : byte = 4;	
+	curTar : byte = 19;
+	large : byte = 0;
+	sprcol : byte = black;
+	per : incbin("data/perlin40.dat");
+	
+	charset1 : incbin("data/parallax2_charset.bin",@charsetLoc1);
+//	charset2 : incbin("data/parallax_charset.bin",@charsetLoc2);
+	screens : incbin("data/parallax2_screens.bin");
+	sprites : incbin("images/tanks.bin", sprLoc);
+	// Scroll shift
+	shiftx,shiftx2,shiftx3: byte;
+	// Scroller y amplitude
+//	новый год для ссср
+//		text: string=( "NOVY GOD DLA RRRQ "); // ends with a zero
+//	text : array[] of byte= (space,space,space,space,15,14,2,27,9,space,3,14,4,space,4,11,0,space,17,17,17,16,   0,0,0,0,0,0,0);
+	const space : byte = $ff;
+	text : array[] of byte= (space,space,space,space,space,space,space,space,space, 17,space,13,14,2,27,12,space,3,14,4,14,12,space, space,space,space,space,space,space,0,0,0,0,0,0,0);
+	// Banking variable
+	g_currentBank:byte = 0;
+// // use chars 64-72 as fire chars. You could try others here, like 80	g_dataLoc : byte=$1a;
+	
+	textp: pointer;
+	zeropage1:pointer;
+	inv :array[8] of byte;	
+//	sprData : array[$11*50] of byte;
+//	sprData : array[$11*$80] of byte;
+	// Turn ON of off KERNAL (0/1)
+	@define useKernal "0"
+	
+	
+	@define bank2ClearVal 0
+	@define charVal $FF
+	// Define some text pointers
+	@define textpointer textp
+	
+	left : array[8] of byte = (%00000001,%00000011, %00000111, %00001111, %00011111, %00111111, %01111111, %11111111);
+	right : array[8] of byte = (%10000000,%11000000, %11100000, %11110000, %11111000, %11111100, %11111110, %11111111);
+	
+
+ 
+//@export "images/corners.flf" "images/corners.bin" 4
+
+
+	//corners : incbin("images/corners.bin");
+	
+	/*
+	
+	This tutorial basically takes a 2x2 charset and converts bit information in the character map
+	to a 16x16 char image.
+	
+	In this tutorial, we render off-screen on an alternate bank, and perform half-page
+	copying on various stages of the scroll. When the scrolling resets, we flip banks and start
+	over again.
+	
+	In addition to this, we cycle the 16 rendering characters using the same method as in previous tutorials
+	*/
+	
+	
+	
+	/*
+	The following method copies half upper/lower screen to 1 char left
+	*/
+
+
+var
+	flookup : array[40] of integer = BuildTable("(i%20)*16 + Math.floor(i/20)*320*2");
+
+procedure WriteText();
+begin
+
+//	val:=hi(screen_char_loc);
+//	if g_currentBank=0 then val:=val+$40;
+
+
+//	moveto(0,5,val);
+	
+//	screenmemory := $
+	// Clear the single byte on the rightmost column
+	//screenmemory[39]:=0;
+//	moveto(0,6,80);
+//	if (scroll>=127) then begin // if scroll<0, trigger a new line to draw
+		val:=@textpointer[0]; // Look up current char
+//		if (val>=64) then val:=val-65; // Look up in charmap
+		
+		if (val=space) then begin
+			val:=32; // Point to an empty location in font space
+		end;	
+//		if val>=16 then val:=val+24;   // Align chars (for this particular font)
+	//	// point to the correct char in memory, each char is 2x2 x 8 bytes, so 16 bytes in total
+		
+		//zeropage1:=zeropage1+val*16;
+		
+		zeropage1:=#font + flookup[val];
+
+		// val2 here is the actual character to draw, 74 is semi-filled char
+		val2:=curVal;//+9-shiftx+scrollsplit;
+		// Scrollsplit decides whether we use the first (0) char in a letter or the second (8)
+		zeropage1:=zeropage1+scrollsplit;
+		// Draw upper and lower 8 chars
+		for j:=0 to 2 do 
+		begin
+			if (val<>$40) then
+			for i:=0 to 8 do begin
+			// Default is blank
+				c:=0;
+				if (getbit(zeropage1[i], shiftx)=1) then c:=val2;
+				if (c<>0) then
+					screenmemory[0]:=c;
+				asm("
+					inc screenmemory+1
+					inc screenmemory+1
+				");
+//				screenmemory:=screenmemory+256;
+			
+			end;
+			// Increase 8 rows (8*40=320)
+			zeropage1:=zeropage1+320;
+		end;
+		dec(shiftx);
+		if (shiftx>=127) then 
+		begin // if shift is less than zero
+			shiftx:=7; // Reset value
+			// Do we increase text pointer or just shift +8 bytes to draw next part of 2x2 char?
+			if (scrollsplit=0) then scrollsplit:=8
+				else begin
+				// Reset and increase text pointer!
+				scrollsplit:=0;
+				@textpointer:=@textpointer+1;
+				badd := 1;
+				if @textpointer[0]=0 then @textpointer:=#text;
+			end;
+		end;
+		// Reset scroll
+		//scroll:=7;
+	//end;
+	
+	
+end;
+
+/*
+	Main raster interrupt.
+*/
+
+var
+	tab1k : array[8] of integer=BuildTable("(Math.floor(i/2+0)%4)*20*80");
+	mod40 : array[256] of byte=BuildTable("i%40");
+
+
+
+	/*
+procedure Blend();
+begin
+	if (shiftx>=160) then shiftx:=0;
+	zp:=@sloc + shiftx;
+
+	screenmemory := bnkAddr[ g_currentBank ] + 40*6;// + shiftx;
+	l:=shiftx3-shiftx2;
+	zp2:=@sloc2 +tab1k[(7-scroll2/2)&7]+mod40[l];// + 80*3;
+//	l:=0;
+//	screenmemory := $0400;
+	for i:=0 to 15 do
+	begin
+		//memcpyunroll(zp,0,screenmemory,40);
+		asm("
+			ldy #39
+bloop : 
+			lda (zp),y
+			bne cont
+			lda (zp2),y
+cont:
+			sta (screenmemory),y
+			dey
+
+
+			lda (zp),y
+			bne cont2
+			lda (zp2),y
+cont2:
+			sta (screenmemory),y
+			dey
+
+			lda (zp),y
+			bne cont3
+			lda (zp2),y
+cont3:
+			sta (screenmemory),y
+			dey
+
+			lda (zp),y
+			bne cont4
+			lda (zp2),y
+cont4:
+			sta (screenmemory),y
+			dey
+
+			
+			bpl bloop		
+
+		");
+		asm(";balle");
+		//zp:=zp+256;
+		asm(" inc zp+1");
+		zp2:=zp2+80;
+		screenmemory := screenmemory + 40;
+	end;	
+
+end;
+*/
+procedure Blend3();
+begin
+//	if (shiftx>=160) then shiftx:=0;
+	zp:=@sloc + shiftx+(1024);
+	if (large=1) then asm(" inc zp+1");
+//	zp3:=@sloc3 + shiftx<<1 + 256*1;
+
+	screenmemory := $4400 + 40*3;// + shiftx;
+	l:=shiftx3-shiftx2;
+	zp2:=@sloc2 +tab1k[(7-scroll2/2)&7]+mod40[l];
+//	l:=0;
+//	screenmemory := $0400;
+	// First, simple copy:
+	for i:=0 to 8 do
+	begin
+		memcpyunroll(zp2,0,screenmemory,40);
+		zp2:=zp2+80;
+		screenmemory := screenmemory + 40;
+	end;	
+	
+	for i:=0 to 11 do
+	begin
+		//memcpyunroll(zp,0,screenmemory,40);
+		asm("
+			ldy #39
+dloop: 
+			lda (zp),y
+			bne dcont
+			lda (zp2),y
+dcont:
+			sta (screenmemory),y
+			dey
+
+
+			lda (zp),y
+			bne dcont2
+			lda (zp2),y
+dcont2:
+			sta (screenmemory),y
+			dey
+
+
+			lda (zp),y
+			bne dcont3
+			lda (zp2),y
+dcont3:
+			sta (screenmemory),y
+			dey
+
+			lda (zp),y
+			bne dcont4
+			lda (zp2),y
+dcont4:
+			sta (screenmemory),y
+			dey
+
+			lda (zp),y
+			bne dcont5
+			lda (zp2),y
+dcont5:
+			sta (screenmemory),y
+			dey
+
+			lda (zp),y
+			bne dcont6
+			lda (zp2),y
+dcont6:
+			sta (screenmemory),y
+			dey
+
+
+			lda (zp),y
+			bne dcont7
+			lda (zp2),y
+dcont7:
+			sta (screenmemory),y
+			dey
+
+			lda (zp),y
+			bne dcont8
+			lda (zp2),y
+dcont8:
+			sta (screenmemory),y
+			dey
+
+			
+			bpl dloop		
+
+		");
+		
+		asm(" inc zp+1");
+		asm(" inc zp+1");
+		
+		zp2:=zp2+80;
+		screenmemory := screenmemory + 40;
+	end;	
+
+	for i:=0 to 1 do
+	begin
+		memcpyunroll(zp,0,screenmemory,40);
+		asm(" inc zp+1");
+		asm(" inc zp+1");
+		screenmemory := screenmemory + 40;
+	end;	
+	
+
+
+/*	for i:=0 to 10 do
+	begin
+		//memcpyunroll(zp,0,screenmemory,40);
+		asm("
+			ldy #39
+bloop : 
+;			lda (zp3),y
+;			bne cont
+			lda (zp),y
+			bne cont
+			lda (zp2),y
+cont:
+			sta (screenmemory),y
+			dey
+
+;			lda (zp3),y
+;			bne cont2
+			lda (zp),y
+			bne cont2
+			lda (zp2),y
+cont2:
+			sta (screenmemory),y
+			dey
+
+
+;			lda (zp3),y
+;			bne cont3
+			lda (zp),y
+			bne cont3
+			lda (zp2),y
+cont3:
+			sta (screenmemory),y
+			dey
+
+;			lda (zp3),y
+;			bne cont4
+			lda (zp),y
+			bne cont4
+			lda (zp2),y
+cont4:
+			sta (screenmemory),y
+			dey
+
+
+
+			
+			bpl bloop		
+
+		");
+/*		for j:=0 to 40 do
+		begin
+			c:=zp[j];
+			if (c=0) then c:=zp2[j];
+			screenmemory[j] := c;
+		end;
+*/
+/*		asm(";balle");
+		//zp:=zp+256;
+		asm(" inc zp+1");
+		asm(" inc zp+1");
+	//	asm(" inc zp3+1");
+		zp2:=zp2+80;
+		screenmemory := screenmemory + 40;
+	end;	
+*/
+end;
+
+
+
+procedure UpdateCharset();
+begin
+	//screen_bg_col:=scroll2;
+	if (scroll2=15) then 	setcharsetlocation($2000);	
+	if (scroll2=11) then 	setcharsetlocation($2800);	
+	if (scroll2=7) then 	setcharsetlocation($3000);	
+	if (scroll2=3) then 	setcharsetlocation($3800);	
+//	if (scroll2=1) then 	setcharsetlocation($3800);	
+//	setcharsetlocation($2800);
+end;
+
+
+var
+	filled : byte = 0;
+procedure UpdateBG();
+begin
+	multicolor_char_col[1] := Luminosities::fromBlack[curBg];
+	if (curBg<curTar) then inc(curBg);
+	if (curBg>curTar) then dec(curBg);
+	if (filled = false) then
+	if (curBg=4 and trans=1) then 
+	begin
+		fill(^$4400+22*40,255,40*3);
+		filled := true;
+	end;
+	
+end;
+
+
+var
+	sprIsSet : array[4] of byte=(0,0,0,0);
+	sprXAdd :array[4] of integer = (30,60,30,60);
+	
+procedure UpdateSpriteTrees();
+begin
+	if (sprCountTree=0 or sprCountTree=2) then
+	begin
+		l:=144;
+		if (sprIsSet[sprCountTree]=0) then
+		begin
+			for i:=0 to 8 do SetSpriteLoc(i,($800/64)+i,1);
+			sprite_stretch_x:=$0;	
+			sprite_stretch_y:=$0;
+			fill(sprite_color,green,8);	
+			sprite_color[0]:=yellow;
+			sprite_multicolor:=$ff;
+			sprite_multicolor_reg2:=white;
+			sprite_multicolor_reg1:=dark_grey;
+			sprite_bitmask:=%01111111;
+			SpritePos(340,0,7);
+	//		sprIsSet[sprCountTree]:=1;
+		
+		end;
+		SpritePos(ii+4,l,0);
+		SpritePos(ii,l+21,1);
+		SpritePos(ii-12,l+(21*2),2);
+		SpritePos(ii+12,l+(21*2),3);
+		SpritePos(ii-24+8,l+(21*3),4);
+		SpritePos(ii-00+8,l+(21*3),5);
+		SpritePos(ii+24+8,l+(21*3),6);
+		return;
+	end;
+	if (sprCountTree=1 or sprCountTree=3) then
+	begin
+		if (sprIsSet[sprCountTree]=0) then
+		begin
+			j:=(($800)/64)+7;
+			for i:=0 to 8 do SetSpriteLoc(i,j+i,1);
+			sprite_bitmask:=$ff;
+			sprite_multicolor_reg2:=yellow;
+			sprite_multicolor_reg1:=dark_Grey;
+			fill(sprite_color,green,8);
+			sprite_stretch_x:=%00000110;
+			sprite_stretch_y:=%00111111;
+			sprIsSet[sprCountTree]:=1;
+			return;			
+		end;
+		l:=124;
+		
+		SpritePos(ii,l,0);
+		SpritePos(ii+12,l+62,1);
+		SpritePos(ii+50,l+63,2);
+		SpritePos(ii+35,l+37,3);
+		SpritePos(ii+11,l+21,4);
+		SpritePos(ii+57,l+54,5);
+		SpritePos(ii+58,l+35,6);
+		SpritePos(ii+12,l+20,7);
+	end;
+end;
+
+
+interrupt RasterMain();
+begin
+	DemoUnit::StartDemoIRQ();
+	setbank(vic_bank1);
+	hidebordery(1);
+	scrolly(3);
+	inc(time);
+	if (stop=0) then
+	begin
+	UpdateBG();	
+	
+	scroll:=scroll - 2; // Scroll speed
+	scroll2:=scroll2 - 2; // Scroll speed
+	
+	if (scroll>127) then begin scroll:=7; inc(shiftx);inc(shiftx3);end;
+	if (scroll2>127) then begin scroll2:=15;	inc(shiftx2);end;
+	if (shiftx=0 and scroll=7) then 	large:=(large+1)&1;
+
+	waitnoraster(1);
+	scrollx(scroll);
+	UpdateCharset();
+//	UpdateSpritesTree();
+
+
+	
+
+	if (trans=1) then curTar :=4;
+
+
+//	if (sprCnt =0) then sprzp := #sprData;
+	ii:=ii-1;
+		if (time&1=0) then
+		  dec(ii);
+
+	kk:=	ii+sprXAdd[sprCountTree]*1;	
+	if (kk>500) then 
+	begin
+		if (sprCountTree<3) then
+		begin
+			ii:=340;
+			inc(sprCountTree);
+		end
+	 else sprite_bitmask:=0;
+	end;
+	UpdateSpriteTrees();
+	
+/*	if (time&1=0) then
+	begin	
+	inc(sprCnt);
+	
+	if (time&3=0) then
+	begin
+		sprzp:=sprzp+$11;
+		inc(sprCnt);
+	
+	end;
+//	if (sprCnt>=48) then begin 
+	if (sprCnt>=128) then begin 
+		sprCnt := 0; sprzp :=#sprData;
+		
+//		memcpyunroll(loczp, 0, ^$07f8,8);
+//		poke( ^$07F8,1,#sprLoc/64+2);
+		loczp:=loczp+1; 
+	end;
+		memcpyunroll(sprzp,0,^$D000,$11);
+	sprzp:=sprzp+$11;
+
+	end;
+*/
+	
+	//setregularcolormode();
+
+
+/*	if (scroll=7) then 
+	begin 
+//		SwitchBank();
+	end;*/
+//	screen_bg_col:=blue;
+//	Blend();	
+	Blend3();	
+	end;
+	//BlendForeground();
+//	screen_bg_col:=red;
+@ifdef IS_DEMO	
+	call(^@callPos);
+	if (peek(^@transition,0)<3) then trans:=1;
+@endif
+@ifndef IS_DEMO
+	call(SIDFILE_1_PLAY);
+	wait(20);
+//	if (time>100) then trans:=1;
+@endif
+	
+	hideborderx(1);
+	
+	DemoUnit::CloseDemoIRQ();
+end;
+
+/* Empty NMI */
+interrupt NMI();
+begin
+end;
+
+
+
+var
+	m:byte;
+
+
+
+procedure isBlock(val3:byte);
+begin
+//	isBlock:=true;
+//	if (val3<>@charVal and val3<>@charVal-2) then isBlock:=true else isBlock:=false;
+
+/*	if (val3=@charVal) then returnvalue(false);
+	if (val3=0) then returnvalue(false);
+	if (val3=(@charVal-2)) then returnvalue(false);
+	if (val3=(@charVal-3)) then returnvalue(false);
+	if (val3=(@charVal-4)) then returnvalue(false);
+	if (val3=(@charVal-5)) then returnvalue(false);
+	if (val3=(@charVal-6)) then returnvalue(false);
+*/
+	if (val3=@charVal -1) then returnvalue(true);
+	returnvalue(false);
+//	if (val3<>@charVal) then isBlock:=true else isBlock:=false;	
+end;
+
+procedure SmoothBlocks();
+begin
+	zp := @sloc + 511+(512*2);	
+	zp2 := @sloc + (511)+(512*3);	
+	zp3 := @sloc + (511)+(512*1);	
+	
+	for k:=0 to 12 do
+	begin
+		for j:=0 to 2 do
+		begin
+			for i:=0 to 256 do
+			begin
+				
+				if (isBlock(zp[1])) then
+				begin
+					//  0 x 
+					//  1 ?
+					if (isBlock(zp[0])=false) then 
+					begin
+						if (isBlock(zp2[0])) then zp[0]:=@charVal-4;
+						if (isBlock(zp3[0])) then zp[0]:=@charVal-6;
+					end;
+					
+				end;
+				if (isBlock(zp[0])) then
+				begin
+					if (isBlock(zp[1])=false) then 
+					begin
+						if (isBlock(zp2[1])) then zp[1]:=@charVal-3;
+						if (isBlock(zp3[1])) then zp[1]:=@charVal-5;
+					end;
+				
+				end;
+
+				zp:=zp+1;
+				zp2:=zp2+1;			
+				zp3:=zp3+1;			
+			end;
+//			asm(" inc zp+1");
+//			asm(" inc zp2+1");
+		end;
+	end;	
+	// Test : Create smooth stuff
+
+end;
+
+
+procedure GenerateLayer1();
+begin
+	clearbitmap(^@sloc,28);
+//	return;
+	@textpointer:=#text;
+	shiftx := 7;
+	
+	zp:=@sloc + 512*8;
+/*	for i:=0 to 7 do
+	begin
+		fill(zp,$02,0);
+		asm(" inc zp+1");
+		fill(zp,$02,0);
+		asm(" inc zp+1");
+	end;
+*/	
+
+	zp := @sloc + 60;	
+	zp2 := #per;
+	curVal := @charVal-2;
+	//for x:=0 to 2 do
+	
+	for l:=0 to 216 do
+	begin
+		screenmemory := zp;
+		k:=zp2[0]>>4+4;
+		m:=215-l;
+		for i:=0 to 16 do
+		begin
+			if (i>k) then
+				if (15-i<l) then
+					if (15-i<m) then
+				screenmemory[0] := curVal;
+				
+			asm(" inc screenmemory +1");
+			asm(" inc screenmemory +1");
+//			screenmemory:=screenmemory+40;
+		end;
+		zp:=zp+1;
+		zp2:=zp2+1;
+	end;		
+
+	curVal := @charVal-1;
+	zp := @sloc + 512;	
+	for x:=0 to 2 do
+	for l:=0 to 256 do
+	begin
+		screenmemory := zp;
+		WriteText();
+		if (badd=true) then
+		begin
+			badd:=false;
+			zp:=zp-4;		
+		end;
+		zp:=zp+1;
+	end;
+	
+//	SmoothBlocks();	
+
+end;
+
+procedure ExpandScreens();
+begin
+	zp:=#screens;
+	zp2 := @sloc2;
+	for l:=0 to 4 do
+	begin	
+		for i:=0 to 20 do
+		begin
+			memcpy(zp,0,zp2,40);
+			zp2:=zp2+40;		
+			memcpy(zp,0,zp2,40);
+			zp2:=zp2+40;		
+			zp:=zp+40;
+		end;
+//	zp:=zp+40*9;
+	end;
+end;
+
+
+
+var
+	charBlack : array[8] of byte = BuildTable("0b10101010");
+//	charHatch : array[8] of byte = BuildTable("(i&1)*0b10001000 + ((i+1)&1)*0b00100010");
+	charHatch : array[8] of byte = BuildTable("(i&1)*0b10111011 + ((i+1)&1)*0b11101110");
+//	charRed   : array[8] of byte = BuildTable("0b0101010101");
+	charRed   : array[8] of byte = BuildTable("0b11111111");
+	
+	charBlackLU : array[8] of byte = (%10010101,%10010101,%10100101,%10100101,%10101001,%10101001,%10101010,%10101010);
+	charBlackRU : array[8] of byte = (%01010110,%01010110,%01011010,%01011010,%01101010,%01101010,%10101010,%10101010);
+
+		
+/*
+	%00000000,
+	%01011010,
+	%01011010,
+	%11111111,
+	%01010101,
+	%01011010,
+	%01011010,
+	%01011010);
+
+*/
+
+//var
+	//itav: array[42] of integer = BuildTable(
+
+
+
+var
+	istart : integer = 300;
+	n:byte;
+	
+
+procedure InitSpritesTree();
+begin
+	ii:=340;
+	UpdateSpriteTrees();
+	sprite_bitmask:=$00;
+	poke(^$d01b,0,$FF);
+end;	
+
+/*
+procedure InitCorners();
+begin
+	zp:=$2000 + $F8;
+	for i:=0 to 4 do
+	begin
+		memcpy(#corners,0,zp,8*4);
+		zp:=zp+$800;
+	end;
+	poke(^$0400,0,$F8);
+	poke(^$0400+39,0,$F9);
+	poke(^$0400+40*24,0,$FA);
+	poke(^$0400+40*24+39,0,$FB);
+end;
+*/
+
+procedure CopyChar(zp:global pointer; i:global byte);
+begin
+	zp2 := $6000 + i*8;
+	memcpy(zp,0,zp2,8);
+	zp2:=zp2+$800;
+	memcpy(zp,0,zp2,8);
+	zp2:=zp2+$800;
+	memcpy(zp,0,zp2,8);
+	zp2:=zp2+$800;
+	memcpy(zp,0,zp2,8);
+
+end;
+
+//@define IS_DEMO 1
+
+/*procedure InitSprloc();
+begin
+	zp := #per;
+	for i:=0 to 128 do
+	begin
+		k := zp[0]>>4-4; 
+		j := #sprLoc/64;
+		if (i<8) then k:=0;
+		if (i>29) then k:=0;
+		sprlocs[i] := k+j;	
+		zp:=zp+4;
+	end;
+
+	loczp := #sprlocs;
+end;
+*/
+procedure Init();
+begin
+	// Set color background
+//	screen_bg_col:=red;	
+//	screen_bg_col:=black;
+//	screen_fg_col:=black;	
+	hideborderx(1);		
+	hidebordery(1);
+	scrolly(3);
+	@ifdef IS_DEMO
+//	RasterIRQ(DemoUnit::RasterClear(),0,0);
+	@endif
+	@ifndef IS_DEMO
+	screen_bg_col:=black;
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	i := peek(^$01,0);
+	poke(^@keepPos,0,i);
+	initsid(SIDFILE_1_INIT);	
+	@endif
+
+//	screen_bg_col:=3;	
+
+
+
+	// Clear screen and color memory
+//	ClearScreen($1, screen_char_loc+bank_size);
+	multicolor_char_col[1] := Luminosities::fromBlack[curBg];
+	multicolor_char_col[2] := black;
+	setmulticolormode();
+	c:=red;
+//	fill(^$0400 + 40*21,0,40*4);
+	waitforraster(0);
+	setcharsetlocation($2000);	
+	setbank(vic_bank1);
+	ClearScreen($1, ^$4400);
+	clearscreen(c+8,^$D800);
+	// Fill colors
+//	c:=%01011010;
+//	InitSprloc();;
+	ExpandScreens();
+
+//	InitCorners();	
+	
+	sprcol := 5;
+
+	DefineScreen();
+//	screen_bg_col:=1;	
+/*	zp:=$2000;
+	for i:=0 to $20 do
+	begin
+		asm("
+			ldy #0
+ball:
+			lda (zp),y
+			eor #%01010101
+			sta (zp),y
+			iny
+			bne ball
+			inc zp+1
+		");
+//		for j:=0 to 0 do zp[j]:=zp[j] xor %01010101;
+//		zp:=zp+256;
+	end;*/
+	CopyChar(#charRed, @charVal);
+	CopyChar(#charBlack, @charVal-1);
+	CopyChar(#charHatch, @charVal-2);
+	CopyChar(#charBlackLU, @charVal-3);
+	CopyChar(#charBlackRU, @charVal-4);
+
+	for i:=0 to 8 do inv[7-i]:=charBlackLU[i];
+	CopyChar(#inv, @charVal-5);
+	for i:=0 to 8 do inv[7-i]:=charBlackRU[i];
+	CopyChar(#inv, @charVal-6);
+
+	
+	screen_fg_col := c;
+//	screen_bg_col:=2;	
+	GenerateLayer1();
+	InitSpritesTree();
+	
+//	memcpyunroll(loczp, 0, ^$07f8,8);
+	@ifndef IS_DEMO
+	SetMemoryConfig(1,@useKernal,0);
+	@endif
+//	fill(^$0400+22*40,0,40);
+//	fill(^$0400+23*40,253,80);
+	fill(^$4400+22*40,253,40*3);
+//	inc(screen_bg_col);
+//	ClearScreen($0, screen_char_loc);
+	waitforraster(240);
+	StartRasterChain(RasterMain(),251,@useKernal);
+	fill(^$4400+23*40,253,80);
+
+end;
+
+
+interrupt RasterClear();
+begin
+	StartIRQ(0);
+	hidebordery(1);
+	call(^@callPos);
+	CloseIRQ();
+end;
+
+
+procedure EnddClear();
+begin
+	while (true) do
+	begin
+		@ifdef IS_DEMO
+		//call(^@outerCall);
+		asm(" 
+			jsr @outerCall
+			beq pp_cnt2
+			");
+	//		inc(^$d020);
+//			RasterIRQ(Empty(),0,0);
+//			waitforraster(0);
+//			waitforraster(0);
+			//settextmode();
+			//setregularcolormode();
+//			poke(^@curBorderY,0,0);
+//			screen_bg_col:=white;
+//			DemoUnit_curBorderY:=1;
+//			poke(^@curBorderY,0,1);
+			stop:=1;
+			waitforraster(248);
+			RasterIRQ(RasterClear(),0,0);
+			clearscreen(key_space,^$0400);
+			waitforraster(248);
+			setcharsetlocation($1000);
+			setbank(vic_bank0);
+//			screen_bg_col:=orange;
+//			setregularcolormode();
+	
+			asm("
+			jmp $810
+pp_cnt2:
+		
+		");
+	//	inc(^$D020);
+		@endif
+	//	waitforverticalblank();
+	end;
+
+end;
+
+
+//@endblock
+
+begin
+	Init();
+	EnddClear();
+end.

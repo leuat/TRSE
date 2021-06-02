@@ -1,0 +1,326 @@
+program PetsciiAnimations;
+// The unit is accessible in the C64 Turbl Rascal Units project from the front page 
+@use "animation/animation"
+@use "tables/luminosities"
+@use "compression/compression"
+@use "demounit"
+var  
+
+
+
+@export "images/ville_salut.flf" "images/ville_salut.trm" 2
+
+var
+	const animPos : address = $2000;
+	anim: incbin("images/ville_salut.trm",animPos);
+	
+@ifndef IS_DEMO
+//	 music : incsid("../demo_system/music/moskou.sid",2);
+@endif
+
+	frame, cur,curf,tar,time, val, color, colorShift : byte = 0;  
+	g_currentBank,trans: byte = 0;
+	
+
+	circle1 : array[1000] of byte = BuildTable("((0.4*(Math.sqrt( Math.pow( (i%40)-12,2) + 4*Math.pow((Math.floor((i)/40-4)),2))))*12)");
+
+
+//	bgcols : array[8] of byte = (red,yellow,red, white,black);
+	zp,cp,cp2:pointer;
+
+	planet : incbin("data/planet.bin", $3000);
+	
+	curColPos : byte = 0;
+
+@define colp $C000
+
+procedure RenderNext(trm_data_width, trm_xpos, trm_ypos:byte);
+var
+   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
+   trm_s : pointer;
+begin
+	
+	trm_m:=0;
+	Animations::trm_zp := Animations::trm_zp + 1;
+	trm_i:=Animations::trm_zp[0];
+
+	trm_dw:=trm_data_width;
+	trm_sw:=screen_width-trm_dw;
+	
+	for trm_pass:=0 to 2 do begin
+		case trm_pass of
+			0:	trm_s:=@colp;
+			1:	trm_s:=@colp+trm_xpos;
+		end;
+	trm_s:=trm_s+screen_width*trm_ypos;
+	while (Animations::trm_zp[0]<>Animations::trm_endChar) do begin
+		if (Animations::trm_zp[0] = Animations::trm_skipChar) then begin
+			trm_s := trm_s + Animations::trm_zp[1]; 
+			Animations::trm_zp:=Animations::trm_zp+2; 
+		end
+		else 
+		begin
+			if (trm_pass=0) then
+				trm_s[0]:=Animations::trm_zp[0];
+			trm_s := trm_s + 1;
+			Animations::trm_zp:=Animations::trm_zp+1; 
+		end;
+//		g0:=zp[0];
+
+	end;
+	Animations::trm_zp:=Animations::trm_zp+1; //inczp(zp,1);
+//	g0:=0;
+	end;
+
+	if (Animations::trm_hasTimeStamps) then Animations::trm_zp:=Animations::trm_zp+1;
+
+	inc(Animations::trm_curFrame);
+/*	if (Animations::trm_curFrame=Animations::trm_maxFrames) then 
+	begin
+		Animations::trm_curFrame:=0;
+		Animations::trm_zp:=int2ptr(Animations::trm_orgPos+7);
+
+	end;*/
+end;
+
+@define charsetLoc $2800
+
+
+
+//@startblock $B800 "Inter code"
+var	
+	const char : byte = 80;
+	const NN : byte = 165;
+	split : byte = 0;	
+	i,j,k,l,curl2,curline,cury2:byte=0;
+	sp,zp2 : pointer;
+	curpos : pointer;
+	cols : array[256] of byte;
+	jj,ii,starcol : byte = 0;
+//	curColFade : byte = 56;
+
+procedure Music();
+begin
+	@ifdef IS_DEMO
+		call(^@callPos);
+	@endif
+	@ifndef IS_DEMO
+//	call(SIDFILE_1_PLAY);
+	@endif
+
+end;
+
+
+procedure UpdatePlanet();
+begin
+	if (frame=0) then
+	begin
+		zp:=#planet;
+	end;
+	zp2 := $0400 + 40*12;
+	for i:=0 to 12 do
+	begin
+		memcpyunroll(zp,0,zp2,40);
+		zp:=zp+40;
+		zp2:=zp2+40;
+	end;
+//	fill(^$0400,frame,40);
+//screen_bg_col:=frame;
+	frame:=frame+1;
+	if (frame=63) then frame:=0;
+end;
+
+procedure UpdateColors;
+begin
+	if (trans=2) then
+	begin
+		if (curColPos>128) then return;
+		j:=curColPos;
+		cp:=$D800;
+		cp2:=@colp+1000;
+		for i:=0 to 25 do
+		begin
+			if (j>=0 and j<40) then
+			begin
+				cp[j] := 0;
+			end;
+			if (i&1=0) then
+				j:=j-1;
+			cp:=cp+40;
+			cp2:=cp2+40;
+		end;
+		dec(curColPos);
+
+	return;
+	end;
+	if (curColPos>65) then return;
+	j:=curColPos;
+	cp:=$D800;
+	cp2:=@colp+1000;
+	for i:=0 to 25 do
+	begin
+		if (j>=0 and j<40) then
+		begin
+			cp[j] := cp2[j];
+		end;
+		if (i&1=0) then
+			j:=j-1;
+		cp:=cp+40;
+		cp2:=cp2+40;
+	end;
+	inc(curColPos);
+end;
+
+procedure RenderFrame();
+begin
+
+	RenderNext(screen_width,0,0);
+	sp:=@colp+6*40;
+	zp2:=$0400;
+	for i:=0 to 10 do
+	begin
+		memcpyunroll(sp,0,zp2,40);
+		sp:=sp+40;
+		zp2:=zp2+40;
+	end;
+end;
+
+
+interrupt RasterAnim();
+var
+	started : byte = 0;
+begin
+//	StartIRQ(0);
+	DemoUnit::StartDemoIRQ();
+	
+	setcharsetlocation($1000);
+	Music();	
+
+	if (time&1=0) then
+		UpdatePlanet();
+
+	if (i>80) then started:=true;
+	@ifndef IS_DEMO
+		if (time>250) then trans:=1;
+	@endif
+	if (trans=0) then
+		if (peek(^@transition,0)<14) then trans:=1;
+
+	i:=time+1;
+	if (started) then
+	if (i&7=0) then
+	begin
+		if (Animations::trm_curFrame<16 or trans=1) then
+			RenderFrame();
+
+		if (Animations::trm_curFrame = Animations::trm_maxFrames) then trans:=2;
+	end;
+				
+	UpdateColors();
+
+
+	setbank(VIC_BANK0);	
+	inc(time);
+
+	DemoUnit::CloseDemoIRQ();
+//	CloseIRQ();
+end;
+
+
+
+
+
+// Raster update
+
+var
+	cury : integer = 2;
+
+
+
+
+
+
+/*
+interrupt RasterMain();
+begin
+	DemoUnit::StartDemoIRQ();
+	
+	@ifdef IS_DEMO	
+	call(^@callPos);
+@endif
+@ifndef IS_DEMO
+	call(SIDFILE_1_PLAY);
+@endif
+
+
+	DemoUnit::CloseDemoIRQ();
+end;
+*/
+
+begin
+//	screen_bg_col:=black;
+//	screen_fg_col:=black;
+	DefineScreen();
+	@ifndef IS_DEMO
+//	vic_data_loc:=$18;
+	setbank(vic_bank0);
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	i := peek(^$01,0);
+	poke(^@keepPos,0,i);
+//	initsid(SIDFILE_1_INIT);	
+	
+	@endif
+	setcharsetlocation($1000);
+	screen_bg_col:=0;
+//	tar := 7;	
+
+
+	zp:=#circle1;
+	clearscreen(white,^@colp+1000);
+	clearscreen(black,^$d800);
+	zp2 := @colp+40*12 + 1000;
+	for i:=0 to 5 do
+	begin
+		for j:=0 to 100 do
+		begin
+			k:=zp[j];
+			k:=Luminosities::blues8[7-k/16];
+			zp2[j]:=k;
+		end;	
+		zp:=zp+100;	
+		zp2:=zp2+100;	
+	end;
+//	copyfullscreen(#circle1,^$0400);
+//	Loop();
+
+	setregularcolormode();
+	settextmode();	
+	clearscreen(key_space,^$0400);
+//	for i:=0 to 2 do
+//	wait(200);
+//	clearscreen(0,^@colp);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	Animations::ReadAnimationHeader(#anim);
+	RenderFrame();	
+/*	if (curf<5) then
+	begin	
+		Animations::ReadAnimationHeader(#anim);
+		for i:=0 to curf do
+			RenderFrame();
+	end;		
+	copyfullscreen(^@datap,^$0400);*/
+	
+		
+//	clearscreen(0,^$D800);
+
+//	StartRasterChain(RasterMain(),0,0);
+			
+	StartRasterChain(RasterAnim(), 0,0);
+
+	DemoUnit::EnddClear();
+	
+
+end.

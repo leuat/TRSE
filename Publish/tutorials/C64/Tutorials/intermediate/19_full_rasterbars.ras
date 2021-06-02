@@ -1,0 +1,61 @@
+program baars;
+@use "tables/luminosities"
+var
+	cols : array[256] of byte = buildtable("i"); // some random numbers
+	zp: pointer;
+	i,j,k,time : byte;
+
+
+procedure Bars();
+begin
+	asm("
+	ldx #50
+lp:
+	lda cols,x
+	cpx $D012
+	bne *-3
+	sta $d021
+	inx
+	cpx #250
+	bne lp
+	
+	");
+end;
+
+procedure DrawBar(pos:byte);
+begin
+	zp:=#cols + pos;
+	memcpy(#Luminosities::fromBlack,0,zp,32); // copy lumi table to the color table  
+end;
+
+
+procedure UpdateBars();
+begin
+	j:=time;
+	for k:=0 to 6 do
+	begin
+		DrawBar(sine[j]/2 + 58);
+		j+=16;
+	end;	
+	time+=2;
+end;
+
+
+interrupt Raster();
+begin
+	startirq(1);
+	screen_bg_col:=black;
+	Bars();
+	// Fill the bars to zero each frame
+	fill(#cols,0,0); // 256 zeros
+	UpdateBars();
+	closeirq();
+end;
+
+	
+begin
+	
+	disableciainterrupts();
+	startrasterchain(Raster(),38,1);
+	loop();
+end.

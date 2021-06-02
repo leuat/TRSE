@@ -24,6 +24,7 @@
 
 #include <QJSEngine>
 #include <QProcess>
+#include <QDate>
 #include "source/Compiler/ast/ast.h"
 #include "source/Compiler/lexer.h"
 #include <QRegularExpression>
@@ -168,6 +169,8 @@ private:
     QVector<QString> m_ignoreMethods;
     Token m_currentToken, m_lastStartBlockToken;
     QString m_inCurrentProcedure="main";
+    bool m_isFirstPerhaps = true;
+    int m_perhapsShift = 0;
     int PASS_PREPRE = 0;
     int PASS_PRE = 1;
     int PASS_FIRST = 10;
