@@ -112,7 +112,7 @@ jobs:
         with:
           release: nightly
           message: Nightly build
-          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }}\n The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
+          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_linux/trse_linux64.tar.gz
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -143,7 +143,7 @@ jobs:
         with:
           release: nightly
           message: Nightly build
-          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }}\n The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
+          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_linux/TRSE-nightly-x86_64.AppImage
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}

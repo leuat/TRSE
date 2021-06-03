@@ -38,7 +38,7 @@ jobs:
         with:
           release: nightly
           message: Nightly build
-          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }}\n The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
+          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_mac/trse_osx.tar.gz
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
