@@ -17,10 +17,13 @@ jobs:
       # have another intermediate workflow, but we take the quik & dirty
       # solution: increment it in each workflow and push it in one (linux.yml).
       - name: Increment version
+        id: version
         run: |
           version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
           let version=${version}+1
           sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
+          version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
+          echo "::set-output name=TRSE_VERSION::${version}"
       - name: Commit & Push new version
         uses: actions-js/push@master
         with:
@@ -109,7 +112,7 @@ jobs:
         with:
           release: nightly
           message: Nightly build
-          body: The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
+          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }}\n The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_linux/trse_linux64.tar.gz
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -140,7 +143,7 @@ jobs:
         with:
           release: nightly
           message: Nightly build
-          body: The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
+          body: TRSE ${{ steps.version.outputs.TRSE_VERSION }}\n The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_linux/TRSE-nightly-x86_64.AppImage
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
