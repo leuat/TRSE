@@ -21,11 +21,21 @@
 
 #include "data.h"
 
+// Extra level of indirection to allow the preprocessor to expand the macros
+// before they are converted to strings
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+#define MAJOR 0
+#define FEATURE 13
+#define NIGHTLY 3
+#define VERSION STR(MAJOR) "." STR(FEATURE) "." STR(NIGHTLY)
+
 Data Data::data;
 
 Data::Data()
 {
-    version = "0.13.1";
+    version = VERSION;
 }
 
 void Data::Redraw()
