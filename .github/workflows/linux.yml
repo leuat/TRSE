@@ -154,6 +154,8 @@ jobs:
           mkdir -p ~/.local/share/TRSE
           cp Publish/publish_linux/trse.ini ~/.local/share/TRSE/
           cd bin
+          # This is the default value but defining the var should avoid logs polluting the output
+          export XDG_RUNTIME_DIR=/tmp/runtime-runner
           xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
 
       - name: Build notification
