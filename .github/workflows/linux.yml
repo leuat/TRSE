@@ -11,14 +11,11 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
-      - run: sudo apt-get update
-      - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
-      # For 'Verify all' tests
-      # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
-      # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
-      - run: sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
-
-      # Increment version very early, for safety, to reduce risk of pushing undesirable changes
+      # Ideally we would like to do it once for all builds,
+      # but this is complicated as we want to allow to trigger a nightly by
+      # pushing the tag, so this can't be in nightly.yml. One option would be to
+      # have another intermediate workflow, but we take the quik & dirty
+      # solution: increment it in each workflow and push it in one (linux.yml).
       - name: Increment version
         run: |
           version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
@@ -30,6 +27,13 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           author_name: "Nightly Build"
           message: "Increment nightly version"
+
+      - run: sudo apt-get update
+      - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
+      # For 'Verify all' tests
+      # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
+      # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
+      - run: sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
 
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
