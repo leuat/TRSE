@@ -149,8 +149,11 @@ end;
 // Arrays 2
 procedure TMIX1();
 begin
-	Vars::a1[1]:=10000;
-	Vars::a2[1]:=1000;
+	
+//	Vars::a1[1]:=10000;
+//	Vars::a2[1]:=1000;
+
+
 	Vars::v1:=7;
 	Vars::v2:=0;
 	Vars::v2:=Vars::p1[5]; // use y

@@ -1,6 +1,7 @@
 unit Strings;
 var
 	teststr1: string = "HEISANN";
+	
 @ifdef C64
 	teststr2: cstring = "HEISANN DU";
 @endif
