@@ -20,7 +20,9 @@ jobs:
         run: |
           version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
           let version=${version}+1
-          sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
+          # Mac uses BSD sed where -i takes a parameter (an extension for the
+          # backup file, empty string disables backup)
+          sed -i '' "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
       - uses: actions/setup-node@v1
       - uses: jurplel/install-qt-action@v2
       - run: brew install libomp
