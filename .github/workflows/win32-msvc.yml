@@ -17,6 +17,7 @@ jobs:
       # have another intermediate workflow, but we take the quik & dirty
       # solution: increment it in each workflow and push it in one (linux.yml).
       - name: Increment version
+        shell: bash
         run: |
           version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
           let version=${version}+1
