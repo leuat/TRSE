@@ -13,11 +13,24 @@ jobs:
       - uses: actions/checkout@v2
       - run: sudo apt-get update
       - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
-
       # For 'Verify all' tests
       # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
       # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
       - run: sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
+
+      # Increment version very early, for safety, to reduce risk of pushing undesirable changes
+      - name: Increment version
+        run: |
+          version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
+          let version=${version}+1
+          sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
+      - name: Commit & Push new version
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          author_name: "Nightly Build"
+          message: "Increment nightly version"
+
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
           mkdir tools
