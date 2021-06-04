@@ -2505,6 +2505,23 @@ QSharedPointer<Node> Parser::Factor()
         return QSharedPointer<NodeNumber>(new NodeNumber(t,len));
 
     }
+    // CString cast
+    if (m_currentToken.m_type == TokenType::CSTRING) {
+        Eat();
+        Eat(TokenType::LPAREN);
+        auto n = Factor();
+        Eat(TokenType::RPAREN);
+
+        auto cs = qSharedPointerDynamicCast<NodeString>(n);
+
+        if (cs==nullptr)
+            ErrorHandler::e.Error("Can only cast strings to cstrings.",m_currentToken.m_lineNumber);
+
+        cs->m_isCString = true;
+        cs->m_op.m_type = TokenType::CSTRING;
+
+        return cs;
+    }
 
 
     Token t = m_currentToken;
@@ -3387,6 +3404,7 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     QString numID = "";
     if (isCString)
         numID = "*&NUM";
+
     while (m_currentToken.m_type!=TokenType::RPAREN) {
         //GetParsedInt(TokenType::INTEGER);
 

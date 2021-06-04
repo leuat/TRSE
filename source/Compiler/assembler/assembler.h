@@ -115,6 +115,7 @@ public:
     QStringList m_source;
     QVector<QSharedPointer<Appendix>> m_appendix;
     QSharedPointer<Appendix> m_currentBlock = nullptr;
+    QSharedPointer<Appendix> m_tempVarsBlock = nullptr;
     QSharedPointer<Appendix> m_mainBlock = nullptr;
     QVector<QSharedPointer<Appendix>> m_blockStack;
     QVector<Appendix> m_extraBlocks;
@@ -131,6 +132,9 @@ public:
     static int m_prevCycles;
 
 
+
+    void StartExistingBlock(QSharedPointer<Appendix> block);
+    void EndCurrentBlock();
 
     QString m_currentBlockName="";
 
@@ -158,6 +162,9 @@ public:
     // Labels for hi/lo integers
     QString ilo = "_i_lo";
     QString ihi = "_i_hi";
+
+
+
 
 
 

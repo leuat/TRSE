@@ -22,6 +22,8 @@ void AsmX86::Connect() {
     }
     newSource << " ; Temp vars section";
     newSource<< m_tempVars;
+    if (m_tempVarsBlock!=nullptr)
+        newSource << m_tempVarsBlock->m_source;
     newSource << " ; Temp vars section ends";
     for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
         newSource<<m_source[i];

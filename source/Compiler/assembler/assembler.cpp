@@ -32,6 +32,7 @@ Assembler::Assembler()
 {
   //  LabelStack::sNumbersUsed.clear();
     m_symTab = QSharedPointer<SymbolTable>(new SymbolTable());
+    m_tempVarsBlock = QSharedPointer<Appendix>(new Appendix());
 }
 
 Assembler::~Assembler()
@@ -111,6 +112,18 @@ bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPoi
     qStableSort(list.begin(), list.end(), caseInsensitiveLessThan);
     // list: [ "AlPha", "beTA", "DELTA", "gamma" ]
 }*/
+void Assembler::StartExistingBlock(QSharedPointer<Appendix> block)
+{
+    m_blockStack.append(m_currentBlock);
+    m_currentBlock = block;
+}
+
+void Assembler::EndCurrentBlock()
+{
+    m_currentBlock = m_blockStack.last();
+    m_blockStack.pop_front();
+}
+
 void Assembler::StartMemoryBlock(QString pos) {
 
     if (m_currentBlock!=nullptr) {
@@ -496,6 +509,9 @@ void Assembler::Connect()
         }
         newSource << " ; Temp vars section";
         newSource << m_tempVars;
+        if (m_tempVarsBlock!=nullptr)
+            newSource << m_tempVarsBlock->m_source;
+
         newSource << " ; Temp vars section ends";
         for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
             newSource<<m_source[i];
@@ -506,6 +522,8 @@ void Assembler::Connect()
         for (QString t : m_tempVars) {
             m_mainBlock->Append(t,0);
         }
+        if (m_tempVarsBlock!=nullptr)
+            m_mainBlock->m_source<<m_tempVarsBlock->m_source;
 
     }
 

@@ -19,6 +19,8 @@ void Asm68000::Connect() {
     newSource << " ; Temp vars section";
     Asm(" 	CNOP 0,4");
     newSource<< m_tempVars;
+    if (m_tempVarsBlock!=nullptr)
+        newSource << m_tempVarsBlock->m_source;
     Asm(" 	CNOP 0,4");
     newSource << " ; Temp vars section ends";
     for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
