@@ -3488,15 +3488,19 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         Eat(TokenType::INLINE);
     }
 /*    if (m_currentToken.m_type == TokenType::RECURSIVE) {
-        isRecursive = true;
+        isRecursive = true;"
         Eat(TokenType::RECURSIVE);
         int pos = 0;
         */
+        NodeVarDecl::s_mProcStackPos[m_inCurrentProcedure+"_"] = 0;
         for (auto&v : paramDecl) {
             auto nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
             auto var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
             if (qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode)->m_flags.contains("stack")) {
                 auto s = m_symTab->Lookup(var->value,m_currentToken.m_lineNumber);
+                if (s->m_type.toLower()!="byte") {
+                    ErrorHandler::e.Error("Stack parameters can currently only be 'byte'",m_currentToken.m_lineNumber);
+                }
                 NodeVarDecl::s_mProcStackPos[m_inCurrentProcedure+"_"]+=s->m_size;
             }
 
