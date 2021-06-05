@@ -25,7 +25,7 @@ begin
 	clearscreen(WHITE, screen_col_loc);
 
 	// Set the screenmemory pointer to point to the screen memory:
-	screenmemory := screen_char_loc;
+	screenmemory := #screen_char_loc;
 
 	// now the exciting bit - let's print the score
 	printdecimal(score, 4);		// PrintDecimal takes two parameters, the variable and the number of digits to display, less one
