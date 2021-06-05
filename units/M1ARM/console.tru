@@ -21,6 +21,7 @@ end;
 	
 procedure Print(p : pointer);
 begin
+	asm(";Here");
 	while (p[0]<>0) do
 	begin
 		PrintChar(p^);

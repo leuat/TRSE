@@ -4,8 +4,11 @@ var
 
 // memory inc test
 	@ifndef X86
+	@ifndef ATARI520ST
 procedure Test1();
 begin
+	
+	
 	poke(^$4000,0,10);
 	inc(^$4000);	
 	Vars::v1:=peek(^$4000,0);
@@ -13,7 +16,7 @@ begin
 	if (peek(^$4000,0)=11) then Common::PASS() else Common::FAIL();
 end;
 	@endif
-
+@endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
@@ -22,7 +25,9 @@ begin
 	
 	// Mul and div
 	@ifndef X86
+	@ifndef ATARI520ST
 	Test1();
+	@endif
 	@endif
 	Common::WaitABit();
 end;

@@ -32,6 +32,7 @@ class CodeGen6502 : public AbstractCodeGen
 {
 public:
     CodeGen6502();
+    int m_stackShift = 0;
 
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
@@ -65,6 +66,7 @@ public:
 
     void HackPointer(Assembler* as, QSharedPointer<Node> node);
 
+    void PopLostStack(int num) override;
 
 
 
@@ -175,7 +177,12 @@ public:
     */
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 
+    void LoadStackVariable(QSharedPointer<NodeVar> node);
+
     bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
+
+
+    bool StoreStackParameter(QSharedPointer<NodeAssign> n) override;
 
     void AssignString(QSharedPointer<NodeAssign>node) override;
 

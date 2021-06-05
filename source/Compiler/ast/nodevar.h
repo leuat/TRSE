@@ -71,6 +71,9 @@ public:
     bool isClass(Assembler* as) override;
     bool isRecordData(Assembler* as) override;
     bool isPureObject = false;
+    bool isStackVariable() override;
+    int getStackShift() override;
+
     virtual bool isReference() override { return m_op.m_isReference; }
 
     void forceWord() override {
@@ -91,7 +94,7 @@ public:
 
     bool isPureVariable() override {
 
-        return m_expr==nullptr; // only return true if there are no array expressions
+        return m_expr==nullptr && !isStackVariable(); // only return true if there are no array expressions
     }
     bool is8bitValue(Assembler* as) override {
         return getType(as)==TokenType::BYTE
@@ -101,7 +104,7 @@ public:
                 ;
     }
 
-    bool isArrayIndex() override { return m_expr!=nullptr; }
+    bool isArrayIndex() override { return m_expr!=nullptr || isStackVariable(); }
 
     bool typeIsArray(Assembler* as) override;
     QString getValue8bit(Assembler* as, bool isHi) override;

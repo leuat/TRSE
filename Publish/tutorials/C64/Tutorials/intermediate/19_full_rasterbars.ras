@@ -15,6 +15,7 @@ lp:
 	cpx $D012
 	bne *-3
 	sta $d021
+	sta $d020
 	inx
 	cpx #250
 	bne lp

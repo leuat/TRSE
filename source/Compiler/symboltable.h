@@ -61,6 +61,11 @@ public:
     int m_size = 0;
     int m_lineNumber;
     int m_bank = 0;
+    // Stack stuff
+    bool m_isStackVariable = false;
+    int m_stackPos = 0;
+
+
     QString m_fileName;
     bool isUsed = false;
     void setIsUsed();
@@ -102,6 +107,7 @@ class SymbolTable
 private:
     QString m_currentProcedure = "";
 public:
+    QString m_currentProcedureClean = "";
     QMap<QString, QSharedPointer<Symbol>> m_symbols;
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;
@@ -129,6 +135,7 @@ public:
         return m_gPrefix+m_currentProcedure;
     }
     void SetCurrentProcedure(QString pr) {
+        m_currentProcedureClean = pr;
         if (m_useLocals) {
             if (pr!="") {
                 m_currentProcedure= "localVariable_"+pr;

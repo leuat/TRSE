@@ -82,6 +82,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::INVERT] = "invert";
     m_typeFlags[TokenType::SIGNED] = "signed";
     m_typeFlags[TokenType::GLOBAL] = "global";
+    m_typeFlags[TokenType::STACK] = "stack";
 
     while (!done)  {
         done = true;
@@ -3464,6 +3465,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     Token tok = m_currentToken;
     Eat(m_currentToken.m_type);
     bool isInline = false;
+    bool isRecursive = false;
     QString procName =m_procPrefix+ m_symTab->m_gPrefix+ m_currentToken.m_value;
 
 //    qDebug() <<"Declaring procedure;: "<<procName;
@@ -3485,6 +3487,21 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         isInline = true;
         Eat(TokenType::INLINE);
     }
+/*    if (m_currentToken.m_type == TokenType::RECURSIVE) {
+        isRecursive = true;
+        Eat(TokenType::RECURSIVE);
+        int pos = 0;
+        */
+        for (auto&v : paramDecl) {
+            auto nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
+            auto var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
+            if (qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode)->m_flags.contains("stack")) {
+                auto s = m_symTab->Lookup(var->value,m_currentToken.m_lineNumber);
+                NodeVarDecl::s_mProcStackPos[m_inCurrentProcedure+"_"]+=s->m_size;
+            }
+
+
+    }
     QSharedPointer<Node> funcType;
     if (isFunction) {
         Eat(TokenType::COLON);
@@ -3494,8 +3511,6 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         if (!(allowed.contains(t->value.toLower()))) {
             ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer' and 'long'",t->m_op.m_lineNumber);
         }
-
-
     }
 
 
@@ -3505,6 +3520,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 //    qDebug() << "Starting new procedure decl block with : "<< procName << procDecl->m_blockInfo.m_blockID;
     procDecl->m_fileName = m_currentFileShort;
     procDecl->m_isInline = isInline;
+    procDecl->m_isRecursive = isRecursive;
     procDecl->m_isFunction = isFunction;
     AppendComment(procDecl);
 

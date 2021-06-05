@@ -472,6 +472,11 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::INTEGER);
     }
 
+    // stack parameters
+     if (StoreStackParameter(node))
+        return;
+
+
     // For constant i:=i+1;
     if (IsSimpleIncDec(node))
         return;
@@ -693,20 +698,24 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
     node->DispatchConstructor(as,this);
     // Don't x<<<< inline procedures
-
     if (node->m_isInline) {
+        auto decls = qSharedPointerDynamicCast<NodeBlock>(node->m_block)->m_decl;
         // Only declare variables in SYMTAB
-        for (QSharedPointer<Node> n: qSharedPointerDynamicCast<NodeBlock>(node->m_block)->m_decl) {
+        for (QSharedPointer<Node> n: decls) {
             // Print label at end of vardecl
             auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
 
             if (!(qSharedPointerDynamicCast<NodeVar>(vd->m_varNode)->m_isGlobal))
-            if (vd!=nullptr)
+            if (vd!=nullptr) {
                 vd->ExecuteSym(as->m_symTab);
+            }
+
 
         }
+
         return;
     }
+
 
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     int ln = node->m_currentLineNumber;
@@ -760,12 +769,16 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     as->Asm("");
     as->m_currentBlockName = node->m_procName;
 
+
+
+
     if (node->m_block!=nullptr) {
         QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
         if (b!=nullptr) {
             b->forceLabel=node->m_procName;
             b->m_isProcedure = true;
         }
+
         node->m_block->Accept(this);
     }
     // Return value
@@ -842,17 +855,23 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         return;
     }
 
-
+    int lostStack = 0;
     for (int i=0; i<node->m_parameters.count();i++) {
         // Assign all variables
 //        node->m_parameters[i]->ApplyHack(as);
         QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
         QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
+        if (vd->m_varNode->isStackVariable()) {
+            lostStack++;
+            if (vd->isWord(as))
+                lostStack++;
+            na->m_isProcedureParameterAssign = true;
+        }
         na->Accept(this);
     }
 
     as->Asm(getCallSubroutine() + " " + node->m_procedure->m_procName);
-
+    PopLostStack(lostStack);
 }
 /*
  *
@@ -955,6 +974,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
         v->value = as->m_symTab->getCurrentProcedure()+v->value;
 
     node->ExecuteSym(as->m_symTab);
+
+
+
 
     if (t->m_op.m_type==TokenType::ARRAY) {
         as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal, t->m_data, t->m_position);

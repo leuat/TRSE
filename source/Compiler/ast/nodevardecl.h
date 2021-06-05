@@ -34,6 +34,9 @@
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+
+
+
 class NodeVarDecl : public Node {
 public:
     QSharedPointer<Node> m_varNode = nullptr;
@@ -41,6 +44,8 @@ public:
     int m_fileSize=0;
     int m_dataSize=0;
     bool m_chipMem = false;
+
+    static QMap<QString, int> s_mProcStackPos;
 
     SidFile sid;
 

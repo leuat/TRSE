@@ -123,6 +123,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         // Visit that AST node tree baby!
         Data::data.compilerState = Data::DISPATCHER;
 //        qDebug() << "Compiler.cpp DISPATCHER starts";
+        Node::s_as = m_assembler.get();
         m_tree->Accept(m_codeGen.get());
 
     } catch (const FatalErrorException& e) {

@@ -44,7 +44,7 @@ public:
 
     NodeAssign(QSharedPointer<Node> left, Token t, QSharedPointer<Node> r);
 
-
+    bool m_isProcedureParameterAssign = false;
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 

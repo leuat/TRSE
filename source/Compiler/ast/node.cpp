@@ -27,6 +27,7 @@ MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 QString Node::sForceFlag = "";
 uint Node::s_nodeCount = 0;
+Assembler* Node::s_as;
 
 QMap<QString, bool> Node::flags;
 QSharedPointer<SymbolTable>  Node::parserSymTab;

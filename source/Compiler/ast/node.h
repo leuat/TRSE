@@ -61,6 +61,7 @@ public:
     // automatic removal of nodes
     bool m_isUsed = false;
     QStringList m_isUsedBy;
+    static Assembler* s_as;
     // Used in x86 to specity if is an index or not
     bool m_isIndex = false;
     // Forced values
@@ -120,6 +121,10 @@ public:
     virtual void setForceType(TokenType::Type t) {
         m_forceType  =t;
     }
+
+    virtual bool isStackVariable() { return false;}
+    virtual int getStackShift() { return 0;}
+
 
     // Replaces inline variables with the macro parameter
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp);

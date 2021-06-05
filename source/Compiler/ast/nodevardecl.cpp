@@ -21,6 +21,8 @@
 
 #include "nodevardecl.h"
 
+QMap<QString, int> NodeVarDecl::s_mProcStackPos;
+
 
 NodeVarDecl::NodeVarDecl(QSharedPointer<Node> varNode, QSharedPointer<Node> typeNode):Node() {
     m_varNode = varNode;
@@ -97,6 +99,16 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     varSymbol->m_pointsTo = typeNode->m_arrayVarType.m_value;
    // varSymbol->m_size = typeSymbol->m_size;
     varSymbol->setSizeFromCountOfData(typeNode->m_declaredCount);
+//    qDebug() <<typeNode->m_flags;
+
+    if (typeNode->m_flags.contains("stack")) {
+        varSymbol->m_isStackVariable = true;
+//        qDebug() <<symTab->m_currentProcedureClean;
+        s_mProcStackPos[symTab->m_currentProcedureClean]-=varSymbol->m_size;
+        varSymbol->m_stackPos = s_mProcStackPos[symTab->m_currentProcedureClean];
+     //   qDebug() <<varSymbol->m_stackPos;
+
+    }
 //    qDebug() <<"NODEVARDECL " <<varSymbol->m_name <<varSymbol->m_size <<typeNode->m_declaredCount;
 
 

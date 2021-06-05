@@ -46,10 +46,12 @@ void CodeGen6502::EightBitMul(QSharedPointer<Node> node) {
     node->m_left->Accept(this);
     as->Term(); // lda z
     as->Asm("pha");
+    m_stackShift+=1;
     as->Comment("Load right hand side");
     node->m_right->Accept(this);
     as->Asm("tax");
     as->Asm("pla");
+    m_stackShift-=1;
 
     as->Term();
 
@@ -961,7 +963,7 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
     QString b="";
 
     QSharedPointer<NodeVar> varb = qSharedPointerDynamicCast<NodeVar>(node->m_right);
-    if (varb!=nullptr && varb->m_expr==nullptr)
+    if (varb!=nullptr && !varb->isArrayIndex())
         b = getValue(varb);
 
     if (node->m_right->isPureNumeric())
@@ -1651,6 +1653,11 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
     //        if (s==nullptr) {
     //          ErrorHandler::e.Error("Could not find variable '" + value +"'.\nDid you mispell?", m_op.m_lineNumber);
     //    }
+    if (s->m_isStackVariable) {
+        LoadStackVariable(node);
+        return;
+    }
+
     if (node->m_expr!=nullptr) {
         LoadVariable(node);
 
@@ -1847,6 +1854,13 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
     QString type = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->m_type;
     if (as->m_symTab->m_records.contains(type))
         t = TokenType::ADDRESS; // Working with a CLASS directly (not pointer)
+
+    if (node->isStackVariable()) {
+        LoadStackVariable(node);
+        return;
+    }
+
+
 //    qDebug() << "LoadVariable: "<<pp;
     if (t==TokenType::ADDRESS || t==TokenType::STRING || t==TokenType::CSTRING || t==TokenType::INCBIN) {
         LoadByteArray(node);
@@ -2057,6 +2071,13 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
 
 
 
+
+}
+
+void CodeGen6502::LoadStackVariable(QSharedPointer<NodeVar> node) {
+    as->Asm("tsx");
+//    as->Asm("txa");
+    as->Asm("lda $103+"+QString::number(node->getStackShift()+m_stackShift)+",x");
 
 }
 
@@ -2643,6 +2664,15 @@ void CodeGen6502::HackPointer(Assembler *as, QSharedPointer<Node> n)
 
 }
 
+void CodeGen6502::PopLostStack(int num)
+{
+    if (num==0) return;
+    as->Asm("tax");
+    for (int i=0;i<num;i++)
+        as->Asm("pla");
+    as->Asm("txa");
+}
+
 void CodeGen6502::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {
     QString vname = node->m_left->getValue(as);
@@ -2823,6 +2853,9 @@ void CodeGen6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPo
         return;
 }
 
+
+
+
 bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
 {
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_expr);
@@ -2837,6 +2870,8 @@ bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
         return false;
 
 //    as->Comment("Simplified storevariable");
+
+
 
 
     if(node->getType(as)!=TokenType::POINTER)
@@ -2888,6 +2923,36 @@ bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
     expr->Accept(this);
     as->Term();
     as->Asm("sta " +pa + getValue(node)+pb+","+ secondReg);
+    return true;
+
+}
+
+bool CodeGen6502::StoreStackParameter(QSharedPointer<NodeAssign> n)
+{
+    auto var = qSharedPointerDynamicCast<NodeVar>(n->m_left);
+    if (var==nullptr)
+        return false;
+
+    if (!var->isStackVariable())
+        return false;
+
+    LoadVariable(n->m_right);
+
+    if (n->m_isProcedureParameterAssign) {
+        as->Asm("pha");
+        if (var->isWord(as)) {
+            as->Asm("tya");
+            as->Asm("pha");
+        }
+        return true;
+    }
+
+    as->Asm("tsx");
+//    as->Asm("txa");
+    as->Asm("sta $103+"+QString::number(var->getStackShift())+",x");
+
+
+
     return true;
 
 }

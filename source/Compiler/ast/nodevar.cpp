@@ -220,6 +220,22 @@ bool NodeVar::isRecord(Assembler *as)
     return as->m_symTab->m_records.contains(t);
 }
 
+
+bool NodeVar::isStackVariable()
+{
+    QSharedPointer<Symbol> s = s_as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    return s->m_isStackVariable;
+
+}
+
+int NodeVar::getStackShift()
+{
+    QSharedPointer<Symbol> s = s_as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    return s->m_stackPos;
+
+}
+
+
 bool NodeVar::isRecord(QSharedPointer<SymbolTable> sym, QString& str)
 {
     QSharedPointer<Symbol> s = sym->Lookup(value,m_op.m_lineNumber,true);
@@ -252,6 +268,7 @@ bool NodeVar::isRecordData(Assembler *as)
 {
     return m_subNode!=nullptr;
 }
+
 
 bool NodeVar::typeIsArray(Assembler *as)
 {

@@ -74,6 +74,24 @@ begin
 	Vars::text := "08:"; if Vars::p1=$0460 then Common::PASS() else Common::FAIL();
 end;
 
+@ifdef C64
+
+function factorial( p: byte stack ):byte;
+begin
+	if (p>1) then
+	begin
+		p:=p*factorial(p-1);
+	end;
+	factorial:=p;
+end;
+
+procedure AdvFactorial();
+begin
+	Vars::v1 := factorial(5);
+	Vars::text := "09:"; if Vars::v1=120 then Common::PASS() else Common::FAIL();
+end;
+
+@endif
 
 /*
 procedure Advanced09();
@@ -107,6 +125,9 @@ begin
 	@endif
 	Advanced08();
 	@endif
+	@endif
+	@ifdef C64
+	AdvFactorial();
 	@endif
 //	Advanced09();// fails
 	Common::WaitABit();

@@ -75,5 +75,39 @@ void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {
 
 
 void NodeProcedureDecl::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
-    m_block->ExecuteSym(symTab);
+
+
+//    m_block->ExecuteSym(symTab);
+
+    auto decls = m_paramDecl;
+    int stackPos = 0;
+
+    for (auto& nv:decls) {
+        auto nv2 = qSharedPointerDynamicCast<NodeVarDecl>(nv);
+        auto var = qSharedPointerDynamicCast<NodeVar>(nv2->m_varNode);
+        auto typeNode = qSharedPointerDynamicCast<NodeVarType>(nv2->m_typeNode);
+        QSharedPointer<Symbol> varSymbol = symTab->Lookup(var->value,var->m_op.m_lineNumber);
+        if (varSymbol  && varSymbol->m_isStackVariable) {
+            stackPos +=varSymbol->m_size;
+            qDebug() << "EHHH";
+
+        }
+    }
+
+    for (auto& nv:decls) {
+        auto nv2 = qSharedPointerDynamicCast<NodeVarDecl>(nv);
+        auto var = qSharedPointerDynamicCast<NodeVar>(nv2->m_varNode);
+        auto typeNode = qSharedPointerDynamicCast<NodeVarType>(nv2->m_typeNode);
+        QSharedPointer<Symbol> varSymbol = symTab->Lookup(var->value,var->m_op.m_lineNumber);
+        if (varSymbol  && varSymbol->m_isStackVariable) {
+            varSymbol->m_isStackVariable = true;
+            stackPos-=varSymbol->m_size;
+            varSymbol->m_stackPos = stackPos;
+            qDebug() << "setting pos : "<<varSymbol->m_stackPos<<varSymbol->m_name;
+
+        }
+    }
+
+
+
 }

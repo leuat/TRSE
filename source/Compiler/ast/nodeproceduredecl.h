@@ -40,6 +40,7 @@ public:
     QSharedPointer<Node> m_returnValue;
     QSharedPointer<Node> m_returnType;
     bool m_isFunction = false;
+    bool m_isRecursive = false;
     int m_type;
     bool m_isInline = false;
     QSharedPointer<Node> m_block = nullptr;
