@@ -1,0 +1,646 @@
+procedure RewardPlayer();
+begin
+		getRand();
+		l:=curDepth/2+1;
+		r:=chest_probabilites[r/16];
+		if (r=@probHealth) then begin
+			tp:=#stringChestHealth;
+			player_health:=player_health+l+4;
+			if (player_health>=player_max_health) then
+				player_health:=player_max_health;
+
+		end;
+		if (r=@probHealthUpgrade) then begin
+			tp:=#stringChestMaxHealth;
+			player_max_health:=player_max_health+l;
+			player_health:=player_health+l;
+		end;
+
+		if (r=@probAmmo) then begin
+			tp:=#stringChestAmmo;
+			player_ammo:=player_ammo+l +2;
+			if (player_ammo>player_max_ammo) then
+				player_ammo:=player_max_ammo;
+		end;
+
+		if (r=@probAmmoUpgrade) then begin
+			tp:=#stringChestAmmoUpgrade;
+			player_max_ammo:=player_max_ammo+l/2;
+			player_ammo:=player_ammo+l+2;
+		end;
+
+		if (r=@probDamageUpgrade) then begin
+			tp:=#stringChestDamageUpgrade;
+			inc(player_damage);
+			inc(playerColor);
+//			player_ammo:=player_ammo+l+2;
+		end;
+
+		if (r=@probNothing) then begin
+			tp:=#stringChestNothing;
+		end;
+
+		Play(1,16);
+
+		score:=score+10*shrine_score;
+
+		textCnt:=128;
+
+end;
+
+procedure ActivateShrine();
+begin
+	getRand();
+	current_shrine_effect:=shrine_probabilities[r/32];
+	current_shrine_time:=128;
+	shrine_temp_var:=SPRITE_COLOR[@playerSprite];
+
+
+	if (current_shrine_effect=@shrineInvincible) then begin shrine_immortal:=1; tp:=#stringShrineImmortal; end;
+	if (current_shrine_effect=@shrineSpeed) then begin shrine_speed:=2;  tp:=#stringShrineSpeed; end;
+	if (current_shrine_effect=@shrineQuadDamage) then begin shrine_damage:=4;  tp:=#stringShrineDamage; end;
+	if (current_shrine_effect=@shrineQuadScore) then begin shrine_score:=4; tp:=#stringShrineScore; end;
+	if (current_shrine_effect=@shrineRestore) then begin tp:=#stringShrineRestore; end;
+
+
+	textCnt:=128;
+
+end;
+
+procedure UpdateShrine();
+begin
+	if (current_shrine_time=0) then return();
+
+	SPRITE_COLOR[@playerSprite]:=lumi[time&31];
+
+
+	if (time&7=0) then 
+		dec(current_shrine_time);
+
+	if (current_shrine_time=0) then begin
+		shrine_immortal:=0;
+		shrine_speed:=1; 
+		shrine_damage:=1; 
+		shrine_score:=1; 
+		SPRITE_COLOR[@playerSprite]:=shrine_temp_var;
+	end;	
+	if (current_shrine_effect=@shrineRestore) then 
+	if (time&3=0) then 
+	begin
+		if (player_health<player_max_health) then inc(player_health);
+		if (player_ammo<player_max_ammo) then inc(player_ammo);
+	end;
+
+
+end;
+
+
+procedure BackgroundCollideLevel();
+begin
+	
+	tmp:=spritex - 12;
+	i:=(tmp)/8;// -m_rl_startx;//-m_rl_startx;
+	
+	j:=(spritey-40);
+	j:=j/8;
+
+	moveto(i-1,j, $44);
+
+	val:=screenmemory[41]; // down
+	tmp2:=mask_charset1[val];
+	blockx:=0;
+	blocky:=0;
+	
+		if (tmp2=1) then begin
+			blocky:=1;
+		end;
+		val:=screenmemory[ 1 + joystickright - joystickleft]; // down
+	
+		if (mask_charset1[val]=1) then begin
+			blockx:=1;
+		end;
+		current_level_value:=screenmemory[1];
+		current_level_value_next:=val;
+		current_level_x:=i;
+		current_level_y:=j;
+
+		isInLadder:=0;
+		if (current_level_value=@ladderChar or current_level_value=@ladderChar+1) then isInLadder:=1;	
+end;
+
+
+
+procedure findCollider(fc_x,fc_y:byte);
+begin
+	val := 255;
+	j:=0;
+
+	for i:=0 to @maxEntities do begin
+		if entity_type[i]<>0 then
+			begin
+			tmp2 := abs(entity_x[i] - fc_x);
+			tmp3 := abs(entity_y[i] - fc_y);
+			
+			tmp2:=tmp2/2 + tmp3/2;
+			
+			//tmp2 :=tmp2 + abs(entity_curpos_y[i] -fc_y);
+			if tmp2<val then begin
+				val:=tmp2;
+				j:=i;
+			end;
+			
+		end;
+	end;
+	// Winner in val, index in j
+	
+end;
+
+
+procedure InitBullet();
+begin
+	setspriteloc(@bulletSprite,$2E,1);
+	SPRITE_COLOR[@bulletSprite]:=BLUE;
+
+end;
+
+
+// Takes in j
+procedure HitMonster();
+begin
+	l:=j+1;
+
+	entity_health[j]:=entity_health[j]-player_damage*shrine_damage;
+	entity_state2[j]:=1; // Agitated
+	Play(4,1);
+	UpdateSounds();
+	if (entity_health[j]>=160) then begin // KILL
+		entity_type[j]:=0;
+		togglebit(SPRITE_BITMASK,l,0);
+
+		moveto(entity_orgx[j],entity_orgy[j], @mazeDataHi);
+		screenmemory[0]:=0;//screenmemory[0]&%01111111;	
+		i:=curDepth/2;
+		score:=score+1+i*shrine_score;
+		RewardPlayer();
+	end;
+end;
+
+procedure UpdateBullet();
+begin
+	if (bullet_active=1) then
+	togglebit(SPRITE_BITMASK, @bulletSprite,1)
+	else
+	togglebit(SPRITE_BITMASK, @bulletSprite,0);
+
+	if (bullet_active=0) then return();
+
+	bullet_x:=bullet_x+bullet_dx;
+	tmp:=bullet_x*2;
+	spritepos(tmp, bullet_y, @bulletSprite);
+	findCollider(bullet_x, bullet_y);
+	if (val<@collisionDistance) then begin
+//	if (val<10) then begin
+
+		HitMonster();
+
+		bullet_active:=0;
+		return();
+	end;	
+	tmpInt:=spritex;
+	dy:=spritey;
+	spritex:=bullet_x*2;
+	spritey:=bullet_y;
+
+		joystickleft:=0;
+		joystickright:=0;
+		//if bullet_dx>1 then joystickright:=1 else joystickleft:=1;
+
+		BackgroundCollideLevel();
+		if (bullet_x>=170) then bullet_active:=0;
+		if (bullet_x<9)  then bullet_active:=0;
+		if (blockx=1) then bullet_active:=0;
+
+	spritey:=dy;
+	spritex:=tmpInt+1-1;
+
+
+end;
+
+procedure Shoot();
+begin
+	if (direction=1) then bullet_dx:=1 else bullet_dx:=255;
+	bullet_active:=1;
+	bullet_x:=spritex/2;
+	bullet_y:=spritey;		
+	Play(3,2);
+end;
+
+
+
+procedure UpdatePlayerBullet();
+begin
+	if (bullet_timer<>0) then begin dec(bullet_timer); return(); end;
+	if (bullet_active=0) then
+	if (player_ammo<>0) then
+	if (joystickbutton=1) then begin
+		Shoot();
+		dec(player_ammo);
+		bullet_timer:=@bulletMaxTimer;
+	end;
+
+end;
+
+
+
+
+
+// Updates the sprite & the sprite animation
+procedure UpdatePlayerSpriteMovement();
+begin
+	
+	val := joystickup+joystickdown+joystickleft+joystickright;
+	if val<>0 then 
+		val:=1;
+
+	
+//	if bulletTime<>0 then dec(bulletTime);
+
+/*	if (current_game_mode = @gameModeLevel) then
+	if (bulletProgress=0 and joystickbutton=1) then begin
+		Shoot();
+	//	bulletTime:=10;
+	end;
+*/
+
+	sprite1_counter:=sprite1_counter-val;
+
+
+	if sprite1_counter>=200 then
+		sprite1_counter := 23;
+
+	// Animation hits at 0 and 10
+	
+	i:=sprite1_counter/4;
+
+	// Make sure up and down work in map mode
+
+	if (joystickleft+joystickright =0 ) then begin
+		if direction=0 then k:=moveSpriteLeftIdle
+		else k:=moveSpriteRightIdle;
+	end;
+
+	if (joystickleft=1) then begin 
+		k:=moveSpriteLeft[i]; 
+		direction:=0; 
+	end;
+	if (joystickright=1) then begin 
+		k:=moveSpriteRight[i]; 
+		direction:=1; 
+	end;
+
+		if (joystickdown=1 or joystickup=1) then begin
+			if (direction = 0) then k:=moveSpriteLeft[i]
+			else
+		k:=moveSpriteRight[i]; 
+		end; 
+
+
+
+
+//	setspriteloc(@playerSprite, moveSprite[i], 1);
+
+	poke(^$47F8,@playerSprite,k); 
+//	poke(^$87F8,@playerSprite,k); 
+	
+
+
+
+	
+end;
+
+procedure RenderBar();
+begin
+	x:=@healthChar+ 7; 
+	y:=@healthChar + 7; 
+	if (val>=15) then val:=15;
+	if (val>=8) then x:=@healthChar+val-8
+	else begin
+		x:=$20;
+		y:=@healthChar+val;
+	end;
+
+
+	screenmemory[0]:=x;
+	screenmemory[1]:=x;
+	screenmemory[40]:=y;
+	screenmemory[41]:=y;
+end;
+
+
+procedure RenderStatsColors();
+begin
+	moveto(0,22,$D8);
+//	fill(screenmemory,RED, 120);
+	fill(^$D800+^22*^40,RED,120);
+	fill(^$D800+^22*^40+^4, PURPLE, 31);
+	fill(^$D800+^23*^40+^4, PURPLE, 31);
+	fill(^$D800+^22*^40+^36,BLUE,2);
+	fill(^$D800+^23*^40+^36,BLUE,2);
+	fill(^$D800+^40*^24+^20,YELLOW,12);
+	fill(^$D800+^40*^24+^10,CYAN,12);
+	fill(^$D800+^40*^24+^0,LIGHT_RED,10);
+	fill(^$D800+^40*^24+^32,LIGHT_BLUE,8);
+
+
+end;
+
+procedure RenderStats();
+begin
+	if (time&3=0) then begin
+
+	moveto(2,22,$44);
+	tmp:=player_health*16;
+	//tmpInt:=player_max_health*8;
+	tmp:=tmp/player_max_health;
+	val:=tmp;
+	RenderBar();
+
+//	moveto(0,24,$44);
+	//fill(screenmemory,$20, 28);
+	
+
+//	printstring("LIFE ",0,40);
+//	screenmemory[0]:=$3F;
+//	inczp(screenmemory,2);
+	moveto(0,24,$44);
+	printdecimal(player_health,2); 
+	screenmemory+=3;
+	screenmemory[0]:=$4e;
+//	printstring("/",0,40);
+	screenmemory+=1;
+	printdecimal(player_max_health,2); 
+
+	moveto(10,24,$44);
+	printstring("DPTH",0,40);
+	
+	screenmemory += 5;
+	
+	printdecimal(curDepth,1); 
+
+
+
+	end;
+
+	if (time&3=1) then begin
+
+		
+		if (tp[0]=$20) then begin
+			fill(^$4400+^22*^40+^5,$20,30);
+			fill(^$4400+^23*^40+^5,$20,30);
+
+		end;
+		//	fill(screenmemory,$20, 28);
+		moveto(5,22,$44);
+
+		i:=0;
+		j:=0;
+		while tp[i]<>0 do begin
+			screenmemory[j]:=tp[i];
+			inc(i);
+			inc(j);
+			if tp[i]=$20 then if j>=24 then begin
+				screenmemory+=40;
+				inc(i);
+				j:=0;
+			end;
+
+		end;
+/*		while (i<28) do begin
+			screenmemory[i]:=$20;
+			inc(i);
+
+		end;
+*/
+	end;
+	if (time&3=2) then begin
+
+
+		moveto(36,22,$44);
+		tmp:=player_ammo*16;
+		//tmpInt:=player_max_health*8;
+		tmp:=tmp/player_max_ammo;
+		val:=tmp;
+		RenderBar();
+
+
+		moveto(34,24,$44);
+
+//		screenmemory[0]:=$1;
+		printdecimal(player_ammo,1); 
+		screenmemory[2]:=$4e;
+		screenmemory+=3;
+		printdecimal(player_max_ammo,1); 
+
+
+
+		moveto(23,24,$44);
+		printstring("SCR",0,40);
+		screenmemory+=4;
+		printdecimal(score,4);
+	end;
+	//printstring(tp,0,40);
+
+end;
+
+
+procedure HurtPlayer(hp_p:byte);
+begin
+	if (shrine_immortal=0 and immortal=0) then
+
+		player_health:=player_health -hp_p;
+	player_hurt:=@playerHurt;
+	Play(2,6);
+end;
+
+
+
+procedure UpdatePlayerInteractions();
+begin
+	x:=curx+ current_level_x/6;
+	y:=cury+ current_level_y/6;
+	curDepth:=y+x/4;
+/*	moveto(0,23,$44);
+	printdecimal(x,1);
+	inczp(screenmemory,4);
+	printdecimal(y,1);
+*/	
+
+	if (current_level_value/2=@trapCharHiddenCheck/2) then begin
+		x:=current_level_x&%11111110;
+		printBlock(x-1,current_level_y+1, @trapChar, RED);
+		printBlock(x+1,current_level_y+1, @trapChar, RED);
+	end; 
+
+	
+
+
+	if (current_shrine_time=0) then
+	
+	if current_level_value=@shrineChar+40 then 
+	begin
+		moveto(x, y, @mazeDataHi);
+		if (getbit(screenmemory[0],7)=0) then begin			
+			screenmemory[0]:=screenmemory[0]|%10000000;
+			printBlock(current_level_x,current_level_y-1, @shrineChar, 4);
+			ActivateShrine();
+		end;
+	end;
+
+
+	if current_level_value=@chestClosed+40 then begin
+		
+		//SCREEN_FG_COL:=WHITE;
+		printBlock(current_level_x,current_level_y-1, @chestOpen, 17);
+		moveto(current_level_x, current_level_y-1,$44);
+
+		
+
+		// Set to opened
+		moveto(x, y, @mazeDataHi);		
+		screenmemory[0]:=screenmemory[0]|%10000000;
+		RewardPlayer();
+
+
+	end;
+
+
+	if (time&3=0) then begin
+		if (current_level_value/2=@lavaChar/2) then begin
+			HurtPlayer(1);
+		end;
+		if (current_level_value/2=@trapChar/2) then begin
+			HurtPlayer(1);
+		end;
+	end;
+	if (textCnt<>0) then dec(textCnt)
+	else tp:=#stringNone;
+
+end;
+
+procedure UpdatePlayerHurt();
+begin
+	if (player_hurt=0) then begin 
+		SPRITE_COLOR[@playerSprite]:=playerColor; 		
+		return(); 
+	end;
+	if (time&3<>0) then return();
+	dec(player_hurt);	
+	if player_hurt&1=0 then SPRITE_COLOR[@playerSprite]:=WHITE
+	else
+	SPRITE_COLOR[@playerSprite]:=playerColor;
+
+	
+end;
+
+
+procedure UpdatePlayerStats();
+begin
+	if (curDepth>=maxDepth) then begin
+		score:=score+10;
+		maxDepth:=curDepth+1;
+	end;
+end;
+
+
+//procedure UpdatePlayerEntities();
+
+procedure UpdatePlayerEntities();
+begin
+	i:=spritex/2;
+	findCollider(i,spritey);
+	if (time&7=0) then
+	if (val<@collisionDistance) then begin
+		k:=1+curDepth/4;
+		HurtPlayer(k);
+	end;
+
+end;
+
+procedure UpdatePlayer();
+begin
+	Joystick(2);
+	BackgroundCollideLevel();
+
+	if (speeddown<8) then
+	if (joystickup=1 and blocky=1) then begin
+		speedup:=64;
+		blocky:=0;
+		speeddown:=0;
+		Play(5,32);
+	end;
+	if (speeddown<100) then 
+		speeddown:=speeddown+2;
+
+
+	if speedup<>0 then dec(speedup);;
+	if speedup<>0 then dec(speedup);;
+
+	if (isInLadder=1) then begin
+		speedup:=joystickup*16*shrine_speed;
+		speeddown:=joystickdown*16*shrine_speed;
+	end;
+
+
+
+	if (blocky=0) then begin
+		tmp2:=speeddown/16;
+		spritey:=spritey+tmp2;
+		tmp2:=speedup/16;
+		spritey:=spritey-tmp2;
+		
+		//SCREEN_BG_COL:=BLACK;
+	end
+	else begin
+//		i:=speeddown/4-18;
+		i:=speeddown/8-8;
+		if (i>=200) then i:=0;
+		if (i<>0) then
+			HurtPlayer(i);		
+		speeddown:=0;
+	end;
+
+	if (blockx=1) then begin
+		joystickright:=0;
+		joystickleft:=0;
+	end;
+	i:=joystickright*shrine_speed;
+	j:=joystickleft*shrine_speed;
+	spritex:=spritex + i-j;
+
+	spritepos(spritex, spritey, 0);
+	UpdatePlayerSpriteMovement();
+	UpdatePlayerInteractions();
+	UpdatePlayerEntities();
+	UpdatePlayerHurt();
+	UpdatePlayerStats();
+	UpdatePlayerBullet();
+	UpdateBullet();
+	UpdateShrine();
+
+end;
+
+
+
+procedure InitPlayer();
+begin
+	SPRITE_BITMASK:=$1;
+	SPRITE_MULTICOLOR_REG1:=BLACK;
+	SPRITE_MULTICOLOR_REG2:=WHITE;
+	SPRITE_COLOR[0]:=playerColor;
+	SPRITE_MULTICOLOR:=$FF;
+
+	spritex:=170;
+	spritey:=80;
+	UpdatePlayer();
+	InitBullet();
+end;

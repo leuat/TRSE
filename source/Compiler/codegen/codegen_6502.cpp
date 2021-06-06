@@ -2078,6 +2078,7 @@ void CodeGen6502::LoadStackVariable(QSharedPointer<NodeVar> node) {
     as->Asm("tsx");
 //    as->Asm("txa");
     as->Asm("lda $103+"+QString::number(node->getStackShift()+m_stackShift)+",x");
+//    qDebug() << node->getStackShift()+m_stackShift;
 
 }
 

@@ -1,0 +1,473 @@
+program WormWood;
+var  
+/*
+	Wormwood is a yet unfinished 16kb cartridge game made with TRSE.
+	
+	All code by Leuat. Will hopefully be finished / rewritten some day.
+
+
+*/
+	charset : incbin("charsets/charset.bin", $6000);
+
+@export "charsets/main.flf" "charsets/charset_level.bin" 256
+
+	charsetLevel : incbin("charsets/charset_level.bin", $6800);
+
+
+
+
+@define perlinHi $FD
+
+@export "sprites/sprites.flf" "sprites/sprites.bin" 256
+
+
+	perlin40 : incbin("data/random.bin", $FD00);
+	sprites : incbin("sprites/sprites.bin",$8000);
+
+	splash: incbin("images/splash_data.bin",$A000);
+//	splash_colors: incbin("images/splash_color.bin",$8800);
+//	splash_colors: incbin("images/splash_color.bin",$83FE);
+
+	splash_colors: incbin("images/splash_color.bin",$8800);
+@userdata "$C000" "$D000" "Maze data"
+
+
+@define debug 1
+
+
+@define mazeHi $C0
+@define mazeDataHi $C4
+@define mazeDataDetailHi $C8
+@define mazeDataDetail $C800
+
+@define mazePos $C000
+@define mazeData $C400
+@define mazeScreen $CC00
+
+@define mazeColor $9A00
+@userdata "$9A00" "$9E00" "Maze color data"
+
+
+@define chestClosed $a0
+@define chestOpen $a2
+@define lavaChar $a6
+@define trapChar $aa
+@define trapCharHidden $bb
+@define trapCharHiddenCheck $E3
+
+@define shrineChar $b2
+@define shrineCharHit $da
+
+@define lavaPos1 "$6D30"
+@define lavaPos2 "$6D38"
+@define ladderPos "$6DC8"
+
+@define healthChar $f0
+
+
+	
+	music: incsid("music/crackout90.sid",2);
+
+	@define useKernal 0
+	@define playerSprite 0
+	@define bulletSprite 7
+
+	@define bulletMaxTimer 8
+	@define bulletColor 8
+	@define playerHurt 16
+	
+	@define keypressMax 10 
+
+
+
+@startblock $E000 "Variables"
+
+	curx, cury,x,y,j,i,k,l,m,n,cx,cy,dx,dy,isDone,v, tick, seed_a, seed_b,val,keypress, curDepth : byte = 0;
+	direction,spritey,tmp2,blockx, blocky,	current_level_value, speedup, speeddown, isInLadder :byte = 0;
+	current_level_x, current_level_y, textCnt,col, orgCol,time,r,ly,maxDepth,tmp3,floorCol, freq : byte = 0;
+	cnt,spritex,tmp,score,tmpInt : integer;
+	bullet_x, bullet_y, bullet_timer, bullet_active, bullet_dx, bullet_dy,n2,initSound :  byte=0;
+	current_level_value_next: byte;
+
+	current_shrine_effect, scroll : byte=0;
+	current_shrine_time : byte=0;
+	shrine_temp_var : byte=0;
+	shrine_immortal : byte = 0;
+	shrine_speed : byte = 1;
+	shrine_damage : byte = 1;
+	shrine_score : byte = 1;
+//	shrine_score : byte = 1;
+
+
+
+	immortal : byte = 0;
+
+
+	@define shrineInvincible 1
+	@define shrineSpeed 2
+	@define shrineQuadDamage 3
+	@define shrineQuadScore 4
+	@define shrineRestore 5
+
+	shrine_probabilities : array[8] of byte = (
+		@shrineInvincible, 
+		@shrineRestore, 
+		@shrineSpeed, 
+		@shrineQuadDamage, 
+		@shrineQuadScore, 
+		@shrineRestore, 
+		@shrineQuadDamage, 
+		@shrineSpeed 
+
+	);
+
+
+
+	rands: array[256] of byte;
+	stack_x : array[256] of byte;
+	stack_y : array[256] of byte;
+	stack_p, tries,maxPos, curPos : byte = 0;
+
+	lumi:  array[] of byte = ($00,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$00,$00,$00);
+
+	
+
+//	monsterSprites : array[10] of byte = ($40,$40,$40,$40,$40,$40,$40,$40);
+//	monsterSprites : array[] of byte = ($44, $44, $44, $44,    $42, $42, $40, $3C);
+	monsterSprites : array[] of byte = ($30, $34, $38, $44,    $40, $34, $44, $3C);
+	monsterYShift : array[] of byte = (30, 38 , 39,34,     30, 38 , 39,34, );
+
+@define bulletSpriteLoc $2E
+
+	
+
+
+	floorColors : array[4] of byte=(5,6,4,3);
+	/* Player stuff */
+
+
+	
+
+	@define maxPlayerHealth 20
+	@define startPlayerHealth 16
+	@define startPlayerDamage 2
+	@define startPlayerMaxAmmo 16
+	
+
+
+	playerColor:byte=8;
+	player_max_health : byte=@startPlayerHealth;
+	player_health : byte=@startPlayerHealth;
+	player_damage : byte=@startPlayerDamage;
+	player_ammo: byte=@startPlayerMaxAmmo;
+	player_max_ammo: byte=@startPlayerMaxAmmo;
+	player_hurt : byte=0;
+
+	joy_cooldown: byte = 0;
+
+	moveSpriteLeftIdle : byte = $2D;
+	moveSpriteRightIdle : byte = $2C;
+//	moveSpriteRight : array[8] of byte = ($24,$26,$28,$26);
+//	moveSpriteLeft : array[8] of byte = ($25,$27,$29,$27);
+
+	moveSpriteRight : array[] of byte = ($24,$26,$28,$2A,$28,$26);
+	moveSpriteLeft : array[] of byte = ($25,$27,$29,$2B,$29,$27);
+
+
+
+	startMessage : string=("PRESS BUTTON TO START");
+
+	sprite1_counter: byte=3;
+
+	@define item_mask %01111111
+	@define itemType_chest 1
+	@define itemType_lava 2
+	@define itemType_monster 3
+	@define itemType_trap 4
+	@define itemType_shrine 5
+
+
+	map_display_items: array[] of byte = (
+		$20, 0,
+		$80, 7,  // chest, yellow
+		$81, 2, // lava, red
+		$a1, 3, // monster, cyan
+//		$20, 5, // hide traps
+		$14, 5, // hide traps
+		$2b, 13 // Shrine	
+	);
+
+
+	@define monster_probability 200
+
+
+
+	@define maxEntities 6
+	@define collisionDistance 10 
+	@define entityMaxTime 3
+
+	entity_x : array[@maxEntities] of byte;
+	entity_y : array[@maxEntities] of byte;
+	entity_orgx : array[@maxEntities] of byte;
+	entity_orgy : array[@maxEntities] of byte;
+	entity_dx : array[@maxEntities] of byte;
+	entity_dy : array[@maxEntities] of byte;
+	entity_time : array[@maxEntities] of byte;
+	entity_state : array[@maxEntities] of byte;
+	entity_state2 : array[@maxEntities] of byte;
+	entity_color : array[@maxEntities] of byte;
+	entity_health : array[@maxEntities] of byte;
+	entity_damage : array[@maxEntities] of byte;
+	entity_type : array[@maxEntities] of byte;
+
+
+	@define probNothing 0
+	@define probHealth 1
+	@define probHealthUpgrade 2
+	@define probAmmo 3
+	@define probAmmoUpgrade 4
+	@define probDamageUpgrade 5
+
+
+
+
+	corridor_probabilities:array[] of byte=(
+
+		0,0,0,0,
+		0,0,0,0,
+		0,		
+		0,
+		@itemType_lava,
+		@itemType_lava,
+		@itemType_trap, 
+		@itemType_shrine,
+		0,
+		0,0,0);
+
+	chest_probabilites:array[] of byte = (
+
+	@probNothing,
+	@probHealth,
+	@probHealth,
+	@probHealth,
+
+	@probHealth,
+	@probHealth,
+	@probHealthUpgrade,
+	@probHealthUpgrade,
+
+	@probHealth,
+	@probAmmo,
+	@probAmmo,
+	@probDamageUpgrade,
+
+	@probAmmo,
+	@probNothing,
+	@probAmmoUpgrade,
+	@probAmmoUpgrade);
+
+	mask_charset1: array[] of byte=(
+	1,1,1,1,0,0,0,0,0,0,  0,0,1,1,1,1,1,1,1,1,   1,1,1,1,1,0,0,0,0,0,  1,0,0,0,0,1,1,1,0,0,
+	1,1,1,1,0,0,0,0,0,0,  0,0,1,1,1,1,1,1,1,1,   1,1,1,1,1,0,0,0,0,0,  1,0,0,0,0,1,1,1,0,0,
+	1,1,1,1,0,0,0,0,0,0,  0,0,1,1,1,1,1,0,0,0,   0,0,0,0,1,1,0,0,1,1,  1,0,0,0,0,1,1,1,1,1,
+	1,1,1,1,0,0,0,0,0,0,  0,0,1,1,1,1,1,0,0,0,   0,0,0,0,1,1,0,0,1,1,  1,0,0,0,0,1,1,1,1,1,
+	0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,1,1,0,0,  1,1,0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0);
+
+
+	background_low_contrast_colors : array[] of byte = ( 
+		7, 2, 2, 4, 4,5,6,9,8,9,11,12,8,9,10,11
+	);
+
+
+	@define ladderChar $b9
+	
+	@define wall $56
+	@define corridor $20
+
+
+	@define bs 4
+	@define bsx 6
+
+//	bricks : array[3] of byte = (0,2,$50,$52, $5D, $5F, $24, 0);
+
+//	biome : array[8] of byte = (
+
+	bricks : array[] of byte = (0,0,0,2,
+								2,0,2,$50,
+								$50, 2,$50,$52, 
+								$52, $52, $50, $5D,
+								$5D, $52, $5D, $5F,
+								$5F, $5F, $5D, $24, 
+								$24, $24, $50, 2);
+
+	roof : array[] of byte = ($B7,$B7,$1D,$B7,$e,$ae, $43, $6b,    $6f, $22, $B7,$B7,$B7,$B7,$B7,$B7 );
+	floor : array[] of byte = ($B7,$B7,$61, $61,$19,$71,$B7,$B7,   $a8, $ac, $b0, $63, $63, $65,$B7,$B7 );
+	
+
+	stringNone : cstring=(" ");
+	stringChestNothing : cstring=("NOTHING AT ALL   ");
+	stringChestHealth: cstring=("A POTION OF LIFE   ");
+	stringChestMaxHealth: cstring=("A POTION OF MORE LIFE   ");
+	stringChestAmmo: cstring=("SOME AMMO   ");
+	stringChestAmmoUpgrade: cstring=("A POTION OF MORE AMMO   ");
+	stringChestDamageUpgrade: cstring=("A POTION OF MORE DAMAGE   ");
+
+
+	stringShrineImmortal: cstring=("DO NOT FEAR DEATH   ");
+	stringShrineSpeed: cstring=("LIGHT AS A FEATHER    ");
+	stringShrineDamage: cstring=("YOU HIT HARD");
+	stringShrineRestore: cstring=("REPLENISH YOUR THOUGHTS   ");
+	stringShrineScore: cstring=("AMPLY REWARDED   ");
+	
+
+	intro_text : cstring=("                                        ",
+	"JOYSTICK UP DOWN TO SELECT SEED         LEMONSPAWN PRESENTS       WORMWOOD",
+	"       CODE AND GFX BY LEUAT         MUSIC BY SPIDER J           DEVELOPED WITH TRSE",
+	"           PREVIEW VERSION DO NOT SPREAD          CREATED FOR "
+	"THE RGCD 2019 INTRO COMPO             ");
+
+	warning_text : cstring=("ALPHA PREVIEW VERSION 0.02 15-04-2019");
+
+//	@define bricks1 0 
+//	@define bricks1 0 
+//	@define roof1 $1D
+	@define background $B7 
+//	@define background $B7 
+
+
+@endblock
+
+	zp,p1, perlin,color,c1,p2,dp, tp,kp: pointer;
+
+
+
+
+procedure printBlock(pb_x, pb_y, pb_char, pb_col:byte);
+begin
+	moveto(pb_x, pb_y,$44);
+	screenmemory[0]:=pb_char;
+	screenmemory[1]:=pb_char+1;
+	screenmemory[40]:=pb_char+40;
+	screenmemory[41]:=pb_char+41;
+	if (pb_col>16) then return(); 
+	moveto(pb_x, pb_y,$D8);
+	screenmemory[0]:=pb_col;
+	screenmemory[1]:=pb_col;
+	screenmemory[40]:=pb_col;
+	screenmemory[41]:=pb_col;
+
+
+end;
+
+
+procedure InitRand();
+begin
+	for i:=0 to 0 do begin
+		//rand(0,255,m);
+		m:=perlin40[i]*109;
+		rands[i]:=m;		
+	end;
+
+end;
+
+
+procedure getRand();
+begin
+	r:=rands[cx];
+	cx:=cx+seed_b*71;
+end;
+
+
+procedure InitIntro();
+interrupt RasterIntro();
+interrupt RasterLevelsTop();
+procedure InitGameOver();
+interrupt RasterGameOver();
+
+@include "include/sounds.ras"
+@include "include/map.ras"
+@include "include/player.ras"
+@include "include/entities.ras"
+@include "include/levels.ras"
+@include "include/gameover.ras"
+@include "include/intro.ras"
+
+// Will copy a sprite to a normal and x-flipped
+procedure CopySprite();
+begin
+	memcpy(zp,0,p2,64);
+	p2:=p2+64;
+	fill(p2,0,64);
+	l:=0;
+	for j:=0 to 21 do begin
+		for i:=0 to 24 step 2 do begin
+			k:=22-i;
+			
+			x:=i/8;
+			y:=k/8;
+
+			n:=getbit(zp[l+x],i&7);
+			n2:=getbit(zp[l+x],(i+1)&7);
+			if (n=1) then togglebit(p2[l+y], k&7,1);
+			if (n2=1) then togglebit(p2[l+y], (k+1)&7,1);
+			
+
+		end;
+		l:=l+3;
+	end;
+end;
+
+
+
+procedure InitSprites();
+begin
+	zp:=$8000;
+	p2:=$4900;
+//	p2:=$4900+64;
+	for m:=0 to 20 do begin
+		CopySprite();
+		zp:=zp+64;
+		p2:=p2+64;
+	end;	
+
+end;
+/*
+ Priorities:
+	// 56 produserer feil map! FIX
+
+- Shrine of invincibility
+- Shrine of speed
+- Shrine of doubling
+
+- Potion of 
+- Game over score
+- Main picture
+- Multiple weapons
+- Bombs
+- More monsters
+- More tiles
+- Depth >24
+- Endgame
+- More items and upgrades
+ 
+
+
+*/
+
+begin
+	preventirq();
+	disableciainterrupts();
+	setmemoryconfig(1,@useKernal,0);
+	InitSid(SIDFILE_1_INIT);
+	seed_a:=3;	
+	seed_b:=91;
+	InitSprites();
+	InitRand();
+	InitIntro();	
+	RasterIRQ(RasterIntro(),0,@useKernal);
+	enableirq();
+	enablerasterirq();
+
+	Loop();
+end.

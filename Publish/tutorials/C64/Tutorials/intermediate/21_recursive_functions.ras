@@ -1,0 +1,52 @@
+program Recursive;
+var
+	i,j,k:byte;
+
+/*
+	TRSE uses non-stack based parameters by default. The main reason for this is
+	the very small size of the stack on the 6502, and the additional overhead 
+	required to read/write stack variables. Usually, recursive function can be
+	implemented using alternative queue methods etc - but sometimes having
+	temporary stack variable parameters be really useful.
+	
+	In TRSE 0.13.10, the type flag keyword "stack" was implemented. For now, only
+	byte variables are allowed. When flagging the parameter with "stack", TRSE
+	will push the value of the parameter onto the stack before every procedure call.
+	
+	Whenever the stack parameter "p" is accessed inside of the Factorial method,
+	TRSE will read and write directly to the stack - and the value will be preserved
+	when the function calls itself.
+
+
+*/
+
+
+
+function Factorial( p : byte stack ) : byte;
+begin
+	if (p>1) then
+		p:=p*Factorial(p-1);
+		
+	Factorial:=p;
+
+end;
+
+
+procedure Sleep();
+begin
+	for i:=0 to 20 do waitforverticalblank();
+end;
+	
+begin
+	clearscreen(key_space,screen_char_loc);	
+	moveto(5,3,hi(screen_char_loc));	
+	for j:=1 to 6 do
+	begin
+		k:=Factorial(j);
+		printdecimal(k,2);
+		screenmemory += screen_width*2;
+		Sleep();
+	end;
+	loop();
+	
+end.

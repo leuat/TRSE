@@ -1,0 +1,75 @@
+procedure InitGameOver();
+begin
+
+	val:=0;
+	setregularcolormode();	
+	clearscreen(11, ^$D800);
+	fill(^$4400+^22*^40,$20,120);
+
+	freq:=100;
+	clearsound();
+	PlaySound(SID_CHANNEL1, 
+			13,  // Volume
+			freq,  // Hi byte frequency
+			0*16+0,  // Attack voice 1
+			14*16 + 12,   // Sustain = 16*15 + release=6
+			1 +SID_SAW,  // Waveform
+			SID_SAW);  // waveform 
+
+		
+	for i:=0 to 100 do begin
+/*	PlaySound(SID_CHANNEL2, 
+			13,  // Volume
+			freq,  // Hi byte frequency
+			15*16+0,  // Attack voice 1
+			14*16 + 3,   // Sustain = 16*15 + release=6
+			1 +SID_SAW,  // Waveform
+			SID_SAW);  // waveform */
+
+		if (freq>5) then freq:=freq-2;
+		inc(SPRITE_COLOR[@playerSprite]);
+
+		setfrequency(SID_CHANNEL1,freq);
+		waitforraster(128);
+		j:=freq*2;
+		setfrequency(SID_CHANNEL1,j);
+		waitforraster(10);
+	end;
+	SPRITE_BITMASK:=0;
+	setregularcolormode();
+	setcharsetlocation($6000);
+	clearscreen($20, ^$4400);
+	clearscreen(LIGHT_BLUE, ^$D800);
+	moveto(15,10,$44);
+	printstring("GAME OVER",0,40);
+	moveto(13,12,$44);
+	printstring("SCORE: ",0,40);
+	screenmemory+=8;
+	printdecimal(score,4);
+	joystickbutton:=0;
+	bullet_timer:=16;
+	InitSid(SIDFILE_1_INIT);
+
+
+
+end;
+
+
+interrupt RasterGameOver();
+begin
+	startirq(@useKernal);
+		Joystick(2);
+
+
+	inc(time);
+	fill(^$D800+^10*^40,lumi[time&31],40);
+	fill(^$D800+^12*^40,lumi[(time+9)&31],40);
+
+	if (joystickbutton=1) then begin
+		InitIntro();
+		RasterIRQ(RasterIntro(),0,@useKernal);
+
+	end;
+	call(SIDFILE_1_PLAY);
+	closeIRQ();
+end;

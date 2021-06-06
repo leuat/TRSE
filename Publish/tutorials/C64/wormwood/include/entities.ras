@@ -1,0 +1,142 @@
+procedure InitEntities();
+begin
+	moveto(curx,cury,@mazeDataHi);
+	l:=0; // cur entity
+	k:=l+1;
+//	SCREEN_BG_COL:=0;
+	fill(#entity_type,0,@maxEntities);
+	SPRITE_BITMASK:=1;
+	for y:=0 to 4 do begin
+		for x:=0 to 6 do begin
+			if (l>=@maxEntities) then return();			
+
+			i:=screenmemory[x];
+
+			if (i=@itemType_monster) then begin
+				
+				togglebit(SPRITE_BITMASK, k, 1);
+				cx:=curx+x+cury*11+y;
+				getRand();
+				n:=r/32;
+				entity_type[l]:=monsterSprites[n];
+				
+				entity_orgx[l]:=x+curx;
+				entity_orgy[l]:=y+cury;
+
+				entity_x[l]:=x*3*8+20;
+				entity_y[l]:=y*3*16+monsterYShift[n];
+				entity_dy[l]:=0;
+				entity_dx[l]:=1;
+				getRand();
+				r:=r/64;
+				entity_time[l]:=r+3;
+				entity_state[l]:=0;
+				entity_state2[l]:=0;
+				entity_health[l]:=cury/2+2;
+				setspriteloc(k,entity_type[l],1);
+
+/*tmp:=spritex - 12;
+	i:=(tmp)/8;// -m_rl_startx;//-m_rl_startx;
+	
+	j:=(spritey-40);
+	j:=j/8;
+*/
+
+				//entity_type[l]:=$2D;
+				getRand();
+				entity_color[l]:=r&15;
+				if (entity_color[l]=0) then entity_color[l]:=PURPLE;
+				inc(l);
+				inc(k);
+//				inc(^$D020);
+			end;
+		end;
+		screenmemory+=40;
+	end;
+end;
+
+
+
+
+
+procedure UpdateEntities();
+begin
+	l:=0;
+	k:=l+1;
+	tmpInt:=spritex;
+	dy:=spritey;
+//	entity_type[1]:=$2
+	if (time&1=0) then 
+	for l:=0 to @maxEntities do begin
+//	while entity_type[l]<>0 then begin
+		if (entity_type[l]<>0) then begin
+			spritex:=entity_x[l]*2;
+			spritey:=entity_y[l];
+			joystickleft:=0;
+			joystickright:=0;
+			if entity_dx[l]=1 then joystickright:=1 else joystickleft:=1;
+
+			BackgroundCollideLevel();
+			if (entity_x[l]>=160) then blockx:=1;
+			if (entity_x[l]<15) then blockx:=1;
+			if (blockx=1) then begin
+				entity_dx[l]:=0-entity_dx[l];
+
+			end;
+			entity_x[l]:=entity_x[l]+entity_dx[l];
+
+			m:=entity_type[l]+entity_state[l]*2;
+			if (entity_dx[l]>=127) then m:=m+1;
+			setspriteloc(k,m,1);
+
+			if (entity_state2[l]=0) then 
+				SPRITE_COLOR[k]:=entity_color[l]
+			else
+			begin
+				if (entity_time[l]&7>=3) then 
+					SPRITE_COLOR[k]:=entity_color[l]
+				else
+					SPRITE_COLOR[k]:=WHITE;
+
+				i:=tmpInt/2;
+				if (entity_x[l]<i) then 
+					entity_dx[l]:=1
+				else 
+					entity_dx[l]:=255;
+				
+			end;
+
+			dec(entity_time[l]);
+			if (entity_time[l]>=128) then begin
+				entity_time[l]:=@entityMaxTime;
+				entity_state[l]:=(entity_state[l]+1)&1;
+			end;
+
+		end;
+
+//		inc(l);
+		inc(k);
+
+
+	end;
+
+	spritey:=dy;
+	spritex:=tmpInt-1+1;
+
+	l:=0;
+	k:=1;
+	for l:=0 to @maxEntities do begin
+		if (entity_type[l]<>0) then begin
+			tmp:=entity_x[l]*2;
+			y:=entity_y[l];
+			spritepos(tmp,y,k);
+		end;
+//		inc(l);
+		inc(k);
+
+	end;		
+
+
+	// Collide with player
+	
+end;

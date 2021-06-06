@@ -1,0 +1,45 @@
+procedure BackgroundCollideLevel();
+
+procedure InitMap();
+begin
+	setcharsetlocation($6000);
+	setregularcolormode();
+	copyfullscreen(^$4400, ^$0400);
+	copyfullscreen(^$D800, ^$7000);
+	copyfullscreen(^@mazeScreen, ^$4400);
+	copyfullscreen(^@mazeColor, ^$D800);
+	dx:=SPRITE_BITMASK;
+	SPRITE_BITMASK:=0;
+	BackgroundCollideLevel();
+	x:=curx+ current_level_x/6;
+	y:=cury+ current_level_y/6;
+
+	moveto(x,y,$44);
+	screenmemory[0]:=$2A;
+	moveto(x,y,$D8);
+	screenmemory[0]:=GREEN;
+	
+
+
+
+	keypress:=@keypressMax;
+
+end;
+
+interrupt RasterMap();
+begin
+	startirq(@useKernal);
+	if (keypress<>0) then dec(keypress)
+	else
+	if (keypressed(KEY_SPACE)=1) then begin
+		copyfullscreen(^$0400, ^$4400);
+		copyfullscreen(^$7000, ^$D800);
+		setcharsetlocation($6800);
+		setmulticolormode();		
+		keypress:=@keypressMax;
+		SPRITE_BITMASK:=dx;
+		RasterIRQ(RasterLevelsTop(), 0, @useKernal);
+	end;
+
+	closeIrq();
+end;

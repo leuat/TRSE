@@ -1,0 +1,182 @@
+
+procedure UpdateScrollerColors();
+begin
+	screenmemory:=$D800+40*16;
+	for i:=0 to 40 do begin
+		j:=(i+time)&31;
+		while (lumi[j]=0) then
+			j:=(j+1)&31;
+		screenmemory[i]:=lumi[j];
+		
+	end;
+
+end;
+
+interrupt RasterIntroBottom();
+
+interrupt RasterIntro();
+begin
+	
+	startirq(@useKernal);
+	setbank(VIC_BANK2);
+	VIC_DATA_LOC:=$18;
+	SCREEN_FG_COL:=BLUE;
+	SCREEN_BG_COL:=BLUE;
+	asm("
+	lda $D016
+	ora #%00001000
+	sta $D016
+	");
+
+	setmulticolormode();
+	setbitmapmode();
+//	waitforraster(60);
+//	SCREEN_FG_COL:=BLUE;
+
+	if (joy_cooldown=0) then	begin
+		Joystick(2);	
+		if (joystickup=1) then inc(seed_a);
+		if (joystickdown=1) then dec(seed_a);
+		joy_cooldown:=4;
+	end else dec(joy_cooldown);
+	inc(time);
+	moveto(14,13,$44);
+	
+	printstring("SEED:",0,40);	
+
+	moveto(20,13,$44);
+	printdecimal(seed_a,2);
+
+	call(SIDFILE_1_PLAY);
+
+	i:=lumi[time&31];
+	fill(^$D800+^22*^40,i,40);
+
+	RasterIRQ(RasterIntroBottom(), 136, @useKernal);
+
+	UpdateScrollerColors();
+
+//	waitforraster(120);
+//	SCREEN_FG_COL:=DARK_GREY;
+
+//	inc(^$D020);
+//	Loop();
+
+
+	closeirq();
+end;
+
+
+
+interrupt RasterIntroBottom();
+begin
+	StartIRQ(@useKernal);
+	wait(5);
+	SCREEN_FG_COL:=BLACK;
+	SCREEN_BG_COL:=BLACK;
+	settextmode();
+	setcharsetlocation($6000);
+	setbank(VIC_BANK1);
+	setregularcolormode();
+
+
+	RasterIRQ(RasterIntro(), 0, @useKernal);
+	waitforraster(178);
+	hideborderx(1);
+	scrollx(scroll);
+	waitnoraster(8);
+	scrollx(0);
+
+	dec(scroll);
+	if (scroll>=128) then begin
+		scroll:=7;
+		//memcpy(^$4400+^40*^16+^1,0,^$4400+^40*^16,39);
+		screenmemory:=$4400+40*16;
+		zp:=tp;
+		for i:=0 to 39 do begin
+			if zp[0]=0 then zp:=#intro_text;
+			screenmemory[i]:=zp[0];
+			zp+=1;
+		end;
+		tp+=1;
+		if (tp[0]=0) then tp:=#intro_text;
+	end;
+
+
+
+	// Make sure this part stays at the end of the raster! 
+	if (bullet_timer<>0) then
+		dec(bullet_timer)
+	else
+	if (joystickbutton=1) then begin
+		clearscreen(LIGHT_BLUE,^$D800);
+
+		tp:=#stringNone;
+		InitLevels();
+	
+		RasterIRQ(RasterLevelsTop(),0,@useKernal);
+	end;
+
+
+	waitforraster(240);
+	wait(11);
+	SCREEN_BG_COL:=BLUE;
+	SCREEN_FG_COL:=BLUE;
+	closeIRQ();
+end;
+
+
+procedure InitIntro();
+begin
+//	copyfullscreen(^$8400+^1000, ^$D800);
+	copyimagecolordata(^$8800,2);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	SPRITE_BITMASK:=0;
+	setregularcolormode();
+	setbank(VIC_BANK1);
+	clearscreen($20,^$4400);
+	clearscreen(LIGHT_BLUE,^$D800);
+	setcharsetlocation($6000);
+	moveto(8,22,$44);
+	printstring("PRESS BUTTON TO START GAME",0,40);	
+//	moveto(7,9,$44);
+//	printstring("PRESS BUTTON 1 AFTER MAP",0,40);	
+//	fill(^$A000+^9*^40*^8,$20,120);
+	fill(^$D800+^13*^40,YELLOW,40);
+	fill(^$D800+^22*^40,BLUE,40);
+	fill(^$D800+^16*^40,GREY,40);
+	fill(^$D800+^18*^40,GREY,40);
+	fill(^$D800+^20*^40,GREY,40);
+/*	moveto(0,16,$44);
+	printstring("MORE DEPTH YIELDS HIGHER REWARDS",0,40);	
+	moveto(0,18,$44);
+	printstring("BUT ALSO HIGHER DIFFICULTY",0,40);	
+	moveto(0,20,$44);
+	printstring("SPACE BAR TO VIEW MAP",0,40);	
+	moveto(0,22,$44);
+	printstring("VERSION 0.103 NOT FOR SPREADING",0,40);	*/
+	player_max_health := @startPlayerHealth;
+	player_health := @startPlayerHealth;
+	player_damage := @startPlayerDamage;
+
+	player_ammo:=@startPlayerMaxAmmo;
+	player_max_ammo:=@startPlayerMaxAmmo;
+
+	player_damage := @startPlayerDamage;
+
+	cx:=2;
+	cnt:=0;
+	curx:=1;
+	cury:=1;
+	cy:=235;
+	
+	score:=0;
+	maxDepth:=0;	
+
+	tp:=#intro_text;
+
+
+	memcpy(#warning_text,0,^$4400+^20*^40+^2,37);
+
+end;

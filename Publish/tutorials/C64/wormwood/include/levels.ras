@@ -1,0 +1,663 @@
+procedure Pop();
+begin
+	inc(tries);
+	if (tries<10) then return();
+
+	if (stack_p=1) then begin isDone:=1; return(); end;
+	dec(stack_p);
+	curx:=stack_x[stack_p];
+	cury:=stack_y[stack_p];
+	tries :=0;
+
+end;
+
+procedure CreateMaze();
+begin
+	//moveto(curx, cury, $04);
+
+	//moveto(curx, cury,$44);
+	//screenmemory[0]:=$56;
+	
+//	if (cnt>128) then return();
+
+	x:=curx;
+	y:=cury;
+	getRand();
+	k:=r/32;
+	dx:=0;
+	dy:=0;
+	if (k=0) then dx:=1;
+	if (k=1) then dx:=-1;
+	if (k=2) then dy:=1;
+	if (k=3) then dy:=-1;
+	if (k=4) then dx:=1;
+	if (k=5) then dx:=-1;
+	if (k=6) then dx:=1;
+	if (k=7) then dx:=-1;
+
+	// Override: first block always points right
+	if (curx=1 and cury=1) then begin
+		dx:=1;
+		dy:=0;
+	end;
+
+	if (x>=128 or x>=39) then begin Pop(); return(); end;
+	if (y>=128 or y>=24) then begin Pop(); return(); end;
+
+	x:=curx+dx;	
+	y:=cury+dy;	
+	if (x>=128 or x>=39) then begin Pop(); return(); end;
+	if (y>=128 or y>=24) then begin Pop(); return(); end;
+
+	moveto(x, y,$44);
+	k:=screenmemory[0];
+	if (k<>@wall) then  begin Pop(); return(); end;
+
+	x:=x+dx;	
+	y:=y+dy;	
+	if (x>=128 or x>=39) then begin Pop(); return(); end;
+	if (y>=128 or y>=24) then begin Pop(); return(); end;
+	moveto(x, y,$44);
+	k:=screenmemory[0];
+	if (k<>@wall) then  begin Pop(); return(); end;
+	
+
+	x:=curx+dx;	
+	y:=cury+dy;	
+	moveto(x, y,$44);
+	screenmemory[0]:=@corridor;
+
+	x:=x+dx;	
+	y:=y+dy;	
+	moveto(x, y,$44);
+	screenmemory[0]:=@corridor;
+
+
+
+
+
+	// Calculate data
+
+
+	curx:=x;
+	cury:=y;
+
+	cnt:=cnt+1;
+
+	inc(stack_p);
+	stack_x[stack_p]:=curx;
+	stack_y[stack_p]:=cury;
+end;	
+
+
+procedure GenerateMazeContents();
+begin
+	clearscreen(0,^@mazeData);
+	clearscreen(0,^@mazeDataDetail);
+
+	for y:=1 to 24 do begin
+		for x:=1 to 39 do begin
+			moveto(x-1,y-1,$44);
+			l:=screenmemory[41];
+			m:=0; // Check for connections
+			k:=0;
+			if (l=@corridor) then begin
+				if (screenmemory[40]=@corridor) then inc(m);
+				if (screenmemory[42]=@corridor) then inc(m);
+				if (screenmemory[1]=@corridor) then inc(m);
+				if (screenmemory[81]=@corridor) then inc(m);
+				if (screenmemory[81]<>@corridor) then inc(k);
+				
+			end;
+
+			moveto(x,y,@mazeDataHi);
+			screenmemory[0]:=0;
+
+			if (k=1) then begin
+				getRand();
+				screenmemory[0]:=corridor_probabilities[r/16];
+
+			end;
+			// Nibble : 0-4 item type     7 taken
+			// END corridor and has a bottom
+			if (m=1 and k=1) then begin
+//				screenmemory[41]:=44;
+				screenmemory[0]:=@itemType_chest;
+
+			end;
+			
+
+			if (screenmemory[0]=0 and k=1) then begin
+				getRand();
+				if r>@monster_probability then begin
+					// Add a monster
+					screenmemory[0]:=@itemType_monster;
+				end;
+
+			end;
+
+			
+
+		end;
+	end;	
+
+	// Init first screen: no monsters, no lava, 1 chest
+	moveto(0,0,@mazeDataHi);
+	p1:=screenmemory;
+	for j:=0 to 4 do
+	begin
+		fill(screenmemory,0,6);
+		screenmemory:=screenmemory+40;
+	end;
+	p1[43]:=@itemType_chest;
+		
+
+end;
+
+procedure OverlayMaze();
+begin
+	moveto(0,0,$d8);
+	c1:=screenmemory;
+	moveto(0,0,$44);
+	p1:=screenmemory;
+	moveto(0,0,@mazeDataHi);
+	for y:=0 to 24 do begin
+		for x:=0 to 40 do begin
+			i:=screenmemory[x];
+			if (i<>0) then begin
+				i:=i*2;
+				p1[x]:=map_display_items[i];
+				c1[x]:=map_display_items[i+1];
+			end;
+		end;	
+		screenmemory+=40;
+		p1+=40;
+		c1+=40;
+	
+	end;	
+
+end;
+
+
+procedure RenderMaze();
+begin
+	p1:=$4400-40;
+	c1:=$D800-40;
+	screenoff();
+	clearscreen(@background,^$4400);
+	bullet_active:=0;
+	fill(^$4400+^40*^22,$20,120);
+	color:=$6800+$800;
+
+//	SCREEN_FG_COL:=DARK_GREY;
+
+	cx:=seed_a+curx*33+cury*11;
+	getRand();
+	orgCol:=r&7+8;
+//	getRand();
+//	floorCol:=floorColors[r/64]+8;
+
+//	clearscreen(orgCol,^$D800);
+//	RenderStats();
+
+	getRand();
+	MULTICOLOR_CHAR_COL[1]:=r/16;
+	i:=0;
+	while i=0 do begin		
+		getRand();
+		r:=background_low_contrast_colors[r/16];	
+		MULTICOLOR_CHAR_COL[2]:=r;
+		i:=1;
+		if (MULTICOLOR_CHAR_COL[2]=MULTICOLOR_CHAR_COL[1]) then i:=0;
+	end;
+	
+@ifdef brickColorFromCharset	
+	//MULTICOLOR_CHAR_COL[1]:=WHITE;//rands[l];
+@endif
+	dy:=0;
+	val:=1; // Skip writing first 
+	for y:=0 to 11 do begin
+		
+		j:=y+2;
+		ly:=cury + j/3;
+		l:=ly;
+		k:=l/2;
+		moveto(0,k,@perlinHi);	
+		perlin:=screenmemory;
+		moveto(0,l,@mazeHi-1);
+		p2:=screenmemory;
+		p2+=256-40;
+
+		
+		moveto(0,l-1,@mazeDataHi);
+		dp:=screenmemory;
+		moveto(0,l,@mazeHi);
+		
+		dx:=0;		
+		for x:=0 to 40 step 2 do begin
+			kp:=screenmemory;
+//			i:=x+2;
+			// K is actual position on screen
+			k:=curx + x/6;
+
+			i:=k/4;
+			j:=ly/3;
+
+			moveto(i,j,@perlinHi);
+//			n:=screenmemory[0]/32;
+			
+			col:=screenmemory[0]/32;
+			col:=col&7;
+			while (col=MULTICOLOR_CHAR_COL[1] or col=MULTICOLOR_CHAR_COL[2]) do 
+			begin
+				screenmemory:=screenmemory+1;
+				col:=(screenmemory[0]/32)&7;
+//				col:=col&7;
+
+			end;	
+			col:=col+8;			
+			screenmemory:=kp;
+			//col:=orgCol;
+
+			l:=screenmemory[k];
+			v:=@background;
+			if (l<>@corridor) then 
+			begin 
+				l:=perlin[k/2]/64; //n
+//				l:=0;
+				l:=l+ly/2;
+				if (l>=64) then l:=64;
+				v:=bricks[l];
+@ifdef brickColorFromCharset
+				col:=color[v];
+@endif
+
+			end
+			else begin // is corridor
+//			if (l=@corridor) then begin
+				// Item
+				if (p2[k] = @wall and dy=1) then begin
+					getRand();
+					r:=r/32;
+					v:=roof[r];
+					getRand();
+					col:=floorColors[r/64]+8;//color[v];
+
+				end;
+
+
+				if (dy=0) then begin
+					if (screenmemory[k+40]<>@corridor and dp[k+40]<>@itemType_lava) then begin
+						getRand();
+						r:=r/16;
+						v:=floor[r];
+						getRand();
+						col:=floorColors[r/64]+8;//r/32+8;//color[v];
+					end;
+					if (dx=1) then 
+					if (dp[k+40]=@itemType_trap) then begin
+						v:=@trapCharHidden;
+					end;
+				end;
+			end;
+
+			l:=dp[k+40];
+			if dy=0 then begin
+			if (l&@item_mask=@itemType_chest and dx=2) then begin
+				if (getbit(l,7)) then v:=@chestOpen else
+					v:=@chestClosed;
+
+				col:=BLACK+8;
+			end;
+			
+
+			if (l&@item_mask=@itemType_shrine) then begin
+				if (getbit(l,7)=0) then n:=YELLOW+8 else
+					n:=PURPLE;
+				if (dx=0) then begin
+					v:=@shrineChar;
+					col:=n;
+				end;
+				if (dx=1) then  begin
+					v:=@shrineChar+2;
+					col:=n;
+				end;
+
+
+//				col:=BLACK+8;
+			end;
+			end;
+//			end;
+
+			if (dp[k]=@itemType_lava and dy=1) then begin
+				v:=@lavaChar;
+				col:=RED;
+			end;				
+
+
+			begin
+				if (val=0) then begin
+					p1[x]:=v;
+					p1[x+1]:=v+1;
+				end;
+				p1[x+40]:=v+40;
+				p1[x+41]:=v+41;
+@ifdef brickColorFromCharset
+				if (col=	color[v]) then begin
+
+				if (val=0) then begin
+
+					c1[x]:=color[v];
+					c1[x+1]:=color[v+1];
+				end;
+				c1[x+41]:=color[v+41];
+				c1[x+40]:=color[v+40];
+
+				end
+				else 
+@endif
+//				begin
+
+				if (val=0) then begin
+					c1[x]:=col;
+					c1[x+1]:=col;
+				end;
+				c1[x+41]:=col;
+				c1[x+40]:=col;
+
+//				end;
+			end;
+			l:=screenmemory[k];
+			// Draw ladder
+			m:=x;
+//			if (m&3=0) then
+			if (l=@corridor and dx=1) then
+			begin
+				// Is corridor: check if below is also a corridor
+//				l:=;
+				if (ly>=1) then 
+				if (p2[k]=@corridor or screenmemory[k+40]=@corridor) then begin
+					m:=x+val*40;
+//					inczp(p2,40);
+					//if (val=0) then 
+					for n:=val to 2 do begin
+						p1[m]:=@ladderChar;
+						c1[m]:=YELLOW;
+						p1[m+1]:=@ladderChar+1;
+						c1[m+1]:=YELLOW;
+						m:=m+40;	
+					end;					
+					
+				end;
+				
+
+			end;
+
+			// Finally, place items
+
+
+			inc(dx);
+			if (dx=3) then dx:=0;
+		end;
+		val:=0;
+		p1+=80;
+		c1+=80;
+		inc(dy);
+		if (dy=3) then dy:=0;
+	end;
+
+
+	fill(^$4400+^40*^21,@background, 40);
+
+	RenderStatsColors();
+	
+	InitEntities();
+	screenon();
+
+//	clearsound();
+end;
+
+
+procedure UpdateLadder();
+begin
+	i:=time+1;
+	if (i&7<>0) then return();
+
+	zp:=@ladderPos;
+	x:=zp[7];
+	y:=zp[8+7];
+	for i:=0 to 7 do begin
+		zp[7-i]:=zp[6-i];
+		zp[15-i]:=zp[14-i];
+	end;
+	zp[0]:=x;
+	zp[8]:=y;
+
+end;
+
+
+procedure UpdateLava();
+begin
+	if (time&3<>0) then return();
+	asm("
+
+	ldx #0
+ul_t
+	lda @lavaPos1,x
+	lsr
+	ror @lavaPos2,x
+	ror @lavaPos1,x
+	lsr
+	ror @lavaPos2,x
+	ror @lavaPos1,x
+
+	lda @lavaPos1+320,x
+	lsr
+	ror @lavaPos2+320,x
+	ror @lavaPos1+320,x
+	lsr
+	ror @lavaPos2+320,x
+	ror @lavaPos1+320,x
+
+	inx
+	cpx #8
+	bne ul_t
+");	
+end;
+
+
+procedure InitLevels();
+begin
+	clearsound();
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+	setbank(VIC_BANK1);
+	asm("
+	lda $D016
+	ora #%00001000
+	sta $D016
+	");
+	setcharsetlocation($6000);
+	ClearScreen(@wall,^$4400);
+	cx:=seed_a;
+	curx:=1;
+	cury:=1;
+	stack_p:=0;
+	tries:=0;
+	isDone:=0;
+	getRand();
+	j:=5+r/64;
+	for i:=0 to j do begin
+		getRand();
+		x:=r/7;
+		x:=x&%11111110+1;
+		getRand();
+		y:=r/11;
+		y:=y&%11111110+1;
+		if (x=1 and y=1) then begin
+
+		end
+		else
+		begin
+			moveto(x,y,$44);
+			screenmemory[0]:=@corridor;
+			screenmemory[1]:=@corridor;
+			screenmemory[2]:=@corridor;
+		end;
+	end;
+
+
+	while(isDone=0) do 
+			CreateMaze();
+
+	poke(^$4400,1,@corridor);
+	poke(^$4400,41,@corridor);
+	getRand();
+	r:=r/6;
+	if (r>=37) then r:=37;
+	inc(r);
+	poke(^$4400+^40*^24,r,@corridor);
+	poke(^$4400+^40*^23,r,@corridor);
+		
+
+
+	copyfullscreen(^$4400,^@mazePos);
+	copyfullscreen(^$D800,^@mazeColor);
+
+	GenerateMazeContents();
+	OverlayMaze();
+	copyfullscreen(^$4400,^@mazeScreen);
+
+	fill(^$4400+^40*^11,$20,120);
+	moveto(10,12,$44);
+	printstring(startMessage,0,40);
+
+
+	joystickbutton:=0;
+	while (joystickbutton=0) do Joystick(2);
+
+	curx:=0;
+	cury:=0;
+		
+	clearscreen(@background,^$4400);
+
+	setcharsetlocation($6800);
+	setmulticolormode();
+	MULTICOLOR_CHAR_COL[1]:=GREY;
+	MULTICOLOR_CHAR_COL[2]:=PURPLE;
+	InitPlayer();
+	RenderMaze();
+
+end;
+
+
+procedure UpdatePlayerLevel();
+begin
+	if (spritex>=320) then 
+	begin
+		spritex:=25;
+		curx:=curx+@bsx; 
+
+		RenderMaze();
+	end;
+	if (spritex<24) then 
+	begin
+		spritex:=318;
+		curx:=curx-@bsx; 
+		RenderMaze();
+	end;
+	if (spritey>=201) then 
+	begin
+		spritey:=41;
+		cury:=cury+@bs; 
+		RenderMaze();
+	end;
+	if (spritey<40) then 
+	begin
+		spritey:=200;
+		cury:=cury-@bs; 
+		RenderMaze();
+	end;
+
+end;
+
+interrupt RasterBottomLevels();
+
+interrupt RasterLevelsTop();
+begin
+	startirq(@useKernal);
+	poke(^$d418,0,31);
+	SCREEN_BG_COL:=BLACK;
+	SCREEN_FG_COL:=BLACK;
+//	screenon();
+	setcharsetlocation($6800);
+	setmulticolormode();
+/*		if (tick=10) then begin
+			joystick(2);
+//			inc(^$D020);	
+			if (joystickright=1) then begin curx:=curx+@bsx; RenderMaze(); tick:=0; end;
+			if (joystickleft=1) then begin curx:=curx-@bsx; RenderMaze(); tick:=0; end;
+			if (joystickdown=1) then begin cury:=cury+@bs; RenderMaze(); tick:=0; end;
+			if (joystickup=1) then begin cury:=cury-@bs; RenderMaze(); tick:=0; end;
+		end
+		else inc(tick);
+
+*/
+
+	UpdatePlayer();
+	UpdatePlayerLevel();
+	UpdateEntities();
+	inc(time);
+	RasterIRQ(RasterBottomLevels(), 226, @useKernal);
+
+	if (keypress<>0) then dec(keypress)
+	else
+	begin
+		if (keypressed(KEY_SPACE)=1) then begin
+			InitMap();
+			RasterIRQ(RasterMap(), 0, @useKernal);
+		end;
+@ifdef debug
+		if (keypressed(KEY_P)=1) then begin
+			immortal:=(immortal+1)&1;
+		end;
+@endif
+
+
+	end;
+
+
+
+
+	if (player_health>=240) then begin
+//		InitIntro();
+//		RasterIRQ(RasterIntro(),0,@useKernal);		
+		RasterIRQ(RasterGameOver(), 0, @useKernal);
+		InitGameOver();
+
+	end;
+
+
+//	if (keypressed(KEY_G)=1) then begin
+		
+//	end;
+
+	closeIrq();
+end;
+
+
+
+interrupt RasterBottomLevels();
+begin
+	startirq(@useKernal);
+	nop(8);
+	setcharsetlocation($6000);
+	setregularcolormode();
+//	UpdateLadder();
+	UpdateLava();
+//	call	(SIDFILE_1_PLAY);
+	RasterIRQ(RasterLevelsTop(),0,@useKernal);
+	RenderStats();
+	UpdateSounds();
+	closeIrq();
+end;
