@@ -7,6 +7,8 @@ var
 
 
 */
+
+@export "charsets/charset.flf" "charsets/charset.bin" 256
 	charset : incbin("charsets/charset.bin", $6000);
 
 @export "charsets/main.flf" "charsets/charset_level.bin" 256
@@ -23,7 +25,7 @@ var
 
 	perlin40 : incbin("data/random.bin", $FD00);
 	sprites : incbin("sprites/sprites.bin",$8000);
-
+@export "images/splash2.flf" "images/splash.bin" 256
 	splash: incbin("images/splash_data.bin",$A000);
 //	splash_colors: incbin("images/splash_color.bin",$8800);
 //	splash_colors: incbin("images/splash_color.bin",$83FE);

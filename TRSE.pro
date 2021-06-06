@@ -678,6 +678,7 @@ DISTFILES += \
     resources/images/PLUS4.png \
     resources/images/amiga_intro.png \
     resources/images/tutorials/floskel.png \
+    resources/images/wormwood.png \
     resources/text/about.txt \
     resources/text/Documentation.txt \
     resources/text/builtinmethods.txt \

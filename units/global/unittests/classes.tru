@@ -12,7 +12,7 @@ var
 		
 		function getValue() : integer;
 		begin
-			Common::DebugValue(this.str);
+//			Common::DebugValue(this.str);
 			StrItem::getValue := this.str;
 		end;
 //		c : array[3] of byte;
@@ -229,7 +229,7 @@ begin
 	
 	// Direct use
 	sl.Stuff();
-	Common::DebugByte(Vars::v1);
+//	Common::DebugByte(Vars::v1);
 	Vars::text := "C3:";
 	if (Vars::v1=3+3*2) then Common::PASS() else Common::FAIL();
 end;

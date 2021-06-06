@@ -711,11 +711,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
         for (QSharedPointer<Node> n: decls) {
             // Print label at end of vardecl
             auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
-
-            if (!(qSharedPointerDynamicCast<NodeVar>(vd->m_varNode)->m_isGlobal))
+            auto var = qSharedPointerDynamicCast<NodeVar>(vd->m_varNode);
+/*            if (!(var->m_isGlobal))
             if (vd!=nullptr) {
                 vd->ExecuteSym(as->m_symTab);
-            }
+            }*/
+            n->Accept(this);
 
 
         }
