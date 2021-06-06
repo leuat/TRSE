@@ -1120,6 +1120,23 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="export_shifted_charset") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="export_rotated_charset") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
 
         if (m_currentToken.m_value=="perlinnoise") {
             Eat();
@@ -2793,6 +2810,14 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export_parallax_data") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExportParallaxData();
+              }
+              else if (m_currentToken.m_value.toLower() =="export_shifted_charset") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportShiftedCharset();
+              }
+              else if (m_currentToken.m_value.toLower() =="export_rotated_charset") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportRotatedCharset();
               }
               else if (m_currentToken.m_value.toLower()=="perlinnoise") {
                   Eat(TokenType::PREPROCESSOR);
@@ -5146,6 +5171,47 @@ void Parser::HandleExportParallaxData()
 
 }
 
+void Parser::HandleExportShiftedCharset()
+{
+//    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    int x0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int y0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    Compression::GenerateShiftedCharset(inFile, outFile, x0,y0);
+
+
+}
+
+void Parser::HandleExportRotatedCharset()
+{
+    //    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    int x0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int y0 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int dir = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+
+    Compression::GenerateRotatedCharset(inFile, outFile, x0,y0,dir);
+
+
+}
 void Parser::HandleExportBW()
 {
     int ln = m_currentToken.m_lineNumber;

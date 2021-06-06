@@ -63,6 +63,10 @@ public:
     void AddBinaryScreen(QByteArray& data, QImage& img);
 
     void SaveCompressedTRM(QByteArray& data, QString file, int compression);
+
+    static void GenerateShiftedCharset(QString inFile, QString outFile, int start, int end);
+    static void GenerateRotatedCharset(QString inFile, QString outFile, int start, int end, int dir);
+
 };
 
 

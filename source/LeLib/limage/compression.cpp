@@ -886,6 +886,104 @@ void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
 
 }
 
+void Compression::GenerateShiftedCharset(QString inFile, QString outFile, int start, int end)
+{
+    LImage* imgIn = (LImage*)LImageIO::Load(inFile);
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(imgIn);
+    if (imgIn==nullptr || mc==nullptr) {
+        qDebug() << "File not found / not c64 fullscreen : " << inFile;
+        return;
+    }
+    QByteArray charData;
+    int compType = 0;
+    QSharedPointer<CharsetImage> t = QSharedPointer<CharsetImage>(new CharsetImage(imgIn->m_colorList.m_type));
+    t->Initialize(320,200);
+    t->setMultiColor(false);
+    for (int i=start;i<end;i++) {
+        for (int j=0;j<8;j++)
+            t->m_data[i*2+1].p[j] = mc->m_data[i].p[j];
+
+    }
+    for (int scroll=0;scroll<8;scroll+=2) {
+        QSharedPointer<CharsetImage> c1 = QSharedPointer<CharsetImage>(new CharsetImage(imgIn->m_colorList.m_type));
+        //       c1->setMultiColor(false)
+        c1->m_width = 320;
+        c1->m_bitMask = 0b1;
+        c1->m_noColors = 2;
+        c1->m_scale = 1;
+        c1->m_minCol = 0;
+
+
+        //        c1->setMultiColor(false);
+        //        c1->m_charWidth = imgIn->m_charWidth;
+        //      c1->m_width = imgIn->m_width;
+        // Paint data!
+        for (int y=0;y<mc->m_height;y++)
+            for (int x=0;x<mc->m_width;x++) {
+                int i = t->getPixel(x,y);
+                if (i!=0)
+                    c1->setPixel((x-scroll)%(c1->m_width),y, 1);
+            }
+
+        for (int i=0;i<(end-start)*2;i++) {
+            for (int j=0;j<8;j++)
+                charData.append(PixelChar::reverse(c1->m_data[i].p[j]));
+        }
+
+    }
+    Util::SaveByteArray(charData, outFile);
+}
+
+void Compression::GenerateRotatedCharset(QString inFile, QString outFile, int start, int end, int dir)
+{
+    LImage* imgIn = (LImage*)LImageIO::Load(inFile);
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(imgIn);
+    if (imgIn==nullptr || mc==nullptr) {
+        qDebug() << "File not found / not c64 fullscreen : " << inFile;
+        return;
+    }
+    QByteArray charData;
+    int compType = 0;
+    QSharedPointer<CharsetImage> t = QSharedPointer<CharsetImage>(new CharsetImage(imgIn->m_colorList.m_type));
+    t->Initialize(320,200);
+    t->setMultiColor(false);
+    for (int i=start;i<end;i++) {
+        for (int j=0;j<8;j++)
+            for (int k=0;k<8;k++) {
+                int x = j;
+                int y= k;
+                if (dir==1)  {
+                    x = 7-k;
+                    y = j;
+                }
+                if (dir==2)  {
+                    y = 7-k;
+                    x = 7-j;
+                }
+                if (dir==3)  {
+                    x = k;
+                    y = 7-j;
+                }
+                unsigned char pp = (mc->m_data[i].p[y]>>x) & 1;
+                if (pp!=0) {
+                    unsigned int f = ~(1 << j);
+                    PixelChar& pc = t->m_data[i];
+                    pc.p[k] &= f;
+                    // Add
+
+                    pc.p[k] |= 1<<j;
+                }
+
+            }
+    }
+    for (int i=0;i<(end-start);i++) {
+        for (int j=0;j<8;j++)
+            charData.append(PixelChar::reverse(t->m_data[i].p[j]));
+    }
+    Util::SaveByteArray(charData, outFile);
+
+}
+
 /*
 void Compression::FrameConverter(QString dir, QString outFile, QVector<int> cols) {
 

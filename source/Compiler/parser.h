@@ -300,6 +300,8 @@ private:
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleExportShiftedCharset();
+    void HandleExportRotatedCharset();
     void HandleCompress();
     void HandleExportParallaxData();
     void HandleExportBW();
