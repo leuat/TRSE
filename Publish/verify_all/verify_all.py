@@ -219,6 +219,8 @@ tests.append([ "C64/MusicPlayer", []]);
 fillRasList(len(tests)-1,".")
 tests.append([ "C64/Olimp", []]);
 fillRasList(len(tests)-1,".")
+tests.append([ "C64/wormwood", []]);
+fillRasList(len(tests)-1,".")
 tests.append([ "C64/TutorialGame_Introduction", []]);
 fillRasList(len(tests)-1,".")
 tests.append([ "C64/UnitTests", ["unittests.ras"]]);
