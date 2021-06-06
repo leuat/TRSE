@@ -43,6 +43,7 @@ public:
     virtual bool isReference() override { return m_op.m_isReference; }
 
     bool isAddress() override;
+    bool m_classTagged = false;
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_procedure!=nullptr)

@@ -444,6 +444,13 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
     }
 
+    // Ignore silly stuff such as a:=a; and zp:=zp;
+    if (node->m_right->isPureVariable()) {
+        if (vname == node->m_right->getValue(as))
+            return;
+    }
+
+
     // ****** RECORDS AND CLASSES DIRECT ASSIGNMENT
     if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
         as->Comment("Assigning pure records/classes");
@@ -822,7 +829,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
 {
     node->DispatchConstructor(as,this);
     if (node->isReference()) {
-//        qDebug() << "IS REFERENCE";
         LoadVariable(node);
         return;
     }
@@ -848,7 +854,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
 //        qDebug() <<"typenode flags" <<node->m_procedure->m_procName<<vt->m_flags << vd->m_varNode->getValue(as);
     }
 
-
+//    as->Comment("calling procedure: "+node->m_procedure->m_procName);
 
     if (node->m_procedure->m_isInline) {
         InlineProcedure(node);

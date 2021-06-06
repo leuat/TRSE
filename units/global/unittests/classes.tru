@@ -22,12 +22,25 @@ var
 	StringList = class
 		items : array[16] of StrItem;	
 		curLen: byte;
+
+		function getLenSomething() : byte;
+		begin
+			StringList::getLenSomething := this.curLen+this.curLen*2;
+//			returnValue(this.curLen);
+		end;
+
 		
 		procedure Add(zp:pointer);
 		begin
 			this.items[ this.curLen ].str := zp;
 			this.curLen+=1;
 		end;
+		
+		procedure Stuff();
+		begin
+			Vars::v1 := this.getLenSomething();
+		end;
+		
 	
 	end;
 	sl: StringList;	
@@ -204,13 +217,23 @@ begin
 	Vars::i2 := 0;
 	Vars::i2 := sl.items[Vars::v2].str;
 	Vars::i1 := 0;
-	asm(";fail");
 	Vars::i1 := sl.items[Vars::v1].getValue();
-	asm(";failEnd");
 	Vars::text := "C2:";
 	
 	if (Vars::i1=Vars::i2) then Common::PASS() else Common::FAIL();
 end;
+
+// Direct access in array of objects using PYTHON syntax
+procedure CTestC3();
+begin
+	
+	// Direct use
+	sl.Stuff();
+	Common::DebugByte(Vars::v1);
+	Vars::text := "C3:";
+	if (Vars::v1=3+3*2) then Common::PASS() else Common::FAIL();
+end;
+
 
 
 procedure Exec();
@@ -237,6 +260,7 @@ begin
 	@ifdef C64
 	// Implement this
     CTestC1(); // ADD still fails on the cpc.. damn
+    CTestC3(); // ADD still fails on the cpc.. damn
 //    CTestC2(); // FAILS fix
     @endif
 
@@ -244,6 +268,7 @@ begin
 	@ifdef X86
 	// Implement this
     CTestC1(); // ADD still fails on the cpc.. damn
+    CTestC3(); // ADD still fails on the cpc.. damn
 //    CTestC2(); // FAILS fix
 //      CTestC2(); // FAILS fix
   @endif

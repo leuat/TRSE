@@ -110,6 +110,38 @@ Parser::Parser()
 {
 }
 
+QSharedPointer<Node> Parser::ManageClassProcedureCalls(QSharedPointer<Node> left)
+{
+    // ooh we had a variable of type a.b.c.Move();
+    auto p = qSharedPointerDynamicCast<NodeProcedure>(m_currentProcedureCall);
+//        left->setForceReference(true);
+    auto v = qSharedPointerDynamicCast<NodeVar>(left);
+    // Transform to a reference..
+    auto s =m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
+    v->value = s->m_name;
+//    qDebug() << "PARSER " <<p->m_procedure->m_procName<< v->value<<s->m_name << s->m_type << s->m_arrayTypeText <<s->m_pointsTo <<s->m_type.toLower() <<s->getEndType();
+
+    if (p->m_classTagged)
+        return left;
+
+    left = ApplyClassVariable(left);
+    if (s->m_type.toLower()!="pointer" && !s->m_name.contains("_this"))
+        left->setReference(true);
+
+    //        if (!left->isReference()) {
+    if (v->m_expr!=nullptr) {
+        auto add = v->m_expr;
+        v->m_expr = nullptr;
+        left = NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS,v,add);
+
+    }
+    //      }
+        p->m_parameters.insert(0,left);
+        p->m_classTagged = true;
+    return p;
+
+}
+
 void Parser::Delete()
 {
     for (QString val : m_procedures.keys()) {
@@ -2002,32 +2034,9 @@ QSharedPointer<Node> Parser::AssignStatement()
         return left; //is a procedure type m.Draw();
 
 
-    if (m_currentProcedureCall!=nullptr) {
-        // ooh we had a variable of type a.b.c.Move();
-        auto p = qSharedPointerDynamicCast<NodeProcedure>(m_currentProcedureCall);
-//        left->setForceReference(true);
-        auto v = qSharedPointerDynamicCast<NodeVar>(left);
-        // Transform to a reference..
-        auto s =m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
-        v->value = s->m_name;
-        //qDebug() << s->m_name << s->m_type << s->m_arrayTypeText <<s->m_pointsTo <<s->m_type.toLower();
-        left = ApplyClassVariable(left);
-        if (s->m_type.toLower()!="pointer")
-            left->setReference(true);
+    if (m_currentProcedureCall!=nullptr)
+        return ManageClassProcedureCalls(left);
 
-        //        if (!left->isReference()) {
-        if (v->m_expr!=nullptr) {
-            auto add = v->m_expr;
-            v->m_expr = nullptr;
-            left = NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS,v,add);
-
-        }
-        //      }
-
-        p->m_parameters.insert(0,left);
-        return p;
-
-    }
 
 
     Token token = m_currentToken;
@@ -2480,6 +2489,8 @@ QSharedPointer<Node> Parser::Program(QString param)
 
 QSharedPointer<Node> Parser::Factor()
 {
+
+
     if (m_currentToken.m_type == TokenType::LENGTH) {
         Eat();
         Eat(TokenType::LPAREN);
@@ -2544,6 +2555,10 @@ QSharedPointer<Node> Parser::Factor()
 
     Token t = m_currentToken;
 
+
+
+
+
     if (t.m_type==TokenType::TEOF)
         ErrorHandler::e.Error("Syntax error", m_currentToken.m_lineNumber);
 
@@ -2590,14 +2605,21 @@ QSharedPointer<Node> Parser::Factor()
 //        qDebug() << "FINDING PROCEDURE IN TERM: " << t.m_value;
         bool isAssign;
         QSharedPointer<Node> node = FindProcedure(isAssign, nullptr);
-        if (node!=nullptr)
+
+
+        if (node!=nullptr) {
             return node;
+        }
+
         node = BuiltinFunction();
         if (node!=nullptr)
             return node;
 
     }
-    return Variable();
+    auto v = Variable();
+    if (m_currentProcedureCall!=nullptr)
+        return ManageClassProcedureCalls(v);
+    return v;
 }
 
 QSharedPointer<Node> Parser::RepeatUntil()
@@ -3222,10 +3244,9 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
     // Already defined? calling / assigning an existing procedure?
 
     if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value) || dual || triple) {
-    //    qDebug() << "FOUND";
         QString procName = m_symTab->m_gPrefix+m_currentToken.m_value; // fix prefix
-        if (triple) procName = m_symTab->m_currentUnit+m_currentToken.m_value;;
-        if (dual) procName = m_currentToken.m_value;;
+        if (triple) procName = m_symTab->m_currentUnit+m_currentToken.m_value;
+        if (dual) procName = m_currentToken.m_value;
         Token t = m_currentToken;
         Eat(TokenType::ID);
 

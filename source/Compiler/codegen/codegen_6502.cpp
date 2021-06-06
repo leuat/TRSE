@@ -2865,6 +2865,10 @@ bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
     if (node==nullptr)
         return false;
 
+
+    // IGNORE zp:=#zp when THIS implied
+
+
     if (!(!node->isWord(as) && expr->isPure() && node->m_expr!=nullptr))
         return false;
     if (node->m_writeType != TokenType::BYTE)

@@ -164,6 +164,9 @@ private:
     QVector<bool> m_lastIfdef;
 
 
+    QSharedPointer<Node> ManageClassProcedureCalls(QSharedPointer<Node> left);
+
+
     QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;
