@@ -3541,7 +3541,7 @@ void Methods6502::SetCharsetAndScreenLocation(Assembler *as)
     if (n==0x3800) { b=0b1110; ok=true;}
 
     if (!ok)
-        ErrorHandler::e.Error("SetCharsetAndScreenLocation parameter must be one of the following values: $8000, $8400, $8800,$8C00, $1000, $1400, $1800, $1C00", m_node->m_op.m_lineNumber);
+        ErrorHandler::e.Error("SetCharsetAndScreenLocation parameter must have both parameters set to valid addresses. For the screen location, every $400 byte on the current vic bank, ie $400, $800, $1C00 etc. For the charset location, every $800 byte on the current VIC bank, i.e. $0, $800,$1000 etc.", m_node->m_op.m_lineNumber);
 
     n = (unsigned int)vs->m_val % 0x4000;
     ok=false;
