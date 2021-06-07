@@ -58,6 +58,7 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     Parser::s_usedTRUs.clear(); // None TRU's are marked
     Parser::s_usedTRUNames.clear(); // None TRU's are marked
     Parser::m_tpus.clear();
+    SymbolTable::pass = 0;
     // MAIN parser
     try {
         m_tree = m_parser.Parse( m_projectIni->getdouble("remove_unused_symbols")==1.0 &&
@@ -114,6 +115,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
 
     connect(m_codeGen.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
+    SymbolTable::pass = 1;
 
     emit EmitTick("<br>Building []");
     if (m_tree!=nullptr)

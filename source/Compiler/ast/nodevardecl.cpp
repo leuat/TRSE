@@ -82,6 +82,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
                 ns->m_flags<< s->m_flags;
                 ns->m_bank = typeNode->m_bank;
                 ns->m_size = s->m_size;
+
 //                ns->setSizeFromCountOfData(typeNode->m_declaredCount);
 
 //                qDebug() << "NODEVARDECL Defining "<<ns->m_name << ns->m_size << s->m_size;
@@ -100,6 +101,7 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
    // varSymbol->m_size = typeSymbol->m_size;
     varSymbol->setSizeFromCountOfData(typeNode->m_declaredCount);
 //    qDebug() <<typeNode->m_flags;
+//    varSymbol->m_for
 
     if (typeNode->m_flags.contains("stack")) {
         varSymbol->m_isStackVariable = true;

@@ -60,6 +60,7 @@ void Assembler::Nl()
 void Assembler::Write(QString str, int level)
 {
 //    qDebug() << "ASM : " <<str;
+    str = str.replace(" g_global_"," ");
     if (m_currentBlock==nullptr) {
 
         QString s ="";

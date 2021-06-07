@@ -1770,9 +1770,17 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             nv->m_isRegister = true;
             return n;
         }
+//        qDebug() << "Variable IN : "<<nv->value;
+        QString glob = "";
+        if (nv->value.startsWith("global_")) {
+            nv->value = nv->value.remove(0,7);
+            glob  = "g_global_";
 
+        }
         QSharedPointer<Symbol> s = m_symTab->Lookup(nv->value,m_currentToken.m_lineNumber);
-        nv->value = s->m_name; // make sure that variable name is proper
+        nv->value = glob+s->m_name; // make sure that variable name is proper
+
+  //      qDebug() << "Variable Out : "<<nv->value;
         // If variable doesn't exist
 //        qDebug
         if (s==nullptr) {
@@ -4204,6 +4212,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
    for (QSharedPointer<Node> n : vars) {
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+        if (v->value.startsWith("g_global_"))
+            ErrorHandler::e.Error("Cannot declare variables that start with 'g_global_' in TRSE, since this prefix is used internally",m_currentToken.m_lineNumber);
         if (m_symTab->isRegisterName(v->value)) {
             v->m_isRegister = true;
         }

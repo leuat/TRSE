@@ -2443,7 +2443,7 @@ void TRSEProject::VerifyDefaults() {
 
 
     if (!m_ini->contains("pascal_settings_use_local_variables"))
-        m_ini->setFloat("pascal_settings_use_local_variables", 0);
+        m_ini->setFloat("pascal_settings_use_local_variables", 1);
 
     if (!m_ini->contains("system"))
         m_ini->setString("system", "C64");

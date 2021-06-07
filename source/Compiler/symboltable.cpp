@@ -26,6 +26,7 @@ bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QString Symbol::s_currentProcedure = "";
 QMap<QString,int> SymbolTable::s_classSizes;
+int SymbolTable::pass = 0;
 
 
 //QString SymbolTable::m_gPrefix = "";
@@ -486,10 +487,31 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         m_symbols[name] = s;
         return s;
     }
+    bool forceGlobal = false;
+
+    if (name.toLower().startsWith("global_")) {
+        //qDebug() << "FORCE GLOBAL " <<name;
+//        if (pass==0)
+           name = name.replace("global_","");
+
+    }
+
+    if (name.toLower().startsWith("g_global_")) {
+        //qDebug() << "FORCE GLOBAL " <<name;
+//        if (pass==0)
+           name = name.replace("g_global_","");
+        if (pass==1) {
+            forceGlobal = true;
+        }
+
+    }
+
 
     QString localName = name;
-    if (!isRegisterName(name))
+    if (!isRegisterName(name) &&!forceGlobal) {
         localName = m_currentProcedure+name;
+//        qDebug() << "LOCAL NAME "<<localName << SymbolTable::pass;
+    }
 
     QString localUnitName = name;
     if (!isRegisterName(name))
@@ -519,9 +541,8 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 //        qDebug() << "SWITCHING FROM "<<name <<localUnitName;
         name = localUnitName;
     }
-//    qDebug() << "ISUSED " <<  name;
-    if (m_symbols.contains(localName)) {
-    //    qDebug() << "Found local name " << localName;
+    if (m_symbols.contains(localName) &&!forceGlobal) {
+    //    qDebug() << "Found local name " << localName << forceGlobal;
         m_symbols[localName]->setIsUsed();
 
         if (m_symbols.contains(name))
@@ -533,7 +554,8 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>", lineNumber);
 
     m_symbols[name]->setIsUsed();
-
+  //  if (forceGlobal)
+//    qDebug() << "ISUSED " <<  name << forceGlobal <<m_symbols[name]->m_name;
     return m_symbols[name];
 }
 

@@ -116,7 +116,7 @@ public:
     Stack m_tempPointers;
     static QMap<QString,int> s_classSizes;
 
-
+    static int pass;
     QStringList m_orderedByDefinition;
 
     QString m_name="";
