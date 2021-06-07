@@ -47,6 +47,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     updateLineNumberAreaWidth(0);
     updateCycleNumberAreaWidth(0);
     updateAddressAreaWidth(0);
+//    this->installEventFilter(this);
 
     highlightCurrentLine();
     InitCompleter(nullptr, nullptr);
@@ -270,7 +271,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
     // Check if we actually have selection or just tab/backtab
     // press in single line and handle them separately.
     if (cursor.hasSelection())
-    // We have selection, handle multiple line indent/unindent
+        // We have selection, handle multiple line indent/unindent
     {
         // Find out the selection start and end, expand
         // to beginning and end of line if needed
@@ -287,7 +288,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
         QStringList lines = str.split("\n");
 
         if (back)
-        // Selection backtab handling
+            // Selection backtab handling
         {
             for (int i=0; i < lines.size(); i++)
             {
@@ -299,7 +300,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
             }
         }
         else
-        // Selection forward tab handling
+            // Selection forward tab handling
         {
             for (int i=0; i < lines.size(); i++)
             {
@@ -323,10 +324,10 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
         setTextCursor(cursor);
     }
     else
-    // Single line tab handling
+        // Single line tab handling
     {
         if (back)
-        // Backtab handling for single line
+            // Backtab handling for single line
         {
             QString line = textCursor().block().text();
             if (line.startsWith("\t") || line.startsWith(" "))
@@ -339,7 +340,7 @@ void CodeEditor::TabBackTab(QKeyEvent* e, bool back)
             }
         }
         else
-        // Forward single tab is simple
+            // Forward single tab is simple
         {
             insertPlainText("\t");
         }
@@ -384,14 +385,26 @@ void CodeEditor::InitCompleter(QSharedPointer<SymbolTable>  symTab, Parser* pars
     QCompleter* completer;
 
     completer = new QCompleter(this);
-//    completer->setModel(modelFromFile(":/resources/autocompletion.txt"));
+    //    completer->setModel(modelFromFile(":/resources/autocompletion.txt"));
     completer->setModel(modelFromTRSE(symTab, parser));
-//    completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+    //    completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
     completer->setCaseSensitivity(Qt::CaseSensitive);
     completer->setWrapAround(false);
 
     c=completer;
     setCompleter(completer);
+
+}
+
+void CodeEditor::mousePressEvent(QMouseEvent *e)
+{
+    QPlainTextEdit::mousePressEvent(e);
+    QTextCursor tc = textCursor();
+    tc.select(QTextCursor::WordUnderCursor);
+
+    if (QApplication::keyboardModifiers() & Qt::ControlModifier)
+        //        emit emitLookupWord(tc.selectedText());
+        emit emitLookupWord();
 
 }
 
@@ -435,20 +448,24 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
     }
 
 
+
+
+
+
     // Handle completer popup
     if (c && c->popup()->isVisible()) {
         // The following keys are forwarded by the completer to the widget
-       switch (e->key()) {
-       case Qt::Key_Enter:
-       case Qt::Key_Return:
-       case Qt::Key_Escape:
-       case Qt::Key_Tab:
-       case Qt::Key_Backtab:
+        switch (e->key()) {
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+        case Qt::Key_Escape:
+        case Qt::Key_Tab:
+        case Qt::Key_Backtab:
             e->ignore();
             return; // let the completer do default behavior
-       default:
-           break;
-       }
+        default:
+            break;
+        }
     }
 
     // Tab/Backtab Handling
@@ -464,15 +481,15 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
     }
 
     if (!(e->modifiers() & Qt::ControlModifier))
-    if (e->key()==Qt::Key_Tab || e->key()==Qt::Key_Backtab || e->key()==Qt::Key_Space || e->key()==Qt::Key_Backspace || e->key()==Qt::Key_Escape) {
-        QPlainTextEdit::keyPressEvent(e);
-        c->popup()->hide();
-        return;
-    }
+        if (e->key()==Qt::Key_Tab || e->key()==Qt::Key_Backtab || e->key()==Qt::Key_Space || e->key()==Qt::Key_Backspace || e->key()==Qt::Key_Escape) {
+            QPlainTextEdit::keyPressEvent(e);
+            c->popup()->hide();
+            return;
+        }
 
     bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_Space); // CTRL+E
     if (!c || !isShortcut) // do not process the shortcut when we have a completer
-            QPlainTextEdit::keyPressEvent(e);
+        QPlainTextEdit::keyPressEvent(e);
 
     //    We also handle other modifiers and shortcuts for which we do not want the completer to respond to.
     const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
@@ -483,7 +500,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
     bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
     QString completionPrefix = textUnderCursor();
     if (!isShortcut && (hasModifier || e->text().isEmpty()|| completionPrefix.length() < 3
-                      || eow.contains(e->text().right(1)))) {
+                        || eow.contains(e->text().right(1)))) {
         c->popup()->hide();
         return;
     }
@@ -495,7 +512,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 
     QRect cr = cursorRect();
     cr.setWidth(c->popup()->sizeHintForColumn(0)
-            + c->popup()->verticalScrollBar()->sizeHint().width());
+                + c->popup()->verticalScrollBar()->sizeHint().width());
 
     c->complete(cr); // popup it up!
 }
@@ -503,8 +520,8 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
 void CodeEditor::focusInEvent(QFocusEvent *e)
 {
     if (c)
-          c->setWidget(this);
-      QPlainTextEdit::focusInEvent(e);
+        c->setWidget(this);
+    QPlainTextEdit::focusInEvent(e);
 
 }
 
@@ -527,6 +544,37 @@ QString CodeEditor::textUnderCursor() const
     return tc.selectedText();
 }
 
+bool CodeEditor::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        qDebug("Ate key press %d", keyEvent->key());
+
+        if (keyEvent->key() == Qt::Key_Control) {
+            QTextCursor tc = textCursor();
+            tc.select(QTextCursor::WordUnderCursor);
+
+            QTextCharFormat defcharfmt = currentCharFormat();
+            QTextCharFormat newcharfmt = defcharfmt;
+            newcharfmt.setFontUnderline( true );
+            setCurrentCharFormat( newcharfmt );
+            setTextCursor( tc ); // added
+            setCurrentCharFormat( defcharfmt );
+            qDebug() << "HERE";
+            //        emit emitLookupWord(tc.selectedText());
+        }
+
+
+
+        return true;
+    } else {
+        // standard event processing
+        return QObject::eventFilter(obj, event);
+
+    }
+}
+
+
 
 
 
@@ -545,12 +593,12 @@ void CodeEditor::updateAddressArea(const QRect &rect, int dy)
     if (dy)
         addressArea->scroll(0, dy);
     else
-//        cycleNumberArea->update(rect.x()-cycleNumberArea->width()-1, rect.y(), cycleNumberArea->width(), rect.height());
-      addressArea->update(0, rect.y(), addressArea->width(), rect.height());
+        //        cycleNumberArea->update(rect.x()-cycleNumberArea->width()-1, rect.y(), cycleNumberArea->width(), rect.height());
+        addressArea->update(0, rect.y(), addressArea->width(), rect.height());
 
-//    updateAddressAreaWidth(0);
-//    if (rect.contains(viewport()->rect()))
-  //      updateCycleNumberAreaWidth(0);
+    //    updateAddressAreaWidth(0);
+    //    if (rect.contains(viewport()->rect()))
+    //      updateCycleNumberAreaWidth(0);
 
 }
 
@@ -561,11 +609,11 @@ void CodeEditor::updateCycleNumberArea(const QRect &rect, int dy)
     if (dy)
         cycleNumberArea->scroll(0, dy);
     else
-//        cycleNumberArea->update(rect.x()-cycleNumberArea->width()-1, rect.y(), cycleNumberArea->width(), rect.height());
-      cycleNumberArea->update(0, rect.y(), cycleNumberArea->width(), rect.height());
+        //        cycleNumberArea->update(rect.x()-cycleNumberArea->width()-1, rect.y(), cycleNumberArea->width(), rect.height());
+        cycleNumberArea->update(0, rect.y(), cycleNumberArea->width(), rect.height());
 
-//    if (rect.contains(viewport()->rect()))
-  //      updateCycleNumberAreaWidth(0);
+    //    if (rect.contains(viewport()->rect()))
+    //      updateCycleNumberAreaWidth(0);
 }
 
 
@@ -648,23 +696,23 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
     painter.setFont(m_font);
 
     painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
-                 Qt::AlignLeft  | Qt::AlignVCenter, "Cycles");
+                     Qt::AlignLeft  | Qt::AlignVCenter, "Cycles");
 
-//    top+=20;
+    //    top+=20;
     top+=m_metrics->height();
     int bottom = top + (int) blockBoundingRect(block).height();
 
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             int ln = blockNumber+1;
-           // qDebug() << m_cycles.count();
+            // qDebug() << m_cycles.count();
             if (m_cycles.contains(ln))
             {
 
                 QString number = QString::number(m_cycles[ln]);
                 painter.setPen(cyclesColor);
                 painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
-                             Qt::AlignLeft | Qt::AlignVCenter, number);
+                                 Qt::AlignLeft | Qt::AlignVCenter, number);
             }
             if (m_blockCycles.contains(ln))
             {
@@ -675,7 +723,7 @@ void CodeEditor::cycleNumberAreaPaintEvent(QPaintEvent *event)
                 QString number = QString::number(m_blockCycles[ln]+val);
                 painter.setPen(blockCyclesColor);
                 painter.drawText(0, top, cycleNumberArea->width(), m_metrics->height(),
-                             Qt::AlignLeft  | Qt::AlignVCenter, number);
+                                 Qt::AlignLeft  | Qt::AlignVCenter, number);
             }
         }
 
@@ -697,15 +745,15 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
     int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
     painter.setPen(cyclesColor);
     painter.drawText(0, top, addressArea->width(), m_metrics->height(),
-                 Qt::AlignLeft | Qt::AlignVCenter, "");
+                     Qt::AlignLeft | Qt::AlignVCenter, "");
 
-//    top+=20;
+    //    top+=20;
     top+=m_metrics->height();
     int bottom = top + (int) blockBoundingRect(block).height();
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             int ln = blockNumber+2;
-           // qDebug() << m_cycles.count();
+            // qDebug() << m_cycles.count();
             if (m_addresses.contains(ln))
             {
 
@@ -714,7 +762,7 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
                     number.insert(1,"0");
                 painter.setPen(cyclesColor);
                 painter.drawText(10, top, addressArea->width(), m_metrics->height(),
-                             Qt::AlignLeft | Qt::AlignVCenter, number);
+                                 Qt::AlignLeft | Qt::AlignVCenter, number);
             }
         }
 
@@ -740,7 +788,7 @@ void CodeEditor::ToggleComments()
             else s = SL.at(i);
         }
         if(i<SL.length()-1) s.append("\n");
-//        qDebug() << s;
+        //        qDebug() << s;
         textCursor().insertText(s);
     }
 

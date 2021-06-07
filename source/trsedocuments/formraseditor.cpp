@@ -59,7 +59,7 @@ FormRasEditor::FormRasEditor(QWidget *parent) :
 
     }
 
-
+    connect(ui->txtEditor, SIGNAL(emitLookupWord()),this,SLOT(LookupSymbolUnderCursor()));
 
 
     // Enable shadow builds?

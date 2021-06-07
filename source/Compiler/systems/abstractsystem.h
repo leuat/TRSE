@@ -78,6 +78,9 @@ public:
     virtual QString CompressFile(QString fileName) {
         return fileName;
     }
+    virtual QStringList CompressData(QStringList& inData, QString& string) {
+        return QStringList();
+    }
     QSharedPointer<Orgasm> m_orgAsm = nullptr;
 
     int m_memoryType = 0;

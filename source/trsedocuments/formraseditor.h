@@ -163,12 +163,12 @@ public:
     void SetOutputText(QString txt);
 
     void BuildNes(QString prg);
-    void LookupSymbolUnderCursor() override;
     void LookupAssemblerUnderCursor() override;
     void ToggleComment() override;
 
 public slots:
     void HandleBuildComplete();
+    void LookupSymbolUnderCursor() override;
 
 private:
 

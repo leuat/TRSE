@@ -95,6 +95,9 @@ public:
     QMap<int,int> m_cycles, m_blockCycles;
     QMap<int,int> m_addresses;
 
+
+    void mousePressEvent(QMouseEvent *e) override;
+
     void RepaintCycles() {
         cycleNumberArea->repaint();
         addressArea->repaint();
@@ -103,6 +106,9 @@ public:
 
 protected slots:
     void onTextChanged();
+
+signals:
+    void emitLookupWord();
 
 
 protected:
@@ -144,11 +150,9 @@ protected:
     QCompleter *c = nullptr;
 
 
-
-
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 };
-
 
 class LineNumberArea : public QWidget
 {
@@ -210,6 +214,7 @@ protected:
 protected:
     CodeEditor *codeEditor;
 };
+
 
 
 #endif

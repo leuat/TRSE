@@ -42,6 +42,8 @@ public:
         return CompressLZ4(fileName);
     }
 
+    QStringList CompressData(QStringList& inData, QString& string) override;
+
 
 };
 

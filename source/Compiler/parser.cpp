@@ -117,7 +117,9 @@ QSharedPointer<Node> Parser::ManageClassProcedureCalls(QSharedPointer<Node> left
 //        left->setForceReference(true);
     auto v = qSharedPointerDynamicCast<NodeVar>(left);
     // Transform to a reference..
-    auto s =m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
+    if (v==nullptr)
+        return left;
+    auto s = m_symTab->Lookup(v->value,m_currentToken.m_lineNumber);;
     v->value = s->m_name;
 //    qDebug() << "PARSER " <<p->m_procedure->m_procName<< v->value<<s->m_name << s->m_type << s->m_arrayTypeText <<s->m_pointsTo <<s->m_type.toLower() <<s->getEndType();
 

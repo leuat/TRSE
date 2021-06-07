@@ -338,3 +338,26 @@ void SystemMOS6502::DefaultValues()
 
 }
 
+QStringList SystemMOS6502::CompressData(QStringList& inData, QString& string) {
+    QByteArray in;
+    for (auto& s: inData) {
+        in.append(Util::NumberFromStringHex(s));
+    }
+    for (QChar s: string)
+        in.append(s.toLatin1());
+
+    QString filename = "_ctemp.bin";
+    Util::SaveByteArray(in,filename);
+    QString fn2 =  CompressLZ4(filename);
+    QByteArray comp = Util::loadBinaryFile(fn2);
+    QFile::remove(fn2);
+    QFile::remove(filename);
+
+    QStringList lst;
+    for (int i=0;i<comp.length();i++)
+        lst.append(Util::numToHex((unsigned char)comp[i]));
+
+    return lst;
+
+}
+
