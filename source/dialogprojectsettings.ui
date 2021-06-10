@@ -629,13 +629,6 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_17">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>System:</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="cmbSystem">
             <item>
@@ -774,6 +767,13 @@
               <string>qemu-system-i386</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>System:</string>
+            </property>
            </widget>
           </item>
          </layout>

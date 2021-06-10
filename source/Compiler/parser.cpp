@@ -4212,8 +4212,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
    for (QSharedPointer<Node> n : vars) {
         QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(n, typeNode));
         QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
-        if (v->value.startsWith("g_global_"))
-            ErrorHandler::e.Error("Cannot declare variables that start with 'g_global_' in TRSE, since this prefix is used internally",m_currentToken.m_lineNumber);
+        if (v->value.startsWith("global_"))
+            ErrorHandler::e.Error("Cannot declare variables that start with 'global_' in TRSE, since this prefix is used internally",m_currentToken.m_lineNumber);
         if (m_symTab->isRegisterName(v->value)) {
             v->m_isRegister = true;
         }

@@ -19,7 +19,7 @@ public:
 
     QString getMetaInfo() override;
 
-    void Color2Raw(QByteArray &ba, int ys) override;
+    void Color2Raw(QByteArray &ba, int ys,int sx,int sy, int ex,int ey) override;
 
     virtual void FixUp(QByteArray& ba);
 

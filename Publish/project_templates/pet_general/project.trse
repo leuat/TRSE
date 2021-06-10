@@ -1,5 +1,5 @@
 zeropages = ,$68, $6A, $6C, $6E, $70, $72, $74, $76, $78
-temp_zeropages = ,$88, $8A, $8C, $8E
+1;95;0ctemp_zeropages = ,$88, $8A, $8C, $8E
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $7b
 zeropage_decrunch2 = $7c
@@ -22,7 +22,7 @@ machine_state = $35
 border_color = 0
 background_color = 0
 override_target_settings = 0
-override_target_settings_org = $400
+override_target_settings_org = $401
 override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 global_defines = ,

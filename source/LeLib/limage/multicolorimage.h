@@ -128,7 +128,7 @@ public:
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;
 
-    virtual void Color2Raw(QByteArray& ba, int ly);
+    virtual void Color2Raw(QByteArray& ba, int ly,int sx, int sy, int ex, int ey);
 
     virtual int charWidthDisplay() {
         return m_charWidth;

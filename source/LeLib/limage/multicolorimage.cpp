@@ -241,10 +241,14 @@ void MultiColorImage::LoadBin(QFile& file)
     //  memcpy(&m_data, &data, m_charHeight*m_charWidth*12);
 }
 
-void MultiColorImage::Color2Raw(QByteArray &ba, int yl)
+void MultiColorImage::Color2Raw(QByteArray &ba, int yl,int sx,int sy, int ex,int ey)
 {
-    for (int i=0;i<m_charWidth*m_charHeight;i++)
-        ba.append(m_data[i].c[3]);
+    for (int y=0;y<m_charHeight;y++)
+    for (int x=0;x<m_charWidth;x++) {
+        if (x>=sx && y>=sy && x<ex && y<ey)
+            ba.append(m_data[x+y*m_charWidth].c[3]);
+    }
+
 
 }
 
@@ -1025,7 +1029,7 @@ void MultiColorImage::ExportCompressed(QString f1, QString f2, QString f3)
     FixUp(charData);
     Util::SaveByteArray(screenData, f1);
     Util::SaveByteArray(charData, f2);
-    Color2Raw(colorData,1);
+    Color2Raw(colorData,1,m_exportParams["StartX"],m_exportParams["StartY"],m_exportParams["EndX"],m_exportParams["EndY"]);
     Util::SaveByteArray(colorData, f3);
     QString s = "Compression level: " +QString::number((int)m_exportParams["Compression"])+"<br>";
     s+= "Packed image to : "+QString::number(noChars) + " characters";
