@@ -49,7 +49,7 @@ Constants and variables
 	zeropages
                 <h2>Zeropages and pointers</h2>
                 Zeropages are in TRSE defined as pointers. The individial addresses
-                for the zeropages are defined in the TRSE settings dialoge, and will be chosen
+                for the zeropages are defined in the TRSE settings dialog, and will be chosen
                 from this pool. Usage:<br>
                 <br>
                 var<br>

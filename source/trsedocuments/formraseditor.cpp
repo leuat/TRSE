@@ -274,7 +274,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 #endif
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
-        ui->txtOutput->setText("Could not find the emulator for system '" + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system) + "'\nMake sure you have set a correct path in the TRSE settings dialoge!\n\n"+
+        ui->txtOutput->setText("Could not find the emulator for system '" + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system) + "'\nMake sure you have set a correct path in the TRSE settings!\n\n"+
                                "Example: VICE 'c64','c128','xvic', 'dosbox' or NES 'mednafen'.");
         return;
     }

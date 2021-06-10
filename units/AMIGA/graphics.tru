@@ -3,6 +3,12 @@ var
 	pa,pb : pointer of integer;
 	bpl,j,i : integer;
 	const height: integer = 200;
+	hx, hy, hl,hc:integer;
+	@donotremove bytefill1
+	@donotremove bytefill2
+	bytefill1 : array[8] of byte =(%11111111,%01111111,%00111111,%00011111,%00001111,%00000111,%00000011,%00000001);
+	bytefill2 : array[8] of byte =(%00000000,%10000000,%11000000,%11100000,%11110000,%11111000,%11111100,%11111110);
+	
  /*
 	Sets up the copper list to point to the screen 
 */
@@ -96,6 +102,57 @@ begin
 		SetCopperList32(pa, #copper_bitplane0);
 	end;
 end;
+
+
+procedure HlineI(hx, hy, hl:global integer;pa:global pointer);
+begin
+	asm("
+		move.l Graphics_pa, a0
+		move.l #Graphics_bytefill1,a1
+		move.l #Graphics_bytefill2,a2
+		moveq #0,d0
+		move.w Graphics_hy, d0
+		mulu.w #40, d0
+		add.l d0, a0
+		
+		move.w Graphics_hx,d0
+		move.w d0,d1
+		and #7,d1
+		add d1,a1
+		
+		move.w Graphics_hx,d1
+		add.w Graphics_hl,d1
+		and #7,d1
+		add d1,a2
+
+
+		
+		lsr #3,d0
+;		and #$FFFE, d0
+		add.w d0,a0
+		
+		move.b (a1),(a0)+
+		
+
+		move.w Graphics_hl,d3
+		lsr #3,d3
+		sub #1,d1
+		move.w #$FF, d0 
+hline_i : 
+		move.b d0,(a0)+
+		dbf d3,hline_i
+		 
+		move.b (a2),(a0)+
+
+		
+
+
+	");		
+
+end;
+
+
+
 /*
 procedure CopySingleBitplaneData(pa,pb : global ^integer; bpl, j : global integer);
 begin
