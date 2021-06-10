@@ -1,0 +1,38 @@
+unit Memory;
+var
+	useKernal:byte;
+	
+procedure StartIRQExtended(useKernal : global byte) inline;
+begin
+	if (useKernal=0) then
+		StartIRQ(0)
+	else
+		StartIRQ(1);	
+		
+		
+	asm("
+		lda mul16x8_num1Hi
+		pha
+		lda mul16x8_num1
+		pha
+		lda mul16x8_num2
+		pha
+	");
+	
+end;	
+
+
+procedure CloseIrqExtended() inline;
+begin
+	asm("
+		pla
+		sta mul16x8_num2
+		pla
+		sta mul16x8_num1
+		pla
+		sta mul16x8_num1Hi
+	");
+	CloseIRQ();
+end;
+
+end.
