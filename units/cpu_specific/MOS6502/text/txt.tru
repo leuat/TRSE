@@ -2,7 +2,7 @@ Unit txt;
 var
 
 	i:byte=0;
-	temp_address_p: pointer;
+	temp_address_p: integer=0;
 	ytab : array[25] of integer=(
 		0,0,0,0,0,0,
 		0,0,0,0,0,0,
