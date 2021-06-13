@@ -200,7 +200,7 @@
 
 	end;
 
-	procedure print_string(in_str: pointer, CRLF: byte = True);
+	procedure print_string(in_str: global pointer, CRLF: global byte = True);
 	var
 		next_ch: byte;
 	begin

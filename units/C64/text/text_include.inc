@@ -187,8 +187,7 @@
 	procedure cursor_return();
 	begin
 
-		_A:=13;
-		call(^$FFD2);
+		put_ch(13);
 
 	end;
 
@@ -208,7 +207,7 @@
 
 	end;
 
-	procedure print_string(in_str: pointer, CRLF: byte = True);
+	procedure print_string(in_str: global pointer, CRLF: global byte = True);
 	var
 		next_ch: byte;
 	begin
@@ -227,7 +226,6 @@
 			//cursor_down();
 		end;
 	end;
-	
 	
 
    function get_string():integer;
