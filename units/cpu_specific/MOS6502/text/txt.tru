@@ -14,6 +14,8 @@ var
 	temp_num: integer;
 	temp_i: byte=0;
 	this_bbc: byte=0;
+	in_str: pointer;
+	CRLF: byte;
 
 @ifdef BBCM
 	// Address Locations of operating system functions
@@ -133,7 +135,18 @@ var
 	Set Carriage Return on/off	
 	
 	**/
-	procedure print_string(in_str: pointer, CRLF: byte = True);
+	procedure print_string(in_str: global pointer, CRLF: global byte);
+
+
+	/**
+
+	Output a string at the current cursor location but centered.
+	Set Carriage Return on/off	
+	Set the screen width
+	Set reverse on/off
+	
+	**/
+	procedure print_string_centered(in_str: global pointer, CRLF: global byte, _sc_w: byte);
 
 	/**
 
@@ -336,7 +349,53 @@ var
 			move_to(_natx+1,_naty);
 		end;
 	end;
+	
+	
+	function str_len(in_str: global pointer):byte;
+	begin
+		
+		i:=0;
+		
+		// get the Str_Len by counting until char is 0
+		while(in_str[i]<>0) do
+		begin 
+			inc(i);
+		end;
+		
+		// Return
+		str_len:=i;
+		
+	end;
+	
+	
+	procedure print_string_centered(in_str: global pointer, CRLF: global byte, _sc_w: byte);
+	begin
+		
+		i:=0;
+		max_digits:=0;
+		
+		// Get the length of the string
+		i:=str_len(in_str);
 
+		// Is it worth padding?
+		if(i<39) then
+		begin	
+			max_digits:=(_sc_w-i)/2;
+
+			// Add the padding
+			for i:=0 to max_digits do
+			begin
+				put_ch(32);
+			end;
+			
+		end;
+		
+		// Now print the string
+		print_string(in_str, CRLF);
+		
+	end;
+	
+// NOT atari
 @ifndef ATARI800
 	procedure print_dec(_in_n:byte, _add_cr:byte);
 	begin
