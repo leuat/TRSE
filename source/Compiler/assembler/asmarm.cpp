@@ -19,10 +19,13 @@ AsmARM::AsmARM()
 void AsmARM::Connect() {
     // Connect with temp vars
     QStringList newSource;
-    newSource<<(".global _start");
-    newSource<<(".align 4");
-    newSource<<("_start:");
-    newSource<<("       b block1");
+    QString init = Util::loadTextFile(":resources/code/arm/init.s");
+    auto lst = init.split("\n");
+    for (auto& s:lst)
+        newSource<<s;
+
+
+
 
 
     for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
@@ -33,6 +36,8 @@ void AsmARM::Connect() {
     }
     newSource << " ; Temp vars section";
     newSource<< m_tempVars;
+    if (m_tempVarsBlock!=nullptr)
+        newSource<<m_tempVarsBlock->m_source;
     newSource << " ; Temp vars section ends";
     m_source = newSource;
     //m_source<<m_appendix;
@@ -176,6 +181,9 @@ void AsmARM::DeclareVariable(QString name, QString type, QString initval, QStrin
     if (type.toLower()=="byte") {
         t = byte;
     }
+    if (type.toLower()=="long") {
+        t = llong;
+    }
 
     if (DeclareClass(name,type,1,QStringList(),position))
          return;
@@ -242,6 +250,7 @@ void AsmARM::BinOP(TokenType::Type t, bool clearFlag)
 void AsmARM::DeclareString(QString name, QStringList initVal, QStringList flags) {
     Write(".align 4");
     Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
+    Write(".align 4");
 }
 
 QString AsmARM::String(QStringList lst, bool term)
@@ -255,15 +264,16 @@ QString AsmARM::String(QStringList lst, bool term)
         if (!ok)
             res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
 
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+        else res=res + "\t"+".byte"+"\t"+QString::number(val) + "\n";
 
         /*        if (s!=lst.last())
                     res=res + "\n";
         */
 
     }
-    if (term)
+    if (term) {
         res=res + "\t.byte\t0";
+    }
     m_term +=res;
     return res;
 }
@@ -295,6 +305,7 @@ bool AsmARM::DeclareClass(QString name, QString type, int count, QStringList dat
 }
 
 QString AsmARM::NewLabel(QString s) {
+    return Assembler::NewLabel(s);
     if (s.toLower().contains("block"))
         return Assembler::NewLabel(s);
     m_curLabel++;

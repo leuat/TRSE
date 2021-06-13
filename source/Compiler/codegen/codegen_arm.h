@@ -55,8 +55,7 @@ public:
     virtual void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
-
-
+    QString getShift(QSharedPointer<NodeVar> n);
 
 
     QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
@@ -85,6 +84,7 @@ public:
     void str (QString x0, QString x1);
     void Binop (QString bop, QString x0, QString x1, QString x2);
 
+    virtual bool UseBlocks() override { return true;}
 
     QString BinopVariableNumber(QSharedPointer<Node> n, QString value, TokenType::Type type);
 
@@ -159,6 +159,9 @@ public:
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
 
 
+    void ProcedureStart(Assembler* as) override;
+
+    void ProcedureEnd(Assembler* as) override;
 
 
 

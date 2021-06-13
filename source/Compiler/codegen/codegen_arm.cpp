@@ -3,7 +3,6 @@
 
 CodeGenARM::CodeGenARM()
 {
-
 }
 
 void CodeGenARM::dispatch(QSharedPointer<NodeBinOP> node)
@@ -42,8 +41,40 @@ void CodeGenARM::dispatch(QSharedPointer<NodeVar> node)
     }
     QString ending = "]";
     if (node->m_expr!=nullptr) {
+        if (node->isPointer(as)) {
+            // i := p[2] etc;
+            QString x0 = getReg();
+            QString expr = PushReg();
+            as->Comment("Loading pointer");
+            as->Comment("load expression:");
+            node->m_expr->Accept(this);
+            as->Comment("load value:");
+            QString x1 = LoadAddress(node);
+            QString x3 = PushReg();
+            ldr(x3,x1);
+            as->Asm("add "+x3+","+x3+","+expr+getShift(node));
+            ldr(x0,x3);
 
+            PopReg();
+            PopReg();
+            PopReg();
+            return;
 
+        }
+        // Regular array
+        QString x0 = getReg();
+        QString expr = PushReg();
+        as->Comment("Loading array");
+        as->Comment("load expression:");
+        node->m_expr->Accept(this);
+        as->Comment("load value:");
+        QString x1 = LoadAddress(node);
+        as->Asm("add "+x1+","+x1+","+expr+getShift(node));
+        ldr(x0,x1);
+
+        PopReg();
+        PopReg();
+        return;
     }
 
     QString x0 = getReg();
@@ -98,8 +129,8 @@ bool CodeGenARM::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
     QString type =getWordByteType(as,var);
-    as->Comment("Store variable simplified");
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->isArrayIndex()) {
+        as->Comment("Store variable simplified");
         node->m_right->Accept(this);
         QString x0 = getReg();
         QString x1 = LoadAddress(var);
@@ -153,6 +184,24 @@ void CodeGenARM::LoadVariable(QSharedPointer<Node> n)
 void CodeGenARM::LoadVariable(QSharedPointer<NodeNumber>n)
 {
 
+}
+
+QString CodeGenARM::getShift(QSharedPointer<NodeVar> var)
+{
+    if (var->isPointer(as) || var->m_expr!=nullptr) {
+        if (var->getArrayType(as)==TokenType::LONG)
+            return ",lsl 2";
+        if (var->getArrayType(as)==TokenType::INTEGER)
+            return ",lsl 1";
+    }
+
+
+    if (var->isWord(as))
+        return ",lsl 1";
+    if (var->isLong(as))
+        return ",lsl 2";
+
+    return "";
 }
 
 QString CodeGenARM::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
@@ -283,6 +332,33 @@ void CodeGenARM::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool CodeGenARM::AssignPointer(QSharedPointer<NodeAssign> node)
 {
+    if (node->m_left->isPointer(as) && node->m_left->isArrayIndex()) {
+        // Storing p[i] := something;
+        node->m_right->Accept(this);
+        QString x0 = getReg();
+        auto expr = PushReg();
+        auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+        as->Comment("storing pointer");
+        as->Comment("loading expression:");
+        var->m_expr->Accept(this);
+
+        as->Comment("load value:");
+        QString x1 = LoadAddress(var);
+        auto x3 = PushReg();
+        ldr(x3,x1);
+        as->Asm("add "+x3+","+x3+","+expr+getShift(var));
+        str(x0,x3);
+
+
+
+
+
+
+        PopReg();
+        PopReg();
+        PopReg();
+        return true;
+    }
     return false;
 }
 
@@ -291,6 +367,9 @@ void CodeGenARM::GenericAssign(QSharedPointer<NodeAssign> node)
     as->Comment("Generic assign");
     node->m_right->Accept(this);
     QString x0 = getReg();
+
+
+
     QString x1 = LoadAddress(node->m_left);
     str(x0,x1);
     PopReg();
@@ -310,29 +389,6 @@ bool CodeGenARM::IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node)
 
 bool CodeGenARM::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
 {
-    // Check for a:=a+2;
-    auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    QString type =getWordByteType(as,var);
-    QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
-    if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::BITOR || bop->m_op.m_type==TokenType::BITAND || bop->m_op.m_type==TokenType::XOR )) {
-        if (bop->ContainsVariable(as,var->getValue(as))) {
-            // We are sure that a:=a ....
-            // first, check if a:=a + number
-//            as->Comment("In BOP");
-            if (bop->m_right->isPureNumeric()) {
-                as->Comment("'a:=a + const'  optimization ");
-                as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+type + " "+bop->m_right->getValue(as));
-                return true;
-            }
-            as->Comment("'a:=a + expression'  optimization ");
-            bop->m_right->Accept(this);
-            as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+getReg());
-            return true;
-        }
-        // Check for a:=a+
-
-    }
-
     return false;
 }
 
@@ -385,6 +441,18 @@ void CodeGenARM::AssignToRegister(QSharedPointer<NodeAssign> node)
 
     as->Asm("mov "+reg+", "+getARMValue(as,node->m_right));
     return;
+
+}
+
+void CodeGenARM::ProcedureStart(Assembler *as) {
+    as->Asm("sub sp, sp, #16");
+    as->Asm("stp x29, x30, [sp, #16]  ; store frame pointer + link register ");
+
+}
+
+void CodeGenARM::ProcedureEnd(Assembler *as) {
+    as->Asm("ldp x29, x30, [sp, #16]  ; restore frame pointer + link register ");
+    as->Asm("add sp, sp, #16");
 
 }
 
@@ -637,8 +705,9 @@ void CodeGenARM::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
-
-    as->Write(v->getValue(as)+ ": .word  0",0);
+    as->Write(".align 4");
+    as->Write(v->getValue(as)+ ": .dword  0",0);
+    as->Write(".align 4");
 
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 
@@ -657,20 +726,20 @@ void CodeGenARM::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
     //    as->Asm("pha"); // Push that baby
 
     BuildToCmp(node);
-    QString jg ="jg ";
-    QString jl ="jl ";
-    QString jge ="jge ";
-    QString jle ="jle ";
+    QString jg ="bg ";
+    QString jl ="bl ";
+    QString jge ="bge ";
+    QString jle ="ble ";
     if (!(node->m_left->isSigned(as) || node->m_right->isSigned(as))) {
-        jg = "ja ";
-        jl = "jb ";
-        jge = "jae ";
-        jle = "jbe ";
+        jg = "bhi ";
+        jl = "blo ";
+        jge = "bhi ";
+        jle = "blo ";
     }
     if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("jne " + lblFailed);
+        as->Asm("bne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("je " + lblFailed);
+        as->Asm("beq " + lblFailed);
     if (node->m_op.m_type==TokenType::LESS)
         as->Asm(jge  + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
@@ -687,7 +756,7 @@ void CodeGenARM::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
 
 void CodeGenARM::BuildToCmp(QSharedPointer<Node> node)
 {
-    if (node->m_left->getValue(as)!="") {
+/*    if (node->m_left->getValue(as)!="") {
         if (node->m_right->isPureNumeric())
         {
             as->Comment("Compare with pure num / var optimization");
@@ -723,7 +792,7 @@ void CodeGenARM::BuildToCmp(QSharedPointer<Node> node)
 //            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
             return;
         }
-    }
+    }*/
     QString ax = getReg();
     QString bx = "b"+ QString(ax[1]);
     node->m_left->Accept(this);
@@ -760,7 +829,7 @@ void CodeGenARM::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
 //    PopReg();
 
     as->Asm(m_cmp+x1+","+ax);
-    as->Asm("bne "+lblJump+"b");
+    as->Asm("bne "+lblJump);
 
 }
 

@@ -175,6 +175,14 @@ public:
     virtual void dispatch(QSharedPointer<NodeProcedureDecl> node);
 
 
+    virtual void ProcedureStart(Assembler* as) {
+
+    }
+
+    virtual void ProcedureEnd(Assembler* as) {
+
+    }
+
     virtual void dispatch(QSharedPointer<NodeProcedure> node);
     void InlineProcedure(QSharedPointer<NodeProcedure> p);
 

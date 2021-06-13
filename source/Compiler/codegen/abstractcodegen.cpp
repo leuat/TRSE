@@ -786,7 +786,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
             b->forceLabel=node->m_procName;
             b->m_isProcedure = true;
         }
-
         node->m_block->Accept(this);
     }
     // Return value
@@ -877,7 +876,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         na->Accept(this);
     }
 
+    ProcedureStart(as);
     as->Asm(getCallSubroutine() + " " + node->m_procedure->m_procName);
+    ProcedureEnd(as);
     PopLostStack(lostStack);
 }
 /*
@@ -967,6 +968,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
                 node->m_curMemoryBlock=nullptr;
         }
     }
+    auto keepBlock = as->m_currentBlock;
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::ARM)
+        as->m_currentBlock = as->m_tempVarsBlock;
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
@@ -1047,6 +1051,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
     if (node->m_curMemoryBlock!=nullptr) {
         node->m_curMemoryBlock->m_end+=node->m_dataSize;
     }
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::ARM)
+        as->m_currentBlock = keepBlock;
 
 }
 

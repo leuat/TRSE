@@ -26,6 +26,11 @@ void SystemM1ARM::Assemble(QString &text, QString filename, QString currentDir, 
                 <<"-lSystem"<< "-syslibroot" <<syslibroot <<"-e" <<"_start" <<"-arch" <<"arm64"
 
                 ,text,true,currentDir);
+
+    if (text.toLower().contains("undefined") || text.contains("error")) {
+        m_buildSuccess = false;
+
+     }
 }
 
 void SystemM1ARM::PostProcess(QString &text, QString file, QString currentDir)
