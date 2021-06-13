@@ -2027,6 +2027,12 @@ QSharedPointer<Node> Parser::AssignStatementBetweenObjects(QSharedPointer<Node> 
     return nullptr;
 }
 
+void Parser::VerifyNotInClassAssignTypespec()
+{
+    if (m_currentClass!="")
+        ErrorHandler::e.Error("Class variables cannot have default values. These must be set manually or in a constructor (which is currently not yet implemented)",m_currentToken.m_lineNumber);
+}
+
 
 QSharedPointer<Node> Parser::AssignStatement()
 {
@@ -4360,6 +4366,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         QStringList data;
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
+            VerifyNotInClassAssignTypespec();
             Eat();
             if (m_currentToken.m_type==TokenType::BUILDTABLE) {
                 data = BuildTable(count, dataType);
@@ -4421,6 +4428,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     ErrorHandler::e.Warning("Declared array count for variable '"+vars+"' ("+QString::number((int)count)+") does not match with data ("+QString::number(data.count())+"). Adjusting array size to fit data. ", m_currentToken.m_lineNumber);
 
             }
+//            if (count==0)
+                count = data.count();
 
         } // end of array
 
@@ -4474,6 +4483,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         QStringList flags = getFlags();
 
         if (m_currentToken.m_type == TokenType::EQUALS) {
+            VerifyNotInClassAssignTypespec();
             Eat();
             QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(String(isCString));
             initData = str->m_val;
@@ -4588,6 +4598,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     QString initVal = "";
     if (m_currentToken.m_type == TokenType::EQUALS) {
+        VerifyNotInClassAssignTypespec();
         Eat();
 //        data << "$0"+QString::number(getIntVal(m_currentToken),16);//QString::number(m_currentToken.m_intVal);
 

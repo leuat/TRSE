@@ -294,6 +294,8 @@ private:
     QSharedPointer<Node> InlineAssembler();
     QSharedPointer<Node> AssignStatementBetweenObjects(QSharedPointer<Node> left,QSharedPointer<Node> right);
 
+    void VerifyNotInClassAssignTypespec();
+
 
     void HandleExportPalette();
     void HandleSetCompressionWeights();

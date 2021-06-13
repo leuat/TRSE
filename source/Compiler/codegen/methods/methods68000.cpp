@@ -208,16 +208,21 @@ void Methods68000::Fill(Assembler *as)
     as->Comment("Fill method");
     m_node->m_params[2]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d0");
+    QString d0 = as->m_regAcc.Get();
     m_node->m_params[1]->setForceType(TokenType::LONG);
     m_node->m_params[1]->Accept(m_codeGen);
-    Asm(as,"move.l",as->m_varStack.pop(),"d2");
+    Asm(as,"move.l",as->m_varStack.pop(),"d1");
 //    m_node->m_params[0]->Accept(m_codeGen);
+
+    QString d1 = as->m_regAcc.Get();
     m_codeGen->LoadAddress(m_node->m_params[0]);
     Asm(as,"move.l",as->m_varStack.pop(),"a0");
+    as->m_regAcc.Pop(d1);
+    as->m_regAcc.Pop(d0);
 
     QString lbl = as->NewLabel("fill");
     as->Label(lbl);
-    as->Asm("move.l d2,(a0)+");
+    as->Asm("move.l d1,(a0)+");
     as->Asm("dbf d0,"+lbl);
 
     as->PopLabel("fill");

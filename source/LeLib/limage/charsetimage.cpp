@@ -262,14 +262,24 @@ unsigned int CharsetImage::getPixel(int x, int y)
 
     QPoint p = getXY(x,y);
 
+
+//    if (rand()%1000>998)
+  //      qDebug() << p;
+
     if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)) {
         return MultiColorImage::getPixel(p.x(),p.y());
     }
 //    return MultiColorImage::getPixel(p.x(),p.y());
 
     PixelChar&pc = getPixelChar(p.x(),p.y());
-    if (MultiColorImage::getPixel(p.x(),p.y())!=getBackground())
+    int mh = m_height;
+    m_height = m_charWidth*m_charHeight/charWidthDisplay()*8;
+    if (MultiColorImage::getPixel(p.x(),p.y())!=(unsigned int)getBackground()) {
+        m_height = mh;
         return pc.c[3];
+    }
+    m_height = mh;
+
 
     return pc.c[0];
 
@@ -395,6 +405,7 @@ QPixmap CharsetImage::ToQPixMap(int chr)
 
 void CharsetImage::setPixel(int x, int y, unsigned int color)
 {
+
     if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
         setPixelHybrid(x,y,color);
         return;
@@ -577,7 +588,9 @@ bool CharsetImage::KeyPress(QKeyEvent *e)
 void CharsetImage::setLimitedPixel(int x, int y, unsigned int color)
 {
 
-    if (x>=m_width || x<0 || y>=m_height || y<0)
+    int hh = m_charWidth*m_charHeight/charWidthDisplay()*8;
+
+    if (x>=m_width || x<0 || y>=hh || y<0)
         return;
 
     PixelChar& pc = getPixelChar(x,y);

@@ -45,7 +45,11 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     QString endtype = getEndType(as,node->m_left, node->m_right);
     if (node->m_left->isByte(as))
         endtype =".b";
-    TransformVariable(as,"move"+endtype,d0 + "     ; BOP move",as->m_varStack.pop());
+
+    QString d1 = as->m_varStack.pop();
+    if (m_regs.contains(d1) && m_regs.contains(d0))
+        endtype = ".l";
+    TransformVariable(as,"move"+endtype,d0 + "     ; BOP move",d1);
 
 
 
@@ -642,6 +646,12 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeProcedure> node)
 QString CodeGen68k::LoadAddress(QSharedPointer<Node> n)
 {
     n->ForceAddress();
+    if (!n->isPure()) {
+//        n->setForceType(TokenType::LONG);
+        n->Accept(this);
+        return "";
+    }
+
     QString a0 = as->m_regMem.Get();
     TransformVariable(as,"move.l",a0,n->getLiteral(as));
     as->m_varStack.push(a0);
@@ -750,6 +760,7 @@ QString CodeGen68k::getEndType(Assembler *as, QSharedPointer<Node> v) {
 
 
     TokenType::Type t = v->getType(as);
+//    as->Comment("Type: "+TokenType::getType(t) + "  for var "+v->getValue(as));
     if (nv!=nullptr && nv->m_expr!=nullptr) {
       //  qDebug() << nv->getValue(as);
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(nv->getValue(as), v->m_op.m_lineNumber, v->isAddress());

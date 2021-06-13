@@ -1345,10 +1345,11 @@ PixelChar &MultiColorImage::getPixelChar(int x, int y)
     int dx = x/(8/m_scale);
     int dy = y/8;
 
-//    qDebug() << "MCI : "<<charWidthDisplay();
-
 
     int i = Util::clamp(dx + charWidthDisplay()*dy,0,m_charWidth*m_charHeight);
+//    if (rand()%1000>996)
+  //      qDebug() << "MCI : "<<charWidthDisplay() <<dx <<dy << i;
+
     return m_data[i];
 
 }
