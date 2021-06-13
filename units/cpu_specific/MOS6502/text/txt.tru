@@ -367,6 +367,18 @@ var
 		
 	end;
 	
+	// print X spaces
+	procedure print_space(max_digits: global integer);
+	begin
+		
+		i:=0;
+		for i:=0 to max_digits do
+		begin
+			put_ch(32);
+		end;
+		
+	end;
+	
 	
 	procedure print_string_centered(in_str: global pointer, CRLF: global byte, _sc_w: byte);
 	begin
@@ -377,21 +389,27 @@ var
 		// Get the length of the string
 		i:=str_len(in_str);
 
+		// padding should be half of width minus string length
+		max_digits:=(_sc_w-i)/2;
+			
 		// Is it worth padding?
-		if(i<39) then
+		if(max_digits>0 and i < 40) then
 		begin	
-			max_digits:=(_sc_w-i)/2;
 
 			// Add the padding
-			for i:=0 to max_digits do
-			begin
-				put_ch(32);
-			end;
+			print_space(max_digits);
 			
+			// print the string
+			print_string(in_str, CRLF);	
+
+		end
+		else
+		begin
+			// print the string
+			print_string(in_str, CRLF);	
 		end;
 		
-		// Now print the string
-		print_string(in_str, CRLF);
+
 		
 	end;
 	
