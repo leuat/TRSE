@@ -165,7 +165,7 @@
 		call(OSWRCH);
 	end;	
 
-	procedure print_string(in_str: pointer, CRLF: byte = True);
+	procedure print_string(in_str: global pointer, CRLF: global byte);
 	var
 	  	ch: 		byte;
 	  	next_ch:	byte;
