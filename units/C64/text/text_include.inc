@@ -11,7 +11,6 @@
 
 	procedure DefineScreen();
 	var
-		temp_c_p: pointer;
 		y:byte;
 	begin
 
@@ -20,8 +19,14 @@
 			return;
 		end;
 
-		temp_address_p:=1024;
+		// Where is screen ram right now?
+		if(temp_address_p=0) then 
+		begin
+			// Custom
+			temp_address_p:=$400;
+		end;
 
+		// Fill the lookup table with screen positions		
 		fori y:= 0 to 24 do
 		begin
 			fillfast(temp_address_p,32,40);
@@ -29,14 +34,8 @@
 			temp_address_p:=temp_address_p+40;					
 		end;
 
-		temp_c_p:=$D800;
-		fill(temp_c_p,0,255);
-		temp_c_p:=temp_c_p+255;
-		fill(temp_c_p,0,255);
-		temp_c_p:=temp_c_p+255;
-		fill(temp_c_p,0,255);
-		temp_c_p:=temp_c_p+255;
-		fill(temp_c_p,0,255);
+		// Fill colour white
+		ClearScreen(1, ^$D800); 
 		
 	end;
 
