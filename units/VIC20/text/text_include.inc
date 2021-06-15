@@ -11,26 +11,29 @@
 
 	procedure DefineScreen();
 	var
-		temp_c_p: pointer;
-		y:byte;
-	begin
+	
 
-		temp_c_p:=$9600;
-		fill(temp_c_p,0,253);
-		temp_c_p:=$9600+253;
-		fill(temp_c_p,0,253);
+	begin
 
 		if(ytab[0]<>0) then
 		begin
 			return;
 		end;
 
-		temp_address_p:=$1E00;
+		if(temp_address_p=0) then
+		begin 
+			temp_address_p:=$1E00;
+			ClearScreen(1, ^$9600);
+		end
+		else
+		begin
+			ClearScreen(1, ^$9400);
+		end;
 
-		fori y:= 0 to 23 do
+		fori i:= 0 to 23 do
 		begin
 			fillfast(temp_address_p,32,22);
-			ytab[y]:=temp_address_p;
+			ytab[i]:=temp_address_p;
 			temp_address_p:=temp_address_p+22;					
 		end;
 
