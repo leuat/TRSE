@@ -1,7 +1,26 @@
 Unit Console;
 var
+	i:integer;
 	text_clearscreen : string ="\033[2J\033[H";
+	sizex, sizey : long;
+	w : array[4] of integer = (0,0,0,0);
+
+
+function Read():integer;
+begin
+	asm("
+		mov X0, #0     // 1 = StdOut
+       	adrp x1, Console_i@PAGE // string to print
+ 	    add x1, x1,  Console_i@PAGEOFF
+ 	    mov x2,#1
+        mov X16, #3     // MacOS write system call
+        svc 0     // Call linux to output the string
+	");
+	Read := i;
 	
+end;
+
+
 
 
 procedure PrintChar(c:integer);
@@ -55,6 +74,55 @@ begin
 	Print(#text_clearscreen);
 end;	
 	
+
+procedure GetWindowSize();
+begin
+	asm("
+	adrp	x8, Console_w@GOTPAGE
+	ldr	x8, [x8, Console_w@GOTPAGEOFF]
+	mov	w9, #0
+	stur	wzr, [x29, #-4]
+	mov	x0, x9
+	mov	x1, #29800
+	movk	x1, #16392, lsl #16
+	mov	x10, sp
+	str	x8, [x10]
+	str	x8, [sp, #16]           ; 8-byte Folded Spill
+	str	w9, [sp, #12]           ; 4-byte Folded Spill
+	bl	_ioctl
+	ldr	w8, [sp, #8]            ; 4-byte Folded Reload
+	mov	x0, x8
+	ldp	x29, x30, [sp, #16]     ; 16-byte Folded Reload
+	add	sp, sp, #32             ; =32
+
+
+
+	adrp	x0, Console_w@GOTPAGE
+	ldr	x0, [x0, Console_w@GOTPAGEOFF]
+	
+	adrp	x1, Console_sizex@GOTPAGE
+	ldr	x1, [x1, Console_sizex@GOTPAGEOFF]
+	
+	ldrh w2,[x0]
+	str w2,[x1]
+	
+	
+	adrp	x0, Console_@GOTPAGE
+	ldr	x0, [x0, Console_@GOTPAGEOFF]
+	add x0,x0,2
+	
+	adrp	x1, Console_sizey@GOTPAGE
+	ldr	x1, [x1, Console_sizey@GOTPAGEOFF]
+	
+	ldrh w2,[x0]
+	str w2,[x1]
+
+
+
+    ");
+end;
+
+
 	
 	
 end.

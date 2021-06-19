@@ -794,21 +794,21 @@ void CodeGenARM::BuildToCmp(QSharedPointer<Node> node)
         }
     }*/
     QString ax = getReg();
-    QString bx = "b"+ QString(ax[1]);
     node->m_left->Accept(this);
+
     as->Term();
-    if (node->m_right->isPure()) {
+    if (node->m_right->isPureNumeric()) {
         as->Asm("cmp  "+ax+", " + getARMValue(as,node->m_right));
         return;
 
     }
     as->Comment("Evaluate full expression");
-    as->Asm("push ax");
+    QString bx = PushReg();
     node->m_right->Accept(this);
     as->Term();
-    as->Asm("pop bx");
 
     as->Asm("cmp "+ax+","+bx);
+    PopReg();
 
 
 }

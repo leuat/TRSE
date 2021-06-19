@@ -121,13 +121,10 @@ void C64FullScreenChar::Clear()
 
 void C64FullScreenChar::ImportBin(QFile &f)
 {
-/*    m_rawData = f.read(1000);
-    m_rawColors = f.read(1000);
-    // Shift down
-    for (int i=0;i<m_rawColors.count();i++)
-        m_rawColors[i] = m_rawColors[i] - 8;
-//    FromRaw(m_rawData);
-*/
+    C64Screen* s = (C64Screen*)m_items[m_current];
+    s->m_rawData = f.read(1000);
+    s->m_rawColors = f.read(1000);
+
 }
 
 void C64FullScreenChar::ExportBin(QFile &f)

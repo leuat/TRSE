@@ -7,9 +7,9 @@ AsmARM::AsmARM()
 {
     m_hash = "";
     byte=".byte";
-    word=".word";
+    word=".hword";
     llong =".word";
-    ppointer =".word";
+    ppointer =".dword";
     //m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserX86());
     m_ignoreInitialJump = true;
 
@@ -125,7 +125,7 @@ void AsmARM::DeclareArray(QString name, QString type, int count, QStringList dat
 
         Write(name+":" +"\t array " + t + "\t "+QString::number(count),0);
   */
-        Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
+        Write(name+":" +"\t skip "+QString::number(count),0);
 
     }
     else {
