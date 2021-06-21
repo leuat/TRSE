@@ -1028,7 +1028,7 @@ void Asm6502::OptimisePassLdaTax(QString x)
                 QString l2 = getNextLine(j,n);
                 k=j;
                 QString op = getToken(l1,0);
-                if (op==("ta"+x)) {
+                if (op==("ta"+x) && !l1.contains(";keep")) {
                     bool perform=true;
                     QString tst = getToken(l2,0);
                     if (tst.startsWith("ta") || tst=="sta")
