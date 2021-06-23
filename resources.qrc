@@ -608,7 +608,7 @@
         <file>resources/code/Z80/init.s</file>
         <file>resources/images/amiga_intro.png</file>
         <file>resources/text/opcodes_z80.txt</file>
-        <file>resources/images/tutorials/olimp.jpg</file>
+        <file>resources/images/tutorials/olimp.png</file>
         <file>resources/bin/bootsect.bin</file>
         <file>resources/images/crossplatform.png</file>
         <file>resources/code/fjong_template.fjo</file>
