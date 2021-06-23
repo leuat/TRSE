@@ -1,4 +1,4 @@
-# Olimp #
+# Olimp - Zeus LT I/O Control #
 
 This is a control program for [Zeus LT](http://www.retroshop.biz/product/zeus-lt/) module for Commodore 64. Original module was made back in 1990 by Željko Stevanović, and it was an open-source project published in Yugoslav computer magazine **Svet Kompjutera** (Computer World).
 In short, it is an input/output interface that has up to 32 0-5V digital inputs and up to 32 220V digital outputs that are mapped inside 6502 I/O space at addresses $DE00-$DE03.
@@ -45,7 +45,7 @@ Program supports up to 26 sequences (named a-z), each sequence can have up to 26
     2.  F3 - Stops sequence execution/manual mode/edit mode
     3.  F5 - Edit sequences
     4.  F7 - Manual setting of outputs with a-p and A-P
-    5.  F8 - Help (not yet implemented)
+    5.  F8 - Help
 5.  Sequences
     1.  First column is sequence name a-z
     2.  Each sequence has 3 lines, first one shows commands, while other
@@ -63,10 +63,10 @@ And another one from version 1.1:
 ## Execution of sequences ##
 
 Each sequence can be set to be cyclic, which means that program will run it constantly.
-Commands in non‑cyclic sequences can be called or jumped to.
-When executing sequences, program runs through all of cyclic ones and executes their commands, and then repeats the process.
-If some command requires the sequence to wait (for example, waiting for timer to expire, or waiting for some input to become 0 or 1), program goes to the next cyclic sequence.
-Execution of sequence finishes either after its last command is executed (index z) or if finish sequence command is encountered.
+Commands in non‑cyclic sequences can only be called or jumped to.
+When executing sequences, Olimp runs through all of cyclic ones and executes their commands, and then repeats the process.
+If some command requires the sequence to wait (for example, waiting for timer to expire, or waiting for some input to become 0 or 1), execution goes to the next cyclic sequence.
+Execution of sequence finishes either after its last command is executed (step z) or if finish sequence command is encountered.
 
 ## Inputs, outputs, constants, variables, counters ##
 
@@ -78,12 +78,12 @@ Supported **constants** include **0** and **1** that can be, for example, writte
 There are 8 1‑bit **variables**, marked with digits **2‑9**.
 They are common for all sequences and can be used to communicate between them.
 
-There is also 8 8‑bit counters named **s‑z**.
+There is also 8 8‑bit counters named **s‑z**, also common for all sequences.
 They can be set to some 8‑bit value and can be decreased until **0** is reached.
 
 ## Sequence editor ##
 
-Sequence editor is entered by pressing **F3**.
+Sequence editor is entered by pressing **F5**.
 After that, cursor appears, and can be moved using cursor keys.
 Placing cursor over command line in a sequence allows you to enter a new command in that position.
 
@@ -105,6 +105,16 @@ This is indicated by arrows at Outputs display.
 Pressing **F1** while running sequences stops reading of the inputs and allows you to set the inputs manually.
 This is indicated by arrows at Inputs display and can be used to test the sequence execution without waiting for real inputs.
 Pressing the **F1** again returns to normal state of execution.
+
+## Disk operations ##
+
+On this screen you can save or load a sequence, or you can display current directory.
+After pressing **F1** or **F3**, you can enter the file name, up to 12 characters (letters, numbers and space).
+You can use **DEL** to delete last character, and **RUN/STOP** to cancel loading or saving.
+
+Drive number can be selected with **+**/**-** keys.
+
+All Olimp files are saved with **.OLI** extension and only those files are displayed when listing a directory.
 
 ## Commands ##
 
@@ -154,29 +164,29 @@ This is a 3-character command where first character is **@** and second and thir
 
 **@32** - sequence is stopped for **50** 1/10 seconds (5 seconds)
 
-### Jump to another command ###
+### Jump to another step ###
 
-This is a 2-character command where first character is **\#** and second is step to jump to **a‑z**.
+This is a 3-character command where first character is **\#**, second is step to jump to **a‑z**, and third is sequence to jump to **a‑z**. When entering this command, third parameter is automatically filled with current sequence.
 
-**\#b** - jump to step **b**
+**#nb** - jump to sequence **b**, step **n**
 
-### Jump to another sequence ###
-
-This is a 3-character command where first character is **!**, second is sequence to jump to **a‑z** and third is step in that sequence to jump to **a‑z**.
-
-**!bn** - jump to sequence **b**, step **n**
-
-**!az** - jump to sequence **a**, step **z**
+**#za** - jump to sequence **a**, step **z**
 
 Be aware that this can skip execution of some sequences, for example if you jump from sequence **a** to sequence **d** and then finish execution, next sequence to be executed will be **e**, and sequences **b** and **c** would not run even if they are set to be cyclic.
 
-### Call another sequence ###
+### Copy counter to another one ###
 
-This is a 3-character command where first character is **+**, second is sequence to jump to **a‑z** and third is step in that sequence to jump to **a‑z**.
+This is a 3-character command where first character is **!**, second is copy-from counter **s‑z** and third is is copy-to counter **s‑z**.
 
-**+bn** - calls sequence **b**, step **n**
+**!sz** - copy value of counter **s** to counter **z**
 
-**+az** - calls sequence **a**, step **z**
+### Call sub-sequence ###
+
+This is a 3-character command where first character is **+**, second is step to jump to **a‑z** and third is sequence to jump to **a‑z**.
+
+**+nb** - calls sequence **b**, step **n**
+
+**+za** - calls sequence **a**, step **z**
 
 Be aware that there is a 16‑position stack that holds return positions (command right after the call) for these calls and that program could crash if there is a mismatch between number of calls and returns from call.
 
@@ -352,48 +362,97 @@ If input **a** became **0**, go back to step **a**, otherwise set output **b** t
 
 * Olimp.prg - Compiled code
 
+* Olimp_v1.4.d64 - Olimp program and one sequence example
+
 * cursor.flf - Cursor sprite
 
 * font.flf - Charset
 
-* logo.png - Program logo by Tamara Milutinović
+* main_screen.prg - Main screen in binary format (Krissz's PETSCII Editor)
 
-* main_screen.bin - Main screen in binary format
+* disk_screen.prg - Disk screen in binary format (Krissz's PETSCII Editor)
 
-* pica.64c - Original font used for characters
-
-* 64c2bin.py - Converts 64c font files to 2 bin files, for first and second 128 chars
-
-* krissz2bin.py - Extracts screen from prg file made in [http://petscii.krissz.hu](http://petscii.krissz.hu)
-
-* png2logo.py - Converts 8-bit gray PNG to C64 font
+* help_N.prg - Help screens in binary format (Krissz's PETSCII Editor)
 
 * gpl.txt - Licence information
 
+* Docs
+
+    * Manual.pdf, Manual.odt - User manual
+    
+    * Manual.svg - Olimp main screen with numbers
+
+* Media
+
+    * logo.png - Program logo by Tamara Milutinović
+
+    * pica.64c - Original font used for characters
+
+* Tools
+
+    * 64c2bin.py - Converts 64c font files to 2 bin files, for first and second 128 chars
+
+    * krissz2bin.py - Extracts screen from prg file made in [http://petscii.krissz.hu](http://petscii.krissz.hu) and converts it to bin file
+
+    * krissz2flf.py - Extracts screen from prg file made in [http://petscii.krissz.hu](http://petscii.krissz.hu) and converts it to TRSE FLF file
+
+    * png2logo.py - Converts 8-bit gray PNG to C64 font
+
 ## Compiling ##
 
-To compile this code on your own, you'll need current nightly build of TRSE, or version 0.13 when it comes out.
+To compile this code on your own, you'll need TRSE version 0.13.
 
 ## Licence ##
 
 All code is licenced under GPL 3 or later. See gpl.txt for details.
 
-
 ## TODO ##
 
-* Implement load/save functionality
-
-* Implement remaining commands (**\[** and **\]** have empty functions)
-
-* Examine if it is possible to make a simple PWM for triac outputs
-
-* Implement in-program help (separate screens and mini help in main screen)
+* Make operations with I/O faster by setting the bits directly and printing the status of inputs/outpust as needed
 
 * Improve the code based on new TRSE developments
 
 * Squash all the bugs!
 
 ## History ##
+
+1.4 - 21.06.2021.
+
+* Added in-program help
+
+* Added screen for disk operations
+
+* Implemented saving and loading of sequences, added code for directory listing
+
+* Removed PWM code due to hardware not being sufficiently fast
+
+* Changed syntax of call command to match jump command
+
+* Added command to copy counter to another one, "!"
+
+* Implemented "[" and "]" commands
+
+* Fixed inset/delete in editor
+
+* Cyclic status set in editor is now preserved after sequences running
+
+1.3 - internal
+
+* Functionality of command for jumping into current sequence "#" was replaced with code to jump to any sequence (former "!" command).
+Current cequence is automatically filled as second parameter (as this would be the most common situation).
+
+* New command for setting the PWM on triac outputs is intoduced (it took the name of former command to jump to other sequence, "!")
+
+* CIA timer for interrupt is sped up to support PWM better.
+This also prompted the change in the interrupt routine to slow down key repeat of KERNAL's SCNKEY routine.
+
+* Fixed entering numbers 0-9
+
+1.2 - internal
+
+* Editing moves forward automatically for newely entered commands
+
+* Moving cursor left/right moved to separate functions
 
 1.1 - 17.04.2021.
 
