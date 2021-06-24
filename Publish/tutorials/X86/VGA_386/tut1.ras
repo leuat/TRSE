@@ -5,7 +5,7 @@ program Adlib;
 var  
 	song: incbin("music/song1.trt");
 	p:pointer of integer;
-	
+	p2:pointer of byte;
 interrupt Raster();
 begin
 	startirq();
@@ -14,6 +14,8 @@ begin
 end;
 
 begin
+	p2:=ptr($B800,0);
+	p2[0]:=65;	
 	AdlibPlayer::Initialize(#song);
 	// Set timer raster interrupt to point to Raster()
 	SetInterrupt($8,Raster());	
