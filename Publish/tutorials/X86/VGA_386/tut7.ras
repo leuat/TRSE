@@ -44,9 +44,7 @@ begin
 		y2 := mod(Random::Random(),width)+sy;
 		
 		Gfx::DrawLine(x1,y1,x2,y2, color, ptr(Screen::VGA,0)); // Draw directly to the screen
-		color+=1;
 		if (time&63=0) then shift+=1;
 		time+=1;
-		
 	end;
 end.

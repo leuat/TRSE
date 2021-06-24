@@ -37,6 +37,14 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("VGAclearScreen32")) {
         ClearScreen(as,32);
     }
+
+    if (Command("loop")) {
+        QString lbl = as->NewLabel("loop");
+        as->Label(lbl);
+        as->Asm("jmp "+lbl);
+        as->PopLabel("loop");
+    }
+
     if (Command("inc"))
         IncDec(as, "inc");
 
