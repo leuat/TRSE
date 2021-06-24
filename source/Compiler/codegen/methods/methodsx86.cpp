@@ -263,6 +263,16 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
        LoadVar(as,1);
        as->Asm(" rep stosw");
     }
+    if (Command("fill") || Command("fillword")) {
+       LoadAddress(as,0,false);
+       disp->PushX();
+       disp->PushX();
+       LoadVar(as,2);
+       disp->PopX();
+       disp->PopX();
+       LoadVar(as,1);
+       as->Asm(" rep stosb");
+    }
     if (Command("ReadKey")) {
         as->Asm(" mov ah, 0h");
         as->Asm(" int 0x16");
