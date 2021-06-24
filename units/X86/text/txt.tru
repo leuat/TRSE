@@ -1,9 +1,9 @@
 unit txt;
 @use "system/screen"
 var
-	i:byte;
+	i,y:byte;
 	CH:byte;
-	temp_address_p: integer=0;
+	temp_address_p: pointer of byte;
 	
 	Active_Page_Number:integer;
 	
@@ -55,6 +55,22 @@ var
 	procedure DefineScreen();
     begin
 	    Screen::SetMode($01);
+	    
+	    if(ytab[0]<>0) then
+		begin
+			return;
+		end;
+
+		temp_address_p:=ptr($B800,0);
+
+		// Fill the lookup table with screen positions		
+		fori y:= 0 to 24 do
+		begin
+			ytab[y]:=ptr(temp_address_p,0);
+			temp_address_p:=temp_address_p+40;					
+		end;
+	    
+
     end;
     
     
@@ -213,12 +229,11 @@ var
 	
 	**/
     procedure put_char_at(_atx,_aty,_atchar:byte);
+ 	    
     begin
 	    
-		get_cursor_position();	    
-	    move_to(_atx,_aty);
-	    put_ch(_atchar);
-	    move_to(o_cx,o_cy);
+		temp_address_p:=ptr($B800,_aty*80);
+		temp_address_p[_atx*2]:=_atchar;
 	    
     end;
 
@@ -251,20 +266,10 @@ var
 	**/
     function get_char_at(_col,_row:byte):byte;
     begin
-	    get_cursor_position();
-	    move_to(_col,_row);
-	    
-	    // Get the character at location
-	    _AH:=$8;
-	    _BH:=0;
-	 
-	    asm("
-	    	int $10
-	    	mov [txt_CH],AL
-	    ");
-	    
-	    // restore cursor position
-   	    move_to(o_cx,o_cy);
+
+		temp_address_p:=ptr($B800,0);
+		temp_address_p+=(_row*80);
+		CH:=temp_address_p[_col*2];
 	    
 	    // return the character
 	    get_char_at:=CH;
