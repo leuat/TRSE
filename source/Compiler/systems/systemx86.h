@@ -31,6 +31,14 @@ public:
         m_hasVariableColorPalette = true;
         m_allowClasses = true;
         m_allowedBaseTypes<<"LONG";
+
+        m_renameVariables << "ax" <<"bx"<<"cx"<<"dx";
+        m_renameVariables << "ah" <<"bh"<<"ch"<<"dh";
+        m_renameVariables << "al" <<"bl"<<"cl"<<"dl";
+        m_renameVariables << "es"<<"ds"<<"si"<<"di";
+
+
+
     }
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
