@@ -55,3 +55,4 @@ data_header_images/trse.flf = 0
 show_all_files = 1
 open_files = ,tutorial1.ras
 project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/tutorials/
+current_file = tutorial1.ras

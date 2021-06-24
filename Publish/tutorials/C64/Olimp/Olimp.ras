@@ -5,7 +5,7 @@ var
  **********************************************************/
 
     const VersionMajor : byte = 1;
-    const VersionMinor : byte = 1;
+    const VersionMinor : byte = 4;
 	VersionString : array[4] of byte = ($16, VersionMajor+$30, $2E, VersionMinor + $30);
 
  /*********************************************************
@@ -18,6 +18,7 @@ var
 	const stateStop : byte = 3;
 	const stateEdit : byte = 4;
 	const stateHelp : byte = 5;
+	const stateDisk : byte = 6;
 	mainState : byte = stateStop;
 
 	// screen and color addresses
@@ -26,13 +27,31 @@ var
 
 	// main screen
 	@define MemMainScreen $4000
-	VarMainScreen : IncBin("main_screen.bin", @MemMainScreen);
+	//VarMainScreen : IncBin("main_screen.bin", @MemMainScreen);
+	VarMainScreen : IncBin("main_screen.prg", @MemMainScreen, $2001, 1000);
+	VarMainScreenC : IncBin("main_screen.prg", @MemMainScreen+1000, $2001+1000, 1000);
+
+	@define MemDiskScreen $4800
+	VarDiskScreen : IncBin("disk_screen.prg", @MemDiskScreen, $2001, 1000);
+	VarDiskScreenC : IncBin("disk_screen.prg", @MemDiskScreen+1000, $2001+1000, 1000);
+
+	@define MemHelp1Screen $6000
+	VarHelp1Screen : IncBin("help_1.prg", @MemHelp1Screen, $2001, 1000);
+	VarHelp1ScreenC : IncBin("help_1.prg", @MemHelp1Screen+1000, $2001+1000, 1000);
+	@define MemHelp2Screen $6800
+	VarHelp2Screen : IncBin("help_2.prg", @MemHelp2Screen, $2001, 1000);
+	VarHelp2ScreenC : IncBin("help_2.prg", @MemHelp2Screen+1000, $2001+1000, 1000);
+	@define MemHelp3Screen $7000
+	VarHelp3Screen : IncBin("help_3.prg", @MemHelp3Screen, $2001, 1000);
+	VarHelp3ScreenC : IncBin("help_3.prg", @MemHelp3Screen+1000, $2001+1000, 1000);
+	@define MemHelp4Screen $7800
+	VarHelp4Screen : IncBin("help_4.prg", @MemHelp4Screen, $2001, 1000);
+	VarHelp4ScreenC : IncBin("help_4.prg", @MemHelp4Screen+1000, $2001+1000, 1000);
 
 	// charset
 	@export "font.flf" "font.bin" 256
 	@define MemCharset1 $3000
 	VarCharset1 : IncBin("font.bin", @MemCharset1);
-
 
 	// sprite for sequence editing
 	@export "cursor.flf" "cursor.bin" 1
@@ -74,19 +93,15 @@ var
 	@define IOInputs $DE00 // $00A1 //$DE00
 	@define IOOutputs $DE00
 
-	// default CIA #1 timer fires 60 times a second
-	// sequence timers needs updating 10 times a second
-	const TimerWait : byte = 6;
-
 	// max number of sequences and commands in sequence	
 	const SequencesNo : byte = 26;	// number of sequences
 	const CommandsNo : byte = 26;	// number of commands in a sequence
 	
 	// arrays for all sequences
-	memSeqCommand : array[CommandsNo*SequencesNo] of byte at $5000; //= (0);	// command
-	memSeqData : array[CommandsNo*SequencesNo] of byte at $5300; //= (0);		// first argument
-	memSeqData2 : array[CommandsNo*SequencesNo] of byte at $5600; //= (0);	// second argument
-	memSeqData3 : array[CommandsNo*SequencesNo] of byte at $5900; //= (0);	// helper for 0-$FF hex values
+	memSeqCommand : array[CommandsNo*SequencesNo] of byte at $5000 + 0*26*26; //= (0);	// command
+	memSeqData : array[CommandsNo*SequencesNo] of byte at    $5000 + 1*26*26; //= (0);		// first argument
+	memSeqData2 : array[CommandsNo*SequencesNo] of byte at   $5000 + 2*26*26; //= (0);	// second argument
+	memSeqData3 : array[CommandsNo*SequencesNo] of byte at   $5000 + 3*26*26; //= (0);	// helper for 0-$FF hex values
 	// pointers for sequence arrays
 	seqCommand : pointer;
 	seqData : pointer;
@@ -95,18 +110,33 @@ var
 
 	// sequences data
 	seqCnt : array[SequencesNo] of byte at $0400+14+8*40;		// sequence counters (used for wait commands)
-	seqCyclic : array[SequencesNo] of byte = (0);				// is sequence cyclic
+	seqCyclic : array[SequencesNo] of byte at $5000 + 4*26*26; //= (0);				// is sequence cyclic
 	seqTimerStarted : array[SequencesNo] of byte = (0);		// is timer started for the sequence
 	seqTimer : array[SequencesNo] of byte = (0);				// timers for each sequence
+
+	seqCyclicBak : array[SequencesNo] of byte;
+
 
 	// interrupt variables
 	seqTimerCnt : byte;		// timer counter used by interrupt routine
 	TimerWaitCnt : byte;		// wait counter used by interrupt routine
+	// default CIA #1 timer fires 240 times a second
+	// sequence timers needs updating 10 times a second
+	const TimerWait : byte = 24;
 /*
-	// pwm testing
-	pwmValue : byte = 1;		// pwm value 0-5
+	// additional delays to compensate KERNAL key repeat
+	delayFlag1 : byte = 0;
+	delayFlag2 : byte = 0;
+
+
+	// pwm outputs - left just for some future hardware update
+	@define pwmCounterMax 9	// max value for pwm
 	pwmCounter : byte = 1;	// incremented by 1 on every interrupt
-	@define pwmCounterMax 5	// max value for pwm
+	pwmIndex : byte = 0;		// index used in timer interrupt
+	
+	@define pwmMaxOutputs 8	// max number of pwm outputs
+	pwmOutputs : array[@pwmMaxOutputs] of byte = (0);	@donotremove pwmOutputs	// pwm outputs [a-pA-P]
+	pwmValues : array[@pwmMaxOutputs] of byte = (0);	@donotremove pwmValues	// pwm values [0-9]
 */
 	// masks used for inputs and outputs
 	IOMasks : array[8] of byte = BuildTable("1<<i");		
@@ -157,6 +187,7 @@ var
 	editPhase : byte;					// do we edit command (0), first (1) or second (2) paremeter
 	const seqBadValue : byte = $3F;		// value used during command editing to indicate that argument isn't defined
 	editBadValues : byte = 0; 			// do we have bad values in sequences
+	editNextElement : byte = 0;			// do we auto-move to next eleemnt to edit
 	// used for displaying current cursor position in index pane
 	editXPos : array[CommandsNo] of byte at $D800 + 14 + 11*40;
 		
@@ -173,18 +204,33 @@ var
 	//                                                *   /   @   #   !   +   -   $   ?   %   <   >   &   =   ^  LEF PND  :   [   ]
 	//                                                80  81  82  83  84  85  86  87  88  89  8A  8B  8C  8D  8E  8F  90  91  92  93
 	commandsChars : array[commandsNumber] of byte = ($2A,$2F,$00,$23,$21,$2B,$2D,$24,$63,$25,$3C,$3E,$26,$3D,$1E,$1F,$1C,$3A,$5B,$5D);	// screen codes
-	commandsArgs  : array[commandsNumber] of byte = ($01,$01,$22,$03,$03,$03,$00,$00,$34,$34,$05,$05,$88,$88,$88,$22,$63,$37,$07,$07); 	// type of first (0-3) and second (4-7) argument
+	commandsArgs  : array[commandsNumber] of byte = ($01,$01,$22,$33,$77,$33,$00,$00,$34,$34,$05,$05,$88,$88,$88,$22,$63,$37,$07,$07); 	// type of first (0-3) and second (4-7) argument
 	// $0 no argument
-	// $1 [a-pA-P] * /	input
-	// $2 [hex][hex] @ left hex value
-	// $3 [a-z] # ! + step/sequence
-	// $4 [a-pA-P2-9] ? % input/var
-	// $5 [1-4] >< input group
-	// $6 [0-9] pound mode
-	// $7 [s-z] : [ ] counter
+	// $1 [a-pA-P] * /   input
+	// $2 [hex][hex] @ left   hex value
+	// $3 [a-z] # +   step/sequence
+	// $4 [a-pA-P2-9] ? %   input/var
+	// $5 [1-4] ><   input group
+	// $6 [0-9] pound   mode
+	// $7 [s-z] : [ ]   counter
 	// $8 [a-pA-P0-9] & ^ =
-	// $9 [a-pA-P0-9s-z] MOVE from, set counter
+	// $9 [a-pA-P0-9s-z] MOVE from, set counter   used as first char
 
+	fileName : string = ("@0:            .OLI"); @donotremove fileName
+	const filenameXPos : byte = 10;
+	const filenameYPos : byte = 3;
+	const driveXPos : byte = 36;
+	fileNameChars : byte = 0;
+	dirName : string = ("$0:????????????.OLI"); @donotremove dirName
+	fileStart : byte at $5000; @donotremove fileStart
+	fileEnd : byte at $5000 + 4*26*26 + 27;  @donotremove fileEnd
+	
+	currentHelpScr : byte = 0;
+	previousState : byte;
+	nameCursorX : byte;
+
+	driveNumber : byte at $00BA;
+	currentDrive : byte;
 
  /*********************************************************
 				Physical inputs and outputs
@@ -198,6 +244,7 @@ begin
 	readInpscr := 0;
 	for readInpi := 0 to 4 do begin
 		readInpval := peek(^@IOInputs,readInpi);
+		// readInpval := IOInputsRun[readInpi]; // IRQ I/O ATTEMPT
 		for readInpj := 0 to 8 do begin
 			if readInpval & IOMasks[readInpj] then begin
 				inputs[readInpk] := 1;
@@ -303,6 +350,167 @@ begin
 	seqData3 := #memSeqData3 + runStart;
 end;
 
+// helper for saving a block of memory
+// adapted from https://codebase64.org/doku.php?id=base:loading_a_file
+procedure saveSequences();
+begin
+	asm("
+        lda #19 			 ; #filename_end-filename
+        ldx #<fileName
+        ldy #>fileName
+        jsr $FFBD         ; SETNAM. Set file name parameters.
+        lda #$00
+        ldx $BA           ; current device number
+        bne .saveSkip     ; if <> 0 is present
+        ldx #$08          ; if 0 select device
+.saveSkip
+        ldy #$01          ; second address
+        jsr $FFBA         ; SETLFS. Set file parameters.
+        lda #<fileStart
+        sta $C1           ; low byte start address for LOAD / SAVE (*)
+        lda #>fileStart
+        sta $C2           ; hig byte start address for LOAD / SAVE
+        ldx #<fileEnd     ; low byte end address
+        ldy #>fileEnd     ; hig byte end address
+        lda #$C1          ; Address (*) of zero page register holding start address of memory area to save
+        jsr $FFD8         ;SAVE. Save file
+        bcs .saveError
+        lda #$00
+        sta $d020
+        rts
+.saveError
+        lda #$02
+        sta $d020
+        rts
+	");
+end;
+
+// helper for loading a block of memory
+// adapted from https://codebase64.org/doku.php?id=base:saving_a_file
+procedure loadSequences();
+begin
+	asm("
+        lda #19       ;#fname_end-fname
+        ldx #<fileName
+        ldy #>fileName
+        jsr $FFBD     ; call SETNAM
+        lda #$01
+        ldx $BA       ; last used device number
+        bne .loadSskip
+        ldx #$08      ; default to device 8
+.loadSskip
+        ldy #$01      ; not $01 means: load to address stored in file
+        jsr $FFBA     ; call SETLFS
+
+        lda #$00      ; $00 means: load to memory (not verify)
+        jsr $FFD5     ; call LOAD
+        bcs .loadError; if carry set, a load error has happened
+        lda #$00
+        sta $d020
+        rts
+.loadError
+        ; Accumulator contains BASIC error code
+
+        ; most likely errors:
+        ; A = $05 (DEVICE NOT PRESENT)
+        ; A = $04 (FILE NOT FOUND)
+        ; A = $1D (LOAD ERROR)
+        ; A = $00 (BREAK, RUN/STOP has been pressed during loading)
+
+        ; ... error handling ...
+        lda #$02
+        sta $d020
+        rts
+
+flashload
+       inc $d020
+       dec $d020
+       jmp $f6fe	
+	");
+end;
+
+
+procedure findFirstDrive();
+begin
+	asm("
+        ldx #0		; check current drive in $BA
+        stx $90
+        jsr $FFB1
+        lda #$FF
+        jsr $FF93
+        lda $90
+        bpl ffdrv2
+        lda #8		; $BA isn't good, search
+        sta $BA
+ffdrv1: ldx #0
+        stx $90
+        jsr $FFB1
+        lda #$FF
+        jsr $FF93
+        lda $90
+        bpl ffdrv2
+        jsr $FFAE
+        inc $BA
+        lda $BA
+        cmp #31
+        bne ffdrv1
+        lda #8          // if not found, set 08
+        sta $BA
+ffdrv2: jsr $FFAE
+		lda $BA
+		sta currentDrive
+        rts
+	");
+end;
+
+procedure listDir();
+begin
+	// taken from https://csdb.dk/forums/?roomid=11&topicid=17487
+	asm("
+		; position the cursor
+		ldy #$00 ;X pos for cursor
+		ldx #$05 ;Y pos for cursor
+		clc
+		jsr $FFF0
+		; display directory
+        ;jsr $E544      ;clear screen
+        lda #$19
+        ;lda #$01
+        ldx #<dirName
+        ldy #>dirName
+        jsr $FFBD      ; set filename
+        ;lda #$08
+        lda currentDrive
+        sta $BA        ; device #8
+        lda #$60
+        sta $B9        ; secondary chn
+        jsr $F3D5      ; open for serial bus devices
+        jsr $F219      ; set input device
+        ldy #$04
+labl1   jsr $EE13      ; input byte on serial bus
+        dey
+        bne labl1      ; get rid of Y bytes
+        lda $C6        ; key pressed?
+        ora $90        ; or EOF?
+        bne labl2      ; if yes exit
+        jsr $EE13      ; now get in AX the dimension
+        tax            ; of the file
+        jsr $EE13
+        jsr $BDCD      ; print number from AX
+labl3   jsr $EE13      ; now the filename
+        jsr $E716      ; put a character to screen
+        bne labl3      ; while not 0 encountered
+        jsr $AAD7      ; put a CR , end line
+        ldy #$02       ; set 2 bytes to skip
+        bne labl1      ; repeat
+labl2   jsr $F642      ; close serial bus device
+        jsr $F6F3      ; restore I/O devices to default
+;labl4   jsr $F142      ; w8 a key
+;        beq labl4
+;        rts
+	");
+end;
+
  /*********************************************************
 						Commands
  **********************************************************/
@@ -347,21 +555,53 @@ begin
 	end;
 end;
 
-// jumps to another step in current sequence
 @donotremove "cmdGoto"
 procedure cmdGoto();		//$83
-begin
-	runIndex := runDat & $1F;
-end;
-
-// jumps to step in another sequence
-@donotremove "cmdGotoSeq"
-procedure cmdGotoSeq();		//$84
 begin
 	runSeq := runDat & $1F;
 	runIndex := seqData2[runIndex] & $1F;
 	setSeqPointers();
 end;
+
+// copy one counter to another
+@donotremove "cmdCopyCounter"
+procedure cmdCopyCounter();		//$84
+begin
+	runK := runDat & $07;
+	runJ := seqData2[runIndex] & $07;
+	counters[runJ] := counters[runK];
+	Inc(runIndex);
+/*
+	// sets PWM for an output
+	// check not needed, moved to editor TODO: test this!!!
+	//if runDat & $04 <> 0 then begin 
+		runJ := $FF;
+		runK := $FF;
+		for runI := 0 to @pwmMaxOutputs do begin
+			if pwmOutputs[runI] = runDat then runJ := runI;
+			if pwmOutputs[runI] = 0 then runK := runI;
+		end;
+		if runJ <> $FF then begin
+			runK := seqData2[runIndex] - $30;
+			pwmValues[runJ] := runK;
+			if runK = 0 then begin
+				pwmOutputs[runJ] := 0;
+				outputs[runDat] := 0;
+			end;
+		end else begin
+			if runK <> $FF then begin
+				runJ := seqData2[runIndex] - $30;
+				if runJ <> 0 then begin
+					pwmOutputs[runK] := runDat;
+					pwmValues[runK] := runJ;
+				end;
+			end;
+		end;
+	//end;
+*/
+	Inc(runIndex);
+end;
+
 
 // calls step in another sequence
 @donotremove "cmdCall"
@@ -370,8 +610,8 @@ begin
 	runSStack[runStackTop] := runSeq;
 	runIStack[runStackTop] := runIndex + 1;
 	Inc(runStackTop);	// TODO: stack protection
-	runSeq := runDat & $1F;
-	runIndex := seqData2[runIndex] & $1F;
+	runSeq := seqData2[runIndex] & $1F;
+	runIndex := runDat & $1F;
 	setSeqPointers();
 end;
 
@@ -479,15 +719,13 @@ end;
 // sets all vars to hex value
 @donotremove "cmdSetVars"
 procedure cmdSetVars();	// $8F
-var i, j, k, val : byte;
 begin
-	//val := seqData2[runIndex];
-	val := GetHex();
-	for i := 0 to 8 do begin
-		if val & IOMasks[i] then
-			vars[i] := 1
+	runJ := GetHex();
+	for runI := 0 to 8 do begin
+		if runJ & IOMasks[runI] then
+			vars[runI] := 1
 		else
-			vars[i] := 0;
+			vars[runI] := 0;
 	end;
 	Inc(runIndex);
 end;
@@ -516,12 +754,27 @@ end;
 @donotremove "cmdCounter2Vars"
 procedure cmdCounter2Vars(); // $92
 begin
+	runJ := counters[runDat];
+	for runI := 0 to 8 do begin
+		if runJ & IOMasks[runI] then
+			vars[runI] := 1
+		else
+			vars[runI] := 0;
+	end;
+	Inc(runIndex);
 end;
 
 // copy vars to counter [s-z]
 @donotremove "cmdVars2Counter"
 procedure cmdVars2Counter(); // $93
 begin
+	runJ := 0;
+	for runI := 0 to 8 do begin
+		if vars[runI] = 1 then
+			runJ := runJ | IOMasks[runI];
+	end;
+	counters[runDat] := runJ;
+	Inc(runIndex);
 end;
 
 // pointers to command procedures
@@ -530,15 +783,15 @@ procedure cmdPointers();
 begin
 	asm("
 cmdPointersL 
-	dc.b <cmdWaitInput1, <cmdWaitInput0, <cmdWaitTime
-	dc.b <cmdGoto, <cmdGotoSeq, <cmdCall, <cmdReturn, <cmdFinishSeq
+	dc.b <cmdWaitInput1, <cmdWaitInput0, <cmdWaitTime, <cmdGoto
+	dc.b <cmdCopyCounter, <cmdCall, <cmdReturn, <cmdFinishSeq
 	dc.b <cmdIf1, <cmdIf0, <cmdInputs2Vars, <cmdVars2Inputs
 	dc.b <cmdAnd, <cmdOr, <cmdXor, <cmdSetVars, <cmdSetCyclic
 	dc.b <cmdDecCounter, <cmdCounter2Vars, <cmdVars2Counter
 
 cmdPointersH 
-	dc.b >cmdWaitInput1, >cmdWaitInput0, >cmdWaitTime
-	dc.b >cmdGoto, >cmdGotoSeq, >cmdCall, >cmdReturn, >cmdFinishSeq
+	dc.b >cmdWaitInput1, >cmdWaitInput0, >cmdWaitTime, >cmdGoto
+	dc.b >cmdCopyCounter, >cmdCall, >cmdReturn, >cmdFinishSeq
 	dc.b >cmdIf1, >cmdIf0, >cmdInputs2Vars, >cmdVars2Inputs
 	dc.b >cmdAnd, >cmdOr, >cmdXor, >cmdSetVars, >cmdSetCyclic
 	dc.b >cmdDecCounter, >cmdCounter2Vars, >cmdVars2Counter
@@ -605,65 +858,15 @@ begin
 end;
 
  /*********************************************************
-	   CIA interrupt that handles all sequence timers
- **********************************************************/
-
-// using default CIA #1 timer
-@donotremove "UpdateTimers"
-procedure UpdateTimers();
-begin
-/*
-	if pwmCounter <= pwmValue then
-		outputs[31] := 1
-	else
-		outputs[31] := 0;
-	Inc(pwmCounter);
-	if pwmCounter > @pwmCounterMax then
-		pwmCounter := 1;
-*/
-	if TimerWaitCnt <> 0 then
-		Dec(TimerWaitCnt)
-	else begin
-		TimerWaitCnt := TimerWait;
-		for seqTimerCnt := 0 to SequencesNo do begin
-			if seqTimer[seqTimerCnt] <> 0 then
-				Dec(seqTimer[seqTimerCnt]);
-		end;
-	end;
-	asm("	jmp $EA31");
-end;
-
- /*********************************************************
 			Screen drawing and user interaction
  **********************************************************/
 
 // drawing of main screen
 procedure MainScreen();
 begin
-	asm("
-		ldx #00
-MainScreenFill:
-		lda @MemMainScreen,x
-		sta @ScreenChr,x
-		lda @MemMainScreen+$100,x
-		sta @ScreenChr+$100,x
-		lda @MemMainScreen+$200,x
-		sta @ScreenChr+$200,x
-		lda @MemMainScreen+$300-24,x
-		sta @ScreenChr+$300-24,x
+	CopyFullScreen(^@MemMainScreen,^@ScreenChr);
+	CopyFullScreen(^@MemMainScreen+1000,^@ScreenCol);
 
-		lda @MemMainScreen+1000,x
-		sta @ScreenCol,x
-		lda @MemMainScreen+1000+$100,x
-		sta @ScreenCol+$100,x
-		lda @MemMainScreen+1000+$200,x
-		sta @ScreenCol+$200,x
-		lda @MemMainScreen+1000+$300-24,x
-		sta @ScreenCol+$300-24,x
-
-		inx
-		bne MainScreenFill
-	");
 	MoveTo(0, 5, hi(^@ScreenChr));
 	for runI := 0 to 4 do
 		screenmemory[runI] := VersionString[runI];
@@ -797,7 +1000,7 @@ begin
 				if keyPetscii <= $34 then keyDecoded := keyPetscii;				// 1-4 -> $31-$34
 			end;
 		// [0-9] sequence cyclic mode
-		6 : if keyPetscii >= $31 then begin
+		6 : if keyPetscii >= $30 then begin
 				if keyPetscii <= $39 then keyDecoded := keyPetscii;				// 0-9 -> $30-$39
 			end;
 		// [s-z] counter
@@ -903,6 +1106,9 @@ end;
 procedure stateRunProc();
 begin
 	for runK := 0 to 6 do statusLocation[runK] := statusStop[runK];
+	// save programmed cyclic status
+	for runK := 0 to SequencesNo do seqCyclicBak[runK] := seqCyclic[runK];
+	//for runK := 0 to @pwmMaxOutputs do pwmOutputs[runK] := 0;
 	if editBadValues then begin
 		mainState := stateEdit;
 		//setStatus(msgBadValues);
@@ -962,6 +1168,9 @@ begin
 	scrInputOutput[1] := $20;
 	scrInputOutput[10] := $20;
 	scrInputOutput[11] := $20;
+	previousState := stateRun;
+	// restore programmed cyclic status
+	for runK := 0 to SequencesNo do seqCyclic[runK] := seqCyclicBak[runK];
 end;
 
  /*********************************************************
@@ -987,9 +1196,18 @@ begin
 		else if keyPetscii = $85 then begin
 			mainState := stateRun;
 			break;
+		end
+		else if keyPetscii = $88 then begin
+			mainState := stateHelp;
+			break;
+		end
+		else if keyPetscii = $8C then begin
+			mainState := stateDisk;
+			break;
 		end;
 		WriteOutputs();
 	end;
+	previousState := stateManual;
 end;
 
  /*********************************************************
@@ -1000,31 +1218,55 @@ end;
 procedure stateStopProc();
 begin
 	for runK := 0 to 6 do statusLocation[runK] := statusStop[runK];
+	//for runK := 0 to @pwmMaxOutputs do pwmOutputs[runK] := 0;
 	while(1) do begin
 		ReadInputs();
 		ReadKey();
-		if keyPetscii = $85 then begin
+		if keyPetscii = $85 then begin		// F1
 			mainState := stateRun;
 			break;
 		end
-		else if keyPetscii = $87 then begin
+		else if keyPetscii = $87 then begin	// F5
 			mainState := stateEdit;
 			break;
 		end
-		else if keyPetscii = $88 then begin
+		else if keyPetscii = $88 then begin	// F7
+			mainState := stateHelp;
+			break;
+		end
+		else if keyPetscii = $8C then begin	// F8
+			mainState := stateDisk;
+			break;
+		end
+		else if keyPetscii = $89 then begin	// F2
 			mainState := stateManual;
 			break;
 		end
-		else if keyPetscii = $8C then begin
-			mainState := stateHelp;
-			break;
+		else if keyPetscii = $8A then begin	// F4
 		end;
 	end;
+	previousState := stateStop;
 end;
 
  /*********************************************************
 		   			Editing of sequences
  **********************************************************/
+
+// move cursor one position right
+procedure editCursorRight();
+begin
+	editXPos[editCursorX] := 5;
+	Inc(editCursorX);
+	if editCursorX > 25 then editCursorX := 0;
+end;
+
+// move cursor one position left
+procedure editCursorLeft();
+begin
+	editXPos[editCursorX] := 5;
+	Dec(editCursorX);
+	if editCursorX > 25 then editCursorX := 25;
+end;
 
 // move cursor one position down
 procedure editCursorDown();
@@ -1050,6 +1292,20 @@ begin
 	end;
 end;
 
+// move cursor to next command element
+procedure editCursorNext();
+begin
+	if editNextElement = 1 then begin
+		if seqData2[runIndex] = seqBadValue then
+			editCursorDown()
+		else editNextElement := 2;
+	end;
+	if editNextElement = 2 then begin
+		editCursorY := editCursorY - editPhase;
+		editCursorRight();
+	end;
+end;
+
 // insert empty command into a sequence
 procedure editInsert();
 begin
@@ -1067,21 +1323,18 @@ begin
 			seqData3[runK] := seqData3[runK-1];
 			// update jumps
 			runCmd := seqCommand[runK];
-			if (((runCmd = $83) or (runCmd = $88)) or ((runCmd = $89) or (runCmd = $91))) then begin
-				runCmd := runCmd & $7F;
-				if (commandsArgs[runCmd] & $0F) = $03 then begin
-					runI := seqData[runK] & $1F;
-					if runI >= editCursorX then begin
-						if runI < (CommandsNo-1) then
-							seqData[runK] := runI + $E1;
-					end;
+			if (((runCmd = $88) or (runCmd = $89)) or (runCmd = $91)) then begin
+				runI := seqData2[runK] & $1F;
+				if runI >= editCursorX then begin
+					if runI < (CommandsNo-1) then
+						seqData2[runK] += 1;
 				end;
-				if (commandsArgs[runCmd] >> 4) = $03 then begin
-					runI := seqData2[runK] & $1F;
-					if runI >= editCursorX then begin
-						if runI < (CommandsNo-1) then
-							seqData2[runK] := runI + $E1;
-					end;
+			end;
+			if ((runCmd = $83) or (runCmd = $85)) then begin
+				runI := seqData[runK] & $1F;
+				if runI >= editCursorX then begin
+					if runI < (CommandsNo-1) then
+						seqData[runK] += 1;
 				end;
 			end;
 			Dec(runJ);
@@ -1113,16 +1366,15 @@ begin
 		seqData3[runK] := seqData3[runK+1];
 		// update jumps
 		runCmd := seqCommand[runK];
-		if (((runCmd = $83) or (runCmd = $88)) or ((runCmd = $89) or (runCmd = $91))) then begin
-			runCmd := runCmd & $7F;
-			if (commandsArgs[runCmd] & $0F) = $03 then begin
-				runI := seqData[runK];
-				if runI >= editCursorX then seqData[runK] := runI - 1;
-			end;
-			if (commandsArgs[runCmd] >> 4) = $03 then begin
-				runI := seqData2[runK];
-				if runI >= editCursorX then seqData2[runK] := runI - 1;
-			end;
+		if (((runCmd = $88) or (runCmd = $89)) or (runCmd = $91)) then begin
+			runI := seqData2[runK] & $1F;
+			if runI >= editCursorX then
+				seqData2[runK] -= 1;
+		end;
+		if ((runCmd = $83) or (runCmd = $85)) then begin
+			runI := seqData[runK] & $1F;
+			if runI >= editCursorX then
+				seqData[runK] -= 1;
 		end;
 	end;
 	// last command becomes empty
@@ -1169,15 +1421,21 @@ begin
 			if  runI & $0F then begin
 				seqData[runIndex] := seqBadValue;
 				Inc(editBadValues);
+				editCursorDown();
 			end;
 			if  runI & $F0 then begin
-				seqData2[runIndex] := seqBadValue;
-				Inc(editBadValues);
+				if ((keyDecoded = $83) or (keyDecoded = $85)) then	// autofill current sequence for jump and call
+					seqData2[runIndex] := runSeq
+				else begin
+					seqData2[runIndex] := seqBadValue;
+					Inc(editBadValues);
+				end;
 			end;
 		// move value or set counter
 		end else begin
 			seqData[runIndex] := seqBadValue;
 			Inc(editBadValues);
+			editCursorDown();
 			if keyDecoded > $4F then begin
 				seqData2[runIndex] := seqBadValue;
 				Inc(editBadValues);
@@ -1196,22 +1454,34 @@ begin
 	if runCmd < $80 then begin
 		if runCmd > $4F then begin
 			if processKeyPress(2) <> $FF then begin
-				if seqData[runIndex] = seqBadValue then
+				if seqData[runIndex] = seqBadValue then begin
 					Dec(editBadValues);
+					editNextElement := 1;
+					editCursorNext();
+				end;
 				seqData[runIndex] := keyDecoded;
 			end;
 		end	else begin
 			if processKeyPress(4) <> $FF then begin
-				if seqData[runIndex] = seqBadValue then
+				if seqData[runIndex] = seqBadValue then begin
 					Dec(editBadValues);
+					editNextElement := 1;
+					editCursorNext();
+				end;
 				seqData[runIndex] := keyDecoded;
 			end;
 		end;
 	end else begin
 		if processKeyPress(commandsArgs[runCmd & $7F] & $0F) <> $FF then begin
-			if seqData[runIndex] = seqBadValue then
-				Dec(editBadValues);
-			seqData[runIndex] := keyDecoded;
+			// special case - check if PWM output is on [e-hm-pE-HM-P]
+			//if ((runCmd <> $84) or ((keyDecoded & $04) <> 0)) then begin
+				if seqData[runIndex] = seqBadValue then begin
+					Dec(editBadValues);
+					editNextElement := 1;
+					editCursorNext();
+				end;
+				seqData[runIndex] := keyDecoded;
+			//end;
 		end;
 	end;
 	// calculate value in case parameter 1 and 2 are hex number
@@ -1229,14 +1499,20 @@ begin
 	if runCmd < $40 then return;
 	if runCmd < $80 then begin
 		if processKeyPress(2) <> $FF then begin
-			if seqData2[runIndex] = seqBadValue then
+			if seqData2[runIndex] = seqBadValue then begin
 				Dec(editBadValues);
+				editNextElement := 2;
+				editCursorNext();
+			end;
 			seqData2[runIndex] := keyDecoded;
 		end;
 	end else begin
 		if processKeyPress(commandsArgs[runCmd & $7F] >> 4) <> $FF then begin
-			if seqData2[runIndex] = seqBadValue then
+			if seqData2[runIndex] = seqBadValue then begin
 				Dec(editBadValues);
+				editNextElement := 2;
+				editCursorNext();
+			end;
 			seqData2[runIndex] := keyDecoded;
 		end;
 	end;
@@ -1263,20 +1539,13 @@ begin
 		runSeq := runSeq + prSeq;
 		// moving around
 		case keyPetscii of
-			$85 : begin mainState := stateRun; break; end;
-			$86 : begin mainState := stateStop; break; end;
-			$88 : begin mainState := stateManual; break; end;
-			$8C : begin mainState := stateHelp; break; end;
-			crsrRight : begin
-				editXPos[editCursorX] := 5;
-				Inc(editCursorX);
-				if editCursorX > 25 then editCursorX := 0;
-			end;
-			crsrLeft : begin
-				editXPos[editCursorX] := 5;
-				Dec(editCursorX);
-				if editCursorX > 25 then editCursorX := 25;
-			end;
+			$85 : begin mainState := stateRun; break; end;		// F1
+			$86 : begin mainState := stateStop; break; end;		// F3
+			$88 : begin mainState := stateHelp; break; end;		// F7
+			$89 : begin mainState := stateManual; break; end;		// F2
+			$8C : begin mainState := stateDisk; break; end;		// F8
+			crsrRight : editCursorRight();
+			crsrLeft : editCursorLeft();
 			crsrDown : editCursorDown();
 			crsrUp : editCursorUp();
 			keyInsDel : editInsert();
@@ -1308,6 +1577,7 @@ begin
 	end;
 	editXPos[editCursorX] := 5;
 	SpritePos(0,0,0);
+	previousState := stateEdit;
 end;
 
  /*********************************************************
@@ -1316,7 +1586,308 @@ end;
 
 procedure stateHelpProc();
 begin
-	mainState := stateStop;
+	while(1) do begin
+		case currentHelpScr of
+			0: begin
+				CopyFullScreen(^@MemHelp1Screen,^@ScreenChr);
+				CopyFullScreen(^@MemHelp1Screen+1000,^@ScreenCol);
+			   end;
+			1: begin
+				CopyFullScreen(^@MemHelp2Screen,^@ScreenChr);
+				CopyFullScreen(^@MemHelp2Screen+1000,^@ScreenCol);
+			   end;
+			2: begin
+				CopyFullScreen(^@MemHelp3Screen,^@ScreenChr);
+				CopyFullScreen(^@MemHelp3Screen+1000,^@ScreenCol);
+			   end;
+			3: begin
+				CopyFullScreen(^@MemHelp4Screen,^@ScreenChr);
+				CopyFullScreen(^@MemHelp4Screen+1000,^@ScreenCol);
+			   end;
+		end;
+		ReadKey();
+		if keyPetscii = $11 then begin		// CRSR down
+			currentHelpScr -= 1;
+			if currentHelpScr >= 4 then currentHelpScr := 3;
+		end
+		else if keyPetscii = $1D then begin	// CRSR right
+			currentHelpScr += 1;
+			if currentHelpScr >= 4 then currentHelpScr := 0;
+		end
+		else if keyPetscii = $88 then begin	// F7
+			mainState := previousState;
+			break;
+		end
+	end;
+	previousState := stateHelp;
+	MainScreen();
+	PrintSequences();
+end;
+
+ /*********************************************************
+  			   			   Disk
+ **********************************************************/
+
+procedure enterNameAddChar();
+begin
+	if fileNameChars < 12 then begin
+		if ((keyPetscii >= $41) and (keyPetscii <= $5A)) then begin
+			keyScreen += $40;
+			//keyPetscii += $20;
+		end;
+		screenmemory[fileNameChars] := keyScreen;
+		fileName[fileNameChars+3] := keyPetscii;
+		fileNameChars += 1;
+	end;
+end;
+
+
+procedure enterName();
+begin
+	MoveTo(filenameXPos, filenameYPos, hi(^@ScreenChr));
+	while(1) do begin
+		sprite_x := (filenameXPos + fileNameChars)*8 + 23;
+		sprite_y := filenameYPos*8 + 49;
+		SpritePos(sprite_x, sprite_y, 0);
+		ReadKey();
+		if ((keyPetscii >= $41) and (keyPetscii <= $5A)) then enterNameAddChar()
+		else if ((keyPetscii >= $30) and (keyPetscii <= $39)) then enterNameAddChar()
+		else if (keyPetscii = $20) then enterNameAddChar()
+		else if keyPetscii = $14 then begin	// DEL
+		   if fileNameChars > 0 then begin
+			   fileNameChars -= 1;
+			   screenmemory[fileNameChars] := $20;
+			   fileName[fileNameChars+3] := $20;
+		   end;
+		end
+		else if ((keyPetscii = $0D) or (keyPetscii = $03)) then begin	// RETURN
+			break;
+		end;
+	end;
+	SpritePos(0,0,0);
+end;
+
+procedure diskPrintDrive();
+begin
+	if ((driveNumber < 8) or (driveNumber > 30)) then driveNumber := 8;
+	MoveTo(driveXPos, filenameYPos, hi(^@ScreenChr));
+	runI := driveNumber / 10;
+	runJ := driveNumber - (runI * 10);
+	screenmemory[0] := runI + $30;
+	screenmemory[1] := runJ + $30;
+end;
+
+procedure diskPrintScreen();
+begin
+	CopyFullScreen(^@MemDiskScreen,^@ScreenChr);
+	CopyFullScreen(^@MemDiskScreen+1000,^@ScreenCol);
+	setcharsetlocation($1800);	// needed for disk header as it uses inverted chars
+	MoveTo(filenameXPos, filenameYPos, hi(^@ScreenChr));
+	for runI := 0 to 12 do
+		screenmemory[runI] := fileName[3+runI];
+	diskPrintDrive();
+end;
+
+procedure stateDiskProc();
+begin
+	PrintSequences();	// for some weird reason, this makes directory listing OK after running sequences
+	diskPrintScreen();
+	while(1) do begin
+		ReadKey();
+		case keyPetscii of
+			$85: begin	// F1
+				screen_bg_col:=black;
+				MoveTo(0, 0, hi(^@ScreenChr));
+				for runI := 0 to 7 do screenmemory[runI] += $80;
+				enterName();
+				if keyPetscii = $0D then	loadSequences();
+				MoveTo(0, 0, hi(^@ScreenChr));
+				for runI := 0 to 7 do screenmemory[runI] -= $80;
+			end;
+			$86: begin	// F3
+				screen_bg_col:=black;
+				MoveTo(9, 0, hi(^@ScreenChr));
+				for runI := 0 to 7 do screenmemory[runI] += $80;
+				enterName();
+				if keyPetscii = $0D then	saveSequences();
+				MoveTo(9, 0, hi(^@ScreenChr));
+				for runI := 0 to 7 do screenmemory[runI] -= $80;
+			end;
+			$87: begin	// F5
+				screen_bg_col:=black;
+				diskPrintScreen();
+				listDir();
+			end;
+			$88: begin	// F7
+				mainState := previousState;
+				break;
+			end;
+			$2B: begin	// +
+				if driveNumber < 30 then driveNumber += 1;
+				diskPrintDrive();
+				currentDrive := driveNumber;
+			end;
+			$2D: begin	// -
+				if driveNumber > 8 then driveNumber -= 1;
+				diskPrintDrive();
+				currentDrive := driveNumber;
+			end;
+
+		end;
+	end;
+	previousState := stateDisk;
+	setcharsetlocation(@MemCharset1);
+	MainScreen();
+	PrintSequences();
+	screen_bg_col:=black;
+end;
+
+ /*********************************************************
+	   CIA interrupt that handles all sequence timers
+ **********************************************************/
+
+// using default CIA #1 timer
+@donotremove "UpdateTimers"
+procedure UpdateTimers();
+begin
+	/*
+	if pwmCounter <= pwmValue then
+		outputs[pwmOutput] := 1
+	else
+		outputs[pwmOutput] := 0;
+	Inc(pwmCounter);
+	if pwmCounter > @pwmCounterMax then
+		pwmCounter := 1;
+	
+	pwmIndex := @pwmMaxOutputs-1;
+
+	asm("
+		inc pwmCounter
+		ldx #$00
+		lda pwmCounter
+		and #$01
+		bne trtmrt
+		ldx #$80
+trtmrt:		
+		stx $DE00
+	");
+*/	
+/*
+
+	asm("
+		; pwm counter 0
+pwmSkip00:
+		ldx pwmIndex
+		lda pwmOutputs,x
+		beq pwmSkip02
+		pha
+		ldy #$00
+		lda pwmValues,x
+		cmp pwmCounter
+		bmi pwmSkip01
+		ldy #$80
+pwmSkip01:
+		pla
+		tax
+		tya
+		sta outputs,x
+		sta $DE00
+pwmSkip02:
+		dec pwmIndex
+		bpl pwmSkip00
+		inc pwmCounter
+		lda pwmCounter
+		cmp #10
+		bcc pwmSkip03
+		lda #$01
+		sta pwmCounter
+pwmSkip03:
+	");
+*/
+
+
+/*
+	asm("
+		; pwm counter 0
+pwmSkip00:
+		ldx pwmIndex
+		lda pwmOutputs,x
+		beq pwmSkip02
+		pha
+		ldy #$00
+		lda pwmValues,x
+		cmp pwmCounter
+		bmi pwmSkip01
+		iny
+pwmSkip01:
+		pla
+		tax
+		tya
+		sta outputs,x
+pwmSkip02:
+		dec pwmIndex
+		bpl pwmSkip00
+		inc pwmCounter
+		lda pwmCounter
+		cmp #10
+		bcc pwmSkip03
+		lda #$01
+		sta pwmCounter
+pwmSkip03:
+	");
+	WriteOutputs();
+
+*/
+
+
+	if TimerWaitCnt <> 0 then
+		Dec(TimerWaitCnt)
+	else begin
+		TimerWaitCnt := TimerWait;
+		for seqTimerCnt := 0 to SequencesNo do begin
+			if seqTimer[seqTimerCnt] <> 0 then
+				Dec(seqTimer[seqTimerCnt]);
+		end;
+	end;
+
+
+	asm("
+		// since CIA timer is running faster, so is the cursor movement based on KERNAL
+		// to slow the repeat code down, we reset the counters on odd values of flags
+		
+		// KERNAL IRQ is running on every odd value of TimerWaitCnt
+		lda TimerWaitCnt
+		and #$03
+		cmp #$03
+		bne timerRTI
+		jmp $EA31
+timerRTI:
+		jmp $EA81
+		");
+/*		
+		// slowing down counter at 028B
+		lda $028B // Delay counter during repeat sequence, for delaying between successive repeats
+		cmp #$01
+		bne timerSkip1
+		inc delayFlag1
+		lda delayFlag1
+		and #$01
+		bne timerSkip1
+		lda #$05
+		sta $028B
+timerSkip1:
+		// slowing down counter at 028C
+		lda $028C // Repeat sequence delay counter, for delaying before first repetition
+		cmp #$01
+		bne timerSkip2
+		inc delayFlag2
+		lda delayFlag2
+		and #$01
+		bne timerSkip2
+		lda #$17
+		sta $028C
+timerSkip2:
+*/
 end;
 
  /*********************************************************
@@ -1324,6 +1895,7 @@ end;
  **********************************************************/
 
 begin
+	findFirstDrive();
 	setcharsetlocation(@MemCharset1);
 	MainScreen();
 	SetSpriteLoc(0,@MemSprite/64,0);
@@ -1332,8 +1904,6 @@ begin
 	sprite_color[0]:=yellow;
 	togglebit(sprite_bitmask,0,1);	
 	
-	//CopyFullScreen(^@ScreenChr, ^@MemMainScreen);
-	//CopyFullScreen(^@ScreenCol, ^@MemMainScreen+1000);
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	editCursorX := 0;
@@ -1355,6 +1925,7 @@ begin
 		outputs[runI] := 0;
 	end;
 	// setup timers interrupt
+	//for runK := 0 to @pwmMaxOutputs do pwmOutputs[runK] := 0;
 	TimerWaitCnt := TimerWait;
 	asm("
 		sei
@@ -1362,6 +1933,23 @@ begin
 		sta $0314
 		lda #>UpdateTimers
 		sta $0315
+
+		// speed up CIA timer to 120 Hz
+		//ldx #$CB
+		//ldy #$19
+		//ldx #$F2
+		//ldy #$0C
+		ldx #$C9
+		ldy #$33
+		stx $DC04
+		sty $DC05
+
+        ;flash border while loading
+        lda #<flashload
+        ldx #>flashload
+        sta $0328
+        stx $0329
+
 		cli
 	");
 	// main program loop
@@ -1376,6 +1964,7 @@ begin
 			stateStop : stateStopProc();
 			stateEdit : stateEditProc();
 			stateHelp : stateHelpProc();
+			stateDisk : stateDiskProc();
 		end;
 	end;
 end.

@@ -1793,7 +1793,7 @@ void Methods6502::PrintNumber(Assembler *as)
     m_node->m_params[0]->Accept(m_codeGen);
     as->Term();
 
-    as->Asm("tay");
+    as->Asm("tay ;keep");
     as->Asm("and #$F0");
     as->Asm("lsr");
     as->Asm("lsr ");

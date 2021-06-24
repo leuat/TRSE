@@ -38,6 +38,7 @@ var
     		"ALL THE KINGS HORSES AND ALL THE KINGS MEN      COULDNT PUT DOLOREM IPSUM TOGETHER AGAIN                               ");
 
 	// Put image in bank 3 ($8000) 
+	@export "resources/images/octopus.flf" "resources/images/octopus.bin" 256
 	image_color: IncBin("resources/images/octopus_color.bin", $7000);
 	image_data: IncBin("resources/images/octopus_data.bin", $A000);
 

@@ -20,7 +20,7 @@ public:
 
 
 
-
+    int m_aspectType = 0;
     GLWidget();
     GLWidget(QWidget* );
     void initializeGL() override;
@@ -29,7 +29,7 @@ public:
     void setTexture(QImage& img, QImage& grid);
     void resizeGL(int width, int height) override;
 
-
+    void resizeEvent(QResizeEvent *event) override;
     void mouseMoveEvent(QMouseEvent *e) override;
 
     void wheelEvent(QWheelEvent *e) override;

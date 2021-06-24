@@ -29,7 +29,7 @@
       <bool>true</bool>
      </property>
      <widget class="QWidget" name="layoutImageWidget">
-      <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,200,0">
+      <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,200">
        <item>
         <widget class="QLabel" name="lblName">
          <property name="sizePolicy">
@@ -88,19 +88,6 @@
           <string/>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="vImageSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>4000</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>

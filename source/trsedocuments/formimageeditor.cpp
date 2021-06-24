@@ -119,7 +119,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
         connect(ui->lblImage, SIGNAL(EmitSwapDisplayMode()), this, SLOT(onSwapDisplayMode()));
     }
 
-    QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
+//    QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
 //    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onImageMouseEvent()));
     QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
     if (m_work.m_currentImage!=nullptr) {
@@ -127,6 +127,7 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
         QObject::connect(m_work.m_currentImage->m_image, SIGNAL(emitImportRom()), this, SLOT(ImportROM()));
         m_work.m_currentImage->m_image->InitPens();
         m_work.m_currentImage->m_image->ReInitialize();
+
 
     }
 
@@ -592,8 +593,9 @@ void FormImageEditor::Initialize()
     emit onImageMouseEvent();
     m_isInitialized = true;
 
+    UpdateAspect();
 
-    QTimer::singleShot(50, this, SLOT(InitAspect()));
+//    QTimer::singleShot(50, this, SLOT(InitAspect()));
 
     //for (int i=0;i<100;i++)
     //    Data::data.UpdatePens();
@@ -941,7 +943,7 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
 
     w->setVisible(true);
     m_oldWidth = w->width();
-    UpdateAspect();
+//    UpdateAspect();
     SetMCColors();
     //ui->lblGrid->setGeometry(ui->lblImage->geometry());
     //ui->lblGrid->repaint();
@@ -1760,19 +1762,41 @@ void FormImageEditor::Aspect1()
 
 void FormImageEditor::UpdateAspect()
 {
-
     QWidget* w = getCurrentPainter();
     int val = ui->cmbAspect->currentIndex();
+    ui->lblImage->m_aspectType = val;
 
 //    ui->lblImage->setVisible(false);
   //  return;
+
+
+
+
 
 
     w->setMinimumHeight(0);
     w->setMaximumHeight(100000);
     w->setMinimumWidth(0);
     w->setMaximumWidth(100000);
-    ui->vImageSpacer->changeSize(0,0);
+    //ui->vImageSpacer->changeSize(0,0);
+    Data::data.Redraw();
+    onImageMouseEvent();
+    ui->lblImage->repaint();
+    ui->lblImage->update();
+    ui->lblImage->resize(ui->lblImage->width(),ui->lblImage->height());
+
+
+    this->resize(this->geometry().width()-1, this->geometry().height());
+    this->resize(this->geometry().width()+1, this->geometry().height());
+    repaint();
+    update();
+    //emit mySizeChanged(QSize(width(), height()));
+ //   ui->lblImage->resizeGL(320,200);
+  //  ui->splitter->update();
+//    ui->splitter->repaint();
+//    ui->splitter->setSizes(QList<int>()<<1<<1);
+   // ui->splitter->move(1,1);
+    return;
 
     int a = 100;
     int b = 100;
@@ -1782,6 +1806,8 @@ void FormImageEditor::UpdateAspect()
     if (val==2) {
         ui->splitter->setSizes(QList<int>()<<a*5*1.6<<b );
     }
+
+
 
     return;
 
@@ -1804,6 +1830,8 @@ void FormImageEditor::UpdateAspect()
 
     }
 
+
+
     return;
 
     if (val==0) {
@@ -1811,7 +1839,7 @@ void FormImageEditor::UpdateAspect()
         w->setMaximumHeight(100000);
         w->setMinimumWidth(0);
         w->setMaximumWidth(100000);
-        ui->vImageSpacer->changeSize(0,0);
+        //ui->vImageSpacer->changeSize(0,0);
 //        m_oldWidth = width();
     }
     if (val==1) {
@@ -1824,7 +1852,7 @@ void FormImageEditor::UpdateAspect()
         w->setMaximumWidth(100000);
         w->setMinimumHeight(m_oldWidth/1.6);
         w->setMaximumHeight(m_oldWidth/1.6);
-        ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
+        //ui->vImageSpacer->changeSize(0,200,QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
     this->resize(this->geometry().width(), this->geometry().height());
     onImageMouseEvent();
