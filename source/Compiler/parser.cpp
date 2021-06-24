@@ -4318,16 +4318,18 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
 
         if (requireSplit) {
+            m_splitCounter++;
+            QString splitExtension = "_split" + QString::number(m_splitCounter) + ".bin";
             QString f = m_currentDir+QDir::separator()+binFile;
             if (!QFile::exists(f))
                ErrorHandler::e.Error("Could not find file for inclusion: "+f, m_currentToken.m_lineNumber);
-            QString of = Util::getFileWithoutEnding(f) + "_split.bin";
+            QString of = Util::getFileWithoutEnding(f) + splitExtension;
             QByteArray ba = Util::loadBinaryFile(f);
             if (len==-1)
                 len = ba.size();
             QByteArray res = ba.mid(start,len);
             Util::SaveByteArray(res,of);
-            binFile = Util::getFileWithoutEnding(binFile)+"_split.bin";
+            binFile = Util::getFileWithoutEnding(binFile) + splitExtension;
         }
 
  //       qDebug() << "LOOKING FOR FLAGS WITH INCBIN "<< binFile;
