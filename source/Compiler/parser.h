@@ -213,6 +213,8 @@ private:
 
     QJSEngine m_jsEngine;
 
+    int m_splitCounter = 0;
+
     void Delete();
 
     void InitObsolete();
