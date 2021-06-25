@@ -1,5 +1,5 @@
 program game;
-@projectsettings "system" "APPLEII"
+@projectsettings "system" "X86"
 @use "text/txt"
 
 var
@@ -16,7 +16,14 @@ var
 	i,x,y,oldx,oldy: byte;
 	this_row: integer;
 
-
+	@ifdef X86
+	function random():byte;		
+	begin
+		
+		@use "math/random"
+		random:=Random::Random();
+	end;
+	@endif	
 
 	procedure init();
 	begin
@@ -82,6 +89,11 @@ begin
 			
 			// Get keyboard input
 			key_press:=txt::get_key();
+						
+			@ifdef X86
+			key_press:=txt::LATEST_SCANCODE;
+			@endif
+			
 			
 			txt::move_to(3,0);
 			txt::print_string(#instruction_str, False);
@@ -94,10 +106,10 @@ begin
 				case key_press of
 			       
 					// Cursor keys defined in unit		        
-	    			    txt::CUR_U: if(y>0) then dec(y);
-			        txt::CUR_D: if(y<23) then inc(y);
-	   			    txt::CUR_L: if(x>0) then dec(x);
-			        txt::CUR_R: if(x<21) then inc(x);
+					txt::CUR_U: if(y>0) then y:=y-1;
+					txt::CUR_D: if(y<23) then inc(y);
+					txt::CUR_L: if(x>0) then x:=x-1;
+					txt::CUR_R: if(x<21) then inc(x);
 			   
 				end;
 				
@@ -105,10 +117,11 @@ begin
 				// Find out if the space we want to move to
 				// is empty or if it contains anything special
 				charat:=txt::get_char_at(x,y);
-				
+
 				
 				// $20 is space
 				case charat of
+				$40:		txt::put_char_at(x,y,64);
 				$20:		txt::put_char_at(x,y,64);
 				  0:		txt::put_char_at(x,y,64);
 				36:

@@ -1,5 +1,5 @@
 program numbers;
-@projectsettings "system" "APPLEII"
+@projectsettings "system" "X86"
 
 @use "text/txt"
 var  

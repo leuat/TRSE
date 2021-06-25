@@ -1,6 +1,6 @@
 program hello_world;
 
-@projectsettings "system" "C64"
+@projectsettings "system" "X86"
 
 @use "text/txt"
 

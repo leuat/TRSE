@@ -1,6 +1,6 @@
 program read_keys;
-@projectsettings "system" BBCM
-@use txt
+@projectsettings "system" X86
+@use "text/txt"
 
 var
 	press_str: string = ("PRESS A KEY",0);

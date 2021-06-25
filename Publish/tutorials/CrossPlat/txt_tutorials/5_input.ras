@@ -1,5 +1,5 @@
 program Get_String_Test;
-@projectsettings "system" C64
+@projectsettings "system" X86
 @use "text/txt"
 var  
    i: byte; 

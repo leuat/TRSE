@@ -1,5 +1,5 @@
 program key_press;
-@projectsettings "system" VIC20
+@projectsettings "system" X86
 @use "text/txt"
 
 var

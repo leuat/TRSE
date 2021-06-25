@@ -1,7 +1,7 @@
 program interpret;
-@projectsettings "system" C64
+@projectsettings "system" X86
 @use "text/txt"
-@use txt
+
 var  
    i: byte =0; 
    user_input: pointer;
