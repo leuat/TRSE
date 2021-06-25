@@ -63,8 +63,9 @@
 		peek(^$C010,0);
 	end;
 
+
 	// Print a line to screen
-	procedure print_string(in_str:pointer, CRLF: byte = True);
+	procedure print_string(in_str:global pointer, CRLF: global byte = True);
 	var
 		_chx,_this_ch:byte;
 	begin
