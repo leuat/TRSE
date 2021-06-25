@@ -1,8 +1,9 @@
 unit txt;
 @use "system/screen"
 var
-	i,y:byte;
+	i,y,p:byte;
 	CH:byte;
+	LATEST_SCANCODE: byte;
 	temp_address_p: pointer of byte;
 	
 	Active_Page_Number:integer;
@@ -21,8 +22,13 @@ var
 	in_str: pointer;
 	CRLF: byte;
 	
+	_match:byte;
 	o_cx:byte;
 	o_cy:byte;
+	
+	user_input: pointer;
+	user_str: string = ("                                   ");
+	
 	
 	// PC cursors		        
 	const CUR_U: byte = $48;
@@ -82,8 +88,11 @@ var
     **/
     procedure esc();
     begin
-    	put_ch($1B);
-	    put_ch($5B);
+
+
+	    put_ch($1B);   
+	    put_ch($5B);   
+
     end;
 
 
@@ -157,7 +166,7 @@ var
 	    
 	    	int $16
 	    	mov [txt_CH],AL
-	    	
+	    	mov [txt_LATEST_SCANCODE],AH
 	    ");
 	    // AL=ascii AH=scan code
 	    
@@ -178,7 +187,7 @@ var
 	    
 	    	int $16
 	    	mov [txt_CH],AH
-	    	
+	    	mov [txt_LATEST_SCANCODE],AH
 	    ");
 	    // AL=ascii AH=scan code
 	    
@@ -243,18 +252,23 @@ var
 	Set Carriage Return on/off	
 	
 	**/
-	procedure print_string(in_str: global pointer, CRLF: global byte);
+	procedure print_string(the_str: pointer, out_CRLF: byte);
 	var
 		
     begin
-		Screen::Print(in_str);
+		while(the_str^<>0) do
+		begin
+			if(the_str^>=$20) then put_ch(the_str^);
+			the_str:=the_str+1;
+		end;
 	    
-	    if(CRLF) then 
+	    if(out_CRLF=true) then 
 	    begin
-		    put_ch(10);
 		    put_ch(13);
+		    put_ch(10);
 	    end;
 	    
+    
     end;
 
 
@@ -276,12 +290,6 @@ var
 
     end;    
 
-	/**
-	
-	Compare two strings for equality
-	
-	**/
-	function str_compare(str1,str2:pointer):byte;
 
 
 	procedure beep();
@@ -384,30 +392,34 @@ var
     end;
 
 
-	// Compare two strings for equality
-	function str_compare(str1,str2:pointer):byte;
+	/**
+	
+	Compare two strings for equality
+	
+	**/
+
+	function str_compare(str1:pointer,str2:pointer):byte;
 	var
-		si:byte=0;
-		_match:byte=False;
+
+		
 	begin
-		si:=0;
-		_match:=False;
-
-		while(str1[si]>0 and str1[si]<>155) do
+		
+		_match:=false;
+		while(str1^<>0) do
 		begin
-			if(str1[si]=str2[si]) then
+			i:=str1^;
+			p:=str2^;	
+					
+			if(i=p) then 
 			begin
-				_match:=True;
-			end
-			else
-			begin	
-				_match:=False;
+				_match:=true;
 			end;
-
-			si:=si+1;
+			
+			str1:=str1+1;
+			str2:=str2+1;
 		end;
 
-		str_compare:=(_match);
+		str_compare:=_match;
 	end;
 
 
@@ -493,52 +505,54 @@ var
 
 		
 	end;
+
+procedure crlf();
+begin
 	
-function get_string():integer;
-   var
-	_input_key, bp: byte;
-	input_buffer: string=("                                                      ",0);
-	p_input_buffer: pointer;
-	   
-   begin
-   
-	bp:=0;
- 	_input_key:=0;
- 	p_input_buffer:=#input_buffer;
- 	
- 	txt::cursor_on();
- 	
-	while (_input_key<>13) do
+	txt::put_ch(10);
+	txt::put_ch(13);
+	
+end;
+	
+function get_string():byte;
+var
+	
+
+begin
+	
+	user_input:=#user_str;
+	while (i<>13) do
 	begin
-
-		_input_key:=txt::get_key();
 		
-		if(_input_key > 0 and _input_key < 255) then
+		i:=get_key();
+		
+		if (LATEST_SCANCODE=$0E) then
 		begin
-			txt::put_ch(_input_key);
-			p_input_buffer[bp]:=_input_key;
-			bp:=bp+1;
-		end;
-
-		if(_input_key = 20) then
+			user_input^:=0;
+			user_input:=user_input-1;
+			put_ch(i);
+		end
+		else
 		begin
-			txt::put_ch(32);			
-			txt::put_ch(20);	
-			bp:=bp-2;
+			if(i>=32) then
+			begin		
+				put_ch(i);
+				user_input^:=i;
+				user_input:=user_input+1;
+			end;				
 
 		end;
+		
+		user_input^:=0;
 
-		p_input_buffer[bp]:=0;
 	end;
-	
-	txt::cursor_off();
-	get_string:=(p_input_buffer);
+		
+	put_ch(10);
+	put_ch(13);
 
-   end;
+	get_string:=user_input;
 
-
-
-
+end;
 
 
 	function str_to_dec(_in_str:pointer):byte;
