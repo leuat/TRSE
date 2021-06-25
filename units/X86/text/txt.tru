@@ -159,6 +159,8 @@ var
 	
 	**/
 	function get_key():byte;
+	var
+		this_sc:byte;
     begin
 	    _AH:=$0;
 	 
@@ -166,10 +168,10 @@ var
 	    
 	    	int $16
 	    	mov [txt_CH],AL
-	    	mov [txt_LATEST_SCANCODE],AH
+	    	mov [txt_this_sc],AH
 	    ");
 	    // AL=ascii AH=scan code
-	    
+	    LATEST_SCANCODE:=this_sc;
 	    get_key:=CH;
     end;
     
