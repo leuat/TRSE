@@ -19,10 +19,11 @@ var
 
 */
 
-
 	@define charmap $3000
 	@define charLoc $2000
 	chardata : incbin("resources/charsets/charset.bin", @charmap);
+
+
 
 	const useKernal : byte = 1;
 	const rasterLine : byte = 210;

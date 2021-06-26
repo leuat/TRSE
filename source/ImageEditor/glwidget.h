@@ -20,7 +20,6 @@ public:
 
 
 
-    int m_aspectType = 0;
     GLWidget();
     GLWidget(QWidget* );
     void initializeGL() override;

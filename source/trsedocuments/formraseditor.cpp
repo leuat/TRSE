@@ -681,27 +681,37 @@ void FormRasEditor::Run()
     QString ft = ".ras";
     if (m_currentSourceFile.toLower().endsWith(".tru"))
         ft =".tru";
-    QString filename = m_currentSourceFile.split(ft)[0] + "."+ m_projectIniFile->getString("output_type");
+
+    QString base = m_currentSourceFile.split(ft)[0];
+    QString orgFile = base;
+    bool renameFile = false;
+    if (m_builderThread.m_builder->compiler->m_parser.m_overrideOutputTarget!="") {
+        renameFile = true;
+//        base = m_builderThread.m_builder->compiler->m_parser.m_overrideOutputTarget;
+    }
+
+    QString filename = base + "."+ m_projectIniFile->getString("output_type");
+
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
-        filename = m_currentSourceFile.split(ft)[0] + ".nes";
+        filename = base + ".nes";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
-        filename = m_currentSourceFile.split(ft)[0] + ".gb";
+        filename = base + ".gb";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
-        filename = m_currentSourceFile.split(ft)[0] + ".bin";
+        filename = base + ".bin";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
         if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu"))
-            filename = m_currentSourceFile.split(ft)[0] + ".bin";
+            filename = base + ".bin";
         else
-            filename = m_currentSourceFile.split(ft)[0] + ".exe";
+            filename = base + ".exe";
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
-        filename = m_currentSourceFile.split(ft)[0] + ".bin";
+        filename = base + ".bin";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM)
-        filename = m_currentSourceFile.split(ft)[0];
+        filename = base;
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX)
-        filename = m_currentSourceFile.split(ft)[0] + ".rom";
+        filename = base + ".rom";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
-        filename = m_currentSourceFile.split(ft)[0] + ".bin";
+        filename = base + ".bin";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100)
         filename = m_currentDir+ "disk.dsk";
 
@@ -710,8 +720,17 @@ void FormRasEditor::Run()
     if (m_currentSourceFile.toLower().endsWith(".tru")) {
         ui->txtOutput->setHtml("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
     }
-    else
+    else {
+        if (renameFile) {
+            QString newFilename = filename;
+            newFilename = newFilename.replace(orgFile, m_builderThread.m_builder->compiler->m_parser.m_overrideOutputTarget);
+            Util::CopyFile(filename,newFilename);
+            filename = newFilename;
+        }
+
+
         ExecutePrg(filename);
+    }
 
     m_run = false;
 

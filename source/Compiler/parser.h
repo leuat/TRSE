@@ -124,6 +124,8 @@ public:
     QStringList m_initJumps;
     QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
 
+    QString m_overrideOutputTarget="";
+
 
     QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
     Parser();
