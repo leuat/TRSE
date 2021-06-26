@@ -38,6 +38,10 @@ public:
     void mouseReleaseEvent(QMouseEvent*  e) override;
     void mousePressEvent(QMouseEvent* e) override;
 
+
+
+    void resizeEvent(QResizeEvent *event) override;
+
 signals:
     void EmitMouseMove(QEvent* e);
     void EmitMouseRelease();

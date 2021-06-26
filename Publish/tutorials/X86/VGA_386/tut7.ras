@@ -45,6 +45,7 @@ begin
 		
 		Gfx::DrawLine(x1,y1,x2,y2, color, ptr(Screen::VGA,0)); // Draw directly to the screen
 		if (time&63=0) then shift+=1;
+		color+=1;
 		time+=1;
 	end;
 end.

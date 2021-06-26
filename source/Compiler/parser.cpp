@@ -1082,6 +1082,11 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="output_target") {
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="splitfile") {
             Eat();
 
@@ -2725,6 +2730,13 @@ void Parser::PreprocessSingle() {
   //                    qDebug() << "Defined: " << key << val;
 
               }
+              if (m_currentToken.m_value.toLower() == "output_target") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_overrideOutputTarget = m_currentToken.m_value;
+                  Eat(TokenType::STRING);
+              }
+
+
               if (m_currentToken.m_value.toLower() == "splitfile") {
                   Eat(TokenType::PREPROCESSOR);
                   QString in = m_currentDir+QDir::separator()+ m_currentToken.m_value;

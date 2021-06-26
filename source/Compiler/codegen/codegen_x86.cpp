@@ -498,7 +498,10 @@ QString CodeGenX86::getAx(QSharedPointer<Node> n) {
 
     if (n->m_forceType==TokenType::INTEGER)
         return a+"x";
-    if (n->getType(as)==TokenType::INTEGER)
+    if (n->m_forceType==TokenType::BYTE)
+        return a+"l";
+
+    if (n->getType(as)==TokenType::INTEGER || n->getType(as)==TokenType::POINTER)
         return a+"x";
     if (n->getType(as)==TokenType::ADDRESS)
         return a+"x";
@@ -746,6 +749,7 @@ bool CodeGenX86::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
             }
             as->Comment("'a:=a + expression'  optimization ");
             bop->m_right->Accept(this);
+            as->Comment("Type : "+TokenType::getType(var->getType(as)));
             as->Asm(getBinaryOperation(bop) + " ["+var->getValue(as)+"], "+getAx(var));
             return true;
         }
@@ -1230,10 +1234,18 @@ void CodeGenX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
         as->Asm("add ["+var+"],"+getWordByteType(as,nodeA->m_left)+" 1");
     else
         as->Asm("add ["+var+"],cx");
+/*
+    if (nodeA->m_left->isByte(as))
+        nodeB->setForceType(TokenType::BYTE);
 
+    if (nodeA->m_left->isWord(as))
+        nodeB->setForceType(TokenType::INTEGER);
+*/
     LoadVariable(nodeB);
     if (isInclusive)
         as->Asm("add "+getAx(nodeB)+",1");
+
+
     as->Asm(m_cmp+getAx(nodeB)+","+getWordByteType(as,nodeA->m_left)+" ["+var+"]");
     as->Asm(m_jne+lblJump);
 

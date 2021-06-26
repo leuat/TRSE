@@ -573,7 +573,6 @@ end;
 
 		for temp_i:=0 to max_digits do
 		begin
-
 			if(_in_str[temp_i]=48) then
 			begin
 				next_digit:=0;
@@ -584,6 +583,8 @@ end;
 			end;
 
 			temp_num:=(temp_num*10)+next_digit;
+						asm(";here");
+
 		end;
 
 		str_to_dec:=(temp_num);

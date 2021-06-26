@@ -1763,13 +1763,14 @@ void FormImageEditor::Aspect1()
 void FormImageEditor::UpdateAspect()
 {
     QWidget* w = getCurrentPainter();
-    int val = ui->cmbAspect->currentIndex();
-    ui->lblImage->m_aspectType = val;
+    auto img = getCurrentPainter();
 
+    //auto img = ui->lblImage;
+
+    int val = ui->cmbAspect->currentIndex();
+//    ((AbstractImageEditor*)img)->m_aspectType = val;
 //    ui->lblImage->setVisible(false);
   //  return;
-
-
 
 
 
@@ -1779,11 +1780,21 @@ void FormImageEditor::UpdateAspect()
     w->setMinimumWidth(0);
     w->setMaximumWidth(100000);
     //ui->vImageSpacer->changeSize(0,0);
+    if (m_painterType == OpenGL) {
+        ui->lblImage->m_aspectType = val;
+        ui->lblImage->repaint();
+        ui->lblImage->update();
+        ui->lblImage->resize(ui->lblImage->width(),ui->lblImage->height());
+    }
+    else {
+        ui->lblImageQt->m_aspectType = val;
+        ui->lblImageQt->repaint();
+        ui->lblImageQt->update();
+        ui->lblImageQt->resize(ui->lblImageQt->width(),ui->lblImageQt->height());
+
+    }
     Data::data.Redraw();
     onImageMouseEvent();
-    ui->lblImage->repaint();
-    ui->lblImage->update();
-    ui->lblImage->resize(ui->lblImage->width(),ui->lblImage->height());
 
 
     this->resize(this->geometry().width()-1, this->geometry().height());
@@ -1872,6 +1883,7 @@ QWidget *FormImageEditor::getCurrentPainter()
 {
     if (m_painterType==OpenGL)
         return ui->lblImage;
+
     return ui->lblImageQt;
 }
 

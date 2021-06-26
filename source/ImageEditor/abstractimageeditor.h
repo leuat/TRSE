@@ -14,6 +14,7 @@ public:
     int m_time=0;
     WorkerThread* m_updateThread = nullptr;
     ImageWorker* m_work = nullptr;
+    int m_aspectType = 0;
     bool m_active=false;
     bool m_cancel = false;
     bool m_buttonDown = false;

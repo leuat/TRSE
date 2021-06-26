@@ -124,6 +124,8 @@ void GLWidget::resizeEvent(QResizeEvent *event)
     if (m_aspectType==2)
         scale = 1.5;
 
+//    qDebug() << m_aspectType;
+
 
 
     if (m_aspectType!=0) {

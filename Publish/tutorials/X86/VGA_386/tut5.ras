@@ -37,7 +37,6 @@ var
 
 
 
-
 interrupt RasterIRQ();
 begin
 	StartIRQ();
@@ -55,13 +54,13 @@ begin
 	File::ReadAll(#filename1,Screen::buffer3);
 
 
-
-	Compression::Decompress(Screen::buffer3,Screen::buffer2);
+	Compression::Decompress(Screen::buffer3, Screen::buffer2);
 	
 	// Load and decompress font
 	fontP := Screen::buffer4;
 	File::ReadAll(#font1_file, Screen::buffer3);
-	Compression::Decompress(Screen::buffer3,Screen::buffer4);
+	
+	Compression::Decompress(Screen::buffer3, Screen::buffer4);
 	
 end;
 
@@ -81,7 +80,6 @@ begin
 	Memory::SetTimer(Memory::Default_Timer);
 	waitforverticalblank();
 	SetInterrupt($8, RasterIRQ());
-
 	// Initialise font to point to the font data, width 16, height 20, 20 columns, default shift (32)	
 	Fonts::Init(fontP, 16,20,20,Fonts::DEFAULT_SHIFT);
 	// Write font with mask >2
