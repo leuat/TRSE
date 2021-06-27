@@ -1,0 +1,26 @@
+program msx_test;
+
+@projectsettings "system" "MSX"
+
+@use "text/txt"
+
+
+var
+
+	hello_string: string=("Hello!");
+	hello_p: pointer;
+
+	begin
+		hello_p:=#hello_string;
+		Screen::SetColors(2,0,0);
+		txt::cls();
+		Screen::PrintString("Test");
+		txt::print_string(hello_p,false);
+		txt::put_ch(65);
+		loop();
+		
+	
+	
+
+		
+	end.

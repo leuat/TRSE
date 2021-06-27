@@ -1,0 +1,60 @@
+program zx_test;
+
+@projectsettings "system" "SPECTRUM"
+
+@use "text/txt"
+@use random 
+
+var
+
+	i,y: byte;
+	hello_string: string=("Hello Speccy!");
+	hello_p: pointer;
+
+	begin
+
+		txt::cls();
+		
+		for y:=0 to 100 do
+		begin
+			hello_p:=Screen::ytab[y];
+			for i:=0 to 200 do
+			begin
+				hello_p^:=Random::Random1();
+				hello_p+=1;
+			end;
+		end;
+		
+		hello_p:=#hello_string;	
+
+		
+		txt::put_char_at(2,12,65);
+		txt::print_string(hello_p,true);
+		
+		txt::move_to(10,10);
+		txt::put_ch(64);
+		i:=txt::get_char_at(10,10);
+		txt::move_to(11,11);
+		txt::put_ch(i);
+		
+		
+		txt::wait_key();
+		txt::beep();
+
+
+		while(1) do
+		begin
+			i:=txt::get_key();
+			if(i<>0) then 
+			begin
+				txt::move_to(10,12);
+				txt::print_string("   ", False);
+				txt::move_to(10,12);
+				txt::print_dec(i, False);
+				txt::beep();
+			end;
+		end;
+		
+
+		
+	end.

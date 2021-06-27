@@ -1,7 +1,7 @@
 program move_char;
-@projectsettings "system" X86
+@projectsettings "system" SPECTRUM
 @use "text/txt"
-
+@use memory
 var
 	
 	
@@ -15,6 +15,13 @@ begin
 
 	// Clear screen,
 	txt::cls();
+	
+	for this_row:=0 to 18 do
+	begin
+		txt::print_space(22);		
+	end;
+	
+	
 	txt::cursor_off();
 	txt::move_to(4,0);
 	txt::print_string(#instruction_str, False);
@@ -23,7 +30,7 @@ begin
 
 	// Test outputting consecutive rows
 	// due to Apple II maddening screen memory scheme	
-	fori y:= 0 to 23 do
+	fori y:= 0 to 18 do
 	begin
 
 		txt::put_char_at(3,y,y+$30);
@@ -35,22 +42,22 @@ begin
 	x:=10;
 	y:=10;	
 	txt::put_char_at(x,y,64);
-	
-	
+
 	// Main loop
 	while(1) do
 	begin
 		
+		Memory::VSync();
+		
 		// Get keyboard input
 		key_press:=txt::get_key();
+
 		
 		@ifdef X86
 		key_press:=txt::LATEST_SCANCODE;
 		@endif
 		
-		txt::move_to(0,0);
-		txt::put_ch(key_press);
-		txt::put_char_at(0,1,key_press);
+
 
 		// Backup the current position			
 		oldx:=x;
@@ -60,10 +67,10 @@ begin
 			case key_press of
 		       
 				// Cursor keys defined in unit		        
-				txt::CUR_U: if(y>0) then dec(y);
-				txt::CUR_D: if(y<23) then inc(y);
-				txt::CUR_L: if(x>0) then dec(x);
-				txt::CUR_R: if(x<39) then inc(x);
+				txt::CUR_U: if(y>0) then y-=1;
+				txt::CUR_D: if(y<20) then y+=1;
+				txt::CUR_L: if(x>0) then x-=1;
+				txt::CUR_R: if(x<32) then x+=1;
 		        
 		        
 			end;
@@ -72,31 +79,40 @@ begin
 			// Find out if the space we want to move to
 			// is empty or if it contains anything special
 			charat:=txt::get_char_at(x,y);
-			txt::put_char_at(1,1,charat);
+
 			
 			@ifdef APPLEII
 			togglebit(charat,7,0);
 			@endif
 			
+			
+
+			
 			// $20 is space
-			if(charat=$20 or charat=0) then
+			if(charat=$20 or charat=64) then
 			begin
 				
 				// Keep the new position and output
 				// our @ symbol
-				txt::put_char_at(x,y,64);
 				txt::put_char_at(oldx,oldy,32);
 	
 			end
 			else
 			begin
+				if(charat<>64) then
+				begin
+					txt::beep();
+					txt::put_char_at(1,1,charat);
+					txt::move_to(0,3);
+					txt::print_dec(charat,false);
+				end;
 				x:=oldx;
 				y:=oldy;
+
 			end;
 
-
-		
-		
+			// Draw our dude
+			txt::put_char_at(x,y,64);
 		
 	end;
 

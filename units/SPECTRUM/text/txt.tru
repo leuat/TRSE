@@ -1,0 +1,756 @@
+unit txt;
+@use "screen"
+@use "format"
+var
+	i,y,p:byte;
+	CH:byte;
+	LATEST_SCANCODE: byte;
+	temp_address_p: pointer of byte;
+	
+	Active_Page_Number:integer;
+	
+	ytab : array[25] of integer=(
+		0,0,0,0,0,0,
+		0,0,0,0,0,0,
+		0,0,0,0,0,0,
+		0,0,0,0,0,0);
+	screen_memory: pointer;
+	max_digits,next_digit: integer;
+	temp_num_p: pointer;
+	temp_num: integer;
+	temp_i: byte=0;
+	this_bbc: byte=0;
+	in_str: pointer;
+	CRLF: byte;
+	
+	_match:byte;
+	o_cx:byte;
+	o_cy:byte;
+	
+	user_input: pointer;
+	user_str: string = ("                                   ");
+	
+	
+	// PC cursors		        
+	const CUR_U: byte = $71;
+	const CUR_D: byte = $61;
+	const CUR_L: byte = $6F;
+	const CUR_R: byte = $70;
+
+
+	/**
+	
+	Put a character at current cursor position
+	
+	**/
+	procedure put_ch(CH:global byte);
+	begin
+
+		asm
+			
+			ld a, [txt_CH]
+			call $10
+		end;
+
+
+	end;
+
+	/**
+	
+	Helper to set up screen pointers etc
+	
+	**/
+	procedure DefineScreen();
+    begin
+
+	    
+
+
+    end;
+    
+    
+
+    /**
+
+	 Escape sequence
+    
+    **/
+    procedure esc();
+    begin
+
+
+	    put_ch($1B);   
+	    put_ch($5B);   
+
+    end;
+
+
+    
+
+
+	/**
+	
+	Place the cursor at X, Y screen position
+	
+	**/
+	procedure move_to(_text_x: byte, _text_y: byte);
+   begin
+
+		asm
+			
+			ld a,22
+			call $0010
+			ld a,[txt__text_y]
+			call $0010
+			ld a,[txt__text_x]						
+			call $0010
+			
+			
+		end;
+
+	    
+   end;
+    
+    
+   /**
+
+	Place the cursor at 0,0 top left of screen
+	
+	**/
+	procedure cursor_home();
+	begin
+
+		move_to(0,0);
+
+   end;
+	
+	/**
+	
+	Wait for vertical blank (not yet implemented)
+	
+	**/
+	procedure wait_vsync();
+    begin
+
+    end;
+
+	/**
+	
+	Set the text colour (not available on all platforms)	
+	
+	**/
+	procedure text_colour(_chosen_text_colour: byte);
+    begin
+	    
+    end;	
+	
+	
+	
+	function read_keyboard():byte;
+	var
+				temp_k:byte;
+	begin
+		temp_k:=0;
+		asm
+		
+		Read_Keyboard:        		
+						ld hl, $5c08
+						ld a,(hl)
+					 	ld [txt_temp_k],a                                   
+	
+		end;
+	    poke(^$5c08,0,0);
+	    read_keyboard:=temp_k;
+	end;
+
+	/**
+
+	Get a character input from the keyboard	
+	
+	**/
+	function get_key():byte;
+	var
+			_k,tmp:byte;
+    begin
+	    
+		_k:=read_keyboard(); 	
+		get_key:=_k;
+	    
+    end;
+    
+    
+	/**
+
+	Get a character input from the keyboard	
+	
+	**/
+	function get_scancode():byte;
+    begin
+
+	    
+	    get_scancode:=CH;
+    end;
+    
+        
+    
+	/**
+	
+	Wait for a key press	
+	
+	**/
+	procedure wait_key();
+    begin
+	    
+	    while(get_key()=0) do 
+			begin
+			end;
+	    
+    end;
+	/**
+
+	Clear the keyboard buffer	
+	
+	**/
+	procedure clear_buffer();
+    begin
+	    
+    end;
+
+
+	/**
+    
+    Get current cursor position to o_cx,o_cy
+	
+	**/
+ 	procedure get_cursor_position();
+    begin
+
+	end;    
+
+	/**
+	
+	Put a character at a X, Y screen coordinate
+	
+	**/
+    procedure put_char_at(_atx,_aty,_atchar:byte);
+ 	    
+    begin
+	    
+		move_to(_atx,_aty);
+		put_ch(_atchar);
+	    
+    end;
+
+	/**
+
+	Output a string at the current cursor location.
+	Set Carriage Return on/off	
+	
+	**/
+	procedure print_string(the_str: pointer, out_CRLF: byte);
+	var
+		
+    begin
+		while(the_str^<>0) do
+		begin
+			if(the_str^>=$20) then put_ch(the_str^);
+			the_str:=the_str+1;
+		end;
+	    
+	    if(out_CRLF=true) then 
+	    begin
+		    put_ch(13);
+		    //put_ch(10);
+	    end;
+	    
+    
+    end;
+
+
+	procedure asm_zx_cxy2saddr();
+	begin
+	asm
+
+asm_zx_cxy2saddr:
+
+			
+
+			
+		   ; enter : h = valid character y coordinate
+		   ;         l = valid character x coordinate
+		   ;
+		   ; exit  : hl = screen address corresponding to the top
+		   ;              pixel row of the character square
+		   ;
+		   ; uses  : af, hl
+		
+		   ld a,h
+		   rrca
+		   rrca
+		   rrca
+		   and $e0
+		   or l
+		   ld l,a
+		   
+		   ld a,h
+		   and $18
+		   or $40
+	   ld h,a   
+
+		
+		end;
+	
+	end;
+
+
+	/**
+	
+	Return the character at chosen screen position
+	
+	**/
+    function get_char_at(_col,_row:byte):byte;
+    var
+	    i_col,i_row:byte;
+    begin
+	    
+    i_row:=_row;
+		asm
+					ld h,a
+		end;	    
+
+    i_col:=_col;    
+		asm
+					ld l,a
+		end;	    
+	    
+		asm_zx_cxy2saddr();
+asm
+	
+	
+
+asm_zx_screenstr:
+   ; h = char Y 0..23
+   ; l = char X 0..31
+   ;
+   ; exit : hl = ascii char code if match, else 0 and carry set
+
+   
+   
+   ; hl = screen address
+   
+   ld c,96                     ; number of chars to match against
+   ld de,(23606)               ; use CHARS system variable to locate character set bitmap
+   inc d
+
+charloop:
+
+   ld b,8                      ; match 8 pixel rows
+   push hl
+
+mloop:
+
+   ld a,(de)
+   xor (hl)
+   jr z, cont1                 ; jump if bit patterns match
+   inc a
+   jr nz, nomatch              ; jump if bit patterns are not inverses
+
+cont1:
+
+   inc de
+   inc h
+   djnz mloop
+   
+match:
+
+   pop hl
+   
+   ld a,128
+   sub c
+
+   ld l,a                      ; hl = ascii char code
+   ld h,b
+   ret
+   
+nomatch:
+
+   ld a,b			;Remaining rows in font left
+   add a,e
+   ld e,a
+   jp nc, cont2
+   inc d
+
+cont2:
+
+   pop hl
+   dec c
+   jp nz, charloop
+   
+   ld l,c
+   ld h,c                      ; return with 0 to indicate no match
+   scf
+	ld [txt_CH],hl
+	
+	
+	
+end;
+	    
+	    // return the character
+	    get_char_at:=CH;
+
+    end;    
+
+	procedure push_registers();
+	begin
+		asm
+			
+		; preserve registers
+					push hl
+					push bc
+					push de
+					push af
+	
+		end;	
+	end;
+
+	procedure pop_registers();
+	begin
+		asm
+		; restore registers	
+					pop af
+					pop de
+					pop bc
+					pop hl
+			
+		end;
+
+	end;
+	
+	procedure beep();
+	begin
+		
+		asm
+			
+
+			
+BEL_LENGHT:
+        ld      b,70
+        ld      c,254
+BEL_loop:
+        dec     h
+        jr      nz,BEL_jump
+        xor     16
+        out     (c),a
+BEL_FREQ_1:
+        ld      h,165
+BEL_jump:
+        dec     l
+        jr      nz,BEL_loop
+        xor     16
+        out     (c),a
+BEL_FR_2:
+        ld      l,180
+        djnz    BEL_loop
+
+		end;
+		
+		
+	end;
+
+
+
+
+	/**
+	
+	Convert string to decimal number
+	
+	**/
+	function str_to_dec(_in_str:pointer):byte;
+
+	/**
+	
+	Get numeric input from keyboard
+	
+	**/
+	function get_dec():integer;
+
+	/**
+	
+	Get screen page
+	
+	**/    
+    procedure get_page();
+    begin
+
+	    
+    end;
+    
+	/**
+	
+	Hide flashing cursor
+	
+	**/
+	procedure cursor_off();
+	var
+
+    begin
+	    
+
+	    
+    end;
+
+	/**
+	
+	Show flashing cursor
+	
+	**/
+	procedure cursor_on();
+	var
+
+    begin
+	    
+
+	    
+    end;
+
+
+	/**
+	
+	Compare two strings for equality
+	
+	**/
+
+	function str_compare(str1:pointer,str2:pointer):byte;
+	var
+
+		
+	begin
+		
+		_match:=false;
+		while(str1^<>0) do
+		begin
+			i:=str1^;
+			p:=str2^;	
+					
+			if(i=p) then 
+			begin
+				_match:=true;
+			end;
+			
+			str1:=str1+1;
+			str2:=str2+1;
+		end;
+
+		str_compare:=_match;
+	end;
+
+
+
+	
+	function str_len(in_str: global pointer):byte;
+	begin
+		
+		i:=0;
+		
+		// get the Str_Len by counting until char is 0
+		while(in_str[i]<>0) do
+		begin 
+			i:=i+1;
+		end;
+		
+		// Return
+		str_len:=i;
+		
+	end;
+	
+	// print X spaces
+	procedure print_space(max_digits: global integer);
+	begin
+		
+		i:=0;
+		for i:=0 to max_digits do
+		begin
+			put_ch(32);
+		end;
+		
+	end;
+	
+	/**
+
+	Output a string at the current cursor location but centered.
+	Set Carriage Return on/off	
+	Set the screen width
+	Set reverse on/off
+	
+	**/
+	procedure print_string_centered(in_str: global pointer, CRLF: global byte, _sc_w: byte);
+	begin
+		
+		i:=0;
+		max_digits:=0;
+		
+		// Get the length of the string
+		i:=str_len(in_str);
+
+		// padding should be half of width minus string length
+		max_digits:=(_sc_w-i)/2;
+			
+		// Is it worth padding?
+		if(max_digits>0 and i < 40) then
+		begin	
+
+			// Add the padding
+			print_space(max_digits);
+			
+			// print the string
+			print_string(in_str, CRLF);	
+
+		end
+		else
+		begin
+			// print the string
+			print_string(in_str, CRLF);	
+		end;
+		
+
+		
+	end;
+
+procedure crlf();
+begin
+	
+	//txt::put_ch(10);
+	txt::put_ch(13);
+	
+end;
+	
+function get_string():byte;
+var
+	
+
+begin
+	
+	user_input:=#user_str;
+	while (i<>13) do
+	begin
+		
+		i:=get_key();
+		
+		if (LATEST_SCANCODE=$0E) then
+		begin
+			user_input^:=0;
+			user_input:=user_input-1;
+			put_ch(i);
+		end
+		else
+		begin
+			if(i>=32) then
+			begin		
+				put_ch(i);
+				user_input^:=i;
+				user_input:=user_input+1;
+			end;				
+
+		end;
+		
+		user_input^:=0;
+
+	end;
+		
+	put_ch(10);
+	put_ch(13);
+
+	get_string:=user_input;
+
+end;
+
+
+	function str_to_dec(_in_str:pointer):byte;
+	begin
+
+		next_digit:=0;
+		temp_num:=0;
+		temp_i:=0;
+		max_digits:=0;
+
+		while(_in_str[max_digits]>0) do
+		begin
+			max_digits:=max_digits+1;
+		end;
+		max_digits-=1;
+
+		for temp_i:=0 to max_digits do
+		begin
+
+			if(_in_str[temp_i]=48) then
+			begin
+				next_digit:=0;
+			end
+			else
+			begin
+				next_digit:=_in_str[temp_i]-48;
+			end;
+
+			temp_num:=(temp_num*10)+next_digit;
+		end;
+
+		str_to_dec:=(temp_num);
+	end;	
+
+	function get_dec():integer;
+	begin
+		temp_num_p:=get_string();
+		get_dec:=(str_to_dec(temp_num_p));
+	end;
+
+	/**
+	
+	Output a string representation of a decimal number at current cursor position
+	Set if you want carriage return true/false
+	
+	**/
+procedure print_dec(_in_n:integer, _add_cr:byte);
+var
+	
+	str:string;
+	
+	begin
+		
+		
+		Format::Itos(_in_n,#str);
+		print_string(#str,_add_cr);
+		
+		
+	end;
+
+	/**
+	
+	Output a string representation of a decimal number at chosen position
+	
+	**/
+	procedure put_dec_at(_natx,_naty,_nat:byte);
+	begin
+
+		move_to(_natx,_naty);		
+		print_dec(_nat, false);
+		
+	end;
+	
+   
+	/**
+	
+	Clear screen and initialise pointers 
+	Required for move_to etc
+		
+	**/
+  	procedure cls();
+    begin
+		asm
+			call $0DAF 
+		end;
+		 cursor_home();
+	    DefineScreen();
+    end;
+
+
+end.
