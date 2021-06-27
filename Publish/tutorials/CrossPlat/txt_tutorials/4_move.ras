@@ -1,7 +1,7 @@
 program move_char;
 @projectsettings "system" SPECTRUM
 @use "text/txt"
-
+@use memory
 var
 	
 	
@@ -47,6 +47,8 @@ begin
 	while(1) do
 	begin
 		
+		Memory::VSync();
+		
 		// Get keyboard input
 		key_press:=txt::get_key();
 
@@ -83,13 +85,15 @@ begin
 			togglebit(charat,7,0);
 			@endif
 			
+			
+
+			
 			// $20 is space
 			if(charat=$20 or charat=64) then
 			begin
 				
 				// Keep the new position and output
 				// our @ symbol
-				txt::put_char_at(x,y,64);
 				txt::put_char_at(oldx,oldy,32);
 	
 			end
@@ -104,11 +108,11 @@ begin
 				end;
 				x:=oldx;
 				y:=oldy;
+
 			end;
 
-
-		
-		
+			// Draw our dude
+			txt::put_char_at(x,y,64);
 		
 	end;
 
