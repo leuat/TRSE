@@ -17,6 +17,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 */
   //   CodeGenZ80* disp = dynamic_cast<CodeGenZ80*>(m_codeGen);
     as->ClearTerm();
+    if (Command("mod"))
+        Mod(as);
     if (Command("fill"))
         Fill(as);
     else
@@ -301,6 +303,36 @@ void MethodsZ80::Fill(Assembler *as)
     jr	nz,.fill
     ret
   */
+}
+
+void MethodsZ80::Mod(Assembler *as)
+{
+    //LoadVar(as,0,"bc");
+//    m_node->m_params[0]->setForceType(TokenType::INTEGER);
+    m_node->m_params[0]->Accept(m_codeGen);
+    if (m_node->m_params[0]->isWord(as)) {
+        as->Asm("ld b,h");
+        as->Asm("ld c,l");
+    }
+    else {
+        as->Asm("ld b,0");
+        as->Asm("ld c,a");
+    }
+
+    if (!m_node->m_params[1]->isPure()) {
+        as->Asm("push bc");
+    }
+    m_node->m_params[1]->setForceType(TokenType::INTEGER);
+    LoadVar(as,1,"de");
+//    m_codeGen->ExDeHl();
+
+    if (!m_node->m_params[1]->isPure()) {
+        as->Asm("pop bc");
+    }
+
+    as->Asm("call _Mod_16");
+    as->Asm("ld a,l");
+
 }
 
 void MethodsZ80::MemCpy(Assembler *as, bool isCont)

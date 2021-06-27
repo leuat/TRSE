@@ -19,6 +19,7 @@ begin
   for hw_i := 48 to 58 do Text::PutChar(hw_i);
   Input::WaitKey();
 
+
   // Print with immediate value
   Text::MoveCursorTo(3, 3);
   Text::Print("Print a string\r\n");

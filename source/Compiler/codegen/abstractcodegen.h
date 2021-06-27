@@ -100,6 +100,8 @@ public:
     virtual void PopLostStack(int num) {};
 
 
+    virtual void ExDeHl() {}
+    virtual void SbcHlDe() {}
 
     /*
      *  Probably the most important method in all of TRSE

@@ -2,7 +2,7 @@ program Sprites;
 @use "crtc"
 @use "compression"
 var  
-   time,x,y,cnt: byte; 
+   time,x,y,cnt,t: byte; 
 	t2:byte = 64;
 
 @export "resources/images/sprite1.flf" "resources/images/sprite1.bin" 256
@@ -23,8 +23,10 @@ interrupt MainRaster();
 begin
 	Memory::PushAll();
 	
-	x:= sinx[time];
+	x:= mod(sinx[time],32);
 	y:= 40+siny[t2];
+	
+	
 	
 	Memory::EnableLRom();
 	Crtc::CopyImageTransparent(#spriteData, #background, 32,32, x, y, 0);

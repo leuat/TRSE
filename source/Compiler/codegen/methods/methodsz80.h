@@ -26,6 +26,7 @@ public:
     void LoadAddress(Assembler *as, int paramNo, QString reg = "hl");
 
     void Fill(Assembler* as);
+    void Mod(Assembler* as);
     void MemCpy(Assembler* as, bool isCont);
     void Poke(Assembler* as);
     void Call(Assembler* as);
