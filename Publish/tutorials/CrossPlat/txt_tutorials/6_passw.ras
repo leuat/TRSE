@@ -1,5 +1,5 @@
 program interpret;
-@projectsettings "system" X86
+@projectsettings "system" SPECTRUM
 @use "text/txt"
 
 var  

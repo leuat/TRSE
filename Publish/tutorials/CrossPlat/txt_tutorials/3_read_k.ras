@@ -1,5 +1,5 @@
 program read_keys;
-@projectsettings "system" X86
+@projectsettings "system" SPECTRUM
 @use "text/txt"
 
 var
@@ -25,10 +25,8 @@ begin
 			txt::move_to(10,0);
 			txt::print_string("   ",False);
 			txt::move_to(10,0);
-			txt::print_dec(in_key, False);
-			
-			txt::put_dec_at(10,2,in_key);
-			txt::put_char_at(16,2,in_key);
+			if(in_key<>0) then 	txt::print_dec(in_key, False);
+
 		end;
 		
 		txt::cls();
