@@ -24,6 +24,19 @@ var
 		random:=Random::Random();
 	end;
 	@endif	
+	
+	
+	@ifdef SPECTRUM
+	function random():byte;
+	var
+		rnd:byte;		
+	begin
+		@use memory
+		@use "random"
+		rnd:=Random::Random1()/256;
+		random:=rnd;
+	end;
+	@endif	
 
 	procedure init();
 	begin
@@ -40,24 +53,28 @@ var
 		collected_loot_count:=0;
 			
 		// Side borders
-		fori y:= 0 to 23 do
+		fori y:= 0 to 19 do
 		begin
 			txt::put_char_at(0,y,35);
 			txt::put_char_at(21,y,35);		
 		end;
 		
 		// Loot
+		
 		for i:=0 to total_loot_count do
 		begin
-			txt::put_char_at(mod(random(), 20)+1,mod(random(), 21)+1,36);
+			x:=mod(random(), 20)+1;
+			y:=mod(random(), 18)+1;
+			if(txt::get_char_at(x,y)=$20) then txt::put_char_at(x,y,36);
 		end;
 	
 	
 		// Traps
+		
 		for i:=0 to total_trap_count do
 		begin
 			x:=mod(random(), 20)+1;
-			y:=mod(random(), 22)+1;
+			y:=mod(random(), 18)+1;
 			if(txt::get_char_at(x,y)=$20) then txt::put_char_at(x,y,42);
 		end;
 		
@@ -77,6 +94,12 @@ begin
 		// Main loop
 		while(game_running) do
 		begin
+			
+			// Reduce flicker
+			Memory::VSync();
+			
+			// Print our dude
+			txt::put_char_at(x,y,64);
 			
 			// Update lives left
 			txt::put_dec_at(20,0,lives);
