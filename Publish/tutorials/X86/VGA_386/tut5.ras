@@ -16,7 +16,7 @@ var
 	// External fils	
 	filename1 : string="IMAGE2_C.BIN";
 	palette1 : string="IMAGE2.PAL";
-	font1_file : string="FONT1_C.BIN";
+	font1_file : string="FONTS/FONT1.BIN";
 	fontP : pointer of byte;
 	// da cheesy text
 	cheesy_text: string=("TU ERES",0,"MI HERMANO",0,"DEL ALMA",0,"REALMENTE",0,"EL AMIGO",0,0,255);	
@@ -58,9 +58,9 @@ begin
 	
 	// Load and decompress font
 	fontP := Screen::buffer4;
-	File::ReadAll(#font1_file, Screen::buffer3);
+	File::ReadAll(#font1_file, Screen::buffer4);
 	
-	Compression::Decompress(Screen::buffer3, Screen::buffer4);
+//	Compression::Decompress(Screen::buffer3, Screen::buffer4);
 	
 end;
 

@@ -196,7 +196,8 @@ begin
 	p1 := objects[i].faces;
 	for j:=0 to objects[i].noFaces do
 	begin
-		k1:=p1[0];		
+		k1:=p1[0];
+asm(";here");		
 		k2:=p1[1];
 		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], cx, p2);
 		p1:=p1+4;
@@ -225,7 +226,7 @@ begin
 	for j:=0 to objects[i].noVertices do
 	begin
 		// Rotate each vertex!
-		Matrix::MatMulVec3(#rotMat,v1,vr);
+		Matrix::MatMulVec3(#rotMat, v1, vr);
 		vr:=vr+6;
 		v1:=v1+6;		
 	end;

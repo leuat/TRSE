@@ -244,7 +244,10 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
             //            as->Asm("push ax");
             as->Asm("les di,["+node->getValue(as)+ "]");
             if (node->m_expr->isPureNumeric()) {
-                as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+"]");
+//                as->Comment("Data size:"+QString::number(node->getArrayDataSize(as)));
+                QString scale = "*"+QString::number(node->getArrayDataSize(as));
+
+                as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+scale+"]");
                 if (node->m_writeType==TokenType::LONG || node->isLong(as)) {
                     as->Asm("mov bx, word [es:di + "+node->m_expr->getValue(as)+"+2]");
                     as->Asm("mov es,bx");
