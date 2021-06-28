@@ -1,9 +1,9 @@
 unit Vector;
 var
-	type vec4 = array[4] of integer;
-	type vec3 = array[3] of integer;
-	type vec2 = array[2] of integer;
-	type vecp = pointer of integer;
+	type vec4 = array[4] of signed integer;
+	type vec3 = array[3] of signed integer;
+	type vec2 = array[2] of signed integer;
+	type vecp = pointer of signed integer;
 
 
 
