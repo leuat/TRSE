@@ -4,8 +4,15 @@ unit txt;
 var
 	i,y,p:byte;
 	CH:byte;
+	@donotremove CH
+	@donotremove i
+	@donotremove y
+	@donotremove p
 	LATEST_SCANCODE: byte;
+	@donotremove LATEST_SCANCODE
+	
 	temp_address_p: pointer of byte;
+	@donotremove temp_address_p
 	
 	Active_Page_Number:integer;
 	
@@ -20,8 +27,17 @@ var
 	temp_num: integer;
 	temp_i: byte=0;
 	this_bbc: byte=0;
+	
 	in_str: pointer;
+	@donotremove in_str
+	
 	CRLF: byte;
+	@donotremove CRLF
+	
+	ch_col,ch_row:byte;
+	@donotremove ch_col
+	@donotremove ch_row
+	
 	
 	_match:byte;
 	o_cx:byte;
@@ -29,7 +45,8 @@ var
 	
 	user_input: pointer;
 	user_str: string = ("                                   ");
-	
+	@donotremove user_input
+	@donotremove user_str
 	
 	// PC cursors		        
 	const CUR_U: byte = $71;
@@ -272,9 +289,6 @@ var
 	asm
 
 asm_zx_cxy2saddr:
-
-			
-
 			
 		   ; enter : h = valid character y coordinate
 		   ;         l = valid character x coordinate
@@ -308,19 +322,17 @@ asm_zx_cxy2saddr:
 	Return the character at chosen screen position
 	
 	**/
-    function get_char_at(_col,_row:byte):byte;
-    var
-	    i_col,i_row:byte;
+    function get_char_at(ch_col,ch_row: global byte):byte;  
     begin
 	    
-    i_row:=_row;
-		asm
-					ld h,a
-		end;	    
-
-    i_col:=_col;    
-		asm
+	    
+	    		asm
+; supply params (spectrum has x and y switched confusingly)
+					
+					ld a,[txt_ch_col]			
 					ld l,a
+					ld a,[txt_ch_row]
+					ld h,a
 		end;	    
 	    
 		asm_zx_cxy2saddr();
