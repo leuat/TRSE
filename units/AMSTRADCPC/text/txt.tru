@@ -1,18 +1,11 @@
 unit txt;
-@use "screen"
-@use "format"
+@use crtc  
+@use Text
 var
 	i,y,p:byte;
 	CH:byte;
-	@donotremove CH
-	@donotremove i
-	@donotremove y
-	@donotremove p
 	LATEST_SCANCODE: byte;
-	@donotremove LATEST_SCANCODE
-	
 	temp_address_p: pointer of byte;
-	@donotremove temp_address_p
 	
 	Active_Page_Number:integer;
 	
@@ -27,17 +20,12 @@ var
 	temp_num: integer;
 	temp_i: byte=0;
 	this_bbc: byte=0;
-	
 	in_str: pointer;
-	@donotremove in_str
-	
 	CRLF: byte;
-	@donotremove CRLF
 	
-	ch_col,ch_row:byte;
-	@donotremove ch_col
-	@donotremove ch_row
-	
+	_col,_row: byte;
+	@donotremove _col
+	@donotremove _row
 	
 	_match:byte;
 	o_cx:byte;
@@ -45,8 +33,7 @@ var
 	
 	user_input: pointer;
 	user_str: string = ("                                   ");
-	@donotremove user_input
-	@donotremove user_str
+	
 	
 	// PC cursors		        
 	const CUR_U: byte = $71;
@@ -62,14 +49,10 @@ var
 	**/
 	procedure put_ch(CH:global byte);
 	begin
-
-		asm
-			
-			ld a, [txt_CH]
-			call $10
-		end;
-
-
+		  asm("
+		    ld a, [txt_CH]
+		    call #bb5a
+  			")
 	end;
 
 	/**
@@ -80,7 +63,6 @@ var
 	procedure DefineScreen();
     begin
 
-	    
 
 
     end;
@@ -103,33 +85,7 @@ var
 
 
     
-
-
 	/**
-	
-	Place the cursor at X, Y screen position
-	
-	**/
-	procedure move_to(_text_x: byte, _text_y: byte);
-   begin
-
-		asm
-			
-			ld a,22
-			call $0010
-			ld a,[txt__text_y]
-			call $0010
-			ld a,[txt__text_x]						
-			call $0010
-			
-			
-		end;
-
-	    
-   end;
-    
-    
-   /**
 
 	Place the cursor at 0,0 top left of screen
 	
@@ -137,9 +93,24 @@ var
 	procedure cursor_home();
 	begin
 
-		move_to(0,0);
 
-   end;
+    end;
+
+	/**
+	
+	Place the cursor at X, Y screen position
+	
+	**/
+	procedure move_to(_text_x: byte, _text_y: byte);
+    begin
+		asm
+		  ld a, [txt__text_x]
+		  call #bb6f
+		  ld a, [txt__text_y]
+		  call #bb72
+		end;
+	    
+    end;
 	
 	/**
 	
@@ -148,7 +119,20 @@ var
 	**/
 	procedure wait_vsync();
     begin
-
+		asm
+	wf_Sync:
+	    ld b,#f5
+	    in a,(c)
+	    rra
+	    jr nc,wf_Sync + 2
+	    ei
+	    nop
+	    halt
+	    halt
+	    di
+	
+		end;
+	
     end;
 
 	/**
@@ -159,26 +143,16 @@ var
 	procedure text_colour(_chosen_text_colour: byte);
     begin
 	    
+	    asm
+		    
+			ld a, [txt__chosen_text_colour]
+			call #bb90
+		    
+	    end;
+	    
     end;	
 	
-	
-	
-	function read_keyboard():byte;
-	var
-				temp_k:byte;
-	begin
-		temp_k:=0;
-		asm
-		
-		Read_Keyboard:        		
-						ld hl, $5c08
-						ld a,(hl)
-					 	ld [txt_temp_k],a                                   
-	
-		end;
-	    poke(^$5c08,0,0);
-	    read_keyboard:=temp_k;
-	end;
+
 
 	/**
 
@@ -187,12 +161,15 @@ var
 	**/
 	function get_key():byte;
 	var
-			_k,tmp:byte;
+
     begin
-	    
-		_k:=read_keyboard(); 	
-		get_key:=_k;
-	    
+		asm
+			
+			   call #bb06
+  				ld [txt_CH], a
+			
+		end;
+	    get_key:=CH;
     end;
     
     
@@ -217,11 +194,7 @@ var
 	**/
 	procedure wait_key();
     begin
-	    
-	    while(get_key()=0) do 
-			begin
-			end;
-	    
+	    get_key();
     end;
 	/**
 
@@ -253,8 +226,8 @@ var
  	    
     begin
 	    
-		move_to(_atx,_aty);
-		put_ch(_atchar);
+		temp_address_p:=$B800+(_aty*80);
+		temp_address_p[_atx*2]:=_atchar;
 	    
     end;
 
@@ -277,7 +250,7 @@ var
 	    if(out_CRLF=true) then 
 	    begin
 		    put_ch(13);
-		    //put_ch(10);
+		    put_ch(10);
 	    end;
 	    
     
@@ -290,117 +263,25 @@ var
 	Return the character at chosen screen position
 	
 	**/
-    function get_char_at(ch_col,ch_row: global byte):byte;  
+    function get_char_at(_col,_row: global byte):byte;
     begin
-	    
-	    
-	    		asm
-; supply params (spectrum has x and y switched confusingly)
-					
-					ld a,[txt_ch_col]			
-					ld b,a
-					ld a,[txt_ch_row]
-					ld c,a
-						
-	;call 9525	
-
-	ld [txt_CH],a
-	
-	
-	
-end;
+			move_to(_col,_row);
+		  asm("
+		    call #bb60
+		    ld [txt_CH], a
+		  ");
 	    
 	    // return the character
-	    get_char_at:=64;
+	    get_char_at:=CH;
 
     end;    
 
 
-	/**
-	
-	Return the character at chosen screen position
-	
-	**/
-    function get_attr_at(ch_col,ch_row: global byte):byte;  
-    begin
-	    
-	    
-	    		asm
-; supply params (spectrum has x and y switched confusingly)
-					
-					ld a,[txt_ch_col]			
-					ld b,a
-					ld a,[txt_ch_row]
-					ld c,a
-					
-	call 9603
-	call 11733				
 
-	ld [txt_CH],a
-	
-	
-	
-end;
-	    
-	    // return the character
-	    get_attr_at:=CH;
-
-    end; 
-
-
-	procedure push_registers();
-	begin
-		asm
-			
-		; preserve registers
-					push hl
-					push bc
-					push de
-					push af
-	
-		end;	
-	end;
-
-	procedure pop_registers();
-	begin
-		asm
-		; restore registers	
-					pop af
-					pop de
-					pop bc
-					pop hl
-			
-		end;
-
-	end;
-	
 	procedure beep();
 	begin
 		
-		asm
-			
-
-			
-BEL_LENGHT:
-        ld      b,70
-        ld      c,254
-BEL_loop:
-        dec     h
-        jr      nz,BEL_jump
-        xor     16
-        out     (c),a
-BEL_FREQ_1:
-        ld      h,165
-BEL_jump:
-        dec     l
-        jr      nz,BEL_loop
-        xor     16
-        out     (c),a
-BEL_FR_2:
-        ld      l,180
-        djnz    BEL_loop
-
-		end;
+		put_ch(7);
 		
 		
 	end;
@@ -443,7 +324,10 @@ BEL_FR_2:
 
     begin
 	    
-
+    asm("
+      call #bb7e
+      call #bb84
+    ");    
 	    
     end;
 
@@ -456,7 +340,10 @@ BEL_FR_2:
 	var
 
     begin
-	    
+	      asm("
+		      call #bb7b
+		      call #bb81
+	    	")
 
 	    
     end;
@@ -493,7 +380,19 @@ BEL_FR_2:
 	end;
 
 
+	/**
+	
+	Output a string representation of a decimal number at chosen position
+	
+	**/
+	procedure put_dec_at(_natx,_naty,_nat:byte);
+	begin
 
+		move_to(_natx,_naty);		
+		print_string(_nat, false);
+		
+	end;
+	
 	
 	function str_len(in_str: global pointer):byte;
 	begin
@@ -567,7 +466,7 @@ BEL_FR_2:
 procedure crlf();
 begin
 	
-	//txt::put_ch(10);
+	txt::put_ch(10);
 	txt::put_ch(13);
 	
 end;
@@ -657,33 +556,14 @@ end;
 	Set if you want carriage return true/false
 	
 	**/
-procedure print_dec(_in_n:integer, _add_cr:byte);
-var
-	
-	str:string;
-	
+	procedure print_dec(_in_n:byte, _add_cr:byte);
 	begin
 		
-		
-		Format::Itos(_in_n,#str);
-		print_string(#str,_add_cr);
-		
+		print_string(_in_n, _add_cr);
+    
 		
 	end;
 
-	/**
-	
-	Output a string representation of a decimal number at chosen position
-	
-	**/
-	procedure put_dec_at(_natx,_naty,_nat:byte);
-	begin
-
-		move_to(_natx,_naty);		
-		print_dec(_nat, false);
-		
-	end;
-	
    
 	/**
 	
@@ -693,10 +573,22 @@ var
 	**/
   	procedure cls();
     begin
-		asm
-			call $0DAF 
-		end;
-		 cursor_home();
+	    
+
+
+		  asm
+; 40x25 mode			  
+		    ld  a,1
+		    call  $BC0E			  
+
+		
+; CLS			
+			call #bb6c
+		    
+
+		    
+		  end;
+
 	    DefineScreen();
     end;
 
