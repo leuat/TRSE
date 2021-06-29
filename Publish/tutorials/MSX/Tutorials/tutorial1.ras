@@ -8,10 +8,10 @@ var
 	
 
 
-
 begin
 	Screen::ClearScreen();
 	Screen::SetColors(2,0,0); // text, bg, border
+	
 	
 	Screen::PrintString(#text);
 	Screen::Wait(100);

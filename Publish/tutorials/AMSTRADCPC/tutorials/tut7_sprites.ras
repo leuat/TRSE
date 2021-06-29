@@ -23,7 +23,7 @@ interrupt MainRaster();
 begin
 	Memory::PushAll();
 	
-	x:= mod(sinx[time],32);
+	x:= sinx[time];
 	y:= 40+siny[t2];
 	
 	

@@ -56,5 +56,5 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/X86/VGA_386/
-open_files = ,tut6.asm, tut6.ras, tut5.asm, tut5.ras, [ext]units/X86/gfx/lib3d.tru, [ext]units/X86/gfx/fonts.tru
-current_file = tut5.ras
+open_files = ,tut6.asm, [ext]units/X86/gfx/lib3d.tru, tut6.ras, tut5.asm, tut5.ras, [ext]units/X86/gfx/fonts.tru
+current_file = tut6.asm

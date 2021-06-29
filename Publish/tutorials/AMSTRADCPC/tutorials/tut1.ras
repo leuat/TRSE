@@ -25,8 +25,11 @@ var
 // Include the exported image data + palette
 	image : incbin("resources/images/trse.bin");
 	palette : incbin("resources/images/trse_palette.bin");
-
+	
+	
+	
 begin
+	
 	// Set 160x200 16-color mode
 	Crtc::InitDefault(0);
 	// Set palette
