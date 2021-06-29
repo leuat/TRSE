@@ -52,6 +52,6 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 project_path = /Applications/trse/trse.app/Contents/MacOS/../../tutorials/CrossPlat/txt_tutorials/
-open_files = ,4_move.ras, 7_game.ras, 6_passw.ras, 5_input.asm, [ext]units/MSX/screen.tru, [ext]units/X86/text/txt.tru
+open_files = ,spectrum.ras, 7_game.ras, 5_input.asm, [ext]units/X86/text/txt.tru
 current_file = 7_game.ras
 qemu = No

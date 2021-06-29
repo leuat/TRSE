@@ -1,35 +1,33 @@
 unit txt;
 @use "screen"
 var
-	i,y,p:byte;
-	CH:byte;
-	@donotremove CH
-	LATEST_SCANCODE: byte;
-	temp_address_p: pointer of byte;
+	i,y,p:byte ram;
+	CH:byte ram;
+	LATEST_SCANCODE: byte ram;
+	temp_address_p: pointer of byte ram;
 	
-	Active_Page_Number:integer;
+	Active_Page_Number:integer ram;
 	
-	ytab : array[25] of integer=(
+	ytab : array[25] of integer  ram=(
 		0,0,0,0,0,0,
 		0,0,0,0,0,0,
 		0,0,0,0,0,0,
 		0,0,0,0,0,0);
-	screen_memory: pointer;
-	max_digits,next_digit: integer;
-	temp_num_p: pointer;
+	screen_memory: pointer ram;
+	max_digits,next_digit: integer ram;
+	temp_num_p: pointer ram;
 	temp_num: integer;
-	temp_i: byte=0;
+	temp_i: byte ram;
 	this_bbc: byte=0;
-	in_str: pointer;
-	@donotremove in_str
-	CRLF: byte;
-	@donotremove CRLF
-	_match:byte;
-	o_cx:byte;
-	o_cy:byte;
+	in_str: pointer ram;
+	CRLF: byte ram;
+	
+	_match:byte ram;
+	o_cx:byte ram;
+	o_cy:byte ram;
 	
 	user_input: pointer;
-	user_str: string = ("                                   ");
+	user_str: string  ram = ("                                   ");
 	
 	
 	// PC cursors		        
@@ -44,17 +42,14 @@ var
 	Put a character at current cursor position
 	
 	**/
-	procedure put_ch(CH: global byte);
+	procedure put_ch(CH:global byte);
+	var
 	begin
-		asm
-			
-			ld a,[txt_CH]
-			call $00A2	
-			ld a,65
-			call $00A2	
-		end;
-		
 
+		asm
+				ld	a, [txt_CH]	
+				call CHPUT
+		end;
 	end;
 
 	/**
@@ -212,7 +207,8 @@ var
  	    
     begin
 	    
-
+		temp_address_p:=$B800+(_aty*80);
+		temp_address_p[_atx*2]:=_atchar;
 	    
     end;
 

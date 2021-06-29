@@ -11,6 +11,8 @@ var
 	charat:byte;
 	x,y,oldx,oldy: byte;
 	this_row: integer;
+	
+	
 begin
 
 	// Clear screen,

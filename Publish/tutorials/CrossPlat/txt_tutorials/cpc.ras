@@ -1,0 +1,25 @@
+program cpc_test;
+
+@projectsettings "system" "AMSTRADCPC"
+
+@use "text/txt"
+
+
+var
+
+	hello_string: string=("Hello!");
+	hello_p: pointer;
+
+	begin
+		hello_p:=#hello_string;
+
+		txt::cls();
+		txt::put_ch(65);
+		txt::cursor_off();
+		txt::print_string(#hello_string,true);
+		txt::wait_key();
+		txt::cursor_on();
+		txt::move_to(10,10);
+		txt::print_string("WOOT!",true);
+		loop();
+	end.

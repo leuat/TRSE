@@ -7,13 +7,25 @@ program zx_test;
 
 var
 
-	i,y: byte;
+	i,y,x: byte;
 	hello_string: string=("Hello Speccy!");
 	hello_p: pointer;
 
 	begin
 
 		txt::cls();
+		
+		for y:=0 to 20 do
+		begin
+			for x:=0 to 30 do
+			begin
+			
+				txt::put_char_at(x,y,64);
+				if(txt::get_char_at(x,y)<>64) then txt::put_char_at(x,y,88);;		
+			end;
+		end;
+		
+	
 		
 		for y:=0 to 100 do
 		begin

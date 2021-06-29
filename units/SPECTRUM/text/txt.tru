@@ -298,55 +298,95 @@ var
 ; supply params (spectrum has x and y switched confusingly)
 					
 					ld a,[txt_ch_col]			
-					ld b,a
+					ld l,a
 					ld a,[txt_ch_row]
-					ld c,a
-						
-	;call 9525	
+					ld h,a
 
-	ld [txt_CH],a
+			; get pointer
+				   rrca
+				   rrca
+				   rrca
+				   and $e0
+				   or l
+				   ld l,a
+				   
+				   ld a,h
+				   and $18
+				   or $40
+			   ld h,a   
+	
+
+asm_zx_screenstr:
+   ; h = char Y 0..23
+   ; l = char X 0..31
+   ;
+   ; exit : hl = ascii char code if match, else 0 and carry set
+
+   
+   
+   ; hl = screen address
+   
+   ld c,96                     ; number of chars to match against
+   ld de,(23606)               ; use CHARS system variable to locate character set bitmap
+   inc d
+
+charloop:
+
+   ld b,8                      ; match 8 pixel rows
+   push hl
+
+mloop:
+
+   ld a,(de)
+   xor (hl)
+   jr z, cont1                 ; jump if bit patterns match
+   inc a
+   jr nz, nomatch              ; jump if bit patterns are not inverses
+
+cont1:
+
+   inc de
+   inc h
+   djnz mloop
+   
+match:
+
+   pop hl
+   
+   ld a,128
+   sub c
+
+   ld l,a                      ; hl = ascii char code
+   ld h,b
+   ret
+   
+nomatch:
+
+   ld a,b			;Remaining rows in font left
+   add a,e
+   ld e,a
+   jp nc, cont2
+   inc d
+
+cont2:
+
+   pop hl
+   dec c
+   jp nz, charloop
+   
+   ld l,c
+   ld h,c                      ; return with 0 to indicate no match
+   scf
+	ld [txt_CH],hl
 	
 	
 	
 end;
 	    
 	    // return the character
-	    get_char_at:=64;
+	    get_char_at:=CH;
 
     end;    
-
-
-	/**
-	
-	Return the character at chosen screen position
-	
-	**/
-    function get_attr_at(ch_col,ch_row: global byte):byte;  
-    begin
-	    
-	    
-	    		asm
-; supply params (spectrum has x and y switched confusingly)
-					
-					ld a,[txt_ch_col]			
-					ld b,a
-					ld a,[txt_ch_row]
-					ld c,a
-					
-	call 9603
-	call 11733				
-
-	ld [txt_CH],a
-	
-	
-	
-end;
-	    
-	    // return the character
-	    get_attr_at:=CH;
-
-    end; 
-
 
 	procedure push_registers();
 	begin
