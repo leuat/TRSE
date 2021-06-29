@@ -2,7 +2,7 @@ program Get_String_Test;
 @projectsettings "system" SPECTRUM
 @use "text/txt"
 var  
-   i: byte; 
+   i: integer; 
    user_input: pointer;
 	myint: integer;
 
@@ -26,11 +26,13 @@ begin
 	i:=txt::get_dec();
 	txt::move_to(0,7);
 	txt::print_string(" ", True);
+	txt::print_string("YOU ARE ",false);
 	txt::print_dec(i, False);
-	txt::print_string("? WOW, YOU DON'T LOOK A DAY", True);
+	txt::print_string("?",True);
+	txt::print_string("WOW, YOU DON'T LOOK A DAY", True);
 	txt::print_string("OLDER THAN ", False);
-	txt::print_dec(i-1, True); 
-
+	i:=i-1;
+	txt::print_dec(i, True); 
 
 	loop();
 end.

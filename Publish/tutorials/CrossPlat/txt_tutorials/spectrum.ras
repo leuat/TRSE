@@ -8,13 +8,39 @@ program zx_test;
 var
 
 	i,y,x: byte;
+	in_num:integer;
 	hello_string: string=("Hello Speccy!");
 	hello_p: pointer;
+
+
+next_digit,temp_num:integer;
+
 
 	begin
 
 		txt::cls();
 		
+
+		while(1) do
+		begin
+			
+			// get the number as a string
+			txt::print_string("ENTER NUMBER: ",true);	
+			temp_num:=txt::get_dec();		
+			txt::print_string("YOUR NUMBER: ",false);
+			txt::print_dec(temp_num, true);
+			txt::put_ch(13);
+		end;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
 		for y:=0 to 20 do
 		begin
 			for x:=0 to 30 do
