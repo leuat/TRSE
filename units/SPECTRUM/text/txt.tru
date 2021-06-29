@@ -40,6 +40,8 @@ var
 	
 	
 	_match:byte;
+	@donotremove _match
+	
 	o_cx:byte;
 	o_cy:byte;
 	
@@ -47,6 +49,10 @@ var
 	user_str: string = ("                                   ");
 	@donotremove user_input
 	@donotremove user_str
+	
+	str1,str2: pointer;
+	@donotremove str1
+	@donotremove str2
 	
 	// PC cursors		        
 	const CUR_U: byte = $71;
@@ -166,6 +172,7 @@ var
 	function read_keyboard():byte;
 	var
 				temp_k:byte;
+				@donotremove tmp_k
 	begin
 		temp_k:=0;
 		asm
@@ -508,25 +515,38 @@ BEL_FR_2:
 	
 	**/
 
-	function str_compare(str1:pointer,str2:pointer):byte;
-	var
-
-		
+	function str_compare(str1: global pointer,str2: global pointer):byte;
 	begin
 		
 		_match:=false;
-		while(str1^<>0) do
+		
+		i:=str1^;
+		p:=str2^;		
+		
+
+		while(i>=32) do
 		begin
-			i:=str1^;
-			p:=str2^;	
+
+/*
+			put_ch(i);
+			put_ch($3A);
+			put_ch(p);
+			put_ch(32);
+*/
 					
 			if(i=p) then 
 			begin
 				_match:=true;
+			end
+			else
+			begin
+				_match:=false;
 			end;
 			
 			str1:=str1+1;
 			str2:=str2+1;
+			i:=str1^;
+			p:=str2^;		
 		end;
 
 		str_compare:=_match;
@@ -613,41 +633,39 @@ begin
 end;
 	
 function get_string():byte;
-var
-	
-
 begin
-	
+
+	i:=0;
 	user_input:=#user_str;
+	
 	while (i<>13) do
 	begin
 		
 		i:=get_key();
 		
-		if (LATEST_SCANCODE=$0E) then
+		if (i=$0C) then
 		begin
 			user_input^:=0;
 			user_input:=user_input-1;
-			put_ch(i);
+			put_ch($08);
 		end
 		else
 		begin
-			if(i>=32) then
-			begin		
-				put_ch(i);
+			
+			if(i>0) then
+			begin
 				user_input^:=i;
+				put_ch(user_input^);
 				user_input:=user_input+1;
-			end;				
-
+				user_input^:=0;			
+			end;
 		end;
-		
-		user_input^:=0;
+
 
 	end;
-		
-	put_ch(10);
 	put_ch(13);
 
+	user_input:=#user_str;
 	get_string:=user_input;
 
 end;
