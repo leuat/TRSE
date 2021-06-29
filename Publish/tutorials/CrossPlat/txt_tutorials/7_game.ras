@@ -130,9 +130,9 @@ begin
 			       
 					// Cursor keys defined in unit		        
 					txt::CUR_U: if(y>0) then y:=y-1;
-					txt::CUR_D: if(y<23) then inc(y);
+					txt::CUR_D: if(y<23) then y+=1;
 					txt::CUR_L: if(x>0) then x:=x-1;
-					txt::CUR_R: if(x<21) then inc(x);
+					txt::CUR_R: if(x<21) then x+=1;
 			   
 				end;
 				
@@ -144,7 +144,7 @@ begin
 				
 				// $20 is space
 				case charat of
-				$40:		txt::put_char_at(x,y,64);
+
 				$20:		txt::put_char_at(x,y,64);
 				  0:		txt::put_char_at(x,y,64);
 				36:
@@ -154,17 +154,18 @@ begin
 						txt::move_to(3,0);
 						txt::print_string(" LOOT ACQUIRED! ", False);
 						txt::put_char_at(x,y,64);
-						inc(collected_loot_count);
-	
+						collected_loot_count+=1;
+
 					end;
 					
 				42:
 					begin
 						// trap
 						txt::move_to(3,0);
-						txt::print_string("   LIVE LOST!   ", False);
+						txt::print_string("   LIFE LOST!   ", False);
 						txt::put_char_at(x,y,64);
-						dec(lives);
+						lives-=1;
+						txt::beep();
 					end;	
 				else
 				begin
