@@ -3,6 +3,7 @@ unit txt;
 var
 	i,y,p:byte;
 	CH:byte;
+	@donotremove CH
 	LATEST_SCANCODE: byte;
 	temp_address_p: pointer of byte;
 	
@@ -20,8 +21,9 @@ var
 	temp_i: byte=0;
 	this_bbc: byte=0;
 	in_str: pointer;
+	@donotremove in_str
 	CRLF: byte;
-	
+	@donotremove CRLF
 	_match:byte;
 	o_cx:byte;
 	o_cy:byte;
@@ -42,14 +44,17 @@ var
 	Put a character at current cursor position
 	
 	**/
-	procedure put_ch(CH:global byte);
-	var
+	procedure put_ch(CH: global byte);
 	begin
-
 		asm
-				ld	a, [txt_CH]	
-				call 	CHPUT
+			
+			ld a,[txt_CH]
+			call $00A2	
+			ld a,65
+			call $00A2	
 		end;
+		
+
 	end;
 
 	/**
@@ -207,8 +212,7 @@ var
  	    
     begin
 	    
-		temp_address_p:=$B800+(_aty*80);
-		temp_address_p[_atx*2]:=_atchar;
+
 	    
     end;
 
@@ -218,17 +222,17 @@ var
 	Set Carriage Return on/off	
 	
 	**/
-	procedure print_string(the_str: pointer, out_CRLF: byte);
+	procedure print_string(in_str: global pointer, CRLF: global byte);
 	var
 		
     begin
-		while(the_str^<>0) do
+		while(in_str^<>0) do
 		begin
-			if(the_str^>=$20) then put_ch(the_str^);
-			the_str:=the_str+1;
+			if(in_str^>=$20) then put_ch(in_str^);
+			in_str:=in_str+1;
 		end;
 	    
-	    if(out_CRLF=true) then 
+	    if(CRLF=true) then 
 	    begin
 		    put_ch(13);
 		    put_ch(10);
