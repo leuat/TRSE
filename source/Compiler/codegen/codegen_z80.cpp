@@ -823,8 +823,10 @@ void CodeGenZ80::SbcHlDe()
 
         as->Asm("sbc a,d");
     }
-    else
+    else {
+        as->Asm("xor a ; clear carry");
         as->Asm("sbc hl,de");
+    }
 
 }
 
