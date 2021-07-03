@@ -16,6 +16,9 @@ on:
 # or to just be allowed to tag, so this solution is not great.
 jobs:
   tag:
+    # Only trigger the nightly on the main repository. Forks probably don't want
+    # to run the nightly by default.
+    if: github.repository == 'leuat/TRSE'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
