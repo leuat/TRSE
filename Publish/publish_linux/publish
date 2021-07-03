@@ -10,7 +10,7 @@ mkdir trse/units/
 
 if [ "$1" = "nightly" ]
 then
-  cp -r ../../trse trse/bin
+  cp -r ../../trse trse/bin/
   # Copy all the libs needed to run TRSE to be sure the right version is avilable.
   ldd trse | awk '{ print $3 }' | sort -u | xargs -I _ cp _ trse/bin/
   # Copy all the plugins listed in plugins.txt
@@ -20,6 +20,9 @@ then
     lib=$(find /usr/lib* | grep "$plugin" | head -n 1)
     cp "$lib" "trse/plugins/$plugin"
   done < plugins.txt
+  # Install OK64 and all the libs it requires
+  cp -r ../../OK64/OK64/OK64 trse/bin/
+  ldd trse/bin/OK64 | awk '{ print $3 }' | sort -u | xargs -I _ cp _ trse/bin/
 else
   cp -r ../../Release/trse trse/bin
   cp -r ../../Release/lib trse/bin

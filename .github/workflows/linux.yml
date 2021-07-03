@@ -104,6 +104,27 @@ jobs:
           qmake PREFIX=/usr TRSE.pro
           make -j 2 -k
 
+      - name: Build OK64
+        run: |
+          git clone https://github.com/leuat/OK64.git
+          pushd OK64
+          OK64dir=`pwd`
+          sudo apt-get install qtmultimedia5-dev
+          # Build resid
+          wget http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/resid/resid-0.16.tar.gz
+          tar -xzf resid-0.16
+          pushd resid-0.16
+          ./configure --prefix=$OK64dir/resid
+          make
+          make install
+          popd
+          # Build OK64
+          pushd OK64
+          qmake INCLUDEPATH=$OK64dir/resid/include QMAKE_LFLAGS=-Wl,-L$OK64dir/resid/lib/ OK64.pro
+          make
+          popd
+          popd
+
       # Construct and publish the linux binary package
       - name: Build tar.gz
         run: cd Publish/publish_linux && ./publish nightly
