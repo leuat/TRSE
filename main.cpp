@@ -173,14 +173,8 @@ void TestSSIM() {
 */
 
 void fixCurrentDir(QString execFile) {
-    QStringList al = execFile.split(QDir::separator());
-    al.removeLast();
-    QString dir = QDir::separator();
-    for (QString s : al)
-        dir +=s+QDir::separator();
-
-    QDir::setCurrent(dir);
-
+    QFileInfo exec(execFile);
+    QDir::setCurrent(exec.absoluteDir().absolutePath());
 }
 
 int main(int argc, char *argv[])
