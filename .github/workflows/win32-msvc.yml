@@ -27,17 +27,9 @@ jobs:
           echo "::set-output name=TRSE_VERSION::${version}"
       - uses: microsoft/setup-msbuild@v1
 
-      # For QT6 build. Commented out because QtMultimedia, which is needed to build OK64, is not available in Qt 6.0 and 6.1.
-      # Hopefully should be reintroduced in Qt 6.2.
-      #- uses: jurplel/install-qt-action@v2
-      #  with:
-      #    version: '6.0.1'
-      #    tools: 'tools_ifw,4,qt.tools.ifw.40 tools_qtcreator,4,qt.tools.qtcreator'
-
-      # For QT5 build.
       - uses: jurplel/install-qt-action@v2
         with:
-          version: '5.15.2'
+          version: '6.0.1'
           tools: 'tools_ifw,4,qt.tools.ifw.40 tools_qtcreator,4,qt.tools.qtcreator'
 
       - name: Build TRSE
@@ -63,7 +55,6 @@ jobs:
           mkdir Publish/publish_win/trse
           cd Publish/publish_win/trse
           cp ../../../release/trse.exe .
-          cp ../../../OK64/OK64/OK64.exe .
           # Copy themes, tutorials, project_templates and units
           cp -r ../../source/* .
           cp -r ../../tutorials .
@@ -99,9 +90,12 @@ jobs:
           echo "Copy trse.exe dependencies"
           ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
           ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
-          echo "Copy OK64.exe dependencies"
-          ldd OK64.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-          ldd OK64.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+          cd ..
+          echo "Copy OK64 from old archive"
+          mkdir tmp # Separate directory as the archive contain a trse dir that would clash with our own
+          cd tmp
+          wget https://www.irio.co.uk/trse/nightly_build/trse_win_nightly.zip
+          cp -r trse/OK64 ../trse/
           cd ..
           7z a trse_win.zip trse
 
