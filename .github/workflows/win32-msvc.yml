@@ -95,7 +95,7 @@ jobs:
           echo "Copy OK64 from old archive"
           mkdir tmp # Separate directory as the archive contain a trse dir that would clash with our own
           cd tmp
-          wget --tries=3 https://www.irio.co.uk/trse/nightly_build/trse_win_nightly.zip
+          C:\msys64\usr\bin\wget.exe --tries=3 https://www.irio.co.uk/trse/nightly_build/trse_win_nightly.zip
           cp -r trse/OK64 ../trse/
           cd ..
           7z a trse_win.zip trse
