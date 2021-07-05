@@ -43,8 +43,8 @@ jobs:
           mkdir tools
           pushd tools
           # vasm (Atari)
-          # wget http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
-          wget https://www.irio.co.uk/div/vasm.tar.gz
+          # wget --tries=3 http://sun.hasenbraten.de/vasm/daily/vasm.tar.gz
+          wget --tries=3 https://www.irio.co.uk/div/vasm.tar.gz
           tar -xzf vasm.tar.gz
           pushd vasm
           make CPU=m68k SYNTAX=mot -j 2
@@ -58,13 +58,13 @@ jobs:
           cmake --build build -j 2
           popd
           # exomizer
-          wget https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
+          wget --tries=3 https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
           unzip 3.1.1.zip -d exomizer
           pushd exomizer/*/src
           make -j 2
           popd
           # Install ROMs to be able to run VICE
-          wget https://sourceforge.net/projects/vice-emu/files/releases/vice-3.5.tar.gz/download -O vice-3.5.tar.gz
+          wget --tries=3 https://sourceforge.net/projects/vice-emu/files/releases/vice-3.5.tar.gz/download -O vice-3.5.tar.gz
           tar -xzf vice-3.5.tar.gz
           mkdir -p ~/.config/vice/
           cp -r vice-3.5/data/* ~/.config/vice/
@@ -111,7 +111,7 @@ jobs:
           OK64dir=`pwd`
           sudo apt-get install qtmultimedia5-dev
           # Build resid
-          wget http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/resid/resid-0.16.tar.gz
+          wget --tries=3 http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/resid/resid-0.16.tar.gz
           tar -xzf resid-0.16.tar.gz
           pushd resid-0.16
           ./configure --prefix=$OK64dir/resid
@@ -151,7 +151,7 @@ jobs:
           # TODO(ColinPitrat): Understand why and try to have them in only one place.
           cp -r trse/{project_templates,themes,tutorials,units} trse/usr/
 
-          wget -c https://github.com/$(wget -q https://github.com/probonopd/go-appimage/releases -O - | grep "appimagetool-.*-x86_64.AppImage" | head -n 1 | cut -d '"' -f 2) -O appimagetool
+          wget --tries=3 -c https://github.com/$(wget -q https://github.com/probonopd/go-appimage/releases -O - | grep "appimagetool-.*-x86_64.AppImage" | head -n 1 | cut -d '"' -f 2) -O appimagetool
           chmod +x appimagetool
           ./appimagetool -s deploy trse/usr/share/applications/trse.desktop
 
