@@ -39,14 +39,15 @@ jobs:
           qmake TRSE.pro
           D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -j 2 -f Makefile.Release
 
-      - name: Build OK64
-        shell: cmd
-        run: |
-          git clone https://github.com/leuat/OK64.git
-          cd OK64/OK64
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
-          qmake INCLUDEPATH=$OK64dir/resid/include QMAKE_LFLAGS=-Wl,-L$OK64dir/resid/lib/ OK64.pro
-          D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -j 2 -f Makefile.Release
+      # OK64 doesn't build with Qt 6.0 or Qt 6.1 (no Qt Multimedia). Hopefully this will be fixed with Qt 6.2.
+      #- name: Build OK64
+      #  shell: cmd
+      #  run: |
+      #    git clone https://github.com/leuat/OK64.git
+      #    cd OK64/OK64
+      #    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+      #    qmake INCLUDEPATH=$OK64dir/resid/include QMAKE_LFLAGS=-Wl,-L$OK64dir/resid/lib/ OK64.pro
+      #    D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -j 2 -f Makefile.Release
 
       # We do not reuse Publish/publish_win/PublishWindows.cmd because copying the libs & plugins is easier with bash
       - name: Build zip
