@@ -405,9 +405,9 @@ void MainWindow::VerifyDefaults()
         m_iniFile->setString("ok64_emulator","OK64");
     #endif
     #ifdef _WIN32
-   m_iniFile->setString("ok64_emulator","OK64\\ok64.exe");
+   m_iniFile->setString("ok64_emulator","ok64.exe");
    if (!QFile::exists(m_iniFile->getString("ok64_emulator")))
-       m_iniFile->setString("ok64_emulator","OK64\\ok64.exe");
+       m_iniFile->setString("ok64_emulator","ok64.exe");
     #endif
 
 
