@@ -273,6 +273,7 @@ void Parser::InitBuiltinFunctions()
             InitBuiltinFunction(QStringList()<< "getkey(", "initgetkey");
         }
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
+        InitBuiltinFunction(QStringList()<< "mod16(","init16x8div");
         InitBuiltinFunction(QStringList()<< "random(", "initrandom256");
 
         InitBuiltinFunction(QStringList()<< "rasterirqwedge(" , "init_wedge");

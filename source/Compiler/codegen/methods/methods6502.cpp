@@ -406,6 +406,8 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     }
     if (Command("mod"))
         Modulo(as);
+    if (Command("mod16"))
+        Modulo16(as);
 
     if (Command("IsOverlapping")) {
         IsOverlapping(as);
@@ -1140,8 +1142,34 @@ void Methods6502::Peek(Assembler* as)
 void Methods6502::Modulo(Assembler *as)
 {
     as->Comment("Modulo");
+
+/*
+    if (m_node->m_params[0]->isWord(as)) {
+//        InitDiv16x8()
+        //as->m_internalZP[0]
+        Node::flags["div16"] = true;
+        LoadVar(as,1);
+        as->Asm("sta "+as->m_internalZP[0]);
+        as->Asm("sty "+as->m_internalZP[0]+"+1");
+        LoadVar(as,0);
+        as->Asm("sta "+as->m_internalZP[1]);
+        if (m_node->m_params[1]->isWord(as)) {
+            as->Asm("sty "+as->m_internalZP[1]+"+1");
+
+        }
+        else {
+            as->Asm("ldy #0 ; force 16-bit");
+            as->Asm("sty "+as->m_internalZP[1]+"+1");
+        }
+        as->Asm("jsr divide16x8");
+        as->Asm("lda "+as->m_internalZP[2]);
+        as->Asm("ldy "+as->m_internalZP[2]+"+1");
+        return;
+    }
+    */
     LoadVar(as,1);
     QString val = as->StoreInTempVar("val");
+
     LoadVar(as,0);
 //    QString mod = as->StoreInTempVar("modulo");
     as->Asm("sec");
@@ -1155,6 +1183,33 @@ void Methods6502::Modulo(Assembler *as)
     as->PopLabel("modulo");
 
     as->PopTempVar();
+
+}
+
+void Methods6502::Modulo16(Assembler *as)
+{
+    as->Comment("Modulo16");
+
+
+//        InitDiv16x8()
+        //as->m_internalZP[0]
+        LoadVar(as,1);
+        as->Asm("sta "+as->m_internalZP[0]);
+        as->Asm("sty "+as->m_internalZP[0]+"+1");
+        LoadVar(as,0);
+        as->Asm("sta "+as->m_internalZP[1]);
+        if (m_node->m_params[1]->isWord(as)) {
+            as->Asm("sty "+as->m_internalZP[1]+"+1");
+
+        }
+        else {
+            as->Asm("ldy #0 ; force 16-bit");
+            as->Asm("sty "+as->m_internalZP[1]+"+1");
+        }
+        as->Asm("jsr divide16x8");
+        as->Asm("lda "+as->m_internalZP[2]);
+        as->Asm("ldy "+as->m_internalZP[2]+"+1");
+        return;
 
 }
 
@@ -5165,6 +5220,8 @@ void Methods6502::InitDiv8x8(Assembler* as) {
 
 }
 
+
+
 void Methods6502::InitDiv16x8(Assembler *as)
 {
 /*    qDebug() << as->m_internalZP.count();
@@ -5172,13 +5229,14 @@ void Methods6502::InitDiv16x8(Assembler *as)
     if (as->m_internalZP.count()<4)
         return;*/
 //    as->Asm("jmp div16x8_def_end");
-
+    if (m_initDiv16x8_initialised)
+        return;
     as->Label("initdiv16x8_divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0
     as->Label("initdiv16x8_dividend = "+as->m_internalZP[1]+"	  ;$fc used for hi-byte");    //1
     as->Label("initdiv16x8_remainder = "+as->m_internalZP[2]+"	  ;$fe used for hi-byte");  // 2
     as->Label("initdiv16x8_result = "+as->m_internalZP[1]+" ;save memory by reusing divident to store the result");
 
-    as->Label("divide16x8	lda #0	        ;preset remainder to 0");
+    as->Label("divide16x8:	lda #0	        ;preset remainder to 0");
     as->Asm("sta initdiv16x8_remainder");
     as->Asm("sta initdiv16x8_remainder+1");
     as->Asm("ldx #16	        ;repeat for each bit: ...");
@@ -5200,7 +5258,7 @@ void Methods6502::InitDiv16x8(Assembler *as)
     as->Asm("inc initdiv16x8_result	;and INCrement result cause divisor fit in 1 times");
     as->Label("skip16	dex");
     as->Asm("bne divloop16");
-    //as->Asm("rts");
+//    m_initDiv16x8_initialised = true;
 
 //    as->Label("div16x8_def_end");
 }

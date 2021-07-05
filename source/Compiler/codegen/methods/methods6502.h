@@ -24,7 +24,7 @@ public:
     Methods6502();
 
     void Assemble(Assembler* as, AbstractCodeGen* dispenser) override;
-
+    bool m_initDiv16x8_initialised = false;
 
     bool Command(QString name) override;
 
@@ -34,6 +34,7 @@ public:
     void Poke(Assembler* as);
     void Peek(Assembler* as);
     void Modulo(Assembler* as);
+    void Modulo16(Assembler* as);
     void MemCpy(Assembler* as, bool isFast);
     void MemCpyUnroll(Assembler* as, bool isReverse);
     void Rand(Assembler* as);
