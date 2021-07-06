@@ -95,6 +95,11 @@ jobs:
           echo "Copy OK64 from old archive"
           mkdir tmp # Separate directory as the archive contain a trse dir that would clash with our own
           cd tmp
+          ls c:/*/wget.exe || echo "ls */wget.exe failed"
+          ls c:/*/*/wget.exe || echo "ls */*/wget.exe failed"
+          ls c:/*/*/*/wget.exe || echo "ls */*/*/wget.exe failed"
+          ls c:/*/*/*/*/wget.exe || echo "ls */*/*/*/wget.exe failed"
+          find c:/ -name wget.exe || echo "find wget.exe failed"
           c:/msys64/usr/bin/wget.exe --tries=3 https://www.irio.co.uk/trse/nightly_build/trse_win_nightly.zip
           cp -r trse/OK64 ../trse/
           cd ..
