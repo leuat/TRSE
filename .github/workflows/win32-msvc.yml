@@ -27,11 +27,6 @@ jobs:
           echo "::set-output name=TRSE_VERSION::${version}"
       - uses: microsoft/setup-msbuild@v1
 
-      # The installed mingw clashes with msys2 and prevents wget.exe to work properly.
-      # This generates a 'fatal error - cygheap base mismatch detected' error when running wget.
-      - name: Remove mingw
-        run: choco uninstall mingw
-
       - uses: jurplel/install-qt-action@v2
         with:
           version: '6.0.1'
@@ -100,7 +95,8 @@ jobs:
           echo "Copy OK64 from old archive"
           mkdir tmp # Separate directory as the archive contain a trse dir that would clash with our own
           cd tmp
-          c:/msys64/usr/bin/wget.exe --tries=3 https://www.irio.co.uk/trse/nightly_build/trse_win_nightly.zip
+          curl https://www.irio.co.uk/trse/nightly_build/trse_win_nightly.zip -o trse_win_nightly.zip
+          unzip trse_win_nightly.zip
           cp -r trse/OK64 ../trse/
           cd ..
           7z a trse_win.zip trse
