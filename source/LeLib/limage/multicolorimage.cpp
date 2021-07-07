@@ -390,9 +390,10 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             double dy = y/(double)height*img.height();
             int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
             int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
-
-//            xx = x;
- //           yy = y;
+            if (m_importScaleX==1.0 && m_importScaleY==1.0) { // prevent rounding errors on windows.. damn
+               xx = x;
+               yy = y;
+            }
 
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();

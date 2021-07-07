@@ -208,8 +208,8 @@ public:
     unsigned char m_scale = 2;
     unsigned char m_noColors = 4;
     unsigned char m_minCol = 1;
-    float m_importScaleX = 1;
-    float m_importScaleY = 1;
+    double m_importScaleX = 1;
+    double m_importScaleY = 1;
     unsigned int m_currentChar;
     // Updates charset position in editor
     bool m_updateCharsetPosition = false;
