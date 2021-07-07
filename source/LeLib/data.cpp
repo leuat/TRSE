@@ -28,7 +28,7 @@
 
 #define MAJOR 0
 #define FEATURE 13
-#define NIGHTLY 67
+#define NIGHTLY 68
 #define VERSION STR(MAJOR) "." STR(FEATURE) "." STR(NIGHTLY)
 
 Data Data::data;
