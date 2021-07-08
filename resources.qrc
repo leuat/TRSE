@@ -615,5 +615,6 @@
         <file>resources/images/tutorials/wormwood.png</file>
         <file>resources/code/arm/init.s</file>
         <file>resources/text/help/m/mod16.rtf</file>
+        <file>resources/images/CROSSPLATFORM.png</file>
     </qresource>
 </RCC>
