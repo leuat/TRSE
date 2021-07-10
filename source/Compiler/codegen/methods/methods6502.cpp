@@ -5563,8 +5563,15 @@ void Methods6502::ClearScreen(Assembler *as)
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::OK64)
         return;
     int val = m_node->m_params[1]->numValue();  // start address (offset) to fill
-    if (m_node->m_params[1]->isPointer(as))
+    if (m_node->m_params[1]->isPointer(as)) {
+/*        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64) {
+
+
+
+            return;
+        }*/
         ErrorHandler::e.Error("ClearScreen does currently not support pointers.",m_node->m_op.m_lineNumber);
+    }
 
     if (!m_node->m_params[1]->isPure())
         ErrorHandler::e.Error("ClearScreen address must be pure numeric or a variable, and not an expression.",m_node->m_op.m_lineNumber);
