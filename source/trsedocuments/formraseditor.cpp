@@ -199,6 +199,17 @@ void FormRasEditor::ExecutePrg(QString fileName)
         }
 
     }
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ORIC) {
+        emu = m_iniFile->getString("oric_emulator");
+        QString fn = Util::getFileWithoutEnding(fileName) + ".prg";
+        if (QFile::exists(fn))
+            fn = QFileInfo(fn).absoluteFilePath();
+
+        params = QStringList() <<"-m" <<"atmos"<<"-t"<<fn;
+  //      params = QStringList() <<"-t"<<fn;
+    //    qDebug() << params;
+
+    }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO) {
         emu = m_iniFile->getString("coleco_emulator");
 
@@ -210,7 +221,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
             //params<<"-fda";
             params<<"-boot" <<"c";
 
-            qDebug() << emu;
+//            qDebug() << emu;
 #ifdef _WIN32
             emu+=".exe";
 #endif
@@ -295,7 +306,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
         params << "-i";
     }
 
-    if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100 || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM || Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800))
+    if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100
+          || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM
+          || Syntax::s.m_currentSystem->m_system == AbstractSystem::ORIC
+          || Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800))
         params << QDir::toNativeSeparators(fileName.replace("//","/"));
 
 
@@ -345,13 +359,13 @@ void FormRasEditor::ExecutePrg(QString fileName)
         return;
     }
 
-
     if (emu.endsWith(".app")) {
         process.setArguments(params);
         process.setProgram(emu);
         process.startDetached();
     }
-    else process.startDetached(emu, params);
+    else
+        process.startDetached(emu, params);
 
     //    qDebug() << emu << params;
     //    qDebug() << "FormRasEditor params" << emu << params;

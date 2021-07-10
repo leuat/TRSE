@@ -127,6 +127,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return APPLEII;
     if (s.toLower()=="m1arm")
         return M1ARM;
+    if (s.toLower()=="oric")
+        return ORIC;
 
     return C64;
 }
@@ -155,6 +157,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == ATARI800) return "ATARI800";
     if (s == APPLEII) return "APPLEII";
     if (s == M1ARM) return "M1ARM";
+    if (s == ORIC) return "ORIC";
     return "";
 }
 

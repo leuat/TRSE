@@ -743,6 +743,11 @@
             </item>
             <item>
              <property name="text">
+              <string>ORIC</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>M1ARM</string>
              </property>
             </item>

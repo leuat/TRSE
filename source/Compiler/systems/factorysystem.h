@@ -23,6 +23,7 @@
 #include "systemmsx.h"
 #include "systemappleii.h"
 #include "systemm1arm.h"
+#include "systemoric.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
@@ -78,6 +79,8 @@ public:
             return new SystemAppleII(settings, proj);
         if (type==AbstractSystem::M1ARM)
             return new SystemM1ARM(settings, proj);
+        if (type==AbstractSystem::ORIC)
+            return new SystemOric(settings, proj);
 
 
         return s;

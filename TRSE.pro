@@ -173,6 +173,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemm1arm.cpp \
     source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
+    source/Compiler/systems/systemoric.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemtiki100.cpp \
@@ -417,6 +418,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemm1arm.h \
     source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
+    source/Compiler/systems/systemoric.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemtiki100.h \

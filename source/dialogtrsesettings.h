@@ -193,6 +193,8 @@ private slots:
 
     void on_btnQemu_clicked();
 
+    void on_btnOric_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

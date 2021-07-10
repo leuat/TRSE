@@ -65,6 +65,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
     ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
+    ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
@@ -167,6 +168,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
+    m_ini->setString("oric_emulator", ui->leOricEmulator->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
@@ -278,7 +280,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"QEMU" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"QEMU" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -747,3 +749,13 @@ void DialogTRSESettings::on_btnQemu_clicked()
         ui->leQemuDir->setText(filename);
 
 }
+
+void DialogTRSESettings::on_btnOric_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Oric emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leOricEmulator->setText(filename);
+
+}
+
