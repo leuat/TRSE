@@ -610,7 +610,6 @@
         <file>resources/text/opcodes_z80.txt</file>
         <file>resources/images/tutorials/olimp.png</file>
         <file>resources/bin/bootsect.bin</file>
-        <file>resources/images/crossplatform.png</file>
         <file>resources/code/fjong_template.fjo</file>
         <file>resources/images/tutorials/wormwood.png</file>
         <file>resources/code/arm/init.s</file>
