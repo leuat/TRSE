@@ -111,7 +111,10 @@ jobs:
           OK64dir=`pwd`
           sudo apt-get install qtmultimedia5-dev
           # Build resid
-          wget --tries=3 http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/resid/resid-0.16.tar.gz
+          #wget --tries=3 http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/resid/resid-0.16.tar.gz
+          # www.zimmers.net seems to be very unstable around the time of the nightly (or some other problem) so
+          # we have our own copy of resid.
+          wget --tries=3 http://www.irio.co.uk/trse/resid-0.16.tar.gz
           tar -xzf resid-0.16.tar.gz
           pushd resid-0.16
           ./configure --prefix=$OK64dir/resid
