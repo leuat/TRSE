@@ -31,14 +31,18 @@ jobs:
           author_name: "Nightly Build"
           message: "Increment nightly version"
 
-      - run: sudo apt-get update
-      - run: sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
-      # For 'Verify all' tests
-      # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
-      # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
-      - run: sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
-      # This may seem weird (and it is) but since Ubuntu virtual environment 20210712.0 we need this to build the AppImage (looks for libQt5XcbQpaAndroidEmu.so.5)
-      - run: sudo apt-get -y install google-android-emulator-installer
+      - run: |
+          # Will be needed if add-apt-repository is not found
+          #sudo apt install software-properties-common
+          sudo add-apt-repository multiverse
+          sudo apt-get update
+          sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
+          # For 'Verify all' tests
+          # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
+          # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
+          sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
+          # This may seem weird (and it is) but since Ubuntu virtual environment 20210712.0 we need this to build the AppImage (looks for libQt5XcbQpaAndroidEmu.so.5)
+          sudo apt-get -y install google-android-emulator-installer
 
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
