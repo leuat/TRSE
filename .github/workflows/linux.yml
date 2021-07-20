@@ -32,9 +32,8 @@ jobs:
           message: "Increment nightly version"
 
       - run: |
-          # Will be needed if add-apt-repository is not found
-          #sudo apt install software-properties-common
-          sudo add-apt-repository multiverse
+          # To provide google-android-emulator-installer, although it should be in multiverse, it's not found for some reason ...
+          sudo add-apt-repository ppa:guardianproject/ppa
           sudo apt-get update
           sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
           # For 'Verify all' tests
