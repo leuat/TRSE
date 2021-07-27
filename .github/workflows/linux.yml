@@ -32,6 +32,7 @@ jobs:
           message: "Increment nightly version"
 
       - run: |
+          sudo apt-get update
           sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
           # For 'Verify all' tests
           # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
