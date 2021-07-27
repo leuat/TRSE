@@ -451,20 +451,26 @@ void CodeGen6502::HandleShiftLeftRight(QSharedPointer<NodeBinOP>node)
             as->Asm(cmd);
         return;
     }
+    QString lbl = as->NewLabel("lblShift");
+    QString lblCancel = as->NewLabel("lblShiftDone");
 
     node->m_right->Accept(this);
     as->Term();
     as->Asm("tax");
     node->m_left->Accept(this);
     as->Term();
-    QString lbl = as->NewLabel("lblShift");
+    as->Asm("cpx #0");
+    as->Asm("beq "+lblCancel);
+    as->Term();
     as->Label(lbl);
     as->Asm(cmd);
     as->Asm("dex");
     as->Asm("cpx #0");
     as->Asm("bne "+lbl);
+    as->Label(lblCancel);
 
     as->PopLabel("lblShift");
+    as->PopLabel("lblShiftDone");
 }
 
 void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, bool isSimpleAeqAopB)
@@ -502,15 +508,20 @@ void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
     else {
         node->m_right->Accept(this);
         as->Term();
+        QString lblCancel = as->NewLabel("lblShiftCancel");
         as->Asm("tax");
+        as->Asm("cpx #0");
+        as->Asm("beq "+lblCancel);
         QString lbl = as->NewLabel("lblShift");
         as->Label(lbl);
         as->Asm(command);
         as->Asm("dex");
         as->Asm("cpx #0");
         as->Asm("bne "+lbl);
+        as->Label(lblCancel);
 
         as->PopLabel("lblShift");
+        as->PopLabel("lblShiftCancel");
     }
     if (!isSimpleAeqAopB) {
         as->Asm("lda "+varName);

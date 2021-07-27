@@ -64,5 +64,5 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/UnitTests/
-open_files = ,unittests.ras, [ext]units/AMSTRADCPC/text.tru, temp.ras, [ext]units/global/unittests/advanced_math.tru, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/integer.tru, [ext]units/global/unittests/vars.tru, [ext]units/global/unittests/strings.tru
+open_files = ,unittests.ras, temp.ras, [ext]units/AMSTRADCPC/text.tru, [ext]units/global/unittests/advanced_math.tru, [ext]units/global/unittests/unittests.tru, [ext]units/global/unittests/integer.tru, [ext]units/global/unittests/vars.tru, [ext]units/global/unittests/strings.tru
 current_file = temp.ras

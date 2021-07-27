@@ -212,7 +212,75 @@ begin
 end;
 
 
+procedure Shift0();
+begin
+	Vars::v1 := 10;
+	Vars::v2 := 1;
+	Vars::v1 := Vars::v1<<1;
+	
+	Vars::text := "S1:";
+	if (Vars::v1=20) then Common::PASS() else Common::FAIL();
+end;
 
+
+procedure Shift1();
+begin
+	Vars::v1 := 10;
+	Vars::v2 := 2;
+	Vars::v1 := Vars::v1<<Vars::v2;
+	
+	Vars::text := "S2:";
+	if (Vars::v1=40) then Common::PASS() else Common::FAIL();
+end;
+
+// Test shift 0
+procedure Shift2();
+begin
+	Vars::v1 := 10;
+	Vars::v2 := 0;
+	Vars::v1 := Vars::v1<<Vars::v2;
+	
+	Vars::text := "S3:";
+	if (Vars::v1=10) then Common::PASS() else Common::FAIL();
+end;
+
+// Shift integer
+procedure Shift4();
+begin
+	Vars::i1 := 1000;
+	Vars::v2 := 1;
+	Vars::i1 := Vars::i1<<1;
+	
+	Vars::text := "S4:";
+	if (Vars::i1=2000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+// Shift integer 2
+procedure Shift5();
+begin
+	Vars::i1 := 1000;
+	Vars::v2 := 3;
+	Vars::i1 := Vars::i1<<Vars::v2;
+	
+	Vars::text := "S5:";
+	if (Vars::i1=8000) then Common::PASS() else Common::FAIL();
+	Common::DebugValue(Vars::i1);
+	
+end;
+
+// Shift integer with zero
+procedure Shift6();
+begin
+	Vars::i1 := 1000;
+	Vars::v2 := 0;
+	Vars::i1 := Vars::i1<<Vars::v2;
+	
+	Vars::text := "S6:";
+	if (Vars::i1=1000) then Common::PASS() else Common::FAIL();
+	Common::DebugValue(Vars::i1);
+	
+end;
 
 procedure Exec();
 begin
@@ -254,6 +322,15 @@ begin
 	IntDivMix12();
 	
 	IntMulAdvancedMix15();
+	@endif
+	
+	Shift0();
+	Shift1();
+	Shift2();
+	Shift4();
+	@ifdef C64
+	Shift5();
+	Shift6();
 	@endif
 	
 	Common::WaitABit();
