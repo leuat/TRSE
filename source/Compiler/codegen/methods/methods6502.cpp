@@ -1066,6 +1066,20 @@ void Methods6502::Poke(Assembler* as)
     //m_node->RequireAddress(m_node->m_params[0],"Poke", m_node->m_op.m_lineNumber);
     AddMemoryBlock(as,0);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
+
+    // Parameter is pointer
+    if (m_node->m_params[0]->isPointer(as)) {
+        // change to zp[b] := c;
+        if (!m_node->m_params[0]->isPure())
+            ErrorHandler::e.Error("Pointer must be pure variable",m_node->m_op.m_lineNumber);
+        QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
+        var->m_expr = m_node->m_params[1];
+        auto assign = NodeFactory::CreateAssign(m_node->m_op,var,m_node->m_params[2]);
+        assign->Accept(m_codeGen);
+        return;
+    }
+
+
     if (num!=nullptr && num->m_val==0) {
         as->Comment("Optimization: shift is zero");
         LoadVar(as,2);
@@ -4867,8 +4881,8 @@ void Methods6502::LoadAddress(Assembler *as, int paramNo)
     QSharedPointer<Node> node = m_node->m_params[paramNo];
 
     if (node->isPureNumeric()) {
-        as->Asm("lda " + Util::numToHex(node->getValueAsInt(as)&0xff));
-        as->Asm("ldy " + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
+        as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
+        as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
         return;
     }
     if (node->isPointer(as) && (!node->isArrayIndex())) {
@@ -6271,23 +6285,50 @@ void Methods6502::BlockMemCpy(Assembler *as)
 
     }
 
-    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+    if (m_node->m_params[0]->getType(as)==TokenType::POINTER || m_node->m_params[1]->getType(as)==TokenType::POINTER) {
 //        qDebug() << "HERE" << as->m_internalZP.count();
         if (as->m_internalZP.count()==0)
             return;
+
         QString zp = as->m_internalZP[0];
         QString zp2 = as->m_internalZP[1];
   //      qDebug() << "HERE -1";
-        as->Asm("lda "+m_node->m_params[0]->getAddress());
+/*        if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
+            as->Asm("lda "+m_node->m_params[0]->getAddress());
     //    qDebug() << "HERE -2";
-        as->Asm("sta "+zp);
-        as->Asm("lda "+m_node->m_params[0]->getAddress()+"+1");
-        as->Asm("sta "+zp+"+1");
+            as->Asm("sta "+zp);
+            as->Asm("lda "+m_node->m_params[0]->getAddress()+"+1");
+            as->Asm("sta "+zp+"+1");
+        }
+        else
+             {
+            m_node->m_params[0]->Accept(m_codeGen);
+            as->Asm("sta "+zp);
+            as->Asm("sty "+zp+"+1");
+        }
 
-        as->Asm("lda "+m_node->m_params[1]->getAddress());
+        if (m_node->m_params[1]->getType(as)==TokenType::POINTER) {
+            as->Asm("lda "+m_node->m_params[1]->getAddress());
+            as->Asm("sta "+zp2);
+            as->Asm("lda "+m_node->m_params[1]->getAddress()+"+1");
+            as->Asm("sta "+zp2+"+1");
+        }
+        else
+        {
+       m_node->m_params[1]->Accept(m_codeGen);
+       as->Asm("sta "+zp2);
+       as->Asm("sty "+zp2+"+1");
+   }*/
+
+        LoadAddress(as,0);
+        as->Term();
+        as->Asm("sta "+zp);
+        as->Asm("sty "+zp+"+1");
+        LoadAddress(as,1);
+        as->Term();
         as->Asm("sta "+zp2);
-        as->Asm("lda "+m_node->m_params[1]->getAddress()+"+1");
-        as->Asm("sta "+zp2+"+1");
+        as->Asm("sty "+zp2+"+1");
+
 
 
       //  qDebug() << "HERE 0";
