@@ -31,6 +31,12 @@ jobs:
           author_name: "Nightly Build"
           message: "Increment nightly version"
 
+      - name: run changing emulator version
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          emulator-build: 6061023
+          script: ./gradlew connectedCheck    
+
       - run: |
           sudo apt-get update
           sudo apt-get install qt5-default qt5-qmake qtdeclarative5-dev
