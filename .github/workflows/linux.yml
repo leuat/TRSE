@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'nightly'
-  workflow_dispatch:
 
 jobs:
   build:
@@ -35,6 +34,7 @@ jobs:
       - name: run changing emulator version
         uses: reactivecircus/android-emulator-runner@v2
         with:
+          api-level: 29
           emulator-build: 6061023
           script: ./gradlew connectedCheck    
 
