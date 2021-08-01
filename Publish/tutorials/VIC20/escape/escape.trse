@@ -54,6 +54,4 @@ data_header_chr\screen.flf = 0
 override_target_settings_basic = 6.95131e-310
 data_header_chr/loadingtext.flf = 6.95309e-310
 show_all_files = 1
-open_files = -1
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/VIC20/escape/
-current_file = main.ras
+open_files =, main.ras

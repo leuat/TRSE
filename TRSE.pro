@@ -29,6 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
+#ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -122,6 +123,7 @@ linux*{
 
 
 SOURCES += main.cpp\
+    formtutorialitem.cpp \
         mainwindow.cpp \
     imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
@@ -367,6 +369,7 @@ SOURCES += main.cpp\
 
 
 HEADERS  += mainwindow.h \
+    formtutorialitem.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
     source/Compiler/assembler/asmarm.h \
@@ -619,6 +622,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     dialognewimage.ui \
     dialogimport.ui \
+    formtutorialitem.ui \
     source/dialogcolorselect.ui \
     source/dialogexport3d.ui \
     source/dialoginfo.ui \

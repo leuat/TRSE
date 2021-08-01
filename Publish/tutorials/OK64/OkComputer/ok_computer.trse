@@ -48,6 +48,4 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 show_all_files = 1
-open_files = -1
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/OK64/OkComputer/
-current_file = main.ras
+open_files =, main.ras

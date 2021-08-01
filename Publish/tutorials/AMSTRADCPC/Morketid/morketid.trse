@@ -87,6 +87,4 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 spectrum_model = 0
-open_files = ,main.ras
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/Morketid/
-current_file = main.ras
+open_files =, main.ras

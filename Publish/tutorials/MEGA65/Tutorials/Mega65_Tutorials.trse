@@ -46,7 +46,4 @@ exomizer_toggle = 0
 data_header_resources/charsets/charset.flf = 3.00862e-314
 zeropages_userdefined = ,
 petmodel = 2001-8N
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/MEGA65/Tutorials/
 show_all_files = 1
-open_files = ,easy/14_fullscreen_scroller.ras
-current_file = easy/14_fullscreen_scroller.ras

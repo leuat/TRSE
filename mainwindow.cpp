@@ -110,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    m_tutorials.PopulateSystemList(ui->lstSystems);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystem);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystemRecent);
-    ui->cmbSelectSystemRecent->insertItem(0,"Show all systems");
+    ui->cmbSelectSystemRecent->insertItem(0,"Show all systems (recent projects)");
     ui->cmbSelectSystem->setCurrentIndex(0);
     ui->cmbSelectSystemRecent->setCurrentIndex(0);
     on_cmbSelectSystem_activated(0);
@@ -144,7 +144,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 //    ui->lblBrag1->setText(t0);
-    ui->lblBrag2->setText(t0 + "\n" +t1+ "\n" + t2 + "\n" + t3);
+//    ui->lblBrag2->setText(t0 + "\n" +t1+ "\n" + t2 + "\n" + t3);
 
 //    setWindowTitle(Util::GetSystemPrefix());
 
@@ -958,6 +958,11 @@ void MainWindow::VerifyTRSEVersion()
     }
 }
 
+void MainWindow::PopulateTutorialTable()
+{
+
+}
+
 void MainWindow::AcceptRequestSystemChange(QString system)
 {
     system = system.toUpper();
@@ -971,6 +976,7 @@ void MainWindow::AcceptRequestSystemChange(QString system)
     QTimer::singleShot(200, this, SLOT(UpdateOutputSystemChange()));
 
 }
+
 void MainWindow::UpdateOutputSystemChange()
 {
     m_currentDoc->setOutputText("Current system changed to "+m_currentProject.m_ini->getString("system")+"! Please rebuild to apply.");
@@ -2573,12 +2579,24 @@ void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int c
 
 }
 
+void MainWindow::LoadTutorialProject(QString file)
+{
+//    qDebug() << "MainWindow tutorial: "<<file;
+    QString dir = Util::GetSystemPrefix() + "tutorials/"+file;
+
+    QString fileName = Util::findFileInDirectory("",dir,"trse");
+    LoadProject(fileName);
+    VerifyTRSEVersion();
+
+}
+
+
 void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     if (current->data(0,Qt::UserRole).toString()=="")
         return;
     QString text = current->data(0,Qt::UserRole).toString().split(";")[1];
-    ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
+    //ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
 }
 
@@ -2780,7 +2798,7 @@ void MainWindow::LoadIniFile()
 void MainWindow::on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
     QString key = current->data(Qt::UserRole).toString();
-    m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
+    //m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
 
 }
 
@@ -2793,7 +2811,7 @@ void MainWindow::on_lstSampleProjects_currentItemChanged(QListWidgetItem *curren
 
 
     QString text = current->data(Qt::UserRole).toString().split(";")[1];
-    ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
+    //ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
 }
 
@@ -2849,7 +2867,25 @@ void MainWindow::on_btnShowcases_clicked()
 void MainWindow::on_cmbSelectSystem_activated(int index)
 {
     QString key = ui->cmbSelectSystem->currentData(Qt::UserRole).toString();
-    m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
+    //m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
+/*    QWidget *scrollWidget = new QWidget;
+    ui->scrollArea->setWidget(scrollWidget);
+    scrollWidget->setLayout(ui->tblTutorials);*/
+
+    for (auto w:m_tutorials.m_widgets)
+        disconnect( w, SIGNAL(emitLoadTutorialProject(QString)),this, SLOT(LoadTutorialProject(QString)));
+
+    auto scrollWidget = new QWidget;
+    auto area= ui->scrollArea;
+    area->setWidget(scrollWidget);
+    auto    layoutWithLabels = new QGridLayout;
+    scrollWidget->setLayout(layoutWithLabels);
+    //    m_tutorials.PopulateProjectTable(key,ui->tblTutorials);
+
+
+    m_tutorials.PopulateProjectTable(key,layoutWithLabels);
+    for (auto w:m_tutorials.m_widgets)
+        connect( w, SIGNAL(emitLoadTutorialProject(QString)),this, SLOT(LoadTutorialProject(QString)));
 
 }
 

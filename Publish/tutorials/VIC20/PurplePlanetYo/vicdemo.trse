@@ -56,5 +56,4 @@ ignore_initial_jump = 0
 remove_unused_symbols = 1
 zeropage_colormemory = $fc
 show_all_files = 1
-open_files = ,demo.ras
-project_path = /Users/leuat/code/TRSE/ReleaseM1/trse.app/Contents/MacOS/../../tutorials/VIC20/PurplePlanetYo/
+open_files =, demo.ras

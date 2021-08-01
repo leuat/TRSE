@@ -299,6 +299,8 @@ public slots:
 
     void VerifyTRSEVersion();
 
+    void PopulateTutorialTable();
+
 
 signals:
    void ValueChanged();
@@ -309,6 +311,8 @@ signals:
 private slots:
 
    void AcceptRequestSystemChange(QString system);
+
+   void LoadTutorialProject(QString file);
 
    void ShowContextMenu(const QPoint &pos);
    void ShowFileContext(const QPoint &pos);
