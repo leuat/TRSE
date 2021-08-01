@@ -35,7 +35,7 @@ void FormTutorialItem::Initialise(QString name, QString description, QString ima
 //    setMouseTracking(true);
 //    ui->lblText->setText(description);
 }
-
+/*
 void FormTutorialItem::leaveEvent(QEvent *event)
 {
     ui->txtInfo->setStyleSheet("background-color: rgb(30,30,30);");
@@ -47,7 +47,7 @@ void FormTutorialItem::enterEvent(QEnterEvent *event)
     ui->txtInfo->setStyleSheet("background-color: rgb(40,40,40);;");
 
 }
-
+*/
 void FormTutorialItem::on_pushButton_clicked()
 {
     emit emitLoadTutorialProject(m_tutorialFile);

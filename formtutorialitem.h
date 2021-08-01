@@ -19,8 +19,8 @@ public:
     ~FormTutorialItem();
     void Initialise(QString name, QString description, QString image, QString file);
 
-    void leaveEvent(QEvent *event) override;
-    void enterEvent(QEnterEvent *event) override;
+/*    void leaveEvent(QEvent *event) override;
+    void enterEvent(QEnterEvent *event) override;*/
 private slots:
     void on_pushButton_clicked();
 
