@@ -20,8 +20,32 @@ void FormTutorialItem::Initialise(QString name, QString description, QString ima
     ui->lblDesc->setText(description);
     m_tutorialFile = file;
     ui->lblImage->setPixmap(QPixmap(file));*/
-    ui->txtInfo->setText(description);
+    QString style="<html><head><style>"\
+"img {"\
+"  display: block;"\
+"  margin-left: auto;"\
+"  margin-right: auto;"\
+"}"\
+"h2 {"\
+"  color: rgb(255,255,220);"\
+"  margin-left: 0px;"\
+"}"\
+"</style></head>";
+    ui->txtInfo->setText(style+description);
+//    setMouseTracking(true);
 //    ui->lblText->setText(description);
+}
+
+void FormTutorialItem::leaveEvent(QEvent *event)
+{
+    ui->txtInfo->setStyleSheet("background-color: rgb(30,30,30);");
+}
+
+void FormTutorialItem::enterEvent(QEnterEvent *event)
+{
+//    ui->txtInfo->setStyleSheet("background-color: red;");
+    ui->txtInfo->setStyleSheet("background-color: rgb(40,40,40);;");
+
 }
 
 void FormTutorialItem::on_pushButton_clicked()

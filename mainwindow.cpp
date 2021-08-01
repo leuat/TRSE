@@ -2567,7 +2567,7 @@ void TRSEProject::VerifyDefaults() {
 
 }
 
-void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column)
+/*void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     if (item->data(0,Qt::UserRole).toString()=="")
         return;
@@ -2578,7 +2578,7 @@ void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int c
     VerifyTRSEVersion();
 
 }
-
+*/
 void MainWindow::LoadTutorialProject(QString file)
 {
 //    qDebug() << "MainWindow tutorial: "<<file;
@@ -2591,7 +2591,7 @@ void MainWindow::LoadTutorialProject(QString file)
 }
 
 
-void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+/*void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     if (current->data(0,Qt::UserRole).toString()=="")
         return;
@@ -2599,7 +2599,7 @@ void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, Q
     //ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
 
 }
-
+*/
 void MainWindow::on_action_Project_Settings_triggered()
 {
     OpenProjectSettings();
@@ -2795,13 +2795,15 @@ void MainWindow::LoadIniFile()
 
 
 
-void MainWindow::on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+/*void MainWindow::on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
     QString key = current->data(Qt::UserRole).toString();
     //m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
 
 }
+*/
 
+/*
 void MainWindow::on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
     if (current==nullptr)
@@ -2826,7 +2828,7 @@ void MainWindow::on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item)
     LoadProject(fileName);
     VerifyTRSEVersion();
 }
-
+*/
 void MainWindow::removeFromRecentList()
 {
     int idx = ui->lstRecentProjects->currentRow();
@@ -2889,19 +2891,9 @@ void MainWindow::on_cmbSelectSystem_activated(int index)
 
 }
 
-void MainWindow::on_btnChangelog_clicked()
-{
-/*    DialogAbout* ab = new DialogAbout();
-    ab->SetText("Changelog", ui->txtChangelog->toHtml());
-    ab->exec();
-    delete ab;*/
-    QDesktopServices::openUrl(QUrl("https://lemonspawn.com/turbo-rascal-syntax-error-expected-but-begin/downloads/", QUrl::TolerantMode));
-
-}
-
 void MainWindow::on_actionView_changelog_triggered()
 {
-    on_btnChangelog_clicked();
+    QDesktopServices::openUrl(QUrl("https://lemonspawn.com/turbo-rascal-syntax-error-expected-but-begin/downloads/", QUrl::TolerantMode));
 }
 
 void MainWindow::on_action_Comment_Uncomment_triggered()
@@ -2973,14 +2965,6 @@ void MainWindow::on_actionTRSE_Tracker_File_trt_triggered()
 
 }
 
-void MainWindow::on_checkBox_stateChanged(int arg1)
-{
-/*    if (m_currentProject.m_filename=="")
-        return;
-    m_currentProject.m_ini->setFloat("show_all_files",ui->chkShowAllFiles->isChecked());
-    RefreshFileList();
-    qDebug() << "HERE";*/
-}
 
 void MainWindow::on_chkShowAllFiles_clicked()
 {

@@ -400,10 +400,10 @@ private slots:
 
     void on_btnBuildAll_clicked();
 
-    void on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column);
+/*    void on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
     void on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-
+*/
     void on_action_Project_Settings_triggered();
 
     void on_actionBuild_C_b_triggered();
@@ -439,11 +439,11 @@ private slots:
 
     void on_actionRas_source_file_triggered();
 
-    void on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+//    void on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
-    void on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+ //   void on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
-    void on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item);
+ //   void on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item);
 
     void removeFromRecentList();
 
@@ -457,7 +457,7 @@ private slots:
 
     void on_cmbSelectSystem_activated(int index);
 
-    void on_btnChangelog_clicked();
+//    void on_btnChangelog_clicked();
 
     void on_actionView_changelog_triggered();
 
@@ -472,7 +472,7 @@ private slots:
 
     void on_actionTRSE_Tracker_File_trt_triggered();
 
-    void on_checkBox_stateChanged(int arg1);
+//    void on_checkBox_stateChanged(int arg1);
 
     void on_chkShowAllFiles_clicked();
 

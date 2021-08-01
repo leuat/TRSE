@@ -2,6 +2,7 @@
 #define FORMTUTORIALITEM_H
 
 #include <QWidget>
+#include <QMouseEvent>
 
 namespace Ui {
 class FormTutorialItem;
@@ -18,6 +19,8 @@ public:
     ~FormTutorialItem();
     void Initialise(QString name, QString description, QString image, QString file);
 
+    void leaveEvent(QEvent *event) override;
+    void enterEvent(QEnterEvent *event) override;
 private slots:
     void on_pushButton_clicked();
 

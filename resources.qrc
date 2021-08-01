@@ -615,5 +615,20 @@
         <file>resources/code/arm/init.s</file>
         <file>resources/text/help/m/mod16.rtf</file>
         <file>resources/images/CROSSPLATFORM.png</file>
+        <file>resources/images/tutorials/units.png</file>
+        <file>resources/images/tutorials/trse_vic.png</file>
+        <file>resources/images/tutorials/vbm.png</file>
+        <file>resources/images/tutorials/dos3.png</file>
+        <file>resources/images/tutorials/dos2.png</file>
+        <file>resources/images/tutorials/dos1.png</file>
+        <file>resources/images/tutorials/zx.png</file>
+        <file>resources/images/tutorials/mega2.png</file>
+        <file>resources/images/tutorials/mega1.png</file>
+        <file>resources/images/tutorials/bbc2.png</file>
+        <file>resources/images/tutorials/bbc1.png</file>
+        <file>resources/images/tutorials/ok3.png</file>
+        <file>resources/images/tutorials/ok2.png</file>
+        <file>resources/images/tutorials/ok1.png</file>
+        <file>resources/images/tutorials/mibri1.png</file>
     </qresource>
 </RCC>

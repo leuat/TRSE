@@ -1,10 +1,11 @@
 program Hello_IBM_XT_CGA;
 var  
-    i,time: byte = 0; 
+    time: byte = 0;
+	i:integer; 
    	x,y,centerx,centery : integer = 0;
    	ka,kb : byte = 0;
    	
-	sine : incbin("data/sine.bin");
+	sine : array[256] of byte = buildsinetable(255);
 
 	cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
 
@@ -37,8 +38,7 @@ end;
 
 procedure RenderEffect();
 begin
-	asm(";here");
-	ka:=ka+3;
+	ka:=ka+1;
 	kb:=kb+2;
 	time:=time+1;
 		
@@ -46,13 +46,14 @@ begin
 	begin
 		kb:=kb+1;
 		WaitForVerticalBlank();
+		i+=1;
 	end;
 
-	centerx:=sine[kb]/2 + 50;
+	centerx:=sine[kb] + 50;
 	centery:=sine[(kb+64)&$FF]/3;
 
-	x:=sine[ka]/3;
-	y:=sine[ka+64]/3;
+	x:=sine[ka&$FF];
+	y:=sine[(ka+64)&$FF]/3;
 	setpixelcga(screen_cga, x+centerx,y+centery, cols[i]);
 		
 	i:=(i+1)&3;

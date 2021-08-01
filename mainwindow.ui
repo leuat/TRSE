@@ -313,7 +313,7 @@
         <attribute name="title">
          <string>Turbo Rascal Solution</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_4" rowstretch="4,0,0,0" columnstretch="0">
+        <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0,1000,0" columnstretch="0">
          <item row="3" column="0">
           <widget class="QTextBrowser" name="txtChangelog">
            <property name="enabled">
@@ -403,8 +403,8 @@ p, li { white-space: pre-wrap; }
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>550</width>
-                    <height>186</height>
+                    <width>607</width>
+                    <height>449</height>
                    </rect>
                   </property>
                  </widget>
@@ -433,7 +433,7 @@ p, li { white-space: pre-wrap; }
          <item row="0" column="0">
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <layout class="QGridLayout" name="gridLayout_3" columnstretch="5,12,4">
+            <layout class="QGridLayout" name="gridLayout_3" columnstretch="5,12,3">
              <item row="0" column="1">
               <widget class="LGLSlideshow" name="glslider" native="true"/>
              </item>
@@ -441,14 +441,14 @@ p, li { white-space: pre-wrap; }
               <widget class="QLabel" name="label_4">
                <property name="minimumSize">
                 <size>
-                 <width>180</width>
-                 <height>180</height>
+                 <width>128</width>
+                 <height>128</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>180</width>
-                 <height>180</height>
+                 <width>128</width>
+                 <height>128</height>
                 </size>
                </property>
                <property name="text">
