@@ -26,15 +26,7 @@ public:
     LImage *m_img = nullptr;
     int m_curCol = 0;
     QString m_projectPath;
-    void Initialize(LImage* img, LColorList* lc, QString path) {
-        m_org = lc;
-        m_img = img;
-        m_lst = new LColorList();
-        m_lst->CopyFrom(m_org);
-//        m_lst->m_list = m_org->m_list;
-        toGUI();
-        m_projectPath = path;
-    }
+    void Initialize(LImage* img, LColorList* lc, QString path);
 
     void toGUI();
     void setColor(int cc,int type);

@@ -28,7 +28,6 @@ program Tutorial2_Sprites;
 var  
 	// Bank to place sprites
 	const spriteBank : byte = 2;
-	// A temporary address to store the screen
 	
 	sprites_index : incbin("images/sprites_index.bin") bank(spriteBank);
 	sprites_data : incbin("images/sprites_packed.bin") bank(spriteBank);
@@ -39,7 +38,7 @@ var
 	time,x,y,pos  : byte;
 
 	// Generate a sine table
-    sine : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*0x7f+0x7F");
+    sine : array[256] of byte = BuildSineTable(255);
 
 
 procedure UpdateSprite();

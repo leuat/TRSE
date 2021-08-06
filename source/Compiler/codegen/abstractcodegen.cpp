@@ -1092,7 +1092,7 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
 
     if (t->m_position=="") {
         as->Label(v->value);
-        as->Asm(getIncbin()+" \"" + filename + "\"");
+        as->Asm(getIncbin()+"\t \"" + filename + "\"");
         if (as->m_currentBlock!=nullptr)
             if (as->m_mainBlock != as->m_currentBlock)
                 as->m_currentBlock->m_incDataSize+=QFileInfo(filename).size();
@@ -1105,9 +1105,14 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;
-        app->Append("org " +t->m_position,1);
-        app->Append(v->value,0);
-        app->Append(getIncbin()+" \"" + filename + "\"",1);
+        if (Syntax::s.m_currentSystem->CL65Syntax()) {
+            app->Append(".res "+t->m_position+"-*",0);
+
+        }
+        else
+            app->Append(as->GetOrg() +t->m_position,1);
+        app->Append(v->value+":",0);
+        app->Append(getIncbin()+"\t \"" + filename + "\"",1);
         as->m_appendix.append(app);
         bool ok;
         int start=0;
@@ -1116,7 +1121,7 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
         }
         else start = t->m_position.toInt();
         as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,filename)));
-        app->Append("EndBlock"+t->m_position,0);
+        app->Append("EndBlock"+t->m_position+":",0);
     }
 }
 

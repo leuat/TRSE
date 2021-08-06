@@ -58,6 +58,4 @@ spectrum_model = 2
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-open_files = ,tutorial1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/SPECTRUM/tutorials/
-current_file = tutorial1.ras
+open_files =, tutorial1.ras

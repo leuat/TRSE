@@ -1,7 +1,5 @@
 
-
-
-multiply_8bit_unsigned
+multiply_8bit_unsigned:
                 bcc m8b_next
                     lda S_T1
                     sta m8s_sm1+1

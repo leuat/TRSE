@@ -6,8 +6,7 @@ var
    ix : integer;
    time,t1,t2 : byte = 0;
    // A suitable sine function (sin(t)/3)
-   sine3 : array[256] of byte = BuildTable("(Math.sin(i/(256.0)*3.14156265*2.0)*0x7F+0x7F)/2");
-   sine2 : array[256] of byte = BuildTable("(Math.sin(i/(256.0)*3.14156265*2.0)*0x7F+0x7F)");
+   sine3 : array[256] of byte = BuildSineTable(127);
    p : ^byte;   
 
 // Simple pixel example, no double buffering
@@ -17,8 +16,8 @@ begin
 
 	x:=sine3[t1];
 	y:=sine3[t2];
-	x1:=sine2[time]>>1+x;
-	y1:=sine2[time+64+shift]>>2+y;
+	x1:=sine3[time]+x;
+	y1:=sine3[time+64+shift]>>1+y;
 	// Put that pixel!	
 	Screen::PutPixel(x1,y1);
 

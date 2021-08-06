@@ -2,7 +2,10 @@ Unit Console;
 var
 	i:integer;
 	text_clearscreen : string ="\033[2J\033[H";
-	sizex, sizey : long;
+	@donotremove sizex
+	@donotremove sizey
+	sizex, sizey : integer;
+	@donotremove w
 	w : array[4] of integer = (0,0,0,0);
 
 
@@ -77,6 +80,7 @@ end;
 
 procedure GetWindowSize();
 begin
+	
 	asm("
 	adrp	x8, Console_w@GOTPAGE
 	ldr	x8, [x8, Console_w@GOTPAGEOFF]
@@ -89,12 +93,13 @@ begin
 	str	x8, [x10]
 	str	x8, [sp, #16]           ; 8-byte Folded Spill
 	str	w9, [sp, #12]           ; 4-byte Folded Spill
+	stp x29, x30, [sp, #16]  ; store frame pointer + link register 
 	bl	_ioctl
+	ldp x29, x30, [sp, #16]  ; restore frame pointer + link register 
 	ldr	w8, [sp, #8]            ; 4-byte Folded Reload
 	mov	x0, x8
 	ldp	x29, x30, [sp, #16]     ; 16-byte Folded Reload
 	add	sp, sp, #32             ; =32
-
 
 
 	adrp	x0, Console_w@GOTPAGE
@@ -107,15 +112,16 @@ begin
 	str w2,[x1]
 	
 	
-	adrp	x0, Console_@GOTPAGE
-	ldr	x0, [x0, Console_@GOTPAGEOFF]
+	adrp	x0, Console_w@GOTPAGE
+	ldr	x0, [x0, Console_w@GOTPAGEOFF]
 	add x0,x0,2
 	
 	adrp	x1, Console_sizey@GOTPAGE
 	ldr	x1, [x1, Console_sizey@GOTPAGEOFF]
 	
+	mov x2,0
 	ldrh w2,[x0]
-	str w2,[x1]
+	str x2,[x1]
 
 
 
@@ -123,6 +129,21 @@ begin
 end;
 
 
+procedure Sleep(time:long);
+begin
+	asm("
+	
+	adrp	x1, Console_time@GOTPAGE
+	ldr	x1, [x1, Console_time@GOTPAGEOFF]
+
+	ldr	x0, [x1]
+	
+	stp x29, x30, [sp, #16]  ; store frame pointer + link register 
+	bl	_usleep
+	ldp x29, x30, [sp, #16]  ; restore frame pointer + link register 
+
+	");
+end;
 	
 	
 end.

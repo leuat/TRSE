@@ -88,6 +88,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageVGA(colorType);
     if (t == LImage::Type::Spectrum)
         return new LImageSpectrum(colorType);
+    if (t == LImage::Type::SNES)
+        return new LImageSNES(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

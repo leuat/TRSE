@@ -239,6 +239,8 @@ public:
     QString llong = "dc.l";
     QString ppointer = "dc.w";
 
+    QString getLabelEnding(QString name);
+
     Assembler();
     virtual ~Assembler();
     void Save(QString filename);
@@ -249,6 +251,9 @@ public:
 
 
     virtual QString GetOrg(int pos ) = 0;
+    virtual QString GetOrg() {return "org";}
+
+
 
     virtual void Program(QString name, QString vicParam) {};
     virtual void EndProgram() {}

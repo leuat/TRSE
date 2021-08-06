@@ -251,7 +251,7 @@ void Parser::InitBuiltinFunctions()
    }
 
 
-    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 ) {
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 ||  Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816 ||  Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C02) {
 /*        InitBuiltinFunction(QStringList()<< "*", "initeightbitmul");
 
         InitBuiltinFunction(QStringList()<< "*", "init16x8mul");

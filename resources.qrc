@@ -630,5 +630,11 @@
         <file>resources/images/tutorials/ok2.png</file>
         <file>resources/images/tutorials/ok1.png</file>
         <file>resources/images/tutorials/mibri1.png</file>
+        <file>resources/images/SNES.png</file>
+        <file>resources/code/snes/end.asm</file>
+        <file>resources/code/snes/init.asm</file>
+        <file>resources/code/snes/smc.cfg</file>
+        <file>resources/code/mega65/init.asm</file>
+        <file>resources/code/mega65/config.cfg</file>
     </qresource>
 </RCC>

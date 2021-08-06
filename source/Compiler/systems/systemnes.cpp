@@ -18,7 +18,6 @@ SystemNES::SystemNES(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
     m_labels.append(SystemLabel(SystemLabel::FREE,"Cartridge SRAM",0x6000,0x7FFF)); // Not always available
     m_labels.append(SystemLabel(SystemLabel::ROM,"PRG ROM",0x8000,0xFFFF));
     // Of course, FFFA-FFFF contains NMI/IRQ/Reset vectors
-
     // The PPU has its own memory layout (including the CHRROM, etc)
 
     m_systemColor = QColor(138, 137, 136); // Dark gray NES
@@ -27,6 +26,9 @@ SystemNES::SystemNES(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
 void SystemNES::DefaultValues() {
     m_startAddress = 0xCA00;
     m_programStartAddress = 0xCA00;
-    m_ignoreSys = false;
+    m_ignoreSys = true;
+    Syntax::s.m_ignoreSys = true;
     m_stripPrg = false;
+    useZByte = true;
+
 }

@@ -1,0 +1,336 @@
+unit Screen;
+var
+	
+	defaultPalette:array[256] of integer = BuildTable("(i%32)+((i/32)%32)<<5 +((i/(32*32))%32)<<10");
+//	palette:array[256] of integer = BuildTable("");
+	zp,p1:pointer;
+	i1:integer;
+	x,y,i : byte;
+	
+	tab32:array[32] of integer=BuildTable("i*32");
+
+	const BG1:integer=$1000;
+	const BG2:integer=$1400;
+	const BG3:integer=$1800;
+	const BG4:integer=$1C00;
+	
+	
+procedure SetPalette(zp:global pointer;i1:global integer);
+begin
+	asm("
+
+   lda Screen_i1   
+   sta CGADD ; start with color 0 (background)
+   ldy #0
+@loop:
+   lda (Screen_zp),y
+   sta CGDATA
+   iny
+   lda (Screen_zp),y
+   sta CGDATA
+
+   iny
+
+	cpy #$200
+	bne @loop
+
+	");
+end;
+
+procedure EnableGFX(x:global byte);
+begin
+	asm("
+   ; Show BG1
+   lda Screen_x
+   sta TM
+	
+	");
+end;
+
+
+procedure EnableDisplay() inline;
+begin
+	asm("
+   ; Maximum screen brightness
+   lda #$0F
+   sta INIDISP
+
+
+	");	
+	
+end;
+
+procedure DisableDisplay() inline;
+begin
+	asm("
+   lda #$80
+   sta INIDISP
+	");	
+	
+end;
+
+
+procedure CopyTilesToVRAM2bpp(zp:global pointer;i1:integer);
+begin
+	i1:=0;
+	asm("
+   ; Load character set into VRAM
+   lda #$20
+   sta VMAIN   ; VRAM stride of 1 word
+   ldx #$000
+   stx VMADDL
+
+
+   
+_topp:   
+   ldy #0
+@charset_loop:
+   
+   lda (Screen_zp),y
+   sta VMDATAH ; color index high bit set -> neutral red (2)
+   iny
+   lda (Screen_zp),y
+   sta VMDATAL ; color index low bit = 0
+   iny
+   cpy #128*8*4
+   bne @charset_loop
+	
+   ");
+
+	
+end;
+
+
+/*
+procedure CopyTilesToVRAM2bpp(zp:global pointer;i1:integer);
+begin
+	i1:=0;
+	p1:=zp+8;
+	asm("
+   ; Load character set into VRAM
+   lda #$20
+   sta VMAIN   ; VRAM stride of 1 word
+   ldx #$000
+   stx VMADDL
+
+   ldx #128
+   
+_topp:   
+   ldy #0
+@charset_loop:
+   
+   lda (Screen_zp),y
+   sta VMDATAH ; color index high bit set -> neutral red (2)
+   lda (Screen_p1),y
+   sta VMDATAL ; color index low bit = 0
+   iny
+   cpy #(8)
+   bne @charset_loop
+	
+   ");
+
+	p1+=16;
+	zp+=16;
+
+   asm("   
+      
+   dex
+   bne _topp
+   
+	
+	");
+	
+end;
+*/
+/*procedure CopyC64CharsetToVRAM2bpp(zp:global pointer);
+begin
+	asm("
+   ; Load character set into VRAM
+   lda #$20
+   sta VMAIN   ; VRAM stride of 1 word
+   ldx #VRAM_CHARSET
+   stx VMADDL
+   ldy #0
+   
+@charset_loop:
+   
+   lda (Screen_zp),y
+   stz VMDATAL ; color index low bit = 0
+   sta VMDATAH ; color index high bit set -> neutral red (2)
+   iny
+   cpy #(256*8)
+   bne @charset_loop
+	
+	");
+	
+end;
+*/
+
+procedure Init();
+begin
+	asm("
+   clc             ; native mode
+   xce
+   rep #$10        ; X/Y 16-bit
+   sep #$20        ; A 8-bit
+
+
+   ; Clear registers
+   ldx #$33
+@loop:
+ ;  stz INIDISP,x
+   stz NMITIMEN,x
+   dex
+   bpl @loop
+
+   ; enable NMI for Vertical Blank
+   lda #$80
+   sta NMITIMEN
+
+	");
+	
+	
+end;
+
+	
+@donotremove nmi
+interrupt nmi();
+begin
+	asm("
+	   rep #$10        ; X/Y 16-bit
+	   sep #$20        ; A 8-bit
+	   phd
+	   pha
+	   phx
+	   phy
+	   ; Do stuff that needs to be done during V-Blank
+	   
+	   lda RDNMI ; reset NMI flag
+	   ply
+	   plx
+	   pla
+	   pld
+	return_int:
+	");
+end;	
+
+procedure MoveTo(i1:global integer);
+begin
+
+	asm("
+	ldx Screen_i1
+    stx VMADDL
+	");
+end;
+
+procedure MoveToXY(x,y,i1:global integer);
+begin
+	i1+=tab32[y]+x;
+	asm("
+	ldx Screen_i1
+    stx VMADDL
+	");
+end;
+
+procedure MoveToCRAM(i1:global integer) inline;
+begin
+	asm("
+	ldx Screen_i1
+    stx CGADD
+	");
+end;
+
+procedure CopyToVRAM(zp:global pointer;i1:global integer;x:global byte);
+begin
+	asm("
+   ; Place string tiles in background
+   ldy #0
+@copy_loop:
+   lda Screen_x ; Attribute
+   sta VMDATAH
+   lda (Screen_zp),y
+   sta VMDATAL
+   ; //vhopppcc
+   iny
+   cpy Screen_i1
+   bne @copy_loop
+	");
+	
+end;
+
+procedure PokeVRAM(x,y:global byte) inline;
+begin
+	poke(^$2118,0,x);
+	poke(^$2119,0,y);
+end;
+
+procedure FillToVRAM(x,y:global byte;i1:global integer);
+begin
+	asm("
+   ; Place string tiles in background
+   
+   ldy #0
+@fill_loop:
+   lda Screen_x
+   sta VMDATAL
+   lda Screen_y ; priority 1
+   sta VMDATAH
+   iny
+   cpy Screen_i1
+   bne @fill_loop
+	");
+	
+end;
+
+procedure PokeCRAM(x:global byte) inline;
+begin
+	poke(^$2122,0,x);
+/*	asm("
+   lda Screen_x
+   sta CGDATA
+		
+	");*/
+end;
+
+
+procedure SetMode0();
+begin
+	asm("
+   ; Setup Graphics Mode 0, 8x8 tiles all layers
+   stz BGMODE
+   lda #>VRAM_BG1
+   sta BG1SC ; BG1 at VRAM_BG1, only single 32x32 map (4-way mirror)
+   lda #>VRAM_BG2
+   sta BG2SC 
+   lda #>VRAM_BG3
+   sta BG3SC 
+   lda #>VRAM_BG4
+   sta BG4SC 
+   
+   lda #((>VRAM_CHARSET >> 4) | (>VRAM_CHARSET & $F0))
+;   lda #%00000000
+   sta BG12NBA ; BG 1 and 2 both use char tiles
+ ;  lda #%00000000
+   sta BG34NBA ; BG 1 and 2 both use char tiles
+	
+	");
+end;
+
+
+procedure WaitForVerticalBlank() inline;
+begin
+	asm(" wai");
+end;	
+
+procedure Scroll(x,y,i : global byte);
+begin
+	zp:=$210d+i;
+	zp[0]:=x;
+	zp[0]:=0;
+	zp[1]:=y;
+	zp[1]:=0;
+end;
+
+
+	
+end.

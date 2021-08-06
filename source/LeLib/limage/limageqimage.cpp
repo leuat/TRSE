@@ -55,6 +55,10 @@ void LImageQImage::LoadBin(QFile& file)
 
 void LImageQImage::SaveBin(QFile& file)
 {
+    if (m_qImage->width()!=m_width || m_qImage->height()!=m_height) {
+        qDebug() << "LImageQImage::SaveBin error... width/height are not equal!";
+        return;
+    }
     unsigned char *data = new unsigned char[m_width*m_height];
     for (int i=0;i<m_qImage->width();i++)
         for (int j=0;j<m_qImage->height();j++) {

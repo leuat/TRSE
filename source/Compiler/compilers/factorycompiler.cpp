@@ -19,6 +19,10 @@ Compiler *FactoryCompiler::CreateCompiler(QSharedPointer<CIniFile> ini, QSharedP
         return new CompilerGBZ80(ini,pIni);
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::ARM)
         return new CompilerArm(ini,pIni);
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816)
+        return new Compiler65C816(ini,pIni,Syntax::s.m_currentSystem->m_processor);
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C02)
+        return new Compiler65C816(ini,pIni,Syntax::s.m_currentSystem->m_processor);
 
     return nullptr;
 }

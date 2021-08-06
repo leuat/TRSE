@@ -155,7 +155,8 @@ void Assembler::StartMemoryBlock(QString pos) {
     Appendix app(pos);
     m_currentBlock = QSharedPointer<Appendix>(new Appendix(pos));
     m_appendix.append(m_currentBlock);
-    m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
+    if (!Syntax::s.m_currentSystem->CL65Syntax())
+        m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
     m_blockStack.append(m_currentBlock);
     Comment("Starting new memory block at "+pos);
     QString p = pos;
@@ -322,6 +323,16 @@ void Assembler::PopLabel(QString s) {
     m_labelStack[s].pop();
 }
 
+QString Assembler::getLabelEnding(QString s)
+{
+    if (Syntax::s.m_currentSystem->CL65Syntax()) {
+        s = s.trimmed();
+        if (!s.endsWith(":") && !s.contains("="))
+            s=s+":";
+    }
+    return s;
+}
+
 
 
 void Assembler::Asm(QString s, QString comment)
@@ -339,8 +350,15 @@ void Assembler::Asm(QString s, QString comment)
 
 void Assembler::Label(QString s)
 {
+    if (Syntax::s.m_currentSystem->CL65Syntax()) {
+        s = s.trimmed();
+        if (!s.endsWith(":") && !s.contains("="))
+            s=s+":";
+    }
     Write(s,0);
 }
+
+
 
 void Assembler::IncludeFile(QString pfile)
 {
@@ -389,7 +407,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
                 QSharedPointer<Symbol> s = st->m_symbols[v];
                 //qDebug() << "WTF " <<s->m_name <<s->m_type;
                 // Build the name
-                QString n = name + "_" + st->m_name+"_"+s->m_name;
+                QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
                 QString w = n+"";
                 //            QString t = byte;
                 //
@@ -420,7 +438,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
         for (QSharedPointer<Symbol> s : st->m_symbols) {
 //            qDebug() << "WTF " <<s->m_name <<s->m_type;
             // Build the name
-            QString n = name + "_" + st->m_name+"_"+s->m_name;
+            QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
             QString w = n;
             QString t = byte;
             if (s->m_type.toLower()=="integer")
@@ -465,7 +483,12 @@ bool Assembler::DeclareClass(QString name, QString type, int count, QStringList 
 
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
         Label(name);
-        Asm("org "+name+"+" +QString::number(st->getSize()*count));
+        if (Syntax::s.m_currentSystem->CL65Syntax()) {
+            Asm(".res "+name+"+" +QString::number(st->getSize()*count)+"-*");
+
+        }
+        else
+        Asm(GetOrg()+name+"+" +QString::number(st->getSize()*count));
 
         return true;
     }
@@ -540,9 +563,14 @@ void Assembler::Connect()
         else m_source << m_appendix[i]->m_source;
 
     }
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
+        m_source = QStringList() << " processor 6502" <<pre << m_source;
+    else
+        m_source = QStringList() << pre << m_source;
 
-    m_source = QStringList() << " processor 6502" <<pre << m_source;
     m_source.removeAll("");
+    for (QString& l: m_source)
+        l.replace("+#$","+$");
     // Delete appendix
     //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
     /*    for (QSharedPointer<Appendix> a: m_appendix)

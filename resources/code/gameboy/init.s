@@ -244,6 +244,32 @@ mul_16x8_s7:
 mul_16x8_s8:
     ret
 
+
+
+div_16x8:
+;div_hl_c:
+   xor	a
+   ld	b, 16
+_loop:
+   add	hl, hl
+   rla
+   jr	c, @+5
+   cp	c
+   jr	c, @+4
+
+   sub	c
+   inc	l
+
+   dec b
+   jp nz,_loop
+
+   ret
+
+
+
+
+
+
 ;-------------------------------------------------------------------------------
 read_keys:
 

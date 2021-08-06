@@ -15,7 +15,7 @@ public:
 
     void CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& ocycles, QMap<int,int>& retcycles, bool isCycles=true ) override;
 
-    void Init6502Assembler();
+    virtual void Init6502Assembler();
 
     bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) override;
 

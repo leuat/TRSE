@@ -36,6 +36,7 @@
 #include "source/LeLib/limage/lcolorlist.h"
 // Footer contains image-state specific data
 
+#define CHECK_BIT(var,pos) (((var) & (1<<(pos)))>>pos)
 
 class CharsetImage;
 
@@ -101,7 +102,7 @@ public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
-                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum};
+                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES};
 
 
     enum WriteType { Color, Character };
@@ -348,6 +349,11 @@ public:
 
     virtual void ExportBin(QFile &file) {}
     virtual void ImportBin(QFile &file) {}
+
+    virtual QStringList getPaletteNames() {
+        return QStringList() <<"Tiles 1"<<"Tiles 2"<<"Tiles 3"<<"Tiles 4"<<"Sprites 1"<<"Sprites 2"<<"Sprites 3"<<"Sprites 4";;
+    }
+
 
     virtual void ExportRGB8Palette(QString filename);
 

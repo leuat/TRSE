@@ -46,7 +46,6 @@ begin
 
 
 		");	*/	
-		asm(";balle");
 		cp1:=cp1+256;
 		cp2:=cp2+256;
 	end;

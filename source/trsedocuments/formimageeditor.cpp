@@ -510,6 +510,9 @@ void FormImageEditor::Initialize()
     updateCharSet();
     FillCMBColors();
 
+    ui->cmbNesPalette->clear();
+    ui->cmbNesPalette->addItems(m_work.m_currentImage->m_image->getPaletteNames());
+
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData, m_projectIniFile->getStringList("data_header"));
 
@@ -2371,6 +2374,8 @@ void FormImageEditor::on_btnPalette_clicked()
 void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 {
     if (!m_work.m_currentImage->m_image->isNes())
+        return;
+    if (ui->cmbNesPalette->count()==0)
         return;
 //    m_ignoreMC = true;
 //    qDebug() << index;

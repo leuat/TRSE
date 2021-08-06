@@ -98,6 +98,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 27;
     if (t==Spectrum)
         return 28;
+    if (t==SNES)
+        return 29;
 
 
     return 255;
@@ -163,6 +165,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "VGA";
     if (t==Spectrum)
         return "Spectrum";
+    if (t==SNES)
+        return "SNES";
 
 
     return "Unknown image type";
@@ -230,6 +234,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return VGA;
     if (c==28)
         return Spectrum;
+    if (c==29)
+        return SNES;
 
     return NotSupported;
 
@@ -318,8 +324,8 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
             int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
 
             if (m_importScaleX==1.0 && m_importScaleY==1.0) { // prevent rounding errors on windows.. damn
-               xx = x;
-               yy = y;
+               xx = dx;
+               yy = dy;
             }
 
 
@@ -546,7 +552,8 @@ void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
 
 void LImage::ExportRGB8Palette(QString filename) {
 
-    QByteArray b = m_colorList.toArray();
+    QByteArray b;
+    m_colorList.toArray(b);
     b.remove(0,1);
     Util::SaveByteArray(b,filename);
 

@@ -170,6 +170,7 @@ void DialogImport::Convert()
 //    m_image->Clear();
     m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
     m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
+
 //    m_image->setPixel(10,10,1);
 //    qDebug() << m_image->m_importScaleX;
     SetColors();

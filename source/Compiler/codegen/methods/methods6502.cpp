@@ -1315,10 +1315,14 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
         as->Asm("in"+x+"");
         as->Term("cp"+x+" ");
         // BUG HERE INTEGER
-        if (m_node->m_params[3]->isWord(as)) {
+        if (m_node->m_params[3]->isWord(as) && is6502()) {
             ErrorHandler::e.Error("Error: memcpy cannot take an integer as count, must be byte. ",m_node->m_op.m_lineNumber);
 //            m_node->m_params[3]->setForceType(TokenType::BYTE);
         }
+        if (!is6502()&&m_node->m_params[3]->isPureNumeric()) {
+            as->Term("#"+Util::numToHex(m_node->m_params[3]->getValueAsInt(as)),true);
+        }
+        else
         m_node->m_params[3]->Accept(m_codeGen);
         as->Term();
 
@@ -1756,7 +1760,10 @@ void Methods6502::InitPrintString(Assembler *as)
 
     as->ClearTerm();
     as->Label("print_text = "+as->m_internalZP[0]);
-    as->Label("print_number_text .dc \"    \",0");
+    if (Syntax::s.m_currentSystem->CL65Syntax())
+        as->Write("print_number_text: .asciiz \"    \"",0);
+    else
+        as->Label("print_number_text: .dc \"    \",0");
     as->Label("printstring");
     as->Asm("ldy #0");
     as->Label("printstringloop");
@@ -1798,8 +1805,8 @@ void Methods6502::InitDecrunch(Assembler *as)
 
 void Methods6502::InitPrintDecimal(Assembler *as)
 {
-//    as->Label("ipd_div_lo dc.b 0");
-//    as->Label("ipd_div_hi dc.b 0");
+//    as->Label("ipd_div_lo "+as->byte+" 0");
+//    as->Label("ipd_div_hi "+as->byte+" 0");
 
     as->DeclareInternalVariable("ipd_div_hi");
     as->DeclareInternalVariable("ipd_div_lo");
@@ -1926,7 +1933,7 @@ void Methods6502::PrintString(Assembler *as)
     if (str!=nullptr) {
 //        as->Asm("jmp " + lbl);
         varName = lbl2;
-        as->m_tempVars<<varName + as->String(str->m_val,true);
+        as->m_tempVars<<as->getLabelEnding(varName) + as->String(str->m_val,true);
 //        as->Label(varName + as->String(str->m_val));
         as->m_term="";
     }
@@ -3959,22 +3966,22 @@ void Methods6502::InitDrawTextBox(Assembler* as) {
     as->Comment("----------");
     as->Comment("InitDrawTextBox");
     as->Comment("addr vars: addrtableaddr,petsciitable");
-    as->Label("idtb_at_lo dc.b 0");
-    as->Label("idtb_at_hi dc.b 0");
-    as->Label("idtb_petscii_tl dc.b 0");
-    as->Label("idtb_petscii_t dc.b 0");
-    as->Label("idtb_petscii_tr dc.b 0");
-    as->Label("idtb_petscii_r dc.b 0");
-    as->Label("idtb_petscii_br dc.b 0");
-    as->Label("idtb_petscii_b dc.b 0");
-    as->Label("idtb_petscii_bl dc.b 0");
-    as->Label("idtb_petscii_l dc.b 0");
+    as->Write("idtb_at_lo: "+as->byte+" 0");
+    as->Write("idtb_at_hi: "+as->byte+" 0");
+    as->Write("idtb_petscii_tl: "+as->byte+" 0");
+    as->Write("idtb_petscii_t: "+as->byte+" 0");
+    as->Write("idtb_petscii_tr: "+as->byte+" 0");
+    as->Write("idtb_petscii_r: "+as->byte+" 0");
+    as->Write("idtb_petscii_br: "+as->byte+" 0");
+    as->Write("idtb_petscii_b: "+as->byte+" 0");
+    as->Write("idtb_petscii_bl: "+as->byte+" 0");
+    as->Write("idtb_petscii_l: "+as->byte+" 0");
     as->Comment("temp vars: col,row,width,height");
-    as->Label("idtb_t_col dc.b 0");
-    as->Label("idtb_t_row dc.b 0");
-    as->Label("idtb_t_wid dc.b 0");
-    as->Label("idtb_t_hei dc.b 0");
-    as->Label("idtb_tmp dc.b 0");
+    as->Write("idtb_t_col: "+as->byte+" 0");
+    as->Write("idtb_t_row: "+as->byte+" 0");
+    as->Write("idtb_t_wid: "+as->byte+" 0");
+    as->Write("idtb_t_hei: "+as->byte+" 0");
+    as->Write("idtb_tmp: "+as->byte+" 0");
 
     QString zp = as->m_internalZP[0];
 
@@ -4902,11 +4909,16 @@ void Methods6502::InitSinusTable(Assembler *as)
     if (m_node->m_isInitialized["sinetab"])
         return;
 //    as->Asm("jmp initsin_continue");
-    as->Label("sine .byte 0 ");
-    as->Asm("org sine +#255");
+    if (Syntax::s.m_currentSystem->CL65Syntax()) {
+        as->Write("sine: .res 256,0");
 
-    as->Label("value .word 0");
-    as->Label("delta .word 0");
+    }
+    else {
+        as->Label("sine .byte 0 ");
+        as->Asm("org sine +#255");
+    }
+    as->Write("value: .word 0");
+    as->Write("delta: .word 0");
     as->Label("initsine_calculate");
 
 
@@ -5217,12 +5229,14 @@ void Methods6502::InitDiv8x8(Assembler* as) {
     as->Asm("lda #$00");
     as->Asm("ldx #$07");
     as->Asm("clc");
-   as->Label("div8x8_loop1 rol div8x8_d");
+   as->Label("div8x8_loop1");
+   as->Asm("rol div8x8_d");
      as->Asm("rol");
      as->Asm("cmp div8x8_c");
      as->Asm("bcc div8x8_loop2");
       as->Asm("sbc div8x8_c");
-   as->Label("div8x8_loop2 dex");
+   as->Label("div8x8_loop2");
+   as->Asm("dex");
     as->Asm("bpl div8x8_loop1");
     as->Asm("rol div8x8_d");
 
@@ -5255,7 +5269,7 @@ void Methods6502::InitDiv16x8(Assembler *as)
     as->Asm("sta initdiv16x8_remainder+1");
     as->Asm("ldx #16	        ;repeat for each bit: ...");
 
-    as->Label("divloop16	asl initdiv16x8_dividend	;dividend lb & hb*2, msb -> Carry");
+    as->Write("divloop16:	asl initdiv16x8_dividend	;dividend lb & hb*2, msb -> Carry");
     as->Asm("rol initdiv16x8_dividend+1");
     as->Asm("rol initdiv16x8_remainder	;remainder lb & hb * 2 + msb from carry");
     as->Asm("rol initdiv16x8_remainder+1");
@@ -5270,7 +5284,8 @@ void Methods6502::InitDiv16x8(Assembler *as)
     as->Asm("sta initdiv16x8_remainder+1	;else save substraction result as new remainder,");
     as->Asm("sty initdiv16x8_remainder");
     as->Asm("inc initdiv16x8_result	;and INCrement result cause divisor fit in 1 times");
-    as->Label("skip16	dex");
+    as->Label("skip16");
+    as->Asm("dex");
     as->Asm("bne divloop16");
 //    m_initDiv16x8_initialised = true;
 
@@ -5389,7 +5404,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Label("mul16x8_loop");
     as->Asm("asl mul16x8_num1");
     as->Asm("rol mul16x8_num1Hi");
-    as->Label("mul16x8_enterLoop  ; accumulating multiply entry point (enter with .A=lo, .Y=hi)");
+    as->Label("mul16x8_enterLoop");
     as->Asm("lsr mul16x8_num2");
     as->Asm("bcs mul16x8_doAdd");
     as->Asm("bne mul16x8_loop");
@@ -7032,11 +7047,11 @@ void Methods6502::InitJoystick(Assembler *as)
         return;
 
 //    as->Asm("jmp callJoystick");
-    as->Label("joystickup .byte 0");
-    as->Label("joystickdown .byte 0");
-    as->Label("joystickleft .byte 0");
-    as->Label("joystickright .byte 0");
-    as->Label("joystickbutton .byte 0");
+    as->Write("joystickup: .byte 0");
+    as->Write("joystickdown: .byte 0");
+    as->Write("joystickleft: .byte 0");
+    as->Write("joystickright: .byte 0");
+    as->Write("joystickbutton: .byte 0");
     as->Label("callJoystick");
 /*
     as->Asm("lda $dc00 ;read joystick port 2");

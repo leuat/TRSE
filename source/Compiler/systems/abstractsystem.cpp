@@ -81,6 +81,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
 }
 
 AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
+
     if (s.toLower()=="c64")
         return C64;
     if (s.toLower()=="c128")
@@ -129,7 +130,10 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return M1ARM;
     if (s.toLower()=="oric")
         return ORIC;
+    if (s.toLower()=="snes")
+        return SNES;
 
+    qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
 }
 
@@ -158,6 +162,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == APPLEII) return "APPLEII";
     if (s == M1ARM) return "M1ARM";
     if (s == ORIC) return "ORIC";
+    if (s == SNES) return "SNES";
     return "";
 }
 

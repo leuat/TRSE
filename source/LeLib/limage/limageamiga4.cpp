@@ -1,6 +1,5 @@
 #include "limageamiga4.h"
 
-#define CHECK_BIT(var,pos) (((var) & (1<<(pos)))>>pos)
 
 LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
 {
@@ -108,7 +107,9 @@ void LImageAmiga::SaveBin(QFile &file)
 {
     m_height  = 256;
     LImageQImage::SaveBin(file);
-    file.write(m_colorList.toArray());
+    QByteArray data;
+    m_colorList.toArray(data);
+    file.write(data);
 }
 
 void LImageAmiga::LoadBin(QFile &file)

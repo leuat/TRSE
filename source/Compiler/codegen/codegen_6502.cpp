@@ -863,9 +863,10 @@ void CodeGen6502::IncSid(QSharedPointer<NodeVarDecl> node) {
     QString pos = QString::number(node->sid.m_loadAddress,16);
     QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$"+pos));
 //    qDebug() << "INCSID dispatcher"<< pos;
-    app->Append("org $" +pos,1);
+
+    app->Append(as->GetOrg(node->sid.m_loadAddress),1);
     //        as->Appendix(getValue(v),0);
-    app->Append("incbin \"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
+    app->Append(getIncbin()+"\t\"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
 
     as->m_appendix.append(app);
 
@@ -900,6 +901,12 @@ void CodeGen6502::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     as->Label(v->value + "\t= " + initVal);
 
+}
+
+QString CodeGen6502::getIncbin() {
+    if (Syntax::s.m_currentSystem->CL65Syntax())
+        return ".incbin";
+    return "incbin";
 }
 
 void CodeGen6502::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
@@ -1002,6 +1009,22 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
         as->PopTempVar();
     }
 
+
+}
+
+void CodeGen6502::Disable16bit()
+{
+    if (Syntax::s.m_currentSystem->isWDC65()) {
+        as->Asm("sep #$10        ; disable X/Y 16-bit");
+    }
+
+}
+
+void CodeGen6502::Enable16bit()
+{
+    if (Syntax::s.m_currentSystem->isWDC65()) {
+        as->Asm("rep #$10        ; enable X/Y 16-bit");
+    }
 
 }
 
@@ -1948,7 +1971,12 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
                 as->Asm("sta " + getValue(node) + "+"+ QString::number(i));
+                Disable16bit();
                 as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1));
+                Enable16bit();
+                if (Syntax::s.m_currentSystem->isWDC65()) {
+                    as->Asm("rep #$10        ; enable X/Y 16-bit");
+                }
 
             }
             else {
@@ -2071,7 +2099,11 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
         else
         if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
             as->Asm("sta " + getValue(node));
+            Disable16bit();
+
             as->Asm("sty " + getValue(node) + "+1");
+            Enable16bit();
+
             return;
         }
         else {
@@ -2193,7 +2225,9 @@ bool CodeGen6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     node->m_right->Accept(this);
     as->Term();
     as->Asm("sta " + getValue(aVar));
+    Disable16bit();
     as->Asm("sty "+ getValue(aVar)+"+1");
+    Enable16bit();
 
     return true;
 //     ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);

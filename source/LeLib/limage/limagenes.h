@@ -28,7 +28,7 @@ public:
     void CopySingleChar(LImage* src, int srcChar, int dstChar) override;
 
 
-    virtual bool isNes() {return true;}
+    virtual bool isNes() override {return true;}
 
 
     bool KeyPress(QKeyEvent *e) override;

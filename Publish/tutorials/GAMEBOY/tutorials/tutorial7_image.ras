@@ -22,7 +22,7 @@ var
 
 	time,delta:byte;
 
-	sine : array[256] of byte = BuildTable("Math.sin((i)/256.0*3.1459*2)*127+127");
+	sine : array[256] of byte = BuildSineTable(255);
 
 	const temp : address = $CF00;
 	kk : integer;
@@ -35,7 +35,7 @@ begin
 	time:=time+3;
 	if (time&7) then delta:=delta+1;
 	scrolly := sine[time]>>3;
-	scrollx := sine[time+delta]>>3;
+	scrollx := sine[time+delta]/8;
 end;
 
 

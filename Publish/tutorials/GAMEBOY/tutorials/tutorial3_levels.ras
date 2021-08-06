@@ -15,7 +15,6 @@ program Tutorial3_Levels;
 var  
 	// Bank to place sprites
 	const levelBank : byte = 2;
-	// A temporary address to store the screen
 	
 	level_data : incbin("images/level.bin") bank(levelBank);
 	tiles : incbin("images/tiles.bin") bank(levelBank);
@@ -27,6 +26,11 @@ var
 	// Generate a sine table
     sine : array[256] of byte = BuildSineTable(127);
 
+
+/*
+	Renders the level and copies to the screen while turned off
+
+*/
 
 procedure RenderLevel(x,y : global byte);
 begin

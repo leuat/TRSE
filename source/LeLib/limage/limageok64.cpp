@@ -48,7 +48,9 @@ unsigned int LImageOK64::getPixel(int x, int y)
 void LImageOK64::SaveBin(QFile &f)
 {
     f.write(m_data);
-    f.write(m_colorList.toArray());
+    QByteArray data;
+    m_colorList.toArray(data);
+    f.write(data);
 
 }
 
@@ -104,9 +106,10 @@ void LImageOK64::ExportBin(QFile &file)
 {
     file.write(m_data);
     QString n = file.fileName().remove(".bin");
-    QByteArray b = m_colorList.toArray();
-    b.remove(0,1);
-    Util::SaveByteArray(b,n+".pal");
+    QByteArray data;
+    m_colorList.toArray(data);
+    data.remove(0,1);
+    Util::SaveByteArray(data,n+".pal");
 
 }
 

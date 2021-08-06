@@ -2,6 +2,7 @@
 #define FACTORYCOMPILER_H
 
 #include "compiler6502.h"
+#include "compiler65c816.h"
 #include "compilerm68k.h"
 #include "compilerx86.h"
 #include "compilerz80.h"

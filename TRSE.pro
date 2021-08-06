@@ -29,7 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-#ARCH = arm64
+ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -153,6 +153,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/methods/methodsx86.cpp \
     source/Compiler/codegen/methods/methodsz80.cpp \
     source/Compiler/compilers/compiler6502.cpp \
+    source/Compiler/compilers/compiler65c816.cpp \
     source/Compiler/compilers/compilerarm.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
@@ -163,6 +164,7 @@ SOURCES += main.cpp\
     source/Compiler/optimiser/postoptimizerm68k.cpp \
     source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/optimiser/postoptimizerz80.cpp \
+    source/Compiler/systems/system65c816.cpp \
     source/Compiler/systems/systemamstradcpc.cpp \
     source/Compiler/systems/systemappleii.cpp \
     source/Compiler/systems/systemarm.cpp \
@@ -173,10 +175,12 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemm1arm.cpp \
+    source/Compiler/systems/systemmega65.cpp \
     source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemoric.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/Compiler/systems/systemsnes.cpp \
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemtiki100.cpp \
     source/Compiler/systems/systemx86.cpp \
@@ -206,6 +210,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagemetachunk.cpp \
     source/LeLib/limage/limagenes.cpp \
     source/LeLib/limage/limageok64.cpp \
+    source/LeLib/limage/limagesnes.cpp \
     source/LeLib/limage/limagespectrum.cpp \
     source/LeLib/limage/limagevga.cpp \
     source/LeLib/limage/limagex16.cpp \
@@ -399,6 +404,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/methods/methodsx86.h \
     source/Compiler/codegen/methods/methodsz80.h \
     source/Compiler/compilers/compiler6502.h \
+    source/Compiler/compilers/compiler65c816.h \
     source/Compiler/compilers/compilerarm.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerm68k.h \
@@ -409,6 +415,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/optimiser/postoptimizerm68k.h \
     source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/optimiser/postoptimizerz80.h \
+    source/Compiler/systems/system65c816.h \
     source/Compiler/systems/systemamstradcpc.h \
     source/Compiler/systems/systemappleii.h \
     source/Compiler/systems/systemarm.h \
@@ -419,10 +426,12 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemm1arm.h \
+    source/Compiler/systems/systemmega65.h \
     source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemoric.h \
     source/Compiler/systems/systemplus4.h \
+    source/Compiler/systems/systemsnes.h \
     source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemtiki100.h \
     source/Compiler/systems/systemx86.h \
@@ -452,6 +461,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagemetachunk.h \
     source/LeLib/limage/limagenes.h \
     source/LeLib/limage/limageok64.h \
+    source/LeLib/limage/limagesnes.h \
     source/LeLib/limage/limagespectrum.h \
     source/LeLib/limage/limagevga.h \
     source/LeLib/limage/limagex16.h \
@@ -673,6 +683,7 @@ DISTFILES += \
     resources/code/c64_keyboard_input.asm \
     resources/code/gameboy/gbt_player.asm \
     resources/code/gameboy/gbt_player_bank1.asm \
+    resources/code/mega65/init.asm \
     resources/code/vbm/vic20_vbm.asm \
     resources/code/x86/init_cga_scanlines.asm \
     resources/code/x86/init_playnote.asm \

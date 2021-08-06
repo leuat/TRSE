@@ -247,6 +247,11 @@ void FormRasEditor::ExecutePrg(QString fileName)
         emu = m_iniFile->getString("mega65_emulator");
     }
 
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SNES) {
+//        params  <<;
+        emu = m_iniFile->getString("snes_emulator");
+    }
+
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X16) {
         emu = m_iniFile->getString("x16_emulator");
         QString base = emu;
@@ -349,6 +354,9 @@ void FormRasEditor::ExecutePrg(QString fileName)
     //    qDebug() << emu << " " << params <<  QDir::toNativeSeparators(fileName);
 #ifdef __APPLE__
     if (emu.startsWith("x"))
+        QProcess::execute("killall",QStringList() << QFileInfo(emu).fileName());
+
+    if (emu.toLower().contains("openemu"))
         QProcess::execute("killall",QStringList() << QFileInfo(emu).fileName());
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM) {
@@ -724,6 +732,8 @@ void FormRasEditor::Run()
         filename = base;
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX)
         filename = base + ".rom";
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SNES)
+        filename = base + ".smc";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
         filename = base + ".bin";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100)

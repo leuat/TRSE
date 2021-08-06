@@ -195,6 +195,10 @@ private slots:
 
     void on_btnOric_clicked();
 
+    void on_btnSnes_clicked();
+
+    void on_btnCL65_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

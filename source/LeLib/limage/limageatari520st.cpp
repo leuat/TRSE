@@ -107,7 +107,9 @@ void LImageAtari520ST::SaveBin(QFile &file)
 {
     m_height  = 200;
     LImageQImage::SaveBin(file);
-    file.write(m_colorList.toArray());
+    QByteArray data;
+    m_colorList.toArray(data);
+    file.write(data);
 }
 
 void LImageAtari520ST::LoadBin(QFile &file)

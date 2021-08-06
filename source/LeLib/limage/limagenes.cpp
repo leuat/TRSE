@@ -531,3 +531,4 @@ void LImageNES::CopySingleChar(LImage *src, int srcChar, int dstChar)
     }
 
 }
+

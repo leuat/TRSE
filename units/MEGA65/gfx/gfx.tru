@@ -23,7 +23,7 @@ var
 	low, high, k, i, val : byte;
 	index, bitmapstart : integer;
 	
-
+	@donotremove addr
 	addr,p_putpixel : pointer;
 	
 	zp: pointer;

@@ -43,16 +43,14 @@ public:
         name = n;
     }
 
-    unsigned short get12BitValue() {
-        return color.blue()/16  | (color.green()/16)<<4  | (color.red()/16)<<8;
-
-    }
-    unsigned short get9BitValue() {
-        return color.blue()/32  | (color.green()/32)<<4  | (color.red()/32)<<8;
-
-    }
+    unsigned short get12BitValue();
+    unsigned short get15BitValue();
+    unsigned short get9BitValue();
     QString toRGB8() {
         return QString::number(color.red())+"," + QString::number(color.green()) +","+ QString::number(color.blue());
+    }
+    QString toRGB15() {
+        return QString::number(color.red()/8)+"," + QString::number(color.green()/8) +","+ QString::number(color.blue()/8);
     }
     QString toRGB4() {
         return QString::number(color.red()/16)+"," + QString::number(color.green()/16) +","+ QString::number(color.blue()/16);

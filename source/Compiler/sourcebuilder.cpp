@@ -24,7 +24,8 @@ bool SourceBuilder::Build(QString source)
 {
     m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
                                          m_projectIniFile->getString("system")),
-                                        m_iniFile, m_projectIniFile));
+                                        m_iniFile,
+                                                                    m_projectIniFile));
 
     compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
     connect(compiler.get(), SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));

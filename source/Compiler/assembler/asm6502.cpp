@@ -156,26 +156,28 @@ void Asm6502::Program(QString programName, QString vicConfig)
     QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
     StartMemoryBlock(org);
 
-
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
-
-            Asm(" .byte $09,$20 //End of command marker (first byte after the 00 terminator)");
-            Asm(" .byte $0a,$00 //10");
-            Asm(" .byte $fe,$02,$30,$00 //BANK 0");
-            Asm(" .byte #<endd_s, #>endd_s ");
-            Asm(" .byte $14,$00 //20");
-            Asm(" .byte $9e //SYS");
-            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-            QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
-
+               Asm(" .org $2001");
+            Asm(" .byte $09,$20 ;End of command marker (first byte after the 00 terminator)");
+            Asm(" .byte $0a,$00 ;10");
+            Asm(" .byte $fe,$02,$30,$00 ;BANK 0");
+//            Asm(" .byte <endd_s, >endd_s ");
+            Asm(" .byte $13, $20 ");
+            Asm(" .byte $14,$00 ;20");
+            Asm(" .byte $9e ;SYS");
+//            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+  //          QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
+            Asm(" .byte $38,$32,$32,$34");
+//
             //QString extra = "";
             //if (s.count()<5)
 //                extra=", $00";
             Asm("  .byte $00");
             Label("endd_s:");
-            Asm("  .byte $00,$00    //End of basic terminators");
+            Asm("  .byte $00,$00    ;End of basic terminators");
+            Asm("  .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF    ;extra");
 
         }
         else {
@@ -246,17 +248,29 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
      }
 
 
+
+
     if (data.count()==0 && pos=="") {
-        Write(name +"\t" + t + "\t ");
         int scale = 1;
         if (type.toLower()=="integer")
             scale = 2;
+        if (type.toLower()=="long")
+            scale = 3;
+
+        if (Syntax::s.m_currentSystem->CL65Syntax()) {
+           Write(getLabelEnding(name) +"\t.res\t" + QString::number(count*scale) + ",0");
+            return;
+        }
+
+
+        Write(getLabelEnding(name) +"\t" + t + "\t ");
         Asm("org "+name+"+" +QString::number(count*scale));
 
     }
     else {
+
         QString s="";
-        s=s+name + "\t"+t+" ";
+        s=s+getLabelEnding(name) + "\t"+t+" ";
 
         for (int i=0;i<data.count();i++) {
             s=s+data[i];
@@ -315,16 +329,21 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
     }
 
 
-    if (type.toLower()=="integer")
+    if (type.toLower()=="integer")  {
         t = word;
+    }
     if (type.toLower()=="byte") {
         t = byte;
 
-        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
-            Write(name +"\t=\t"+Util::numToHex(m_zbyte));
+    }
+    if (Syntax::s.m_currentSystem->useZByte) {
+        Write(name +"\t=\t"+Util::numToHex(m_zbyte));
+        m_zbyte++;
+        if (t==word)
             m_zbyte++;
-            return;
-        }
+
+
+        return;
     }
 
 /*    if (m_symTab->m_records.contains(type)) {
@@ -347,7 +366,7 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 
-    Write(name +"\t" + t + "\t"+initval);
+    Write(getLabelEnding(name) +"\t" + t + "\t"+initval);
 
 }
 
@@ -367,19 +386,19 @@ void Asm6502::DeclareString(QString name, QStringList initval, QStringList flags
     m_appendix.append(app);
 */
 
-    Write(name +"\t" + String(initval,!flags.contains("no_term")));
+    Write(getLabelEnding(name) +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
 }
 
 void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flags)
 {
-    Write(name + "\t");
+    Write(getLabelEnding(name) + "\t");
     bool done=false;
     int curIdx=0;
     int curLin = 0;
     int curOut = 0;
     if (initVal.count()==0) {
-        Write("\tdc.b\t");
+        Write("\t"+byte+"\t");
         return;
     }
 //    qDebug() << initVal.count();
@@ -388,7 +407,7 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
     while (!done) {
         // First check if current is a pure number
         if (curOutData == "")
-            curOutData = "\tdc.b\t";
+            curOutData = "\t"+byte+"\t";
 
         bool isNumber = false;
         if (curStr.startsWith("*&NUM")) {
@@ -512,6 +531,10 @@ QString Asm6502::String(QStringList lst, bool term)
 
     QString res;
     QString mark = "dc.b";
+    if (Syntax::s.m_currentSystem->CL65Syntax()) {
+        mark = ".asciiz";
+        term = false;
+    }
 
     for (QString s:lst) {
         bool ok=false;
@@ -612,7 +635,15 @@ bool Asm6502::CheckZPAvailability()
 
 QString Asm6502::GetOrg(int pos)
 {
+    if (Syntax::s.m_currentSystem->CL65Syntax())
+        return ".res " + Util::numToHex(pos)+"-*";
     return "org " + Util::numToHex(pos);
+}
+
+QString Asm6502::GetOrg() {
+    if (Syntax::s.m_currentSystem->CL65Syntax())
+        return ".org ";
+    return "org ";
 }
 
 void Asm6502::DeclareInternalVariable(QString name)
@@ -678,8 +709,13 @@ QString Asm6502::StoreInTempVar(QString name, QString type)
         Label(labelVar);
 //        m_tempVars << labelVar;
         Asm("sta " + tmpVar);
-        if (type=="word")
+        if (type=="word") {
+            if (Syntax::s.m_currentSystem->isWDC65())
+                Asm("sep #$10");
             Asm("sty " + tmpVar + "+1");
+            if (Syntax::s.m_currentSystem->isWDC65())
+                Asm("rep #$10");
+        }
         PopLabel(name+ "_var");
         return tmpVar;
 

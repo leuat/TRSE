@@ -6,145 +6,14 @@ var
 	@donotremove i
 	i,k,time:integer;
 	tp:pointer;
-	x,y,xx,yy:long;
+	xx,yy:long;
 	j:byte;
-	@donotremove w
-	w : array[4] of integer = (0,0,0,0);
-
-
-
-procedure Read();
-begin
-	asm("
-	mov X0, #0     // 1 = StdOut
-       adrp x1, i@PAGE // string to print
- 	    add x1, x1, i@PAGEOFF
- 	    mov x2,#1
-        mov X16, #3     // MacOS write system call
-        svc 0     // Call linux to output the string
-	ret
-	
-	
-	
-	");
-	
-end;
-
-procedure GetWindowSize();
-begin
-	asm("
-	mov X0, #1     // 1 = StdOut
-       adrp x9, w@PAGE // string to print
- 	    add x9, x9, w@PAGEOFF
-		  mov     x0, x8
-        mov     x1, #29800
-        movk    x1, #16392, lsl #16
-        ;mov     x9, sp
-
-
- 	    
-;        svc 0     // Call linux to output the string
-	sub sp, sp, #16
-	stp x29, x30, [sp, #16]  ; store frame pointer + link register 
-       bl _ioctl
-	ldp x29, x30, [sp, #16]  ; restore frame pointer + link register 
-	add sp, sp, #16
-
-
-
-        adrp    x9, test2@PAGE
-        add     x9, x9, test2@PAGEOFF
-        mov     x0, x9
-        mov     x9, sp
-                                        ; implicit-def: $x1                               
-        mov     x1, x8
-        str     x1, [x9]
-	sub sp, sp, #16
-	stp x29, x30, [sp, #16]  ; store frame pointer + link register 
-        bl      _printf
-	ldp x29, x30, [sp, #16]  ; restore frame pointer + link register 
-	add sp, sp, #16
-
-
-    ");
-end;
-
-
 
 
 begin
-	w:=40;
-	asm("
-	
-	adrp	x8, w@GOTPAGE
-	ldr	x8, [x8, w@GOTPAGEOFF]
-	mov	w9, #0
-	stur	wzr, [x29, #-4]
-	mov	x0, x9
-	mov	x1, #29800
-	movk	x1, #16392, lsl #16
-	mov	x10, sp
-	str	x8, [x10]
-	str	x8, [sp, #16]           ; 8-byte Folded Spill
-	str	w9, [sp, #12]           ; 4-byte Folded Spill
-	bl	_ioctl
-	ldr	w8, [sp, #8]            ; 4-byte Folded Reload
-	mov	x0, x8
-	ldp	x29, x30, [sp, #16]     ; 16-byte Folded Reload
-	add	sp, sp, #32             ; =32
-
-
-");
-
-/*	asm("
-	
-                                        ; implicit-def: $x1
-	mov	x1, x8
-	str	x1, [x9]
-	bl	_printf
-	ldurh	w8, [x29, #-10]
-	adrp	x9, l_.str.1@PAGE
-	add	x9, x9, l_.str.1@PAGEOFF
-	mov	x0, x9
-	mov	x9, sp
-                                        ; implicit-def: $x1
-	mov	x1, x8
-	str	x1, [x9]
-	bl	_printf
-	ldr	w8, [sp, #16]           ; 4-byte Folded Reload
-	mov	x0, x8
-	ldp	x29, x30, [sp, #32]     ; 16-byte Folded Reload
-	add	sp, sp, #48             ; =48
-	");*/
-//	Console::ClearScreen();
+	Console::ClearScreen();
 	tp:=#text;
-//	Read();
-//	GetWindowSize();
-asm("
-	adrp	x0, w@GOTPAGE
-	ldr	x0, [x0, w@GOTPAGEOFF]
-	
-	adrp	x1, x@GOTPAGE
-	ldr	x1, [x1, x@GOTPAGEOFF]
-	
-	ldrh w2,[x0]
-	str w2,[x1]
-	
-	
-	adrp	x0, w@GOTPAGE
-	ldr	x0, [x0, w@GOTPAGEOFF]
-	add x0,x0,2
-	
-	adrp	x1, y@GOTPAGE
-	ldr	x1, [x1, y@GOTPAGEOFF]
-	
-	ldrh w2,[x0]
-	str w2,[x1]
-
-	
-");
-//	x:=w;
-//	y:=w2;
+	Console::GetWindowSize();
 	while (true) do
 	begin
 		i:=xx+yy+time;
@@ -153,21 +22,16 @@ asm("
 		k+=1;
 		
 		xx+=1;
-		if (xx=x-1) then
+		if (xx=Console::sizex-1) then
 		begin
 			xx:=0;
 			yy+=1;
 		end;
 		
 		
-		if (k=x*y) then 
+		if (k=Console::sizex*Console::sizey) then 
 		begin
-			asm("
-	mov	x0, #62000
-	bl	_usleep
-
-			");			
-			
+			Console::Sleep(30000);			
 			Console::ClearScreen();
 			k:=0;
 			i:=0;	
@@ -209,14 +73,6 @@ _inf:
 
         
 .data
-
-.align 4
-l_.str:                                 ; @.str
-	.asciz	\"lines %d\\n\"
-
-.align 4
-l_.str.1:                               ; @.str.1
-	.asciz	\"columns %d\\n\"
 
 
 test : .hword 0

@@ -40,6 +40,10 @@ public:
     void Rand(Assembler* as);
     void Random(Assembler* as);
 
+    bool is6502() {
+        return Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502;
+    }
+
     void MoveTo(Assembler* as);
     void MoveTo80(Assembler* as);
     void SetFrequency(Assembler *as);

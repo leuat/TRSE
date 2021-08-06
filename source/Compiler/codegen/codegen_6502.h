@@ -112,6 +112,8 @@ public:
 
     void InlineProcedure(QSharedPointer<NodeProcedure> p);
 
+    virtual QString getIncbin() override;
+
     /*
      *
      * NodeBinaryClause functions
@@ -120,6 +122,10 @@ public:
 //    void BinaryClause(QSharedPointer<Node> node);
 
     void BuildToCmp(QSharedPointer<Node> node);
+
+    void Disable16bit();
+    void Enable16bit();
+
 
 //    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
     void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;

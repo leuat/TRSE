@@ -49,6 +49,7 @@ private:
 
     QVector<int> m_multicolors;
     int m_currentType = 0;
+    int m_currentPalette = 0;
     QVector<QSharedPointer<LPen>> m_pens;
     bool firstTime=true;
 
@@ -61,7 +62,7 @@ public:
     bool m_supportsFooterPen = false;
     bool m_isLevelEditor = false;
     QVector3D m_bpp = QVector3D(8,8,8);
-    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC, VGA, SPECTRUM };
+    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC, VGA, SPECTRUM, SNES };
     bool m_selectClosestFromPen = true;
     QVector<int> m_enabledColors;
     QByteArray m_customPalette;
@@ -70,6 +71,7 @@ public:
     ~LColorList();
 
     QByteArray m_nesPPU;
+
     int m_curPal = 0;
     bool m_ignoreSetIsMulti = false;
     LColor& get(int i);
@@ -108,7 +110,7 @@ public:
 
     int getNoBitplanes();
     void setNoBitplanes(int bpl);
-    QByteArray toArray();
+    void toArray(QByteArray& data);
     void fromArray(QByteArray& d);
 
     void Initialize(Type t);
@@ -118,6 +120,7 @@ public:
     void SetC64SpritePen(bool m_isMulticolor);
 
     void InitNESPens();
+    void InitSNESPens();
 
 
     QPixmap CreateColorIcon(int col, int s);
@@ -135,6 +138,7 @@ public:
     void InitOK64();
     void InitVGA();
     void InitNES();
+    void InitSNES();
     void InitNES4();
     void InitCGA2_LOW();
     void InitCGA2_HIGH();
@@ -158,6 +162,7 @@ public:
     QColor getPenColour(int pcol);
 
     void ExportAmigaPalette(QString filename);
+    void ExportSNESPalette(QString filename);
     void ExportAtariSTPalette(QString filename);
 
 

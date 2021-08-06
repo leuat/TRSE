@@ -116,7 +116,7 @@ The VIC4 is hidden by default on the mega65. Use this method to make it visible 
 procedure EnableVIC4();
 begin
 	asm("
-		lda #$47    //Enable VIC IV
+		lda #$47  
         sta $d02f
         lda #$53
         sta $d02f

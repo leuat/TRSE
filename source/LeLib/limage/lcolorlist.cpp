@@ -317,6 +317,11 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
 }
 
 int LColorList::getNoBitplanes() {
+    if (m_type==SNES) {
+        qDebug() << "Getting no bpl: "<<m_bpp.x();
+        return m_bpp.x();
+    }
+
     if (m_list.count()==2) return 1;
     if (m_list.count()==4) return 2;
     if (m_list.count()==8) return 3;
@@ -330,17 +335,23 @@ int LColorList::getNoBitplanes() {
 
 void LColorList::setNoBitplanes(int bpl)
 {
+
+    if (m_type==SNES) {
+        m_bpp = QVector3D(bpl,bpl,bpl);
+        InitSNESPens();
+        return;
+    }
+
     m_list.resize(pow(2,bpl));
     DefaultPen(LPen::SingleSelect);
 }
 
-QByteArray LColorList::toArray()
+void LColorList::toArray(QByteArray& data)
 {
-    QByteArray data;
     data.resize(m_list.count()*3+1);
     data[0] = m_list.count();//(char)getNoBitplanes();
     int i = 0;
-    for (LColor c: m_list) {
+    for (LColor& c: m_list) {
         data[3*i+0+1] = (uchar)c.color.red();
         data[3*i+1+1] = (uchar)c.color.green();
         data[3*i+2+1] = (uchar)c.color.blue();
@@ -348,18 +359,15 @@ QByteArray LColorList::toArray()
 
     }
 
-    return data;
 }
 
 void LColorList::fromArray(QByteArray &d)
 {
     int size = (uchar)d[0];
     int shift = 1;
-  //  qDebug() << size;
     if (size==0) {
         size = 256;
         shift = 0;
-//        qDebug() << "HERE";
     }
     m_list.clear();
  //    setNoBitplanes(size);
@@ -398,6 +406,8 @@ void LColorList::Initialize(Type t)
         InitOK64();
     if (m_type == Type::NES)
         InitNES();
+    if (m_type == Type::SNES)
+        InitSNES();
     if (m_type == Type::X16)
         InitOK64();
     if (m_type == Type::AMSTRADCPC)
@@ -565,6 +575,24 @@ void LColorList::InitNESPens()
 
 }
 
+void LColorList::InitSNESPens()
+{
+    QVector<int> oldList = getPenList();
+    // Make sure old data is kept!
+    for (int i=0;i<pow(2,m_bpp.x());i++) {
+        if (i>=oldList.count())
+            oldList.append(i);
+    }
+    m_pens.clear();
+    for (int i=0;i<pow(2,m_bpp.x());i++)
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[i],"Color "+QString::number((int)m_bpp.x()),LPen::Dropdown)));
+
+
+    m_nesPPU.resize(256);
+
+}
+
+
 QPixmap LColorList::CreateColorIcon(int col, int s)
 {
     QImage img(s,s,QImage::Format_RGB32);
@@ -599,6 +627,8 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_pens.count();i++) {
         m_pens[i] = other->m_pens[i];
     }
+    m_bpp = other->m_bpp;
+    m_type = other->m_type;
     m_isLevelEditor = other->m_isLevelEditor;
 
 
@@ -860,6 +890,28 @@ void LColorList::InitVGA()
 
 }
 
+
+void LColorList::InitSNES()
+{
+    m_list.clear();
+    float s = 1; // saturation
+    for (int i=0;i<256;i++) {
+        int b = (i&0b11100000);
+        int g = (i&0b00011000)<<3;
+        int r = (i&0b00000111)<<5;
+
+        int c = (r+g+b)/3;
+        r = Util::minmax(c+(r-c)*s,0,255);
+        g = Util::minmax(c+(g-c)*s,0,255);
+        b = Util::minmax(c+(b-c)*s,0,255);
+
+        m_list.append(LColor(QColor(r,g,b),""+QString::number((i))));
+    }
+//    DefaultPen(LPen::FixedSingle);
+
+}
+
+
 void LColorList::InitNES()
 {
     m_list.clear();
@@ -901,6 +953,7 @@ void LColorList::InitNES()
 //    DefaultPen();
 
 }
+
 
 void LColorList::InitNES4()
 {
@@ -1164,6 +1217,25 @@ void LColorList::ExportAmigaPalette(QString filename)
         data.append((char)(d&0xFF));
     }
     Util::SaveByteArray(data, filename);
+}
+
+void LColorList::ExportSNESPalette(QString filename)
+{
+    QByteArray data;
+    int skew[4] = {0,2,1,3};
+
+    for (int i=0;i<256;i++) {
+        uchar c = m_nesPPU[i-(i&3)+skew[i&3]];
+
+        unsigned short d = m_list[c].get15BitValue();
+        //        qDebug() << l.color;
+        //      qDebug() <<Util::numToHex(d);
+        //        qDebug() << QString::number(d,16);
+        data.append((char)(d&0xFF));
+        data.append((char)((d>>8)&0xFF));
+    }
+    Util::SaveByteArray(data, filename);
+
 }
 
 void LColorList::ExportAtariSTPalette(QString filename)

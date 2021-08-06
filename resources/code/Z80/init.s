@@ -110,7 +110,6 @@ div_16x8
 ;div_hl_c:
    xor	a
    ld	b, 16
-
 _loop:
    add	hl, hl
    rla

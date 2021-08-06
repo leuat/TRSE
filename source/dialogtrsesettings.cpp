@@ -66,12 +66,14 @@ void DialogTRSESettings::FillFromIni()
     ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
+    ui->leSNES->setText(m_ini->getString("snes_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
+    ui->leCL65->setText(m_ini->getString("cl65"));
     ui->leZXSpectrumEmulator->setText(m_ini->getString("spectrum_emulator"));
     ui->leTiki100->setText(m_ini->getString("tiki100_emulator"));
     ui->leExomizer->setText(m_ini->getString("exomizer"));
@@ -169,6 +171,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
+    m_ini->setString("snes_emulator", ui->leSNES->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
@@ -181,6 +184,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
     m_ini->setString("tiki100_emulator", ui->leTiki100->text());
     m_ini->setString("pasmo", ui->lePasmo->text());
+    m_ini->setString("cl65", ui->leCL65->text());
 
 
     m_ini->setString("sidplayer",ui->leSidplayer->text());
@@ -280,7 +284,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"QEMU" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"QEMU" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -756,6 +760,27 @@ void DialogTRSESettings::on_btnOric_clicked()
         tr("Oric emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leOricEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnSnes_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("SNES emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leSNES->setText(filename);
+
+
+}
+
+
+void DialogTRSESettings::on_btnCL65_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("CL65 assembler location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leCL65->setText(filename);
 
 }
 

@@ -23,7 +23,6 @@ program Tutorial5_Input;
 var  
 	// Bank to place sprites
 	const spriteBank : byte = 2;
-	// A temporary address to store the screen
 	
 	sprites_index : incbin("images/sprites_index.bin") bank(spriteBank);
 	sprites_data : incbin("images/sprites_packed.bin") bank(spriteBank);

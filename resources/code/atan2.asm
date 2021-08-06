@@ -9,12 +9,12 @@
 
 octant		= @DECRUNCH_ZP1
 
-atan2_x1    .byte 0
-atan2_x2    .byte 0
-atan2_y1    .byte 0
-atan2_y2    .byte 0
+atan2_x1:    .byte 0
+atan2_x2:    .byte 0
+atan2_y1:    .byte 0
+atan2_y2:    .byte 0
 
-atan2_call
+atan2_call:
 		lda atan2_x1
 		sbc atan2_x2
 		bcs *+4
@@ -44,7 +44,7 @@ atan2_call
 		eor octant_adjust,y
 		rts
 
-octant_adjust	.byte %00111111		;; x+,y+,|x|>|y|
+octant_adjust:	.byte %00111111		;; x+,y+,|x|>|y|
 		.byte %00000000		;; x+,y+,|x|<|y|
 		.byte %11000000		;; x+,y-,|x|>|y|
 		.byte %11111111		;; x+,y-,|x|<|y|
@@ -56,7 +56,7 @@ octant_adjust	.byte %00111111		;; x+,y+,|x|>|y|
 
 		;;;;;;;; atan(2^(x/32))*128/pi ;;;;;;;;
 
-atan_tab	.byte $00,$00,$00,$00,$00,$00,$00,$00
+atan_tab:	.byte $00,$00,$00,$00,$00,$00,$00,$00
 		.byte $00,$00,$00,$00,$00,$00,$00,$00
 		.byte $00,$00,$00,$00,$00,$00,$00,$00
 		.byte $00,$00,$00,$00,$00,$00,$00,$00

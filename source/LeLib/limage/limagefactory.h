@@ -52,6 +52,7 @@
 #include "source/LeLib/limage/limagebbc.h"
 #include "source/LeLib/limage/limagevga.h"
 #include "source/LeLib/limage/limagespectrum.h"
+#include "source/LeLib/limage/limagesnes.h"
 
 class LImageFactory {
 public:

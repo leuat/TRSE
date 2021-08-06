@@ -107,7 +107,9 @@ public:
     void PopAllZeroPointers() override { m_curZeroPointer=0;}
     bool CheckZPAvailability() override;
 
-    QString GetOrg(int pos);
+    QString GetOrg(int pos) override;
+    virtual QString GetOrg() override;
+
     void DeclareInternalVariable(QString name) override;
 
     int CodeSizeEstimator(QStringList& lines) override;

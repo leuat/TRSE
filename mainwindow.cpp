@@ -2094,28 +2094,9 @@ void MainWindow::LoadProject(QString filename)
     // Set compiler syntax based on system
     QString system = m_currentProject.m_ini->getString("system").toUpper();
     Syntax::s.m_systemString = system;
+
     Syntax::s.Init(AbstractSystem::SystemFromString(system),m_iniFile, m_currentProject.m_ini);
-  //  if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA)
-   //     Messages::messages.DisplayMessage(Messages::messages.AMIGA_WARNING);
 
-
-/*    QString link = m_currentPath+QDir::separator() + "trse_units";
-    QString truPath = Util::path+ QDir::separator() + "tutorials"+QDir::separator() + system+QDir::separator() + "tru"+QDir::separator();
-//    qDebug() <<link << truPath;
-
-  //  qDebug() << "LINK : " <<
-    if (QDir().exists(truPath)) {
-
-        #ifdef Q_OS_UNIX
-            QFile::link(truPath, link);
-        #endif
-
-        #ifdef Q_OS_WIN
-            QFile::link(truPath, link.append(".lnk"));
-        #endif
-
-    }
-*/
     QImage sysImg(":resources/images/" +system+".png");
     ui->lblCommodoreImage->setPixmap(QPixmap::fromImage(sysImg));
 
