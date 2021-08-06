@@ -84,6 +84,10 @@ void Assembler::Write(QString str, int level)
     }
 }
 
+QString Assembler::GetOrg() {
+    return "org ";
+}
+
 bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPointer<Appendix> s2)
 {
     QString sa = s1->m_pos.toLower().replace("$","0x");

@@ -251,7 +251,7 @@ public:
 
 
     virtual QString GetOrg(int pos ) = 0;
-    virtual QString GetOrg() {return "org";}
+    virtual QString GetOrg();
 
 
 

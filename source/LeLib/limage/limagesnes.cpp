@@ -165,7 +165,7 @@ void LImageSNES::ExportBin(QFile &file)
                         char val = m_qImage->pixel(x+dx,y+dy);
                         int bit = CHECK_BIT(val,i);
                         if (val!=0)
-                            data[idx] |= (bit<<(7-dx));
+                            data[idx] = data[idx] |(bit<<(7-dx));
 
                     }
                     idx++;
