@@ -1,0 +1,151 @@
+unit Matrix;
+@use "math/signedmath"
+@use "system/tables"
+@use "math/vector"
+var
+
+	type mat4 = array[16] of integer;
+	type mat2 = array[4] of integer;
+	type matp = pointer of integer;
+
+	@donotremove angle
+	v:integer;// at $31;
+	c,s,ci,cj,ck, i,j,k,angle,v0,v1,v2,a0 : byte at @matrix_zeropage;
+	m:matp;
+	p1,pb : pointer of byte;
+	res : pointer of integer;
+	
+/**
+	Multiply two 4x4 matrices aa and bb, result in cc
+**/
+
+
+
+
+procedure MatMul3( p1,pb : global pointer of byte; m : global matp );
+begin
+
+/*	for j:=0 to 3 do
+	begin
+		for i:=0 to 3 do
+		begin
+			v:=0;		
+			for k:=0 to 3 do
+			begin
+				v0:=i<<2+k;
+				v1:=k<<2+j;
+				a0 := p1[v0*2];
+				v+=SignedMath::Muls8x8(pb[v1*2],a0);
+			end;
+			v:=SignedMath::Divs16x8(v,127);
+ 			m[(j<<2)+i] := v;
+        end;
+    end;
+  */
+	v2:=0;
+	for j:=0 to 6 step 2 do
+	begin
+		for i:=0 to 6 step 2 do
+		begin
+			v:=0;		
+			for k:=0 to 6 step 2 do
+			begin
+				v+=SignedMath::Muls8x8(pb[i<<2+k],p1[k<<2+j]);
+			end;
+			v:=SignedMath::Divs16x8(v,127);
+ 			m[v2] := v;
+ 			v2+=1;
+        end;
+ 		v2+=1;
+    end;
+    
+
+end;
+
+/**
+	Prints the conents of a 4x4 matrix to screen.
+	For debugging purposes.
+
+/**
+	Multiplies a matrix 'a' with a vector3 'vec' with result in 'res'.
+
+**/
+procedure MatMulVec3( pb: global pointer of byte; p1:global pointer of byte;res:global pointer of integer );
+begin
+	v0:=p1[0];
+	v1:=p1[1];
+	v2:=p1[2];
+	
+	for i:=0 to 3 do
+	begin
+		v:=SignedMath::Muls8x8(v0,pb[0]);
+		v+=SignedMath::Muls8x8(v1,pb[2]);
+		v+=SignedMath::Muls8x8(v2,pb[4]);
+		res[i] := v;
+		pb+=(4*2);
+     end;
+
+
+end;
+/*
+procedure Normalize3(a : global matp);
+begin
+	asm("
+		mov cx,12
+		les di,[Matrix_a]
+norm:
+		mov ax,[es:di]
+		xchg al,ah
+		mov ah,0
+		stosw
+		loop norm			
+	");
+end;
+
+*/
+procedure Identity(m:global matp);
+begin
+//	for i:=0 to 16 do m[i]:=0;
+	fill(m,0,32);
+	m[0]:=127;
+	m[5]:=127;
+	m[10]:=127;
+	m[15]:=127;
+end;
+
+
+
+procedure RotateX(m:global matp; angle:global byte);
+begin
+	c := Tables::sine128[angle];
+	s := Tables::sine128[(angle+64)];
+	
+	m[5]:=c;
+	m[6]:=0-s;
+	m[9]:=s;
+	m[10]:=c;
+end;
+
+procedure RotateY(m:global matp; angle:global byte);
+begin
+	c := Tables::sine128[angle];
+	s := Tables::sine128[(angle+64)];
+
+	m[0]:=c;
+	m[2]:=0-s;
+	m[8]:=s;
+	m[10]:=c;
+end;
+
+procedure RotateZ(m:global matp; angle:global byte);
+begin
+	c := Tables::sine128[angle];
+	s := Tables::sine128[(angle+64)];
+
+	m[0]:=c;
+	m[1]:=s;
+	m[4]:=0-s;
+	m[5]:=c;
+end;
+
+end.

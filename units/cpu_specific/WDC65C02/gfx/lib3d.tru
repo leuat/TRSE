@@ -1,0 +1,180 @@
+unit Lib3d;
+@use "math/signedmath"
+@use "gfx/gfx"
+@use "math/matrix"
+var
+	object3d = record
+		// All pointers
+		vertices : integer;
+		vertices_rot : integer;
+		faces : integer;
+		points_old : integer;
+		points_new : integer;
+		color : integer;
+		noVerts : byte;
+		noFaces,curDraw : byte;
+		rotmat:integer;
+	end;
+	objects : array[@max3dobjects] of object3d;
+	
+	ppo,ppn,fp,cp : pointer of byte;
+	ip:pointer of integer;
+	zdiv : integer = 127;
+	zdiv2 : integer = 4;
+	
+	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte at @lib3d_zeropage;
+	clearLines : byte = true;
+	xx,yy,iz:integer;
+	first : byte = 0;
+	startPos,curPos : integer = $8000;
+
+
+
+procedure FlipPointPointers(i : global byte);
+begin
+	if (objects[i].curDraw=1) then 
+	begin
+		ppo:=objects[i].points_new; 
+		ppn:=objects[i].points_old; 
+	end
+	else
+	begin
+		ppo:=objects[i].points_old; 
+		ppn:=objects[i].points_new; 
+	end;
+
+	objects[i].curDraw:=(objects[i].curDraw+1)&1;
+
+end;
+
+
+
+procedure InitializeData(startPos: global integer);
+begin
+	curPos := startPos;
+end;
+
+procedure AllocateWireframe(i,f,v : global byte);
+begin
+	objects[i].vertices := curPos;
+	curPos += v*3; // 3 bytes per vertex
+	objects[i].vertices_rot := curPos;
+	curPos += v*6; // 3 bytes per vertex
+	objects[i].faces := curPos;
+	curPos += f*2; // 2 bytes per frame
+	objects[i].points_old := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].points_new := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].color := curPos;
+	curPos += v; // 2 bytes per point
+	objects[i].rotmat := curPos;
+	curPos += 4*4*2; // 32 bytes per matrix
+	objects[i].noVerts := v;
+	objects[i].noFaces := f;
+end;
+
+
+
+procedure RenderWireframe(i:global byte);
+begin
+	fp := objects[i].faces;
+	cp := objects[i].color;
+	k:=0;
+
+	for j:=0 to objects[i].noFaces do
+	begin
+		i1 := fp[k];
+		i2 := fp[k+1];
+		k+=2;
+@ifdef lib3d_clearlines
+		if (first=1) then
+			Gfx::Line(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
+@endif			
+		Gfx::Line(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],cp[j]);		
+	end;
+	first := 1;	
+
+end;
+
+
+procedure FillColors(i,f:global byte);
+begin
+	fp := objects[i].color;
+	fill(fp,f,objects[i].noFaces);
+end;
+
+procedure LoadObject(i:global byte; fp: global pointer);
+begin
+	v:=fp[0];
+	f:=fp[1];
+	objects[i].noVerts := v;
+	objects[i].noFaces := f;
+	fp+=2;
+	
+	objects[i].vertices := fp;
+	fp:=fp + v*3;
+	objects[i].faces := fp;
+	objects[i].vertices_rot := curPos;
+	curPos += v*6; // rotated are integer
+	objects[i].color := curPos;
+	curPos += f; // 1 byte per face
+	
+	objects[i].points_old := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].points_new := curPos;
+	curPos += v*2; // 2 bytes per point
+	objects[i].rotmat := curPos;
+	curPos += (4*4*2); // 32 bytes per matrix
+	
+
+end;
+
+procedure RotateVertices(i:global byte);
+var
+	mat : integer;
+begin
+
+	fp := objects[i].vertices;
+	ip := objects[i].vertices_rot;
+	mat := objects[i].rotmat;
+		
+	for j:=0 to objects[i].noVerts do
+	begin
+		Matrix::MatMulVec3(mat, fp, ip);
+		fp:=fp+3;
+		ip:=ip+6;
+	end;
+
+end;
+
+
+procedure ProjectSimple(i,cx,cy,cz,zdiv: global integer);
+begin
+	ip := objects[i].vertices_rot;
+	cp := ppn;
+	
+	for j:=0 to objects[i].noVerts do
+	begin
+	
+		iz:=SignedMath::Divs16x8(ip[0],zdiv);
+		zz :=lo(iz)+cz;
+		xx:=SignedMath::Divs16x8(ip[1],zz);
+@ifdef lib3d_yscale2 
+		zz/=2;
+@endif
+		
+		yy:=SignedMath::Divs16x8(ip[2],zz);
+			
+		cp[0] := lo(xx)+cx;		
+		cp[1] := lo(yy)+cy;
+
+		cp+=2;
+		ip+=6;		
+	end;
+
+
+end;
+
+
+end.

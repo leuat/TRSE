@@ -1,0 +1,12 @@
+unit math;
+var
+	math_test: byte at $20;
+	const math_pi : integer=31415;
+
+procedure sqrTest(math_v : byte);
+begin
+	returnvalue(math_v*math_v);
+end; 
+
+
+end.
