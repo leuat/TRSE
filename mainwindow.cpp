@@ -1686,11 +1686,13 @@ void MainWindow::on_duplicate_file()
 
     int i = 1;
     QString nf = filename;
-    nf = nf.replace(".ras",QString::number(i)+".ras");
+    QString end = "."+QFileInfo(nf).suffix();
+
+    nf = nf.replace(end,QString::number(i)+end);
     while (QFile::exists(nf)) {
         i++;
         nf = filename;
-        nf = filename.replace(".ras",QString::number(i)+".ras");
+        nf = nf.replace(end,QString::number(i)+end);
     }
     Util::CopyFileMSVCBug(filename,nf);
     RefreshFileList();

@@ -339,6 +339,7 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
             int winner = 0;
             QColor newPixel = colors.getClosestColor(color, winner);
             //int c = m_colorList.getIndex(newPixel);
+
             setPixel(x,y,winner);
 
         }

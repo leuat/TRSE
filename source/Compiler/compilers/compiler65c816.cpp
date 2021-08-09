@@ -86,7 +86,6 @@ void Compiler65C816::Connect()
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES) {
         m_assembler->m_currentBlock = nullptr;
-        m_assembler->IncludeFile(":resources/code/snes/end.asm");
     }
 
 

@@ -10,6 +10,7 @@ LImageSNES::LImageSNES(LColorList::Type t) : LImageAmiga(t,0)
 
     m_scaleX = 1.0f;
 
+    m_colorList.m_bpp = QVector3D(2,2,2);
     m_colorList.setNoBitplanes(2);
 
 //    m_charWidth = 16;
@@ -68,7 +69,6 @@ LImageSNES::LImageSNES(LColorList::Type t) : LImageAmiga(t,0)
 
 void LImageSNES::InitPens()
 {
-    m_colorList.m_bpp = QVector3D(2,2,2);
     m_colorList.InitSNESPens();
 }
 
@@ -100,7 +100,9 @@ void LImageSNES::SaveBin(QFile &file)
 
 void LImageSNES::LoadBin(QFile &file)
 {
-    LImageQImage::LoadBin(file);
+    m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
+    unsigned char *data = new unsigned char[m_width*m_height];
+    file.read((char*)data, m_width*m_height);
     uchar size;
 
     file.read((char*)&size,1);
@@ -115,7 +117,14 @@ void LImageSNES::LoadBin(QFile &file)
     }
     uchar bpp;
     file.read((char*)&bpp,1);
-    m_colorList.m_bpp.setX(bpp);
+    m_colorList.setNoBitplanes(bpp);
+    for (int i=0;i<m_width;i++)
+        for (int j=0;j<m_height;j++) {
+           setPixel(i,j, data[i+j*m_width]);
+        }
+    delete[] data;
+
+
     m_colorList.m_nesPPU = file.read(0x100);
 
 }
@@ -156,21 +165,27 @@ void LImageSNES::ExportBin(QFile &file)
     data.fill(0);
     int curBit = 0;
     int idx = 0;
+    int planes[8] = {0,1,3,2,4,5,6,7};
     for (int y=0;y<m_height;y+=8) {
         for (int x=0;x<m_width;x+=8) {
-            for (int dy=0;dy<8;dy++) {
-                for (int i=0;i<nobp;i++) {
-                    for (int dx=0;dx<8;dx++) {
+            for (int split = 0;split<nobp/2;split++) {
+                for (int dy=0;dy<8;dy++) {
+                    for (int i=0;i<2;i++) {
+                        for (int dx=0;dx<8;dx++) {
 
-                        char val = m_qImage->pixel(x+dx,y+dy);
-                        int bit = CHECK_BIT(val,i);
-                        if (val!=0)
-                            data[idx] = data[idx] |(bit<<(7-dx));
+                            char val = m_qImage->pixel(x+dx,y+dy) ;
+                            int tst = (i+(split*2));
+                            int bit = CHECK_BIT(val,planes[tst]);
+                            if (val!=0)
+                                data[idx] = data[idx] | (bit<<(7-dx));
+
+  //                          data[idx]=1<<(dy+i+split*2);
+//
+                        }
+                        idx++;
+                        // qDebug() <<idx<<x<<y<<data.count()<<i<<idx;
 
                     }
-                    idx++;
-                    // qDebug() <<idx<<x<<y<<data.count()<<i<<idx;
-
                 }
             }
             //            qDebug() << QString::number(idx);

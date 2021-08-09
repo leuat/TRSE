@@ -1,0 +1,65 @@
+unit Music;
+var
+
+
+procedure Init() inline;
+begin
+	asm("
+.i16
+.a16
+	AXY16
+	lda #.loword(music_code)
+	ldx #^music_code
+	jsl SPC_Init
+
+	AXY16
+	lda #$00001
+	jsl SPC_Stereo
+
+	AXY16
+	lda #.loword(song1)
+	ldy #^song1
+	tyx
+	jsl SPC_Play_Song	
+	
+.a8
+.i16
+	A8
+");
+
+
+	
+end;
+
+
+procedure Initialize();
+begin
+	asm("
+
+.include \"music/music.asm \"
+.i16    ; X/Y are 16 bits
+.a8     ; A is 8 bits
+
+");
+
+asm("	
+.segment \"RODATA6 \"
+music_code:
+.incbin \"/Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/music/spc700.bin \"
+music_code_end:
+");
+
+asm("
+.segment \"RODATA7 \"
+
+song1:
+.incbin \"/Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/music/music_1.bin \"	
+	
+
+.segment \"CODE \"
+	
+	");	
+	
+end;	
+
+end.

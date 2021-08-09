@@ -63,6 +63,10 @@ void DialogColors::on_pushButton_clicked()
 {
     //m_org->m_list = m_lst->m_list;
     m_org->CopyFrom(m_lst);
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES ) {
+        m_org->setNoBitplanes(m_lst->m_bpp.x());
+    }
+
     close();
 }
 
@@ -145,8 +149,12 @@ void DialogColors::on_pushButton_2_clicked()
 
 void DialogColors::on_cbmBitplanes_currentIndexChanged(int index)
 {
-    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000)
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000 ||
+       Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES ) {
         m_lst->setNoBitplanes(index+1);
+
+    }
+
     toGUI();
 }
 

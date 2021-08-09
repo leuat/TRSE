@@ -437,7 +437,6 @@ void LImageQImage::fromQImage(QImage *img, LColorList &lst)
     for (int i=0;i<m_qImage->width();i++)
         for (int j=0;j<m_qImage->height();j++) {
             unsigned char col = lst.getIndex(QColor(img->pixel(i, j)));
-
             m_qImage->setPixel(i,j,col);
         }
 }

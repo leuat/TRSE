@@ -3,6 +3,7 @@
 .p816   ; 65816 processor
 .i16    ; X/Y are 16 bits
 .a8     ; A is 8 bits
+.smart
 
 ; Address Bus B Registers
 INIDISP     =   $2100   ;   Screen Display Register   single   write   any time
@@ -191,20 +192,106 @@ NTLRx       =   $430A   ;   HDMA Line Counter Register
 .charmap $7e, $7e
 .charmap $7f, $7f
 
-.segment "HEADER"    ; +$7FE0 in file
-.byte "CA65 EXAMPLE" ; ROM name
 
-.segment "ROMINFO"   ; +$7FD5 in file
-.byte $30            ; LoROM, fast-capable
-.byte 0              ; no battery RAM
-.byte $07            ; 128K ROM
-.byte 0,0,0,0
-.word $AAAA,$5555    ; dummy checksum and complement
 
-.segment "CODE"
-VRAM_CHARSET   = $0000 ; must be at $1000 boundary
+.segment "SNESHEADER"
+;$00FFC0-$00FFFF
+
+.byte "TRSETRSETRSE         " ;rom name 21 chars
+.byte $30  ;LoROM FastROM
+.byte $00  ; extra chips in cartridge, 00: no extra RAM; 02: RAM with battery
+.byte $08  ; ROM size (2^# in kB)
+.byte $00  ; backup RAM size
+.byte $01  ; US
+.byte $33  ; publisher id
+.byte $00  ; ROM revision number
+.word $0000  ; checksum of all bytes
+.word $0000  ; $FFFF minus checksum
+
+;ffe0 not used
+.word $0000
+.word $0000
+
+;ffe4 - native mode vectors
+.addr return_int  ;cop native **
+.addr return_int  ;brk native **
+.addr return_int  ;abort native not used *
+.addr Screen_nmi ;nmi native
+.addr StartBlock800 ;RESET native
+.addr return_int ;irq native
+
+
+;fff0 not used
+.word $0000
+.word $0000
+
+;fff4 - emulation mode vectors
+.addr return_int  ;cop emulation **
+.addr $0000 ; not used
+.addr $0000  ;abort not used *
+.addr Screen_nmi ;nmi emulation
+.addr StartBlock800 ;RESET emulation
+.addr return_int ;irq/brk emulation **
+
+;* the SNES doesn't use the ABORT vector
+;**the programmer could insert COP or BRK as debugging tools
+;The SNES boots up in emulation mode, but then immediately
+;  will be set in software to native mode
+;IRQ_end is just an RTI
+;the vectors here need to be in bank 00
+;The SNES never looks at the checksum. Some emulators
+;will give a warning message, if the checksum is w
+
+VRAM_CHARSET   = $2000 ; must be at $1000 boundary
 VRAM_BG1       = $1000 ; must be at $0400 boundary
 VRAM_BG2       = $1400 ; must be at $0400 boundary
 VRAM_BG3       = $1800 ; must be at $0400 boundary
 VRAM_BG4       = $1C00 ; must be at $0400 boundary
 
+.macro A8
+        sep #$20
+.endmacro
+
+.macro A16
+        rep #$20
+.endmacro
+
+.macro AXY8
+        sep #$30
+.endmacro
+
+.macro AXY16
+        rep #$30
+.endmacro
+
+.macro XY8
+        sep #$10
+.endmacro
+
+.macro XY16
+        rep #$10
+.endmacro
+
+.macro DMA_VRAM  src_addr, dst_addr, length
+;dst is address in the VRAM
+;a should be 8 bit, xy should be 16 bit
+        ldx #dst_addr
+        stx $2116 ; vram address
+
+        lda #1
+        sta $4300 ; transfer mode, 2 registers 1 write
+                          ; $2118 and $2119 are a pair Low/High
+        lda #$18  ; $2118
+        sta $4301 ; destination, vram data
+        ldx #.loword(src_addr)
+        stx $4302 ; source
+        lda #^src_addr
+        sta $4304 ; bank
+        ldx #length
+        stx $4305 ; length
+        lda #1
+        sta $420b ; start dma, channel 0
+.endmacro
+
+
+.segment "CODE"

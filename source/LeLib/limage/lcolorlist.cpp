@@ -318,7 +318,7 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
 
 int LColorList::getNoBitplanes() {
     if (m_type==SNES) {
-        qDebug() << "Getting no bpl: "<<m_bpp.x();
+//        qDebug() << "Getting no bpl: "<<m_bpp.x();
         return m_bpp.x();
     }
 
@@ -561,6 +561,7 @@ void LColorList::SetVIC20Pens(bool m_isMulticolor)
 
 void LColorList::InitNESPens()
 {
+    m_type = NES;
     QVector<int> oldList = getPenList();
     // Make sure old data is kept!
     for (int i=0;i<4;i++) {
@@ -577,6 +578,7 @@ void LColorList::InitNESPens()
 
 void LColorList::InitSNESPens()
 {
+    m_type = SNES;
     QVector<int> oldList = getPenList();
     // Make sure old data is kept!
     for (int i=0;i<pow(2,m_bpp.x());i++) {
@@ -589,6 +591,8 @@ void LColorList::InitSNESPens()
 
 
     m_nesPPU.resize(256);
+    for (int i=0;i<m_nesPPU.count();i++)
+        m_nesPPU[i]=i;
 
 }
 
@@ -618,6 +622,8 @@ QPixmap LColorList::CreateColorIcon(int col, int s)
 
 void LColorList::CopyFrom(LColorList *other)
 {
+    m_bpp = other->m_bpp;
+    m_type = other->m_type;
 
     m_list.resize(other->m_list.count());
     for (int i=0;i<m_list.count();i++)
@@ -627,8 +633,6 @@ void LColorList::CopyFrom(LColorList *other)
     for (int i=0;i<m_pens.count();i++) {
         m_pens[i] = other->m_pens[i];
     }
-    m_bpp = other->m_bpp;
-    m_type = other->m_type;
     m_isLevelEditor = other->m_isLevelEditor;
 
 
@@ -1367,6 +1371,8 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
 //    ly->setSpacing(0);
 //    qDebug() << "*************************";
 //    ly->setSpacing(0);
+    int colorh = 16;
+    if (m_type==SNES) colorh=8;
     for (int i=0;i<m_pens.count();i++) {
         //qDebug() << "COL " <<m_pens[i].m_colorIndex;
         if (m_pens[i]->m_isHidden)
@@ -1391,10 +1397,10 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
             yy++;
             cur++;
             maxy++;
-            if (yy==16) {
+            if (yy==colorh) {
                 yy=0;
                 xx++;
-                maxy=17;
+                maxy=colorh+1;
             }
         }
         //}
