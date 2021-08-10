@@ -90,6 +90,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageSpectrum(colorType);
     if (t == LImage::Type::SNES)
         return new LImageSNES(colorType);
+    if (t == LImage::Type::LevelEditorSNES)
+        return new LImageLevelSNES(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

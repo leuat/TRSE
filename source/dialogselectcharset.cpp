@@ -1,7 +1,7 @@
 #include "dialogselectcharset.h"
 #include "ui_dialogselectcharset.h"
 
-DialogSelectCharset::DialogSelectCharset(CharsetImage* charset, QWidget *parent) :
+DialogSelectCharset::DialogSelectCharset(LImage* charset, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogSelectCharset)
 {
@@ -31,7 +31,7 @@ void DialogSelectCharset::UpdateCharSet()
 
     QVector<QPixmap> maps;
     m_charset->ToQPixMaps(maps);
-    CharsetImage* charmap = m_charset;
+    LImage* charmap = m_charset;
 
 
     int keep = charmap->m_footer.get(LImageFooter::POS_DISPLAY_CHAR);

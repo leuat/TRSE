@@ -12,10 +12,10 @@ class DialogSelectCharset;
 class DialogSelectCharset : public QDialog
 {
     Q_OBJECT
-    CharsetImage* m_charset = nullptr;
+    LImage* m_charset = nullptr;
 public:
 
-    explicit DialogSelectCharset(CharsetImage* charset, QWidget *parent = nullptr);
+    explicit DialogSelectCharset(LImage* charset, QWidget *parent = nullptr);
     ~DialogSelectCharset();
     int m_char=-1;
     void keyPressEvent(QKeyEvent *e) override;

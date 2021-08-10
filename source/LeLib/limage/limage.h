@@ -102,7 +102,7 @@ public:
     enum Type { QImageBitmap, MultiColorBitmap, HiresBitmap,
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
-                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES};
+                OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset, AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES};
 
 
     enum WriteType { Color, Character };
@@ -253,11 +253,21 @@ public:
     virtual void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h, int comp) {
         qDebug() << "LImage::SpritePacker not implemented for this image type : " <<m_type;
     }
+    int m_charWidth=40;
+    int m_charHeight=25;
 
+    void ToQPixMaps(QVector<QPixmap> &map)
+    {
+        map.clear();
+        for (int i=0;i<m_charWidth*m_charHeight;i++) {
+            map.append(ToQPixMap(i));
+        }
+    }
+    virtual QPixmap ToQPixMap(int chr) {return QPixmap();}
 
     virtual void setCurrentChar(int i) {m_currentChar = i;}
 
-    virtual CharsetImage* getCharset() { return nullptr; }
+    virtual LImage* getCharset() { return nullptr; }
 
     bool renderPathGrid = false;
 //    unsigned char m_extraCols[4];
@@ -323,9 +333,12 @@ public:
 
     virtual void setPixel(int x, int y, unsigned int color) = 0;
     virtual unsigned int getPixel(int x, int y) = 0;
+    virtual unsigned int getPixelPalette(int x, int y, int pal) {};
     virtual void SetColor(uchar col, uchar idx) {}
 
-    virtual void LoadCharset(QString file, int skipBytes) {}
+    virtual void LoadCharset(QString file, int skipBytes) {
+
+    }
 
     virtual bool KeyPress(QKeyEvent *e) {return false;}
     virtual void SaveBin(QFile &file) = 0;

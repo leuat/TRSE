@@ -227,7 +227,7 @@ public:
 //    void FromRaw(QByteArray& arr);
 //    void ToRaw(QByteArray& arr);
 
-    CharsetImage* getCharset() override {
+    LImage* getCharset() override {
         return m_charset;
     }
 

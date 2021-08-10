@@ -65,6 +65,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("VGA 320x200", "x86",LImage::Type::VGA, LColorList::Type::VGA));
     m_types.append(ImageType("ZX Spectrum 256x192", "spectrum",LImage::Type::Spectrum, LColorList::Type::SPECTRUM));
     m_types.append(ImageType("SNES tilemap/sprites", "snes",LImage::Type::SNES, LColorList::Type::SNES));
+    m_types.append(ImageType("SNES Level editor", "snes",LImage::Type::LevelEditorSNES, LColorList::Type::SNES));
 
 //    m_types.append(ImageType("Hybrid multicolor/hires charset", "c64",LImage::Type::HybridCharset,LColorList::Type::C64));
   //  m_types.append(ImageType("Hybrid multicolor/hires charset", "vic20",LImage::Type::HybridCharset,LColorList::Type::VIC20));

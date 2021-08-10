@@ -53,6 +53,7 @@
 #include "source/LeLib/limage/limagevga.h"
 #include "source/LeLib/limage/limagespectrum.h"
 #include "source/LeLib/limage/limagesnes.h"
+#include "source/LeLib/limage/limagelevelsnes.h"
 
 class LImageFactory {
 public:

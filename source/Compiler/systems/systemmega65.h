@@ -14,7 +14,8 @@ public:
         m_canRunAsmFiles = true;
         m_allowClasses = true; // EXPERIMENTAL
         m_processor = WDC65C02;
-        m_systemColor = QColor(40,30,120);
+        float x = 1.8;
+        m_systemColor = QColor(70*x,50*x,120*x);
         DefaultValues();
         m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
         m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));

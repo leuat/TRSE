@@ -589,11 +589,11 @@ void LColorList::InitSNESPens()
     for (int i=0;i<pow(2,m_bpp.x());i++)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[i],"Color "+QString::number((int)m_bpp.x()),LPen::Dropdown)));
 
-
-    m_nesPPU.resize(256);
-    for (int i=0;i<m_nesPPU.count();i++)
-        m_nesPPU[i]=i;
-
+    if (m_nesPPU.count()!=256) {
+        m_nesPPU.resize(256);
+        for (int i=0;i<m_nesPPU.count();i++)
+            m_nesPPU[i]=i;
+    }
 }
 
 

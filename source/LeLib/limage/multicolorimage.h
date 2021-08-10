@@ -68,8 +68,6 @@ public:
 //    QVector<CharPos> m_charPos;
     QByteArray m_outputData;
     int m_Index = 0;
-    int m_charWidth=40;
-    int m_charHeight=25;
 
     MultiColorImage(LColorList::Type t);
 //    QVector<PixelChar> m_data;

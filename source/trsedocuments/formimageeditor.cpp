@@ -164,7 +164,7 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
     if (m_work.m_currentImage->m_image->m_updateCharsetPosition)
     if (ui->lstCharMap->currentItem()!=nullptr) {
         int i = ui->lstCharMap->currentItem()->data(Qt::UserRole).toInt();
-        CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
+        LImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
         if (charmap->m_currentChar!=i) {
 /*            i = charmap->m_currentChar;
@@ -1219,7 +1219,7 @@ void FormImageEditor::updateCharSet()
 //    return;
 
     UpdateCurrentMode();
-    CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
+    LImage* charmap = m_work.m_currentImage->m_image->getCharset();
 
 
     bool isLevelEditor = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr;
@@ -1316,7 +1316,7 @@ void FormImageEditor::updateCharSet()
 void FormImageEditor::updateSingleCharSet()
 {
     UpdateCurrentMode();
-    CharsetImage* charmap = m_work.m_currentImage->m_image->getCharset();
+    LImage* charmap = m_work.m_currentImage->m_image->getCharset();
     ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
 /*    if (le!=nullptr && charmap==nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);

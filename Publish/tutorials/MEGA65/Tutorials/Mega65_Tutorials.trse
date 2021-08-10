@@ -55,3 +55,5 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/MEGA65/Tutorials/
+open_files = ,easy/07_rasters.ras, easy/03_boxes.ras
+current_file = easy/07_rasters.ras

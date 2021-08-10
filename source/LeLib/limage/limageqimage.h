@@ -54,6 +54,15 @@ public:
     double getHeight() override {return m_height;}
     double getL() override {return 8;}
 
+    QPoint getPixelPosition(int x, int y);
+
+    virtual QPixmap ToQPixMap(int chr) override;
+
+    int getCharWidthDisplay() override;
+
+    int getCharHeightDisplay() override;
+
+    int getGridWidth() override;
 
     virtual void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
@@ -70,6 +79,7 @@ public:
             m_qImage->fill(QColor(0,0,0,255));
     }
 
+    bool KeyPress(QKeyEvent *e) override;
 
 
     // Specific stuff

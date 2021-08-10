@@ -100,6 +100,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 28;
     if (t==SNES)
         return 29;
+    if (t==LevelEditorSNES)
+        return 30;
 
 
     return 255;
@@ -167,7 +169,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Spectrum";
     if (t==SNES)
         return "SNES";
-
+    if (t==LevelEditorSNES)
+        return "SNES Level editor";
 
     return "Unknown image type";
 
@@ -236,6 +239,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return Spectrum;
     if (c==29)
         return SNES;
+    if (c==30)
+        return LevelEditorSNES;
 
     return NotSupported;
 

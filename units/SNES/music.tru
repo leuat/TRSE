@@ -1,8 +1,11 @@
 unit Music;
 var
-
-
-procedure Init() inline;
+	addr:integer;
+	bank:byte;
+	@donotremove bank
+	@donotremove addr
+	
+procedure Init(addr:global integer; bank: global byte);
 begin
 	asm("
 .i16
@@ -17,8 +20,8 @@ begin
 	jsl SPC_Stereo
 
 	AXY16
-	lda #.loword(song1)
-	ldy #^song1
+	lda Music_addr
+	ldy Music_bank
 	tyx
 	jsl SPC_Play_Song	
 	
@@ -47,19 +50,9 @@ asm("
 music_code:
 .incbin \"/Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/music/spc700.bin \"
 music_code_end:
-");
-
-asm("
-.segment \"RODATA7 \"
-
-song1:
-.incbin \"/Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/music/music_1.bin \"	
-	
-
 .segment \"CODE \"
-	
-	");	
-	
+
+");
 end;	
 
 end.

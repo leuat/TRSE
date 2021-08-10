@@ -17,12 +17,14 @@ public:
     void SaveBin(QFile &file) override;
     void LoadBin(QFile &file) override;
 
+//    unsigned int getPixelPalette(int x, int y, int pal) override;
 
     void ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center) override;
 
     void setPixel(int x, int y, unsigned int color) override;
 
     void ExportBin(QFile &file) override;
+    LImage* getCharset() override { return this; }
 
 
     void SetPalette(int pal) override;

@@ -24,6 +24,7 @@
 #include <QGraphicsPixmapItem>
 #include <QPainter>
 #include "source/LeLib/util/util.h"
+#include <QKeyEvent>
 
 LImageQImage::LImageQImage(LColorList::Type t)  : LImage(t)
 {
@@ -36,7 +37,7 @@ LImageQImage::LImageQImage(LColorList::Type t)  : LImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
-
+    m_currentChar = 0;
 }
 
 void LImageQImage::LoadBin(QFile& file)
@@ -59,6 +60,8 @@ void LImageQImage::SaveBin(QFile& file)
         qDebug() << "LImageQImage::SaveBin error... width/height are not equal!";
         return;
     }
+    auto keep = m_footer.get(LImageFooter::POS_DISPLAY_CHAR);
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     unsigned char *data = new unsigned char[m_width*m_height];
     for (int i=0;i<m_qImage->width();i++)
         for (int j=0;j<m_qImage->height();j++) {
@@ -67,6 +70,7 @@ void LImageQImage::SaveBin(QFile& file)
         }
     file.write((char*)data, m_width*m_height);
     delete[] data;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);
 
 }
 
@@ -181,6 +185,98 @@ double LImageQImage::getVal(int x, int y) {
     return (c.x() + c.y() + c.z())/3.0/255.0;
 }
 
+QPoint LImageQImage::getPixelPosition(int x, int y)
+{
+    int xx = x;
+    int yy = y;
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        bool isRepeat = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1;
+
+        double scale = 1;
+        if (isRepeat)
+            scale = 3;
+
+        int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+        int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+
+        int x1 = (m_currentChar%getCharWidthDisplay())*8;
+        int y1 = ((int)(m_currentChar/getCharWidthDisplay()))*8;
+        xx = x1 + ((int)((x/(double)m_width)*8*cx*scale))%(8*cx);
+        yy = y1 + ((int)((y/(double)m_height)*8*cy*scale))%(8*cy);
+//        xx = x1 + (x/(double)m_width)*8.0*cx;
+  //      yy = y1 + (y/(double)m_height)*8.0*cy;
+//        if (rand()%100>98)
+  //          qDebug() <<xx<<yy;
+
+    }
+    return QPoint(xx,yy);
+}
+
+QPixmap LImageQImage::ToQPixMap(int chr)
+{
+    int cx = 32;
+    int cy = 32;
+
+    int keep = m_footer.get(LImageFooter::POS_DISPLAY_CHAR);
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+
+    QImage img(cx,cy,QImage::Format_ARGB32);
+    for (int j=0;j<cy;j++) {
+        for (int i=0;i<cx;i++) {
+            int x = i/(double)cx*m_width;
+            int y = j/(double)cy*m_height;
+
+            int x1 = (chr%getCharWidthDisplay())*8;
+            int y1 = (chr/getCharWidthDisplay())*8;
+
+            int xx = x1 + (x/(double)m_width)*8;
+            int yy = y1 + (y/(double)m_height)*8;
+
+            unsigned int col = getPixel(xx,yy);// % 16;
+
+//            img->setPixel(i,j,QRgb(col));
+            img.setPixel(i,j,m_colorList.get(col).color.rgb());
+        }
+    }
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);
+
+
+    return QPixmap::fromImage(img);
+}
+
+int LImageQImage::getCharWidthDisplay()
+{
+/*    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int i =1;
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            i=3;
+        return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    }*/
+    return m_charWidthDisplay;
+}
+
+int LImageQImage::getCharHeightDisplay()
+{
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int i =1;
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            i=3;
+        return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+    }
+    return m_charHeightDisplay;
+}
+
+int LImageQImage::getGridWidth()
+{
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+        int i =1;
+        if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
+            i=3;
+        return i*8*m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    }
+    return m_gridWidthDisplay;
+}
+
 
 
 void LImageQImage::Initialize(int width, int height)
@@ -190,7 +286,7 @@ void LImageQImage::Initialize(int width, int height)
     if (m_qImage != nullptr)
         delete m_qImage;
 
-//    qDebug() << "NEWING "<<m_width << this;
+    //    qDebug() << "NEWING "<<m_width << this;
     m_width = width;
     m_height = height;
 
@@ -294,20 +390,61 @@ void LImageQImage::ApplyToLabel(QLabel *l)
 
 }
 
+bool LImageQImage::KeyPress(QKeyEvent *e)
+{
+    QPoint dir(0,0);
+
+
+
+    int sx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+    int sy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+    //    if (m_currentMode==CHARSET2x2 || m_currentMode==CHARSET2x2_REPEAT)
+    //      s=2;
+
+    if (e->key()==Qt::Key_W)
+        m_currentChar-=m_charWidthDisplay*sy;
+    if (e->key()==Qt::Key_A)
+        m_currentChar-=sx;
+    if (e->key()==Qt::Key_S)
+        m_currentChar+=m_charWidthDisplay*sy;
+    if (e->key()==Qt::Key_D)
+        m_currentChar+=sx;
+
+    if (m_currentChar>=m_charHeight*m_charWidth)
+        m_currentChar=0;
+
+    m_currentChar = Util::clamp(m_currentChar,0,m_charWidth*m_charHeight-1);
+
+
+    return true;
+}
+
 void LImageQImage::setPixel(int x, int y, unsigned int color)
 {
     if (m_qImage==nullptr)
         return;
-    if (x>=0 && x<m_qImage->width() && y>=0 && y<m_qImage->height())
-        m_qImage->setPixel(x,y,QRgb(color));
+
+    QPoint p = getPixelPosition(x,y);
+
+//    if (rand()%1000>900)
+  //      qDebug() <<p;
+
+    if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height())
+        m_qImage->setPixel(p.x(),p.y(),QRgb(color));
 }
+
+
 
 unsigned int LImageQImage::getPixel(int x, int y)
 {
     if (m_qImage==nullptr)
         return 0;
-    if (x>=0 && x<m_qImage->width() && y>=0 && y<m_qImage->height())
-        return m_qImage->pixel(x,y);
+
+
+    QPoint p = getPixelPosition(x,y);
+
+    if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height())
+        return m_qImage->pixel(p.x(),p.y());
 
 
     return 0;

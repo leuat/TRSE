@@ -206,6 +206,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagehybridcharset.cpp \
     source/LeLib/limage/limagelevelgameboy.cpp \
     source/LeLib/limage/limagelevelnes.cpp \
+    source/LeLib/limage/limagelevelsnes.cpp \
     source/LeLib/limage/limagemetablocksprites.cpp \
     source/LeLib/limage/limagemetachunk.cpp \
     source/LeLib/limage/limagenes.cpp \
@@ -457,6 +458,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagehybridcharset.h \
     source/LeLib/limage/limagelevelgameboy.h \
     source/LeLib/limage/limagelevelnes.h \
+    source/LeLib/limage/limagelevelsnes.h \
     source/LeLib/limage/limagemetablocksprites.h \
     source/LeLib/limage/limagemetachunk.h \
     source/LeLib/limage/limagenes.h \

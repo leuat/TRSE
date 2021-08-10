@@ -388,13 +388,6 @@ void CharsetImage::ToRaw(QByteArray &arr)
     }
 }
 
-void CharsetImage::ToQPixMaps(QVector<QPixmap> &map)
-{
-    map.clear();
-    for (int i=0;i<m_charWidth*m_charHeight;i++) {
-        map.append(ToQPixMap(i));
-    }
-}
 
 QPixmap CharsetImage::ToQPixMap(int chr)
 {
