@@ -1519,6 +1519,8 @@ void Methods6502::InitMoveto(Assembler *as)
     as->Asm("clc");
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4)
         as->Asm("adc #40");
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
+        as->Asm("adc #80");
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)
         as->Asm("adc #22");
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES)

@@ -211,3 +211,26 @@ void LImageLevelSNES::CopyFrom(LImage *mc)
 LImage *LImageLevelSNES::getCharset() {
     return m_charset;
 }
+
+void LImageLevelSNES::ExportBin(QFile &file)
+{
+    file.write(m_meta.toHeader());
+    if (m_levels.count()==0)
+        return;
+
+    for (CharmapLevel* l : m_levels) {
+
+
+        QByteArray data;
+        for (int i=0;i<l->m_CharData.count();i++) {
+            data.append(l->m_CharData[0]);
+            data.append((l->m_ColorData[0]&7)<<2);
+        }
+        file.write( data);
+
+        if (l->m_ExtraData.count()!=0)
+            file.write( l->m_ExtraData);
+
+    }
+
+}

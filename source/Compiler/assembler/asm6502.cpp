@@ -652,10 +652,10 @@ void Asm6502::DeclareInternalVariable(QString name)
         QString addr = m_varZeroPointers[0];
         m_varZeroPointers.removeFirst();
 //        m_tempVars << (name + " = " + addr);
-        Label(name + " = " + addr);
+        Write(name + " = " + addr);
         return;
     }
-    Label(name + " dc.b 0");
+    Write(name + ": "+byte+" 0");
 //    m_tempVars << (name + " dc.b 0");
 }
 

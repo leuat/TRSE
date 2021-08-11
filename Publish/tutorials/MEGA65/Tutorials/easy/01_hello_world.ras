@@ -2,7 +2,8 @@ program HelloWorld;
 @use "screen"
 var  
   	text : string = ("HELLO WORLD");
-
+  	
+  	
 begin
 	// Initialize the screen + enable VIC4
 	Screen::Init();
@@ -27,8 +28,7 @@ begin
 	// Print something else
 	printstring("THIS IS ANOTHER STRING",0,screen_width);
 	// Infinite loop
-
-
+	
 	Loop(); 
 
 end.

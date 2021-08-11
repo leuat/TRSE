@@ -189,8 +189,6 @@ void LImageLevelNES::LoadCharset(QString file, int skipBttes)
 
 void LImageLevelNES::ExportBin(QFile &file)
 {
-
-
     file.write(m_meta.toHeader());
     if (m_levels.count()==0)
         return;

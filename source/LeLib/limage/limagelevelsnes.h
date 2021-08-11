@@ -15,6 +15,9 @@ public:
     void CopyFrom(LImage *mc) override;
     LImage* getCharset() override;
 
+
+    void ExportBin(QFile &file) override;
+
 };
 
 #endif // LIMAGELEVELSNES_H
