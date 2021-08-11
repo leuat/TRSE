@@ -20,6 +20,12 @@ void System65C816::Assemble(QString &text, QString filename, QString currentDir,
         if (!QFile::exists(smc))
             Util::CopyFile(":resources/code/snes/smc.cfg",smc);
         QStringList params = QStringList() <<"-C" <<smc <<("-o"+filename+".smc") <<(filename +".asm");
+
+        QString music = currentDir + QDir::separator() + "music.asm";
+        if (!QFile::exists(music))
+            Util::CopyFile(":resources/code/snes/music.asm",music);
+
+
         AssembleCL65(text,filename,currentDir,symTab,"smc",params);
     }
     if (Syntax::s.m_currentSystem->m_system==MEGA65) {

@@ -39,7 +39,7 @@ procedure Initialize();
 begin
 	asm("
 
-.include \"music/music.asm \"
+.include \"music.asm \"
 .i16    ; X/Y are 16 bits
 .a8     ; A is 8 bits
 

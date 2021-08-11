@@ -333,7 +333,6 @@ public:
 
     virtual void setPixel(int x, int y, unsigned int color) = 0;
     virtual unsigned int getPixel(int x, int y) = 0;
-    virtual unsigned int getPixelPalette(int x, int y, int pal) {};
     virtual void SetColor(uchar col, uchar idx) {}
 
     virtual void LoadCharset(QString file, int skipBytes) {
