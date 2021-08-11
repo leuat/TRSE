@@ -1,11 +1,11 @@
 unit Music;
 var
 	addr:integer;
-	bank:byte;
+	bnk:byte;
 	@donotremove bank
 	@donotremove addr
 	
-procedure Init(addr:global integer; bank: global byte);
+procedure Init(addr:global integer; bnk: global byte);
 begin
 	asm("
 .i16
@@ -21,7 +21,7 @@ begin
 
 	AXY16
 	lda Music_addr
-	ldy Music_bank
+	ldy Music_bnk
 	tyx
 	jsl SPC_Play_Song	
 	

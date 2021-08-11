@@ -5,4 +5,5 @@ void SystemSNES::DefaultValues()
 {
     useZByte = true;
     m_hasVariableColorPalette = true;
+
 }

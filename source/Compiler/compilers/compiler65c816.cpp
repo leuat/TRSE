@@ -88,6 +88,13 @@ void Compiler65C816::Connect()
         m_assembler->m_currentBlock = nullptr;
     }
 
+    for (QString key : m_assembler->m_banks.keys()) {
+        QSharedPointer<Appendix> app = m_assembler->m_banks[key];
+        QString rom = QString::number(Util::NumberFromStringHex(key));
+        app->m_source.insert(0,".segment \"RODATA"+rom+"\"");
+        m_assembler->m_source << app->m_source;
+
+    }
 
 
 

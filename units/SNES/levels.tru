@@ -1,0 +1,82 @@
+unit Levels;
+@use "screen"
+var
+	@donotremove zp2
+	zp,zp2,p1 : pointer;
+	x,y,i,j,k,l,xx,yy,m : byte;
+	i1 : integer;
+	Level = class
+		
+		lp : integer;
+		sizex,sizey,width,height,startx,starty,chunks,chunksize,datasize,pos,size:byte;
+		bnk:byte;
+		procedure ReadHeader(Levels::zp:global pointer;Levels::x:global byte);
+		begin
+			this.lp := zp;
+			this.bnk := x;		
+			// Read level header info
+			this.sizex := zp[0];
+			this.sizey := zp[1];
+		
+			this.width := zp[2];
+			this.height := zp[3];
+	
+			this.startx := zp[4];
+			this.starty := zp[5];
+		
+			this.chunks := zp[6];
+			this.chunksize := zp[7];
+		
+			this.datasize := zp[8];
+			this.size := this.size*this.sizey*2 + this.datasize;
+			
+			this.width:=16;
+			this.height:=16;
+			
+		end;
+		
+		procedure RenderLevel(Levels::x,Levels::y : global byte;Levels::i1:global integer);
+		begin
+			zp :=this.lp;
+			zp+=32;
+			yy:=0;
+			zp2:=this.bnk;
+			for j:=0 to this.height do begin
+				l:=0;
+				xx:=0;
+				for i:=0 to this.width do begin
+					asm("
+					
+					ldy #$0
+					lda [Levels_zp],y
+					sta Levels_x
+					ldy #$1
+					lda [Levels_zp],y
+					ora #$20
+					sta Levels_y
+					
+					");
+					Screen::MoveToXY(xx+0,yy+0, i1);
+					poke(^$2119,0,Levels::y);
+					poke(^$2118,0,Levels::x);
+					poke(^$2119,0,Levels::y);
+					poke(^$2118,0,Levels::x+1);
+					Screen::MoveToXY(xx+0,yy+1, i1);
+					poke(^$2119,0,Levels::y);
+					poke(^$2118,0,Levels::x+16);
+					poke(^$2119,0,Levels::y);
+					poke(^$2118,0,Levels::x+17);
+					zp+=2;
+					xx+=2;					
+				end;
+				yy+=2;
+			end;
+		
+	end;
+	
+	end;
+	
+	
+	
+
+end.

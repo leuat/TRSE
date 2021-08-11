@@ -834,11 +834,40 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVarDecl> node)
 {
     node->DispatchConstructor(as,this);
 
-    AbstractCodeGen::dispatch(node);
+
+    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
+
+    QSharedPointer<Appendix> old = as->m_currentBlock;
+
+    if (t->m_flags.contains("wram")) {
+        as->m_currentBlock = as->m_wram;
+    }
+
+    if (t->m_flags.contains("bank")) {
+        QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
+        if (!as->m_banks.contains(bnk)) {
+            as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
+            as->m_banks[bnk]->m_pos = "$4000";
+            as->m_banks[bnk]->m_isMainBlock = true;
+        }
+        as->m_currentBlock = as->m_banks[bnk];
+    }
+    if (v->m_isGlobal) {
+        as->m_currentBlock = nullptr;
+        return;
+    }
+
+
+    //    qDebug() << "" <<as->m_currentBlock;
+    AbstractCodeGen::dispatch(node);
     if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
         IncSid(node);
+        return;
     }
+    //  qDebug() << as->m_currentBlock;
+    as->m_currentBlock = old;
+
 
 
 }
@@ -1251,6 +1280,7 @@ bool CodeGen6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString l
     //  return true;
 }
 
+
 bool CodeGen6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -1266,15 +1296,15 @@ bool CodeGen6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
     if (var->m_writeType==TokenType::INTEGER) {
         as->Comment("Writing an integer class pointer");
-//        node->m_right->setForceType(TokenType::INTEGER);
+        //        node->m_right->setForceType(TokenType::INTEGER);
         as->ClearTerm();
         node->m_right->Accept(this);
         as->Term();
         as->Asm("pha");
-//        as->Asm("tax");
+        //        as->Asm("tax");
         as->Asm("tya");
         as->Asm("pha");
-  //      as->Asm("txa");
+        //      as->Asm("txa");
         var->m_expr->Accept(this);
         as->Term();
         as->Asm("tay");
@@ -2208,10 +2238,12 @@ bool CodeGen6502::AssignPointer(QSharedPointer<NodeAssign> node) {
 
     if (node->m_right->isPure()) {
 
+        Disable16bit();
         as->Asm("lda " + getValue8bit(node->m_right,false));
         as->Asm("ldx " + getValue8bit(node->m_right,true));
         as->Asm("sta " + getValue(aVar));
         as->Asm("stx "+ getValue(aVar)+"+1");
+        Enable16bit();
         //if (!node->m_right->isWord(as))
         //    ErrorHandler::e.Warning("Assigning an 8-bit value to pointer. Is this intentional?", node->m_op.m_lineNumber);
 

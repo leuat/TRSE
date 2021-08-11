@@ -24,7 +24,7 @@ var
 	@donotremove id
 	@donotremove i1
 	
-procedure SetPalette(zp:global pointer;x:global byte);
+procedure SetPalette(zp:global pointer;x:global byte;i1:global integer);
 begin
 	asm("
 
@@ -40,7 +40,7 @@ begin
 
    iny
 
-   cpy #$100
+   cpy Screen_i1
    bne @loop
 
 	");
@@ -362,7 +362,7 @@ end;
 Tile data attribute organisation (y,x): vhopppcc cccccccc 
 
 **/
-procedure PokeVRAM(x,y:global byte) inline;
+procedure PokeVRAM(x,y:global byte);
 begin
 	poke(^$2118,0,x);
 	poke(^$2119,0,y);

@@ -486,13 +486,23 @@ bool Assembler::DeclareClass(QString name, QString type, int count, QStringList 
             return false;
 
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
-        Label(name);
         if (Syntax::s.m_currentSystem->CL65Syntax()) {
-            Asm(".res "+name+"+" +QString::number(st->getSize()*count)+"-*");
+            if (Syntax::s.m_currentSystem->useZByte) {
+                Asm(name+"\t=\t"+ Util::numToHex(m_zbyte));
+ //               Write(name +"\t=\t"+Util::numToHex(m_zbyte));
+                m_zbyte+=st->getSize()*count;
+            }
+            else {
+
+                Label(name);
+                Asm(".res "+name+"+" +QString::number(st->getSize()*count)+"-*");
+            }
 
         }
-        else
-        Asm(GetOrg()+name+"+" +QString::number(st->getSize()*count));
+        else {
+            Label(name);
+            Asm(GetOrg()+name+"+" +QString::number(st->getSize()*count));
+        }
 
         return true;
     }
