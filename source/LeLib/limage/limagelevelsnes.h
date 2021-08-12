@@ -14,7 +14,7 @@ public:
     void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
     void CopyFrom(LImage *mc) override;
     LImage* getCharset() override;
-
+    void ReInitialize() override;
 
     void ExportBin(QFile &file) override;
 

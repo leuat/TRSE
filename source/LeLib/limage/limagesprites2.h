@@ -28,7 +28,7 @@ public:
 
 
 
-    void Clear() override {
+    void Clear(int val=0) override {
         for (PixelChar &pc : m_data)
             pc.Clear(pc.c[0]);
     }

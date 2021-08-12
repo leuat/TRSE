@@ -22,7 +22,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_gridWidthDisplay = 16;
 
 //    m_double=false;
-    Clear();
+    Clear(0);
     m_type = LImage::Type::NES;
     m_supports.asmExport = true;
     m_supports.binaryLoad = true;

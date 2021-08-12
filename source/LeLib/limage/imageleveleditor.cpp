@@ -217,10 +217,10 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
     m_charset->SetColor(col, idx);
 }
 
-void ImageLevelEditor::Clear()
+void ImageLevelEditor::Clear(int val=0)
 {
     if (m_currentLevel!=nullptr)
-        m_currentLevel->Clear();
+        m_currentLevel->Clear(val);
 }
 
 void ImageLevelEditor::SaveBin(QFile &file)
@@ -234,6 +234,9 @@ void ImageLevelEditor::SaveBin(QFile &file)
 
     for (CharmapLevel* l : m_levels) {
         file.write( l->m_CharData);
+        if (m_meta.m_is16bit)
+            file.write( l->m_CharDataHi);
+
         if (m_meta.m_useColors)
            file.write( l->m_ColorData);
 
@@ -283,6 +286,9 @@ void ImageLevelEditor::LoadBin(QFile &file)
     for (CharmapLevel* l : m_levels) {
 
         l->m_CharData = file.read(m_meta.dataSize());
+        if (m_meta.m_is16bit)
+            l->m_CharDataHi = file.read(m_meta.dataSize());
+
         if (m_meta.m_useColors)
             l->m_ColorData = file.read(m_meta.dataSize());
         if (m_meta.m_extraDataSize!=0)

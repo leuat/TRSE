@@ -212,7 +212,7 @@ void DialogImport::Convert()
     }
 
 
-    m_image->Clear();
+    m_image->Clear(0);
 /*    if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else

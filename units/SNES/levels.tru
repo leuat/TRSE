@@ -3,7 +3,7 @@ unit Levels;
 var
 	@donotremove zp2
 	zp,zp2,p1 : pointer;
-	x,y,i,j,k,l,xx,yy,m : byte;
+	x,y,i,j,k,l,xx,yy,m,ad : byte;
 	i1 : integer;
 	Level = class
 		
@@ -30,8 +30,8 @@ var
 			this.datasize := zp[8];
 			this.size := this.size*this.sizey*2 + this.datasize;
 			
-			this.width:=16;
-			this.height:=16;
+			this.width:=32;
+			this.height:=32;
 			
 		end;
 		
@@ -56,7 +56,7 @@ var
 					sta Levels_y
 					
 					");
-					Screen::MoveToXY(xx+0,yy+0, i1);
+					Screen::MoveToXY(xx+0,yy+0,i1);
 					poke(^$2119,0,Levels::y);
 					poke(^$2118,0,Levels::x);
 					poke(^$2119,0,Levels::y);

@@ -1084,7 +1084,7 @@ void FormImageEditor::on_chkBackgroundArea_clicked(bool checked)
 
 void FormImageEditor::on_btnNew_clicked()
 {
-    m_work.m_currentImage->m_image->Clear();
+    m_work.m_currentImage->m_image->Clear(0);
     Data::data.Redraw();
     Data::data.forceRedraw = true;
 }
@@ -2520,7 +2520,7 @@ void FormImageEditor::on_btnShiftUp_clicked()
 void FormImageEditor::on_btnClear_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->Clear();
+    m_work.m_currentImage->m_image->Clear(m_work.m_currentImage->m_image->m_currentChar);
     updateCharSet();
 
     Update();

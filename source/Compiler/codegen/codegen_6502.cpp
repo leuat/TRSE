@@ -2004,13 +2004,12 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 Disable16bit();
                 as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1));
                 Enable16bit();
-                if (Syntax::s.m_currentSystem->isWDC65()) {
-                    as->Asm("rep #$10        ; enable X/Y 16-bit");
-                }
 
             }
             else {
                 as->Asm("sta " + getValue(node) + "+"+ getValue(node->m_expr));
+                if (node->m_writeType==TokenType::INTEGER)
+                    as->Asm("sty " + getValue(node) + "+"+ getValue(node->m_expr)+"+1");
             }
             //                as->Asm("tya");
             return;

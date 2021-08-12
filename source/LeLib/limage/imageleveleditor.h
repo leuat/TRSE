@@ -33,13 +33,15 @@ class CharmapLevel {
 public:
 //    uchar m_col0, m_col1, m_col2;
     QByteArray m_CharData;
+    QByteArray m_CharDataHi;
     QByteArray m_ColorData;
     QByteArray m_ExtraData;
 
 
-    void Clear() {
+    void Clear(int val) {
         for (int i=0;i<m_CharData.count();i++) {
-            m_CharData[i] = 0x20;
+            m_CharData[i] = val;
+            m_CharDataHi[i] = val;
             m_ColorData[i] = 0x5;
         }
     }
@@ -50,6 +52,7 @@ public:
 
     CharmapLevel(int sizeChar, int sizeExtraData) {
         m_CharData.resize(sizeChar);
+        m_CharDataHi.resize(sizeChar);
         m_ColorData.resize(sizeChar);
         m_ExtraData.resize(sizeExtraData);
         if (sizeExtraData!=0)
@@ -59,7 +62,7 @@ public:
 
         for (int i=0;i<m_ExtraData.size();i++)
             m_ExtraData[i]=0;
-        Clear();
+        Clear(0);
     }
 
     QImage createImage(int size, LColorList& lst, int width, int height);
@@ -76,6 +79,7 @@ private:
 
 public:
     bool m_useColors=true;
+    bool m_is16bit = false;
     int m_width=40, m_height=25;
     int m_sizex, m_sizey;
     int m_colSizex=-1, m_colSizey=-1;
@@ -101,14 +105,18 @@ public:
             m_colSizey = m_sizey;
         }
         m_dataSize = m_width*m_height;
+
         m_levelSize = m_dataSize + m_extraDataSize;
         if (m_useColors)
             m_levelSize +=m_colSizex*m_colSizey + m_extraDataSize;
 
 //        m_headerSize = 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1;
         m_headerSize = 32;
+        int scale = 1;
+        if (m_is16bit)
+            scale = 2;
         // w/h sx/sy  stx/sty   levelSize
-        m_totalSize = m_levelSize*m_sizex*m_sizey + m_headerSize;
+        m_totalSize = m_levelSize*m_sizex*m_sizey*m_is16bit + m_headerSize;
     }
 
 
@@ -132,6 +140,7 @@ public:
         ba[10] = (uint)m_colSizex;
         ba[11] = (uint)m_colSizey;
         ba[12] = (uint)m_displayMultiColor;
+        ba[13] = (uint)m_is16bit;
         return ba;
     }
 
@@ -158,6 +167,7 @@ public:
         m_displayMultiColor = ba[12];
 
         m_useColors = ((uchar)ba[9]==1);
+        m_is16bit = ((uchar)ba[13]==1);
 
         if (m_useColors)
         if (m_colSizex <=0 || m_colSizey <=0) {
@@ -221,7 +231,7 @@ public:
     }
 
     void SetColor(uchar col, uchar idx) override;
-    void Clear() override;
+    void Clear(int val) override;
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;
 //    void FromRaw(QByteArray& arr);

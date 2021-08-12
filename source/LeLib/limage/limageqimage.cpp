@@ -372,6 +372,7 @@ void LImageQImage::CopyFrom(LImage *img) {
     m_colorList.CopyFrom(&img->m_colorList);
     m_footer = img->m_footer;
     m_scaleX = img->m_scaleX;
+    m_currentChar = img->m_currentChar;
     LImageQImage* mc = dynamic_cast<LImageQImage*>(img);
     if (mc!=nullptr) {
         *m_qImage = *mc->m_qImage;

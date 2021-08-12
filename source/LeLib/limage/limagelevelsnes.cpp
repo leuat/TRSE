@@ -50,6 +50,8 @@ LImageLevelSNES::LImageLevelSNES(LColorList::Type t) : ImageLevelEditor(t)
     m_GUIParams[tabData] = "1";
     m_GUIParams[tabLevels] = "1";
 
+    m_meta.m_is16bit = true;
+
     //    m_colorList.InitNES4();
     //    m_colorList.InitNES();
 
@@ -77,22 +79,25 @@ unsigned int LImageLevelSNES::getPixel(int x, int y)
     shift += (x%16)/(16/cx);
     shift += ((y%16)/(16/cy))*m_charset->m_charWidthDisplay;
 
-    uchar v = m_currentLevel->m_CharData[pos];
+    uchar vl = m_currentLevel->m_CharData[pos];
+    uchar vh = m_currentLevel->m_CharDataHi[pos];
     uchar col = m_currentLevel->m_ColorData[pos];
 
-    pos = v + shift;
+    pos = vl + shift;
 
     m_charset->m_currentChar = pos;
 /*    if (pos>6)
     if (rand()%100>98)
         qDebug() << Util::numToHex(pos);*/
     m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,1);
+    m_charset->m_footer.set(LImageFooter::POS_CURRENT_DISPLAY_REPEAT,0);
 //    m_charset->m_colorList.m_curPal = col;
     int lx = 16/cx;
     int ly = 16/cy;
     int xx = (((x%lx))/(float)(lx))*m_charset->m_width;
     int yy = (((y%ly))/(float)(ly))*m_charset->m_height;
-    v = m_charset->getPixel(xx,yy)+col*pow(2,m_charset->m_colorList.m_bpp.x());
+//    qDebug() <<m_charset->m_colorList.m_bpp.x();
+    return m_charset->getPixel(xx,yy)+col*pow(2,m_charset->m_colorList.m_bpp.x());
 
 /*    if (rand()%1000>998) {
         for (int i=0;i<12;i++)
@@ -100,7 +105,6 @@ unsigned int LImageLevelSNES::getPixel(int x, int y)
 
     }
 */
-    return v;
 }
 
 void LImageLevelSNES::LoadCharset(QString file, int skipBttes)
@@ -176,9 +180,11 @@ void LImageLevelSNES::CopyFrom(LImage *mc)
         ReInitialize();
 
         m_currentChar = c->m_currentChar;
+
         m_forcePaintColorAndChar = c->m_forcePaintColorAndChar;
         for (int i=0;i<m_meta.m_sizex*m_meta.m_sizey;i++) {
             m_levels[i]->m_CharData = c->m_levels[i]->m_CharData;
+            m_levels[i]->m_CharDataHi = c->m_levels[i]->m_CharDataHi;
             m_levels[i]->m_ColorData = c->m_levels[i]->m_ColorData;
             m_levels[i]->m_ExtraData = c->m_levels[i]->m_ExtraData;
         }
@@ -212,6 +218,13 @@ LImage *LImageLevelSNES::getCharset() {
     return m_charset;
 }
 
+void LImageLevelSNES::ReInitialize()
+{
+    ImageLevelEditor::ReInitialize();
+    m_meta.m_is16bit = true;
+
+}
+
 void LImageLevelSNES::ExportBin(QFile &file)
 {
     file.write(m_meta.toHeader());
@@ -224,7 +237,7 @@ void LImageLevelSNES::ExportBin(QFile &file)
         QByteArray data;
         for (int i=0;i<l->m_CharData.count();i++) {
             data.append(l->m_CharData[i]);
-            data.append((l->m_ColorData[i]&7)<<2);
+            data.append((l->m_ColorData[i]&7)<<2 | (l->m_CharDataHi[i]&3));
         }
         file.write( data);
 

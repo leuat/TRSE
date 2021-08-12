@@ -35,7 +35,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_width = 320;
     m_minCol = 0;
 //    m_data = new PixelChar[m_charWidth*m_charHeight];
-    Clear();
+    Clear(0);
     m_type = LImage::Type::CharMapMulticolor;
     m_colorList.m_supportsFooterPen = true;
     SetColor(1,1);

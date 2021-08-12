@@ -69,6 +69,8 @@ LImageSNES::LImageSNES(LColorList::Type t) : LImageAmiga(t,0)
     m_charWidth=16;
     m_charHeight=16;
 
+    m_metaParams.append(new MetaParameter("bitplanes","Bitplane data: 2 (4 colors), 3 (8 colors) or 4 (16 colors). For sprites, select 4 bitplanes (16 colors)",2,2,4));
+
 
     InitPens();
 
@@ -217,6 +219,11 @@ void LImageSNES::ExportBin(QFile &file)
     m_colorList.ExportSNESPalette(ff+".pal");
 
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);
+}
+
+void LImageSNES::ReInitialize()
+{
+    m_colorList.setNoBitplanes(getMetaParameter("bitplanes")->value);
 }
 
 void LImageSNES::SetPalette(int pal)

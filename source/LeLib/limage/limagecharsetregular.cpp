@@ -30,7 +30,7 @@ LImageCharsetRegular::LImageCharsetRegular(LColorList::Type t) : CharsetImage(t)
     m_noColors = 1;
     m_scale = 1;
     m_minCol = 0;
-    Clear();
+    Clear(0);
     m_type = LImage::Type::CharmapRegular;
     SetColor(1,2);
     SetColor(1,3);

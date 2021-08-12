@@ -26,7 +26,7 @@ public:
     void ExportBin(QFile &file) override;
     LImage* getCharset() override { return this; }
 
-
+    void ReInitialize() override;
     void SetPalette(int pal) override;
     virtual bool isNes() override {return true;}
     QStringList getPaletteNames() override;

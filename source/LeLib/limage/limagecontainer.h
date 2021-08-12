@@ -11,7 +11,7 @@ public:
 
     virtual QByteArray ToQByteArray(int) = 0;
 
-    virtual void Clear() = 0;
+    virtual void Clear(int val=0) = 0;
 
 
 };

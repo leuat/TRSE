@@ -473,10 +473,10 @@ void LImage::Transform(int tx, int ty) {
     PopHybrid();
 }
 
-void LImage::Clear() {
+void LImage::Clear(int val) {
     for (int y=0;y<m_height;y++)
         for (int x=0;x<m_width;x++) {
-            setPixel(x,y,0);
+            setPixel(x,y,val);
         }
 
 }

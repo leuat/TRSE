@@ -113,9 +113,9 @@ void C64FullScreenChar::SetColor(uchar col, uchar idx)
  //   m_extraCols[idx] = col;
 }
 
-void C64FullScreenChar::Clear()
+void C64FullScreenChar::Clear(int val=0)
 {
-    m_items[m_current]->Clear();
+    m_items[m_current]->Clear(val);
 
 }
 

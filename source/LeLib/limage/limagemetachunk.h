@@ -22,8 +22,8 @@ public:
 
     QByteArray ToQByteArray(int mask) override;
 
-    void Clear() override {
-        m_data.clear();
+    void Clear(int val=0) override {
+        m_data.fill(val);
     }
 
     LMetaChunkItem(QByteArray& a, int index) {

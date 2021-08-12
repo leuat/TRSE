@@ -412,7 +412,7 @@ public:
     virtual void FromLImageQImage(LImage* other) {}
     virtual void CreateMagicalCharset() {}
 
-    virtual void Clear();
+    virtual void Clear(int val=0);
     virtual void fromQImage(QImage* img, LColorList& lst) = 0;
 
     virtual void ExportAsm(QString filename)  { qDebug() << "ASM Write not supported"; }

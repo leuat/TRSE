@@ -4,11 +4,12 @@ var
 	defaultPalette:array[256] of integer = BuildTable("(i%32)+((i/32)%32)<<5 +((i/(32*32))%32)<<10");
 //	palette:array[256] of integer = BuildTable("");
 	zp,p1:pointer;
-	i1,i2:integer;
+	zi : pointer of integer;
+	i1,i2,i3:integer;
 	x,y,i,j,att,id,xx,yy,w,h,l,dx,dy,flip : byte;
-	
-	tab32:array[32] of integer=BuildTable("i*32");
-
+	quadrant: array[4] of integer=buildtable("i*32*32");
+	tab32 : array[32] of integer=buildtable("i*32");
+	tabPointer:pointer of integer;
 	const BG1:integer=$1000;
 	const BG2:integer=$1400;
 	const BG3:integer=$1800;
@@ -20,6 +21,12 @@ var
 	const SPRITE_PRIORITY1:byte = $10;
 	const SPRITE_PRIORITY2:byte = $20;
 	const SPRITE_PRIORITY3:byte = $30;
+	
+	const BG_32X32: byte=%00;
+	const BG_64X32: byte=%01;
+	const BG_32X64: byte=%10;
+	const BG_64X64: byte=%11;
+	
 	
 	@donotremove id
 	@donotremove i1
@@ -313,23 +320,28 @@ begin
 	");
 end;	
 
-procedure MoveTo(i1:global integer);
-begin
-
-	asm("
-	ldx Screen_i1
-    stx VMADDL
-	");
-end;
 
 procedure MoveToXY(x,y,i1:global integer);
 begin
-	i1+=tab32[y]+x;
+	// quadrant
+	i:=0;
+	if (x>31) then 
+	begin 
+		x:=x&31;
+		i+=1;
+	end;
+	if (y>31) then 
+	begin 
+		y:=y&31;
+		i+=2;
+	end;
+	i1+=quadrant[i] + tab32[y]+x;
 	asm("
 	ldx Screen_i1
     stx VMADDL
 	");
 end;
+
 
 procedure MoveToCRAM(i1:global integer) inline;
 begin
@@ -396,15 +408,27 @@ begin
 	");*/
 end;
 
+procedure SetBGScreenLocation(x,y:global byte);
+begin
+	asm("
+		XY8
+		ldx Screen_x
+		lda Screen_y
+		sta BG1SC,x
+		XY16
+	");
+end;
 
-procedure SetMode0(i1:global integer);
+
+procedure SetGraphicsMode(y:global byte;i1:global integer);
 begin
 	// Calculate charset address
-	x:=(hi(i1)>>4) | (hi(i1)&$F0);;
+	x:=(hi(i1)>>4) | (hi(i1)&$F0);
 //	x:=($20>>4) | ($20&$F0);
 	asm("
    ; Setup Graphics Mode 0, 8x8 tiles all layers
-   stz BGMODE
+   lda Screen_y
+   sta BGMODE
    lda #>VRAM_BG1
    sta BG1SC ; BG1 at VRAM_BG1, only single 32x32 map (4-way mirror)
    lda #>VRAM_BG2
@@ -419,6 +443,15 @@ begin
    sta BG12NBA ; BG 1 and 2 both use char tiles
    sta BG34NBA ; BG 1 and 2 both use char tiles
 	
+	");
+end;
+
+
+procedure SetBGMode(x:global byte);
+begin
+	asm("
+	lda Screen_x
+	sta BGMODE
 	");
 end;
 
@@ -446,13 +479,24 @@ begin
 	asm(" wai");
 end;	
 
-procedure Scroll(x,y,i : global byte);
+procedure Scroll(i1,i2:global integer;i3 : global integer);
 begin
-	zp:=$210d+i;
-	zp[0]:=x;
-	zp[0]:=0;
-	zp[1]:=y;
-	zp[1]:=0;
+	asm("
+	ldx Screen_i3
+	lda Screen_i1
+	sta $210d,x
+	lda Screen_i1+1
+	sta $210d,x
+	inx
+	lda Screen_i2
+	sta $210d,x
+	lda Screen_i2+1
+	sta $210d,x
+	XY16
+	A8
+		");
+//	zi[0]:=i1;
+//	zi[1]:=i2;
 end;
 
 

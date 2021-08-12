@@ -51,9 +51,9 @@ public:
 
     }
 
-    void Clear() override {
+    void Clear(int val=0) override {
         for (int i=0;i<m_rawData.count();i++)
-            m_rawData[i] = 0x20;
+            m_rawData[i] = val;
 
         for (int i=0;i<m_rawData.count();i++)
             m_rawColors[i] = 0x2;
@@ -88,7 +88,7 @@ public:
     void LoadBin(QFile &f) override;
 
     void SetColor(uchar col, uchar idx) override;
-    void Clear() override;
+    void Clear(int val) override;
     void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
 

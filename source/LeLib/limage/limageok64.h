@@ -28,9 +28,9 @@ public:
     void ApplyToLabel(QLabel* l) override {
 
     }
-    void Clear() override {
+/*    void Clear(int val=0) override {
     }
-
+*/
     void ExportBin(QFile &file) override;
     void ImportBin(QFile &file) override;
 

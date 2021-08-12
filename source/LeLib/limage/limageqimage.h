@@ -74,9 +74,9 @@ public:
     void Release() override;
 
     void ApplyToLabel(QLabel* l) override;
-    void Clear() override {
+    void Clear(int val=0) override {
         if (m_qImage)
-            m_qImage->fill(QColor(0,0,0,255));
+            m_qImage->fill(QColor(val,val,val,255));
     }
 
     bool KeyPress(QKeyEvent *e) override;
