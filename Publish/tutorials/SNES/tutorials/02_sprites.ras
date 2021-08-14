@@ -1,0 +1,44 @@
+program Tutorial1;
+@use "screen"
+var
+// Sprites are alwyas 16-colour. Export them automatically!	
+@export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 256
+
+// Sprite data
+	sprites1 : incbin("resources/gfx/sprites.bin");
+// Automatically exported palette data
+	palette_sprites: incbin("resources/gfx/sprites.pal");
+// A sine table
+	sin256:array[256] of byte = BuildSineTable(127);
+// A counter variable	
+	i:byte;
+	
+
+
+begin
+	Screen::Init();
+		
+	Screen::SetPalette(#palette_sprites,128,128);
+	// Put sprites at VRAM = 0
+	Screen::CopyToVRAM(#sprites1,$0000,128*128/2);
+	// Turn on sprites
+	Screen::EnableGFX(Screen::ENABLE_SPRITES);// 01 = BG1	
+	// Turn on display
+	Screen::EnableDisplay();
+ 	while (true) offpage do
+ 	begin
+	 	Screen::WaitForVerticalBlank();
+		// Put the sprite on screen
+		
+		Screen::PutSprite(0, // Sprite number (in VRAM)
+				sin256[0-i]+60,sin256[i+64]+30,  // x,y
+				2,2,  // width, height
+				2,    // Sprite sheet ID (will draw 3x3 sprites with this value +1,2,3 and 16,17,18 etc 
+				%00000000 | Screen::SPRITE_PRIORITY3,  // Sprite attributes (including palette)
+				0);  // Sprite horizontal flip. Not implemented yet.
+			
+		i+=1;		
+		
+ 	end;
+	
+end.

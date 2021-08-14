@@ -24,6 +24,7 @@ public:
         PerformConstrainColours(cols);
 
     }
+    virtual QStringList getBankNames() override;
 
     void CopySingleChar(LImage* src, int srcChar, int dstChar) override;
 

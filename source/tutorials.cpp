@@ -155,6 +155,7 @@ void Tutorials::PopulateProjectTable(QString system, QGridLayout *w)
     int i=0;
     int j=0;
     m_widgets.clear();
+    int cnt=0;
     for (Tutorial& t: m_tutorials) {
         if ((system != t.m_system))
             continue;
@@ -165,6 +166,7 @@ void Tutorials::PopulateProjectTable(QString system, QGridLayout *w)
         //      item->setForeground(QColor(190,220,240,255));
         w->addWidget(item,j,i);
         m_widgets.append(item); i++;
+        cnt++;
         if (i==2) {
             j+=1;
             i=0;
@@ -172,6 +174,12 @@ void Tutorials::PopulateProjectTable(QString system, QGridLayout *w)
 //            w->setItem(i,j,item);
         }
 
+    if (cnt==1) {
+        // Insert dummy widget to get a grid
+        QLabel* item = new QLabel("                                                                                                  ");
+        //      item->setForeground(QColor(190,220,240,255));
+        w->addWidget(item,0,1);
+    }
 }
 
 void Tutorials::PopulateTemplateList(QListWidget *w, QString system)

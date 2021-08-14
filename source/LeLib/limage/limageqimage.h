@@ -32,9 +32,13 @@ public:
     LImageQImage() {}
     LImageQImage(LColorList::Type t);
     QImage* m_qImage = nullptr;
+    QVector<QSharedPointer<QImage>> m_banks;
     ~LImageQImage() {
         Release();
     }
+
+
+
 
     void Initialize(int width, int height) override;
 

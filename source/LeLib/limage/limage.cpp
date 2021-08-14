@@ -269,6 +269,10 @@ int LImage::getCharHeightDisplay()
     return m_charHeightDisplay;
 }
 
+QStringList LImage::getBankNames() {
+    return QStringList()<<"Bank 0";
+}
+
 void LImage::CtrlLeftShift(int x, int y) {
     Data::data.currentColor = getPixel(x,y);
 }

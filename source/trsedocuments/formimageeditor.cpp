@@ -512,6 +512,9 @@ void FormImageEditor::Initialize()
 
     ui->cmbNesPalette->clear();
     ui->cmbNesPalette->addItems(m_work.m_currentImage->m_image->getPaletteNames());
+    if (ui->cmbBank->count()!=0)
+        ui->cmbBank->clear();
+    ui->cmbBank->addItems(m_work.m_currentImage->m_image->getBankNames());
 
 
     m_work.m_currentImage->m_image->BuildData(ui->tblData, m_projectIniFile->getStringList("data_header"));

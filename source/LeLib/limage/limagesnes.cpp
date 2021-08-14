@@ -82,21 +82,37 @@ void LImageSNES::InitPens()
     m_colorList.InitSNESPens();
 }
 
+void LImageSNES::Initialize(int width, int height)
+{
+    if (m_width==width && m_height==height && m_qImage!=nullptr)
+        return;
+    if (m_qImage != nullptr)
+        delete m_qImage;
+
+    //    qDebug() << "NEWING "<<m_width << this;
+    m_width = width;
+    m_height = height;
+
+    m_banks.clear();
+    for (int i=0;i<8;i++) {
+        auto img = QSharedPointer<QImage>(new QImage(width, height, QImage::Format_ARGB32));
+        img->fill(QColor(0,0,0));
+        m_banks.append(img);
+    }
+    SetBank(0);
+
+}
+
 void LImageSNES::SaveBin(QFile &file)
 {
     int pal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
-//    qDebug() << "A";
-//    if (pal>=2)
-  //      SetPalette(pal-1);
-  //  qDebug() << "B";
-
     SetPalette(0);
-/*    int noCol = pow(2,m_colorList.m_bpp.x());
-        for (int i=0;i<noCol;i++)
-            m_colorList.m_nesPPU[pal*noCol +i] = (uchar)m_colorList.getPen(i);
-*/
-
-    LImageQImage::SaveBin(file);
+    auto qi = m_qImage;
+    for (int i=0;i<m_banks.count();i++) {
+        SetBank(i);
+        LImageQImage::SaveBin(file);
+    }
+    m_qImage = qi;
     QByteArray data;
     m_colorList.toArray(data);
     file.write(data);
@@ -111,9 +127,12 @@ void LImageSNES::SaveBin(QFile &file)
 
 void LImageSNES::LoadBin(QFile &file)
 {
-    m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
-    unsigned char *data = new unsigned char[m_width*m_height];
-    file.read((char*)data, m_width*m_height);
+    QVector<unsigned char*> d;
+    for (int i=0;i<m_banks.count();i++) {
+        unsigned char *data = new unsigned char[m_width*m_height];
+        file.read((char*)data, m_width*m_height);
+        d.append(data);
+    }
     uchar size;
 
     file.read((char*)&size,1);
@@ -129,17 +148,37 @@ void LImageSNES::LoadBin(QFile &file)
     uchar bpp;
     file.read((char*)&bpp,1);
     m_colorList.setNoBitplanes(bpp);
-    for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
-           setPixel(i,j, data[i+j*m_width]);
-        }
-    delete[] data;
+    for (int k=0;k<m_banks.count();k++) {
+        SetBank(k);
+        for (int i=0;i<m_width;i++)
+            for (int j=0;j<m_height;j++) {
+                setPixel(i,j, d[k][i+j*m_width]);
+            }
+        delete[] d[k];
+
+    }
 
 
+    SetBank(0);
     m_colorList.m_nesPPU = file.read(0x100);
 //    qDebug() << Util::numToHex(m_colorList.m_nesPPU[4*2]);
 
 
+}
+
+QStringList LImageSNES::getBankNames() {
+    QStringList lst;
+    for (int i=0;i<m_banks.count(); i++)
+        lst<<"Bank "+QString::number(i);
+    if (lst.count()==0)
+        lst<<"Bank 0";
+    return lst;
+}
+
+void LImageSNES::SetBank(int bnk) {
+    m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
+    if (bnk<m_banks.count() && bnk>=0)
+        m_qImage = m_banks[bnk].get();
 }
 
 
@@ -181,37 +220,43 @@ void LImageSNES::ExportBin(QFile &file)
     QByteArray data;
     data.resize(m_height*m_width/8*nobp);
     data.fill(0);
+    int noBanksToExport = fmin(m_exportParams["End"],m_banks.count());
+    auto qi = m_qImage;
+    for (int bank=0;bank<noBanksToExport;bank++)
+    {
+        SetBank(bank);
+        int curBit = 0;
+        int idx = 0;
+        int planes[8] = {0,1,3,2,4,5,6,7};
+        for (int y=0;y<m_height;y+=8) {
+            for (int x=0;x<m_width;x+=8) {
+                for (int split = 0;split<nobp/2;split++) {
+                    for (int dy=0;dy<8;dy++) {
+                        for (int i=0;i<2;i++) {
+                            for (int dx=0;dx<8;dx++) {
 
-    int curBit = 0;
-    int idx = 0;
-    int planes[8] = {0,1,3,2,4,5,6,7};
-    for (int y=0;y<m_height;y+=8) {
-        for (int x=0;x<m_width;x+=8) {
-            for (int split = 0;split<nobp/2;split++) {
-                for (int dy=0;dy<8;dy++) {
-                    for (int i=0;i<2;i++) {
-                        for (int dx=0;dx<8;dx++) {
+                                char val = m_qImage->pixel(x+dx,y+dy) ;
+                                int tst = (i+(split*2));
+                                int bit = CHECK_BIT(val,planes[tst]);
+                                if (val!=0)
+                                    data[idx] = data[idx] | (bit<<(7-dx));
 
-                            char val = m_qImage->pixel(x+dx,y+dy) ;
-                            int tst = (i+(split*2));
-                            int bit = CHECK_BIT(val,planes[tst]);
-                            if (val!=0)
-                                data[idx] = data[idx] | (bit<<(7-dx));
+                                //                          data[idx]=1<<(dy+i+split*2);
+                                //
+                            }
+                            idx++;
+                            // qDebug() <<idx<<x<<y<<data.count()<<i<<idx;
 
-  //                          data[idx]=1<<(dy+i+split*2);
-//
                         }
-                        idx++;
-                        // qDebug() <<idx<<x<<y<<data.count()<<i<<idx;
-
                     }
                 }
-            }
-            //            qDebug() << QString::number(idx);
+                //            qDebug() << QString::number(idx);
 
+            }
         }
     }
     file.write(data);
+    m_qImage = qi;
     int type = m_exportParams["export1"];
     QByteArray cData;
     QString ff = file.fileName();

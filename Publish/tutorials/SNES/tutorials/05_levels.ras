@@ -1,0 +1,72 @@
+program Levels;
+// The unit "Screen" contains all the important methods for VRAM operations
+@use "screen"
+@use "levels"
+var
+// Automatically export "tiles.flf", and export only 1 (128x128) bank	
+@export "resources/gfx/tiles.flf" "resources/gfx/tiles.bin" 1
+@export "resources/gfx/levels.flf" "resources/gfx/levels.bin" 256
+
+// Where we decide to put the charset in VRAM
+	const charset1_addr : integer = $3000;
+
+// The tile data. 
+	tiles : incbin("resources/gfx/tiles.bin");
+// "export" automatically exports the palette as well
+	palette_tiles: incbin("resources/gfx/tiles.pal");
+	level_data : incbin("resources/gfx/levels.bin") bank(2); 
+	
+	const BG2 : address = $2000;
+	i1:integer;
+	i,j,val,col:byte;
+
+	level: Levels::Level;
+
+
+begin
+	// Initialses the SNES
+	Screen::Init();
+	// Copies the palette to VRAM
+	Screen::SetPalette(#palette_tiles,0,$100);
+	// Sets mode 1, points all background VRAM to the same address. 
+	// If you want your backgrounds to use independent tile data, set this up here	
+	Screen::SetGraphicsMode(1, #charset1_addr);
+	// Copes all the tile data to VRAM
+	Screen::CopyToVRAM(#tiles,#charset1_addr,128*128/2);
+	// Sets up the background 0 and 1 to pointt to $1000 and $1400. Only works for 32x32 playfields, if
+	// you are using 64x64, you need to set BG2 to be BG1+64*64
+	Screen::SetBGScreenLocation(0,hi(#SCREEN_BG1) | Screen::BG_64X64);
+	Screen::SetBGScreenLocation(1,hi(#BG2) | Screen::BG_32X32);
+	
+	// Fill background 1 with value 0 (all black) and attribute 0
+	Screen::MoveToXY(0,0, #Screen::BG1);
+	Screen::FillToVRAM(0, 0 , 64*64);
+
+	Screen::MoveToXY(0,0, #BG2);
+	Screen::FillToVRAM(14, 2<<2 , 32*32);
+	
+	// Turn on background 1 and 2
+	Screen::EnableGFX(Screen::ENABLE_BG1 | Screen::ENABLE_BG2);
+
+	// Read the level data (from bank 2, must be specified)
+	level.ReadHeader(#level_data,2);
+	// Render level x,y. Make sure this happens when the display is off!
+	level.RenderLevel(0,0, #Screen::BG1);
+
+
+	 // Turn on the screen. 
+	Screen::EnableDisplay();
+	// Infinite loop		
+	i1:=0;
+ 	while (true) offpage do
+ 	begin
+	 	// wait for vsync
+	 	Screen::WaitForVerticalBlank();
+		// Scroll background 2 with some increasing value. 
+		Screen::Scroll(i1,i1,0);
+		Screen::Scroll(i1/2,i1/2,2);
+		i1+=1;
+		
+ 	end;
+ 	
+end.

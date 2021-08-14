@@ -10,6 +10,7 @@
 #include <QListWidget>
 #include <QTableWidget>
 #include <QComboBox>
+#include <QLabel>
 #include "source/LeLib/util/util.h"
 #include "formtutorialitem.h"
 

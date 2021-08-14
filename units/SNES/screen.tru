@@ -10,10 +10,17 @@ var
 	quadrant: array[4] of integer=buildtable("i*32*32");
 	tab32 : array[32] of integer=buildtable("i*32");
 	tabPointer:pointer of integer;
-	const BG1:integer=$1000;
-	const BG2:integer=$1400;
-	const BG3:integer=$1800;
-	const BG4:integer=$1C00;
+	const BG1:address=$1000;
+	const BG2:address=$1400;
+	const BG3:address=$1800;
+	const BG4:address=$1C00;
+	
+	
+	const ENABLE_BG1 : byte = %1;
+	const ENABLE_BG2 : byte = %10;
+	const ENABLE_BG3 : byte = %100;
+	const ENABLE_BG4 : byte = %1000;
+	const ENABLE_SPRITES : byte = %10000;
 	
 	
 	const TILE_PRIORITY:byte = $20;
@@ -30,6 +37,11 @@ var
 	
 	@donotremove id
 	@donotremove i1
+	
+	/**
+	Copies [param 3] bytes from [param 1] to the palette register starting with color [param 2]
+	
+	**/
 	
 procedure SetPalette(zp:global pointer;x:global byte;i1:global integer);
 begin
@@ -199,7 +211,7 @@ begin
    bpl @loop
 
    ; enable NMI for Vertical Blank
-   lda #$80
+   lda #$81
    sta NMITIMEN
    
 	");
@@ -528,7 +540,8 @@ begin
 end;
 /**
 
-Put sprite x at xx,yy with tile id
+Put sprite x at xx,yy with tile id with width,height =w,h and attribute att
+Note: "flip" isn't implemented yet
 
 (c=high bit tile)
 Attribute: vhoopppc  
@@ -538,6 +551,36 @@ Attribute: vhoopppc
 procedure PutSprite(x,xx,yy, w,h, id,att,flip:global byte);
 begin
 	PointToSprite(x);
+	if (flip=1) then
+	begin
+		att:=att|%01000000;	
+	for j:=0 to h do
+	begin
+		dx:=xx+w<<2-1;
+		for i:=0 to w do
+		begin
+//			WriteSingleSprite(dx,yy,l,att);
+			asm("
+        lda Screen_dx       ; horizontal position of first sprite
+        sta OAMDATA
+        lda Screen_yy       ; vertical position of first sprite
+        sta OAMDATA
+        lda Screen_id                ; name of first sprite
+        sta OAMDATA
+        lda Screen_att                ; no flip, prio 0, palette 0
+        sta OAMDATA
+			
+			");
+			dx-=8;
+			id+=1;
+		end;
+		yy+=8;
+		id:=id+16-w;//Move to next row
+	end;
+		
+	end;
+	
+	
 	for j:=0 to h do
 	begin
 		dx:=xx;

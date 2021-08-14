@@ -1826,6 +1826,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     bool unknownType = false;
     bool scale = true;
+    Disable16bit();
     if (node->m_writeType!=TokenType::NADA) {
         s->m_arrayType = node->m_writeType;
         s->m_arrayTypeText = TokenType::getType(node->m_writeType);
@@ -1852,6 +1853,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
                 op = as->m_term + " ";
             as->ClearTerm();
             as->Asm(op+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
+            Disable16bit();
             return;
         }
     }
@@ -1887,6 +1889,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
   //      as->Asm("inx");
         as->Asm("ldy "+  getValue(node)+"+1,x");
     }
+    Enable16bit();
 }
 
 void CodeGen6502::LoadVariable(QSharedPointer<Node> node)

@@ -14,8 +14,13 @@ public:
 
     void InitPens() override;
 
+    void Initialize(int width, int height) override;
+
     void SaveBin(QFile &file) override;
     void LoadBin(QFile &file) override;
+    QStringList getBankNames() override;
+
+    virtual void SetBank(int bnk) override;
 
 //    unsigned int getPixelPalette(int x, int y, int pal) override;
 

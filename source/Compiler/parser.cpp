@@ -5144,7 +5144,7 @@ void Parser::HandleExport()
 
 
     LImage* img = LImageIO::Load(inFile);
-    if (dynamic_cast<CharsetImage*>(img)!=nullptr) {
+    if (dynamic_cast<CharsetImage*>(img)!=nullptr || img->m_type == LImage::SNES) {
         img->m_exportParams["Start"] = param1;
         img->m_exportParams["End"] = param2;
     }

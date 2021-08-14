@@ -139,6 +139,10 @@ void LImageNES::SaveBin(QFile &file)
 
 }
 
+QStringList LImageNES::getBankNames() {
+    return QStringList()<<"Bank 0"<<"Bank 1";
+}
+
 
 bool LImageNES::KeyPress(QKeyEvent *e)
 {

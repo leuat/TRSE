@@ -32,6 +32,8 @@ MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do.
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>TRSE currently contains 4 seperate NES example files on how to start building a NES game!
 NES; Unit tests; NES/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal 2A03 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
 
+SNES; Main SNES tutorials; SNES/tutorials/;<h2>Main SNES tutorials</h2><p><img src=":resources/images/tutorials/cat.png" width="200" class="center"><p>Learn how to code a game for the Super Nintendo System using TRSE! The starting point for everything SNES.
+
 GAMEBOY; Main Gameboy tutorials; GAMEBOY/tutorials/ ;  <h2>Main Gameboy tutorials</h2><p><img src=":resources/images/GAMEBOY.png" width="200" class="center"><p>Recommended starting point for anybody interested in coding for the Nintendo Gameboy!
 GAMEBOY; Yo-grl (demo); GAMEBOY/yo-grl/; <h2>Yo-grl makes a demo</h2><p><tr><td><img src=":resources/images/tutorials/yogrl.png" width="150" class="center"></td><td>Demo that came 2nd at Solskogen 2020. Made by Leuat, 100% TRSE! <p>Full (uncensored) source code + all resources included.</td></tr>
 GAMEBOY; Unit tests; GAMEBOY/UnitTests/; <h2>TRSE internal unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>This project contains various unit test files for testing and verifying that the internal Z80 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.

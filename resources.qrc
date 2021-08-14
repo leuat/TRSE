@@ -636,6 +636,6 @@
         <file>resources/code/snes/smc.cfg</file>
         <file>resources/code/mega65/init.asm</file>
         <file>resources/code/mega65/config.cfg</file>
-        <file>resources/code/snes/music.asm</file>
+        <file>resources/images/tutorials/cat.png</file>
     </qresource>
 </RCC>

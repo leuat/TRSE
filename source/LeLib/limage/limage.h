@@ -152,6 +152,7 @@ public:
     int m_gridWidthDisplay = 40;
 
 
+    virtual QStringList getBankNames();
     bool m_updatePaletteInternal = true;
     virtual void SetBank(int bnk) {
         m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);

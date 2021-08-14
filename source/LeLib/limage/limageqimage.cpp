@@ -377,6 +377,8 @@ void LImageQImage::CopyFrom(LImage *img) {
     if (mc!=nullptr) {
         *m_qImage = *mc->m_qImage;
     }
+  //  m_banks = mc->m_banks;
+//    m_qImage = mc->m_qImage;
 
 }
 

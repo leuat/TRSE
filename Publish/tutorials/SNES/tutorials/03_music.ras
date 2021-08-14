@@ -1,0 +1,25 @@
+program Music;
+@use "screen"
+@use "music"
+var
+	/*
+		How to make SNES music: 
+		a) download SNESGSS (https://github.com/nathancassano/snesgss) and make a / several songs. 
+		b) export the songs - you get a separate ".bin" files for each song (containing the patterns),
+		and a "spc700.bin" file containing all the instruments and samples. 
+		c) Include songs and instruments separately into TRSE
+		d) Initialize and play!
+	
+	*/
+	// Place song 1 and 2 in bank 3
+	song1 : incbin("resources/music/music_1.bin") bank(3);
+	song2 : incbin("resources/music/music_2.bin") bank(3);
+	// Place the music code in bank 6
+	music_code: incbin("resources/music/spc700.bin") bank(6);
+
+begin
+	Screen::Init();
+	// Initialise the song and music code. For now, you must specify which banks the data reside in.
+	Music::Init(#song2, #music_code, 3, 6);
+	Loop();	
+end.
