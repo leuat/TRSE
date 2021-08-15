@@ -30,6 +30,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           author_name: "Nightly Build"
           message: "Increment nightly version"
+          branch: master
 
       - run: |
           sudo apt-get update
