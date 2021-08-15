@@ -1654,7 +1654,12 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
 
 
     as->ClearTerm();
-
+    QString p1 = "(";
+    QString p2 = ")";
+    if (node->hasFlag(as,"lpointer")) {
+        p1="[";
+        p2="]";
+    }
     if (node->m_expr==nullptr) {
         as->Asm("lda "+getValue(node));
         as->Asm("ldy "+getValue(node) + " +1");
@@ -1672,10 +1677,10 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
             as->Asm("pla");
     }
     if (node->getArrayType(as)==TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
-        as->Asm("lda (" + getValue(node)+"),y");
+        as->Asm("lda "+p1+ getValue(node)+""+p2+",y");
         as->Asm("pha");
         as->Asm("iny");
-        as->Asm("lda (" + getValue(node)+"),y");
+        as->Asm("lda "+p1+"" + getValue(node)+""+p2+",y");
         as->Asm("tay");
         as->Asm("pla");
         return;
@@ -1683,7 +1688,7 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
 
     if (m=="")
         m="lda ";
-    as->Asm(m+  "(" + getValue(node)+"),y");
+    as->Asm(m+  ""+p1+"" + getValue(node)+""+p2+",y");
     if (node->m_forceType == TokenType::INTEGER)
         as->Asm("ldy #0 ; Loading 8-bit pointer, but return type should be integer");
 }
@@ -2245,6 +2250,12 @@ bool CodeGen6502::AssignPointer(QSharedPointer<NodeAssign> node) {
         as->Asm("ldx " + getValue8bit(node->m_right,true));
         as->Asm("sta " + getValue(aVar));
         as->Asm("stx "+ getValue(aVar)+"+1");
+        if (aVar->hasFlag(as,"lpointer")) {
+            as->Asm("lda " + getValue8bit(node->m_right,2));
+            as->Asm("sta "+ getValue8bit(aVar,2)+"+2");
+
+        }
+
         Enable16bit();
         //if (!node->m_right->isWord(as))
         //    ErrorHandler::e.Warning("Assigning an 8-bit value to pointer. Is this intentional?", node->m_op.m_lineNumber);

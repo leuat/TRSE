@@ -288,20 +288,23 @@ bool NodeVar::typeIsArray(Assembler *as)
     return false;
 }
 
-QString NodeVar::getValue8bit(Assembler *as, bool isHi) {
+QString NodeVar::getValue8bit(Assembler *as, int isHi) {
 
     if (isReference()) {
-        if (isHi)
+        if (isHi==1)
             return "#>"+getValue(as);
-        else
+        if (isHi==0)
             return "#<"+getValue(as);
+        if (isHi==2)
+            return "#^"+getValue(as);
+        return "";
     }
     QString pa="";
     QString pb="";
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80){
         pa="(";pb=")";
     }
-    if (isHi) {
+    if (isHi==1) {
         if (getOrgType(as)==TokenType::BYTE)
             return "#0";
        return pa+getValue(as)+"+1"+pb;

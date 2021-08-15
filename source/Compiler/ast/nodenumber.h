@@ -48,7 +48,7 @@ public:
     QString getValue(Assembler* as) override;
     virtual bool isReference() override;
 
-    QString getValue8bit(Assembler* as, bool isHi) override;
+    QString getValue8bit(Assembler* as, int isHi) override;
 
     void forceWord() override {
         m_op.m_type = TokenType::INTEGER_CONST;

@@ -1,8 +1,8 @@
 #include "system65c816.h"
 
 System65C816::System65C816(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
-    m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert"<<"bank";
-    m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global" <<"stack";
+    m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert"<<"bank"<<"lpointer";
+    m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global" <<"stack"<<"lpointer";
     m_supportsExomizer = true;
     m_registers << "_a"<<"_x" <<"_y" <<"_ax" <<"_ay" <<"_xy";
     m_canRunAsmFiles = true;
@@ -98,7 +98,7 @@ void System65C816::AssembleCL65(QString &text, QString filename, QString current
         m_buildSuccess = false;
     }
 
-    if (output.trimmed()!="") {
+    if (output.trimmed().contains("error")) {
         m_buildSuccess = false;
     }
 
@@ -128,4 +128,5 @@ void System65C816::PostProcess(QString &text, QString file, QString currentDir)
 void System65C816::DefaultValues()
 {
     m_ignoreSys = false;
+    m_startAddress=0x7FF;
 }

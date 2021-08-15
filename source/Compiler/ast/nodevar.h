@@ -108,7 +108,7 @@ public:
     bool isArrayIndex() override { return m_expr!=nullptr || isStackVariable(); }
 
     bool typeIsArray(Assembler* as) override;
-    QString getValue8bit(Assembler* as, bool isHi) override;
+    QString getValue8bit(Assembler* as, int isHi) override;
 
 
 
@@ -122,6 +122,15 @@ public:
     bool isAddress() override;
 
     bool isSigned(Assembler* as) override;
+
+    bool hasFlag(Assembler* as, QString flag)
+    {
+        QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber);
+        return s->m_flags.contains(flag);
+    }
+
+
+
 /*    void LoadVariable(AbstractCodeGen* dispatcher) override;
     void LoadPointer(Assembler* as);
 

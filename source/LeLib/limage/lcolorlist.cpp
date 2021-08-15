@@ -308,8 +308,17 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
 
     // Sort colors
    std::sort(m_colorList.begin(), m_colorList.end(), sortColors);
-    for (int i=0;i<m_colorList.count();i++) {
-        m_list[i].color = Util::toColor(m_colorList[i]);
+   int shift=0;
+   if (m_type==SNES) {
+       // remember to set current palette
+       shift = m_curPal*pow(2,m_bpp.x());
+       qDebug()<<shift;
+       for (int i=0;i<m_colorList.count();i++) {
+           m_nesPPU[shift+i]=shift+i;
+       }
+   }
+   for (int i=0;i<m_colorList.count();i++) {
+        m_list[i + shift].color = Util::toColor(m_colorList[i]);
     }
 
 
@@ -624,7 +633,7 @@ void LColorList::CopyFrom(LColorList *other)
 {
     m_bpp = other->m_bpp;
     m_type = other->m_type;
-
+    m_curPal = other->m_curPal;
     m_list.resize(other->m_list.count());
     for (int i=0;i<m_list.count();i++)
         m_list[i] = other->m_list[i];

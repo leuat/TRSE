@@ -181,7 +181,7 @@ QString NodeBinOP::getValue(Assembler *as) {
     return hash + HexValue();
 }
 
-QString NodeBinOP::getValue8bit(Assembler *as, bool isHi)
+QString NodeBinOP::getValue8bit(Assembler *as, int isHi)
 {   QString hash = "";
     if (as!=nullptr)
         hash = as->m_hash;
@@ -189,7 +189,7 @@ QString NodeBinOP::getValue8bit(Assembler *as, bool isHi)
     if (isAddress()) hash="";
 
     int res = numValue();
-    if (isHi)
+    if (isHi==1)
         return hash + Util::numToHex((int)res>>8);
     else
         return hash + Util::numToHex(((int)res)&0xFF);

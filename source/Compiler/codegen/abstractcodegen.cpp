@@ -1316,7 +1316,7 @@ QString AbstractCodeGen::getValue(QSharedPointer<Node> n) {
     return n->getValue(as);
 }
 
-QString AbstractCodeGen::getValue8bit(QSharedPointer<Node> n, bool isHi) {
+QString AbstractCodeGen::getValue8bit(QSharedPointer<Node> n, int isHi) {
 
     if (m_inlineParameters.contains(n->getValue(as)))
         return m_inlineParameters[n->getValue(as)]->getValue8bit(as,isHi);

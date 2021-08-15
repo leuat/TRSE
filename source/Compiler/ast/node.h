@@ -198,7 +198,7 @@ public:
     virtual void AssignPointer(Assembler* as, QString memoryLocation) {}
 
     virtual QString getValue(Assembler* as) {return "";}
-    virtual QString getValue8bit(Assembler* as, bool isHi) {return "";}
+    virtual QString getValue8bit(Assembler* as, int isHi) {return "";}
     virtual int getValueAsInt(Assembler* as) {
         return Util::NumberFromStringHex(getValue(as));
     }
@@ -238,6 +238,9 @@ public:
 
     virtual void VerifyReferences(Assembler* as);
     virtual bool isSigned(Assembler* as);
+
+    virtual bool hasFlag(Assembler* as, QString flag);
+
 
 };
 

@@ -64,6 +64,9 @@ public:
     // Stack stuff
     bool m_isStackVariable = false;
     int m_stackPos = 0;
+    bool isLPointer() {
+        return m_flags.contains("lpointer");
+    }
 
 
     QString m_fileName;

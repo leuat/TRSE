@@ -64,20 +64,22 @@ bool NodeNumber::isReference() {
     return m_op.m_isReference;// || isAddress();
 }
 
-QString NodeNumber::getValue8bit(Assembler *as, bool isHi) {
+QString NodeNumber::getValue8bit(Assembler *as, int isHi) {
     QString hash = "";
     if (as!=nullptr)
         hash = as->m_hash;
 
     if (isAddress()) hash="";
     if (isReference()) hash="#";
-    if (isHi)
+    if (isHi==1)
         return hash + Util::numToHex((int)m_val>>8);
-    else
+    if (isHi==0)
         return hash + Util::numToHex(((int)m_val)&0xFF);
+    if (isHi==2)
+        return hash + Util::numToHex((int)m_val>>16);
+
+    return 0;
 }
-
-
 
 
 

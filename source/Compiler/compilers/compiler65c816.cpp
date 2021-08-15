@@ -80,6 +80,8 @@ void Compiler65C816::Connect()
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         m_assembler->StartMemoryBlock("0");
         m_assembler->IncludeFile(":resources/code/mega65/init.asm");
+
+
     }
 
     m_assembler->Connect();

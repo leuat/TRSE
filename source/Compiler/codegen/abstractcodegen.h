@@ -220,7 +220,7 @@ public:
 
     QString getValue(QSharedPointer<Node> n);
 
-    QString getValue8bit(QSharedPointer<Node> n, bool isHi);
+    QString getValue8bit(QSharedPointer<Node> n, int isHi);
 
 public:
 signals:

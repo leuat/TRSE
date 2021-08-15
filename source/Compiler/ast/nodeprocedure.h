@@ -55,7 +55,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     QString getValue(Assembler* as) override;
-    QString getValue8bit(Assembler* as, bool isHi) override;
+    QString getValue8bit(Assembler* as, int isHi) override;
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));

@@ -50,10 +50,12 @@ QString NodeProcedure::getValue(Assembler *as)
 
 }
 
-QString NodeProcedure::getValue8bit(Assembler *as, bool isHi)
+QString NodeProcedure::getValue8bit(Assembler *as,  int isHi)
 {
     QString v = "<";
-    if (isHi) v=">";
+    if (isHi==1) v=">";
+    if (isHi==2) v="^";
+
     if (m_op.m_isReference)
         return v+"#" + m_procedure->m_procName;
     else

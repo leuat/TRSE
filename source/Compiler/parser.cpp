@@ -4548,12 +4548,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     }
 
-    if (m_currentToken.m_type == TokenType::POINTER) {
+    if (m_currentToken.m_type == TokenType::POINTER || m_currentToken.m_type == TokenType::LPOINTER) {
         if (m_isRecord && !Syntax::s.m_currentSystem->AllowPointerInStructs() && !m_inProcedureVariableDecl)
             ErrorHandler::e.Error("You cannot declare pointers in records/classes on this CPU type. Please use an integer to store the address instead, and assign a pointer to it when required.  ",m_currentToken.m_lineNumber);
 //        QString type;
+        bool isLPointer = m_currentToken.m_type == TokenType::LPOINTER;
         Eat();
-
+        t.m_type = TokenType::POINTER;
+        t.m_value = "POINTER";
         QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,""));
         nvt->m_arrayVarType.m_type = TokenType::BYTE;
 
@@ -4580,6 +4582,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 //            Eat();
 
         }
+        if (isLPointer)
+            nvt->m_flags<<"lpointer";
 
 //        qDebug() <<"Parser typespec pointer: "  << nvt->m_arrayVarType.getType();
         nvt->VerifyFlags(isInProcedure);

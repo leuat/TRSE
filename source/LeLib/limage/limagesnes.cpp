@@ -218,14 +218,14 @@ void LImageSNES::ExportBin(QFile &file)
     auto keep = m_footer.get(LImageFooter::POS_DISPLAY_CHAR);
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     QByteArray data;
-    data.resize(m_height*m_width/8*nobp);
-    data.fill(0);
     int noBanksToExport = fmin(m_exportParams["End"],m_banks.count());
     auto qi = m_qImage;
     for (int bank=0;bank<noBanksToExport;bank++)
     {
         SetBank(bank);
         int curBit = 0;
+        data.resize(m_height*m_width/8*nobp);
+        data.fill(0);
         int idx = 0;
         int planes[8] = {0,1,3,2,4,5,6,7};
         for (int y=0;y<m_height;y+=8) {
@@ -254,8 +254,9 @@ void LImageSNES::ExportBin(QFile &file)
 
             }
         }
+        file.write(data);
+
     }
-    file.write(data);
     m_qImage = qi;
     int type = m_exportParams["export1"];
     QByteArray cData;
@@ -291,6 +292,7 @@ void LImageSNES::SetPalette(int pal)
         m_colorList.setPen(i,(uchar)m_colorList.m_nesPPU[pal*noCol +i]);
         //   qDebug() << " NEW ** " <<Util::numToHex((uchar)m_colorList.m_nesPPU[pal*noCol +i]);
     }
+    m_colorList.m_curPal = pal;
     m_firstIgnoreDone = true;
  //   qDebug() << Util::numToHex(m_colorList.m_nesPPU[4*2]);
 

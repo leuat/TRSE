@@ -180,6 +180,10 @@ bool Node::isSigned(Assembler *as) {
     return isSigned;
 }
 
+bool Node::hasFlag(Assembler *as, QString flag) {
+    return false;
+}
+
 void Node::setReference(bool ref) {
     m_op.m_isReference = ref;
     if (m_left!=nullptr)

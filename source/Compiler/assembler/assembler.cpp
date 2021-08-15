@@ -198,8 +198,6 @@ void Assembler::EndMemoryBlock() {
 
 void Assembler::SortAppendix()
 {
-    /*   for (int i=0;i<m_appendix.count();i++)
-        qDebug() << "appos:" << m_appendix[i].m_pos;*/
 std::sort(m_appendix.begin(), m_appendix.end(), caseInsensitiveLessThan);
 }
 
@@ -540,7 +538,6 @@ void Assembler::Connect()
 
 
     if (m_mainBlock==nullptr) {
-
         QStringList newSource;
         for (int i=0;i<m_varDeclEndsLineNumber;i++) {
             newSource<<m_source[i];
@@ -570,6 +567,17 @@ void Assembler::Connect()
 
     //  qDebug() << m_appendix[0].m_source;
     QStringList pre;
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+        for (int i=0;i<m_appendix.count();i++) {
+            //                qDebug() << (m_appendix[i].m_pos);
+            pre << m_appendix[i]->m_source;
+
+        }
+
+    }
+    else
+
     for (int i=0;i<m_appendix.count();i++) {
         //                qDebug() << (m_appendix[i].m_pos);
         if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
