@@ -55,5 +55,5 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/MEGA65/Tutorials/
-open_files = ,easy/14_fullscreen_scroller.ras, easy/07_rasters.ras, easy/01_hello_world.asm, easy/01_hello_world.ras
-current_file = easy/14_fullscreen_scroller.ras
+open_files = ,easy/01_hello_world.asm, easy/01_hello_world.ras
+current_file = easy/01_hello_world.ras
