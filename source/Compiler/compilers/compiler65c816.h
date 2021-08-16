@@ -14,7 +14,7 @@ public:
     };
 
     void InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) override;
-    //void Init6502Assembler() override;
+    void Init6502Assembler() override;
 
     void Connect() override;
 

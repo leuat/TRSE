@@ -16,7 +16,7 @@ void Compiler65C816::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> s
 
 
 }
-/*
+
 void Compiler65C816::Init6502Assembler()
 {
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
@@ -64,7 +64,7 @@ void Compiler65C816::Init6502Assembler()
     if (Syntax::s.m_currentSystem->isCustom())
         Syntax::s.m_ignoreSys = true;
 }
-*/
+
 void Compiler65C816::Connect()
 {
 //    m_assembler->EndMemoryBlock();
