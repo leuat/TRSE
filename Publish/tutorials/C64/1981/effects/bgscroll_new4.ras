@@ -171,6 +171,10 @@ end;
 
 @endblock
 
+procedure UpdateSprites();
+procedure UpdateSpriteColors();
+
+
 procedure UpdateColors();
 
 begin
@@ -185,9 +189,6 @@ begin
 end;
 
 
-
-procedure UpdateSprites();
-procedure UpdateSpriteColors();
 
 interrupt Raster();
 begin
@@ -281,6 +282,12 @@ begin
 //	clearscreen($15,^$4400);
 
 end;
+
+
+
+
+
+
 @startblock $CC00 "Extra code"
 var 
 	int:integer;

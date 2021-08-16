@@ -16,7 +16,7 @@ void Compiler65C816::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> s
 
 
 }
-
+/*
 void Compiler65C816::Init6502Assembler()
 {
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
@@ -34,10 +34,6 @@ void Compiler65C816::Init6502Assembler()
     m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
     m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
 
-/*    qDebug() << m_projectIni->contains("ignore_initial_jump");
-    for (CItem i : m_projectIni->items)
-        qDebug() << i.name;
-*/
     m_assembler->m_ignoreInitialJump = m_projectIni->getdouble("ignore_initial_jump")==1.0;
 
 
@@ -64,8 +60,11 @@ void Compiler65C816::Init6502Assembler()
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
         Syntax::s.m_ignoreSys = true;
 
-}
 
+    if (Syntax::s.m_currentSystem->isCustom())
+        Syntax::s.m_ignoreSys = true;
+}
+*/
 void Compiler65C816::Connect()
 {
 //    m_assembler->EndMemoryBlock();
@@ -80,8 +79,6 @@ void Compiler65C816::Connect()
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         m_assembler->StartMemoryBlock("0");
         m_assembler->IncludeFile(":resources/code/mega65/init.asm");
-
-
     }
 
     m_assembler->Connect();

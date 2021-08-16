@@ -26,36 +26,7 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     }
     else if (m_settingsIni->getString("assembler").toLower()=="orgasm") {
 
-        m_orgAsm = QSharedPointer<Orgasm>(new Orgasm());
-
-        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
-           m_orgAsm->m_cpuFlavor = Orgasm::CPUFLAVOR_GS4510;
-
-        emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
-        connect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
-        if (symTab!=nullptr) {
-            m_orgAsm->SetupConstants(symTab);
-            m_orgAsm->m_extraSymbols = symTab->m_extraAtSymbols;
-            m_orgAsm->m_extraMonCommands = symTab->m_extraMonCommands;
-        }
-        m_orgAsm->Assemble(filename+".asm", filename+".prg");
-
-        disconnect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
-        output = m_orgAsm->m_output;
-        if (m_orgAsm->m_hasOverlappingError) {
-            output = m_orgAsm->error.msg;
-            output +="<br><br>Line "+QString::number(m_orgAsm->error.oline.m_lineNumber+1)+ " in " +"<font color=\"orange\">"+filename+" :</font> "" : " +m_orgAsm->error.oline.m_orgLine;
-            m_orgOutput = output;
-            text="<font color=\"#FF6040\">Fatal error during OrgAsm assembly!</font><br>";
-            text+=output;
-            m_buildSuccess = false;
-            return;
-
-        }
-
-        m_addresses = m_orgAsm->m_lineAddress;
-        if (m_projectIni->getdouble("output_debug_symbols")==1.0)
-            m_orgAsm->SaveSymbolsList(filename+".sym");
+        AssembleOrgasm(output,text,filename,currentDir,symTab);
 
 
     }

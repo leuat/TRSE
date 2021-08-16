@@ -288,6 +288,13 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
 
 #endif
+    // Custom must be at last, since it overwrites parameters
+    if (Syntax::s.m_currentSystem->isCustom()) {
+        emu = m_projectIniFile->getString("custom_system_emulator");
+    }
+
+
+
     if (!QFile::exists(emu)) {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
         ui->txtOutput->setText("Could not find the emulator for system '" + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system) + "'\nMake sure you have set a correct path in the TRSE settings!\n\n"+
@@ -343,7 +350,13 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
     }
 
-
+    // override custom system params
+    if (Syntax::s.m_currentSystem->isCustom()) {
+        QString p = m_projectIniFile->getString("custom_system_emulator_parameters").trimmed().simplified().replace("@prg",Util::getFileWithoutEnding(fileName));
+        params = p.split(" ");
+        process.setWorkingDirectory(QFileInfo(emu).path());
+        QDir::setCurrent(QFileInfo(emu).path());
+    }
 
     process.waitForFinished();
     QString orgDir = QDir::currentPath();
@@ -372,8 +385,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
         process.setProgram(emu);
         process.startDetached();
     }
-    else
+    else {
+ //       qDebug() <<emu<<params;
         process.startDetached(emu, params);
+    }
 
     //    qDebug() << emu << params;
     //    qDebug() << "FormRasEditor params" << emu << params;
@@ -390,7 +405,8 @@ void FormRasEditor::ExecutePrg(QString fileName)
     //qDebug() << params;
 #endif
     //    process.pi
-    QString output(process.readAllStandardOutput());
+    QString output(process.readAllStandardOutput()+process.readAllStandardError());
+//    qDebug() <<output;
     QDir::setCurrent(orgDir);
     //    process.waitForFinished();
 }
@@ -720,6 +736,9 @@ void FormRasEditor::Run()
         filename = base + ".gb";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
         filename = base + ".bin";
+    if (Syntax::s.m_currentSystem->isCustom())
+        filename = base + "."+m_projectIniFile->getString("custom_system_ending");
+
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
         if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu"))
             filename = base + ".bin";

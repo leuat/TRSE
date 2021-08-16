@@ -9,6 +9,7 @@
 #include "source/Compiler/symboltable.h"
 #include <QSharedPointer>
 
+
 class OrgasmData {
 public:
     enum PassType { PASS_LABELS, PASS_SYMBOLS, PASS_COMPILE };

@@ -54,6 +54,3 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/MEGA65/Tutorials/
-open_files = ,easy/01_hello_world.asm, easy/01_hello_world.ras
-current_file = easy/01_hello_world.ras

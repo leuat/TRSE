@@ -26,6 +26,7 @@
 #include "systemoric.h"
 #include "systemsnes.h"
 #include "systemmega65.h"
+#include "systemcustom.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

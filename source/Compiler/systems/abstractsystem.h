@@ -50,6 +50,7 @@ public:
     QString m_renamedVariablePrefix = "varPrefixed_";
     QElapsedTimer timer;
     QString m_orgOutput;
+    QString m_alternateMethods="";
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     bool m_canRunAsmFiles = false;
@@ -118,7 +119,7 @@ public:
     static void InitLabelColors();
  //   virtual bool hasFixedProgramAddress() {return true;}
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02};
 
     static QString StringFromProcessor(Processor s) {
@@ -133,19 +134,9 @@ public:
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return "";
     }
+    static Processor ProcessorFromString(QString s);
     virtual bool CL65Syntax() {return false;}
-    static QString StringFromProcessor(QString s) {
-        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII" || s=="ORIC") return "MOS6502";
-        if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
-        if (s == "X86") return "PX86";
-        if (s == "M1ARM") return "ARM";
-        if (s == "GAMEBOY") return "GBZ80";
-        if (s == "SNES") return "WDC65C816";
-        if (s == "MEGA65") return "WDC65C02";
-        if (s == "AMSTRADCPC" || s == "TIKI100" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
-        qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
-        return "";
-    }
+    static QString StringFromProcessor(QString s);
 
 
 
@@ -167,11 +158,14 @@ public:
 
     static QString StringFromSystem(System s);
 
-    bool isWDC65() {
-        return m_processor==WDC65C816;
-    }
+    bool isWDC65();
 
 
+    void AssembleOrgasm(QString& output,QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab);
+    void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
+    void AssembleCL65(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, QString ending, QStringList params);
+
+    virtual bool isCustom() { return false; }
     System m_system = C64;
     Processor m_processor = MOS6502;
 

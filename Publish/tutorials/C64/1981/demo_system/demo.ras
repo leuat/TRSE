@@ -413,8 +413,8 @@ begin
 
 			ClearOut();
 //			inc(clearcnt);
-			waitforraster(0);
-			waitforraster(240);
+//			waitforverticalblank();
+//			waitforraster(240);
 		end;
 	
 	end;

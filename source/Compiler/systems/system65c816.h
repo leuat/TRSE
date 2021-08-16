@@ -18,7 +18,6 @@ public:
 
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
-    void AssembleCL65(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab, QString ending, QStringList params);
     virtual void PostProcess(QString& text, QString file, QString currentDir) override;
 
     virtual bool CL65Syntax() override {return true;}

@@ -19,8 +19,6 @@ public:
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
     // Generic post processing
     virtual void PostProcess(QString& text, QString file, QString currentDir) override;
-    // Assembles using Zorgasm only
-    virtual void AssembleZOrgasm(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
     // Perform assembling of 1 file - using either orgasm or pasmo
     void PerformAssembling(QString filename, QString &text,QString currentDir, QSharedPointer<SymbolTable> symTab);
 

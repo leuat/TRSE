@@ -72,7 +72,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>8</number>
+          <number>9</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -618,6 +618,226 @@
            </layout>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab_13">
+          <attribute name="title">
+           <string>Custom</string>
+          </attribute>
+          <widget class="QWidget" name="gridLayoutWidget_8">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>10</y>
+             <width>751</width>
+             <height>176</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_18">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_36">
+              <property name="text">
+               <string>CPU:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QComboBox" name="cmbCustomAssembler">
+              <item>
+               <property name="text">
+                <string>From System</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Custom</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_41">
+              <property name="text">
+               <string>Emulator:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_37">
+              <property name="text">
+               <string>Built-in methods based on:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="cmbCustomMethods">
+              <item>
+               <property name="text">
+                <string>C64</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>VIC20</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>SNES</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>NES</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>GAMEBOY</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>AMSTRADCPC</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>MEGA65</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>OK64</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>PET</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>X16</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ATARI512ST</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>AMIGA</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>X86</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>BBCM</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ATARI2600</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <widget class="QLineEdit" name="leCustomAssemblerParameters"/>
+            </item>
+            <item row="4" column="2">
+             <widget class="QLabel" name="label_42">
+              <property name="text">
+               <string>Emulator parameters:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLabel" name="label_40">
+              <property name="text">
+               <string>Assembler parameters:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="leCustomAssembler"/>
+            </item>
+            <item row="4" column="3">
+             <widget class="QLineEdit" name="leCustomEmulatorParameters"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_39">
+              <property name="text">
+               <string>Custom assembler (if not from system)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="cmbCustomCPU">
+              <item>
+               <property name="text">
+                <string>6502</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>65C816</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>65C02</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Z80</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>GBZ80</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>X86</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>M68000</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_38">
+              <property name="text">
+               <string>Assembler:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="leCustomEmulator"/>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_43">
+              <property name="text">
+               <string>Output filename ending:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="leCustomEnding"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </widget>
         <widget class="QWidget" name="gridLayoutWidget_7">
          <property name="geometry">
@@ -754,6 +974,11 @@
             <item>
              <property name="text">
               <string>M1ARM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>CUSTOM</string>
              </property>
             </item>
            </widget>

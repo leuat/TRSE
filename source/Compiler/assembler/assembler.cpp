@@ -61,6 +61,11 @@ void Assembler::Write(QString str, int level)
 {
 //    qDebug() << "ASM : " <<str;
     str = str.replace(" g_global_"," ");
+/*    if (m_currentBlock == nullptr)
+        m_currentBlock = m_mainBlock;*/
+//   if (m_currentBlock!=nullptr)
+  //      m_currentBlock->m_source<<(";Writing to block: "+m_currentBlock->m_pos);
+
     if (m_currentBlock==nullptr) {
 
         QString s ="";
@@ -141,7 +146,7 @@ void Assembler::StartMemoryBlock(QString pos) {
         if (app->m_pos == pos)
         {
             m_currentBlock = app;
-            m_blockStack.append(m_currentBlock);
+//            m_blockStack.append(m_currentBlock);
 //            qDebug() << "LAST : " <<m_source.l
             if (m_currentBlock->m_source.last().toLower().startsWith("endblock"))
                 m_currentBlock->m_source.removeLast();
@@ -172,7 +177,9 @@ void Assembler::StartMemoryBlock(QString pos) {
 
 void Assembler::EndMemoryBlock() {
     //        qDebug() << "Trying to end memory block.. ";
-    Comment("Ending memory block");
+    if (m_currentBlock!=nullptr)
+        Comment("Ending memory block at "+m_currentBlock->m_pos);
+
     if (m_currentBlock!=nullptr && m_currentBlock->m_extraOutput == false) {
 //        Label("EndBlock"+QString::number(m_currentBlock->m_id));
         QString s = m_currentBlock->m_pos;
@@ -181,15 +188,23 @@ void Assembler::EndMemoryBlock() {
         m_currentBlock->m_extraOutput = true;
 
     }
-    m_currentBlock=nullptr;
-
+    m_currentBlock = nullptr;
+    /*    m_currentBlock=nullptr;
+    Comment("Mainblock: "+QString::number(m_mainBlock==nullptr));
+    if (m_mainBlock!=nullptr)
+        Comment("Mainblock number: "+m_mainBlock->m_pos);
+*/
     if (m_blockStack.count()>0)
         m_blockStack.removeLast();
 
     if (m_blockStack.count()!=0) {
         m_currentBlock = m_blockStack.last();
-        // qDebug() << "STILL STACK : " << m_blockStack.count();
+        // qDebug() << "STILL STACK : " << m_blockStack.count() <<m_currentBlock->m_pos;
     }
+    if (m_currentBlock==nullptr)
+        m_currentBlock = m_mainBlock;
+
+    m_currentBlock = m_mainBlock;
   //  if (m_currentBlock!=nullptr)
     //    qDebug() << "AT END: " << m_blockStack.count() << m_currentBlock->m_pos;;
 //    else m_currentBlock = nullptr;
@@ -562,12 +577,15 @@ void Assembler::Connect()
 
     }
 
+//        qDebug() << m_mainBlock->m_source;
+
     //    m_appendix.append(m_ extraBlocks);
     SortAppendix();
 
     //  qDebug() << m_appendix[0].m_source;
     QStringList pre;
 
+ //   qDebug() <<m_source;
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         for (int i=0;i<m_appendix.count();i++) {
             //                qDebug() << (m_appendix[i].m_pos);
@@ -579,28 +597,33 @@ void Assembler::Connect()
     else
 
     for (int i=0;i<m_appendix.count();i++) {
-        //                qDebug() << (m_appendix[i].m_pos);
-        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
+     //   qDebug() << "*************"<<m_appendix[i]->m_pos <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
+   //     qDebug() << m_appendix[i]->m_source;
+        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress+0x20)
             pre <<m_appendix[i]->m_source;
-        else m_source << m_appendix[i]->m_source;
+        else
+            m_source << m_appendix[i]->m_source;
 
     }
+
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
         m_source = QStringList() << " processor 6502" <<pre << m_source;
     else
         m_source = QStringList() << pre << m_source;
+
+
+
+//    qDebug() << "************************** "<<(m_appendix[i]->m_pos);
+
+//    m_source=m_startInsertAssembler+m_source;
 
     m_source.removeAll("");
     for (QString& l: m_source)
         l.replace("+#$","+$");
     // Delete appendix
     //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
-    /*    for (QSharedPointer<Appendix> a: m_appendix)
-        delete a;*/
-    //   m_appendix.clear();
-    /*    for (Appendix* a: m_blockStack)
-        delete a;
-    m_blockStack.clear();*/
+
+
 }
 
 

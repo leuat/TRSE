@@ -59,6 +59,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemOric(settings, proj);
     if (type==AbstractSystem::SNES)
         return new SystemSNES(settings, proj);
+    if (type==AbstractSystem::CUSTOM)
+        return new SystemCustom(settings, proj);
 
 
     return s;

@@ -173,6 +173,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systematari800.cpp \
     source/Compiler/systems/systembbcm.cpp \
     source/Compiler/systems/systemcoleco.cpp \
+    source/Compiler/systems/systemcustom.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemm1arm.cpp \
     source/Compiler/systems/systemmega65.cpp \
@@ -425,6 +426,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systematari800.h \
     source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systemcoleco.h \
+    source/Compiler/systems/systemcustom.h \
     source/Compiler/systems/systemgameboy.h \
     source/Compiler/systems/systemm1arm.h \
     source/Compiler/systems/systemmega65.h \

@@ -45,6 +45,7 @@ void DialogProjectSettings::on_btnClose_clicked()
 
 void DialogProjectSettings::FillFromIni()
 {
+
     ui->leZeropageScreenMemory->setText(m_ini->getString("zeropage_screenmemory"));
     ui->leZeropageColorMemory->setText(m_ini->getString("zeropage_colormemory"));
 
@@ -177,6 +178,19 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leBackgroundColor->setText(QString::number(m_ini->getdouble("background_color")));
     ui->leBorderColor->setText(QString::number(m_ini->getdouble("border_color")));
+
+
+    ui->cmbCustomCPU->setCurrentText(m_ini->getString("custom_system_cpu"));
+    ui->cmbCustomMethods->setCurrentText(m_ini->getString("custom_system_methods"));
+    ui->cmbCustomAssembler->setCurrentText(m_ini->getString("custom_system_assembler"));
+    ui->leCustomAssembler->setText(m_ini->getString("custom_system_assembler_custom"));
+    ui->leCustomEmulator->setText(m_ini->getString("custom_system_emulator"));
+    ui->leCustomEmulatorParameters->setText(m_ini->getString("custom_system_emulator_parameters"));
+    ui->leCustomAssemblerParameters->setText(m_ini->getString("custom_system_assembler_parameters"));
+    ui->leCustomEnding->setText(m_ini->getString("custom_system_ending"));
+
+    on_cmbSystem_currentIndexChanged(ui->cmbSystem->currentIndex());
+
 }
 
 void DialogProjectSettings::FillToIni()
@@ -199,6 +213,17 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("zeropage_decrunch2", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp2->text())));
     m_ini->setString("zeropage_decrunch3", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp3->text())));
     m_ini->setString("zeropage_decrunch4", Util::numToHex(Util::NumberFromStringHex(ui->leDecrunchZp4->text())));
+
+
+    m_ini->setString("custom_system_cpu",ui->cmbCustomCPU->currentText());
+    m_ini->setString("custom_system_methods",ui->cmbCustomMethods->currentText());
+    m_ini->setString("custom_system_assembler",ui->cmbCustomAssembler->currentText());
+    m_ini->setString("custom_system_assembler_custom",ui->leCustomAssembler->text());
+    m_ini->setString("custom_system_emulator",ui->leCustomEmulator->text());
+    m_ini->setString("custom_system_emulator_parameters",ui->leCustomEmulatorParameters->text());
+    m_ini->setString("custom_system_assembler_parameters",ui->leCustomAssemblerParameters->text());
+    m_ini->setString("custom_system_ending",ui->leCustomEnding->text());
+
 
 
     m_ini->setString("petmodel", ui->cbmPetSystem->currentText());
@@ -378,6 +403,8 @@ void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
         ui->tabConfigs->setCurrentIndex(6);
     if (index==9)
         ui->tabConfigs->setCurrentIndex(8);
+    if (index==25)
+        ui->tabConfigs->setCurrentIndex(9);
 
     UpdateSystem();
 /*    if (index==7)

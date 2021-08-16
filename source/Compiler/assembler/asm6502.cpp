@@ -127,6 +127,7 @@ void Asm6502::InitCStrings()
 void Asm6502::Program(QString programName, QString vicConfig)
 {
 
+    m_source+=m_startInsertAssembler;
 
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::BBCM) {
@@ -135,12 +136,11 @@ void Asm6502::Program(QString programName, QString vicConfig)
         StartMemoryBlock(org);
         m_currentBlock->m_isMainBlock = true;
         m_mainBlock = m_currentBlock;
-        m_source+=m_startInsertAssembler;
-        return;
+       return;
     }
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
-        m_source+=m_startInsertAssembler;
+    //    m_source+=m_startInsertAssembler;
         Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
 
@@ -152,10 +152,10 @@ void Asm6502::Program(QString programName, QString vicConfig)
 
     Nl();
 
+//    qDebug() << "IGNORE SYS : "<<Syntax::s.m_ignoreSys<<Syntax::s.m_currentSystem->m_programStartAddress;
 
     QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
     StartMemoryBlock(org);
-
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
@@ -199,13 +199,15 @@ void Asm6502::Program(QString programName, QString vicConfig)
             */
             Nl();
             }
+
         EndMemoryBlock();
-  //      Comment("End of SYS memory block, starting new");
+//        Comment("End of SYS memory block, starting new");
         StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+  //      Comment("Start of MAIN BLOCK");
     }
     m_currentBlock->m_isMainBlock = true;
     m_mainBlock = m_currentBlock;
-    m_source+=m_startInsertAssembler;
+//    m_source+=m_startInsertAssembler;
 //    Asm("test");
 
     Label(programName);
