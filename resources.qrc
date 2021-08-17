@@ -638,5 +638,6 @@
         <file>resources/code/mega65/config.cfg</file>
         <file>resources/images/tutorials/cat.png</file>
         <file>resources/images/help_icon.png</file>
+        <file>resources/text/help/p/rtf_files.rtf</file>
     </qresource>
 </RCC>
