@@ -96,6 +96,11 @@ unsigned int LImageLevelSNES::getPixel(int x, int y)
     int ly = 16/cy;
     int xx = (((x%lx))/(float)(lx))*m_charset->m_width;
     int yy = (((y%ly))/(float)(ly))*m_charset->m_height;
+    auto ch = dynamic_cast<LImageMetaChunk*>(m_charset);
+    if (ch!=nullptr) {
+        ch->m_current = pos;
+    }
+//    m_charset->m_currentChar = pos;
 //    qDebug() <<m_charset->m_colorList.m_bpp.x();
     return m_charset->getPixel(xx,yy)+col*pow(2,m_charset->m_colorList.m_bpp.x());
 

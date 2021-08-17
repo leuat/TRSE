@@ -46,6 +46,7 @@
 #include "source/trsedocuments/formraseditor.h"
 #include "source/trsedocuments/formimageeditor.h"
 #include "source/trsedocuments/formfjong.h"
+#include "source/trsedocuments/formrtf.h"
 #include "source/trsedocuments/formpaw.h"
 #include "source/trsedocuments/formhexedit.h"
 #include "source/trsedocuments/formttredit.h"
@@ -193,9 +194,9 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt";
-    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt";
-
+    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf";
+    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt"<<"*.rtf";
+    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf";
     TRSEDocument* m_currentDoc = nullptr;
 
     void LoadIniFile();

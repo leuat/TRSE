@@ -668,6 +668,9 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     if (fileName.contains(".fjo")) {
         editor = new FormFjong(this);
     }
+    if (fileName.contains(".rtf")) {
+        editor = new FormRTF(this);
+    }
     if (fileName.contains(".paw")  ) {
         editor = new FormPaw(this);
     }
@@ -1123,6 +1126,11 @@ void MainWindow::setupIcons()
     m_fileColors["sid"] = QColor(c1,c1,c3);
 
 
+    img.load(":resources/images/help_icon.png");
+    m_icons["rtf"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["rtf"] = QColor(c1,c2,c3);
+
+
     m_fileColors["dir"] = QColor(c2,c2,c2);
 
 
@@ -1542,7 +1550,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt"<<"*.rtf";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
@@ -1602,13 +1610,18 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
         return;
     }
 
-    if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
+
+/*    if (file.toLower().endsWith(".tru") || file.toLower().endsWith(".ras") || file.toLower().endsWith(".asm")
             || file.toLower().endsWith(".inc") || file.toLower().endsWith(".flf")
             || file.toLower().endsWith(".paw") || file.toLower().endsWith(".fjo")
-        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid")|| file.toLower().endsWith(".trt") ) {
+        || file.toLower().endsWith(".bin_c") || file.toLower().endsWith(".bin") || file.toLower().endsWith(".prg") || file.toLower().endsWith(".sid")|| file.toLower().endsWith(".trt")) {
+*/
+        bool ok=false;
+        for (QString& tst:allowedOpenExtensions)
+            if (file.toLower().endsWith(tst)) ok=true;
 
-        LoadDocument(path + file);
-    }
+        if (ok)
+            LoadDocument(path + file);
 
     Data::data.Redraw();
     Data::data.forceRedraw = true;

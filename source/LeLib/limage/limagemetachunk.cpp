@@ -14,6 +14,9 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     if (t==LColorList::NES) {
         m_img = new LImageNES(t);
     }
+    if (t==LColorList::SNES) {
+        m_img = new LImageSNES(t);
+    }
     m_type = LImage::Type::LMetaChunk;
     if (m_img!=nullptr) {
         m_colorList.m_type = m_img->m_colorList.m_type;

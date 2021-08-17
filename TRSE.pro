@@ -29,7 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-#ARCH = arm64
+ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -247,6 +247,7 @@ SOURCES += main.cpp\
     source/toolboxitem.cpp \
     source/trsedocuments/dialogcustomwarning.cpp \
     source/trsedocuments/formhexedit.cpp \
+    source/trsedocuments/formrtf.cpp \
     source/trsedocuments/formttredit.cpp \
     source/trsedocuments/helpdocumentbuilder.cpp \
     source/trsedocuments/ttrview.cpp \
@@ -502,6 +503,7 @@ HEADERS  += mainwindow.h \
     source/toolboxitem.h \
     source/trsedocuments/dialogcustomwarning.h \
     source/trsedocuments/formhexedit.h \
+    source/trsedocuments/formrtf.h \
     source/trsedocuments/formttredit.h \
     source/trsedocuments/helpdocumentbuilder.h \
     source/trsedocuments/ttrview.h \
@@ -648,6 +650,7 @@ FORMS    += mainwindow.ui \
     source/formhelp.ui \
     source/trsedocuments/dialogcustomwarning.ui \
     source/trsedocuments/formhexedit.ui \
+    source/trsedocuments/formrtf.ui \
     source/trsedocuments/formttredit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
