@@ -2376,7 +2376,7 @@ void FormImageEditor::on_btnPalette_clicked()
 */
 void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
 {
-    if (!m_work.m_currentImage->m_image->isNes())
+    if (!m_work.m_currentImage->m_image->isNes() && !m_work.m_currentImage->m_image->isSnes() )
         return;
     if (ui->cmbNesPalette->count()==0)
         return;

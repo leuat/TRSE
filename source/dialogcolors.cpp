@@ -62,7 +62,14 @@ void DialogColors::setColor(int cc, int ty) {
 void DialogColors::on_pushButton_clicked()
 {
     //m_org->m_list = m_lst->m_list;
-    m_org->CopyFrom(m_lst);
+//    m_org->CopyFrom(m_lst);
+    // WTF? Why does everything crash if you change color 0?
+    for (int i=1;i<m_org->m_list.count();i++) {
+//        qDebug() << m_org->m_list[i].color<<m_lst->m_list[i].color;
+        m_img->m_colorList.m_list[i].color = m_lst->m_list[i].color;
+
+    }
+//    m_org->m_list = m_lst->m_list;
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES ) {
         m_org->setNoBitplanes(m_lst->m_bpp.x());
     }

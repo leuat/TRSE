@@ -222,6 +222,9 @@ public:
 
     QString getValue8bit(QSharedPointer<Node> n, int isHi);
 
+    virtual void Disable16bit() {}
+    virtual void Enable16bit() {}
+
 public:
 signals:
     void EmitTick(QString val);

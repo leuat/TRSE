@@ -620,6 +620,8 @@ void Assembler::Connect()
     m_source.removeAll("");
     for (QString& l: m_source)
         l.replace("+#$","+$");
+    for (QString& l: m_source)
+        l.replace("+ #$","+ $");
     // Delete appendix
     //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
 

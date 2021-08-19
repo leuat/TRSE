@@ -101,12 +101,20 @@ public:
 
    void SetPalette(int pal) override;
 
+   QStringList getPaletteNames() override;
+
+
 
    unsigned int getPixel(int x, int y) override;
 
    virtual bool isNes() override {
        if (m_charset!=nullptr)
            return m_charset->isNes();
+       return false;
+   }
+   virtual bool isSnes() override {
+       if (m_charset!=nullptr)
+           return m_charset->isSnes();
        return false;
    }
 

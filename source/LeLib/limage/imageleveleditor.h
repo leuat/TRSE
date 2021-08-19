@@ -229,6 +229,11 @@ public:
             return m_charset->isNes();
         return false;
     }
+    virtual bool isSnes() override {
+        if (m_charset!=nullptr)
+            return m_charset->isSnes();
+        return false;
+    }
 
     void SetColor(uchar col, uchar idx) override;
     void Clear(int val) override;

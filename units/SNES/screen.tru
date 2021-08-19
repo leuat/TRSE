@@ -3,7 +3,8 @@ var
 	
 	defaultPalette:array[256] of integer = BuildTable("(i%32)+((i/32)%32)<<5 +((i/(32*32))%32)<<10");
 //	palette:array[256] of integer = BuildTable("");
-	zp,p1:pointer;
+	p1:pointer;
+	zp:lpointer;
 	zi : pointer of integer;
 	i1,i2,i3:integer;
 	x,y,i,j,att,id,xx,yy,w,h,l,dx,dy,flip : byte;
@@ -33,7 +34,9 @@ var
 	const BG_64X32: byte=%01;
 	const BG_32X64: byte=%10;
 	const BG_64X64: byte=%11;
-	
+
+
+	sprites : array[128*4] of byte at $1E00;	
 	
 	@donotremove id
 	@donotremove i1
@@ -98,7 +101,7 @@ begin
 end;
 
 
-procedure CopyToVRAM(zp:global pointer;i1,i2 : global integer);
+procedure CopyToVRAM(zp:global lpointer;i1,i2 : global integer);
 begin
 	asm("
    ; Load character set into VRAM
@@ -113,10 +116,10 @@ _topp:
    ldy #0
 @charset_loop:
    
-   lda (Screen_zp),y
+   lda [Screen_zp],y
    sta VMDATAH ; color index high bit set -> neutral red (2)
    iny
-   lda (Screen_zp),y
+   lda [Screen_zp],y
    sta VMDATAL ; color index low bit = 0
    iny
    cpy Screen_i2
@@ -431,6 +434,13 @@ begin
 	");
 end;
 
+procedure SetVRAMDataPosition(x:global byte;i1,i2:global integer);
+begin
+	y:=(hi(i1)>>4) | (hi(i2)&$F0);
+	
+	poke(^$210B,x,y);
+
+end;
 
 procedure SetGraphicsMode(y:global byte;i1:global integer);
 begin
@@ -538,6 +548,22 @@ begin
 		sta OAMADDH
 	");
 end;
+
+procedure CopySprites();
+begin
+	asm("
+		stz OAMADDL
+		stz OAMADDH
+		ldx #0
+copysprites_loop:
+		lda 	Screen_sprites,x
+        sta OAMDATA
+		inx
+		cpx #128*4
+		bne copysprites_loop		
+	");	
+end;
+
 /**
 
 Put sprite x at xx,yy with tile id with width,height =w,h and attribute att
@@ -548,12 +574,77 @@ Attribute: vhoopppc
 
 **/
 
+procedure HideSprite(x,w,h:global byte);
+begin
+	p1:=#sprites + x<<2;
+	for j:=0 to h do
+	begin
+		for i:=0 to w do
+		begin
+			p1[0]:=100;
+			p1[1]:=248;	
+			p1+=4;		
+		end;
+	end;
+	
+end;
+
+
+procedure PutSprite(x,xx,yy, w,h, id,att,flip:global byte);
+begin
+	p1:=#sprites + x<<2;
+	if (flip=1) then
+	begin
+		att:=att|%01000000;	
+		
+	for j:=0 to h do
+	begin
+		dx:=xx+w<<2-1;
+		for i:=0 to w do
+		begin
+			p1[0]:=dx;
+			p1[1]:=yy;
+			p1[2]:=id;
+			p1[3]:=att;
+			dx-=8;
+			id+=1;
+			p1+=4;
+		end;
+		yy+=8;
+		id:=id+16-w;//Move to next row
+	end;
+	return;		
+	end;
+	
+	
+	for j:=0 to h do
+	begin
+		dx:=xx;
+		for i:=0 to w do
+		begin
+			p1[0]:=dx;
+			p1[1]:=yy;
+			p1[2]:=id;
+			p1[3]:=att;
+			p1+=4;
+			dx+=8;
+			id+=1;
+		end;
+		yy+=8;
+		id:=id+16-w;//Move to next row
+	end;
+end;
+
+
+
+/*
 procedure PutSprite(x,xx,yy, w,h, id,att,flip:global byte);
 begin
 	PointToSprite(x);
 	if (flip=1) then
 	begin
 		att:=att|%01000000;	
+		
 	for j:=0 to h do
 	begin
 		dx:=xx+w<<2-1;
@@ -577,7 +668,7 @@ begin
 		yy+=8;
 		id:=id+16-w;//Move to next row
 	end;
-		
+	return;		
 	end;
 	
 	
@@ -606,8 +697,7 @@ begin
 	end;
 end;
 
-
-
+*/
 
 	
 end.

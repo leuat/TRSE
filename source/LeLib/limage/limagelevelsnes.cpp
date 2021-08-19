@@ -67,7 +67,7 @@ unsigned int LImageLevelSNES::getPixel(int x, int y)
     if (m_charset==nullptr)
         return 0;
 
-
+    m_charset->m_returnActualColor = false;
     int pos;
     if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return 0; // out of bounds

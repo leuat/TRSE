@@ -1638,6 +1638,7 @@ void Methods6502::InitEightBitMul(Assembler *as)
     QString l = as->NewLabel("multiply_eightbit");
 //    as->Asm("jmp " + l);
   //  as->Label("multiplier .byte 0");
+    m_codeGen->Disable16bit();
     as->Label("multiplier = " + as->m_internalZP[0]);
     as->Label("multiplier_a = " + as->m_internalZP[1]);
     as->Label("multiply_eightbit");
@@ -1664,6 +1665,7 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Label("mul_end");
     as->Asm("txa");
 //    as->Asm("ldy #0");
+    m_codeGen->Enable16bit();
     as->Asm("rts");
 
 
@@ -5386,7 +5388,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Label("mul16x8_num2 = " + as->m_internalZP[2]);
 
     as->Label("mul16x8_procedure");
-
+//    m_codeGen->Disable16bit();
     as->Asm("lda #$00");
     as->Asm("ldy #$00");
 //    as->Asm("tay");
@@ -5410,6 +5412,8 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Asm("lsr mul16x8_num2");
     as->Asm("bcs mul16x8_doAdd");
     as->Asm("bne mul16x8_loop");
+
+  //  m_codeGen->Enable16bit();
   //  as->Asm("rts");
 
 //    as->Label("mul16x8_def_end");
@@ -6621,12 +6625,14 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 */
 
     QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
-
     if (node->isPureNumeric() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
+        m_codeGen->Disable16bit();
         as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
         as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
+        m_codeGen->Enable16bit();
         return;
     }
+    m_codeGen->Disable16bit();
 
     if (qSharedPointerDynamicCast<NodeVar>(node)!=nullptr ||
         qSharedPointerDynamicCast<NodeNumber>(node)!=nullptr) {
@@ -6660,6 +6666,9 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
     }
     else
         m_node->m_params[paramNo]->Accept(m_codeGen);
+
+    m_codeGen->Enable16bit();
+
 
 }
 

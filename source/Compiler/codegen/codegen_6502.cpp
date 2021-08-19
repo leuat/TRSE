@@ -113,6 +113,7 @@ void CodeGen6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->Label(lblword);
     as->Asm("sta "+lbl);
     as->Comment("High-bit binop");
+    Disable16bit();
     as->Asm("tya");
 
     //    as->BinOP(m_op.m_type);
@@ -126,6 +127,7 @@ void CodeGen6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->Asm("tay");
     as->Asm("lda "+lbl);
 
+    Enable16bit();
 
     as->PopLabel("wordAdd");
 
@@ -366,7 +368,6 @@ void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
         as->Comment("Swapping nodes :  num * expr -> exp*num (mul only)");
     }
 
-
     if (node->m_right->isPureNumeric())  {
         as->Comment("Right is PURE NUMERIC : Is word ="+ QString::number(node->isWord(as)) );
         //qDebug() << "IS PURE NUMERIC";
@@ -377,18 +378,24 @@ void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
         return;
     }
     if (node->m_op.m_type==TokenType::MUL) {
+        Disable16bit();
+
         if (node->isWord(as))
             Mul16x8(node);
         else
             EightBitMul(node);
+        Enable16bit();
         return;
     }
     if (node->m_op.m_type==TokenType::DIV) {
+        Disable16bit();
+
         if (node->isWord(as))
             Div16x8(node);
         //                ErrorHandler::e.Error("16 bit div not implemented",m_op.m_lineNumber);
         else
             RightIsPureNumericMulDiv8bit(node);
+        Enable16bit();
         return;
     }
     ErrorHandler::e.Error("Binary operation / not implemented for this type yet...");
@@ -533,6 +540,7 @@ void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
 void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
+//    Disable16bit();
     if (node->m_left->isWord(as)) {
 
         LoadVariable(node->m_left);
@@ -558,11 +566,13 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     as->Term();
     as->Asm("sta mul16x8_num2");
     as->Asm("jsr mul16x8_procedure");
+  //  Enable16bit();
 
 }
 
 void CodeGen6502::Div16x8(QSharedPointer<Node> node) {
     as->Comment("16x8 div");
+    Disable16bit();
     as->Asm("ldy #0");
     node->m_left->Accept(this);
     as->Term();
@@ -577,6 +587,7 @@ void CodeGen6502::Div16x8(QSharedPointer<Node> node) {
     as->Asm("lda initdiv16x8_dividend");
     as->Asm("ldy initdiv16x8_dividend+1");
 
+    Enable16bit();
 }
 
 
@@ -1044,7 +1055,9 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
 void CodeGen6502::Disable16bit()
 {
     if (Syntax::s.m_currentSystem->isWDC65()) {
-        as->Asm("sep #$10        ; disable X/Y 16-bit");
+//        if (block16bit==0)
+            as->Asm("sep #$10        ; disable X/Y 16-bit");
+        block16bit++;
     }
 
 }
@@ -1052,7 +1065,9 @@ void CodeGen6502::Disable16bit()
 void CodeGen6502::Enable16bit()
 {
     if (Syntax::s.m_currentSystem->isWDC65()) {
-        as->Asm("rep #$10        ; enable X/Y 16-bit");
+  //      if (block16bit==1)
+            as->Asm("rep #$10        ; enable X/Y 16-bit");
+        block16bit--;
     }
 
 }
@@ -1745,11 +1760,15 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
         if (((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN || node->isReference())  && as->m_term=="")) {
             if (!node->isPointer(as)) {
             as->Asm("lda #<" + val);
+            Disable16bit();
             as->Asm("ldy #>" + val);
+            Enable16bit();
             }
             else {
                 as->Asm("lda " + val);
+                Disable16bit();
                 as->Asm("ldy " + val + "+1");
+                Enable16bit();
 
             }
             return;
@@ -1982,7 +2001,9 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
 void CodeGen6502::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
     as->Asm("lda #<"+node->m_procedure->m_procName);
+    Disable16bit();
     as->Asm("ldy #>"+node->m_procedure->m_procName);
+    Enable16bit();
 }
 
 
@@ -2016,8 +2037,11 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
             }
             else {
                 as->Asm("sta " + getValue(node) + "+"+ getValue(node->m_expr));
-                if (node->m_writeType==TokenType::INTEGER)
+                if (node->m_writeType==TokenType::INTEGER) {
+                    Disable16bit();
                     as->Asm("sty " + getValue(node) + "+"+ getValue(node->m_expr)+"+1");
+                    Enable16bit();
+                }
             }
             //                as->Asm("tya");
             return;
@@ -2121,7 +2145,6 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
         return;
     }
     else {
-        // Not array
         if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
 
             as->Asm("sta " + getValue(node));
@@ -2134,7 +2157,7 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
             return;
         }
         else
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER) {
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
             as->Asm("sta " + getValue(node));
             Disable16bit();
 

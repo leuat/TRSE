@@ -53,7 +53,7 @@ public:
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
 
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
-
+    int block16bit=0;
 
 
 
@@ -123,8 +123,8 @@ public:
 
     void BuildToCmp(QSharedPointer<Node> node);
 
-    void Disable16bit();
-    void Enable16bit();
+    void Disable16bit() override;
+    void Enable16bit() override;
 
 
 //    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);

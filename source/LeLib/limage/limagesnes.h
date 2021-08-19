@@ -33,8 +33,10 @@ public:
 
     void ReInitialize() override;
     void SetPalette(int pal) override;
-    virtual bool isNes() override {return true;}
+    virtual bool isNes() override;
+    virtual bool isSnes() override;
     QStringList getPaletteNames() override;
+    QString GetCurrentDataString() override;
 
 };
 

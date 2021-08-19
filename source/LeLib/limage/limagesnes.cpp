@@ -299,6 +299,10 @@ void LImageSNES::SetPalette(int pal)
 
 }
 
+bool LImageSNES::isNes() {return false;}
+
+bool LImageSNES::isSnes() {return true;}
+
 QStringList LImageSNES::getPaletteNames() {
     QStringList lst;
     int noCol = pow(2,m_colorList.m_bpp.x());
@@ -307,6 +311,11 @@ QStringList LImageSNES::getPaletteNames() {
         lst<<("Palette "+QString::number(i));
     return lst;
 
+}
+
+QString LImageSNES::GetCurrentDataString() {
+    char chr = m_currentChar;
+    return "  Character : " + QString(chr) + "  "+ Util::numToHex(m_currentChar) + " (" + QString::number(m_currentChar)+ ")";
 }
 
 

@@ -132,7 +132,8 @@ public:
 
 
     virtual bool isNes() {return false;}
-
+    virtual bool isSnes() {return false;}
+    bool m_returnActualColor = true;
     QVector<MetaParameter*> m_metaParams;
     MetaParameter* getMetaParameter(QString name);
     virtual QString getMetaInfo() { return "";}

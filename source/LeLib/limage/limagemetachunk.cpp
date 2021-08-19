@@ -27,8 +27,9 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
 
     m_supports.displayBank = true;
 
-    if (isNes())
+    if (isNes() || isSnes())
         m_charWidthDisplay = 16;
+
     else m_charWidthDisplay = 40;
 
     m_gridWidthDisplay = m_charWidthDisplay;
@@ -161,7 +162,7 @@ void LImageMetaChunk::LoadCharset(QString file, int skipBytes)
         nes->m_double = false;
 
     m_charsetFilename = file;
-    if (isNes())
+    if (isNes() || isSnes())
         m_charWidthDisplay = 16;
     else m_charWidthDisplay = 40;
 
@@ -177,7 +178,17 @@ void LImageMetaChunk::InitPens()
 
 void LImageMetaChunk::SetPalette(int pal)
 {
+    if (m_charset==nullptr)
+        return;
     m_charset->SetPalette(pal);
+//    m_colorList.CopyFrom(&m_charset->m_colorList);
+}
+
+QStringList LImageMetaChunk::getPaletteNames() {
+    if (m_charset==nullptr)
+        return LImage::getPaletteNames();
+
+    return m_charset->getPaletteNames();
 }
 
 void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
@@ -209,13 +220,22 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
 
     if (isNes())
         yy=yy+ 16*8*m_footer.get(LImageFooter::POS_CURRENT_BANK);
+    if (isSnes())
+        yy=yy+ 16*16*m_footer.get(LImageFooter::POS_CURRENT_BANK);
 
     m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
 //    qDebug() << xx << yy
-    if (m_charset==nullptr) {
-        return 0;
+
+    unsigned int col = 0;
+    col = m_charset->getPixel(xx,yy);
+//    if (isNes())
+    if (isSnes() && m_returnActualColor)
+    {
+        unsigned int pen = m_charset->getPixel(xx,yy);// % 16;
+        col = m_charset->m_colorList.getPen(pen);
+
     }
-    else return m_charset->getPixel(xx,yy);
+    return col;
 
 }
 
