@@ -73,5 +73,5 @@ data_header_resources/gfx/tiles.flf = 0
 data_header_resources/gfx/text_tiles.flf = 0
 data_header_resources/gfx/sprites.flf = 0
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/SNES/tutorials/
-open_files = ,01_tiles.asm, 01_tiles.ras
-current_file = 03_music.ras
+open_files = ,04_input.ras, [ext]units/SNES/screen.tru, 02_sprites.asm, 02_sprites.ras, 05_levels.ras, 06_levels_and_sprites.ras, 03_music.ras, 01_tiles.asm, 01_tiles.ras
+current_file = 01_tiles.ras

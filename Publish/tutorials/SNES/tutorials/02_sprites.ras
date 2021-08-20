@@ -2,7 +2,7 @@ program Tutorial1;
 @use "screen"
 var
 // Sprites are alwyas 16-colour. Export them automatically!	
-@export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 256
+@export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 1
 
 // Sprite data
 	sprites1 : incbin("resources/gfx/sprites.bin");
@@ -22,13 +22,11 @@ begin
 	// Put sprites at VRAM = 0
 	Screen::CopyToVRAM(#sprites1,$0000,128*128/2);
 	// Turn on sprites
-	Screen::EnableGFX(Screen::ENABLE_SPRITES);// 01 = BG1	
+	Screen::EnableGFX(Screen::ENABLE_SPRITES);
 	// Turn on display
 	Screen::EnableDisplay();
  	while (true) offpage do
  	begin
-	 	Screen::WaitForVerticalBlank();
-		// Put the sprite on screen
 		
 		Screen::PutSprite(0, // Sprite number (in VRAM)
 				sin256[0-i]+60,sin256[i+64]+30,  // x,y
@@ -38,6 +36,10 @@ begin
 				0);  // Sprite horizontal flip. Not implemented yet.
 			
 		i+=1;		
+		Screen::WaitForVerticalBlank();
+		Screen::CopySprites(4); // copy 4 sprites
+		// Put the sprite on screen
+
 		
  	end;
 	

@@ -156,6 +156,7 @@ public:
    CharsetImage* getCharset() override { return (CharsetImage*)m_charset; }
 
 
+
     unsigned int getCharPixel(int pos,  int pal,int x, int y) override;
 
 

@@ -3,7 +3,7 @@ program Tutorial1;
 @use "input"
 var
 // Sprites are alwyas 16-colour. Export them automatically!	
-@export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 256
+@export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 1
 
 // Sprite data
 	sprites1 : incbin("resources/gfx/sprites.bin");
@@ -38,7 +38,8 @@ begin
  	while (true) offpage do
  	begin
 	 	Screen::WaitForVerticalBlank();
-		// Put the sprite on screen
+		Screen::CopySprites(4); // copy 4 sprites
+// Put the sprite on screen
 		
 		Input::Read();
 		curSprite:=0;

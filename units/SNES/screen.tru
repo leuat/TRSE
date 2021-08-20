@@ -549,8 +549,9 @@ begin
 	");
 end;
 
-procedure CopySprites();
+procedure CopySprites(i1:global integer);
 begin
+	i1:=i1*4;
 	asm("
 		stz OAMADDL
 		stz OAMADDH
@@ -559,7 +560,7 @@ copysprites_loop:
 		lda 	Screen_sprites,x
         sta OAMDATA
 		inx
-		cpx #128*4
+		cpx Screen_i1
 		bne copysprites_loop		
 	");	
 end;

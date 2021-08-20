@@ -9,6 +9,10 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     m_width = 256;
     m_height = 256;
     m_supports.displayColors = false;
+    m_GUIParams[btnFlipH] = "Paint mirror X";
+    m_GUIParams[btnFlipV] = "Paint mirror Y";
+
+
 
     Initialize(m_width,m_height);
     if (t==LColorList::NES) {
@@ -66,7 +70,7 @@ LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
     m_GUIParams[tabSprites] ="Metachunks";
 
     m_updateCharsetPosition = false;
-    m_supports.displayCharOperations = false;
+    m_supports.displayCharOperations = true;
 
 
 }
@@ -195,6 +199,8 @@ void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getPos(x,y);
     ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currentChar,m_img->m_bitMask);
+    if (isSnes())
+        ((LMetaChunkItem*)m_items[m_current])->setPixelAttrib(p.x(),p.y(),m_currentAttribute,m_img->m_bitMask);
 
 }
 
@@ -204,6 +210,7 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     if (m_charset==nullptr)
         return 0;
 
+
     QPoint p = getPos(x,y);
 //    qDebug() << p;
     if (m_current>=m_items.count())
@@ -211,9 +218,21 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
 
 
     uchar val = ((LMetaChunkItem*)m_items[m_current])->getPixel(p.x(),p.y(),m_img->m_bitMask);
+    uchar attrib = ((LMetaChunkItem*)m_items[m_current])->getPixelAttrib(p.x(),p.y(),m_img->m_bitMask);
 
     int xp = x/(float)m_width*m_pixelWidth*getCur()->m_width;
     int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;
+
+
+
+    if  ((attrib&0b01000000) == 0b01000000) {
+        xp = m_pixelWidth-1-xp%m_pixelWidth; // Flip
+    }
+    if  ((attrib&0b10000000) == 0b10000000) {
+        yp = m_pixelHeight-1-yp%m_pixelHeight; // Flip
+    }
+
+
 
     int xx = ((val%m_charWidthDisplay)*m_pixelWidth) + xp%m_pixelWidth;
     int yy = ((val/(int)m_charWidthDisplay)*m_pixelHeight)  +yp%m_pixelHeight;
@@ -250,6 +269,7 @@ void LImageMetaChunk::SaveBin(QFile &file)
         file.write( ( char * )( &w ),  1 );
         file.write( ( char * )( &h ),  1 );
         file.write(m->m_data);
+        file.write(m->m_attributes);
     }
     AppendSaveBinCharsetFilename(file);
 }
@@ -267,6 +287,7 @@ void LImageMetaChunk::LoadBin(QFile &file)
   //      qDebug() << "W read : " << QString::number(w);
         AddNew(w,h);
         getCur()->m_data = file.read(w*h);
+        getCur()->m_attributes = file.read(w*h);
     }
     LoadBinCharsetFilename(file);
 }
@@ -334,11 +355,14 @@ void LImageMetaChunk::AddNew(int w, int h)
 
 void LImageMetaChunk::FlipHorizontal()
 {
-
+    if (isSnes())
+        m_currentAttribute = Util::flipBit(m_currentAttribute,6);
 }
 
 void LImageMetaChunk::FlipVertical()
 {
+    if (isSnes())
+        m_currentAttribute = Util::flipBit(m_currentAttribute,7);
 
 }
 
@@ -427,6 +451,7 @@ void LImageMetaChunk::ExportBin(QFile &file)
     for (LImageContainerItem* li : m_items) {
         LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
         file.write(m->m_data);
+        file.write(m->m_attributes);
     }
 }
 

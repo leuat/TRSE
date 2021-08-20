@@ -57,19 +57,19 @@ var
 					
 					x:=zp[0];					
 					
-					p2:=p1+(x<<2);
+					p2:=p1+(x<<3);
 					
 					
 					y:=zp[1] | $20;					
 					Screen::MoveToXY(xx+0,yy+0,i1);
-					poke(^$2119,0,Levels::y);
+					poke(^$2119,0,Levels::y|Levels::p2[4]);
 					poke(^$2118,0,Levels::p2[0]);
-					poke(^$2119,0,Levels::y);
+					poke(^$2119,0,Levels::y|Levels::p2[5]);
 					poke(^$2118,0,Levels::p2[1]);
 					Screen::MoveToXY(xx+0,yy+1, i1);
-					poke(^$2119,0,Levels::y);
+					poke(^$2119,0,Levels::y|Levels::p2[6]);
 					poke(^$2118,0,Levels::p2[2]);
-					poke(^$2119,0,Levels::y);
+					poke(^$2119,0,Levels::y|Levels::p2[7]);
 					poke(^$2118,0,Levels::p2[3]);
 					zp+=2;
 					xx+=2;					
