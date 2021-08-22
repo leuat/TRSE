@@ -416,8 +416,38 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
     if (m_symTab->m_records.contains(type)) {
         if (m_symTab->m_records[type]->m_isClass)
             return false;
+
+
+
+
+        // We have data!
+        QVector<QString> splitData;
+        if (data.count()!=0) {
+            int i=0;
+            QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+            auto cnt = st->m_orderedByDefinition.count();
+            splitData.resize(cnt);
+            for (int k=0;k<st->m_orderedByDefinition.count();k++) {
+                QString v = st->m_orderedByDefinition[k];
+                for (int k=0;k<count;k++) {
+                    int pt = k*cnt+i; // Lookup in data
+                    if (pt<data.count())
+                        splitData[i]+=data[pt]+",";
+                    else
+                        splitData[i]+="$00,";
+
+
+                }
+                if (splitData[i].endsWith(","))
+                    splitData[i].remove(splitData[i].length()-1,1);
+                i+=1;
+            }
+        }
+
         if (pos!="") {
             int p = Util::NumberFromStringHex(pos);
+            if (splitData.count()!=0)
+                ErrorHandler::e.Error("Cannot initialise record data for '"+name+"' when placed at a specific memory location ("+pos+")");
 
             QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
             for (QString v : st->m_orderedByDefinition) {
@@ -452,7 +482,10 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
 
         //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
-        for (QSharedPointer<Symbol> s : st->m_symbols) {
+        int curData=0;
+        for (int k=0;k<st->m_orderedByDefinition.count();k++) {
+            QString v = st->m_orderedByDefinition[k];
+            auto s = st->m_symbols[v];
 //            qDebug() << "WTF " <<s->m_name <<s->m_type;
             // Build the name
             QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
@@ -465,24 +498,31 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             if (s->m_type.toLower()=="long")
                 t= llong;
 
-            w = w+ "\t"+t + "\t0";
-
-
-            //if (s->m_type.toLower()=="integer")
-            //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
             if (s->m_type.toLower()=="string")
-                ErrorHandler::e.Error("Record types does not support strings (yet) for record : " + type);
-            Write(w);
-            int scale = 1;
+                ErrorHandler::e.Error("Record types does not support strings for record : " + type+", please use classes instead.");
 
-            QString bytes = "";
-            for (int i=0;i<count-1;i++)
-                bytes+="0,";
-            bytes.remove(bytes.count()-1,1);
-            if (count!=1)
-                Asm("    "+t+" "+bytes);
+            // Fill in data
+            if (curData<splitData.count()) {
+                Write(getLabelEnding(w)+"\t"+t+"\t"+splitData[curData]);
+
+            }
+            else {
+                w = w+ "\t"+t + "\t0";
+                //if (s->m_type.toLower()=="integer")
+                //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+                Write(w);
+                int scale = 1;
+
+                // Pad with zeros
+                QString bytes = "";
+                for (int i=0;i<count-1;i++)
+                    bytes+="0,";
+                bytes.remove(bytes.count()-1,1);
+                if (count!=1)
+                    Asm("    "+t+" "+bytes);
+            }
             //                Asm("org "+n+"+" +QString::number(count*scale));
-
+            curData++;
         }
         //    if (pos!="")
         //      EndMemoryBlock();

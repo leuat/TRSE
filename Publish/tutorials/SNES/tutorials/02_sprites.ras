@@ -1,5 +1,6 @@
 program Tutorial1;
 @use "screen"
+@use "memory"
 var
 // Sprites are alwyas 16-colour. Export them automatically!	
 @export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 1
@@ -25,6 +26,7 @@ begin
 	Screen::EnableGFX(Screen::ENABLE_SPRITES);
 	// Turn on display
 	Screen::EnableDisplay();
+	fill(#Screen::sprites,0,255);
  	while (true) offpage do
  	begin
 		
@@ -37,8 +39,8 @@ begin
 			
 		i+=1;		
 		Screen::WaitForVerticalBlank();
-		Screen::CopySprites(4); // copy 4 sprites
-		// Put the sprite on screen
+		// Copy on vblank		
+		Screen::CopySprites(4);
 
 		
  	end;

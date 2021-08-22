@@ -49,6 +49,8 @@ var
 procedure SetPalette(zp:global pointer;x:global byte;i1:global integer);
 begin
 	asm("
+   lda #$20
+   sta VMAIN   ; VRAM stride of 1 word
 
    lda Screen_x   
    sta CGADD ; start with color 0 (background)
@@ -99,9 +101,7 @@ begin
 	");	
 	
 end;
-
-
-procedure CopyToVRAM(zp:global lpointer;i1,i2 : global integer);
+procedure CopyToVRAMNoDMA(zp:global lpointer;i1,i2 : global integer);
 begin
 	asm("
    ; Load character set into VRAM
@@ -126,8 +126,38 @@ _topp:
    bne @charset_loop
 	
    ");
-
 	
+end;
+
+
+procedure CopyToVRAM(zp:global lpointer;i1,i2 : global integer);
+begin
+	asm("
+   lda #$80
+   sta VMAIN   ; VRAM stride of 1 word
+   
+        ldx Screen_i1
+        stx $2116 ; vram address
+        lda #1
+        sta $4300 ; transfer mode, 2 registers 1 write
+                          ; $2118 and $2119 are a pair Low/High
+        lda #$18  ; $2118
+        sta $4301 ; destination, vram data
+        ldx Screen_zp
+        stx $4302 ; source
+        lda Screen_zp+2
+        sta $4304 ; bank
+        ldx Screen_i2
+        stx $4305 ; length
+        lda #1
+        sta $420b ; start dma, channel 0
+        
+   lda #$20
+   sta VMAIN   ; VRAM stride of 1 word
+	");
+	
+	
+
 end;
 
 
@@ -216,6 +246,9 @@ begin
    ; enable NMI for Vertical Blank
    lda #$81
    sta NMITIMEN
+
+   lda #$20
+   sta VMAIN   ; VRAM stride of 1 word
    
 	");
 /*
@@ -552,7 +585,7 @@ end;
 procedure CopySprites(i1:global integer);
 begin
 	i1:=i1*4;
-	asm("
+/*	asm("
 		stz OAMADDL
 		stz OAMADDH
 		ldx #0
@@ -562,7 +595,27 @@ copysprites_loop:
 		inx
 		cpx Screen_i1
 		bne copysprites_loop		
-	");	
+	");	*/
+	
+	asm("
+        ; use constants to access arguments on stack with Direct Addressing
+
+        ; set up DMA channel 0 to transfer data to OAMRAM
+        lda #%00000010          ; set DMA channel 0
+        sta $4300 
+        lda #$04                ; set destination to OAMDATA
+        sta $4301    
+        ldx #$1E00 ; MirrorAddr          ; get address of OAMRAM mirror
+        stx $4302                ; set low and high byte of address 
+        stz $4304                ; set bank to zero, since the mirror is in WRAM
+        ldx Screen_i1              ; set the number of bytes to transfer 
+        stx $4305 
+
+        lda #$01                ; start DMA transfer 
+        sta MDMAEN
+
+        ; OAMRAM update is done, restore frame and stack pointer
+	");
 end;
 
 /**

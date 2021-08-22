@@ -227,7 +227,13 @@ void LImageSNES::ExportBin(QFile &file)
         data.resize(m_height*m_width/8*nobp);
         data.fill(0);
         int idx = 0;
-        int planes[8] = {0,1,3,2,4,5,6,7};
+        // 0123
+        // 2301
+        // 0132
+        // 0231
+        // 0213
+        // 0321
+        int planes[4] = {1,0,2,3};
         for (int y=0;y<m_height;y+=8) {
             for (int x=0;x<m_width;x+=8) {
                 for (int split = 0;split<nobp/2;split++) {
