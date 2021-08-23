@@ -1451,6 +1451,9 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     int stepValue = 1; // do we have a step value?
     if (step != nullptr) {
         stepValue = step->getValueAsInt(as); //node->m_step->getValue(as);
+        if (stepValue>127)
+            stepValue=-(256-stepValue);
+
         if (stepValue==0)
             stepValue =1;
     }
@@ -1467,7 +1470,6 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
 
         }
         else {
-
             // LargeLoops needs checking
             if (stepValue > 0) {
                 as->Asm("bcc "+loopDone); // or FOR index > TO value
