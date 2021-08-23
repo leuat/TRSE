@@ -44,6 +44,7 @@ public:
     bool m_isMainBlock = false;
     bool m_isProcedure = false;
     QString m_forceInterupt = "";
+    QString m_initCode = "";
 
 
     NodeBlock(Token t, QVector<QSharedPointer<Node>> decl, QSharedPointer<Node> comp, bool useOwnSymTab = true):Node() {

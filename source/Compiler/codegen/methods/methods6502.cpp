@@ -192,7 +192,7 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
 
     if (Command("ReturnValue")) {
         LoadVar(as,0);
-        as->Asm("rts");
+        as->Asm(m_codeGen->getReturn());
     }
 
     if (Command("ToggleSpriteTableAddress"))
@@ -1220,7 +1220,7 @@ void Methods6502::Modulo16(Assembler *as)
             as->Asm("ldy #0 ; force 16-bit");
             as->Asm("sty "+as->m_internalZP[1]+"+1");
         }
-        as->Asm("jsr divide16x8");
+        as->Asm(m_codeGen->getCallSubroutine()+" divide16x8");
         as->Asm("lda "+as->m_internalZP[2]);
         as->Asm("ldy "+as->m_internalZP[2]+"+1");
         return;
@@ -1424,7 +1424,7 @@ void Methods6502::Rand(Assembler* as)
 void Methods6502::Random(Assembler* as)
 {
     VerifyInitialized("random","InitRandom256");
-    as->Asm("jsr Random");
+    as->Asm(m_codeGen->getCallSubroutine()+" Random");
     //SaveVar(as,2);
 }
 
@@ -1642,6 +1642,7 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Label("multiplier = " + as->m_internalZP[0]);
     as->Label("multiplier_a = " + as->m_internalZP[1]);
     as->Label("multiply_eightbit");
+    as->Asm(m_codeGen->getInitProcedure());
     as->Asm("cpx #$00");
     as->Asm("beq mul_end");
     as->Asm("dex");
@@ -1661,12 +1662,12 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Asm("dex");
     as->Asm("bne mul_loop");
     as->Asm("ldx multiplier");
-    as->Asm("rts");
+    as->Asm(m_codeGen->getReturn());
     as->Label("mul_end");
     as->Asm("txa");
 //    as->Asm("ldy #0");
     m_codeGen->Enable16bit();
-    as->Asm("rts");
+    as->Asm(m_codeGen->getReturn());
 
 
 
@@ -3820,7 +3821,7 @@ void Methods6502::Sqrt(Assembler *as)
         as->Asm("sty " + as->m_internalZP[1]);
 
     }
-    as->Asm("jsr sqrt16_init");
+    as->Asm(m_codeGen->getCallSubroutine()+" sqrt16_init");
     as->Asm("lda " +as->m_internalZP[0]);
 
 }
@@ -4484,7 +4485,7 @@ void Methods6502::Atan2(Assembler *as)
 //      as->Asm("pha");
 //      m_node->m_params[1]->Build(as);
   //    as->Term();
-      as->Asm("jsr atan2_call");
+      as->Asm(m_codeGen->getCallSubroutine()+" atan2_call");
 }
 
 void Methods6502::CopyCharsetFromRom(Assembler *as)
@@ -5263,12 +5264,15 @@ void Methods6502::InitDiv16x8(Assembler *as)
 //    as->Asm("jmp div16x8_def_end");
     if (m_initDiv16x8_initialised)
         return;
+
     as->Label("initdiv16x8_divisor = "+as->m_internalZP[0]+"     ;$59 used for hi-byte");   //0
     as->Label("initdiv16x8_dividend = "+as->m_internalZP[1]+"	  ;$fc used for hi-byte");    //1
     as->Label("initdiv16x8_remainder = "+as->m_internalZP[2]+"	  ;$fe used for hi-byte");  // 2
     as->Label("initdiv16x8_result = "+as->m_internalZP[1]+" ;save memory by reusing divident to store the result");
 
-    as->Label("divide16x8:	lda #0	        ;preset remainder to 0");
+    as->Label("divide16x8");
+    as->Asm(m_codeGen->getInitProcedure());
+    as->Asm("lda #0	        ;preset remainder to 0");
     as->Asm("sta initdiv16x8_remainder");
     as->Asm("sta initdiv16x8_remainder+1");
     as->Asm("ldx #16	        ;repeat for each bit: ...");
@@ -5388,6 +5392,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Label("mul16x8_num2 = " + as->m_internalZP[2]);
 
     as->Label("mul16x8_procedure");
+    as->Asm(m_codeGen->getInitProcedure());;
 //    m_codeGen->Disable16bit();
     as->Asm("lda #$00");
     as->Asm("ldy #$00");
@@ -5412,7 +5417,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Asm("lsr mul16x8_num2");
     as->Asm("bcs mul16x8_doAdd");
     as->Asm("bne mul16x8_loop");
-
+//    as->Asm(m_codeGen->ProcedureEndWithoutReturn());
   //  m_codeGen->Enable16bit();
   //  as->Asm("rts");
 
@@ -5922,7 +5927,7 @@ void Methods6502::Decrunch(Assembler *as)
     as->Asm("sta opbase+1");
     as->Asm("lda #" + QString::number(((int)num->m_val>>8)&0xFF));
     as->Asm("sta opbase+2");
-    as->Asm("jsr exod_decrunch");
+    as->Asm(m_codeGen->getCallSubroutine()+" exod_decrunch");
     return;
     }
 
@@ -5946,7 +5951,7 @@ void Methods6502::Decrunch(Assembler *as)
         as->Asm("sta opbase+1");
         as->Asm("lda #" + QString::number(((int)pos>>8)&0xFF));
         as->Asm("sta opbase+2");
-        as->Asm("jsr exod_decrunch");
+        as->Asm(m_codeGen->getCallSubroutine()+" exod_decrunch");
 }
 
 void Methods6502::DecrunchFromIndex(Assembler *as)
@@ -5967,7 +5972,7 @@ void Methods6502::DecrunchFromIndex(Assembler *as)
 //    as->Term(",x",true);
     as->Asm("lda " + m_node->m_params[0]->getAddress()+",x");
     as->Asm("sta opbase+2");
-    as->Asm("jsr exod_decrunch");
+    as->Asm(m_codeGen->getCallSubroutine()+" exod_decrunch");
 
 }
 
@@ -6632,19 +6637,19 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         m_codeGen->Enable16bit();
         return;
     }
-    m_codeGen->Disable16bit();
+    bool disable16bit = true;
+    if (lda=="ldx" || lda=="ldy" || (node->getType(as)==TokenType::POINTER && nodevar->m_expr==nullptr) || reg!="")
+        disable16bit = true;
+
+
 
     if (qSharedPointerDynamicCast<NodeVar>(node)!=nullptr ||
         qSharedPointerDynamicCast<NodeNumber>(node)!=nullptr) {
 
+        if (disable16bit)
+            m_codeGen->Disable16bit();
 
-/*        if (node->isWord(as)) {
-//            qDebug() << "HERE BALLE" << node->getValue(as);
-//            node->Accept(m_codeGen);
- //           as->Term();
-            return;
-        }
-*/
+
         as->ClearTerm();
         if (lda=="")
             as->Term("lda ");
@@ -6663,11 +6668,13 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
             as->Asm("ldy " + node->getValue(as)+"+1");
         }
 
+        if (disable16bit)
+            m_codeGen->Enable16bit();
+
+
     }
     else
         m_node->m_params[paramNo]->Accept(m_codeGen);
-
-    m_codeGen->Enable16bit();
 
 
 }

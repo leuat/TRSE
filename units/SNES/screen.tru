@@ -8,8 +8,8 @@ var
 	zi : pointer of integer;
 	i1,i2,i3:integer;
 	x,y,i,j,att,id,xx,yy,w,h,l,dx,dy,flip : byte;
-	quadrant: array[4] of integer=buildtable("i*32*32");
-	tab32 : array[32] of integer=buildtable("i*32");
+	quadrant: array[4] of integer=buildtable(" i*32*32 ");
+	tab32 : array[32] of integer = buildtable(" i*32 ");
 	tabPointer:pointer of integer;
 	const BG1:address=$1000;
 	const BG2:address=$1400;
@@ -46,7 +46,7 @@ var
 	
 	**/
 	
-procedure SetPalette(zp:global pointer;x:global byte;i1:global integer);
+procedure SetPalette(zp:global lpointer;x:global byte;i1:global integer);
 begin
 	asm("
    lda #$20
@@ -56,10 +56,10 @@ begin
    sta CGADD ; start with color 0 (background)
    ldy #0
 @loop:
-   lda (Screen_zp),y
+   lda [Screen_zp],y
    sta CGDATA
    iny
-   lda (Screen_zp),y
+   lda [Screen_zp],y
    sta CGDATA
 
    iny
@@ -364,6 +364,8 @@ begin
 	   plx
 	   pla
 	   pld
+	   
+	   plb
 	return_int:
 	");
 end;	
@@ -371,7 +373,6 @@ end;
 
 procedure MoveToXY(x,y,i1:global integer);
 begin
-	// quadrant
 	i:=0;
 	if (x>31) then 
 	begin 
@@ -470,7 +471,10 @@ end;
 procedure SetVRAMDataPosition(x:global byte;i1,i2:global integer);
 begin
 	y:=(hi(i1)>>4) | (hi(i2)&$F0);
-	
+/*	asm("
+		lda Screen_y
+		sta $210B+1	
+	");	*/
 	poke(^$210B,x,y);
 
 end;

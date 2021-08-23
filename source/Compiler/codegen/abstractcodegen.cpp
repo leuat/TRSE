@@ -123,6 +123,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
     if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
         as->IncludeFile(":resources/code/nes_init.asm");
 
+    as->Asm(node->m_initCode);
 
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
@@ -729,6 +730,19 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     int ln = node->m_currentLineNumber;
 //    LineNumber(ln+1);
+    bool isInbank = false;
+    auto orgBank = as->m_currentBlock;
+    if (node->m_flags.contains("bank")) {
+        QString bnk = node->m_flags[node->m_flags.indexOf("bank")+1];//Banks always placed +1
+        isInbank = true;
+        if (!as->m_banks.contains(bnk)) {
+            as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
+//            as->m_banks[bnk]->m_pos = "$4000";
+            as->m_banks[bnk]->m_isMainBlock = false;
+        }
+        as->m_currentBlock = as->m_banks[bnk];
+        m_isFarAway = true;
+    }
 
     if (UseBlocks()) {
         as->Comment("NodeProcedureDecl "+ QString::number(node->m_blockInfo.m_blockID));
@@ -780,12 +794,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 
 
-
     if (node->m_block!=nullptr) {
         QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
         if (b!=nullptr) {
             b->forceLabel=node->m_procName;
             b->m_isProcedure = true;
+            b->m_initCode = getInitProcedure();
         }
         node->m_block->Accept(this);
     }
@@ -814,6 +828,11 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
 
     as->m_symTab->ExitProcedureScope(false);
+
+    if (isInbank) {
+        as->m_currentBlock = orgBank;
+        m_isFarAway = false;
+    }
     //  as->PopCounter(ln);
 }
 

@@ -3591,8 +3591,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
             ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer' and 'long'",t->m_op.m_lineNumber);
         }
     }
-
-
+    QStringList flags = getFlags();
     Eat(TokenType::SEMI);
     QSharedPointer<Node> block = nullptr;
     QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
@@ -3601,6 +3600,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     procDecl->m_isInline = isInline;
     procDecl->m_isRecursive = isRecursive;
     procDecl->m_isFunction = isFunction;
+    procDecl->m_flags = flags;
     AppendComment(procDecl);
 
     if (m_procedures[procName]!=nullptr) {

@@ -25,7 +25,9 @@ var
 
 begin
 	// Initialses the SNES
+
 	Screen::Init();
+	
 	// Copies the palette to VRAM
 	Screen::SetPalette(#palette_tiles,0,$100);
 	// Sets mode 1, points all background VRAM to the same address. 
@@ -50,11 +52,11 @@ begin
 	
 	// Turn on background 1 and 2
 	Screen::EnableGFX(Screen::ENABLE_BG1 | Screen::ENABLE_BG2);
-
 	// Read the level data
 	level.ReadHeader(#level_data);
 	// Render level x,y. Make sure this happens when the display is off!
 	level.RenderLevel(0,0, #Screen::BG1);
+	
 
 
 	 // Turn on the screen. 

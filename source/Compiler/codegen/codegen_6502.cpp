@@ -32,7 +32,7 @@ void CodeGen6502::EightBitDiv(QSharedPointer<Node> node) {
 
     as->Term();
 
-    as->Asm("jsr div8x8_procedure");
+    as->Asm(getCallSubroutine()+" div8x8_procedure");
 
 }
 
@@ -55,7 +55,7 @@ void CodeGen6502::EightBitMul(QSharedPointer<Node> node) {
 
     as->Term();
 
-    as->Asm("jsr multiply_eightbit");
+    as->Asm(getCallSubroutine()+" multiply_eightbit");
     as->Asm("txa"); // result in a
     as->Asm("ldy #0 ; ::EightbitMul");
 
@@ -565,7 +565,7 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     LoadVariable(node->m_right);
     as->Term();
     as->Asm("sta mul16x8_num2");
-    as->Asm("jsr mul16x8_procedure");
+    as->Asm(getCallSubroutine()+" mul16x8_procedure");
   //  Enable16bit();
 
 }
@@ -583,7 +583,7 @@ void CodeGen6502::Div16x8(QSharedPointer<Node> node) {
     as->Term();
     as->Asm("sta initdiv16x8_divisor");
     as->Asm("sty initdiv16x8_divisor+1");
-    as->Asm("jsr divide16x8");
+    as->Asm(getCallSubroutine()+" divide16x8");
     as->Asm("lda initdiv16x8_dividend");
     as->Asm("ldy initdiv16x8_dividend+1");
 
@@ -1055,9 +1055,9 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
 void CodeGen6502::Disable16bit()
 {
     if (Syntax::s.m_currentSystem->isWDC65()) {
-//        if (block16bit==0)
+        if (block16bit==0)
             as->Asm("sep #$10        ; disable X/Y 16-bit");
-        block16bit++;
+        block16bit=1;
     }
 
 }
@@ -1065,9 +1065,9 @@ void CodeGen6502::Disable16bit()
 void CodeGen6502::Enable16bit()
 {
     if (Syntax::s.m_currentSystem->isWDC65()) {
-  //      if (block16bit==1)
+        if (block16bit!=0)
             as->Asm("rep #$10        ; enable X/Y 16-bit");
-        block16bit--;
+        block16bit=0;
     }
 
 }
@@ -1293,6 +1293,39 @@ bool CodeGen6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString l
 //    as->m_lblFailed="";
   //  as->m_lblSuccess="";
     //  return true;
+}
+
+QString CodeGen6502::getReturn() {
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816) {
+        return "plb\n"
+                     "\trtl";
+    }
+    return "rts";
+}
+
+QString CodeGen6502::getCallSubroutine() {
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816) {
+        return "jsl";
+    }
+    return "jsr";
+}
+
+QString CodeGen6502::ProcedureEndWithoutReturn() {
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816) {
+        return "plb\n";
+    }
+    return "";
+
+}
+
+
+QString CodeGen6502::getInitProcedure() {
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816) {
+        return "phb\n"
+                     "\tphk\n"
+                     "\tplb\n";
+    }
+    return "";
 }
 
 
@@ -1850,7 +1883,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     bool unknownType = false;
     bool scale = true;
-    Disable16bit();
+//    Disable16bit();
     if (node->m_writeType!=TokenType::NADA) {
         s->m_arrayType = node->m_writeType;
         s->m_arrayTypeText = TokenType::getType(node->m_writeType);
@@ -1866,27 +1899,35 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         as->Comment("Load Unknown type array, assuming BYTE");
         unknownType = true;
     }
+    bool disable16bit =false;
+
     if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
         as->Asm("ldy #0 ; lhs is byte, but integer required");
     }
     // Optimization : ldx #3, lda a,x   FIX
     if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric()) {
+//            as->Comment("Optimising loading byte array with constant");
             QString op = "lda ";
-            if (as->m_term!="")
+          //  disable16bit = true;
+            if (as->m_term!="") {
+      //          Disable16bit();
+        //        disable16bit = true;
                 op = as->m_term + " ";
+            }
             as->ClearTerm();
             as->Asm(op+getValue(node) + " +"+node->m_expr->getValue(as) + " ; array with const index optimization");
-            Disable16bit();
+  //          if (disable16bit)
+    //            Enable16bit();
             return;
         }
     }
-
     QString m = as->m_term;
     if (node->m_expr==nullptr) {
         ErrorHandler::e.Error("Unknown operation with address!",node->m_op.m_lineNumber);
     }
     as->ClearTerm();
+    Disable16bit();
     if (!LoadXYVarOrNum(node, node->m_expr,true,scale))
     {
         // calculation version, eg: index+2  or 3+2
@@ -1913,7 +1954,8 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
   //      as->Asm("inx");
         as->Asm("ldy "+  getValue(node)+"+1,x");
     }
-    Enable16bit();
+//    if (disable16bit)
+        Enable16bit();
 }
 
 void CodeGen6502::LoadVariable(QSharedPointer<Node> node)

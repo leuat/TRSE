@@ -57,7 +57,7 @@ public:
     bool m_outputLineNumbers = true;
     bool m_outputSource = false; // Turned off for now
     QStringList m_rasSource;
-
+    bool m_isFarAway = false;
 
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch
@@ -99,9 +99,11 @@ public:
     virtual QString resolveTemporaryClassPointer(QString name, int mul, int &res) { return "";}
     virtual void PopLostStack(int num) {};
 
+    virtual QString getInitProcedure() { return "";}
 
     virtual void ExDeHl() {}
     virtual void SbcHlDe() {}
+
 
     /*
      *  Probably the most important method in all of TRSE
@@ -183,6 +185,9 @@ public:
 
     virtual void ProcedureEnd(Assembler* as) {
 
+    }
+    virtual QString ProcedureEndWithoutReturn() {
+        return "";
     }
 
     virtual void dispatch(QSharedPointer<NodeProcedure> node);

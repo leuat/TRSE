@@ -209,10 +209,14 @@ public:
     bool isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPointer<NodeAssign>node);
     bool IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString labelSuccess, QString labelFail);
 
-    QString getReturn() override { return "rts";}
+    QString getReturn() override;
     QString getReturnInterrupt() override { return "rti";}
 
+    QString getCallSubroutine() override;
 
+    virtual QString ProcedureEndWithoutReturn() override;
+
+    virtual QString getInitProcedure() override;
 
 
 

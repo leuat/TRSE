@@ -36,6 +36,7 @@ public:
     QString m_procName, m_fileName;
     bool m_isStatic = true;
     QString m_class;
+    QStringList m_flags;
     QVector<QSharedPointer<Node>> m_paramDecl;
     QSharedPointer<Node> m_returnValue;
     QSharedPointer<Node> m_returnType;
