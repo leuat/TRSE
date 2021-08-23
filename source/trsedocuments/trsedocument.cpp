@@ -133,11 +133,12 @@ void TRSEDocument::UserDefined()
         if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort)
             src = m_currentDir+ m_projectIniFile->getString("main_ras_file");
 
-
-
-    paramsStr = paramsStr.replace("@prg", src.replace(".ras", "."+m_programEndingType)).trimmed();
     QStringList params = paramsStr.split(" ");
-    p.startDetached(cmd,params);
+    for (auto& param : params) {
+        if (param.startsWith("@prg"))
+            param = param.replace("@prg", src.replace(".ras", "."+m_programEndingType)).trimmed();
+    }
+    p.startDetached(cmd, params);
     p.waitForFinished();
 
 }
