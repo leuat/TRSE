@@ -429,7 +429,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             splitData.resize(cnt);
             for (int k=0;k<st->m_orderedByDefinition.count();k++) {
                 QString v = st->m_orderedByDefinition[k];
-                for (int k=0;k<count;k++) {
+                for (int k=0;k<count/cnt;k++) {
                     int pt = k*cnt+i; // Lookup in data
                     if (pt<data.count())
                         splitData[i]+=data[pt]+",";

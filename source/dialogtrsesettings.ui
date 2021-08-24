@@ -25,7 +25,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1146,15 +1146,22 @@
         <layout class="QGridLayout" name="gridLayout_24">
          <item row="0" column="0">
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="3" column="2">
-            <widget class="QCheckBox" name="chkDisableFileColors">
+           <item row="0" column="2">
+            <widget class="QComboBox" name="cmbTheme"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_3">
              <property name="text">
-              <string/>
+              <string>Rascal editor color theme</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QComboBox" name="cmbTheme"/>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Window palette</string>
+             </property>
+            </widget>
            </item>
            <item row="2" column="2">
             <widget class="QComboBox" name="cmbPalette">
@@ -1170,6 +1177,16 @@
              </item>
             </widget>
            </item>
+           <item row="3" column="2">
+            <widget class="QCheckBox" name="chkDisableFileColors">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QComboBox" name="cmbThemeFjong"/>
+           </item>
            <item row="4" column="0">
             <widget class="QLabel" name="label_47">
              <property name="text">
@@ -1177,18 +1194,13 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Rascal editor color theme</string>
-             </property>
-            </widget>
+           <item row="4" column="2">
+            <widget class="QLineEdit" name="leSplashSeconds"/>
            </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_56">
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_62">
              <property name="text">
-              <string>Editor auto-indent
-(shift-enter works if disabled)</string>
+              <string>Enable auto-complete</string>
              </property>
             </widget>
            </item>
@@ -1206,20 +1218,22 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="2">
-            <widget class="QLineEdit" name="leSplashSeconds"/>
-           </item>
-           <item row="1" column="2">
-            <widget class="QComboBox" name="cmbThemeFjong"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_8">
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_56">
              <property name="text">
-              <string>Window palette</string>
+              <string>Editor auto-indent
+(shift-enter works if disabled)</string>
              </property>
             </widget>
            </item>
            <item row="5" column="2">
+            <widget class="QCheckBox" name="chkAutoIndent">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
             <widget class="QCheckBox" name="chkAutoComplete">
              <property name="text">
               <string/>

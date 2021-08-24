@@ -77,6 +77,7 @@ public:
     enum FileType {RAS, TRU, INC, ASM, FJO};
     FileType m_fileType = RAS;
     bool m_autoComplete = true;
+    bool m_autoIndent = true;
 
 
     // Handle indenting automatically if enabled in settings

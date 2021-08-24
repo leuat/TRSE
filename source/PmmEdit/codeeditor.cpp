@@ -170,7 +170,7 @@ void CodeEditor::SetIndent(bool shift)
 
     // The autocomplete & indent is enabled only for .RAS and .TRU files and
     // when either enabled in settings or shift-entered
-    bool enable = (m_autoComplete | shift) & (m_fileType == RAS || m_fileType == TRU || m_fileType == INC);
+    bool enable = (m_autoIndent | shift) & (m_fileType == RAS || m_fileType == TRU || m_fileType == INC);
 
     // Only keep the current indent if not enabled
     if (!enable)
@@ -514,7 +514,8 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
     cr.setWidth(c->popup()->sizeHintForColumn(0)
                 + c->popup()->verticalScrollBar()->sizeHint().width());
 
-    c->complete(cr); // popup it up!
+    if (m_autoComplete)
+        c->complete(cr); // popup it up!
 }
 
 void CodeEditor::focusInEvent(QFocusEvent *e)

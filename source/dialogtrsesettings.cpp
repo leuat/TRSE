@@ -90,7 +90,8 @@ void DialogTRSESettings::FillFromIni()
     ui->leSidplayer->setText(m_ini->getString("sidplayer"));
 
     ui->chkBackup->setChecked(m_ini->getdouble("auto_backup")==1.0);
-    ui->chkAutoComplete->setChecked(m_ini->getdouble("editor_autocomplete")==1.0);
+    ui->chkAutoIndent->setChecked(m_ini->getdouble("editor_autocomplete")==1.0);
+    ui->chkAutoComplete->setChecked(m_ini->getdouble("editor_autocomplete_nobug")==1.0);
     ui->chkCompileThread->setChecked(m_ini->getdouble("compile_thread")==1.0);
 
     ui->leCPCDisk->setText(m_ini->getString("cpcdisk_location"));
@@ -219,7 +220,8 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
     m_ini->setFloat("auto_backup", ui->chkBackup->isChecked()?1:0);
-    m_ini->setFloat("editor_autocomplete", ui->chkAutoComplete->isChecked()?1:0);
+    m_ini->setFloat("editor_autocomplete", ui->chkAutoIndent->isChecked()?1:0);
+    m_ini->setFloat("editor_autocomplete_nobug", ui->chkAutoComplete->isChecked()?1:0);
     m_ini->setFloat("compile_thread", ui->chkCompileThread->isChecked()?1:0);
 
     m_ini->setString("user_defined_command",ui->leUserDefined->text());

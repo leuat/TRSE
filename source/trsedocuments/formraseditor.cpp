@@ -419,7 +419,8 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     setupEditor();
     ui->txtEditor->m_displayCycles = m_iniFile->getdouble("display_cycles")==1;
     ui->txtEditor->m_displayAddresses = m_iniFile->getdouble("display_addresses")==1;
-    ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete")==1;
+    ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete_nobug")==1;
+    ui->txtEditor->m_autoIndent = m_iniFile->getdouble("editor_autocomplete")==1;
 
 }
 

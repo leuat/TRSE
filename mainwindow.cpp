@@ -427,6 +427,10 @@ void MainWindow::VerifyDefaults()
    if (!m_iniFile->contains("editor_autocomplete"))
        m_iniFile->setFloat("editor_autocomplete",1);
 
+   if (!m_iniFile->contains("editor_autocomplete_nobug"))
+       m_iniFile->setFloat("editor_autocomplete_nobug",1);
+
+
     m_iniFile->filename = m_iniFileName;
 
 }
