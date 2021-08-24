@@ -1,0 +1,33 @@
+program tutorial1;
+@use "screen"
+var
+	i,time,j,k:byte;
+	src,dst:pointer;
+	
+	circle : array[256] of byte = buildtable2d(32,16,
+		"Math.sqrt(Math.pow(i-SCREEN_WIDTH/2,2)+Math.pow(j-SCREEN_HEIGHT/2,2))");
+	
+	
+procedure Update();
+begin
+	src:=#circle;
+	dst:=#screen;
+	for j:=0 to screen_height do
+	begin
+		for i:=0 to screen_width do
+		begin
+			dst[i]:=src[i]+time;
+		end;	
+		dst+=screen_width;
+		src+=screen_width;	
+	end;
+end;
+	
+begin
+	while (true) do
+	begin
+		Update();
+		time+=1;
+	end;
+	loop();
+end.
