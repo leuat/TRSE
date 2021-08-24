@@ -199,6 +199,10 @@ private slots:
 
     void on_btnCL65_clicked();
 
+    void on_btnVZ200_clicked();
+
+    void on_btnVZ200Help_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

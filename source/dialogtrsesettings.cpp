@@ -52,6 +52,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leDasm->setText(m_ini->getString("dasm"));
     ui->leEmulator->setText(m_ini->getString("emulator"));
     ui->leEmulatorC128->setText(m_ini->getString("c128_emulator"));
+    ui->leVZ200Emulator->setText(m_ini->getString("vz200_emulator"));
     ui->leVic20Emulator->setText(m_ini->getString("vic20_emulator"));
     ui->lePETEmulator->setText(m_ini->getString("pet_emulator"));
     ui->leNesEmulator->setText(m_ini->getString("nes_emulator"));
@@ -165,6 +166,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("vic20_emulator", ui->leVic20Emulator->text());
     m_ini->setString("pet_emulator", ui->lePETEmulator->text());
     m_ini->setString("c128_emulator", ui->leEmulatorC128->text());
+    m_ini->setString("vz200_emulator", ui->leVZ200Emulator->text());
     m_ini->setString("atari2600_emulator", ui->leAtari2600Emulator->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("bbc_emulator", ui->leBBCEmulator->text());
@@ -286,12 +288,12 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"QEMU" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"VZ200"<<"QEMU" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
         QPushButton* btn = new QPushButton("params");
-        ui->grdEmulators->addWidget(btn,i,4);
+        ui->grdEmulators->addWidget(btn,i,5);
         QString name = "emulator_additional_parameters_"+data[i];
         connect(btn, &QPushButton::clicked,  [=](){
             DialogSimpleLineEdit* de = new DialogSimpleLineEdit(data[i]+" emulator additional params",
@@ -783,6 +785,23 @@ void DialogTRSESettings::on_btnCL65_clicked()
         tr("CL65 assembler location"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leCL65->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnVZ200_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("VZ200 emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leVZ200Emulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnVZ200Help_clicked()
+{
+    Help("Apple VZ200 emulator","Download from https://bluebilby.com/sdm_categories/tools/");
 
 }
 

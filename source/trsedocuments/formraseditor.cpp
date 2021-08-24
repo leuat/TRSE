@@ -180,6 +180,12 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600) {
         emu = m_iniFile->getString("atari2600_emulator");
+        params = QStringList() <<"-f";
+
+    }
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VZ200) {
+        emu = m_iniFile->getString("vz200_emulator");
+        params = QStringList() <<"-f";
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
         emu = m_iniFile->getString("amstradcpc_emulator");
@@ -356,6 +362,11 @@ void FormRasEditor::ExecutePrg(QString fileName)
         params = p.split(" ");
         process.setWorkingDirectory(QFileInfo(emu).path());
         QDir::setCurrent(QFileInfo(emu).path());
+    }
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VZ200) {
+        process.setWorkingDirectory(QFileInfo(emu).path());
+        QDir::setCurrent(QFileInfo(emu).path());
+
     }
 
     process.waitForFinished();
@@ -737,6 +748,8 @@ void FormRasEditor::Run()
         filename = base + ".gb";
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
         filename = base + ".bin";
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VZ200)
+        filename = base + ".vz";
     if (Syntax::s.m_currentSystem->isCustom())
         filename = base + "."+m_projectIniFile->getString("custom_system_ending");
 

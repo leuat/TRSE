@@ -104,7 +104,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "GAMEBOY") return "GBZ80";
         if (s == "SNES") return "WDC65C816";
         if (s == "MEGA65") return "WDC65C02";
-        if (s == "AMSTRADCPC" || s == "TIKI100" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
+        if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
 
         qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
         return "";
@@ -164,6 +164,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         return SNES;
     if (s.toLower()=="custom")
         return CUSTOM;
+    if (s.toLower()=="vz200")
+        return VZ200;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -196,6 +198,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == ORIC) return "ORIC";
     if (s == SNES) return "SNES";
     if (s == CUSTOM) return "CUSTOM";
+    if (s == VZ200) return "VZ200";
     return "";
 }
 

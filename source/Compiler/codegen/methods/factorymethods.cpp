@@ -46,6 +46,9 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
     if (s==AbstractSystem::MSX)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
+    if (s==AbstractSystem::VZ200)
+        return QSharedPointer<MethodsZ80>(new MethodsZ80);
+
     if (s == AbstractSystem::SPECTRUM ||
             s==AbstractSystem::TIKI100 ||
             s==AbstractSystem::COLECO ||

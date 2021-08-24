@@ -61,6 +61,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemSNES(settings, proj);
     if (type==AbstractSystem::CUSTOM)
         return new SystemCustom(settings, proj);
+    if (type==AbstractSystem::VZ200)
+        return new SystemVZ200(settings, proj);
 
 
     return s;
