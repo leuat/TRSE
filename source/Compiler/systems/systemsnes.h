@@ -18,6 +18,13 @@ public:
     */
     bool isCommodoreSystem() override  {return false;}
 
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("snes_emulator");
+    }
+
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        params<<filename+".smc";
+    }
 
 };
 

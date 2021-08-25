@@ -26,6 +26,13 @@ public:
 
 //    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
 
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("mega65_emulator");
+    }
+
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        params  <<"-besure" <<"-prgmode" <<"65"<< "-prg" <<filename+".prg";
+    }
 
 
 };

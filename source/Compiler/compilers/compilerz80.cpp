@@ -39,7 +39,8 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
-        m_assembler->Asm(" jp $8000");
+//        m_assembler->Asm(" jp $8000");
+        m_assembler->m_source.clear();
         m_assembler->Asm(" org $8000");
 
     }

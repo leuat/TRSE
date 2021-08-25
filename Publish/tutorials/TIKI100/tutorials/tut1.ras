@@ -3,7 +3,8 @@ program Tiki100_Tutorial1;
  Test : Proof-of-concept that the Tiki 100 can be included in TRSE
  Please contact me if you are interested in developing the library for this computer
  
- NOTE: Emulator does NOT support command-line parameters on windows (for some reason), so eh, you'll have to manually load the disk for each compile =) 
+ NOTE: Emulator does NOT support command-line parameters on windows (for some reason), 
+ so eh, you'll have to manually load the disk for each compile =) 
 */
 
 var
@@ -47,8 +48,4 @@ begin
 		RenderRandomStuff();
 		time:=time+1;
 	end;
-	
-
-	
-
 end.

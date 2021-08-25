@@ -269,7 +269,8 @@ void LImageMetaChunk::SaveBin(QFile &file)
         file.write( ( char * )( &w ),  1 );
         file.write( ( char * )( &h ),  1 );
         file.write(m->m_data);
-        file.write(m->m_attributes);
+        if (isSnes())
+            file.write(m->m_attributes);
     }
     AppendSaveBinCharsetFilename(file);
 }
@@ -287,7 +288,8 @@ void LImageMetaChunk::LoadBin(QFile &file)
   //      qDebug() << "W read : " << QString::number(w);
         AddNew(w,h);
         getCur()->m_data = file.read(w*h);
-        getCur()->m_attributes = file.read(w*h);
+        if (isSnes())
+            getCur()->m_attributes = file.read(w*h);
     }
     LoadBinCharsetFilename(file);
 }
@@ -451,7 +453,8 @@ void LImageMetaChunk::ExportBin(QFile &file)
     for (LImageContainerItem* li : m_items) {
         LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
         file.write(m->m_data);
-        file.write(m->m_attributes);
+        if (isSnes())
+            file.write(m->m_attributes);
     }
 }
 

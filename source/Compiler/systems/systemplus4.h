@@ -23,6 +23,13 @@ public:
         m_stripPrg = false;
 
     }
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("plus4_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        applyEmulatorParametersVICE(params, debugFile,filename);
+
+    }
 
 };
 

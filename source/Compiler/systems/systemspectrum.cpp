@@ -1,4 +1,5 @@
 #include "systemspectrum.h"
+#include "source/Compiler/syntax.h"
 
 void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
@@ -31,5 +32,17 @@ void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDi
 
 void SystemSpectrum::PostProcess(QString &text, QString file, QString currentDir)
 {
+
+}
+
+void SystemSpectrum::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+    QString emu = getEmulatorName();
+    if (emu.toLower().contains("retro")) {
+        QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
+        int model = pini->getdouble("spectrum_model");
+        QStringList models = QStringList() <<"zx16k" << "zx48k"<<"zx128k";
+        params<<"-b="+models[model]<<"-j=0x"+addr<<"-l=0x"+addr;
+        params << filename+".bin";
+    }
 
 }

@@ -41,9 +41,9 @@ public:
 
     }
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    virtual void PostProcess(QString& text, QString file, QString currentDir);
-    virtual bool is8bit() {
+    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+    virtual void PostProcess(QString& text, QString file, QString currentDir) override;
+    virtual bool is8bit() override {
         return false;
     }
 
@@ -57,6 +57,8 @@ public:
     }
     virtual TokenType::Type getPointerType() override { return TokenType::Type::LONG;}
 
+    virtual QString getEmulatorName() override;
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 
 };
 

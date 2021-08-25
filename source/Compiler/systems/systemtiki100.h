@@ -16,8 +16,17 @@ public:
 
 
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    virtual void PostProcess(QString& text, QString file, QString currentDir);
+    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+    virtual void PostProcess(QString& text, QString file, QString currentDir) override;
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("tiki100_emulator");
+    }
+
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        QString file = QFileInfo(filename+".asm").absolutePath()+QDir::separator()+"disk.dsk";
+        params << "-diska"<< file<< "-40x"<< "2"<< "-80x"<< "2";
+    }
+
 };
 
 #endif // SYSTEMTIKI100_H

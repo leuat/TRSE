@@ -156,3 +156,30 @@ bool SystemX86::is8088()
 {
     return m_cpu=="8088";
 }
+
+QString SystemX86::getEmulatorName() {
+    if (m_projectIni->contains("qemu") && m_projectIni->getString("qemu").startsWith("qemu")) {
+       QString emu = m_settingsIni->getString("qemu_directory")+QDir::separator()+m_projectIni->getString("qemu");
+    #ifdef _WIN32
+            emu+=".exe";
+    #endif
+        return emu;
+    }
+    return m_settingsIni->getString("dosbox");
+}
+
+void SystemX86::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+    QString fn = filename;
+    if (m_projectIni->contains("qemu") && m_projectIni->getString("qemu").startsWith("qemu")) {
+        params<<"-boot" <<"c";
+        fn+=".bin";
+    }
+    else {
+        QString type = pini->getString("dosbox_x86_system");
+        if (type.toLower()!="default")
+            params << "-machine" << type;
+        params << "-noautoexec";
+        fn+=".exe";
+    }
+    params <<fn;
+}

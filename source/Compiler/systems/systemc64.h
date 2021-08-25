@@ -14,6 +14,13 @@ public:
     };
     bool isCommodoreSystem() override  {return true;}
 
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        applyEmulatorParametersVICE(params,debugFile,filename);
+
+    }
 
 };
 
@@ -27,6 +34,36 @@ public:
         m_systemColor = QColor(100,60,40);
 
     }
+    virtual QString getEmulatorName() override {
+
+
+
+        QString base= m_settingsIni->getString("x16_emulator");
+/*
+#ifdef __linux__
+        base = base.remove("x16emu");
+#endif
+#ifdef __APPLE__
+        base = base.remove("x16emu");
+#endif
+#ifdef _WIN32
+        base = base.toLower();
+        base = base.remove("x16emu.exe");
+#endif*/
+        return base;
+    }
+
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+/*        QStringList lst = m_settingsIni->getString("x16_emulator_params").trimmed().simplified().split(" ");
+        for (QString s: lst) {
+            if (s.trimmed()!="") {
+                params<<s;
+            }
+        }*/
+        params<< "-run" << "-prg" <<filename+".prg";
+    }
+
+
 };
 
 #endif // SYSTEMC64_H

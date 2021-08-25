@@ -92,12 +92,15 @@ void FormRasEditor::setOutputText(QString text) {
 
 void FormRasEditor::ExecutePrg(QString fileName)
 {
-    QString emu = m_iniFile->getString("emulator");
+//    QString emu = m_iniFile->getString("emulator");
+    QString emu = Syntax::s.m_currentSystem->getEmulatorName();
 
     QStringList params;
+    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
+    Syntax::s.m_currentSystem->applyEmulatorParameters(params,debugFile, fileName,m_builderThread.m_builder->m_projectIniFile.get());
 
     QString name = "emulator_additional_parameters_"+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system);
-
+    // Additional parameters
     if (m_iniFile->contains(name)) {
         QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
         //        qDebug() << "Additional params: "<<pl;
@@ -106,199 +109,19 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
 
 
-    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
-    if (QFile::exists(debugFile) && (
-                Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 ||
-                Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
-                Syntax::s.m_currentSystem->m_system == AbstractSystem::C128 ||
-                Syntax::s.m_currentSystem->m_system == AbstractSystem::PET ||
-                Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64
-                ))
-        params<<"-moncommands"<<debugFile;
-    if (QFile::exists(debugFile) && Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
-        params << "-s" << debugFile;
-
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20) {
-        emu = m_iniFile->getString("vic20_emulator");
-        params<< "-autostartprgmode" << "1";
-        if (m_builderThread.m_builder==nullptr || m_builderThread.m_builder->compiler==nullptr)
-            params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
-        //          qDebug() <<params;
-        else
-            params<< "-memory" << m_builderThread.m_builder->compiler->m_parser.m_vicMemoryConfig;
-
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PET) {
-        emu = m_iniFile->getString("pet_emulator");
-        params<< "-autostartprgmode" << "1";
-        QString petmodel = m_builderThread.m_builder->m_projectIniFile->getString("petmodel");
-        if (petmodel!="") {
-            params << "-model" << petmodel;
-        }
-        //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM) {
-        emu = m_iniFile->getString("bbc_emulator");
-        params<< "-0" << Util::getFileWithoutEnding(fileName) + ".ssd" <<"-b";
-
-        //        params<< "-memory" << m_projectIniFile->getString("vic_memory_config");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
-        emu = m_iniFile->getString("c128_emulator");
-
-        //params << "-" + m_projectIniFile->getString("columns")+"col";
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
-        emu = m_iniFile->getString("nes_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY) {
-        emu = m_iniFile->getString("gameboy_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM) {
-        emu = m_iniFile->getString("spectrum_emulator");
-        if (emu.toLower().contains("retro")) {
-            QString addr = QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
-            int model = m_projectIniFile->getdouble("spectrum_model");
-            QStringList models = QStringList() <<"zx16k" << "zx48k"<<"zx128k";
-            params<<"-b="+models[model]<<"-j=0x"+addr<<"-l=0x"+addr;
-        }
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
-        emu = m_iniFile->getString("plus4_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800) {
-        emu = m_iniFile->getString("atari800_emulator");
-        params<< Util::getFileWithoutEnding(fileName) + ".xex";
-    }
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64) {
-        emu = m_iniFile->getString("ok64_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
-        emu = m_iniFile->getString("tiki100_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600) {
-        emu = m_iniFile->getString("atari2600_emulator");
-        params = QStringList() <<"-f";
-
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VZ200) {
-        emu = m_iniFile->getString("vz200_emulator");
-        params = QStringList() <<"-f";
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
-        emu = m_iniFile->getString("amstradcpc_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
-        emu = m_iniFile->getString("msx_emulator");
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::APPLEII) {
-        emu = m_iniFile->getString("appleii_emulator");
-        QString fn = Util::getFileWithoutEnding(fileName) + ".do";
-        if (QFile::exists(fn))
-            fn = QFileInfo(fn).absoluteFilePath();
-
-        if (emu.toLower().contains("microm8")) {
-            params = QStringList() <<"-launch" <<fn;
-            //            qDebug() << params;
-        }
-
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ORIC) {
-        emu = m_iniFile->getString("oric_emulator");
-        QString fn = Util::getFileWithoutEnding(fileName) + ".prg";
-        if (QFile::exists(fn))
-            fn = QFileInfo(fn).absoluteFilePath();
-
-        params = QStringList() <<"-m" <<"atmos"<<"-t"<<fn;
-  //      params = QStringList() <<"-t"<<fn;
-    //    qDebug() << params;
-
-    }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO) {
-        emu = m_iniFile->getString("coleco_emulator");
-
-    }
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
-        if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu")) {
-            emu = m_iniFile->getString("qemu_directory")+QDir::separator()+m_projectIniFile->getString("qemu");
-            //params<<"-fda";
-            params<<"-boot" <<"c";
-
-//            qDebug() << emu;
-#ifdef _WIN32
-            emu+=".exe";
-#endif
-        }
-        else {
-            emu = m_iniFile->getString("dosbox");
-            QString type = m_projectIniFile->getString("dosbox_x86_system");
-            if (type.toLower()!="default")
-                params << "-machine" << type;
-            params << "-noautoexec";
-        }
-
-#ifdef _WIN32
-        //        params << "-noconsole";
-#endif
-
-    }
-
-
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
-        params  <<"-besure" <<"-prgmode" <<"65"<< "-prg";
-        emu = m_iniFile->getString("mega65_emulator");
-    }
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SNES) {
-//        params  <<;
-        emu = m_iniFile->getString("snes_emulator");
-    }
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X16) {
-        emu = m_iniFile->getString("x16_emulator");
-        QString base = emu;
-#ifdef __linux__
-        base = base.remove("x16emu");
-#endif
-#ifdef __APPLE__
-        base = base.remove("x16emu");
-
-#endif
-#ifdef _WIN32
-        base = base.toLower();
-        base = base.remove("x16emu.exe");
-#endif
-        //  -rom /home/leuat/code/x16/rom.bin -char /home/leuat/code/x16/chargen.bin -prg @prg -run
-        QStringList lst = m_iniFile->getString("x16_emulator_params").trimmed().simplified().split(" ");
-        for (QString s: lst) {
-            if (s.trimmed()!="") {
-                params<<s;
-            }
-        }
-        params<< "-run" << "-prg";
-
-    }
+    // Macos considerations (.app ending)
 #ifdef __APPLE__
     if (emu.toLower().endsWith(".app") || emu.toLower().endsWith(".app/")) {
         if (emu.endsWith("/"))
             emu.remove(emu.count()-1,1);
         QString ls = emu.split("/").last().remove(".app");
         emu = emu + "/Contents/MacOS/"+ls;
-
-
-
     }
-
 #endif
     // Custom must be at last, since it overwrites parameters
     if (Syntax::s.m_currentSystem->isCustom()) {
         emu = m_projectIniFile->getString("custom_system_emulator");
     }
-
 
 
     if (!QFile::exists(emu)) {
@@ -310,64 +133,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
     QProcess process;
 
 
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20 || Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::C128)
-        if (m_iniFile->getdouble("auto_inject")==1.0) {
-            params << "-autostartprgmode" << "1";
-        }
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
-        params << "-diska"<< QDir::toNativeSeparators(fileName)<< "-40x"<< "2"<< "-80x"<< "2";
-    }
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
-        params << "-i";
-    }
-
-    if (!(Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100
-          || Syntax::s.m_currentSystem->m_system == AbstractSystem::BBCM
-          || Syntax::s.m_currentSystem->m_system == AbstractSystem::ORIC
-          || Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI800))
-        params << QDir::toNativeSeparators(fileName.replace("//","/"));
-
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC) {
-        int num = Syntax::s.m_currentSystem->m_programStartAddress;
-        if (m_projectIniFile->getdouble("exomizer_toggle")==1)
-            num = 0x4000; /// Always start at 0x4000
-        params << "-o" << "0x"+QString::number(num,16);
-        QString amstradcpc_model = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_model");
-        QMap<QString, QString> caprice32_models = {
-            { "464", "0" },
-            { "664", "1" },
-            { "6128", "2" },
-            { "6128 Plus", "3" },
-        };
-        amstradcpc_model = caprice32_models[amstradcpc_model];
-        if (amstradcpc_model != "") {
-            params << "-O" << "system.model=" + amstradcpc_model;
-        }
-        QString amstradcpc_options = m_builderThread.m_builder->m_projectIniFile->getString("amstradcpc_options");
-        params << amstradcpc_options.split(' ');
-        //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        //        qDebug() << "Setting working dir to "<<QFileInfo(emu).path();
-        QDir::setCurrent(QFileInfo(emu).path());
-
-    }
-
-    // override custom system params
-    if (Syntax::s.m_currentSystem->isCustom()) {
-        QString p = m_projectIniFile->getString("custom_system_emulator_parameters").trimmed().simplified().replace("@prg",Util::getFileWithoutEnding(fileName));
-        params = p.split(" ");
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        QDir::setCurrent(QFileInfo(emu).path());
-    }
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VZ200) {
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        QDir::setCurrent(QFileInfo(emu).path());
-
-    }
 
     process.waitForFinished();
     QString orgDir = QDir::currentPath();
@@ -391,6 +156,11 @@ void FormRasEditor::ExecutePrg(QString fileName)
         return;
     }
 
+    if (Syntax::s.m_currentSystem->m_requireEmulatorWorkingDirectory) {
+        process.setWorkingDirectory(QFileInfo(emu).path());
+        QDir::setCurrent(QFileInfo(emu).path());
+    }
+
     if (emu.endsWith(".app")) {
         process.setArguments(params);
         process.setProgram(emu);
@@ -400,11 +170,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
  //       qDebug() <<emu<<params;
         process.startDetached(emu, params);
     }
-
-    //    qDebug() << emu << params;
-    //    qDebug() << "FormRasEditor params" << emu << params;
-
-    // Finally, add custom paramters
 
 
 #else
@@ -725,6 +490,10 @@ void FormRasEditor::Run()
     if (!m_builderThread.m_builder->m_system->m_buildSuccess)
         return;
 
+    if (m_currentSourceFile.toLower().endsWith(".tru")) {
+        ui->txtOutput->setHtml("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
+    }
+
     if (!m_projectIniFile->contains("output_type"))
         m_projectIniFile->setString("output_type","prg");
 
@@ -739,55 +508,17 @@ void FormRasEditor::Run()
         renameFile = true;
 //        base = m_builderThread.m_builder->compiler->m_parser.m_overrideOutputTarget;
     }
+    QString filename = base;
 
-    QString filename = base + "."+ m_projectIniFile->getString("output_type");
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES)
-        filename = base + ".nes";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
-        filename = base + ".gb";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM)
-        filename = base + ".bin";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VZ200)
-        filename = base + ".vz";
-    if (Syntax::s.m_currentSystem->isCustom())
-        filename = base + "."+m_projectIniFile->getString("custom_system_ending");
-
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X86) {
-        if (m_projectIniFile->contains("qemu") && m_projectIniFile->getString("qemu").startsWith("qemu"))
-            filename = base + ".bin";
-        else
-            filename = base + ".exe";
+    if (renameFile) {
+        QString newFilename = filename;
+        newFilename = newFilename.replace(orgFile, m_builderThread.m_builder->compiler->m_parser.m_overrideOutputTarget);
+        Util::CopyFile(filename,newFilename);
+        filename = newFilename;
     }
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC)
-        filename = base + ".bin";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::M1ARM)
-        filename = base;
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX)
-        filename = base + ".rom";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::SNES)
-        filename = base + ".smc";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::COLECO)
-        filename = base + ".bin";
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100)
-        filename = m_currentDir+ "disk.dsk";
 
 
-    //    exit(1);
-    if (m_currentSourceFile.toLower().endsWith(".tru")) {
-        ui->txtOutput->setHtml("<font color=\"red\">Cannot execute Turbo Rascal Unit (.tru) files. </font>");
-    }
-    else {
-        if (renameFile) {
-            QString newFilename = filename;
-            newFilename = newFilename.replace(orgFile, m_builderThread.m_builder->compiler->m_parser.m_overrideOutputTarget);
-            Util::CopyFile(filename,newFilename);
-            filename = newFilename;
-        }
-
-
-        ExecutePrg(filename);
-    }
+    ExecutePrg(filename);
 
     m_run = false;
 

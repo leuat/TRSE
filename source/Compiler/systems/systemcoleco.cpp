@@ -4,6 +4,7 @@ SystemColeco::SystemColeco(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
     m_processor = Z80;
     m_system = COLECO;
 
+
 /*    m_labels.append(SystemLabel(SystemLabel::SCREEN,"Screen",0x8000,0x8FFF));
     m_labels.append(SystemLabel(SystemLabel::SCREEN,"Video ram",0x9000,0x9FFF));
     m_labels.append(SystemLabel(SystemLabel::ROM,"BANK 0 ROM",0x0,0x3FFF));

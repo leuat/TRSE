@@ -11,6 +11,15 @@ public:
     void DefaultValues() override;
     int getDefaultBasicAddress() override;;
     bool isCommodoreSystem() override  {return true;}
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("vic20_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        params<< "-memory" << pini->getString("vic_memory_config");
+        applyEmulatorParametersVICE(params, debugFile,filename);
+
+    }
+
 
 };
 

@@ -16,6 +16,8 @@ SystemVZ200::SystemVZ200(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
 
     m_systemColor = QColor(30,60,90);
 
+    m_requireEmulatorWorkingDirectory = true;
+
 
 }
 

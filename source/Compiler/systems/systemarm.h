@@ -7,6 +7,9 @@ class SystemArm : public AbstractSystem
 {
 public:
     SystemArm(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
+    virtual QString getEmulatorName() override {
+        return "open";
+    }
 
 };
 

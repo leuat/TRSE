@@ -13,6 +13,13 @@ public:
     SystemVZ200(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
     virtual void PostProcess(QString& text, QString file, QString currentDir) override;
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("vz200_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        params<< "-f"<<filename+".vz";
+
+    }
 
 };
 

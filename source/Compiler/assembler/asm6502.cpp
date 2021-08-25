@@ -840,13 +840,16 @@ void Asm6502::Optimise(CIniFile& ini)
 
     if (ini.getdouble("post_optimizer_passldatax")==1)
         OptimisePassLdaTax("x");
+
+
     if (ini.getdouble("post_optimizer_passldatax")==1)
         OptimisePassLdaTax("y");
 
 
     if (ini.getdouble("post_optimizer_passstalda")==1) {
         OptimisePassStaLda();
-        OptimisePassStaLda2();
+        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
+            OptimisePassStaLda2();
     }
 
     if (ini.getdouble("post_optimizer_passldx")==1)

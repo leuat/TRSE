@@ -1790,7 +1790,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         // If variable doesn't exist
 //        qDebug
         if (s==nullptr) {
-            ErrorHandler::e.Error("Could not find variable : " +nv->value);
+            ErrorHandler::e.Error("Could not find variable/procedure : " +nv->value+". Are you sure it is defined?");
         }
 //        qDebug() << nv->value<<s->m_type;
         if (!(s->m_type.toUpper()=="ARRAY" || s->m_type.toUpper()=="POINTER" || s->m_type.toUpper()=="STRING"  ||s->m_type.toUpper()=="CSTRING" ||s->m_type.toUpper()=="INCBIN" || s->m_type.toUpper()=="ADDRESS" || isConstant) && nv->m_expr!=nullptr)

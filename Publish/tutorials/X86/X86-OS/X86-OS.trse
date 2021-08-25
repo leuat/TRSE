@@ -52,3 +52,6 @@ override_target_settings_basic = 0
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/X86/X86-OS/
+open_files = -1
+current_file = main.ras

@@ -93,6 +93,8 @@ public:
     QStringList m_allowedGlobalTypeFlags;
     QStringList m_allowedProcedureTypeFlags;
 
+    bool m_requireEmulatorWorkingDirectory = false;
+
     virtual bool is8bit() {
         return true;
     }
@@ -122,23 +124,13 @@ public:
     enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200};
     enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02};
 
-    static QString StringFromProcessor(Processor s) {
-        if (s == MOS6502) return "MOS6502";
-        if (s == M68000) return "M68000";
-        if (s == PX86) return "PX86";
-        if (s == GBZ80) return "GBZ80";
-        if (s == Z80) return "Z80";
-        if (s == ARM) return "ARM";
-        if (s == WDC65C816) return "WDC65C816";
-        if (s == WDC65C02) return "WDC65C02";
-        qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
-        return "";
-    }
+    static QString StringFromProcessor(Processor s);
     static Processor ProcessorFromString(QString s);
     virtual bool CL65Syntax() {return false;}
     static QString StringFromProcessor(QString s);
 
-
+    virtual QString getEmulatorName() = 0;
+    virtual void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) = 0;
 
 
     bool m_buildSuccess;

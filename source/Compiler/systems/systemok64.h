@@ -15,6 +15,16 @@ public:
         m_memorySize = 65536 + 65536*16;
         m_hasVariableColorPalette = true;
     }
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("ok64_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        if (QFile::exists(debugFile))
+            params<<"-moncommands"<<debugFile;
+        params << filename+".prg";
+
+    }
+
 };
 
 #endif // SYSTEMOK64_H

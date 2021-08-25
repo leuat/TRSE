@@ -12,6 +12,14 @@ public:
     void PostProcess(QString &text, QString filename, QString currentDir) override;
 
     void DefaultValues() override;
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("atari800_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        params<< filename + ".xex";
+
+    }
+
 };
 
 #endif // SYSTEMBBCM_H

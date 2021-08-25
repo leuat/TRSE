@@ -3,7 +3,7 @@ program Tutorial1;
 var
 	i,j,l,k:byte;	
 	zp:pointer;
-	msg : cstring=("HELLO BLOODY APPLE WORLD FROM TRSE"); 
+	msg : cstring=("HELLO APPLE WORLD FROM TRSE"); 
 
 procedure FunFill(start,incVal : byte);
 begin

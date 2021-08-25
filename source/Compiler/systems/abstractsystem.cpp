@@ -82,6 +82,19 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
 
     }
 
+    QString AbstractSystem::StringFromProcessor(Processor s) {
+        if (s == MOS6502) return "MOS6502";
+        if (s == M68000) return "M68000";
+        if (s == PX86) return "PX86";
+        if (s == GBZ80) return "GBZ80";
+        if (s == Z80) return "Z80";
+        if (s == ARM) return "ARM";
+        if (s == WDC65C816) return "WDC65C816";
+        if (s == WDC65C02) return "WDC65C02";
+        qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
+        return "";
+    }
+
     AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
         if (s == "MOS6502" || s=="6502") return MOS6502;
         if (s == "M68000") return M68000;
@@ -109,6 +122,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
         return "";
     }
+
 
     AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
 

@@ -16,6 +16,14 @@ public:
     void DefaultValues() override;
     void AddFileToDisk(DiscImage* di, QString filename, QString name, int address);
     bool BuildDiskFiles(DiscImage* di, QString currentDir, QString iniData, QString&text);
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("bbc_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        params<< "-0" << filename + ".ssd" <<"-b";
+
+    }
+
 };
 
 #endif // SYSTEMBBCM_H

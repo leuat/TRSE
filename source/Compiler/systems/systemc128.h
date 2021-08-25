@@ -18,6 +18,14 @@ public:
         return 0x1C01;
     };
     bool isCommodoreSystem() override  {return true;}
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("c128_emulator");
+    }
+
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        applyEmulatorParametersVICE(params, debugFile, filename);
+    }
+
 
 };
 #endif // SYSTEMC128_H

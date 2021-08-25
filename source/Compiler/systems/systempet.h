@@ -15,6 +15,17 @@ public:
     };
     bool isCommodoreSystem() override  {return true;}
 
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("pet_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        QString petmodel = pini->getString("petmodel");
+        if (petmodel!="") {
+            params << "-model" << petmodel;
+        }
+        applyEmulatorParametersVICE(params, debugFile, filename);
+    }
+
 };
 
 

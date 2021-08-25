@@ -17,12 +17,16 @@ public:
         m_programStartAddress = 0x6000;
     }
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    virtual void PostProcess(QString& text, QString file, QString currentDir);
+    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+    virtual void PostProcess(QString& text, QString file, QString currentDir) override;
 
     QString getArkosTrackerSystemString() override {
         return "PLY_AKG_HARDWARE_SPECTRUM = 1\n";
     }
+    virtual QString getEmulatorName() override {
+        return m_settingsIni->getString("spectrum_emulator");
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile *pini) override;
 
 };
 

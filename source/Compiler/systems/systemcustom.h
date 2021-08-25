@@ -14,5 +14,13 @@ public:
     virtual void PostProcess(QString& text, QString file, QString currentDir) override;
     virtual bool CL65Syntax() override;
 
+    virtual QString getEmulatorName() override {
+        return "";
+    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
+        QString p = pini->getString("custom_system_emulator_parameters").trimmed().simplified().replace("@prg",filename);
+        params << p.split(" ");
+    }
+
 };
 #endif // SYSTEMCUSTOM_H
