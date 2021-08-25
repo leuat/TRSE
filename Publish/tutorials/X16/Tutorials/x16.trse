@@ -40,6 +40,3 @@ remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 show_all_files = 1
-project_path = tutorials/X16/Tutorials/
-open_files = ,example4_twister.ras
-current_file = example4_twister.ras
