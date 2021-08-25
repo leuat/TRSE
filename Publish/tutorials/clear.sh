@@ -60,3 +60,6 @@ echo "open_files =, tut1.ras" >> AMSTRADCPC/tutorials/amstrad_tutorials.trse
 echo "open_files =, main.ras" >> AMSTRADCPC/Morketid/morketid.trse
 echo "open_files =, tutorial1_helloworld.ras" >> ATARI800/Tutorials/Tutorials.trse
 
+echo "open_files =, tutorial1.ras" >> VZ200/tutorials/main_vz200_tutorials.trse
+echo "open_files =, 01_tiles.ras" >> SNES/tutorials/snes_tutorials.trse
+
