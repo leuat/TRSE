@@ -181,5 +181,8 @@ void SystemX86::applyEmulatorParameters(QStringList &params, QString debugFile, 
         params << "-noautoexec";
         fn+=".exe";
     }
+    fn = fn.replace("//","/");
+    fn = fn.replace("/",QDir::separator());
     params <<fn;
+    qDebug() << params;
 }

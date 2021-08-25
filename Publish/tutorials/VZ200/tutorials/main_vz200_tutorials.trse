@@ -1,4 +1,4 @@
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/tutorials/
+project_path = tutorials/VZ200/tutorials/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fd
@@ -34,7 +34,7 @@ override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
 open_files = ,[ext]units/VZ200/screen.tru
-current_file = tutorial1.asm
+current_file = tutorial1.ras
 output_type = prg
 var_zeropages = ,
 zeropages_userdefined = ,

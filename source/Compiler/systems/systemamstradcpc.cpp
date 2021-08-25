@@ -18,7 +18,7 @@ SystemAmstradCPC::SystemAmstradCPC(QSharedPointer<CIniFile> settings, QSharedPoi
     m_labels.append(SystemLabel(SystemLabel::SID,"Firmware",0xB000,0xBEFF));
 
     m_systemColor = QColor(40,90,40);
-
+    m_requireEmulatorWorkingDirectory = true;
 
 }
 

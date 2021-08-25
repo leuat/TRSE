@@ -46,4 +46,6 @@ exomizer_toggle = 0
 zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 3032
 show_all_files = 1
-open_files =, 01_hello_world.ras
+open_files = -1
+project_path = tutorials/PET/examples/
+current_file = 01_hello_world.ras

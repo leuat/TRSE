@@ -156,10 +156,6 @@ void FormRasEditor::ExecutePrg(QString fileName)
         return;
     }
 
-    if (Syntax::s.m_currentSystem->m_requireEmulatorWorkingDirectory) {
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        QDir::setCurrent(QFileInfo(emu).path());
-    }
 
     if (emu.endsWith(".app")) {
         process.setArguments(params);
@@ -175,6 +171,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
 #else
     //    qDebug()<<"TEST"+QDir::toNativeSeparators(fileName)+"TEST";
 
+    if (Syntax::s.m_currentSystem->m_requireEmulatorWorkingDirectory) {
+        process.setWorkingDirectory(QFileInfo(emu).path());
+        QDir::setCurrent(QFileInfo(emu).path());
+    }
 
 
     process.startDetached(emu, params);
