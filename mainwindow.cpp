@@ -110,8 +110,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    m_tutorials.PopulateSystemList(ui->lstSystems);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystem);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystemRecent);
+    ui->cmbSelectSystem->setCurrentText(m_iniFile->getString("current_display_system"));
     ui->cmbSelectSystemRecent->insertItem(0,"Show all systems (recent projects)");
-    ui->cmbSelectSystem->setCurrentIndex(0);
+//    ui->cmbSelectSystem->setCurrentIndex(0);
     ui->cmbSelectSystemRecent->setCurrentIndex(0);
     on_cmbSelectSystem_activated(0);
     //ui->lstSystems->setCurrentRow(0);
@@ -345,6 +346,9 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile->contains("tab_width"))
         m_iniFile->setFloat("tab_width", 4);
+
+    if (!m_iniFile->contains("current_display_system"))
+        m_iniFile->setString("current_display_system", "C64");
 
 
     if (!m_iniFile->contains("splash_seconds"))
@@ -620,7 +624,9 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
 
 
-
+/*
+ *  Todo: Create a form factory class
+ */
 void MainWindow::LoadDocument(QString fileName, bool isExternal)
 {
 
@@ -1308,10 +1314,12 @@ bool MainWindow::SaveAs()
 void MainWindow::SaveAllRas()
 {
     for (auto doc:m_documents) {
-        if (dynamic_cast<FormRasEditor*>(doc)!=nullptr)
+        if (dynamic_cast<FormRasEditor*>(doc)!=nullptr) {
             if (doc->m_currentSourceFile!="")
                 if (!doc->m_currentFileShort.toLower().endsWith("asm"))
                    doc->SaveCurrent();
+        }
+        else doc->SaveCurrent();
     }
 }
 
@@ -2614,6 +2622,7 @@ void MainWindow::on_actionBuild_C_b_triggered()
 
 void MainWindow::on_actionBuild_All_triggered()
 {
+    SaveAllRas();
     BuildAll();
 }
 
@@ -2869,6 +2878,9 @@ void MainWindow::on_btnShowcases_clicked()
 void MainWindow::on_cmbSelectSystem_activated(int index)
 {
     QString key = ui->cmbSelectSystem->currentData(Qt::UserRole).toString();
+
+    m_iniFile->setString("current_display_system", key);
+
     //m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
 /*    QWidget *scrollWidget = new QWidget;
     ui->scrollArea->setWidget(scrollWidget);
@@ -2974,3 +2986,9 @@ void MainWindow::on_chkShowAllFiles_clicked()
     RefreshFileList();
 
 }
+
+void MainWindow::on_actionSave_All_triggered()
+{
+    SaveAllRas();
+}
+

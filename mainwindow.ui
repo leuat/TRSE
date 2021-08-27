@@ -511,6 +511,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOpen_project_location"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
+    <addaction name="actionSave_All"/>
     <addaction name="action_Rename_current_file"/>
     <addaction name="actionDelete_file"/>
     <addaction name="actionClose_current_project"/>
@@ -798,6 +799,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_include_source_file">
    <property name="text">
     <string>Include file (.inc)</string>
+   </property>
+  </action>
+  <action name="actionSave_All">
+   <property name="text">
+    <string>S&amp;ave All</string>
    </property>
   </action>
  </widget>

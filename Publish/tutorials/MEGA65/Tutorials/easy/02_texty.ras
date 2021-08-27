@@ -4,6 +4,16 @@ var
 	// Define four variables : position x, position y, time and a counter i
    x,y,time,i: byte = 0;  
 
+@donotremove trans_char
+@donotremove roof
+/*
+@startblock "$4000" "Vars"
+  trans_char : array[64] of byte;
+  roof : array[] of byte = (
+  0,1,2,3,4,5,6,7);
+
+@endblock
+*/
 
 begin
 	Screen::Init();
