@@ -1,0 +1,35 @@
+Unit Input;
+
+var  
+   c: byte;
+
+/**
+  Reads the keyboard at this time and returns the value
+  If the value is zero (0) no key was pressed
+  **/
+function ReadKey():byte;
+begin
+  asm("
+    call #2ef4
+    ld [Input_c],a
+  ");
+    ReadKey := c;
+end;
+
+/**
+  Reads the keyboard at this time and returns the value
+  Will loop until any key is pressed
+  **/
+function WaitChar():byte;
+begin
+  asm("
+keyloop  
+    call #2ef4
+    cp #00
+    jr z,keyloop
+    ld [Input_c],a
+  ");
+    WaitChar := c;
+end;
+
+end.

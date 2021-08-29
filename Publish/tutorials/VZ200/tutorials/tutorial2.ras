@@ -1,0 +1,37 @@
+program Tutorial2;
+@use "Screen"
+@use "Text"
+@use "Memory"
+@use "Input"
+
+// TRSE Tutorial 2
+// for VZ200 & VZ300 computers
+// By Jason "WauloK" Oakley
+// https://BlueBilby.com/
+
+var  
+	v : byte;
+	
+begin
+	Memory::DisableInterrupts();
+	// Set Graphics mode
+	Screen::SetMode(1);
+	// Clear screen using Graphics mode
+	Screen::Cls(1);
+	// Set colour to draw pixels with
+	Screen::SetPen(3);
+	// Do a little loop to draw a line
+	for v := 0 to 127 do
+	begin
+		Screen::PutPixel(v,55);
+	end;
+	Screen::SetPen(1);
+	Screen::PutPixel(3,3);
+	Screen::PutPixel(4,4);
+	Screen::SetPen(2);
+	// Draw a diagonal line on the screen
+	Screen::DrawLine(20,20,50,50);
+	// Draw a rectangle on the screen
+	Screen::DrawRect(80,20,20,30);
+	Loop();
+end.

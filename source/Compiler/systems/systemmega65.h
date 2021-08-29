@@ -24,7 +24,19 @@ public:
 
     }
 
+    void DefaultValues() override
+    {
+        m_ignoreSys = false;
+        m_startAddress=getDefaultBasicAddress();
+        m_programStartAddress = 0x2001;
+    }
+
 //    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+
+    int getDefaultBasicAddress() override {
+        return 0x2001;
+    };
+
 
     virtual QString getEmulatorName() override {
         return m_settingsIni->getString("mega65_emulator");

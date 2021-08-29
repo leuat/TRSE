@@ -137,6 +137,13 @@ void FormRasEditor::ExecutePrg(QString fileName)
     process.waitForFinished();
     QString orgDir = QDir::currentPath();
 
+    if (Syntax::s.m_currentSystem->m_requireEmulatorWorkingDirectory) {
+        process.setWorkingDirectory(QFileInfo(emu).path());
+        QDir::setCurrent(QFileInfo(emu).path());
+    }
+
+
+
 #ifdef _WIN32
     QProcess::execute("taskkill /im \"x64.exe\" /f");
 #endif
@@ -165,16 +172,12 @@ void FormRasEditor::ExecutePrg(QString fileName)
     else {
  //       qDebug() <<emu<<params;
         process.startDetached(emu, params);
+
     }
 
 
 #else
     //    qDebug()<<"TEST"+QDir::toNativeSeparators(fileName)+"TEST";
-
-    if (Syntax::s.m_currentSystem->m_requireEmulatorWorkingDirectory) {
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        QDir::setCurrent(QFileInfo(emu).path());
-    }
 
 
     process.startDetached(emu, params);

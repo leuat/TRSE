@@ -56,7 +56,6 @@ var
 				for i:=0 to this.width do begin
 					
 					x:=zp[0];					
-					
 					p2:=p1+(x<<3);
 					
 					y:=zp[1] | $20;					

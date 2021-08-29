@@ -42,9 +42,40 @@ void System65C816::Assemble(QString &text, QString filename, QString currentDir,
         da.insert(0,(uchar)01);
         da.insert(1,(uchar)0x20);
         Util::SaveByteArray(da,f);
+    }
 
 
+    if (m_projectIni->getdouble("exomizer_toggle")==1) {
+        QProcess processCompress;
 
+        QString fn = (filename +".prg");
+        QString target="-t65";
+
+        if (!QFile::exists(m_settingsIni->getString("exomizer"))) {
+            m_buildSuccess = false;
+            text = text + "<br><font color=\"#FF6040\">Incorrect exomizer path. Please setup exomizer in the TRSE settings panel</font><br>";
+            return;
+        }
+//            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
+
+
+        QString startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
+        if (Syntax::s.m_ignoreSys)
+//            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
+          startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
+//        startAddress="$2001";
+  //      qDebug() << startAddress;
+        QStringList exoParams = QStringList()<<  "sfx" << startAddress << target << fn<< "-o" << fn;
+
+        if (m_settingsIni->getdouble("hide_exomizer_footprint")==1)
+            exoParams << "-n";
+
+        emit EmitTick("Exomizing ...");
+
+        processCompress.start(m_settingsIni->getString("exomizer"), exoParams  );
+        processCompress.waitForFinished();
+        qDebug() << processCompress.readAllStandardError();
+        qDebug() <<processCompress.readAllStandardOutput();
     }
 
 

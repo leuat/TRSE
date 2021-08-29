@@ -1,0 +1,25 @@
+program Tutorial4;
+@use "Screen"
+@use "Text"
+@use "Memory"
+@use "Input"
+@use "Font"
+
+ var
+	v, i: byte;
+		
+begin
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	Screen::SetPen(0);
+	
+	Font::SetFont(#Font::font1);
+	
+	Font::DrawTextAt("Why, hello there How are you? :)",0,0);
+	Screen::SetPen(2);
+	Font::DrawTextAt("Font by Jason 'WauloK' Oakley!",1,7);
+	Screen::SetPen(3);
+	Font::DrawTextAt("Check out BLUEBILBY.COM",4,14);
+	loop();
+end.

@@ -1,0 +1,78 @@
+Unit Text;
+
+var
+
+/**
+Prints char c at the current cursor position.
+ Control chars are obeyed not printed.
+ **/
+ 	c : pointer;
+ 	x,y : byte;
+ 	
+procedure PutChar(c: global pointer);
+begin
+  asm("
+    ld a, [Text_c]
+    call #28a7
+    ld a,#0d
+    call #033a    
+  ")
+end;
+
+/**
+Prints the string pointed to by p at the current cursor position.
+Control chars are obeyed, not printed.
+**/
+procedure Print(c: global pointer);
+begin
+    asm("
+      ld hl, [Text_c]
+      call #28a7
+      ld a,#0d
+      call #033a
+      ");
+end;
+
+/** 
+  Move cursor to 0,0
+  **/
+procedure CursorHome();
+begin
+  asm("
+    ld hl,#7000
+    ld (#7820),hl
+    xor a
+    ld(#78a6),a
+    call #0053
+  ");
+end;
+
+/**
+  Move cursor to x,y location onscreen
+  **/
+procedure MoveCursorTo(x, y: global byte);
+begin
+  asm("
+    ld hl,#7000
+    ld a,[Text_x];
+    ld b,0
+    ld c,a
+    add hl,bc
+
+    ld de,#0020
+    ld a,[Text_y]
+    cp #00
+    jr z,noyloop
+    ld b,a
+mctloop
+    add hl,de
+    djnz mctloop  
+noyloop    
+    ld (#7820),hl
+    ld a,[Text_x]
+    ld (#78a6),a
+    call #0053 
+  ");
+end;
+
+end.

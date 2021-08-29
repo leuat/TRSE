@@ -83,6 +83,7 @@ interrupt MainRaster();
 begin
 	startirq(1);
 	// Update joystick here
+	fill(#joystickup,0,5);
 	Joystick(joystickPort);
 	// Update sprites
 	UpdateSprite();	

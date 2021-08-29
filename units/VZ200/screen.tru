@@ -1,5 +1,229 @@
 unit Screen;
+
 var
-	// Nothing here yet	
+  const screen_char_loc : address = $7000;	
+  const gfxmode : address = $6800;
+  const gfxmode2 : address = $783B;
+	Count: Integer;
+	c,ga,u:byte;
+	i, j, gfxval, col_and, col_or : byte;
+	dx, dy, d, xi, yi, ai, bi : byte;
+	x,y,x1,y1,x2,y2 : byte;
+
+/* 
+	Clears the screen using mode parameter 0 or 1
+	*/
+procedure Cls(u: global byte);
+begin
+	asm("
+		ld a, [Screen_u]
+		cp #00
+		jp z,mode0
+		ld a,#00
+		jr cls
+mode0
+		ld a,#20
+cls
+		ld hl,#7000
+		ld de,#7001
+		ld bc,#0800
+		ld (hl),a
+		ldir
+	");
+end;
+
+/**
+Sets the VZ200 resolution mode.
+<ul>
+<li>0: Text mode</li>
+<li>1: Graphics mode 128x64</li>
+</ul>
+**/
+procedure SetMode(ga: global byte);
+begin
+	j := gfxmode2;
+	if (ga=1) then
+		begin
+			gfxval := $02;
+			col_or := $08; 
+			col_and := $ef;			
+			i := col_or + gfxval;
+			j := j & i;
+			gfxmode2 := j;
+			gfxmode := j;
+		end
+	else
+		begin
+			gfxval := $00;
+			col_or := $08; 
+			col_and := $ef;			
+			i := col_or + gfxval;
+			j := j & i;
+			gfxmode2 := j;	
+		end;
+end;
+
+/**
+	Set pen colour (0-3) for plotting pixels in mode(1)
+	**/
+procedure SetPen(c: global byte);
+begin
+	asm("
+		ld a,[Screen_c]
+		ld (#7846),a
+		");
+end;
+
+/**
+	Get pen colour in mode(1)
+	**/
+function GetPen():byte;
+begin
+	asm("
+		ld a,(#7846)
+		ld [Screen_c],a
+		");
+		GetPen := c;
+end;
+
+/**
+	Set paper (background) color 0 or 1
+	**/
+procedure SetPaper(c : global byte);
+begin
+	asm("
+		ld a,[Screen_c]
+		cp #00
+		jr z,bg0
+		ld a,(#6800)
+		set 4,a
+		ld (#6800),a
+		ld (#783B),a
+		ret
+bg0		
+		ld a,(#6800)
+		res 4,a
+		ld (#6800),a
+		ld (#783B),a
+	");
+end;
+
+/** 
+Sets a pixel in mode(1) at position (x,y) with current colour.
+**/
+// #7846 = current color value
+procedure PutPixel(x, y : global byte);
+begin
+	asm("
+				ld a,(#7846)
+				ld c,a
+        ld      a, [Screen_y]            ; get y
+				ld 			h,a
+        cp      #40             ; >= 64 ?
+        jr      nc, psetx       ; nah, wont pset there
+        ld      a, [Screen_x]            ; get x
+				ld      l,a
+        cp      #80            ; >= 128 ?
+        jr      nc, psetx
+        sla     l               ; calculate screen offset
+        srl     h
+        rr      l
+        srl     h
+        rr      l
+        srl     h
+        rr      l
+        and     #03              ; pixel offset
+        inc     a
+        ld      b, #fc
+pset1   rrc     b
+        rrc     b
+        rrc     c
+        rrc     c
+        dec     a
+        jr      nz, pset1
+				ld	de, #7000
+				add	hl, de
+        ld      a, (hl)
+        and     b
+        or      c
+        ld      (hl), a
+psetx
+	");
+end;
+
+/**
+	Draws a line in mode(1) in current colour
+	**/
+procedure DrawLine( x1, y1, x2, y2: global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+		begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
 	
+	if y1 < y2 then begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	else
+		begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	PutPixel(x1,y1);
+	if dx >= dy then begin
+		ai := (dy - dx);
+		bi := dy;
+		d := bi - dx/2;
+		while x1 <> x2 do begin
+			if d <128 do begin
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + bi;
+				x1 :=  x1 + xi;
+				PutPixel(x1,y1);
+		end;
+	end
+	else
+		begin // dy > dx
+		ai := (dx - dy);
+		bi := dx;
+		d := bi - dy/2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;	
+			end
+			else
+				d := d+  bi;
+				y1 := y1 + yi;
+				PutPixel(x1,y1);
+		end;
+	end;
+end;
+
+/**
+	Draws a rectangle in mode(1) in current colour
+	x,y is top-left corner then width and height.
+	**/
+procedure DrawRect( rx, ry, w, h: byte);
+begin
+	DrawLine(rx,ry,rx+w,ry);
+	DrawLine(rx+w,ry,rx+w,ry+h);
+	DrawLine(rx,ry,rx,ry+h);
+	DrawLine(rx,ry+h,rx+w,ry+h);
+end;
+
 end.

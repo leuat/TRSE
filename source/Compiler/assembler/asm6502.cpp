@@ -156,49 +156,64 @@ void Asm6502::Program(QString programName, QString vicConfig)
 
     QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
     StartMemoryBlock(org);
-    if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
 
-        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
-               Asm(" .org $2001");
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
+        Asm(" .org $2001");
+        if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
             Asm(" .byte $09,$20 ;End of command marker (first byte after the 00 terminator)");
             Asm(" .byte $0a,$00 ;10");
             Asm(" .byte $fe,$02,$30,$00 ;BANK 0");
-//            Asm(" .byte <endd_s, >endd_s ");
+            //            Asm(" .byte <endd_s, >endd_s ");
             Asm(" .byte $13, $20 ");
             Asm(" .byte $14,$00 ;20");
             Asm(" .byte $9e ;SYS");
-//            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-  //          QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
+            //            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+            //          QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
             Asm(" .byte $38,$32,$32,$34");
-//
+            //
             //QString extra = "";
             //if (s.count()<5)
-//                extra=", $00";
+            //                extra=", $00";
             Asm("  .byte $00");
             Label("endd_s:");
             Asm("  .byte $00,$00    ;End of basic terminators");
             Asm("  .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF    ;extra");
+            EndMemoryBlock();
+            //        Comment("End of SYS memory block, starting new");
+            StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
         }
-        else {
+        m_currentBlock->m_isMainBlock = true;
+        m_mainBlock = m_currentBlock;
+        //    m_source+=m_startInsertAssembler;
+        //    Asm("test");
 
-            // new method
-            //Asm(".byte $00 ; fill $xxx0");
-            Asm( ".byte $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
-            Asm( ".byte $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
-            Asm(".byte $0a, $00 ; line 10 (lo, hi)");
-            Asm(".byte $9e, $20 ; SYS token and a space");
-            // write PETSCII / ASCII representation of address to call
-            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-            Asm(".byte $00, $00, $00 ; end of program");
+        Label(programName);
+        return;
 
-            /* // old method
+    }
+
+
+
+    if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
+
+
+        // new method
+        //Asm(".byte $00 ; fill $xxx0");
+        Asm( ".byte $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
+        Asm( ".byte $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
+        Asm(".byte $0a, $00 ; line 10 (lo, hi)");
+        Asm(".byte $9e, $20 ; SYS token and a space");
+        // write PETSCII / ASCII representation of address to call
+        Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+        Asm(".byte $00, $00, $00 ; end of program");
+
+        /* // old method
             Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
             Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
             Asm(".byte     $00");   // 6, 4, )
             */
-            Nl();
-            }
+        Nl();
 
         EndMemoryBlock();
 //        Comment("End of SYS memory block, starting new");

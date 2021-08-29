@@ -64,7 +64,7 @@ BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC De
 ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>Under construction.
 APPLEII; Main Apple II tutorials; APPLEII/tutorials/ ;  <h2>Main Apple II tutorials</h2><p><p>Under construction.
 
-VZ200; Preliminary VZ200 tutorials; VZ200/tutorials/ ;  <h2>Main VZ200 tutorials</h2><p><p>Under construction.
+VZ200; VZ200 tutorials; VZ200/tutorials/ ;  <h2>Main VZ200 tutorials</h2><p><p>Under construction.
 
 OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2><tr><td><img src=":resources/images/tutorials/ok1.png" width="150" class="center"></td><td>OK64 is Leuat's very own fake 6502 computer!<p>The OK64 hardware supports a 6502 with 64kb of program RAM. In addition to this, the OKVC (OK video chip) supports an additional 1mb Video RAM - and features a handy command interface that the 6502 can use to draw graphic primitives such as polygons, circles and lines. The screen is 256x256 pixels, with a selection of 256 colours from a RGB24 palette. The OK64 also supports a SID chip. </td></tr>
 OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2><tr><td><img src=":resources/images/tutorials/ok2.png" width="150" class="center"></td><td>The first demo made for the OK64! Presented at Revision 2020.</td></tr>

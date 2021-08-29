@@ -1,5 +1,5 @@
 #include "compiler65c816.h"
-
+#include "source/Compiler/syntax.h"
 
 void Compiler65C816::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
@@ -63,7 +63,31 @@ void Compiler65C816::Init6502Assembler()
 
     if (Syntax::s.m_currentSystem->isCustom())
         Syntax::s.m_ignoreSys = true;
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+
+
+        if (m_projectIni->getdouble("override_target_settings")==1) {
+            Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
+            Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
+            Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+            Syntax::s.m_currentSystem->m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
+            if (Syntax::s.m_ignoreSys)
+                Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->m_programStartAddress;
+        } else {
+            Syntax::s.m_currentSystem->DefaultValues();
+            Syntax::s.m_ignoreSys = Syntax::s.m_currentSystem->m_ignoreSys;
+            //       Syntax::s.m_stripPrg = false;
+
+        }
+        if (m_projectIni->getdouble("exomizer_toggle")==1)
+            Syntax::s.m_ignoreSys = true;
+    }
+
+
+
 }
+
 
 void Compiler65C816::Connect()
 {

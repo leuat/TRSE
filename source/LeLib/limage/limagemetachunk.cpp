@@ -1,6 +1,6 @@
 #include "limagemetachunk.h"
 #include "source/LeLib/limage/limageio.h"
-
+#include "source/Compiler/syntax.h"
 
 LImageMetaChunk::LImageMetaChunk(LColorList::Type t) : CharsetImage(t)
 {
@@ -269,8 +269,13 @@ void LImageMetaChunk::SaveBin(QFile &file)
         file.write( ( char * )( &w ),  1 );
         file.write( ( char * )( &h ),  1 );
         file.write(m->m_data);
-        if (isSnes())
+  //      qDebug() << "Writing: "<<isSnes();
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
+        {
+//        if (isSnes()) {
+//            qDebug() << "Writing attributes;";
             file.write(m->m_attributes);
+        }
     }
     AppendSaveBinCharsetFilename(file);
 }
@@ -288,7 +293,7 @@ void LImageMetaChunk::LoadBin(QFile &file)
   //      qDebug() << "W read : " << QString::number(w);
         AddNew(w,h);
         getCur()->m_data = file.read(w*h);
-        if (isSnes())
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
             getCur()->m_attributes = file.read(w*h);
     }
     LoadBinCharsetFilename(file);
@@ -453,7 +458,7 @@ void LImageMetaChunk::ExportBin(QFile &file)
     for (LImageContainerItem* li : m_items) {
         LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
         file.write(m->m_data);
-        if (isSnes())
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
             file.write(m->m_attributes);
     }
 }

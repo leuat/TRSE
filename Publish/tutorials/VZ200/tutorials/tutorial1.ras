@@ -1,33 +1,40 @@
-program tutorial1;
-@use "screen"
-var
-	i,time,j,k:byte;
-	src,dst:pointer;
-	
-	circle : array[256] of byte = buildtable2d(32,16,
-		"Math.sqrt(Math.pow(i-SCREEN_WIDTH/2,2)+2*Math.pow(j-SCREEN_HEIGHT/2,2))");
-	
-	
-procedure Update();
-begin
-	src:=#circle;
-	dst:=#screen;
-	for j:=0 to screen_height do
-	begin
-		for i:=0 to screen_width do
-		begin
-			dst[i]:=src[i]-time;
-		end;	
-		dst+=screen_width;
-		src+=screen_width;	
-	end;
-end;
+program Tutorial1;
+@use "Screen"
+@use "Text"
+@use "Memory"
+@use "Input"
+
+// TRSE Tutorial 1
+// for VZ200 & VZ300 computers
+// By Jason "WauloK" Oakley
+// https://BlueBilby.com/
+
+var  
+	v : byte;
 	
 begin
-	while (true) do
-	begin
-		Update();
-		time+=1;
-	end;
-	loop();
+	Memory::DisableInterrupts();
+	// Set Text mode (not necessary if booted in text mode)
+	Screen::SetMode(0);
+	// Clear screen using Text mode
+	Screen::Cls(0);
+	// Move cursor to x,y to print text
+	Text::MoveCursorTo(1,2);
+	// Print text to screen
+	Text::Print("HELLO FROM THE TRSE TUTORIAL!");
+	Text::MoveCursorTo(3,4);
+	Text::Print("BY JASON 'WAULOK' OAKLEY!");
+	Text::MoveCursorTo(15,6);
+	// Output one character to the screen
+	Text::PutChar("%");
+	Text::MoveCursorTo(17,6);
+	Text::PutChar("%");
+	// Move cursor to top-left of screen
+	Text::CursorHome();
+	Text::Print("HOME");
+	// Output char via variable
+	v := 42;
+	Text::MoveCursorTo(16,8);
+	Text::PutChar(v);
+	Loop();
 end.
