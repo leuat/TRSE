@@ -136,8 +136,8 @@ void SystemVZ200::PostProcess(QString &text, QString file, QString currentDir)
     org $7b00
     */
     h.append("VZF0");
-    h.append("AGDGAME");
-    for (int i=0;i<10;i++)
+    h.append("TRSE");
+    for (int i=0;i<13;i++)
         h.append((char)0x0);
     h.append(0xf1);
     h.append((char)0x0);
