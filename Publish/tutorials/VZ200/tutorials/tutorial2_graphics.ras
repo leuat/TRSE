@@ -1,8 +1,7 @@
-program Tutorial2;
+program Tutorial5;
 @use "Screen"
 @use "Text"
 @use "Memory"
-@use "Input"
 
 // TRSE Tutorial 2
 // for VZ200 & VZ300 computers
@@ -32,6 +31,5 @@ begin
 	// Draw a diagonal line on the screen
 	Screen::DrawLine(20,20,50,50);
 	// Draw a rectangle on the screen
-	Screen::DrawRect(80,20,20,30);
-	Loop();
+	Screen::DrawRect(80,20,20,30);	Loop();
 end.

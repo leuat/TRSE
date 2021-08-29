@@ -640,5 +640,7 @@
         <file>resources/images/help_icon.png</file>
         <file>resources/text/help/p/rtf_files.rtf</file>
         <file>resources/images/VZ200.png</file>
+        <file>resources/images/portraits/red_sunglasses_small.png</file>
+        <file>resources/images/portraits/red_sunglasses.png</file>
     </qresource>
 </RCC>

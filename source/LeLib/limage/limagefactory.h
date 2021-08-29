@@ -54,6 +54,7 @@
 #include "source/LeLib/limage/limagespectrum.h"
 #include "source/LeLib/limage/limagesnes.h"
 #include "source/LeLib/limage/limagelevelsnes.h"
+#include "source/LeLib/limage/limagevz200.h"
 
 class LImageFactory {
 public:

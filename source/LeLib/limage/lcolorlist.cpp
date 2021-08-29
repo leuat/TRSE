@@ -138,6 +138,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 13;
   if (t==SPECTRUM)
       return 14;
+  if (t==VZ200)
+      return 15;
 
   return 255;
 }
@@ -174,6 +176,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return VGA;
     if (c==14)
         return SPECTRUM;
+    if (c==15)
+        return VZ200;
 
     return UNSUPPORTED;
 
@@ -427,6 +431,8 @@ void LColorList::Initialize(Type t)
         InitVGA();
     if (m_type == Type::SPECTRUM)
         InitSPECTRUM();
+    if (m_type == Type::VZ200)
+        InitVZ200();
 
 
 
@@ -1052,6 +1058,20 @@ void LColorList::InitBBC(int noPens)
     m_pens.clear();
     for (int i=0;i<noPens;i++) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i&7,"",LPen::Dropdown, m_bpp)));
+    }
+
+}
+
+void LColorList::InitVZ200()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0,0xFF,0),"Black"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x0),"Yellow"));
+    m_list.append(LColor(QColor(0x00,0x00,0xFF),"Blue"));
+    m_list.append(LColor(QColor(0xFF,0x00,0x0),"Red"));
+    m_pens.clear();
+    for (int i=0;i<m_list.count();i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
     }
 
 }

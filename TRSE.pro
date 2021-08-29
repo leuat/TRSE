@@ -29,7 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-#ARCH = arm64
+ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -216,6 +216,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagesnes.cpp \
     source/LeLib/limage/limagespectrum.cpp \
     source/LeLib/limage/limagevga.cpp \
+    source/LeLib/limage/limagevz200.cpp \
     source/LeLib/limage/limagex16.cpp \
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
@@ -471,6 +472,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagesnes.h \
     source/LeLib/limage/limagespectrum.h \
     source/LeLib/limage/limagevga.h \
+    source/LeLib/limage/limagevz200.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \
@@ -703,6 +705,8 @@ DISTFILES += \
     resources/images/OK64.png \
     resources/images/PLUS4.png \
     resources/images/amiga_intro.png \
+    resources/images/portraits/red_sunglasses.png \
+    resources/images/portraits/red_sunglasses_small.png \
     resources/images/tutorials/floskel.png \
     resources/images/wormwood.png \
     resources/text/about.txt \

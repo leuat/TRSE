@@ -102,6 +102,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 29;
     if (t==LevelEditorSNES)
         return 30;
+    if (t==VZ200)
+        return 31;
 
 
     return 255;
@@ -171,6 +173,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "SNES";
     if (t==LevelEditorSNES)
         return "SNES Level editor";
+    if (t==VZ200)
+        return "VZ200 4-color 128x64";
 
     return "Unknown image type";
 
@@ -241,6 +245,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return SNES;
     if (c==30)
         return LevelEditorSNES;
+    if (c==31)
+        return VZ200;
 
     return NotSupported;
 
