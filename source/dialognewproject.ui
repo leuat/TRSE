@@ -121,6 +121,11 @@
             <string>ATARI800</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>VZ200</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

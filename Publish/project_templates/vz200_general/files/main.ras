@@ -1,0 +1,19 @@
+program MyProject;
+@use "Screen"
+@use "Memory"
+@use "Compression"
+
+@export "images/trse.flf" "trse.bin" 256
+
+var  
+	data : incbin("trse.bin") compressed;
+	
+begin
+	Memory::DisableInterrupts();
+	// Set Graphics mode
+	Screen::SetMode(1);
+	// Decompress the image to the screen
+	Compression::Decompress(#data, #screen); 
+
+	Loop();
+end.
