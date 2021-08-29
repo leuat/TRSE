@@ -1,7 +1,6 @@
 unit Font;
 var
 
-  
 	text, currentFont:pointer;
 	@donotremove currentFont
 	tx,ty : byte;
@@ -42,9 +41,9 @@ var
    $40,$10,$04,$10,$40,
    $54,$04,$10,$00,$10,
    $10,$44,$44,$40,$14,
-   $10,$44,$54,$44,$44,// A
+   $10,$44,$54,$44,$44,
    $50,$44,$50,$44,$50,
-   $14,$40,$40,$40,$14 ,
+   $14,$40,$40,$40,$14,
    $50,$44,$44,$44,$50,
    $54,$40,$50,$40,$54,
    $54,$40,$50,$40,$40,
@@ -74,7 +73,7 @@ var
    $10,$44,$00,$00,$00,
    $00,$00,$00,$00,$54,
    $40,$10,$00,$00,$00,
-   $00,$14,$44,$44,$14,//a
+   $00,$14,$44,$44,$14,
    $40,$50,$44,$44,$50,
    $00,$14,$40,$40,$14,
    $04,$14,$44,$44,$14,
@@ -95,7 +94,7 @@ var
    $00,$14,$50,$14,$50,
    $40,$50,$40,$44,$10,
    $00,$44,$44,$44,$14,
-   $00,$44,$44,$44,$10,// v
+   $00,$44,$44,$44,$10,
    $00,$44,$44,$54,$44,
    $00,$44,$10,$10,$44,
    $00,$44,$14,$04,$10,
@@ -114,12 +113,12 @@ begin
 	
 end;
 
-
-
 /**
   Draws a string in mode(1) graphics mode at x,y
-  Note: Make sure you use SetPen first or it will draw in the default red
-        Also, this is not drawn with transparency so Pen 0 will draw nothing
+  Note: Use SetFont() first to configure which to draw.
+        Make sure you use SetPen first or it will draw in the default red.
+        The font is rendered with transparency.
+        
   **/
   
 procedure DrawTextAt(text : global pointer; tx, ty : global byte);
@@ -176,6 +175,9 @@ drawletter
 drawletter2    
     pop bc          ; Font data pointer          
     pop hl          ; Coords to display fontbyte
+    ld d,a
+    ld a,(hl)
+    xor d
     ld (hl),a       ; Put it there
     ld de,#0020
     add hl,de       ; Move screen coords pointer down 1 line
