@@ -44,10 +44,8 @@ jobs:
       - name: unzip jom
         shell: cmd
         run: |
-          dir D:\a\TRSE\
-          dir D:\a\TRSE\Qt\
-          dir D:\a\TRSE\Qt\QtCreator
-          dir D:\a\TRSE\Qt\QtCreator\bin
+          dir D:\a\TRSE\Qt\Tools\QtCreator
+          dir D:\a\TRSE\Qt\Tools\QtCreator\bin
           unzip D:\jom\jom.zip D:\a\TRSE\Qt\Tools\QtCreator\bin\
 
 
