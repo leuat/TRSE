@@ -33,22 +33,6 @@ jobs:
           tools: 'tools_ifw,4.0.0,qt.tools.ifw.40 tools_qtcreator,5.0.0,qt.tools.qtcreator'
 
 
-      - name: Download jom omg
-        uses: carlosperate/download-file-action@v1.0.3
-        id: download-poetry
-        with:
-          file-url: 'https://download.qt.io/official_releases/jom/jom.zip'
-          file-name: 'jom.zip'
-          location: 'D:\jom'
-
-      - name: unzip jom
-        shell: cmd
-        run: |
-          dir D:\a\TRSE\Qt\Tools\QtCreator
-          dir D:\a\TRSE\Qt\Tools\QtCreator\bin
-          dir D:\a\TRSE\Qt\Tools\QtCreator\bin\jom
-
-
       - name: Build TRSE
         shell: cmd
         run: |
