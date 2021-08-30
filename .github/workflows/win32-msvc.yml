@@ -46,7 +46,7 @@ jobs:
         run: |
           dir D:\a\TRSE\Qt\Tools\QtCreator
           dir D:\a\TRSE\Qt\Tools\QtCreator\bin
-          unzip D:\jom\jom.zip D:\a\TRSE\Qt\Tools\QtCreator\bin\
+          dir D:\a\TRSE\Qt\Tools\QtCreator\bin\jom
 
 
       - name: Build TRSE
@@ -54,7 +54,7 @@ jobs:
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
           qmake TRSE.pro
-          D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -j 2 -f Makefile.Release
+          D:\a\TRSE\Qt\Tools\QtCreator\bin\jom\jom.exe -j 2 -f Makefile.Release
 
       # OK64 doesn't build with Qt 6.0 or Qt 6.1 (no Qt Multimedia). Hopefully this will be fixed with Qt 6.2.
       #- name: Build OK64
