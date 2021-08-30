@@ -5,10 +5,10 @@ var
   const gfxmode : address = $6800;
   const gfxmode2 : address = $783B;
 	Count: Integer;
-	c,ga,u:byte;
+	c, ga, u : byte;
 	i, j, gfxval, col_and, col_or : byte;
 	dx, dy, d, xi, yi, ai, bi : byte;
-	x,y,x1,y1,x2,y2 : byte;
+	x, y, x1, y1, x2, y2, rx, ry, w, h : byte;
 
 /* 
 	Clears the screen using mode parameter 0 or 1
@@ -218,12 +218,28 @@ end;
 	Draws a rectangle in mode(1) in current colour
 	x,y is top-left corner then width and height.
 	**/
-procedure DrawRect( rx, ry, w, h: byte);
+procedure DrawRect( rx, ry, w, h: global byte);
 begin
 	DrawLine(rx,ry,rx+w,ry);
 	DrawLine(rx+w,ry,rx+w,ry+h);
 	DrawLine(rx,ry,rx,ry+h);
 	DrawLine(rx,ry+h,rx+w,ry+h);
 end;
+
+/**
+	Draws a filled rectangle in mode(1) in current colour
+	x,y is top-left corner then width and height.
+	**/
+procedure DrawRectFilled( rx, ry, w, h: global byte);
+begin
+	for i := rx to rx+w do
+	begin
+		for j := ry to ry+h do
+		begin
+			Screen::PutPixel(i,j);
+		end;
+	end;
+end;
+
 
 end.
