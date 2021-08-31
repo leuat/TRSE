@@ -1,7 +1,5 @@
-program Tutorial9_Mandelbrot;
-// Change to video.scr_tube=0 and uncomment SetColorPalette below (line 85) for the color version
-// You can also draw in mode 1 or 2 by changing SetMode(X), PutPixelModeX and adapting col (line 127 and 139)
-@projectsettings "amstradcpc_options" "-O video.scr_tube=1 -O system.limit_speed=0"
+program Tutorial_Mandelbrot;
+
 @use "screen"
 @use "memory"
 @use "smallfloat"
