@@ -10,6 +10,10 @@ var
 	dx, dy, d, xi, yi, ai, bi : byte;
 	x, y, x1, y1, x2, y2, rx, ry, w, h : byte;
 
+	const screen_pixel_width : byte= 128;
+	const screen_pixel_height : byte= 64;
+
+
 /* 
 	Clears the screen using mode parameter 0 or 1
 	*/

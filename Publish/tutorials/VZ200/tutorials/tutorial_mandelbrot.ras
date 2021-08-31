@@ -1,0 +1,124 @@
+program Tutorial9_Mandelbrot;
+// Change to video.scr_tube=0 and uncomment SetColorPalette below (line 85) for the color version
+// You can also draw in mode 1 or 2 by changing SetMode(X), PutPixelModeX and adapting col (line 127 and 139)
+@projectsettings "amstradcpc_options" "-O video.scr_tube=1 -O system.limit_speed=0"
+@use "screen"
+@use "memory"
+@use "smallfloat"
+
+var
+	// We use a integer for screen_width and screen_x to make it simpler to switch to Mode 1 or 2
+	const screen_width: integer = 160;
+	const screen_height: byte = 200;
+	const float_size: byte = 2;
+	
+	min_x: array[float_size] of byte;
+	min_y: array[float_size] of byte;
+	max_x: array[float_size] of byte;
+	max_y: array[float_size] of byte;
+	modulus: array[float_size] of byte;
+	dx: array[float_size] of byte;
+	dy: array[float_size] of byte;
+	cx: array[float_size] of byte;
+	cy: array[float_size] of byte;
+	x: array[float_size] of byte;
+	y: array[float_size] of byte;
+	tmp: array[float_size] of byte;
+	tmp2: array[float_size] of byte;
+	zx: array[float_size] of byte;
+	zy: array[float_size] of byte;
+	screen_x_f: array[float_size] of byte;
+	screen_y_f: array[float_size] of byte;
+	four: array[float_size] of byte;
+	screen_width_f: array[float_size] of byte;
+	screen_height_f: array[float_size] of byte;
+	
+	screen_x: integer;
+	screen_y: byte;
+	col: byte;
+	i: byte;
+
+begin
+	Memory::DisableInterrupts();
+	// Set Graphics mode
+	Screen::SetMode(1);
+	// Clear screen using Graphics mode
+	Screen::Cls(1);
+		
+	// Initialize constants
+	SmallFloat::FromU8(#four, 4);
+	SmallFloat::FromU16(#screen_width_f, Screen::screen_pixel_width);
+	SmallFloat::FromU16(#screen_height_f, Screen::screen_pixel_height);
+
+	// Initialize boundaries
+	SmallFloat::FromString(#min_x, "-2");
+	SmallFloat::FromString(#min_y, "-1");
+	SmallFloat::FromString(#max_x, "1");
+	SmallFloat::FromString(#max_y, "1");
+	
+	SmallFloat::Substract(#dx, #max_x, #min_x);
+	SmallFloat::Substract(#dy, #max_y, #min_y);
+	
+	for screen_x := 0 to Screen::screen_pixel_width do
+	begin
+		SmallFloat::FromU16(#screen_x_f, screen_x);
+		for screen_y := 0 to Screen::screen_pixel_height do
+		begin
+			// For each point C(x,y) of the complex plane we compute iteratively
+			//  Z_(n+1) = Z_n^2 + C
+			// Starting with Z_0 = 0
+			// If this sequence diverges, the point is outside of the Mandelbrot set. If it stays bounded, it's inside.
+			// We'll compute only the first 16 iterations and consider that it diverges if the modulus gets greater than 2.
+			// We use colors to show how fast things diverges: color 0 diverges on the first iteration (i.e |C| > 2), color
+			// 1 diverges on the second iteration (i.e |C^2 + C| > 2), etc ...
+			SmallFloat::FromU16(#screen_y_f, screen_y);
+			// x := min_x + dx * screen_x / screen_width
+			SmallFloat::Multiply(#x, #dx, #screen_x_f);
+			SmallFloat::Divide(#tmp, #x, #screen_width_f);
+			SmallFloat::Add(#x, #tmp, #min_x);
+	 		SmallFloat::Assign(#cx, #x);
+	 		
+			// y := min_y + dy * screen_y / screen_height
+			SmallFloat::Multiply(#y, #dy, #screen_y_f);
+			SmallFloat::Divide(#tmp, #y, #screen_height_f);
+			SmallFloat::Add(#y, #tmp, #min_y);
+	 		SmallFloat::Assign(#cy, #y);
+
+			col := 15;
+			for i := 0 to 16 do
+			begin
+				// modulus := x*x + y*y;
+				// This actually is the square of the modulus
+				SmallFloat::Multiply(#tmp, #x, #x);
+				SmallFloat::Multiply(#tmp2, #y, #y);
+				SmallFloat::Add(#modulus, #tmp, #tmp2);
+
+				// As soon as modulus is greater than 2 (so its square greater than 4), this is considered as diverging
+				if SmallFloat::Compare(#modulus, #four) = 1 then
+				begin
+				   col := i;
+				   break;
+				end;
+
+				// zx := x*x - y* y;
+				// The real part of z^2
+				SmallFloat::Substract(#zx, #tmp, #tmp2);
+				
+				// zy := 2*x*y;
+				// The imaginary part of z^2
+				SmallFloat::Multiply(#tmp, #x, #y);
+				SmallFloat::Add(#zy, #tmp, #tmp);
+				// Now add c (the current point) to the result
+ 				// x := zx + cx;
+ 				SmallFloat::Add(#x, #zx, #cx);
+ 				// y := zy + cy;
+ 				SmallFloat::Add(#y, #zy, #cy);
+			end;
+			Screen::SetPen(col&3);
+			Screen::PutPixel(screen_x,screen_y);
+
+		end;
+	end;
+	// Now admire the result!
+	Loop();
+end.
