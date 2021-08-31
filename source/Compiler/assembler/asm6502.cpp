@@ -159,7 +159,7 @@ void Asm6502::Program(QString programName, QString vicConfig)
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
         Asm(" .org $2001");
-        if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
+        if (!Syntax::s.m_ignoreSys){// && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
             Asm(" .byte $09,$20 ;End of command marker (first byte after the 00 terminator)");
             Asm(" .byte $0a,$00 ;10");
             Asm(" .byte $fe,$02,$30,$00 ;BANK 0");
@@ -305,7 +305,8 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
         }
         else {
             QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
-            app->Append("org " + pos,1);
+//            app->Append("org " + pos,1);
+            app->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
             for (int i=0;i<lst.count();i++)
                 app->Append(lst[i],0);
 

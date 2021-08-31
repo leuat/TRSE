@@ -6,21 +6,7 @@
 class LImageVZ200 : public LImageQImage
 {
 public:
-    LImageVZ200(LColorList::Type t)  : LImageQImage(t)
-    {
-        Initialize(128,64);
-        m_scale = 1;
-        m_type = LImage::VZ200;
-
-        m_supports.asmExport = false;
-        m_supports.binaryLoad = false;
-        m_supports.binarySave = false;
-        m_supports.flfSave = true;
-        m_supports.flfLoad = true;
-        m_supports.asmExport = false;
-        m_currentChar = 0;
-
-    }
+    LImageVZ200(LColorList::Type t);
 
 
     void ExportBin(QFile &file) override;

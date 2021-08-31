@@ -2152,6 +2152,14 @@ void MainWindow::LoadProject(QString filename)
             LoadDocument(focusFile);
 
 
+    if (m_documents.count()==0) { // No documents - load default
+        if (QFile::exists(getProjectPath() + "/readme.rtf"))
+            LoadDocument("readme.rtf");
+        else
+        if (QFile::exists(getProjectPath() + "/index.rtf"))
+            LoadDocument("index.rtf");
+    }
+
     m_watcher = QSharedPointer<QFileSystemWatcher>(new QFileSystemWatcher());
     m_watcher->addPath(getProjectPath());
     QStringList lst = getTRUPaths();

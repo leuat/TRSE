@@ -74,8 +74,8 @@ void System65C816::Assemble(QString &text, QString filename, QString currentDir,
 
         processCompress.start(m_settingsIni->getString("exomizer"), exoParams  );
         processCompress.waitForFinished();
-        qDebug() << processCompress.readAllStandardError();
-        qDebug() <<processCompress.readAllStandardOutput();
+//        qDebug() << processCompress.readAllStandardError();
+  //      qDebug() <<processCompress.readAllStandardOutput();
     }
 
 
