@@ -12,7 +12,7 @@ begin
 	Memory::DisableInterrupts();
 	Screen::SetMode(1);	
 	Screen::Cls(1);
-	Screen::SetPen(0);
+	Screen::SetPen(1);
 	
 	Font::SetFont(#Font::font1);
 	

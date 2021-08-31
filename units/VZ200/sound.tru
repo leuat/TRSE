@@ -1,0 +1,99 @@
+unit Sound;
+
+var
+  freq, dur : Integer;
+
+/* 
+	Makes the VZ keyboard BEEP sound
+	*/
+procedure Beep();
+begin
+	asm("
+  call #3450
+	");
+end;
+
+/* 
+	Makes sound. Parameters are for frequency and duration
+	*/
+procedure Play(freq, dur: global Integer);
+begin
+	asm("
+  ld hl,[Sound_freq]
+  ld bc,[Sound_dur]
+  call #345c
+	");
+end;
+
+/* 
+	Makes shooting sound.
+  Parameters are for frequency and duration
+	*/
+procedure Shoot(freq, dur: global Integer);
+var
+begin  
+	asm("
+	ld      hl,[Sound_freq] ;%000000011000011     ;450
+expl
+  push    hl
+  push    af
+  ld      a,#21
+  ld      h,0
+  and     (hl)
+  ld      l,a
+  pop     af
+  xor     l
+	or      #08
+	and     #ef
+  ld      (#6800),a
+  pop     hl
+  push    af
+  ld      bc,[Sound_dur]
+dly      
+  dec     bc
+  ld      a,b
+  or      c
+  jr      nz,dly
+  pop     af
+  inc     hl
+  bit     5,l
+  jr      z,expl
+	");
+end;
+
+/* 
+  Makes explosion sound
+  */
+procedure Explode();
+begin
+asm("
+	ld hl,450
+expl0
+  push    hl
+  push    af
+  ld      a,#21
+  ld      h,0
+  and     (hl)
+  ld      l,a
+  pop     af
+  xor     l
+  or      #08
+  and     #ef
+  ld      (#6800),a
+  pop     hl
+  push    af
+  ld      b,h
+  ld      c,l
+xdly      dec     bc
+  ld      a,b
+  or      c
+  jr      nz,xdly
+  pop     af
+  inc     hl
+  bit     1,h
+  jr      z,expl0
+");
+end;
+
+
+end.

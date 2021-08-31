@@ -1,0 +1,54 @@
+program Tutorial_Sound;
+@use "Screen"
+@use "Memory"
+@use "Sound"
+@use "Font"
+
+// TRSE Sound Tutorial 
+// for VZ200 & VZ300 computers
+// By Jason "WauloK" Oakley
+// https://BlueBilby.com/
+
+var  
+	u, v : byte;
+begin
+	Memory::DisableInterrupts();
+	// Set Text mode (not necessary if booted in text mode)
+	Screen::SetMode(1);
+	// Clear screen using Text mode
+	Screen::Cls(1);
+	Font::SetFont(#Font::font1);
+	Screen::SetPen(1);
+	Font::DrawTextAt("The VZ200 keyboard beep!",0,0);
+	// Make the standard VZ keyboard beep sound
+	for v := 0 to 10 do
+	begin
+		Sound::Beep();
+		for u := 0 to 250 do
+			wait(250);
+	end;
+	for v := 0 to 255 do
+               wait(250);
+  Screen::SetPen(2);
+  Font::DrawTextAt("Bang bang! You're dead!",1,10);
+  // Make an gunshot sound
+  for v := 0 to 10 do
+  begin
+		Sound::Shoot(400,400);  
+		for u := 0 to 100 do     
+			wait(250);
+	end;        
+	Screen::SetPen(3);
+	Font::DrawTextAt("Missile heading for target!",4,20);	
+	// Make a decreasing pitch sound
+	for v := 20 to 120 do
+	begin
+		Sound::Play(v,25);
+	end;
+	 for v:=0 to 100 do
+               wait(250);
+   Font::DrawTextAt("We got him, sir!",4,30);            
+  // Make an explosion sound
+	Sound::Explode();
+	Loop();
+end.
