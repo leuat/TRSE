@@ -220,48 +220,10 @@ end;
 	**/
 procedure DrawRect( rx, ry, w, h: global byte);
 begin
-	xi := rx + w;
-	yi := ry + h ;
-asm("
-	ld a,[Screen_rx]
-hloop	
-	ld [Screen_x],a
-	push af
-	ld a,[Screen_ry]
-	ld [Screen_y],a
-	call Screen_PutPixel
-	ld a,[Screen_yi]
-	ld [Screen_y],a
-	call Screen_PutPixel
-	pop af
-	inc a
-	ld d,a
-	ld a,[Screen_xi]
-	cp d
-	ld a,d
-	jr nz,hloop
-	ld a,[Screen_rx]
-	ld [Screen_x],a	
-	ld a,[Screen_ry]
-vloop	
-	ld [Screen_y],a
-	push af
-	ld a,[Screen_rx]
-	ld [Screen_x],a
-	call Screen_PutPixel
-	ld a,[Screen_xi]
-	ld [Screen_x],a
-	call Screen_PutPixel
-	pop af
-	inc a
-	ld d,a
-	ld a,[Screen_yi]
-	cp d
-	ld a,d
-	jr nz,vloop	
-	ld [Screen_y],a
-	call Screen_PutPixel
-");
+	DrawLine(rx,ry,rx+w,ry);
+	DrawLine(rx+w,ry,rx+w,ry+h);
+	DrawLine(rx,ry,rx,ry+h);
+	DrawLine(rx,ry+h,rx+w,ry+h);
 end;
 
 /**
@@ -270,32 +232,26 @@ end;
 	**/
 procedure DrawRectFilled( rx, ry, w, h: global byte);
 begin
-	xi := rx + w;
-	yi := ry + h;
-asm("
-	ld a, [Screen_ry]
-y_loop	
-	ld [Screen_y],a
-	ld a, [Screen_rx]
-x_loop	
-	ld [Screen_x],a
-	push af
-	call Screen_PutPixel
-  pop af
-	inc a
-	ld d,a
-	ld a,[Screen_xi]
-	cp d
-	ld a,d
-	jr nz,x_loop
-	ld a,[Screen_y]
-	inc a
-	ld d,a
-	ld a,[Screen_yi]
-	cp d
-	ld a,d
-	jr nz,y_loop
-");
+	for i := rx to rx+w do
+	begin
+		for j := ry to ry+h do
+		begin
+			Screen::PutPixel(i,j);
+		end;
+	end;
+end;
+
+/**
+	Wait for Vertical Blank
+	**/
+procedure WaitForVerticalBlank();
+begin
+asm ("
+vloop 
+	ld a, (#6800)
+	rla
+	jr nc,vloop
+");	
 end;
 
 

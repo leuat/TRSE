@@ -1,0 +1,36 @@
+program SplitTutorial;
+@use "Screen"
+@use "Memory"
+@use "Font"
+
+ var
+	u, v : byte;
+	
+begin
+	v := 1;
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	Font::SetFont(#Font::font1);
+	Font::DrawTextAt("Let's try a splitscreen!",2,20);
+	Font::DrawTextAt("Let's try a splitscreen!",2,40);
+	while (v) do
+	begin
+		Screen::WaitForVerticalBlank();
+		Screen::SetPaper(0);
+		for u := 0 to 10 do
+		begin
+			for v := 0 to 5 do
+				wait(30);
+		end;
+			Screen::SetPaper(1);
+		for u := 0 to 5 do
+		begin
+			for v := 0 to 25 do
+				wait(20);
+		end;			
+
+	end;
+	
+end.
+	
