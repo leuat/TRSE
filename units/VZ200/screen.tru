@@ -10,10 +10,6 @@ var
 	dx, dy, d, xi, yi, ai, bi : byte;
 	x, y, x1, y1, x2, y2, rx, ry, w, h : byte;
 
-	const screen_pixel_width : byte= 128;
-	const screen_pixel_height : byte= 64;
-
-
 /* 
 	Clears the screen using mode parameter 0 or 1
 	*/
@@ -119,38 +115,38 @@ Sets a pixel in mode(1) at position (x,y) with current colour.
 procedure PutPixel(x, y : global byte);
 begin
 	asm("
-				ld a,(#7846)
-				ld c,a
-        ld      a, [Screen_y]            ; get y
-				ld 			h,a
-        cp      #40             ; >= 64 ?
-        jr      nc, psetx       ; nah, wont pset there
-        ld      a, [Screen_x]            ; get x
-				ld      l,a
-        cp      #80            ; >= 128 ?
-        jr      nc, psetx
-        sla     l               ; calculate screen offset
-        srl     h
-        rr      l
-        srl     h
-        rr      l
-        srl     h
-        rr      l
-        and     #03              ; pixel offset
-        inc     a
-        ld      b, #fc
+	ld a,(#7846)
+	ld c,a
+	ld      a, [Screen_y]            ; get y
+	ld 			h,a
+	cp      #40             ; >= 64 ?
+	jr      nc, psetx       ; nah, wont pset there
+	ld      a, [Screen_x]            ; get x
+	ld      l,a
+	cp      #80            ; >= 128 ?
+	jr      nc, psetx
+	sla     l               ; calculate screen offset
+	srl     h
+	rr      l
+	srl     h
+	rr      l
+	srl     h
+	rr      l
+	and     #03              ; pixel offset
+	inc     a
+	ld      b, #fc
 pset1   rrc     b
-        rrc     b
-        rrc     c
-        rrc     c
-        dec     a
-        jr      nz, pset1
-				ld	de, #7000
-				add	hl, de
-        ld      a, (hl)
-        and     b
-        or      c
-        ld      (hl), a
+	rrc     b
+	rrc     c
+	rrc     c
+	dec     a
+	jr      nz, pset1
+	ld	de, #7000
+	add	hl, de
+	ld      a, (hl)
+	and     b
+	or      c
+	ld      (hl), a
 psetx
 	");
 end;
@@ -224,10 +220,48 @@ end;
 	**/
 procedure DrawRect( rx, ry, w, h: global byte);
 begin
-	DrawLine(rx,ry,rx+w,ry);
-	DrawLine(rx+w,ry,rx+w,ry+h);
-	DrawLine(rx,ry,rx,ry+h);
-	DrawLine(rx,ry+h,rx+w,ry+h);
+	xi := rx + w;
+	yi := ry + h ;
+asm("
+	ld a,[Screen_rx]
+hloop	
+	ld [Screen_x],a
+	push af
+	ld a,[Screen_ry]
+	ld [Screen_y],a
+	call Screen_PutPixel
+	ld a,[Screen_yi]
+	ld [Screen_y],a
+	call Screen_PutPixel
+	pop af
+	inc a
+	ld d,a
+	ld a,[Screen_xi]
+	cp d
+	ld a,d
+	jr nz,hloop
+	ld a,[Screen_rx]
+	ld [Screen_x],a	
+	ld a,[Screen_ry]
+vloop	
+	ld [Screen_y],a
+	push af
+	ld a,[Screen_rx]
+	ld [Screen_x],a
+	call Screen_PutPixel
+	ld a,[Screen_xi]
+	ld [Screen_x],a
+	call Screen_PutPixel
+	pop af
+	inc a
+	ld d,a
+	ld a,[Screen_yi]
+	cp d
+	ld a,d
+	jr nz,vloop	
+	ld [Screen_y],a
+	call Screen_PutPixel
+");
 end;
 
 /**
@@ -236,13 +270,32 @@ end;
 	**/
 procedure DrawRectFilled( rx, ry, w, h: global byte);
 begin
-	for i := rx to rx+w do
-	begin
-		for j := ry to ry+h do
-		begin
-			Screen::PutPixel(i,j);
-		end;
-	end;
+	xi := rx + w;
+	yi := ry + h;
+asm("
+	ld a, [Screen_ry]
+y_loop	
+	ld [Screen_y],a
+	ld a, [Screen_rx]
+x_loop	
+	ld [Screen_x],a
+	push af
+	call Screen_PutPixel
+  pop af
+	inc a
+	ld d,a
+	ld a,[Screen_xi]
+	cp d
+	ld a,d
+	jr nz,x_loop
+	ld a,[Screen_y]
+	inc a
+	ld d,a
+	ld a,[Screen_yi]
+	cp d
+	ld a,d
+	jr nz,y_loop
+");
 end;
 
 /**
