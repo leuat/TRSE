@@ -1,0 +1,94 @@
+unit Sprite;
+
+var
+  @donotremove spritewidth
+  @donotremove spriteheight
+  @donotremove spritedatasize
+  @donotremove spritedata
+  spritex, spritey, no, spritedatasize, spritewidth, spriteheight : byte;
+  loc : Integer;
+  spritedata : pointer;
+
+/**
+	Sets the sprites height and width
+  Note: Width is in 4 bits per pixel 
+        So a sprite 8 pixels in width would have a width of 2 here.
+**/
+procedure SetSize(spritewidth, spriteheight : global byte);
+begin
+  spritedatasize := spritewidth * spriteheight;
+end;
+
+/**
+	Sets the sprite data
+
+**/
+procedure SetData(spritedata : global pointer);
+begin
+	
+end;
+
+/* 
+	Draws a sprite at x,y using sprite no
+	*/
+procedure DrawAt(spritex, spritey, no: global byte);
+begin
+  loc := 28672 + 32 * spritey + spritex;
+
+asm("
+  ld a,[Sprite_no]        ; a = spriteno
+  ld c,a                  ; c = spriteno  **
+  ld a,[Sprite_loc+1]
+  ld d,a 
+  ld a,[Sprite_loc]
+  ld e,a                  ; de = sprite screen location
+  push de
+  ld a,[Sprite_spriteheight]
+  ld [hcount],a            
+  ld hl,[Sprite_spritedata]
+  ld a,#00
+  cp c
+  jr z,displaysprite      ; if spriteno = 0, just display it
+  ld a,[Sprite_spritedatasize]  ; sprite data amount per sprite                
+  ld e,a 
+sprite_mult:                
+  add hl,bc
+  dec e
+  jr nz,sprite_mult       ; hl = start of spriteno spritedata 
+displaysprite:
+  pop bc                  ; bc = fox_asm_spriteat screen location
+iterate_height:
+  ld a,[Sprite_spritewidth]     ; sprite width
+  ld d,a                  ; d = sprite width
+iterate_width:
+  ld a,(hl)
+  ld (bc),a
+  inc hl
+  inc bc
+  dec d
+  jr nz,iterate_width     ; display all sprite data in x dimension
+  push hl                 ; save hl (sprite data position) cos only hl can be used in 16bit adding
+  ld hl,#0000
+  add hl,bc               ; put screen location into hl
+  ld de,#0020            
+  add hl,de               ; add one screen line down
+  ld a,[Sprite_spritewidth]     ; sprite width
+  ld d,a                  ; d = sprite width
+subtract_width:
+  dec hl                  ; move hl=bc to start of new line
+  dec d
+  jr nz,subtract_width    
+  push hl                 ; save screen location
+  pop bc                  ; restore fox_spriteat screen location
+  pop hl                  ; restore sprite data position
+  ld a,[hcount]       ; sprite height counter
+  dec a 
+  ld [hcount],a
+  jr nz,iterate_height
+  ret
+hcount
+  db #00  
+");
+end;
+
+end.
