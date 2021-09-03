@@ -141,6 +141,8 @@ void Assembler::StartMemoryBlock(QString pos) {
             return;
 //        else ErrorHandler("")
     }
+    if (m_currentBlock!=nullptr)
+        EndMemoryBlock();
     for (QSharedPointer<Appendix> app: m_appendix) {
 
         if (app->m_pos == pos)
@@ -176,7 +178,6 @@ void Assembler::StartMemoryBlock(QString pos) {
 }
 
 void Assembler::EndMemoryBlock() {
-    //        qDebug() << "Trying to end memory block.. ";
     if (m_currentBlock!=nullptr)
         Comment("Ending memory block at "+m_currentBlock->m_pos);
 
