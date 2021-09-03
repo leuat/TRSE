@@ -44,15 +44,7 @@ public:
 
     QStringList CompressData(QStringList& inData, QString& string) override;
 
-    void applyEmulatorParametersVICE(QStringList& params, QString debugFile, QString filename) {
-        if (QFile::exists(debugFile))
-            params<<"-moncommands"<<debugFile;
-        if (m_settingsIni->getdouble("auto_inject")==1.0) {
-            params << "-autostartprgmode" << "1";
-        }
-        params << filename+".prg";
-
-    }
+    void applyEmulatorParametersVICE(QStringList& params, QString debugFile, QString filename);
 
 
 };

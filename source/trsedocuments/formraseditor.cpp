@@ -96,8 +96,9 @@ void FormRasEditor::ExecutePrg(QString fileName)
     QString emu = Syntax::s.m_currentSystem->getEmulatorName();
 
     QStringList params;
-    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
-    Syntax::s.m_currentSystem->applyEmulatorParameters(params,debugFile, fileName,m_builderThread.m_builder->m_projectIniFile.get());
+//    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
+  //  qDebug() << debugFile <<fileName;
+    Syntax::s.m_currentSystem->applyEmulatorParameters(params,fileName+".sym", fileName,m_builderThread.m_builder->m_projectIniFile.get());
 
     QString name = "emulator_additional_parameters_"+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system);
     // Additional parameters

@@ -332,3 +332,13 @@ QStringList SystemMOS6502::CompressData(QStringList& inData, QString& string) {
 
 }
 
+void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString debugFile, QString filename) {
+    if (QFile::exists(debugFile))
+        params<<"-moncommands"<<debugFile;
+    if (m_settingsIni->getdouble("auto_inject")==1.0) {
+        params << "-autostartprgmode" << "1";
+    }
+    params << filename+".prg";
+
+}
+
