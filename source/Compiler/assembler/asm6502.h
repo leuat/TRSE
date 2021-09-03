@@ -61,6 +61,8 @@ public:
 
     int m_curZeroPointer=0;
 
+    QString m_insertEndBlock = "";
+
     QVector<int> m_removeLines;
     bool endTerm() {
         if (m_term.split(" ").count()==2)

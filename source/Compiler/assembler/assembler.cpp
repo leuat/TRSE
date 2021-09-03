@@ -143,6 +143,7 @@ void Assembler::StartMemoryBlock(QString pos) {
     }
     if (m_currentBlock!=nullptr)
         EndMemoryBlock();
+
     for (QSharedPointer<Appendix> app: m_appendix) {
 
         if (app->m_pos == pos)
@@ -625,7 +626,7 @@ void Assembler::Connect()
 
     //  qDebug() << m_appendix[0].m_source;
     QStringList pre;
-
+//    EndMemoryBlock();
  //   qDebug() <<m_source;
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         for (int i=0;i<m_appendix.count();i++) {
@@ -638,7 +639,7 @@ void Assembler::Connect()
     else
 
     for (int i=0;i<m_appendix.count();i++) {
-     //   qDebug() << "*************"<<m_appendix[i]->m_pos <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
+//        qDebug() << "*************"<<m_appendix[i]->m_pos <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
    //     qDebug() << m_appendix[i]->m_source;
         if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress+0x20)
             pre <<m_appendix[i]->m_source;

@@ -181,6 +181,7 @@ void Asm6502::Program(QString programName, QString vicConfig)
             EndMemoryBlock();
             //        Comment("End of SYS memory block, starting new");
             StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+            m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
 
         }
         m_currentBlock->m_isMainBlock = true;
@@ -218,7 +219,9 @@ void Asm6502::Program(QString programName, QString vicConfig)
         EndMemoryBlock();
 //        Comment("End of SYS memory block, starting new");
         StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+        m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
   //      Comment("Start of MAIN BLOCK");
+//        qDebug() << "INSERT "+m_insertEndBlock;
     }
     m_currentBlock->m_isMainBlock = true;
     m_mainBlock = m_currentBlock;
@@ -235,6 +238,9 @@ void Asm6502::EndProgram()
 //    Asm("rts");
     //if (m_hasOpenBlock)
     Comment("End of program");
+    if (m_insertEndBlock!="") {
+        Write(m_insertEndBlock,0);
+    }
     EndMemoryBlock();
 }
 
