@@ -1,0 +1,45 @@
+unit Trsedemo;
+var
+
+procedure doScroll();
+begin
+asm("
+  ld hl,#7741
+  ld de,#7740
+  ld bc,#1f
+  ldir
+  dec hl
+  ld a,#00
+  ld (hl),a
+  ld hl,#7761
+  ld de,#7760
+  ld bc,#1f
+  ldir
+  dec hl
+  ld a,#00
+  ld (hl),a  
+  ld hl,#7781
+  ld de,#7780
+  ld bc,#1f
+  ldir
+  dec hl
+  ld a,#00
+  ld (hl),a  
+  ld hl,#77a1
+  ld de,#77a0
+  ld bc,#1f
+  ldir
+  dec hl
+  ld a,#00
+  ld (hl),a  
+  ld hl,#77c1
+  ld de,#77c0
+  ld bc,#1f
+  ldir
+  dec hl
+  ld a,#00
+  ld (hl),a  
+");
+end;
+
+end.

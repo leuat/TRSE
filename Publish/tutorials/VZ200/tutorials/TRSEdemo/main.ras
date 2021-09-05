@@ -1,0 +1,63 @@
+program MyProgram;
+@use "Screen"
+@use "Memory"
+@use "Sprite"
+@use "Font"
+@use "Compression"
+@use "Trsedemo"
+
+@export "images/trsewaulok.flf" "waulok.bin" 256
+
+ var
+	strlen, strpos, u, spritemax, spritepos, spritex, spritedir, spritenum : byte;
+	mychar : string = "A";
+	myp, mym : pointer;
+	message : string = "Welcome to the TRSE demo for the VZ200 and VZ300 computers. Developed by Jason 'WauloK' Oakley! Check out www.BlueBilby.com for more cool 8bit stuff for VZ200, Commodore 64 and Spectrum! ... ";
+	sprites : array[] of byte = (
+	85,85,85,85,85,85,85,64,0,0,0,0,0,1,138,170,170,0,170,170,162,64,0,1,65,64,0,1,128,160,128,130,128,40,2,192,240,194,192,252,63,195,192,240,255,0,15,60,3,128,160,136,0,10,40,2,64,80,65,0,5,20,1,128,160,128,170,168,42,162,64,0,0,0,0,0,1,85,85,85,85,85,85,85,
+	81,69,84,15,194,160,84,81,69,84,60,250,41,69,81,64,20,0,250,41,69,81,64,20,0,250,41,69,81,64,20,0,250,41,69,81,64,80,3,202,41,69,81,65,64,15,10,41,69,81,69,0,60,10,41,69,81,69,0,60,10,41,69,85,69,0,60,10,41,69,21,5,84,63,250,41,69,4,5,84,63,242,160,84);	
+	data : incbin("waulok.bin") compressed;
+	spritey : array[] of byte = (0,0,1,2,4,7,10,13,16,20,23,25,28,29,31,31,31,31,29,28,25,23,20,16,13,10,7,4,2,1,0,0);
+begin
+	strlen := 191;
+	strpos := 0;
+	spritenum := 0;
+	spritex := 16;
+	spritedir := 1;
+	spritemax := 31;
+	spritepos := 0;
+	myp := #mychar;
+	mym := #message;
+	Sprite::SetData(#sprites);
+	Sprite::SetSize(7,12);
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	Screen::SetPen(1);
+	Font::SetFont(#Font::font1);
+	Compression::Decompress(#data, #screen);
+	while (true) do
+	begin
+		Sprite::DrawAt(spritex,spritey[spritepos],spritenum);
+		Trsedemo::doScroll();
+		myp[0] := mym[strpos];
+		Font::DrawTextAt(#mychar,31,58);
+		for u := 0 to 200 do wait(100);
+		if (strpos < strlen) then strpos := strpos + 1 else strpos := 0;
+		Sprite::DrawAt(spritex,spritey[spritepos],spritenum);
+		if (spritepos < spritemax) then spritepos := spritepos + 1 else spritepos := 0;
+		if (spritex > 24) then
+		begin
+			spritedir := 0;
+			spritenum := 0;
+		end;
+		if (spritex < 1) then
+		begin
+			spritedir := 1;
+			spritenum := 1;
+		end;
+		if (spritedir =1) then spritex := spritex + 1;
+		if (spritedir =0) then spritex := spritex - 1;
+	end;
+end.
+	
