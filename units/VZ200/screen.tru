@@ -309,10 +309,10 @@ end;
 procedure WaitForVerticalBlank();
 begin
 asm ("
-vloop 
+vbloop 
 	ld a, (#6800)
 	rla
-	jr nc,vloop
+	jr nc,vbloop
 ");	
 end;
 
