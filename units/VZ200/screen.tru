@@ -14,6 +14,9 @@ var
 	@donotremove PutPixel
 	x : byte = 0;
 	y : byte = 0;
+	
+  const screen_pixel_width : byte=128;
+  const screen_pixel_height : byte=64;
 
 /* 
 	Clears the screen using mode parameter 0 or 1
