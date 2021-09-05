@@ -19,7 +19,7 @@
      <item row="1" column="0">
       <widget class="FjongEditor" name="txtEditor">
        <property name="readOnly">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>

@@ -25,6 +25,7 @@ public:
     void SaveCharset(QString filename, QImage& img, int w, int h, int div);
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div);
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
+    void AddToVZ200Data(QByteArray& data, LImage& img,int x, int y, int w, int h);
     void AddToDataBBCMode5(QByteArray& data, LImage* img,int x, int y, int w, int h);
     void AddToDataVGA(QByteArray& data, LImageQImage& img,int x, int y, int w, int h);
     void AddBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl);

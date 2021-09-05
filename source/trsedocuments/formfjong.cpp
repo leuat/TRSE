@@ -90,6 +90,7 @@ void FormFjong::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSha
     m_font.setPointSize(m_iniFile->getdouble("font_size"));
 
 
+
 }
 
 
@@ -119,6 +120,7 @@ void FormFjong::SetupHighlighter()
 {
     if (highlighter != nullptr)
         delete highlighter;
+
     CIniFile colors;
 
     colors.Load(Util::GetSystemPrefix() + "themes/" + m_iniFile->getString("theme_fjong"));
@@ -130,6 +132,7 @@ void FormFjong::SetupHighlighter()
     ui->txtEditor->setPalette(p);
     highlighter = new FjongHighlighter(colors, 0, ui->txtEditor->document());
 
+    ui->txtEditor->setEnabled(true);
     //    qDebug() << "UPDATE " << m_iniFile->getString("theme");
 
 }

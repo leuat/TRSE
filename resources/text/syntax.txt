@@ -1534,6 +1534,7 @@ f ; SetPosition; s,f,f,f
 f ; AddPosition; s,f,f,f
 f ; AddC64, MEGA65LineToData; f,f,f,f
 f ; AddVGALineToData; f,f,f,f
+f ; AddVZ200ToData; f,f,f,f
 f ; SaveRawData; s
 f ; SaveRawScreen; s
 f ; CompressAndSaveHorizontalData ; f,f,s,s

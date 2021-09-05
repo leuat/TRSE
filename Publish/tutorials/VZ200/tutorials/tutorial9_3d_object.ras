@@ -1,0 +1,40 @@
+program MyProgram;
+@use "Screen"
+@use "Memory"
+@use "Font"
+@use "Sprite"
+
+ var
+	i,time: byte;
+	sprites:incbin("object.bin");
+	zp : pointer;
+	frame : byte;
+	const object_width:byte=32;
+	const object_height:byte=16;
+	lookup : array[128] of integer = buildtable("i*(OBJECT_WIDTH/4)*OBJECT_HEIGHT");
+	
+begin
+	
+	// Set the sprite data
+	Sprite::SetData(#sprites);
+	Sprite::SetSize(4,16);
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	Screen::SetPen(3);
+	Font::SetFont(#Font::font1);
+	Font::DrawTextAt("Pre-rendered sprites",2,50);
+	
+	while (true) do
+	begin
+		zp:=#sprites + lookup[frame];
+		Screen::WaitForVerticalBlank();
+		Sprite::StampAt(zp,16,16, object_width/4 ,object_height);
+		time+=1;
+		if (time&7=0) then 
+			frame:=(frame+1)&127;
+		
+	end;
+	loop();
+end.
+	
