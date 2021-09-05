@@ -643,5 +643,6 @@
         <file>resources/images/portraits/red_sunglasses_small.png</file>
         <file>resources/images/portraits/red_sunglasses.png</file>
         <file>resources/images/tutorials/vz200.png</file>
+        <file>resources/images/tutorials/vz200_demo.png</file>
     </qresource>
 </RCC>
