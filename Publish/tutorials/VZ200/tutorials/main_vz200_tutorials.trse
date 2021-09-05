@@ -65,4 +65,6 @@ data_header_images/trse.flf = 0
 data_header_images/test.flf = 0
 data_header_images\test.flf = 0
 data_header_images\trse.flf = 0
+data_header_images/font1.flf = 0
+charset_ = :resources/character.rom
 open_files =, tutorial1.ras

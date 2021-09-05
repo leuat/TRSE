@@ -1,11 +1,14 @@
 unit Font;
 var
 
-	text, currentFont:pointer;
+	text, currentFont, zp,src,scr:pointer;
 	@donotremove currentFont
-	tx,ty : byte;
+	tx,ty, i,j : byte;
 	@donotremove tpos
 	tpos : Integer;
+	tab32:array[64] of integer = buildtable("i*32");
+	font8x8tab:array[32] of integer= buildtable("((i)%16)*2 + Math.floor(i/16.0)*32*8");
+	
 	font1: array[] of byte=(
 	
    $00,$00,$00,$00,$00,
@@ -113,6 +116,38 @@ begin
 	
 end;
 
+
+procedure Draw8x8Font(zp:global pointer; text : global pointer; tx, ty : global byte);
+begin
+ 	scr :=#screen+tab32[ty]+tx;
+ 	while (text^<>0) offpage do
+	begin
+		i:=text^;
+		if (i>64)  then 
+		begin
+			src:=zp + font8x8tab[i-64];
+			asm("
+			ld hl,[Font_src]
+			ld de,[Font_scr]			
+			repeat 7
+			ldi
+			ldi
+			ld bc,30
+			add hl,bc
+			ex de,hl
+			add hl,bc
+			ex de,hl
+			repend
+			");
+		end;	
+		scr+=2;	
+		text+=1;
+	end;
+
+end;
+
+
+
 /**
   Draws a string in mode(1) graphics mode at x,y
   Note: Use SetFont() first to configure which to draw.
@@ -123,7 +158,7 @@ end;
   
 procedure DrawTextAt(text : global pointer; tx, ty : global byte);
 begin
-  tpos := 28672+32*ty+tx;
+  tpos := #screen+tab32[ty]+tx;
   asm("
     ld de,[Font_text]
     ld hl,[Font_tpos]

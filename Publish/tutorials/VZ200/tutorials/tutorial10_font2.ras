@@ -1,0 +1,25 @@
+program Tutorial4;
+@use "Screen"
+@use "Text"
+@use "Memory"
+@use "Input"
+@use "Font"
+
+//@exportblackwhite "images/font1.flf" "images/font1.bin" 0 0 128 16
+@export "images/font1.flf" "images/font1.bin" 256
+
+
+ var
+	v, i: byte;
+	font: incbin("images/font1.bin");
+	text1 : string="HI THERE!";
+
+		
+begin
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	
+	Font::Draw8x8Font(#font, #text1,0,0);
+	loop();
+end.
