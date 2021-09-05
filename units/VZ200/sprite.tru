@@ -1,4 +1,5 @@
 unit Sprite;
+// Bugfix helped by Leslie Ayling
 
 var
   @donotremove spritewidth
@@ -51,6 +52,7 @@ asm("
   jr z,displaysprite      ; if spriteno = 0, just display it
   ld a,[Sprite_spritedatasize]  ; sprite data amount per sprite                
   ld e,a 
+  ld b,#00
 sprite_mult:                
   add hl,bc
   dec e
@@ -62,6 +64,9 @@ iterate_height:
   ld d,a                  ; d = sprite width
 iterate_width:
   ld a,(hl)
+  ld e,a
+  ld a,(bc)
+  xor e
   ld (bc),a
   inc hl
   inc bc

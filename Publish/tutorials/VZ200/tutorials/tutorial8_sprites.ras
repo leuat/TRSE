@@ -1,0 +1,47 @@
+program MyProgram;
+@use "Screen"
+@use "Memory"
+@use "Font"
+@use "Sprite"
+
+ var
+	u, v : byte;
+	sprites: array[] of byte =(
+	21,84,95,85,85,164,105,168,85,164,95,85,21,84,0,0,
+	0,0,63,192,221,112,255,240,221,112,63,192,0,0,0,0,
+	170,170,157,222,45,216,10,160,53,92,53,92,53,92,15,240);
+
+begin
+	
+	// Set the sprite data
+	Sprite::SetData(#sprites);
+	Sprite::SetSize(2,8);
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	Screen::SetPen(1);
+	Font::SetFont(#Font::font1);
+	Font::DrawTextAt("Let's try some sprites!",2,2);
+	Font::DrawTextAt("Non-destructive sprites!",2,23);
+	// Draw a sprite to the screen
+	Sprite::DrawAt(10,10,0);
+	Sprite::DrawAt(10,50,1);
+	Screen::SetPen(3);
+	Screen::DrawRectFilled(40,30,15,15);
+	while (true) do
+	begin
+		for v:= 0 to 30 do
+		begin
+			Sprite::DrawAt(v,35,2);
+			for u:= 0 to 150 do	wait(250);
+			Sprite::DrawAt(v,35,2);
+		end;
+		for v:= 0 to 30 do
+		begin
+			Sprite::DrawAt(30-v,35,2);
+			for u:= 0 to 150 do	wait(250);
+			Sprite::DrawAt(30-v,35,2);
+		end;	
+	end;
+end.
+	
