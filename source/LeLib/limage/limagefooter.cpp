@@ -12,7 +12,7 @@ LImageFooter::LImageFooter() {
 }
 
 uchar LImageFooter::get(int pos) {
-    if (pos<m_data.count())
+    if (pos<m_data.count() && pos>=0)
         return m_data[pos];
     return 0;
 }

@@ -329,7 +329,7 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
 
 //    qDebug() << img.width();
     for (int y=0;y<height;y++) {
-#pragma omp parallel for
+//#pragma omp parallel for
         for (int x=0;x<width;x++) {
 
 //            color.R = color.R + bayer8x8[x % 8, y % 8] * GAP / 65;
@@ -641,7 +641,7 @@ void LImage::CopyFrom(LImage *img) {
     m_colorList.CopyFrom(&img->m_colorList);
     m_footer = img->m_footer;
     m_scaleX = img->m_scaleX;
-#pragma omp parallel for
+//#pragma omp parallel for
 
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++)

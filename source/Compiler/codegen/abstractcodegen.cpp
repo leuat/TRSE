@@ -28,7 +28,9 @@ AbstractCodeGen::AbstractCodeGen()
 
 void AbstractCodeGen::UpdateDispatchCounter()
 {
-    int p = std::min((int)((100*m_currentNode)/Node::s_nodeCount),100);
+    int nc = Node::s_nodeCount;
+    if (nc==0) nc++;
+    int p = std::min((int)((100*m_currentNode)/nc),100);
 
     if (m_currentPercent!=p) {
         m_currentPercent = p;

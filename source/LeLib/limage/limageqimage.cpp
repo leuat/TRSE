@@ -496,7 +496,7 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
     aspectY = 1.0/aspect;
     QColor black(0,0,0);
 //    qDebug() << sx << sy << aspectX << aspectY;
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<x;i++)
         for (int j=0;j<y;j++) {
             QColor color = black;
@@ -558,7 +558,7 @@ QImage *LImageQImage::Blur(float blurRadius)
 
 void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center)
 {
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 
@@ -575,7 +575,7 @@ void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF c
 
 void LImageQImage::fromQImage(QImage *img, LColorList &lst)
 {
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<m_qImage->width();i++)
         for (int j=0;j<m_qImage->height();j++) {
             unsigned char col = lst.getIndex(QColor(img->pixel(i, j)));

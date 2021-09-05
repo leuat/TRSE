@@ -92,7 +92,7 @@ unsigned int LImageAmstradCPC::getPixel(int x, int y)
 */
 void LImageAmstradCPC::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 

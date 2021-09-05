@@ -184,7 +184,7 @@ void LImageSNES::SetBank(int bnk) {
 
 void LImageSNES::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 
