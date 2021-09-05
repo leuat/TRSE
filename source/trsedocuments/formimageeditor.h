@@ -304,6 +304,7 @@ private slots:
     void on_btnInv_clicked();
     void on_chkHybrid_clicked(bool checked);
     void on_cbmGridSize_currentTextChanged(const QString &arg1);
+    void on_btnImportMain_clicked();
 };
 
 

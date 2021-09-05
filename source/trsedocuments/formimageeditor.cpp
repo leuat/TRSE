@@ -2583,3 +2583,9 @@ void FormImageEditor::on_cbmGridSize_currentTextChanged(const QString &arg1)
     Data::data.Redraw();
     onImageMouseEvent();
 }
+
+void FormImageEditor::on_btnImportMain_clicked()
+{
+    on_btnImport_clicked();
+}
+
