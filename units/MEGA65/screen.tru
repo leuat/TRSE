@@ -56,7 +56,7 @@ procedure Set80ColumnMode() inline;
 begin
 	asm("
 		lda $D031
-		or #%10000000
+		ora #%10000000
 		sta $d031
 	");
 end;
