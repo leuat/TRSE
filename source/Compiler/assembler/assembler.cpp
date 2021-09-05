@@ -182,6 +182,11 @@ void Assembler::EndMemoryBlock() {
     if (m_currentBlock!=nullptr)
         Comment("Ending memory block at "+m_currentBlock->m_pos);
 
+    if (!m_isTheRealEnd)
+    if (m_currentBlock==m_mainBlock) // Don't end main block
+        return;
+
+
     if (m_currentBlock!=nullptr && m_currentBlock->m_extraOutput == false) {
 //        Label("EndBlock"+QString::number(m_currentBlock->m_id));
         QString s = m_currentBlock->m_pos;

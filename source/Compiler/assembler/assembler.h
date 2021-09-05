@@ -147,7 +147,7 @@ public:
     RegisterStack m_regAcc;
     RegisterStack m_regMem;
     Stack m_varStack;
-
+    bool m_isTheRealEnd = false;
     QString m_lblFailed, m_lblSuccess;
     QString m_curDir;
     int m_currentBreakpoint = 0;

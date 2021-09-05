@@ -238,14 +238,15 @@ void Asm6502::EndProgram()
 //    Asm("rts");
     //if (m_hasOpenBlock)
     Comment("End of program");
-    if (m_currentBlock==nullptr) {
+/*    if (m_currentBlock==nullptr) {
         if (m_insertEndBlock!="") {
             Write(m_insertEndBlock,0);
         }
         else EndMemoryBlock();
     }
-    else
-        EndMemoryBlock();
+    else*/
+    m_isTheRealEnd = true;
+    EndMemoryBlock();
 }
 
 
