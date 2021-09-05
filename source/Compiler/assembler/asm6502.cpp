@@ -1530,6 +1530,7 @@ void Asm6502::OptimisePassStaLda2()
             QString l1 = getNextLine(i,j);
         //    qDebug() << "FOUND sta "<<l0;
             bool done = false;
+            int old_j = -1;
             while (!done) {
 
 /*                if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
@@ -1541,6 +1542,7 @@ void Asm6502::OptimisePassStaLda2()
                 bool abort = ContainsAChangingOpcodes(l1) & !nextLineIsLabel(j);
 ;
 //                qDebug() << "NEXT IS LABEL " <<nextLineIsLabel(j);
+                old_j=j;
                 while ((done==false && !l1.startsWith("lda")) && !abort && !nextLineIsLabel(j)) {
                     l1 = getNextLine(j,j);
 //                    qDebug() << l1;
@@ -1556,9 +1558,12 @@ void Asm6502::OptimisePassStaLda2()
                             qDebug() << "ABORTING because "<<l1;
                         }*/
                     }
-//                    qDebug() << j <<m_source.count();
-                    if (j>=m_source.count()-2)
+//                    qDebug() << j <<old_j<<m_source.count();
+                    if (j>=m_source.count()-2 || old_j==j)
                         done = true;
+                    if (old_j==j)
+                        abort = true;
+                    old_j = j;
                 }
                 done = true;
                 if (!abort) {
