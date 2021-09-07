@@ -338,7 +338,7 @@ void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString deb
     if (m_settingsIni->getdouble("auto_inject")==1.0) {
         params << "-autostartprgmode" << "1";
     }
-    params << filename+".prg";
+    params << filename+"."+m_projectIni->getString("output_type");;
 
 }
 
