@@ -1,4 +1,5 @@
 unit Font;
+@use "Screen"
 var
 
 	text, currentFont, zp,src,scr:pointer;
@@ -6,7 +7,6 @@ var
 	tx,ty, i,j : byte;
 	@donotremove tpos
 	tpos : Integer;
-	tab32:array[64] of integer = buildtable("i*32");
 	font8x8tab:array[32] of integer= buildtable("((i)%16)*2 + Math.floor(i/16.0)*32*8");
 	
 	font1: array[] of byte=(
@@ -119,7 +119,7 @@ end;
 
 procedure Draw8x8Font(zp:global pointer; text : global pointer; tx, ty : global byte);
 begin
- 	scr :=#screen+tab32[ty]+tx;
+ 	scr :=#screen+Screen::tab32[ty]+tx;
  	while (text^<>0) offpage do
 	begin
 		i:=text^;
@@ -158,7 +158,7 @@ end;
   
 procedure DrawTextAt(text : global pointer; tx, ty : global byte);
 begin
-  tpos := #screen+tab32[ty]+tx;
+  tpos := #screen+Screen::tab32[ty]+tx;
   asm("
     ld de,[Font_text]
     ld hl,[Font_tpos]

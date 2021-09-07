@@ -1,0 +1,79 @@
+program Twister;
+@use "screen"
+@use "memory"
+
+var  
+  	k,j,time,t2,frame,y,m: byte;
+	ll,tt : byte; 
+	
+//   	data : incbin("data/twister_data.bin");
+   	data : incbin("data/twister_data.bin");
+   	table : incbin("data/twister_table.bin");
+   	
+	dst,zp,tp,p1,scr : pointer;
+	tab : pointer of integer;   
+    sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
+	text : string = ("TRSE WHOO OLALALALA");
+    
+
+	charLookup : array[32] of integer = BuildTable("(2*16*16*i)");
+	frameLookup : array[16] of integer = BuildTable("(2*16*i)");
+
+@requirefile "data/twister_data.bin" "Please run the corresponding fjong file (twister.fjo) before compiling this program"
+
+procedure RenderTwister(tx:byte);
+begin
+	t2:=t2+1;
+	tt:=0-tx; // Text goes up
+	t2:=tx; // Twist goes down
+	tp:=#text;
+//	dst:=dst+xp;
+	j:=0;
+//		zp:=#data;
+	y:=0;
+	scr := #screen + Screen::tab32[y] + 40;
+	for k:=0 to 64 do
+	begin
+		j:=sine32[(k+t2)&255]; // Twist turning
+		frame:=(((tx>>1-j))&15); // Current rotation frame
+		ll:=(k-tt); // Current shift & text position in y
+		j:=ll>>4; // Twister yeah!
+	 	m:=(tp[j]-1)&31; // Look up current character, store in j
+	 	if (frame=0) then frame:=1; // bug
+		tab :=#table + frameLookup[frame];
+		tab :=tab +charLookup[m];
+		
+		zp :=tab[ll&15];
+		zp:=#data+zp;
+
+
+		// Copy 2 rows of data
+		if (tp[j]=$20) then fill(scr,%10101010,8)
+		else
+			memcpy(zp,scr,8);
+		scr+=screen_width;
+		
+
+	end;
+	
+end;
+
+
+begin
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	fill(#screen,%10101010,32*64);
+	
+	time := 0;	
+	while (true) do
+	begin
+		Screen::WaitForVerticalBlank();
+		RenderTwister(time);
+		time+=1;
+	end;
+		
+	Loop();
+
+
+
+end.

@@ -18,6 +18,7 @@ var
   const screen_pixel_width : byte=128;
   const screen_pixel_height : byte=64;
 
+  tab32 : array[64] of integer = buildtable("i*32");
 /* 
 	Clears the screen using mode parameter 0 or 1
 	*/

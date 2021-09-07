@@ -1,6 +1,6 @@
 unit Sprite;
 // Bugfix helped by Leslie Ayling
-
+@use "Screen"
 var
   @donotremove spritewidth
   @donotremove spriteheight
@@ -32,7 +32,7 @@ end;
 
 procedure StampAt(src:global pointer;spritex, spritey,x,y: global byte);
 begin
-  dst := 28672 + 32 * spritey + spritex;
+  dst := #screen+ Screen::tab32[spritey] + spritex;
   for i:=0 to y do
   begin
 	memcpy(src,dst,x);
@@ -47,7 +47,7 @@ end;
 	*/
 procedure DrawAt(spritex, spritey, no: global byte);
 begin
-  loc := 28672 + 32 * spritey + spritex;
+  loc := #screen+ Screen::tab32[spritey] + spritex;
 
 asm("
   ld a,[Sprite_no]        ; a = spriteno
