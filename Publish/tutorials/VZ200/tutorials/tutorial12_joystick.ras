@@ -1,0 +1,30 @@
+program MyProgram;
+
+@use "Screen"
+@use "Memory"
+@use "Input"
+@use "Text"
+
+ var
+	u, v : byte;
+
+begin
+	
+	Memory::DisableInterrupts();
+	Screen::SetMode(0);	
+	Screen::Cls(0);
+	while (true) do 	
+		begin
+		v := Input::GetJoystick(1);
+		if (v = Input::Joy1_None) then Text::Print("NO INPUT");
+		if (v = Input::Joy1_Up) then Text::Print("JOY 1 UP");
+		if (v = Input::Joy1_Down) then Text::Print("JOY 1 DOWN");
+		if (v = Input::Joy1_Left) then Text::Print("JOY 1 LEFT");
+		if (v = Input::Joy1_Right) then Text::Print("JOY 1 RIGHT");
+		if (v = Input::Joy1_Fire) then Text::Print("JOY 1 FIRE");
+		if (v = Input::Joy1_Arm) then Text::Print("JOY 1 ARM");
+		if (v = (Input::Joy1_Up | Input::Joy1_Fire)) then Text::Print("JOY 1 UP AND FIRE");
+		if (v = (Input::Joy1_Down | Input::Joy1_Arm)) then Text::Print("JOY 1 DOWN AND ARM");
+	end;
+end.
+	

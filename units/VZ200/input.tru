@@ -4,6 +4,15 @@ var
   @donotremove c
   c : byte = 0;
 
+// Defined joystick directions. Delete any not used
+  const Joy1_None : byte = 64;
+  const Joy1_Up   : byte = 72;
+  const Joy1_Right: byte = 65;
+  const Joy1_Down : byte = 68;
+  const Joy1_Left : byte = 66;
+  const Joy1_Fire : byte = 208;
+  const Joy1_Arm  : byte = 96;
+
 // Defined keys. Delete any not used.
   const Key_A : byte =  87;
   const Key_B : byte =	22;
@@ -85,7 +94,7 @@ end;
   **/
 function GetPressedKey():byte;
 begin
- asm("        
+asm("        
 
 ; Taken from MPAGD by Jonathan Cauldwell; VZ keyboard routine by Kees van Oss.
 ; Detect keypress.
@@ -156,6 +165,106 @@ debounce
 keyend
   ");
     GetPressedKey := c;
+end;
+
+/**
+  Get joystick direction/fire pressed
+  **/
+function GetJoystick(c : global byte):byte;
+begin
+asm("   
+;--------------------------------------------------------
+; Joystick
+;
+; Out: joyval=xx5FUDLR (bit cleared if key pressed)
+;             ||||||||
+;             |||||||+> Right      
+;             ||||||+-> Left       
+;             |||||+--> Down      
+;             ||||+---> Up        
+;             |||+----> Fire1     
+;             ||+-----> Fire2    
+;             |+------> Not used
+;             +-------> Not used
+
+;--------------------------------------------------------
+; Joystick reading routines.
+; The two Joystick units are connected to a plug-in module that
+; contains I/O address decoding and switch matrix encoding.
+; IC U2 (74LS138) enables I/O reads between 20 - 2F Hex.
+; Address lines AO - A3 are used separately to generate active LOW signals
+; on the joystick or switch to be read.
+; Switch state is then read at the resultant address from Data bits DO - D4.
+; When a switch is ON it provides an active-low Data bit. 
+;
+; JOY1 0x2E    JOY2 0x2B
+; U    0xFE    U    0xFE   1111 1110	
+; D    0xFD    D    0xFD   1111 1101   
+; L    0xFB    L    0xFB   1111 1011   
+; R    0xF7    R    0xF7   1111 0111   
+; FIRE 0xEF    FIRE 0xEF   1110 1111   
+
+; 'Arm'0x2D (joy1 button 2)
+; FIRE 0xEF                1110 1111   
+
+; 'Arm'0x27 (joy2 button 2)
+;              FIRE 0xEF   1110 1111 
+
+  ld a,[Input_c]      ; control flag.
+  dec a               ; is it joystick 1?
+  jr z,joy1           ; yes, read it.
+  dec a               ; is it joystick 2?
+  jr z,joy2           ; yes, read it.
+  jr joyend
+
+; Joystick 1.
+joy1
+  in a,(#2e)	             ; read joystick1
+	call readjoy	           ; convert to joyval
+	in a,(#2d)	             ; Read arm button joystick1
+	jr readarm
+
+; Joystick 2.
+joy2
+  in a,(#2b)	             ; read joystick2
+	call readjoy	           ; convert to joyval
+	in a,(#27)	             ; Read arm button joystick1
+	jr readarm
+
+readjoy
+  ld b,#05		             ; read 5 bits from joystick
+read0
+  sra a	
+	ccf		                   ; complement the result (0=not pressed,1=pressed).
+	rl e
+	djnz read0
+	rrc e		                 ; convert VZ values to Kempston
+	jr nc,rstfire
+	set 4,e
+	jr joyend
+rstfire
+  res 4,e
+  jr joyend
+
+readarm
+  and #10		              ; read arm button
+	jr z, joy1a
+	res 5,e		              ; Not pressed, carry clear
+	jr joy1b
+joy1a
+  set 5,e		              ; Pressed, carry set
+
+joy1b
+	set 6,e
+	jr joy1d
+joy1c
+  res 6,e
+joy1d
+  ld a,e                   ; copy e register to accumulator.
+  ld [Input_c],a            ; remember value.
+joyend
+");
+  GetJoystick := c;
 end;
 
 end.
