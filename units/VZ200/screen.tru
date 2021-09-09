@@ -16,6 +16,7 @@ var
 	@donotremove PutPixel
 	x : byte = 0;
 	y : byte = 0;
+	tab32 : array[64] of integer=buildtable("i*32");
 
 /* 
 	Clears the screen using mode parameter 0 or 1
