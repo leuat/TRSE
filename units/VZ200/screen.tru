@@ -4,21 +4,19 @@ var
   const screen_char_loc : address = $7000;	
   const gfxmode : address = $6800;
   const gfxmode2 : address = $783B;
-	Count: Integer;
+	Count, Loc: Integer;
 	c, ga, u : byte;
 	i, j, gfxval, col_and, col_or : byte;
 	dx, dy, d, xi, yi, ai, bi : byte;
 	x1, y1, x2, y2, rx, ry, w, h : byte;
 	@donotremove x
 	@donotremove y
+	@donotremove i
+	@donotremove Loc
 	@donotremove PutPixel
 	x : byte = 0;
 	y : byte = 0;
-	
-  const screen_pixel_width : byte=128;
-  const screen_pixel_height : byte=64;
 
-  tab32 : array[64] of integer = buildtable("i*32");
 /* 
 	Clears the screen using mode parameter 0 or 1
 	*/
@@ -320,5 +318,29 @@ vbloop
 ");	
 end;
 
+/**
+	Look up value at location
+	**/
+function Peek(Loc: global Integer):byte;
+begin
+asm("
+	ld hl,[Screen_Loc]
+	ld a,(hl)
+	ld [Screen_i],a
+");
+		Peek := i;
+end;
+
+/**
+	Put value at location
+	**/
+procedure Poke(Loc: global Integer, i: global byte);
+begin
+asm("
+	ld a,[Screen_i]
+	ld hl,[Screen_Loc]
+	ld (hl),a
+");
+end;
 
 end.

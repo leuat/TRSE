@@ -1,0 +1,70 @@
+program MyProgram;
+
+// Defined keys. Delete any not used.
+@define Key_A	87
+@define Key_B	22
+@define Key_C	70
+@define Key_D	71
+@define Key_E	72
+@define Key_F	103
+@define Key_G	23
+@define Key_H	17
+@define Key_I	66
+@define Key_J	97
+@define Key_K	65
+@define Key_L	33
+@define Key_M	100
+@define Key_N	20
+@define Key_O	34
+@define Key_P	82
+@define Key_Q	88
+@define Key_R	104
+@define Key_S	39
+@define Key_T	24
+@define Key_U	98
+@define Key_V	102
+@define Key_W	40
+@define Key_X	38
+@define Key_Y	18
+@define Key_Z	86
+@define Key_SPC	84
+@define Key_SHFT	54
+@define Key_CTRL	55
+@define Key_COMMA	68
+@define Key_PERIOD	36
+@define Key_RETN	50
+@define Key_HYPHEN	41
+@define Key_SEMI	81
+@define Key_COLON	49
+@define Key_1	85
+@define Key_2	37
+@define Key_3	69
+@define Key_4	101
+@define Key_5	21
+@define Key_6	19
+@define Key_7	99
+@define Key_8	67
+@define Key_9	35
+@define Key_0	83
+
+@use "Screen"
+@use "Memory"
+@use "Input"
+
+ var
+	u, v : byte;
+
+begin
+	
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	while (true) do 	
+		begin
+		v := Input::GetPressedKey();
+		if (v = @Key_A) then Screen::Poke(28672,v);
+		u := Screen::Peek(28672);
+		if (u = v) then Screen::Poke(28672+32,u);
+	end;
+end.
+	
