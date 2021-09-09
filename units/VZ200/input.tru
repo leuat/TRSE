@@ -4,6 +4,53 @@ var
   @donotremove c
   c : byte = 0;
 
+// Defined keys. Delete any not used.
+  const Key_A : byte =  87;
+  const Key_B : byte =	22;
+  const Key_C : byte =	70;
+  const Key_D : byte =	71;
+  const Key_E : byte =	72;
+  const Key_F : byte =	103;
+  const Key_G : byte =	23;
+  const Key_H : byte =	17;
+  const Key_I : byte =	66;
+  const Key_J : byte =	97;
+  const Key_K : byte =	65;
+  const Key_L : byte =	33;
+  const Key_M : byte =	100;
+  const Key_N : byte =	20;
+  const Key_O : byte =	34;
+  const Key_P : byte =	82;
+  const Key_Q : byte =	88;
+  const Key_R : byte =	104;
+  const Key_S : byte =	39;
+  const Key_T : byte =	24;
+  const Key_U : byte =	98;
+  const Key_V : byte =	102;
+  const Key_W : byte =	40;
+  const Key_X : byte =	38;
+  const Key_Y : byte =	18;
+  const Key_Z : byte =	86;
+  const Key_1 : byte =	85;
+  const Key_2 : byte =	37;
+  const Key_3 : byte =	69;
+  const Key_4 : byte =	101;
+  const Key_5 : byte =	21;
+  const Key_6 : byte =	19;
+  const Key_7 : byte =	99;
+  const Key_8 : byte =	67;
+  const Key_9 : byte =	35;
+  const Key_0 : byte =	83;
+  const Key_SPC : byte =	84;
+  const Key_SHFT : byte =	54;
+  const Key_CTRL : byte =	55;
+  const Key_COMMA : byte =	68;
+  const Key_PERIOD : byte =	36;
+  const Key_RETN : byte =	50;
+  const Key_HYPHEN : byte =	41;
+  const Key_SEMI : byte =	81;
+  const Key_COLON : byte =	49;    
+
 /**
   Reads the keyboard at this time and returns the value
   If the value is zero (0) no key was pressed
