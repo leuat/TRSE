@@ -16,15 +16,25 @@ begin
 	while (true) do 	
 		begin
 		v := Input::GetJoystick(1);
-		if (v = Input::Joy1_None) then Text::Print("NO INPUT");
-		if (v = Input::Joy1_Up) then Text::Print("JOY 1 UP");
-		if (v = Input::Joy1_Down) then Text::Print("JOY 1 DOWN");
-		if (v = Input::Joy1_Left) then Text::Print("JOY 1 LEFT");
-		if (v = Input::Joy1_Right) then Text::Print("JOY 1 RIGHT");
-		if (v = Input::Joy1_Fire) then Text::Print("JOY 1 FIRE");
-		if (v = Input::Joy1_Arm) then Text::Print("JOY 1 ARM");
-		if (v = (Input::Joy1_Up | Input::Joy1_Fire)) then Text::Print("JOY 1 UP AND FIRE");
-		if (v = (Input::Joy1_Down | Input::Joy1_Arm)) then Text::Print("JOY 1 DOWN AND ARM");
+		//if (v = Input::Joy_None) then Text::Print("NO INPUT");
+		if (v = Input::Joy_Up) then Text::Print("JOY 1 UP");
+		if (v = Input::Joy_Down) then Text::Print("JOY 1 DOWN");
+		if (v = Input::Joy_Left) then Text::Print("JOY 1 LEFT");
+		if (v = Input::Joy_Right) then Text::Print("JOY 1 RIGHT");
+		if (v = Input::Joy_Fire) then Text::Print("JOY 1 FIRE");
+		if (v = Input::Joy_Arm) then Text::Print("JOY 1 ARM");
+		if (v = (Input::Joy_Up | Input::Joy_Fire)) then Text::Print("JOY 1 UP AND FIRE");
+		if (v = (Input::Joy_Down | Input::Joy_Arm)) then Text::Print("JOY 1 DOWN AND ARM");
+		v := Input::GetJoystick(2);
+		//if (v = Input::Joy_None) then Text::Print("NO INPUT");
+		if (v = Input::Joy_Up) then Text::Print("JOY 2 UP");
+		if (v = Input::Joy_Down) then Text::Print("JOY 2 DOWN");
+		if (v = Input::Joy_Left) then Text::Print("JOY 2 LEFT");
+		if (v = Input::Joy_Right) then Text::Print("JOY 2 RIGHT");
+		if (v = Input::Joy_Fire) then Text::Print("JOY 2 FIRE");
+		if (v = Input::Joy_Arm) then Text::Print("JOY 2 ARM");
+		if (v = (Input::Joy_Up | Input::Joy_Fire)) then Text::Print("JOY 2 UP AND FIRE");
+		if (v = (Input::Joy_Down | Input::Joy_Arm)) then Text::Print("JOY 2 DOWN AND ARM");		
 	end;
 end.
 	

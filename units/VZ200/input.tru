@@ -5,13 +5,13 @@ var
   c : byte = 0;
 
 // Defined joystick directions. Delete any not used
-  const Joy1_None : byte = 64;
-  const Joy1_Up   : byte = 72;
-  const Joy1_Right: byte = 65;
-  const Joy1_Down : byte = 68;
-  const Joy1_Left : byte = 66;
-  const Joy1_Fire : byte = 208;
-  const Joy1_Arm  : byte = 96;
+  const Joy_None : byte = 64;
+  const Joy_Up   : byte = 72;
+  const Joy_Right: byte = 65;
+  const Joy_Down : byte = 68;
+  const Joy_Left : byte = 66;
+  const Joy_Fire : byte = 208;
+  const Joy_Arm  : byte = 96;
 
 // Defined keys. Delete any not used.
   const Key_A : byte =  87;
