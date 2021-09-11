@@ -2,12 +2,13 @@ Unit Text;
 
 var
 
+ 	c : pointer;
+ 	x,y : byte;
+  i : Integer;
 /**
 Prints char c at the current cursor position.
  Control chars are obeyed not printed.
  **/
- 	c : pointer;
- 	x,y : byte;
  	
 procedure PutChar(c: global pointer);
 begin
@@ -72,6 +73,26 @@ noyloop
     ld a,[Text_x]
     ld (#78a6),a
     call #0053 
+  ");
+end;
+
+/**
+  Prints a number to the mode(0) text screen
+  Number is Integer-sized 0-65536
+  **/
+procedure PrintNumber(i : global Integer);
+begin
+  asm("
+    ld bc,#0000
+    ld de,[Text_i]
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer    
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
+    xor a
+    ld (#409c),a    ; Set output to 0 = video display
+    call #28a7      ; Print number on screen
+    ld a,#0d
+    call #033a      ; Print a <CR>
   ");
 end;
 
