@@ -96,4 +96,26 @@ begin
   ");
 end;
 
+/**
+  Prints a number to the mode(0) text screen
+  Number is Byte-sized 0-255
+  **/
+procedure PrintNumberByte(x : global byte);
+begin
+  asm("
+    ld bc,#0000
+    ld d,#00
+    ld a,[Text_x]
+    ld e,a
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer    
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
+    xor a
+    ld (#409c),a    ; Set output to 0 = video display
+    call #28a7      ; Print number on screen
+    ld a,#0d
+    call #033a      ; Print a <CR>
+  ");
+end;
+
 end.

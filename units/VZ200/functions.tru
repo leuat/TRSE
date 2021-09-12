@@ -1,14 +1,15 @@
 Unit Functions;
 
 var
+  @donotremove i
   i : Integer;
+  j : byte;
+  h,l : byte;
 
 /** 
   Gets a random integer number 0-65535
   **/
 function GetRnd(i : global Integer):Integer;
-var
-    h,l : byte;
 begin
   asm("
     ld bc,#0000
@@ -24,5 +25,33 @@ begin
   ");
     GetRnd := 256*h+l;
 end;
+
+/** 
+  Converts an Integer to a byte
+  **/
+function IntToByte(i: global Integer):byte;
+begin
+  asm("
+    ld hl,[Functions_i]
+    ld a,l
+    ld [Functions_j],a
+  ");
+  IntToByte := j;
+end;
+
+/** 
+  Converts a byte to an Integer
+  **/
+function ByteToInt(j: global byte):Integer;
+begin
+asm("
+  ld h,#00
+  ld a,[Functions_j]
+  ld l,a
+  ld [Functions_i],hl
+");
+  ByteToInt := i;
+end;
+
 
 end.
