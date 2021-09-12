@@ -16,6 +16,7 @@ C64; C64 disk project; c64_disk; <h2>C64 disk project</h2><p>A sample project th
 GAMEBOY; Gameboy game project; gameboy_game; <h2>Small Gameboy sample project</h2><p>Sets up a Gameboy game project that renders a movable sprite in a collidable level. Charset, tiles, metatiles, level and sprites are included.
 MEGA65; MEGA65 hello world project; mega65_helloworld; <h2>MEGA 65 "Hello world" sample program</h2>
 NES; NES sample project; nes_general; <h2>Small NES sample project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
+SNES; SNES sample game; snes_game; <h2>Advanced SNES game sample project</h2><p>Sets up a SNES project with a basic setup for a game: background tiles, sprites, meta tiles, level editor, music player, sprite control.
 OK64; OK64 sample project; ok64_general; <h2>OK64 sample project with SID music, an image and some circles.</h2><p>The OK64 is a MOS6502-based "fake" computer designed by the TRSE team. The OK64 supports VGA-like graphics with 1mb ram, a 1 mhz MOS6502 with 64kb program ram and a SID chip.<p>The OK64 emulator is included with TRSE, and works out-of-the-box.
 PET; Commodore PET project; pet_general; <h2>Small Commodore PET project</h2><p>A small sample project for the commodore PET that displays some random text on the screen.
 PLUS4; Empty Commodore PLUS4 project; plus4_general; <h2>Small Commodore PLUS4 project</h2><p>A small sample project for the commodore PLUS that displays text.

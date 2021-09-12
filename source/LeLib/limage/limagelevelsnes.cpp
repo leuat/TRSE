@@ -245,7 +245,6 @@ void LImageLevelSNES::ExportBin(QFile &file)
             data.append((l->m_ColorData[i]&7)<<2 | (l->m_CharDataHi[i]&3));
         }
         file.write( data);
-
         if (l->m_ExtraData.count()!=0)
             file.write( l->m_ExtraData);
 

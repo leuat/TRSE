@@ -188,6 +188,10 @@ bool NodeVar::isWord(Assembler *as) {
     if (getType(as)==TokenType::POINTER && m_expr!=nullptr) {
         if (getArrayType(as)==TokenType::INTEGER)
             return true;
+           if (m_writeType==TokenType::INTEGER) {
+            as->Comment("IsWord TRUE pointer integer write array");
+            return true;
+        }
     }
 
     return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;

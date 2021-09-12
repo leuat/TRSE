@@ -5393,7 +5393,7 @@ void Methods6502::InitMul16x8(Assembler *as)
 
     as->Label("mul16x8_procedure");
     as->Asm(m_codeGen->getInitProcedure());;
-//    m_codeGen->Disable16bit();
+    m_codeGen->Disable16bit();
     as->Asm("lda #$00");
     as->Asm("ldy #$00");
 //    as->Asm("tay");
@@ -5418,7 +5418,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Asm("bcs mul16x8_doAdd");
     as->Asm("bne mul16x8_loop");
 //    as->Asm(m_codeGen->ProcedureEndWithoutReturn());
-  //  m_codeGen->Enable16bit();
+    m_codeGen->Enable16bit();
   //  as->Asm("rts");
 
 //    as->Label("mul16x8_def_end");

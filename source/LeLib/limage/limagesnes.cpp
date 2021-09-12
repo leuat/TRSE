@@ -219,7 +219,17 @@ void LImageSNES::ExportBin(QFile &file)
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     QByteArray data;
     int noBanksToExport = fmin(m_exportParams["End"],m_banks.count());
+    bool isSprite = m_exportParams["Start"]==1.0;
     auto qi = m_qImage;
+    //
+    int planes[4] = {1,0,2,3};
+    if (isSprite) {
+        planes[0]=0;
+        planes[1]=1;
+        planes[2]=3;
+        planes[3]=2;
+    }
+
     for (int bank=0;bank<noBanksToExport;bank++)
     {
         SetBank(bank);
@@ -233,7 +243,9 @@ void LImageSNES::ExportBin(QFile &file)
         // 0231
         // 0213
         // 0321
-        int planes[4] = {1,0,2,3};
+//        int planes[4] = {1,0,2,3};
+//        int planes[4] = {1,0,2,3};
+
         for (int y=0;y<m_height;y+=8) {
             for (int x=0;x<m_width;x+=8) {
                 for (int split = 0;split<nobp/2;split++) {

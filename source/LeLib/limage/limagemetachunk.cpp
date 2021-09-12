@@ -198,9 +198,13 @@ QStringList LImageMetaChunk::getPaletteNames() {
 void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
 {
     QPoint p = getPos(x,y);
-    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currentChar,m_img->m_bitMask);
+    int bm = 1;
+    if (m_img!=nullptr)
+        bm = m_img->m_bitMask;
+
+    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currentChar,bm);
     if (isSnes())
-        ((LMetaChunkItem*)m_items[m_current])->setPixelAttrib(p.x(),p.y(),m_currentAttribute,m_img->m_bitMask);
+        ((LMetaChunkItem*)m_items[m_current])->setPixelAttrib(p.x(),p.y(),m_currentAttribute,bm);
 
 }
 
@@ -216,9 +220,11 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     if (m_current>=m_items.count())
         return 0;
 
-
-    uchar val = ((LMetaChunkItem*)m_items[m_current])->getPixel(p.x(),p.y(),m_img->m_bitMask);
-    uchar attrib = ((LMetaChunkItem*)m_items[m_current])->getPixelAttrib(p.x(),p.y(),m_img->m_bitMask);
+    int bm=1;
+    if (m_img!=nullptr)
+        bm = m_img->m_bitMask;
+    uchar val = ((LMetaChunkItem*)m_items[m_current])->getPixel(p.x(),p.y(),bm);
+    uchar attrib = ((LMetaChunkItem*)m_items[m_current])->getPixelAttrib(p.x(),p.y(),bm);
 
     int xp = x/(float)m_width*m_pixelWidth*getCur()->m_width;
     int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;

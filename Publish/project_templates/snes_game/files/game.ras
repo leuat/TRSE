@@ -1,0 +1,182 @@
+program Sample_game_project;
+@use "screen"
+@use "levels"
+@use "input"
+@use "music"
+@use "entity"
+@use "player"
+
+/*
+
+
+	Be sure to read the readme.rtf first!
+
+*/
+
+
+
+
+var
+// Automatically export "tiles.flf", and export only 1 (128x128) bank	
+@export "resources/gfx/font.flf" "resources/gfx/font.bin" 1
+@export "resources/gfx/tiles.flf" "resources/gfx/tiles.bin" 1
+@export "resources/gfx/levels.flf" "resources/gfx/levels.bin" 64
+@export "resources/gfx/metatiles_bg.flf" "resources/gfx/metatiles_bg.bin" 256
+// Export sprites with an extra "1" to fix the sprite plane ordering
+@export "resources/gfx/sprites.flf" "resources/gfx/sprites.bin" 1 1
+
+
+// Where we decide to put the charset in VRAM: $4000 for the tile data
+	const tile_addr : address = $4000;
+// $6000 for charset data
+	const charset1_addr : address = $6000;
+
+// Define the 64k banks where we put various resource data
+	const song_bank : byte = 3;
+	const extra_code_bank : byte = 4;
+	const music_player_bank : byte = 7;
+	const gfx_bank : byte = 2;
+	const sprite_bank : byte = 5;
+	
+// Put the song in bank 3	
+	song1 : incbin("resources/music/lover/music_1.bin") bank( song_bank );
+// Place the music player code in bank 6
+	music_code: incbin("resources/music/lover/spc700.bin") bank( music_player_bank );
+
+	// Put graphics in bank 2	
+	level_data : incbin("resources/gfx/levels.bin") bank( gfx_bank ); 
+	charset : incbin("resources/gfx/font.bin") bank( gfx_bank );
+	tiles_bg : incbin("resources/gfx/tiles.bin") bank( gfx_bank );
+	
+// "export" automatically exports the palette as well
+	palette_tiles: incbin("resources/gfx/tiles.pal");
+	metatiles_bg: incbin("resources/gfx/metatiles_bg.bin");
+// Sprite data
+	sprites1 : incbin("resources/gfx/sprites.bin") bank( sprite_bank );
+// Automatically exported palette data
+	palette_sprites: incbin("resources/gfx/sprites.pal");
+	
+	// Custom location of background screen data
+	const BG2 : address = $2000;
+	const BG3 : address = $2400;
+	
+	
+	// Some variables	
+	curSprite, moveSprite,flip,moveTimer:byte;
+	i1:integer;
+	bgscrollx,bgscrolly:integer;
+	i,j,val,col:byte;
+	zp:lpointer;
+	level: Levels::Level;
+	
+	
+	current_level_x : byte;
+	current_level_y : byte;
+	
+
+	text1: string="MR TIBBLES DEMO";
+
+
+
+procedure InitializeScreen() bank( extra_code_bank ); // Place far far away to show that it is possible
+begin
+	Screen::Init();
+	Music::Init(#song1, #music_code, 3, 7);
+	// Copies the palette to VRAM
+	Screen::SetPalette(#palette_tiles,0,$100);
+	Screen::SetPalette(#palette_sprites,$80,$80);
+	// Sets mode 1, points all background VRAM to the same address. 
+	// If you want your backgrounds to use independent tile data, set this up here	
+	Screen::SetGraphicsMode(1 | %1000, #tile_addr); // back to front priority
+	
+	Screen::SetVRAMDataPosition(1, #charset1_addr,#charset1_addr);
+	
+	Screen::CopyToVRAMNoDMA(#sprites1,$0000,128*128/2);
+	// Copes all the tile data to VRAM
+	Screen::CopyToVRAM(#charset,#charset1_addr,128*128/2);
+	Screen::CopyToVRAM(#tiles_bg,#tile_addr,128*128/2);
+
+	zp:=0;
+	
+	// Sets up the background 0 and 1 to pointt to $1000 and $1400. Only works for 32x32 playfields, if
+	// you are using 64x64, you need to set BG2 to be BG1+64*64
+	Screen::SetBGScreenLocation(0,hi(#SCREEN_BG1) | Screen::BG_64X64);
+	Screen::SetBGScreenLocation(1,hi(#BG2) | Screen::BG_32X32);
+	Screen::SetBGScreenLocation(2,hi(#BG3) | Screen::BG_32X32);
+
+end;	
+
+
+procedure SetupLevel();
+begin
+	Screen::MoveToXY(0,0, #Screen::BG1);
+	Screen::FillToVRAM(0, 0 , 64*64);
+	// pos x,y in the level grid
+	current_level_x := 0; 
+	current_level_y := 0;
+	Screen::MoveToXY(0,0, #BG2);
+	for i1:=0 to 32*32 do
+	begin
+		Screen_PokeVRAM($59+Vars::rnd[i1]&3,0<<2);
+	end;
+	
+	Screen::MoveToXY(0,0, #BG3);
+	Screen::FillToVRAM(0, 0<<2 , 32*32);
+	Screen::MoveToXY(12,22, #BG3);
+	Screen::CopyToScreen(#text1,length(text1),Screen::TILE_PRIORITY);
+	
+	// Turn on background 1 and 2
+	Screen::EnableGFX(Screen::ENABLE_BG1 | Screen::ENABLE_BG2 | Screen::ENABLE_BG3 | Screen::ENABLE_SPRITES);
+
+	// Read the level data
+	level.ReadHeader(#level_data);
+	// Render level x,y. Make sure this happens when the display is off!
+	level.RenderLevelMetaTiles(current_level_x,current_level_y, #Screen::BG1, #metatiles_bg);
+	//level.RenderLevel(0,0, #Screen::BG1);
+	
+end;
+
+procedure InitEntities();
+begin
+	Entity::InitTest();
+end;
+
+
+begin
+	// Initialses the SNES
+	InitializeScreen();
+	Player::Init();
+	
+	SetupLevel();
+	InitEntities();
+
+	 // Turn on the screen. 
+	Screen::EnableDisplay();
+	// Infinite loop		
+	i1:=0;
+ 	while (true) offpage do
+ 	begin
+	 	// wait for vsync
+		Entity::Update(Player::scrollx, Player::scrolly);
+		Player::UpdatePlayerSprite();
+		
+	 	Screen::WaitForVerticalBlank();
+		// Scroll background 2 with some increasing value. 
+		Screen::Scroll(Player::scrollx,Player::scrolly,0);
+		
+		Screen::Scroll(Player::scrollx/2+bgscrollx,Player::scrolly/2+bgscrolly,2);
+	 	Screen::CopySprites(100);
+		
+		
+		if (Vars::time&7=0)  then
+			bgscrollx-=1;
+			
+		if (Vars::time&15=0) then
+			bgscrolly-=1;
+			
+		i1+=1;
+		Vars::time+=1;
+		
+ 	end;
+ 	
+end.

@@ -1,0 +1,6 @@
+Unit Vars;
+var  
+   time: byte; 
+	rnd : array[256] of byte=BuildTable("Math.random()*1000");
+
+end.

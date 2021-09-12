@@ -606,6 +606,9 @@ void Assembler::Connect()
         }
         newSource << " ; Temp vars section";
         newSource << m_tempVars;
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
+         if (m_tempVars.count()!=0)
+             ErrorHandler::e.Error("Error: Out of memory addresses for temp values for the SNES (must not reside in ROM). Please go to the project settings -> zeropages -> add new addresses to the 'temp vars zeropages!'");
         if (m_tempVarsBlock!=nullptr)
             newSource << m_tempVarsBlock->m_source;
 
@@ -619,6 +622,8 @@ void Assembler::Connect()
         for (QString t : m_tempVars) {
             m_mainBlock->Append(t,0);
         }
+
+//        qDebug() <<m_tempVarsBlock->m_source;
         if (m_tempVarsBlock!=nullptr)
             m_mainBlock->m_source<<m_tempVarsBlock->m_source;
 

@@ -750,10 +750,12 @@ QString Asm6502::StoreInTempVar(QString name, QString type)
         return tmpVar;
 
     }
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
+         ErrorHandler::e.Error("Error: Out of memory addresses for temp values for the SNES (must not reside in ROM). Please go to the project settings -> zeropages -> add new addresses to the 'temp vars zeropages!'");
 
    // qDebug() << "Using reglar variables: " << m_zpStack.count();
     QString tmpVar = NewLabel(name+"_var");
-    QString labelVar = tmpVar + "\t."+type+"\t0 ";
+    QString labelVar = getLabelEnding(tmpVar) + "\t."+type+"\t0 ";
     m_tempVars << labelVar;
     Asm("sta " + tmpVar);
     if (type=="word")

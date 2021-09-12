@@ -1,0 +1,102 @@
+Unit Entity;
+@use "vars"
+@use "screen"
+var
+	i,j,x,y,w,h,spritePPU,spriteVal,spriteCounter,k : byte;
+	i1,i2:integer;
+	Entity = class
+		
+		spritex,spritey:byte;
+		
+		moveTimer,curSprite,spritePPU, spriteValue, width, height,flip,hidden : byte;
+		x,y : integer;
+		
+		procedure Init(Entity::i1,Entity::i2:global integer;Entity::w,Entity::h,Entity::spriteVal:global byte);
+		begin
+			this.x:=i1;
+			this.y:=i2;
+			this.hidden:=true;
+			this.spritex:=0;
+			this.spritey:=0;
+			this.curSprite:=0;
+			this.moveTimer:=0;
+			this.spritePPU := spriteCounter;
+			this.spriteValue:=spriteVal;
+			this.width := w;
+			this.height := h;
+			this.flip := 0;
+			spriteCounter+=w*h;
+		end;
+		
+		procedure DrawSprite();
+		begin			
+			if (this.hidden) then
+				Screen::HideSprite(this.spritePPU,this.width,this.height)
+			else
+			Screen::PutSprite(this.spritePPU, // Sprite number (in VRAM)
+				this.spritex,this.spritey,  // x,y
+				this.width,this.height,  // width, height
+				this.spriteValue,    
+				%00000000 | $30,  // Sprite attributes (including palette)
+				this.flip);  // Sprite horizontal flip. Not implemented yet.
+
+		end;
+	end;
+
+	ep : pointer of Entity;
+	noEntities:byte;
+	const maxEntities: byte = 16;
+	ent : array[ maxEntities ] of Entity;
+	
+	
+	
+	procedure InitTest();
+	begin
+		spriteCounter:=6;
+		noEntities:=3;
+//		ep := #ent;
+		ent[0].Init(50,50,3,3, 32 );
+//		ep := #ent[1];
+		ent[1].Init(150,150,3,3,32+3);
+		ent[2].Init(350,100,3,3,32+9);
+		
+	end;
+	
+	// Scrollx
+	procedure Update(sx,sy:integer);
+	begin
+		k:=Vars::time>>4;
+		for i:=0 to noEntities do
+		begin
+			ep:=#ent[i];
+			ep.hidden:=false;
+			i2:=ep.y+8*3;
+			if (i2>sy and i2<5000) then
+				ep.spritey:=ep.y-sy
+			else ep.hidden:=true;
+
+			i2:=ep.x+8*3;
+			if (i2>sx and i2<5000) then
+				ep.spritex:=ep.x-sx
+			else ep.hidden:=true;
+			
+			
+			ep.DrawSprite();			
+			
+			if (Vars::rnd[k]>=128+50 and ep.x<>512) then
+			begin
+				ep.x+=1;
+				ep.flip:=true;
+			end;
+			if (Vars::rnd[k]<128-50 and ep.x<>0) then
+			begin
+				ep.x-=1;
+				ep.flip:=false;
+			end;
+			k+=111;
+		end;
+	end;	
+
+	
+	
+end.

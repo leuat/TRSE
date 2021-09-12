@@ -1,0 +1,138 @@
+unit Player;
+@use "screen"
+@use "entity"
+@use "input"
+var
+	player: Entity::Entity;
+	
+//	pEntity : pointer of Entity::Entity;
+
+	moveset : array[] of byte = (
+		0, 0, 5*2, 0, 0,6*2, 6*2,0,
+		1*2,2*2,3*2,4*2,1*2,2*2,3*2,4*2);
+
+	const sprite_window_x0: byte = 60;
+	const sprite_window_y0: byte = 60;
+	const sprite_window_x1: byte = 160;
+	const sprite_window_y1: byte = 100;
+	scrollx,scrolly:integer;
+	flip:byte;
+	
+	
+procedure Init();
+begin
+	player.x:=100;
+	player.y:=100;
+	player.spritex:=100;
+	player.spritey:=100;
+	scrollx:=0;
+	scrolly:=0;
+	Vars::time:=0;
+	player.moveTimer:=0;
+	player.curSprite:=0;
+end;	
+	
+procedure UpdatePlayerSprite();
+begin
+	Input::Read();
+	player.curSprite:=0;
+	if (Input::Movement( Input::jpad1 )) then player.curSprite:=8;
+	
+	if (Input::Left( Input::jpad1 )) then flip:=1
+	else 
+	if (Input::Right( Input::jpad1 )) then flip:=0;
+	
+	Screen::PutSprite(0, // Sprite number (in VRAM)
+			player.spritex,player.spritey,  // x,y
+			2,2,  // width, height
+			moveset[ player.curSprite+player.moveTimer ],    // Sprite sheet ID (will draw 2x2 sprites with this value +1,2,3 and 16,17,18 etc 
+			%00000000 | $30,  // Sprite attributes (including palette)
+			flip);  // Sprite horizontal flip. Not implemented yet.
+
+	player.spritex += Input::Right( Input::jpad1 ) - Input::Left( Input::jpad1 );
+	player.spritey += Input::Up( Input::jpad1 ) - Input::Down( Input::jpad1 );
+
+	
+	/*
+	lda Input_jpad1
+	; Calling storevariable on generic assign expression
+	sta Input_i
+	jsl Input_Right
+Player_UpdatePlayerSprite_rightvarAddSub_var383 = $38
+	sta Player_UpdatePlayerSprite_rightvarAddSub_var383
+	; Load Byte array
+	lda Player_player +$0 ; array with const index optimization
+	clc
+	adc Player_UpdatePlayerSprite_rightvarAddSub_var383
+	; Calling storevariable on generic assign expression
+	sta Player_player+$0
+	
+	
+	*/
+	
+	
+
+	player.x += Input::Right( Input::jpad1 ) - Input::Left( Input::jpad1 );
+	player.y += Input::Up( Input::jpad1 ) - Input::Down( Input::jpad1 );
+//	return;
+	//val :=(1+Input::Up( Input::jpad1 ) - Input::Down( Input::jpad1 ));
+	if (Vars::time&7=0) then 
+	begin
+		player.moveTimer := (player.moveTimer+1)&7;
+	end;
+ 	
+ 	
+ 	if (player.spritex>sprite_window_x1) then
+ 	begin
+	 	if (scrollx<256) then
+	 	begin
+		 	player.spritex:=sprite_window_x1;
+		 	scrollx+=1;
+		end
+		else
+		begin
+			if (player.spritex>256-16) then player.spritex:=256-16;
+		end;
+ 	end;
+ 	if (player.spritey>sprite_window_y1) then
+ 	begin
+	 	if (scrolly<256) then
+	 	begin
+		 	player.spritey:=sprite_window_y1;
+		 	scrolly+=1;
+		end
+		else
+		begin
+			if (player.spritey>256-16) then player.spritey:=256-16;
+		end;
+ 	end;
+	if (player.spritex<sprite_window_x0) then
+ 	begin
+	 	if (scrollx<>0) then
+	 	begin
+		 	player.spritex:=sprite_window_x0;
+		 	scrollx-=1;
+		end
+		else
+		begin
+			if (player.spritex=0) then player.spritex:=1;
+		end;
+ 	end;
+	if (player.spritey<sprite_window_y0) then
+ 	begin
+	 	if (scrolly<>0) then
+	 	begin
+		 	player.spritey:=sprite_window_y0;
+		 	scrolly-=1;
+		end
+		else
+		begin
+			if (player.spritey=0) then player.spritey:=1;
+		end;
+ 	end;
+ end;
+
+
+
+	
+end.

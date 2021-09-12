@@ -402,7 +402,7 @@ void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
 }
 
 void CodeGen6502::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
-    int val = qSharedPointerDynamicCast<NodeNumber>(node->m_right)->m_val;
+    int val = node->m_right->getValueAsInt(as);
 
     int cnt = Util::getShiftCount(val);
     if (cnt == -1 && node->m_op.m_type == TokenType::DIV ) {
@@ -540,6 +540,9 @@ void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
 void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
+    if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
+        node->SwapNodes();
+    }
 //    Disable16bit();
     if (node->m_left->isWord(as)) {
 
