@@ -188,9 +188,11 @@ bool NodeVar::isWord(Assembler *as) {
     if (getType(as)==TokenType::POINTER && m_expr!=nullptr) {
         if (getArrayType(as)==TokenType::INTEGER)
             return true;
+        // Next one is for the z80 and 6502
+        if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::PX86)
            if (m_writeType==TokenType::INTEGER) {
             as->Comment("IsWord TRUE pointer integer write array");
-            return true;
+            return false;
         }
     }
 

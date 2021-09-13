@@ -1638,13 +1638,23 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             as->Asm("pop af");
         }
         else
-            if (node->m_right->isWord(as)) {
+            if (node->m_left->isWord(as)) {
                 if (node->m_right->isPure()) {
                     as->Comment("Optimization: rhs is integer, but pure");
-                    if (node->m_right->isPureVariable())
-                        as->Asm("ld a,["+node->m_right->getValue(as)+"]");
+                    if (node->m_right->isPureVariable()) {
+                        as->Asm("push hl");
+                        as->Asm("ld hl,["+node->m_right->getValue(as)+"]");
+                        as->Asm("pop de");
+                    }
                     else // is number
-                        as->Asm("ld a,"+Util::numToHex(node->m_right->getValueAsInt(as)&0xFF));
+                        as->Asm("ld de,"+Util::numToHex(node->m_right->getValueAsInt(as)));
+
+                    as->Asm("ld a,e");
+                    as->Asm("ld [hl],a"); // Store in pointer
+                    as->Asm("inc hl");
+                    as->Asm("ld a,d");
+                    as->Asm("ld [hl],a"); // Store in pointer
+                    return true;
 
                 }
                 else {
@@ -1657,6 +1667,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             }
             else
                 node->m_right->Accept(this);
+
         as->Asm("ld [hl],a"); // Store in pointer
 
         return true;
