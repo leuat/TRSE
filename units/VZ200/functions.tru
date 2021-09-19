@@ -71,6 +71,7 @@ end;
 
 /**
   Converts an Integer number to a string
+  Integer range: -32768 to +32767
   **/
 procedure IntegerToString(i : global Integer);
 begin
@@ -83,7 +84,6 @@ begin
     ld (#78af),a   
     call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
     ld [Functions_s],hl
-tstlp jp tstlp    
   ");
 end;
 
