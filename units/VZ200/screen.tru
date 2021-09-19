@@ -372,4 +372,32 @@ doscroll
 ");
 end;
 
+/**
+	Coarse scroll in mode(1)
+	First parameter is left-most char onscreen of starting location
+	Second parameter is the height of the scroll
+	**/
+procedure doCoarseScroll(Loc: global Integer, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld b,a
+cscroll	
+	inc hl
+	push bc
+	push hl
+	pop de
+	dec de
+	ld bc,#001f
+	ldir
+	dec hl
+	ld a,#00
+	ld (hl),a
+	inc hl
+	pop bc
+	djnz cscroll
+	");
+end;
+
 end.
