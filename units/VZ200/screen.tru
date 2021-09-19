@@ -344,4 +344,32 @@ asm("
 ");
 end;
 
+/**
+	1 pixel smooth scroll in mode(1)
+	First parameter is right-most char onscreen of starting location
+	Second parameter is the height of the scroll
+	**/
+procedure doSmoothScroll(Loc: global Integer, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld c,a
+nextline	
+	xor a
+  ld b,#20
+doscroll
+	rl (hl)
+	rla
+	rl (hl)
+	rra
+	dec hl
+  djnz doscroll
+	ld de,#0040
+	add hl,de
+	dec c
+	jr nz,nextline
+");
+end;
+
 end.
