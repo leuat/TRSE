@@ -131,8 +131,8 @@ prskey0
 	inc b		        ; increment row counter
 	ld a,b
 	cp #09		      ; last row checked?
-	jr nz,prskey0	; no, repeat
-	jr prskey	      ; yes, no key pressed, check again
+	jr nz,prskey0	  ; no, repeat
+	ret     	      ; yes, no key pressed, check again
 
 ; Determine column
 prskey1
@@ -156,10 +156,10 @@ prskey4	ld a,c		; high nibble=row
 	sla a
 	add a,b		      ; low nibble=column
 	push af
-debounce
-	call #2ef4
-	or a
-	jr nz,debounce
+;debounce
+;	call #2ef4
+;	or a
+;	jr nz,debounce
 	pop af
   ld [Input_c],a
 keyend

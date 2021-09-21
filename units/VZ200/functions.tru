@@ -5,6 +5,8 @@ var
   i : Integer;
   j : byte;
   h,l : byte;
+  p : pointer;
+  s : pointer;
 
 /** 
   Gets a random integer number 0-65535
@@ -53,5 +55,54 @@ asm("
   ByteToInt := i;
 end;
 
+function getRandFromArray(p: global pointer):byte;
+begin
+  asm("
+    ld hl,[Functions_p]
+    ld a,r
+    ld b,#00
+    ld c,a
+    add hl,bc
+    ld a,(hl)
+    ld [Functions_i],a
+  ");
+  getRandFromArray := i;
+end;
+
+/**
+  Converts an Integer number to a string
+  Integer range: -32768 to +32767
+  **/
+procedure IntegerToString(i : global Integer);
+begin
+  asm("
+    ld bc,#0000
+    ld de,[Functions_i]
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer 
+    ld a,#02
+    ld (#78af),a   
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
+    ld [Functions_s],hl
+  ");
+end;
+
+/**
+  Converts a Byte number to a string
+  **/
+procedure ByteToString(j : global byte);
+begin
+  asm("
+    ld bc,#0000
+    ld d,#00
+    ld a,[Functions_j]
+    ld e,a
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer    
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
+    inc hl
+    ld [Functions_s],hl
+  ");
+end;
 
 end.
