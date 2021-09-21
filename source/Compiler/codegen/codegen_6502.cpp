@@ -1705,7 +1705,6 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
 
 
 
-
     as->ClearTerm();
     QString p1 = "(";
     QString p2 = ")";
@@ -1715,7 +1714,9 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
     }
     if (node->m_expr==nullptr) {
         as->Asm("lda "+getValue(node));
+        Disable16bit();
         as->Asm("ldy "+getValue(node) + " +1");
+        Enable16bit();
         return;
     }
 

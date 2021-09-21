@@ -589,7 +589,7 @@ begin
 end;
 
 
-procedure Blit(bsrc,bdst: global pointer of integer; bdx, bdy,bw,bh : global integer;badd:global long);
+procedure Blit(bsrc, bdst: global pointer of integer; bdx, bdy,bw,bh : global integer;badd:global long);
 begin
 	asm("
 		jsr Graphics_BlitSetup	

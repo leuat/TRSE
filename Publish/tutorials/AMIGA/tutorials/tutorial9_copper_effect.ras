@@ -61,8 +61,8 @@ begin
 	while (isDone=0) do begin
 	
 		RenderFrame2(time, time*2,4,0);
-		RenderFrame2(time*2, time2,5,1);
-		RenderFrame2(time2, time2,6,2);
+		RenderFrame2(time*2, time2,8,1);
+		RenderFrame2(time2, time2,16,2);
 		
 		ApplyCopperList();
 		WaitVerticalBlank();	

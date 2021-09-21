@@ -179,12 +179,14 @@ void Assembler::StartMemoryBlock(QString pos) {
 }
 
 void Assembler::EndMemoryBlock() {
-    if (m_currentBlock!=nullptr)
-        Comment("Ending memory block at "+m_currentBlock->m_pos);
 
     if (!m_isTheRealEnd)
     if (m_currentBlock==m_mainBlock) // Don't end main block
         return;
+
+    if (m_currentBlock!=nullptr) {
+        Comment("Ending memory block at "+m_currentBlock->m_pos);
+    }
 
 
     if (m_currentBlock!=nullptr && m_currentBlock->m_extraOutput == false) {
@@ -649,9 +651,9 @@ void Assembler::Connect()
     else
 
     for (int i=0;i<m_appendix.count();i++) {
-//        qDebug() << "*************"<<m_appendix[i]->m_pos <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
+//        qDebug() << "*************" <<m_appendix[i]->m_pos <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress)<< QString::number(m_appendix[i]==m_mainBlock);
    //     qDebug() << m_appendix[i]->m_source;
-        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress+0x20)
+        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<=Syntax::s.m_currentSystem->m_programStartAddress+0x20)
             pre <<m_appendix[i]->m_source;
         else
             m_source << m_appendix[i]->m_source;
