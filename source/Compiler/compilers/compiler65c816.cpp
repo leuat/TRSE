@@ -66,6 +66,7 @@ void Compiler65C816::Init6502Assembler()
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
 
+//        Syntax::s.m_ignoreSys = false;
 
         if (m_projectIni->getdouble("override_target_settings")==1) {
             Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));

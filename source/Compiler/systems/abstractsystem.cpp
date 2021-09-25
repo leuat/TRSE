@@ -313,7 +313,6 @@ void AbstractSystem::AssembleCL65(QString &text, QString filename, QString curre
     process.waitForFinished();
     //process;
     output = process.readAllStandardOutput() + process.readAllStandardError();
-
     // codeEnd=FindEndSymbol(output);
 
     int assembleTime = timer.elapsed()- time;

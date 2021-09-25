@@ -33,10 +33,10 @@ void System65C816::Assemble(QString &text, QString filename, QString currentDir,
         QString smc = currentDir + QDir::separator() + "config.cfg";
 //        if (!QFile::exists(smc))
             Util::CopyFile(":resources/code/mega65/config.cfg",smc);
-        QStringList params = QStringList() << "-t none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
+//        QStringList params = QStringList() << "-t none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
+        QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
 //        QStringList params = QStringList() <<"--cpu"<<"4510"<<(filename +".asm") <<("-o"+filename+".prg");
         AssembleCL65(text,filename,currentDir,symTab,"prg",params);
-
         QString f= filename+".prg";
         QByteArray da = Util::loadBinaryFile(f);
         da.insert(0,(uchar)01);
