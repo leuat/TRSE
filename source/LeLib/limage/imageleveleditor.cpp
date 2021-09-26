@@ -131,6 +131,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_colorList.m_isLevelEditor = true;
 
     EnsureSystemColours();
+    m_clearWithCurrentChar = true;
 //    m_colorList.SetC64Pens(m_meta.m_displayMultiColor,true);
 //    m_colorList.SetC64Pens(mul)
 }

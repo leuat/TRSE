@@ -2523,7 +2523,12 @@ void FormImageEditor::on_btnShiftUp_clicked()
 void FormImageEditor::on_btnClear_clicked()
 {
     m_work.m_currentImage->AddUndo();
-    m_work.m_currentImage->m_image->Clear(m_work.m_currentImage->m_image->m_currentChar);
+//    m_work.m_currentImage->m_image->Clear(m_work.m_currentImage->m_image->m_currentChar);
+
+    if (m_work.m_currentImage->m_image->m_clearWithCurrentChar)
+       m_work.m_currentImage->m_image->Clear(m_work.m_currentImage->m_image->m_currentChar);
+    else
+        m_work.m_currentImage->m_image->Clear(0);
     updateCharSet();
 
     Update();
