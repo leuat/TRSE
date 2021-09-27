@@ -47,6 +47,8 @@ end;
 	*/
 procedure DrawAt(spritex, spritey, no: global byte);
 begin
+  // Exit if out of bounds
+  if (x > 31 or y > 63) then return();
   loc := #screen+ Screen::tab32[spritey] + spritex;
 
 asm("
