@@ -1,5 +1,5 @@
 program Music;
-@use "Screen"
+@use "screen"
 var
 	sidfile: incsid("resources/music/courier30.sid",2);
 	const useKernal:byte=0;
