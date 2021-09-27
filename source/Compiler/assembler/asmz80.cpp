@@ -192,8 +192,8 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
         t = byte;
     }
 
-//    if (DeclareRecord(name,type,1,QStringList(),position))
-  //       return;
+    if (DeclareRecord(name,type,1,QStringList(),position))
+         return;
     if (DeclareClass(name,type,1,QStringList(),position))
          return;
 

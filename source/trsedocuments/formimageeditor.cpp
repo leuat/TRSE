@@ -2529,6 +2529,7 @@ void FormImageEditor::on_btnClear_clicked()
        m_work.m_currentImage->m_image->Clear(m_work.m_currentImage->m_image->m_currentChar);
     else
         m_work.m_currentImage->m_image->Clear(0);
+
     updateCharSet();
 
     Update();
