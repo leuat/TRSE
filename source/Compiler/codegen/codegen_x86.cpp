@@ -260,7 +260,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
 
             }
 
-            if (node->m_expr->isPureVariable() && !node->m_expr->isArrayIndex()) {
+            if (node->m_expr->isPureVariable() && !node->m_expr->hasArrayIndex()) {
                 as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
                 if (node->isWord(as))
                     as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
@@ -368,7 +368,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
 
-    if (node->isPointer(as) && !node->isArrayIndex()) {
+    if (node->isPointer(as) && !node->hasArrayIndex()) {
         as->Asm("les di, [" + node->getValue(as)+"]");
         return;
     }
@@ -387,11 +387,11 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
 
 
     as->Asm("mov "+ax+", [" + node->getValue(as)+ending);
-//    if (node->isArrayIndex())
+//    if (node->hasArrayIndex())
 //        qDebug() << TokenType::getType(node->getArrayType(as));
     if (node->m_forceType==TokenType::INTEGER) {
         bool accomodate = false;
-        if (node->isArrayIndex()) {
+        if (node->hasArrayIndex()) {
             if (node->getArrayType(as)!=TokenType::INTEGER) {
             accomodate = true;
             }
@@ -454,7 +454,7 @@ bool CodeGenX86::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
     auto var = node->m_left;
     QString type =getWordByteType(as,var);
 
-    if (node->m_right->isPureNumeric() && !node->m_left->isPointer(as) && !node->m_left->isArrayIndex()) {
+    if (node->m_right->isPureNumeric() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Asm("mov ["+var->getValue(as)+ "], "+type+ " "+node->m_right->getValue(as));
         return true;
     }
@@ -619,7 +619,7 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
 {
     // Set pointer value
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    if (var->isPointer(as) && var->isArrayIndex()) {
+    if (var->isPointer(as) && var->hasArrayIndex()) {
 
         // TO DO: Optimize special cases
 
@@ -685,7 +685,7 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
 bool CodeGenX86::IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    if (var->isArrayIndex()) {
+    if (var->hasArrayIndex()) {
         // Is an array
         as->Asm(";Is array index");
         if (var->getArrayType(as)==TokenType::POINTER) {
@@ -766,7 +766,7 @@ bool CodeGenX86::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
 bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    if (var->isPointer(as) && !var->isArrayIndex()) {
+    if (var->isPointer(as) && !var->hasArrayIndex()) {
 
         node->m_right->VerifyReferences(as);
         if (!node->m_right->isReference())
@@ -913,7 +913,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::LONG);
 
 
-    if (var->isPointer(as) && !var->isArrayIndex()) {
+    if (var->isPointer(as) && !var->hasArrayIndex()) {
         node->m_right->VerifyReferences(as);
         if (!node->m_right->isReference())
             if (!node->m_right->isPointer(as))
@@ -981,7 +981,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
     }
 
     // Set pointer value
-    if (var->isPointer(as) && var->isArrayIndex()) {
+    if (var->isPointer(as) && var->hasArrayIndex()) {
 
         // TO DO: Optimize special cases
 
@@ -1027,7 +1027,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 
 
-    if (var->isArrayIndex()) {
+    if (var->hasArrayIndex()) {
         // Is an array
         as->Asm(";Is array index");
         if (var->getArrayType(as)==TokenType::POINTER) {

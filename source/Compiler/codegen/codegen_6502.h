@@ -218,6 +218,8 @@ public:
 
     virtual QString getInitProcedure() override;
 
+    bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
+
 
 
     //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);

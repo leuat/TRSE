@@ -900,7 +900,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     if (var==nullptr)
         return false;
 
-    if (var->isArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
+    if (var->hasArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
             as->Asm("ld a,l");
@@ -913,7 +913,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     }
 
 
-    if ((var->isArrayIndex() && !var->isWord(as))) {
+    if ((var->hasArrayIndex() && !var->isWord(as))) {
         // Is an array
         as->Comment("Storing to array");
         // Optimization : array[ constant ] := expr
@@ -987,7 +987,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
-        if (var->isArrayIndex())  { // Storing in 16 bit array index
+        if (var->hasArrayIndex())  { // Storing in 16 bit array index
 
             as->Comment("Storing in 16-bit array index");
             as->Asm("push hl");
@@ -1014,7 +1014,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
     node->m_right->Accept(this);
 
 
-    if (node->m_left->isArrayIndex()) {
+    if (node->m_left->hasArrayIndex()) {
         as->Asm("ld [hl], a");
         return;
     }
@@ -1081,7 +1081,7 @@ void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
     }
 
-    if (var->isArrayIndex() && !var->isWord(as)) {
+    if (var->hasArrayIndex() && !var->isWord(as)) {
         // Is an array
 
         // Optimization : array[ constant ] := expr
@@ -1180,7 +1180,7 @@ void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
-        if (var->isArrayIndex())  { // Storing in 16 bit array index
+        if (var->hasArrayIndex())  { // Storing in 16 bit array index
 
             as->Comment("Storing in 16-bit array index");
             as->Asm("push hl");
@@ -1214,7 +1214,7 @@ void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     node->m_right->Accept(this);
 
 
-    if (node->m_left->isArrayIndex()) {
+    if (node->m_left->hasArrayIndex()) {
         as->Asm("ld [hl], a");
         return;
     }
@@ -1465,7 +1465,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
     node->VerifyReferences(as);
 
 
-/*    if (var->isPointer(as) && var->m_writeType==TokenType::INTEGER && var->isArrayIndex()) {
+/*    if (var->isPointer(as) && var->m_writeType==TokenType::INTEGER && var->hasArrayIndex()) {
         as->Comment("Writing an integer class pointer");
         as->ClearTerm();
         node->m_right->setForceType(TokenType::INTEGER);
@@ -1490,7 +1490,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
     }
 */
 
-    if (!var->isArrayIndex()) {
+    if (!var->hasArrayIndex()) {
 
         // P := Address / variable
         if (node->m_right->isPure()) {

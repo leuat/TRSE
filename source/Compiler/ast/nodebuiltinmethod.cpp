@@ -70,7 +70,7 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
                 }
                 if (m_function->m_params[p]==BuiltInFunction::INTEGER || m_function->m_params[p]==BuiltInFunction::BYTE) {
                     if (v->isPointer(as)) {
-                        if (!v->isArrayIndex())
+                        if (!v->hasArrayIndex())
                         ErrorHandler::e.Warning("Method '"+m_procName+"' requires a byte/integer value for parameter "+QString::number(p+1)+", but a pointer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
                     }
                 }

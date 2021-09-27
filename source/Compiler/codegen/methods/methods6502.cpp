@@ -4897,7 +4897,7 @@ void Methods6502::LoadAddress(Assembler *as, int paramNo)
         as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
         return;
     }
-    if (node->isPointer(as) && (!node->isArrayIndex())) {
+    if (node->isPointer(as) && (!node->hasArrayIndex())) {
         as->Asm("lda "+node->getValue(as));
         as->Asm("ldy "+node->getValue(as)+"+1");
         return;

@@ -191,7 +191,7 @@ public:
     virtual TokenType::Type getArrayType(Assembler* as) {
         return m_op.m_type;
     }
-    virtual bool isArrayIndex() { return false; }
+    virtual bool hasArrayIndex() { return false; }
     virtual void Accept(AbstractCodeGen* dispatcher) = 0;
     virtual QString getLiteral(Assembler* as) {return "";}
     virtual bool isAddress() { return false;}

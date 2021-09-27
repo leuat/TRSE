@@ -830,7 +830,7 @@ bool CodeGen68k::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
     if (!bop->m_right->isPureNumeric())
         return false;
 
-    if (v2->isArrayIndex())
+    if (v2->hasArrayIndex())
         return false;
 
 
@@ -861,7 +861,7 @@ bool CodeGen68k::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
     QString var = node->m_left->getValue(as);
 //    return false;
     // First: Check if right is simple,
-    if (node->m_right->isPure() && !node->m_right->isArrayIndex() && !node->m_left->isArrayIndex()) {
+    if (node->m_right->isPure() && !node->m_right->hasArrayIndex() && !node->m_left->hasArrayIndex()) {
         QString rval = node->m_right->getValue(as);
 
         as->Asm("move"+getEndType(as,node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
@@ -1011,11 +1011,11 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
     if (node->m_left->getType(as)==TokenType::LONG) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
     }
-    if (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->isArrayIndex()) {
+    if (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->hasArrayIndex()) {
         node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
         node->m_right->ForceAddress();
     }
-    if (node->m_left->getType(as)==TokenType::POINTER && node->m_left->isArrayIndex()) {
+    if (node->m_left->getType(as)==TokenType::POINTER && node->m_left->hasArrayIndex()) {
         //if (node->m_left->getArrayType(as))
         node->m_right->m_forceType = node->m_left->getArrayType(as); // FORCE integer on right-hand side
 
@@ -1046,7 +1046,7 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     // POINTER = RECORD errors
     if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
-        if (!node->m_left->isArrayIndex())
+        if (!node->m_left->hasArrayIndex())
             ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as))
             ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
@@ -1072,7 +1072,7 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
 
-    if (node->m_right->isArrayIndex()) {
+    if (node->m_right->hasArrayIndex()) {
   //      as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->m_forceType));
         LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
 

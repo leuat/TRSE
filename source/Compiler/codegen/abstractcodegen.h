@@ -136,6 +136,8 @@ public:
 
     virtual bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) {return false;}
 
+    virtual bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {return false;}
+
     virtual bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) {return false;}
 
     virtual bool StoreVariableSimplified(QSharedPointer<NodeAssign> n) {return false;}

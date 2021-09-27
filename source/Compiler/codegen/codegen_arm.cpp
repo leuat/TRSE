@@ -129,7 +129,7 @@ bool CodeGenARM::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
     QString type =getWordByteType(as,var);
-    if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->isArrayIndex()) {
+    if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         node->m_right->Accept(this);
         QString x0 = getReg();
@@ -332,7 +332,7 @@ void CodeGenARM::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool CodeGenARM::AssignPointer(QSharedPointer<NodeAssign> node)
 {
-    if (node->m_left->isPointer(as) && node->m_left->isArrayIndex()) {
+    if (node->m_left->isPointer(as) && node->m_left->hasArrayIndex()) {
         // Storing p[i] := something;
         node->m_right->Accept(this);
         QString x0 = getReg();
@@ -395,7 +395,7 @@ bool CodeGenARM::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
 bool CodeGenARM::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    if (var->isPointer(as) && !var->isArrayIndex()) {
+    if (var->isPointer(as) && !var->hasArrayIndex()) {
 
         node->m_right->VerifyReferences(as);
         if (!node->m_right->isReference())
@@ -506,7 +506,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
         node->m_right->setForceType(TokenType::LONG);
 
 
-    if (var->isPointer(as) && !var->isArrayIndex()) {
+    if (var->isPointer(as) && !var->hasArrayIndex()) {
         node->m_right->VerifyReferences(as);
         if (!node->m_right->isReference())
             if (!node->m_right->isPointer(as))
@@ -574,7 +574,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
     }
 
     // Set pointer value
-    if (var->isPointer(as) && var->isArrayIndex()) {
+    if (var->isPointer(as) && var->hasArrayIndex()) {
 
         // TO DO: Optimize special cases
 
@@ -620,7 +620,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
 
 
 
-    if (var->isArrayIndex()) {
+    if (var->hasArrayIndex()) {
         // Is an array
         as->Asm(";Is array index");
         if (var->getArrayType(as)==TokenType::POINTER) {

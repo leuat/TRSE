@@ -225,7 +225,7 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
     //as->Variable(getValue(v), false);
   //  as->Comment(";HEREHERE");
 //    exit(1);
-    if (!v->isArrayIndex()) {
+    if (!v->hasArrayIndex()) {
         if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
             as->Asm("lda " + getValue(v) + "+1");
         else
@@ -1024,7 +1024,7 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
     QString b="";
 
     QSharedPointer<NodeVar> varb = qSharedPointerDynamicCast<NodeVar>(node->m_right);
-    if (varb!=nullptr && !varb->isArrayIndex())
+    if (varb!=nullptr && !varb->hasArrayIndex())
         b = getValue(varb);
 
     if (node->m_right->isPureNumeric())
@@ -1331,6 +1331,46 @@ QString CodeGen6502::getInitProcedure() {
     return "";
 }
 
+bool CodeGen6502::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
+{
+
+    // Only assign pure variables ( z := ... and not z[i] := ....)
+    if (node->m_left->hasArrayIndex())
+        return false;
+
+    if (node->m_right->isPointer(as) && node->m_right->hasArrayIndex() && node->m_right->getArrayType(as)==TokenType::INTEGER) {
+        // We made sure that we only have stuff like z := p[ expr() ]
+        as->Comment("Assigning pure variable, rhs is pure integer pointer optimization");
+        auto ptr = qSharedPointerDynamicCast<NodeVar>(node->m_right);
+        auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+        if (!ptr) return false;
+        if (!var) return false;
+        // First, evaluate the expression
+        if (ptr->m_expr->isPureNumeric()) {
+            as->Asm("ldy #"+Util::numToHex(ptr->m_expr->getValueAsInt(as)*2));
+        }
+        else {
+            ptr->m_expr->Accept(this);
+            as->Term();
+            as->Asm("asl ; integer shift");
+            as->Asm("tay");
+        }
+        as->Asm("lda ("+ptr->getValue(as)+"),y");
+        as->Asm("sta "+var->getValue(as)+"");
+        if (var->isWord(as)) {
+            as->Asm("iny");
+            as->Asm("lda ("+ptr->getValue(as)+"),y");
+            as->Asm("sta "+var->getValue(as)+"+1");
+
+        }
+
+        return true;
+    }
+
+
+    return false;
+}
+
 
 bool CodeGen6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 {
@@ -1435,7 +1475,7 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     else {
         as->ClearTerm();
 
-        if (!nodeA->m_left->isPureVariable() || nodeA->m_left->isArrayIndex()) {
+        if (!nodeA->m_left->isPureVariable() || nodeA->m_left->hasArrayIndex()) {
             as->Comment("Compare variable is complex, storing in temp variable : "+nodeA->getValue(as));
             nodeA->m_left->Accept(this);
             as->Term();
@@ -1934,6 +1974,8 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     as->ClearTerm();
     Disable16bit();
+
+
     if (!LoadXYVarOrNum(node, node->m_expr,true,scale))
     {
         // calculation version, eg: index+2  or 3+2
@@ -2241,7 +2283,7 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 //    QString lbl = as->NewLabel("stringassign");
 
-/*    if (isPointer && node->m_left->isArrayIndex()) {
+/*    if (isPointer && node->m_left->hasArrayIndex()) {
         right->Accept(this);
 
         as->Asm("sta ("+ getValue(left)+"),y");
@@ -2271,7 +2313,7 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
   //  as->Label(lbl);
 
 //    qDebug() << "IS POINTER " << isPointer;
-    if (isPointer && node->m_left->isArrayIndex()==false) {
+    if (isPointer && node->m_left->hasArrayIndex()==false) {
   //      qDebug() << "HERE";
         as->Asm("lda #<"+str);
         as->Asm("sta "+getValue(left));
@@ -2308,7 +2350,7 @@ bool CodeGen6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     if (!aVar->isPointer(as))
         return false;
     // Only for assigning PURE pointers!
-    if (aVar->isArrayIndex())
+    if (aVar->hasArrayIndex())
         return false;
 
     node->VerifyReferences(as);
@@ -2410,10 +2452,10 @@ bool CodeGen6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPoint
      if (bvar==nullptr)
          return false;
 
-     if (bvar->isArrayIndex())
+     if (bvar->hasArrayIndex())
          return false;
 
-     if (var->isArrayIndex())
+     if (var->hasArrayIndex())
          return false;
 
 //    QSharedPointer<NodeVar> rrvar = dynamic_cast<QSharedPointer<NodeVar>>(rterm->m_right);
@@ -2586,7 +2628,7 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
         num = rterm->m_right->getValueAsInt(as);
 
     // #array[i]
-//    if (rterm->isReference() && rterm->isArrayIndex())
+//    if (rterm->isReference() && rterm->hasArrayIndex())
   //      return false;
 
 
@@ -2629,13 +2671,13 @@ bool CodeGen6502::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     as->Comment("Test Inc dec D");
 
 
-    if (!var->isArrayIndex() && !rvar->isArrayIndex()) {
+    if (!var->hasArrayIndex() && !rvar->hasArrayIndex()) {
         as->Asm(operand +getValue(var));
 
         return true;
     }
     else {
-        if (!rvar->isArrayIndex())
+        if (!rvar->hasArrayIndex())
             return false;
         if (var->m_expr==nullptr)
             return false;

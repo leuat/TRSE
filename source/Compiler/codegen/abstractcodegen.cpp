@@ -463,7 +463,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 
     // ****** STRINGS
-    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->isArrayIndex()) {
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
         as->Comment("Assigning a string : " + getValue(v));
         AssignString(node);
         return;
@@ -506,6 +506,9 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
     // arr[i] := 10;
     if (IsAssignArrayWithIndex(node))
+        return;
+
+    if (IsSimpleAssignInteger(node))
         return;
 
 

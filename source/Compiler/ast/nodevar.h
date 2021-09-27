@@ -105,7 +105,7 @@ public:
                 ;
     }
 
-    bool isArrayIndex() override { return m_expr!=nullptr || isStackVariable(); }
+    bool hasArrayIndex() override { return m_expr!=nullptr || isStackVariable(); }
 
     bool typeIsArray(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
