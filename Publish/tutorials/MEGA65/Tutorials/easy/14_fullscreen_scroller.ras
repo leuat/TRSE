@@ -1,5 +1,5 @@
 program Fullscreen_Scroller;
-@use "Screen"
+@use "screen"
 var 
 
 /*
