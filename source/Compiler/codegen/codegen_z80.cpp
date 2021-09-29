@@ -682,13 +682,18 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ld de,"+node->m_expr->getValue(as));
         }
         else {
-        node->m_expr->Accept(this);
+            node->m_expr->Accept(this);
     /*        if (node->isWord(as))
                 as->Asm("rlca"); // *2 for integer arrays
       */
-            as->Term();
-            as->Asm("ld e,a ; variable is 8-bit");
-            as->Asm("ld d,0");
+            if (node->m_expr->isWord(as)) {
+                ExDeHl();
+            }
+            else {
+                as->Term();
+                as->Asm("ld e,a ; variable is 8-bit");
+                as->Asm("ld d,0");
+            }
         }
   //      as->Asm("ld hl,"+node->getValue(as));
         LoadAddress(node);

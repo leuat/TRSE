@@ -64,4 +64,5 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-open_files =, tut1.ras
+open_files = ,tut1.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/tutorials/
