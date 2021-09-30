@@ -687,6 +687,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("rlca"); // *2 for integer arrays
       */
             if (node->m_expr->isWord(as)) {
+                as->Term();
                 ExDeHl();
             }
             else {
@@ -946,8 +947,14 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
             as->Asm("ld l,a");
         }
         else {
-            as->Asm("ld e,a");
-            as->Asm("ld d,0");
+//            as->Asm("; shift in de");
+            if (var->m_expr->isWord(as)){
+                ExDeHl();
+            }
+            else {
+                as->Asm("ld e,a");
+                as->Asm("ld d,0");
+            }
             as->Asm("ld hl," + var->getValue(as));
             as->Asm("add hl,de");
         }
