@@ -83,6 +83,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
   //  ui->splitter->setStretchFactor(1, 0);
 
   ui->splitter->setSizes(QList<int>() << 1000<<500);
+  m_lastSizes = ui->splitter->sizes();
 //  ui->splitter->s
 //  ui->splitter->setCollapsible(0, false);
  // ui->splitter->setCollapsible(1, false);
@@ -278,12 +279,12 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         // toggle toolbar panels
         if (e->key()==Qt::Key_F6) {
             ui->tabMain->setVisible(!ui->tabMain->isVisible());
-            FixSplitting(ui->tabMain);
+            FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
 
         if (e->key()==Qt::Key_F5) {
             ui->Tools_2->setVisible(!ui->Tools_2->isVisible());
-            FixSplitting(ui->Tools_2);
+            FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
 
         if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
@@ -1370,10 +1371,11 @@ void FormImageEditor::InitQtPainter()
 //    delete ui->lblImageQt;
 }
 
-void FormImageEditor::FixSplitting(QWidget *w) {
+void FormImageEditor::FixSplitting(QWidget *w, bool sideVisible) {
     if (not w->isVisible()) {
         m_lastSizes = ui->splitter->sizes();
-        ui->splitter->setSizes(QList<int> {this->width(), 1});
+        if (not sideVisible)
+            ui->splitter->setSizes(QList<int> {this->width(), 1});
     } else {
         ui->splitter->setSizes(m_lastSizes);
     }
