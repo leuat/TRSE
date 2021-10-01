@@ -104,6 +104,8 @@ public:
     void updateCharSet();
     void updateSingleCharSet();
     void InitQtPainter();
+    void FixSplitting(QWidget* w);
+    QVector<int> m_lastSizes; // Last qsplitter sizes
 
     void PrepareImageTypeGUI();
     void Initialize();

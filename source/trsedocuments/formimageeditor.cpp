@@ -278,10 +278,12 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         // toggle toolbar panels
         if (e->key()==Qt::Key_F6) {
             ui->tabMain->setVisible(!ui->tabMain->isVisible());
+            FixSplitting(ui->tabMain);
         }
 
         if (e->key()==Qt::Key_F5) {
             ui->Tools_2->setVisible(!ui->Tools_2->isVisible());
+            FixSplitting(ui->Tools_2);
         }
 
         if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
@@ -1366,6 +1368,15 @@ void FormImageEditor::InitQtPainter()
 {
 //    ui->lblImage->setVisible(false);
 //    delete ui->lblImageQt;
+}
+
+void FormImageEditor::FixSplitting(QWidget *w) {
+    if (not w->isVisible()) {
+        m_lastSizes = ui->splitter->sizes();
+        ui->splitter->setSizes(QList<int> {this->width(), 1});
+    } else {
+        ui->splitter->setSizes(m_lastSizes);
+    }
 }
 
 
