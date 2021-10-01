@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="100,1,1">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -30,6 +30,9 @@
      </property>
      <widget class="QWidget" name="layoutImageWidget">
       <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,200">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <item>
         <widget class="QLabel" name="lblName">
          <property name="sizePolicy">
@@ -92,7 +95,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="layoutToolsWidget">
-      <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="1,20">
+      <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="0,20">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -100,174 +103,176 @@
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="Tools" stretch="1,1">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetMaximumSize</enum>
-         </property>
-         <item>
-          <layout class="QGridLayout" name="layoutColorsEdit_3"/>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0">
-           <property name="spacing">
-            <number>4</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_13">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Zoom level</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbZoomLevel">
-             <property name="toolTip">
-              <string>General background color. </string>
-             </property>
-             <item>
-              <property name="text">
-               <string>1x</string>
+        <widget class="QWidget" name="Tools_2" native="true">
+         <layout class="QHBoxLayout" name="Tools" stretch="1,1">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <item>
+           <layout class="QGridLayout" name="layoutColorsEdit_3"/>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_13">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
               </property>
-             </item>
-             <item>
               <property name="text">
-               <string>2x</string>
+               <string>Zoom level</string>
               </property>
-             </item>
-             <item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cmbZoomLevel">
+              <property name="toolTip">
+               <string>General background color. </string>
+              </property>
+              <item>
+               <property name="text">
+                <string>1x</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>2x</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>4x</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>8x</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>4x</string>
+               <string>Aspect:</string>
               </property>
-             </item>
-             <item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cmbAspect">
+              <item>
+               <property name="text">
+                <string>Free</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>3:2</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblPalette">
               <property name="text">
-               <string>8x</string>
+               <string>Palette:</string>
               </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Aspect:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbAspect">
-             <item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cmbNesPalette">
+              <item>
+               <property name="text">
+                <string>Tiles 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Tiles 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Tiles 3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Tiles 4</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sprites 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sprites 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sprites 3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Sprites 4</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblBank">
               <property name="text">
-               <string>Free</string>
+               <string>Bank:</string>
               </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>1:1</string>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cmbBank">
+              <item>
+               <property name="text">
+                <string>Bank 0</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bank 1</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="ToolboxLayout"/>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>3:2</string>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>4000</height>
+               </size>
               </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lblPalette">
-             <property name="text">
-              <string>Palette:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbNesPalette">
-             <item>
-              <property name="text">
-               <string>Tiles 1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Tiles 2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Tiles 3</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Tiles 4</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Sprites 1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Sprites 2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Sprites 3</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Sprites 4</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="lblBank">
-             <property name="text">
-              <string>Bank:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmbBank">
-             <item>
-              <property name="text">
-               <string>Bank 0</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Bank 1</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <layout class="QGridLayout" name="ToolboxLayout"/>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>4000</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <widget class="QTabWidget" name="tabMain">
@@ -1252,8 +1257,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>765</width>
-                  <height>459</height>
+                  <width>730</width>
+                  <height>468</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_13">

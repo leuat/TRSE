@@ -275,6 +275,15 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         }
 
   */
+        // toggle toolbar panels
+        if (e->key()==Qt::Key_F6) {
+            ui->tabMain->setVisible(!ui->tabMain->isVisible());
+        }
+
+        if (e->key()==Qt::Key_F5) {
+            ui->Tools_2->setVisible(!ui->Tools_2->isVisible());
+        }
+
         if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             if (e->key()==Qt::Key_C)
                 on_btnCharsetCopy_clicked();
