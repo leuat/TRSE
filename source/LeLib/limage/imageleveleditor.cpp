@@ -182,6 +182,22 @@ void ImageLevelEditor::CtrlLeftShift(int x, int y)
 
 
 }
+
+void ImageLevelEditor::CopyChar()
+{
+    m_copyLevel = *m_currentLevel;
+}
+
+void ImageLevelEditor::PasteChar()
+{
+    //        m_copyLevel = *m_currentLevel;
+    if (m_copyLevel.m_CharData.count()!=0) {
+       *m_currentLevel = m_copyLevel;
+        m_currentLevel->m_CharData = m_copyLevel.m_CharData;
+        m_currentLevel->m_CharDataHi = m_copyLevel.m_CharDataHi;
+        m_currentLevel->m_ColorData = m_copyLevel.m_ColorData;
+    }
+}
 void ImageLevelEditor::InitPens()
 {
     if (first) {

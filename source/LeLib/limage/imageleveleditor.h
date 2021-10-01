@@ -36,7 +36,9 @@ public:
     QByteArray m_CharDataHi;
     QByteArray m_ColorData;
     QByteArray m_ExtraData;
+    CharmapLevel() {
 
+    }
 
     void Clear(int val) {
         for (int i=0;i<m_CharData.count();i++) {
@@ -222,6 +224,11 @@ public:
 
 
     void CtrlLeftShift(int x, int y ) override;
+
+    CharmapLevel m_copyLevel;
+    void CopyChar() override;
+
+    void PasteChar() override;
 
 
     virtual bool isNes() override {

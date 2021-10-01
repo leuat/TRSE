@@ -269,7 +269,12 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.redrawOutput = true;
             Data::data.forceRedraw = true;
         }
+/*
+        if (e->key()==Qt::Key_1 && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            ui->tabMain->setVisible(!ui->tabMain->isVisible());
+        }
 
+  */
         if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             if (e->key()==Qt::Key_C)
                 on_btnCharsetCopy_clicked();

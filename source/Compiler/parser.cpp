@@ -1890,6 +1890,11 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
     while (m_currentToken.m_type!=TokenType::END) {
 
+        if (!isClass)
+        if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::FUNCTION || m_currentToken.m_type==TokenType::INTERRUPT)  {
+            ErrorHandler::e.Error("Procedures and funtions can only be declared in classes, not in records",m_currentToken.m_lineNumber);
+        }
+
 
         if (isClass) {
             m_currentClass = name;
