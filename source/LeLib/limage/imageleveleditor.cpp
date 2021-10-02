@@ -96,6 +96,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_supports.asmExport = false;
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
+    m_supports.tilestamp = true;
 
     m_GUIParams[btnLoadCharset] ="Load Charset";
     m_GUIParams[btn1x1] = "";
@@ -129,6 +130,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_metaParams.append(new MetaParameter("use_colors","Colour data is stored with level data",1,1,1));
 
     m_colorList.m_isLevelEditor = true;
+
 
     EnsureSystemColours();
     m_clearWithCurrentChar = true;
@@ -495,6 +497,8 @@ bool ImageLevelEditor::PixelToPos(int x, float y, int& pos, int w, int h)
   //  qDebug() <<m_meta.m_width;
 
     pos = x + (int)y*w;
+    curPos.setX(x);
+    curPos.setY(y);
     if ((pos<0 || pos>=w*h))
         return false;
 
@@ -556,6 +560,12 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 
 
 
+    int sx = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int sy = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int w = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CHARSET_WIDTH),1);
+
+    int shift = curPos.x()%sx + (curPos.y()%sy)*w;
+
 //    qDebug() << QString::number(m_currentChar);
     if (m_currentLevel==nullptr)
         return;
@@ -567,7 +577,7 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 
 
     if (m_writeType==Character || m_forcePaintColorAndChar)
-        m_currentLevel->m_CharData[pos] = m_currentChar;
+        m_currentLevel->m_CharData[pos] = m_currentChar + shift;
     if (m_writeType==Color || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[pos] = color;
 

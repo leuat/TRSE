@@ -584,6 +584,9 @@ void FormImageEditor::Initialize()
     ui->cmbCharX->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X)-1);
     ui->cmbCharY->setCurrentIndex(GetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y)-1);
 
+    ui->cmbTileStampX->setCurrentIndex(fmax(GetFooterData(LImageFooter::POS_CURRENT_STAMP_X),1.0f)-1);
+    ui->cmbTileStampY->setCurrentIndex(fmax(GetFooterData(LImageFooter::POS_CURRENT_STAMP_Y),1.0f)-1);
+
 //    qDebug() << GetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR);
     ui->chkDisplayMulticolor->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR));
     on_chkDisplayMulticolor_stateChanged(GetFooterData(LImageFooter::POS_DISPLAY_MULTICOLOR));
@@ -792,6 +795,9 @@ void FormImageEditor::UpdatePalette()
     ui->btnExportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binarySave);
     ui->btnImportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binaryLoad);
 
+
+
+
     ui->btnExportC->setVisible(m_work.m_currentImage->m_image->m_supports.exportc);
     ui->btnImportC->setVisible(m_work.m_currentImage->m_image->m_supports.importc);
 
@@ -802,6 +808,12 @@ void FormImageEditor::UpdatePalette()
     ui->btnExportMovie->setVisible(m_work.m_currentImage->m_image->m_supports.movieExport);
 
     ui->btnSelectDefaultClearItm->setVisible(m_work.m_currentImage->m_image->m_supports.displayDefaultClearButton);
+
+
+    ui->lblTileStamp->setVisible(m_work.m_currentImage->m_image->m_supports.tilestamp);
+    ui->cmbTileStampX->setVisible(m_work.m_currentImage->m_image->m_supports.tilestamp);
+    ui->cmbTileStampY->setVisible(m_work.m_currentImage->m_image->m_supports.tilestamp);
+
 
 /*    ui->cmbMC1->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC1);
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
@@ -2500,6 +2512,26 @@ void FormImageEditor::on_cmbCharX_currentIndexChanged(int index)
 void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
 {
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y,ui->cmbCharY->currentText().toInt());
+    SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
+    on_btnCharsetFull_clicked();
+    Update();
+
+}
+
+void FormImageEditor::on_cmbTileStampX_currentIndexChanged(int index)
+{
+    SetFooterData(LImageFooter::POS_CURRENT_STAMP_X,ui->cmbTileStampX->currentText().toInt());
+    SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
+    on_btnCharsetFull_clicked();
+
+    Update();
+    UpdateCurrentCell();
+
+}
+
+void FormImageEditor::on_cmbTileStampY_currentIndexChanged(int index)
+{
+    SetFooterData(LImageFooter::POS_CURRENT_STAMP_Y,ui->cmbTileStampY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
     Update();

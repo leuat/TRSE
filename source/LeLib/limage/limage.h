@@ -69,7 +69,7 @@ public:
     bool koalaImport = false;
     bool movieExport = false;
     bool compressedExport = false;
-
+    bool tilestamp = false;
     bool editPalette = true;
     bool displayColors = true;
     bool displayCmbColors = true;

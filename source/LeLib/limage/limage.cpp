@@ -609,9 +609,13 @@ void LImage::drawCircle(float x0, float y0, float r, float r0, unsigned int col)
 
 void LImage::Box(int x, int y, unsigned char col, int size)
 {
+
+    int sx = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int sy = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int w = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CHARSET_WIDTH),1);
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
-            setPixel(x+i-size/2, y+j-size/2, col);
+            setPixel(x+i-size/2, y+j-size/2, col+i%sx + (j%sy)*w);
         }
 }
 
@@ -619,13 +623,19 @@ void LImage::RBox(int x0, int y0, int x1, int y1, unsigned char col, int size)
 {
     if (x0>x1) std::swap(x0,x1);
     if (y0>y1) std::swap(y0,y1);
+
+    int sx = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int sy = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int w = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CHARSET_WIDTH),1);
+
     for (int i=0;i<x1-x0;i++)
         for (int j=0;j<y1-y0;j++) {
+            char c = col+i%sx + (j%sy)*w;
             if (size==0)
-                setPixel(x0+i, y0+j, col);
+                setPixel(x0+i, y0+j, c);
             else {
                 if (i<size || i>=x1-x0-size || j<size || j>=y1-y0-size)
-                    setPixel(x0+i, y0+j, col);
+                    setPixel(x0+i, y0+j, c);
             }
         }
 }

@@ -199,6 +199,7 @@ public:
     bool m_isRightButtonClick = false;
     CharmapLevel* getLevel(int i, int j);
     CharmapGlobalData m_meta;
+    QPoint curPos;
 
     void ExportFrame(QFile& file, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8) override;
 

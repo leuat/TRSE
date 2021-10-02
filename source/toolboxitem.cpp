@@ -58,20 +58,29 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
     }
     float lw = m_options["lwidth"]->val/10.0;
 
+/*    int sx = fmax(img->m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int sy = fmax(img->m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+    int w = fmax(img->m_footer.get(LImageFooter::LImageFooter::POS_CHARSET_WIDTH),1);
+
+    int currentChar = img->m_currentChar;
+*/
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
             int d = m/2;
             float xx = i-d;
             float yy = (j-d);
             float l = sqrt(xx*xx*ll + yy*yy);
+    //        img->m_currentChar =currentChar+((i/8)%sx) + ((j/8)%sy)*w;
 
             bool ok = l<m/2.5;
             if (m_type==1)
                 ok = abs(l-m/3)<lw;
-            if (ok)
 
+            if (ok)
                 img->setPixel(x+xx,y+yy,color);
         }
+
+  //  img->m_currentChar = currentChar;
 }
 
 void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
@@ -382,6 +391,7 @@ void Box::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview
     int width = 0;
     if (m_type ==1)
         width = 1;
+
     img->RBox(m_start.x(), m_start.y(), x,y, color, width);
 
 

@@ -292,6 +292,8 @@ private slots:
     void on_pushButton_clicked();
     void on_cmbCharX_currentIndexChanged(int index);
     void on_cmbCharY_currentIndexChanged(int index);
+    void on_cmbTileStampX_currentIndexChanged(int index);
+    void on_cmbTileStampY_currentIndexChanged(int index);
     void on_btnRepeating_clicked();
     void on_btnShiftLeft_clicked();
     void on_btnShiftRight_clicked();
