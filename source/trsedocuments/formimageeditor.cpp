@@ -270,12 +270,18 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.redrawOutput = true;
             Data::data.forceRedraw = true;
         }
-/*
-        if (e->key()==Qt::Key_1 && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-            ui->tabMain->setVisible(!ui->tabMain->isVisible());
+
+        // select a tab with CTRL + 1 ... 5
+        if (QApplication::keyboardModifiers() & Qt::ControlModifier)
+        {
+            if (e->key()==Qt::Key_1) { ui->tabMain->setCurrentIndex(0); }
+            if (e->key()==Qt::Key_2) { ui->tabMain->setCurrentIndex(1); }
+            if (e->key()==Qt::Key_3) { ui->tabMain->setCurrentIndex(2); }
+            if (e->key()==Qt::Key_4) { ui->tabMain->setCurrentIndex(3); }
+            if (e->key()==Qt::Key_5) { ui->tabMain->setCurrentIndex(4); }
         }
 
-  */
+
         // toggle toolbar panels
         if (e->key()==Qt::Key_F6) {
             ui->tabMain->setVisible(!ui->tabMain->isVisible());
