@@ -2,11 +2,12 @@ unit Font;
 @use "Screen"
 var
 
-	text, currentFont, zp,src,scr:pointer;
+	text, currentFont, zp, src, scr : pointer;
 	@donotremove currentFont
 	tx,ty, i,j : byte;
 	@donotremove tpos
 	tpos : Integer;
+    tran : boolean;
 	font8x8tab:array[32] of integer= buildtable("((i)%16)*2 + Math.floor(i/16.0)*32*8");
 	
 	font1: array[] of byte=(
@@ -116,7 +117,6 @@ begin
 	
 end;
 
-
 procedure Draw8x8Font(zp:global pointer; text : global pointer; tx, ty : global byte);
 begin
  	scr :=#screen+Screen::tab32[ty]+tx;
@@ -146,17 +146,15 @@ begin
 
 end;
 
-
-
 /**
   Draws a string in mode(1) graphics mode at x,y
   Note: Use SetFont() first to configure which to draw.
         Make sure you use SetPen first or it will draw in the default red.
-        The font is rendered with transparency.
+        The font is rendered with transparency if the last parameter is true.
         
   **/
   
-procedure DrawTextAt(text : global pointer; tx, ty : global byte);
+procedure DrawTextAt(text : global pointer; tx, ty : global byte, tran : global boolean);
 begin
   tpos := #screen+Screen::tab32[ty]+tx;
   asm("
@@ -211,8 +209,15 @@ drawletter2
     pop bc          ; Font data pointer          
     pop hl          ; Coords to display fontbyte
     ld d,a
+    ld a,[Font_tran]
+    cp #01
+    jr z,trans      ; Draw transparent
+    ld a,d
+    jr drawtext
+trans
     ld a,(hl)
     xor d
+drawtext
     ld (hl),a       ; Put it there
     ld de,#0020
     add hl,de       ; Move screen coords pointer down 1 line

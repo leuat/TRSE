@@ -19,7 +19,7 @@ begin
 	Screen::Cls(1);
 	Font::SetFont(#Font::font1);
 	Screen::SetPen(1);
-	Font::DrawTextAt("The VZ200 keyboard beep!",0,0);
+	Font::DrawTextAt("The VZ200 keyboard beep!",0,0,true);
 	// Make the standard VZ keyboard beep sound
 	for v := 0 to 10 do
 	begin
@@ -30,7 +30,7 @@ begin
 	for v := 0 to 255 do
                wait(250);
   Screen::SetPen(2);
-  Font::DrawTextAt("Bang bang! You're dead!",1,10);
+  Font::DrawTextAt("Bang bang! You're dead!",1,10,true);
   // Make an gunshot sound
   for v := 0 to 10 do
   begin
@@ -39,7 +39,7 @@ begin
 			wait(250);
 	end;        
 	Screen::SetPen(3);
-	Font::DrawTextAt("Missile heading for target!",4,20);	
+	Font::DrawTextAt("Missile heading for target!",4,20,true);	
 	// Make a decreasing pitch sound
 	for v := 20 to 120 do
 	begin
@@ -47,7 +47,7 @@ begin
 	end;
 	 for v:=0 to 100 do
                wait(250);
-   Font::DrawTextAt("We got him, sir!",4,30);            
+   Font::DrawTextAt("We got him, sir!",4,30,true);            
   // Make an explosion sound
 	Sound::Explode();
 	Loop();
