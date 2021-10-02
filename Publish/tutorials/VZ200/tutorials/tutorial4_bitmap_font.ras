@@ -16,10 +16,10 @@ begin
 	
 	Font::SetFont(#Font::font1);
 	
-	Font::DrawTextAt("Why, hello there How are you? :)",0,0);
+	Font::DrawTextAt("Why, hello there How are you? :)",0,0,true);
 	Screen::SetPen(2);
-	Font::DrawTextAt("Font by Jason 'WauloK' Oakley!",1,7);
+	Font::DrawTextAt("Font by Jason 'WauloK' Oakley!",1,7,true);
 	Screen::SetPen(3);
-	Font::DrawTextAt("Check out BLUEBILBY.COM",4,14);
+	Font::DrawTextAt("Check out BLUEBILBY.COM",4,14,true);
 	loop();
 end.

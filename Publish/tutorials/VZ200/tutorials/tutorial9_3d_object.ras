@@ -23,7 +23,7 @@ begin
 	Screen::Cls(1);
 	Screen::SetPen(3);
 	Font::SetFont(#Font::font1);
-	Font::DrawTextAt("Pre-rendered sprites",2,50);
+	Font::DrawTextAt("Pre-rendered sprites",2,50,true);
 	
 	while (true) do
 	begin

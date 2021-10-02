@@ -12,8 +12,8 @@ begin
 	Screen::SetMode(1);	
 	Screen::Cls(1);
 	Font::SetFont(#Font::font1);
-	Font::DrawTextAt("Let's try a splitscreen!",2,20);
-	Font::DrawTextAt("Let's try a splitscreen!",2,40);
+	Font::DrawTextAt("Let's try a splitscreen!",2,20,true);
+	Font::DrawTextAt("Let's try a splitscreen!",2,40,true);
 	while (v) do
 	begin
 		Screen::WaitForVerticalBlank();

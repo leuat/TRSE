@@ -21,8 +21,8 @@ begin
 	Screen::Cls(1);
 	Screen::SetPen(1);
 	Font::SetFont(#Font::font1);
-	Font::DrawTextAt("Let's try some sprites!",2,2);
-	Font::DrawTextAt("Non-destructive sprites!",2,23);
+	Font::DrawTextAt("Let's try some sprites!",2,2,true);
+	Font::DrawTextAt("Non-destructive sprites!",2,23,true);
 	// Draw a sprite to the screen
 	Sprite::DrawAt(10,10,0);
 	Sprite::DrawAt(10,50,1);
