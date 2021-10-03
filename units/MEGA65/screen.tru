@@ -3,7 +3,7 @@ unit Screen;
 var
 	const VIC_BASE: integer = $D000;
 	addr : integer;
-	bank, val,y,x,j : byte;
+	curbank, val,y,x,j : byte;
 	zp:^byte;
 	spritePointerAddress: integer at $D06C;
 
@@ -25,13 +25,13 @@ begin
 end;
 
 /**
-Sets the character data address at the 16-bit location given in parameter 1 with bank from parameter 2.
+Sets the character data address at the 16-bit location given in parameter 1 with curbank from parameter 2.
 **/
-procedure SetCharsetLocation(addr: global integer; bank:global byte);
+procedure SetCharsetLocation(addr: global integer; curbank:global byte);
 begin
 	poke(VIC_BASE + ^$68, 0, lo(addr));
     poke(VIC_BASE + ^$69, 0, hi(addr));
-    poke(VIC_BASE + ^$6A, 0, bank);
+    poke(VIC_BASE + ^$6A, 0, curbank);
 end;
 
 /**
@@ -62,23 +62,23 @@ begin
 end;
 
 /**
-Sets the screen location address at the 16-bit location given in parameter 1 with bank from parameter 2.
+Sets the screen location address at the 16-bit location given in parameter 1 with curbank from parameter 2.
 **/
-procedure SetScreenLocation(addr: global integer; bank:global byte);
+procedure SetScreenLocation(addr: global integer; curbank:global byte);
 begin
 	poke(VIC_BASE + ^$60, 0, lo(addr));
     poke(VIC_BASE + ^$61, 0, hi(addr));
-    poke(VIC_BASE + ^$62, 0, bank);
+    poke(VIC_BASE + ^$62, 0, curbank);
 end;
 
 /**
-Sets the current screen bank on the VIC4
+Sets the current screen curbank on the VIC4
 **/
 
-procedure SetBank(bank : global byte);
+procedure SetBank(curbank : global byte);
 begin
 	asm("
-        ldy Screen_bank
+        ldy Screen_curbank
 		lda #$00
         tax 
 ;        tay 
