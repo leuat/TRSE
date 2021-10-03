@@ -391,7 +391,7 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
             int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
             if (m_importScaleX==1.0 && m_importScaleY==1.0) { // prevent rounding errors on windows.. damn
-               xx = x*m_scale;
+               xx = x*m_importScale;
                yy = y;
             }
 
@@ -631,11 +631,13 @@ void MultiColorImage::ExportBin(QFile& ofile)
     if (m_bitMask== 0b1 || m_type==LImage::Type::HiresBitmap || m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==0) { // Regular color
         charC = 1;
     }
+
     if (charC==3)
     for (int j=sy;j<ey;j++)
-        for (int i=sx;i<ex;i++)
-//            data.append(m_data[i + j*m_charWidth].data());
+        for (int i=sx;i<ex;i++) {
+//            data.append(m_data[i + j*m_charWidth].data()); {
             colorData.append((uchar)m_data[j*m_charWidth + i].colorMapToNumber(1,2));
+}
 
   /*  for (int i=0;i<m_charWidth*m_charHeight;i++) {
       //  qDebug () << QString::number((uchar)colorData[colorData.count()-1]);
@@ -657,6 +659,9 @@ void MultiColorImage::ExportBin(QFile& ofile)
             c=0;
 //        if (c!=0)
   //          qDebug() << c;
+
+
+
         data.append((char)c);
     }
     QFile file2(fColor);

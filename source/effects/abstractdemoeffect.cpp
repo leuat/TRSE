@@ -600,8 +600,12 @@ void AbstractDemoEffect::ConvertToC64(int dither, bool isMulticolor, QVector3D d
     m_mc->m_colorList.EnableColors(m_cols);
     if (dither==1)
         m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
-    if (dither==2)
+    if (dither==2) {
+        //int scale = m_mc->m_scale;
+      //  m_mc->m_scale = 1.0;
         m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size), 1);
+       // m_mc->m_scale = scale;
+    }
     if (dither==0)
         m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 
@@ -632,8 +636,12 @@ void AbstractDemoEffect::ConvertToCharset(int dither, bool isMulticolor, QVector
     m_mc->m_colorList.EnableColors(m_cols);
     if (dither==1)
         m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
-    if (dither==2)
+    if (dither==2) {
+    //    int scale = m_mc->m_scale;
+//        m_mc->m_scale = 1.0;
         m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size), 1);
+  //      m_mc->m_scale = scale;
+    }
     if (dither==0)
         m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
 

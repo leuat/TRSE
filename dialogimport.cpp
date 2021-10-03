@@ -229,7 +229,7 @@ void DialogImport::Convert()
         auto lst = ui->leCustomPalette->text().split("," );
         m_image->m_colorList.m_customPalette = Util::HexQStringListToByteArray(lst);
     }
-
+    m_image->m_importScale = 2;
     m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
 
     if (ui->chkCustom->isChecked()) {
