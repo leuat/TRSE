@@ -31,8 +31,7 @@ begin
 		Screen::WaitForVerticalBlank();
 		Sprite::StampAt(zp,16,16, object_width/4 ,object_height);
 		time+=1;
-		if (time&7=0) then 
-			frame:=(frame+1)&127;
+		frame:=(frame+1)&127;
 		
 	end;
 	loop();
