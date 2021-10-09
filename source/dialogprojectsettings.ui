@@ -986,6 +986,11 @@
               <string>VZ200</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>ACORN</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="0">

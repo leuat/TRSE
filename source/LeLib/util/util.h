@@ -90,6 +90,7 @@ public:
 
     static void WriteInt32(QByteArray& ba, int val);
     static void WriteInt16(QByteArray& ba, int val);
+    static void WriteInt16LH(QByteArray& ba, int val);
 
     static QStringList fixStringListSplitWithCommaThatContainsStrings(QStringList lst);
 

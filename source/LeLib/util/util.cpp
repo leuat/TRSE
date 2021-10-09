@@ -360,6 +360,12 @@ void Util::WriteInt16(QByteArray &ba, int val)
     ba.append((val)&0xFF);
 
 }
+void Util::WriteInt16LH(QByteArray &ba, int val)
+{
+    ba.append((val)&0xFF);
+    ba.append((val>>8)&0xFF);
+
+}
 
 QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst)
 {

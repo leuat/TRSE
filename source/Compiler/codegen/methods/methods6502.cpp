@@ -1375,15 +1375,22 @@ void Methods6502::MemCpyUnroll(Assembler* as, bool isReverse)
         start = counter-1;
         end = 0;
         inc = -1;
+        as->Asm("ldy #" +QString::number(start));
     }
     as->Comment("memcpy unrolled");
-    for (int i=start;i<end;i+=inc) {
+    for (int i=start;i!=end;i+=inc) {
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER || m_node->m_params[2]->getType(as)==TokenType::POINTER)
         {
+            if (isReverse) {
+                as->Asm("dey");
+
+            }
+            else {
             if (i==0)
                 as->Asm("ldy #" +QString::number(i));
             else
                 as->Asm("iny");
+            }
         }
 
         if (m_node->m_params[0]->getType(as)==TokenType::POINTER)

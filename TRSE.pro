@@ -165,6 +165,7 @@ SOURCES += main.cpp\
     source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/optimiser/postoptimizerz80.cpp \
     source/Compiler/systems/system65c816.cpp \
+    source/Compiler/systems/systemacorn.cpp \
     source/Compiler/systems/systemamstradcpc.cpp \
     source/Compiler/systems/systemappleii.cpp \
     source/Compiler/systems/systemarm.cpp \
@@ -421,6 +422,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/optimiser/postoptimizerz80.h \
     source/Compiler/systems/system65c816.h \
+    source/Compiler/systems/systemacorn.h \
     source/Compiler/systems/systemamstradcpc.h \
     source/Compiler/systems/systemappleii.h \
     source/Compiler/systems/systemarm.h \

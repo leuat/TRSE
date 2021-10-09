@@ -110,7 +110,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
 
     QString AbstractSystem::StringFromProcessor(QString s) {
         if (s == "CUSTOM") return "CUSTOM";//StringFromProcessor("CUSTOM");
-        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII" || s=="ORIC") return "MOS6502";
+        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII" || s=="ORIC"|| s=="ACORN") return "MOS6502";
         if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
         if (s == "X86") return "PX86";
         if (s == "M1ARM") return "ARM";
@@ -180,6 +180,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         return CUSTOM;
     if (s.toLower()=="vz200")
         return VZ200;
+    if (s.toLower()=="acorn")
+        return ACORN;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -213,6 +215,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == SNES) return "SNES";
     if (s == CUSTOM) return "CUSTOM";
     if (s == VZ200) return "VZ200";
+    if (s == ACORN) return "ACORN";
     return "";
 }
 

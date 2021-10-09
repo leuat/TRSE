@@ -79,7 +79,7 @@ function PostProcess();
 	sy = 20*s
 	rot = -frame/120.0+0.2
 --	whoo("")
-	DrawImage("/home/leuat/Pictures/ak47.png",
+	DrawImage("/Users/leuat/pic/ak47.png",
 	output.resolution.width/2*0, output.resolution.height/2*0, 
 	sx,sy, 
 	rot) 

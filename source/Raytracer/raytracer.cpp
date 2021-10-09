@@ -433,10 +433,19 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     QString unrollData = "procedure "+name+"_unroll();\n";
     unrollData+="begin asm(\" \n";
 
+    QMap<int, int> types;
+
     for (AbstractRayObject* aro : m_objects) {
         id = aro->m_id;
+//        qDebug() <<aro->m_material.m_color;
         QVector<QVector3D> reduced;
-  //      qDebug() << aro->m_2Dpoints.count();
+
+        int type = 1; // Assume white
+        if ((aro->m_material.m_color.x()==0 &&aro->m_material.m_color.y()==0))
+            type = 2; // Blue - type 2
+
+        if ((aro->m_material.m_color.x()==0 &&aro->m_material.m_color.y()==0 &&aro->m_material.m_color.z()==0))
+            continue;
 
         // Combine all 2D points from instances
         QVector<QVector3D> all;
@@ -446,8 +455,8 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 
         if (all.count()==0)
             continue;
+//        qDebug() << type<<all.cou;
 
-//        qDebug() << "Org size : " << all.count();
 //        if (id>5) continue;
         for (QVector3D p: all) {
             //            img.setPixelColor(p.x(),p.y(),Qt::red);
@@ -459,39 +468,48 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 
 //            if (rand()%100>95) qDebug() << org;
             if (org.red()==0 && org.blue() == 0 && org.green()==0)
-            if (!reduced.contains(p)) {
-                reduced.append(p);
-            }
+                if (!reduced.contains(p)) {
+                    reduced.append(p);
+                }
         }
-
+//        qDebug() << "Org size : " << reduced.count();
 //        killList.append(perhapsKill);
   //      total.append(reduced);
+
+        int bb = base;
+        if (type==2) bb=0xD800;
 
         QVector<int> positions;
         for (QVector3D p: reduced) {
 
-            int i = base + p.x() + p.y()*40;
+            int i = bb + p.x() + p.y()*40;
+            if (!types.contains(i))
+                types[i]=type;
 
             if (p.x()>=0 && p.x()<40 && p.y()>=0 && p.y()<25) {
                 if (!taken.contains(i)) {
                     positions.append(i);
                     taken.append(i);
                 }
-
-
             }
-  //          qDebug() << Util::numToHex(i);
+  //          qDebug() << Util::numToHex(i);'
 //            data.append((char)((i)&0xFF));
   //          data.append((char)((i>>8)&0xFF));
         }
 
 
 
-
         int cnt = positions.count();
         if (cnt!=0) {
             unrollData+=" ldx #"+Util::numToHex(id)+"\n";
-            unrollData+=" lda cols,x\n";
+//            if (ty==0)
+                unrollData+=" lda cols,x\n";
+  /*          if (type==1)
+                unrollData+=" lda cols2,x\n";
+            if (type==0b11) {
+                unrollData+=" lda cols,x\n";
+                unrollData+=" ora cols2,x\n";
+            }*/
             for (int i: positions) {
                 unrollData += " sta "+Util::numToHex(i) + "\n";
             }

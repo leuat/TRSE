@@ -3,7 +3,7 @@ unit Screen;
 var
 	const VIC_BASE: integer = $D000;
 	addr : integer;
-	curbank, val,y,x,j : byte;
+	bbank, val,y,x,j : byte;
 	zp:^byte;
 	spritePointerAddress: integer at $D06C;
 
@@ -25,13 +25,13 @@ begin
 end;
 
 /**
-Sets the character data address at the 16-bit location given in parameter 1 with curbank from parameter 2.
+Sets the character data address at the 16-bit location given in parameter 1 with bbank from parameter 2.
 **/
-procedure SetCharsetLocation(addr: global integer; curbank:global byte);
+procedure SetCharsetLocation(addr: global integer; bbank:global byte);
 begin
 	poke(VIC_BASE + ^$68, 0, lo(addr));
     poke(VIC_BASE + ^$69, 0, hi(addr));
-    poke(VIC_BASE + ^$6A, 0, curbank);
+    poke(VIC_BASE + ^$6A, 0, bbank);
 end;
 
 /**
@@ -56,29 +56,29 @@ procedure Set80ColumnMode() inline;
 begin
 	asm("
 		lda $D031
-		ora #%10000000
+		or #%10000000
 		sta $d031
 	");
 end;
 
 /**
-Sets the screen location address at the 16-bit location given in parameter 1 with curbank from parameter 2.
+Sets the screen location address at the 16-bit location given in parameter 1 with bbank from parameter 2.
 **/
-procedure SetScreenLocation(addr: global integer; curbank:global byte);
+procedure SetScreenLocation(addr: global integer; bbank:global byte);
 begin
 	poke(VIC_BASE + ^$60, 0, lo(addr));
     poke(VIC_BASE + ^$61, 0, hi(addr));
-    poke(VIC_BASE + ^$62, 0, curbank);
+    poke(VIC_BASE + ^$62, 0, bbank);
 end;
 
 /**
-Sets the current screen curbank on the VIC4
+Sets the current screen bbank on the VIC4
 **/
 
-procedure SetBank(curbank : global byte);
+procedure SetBank(bbank : global byte);
 begin
 	asm("
-        ldy Screen_curbank
+        ldy Screen_bbank
 		lda #$00
         tax 
 ;        tay 
@@ -161,6 +161,19 @@ begin
 
 
 end;
-
-
+/**
+Enables Super-extended attribute mode (SEAM)
+**/
+procedure EnableSeamMode();
+begin
+	Set40ColumnMode();
+	asm("
+	    lda #$5
+        sta $d054
+        lda #$50
+        sta $d058
+        lda #$00
+        sta $d059
+	");
+end;
 end.

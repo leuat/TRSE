@@ -61,6 +61,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->leBBCEmulator->setText(m_ini->getString("bbc_emulator"));
+    ui->leAcornEmulator->setText(m_ini->getString("acorn_emulator"));
     ui->leAtari800Emulator->setText(m_ini->getString("atari800_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
@@ -170,6 +171,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("atari2600_emulator", ui->leAtari2600Emulator->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("bbc_emulator", ui->leBBCEmulator->text());
+    m_ini->setString("acorn_emulator", ui->leAcornEmulator->text());
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
@@ -288,7 +290,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"VZ200"<<"QEMU" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -801,7 +803,24 @@ void DialogTRSESettings::on_btnVZ200_clicked()
 
 void DialogTRSESettings::on_btnVZ200Help_clicked()
 {
-    Help("Apple VZ200 emulator","Download from https://bluebilby.com/sdm_categories/tools/");
+    Help("VZ200 emulator","Download from https://bluebilby.com/sdm_categories/tools/");
+
+}
+
+
+void DialogTRSESettings::on_btnAcornHelp_clicked()
+{
+    Help("Acorn emulator","Download http://atomulator.acornatom.co.uk/");
+
+}
+
+
+void DialogTRSESettings::on_btnAcornEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Acorn emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leAcornEmulator->setText(filename);
 
 }
 

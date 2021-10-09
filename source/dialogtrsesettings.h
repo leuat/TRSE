@@ -203,6 +203,10 @@ private slots:
 
     void on_btnVZ200Help_clicked();
 
+    void on_btnAcornHelp_clicked();
+
+    void on_btnAcornEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

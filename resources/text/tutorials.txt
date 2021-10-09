@@ -61,6 +61,7 @@ MEGA65; Mega65 Demoeffects (raytracer); MEGA65/RayTracer/ ;  <h2><p><img src=":r
 
 BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><p><img src=":resources/images/tutorials/bbc1.png" width="200" class="center"><p><p>Main BBC Micro (32k) tutorials.
 BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC Demo setup sample project</h2><p><img src=":resources/images/tutorials/bbc2.png" width="200" class="center">Make a demo for the BBC that loads independent parts from disk!<p>Loader at $1100, effects at $1280. Plays music, loads effects from disk.
+ACORN; Acorn atom tutorials; Acorn/tutorials/ ;  <h2>Acorn Atom tutorials</h2><p><img src=":resources/images/ACORN.png" width="200" class="center">Under construction.
 ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>Under construction.
 APPLEII; Main Apple II tutorials; APPLEII/tutorials/ ;  <h2>Main Apple II tutorials</h2><p><p>Under construction.
 

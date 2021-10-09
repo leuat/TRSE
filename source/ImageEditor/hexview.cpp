@@ -474,7 +474,7 @@ void HexView::keyPressEvent(QKeyEvent *event)
 
     QString t = event->text();
 
-    if(event->key() == Qt::Key_Delete)
+    if(event->key() == Qt::Key_Delete || event->key() == Qt::Key_Question)
     {
         m_pdata->m_data.remove(m_selectBegin / 2, (m_selectEnd - m_selectBegin) / 2 + 1);
         m_isChanged = true;

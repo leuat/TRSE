@@ -69,7 +69,7 @@ public:
     float seamless2d(float oct, float pers, float scale, double x, double y);
 
 
-    void CreateNoiseData(QString file, int w, int h, int oct, float sx, float sy, float amp);
+    void CreateNoiseData(QString file, int w, int h, int oct, float sx, float sy, float sz, float amp);
 
 
     /**

@@ -29,6 +29,21 @@ begin
 	closeirq();
 end;
 
+
+procedure EndWithinLoop();
+begin
+		@ifdef IS_DEMO
+			asm(" 
+			jsr @outerCall
+			beq pp_cnt
+			jmp $810
+pp_cnt:
+		
+		");
+		@endif
+
+end;
+
 procedure Endd();
 begin
 	while (true) do

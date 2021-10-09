@@ -1187,6 +1187,7 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            Eat();
             return;
         }
         if (m_currentToken.m_value=="exportblackwhite") {
@@ -3048,6 +3049,7 @@ void Parser::PreprocessSingle() {
                           }
 
                           replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
+                          replaceLine+="@donotremove "+var+"\n";
 
                       }
                       QString orgL =  m_lexer->m_lines[ln];
@@ -5021,14 +5023,16 @@ void Parser::HandlePerlinNoise()
     Eat(TokenType::INTEGER_CONST);
     int oct = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
-    float scale = m_currentToken.m_intVal;
+    float scalex = m_currentToken.m_intVal;
+    Eat();
+    float scaley = m_currentToken.m_intVal;
     Eat();
     float pers = m_currentToken.m_intVal/100.0;
     Eat();
     int amp = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     SimplexNoise sn;
-    sn.CreateNoiseData(file,w,h,oct,pers,scale,amp);
+    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
 
 }
 

@@ -1,0 +1,11 @@
+program Example1;
+var  
+   i: byte; 
+
+begin
+	while (true) do
+	begin
+		fill(^$8000,i,0);
+		i+=1;
+	end;
+end.

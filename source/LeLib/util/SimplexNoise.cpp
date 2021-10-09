@@ -648,7 +648,7 @@ float SimplexNoise::fractal(size_t octaves, float x, float y, float z) {
     return (output / denom);
 }
 
-void SimplexNoise::CreateNoiseData(QString file, int w, int h, int oct, float pers, float scale, float amp) {
+void SimplexNoise::CreateNoiseData(QString file, int w, int h, int oct, float pers, float scalex, float scaley, float amp) {
     QByteArray ba;
     ba.resize(w*h);
     SimplexNoise sn;
@@ -657,7 +657,7 @@ void SimplexNoise::CreateNoiseData(QString file, int w, int h, int oct, float pe
         for (int x=0;x<w;x++) {
             float yy = y/(float)h;
             float xx = x/(float)w;
-            float val = 0.5*(1+sn.seamless2d(oct,pers,scale,xx,yy)) *amp;
+            float val = 0.5*(1+sn.seamless2d(oct,pers,scalex,xx,yy*scaley/scalex)) *amp;
             //            for (int j=0;j<4;j++) {
             //              val+=sn.noise(xx*sx,yy*sy,0,0))
             //        }
