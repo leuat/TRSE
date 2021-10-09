@@ -1,11 +1,36 @@
 program Example1;
+@use "Screen"
 var  
-   i: byte; 
+	i,j,k,time: byte; 
+	circle_data : array[Screen::Width*Screen::Height] of byte = BuildTable2D(Screen::Width,Screen::Height,
+	"Math.sqrt( Math.pow( i-SCREEN_WIDTH/2,2)/SCREEN_ASPECT + Math.pow( j-SCREEN_HEIGHT/2,2))"
+	);
+
+	src, dst : pointer;
+
+
+procedure UpdateScreen();
+begin
+	src := #circle_data;
+	dst := #Screen::Screen;
+	for j:=0 to Screen::height do
+	begin
+		for i:=0 to Screen::width do
+		begin
+			dst[i] := src[i] - time;
+		end;
+		dst+=Screen::Width;
+		src+=Screen::Width;
+	end;
+
+end;
+
+
 
 begin
 	while (true) do
 	begin
-		fill(^$8000,i,0);
-		i+=1;
+		UpdateScreen();
+		time+=1;
 	end;
 end.

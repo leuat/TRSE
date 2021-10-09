@@ -17,7 +17,7 @@ public:
     }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
 //        params<< "-0" << filename + ".ssd" <<"-b";
-        params<< "-autoboot" <<filename + ".atm";
+        params<< "-autoboot";
 
     }
 

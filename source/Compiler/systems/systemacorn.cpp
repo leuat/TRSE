@@ -44,6 +44,10 @@ void SystemAcorn::PostProcess(QString &text, QString filename, QString currentDi
     h.append(d);
 //    Util::SaveByteArray(h,filename+".atm");
     Util::SaveByteArray(h,filename+".atm");
+    QString dir = QFileInfo(getEmulatorName()).absoluteDir().path()+QDir::separator()+"MMC";
+    if (!QDir(dir).exists())
+     QDir().mkdir(dir);
+    Util::CopyFile(filename+".atm",dir+QDir::separator()+"MENU");
 
 }
 
@@ -55,6 +59,7 @@ void SystemAcorn::DefaultValues()
     m_ignoreSys = true;
     m_stripPrg = true;
     m_memorySize = 65536;
+    m_requireEmulatorWorkingDirectory = true;
 
 }
 

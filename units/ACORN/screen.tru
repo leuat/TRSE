@@ -1,1 +1,8 @@
+unit Screen;
+var
+	const SCREEN: address = $8000;
+	const WIDTH : byte = 32;	
+	const HEIGHT : byte = 16;
+	const ASPECT : byte = 2;	
 
+end.
