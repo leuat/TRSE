@@ -1,0 +1,312 @@
+program Beep;
+
+
+/*
+
+ In order to compile this demo, do the following:
+ 
+   a) press the "Build All" button in the lower left corner. This will build all the individual parts to
+      the correct memory location.
+      
+   b) Build and run this file - "demo.ras". 
+   
+   c) Enjoy!
+
+
+	all the individual files on the disk are defined in the disk1.paw file (with load
+	position and names)
+
+*/
+
+
+	@ignoremethod "init16x8mul"
+	@ignoremethod "init16x8div"
+	@ignoremethod "init8x8div"
+	@ignoremethod "initeightbitmul"
+	@ignoremethod "initjoystick"
+	@ignoremethod "initmoveto"
+
+
+@use "screen"
+@use "files"
+
+
+var
+	// Some local variables in zp
+	kp : integer at $0a;
+	i: byte;
+	cur,play:byte at $0C;
+	zp2: pointer;
+	zp : pointer at $0E;
+	
+	files : string no_term =(
+
+	// The following filenames are all defined in the disk1.paw file. 
+	// Filenames must end with $0D to load
+	// Names are kept short to preserve loader space	
+
+	"E2",$0D, // proxima wobbler
+	"C1",$0D, // clearscreen
+	"E3",$0D, // Test kid image
+	"E4",$0D, // beep
+	"E5",$0D, // 3d effect 1
+	"R3",$0D, // Credits image scroll
+	"EB",$0D, // plasma #1
+	"EP",$0D, // plasma #2
+	"R4",$0D, // Clear
+	"EA",$0D, // uk
+	"R4",$0D, // Clear
+	"E6",$0D, // greets image
+	"E7",$0D, // greets effect
+	"E9",$0D, // proxima image
+	"E8",$0D, // 3d object 2
+	"R4",$0D, // Clear
+	"R1",$0D, // Rotating font image
+	"R2",$0D, // Fonte effect
+	"R4",$0D, // Clear
+	"R5",$0D, // TRSE image
+	);
+	song2 : string no_term=("M2",$0D);
+	
+
+// Player positions for the song	
+
+@define PLAYER_INIT $4F00
+@define PLAYER_PLAY $4F07
+
+
+
+procedure PlayMusic();
+begin
+	if (play) then
+		call(^@PLAYER_PLAY);
+end;
+
+procedure InitMusic();
+begin
+	zp:=@musicPos;
+	asm("
+	  lda #0
+  	  ldx zp
+    	  ldy zp+1
+    	  jsr @PLAYER_INIT
+  	");
+end;
+
+
+@startblock $1280 "MUZAK"
+
+
+var
+	@donotremove music
+	music : incbin("resources/music/maze.vgc") compressed;
+	player: incbin("bin/player4C00.bin") compressed;
+
+	Compression_endd,Compression_count: integer;
+
+
+	
+
+// Custom decompression placement here
+
+procedure Decompress(Compression_src, Compression_dst : pointer of integer);
+begin
+	Compression_src := Compression_src + 7;
+	// Look up count and end
+	Compression_count :=Compression_src^ ;
+	Compression_src := Compression_src + 4;	
+	Compression_endd := Compression_src + Compression_count;
+	asm("
+
+
+;unpacker variables, no need to change these
+delta_d	=	$B4
+
+
+	ldy	#0
+
+
+	lda $10
+	sta Compression_count
+	lda $10
+	sta Compression_count+1
+
+
+
+parsetoken:
+	jsr	getsrc
+	pha
+	lsr
+	lsr
+	lsr
+	lsr
+	beq	copymatches
+	jsr	buildcount
+	tax
+	jsr	docopy
+	lda	Compression_src
+	cmp	Compression_endd
+	lda	Compression_src+1
+	sbc	Compression_endd+1
+	bcs	done
+
+copymatches
+	jsr	getsrc
+	sta	delta_d
+	jsr	getsrc
+	sta	delta_d+1
+	pla
+	and	#$0f
+	jsr	buildcount
+	clc
+	adc	#4
+	tax
+	bcc	c_b1
+	inc	Compression_count+1
+c_b1:
+	lda	Compression_src+1
+	pha
+	lda	Compression_src
+	pha
+	sec
+	lda	Compression_dst
+	sbc	delta_d
+	sta	Compression_src
+	lda	Compression_dst+1
+	sbc	delta_d+1
+	sta	Compression_src+1
+	jsr	docopy
+	pla
+	sta	Compression_src
+	pla
+	sta	Compression_src+1
+	jmp	parsetoken
+
+done
+	pla
+	rts
+
+docopy
+	jsr	getput
+	dex
+	bne	docopy
+	dec	Compression_count+1
+	bne	docopy
+	rts
+
+buildcount
+	ldx	#1
+	stx	Compression_count+1
+	cmp	#$0f
+	bne	c_q1
+c_m1	
+	sta	Compression_count
+	jsr	getsrc
+	tax
+	clc
+	adc	Compression_count
+	bcc	c_b2
+	inc	Compression_count+1
+c_b2
+	inx
+	beq	c_m1
+c_q1
+	rts
+
+getput
+	jsr	getsrc
+
+putdst
+	sta 	(Compression_dst),y
+	inc	Compression_dst
+	bne	c_p1
+	inc	Compression_dst+1
+c_p1
+	rts
+
+getsrc
+	lda 	(Compression_src),y
+	inc	Compression_src
+	bne	c_p2
+	inc	Compression_src+1
+c_p2
+	");
+
+end;
+
+// Initialises the demo setup
+procedure Init();
+begin
+	asm("
+	LDA #$7F
+	STA $FE4E			; disable all interrupts
+	STA $FE43					; set keyboard data direction
+	LDA #$C2
+	STA $FE4E			; enable VSync and timer interrupt
+	LDA #$0F
+	STA $FE42			; set addressable latch for writing
+;	LDA #3
+;	STA $FE40			; keyboard write enable
+	LDA #0
+	STA $FE4B			; timer 1 one shot mode
+	cli
+	");
+	// Decompress the player and music
+	Decompress(#player,$4c00);
+	Decompress(#music,@musicPos);
+	// Initialise music
+	InitMusic();
+	
+	// Default raster irq, only play music	
+	RasterIRQ(Screen::DefaultIRQ());
+	Screen::irqProcedure := #PlayMusic;
+	// Starts the music
+	Screen::StartInterrupts();
+	cur:=0;
+	play:=1;
+
+end;
+
+	
+@endblock
+
+
+
+	
+
+begin
+	Init();
+	// Point to the files
+	zp:=#files;	
+
+
+	while (zp[0]<>0) do
+	begin
+		Screen::irqProcedure := #PlayMusic;
+		// On effect 6, load and initialise a new tune
+		if (cur=6) then 
+		begin
+			kp:=zp;
+			play:=0;
+			asm(" sei");
+			// Make sure we're not playing anything while loading the new track
+			Files::LoadFile(#song2,@musicPos);
+			InitMusic();
+			asm(" cli");
+			play:=1;
+			zp:=kp;
+		end;
+		// Load next effect
+		Files::LoadFile(zp,@codePos);
+		cur+=1;
+		zp:=zp+3;
+		// Jump to loaded code
+		call(^@codePos);
+	end;
+	Loop();
+	
+end.
+
+
+
+	

@@ -1,0 +1,100 @@
+program Clearscreen1;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+/*
+
+This effect clears the screen by rendering multiple instances of the box effect generated
+with fjong/box.fjo. 
+
+
+*/
+
+
+
+
+var
+	yy,time,i,j,k,t2,f,xx,fk,c: byte;
+	@donotremove line_1
+	zp,keep,sp,zp2,sp2 : pointer;
+	pp:integer;
+	clr : incbin("data/clear_screen1.bin");
+
+
+	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*112+112");
+
+	const W :byte=20/4;
+	const H: byte=32/8;
+
+	frames : array[32] of integer=BuildTable("i*20*32/4");
+
+procedure RenderClear(pos : integer;frame:byte);
+begin
+	zp:=$5800+pos;
+	zp2 := #clr + frames[frame];
+	for i:=0 to H do
+	begin
+		memcpyunroll(zp2,0,zp,W*8);
+		zp2:=zp2+(W*8);
+		zp:=zp+320;
+	end;	
+end;
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+	Screen::SetMode5();
+	//Screen::SetMode5Palette(#Screen::colorsBluePurpleWhite);	
+//	Screen::SetMode5Palette(#Screen::colorsRed);	
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+	Screen::FillBanks(#mode5_vram, 0,$28);
+	// Clear the screen
+@endif
+	Screen::FillBanks(#mode5_vram, %00001111,$28);
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+
+
+
+//	keep := Screen::irqProcedure;
+//	Screen::irqProcedure := #IRQ;
+
+//	DemoTools::InitEffect(8);
+	f:=200;		
+	While(DemoTools::isDone = false) do
+	begin
+		pp:=0;
+		fk:=f;
+		for yy:=0 to 8 do
+		begin
+			for xx:=0 to 8 do
+			begin
+				c:=fk;	
+				if (c>127) then c:=0;
+				if (c>31) then c:=31;
+				if (c>0 and c<31) then
+					RenderClear(pp,c);
+				pp:=pp+8*W;
+				fk:=fk+1;
+				
+			end;
+			pp:=pp+320*(H-1);
+		end;
+		f:=(f+1);
+		if (f=48) then DemoTools::isDone:=true;
+//		Screen_WaitForVerticalSync();
+	end;
+	//Screen::FillBanks(#mode5_vram, $FF,$28);
+	
+//	Screen::irqProcedure := keep;
+
+//	DemoTools::EndEffect();
+	return;
+
+
+end.

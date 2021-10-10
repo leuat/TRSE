@@ -1,0 +1,98 @@
+program Clearscreen2;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+//@endif
+
+@export "resources/images/proxima_lines.flf" "resources/images/proxima_lines.bin" 100
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+@export "resources/images/proxima2.flf" "resources/images/proxima2.bin" 256
+
+/*
+	One of the clearscreen methods
+
+*/
+
+
+
+var
+	const N:byte = 21;
+	yy,time,i,j,k,t2,f,xx,fk,c: byte;
+	zp,keep,sp,zp2,sp2 : pointer;
+	pp:integer;
+
+procedure IRQ();
+begin
+	
+	DemoTools_IncreaseTimer();;
+	@ifdef IS_DEMO
+	call(keep);
+	@endif	
+
+end;
+
+var
+	const W :byte=20/4;
+	const H: byte=32/8;
+
+
+procedure RenderClear(pos : integer;frame:byte);
+begin
+	zp:=$5800+pos;
+	zp2 := zp+1;
+	for j:=0 to H do
+	begin
+		for i:=0 to W do
+		begin
+			memcpyunroll(zp2,0,zp,7);
+			zp[7]:=0;
+			zp+=8;
+			zp2+=8;
+		end;
+		zp+=(320-W*8);
+		zp2+=(320-W*8);
+	end;	
+end;
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+	Screen::SetMode5();
+	//Screen::SetMode5Palette(#Screen::colorsBluePurpleWhite);	
+	Screen::SetMode5Palette(#Screen::colorsRed);	
+ 	Screen::FillBanks(#mode5_vram, $FF,$28);
+@endif
+	f:=200;		
+	While(DemoTools::isDone = false) do
+	begin
+		pp:=0;
+		fk:=f;
+		for yy:=0 to 8 do
+		begin
+			for xx:=0 to 8 do
+			begin
+				c:=fk*11;	
+				if (c>127) then c:=0;
+				if (c>31) then c:=31;
+				if (c>0 and c<31) then
+					RenderClear(pp,c);
+				pp:=pp+8*W;
+				fk:=fk+1;
+				
+			end;
+			pp:=pp+320*(H-1);
+		end;
+		f:=(f+1);
+		if (f=48) then DemoTools::isDone:=true;
+//		Screen_WaitForVerticalSync();
+	end;
+	return;
+
+
+end.

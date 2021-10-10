@@ -1,0 +1,152 @@
+program Proxima2;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+//@endif
+
+@export "resources/images/proxima_lines.flf" "resources/images/proxima_lines.bin" 100
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+@export "resources/images/proxima2.flf" "resources/images/proxima2.bin" 256
+
+/*
+	Proxima2 logo
+
+*/
+
+
+var
+	time,i,j,k,t2,cnt: byte;
+	@donotremove line_1
+	zp,keep,sp,zp2,sp2 : pointer;
+	colorsRedCyan : array[4] of byte = (1,6,4,7); // white, yellow, red, black
+	const lw:byte = 16;
+	const st:byte=53;
+	image1 : incbin("resources/images/proxima2.bin") compressed;
+//	slide : incbin("resources/images/proxima_lines.bin",$2000,0,320);
+	
+	
+//	image1 : incbin("resources/images/kid1.bin");
+//	image2 : incbin("resources/images/kid2.bin");
+
+
+//	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*16+48");
+	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*112+112");
+//	sinx : array[256] of byte = BuildTable("Math.cos(i/256.0*Math.PI*2.0)*6+6");
+
+	const N:byte = 21;
+procedure IRQ();
+begin
+	
+	DemoTools_IncreaseTimer();;
+	@ifdef IS_DEMO
+	call(keep);
+	@endif	
+
+end;
+
+var
+	patt1 : array[4] of byte = (0,3,0,0);
+	patt2 : array[4] of byte = (0,3,3,0);
+	patt3 : array[4] of byte = (3,3,3,3);
+	patt4 : array[4] of byte = (1,3,3,1);
+	patt5 : array[4] of byte = (1,1,1,1);
+	v,v2,i2:byte;	
+
+//	addPatt: array[18] of byte=(0,1, 0,1, 0,1,  0,0,1,  0,1, 0,1, 0,0,1 );
+	addPatt: array[18] of byte=(0,1, 0,1,  0,0,1,  0,1, 0,1,  0,1,0,0,1 );
+
+procedure PutPixelMode5(ppx, ppy, ppc : byte);
+begin
+	Screen::PointToY(#Screen::ytabMode5, ppy);
+	Screen::screenPtr := Screen::screenPtr + Screen::xtab[ppx/4];
+	i2 :=(ppx&3);
+	v := Screen::pixel5Tab[i2<<2+ppc];
+	v2:=(Screen::screenPtr^);
+	if (v2&v<>0) then return;
+	v2:=v2 & Screen::mode5Clear[i2];
+	Screen::screenPtr^ := v2 | v;
+
+end;
+
+
+procedure DrawLine(x,l: byte; zp:global pointer);
+begin
+	j:=0;
+	cnt := 0;
+	for i:=0 to 200 do
+	begin
+		for k:=0 to l do
+		begin
+				if (x+k<200) then
+				PutPixelMode5(x+k,i,zp[j+k&1]);
+		end;
+		
+		if (i&1=0) then
+		begin
+			cnt+=1;
+			x-=addPatt[cnt]*2;
+			if (cnt=16) then cnt:=0;
+
+		end;
+		j:=(j+2)&3;
+	end;	
+end;
+
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+	//Screen::SetMode5Palette(#Screen::colorsBluePurpleWhite);	
+	Screen::SetMode5Palette(#colorsRedCyan);	
+ 	Screen::FillBanks(#mode5_vram, 0,$28);
+	// Clear the screen
+
+/*	zp:=$5800;
+	zp2:=#slide+256;
+	sp:=#slide;
+	for i:=0 to 25 do
+	begin
+		memcpy(sp,0,zp,0);
+		asm(" inc zp+1");
+		memcpy(zp2,0,zp,0);
+		zp:=zp+64;
+		sp:=sp+8;
+		zp2:=zp2+8;
+		for j:=0 to 3 do	
+			Screen::WaitForVerticalSync();
+	
+	end;
+*/
+
+//	DemoTools::WaitABit(64);
+	DrawLine(st,lw,#patt1);
+	DrawLine(st+lw,lw,#patt2);
+	DrawLine(st+lw*2,lw,#patt3);
+	DrawLine(st+lw*3,lw,#patt4);
+	DrawLine(st+lw*4,lw,#patt5);
+	Compression::Decompress(#image1, #mode5_vram);
+
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+
+//	DemoTools::InitEffect(24);
+			
+	While(DemoTools::isDone = false) do
+	begin
+	end;
+	
+	Screen::irqProcedure := keep;
+
+	DemoTools::EndEffect();
+	return;
+
+
+end.

@@ -1,0 +1,80 @@
+program Demo;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+//@endif
+
+@export "resources/images/flower1.flf" "resources/images/flowers1.bin" 100
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+//@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+
+
+
+var
+	time,i,j,k,t2: byte;
+
+	image1 : incbin("resources/images/flowers1.bin") compressed;
+	
+	const N:byte=24;
+	keep:pointer;
+
+	
+	procedure IRQ();
+begin
+	
+	Screen::SetPalette4(7,7);	
+	for i:=0 to 220-t2 do
+	begin
+		wait(N);	
+	end;	
+	Screen::SetPalette4(4,3);	
+	for i:=0 to 4 do
+		wait(N);	
+	Screen::SetPalette4(0,7);	
+for i:=0 to 4 do
+		wait(N);	
+
+	if (t2<218) then
+		t2+=1;
+	DemoTools_IncreaseTimer();;
+	@ifdef IS_DEMO
+	call(keep);
+	@endif	
+
+end;
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode4();
+	Screen::SetPalette4(7,7);	
+	Screen::FillBanks(#mode5_vram, 0,$28);
+	// Clear the screen
+
+	Compression::Decompress(#image1, #mode5_vram+320*0);
+//	DemoTools::WaitABit(64);
+
+
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+
+	DemoTools::InitEffect(30);
+			
+	While(DemoTools::isDone = false) do
+	begin
+	end;
+	
+	Screen::irqProcedure := keep;
+
+	DemoTools::EndEffect();
+	return;
+
+
+end.

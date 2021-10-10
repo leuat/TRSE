@@ -1,0 +1,170 @@
+globals = {
+ 	camera = { x = 23, y=0, z=0 },
+     fov = 60,
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = {x=1, y=0.0, z=0 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	up = { x=0, y=1, z = 0},
+--	ambient = { x = 00.0, y = 00.0, z = 00.0 },
+	ambient = { x = 1, y = 1.0, z = 1.0 },
+     raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output = {
+--	resolution = { width = 168, height=105},
+	resolution = { width = 20, height=32},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+	output_type = 8,
+--	palette_file = "images/pals.pal",
+	c64_imageType = 0,
+	aspect = 0.6,
+	dither = 2,
+	ditherStrength= {x=6, y=2, z=2 },
+--	index_colors = { 0,1,2,3 }
+	index_colors = { 0,1,2,3 }
+--	c64_colors = { 0,5,14,6 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=1, z=2 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialWhite = {
+   color = { x=1, y=1, z=1 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+MaterialGreen = {
+   color = { x=0, y=1, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 32
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+text = "PRX"
+
+charname = "char"
+
+function Init()
+
+
+--	AddObject("box","d1","","MaterialWhite",0,0,0,  1,1,1);
+--	AddObject("torus","d1","","MaterialWhite",0,0,0,  1,0.5,1);
+	AddObject("box","d1","","MaterialWhite",0,0,0,   1,1,1);
+
+
+--[[
+	for y=0,2 do
+	for x=0,2 do
+		xx = (x-1)*4
+		yy = (y-1)*4
+	AddObject("box","d","","MaterialWhite",00,xx,yy,   1,1,1);
+	end
+	end
+]]--
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+
+  	t = ((frame)/(noFrames-1))
+
+--	tt = t*3.14159*2
+
+	tt = t*360.0/6
+--	SetRotation("d1",0,0,0);
+--	SetRotation("d1",tt+45,tt,0);
+--	SetRotation("d1",-tt*5,tt,tt+89.9);
+	SetRotation("d1",tt,0,0);
+--	SetRotation("d2",tt+45,0,0);
+	a = (24.3-23*sqrt(sqrt((t))))
+
+    a = 1
+	globals.camera.y = globals.camera.y+0.1
+	globals.target.y = globals.target.y+0.1
+
+	globals.camera.x = 2*a
+--	if (frame==0) then globals.camera.x = 20000 end
+--	globals.camera.x = 4
+--	globals.target.z = -2
+end
+
+
+
+function Update()
+	
+
+
+	if (hasSaved == 0) then 
+		frame=frame+1
+
+--		CompressCharset(0,10,0,6,  1, 32)
+	for y=0, output.resolution.height/8-1 do
+		for xx=0, output.resolution.width/4-1 do
+			for yy = 0,7 do
+				AddBBCMode5LineToData(xx*4,y*8+yy, 4, 1)
+			end
+		end
+	end	
+--		for x=0, output.resolution.width/4 do
+--	    AddBBCMode5LineToData(x*4,y*8,4,5);
+ --   		end
+	
+		if (frame == noFrames) then			
+	--		OptimizeScreenAndCharset(10,6,  32, 1);
+			--SaveScreenAndCharset("data/testdata_screen3.bin", "data/testdata_charset3.bin");
+			SaveRawData("data/clear_screen1.bin");
+			Message("DONE");
+			hasSaved = 1
+		end
+
+	end
+	UpdateScene()
+
+	
+
+
+end

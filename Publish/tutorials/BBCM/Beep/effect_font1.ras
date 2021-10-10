@@ -1,0 +1,68 @@
+program Font1;
+@use "screen"
+@use "files"
+@use "demotools"
+@use "gfx/text"
+
+@use "compression/compression"
+
+//@endif
+
+@exportblackwhite "resources/images/font1.flf" "resources/images/font1.bin" 0 0 160 34
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+//@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+
+
+
+var
+	time,i,j,k,t2: byte;
+	@donotremove line_1
+	zp,keep,sp,zp2,sp2 : pointer;
+	
+	font1 : incbin("resources/images/font1.bin");
+
+	text : string=(Text::setColor,2,"S",Text::setColor,1,"OMETIMES",Text::newLine,
+					" PEAS CAN BE ",Text::setColor,3,"OK");	
+
+procedure IRQ();
+begin
+
+	inc(time);
+	Text::AdvanceWriter();
+//	Screen::SetBorderColor(time);
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+end;
+
+
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+	//Screen::SetMode5Palette(#Screen::colorsBluePurpleWhite);	
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+	Screen::FillBanks(#mode5_vram, 0,$28);
+	// Clear the screen
+
+//	CopyData();
+
+	
+	Text::Init(#font1,1,16);
+	Text::InitWriter(#text);
+	
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+	
+	loop();
+
+	Screen::irqProcedure := keep;
+	DemoTools::EndEffect();
+
+end.

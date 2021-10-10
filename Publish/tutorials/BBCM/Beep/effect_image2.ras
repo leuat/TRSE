@@ -1,0 +1,183 @@
+program Opening;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+@use "gfx/text"
+
+@export "resources/images/proxima1.flf" "resources/images/proxima1.bin" 256
+
+
+/*
+ 	Opening image effect
+
+*/
+
+
+@projectsettings "startaddress" $1280
+
+//@userdata $2800 
+
+var
+	const ppos : integer = 320*23;
+	const buffer: address= $2400;
+	time,i,j,k,t2,l,m,t3: byte;
+	@donotremove tab8
+	@export "resources/images/presents.flf" "resources/images/presents.bin" 256
+ 
+	tab8 : array[64] of byte = BuildTable("i*8");
+	zp,keep,p1 : pointer;
+@ifndef IS_DEMO
+//	music : incbin("resources/music/maze.vgc", @musicPos);
+@endif	
+//	image1 : incbin("resources/images/proxima1.bin") compressed;
+	image1 : incbin("resources/images/proxima1.bin") compressed;
+	presents: incbin("resources/images/presents.bin",$2500,0,320*2);
+
+
+//	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*16+48");
+	sinx : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*112+112)/12");
+//	sinx : array[256] of byte = BuildTable("Math.cos(i/256.0*Math.PI*2.0)*6+6");
+
+
+	colorsBlueCyanWhite : array[4] of byte = (0,1,3,7); // white, cyan, blue, black
+	colorsBlueCyan : array[4] of byte = (1,1,3,7); // white, cyan, blue, black
+	colorsBlue : array[4] of byte = (3,3,3,7); // white, cyan, blue, black
+	colorsBlueBlue : array[4] of byte = (3,3,3,3); // white, cyan, blue, black
+
+	text : string=(Text::setColor,0,"PRESENTS");	
+
+
+
+@ifndef IS_DEMO
+@define PLAYER_LOCATION 2
+
+//@use "player"
+//	music : incbin("resources/music/maze.vgc", @musicPos);
+
+@endif
+
+procedure IRQ();
+begin
+	inc(time);
+	inc(t2);
+	
+	if (time&15=0) then 
+	begin
+	inc(t3);
+	if (t3=2) then 	Screen::SetMode5Palette(#colorsBlue);	
+	if (t3=4) then 	Screen::SetMode5Palette(#colorsBlueCyan);	
+	if (t3=6) then 	Screen::SetMode5Palette(#colorsBlueCyanWhite);	
+	if (DemoTools::trans=6) then Screen::SetMode5Palette(#colorsBlueCyan);
+	if (DemoTools::trans=4) then Screen::SetMode5Palette(#colorsBlue);
+	if (DemoTools::trans=2) then Screen::SetMode5Palette(#colorsBlueBlue);
+	end;
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+@ifndef IS_DEMO
+//	Player::PlayMusic();
+@endif		
+
+
+
+end;
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+	Screen::SetMode5Palette(#colorsBlueBlue);	
+	// Clear the screen
+	@ifndef IS_DEMO
+//	Player::InitMusic(#music);
+
+	@endif	
+
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+	Screen::SetWindowHeight(0);
+	j:=0;
+	for i:=0 to 4 do
+		j+=Screen::pixel5Tab[i<<2 +1];	
+	
+	Screen::FillBanks(#mode5_vram, j,$28);
+	//zp:=#presents;
+	//blockmemcpy(zp,mode5_vram,1);
+	zp:=#presents;
+
+	
+	Compression::Decompress(#image1, #mode5_vram);
+	memcpy(zp,0,mode5_vram+ppos,0); asm(" inc zp+1");
+	memcpy(zp,0,mode5_vram+ppos+256,0); asm(" inc zp+1");
+	memcpy(zp,0,mode5_vram+ppos+512,128); 
+//	Compression::Decompress(#image1, $1e00);
+	blockmemcpy(#mode5_vram+80*4,buffer,17);	
+	Screen::FillBanks(#mode5_vram, j,$1C);
+	fill(mode5_vram+$1C00,j,192);
+	Screen::FillBanks(#mode5_vram+ppos+320*2, j,$9);
+//	blockmemcpy(#mode5_vram+$1000,^$3200,1);
+	
+	Screen::SetWindowHeight(32);
+	
+	DemoTools::InitEffect(20);
+	While(DemoTools::isDone = false) do
+	begin
+		zp:=#buffer;
+		k:=DemoTools::time*4;
+//		Screen::WaitForVerticalSync();
+		for i:=0 to 120 offpage do
+		begin
+			j:=sinx[k]+i;
+			if (j>140) then j:=0;
+			if (j>100) then j:=100;
+			Screen::PointToY(#Screen::ytabMode5,j);
+			zp:=Screen::screenPtr+$CC00;
+			Screen::PointToY(#Screen::ytabMode5,i+60);
+//			zp+=j*8;
+			m:=0;
+/*			for l:=0 to 40 do
+			begin
+				Screen::screenPtr[m] := zp[m];
+				m+=8;
+			end;
+*/
+			asm("
+			ldx #0
+			
+			repeat 32
+			
+			ldy tab8,x			
+			lda (zp),y
+			sta (Screen_screenPtr),y
+			inx
+			repend
+			
+			inc Screen_screenPtr+1
+			inc zp+1
+			ldx #0
+						
+			repeat 7
+			
+			ldy tab8,x			
+			lda (zp),y
+			sta (Screen_screenPtr),y
+			inx			
+			repend
+
+			");
+						
+			k:=k+5;								
+		end;
+		DemoTools::IncreaseTimer();
+	end;
+
+
+	Screen::irqProcedure := keep;
+	DemoTools::EndEffect();
+	return;
+end.

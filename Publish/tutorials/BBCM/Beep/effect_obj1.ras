@@ -1,0 +1,178 @@
+program Object1;
+@define signedmath_zeropage $20 // $20-25
+@define matrix_zeropage $c0
+@define lib3d_zeropage $90
+@define lib3d_clearlines 0 // Clear lines with black
+@define muldivtables $2700
+@define objPos $2F00
+@define max3dobjects 1
+
+/*
+ Renders the first 3D object. Require the screen to already be filled with some data
+
+*/
+
+@projectsettings "startaddress" $1280
+
+@use "screen"
+@use "files"
+@use "demotools"
+@use "compression/compression"
+@use "gfx/lib3d"
+
+//@userdata $3100 $5800 "Music"
+
+var
+	bb,x1,x2,y1,y2,l,i,j,k,f,x3,y3,time,time2,t: byte;
+	maxSize :byte = 127;
+	cy1: byte=@linePos;
+	cy2: byte=@linePos+@lineWidth;
+	curFace: byte=0;	
+	xx:byte = 110;
+	keep,zp : pointer;
+	ip:pointer of integer;
+	
+	obj1 : incbin("data/t1.bin");
+	
+	const sh: byte = 8;
+
+
+	matX, matY, matZ, matT : Matrix::mat4;
+
+	x,y,char : byte=0;
+	len:byte=1;
+	ix,m:integer;
+	
+//    sinx : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*79+80)/2.0");
+/*    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*79+80");
+  */  
+//	tab8 : array[160] of byte= BuildTable("i*8
+/*
+@ifndef IS_DEMO
+@define PLAYER_LOCATION 2
+
+@use "player"
+	music : incbin("resources/music/maze.vgc", @musicPos);
+
+@endif
+*/
+
+procedure Render();
+begin
+	Lib3d::FlipPointPointers(0);
+	
+	Matrix::RotateX(#matX, time*4);
+	Matrix::RotateY(#matY, time*3);
+	Matrix::RotateZ(#matZ, time*2);
+	
+	Matrix::MatMul3(#matX, #matY, #matT);
+	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
+
+	Lib3d::RotateVertices(0);	
+
+//	Lib3d::ProjectSimple(0,80,50,80 + sinx[time*5]);
+	i:=maxSize+(Tables::sine128[time*16]+127)/4;
+	if (DemoTools::time&1=0) then
+		if (maxSize>70) then dec(maxSize);
+		if (i<80) then i:=80;
+	if (i>190) then i:=190;	
+	Lib3d::ProjectSimple(0,xx,@linePos/2+16,i, 60);
+	
+	Lib3d::RenderWireframe(0);
+	
+
+	if (DemoTools_trans<4) then
+	begin
+		if (DemoTools::time&1=0) then
+			if (curFace<Lib3d::objects[0].noFaces) then
+			begin
+				zp:=Lib3d::objects[0].color;
+				zp[curFace]:=0;
+				curFace+=1;
+			end;
+			
+	end;
+end;
+/*
+
+procedure IRQ();
+begin
+
+//	inc(bb);
+
+//	if (time&3=1) then inc(time2);
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+@ifndef IS_DEMO
+	Player_PlayMusic();
+@endif		
+
+end;
+*/
+
+begin
+	
+@ifndef IS_DEMO
+	Screen::InitStandardScreenAndIRQ();
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+	Screen::SetMode5();
+	
+@endif
+	
+
+	Lib3d::InitializeData(@objPos);	
+	Lib3d::LoadObject(0, #obj1);
+	// place rotmat in z
+
+	//Lib3d::objects[0].rotmat := $70;// place at $a0
+	
+//	Lib3d::FillColors(0, 1);	
+	
+	zp:=Lib3d::objects[0].color;
+	k:=1;
+	
+	for i:=0 to Lib3d::objects[0].noFaces do
+	begin
+		zp[i]:=k;	
+		k:=k+1;
+		if (k=3) then k:=1;
+	end;
+
+//	keep := Screen::irqProcedure;
+//	Screen::irqProcedure := #IRQ;
+
+	Matrix::Identity(#matX);
+	Matrix::Identity(#matY);
+	Matrix::Identity(#matZ);
+	Matrix::Identity(Lib3d::objects[0].rotmat);
+
+
+	DemoTools::InitEffect(20);
+		
+	While(DemoTools::isDone = false) do
+	begin
+		time+=1;
+		xx :=(Tables::sine128[time*4]+127)>>2+40;
+		Render();
+		DemoTools_IncreaseTimer();
+		
+		if (cy1<>255) then
+		begin
+			Gfx::ClearLineSlow(cy1,0);
+			cy1-=1;	
+		end;
+		if (cy2<>0) then
+		begin
+			Gfx::ClearLineSlow(cy2,0);
+			cy2+=1;
+		end	;
+		
+		//if (time&1=0) then
+		//if (xx>30) then xx-=1;
+		
+	end;
+	
+	DemoTools::EndEffect();
+	return;
+end.

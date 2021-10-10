@@ -645,5 +645,6 @@
         <file>resources/images/tutorials/vz200.png</file>
         <file>resources/images/tutorials/vz200_demo.png</file>
         <file>resources/images/ACORN.png</file>
+        <file>resources/images/beep.png</file>
     </qresource>
 </RCC>

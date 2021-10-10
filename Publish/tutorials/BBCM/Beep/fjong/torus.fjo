@@ -1,0 +1,91 @@
+globals = {
+	camera = { x = 0.0, y=0.00, z=-10.0 },
+	fov = 90, 
+	target = { x = 0.00, y=.00, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=-2, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+  	ambient = { x = 0.4, y = 0.4, z = 0.4 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 0,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+	resolution = { width = 320, height=200},
+	output_type = 8,
+--	palette_file = "images/pals.pal",
+	c64_imageType = 0,
+	aspect = 0.6,
+	dither = 2,
+	ditherStrength= {x=6, y=1, z=2 },
+--	index_colors = { 0,1,2,3 }
+	index_colors = { 0,1,2,3 }
+--	index_colors = { 0,2,3,1 }
+--	index_colors = { 0,2,3,1 }
+--	c64_colors = { 0,1}
+}
+
+
+Material0 = {
+   color = { x=1.0, y=0, z=1 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0.0
+}
+
+-- Init is called on start  
+
+
+ 
+function Init()
+
+
+	AddObjectRegular("torus_wire","t1", "", "Material2",  5,3, 4,5,3,0);
+--	AddObjectRegular("torus_wire","t1", "", "Material2",  6,4, 2,6,0);
+
+
+
+	Save3DObject("t1","data/t2.bin",1.9);
+	Message("saved");
+
+	UpdateGraphics()
+	isInit = 1
+end
+
+
+distance = 10
+frame = 0
+noFrames = 16
+char = 0
+isInit = 0
+
+t1 = 0
+function UpdateGraphics()
+
+  	t = ((frame)/(noFrames))*3.14159/2.0+3.14159/2.0;--*2 
+	r = 20
+	t1 = t1+0.02	
+	globals.camera.x = sin(t1)*r
+	globals.camera.y = cos(t1)*r
+	
+
+end
+
+
+function Update()
+	
+	UpdateGraphics()
+	frame=frame+1
+--	globals.sky = frame/100.0
+--	Message("halla");
+end

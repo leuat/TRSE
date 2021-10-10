@@ -1,0 +1,73 @@
+program OpticImage;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+//@endif
+
+@export "resources/images/optic1.flf" "resources/images/optic1.bin" 100
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+//@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+/*
+
+	Effect that displays the Optic image
+
+*/
+
+
+
+var
+	time,i,j,k,t2: byte;
+	@donotremove line_1
+	zp,keep,sp,zp2,sp2 : pointer;
+	
+	image1 : incbin("resources/images/optic1.bin") compressed;
+//	image1 : incbin("resources/images/kid1.bin");
+//	image2 : incbin("resources/images/kid2.bin");
+
+
+//	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*16+48");
+	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*112+112");
+//	sinx : array[256] of byte = BuildTable("Math.cos(i/256.0*Math.PI*2.0)*6+6");
+
+	const N:byte = 21;
+procedure IRQ();
+begin
+	DemoTools_IncreaseTimer();;
+	@ifdef IS_DEMO
+	call(keep);
+	@endif	
+
+end;
+
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+
+	Compression::Decompress(#image1, #mode5_vram);
+
+
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+
+	DemoTools::InitEffect(24*0);
+			
+	While(DemoTools::isDone = false) do
+	begin
+	end;
+	
+	Screen::irqProcedure := keep;
+
+	DemoTools::EndEffect();
+	return;
+
+
+end.

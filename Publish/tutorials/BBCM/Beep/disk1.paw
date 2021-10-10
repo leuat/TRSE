@@ -1,0 +1,7 @@
+ras_include_file = packed_resources1.ras
+packed_address = $4000
+output_dir = 0
+use_exomizer3 = 0
+address_field = 0
+data = ,e2, effect_image2.prg, $1280, e3, effect_image3.prg, $1280, e4, effect_scroll1.prg, $1280, e5, effect_obj1.prg, $1280, e6, image_optic1.prg, $1280, e7, optic_scroller1.prg, $1280, e8, effekt_obj2.prg, $1280, e9, image_proxima2.prg, $1280, ea, image_uk1.prg, $1280, eb, plasma.prg, $1280, m2, resources/music/beebmeeb.vgc, $3600, c1, clearscreen1.prg, $1280, ep, plasma2.prg, $1280, r2, rotating_font.prg, $1280, r1, rotating_font_image.prg, $1280, r3, credits80.prg, $1280, r4, proxima_clear.prg, $1280, r5, image_trse.prg, $1280
+data_tinycrunch = ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

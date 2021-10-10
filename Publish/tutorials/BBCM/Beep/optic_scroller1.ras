@@ -1,0 +1,225 @@
+program Greetings;
+@use "screen"
+@use "files"
+@use "demotools"
+@use "gfx/text"
+@use "compression/compression"
+
+//@endif
+
+@export "resources/images/optic1.flf" "resources/images/optic1.bin" 100
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+//@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+
+/*
+
+ Greetings scroller
+
+*/
+
+
+@projectsettings "startaddress" $1280
+
+var
+	start,l,m,y,c,i,j,k,t2,shift,scroll,col,x,clr: byte = 0;
+	@donotremove line_1
+	zp,sp,keep,tp,zp2,sp2 : pointer;
+	i2,v2 : byte;
+//@define IS_DEMO	 1	
+	
+@ifndef IS_DEMO	
+	image1 : incbin("resources/images/optic1.bin") compressed;
+@endif
+//	image1 : incbin("resources/images/kid1.bin");
+//	image2 : incbin("resources/images/kid2.bin");
+@exportblackwhite "resources/images/font3.flf" "resources/images/font1.bin" 0 0 160 64
+	font1 : incbin("resources/images/font1.bin");
+
+//	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*16+48");
+	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*112+112");
+//	sinx : array[256] of byte = BuildTable("Math.cos(i/256.0*Math.PI*2.0)*6+6");
+//	text : string=("I AM A TEST ARE YOU A TEST TOO MMKAY THAT IS COOL THIS SCROLLER IS SELF CONTAINED AS A SCROLLER");
+    text:string = ("                    ARTSTATE  ATLANTIS  BITSHIFTERS  BONZAI  ",
+       " BOOZE DESIGN   CALAMITY   CENSOR DESIGN   ",
+       "   DARKLITE  DELYSID  FFCG  FAIRLIGHT   ",
+       "   FATZONE  GENESIS PROJECT  HOAXERS    ",
+       " HOKUTO FORCE    HOOY PROGRAM  LETHARGY   ",
+       "MAYDAY   MOODS PLATEAU  MULTISTYLE LABS  ",
+       "  NAH KOLOR   NOSTALGIA   OFFENCE  ONSLAUGHT   ",
+       "  ORANGE   PADUA  PLANET JAZZ    POO BRAIN    PVM  ",
+       "  RIFT  SAMAR    SLIPSTREAM  ",
+       "  TRIAD    UP ROUGH  WRATH DESIGNS    XENTAX ",
+	   "                                                                                   ");
+
+	box : incbin("data/box.bin");
+
+	const ypos : byte = 184;
+
+
+procedure UpdateScroll();
+begin
+	Screen::PointToY(#Screen::ytabMode5,ypos);
+	zp2:=Screen::screenPtr+8;
+	for j:=0 to 3 do
+	begin
+	for i:=0 to 39 do
+	begin
+/*		asm("
+			ldy #$7
+			clc
+ute:		
+			lda (zp2),y
+			
+			sta (Screen_screenPtr),y
+			dey
+			bpl ute
+		");*/
+		memcpyunroll(zp2,0,Screen::screenPtr,8);	
+		Screen::screenPtr+=8;
+		zp2+=8;
+	end;
+		fill(Screen_screenPtr,0,8);
+		Screen::screenPtr+=8;
+		zp2+=8;
+				
+	end;
+end;
+
+procedure UpdateScrollText();
+begin
+	if (shift=0) then
+	begin
+		c:=tp[0];
+		if (col=0) then inc(col);
+		
+		if (c<>$20) then
+		begin
+			y:=sinx[DemoTools::time*8]>>5;
+			Text::DrawCharMode5(c-65,160-8,ypos+y,col);	
+//			Text::DrawCharMode5Funky(18,160-8,ypos+y,col);	
+		end;
+		shift:=2;
+		if (c=65+8) then shift:=1; // "i"
+		if (DemoTools::time&7=0) then
+		begin
+			inc(col);
+			if (col=4) then col:=1;
+		end;
+		tp+=1;
+	end;	
+	shift-=1;	
+
+end;
+
+procedure PlaceBox(x,y,k : global byte);
+begin
+	zp:=#box + k*64;
+	j:=y;
+	for i:=0 to 16 do
+	begin
+		Screen::PointToY(#Screen::ytabMode5,j);
+		Screen::screenPtr+=x*8;
+		Screen::screenPtr[0]:=zp[0];
+		Screen::screenPtr[8]:=zp[1];
+		Screen::screenPtr[16]:=zp[2];
+		Screen::screenPtr[24]:=zp[3];
+		j+=2;
+		zp:=zp+4;		
+	end;
+		Screen::PointToY(#Screen::ytabMode5,j);
+		Screen::screenPtr+=x*8;
+		Screen::screenPtr[0]:=0;
+		Screen::screenPtr[8]:=0;
+		Screen::screenPtr[16]:=0;
+		Screen::screenPtr[24]:=0;
+	
+	
+end;
+
+
+
+procedure IRQ();
+begin
+	start:=1;
+	if (DemoTools::time&1=0) then
+	begin
+		UpdateScroll();
+		UpdateScrollText();
+	end
+	else
+	begin	
+		if (DemoTools::trans>24) then 
+		begin
+
+			k:=sinx[DemoTools::time*2]>>4;
+			PlaceBox(0,100+k*2,DemoTools::time&63);	
+			k:=sinx[(DemoTools::time+32)*2]>>4;
+			PlaceBox(8,10+k*2,(DemoTools::time+16)&63);	
+			k:=sinx[(DemoTools::time+64+32)*2]>>5;
+			PlaceBox(18,140+k*2,(DemoTools::time+16)&63);	
+		end;
+	end;
+	
+	DemoTools::IncreaseTimer();
+
+		if (DemoTools::trans<24) then
+		begin
+			sp2:=sp;
+			if (DemoTools::time&3=0) then
+			if (clr<40) then
+			begin
+				for i2:=0 to 23 do
+				begin
+					fill(sp2,0,8);
+					sp2:=sp2+320;
+				end;
+				sp:=sp+8;
+				inc(clr);
+			end;		
+				
+		end;
+	
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+end;
+
+
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+	Screen::SetMode5();
+	//Screen::SetMode5Palette(#Screen::colorsBluePurpleWhite);	
+	Screen::SetMode5Palette(#Screen::colorsRed);	
+	Screen::FillBanks(#mode5_vram, 0,$28);
+	// Clear the screen
+
+	Compression::Decompress(#image1, #mode5_vram);
+@endif
+	Screen::SetMode5();
+	Screen::SetMode5Palette(#Screen::colorsRed);	
+	tp:=#text;
+	Text::Init(#font1,1,16);
+	DemoTools::InitEffect(230);
+//	DemoTools::InitEffect(40);
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+	sp:=$5800;
+	While(DemoTools::isDone = false) do
+	begin
+		
+	end;
+	Screen::irqProcedure := keep;
+	
+
+	DemoTools::EndEffect();
+	return;
+
+
+
+end.

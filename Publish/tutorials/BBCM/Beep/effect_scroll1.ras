@@ -1,0 +1,178 @@
+program ScrollEffect;
+@use "screen"
+@use "files"
+@use "demotools"
+@use "compression/compression"
+@use "gfx/gfx"
+
+/*
+
+	Renders the rotating BEEP logo
+	the individual characters are genereated with fjong/e1.fjo 
+	
+*/
+
+
+var
+	l,i,j,k,f,time,time2,t,clr: byte = 0;
+	zp,keep : pointer;
+	ip:pointer of integer;
+
+	x,y,char : byte=0;
+	len:byte=1;
+	ix,m:integer;
+	
+    sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*80+79");
+    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+100");
+    
+	data : incbin("data/e1_data.bin");
+	tab : incbin("data/e1_tab.bin");
+	charL : array[4] of integer=BuildTable("i*32*2*16");
+	frameL : array[16] of integer=BuildTable("i*32*2");
+//	tab8 : array[160] of byte= BuildTable("i*8
+
+@ifndef IS_DEMO
+@define PLAYER_LOCATION 2
+
+//@use "player"
+//	music : incbin("resources/music/maze.vgc", @musicPos);
+
+@endif
+
+
+
+procedure RenderLetter(char,f:global byte; ix:global integer;y:global byte);
+begin
+	if (f=0) then f:=1;
+	ip := #tab + charL[char] + frameL[f];
+//	ip := #tab + frameL[f];
+	for j:=0 to len do
+	begin
+		Screen::PointToY(#Screen::ytabMode5,y);
+		y+=2;
+		zp:=#data + ip[0];
+//		if (j&1=0) then
+		ip+=2;
+		Screen::screenPtr+=ix;
+		Screen::screenPtr[0]:=zp[0];
+		Screen::screenPtr[8]:=zp[1];
+		Screen::screenPtr[16]:=zp[2];
+		Screen::screenPtr[24]:=zp[3];
+		Screen::screenPtr[32]:=zp[4];
+		Screen::screenPtr[40]:=zp[5];
+		Screen::screenPtr[48]:=zp[6];
+		Screen::screenPtr[56]:=zp[7];
+	
+	end;
+	
+end;	 
+
+
+procedure Transition();
+begin
+		if (DemoTools::trans>24) then
+		begin		
+		
+			if (clr<@linePos-8+20) then 
+			begin
+				if (time&1=0) then
+				begin
+					Gfx::ClearLineFast((@lineWidth+@linePos)-clr,00);
+//					ClearLine((60+64+20)-clr,0);
+					clr+=1;
+				end;
+			end;
+
+			if (time&3=0) then
+				if (len<>32) then len+=1;
+		
+		end
+		else 
+		begin
+			if (time&3=0) then
+			begin
+			if (len<>0) then 
+				len-=1;
+
+			Gfx::ClearLineFast((@linePos-4)+len*2,00);
+//			ClearLine(71+len*2,0);
+				
+/*			if (clr<>0) then
+			begin	
+				clr-=1;
+			end;
+*/			end;
+		
+
+
+		end;
+
+end;
+
+
+procedure IRQ();
+var
+	letters: array[7] of byte=(0,1,1,2);
+begin
+	
+	inc(time);
+	if (time&3=1) then inc(time2);
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+
+
+
+
+end;
+
+
+begin
+	
+@ifndef IS_DEMO
+	Screen::InitStandardScreenAndIRQ();
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+@endif
+	Screen::SetMode5();
+	// Clear the screen
+//	Screen::FillBanks(#mode5_vram,%00000000,$28);	
+	
+	@ifndef IS_DEMO
+//	Player::InitMusic(#music);
+//	Screen::irqProcedure := #Player::PlayMusic;
+
+	@endif	
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+
+
+//Screen::WaitForVerticalSync();
+	DemoTools::WaitABit(10);
+//	Compression::Decompress(#image2, #mode5_vram);
+
+
+	DemoTools::InitEffect(96);
+		
+	While(DemoTools::isDone = false) do
+	begin
+	
+		l:=time;
+		m:=8*4;
+		if (len<>0) then
+		for i:=0 to 4 do
+		begin
+			t:=sinx[l]/4;
+			RenderLetter(letters[i],t&15,m,@linePos-4);
+			m:=m+(8*8);
+//			if (i>=1 and i<=4) then
+			l+=32;
+		end;	
+		Transition();	
+
+		DemoTools::IncreaseTimer();
+	end;
+	
+	DemoTools::EndEffect();
+	Screen::irqProcedure := keep;
+	return;
+end.

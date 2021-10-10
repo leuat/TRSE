@@ -1,0 +1,216 @@
+program Font1;
+@use "screen"
+@use "demotools"
+
+@use "compression/compression"
+
+//@endif
+
+@exportblackwhite "resources/images/font1.flf" "resources/images/font1.bin" 0 0 160 34
+//@splitfile "resources/images/kid.bin" "resources/images/kid1.bin" "resources/images/kid2.bin" 5120
+@export "resources/images/flower1.flf" "resources/images/border1.bin" 256
+
+@projectsettings "startaddress" $1280
+
+
+
+var
+	xx,yy,c,x,y,f,l : byte;
+	time,i,j,k,t2: byte;
+	curCol:byte=0;
+	@donotremove line_1
+	zp,keep,tp : pointer;
+	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*13+14");
+	
+	font1 : incbin("data/rotatingfont.bin");
+	const noFrames:byte=28;
+	
+	tabChar : array[32] of integer=BuildTable("i*8*28");
+	tabFrame : array[noFrames] of integer=BuildTable("i*8");
+
+	const dw : byte=36;
+	curCnt : byte=0;
+	const maxPause: byte= 100;
+	pause : byte = 32;
+	
+
+	
+	text : string=("                                    ",
+				  " THE BBC MICRO IS QUITE THE DUCK   ",
+	               "   STILL LOVELY TO MAKE A SHOW FOR   ",
+	               "THIS DEMO WAS MADE WITH THE SERENITY",
+	               "THAT COMES FROM LACKING A SCHEDULE  ",
+	               "     MADE ENTIRELY USING TRSE        ",
+	               "NOW VENTURE FORTH AND MAKE A DEMO   ",
+				  "                                    ");
+	ytabadd: array[8] of integer=(1,1,1,1,1,1,1,320-7);
+	
+@ifndef IS_DEMO	
+//	img:incbin("resources/images/border1.bin") compressed;
+@endif
+
+procedure RenderLetter();
+begin
+	Screen::PointToY(#Screen::ytabMode5,y);
+	Screen::screenPtr+=Screen::xtab[x/4];
+	zp:=#font1 + tabChar[c] + tabFrame[f];
+	yy:=y;
+		asm("
+			ldy #0
+			lda #0
+			sta (Screen_screenPtr),y
+					
+		");	
+		Screen_screenPtr+=ytabadd[yy&7];
+		yy+=1;
+		asm("
+			ldy #0
+			lda #0
+			sta (Screen_screenPtr),y
+					
+		");	
+		Screen_screenPtr+=ytabadd[yy&7];
+		yy+=1;
+		asm("
+			ldy #0
+			lda #0
+			sta (Screen_screenPtr),y
+					
+		");	
+	for j:=0 to 8 do
+	begin
+		asm("
+			ldy #0
+			lda (zp),y
+			sta (Screen_screenPtr),y
+					
+		");	
+		zp+=1;
+		Screen_screenPtr+=ytabadd[yy&7];
+		yy+=1;
+	end;
+	
+		asm("
+			ldy #0
+			lda #0
+			sta (Screen_screenPtr),y
+					
+		");	
+		Screen_screenPtr+=ytabadd[yy&7];
+		yy+=1;
+		asm("
+			ldy #0
+			lda #0
+			sta (Screen_screenPtr),y
+					
+		");	
+		
+
+end; 
+
+procedure RenderClear();
+begin
+	Screen::PointToY(#Screen::ytabMode5,y);
+	Screen::screenPtr+=Screen::xtab[x/4];
+	yy:=y;
+	for j:=0 to 12 do
+	begin
+		asm("
+			ldy #0
+			lda #0
+			sta (Screen_screenPtr),y
+					
+		");	
+		Screen_screenPtr+=ytabadd[yy&7];
+		yy+=1;
+	end;
+
+end; 
+
+procedure RenderText();
+begin
+	x:=16;
+	k:=DemoTools::time*3+4;
+	l:=DemoTools::time*3;
+	l-=64;
+	
+	for i:=0 to dw do
+	begin
+		k+=7;
+		l+=7;
+		f:=(sinx[k]+sinx[0-k*2])>>1;	
+		c:=tp[i];
+		y:=80+sinx[l]+sinx[0-l*2]>>1;
+		if (c<>$20) then 
+		begin
+			c-=65;
+			RenderLetter();
+		end
+		else
+			RenderClear();
+		
+			
+		x+=4;
+		
+	
+	end;
+	if (DemoTools::time&1=0) then 
+	begin
+		if (pause<>0) then
+		begin
+			pause-=1;
+			return;
+		end;
+	end;
+	if (pause=0) then
+	begin
+		tp+=1;
+		curCnt+=1;
+		if (curCnt=dw) then
+		begin
+			curCnt:=0;
+			pause:=maxPause;
+/*			curCol:=(curCol+1)&7;
+			if (curCol=7) then curCol:=0;
+			Screen::SetPalette4(curCol,7);	*/
+	end;
+		
+	end;
+end;
+
+procedure IRQ();
+begin
+//	RenderText();
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+end;
+
+
+
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+//	Compression::Decompress(#img,#mode5_vram);
+	Screen::SetMode4();
+	Screen::SetPalette4(0,7);	
+@endif
+
+	tp:=#text;
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+	DemoTools::InitEffect(195);
+
+	while (DemoTools::isDone=false) do
+	begin	
+		RenderText();
+		DemoTools_IncreaseTimer();
+	end;	
+
+	Screen::irqProcedure := keep;
+	DemoTools::EndEffect();
+
+end.

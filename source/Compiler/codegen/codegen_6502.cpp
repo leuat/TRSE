@@ -606,6 +606,8 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(varName, node->m_op.m_lineNumber);
     }
     isWord16 = node->isWord(as);
+
+//    as->Comment("IS WORD: " + QString::number(isWord16));
     if (node->m_isWord)
         isWord16 = true;
 

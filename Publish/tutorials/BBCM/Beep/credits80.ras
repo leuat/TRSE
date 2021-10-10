@@ -1,0 +1,188 @@
+program Credits;
+@use "screen"
+@use "gfx/gfx"
+@use "files"
+@use "demotools"
+@use "compression/compression"
+@use "gfx/text"
+@use "files"
+
+@export "resources/images/hammerfist.flf" "resources/images/credits80.bin" 256
+
+/*
+ This renders the "scrolling credits" effect image (made by Hammerfist). 
+ 
+ The image is split into several parts in order to have enough space in memory.
+
+*/
+
+
+
+@splitfile "resources/images/credits80.bin" "resources/images/credits1_0.bin" "resources/images/rem.bin" 2560
+@define A 2
+@splitfile "resources/images/rem.bin" "resources/images/credits1_1.bin" "resources/images/rem.bin" 2560
+@define A 2
+@splitfile "resources/images/rem.bin" "resources/images/credits1_2.bin" "resources/images/credits1_3.bin" 2560
+
+
+@projectsettings "startaddress" $1280
+var
+	const xshift:integer = 96;
+	spos, sp,zp,zpt,sp2,keep:pointer;
+	i,j,cur,curLine,curPtr:byte;
+	curColumn:byte=0;
+	curAdd:integer=0;
+	//const temp: address = $2C00;
+	const temp: address = $2B00;
+	xtab : array[40] of byte = buildtable("i*8");
+	@donotremove data0
+	@donotremove data1
+	@donotremove data2
+	@donotremove data3
+	@donotremove data4
+//	@donotremove data5
+	
+//	colors : array[4] of byte = (4,1,3,7); // cyan, purple, blue, black
+	colors : array[4] of byte = (1,4,6,7); // cyan, purple, blue, black
+
+	data0 : incbin("resources/images/credits1_0.bin") compressed;
+	data1 : incbin("resources/images/credits1_1.bin") compressed;
+	data2 : incbin("resources/images/credits1_2.bin") compressed;
+	data3 : incbin("resources/images/credits1_3.bin") compressed;
+//	data5 : incbin("resources/images/credits1_0.bin") compressed;
+	poss : array[] of integer=(data0,data1,data2,data3);
+//	data6 : incbin("resources/images/credits1_0.bin") compressed;
+	const U: byte = 16;
+	const L:byte = 190;
+	black: array[320] of byte at $5800+320*24;
+	yadd : array[8] of integer=(1,1,1,1,1,1,1,320-7);
+
+procedure LoadNext();
+begin
+	sp:=poss[curPtr];
+	Compression::Decompress(sp,#temp);
+	curPtr+=1;
+end;
+
+
+procedure Move();
+begin
+	
+	Screen::PointToY(#Screen::ytabMode5,U);
+	Screen::screenPtr+=xshift;
+	sp := Screen::screenPtr;
+	Screen::PointToY(#Screen::ytabMode5,U+1);
+	Screen::screenPtr+=xshift;
+//	Screen::WaitForVerticalSync();
+	for i:=U to L offpage  do
+	begin
+	
+		asm("
+			ldx #0
+			repeat 20
+			ldy xtab,x
+			lda (Screen_screenPtr),y
+			sta (sp),y
+			inx
+			repend					
+			");
+		sp+=yadd[i&7];
+		Screen::screenPtr+=yadd[(i+1)&7];
+		
+	end;
+	
+		// Copy data
+		zp:=zpt+curAdd;
+		
+		asm("
+			ldx #0
+			repeat 20
+			ldy xtab,x
+			lda (zp),y
+			sta (spos),y
+			inx
+			repend					
+			");
+			
+		inc(cur);
+		if (cur=8) then
+		begin
+			zpt:=zpt+(320-7);
+			cur:=0;
+		end
+			else zpt:=zpt+1;
+		
+//		if (curLine=0) then
+			
+		inc(curLine);
+		
+		if (curLine=64) then
+		begin
+			if (curColumn=0) then
+			begin
+				curColumn:=1;
+				curAdd:=160;
+				zpt:=#temp;
+				curLine:=0;
+				
+			end
+			else	
+			begin
+				LoadNext();
+				zpt:=#temp;
+				curLine:=0;
+				curColumn:=0;
+				curAdd:=0;
+				
+				
+			end;
+						
+//			curFlip:=(curFlip+1)&1;
+		end;
+		if (curPtr>=5) then begin zpt:=#black; curPtr:=4; end;
+	
+
+	
+end;
+
+
+procedure IRQ();
+begin
+	DemoTools::IncreaseTimer();	
+
+	
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+	
+end;
+
+
+begin
+
+
+
+	
+@ifndef IS_DEMO
+	Screen::InitStandardScreenAndIRQ();
+@endif
+
+	Screen::SetMode5();
+	Screen::SetMode5Palette(#colors);	
+	Screen::FillBanks(#mode5_vram,%00000000,$28);	
+//	blockmemcpy(#temp,^$5800,16);
+	zpt:=#temp;
+	keep := Screen::irqProcedure;
+	Screen::PointToY(#Screen::ytabMode5,L);
+	spos := Screen::screenPtr + xshift;
+	LoadNext();
+	Screen::irqProcedure := #IRQ;
+	DemoTools::InitEffect(164);
+	
+	While(DemoTools::isDone = false) do
+	begin
+		Move();	
+	end;
+	DemoTools::EndEffect();
+	return;
+end.

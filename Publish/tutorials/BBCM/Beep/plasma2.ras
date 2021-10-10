@@ -1,0 +1,194 @@
+program Plasma2;
+@use "screen"
+@use "gfx/gfx"
+@use "files"
+@use "demotools"
+@use "compression/compression"
+@use "gfx/text"
+@donotremove pixel5TabReverse
+
+var
+	i,j,k,curFill: byte;
+	swy : byte=1;
+	zp : pointer;
+	image1 : incbin("resources/images/uk.bin") compressed;
+
+	lookupDiv16 : array[256] of byte=BuildTable("i/16");
+
+	m,x,y : byte=0;
+	
+    sineTab : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*64");
+	colors : array[4] of byte = (0,6,4,3); // cyan, purple, blue, black
+
+	font1 : incbin("resources/images/font1.bin");
+
+	text : string=(Text::pause,140,Text::setSpeed,2,Text::setColor,2," THE BBC TAUGHT ME",Text::newLine,
+					Text::setColor,3,Text::pause,20,"    EVERYTHING",Text::setColor,2,
+					Text::pause,32,Text::moveTo,0,230,"    ABOUT",Text::setColor,1," LOVE");	
+
+
+
+@ifndef IS_DEMO
+@define PLAYER_LOCATION 2
+
+@define OPTIMIZED 0
+
+//@use "player"
+//	music : incbin("resources/music/maze.vgc", @musicPos);
+
+@endif
+
+
+//	colors : array[4] of byte = (0,3,1,5);
+
+
+var
+	// some plasma variables
+	c,val,c2x, c2y,ax, ay : byte;
+	// mini sine table
+	
+		const sw:byte = 40;
+		const sh:byte = 23;
+	
+    siny : array[sh] of byte; 
+	sinx : array[sw] of byte; 
+
+
+procedure RenderPlasma();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to sh do begin 
+		siny[x]:=  sineTab[c2x] - sineTab[c2y];
+		c2x:=c2x+5;
+		c2y:=c2y-7;
+	end;
+
+	ax:=ax+2;
+	ay:=ay-3;
+
+	// Set up x-sine table
+	for x:=0 to sw do begin 
+		sinx[x] := sineTab[c2x] - sineTab[c2y];
+		c2x:=c2x+4;
+		c2y:=c2y-3;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	//moveto(0,yStart, hi(screen_char_loc));
+//	Screen::PointToY(0);
+	Screen::screenPtr:=#$5800+320*5;
+	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
+	
+	
+	for y:=0 to swy do 
+	begin
+		val:=siny[y];
+		for x:=0 to sw do 
+		begin
+		
+/*@if OPTIMIZED = 0
+			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
+			// we have created a lookup table instead!
+			c:=lookupDiv16[ (sinx[x] +val) ];
+			// Set the screen memory
+			Screen::screenPtr[0]:=c;
+			Screen::screenPtr+=8;
+
+			// Set color memory
+@endif*/
+// This is the optimized version
+			asm("
+				ldx x
+				lda sinx,x
+				adc val
+				tax
+				lda lookupDiv16,x
+				ldy #0
+				sta (Screen_screenPtr),y
+				ldy #2
+;				asl
+;				sta (Screen_screenPtr),y
+				ldy #4
+				asl
+				sta (Screen_screenPtr),y
+;				ldy #6
+;				asl
+;				sta (Screen_screenPtr),y
+			");
+			Screen::screenPtr+=8;
+		end;
+		// Increase screen memory pointer by 40 (next row)
+//		screenmemory+=+screen_width;
+		// Increase color pointer by 40 (next row)
+	//	colorP+=screen_width;
+	end;
+		
+	
+	
+end;
+
+
+var
+ 	cols: array[4] of byte =(4,5,2,7);
+
+begin
+
+	
+@ifndef IS_DEMO
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+	Screen::SetMode5Palette(#cols);	
+//	Screen::SetMode5Palette(#colors);	
+	// Clear the screen
+	Screen::FillBanks(#mode5_vram,%00000000,$28);	
+	
+	@ifndef IS_DEMO
+//	Player::InitMusic(#music);
+//	Screen::irqProcedure := #Player::PlayMusic;
+
+	@endif	
+	for i:=0 to 0 do
+	begin	
+			j:=lookupDiv16[i];
+//			lookupDiv16[i]:=Screen::filledPixel5tab[j&3];
+//			lookupDiv16[i]:=Screen::pixel5Tab[(j/4)*4 + j&15];// | Screen::pixel5Tab[(j+4)&15]; 
+			if (j&3=0) then j+=1;
+			lookupDiv16[i]:=Screen::pixel5Tab[j&15];// | Screen::pixel5Tab[(j+4)&15]; 
+		
+	end;
+
+//Screen::WaitForVerticalSync();
+//	Compression::Decompress(#image1, #mode5_vram);
+//	DemoTools::WaitABit(10);
+//	Compression::Decompress(#image2, #mode5_vram);
+
+
+	Text::Init(#font1,1,16);
+	Text::InitWriter(#text);
+	DemoTools::InitEffect(64);
+	While(DemoTools::isDone = false) do
+	begin
+		DemoTools::IncreaseTimer();
+		RenderPlasma();
+	//	Screen::WaitForVerticalSync();
+		Text_AdvanceWriter();
+		if (DemoTools::trans>8) then
+		begin
+			if (DemoTools::time&3=0 and swy<sh) then swy+=1;
+		end
+		else
+		begin
+			for j:=0 to 4 do
+				lookupDiv16[curFill+j]:=0;
+			curFill+=4;
+					
+		end;			
+
+	end;
+	
+	DemoTools::EndEffect();
+end.

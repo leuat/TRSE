@@ -60,6 +60,7 @@ MEGA65; Main Mega65 tutorials; MEGA65/Tutorials/ ;  <h2>Main Mega65 tutorials</h
 MEGA65; Mega65 Demoeffects (raytracer); MEGA65/RayTracer/ ;  <h2><p><img src=":resources/images/tutorials/mega2.png" width="200" class="center"><p>The Mega65 demo effect ray tracer tutorials!</h2><p>Under construction.
 
 BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><p><img src=":resources/images/tutorials/bbc1.png" width="200" class="center"><p><p>Main BBC Micro (32k) tutorials.
+BBCM; Beep! the demo; BBCM/Beep/ ;  <h2>Beep! the demo</h2><p><img src=":resources/images/beep.png" width="200" class="center"><p>Beep! is multi-part disk-loading demo for the BBC Micro that was made entirely with TRSE. Beep! was released at Deadline 2021.
 BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC Demo setup sample project</h2><p><img src=":resources/images/tutorials/bbc2.png" width="200" class="center">Make a demo for the BBC that loads independent parts from disk!<p>Loader at $1100, effects at $1280. Plays music, loads effects from disk.
 ACORN; Acorn atom tutorials; Acorn/tutorials/ ;  <h2>Acorn Atom tutorials</h2><p><img src=":resources/images/ACORN.png" width="200" class="center">Under construction.
 ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>Under construction.

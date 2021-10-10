@@ -1,0 +1,102 @@
+program Demo;
+@use "screen"
+@use "files"
+@use "demotools"
+
+@use "compression/compression"
+
+//@endif
+
+@export "resources/images/uk.flf" "resources/images/uk.bin" 100
+
+/*
+	Displays the UK image
+
+*/
+
+
+
+var
+	time,i,j,k,t2: byte;
+	@donotremove line_1
+	zp,keep,sp,zp2,sp2 : pointer;
+	colors : array[4] of byte = (0,6,4,3); // cyan, purple, blue, black
+//	colorsRed : array[4] of byte = (0,4,6,7); // white, yellow, red, black
+
+	image1 : incbin("resources/images/uk.bin") compressed;
+//	image1 : incbin("resources/images/kid1.bin");
+//	image2 : incbin("resources/images/kid2.bin");
+
+
+//	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*16+48");
+	sinx : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0)*112+112");
+//	sinx : array[256] of byte = BuildTable("Math.cos(i/256.0*Math.PI*2.0)*6+6");
+
+	const N:byte = 24;
+
+
+
+	
+	procedure IRQ();
+begin
+	
+	Screen::SetMode5Palette(#Screen::colorsBlack);	
+	for i:=0 to 220-t2 do
+	begin
+		wait(N);	
+	end;	
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+	for i:=0 to 4 do
+		wait(N);	
+/*	Screen::SetMode5Palette(#Screen::colorsRedYellow);	
+	for i:=0 to 4 do
+		wait(N);	
+*/
+//	Screen::SetMode5Palette(#Screen::colorsRed);	
+//	Screen::SetMode5Palette(#colors);	
+		Screen::SetMode5Palette(#Screen::colorsRed);	
+for i:=0 to 4 do
+		wait(N);	
+
+	if (t2<218) then
+		t2+=1;
+	DemoTools_IncreaseTimer();;
+	@ifdef IS_DEMO
+	call(keep);
+	@endif	
+
+end;
+
+begin
+	
+@ifndef IS_DEMO
+	
+	Screen::InitStandardScreenAndIRQ();
+@endif
+	Screen::SetMode5();
+	//Screen::SetMode5Palette(#Screen::colorsBluePurpleWhite);	
+//	Screen::SetMode5Palette(#Screen::colorsRed);	
+	Screen::SetMode5Palette(#Screen::colorsBlack);	
+	Screen::FillBanks(#mode5_vram, 0,$28);
+	// Clear the screen
+
+	Compression::Decompress(#image1, #mode5_vram+320*0);
+//	DemoTools::WaitABit(64);
+
+
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+
+	DemoTools::InitEffect(30);
+			
+	While(DemoTools::isDone = false) do
+	begin
+	end;
+	
+	Screen::irqProcedure := keep;
+
+	DemoTools::EndEffect();
+	return;
+
+
+end.

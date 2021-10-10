@@ -1,0 +1,208 @@
+program Tunnel;
+@use "screen"
+@use "files"
+@use "demotools"
+@use "compression/compression"
+//@use "gfx/gfx"
+@define signedmath_zeropage $20 // $20-25
+@define matrix_zeropage $c0
+@define lib3d_zeropage $90
+@define lib3d_clearlines 0 // Clear lines with black
+@define muldivtables $2700
+@define objPos $2F00
+@define max3dobjects 1
+
+@use "gfx/lib3d"
+
+
+/*
+	Line effect not used in the demo
+
+
+*/
+var
+	n,s,z,bb,x1,x2,y1,y2,l,i,j,k,f,x3,y3,time,time2,t: byte;
+	zp,keep,p1 : pointer;
+	ip:pointer of integer;
+	
+	const C1 : integer = 8;
+	@define CC1 8
+	const N1 : integer = 4;
+
+
+	x,y,char,sx,sy : byte=0;
+	len:byte=1;
+	ix,m:integer;
+	@donotremove sinx1	
+	@donotremove sinx2	
+	@donotremove sinx3	
+	@donotremove sinx4	
+    sinx1 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80/2.1)");
+    sinx2 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80/3.0)");
+    sinx3 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80/4.)");
+    sinx4 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80/6)");
+
+	ctab : array[c1] of byte = BuildTable("i/@CC1*256"); 
+    
+    isin : array[256] of integer = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*31000+32000);");
+    xx,yy : integer;
+//    siny : array[256] of byte = BuildTable("Math.sin(i/256.0*Math.PI*2.0*2)*80+100");
+    
+//	tab8 : array[160] of byte= BuildTable("i*8
+
+@ifndef IS_DEMO
+@define PLAYER_LOCATION 2
+
+//@use "player"
+//	music : incbin("resources/music/maze.vgc", @musicPos);
+
+@endif
+
+
+//	colors : array[4] of byte = (0,3,1,5);
+
+procedure SetupFaces();
+begin
+	i:=0;
+	Lib3d::FlipPointPointers(0);
+	zp := Lib3d::objects[0].faces;
+	p1:=Lib3d::objects[0].color;
+	k:=0;
+	m:=1;
+	for i:=0 to N1 do
+	begin
+		l:=k;
+		for j:=0 to C1 do
+		begin
+			zp[0]:=(k);		
+			zp[1]:=(k+2);
+			if (j=C1-1) then zp[1]:=l;		
+			zp+=2;
+			p1[0]:=m;
+			p1+=1;
+			k+=2;
+		end;
+		m+=1;
+		if (m=3) then m:=1;
+//		k+=C1*2;
+	end;	
+	
+
+	k:=0;
+	m:=1;
+	for i:=0 to N1 do
+	begin
+		l:=k;
+		for j:=0 to C1 do
+		begin
+			zp[0]:=(k);		
+			zp[1]:=(k+C1*2);
+			zp+=2;
+			p1[0]:=3;
+			p1+=1;
+			k+=2;
+		end;
+	end;	
+
+end;
+
+
+procedure Calculate();
+begin
+	zp := Lib3d::ppn;
+	z:=256;
+	p1:=#sinx1;
+	m:=time*4;
+	l:=time*2;
+	for i:=0 to N1 do
+	begin
+		s:=sinx1[m+i*8];
+		sx:=(80+sinx4[l])/2+40;
+		sy:=(80+sinx4[l*2])/2+10;
+		for j:=0 to C1 do
+		begin
+			k:=ctab[j];
+//			n:=p1[k+s]/2;
+			zp[0]:=(sx+p1[k+s]);
+			zp[1]:=sy+p1[k+64+s];
+			
+			zp+=2;
+		end;
+		z+=100;
+		p1+=256;
+		s+=48;
+		l+=16;
+	end;	
+	
+end;
+
+procedure Render();
+begin
+	Lib3d::FlipPointPointers(0);
+	Calculate();
+//	Screen::FillBanks(#mode5_vram,%00000000,$20);	
+	Lib3d::RenderWireframe(0);
+
+end;
+
+
+procedure IRQ();
+begin
+
+	inc(bb);
+	
+//	Screen::SetBackgroundColor(0);
+//	time := 50 + bb/4;
+//	time:=60;
+//	Screen::SetBackgroundColor($FF);
+
+
+
+
+	if (time&3=1) then inc(time2);
+@ifdef IS_DEMO
+	call(keep);// Make sure that music plays
+@endif
+@ifndef IS_DEMO
+@endif		
+
+end;
+
+
+begin
+	
+@ifndef IS_DEMO
+	Screen::InitStandardScreenAndIRQ();
+	Screen::SetMode5Palette(#Screen::colorsBlue);	
+@endif
+	Screen::SetMode5();
+	// Clear the screen
+	Screen::FillBanks(#mode5_vram,%00000000,$28);	
+	
+	@ifndef IS_DEMO
+//	Player::InitMusic(#music);
+//	Screen::irqProcedure := #Player::PlayMusic;
+
+	@endif	
+
+	Lib3d::InitializeData($3000);	
+	Lib3d::AllocateWireframe(0, C1*N1 + C1*(N1-1), C1*N1);
+	
+	SetupFaces();
+
+	keep := Screen::irqProcedure;
+	Screen::irqProcedure := #IRQ;
+
+
+
+	DemoTools::InitEffect(120);
+		
+	While(DemoTools::isDone = false) do
+	begin
+		time+=1;
+		Render();
+//		Gfx::Line(time,0,100,100,2);
+	end;
+	
+	DemoTools::EndEffect();
+end.
