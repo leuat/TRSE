@@ -290,7 +290,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
 //            m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
         }
 
-        // toggle toolbar panels
+        // toggle toolbar panels on and off
         if (e->key()==Qt::Key_F6) {
             ui->tabMain->setVisible(!ui->tabMain->isVisible());
             FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
@@ -299,6 +299,41 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         if (e->key()==Qt::Key_F5) {
             ui->Tools_2->setVisible(!ui->Tools_2->isVisible());
             FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
+        }
+        // toggle
+        if (e->key()==Qt::Key_Backslash) {
+
+            if ( ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) )
+            {
+
+                // no Ctrl key, toggle from one to the other
+                if (ui->Tools_2->isVisible() ) {
+                    ui->Tools_2->setVisible(false);
+                    ui->tabMain->setVisible(true);
+                }
+                else {
+                    ui->Tools_2->setVisible(true);
+                    ui->tabMain->setVisible(false);
+                }
+
+            }
+            else
+            {
+
+                // Ctrl key, toggle both on and both off
+                if (!ui->Tools_2->isVisible() ) {
+                    ui->Tools_2->setVisible(true);
+                    ui->tabMain->setVisible(true);
+                }
+                else {
+                    ui->Tools_2->setVisible(false);
+                    ui->tabMain->setVisible(false);
+                }
+
+            }
+
+            FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
+            FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
 
         if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
