@@ -281,6 +281,14 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             if (e->key()==Qt::Key_5) { ui->tabMain->setCurrentIndex(4); }
         }
 
+        if (e->key()==Qt::Key_Question) {
+            QPointF pos = (  m_updateThread.m_currentPos - QPointF(0.5, 0.5) -m_updateThread.m_zoomCenter)*m_updateThread.m_zoom + m_updateThread.m_zoomCenter ;
+            auto colorIndex = m_work.m_currentImage->m_image->getPixel(pos.x(),pos.y());
+            Data::data.currentColor = colorIndex;
+            //            m_work.m_currentImage->m_image->m_colorList.m_
+
+//            m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+        }
 
         // toggle toolbar panels
         if (e->key()==Qt::Key_F6) {
