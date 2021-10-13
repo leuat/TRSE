@@ -301,7 +301,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
         // toggle
-        if (e->key()==Qt::Key_Backslash) {
+        if (e->key()==Qt::Key_Backslash || e->key()==Qt::Key_F7) {
 
             if ( ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) )
             {
@@ -348,12 +348,6 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
                 j = 4;
             float scale = m_updateThread.m_zoom*(1+j)*4;
-            if (e->key()==Qt::Key_D) {
-                m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() + 1*scale);
-                emit onImageMouseEvent();
-                Data::data.forceRedraw = true;
-                Data::data.Redraw();
-            }
             if (e->key()==Qt::Key_C) {
                 OpenSelectCharset();
                 return;
@@ -365,8 +359,13 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 return;
             }
 
-
-
+            // navigation
+            if (e->key()==Qt::Key_D) {
+                m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() + 1*scale);
+                emit onImageMouseEvent();
+                Data::data.forceRedraw = true;
+                Data::data.Redraw();
+            }
             if (e->key()==Qt::Key_A) {
                 m_updateThread.m_zoomCenter.setX(m_updateThread.m_zoomCenter.x() - 1*scale);
                 emit onImageMouseEvent();
