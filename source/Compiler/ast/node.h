@@ -68,6 +68,7 @@ public:
     bool m_forceAddress = false;
     bool m_classApplied = false;
     bool m_ignoreSuccess = false; // Used for binary expressions
+    bool m_isBoolean = false;
     // Force page for conditionals (while/if/repeat until etc)
     int m_forcePage = 0;
     static QString sForceFlag;

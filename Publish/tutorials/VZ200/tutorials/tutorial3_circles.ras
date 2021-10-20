@@ -27,7 +27,8 @@ begin
 	while (true) do
 	begin
 		Update();
-		time+=1;
+		//time+=1;
+		dec(time);
 	end;
 	loop();
 end.

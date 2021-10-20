@@ -56,3 +56,6 @@ data_header_resources/images/test.flf = 0
 zeropages_userdefined = ,
 petmodel = 2001-8N
 show_all_files = 1
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/BBCM/Tutorials/
+open_files = ,tutorial4_putpixel.ras, tutorial2_screen.ras
+current_file = tutorial4_putpixel.ras

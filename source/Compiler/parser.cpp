@@ -1140,6 +1140,16 @@ void Parser::HandlePreprocessorInParsing()
                 Eat();
             return;
         }
+        if (m_currentToken.m_value=="exportsubregion") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="setcompressionweights") {
             Eat();
             Eat();
@@ -1395,6 +1405,10 @@ void Parser::HandlePreprocessorInParsing()
         if (m_currentToken.m_value=="use") {
             Eat();
             Eat();
+            if (m_currentToken.m_type==TokenType::COMMA) {
+                Eat();
+                Eat();
+            }
             //        Eat();
             //        Eat();
             return;
@@ -1585,6 +1599,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     if (!isSubVar && !isRegister && m_symTab->m_constants.contains(m_currentToken.m_value.toUpper())) {
         QSharedPointer<Symbol> s = m_symTab->m_constants[m_currentToken.m_value.toUpper()];
         isConstant=true;
+        QString val = m_currentToken.m_value.toUpper();
 
 //        qDebug() << "PARSER looking for " << m_currentToken.m_value << " , found symbol: " << s->m_name << " with value " << s->m_value->m_fVal << " of type " << s->m_type;
 
@@ -1641,6 +1656,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
             //qDebug()  << s->m_value->m_fVal;
         }
+        if (val=="TRUE" || val=="FALSE")  // setting the boolean flag, used for comparison
+            n->m_isBoolean = true;
 
 
     }
@@ -2266,6 +2283,7 @@ QSharedPointer<Node> Parser::BinaryClause()
             || m_currentToken.m_type==TokenType::OR
             || m_currentToken.m_type==TokenType::SEMI
             || m_currentToken.m_type==TokenType::XOR
+            || m_currentToken.m_type==TokenType::NOT
             || m_currentToken.m_type==TokenType::OFFPAGE
             || m_currentToken.m_type==TokenType::ONPAGE)  {
         Token t;
@@ -2517,6 +2535,15 @@ QSharedPointer<Node> Parser::Program(QString param)
 
 QSharedPointer<Node> Parser::Factor()
 {
+
+    if (m_currentToken.m_type == TokenType::NOT || m_currentToken.m_type == TokenType::BITNOT) {
+        Eat();
+
+       auto t = m_currentToken;
+
+        return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
+    }
+
 
 
     if (m_currentToken.m_type == TokenType::LENGTH) {
@@ -2849,6 +2876,12 @@ void Parser::PreprocessSingle() {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
               }
+              else if (m_currentToken.m_value.toLower() =="exportsubregion") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleExportSubregion();
+              }
+
+
               else if (m_currentToken.m_value.toLower() =="donotprefixunit") {
                   Eat(TokenType::PREPROCESSOR);
                   m_doNotPrefix = true;
@@ -4718,19 +4751,19 @@ QSharedPointer<Node> Parser::BuiltinFunction()
     return nullptr;
 
 }
-
-QSharedPointer<Node> Parser::Constant()
+/*QSharedPointer<Node> Parser::Constant()
 {
     QString id = m_currentToken.m_value;
     if (m_symTab->m_constants.contains(id)) {
         Eat(m_currentToken.m_type);
         QSharedPointer<Symbol> s = m_symTab->m_constants[id];
         QSharedPointer<Node> n =  QSharedPointer<NodeNumber>(new NodeNumber(Token(s->getTokenType(), s->m_value->m_fVal), s->m_value->m_fVal));
+        qDebug() << "PARSER"<< "constant"<<id<<s->m_value;
         return n;
     }
     return nullptr;
 }
-
+*/
 QSharedPointer<Node> Parser::InlineAssembler()
 {
     Token t = m_currentToken;
@@ -4971,6 +5004,7 @@ void Parser::HandleExportPalette()
 
 }
 
+
 void Parser::HandleSetCompressionWeights()
 {
     double param1 = m_currentToken.m_intVal;
@@ -5116,6 +5150,38 @@ void Parser::HandleExecute() {
     Eat(TokenType::STRING);
     QString out;
     Syntax::s.m_currentSystem->StartProcess(exec,params,out,true,m_currentDir);
+
+
+}
+
+void Parser::HandleExportSubregion()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int x = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int y = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int w = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int h = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+
+
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+
+
+    LImage* img = LImageIO::Load(inFile);
+
+    img->ExportSubregion(outFile,x,y,w,h);
+
 
 
 }
@@ -5807,10 +5873,24 @@ void Parser::HandleProjectSettingsPreprocessors()
 
 void Parser::HandleUseTPU(QString fileName)
 {
+    QString pos = "";
+//    if (m_currentToken.m_type==TokenType::INTEGER_CONST)
+  //      pos = GetParsedInt(TokenType::INTEGER);
+//    qDebug() << m_currentToken.m_value;
+/*    Eat();
+    if (m_currentToken.m_type==TokenType::COMMA) {
+        Eat();
+        pos = m_currentToken.getNumAsHexString();
+  //      qDebug()<< sp;
+//        pos = GetParsedInt(TokenType::INTEGER);
+    }
 
+*/
     if (s_usedTRUs.contains(fileName)) {
         return;
     }
+//    qDebug() << pos;
+
 
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
@@ -5854,6 +5934,17 @@ void Parser::HandleUseTPU(QString fileName)
     p->m_currentFileShort = fname;
     p->m_ignoreMethods = m_ignoreMethods;
 
+/*
+    ParserBlock pb;
+    pb.m_blockID = m_parserBlocks.count();
+    pb.pos = pos;
+    m_parserBlocks.append(pb);
+    Node::m_staticBlockInfo.m_blockID = pb.m_blockID;
+    Node::m_staticBlockInfo.m_blockPos = pb.pos;
+    Node::m_staticBlockInfo.m_blockName = "unit";
+*/
+
+
     try {
 
         p->m_tree = p->Parse( false
@@ -5866,8 +5957,11 @@ void Parser::HandleUseTPU(QString fileName)
         e.linenr = m_currentToken.m_lineNumber;
        throw e;
     }
-
-
+/*
+    Node::m_staticBlockInfo.m_blockID = -1;
+    Node::m_staticBlockInfo.m_blockPos = "";
+    Node::m_staticBlockInfo.m_blockName = "unit";
+*/
     m_symTab->Merge(p->m_symTab.get(),true);
     // Merge types as well
     for (QString s: p->m_types.keys()) {

@@ -365,6 +365,8 @@ public:
         return QPoint(x,y);
     }
 
+    virtual void ExportSubregion(QString outfile,int x, int y, int w, int h);
+
     virtual void ExportBin(QFile &file) {}
     virtual void ImportBin(QFile &file) {}
 

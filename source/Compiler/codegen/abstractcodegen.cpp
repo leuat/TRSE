@@ -653,6 +653,28 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
             as->Comment("Swapped comparison expressions");
         }
 
+        if (node->m_right->m_isBoolean) {
+//            qDebug() << "Right is boolean!" << node->m_right->getValue(as);
+            if (node->m_right->getValueAsInt(as)==1) {
+                // ooh flip to FALSE and invert
+                auto num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+                if (node->m_op.m_type == TokenType::EQUALS) {
+                    num->m_strVal="0";
+                    num->m_val = 0;
+                    node->m_op.m_type = TokenType::NOTEQUALS;
+                    //qDebug() << "Flipping IS TRUE to NOT EQ FALSE";
+                }
+                else
+                if (node->m_op.m_type == TokenType::NOTEQUALS) {
+                    num->m_strVal="0";
+                    num->m_val = 0;
+                    node->m_op.m_type = TokenType::EQUALS;
+                    //qDebug() << "Flipping IS NOT TRUE to EQ FALSE";
+                }
+
+            }
+        }
+
         OptimizeBinaryClause(node,as);
         BuildSimple(node,  lblSuccess, lblFailed, offpage);
         return;

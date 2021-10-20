@@ -396,7 +396,7 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
             if (m_node->m_params[paramNo]->isPointer(as)) {
                 as->Asm("l"+es+" "+ di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
 /*                as->Asm("push ax");
-                as->Asm("mov ax,["+m_node->m_params[paramNo]->getValue(as)+"]");
+                as->Asm("mov ax,["+m_node->m_params[paramNo]->getValue(as)+"]"l);
                 as->Asm("mov "+es+",ax");
                 as->Asm("pop ax");
                 as->Asm("mov "+di+",["+m_node->m_params[paramNo]->getValue(as)+"+2]");*/

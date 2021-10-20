@@ -587,6 +587,17 @@ Token Lexer::GetNextToken()
             Advance();
             return Token(TokenType::XOR, "^");
         }
+        if (m_currentChar=="~") {
+            QString c = m_currentChar;
+            if (peek()=="=") {
+                Advance();
+                Advance();
+                return Token(TokenType::ASSIGNOP, c);
+
+            }
+            Advance();
+            return Token(TokenType::BITNOT, "~");
+        }
 
         if (m_currentChar=="*") {
             QString c = m_currentChar;

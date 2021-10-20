@@ -49,6 +49,9 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("inc"))
         IncDec(as, "inc");
 
+    if (Command("dec"))
+        IncDec(as, "dec");
+
     if (Command("AddBreakpoint")) {
         as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));
     }
@@ -196,7 +199,9 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     else if (Command("waitforhblank"))
         WaitForHBLank(as);
 
-
+/*   if (Command("togglebit")) {
+       ToggleBit(as);
+   }*/
 }
 
 
@@ -755,4 +760,10 @@ void MethodsZ80::Joypad(Assembler *as)
     as->Asm("ld a,c");
     as->Asm("ld ["+m_node->m_params[1]->getValue(as)+"],a");
 
+}
+
+void MethodsZ80::ToggleBit(Assembler *as)
+{
+     if (!m_node->m_params[2]->isPureNumeric())
+         ErrorHandler::e.Error("Parameter 3 must be pure numeric", m_node->m_op.m_lineNumber);
 }

@@ -561,7 +561,7 @@ bool CodeEditor::eventFilter(QObject *obj, QEvent *event)
             setCurrentCharFormat( newcharfmt );
             setTextCursor( tc ); // added
             setCurrentCharFormat( defcharfmt );
-            qDebug() << "HERE";
+//            qDebug() << "HERE";
             //        emit emitLookupWord(tc.selectedText());
         }
 

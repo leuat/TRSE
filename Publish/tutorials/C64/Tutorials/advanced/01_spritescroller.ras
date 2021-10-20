@@ -101,7 +101,6 @@ begin
 			textSprite_x[i]:=textSprite_x[i] -1;
 			k:=textSprite_t[i];
 			textSprite_y[i]:=@spriteScrollerYPos + temp2[k];
-			asm(";here");
 			ms_x:=textSprite_x[i]*2;
 			spritepos(ms_x, textSprite_y[i], i);
 			textSprite_t[i]:=textSprite_t[i]+3;

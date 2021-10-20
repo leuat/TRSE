@@ -39,6 +39,7 @@ public:
     void WaitForHBLank(Assembler* as);
     void HiLo(Assembler* as, bool isHi);
     void Joypad(Assembler* as);
+    void ToggleBit(Assembler* as);
 };
 
 #endif // METHODSX86_H

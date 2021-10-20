@@ -5751,7 +5751,7 @@ void Methods6502::WaitForRaster(Assembler *as)
     as->Asm("tax");
 //    as->Asm("lda $d012 ; raster line pos");
 //    as->Asm("clc ; clear carry ");
- //   as->Label("lblTest");
+ //   as->Label("lblb");
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
         as->Asm("cpx $d012");
     else if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20)

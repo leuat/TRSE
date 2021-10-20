@@ -12,17 +12,17 @@ var
 procedure RenderScreen();
 begin
 	// could equally well have written "screenmemory:=screen_char_loc;"
-	zp := screen_char_loc;
+	zp := #screen_char_loc;
 	// Set cp to point to color memory
 	// 23 rows
 	for y:=0 to 25 do begin
 		//40 columns
 		for x:=0 to 40 do begin
 			// calculate delta x and delta y from the center of the screen (20,13)
-			dx:=abs(40-x)/2;
+			dx:=abs(20-x)/2;
 			dy:=abs(13-y);
 			// Calculate the "tangential" value of dx,dy. Try to plot this value indepenedntly!
-			tangent:=(atan2(40,x,12,y));
+			tangent:=(atan2(20,x,12,y));
 			radial:=(dx*dx+dy*dy);
 			// Calculate the "radial" value of dx,dy. Try to plot this value indepenedntly!
 			// Combine the values to create a spiral. Ideally the (tangent

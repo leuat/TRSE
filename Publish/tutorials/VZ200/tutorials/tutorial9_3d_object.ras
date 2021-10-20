@@ -13,6 +13,9 @@ program MyProgram;
 	const object_height:byte=16;
 	lookup : array[128] of integer = buildtable("i*(OBJECT_WIDTH/4)*OBJECT_HEIGHT");
 	
+	
+	
+	
 begin
 	
 	// Set the sprite data

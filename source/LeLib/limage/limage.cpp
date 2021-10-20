@@ -566,6 +566,22 @@ void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
         }
 }
 
+void LImage::ExportSubregion(QString outfile, int x, int y, int w, int h) {
+    QByteArray data;
+
+    for (int j=0;j<h;j++)
+        for (int i=0;i<w;i++)
+        {
+            data.append(getPixel(x+i,y+j));
+            data.append(getPixel(x+i,y+j));
+        }
+
+    Util::SaveByteArray(data,outfile);
+
+
+
+}
+
 void LImage::ExportRGB8Palette(QString filename) {
 
     QByteArray b;

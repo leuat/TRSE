@@ -294,7 +294,7 @@ private:
     QVector<QSharedPointer<Node>> VariableDeclarations(QString blockName, bool isProcedureParams = false);
     QSharedPointer<Node> TypeSpec(bool isInProcedure, QStringList varNames);
     QSharedPointer<Node> BuiltinFunction();
-    QSharedPointer<Node> Constant();
+//    QSharedPointer<Node> Constant();
     QSharedPointer<Node> InlineAssembler();
     QSharedPointer<Node> AssignStatementBetweenObjects(QSharedPointer<Node> left,QSharedPointer<Node> right);
 
@@ -302,6 +302,7 @@ private:
 
 
     void HandleExportPalette();
+    void HandleExportSubregion();
     void HandleSetCompressionWeights();
     void HandleMacro();
     void HandleExecute();

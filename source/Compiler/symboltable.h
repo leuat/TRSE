@@ -59,6 +59,7 @@ public:
     QString m_pointsTo = "";
     int m_org = 0;
     int m_size = 0;
+    bool m_isBoolean = false;
     int m_lineNumber;
     int m_bank = 0;
     // Stack stuff

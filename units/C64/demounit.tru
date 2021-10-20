@@ -93,10 +93,12 @@ begin
 			//settextmode();
 			//setregularcolormode();
 			RasterIRQ(RasterClear(),0,0);
+			screenoff();
 			waitforraster(0);
 			setcharsetlocation($1000);
 			setbank(vic_bank0);
 			clearscreen(key_space,^$0400);
+			screenon();
 //			setregularcolormode();
 	
 			asm("
