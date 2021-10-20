@@ -26,9 +26,9 @@ end;
 begin
 	while (true) do
 	begin
+		Screen::WaitForVerticalBlank();
 		Update();
-		//time+=1;
-		dec(time);
+		time+=1;
 	end;
 	loop();
 end.

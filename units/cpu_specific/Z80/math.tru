@@ -1,0 +1,24 @@
+unit Math;
+var
+	zp:pointer;
+	i,j : byte;
+	bits :array[8] of byte = buildtable("Math.pow(2,i)");
+	bitsInv :array[8] of byte = buildtable("Math.pow(2,i)^255");
+	
+procedure ToggleBit(zp : global pointer; i,j : global byte);
+begin
+	if j=1 then
+		zp^|=bits[i]
+	else
+		zp^&=bitsInv[i];
+end;
+
+procedure GetBit(zp:global pointer; i : global byte);
+begin
+	if (zp^&bits[i]) then
+		returnvalue(1)
+	else
+		returnvalue(0);
+end;	
+	
+end.

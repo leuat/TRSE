@@ -53,6 +53,3 @@ via_zeropages = ,
 override_target_settings_basic = 0
 qemu = No
 spectrum_model = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
-open_files = ,unittests.ras
-current_file = unittests.ras

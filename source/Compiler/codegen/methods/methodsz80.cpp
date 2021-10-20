@@ -45,6 +45,9 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 
     if (Command("Nop"))
         Nop(as);
+    if (Command("returnvalue")) {
+        m_node->m_params[0]->Accept(m_codeGen);
+    }
 
     if (Command("inc"))
         IncDec(as, "inc");
