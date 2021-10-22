@@ -1656,7 +1656,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
             //qDebug()  << s->m_value->m_fVal;
         }
-        if (val=="TRUE" || val=="FALSE")  // setting the boolean flag, used for comparison
+        if (val=="TRUE" || val=="FALSE")  // setting the boolean flag, used for comparisone
             n->m_isBoolean = true;
 
 

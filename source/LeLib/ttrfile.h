@@ -305,6 +305,7 @@ E = Unused?
     void ExportVIC20(QString filename);
     void ExportBeep(QString filename);
     void ExportVIC20C(QString filename);
+    void ExportVZ(QString filename);
     void Load(QString filename);
     void LoadPSF(QString filename);
 

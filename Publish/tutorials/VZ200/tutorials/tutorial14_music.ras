@@ -1,0 +1,32 @@
+program TRT_Music_player;
+
+@use "TrtPlayer"
+@use "screen"
+var  
+
+	// export the song from the tracker into a BIN format (4 implies VZ200)
+	
+	@export "bubble.trt" 
+			"music.bin" 4 
+
+	music: incbin("music.bin");
+
+begin
+
+	TrtPlayer::Initialize( #music );
+	TrtPlayer::speed := 2;
+
+	while( true ) do
+	begin
+	
+		Screen::WaitForVerticalBlank();
+		
+		// ready to play next note?
+		TrtPlayer::Play();
+	
+		
+	end;
+	
+	
+	
+end.

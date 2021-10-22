@@ -1,0 +1,106 @@
+unit TrtPlayer;
+
+var
+	ptrOrder, ptrPattern, zp : pointer;
+	i, j, k : byte;
+	i1 : integer;
+	
+	noChannels, noRows : byte; 
+	curOrder, noOrder, curRow : byte; 
+	
+	// how fast to play the tune
+	speed, counter : byte;
+	
+	// set what voices to assign to each channel
+	chMap: array[ 4 ] of byte = ( 0, 1, 2, 3 );
+	
+	notes : array[] of integer = (
+	32,34,36,38,41,43,46,49,52,55,58,61,
+	65,69,73,77,82,87,92,98,104,110,116,123,
+	130,138,146,155,164,174,185,196,208,220,233,246,
+	261,277,293,311,329,349,369,392,415,440,466,493,
+	523,554,587,622,659,698,739,784,830,880,932,987);
+
+
+procedure Initialize( zp : global pointer );
+begin
+	noChannels := zp[ 0 ];	// how many channels
+	noRows := zp[ 1 ];		// how many rows
+	noOrder := zp[ 2 ]; // * noChannels;	// number of orders
+	if ( noChannels = 2 ) then noOrder := noOrder << 1; // * 2
+	if ( noChannels = 4 ) then noOrder := noOrder << 2; // * 4
+
+	// set volume, leave aux colour intact
+/*	i:=peek(^$900E,0);
+	i:=i | (15);
+	poke(^$900E,0,i);	
+*/	
+	zp:=zp+5; //3 + 2
+	
+	ptrPattern := zp + noOrder; // skip past the order array to the pattern data
+
+	// controls the speed of the music playback
+	speed := 8;
+	counter := 0;
+	
+	ptrOrder := zp;  // current order pointer
+	curOrder := 0; // order number
+	curRow := 0; // row within pattern
+ 
+end;
+
+
+procedure Play();
+begin
+
+	
+	for i:=0 to 2 do
+	begin
+	
+		// Get current order
+		j := ptrOrder[ curOrder + i ];
+		
+		// Point to correct pattern
+		if ( noRows = 8 ) then k := j << 3; // 8 rows per pattern
+		if ( noRows = 16 ) then k := j << 4; // 16 rows per pattern
+		if ( noRows = 32 ) then k := j << 5; // 32 rows per pattern
+		zp := ptrPattern + k;	
+		
+		j := zp[ curRow ]; // get note
+		k := chMap[ i ]; // what voice channel to play on
+	//	poke( ^$900a, k, j ); // Play note!
+		j:=j&63;
+		if (j<>0) then
+		begin
+		i1:=notes[64-j];
+		
+				
+		asm("
+		ld hl, [TrtPlayer_i1]
+		ld bc, 5
+		call $345C		
+		");
+		end;
+		
+	end;
+	// delay until read next row in the pattern
+	counter := counter + 1;
+	if ( counter < speed ) then
+		return;
+
+	counter := 0;
+
+	curRow:=curRow+1;
+	if ( curRow = noRows ) then
+	begin
+	
+		curRow := 0;
+		curOrder := curOrder + noChannels;
+		if (curOrder=noOrder) then curOrder := 0; //Reset to start of song
+
+	end;	
+
+end;
+
+
+end.
