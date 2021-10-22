@@ -10,6 +10,7 @@ var
   loc : Integer;
   src,dst : pointer;
   spritedata : pointer;
+  tran : boolean;
 
 /**
 	Sets the sprites height and width
@@ -44,8 +45,9 @@ end;
 
 /* 
 	Draws a sprite at x,y using sprite no
+  The last parameter needs to be true or false to draw in XOR transparent mode or not.
 	*/
-procedure DrawAt(spritex, spritey, no: global byte);
+procedure DrawAt(spritex, spritey, no: global byte; tran: global boolean);
 begin
   // Exit if out of bounds
   if (x > 31 or y > 63) then return();
@@ -73,15 +75,22 @@ sprite_mult:
   dec e
   jr nz,sprite_mult       ; hl = start of spriteno spritedata 
 displaysprite:
-  pop bc                  ; bc = fox_asm_spriteat screen location
+  pop bc                  ; bc = sprite screen location
 iterate_height:
   ld a,[Sprite_spritewidth]     ; sprite width
   ld d,a                  ; d = sprite width
 iterate_width:
   ld a,(hl)
   ld e,a
+  ld a,[Sprite_tran]
+  cp #01
+  jr z,transp
+  ld a,e
+  jr drawsprite
+transp 
   ld a,(bc)
   xor e
+drawsprite  
   ld (bc),a
   inc hl
   inc bc
@@ -99,9 +108,9 @@ subtract_width:
   dec d
   jr nz,subtract_width    
   push hl                 ; save screen location
-  pop bc                  ; restore fox_spriteat screen location
+  pop bc                  ; restore sprite screen location
   pop hl                  ; restore sprite data position
-  ld a,[hcount]       ; sprite height counter
+  ld a,[hcount]           ; sprite height counter
   dec a 
   ld [hcount],a
   jr nz,iterate_height

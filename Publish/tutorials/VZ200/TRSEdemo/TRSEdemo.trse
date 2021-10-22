@@ -63,3 +63,6 @@ override_target_settings_basic = 0
 exomizer_toggle = 0
 data_header_images/waulok.flf = 1.16475e-311
 data_header_images/trsewaulok.flf = 1.16472e-311
+project_path = D:/VZ/trsepgm-1/tutorials/VZ200/TRSEdemo/
+open_files = 1.29044e-312
+current_file = main.ras

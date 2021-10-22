@@ -40,13 +40,13 @@ begin
 	Compression::Decompress(#data, #screen);
 	while (true) do
 	begin
-		Sprite::DrawAt(spritex,spritey[spritepos],spritenum);
+		Sprite::DrawAt(spritex,spritey[spritepos],spritenum,true);
 		Trsedemo::doScroll();
 		myp[0] := mym[strpos];
 		Font::DrawTextAt(#mychar,31,58,true);
 		for u := 0 to 200 do wait(100);
 		if (strpos < strlen) then strpos := strpos + 1 else strpos := 0;
-		Sprite::DrawAt(spritex,spritey[spritepos],spritenum);
+		Sprite::DrawAt(spritex,spritey[spritepos],spritenum,true);
 		if (spritepos < spritemax) then spritepos := spritepos + 1 else spritepos := 0;
 		if (spritex > 24) then
 		begin

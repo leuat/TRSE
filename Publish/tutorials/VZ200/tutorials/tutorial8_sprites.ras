@@ -24,23 +24,23 @@ begin
 	Font::DrawTextAt("Let's try some sprites!",2,2,true);
 	Font::DrawTextAt("Non-destructive sprites!",2,23,true);
 	// Draw a sprite to the screen
-	Sprite::DrawAt(10,10,0);
-	Sprite::DrawAt(10,50,1);
+	Sprite::DrawAt(10,10,0,true);
+	Sprite::DrawAt(10,50,1,true);
 	Screen::SetPen(3);
 	Screen::DrawRectFilled(40,30,15,15);
 	while (true) do
 	begin
 		for v:= 0 to 30 do
 		begin
-			Sprite::DrawAt(v,35,2);
+			Sprite::DrawAt(v,35,2,true);
 			for u:= 0 to 150 do	wait(250);
-			Sprite::DrawAt(v,35,2);
+			Sprite::DrawAt(v,35,2,true);
 		end;
 		for v:= 0 to 30 do
 		begin
-			Sprite::DrawAt(30-v,35,2);
+			Sprite::DrawAt(30-v,35,2,true);
 			for u:= 0 to 150 do	wait(250);
-			Sprite::DrawAt(30-v,35,2);
+			Sprite::DrawAt(30-v,35,2,true);
 		end;	
 	end;
 end.
