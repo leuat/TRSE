@@ -3,7 +3,7 @@ unit TrtPlayer;
 var
 	ptrOrder, ptrPattern, zp : pointer;
 	i, j, k : byte;
-	i1 : integer;
+	note,len : integer;
 	
 	noChannels, noRows : byte; 
 	curOrder, noOrder, curRow : byte; 
@@ -20,6 +20,8 @@ var
 	130,138,146,155,164,174,185,196,208,220,233,246,
 	261,277,293,311,329,349,369,392,415,440,466,493,
 	523,554,587,622,659,698,739,784,830,880,932,987);
+	
+	noteLength : array[64] of integer = buildtable("i/10+3");
 
 
 procedure Initialize( zp : global pointer );
@@ -72,12 +74,15 @@ begin
 		j:=j&63;
 		if (j<>0) then
 		begin
-		i1:=notes[64-j];
-		
+		note:=notes[64-j];
+		len:=noteLength[j];
+				
 				
 		asm("
-		ld hl, [TrtPlayer_i1]
-		ld bc, 5
+		ld hl, [TrtPlayer_len]
+		push hl
+		pop bc
+		ld hl, [TrtPlayer_note]
 		call $345C		
 		");
 		end;
