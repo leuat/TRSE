@@ -230,9 +230,11 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
             for (QString s2 : orgAsm->m_symbolsList){
                 if (s2.toLower() == search) {
                     end = orgAsm->m_symbols[s2];
+//                    qDebug() << "Found:" <<search<<Util::numToHex(end);
                     break;
                 }
             }
+  //          qDebug() << "RANGE " << Util::numToHex(start) << Util::numToHex(end);
             if (start!=end) {
                 if (m_assembler!=nullptr) {
                 QString name = "Code block "+QString::number(i++);
@@ -241,8 +243,14 @@ bool Compiler6502::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
                         if (bl->m_name!="")
                             name = bl->m_name;
 //                qDebug() << "Adding cod eblock with name : "<<name;
+                bool ok = true;
+                for (auto b: m_assembler->blocks) {
+                    if (b->m_start==start && b->m_end==end)
+                        ok = false;
+                }
+                if (ok)
+                    m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
 
-                m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
             }
             }
         }

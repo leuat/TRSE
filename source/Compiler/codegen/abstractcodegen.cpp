@@ -1168,7 +1168,7 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
         }
         else start = t->m_position.toInt();
         as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,filename)));
-        app->Append("EndBlock"+t->m_position+":",0);
+//        app->Append("EndBlock"+t->m_position+":",0);
     }
 }
 

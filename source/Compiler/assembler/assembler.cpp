@@ -66,18 +66,25 @@ void Assembler::Write(QString str, int level)
 //   if (m_currentBlock!=nullptr)
   //      m_currentBlock->m_source<<(";Writing to block: "+m_currentBlock->m_pos);
 
+    bool haveWritten = false;
     if (m_currentBlock==nullptr) {
-
-        QString s ="";
-        for (int i=0;i<level;i++)
-            s+="\t";
-        s+=str;
-        m_source.append(s);
+        if (m_mainBlock==nullptr) {
+            QString s ="";
+            for (int i=0;i<level;i++)
+                s+="\t";
+            s+=str;
+            m_source.append(s);
+            haveWritten = true;
+        }
+        else
+            m_currentBlock = m_mainBlock;
     }
-    else {
-        m_currentBlock->Append(str,level);
+/*    else {
 //        qDebug() << "CURRENTBLOCK: " << str;
     }
+    */
+    if (m_currentBlock && !haveWritten)
+        m_currentBlock->Append(str,level);
 
     if (m_countCycles) {
         int cnt = CountCycles(str);
@@ -151,8 +158,9 @@ void Assembler::StartMemoryBlock(QString pos) {
             m_currentBlock = app;
 //            m_blockStack.append(m_currentBlock);
 //            qDebug() << "LAST : " <<m_source.l
-            if (m_currentBlock->m_source.last().toLower().startsWith("endblock"))
-                m_currentBlock->m_source.removeLast();
+//            if (m_currentBlock->m_source.last().toLower().startsWith("endblock"))
+  //              m_currentBlock->m_source.removeLast();
+
             m_currentBlock->m_extraOutput = false;
 
 
@@ -167,27 +175,27 @@ void Assembler::StartMemoryBlock(QString pos) {
     Appendix app(pos);
     m_currentBlock = QSharedPointer<Appendix>(new Appendix(pos));
     m_appendix.append(m_currentBlock);
-    if (!Syntax::s.m_currentSystem->CL65Syntax())
-        m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
+//    if (!Syntax::s.m_currentSystem->CL65Syntax())
+  //      m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
     m_blockStack.append(m_currentBlock);
     Comment("Starting new memory block at "+pos);
-    QString p = pos;
-    p = p.remove("$");
-    Label("StartBlock"+p);
+    //QString p = pos;
+  //  p = p.remove("$");
+//    Label("StartBlock"+p);
 //    qDebug() << "Starting new memory block at "+pos;
     //        m_currentBlockCount = m_appendix.count()-1;
 }
 
 void Assembler::EndMemoryBlock() {
 
-    if (!m_isTheRealEnd)
+/*    if (!m_isTheRealEnd)
     if (m_currentBlock==m_mainBlock) // Don't end main block
         return;
-
+*/
     if (m_currentBlock!=nullptr) {
         Comment("Ending memory block at "+m_currentBlock->m_pos);
     }
-
+/*
 
     if (m_currentBlock!=nullptr && m_currentBlock->m_extraOutput == false) {
 //        Label("EndBlock"+QString::number(m_currentBlock->m_id));
@@ -196,7 +204,8 @@ void Assembler::EndMemoryBlock() {
         Label("EndBlock"+s);
         m_currentBlock->m_extraOutput = true;
 
-    }
+    }*/
+
     m_currentBlock = nullptr;
     /*    m_currentBlock=nullptr;
     Comment("Mainblock: "+QString::number(m_mainBlock==nullptr));
@@ -213,7 +222,9 @@ void Assembler::EndMemoryBlock() {
     if (m_currentBlock==nullptr)
         m_currentBlock = m_mainBlock;
 
-    m_currentBlock = m_mainBlock;
+//    m_currentBlock = m_mainBlock;
+//    if (m_mainBlock!=nullptr)
+  //      StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
   //  if (m_currentBlock!=nullptr)
     //    qDebug() << "AT END: " << m_blockStack.count() << m_currentBlock->m_pos;;
 //    else m_currentBlock = nullptr;
@@ -266,6 +277,7 @@ void Assembler::PopBlock(int ln)
         m_blockIndent[ln] = -1;
 
 }
+
 
 int Assembler::m_prevCycles = 0;
 
@@ -596,6 +608,7 @@ void Assembler::Term()
     ClearTerm();
 }
 
+
 void Assembler::Connect()
 {
     // Connect with temp vars
@@ -643,8 +656,9 @@ void Assembler::Connect()
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         for (int i=0;i<m_appendix.count();i++) {
             //                qDebug() << (m_appendix[i].m_pos);
-            pre << m_appendix[i]->m_source;
-
+            //    if (!Syntax::s.m_currentSystem->CL65Syntax())
+              //      m_currentBlock->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
+            pre<< m_appendix[i]->getSource();
         }
 
     }
@@ -653,12 +667,25 @@ void Assembler::Connect()
     for (int i=0;i<m_appendix.count();i++) {
 //        qDebug() << "*************" <<m_appendix[i]->m_pos <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress)<< QString::number(m_appendix[i]==m_mainBlock);
    //     qDebug() << m_appendix[i]->m_source;
-        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<=Syntax::s.m_currentSystem->m_programStartAddress+0x20)
-            pre <<m_appendix[i]->m_source;
-        else
-            m_source << m_appendix[i]->m_source;
+        QString p = m_appendix[i]->m_pos;
+        int start = Util::NumberFromStringHex(m_appendix[i]->m_pos);
+        p = p.replace("$","");
+        if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<=Syntax::s.m_currentSystem->m_programStartAddress+0x20) {
+            if (start!=0)
+            pre<< "\t"+GetOrg(start);
+            pre<< m_appendix[i]->getSource();
+        }
+        else{
+            if (start!=0)
+            m_source<<"\t"+GetOrg(start);
+            m_source<< m_appendix[i]->getSource();
+
+        }
 
     }
+
+//    qDebug().noquote() << m_source;
+
 
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
         m_source = QStringList() << " processor 6502" <<pre << m_source;
@@ -713,4 +740,16 @@ void LabelStack::pop() {
 }
 
 MemoryBlock::~MemoryBlock() {
+}
+
+QStringList Appendix::getSource()
+{
+    QStringList lst;
+    QString p = m_pos;
+    p = p.replace("$","");
+
+    lst << "StartBlock"+p+":";
+    lst <<m_source;
+    lst << "EndBlock"+p+":";
+    return lst;
 }

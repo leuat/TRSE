@@ -53,8 +53,8 @@ void AsmZ80::Connect() {
     for (int i=0;i<m_appendix.count();i++) {
 
         if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
-            pre <<m_appendix[i]->m_source;
-        else m_source << m_appendix[i]->m_source;
+            pre <<m_appendix[i]->getSource();
+        else m_source << m_appendix[i]->getSource();
 
     }
 

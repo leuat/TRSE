@@ -664,6 +664,8 @@ bool Asm6502::CheckZPAvailability()
 
 QString Asm6502::GetOrg(int pos)
 {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
+        return "";
     if (Syntax::s.m_currentSystem->CL65Syntax())
 //        return ".res " + Util::numToHex(pos)+"-*";
       return ".org " + Util::numToHex(pos);

@@ -97,6 +97,10 @@ public:
     QStringList m_source;
     QString m_pos;
 
+    QStringList getSource();
+
+
+
     void Append(QString str, int level)
     {
         QString s ="";
@@ -124,6 +128,10 @@ public:
     QSharedPointer<Appendix> m_wram, m_sprram, m_ram;
     QMap<QString,QSharedPointer<Appendix>> m_banks;
     QMap<QString, QString> m_lastRegister; // Last registers set
+
+
+
+
 
     QSharedPointer<PostOptimiser> m_optimiser = nullptr;
 
@@ -212,6 +220,8 @@ public:
     virtual void InitZeroPointers(QStringList list1, QStringList list2, QStringList list3) {
 
     }
+
+    QStringList getSource();
 
     virtual int getLineCount();
     int CountCycles(QString s);
