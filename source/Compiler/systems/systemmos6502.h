@@ -32,7 +32,7 @@ public:
 
     bool VerifyMachineCodeZP(QString fname);
 
-    void CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg);
+    void CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text);
     bool BuildDiskFiles(QString currentDir, QStringList& d64Params, QString iniData);
 
     void DefaultValues() override;

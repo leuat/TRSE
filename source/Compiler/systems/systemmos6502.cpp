@@ -198,8 +198,8 @@ BLK5 = $A000-$BFFF
             m_buildSuccess = false;
             return;
         }
-        CreateDisk(currentDir, filename, "d64_paw_file", true);
-        CreateDisk(currentDir,filename+"_side2", "d64_paw_file_disk2",false);
+        CreateDisk(currentDir, filename, "d64_paw_file", true,output);
+        CreateDisk(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output);
     }
 
 
@@ -213,7 +213,7 @@ bool SystemMOS6502::VerifyMachineCodeZP(QString fname)
     return true;
 }
 
-void SystemMOS6502::CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg)
+void SystemMOS6502::CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text)
 {
     QString f = filename.split("/").last();
     QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
@@ -224,7 +224,8 @@ void SystemMOS6502::CreateDisk(QString currentDir, QString filename, QString ini
 
     if (m_projectIni->getString(iniData)!="none") {
         if (!BuildDiskFiles(currentDir, d64Params,iniData)) {
-            qDebug() << "SystemMos6502 : Could not build disk!";
+            text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 disk.. please make sure that all the files specified in "+filename+" exist!<br>";
+//            qDebug() << "SystemMos6502 : Could not build disk!";
             return;
         }
 

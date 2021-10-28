@@ -1,0 +1,314 @@
+//
+// galenciastars
+//
+// By Alan Bourke in 2021 using Turbo Rascal.
+//
+
+
+/*
+
+
+
+	This is a conversion of Jason Aldred's Galencia starfield, taken from his
+	game of the same name. Jason extracted the starfield ASM code into a standalone
+	programme (see link below), and this is an Turbo Rascal recreation of that.
+
+
+ ---------------------------------------------------------------------------------------------------------------------------------
+ How It Works 
+ ---------------------------------------------------------------------------------------------------------------------------------
+ CreateStarScreen fills the entire character screen with the characters and colours defined in StarfieldRow\StarfieldColours.
+ The character screen starts at location $0400 and is 25 rows of 40 characters. The screen is filled in such a way that chars
+ that are in sequence in the character set will be placed in vertical rows down the screen. 
+ Once this procedure is finished the first 4 rows of the screen will have these characters:
+
+ :.I..>.QB.V;OWPGLCR.DNC<K?TAS.DXJ=ZBUEAM
+ ;.JA.?.RC.W<PXQHMD:.EOD=L.UBTAEYK>.CVFBN
+ <.KB...:D.X=QYRINE;AFPE>MAVCUBFZL?.DWGCO
+ =.LC.A.;EAY>RZ:JOF<BGQF?NBWDVCG.M..EXHDP
+
+ Note the ':' and the ';' below it at the top left. These two characters are numbers 58 and 59 in the character set. We have copied
+ the character set into RAM starting at location $3000 (12288 decimal) . 'Star1Ptr' starts off pointing at 'Star1Init', which is 
+ location $31D0 (12572 decimal). 12288 - 12572 = 464 bytes or 58 characters. Therefore 'Star1Ptr' starts off pointing at the first
+ byte\row of the ':' character in memory. From there the 'DoStarField()' loop will place a star shape into that memory location and 
+ on the next pass erase it and draw it one byte down. This produces the falling stars.
+
+ ---------------------------------------------------------------------------------------------------------------------------------
+ Resources
+ ---------------------------------------------------------------------------------------------------------------------------------
+ https:retrocomputing.stackexchange.com/questions/12678/get-exact-position-of-raster-beam-on-c64-c128
+ VICE monitor io d000
+ https:retrocomputing.stackexchange.com/questions/7528/commodore-8-bit-character-sets/8278
+ 
+ Jason Aldred's original Galencia starfield extracted to a standalone program.
+ https://github.com/Jimmy2x2x/C64-Starfield/blob/master/starfield.asm
+
+ Info about the C64 character set.
+ https://github.com/neilsf/XC-BASIC/tree/master/examples/invaders
+ https://www.c64-wiki.com/wiki/Character_set
+
+ Info about the C64 memory map.
+ https://www.pagetable.com/c64ref/c64mem/
+ https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
+
+ GRay Defender's breakdown of how the original ASM works - WATCH THIS.
+ https://www.youtube.com/watch?v=47LakVkR5lg&t=1251s
+
+
+*/
+
+program GalenciaStars;
+var
+	
+	const useKernal : byte = 0;				// Flags whether interrupt chain should use the Kernal.
+	RasterCount : byte;						// Keeps track of the number of times the interrupt 
+											// handler that draws the stars has been hit.
+	
+	const Star1Shape : byte = %00000011;	// Star shapes - a bit pattern representing one 
+	const Star2Shape : byte = %00001100; 	// byte in an 8-byte character.
+	const Star3Shape : byte = %00110000;
+	const Star4Shape : byte = %11000000;
+	const StarBShape : byte = %00010000;
+	
+	const CharSetLoc : address = $3000;		// The location in RAM to which the ROM-based
+																// character set will be copied.
+	
+	const Star1Init  : address = $31D0;		// Init address for each star, CharSetLoc plus offset
+											// For example:
+											// CharsetLoc = $3000 = 12288 and Star1Init = $31D0 = 12752
+											// 12752 - 12288 = 464. There are 8 bytes per char, so 464/8 = 58
+											// This corresponds to the first byte of the ':' character in the 
+										    // C64 PETSCII character set (https://www.c64-wiki.com/wiki/PETSCII)
+											
+    const Star1Limit : address = $3298;		// Limit for Star 1. This is the last byte in the 'S' character.
+	const Star1Reset : address = $31D0;		// Reset address for star 1. 
+
+	const Star2Init : address = $3298;		// As per star 1.
+	const Star2Limit : address = $3360; 		
+	const Star2Reset : address = $3298;
+
+	const Star3Init : address = $3240;
+	const Star3Limit : address = $3298;
+	const Star3Reset : address = $31D0;
+
+	const Star4Init : address = $32E0;
+	const Star4Limit : address = $3360;
+	const Star4Reset : address = $3298;
+
+	const StaticStar1 : address = $3250; 	// 2 Locations for blinking static stars
+	const StaticStar2 : address = $31E0;
+	
+	StarfieldPtr : pointer of integer;		// These pointers track the current byte offset into the RAM
+	StarfieldPtr2 : pointer of integer;		// character set for the star in question.
+	StarfieldPtr3 : pointer of integer;
+	StarfieldPtr4 : pointer of integer;
+ 	StaticStarPtr : pointer of integer;
+
+	StaticStarBlink : byte;					// Flag used to toggle the static blinking stars on and off.
+
+	// One screen row of 40 PETSCII characters.
+	StarfieldRow : array[40] of byte = (058,092,073,064,091,062,093,081,066,094,
+									   086,059,079,087,080,071,076,067,082,095,
+									   100,078,099,060,075,063,084,065,083,096,
+									   068,088,074,061,090,098,085,101,097,077);
+
+	// The colour values corresponding to the characters.
+	StarfieldColours : array[20] of byte = (14,10,12,15,14,13,12,11,10,14,
+										   14,10,14,15,14,13,12,11,10,12);
+	
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Fills the entire character screen with the characters and colours defined in StarfieldRow\StarfieldColours.
+// ---------------------------------------------------------------------------------------------------------------------------------
+procedure CreateStarScreen();
+	var
+		currentchar : byte;
+		colourindex : byte;
+		//offset : integer;
+		col : byte;
+		row : byte;
+    		saddr : array[25] of integer;
+    		caddr : array[25] of integer;		
+begin
+	
+	CreateAddressTable( #saddr, $0400, 40, 25 );   // $0400 screen address, 40 characters per column, 25 rows
+    CreateAddressTable( #caddr, $D800, 40, 25 );   // $D800 color address, 40 characters per column, 25 rows
+	
+	col := 0;
+	while col <= 39 do begin
+		
+		currentchar := StarfieldRow[col];
+		
+		row := 0;
+		
+		while row <= 24 do begin
+			
+			screenmemory := AddressTable( #saddr, col, row );
+			screenmemory[0] := currentchar;
+			
+			inc(currentchar);
+			
+			// 83 = heart, 58 = colon
+			if currentchar = 107 then begin
+				currentchar := 83;
+				//currentchar := 0;
+			end
+			else
+			if currentchar = 83 then begin
+				currentchar := 58;
+			end;
+			
+			colormemory := AddressTable( #caddr, col, row );
+			colormemory[0] := StarfieldColours[colourindex];
+	
+			inc(row);
+			
+		end;
+		
+		inc(colourindex);
+		
+		if colourindex > 19 then begin
+			colourindex := 0;
+		end;
+		
+		inc(col);
+		
+	end;
+
+end;
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Blanks the character set in RAM.
+// ---------------------------------------------------------------------------------------------------------------------------------
+Procedure ClearCharacterSet();
+	var
+		charsetptr : pointer of integer;
+		counter : integer;
+begin
+	charsetptr := #CharSetLoc;
+	for counter := 0 to 2048 do begin
+		charsetptr[0] := 0;
+		inc(charsetptr);
+	end;
+end;
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Update the starfield by redefining bytes in the character set once per frame.
+// ---------------------------------------------------------------------------------------------------------------------------------
+Procedure DoStarfield();
+	
+begin
+
+	// -- Star 1 updates every other frame.
+	if (RasterCount & 1) = 1 then begin
+		StarfieldPtr[0] := 0;
+		Inc(StarfieldPtr);
+		StarfieldPtr[0] := StarfieldPtr[0] | Star1Shape;
+		if StarfieldPtr = #Star1Limit then begin
+			StarfieldPtr := #Star1Reset;
+		end;
+		
+	end;
+
+	// -- Star 2 updates every frame.
+	StarfieldPtr2[0] := 0;
+	Inc(StarfieldPtr2);
+	if StarfieldPtr2 = #Star2Limit then begin
+		StarfieldPtr2 := #Star2Reset;
+	end;	
+	StarfieldPtr2[0] := StarfieldPtr2[0] | Star2Shape;
+
+	// -- Star 3 updates every other frame.
+	if (RasterCount & 1) = 1 then begin
+		StarfieldPtr3[0] := 0;
+		Inc(StarfieldPtr3);
+		StarfieldPtr3[0] := StarfieldPtr3[0] | Star3Shape;
+		if StarfieldPtr3 = #Star3Limit then begin
+			StarfieldPtr3 := #Star3Reset;
+		end;
+	end;
+
+	// -- Star 4 updates two pixels down every frame.
+	StarfieldPtr4[0] := 0;
+	Inc(StarfieldPtr4);
+	Inc(StarfieldPtr4);
+	StarfieldPtr4[0] := StarfieldPtr4[0] | Star4Shape;
+	
+	if StarfieldPtr4 = #Star4Limit then begin
+		StarfieldPtr4 := #Star4Reset;
+	end;
+	
+	// -- Two static blinking stars.
+	StaticStarPtr := #StaticStar1;
+	if RasterCount < 230 then begin
+		StaticStarPtr[0] := StaticStarPtr[0] | StarBShape;
+	end
+	else begin
+		StaticStarPtr[0] := 0;
+	end;
+	
+	StaticStarBlink := RasterCount | $80;
+	
+	StaticStarPtr := #StaticStar2;
+	if RasterCount < 230 then begin
+		StaticStarPtr[0] := StaticStarPtr[0] | StarBShape;
+	end
+	else begin
+		StaticStarPtr[0] := 0;
+	end;	
+	
+end;
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Main raster interrupt routine.
+// ---------------------------------------------------------------------------------------------------------------------------------
+interrupt MainRaster();
+begin
+
+	StartIRQ(useKernal);					// All code must be between StartIrq\CloseIrq
+	inc(RasterCount);
+
+	// Debug
+	//moveto(10,10,$04);
+	//printnumber(RasterCount);
+
+    DoStarfield();
+	CloseIRQ();
+
+end;
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Main program loop. Turn CIA interrupts off, copy the character set from ROM into RAM and tell the machine to look at CharSetLoc
+// for its character set, initialise the pointers and start the raster chain off.
+// ---------------------------------------------------------------------------------------------------------------------------------
+begin
+	
+	DisableCIAInterrupts();				// Stop handling timer, joystick, keyboard ...
+    SCREEN_BG_COL:=BLACK;
+    SCREEN_FG_COL:=BLACK;
+    
+    DefineScreen();
+
+    SetCharsetLocation(CharSetLoc);
+ 	CopyCharsetFromRom(CharSetLoc);
+
+	CreateStarScreen();
+	
+	// -- Comment this line out to see the effect of the character set being overwritten.
+	ClearCharacterSet();
+	  
+	StarfieldPtr := #Star1Init;
+	StarfieldPtr2 := #Star2Init;
+	StarfieldPtr3 := #Star3Init;
+	StarfieldPtr4 := #Star4Init;
+	
+	// IO area visible at $D000-$DFFF, RAM visible at $A000-$BFFF (NO BASIC) and RAM visible at $E000-$FFFF (NO KERNAL). 
+	// This is the typical memory configuration for demo/game development. 
+	SetMemoryConfig(1, 0, 0);	
+	StartRasterChain(MainRaster(), $DC, useKernal);
+
+	Loop(); 
+	//  Note: VICE monitor io d000
+	
+end.
+

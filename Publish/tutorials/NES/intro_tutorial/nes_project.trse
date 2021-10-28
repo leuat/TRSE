@@ -53,3 +53,6 @@ zeropage_colormemory = $fc
 exomizer_toggle = 0
 show_all_files = 1
 charset_tiles/game_sprite_meta.flf = /Users/leuat/code/TRSE/Publish/tutorials/NES/intro_tutorial/tiles/game_tiles.flf
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/NES/intro_tutorial/
+open_files = 2.74409e-314
+current_file = tutorial_4_hello_scrolling.ras

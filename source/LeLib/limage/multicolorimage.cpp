@@ -381,6 +381,7 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
     height = m_height;
     qDebug() << width << height << img.width() << img.height();
 */
+//    qDebug() <<m_importScaleX<<m_importScaleY<<m_importScale;
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
@@ -687,8 +688,14 @@ void MultiColorImage::ImportBin(QFile &file)
 {
     QByteArray data = file.readAll();
     int j=0;
-    if (file.fileName().contains("_data")) {
+
+    unsigned char col[4] {0,1,2,3};
+
+    if (file.fileName().contains("_data") || data.size()==8000) {
         for (int i=0;i<1000;i++) {
+            if (data.size()==8000)
+                for (int j=0;j<4;j++)
+                   m_data[i].c[j] = col[j];
             for (int k=0;k<8;k++)
                 m_data[i].p[k] = PixelChar::reverse(data[j+k]);
 
