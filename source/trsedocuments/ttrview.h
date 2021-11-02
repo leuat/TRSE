@@ -35,10 +35,9 @@ class TTRView: public QAbstractScrollArea
         QVector<QColor> m_columnColors;
         float m_size = 1.5;
         int m_curLinePos;
-        int m_curOctave;
         int m_curCmd;
         int m_curEffect;
-        int m_curInstrument;
+        int m_curInstrument = 0;
         int m_curPlayerLine = -1;
 
         TTRView(QWidget *parent = 0);
@@ -59,7 +58,7 @@ class TTRView: public QAbstractScrollArea
         void Calculate();
 
         bool m_isChanged = false;
-        QString m_lastLine="";
+        QString m_lastLine="C- 03 00 00 00 00";
         QString UnpackLine(QByteArray& d, int pos );
         void PackLine(QByteArray& d, int pos, QString line);
 

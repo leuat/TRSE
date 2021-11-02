@@ -62,4 +62,4 @@ show_all_files = 0
 data_header_/users/leuat/code/trse/publish/tutorials/c64/tutorials/resources/images/hammerfist.flf = 2.55794e-314
 open_files = ,intermediate/22_galencia_stars.ras, Hello.ras
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
-current_file = Hello.ras
+current_file = intermediate/22_galencia_stars.ras

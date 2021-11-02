@@ -93,7 +93,10 @@ waitblt:
         move.w	d0,BLTCON0(a6)
         moveq	#0,d0
         move.b	oct(pc,d5.w),d0
-        bclr	#1,d0
+        ; eor.l line_method,d0
+       ; bset	#1,d0
+line_method_change:
+        bclr #1,d0
         move.w	d0,BLTCON1(a6)
         move.l	d4,BLTCPTH(a6)
         move.l	d4,BLTDPTH(a6)
@@ -104,7 +107,6 @@ out:
 
 oct:
         dc.l	$3431353,$b4b1757
-
 
 
 continueLine:

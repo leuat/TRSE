@@ -299,6 +299,7 @@ E = Unused?
     void InsertPattern(int pos);
     void DeletePattern(int pos);
 
+
     QVector<QByteArray> getCurrentPattern();
     void Save(QString filename);
     void Export(QString filename, int type);

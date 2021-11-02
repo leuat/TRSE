@@ -806,7 +806,6 @@ void TTRView::keyPressEvent(QKeyEvent *event)
         bool isNote =  curP<3;
         QString line = UnpackLine(m_pdata->m_data,m_curLinePos);
 
-//        qDebug() << line;
         if (curP==0){
             if (validNotes1.contains(t))
                 line[curPSet] = t[0];

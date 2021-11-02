@@ -23,6 +23,7 @@ void TTRFile::Initialize(int channels, int rows)
     m_currentOrder = 0;
     InsertPattern(0);
     InsertOrder(0);
+    AddInstrument();
 }
 
 void TTRFile::InsertPattern(int pos) {
@@ -50,6 +51,7 @@ void TTRFile::DeletePattern(int pos)
     }
 
 }
+
 
 QVector<QByteArray> TTRFile::getCurrentPattern() {
 /*    QByteArray test;
