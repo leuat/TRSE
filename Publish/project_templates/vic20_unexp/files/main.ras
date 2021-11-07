@@ -10,12 +10,67 @@ program MainProgram;
 				for the Vic 20 build.
 
 */
+//@define DEBUG		1		// uncomment to show debugging timings as rasterbar blocks on the screen
+
+// comment out if using multiplcation or division, otherwise save space
+@ignoremethod "init16x8mul"
+@ignoremethod "init16x8div"
+@ignoremethod "init8x8div"
+@ignoremethod "initeightbitmul"
+
+// deprecated commands - ensure not included
+@ignoremethod "initjoystick"
+@ignoremethod "initmoveto"
+
 var  
+@use "screen"
 
-	strHello : cstring = ("HELLO WORLD");
+/*
+	Memory areas to use.
 
-//@define DEBUG		1				// uncomment to show debugging timings
+	Most of these locations can be used if not returning to BASIC.
+	
+	Zero page is a good place to use commonly used variables becasue 6502 instructions take
+	one less byte to access zero page and is a little WaitForRaster
 
+	Other areas of RAM are good for general variables used less frequently rather than using main program RAM.
+
+	Use the 'at $nn' or 'at $nnnn' modifier when setting variables in these locations, replacing nn with the hex address
+
+*/
+
+// ------------------------------
+// Zero Page:	$00-$5d - 94 bytes
+	
+	i,j,k,l: byte at $00;	// general purpose, reusable variables, good for FOR loops and counters, at addresses $00, $01, $02 and $03 in this case
+		
+// $7d - one byte gap
+// oldticks:	byte at $7d;
+
+// ------------------------------
+// BASIC input buffer:	$0200-$0258 - 88 bytes
+
+// ------------------------------
+// Indirect vectors:	$02A1-$02FF - 94 bytes 
+
+// ------------------------------
+// Cassette buffer:		$033C-$03FB (828-1019) - 192 bytes
+
+
+// ------------------------------
+// Total program memory:$1000-$1DFF (4096-7679) - 3584 bytes
+// Working memory:		$1000-$1BFF (4096-7167) - 3072 bytes
+// Character memory:	$1C00-$1DFF (7168-7679) -  512 bytes
+
+	//@export "chr\chars.flf" "chr\chars.bin" 0 64
+	//charset: incbin("chr\chars.bin", $1c00); 
+
+// ------------------------------
+// Screen memory:		$1E00-$1FFA (7680-8186) - 506 bytes
+
+// ------------------------------
+// unused Colour memory:$9400-$95FA (37888-38394) - 506 bytes
+// Colour memory:		$9600-$97FA (38400-38906) - 506 bytes
 
 // -------------------------------------------------------------------------------
 
@@ -26,27 +81,34 @@ begin
 	
 	DefineScreen();
 
-	ClearScreen( 32, #SCREEN_CHAR_LOC); 		// ^$1e00 - unexpanded screen location
+	// clear the screen and colour RAM
+	ClearScreen( 32, #SCREEN_CHAR_LOC); 	// ^$1e00 - unexpanded screen location
 	ClearScreen( GREEN, #SCREEN_COL_LOC); 	// ^$9600 - unexpanded colour location
 
-	AUX_COLOR_AND_VOLUME := %00000010;
-	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+	// Set up optional redefined character set. This setting allows 64 unique characters 
+	// and access to all default ROM letters with BIT7 set (ie: values of 128 and greater)
+	/*
+	Screen::SetScreenCharAddress( 
+		Screen::SCREEN_1c00 + Screen::CHAR_1c00, 
+		Screen::SCREEN_ADD_0200 );
+	*/
 
-	screenmemory := #SCREEN_CHAR_LOC;
-	PrintString( #strHello, 0, 11 );
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLUE + SCREEN_BG_BLACK; // border + background colours
+
 
 	// main game loop
 	while (true) offpage do 
 	begin
 		
-		@ifdef DEBUG	// for testing speed
+		@ifdef DEBUG	// for testing speed of your drawing loop
 		SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
 		@endif
 		
-		// wait for vertical blank
-		WaitForRaster(120);
+		// wait for raster position outside of visible screen area (vertical blank)
+		WaitForRaster(120); // PAL
 
-		@ifdef DEBUG	// for testing speed
+		@ifdef DEBUG	// for testing speed of your drawing loop
 		SCREEN_BG_COLOR := CYAN + SCREEN_BG_BLACK;
 		@endif
 				
