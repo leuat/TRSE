@@ -33,6 +33,7 @@
 #include "source/Compiler/codegen/codegen_arm.h"
 #include "source/Compiler/codegen/codegen_x86.h"
 #include "source/Compiler/codegen/codegen_z80.h"
+#include "source/Compiler/codegen/codegen_tripe.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"

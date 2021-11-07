@@ -12,6 +12,12 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     QString output;
     int time = timer.elapsed();
     int codeEnd = 0;
+
+    m_buildSuccess = true;
+    AssembleTripe(text,filename,currentDir,symTab);
+    if (!m_buildSuccess)
+        return;
+
     //qDebug() << m_settingsIni->getString("assembler");
     if (m_settingsIni->getString("assembler").toLower()=="dasm") {
         emit EmitTick("<br>Assembling with DASM ...");

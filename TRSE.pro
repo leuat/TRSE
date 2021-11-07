@@ -128,6 +128,7 @@ SOURCES += main.cpp\
     imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
+    source/Compiler/assembler/asmTripe.cpp \
     source/Compiler/assembler/asmarm.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
@@ -139,6 +140,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/codegen_6502.cpp \
     source/Compiler/codegen/codegen_arm.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
+    source/Compiler/codegen/codegen_tripe.cpp \
     source/Compiler/codegen/codegen_x86.cpp \
     source/Compiler/codegen/codegen_z80.cpp \
     source/Compiler/codegen/methods/abstractmethods.cpp \
@@ -383,10 +385,12 @@ HEADERS  += mainwindow.h \
     formtutorialitem.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
+    source/Compiler/assembler/asmTripe.h \
     source/Compiler/assembler/asmarm.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
     source/Compiler/codegen/codegen_arm.h \
+    source/Compiler/codegen/codegen_tripe.h \
     source/Compiler/codegen/codegen_x86.h \
     source/Compiler/codegen/codegen_z80.h \
     source/Compiler/ast/nodecase.h \

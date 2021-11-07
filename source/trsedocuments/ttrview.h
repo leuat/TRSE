@@ -58,7 +58,7 @@ class TTRView: public QAbstractScrollArea
         void Calculate();
 
         bool m_isChanged = false;
-        QString m_lastLine="C- 03 00 00 00 00";
+        QString m_lastLine="C- 03 00 00 00 00"; // Default
         QString UnpackLine(QByteArray& d, int pos );
         void PackLine(QByteArray& d, int pos, QString line);
 

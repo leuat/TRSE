@@ -312,6 +312,13 @@ QString Util::numToHex(long v)
     return "$" +o;
 }
 
+QString Util::Util::numToHex0(long v)
+{
+    QString o = QString::number(v,16);
+    if (o.count()==1) o="0"+o;
+    return "0x" +o;
+}
+
 QByteArray Util::toQByteArray(QVector<int> &data)
 {
     QByteArray a;

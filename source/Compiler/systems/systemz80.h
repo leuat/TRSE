@@ -22,6 +22,10 @@ public:
     // Perform assembling of 1 file - using either orgasm or pasmo
     void PerformAssembling(QString filename, QString &text,QString currentDir, QSharedPointer<SymbolTable> symTab);
 
+    virtual QString getTripePointerType() override {
+        return "uint16";
+    }
+
     QString CompressFile(QString fileName) override;
 };
 

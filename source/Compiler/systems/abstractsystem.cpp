@@ -399,3 +399,30 @@ void AbstractSystem::AcceptDispatcherTick(QString val)
 {
     emit EmitTick(val);
 }
+
+
+void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) {
+    if (m_projectIni->getdouble("use_tripe")==0)
+        return;
+
+
+    QString error="";
+    Util::CopyFile(file+".asm",file+"_tripe.asm");
+    QFile::remove(file+".asm");
+    QStringList params  = QStringList() << "-arch" <<"trasm2tripe" << "-i"<< file+"_tripe.asm" << "-o"<<file+".trp";
+    GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
+
+//    qDebug() << m_settingsIni->getString("tripe_location");
+  //  qDebug() << params;
+
+    //qDebug() << error<<text;
+
+    params  = QStringList() << "-arch" <<"mos6502" << "-i"<< file+".trp" <<"-o"<<file+".asm";
+    GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
+    if (error.contains("error"))
+        m_buildSuccess = false;
+//    qDebug() << error;
+
+//    Util::CopyFile()
+
+}

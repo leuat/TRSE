@@ -132,6 +132,11 @@ public:
     virtual QString getEmulatorName() = 0;
     virtual void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) = 0;
 
+    virtual bool useZeroPagePointers() { return false;}
+
+    virtual QString getTripePointerType() { return "uint64";}
+
+    virtual void AssembleTripe(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
 
     bool m_buildSuccess;
     static bool isSupported(System currentSystem, QString list) {

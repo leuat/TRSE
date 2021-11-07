@@ -131,6 +131,8 @@ void DialogTRSESettings::FillFromIni()
     ui->cmbThemeFjong->setCurrentText(m_ini->getString("theme_fjong").split(".")[0]);
 
 
+    ui->leTripeLoc->setText(m_ini->getString("tripe_location"));
+
     ui->leFontSize->setText(QString::number((int)m_ini->getdouble("font_size")));
     ui->leFontScale->setText(QString::number(m_ini->getdouble("font_size_scale")));
     ui->leFontSizeSymbols->setText(QString::number((int)m_ini->getdouble("font_size_symbols")));
@@ -238,6 +240,7 @@ void DialogTRSESettings::FillToIni()
 
 
 
+
 //    m_ini->setFloat("optimizer_remove_unused_symbols", ui->chkRemoveUnusedProcedures->isChecked()?1:0);
 
     if (ui->cmbPalette->currentText()=="Dark")
@@ -254,6 +257,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("custom_keyword_bold",ui->chkBold->isChecked());
     m_ini->setFloat("custom_keyword_italic",ui->chkItalic->isChecked());
 
+    m_ini->setString("tripe_location",ui->leTripeLoc->text());
 
 
 }

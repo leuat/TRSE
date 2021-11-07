@@ -77,6 +77,7 @@ public:
     static bool CancelSignal;
     static int VerifyHexAddress(QString s);
     static QString numToHex(long v);
+    static QString numToHex0(long v);
     static QString path;
 
 

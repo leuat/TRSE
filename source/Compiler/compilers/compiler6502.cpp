@@ -1,10 +1,19 @@
 #include "compiler6502.h"
+#include "../codegen/codegen_tripe.h"
+#include "../assembler/asmTripe.h"
 
 void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
-    m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+    if (m_projectIni->getdouble("use_tripe")==1.0) {
+        m_codeGen = QSharedPointer<CodeGenTRIPE>(new CodeGenTRIPE());
+        m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
+    }
+    else {
+        m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
+        m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+    }
     m_assembler->m_zbyte = 0x10;
-    m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
+
     Init6502Assembler();
     LabelStack::m_labelCount = 0;
 }

@@ -27,6 +27,11 @@ public:
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
     virtual void PostProcess(QString& text, QString file, QString currentDir) override;
 
+    virtual QString getTripePointerType() override {
+        return "uint16";
+    }
+
+    virtual bool useZeroPagePointers() override { return true;}
 
     virtual bool AllowPointerInStructs() override {return false;}
 

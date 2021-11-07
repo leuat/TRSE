@@ -70,6 +70,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
     ui->cmbQuemu->setCurrentText(m_ini->getString("qemu"));
+    ui->cmbUseTripe->setCurrentText(m_ini->getdouble("use_tripe")?"Yes":"No");
 //    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
     UpdateSystem();
 
@@ -230,6 +231,11 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setString("amstradcpc_model", ui->cmbAmstradCPCModel->currentText());
     m_ini->setString("qemu",ui->cmbQuemu->currentText());
+
+    m_ini->setFloat("use_tripe",(ui->cmbUseTripe->currentText()=="Yes")?1:0);
+    ui->cmbUseTripe->setCurrentText(m_ini->getdouble("use_tripe")?"Yes":"No");
+
+
     m_ini->setString("amstradcpc_options", ui->leAmstradCPCOptions->text());
 
     m_ini->setFloat("spectrum_model", ui->cbmSpectrumModel->currentIndex());

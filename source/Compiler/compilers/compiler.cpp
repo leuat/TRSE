@@ -38,6 +38,8 @@ Compiler::~Compiler() {
 
 
 
+
+
 void Compiler::Parse(QString text, QStringList lst, QString fname)
 {
     m_parser.m_currentFileShort = fname;
