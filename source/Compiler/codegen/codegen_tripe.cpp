@@ -278,7 +278,7 @@ QString CodeGenTRIPE::getReturn() {
 }
 
 QString CodeGenTRIPE::getCallSubroutine() {
-    return "jump";
+    return "call";
 }
 
 QString CodeGenTRIPE::ProcedureEndWithoutReturn() {
@@ -518,6 +518,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeComment> node)
 
 QString CodeGenTRIPE::resolveTemporaryClassPointer(QString name, int mul, int& res)
 {
+    return "";
 }
 
 QString CodeGenTRIPE::getIntType(Assembler *as, QSharedPointer<Node> node) {
@@ -582,7 +583,7 @@ void CodeGenTRIPE::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
 
     if (!isOffPage) {
         QString loopDone = as->NewLabel("loopdone");
-        as->Comment("Compare is onpage");
+//        as->Comment("Compare is onpage");
 
         IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
         Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
