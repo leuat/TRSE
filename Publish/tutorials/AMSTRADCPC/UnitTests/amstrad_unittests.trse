@@ -63,6 +63,3 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/UnitTests/
-open_files = ,[ext]units/global/unittests/vars.tru, [ext]units/global/unittests/integer.tru
-current_file = [ext]units/global/unittests/vars.tru
