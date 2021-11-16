@@ -80,6 +80,9 @@ begin
   ld a,[Functions_i]
   ld c,a
   ld a,r
+  ld d,a
+  ld a,r
+  add a,d
 rndloop
   ld b,#7f
 redo
