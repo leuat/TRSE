@@ -83,6 +83,8 @@ begin
   ld d,a
   ld a,r
   add a,d
+  inc d
+  xor d
 rndloop
   ld b,#7f
 redo
