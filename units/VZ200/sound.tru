@@ -43,9 +43,21 @@ expl
   ld      l,a
   pop     af
   xor     l
-	or      #08
-	and     #ef
+  push    af
+  ld      a,(#783B)
+  bit     4,a
+  jr      nz,palette1
+  pop     af
+  or      #08
+  and     #ef
+  jp      setpal
+palette1  
+  pop     af
+	or      #18
+	and     #ff
+setpal
   ld      (#6800),a
+  ld      (#783B),a
   pop     hl
   push    af
   ld      bc,[Sound_dur]
@@ -77,9 +89,21 @@ expl0
   ld      l,a
   pop     af
   xor     l
+ push    af
+  ld      a,(#783B)
+  bit     4,a
+  jr      nz,xpalette1
+  pop     af
   or      #08
   and     #ef
+  jp      xsetpal
+xpalette1  
+  pop     af
+	or      #18
+	and     #ff
+xsetpal
   ld      (#6800),a
+  ld      (#783B),a
   pop     hl
   push    af
   ld      b,h
