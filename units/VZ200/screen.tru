@@ -408,4 +408,27 @@ cscroll
 	");
 end;
 
+/** Move hires screen up one line
+		First parameter is start location onscreen.
+		Second parameter is number of lines down
+		**/
+procedure doLineScroll(Loc: global Integer, h: global byte);
+begin
+	Count := h * 32;
+asm("
+  ld hl,[Screen_Loc]
+	push hl
+	ld de,#0020
+	add hl,de
+	pop de
+	ld bc,[Screen_Count]
+	ldir
+	ld hl,#77e0
+	ld de,#77e1
+	ld bc,#001f
+	ld (hl),#00
+	ldir
+");	
+end;
+
 end.
