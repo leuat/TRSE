@@ -17,6 +17,8 @@ var
 	x : byte = 0;
 	y : byte = 0;
 	tab32 : array[64] of integer=buildtable("i*32");
+	const screen_pixel_width : byte = 128;
+	const screen_pixel_height : byte = 64;
 
 /* 
 	Clears the screen using mode parameter 0 or 1
@@ -57,6 +59,7 @@ begin
 			col_and := $ef;			
 			i := col_or + gfxval;
 			j := j & i;
+			asm(";here");
 			gfxmode2[0] := j;
 			gfxmode[0] := j;
 		end

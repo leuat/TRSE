@@ -977,7 +977,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     }
 
 
-    if (node->m_right->isPureNumeric() && !var->isWord(as) && node->m_right->isReference()) {
+    if (node->m_right->isPureNumeric() && !var->isWord(as)) {
         as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
         as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
         return true;
