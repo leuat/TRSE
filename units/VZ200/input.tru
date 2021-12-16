@@ -157,10 +157,6 @@ prskey4	ld a,c		; high nibble=row
 	sla a
 	add a,b		      ; low nibble=column
 	push af
-;debounce
-;	call #2ef4
-;	or a
-;	jr nz,debounce
 	pop af
   ld [Input_c],a
 keyend

@@ -9,7 +9,7 @@ var
 procedure Beep();
 begin
 	asm("
-  call #3450
+  call $3450
 	");
 end;
 
@@ -21,8 +21,67 @@ begin
 	asm("
   ld hl,[Sound_freq]
   ld bc,[Sound_dur]
-  call #345c
-	");
+sound
+	call toggle	; call toggling speaker bits
+	dec c		; decrement counter1
+	jr nz,sound	; repeat if not 0
+	ret
+
+; Toggle speaker bit
+
+toggle
+	push bc		; save counter1
+	ld a,$20		; Speaker B
+	or $0a	; restore graphicsmode
+  push af
+  ld a,(#783B)
+  bit 4,a
+  jr nz,xxpal1
+	pop af
+  or #08
+  and #ef
+  jp xset
+xxpal1
+  pop af
+  or #18
+  and #ff
+xset
+	ld (#783B),a
+	ld (#6800),a	; set $6800
+
+	push hl		; save counter1
+	pop bc		; set counter2
+toggle0
+	dec c		; decrement counter2
+	jr nz,toggle0	; repeat if not 0
+
+	ld a,$01		; Speaker A
+	or $0a	; restore graphicsmode
+  push af
+  ld a,(#783b)
+  bit 4,a
+  jr nz,xxpal2
+	pop af
+  or #08
+  and #ef
+  jp xset2
+xxpal2
+  pop af
+  or #18
+  and #ff
+xset2
+
+	ld (#783B),a
+	ld (#6800),a	; set $6800
+
+	push hl		; save counter1
+	pop bc		; set counter2
+toggle1
+	dec c		; decrement counter2
+	jr nz,toggle1	; repeat if not 0
+	pop bc		; restore counter1
+	ret
+  ");
 end;
 
 /* 
@@ -43,9 +102,21 @@ expl
   ld      l,a
   pop     af
   xor     l
-	or      #08
-	and     #ef
+  push    af
+  ld      a,(#783B)
+  bit     4,a
+  jr      nz,palette1
+  pop     af
+  or      #08
+  and     #ef
+  jp      setpal
+palette1  
+  pop     af
+	or      #18
+	and     #ff
+setpal
   ld      (#6800),a
+  ld      (#783B),a
   pop     hl
   push    af
   ld      bc,[Sound_dur]
@@ -77,9 +148,21 @@ expl0
   ld      l,a
   pop     af
   xor     l
+ push    af
+  ld      a,(#783B)
+  bit     4,a
+  jr      nz,xpalette1
+  pop     af
   or      #08
   and     #ef
+  jp      xsetpal
+xpalette1  
+  pop     af
+	or      #18
+	and     #ff
+xsetpal
   ld      (#6800),a
+  ld      (#783B),a
   pop     hl
   push    af
   ld      b,h
@@ -94,6 +177,5 @@ xdly      dec     bc
   jr      z,expl0
 ");
 end;
-
 
 end.
