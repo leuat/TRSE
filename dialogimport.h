@@ -161,6 +161,10 @@ private slots:
 
     void on_comboBox_currentIndexChanged(int index);
 
+    void on_leForceD800_editingFinished();
+
+    void on_leForceD800_textChanged(const QString &arg1);
+
 private:
     Ui::DialogImport *ui;
 };

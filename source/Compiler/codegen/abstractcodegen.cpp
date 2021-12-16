@@ -467,7 +467,6 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         AssignString(node);
         return;
     }
-
     // ****** Pointer handling
     if (AssignPointer(node)) {
         return;

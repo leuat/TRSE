@@ -44,4 +44,5 @@ override_target_settings_prg = 1
 build_list = ,
 exomizer_toggle = 0
 show_all_files = 1
-open_files =, tutorial1_helloworld.ras
+open_files = ,tutorial1_helloworld.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/ATARI800/Tutorials/

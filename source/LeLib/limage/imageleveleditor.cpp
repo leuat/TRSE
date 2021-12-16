@@ -97,6 +97,7 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;
     m_supports.tilestamp = true;
+    m_supports.d800_limit = false;
 
     m_GUIParams[btnLoadCharset] ="Load Charset";
     m_GUIParams[btn1x1] = "";

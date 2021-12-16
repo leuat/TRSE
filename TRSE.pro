@@ -29,7 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-##ARCH = arm64
+ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -206,6 +206,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limageamstradgeneric.cpp \
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagebbc.cpp \
+    source/LeLib/limage/limagecustomc64multicolor.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
     source/LeLib/limage/limagehybridcharset.cpp \
@@ -465,6 +466,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limageamstradgeneric.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagebbc.h \
+    source/LeLib/limage/limagecustomc64multicolor.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
     source/LeLib/limage/limagehybridcharset.h \

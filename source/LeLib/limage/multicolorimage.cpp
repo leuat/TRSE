@@ -40,6 +40,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
 {
     m_width = 160;
     m_height = 200;
+//    m_charhe
     m_scaleX = 2;
     //m_data.resize(m_charWidth*m_charHeight);
     m_colorList.m_supportsFooterPen = true;
@@ -56,7 +57,7 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.flfLoad = true;
     m_supports.compressedExport = true;
     m_supports.displayCharOperations = false;
-
+    m_supports.d800_limit = true;
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "";
     m_GUIParams[btn2x2] = "";
@@ -106,8 +107,9 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
     PixelChar& pc = getPixelChar(x,y);
 
 
+    int cols = m_forceD800Color==-1?m_noColors:m_noColors-1;
 
-    pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, getBackground());
+    pc.Reorganize(m_bitMask, m_scale,m_minCol, cols, getBackground(),m_forceD800Color);
 //    qDebug() << m_noColors;
 
     int ix = x % (8/m_scale);//- (dx*m_charWidth);
@@ -116,7 +118,7 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
         qDebug() << Util::numToHex(color) << Util::numToHex(m_noColors) << Util::numToHex(m_minCol);
     }
 */
-    pc.set(m_scale*ix, iy, color, m_bitMask, m_noColors, m_minCol);
+    pc.set(m_scale*ix, iy, color, m_bitMask, m_noColors, m_minCol, m_forceD800Color);
 }
 
 
@@ -151,7 +153,7 @@ void MultiColorImage::setBackground(unsigned int col)
  //   qDebug() << "SETBACK";
     if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
 //        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
-        if (m_type != MultiColorBitmap)
+        if (m_type != MultiColorBitmap && m_type!=CustomC64)
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
             //m_data[i].c[0] = col;
 
@@ -169,7 +171,7 @@ void MultiColorImage::Reorganize()
 {
 //#pragma omp parallel for
     for (int i=0;i<m_charWidth*m_charHeight;i++)
-        m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors,getBackground());
+        m_data[i].Reorganize(m_bitMask, m_scale, m_minCol, m_noColors,getBackground(),m_forceD800Color);
 }
 
 bool MultiColorImage::KeyPress(QKeyEvent *e)
@@ -286,7 +288,7 @@ void MultiColorImage::ExportKoa(QFile &f)
     color.resize(1000);
     for (int j=0;j<m_charWidth*m_charHeight;j++) {
         PixelChar& pc =  m_data[j];
-        pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, getBackground());
+        pc.Reorganize(m_bitMask, m_scale,m_minCol, m_noColors, getBackground(),m_forceD800Color);
         for (int i=0;i<8;i++)
             data.append(PixelChar::reverse(pc.p[i]));
 
@@ -381,7 +383,6 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
     height = m_height;
     qDebug() << width << height << img.width() << img.height();
 */
-//    qDebug() <<m_importScaleX<<m_importScaleY<<m_importScale;
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
@@ -419,7 +420,7 @@ void MultiColorImage::CopyImageData(LImage *img)
     MultiColorImage* mc = dynamic_cast<MultiColorImage*>(img);
     //qDebug() << "HERE " <<mc;
     if (mc!=nullptr)
-        memcpy((char*)m_data,(char*)mc->m_data,sizeof(PixelChar)*m_charWidth*m_charWidth);
+        memcpy((char*)m_data,(char*)mc->m_data,sizeof(PixelChar)*m_charWidth*m_charHeight);
     else qDebug() << "MultiColorImage::CopyImageData - unknown image type!";
 
 }
@@ -447,6 +448,7 @@ void MultiColorImage::CopyFrom(LImage* img)
     {
         //        m_footer.m_data = mc->m_footer.m_data;
         m_currentChar = mc->m_currentChar;
+        m_forceD800Color = mc->m_forceD800Color;
         m_charWidth = mc->m_charWidth;
         m_charHeight = mc->m_charHeight;
         m_scale = mc->m_scale;
@@ -458,7 +460,6 @@ void MultiColorImage::CopyFrom(LImage* img)
         m_minCol = img->m_minCol;
         m_charWidthDisplay = mc->m_charWidthDisplay;
         m_charHeightDisplay = mc->m_charHeightDisplay;
-
         CopyImageData(img);
 
     }
@@ -988,12 +989,18 @@ void MultiColorImage::FromLImageQImage(LImage *other)
                     winners.append(cols[j].y());
                     j++;
                 }
+
             for (int i=0;i<4;i++)
                 pc.c[i] = winners[i];
 
-            m_colorList.EnableColors(winners);
+            if (m_forceD800Color!=-1) {
+                winners[3] = m_forceD800Color;
+                pc.c[3] = m_forceD800Color;
+            }
+           m_colorList.EnableColors(winners);
             for (int j=0;j<8;j++) {
                 for (int i=0;i<8/m_scale;i++) {
+
                     uchar c = other->getPixel(dx+i, dy+j);
   //                  if (winners.contains(c))
                     int winner =  0;
@@ -1198,7 +1205,7 @@ int MultiColorImage::LookUp(PixelChar pc)
 void MultiColorImage::setHybrid()
 {
     m_width = 320;
-    m_height = 200;
+//    m_height = 200;
     //m_scaleX = 1.2f;
     m_bitMask = 0b1;
     m_noColors = 4;
@@ -1212,7 +1219,7 @@ void MultiColorImage::setMultiColor(bool doSet)
 {
     if (doSet) {
         m_width = 160;
-        m_height = 200;
+      //  m_height = 200;
       //  m_scaleX = 2.5f;
         m_bitMask = 0b11;
         m_noColors = 4;
@@ -1222,7 +1229,7 @@ void MultiColorImage::setMultiColor(bool doSet)
     }
     else {
         m_width = 320;
-        m_height = 200;
+//        m_height = 200;
         //m_scaleX = 1.2f;
         m_bitMask = 0b1;
         m_noColors = 2;
@@ -1628,6 +1635,12 @@ void MultiColorImage::SetColor(uchar col, uchar idx)
     //m_extraCols[idx] = col;
     m_colorList.SetMulticolor(idx,col);
 //    qDebug()<< m_extraCols[idx];
+
+}
+
+void MultiColorImage::SetForceD800Color(int val) {
+    m_forceD800Color = val;
+    Reorganize();
 
 }
 

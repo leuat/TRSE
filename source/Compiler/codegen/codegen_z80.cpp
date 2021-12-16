@@ -669,6 +669,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
 
+
     if (node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric() && node->m_expr->getValueAsInt(as)==0) {
             as->Asm("; Optimization : zp[0]");
@@ -730,7 +731,6 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
     }
 
     if (!node->isWord(as)) {
-//        as->Comment("HERE") ;
         if (node->isPureVariable())
             as->Asm("ld a,["+node->getValue(as)+"]");
         else
@@ -754,7 +754,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
     else
     {
 
-        if (node->getOrgType(as)==TokenType::POINTER) {
+        if (node->getOrgType(as) == TokenType::POINTER) {
             //as->Asm("ld a,["+node->getValue(as)+"+1]");
             //as->Asm("ld "+QString(hl[0])+",a");
             LoadAddress(node);
@@ -796,6 +796,15 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
 {
     QString hl = getHL();
+
+    // fix for  val := someAddress which should be the same as val := someAddress[0];
+    if (node->isAddress() && !node->isReference()) {
+        as->Asm("ld hl, "+node->getValue(as));
+        as->Asm("ld a,[hl]");
+        return;
+    }
+
+
 
     if (!node->isWord(as))
         as->Asm("ld a,"+node->getValue(as));
@@ -906,6 +915,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     if (var==nullptr)
         return false;
 
+
     if (var->hasArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
@@ -931,7 +941,6 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
             return true;
         }
         // GENERIC expression
-
         bool rightIsPure = node->m_right->isPure();
         bool isAligned = as->m_symTab->Lookup(var->getValue(as),var->m_op.m_lineNumber)->m_flags.contains("aligned");
         //        qDebug() << "IS ALIGNED "<< isAligned;
@@ -968,7 +977,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     }
 
 
-    if (node->m_right->isPureNumeric() && !var->isWord(as)) {
+    if (node->m_right->isPureNumeric() && !var->isWord(as) && node->m_right->isReference()) {
         as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
         as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
         return true;
@@ -981,7 +990,6 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-
 
 //    if (qSharedPointerDynamicCast<NodeNumber>(node->m_left)!=nullptr) {
     if (var->value.startsWith("$")) {
@@ -1475,6 +1483,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
     if (!var->isPointer(as))
         return false;
     node->VerifyReferences(as);
+
 
 
 /*    if (var->isPointer(as) && var->m_writeType==TokenType::INTEGER && var->hasArrayIndex()) {

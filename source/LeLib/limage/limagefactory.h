@@ -55,6 +55,7 @@
 #include "source/LeLib/limage/limagesnes.h"
 #include "source/LeLib/limage/limagelevelsnes.h"
 #include "source/LeLib/limage/limagevz200.h"
+#include "source/LeLib/limage/limagecustomc64multicolor.h".h"
 
 class LImageFactory {
 public:

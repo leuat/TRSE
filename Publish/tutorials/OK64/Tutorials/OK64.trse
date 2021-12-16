@@ -45,4 +45,6 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 show_all_files = 1
-open_files =, example1.ras
+open_files = ,example3.ras, example1.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/OK64/Tutorials/
+current_file = example2.ras

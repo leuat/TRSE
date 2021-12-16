@@ -104,6 +104,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 30;
     if (t==VZ200)
         return 31;
+    if (t==CustomC64)
+        return 32;
 
 
     return 255;
@@ -175,6 +177,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "SNES Level editor";
     if (t==VZ200)
         return "VZ200 4-color 128x64";
+    if (t==CustomC64)
+        return "Custom C64";
 
     return "Unknown image type";
 
@@ -247,6 +251,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return LevelEditorSNES;
     if (c==31)
         return VZ200;
+    if (c==32)
+        return CustomC64;
 
     return NotSupported;
 
@@ -326,7 +332,6 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
     int width  =std::min(img.width(), m_width);
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
-
 //    qDebug() << img.width();
     for (int y=0;y<height;y++) {
 //#pragma omp parallel for

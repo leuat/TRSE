@@ -30,6 +30,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Amiga 320x256", "amiga",LImage::Type::AMIGA320x256, LColorList::Type::C64));
     m_types.append(ImageType("Amiga 320x200", "amiga",LImage::Type::AMIGA320x200, LColorList::Type::C64));
     m_types.append(ImageType("MultiColor bitmap", "c64", LImage::Type::MultiColorBitmap,LColorList::Type::C64));
+    m_types.append(ImageType("Custom (large) MultiColor bitmap", "c64", LImage::Type::CustomC64,LColorList::Type::C64));
     m_types.append(ImageType("Hires Bitmap", "c64",LImage::Type::HiresBitmap,LColorList::Type::C64));
     m_types.append(ImageType("Charmap", "c64",LImage::Type::CharMapMulticolor,LColorList::Type::C64));
 //    m_types.append(ImageType("Hires Charmap", "c64",LImage::Type::CharmapRegular,LColorList::Type::C64));

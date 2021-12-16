@@ -52,7 +52,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
-
+    m_supports.d800_limit = false;
     m_supports.displayColors = true;
     m_supports.displayForeground = false;
     m_supports.displayMC2 = true;

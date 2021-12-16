@@ -14,7 +14,7 @@ public:
     unsigned char c[4];
     static int m_lastBitmask;
     unsigned char get(int x, int y, unsigned char bitMask);
-    void set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol);
+    void set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol, int forceD800Col=-1);
     void set(int x, int y, unsigned char color, unsigned char bitMask);
     void Clear(unsigned char background);
     QString bitmapToAssembler();
@@ -26,10 +26,11 @@ public:
     QImage toQImage(int size, uchar bmask, LColorList& lst, int scale);
     bool isEmpty();
     bool isEqualBytes(PixelChar& o);
-    void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol);
+    void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol, unsigned char forceD800Color);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
 
     void ForceBackgroundColor(int col, int swapcol);
+    void swapMCBits(uchar b1, uchar b2);
 
     bool isPure();
 

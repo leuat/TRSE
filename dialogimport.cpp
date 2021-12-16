@@ -140,6 +140,9 @@ void DialogImport::Convert()
     if (m_image == nullptr)
         return;
 
+
+    m_image->m_forceD800Color = ui->leForceD800->text().toInt();
+
     LImageQImage* img = &m_work;
 
     if (ui->chkTreatCharset->isChecked()) {
@@ -660,3 +663,17 @@ void DialogImport::on_comboBox_currentIndexChanged(int index)
     ui->leCustomPalette->setText(m_customPalettes[index]);
 
 }
+
+void DialogImport::on_leForceD800_editingFinished()
+{
+    UpdateSliders();
+    UpdateOutput();
+}
+
+
+void DialogImport::on_leForceD800_textChanged(const QString &arg1)
+{
+    UpdateSliders();
+    UpdateOutput();
+}
+

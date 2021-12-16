@@ -23,7 +23,7 @@
 
 
 LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
-
+//    qDebug() << "Creating type: " <<LImage::TypeToString(t);
 
     if (t == LImage::Type::QImageBitmap)
         return new LImageQImage(colorType);
@@ -94,6 +94,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageLevelSNES(colorType);
     if (t == LImage::VZ200)
         return new LImageVZ200(colorType);
+    if (t == LImage::CustomC64)
+        return new LImageCustomC64(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

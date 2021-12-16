@@ -20,14 +20,13 @@ unsigned char PixelChar::get(int x, int y, unsigned char bitMask)
 
 }
 
-void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol)
+void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol, int forceD800)
 {
     m_lastBitmask = bitMask;
     if (x<0 || x>=8 || y<0 || y>=8) {
         qDebug() << "Trying to set " << x << ", " << y << " out of bounds";
         return;
     }
-
 
     // Special case hires
     if (maxCol==2) {
@@ -90,6 +89,17 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, un
         if (winner>=minCol)
             c[winner] = color;
 
+    }
+
+    if (forceD800!=-1) {
+        c[3] = forceD800;
+//        if (color!=0 )
+  //          qDebug() << QString::number(winner) <<QString::number(color) ;
+        if (winner==3 && color != forceD800){
+            color = forceD800;
+//            qDebug() << "ABORTING " <<QString::number(color);
+//            return;
+        }
     }
 
 
@@ -246,10 +256,22 @@ bool PixelChar::isEqualBytes(PixelChar &o)
     return true;
 }
 
-void PixelChar::Reorganize(unsigned char bitMask, unsigned char scale, unsigned char minCol, unsigned char maxCol, unsigned char bgCol)
+void PixelChar::Reorganize(unsigned char bitMask, unsigned char scale, unsigned char minCol, unsigned char maxCol, unsigned char bgCol, unsigned char forceD800Color)
 {
 //    if (rand()%1000==0)
   //      qDebug() << bgCol << minCol << maxCol;
+
+    if (forceD800Color!=255) {
+        // First, swap potential 1 and 2
+//        qDebug() << "HERE";
+        if (c[1]==forceD800Color)
+            swapMCBits(1,3);
+        if (c[2]==forceD800Color)
+            swapMCBits(2,3);
+
+        c[3] = forceD800Color;
+    }
+
     if (c[0]!=bgCol)
         for (int i=1;i<maxCol;i++)
             if (c[i]==bgCol) {
@@ -341,6 +363,21 @@ void PixelChar::ForceBackgroundColor(int col, int swapcol)
 
 
 
+}
+
+void PixelChar::swapMCBits(uchar b1, uchar b2)
+{
+    for (int i=0;i<8;i++) {
+        uchar c = 0;
+        uchar org = p[i];
+        for (int j=0;j<4;j++) {
+            uchar v = (org>>(j*2))&0b11;
+            if (v==b1)
+                v=b2;
+            c |= (v<<j*2);
+        }
+        p[i] = c;
+    }
 }
 
 bool PixelChar::isPure()

@@ -68,7 +68,6 @@ public:
 //    QVector<CharPos> m_charPos;
     QByteArray m_outputData;
     int m_Index = 0;
-
     MultiColorImage(LColorList::Type t);
 //    QVector<PixelChar> m_data;
     PixelChar m_data[40*25*10];
@@ -182,6 +181,8 @@ public:
    virtual void CompressAndSave(QByteArray& chars, QVector<int>& screen, int x0,int x1, int y0, int y1, int& noChars, double compression, int maxChars, int type, bool addChars);
 
    void SetColor(uchar col, uchar idx) override;
+
+   void SetForceD800Color(int val ) override;
 
 
 };

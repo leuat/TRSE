@@ -39,7 +39,7 @@ C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
     m_bitMask = 0b1;
     m_noColors = 2;
 
-
+    m_supports.d800_limit = false;
     m_scale = 1;
     m_minCol = 0;
     m_type = LImage::Type::FullScreenChar;

@@ -571,6 +571,12 @@ void FormImageEditor::Initialize()
     Data::data.Redraw();
 
 
+    int i = GetFooterData(LImageFooter::POS_D800_FIXED);
+    if (i!=0) {
+        ui->cmbFixedfD800->setCurrentIndex(i);
+        m_work.m_currentImage->m_image->SetForceD800Color(i-1);
+    }
+
     UpdatePalette();
     updateCharSet();
     FillCMBColors();
@@ -846,10 +852,10 @@ void FormImageEditor::UpdatePalette()
 
 
 
-
     ui->btnExportC->setVisible(m_work.m_currentImage->m_image->m_supports.exportc);
     ui->btnImportC->setVisible(m_work.m_currentImage->m_image->m_supports.importc);
-
+    ui->lblFixedD800->setVisible(m_work.m_currentImage->m_image->m_supports.d800_limit);
+    ui->cmbFixedfD800->setVisible(m_work.m_currentImage->m_image->m_supports.d800_limit);
 
     ui->btnExportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaExport);
     ui->btnImportKoala->setVisible(m_work.m_currentImage->m_image->m_supports.koalaImport);
@@ -2700,5 +2706,13 @@ void FormImageEditor::on_cbmGridSize_currentTextChanged(const QString &arg1)
 void FormImageEditor::on_btnImportMain_clicked()
 {
     on_btnImport_clicked();
+}
+
+
+void FormImageEditor::on_cmbFixedfD800_activated(int index)
+{
+    SetFooterData(LImageFooter::POS_D800_FIXED,index);
+    m_work.m_currentImage->m_image->SetForceD800Color(index-1);
+    onPenChanged();
 }
 

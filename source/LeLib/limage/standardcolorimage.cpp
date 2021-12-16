@@ -42,6 +42,7 @@ StandardColorImage::StandardColorImage(LColorList::Type t) : MultiColorImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_supports.asmExport = true;
+    m_supports.d800_limit = false;
 
 }
 

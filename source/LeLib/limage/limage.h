@@ -76,7 +76,7 @@ public:
 
     bool exportc = false;
     bool importc = false;
-
+    bool d800_limit = false;
     bool displayBackground = true;
     bool displayForeground = true;
     bool displayMC1 = true;
@@ -103,7 +103,7 @@ public:
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
                 OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset,
-                AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES,VZ200
+                AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES,VZ200, CustomC64
               };
 
 
@@ -187,6 +187,10 @@ public:
     virtual void ExportBlackWhite(QFile& file, int p1, int p2, int p3, int p4) {}
 
 
+    virtual void SetForceD800Color(int val) {
+
+    }
+
     virtual QStringList SpriteCompiler(QString name, QString src, QString dst, int x, int y, int w, int h) {return QStringList();}
 
     virtual void BeforeRightButton() {}
@@ -199,6 +203,7 @@ public:
     int m_height;
     bool m_isHybridTemp;
 
+    int m_forceD800Color = -1;
 
 
     void PushHybrid();
