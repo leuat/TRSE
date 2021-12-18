@@ -51,26 +51,21 @@ Sets the VZ200 resolution mode.
 **/
 procedure SetMode(ga: global byte);
 begin
-	j := gfxmode2;
-	if (ga=1) then
-		begin
-			gfxval := $02;
-			col_or := $08; 
-			col_and := $ef;			
-			i := col_or + gfxval;
-			j := j & i;
-			gfxmode2 := j;
-			gfxmode := j;
-		end
-	else
-		begin
-			gfxval := $00;
-			col_or := $08; 
-			col_and := $ef;			
-			i := col_or + gfxval;
-			j := j & i;
-			gfxmode2 := j;	
-		end;
+	asm("
+		ld a,[Screen_c]
+		cp #00
+		jr z,bg0
+		ld a,(#783B)
+		res 3,a
+		ld (#6800),a
+		ld (#783B),a
+		ret
+bg0		
+		ld a,(#783B)
+		set 3,a
+		ld (#6800),a
+		ld (#783B),a
+	");
 end;
 
 /**
@@ -104,14 +99,14 @@ begin
 	asm("
 		ld a,[Screen_c]
 		cp #00
-		jr z,bg0
-		ld a,(#6800)
+		jr z,bg1
+		ld a,(#783B)
 		set 4,a
 		ld (#6800),a
 		ld (#783B),a
 		ret
-bg0		
-		ld a,(#6800)
+bg1		
+		ld a,(#783B)
 		res 4,a
 		ld (#6800),a
 		ld (#783B),a
