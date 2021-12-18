@@ -51,7 +51,7 @@ Sets the VZ200 resolution mode.
 **/
 procedure SetMode(ga: global byte);
 begin
-	j := gfxmode2[0];
+	j := gfxmode2;
 	if (ga=1) then
 		begin
 			gfxval := $02;
@@ -59,9 +59,14 @@ begin
 			col_and := $ef;			
 			i := col_or + gfxval;
 			j := j & i;
+<<<<<<< Updated upstream
 			asm(";here");
 			gfxmode2[0] := j;
 			gfxmode[0] := j;
+=======
+			gfxmode2 := j;
+			gfxmode := j;
+>>>>>>> Stashed changes
 		end
 	else
 		begin
@@ -70,7 +75,7 @@ begin
 			col_and := $ef;			
 			i := col_or + gfxval;
 			j := j & i;
-			gfxmode2[0] := j;	
+			gfxmode2 := j;	
 		end;
 end;
 
