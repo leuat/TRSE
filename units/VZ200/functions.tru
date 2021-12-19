@@ -71,35 +71,6 @@ begin
   ");
   getRandFromArray := i;
 end;
-/** 
-  Takes a maximum number and generates and returns a random number.
-  **/
-function getRandomByte(i : global byte):byte;
-begin
-  asm("
-  ld a,[Functions_i]
-  ld c,a
-  ld a,r
-  ld d,a
-  ld a,r
-  add a,d
-  inc d
-  xor d
-rndloop
-  ld b,#7f
-redo
-  inc b
-  cp c  
-  jr c,rndend
-  dec b
-  and b
-  srl b
-  jr redo
-rndend
-  ld [Functions_i],a
-  ");
-  getRandomByte := i;
-end;
 
 /**
   Converts an Integer number to a string
