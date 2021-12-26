@@ -2,18 +2,51 @@ unit Screen;
 
 var
 	x,y, i,j : byte;
-//	ytab : array[20] of integer = BuildTable("0x0400 + 7*40*(i%7)");
-	ytab : array[20] of integer = BuildTable("0x0400 + 40*i");
-	ptr : pointer;
-/*	
-procedure MoveToY(x,y : global byte);
+	ytab : array[24] of integer = BuildTable("0x0400 + 0x80*(i&7) + Math.floor(i/8)*0x28");
+	zp,ptr : pointer;
+	const screen_loc : address =$400;
+
+
+
+
+
+procedure Clear(x:global byte; zp:global pointer);
 begin
-//	ptr:=ytab[y]+x;
+	fill(zp,x,0);
+	asm(" inc Screen_zp+1");
+	fill(zp,x,0);
+	asm(" inc Screen_zp+1");
+	fill(zp,x,0);
+	asm(" inc Screen_zp+1");
+	fill(zp,x,0);
 end;
-*/
-procedure MoveToY(x,y : global byte);
+	
+procedure MoveTo(x,y : global byte);
 begin
 	ptr:=ytab[y]+x;
+end;
+
+procedure MoveToY(y : global byte) inline;
+begin
+	ptr:=ytab[y];
+end;
+
+procedure WaitForVBlank();
+begin
+	asm("
+	lda $C019  
+	bpl Screen_WaitForVBlank
+vbl_tpp:	
+	lda $C019  
+    	bmi vbl_tpp
+    	");
+
+end;
+
+procedure PrintText(x,y : global byte; zp: global pointer; i:global byte); 
+begin
+	MoveTo(x,y);
+	memcpy(zp, 0, ptr, i);
 end;
 
 

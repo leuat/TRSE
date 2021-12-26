@@ -1,0 +1,34 @@
+program SomeText;
+@use "screen"
+var
+	i,j,time,k : byte;
+	rnd : array[$100] of byte = BuildTable("(Math.random()*1252)%63");
+
+	
+
+procedure PrintRandom();
+begin
+	k:=time;
+	for j:=0 to screen_height do
+	begin
+		Screen::MoveToY(j);
+		for i:=0 to 40 do 
+		begin
+			Screen::ptr[i]:=rnd[k];
+			k+=111;
+		end;
+			
+		
+	end;
+	
+end;
+
+	
+begin
+	while (true) do
+	begin
+		PrintRandom();
+		Screen::WaitForVBlank();
+		time+=19;
+	end;	
+end.

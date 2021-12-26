@@ -33,6 +33,13 @@
 		call(^$FDED);
 	end;
 
+	// Clear keyboard buffer
+	procedure clear_buffer();
+	begin
+		peek(^$C010,0);
+	end;
+
+
 	// Get a key press
 	function get_key():byte;
 	var
@@ -57,11 +64,6 @@
 		end;	
 	end;
 
-	// Clear keyboard buffer
-	procedure clear_buffer();
-	begin
-		peek(^$C010,0);
-	end;
 
 
 	// Print a line to screen

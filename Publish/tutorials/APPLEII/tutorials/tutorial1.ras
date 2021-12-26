@@ -1,58 +1,29 @@
 program Tutorial1;
 @use "Screen"
 var
-	i,j,l,k:byte;	
-	zp:pointer;
-	msg : cstring=("HELLO APPLE WORLD FROM TRSE"); 
-
-procedure FunFill(start,incVal : byte);
-begin
-	zp:=$0400;	
-	j:=start;
-	for l:=0 to 8 do
-	begin	
-		for k:=0 to 3 do
-		begin
-			fill(zp,j,40);
-			j+=incVal;
-			zp:=zp+40;
-			for i:=0 to 60 do
-				wait(255);
-		end;
-		// Yeah. Hurrah!
-		zp:=zp + 8;
-	end
-
-end;
-
-procedure MoveToY();
-begin
-//	ptr:=ytab[y]+x;
-end;
-procedure TestFill();
-begin
-	for l:=0 to 10 do
-	begin
-		Screen::MoveToY(l,0);
-		Screen::ptr:=Screen::ptr+40;
-		//MoveToY();
-		//Screen::ptr:=$0400;
-//		Screen::ptr[0]:=$20+l;	
-		Screen::ptr[l]:=$20;	
-		for i:=0 to 60 do
-			wait(255);
-	end;
-//	Loop();
-end;
-
-
-begin
-	TestFill();
+	py,y,time : byte;
 	
-	FunFill(0,1);	 // Fill with some chars
-	FunFill($20,0);	 // Fill with space
-	// Print message
-	memcpy(#msg,0,^$0400+42,34);
-	Loop();
+	msg : cstring=("HELLO APPLE II WORLD FROM TRSE"); 
+	
+	sin : array[$100] of byte = buildsinetable(24);
+
+
+
+begin
+	
+	while(true) do
+	begin
+		// Increase the counter, calculate y
+		py:=y;
+		y:=sin[time];	
+		time+=1;
+		// Only clear screen if y pos has changed
+		if (y<>py) then
+			Screen::Clear($20, #Screen::screen_loc);
+		// Print the text
+		Screen::PrintText(4,y, #msg, sizeof(msg));			
+		// Wait for vertical blank!
+		Screen::WaitForVBlank();
+	end;
 end.
 
