@@ -58,3 +58,6 @@ data_header_chr/pet.flf = 0
 data_header_chr\pet.flf = 0
 data_header_chr\pet.flf = 0
 show_all_files = 1
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/PET/pbm_examples/
+open_files = 3.043e-314
+current_file = main.ras
