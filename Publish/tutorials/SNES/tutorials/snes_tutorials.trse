@@ -80,6 +80,4 @@ custom_system_emulator = -0.5
 custom_system_emulator_parameters = -0.5
 custom_system_assembler_parameters = -0.5
 custom_system_ending = -0.5
-open_files = -1
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/SNES/tutorials/
-current_file = 01_tiles.ras
+open_files =, 01_tiles.ras
