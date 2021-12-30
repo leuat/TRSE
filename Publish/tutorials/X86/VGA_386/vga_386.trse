@@ -55,6 +55,3 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/X86/VGA_386/
-open_files = ,[ext]units/X86/music/beeplay.tru, music/bubble.trt, tut4.ras, tut5.ras
-current_file = tut3.ras
