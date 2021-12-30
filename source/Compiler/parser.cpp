@@ -758,16 +758,26 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
 //            qDebug() << "Looking for constant " << m_currentToken.m_value.toUpper();
   //          qDebug() << m_symTab->m_constants.keys();
             QSharedPointer<Symbol> s = m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
-
-              if (s==nullptr) {
+            bool isConst = true;
+/*              if (s==nullptr) {
+                  s = m_symTab->Lookup(m_currentToken.m_value,m_currentToken.m_lineNumber);
+                  isConst = false;
+              }
+*/
+              if (s == nullptr) {
                   done=true;
-                  ErrorHandler::e.Error("Could not find constant : '"+m_currentToken.m_value+"'",m_currentToken.m_lineNumber);
+                  ErrorHandler::e.Error("Could not find constant/symbol : '"+m_currentToken.m_value+"'",m_currentToken.m_lineNumber);
 
               }
-              else {
-      //            qDebug() << "FOUND adding " <<s->m_value->m_fVal;
-               str+=QString::number(s->m_value->m_fVal);
-               prevNumber = true;
+              else
+              {
+                  //            qDebug() << "FOUND adding " <<s->m_value->m_fVal;
+                  if (isConst)
+                      str+=QString::number(s->m_value->m_fVal);
+                  else
+                      str+=s->m_name;
+
+                   prevNumber = true;
 
                Eat();
 

@@ -71,4 +71,6 @@ qemu = No
 amstradcpc_options = -0.5
 spectrum_model = 0
 columns = 40
-open_files =, easy/01_hello_world.ras
+open_files = ,easy/10_trt_music_player.ras, easy/01_hello_world.ras, [ext]units/VIC20/trtplayer.tru
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VIC20/tutorials/
+current_file = easy/01_hello_world.ras

@@ -66,6 +66,17 @@ void WidgetPattern::SetCurrentRow(int row) {
     ui->Pattern->m_curPlayerLine = row;
 }
 
+void WidgetPattern::TogglePiano(int toggle)
+{
+    ui->Pattern->m_pianoInput = toggle;
+}
+
+void WidgetPattern::SetOctave(int oct)
+{
+    ui->Pattern->m_curOctave = oct;
+
+}
+
 void WidgetPattern::on_cbmPattern_currentIndexChanged(int index)
 {
     emit emitReloadPatterns();

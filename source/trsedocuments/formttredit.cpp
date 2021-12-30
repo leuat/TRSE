@@ -452,3 +452,19 @@ void FormTTREdit::on_btnTRSEInstruments_clicked()
     on_cmbInstruments_currentIndexChanged(ui->cmbTRSEInstrument->currentIndex());
     m_player.m_instruments.Save();
 }
+
+void FormTTREdit::on_checkBox_stateChanged(int arg1)
+{
+    for (auto w: m_curPatterns)
+        w->TogglePiano(arg1);
+}
+
+
+void FormTTREdit::on_comboBox_activated(int index)
+{
+    for (auto w: m_curPatterns)
+        w->SetOctave(index);
+
+}
+
+

@@ -13,7 +13,28 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,1,1,1,1,1,1000">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,1,1,1,1,1,1,10000">
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <item row="8" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="lyTrackers"/>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <layout class="QGridLayout" name="gridLayout_11">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btnPlay">
+       <property name="text">
+        <string>Play</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -237,22 +258,92 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <layout class="QGridLayout" name="gridLayout_11">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="btnPlay">
-       <property name="text">
-        <string>Play</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="7" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <layout class="QHBoxLayout" name="lyTrackers"/>
-     </item>
-    </layout>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Input</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_13">
+      <item row="0" column="3">
+       <widget class="QComboBox" name="comboBox">
+        <property name="currentText">
+         <string>1</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>5</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>6</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>7</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Piano layout input</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>[spacebar] to toggle free keyboard</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Current octave: </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

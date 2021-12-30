@@ -8,6 +8,7 @@ var
 	tp : pointer of byte;
 	color,red,green,blue : byte;
 	const VGA : integer = $A000;
+	const CGA : integer = $B800;
 	buffer1, buffer2, buffer3, buffer4, buffer5 : pointer;
 	@donotremove source	
 	@donotremove dest
@@ -28,6 +29,22 @@ begin
 	if (noBuffers>4) then
 		buffer5 := Memory::GetBlockMem($FFF);
 end;
+
+procedure InitCGABuffers(noBuffers:global integer);
+begin
+	if (noBuffers>0) then
+		buffer1 := Memory::GetBlockMem($400);
+	if (noBuffers>1) then
+		buffer2 := Memory::GetBlockMem($400);
+	if (noBuffers>2) then
+		buffer3 := Memory::GetBlockMem($400);
+	if (noBuffers>3) then
+		buffer4 := Memory::GetBlockMem($400);
+	if (noBuffers>4) then
+		buffer5 := Memory::GetBlockMem($400);
+end;
+
+
 
 procedure InitVGABuffersNo21(noBuffers:global integer);
 begin

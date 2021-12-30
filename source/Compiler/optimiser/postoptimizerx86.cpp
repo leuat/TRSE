@@ -5,7 +5,7 @@ PostOptimiserX86::PostOptimiserX86()
     m_registers = QStringList() <<"ax"<<"bx"<<"cx"<<"dx"<<"ah"<<"al"<<"bh"<<"bl"<<"ch"<<"cl"<<"dh"<<"dl"<<"es"<<"di"<<"ds"<<"si";
     m_branches = QStringList() <<"call" <<"jne"<<"je"<<"jg"<<"jl" <<"jmp";
     m_registerChangingCommands = QStringList() << "call";
-    m_bops = QStringList() << "add"<<"sub"<<"xor"<<"or"<<"and";
+    m_bops = QStringList() << "add"<<"sub"<<"xor"<<"or"<<"and"<<"shr"<<"shl";
     m_axModifiers = QStringList() << "div"<<"idiv"<<"mul"<<"imul";
 }
 

@@ -24,6 +24,10 @@ public:
     void RefreshAll();
     void SetCursorPosition(int pos);
     void SetCurrentRow(int row);
+    void TogglePiano(int toggle);
+    void SetOctave(int oct);
+
+
 
 private slots:
     void on_cbmPattern_currentIndexChanged(int index);

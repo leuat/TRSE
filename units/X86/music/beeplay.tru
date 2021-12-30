@@ -2,17 +2,20 @@ unit BeePlay;
 @use "system/screen"
 @use "system/tables"
 var
-	ptrOrder, ptrPattern, zp : pointer;
-	noChannels,j,note,octave,oct : byte;
-	octShift: byte = 2;
-	i,noRows,val,decayLength,distort : integer;
+	ptrOrder, ptrPattern, zp : pointer of byte;
+	noChannels,note,octave,oct,o3 : byte;
+	octShift,o4: byte = 2;
+	@donotremove o3
+	@donotremove o4
+	i,noRows,val,distort,v2,j : integer;
 	curOrder, noOrder, curRow, speed, counter,k : integer;
 
 
-	curNotes : array[4] of integer=(0,0,0,0,0,0);
-	curDecay : array[4] of integer=(0,0,0,0,0,0);
-	curDistort : array[4] of integer=(0,0,0,0,0,0);
-	
+	decayLength : array[] of integer=(2,2,2,2,2,2,2,2);
+	curNotes : array[] of integer=(0,0,0,0,0,0,0,0);
+	curDistort : array[] of integer=(0,0,0,0,0,0,0,0);
+	curDecay : array[] of integer=(0,0,0,0,0,0,0,0);
+
 
 
 	curN : integer = 0;
@@ -27,7 +30,7 @@ var
 	
 
 	
-	pow2 : array[8] of integer = (1,2,4,8,16,32,64,128,256,512);
+	pow2 : array[] of integer = (1,2,4,8,16,32,64,128,256,512);
 
 
 
@@ -48,19 +51,30 @@ begin
 	");	
 end; 
 
+procedure Stop( );
+begin
+	asm("
+
+    in      al, 61h         ; Turn off note (get value from
+                            ;  port 61h).
+    and     al, 11111100b   ; Reset bits 1 and 0.
+    out     61h, al         ; Send new value.	
+");
+end; 
+
 
 procedure Initialize( zp : global pointer );
 begin
 	noChannels := zp[0];
 	noRows := zp[1];
 	asm mov [BeePlay_noRows+1], byte 0 end;
-	
 	noOrder := zp[2];
 	noOrder *=noChannels;
-	zp:=zp+3;
-	ptrPattern := zp + noOrder;
-	zp:=zp+2;
-	decayLength := 3;
+	zp:=zp+ptr(0,5);
+	ptrPattern := zp+noOrder;
+	
+	
+	fill(#decayLength,3,noChannels);
 	
 	speed := 3;
 	counter :=0;
@@ -76,42 +90,49 @@ end;
 procedure Play();
 begin
 	// Get note of current channel
-	val:=curDecay[curN];
-	// Advance to next channel		
-	val-=1;
-	if (val=0) then curNotes[curN]:=0;
-
-
 	i:=curNotes[curN];
-	/*
-	distort := curDistort[curN];
-	curDistort[curN] := distort+10;
-	*/
-
-	if (val<255) then curDecay[curN]:=val;
+	if (curDecay[curN]<>0) then
+		curDecay[curN]-=1
+	else
+		i:=0;
 	
+
 	curN:=curN+1;
+	
 	if (curN = noChannels) then
 		curN := 0;
-	
-	if (i=255 or i=0) then
-		return; 
-		
 
+	if (i=255 or i=0) then
+	begin
+		v2:=true; // prepare to stop
+		for j:=0 to noChannels do
+		begin
+			if (curDecay[j]<>0) then
+				v2:=false;
+		end;
+			
+		if (v2) then
+			Stop();
+			
+		return;
+	end;
+
+
+	// Play note
+	//i:=curRow;
 
 	// Calculate octave		
 	oct := i/12;
-	while (i>12) do i:=i-12;
+	i:=mod(i,12);
 	// Look up note
 	val := noteTable[i];
-
-//	val := val + Tables::sineDistort[distort];
-
-	// Tweak octave
-	i:=oct-octShift;
-	val := val>>i;
-	// Beep ahoy!	
+	
+	asm(";bug, fix, byte lookup in array");
+	oct:=oct+octShift;
+	val:=val/pow2[oct];
+	
 	Beep(val);
+
 		
 
 end;
@@ -124,7 +145,14 @@ begin
 		return;
 		
 	counter := 0;
+	
 	// Calculate new notes for each channel
+/*	
+	Screen::Print("  ROW ");
+	Screen::PrintInt(curRow);
+	Screen::Print(" - ");
+*/
+	
 	for i:=0 to noChannels do
 	begin
 		// Get current order
@@ -134,31 +162,34 @@ begin
 		// Get data from row
 		j := zp[curRow];
 		// Do we have a note?
+//		curNotes[i] := 0;
+//		curDecay[i] := 0;
 		if (j&$80 <>0) then
 		begin
 			j:= j &$7F; // Semitone
-			octave := j/12;
+//			octave := j/12;
 			if (j<>$7f) then
 			begin
 				val:=j;
 				asm mov [BeePlay_val+1], byte 0 end; 
 				curNotes[i] := val;
-				curDecay[i] := decayLength;
-//				curDistort[i] := 0;
+				
+				curDecay[i] := decayLength[i];
 			end;		
 		
 		end;
-//		else curNotes[i]:=0;
 				
 	end;
+//	Screen::NewLine();
 	
 	curRow:=curRow+1;
+
 	
 	if (curRow=noRows) then
 	begin
 		curRow:=0;
 		curOrder:=curOrder + noChannels;
-		if (curOrder=noOrder) then
+		if (curOrder = noOrder) then
 		begin
 			curOrder:=0;//Reset to start of song
 		end;

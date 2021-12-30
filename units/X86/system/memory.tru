@@ -3,6 +3,7 @@ var
 	i1 : integer;
 	p1 : pointer;
 	const DEFAULT_TIMER : integer = 23863;
+	error_code : integer = 0;
 	
 @ifdef QEMU
 	curMem : integer;
@@ -58,13 +59,18 @@ end;
 function GetBlockMem(blocks: integer):long;
 begin
 	@ifndef QEMU
+	error_code := 0;
 	asm
 		mov ah,$48
 		mov bx, [Memory_blocks]
 		int $21
 		mov [Memory_i1],ax
+		jnc gbe_ok
+		mov [Memory_error_code], ax
+gbe_ok:
 	end;	
 	GetBlockMem := ptr(i1,0);
+	
 	@endif
 	@ifdef QEMU
 	GetBlockMem :=ptr(curMem,0);

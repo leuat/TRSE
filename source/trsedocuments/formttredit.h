@@ -95,6 +95,12 @@ private slots:
     void on_btnTRSEInstruments_clicked();
 
 
+    void on_checkBox_stateChanged(int arg1);
+
+    void on_comboBox_activated(int index);
+
+
+
 private:
     Ui::FormTTREdit *ui;
 };
