@@ -10,6 +10,7 @@ var
   matrix: array[8] of byte;
   message: string = ("trse stringz rulz");
   num: string = "        ";
+  data : array[256] of byte; // Store string here
   
 begin
   // Set 160x200 16-color mode
@@ -38,6 +39,12 @@ begin
 	Text::Print("In hex: $");	
 	str::itoa(12354,#num,16);
 	Text::Print(#num);
+	
+	str::strcat(#data, "Hello ");
+	str::strcat(#data, "World ");
+
+	Text::MoveCursorTo(1, 11);
+	Text::Print(#data);	
 	  
 	Input::WaitKey();
 

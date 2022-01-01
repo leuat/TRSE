@@ -12,6 +12,14 @@ var
 	num : integer;
 	chars : string="0123456789ABCDEF";
 
+
+/**
+
+	Returns the length of a string. Note that
+	this will only work for strings <256 bytes. 
+
+**/
+
 function strlen( p3 : global ^byte):byte;
 var
 	li:byte;
@@ -24,7 +32,7 @@ begin
 end;
 
 /**
- Reverses a string in
+ Reverses a string
  
  **/
  
@@ -44,12 +52,24 @@ begin
 end;
 
 /**
-	Converts a number to a string in base X
+	Converts a number to a string in base b
+	example:
+	<code>
+itoa(1234, p1, 16); // coverts "1234" to a hexadecimal string stored in p1
+	</code>
 
 **/
 procedure itoa( num:global integer; p1: global ^byte; b:global byte);
 begin
 	i:=0;
+	
+	if (num = 0) then
+	begin
+		p1[0]:=$30; // Simply 0
+		p1[1]:=0; 
+		return;
+	end;
+	
 	while (num <> 0) do
 	begin
  		p1[i]:=chars[mod(num,b)];
@@ -59,6 +79,25 @@ begin
 	p1[i]:=0; // null-term string    
 	reverse(p1);	
 	
+end;
+/**
+
+	Appends a copy of the source string (p2) to the destination string (p1).
+	The terminating null character in destination is overwritten by the first character of source, and a null-character is included at the end of the new string formed by the concatenation of both in destination.
+
+**/
+procedure strcat(p1,p2 : ^byte); 
+begin
+	i:=strlen(p1);
+	j:=0;
+	while (p2[j]<>0) do
+	begin
+		p1[i]:=p2[j];
+		j+=1;
+		i+=1;
+	end;	
+	p1[i]:=0; // null-terminate
+
 end;
 
 end.
