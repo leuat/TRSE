@@ -1,0 +1,27 @@
+unit str;
+
+/*
+	platform-independent string class
+		
+*/
+
+var
+	
+	p1,p2 : ^byte;
+	i,j : byte;
+
+function strlen( p1 : global ^byte):byte;
+begin
+	i:=0;
+	while (p1^<>0) do 
+	begin
+		p1+=1;
+		i+=1;
+	end;
+	strlen:=i;	
+end;
+
+end.
+	
+	
+	

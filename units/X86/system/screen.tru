@@ -13,7 +13,7 @@ var
 	@donotremove source	
 	@donotremove dest
 	source,dest:pointer of integer;
-		
+	ytab_cga : array[200] of integer = buildtable("Math.floor(i/2)*80 + 8192*((i)%2)");
 
 
 procedure InitVGABuffers(noBuffers:global integer);
@@ -32,16 +32,21 @@ end;
 
 procedure InitCGABuffers(noBuffers:global integer);
 begin
-	if (noBuffers>0) then
-		buffer1 := Memory::GetBlockMem($400);
+/*	if (noBuffers>0) then
+		buffer1 := Memory::GetBlockMem($3E8);
 	if (noBuffers>1) then
-		buffer2 := Memory::GetBlockMem($400);
+		buffer2 := Memory::GetBlockMem($3E8);
 	if (noBuffers>2) then
-		buffer3 := Memory::GetBlockMem($400);
+		buffer3 := Memory::GetBlockMem($3E8);
 	if (noBuffers>3) then
-		buffer4 := Memory::GetBlockMem($400);
+		buffer4 := Memory::GetBlockMem($3E8);
 	if (noBuffers>4) then
-		buffer5 := Memory::GetBlockMem($400);
+		buffer5 := Memory::GetBlockMem($3E8);*/
+	buffer1:=Memory::GetBlockMem(1000*noBuffers);
+	buffer2:=buffer1+16000;
+	buffer3:=buffer2+16000;
+	buffer4:=buffer3+16000;
+	buffer5:=buffer4+16000;
 end;
 
 

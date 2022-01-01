@@ -1,0 +1,28 @@
+unit DemoUnit;
+var
+	time,maxTime,transition : integer;
+	
+
+procedure InitEffect(maxTime:global integer);
+begin
+	time:=0;
+	transition:=maxTime;
+end;
+		
+
+procedure Update();
+begin
+	time+=1;
+	transition := maxTime - time;
+end;
+
+
+procedure UpdateMainEmpty();
+begin
+	while (time<maxTime) do
+	begin
+		
+	end;
+end;
+	
+end.

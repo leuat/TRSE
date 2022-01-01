@@ -72,7 +72,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>9</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="tabC64">
           <attribute name="title">
@@ -328,14 +328,55 @@
              <x>10</x>
              <y>10</y>
              <width>781</width>
-             <height>71</height>
+             <height>86</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="gridLayout_10">
+           <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
             <item row="0" column="0">
              <widget class="QLabel" name="label_27">
               <property name="text">
                <string>DOSBOX emulator system</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="cmbX86CPU">
+              <item>
+               <property name="text">
+                <string>8086</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>186</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>286</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>386</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>486</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>PENTIUM</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>ASM CPU Target</string>
               </property>
              </widget>
             </item>
@@ -378,46 +419,15 @@
               </item>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_28">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_45">
               <property name="text">
-               <string>ASM CPU Target</string>
+               <string>Dosbox cycles:</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QComboBox" name="cmbX86CPU">
-              <item>
-               <property name="text">
-                <string>8086</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>186</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>286</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>386</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>486</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>PENTIUM</string>
-               </property>
-              </item>
-             </widget>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="leDosboxCycles"/>
             </item>
            </layout>
           </widget>
