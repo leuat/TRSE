@@ -7,10 +7,16 @@ unit str;
 
 var
 
-@ifdef CPU_6502
-@define sz byte
-@else
+
+/*
+	6502 only handles bytes, the rest supports integers!
+
+*/
+
+
 @define sz integer
+@ifdef CPU_MOS6502
+@define sz byte
 @endif
 	
 	p1,p2,p3 : ^byte;

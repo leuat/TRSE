@@ -1,11 +1,15 @@
 program String_manipulation;
+@use "system/str"
 var
 	longString : string ="I MEOW YOU KNOW";
 	splitString : array[64] of byte;
 	// Could also have been
 	// splitString : string = "                                                                ";
 	sp: pointer; // Pointer to a string
+	// Temporary buffer
+	buf : array[256] of byte;
 
+	ii : integer = 12345;
 
 /*
 	In this example, we use various string methods to manipulate
@@ -45,6 +49,23 @@ begin
 	moveto(11,12,hi(screen_char_loc));
 	sp:=strgetfromindex(#splitString,2);
 	printstring(	sp,0,40);
+
+
+	// Using the new global string library (not finished yet)
+	
+	moveto(11,14,hi(screen_char_loc));
+	// convert the number "ii" to decimal:
+	str::itoa(ii, #buf, 10);
+	printstring(	buf,0,40);
+	
+	
+	
+	moveto(19,14,hi(screen_char_loc));
+	// convert the number in "ii" to hex
+	str::itoa(ii, #buf, 16);
+	printstring(	buf,0,40);
+	
+	
 	
 	Loop();
 
