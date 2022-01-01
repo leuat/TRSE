@@ -30,13 +30,14 @@ begin
 		cp #00
 		jp z,mode0
 		ld a,#00
+		ld bc,#0800
 		jr cls
 mode0
 		ld a,#20
+		ld bc,#0200
 cls
 		ld hl,#7000
 		ld de,#7001
-		ld bc,#0800
 		ld (hl),a
 		ldir
 	");
@@ -54,15 +55,15 @@ begin
 	asm("
 		ld a,[Screen_c]
 		cp #00
-		jr z,bg0
+		jr z,md0
 		ld a,(#783B)
-		res 3,a
+		set 3,a
 		ld (#6800),a
 		ld (#783B),a
 		ret
-bg0		
+md0		
 		ld a,(#783B)
-		set 3,a
+		res 3,a
 		ld (#6800),a
 		ld (#783B),a
 	");

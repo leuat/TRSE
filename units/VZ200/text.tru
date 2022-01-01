@@ -22,15 +22,50 @@ end;
 
 /**
 Prints the string pointed to by p at the current cursor position.
+By default VZ200 prints in inverse.
 Control chars are obeyed, not printed.
 **/
-procedure Print(c: global pointer);
+procedure PrintInv(c: global pointer);
 begin
     asm("
       ld hl, [Text_c]
       call #28a7
       ld a,#0d
       call #033a
+      ");
+end;
+
+/**
+Prints the string pointed to by p at the current cursor position.
+Control chars are obeyed, not printed.
+**/
+procedure Print(c: global pointer);
+begin
+    asm("
+      ld hl, [Text_c]
+printloop      
+      ld a,(hl)
+      cp #00
+      jr z,printout
+      add a,#80
+      ld (hl),a
+      inc hl
+      jp printloop
+printout  
+      ld hl, [Text_c]
+      call #28a7
+      ld a,#0d
+      call #033a
+      ld hl, [Text_c]
+printloop2      
+      ld a,(hl)
+      cp #00
+      jr z,printend
+      sub #80
+      ld (hl),a
+      inc hl
+      jp printloop2     
+printend  
       ");
 end;
 
@@ -78,7 +113,7 @@ end;
 
 /**
   Prints a number to the mode(0) text screen
-  Number is Integer-sized 0-65536
+  Number is Integer-sized -32767 to 32768
   **/
 procedure PrintNumber(i : global Integer);
 begin
@@ -94,6 +129,24 @@ begin
     ld a,#0d
     call #033a      ; Print a <CR>
   ");
+end;
+
+/**
+  Prints a number to the mode(0) text screen wit no carriage return (CR)
+  Number is Integer-sized -32767 to 32768
+  **/
+procedure PrintNumberIntNoCR(i: global Integer);
+begin
+  asm("
+    ld bc,#0000
+    ld de,[Text_i]
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer
+    call #0977    
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string 
+    ld de,pnbbuffer+1
+    jp pnbloop    
+  "); 
 end;
 
 /**
@@ -116,6 +169,59 @@ begin
     ld a,#0d
     call #033a      ; Print a <CR>
   ");
+end;
+
+procedure PrintNumberByteNoCR(x: global byte);
+begin
+  asm("
+    ld bc,#0000
+    ld d,#00
+    ld a,[Text_x]
+    ld e,a
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer    
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string
+    ld de,pnbbuffer
+pnbloop    
+    ld a,(hl)
+    cp #00
+    jr z,pnbstrend
+    ldi
+    jp pnbloop
+pnbstrend
+    ld a,#22
+    ld (de),a
+    inc de
+    ld a,#3b
+    ld (de),a
+    inc de
+    ld a,#00
+    ld (de),a
+    ld hl,pnbbuffer
+    ld a,#22
+    ld (hl),a
+    call #206f
+    jp pnbncrend
+pnbbuffer
+  db $22, #00, #00, #00, #00, #00, #00, #00, #00, #00
+pnbncrend
+  ");
+end;
+
+
+/**
+Prints the string pointed to by p at the current cursor position with no CR.
+By default VZ200 prints in inverse. Must be formatted as literally "STRING TO PRINT";
+Eg. (34,"DEMON",34,59);
+Control chars are obeyed, not printed.
+**/
+procedure PrintInvNoCR(c: global pointer);
+begin
+    asm("
+      ld hl, [Text_c]
+      ld de,pnbbuffer+1
+      jp pnbloop
+      ");
 end;
 
 end.

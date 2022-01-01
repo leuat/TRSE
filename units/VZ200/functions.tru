@@ -108,4 +108,15 @@ begin
   ");
 end;
 
+function SizeOfString(s: global pointer):byte;
+begin
+	j:=0;
+	while (s^<>0) do 
+	begin
+		s += 1;
+		j += 1;
+	end;
+	SizeOfString := j;
+end;
+
 end.
