@@ -7,18 +7,58 @@ unit str;
 
 var
 	
-	p1,p2 : ^byte;
-	i,j : byte;
+	p1,p2,p3 : ^byte;
+	i,j,b,c : byte;
+	num : integer;
+	chars : string="0123456789ABCDEF";
 
-function strlen( p1 : global ^byte):byte;
+function strlen( p3 : global ^byte):byte;
+var
+	li:byte;
 begin
+	li:=0;
+	while (p3[li]<>0) do 
+		li+=1;
+		
+	strlen:=li;	
+end;
+
+/**
+ Reverses a string in
+ 
+ **/
+ 
+procedure reverse(p2: global ^byte);
+begin
+	c:=strlen(p2);
+	j:=c-1;
 	i:=0;
-	while (p1^<>0) do 
+	while i<j do
 	begin
-		p1+=1;
+		b:=p2[i];
+		p2[i]:=p2[j];
+		p2[j]:=b;
+		j-=1;
 		i+=1;
 	end;
-	strlen:=i;	
+end;
+
+/**
+	Converts a number to a string in base X
+
+**/
+procedure itoa( num:global integer; p1: global ^byte; b:global byte);
+begin
+	i:=0;
+	while (num <> 0) do
+	begin
+ 		p1[i]:=chars[mod(num,b)];
+		i+=1;
+		num:=num/b;
+    end;
+	p1[i]:=0; // null-term string    
+	reverse(p1);	
+	
 end;
 
 end.

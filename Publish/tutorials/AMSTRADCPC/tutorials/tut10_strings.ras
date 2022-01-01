@@ -1,0 +1,44 @@
+program Strings;
+@use "crtc"
+@use "input"
+@use "text"
+@use "system/str" // Global string manipulation
+
+var
+  hw_i: byte=0;
+  ch: byte=0;
+  matrix: array[8] of byte;
+  message: string = ("trse stringz rulz");
+  num: string = "        ";
+  
+begin
+  // Set 160x200 16-color mode
+	Crtc::SetMode(0);
+	 	
+	  // Set black border
+	Crtc::SetBorder(0);
+	
+	Text::MoveCursorTo(1, 3);
+	Text::Print(#message);
+	  
+	Text::MoveCursorTo(1, 5);
+	  
+	ch:=str::strlen(#message);
+	str::itoa(ch,#num,10);
+		
+	Text::Print("Number of chars:");	
+	Text::Print(#num);
+		
+	Text::MoveCursorTo(1, 7);
+	Text::Print("Number: ");	
+	str::itoa(12354,#num,10);
+	Text::Print(#num);
+
+	Text::MoveCursorTo(1, 9);
+	Text::Print("In hex: $");	
+	str::itoa(12354,#num,16);
+	Text::Print(#num);
+	  
+	Input::WaitKey();
+
+end.
