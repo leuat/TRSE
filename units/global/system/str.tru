@@ -6,9 +6,16 @@ unit str;
 */
 
 var
+
+@ifdef CPU_6502
+@define sz byte
+@else
+@define sz integer
+@endif
 	
 	p1,p2,p3 : ^byte;
-	i,j,b,c : byte;
+	i,j,b,c : @sz;
+	
 	num : integer;
 	chars : string="0123456789ABCDEF";
 
@@ -22,7 +29,7 @@ var
 
 function strlen( p3 : global ^byte):byte;
 var
-	li:byte;
+	li:@sz;
 begin
 	li:=0;
 	while (p3[li]<>0) do 
@@ -86,7 +93,7 @@ end;
 	The terminating null character in destination is overwritten by the first character of source, and a null-character is included at the end of the new string formed by the concatenation of both in destination.
 
 **/
-procedure strcat(p1,p2 : ^byte); 
+procedure strcat(p1,p2 : global ^byte); 
 begin
 	i:=strlen(p1);
 	j:=0;

@@ -440,6 +440,7 @@ void Parser::VerifyToken(Token t)
 void Parser::InitSystemPreprocessors()
 {
     m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)] = "1";
+    m_preprocessorDefines["CPU_"+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)] = "1";
     Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 
 }
