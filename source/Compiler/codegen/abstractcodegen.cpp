@@ -467,6 +467,12 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         AssignString(node);
         return;
     }
+    // ** Override
+    // someInt := b[c];
+    if (IsSimpleAssignInteger(node))
+        return;
+
+
     // ****** Pointer handling
     if (AssignPointer(node)) {
         return;
@@ -484,6 +490,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     // stack parameters
      if (StoreStackParameter(node))
         return;
+
 
 
     // For constant i:=i+1;
@@ -507,8 +514,6 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     if (IsAssignArrayWithIndex(node))
         return;
 
-    if (IsSimpleAssignInteger(node))
-        return;
 
 
     GenericAssign(node);
