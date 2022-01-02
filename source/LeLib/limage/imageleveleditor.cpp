@@ -428,9 +428,13 @@ CharmapLevel *ImageLevelEditor::getLevel(int i, int j)
 QVector<QPixmap> ImageLevelEditor::CreateIcons()
 {
     QVector<QPixmap> lst;
+
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++) {
-            QImage img = getLevel(i,j)->createImage(64,m_colorList,m_meta.m_width, m_meta.m_height);
+            bool hasBorder = false;
+            if (m_currentLevelPos.x() ==i && m_currentLevelPos.y()==j)
+                hasBorder = true;
+            QImage img = getLevel(i,j)->createImage(64,m_colorList,m_meta.m_width, m_meta.m_height, hasBorder);
             QPixmap pixmap = QPixmap::fromImage(img);
             //QIcon icon(pixmap);
             lst.append(pixmap);
@@ -856,9 +860,10 @@ int CharmapGlobalData::dataSize() const
     return m_dataSize;
 }
 
-QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int height)
+QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int height, bool hasBorder)
 {
     QImage img = QImage(size, size, QImage::Format_ARGB32);
+    QColor border = Qt::yellow;
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
             QColor c = QColor(0,0,0);
@@ -874,6 +879,12 @@ QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int heigh
             if (val==32)
                 colval = 0;
             img.setPixel(i,j, lst.get(colval).color.rgba());
+            if (hasBorder) {
+                int sz = size/12;
+                if (i<sz || i>size-sz || j<sz || j>size-sz)
+                    img.setPixel(i,j, border.rgba());
+
+            }
         }
 
     return img;

@@ -67,7 +67,7 @@ public:
         Clear(0);
     }
 
-    QImage createImage(int size, LColorList& lst, int width, int height);
+    QImage createImage(int size, LColorList& lst, int width, int height, bool hasBorder);
 
 };
 

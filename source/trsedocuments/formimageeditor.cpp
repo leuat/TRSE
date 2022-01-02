@@ -400,6 +400,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
             pressed = true;
             m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
+            UpdateLevels();
 
         }
         if (!pressed)
@@ -1653,6 +1654,7 @@ void FormImageEditor::UpdateLevels()
                 m_work.m_currentImage->m_image->BuildData(ui->tblData,m_projectIniFile->getStringList("data_header_"+m_currentFileShort));
                 Data::data.Redraw();
                 Data::data.forceRedraw = true;
+                UpdateLevels();;
                 onImageMouseEvent();
 
             }
