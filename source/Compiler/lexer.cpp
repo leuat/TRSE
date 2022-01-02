@@ -379,7 +379,7 @@ void Lexer::Initialize()
 }
 /*
  *
- * GetNextToken is the main "tokenizer" that transforms the stream
+ * GetNextToken is the main tokenizen that transforms the stream
  * of characters into streams of tokens.
 */
 
@@ -469,6 +469,7 @@ Token Lexer::GetNextToken()
                 m_text.insert(m_pos-1,"[0]"); m_currentChar = "[";
 
             }
+            //qDebug() << id.m_value;
             return id;
         }
         // Assign statement a:=b;
