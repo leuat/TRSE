@@ -11,6 +11,7 @@
 #include "systemplus4.h"
 #include "systemok64.h"
 #include "systemx86.h"
+#include "systemx16.h"
 #include "systemgameboy.h"
 #include "systemspectrum.h"
 #include "systemtiki100.h"

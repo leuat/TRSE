@@ -70,7 +70,6 @@ end;
 begin
 	
 	InitialiseBalls(); 	 // initialise the balls
-	
 	// infinite loop
 	while(true) do
 	begin
