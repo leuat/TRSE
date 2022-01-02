@@ -23,6 +23,9 @@
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/syntax.h"
 
+
+CharmapLevel ImageLevelEditor::m_copyLevel;
+
 void ImageLevelEditor::SetLevel(QPoint f)
 {
     // Clamp
