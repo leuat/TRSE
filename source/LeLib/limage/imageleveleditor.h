@@ -219,6 +219,7 @@ public:
 
     QString GetCurrentDataString() override;
 
+    void setBasePixel(int x, int y) override;
 
     void BeforeRightButton() override { m_isRightButtonClick = true;}
     void AfterRightButton()  override{m_isRightButtonClick = false;}

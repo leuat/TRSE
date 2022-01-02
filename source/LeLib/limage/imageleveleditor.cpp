@@ -174,6 +174,13 @@ QString ImageLevelEditor::GetCurrentDataString() {
             + " ("+ QString::number(curPos) +  ")";
 }
 
+void ImageLevelEditor::setBasePixel(int x, int y)
+{
+    int pos;
+    PixelToPos(x,y,pos,m_meta.m_width, m_meta.m_height);
+    m_basePixel = curPos;
+}
+
 void ImageLevelEditor::CtrlLeftShift(int x, int y)
 {
     int pos;
@@ -582,9 +589,19 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 
     int sx = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
     int sy = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+//    qDebug() << sx<<sy;
     int w = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CHARSET_WIDTH),1);
+    int tx = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CURRENT_DISPLAY_X),1);
+    int ty = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CURRENT_DISPLAY_Y),1);
 
-    int shift = curPos.x()%sx + (curPos.y()%sy)*w;
+//    qDebug() << tx << ty;
+
+    int dx = (m_basePixel.x())%sx;
+    int dy = (m_basePixel.y())%sy;
+
+    int shift = (tx*(sx+curPos.x()-dx))%sx + (ty*((sy+curPos.y()-dy))%sy)*w;
+    // subtract mouse pos
+
 
 //    qDebug() << QString::number(m_currentChar);
     if (m_currentLevel==nullptr)
