@@ -220,6 +220,10 @@ void ImageLevelEditor::PasteChar()
 {
     //        m_copyLevel = *m_currentLevel;
     if (m_copyLevel.m_CharData.count()!=0) {
+
+        if (m_currentLevel->m_CharData.count()!=m_copyLevel.m_CharData.count())
+            return;
+
        *m_currentLevel = m_copyLevel;
         m_currentLevel->m_CharData = m_copyLevel.m_CharData;
         m_currentLevel->m_CharDataHi = m_copyLevel.m_CharDataHi;
