@@ -45,6 +45,12 @@ begin
 
 	Text::MoveCursorTo(1, 11);
 	Text::Print(#data);	
+
+	// Copy "rulz" from string
+	str::substr(#data, #message, 13,4); 
+
+	Text::MoveCursorTo(1, 13);
+	Text::Print(#data);	
 	  
 	Input::WaitKey();
 

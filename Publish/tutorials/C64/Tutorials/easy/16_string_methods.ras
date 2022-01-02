@@ -65,6 +65,11 @@ begin
 	str::itoa(ii, #buf, 16);
 	printstring(	buf,0,40);
 	
+
+	moveto(10,17,hi(screen_char_loc));
+	// Copy a substring to the buffer ("MEOW")
+	str::substr(#buf, #longString, 2,4);
+	printstring(	buf,0,40);
 	
 	
 	Loop();

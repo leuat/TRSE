@@ -3422,7 +3422,6 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
             Eat(m_currentToken.m_type);
         }
     }
-    //Eat(TokenType::RPAREN);
     m_inProcedureVariableDecl = false;
     return decl;
 }

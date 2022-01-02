@@ -113,6 +113,30 @@ begin
 
 end;
 
+/**
+
+	Copies a substring from p2 to p1. The start position is given by b, and the length is c. 
+	
+<code>
+   // Copies 4 bytes from position 14 (to 18)
+   str::substr(#data, #myString, 14,4); 
+</code>
+
+**/
+
+procedure substr(p1, p2: global ^byte; b,c : global @sz);
+begin
+	p2+=b;
+	
+@ifdef CPU_MOS6502	
+	memcpy(p2,0,p1,c);
+@endif
+@ifdef CPU_Z80
+	memcpy(p2,p1,c);
+@endif 
+	p1[c]:=0;
+end; 
+
 end.
 	
 	
