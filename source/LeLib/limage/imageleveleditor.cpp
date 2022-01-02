@@ -186,6 +186,21 @@ void ImageLevelEditor::CtrlLeftShift(int x, int y)
 
 }
 
+void ImageLevelEditor::ShiftXY(int dx, int dy)
+{
+    CopyChar();
+    for (int j=0;j<m_meta.m_height; j++)
+        for (int i=0;i<m_meta.m_width; i++) {
+            int pos = i + j*m_meta.m_width;
+            int ix = (i-dx+m_meta.m_width)%m_meta.m_width;
+            int iy = (j-dy+m_meta.m_height)%m_meta.m_height;
+            int np = ix + iy*m_meta.m_width;
+            m_currentLevel->m_CharData[pos] = m_copyLevel.m_CharData[np];
+            m_currentLevel->m_CharDataHi[pos] = m_copyLevel.m_CharDataHi[np];
+            m_currentLevel->m_ColorData[pos] = m_copyLevel.m_ColorData[np];
+        }
+}
+
 void ImageLevelEditor::CopyChar()
 {
     m_copyLevel = *m_currentLevel;

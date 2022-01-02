@@ -225,6 +225,7 @@ public:
 
 
     void CtrlLeftShift(int x, int y ) override;
+    void ShiftXY(int dx, int dy) override;
 
     CharmapLevel m_copyLevel;
     void CopyChar() override;
