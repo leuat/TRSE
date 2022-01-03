@@ -11,7 +11,7 @@ var
   message: string = ("trse stringz rulz");
   num: string = "        ";
   data : array[256] of byte; // Store string here
-  
+ 	 
 begin
   // Set 160x200 16-color mode
 	Crtc::SetMode(0);
