@@ -12,6 +12,9 @@ var
   num: string = "        ";
   data : array[256] of byte; // Store string here
  	 
+ 	 
+  string_list : array[4] of string = ("this","is","an","array");	 
+ 	 
 begin
   // Set 160x200 16-color mode
 	Crtc::SetMode(0);
@@ -51,6 +54,9 @@ begin
 
 	Text::MoveCursorTo(1, 13);
 	Text::Print(#data);	
+
+	Text::MoveCursorTo(1, 14);
+	Text::Print(string_list[3]);	
 	  
 	Input::WaitKey();
 

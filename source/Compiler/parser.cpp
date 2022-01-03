@@ -4117,6 +4117,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
    }
 
 //    return vars;
+    var_decleratons.append(m_extraDecls); // Extra variables such as string lists
+    m_extraDecls.clear();
     return var_decleratons;
 }
 
@@ -4218,11 +4220,60 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         }
         Eat(m_currentToken.m_type);
         flags<< getFlags();
-        QStringList data;
+        QStringList data ;
+
+        bool isStringList = dataType==TokenType::STRING;
+
+        // string lists are treated as pointer lists
+
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
             VerifyNotInClassAssignTypespec();
             Eat();
+
+            if (isStringList) {
+                dataType = Syntax::s.m_currentSystem->getSystemPointerArrayType();
+                arrayType.m_type = Syntax::s.m_currentSystem->getSystemPointerArrayType();
+                arrayType.m_value = "INTEGER";
+
+                Eat(TokenType::LPAREN);
+                QVector<Token> tmp_data;
+                while (m_currentToken.m_type != TokenType::RPAREN && m_currentToken.m_type!=TokenType::TEOF) {
+                    tmp_data.append(m_currentToken);
+//                    qDebug() << m_currentToken.m_value;
+                    Eat();
+                    if (m_currentToken.m_type == TokenType::COMMA)
+                        Eat();
+                }
+                // Ok so we have strings and string lists
+                // First, declare the strings
+                QStringList names;
+                int cnt=0;
+                Token tt = t;
+                t.m_type = TokenType::STRING;
+                // Create one string per in the list
+                for (auto d: tmp_data) {
+                    QString name = "tmp_"+QString::number((rand()%1000000)) + "_string"+QString::number(cnt);
+                    names.append(name);
+                    QSharedPointer<NodeVar> var = NodeFactory::CreateVariable(d,name);
+                    Token tt = d;
+                    tt.m_type = TokenType::STRING;
+                    tt.m_value = "STRING";
+                    auto type = QSharedPointer<NodeVarType>(new NodeVarType(tt,""));
+                    type->m_data.append(d.m_value);
+//                    qDebug() << d.m_value;
+                    QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(var, type));
+
+                    m_extraDecls.append(decl);
+                    cnt++;
+                }
+                // Ok : strings are added. Now create the actual pointer list!
+                data = names;
+                t.m_type = TokenType::ARRAY;
+            }
+            else {
+
+
             if (m_currentToken.m_type==TokenType::BUILDTABLE) {
                 data = BuildTable(count, dataType);
             }
@@ -4269,6 +4320,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     }
                 }
             }
+            }
 
             QString vars = Util::toString(varNames);
             Eat(TokenType::RPAREN);
@@ -4297,7 +4349,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 //            qDebug() << "PARSER "<<position;
 
 
-           // Eat(m_currentToken.m_type);
         }
 //        QStringList flags = getFlags();
 
@@ -4312,16 +4363,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     ErrorHandler::e.Error("You cannot declare an array of records that contain sub-arrays due to 6502 limitations. <br>Please remove the sub-array from the record type in question : '"+arrayType.m_value+"'.",arrayType.m_lineNumber);
         }
         // m68k alignment for byte arrays
-  //      qDebug() << "Before:" <<t.m_intVal <<data.count() << t.m_type;
         if (forceByteAlignment && arrayType.m_type==TokenType::BYTE && (t.m_intVal&1)==1) {
             t.m_intVal+=1;
             if (data.count()!=0)
                 data.append("0");
             count = t.m_intVal;
-//            qDebug() << "After:" <<t.m_intVal <<data.count() << t.m_type;
 
         }
-
+//        qDebug() << "***** " <<t.getType();
         QSharedPointer<NodeVarType> nt =  QSharedPointer<NodeVarType>(new NodeVarType(t,position, arrayType,data));
         nt->m_flags = flags;
         nt->VerifyFlags(isInProcedure);

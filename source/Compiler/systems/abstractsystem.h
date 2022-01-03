@@ -55,6 +55,9 @@ public:
     bool m_stripPrg = false;
     bool m_canRunAsmFiles = false;
 
+    virtual TokenType::Type getSystemPointerArrayType() {
+        return TokenType::POINTER;
+    }
     QMap<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;
     bool m_supportsExomizer = false;

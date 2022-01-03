@@ -51,6 +51,9 @@ public:
 
     void applyEmulatorParametersVICE(QStringList& params, QString debugFile, QString filename);
 
+    TokenType::Type getSystemPointerArrayType() override {
+        return TokenType::INTEGER;
+    }
 
 };
 
