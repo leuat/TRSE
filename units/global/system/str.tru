@@ -1,0 +1,143 @@
+unit str;
+
+/*
+	platform-independent string class
+		
+*/
+
+var
+
+
+/*
+	6502 only handles bytes, the rest supports integers!
+
+*/
+
+
+@define sz integer
+@ifdef CPU_MOS6502
+@define sz byte
+@endif
+	
+	p1,p2,p3 : ^byte;
+	i,j,b,c : @sz;
+	
+	num : integer;
+	chars : string="0123456789ABCDEF";
+
+
+/**
+
+	Returns the length of a string. Note that
+	this will only work for strings <256 bytes. 
+
+**/
+
+function strlen( p3 : global ^byte):byte;
+var
+	li:@sz;
+begin
+	li:=0;
+	while (p3[li]<>0) do 
+		li+=1;
+		
+	strlen:=li;	
+end;
+
+/**
+ Reverses a string
+ 
+ **/
+ 
+procedure reverse(p2: global ^byte);
+begin
+	c:=strlen(p2);
+	j:=c-1;
+	i:=0;
+	while i<j do
+	begin
+		b:=p2[i];
+		p2[i]:=p2[j];
+		p2[j]:=b;
+		j-=1;
+		i+=1;
+	end;
+end;
+
+/**
+	Converts a number to a string in base b
+	example:
+	<code>
+itoa(1234, p1, 16); // coverts "1234" to a hexadecimal string stored in p1
+	</code>
+
+**/
+procedure itoa( num:global integer; p1: global ^byte; b:global byte);
+begin
+	i:=0;
+	
+	if (num = 0) then
+	begin
+		p1[0]:=$30; // Simply 0
+		p1[1]:=0; 
+		return;
+	end;
+	
+	while (num <> 0) do
+	begin
+ 		p1[i]:=chars[mod(num,b)];
+		i+=1;
+		num:=num/b;
+    end;
+	p1[i]:=0; // null-term string    
+	reverse(p1);	
+	
+end;
+/**
+
+	Appends a copy of the source string (p2) to the destination string (p1).
+	The terminating null character in destination is overwritten by the first character of source, and a null-character is included at the end of the new string formed by the concatenation of both in destination.
+
+**/
+procedure strcat(p1,p2 : global ^byte); 
+begin
+	i:=strlen(p1);
+	j:=0;
+	while (p2[j]<>0) do
+	begin
+		p1[i]:=p2[j];
+		j+=1;
+		i+=1;
+	end;	
+	p1[i]:=0; // null-terminate
+
+end;
+
+/**
+
+	Copies a substring from p2 to p1. The start position is given by b, and the length is c. 
+	
+<code>
+   // Copies 4 bytes from position 14 (to 18)
+   str::substr(#data, #myString, 14,4); 
+</code>
+
+**/
+
+procedure substr(p1, p2: global ^byte; b,c : global @sz);
+begin
+	p2+=b;
+	
+@ifdef CPU_MOS6502	
+	memcpy(p2,0,p1,c);
+@endif
+@ifdef CPU_Z80
+	memcpy(p2,p1,c);
+@endif 
+	p1[c]:=0;
+end; 
+
+end.
+	
+	
+	

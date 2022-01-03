@@ -101,7 +101,7 @@ void SystemX86::PostProcess(QString &text, QString file, QString currentDir)
 
     if (m_buildSuccess) {
 
-            int orgFileSize = QFile(file).size();
+            int orgFileSize = QFile(file+".exe").size();
 
             output+="<br>Assembled file size: <b>" + QString::number(orgFileSize) + "</b> bytes";
 /*            if (m_settingsIni->getdouble("perform_crunch")==1) {
@@ -178,11 +178,18 @@ void SystemX86::applyEmulatorParameters(QStringList &params, QString debugFile, 
         QString type = pini->getString("dosbox_x86_system");
         if (type.toLower()!="default")
             params << "-machine" << type;
+
         params << "-noautoexec";
         fn+=".exe";
     }
     fn = fn.replace("//","/");
     fn = fn.replace("/",QDir::separator());
-    params <<fn;
-    qDebug() << params;
+    QString cycles = (m_projectIni->getString("dosbox_cycles"));
+    QString cpu = m_cpu;
+    if (cpu=="8086") cpu="8088";
+    if (cycles.trimmed()!="")
+        params <<"-c"<<"cycles "+cycles;
+    params <<"-c" <<"cputype "+cpu;
+    params << fn;
+//    qDebug() << params;
 }

@@ -1,0 +1,26 @@
+program TextStuff;
+@use "system/str"
+@use "system/screen"
+var  
+	tmp : array[256] of byte; // string storage
+	i : integer;
+begin
+	Screen::Print("Whoooo!");
+	Screen::NewLine();
+	
+	str::strcat(#tmp, "Hello ");	
+	str::strcat(#tmp, "World");
+	Screen::Print(#tmp);
+	Screen::NewLine();
+	i := 5123;
+	Screen::Print("This is a number in base 10 :");
+	str::itoa(i,#tmp,10); 	
+	Screen::Print(#tmp);
+	Screen::NewLine();
+
+	Screen::Print("This is the number in hex :$");
+	str::itoa(i,#tmp,16); 	
+	Screen::Print(#tmp);
+	Screen::NewLine();
+	loop();
+end.

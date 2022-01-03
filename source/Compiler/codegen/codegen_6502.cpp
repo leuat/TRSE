@@ -1339,9 +1339,14 @@ QString CodeGen6502::getInitProcedure() {
 bool CodeGen6502::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
 {
 
+//    qDebug() << "HERE" <<node->m_right->isPointer(as);
+  //  qDebug() << TokenType::getType(as->m_symTab->Lookup(node->m_left->getValue(as), node->m_op.m_lineNumber)->getTokenType());
     // Only assign pure variables ( z := ... and not z[i] := ....)
     if (node->m_left->hasArrayIndex())
         return false;
+
+
+
 
     if (node->m_right->isPointer(as) && node->m_right->hasArrayIndex() && node->m_right->getArrayType(as)==TokenType::INTEGER) {
         // We made sure that we only have stuff like z := p[ expr() ]
@@ -3088,6 +3093,7 @@ bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
 
 
     if(node->getType(as)!=TokenType::POINTER)
+
     if (node->m_expr->isPureNumeric()) {
         int pos = node->m_expr->getValueAsInt(as);
         if (node->getArrayType(as)==TokenType::INTEGER)

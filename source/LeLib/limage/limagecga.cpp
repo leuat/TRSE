@@ -22,6 +22,20 @@ void LImageCGA::ExportBin(QFile &file)
 {
     QByteArray even, odd,m1,m2;
     toCGA(even,odd,m1,m2,0,0,320,200);
+    if (m_exportParams["export1"]==1) {
+        // Chunky export
+        QByteArray c;
+        int a=0;
+        int b=0;
+        for (int i=0;i<100;i++) {
+            for (int j=0;j<80;j++)
+                c.append(even[a++]);
+            for (int j=0;j<80;j++)
+                c.append(odd[b++]);
+        }
+        file.write(c);
+        return;
+    }
     for (int i=0;i<192;i++) even.append((char)0);
     file.write(even);
     file.write(odd);

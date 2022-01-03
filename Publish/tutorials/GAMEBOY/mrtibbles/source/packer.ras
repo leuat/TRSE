@@ -1,0 +1,26 @@
+
+// Delete original packed files
+@deletefile "sprites/sprites_packed.flf"
+@deletefile "sprites/sprites_index.bin"
+
+// Pack sprite 0 : cat at 0,0 - 8,2 in "cat.flf"
+@spritepacker "sprites/cat.flf" "sprites/sprites_packed.flf" "sprites/sprites_index.bin" "gameboy" 0 0  2 2  0 // site
+@spritepacker "sprites/cat.flf" "sprites/sprites_packed.flf" "sprites/sprites_index.bin" "gameboy" 2 0  2 2  0 // walk 0
+@spritepacker "sprites/cat.flf" "sprites/sprites_packed.flf" "sprites/sprites_index.bin" "gameboy" 4 0  2 2  0 // walk 1
+@spritepacker "sprites/cat.flf" "sprites/sprites_packed.flf" "sprites/sprites_index.bin" "gameboy" 6 0  2 2  0 // walk 2
+@spritepacker "sprites/cat.flf" "sprites/sprites_packed.flf" "sprites/sprites_index.bin" "gameboy" 8 0  2 2  0 // walk 3
+// Afterwards, export
+@export "sprites/sprites_packed.flf" "sprites/sprites_packed.bin" 256
+
+
+
+// Export the level data
+@export "tiles/levels.flf" "tiles/level.bin" 256
+
+
+// Export the metatile data (2x2 chunks of tiles)
+@export "tiles/metatiles.flf" "tiles/metatiles.bin" 256
+
+// Export the tile data
+@export "tiles/tiles.flf" "tiles/tiles.bin" 256
+

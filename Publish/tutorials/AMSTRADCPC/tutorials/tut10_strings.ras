@@ -1,0 +1,63 @@
+program Strings;
+@use "crtc"
+@use "input"
+@use "text"
+@use "system/str" // Global string manipulation
+
+var
+  hw_i: byte=0;
+  ch: byte=0;
+  matrix: array[8] of byte;
+  message: string = ("trse stringz rulz");
+  num: string = "        ";
+  data : array[256] of byte; // Store string here
+ 	 
+ 	 
+  string_list : array[4] of string = ("this","is","an","array");	 
+ 	 
+begin
+  // Set 160x200 16-color mode
+	Crtc::SetMode(0);
+	 	
+	  // Set black border
+	Crtc::SetBorder(0);
+	
+	Text::MoveCursorTo(1, 3);
+	Text::Print(#message);
+	  
+	Text::MoveCursorTo(1, 5);
+	  
+	ch:=str::strlen(#message);
+	str::itoa(ch,#num,10);
+		
+	Text::Print("Number of chars:");	
+	Text::Print(#num);
+		
+	Text::MoveCursorTo(1, 7);
+	Text::Print("Number: ");	
+	str::itoa(12354,#num,10);
+	Text::Print(#num);
+
+	Text::MoveCursorTo(1, 9);
+	Text::Print("In hex: $");	
+	str::itoa(12354,#num,16);
+	Text::Print(#num);
+	
+	str::strcat(#data, "Hello ");
+	str::strcat(#data, "World ");
+
+	Text::MoveCursorTo(1, 11);
+	Text::Print(#data);	
+
+	// Copy "rulz" from string
+	str::substr(#data, #message, 13,4); 
+
+	Text::MoveCursorTo(1, 13);
+	Text::Print(#data);	
+
+	Text::MoveCursorTo(1, 14);
+	Text::Print(string_list[3]);	
+	  
+	Input::WaitKey();
+
+end.

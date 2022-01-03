@@ -7,7 +7,7 @@ class NodeCase : public Node
 {
 public:
     NodeCase(Token t);
-    QSharedPointer<NodeVar> m_variable = nullptr;
+    QSharedPointer<Node> m_variable = nullptr;
     QVector<QSharedPointer<Node>> m_conditionals;
     QVector<QSharedPointer<Node>> m_statements;
     QSharedPointer<Node> m_elseBlock = nullptr;

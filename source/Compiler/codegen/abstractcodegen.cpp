@@ -467,6 +467,12 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         AssignString(node);
         return;
     }
+    // ** Override
+    // someInt := b[c];
+    if (IsSimpleAssignInteger(node))
+        return;
+
+
     // ****** Pointer handling
     if (AssignPointer(node)) {
         return;
@@ -484,6 +490,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     // stack parameters
      if (StoreStackParameter(node))
         return;
+
 
 
     // For constant i:=i+1;
@@ -507,8 +514,6 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     if (IsAssignArrayWithIndex(node))
         return;
 
-    if (IsSimpleAssignInteger(node))
-        return;
 
 
     GenericAssign(node);
@@ -1381,11 +1386,33 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
     bool hasElse = node->m_elseBlock!=nullptr;
     QString labelEnd = as->NewLabel("caseend");
     // Loop through all the conditionals in the case statement
+
+    auto expr = node->m_variable;
+
+    if (!expr->isPureVariable()) {
+        // Uh oh, we need to store in a temp one
+        if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::MOS6502)
+            ErrorHandler::e.Error("Cases can only operate on pure variables (for now). Not implemented on the z80 / m68k / x86 yet, please nag the developer!",node->m_op.m_lineNumber);
+
+        QString name = as->m_internalZP[as->m_internalZP.count()-1];
+        as->Comment("expr is not pure, need to save to temp var");
+        as->ClearTerm();
+        expr->Accept(this);
+        as->Term();
+        as->Asm("sta "+name);
+        if (expr->isWord(as))
+            as->Asm("sty "+name+"+1");
+
+        expr = NodeFactory::CreateVariable(expr->m_op,name);
+
+    }
+
+
     for (int i=0;i<node->m_conditionals.count();i++) {
         QString labelNext = as->NewLabel("casenext");
         as->PopLabel("casenext");
         // perform the actual CPU-dependent comparison of the two numbers
-        CompareAndJumpIfNotEqual(node->m_variable, node->m_conditionals[i], labelNext,false);
+        CompareAndJumpIfNotEqual(expr, node->m_conditionals[i], labelNext,false);
         // Print the current statement block
         node->m_statements[i]->Accept(this);
         // Jump to the end, done with case

@@ -260,7 +260,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
 
             }
 
-            if (node->m_expr->isPureVariable() && !node->m_expr->hasArrayIndex()) {
+            if (node->m_expr->isPureVariable() && !node->m_expr->hasArrayIndex() && node->m_expr->isWord(as)) {
                 as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
                 if (node->isWord(as))
                     as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");

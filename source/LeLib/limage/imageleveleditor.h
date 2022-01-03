@@ -67,7 +67,7 @@ public:
         Clear(0);
     }
 
-    QImage createImage(int size, LColorList& lst, int width, int height);
+    QImage createImage(int size, LColorList& lst, int width, int height, bool hasBorder);
 
 };
 
@@ -219,14 +219,16 @@ public:
 
     QString GetCurrentDataString() override;
 
+    void setBasePixel(int x, int y) override;
 
     void BeforeRightButton() override { m_isRightButtonClick = true;}
     void AfterRightButton()  override{m_isRightButtonClick = false;}
 
 
     void CtrlLeftShift(int x, int y ) override;
+    void ShiftXY(int dx, int dy) override;
 
-    CharmapLevel m_copyLevel;
+    static CharmapLevel m_copyLevel;
     void CopyChar() override;
 
     void PasteChar() override;

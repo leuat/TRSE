@@ -1934,8 +1934,8 @@ void Methods6502::PrintString(Assembler *as)
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeString> str = qSharedPointerDynamicCast<NodeString>(m_node->m_params[0]);
 
-    if (str==nullptr && var==nullptr)
-        ErrorHandler::e.Error("PrintString must take variable or string constant");
+//    if (str==nullptr && var==nullptr)
+  //      ErrorHandler::e.Error("PrintString must take variable or string constant");
 
     QString varName = "";
     if (var!=nullptr)
@@ -1952,17 +1952,39 @@ void Methods6502::PrintString(Assembler *as)
 
     if (str!=nullptr)
         as->Label(lbl);
-    if (var!=nullptr && var->isPointer(as)) {
+
+
+
+/*    if (var!=nullptr && var->isPointer(as)) {
         as->Asm("lda "+var->getValue(as));
         as->Asm("ldy "+var->getValue(as)+"+1");
     }
     else {
+
+
+
+
         as->Asm("clc");
         as->Asm("lda #<" +varName);
         as->Term("adc ");
         m_node->m_params[1]->Accept(m_codeGen);
         as->Term();
         as->Asm("ldy #>" +varName);
+    }
+*/
+    if (str!=nullptr) {
+        as->Asm("clc");
+        as->Asm("lda #<" +varName);
+        as->Term("adc ");
+        m_node->m_params[1]->Accept(m_codeGen);
+        as->Term();
+        as->Asm("ldy #>" +varName);
+
+    }
+    else {
+        as->ClearTerm();
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Term();
     }
     as->Asm("sta print_text+0");
     as->Asm("sty print_text+1");

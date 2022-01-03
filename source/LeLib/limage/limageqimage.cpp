@@ -19,6 +19,7 @@
  *   If not, see <https://www.gnu.org/licenses/>.
 */
 
+
 #include "limageqimage.h"
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>

@@ -400,6 +400,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             QStringList lst = m_projectIniFile->getStringList("data_header_"+m_currentFileShort);
             pressed = true;
             m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
+            UpdateLevels();
 
         }
         if (!pressed)
@@ -1084,16 +1085,16 @@ void FormImageEditor::showDetailCharButtons()
     ui->btnCharsetPaste->setVisible(doShow);
     ui->btnFlipVert->setVisible(doShow);
     ui->btnFlipHorisontal->setVisible(doShow);
-    ui->btnShiftUp->setVisible(doShow);
-    ui->btnShiftDown->setVisible(doShow);
-    ui->btnShiftLeft->setVisible(doShow);
-    ui->btnShiftRight->setVisible(doShow);
     ui->btnRepeating->setVisible(doShow);
 
 
     if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr) {
         doShow = true;
     }
+    ui->btnShiftUp->setVisible(doShow);
+    ui->btnShiftDown->setVisible(doShow);
+    ui->btnShiftLeft->setVisible(doShow);
+    ui->btnShiftRight->setVisible(doShow);
     ui->cmbCharX->setVisible(doShow);
     ui->cmbCharY->setVisible(doShow);
     ui->lblTileSize->setVisible(doShow);
@@ -1653,6 +1654,7 @@ void FormImageEditor::UpdateLevels()
                 m_work.m_currentImage->m_image->BuildData(ui->tblData,m_projectIniFile->getStringList("data_header_"+m_currentFileShort));
                 Data::data.Redraw();
                 Data::data.forceRedraw = true;
+                UpdateLevels();;
                 onImageMouseEvent();
 
             }

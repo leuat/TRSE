@@ -41,4 +41,5 @@ ignore_initial_jump = 0
 zeropage_colormemory = $fc
 exomizer_toggle = 0
 show_all_files = 1
+data_header_resources/images/image1.flf = 0
 open_files =, Hello.ras

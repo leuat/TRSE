@@ -145,6 +145,7 @@ private:
     QMap<QString, LMacro> m_macros;
     QString m_procPrefix = "";
     int m_prevPercent = -1;
+    int m_pass = 0, m_acc=0;
 
 //    int m_currentParserBlock=-1;
 
@@ -167,8 +168,7 @@ private:
 
 
     QSharedPointer<Node> ManageClassProcedureCalls(QSharedPointer<Node> left);
-
-
+    QVector<QSharedPointer<Node>> m_extraDecls;
     QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;
@@ -182,7 +182,6 @@ private:
     int PASS_CODE = 2;
     int PASS_OTHER = 4;
 
-    int m_pass = 0, m_acc=0;
 
     bool m_ignoreAll = false;
     bool m_isRecord = false;

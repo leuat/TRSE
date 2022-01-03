@@ -11,7 +11,9 @@ var
 
 @requireFile "data/textsprites0.bin" "Please run example12_rotating_text.fjo before compiling this file"
 
-/*
+/*     if (IsSimpleAssignInteger(node))
+         return;
+
 
 	In this example, we pre-render 28 character as rotating sprites with 16 frames each. We then display
 	the sprites in a funky wavy pattern that it totally scientific and stuff. 

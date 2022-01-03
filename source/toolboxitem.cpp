@@ -64,6 +64,7 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
 
     int currentChar = img->m_currentChar;
 */
+    img->setBasePixel(x,y);
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
             int d = m/2;
@@ -86,6 +87,7 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
 void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
 {
     float m= m_size;
+    img->setBasePixel(x,y);
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
             int d = m/2;
@@ -125,6 +127,7 @@ void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, boo
 void Spray::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
     float m= m_size;
+    img->setBasePixel(x,y);
 
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
@@ -168,6 +171,7 @@ void Filler::Perform(int x, int y, unsigned char color, LImage *img, bool isPrev
 {
 //    if (isPreview)
   //      return;
+    img->setBasePixel(x,y);
     unsigned char testCol = img->getPixel(x,y);
     if (color == testCol)
         return;
@@ -244,6 +248,7 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
 
 void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
     if (button==0) {
         m_start = QPoint(x,y);
         return;
@@ -262,6 +267,7 @@ void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPrevie
 
 void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
 
     if (button==1 && m_status == Status::Idle) {
         m_status = Status::Selecting;
@@ -310,6 +316,7 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
 {
     int w = abs(m_end.x()-m_start.x());
     int h = abs(m_end.y()-m_start.y());
+    img->setBasePixel(x,y);
     for (int i=0;i<w;i++)
         for (int j=0;j<h;j++) {
             unsigned int col = m_copy->getPixel(m_start.x() + i-0.5, m_start.y()+j-0.5);
@@ -327,6 +334,7 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
 
 void RotateAround::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
     if (button==1 && m_status == Status::Idle) {
         m_status = Status::Down;
         m_start = QPoint(x,y);
@@ -362,6 +370,7 @@ void RotateAround::Perform(int x, int y, unsigned char color, LImage *img, bool 
 
 void Circle::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
     if (button==0) {
         m_start = QPoint(x,y);
         return;
@@ -384,6 +393,7 @@ void Circle::Perform(int x, int y, unsigned char color, LImage *img, bool isPrev
 
 void Box::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
     if (button==0) {
         m_start = QPoint(x,y);
         return;
@@ -399,6 +409,7 @@ void Box::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview
 
 void WetBrush::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
     float m= m_size;
     float ll = 0.66;
     MultiColorImage* mci = dynamic_cast<MultiColorImage*>(img);
@@ -579,6 +590,7 @@ void ToolBoxItemOptionFileList::Build(QGridLayout *gl, int row)
 
 void ShapePNGColor::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
 {
+    img->setBasePixel(x,y);
     float m= m_size;
 //    float str = m_options["strength"]->val/50.0;
     QImage scaled = m_shape.scaled(m_size, m_size,Qt::KeepAspectRatio, Qt::TransformationMode::SmoothTransformation);

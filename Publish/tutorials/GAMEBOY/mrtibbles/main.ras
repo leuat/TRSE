@@ -1,0 +1,89 @@
+program MrTibbles;
+@use "screens"
+@use "units/player"
+@use "levels"
+/*
+ Include the "packer file" whenever you've changed any of the sprites!
+*/
+@include "source/packer.ras"
+
+
+
+
+var  
+	pad1,pad2 : byte;
+
+//    sine : array[256] of byte = BuildTable( "Math.sin(i/256.0*Math.PI*2.0)*0x7f+0x7F ");
+	const levelBank : byte = 3;
+	const tileBank : byte = 2;
+
+	tiles : incbin("tiles/tiles.bin") bank(tileBank);
+	metatiles : incbin("tiles/metatiles.bin") bank(levelBank);
+	x,y : byte;
+
+
+
+	level_data : incbin("tiles/level.bin") bank(levelBank);
+
+
+
+
+procedure InitLevelData();
+begin
+	current_bank := tileBank;
+	// Set up tile data
+	Screens::CopyFullCharset(#tiles);
+
+	// Set TRU data to point to level & metatiles
+//	Levels::lp := #level_data;
+	Levels::mt := #metatiles;
+	current_bank := levelBank;
+	
+	Levels::ReadHeader(#level_data);
+
+end;
+
+
+procedure InitVariables();
+begin
+	Player::cur_level_x:=0;
+	Player::cur_level_y:=0;
+	Player::px:=80;
+	Player::ipy:=80*256;
+
+end;
+
+
+
+procedure VBlank();
+begin
+	JoyPad(pad1,pad2);
+	Player::time:=Player::time+1;
+	Player::UpdateSprite(pad1);
+	Player::UpdateLevels();
+	scrollx:=Player::sx;
+	scrolly:=Player::sy;
+
+end;
+
+
+begin
+
+	Screens::InitDefaultScreen();
+	InitVariables();
+	Levels::org_lp:=#level_data;
+	Player::levelBank := levelBank;
+	InitLevelData();	
+//	current_bank := spriteBank;
+
+	background_palette := %11010010;
+	object0_palette := %10010011;
+	Player::Init();	
+	Player::RenderLevel();
+	// must have Vertical blank in order to be able to display sprites
+	InitVBlank( VBlank() );
+	EnableVBLank();
+
+	Loop();	
+
+end.

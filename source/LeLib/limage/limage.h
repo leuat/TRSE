@@ -229,6 +229,7 @@ public:
 
     static QPoint m_copySize;
     static uchar m_copy[];
+    QPoint m_basePixel;
 
     virtual int getGridWidth() {
 //        return getCharWidthDisplay();
@@ -343,6 +344,7 @@ public:
     virtual void Rotate(QPoint center, float angle, float scale, LImage* img);
 
     virtual void setPixel(int x, int y, unsigned int color) = 0;
+    virtual void setBasePixel(int x, int y) {}
     virtual unsigned int getPixel(int x, int y) = 0;
     virtual void SetColor(uchar col, uchar idx) {}
 

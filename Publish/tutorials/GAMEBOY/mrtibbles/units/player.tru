@@ -1,0 +1,327 @@
+Unit Player;
+
+@use "screens"
+@use "levels"
+
+var  
+	const spriteBank : byte = 2;
+	sprites_index : incbin("sprites/sprites_index.bin") bank(spriteBank);
+	sprites_data : incbin("sprites/sprites_packed.bin") bank(spriteBank);
+
+	// 1 sprite takes up 4 bytes, the grl sprite is 3x2x4 bytes starting at $C000 (Sprite ram)
+	sprCat : array[2*2*4] of byte sprram;
+	levelBank : byte;
+
+
+	cur_level_x, cur_level_y : byte;
+	
+	sx, sy : byte; // Scroll values
+
+	// Collision direction
+	colldirx, colldiry,time : byte;
+	// player position (0-255)
+	px,py : byte;
+	yvel, yacc, ipy : integer; // Real player y
+	pos:byte; // Position of current sprite in lookup table
+	direction : byte; // Left/right direction of player (0/1)
+	// Some vars
+ 	i,x,y : byte;
+	// Y velocity and acceleration and direction (1=up, 0=down)
+	ydir : byte; 
+	// Blocks in vicinity
+	blockr, blockl, blockup, blockdown : byte;
+	// Positions for scrolling 
+	
+	jumpCounter : byte;
+	// Time between jumping
+	const jumpTime : byte = 8; 
+	
+	const jumpStrength : integer = 600;
+
+	const stop_pos : byte = 100;
+	const stop_pos2 : byte = (128+16)-stop_pos;
+	// Temporary pointer
+	p1:pointer;
+
+
+
+/*
+ Updates collision in 4 directions
+*/
+procedure UpdateCollision();
+begin
+	x:=px/8;
+	y:=py/8;
+	y:=y-1;
+	y:=y+colldiry;
+	x:=x+colldirx;
+	p1:=Levels::temp;
+	p1:=p1+y*32;
+	i:=p1[x];
+	blockr:=0;
+	blockl:=0;
+	blockdown:=0;
+	blockup:=0;
+	if (i<>$24) then
+	begin
+		if (colldirx=1) then blockr:=1;
+		if (colldirx=255) then blockl:=1;
+		if (colldiry=1) then blockup:=1;
+		if (colldiry=255) then blockdown:=1;
+	end;	
+	
+//	p1[x]:=1;
+
+end;
+
+procedure RenderLevel();
+begin
+	Levels::lp := Levels::org_lp;
+	current_bank := levelBank;
+	Levels::RenderLevel2x2MetaTiles(cur_level_x,cur_level_y);
+	// Remember to turn off LCD before copying to VRAM!
+	Screens::StopLCD();
+	memcpy(Levels::temp,screen0,$400);
+	Screens::Set9800();
+end;
+
+
+
+// Updates DOWN only. Fixes falling issues.
+procedure UpdateCollisionDown();
+begin
+	x:=px/8;
+	y:=py/8;
+	p1:=Levels::temp;
+	p1:=p1+y*32;
+	i:=p1[x];
+	blockdown:=0;
+	if (i<>$24) then
+	begin
+		blockdown:=1;
+	end;	
+	
+/*
+	// Debug block
+	p1:=screen0;
+	p1:=p1+y*32;
+	p1[x]:=1;
+*/
+end;
+
+
+/*
+ Applies 16-bit Y-acceleration in dir up (1) or down (0)
+*/
+procedure ApplyPlayerAcceleration();
+begin
+	// If on the ground and fall dir is down, don't do anything
+	if (blockdown<>0 and ydir=0) then
+	begin
+		yvel:=0;
+		return();
+	end;
+	
+//	begin
+		// Falling down
+		if (ydir=0) then
+		begin
+			asm("
+				ld a,[Player_yvel]
+				ld [Player_i],a
+			");
+			
+			if (i<128) then
+				yvel:=yvel+yacc;
+		
+			ipy:=ipy+yvel;
+		end;
+		// Jumping
+		if (ydir=1) then
+		begin
+			yvel:=yvel-yacc;
+			// Velocity is zero in jumping, start falling down
+			asm("
+				ld a,[Player_yvel]
+				ld [Player_i],a
+			");
+			if (i=0 or i>128) then
+			begin
+				ydir:=0;
+				yvel:=0;
+				return();
+			end;
+			ipy:=ipy-yvel;
+		end;
+
+	
+	
+end;
+/*
+	performs a jump (if the timer is 0) AND you are on solid ground
+*/
+procedure Jump();
+begin
+	if (jumpCounter<>0) then begin
+		jumpCounter:=jumpCounter-1;
+		return();		
+	end;
+	if (blockdown=0) then return();
+	jumpCounter:=jumpTime;
+	ydir:=1;
+	yvel:=jumpStrength;
+
+end;
+
+
+/*
+	Updates the sprites
+*/
+procedure UpdateSprite(pad1 : byte);
+begin
+
+	current_bank := spriteBank;
+	
+	if (direction = 1) then
+		initspritefromdata( #sprCat, #sprites_index, pos, 4, 2, 0)
+	else
+		initspritefromdata( #sprCat, #sprites_index, pos, 4, 2, sprite_flip_x);
+
+	asm("
+		ld a,[Player_ipy]
+		ld [Player_py],a
+	");
+
+	x:=px;
+	y:=py;
+
+	// Set correct sprite + scroll data from py 
+	if (py>stop_pos) then
+	begin
+		y:=stop_pos;
+		sy:=py-stop_pos;
+		if (py>255-stop_pos2) then
+		begin
+			sy:=(128-16);
+			y:=py-(128-16);
+		end;
+	end;	
+
+	// Set correct sprite + scroll data from px 
+	if (px>stop_pos) then
+	begin
+		x:=stop_pos;
+		sx:=px-stop_pos;
+		if (px>255-stop_pos2-16) then
+		begin
+			sx:=(128-32);
+			x:=px-(128-32);
+		end;
+	end;	
+	// Set sprite position			
+	setsprite( #sprCat, x, y, 2, 30 );
+	
+//	setsprite(sprGirl,spritex,spritey, 2,30);
+	// Advance to next sprite		
+	colldirx := 0;	
+	colldiry := 0;	
+	
+	if (pad1&PAD_RIGHT=PAD_RIGHT) then begin colldirx:=1; end;
+	if (pad1&PAD_LEFT=PAD_LEFT) then begin colldirx:=255; end;
+	if (pad1&PAD_DOWN=PAD_DOWN) then begin colldiry:=255; end;
+//	if (pad1&PAD_UP=PAD_UP) then begin colldiry:=1; end;
+
+	
+	UpdateCollision();	
+	UpdateCollisionDown();	
+	
+	if (pad1 & PAD_DOWN = PAD_DOWN) then begin Jump();end;
+	
+	if (colldirx=1) then begin direction:=1;if (blockr=0) then px:=px+1; end;
+	if (colldirx=255) then begin direction:=0;if (blockl=0) then px:=px-1; end;
+	
+	// Can still jump through blocks. fix!
+//	if (colldiry=255) then begin if (blockdown=0) then py:=py-1;  end;
+//	if (colldiry=1) then begin if (blockup=0) then py:=py+1; end;
+
+	ApplyPlayerAcceleration();
+	
+	
+		
+	
+	if ( pad1 = 0 ) then begin pos := 0; return(); end;
+	
+	// Advance to next sprite		
+	if ( time & 3 = 0 ) then
+	begin
+	
+		pos := pos + 4; // Point to next sprite
+		if ( pos = 20 ) then pos := 4; // Reset sprite
+	
+	end;
+	
+end;
+
+
+/*
+ Initialize player and variables
+*/
+
+procedure Init();
+begin
+	current_bank := spriteBank;
+	Screens::CopyBankHB(#sprites_data, vram, 8); // Copy 8x$100 bytes of data
+	
+	time:=0;
+	pos:=0;
+	yacc:=16;
+	yvel :=0;
+	ydir:=0;
+	jumpCounter:=0;
+
+end;
+
+/*
+ Update rendering of levels + moves player sprite when leaving an area
+*/
+
+procedure UpdateLevels();
+begin
+	if (px>=248) then
+	begin
+		px:=16;
+		sx:=0;
+		cur_level_x:=cur_level_x+1;
+		RenderLevel();
+	end;
+	if (px<15) then
+	begin
+		px:=247;
+		sx:=(128-16);
+		cur_level_x:=cur_level_x-1;
+		RenderLevel();
+	end;
+	if (py>=248) then
+	begin
+		py:=16;
+		ipy:=16*256;
+		sx:=0;
+		cur_level_y:=cur_level_y+1;
+		RenderLevel();
+	end;
+	if (py<15) then
+	begin
+		py:=247;
+		ipy:=247*256;
+		sx:=(128-16);
+		cur_level_y:=cur_level_y-1;
+		RenderLevel();
+	end;
+end;
+
+
+
+
+
+
+end.

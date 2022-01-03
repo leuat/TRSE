@@ -119,6 +119,9 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cbmSpectrumModel->setCurrentIndex(m_ini->getdouble("spectrum_model"));
     ui->cmbX86CPU->setCurrentText(m_ini->getString("cpu_x86_system"));
+
+    ui->leDosboxCycles->setText(m_ini->getString("dosbox_cycles"));
+
 //    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
 
 
@@ -244,6 +247,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("zeropage_internal2", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp2->text())));
     m_ini->setString("zeropage_internal3", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp3->text())));
     m_ini->setString("zeropage_internal4", Util::numToHex(Util::NumberFromStringHex(ui->leInternalZp4->text())));
+
+    m_ini->setString("dosbox_cycles",ui->leDosboxCycles->text());
 
 
     m_ini->setString("system", ui->cmbSystem->currentText());

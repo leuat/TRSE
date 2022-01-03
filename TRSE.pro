@@ -188,6 +188,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemtiki100.cpp \
     source/Compiler/systems/systemvz200.cpp \
+    source/Compiler/systems/systemx16.cpp \
     source/Compiler/systems/systemx86.cpp \
     source/Compiler/systems/systemz80.cpp \
     source/ImageEditor/abstractimageeditor.cpp \
@@ -448,6 +449,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemtiki100.h \
     source/Compiler/systems/systemvz200.h \
+    source/Compiler/systems/systemx16.h \
     source/Compiler/systems/systemx86.h \
     source/Compiler/systems/systemz80.h \
     source/ImageEditor/abstractimageeditor.h \

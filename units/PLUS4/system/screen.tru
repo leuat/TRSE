@@ -1,0 +1,55 @@
+unit Screen;
+var
+	i,j,k : byte;
+	
+procedure SetBitmapMode() inline;
+begin
+asm("
+	lda $ff06
+	ora #$20
+	sta $ff06
+");
+end;
+
+procedure SetMulticolorMode() inline;
+begin
+asm
+	lda $ff07	
+	ora #$10
+	sta $ff07
+end;
+end;
+/**
+
+	Sets screen location.. $2000 * i?
+**/
+procedure SetScreenLoc(i: global byte);
+begin
+	i:=i<<3;
+asm
+	lda $FF12 
+	and #%00000111
+	ora Screen_i
+	sta $FF12 
+end;
+end;
+
+procedure SetColorLoc(i: global byte);
+begin
+	i:=(i)<<3;
+asm
+	lda $FF14 
+	and #%00000111
+	ora Screen_i
+	sta $FF14 
+end;
+end;
+	
+procedure SetColor(i,j,k : global byte);
+begin
+	j:=j&7;
+	k:=(k&7)<<4;
+	poke(^$FF16,i,j|k);	
+end;
+	
+end.

@@ -23,6 +23,9 @@
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/syntax.h"
 
+
+CharmapLevel ImageLevelEditor::m_copyLevel;
+
 void ImageLevelEditor::SetLevel(QPoint f)
 {
     // Clamp
@@ -174,6 +177,13 @@ QString ImageLevelEditor::GetCurrentDataString() {
             + " ("+ QString::number(curPos) +  ")";
 }
 
+void ImageLevelEditor::setBasePixel(int x, int y)
+{
+    int pos;
+    PixelToPos(x,y,pos,m_meta.m_width, m_meta.m_height);
+    m_basePixel = curPos;
+}
+
 void ImageLevelEditor::CtrlLeftShift(int x, int y)
 {
     int pos;
@@ -186,6 +196,21 @@ void ImageLevelEditor::CtrlLeftShift(int x, int y)
 
 }
 
+void ImageLevelEditor::ShiftXY(int dx, int dy)
+{
+    CopyChar();
+    for (int j=0;j<m_meta.m_height; j++)
+        for (int i=0;i<m_meta.m_width; i++) {
+            int pos = i + j*m_meta.m_width;
+            int ix = (i-dx+m_meta.m_width)%m_meta.m_width;
+            int iy = (j-dy+m_meta.m_height)%m_meta.m_height;
+            int np = ix + iy*m_meta.m_width;
+            m_currentLevel->m_CharData[pos] = m_copyLevel.m_CharData[np];
+            m_currentLevel->m_CharDataHi[pos] = m_copyLevel.m_CharDataHi[np];
+            m_currentLevel->m_ColorData[pos] = m_copyLevel.m_ColorData[np];
+        }
+}
+
 void ImageLevelEditor::CopyChar()
 {
     m_copyLevel = *m_currentLevel;
@@ -195,6 +220,10 @@ void ImageLevelEditor::PasteChar()
 {
     //        m_copyLevel = *m_currentLevel;
     if (m_copyLevel.m_CharData.count()!=0) {
+
+        if (m_currentLevel->m_CharData.count()!=m_copyLevel.m_CharData.count())
+            return;
+
        *m_currentLevel = m_copyLevel;
         m_currentLevel->m_CharData = m_copyLevel.m_CharData;
         m_currentLevel->m_CharDataHi = m_copyLevel.m_CharDataHi;
@@ -428,9 +457,13 @@ CharmapLevel *ImageLevelEditor::getLevel(int i, int j)
 QVector<QPixmap> ImageLevelEditor::CreateIcons()
 {
     QVector<QPixmap> lst;
+
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++) {
-            QImage img = getLevel(i,j)->createImage(64,m_colorList,m_meta.m_width, m_meta.m_height);
+            bool hasBorder = false;
+            if (m_currentLevelPos.x() ==i && m_currentLevelPos.y()==j)
+                hasBorder = true;
+            QImage img = getLevel(i,j)->createImage(64,m_colorList,m_meta.m_width, m_meta.m_height, hasBorder);
             QPixmap pixmap = QPixmap::fromImage(img);
             //QIcon icon(pixmap);
             lst.append(pixmap);
@@ -563,9 +596,19 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
 
     int sx = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
     int sy = fmax(m_footer.get(LImageFooter::POS_CURRENT_STAMP_X),1);
+//    qDebug() << sx<<sy;
     int w = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CHARSET_WIDTH),1);
+    int tx = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CURRENT_DISPLAY_X),1);
+    int ty = fmax(m_footer.get(LImageFooter::LImageFooter::POS_CURRENT_DISPLAY_Y),1);
 
-    int shift = curPos.x()%sx + (curPos.y()%sy)*w;
+//    qDebug() << tx << ty;
+
+    int dx = (m_basePixel.x())%sx;
+    int dy = (m_basePixel.y())%sy;
+
+    int shift = (tx*(sx+curPos.x()-dx))%sx + (ty*((sy+curPos.y()-dy))%sy)*w;
+    // subtract mouse pos
+
 
 //    qDebug() << QString::number(m_currentChar);
     if (m_currentLevel==nullptr)
@@ -856,9 +899,10 @@ int CharmapGlobalData::dataSize() const
     return m_dataSize;
 }
 
-QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int height)
+QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int height, bool hasBorder)
 {
     QImage img = QImage(size, size, QImage::Format_ARGB32);
+    QColor border = Qt::yellow;
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
             QColor c = QColor(0,0,0);
@@ -874,6 +918,12 @@ QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int heigh
             if (val==32)
                 colval = 0;
             img.setPixel(i,j, lst.get(colval).color.rgba());
+            if (hasBorder) {
+                int sz = size/12;
+                if (i<sz || i>size-sz || j<sz || j>size-sz)
+                    img.setPixel(i,j, border.rgba());
+
+            }
         }
 
     return img;
