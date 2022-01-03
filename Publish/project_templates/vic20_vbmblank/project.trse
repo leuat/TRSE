@@ -3,6 +3,7 @@ zeropages = ,$68,  $6A,  $6C,  $6E,  $70,  $72,  $74,  $76,  $78
 temp_zeropages = ,$88,  $8A,  $8C,  $8E
 via_zeropages = ,$64,  $65,  $66,  $67
 var_zeropages = ,$5e,  $5f,  $60,  $61,  $62,  $63
+zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $7b
 zeropage_decrunch2 = $7c

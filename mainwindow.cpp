@@ -117,8 +117,8 @@ MainWindow::MainWindow(QWidget *parent) :
     on_cmbSelectSystem_activated(0);
     //ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
-    ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@version",Data::data.version));
-    ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@build",QDate::currentDate().toString()));
+//    ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@version",Data::data.version));
+  //  ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@build",QDate::currentDate().toString()));
 
     ui->treeSymbols->setHeaderHidden(true);
 
