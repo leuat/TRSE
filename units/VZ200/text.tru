@@ -1,10 +1,10 @@
 Unit Text;
 
 var
-
  	c : pointer;
  	x,y : byte;
   i : Integer;
+
 /**
 Prints char c at the current cursor position.
  Control chars are obeyed not printed.
@@ -21,7 +21,7 @@ begin
 end;
 
 /**
-Prints the string pointed to by p at the current cursor position.
+Prints the string at the current cursor position.
 By default VZ200 prints in inverse.
 Control chars are obeyed, not printed.
 **/
@@ -36,7 +36,7 @@ begin
 end;
 
 /**
-Prints the string pointed to by p at the current cursor position.
+Prints the string at the current cursor position.
 Control chars are obeyed, not printed.
 **/
 procedure Print(c: global pointer);
@@ -171,6 +171,9 @@ begin
   ");
 end;
 
+/**
+  Prints a byte number 0-255 to screen with no Carriage Return.
+**/
 procedure PrintNumberByteNoCR(x: global byte);
 begin
   asm("
@@ -210,10 +213,9 @@ end;
 
 
 /**
-Prints the string pointed to by p at the current cursor position with no CR.
-By default VZ200 prints in inverse. Must be formatted as literally "STRING TO PRINT";
-Eg. (34,"DEMON",34,59);
-Control chars are obeyed, not printed.
+Prints the string at the current cursor position with no CR.
+By default VZ200 prints in inverse. Must be only up to 10 chars.
+Created to write out short texts without CR.
 **/
 procedure PrintInvNoCR(c: global pointer);
 begin

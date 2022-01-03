@@ -57,13 +57,13 @@ begin
 		cp #00
 		jr z,md0
 		ld a,(#783B)
-		set 3,a
+		res 3,a
 		ld (#6800),a
 		ld (#783B),a
 		ret
 md0		
 		ld a,(#783B)
-		res 3,a
+		set 3,a
 		ld (#6800),a
 		ld (#783B),a
 	");
