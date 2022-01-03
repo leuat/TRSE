@@ -63,3 +63,4 @@ data_header_tiles/levels.flf = 0
 zeropage_colormemory = $fb
 show_all_files = 1
 data_header_tiles/tiles.flf = 0
+open_files =, main.ras
