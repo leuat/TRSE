@@ -197,9 +197,27 @@ begin
 	for j:=0 to objects[i].noFaces do
 	begin
 		k1:=p1[0];
-asm(";here");		
 		k2:=p1[1];
 		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], cx, p2);
+		p1:=p1+4;
+	end;
+	
+end;
+
+procedure RenderCGAWireframe(i,cx: global integer;p2:global pointer);
+begin
+	vr := objects[i].points;
+	p1 := objects[i].faces;
+	asm("
+	mov ax, [Lib3d_p2+2]
+	mov [Lib3d_n],ax
+	
+	");	
+	for j:=0 to objects[i].noFaces do
+	begin
+		k1:=p1[0];
+		k2:=p1[1];
+		Gfx::DrawLineCGA(vr[k1],vr[k1+1],vr[k2],vr[k2+1], cx, p2);
 		p1:=p1+4;
 	end;
 	

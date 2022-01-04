@@ -15,6 +15,8 @@ var
 	source,dest:pointer of integer;
 	ytab_cga : array[200] of integer = buildtable("Math.floor(i/2)*80 + 8192*((i)%2)");
 
+	CGA_cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
+
 
 procedure InitVGABuffers(noBuffers:global integer);
 begin
@@ -160,6 +162,7 @@ begin
     pop     ds
   end;
 end;
+
 
 
 procedure SetMode(i : global integer);

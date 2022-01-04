@@ -87,6 +87,9 @@ public:
     }
     QSharedPointer<Orgasm> m_orgAsm = nullptr;
 
+    virtual QString getCPUFlavor() {
+        return "";
+    }
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;
     int m_memorySize = 65536;

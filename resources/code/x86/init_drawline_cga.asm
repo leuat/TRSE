@@ -3,6 +3,7 @@
 %macro drawline_set_pixel 3
 	push ax
 	push bx
+
 	mov ax, %1
         shr  ax, 1
         shr  ax, 1

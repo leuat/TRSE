@@ -1,0 +1,50 @@
+program Example3D;
+@use "system/screen"
+@use "system/memory"
+@use "gfx/gfx"
+@use "system/tables"
+@use "gfx/lib3d"
+
+var  
+	k,i,x,x1,x2,y1,y2,y,j,j2,px,time: integer;
+	p : pointer;
+	
+
+begin
+	
+	init_cga_scanlines();
+	init_keyboard_irq();
+	setscreenmode(mode_cga_320x200);
+	Memory::Init();
+	Screen::InitCGABuffers(4);
+	
+	// Create a torus!	
+	Lib3d::Torus(0, 8,8,3,160,Lib3d::renderType_lines);		
+
+
+
+
+	while (true) do
+	begin
+		waitforverticalblank();
+		//Copy back buffers to the screen etc
+		Memory::CopyData16(Screen::buffer1, ptr(Screen::CGA,0),8000);
+		// Clear back buffer
+		Memory::CopyData16(Screen::buffer2, Screen::buffer1,8000);
+		// Rotate object 0 		
+		
+		Lib3d::RotateEuler(0,time,time*2,0-time);
+		
+		// Some sine waves		
+		k:=Tables::sine256[(time*3)&255]/2;
+		// Project points in object 0 to 2D, move to position 160,100,200+k
+		Lib3d::ProjectSimple(0, 160,100, 138+k);
+
+		// Render as lines
+		Lib3d::RenderCGAWireframe(0, cga_color2, Screen::buffer1);		
+		
+		time+=1;		
+		
+	end;
+	
+end.

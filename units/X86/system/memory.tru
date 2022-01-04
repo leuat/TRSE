@@ -4,7 +4,7 @@ var
 	p1 : pointer;
 	const DEFAULT_TIMER : integer = 23863;
 	error_code : integer = 0;
-	
+	source,dest : pointer of integer;
 @ifdef QEMU
 	curMem : integer;
 @endif
@@ -122,6 +122,20 @@ begin
     int $21	
     ");
     @endif
+end;
+
+
+procedure CopyData16(source,dest:global pointer of integer;i1:global integer);
+begin
+  asm
+    mov     cx, [Memory_i1]
+    push    ds
+    les di,[Memory_dest]
+    lds si,[Memory_source]
+    
+    Rep MovsW
+    pop     ds
+  end;
 end;
 
 end.

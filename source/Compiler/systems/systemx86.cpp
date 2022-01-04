@@ -154,7 +154,7 @@ bool SystemX86::is286()
 
 bool SystemX86::is8088()
 {
-    return m_cpu=="8088";
+    return m_cpu=="8088" || m_cpu=="8086";
 }
 
 QString SystemX86::getEmulatorName() {
@@ -193,3 +193,4 @@ void SystemX86::applyEmulatorParameters(QStringList &params, QString debugFile, 
     params << fn;
 //    qDebug() << params;
 }
+

@@ -429,6 +429,9 @@ void Parser::InitSystemPreprocessors()
 {
     m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)] = "1";
     m_preprocessorDefines["CPU_"+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)] = "1";
+    if (Syntax::s.m_currentSystem->getCPUFlavor()!="")
+       m_preprocessorDefines["CPU_FLAVOR_"+Syntax::s.m_currentSystem->getCPUFlavor()] = "1";
+
     Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 
 }
@@ -1427,6 +1430,8 @@ void Parser::HandlePreprocessorInParsing()
 
         if (m_currentToken.m_value=="else") {
             //        qDebug() << "Start with ELSE : " << m_lastIfdef.last() << m_lastKey.last();
+            if (m_lastIfdef.count()==0)
+                ErrorHandler::e.Error("You cannot have an else block without having an if statement", m_currentToken.m_lineNumber);
             PreprocessIfDefs(!m_lastIfdef.last());
             return;
         }
