@@ -1,8 +1,14 @@
 <h3>Description</h3>
-<p></p>
-
-
+<p>A data type for storing a 24/32-bit number, values of 0 to 2^24 or 2^32.</p>
+<p>In TRSE, long is only defined for the following systems:
+<ul>
+<li>M68K (Amiga/Atari ST): 32-bit number
+<li>X86: 32-bit number
+<li>Mega64: 24-bit number (used for banked data)
+</ul>
 <h3>Example</h3>
 
 <code>
+    var
+        data : long = 0;
 </code>

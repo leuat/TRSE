@@ -41,6 +41,9 @@ public:
     bool m_curIsTru = false;
     int m_currentSearchItem = 0;
     int m_curTopic, m_curItem, m_idx;
+
+    QString sz1 = "14pt";
+
 //    Highlighter* m_highlighter = nullptr;
     void LoadItems(int idx);
     void LoadItem(QString word);

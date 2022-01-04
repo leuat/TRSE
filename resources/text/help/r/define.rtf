@@ -1,14 +1,44 @@
-<h3>Description</h3>
-<p>Defines a constant type. See also the const declaration which is recommended for future use.</p>
-
-
-<h3>Example</h3>
-
+<h2>Preprocessors</h2>
+<p>TRSE has a lot of preprocessor directives defined. These can be used to give messages to the compiler <b>before</b> the actual parsing of the program is executed.</p>
+<h3>Constants</h3>
+<p>Constants are preprocessors that will be string replaced before compilation occurs.</p>
 <code>
-var
-    @define playerSprite 0
+@define myConstant 4
+@define myText "WHOO PARTY"
 
-begin
-    setspriteloc( @playerSprite, $C8, 0 );
-end.
+...
+a:=@myConstant * 5; // same as 4*5
+
 </code>
+<h3>Preprocessor ifdef / if / else / endif</h3>
+You can define preprocessor constants and use them in preprocessor expressions as such:
+<code>
+@define L 1
+@define N 10
+
+
+@ifdef L // If @L is defined...
+        @if N = 10    // if @N holds the value of 10
+                screen_bg_col:=1;
+        @else
+                screen_bg_col:=2;
+        @endif
+@else // if L is not defined
+        screen_bg_col:=4;
+@endif
+</code>
+<h3>Pre-existing preprocessor defines</h3>
+You can define your own preprocessor for a given project in the project settings->target output->global defines. Simply type "@define IS_DEBUG 1" etc in order to add the preprocessor to your project.
+<p>TRSE also provides the user with some handy preprocessor defines for determining the current CPU / system:
+<code>
+...
+@ifdef C64
+ // the following line will only be compiled if the current project is for the C64
+ screen_bg_col := black;
+@endif
+@ifdef CPU_Z80
+ // the following line will only be compiled if the current project is for a Z80 CPU
+   asm(" push bc ");
+@endif
+<code>
+The syntax for cpu-specific defines are CPU_MOS6502, CPU_Z80, CPU_PX86, CPU_M68K, CPU_GBZ80.

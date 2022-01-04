@@ -1,8 +1,13 @@
 <h3>Description</h3>
-<p>If defined</p>
-
-
+<p>Checks whether a preprocessor variable is defined</p>
 <h3>Example</h3>
 
 <code>
+// Raises an error if compiled for z80
+@ifdef CPU_Z80
+
+@error "OH NOES this code does not compile for the z80"
+
+@endif
+
 </code>

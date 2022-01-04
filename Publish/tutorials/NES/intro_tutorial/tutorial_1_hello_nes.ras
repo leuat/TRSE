@@ -55,7 +55,7 @@ procedure InitScreen();
 begin
 //	zp:=@storage;
 	// fill 30 lines with some values
-	ppupoint($20,00);
+	ppupoint($24,00);
 	for i:=0 to 30 do begin
 		for j:=0 to 32 do
 		begin
@@ -65,7 +65,7 @@ begin
 	// Fill nametable with : Palette 0 (00), 1(01), 2(10) and 3 (11)
 	fill(^@storage,%00011110,64);
 	// Dump 64 bytes from storage to PPU nametable 0 color ram ($2000 + $3C0);
-	PPUAttributeDump(^@storage,$23,$C0);
+	PPUAttributeDump(^@storage,$23+$4,$C0);
 	
 end;
 
@@ -86,7 +86,7 @@ begin
 	togglebackgroundtableaddress(1);
 
 	// set nametable 0 = $2000 (where we dumped the background data)
-	SetNametable(0);
+	SetNametable(1);
 	// Turn on NMI
 	ToggleNMI(1);
 	// Halt! (this is where non-drawing gamelogic should happen)

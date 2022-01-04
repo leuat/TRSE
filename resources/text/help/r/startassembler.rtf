@@ -1,8 +1,19 @@
 <h3>Description</h3>
-<p></p>
-
-
+<p>StartAssembler is a preprocessor directive that will insert the parameter (a string) before
+any assembler is produced. </p>
+<p>This is extremely useful for inserting assembly loader / wrapper stubs.
 <h3>Example</h3>
 
 <code>
+
+// The following assembler will be inserted before any actual code.
+
+@startassembler " jmp mainPart    ; real entry point
+; Returns here afterwards
+exitPart:
+ jsr $0FFF
+ rts
+ jmp $02d6        ; load next file
+mainPart:
+"
 </code>
