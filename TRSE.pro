@@ -130,6 +130,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/asm68000.cpp \
     source/Compiler/assembler/asmTripe.cpp \
     source/Compiler/assembler/asmarm.cpp \
+    source/Compiler/assembler/asmjdh8.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
     source/Compiler/ast/nodecase.cpp \
@@ -139,6 +140,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/abstractcodegen.cpp \
     source/Compiler/codegen/codegen_6502.cpp \
     source/Compiler/codegen/codegen_arm.cpp \
+    source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
     source/Compiler/codegen/codegen_tripe.cpp \
     source/Compiler/codegen/codegen_x86.cpp \
@@ -158,6 +160,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compiler65c816.cpp \
     source/Compiler/compilers/compilerarm.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
+    source/Compiler/compilers/compilerjdh8.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
@@ -178,6 +181,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemcustom.cpp \
     source/Compiler/systems/systemgameboy.cpp \
+    source/Compiler/systems/systemjdh8.cpp \
     source/Compiler/systems/systemm1arm.cpp \
     source/Compiler/systems/systemmega65.cpp \
     source/Compiler/systems/systemmsx.cpp \
@@ -211,6 +215,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
     source/LeLib/limage/limagehybridcharset.cpp \
+    source/LeLib/limage/limagejdh8.cpp \
     source/LeLib/limage/limagelevelgameboy.cpp \
     source/LeLib/limage/limagelevelnes.cpp \
     source/LeLib/limage/limagelevelsnes.cpp \
@@ -389,9 +394,11 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asm68000.h \
     source/Compiler/assembler/asmTripe.h \
     source/Compiler/assembler/asmarm.h \
+    source/Compiler/assembler/asmjdh8.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
     source/Compiler/codegen/codegen_arm.h \
+    source/Compiler/codegen/codegen_jdh8.h \
     source/Compiler/codegen/codegen_tripe.h \
     source/Compiler/codegen/codegen_x86.h \
     source/Compiler/codegen/codegen_z80.h \
@@ -419,6 +426,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compiler65c816.h \
     source/Compiler/compilers/compilerarm.h \
     source/Compiler/compilers/compilergbz80.h \
+    source/Compiler/compilers/compilerjdh8.h \
     source/Compiler/compilers/compilerm68k.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
@@ -439,6 +447,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemcustom.h \
     source/Compiler/systems/systemgameboy.h \
+    source/Compiler/systems/systemjdh8.h \
     source/Compiler/systems/systemm1arm.h \
     source/Compiler/systems/systemmega65.h \
     source/Compiler/systems/systemmsx.h \
@@ -472,6 +481,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
     source/LeLib/limage/limagehybridcharset.h \
+    source/LeLib/limage/limagejdh8.h \
     source/LeLib/limage/limagelevelgameboy.h \
     source/LeLib/limage/limagelevelnes.h \
     source/LeLib/limage/limagelevelsnes.h \

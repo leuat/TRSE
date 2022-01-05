@@ -106,6 +106,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 31;
     if (t==CustomC64)
         return 32;
+    if (t==JDH8)
+        return 33;
 
 
     return 255;
@@ -179,6 +181,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "VZ200 4-color 128x64";
     if (t==CustomC64)
         return "Custom C64";
+    if (t==JDH8)
+        return "JDH8";
 
     return "Unknown image type";
 
@@ -253,6 +257,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return VZ200;
     if (c==32)
         return CustomC64;
+    if (c==33)
+        return JDH8;
 
     return NotSupported;
 

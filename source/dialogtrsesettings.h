@@ -207,6 +207,8 @@ private slots:
 
     void on_btnAcornEmulator_clicked();
 
+    void on_btnJDH8Emu_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

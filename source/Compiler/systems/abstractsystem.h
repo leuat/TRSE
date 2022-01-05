@@ -127,8 +127,8 @@ public:
     static void InitLabelColors();
  //   virtual bool hasFixedProgramAddress() {return true;}
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200, ACORN};
-    enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200, ACORN, JDH8};
+    enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02, PJDH8};
 
     static QString StringFromProcessor(Processor s);
     static Processor ProcessorFromString(QString s);
@@ -176,7 +176,7 @@ public:
     virtual void PostProcess(QString& text, QString file, QString currentDir) {}
     virtual void DefaultValues() {}
 
-    bool GenericAssemble(QString assembler, QStringList parameters, QString error, QString& output);
+    bool GenericAssemble(QString assembler, QStringList parameters, QString error, QString& output, QString workingDir="");
     bool useZByte = false;
 
 //    virtual void Execute(QString filename, QString currentDir);

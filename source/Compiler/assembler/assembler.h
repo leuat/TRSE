@@ -197,6 +197,9 @@ public:
 
     void SortAppendix();
 
+    // Override call (label) etc
+    virtual QString jumpLabel(QString lbl) {return lbl; }
+
     QMap<int, int> m_cycles, m_blockCycles;
     QMap<int, int> m_cyclesOut, m_blockCyclesOut;
     QMap<int,int> m_addressesOut, m_addresses;

@@ -81,7 +81,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
 
         if (node->m_decl.count()!=0) {
             if (node->m_isMainBlock && !as->m_ignoreInitialJump) {
-                as->Asm(getJmp(true)+" " + label);
+                as->Asm(getJmp(true)+" "+as->jumpLabel(label));
             }
 
             hasLabel = true;
@@ -231,13 +231,13 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
     if (node->m_op.m_type == TokenType::BREAK) {
 
         if (as->m_labelStack["loopend"].m_vars.count()!=0) // for loops
-            as->Asm(getJmp(true) + " " + as->getLabel("loopend"));
+            as->Asm(getJmp(true) + " " + as->jumpLabel(as->getLabel("loopend")));
         else
         ErrorHandler::e.Error("'Break' can only be used within a for / while loop", node->m_op.m_lineNumber);
     }
     if (node->m_op.m_type == TokenType::CONTINUE) {
         if (as->m_labelStack["loopstart"].m_vars.count()!=0)
-            as->Asm(getJmp(true) + " " + as->getLabel("loopstart"));
+            as->Asm(getJmp(true) + " " + as->jumpLabel(as->getLabel("loopstart")));
         else
          ErrorHandler::e.Error("'Continue' can only be used within a for / while loop", node->m_op.m_lineNumber);
     }
@@ -342,7 +342,7 @@ void AbstractCodeGen::LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer
     //    Compare(node, var, true, loopDone, loopNotDone, inclusive);
 
     as->Label(loopNotDone);
-    as->Asm(getJmp(true) + " " + as->getLabel("for"));
+    as->Asm(getJmp(true) + " " + as->jumpLabel(as->getLabel("for")));
 
     as->Label(loopDone);
 
@@ -582,10 +582,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
     // OFFPAGE branching for z80:
 
     if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
-        as->Asm(getJmp(offpage) + " "+lblstartTrueBlock);
+        as->Asm(getJmp(offpage) + " "+as->jumpLabel(lblstartTrueBlock));
         as->Label(localFailed);
         as->PopLabel("localfailed");
-        as->Asm(getJmp(offpage) + " " + failedLabel);
+        as->Asm(getJmp(offpage) + " " + as->jumpLabel(failedLabel));
     }
 
    // Start main block
@@ -593,11 +593,11 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
     node->m_block->Accept(this);
 
     if (node->m_elseBlock!=nullptr)
-        as->Asm(getJmp(offpage)+" " + labelElseDone);
+        as->Asm(getJmp(offpage)+" " + as->jumpLabel(labelElseDone));
 
     // If while loop, return to beginning of conditionals
     if (node->m_isWhileLoop)
-        as->Asm(getJmp(offpage)+" " + labelStartOverAgain);
+        as->Asm(getJmp(offpage)+" " + as->jumpLabel(labelStartOverAgain));
 
     // Else block
     if (node->m_elseBlock!=nullptr) {
@@ -696,7 +696,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
         QString lblLocalFailed = as->NewLabel("localfailed");
         HandleCompoundBinaryClause(node->m_left,  lblLocalFailed,lblSuccess,offpage);
         // Success! please continue!
-        as->Asm(getJmp(offpage)+" "+lblSuccess);
+        as->Asm(getJmp(offpage)+" "+as->jumpLabel(lblSuccess));
         as->Label(lblLocalFailed+": ;keep");
         as->Comment("; logical OR, second chance");
         HandleCompoundBinaryClause(node->m_right,  lblFailed,lblSuccess,offpage);
@@ -928,7 +928,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     }
 
     ProcedureStart(as);
-    as->Asm(getCallSubroutine() + " " + node->m_procedure->m_procName);
+    as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
     ProcedureEnd(as);
     PopLostStack(lostStack);
 }
@@ -1417,7 +1417,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
         node->m_statements[i]->Accept(this);
         // Jump to the end, done with case
         if (i!=node->m_conditionals.count()-1 || hasElse)
-            as->Asm(getJmp(true)+" "+labelEnd);
+            as->Asm(getJmp(true)+" "+as->jumpLabel(labelEnd));
         as->Label(labelNext);
     }
     // Print else blockl

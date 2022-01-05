@@ -2,6 +2,7 @@ unit Lib3d;
 @use "math/matrix"
 @use "system/memory"
 @use "gfx/gfx"
+
 var
 
 	idx,renderType,r1,r2,i,j,n,v,ii,msize,size,xx,yy,zz,cx,cy,cz,k1,k2,k,k3,f1,f2,f3,f4,dx,dy,k4:signed integer;
@@ -31,6 +32,8 @@ var
 	
 	p1,p2 : pointer of signed integer;	
 	vert : array[4] of signed integer;//Vector::vec3;
+	
+	
 /**
 	Allocates memory for a 3D object.
 	i: object number
@@ -205,19 +208,24 @@ begin
 end;
 
 procedure RenderCGAWireframe(i,cx: global integer;p2:global pointer);
+var
+	CGA_cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
+
 begin
 	vr := objects[i].points;
 	p1 := objects[i].faces;
 	asm("
 	mov ax, [Lib3d_p2+2]
 	mov [Lib3d_n],ax
-	
-	");	
+	");
+	f1:=1;
 	for j:=0 to objects[i].noFaces do
 	begin
 		k1:=p1[0];
 		k2:=p1[1];
-		Gfx::DrawLineCGA(vr[k1],vr[k1+1],vr[k2],vr[k2+1], cx, p2);
+		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], CGA_cols[f1], p2);
+		f1:=(f1+cx)&3;
+		if (f1=0) then f1+=1;
 		p1:=p1+4;
 	end;
 	

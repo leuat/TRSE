@@ -1,0 +1,109 @@
+program test;
+@use "system/screen"
+@use "system/memory"
+
+@export "trse1.flf" "trse.bin" 0
+
+
+var 
+	i,k,cnt : integer;
+	src,dst,pd,p1,src2:pointer of byte;
+	time,j,l,m,x:byte;
+	@donotremove ba
+	table : array[Screen::width*Screen::height/8] of byte = 
+		BuildTable2D(Screen::width/8,Screen::height,
+	"(200/Math.sqrt(4*Math.pow(i-16,2) + 0.1*Math.pow(j-120,2)))%16");
+
+	siny : array[256] of byte = BuildSineTable(32);
+
+
+	data: array[32] of byte = (
+	%00000000,
+	%00000000,
+	%00001000,
+	%01000000,
+	%00100010,
+	%01000101,
+	%00100010,
+	%01100101,
+	%10010011,
+	%11011111,
+	%11011111,
+	%11011111,
+	%11011111,
+	%11011111,
+	%11011111,
+	%11111111,
+	
+	%11111111,
+	%11011111,
+	%11011111,
+	%11011111,
+	%01011111,
+	%11011111,
+	%01011111,
+	%01000101,
+	%00100010,
+	%01100101,
+	%00000000,
+	%00001000,
+	%01000000,
+	%00100010,
+	%01000101,
+	%00100010,
+	
+	);
+	
+
+
+begin
+	Memory::Init();
+	
+	asm("
+		lda [img]
+		sw16 [src2],h,l
+		sw16 [src],h,l
+	");
+	cnt:=$20;
+	pd:=#Screen::pos+$1E00-$20;
+	
+	for i:=0 to 240 do
+	begin	
+		Memory::Copy(src, pd, cnt);
+		cnt+=$20;
+		pd:=pd-$20;
+	end;
+	
+	k:=0;
+	time:=0;	
+	pd:=#data;
+	x:=0;
+	p1:=#siny;
+	while (true) do
+	begin	
+		time+=1;
+		dst:=#Screen::pos;
+		src:=#table;
+		x:=time;
+		for i:=0 to 32*240 do
+		begin
+			j:=src[i];
+			j+=time;
+			j:=j&31;
+			j:=pd[j];
+			l:=src2[i];
+			dst[i]:=j|l;
+		end;
+
+	end;
+	
+	
+	asm("
+img:
+	@include \"trse.asm \"
+	
+	");
+	
+
+	
+end.

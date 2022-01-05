@@ -1,4 +1,7 @@
 program Example3D;
+// Use the CGA line renderer (and not the default vga)
+@define LINE_PUTPIXEL "_putpixel_line_cga"
+
 @use "system/screen"
 @use "system/memory"
 @use "gfx/gfx"
@@ -19,7 +22,7 @@ begin
 	Screen::InitCGABuffers(4);
 	
 	// Create a torus!	
-	Lib3d::Torus(0, 8,8,3,160,Lib3d::renderType_lines);		
+	Lib3d::Torus(0, 10,10,3,160,Lib3d::renderType_lines);		
 
 
 
@@ -41,7 +44,7 @@ begin
 		Lib3d::ProjectSimple(0, 160,100, 138+k);
 
 		// Render as lines
-		Lib3d::RenderCGAWireframe(0, cga_color2, Screen::buffer1);		
+		Lib3d::RenderCGAWireframe(0, 1, Screen::buffer1);		
 		
 		time+=1;		
 		

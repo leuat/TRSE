@@ -1,0 +1,10 @@
+unit Screen;
+var
+	const POS : address = $8000;
+	const WIDTH : integer = 256;
+	const HEIGHT : integer = 240;
+	
+	
+end.
+
+
