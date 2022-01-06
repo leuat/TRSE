@@ -2,7 +2,7 @@ Unit Text;
 
 var
  	c : pointer;
- 	x,y : byte;
+ 	x,y,z : byte;
   i : Integer;
 
 /**
@@ -171,59 +171,20 @@ begin
   ");
 end;
 
-/**
-  Prints a byte number 0-255 to screen with no Carriage Return.
-**/
-procedure PrintNumberByteNoCR(x: global byte);
+/* 
+  Outputs a string to the screen at position x,y 
+  the last parameter is 0 for normal text and 1 for inverse
+*/
+procedure PrintAt(x,y: global byte, c: global pointer, z: global byte);
 begin
-  asm("
-    ld bc,#0000
-    ld d,#00
-    ld a,[Text_x]
-    ld e,a
-    call #09b4      ; Loads ACC with BCDE
-    call #0a9d      ; Set flag to Integer    
-    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string
-    ld de,pnbbuffer
-pnbloop    
-    ld a,(hl)
-    cp #00
-    jr z,pnbstrend
-    ldi
-    jp pnbloop
-pnbstrend
-    ld a,#22
-    ld (de),a
-    inc de
-    ld a,#3b
-    ld (de),a
-    inc de
-    ld a,#00
-    ld (de),a
-    ld hl,pnbbuffer
-    ld a,#22
-    ld (hl),a
-    call #206f
-    jp pnbncrend
-pnbbuffer
-  db $22, #00, #00, #00, #00, #00, #00, #00, #00, #00
-pnbncrend
-  ");
-end;
-
-
-/**
-Prints the string at the current cursor position with no CR.
-By default VZ200 prints in inverse. Must be only up to 10 chars.
-Created to write out short texts without CR.
-**/
-procedure PrintInvNoCR(c: global pointer);
-begin
-    asm("
-      ld hl, [Text_c]
-      ld de,pnbbuffer+1
-      jp pnbloop
-      ");
+  i := 28672 + 32 * y + x;
+  if (z = 1) then z := 0 else z := 64;
+  while (c^<>0) do
+  begin
+    Screen::Poke(i,c^ - z);
+    c += 1;
+    i += 1;
+  end;
 end;
 
 end.

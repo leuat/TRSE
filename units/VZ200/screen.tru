@@ -31,15 +31,13 @@ begin
 		jp z,mode0
 		ld a,#00
 		ld bc,#0800
-		jr cls
-mode0
-		ld a,#20
-		ld bc,#0200
-cls
 		ld hl,#7000
 		ld de,#7001
 		ld (hl),a
-		ldir
+		jr clsend
+mode0
+		call #01c9
+clsend
 	");
 end;
 
