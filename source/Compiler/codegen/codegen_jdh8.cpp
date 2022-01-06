@@ -330,7 +330,7 @@ void CodeGenJDH8::Binop(QString bop, QString x0, QString x1, QString x2)
 
 QString CodeGenJDH8::BinopVariableNumber(QSharedPointer<Node> n, QString value, TokenType::Type type)
 {
-
+    return "";
 }
 
 
