@@ -1,6 +1,7 @@
 program InputMe;
 // Use the CGA line renderer
 @define LINE_PUTPIXEL "_putpixel_line_cga"
+
 @use "gfx/gfx"
 var  
     i,j, time,t: byte; 
