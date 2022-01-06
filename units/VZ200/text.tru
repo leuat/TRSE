@@ -1,9 +1,11 @@
 Unit Text;
+@use "system/str"
 
 var
  	c : pointer;
  	x,y,z : byte;
   i : Integer;
+  num: string = "        ";
 
 /**
 Prints char c at the current cursor position.
@@ -131,46 +133,6 @@ begin
   ");
 end;
 
-/**
-  Prints a number to the mode(0) text screen wit no carriage return (CR)
-  Number is Integer-sized -32767 to 32768
-  **/
-procedure PrintNumberIntNoCR(i: global Integer);
-begin
-  asm("
-    ld bc,#0000
-    ld de,[Text_i]
-    call #09b4      ; Loads ACC with BCDE
-    call #0a9d      ; Set flag to Integer
-    call #0977    
-    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string 
-    ld de,pnbbuffer+1
-    jp pnbloop    
-  "); 
-end;
-
-/**
-  Prints a number to the mode(0) text screen
-  Number is Byte-sized 0-255
-  **/
-procedure PrintNumberByte(x : global byte);
-begin
-  asm("
-    ld bc,#0000
-    ld d,#00
-    ld a,[Text_x]
-    ld e,a
-    call #09b4      ; Loads ACC with BCDE
-    call #0a9d      ; Set flag to Integer    
-    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
-    xor a
-    ld (#409c),a    ; Set output to 0 = video display
-    call #28a7      ; Print number on screen
-    ld a,#0d
-    call #033a      ; Print a <CR>
-  ");
-end;
-
 /* 
   Outputs a string to the screen at position x,y 
   the last parameter is 0 for normal text and 1 for inverse
@@ -185,6 +147,12 @@ begin
     c += 1;
     i += 1;
   end;
+end;
+
+procedure PrintNumberAt(x,y: global byte, i: global Integer, z: global byte);
+begin
+  str::itoa(i,#num,10);
+  PrintAt(x,y,#num, z);
 end;
 
 end.
