@@ -98,23 +98,30 @@ void CodeGenJDH8::dispatch(QSharedPointer<NodeVar> node)
             node->m_expr->Accept(this);
             as->Asm("lw16 h,l,["+node->getValue(as)+"]");
             as->Asm("add16 h,l,a,b");
+            if (node->getArrayType(as)==TokenType::INTEGER) {
+                as->Asm("add16 h,l,a,b");
+                as->Asm("lw b,h,l ");
+                as->Asm("add16 h,l,1");
+                as->Asm("lw a,h,l ");
+                return;
+            }
             as->Asm("lw a,h,l ");
             return;
 
         }
         // Regular array
-        QString x0 = getReg();
-        QString expr = PushReg();
-        as->Comment("Loading array");
-        as->Comment("load expression:");
+        node->m_expr->setForceType(TokenType::INTEGER);
         node->m_expr->Accept(this);
-        as->Comment("load value:");
-        QString x1 = LoadAddress(node);
-        as->Asm("add "+x1+","+x1+","+expr+getShift(node));
-        ldr(x0,x1);
-
-        PopReg();
-        PopReg();
+        as->Asm("lda ["+node->getValue(as)+"]");
+        as->Asm("add16 h,l,a,b");
+        if (node->getArrayType(as)==TokenType::INTEGER) {
+            as->Asm("add16 h,l,a,b");
+            as->Asm("lw b,h,l ");
+            as->Asm("add16 h,l,1");
+            as->Asm("lw a,h,l ");
+            return;
+        }
+        as->Asm("lw a,h,l ");
         return;
     }
 
@@ -287,6 +294,18 @@ void CodeGenJDH8::str(QSharedPointer<Node> var)
 
 void CodeGenJDH8::ldr(QSharedPointer<Node> var)
 {
+    auto nv = qSharedPointerDynamicCast<NodeVar>(var);
+//    as->Comment("Loading var is ")
+//    as->Comment("Left right : "+QString::number(var->isWord(as)));
+
+    if (nv && (var->m_forceType==TokenType::INTEGER && nv->getOrgType(as)==TokenType::BYTE)) {
+        QString x0 = getReg();
+        QString x1 = m_regs[m_lvl+1];
+        as->Asm("mw "+x0+",0");
+        as->Asm("lw "+x1+",["+var->getValue(as)+"]");
+        return;
+    }
+
     if (var->isWord(as)) {
         QString x0 = getReg();
         QString x1 = m_regs[m_lvl+1];
@@ -294,7 +313,7 @@ void CodeGenJDH8::ldr(QSharedPointer<Node> var)
     }
     else {
         QString x0 = getReg();
-        as->Asm("lw "+x0+"["+var->getValue(as)+"]");
+        as->Asm("lw "+x0+",["+var->getValue(as)+"]");
 
     }
 

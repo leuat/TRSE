@@ -90,6 +90,9 @@ public:
     virtual bool UseBlocks() override { return true;}
 
     QString BinopVariableNumber(QSharedPointer<Node> n, QString value, TokenType::Type type);
+    QString getIncbin() override{
+        return "@include";
+    }
 
 
     virtual QString getJDH8Value(Assembler* as, QSharedPointer<Node> n) {

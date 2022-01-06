@@ -1,5 +1,5 @@
-#include "asmjdh8.h".h"
-#include "source/Compiler/optimiser/postoptimizerz80.h".h"
+#include "asmjdh8.h"
+#include "source/Compiler/optimiser/postoptimizerz80.h"
 
 AsmJDH8::AsmJDH8()
 {
@@ -236,6 +236,7 @@ void AsmJDH8::DeclareVariable(QString name, QString type, QString initval, QStri
 }
 
 void AsmJDH8::DeclareString(QString name, QStringList initVal, QStringList flags) {
+
     Write(name +":\n\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
@@ -370,15 +371,15 @@ QString AsmJDH8::String(QStringList lst, bool term)
 {
 
     QString res;
-    QString mark = byte;
+    QString mark = "@ds";
 
     for (QString s:lst) {
         bool ok=false;
         uchar val = s.toInt(&ok);
         if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+            res=res+"\t@ds\t" +"\"" + s + "\"\n";
 
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+        else res=res + "\t@db\t"+QString::number(val) + "\n";
 
         /*        if (s!=lst.last())
                     res=res + "\n";
@@ -386,7 +387,7 @@ QString AsmJDH8::String(QStringList lst, bool term)
 
     }
     if (term)
-        res=res + "\t"+mark+"\t0";
+        res=res + "\t@db\t0";
     m_term +=res;
     return res;
 }

@@ -1125,6 +1125,12 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="convert_jdh8") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="export") {
             Eat();
             Eat();
@@ -2863,6 +2869,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower()=="execute") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExecute();
+              }
+              else if (m_currentToken.m_value.toLower()=="convert_jdh8") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleConvertJDH8();
               }
 
 
@@ -5095,6 +5105,30 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleConvertJDH8()
+{
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QByteArray data = Util::loadBinaryFile(inFile);
+    QString s ="";
+    int cnt = 0;
+    for (int i=0;i<data.count();i++) {
+        if (cnt==0)
+            s+="\n@db ";
+        s+="0x"+QString::number((uchar)data[i],16);
+        if (cnt++==16) {
+            cnt=0;
+        }
+        else
+            s+=", ";
+    }
+    Util::SaveTextFile(outFile, s);
 
 }
 
