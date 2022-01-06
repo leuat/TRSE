@@ -40,5 +40,5 @@ void CompilerJDH8::Connect()
 
 bool CompilerJDH8::SetupMemoryAnalyzer(QString filename, Orgasm *orgAsm)
 {
-
+    return true;
 }

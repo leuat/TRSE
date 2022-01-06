@@ -69,7 +69,7 @@ begin
 	
 	for i:=0 to 240 do
 	begin	
-		Memory::Copy(src, pd, cnt);
+		Memory::Copy16(src, pd, cnt);
 		cnt+=$20;
 		pd:=pd-$20;
 	end;
