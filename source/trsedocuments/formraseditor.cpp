@@ -153,6 +153,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
     if (emu.startsWith("x"))
         QProcess::execute("killall",QStringList() << QFileInfo(emu).fileName());
 
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::JDH8)
+        QProcess::execute("killall",QStringList() << "emu");
+
+
     if (emu.toLower().contains("openemu"))
         QProcess::execute("killall",QStringList() << QFileInfo(emu).fileName());
 
@@ -171,7 +175,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         process.startDetached();
     }
     else {
- //       qDebug() <<emu<<params;
+//        qDebug() <<emu<<params;
         process.startDetached(emu, params);
 
     }

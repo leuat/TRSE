@@ -1,4 +1,10 @@
 program Notes;
+
+/*
+
+ This stuff is kinda deprecated.. check out tut8_mus instead for the internal music editor/player!
+
+*/
 var  
    k,l: byte = 0;  
    x,j,idx,m:integer = 0;

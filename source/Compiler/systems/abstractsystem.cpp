@@ -91,6 +91,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == ARM) return "ARM";
         if (s == WDC65C816) return "WDC65C816";
         if (s == WDC65C02) return "WDC65C02";
+        if (s == PJDH8) return "JDH8";
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return "";
     }
@@ -104,6 +105,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "ARM") return ARM;
         if (s == "WDC65C816" || s=="65C816") return WDC65C816;
         if (s == "WDC65C02" || s =="65C02") return WDC65C02;
+        if (s == "PJDH8") return PJDH8;
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return MOS6502;
     }
@@ -117,6 +119,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "GAMEBOY") return "GBZ80";
         if (s == "SNES") return "WDC65C816";
         if (s == "MEGA65") return "WDC65C02";
+        if (s == "JDH8") return "PJDH8";
         if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
 
         qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
@@ -182,6 +185,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         return VZ200;
     if (s.toLower()=="acorn")
         return ACORN;
+    if (s.toLower()=="jdh8")
+        return JDH8;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -216,6 +221,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == CUSTOM) return "CUSTOM";
     if (s == VZ200) return "VZ200";
     if (s == ACORN) return "ACORN";
+    if (s == JDH8) return "JDH8";
     return "";
 }
 
@@ -364,7 +370,7 @@ void AbstractSystem::AssembleCL65(QString &text, QString filename, QString curre
 
 }
 
-bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QString error, QString &text)
+bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QString error, QString &text, QString workingDir)
 {
     QString output;
     int time = timer.elapsed();
@@ -381,6 +387,9 @@ bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QStr
     //    QStringList params;
     //  params << filename+".asm";
     //    qDebug() << "Assembling with "<<assembler;
+    if (workingDir!="")
+        process.setWorkingDirectory(workingDir);
+
     process.start(assembler, params);
     process.waitForFinished();
     output = process.readAllStandardOutput();

@@ -429,6 +429,9 @@ void Parser::InitSystemPreprocessors()
 {
     m_preprocessorDefines[AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)] = "1";
     m_preprocessorDefines["CPU_"+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)] = "1";
+    if (Syntax::s.m_currentSystem->getCPUFlavor()!="")
+       m_preprocessorDefines["CPU_FLAVOR_"+Syntax::s.m_currentSystem->getCPUFlavor()] = "1";
+
     Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 
 }
@@ -1122,6 +1125,12 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="convert_jdh8") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="export") {
             Eat();
             Eat();
@@ -1427,6 +1436,8 @@ void Parser::HandlePreprocessorInParsing()
 
         if (m_currentToken.m_value=="else") {
             //        qDebug() << "Start with ELSE : " << m_lastIfdef.last() << m_lastKey.last();
+            if (m_lastIfdef.count()==0)
+                ErrorHandler::e.Error("You cannot have an else block without having an if statement", m_currentToken.m_lineNumber);
             PreprocessIfDefs(!m_lastIfdef.last());
             return;
         }
@@ -2858,6 +2869,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower()=="execute") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExecute();
+              }
+              else if (m_currentToken.m_value.toLower()=="convert_jdh8") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandleConvertJDH8();
               }
 
 
@@ -5090,6 +5105,30 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleConvertJDH8()
+{
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QByteArray data = Util::loadBinaryFile(inFile);
+    QString s ="";
+    int cnt = 0;
+    for (int i=0;i<data.count();i++) {
+        if (cnt==0)
+            s+="\n@db ";
+        s+="0x"+QString::number((uchar)data[i],16);
+        if (cnt++==16) {
+            cnt=0;
+        }
+        else
+            s+=", ";
+    }
+    Util::SaveTextFile(outFile, s);
 
 }
 

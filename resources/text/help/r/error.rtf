@@ -1,8 +1,10 @@
 <h3>Description</h3>
-<p>Throw an error</p>
+<p>Throws a precompiler error and halts compilation</p>
 
 
 <h3>Example</h3>
-
 <code>
+@ifndef CPU_MOS6502
+@error "OH NOES this program can only compile on a 6502"
+@endif
 </code>

@@ -3,6 +3,9 @@
 
 
 <h3>Example</h3>
-
 <code>
+// Only call the method if the current system uses a 6502
+@ifdef CPU_MOS6502
+ CallMy6502Routine();
+@endif
 </code>

@@ -1,4 +1,8 @@
 program InputMe;
+// Use the CGA line renderer
+@define LINE_PUTPIXEL "_putpixel_line_cga"
+
+@use "gfx/gfx"
 var  
     i,j, time,t: byte; 
     update,trigger: byte=0;
@@ -63,8 +67,7 @@ begin
 		
 	for i:=0 to landscapeWidth-1 do
 	begin
-		DrawLineCGA(screen_cga, x, landscape[z], x+xx,landscape[z+1] , rl_color);
-	//	DrawLineCGA(screen_cga, x, z, x+xx, z , rl_color);
+		Gfx::DrawLine(x, landscape[z], x+xx,landscape[z+1] , rl_color, ptr(screen_cga,0));
 		x:=x+xx;
 		z:=z+1;
 	end;

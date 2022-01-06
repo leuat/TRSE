@@ -1,6 +1,8 @@
 <p>Sets the current VIC bank.
+Each vic bank is divided into 16k ($4000) bytes of memory
 <code>
- SetBank(VIC_BANK1);
+ SetBank(VIC_BANK0); // VIC sees data from 0-$3FFF
+ SetBank(VIC_BANK1); // VIC sees data from $4000-$7FFF
  ...
- SetBank(VIC_BANK2);
+ SetBank(VIC_BANK2); // VIC sees data from $8000-$BFFF
  </code>

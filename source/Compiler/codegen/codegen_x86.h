@@ -113,6 +113,8 @@ public:
     QString getReturn() override { return "ret";}
     QString getReturnInterrupt() override { return "iret";}
 
+    void ShlAx(QString ax, int val, bool pushpopcl);
+
     /*
      *
      * Node Assign stuff

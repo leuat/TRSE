@@ -30,6 +30,7 @@
 #include "systemcustom.h"
 #include "systemvz200.h"
 #include "systemacorn.h"
+#include "systemjdh8.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

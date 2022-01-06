@@ -30,7 +30,7 @@ end;
 
 procedure ClearScreen() inline;
 begin
-	asm(" XOR A");
+	asm(" xor A");
 	call(CLS);
 end;
 

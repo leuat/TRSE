@@ -72,6 +72,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
+    ui->leJDH8Emulator->setText(m_ini->getString("jdh8_directory"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
@@ -183,6 +184,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
     m_ini->setString("qemu_directory",ui->leQemuDir->text());
+    m_ini->setString("jdh8_directory",ui->leJDH8Emulator->text());
     m_ini->setString("coleco_emulator", ui->leColecoEmulator->text());
     m_ini->setString("lz4",ui->leLZ4->text());
     //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
@@ -294,7 +296,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -825,6 +827,16 @@ void DialogTRSESettings::on_btnAcornEmulator_clicked()
         tr("Acorn emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leAcornEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnJDH8Emu_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("JDH-8 base directory"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leJDH8Emulator->setText(filename);
 
 }
 

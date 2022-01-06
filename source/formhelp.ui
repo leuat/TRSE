@@ -49,6 +49,14 @@
       </property>
      </widget>
      <widget class="QTextEdit" name="txtHelp">
+      <property name="font">
+       <font>
+        <family>Helvetica</family>
+        <pointsize>15</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
       <property name="acceptRichText">
        <bool>true</bool>
       </property>

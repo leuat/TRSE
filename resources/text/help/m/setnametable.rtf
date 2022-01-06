@@ -1,5 +1,8 @@
-<p>Sets the high byte of the sprite pointer location.
-<p>Example:
-<code>
-SetSpriteLocation($2); // sprites are located at $0200
-</code>
+Sets the current nametable (location of background data + attributes)
+<p>
+SetNameTable(0) will point data to $2000 on the PPU and attributes at $23C0<br>
+SetNameTable(1) will point data to $2400 on the PPU and attributes at $27C0<br>
+SetNameTable(2) will point data to $2800 on the PPU and attributes at $2BC0<br>
+SetNameTable(3) will point data to $2C00 on the PPU and attributes at $2FC0<br>
+
+

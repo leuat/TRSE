@@ -168,7 +168,7 @@ void formHelp::LoadItem(QString findword)
 
                     s = ApplyColors(s);
 
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+                    val+="<div style=\"font-size: "+sz1+"\">" + s + "</div>";
 
              //       m_highlighter->HighlightText(val);
            //         qDebug() << val;
@@ -208,7 +208,7 @@ void formHelp::LoadItem(QString findword)
 
                     s = ApplyColors(s);
 
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+                    val+="<div style=\"font-size: "+sz1+"\">" + s + "</div>";
 
              //       m_highlighter->HighlightText(val);
            //         qDebug() << val;
@@ -240,7 +240,7 @@ void formHelp::LoadItem(QString findword)
 
                     s = ApplyColors(s);
 
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+                    val+="<div style=\"font-size: "+sz1+"\">" + s + "</div>";
 
                 }
 
@@ -263,7 +263,7 @@ void formHelp::LoadItem(QString findword)
 
                     s = ApplyColors(s);
 
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+                    val+="<div style=\"font-size: "+sz1+"\">" + s + "</div>";
 
                 }
 
@@ -284,7 +284,7 @@ void formHelp::LoadItem(QString findword)
                     QString s = f.readAll();
                     f.close();
                     s = ApplyColors(s);
-                    val+="<div style=\"font-size: 10pt\">" + s + "</div>";
+                    val+="<div style=\"font-size: "+sz1+"\">" + s + "</div>";
 
                 }
 
@@ -310,8 +310,8 @@ QString formHelp::ApplyColors(QString s)
     s=s.replace("<code>","<pre><code style=\"color: #E0B050\">");
     s=s.replace("</code>","</code></pre>");
 
-    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 16pt;margin: 35px 0px 20px\">");
-    s=s.replace("<h1>","<h1 style=\"color: lightblue;font-size: 18pt;margin: 35px 0px 20px\">");
+    s=s.replace("<h3>","<h3 style=\"color: yellow;font-size: 20pt;margin: 35px 0px 20px\">");
+    s=s.replace("<h1>","<h1 style=\"color: lightblue;font-size: 24pt;margin: 35px 0px 20px\">");
 
     return s;
 }

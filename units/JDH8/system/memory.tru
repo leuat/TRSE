@@ -1,0 +1,48 @@
+unit Memory;
+var
+	src,dst : pointer;
+	@donotremove i1
+	@donotremove src
+	@donotremove dst
+	
+	i1 : integer;
+	bb:byte;
+	
+procedure Init() inline;
+begin
+	asm
+  	sw [ADDR_MB], 1
+	end;
+end;
+	
+	
+procedure Copy16(src,dst:global pointer; i1:global integer);
+begin
+	asm
+	
+  lw16 a, b, [Memory_dst]
+  lw16 c, d, [Memory_src]
+  lw16 h,l, [Memory_i1]
+  sw16 [D0], h, l
+  call [memcpy16]
+	
+	end;	
+	
+	
+end;
+
+procedure Copy(src,dst:global pointer; bb:global byte);
+begin
+	asm
+	
+  lw16 a, b, [Memory_dst]
+  lw16 c, d, [Memory_src]
+  lw z, [Memory_bb]
+  call [memcpy]
+	
+	end;	
+	
+	
+end;
+
+end.

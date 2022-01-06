@@ -229,7 +229,8 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
             node->m_expr->setForceType(TokenType::INTEGER);
             node->m_expr->Accept(this);
             as->Asm("mov bx,ax");
-            as->Asm("shl bx,2");
+            ShlAx("bx",2,false);
+//            as->Asm("shl bx,2");
 
             as->Asm("lea si,["+node->getValue(as)+ "]");
             as->Asm("mov di,[ds:si+bx]");
@@ -661,7 +662,7 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
         var->m_expr->Accept(this);
         as->Term();
         if (var->isWord(as))
-            as->Asm("shl ax,1");
+            ShlAx("ax",1,false);
         as->Asm("mov bx,ax");
 
         if (node->m_right->isPointer(as)) {
@@ -692,7 +693,7 @@ bool CodeGenX86::IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node)
             as->Comment("Assign value to pointer array");
             node->m_right->Accept(this);
             var->m_expr->Accept(this);
-            as->Asm("shl ax,2 ; pointer lookup");
+            ShlAx("ax",2,false);
             as->Asm("mov bx,ax");
             as->Asm("lea si,["+var->getValue(as)+"]");
             as->Asm("mov [ds:si+bx],di ; store in pointer array");
@@ -713,7 +714,7 @@ bool CodeGenX86::IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node)
             else {
                 as->Asm("mov di,"+getX86Value(as,var->m_expr));
                 if (var->isWord(as))
-                    as->Asm("shl di,1");
+                    ShlAx("di",1,false);
             }
         }
         else {
@@ -722,7 +723,7 @@ bool CodeGenX86::IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node)
             var->m_expr->Accept(this);
             as->Asm("mov di,ax");
             if (var->isWord(as))
-                as->Asm("shl di,1");
+                ShlAx("di",1,false);
             as->Asm("pop ax");
         }
         as->Asm("mov ["+var->getValue(as) + "+di], "+getAx(node->m_left));
@@ -1265,6 +1266,22 @@ void CodeGenX86::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPoi
     PopX();
     as->Asm(m_cmp+ax+","+bx);
     as->Asm(m_jne+lblJump);
+
+}
+
+void CodeGenX86::ShlAx(QString ax, int val, bool pushpopcl)
+{
+    if (Syntax::s.m_currentSystem->is8088()) {
+        if (pushpopcl)
+            as->Asm("push cl");
+        as->Asm("mov cl,"+QString::number(val));
+        as->Asm("shl "+ax+",cl");
+        if (pushpopcl)
+            as->Asm("pop cl");
+        return;
+
+    }
+   as->Asm("shl "+ax+","+QString::number(val));
 
 }
 

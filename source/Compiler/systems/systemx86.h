@@ -59,6 +59,9 @@ public:
 
     virtual QString getEmulatorName() override;
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
+    QString getCPUFlavor() override {
+        return m_cpu;
+    }
 
 };
 

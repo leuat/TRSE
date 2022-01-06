@@ -1,1 +1,9 @@
-<p>Prints a hexadecimal number at the current screenmemory position (see moveto).
+<p>Prints a hexadecimal number (byte) at the current screenmemory position (see moveto).
+<p>Example:
+<code>
+var i:byte = 64;;
+begin
+  moveto(5,5,hi(screen_char_loc));
+  printnumber(i); // will print 40 (in hex)
+...
+</code>

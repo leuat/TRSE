@@ -1,2 +1,12 @@
-<p>Toggles NMI on or off.
+<p>Sets the data location of a given sprite on the c64.
+Usage:<br>
+SetSpriteLoc( sprite_number, sprite_data_location, bank_location)<br>
+<p>
+<b>sprite_number</b> is sprite 0-7<br>
+<b>sprite_data_location</b> is the location in memory divided by 64. Example: if your
+sprite is located at $2000, then the value should be $2000/64 = $80.
+<b>bank</b> is the bank your sprite is located in (0= bank0 (0-$3FFF), 1=bank 1 ($4000,$7FFF) etc)
+
+
+
 

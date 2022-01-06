@@ -1,8 +1,28 @@
 <h3>Description</h3>
-<p></p>
+<p>Includes NES Sound Format files (.nsf) to your program. Default method for playing
+music on the NES.
 
 
 <h3>Example</h3>
 
 <code>
+var
+    music: incnsf("music/zelda.nsf"); // Official zelda music
+
+
+...
+begin
+    // Load music
+    LoadSong(0); // a NSF music file can contain multiple songs
+
+...
+
+// In your NMI routine, call playsong();
+interrupt NMI();
+begin
+...
+    // Play the tune!
+    PlaySong();
+...
+
 </code>
