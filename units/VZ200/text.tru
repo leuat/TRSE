@@ -140,10 +140,16 @@ end;
 procedure PrintAt(x,y: global byte, c: global pointer, z: global byte);
 begin
   i := 28672 + 32 * y + x;
-  if (z = 1) then z := 0 else z := 64;
   while (c^<>0) do
   begin
-    Screen::Poke(i,c^ - z);
+    if (z = 0) then
+    begin
+      if (c^ > 64) then Screen::Poke(i,c^ - 64) else Screen::Poke(i,c^);
+    end
+    else
+    begin
+      if (c^ > 64) then Screen::Poke(i,c^) else Screen::Poke(i,c^ + 64);
+    end;
     c += 1;
     i += 1;
   end;
