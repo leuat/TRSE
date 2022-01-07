@@ -10,6 +10,8 @@ var
 	buf : array[256] of byte;
 
 	ii : integer = 12345;
+	
+	lst : array[] of string = ("NEED","MORE","CATNIP");
 
 /*
 	In this example, we use various string methods to manipulate
@@ -70,6 +72,14 @@ begin
 	// Copy a substring to the buffer ("MEOW")
 	str::substr(#buf, #longString, 2,4);
 	printstring(	buf,0,40);
+	
+	moveto(0,19,hi(screen_char_loc));
+	// Copy a substring to the buffer ("MEOW")
+	printstring(	lst[0],0,40);
+	screenmemory+=10;
+	printstring(	lst[1],0,40);
+	screenmemory+=10;
+	printstring(	lst[2],0,40);
 	
 	
 	Loop();

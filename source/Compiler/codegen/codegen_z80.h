@@ -110,7 +110,7 @@ public:
 
     QString getJmp(bool isOffPage) override;
     bool UseBlocks() override;
-
+    void Load16bitToHl(Assembler* as);
 
 //    void dispatch(QSharedPointer<NodeConditional> node) override;
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed,QString lblSuccess, bool forcePage);

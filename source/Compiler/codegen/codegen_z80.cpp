@@ -88,6 +88,16 @@ bool CodeGenZ80::UseBlocks() {
     return (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM);
 }
+
+void CodeGenZ80::Load16bitToHl(Assembler *as)
+{
+    as->Asm("ld a,[hl]");
+    as->Asm("ld e,a");
+    as->Asm("inc hl");
+    as->Asm("ld a,[hl]");
+    as->Asm("ld d,a");
+    ExDeHl();
+}
 /*
  *
  * Main method used in for loops. Will increase a counter in nodeA->m_left (from for a:=0 ...)
@@ -676,7 +686,13 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 //            LoadVariable(as,)
 //            as->Asm("ld hl,"+node->getValue(as));
             LoadAddress(node);
-            as->Asm("ld a,[hl]");
+            if (node->isWord(as)) {
+                as->Comment("Integer array!");
+                Load16bitToHl(as);
+            }
+            else
+                as->Asm("ld a,[hl]");
+
             return;
         }
         if (node->m_expr->isPureNumeric()) {

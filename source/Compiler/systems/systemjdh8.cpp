@@ -60,7 +60,7 @@ void SystemJDH8::applyEmulatorParameters(QStringList &params, QString debugFile,
     params<<"--load"<< filename+".bin" << "0xc000";
     params<<"-r"<< "10000000";
 
-    qDebug() << params;
+//    qDebug() << params;
 //    exit(1);
 
   //  m_requireEmulatorWorkingDirectory = true;

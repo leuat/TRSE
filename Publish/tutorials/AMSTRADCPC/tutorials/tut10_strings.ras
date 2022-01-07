@@ -12,7 +12,7 @@ var
   num: string = "        ";
   data : array[256] of byte; // Store string here
  	 
- 	 
+ 	p:pointer;
   string_list : array[4] of string = ("this","is","an","array");	 
  	 
 begin
@@ -56,7 +56,11 @@ begin
 	Text::Print(#data);	
 
 	Text::MoveCursorTo(1, 14);
-	Text::Print(string_list[3]);	
+	for ch:=0 to length(string_list)-1 do
+	begin
+		Text::Print(string_list[ch]);
+		Text::Print(" ");	
+	end;
 	  
 	Input::WaitKey();
 

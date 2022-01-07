@@ -1,6 +1,7 @@
 Unit Text;
 
 var
+	@donotremove Screen_c
  	c : pointer;
  	x,y : byte;
   i : Integer;
