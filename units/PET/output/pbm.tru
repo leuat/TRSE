@@ -1,0 +1,280 @@
+Unit Pbm;
+var
+
+@ifndef PBMADDRESS
+	@raiseerror "Missing: '@define PBMADDRESS $8000' Set the address of the screen in your program"
+@endif
+
+@ifndef PBMDISPLAYWIDTH
+	@raiseerror "Missing: '@define PBMDISPLAYWIDTH 40' to set how much of the buffer to display (smaller values). Set this in your program, values 1-40"
+@endif
+
+@ifndef PBMSCREENWIDTH
+	@raiseerror "Missing: '@define PBMSCREENWIDTH 40' to set the width of the screen. Set this in your program, values 1-40"
+@endif
+
+@ifndef PBMBUFFERWIDTH
+	@raiseerror "Missing: '@define PBMBUFFERWIDTH 40' Set this in your program, values 1-40"
+@endif
+@ifndef PBMBUFFERHEIGHT
+	@raiseerror "Missing: '@define PBMBUFFERHEIGHT 25' Set this in your program, values 1-25"
+@endif
+
+//	ScreenWidth: byte = 40;	// width of screen (40 or 80)
+//	const SCREENWIDTH: byte = 40;
+//	const SCREENHEIGHT: byte = 25;
+
+	x, y: byte at $5c;				// internal index
+	w, h: byte at $5a;				// sprite size
+	i, j, t: byte at $57;				// index
+
+	sp: pointer;			// sprite/PETSCII image data pointer
+//	np: pointer;			// Nibble array pointer
+
+	// convert upper nibble to lower nibble
+	nibble:	array[ 256 ] of byte = buildtable( "i >> 4" );
+
+	// PETSCII char tables - character blocks for all 16 states
+	petab: array[ 16 ] of byte = (
+		32, $7c, $7e, $e2, $6c, $e1, $7f, $fb, $7b, $ff, $61, $ec, $62, $fe, $fc, $e0
+	);
+
+	// mirror (left-right) indexes to above petab
+	// ie: if PETSCII bin =14, this maps to bin pattern 13 in its mirrored state
+	mirror: array[ 16 ] of byte = (
+		0, 2, 1, 3, 8, 10, 9, 11, 4, 6, 5, 7, 12, 14, 13, 15
+	);
+	
+	// binary buffer - 40 x 25 (1000 bytes)
+	const BUFFERSIZE: integer = @PBMBUFFERWIDTH * @PBMBUFFERHEIGHT;
+	buffer: array[ BUFFERSIZE ] of byte;
+
+	// addresses of start of lines
+	const SCREENADDRESS: address = @PBMADDRESS;
+	const SCREENWIDTH: byte = @PBMSCREENWIDTH;
+	scraddr: array[25] of integer = buildtable( "SCREENADDRESS + (i * SCREENWIDTH)" );
+	bufaddr: array[25] of integer;
+
+
+@include "output/pbm/macro.ras"
+
+
+// --------------------------------------------------------------
+// Call this once, before using PBM
+
+/**
+<p>Initialise PBM. Clears the buffer and sets up address tables.
+**/
+procedure Initialise();
+
+
+
+// --------------------------------------------------------------
+// Refresh the display
+
+/**
+<p>Refresh a portion of the screen from the back buffer. Call 
+this each time you wish to refresh the screen.
+<p>Note that Refresh draws from the top downwards.
+<h3>Param</h3>
+<ul>
+<li>x - the column in the buffer to start drawing from, eg: 0 (can be used for simple scrolling)
+<li>y - the line on the screen to start drawing from
+<li>h - the number of lines to draw
+</ul>
+**/
+procedure Refresh( x, y, h: global byte );
+
+
+
+
+/**
+<p>Fast unrolled screen refresh in a fixed dimension of 36 columns by
+22 rows. Is faster than the other Refresh commands at expense of 
+using a lot of memory. 
+<p>Leaves a border of 1 char at top, 2 at left/right, 2 at bottom
+for use with border graphics, status icons and scores etc.
+**/
+procedure RefreshUnroll_36x22();
+
+
+/**
+<p>Fast unrolled screen refresh for the whole screen. Is faster than 
+the other Refresh commands at expense of using a lot of memory.
+**/
+procedure RefreshUnroll();
+
+
+/**
+<p>Fast unrolled screen refresh in a fixed dimension of 24 columns by
+22 rows on a Vic 20. Is faster than the other Refresh commands at 
+expense of using a lot of memory. 
+<p>Vic 20 equivalent of RefreshUnroll_36x22, this takes the x starting
+offset in the _y register.
+<p>Leaves a border of 1 char at top, 2 at bottom
+for use with border graphics, status icons and scores etc.
+**/
+procedure RefreshUnrollVic_24x22( _y: byte );
+
+
+// --------------------------------------------------------------
+// PBM draw routines
+
+
+/**
+<p>Draw uncompressed PBM data (mode 1) with replace ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (one char per byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSprite( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+
+/**
+<p>Draw uncompressed PBM data (mode 1) with EOR ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (one char per byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSpriteE( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+
+
+/**
+<p>Draw uncompressed PBM data (mode 1) with OR ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (one char per byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSpriteO( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+
+/**
+<p>Draw uncompressed PBM data (mode 1) Mirrored with EOR ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (one char per byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSpriteME( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+
+/**
+<p>Draw compressed PBM data (mode 2) with replace ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (two chars in one byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSpriteC( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+/**
+<p>Draw compressed PBM data (mode 2) with EOR ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (two chars in one byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSpriteCE( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+/**
+<p>Draw compressed PBM data (mode 2) with OR ink
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>w - Width of source object in character pairs (two chars in one byte)
+<li>h - Height of source object in characters
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSpriteCO( x, y, w, h: global byte, _y:byte, _ax: integer );
+
+/**
+<p>Draw fixed 8x8 sized uncompressed PBM data (mode 1) with EOR ink. 
+A little faster as the drawing code is unrolled (no loop)
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSprite8E( x, y: global byte, _y:byte, _ax: integer );
+
+/**
+<p>Draw fixed 8x8 sized uncompressed PBM data (mode 1) Mirrored with EOR ink. 
+A little faster as the drawing code is unrolled (no loop)
+<ul>
+<li>x - Block position to draw at horizontally
+<li>y - Block position to draw at vertically
+<li>_y - Animation frame
+<li>_ax - #address array of integers containing the addresses of PBM data
+		in four postions - NW, NE, SW, SE
+**/
+procedure DrawSprite8ME( x, y: global byte, _y:byte, _ax: integer );
+
+
+
+// --------------------------------------------------------------
+// PETSCII routines
+
+/**
+<p>Draw PETSCII screen codes (mode 0) from the supplied address 
+in the width and height specified directly to the screen. 
+<ul>
+<li>w - Width of source object in characters
+<li>h - Height of source object in characters
+<li>_ax - #address of binary data containing PETSCII characters
+**/
+procedure PDraw( w, h: global byte, _ax: integer );
+
+/**
+<p>Draw PETSCII screen codes (mode 0) from the supplied address 
+in the width and height specified directly to the screen.
+Space characters (32) are not drawn and act as transparent
+<ul>
+<li>w - Width of source object in characters
+<li>h - Height of source object in characters
+<li>_ax - #address of binary data containing PETSCII characters
+**/
+procedure PDrawT( w, h: global byte, _ax: integer );
+
+
+
+// --------------------------------------------------------------
+
+@include "output/pbm/implementation.ras"
+@include "output/pbm/unrolled.ras"
+
+
+
+
+end.

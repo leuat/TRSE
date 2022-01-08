@@ -1,0 +1,40 @@
+
+// wait for VBL to start
+procedure WaitVblStart();
+begin
+
+	asm
+	;
+waitVblStart
+	lda $e840
+	and #%00100000
+	cmp #%00100000
+	beq waitVblStart
+
+	end;
+
+end;
+
+// wait for VBL to end
+procedure WaitVblEnd();
+begin
+
+	asm
+	;
+waitVblEnd
+	lda $e840
+	and #%00100000
+	cmp #%00100000
+	bne waitVblEnd
+
+	end;
+
+end;
+
+procedure Clear();
+begin
+
+	_a := 147;  // clear (home) character
+	call( OUTCHAR );
+
+end;

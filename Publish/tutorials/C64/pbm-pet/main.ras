@@ -1,0 +1,286 @@
+/*
+
+PBM - Pet Bitmap Mode
+=====================
+Andy H @ HEWCO 2021 - free to use in your TRSE programs
+
+PBM creates a virtual screen using 16 PETSCII characters that are made up
+of blocks of 2 by 2. This creates a blocky, double resolution to draw a
+low-res bitmap of PETSCII blocks.
+
+For the PET computer, this provides a way to define and draw graphics
+
+
+PBM supports :
+
+- PET, C64 and VIC 20
+- spirtes and 'tilemaps'
+- @PBMEXPORT command for converting graphics into PETSCII block data
+
+Take a look at the output/pbm unit for list of commands
+
+
+HOW TO USE:
+
+- Initialise PBM
+- Use draw commands
+- Refresh the screen
+
+
+ABOUT THIS FILE:
+
+This example file shows how to use Sprites with the PBM library.
+The chr/sprites.flf file contains the four pre-shifted sprites needed
+- each sprite is 7x7 and positioned Top Left, Top Right, Bottom Left and Bottom Right
+
+Animation is possible in two ways
+- First is as used in this example, each pre-shifted sprite forms the animation
+  when moved horizontall. WIll not animate when moving vertically
+- An alternative method is to draw another set of 4 pre-shifted sprites for each
+  frame of animation required, then extend the sprPlayerWalk0 array with pointers
+  to @PBMEXPORT'ed binary data. The sprite drawing commands (eg: DrawSprite8E) take
+  and animation frame value. You would pass in values in multiples of 4, 
+  ie: 0, 4, 8, 12, 16 etc as required by the number of animation frames/pre-shifted
+  sprites you have defined
+
+Tiles, Tilemaps and general graphic drawing is possibly by using the sprite drawing
+commands. However, in most cases you do not need to create 4 pre-shitfed version
+as often you would simply be drawing these at standard character locations
+
+
+- Works on the PET, C64 and Vic 20 - this example file is set up to work on
+  all these computers. Go to the Project settings and change the System
+  to compile and run on that computer
+
+
+*/
+program PBM_DEMO;
+var
+
+// screen address
+@ifdef PET
+
+	@define PBMADDRESS $8000
+	@define PBMDISPLAYWIDTH 40
+	@define PBMSCREENWIDTH 40 // screen size
+
+	const XMAX: byte = 60;
+
+	@projectsettings "petmodel" "3032"
+
+@endif
+
+@ifdef C64
+
+	@define PBMADDRESS $0400
+	@define PBMDISPLAYWIDTH 40
+	@define PBMSCREENWIDTH 40 // screen size
+
+	const XMAX: byte = 60;
+
+@endif
+
+@ifdef VIC20
+
+	// VIA values: $64,$65,$66,$67
+	@define PBMADDRESS $1000
+	@define PBMDISPLAYWIDTH 24
+	@define PBMSCREENWIDTH 24 // screen size
+
+	const XMAX: byte = 30;
+
+
+	@VicMemoryConfig "all"
+	@projectsettings "startaddress" $1300 //$1258 // other blocks, eg: $2000
+	
+@endif
+
+// used only for some refresh commands
+@define PBMBUFFERWIDTH 40
+@define PBMBUFFERHEIGHT 25
+
+
+@ifdef PET @use "output/screen" @endif
+@ifdef VIC20 @use "screen" @endif
+@ifdef PET @use "os/interrupts" @endif
+
+@use "output/pbm"
+@use "input/key"
+@use "compression/compression"
+
+// Remove if using multiplcation or division
+@ignoremethod "init16x8mul"
+@ignoremethod "init16x8div"
+@ignoremethod "init8x8div"
+@ignoremethod "initeightbitmul"
+// deprecated commands - ensure not included
+@ignoremethod "initjoystick"
+@ignoremethod "initmoveto"
+
+
+
+	// export player frames (need four) facing one direction
+	@pbmexport "chr/sprites.flf" "chr/playerwalk0.bin" 0 8 8 1 // result 3x3 uncompressed
+	binPlayerWalk0: incbin("chr/playerwalk0.bin");
+	@pbmexport "chr/sprites.flf" "chr/playerwalk1.bin" 1 8 8 1 // result 3x3 uncompressed
+	binPlayerWalk1: incbin("chr/playerwalk1.bin");
+	@pbmexport "chr/sprites.flf" "chr/playerwalk2.bin" 2 8 8 1 // result 3x3 uncompressed 
+	binPlayerWalk2: incbin("chr/playerwalk2.bin");
+	@pbmexport "chr/sprites.flf" "chr/playerwalk3.bin" 3 8 8 1 // result 3x3 uncompressed 
+	binPlayerWalk3: incbin("chr/playerwalk3.bin");
+
+	// Addresses of the four sprite poisitions
+	@donotremove "sprPlayerWalk0"
+	sprPlayerWalk0: array[ 4 ] of integer = (
+		#binPlayerWalk0, #binPlayerWalk1, #binPlayerWalk2, #binPlayerWalk3
+	);
+
+
+
+	direction: byte = 0;
+	xpos, ypos: byte = 10;
+	ticks: byte = 0;
+
+
+// Draw the player sprite.
+// Note: This can draw the sprite facing either direction (Mirrored)
+procedure DrawPlayer();
+begin
+	
+	if ( direction = 0) then 
+		Pbm::DrawSprite8E( xpos, ypos, 0, #sprPlayerWalk0 )
+	else
+		Pbm::DrawSprite8ME( xpos, ypos, 0, #sprPlayerWalk0 );
+
+end;
+
+// Process the keyboard for the player movement
+procedure PlayerUpdate();
+begin
+	
+	Key::Read();
+	
+	if ( Key::Held( Key::KD ) and xpos < XMAX ) then 
+	begin
+		
+		xpos += 1;
+		direction := 0;
+		
+	end;
+
+	if ( Key::Held( Key::KA ) and xpos > 5 ) then 
+	begin
+		
+		xpos -= 1;
+		direction := 1;
+		
+	end;
+
+	if ( Key::Held( Key::KS ) and ypos < 39 ) then ypos += 1;
+	if ( Key::Held( Key::KW ) and ypos > 3 ) then ypos -= 1;
+
+end;
+
+
+
+/* main program */  
+begin
+
+	definescreen();
+	
+	@ifdef PET
+	
+		Interrupts::Disable();
+		
+	@endif
+
+	@ifdef C64
+
+		SCREEN_BG_COL := BLACK;
+		SCREEN_FG_COL := BLACK;
+	
+	@endif
+	
+	@ifdef VIC20
+	
+		if (VICCR0 = 12) then VICCR0 := 10;
+		Screen::SetScreenCharAddress( Screen::SCREEN_1000 + Screen::CHAR_8000, Screen::SCREEN_ADD_0000 );
+		VICCR2 := @PBMSCREENWIDTH; // screen width
+		VICCR3 := @PBMBUFFERHEIGHT * 2; // screen height
+		SCREEN_BG_COLOR := PURPLE + SCREEN_BG_BLACK;
+		
+	@endif
+	
+	
+	// Must initialse the PBM library
+	Pbm::Initialise();
+
+	// main loop
+	while( true ) do
+	begin
+
+		ticks += 1;
+
+		// move sprite with keys WASD, slow down with ticks counter
+		if ( ticks & 3 = 0 ) then PlayerUpdate();
+
+		// draw sprite
+		DrawPlayer();
+		
+		
+		// Wait for Vertical Blank
+		@ifdef PET
+		
+			Screen_WaitVblStart();
+			
+		@endif
+
+		@ifdef C64
+		
+			waitforverticalblank();
+			
+		@endif
+		
+		@ifdef VIC20
+		
+			waitforraster(105);
+
+		@endif
+		
+		
+		// Draw the PBM buffer to the screen
+		// There are different ways to do this, see output/pbm.tru for list
+		// Unrolled is faster but uses up a lot of RAM
+		// Non-unrolled are a bit slower, but take up less RAM
+		@ifndef VIC20
+		
+			// This is a special smaller screen, useful if you wish to
+			// draw a HUD for your UI around the outside
+			//Pbm::RefreshUnroll_36x22();
+			
+			// This does the whole screen
+			Pbm::RefreshUnroll();
+			
+		@endif
+		
+		@ifdef VIC20
+	
+			// the Vic 20 has a smaller screen so there is a specific
+			// refresh command for it
+			// Note, it is still possible to use the same virtual screen size
+			// as the C64 and PET if you use scrolling, the parameter for this
+			// command is the display offset int he buffer to draw 
+			Pbm::RefreshUnrollVic_24x22( 0 );
+			// also note: this vic routine allows for a HUD area above and below so does not draw the whole screen
+						
+		@endif
+		
+		
+		// erase sprite
+		DrawPlayer();
+		
+	end;
+	
+end.
+
+

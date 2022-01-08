@@ -1,0 +1,634 @@
+
+// Initialise the buffer and look up table
+procedure Initialise();
+begin
+
+//	np := #nibble - 128; // used for high nibble lookups
+
+	sp := #buffer;
+	for i := 0 to @PBMBUFFERHEIGHT do
+	begin
+	
+		for j := 0 to @PBMBUFFERWIDTH do
+		begin
+			
+			sp[ j ] := 0;
+			
+		end;
+		bufaddr[ i ] := sp; // set Y line start addresses in buffer
+		sp := sp + @PBMBUFFERWIDTH;	
+	
+	end;
+
+end;
+
+
+
+
+// Refresh the display from the data in the buffer
+procedure Refresh( x, y, h: global byte );
+begin
+
+	sp := bufaddr[ y ];
+	sp := sp + x;
+	screenmemory := scraddr[ y ]; // line 25
+	
+	for y := 0 to h offpage do
+	begin
+
+		asm
+;		
+Pbm_Refresh_ASMBlock:
+
+		ldy #0
+
+		repeat @PBMDISPLAYWIDTH
+		
+			lda (Pbm_sp),y
+			tax
+			lda Pbm_petab,x
+			sta (screenmemory),y
+			iny
+
+		repend
+
+		end;	
+
+		screenmemory := screenmemory + @PBMSCREENWIDTH;
+		sp := sp + @PBMBUFFERWIDTH;
+		
+	end;
+
+end;
+
+
+
+
+// --------------------------------------------------------------
+// PBM Draw routines
+
+// Draw sprite from uncompressed data with replace - faster but uses more data
+procedure DrawSprite( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	for j := 0 to h do
+	begin
+
+//addbreakpoint();
+		asm
+;		
+Pbm_DrawSprite_PokeBlock:
+
+		ldy #0					; the columns
+
+		; draw all columns in this row
+		
+Pbm_DrawSprite__loop:
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		sta (screenmemory),y	; write to display
+		
+		iny
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSprite__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + w;	// next row of sprite data
+		
+	end;
+
+
+end;
+
+
+// Draw sprite from uncompressed data with EOR - faster but uses more data
+procedure DrawSpriteE( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	for j := 0 to h do
+	begin
+
+
+		asm
+;		
+Pbm_DrawSpriteE_PokeBlock:
+
+		ldy #0					; the columns
+
+		; draw all columns in this row
+		
+Pbm_DrawSpriteE__loop:
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		iny
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSpriteE__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + w;	// next row of sprite data
+		
+	end;
+
+
+end;
+
+
+// Draw sprite from uncompressed data with OR - faster but uses more data
+procedure DrawSpriteO( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	for j := 0 to h do
+	begin
+
+
+		asm
+;		
+Pbm_DrawSpriteO_PokeBlock:
+
+		ldy #0					; the columns
+
+		; draw all columns in this row
+		
+Pbm_DrawSpriteO__loop:
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		ora (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		iny
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSpriteO__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + w;	// next row of sprite data
+		
+	end;
+
+
+end;
+
+
+// Draw sprite from uncompressed data with EOR - faster but uses more data
+procedure DrawSpriteME( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXYMirror();
+
+	for j := 0 to h do
+	begin
+
+		asm
+;		
+Pbm_DrawSpriteME_PokeBlock:
+		
+		lda Pbm_w
+		sta Pbm_i				; track the screen index pos -ve
+
+		ldy #0					; the columns
+		sty Pbm_t				; track the data index pos +ve
+
+		; draw all columns in this row
+		
+Pbm_DrawSpriteME__loop:
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		tax
+		lda Pbm_mirror,x			; get mirrored block
+
+		ldy Pbm_i
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		dec Pbm_i				; screen (move left)
+		inc Pbm_t				; data (move right)
+		ldy Pbm_t
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSpriteME__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + w;	// next row of sprite data
+		
+	end;
+
+
+end;
+
+
+
+// Draw sprite from compressed data with overwrite
+procedure DrawSpriteC( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	for j := 0 to h do
+	begin
+
+		asm
+;		
+Pbm_DrawSpriteC_PokeBlock:
+		
+		lda #0
+		sta Pbm_i				; track the screen index pos 
+		sta Pbm_t				; track the data index pos 
+
+		; draw all columns in this row
+		
+Pbm_DrawSpriteC__loop:
+			
+		ldy Pbm_t
+		lda (Pbm_sp),y			; get block (binary) - upper nibble
+		pha						; store for use with the lower nibble
+		tax
+		lda Pbm_nibble,x		; get upper nibble value
+
+		ldy Pbm_i
+		sta (screenmemory),y	; write to display
+		
+		inc Pbm_i				; screen (move right)
+		iny
+
+		pla						; get block (binary) - lower nibble
+		and #%00001111			; get the low nibble
+		sta (screenmemory),y	; write to display
+
+		inc Pbm_i				; screen (move right)
+		iny
+		
+		inc Pbm_t				; data (move right)
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSpriteC__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + (w>>1);	// next row of sprite data
+		
+	end;
+
+end;
+
+// Draw sprite from compressed data with EOR
+procedure DrawSpriteCE( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	for j := 0 to h do
+	begin
+
+		asm
+;		
+Pbm_DrawSpriteCE_PokeBlock:
+		
+		lda #0
+		sta Pbm_i				; track the screen index pos 
+		sta Pbm_t				; track the data index pos 
+
+		; draw all columns in this row
+		
+Pbm_DrawSpriteCE__loop:
+			
+		ldy Pbm_t
+		lda (Pbm_sp),y			; get block (binary) - upper nibble
+		pha						; store for use with the lower nibble
+		tax
+		lda Pbm_nibble,x		; get upper nibble value
+
+		ldy Pbm_i
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		inc Pbm_i				; screen (move right)
+		iny
+
+		pla						; get block (binary) - lower nibble
+		and #%00001111			; get the low nibble
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+
+		inc Pbm_i				; screen (move right)
+		iny
+		
+		inc Pbm_t				; data (move right)
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSpriteCE__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + (w>>1);	// next row of sprite data
+		
+	end;
+
+end;
+
+// Draw sprite from compressed data with OR
+procedure DrawSpriteCO( x, y, w, h: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	for j := 0 to h do
+	begin
+
+		asm
+;		
+Pbm_DrawSpriteCO_PokeBlock:
+		
+		lda #0
+		sta Pbm_i				; track the screen index pos 
+		sta Pbm_t				; track the data index pos 
+
+		; draw all columns in this row
+		
+Pbm_DrawSpriteCO__loop:
+			
+		ldy Pbm_t
+		lda (Pbm_sp),y			; get block (binary) - upper nibble
+		pha						; store for use with the lower nibble
+		tax
+		lda Pbm_nibble,x		; get upper nibble value
+
+		ldy Pbm_i
+		ora (screenmemory),y	; or it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		inc Pbm_i				; screen (move right)
+		iny
+
+		pla						; get block (binary) - lower nibble
+		and #%00001111			; get the low nibble
+		ora (screenmemory),y	; or it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+
+		inc Pbm_i				; screen (move right)
+		iny
+		
+		inc Pbm_t				; data (move right)
+		
+		cpy	Pbm_w				; have we reached the width yet
+		bcc Pbm_DrawSpriteCO__loop ; nope, keep going		
+
+		end;
+		
+
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		sp := sp + (w>>1);	// next row of sprite data
+		
+	end;
+
+end;
+
+
+// Draw 8x8 sprite from uncompressed data with EOR - faster but uses more data
+procedure DrawSprite8E( x, y: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXY();
+
+	asm ;		
+
+			
+		repeat 4
+
+
+		; draw all columns in this row		
+		ldy #0					; 
+
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		iny
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		iny
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		iny
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+
+		lda screenmemory
+		clc
+		adc #@PBMBUFFERWIDTH ;#$28
+		sta screenmemory+0
+		bcc *+4
+		inc screenmemory+1
+
+		lda Pbm_sp
+		clc
+		adc #4
+		sta Pbm_sp+0
+		bcc *+4
+		inc Pbm_sp+1
+
+		repend
+
+
+	end;
+		
+end;
+
+
+// Draw sprite from uncompressed data with EOR - faster but uses more data
+procedure DrawSprite8ME( x, y: global byte, _y:byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	// work out x and y position
+	SetXYMirror();
+
+	asm ;		
+		
+		repeat 4
+		
+		; draw all columns in this row
+		lda #4
+		sta Pbm_i				; track the screen index pos -ve
+		
+		ldy #0					; the columns
+		sty Pbm_t				; track the data index pos +ve
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		tax
+		lda Pbm_mirror,x			; get mirrored block
+
+		ldy Pbm_i
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		dec Pbm_i				; screen (move left)
+		inc Pbm_t				; data (move right)
+		ldy Pbm_t
+
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		tax
+		lda Pbm_mirror,x			; get mirrored block
+
+		ldy Pbm_i
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		dec Pbm_i				; screen (move left)
+		inc Pbm_t				; data (move right)
+		ldy Pbm_t
+				
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		tax
+		lda Pbm_mirror,x			; get mirrored block
+
+		ldy Pbm_i
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+		dec Pbm_i				; screen (move left)
+		inc Pbm_t				; data (move right)
+		ldy Pbm_t
+		
+			
+		lda (Pbm_sp),y			; get block (binary) in one byte
+		tax
+		lda Pbm_mirror,x			; get mirrored block
+
+		ldy Pbm_i
+		eor (screenmemory),y	; eor it in with what is in screenmemory
+		sta (screenmemory),y	; write to display
+		
+;		dec Pbm_i				; screen (move left)
+;		inc Pbm_t				; data (move right)
+;		ldy Pbm_t
+		
+		lda screenmemory
+		clc
+		adc #@PBMBUFFERWIDTH ;#$28
+		sta screenmemory+0
+		bcc *+4
+		inc screenmemory+1
+
+		lda Pbm_sp
+		clc
+		adc #4
+		sta Pbm_sp+0
+		bcc *+4
+		inc Pbm_sp+1
+		
+		repend
+	
+	end;
+		
+
+end;
+
+
+
+// --------------------------------------------------------------
+// PETSCII routines
+
+// Draw PETSCII screen codes
+procedure PDraw( w, h: global byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	i := 0;
+	
+	for y := 0 to h do
+	begin
+	
+		for x := 0 to w do
+		begin
+		
+			screenmemory[ x ] := sp[ i ];
+			inc( i );
+
+		end;
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		
+	end;
+
+end;
+
+// Draw PETSCII screen codes and treat space (32) as transparent
+procedure PDrawT( w, h: global byte, _ax: integer );
+begin
+
+	LoadSP();
+	
+	i := 0;
+	
+	for y := 0 to h do
+	begin
+	
+		for x := 0 to w do
+		begin
+		
+			t := sp[ i ];
+			if ( t <> 32 ) then screenmemory[ x ] := t;
+			inc( i );
+
+		end;
+		screenmemory := screenmemory + @PBMBUFFERWIDTH;
+		
+	end;
+
+end;

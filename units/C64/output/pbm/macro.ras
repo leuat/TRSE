@@ -1,0 +1,133 @@
+
+// macro to set the SP pointer from the _ax register
+procedure LoadSP() inline;
+begin
+
+	asm
+	
+	; store the address in a pointer
+	sta Pbm_sp
+
+	; add the offset (for animation frame) in y	
+	tya
+	clc
+	adc Pbm_sp
+	bcc *+3
+	inx
+
+	; store the updated a/x
+	sta Pbm_sp
+	stx Pbm_sp+1
+
+	end;
+
+end; 
+
+// set the screenmemory using the XY position for a sprite
+procedure SetXY();
+begin
+
+	asm("
+	
+;	
+    lda Pbm_x 		; x position
+	and #%00000001 	; x is 0 or 1
+	sta Pbm_t 		; the index to one of the four sprites 0-3
+	
+	lda Pbm_y 		; y position
+	and #%00000001 	; y is 0 or 1
+	asl				; need y in bit 1
+	ora Pbm_t		; merge with index t
+	asl				; multiply by 2 for the TRSE array lookup
+	tay				; push result into x
+	
+
+	lda (Pbm_sp),y	; get lo address
+	tax
+	iny
+	lda (Pbm_sp),y	; get hi address
+
+	stx Pbm_sp		; point sp to Pbm data
+	sta Pbm_sp+1
+	
+
+	; now work out where on the screen buffer memory to write this
+
+	
+	lda Pbm_x
+	lsr							; x / 2
+	sta Pbm_x
+
+	lda Pbm_y
+	and #%11111110				; y is already *2, but align to even for look up
+	tax
+	lda Pbm_bufaddr,x
+	ldy Pbm_bufaddr+1,x
+	clc
+	adc Pbm_x
+	sta screenmemory
+	
+	bcc *+3 ;jump to the sty line
+	iny
+
+	sty screenmemory+1	
+	
+	");
+
+end;
+
+// set the screenmemory using the XY position for a sprite in mirror mode
+procedure SetXYMirror();
+begin
+
+	asm("	
+	
+    lda Pbm_x 		; x position
+	and #%00000001 	; x is 0 or 1
+	eor #%00000001	; invert it
+	sta Pbm_t 		; the index to one of the four sprites 0-3
+	
+	lda Pbm_y 		; y position
+	and #%00000001 	; y is 0 or 1
+	asl				; need y in bit 1
+	ora Pbm_t		; merge with index t
+	asl				; multiply by 2 for the TRSE array lookup
+	tay				; push result into x
+	
+
+	lda (Pbm_sp),y	; get lo address
+	tax
+	iny
+	lda (Pbm_sp),y	; get hi address
+
+	stx Pbm_sp		; point sp to Pbm data
+	sta Pbm_sp+1
+	
+
+	; now work out where on the screen buffer memory to write this
+
+	
+	lda Pbm_x
+	lsr							; x / 2
+	clc			;; todo - these two lines stop the mirrored sprite from
+	sbc #0		;; being positioned 2 sub-blocks to the right (result is it subtracts 1 from x pos and sets carry flag)
+	sta Pbm_x
+
+	lda Pbm_y
+	and #%11111110				; y is already *2, but align to even for look up
+	tax
+	lda Pbm_bufaddr,x
+	ldy Pbm_bufaddr+1,x
+	clc
+	adc Pbm_x
+	sta screenmemory
+	
+	bcc *+3 ;jump to the sty line
+	iny
+
+	sty screenmemory+1	
+	
+	");
+
+end;
+
