@@ -686,11 +686,11 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 //            LoadVariable(as,)
 //            as->Asm("ld hl,"+node->getValue(as));
             LoadAddress(node);
-            if (node->isWord(as)) {
+/*            if (node->isWord(as)) {
                 as->Comment("Integer array!");
                 Load16bitToHl(as);
             }
-            else
+            else*/
                 as->Asm("ld a,[hl]");
 
             return;
