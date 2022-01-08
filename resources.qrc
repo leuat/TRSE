@@ -648,5 +648,6 @@
         <file>resources/images/beep.png</file>
         <file>resources/images/billboard/b31.png</file>
         <file>resources/images/tutorials/mrtibbles.png</file>
+        <file>resources/images/tutorials/pbm.png</file>
     </qresource>
 </RCC>
