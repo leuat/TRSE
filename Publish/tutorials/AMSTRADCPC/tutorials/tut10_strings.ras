@@ -22,6 +22,8 @@ begin
 	  // Set black border
 	Crtc::SetBorder(0);
 	
+	
+	
 	Text::MoveCursorTo(1, 3);
 	Text::Print(#message);
 	  

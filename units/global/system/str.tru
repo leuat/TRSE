@@ -20,8 +20,8 @@ var
 @endif
 	
 	p1,p2,p3 : ^byte;
-	i,j,b,c : @sz;
-	
+	i,j,c : @sz;
+	b:byte;
 	num : integer;
 	chars : string="0123456789ABCDEF";
 
@@ -85,7 +85,7 @@ begin
 	
 	while (num <> 0) do
 	begin
- 		p1[i]:=chars[mod(num,b)];
+ 		p1[i] :=chars[mod(num,b)];
 		i+=1;
 		num:=num/b;
     end;
