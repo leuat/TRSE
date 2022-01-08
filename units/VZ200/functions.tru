@@ -119,4 +119,16 @@ begin
 	SizeOfString := j;
 end;
 
+function LastIndexOfChar(p: global pointer, l: global byte):byte;
+begin
+  h := SizeOfString(#p);
+  p += h;
+  while (h > 0 and (p^<>l)) do
+  begin
+    p -= 1;
+    h -= 1;
+  end;
+    LastIndexOfChar := h;
+end;
+
 end.

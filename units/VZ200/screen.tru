@@ -29,11 +29,12 @@ begin
 		ld a, [Screen_u]
 		cp #00
 		jp z,mode0
-		ld a,#00
+		xor a
 		ld bc,#0800
 		ld hl,#7000
 		ld de,#7001
 		ld (hl),a
+		ldir
 		jr clsend
 mode0
 		call #01c9
