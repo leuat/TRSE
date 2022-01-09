@@ -85,9 +85,9 @@ void formHelp::LoadItems(int idx)
             QString system = data[2].toLower();
             bool isFjong = data[0]=="f";
             if (word.toLower().startsWith("init")) continue;
-            if (!isFjong && !AbstractSystem::isSupported(Syntax::s.m_currentSystem->m_system, system))
+            if (!isFjong && !Syntax::s.m_currentSystem->systemIsOfType(system.split(",")))
                 continue;
-            if (system.contains(currentSystem)||isFjong) {
+            if (system.contains(currentSystem)||isFjong || system=="all") {
 /*                QString val = word + "(";
                 for (QString s: params) {
                     if (s=="b") val+="[byte variable]";
@@ -137,13 +137,16 @@ void formHelp::LoadItem(QString findword)
         QString word = data[1];
         if (word!=findword)
             continue;
+
         m_currentWord = findword;
 
         QString type = data[0].toLower();
         m_currentType = type;
         QString system = data[2].toLower();
-        if (type!="f" && !AbstractSystem::isSupported(Syntax::s.m_currentSystem->m_system, system))
+        if (type!="f" && !Syntax::s.m_currentSystem->systemIsOfType(system.split(",")))
             continue;
+
+
         if (type=="f")
          {
                 QStringList params = data[2].toLower().split(",");

@@ -229,6 +229,33 @@ bool AbstractSystem::isWDC65() {
     return m_processor==WDC65C816;
 }
 
+bool AbstractSystem::systemIsOfType(QString val)
+{
+    val = val.trimmed().toLower();
+    if (val==StringFromSystem(m_system).toLower())
+        return true;
+    // Check whether CPU is the same:
+    if (val == StringFromProcessor(m_processor).toLower())
+        return true;
+    if (val=="all")
+        return true;
+    if (val=="mos6502" && (m_processor==WDC65C02 || m_processor==WDC65C816))
+        return true;
+    if (val=="z80" && (m_processor==GBZ80))
+        return true;
+
+    return false;
+}
+
+bool AbstractSystem::systemIsOfType(QStringList val)
+{
+    for (QString&s : val) {
+        if (systemIsOfType(s))
+            return true;
+    }
+    return false;
+}
+
 void AbstractSystem::AssembleOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) {
     m_orgAsm = QSharedPointer<Orgasm>(new Orgasm());
 
@@ -435,3 +462,13 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 //    Util::CopyFile()
 
 }
+/*
+bool AbstractSystem::isSupported(QString currentSystem, QString list) {
+    QStringList lst  = list.toLower().trimmed().simplified().split(",");
+    for (QString s : lst)
+        if (s == currentSystem.toLower() || s=="all")
+            return true;
+
+    return false;
+}
+*/

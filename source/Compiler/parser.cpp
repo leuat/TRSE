@@ -2560,11 +2560,23 @@ QSharedPointer<Node> Parser::Factor()
         }
         Token t = m_currentToken;
         t.m_intVal = s->getLength();
-//        qDebug() << "PARSER HERE " <<s->m_value->m_strVal<< s->m_size;
+        if (s->m_type.toLower()=="array") {
+  //          qDebug() << TokenType::getType(s->m_arrayType) <<Syntax::s.m_currentSystem->getPointerSize();;
+            if (s->m_arrayType==TokenType::POINTER)
+                t.m_intVal/=Syntax::s.m_currentSystem->getPointerSize();
+            else
+            if (s->m_arrayType==TokenType::INTEGER)
+                t.m_intVal/=2;
+            else
+            if (s->m_arrayType==TokenType::LONG)
+                t.m_intVal/=4;
+        }
+
+//        qDebug() << "PARSER HERE " <<t.m_intVal<<s->m_value->m_strVal<< s->m_size<<s->m_arrayTypeText<<s->m_type;
         t.m_type  = TokenType::INTEGER_CONST;
         Eat();
         Eat(TokenType::RPAREN);
-        return QSharedPointer<NodeNumber>(new NodeNumber(t,s->getLength()));
+        return NodeFactory::CreateNumber(t,t.m_intVal);
 
     }
 
@@ -3907,6 +3919,8 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
     Eat(TokenType::EQUALS);
     int value = GetParsedInt(dType);
 //    qDebug() << "DECLARING CONSTANT " <<name.toUpper();
+    if (m_symTab->exists(name))
+        ErrorHandler::e.Error("Symbol '"+name+"' is already defined.", m_currentToken.m_lineNumber);
     m_symTab->m_constants[name.toUpper()] = QSharedPointer<Symbol>(new Symbol(name.toUpper(),type.toUpper(),value));
     return QVector<QSharedPointer<Node>>();
 }

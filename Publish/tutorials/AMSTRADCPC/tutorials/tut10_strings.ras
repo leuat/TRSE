@@ -12,9 +12,27 @@ var
   num: string = "        ";
   data : array[256] of byte; // Store string here
  	 
- 	p:pointer;
+  p:pointer;
+  
   string_list : array[4] of string = ("this","is","an","array");	 
- 	 
+
+
+function SizeOfString(s: pointer):byte;
+var
+	i,j : byte;
+begin
+  j:=0;
+  while (s^<>0) do 
+  begin
+    s += 1;
+    j += 1;
+  end;
+  SizeOfString := j;
+end;
+
+
+
+ 
 begin
   // Set 160x200 16-color mode
 	Crtc::SetMode(0);
@@ -28,7 +46,6 @@ begin
 	Text::Print(#message);
 	  
 	Text::MoveCursorTo(1, 5);
-	  
 	ch:=str::strlen(#message);
 	str::itoa(ch,#num,10);
 		
@@ -58,10 +75,10 @@ begin
 	Text::Print(#data);	
 
 	Text::MoveCursorTo(1, 14);
-	for ch:=0 to length(string_list)-1 do
+	for ch:=0 to length(string_list) do
 	begin
 		Text::Print(string_list[ch]);
-		Text::Print(" ");	
+		Text::Print("-");	
 	end;
 	  
 	Input::WaitKey();

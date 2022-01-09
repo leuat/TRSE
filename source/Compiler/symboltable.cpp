@@ -123,6 +123,10 @@ void SymbolTable::Initialize()
         QStringList data = s.split(";");
         if (data[0].toLower()!="c")
             continue;
+        if (data.count()!=5) {
+            qDebug() << "SymbolTable::Initialize reporting ERROR in syntax.txt";
+            exit(1);
+        }
         QString constant = data[1].toUpper();
         QString system = data[2].toLower();
         QString type = data[3].toLower();
@@ -137,7 +141,7 @@ void SymbolTable::Initialize()
     //    if (constant=="KEY_2")
       //      qDebug() << system << currentSystem << system.contains(currentSystem);
 
-        if (system.contains(currentSystem)) {
+        if (Syntax::s.m_currentSystem->systemIsOfType(system.split(","))) {
 
             long ival = Util::NumberFromStringHex(value);
             if (ival==0 && value.count()>4) {

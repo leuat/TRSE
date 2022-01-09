@@ -1,0 +1,23 @@
+<p>Returns the number of elements in an array / string of a fixed length.
+This is a compile-time function, so it will only reflect the count at the declaration
+of the array.
+<p>Example:
+<code>
+var
+  myString : string ="beep";
+
+  i := length(myString); // length(myString) is replaced with "4" compile time
+  str::strcat(#data, #myString); // adds myString to data
+  i := length(data); // Does not work, as data is a dynamic variable
+  // instead, use
+  i := str::strlen(#data); // dynamically find the length of the new string
+
+</code>
+<p>
+Example 2:
+<code>
+var
+   arr: array[10] of integer;
+   b : byte = length(arr); // 10
+
+</code>

@@ -339,6 +339,7 @@ private slots:
 
     void on_new_ras_file();
     void on_new_tru_file();
+    void on_new_rtf_file();
     void on_new_inc_file();
     void on_new_fjo_file();
 

@@ -145,23 +145,20 @@ public:
     virtual void AssembleTripe(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab);
 
     bool m_buildSuccess;
-    static bool isSupported(System currentSystem, QString list) {
+/*    static bool isSupported(System currentSystem, QString list) {
         return isSupported(StringFromSystem(currentSystem), list);
     }
-    static bool isSupported(QString currentSystem, QString list) {
-        QStringList lst  = list.toLower().trimmed().simplified().split(",");
-        for (QString s : lst)
-            if (s == currentSystem.toLower())
-                return true;
-
-        return false;
-    }
-
+    static bool isSupported(QString currentSystem, QString list);
+*/
     static System SystemFromString(QString s);
 
     static QString StringFromSystem(System s);
 
     bool isWDC65();
+
+
+    bool systemIsOfType(QString val);
+    bool systemIsOfType(QStringList val);
 
 
     void AssembleOrgasm(QString& output,QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab);

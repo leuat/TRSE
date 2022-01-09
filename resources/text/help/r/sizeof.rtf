@@ -1,0 +1,19 @@
+<p>Returns the size of a variable / array / string of a fixed length.
+This is a compile-time function, so it will only reflect the size at the declaration
+of the variable.
+<p>Example:
+<code>
+var
+  myString : string ="beep";
+  i := sizeof(myString); // sizeof(myString) is replaced with "4" compile time
+
+</code>
+<p>
+Example 2:
+<code>
+var
+   arr: array[10] of integer;
+   b : byte = sizeof(arr); // 20
+
+</code>
+

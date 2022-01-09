@@ -20,8 +20,8 @@ var
 @endif
 	
 	p1,p2,p3 : ^byte;
-	i,j,c : @sz;
-	b:byte;
+	i,j : @sz;
+	b,li,c:byte;
 	num : integer;
 	chars : string="0123456789ABCDEF";
 
@@ -34,8 +34,6 @@ var
 **/
 
 function strlen( p3 : global ^byte):byte;
-var
-	li:@sz;
 begin
 	li:=0;
 	while (p3[li]<>0) do 

@@ -649,5 +649,7 @@
         <file>resources/images/billboard/b31.png</file>
         <file>resources/images/tutorials/mrtibbles.png</file>
         <file>resources/images/tutorials/pbm.png</file>
+        <file>resources/text/help/r/length.rtf</file>
+        <file>resources/text/help/r/sizeof.rtf</file>
     </qresource>
 </RCC>

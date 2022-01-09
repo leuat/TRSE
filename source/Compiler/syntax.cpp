@@ -80,8 +80,9 @@ void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSys
             continue;
         QString word = data[1].toLower();
         QString system = data[2].toLower();
-
-        if (system.contains(currentSystem) || ignoreSystem) {
+//        if (id=="p")
+  //      qDebug() << "Adding: "<<word << system;
+        if (ignoreSystem || Syntax::s.m_currentSystem->systemIsOfType(system.split(","))) {
             if (data.count()>3) {
                 if (data[3].trimmed()=="f")
                     m_reservedWordsRegularFont[word.toUpper()] = true;
@@ -108,7 +109,7 @@ void Syntax::SetupIllegalVariables()
             continue;
         QString system = data[1].toLower();
 
-        if (system.contains(currentSystem)) {
+        if (Syntax::s.m_currentSystem->systemIsOfType(system.split(","))) {
             m_illegaVariableNames<<(data[2].split(","));
         }
 
@@ -135,6 +136,13 @@ void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, Abstract
         QString method = data[1].toLower();
         QString system="";
         QStringList params;
+//        qDebug() << data;
+        if (!ignoreSystem && data.count()!=4) {
+            qDebug() << "Syntax::SetupBuiltinFunction reporting ERROR in syntax.txt";
+            qDebug() << s;
+            exit(1);
+        }
+
         if (!ignoreSystem) {
            system = data[2].toLower();
            params = data[3].toLower().split(",");
@@ -168,7 +176,7 @@ void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, Abstract
                 paramList << BuiltInFunction::Type::IGNOREPARAM;
 
         }
-        if (system.contains(currentSystem) || ignoreSystem) {
+        if (ignoreSystem || Syntax::s.m_currentSystem->systemIsOfType(system.split(","))) {
             lst[method] = BuiltInFunction(method, paramList);
         }
 
@@ -265,7 +273,6 @@ bool Syntax::isDigit(QString s) {
 bool Syntax::isDigitHex(QString s) {
     // Check if HEX
     return digitAll.contains(s);
-
 }
 
 bool Syntax::isAlnum(QString s) {
