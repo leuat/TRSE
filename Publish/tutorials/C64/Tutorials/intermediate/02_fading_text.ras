@@ -26,6 +26,7 @@ var
 	// x,y, "string", 0, pause time
 	// terminates with 255, restarts
 
+
 	demotext: string = (5,10, "TURBO RASCAL", 0,8,
 						8,12, "PRESENTS",0,8,
 						3,12, "ALPHA", 0,1,

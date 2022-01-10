@@ -2252,7 +2252,7 @@ QSharedPointer<Node> Parser::Case()
         n->m_elseBlock = Block(false);
     }
     else
-    Eat(); // Eat final END
+        Eat(); // Eat final END
     return n;
 
 }

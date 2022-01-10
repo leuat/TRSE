@@ -1,6 +1,7 @@
 program Example3D;
 @use "system/screen"
 @use "system/memory"
+@define CHECK_LINE_BOUNDARY 1
 @use "gfx/gfx"
 @use "system/tables"
 @use "gfx/lib3d"

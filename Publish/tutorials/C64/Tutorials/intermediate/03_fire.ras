@@ -18,7 +18,7 @@ var
 	// Use custom charset
 	charset: IncBin("resources/charsets/charset.bin",@charLoc);
 	// Fire colors, from low to high brightness
-	color : array [] of byte = (9, 2,2,8,8, 10,10, 7,7,1, 1,1,1); 
+	color : array [] of byte = (9, 2,2,8,8, 13,10, 7,7,1, 1,1,1); 
 	// Shiftx shifts random values
 	shiftx: byte;
 

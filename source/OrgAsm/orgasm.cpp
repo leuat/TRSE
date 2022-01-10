@@ -9,10 +9,10 @@ void Orgasm::LoadFile(QString filename) {
     QFile f(filename);
     f.open(QFile::ReadOnly);
     m_source=f.readAll();
-
     ProcessSource();
     f.close();
     m_lines = m_source.split("\n");
+
     m_pCounter = 0;
     m_done = false;
     m_constantPassLines = -1;
@@ -173,8 +173,8 @@ OrgasmLine Orgasm::LexLine(int i) {
 
 //    if (line.toLower().contains("else"))
   //      qDebug() << line;
-
-    line.replace("("," (");
+    if (!line.contains("\""))
+        line.replace("("," (");
 
 
 /*      if (line.simplified().toLower().startsWith("repeat") || line.simplified().toLower().startsWith("repend")) {
@@ -354,20 +354,14 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         ol.m_lineNumber = i;
         if (!ol.m_ignore)
             m_olines.append(ol);
+//        if (ol.m_expr.contains("(C)"))
+  //      qDebug() << ol.m_expr;
     }
 
     emit EmitTick(" [constants] ");
     PassFindConstants();
     PassReplaceConstants();
 
-//       for (QString s: m_constants.keys())
-  //         qDebug() << s << " " << m_constants[s];
-   //     exit(1);
-/*    while (m_constantPassLines!=0) {
-        PassConstants();
-        qDebug() << "PAssing" << m_constantPassLines;
-    }
-*/
     QTimer myTimer;
     myTimer.start();
 //    qDebug() << "LABELS  " << QString::number((myTimer.elapsed()/100.0));
@@ -547,7 +541,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
 //    qDebug() << ol.m_expr;
 
 
-
     QStringList lst = Util::fixStringListSplitWithCommaThatContainsStrings(ol.m_expr.split(","));
 
     for (QString s: lst) {
@@ -586,10 +579,11 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             str = str.remove(str.count()-1,1);
             str = str.replace("\\n","\n");
             str = str.replace("\\r","\r");
-
+            //qDebug() << "HERE: " <<s;
             for (int i=0;i<str.length();i++) {
 
                 int c = str.at(i).toLatin1();
+//                qDebug().noquote() << (char)c << c;
                 m_data.append((uchar)c);
                 m_pCounter++;
 /*                if (str.at(i)==':') {
@@ -597,6 +591,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
                 }
 */
             }
+//            qDebug()<<"";
   //          exit(1);
 
         }

@@ -17,20 +17,8 @@ var
   string_list : array[4] of string = ("this","is","an","array");	 
 
 
-function SizeOfString(s: pointer):byte;
-var
-	i,j : byte;
-begin
-  j:=0;
-  while (s^<>0) do 
-  begin
-    s += 1;
-    j += 1;
-  end;
-  SizeOfString := j;
-end;
-
-
+@donotremove temp
+	temp:string="(C)";
 
  
 begin
@@ -46,6 +34,7 @@ begin
 	Text::Print(#message);
 	  
 	Text::MoveCursorTo(1, 5);
+	  
 	ch:=str::strlen(#message);
 	str::itoa(ch,#num,10);
 		
@@ -80,7 +69,11 @@ begin
 		Text::Print(string_list[ch]);
 		Text::Print("-");	
 	end;
-	  
+	
+	
+  
 	Input::WaitKey();
+
+	
 
 end.
