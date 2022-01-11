@@ -31,13 +31,17 @@ begin
 		jp z,mode0
 		xor a
 		ld bc,#0800
+		jr cls
+mode0
+		ld a,#20
+		ld bc,#0200
+cls
 		ld hl,#7000
 		ld de,#7001
 		ld (hl),a
 		ldir
 		jr clsend
-mode0
-		call #01c9
+
 clsend
 	");
 end;
@@ -62,7 +66,7 @@ begin
 		ret
 md0		
 		ld a,(#783B)
-		set 3,a
+		and #f7
 		ld (#6800),a
 		ld (#783B),a
 	");
