@@ -146,8 +146,8 @@ fillRasList(len(tests)-1,".")
 
 tests.append([ "BBCM/Tutorials",[]])
 fillRasList(len(tests)-1,".")
-tests.append([ "BBCM/Beep",[]])
-fillRasList(len(tests)-1,".")
+#tests.append([ "BBCM/Beep",[]])
+#fillRasList(len(tests)-1,".")
 # Has dependencies, ignore
 #tests.append([ "BBCM/BBCDemoSetup",["demo.ras"]])
 
@@ -180,8 +180,8 @@ tests.append([ "X86/unittests", ["utests.ras"]])
 #tests.append([ "PET/examples/",[]])
 #fillRasList(len(tests)-1,".")
 
-tests.append([ "PET/pbm-pet/",[]])
-fillRasList(len(tests)-1,".")
+#tests.append([ "PET/pbm-pet/",[]])
+#fillRasList(len(tests)-1,".")
 
 tests.append([ "PET/PETFrog/",["petfrog.ras"]])
 
