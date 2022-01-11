@@ -16,10 +16,6 @@ var
   
   string_list : array[4] of string = ("this","is","an","array");	 
 
-
-@donotremove temp
-	temp:string="(C)";
-
  
 begin
   // Set 160x200 16-color mode
@@ -69,11 +65,7 @@ begin
 		Text::Print(string_list[ch]);
 		Text::Print("-");	
 	end;
-	
-	
   
 	Input::WaitKey();
-
-	
 
 end.

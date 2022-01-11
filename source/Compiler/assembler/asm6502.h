@@ -116,7 +116,7 @@ public:
 
     int CodeSizeEstimator(QStringList& lines) override;
 
-    QString StoreInTempVar(QString name, QString type="byte") override;
+    QString StoreInTempVar(QString name, QString type="byte", bool actuallyStore=true) override;
 
 
 //    void Writeln() override;

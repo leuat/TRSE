@@ -299,7 +299,7 @@ public:
     virtual void LoadVariable(QString var) {}
 
     virtual void Connect();
-    virtual QString StoreInTempVar(QString name, QString type="byte")  { return name;}
+    virtual QString StoreInTempVar(QString name, QString type="byte", bool actuallyStore=true);
     virtual void PopTempVar() {}
 //    virtual void StartForLoop(QString a, QString b) {}
 //    virtual void EndForLoop(QString endVal) {}

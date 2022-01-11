@@ -2110,7 +2110,8 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeProcedure> node)
 void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
     //        as->Comment("VarNode StoreVariable");
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
-    as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
+    if (!node->m_ignoreLookup)
+        as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     if (node->m_subNode!=nullptr){
         QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(node->m_subNode);
         if (nv->m_expr!=nullptr) {
@@ -2246,7 +2247,6 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
     }
     else {
         if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
-
             as->Asm("sta " + getValue(node));
             return;
         }

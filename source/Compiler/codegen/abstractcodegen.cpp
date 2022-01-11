@@ -1391,10 +1391,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
 
     if (!expr->isPureVariable()) {
         // Uh oh, we need to store in a temp one
-        if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::MOS6502)
-            ErrorHandler::e.Error("Cases can only operate on pure variables (for now). Not implemented on the z80 / m68k / x86 yet, please nag the developer!",node->m_op.m_lineNumber);
+//        if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::MOS6502)
+  //          ErrorHandler::e.Error("Cases can only operate on pure variables (for now). Not implemented on the z80 / m68k / x86 yet, please nag the developer!",node->m_op.m_lineNumber);
 
-        QString name = as->m_internalZP[as->m_internalZP.count()-1];
+/*        QString name = as->m_internalZP[as->m_internalZP.count()-1];
         as->Comment("expr is not pure, need to save to temp var");
         as->ClearTerm();
         expr->Accept(this);
@@ -1404,6 +1404,26 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
             as->Asm("sty "+name+"+1");
 
         expr = NodeFactory::CreateVariable(expr->m_op,name);
+*/
+        QString type = "byte";
+        if (expr->isWord(as))
+            type="integer";
+        QString name = as->StoreInTempVar("case",type,false);
+
+//        qDebug() << name;
+
+        auto sym = QSharedPointer<Symbol>(new Symbol(name,type));
+        as->m_symTab->m_ignoreAllprefixes = true;
+        as->m_symTab->Define(sym);
+
+        as->Comment("expr is not pure, need to save to temp var");
+        auto right = expr;
+
+        expr = NodeFactory::CreateVariable(expr->m_op,name);
+        auto assign = NodeFactory::CreateAssign(expr->m_op,expr,right);
+
+        AssignVariable(assign);
+        as->m_symTab->m_ignoreAllprefixes = false;
 
     }
 
@@ -1418,6 +1438,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
         // Jump to the end, done with case
         if (i!=node->m_conditionals.count()-1 || hasElse)
             as->Asm(getJmp(true)+" "+as->jumpLabel(labelEnd));
+
         as->Label(labelNext);
     }
     // Print else blockl

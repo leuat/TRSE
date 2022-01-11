@@ -250,6 +250,9 @@ void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
 //    if (isRegisterName(s->m_name))
  //       return ;
     QString name = m_currentProcedure+ s->m_name;
+    if (m_ignoreAllprefixes)
+        name = s->m_name;
+
     if (isRegisterName(s->m_name))
         name = s->m_name;
 
@@ -512,7 +515,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
 
     QString localName = name;
-    if (!isRegisterName(name) &&!forceGlobal) {
+    if (!isRegisterName(name) &&!forceGlobal && !m_ignoreAllprefixes) {
         localName = m_currentProcedure+name;
 //        qDebug() << "LOCAL NAME "<<localName << SymbolTable::pass;
     }

@@ -727,7 +727,7 @@ int Asm6502::CodeSizeEstimator(QStringList &lines) {
     return size;
 }
 
-QString Asm6502::StoreInTempVar(QString name, QString type)
+QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
 {
     if (m_zpStack.count()<m_tempZeroPointers.count()) {
        // qDebug() << "B" << m_tempZeroPointers.count();
@@ -740,6 +740,7 @@ QString Asm6502::StoreInTempVar(QString name, QString type)
         QString labelVar = tmpVar + " = " + m_zpStack.last();
         Label(labelVar);
 //        m_tempVars << labelVar;
+        if (actuallyStore) {
         Asm("sta " + tmpVar);
         if (type=="word") {
             if (Syntax::s.m_currentSystem->isWDC65())
@@ -747,6 +748,7 @@ QString Asm6502::StoreInTempVar(QString name, QString type)
             Asm("sty " + tmpVar + "+1");
             if (Syntax::s.m_currentSystem->isWDC65())
                 Asm("rep #$10");
+        }
         }
         PopLabel(name+ "_var");
         return tmpVar;
@@ -759,9 +761,11 @@ QString Asm6502::StoreInTempVar(QString name, QString type)
     QString tmpVar = NewLabel(name+"_var");
     QString labelVar = getLabelEnding(tmpVar) + "\t."+type+"\t0 ";
     m_tempVars << labelVar;
+    if (actuallyStore) {
     Asm("sta " + tmpVar);
     if (type=="word")
         Asm("sty " + tmpVar + "+1");
+    }
     PopLabel(name+ "_var");
     return tmpVar;
 }
