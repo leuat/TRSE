@@ -55,6 +55,16 @@ asm("
   ByteToInt := i;
 end;
 
+/**
+  Re-seeds the Randomizer
+  **/
+procedure Randomize();
+begin
+  asm("
+  call #01d3
+  ")
+end;
+
 /** 
   Takes a pointer to a 256 byte array and returns a random number
   **/
