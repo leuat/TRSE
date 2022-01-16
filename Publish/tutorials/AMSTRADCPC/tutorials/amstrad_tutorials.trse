@@ -64,6 +64,4 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-open_files = ,tut10_strings.asm, tut10_strings.ras, tut1.ras, tut10_strings.bin, [ext]units/AMSTRADCPC/crtc.tru
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/tutorials/
-current_file = tut10_strings.ras
+open_files =, tut1.ras

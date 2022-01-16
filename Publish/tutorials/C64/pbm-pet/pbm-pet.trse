@@ -72,6 +72,3 @@ dosbox_cycles = 0
 columns = 40
 vic_memory_config = all
 via_zeropages = ,$64, $65, $66, $67
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/pbm-pet/
-open_files = ,[ext]units/C64/input/key.tru, main.ras
-current_file = main.ras
