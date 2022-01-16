@@ -38,5 +38,6 @@ begin
 	memcpy(#image, screen, $4000);
 	// halt the computer
 	Loop();
+	
 
 end.

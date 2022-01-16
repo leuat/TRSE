@@ -686,6 +686,7 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
 bool CodeGenX86::IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+
     if (var->hasArrayIndex()) {
         // Is an array
         as->Asm(";Is array index");

@@ -269,20 +269,20 @@ set_Crtc_vals:
 
 Crtc_256widthList:
 
-	defb $3f	; R0  - horizontal total
-	defb 32		; R1  - horizontal displayed (32 chars wide)
-	defb 42		; R2  - Horizontal sync position (centralises screen)
-	defb $86	; R3  - Horizontal and Vertical sync widths
-	defb 38		; R4  - Vertical total
-	defb 0		; R5  - Vertical adjust
-	defb 24		; R6  - Vertical displayed (24 chars tall)
-	defb 31		; R7  - Vertical sync position (centralises screen)
-	defb 0		; R8  - Interlace
-	defb 7		; R9  - Max Raster
-	defb 0		; R10 - Cusror (not used)
-	defb 0		; R11 - Cursor (not used)
-	defb $30	; R12 - screen start (at &c000)
-	defb $00	; R13 - screen start
+	db $3f	; R0  - horizontal total
+	db 32		; R1  - horizontal displayed (32 chars wide)
+	db 42		; R2  - Horizontal sync position (centralises screen)
+	db $86	; R3  - Horizontal and Vertical sync widths
+	db 38		; R4  - Vertical total
+	db 0		; R5  - Vertical adjust
+	db 24		; R6  - Vertical displayed (24 chars tall)
+	db 31		; R7  - Vertical sync position (centralises screen)
+	db 0		; R8  - Interlace
+	db 7		; R9  - Max Raster
+	db 0		; R10 - Cusror (not used)
+	db 0		; R11 - Cursor (not used)
+	db $30	; R12 - screen start (at &c000)
+	db $00	; R13 - screen start
 
 	");
 

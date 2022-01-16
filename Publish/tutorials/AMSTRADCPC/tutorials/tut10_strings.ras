@@ -16,8 +16,8 @@ var
   
   string_list : array[4] of string = ("this","is","an","array");	 
 
- 
 begin
+	
   // Set 160x200 16-color mode
 	Crtc::SetMode(0);
 	 	

@@ -57,6 +57,9 @@ public:
      *
      *
     */
+    bool IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node) override {
+        return false;
+    }
 
     void ExDeHl() override;
     void SbcHlDe() override;
