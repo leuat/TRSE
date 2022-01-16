@@ -69,6 +69,11 @@ data_header_images/font1.flf = 0
 charset_ = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
 data_header_images/level1.flf = 0
 charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
+<<<<<<< HEAD
 open_files = ,tutorial4_bitmap_font.ras, images/trse.flf, tutorial8_sprites.ras, tutorial2_graphics.ras, tutorial3_circles.ras, [ext]units/VZ200/screen.tru, tutorial1.ras
 project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/tutorials/
 current_file = images/trse.flf
+=======
+open_files = ,tutorial8_sprites.ras, tutorial1.ras
+project_path = D:/VZ/trse/tutorials/VZ200/tutorials/
+>>>>>>> 6d83f9d02c58912c9d689f7a48f74e045515549f
