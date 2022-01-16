@@ -56,17 +56,17 @@ Sets the VZ200 resolution mode.
 procedure SetMode(ga: global byte);
 begin
 	asm("
-		ld a,[Screen_c]
+		ld a,[Screen_ga]
 		cp #00
-		jr z,md0
-		ld a,(#783B)
+		jr nz,md1
+		ld a,($783B)
 		res 3,a
 		ld (#6800),a
 		ld (#783B),a
 		ret
-md0		
+md1		
 		ld a,(#783B)
-		and #f7
+		set 3,a
 		ld (#6800),a
 		ld (#783B),a
 	");
