@@ -1,0 +1,218 @@
+unit vsp;
+
+@ifndef VSP_POS 
+@raiseerror "You need to define the VSP location at a fixed multiple of $100: $BDD, $CDD, $8BDD etc"
+@endif
+/*
+@ifndef NEXT_RASTER_POS 
+@raiseerror "You need to define the next raster position in NEXT_RASTER_POS"
+@endif
+
+@ifndef SHIFT_IRQ_POS
+@raiseerror "You need to define the shift irq pos in SHIFT_IRQ_POS"
+@endif
+*/
+
+var
+	@donotremove proc
+	@donotremove VSP_offset
+	proc:integer;
+	offset : byte;
+	const line:byte = $2f;	
+	
+	@donotremove next_raster_pos
+	@donotremove shift_irq_pos
+	
+	next_raster_pos:byte;
+	shift_irq_pos:byte;
+	i:byte;
+
+
+	
+@startblock @VSP_POS "VSP"
+//@startblock $8BD7 "VSP"
+interrupt raster();
+begin
+
+	asm("
+	pha
+	txa
+	pha
+	tya
+	pha
+
+	");
+	asm("
+	
+;		lda #$1b
+;		sta $d011
+;		lda #$1
+;		sta $d020
+
+		lda #<StableIRQ
+		ldx #>StableIRQ
+		sta $fffe
+		stx $ffff
+		inc $d012
+		asl $d019
+
+		tsx
+		cli
+
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+	");
+asm("		
+		
+
+StableIRQ:
+		// 0-1 cycles of jitter here now
+		txs   
+
+		ldx #$07  //X * 5 + 1
+e1:
+		dex
+		bne e1	
+		nop
+		nop
+		nop
+		clv
+
+
+		//Force a branch if 0 jitter and not if 1 jitter
+		//causing either 3 or 2 cycles to be added
+		lda $d012
+		cmp $d012
+		beq e2
+e2:
+
+		//Raster is stable here!
+
+
+		//Waste more cycles
+		ldx #$0a
+e3:
+		dex
+		bne e3
+		nop
+		nop
+
+		//Waste an exact number of cycles + offset
+		lda vsp_offset
+		lsr
+		sta selfmod_branch + 1
+		bcc e4 //2 cycles if offset was odd, 3 if even
+e4:
+selfmod_branch:
+		bvc *  //relative becomes offset /2
+
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+
+		dec $d011
+		inc $d011
+
+		//Ack interrupt
+		asl $d019
+
+		//Point back to original IRQ
+		lda #<ShiftIRQ
+		ldx #>ShiftIRQ
+		sta $fffe
+		stx $ffff
+		lda vsp_shift_irq_pos
+		sta $d012
+
+");
+
+asm("
+
+		
+		pla
+		tay 
+		pla  
+		tax 
+		pla 
+		
+		rti
+
+
+ShiftIRQ:
+		//save state
+		pha
+		txa 
+		pha 
+		tya 
+		pha 
+
+
+
+; call user-defined proc
+
+
+		lda vsp_proc
+		ldx vsp_proc+1
+		sta $fffe
+		stx $ffff
+		lda vsp_next_raster_pos
+		sta $d012
+	
+		");
+//		screen_bg_col:=black;
+//	RasterIRQ(proc(),@nextRasterPos,0);
+//	scrolly(i);
+	
+//	scrollx(7-sx);
+
+/*	asm("
+		lda i
+		sta $d011
+	");
+*/
+	
+//	closeirq();
+	asm("
+
+	asl $d019
+		//restore state
+		pla
+		tay 
+		pla  
+		tax 
+		pla 
+		rti
+");	
+end;
+@endblock
+
+
+end.

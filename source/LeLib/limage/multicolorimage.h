@@ -77,11 +77,12 @@ public:
 
     int LookUp(PixelChar pc);
     QString m_charsetFilename ="";
-
+    void SetFixed23(int a, int b);
     CharsetImage* m_charset = nullptr;
     virtual void setMultiColor(bool doSet) override;
     void ForceBackgroundColor(int col, int swapCol);
 
+    void FixYColors();
 
     void AppendSaveBinCharsetFilename(QFile& file);
     void LoadBinCharsetFilename(QFile& file);

@@ -891,6 +891,27 @@ static int CompressCharset(lua_State* L) {
 
 
 
+static int SaveSinusScrollerData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"SaveSinusScrollerData"))
+        return 0;
+
+
+    int type =0;
+    int args = lua_gettop(L);
+    if (m_effect == nullptr || m_effect->m_mc==nullptr) {
+        qDebug() << "NULL POINTERS";
+        return 0;
+    }
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(m_effect->m_mc);
+    if (mc==nullptr)
+        return 0;
+
+
+    Compression::SaveSinusScrollerData(mc,lua_tonumber(L,1),lua_tonumber(L,2),m_currentDir+"/"+lua_tostring(L,3));
+//    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type,false);
+
+}
+
 
 static int SaveScreenAndCharset(lua_State* L) {
     if (!VerifyFjongParameters(L,"SaveScreenAndCharset"))
@@ -1441,6 +1462,8 @@ void DialogEffects::LoadScript(QString file)
 
     lua_register(m_script->L, "CopyFile", CopyFile);
     lua_register(m_script->L, "AddToPng", AddToPng);
+
+    lua_register(m_script->L,"SaveSinusScrollerData", SaveSinusScrollerData);
 
     lua_register(m_script->L, "AddAmstradCPCToData", AddAmstradCPCToData);
     lua_register(m_script->L, "AddAmigaBitplaneToData", AddBitplaneToData);

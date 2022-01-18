@@ -41,6 +41,9 @@ public:
 
     int CompareLength2(PixelChar& other);
 
+    void SwapColors12();
+
+
     int CompareLength3(PixelChar& other);
     double CompareLengthSSIM(PixelChar& other);
 

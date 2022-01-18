@@ -42,6 +42,9 @@ public:
 
 //    static void FrameConverter(QString dir, QString outFile, QVector<int> cols);
 
+    static void SaveSinusScrollerData(MultiColorImage*, int height, int startaddr, QString fname);
+    static void SaveSinusScrollerData_OLD(MultiColorImage*, int height, int startaddr, QString fname);
+
 
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);
 

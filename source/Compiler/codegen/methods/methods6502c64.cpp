@@ -40,8 +40,7 @@ void Methods6502C64::WaitForVerticalBlank(Assembler *as)
 
 void Methods6502C64::Jammer(Assembler *as)
 {
-    as->Comment("Jammer");
-    QString lbl = as->NewLabel("jammer");
+    as->Comment("Jammer"); QString lbl = as->NewLabel("jammer");
     m_node->m_params[0]->Accept(m_codeGen);
     as->Term();
     //;sta     $7000

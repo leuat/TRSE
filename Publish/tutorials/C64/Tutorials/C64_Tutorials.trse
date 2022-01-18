@@ -76,4 +76,6 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-open_files =, Hello.ras
+open_files = ,intermediate/19_full_rasterbars.ras, advanced/07_real_3d.ras, resources/images/skull.flf, easy/04_randomness.ras, [ext]units/global/system/str.tru
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
+current_file = advanced/07_real_3d.ras

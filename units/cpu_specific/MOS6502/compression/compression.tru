@@ -4,7 +4,6 @@ var
 	src, dst : pointer of integer;
 
 
-
 /**
 <p>This method will decompress the LZW-compressed source data to the target destination.
 <br>

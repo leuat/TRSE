@@ -524,6 +524,200 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
 
 }
 
+void Compression::SaveSinusScrollerData_OLD(MultiColorImage* mc, int height, int startaddr, QString fname)
+{
+}
+void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int startaddr, QString fname)
+{
+    QString dfname = fname;
+    if (QFile::exists(dfname+"_data.bin"))
+        QFile::remove(dfname+"_data.bin");
+
+    QFile f(dfname+".bin");
+    f.open(QIODevice::WriteOnly);
+
+    mc->ExportBin(f);
+    f.close();
+    LImageIO::Save(dfname+".flf",mc);
+
+    QFile f2(dfname+"_unroll.ras");
+    f2.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream s(&f2);
+
+    QVector<int> addr;
+    QVector<int> inv;
+    QVector<int> iny;
+    QVector<int> inyBefore;
+    QVector<int> single;
+    for (int x=0;x<40;x++) {
+        uchar c = 0;
+        uchar d = 0;
+        int y = 0;
+
+        while (c==0 && d==0) {
+            int pos = y*40 + x;
+
+            c = mc->m_data[pos].c[1];
+            d = mc->m_data[pos].c[2];
+            y++;
+          }
+        y--;
+        // here we start
+        uchar oc = 0;
+        uchar od = 0;
+        bool done = false;
+        bool t = false;
+        int cnt = 0;
+        int rows = 0;
+        int alt = 0;
+        uchar cval = 1;
+        int countdown = 0;
+
+        int addy=0;
+        y*=8;
+        while (!done && y<200) {
+            int pos = ((int)y/8)*40+x;
+            c = mc->m_data[pos].c[1];
+            d = mc->m_data[pos].c[2];
+            int sng = 0;
+            bool cross = false;
+            int iyb = 0;
+
+            bool ldone = false;
+                uchar val = mc->getPixel(x*4,y);
+                if (cval!=val && val!=0 && val>cval) {
+                    cval = val;
+                    cross = true;
+                }
+                else
+                {
+/*                    val = mc->getPixel(x*4+3,y);
+                    if (cval!=val && val!=0 && val>cval) {
+                        cval = val;
+                        cross = true;
+                    }*/
+                }
+
+            int iv = 0;
+//            if (isUniform)
+  //              addy=1;
+            if (cross) {
+                alt++;
+                addy=1;
+            }
+//            qDebug() <<addy <<y;
+//            if (rows==0) addy=1;
+            if (c==0 && d!=0) {
+                sng=2;
+            }
+            if (c!=0 && d==0) {
+                sng=1;
+            }
+            if ((y&7)==0) {
+//                qDebug() << "Append "<<y;
+                iny.append(0);
+                inyBefore.append(addy);
+                inv.append(0);
+                single.append(sng);
+                cnt+=addy;
+                addr.append(pos+startaddr);
+                rows++;
+
+                addy = 0;
+            }
+            if (cnt==8)
+                done =true;
+
+//            if (x==26)
+//                  qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d)<< "- "<<QString::number(nc) << QString::number(nd) <<  " - " << addy << cnt;
+  //                qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
+
+            oc = c;
+            od = d;
+
+
+            y++;
+
+        }
+    //    qDebug() << "DONE";
+        // Last one
+/*        int pos = y*40+x;
+        addr.append(pos+startaddr);
+        cnt++;
+        iny.append(1);
+*/
+        int add = 1;
+        if (cnt!=8) {
+            qDebug() << "CNT NOT 8 for x="<<x<<cnt<<8-cnt;
+            add = 8-cnt;
+
+        }
+        iny[iny.count()-1]=add;
+
+//        qDebug() << cnt << rows;
+
+    }
+//    int i=0;
+  /*  for (int j=0;j<2;j++) {*/
+//    s<<"procedure paint_unroll"+QString::number(j)+"();\n";
+    s<<"procedure paint_unroll();\n";
+    s<<"begin\n";
+    s<<" asm(\"\n";
+
+/*    if (j==0) s<<" ldy #0\n";
+    if (j==1)
+        s<<"\tldy $72\n";
+        s<<
+
+*/
+    s<<"\tldy #0\n";
+    int cnt = 0;
+    for (int i=0;i<addr.length();i++) {
+        if (inyBefore[i]!=0) {
+            for (int j=0;j<inyBefore[i];j++)
+                s<<"\tiny\n";
+            cnt+=inyBefore[i];
+            if (cnt>=256) {
+                s<<"\tinc zp+1 \n";
+                s<<"\tinc zp2+1\n";
+                cnt -=256;
+            }
+        }
+        if (single[i]==0) {
+            s<<"\tlda (zp2),y\n";
+            s<<"\tora (zp),y\n";
+        }
+        if (single[i]==2) {
+            s<<"\tlda (zp2),y\n";
+        }
+        if (single[i]==1) {
+            s<<"\tlda (zp),y\n";
+        }
+        s<<"\tsta $"+QString::number(addr[i],16)+"\n";
+        if (iny[i]!=0) {
+            for (int j=0;j<iny[i];j++)
+                s<<"\tiny\n";
+            cnt+=iny[i];
+            if (cnt>=256) {
+                s<<"\tinc zp+1 \n";
+                s<<"\tinc zp2+1\n";
+                cnt = 0;
+            }
+        }
+  //      i++;
+
+
+    }
+//    if (j==0)
+  //      s<<"\tsty $72\n";
+    s<<" \");\n";
+    s<<"end;\n";
+    //}
+
+    f2.close();
+
+}
+
 
 void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, QString tableFile, int address, int compressionLevel)
 {

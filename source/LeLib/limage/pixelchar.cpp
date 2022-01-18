@@ -271,7 +271,6 @@ void PixelChar::Reorganize(unsigned char bitMask, unsigned char scale, unsigned 
 
         c[3] = forceD800Color;
     }
-
     if (c[0]!=bgCol)
         for (int i=1;i<maxCol;i++)
             if (c[i]==bgCol) {
@@ -437,6 +436,27 @@ int PixelChar::CompareLength2(PixelChar &other) {
     return l;
 
 }
+
+void PixelChar::SwapColors12()
+{
+    //return;
+    uchar t = c[2];
+    c[2] = c[1];
+    c[1]  = t;
+    for (int j=0;j<8;j++) {
+        uchar cc = 0;
+        for (int k=0;k<8;k+=2)  {
+            t = (p[j]>>k)&0b11;
+            if (t==1) t=2;
+            else
+             if (t=2) t=1;
+            cc|=t<<k;
+
+        }
+    p[j]=cc;
+    }
+}
+
 
 int PixelChar::CompareLength3(PixelChar &other)
 {

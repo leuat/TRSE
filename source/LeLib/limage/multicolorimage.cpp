@@ -383,6 +383,7 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
     height = m_height;
     qDebug() << width << height << img.width() << img.height();
 */
+    FixYColors();
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
@@ -396,6 +397,7 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
                xx = x*m_importScale;
                yy = y;
             }
+
 
             QColor color = QColor(img.pixel(xx,yy));
             int yp = y + x%(int)strength.y();
@@ -638,6 +640,10 @@ void MultiColorImage::ExportBin(QFile& ofile)
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++) {
 //            data.append(m_data[i + j*m_charWidth].data()); {
+/*            if ((j==8 || j==9) && i==27 ) {
+                qDebug() << "********** "<< QString::number((uchar)m_data[j*m_charWidth + i].colorMapToNumber(1,2),16);
+                qDebug() << "    -     " <<QString::number((uchar)m_data[j*m_charWidth + i].c[1]) <<QString::number((uchar)m_data[j*m_charWidth + i].c[2]);
+            }*/
             colorData.append((uchar)m_data[j*m_charWidth + i].colorMapToNumber(1,2));
 }
 
@@ -1202,6 +1208,14 @@ int MultiColorImage::LookUp(PixelChar pc)
 
 }
 
+void MultiColorImage::SetFixed23(int a, int b)
+{
+    for (int i=0;i<1000;i++) {
+        m_data[i].c[1] = a;
+        m_data[i].c[2] = b;
+    }
+}
+
 void MultiColorImage::setHybrid()
 {
     m_width = 320;
@@ -1395,6 +1409,29 @@ void MultiColorImage::ForceBackgroundColor(int col, int swapCol)
 
         }
         */
+}
+
+void MultiColorImage::FixYColors()
+{
+    return;
+    for (int x=0;x<m_charWidth;x++) {
+        for (int y=1;y<m_charHeight;y++) {
+            PixelChar& pc0 = m_data[(y-1)*m_charWidth+x];
+            PixelChar& pc1 = m_data[y*m_charWidth+x];
+
+/*            if (pc1.c[1]!=0 && pc0.c[1]!=0 && pc0.c[2]==0 && pc1.c[0]==0) {
+ //               if (rand()%100>98)
+//                   qDebug() << "SWAPPED "<<x<<y;
+                pc1.SwapColors12();
+            }*/
+            if (x==27) {
+                if (y==8 || y==9) {
+                    qDebug() << QString::number(pc1.c[1]) <<QString::number(pc1.c[2]) ;
+                }
+            }
+        }
+
+    }
 }
 
 void MultiColorImage::AppendSaveBinCharsetFilename(QFile &file)
