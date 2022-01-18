@@ -443,6 +443,7 @@ void PixelChar::SwapColors12()
     uchar t = c[2];
     c[2] = c[1];
     c[1]  = t;
+//    return;
     for (int j=0;j<8;j++) {
         uchar cc = 0;
         for (int k=0;k<8;k+=2)  {

@@ -383,7 +383,8 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
     height = m_height;
     qDebug() << width << height << img.width() << img.height();
 */
-    FixYColors();
+    if (m_fixMultiColorYSave)
+        FixYColors();
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
 
@@ -1413,22 +1414,35 @@ void MultiColorImage::ForceBackgroundColor(int col, int swapCol)
 
 void MultiColorImage::FixYColors()
 {
-    return;
     for (int x=0;x<m_charWidth;x++) {
         for (int y=1;y<m_charHeight;y++) {
             PixelChar& pc0 = m_data[(y-1)*m_charWidth+x];
             PixelChar& pc1 = m_data[y*m_charWidth+x];
-
-/*            if (pc1.c[1]!=0 && pc0.c[1]!=0 && pc0.c[2]==0 && pc1.c[0]==0) {
+            if (pc1.c[1]>pc1.c[2]) {
+                pc1.SwapColors12();
+//                qDebug() << "EWOOT";
+            }
+ //           if (pc1.c[1]!=0 && pc0.c[1]!=0 && pc0.c[2]==0 && pc1.c[0]==0) {
  //               if (rand()%100>98)
 //                   qDebug() << "SWAPPED "<<x<<y;
-                pc1.SwapColors12();
-            }*/
-            if (x==27) {
+   //             pc1.SwapColors12();
+     //       }
+//            if (pc1.c[2]==pc0.c[2])
+/*               if (x==2 && y==9) {
+//                pc1.SwapColors12();
+                   int t=pc1.c[2];
+                   pc1.c[2]=pc1.c[1];
+                   pc1.c[1]=t;
+                   pc1.c[1]=0;
+                   pc1.c[2]=1;
+                   qDebug() << QString::number(pc1.c[1]) <<QString::number(pc1.c[2]) ;
+               }*/
+           /* if (x==27) {
                 if (y==8 || y==9) {
                     qDebug() << QString::number(pc1.c[1]) <<QString::number(pc1.c[2]) ;
                 }
             }
+            */
         }
 
     }

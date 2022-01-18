@@ -577,26 +577,25 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
         y*=8;
         while (!done && y<200) {
             int pos = ((int)y/8)*40+x;
+            oc = mc->m_data[pos-40].c[1];
+            od = mc->m_data[pos-40].c[2];
             c = mc->m_data[pos].c[1];
             d = mc->m_data[pos].c[2];
             int sng = 0;
             bool cross = false;
             int iyb = 0;
-
+            int orgVal = cval;
             bool ldone = false;
-                uchar val = mc->getPixel(x*4,y);
-                if (cval!=val && val!=0 && val>cval) {
+            for (int xx=0;xx<1;xx++) {
+                uchar val = mc->getPixel(x*4+xx,y);
+                //                if (cval!=val && val!=0 && val>cval) {
+                if (val!=cval && val!=0) {
                     cval = val;
                     cross = true;
+
                 }
-                else
-                {
-/*                    val = mc->getPixel(x*4+3,y);
-                    if (cval!=val && val!=0 && val>cval) {
-                        cval = val;
-                        cross = true;
-                    }*/
-                }
+            }
+
 
             int iv = 0;
 //            if (isUniform)
@@ -613,24 +612,33 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
             if (c!=0 && d==0) {
                 sng=1;
             }
+
+            int inyAfter = 0;
+
             if ((y&7)==0) {
 //                qDebug() << "Append "<<y;
-                iny.append(0);
+                if (addy==1 && c==oc) {
+                    addy=0; inyAfter=1;
+                }
+                iny.append(inyAfter);
                 inyBefore.append(addy);
                 inv.append(0);
                 single.append(sng);
-                cnt+=addy;
+                cnt+=addy + inyAfter;
                 addr.append(pos+startaddr);
                 rows++;
+
+
+                if (x==2)
+    //                  qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d)<< "- "<<QString::number(nc) << QString::number(nd) <<  " - " << addy << cnt;
+                      qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
+
 
                 addy = 0;
             }
             if (cnt==8)
                 done =true;
 
-//            if (x==26)
-//                  qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d)<< "- "<<QString::number(nc) << QString::number(nd) <<  " - " << addy << cnt;
-  //                qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
 
             oc = c;
             od = d;

@@ -909,7 +909,7 @@ static int SaveSinusScrollerData(lua_State* L) {
 
     Compression::SaveSinusScrollerData(mc,lua_tonumber(L,1),lua_tonumber(L,2),m_currentDir+"/"+lua_tostring(L,3));
 //    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type,false);
-
+    return 0;
 }
 
 

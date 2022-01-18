@@ -145,6 +145,7 @@ public:
     virtual LColorList::Type getColorType() {
         return m_colorList.m_type;
     }
+    bool m_fixMultiColorYSave = false;
 
     virtual void CopyImageData(LImage* img);
     virtual int getCharWidthDisplay();

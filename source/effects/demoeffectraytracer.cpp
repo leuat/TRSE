@@ -13,6 +13,7 @@ void DemoEffectRaytracer::Initialize()
 
 
    m_mc = new MultiColorImage(LColorList::C64);
+   m_mc->m_fixMultiColorYSave = true;
 //   m_mc->SetFixed23(3,6);
 
     if (!m_rt->m_globals.m_multicolor)
