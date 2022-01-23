@@ -2718,3 +2718,9 @@ void FormImageEditor::on_cmbFixedfD800_activated(int index)
     onPenChanged();
 }
 
+
+void FormImageEditor::on_cmbZoomLevel_activated(int index)
+{
+    on_cmbZoomLevel_activated("");
+}
+

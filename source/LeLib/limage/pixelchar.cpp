@@ -450,7 +450,7 @@ void PixelChar::SwapColors12()
             t = (p[j]>>k)&0b11;
             if (t==1) t=2;
             else
-             if (t=2) t=1;
+             if (t==2) t=1;
             cc|=t<<k;
 
         }
