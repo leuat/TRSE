@@ -7,8 +7,8 @@ var
    	// Yadd contains the addition value for each column. Is reset for each cycle
    	yadd : array[screen_width] of byte;
    	// Screen and color address tables
-	saddr: array[screen_width] of integer; // Screen address table
-	caddr: array[screen_width] of integer; // Color adress table
+		saddr: array[screen_height] of integer = buildtable("SCREEN_CHAR_LOC+i*SCREEN_WIDTH"); // Screen address table
+		caddr: array[screen_height] of integer = buildtable("SCREEN_COL_LOC+i*SCREEN_WIDTH"); // Color adress table
    	sp:pointer;
 
 /*
@@ -20,9 +20,6 @@ begin
 	for i:=0 to screen_width do yadd[i]:=random()/80+1;
 	// ypos has values 0-128
 	for i:=0 to screen_width do ypos[i]:=random()/2;
-	// Lookup address tables for 40 column mode, screen address and color address
-	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
-	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
 
 end;
 

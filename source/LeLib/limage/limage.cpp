@@ -577,13 +577,22 @@ void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
         }
 }
 
-void LImage::ExportSubregion(QString outfile, int x, int y, int w, int h) {
-    QByteArray data;
+void LImage::ExportSubregion(QString outfile, int x, int y, int w, int h, int type) {
 
-    for (int j=0;j<h;j++)
-        for (int i=0;i<w;i++)
+    QByteArray data;
+//    qDebug() << x<<type;
+    if (type==0)
+        for (int j=0;j<h;j++)
+            for (int i=0;i<w;i++)
+            {
+                data.append(getPixel(x+i,y+j));
+                data.append(getPixel(x+i,y+j));
+            }
+
+    if (type == 1)
+    for (int i=0;i<w;i++)
+        for (int j=0;j<h;j++)
         {
-            data.append(getPixel(x+i,y+j));
             data.append(getPixel(x+i,y+j));
         }
 

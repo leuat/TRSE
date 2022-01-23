@@ -1148,6 +1148,8 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            if (m_currentToken.m_intVal!=0)
+                Eat();
             return;
         }
         if (m_currentToken.m_value=="setcompressionweights") {
@@ -5035,7 +5037,12 @@ void Parser::HandleExportSubregion()
     Eat(TokenType::INTEGER_CONST);
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
+    int type = 0;
+    if (m_currentToken.m_intVal!=0) {
+        type = m_currentToken.m_intVal;
+        Eat(TokenType::INTEGER_CONST);
 
+    }
 
 
 
@@ -5045,8 +5052,7 @@ void Parser::HandleExportSubregion()
 
 
     LImage* img = LImageIO::Load(inFile);
-
-    img->ExportSubregion(outFile,x,y,w,h);
+    img->ExportSubregion(outFile,x,y,w,h,type);
 
 
 

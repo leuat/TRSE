@@ -97,6 +97,11 @@ void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h) {
     file.write(data);
 }
 
+void LImageQImage::ExportBin(QFile &file)
+{
+
+}
+
 void LImageQImage::RemapCharset(QImage *other, int border_w, int border_h, int blockwidth, int blockheight,int dw,int dh, int allowance)
 {
     if (blockwidth==0)

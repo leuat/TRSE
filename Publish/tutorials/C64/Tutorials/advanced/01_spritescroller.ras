@@ -1,4 +1,5 @@
 Program SpriteScroller;
+@use "tables/luminosities"
 var
 	zp,tp, p1,ep,time: pointer;
 	i,j,k,col : byte;
@@ -193,6 +194,9 @@ begin
 	PreventIRQ();
 	disableciainterrupts();	
 	setmemoryconfig(1,useKernal,0);
+	clearscreen(key_space,screen_char_loc);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
 	Init16x16Sprites();
 	ep:=#scrollerText;
 	StartRasterChain(RasterMain(),0,@useKernal);
