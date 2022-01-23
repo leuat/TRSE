@@ -311,6 +311,7 @@ private slots:
     void on_btnImportMain_clicked();
     void on_cmbFixedfD800_activated(int index);
     void on_cmbZoomLevel_activated(int index);
+    void on_cmbAspect_activated(int index);
 };
 
 

@@ -2724,3 +2724,9 @@ void FormImageEditor::on_cmbZoomLevel_activated(int index)
     on_cmbZoomLevel_activated("");
 }
 
+
+void FormImageEditor::on_cmbAspect_activated(int index)
+{
+    on_cmbAspect_currentIndexChanged(ui->cmbAspect->currentIndex());
+}
+

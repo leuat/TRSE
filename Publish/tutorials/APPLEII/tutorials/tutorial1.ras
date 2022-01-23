@@ -3,7 +3,7 @@ program Tutorial1;
 var
 	py,y,time : byte;
 	
-	msg : cstring=("HELLO APPLE II WORLD FROM TRSE"); 
+	msg : string=("HELLO APPLE II WORLD FROM TRSE"); 
 	
 	sin : array[$100] of byte = buildsinetable(24);
 
