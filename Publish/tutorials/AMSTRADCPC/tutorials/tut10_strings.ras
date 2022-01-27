@@ -16,6 +16,8 @@ var
   
   string_list : array[4] of string = ("this","is","an","array");	 
 
+  msg2 : string = ("some ",0,0,0,0,0);
+
 begin
 	
   // Set 160x200 16-color mode
@@ -66,6 +68,12 @@ begin
 		Text::Print("-");	
 	end;
   
+	// add two strings together
+	str::strcat(#msg2, "500");
+	
+	Text::MoveCursorTo(1, 15);
+	Text::Print(#msg2);	
+	
 	Input::WaitKey();
 
 end.

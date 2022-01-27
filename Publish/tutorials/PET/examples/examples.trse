@@ -46,4 +46,5 @@ exomizer_toggle = 0
 zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 3032
 show_all_files = 1
+charset_ = /Users/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/resources/charsets/charset.flf
 open_files =, 01_hello_world.ras

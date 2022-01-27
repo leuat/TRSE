@@ -1,5 +1,5 @@
-zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
-temp_zeropages = ,$54, $56, $58, $5A
+zeropages = ,$02,  $04,  $08,  $16,  $0B,  $0D,  $10,  $12,  $22,  $24,  $68
+temp_zeropages = ,$54,  $56,  $58,  $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -60,7 +60,7 @@ qemu = No
 use_tripe = 0
 amstradcpc_options = 0
 spectrum_model = 0
-dosbox_cycles = 3000
+dosbox_cycles = 500
 columns = 40
 vic_memory_config = none
 via_zeropages = ,

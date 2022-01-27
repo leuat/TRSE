@@ -9,7 +9,8 @@ program Tutorial5;
 // https://BlueBilby.com/
 
 var  
-	v : byte;
+	v,i : byte;
+	zp : pointer;
 	
 begin
 	Memory::DisableInterrupts();
@@ -20,6 +21,20 @@ begin
 	// Set colour to draw pixels with
 	Screen::SetPen(3);
 	// Do a little loop to draw a line
+	zp:=$7000;
+	while (true) do
+	begin
+	for v:=0 to 32 do
+	begin
+		zp[v]:=i;
+	end;
+	i+=1;
+	zp+=32;
+		Screen::WaitForVerticalBlank();
+	end;
+	loop();
+	
+	
 	for v := 0 to 127 do
 	begin
 		Screen::PutPixel(v,55);

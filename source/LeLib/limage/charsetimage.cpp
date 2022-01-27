@@ -153,6 +153,9 @@ void CharsetImage::ImportBin(QFile &file)
   //  m_rawData.remove(0,2);
 //    m_rawData.resize(8*64);
     FromRaw(m_rawData);
+    for (int i=0;i<1000;i+=1) {
+        m_data[i].c[1]=1;
+    }
 /*    SetColor(0, m_background); //MULTICOLOR_CHAR_COL +0
     SetColor(1, 2);// MULTICOLOR_CHAR_COL +2
     SetColor(2, 1); // MULTICOLOR_CHAR_COL +1*/

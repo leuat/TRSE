@@ -73,7 +73,7 @@ void SystemAppleII::PostProcess(QString &text, QString file, QString currentDir)
     QStringList params = QStringList() << "-jar" << "ac.jar" <<"-as" <<file+".do" <<"HIWORLD" <<"BIN";
 
 //    "-as" << file+".do"<<"HIWORLD" <<"BIN ";
-    QString p = " " +file+".do HIWORLD BIN ";
+    QString p = " " +file+".do HIWacORLD BIN ";
 //    qDebug() << params;
    /* StartProcess("java",
                  params, tout);;*/

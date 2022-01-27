@@ -1,7 +1,7 @@
 unit Graphics;
 var
 	pa,pb : pointer of integer;
-	bpl,j,i : integer;
+	bpl,j,i,k : integer;
 	const height: integer = 200;
 	hx, hy, hl,hc:integer;
 	@donotremove bytefill1
@@ -202,4 +202,6 @@ csb_inner:
 
 end;
 */
+
+
 end.
