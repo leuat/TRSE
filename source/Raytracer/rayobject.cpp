@@ -453,25 +453,34 @@ float RayObjectTriangle::intersect(Ray *ray)
     if (QVector3D::dotProduct(m_normal,ray->m_direction)>0)
         return 100;*/
     QVector3D p = ray->m_currentPos;
-    float h = 0.06;
-    float dtop = abs(p.distanceToPlane(m_pos[1], m_normal));
-    float d = dtop;//dtop-2;
-    if (d>h) {
-        return d;
+    QVector3D n = m_normal;
+    double dtop =  (QVector3D::dotProduct(p-m_pos[1], n));
+//    if (dtop<0)
+  //      return -1000;
+    double ln = QVector3D::dotProduct(ray->m_direction,n);
+
+    if (ln==0){
+        doesIntersect = false;
+        return 10000;
     }
 
-    bool sameside =
-            Util::SameSide(p, m_pos[0], m_pos[1], m_pos[2]) &&
-            Util::SameSide(p, m_pos[2], m_pos[0], m_pos[1]) &&
-            Util::SameSide(p, m_pos[1], m_pos[0], m_pos[2]);
+    dtop =abs(dtop/ln);
+//    dtop*=-1;
+    QVector3D np =p + ray->m_direction*dtop;
 
-
-    if (!sameside) {
-        return 100;
+    bool hits = Util::PointInTriangle(np,m_pos[0],m_pos[1], m_pos[2]);
+    if (hits) {
+        doesIntersect = true;
+        return dtop;
     }
+   else {
+        doesIntersect = false;
+        return 1000;
+    }
+}
 
-    return d;
-
+QVector3D RayObjectTriangle::getBBBox() {
+    return m_localRotmatInv*m_centerPos*-1;
 }
 
 

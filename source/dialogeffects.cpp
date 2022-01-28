@@ -208,6 +208,9 @@ static int AddObject(lua_State *L)
 //       return 0;
    // }
     QString object = QString::fromStdString(lua_tostring(L,1)).toLower();
+
+
+
     Material mat = Material(QVector3D(1,1,1),50,0.5, 0,0,"");
     QString name = lua_tostring(L,2);
     QString parent = lua_tostring(L,3);
@@ -360,6 +363,21 @@ static int AddObject(lua_State *L)
                         mat);
 
 //        obj->m_flatten = false;
+
+    }
+    if (object=="triangle") {
+        auto o =
+                    new RayObjectTriangle();
+        o->m_material = mat;
+        o->m_pos[0] =   QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
+        o->m_pos[1] =   QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
+        o->m_pos[2] =   QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
+
+        o->m_position = QVector3D(0,0,0);
+        o->m_normal = QVector3D::crossProduct(o->m_pos[0]-o->m_pos[1],o->m_pos[2]-o->m_pos[1]).normalized();
+        o->m_bbRadius = 10;
+//        obj->m_flatten = false;
+        obj = o;
 
     }
 

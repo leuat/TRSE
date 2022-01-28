@@ -127,6 +127,7 @@ public:
     static int C64StringToInt(QString f);
 
     static bool SameSide(const QVector3D& p1,const QVector3D& p2, const QVector3D& a,const QVector3D& b);
+    static bool PointInTriangle(const QVector3D &p, const QVector3D &a, const QVector3D &b, const QVector3D &c);
 
     static QString fixFolder(QString folderName);
 

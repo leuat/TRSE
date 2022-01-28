@@ -568,8 +568,16 @@ int Util::C64StringToInt(QString f) {
 bool Util::SameSide(const QVector3D &p1, const QVector3D &p2, const QVector3D &a, const QVector3D &b) {
     QVector3D cp1 = QVector3D::crossProduct(b-a, p1-a);
     QVector3D cp2 = QVector3D::crossProduct(b-a, p2-a);
-    return QVector3D::dotProduct (cp1, cp2) >= 0;
+    return QVector3D::dotProduct (cp1, cp2) >= -0.0;
     //        else return false
+}
+
+bool Util::PointInTriangle(const QVector3D &p, const QVector3D &a, const QVector3D &b, const QVector3D &c) {
+    if (SameSide(p,a, b,c) &&
+            SameSide(p,b, a,c) &&
+            SameSide(p,c, a,b)) return true;
+
+    return false;
 }
 
 QString Util::fixFolder(QString folderName) {

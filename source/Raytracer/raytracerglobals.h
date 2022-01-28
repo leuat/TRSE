@@ -47,6 +47,7 @@ public:
     Ray Rotate(QMatrix4x4& rotmat, QVector3D pos) {
         Ray r(rotmat*(m_currentPos+pos)-pos,rotmat*m_direction);
         r.m_currentPos = r.m_origin;
+        r.m_currentPosUnrotated = m_currentPos;
         return r;
     }
 

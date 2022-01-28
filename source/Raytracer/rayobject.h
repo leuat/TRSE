@@ -36,7 +36,7 @@ public:
     Ray m_localRay[32];
     QVector<QVector3D> m_2Dpoints[32];
     float m_bbRadius;
-
+    bool doesIntersect = true;
     QVector<AbstractRayObject*> m_children;
 
     void SetMaterial(Material m) {
@@ -50,6 +50,10 @@ public:
 
     virtual void Render(Camera& cam, QImage& img) {
 
+    }
+
+    virtual QVector3D getBBBox() {
+       return m_localPos;
     }
 
     QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, float l);
@@ -304,6 +308,7 @@ class RayObjectTriangle: public AbstractRayObject {
     RayObjectTriangle();
     float intersect(Ray* ray) override;
 
+    virtual QVector3D getBBBox();
 
 };
 
