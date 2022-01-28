@@ -208,6 +208,7 @@ public:
     static const int CPUFLAVOR_6502_ILLEGAL = 1;
     static const int CPUFLAVOR_GS4510 = 2;
     static const int CPUFLAVOR_Z80 = 3;
+    static const int CPUFLAVOR_S1C88 = 4;
 
     int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
 

@@ -27,6 +27,12 @@ public:
     }
 
     QString CompressFile(QString fileName) override;
+
+    virtual int getCPUFlavorint() override {
+        return 3; // z80
+    }
+
+
 };
 
 #endif

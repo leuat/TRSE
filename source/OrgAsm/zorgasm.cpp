@@ -379,6 +379,10 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 void ZOrgasm::LoadCodes(int CPUflavor)
 {
     QString filename = ":/resources/text/opcodes_z80.txt";
+
+    if (CPUflavor == CPUFLAVOR_S1C88)
+        filename = ":/resources/text/opcodes_s1c88.txt";
+    qDebug() << "CPU flavor : "<<CPUflavor<<filename;
     QString data = Util::loadTextFile(filename);
     QStringList lst = data.split("\n");
     m_opCodes.clear();

@@ -209,6 +209,8 @@ private slots:
 
     void on_btnJDH8Emu_clicked();
 
+    void on_btnMameEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

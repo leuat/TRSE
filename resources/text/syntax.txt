@@ -333,9 +333,9 @@ m; DecrunchFromIndex; C64, MEGA65, PLUS4, C128, VIC20, PET, ATARI2600, APPLEII, 
 # Charset routines
 
 m; CopyCharsetFromRom; C64, PLUS4, C128 ; a
-m; SetCharsetLocation; C64,  PLUS4, C128, VIC20; n
-m; SetScreenLocation; C64,  PLUS4, C128, VIC20; n
-m; SetCharsetAndScreenLocation; C64, C128; n,n
+m; SetCharsetLocation; C64,  PLUS4, C128, VIC20, MEGA65; n
+m; SetScreenLocation; C64,  PLUS4, C128, VIC20, MEGA65; n
+m; SetCharsetAndScreenLocation; C64, C128, MEGA65; n,n
 
 
 

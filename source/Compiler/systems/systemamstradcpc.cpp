@@ -1,6 +1,7 @@
 #include "systemamstradcpc.h"
 #include "source/LeLib/util/lz4/lz4.h"
 #include "source/Compiler/errorhandler.h"
+
 SystemAmstradCPC::SystemAmstradCPC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj) {
     m_processor = Z80;
     m_system = AMSTRADCPC;

@@ -44,4 +44,6 @@ dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 0
 show_all_files = 1
-open_files =, example05_single_sprite.ras
+open_files = ,example9_movie.ras, example13_compressed_charset.ras, example14_wavecolors.ras, example12_rotating_text.ras, example11_flipdisk.ras, example05_single_sprite.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/MEGA65/RayTracer/
+current_file = example13_compressed_charset.ras

@@ -1,0 +1,252 @@
+add ba #*16     ;$C0 =a          // ADD BA #mmnn 
+add a [*16]     ;$05 =a          // ADD A [hhll] 
+add hl #*16     ;$C1 =a          // ADD HL #mmnn 
+add ix #*16     ;$C2 =a          // ADD IX #mmnn 
+add iy #*16     ;$C3 =a          // ADD IY #mmnn 
+add a #*08      ;$02 =a          // ADD A #nn 
+add a [br:*08]  ;$04 =a          // ADD A [BR:ll] 
+add a a         ;$00             // ADD A A 
+add a b         ;$01             // ADD A B 
+add a [hl]      ;$03             // ADD A [HL] 
+add a [ix]      ;$06             // ADD A [IX] 
+add a [iy]      ;$07             // ADD A [IY] 
+adc a [*16]     ;$0D =a          // ADC A [hhll] 
+adc a #*08      ;$0A =a          // ADC A #nn 
+adc a [br:*08]  ;$0C =a          // ADC A [BR:ll] 
+adc a a         ;$08             // ADC A A 
+adc a b         ;$09             // ADC A B 
+adc a [hl]      ;$0B             // ADC A [HL] 
+adc a [ix]      ;$0E             // ADC A [IX] 
+adc a [iy]      ;$0F             // ADC A [IY] 
+sub ba #*16     ;$D0 =a          // SUB BA #mmnn 
+sub a [*16]     ;$15 =a          // SUB A [hhll] 
+sub hl #*16     ;$D1 =a          // SUB HL #mmnn 
+sub ix #*16     ;$D2 =a          // SUB IX #mmnn 
+sub iy #*16     ;$D3 =a          // SUB IY #mmnn 
+sub a #*08      ;$12 =a          // SUB A #nn 
+sub a [br:*08]  ;$14 =a          // SUB A [BR:ll] 
+sub a a         ;$10             // SUB A A 
+sub a b         ;$11             // SUB A B 
+sub a [hl]      ;$13             // SUB A [HL] 
+sub a [ix]      ;$16             // SUB A [IX] 
+sub a [iy]      ;$17             // SUB A [IY] 
+sbc a [*16]     ;$1D =a          // SBC A [hhll] 
+sbc a #*08      ;$1A =a          // SBC A #nn 
+sbc a [br:*08]  ;$1C =a          // SBC A [BR:ll] 
+sbc a a         ;$18             // SBC A A 
+sbc a b         ;$19             // SBC A B 
+sbc a [hl]      ;$1B             // SBC A [HL] 
+sbc a [ix]      ;$1E             // SBC A [IX] 
+sbc a [iy]      ;$1F             // SBC A [IY] 
+and a [*16]     ;$25 =a          // AND A [hhll] 
+and a #*08      ;$22 =a          // AND A #nn 
+and a [br:*08]  ;$24 =a          // AND A [BR:ll] 
+and sc #*08     ;$9C =a          // AND SC #nn 
+and [br:*08] #*08;$D8 =a =a       // AND [BR:ll] #nn 
+and a a         ;$20             // AND A A 
+and a b         ;$21             // AND A B 
+and a [hl]      ;$23             // AND A [HL] 
+and a [ix]      ;$26             // AND A [IX] 
+and a [iy]      ;$27             // AND A [IY] 
+or a [*16]      ;$2D =a          // OR A [hhll] 
+or a #*08       ;$2A =a          // OR A #nn 
+or a [br:*08]   ;$2C =a          // OR A [BR:ll] 
+or sc #*08      ;$9D =a          // OR SC #nn 
+or [br:*08] #*08;$D9 =a =a       // OR [BR:ll] #nn 
+or a a          ;$28             // OR A A 
+or a b          ;$29             // OR A B 
+or a [hl]       ;$2B             // OR A [HL] 
+or a [ix]       ;$2E             // OR A [IX] 
+or a [iy]       ;$2F             // OR A [IY] 
+cp ba #*16      ;$D4 =a          // CP BA #mmnn 
+cp a [*16]      ;$35 =a          // CP A [hhll] 
+cp hl #*16      ;$D5 =a          // CP HL #mmnn 
+cp ix #*16      ;$D6 =a          // CP IX #mmnn 
+cp iy #*16      ;$D7 =a          // CP IY #mmnn 
+cp a #*08       ;$32 =a          // CP A #nn 
+cp a [br:*08]   ;$34 =a          // CP A [BR:ll] 
+cp [br:*08] #*08;$DB =a =a       // CP [BR:ll] #nn 
+cp a a          ;$30             // CP A A 
+cp a b          ;$31             // CP A B 
+cp a [hl]       ;$33             // CP A [HL] 
+cp a [ix]       ;$36             // CP A [IX] 
+cp a [iy]       ;$37             // CP A [IY] 
+xor a [*16]     ;$3D =a          // XOR A [hhll] 
+xor a #*08      ;$3A =a          // XOR A #nn 
+xor a [br:*08]  ;$3C =a          // XOR A [BR:ll] 
+xor sc #*08     ;$9E =a          // XOR SC #nn 
+xor [br:*08] #*08;$DA =a =a       // XOR [BR:ll] #nn 
+xor a a         ;$38             // XOR A A 
+xor a b         ;$39             // XOR A B 
+xor a [hl]      ;$3B             // XOR A [HL] 
+xor a [ix]      ;$3E             // XOR A [IX] 
+xor a [iy]      ;$3F             // XOR A [IY] 
+ld [*16] ix     ;$BE =a          // LD [hhll] IX 
+ld ix [*16]     ;$BA =a          // LD IX [hhll] 
+ld iy #*16      ;$C7 =a          // LD IY #mmnn 
+ld ix #*16      ;$C6 =a          // LD IX #mmnn 
+ld ba [*16]     ;$B8 =a          // LD BA [hhll] 
+ld hl #*16      ;$C5 =a          // LD HL #mmnn 
+ld ba #*16      ;$C4 =a          // LD BA #mmnn 
+ld [*16] iy     ;$BF =a          // LD [hhll] IY 
+ld hl [*16]     ;$B9 =a          // LD HL [hhll] 
+ld [*16] hl     ;$BD =a          // LD [hhll] HL 
+ld [*16] ba     ;$BC =a          // LD [hhll] BA 
+ld iy [*16]     ;$BB =a          // LD IY [hhll] 
+ld [br:*08] #*08;$DD =a =a       // LD [BR:ll] #nn 
+ld h [br:*08]   ;$5C =a          // LD H [BR:ll] 
+ld [br:*08] h   ;$7B =a          // LD [BR:ll] H 
+ld [br:*08] [ix];$7E =a          // LD [BR:ll] [IX] 
+ld [br:*08] [hl];$7D =a          // LD [BR:ll] [HL] 
+ld [ix] [br:*08];$64 =a          // LD [IX] [BR:ll] 
+ld [br:*08] l   ;$7A =a          // LD [BR:ll] L 
+ld [br:*08] b   ;$79 =a          // LD [BR:ll] B 
+ld [br:*08] a   ;$78 =a          // LD [BR:ll] A 
+ld sc #*08      ;$9F =a          // LD SC #nn 
+ld [iy] [br:*08];$74 =a          // LD [IY] [BR:ll] 
+ld [br:*08] [iy];$7F =a          // LD [BR:ll] [IY] 
+ld l #*08       ;$B2 =a          // LD L #nn 
+ld a #*08       ;$B0 =a          // LD A #nn 
+ld [ix] #*08    ;$B6 =a          // LD [IX] #nn 
+ld a [br:*08]   ;$44 =a          // LD A [BR:ll] 
+ld b [br:*08]   ;$4C =a          // LD B [BR:ll] 
+ld b #*08       ;$B1 =a          // LD B #nn 
+ld [iy] #*08    ;$B7 =a          // LD [IY] #nn 
+ld [hl] [br:*08];$6C =a          // LD [HL] [BR:ll] 
+ld [hl] #*08    ;$B5 =a          // LD [HL] #nn 
+ld br #*08      ;$B4 =a          // LD BR #nn 
+ld l [br:*08]   ;$54 =a          // LD L [BR:ll] 
+ld h #*08       ;$B3 =a          // LD H #nn 
+ld [iy] [iy]    ;$77             // LD [IY] [IY] 
+ld [iy] [hl]    ;$75             // LD [IY] [HL] 
+ld [hl] [ix]    ;$6E             // LD [HL] [IX] 
+ld [iy] h       ;$73             // LD [IY] H 
+ld [iy] l       ;$72             // LD [IY] L 
+ld [iy] b       ;$71             // LD [IY] B 
+ld [iy] a       ;$70             // LD [IY] A 
+ld [hl] [iy]    ;$6F             // LD [HL] [IY] 
+ld [iy] [ix]    ;$76             // LD [IY] [IX] 
+ld a a          ;$40             // LD A A 
+ld [hl] [hl]    ;$6D             // LD [HL] [HL] 
+ld b h          ;$4B             // LD B H 
+ld l h          ;$53             // LD L H 
+ld l l          ;$52             // LD L L 
+ld l b          ;$51             // LD L B 
+ld l a          ;$50             // LD L A 
+ld b [iy]       ;$4F             // LD B [IY] 
+ld b [ix]       ;$4E             // LD B [IX] 
+ld b [hl]       ;$4D             // LD B [HL] 
+ld b l          ;$4A             // LD B L 
+ld l [ix]       ;$56             // LD L [IX] 
+ld b b          ;$49             // LD B B 
+ld b a          ;$48             // LD B A 
+ld a [iy]       ;$47             // LD A [IY] 
+ld a [ix]       ;$46             // LD A [IX] 
+ld a [hl]       ;$45             // LD A [HL] 
+ld a h          ;$43             // LD A H 
+ld a l          ;$42             // LD A L 
+ld l [hl]       ;$55             // LD L [HL] 
+ld l [iy]       ;$57             // LD L [IY] 
+ld [hl] h       ;$6B             // LD [HL] H 
+ld [ix] l       ;$62             // LD [IX] L 
+ld a b          ;$41             // LD A B 
+ld [hl] b       ;$69             // LD [HL] B 
+ld [hl] a       ;$68             // LD [HL] A 
+ld [ix] [iy]    ;$67             // LD [IX] [IY] 
+ld [ix] [ix]    ;$66             // LD [IX] [IX] 
+ld [ix] [hl]    ;$65             // LD [IX] [HL] 
+ld [ix] h       ;$63             // LD [IX] H 
+ld [ix] b       ;$61             // LD [IX] B 
+ld h a          ;$58             // LD H A 
+ld [ix] a       ;$60             // LD [IX] A 
+ld h [iy]       ;$5F             // LD H [IY] 
+ld h [ix]       ;$5E             // LD H [IX] 
+ld h [hl]       ;$5D             // LD H [HL] 
+ld h h          ;$5B             // LD H H 
+ld h l          ;$5A             // LD H L 
+ld h b          ;$59             // LD H B 
+ld [hl] l       ;$6A             // LD [HL] L 
+inc [br:*08]    ;$85 =a          // INC [BR:ll]  
+inc a           ;$80             // INC A  
+inc b           ;$81             // INC B  
+inc l           ;$82             // INC L  
+inc h           ;$83             // INC H  
+inc br          ;$84             // INC BR  
+inc [hl]        ;$86             // INC [HL]  
+inc sp          ;$87             // INC SP  
+inc ba          ;$90             // INC BA  
+inc hl          ;$91             // INC HL  
+inc ix          ;$92             // INC IX  
+inc iy          ;$93             // INC IY  
+dec ba          ;$98             // DEC BA  
+dec [br:*08]    ;$8D =a          // DEC [BR:ll]  
+dec hl          ;$99             // DEC HL  
+dec ix          ;$9A             // DEC IX  
+dec iy          ;$9B             // DEC IY  
+dec a           ;$88             // DEC A  
+dec b           ;$89             // DEC B  
+dec l           ;$8A             // DEC L  
+dec h           ;$8B             // DEC H  
+dec br          ;$8C             // DEC BR  
+dec [hl]        ;$8E             // DEC [HL]  
+dec sp          ;$8F             // DEC SP  
+bit a #*08      ;$96 =a          // BIT A #nn 
+bit [hl] #*08   ;$95 =a          // BIT [HL] #nn 
+bit b #*08      ;$97 =a          // BIT B #nn 
+bit [br:*08] #*08;$DC =a =a       // BIT [BR:ll] #nn 
+bit a b         ;$94             // BIT A B 
+push ba         ;$A0             // PUSH BA  
+push hl         ;$A1             // PUSH HL  
+push ix         ;$A2             // PUSH IX  
+push iy         ;$A3             // PUSH IY  
+push br         ;$A4             // PUSH BR  
+push ep         ;$A5             // PUSH EP  
+push ip         ;$A6             // PUSH IP  
+push sc         ;$A7             // PUSH SC  
+pop ba          ;$A8             // POP BA  
+pop hl          ;$A9             // POP HL  
+pop ix          ;$AA             // POP IX  
+pop iy          ;$AB             // POP IY  
+pop br          ;$AC             // POP BR  
+pop ep          ;$AD             // POP EP  
+pop ip          ;$AE             // POP IP  
+pop sc          ;$AF             // POP SC  
+ex ba hl        ;$C8             // EX BA HL 
+ex ba ix        ;$C9             // EX BA IX 
+ex ba iy        ;$CA             // EX BA IY 
+ex ba sp        ;$CB             // EX BA SP 
+ex a b          ;$CC             // EX A B 
+ex a [hl]       ;$CD             // EX A [HL] 
+pack            ;$DE             // PACK   
+upck            ;$DF             // UPCK   
+cars *08        ;$F0 =a          // CARS rr  
+cars c *08      ;$E0 =a          // CARS C rr 
+cars nc *08     ;$E1 =a          // CARS NC rr 
+cars z *08      ;$E2 =a          // CARS Z rr 
+cars nz *08     ;$E3 =a          // CARS NZ rr 
+jrs *08         ;$F1 =a          // JRS rr  
+jrs c *08       ;$E4 =a          // JRS C rr 
+jrs nc *08      ;$E5 =a          // JRS NC rr 
+jrs z *08       ;$E6 =a          // JRS Z rr 
+jrs nz *08      ;$E7 =a          // JRS NZ rr 
+carl c *16      ;$E8 =a          // CARL C qqrr 
+carl nc *16     ;$E9 =a          // CARL NC qqrr 
+carl z *16      ;$EA =a          // CARL Z qqrr 
+carl nz *16     ;$EB =a          // CARL NZ qqrr 
+carl *16        ;$F2 =a          // CARL qqrr  
+jrl c *16       ;$EC =a          // JRL C qqrr 
+jrl nc *16      ;$ED =a          // JRL NC qqrr 
+jrl z *16       ;$EE =a          // JRL Z qqrr 
+jrl nz *16      ;$EF =a          // JRL NZ qqrr 
+jrl *16         ;$F3 =a          // JRL qqrr  
+jp hl           ;$F4             // JP HL  
+jp [*08]        ;$FD =a          // JP [kk]  
+djr nz *08      ;$F5 =a          // DJR NZ rr 
+swap a          ;$F6             // SWAP A  
+swap [hl]       ;$F7             // SWAP [HL]  
+ret             ;$F8             // RET   
+rete            ;$F9             // RETE   
+rets            ;$FA             // RETS   
+call [*16]      ;$FB =a          // CALL [hhll]  
+int [*08]       ;$FC =a          // INT [kk]  
+nop             ;$FF             // NOP   

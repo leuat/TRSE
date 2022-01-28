@@ -92,6 +92,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == WDC65C816) return "WDC65C816";
         if (s == WDC65C02) return "WDC65C02";
         if (s == PJDH8) return "JDH8";
+        if (s == S1C88) return "S1C88";
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return "";
     }
@@ -106,6 +107,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "WDC65C816" || s=="65C816") return WDC65C816;
         if (s == "WDC65C02" || s =="65C02") return WDC65C02;
         if (s == "PJDH8") return PJDH8;
+        if (s == "S1C88") return S1C88;
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return MOS6502;
     }
@@ -120,6 +122,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "SNES") return "WDC65C816";
         if (s == "MEGA65") return "WDC65C02";
         if (s == "JDH8") return "PJDH8";
+        if (s == "POKEMONMINI") return "S1C88";
         if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX") return "Z80";
 
         qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
@@ -187,6 +190,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         return ACORN;
     if (s.toLower()=="jdh8")
         return JDH8;
+    if (s.toLower()=="pokemonmini")
+        return POKEMONMINI;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -222,6 +227,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == VZ200) return "VZ200";
     if (s == ACORN) return "ACORN";
     if (s == JDH8) return "JDH8";
+    if (s == POKEMONMINI) return "POKEMONMINI";
     return "";
 }
 
@@ -258,9 +264,10 @@ bool AbstractSystem::systemIsOfType(QStringList val)
 
 void AbstractSystem::AssembleOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) {
     m_orgAsm = QSharedPointer<Orgasm>(new Orgasm());
-
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
         m_orgAsm->m_cpuFlavor = Orgasm::CPUFLAVOR_GS4510;
+
+
 
     emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
     connect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
@@ -294,7 +301,7 @@ void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString fil
 {
     m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
 
-    m_orgAsm->m_cpuFlavor = Orgasm::CPUFLAVOR_Z80;
+    m_orgAsm->m_cpuFlavor = getCPUFlavorint();
 
     emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");
     connect(m_orgAsm.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));

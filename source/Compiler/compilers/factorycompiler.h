@@ -8,6 +8,7 @@
 #include "compilerz80.h"
 #include "compilergbz80.h"
 #include "compilerjdh8.h"
+#include "compilers1c88.h"
 #include "compilerarm.h"
 
 class FactoryCompiler

@@ -29,7 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-#ARCH = arm64
+ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -162,6 +162,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerjdh8.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
+    source/Compiler/compilers/compilers1c88.cpp \
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
@@ -188,6 +189,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemoric.cpp \
     source/Compiler/systems/systemplus4.cpp \
+    source/Compiler/systems/systempokemonmini.cpp \
     source/Compiler/systems/systemsnes.cpp \
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemtiki100.cpp \
@@ -428,6 +430,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerjdh8.h \
     source/Compiler/compilers/compilerm68k.h \
+    source/Compiler/compilers/compilers1c88.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
@@ -454,6 +457,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemoric.h \
     source/Compiler/systems/systemplus4.h \
+    source/Compiler/systems/systempokemonmini.h \
     source/Compiler/systems/systemsnes.h \
     source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemtiki100.h \
