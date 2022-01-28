@@ -1,4 +1,4 @@
-#include "compilerS1C88.h"
+#include "compilers1c88.h"
 
 
 void CompilerS1C88::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
