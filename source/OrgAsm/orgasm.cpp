@@ -376,7 +376,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     Compile(OrgasmData::PASS_SYMBOLS);
 
 
-    qDebug() << filename <<m_symbolsList.count();
+//    qDebug() << filename <<m_symbolsList.count();
 
 
     if (!m_hasOverlappingError)

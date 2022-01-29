@@ -202,7 +202,6 @@ bool Compiler::SetupMemoryAnalyzer(QString filename, Orgasm *orgAsm)
     if (m_assembler==nullptr)
         return false;
     int i = 1;
-
     bool is6502 = Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502;
     bool isZ80 = Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80;
 

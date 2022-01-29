@@ -485,6 +485,9 @@ private slots:
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 
+    TRSEDocument* getMainDocument();
+
+
     QString FindPathInProjectFolders(const QModelIndex &index);
 
     void BuildAll();

@@ -117,6 +117,11 @@ QAbstractItemModel *CodeEditor::modelFromTRSE(QSharedPointer<SymbolTable> symtab
         params+=");";
         words.append(bf.m_name + params );
     }
+    for (Token& s: Syntax::s.reservedWords) {
+//        qDebug() << s.m_value.toLower();
+        words.append(s.m_value.toLower());
+    }
+
 
     if (symtab!=nullptr) {
         for (QString s: symtab->m_constants.keys()) {

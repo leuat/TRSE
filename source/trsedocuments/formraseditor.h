@@ -122,6 +122,8 @@ public:
     void Setup();
     void VerifyCommodoreStartChange();
 
+    void ApplySymbolList(SourceBuilder* c) override;
+
     void Focus() override;
 
     bool isBuilding() override;

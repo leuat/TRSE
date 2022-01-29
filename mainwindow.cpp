@@ -450,27 +450,30 @@ void MainWindow::VerifyProjectDefaults()
 void MainWindow::UpdateSymbolTree(QString search)
 {
 
-    if (m_currentDoc==nullptr) {
+    auto doc = getMainDocument();
+
+
+    if (doc==nullptr) {
         return;
     }
-    if (!m_currentDoc->isRasFile())
+    if (!doc->isRasFile())
         return;
 
 
 
-    if (!m_currentDoc->m_currentFileShort.toLower().endsWith(".ras"))
+    if (!doc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
+
+
+
 
     ui->treeSymbols->setFont(QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")));
 
-    m_currentDoc->setOutputText(FormRasEditor::m_globalOutput);
-    FormRasEditor* fe = ((FormRasEditor*)m_currentDoc);
-    if (fe)
-        fe->SetLights();
-
-    FormRasEditor* e = dynamic_cast<FormRasEditor*>(m_currentDoc);
+    doc->setOutputText(FormRasEditor::m_globalOutput);
+    auto e = dynamic_cast<FormRasEditor*>(doc);
     if (e==nullptr)
         return;
+    e->SetLights();
 
 
 
@@ -490,7 +493,9 @@ void MainWindow::UpdateSymbolTree(QString search)
     QTreeWidgetItem* Symbols = new QTreeWidgetItem(QStringList() <<"Symbols");
     QTreeWidgetItem* Procedures = new QTreeWidgetItem(QStringList() <<"Procedures");
 
-
+    if (p==nullptr) return;
+    if (p->m_symTab == nullptr)
+        return;
     if (p->m_symTab->m_symbols.keys().count()==0)
         return;
 
@@ -621,7 +626,6 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
 
 }
-
 
 
 
@@ -1690,28 +1694,44 @@ void MainWindow::on_tabMain_currentChanged(int index)
 
 }
 
-void MainWindow::PropagateMainOutput()
+TRSEDocument* MainWindow::getMainDocument()
 {
-    if (m_currentDoc == nullptr) return;
     auto mainFile = m_currentProject.m_ini->getString("main_ras_file");
     if (mainFile=="none")
-        return;
+        return m_currentDoc;
 
 
-    TRSEDocument* main = nullptr;
+    TRSEDocument* main = m_currentDoc;
     for (auto doc : m_documents)  {
         if (doc->m_currentFileShort==mainFile) {
             main = doc;
         }
     }
 
+    return main;
+}
+
+
+
+
+void MainWindow::PropagateMainOutput()
+{
+    if (m_currentDoc == nullptr) return;
+
+    auto main = getMainDocument();
+
     if (m_currentDoc == main)
         return;
 
     if (main==nullptr)
         return;
-    if (dynamic_cast<FormRasEditor*>(m_currentDoc)==nullptr)
+
+    auto mn = dynamic_cast<FormRasEditor*>(main);
+
+    if (mn==nullptr)
         return;
+
+
 
     m_currentDoc->setOutputText(main->getBuildText());
 
@@ -2909,6 +2929,10 @@ void MainWindow::HandleBuildSuccess()
 {
     RefreshFileList();
     UpdateSymbolTree();
+    auto main = getMainDocument();
+    if (main!=m_currentDoc)
+        m_currentDoc->ApplySymbolList(((FormRasEditor*)main)->m_builderThread.m_builder.get());
+
 }
 
 void MainWindow::on_actionTRSE_Showcases_triggered()

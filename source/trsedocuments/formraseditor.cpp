@@ -456,6 +456,17 @@ void FormRasEditor::VerifyCommodoreStartChange()
     }
 }
 
+void FormRasEditor::ApplySymbolList(SourceBuilder* c) {
+    if (c==nullptr)
+        return;
+    if (c->compiler==nullptr)
+        return;
+
+    highlighter->AppendSymboltable(c->compiler->m_parser.m_procedures.keys());
+    highlighter->rehighlight();
+
+}
+
 void FormRasEditor::Focus() {
     ui->txtEditor->setFocus();
 }

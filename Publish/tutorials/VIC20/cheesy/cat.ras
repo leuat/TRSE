@@ -9,7 +9,6 @@ begin
 	
 	vbmSetPosition2( cat_tail, 184 );
 	vbmDrawSprite8E( #sprCatTail_A, #sprCatTail_B );
-	
 end;
 
 // move the cat

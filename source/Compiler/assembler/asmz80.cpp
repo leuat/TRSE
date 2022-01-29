@@ -53,6 +53,9 @@ void AsmZ80::Connect() {
     for (int i=0;i<m_appendix.count();i++) {
 
         QString add = "\t"+GetOrg(Util::NumberFromStringHex(m_appendix[i]->m_pos));
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+            add = "";
+        }
 
 
         if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)

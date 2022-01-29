@@ -11,6 +11,9 @@ begin
 	cat_ears := 12;
 	cat_tail := 0;
 
+
+	
+
 	// clear completed room list
 	levelComplete[ 0 ] := 1;
 	levelComplete[ 1 ] := 1;

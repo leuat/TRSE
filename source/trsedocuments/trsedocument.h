@@ -30,6 +30,9 @@
 #include <QMessageBox>
 #include <QProcess>
 
+
+class SourceBuilder;
+
 class TRSEDocument : public QWidget
 {
     Q_OBJECT
@@ -106,6 +109,7 @@ public:
 
     virtual void Focus() {}
     virtual void keyPressEvent(QKeyEvent *e);
+    virtual void ApplySymbolList(SourceBuilder* c) {};
 
 
     void UserDefined();
