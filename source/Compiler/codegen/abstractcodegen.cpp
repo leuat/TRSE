@@ -1162,6 +1162,7 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
         }
         else
             app->Append(as->GetOrg() +t->m_position,1);
+
         app->Append(v->value+":",0);
         app->Append(getIncbin()+"\t \"" + filename + "\"",1);
         as->m_appendix.append(app);

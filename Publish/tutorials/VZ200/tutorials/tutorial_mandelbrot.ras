@@ -6,8 +6,6 @@ program Tutorial_Mandelbrot;
 
 var
 	// We use a integer for screen_width and screen_x to make it simpler to switch to Mode 1 or 2
-	const screen_width: integer = 160;
-	const screen_height: byte = 200;
 	const float_size: byte = 2;
 	
 	min_x: array[float_size] of byte;

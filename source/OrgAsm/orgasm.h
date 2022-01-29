@@ -216,7 +216,7 @@ public:
     void ProcessSource();
     void ProcessUnrolling();
 
-
+    bool isLittleEndian = true;
     OrgasmLine LexLine(int i);
 
     bool Assemble(QString filename, QString out);

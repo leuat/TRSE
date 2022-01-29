@@ -12,7 +12,7 @@ public:
 
     void Connect() override;
 
-    bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) override;
+//    bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) override;
 
 
 

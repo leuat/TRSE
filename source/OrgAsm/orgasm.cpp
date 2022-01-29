@@ -344,6 +344,9 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     m_success = false;
     LoadFile(filename);
     m_olines.clear();
+  //  m_symbols.clear();
+//    m_symbolsList.clear();
+    //m_constants.clear();
 
     try {
         ProcessUnrolling();
@@ -368,8 +371,13 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     emit EmitTick(" [labels] ");
     Compile(OrgasmData::PASS_LABELS);
 
+
     emit EmitTick(" [symbols] ");
     Compile(OrgasmData::PASS_SYMBOLS);
+
+
+    qDebug() << filename <<m_symbolsList.count();
+
 
     if (!m_hasOverlappingError)
         m_success = true;
@@ -396,6 +404,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         qDebug() << i << Util::numToHex(m_lineAddress[i]);
     }
 */
+
     return m_success;
 }
 
@@ -484,6 +493,7 @@ void Orgasm::Compile(OrgasmData::PassType pt)
             {
                 m_symbols[ol.m_label] = m_pCounter;
                 m_symbolsList.append(ol.m_label);
+//                qDebug() << "ADDING "<<ol.m_label;
             }
             else {
                 throw OrgasmError("OrgAsm error: symbol '"+ol.m_label+"' already defined",ol);

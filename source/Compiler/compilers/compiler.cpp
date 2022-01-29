@@ -192,6 +192,112 @@ void Compiler::CleanupBlockLinenumbers()
 
 }
 
+bool Compiler::SetupMemoryAnalyzer(QString filename, Orgasm *orgAsm)
+{
+//    qDebug() << "SETUPMEMORYANALYZER";
+    if (orgAsm == nullptr)
+        return false;
+    //   Orgasm orgAsm;
+
+    if (m_assembler==nullptr)
+        return false;
+    int i = 1;
+
+    bool is6502 = Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502;
+    bool isZ80 = Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80;
+
+  //  if (is6502)
+    for (QString s : orgAsm->m_symbolsList){
+        if (s.toLower().startsWith("startblock")) {
+
+            int start = orgAsm->m_symbols[s];
+            QString search = s.toLower().replace("startblock","endblock");
+            int end = start;
+            for (QString s2 : orgAsm->m_symbolsList){
+                if (s2.toLower() == search) {
+                    end = orgAsm->m_symbols[s2];
+                    //                    qDebug() << "Found:" <<search<<Util::numToHex(end);
+                    break;
+                }
+            }
+//                     qDebug() << "RANGE " << Util::numToHex(start) << Util::numToHex(end) <<s<<Util::numToHex(orgAsm->m_symbols[s]);
+            if (start!=end) {
+                if (m_assembler!=nullptr) {
+                    QString name = "Code block "+QString::number(i++);
+                    for (auto bl : m_assembler->userBlocks)
+                        if (bl->m_start == start)
+                            if (bl->m_name!="")
+                                name = bl->m_name;
+                    //                qDebug() << "Adding cod eblock with name : "<<name;
+                    bool ok = true;
+                    for (auto b: m_assembler->blocks) {
+                        if (b->m_start==start)// && b->m_end==end)
+                            ok = false;
+                    }
+                    if (ok) {
+                        m_assembler->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start, end, MemoryBlock::CODE, name)));
+                    }
+
+                }
+            }
+        }
+    }
+
+//    if (!isZ80)
+    for (QSharedPointer<MemoryBlock> mb : m_assembler->blocks) {
+        if (mb->m_type==MemoryBlock::USER)
+            continue;
+        if (mb->m_type==MemoryBlock::MUSIC)
+            continue;
+        if (mb->m_type==MemoryBlock::CODE) // Already taken care of
+             continue;
+
+        QString str = Util::numToHex(mb->m_start);
+        str = str.toLower().remove("$");
+        int end = mb->m_start;
+        QString curEnd = ("endblock"+str);
+
+
+        for (QString s : orgAsm->m_symbols.keys())  {
+            QString chk = s;
+            if (chk.toLower()==curEnd) {
+  //              qDebug() << "Found real end:" <<chk.toLower();
+                end = orgAsm->m_symbols[s];
+                mb->m_end = end;
+                break;
+            }
+        }
+
+
+
+    }
+
+    std::sort(m_assembler->blocks.begin(), m_assembler->blocks.end(),
+              [](const auto& a, const auto& b) { return a->m_start < b->m_start; });
+
+
+    // Check for overlaps:
+    for (int i=0;i<m_assembler->blocks.count();i++) {
+        auto x = m_assembler->blocks[i];
+        for (int j=i+1;j<m_assembler->blocks.count();j++) {
+            auto y = m_assembler->blocks[j];
+            //            x1 <= y2 && y1 <= x2
+            if (x->m_start<y->m_end && y->m_start<x->m_end) {
+                //   qDebug() << "OVERLAP " << Util::numToHex(x->m_start)<<Util::numToHex(x->m_end) << " vs " << Util::numToHex(y->m_start)<<Util::numToHex(y->m_end);
+                x->m_isOverlapping = true;
+                y->m_isOverlapping = true;
+                y->m_shift = x->m_shift+1;
+                ErrorHandler::e.Warning("Overlapping memory regions: '"+x->m_name + "' and '"+y->m_name+"' at "+Util::numToHex(y->m_start)+" to " +Util::numToHex(x->m_end)+". See the memory analyzer for details.");
+
+            }
+        }
+    }
+
+    return orgAsm->m_success;
+
+
+}
+
 void Compiler::SaveBuild(QString filename)
 {
     if (!m_assembler)

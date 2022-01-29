@@ -47,14 +47,18 @@ void AsmZ80::Connect() {
     //m_source<<m_appendix;
     //    m_appendix.append(m_ extraBlocks);
     SortAppendix();
-
+    Label("EndBlock"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16));
     //  qDebug() << m_appendix[0].m_source;
     QStringList pre;
     for (int i=0;i<m_appendix.count();i++) {
 
+        QString add = "\t"+GetOrg(Util::NumberFromStringHex(m_appendix[i]->m_pos));
+
+
         if (Util::NumberFromStringHex(m_appendix[i]->m_pos)<Syntax::s.m_currentSystem->m_programStartAddress)
-            pre <<m_appendix[i]->getSource();
-        else m_source << m_appendix[i]->getSource();
+            pre <<add<<m_appendix[i]->getSource();
+
+        else m_source << add<<m_appendix[i]->getSource();
 
     }
 
@@ -74,8 +78,9 @@ void AsmZ80::Program(QString name, QString vicParam)
 //    Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
     m_hash = "";
  //   qDebug() << "z80 program start " <<Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
-//    StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-
+//    m_currentBlock = nullptr;
+  //  StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+    Label("StartBlock"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16));
 }
 
 void AsmZ80::EndProgram()

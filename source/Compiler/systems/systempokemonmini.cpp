@@ -6,8 +6,8 @@ SystemPokemonMini::SystemPokemonMini(QSharedPointer<CIniFile> settings, QSharedP
     m_processor = S1C88;
     m_system = POKEMONMINI;
 
-    m_startAddress = 0x4000;
-    m_programStartAddress = 0x4000;
+    m_startAddress = 0x0000;
+    m_programStartAddress = 0x0000;
     m_supportsExomizer = true;
 
 
@@ -33,6 +33,14 @@ void SystemPokemonMini::Assemble(QString &text, QString filename, QString curren
     }
 
     if (m_buildSuccess) {
+
+        auto h = Util::loadBinaryFile("/Users/leuat/code/TRSE/Publish/tutorials/POKEMONMINI/test/org.min");
+//        h = h.remove(0x11B,h.size()-0x11B);
+  //      qDebug() << h.size();
+        auto b = Util::loadBinaryFile(filename+".bin");
+        b.remove(0,2);
+//        b = h +b;
+        Util::SaveByteArray(b,filename+".min");
         text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
     }
 

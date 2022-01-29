@@ -1211,6 +1211,7 @@ void BuilderThread::run()
 
             m_builder->Assemble();
             if (m_builder->m_buildSuccess) {
+                //qDebug() << "FORMRASEDITOR "<<m_builder->m_currentSourceFile;
                 m_builder->compiler->SetupMemoryAnalyzer(Util::getFileWithoutEnding(m_filename), m_builder->m_system->m_orgAsm.get());
                 //            qDebug() << m_builder->getOutput();
 

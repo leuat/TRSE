@@ -99,7 +99,9 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
         Util::SaveTextFile(codeFile+".asm", code);
         QFile::remove(filename+".bin");
 //        QString temp;
+        auto keep = m_orgAsm;
         PerformAssembling(codeFile,text,currentDir,symTab);
+        m_orgAsm = keep; // keep for memory analyzer
         Util::CopyFile(codeFile+".bin",filename+".bin");
         QFile::remove(codeFile+".bin");
         QFile::remove(codeFile+".asm");

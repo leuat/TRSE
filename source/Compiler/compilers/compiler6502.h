@@ -17,7 +17,6 @@ public:
 
     virtual void Init6502Assembler();
 
-    bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) override;
 
 
 

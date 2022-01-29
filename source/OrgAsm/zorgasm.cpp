@@ -205,9 +205,18 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // Imm 8 bit
     if (m_opCode.contains("*"))
         type = OrgasmInstruction::imm;
+
     // imm 16 bit
     if (m_opCode.contains("**"))
         type = OrgasmInstruction::abs;
+
+
+    if (m_cpuFlavor == CPUFLAVOR_S1C88) {
+        if (m_opCode.contains("+*"))
+            type = OrgasmInstruction::imm;
+
+    }
+
     // jr is special: will get marked with a 16-bit address, but is
     // actually only 8-bit relative. Remove a * if needed.
     if (m_opCode.startsWith("jr") || m_opCode.startsWith("djnz")) {
@@ -244,8 +253,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         }
 
         type = OrgasmInstruction::none;
-        if (m_opCode.contains("+*")) // contains ix+* etc
+        if (m_opCode.contains("+*")) { // contains ix+* etc
             type = OrgasmInstruction::imm;
+        }
 
     }
     // What a silly-looking opcode
@@ -297,7 +307,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     int val=0;
     int val2=0;
     bool hasValue2 = value2!="";
-
     if (type!=OrgasmInstruction::none) {
         QString num = value.replace("#","$").replace("(","").replace(")","");
         val = Util::NumberFromStringHex(Util::BinopString(num));
@@ -311,19 +320,36 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // Write opcode to data
 
     // 24-bit extra opcode
+
     bool is32bit = false;
-    if (code>=0x10000) {
-        data.append((code>>16)&0xff);
-        is32bit = true;
+    if (isLittleEndian) {
+        if (code>=0x10000) {
+            data.append((code>>16)&0xff);
+            is32bit = true;
+        }
+        // Append 16-bit opcode
+        if (code>=0x100)
+            data.append((code>>8)&0xff);
+
+        // 8 bit part
+        if (!is32bit)
+            data.append(code&0xFF);
     }
-    // Append 16-bit opcode
-    if (code>=0x100)
-        data.append((code>>8)&0xff);
+    else {
+        // 8 bit part
+        if (!is32bit)
+            data.append(code&0xFF);
 
-    // 8 bit part
-    if (!is32bit)
-       data.append(code&0xFF);
+        // Append 16-bit opcode
+        if (code>=0x100)
+            data.append((code>>8)&0xff);
 
+
+        if (code>=0x10000) {
+            data.append((code>>16)&0xff);
+            is32bit = true;
+        }
+    }
 
     // OPERANDS:
 
@@ -344,6 +370,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     else
         // Immediate 8-bit vale?
+//        if (m_opCode.contains("nn"))
+  //          qDebug() << m_opCode <<val << val2 << hasValue2 << type;
         if (type==OrgasmInstruction::imm) {
             data.append(val);
             // Has additional data? only imm has this (some select few operations)
@@ -380,9 +408,14 @@ void ZOrgasm::LoadCodes(int CPUflavor)
 {
     QString filename = ":/resources/text/opcodes_z80.txt";
 
-    if (CPUflavor == CPUFLAVOR_S1C88)
+    if (CPUflavor == CPUFLAVOR_S1C88) {
         filename = ":/resources/text/opcodes_s1c88.txt";
-    qDebug() << "CPU flavor : "<<CPUflavor<<filename;
+        m_regs = QStringList() << "a"<<"b"<<"h"<<"l"<<"n"<<"nn"<<"hl"<<"ab"<<"sp"<<"x1"<<"x2"<<"x"<<"y"<<"y1"<<"y2"<<"sp"<<"i";
+        m_16bitRegs = QStringList() << "ab"<<"hl"<<"x"<<"y"<<"i"<<"nn"<<"x1"<<"x2"<<"y1"<<"y2";
+        m_8bitRegs = QStringList() << "a"<<"b"<<"h"<<"l"<<"n";
+        m_ignoreCommands = QStringList() << "processor" <<"cpu" <<"org" << "end";
+        isLittleEndian = false;
+    }
     QString data = Util::loadTextFile(filename);
     QStringList lst = data.split("\n");
     m_opCodes.clear();
@@ -394,6 +427,8 @@ void ZOrgasm::LoadCodes(int CPUflavor)
         QString c = l[0].trimmed();
         if (!m_opCodes.contains(c))
             m_opCodes[c] = Util::NumberFromStringHex(l[1].trimmed());
+
+//        qDebug() << c << m_opCodes[c];
     }
 
 
@@ -415,6 +450,20 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
 
     QString t = test;
     t = t.remove("(").remove(")");
+
+    if (m_cpuFlavor==CPUFLAVOR_S1C88) {
+//        qDebug() << t;
+        if (t.toLower()=="x2+l")
+            return ("(x2+l)");
+        if (t.toLower().startsWith("nn+")) {
+  //          qDebug() << t;
+            value = t.split("+")[1];
+            return ("(nn+*)");
+        }
+
+    }
+
+
     if (t.toLower().startsWith("ix+")) {
         value = t.split("+")[1];
         return ("(ix+*)");
@@ -444,6 +493,8 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
     if (test.startsWith("(")) {
         return "(**)";
     }
+
+
     // Symbols are also addresses
     return "**";
 }

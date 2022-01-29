@@ -87,7 +87,7 @@ public:
     bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
     void CleanupBlockLinenumbers();
     virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles=true) {}
-    virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr) { return true;}
+    virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr);
 
     void SaveBuild(QString filename);
     void ApplyOptions(QMap<QString,QStringList>& opt);

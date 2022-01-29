@@ -1,222 +1,1301 @@
-add ba,#**->0xC0 
-add a,(**)->0x05 
-add hl,#**->0xC1 
-add ix,#**->0xC2 
-add iy,#**->0xC3 
-add a,#*->0x02 
-add a,a->0x00 
-add a,b->0x01 
-add a,(hl)->0x03 
-add a,(ix)->0x06 
-add a,(iy)->0x07 
-adc a,(**)->0x0D 
-adc a,#*->0x0A 
-adc a,a->0x08 
-adc a,b->0x09 
-adc a,(hl)->0x0B 
-adc a,(ix)->0x0E 
-adc a,(iy)->0x0F 
-sub ba,#**->0xD0 
-sub a,(**)->0x15 
-sub hl,#**->0xD1 
-sub ix,#**->0xD2 
-sub iy,#**->0xD3 
-sub a,#*->0x12 
-sub a,a->0x10 
-sub a,b->0x11 
-sub a,(hl)->0x13 
-sub a,(ix)->0x16 
-sub a,(iy)->0x17 
-sbc a,(**)->0x1D 
-sbc a,#*->0x1A 
-sbc a,a->0x18 
-sbc a,b->0x19 
-sbc a,(hl)->0x1B 
-sbc a,(ix)->0x1E 
-sbc a,(iy)->0x1F 
-and a,(**)->0x25 
-and a,#*->0x22 
-and sc,#*->0x9C 
-and a,a->0x20 
-and a,b->0x21 
-and a,(hl)->0x23 
-and a,(ix)->0x26 
-and a,(iy)->0x27 
-or a,(**)->0x2D 
-or a,#*->0x2A 
-or sc,#*->0x9D 
-or a,a->0x28 
-or a,b->0x29 
-or a,(hl)->0x2B 
-or a,(ix)->0x2E 
-or a,(iy)->0x2F 
-cp ba,#**->0xD4 
-cp a,(**)->0x35 
-cp hl,#**->0xD5 
-cp ix,#**->0xD6 
-cp iy,#**->0xD7 
-cp a,#*->0x32 
-cp a,a->0x30 
-cp a,b->0x31 
-cp a,(hl)->0x33 
-cp a,(ix)->0x36 
-cp a,(iy)->0x37 
-xor a,(**)->0x3D 
-xor a,#*->0x3A 
-xor sc,#*->0x9E 
-xor a,a->0x38 
-xor a,b->0x39 
-xor a,(hl)->0x3B 
-xor a,(ix)->0x3E 
-xor a,(iy)->0x3F 
-ld (**),ix->0xBE 
-ld ix,(**)->0xBA 
-ld iy,#**->0xC7 
-ld ix,#**->0xC6 
-ld ba,(**)->0xB8 
-ld hl,#**->0xC5 
-ld ba,#**->0xC4 
-ld (**),iy->0xBF 
-ld hl,(**)->0xB9 
-ld (**),hl->0xBD 
-ld (**),ba->0xBC 
-ld iy,(**)->0xBB 
-ld sc,#*->0x9F 
-ld l,#*->0xB2 
-ld a,#*->0xB0 
-ld (ix),#*->0xB6 
-ld b,#*->0xB1 
-ld (iy),#*->0xB7 
-ld (hl),#*->0xB5 
-ld br,#*->0xB4 
-ld h,#*->0xB3 
-ld (iy),(iy)->0x77 
-ld (iy),(hl)->0x75 
-ld (hl),(ix)->0x6E 
-ld (iy),h->0x73 
-ld (iy),l->0x72 
-ld (iy),b->0x71 
-ld (iy),a->0x70 
-ld (hl),(iy)->0x6F 
-ld (iy),(ix)->0x76 
-ld a,a->0x40 
-ld (hl),(hl)->0x6D 
-ld b,h->0x4B 
-ld l,h->0x53 
-ld l,l->0x52 
-ld l,b->0x51 
-ld l,a->0x50 
-ld b,(iy)->0x4F 
-ld b,(ix)->0x4E 
-ld b,(hl)->0x4D 
-ld b,l->0x4A 
-ld l,(ix)->0x56 
-ld b,b->0x49 
-ld b,a->0x48 
-ld a,(iy)->0x47 
-ld a,(ix)->0x46 
-ld a,(hl)->0x45 
-ld a,h->0x43 
-ld a,l->0x42 
-ld l,(hl)->0x55 
-ld l,(iy)->0x57 
-ld (hl),h->0x6B 
-ld (ix),l->0x62 
-ld a,b->0x41 
-ld (hl),b->0x69 
-ld (hl),a->0x68 
-ld (ix),(iy)->0x67 
-ld (ix),(ix)->0x66 
-ld (ix),(hl)->0x65 
-ld (ix),h->0x63 
-ld (ix),b->0x61 
-ld h,a->0x58 
-ld (ix),a->0x60 
-ld h,(iy)->0x5F 
-ld h,(ix)->0x5E 
-ld h,(hl)->0x5D 
-ld h,h->0x5B 
-ld h,l->0x5A 
-ld h,b->0x59 
-ld (hl),l->0x6A 
-inc a->0x80 
-inc b->0x81 
-inc l->0x82 
-inc h->0x83 
-inc br->0x84 
-inc (hl)->0x86 
-inc sp->0x87 
-inc ba->0x90 
-inc hl->0x91 
-inc ix->0x92 
-inc iy->0x93 
-dec ba->0x98 
-dec hl->0x99 
-dec ix->0x9A 
-dec iy->0x9B 
-dec a->0x88 
-dec b->0x89 
-dec l->0x8A 
-dec h->0x8B 
-dec br->0x8C 
-dec (hl)->0x8E 
-dec sp->0x8F 
-bit a,#*->0x96 
-bit (hl),#*->0x95 
-bit b,#*->0x97 
-bit a,b->0x94 
-push ba->0xA0 
-push hl->0xA1 
-push ix->0xA2 
-push iy->0xA3 
-push br->0xA4 
-push ep->0xA5 
-push ip->0xA6 
-push sc->0xA7 
-pop ba->0xA8 
-pop hl->0xA9 
-pop ix->0xAA 
-pop iy->0xAB 
-pop br->0xAC 
-pop ep->0xAD 
-pop ip->0xAE 
-pop sc->0xAF 
-ex ba,hl->0xC8 
-ex ba,ix->0xC9 
-ex ba,iy->0xCA 
-ex ba,sp->0xCB 
-ex a,b->0xCC 
-ex a,(hl)->0xCD 
-pack ->0xDE 
-upck ->0xDF 
-cars *->0xF0 
-cars c,*->0xE0 
-cars nc,*->0xE1 
-cars z,*->0xE2 
-cars nz,*->0xE3 
-jrs *->0xF1 
-jrs c,*->0xE4 
-jrs nc,*->0xE5 
-jrs z,*->0xE6 
-jrs nz,*->0xE7 
-carl c,**->0xE8 
-carl nc,**->0xE9 
-carl z,**->0xEA 
-carl nz,**->0xEB 
-carl **->0xF2 
-jr c,**->0xEC 
-jr nc,**->0xED 
-jr z,**->0xEE 
-jr nz,**->0xEF 
-jp **->0xF3 
-jp hl->0xF4 
-jp (*)->0xFD 
-djr nz,*->0xF5 
-swap a->0xF6 
-swap (hl)->0xF7 
-ret ->0xF8 
-rete ->0xF9 
-rets ->0xFA 
-call (**)->0xFB 
-int (*)->0xFC 
-nop ->0xFF 
+adc a,a -> 0x08
+adc a,b -> 0x09
+adc a,(hl) -> 0x0b
+adc a,n+* -> 0x0c
+adc a,(x+l) -> 0xace
+adc a,(x+*) -> 0x8ce
+adc a,(x) -> 0x0e
+adc a,(y+l) -> 0xbce
+adc a,(y+*) -> 0x9ce
+adc a,(y) -> 0x0f
+adc a,(**) -> 0x0d
+adc a,* -> 0x0a
+adc ba,ba -> 0x4cf
+adc ba,hl -> 0x5cf
+adc ba,x -> 0x6cf
+adc ba,x1 -> 0x6cf
+adc ba,x2 -> 0x7cf
+adc ba,y -> 0x7cf
+adc ba,** -> 0x60cf
+adc hl,ba -> 0x24cf
+adc hl,hl -> 0x25cf
+adc hl,x -> 0x26cf
+adc hl,x1 -> 0x26cf
+adc hl,x2 -> 0x27cf
+adc hl,y -> 0x27cf
+adc hl,** -> 0x61cf
+adc (hl),a -> 0xcce
+adc (hl),(x) -> 0xece
+adc (hl),(y) -> 0xfce
+adc (hl),* -> 0xdce
+add a,a -> 0x00
+add a,b -> 0x01
+add a,(hl) -> 0x03
+add a,n+* -> 0x04
+add a,(x+l) -> 0x2ce
+add a,(x+**) -> 0xce
+add a,(x) -> 0x06
+add a,(y+l) -> 0x3ce
+add a,(y+*) -> 0x1ce
+add a,(y) -> 0x07
+add a,(**) -> 0x05
+add a,* -> 0x02
+add ba,ba -> 0xcf
+add ba,hl -> 0x1cf
+add ba,x -> 0x2cf
+add ba,x1 -> 0x2cf
+add ba,x2 -> 0x3cf
+add ba,y -> 0x3cf
+add ba,** -> 0xc0
+add hl,ba -> 0x20cf
+add hl,hl -> 0x21cf
+add hl,x -> 0x22cf
+add hl,x1 -> 0x22cf
+add hl,x2 -> 0x23cf
+add hl,y -> 0x23cf
+add hl,** -> 0xc1
+add sp,ba -> 0x44cf
+add sp,hl -> 0x45cf
+add sp,** -> 0x68cf
+add x,ba -> 0x40cf
+add x,hl -> 0x41cf
+add x,** -> 0xc2
+add x1,** -> 0xc2
+add x2,** -> 0xc3
+add y,ba -> 0x42cf
+add y,hl -> 0x43cf
+add y,** -> 0xc3
+add (hl),a -> 0x4ce
+add (hl),(x) -> 0x6ce
+add (hl),(y) -> 0x7ce
+add (hl),* -> 0x5ce
+addb a,a -> 0x00
+addb a,b -> 0x01
+addb a,(hl) -> 0x03
+addb a,(nn+*) -> 0x04
+addb a,(x1+l) -> 0x2ce
+addb a,(x1+**) -> 0xce
+addb a,(x1) -> 0x06
+addb a,(x2+l) -> 0x3ce
+addb a,(x2+*) -> 0x1ce
+addb a,(x2) -> 0x07
+addb a,(**) -> 0x05
+addb a,* -> 0x02
+addb (hl),a -> 0x4ce
+addb (hl),(x1) -> 0x6ce
+addb (hl),(x2) -> 0x7ce
+addb (hl),* -> 0x5ce
+addcb a,a -> 0x08
+addcb a,b -> 0x09
+addcb a,(hl) -> 0x0b
+addcb a,(nn+*) -> 0x0c
+addcb a,(x1+l) -> 0xace
+addcb a,(x1+*) -> 0x8ce
+addcb a,(x1) -> 0x0e
+addcb a,(x2+l) -> 0xbce
+addcb a,(x2+*) -> 0x9ce
+addcb a,(x2) -> 0x0f
+addcb a,(**) -> 0x0d
+addcb a,* -> 0x0a
+addcb (hl),a -> 0xcce
+addcb (hl),(x1) -> 0xece
+addcb (hl),(x2) -> 0xfce
+addcb (hl),* -> 0xdce
+addcw ba,ba -> 0x4cf
+addcw ba,hl -> 0x5cf
+addcw ba,x -> 0x6cf
+addcw ba,x1 -> 0x6cf
+addcw ba,x2 -> 0x7cf
+addcw ba,y -> 0x7cf
+addcw hl,ba -> 0x24cf
+addcw hl,hl -> 0x25cf
+addcw hl,x -> 0x26cf
+addcw hl,x1 -> 0x26cf
+addcw hl,x2 -> 0x27cf
+addcw hl,y -> 0x27cf
+addw ba,ba -> 0xcf
+addw ba,hl -> 0x1cf
+addw ba,x -> 0x2cf
+addw ba,x1 -> 0x2cf
+addw ba,x2 -> 0x3cf
+addw ba,y -> 0x3cf
+addw ba,** -> 0xc0
+addw hl,ba -> 0x20cf
+addw hl,hl -> 0x21cf
+addw hl,x -> 0x22cf
+addw hl,x1 -> 0x22cf
+addw hl,x2 -> 0x23cf
+addw hl,y -> 0x23cf
+addw hl,** -> 0xc1
+addw sp,ba -> 0x44cf
+addw sp,hl -> 0x45cf
+addw sp,** -> 0x68cf
+addw x,** -> 0xc2
+addw x1,ba -> 0x40cf
+addw x1,hl -> 0x41cf
+addw x1,** -> 0xc2
+addw x2,ba -> 0x42cf
+addw x2,hl -> 0x43cf
+addw x2,** -> 0xc3
+addw y,** -> 0xc3
+and a,a -> 0x20
+and a,b -> 0x21
+and a,(hl) -> 0x23
+and a,n+* -> 0x24
+and a,(x+l) -> 0x22ce
+and a,(x+*) -> 0x20ce
+and a,(x) -> 0x26
+and a,(y+l) -> 0x23ce
+and a,(y+*) -> 0x21ce
+and a,(y) -> 0x27
+and a,(**) -> 0x25
+and a,* -> 0x22
+and b,* -> 0xb0ce
+and f,* -> 0x9c
+and h,* -> 0xb2ce
+and l,* -> 0xb1ce
+and (hl),a -> 0x24ce
+and (hl),(x) -> 0x26ce
+and (hl),(y) -> 0x27ce
+and (hl),* -> 0x25ce
+and n+*,** -> 0xd8
+andb a,a -> 0x20
+andb a,b -> 0x21
+andb a,(hl) -> 0x23
+andb a,(nn+*) -> 0x24
+andb a,(x1+l) -> 0x22ce
+andb a,(x1+*) -> 0x20ce
+andb a,(x1) -> 0x26
+andb a,(x2+l) -> 0x23ce
+andb a,(x2+*) -> 0x21ce
+andb a,(x2) -> 0x27
+andb a,(**) -> 0x25
+andb a,* -> 0x22
+andb b,* -> 0xb0ce
+andb flags,* -> 0x9c
+andb h,* -> 0xb2ce
+andb l,* -> 0xb1ce
+andb (hl),a -> 0x24ce
+andb (hl),(x1) -> 0x26ce
+andb (hl),(x2) -> 0x27ce
+andb (hl),* -> 0x25ce
+andb (nn+*),** -> 0xd8
+bcdd -> 0xdf
+bcde -> 0xde
+bcdx a -> 0xf6
+bcdx (hl) -> 0xf7
+call (**) -> 0xfb
+call ** -> 0xf2
+callb * -> 0xf0
+callc ** -> 0xe8
+callcb * -> 0xe0
+callcw ** -> 0xe8
+callg * -> 0xf2ce
+callge * -> 0xf3ce
+calll * -> 0xf0ce
+callle * -> 0xf1ce
+callnc ** -> 0xe9
+callncb * -> 0xe1
+callncw ** -> 0xe9
+callno * -> 0xf5ce
+callns * -> 0xf6ce
+callnz ** -> 0xeb
+callnzb * -> 0xe3
+callnzw ** -> 0xeb
+callo * -> 0xf4ce
+calls * -> 0xf7ce
+callw ** -> 0xf2
+callz ** -> 0xea
+callzb * -> 0xe2
+callzw ** -> 0xea
+cint * -> 0xfc
+cmp a,a -> 0x30
+cmp a,b -> 0x31
+cmp a,(hl) -> 0x33
+cmp a,n+* -> 0x34
+cmp a,(x+l) -> 0x32ce
+cmp a,(x+*) -> 0x30ce
+cmp a,(x) -> 0x36
+cmp a,(y+l) -> 0x33ce
+cmp a,(y+*) -> 0x31ce
+cmp a,(y) -> 0x37
+cmp a,(**) -> 0x35
+cmp a,* -> 0x32
+cmp b,* -> 0xbcce
+cmp ba,ba -> 0x18cf
+cmp ba,hl -> 0x19cf
+cmp ba,x -> 0x1acf
+cmp ba,x1 -> 0x1acf
+cmp ba,x2 -> 0x1bcf
+cmp ba,y -> 0x1bcf
+cmp ba,** -> 0xd4
+cmp h,* -> 0xbece
+cmp hl,ba -> 0x38cf
+cmp hl,hl -> 0x39cf
+cmp hl,x -> 0x3acf
+cmp hl,x1 -> 0x3acf
+cmp hl,x2 -> 0x3bcf
+cmp hl,y -> 0x3bcf
+cmp hl,** -> 0xd5
+cmp l,* -> 0xbdce
+cmp n,* -> 0xbfce
+cmp sp,ba -> 0x5ccf
+cmp sp,hl -> 0x5dcf
+cmp sp,** -> 0x6ccf
+cmp x,** -> 0xd6
+cmp x1,** -> 0xd6
+cmp x2,** -> 0xd7
+cmp y,** -> 0xd7
+cmp (hl),a -> 0x34ce
+cmp (hl),(x) -> 0x36ce
+cmp (hl),(y) -> 0x37ce
+cmp (hl),* -> 0x35ce
+cmp n+*,** -> 0xdb
+cmpb a,a -> 0x30
+cmpb a,b -> 0x31
+cmpb a,(hl) -> 0x33
+cmpb a,(nn+*) -> 0x34
+cmpb a,(x1+l) -> 0x32ce
+cmpb a,(x1+*) -> 0x30ce
+cmpb a,(x1) -> 0x36
+cmpb a,(x2+l) -> 0x33ce
+cmpb a,(x2+*) -> 0x31ce
+cmpb a,(x2) -> 0x37
+cmpb a,(**) -> 0x35
+cmpb a,* -> 0x32
+cmpb b,* -> 0xbcce
+cmpb h,* -> 0xbece
+cmpb l,* -> 0xbdce
+cmpb n,* -> 0xbfce
+cmpb (hl),a -> 0x34ce
+cmpb (hl),(x1) -> 0x36ce
+cmpb (hl),(x2) -> 0x37ce
+cmpb (hl),* -> 0x35ce
+cmpb (nn+*),** -> 0xdb
+cmpnw ba,** -> 0x60cf
+cmpnw hl,** -> 0x61cf
+cmpnw x,** -> 0x62cf
+cmpnw x1,** -> 0x62cf
+cmpnw x2,** -> 0x63cf
+cmpnw y,** -> 0x63cf
+cmpw ba,ba -> 0x18cf
+cmpw ba,hl -> 0x19cf
+cmpw ba,x -> 0x1acf
+cmpw ba,x1 -> 0x1acf
+cmpw ba,x2 -> 0x1bcf
+cmpw ba,y -> 0x1bcf
+cmpw ba,** -> 0xd4
+cmpw hl,ba -> 0x38cf
+cmpw hl,hl -> 0x39cf
+cmpw hl,x -> 0x3acf
+cmpw hl,x1 -> 0x3acf
+cmpw hl,x2 -> 0x3bcf
+cmpw hl,y -> 0x3bcf
+cmpw hl,** -> 0xd5
+cmpw sp,ba -> 0x5ccf
+cmpw sp,hl -> 0x5dcf
+cmpw sp,** -> 0x6ccf
+cmpw x,** -> 0xd6
+cmpw x1,** -> 0xd6
+cmpw x2,** -> 0xd7
+cmpw y,** -> 0xd7
+dec a -> 0x88
+dec b -> 0x89
+dec ba -> 0x98
+dec h -> 0x8b
+dec hl -> 0x99
+dec l -> 0x8a
+dec n -> 0x8c
+dec sp -> 0x8f
+dec x -> 0x9a
+dec x1 -> 0x9a
+dec x2 -> 0x9b
+dec y -> 0x9b
+dec (hl) -> 0x8e
+dec n+* -> 0x8d
+decb a -> 0x88
+decb b -> 0x89
+decb h -> 0x8b
+decb l -> 0x8a
+decb n -> 0x8c
+decb (hl) -> 0x8e
+decb (nn+*) -> 0x8d
+decw ba -> 0x98
+decw hl -> 0x99
+decw sp -> 0x8f
+decw x -> 0x9a
+decw x1 -> 0x9a
+decw x2 -> 0x9b
+decw y -> 0x9b
+div hl,a -> 0xd9ce
+ex ba,a -> 0xa8ce
+exts ba,a -> 0xa8ce
+halt -> 0xaece
+inc a -> 0x80
+inc b -> 0x81
+inc ba -> 0x90
+inc h -> 0x83
+inc hl -> 0x91
+inc l -> 0x82
+inc n -> 0x84
+inc sp -> 0x87
+inc x -> 0x92
+inc x1 -> 0x92
+inc x2 -> 0x93
+inc y -> 0x93
+inc (hl) -> 0x86
+inc n+* -> 0x85
+incb a -> 0x80
+incb b -> 0x81
+incb h -> 0x83
+incb l -> 0x82
+incb n -> 0x84
+incb (hl) -> 0x86
+incb (nn+*) -> 0x85
+incw ba -> 0x90
+incw hl -> 0x91
+incw sp -> 0x87
+incw x -> 0x92
+incw x1 -> 0x92
+incw x2 -> 0x93
+incw y -> 0x93
+int * -> 0xfc
+jc ** -> 0xec
+jcb * -> 0xe4
+jcw ** -> 0xec
+jdbnz * -> 0xf5
+jg * -> 0xe2ce
+jge * -> 0xe3ce
+jint * -> 0xfd
+jl * -> 0xe0ce
+jle * -> 0xe1ce
+jmp hl -> 0xf4
+jmp ** -> 0xf3
+jmpb * -> 0xf1
+jmpw ** -> 0xf3
+jnc ** -> 0xed
+jncb * -> 0xe5
+jncw ** -> 0xed
+jno * -> 0xe5ce
+jns * -> 0xe6ce
+jnz ** -> 0xef
+jnzb * -> 0xe7
+jnzw ** -> 0xef
+jo * -> 0xe4ce
+js * -> 0xe7ce
+jz ** -> 0xee
+jzb * -> 0xe6
+jzw ** -> 0xee
+mov a,a -> 0x40
+mov a,b -> 0x41
+mov a,f -> 0xc1ce
+mov a,h -> 0x43
+mov a,i -> 0xc9ce
+mov a,l -> 0x42
+mov a,n -> 0xc0ce
+mov a,v -> 0xc8ce
+mov a,xi -> 0xcace
+mov a,yi -> 0xcbce
+mov a,(hl) -> 0x45
+mov a,n+* -> 0x44
+mov a,(x+l) -> 0x42ce
+mov a,(x+*) -> 0x40ce
+mov a,(x) -> 0x46
+mov a,(y+l) -> 0x43ce
+mov a,(y+*) -> 0x41ce
+mov a,(y) -> 0x47
+mov a,(**) -> 0xd0ce
+mov a,* -> 0xb0
+mov b,a -> 0x48
+mov b,b -> 0x49
+mov b,h -> 0x4b
+mov b,l -> 0x4a
+mov b,(hl) -> 0x4d
+mov b,n+* -> 0x4c
+mov b,(x+l) -> 0x4ace
+mov b,(x+*) -> 0x48ce
+mov b,(x) -> 0x4e
+mov b,(y+l) -> 0x4bce
+mov b,(y+*) -> 0x49ce
+mov b,(y) -> 0x4f
+mov b,(**) -> 0xd1ce
+mov b,* -> 0xb1
+mov ba,ba -> 0xe0cf
+mov ba,hl -> 0xe1cf
+mov ba,pc -> 0xf9cf
+mov ba,sp -> 0xf8cf
+mov ba,x -> 0xe2cf
+mov ba,x1 -> 0xe2cf
+mov ba,x2 -> 0xe3cf
+mov ba,y -> 0xe3cf
+mov ba,(hl) -> 0xc0cf
+mov ba,(sp+*) -> 0x70cf
+mov ba,(x) -> 0xd0cf
+mov ba,(y) -> 0xd8cf
+mov ba,(**) -> 0xb8
+mov ba,** -> 0xc4
+mov f,a -> 0xc3ce
+mov f,* -> 0x9f
+mov h,a -> 0x58
+mov h,b -> 0x59
+mov h,h -> 0x5b
+mov h,l -> 0x5a
+mov h,(hl) -> 0x5d
+mov h,n+* -> 0x5c
+mov h,(x+l) -> 0x5ace
+mov h,(x+*) -> 0x58ce
+mov h,(x) -> 0x5e
+mov h,(y+l) -> 0x5bce
+mov h,(y+*) -> 0x59ce
+mov h,(y) -> 0x5f
+mov h,(**) -> 0xd3ce
+mov h,* -> 0xb3
+mov hl,ba -> 0xe4cf
+mov hl,hl -> 0xe5cf
+mov hl,pc -> 0xf5cf
+mov hl,sp -> 0xf4cf
+mov hl,x -> 0xe6cf
+mov hl,x1 -> 0xe6cf
+mov hl,x2 -> 0xe7cf
+mov hl,y -> 0xe7cf
+mov hl,(hl) -> 0xc1cf
+mov hl,(sp+*) -> 0x71cf
+mov hl,(x) -> 0xd1cf
+mov hl,(y) -> 0xd9cf
+mov hl,(**) -> 0xb9
+mov hl,** -> 0xc5
+mov i,a -> 0xcdce
+mov i,* -> 0xc5ce
+mov l,a -> 0x50
+mov l,b -> 0x51
+mov l,h -> 0x53
+mov l,l -> 0x52
+mov l,(hl) -> 0x55
+mov l,n+* -> 0x54
+mov l,(x+l) -> 0x52ce
+mov l,(x+*) -> 0x50ce
+mov l,(x) -> 0x56
+mov l,(y+l) -> 0x53ce
+mov l,(y+*) -> 0x51ce
+mov l,(y) -> 0x57
+mov l,(**) -> 0xd2ce
+mov l,* -> 0xb2
+mov n,a -> 0xc2ce
+mov n,* -> 0xb4
+mov sp,ba -> 0xf0cf
+mov sp,hl -> 0xf1cf
+mov sp,x -> 0xf2cf
+mov sp,x1 -> 0xf2cf
+mov sp,x2 -> 0xf3cf
+mov sp,y -> 0xf3cf
+mov sp,(**) -> 0x78cf
+mov sp,** -> 0x6ecf
+mov u,a -> 0xccce
+mov u,* -> 0xc4ce
+mov x,ba -> 0xe8cf
+mov x,hl -> 0xe9cf
+mov x,sp -> 0xfacf
+mov x,x -> 0xeacf
+mov x,x1 -> 0xeacf
+mov x,x2 -> 0xebcf
+mov x,y -> 0xebcf
+mov x,(hl) -> 0xc2cf
+mov x,(sp+*) -> 0x72cf
+mov x,(x) -> 0xd2cf
+mov x,(y) -> 0xdacf
+mov x,(**) -> 0xba
+mov x,** -> 0xc6
+mov x1,ba -> 0xe8cf
+mov x1,hl -> 0xe9cf
+mov x1,x -> 0xeacf
+mov x1,x1 -> 0xeacf
+mov x1,x2 -> 0xebcf
+mov x1,y -> 0xebcf
+mov x1,(hl) -> 0xc2cf
+mov x1,(sp+*) -> 0x72cf
+mov x1,(x) -> 0xd2cf
+mov x1,(y) -> 0xdacf
+mov x1,(**) -> 0xba
+mov x1,** -> 0xc6
+mov x2,ba -> 0xeccf
+mov x2,hl -> 0xedcf
+mov x2,x -> 0xeecf
+mov x2,x1 -> 0xeecf
+mov x2,x2 -> 0xefcf
+mov x2,y -> 0xefcf
+mov x2,(hl) -> 0xc3cf
+mov x2,(sp+*) -> 0x73cf
+mov x2,(x) -> 0xd3cf
+mov x2,(y) -> 0xdbcf
+mov x2,(**) -> 0xbb
+mov x2,** -> 0xc7
+mov xi,a -> 0xcece
+mov xi,* -> 0xc6ce
+mov y,ba -> 0xeccf
+mov y,hl -> 0xedcf
+mov y,sp -> 0xfecf
+mov y,x -> 0xeecf
+mov y,x1 -> 0xeecf
+mov y,x2 -> 0xefcf
+mov y,y -> 0xefcf
+mov y,(hl) -> 0xc3cf
+mov y,(sp+*) -> 0x73cf
+mov y,(x) -> 0xd3cf
+mov y,(y) -> 0xdbcf
+mov y,(**) -> 0xbb
+mov y,** -> 0xc7
+mov yi,a -> 0xcfce
+mov yi,* -> 0xc7ce
+mov (hl),a -> 0x68
+mov (hl),b -> 0x69
+mov (hl),ba -> 0xc4cf
+mov (hl),h -> 0x6b
+mov (hl),hl -> 0xc5cf
+mov (hl),l -> 0x6a
+mov (hl),x -> 0xc6cf
+mov (hl),x1 -> 0xc6cf
+mov (hl),x2 -> 0xc7cf
+mov (hl),y -> 0xc7cf
+mov (hl),(hl) -> 0x6d
+mov (hl),n+* -> 0x6c
+mov (hl),(x+l) -> 0x62ce
+mov (hl),(x+*) -> 0x60ce
+mov (hl),(x) -> 0x6e
+mov (hl),(y+l) -> 0x63ce
+mov (hl),(y+*) -> 0x61ce
+mov (hl),(y) -> 0x6f
+mov (hl),* -> 0xb5
+mov n+*,a -> 0x78
+mov n+*,b -> 0x79
+mov n+*,h -> 0x7b
+mov n+*,l -> 0x7a
+mov n+*,(hl) -> 0x7d
+mov n+*,(x) -> 0x7e
+mov n+*,(y) -> 0x7f
+mov n+*,** -> 0xdd
+mov (sp+*),ba -> 0x74cf
+mov (sp+*),hl -> 0x75cf
+mov (sp+*),x -> 0x76cf
+mov (sp+*),x1 -> 0x76cf
+mov (sp+*),x2 -> 0x77cf
+mov (sp+*),y -> 0x77cf
+mov (x+l),a -> 0x46ce
+mov (x+l),b -> 0x4ece
+mov (x+l),h -> 0x5ece
+mov (x+l),l -> 0x56ce
+mov (x+*),a -> 0x44ce
+mov (x+*),b -> 0x4cce
+mov (x+*),h -> 0x5cce
+mov (x+*),l -> 0x54ce
+mov (x),a -> 0x60
+mov (x),b -> 0x61
+mov (x),ba -> 0xd4cf
+mov (x),h -> 0x63
+mov (x),hl -> 0xd5cf
+mov (x),l -> 0x62
+mov (x),x -> 0xd6cf
+mov (x),x1 -> 0xd6cf
+mov (x),x2 -> 0xd7cf
+mov (x),y -> 0xd7cf
+mov (x),(hl) -> 0x65
+mov (x),n+* -> 0x64
+mov (x),(x+l) -> 0x6ace
+mov (x),(x+*) -> 0x68ce
+mov (x),(x) -> 0x66
+mov (x),(y+l) -> 0x6bce
+mov (x),(y+*) -> 0x69ce
+mov (x),(y) -> 0x67
+mov (x),* -> 0xb6
+mov (y+l),a -> 0x47ce
+mov (y+l),b -> 0x4fce
+mov (y+l),h -> 0x5fce
+mov (y+l),l -> 0x57ce
+mov (y+*),a -> 0x45ce
+mov (y+*),b -> 0x4dce
+mov (y+*),h -> 0x5dce
+mov (y+*),l -> 0x55ce
+mov (y),a -> 0x70
+mov (y),b -> 0x71
+mov (y),ba -> 0xdccf
+mov (y),h -> 0x73
+mov (y),hl -> 0xddcf
+mov (y),l -> 0x72
+mov (y),x -> 0xdecf
+mov (y),x1 -> 0xdecf
+mov (y),x2 -> 0xdfcf
+mov (y),y -> 0xdfcf
+mov (y),(hl) -> 0x75
+mov (y),n+* -> 0x74
+mov (y),(x+l) -> 0x7ace
+mov (y),(x+*) -> 0x78ce
+mov (y),(x) -> 0x76
+mov (y),(y+l) -> 0x7bce
+mov (y),(y+*) -> 0x79ce
+mov (y),(y) -> 0x77
+mov (y),* -> 0xb7
+mov (**),a -> 0xd4ce
+mov (**),b -> 0xd5ce
+mov (**),ba -> 0xbc
+mov (**),h -> 0xd7ce
+mov (**),hl -> 0xbd
+mov (**),l -> 0xd6ce
+mov (**),sp -> 0x7ccf
+mov (**),x -> 0xbe
+mov (**),x1 -> 0xbe
+mov (**),x2 -> 0xbf
+mov (**),y -> 0xbf
+movb a,a -> 0x40
+movb a,b -> 0x41
+movb a,flags -> 0xc1ce
+movb a,h -> 0x43
+movb a,l -> 0x42
+movb a,n -> 0xc0ce
+movb a,v -> 0xc8ce
+movb a,(hl) -> 0x45
+movb a,(nn+*) -> 0x44
+movb a,(x1+l) -> 0x42ce
+movb a,(x1+*) -> 0x40ce
+movb a,(x1) -> 0x46
+movb a,(x2+l) -> 0x43ce
+movb a,(x2+*) -> 0x41ce
+movb a,(x2) -> 0x47
+movb a,(**) -> 0xd0ce
+movb a,* -> 0xb0
+movb b,a -> 0x48
+movb b,b -> 0x49
+movb b,h -> 0x4b
+movb b,l -> 0x4a
+movb b,(hl) -> 0x4d
+movb b,(nn+*) -> 0x4c
+movb b,(x1+l) -> 0x4ace
+movb b,(x1+*) -> 0x48ce
+movb b,(x1) -> 0x4e
+movb b,(x2+l) -> 0x4bce
+movb b,(x2+*) -> 0x49ce
+movb b,(x2) -> 0x4f
+movb b,(**) -> 0xd1ce
+movb b,* -> 0xb1
+movb flags,a -> 0xc3ce
+movb flags,* -> 0x9f
+movb h,a -> 0x58
+movb h,b -> 0x59
+movb h,h -> 0x5b
+movb h,l -> 0x5a
+movb h,(hl) -> 0x5d
+movb h,(nn+*) -> 0x5c
+movb h,(x1+l) -> 0x5ace
+movb h,(x1+*) -> 0x58ce
+movb h,(x1) -> 0x5e
+movb h,(x2+l) -> 0x5bce
+movb h,(x2+*) -> 0x59ce
+movb h,(x2) -> 0x5f
+movb h,(**) -> 0xd3ce
+movb h,* -> 0xb3
+movb l,a -> 0x50
+movb l,b -> 0x51
+movb l,h -> 0x53
+movb l,l -> 0x52
+movb l,(hl) -> 0x55
+movb l,(nn+*) -> 0x54
+movb l,(x1+l) -> 0x52ce
+movb l,(x1+*) -> 0x50ce
+movb l,(x1) -> 0x56
+movb l,(x2+l) -> 0x53ce
+movb l,(x2+*) -> 0x51ce
+movb l,(x2) -> 0x57
+movb l,(**) -> 0xd2ce
+movb l,* -> 0xb2
+movb n,a -> 0xc2ce
+movb u,a -> 0xccce
+movb u,* -> 0xc4ce
+movb (hl),a -> 0x68
+movb (hl),b -> 0x69
+movb (hl),h -> 0x6b
+movb (hl),l -> 0x6a
+movb (hl),(hl) -> 0x6d
+movb (hl),(nn+*) -> 0x6c
+movb (hl),(x1+l) -> 0x62ce
+movb (hl),(x1+*) -> 0x60ce
+movb (hl),(x1) -> 0x6e
+movb (hl),(x2+l) -> 0x63ce
+movb (hl),(x2+*) -> 0x61ce
+movb (hl),(x2) -> 0x6f
+movb (hl),* -> 0xb5
+movb (nn+*),a -> 0x78
+movb (nn+*),b -> 0x79
+movb (nn+*),h -> 0x7b
+movb (nn+*),l -> 0x7a
+movb (nn+*),(hl) -> 0x7d
+movb (nn+*),(x1) -> 0x7e
+movb (nn+*),(x2) -> 0x7f
+movb (nn+*),** -> 0xdd
+movb (x1+l),a -> 0x46ce
+movb (x1+l),b -> 0x4ece
+movb (x1+l),h -> 0x5ece
+movb (x1+l),l -> 0x56ce
+movb (x1+*),a -> 0x44ce
+movb (x1+*),b -> 0x4cce
+movb (x1+*),h -> 0x5cce
+movb (x1+*),l -> 0x54ce
+movb (x1),a -> 0x60
+movb (x1),b -> 0x61
+movb (x1),h -> 0x63
+movb (x1),l -> 0x62
+movb (x1),(hl) -> 0x65
+movb (x1),(nn+*) -> 0x64
+movb (x1),(x1+l) -> 0x6ace
+movb (x1),(x1+*) -> 0x68ce
+movb (x1),(x1) -> 0x66
+movb (x1),(x2+l) -> 0x6bce
+movb (x1),(x2+*) -> 0x69ce
+movb (x1),(x2) -> 0x67
+movb (x1),* -> 0xb6
+movb (x2+l),a -> 0x47ce
+movb (x2+l),b -> 0x4fce
+movb (x2+l),h -> 0x5fce
+movb (x2+l),l -> 0x57ce
+movb (x2+*),a -> 0x45ce
+movb (x2+*),b -> 0x4dce
+movb (x2+*),h -> 0x5dce
+movb (x2+*),l -> 0x55ce
+movb (x2),a -> 0x70
+movb (x2),b -> 0x71
+movb (x2),h -> 0x73
+movb (x2),l -> 0x72
+movb (x2),(hl) -> 0x75
+movb (x2),(nn+*) -> 0x74
+movb (x2),(x1+l) -> 0x7ace
+movb (x2),(x1+*) -> 0x78ce
+movb (x2),(x1) -> 0x76
+movb (x2),(x2+l) -> 0x7bce
+movb (x2),(x2+*) -> 0x79ce
+movb (x2),(x2) -> 0x77
+movb (x2),* -> 0xb7
+movb (**),a -> 0xd4ce
+movb (**),b -> 0xd5ce
+movb (**),h -> 0xd7ce
+movb (**),l -> 0xd6ce
+movw ba,ba -> 0xe0cf
+movw ba,hl -> 0xe1cf
+movw ba,pc -> 0xf9cf
+movw ba,sp -> 0xf8cf
+movw ba,x -> 0xe2cf
+movw ba,x1 -> 0xe2cf
+movw ba,x2 -> 0xe3cf
+movw ba,y -> 0xe3cf
+movw ba,(hl) -> 0xc0cf
+movw ba,(sp+*) -> 0x70cf
+movw ba,(x1) -> 0xd0cf
+movw ba,(x2) -> 0xd8cf
+movw ba,(**) -> 0xb8
+movw ba,** -> 0xc4
+movw hl,ba -> 0xe4cf
+movw hl,hl -> 0xe5cf
+movw hl,pc -> 0xf5cf
+movw hl,sp -> 0xf4cf
+movw hl,x -> 0xe6cf
+movw hl,x1 -> 0xe6cf
+movw hl,x2 -> 0xe7cf
+movw hl,y -> 0xe7cf
+movw hl,(hl) -> 0xc1cf
+movw hl,(sp+*) -> 0x71cf
+movw hl,(x1) -> 0xd1cf
+movw hl,(x2) -> 0xd9cf
+movw hl,(**) -> 0xb9
+movw hl,** -> 0xc5
+movw nn,* -> 0xb4
+movw sp,ba -> 0xf0cf
+movw sp,hl -> 0xf1cf
+movw sp,x -> 0xf2cf
+movw sp,x1 -> 0xf2cf
+movw sp,x2 -> 0xf3cf
+movw sp,y -> 0xf3cf
+movw sp,(**) -> 0x78cf
+movw sp,** -> 0x6ecf
+movw x,ba -> 0xe8cf
+movw x,hl -> 0xe9cf
+movw x,x -> 0xeacf
+movw x,x1 -> 0xeacf
+movw x,x2 -> 0xebcf
+movw x,y -> 0xebcf
+movw x,(hl) -> 0xc2cf
+movw x,(sp+*) -> 0x72cf
+movw x,(x1) -> 0xd2cf
+movw x,(x2) -> 0xdacf
+movw x,(**) -> 0xba
+movw x,** -> 0xc6
+movw x1,ba -> 0xe8cf
+movw x1,hl -> 0xe9cf
+movw x1,sp -> 0xfacf
+movw x1,x -> 0xeacf
+movw x1,x1 -> 0xeacf
+movw x1,x2 -> 0xebcf
+movw x1,y -> 0xebcf
+movw x1,(hl) -> 0xc2cf
+movw x1,(sp+*) -> 0x72cf
+movw x1,(x1) -> 0xd2cf
+movw x1,(x2) -> 0xdacf
+movw x1,(**) -> 0xba
+movw x1,** -> 0xc6
+movw x2,ba -> 0xeccf
+movw x2,hl -> 0xedcf
+movw x2,sp -> 0xfecf
+movw x2,x -> 0xeecf
+movw x2,x1 -> 0xeecf
+movw x2,x2 -> 0xefcf
+movw x2,y -> 0xefcf
+movw x2,(hl) -> 0xc3cf
+movw x2,(sp+*) -> 0x73cf
+movw x2,(x1) -> 0xd3cf
+movw x2,(x2) -> 0xdbcf
+movw x2,(**) -> 0xbb
+movw x2,** -> 0xc7
+movw y,ba -> 0xeccf
+movw y,hl -> 0xedcf
+movw y,x -> 0xeecf
+movw y,x1 -> 0xeecf
+movw y,x2 -> 0xefcf
+movw y,y -> 0xefcf
+movw y,(hl) -> 0xc3cf
+movw y,(sp+*) -> 0x73cf
+movw y,(x1) -> 0xd3cf
+movw y,(x2) -> 0xdbcf
+movw y,(**) -> 0xbb
+movw y,** -> 0xc7
+movw (hl),ba -> 0xc4cf
+movw (hl),hl -> 0xc5cf
+movw (hl),x -> 0xc6cf
+movw (hl),x1 -> 0xc6cf
+movw (hl),x2 -> 0xc7cf
+movw (hl),y -> 0xc7cf
+movw (sp+*),ba -> 0x74cf
+movw (sp+*),hl -> 0x75cf
+movw (sp+*),x -> 0x76cf
+movw (sp+*),x1 -> 0x76cf
+movw (sp+*),x2 -> 0x77cf
+movw (sp+*),y -> 0x77cf
+movw (x1),ba -> 0xd4cf
+movw (x1),hl -> 0xd5cf
+movw (x1),x -> 0xd6cf
+movw (x1),x1 -> 0xd6cf
+movw (x1),x2 -> 0xd7cf
+movw (x1),y -> 0xd7cf
+movw (x2),ba -> 0xdccf
+movw (x2),hl -> 0xddcf
+movw (x2),x -> 0xdecf
+movw (x2),x1 -> 0xdecf
+movw (x2),x2 -> 0xdfcf
+movw (x2),y -> 0xdfcf
+movw (**),ba -> 0xbc
+movw (**),hl -> 0xbd
+movw (**),sp -> 0x7ccf
+movw (**),x -> 0xbe
+movw (**),x1 -> 0xbe
+movw (**),x2 -> 0xbf
+movw (**),y -> 0xbf
+movx a,hl -> 0xc9ce
+movx a,x1 -> 0xcace
+movx a,x2 -> 0xcbce
+movx hl,a -> 0xcdce
+movx hl,* -> 0xc5ce
+movx x1,a -> 0xcece
+movx x1,* -> 0xc6ce
+movx x2,a -> 0xcfce
+movx x2,* -> 0xc7ce
+mul l,a -> 0xd8ce
+neg a -> 0xa4ce
+neg b -> 0xa5ce
+neg (hl) -> 0xa7ce
+neg n+* -> 0xa6ce
+negb a -> 0xa4ce
+negb b -> 0xa5ce
+negb (hl) -> 0xa7ce
+negb (nn+*) -> 0xa6ce
+nop -> 0xff
+nop -> 0xff
+not a -> 0xa0ce
+not b -> 0xa1ce
+not (hl) -> 0xa3ce
+not n+* -> 0xa2ce
+notb a -> 0xa0ce
+notb b -> 0xa1ce
+notb (hl) -> 0xa3ce
+notb (nn+*) -> 0xa2ce
+or a,a -> 0x28
+or a,b -> 0x29
+or a,(hl) -> 0x2b
+or a,n+* -> 0x2c
+or a,(x+l) -> 0x2ace
+or a,(x+*) -> 0x28ce
+or a,(x) -> 0x2e
+or a,(y+l) -> 0x2bce
+or a,(y+*) -> 0x29ce
+or a,(y) -> 0x2f
+or a,(**) -> 0x2d
+or a,* -> 0x2a
+or b,* -> 0xb4ce
+or f,* -> 0x9d
+or h,* -> 0xb6ce
+or l,* -> 0xb5ce
+or (hl),a -> 0x2cce
+or (hl),(x) -> 0x2ece
+or (hl),(y) -> 0x2fce
+or (hl),* -> 0x2dce
+or n+*,** -> 0xd9
+orb a,a -> 0x28
+orb a,b -> 0x29
+orb a,(hl) -> 0x2b
+orb a,(nn+*) -> 0x2c
+orb a,(x1+l) -> 0x2ace
+orb a,(x1+*) -> 0x28ce
+orb a,(x1) -> 0x2e
+orb a,(x2+l) -> 0x2bce
+orb a,(x2+*) -> 0x29ce
+orb a,(x2) -> 0x2f
+orb a,(**) -> 0x2d
+orb a,* -> 0x2a
+orb b,* -> 0xb4ce
+orb flags,* -> 0x9d
+orb h,* -> 0xb6ce
+orb l,* -> 0xb5ce
+orb (hl),a -> 0x2cce
+orb (hl),(x1) -> 0x2ece
+orb (hl),(x2) -> 0x2fce
+orb (hl),* -> 0x2dce
+orb (nn+*),** -> 0xd9
+pack -> 0xde
+pop a -> 0xb4cf
+pop b -> 0xb5cf
+pop ba -> 0xa8
+pop f -> 0xaf
+pop h -> 0xb7cf
+pop hl -> 0xa9
+pop i -> 0xad
+pop l -> 0xb6cf
+pop n -> 0xac
+pop x -> 0xaa
+pop x1 -> 0xaa
+pop x2 -> 0xab
+pop y -> 0xab
+popa -> 0xbccf
+popax -> 0xbdcf
+popb a -> 0xb4cf
+popb b -> 0xb5cf
+popb flags -> 0xaf
+popb h -> 0xb7cf
+popb l -> 0xb6cf
+popb n -> 0xac
+popw ba -> 0xa8
+popw hl -> 0xa9
+popw x -> 0xaa
+popw x1 -> 0xaa
+popw x2 -> 0xab
+popw y -> 0xab
+popx hl -> 0xad
+popx -> 0xae
+popxxx -> 0xae
+push a -> 0xb0cf
+push b -> 0xb1cf
+push ba -> 0xa0
+push f -> 0xa7
+push h -> 0xb3cf
+push hl -> 0xa1
+push i -> 0xa5
+push l -> 0xb2cf
+push n -> 0xa4
+push x -> 0xa2
+push x1 -> 0xa2
+push x2 -> 0xa3
+push y -> 0xa3
+pusha -> 0xb8cf
+pushax -> 0xb9cf
+pushb a -> 0xb0cf
+pushb b -> 0xb1cf
+pushb flags -> 0xa7
+pushb h -> 0xb3cf
+pushb l -> 0xb2cf
+pushb n -> 0xa4
+pushw ba -> 0xa0
+pushw hl -> 0xa1
+pushw x -> 0xa2
+pushw x1 -> 0xa2
+pushw x2 -> 0xa3
+pushw y -> 0xa3
+pushx hl -> 0xa5
+pushx -> 0xa6
+pushxxx -> 0xa6
+ret -> 0xf8
+reti -> 0xf9
+retskip -> 0xfa
+rol a -> 0x94ce
+rol b -> 0x95ce
+rol (hl) -> 0x97ce
+rol n+* -> 0x96ce
+rolb a -> 0x94ce
+rolb b -> 0x95ce
+rolb (hl) -> 0x97ce
+rolb (nn+*) -> 0x96ce
+rolc a -> 0x90ce
+rolc b -> 0x91ce
+rolc (hl) -> 0x93ce
+rolc n+* -> 0x92ce
+rolcb a -> 0x90ce
+rolcb b -> 0x91ce
+rolcb (hl) -> 0x93ce
+rolcb (nn+*) -> 0x92ce
+ror a -> 0x9cce
+ror b -> 0x9dce
+ror (hl) -> 0x9fce
+ror n+* -> 0x9ece
+rorb a -> 0x9cce
+rorb b -> 0x9dce
+rorb (hl) -> 0x9fce
+rorb (nn+*) -> 0x9ece
+rorc a -> 0x98ce
+rorc b -> 0x99ce
+rorc (hl) -> 0x9bce
+rorc n+* -> 0x9ace
+rorcb a -> 0x98ce
+rorcb b -> 0x99ce
+rorcb (hl) -> 0x9bce
+rorcb (nn+*) -> 0x9ace
+sal a -> 0x80ce
+sal b -> 0x81ce
+sal (hl) -> 0x83ce
+sal n+* -> 0x82ce
+salb a -> 0x80ce
+salb b -> 0x81ce
+salb (hl) -> 0x83ce
+salb (nn+*) -> 0x82ce
+sar a -> 0x88ce
+sar b -> 0x89ce
+sar (hl) -> 0x8bce
+sar n+* -> 0x8ace
+sarb a -> 0x88ce
+sarb b -> 0x89ce
+sarb (hl) -> 0x8bce
+sarb (nn+*) -> 0x8ace
+sbc a,a -> 0x18
+sbc a,b -> 0x19
+sbc a,(hl) -> 0x1b
+sbc a,n+* -> 0x1c
+sbc a,(x+l) -> 0x1ace
+sbc a,(x+*) -> 0x18ce
+sbc a,(x) -> 0x1e
+sbc a,(y+l) -> 0x1bce
+sbc a,(y+*) -> 0x19ce
+sbc a,(y) -> 0x1f
+sbc a,(**) -> 0x1d
+sbc a,* -> 0x1a
+sbc ba,ba -> 0xccf
+sbc ba,hl -> 0xdcf
+sbc ba,x -> 0xecf
+sbc ba,x1 -> 0xecf
+sbc ba,x2 -> 0xfcf
+sbc ba,y -> 0xfcf
+sbc ba,** -> 0x62cf
+sbc hl,ba -> 0x2ccf
+sbc hl,hl -> 0x2dcf
+sbc hl,x -> 0x2ecf
+sbc hl,x1 -> 0x2ecf
+sbc hl,x2 -> 0x2fcf
+sbc hl,y -> 0x2fcf
+sbc hl,** -> 0x63cf
+sbc (hl),a -> 0x1cce
+sbc (hl),(x) -> 0x1ece
+sbc (hl),(y) -> 0x1fce
+sbc (hl),* -> 0x1dce
+shl a -> 0x84ce
+shl b -> 0x85ce
+shl (hl) -> 0x87ce
+shl n+* -> 0x86ce
+shlb a -> 0x84ce
+shlb b -> 0x85ce
+shlb (hl) -> 0x87ce
+shlb (nn+*) -> 0x86ce
+shr a -> 0x8cce
+shr b -> 0x8dce
+shr (hl) -> 0x8fce
+shr n+* -> 0x8ece
+shrb a -> 0x8cce
+shrb b -> 0x8dce
+shrb (hl) -> 0x8fce
+shrb (nn+*) -> 0x8ece
+stop -> 0xafce
+sub a,a -> 0x10
+sub a,b -> 0x11
+sub a,(hl) -> 0x13
+sub a,n+* -> 0x14
+sub a,(x+l) -> 0x12ce
+sub a,(x+*) -> 0x10ce
+sub a,(x) -> 0x16
+sub a,(y+l) -> 0x13ce
+sub a,(y+*) -> 0x11ce
+sub a,(y) -> 0x17
+sub a,(**) -> 0x15
+sub a,* -> 0x12
+sub ba,ba -> 0x8cf
+sub ba,hl -> 0x9cf
+sub ba,x -> 0xacf
+sub ba,x1 -> 0xacf
+sub ba,x2 -> 0xbcf
+sub ba,y -> 0xbcf
+sub ba,** -> 0xd0
+sub hl,ba -> 0x28cf
+sub hl,hl -> 0x29cf
+sub hl,x -> 0x2acf
+sub hl,x1 -> 0x2acf
+sub hl,x2 -> 0x2bcf
+sub hl,y -> 0x2bcf
+sub hl,** -> 0xd1
+sub sp,ba -> 0x4ccf
+sub sp,hl -> 0x4dcf
+sub sp,** -> 0x6acf
+sub x,ba -> 0x48cf
+sub x,hl -> 0x49cf
+sub x,** -> 0xd2
+sub x1,** -> 0xd2
+sub x2,** -> 0xd3
+sub y,ba -> 0x4acf
+sub y,hl -> 0x4bcf
+sub y,** -> 0xd3
+sub (hl),a -> 0x14ce
+sub (hl),(x) -> 0x16ce
+sub (hl),(y) -> 0x17ce
+sub (hl),* -> 0x15ce
+subb a,a -> 0x10
+subb a,b -> 0x11
+subb a,(hl) -> 0x13
+subb a,(nn+*) -> 0x14
+subb a,(x1+l) -> 0x12ce
+subb a,(x1+*) -> 0x10ce
+subb a,(x1) -> 0x16
+subb a,(x2+l) -> 0x13ce
+subb a,(x2+*) -> 0x11ce
+subb a,(x2) -> 0x17
+subb a,(**) -> 0x15
+subb a,* -> 0x12
+subb (hl),a -> 0x14ce
+subb (hl),(x1) -> 0x16ce
+subb (hl),(x2) -> 0x17ce
+subb (hl),* -> 0x15ce
+subcb a,a -> 0x18
+subcb a,b -> 0x19
+subcb a,(hl) -> 0x1b
+subcb a,(nn+*) -> 0x1c
+subcb a,(x1+l) -> 0x1ace
+subcb a,(x1+*) -> 0x18ce
+subcb a,(x1) -> 0x1e
+subcb a,(x2+l) -> 0x1bce
+subcb a,(x2+*) -> 0x19ce
+subcb a,(x2) -> 0x1f
+subcb a,(**) -> 0x1d
+subcb a,* -> 0x1a
+subcb (hl),a -> 0x1cce
+subcb (hl),(x1) -> 0x1ece
+subcb (hl),(x2) -> 0x1fce
+subcb (hl),* -> 0x1dce
+subcw ba,ba -> 0xccf
+subcw ba,hl -> 0xdcf
+subcw ba,x -> 0xecf
+subcw ba,x1 -> 0xecf
+subcw ba,x2 -> 0xfcf
+subcw ba,y -> 0xfcf
+subcw hl,ba -> 0x2ccf
+subcw hl,hl -> 0x2dcf
+subcw hl,x -> 0x2ecf
+subcw hl,x1 -> 0x2ecf
+subcw hl,x2 -> 0x2fcf
+subcw hl,y -> 0x2fcf
+subw ba,ba -> 0x8cf
+subw ba,hl -> 0x9cf
+subw ba,x -> 0xacf
+subw ba,x1 -> 0xacf
+subw ba,x2 -> 0xbcf
+subw ba,y -> 0xbcf
+subw ba,** -> 0xd0
+subw hl,ba -> 0x28cf
+subw hl,hl -> 0x29cf
+subw hl,x -> 0x2acf
+subw hl,x1 -> 0x2acf
+subw hl,x2 -> 0x2bcf
+subw hl,y -> 0x2bcf
+subw hl,** -> 0xd1
+subw sp,ba -> 0x4ccf
+subw sp,hl -> 0x4dcf
+subw sp,** -> 0x6acf
+subw x,** -> 0xd2
+subw x1,ba -> 0x48cf
+subw x1,hl -> 0x49cf
+subw x1,** -> 0xd2
+subw x2,ba -> 0x4acf
+subw x2,hl -> 0x4bcf
+subw x2,** -> 0xd3
+subw y,** -> 0xd3
+swap a -> 0xf6
+swap (hl) -> 0xf7
+testb a,b -> 0x94
+testb a,* -> 0x96
+testb b,* -> 0x97
+testb (hl),* -> 0x95
+testb (nn+*),** -> 0xdc
+tst a,b -> 0x94
+tst a,* -> 0x96
+tst b,* -> 0x97
+tst (hl),* -> 0x95
+tst n+*,** -> 0xdc
+unpack -> 0xdf
+xchg a,b -> 0xcc
+xchg a,(hl) -> 0xcd
+xchg ba,hl -> 0xc8
+xchg ba,sp -> 0xcb
+xchg ba,x -> 0xc9
+xchg ba,y -> 0xca
+xchgb a,b -> 0xcc
+xchgb a,(hl) -> 0xcd
+xchgw ba,hl -> 0xc8
+xchgw ba,sp -> 0xcb
+xchgw ba,x1 -> 0xc9
+xchgw ba,x2 -> 0xca
+xor a,a -> 0x38
+xor a,b -> 0x39
+xor a,(hl) -> 0x3b
+xor a,n+* -> 0x3c
+xor a,(x+l) -> 0x3ace
+xor a,(x+*) -> 0x38ce
+xor a,(x) -> 0x3e
+xor a,(y+l) -> 0x3bce
+xor a,(y+*) -> 0x39ce
+xor a,(y) -> 0x3f
+xor a,(**) -> 0x3d
+xor a,* -> 0x3a
+xor b,* -> 0xb8ce
+xor f,* -> 0x9e
+xor h,* -> 0xbace
+xor l,* -> 0xb9ce
+xor (hl),a -> 0x3cce
+xor (hl),(x) -> 0x3ece
+xor (hl),(y) -> 0x3fce
+xor (hl),* -> 0x3dce
+xor n+*,** -> 0xda
+xorb a,a -> 0x38
+xorb a,b -> 0x39
+xorb a,(hl) -> 0x3b
+xorb a,(nn+*) -> 0x3c
+xorb a,(x1+l) -> 0x3ace
+xorb a,(x1+*) -> 0x38ce
+xorb a,(x1) -> 0x3e
+xorb a,(x2+l) -> 0x3bce
+xorb a,(x2+*) -> 0x39ce
+xorb a,(x2) -> 0x3f
+xorb a,(**) -> 0x3d
+xorb a,* -> 0x3a
+xorb b,* -> 0xb8ce
+xorb flags,* -> 0x9e
+xorb h,* -> 0xbace
+xorb l,* -> 0xb9ce
+xorb (hl),a -> 0x3cce
+xorb (hl),(x1) -> 0x3ece
+xorb (hl),(x2) -> 0x3fce
+xorb (hl),* -> 0x3dce
+xorb (nn+*),** -> 0xda
