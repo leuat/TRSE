@@ -765,6 +765,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitSuccess()), this, SLOT(HandleBuildSuccess()));
     connect(m_currentDoc, SIGNAL(emitFailure()), this, SLOT(UpdateFailure()));
 
+    connect(m_currentDoc, SIGNAL(emitOutputTextChanged()), this, SLOT(PropagateMainOutput()));
 
 
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
@@ -1240,7 +1241,7 @@ void MainWindow::ForceOpenFile(QString s, int ln)
     m_currentDoc->GotoLine(ln);
     FormRasEditor* fe = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (fe!=nullptr)
-        fe->SetOutputText(txt);
+        fe->setOutputText(txt);
 }
 
 void MainWindow::closeWindowSlot()
@@ -1685,6 +1686,34 @@ void MainWindow::on_tabMain_currentChanged(int index)
         m_currentDoc=nullptr;
     }
     UpdateSymbolTree();
+    PropagateMainOutput();
+
+}
+
+void MainWindow::PropagateMainOutput()
+{
+    if (m_currentDoc == nullptr) return;
+    auto mainFile = m_currentProject.m_ini->getString("main_ras_file");
+    if (mainFile=="none")
+        return;
+
+
+    TRSEDocument* main = nullptr;
+    for (auto doc : m_documents)  {
+        if (doc->m_currentFileShort==mainFile) {
+            main = doc;
+        }
+    }
+
+    if (m_currentDoc == main)
+        return;
+
+    if (main==nullptr)
+        return;
+    if (dynamic_cast<FormRasEditor*>(m_currentDoc)==nullptr)
+        return;
+
+    m_currentDoc->setOutputText(main->getBuildText());
 
 }
 

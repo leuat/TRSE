@@ -328,6 +328,8 @@ private slots:
     void on_helpFileType();
 
     void on_tabMain_currentChanged(int index);
+    void PropagateMainOutput();
+
 
     void on_btnSave_3_clicked();
 

@@ -7,7 +7,6 @@ begin
 
 	// get next token
 	textChar := p1[ 0 ];
-
 	if ( textChar = TEXT_END ) then return; // no more text to display
 
 	if ( textChar = TEXT_LARGE or textChar = TEXT_SMALL ) then

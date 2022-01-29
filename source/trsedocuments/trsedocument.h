@@ -66,6 +66,8 @@ public:
 
     virtual void UpdateHelpText(QStringList& files) {};
 
+
+    virtual QString getBuildText() { return ""; }
     bool SaveChanges();
     void SaveCurrent() {
         if (m_currentSourceFile=="") {

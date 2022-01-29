@@ -2,7 +2,6 @@
 // reset to a new game
 procedure Game_NewGame();
 begin
-
 	gameRoom := 0;		// Room player is in or selected
 
 	// for text drawing routine

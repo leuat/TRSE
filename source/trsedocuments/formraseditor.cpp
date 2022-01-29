@@ -88,7 +88,9 @@ void FormRasEditor::FocusOnOutput()
 
 void FormRasEditor::setOutputText(QString text) {
     ui->txtOutput->setHtml(text);
+//    PropagateMainOutput();
 }
+
 
 void FormRasEditor::ExecutePrg(QString fileName)
 {
@@ -314,14 +316,14 @@ void FormRasEditor::Build(bool isShadow)
 
 }
 
-
-void FormRasEditor::SetOutputText(QString txt)
+/*
+void FormRasEditor::setOutputText(QString txt)
 {
     ui->txtOutput->setHtml(ErrorHandler::e.m_teOut);
     //    ui->txtOutput->set
 
 }
-
+*/
 
 void FormRasEditor::BuildNes(QString prg)
 {
@@ -462,6 +464,14 @@ bool FormRasEditor::isBuilding()
 {
 
     return m_builderThread.m_isRunning;
+}
+
+QString FormRasEditor::getBuildText()
+{
+    if (m_builderThread.m_builder==nullptr)
+        return "";
+//    qDebug() << m_builderThread.m_builder->m_buildString;
+    return m_builderThread.m_builder->m_buildString;
 }
 
 
@@ -729,6 +739,7 @@ void FormRasEditor::AcceptBuildString()
     //    float t = 0.02;
     //  m_curCol = m_endCol;//(m_curCol)*(1-t) + m_endCol*t;
     ui->lblLight->setStyleSheet("QLabel { background-color : \""+ Util::toColor(m_curCol).name() + "\"; color : blue; }");
+    emit emitOutputTextChanged();
 
 }
 
@@ -923,7 +934,7 @@ void FormRasEditor::MemoryAnalyze(bool isHidden)
         ErrorHandler::e.m_warnings.clear();
         ErrorHandler::e.m_teOut = "";
         ErrorHandler::e.Warning("Memory analyzer only works for .ras source files");
-        SetOutputText(ErrorHandler::e.m_teOut);
+        setOutputText(ErrorHandler::e.m_teOut);
         return;
     }
     int i= m_projectIniFile->getdouble("exomizer_toggle");
@@ -933,14 +944,14 @@ void FormRasEditor::MemoryAnalyze(bool isHidden)
         ErrorHandler::e.m_warnings.clear();
         ErrorHandler::e.m_teOut = "";
         ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
-        SetOutputText(ErrorHandler::e.m_teOut);
+        setOutputText(ErrorHandler::e.m_teOut);
         return;
     }
     if (!m_builderThread.m_builder->m_buildSuccess) {
         ErrorHandler::e.m_warnings.clear();
         ErrorHandler::e.m_teOut = "";
         ErrorHandler::e.Warning("Source file must be built before memory analyzer can run.");
-        SetOutputText(ErrorHandler::e.m_teOut);
+        setOutputText(ErrorHandler::e.m_teOut);
         return;
     }
 
@@ -1062,7 +1073,7 @@ void FormRasEditor::on_chkPostOpt_stateChanged(int arg1)
 void FormRasEditor::HandleBuildError()
 {
     m_run = false;
-    SetOutputText(ErrorHandler::e.m_teOut);
+    setOutputText(ErrorHandler::e.m_teOut);
     m_outputText = ErrorHandler::e.m_teOut;
     int ln = Pmm::Data::d.lineNumber;
 
@@ -1159,6 +1170,8 @@ void FormRasEditor::HandleBuildComplete()
         HandleUpdateBuildText();
         Run();
     }
+    m_builderThread.m_builder->m_buildString= m_builderThread.m_builder->getOutput();
+    emit emitOutputTextChanged();
 
     m_run = false;
 }

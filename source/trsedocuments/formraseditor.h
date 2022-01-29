@@ -111,7 +111,6 @@ public:
 
     void FocusOnOutput();
 
-    void setOutputText(QString text) override;
 
     void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName);
@@ -126,6 +125,8 @@ public:
     void Focus() override;
 
     bool isBuilding() override;
+
+    QString getBuildText() override;
 
     void Run() override;
     void SetLights();
@@ -160,7 +161,7 @@ public:
 
     Ui::FormRasEditor* UI(){return ui;}
 
-    void SetOutputText(QString txt);
+    void setOutputText(QString txt);
 
     void BuildNes(QString prg);
     void LookupAssemblerUnderCursor() override;
@@ -186,6 +187,7 @@ signals:
     void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
     void emitFailure();
     void emitRequestSystemChange(QString val);
+    void emitOutputTextChanged();
 private slots:
     void AcceptRequestSystemChange(QString val);
     void ShadowBuild();
