@@ -72,6 +72,12 @@ void DialogSizeAnalyser::Build()
 
         }
     }
+    if (orgAsm->m_symbols.contains("main_block_begin_")) {
+        int start = orgAsm->m_symbols["main_block_begin_"];
+        int end = orgAsm->m_symbols["main_block_end_"];
+        m_data.append(SizeData("Main block",end-start,4));
+    }
+
     m_data.append(SizeData("variables",variableSize,3));
 
     // Normalise
@@ -143,14 +149,18 @@ void DialogSizeAnalyser::ReInitialise(){
         }
         // incbin
         if (m_data[i].type==2) {
-            c = QColor(40,190,140);
+            c = QColor(40,140,190);
             if ((i&1)==0)
-                c = QColor(30,170,110);
+                c = QColor(30,110,170);
 
         }
         // variables
         if (m_data[i].type==3)
             c = QColor(190,190,190);
+
+        // main block
+        if (m_data[i].type==4)
+            c = QColor(20,190,30);
 
         QRect r = QRect(x,y-h,dw,h);
         QRect r2 = QRect(x,y-h-20,dw,h+30);

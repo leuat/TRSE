@@ -127,8 +127,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
 
     as->Asm(node->m_initCode);
 
+    if (node->m_isMainBlock)
+        as->Label("main_block_begin_");
     if (node->m_compoundStatement!=nullptr)
         node->m_compoundStatement->Accept(this);
+    if (node->m_isMainBlock)
+        as->Label("main_block_end_");
 
     as->PopBlock(node->m_currentLineNumber);
     if (node->m_isMainBlock && Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
