@@ -452,8 +452,14 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
         return;
     }
 
-
-
+/*
+    if (e->key() == Qt::Key_U &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        auto keep = m_textChanged;
+        QPlainTextEdit::keyPressEvent(e);
+        m_textChanged = false;
+        return;
+    }
+*/
 
 
 

@@ -185,6 +185,7 @@ private:
 
 signals:
     void emitSearchSymbols();
+    void emitMemoryAnalyse();
     void OpenOtherFile(QString filename, int ln);
     void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
     void emitFailure();

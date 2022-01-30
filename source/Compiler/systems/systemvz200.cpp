@@ -12,9 +12,13 @@ SystemVZ200::SystemVZ200(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
     m_supportsExomizer = false;
 
 
-    m_labels.append(SystemLabel(SystemLabel::VIC,"Video memory",0x7000,0x7800));
-
-    m_systemColor = QColor(30,60,90);
+    m_labels.append(SystemLabel(SystemLabel::BASIC,"Basic",0x0000,0x3FFF));
+    m_labels.append(SystemLabel(SystemLabel::KERNAL,"ROM Cart",0x4000,0x67FF));
+    m_labels.append(SystemLabel(SystemLabel::IO,"Input/Output",0x6800,0x6FFF));
+    m_labels.append(SystemLabel(SystemLabel::SCREEN,"Video RAM",0x7000,0x77FF));
+    m_labels.append(SystemLabel(SystemLabel::BASIC,"Basic Workspace",0x7800,0x7AFF));
+    m_labels.append(SystemLabel(SystemLabel::FREE,"Free",0x7B00,0xFFFF));
+    m_systemColor = QColor(0,64,0);
 
     m_requireEmulatorWorkingDirectory = true;
 

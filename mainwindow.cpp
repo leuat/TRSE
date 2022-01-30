@@ -770,6 +770,7 @@ void MainWindow::ConnectDocument()
     connect(m_currentDoc, SIGNAL(emitFailure()), this, SLOT(UpdateFailure()));
 
     connect(m_currentDoc, SIGNAL(emitOutputTextChanged()), this, SLOT(PropagateMainOutput()));
+    connect(m_currentDoc, SIGNAL(emitMemoryAnalyse()), this, SLOT(AcceptMemoryAnalyse()));
 
 
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
@@ -993,6 +994,16 @@ void MainWindow::AcceptRequestSystemChange(QString system)
     Syntax::s.m_systemString = system;
     Syntax::s.Init(sys,m_iniFile, m_currentProject.m_ini);
     QTimer::singleShot(200, this, SLOT(UpdateOutputSystemChange()));
+
+}
+
+void MainWindow::AcceptMemoryAnalyse()
+{
+    auto doc = getMainDocument();
+    auto d = dynamic_cast<FormRasEditor*>(doc);
+    if (d==nullptr)
+        return;
+    d->MemoryAnalyze(false);
 
 }
 

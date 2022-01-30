@@ -5,7 +5,7 @@ program Strings;
 @use "system/str" // Global string manipulation
 
 var
-  hw_i: byte=0;
+  i: byte=0;
   ch: byte=0;
   matrix: array[8] of byte;
   message: string = ("trse stringz rulz");
@@ -73,6 +73,7 @@ begin
 	
 	Text::MoveCursorTo(1, 15);
 	Text::Print(#msg2);	
+
 	
 	Input::WaitKey();
 

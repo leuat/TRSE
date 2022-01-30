@@ -626,8 +626,10 @@ void FormRasEditor::wheelEvent(QWheelEvent *event)
 
 void FormRasEditor::keyPressEvent(QKeyEvent *e)
 {
+//    qDebug() << "before" << m_documentIsChanged;
+    bool keep = ui->txtEditor->m_textChanged;
     TRSEDocument::keyPressEvent(e);
-    m_documentIsChanged  = ui->txtEditor->m_textChanged;
+  //  qDebug() << "after" << m_documentIsChanged;
     if (e->key() == Qt::Key_Escape && ui->leSearch2->hasFocus()) {
         ui->txtEditor->setFocus();
     }
@@ -644,8 +646,11 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
     //    if (ui->txtEditor->m_textChanged)
 
     //   if ((e->modifiers() & Qt::ControlModifier) && (e->modifiers() & Qt::ShiftModifier) && e->key()==Qt::Key_C)
-    if ((e->modifiers() & Qt::ControlModifier) && e->key()==Qt::Key_E)
+    if ((e->modifiers() & Qt::ControlModifier) && e->key()==Qt::Key_E) {
         ToggleComment();
+        ui->txtEditor->m_textChanged = keep;
+
+    }
 
 
     if (e->key()==Qt::Key_J && (QApplication::keyboardModifiers() & Qt::ControlModifier)) AutoFormat();
@@ -653,9 +658,12 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         ui->leSearch2->setText("");
         m_searchFromPos = ui->txtEditor->textCursor().position();
         ui->leSearch2->setFocus();
+        ui->txtEditor->m_textChanged = keep;
+
     }
     if (e->key()==Qt::Key_G && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         emit emitSearchSymbols();
+        ui->txtEditor->m_textChanged = keep;
     }
 
 
@@ -675,6 +683,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         ui->widgetHelp->SetFontSize(m_iniFile->getdouble("font_size"));
         //        ui->tabHelp->setFocus();
         ui->widgetHelp->Search(word);
+        ui->txtEditor->m_textChanged = keep;
     }
 
     if (e->key()==Qt::Key_Escape)
@@ -682,22 +691,27 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
     if (e->key()==Qt::Key_F2) {
         LookupSymbolUnderCursor();
+        ui->txtEditor->m_textChanged = keep;
     }
 
     if (e->key()==Qt::Key_F3) {
         LookupAssemblerUnderCursor();
+        ui->txtEditor->m_textChanged = keep;
     }
 
     if (e->key() == Qt::Key_U &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-        MemoryAnalyze(false);
+        emit emitMemoryAnalyse();
+        ui->txtEditor->m_textChanged = keep;
     }
     if (e->key() == Qt::Key_F5 || (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))) {
         m_run=true;
         Build();
+        ui->txtEditor->m_textChanged = keep;
         //        Run();
     }
 
 
+    m_documentIsChanged  = ui->txtEditor->m_textChanged;
 
 
 }
@@ -970,6 +984,8 @@ void FormRasEditor::MemoryAnalyze(bool isHidden)
         return;
     }
 */
+
+
     m_projectIniFile->setFloat("exomizer_toggle",i);
     m_builderThread.m_builder->compiler->SaveBuild(filename + ".asm");
 
@@ -980,6 +996,7 @@ void FormRasEditor::MemoryAnalyze(bool isHidden)
     //    bool success = m_builderThread.m_builder->compiler->SetupMemoryAnalyzer(filename);
     if (isHidden)
         return;
+
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);
 
     DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_builderThread.m_builder->m_system.get());
