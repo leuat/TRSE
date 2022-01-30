@@ -292,7 +292,7 @@ m; GetBit; MOS6502 ; a,b
 
 m; EnableAllRam; C64, MEGA65, PLUS4  ;
 m; MemCpy; MOS6502 ; a,b,a,b
-m; MemCpyFast; MOS6502 ; a,b,a,b
+m; MemCpyFast; MOS6502, Z80, X86 ; a,b,a,b
 m; MemCpyUnroll; MOS6502 ; a,b,a,b
 m; MemCpyUnrollReverse; MOS6502 ; a,b,a,b
 m; BlockMemCpy; MOS6502 ; a,a,n

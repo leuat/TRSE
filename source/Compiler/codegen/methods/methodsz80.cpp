@@ -40,7 +40,7 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         Call(as);
     }
     else
-    if (Command("memcpy"))
+    if (Command("memcpy") || Command("memcpyfast"))
         MemCpy(as,false);
 
     if (Command("Nop"))
