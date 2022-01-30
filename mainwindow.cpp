@@ -47,6 +47,7 @@
 #include "source/LeLib/data.h"
 #include "source/dialogsplash.h"
 #include <QInputDialog>
+#include "source/dialogsizeanalyser.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -395,10 +396,15 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("memory_analyzer_font_size"))
         m_iniFile->setFloat("memory_analyzer_font_size", 17);
 
-    if (!m_iniFile->contains("memory_analyzer_window_width"))
-        m_iniFile->setFloat("memory_analyzer_window_width", 600);
-    if (!m_iniFile->contains("memory_analyzer_window_height"))
+    if (!m_iniFile->contains("memory_analyzer_window_width")) {
+        m_iniFile->setFloat("memory_analyzer_window_width", 800);
         m_iniFile->setFloat("memory_analyzer_window_height", 600);
+    }
+    if (!m_iniFile->contains("size_analyser_window_width")) {
+        m_iniFile->setFloat("size_analyser_window_width", 800);
+        m_iniFile->setFloat("size_analyser_window_height", 600);
+    }
+
     if (!m_iniFile->contains("image_painter"))
         m_iniFile->setFloat("image_painter", 0);
 
@@ -771,6 +777,7 @@ void MainWindow::ConnectDocument()
 
     connect(m_currentDoc, SIGNAL(emitOutputTextChanged()), this, SLOT(PropagateMainOutput()));
     connect(m_currentDoc, SIGNAL(emitMemoryAnalyse()), this, SLOT(AcceptMemoryAnalyse()));
+    connect(m_currentDoc, SIGNAL(emitSizeAnalyse()), this, SLOT(on_btnSizeAnalyser_clicked()));
 
 
 //    connect(m_currentDoc, SIGNAL(NotifyOtherSourceFiles()), this, SLOT(AcceptUpdateSourceFiles()));
@@ -3071,5 +3078,26 @@ void MainWindow::on_chkShowAllFiles_clicked()
 void MainWindow::on_actionSave_All_triggered()
 {
     SaveAllRas();
+}
+
+
+void MainWindow::on_btnSizeAnalyser_clicked()
+{
+    auto doc = getMainDocument();
+    auto d = dynamic_cast<FormRasEditor*>(doc);
+    if (d==nullptr)
+        return;
+    if (d->m_builderThread.m_builder==nullptr)
+        return;
+    if (d->m_builderThread.m_builder->compiler==nullptr)
+        return;
+
+
+    DialogSizeAnalyser* ds = new DialogSizeAnalyser();
+    ds->Initialize(d->m_builderThread.m_builder.get(),m_iniFile.get(),m_iniFile->getdouble("memory_analyzer_font_size"));
+    ds->resize(m_iniFile->getdouble("size_analyser_window_width"),m_iniFile->getdouble("size_analyser_window_height"));
+    ds->exec();
+    delete ds;
+
 }
 

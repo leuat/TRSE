@@ -68,6 +68,7 @@
 #include "source/dialogsplash.h"
 #include "source/dialognewtrt.h"
 #include "source/LeLib/util/util.h"
+#include "source/dialogsizeanalyser.h"
 
 namespace Ui {
 class MainWindow;
@@ -487,6 +488,8 @@ private slots:
 
 
 
+
+    void on_btnSizeAnalyser_clicked();
 
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);

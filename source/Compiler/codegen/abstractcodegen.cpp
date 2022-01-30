@@ -864,6 +864,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
         as->m_currentBlock = orgBank;
         m_isFarAway = false;
     }
+    as->Label("end_procedure_"+node->m_procName);
     //  as->PopCounter(ln);
 }
 
@@ -1144,6 +1145,8 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
     if (t->m_position=="") {
         as->Label(v->value);
         as->Asm(getIncbin()+"\t \"" + filename + "\"");
+        as->Label("end_incbin_"+v->value);
+
         if (as->m_currentBlock!=nullptr)
             if (as->m_mainBlock != as->m_currentBlock)
                 as->m_currentBlock->m_incDataSize+=QFileInfo(filename).size();
@@ -1172,6 +1175,9 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
             start = t->m_position.remove("$").toInt(&ok, 16);
         }
         else start = t->m_position.toInt();
+
+        app->Append("end_incbin_"+v->value+":",0);
+
         as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,filename)));
 //        app->Append("EndBlock"+t->m_position+":",0);
     }

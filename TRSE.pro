@@ -254,6 +254,7 @@ SOURCES += main.cpp\
     source/dialognewtrt.cpp \
     source/dialogselectcharset.cpp \
     source/dialogsimplelineedit.cpp \
+    source/dialogsizeanalyser.cpp \
     source/dialogsplash.cpp \
     source/formhelp.cpp \
     source/mynth/ma_context.cpp \
@@ -521,6 +522,7 @@ HEADERS  += mainwindow.h \
     source/dialognewtrt.h \
     source/dialogselectcharset.h \
     source/dialogsimplelineedit.h \
+    source/dialogsizeanalyser.h \
     source/dialogsplash.h \
     source/formhelp.h \
 #    source/LeLib/miniaudio_engine.h \
@@ -674,6 +676,7 @@ FORMS    += mainwindow.ui \
     source/dialognewtrt.ui \
     source/dialogselectcharset.ui \
     source/dialogsimplelineedit.ui \
+    source/dialogsizeanalyser.ui \
     source/dialogsplash.ui \
     source/formhelp.ui \
     source/trsedocuments/dialogcustomwarning.ui \

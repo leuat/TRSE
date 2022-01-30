@@ -117,13 +117,6 @@
            </widget>
            <widget class="QWidget" name="layoutWidget">
             <layout class="QGridLayout" name="gridLayout_8">
-             <item row="0" column="1">
-              <widget class="QPushButton" name="btnBuild_3">
-               <property name="text">
-                <string>Build (c-b)</string>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="1">
               <widget class="QPushButton" name="btnMemoryAnalyze">
                <property name="toolTip">
@@ -134,14 +127,7 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QPushButton" name="btnSave_3">
-               <property name="text">
-                <string>Save (c-s)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
+             <item row="3" column="0">
               <widget class="QPushButton" name="btnBuildAll">
                <property name="toolTip">
                 <string>Builds all files according to the build instruction script. Check the &quot;project settings&quot; for details.</string>
@@ -151,24 +137,21 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="0" column="1">
+              <widget class="QPushButton" name="btnBuild_3">
+               <property name="text">
+                <string>Build (c-b)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
               <widget class="QPushButton" name="btnShowcases">
                <property name="text">
                 <string>TRSE Showcases</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="btnProjectDir">
-               <property name="toolTip">
-                <string>Opens up an explorer window to the current project folder</string>
-               </property>
-               <property name="text">
-                <string>Project directory</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
+             <item row="4" column="0">
               <widget class="QPushButton" name="btnClearProject">
                <property name="toolTip">
                 <string>Deletes all .asm .sym .prg files in the current project</string>
@@ -188,6 +171,33 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btnSave_3">
+               <property name="text">
+                <string>Save (c-s)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QPushButton" name="btnProjectDir">
+               <property name="toolTip">
+                <string>Opens up an explorer window to the current project folder</string>
+               </property>
+               <property name="text">
+                <string>Project directory</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="btnSizeAnalyser">
+               <property name="toolTip">
+                <string>Opens up a memory map analyzer window</string>
+               </property>
+               <property name="text">
+                <string>Size analyser (c-y)</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </widget>
@@ -201,7 +211,7 @@
                  <string/>
                 </property>
                 <property name="pixmap">
-                 <pixmap resource="resources.qrc">:/resources/images/C64.png</pixmap>
+                 <pixmap>:/resources/images/C64.png</pixmap>
                 </property>
                 <property name="scaledContents">
                  <bool>false</bool>
@@ -253,7 +263,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="resources.qrc">:/resources/images/tape.png</pixmap>
+             <pixmap>:/resources/images/tape.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -275,7 +285,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="resources.qrc">:/resources/images/hammer.png</pixmap>
+             <pixmap>:/resources/images/hammer.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -339,7 +349,7 @@
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="resources.qrc">:/resources/images/trse_icon.png</pixmap>
+                <pixmap>:/resources/images/trse_icon.png</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -779,8 +789,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

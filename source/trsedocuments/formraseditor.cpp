@@ -703,6 +703,9 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         emit emitMemoryAnalyse();
         ui->txtEditor->m_textChanged = keep;
     }
+    if (e->key() == Qt::Key_Y &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        emit emitSizeAnalyse();
+    }
     if (e->key() == Qt::Key_F5 || (e->key() == Qt::Key_R &&  (QApplication::keyboardModifiers() & Qt::ControlModifier))) {
         m_run=true;
         Build();

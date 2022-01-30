@@ -125,6 +125,7 @@ public:
     QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
 
     QString m_overrideOutputTarget="";
+    QVector<QSharedPointer<Node>> m_proceduresOnly;
 
 
     QSharedPointer<Node> Parse(bool removeUnusedDecls, QString param, QString globalDefines, bool useLocals);
@@ -169,7 +170,6 @@ private:
 
     QSharedPointer<Node> ManageClassProcedureCalls(QSharedPointer<Node> left);
     QVector<QSharedPointer<Node>> m_extraDecls;
-    QVector<QSharedPointer<Node>> m_proceduresOnly;
     QVector<QSharedPointer<Node>> m_mergedProcedures;
     QVector<QString> m_ignoreMethods;
     Token m_currentToken, m_lastStartBlockToken;
