@@ -182,6 +182,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("memcpy8"))
         MemCpy(as, "b");
 
+    if (Command("memcpyfast"))
+        MemCpyFast(as);
+
     if (Command("memcpy16"))
         MemCpy(as,"w");
 
@@ -516,6 +519,22 @@ void MethodsX86::MemCpy(Assembler *as, QString type)
     as->Asm("pop cx");
 
     as->Asm("rep movs"+type);
+    as->Asm("pop ds");
+
+}
+
+void MethodsX86::MemCpyFast(Assembler *as)
+{
+    as->Comment("Memcpy");
+    as->Asm("push ds");
+    LoadVar(as,3);
+
+    as->Asm("push ax");
+    LoadAddress(as, 2,false);
+    LoadAddress(as, 0,true);
+    as->Asm("pop cx");
+
+    as->Asm("rep movsb");
     as->Asm("pop ds");
 
 }
