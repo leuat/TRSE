@@ -62,11 +62,7 @@ procedure PutPixelMode5Clear();
 begin
 	Screen::PointToY(#Screen::ytabMode5, y1);
 	Screen::screenPtr+= Screen::xtab4[x1];
-//	val:=x1&3;
-//	val :=(x1&3);
-//asm(";here");
-//	Screen::screenPtr^:=(Screen::screenPtr^ & Screen::mode5Clear[x1&3]);
-
+	
 	asm("
 	ldy #0
 	lda Gfx_x1

@@ -52,7 +52,7 @@ void AsmX86::Connect() {
 void AsmX86::Program(QString name, QString vicParam)
 {
     m_source+=m_startInsertAssembler;
-    if (Syntax::s.m_currentSystem->m_programStartAddress!=0)
+//    if (Syntax::s.m_currentSystem->m_programStartAddress!=0)
         Asm("[ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress) + "]");
     m_hash = "";
 /*    Asm("jmp save_ds_register");

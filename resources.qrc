@@ -652,5 +652,6 @@
         <file>resources/text/help/r/length.rtf</file>
         <file>resources/text/help/r/sizeof.rtf</file>
         <file>resources/text/opcodes_s1c88.txt</file>
+        <file>resources/text/help/p/buildtable2d.rtf</file>
     </qresource>
 </RCC>
