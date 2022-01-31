@@ -47,6 +47,15 @@ public:
         return false;
     }
 
+
+    QString getOutputType() {
+        QString outputType = "exe";
+        if (m_projectIni->contains("cpu_x86_output"))
+            outputType = m_projectIni->getString("cpu_x86_output");
+        return outputType;
+
+    }
+
     virtual bool is486() override;
     virtual bool is386() override;
     virtual bool is286() override;

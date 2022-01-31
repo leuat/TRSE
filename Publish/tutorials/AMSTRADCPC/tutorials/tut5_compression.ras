@@ -49,6 +49,7 @@ begin
 		Crtc::SetPalette(#palette1);
 		// Decompress first image directly to the screen
 		Compression::Decompress(#image1, screen);
+		fill(screen,0,8000);
 		// wait a bit
 		Sleep(30);		
 		Crtc::SetPalette(#palette2);

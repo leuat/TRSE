@@ -254,6 +254,27 @@ void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 
 void MethodsZ80::Fill(Assembler *as)
 {
+
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80) {
+       as->Comment("Updated fast fill");
+       LoadVar(as,2,"bc");
+       LoadVar(as,1);
+       LoadAddress(as, 0);
+       as->Asm("ld d,h");
+       as->Asm("ld e,l");
+       as->Asm("inc de");
+       as->Asm("ld (hl),a");
+       as->Asm("ldir");
+/*        ld a,$20
+               ld bc,#0200
+               ld hl,#7000
+               ld de,#7001
+               ld (hl),a
+               ldir
+*/
+        return;
+    }
+
     as->Comment("Loading param 2 ");
     LoadVar(as,2,"bc");
     if (!m_node->m_params[1]->isPure()) {

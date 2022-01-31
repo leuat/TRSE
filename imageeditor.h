@@ -67,7 +67,7 @@ public:
     void Undo();
     void AddUndo();
     void setName();
-    const int m_undoMax = 10;
+    const int m_undoMax = 30;
 
 
 };

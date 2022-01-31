@@ -119,6 +119,8 @@ void DialogProjectSettings::FillFromIni()
 
     ui->cbmSpectrumModel->setCurrentIndex(m_ini->getdouble("spectrum_model"));
     ui->cmbX86CPU->setCurrentText(m_ini->getString("cpu_x86_system"));
+    ui->cmbX86OutputType->setCurrentText(m_ini->getString("cpu_x86_output"));
+
 
     ui->leDosboxCycles->setText(m_ini->getString("dosbox_cycles"));
 
@@ -265,6 +267,7 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setString("dosbox_x86_system", ui->cmbX86Type->currentText());
     m_ini->setString("cpu_x86_system", ui->cmbX86CPU->currentText());
+    m_ini->setString("cpu_x86_output", ui->cmbX86OutputType->currentText());
 
     m_ini->setFloat("pascal_settings_use_local_variables", ui->chkLocalVariables->isChecked());
 
