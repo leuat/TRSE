@@ -9,9 +9,12 @@ AsmZ80::AsmZ80()
     m_sprram = QSharedPointer<Appendix>(new Appendix);
     m_ram = QSharedPointer<Appendix>(new Appendix);
 
-    m_wram->Append("i_input_current:	DS	1",0);
-    m_wram->Append("i_input_previous:	DS	1",0);
-    m_wram->Append("cmpvar:	DS	1",0);
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+        m_wram->Append("i_input_current:	DS	1",0);
+        m_wram->Append("i_input_previous:	DS	1",0);
+        m_wram->Append("cmpvar:	DS	1",0);
+    }
     m_hram->m_isMainBlock = true;
     m_wram->m_isMainBlock = true;
     m_sprram->m_isMainBlock = true;
@@ -133,7 +136,9 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
   */
 
         //Write(name+":" +"\t times "+QString::number(count) +" "+t+" 0",0);
+
         if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram || m_currentBlock==m_ram) {
+
             Write(name+":" +"\t ds "+QString::number(count),0);
             m_currentBlock->m_dataSize+=count;
 
@@ -211,8 +216,8 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
 
 
-
 //    qDebug() << "IS WRAM " <<(m_currentBlock==m_wram) << name;
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::POKEMONMINI)
     if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram) {
         t = "ds";
         if (type.toLower()=="byte") {
@@ -370,10 +375,23 @@ void AsmZ80::Label(QString s)
 
 QString AsmZ80::GetOrg(int pos)
 {
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::S1C88) {
+        return ".orgfill " + Util::numToHex(pos);
+
+    }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
         return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
     else
         return "org " + Util::numToHex(pos);
+}
+
+
+QString AsmZ80::GetOrg() {
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::S1C88) {
+        return ".orgfill ";
+
+    }
+    return "org ";
 }
 
 QString AsmZ80::String(QStringList lst, bool term)
@@ -453,4 +471,5 @@ void AsmZ80::EndMemoryBlock() {
   //      return;
 
 }
+
 

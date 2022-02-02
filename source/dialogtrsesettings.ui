@@ -1130,20 +1130,6 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_38">
-                   <property name="text">
-                    <string>Gameboy RGB Asm directory:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_61">
-                   <property name="text">
-                    <string>WDC65C816 assembler CL65 executable:</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="2" column="2">
                   <widget class="QLineEdit" name="leCL65">
                    <property name="text">
@@ -1151,17 +1137,24 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="3">
-                  <widget class="QPushButton" name="btnCL65">
+                 <item row="3" column="3">
+                  <widget class="QPushButton" name="btnPasmo">
                    <property name="text">
                     <string>...</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="3">
-                  <widget class="QPushButton" name="btnNasm">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_38">
                    <property name="text">
-                    <string>...</string>
+                    <string>Gameboy RGB Asm directory:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="2">
+                  <widget class="QLineEdit" name="lePasmo">
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>
@@ -1182,15 +1175,43 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="2">
-                  <widget class="QLineEdit" name="lePasmo">
+                 <item row="2" column="3">
+                  <widget class="QPushButton" name="btnCL65">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_61">
+                   <property name="text">
+                    <string>WDC65C816 assembler CL65 executable:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QPushButton" name="btnNasm">
+                   <property name="text">
+                    <string>...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_67">
+                   <property name="text">
+                    <string>PMAS assembler location</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="2">
+                  <widget class="QLineEdit" name="lePMAS">
                    <property name="text">
                     <string/>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="3">
-                  <widget class="QPushButton" name="btnPasmo">
+                 <item row="4" column="3">
+                  <widget class="QPushButton" name="btnPMAS">
                    <property name="text">
                     <string>...</string>
                    </property>

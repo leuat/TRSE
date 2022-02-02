@@ -1,0 +1,108 @@
+program Twister;
+@use "screen"
+var  
+  	m,ll,frame, tmp1,idx,i,j,k,tt2,tt,tx,y,time: byte wram; 
+  	it,ii,i2: integer wram;
+	ptr,tp,zp,scr: pointer wram;
+	tab:pointer of integer wram;
+	
+	
+@exportblackwhite "trse.flf" "trse.bin" 0 0 96 64 2
+
+	//image:incbin("trse.bin",$6000);
+	itable32: array[32] of integer = buildtable("i*32");
+
+	table: incbin("data/twister_table.bin");
+	data: incbin("data/twister_data.bin");
+	
+	text: string="HELLOTHEREHELLOTHERE";
+	sine32 : array[256] of byte = buildsinetable(10);
+	tab_div16: array[256] of byte=buildtable("i/24");
+	
+	tab24: array[256] of byte=buildtable("i%24");
+	charLookup : array[32] of integer = BuildTable("(2*16*24*i)");
+	frameLookup : array[16] of integer = BuildTable("(2*24*i)");
+
+procedure RenderTwister(tx:global byte);
+begin
+	tt2:=tt2+1;
+	tt:=0-tx; // Text goes up
+	tt2:=tx; // Twist goes down
+	tp:=#text;
+	j:=0;
+	
+	y:=0;
+//	scr :=itable32[y];
+	scr := #Screen::screen+$60+$8;
+	
+	for k:=0 to $4F do
+	begin
+
+				
+		tmp1:=k+tt2;
+		j:=sine32[tmp1];
+		frame := tx-j;
+		frame := frame &15;
+		ll:=(k-tt); // Current shift & text position in y
+		//j:=ll>>4;
+		j:=tab_div16[ll]; // Twister yeah!
+	 	m:=tp[j];
+		m:=(m-1)&31;
+		
+		tab := frameLookup[frame];
+		tab := #table+tab;
+		it:=charLookup[m];
+		tab+=it;
+		j:=k+time;
+		j:=tab24[j];
+		
+		
+		zp := tab[j];
+		zp:=#data + zp;
+
+		asm("
+			movw x2,[zp]
+			movw x1,[scr]
+			mov hl,[x2]
+			movb [x1],l
+			movb [x1+$60],h
+			add x2,2
+			add x1,$60*2
+			mov hl,[x2]
+			movb [x1],l
+			movb [x1+$60],h
+			
+			
+
+		");		
+/*		m:=zp[0];
+		scr[0]:=m;			
+		m:=zp[1];
+		scr[$60]:=m;			
+*/		
+		scr:=scr+1;
+
+	end;
+	
+end;
+
+
+
+begin
+	i:=10;
+	j:=1;
+	Screen::Init();
+	Screen::SetTileMode();		
+//	Screen::SetScreenPos(#image);
+	Screen::SetScreenPos(#Screen::screen);
+	i:=0;
+	Screen::SetScreenPos(#Screen::screen);
+	while (true) do
+	begin		
+		Screen::VSync();
+		RenderTwister(time);		
+		time+=1;
+	end;
+
+	
+end.

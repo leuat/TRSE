@@ -211,6 +211,8 @@ private slots:
 
     void on_btnMameEmulator_clicked();
 
+    void on_btnPMAS_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

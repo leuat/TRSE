@@ -39,6 +39,7 @@ public:
 
     void EndMemoryBlock()  override;
 
+    QString GetOrg() override;
 
 
 };

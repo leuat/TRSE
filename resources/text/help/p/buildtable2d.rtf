@@ -1,12 +1,11 @@
-<p>BuildTable can be used with arrays to create a table of data that is calculated at build time.</p>
+<p>BuildTable2D can be used with arrays to create a 2D table of data that is calculated at build time.</p>
 
-<p>JavaScript is used with an indexer variable called 'i'.  Thus, any JavaScript functions can be used.</p>
+<p>JavaScript is used with an indexer variable called 'i' and j.  Thus, any JavaScript functions can be used.</p>
 
 <h3>Example</h3>
 <code>
-a : array[256] of byte =BuildTable( "Math.sin( i / 256.0 * Math.PI * 2) * 0x7F + 0x80" );   // your average sine table
+data1 : array[256] of byte =BuildTable2D(16,16,"i+j" );
 
-b : array[64] of byte = BuildTable("i")  ;   // will build a table with values 0-63
+screen_circle : array[1000] of byte = BuildTable(40,25,"Math.sqrt( (i-20)*(i-20) + (j-12)*(j-12))  ;   // circles
 
-c: array[16] of byte = BuildTable("( 1 + i ) * 0x4000");
 </code>

@@ -75,11 +75,54 @@ void LImageQImage::SaveBin(QFile& file)
 
 }
 
-void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h) {
+void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h,int type) {
 
     char c = 0;
     int cnt = 0;
     QByteArray data;
+
+    if (type==1) {
+
+            for (int x=0;x<w;x++)
+                for (int y=0;y<h;y++) {
+                int p = getPixel(x+xx,y+yy);
+                if (p!=0)
+                    c |= 1<<(cnt);
+
+                cnt++;
+                if (cnt==8) {
+                    data.append(c);
+                    c = 0;
+                    cnt = 0;
+                }
+
+            }
+
+    }
+    // Pokemon mini
+    if (type==2) {
+
+        for (int y=0;y<h;y+=8) {
+            for (int x=0;x<w;x++){
+                for (int yp=0;yp<8;yp++) {
+                    int p = getPixel(x+xx,y+yy+yp);
+                    if (p!=0)
+                        c |= 1<<(cnt);
+
+                    cnt++;
+                    if (cnt==8) {
+                        data.append(c);
+                        c = 0;
+                        cnt = 0;
+                    }
+
+                }
+            }
+        }
+
+
+    }
+    if (type==0)
     for (int y=0;y<h;y++)
         for (int x=0;x<w;x++) {
             int p = getPixel(x+xx,y+yy);

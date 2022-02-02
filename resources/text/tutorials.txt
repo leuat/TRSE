@@ -82,6 +82,8 @@ PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorial
 PET; PETFrog; PET/PETFrog/;<h2>PET Frog game</h2><p><img src=":resources/images/billboard/b30.png" width="300" class="center"><p>PET Frog for the VIC-20!<p>By Chris Garrett
 PET; PBM Unit; PET/pbm-pet/; <h2>Pet Bitmap Mode (PBM)</h2><div><img src=":resources/images/tutorials/pbm.png" width="300" class="center"><p>For drawing using PETSCII 2x2 blocks, provides a low-res 80x50 bitmap out of characters. Supports drawing sprites and tiles, including mirrored drawing.</p><p>PBM created by Andy H (HEWCO)
 
+POKEMONMINI; Main Pokemon Mini tutorials; POKEMONMINI/tutorials;<h2>Main Pokemon Mini tutorials</h2><p>Please note that this compiler is a work in progress!
+
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/crossplatform.png" width="300" class="center"><p>
 

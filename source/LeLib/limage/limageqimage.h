@@ -71,7 +71,7 @@ public:
     virtual void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
 
-    void ExportBlackWhite(QFile &file, int p1, int p2, int p3, int p4) override;
+    void ExportBlackWhite(QFile &file, int p1, int p2, int p3, int p4, int type) override;
     void ExportBin(QFile &file) override;
 
     void RemapCharset(QImage* other, int cw, int ch, int bw, int bh, int dw, int dh, int allowance);

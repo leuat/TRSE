@@ -5264,6 +5264,11 @@ void Parser::HandleExportBW()
     Eat(TokenType::INTEGER_CONST);
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
+    int type = 0;
+    if (m_currentToken.m_type==TokenType::INTEGER_CONST)  {
+        type = m_currentToken.m_intVal;
+        Eat();
+    }
     if (!QFile::exists(inFile))
         ErrorHandler::e.Error("Could not find file :" +inFile,m_currentToken.m_lineNumber);
 
@@ -5276,7 +5281,7 @@ void Parser::HandleExportBW()
 
     file.open(QFile::WriteOnly);
     img->m_silentExport = true;
-    img->ExportBlackWhite(file,x,y,w,h);
+    img->ExportBlackWhite(file,x,y,w,h,type);
 
 
 

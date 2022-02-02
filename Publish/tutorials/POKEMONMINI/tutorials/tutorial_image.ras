@@ -1,0 +1,20 @@
+program Image;
+@use "screen"
+var  
+	i,j  : byte wram;	
+	
+@exportblackwhite "trse.flf" "trse.bin" 0 0 96 64 2
+
+	image:incbin("trse.bin",$6000);
+
+
+begin
+	Screen::Init();
+	Screen::SetTileMode();		
+	Screen::SetScreenPos(#image);
+	while (true) do
+	begin		
+	end;
+
+	
+end.

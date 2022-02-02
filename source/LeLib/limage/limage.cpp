@@ -108,6 +108,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 32;
     if (t==JDH8)
         return 33;
+    if (t==LImageGeneric)
+        return 34;
 
 
     return 255;
@@ -183,6 +185,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Custom C64";
     if (t==JDH8)
         return "JDH8";
+    if (t==LImageGeneric)
+        return "Generic indexed image";
 
     return "Unknown image type";
 
@@ -259,6 +263,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return CustomC64;
     if (c==33)
         return JDH8;
+    if (c==34)
+        return LImageGeneric;
 
     return NotSupported;
 

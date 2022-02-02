@@ -1034,6 +1034,11 @@
               <string>JDH8</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>POKEMONMINI</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="1">

@@ -57,6 +57,7 @@
 #include "source/LeLib/limage/limagevz200.h"
 #include "source/LeLib/limage/limagecustomc64multicolor.h"
 #include "source/LeLib/limage/limagejdh8.h"
+#include "source/LeLib/limage/limagegeneric.h"
 
 class LImageFactory {
 public:

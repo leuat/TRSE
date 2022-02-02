@@ -50,7 +50,7 @@ void DialogNewImage::CreateCategories()
 {
     m_categories.clear();
     for (ImageType& it: m_types)
-        if (!m_categories.contains(it.category))
+        if (!m_categories.contains(it.category) || it.category=="all")
             m_categories << it.category;
 
 

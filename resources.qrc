@@ -653,5 +653,8 @@
         <file>resources/text/help/r/sizeof.rtf</file>
         <file>resources/text/opcodes_s1c88.txt</file>
         <file>resources/text/help/p/buildtable2d.rtf</file>
+        <file>resources/code/pokemini/pm.s</file>
+        <file>resources/code/pokemini/init.asm</file>
+        <file>resources/images/POKEMONMINI.png</file>
     </qresource>
 </RCC>

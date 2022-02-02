@@ -1,0 +1,74 @@
+unit Screen;
+var
+	src : pointer wram;
+	const screen: address = $1000;
+	
+	
+procedure VidLin() inline;
+begin
+	asm("
+	mov	x2,$1360
+	mov	l,0
+	
+_vidini:	
+	mov	a,l
+	mov	[x2+l],a
+	inc	l    
+	cmp	l,$60
+	jnz	_vidini
+	
+	
+	");
+	
+end;
+
+procedure SetScreenPos(src:global pointer);
+begin
+	asm("
+	mov x1,[Screen_src]		# set tiles graphix base
+	mov	[$2082],x1
+		
+	
+	");
+end;
+
+
+procedure Init() inline;
+begin
+	asm("
+
+	mov	sp, $2000
+	movx	hl,0
+	movw	nn,$2000
+
+	");	
+	VidLin();
+end;
+
+procedure SetTileMode();
+begin
+	asm("
+	movw	nn,$2000
+	movb	[nn+$80],8+2		# set tiled mode 12x8, non-inverted
+	movb	[nn+$81],9		# enable video
+	movw	x1,$4000
+	
+	");
+end;
+	
+
+procedure VSync();
+begin
+	asm("
+	movw nn,$2000
+
+	test	[nn+$8A],$10
+	jnz	Screen_VSync
+
+Screen_vsync2:	
+	test	[nn+$8A],$10
+	jz	Screen_vsync2
+
+	");	
+end;
+end.

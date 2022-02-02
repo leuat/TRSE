@@ -142,6 +142,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/codegen_arm.cpp \
     source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
+    source/Compiler/codegen/codegen_s1c88.cpp \
     source/Compiler/codegen/codegen_tripe.cpp \
     source/Compiler/codegen/codegen_x86.cpp \
     source/Compiler/codegen/codegen_z80.cpp \
@@ -156,6 +157,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/methods/methods6800amiga.cpp \
     source/Compiler/codegen/methods/methodsx86.cpp \
     source/Compiler/codegen/methods/methodsz80.cpp \
+    source/Compiler/codegen/registerstack.cpp \
     source/Compiler/compilers/compiler6502.cpp \
     source/Compiler/compilers/compiler65c816.cpp \
     source/Compiler/compilers/compilerarm.cpp \
@@ -216,6 +218,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagecustomc64multicolor.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
+    source/LeLib/limage/limagegeneric.cpp \
     source/LeLib/limage/limagehybridcharset.cpp \
     source/LeLib/limage/limagejdh8.cpp \
     source/LeLib/limage/limagelevelgameboy.cpp \
@@ -402,6 +405,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asmz80.h \
     source/Compiler/codegen/codegen_arm.h \
     source/Compiler/codegen/codegen_jdh8.h \
+    source/Compiler/codegen/codegen_s1c88.h \
     source/Compiler/codegen/codegen_tripe.h \
     source/Compiler/codegen/codegen_x86.h \
     source/Compiler/codegen/codegen_z80.h \
@@ -425,6 +429,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/methods/methods6800amiga.h \
     source/Compiler/codegen/methods/methodsx86.h \
     source/Compiler/codegen/methods/methodsz80.h \
+    source/Compiler/codegen/registerstack.h \
     source/Compiler/compilers/compiler6502.h \
     source/Compiler/compilers/compiler65c816.h \
     source/Compiler/compilers/compilerarm.h \
@@ -485,6 +490,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagecustomc64multicolor.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \
+    source/LeLib/limage/limagegeneric.h \
     source/LeLib/limage/limagehybridcharset.h \
     source/LeLib/limage/limagejdh8.h \
     source/LeLib/limage/limagelevelgameboy.h \

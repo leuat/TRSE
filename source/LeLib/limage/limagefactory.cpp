@@ -98,6 +98,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageCustomC64(colorType);
     if (t == LImage::JDH8)
         return new LImageJDH8(colorType);
+    if (t == LImage::LImageGeneric)
+        return new LImageGeneric(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

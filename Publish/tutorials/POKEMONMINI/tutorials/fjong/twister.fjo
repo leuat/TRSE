@@ -1,0 +1,201 @@
+
+globals = {
+	camera = { x = 0.5, y=0.20, z=6.0 },
+	fov = 20, 
+	target = { x = 0.5, y=0.20, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=0, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	light1 = {   	direction = {x=1, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.1, y = 0.1, z = 0.1 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+output_type_STANDARD = 0;
+output_type_C64 = 1;
+output_type_PICO8 = 2;
+output_type_VGA = 3;
+output_type_BINARY = 4;
+output_type_GAMEBOY = 5;
+output_type_AMSTRAD = 6;
+output_type_CHARSET = 7;
+output_type_CGA = 8;
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+	resolution = { width = 32, height=24},
+	
+	output_type = output_type_C64, 
+
+	aspect = 1,
+	dither = 2,
+	
+
+	ditherStrength= {x=10, y=2, z=2 },
+	
+	
+		
+	
+	-- aspect ration
+    aspect = 1,
+     -- 
+	c64_imageType = 0, -- 0 = character set (4 colors, compressable), 1 = multicolor image 
+	-- turn on c64 multicolors
+	c64_multicolor = 0,
+	-- Define 4 colors (black, purple, blue, white)
+	index_colors = { 0,13 },
+--	palette = {0,0,0,  255,255,0,  0,0,128, 0,0,255}
+--	palette = {0,0,255,  255,255,0,  0,0,0, 0,0,128}
+}
+
+
+Material0 = {
+   color = { x=0.1, y=0.2, z=0.8 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0.5
+}
+
+
+Material2 = {
+	color = { x=0.7, y=0.2, z=0.3 },
+	reflection = 0.0,
+	shininess = 40,
+	shininess_intensity = 0.2
+
+}
+
+
+
+
+-- Init is called on start  
+
+
+ 
+function Init()
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.2,0.2, 3 )
+--  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,12,0.5 )
+
+	font = "rom"
+	--font = "charsets/gamecharset.flf"
+
+	z = 1
+	w = 0.25
+
+	z = -0.0
+	w = .9
+	r = 0.3
+	rs = 2.4
+	dx=-0.5
+	AddObject("box","box1","","Material0", dx,0,0,rs,rs*1.5,r);
+--	AddObject("perlin","box1","","Material0",  "box1", 0.2,1.45,0);
+
+		
+	if char~=29 then
+
+	AddObject("char","char1", "", "Material2",  font, char+1,   
+dx,0,-z,            -- position
+-0.55,0.6,0.0,      -- width xyz 
+w,0.31111,0.3111  -- stretch xyz
+);          
+
+
+--[[
+	AddObject("char","char2", "", "Material2",  font, char+1,   
+0,0,z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+]]--
+--	jj = sin(char+1)*10
+	jj = 0
+--	SetRotation("char1",0,45+90,0);
+	SetRotation("char1",90,90,180);
+
+	--SetRotation("char2",0,45+90,jj);
+
+	end
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 16
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame)/noFrames)*3.14159+3.1515/2;--*2 
+	r = 12
+	r = 14
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+--	t=t+3.14159/4
+	t=t
+    dt = 0
+--	globals.light0.direction.x = sin(t+dt)
+--	globals.light0.direction.z = cos(t+dt)
+
+
+
+end
+
+
+function Update()
+	
+	w = output.resolution.width/8
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+		if char == 26 then 
+--			globals.isPaused = 1
+			CompressAndSaveHorizontalData(w, 1, "data/twister_data.bin","data/twister_table.bin", 0 );
+--			SaveRawData("data/twister.bin");
+			--CompressAndSaveHorizontalData(4,1, "data/screen_sprite.bin","data/table_sprite.bin");
+
+
+
+			Message("Files written")
+			
+		end
+		ClearAllObjects()
+		Init()
+	end
+
+	w = output.resolution.width/8-1
+
+--	if (frame ~= noFrames) then 
+	
+	for i=0,output.resolution.height-1 do
+		for j = 0,w do
+			AddC64LineToData(w-j,i,1,1)
+	 	end
+	end
+	SetLight(1,  0,0,-1,  1,1,1);
+
+	UpdateGraphics()
+	frame=frame+1
+
+--	end
+	
+
+
+end
