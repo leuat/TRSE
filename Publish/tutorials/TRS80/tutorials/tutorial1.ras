@@ -1,0 +1,39 @@
+program Tutorial1;
+@use "screen"
+@use "memory"
+var  
+	i,j,time,k:byte;
+	circle : array[Screen::width*Screen::height] of byte = 
+		buildtable2D(Screen::width,Screen::height,
+	"Math.sqrt(0.1*Math.pow(i-SCREEN_WIDTH/2,2) + Math.pow(j-SCREEN_HEIGHT/2,2))") at $4800;
+	src,dst:pointer;
+
+
+procedure RenderCircle();
+begin
+	src:=#circle;
+	dst:=#Screen::screen;
+	
+	for i:=0 to Screen::height do
+	begin
+		for j:=0 to Screen::width do
+		begin
+			dst[j]:=src[j]+time;
+		end;
+		dst+=Screen::width;
+		src+=Screen::width;
+	end;
+	
+end;
+	
+	
+begin
+	Memory::DisableInterrupts();
+	while (true) do
+	begin
+		RenderCircle();
+		time+=1;
+	end;	
+	
+
+end.

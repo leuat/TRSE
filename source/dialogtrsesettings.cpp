@@ -68,7 +68,8 @@ void DialogTRSESettings::FillFromIni()
     ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
-    ui->leSNES->setText(m_ini->getString("snes_emulator"));
+
+    ui->leTRS80->setText(m_ini->getString("trs80_emulator"));    ui->leSNES->setText(m_ini->getString("snes_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
@@ -181,6 +182,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
+    m_ini->setString("trs80_emulator", ui->leTRS80->text());
     m_ini->setString("snes_emulator", ui->leSNES->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
@@ -300,7 +302,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -861,6 +863,23 @@ void DialogTRSESettings::on_btnPMAS_clicked()
         tr("Location of PMAS"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->lePMAS->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnTRS80help_clicked()
+{
+    Help("TRS80 emulator","Download http://48k.ca/trs80gp.html");
+
+}
+
+
+void DialogTRSESettings::on_btnTRS80_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("TRSE80gb emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leTRS80->setText(filename);
 
 }
 

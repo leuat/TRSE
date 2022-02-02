@@ -656,5 +656,6 @@
         <file>resources/code/pokemini/pm.s</file>
         <file>resources/code/pokemini/init.asm</file>
         <file>resources/images/POKEMONMINI.png</file>
+        <file>resources/images/TRS80.png</file>
     </qresource>
 </RCC>

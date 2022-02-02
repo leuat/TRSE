@@ -77,6 +77,7 @@ OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2><tr><td><img sr
 OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system source</h2><p><img src=":resources/images/tutorials/ok3.png" width="300" class="center"><p>Simple source code for the extremely basic KOS - (O)K Operating System.
 
 TIKI100; Tiki 100 tutorials; TIKI100/tutorials/;  <h2>Main TIKI 100 tutorials</h2><p><img src=":resources/images/TIKI100.png" width="300" class="center">The TIKI 100 was a little-known (and failed) 1980s computer from Norway. A perfect match for TRSE!<br><br>  Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
+TRS80; TRS-80 tutorials; TRS80/tutorials/;  <h2>Main TRS-80 tutorials</h2><p><img src=":resources/images/TRS80.png" width="200" class="center"><p>TRS-80 z80 tutorials. Work in progress!<p>Let us know if you're interesting in writing some example files / libraries
 
 PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2><p><img src=":resources/images/PET.png" width="300" class="center">The official PET tutorials!
 PET; PETFrog; PET/PETFrog/;<h2>PET Frog game</h2><p><img src=":resources/images/billboard/b30.png" width="300" class="center"><p>PET Frog for the VIC-20!<p>By Chris Garrett

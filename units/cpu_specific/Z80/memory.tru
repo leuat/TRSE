@@ -1,0 +1,13 @@
+unit Memory;
+var	
+	
+	
+	
+	
+procedure DisableInterrupts() inline;
+begin
+	asm(" di");
+end;
+
+
+end.

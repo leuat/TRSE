@@ -69,6 +69,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemJDH8(settings, proj);
     if (type==AbstractSystem::POKEMONMINI)
         return new SystemPokemonMini(settings, proj);
+    if (type==AbstractSystem::TRS80)
+        return new SystemTRS80(settings, proj);
 
 
     return s;

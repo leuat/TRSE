@@ -39,15 +39,23 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_18">
             <item row="0" column="0">
-             <layout class="QGridLayout" name="grdEmulators" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
-              <item row="3" column="2">
-               <widget class="QLineEdit" name="lePETEmulator"/>
+             <layout class="QGridLayout" name="grdEmulators" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+              <item row="26" column="0">
+               <widget class="QLabel" name="label_65">
+                <property name="text">
+                 <string>JDH-8 base directory</string>
+                </property>
+               </widget>
               </item>
-              <item row="13" column="2">
-               <widget class="QLineEdit" name="leDosbox"/>
+              <item row="19" column="0">
+               <widget class="QLabel" name="label_53">
+                <property name="text">
+                 <string>Apple II emulator</string>
+                </property>
+               </widget>
               </item>
-              <item row="7" column="4">
-               <widget class="QPushButton" name="btnHelpZX">
+              <item row="6" column="4">
+               <widget class="QPushButton" name="btnHelpGB">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -59,17 +67,45 @@
                 </property>
                </widget>
               </item>
-              <item row="15" column="0">
-               <widget class="QLabel" name="label_79">
+              <item row="13" column="3">
+               <widget class="QPushButton" name="btnDosbox">
                 <property name="text">
-                 <string>X16 emulator location</string>
+                 <string>...</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="3">
-               <widget class="QPushButton" name="btnGameboyEmulator">
+              <item row="24" column="0">
+               <widget class="QLabel" name="label_64">
+                <property name="text">
+                 <string>Acorn emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QPushButton" name="btnEmulatorC128">
                 <property name="text">
                  <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_87">
+                <property name="text">
+                 <string>MSX Emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_82">
+                <property name="text">
+                 <string>ZX Spectrum emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="0">
+               <widget class="QLabel" name="label_34">
+                <property name="text">
+                 <string>DOSBOX</string>
                 </property>
                </widget>
               </item>
@@ -81,19 +117,20 @@
                </widget>
               </item>
               <item row="22" column="2">
-               <widget class="QLineEdit" name="leVZ200Emulator"/>
+               <widget class="QLineEdit" name="leSNES"/>
               </item>
-              <item row="4" column="2">
-               <widget class="QLineEdit" name="lePlus4Emulator"/>
+              <item row="17" column="2">
+               <widget class="QLineEdit" name="leBBCEmulator"/>
               </item>
-              <item row="18" column="2">
-               <widget class="QLineEdit" name="leAtari800Emulator"/>
+              <item row="11" column="3">
+               <widget class="QPushButton" name="btnAtari2600">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
               </item>
-              <item row="23" column="2">
-               <widget class="QLineEdit" name="leAcornEmulator"/>
-              </item>
-              <item row="21" column="4">
-               <widget class="QPushButton" name="btnSnesHelp">
+              <item row="2" column="4">
+               <widget class="QPushButton" name="btnHelpVIC20">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -105,8 +142,18 @@
                 </property>
                </widget>
               </item>
-              <item row="12" column="4">
-               <widget class="QPushButton" name="btnHelpTiki">
+              <item row="2" column="2">
+               <widget class="QLineEdit" name="leVic20Emulator"/>
+              </item>
+              <item row="9" column="3">
+               <widget class="QPushButton" name="btnColecoEmulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QPushButton" name="btnHelpPET">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -118,15 +165,11 @@
                 </property>
                </widget>
               </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_86">
-                <property name="text">
-                 <string>Colecovision emulator</string>
-                </property>
-               </widget>
+              <item row="25" column="2">
+               <widget class="QLineEdit" name="leQemuDir"/>
               </item>
-              <item row="18" column="4">
-               <widget class="QPushButton" name="pushButton_4">
+              <item row="4" column="4">
+               <widget class="QPushButton" name="btnHelpPlus4">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -138,8 +181,36 @@
                 </property>
                </widget>
               </item>
-              <item row="22" column="4">
-               <widget class="QPushButton" name="btnVZ200Help">
+              <item row="22" column="0">
+               <widget class="QLabel" name="label_60">
+                <property name="text">
+                 <string>SNES emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="3">
+               <widget class="QPushButton" name="btnMSXEmulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="0">
+               <widget class="QLabel" name="label_18">
+                <property name="text">
+                 <string>OK64 emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="3">
+               <widget class="QPushButton" name="btnGameboyEmulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="4">
+               <widget class="QPushButton" name="btnHelpOK64">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -150,6 +221,37 @@
                  <string>?</string>
                 </property>
                </widget>
+              </item>
+              <item row="25" column="0">
+               <widget class="QLabel" name="label_58">
+                <property name="text">
+                 <string>Qemu directory</string>
+                </property>
+               </widget>
+              </item>
+              <item row="19" column="3">
+               <widget class="QPushButton" name="btnAppleII">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_81">
+                <property name="text">
+                 <string>Gameboy emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="3">
+               <widget class="QPushButton" name="btnNesEmulatr">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QLineEdit" name="lePETEmulator"/>
               </item>
               <item row="18" column="3">
                <widget class="QPushButton" name="btnAtari800Emulator">
@@ -158,18 +260,184 @@
                 </property>
                </widget>
               </item>
-              <item row="25" column="0">
-               <widget class="QLabel" name="label_65">
+              <item row="3" column="3">
+               <widget class="QPushButton" name="btnPetEmulator">
                 <property name="text">
-                 <string>JDH-8 base directory</string>
+                 <string>...</string>
                 </property>
                </widget>
               </item>
-              <item row="20" column="2">
-               <widget class="QLineEdit" name="leOricEmulator"/>
+              <item row="2" column="3">
+               <widget class="QPushButton" name="btnVic20Emulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="2">
+               <widget class="QLineEdit" name="leMSXEmulator"/>
+              </item>
+              <item row="10" column="2">
+               <widget class="QLineEdit" name="leAmstradCPC"/>
+              </item>
+              <item row="10" column="3">
+               <widget class="QPushButton" name="btnAmstradCPC">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="0">
+               <widget class="QLabel" name="label_46">
+                <property name="text">
+                 <string>MEGA 65 Xemu emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="4">
+               <widget class="QPushButton" name="btnHelpDosbox">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
               </item>
               <item row="23" column="3">
-               <widget class="QPushButton" name="btnAcornEmulator">
+               <widget class="QPushButton" name="btnVZ200">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="2">
+               <widget class="QLineEdit" name="leZXSpectrumEmulator"/>
+              </item>
+              <item row="9" column="4">
+               <widget class="QPushButton" name="btnHelpColeco">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="2">
+               <widget class="QLineEdit" name="leDosbox"/>
+              </item>
+              <item row="24" column="4">
+               <widget class="QPushButton" name="btnAcornHelp">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_83">
+                <property name="text">
+                 <string>TIKI 100 emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>NES emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="27" column="2">
+               <widget class="QLineEdit" name="lePokemonMinEmulator"/>
+              </item>
+              <item row="10" column="4">
+               <widget class="QPushButton" name="btnHelpAmstradCPC">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="18" column="2">
+               <widget class="QLineEdit" name="leAtari800Emulator"/>
+              </item>
+              <item row="14" column="3">
+               <widget class="QPushButton" name="btnOKEmulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="4">
+               <widget class="QPushButton" name="btnHelpX16">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="2">
+               <widget class="QLineEdit" name="leX16Emu">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLineEdit" name="leEmulator"/>
+              </item>
+              <item row="17" column="0">
+               <widget class="QLabel" name="label_48">
+                <property name="text">
+                 <string>BBC B2 emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="27" column="4">
+               <widget class="QPushButton" name="btnMameHelp">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>C64 Emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="22" column="3">
+               <widget class="QPushButton" name="btnSnes">
                 <property name="text">
                  <string>...</string>
                 </property>
@@ -188,42 +456,21 @@
                 </property>
                </widget>
               </item>
-              <item row="11" column="4">
-               <widget class="QPushButton" name="btnHelpAtari">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
+              <item row="6" column="2">
+               <widget class="QLineEdit" name="leGameboyEmulator"/>
               </item>
-              <item row="12" column="3">
-               <widget class="QPushButton" name="btnTiki100">
+              <item row="16" column="2">
+               <widget class="QLineEdit" name="leMega65Emu"/>
+              </item>
+              <item row="15" column="0">
+               <widget class="QLabel" name="label_79">
                 <property name="text">
-                 <string>...</string>
+                 <string>X16 emulator location</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="2">
                <widget class="QLineEdit" name="leEmulatorC128"/>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_26">
-                <property name="text">
-                 <string>PLUS4 emulator location:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>C64 Emulator location</string>
-                </property>
-               </widget>
               </item>
               <item row="10" column="0">
                <widget class="QLabel" name="label_85">
@@ -232,128 +479,8 @@
                 </property>
                </widget>
               </item>
-              <item row="24" column="4">
-               <widget class="QPushButton" name="btnQemuHelp">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="0">
-               <widget class="QLabel" name="label_18">
-                <property name="text">
-                 <string>OK64 emulator location</string>
-                </property>
-               </widget>
-              </item>
-              <item row="21" column="2">
-               <widget class="QLineEdit" name="leSNES"/>
-              </item>
-              <item row="15" column="2">
-               <widget class="QLineEdit" name="leX16Emu">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="15" column="3">
-               <widget class="QPushButton" name="btnX16Emulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
               <item row="19" column="4">
                <widget class="QPushButton" name="btnApple2Help">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="3">
-               <widget class="QPushButton" name="btnAmstradCPC">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="label_87">
-                <property name="text">
-                 <string>MSX Emulator</string>
-                </property>
-               </widget>
-              </item>
-              <item row="17" column="4">
-               <widget class="QPushButton" name="pushButton_3">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="3">
-               <widget class="QPushButton" name="btnEmulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="3">
-               <widget class="QPushButton" name="btnColecoEmulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="4">
-               <widget class="QPushButton" name="btnHelpNES">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="25" column="2">
-               <widget class="QLineEdit" name="leJDH8Emulator"/>
-              </item>
-              <item row="16" column="4">
-               <widget class="QPushButton" name="pushButton_2">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="4">
-               <widget class="QPushButton" name="btnHelpPlus4">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -378,85 +505,12 @@
                 </property>
                </widget>
               </item>
-              <item row="15" column="4">
-               <widget class="QPushButton" name="btnHelpX16">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="20" column="0">
-               <widget class="QLabel" name="label_59">
-                <property name="text">
-                 <string>Oric emulator</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="2">
-               <widget class="QLineEdit" name="leZXSpectrumEmulator"/>
-              </item>
-              <item row="16" column="3">
-               <widget class="QPushButton" name="btnMega65Emulator">
+              <item row="20" column="3">
+               <widget class="QPushButton" name="btnOric">
                 <property name="text">
                  <string>...</string>
                 </property>
                </widget>
-              </item>
-              <item row="23" column="0">
-               <widget class="QLabel" name="label_64">
-                <property name="text">
-                 <string>Acorn emulator</string>
-                </property>
-               </widget>
-              </item>
-              <item row="17" column="3">
-               <widget class="QPushButton" name="btnBBCEmulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QLineEdit" name="leEmulator"/>
-              </item>
-              <item row="9" column="4">
-               <widget class="QPushButton" name="btnHelpColeco">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="2">
-               <widget class="QLineEdit" name="leAtari2600Emulator"/>
-              </item>
-              <item row="2" column="3">
-               <widget class="QPushButton" name="btnVic20Emulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="24" column="0">
-               <widget class="QLabel" name="label_58">
-                <property name="text">
-                 <string>Qemu directory</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="2">
-               <widget class="QLineEdit" name="leMSXEmulator"/>
               </item>
               <item row="8" column="4">
                <widget class="QPushButton" name="btnHelpMSX">
@@ -471,11 +525,32 @@
                 </property>
                </widget>
               </item>
-              <item row="24" column="2">
-               <widget class="QLineEdit" name="leQemuDir"/>
+              <item row="16" column="3">
+               <widget class="QPushButton" name="btnMega65Emulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
               </item>
-              <item row="25" column="4">
-               <widget class="QPushButton" name="btnJDH8Help">
+              <item row="5" column="2">
+               <widget class="QLineEdit" name="leNesEmulator"/>
+              </item>
+              <item row="24" column="3">
+               <widget class="QPushButton" name="btnAcornEmulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="25" column="3">
+               <widget class="QPushButton" name="btnQemu">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="18" column="4">
+               <widget class="QPushButton" name="pushButton_4">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -487,24 +562,60 @@
                 </property>
                </widget>
               </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_83">
+              <item row="11" column="0">
+               <widget class="QLabel" name="label_84">
                 <property name="text">
-                 <string>TIKI 100 emulator location</string>
+                 <string>Atari 2600 emulator location</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_82">
+              <item row="22" column="4">
+               <widget class="QPushButton" name="btnSnesHelp">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="text">
-                 <string>ZX Spectrum emulator location</string>
+                 <string>?</string>
                 </property>
                </widget>
               </item>
-              <item row="21" column="0">
-               <widget class="QLabel" name="label_60">
+              <item row="15" column="3">
+               <widget class="QPushButton" name="btnX16Emulator">
                 <property name="text">
-                 <string>SNES emulator</string>
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>C128 Emulator location</string>
+                </property>
+               </widget>
+              </item>
+              <item row="19" column="2">
+               <widget class="QLineEdit" name="leAppleIIEmulator"/>
+              </item>
+              <item row="17" column="3">
+               <widget class="QPushButton" name="btnBBCEmulator">
+                <property name="text">
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="4">
+               <widget class="QPushButton" name="pushButton_2">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
                 </property>
                </widget>
               </item>
@@ -521,50 +632,114 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="4">
-               <widget class="QPushButton" name="btnHelpVIC20">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="4">
-               <widget class="QPushButton" name="btnHelpOK64">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="0">
-               <widget class="QLabel" name="label_34">
-                <property name="text">
-                 <string>DOSBOX</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="3">
-               <widget class="QPushButton" name="btnNesEmulatr">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
               <item row="18" column="0">
                <widget class="QLabel" name="label_49">
                 <property name="text">
                  <string>Atari 800 emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="4">
+               <widget class="QPushButton" name="btnHelpTiki">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="24" column="2">
+               <widget class="QLineEdit" name="leAcornEmulator"/>
+              </item>
+              <item row="4" column="2">
+               <widget class="QLineEdit" name="lePlus4Emulator"/>
+              </item>
+              <item row="12" column="2">
+               <widget class="QLineEdit" name="leTiki100"/>
+              </item>
+              <item row="23" column="2">
+               <widget class="QLineEdit" name="leVZ200Emulator"/>
+              </item>
+              <item row="20" column="0">
+               <widget class="QLabel" name="label_59">
+                <property name="text">
+                 <string>Oric emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="26" column="4">
+               <widget class="QPushButton" name="btnJDH8Help">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="25" column="4">
+               <widget class="QPushButton" name="btnQemuHelp">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_26">
+                <property name="text">
+                 <string>PLUS4 emulator location:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="2">
+               <widget class="QLineEdit" name="leAtari2600Emulator"/>
+              </item>
+              <item row="9" column="2">
+               <widget class="QLineEdit" name="leColecoEmulator"/>
+              </item>
+              <item row="17" column="4">
+               <widget class="QPushButton" name="pushButton_3">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="23" column="4">
+               <widget class="QPushButton" name="btnVZ200Help">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="3">
+               <widget class="QPushButton" name="btnTiki100">
+                <property name="text">
+                 <string>...</string>
                 </property>
                </widget>
               </item>
@@ -575,11 +750,8 @@
                 </property>
                </widget>
               </item>
-              <item row="17" column="2">
-               <widget class="QLineEdit" name="leBBCEmulator"/>
-              </item>
-              <item row="6" column="4">
-               <widget class="QPushButton" name="btnHelpGB">
+              <item row="7" column="4">
+               <widget class="QPushButton" name="btnHelpZX">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -588,37 +760,6 @@
                 </property>
                 <property name="text">
                  <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="17" column="0">
-               <widget class="QLabel" name="label_48">
-                <property name="text">
-                 <string>BBC B2 emulator</string>
-                </property>
-               </widget>
-              </item>
-              <item row="22" column="3">
-               <widget class="QPushButton" name="btnVZ200">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="2">
-               <widget class="QLineEdit" name="leOK64Emulator"/>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_14">
-                <property name="text">
-                 <string>NES emulator location</string>
-                </property>
-               </widget>
-              </item>
-              <item row="16" column="0">
-               <widget class="QLabel" name="label_46">
-                <property name="text">
-                 <string>MEGA 65 Xemu emulator</string>
                 </property>
                </widget>
               </item>
@@ -629,136 +770,22 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="3">
-               <widget class="QPushButton" name="btnEmulatorC128">
+              <item row="0" column="3">
+               <widget class="QPushButton" name="btnEmulator">
                 <property name="text">
                  <string>...</string>
                 </property>
                </widget>
               </item>
-              <item row="10" column="2">
-               <widget class="QLineEdit" name="leAmstradCPC"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_16">
-                <property name="text">
-                 <string>C128 Emulator location</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="2">
-               <widget class="QLineEdit" name="leNesEmulator"/>
-              </item>
-              <item row="11" column="3">
-               <widget class="QPushButton" name="btnAtari2600">
+              <item row="27" column="3">
+               <widget class="QPushButton" name="btnMameEmulator">
                 <property name="text">
                  <string>...</string>
                 </property>
                </widget>
               </item>
-              <item row="11" column="0">
-               <widget class="QLabel" name="label_84">
-                <property name="text">
-                 <string>Atari 2600 emulator location</string>
-                </property>
-               </widget>
-              </item>
-              <item row="19" column="2">
-               <widget class="QLineEdit" name="leAppleIIEmulator"/>
-              </item>
-              <item row="13" column="3">
-               <widget class="QPushButton" name="btnDosbox">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="19" column="0">
-               <widget class="QLabel" name="label_53">
-                <property name="text">
-                 <string>Apple II emulator</string>
-                </property>
-               </widget>
-              </item>
-              <item row="25" column="3">
-               <widget class="QPushButton" name="btnJDH8Emu">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="4">
-               <widget class="QPushButton" name="btnHelpAmstradCPC">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QLineEdit" name="leVic20Emulator"/>
-              </item>
-              <item row="23" column="4">
-               <widget class="QPushButton" name="btnAcornHelp">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="21" column="3">
-               <widget class="QPushButton" name="btnSnes">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="4">
-               <widget class="QPushButton" name="btnHelpDosbox">
-                <property name="maximumSize">
-                 <size>
-                  <width>48</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>?</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="2">
-               <widget class="QLineEdit" name="leGameboyEmulator"/>
-              </item>
-              <item row="24" column="3">
-               <widget class="QPushButton" name="btnQemu">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="19" column="3">
-               <widget class="QPushButton" name="btnAppleII">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="3">
-               <widget class="QPushButton" name="btnOKEmulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
+              <item row="14" column="2">
+               <widget class="QLineEdit" name="leOK64Emulator"/>
               </item>
               <item row="3" column="0">
                <widget class="QLabel" name="label_23">
@@ -767,49 +794,35 @@
                 </property>
                </widget>
               </item>
-              <item row="20" column="3">
-               <widget class="QPushButton" name="btnOric">
+              <item row="20" column="2">
+               <widget class="QLineEdit" name="leOricEmulator"/>
+              </item>
+              <item row="26" column="3">
+               <widget class="QPushButton" name="btnJDH8Emu">
                 <property name="text">
                  <string>...</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="3">
-               <widget class="QPushButton" name="btnMSXEmulator">
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_86">
                 <property name="text">
-                 <string>...</string>
+                 <string>Colecovision emulator</string>
                 </property>
                </widget>
               </item>
-              <item row="9" column="2">
-               <widget class="QLineEdit" name="leColecoEmulator"/>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_81">
+              <item row="27" column="0">
+               <widget class="QLabel" name="label_66">
                 <property name="text">
-                 <string>Gameboy emulator location</string>
+                 <string>Mame emulator (Pokemon Mini)</string>
                 </property>
                </widget>
               </item>
-              <item row="22" column="0">
-               <widget class="QLabel" name="label_63">
-                <property name="text">
-                 <string>VZ200 emulator</string>
-                </property>
-               </widget>
+              <item row="26" column="2">
+               <widget class="QLineEdit" name="leJDH8Emulator"/>
               </item>
-              <item row="12" column="2">
-               <widget class="QLineEdit" name="leTiki100"/>
-              </item>
-              <item row="3" column="3">
-               <widget class="QPushButton" name="btnPetEmulator">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="4">
-               <widget class="QPushButton" name="btnHelpPET">
+              <item row="5" column="4">
+               <widget class="QPushButton" name="btnHelpNES">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>
@@ -821,28 +834,45 @@
                 </property>
                </widget>
               </item>
-              <item row="16" column="2">
-               <widget class="QLineEdit" name="leMega65Emu"/>
-              </item>
-              <item row="26" column="0">
-               <widget class="QLabel" name="label_66">
+              <item row="23" column="0">
+               <widget class="QLabel" name="label_63">
                 <property name="text">
-                 <string>Mame emulator (Pokemon Mini)</string>
+                 <string>VZ200 emulator</string>
                 </property>
                </widget>
               </item>
-              <item row="26" column="2">
-               <widget class="QLineEdit" name="lePokemonMinEmulator"/>
+              <item row="11" column="4">
+               <widget class="QPushButton" name="btnHelpAtari">
+                <property name="maximumSize">
+                 <size>
+                  <width>48</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>?</string>
+                </property>
+               </widget>
               </item>
-              <item row="26" column="3">
-               <widget class="QPushButton" name="btnMameEmulator">
+              <item row="21" column="0">
+               <widget class="QLabel" name="label_68">
+                <property name="text">
+                 <string>TRS-80 emulator</string>
+                </property>
+               </widget>
+              </item>
+              <item row="21" column="2">
+               <widget class="QLineEdit" name="leTRS80"/>
+              </item>
+              <item row="21" column="3">
+               <widget class="QPushButton" name="btnTRS80">
                 <property name="text">
                  <string>...</string>
                 </property>
                </widget>
               </item>
-              <item row="26" column="4">
-               <widget class="QPushButton" name="btnMameHelp">
+              <item row="21" column="4">
+               <widget class="QPushButton" name="btnTRS80help">
                 <property name="maximumSize">
                  <size>
                   <width>48</width>

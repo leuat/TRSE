@@ -1039,6 +1039,11 @@
               <string>POKEMONMINI</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>TRS80</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="1">

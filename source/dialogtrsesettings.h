@@ -213,6 +213,10 @@ private slots:
 
     void on_btnPMAS_clicked();
 
+    void on_btnTRS80help_clicked();
+
+    void on_btnTRS80_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };
