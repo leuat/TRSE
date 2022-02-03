@@ -72,11 +72,11 @@ QString NodeNumber::getValue8bit(Assembler *as, int isHi) {
     if (isAddress()) hash="";
     if (isReference()) hash="#";
     if (isHi==1)
-        return hash + Util::numToHex((int)m_val>>8);
+        return hash + Util::numToHex(((int)m_val>>8)&0xFF);
     if (isHi==0)
         return hash + Util::numToHex(((int)m_val)&0xFF);
     if (isHi==2)
-        return hash + Util::numToHex((int)m_val>>16);
+        return hash + Util::numToHex(((int)m_val>>16)&0xFF);
 
     return 0;
 }
