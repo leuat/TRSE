@@ -78,6 +78,7 @@ void DialogTRSESettings::FillFromIni()
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
+    ui->leWasm->setText(m_ini->getString("lwasm"));
     ui->lePMAS->setText(m_ini->getString("pmas"));
     ui->leCL65->setText(m_ini->getString("cl65"));
     ui->leZXSpectrumEmulator->setText(m_ini->getString("spectrum_emulator"));
@@ -198,6 +199,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
     m_ini->setString("tiki100_emulator", ui->leTiki100->text());
     m_ini->setString("pasmo", ui->lePasmo->text());
+    m_ini->setString("lwasm", ui->leWasm->text());
     m_ini->setString("pmas", ui->lePMAS->text());
     m_ini->setString("cl65", ui->leCL65->text());
 
@@ -881,5 +883,14 @@ void DialogTRSESettings::on_btnTRS80_clicked()
     if (filename!="")
         ui->leTRS80->setText(filename);
 
+}
+
+
+void DialogTRSESettings::on_btnWasm_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("lwasm assembler"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leWasm->setText(filename);
 }
 

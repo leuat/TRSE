@@ -217,6 +217,8 @@ private slots:
 
     void on_btnTRS80_clicked();
 
+    void on_btnWasm_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

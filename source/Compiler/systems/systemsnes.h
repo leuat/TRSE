@@ -25,6 +25,13 @@ public:
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
         params<<filename+".smc";
     }
+    virtual QString getCPUAssemblerString() override {
+        return ".p816   ; 65816 processor";
+
+    }
+
+
+
 
 };
 

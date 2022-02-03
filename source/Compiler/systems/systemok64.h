@@ -24,6 +24,9 @@ public:
         params << filename+".prg";
 
     }
+    virtual int addressBusBits() override {
+        return 24;
+    }
 
 };
 

@@ -105,6 +105,9 @@ public:
     virtual void SbcHlDe() {}
 
 
+    QString getBank(QSharedPointer<NodeVarType> t);
+
+
     /*
      *  Probably the most important method in all of TRSE
      *  Abstract AssignVariable

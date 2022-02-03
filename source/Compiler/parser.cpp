@@ -86,6 +86,7 @@ QStringList Parser::getFlags() {
 
     while (!done)  {
         done = true;
+
         TokenType::Type type = m_currentToken.m_type;
         if (m_typeFlags.contains(type)) {
             Eat(type);
@@ -782,6 +783,8 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     int r = ret.toInt();
 //    qDebug() << "PARSER "<<r;
     if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64)
+        return r;
+    if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->addressBusBits()>16)
         return r;
     if (forceType==TokenType::BYTE)
         return r&0xFF;
@@ -3615,6 +3618,8 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         isInline = true;
         Eat(TokenType::INLINE);
     }
+
+
 /*    if (m_currentToken.m_type == TokenType::RECURSIVE) {
         isRecursive = true;"
         Eat(TokenType::RECURSIVE);
@@ -4377,7 +4382,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
             //position = m_currentToken.getNumAsHexString();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
-//            qDebug() << "PARSER "<<position;
 
 
         }
@@ -4427,6 +4431,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         if (m_currentToken.m_type==TokenType::AT || m_currentToken.m_type==TokenType::ABSOLUT) {
             Eat();
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
+
         }
 
 

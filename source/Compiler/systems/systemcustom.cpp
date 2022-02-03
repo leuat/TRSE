@@ -4,8 +4,8 @@
 #include "source/LeLib/util/util.h"
 
 SystemCustom::SystemCustom(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
-    m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert";
-    m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global" <<"stack";
+    m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert"<<"bank"<<"lpointer";
+    m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global" <<"stack"<<"bank"<<"lpointer";
     m_supportsExomizer = false;
     //        m_registers << "_a"<<"_x" <<"_y" <<"_ax" <<"_ay" <<"_xy";
     m_canRunAsmFiles = false;
@@ -30,6 +30,7 @@ void SystemCustom::Assemble(QString &text, QString filename, QString currentDir,
     int time = timer.elapsed();
     bool useInternal = m_projectIni->getString("custom_system_assembler").toLower()=="from system";
     QStringList params = m_projectIni->getString("custom_system_assembler_parameters").trimmed().simplified().split(" ");
+
     for (QString& s:params)
         s = s.replace("@prg",filename);
 
@@ -121,4 +122,21 @@ void SystemCustom::PostProcess(QString &text, QString file, QString currentDir)
 
 bool SystemCustom::CL65Syntax() {
     return (m_processor==WDC65C02 || m_processor==WDC65C816);
+}
+
+int SystemCustom::addressBusBits() {
+    if ((m_processor==WDC65C02 || m_processor==WDC65C816))
+        return 24;
+
+    return 16;
+}
+
+QString SystemCustom::getCPUAssemblerString() {
+    if (m_processor==WDC65C02) {
+     return ".p816   ; 65816 processor";
+    }
+    if (m_processor==WDC65C816) {
+        return ".p4510   ; 65816 processor";
+    }
+    return "";
 }

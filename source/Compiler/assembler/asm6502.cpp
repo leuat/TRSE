@@ -139,10 +139,10 @@ void Asm6502::Program(QString programName, QString vicConfig)
        return;
     }
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES || Syntax::s.m_currentSystem->isCustom()) {
     //    m_source+=m_startInsertAssembler;
-        Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-
+        Write(Syntax::s.m_currentSystem->getCPUAssemblerString(),0);
+        Asm(GetOrg()+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
 //        StartMemoryBlock("$8000");
 

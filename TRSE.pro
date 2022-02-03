@@ -173,6 +173,7 @@ SOURCES += main.cpp\
     source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/optimiser/postoptimizerz80.cpp \
     source/Compiler/systems/system65c816.cpp \
+    source/Compiler/systems/system6809.cpp \
     source/Compiler/systems/systemacorn.cpp \
     source/Compiler/systems/systemamstradcpc.cpp \
     source/Compiler/systems/systemappleii.cpp \
@@ -196,6 +197,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemtiki100.cpp \
     source/Compiler/systems/systemtrs80.cpp \
+    source/Compiler/systems/systemtrs80coco.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemx16.cpp \
     source/Compiler/systems/systemx86.cpp \
@@ -446,6 +448,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/optimiser/postoptimizerz80.h \
     source/Compiler/systems/system65c816.h \
+    source/Compiler/systems/system6809.h \
     source/Compiler/systems/systemacorn.h \
     source/Compiler/systems/systemamstradcpc.h \
     source/Compiler/systems/systemappleii.h \
@@ -469,6 +472,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemtiki100.h \
     source/Compiler/systems/systemtrs80.h \
+    source/Compiler/systems/systemtrs80coco.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemx16.h \
     source/Compiler/systems/systemx86.h \

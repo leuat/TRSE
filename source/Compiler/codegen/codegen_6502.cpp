@@ -861,15 +861,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVarDecl> node)
     }
 
     if (t->m_flags.contains("bank")) {
-        QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
-        if (!as->m_banks.contains(bnk)) {
-            as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
-            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
-                as->m_banks[bnk]->m_pos = "$0000";
-            else
-                as->m_banks[bnk]->m_pos = "$4000";
-            as->m_banks[bnk]->m_isMainBlock = true;
-        }
+        QString bnk = getBank(t);
         as->m_currentBlock = as->m_banks[bnk];
     }
     if (v->m_isGlobal) {

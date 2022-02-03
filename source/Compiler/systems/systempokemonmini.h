@@ -22,6 +22,9 @@ public:
     virtual int getCPUFlavorint() override {
         return 4; // s1c88
     }
+    virtual int addressBusBits() override {
+        return 24;
+    }
 
 };
 #endif // SYSTEMPOKEMONMINI_H

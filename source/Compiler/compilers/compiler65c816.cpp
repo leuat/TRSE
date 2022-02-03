@@ -62,12 +62,23 @@ void Compiler65C816::Init6502Assembler()
 
 
     if (Syntax::s.m_currentSystem->isCustom())
+    if (Syntax::s.m_currentSystem->isCustom()) {
         Syntax::s.m_ignoreSys = true;
+        if (m_projectIni->getdouble("override_target_settings")==1) {
+            Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
+            Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+            Syntax::s.m_currentSystem->m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
 
+        } else {
+            Syntax::s.m_currentSystem->DefaultValues();
+            //       Syntax::s.m_stripPrg = false;
+
+        }
+
+    }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
-
 //        Syntax::s.m_ignoreSys = false;
-
+//        qDebug() << "WOOT";
         if (m_projectIni->getdouble("override_target_settings")==1) {
             Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
             Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
@@ -107,6 +118,7 @@ void Compiler65C816::Connect()
     }
 
     m_assembler->Connect();
+
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES) {
         m_assembler->m_currentBlock = nullptr;

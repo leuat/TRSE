@@ -249,6 +249,19 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
         as->Asm(getReturn());
 }
 
+QString AbstractCodeGen::getBank(QSharedPointer<NodeVarType> t) {
+    QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
+    if (!as->m_banks.contains(bnk)) {
+        as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
+            as->m_banks[bnk]->m_pos = "$0000";
+        else
+            as->m_banks[bnk]->m_pos = "$4000";
+        as->m_banks[bnk]->m_isMainBlock = true;
+    }
+    return bnk;
+}
+
 
 /*
  *
@@ -777,8 +790,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
         }
         as->m_currentBlock = as->m_banks[bnk];
         m_isFarAway = true;
-    }
 
+    }
+    else
     if (UseBlocks()) {
         as->Comment("NodeProcedureDecl "+ QString::number(node->m_blockInfo.m_blockID));
         int ret = node->MaintainBlocks(as);
@@ -863,12 +877,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
 
     as->m_symTab->ExitProcedureScope(false);
+    as->Label("end_procedure_"+node->m_procName);
 
     if (isInbank) {
         as->m_currentBlock = orgBank;
         m_isFarAway = false;
     }
-    as->Label("end_procedure_"+node->m_procName);
     //  as->PopCounter(ln);
 }
 

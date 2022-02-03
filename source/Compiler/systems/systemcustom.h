@@ -21,6 +21,10 @@ public:
         QString p = pini->getString("custom_system_emulator_parameters").trimmed().simplified().replace("@prg",filename);
         params << p.split(" ");
     }
+    virtual int addressBusBits() override;
+
+
+    QString getCPUAssemblerString();
 
 };
 #endif // SYSTEMCUSTOM_H

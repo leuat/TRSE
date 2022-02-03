@@ -31,6 +31,13 @@ public:
     {
         return CompressLZ4(fileName);
     }
+    virtual int addressBusBits() override {
+        return 24;
+    }
+    virtual QString getCPUAssemblerString() override {
+        return ".p4510   ; 65816 processor";
+
+    }
 
 };
 

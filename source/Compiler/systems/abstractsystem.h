@@ -135,6 +135,11 @@ public:
     virtual bool CL65Syntax() {return false;}
     static QString StringFromProcessor(QString s);
 
+
+    virtual int addressBusBits() {
+        return 16;
+    }
+
     virtual QString getEmulatorName() = 0;
     virtual void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) = 0;
 
@@ -165,6 +170,9 @@ public:
     void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
     void AssembleCL65(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, QString ending, QStringList params);
 
+    virtual QString getCPUAssemblerString() {
+        return "";
+    }
 
     virtual int getCPUFlavorint() {
         return 0;

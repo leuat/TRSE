@@ -19,11 +19,11 @@ var
 	const charVal:byte= $40;
 // Place 40x25 noise data at a random position
 	const noisePos : address = $4000;
-	const charsetLoc : address =  $3000;
+	const charsetLoc : address = $3000;
 
 // generate seamless perlin noise
 //@deletefile "data/perlin80.dat"
-	@perlinnoise "resources/data/perlin80.dat" 80 50 3 3 50 16
+	@perlinnoise "resources/data/perlin80.dat" 80 50 3 3 5 6 16
 
 
    	noiseData: incbin("resources/data/perlin80.dat",noisePos); 

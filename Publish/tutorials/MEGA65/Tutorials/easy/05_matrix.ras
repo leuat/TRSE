@@ -46,7 +46,7 @@ end;
 /*
 	Renders the actual matrix effect
 */
-procedure RenderMatrix();
+procedure RenderMatrix() bank(2);
 begin
 	// Look through 80 columns
 	for i:=0 to screen_width do 
