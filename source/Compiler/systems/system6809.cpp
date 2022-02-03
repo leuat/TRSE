@@ -2,7 +2,6 @@
 
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
-#include "System6809.h"
 
 //#include "source/LeLib/util/lz4/lz4.h"
 
