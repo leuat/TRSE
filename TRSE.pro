@@ -160,6 +160,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/registerstack.cpp \
     source/Compiler/compilers/compiler6502.cpp \
     source/Compiler/compilers/compiler65c816.cpp \
+    source/Compiler/compilers/compiler6809.cpp \
     source/Compiler/compilers/compilerarm.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerjdh8.cpp \
@@ -435,6 +436,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/registerstack.h \
     source/Compiler/compilers/compiler6502.h \
     source/Compiler/compilers/compiler65c816.h \
+    source/Compiler/compilers/compiler6809.h \
     source/Compiler/compilers/compilerarm.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerjdh8.h \

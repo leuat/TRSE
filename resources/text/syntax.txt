@@ -285,10 +285,10 @@ m; VBIRQ;Amiga; p
 m; ProjectAllVertices; Amiga, ATARI520ST; a,a,l,l,l,l
 
 #Memory routines
-m; Poke; MOS6502, Z80 ; a,b,b
-m; Peek; MOS6502, Z80  ; a,b
-m; ToggleBit; MOS6502 ; a,b,b
-m; GetBit; MOS6502 ; a,b
+m; Poke; MOS6502, Z80, M6809 ; a,b,b
+m; Peek; MOS6502, Z80, M6809  ; a,b
+m; ToggleBit; MOS6502, M6809 ; a,b,b
+m; GetBit; MOS6502, M6809 ; a,b
 
 m; EnableAllRam; C64, MEGA65, PLUS4  ;
 m; MemCpy; MOS6502 ; a,b,a,b

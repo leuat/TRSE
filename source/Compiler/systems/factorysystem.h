@@ -33,6 +33,7 @@
 #include "systemjdh8.h"
 #include "systempokemonmini.h"
 #include "systemtrs80.h"
+#include "systemtrs80coco.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

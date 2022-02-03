@@ -112,6 +112,7 @@ public:
     virtual bool is386() { return false;}
     virtual bool is286() { return false;}
     virtual bool is8088() { return false;}
+    virtual bool is6809() { return false;}
     virtual int getPointerSize() {
         return 2;
     }
@@ -127,8 +128,8 @@ public:
     static void InitLabelColors();
  //   virtual bool hasFixedProgramAddress() {return true;}
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200, ACORN, JDH8, POKEMONMINI, TRS80};
-    enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02, PJDH8, S1C88};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200, ACORN, JDH8, POKEMONMINI, TRS80, TRS80COCO};
+    enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02, PJDH8, S1C88, M6809};
 
     static QString StringFromProcessor(Processor s);
     static Processor ProcessorFromString(QString s);

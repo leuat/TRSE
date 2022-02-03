@@ -139,7 +139,8 @@ void Asm6502::Program(QString programName, QString vicConfig)
        return;
     }
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES || Syntax::s.m_currentSystem->isCustom()) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES || Syntax::s.m_currentSystem->isCustom() ||
+            Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
     //    m_source+=m_startInsertAssembler;
         Write(Syntax::s.m_currentSystem->getCPUAssemblerString(),0);
         Asm(GetOrg()+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));

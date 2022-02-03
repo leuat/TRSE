@@ -27,6 +27,7 @@ public:
     virtual int addressBusBits() override {
         return 24;
     }
+    virtual bool is6809() { return true;}
 
 };
 

@@ -23,7 +23,7 @@ public:
         return "";
     }
     virtual QString getEmulatorName() override {
-        return m_settingsIni->getString("trs80_emulator");
+        return m_settingsIni->getString("pokemonmini_emulator");
     }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 

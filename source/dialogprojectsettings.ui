@@ -1044,6 +1044,11 @@
               <string>TRS80</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>TRS80COCO</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="1">

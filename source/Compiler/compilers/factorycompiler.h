@@ -10,6 +10,7 @@
 #include "compilerjdh8.h"
 #include "compilers1c88.h"
 #include "compilerarm.h"
+#include "compiler6809.h"
 
 class FactoryCompiler
 {

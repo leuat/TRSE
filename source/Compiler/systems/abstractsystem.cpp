@@ -93,6 +93,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == WDC65C02) return "WDC65C02";
         if (s == PJDH8) return "JDH8";
         if (s == S1C88) return "S1C88";
+        if (s == M6809) return "M6809";
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return "";
     }
@@ -108,6 +109,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "WDC65C02" || s =="65C02") return WDC65C02;
         if (s == "PJDH8") return PJDH8;
         if (s == "S1C88") return S1C88;
+        if (s == "M6809") return M6809;
         qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
         return MOS6502;
     }
@@ -122,6 +124,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "SNES") return "WDC65C816";
         if (s == "MEGA65") return "WDC65C02";
         if (s == "JDH8") return "PJDH8";
+        if (s == "TRS80COCO") return "M6809";
         if (s == "POKEMONMINI") return "S1C88";
         if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80") return "Z80";
 
@@ -194,6 +197,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         return POKEMONMINI;
     if (s.toLower()=="trs80")
         return TRS80;
+    if (s.toLower()=="trs80coco")
+        return TRS80COCO;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -231,6 +236,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == JDH8) return "JDH8";
     if (s == POKEMONMINI) return "POKEMONMINI";
     if (s == TRS80) return "TRS80";
+    if (s == TRS80COCO) return "TRS80COCO";
     return "";
 }
 
@@ -251,6 +257,8 @@ bool AbstractSystem::systemIsOfType(QString val)
     if (val=="mos6502" && (m_processor==WDC65C02 || m_processor==WDC65C816))
         return true;
     if (val=="z80" && (m_processor==GBZ80))
+        return true;
+    if (val=="m6809" && (m_processor==M6809))
         return true;
 
     return false;

@@ -1464,14 +1464,16 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
         return;
 
     }
-
+    QString cmp ="cmp ";
+    if (Syntax::s.m_currentSystem->is6809())
+        cmp = "cmpa ";
     if (nodeB->isPure() && (1==2)) { // DISABLE this optimization - for now
         as->Comment("Optimization: switch A and B, allow for optimizer");
         as->ClearTerm();
         nodeA->m_left->Accept(this);
         as->Term();
 
-        as->Asm("cmp " + nodeB->getValue(as) +" ;keep");
+        as->Asm(cmp + nodeB->getValue(as) +" ;keep");
 
     }
     else {
@@ -1485,12 +1487,12 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
             as->ClearTerm();
             nodeB->Accept(this);
             as->Term();
-            as->Asm("cmp "+temp+" ;keep");
+            as->Asm(cmp+temp+" ;keep");
         }
         else {
             nodeB->Accept(this);
             as->Term();
-            as->Asm("cmp " + nodeA->m_left->getValue(as) +" ;keep");
+            as->Asm(cmp + nodeA->m_left->getValue(as) +" ;keep");
         }
     }
     int stepValue = 1; // do we have a step value?

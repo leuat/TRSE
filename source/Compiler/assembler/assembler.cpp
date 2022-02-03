@@ -363,7 +363,7 @@ void Assembler::PopLabel(QString s) {
 
 QString Assembler::getLabelEnding(QString s)
 {
-    if (Syntax::s.m_currentSystem->CL65Syntax()) {
+    if (Syntax::s.m_currentSystem->CL65Syntax() || Syntax::s.m_currentSystem->is6809())  {
         s = s.trimmed();
         if (!s.endsWith(":") && !s.contains("="))
             s=s+":";
@@ -388,7 +388,7 @@ void Assembler::Asm(QString s, QString comment)
 
 void Assembler::Label(QString s)
 {
-    if (Syntax::s.m_currentSystem->CL65Syntax()) {
+    if (Syntax::s.m_currentSystem->CL65Syntax() || Syntax::s.m_currentSystem->is6809()) {
         s = s.trimmed();
         if (!s.endsWith(":") && !s.contains("="))
             s=s+":";

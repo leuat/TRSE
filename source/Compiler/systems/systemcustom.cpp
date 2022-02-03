@@ -133,10 +133,10 @@ int SystemCustom::addressBusBits() {
 
 QString SystemCustom::getCPUAssemblerString() {
     if (m_processor==WDC65C02) {
-     return ".p816   ; 65816 processor";
+     return ".p4510   ; 65816 processor";
     }
     if (m_processor==WDC65C816) {
-        return ".p4510   ; 65816 processor";
+        return ".p816   ; 65816 processor";
     }
     return "";
 }
