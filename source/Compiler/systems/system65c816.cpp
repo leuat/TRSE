@@ -9,6 +9,7 @@ System65C816::System65C816(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
     m_allowClasses = true; // EXPERIMENTAL
     m_processor = WDC65C816;
 
+    m_allowedBaseTypes<<"LONG";
     m_renameVariables << "a" <<"x"<<"y"<<"pc"<<"sp";
 
 }

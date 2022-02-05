@@ -14,6 +14,8 @@ SystemCustom::SystemCustom(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
 //    qDebug() << "SYSTEMCUSTOM" <<(m_processor==WDC65C816);
     m_alternateMethods = proj->getString("custom_system_methods");
     m_requireEmulatorWorkingDirectory = true;
+    m_allowedBaseTypes<<"LONG";
+
 }
 
 void SystemCustom::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)

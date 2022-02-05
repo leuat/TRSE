@@ -2152,6 +2152,10 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 secondReg="y";
                 pa="(";
                 pb=")";
+                if (node->hasFlag(as,"lpointer")) {
+                    pa="[";
+                    pb="]";
+                }
                 as->Comment("Storing to a pointer");
             }
 //            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
@@ -3108,6 +3112,13 @@ bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
         secondReg="y";
         pa="(";
         pb=")";
+
+        if (node->hasFlag(as,"lpointer")) {
+            pa="[";
+            pb="]";
+        }
+
+
     }
     as->Comment("Store Variable simplified optimization : right-hand term is pure");
     as->ClearTerm();
@@ -3124,10 +3135,10 @@ bool CodeGen6502::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
         as->Asm("tay");
         as->Asm("ldx "+getValue8bit(expr,true));
         as->Asm("lda "+getValue8bit(expr,false));
-        as->Asm("sta ("+getValue(node)+"),y");
+        as->Asm("sta "+pa+getValue(node)+pb+",y");
         as->Asm("iny");
         as->Asm("txa");
-        as->Asm("sta ("+getValue(node)+"),y");
+        as->Asm("sta "+pa+getValue(node)+pb+",y");
         return true;
 
     }
