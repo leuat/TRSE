@@ -2373,7 +2373,7 @@ bool CodeGen6502::AssignPointer(QSharedPointer<NodeAssign> node) {
         as->Asm("stx "+ getValue(aVar)+"+1");
         if (aVar->hasFlag(as,"lpointer")) {
             as->Asm("lda " + getValue8bit(node->m_right,2));
-            as->Asm("sta "+ getValue8bit(aVar,2)+"+2");
+            as->Asm("sta "+ getValue8bit(aVar,2));
 
         }
 

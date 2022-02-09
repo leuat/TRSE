@@ -315,6 +315,12 @@ QString NodeVar::getValue8bit(Assembler *as, int isHi) {
             return "#0";
        return pa+getValue(as)+"+1"+pb;
     }
+    else
+    if (isHi==2) {
+        if (getOrgType(as)==TokenType::BYTE || getOrgType(as)==TokenType::INTEGER)
+            return "#0";
+       return pa+getValue(as)+"+2"+pb;
+    }
     else return pa+getValue(as)+pb;
 }
 
