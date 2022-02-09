@@ -46,7 +46,8 @@ public:
         params  <<"-besure" <<"-prgmode" <<"65"<< "-prg" <<filename+".prg";
     }
 
+    void PrepareInitialAssembler(Assembler* as) override;
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
 };
-
 #endif // SYSTEMMEGA65_H

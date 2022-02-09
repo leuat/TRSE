@@ -16,34 +16,8 @@ System65C816::System65C816(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
 
 void System65C816::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
-    if (Syntax::s.m_currentSystem->m_system==SNES) {
-        QString smc = currentDir + QDir::separator() + "smc.cfg";
-        if (!QFile::exists(smc))
-            Util::CopyFile(":resources/code/snes/smc.cfg",smc);
 
-        QStringList params = QStringList() <<"-C" <<smc <<("-o"+filename+".smc") <<(filename +".asm");
 
-/*        QString music = currentDir + QDir::separator() + "music.asm";
-        if (!QFile::exists(music))
-            Util::CopyFile(":resources/code/snes/music.asm",music);
-*/
-
-        AssembleCL65(text,filename,currentDir,symTab,"smc",params);
-    }
-    if (Syntax::s.m_currentSystem->m_system==MEGA65) {
-        QString smc = currentDir + QDir::separator() + "config.cfg";
-       if (!QFile::exists(smc))
-            Util::CopyFile(":resources/code/mega65/config.cfg",smc);
-//        QStringList params = QStringList() << "-t none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
-        QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
-//        QStringList params = QStringList() <<"--cpu"<<"4510"<<(filename +".asm") <<("-o"+filename+".prg");
-        AssembleCL65(text,filename,currentDir,symTab,"prg",params);
-        QString f= filename+".prg";
-        QByteArray da = Util::loadBinaryFile(f);
-        da.insert(0,(uchar)01);
-        da.insert(1,(uchar)0x20);
-        Util::SaveByteArray(da,f);
-    }
 
 
     if (m_projectIni->getdouble("exomizer_toggle")==1) {
@@ -91,5 +65,5 @@ void System65C816::PostProcess(QString &text, QString file, QString currentDir)
 void System65C816::DefaultValues()
 {
     m_ignoreSys = false;
-    m_startAddress=0x7FF;
+    m_startAddress=0x800;
 }

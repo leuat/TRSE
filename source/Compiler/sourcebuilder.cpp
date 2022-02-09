@@ -83,6 +83,9 @@ bool SourceBuilder::Build(QString source)
     */
 
     compiler->Parse(source,lst, m_currentSourceFile);
+
+
+
 //    if (compiler->m_tree==nullptr)
   //      return true;
 

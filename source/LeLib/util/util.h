@@ -242,6 +242,9 @@ public:
 
     static int CountFilesInAllDirectories(QString dir, QStringList fileTypes);
 
+
+    static QString IntToHexString(int val);
+
 };
 
 

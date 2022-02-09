@@ -26,5 +26,7 @@ public:
 
     QString getCPUAssemblerString();
 
+    void PrepareInitialAssembler(Assembler* as) override;
+
 };
 #endif // SYSTEMCUSTOM_H

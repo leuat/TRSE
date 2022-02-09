@@ -61,7 +61,6 @@ public:
 
     int m_curZeroPointer=0;
 
-    QString m_insertEndBlock = "";
 
     QVector<int> m_removeLines;
     bool endTerm() {
@@ -74,7 +73,6 @@ public:
     //int m_lblIdx = 0;
     QMap<QString, int> m_lblIdx;
 
-    QString intToHexString(int val);
 
 
     void InitCStrings();

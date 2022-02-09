@@ -349,3 +349,35 @@ void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString deb
 
 }
 
+void SystemMOS6502::PrepareInitialAssembler(Assembler *as) {
+    // new method
+    //Asm(".byte $00 ; fill $xxx0");
+    if (!(!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)))
+        return;
+
+
+
+    as->Asm( ".byte $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
+    as->Asm( ".byte $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
+    as->Asm(".byte $0a, $00 ; line 10 (lo, hi)");
+    as->Asm(".byte $9e, $20 ; SYS token and a space");
+    // write PETSCII / ASCII representation of address to call
+    as->Asm(Util::IntToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+    as->Asm(".byte $00, $00, $00 ; end of program");
+
+    /* // old method
+        Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
+        Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
+        Asm(".byte     $00");   // 6, 4, )
+        */
+    as->Nl();
+
+    as->EndMemoryBlock();
+//        Comment("End of SYS memory block, starting new");
+    as->StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+    as->m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
+//      Comment("Start of MAIN BLOCK");
+//        qDebug() << "INSERT "+m_insertEndBlock;
+
+}
+

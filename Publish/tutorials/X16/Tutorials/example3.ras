@@ -64,7 +64,6 @@ begin
 	*/
 	SetVeraTileMode(0,0);
 
-
 	setverabank(0);
 	setveraincrement(1);
 	vera_addr_mid:=0;

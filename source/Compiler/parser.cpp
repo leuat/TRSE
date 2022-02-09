@@ -3449,7 +3449,6 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
         Eat(TokenType::LPAREN);
         while (m_currentToken.m_type==TokenType::ID) {
             QVector<QSharedPointer<Node>> ns = VariableDeclarations(blockName,true);
-
             for (QSharedPointer<Node> n: ns) {
                 decl.append(n);
             }
@@ -3661,9 +3660,15 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     procDecl->m_flags = flags;
     AppendComment(procDecl);
 
+    bool alreadyForwaredDeclared = false;
+
     if (m_procedures[procName]!=nullptr) {
+      //  qDebug() << "Procedure already defined: testing for forward "<<procName <<m_proceduresOnly.count();
         procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
         procDecl->m_isUsedBy = m_procedures[procName]->m_isUsedBy;
+        if (qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName])->m_isForward==false)
+            ErrorHandler::e.Error("Procedure '"+ WashVariableName(procName) +"' is already declared.", tok.m_lineNumber);
+
         // Make sure that the correct number of parameters + types etc are identical for the forward declared procedure
         QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
         if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
@@ -3682,8 +3687,20 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
                                       "' has incorrect declared parameter type for parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"', should be "
                                       +WashVariableName(qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value), tok.m_lineNumber);
 
-
         }
+/*        for (QSharedPointer<Node> d: m_proceduresOnly) {
+//            qDebug()<< "   *********";
+            auto p = qSharedPointerDynamicCast<NodeProcedureDecl>(d);
+  //          qDebug() << " testing : "<<procName<<p->m_isForward;
+            if (p->m_procName == procName && p->m_isForward) {
+                ///procDecl->m_isForward = true;
+                m_proceduresOnly.replace(m_proceduresOnly.indexOf(p),procDecl);
+                alreadyForwaredDeclared = true;
+    //            qDebug() << "Replacing forwarded procedure: " <<procDecl;
+                break;
+            }
+
+        }*/
 //            qDebug() << procName << procDecl->m_paramDecl.count() << existing->m_paramDecl.count();
 
     }
@@ -3700,23 +3717,31 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 //        if (block==nullptr)
 //          qDebug() << "Procedure decl: " << procName;
     //decl.append(procDecl);
-    if (block!=nullptr)
+    if (block!=nullptr) {
+    //    qDebug() << "Found block for : "<<procName;
         Eat(TokenType::SEMI);
+    }
     else {
         // Forward declared variables are used
+      //  qDebug() << "Forward declaration : "<<procName;
         procDecl->m_isUsed = true;
-
+        procDecl->m_isForward = true;
+        for (auto& p:procDecl->m_paramDecl) {
+            QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(p);
+            QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
+            m_symTab->m_forwardedVariables.append(v->value);
+        }
     }
 
-    procDecl->AppendBlock(block);
-    //qDebug() <<procName;
 
-    if (block!=nullptr) {
+
+    procDecl->AppendBlock(block);
+
+    if (block!=nullptr && !alreadyForwaredDeclared) {
         bool ok = true;
-         // Check if procedure already declared
         for (QSharedPointer<Node> n: m_proceduresOnly) {
             QSharedPointer<NodeProcedureDecl> proc =qSharedPointerDynamicCast<NodeProcedureDecl>(n);
-            if (proc->m_procName==procName) {
+            if (proc->m_procName==procName && !proc->m_isForward) {
                 ok = false;
                 // Verify that the parameters are identical:
             }
@@ -3726,13 +3751,15 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         if (!ok)
             ErrorHandler::e.Error("Procedure '"+ procName +"' already defined", tok.m_lineNumber);
 
-        m_proceduresOnly.append(procDecl);
     }
-
+    if (!procDecl->m_isForward)
+        m_proceduresOnly.append(procDecl);
 
     Symbol::s_currentProcedure = "main";
     m_inCurrentProcedure = "main";
     decl.append(procDecl);
+
+
 }
 
 
@@ -3972,7 +3999,6 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     QString varName = m_currentToken.m_value;
     QStringList variableNames;
     variableNames << varName;
-//    qDebug() << "CURRENT VARNAME "<< varName;
     QVector<QSharedPointer<Symbol>> syms;
     syms.append(QSharedPointer<Symbol>(new Symbol(m_currentToken.m_value,"")));
     Eat(TokenType::ID);

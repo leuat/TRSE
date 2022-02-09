@@ -31,7 +31,7 @@ public:
     }
 
 
-
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
 };
 

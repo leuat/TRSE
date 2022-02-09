@@ -178,6 +178,9 @@ Renders a .flf level at map pos x,y
 
 //Goes through all data and resets the isdead flag to 0
 
+
+
+
 procedure ResetLevels(rl_levelp:pointer);
 begin
 	rl_levelp := rl_levelp+(13+9); // header

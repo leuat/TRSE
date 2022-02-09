@@ -55,6 +55,9 @@ public:
         return TokenType::INTEGER;
     }
 
+    virtual void PrepareInitialAssembler(Assembler* as) override;
+
+
 };
 
 #endif // SYSTEMMOS6502_H

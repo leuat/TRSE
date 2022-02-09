@@ -36,6 +36,12 @@ public:
         params<< "-run" << "-prg" <<filename+".prg";
     }
 
+    void DefaultValues() override;
+
+
+    void PrepareInitialAssembler(Assembler* as) override;
+
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
 };
 

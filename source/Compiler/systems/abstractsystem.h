@@ -13,6 +13,8 @@ class Orgasm;
 
 class SymbolTable;
 
+class Assembler;
+
 class SystemLabel {
 public:
     enum Type {SCREEN, SID, REGISTERS, ZEROPAGE,STACK, BASIC, FREE, VIC,COLOUR,IO,KERNAL,UNAVAILABLE,ROM};
@@ -120,7 +122,7 @@ public:
 
     virtual bool AllowPointerInStructs() {return true;}
 
-
+    virtual void PrepareInitialAssembler(Assembler* as) {}
 
 
     void StartProcess(QString file, QStringList params, QString& output, bool standardOutput = false, QString currentDir = "");

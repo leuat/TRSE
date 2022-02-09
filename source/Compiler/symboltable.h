@@ -112,6 +112,8 @@ private:
     QString m_currentProcedure = "";
 public:
     QString m_currentProcedureClean = "";
+    QStringList m_forwardedVariables;
+    QMap<QString, QSharedPointer<Symbol>> m_forwardedSymbols;
     QMap<QString, QSharedPointer<Symbol>> m_symbols;
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;

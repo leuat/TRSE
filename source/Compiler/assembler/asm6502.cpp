@@ -39,18 +39,6 @@ Asm6502::Asm6502() :Assembler()
 Asm6502::~Asm6502() {
 }
 
-QString Asm6502::intToHexString(int val)
-{
-    QString s = QString::number(val);
-    QString line = ".byte   ";
-    for (int i=0;i<s.count();i++) {
-        int val = QString(s[i]).toInt() + 0x30;
-        line = line + Util::numToHex(val) + ",";
-    }
-    line = line.remove(line.count()-1,1);
-    return line;
-
-}
 
 void Asm6502::InitCStrings()
 {
@@ -129,109 +117,18 @@ void Asm6502::Program(QString programName, QString vicConfig)
 
     m_source+=m_startInsertAssembler;
 
-
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::BBCM) {
-        //Asm("ORG "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-        QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
-        StartMemoryBlock(org);
-        m_currentBlock->m_isMainBlock = true;
-        m_mainBlock = m_currentBlock;
-       return;
-    }
-
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES || Syntax::s.m_currentSystem->isCustom() ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
-    //    m_source+=m_startInsertAssembler;
-        Write(Syntax::s.m_currentSystem->getCPUAssemblerString(),0);
-        Asm(GetOrg()+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-
-//        StartMemoryBlock("$8000");
-
-//        Asm("ORG "+Util::numToHex(0x8000));
-        return;
-    }
-
     Nl();
-
-//    qDebug() << "IGNORE SYS : "<<Syntax::s.m_ignoreSys<<Syntax::s.m_currentSystem->m_programStartAddress;
 
     QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
     StartMemoryBlock(org);
+    Write(Syntax::s.m_currentSystem->getCPUAssemblerString(),0);
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
-        Asm(" .org $2001");
-        if (!Syntax::s.m_ignoreSys){// && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
-            Asm(" .byte $09,$20 ;End of command marker (first byte after the 00 terminator)");
-            Asm(" .byte $0a,$00 ;10");
-            Asm(" .byte $fe,$02,$30,$00 ;BANK 0");
-            //            Asm(" .byte <endd_s, >endd_s ");
-            Asm(" .byte $13, $20 ");
-            Asm(" .byte $14,$00 ;20");
-            Asm(" .byte $9e ;SYS");
-            //            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-            //          QString s = QString::number(Syntax::s.m_currentSystem->m_programStartAddress);
-            Asm(" .byte $38,$32,$32,$34");
-            //
-            //QString extra = "";
-            //if (s.count()<5)
-            //                extra=", $00";
-            Asm("  .byte $00");
-            Label("endd_s:");
-            Asm("  .byte $00,$00    ;End of basic terminators");
-            Asm("  .byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF    ;extra");
-            EndMemoryBlock();
-            //        Comment("End of SYS memory block, starting new");
-            StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-            m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
+    Syntax::s.m_currentSystem->PrepareInitialAssembler(this);
 
-        }
-        m_currentBlock->m_isMainBlock = true;
-        m_mainBlock = m_currentBlock;
-        //    m_source+=m_startInsertAssembler;
-        //    Asm("test");
-
-        Label(programName);
-        return;
-
-    }
-
-
-
-    if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
-
-
-        // new method
-        //Asm(".byte $00 ; fill $xxx0");
-        Asm( ".byte $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
-        Asm( ".byte $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
-        Asm(".byte $0a, $00 ; line 10 (lo, hi)");
-        Asm(".byte $9e, $20 ; SYS token and a space");
-        // write PETSCII / ASCII representation of address to call
-        Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-        Asm(".byte $00, $00, $00 ; end of program");
-
-        /* // old method
-            Asm(".byte    $0, $0E, $08, $0A, $00, $9E, $20");
-            Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
-            Asm(".byte     $00");   // 6, 4, )
-            */
-        Nl();
-
-        EndMemoryBlock();
-//        Comment("End of SYS memory block, starting new");
-        StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
-        m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
-  //      Comment("Start of MAIN BLOCK");
-//        qDebug() << "INSERT "+m_insertEndBlock;
-    }
     m_currentBlock->m_isMainBlock = true;
     m_mainBlock = m_currentBlock;
-//    m_source+=m_startInsertAssembler;
-//    Asm("test");
 
     Label(programName);
-//    if (!m_hasOpenBlock)
-  //      EndMemoryBlock();
 }
 
 void Asm6502::EndProgram()

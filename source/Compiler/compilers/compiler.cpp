@@ -73,7 +73,6 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     } catch (const FatalErrorException& e) {
         HandleError(e, "Error during parsing");
     }
-
     if (m_parser.m_symTab!=nullptr)
         m_parser.m_symTab->SetCurrentProcedure("");
 }
@@ -107,17 +106,26 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     if (m_assembler==nullptr)
         return false;
 
+    // Map forwarded symbols
+    for (QString s: m_parser.m_symTab->m_forwardedVariables)
+        m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+
+//    m_assembler->m_symTab->m_forwardedSymbols = m_parser.m_symTab->m_forwardedSymbols;
     m_assembler->m_projectDir = project_dir;
     // Copy symbol table stuff, like records
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
     m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
     m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
+    // Write init assembler code
 
     for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
 
     connect(m_codeGen.get(), SIGNAL(EmitTick(QString)), this, SLOT( AcceptDispatcherTick(QString)));
     SymbolTable::pass = 1;
+
+
+//    qDebug() <<m_assembler->m_symTab->m_symbols.keys().contains("song");
 
     emit EmitTick("<br>Building []");
     if (m_tree!=nullptr)
@@ -128,6 +136,8 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         Data::data.compilerState = Data::DISPATCHER;
 //        qDebug() << "Compiler.cpp DISPATCHER starts";
         Node::s_as = m_assembler.get();
+        //m_tree->ExecuteSym(m_assembler->m_symTab);
+        //qDebug() << m_assembler->m_symTab->m_symbols.keys();
         m_tree->Accept(m_codeGen.get());
 
     } catch (const FatalErrorException& e) {

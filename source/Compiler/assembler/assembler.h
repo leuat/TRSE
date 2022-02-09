@@ -128,6 +128,7 @@ public:
     QSharedPointer<Appendix> m_wram, m_sprram, m_ram;
     QMap<QString,QSharedPointer<Appendix>> m_banks;
     QMap<QString, QString> m_lastRegister; // Last registers set
+    QString m_insertEndBlock = "";
 
 
 

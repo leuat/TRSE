@@ -1,0 +1,96 @@
+unit Screen;
+
+var
+	b1,b2,b3,py:byte;
+	
+	const L0_CONFIG : address=$9F2D;
+	const L1_CONFIG : address=$9F34;
+	
+	const L0_TILEBASE : address = $9F2F;
+	const L1_TILEBASE : address = $9F36;
+
+	const VRAM_L : address=$9F20;
+	const VRAM_M : address=$9F21;
+	const VRAM_H : address=$9F22;
+	ptr:pointer;
+
+	bits : array[8] of byte=buildtable("Math.pow(2,i)");
+	bitsInv : array[8] of byte=buildtable("Math.pow(2,i)^255");
+
+	i1,i2 : integer;
+
+procedure PointToL(i1,i2:global integer; py:global byte) inline;
+begin
+	ptr:=i1;
+	if (py=1) then ptr := i2;
+	
+end;
+
+procedure Toggle(a,b:byte);
+begin
+	if (b=0) then
+		ptr^:=ptr^&bitsInv[a]
+	else
+		ptr^:=ptr^|bits[a];
+end;
+
+	
+procedure SetBitmapMode(b1,b2:global byte);
+begin
+	PointToL(#l0_config,#l1_config, b1);
+	Toggle(2,b2);
+end;	
+
+procedure SetT256Mode(b1,b2:global byte);
+begin
+	PointToL(#l0_config,#l1_config, b1);
+	Toggle(3,b2);
+end;	
+	
+procedure SetTileWidth(b1,b2:global byte);
+begin
+	PointToL(#l0_tilebase,#l1_tilebase, b1);
+	b1:=peek(ptr,0)&%11111100;
+	ptr[0]:=b1|b2;
+	
+end;	
+
+procedure SetTileBase(b1,b2:global byte);
+begin
+	PointToL(#l0_tilebase,#l1_tilebase, b1);
+	b2:=b2<<3;
+	b1:=peek(ptr,0)&%00000111;
+	ptr[0]:=b1|b2;
+	
+end;	
+	
+	
+procedure SetVRAMLocation(b1,b2,b3 : global byte);
+begin
+	vram_l := b1;
+	vram_m := b2;
+	vram_h :=(peek(vram_h,0)&$FE) | (b3&1);	
+end;	
+	
+procedure ClearScreen(b1,b2:global byte);
+begin
+	vera_addr_lo:=0;
+	vera_addr_mid:=b1;
+	setveraincrement(1);
+	asm("
+		lda Screen_b2
+		ldy #30
+cls_out1:
+		ldx #0
+cls_topp1:
+		sta $9F23
+		stz $9F23
+		dex
+		bne cls_topp1	
+		dey
+		bne cls_out1	
+	");
+end;
+	
+	
+end.

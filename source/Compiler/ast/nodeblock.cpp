@@ -60,6 +60,7 @@ void NodeBlock::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 
     for (QSharedPointer<Node> n: m_decl)
     {
+
         n->ExecuteSym(m_symTab);
     }
     m_compoundStatement->ExecuteSym(m_symTab);

@@ -2,7 +2,7 @@
 #include <QProcess>
 #include "source/Compiler/syntax.h"
 #include "source/LeLib/util/util.h"
-
+#include "source/Compiler/assembler/assembler.h"
 SystemCustom::SystemCustom(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
     m_allowedGlobalTypeFlags << "compressed"<<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert"<<"bank"<<"lpointer";
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global" <<"stack"<<"bank"<<"lpointer";
@@ -141,4 +141,9 @@ QString SystemCustom::getCPUAssemblerString() {
         return ".p816   ; 65816 processor";
     }
     return "";
+}
+
+void SystemCustom::PrepareInitialAssembler(Assembler* as) {
+    as->Write(as->GetOrg(Syntax::s.m_currentSystem->m_programStartAddress));
+
 }

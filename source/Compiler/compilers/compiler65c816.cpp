@@ -76,9 +76,7 @@ void Compiler65C816::Init6502Assembler()
         }
 
     }
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
-//        Syntax::s.m_ignoreSys = false;
-//        qDebug() << "WOOT";
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65 || Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
         if (m_projectIni->getdouble("override_target_settings")==1) {
             Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
             Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
@@ -115,6 +113,10 @@ void Compiler65C816::Connect()
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
         m_assembler->StartMemoryBlock("0");
         m_assembler->IncludeFile(":resources/code/mega65/init.asm");
+    }
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
+//        m_assembler->StartMemoryBlock("0");
+        m_assembler->Asm(".p4510");
     }
 
     m_assembler->Connect();

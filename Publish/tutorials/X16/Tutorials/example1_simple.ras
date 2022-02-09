@@ -5,7 +5,7 @@ var
 
    @define Space 32
    i, j: byte;
-   hex: string = (48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 01, 02, 03, 04, 05, 06);
+   hex: array[] of byte = (48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 01, 02, 03, 04, 05, 06);
    
 	procedure DrawCell(X, Y, Fg, Bg: byte);
 		var col: byte;

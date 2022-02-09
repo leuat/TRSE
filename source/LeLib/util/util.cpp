@@ -967,6 +967,19 @@ int Util::CountFilesInAllDirectories(QString dir, QStringList fileTypes)
     return cnt;
 }
 
+QString Util::IntToHexString(int val)
+{
+    QString s = QString::number(val);
+    QString line = ".byte   ";
+    for (int i=0;i<s.count();i++) {
+        int val = QString(s[i]).toInt() + 0x30;
+        line = line + Util::numToHex(val) + ",";
+    }
+    line = line.remove(line.count()-1,1);
+    return line;
+
+}
+
 
 
 float Util::smoothstep(float edge0, float edge1, float x)

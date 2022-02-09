@@ -36,6 +36,7 @@ public:
     QString m_procName, m_fileName;
     bool m_isStatic = true;
     QString m_class;
+
     QStringList m_flags;
     QVector<QSharedPointer<Node>> m_paramDecl;
     QSharedPointer<Node> m_returnValue;
@@ -44,6 +45,7 @@ public:
     bool m_isRecursive = false;
     int m_type;
     bool m_isInline = false;
+    bool m_isForward = false;
     QSharedPointer<Node> m_block = nullptr;
 
 

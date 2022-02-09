@@ -37,6 +37,7 @@ NodeAssign::NodeAssign(QSharedPointer<Node> left, Token t, QSharedPointer<Node> 
 
 
 void NodeAssign::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
+    return;
     QString varName = qSharedPointerDynamicCast<NodeVar>(m_left)->value;
     QSharedPointer<Symbol> varSymbol = symTab->Lookup(varName, m_op.m_lineNumber);
     m_right->ExecuteSym(symTab);

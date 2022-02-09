@@ -89,7 +89,7 @@ void NodeProcedureDecl::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
         QSharedPointer<Symbol> varSymbol = symTab->Lookup(var->value,var->m_op.m_lineNumber);
         if (varSymbol  && varSymbol->m_isStackVariable) {
             stackPos +=varSymbol->m_size;
-            qDebug() << "EHHH";
+//            qDebug() << "EHHH";
 
         }
     }
@@ -103,11 +103,13 @@ void NodeProcedureDecl::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
             varSymbol->m_isStackVariable = true;
             stackPos-=varSymbol->m_size;
             varSymbol->m_stackPos = stackPos;
-            qDebug() << "setting pos : "<<varSymbol->m_stackPos<<varSymbol->m_name;
+//            qDebug() << "setting pos : "<<varSymbol->m_stackPos<<varSymbol->m_name;
 
         }
     }
-
-
+/*    for (auto& nv:decls) {
+        nv->ExecuteSym(symTab);
+    }
+*/
 
 }
