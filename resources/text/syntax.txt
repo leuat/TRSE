@@ -509,16 +509,16 @@ m; ReadJoy2; C64, MEGA65;
 # IRQ routines
 
 m; NmiIRQ; MOS6502 ; p
-m; EnableRasterIRQ; C64, MEGA65, PLUS4, C128;
+m; EnableRasterIRQ; C64, MEGA65, PLUS4, C128, X16;
 m; StartIRQ; MOS6502; b
 m; StartIRQWedge; C64, MEGA65, PLUS4, C128; b
 m; StartRasterChain; C64, MEGA65, PLUS4, C128; p,b,n
 m; CloseIRQ; MOS6502, M68000;
 m; CloseIRQWedge; C64, MEGA65, PLUS4, C128;
-m; EnableIRQ; MOS6502;
-m; PreventIRQ; MOS6502;
-m; DisableCIAInterrupts; C64, MEGA65, PLUS4, C128;
-m; RasterIRQ; C64, MEGA65, PLUS4, C128 ; p,b,n
+m; EnableIRQ; MOS6502, X16, MEGA65;
+m; PreventIRQ; MOS6502, X16, MEGA65;
+m; DisableCIAInterrupts; C64, MEGA65, PLUS4, C128,X16;
+m; RasterIRQ; C64, MEGA65, PLUS4, C128; p,b,n
 m; RasterIRQ; BBCM, ACORN, ATARI800; p
 m; RasterIRQWedge; C64, MEGA65, PLUS4, C128 ; p,b,n
 m; ReturnInterrupt; MOS6502;
@@ -1064,22 +1064,22 @@ c; SCREEN_WIDTH; MEGA65; b; 80
 c; SCREEN_HEIGHT; C64, MEGA65, ATARI800; b; 25
 c; SCREEN_HEIGHT; APPLEII; b; 24
 c; RASTERLINE_POS; C64, MEGA65, C128; a; $D012
-c; BLACK; C64, MEGA65, C128, VIC20; b; 0
-c; WHITE; C64, MEGA65, C128, VIC20; b; 1
-c; RED  ; C64, MEGA65, C128, VIC20;b;2
-c; CYAN; C64, MEGA65, C128, VIC20; b;3
-c; PURPLE; C64, MEGA65, C128, VIC20; b;4
-c; GREEN; C64, MEGA65, C128, VIC20; b;5
-c; BLUE; C64, MEGA65, C128, VIC20; b;6
-c; YELLOW; C64, MEGA65, C128, VIC20; b;7
-c; ORANGE; C64, MEGA65, C128; b;8
-c; BROWN; C64, MEGA65, C128; b;9
-c; LIGHT_RED; C64, MEGA65, C128; b;10
-c; DARK_GREY; C64, MEGA65, C128; b;11
-c; GREY; C64, MEGA65, C128; b;12
-c; LIGHT_GREEN; C64, MEGA65, C128;b;13
-c; LIGHT_BLUE; C64, MEGA65, C128; b;14
-c; LIGHT_GREY; C64, MEGA65, C128; b;15
+c; BLACK; C64, MEGA65, C128, VIC20,X16; b; 0
+c; WHITE; C64, MEGA65, C128, VIC20,X16; b; 1
+c; RED  ; C64, MEGA65, C128, VIC20,X16;b;2
+c; CYAN; C64, MEGA65, C128, VIC20,X16; b;3
+c; PURPLE; C64, MEGA65, C128, VIC20,X16; b;4
+c; GREEN; C64, MEGA65, C128, VIC20,X16; b;5
+c; BLUE; C64, MEGA65, C128, VIC20,X16; b;6
+c; YELLOW; C64, MEGA65, C128, VIC20,X16; b;7
+c; ORANGE; C64, MEGA65, C128,X16; b;8
+c; BROWN; C64, MEGA65, C128,X16; b;9
+c; LIGHT_RED; C64, MEGA65, C128,X16; b;10
+c; DARK_GREY; C64, MEGA65, C128,X16; b;11
+c; GREY; C64, MEGA65, C128,X16; b;12
+c; LIGHT_GREEN; C64, MEGA65, C128,X16;b;13
+c; LIGHT_BLUE; C64, MEGA65, C128,X16; b;14
+c; LIGHT_GREY; C64, MEGA65, C128,X16; b;15
 c; SPRITE_POS; C64, MEGA65, C128; a; $D000
 c; SPRITE_DATA_LOC; C64, MEGA65, C128; a;$07F8
 c; SPRITE_BITMASK; C64, MEGA65, C128; a; $D015
@@ -1288,8 +1288,8 @@ c;READ_KEYBOARD;X16;a; $ffe4
 m; MoveTo; X16 ; b,b
 m; VeraPoke; X16; b,b,b
 m; VeraPokeDual; X16; b,b,b,b
-m; InitPalette;X16;b
-m; SetColor;X16;b,b,b
+#m; InitPalette;X16;b
+#m; SetColor;X16;b,b,b
 m; SetVideoMode;X16;b,b,b
 m; SetVeraBank;X16; b
 m; SetVeraIncrement;X16; b
@@ -1297,14 +1297,14 @@ m; SetVeraTileMode; X16; b,b
 #m; InitSprite; X16 ; b
 #m; SetSpriteLoc; X16; i #m; enableSprites;X16;b
 #m; SpritePos; X16 ; i,i
-m; SpriteDepth; X16; b
-m; SpriteSize; X16; b,b
-m; SpritePaletteOffset; X16; b
+#m; SpriteDepth; X16; b
+#m; SpriteSize; X16; b,b
+#m; SpritePaletteOffset; X16; b
 m; copydatatovera; X16; a,b,b,b,b
 
 
-c; SCREEN_WIDTH; X16; b; 80
-c; SCREEN_HEIGHT; X16; b; 60
+#c; SCREEN_WIDTH; X16; b; 80
+#c; SCREEN_HEIGHT; X16; b; 60
 
 
 

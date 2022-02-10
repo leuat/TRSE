@@ -186,9 +186,6 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
         LoadVar(as,0);
         as->Asm("sta $9F20");
     }
-    if (Command("SetColor"))
-        SetColor(as);
-
 
     if (Command("ReturnValue")) {
         LoadVar(as,0);
@@ -522,72 +519,7 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("setspriteloc"))
         SetSpriteLoc(as);
 
-    if (Command("initsprite"))
-        InitVeraSprite(as);
 
-    if (Command("spritedepth")) {
-        as->Asm("lda #6");
-        as->Asm("clc");
-        as->Asm("adc $9F20");
-        as->Asm("sta $9F20");
-        as->Asm("lda $9F23");
-        as->Asm("and #%11110011");
-        as->Asm("sta "+as->m_internalZP[0]);
-        LoadVar(as,0);
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("ora "+as->m_internalZP[0]);
-        as->Asm("sta $9F23");
-        as->Asm("lda $9F20");
-        as->Asm("sec");
-        as->Asm("sbc #6");
-        as->Asm("sta $9F20");
-    }
-    if (Command("spritesize")) {
-        as->Asm("lda #7");
-        as->Asm("clc");
-        as->Asm("adc $9F20");
-        as->Asm("sta $9F20");
-        as->Asm("lda $9F23");
-        as->Asm("and #%00001111");
-        as->Asm("sta "+as->m_internalZP[0]);
-        LoadVar(as,0);
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("sta "+as->m_internalZP[1]);
-        LoadVar(as,1);
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("asl");
-        as->Asm("ora "+as->m_internalZP[1]);
-        as->Asm("ora "+as->m_internalZP[0]);
-        as->Asm("sta $9F23");
-        as->Asm("lda $9F20");
-        as->Asm("sec");
-        as->Asm("sbc #7");
-        as->Asm("sta $9F20");
-    }
-    if (Command("spritepaletteoffset")) {
-        as->Asm("lda #7");
-        as->Asm("clc");
-        as->Asm("adc $9F20");
-        as->Asm("sta $9F20");
-        as->Asm("lda $9F23");
-        as->Asm("and #%11110000");
-        as->Asm("sta "+as->m_internalZP[0]);
-        LoadVar(as,0);
-        as->Asm("ora "+as->m_internalZP[0]);
-        as->Asm("sta $9F23");
-        as->Asm("lda $9F20");
-        as->Asm("sec");
-        as->Asm("sbc #7");
-        as->Asm("sta $9F20");
-    }
 
     if (Command("copydatatovera"))
         CopyDataToVera(as);
@@ -2750,33 +2682,6 @@ void Methods6502::ScrollY(Assembler *as)
     }
 }
 
-void Methods6502::InitVeraSprite(Assembler* as)
-{
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::X16) {
-//        PointToVera(as,0x0F5000, true);
-        QString zp = as->m_internalZP[0];
-        as->Asm("lda #0");
-        as->Asm("sta "+zp);
-        LoadVar(as,0);
-        as->Asm("asl");
-        as->Asm("rol "+zp);
-        as->Asm("asl");
-        as->Asm("rol "+zp);
-        as->Asm("asl");
-        as->Asm("rol "+zp);
-
-        as->Asm("sta $9F20");
-        as->Asm("lda "+zp);
-        as->Asm("clc");
-        as->Asm("adc #$50"); // Sprite attribute
-        as->Asm("sta $9F21");
-        as->Asm("lda #$0F"); // Vera data bank
-        as->Asm("sta $9F22");
-
-        return;
-    }
-
-}
 
 void Methods6502::CopyDataToVera(Assembler *as)
 {
@@ -2831,21 +2736,6 @@ void Methods6502::CopyDataToVera(Assembler *as)
 
 }
 
-void Methods6502::SetColor(Assembler *as)
-{
-    QString zp = as->m_internalZP[0];
-    LoadVar(as,1);
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("asl");
-    as->Asm("sta "+zp);
-    LoadVar(as,2);
-    as->Asm("ora "+zp);
-    as->Asm("sta $9F23");
-    LoadVar(as,0);
-    as->Asm("sta $9F23");
-}
 
 void Methods6502::SetVideoMode(Assembler *as)
 {
@@ -7134,7 +7024,7 @@ void Methods6502::InitJoystick(Assembler *as)
     // UP
     QString addr = as->m_internalZP[2];
 
-    as->Asm("lda #%00000001 ; mask joystick up movement");
+    as->Asm("lda #%00000001 ; mask joystick up mment");
     as->Asm("bit "+addr+"      ; bitwise AND with address 56320");
     as->Asm("bne joystick_down       ; zero flag is not set -> skip to down");
     as->Asm("lda #1");

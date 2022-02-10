@@ -3,6 +3,7 @@
 	
 */
 program VeraBalls;
+@use "system/screen"
 var 
 	// defines a constant to specify how many balls we want 
 	@define NUM_BALLS 255
@@ -51,9 +52,9 @@ begin
 		vera_data1:=6;
 				
 		if (xp[i] = 0 ) then dx[i] := 1;
-		if (xp[i] = screen_width -1 ) then dx[i] := -1;
+		if (xp[i] = Screen::screen_width -1 ) then dx[i] := -1;
 		if (yp[i] = 0 ) then dy[i] := 1;
-		if (yp[i] = screen_height -1 ) then dy[i] := -1;
+		if (yp[i] = Screen::screen_height -1 ) then dy[i] := -1;
 		// update x and y position of ball using the delta
 		xp[i] := xp[i] + dx[i];
 		yp[i] := yp[i] + dy[i];

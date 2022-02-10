@@ -14,6 +14,8 @@ var
 
 @requirefile "data/example7_sprite.bin" "Please run the ray-tracer file 'example7_sprites.fjo' before compiling this program"
 	sprites : incbin("data/example7_sprite.bin",spriteLoc);
+
+
 	
 // Set som funky palette
 procedure SetPalette(aa,bb,cc:byte);
@@ -25,7 +27,7 @@ begin
 		ia:=i/aa;
 		ib:=i/bb;
 		ic:=i/cc;
-		SetColor(ia,ib,ic);
+		Screen::SetColor(ia,ib,ic);
 	end;
 
 end;
@@ -51,15 +53,12 @@ begin
 		j:=(j+2)&15;
 		in:=$8200 + j*8;
 		// Set sprite position = $200 = $4000/32 + frame*256 (each frame is 256 byes)
-//		verapokedual($FC,00,hi(in),lo(in));
-	//	setspriteloc(in);
 		Screen::SetSpriteLoc(in);
 		// Set x / y position of individuals
 		ia:=100 + ix+sine[k];
 		ib:=sine[k2]*1+iy;
 		// Set position
 		Screen::SetSpritePos(ia,ib);
-	//	spritepos(ia, ib);
 		// Advance counters with some primes
 		k:=k+11;
 		k2:=k2+7;
@@ -76,12 +75,13 @@ begin
 		Screen::PointToSprite(i);	
 		
 	    // Set 16x16 (0 = 8, 1=16, 2=32, 3=64)		
-		spritesize(1,1);// 16x16
-		spritedepth(3); // In front ofall
+	    Screen::SetSpriteSize(1,1);
+//		spritesize(1,1);// 16x16
+		Screen::SetSpriteDepth(3); // In front ofall
 		
 		j:=((i*11)&3)*4; // 64 colour shift RGB
 		
-		SpritePaletteOffset(j);	
+		Screen::SetSpritePaletteOffset(j);	
 	end;
 
 end;
@@ -91,7 +91,8 @@ begin
 
 	CopyDataToVera(#spriteLoc, $00,$40, $00, 16);  
 
-	Initpalette(0);
+	Screen::PointToPalette(0);
+	// Set four funky 64-color palettes 
 	SetPalette(8,6,4);
 	SetPalette(8,4,8);
 	SetPalette(4,12,12);

@@ -14,7 +14,7 @@ globals = {
 				color = {x=1, y=1, z=1}, 
 			},
 	-- add some ambient background colors
-	ambient = { x = 0.3, y = 0.3, z = 0.3 },
+	ambient = { x = 0.1, y = 0.1, z = 0.1 },
      raymarch_steps = 30,
      
      -- define the "up" vector

@@ -1,0 +1,107 @@
+program Example7_simple_twister;
+@use "system/screen"
+var  
+   i,j,k,m,l,time,y1,y2,cury: byte = 0;  
+   
+	dest,source,zp : pointer;
+	pos:integer;
+
+	
+	const twisterLoc:address = $8000;
+
+	sin : array[256] of byte = buildsinetable(80);
+
+
+	twisterData : incbin("data/twister.bin", twisterLoc);
+	// 64 frames * 2 for table addresses
+	twisterTable : array[256] of integer = BuildTable("i*8");
+	tabb : array[255] of integer = BuildTable("(i&7) + (Math.floor(i/8.0)*8*8)");
+
+
+procedure PrintScreen();
+begin
+	setverabank($0);
+	VERA_CTRL := 0;
+	setveraincrement(1);	
+	
+	l:=0;
+	for i:=0 to 16 do
+	begin
+		for j:=0 to 8 do
+		begin
+			moveto(2*j+64,i+10);
+			vera_data1:=l;
+			vera_data1:=0<<4 | 5;
+			l+=1;
+		end;	
+	
+	
+	end;
+end;
+
+
+	
+procedure UpdateTwister();
+begin
+
+	// Two opposing sine phases
+	y1:=time*3;
+	y2:=1-time*2;
+	
+	setverabank($0);
+	setveraincrement(4); // inc 8	 bytes
+	// Draw 16 x 8 rows
+	j:=sine[time*2];
+	cury:=0;
+	for i:=0 to 8*16 do 
+	begin
+		// Some frame lookup
+		l:=((time+sin[y1] - sin[y2]))&63;
+		// Point vera to the correct location
+		Memory::VeraPoint($F800 + tabb[i]);		
+		// Find the lookup in the table
+		source := #twisterData + twisterTable[l]; 
+		// Copy 8 bytes of data
+		Memory::VeraCopy(source, 8);
+		
+		y1:=y1+1;
+		y2:=y2+2;
+
+	end;
+
+end;
+
+procedure InitScreen();
+begin
+
+	setveraincrement(1);
+	setverabank($00);	
+	Screen::SetTileBase(1,15);
+	setverabank(0);
+	Screen::ClearScreen(255,0);
+	// Clear charmap
+	
+	Memory::VeraPoint($F800);	
+//	for k:=0 to 1 do
+//		Memory::VeraFill(0,0,256);
+end;
+
+
+interrupt Raster();
+begin
+	Memory::StartIRQ();
+	
+	UpdateTwister();
+	inc(time);
+	
+	Memory::CloseIRQ();
+end;
+
+
+begin
+	InitScreen();
+	PrintScreen();
+	Memory::VSyncIRQ(#Raster);
+	loop();	
+	
+end.

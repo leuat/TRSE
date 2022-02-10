@@ -1,0 +1,45 @@
+program HelloX16;
+@use "system/screen"
+var
+	
+	sin : array[256] of byte = buildsinetable(80);
+	time:byte;
+	const shift : byte = 64;
+	const lag : byte = 32;
+	x,y : byte;
+
+
+
+procedure Render(str:pointer;t, color:byte);
+begin
+	x:=sin[t]>>1+16;
+	y:=sin[t+shift]>>1+10; // cos
+	
+	Screen::PrintString(str,x,y, color);
+	
+end;
+	
+	
+interrupt Raster();
+begin
+	Memory::StartIRQ();
+
+	// render text
+	Render("WHOOO",time,time);
+	// clear trail
+	Render("      ",time-lag, blue<<4);	
+	
+	time+=1;		
+	
+		
+	
+	Memory::CloseIRQ();
+	
+end;	
+	
+begin
+	Screen::ClearScreen(32,blue<<4);
+	Screen::PrintString("HELLO WORLD ON THE X16 FROM TRSE ",22,5, black |(light_grey<<4));
+	Memory::VSyncIRQ(#Raster);
+	loop();
+end.

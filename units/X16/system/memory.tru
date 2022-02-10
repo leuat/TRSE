@@ -1,0 +1,109 @@
+unit Memory;
+var
+	i1 : integer;
+	b1,b2,b3:byte;
+	ptr:pointer;
+	
+	@donotremove def_irq	
+	
+	def_irq : pointer;
+
+	const VERA_L : address=$9F20;
+	const VERA_M : address=$9F21;
+	const VERA_H : address=$9F22;
+	const VERA_D : address=$9F23;
+	const IRQ : address = $0314;		
+
+procedure VSyncIRQ(i1:global integer) inline;
+begin
+	asm(" sei");
+	asm("
+		lda	$0314
+		sta Memory_def_irq
+		lda	$0314+1
+		sta Memory_def_irq+1
+	");
+	IRQ[0]:=lo(i1);
+	IRQ[1]:=hi(i1);
+	asm(" cli");
+end;
+
+
+procedure SetBank(b1:global byte) inline;
+begin
+	vera_h:=b1;
+end;	
+	
+procedure VeraPoint(i1:global integer);
+begin
+	vera_l:=lo(i1);
+	vera_m:=hi(i1);
+end;
+
+procedure VeraPointDual(b1,b2:global byte);
+begin
+	vera_l:=b1;
+	vera_m:=b2;
+end;
+
+procedure CloseIRQ() inline;
+begin
+	asm 
+		jmp (Memory_def_irq)
+	end;
+end;	
+	
+procedure StartIRQ() inline;
+begin
+	asm("
+	lda $9F27 
+    	and #$01
+    	bne startirq_cont	
+
+	jmp (Memory_def_irq)
+
+    	
+startirq_cont:
+	");
+		
+end;
+
+/**
+
+	fills b3*2 bytes of values b1, b2
+**/
+procedure VeraFill(b1,b2,b3:global byte);
+begin
+	setveraincrement(1);
+	asm("
+		ldx Memory_b3
+		lda Memory_b1
+		ldy Memory_b2
+vfill_top1:
+		sta $9F23
+		sty $9F23
+		dex
+		bne vfill_top1	
+	");
+end;
+
+/**
+
+	Copies b1 bytes of data from ptr to the current vera location
+	
+**/
+procedure VeraCopy(ptr:global pointer;b1:global byte);
+begin
+	asm("
+		ldy #0
+vcopy_top1:
+		lda (Memory_ptr),y
+		sta $9F23
+		iny
+		cpy Memory_b1
+		bne vcopy_top1	
+	");
+end;
+
+	
+end.

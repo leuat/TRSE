@@ -1,0 +1,239 @@
+unit Screen;
+@use "system/memory"
+var
+	b1,b2,b3,py:byte;
+	
+	const L0_CONFIG : address=$9F2D;
+	const L1_CONFIG : address=$9F34;
+	
+	const L0_TILEBASE : address = $9F2F;
+	const L1_TILEBASE : address = $9F36;
+
+
+	const screen_width:byte = 80;
+	const screen_height:byte = 60;
+
+	const ENABLE_SPRITE_REG : address = $9f29;
+
+	ptr:pointer;
+
+	bits : array[8] of byte=buildtable("Math.pow(2,i)");
+	bitsInv : array[8] of byte=buildtable("Math.pow(2,i)^255");
+
+	i1,i2 : integer;
+
+procedure PointToL(i1,i2:global integer; py:global byte) inline;
+begin
+	ptr:=i1;
+	if (py=1) then ptr := i2;
+	
+end;
+
+procedure Toggle(a,b:byte);
+begin
+	if (b=0) then
+		ptr^:=ptr^&bitsInv[a]
+	else
+		ptr^:=ptr^|bits[a];
+end;
+
+	
+procedure SetBitmapMode(b1,b2:global byte);
+begin
+	PointToL(#l0_config,#l1_config, b1);
+	Toggle(2,b2);
+end;	
+
+procedure SetT256Mode(b1,b2:global byte);
+begin
+	PointToL(#l0_config,#l1_config, b1);
+	Toggle(3,b2);
+end;	
+	
+procedure SetTileWidth(b1,b2:global byte);
+begin
+	PointToL(#l0_tilebase,#l1_tilebase, b1);
+	b1:=peek(ptr,0)&%11111100;
+	ptr[0]:=b1|b2;
+	
+end;	
+
+procedure SetTileBase(b1,b2:global byte);
+begin
+	PointToL(#l0_tilebase,#l1_tilebase, b1);
+	b2:=b2<<3;
+	b1:=peek(ptr,0)&%00000111;
+	ptr[0]:=b1|b2;
+	
+end;	
+	
+	
+procedure SetMemory::veraLocation(b1,b2,b3 : global byte);
+begin
+	Memory::vera_l := b1;
+	Memory::vera_m := b2;
+	Memory::vera_h :=(peek(Memory::vera_h,0)&$FE) | (b3&1);	
+end;	
+
+
+
+
+/**
+
+Fills the text mode screen with char b1 and color b2
+
+**/
+procedure ClearScreen(b1,b2:global byte);
+begin
+	vera_addr_lo:=0;
+	vera_addr_mid:=0;
+	setveraincrement(1);
+	asm("
+		ldy #30
+cls_out1:
+		ldx #0
+cls_topp1:
+		lda Screen_b1
+		sta $9F23
+		lda Screen_b2
+		sta $9F23
+		dex
+		bne cls_topp1	
+		dey
+		bne cls_out1	
+	");
+end;
+
+procedure EnableSprites(b1:global byte);
+begin
+	if (b1=0) then
+		togglebit(enable_sprite_reg,6,0)
+	else
+		togglebit(enable_sprite_reg,6,1);
+
+end;	
+	
+	
+procedure PointToSprite(b1:global byte);
+begin	
+	poke(Memory::vera_h,0,1);
+	i1:=$FC00 + b1*8;
+	poke(Memory::vera_l,0,lo(i1));
+	poke(Memory::vera_m,0,hi(i1));
+	
+end;
+
+procedure PointToPalette(b1:global byte);
+begin	
+	poke(Memory::vera_h,0,1);
+	i1:=$FA00 + b1*2;
+	poke(Memory::vera_l,0,lo(i1));
+	poke(Memory::vera_m,0,hi(i1));
+	setveraincrement(1);
+end;
+/**
+
+ SetColor(r,g,b). Make sure you are pointing to the palette first with PointTopalette
+ 
+**/
+procedure SetColor(b1,b2,b3:global byte);
+begin	
+	Memory::Vera_d:=(b1&7) | (b2<<4);
+	Memory::Vera_d:=(b3);
+	
+end;
+
+procedure SetSpriteLoc(i1:global integer);
+begin
+	poke(Memory::vera_d,0,lo(i1));
+	inc(Memory::vera_l);
+	poke(Memory::vera_d,0,hi(i1));
+	dec(Memory::vera_l);
+end;
+
+
+procedure SetSpriteSize(b1,b2:global byte);
+begin
+	// Point to sprite size
+	Memory::vera_l+=7;	
+	b3 := (Memory::vera_d &%00001111)	;
+	b3 |= b1<<6;
+	b3 |= b2<<4;
+	Memory::vera_d:=b3;
+	Memory::vera_l-=7;	
+	
+end;
+
+procedure SetSpritePaletteOffset(b1:global byte);
+begin
+	// Point to sprite size
+	Memory::vera_l+=7;	
+	b3 := (Memory::vera_d &%11110000)	;
+	b3 |= b1&$0F;
+	Memory::vera_d:=b3;
+	Memory::vera_l-=7;	
+	
+end;
+
+
+
+procedure SetSpriteDepth(b1:global byte);
+begin
+	// Point to sprite size
+	Memory::vera_l+=6;	
+	b3 := (Memory::vera_d &%11110011)	;
+	b3 |= b1<<2;
+	Memory::vera_d:=b3;
+	Memory::vera_l-=6;	
+	
+end;
+
+procedure SetSpritePos(i1,i2:global integer);
+begin
+	// Point to the sprite attribute location
+	//inc(Memory::vera_l);
+	//inc(Memory::vera_l);
+	Memory::vera_l+=2;	
+	
+	poke(Memory::vera_d,0,lo(i1));
+	inc(Memory::vera_l);
+	poke(Memory::vera_d,0,hi(i1));
+	inc(Memory::vera_l);
+	poke(Memory::vera_d,0,lo(i2));
+	inc(Memory::vera_l);
+	poke(Memory::vera_d,0,hi(i2));
+//	restore pointer
+
+	Memory::vera_l-=5;
+/*	asm("
+		lda $9F20
+		sec
+		sbc #5
+		sta $9F20
+	");*/
+end;	
+
+
+/**
+Prints a string at position b1,b2 with color b3
+
+**/
+procedure PrintString(ptr:global pointer;b1,b2,b3: byte);
+begin
+	Memory::VeraPointDual(b1<<1,b2);
+	setveraincrement(1);
+	while (ptr^<>0) do
+	begin
+		b1:=ptr^;
+		if (b1>64) then
+			b1-=64;
+		Memory::Vera_d:=b1;
+		Memory::Vera_d:=b3;
+		ptr+=1;
+	end;
+end;
+
+
+
+
+end.
