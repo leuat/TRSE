@@ -115,8 +115,9 @@ begin
 	ClearScreen(0, screen_char_loc);
 	ClearScreen(black, screen_col_loc);
 	SetCharsetLocation(@charLoc);
-	asm(";here");
 	memcpy(^@charLoc+fireChar*8,0,^@charLoc,0);	
+	asm(";here");
+	
 	fill(@charLoc+^8*^8,$FF,128);
 //	fill(^@charLoc,$FF,0);
 	

@@ -136,6 +136,7 @@ public:
     // Only returns true of is a compound clause
     virtual bool isCompoundClause() { return false; }
 
+    bool m_isCollapsed = false;
 
     virtual bool isPointer(Assembler* as)  { return false;}
     virtual bool isPurePointer(Assembler* as)  { return false;}
@@ -174,6 +175,9 @@ public:
     }
 
     virtual bool isPureNumeric() {
+        return false;
+    }
+    virtual bool containsVariables() {
         return false;
     }
     virtual bool isPureNumericOrAddress() {

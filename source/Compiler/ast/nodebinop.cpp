@@ -28,7 +28,7 @@ NodeBinOP::NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> r
     m_op = op;
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
-    if (m_right->isPureNumeric()) {
+    if (m_right->isPureNumericOrAddress()) {
         int val = m_right->getValueAsInt(nullptr);
         if (power2.contains(val)) {
             int idx = power2.indexOf(val);
@@ -58,7 +58,17 @@ bool NodeBinOP::isPureNumeric() {
     if (m_left==nullptr || m_right==nullptr)
         return false;
 
-    return (m_left->isPureNumeric() && m_right->isPureNumeric());
+    return (m_left->isPureNumeric() && m_right->isPureNumeric() &&
+            !m_left->containsVariables() && !m_right->containsVariables()
+
+            );
+}
+
+bool NodeBinOP::containsVariables() {
+    if (m_left==nullptr || m_right==nullptr)
+        return false;
+
+    return ((m_left->containsVariables() || m_right->containsVariables()));
 }
 
 bool NodeBinOP::isPureNumericOrAddress()
@@ -163,7 +173,7 @@ void NodeBinOP::parseConstants(QSharedPointer<SymbolTable>  symTab) {
 //    int b = m_right->getValueAsInt(nullptr);
  //   qDebug() << a << b;
 
-    if (!isPureNumeric()) {
+    if (!isPureNumericOrAddress()) {
         if (m_left!=nullptr)
             m_left->parseConstants(symTab);
         if (m_right!=nullptr)
@@ -234,6 +244,7 @@ TokenType::Type NodeBinOP::VerifyAndGetNumericType() {
             return a;
         if (b==TokenType::ADDRESS)
             return b;
+
         ErrorHandler::e.Error("Binary operations must occur between same token types ("+TokenType::getType(a)+" vs "+TokenType::getType(b)+")", m_op.m_lineNumber);
 
     }

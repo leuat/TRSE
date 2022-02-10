@@ -42,6 +42,7 @@ public:
 
     QString BothConstants(Assembler* as);
 
+    bool containsVariables() override;
     bool isPureNumeric() override;
     bool isPureNumericOrAddress() override;
     bool is8bitValue(Assembler* as) override;
@@ -49,7 +50,6 @@ public:
     void ApplyFlags() override;
     bool isAddress() override;
 
-    bool m_isCollapsed = false;
     int m_value = 0;
 
     bool isWord(Assembler* as) override;

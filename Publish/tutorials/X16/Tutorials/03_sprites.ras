@@ -99,7 +99,7 @@ begin
 	SetPalette(4,16,4);
 	
 	InitSprites();
-
+	Screen::ClearScreen(0,25);
 	while (true) do 
 	begin
 		UpdateSprites();

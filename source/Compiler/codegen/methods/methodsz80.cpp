@@ -29,7 +29,7 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         Poke(as);
     }
     if (Command("Nop")) {
-        if (!m_node->m_params[0]->isPureNumeric())
+        if (!m_node->m_params[0]->isPureNumericOrAddress())
             ErrorHandler::e.Error("Nop() requires a pure numeric value.",m_node->m_op.m_lineNumber);
 
         int val = Util::NumberFromStringHex(m_node->m_params[0]->getValue(as).remove("#"));
@@ -418,8 +418,8 @@ void MethodsZ80::MemCpy(Assembler *as, bool isCont)
 
 void MethodsZ80::Poke(Assembler *as)
 {
-    if (m_node->m_params[0]->isPureNumeric() &&
-            m_node->m_params[1]->isPureNumeric() &&
+    if (m_node->m_params[0]->isPureNumericOrAddress() &&
+            m_node->m_params[1]->isPureNumericOrAddress() &&
             m_node->m_params[1]->getValueAsInt(as)==0) {
 
         LoadVar(as,2);
@@ -431,7 +431,7 @@ void MethodsZ80::Poke(Assembler *as)
     LoadAddress(as,0);
 //        as->Asm("ld a,"+m_node->m_params[1]->getValue(as));
     as->Term();
-    if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0) {
+    if (m_node->m_params[1]->isPureNumericOrAddress() && m_node->m_params[1]->getValueAsInt(as)==0) {
         LoadVar(as,2);
         as->Asm("ld [hl],a");
         return;
@@ -476,9 +476,9 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
     if (!m_node->m_params[1]->isPure())
         ErrorHandler::e.Error("Parameter 2 (y) must be pure constant or variable");
 
-    if (!m_node->m_params[3]->isPureNumeric())
+    if (!m_node->m_params[3]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Parameter 3 (width) must be constant value!");
-    if (!m_node->m_params[4]->isPureNumeric())
+    if (!m_node->m_params[4]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Parameter 4 (height) must be constant value");
 
 
@@ -544,7 +544,7 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
 
 
             if (type==1) { // Init
-                if (m_node->m_params[1]->isPureNumeric()) {
+                if (m_node->m_params[1]->isPureNumericOrAddress()) {
                     int dx = m_node->m_params[1]->getValueAsInt(as);
                     int dy = m_node->m_params[2]->getValueAsInt(as);
                     int num = (dx+i)+ (dy+j)*16;
@@ -553,7 +553,7 @@ void MethodsZ80::SetSprite(Assembler *as, int type)
                 as->Asm("ld ["+addr + "+"+QString::number(cnt)+" +2 ],a");
             }
             if (type==3) { // Init from POINTER
-                if (m_node->m_params[1]->isPureNumeric()) {
+                if (m_node->m_params[1]->isPureNumericOrAddress()) {
                     int dx = m_node->m_params[1]->getValueAsInt(as);
                     int dy = m_node->m_params[2]->getValueAsInt(as);
                     int num = (dx+i)+ (dy+j)*16;
@@ -580,13 +580,13 @@ void MethodsZ80::InitSpriteFromData(Assembler *as, int type)
 //    LoadAddress(as,0);
     if (!m_node->m_params[2]->isPure())
         ErrorHandler::e.Error("Parameter 2 (start) must be constant/variable", m_node->m_op.m_lineNumber);
-    if (!m_node->m_params[3]->isPureNumeric())
+    if (!m_node->m_params[3]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Parameter 3 (length) must be pure constant", m_node->m_op.m_lineNumber);
 
     //    LoadAddress(as,0);
-    if (!m_node->m_params[4]->isPureNumeric())
+    if (!m_node->m_params[4]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Parameter 4 (width) must be pure constant", m_node->m_op.m_lineNumber);
-    if (!m_node->m_params[5]->isPureNumeric())
+    if (!m_node->m_params[5]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Parameter 5 (flip x) must be pure constant", m_node->m_op.m_lineNumber);
 
 //    int start = m_node->m_params[2]->getValueAsInt(as);
@@ -713,12 +713,12 @@ void MethodsZ80::MemCpyOnHBLank(Assembler *as, QString jlbl, int div)
 {
     LoadAddress(as,0,"de");
     LoadAddress(as,1,"hl");
-    //if (!m_node->m_params[2]->isPureNumeric())
+    //if (!m_node->m_params[2]->isPureNumericOrAddress())
     //    ErrorHandler::e.Error("Parameter 3 must be pure constant and a divisible by 8", m_node->m_op.m_lineNumber);
     as->Comment("HBLANK 8-byte copy per scanline");
     int cnt = m_node->m_params[2]->getValueAsInt(as);
     QString lbl = as->NewLabel("memcpyhblank");
-    if (m_node->m_params[2]->isPureNumeric())
+    if (m_node->m_params[2]->isPureNumericOrAddress())
         as->Asm("ld a, "+Util::numToHex(ceil(cnt/(float)div)));
     else {
         as->Comment("hblank non-const");
@@ -788,6 +788,6 @@ void MethodsZ80::Joypad(Assembler *as)
 
 void MethodsZ80::ToggleBit(Assembler *as)
 {
-     if (!m_node->m_params[2]->isPureNumeric())
+     if (!m_node->m_params[2]->isPureNumericOrAddress())
          ErrorHandler::e.Error("Parameter 3 must be pure numeric", m_node->m_op.m_lineNumber);
 }

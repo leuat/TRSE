@@ -1793,6 +1793,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 */
     // Verify that we're not trying to screw with the variable
 
+
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(n);
 //    if (!m_ignoreLookup)
     if (nv!=nullptr) {
@@ -1820,6 +1821,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 //        qDebug() << nv->value<<s->m_type;
         if (!(s->m_type.toUpper()=="ARRAY" || s->m_type.toUpper()=="POINTER" || s->m_type.toUpper()=="STRING"  ||s->m_type.toUpper()=="CSTRING" ||s->m_type.toUpper()=="INCBIN" || s->m_type.toUpper()=="ADDRESS" || isConstant) && nv->m_expr!=nullptr)
             ErrorHandler::e.Error("Variable '<b>" +nv->value + "</b>' is neither a pointer nor an array.",nv->m_op.m_lineNumber);
+
 
     }
     return ApplyClassVariable(n);
@@ -2642,7 +2644,7 @@ QSharedPointer<Node> Parser::Factor()
     if (t.m_type == TokenType::INTEGER_CONST || t.m_type ==TokenType::REAL_CONST
             || t.m_type ==TokenType::ADDRESS) {
         Eat(t.m_type);
-  //      qDebug() << "parser: " <<t.m_value << t.m_intVal;
+//        qDebug() << "parser: " <<t.m_value << t.m_intVal<<t.m_isReference;
         return QSharedPointer<NodeNumber>(new NodeNumber(t, t.m_intVal));
     }
 
@@ -5941,6 +5943,7 @@ QSharedPointer<Node> Parser::Expr()
 
     if (node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
         // Calculate and COLLAPSE. Easier on the dispatcher.
+//        qDebug() << "COLLAPSE";
         int val = node->getValueAsInt(nullptr);
         Token t;
         t.m_type = node->VerifyAndGetNumericType();

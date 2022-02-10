@@ -1,7 +1,7 @@
 unit Screen;
 @use "system/memory"
 var
-	b1,b2,b3,py:byte;
+	b1,b2,b3,py,kp:byte;
 	
 	const L0_CONFIG : address=$9F2D;
 	const L1_CONFIG : address=$9F34;
@@ -120,7 +120,7 @@ begin
 	i1:=$FC00 + b1*8;
 	poke(Memory::vera_l,0,lo(i1));
 	poke(Memory::vera_m,0,hi(i1));
-	
+	kp:=Memory::vera_l;	
 end;
 
 procedure PointToPalette(b1:global byte);
@@ -155,23 +155,23 @@ end;
 procedure SetSpriteSize(b1,b2:global byte);
 begin
 	// Point to sprite size
-	Memory::vera_l+=7;	
-	b3 := (Memory::vera_d &%00001111)	;
+	Memory::vera_l:=kp+7;	
+	b3 := (peek(Memory::vera_d,0) &%00001111)	;
 	b3 |= b1<<6;
 	b3 |= b2<<4;
 	Memory::vera_d:=b3;
-	Memory::vera_l-=7;	
+	Memory::vera_l:=kp;	
 	
 end;
 
 procedure SetSpritePaletteOffset(b1:global byte);
 begin
 	// Point to sprite size
-	Memory::vera_l+=7;	
-	b3 := (Memory::vera_d &%11110000)	;
+	Memory::vera_l:=kp+7;	
+	b3 := (peek(Memory::vera_d,0) &%11110000)	;
 	b3 |= b1&$0F;
 	Memory::vera_d:=b3;
-	Memory::vera_l-=7;	
+	Memory::vera_l:=kp;	
 	
 end;
 
@@ -180,11 +180,11 @@ end;
 procedure SetSpriteDepth(b1:global byte);
 begin
 	// Point to sprite size
-	Memory::vera_l+=6;	
-	b3 := (Memory::vera_d &%11110011)	;
+	Memory::vera_l:=kp+6;	
+	b3 := (peek(Memory::vera_d,0) &%11110011)	;
 	b3 |= b1<<2;
 	Memory::vera_d:=b3;
-	Memory::vera_l-=6;	
+	Memory::vera_l:=kp;	
 	
 end;
 
@@ -193,7 +193,7 @@ begin
 	// Point to the sprite attribute location
 	//inc(Memory::vera_l);
 	//inc(Memory::vera_l);
-	Memory::vera_l+=2;	
+	Memory::vera_l:=kp+2;	
 	
 	poke(Memory::vera_d,0,lo(i1));
 	inc(Memory::vera_l);
@@ -204,7 +204,7 @@ begin
 	poke(Memory::vera_d,0,hi(i2));
 //	restore pointer
 
-	Memory::vera_l-=5;
+	Memory::vera_l:=kp;
 /*	asm("
 		lda $9F20
 		sec

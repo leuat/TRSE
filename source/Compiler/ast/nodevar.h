@@ -61,6 +61,7 @@ public:
     bool isPointer(Assembler* as) override;
     bool isPurePointer(Assembler* as) override;
 
+    bool containsVariables() override {return true;}
 
     bool DataEquals(QSharedPointer<Node> other) override;
     bool isWord(Assembler* as) override;

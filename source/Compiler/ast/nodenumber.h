@@ -62,6 +62,7 @@ public:
     QString getAddress() override {
         return HexValue();
     }
+    bool containsVariables() override {return false;}
 
     QString getLiteral(Assembler* as) override {
         return HexValue();

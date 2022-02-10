@@ -43,31 +43,29 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
 //        qDebug() << "NodeBuiltinMethod " << m_function->m_params[p] << m_procName;
         QString cp = QString::number(p+1);
 
-        if (m_params[p]->isPureNumericOrAddress() && !m_params[p]->isPureVariable()) {
+        // ARGH! in UPPERCASE
+
+/*        if (m_params[p]->isPureNumericOrAddress() && m_params[p]->m_isCollapsed==false) {
             // Collapse here.. willl that work?
             int val = m_params[p]->getValueAsInt(as);
 
-/*            auto num = qSharedPointerDynamicCast<NodeNumber>(m_params[p]);
-            if (num!=nullptr) {
-                qDebug() <<"IS NUMBER " <<Util::numToHex(num->m_val);
-                qDebug() << (m_params[p]->m_op.getType())<<m_procName <<Util::numToHex(val)<<m_params[p]->getValue(as);
-            }*/
             bool isAddress = m_params[p]->isAddress();
             bool isRef = m_params[p]->isReference();
             auto n = NodeFactory::CreateNumber(m_params[p]->m_op,val);
             n->setReference(isRef);
+//            qDebug() << m_procName<< Util::numToHex(val)<< n->isReference() << m_params[p]->m_op.getType();
 
             if (isAddress) {
-                n->m_op.m_type = TokenType::ADDRESS;
+                n->m_op.m_type = m_params[p]->isAddress()?TokenType::ADDRESS:TokenType::INTEGER_CONST;
                 m_params[p] = n;
+//                qDebug() << m_procName<< m_params[p]->getValue(as)<< n->isReference() << " Address: " <<isAddress << Util::numToHex(val) <<n->isAddress()<<n->m_op.m_lineNumber;
 
             }
 //                n->m_op.m_type = TokenType::INTEGER_CONST;
   //          else
     //            n->m_op.m_
-//            qDebug() << isAddress << Util::numToHex(val) <<n->isAddress();
         }
-
+*/
         if (m_function->m_params[p]==BuiltInFunction::ADDRESS) {
 //            qDebug() << m_procedure->m_procName << m_op.m_isReference;
             //qDebug() <<" ARHJ " << m_params[p]->getValue(as);
