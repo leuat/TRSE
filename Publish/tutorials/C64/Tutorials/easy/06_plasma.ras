@@ -120,13 +120,14 @@ begin
 	// Set charmap location at $2000
 	SetCharsetLocation(charsetLocation);
 	// Copy the 16 characters rom baseCharacter to 0
-	memcpy(charsetLocation +8*baseCharacter, 0, charsetLocation,8*16);
+	asm(";here");
+	memcpy(#charsetLocation +8*baseCharacter, 0, #charsetLocation,8*16);
 	InitDivision16();
 	ax:=1;
 	ay:=5;
 
 	// Clear screen and color memory
-	ClearScreen(key_space, screen_char_loc);
+	ClearScreen(key_space, #screen_char_loc);
 	// Main loop
 	while (true) do begin
 		waitforverticalblank();

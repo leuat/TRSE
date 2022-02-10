@@ -116,7 +116,7 @@ void Compiler65C816::Connect()
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
 //        m_assembler->StartMemoryBlock("0");
-        m_assembler->Asm(".p4510");
+//        m_assembler->Asm(".p4510");
     }
 
     m_assembler->Connect();

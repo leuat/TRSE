@@ -43,6 +43,7 @@ public:
     QString BothConstants(Assembler* as);
 
     bool isPureNumeric() override;
+    bool isPureNumericOrAddress() override;
     bool is8bitValue(Assembler* as) override;
 
     void ApplyFlags() override;

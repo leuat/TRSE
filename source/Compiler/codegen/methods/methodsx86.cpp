@@ -412,13 +412,13 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
         as->Asm("lea "+di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
         return;
     }
-    if (m_node->m_params[paramNo]->isPureNumeric()) {
+    if (m_node->m_params[paramNo]->isPureNumericOrAddress()) {
         as->Asm("mov ax, "+m_node->m_params[paramNo]->getValue(as));
         as->Asm("mov "+es+",ax");
         as->Asm("xor "+di+","+di);
         return;
     }
-    ErrorHandler::e.Error("Parameter "+QString::number(paramNo)+" must be address (variable, number or pointer)");
+    ErrorHandler::e.Error("Parameter "+QString::number(paramNo)+" must be an address (variable, number or pointer)");
   //  m_node->m_params[paramNo]->Accept(m_codeGen);
 
 }
@@ -541,8 +541,8 @@ void MethodsX86::MemCpyFast(Assembler *as)
 
 /*void MethodsX86::Poke(Assembler* as)
 {
-    if (m_node->m_params[0]->isPureNumeric() &&
-            m_node->m_params[1]->isPureNumeric() &&
+    if (m_node->m_params[0]->isPureNumericOrAddress() &&
+            m_node->m_params[1]->isPureNumericOrAddress() &&
             m_node->m_params[1]->getValueAsInt(as)==0) {
 
         LoadVar(as,2);
@@ -554,7 +554,7 @@ void MethodsX86::MemCpyFast(Assembler *as)
     LoadAddress(as,0);
     //        as->Asm("ld a,"+m_node->m_params[1]->getValue(as));
     as->Term();
-    if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0) {
+    if (m_node->m_params[1]->isPureNumericOrAddress() && m_node->m_params[1]->getValueAsInt(as)==0) {
         LoadVar(as,2);
         as->Asm("ld [hl],a");
         return;

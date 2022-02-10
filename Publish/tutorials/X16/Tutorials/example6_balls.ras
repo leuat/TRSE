@@ -12,7 +12,7 @@ var
 
 	i, j,rnd : byte;
 
-	rand : incbin("data/random.bin");
+	rand : array[256] of byte = buildtable("Math.random()*256");
 	
 procedure getRand();
 begin

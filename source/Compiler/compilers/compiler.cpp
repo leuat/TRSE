@@ -157,7 +157,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
     Connect();
 //    qDebug() << "Start address "<< Util::numToHex(system->m_startAddress);
-
+    m_assembler->m_source<<m_assembler->m_endInsertAssembler;
     CleanupBlockLinenumbers();
 
     if (m_assembler->m_optimiser!=nullptr && m_ini->getdouble("post_optimize")==1.0) {

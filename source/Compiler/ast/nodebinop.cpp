@@ -61,6 +61,14 @@ bool NodeBinOP::isPureNumeric() {
     return (m_left->isPureNumeric() && m_right->isPureNumeric());
 }
 
+bool NodeBinOP::isPureNumericOrAddress()
+{
+    if (m_left==nullptr || m_right==nullptr)
+        return false;
+
+    return (m_left->isPureNumericOrAddress() && m_right->isPureNumericOrAddress());
+}
+
 bool NodeBinOP::is8bitValue(Assembler *as)
 {
     return (m_right->is8bitValue(as) && m_left->is8bitValue(as));
@@ -256,7 +264,7 @@ QString NodeBinOP::getLiteral(Assembler *as) {
 
 
 int NodeBinOP::numValue() {
-    if (!isPureNumeric())
+    if (!isPureNumericOrAddress())
         return 0;
     int a = m_left->numValue();
     int b = m_right->numValue();
@@ -284,7 +292,7 @@ int NodeBinOP::numValue() {
 }
 
 QString NodeBinOP::HexValue() {
-    if (!isPureNumeric())
+    if (!isPureNumericOrAddress())
         return "";
     int res = numValue();
     //qDebug() << QString::number(res, 16);

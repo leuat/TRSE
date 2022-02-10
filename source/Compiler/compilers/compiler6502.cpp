@@ -113,6 +113,7 @@ void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
 void Compiler6502::Init6502Assembler()
 {
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+    m_assembler->m_endInsertAssembler << m_parser.m_endAssembler;
     //    qDebug() << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 

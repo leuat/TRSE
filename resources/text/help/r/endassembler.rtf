@@ -1,0 +1,15 @@
+<h3>Description</h3>
+<p>EndAssembler is a preprocessor directive that will insert the parameter (a string) after
+any assembler is produced. </p>
+<p>This is extremely useful for inserting assembly loader / wrapper stubs.
+<h3>Example</h3>
+
+<code>
+
+// The following assembler will be inserted before any actual code.
+
+@endassembler "
+ jsr $0FFF
+ rts
+"
+</code>

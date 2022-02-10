@@ -1051,7 +1051,7 @@ void Methods6502::AddMemoryBlock(Assembler *as, int param)
 {
 
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[param]);
-    if (!m_node->m_params[param]->isPureNumeric())
+    if (!m_node->m_params[param]->isPureNumericOrAddress())
         return;
     int val = m_node->m_params[param]->getValueAsInt(as);
     MemoryBlock b(val,val+1,MemoryBlock::USER,"Memory write");
@@ -1232,13 +1232,13 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     //as->ClearTerm();
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
     AddMemoryBlock(as,2);
 
     QString addr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         addr = m_node->m_params[0]->HexValue();
 
     if (var!=nullptr)
@@ -1246,7 +1246,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
 
 //    QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
 
-    if (!m_node->m_params[1]->isPureNumeric()) {
+    if (!m_node->m_params[1]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
     int num2 = m_node->m_params[1]->getValueAsInt(as);
@@ -1276,7 +1276,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     if (!isFast)
         as->Asm("ld"+x+" #0");
     else {
-        if (m_node->m_params[3]->isPureNumeric()) {
+        if (m_node->m_params[3]->isPureNumericOrAddress()) {
             as->Asm("ld"+x+ " #"+ QString::number((unsigned char)(Util::NumberFromStringHex(m_node->m_params[3]->getValue(as).remove("#"))-1)) );
         }
         else {
@@ -1319,7 +1319,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
             ErrorHandler::e.Error("Error: memcpy cannot take an integer as count, must be byte. ",m_node->m_op.m_lineNumber);
 //            m_node->m_params[3]->setForceType(TokenType::BYTE);
         }
-        if (!is6502()&&m_node->m_params[3]->isPureNumeric()) {
+        if (!is6502()&&m_node->m_params[3]->isPureNumericOrAddress()) {
             as->Term("#"+Util::numToHex(m_node->m_params[3]->getValueAsInt(as)),true);
         }
         else
@@ -1339,21 +1339,21 @@ void Methods6502::MemCpyUnroll(Assembler* as, bool isReverse)
     //as->ClearTerm();
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric())
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress())
     {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
     QString addr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         addr = var->getValue(as);
 
 //    int num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (!m_node->m_params[1]->isPureNumeric()) {
+    if (!m_node->m_params[1]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("Second parameter must be pure numeric", m_node->m_op.m_lineNumber);
     }
-    if (!m_node->m_params[3]->isPureNumeric())
+    if (!m_node->m_params[3]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Third parameter must be pure numeric", m_node->m_op.m_lineNumber);
 
     int counter = m_node->m_params[3]->getValueAsInt(as);
@@ -1402,7 +1402,7 @@ void Methods6502::MemCpyUnroll(Assembler* as, bool isReverse)
         as->ClearTerm();
 
 
-        if (m_node->m_params[2]->isPureNumeric() || m_node->m_params[2]->isReference()) {
+        if (m_node->m_params[2]->isPureNumericOrAddress() || m_node->m_params[2]->isReference()) {
             as->Asm("sta " +m_node->m_params[2]->getValue(as) +" +  " +Util::numToHex(i));
 
         }
@@ -2058,12 +2058,12 @@ void Methods6502::MoveTo(Assembler *as)
     }
 
 
-    if (m_node->m_params[0]->isPureNumeric() && m_node->m_params[1]->isPureNumeric() && as->m_symTab->m_constants.contains("SCREEN_WIDTH")) {
+    if (m_node->m_params[0]->isPureNumericOrAddress() && m_node->m_params[1]->isPureNumericOrAddress() && as->m_symTab->m_constants.contains("SCREEN_WIDTH")) {
         // Calculate value directly, much much faster
         as->Comment("MoveTo optimization");
         int width = as->m_symTab->m_constants["SCREEN_WIDTH"]->m_value->m_fVal;
         int shift = m_node->m_params[0]->getValueAsInt(as) + m_node->m_params[1]->getValueAsInt(as)*width;
-        if (m_node->m_params[2]->isPureNumeric()) {
+        if (m_node->m_params[2]->isPureNumericOrAddress()) {
             // Super optimized!
             as->Asm("lda #" +Util::numToHex(shift&0xff));
             as->Asm("sta screenmemory");
@@ -2853,7 +2853,7 @@ void Methods6502::SetVideoMode(Assembler *as)
 //vera_addr_hi:=4;
 //verapoke(0,0,%00100001);
 
-    if (!m_node->m_params[1]->isPureNumeric())
+    if (!m_node->m_params[1]->isPureNumericOrAddress())
         ErrorHandler::e.Error("Parameter 2 (layer 1/2) must be 1 or 2 ",m_node->m_op.m_lineNumber);
 
     int num = m_node->m_params[1]->getValueAsInt(as);
@@ -3201,7 +3201,7 @@ void Methods6502::PPUSingle(Assembler *as, int type )
     }
 
     if (type==3) {
-        if (m_node->m_params[0]->isPureNumeric()) {
+        if (m_node->m_params[0]->isPureNumericOrAddress()) {
             as->Comment("Is pure numeric ppupoint");
             as->Asm("ldy #"+QString::number(m_node->m_params[0]->getValueAsInt(as)>>8));
             as->Asm("lda #"+QString::number(m_node->m_params[0]->getValueAsInt(as)&0xFF));
@@ -3871,12 +3871,12 @@ void Methods6502::CreateAddressTable(Assembler *as) {
 
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString addr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         addr = var->getValue(as);
@@ -3930,17 +3930,17 @@ void Methods6502::AddressTable(Assembler *as) {
 
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString addr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         addr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         addr = var->getValue(as);
 
-    if (m_node->m_params[2]->isPureNumeric()) {
+    if (m_node->m_params[2]->isPureNumericOrAddress()) {
         // pure numeric
         as->Asm( "ldx #" + QString::number( m_node->m_params[2]->getValueAsInt(as) * 2 ) );
     /*} else if (m_node->m_params[2]->isPure()) {
@@ -3959,7 +3959,7 @@ void Methods6502::AddressTable(Assembler *as) {
 
     if (m_node->m_params[1]->isPure()) {
         // pure
-        if (m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as) == 0 ) {} else {
+        if (m_node->m_params[1]->isPureNumericOrAddress() && m_node->m_params[1]->getValueAsInt(as) == 0 ) {} else {
             as->Asm("clc");
             as->Asm("adc " + m_node->m_params[1]->getValue(as) );
             as->Asm("bcc " + lblDTNoOverflow );
@@ -4125,21 +4125,21 @@ void Methods6502::DrawTextBox(Assembler* as) {
     as->Asm("cpx #0");
     as->Asm("bne " + lblPetsciiCopy);
 
-    if (m_node->m_params[2]->isPureNumeric()) {
+    if (m_node->m_params[2]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[2]->getValue(as) );
     } else {
         LoadVar(as, 2);
     }
     as->Asm("sta idtb_t_col");
 
-    if (m_node->m_params[3]->isPureNumeric()) {
+    if (m_node->m_params[3]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[3]->getValue(as) );
     } else {
         LoadVar(as, 3);
     }
     as->Asm("sta idtb_t_row");
 
-    if (m_node->m_params[4]->isPureNumeric()) {
+    if (m_node->m_params[4]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[4]->getValue(as) );
     } else {
         LoadVar(as, 4);
@@ -4149,7 +4149,7 @@ void Methods6502::DrawTextBox(Assembler* as) {
     as->Asm("sbc #1");
     as->Asm("sta idtb_t_wid");
 
-    if (m_node->m_params[5]->isPureNumeric()) {
+    if (m_node->m_params[5]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[5]->getValue(as) );
     } else {
         LoadVar(as, 5);
@@ -4203,21 +4203,21 @@ void Methods6502::DrawColorTextBox(Assembler* as) {
     as->Asm("cpx #0");
     as->Asm("bne " + lblPetsciiCopy);
 
-    if (m_node->m_params[3]->isPureNumeric()) {
+    if (m_node->m_params[3]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[3]->getValue(as) );
     } else {
         LoadVar(as, 3);
     }
     as->Asm("sta idtb_t_col");
 
-    if (m_node->m_params[4]->isPureNumeric()) {
+    if (m_node->m_params[4]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[4]->getValue(as) );
     } else {
         LoadVar(as, 4);
     }
     as->Asm("sta idtb_t_row");
 
-    if (m_node->m_params[5]->isPureNumeric()) {
+    if (m_node->m_params[5]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[5]->getValue(as) );
     } else {
         LoadVar(as, 5);
@@ -4227,7 +4227,7 @@ void Methods6502::DrawColorTextBox(Assembler* as) {
     as->Asm("sbc #1");
     as->Asm("sta idtb_t_wid");
 
-    if (m_node->m_params[6]->isPureNumeric()) {
+    if (m_node->m_params[6]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[6]->getValue(as) );
     } else {
         LoadVar(as, 6);
@@ -4244,7 +4244,7 @@ void Methods6502::DrawColorTextBox(Assembler* as) {
     as->Asm("sta idtb_at_lo");
     as->Asm("stx idtb_at_hi");
 
-    if (m_node->m_params[6]->isPureNumeric()) {
+    if (m_node->m_params[6]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[6]->getValue(as) );
     } else {
         LoadVar(as, 6);
@@ -4254,7 +4254,7 @@ void Methods6502::DrawColorTextBox(Assembler* as) {
     as->Asm("sbc #1");
     as->Asm("sta idtb_t_hei");
 
-    if (m_node->m_params[7]->isPureNumeric()) {
+    if (m_node->m_params[7]->isPureNumericOrAddress()) {
         as->Asm("lda " + m_node->m_params[7]->getValue(as) );
     } else {
         LoadVar(as, 7);
@@ -4291,7 +4291,7 @@ void Methods6502::IsOverlapping(Assembler *as)
     QString zp2 = as->m_internalZP[2];  // used for +ve distance
 
     // calc -ve distance
-    if (!m_node->m_params[4]->isPureNumeric()) {
+    if (!m_node->m_params[4]->isPureNumericOrAddress()) {
         as->Comment("Distance is not a constant, store in zero page addresses");
         LoadVar(as, 4); // Loads distance
         as->Asm("sta "+zp2); // Store +ve in zp
@@ -4314,14 +4314,14 @@ void Methods6502::IsOverlapping(Assembler *as)
         as->Asm("sbc " + zp0);
     }
 
-    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+    if (m_node->m_params[4]->isPureNumericOrAddress())               // distance on X
         as->Asm("cmp #" + distNeg );                        // -ve pure
     else
         as->Asm("cmp " + zp1 );                             // -ve complex
 
     as->Asm("bcs "+ lblColXConfirmed);                      // x vector 1 within distance
 
-    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+    if (m_node->m_params[4]->isPureNumericOrAddress())               // distance on X
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
     else
         as->Asm("cmp " + zp2 );                             // +ve complex
@@ -4346,14 +4346,14 @@ void Methods6502::IsOverlapping(Assembler *as)
         as->Asm("sbc " + zp0);
     }
 
-    if (m_node->m_params[4]->isPureNumeric())               // distance on Y
+    if (m_node->m_params[4]->isPureNumericOrAddress())               // distance on Y
         as->Asm("cmp #" + distNeg );                        // -ve pure
     else
         as->Asm("cmp " + zp1 );                             // -ve complex
 
     as->Asm("bcs "+ lblCollision);                          // y vector 1 within distance, no more checks needed
 
-    if (m_node->m_params[4]->isPureNumeric())               // distance on Y
+    if (m_node->m_params[4]->isPureNumericOrAddress())               // distance on Y
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
     else
         as->Asm("cmp " + zp2 );                             // +ve complex
@@ -4396,7 +4396,7 @@ void Methods6502::IsOverlappingWH(Assembler *as)
     QString zp2 = as->m_internalZP[2];  // used for +ve distance
 
     // calc -ve width
-    if (!m_node->m_params[4]->isPureNumeric()) {
+    if (!m_node->m_params[4]->isPureNumericOrAddress()) {
         as->Comment("Distance is not a constant, store in zero page addresses");
         LoadVar(as, 4); // Loads distance
         as->Asm("sta "+zp2); // Store +ve in zp
@@ -4419,14 +4419,14 @@ void Methods6502::IsOverlappingWH(Assembler *as)
         as->Asm("sbc " + zp0);
     }
 
-    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+    if (m_node->m_params[4]->isPureNumericOrAddress())               // distance on X
         as->Asm("cmp #" + distNegX );                        // -ve pure
     else
         as->Asm("cmp " + zp1 );                             // -ve complex
 
     as->Asm("bcs "+ lblColXConfirmed);                      // x vector 1 within distance
 
-    if (m_node->m_params[4]->isPureNumeric())               // distance on X
+    if (m_node->m_params[4]->isPureNumericOrAddress())               // distance on X
         as->Asm("cmp "+ m_node->m_params[4]->getValue(as)); // +ve pure
     else
         as->Asm("cmp " + zp2 );                             // +ve complex
@@ -4436,7 +4436,7 @@ void Methods6502::IsOverlappingWH(Assembler *as)
     as->Label(lblColXConfirmed);                            // X is within +/- distance, now check Y
 
     // calc -ve height
-    if (!m_node->m_params[5]->isPureNumeric()) {
+    if (!m_node->m_params[5]->isPureNumericOrAddress()) {
         as->Comment("Distance is not a constant, store in zero page addresses");
         LoadVar(as, 5); // Loads distance
         as->Asm("sta "+zp2); // Store +ve in zp
@@ -4460,14 +4460,14 @@ void Methods6502::IsOverlappingWH(Assembler *as)
         as->Asm("sbc " + zp0);
     }
 
-    if (m_node->m_params[5]->isPureNumeric())               // distance on Y
+    if (m_node->m_params[5]->isPureNumericOrAddress())               // distance on Y
         as->Asm("cmp #" + distNegY );                        // -ve pure
     else
         as->Asm("cmp " + zp1 );                             // -ve complex
 
     as->Asm("bcs "+ lblCollision);                          // y vector 1 within distance, no more checks needed
 
-    if (m_node->m_params[5]->isPureNumeric())               // distance on Y
+    if (m_node->m_params[5]->isPureNumericOrAddress())               // distance on Y
         as->Asm("cmp "+ m_node->m_params[5]->getValue(as)); // +ve pure
     else
         as->Asm("cmp " + zp2 );                             // +ve complex
@@ -4921,7 +4921,7 @@ void Methods6502::LoadAddress(Assembler *as, int paramNo)
 {
     QSharedPointer<Node> node = m_node->m_params[paramNo];
 
-    if (node->isPureNumeric()) {
+    if (node->isPureNumericOrAddress()) {
         as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
         as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
         return;
@@ -5743,7 +5743,7 @@ void Methods6502::WaitForRaster(Assembler *as)
 
 /*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
  //       m_node->m_params[0]->setForceType(TokenType::BYTE);
-        if (m_node->m_params[0]->isPureNumeric()) {
+        if (m_node->m_params[0]->isPureNumericOrAddress()) {
             int val =  m_node->m_params[0]->getValueAsInt(as);
              if (val<=255) {
                 as->Asm("bit $D011");
@@ -5823,7 +5823,7 @@ void Methods6502::SetSpriteLoc(Assembler *as)
         as->Asm("tax");
         LoadVar(as,1);
     } else {
-/*        if (m_node->m_params[0]->isPureNumeric())
+/*        if (m_node->m_params[0]->isPureNumericOrAddress())
             m_node->m_params[0]->setForceType(TokenType::BYTE);*/
         LoadVar(as,0);
         QString zp = as->m_internalZP[2];
@@ -5846,7 +5846,7 @@ void Methods6502::SetSpriteLoc(Assembler *as)
 void Methods6502::ClearBitmap(Assembler *as)
 {
 
-    if (!m_node->m_params[0]->isPureNumeric() || !m_node->m_params[1]->isPureNumeric())
+    if (!m_node->m_params[0]->isPureNumericOrAddress() || !m_node->m_params[1]->isPureNumericOrAddress())
         ErrorHandler::e.Error("ClearBitmap: both parameters must be integer constants");
 
     QString lbl = as->NewLabel("clear");
@@ -6329,7 +6329,7 @@ void Methods6502::BlockMemCpy(Assembler *as)
         as->Label(lbl);
 
         for (int i=0;i<v;i++) {
-            if (m_node->m_params[0]->isPureNumeric())
+            if (m_node->m_params[0]->isPureNumericOrAddress())
                 as->Asm("lda $"+QString::number(m_node->m_params[0]->getValueAsInt(as) + i*256,16)+",y");
             else
                 as->Asm("lda #"+m_node->m_params[0]->getValue(as) +"+$"+ QString::number(i*256,16)+",y");
@@ -6660,7 +6660,7 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 */
 
     QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
-    if (node->isPureNumeric() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
+    if (node->isPureNumericOrAddress() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
         m_codeGen->Disable16bit();
         as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
         as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
@@ -6789,12 +6789,12 @@ void Methods6502::BcdAdd(Assembler *as)
     // BCD array address to add to
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString srcaddr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         srcaddr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         srcaddr = var->getValue(as);
@@ -6802,12 +6802,12 @@ void Methods6502::BcdAdd(Assembler *as)
     // BCD array address containing value to add
     var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[1]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString addaddr = "";
-    if (m_node->m_params[1]->isPureNumeric())
+    if (m_node->m_params[1]->isPureNumericOrAddress())
         addaddr = m_node->m_params[1]->HexValue();
     if (var!=nullptr)
         addaddr = var->getValue(as);
@@ -6850,12 +6850,12 @@ void Methods6502::BcdSub(Assembler *as)
     // BCD array address to subtract from
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString srcaddr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         srcaddr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         srcaddr = var->getValue(as);
@@ -6863,12 +6863,12 @@ void Methods6502::BcdSub(Assembler *as)
     // BCD array address containing value to subtract
     var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[1]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString addaddr = "";
-    if (m_node->m_params[1]->isPureNumeric())
+    if (m_node->m_params[1]->isPureNumericOrAddress())
         addaddr = m_node->m_params[1]->HexValue();
     if (var!=nullptr)
         addaddr = var->getValue(as);
@@ -6911,12 +6911,12 @@ void Methods6502::BcdCompare(Assembler *as)
     // BCD array address to compare
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString srcaddr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         srcaddr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         srcaddr = var->getValue(as);
@@ -6924,12 +6924,12 @@ void Methods6502::BcdCompare(Assembler *as)
     // BCD array address containing value to compare with
     var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[1]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString dstaddr = "";
-    if (m_node->m_params[1]->isPureNumeric())
+    if (m_node->m_params[1]->isPureNumericOrAddress())
         dstaddr = m_node->m_params[1]->HexValue();
     if (var!=nullptr)
         dstaddr = var->getValue(as);
@@ -6983,12 +6983,12 @@ void Methods6502::BcdIsEqual(Assembler *as)
     // BCD array address to compare
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString srcaddr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         srcaddr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         srcaddr = var->getValue(as);
@@ -6996,12 +6996,12 @@ void Methods6502::BcdIsEqual(Assembler *as)
     // BCD array address containing value to compare with
     var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[1]);
     num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (var==nullptr && !m_node->m_params[1]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[1]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("Second parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString dstaddr = "";
-    if (m_node->m_params[1]->isPureNumeric())
+    if (m_node->m_params[1]->isPureNumericOrAddress())
         dstaddr = m_node->m_params[1]->HexValue();
     if (var!=nullptr)
         dstaddr = var->getValue(as);
@@ -7048,12 +7048,12 @@ void Methods6502::BcdPrint(Assembler *as)
     // BCD array address to add to
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
     //QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (var==nullptr && !m_node->m_params[0]->isPureNumeric()) {
+    if (var==nullptr && !m_node->m_params[0]->isPureNumericOrAddress()) {
         ErrorHandler::e.Error("First parameter must be variable or number", m_node->m_op.m_lineNumber);
     }
 
     QString srcaddr = "";
-    if (m_node->m_params[0]->isPureNumeric())
+    if (m_node->m_params[0]->isPureNumericOrAddress())
         srcaddr = m_node->m_params[0]->HexValue();
     if (var!=nullptr)
         srcaddr = var->getValue(as);

@@ -773,18 +773,18 @@ void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
     node->DispatchConstructor(as,this);
 
     QString val = getValue(node);
-
     if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
 
 //    as->Comment("Value assignment : " + Util::numToHex(node->m_val) + " "+ val + " " +QString::number(node->getValueAsInt(as)));
-    if ((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) {
+    if (((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) && as->m_term=="") {
         as->Comment("Integer constant assigning");
         Load16bitVariable(node,"y");
         return;
 
     }
+
     if (as->m_term=="")
         as->Term("lda " + val);
     else

@@ -657,5 +657,6 @@
         <file>resources/code/pokemini/init.asm</file>
         <file>resources/images/POKEMONMINI.png</file>
         <file>resources/images/TRS80.png</file>
+        <file>resources/text/help/r/endassembler.rtf</file>
     </qresource>
 </RCC>

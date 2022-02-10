@@ -24,6 +24,7 @@
 #include "nodevar.h"
 #include "nodestring.h"
 #include "nodeprocedure.h"
+#include "nodefactory.h"
 
 QMap<QString, bool> NodeBuiltinMethod::m_isInitialized;
 
@@ -41,18 +42,45 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
         m_params[p]->m_builtInFunctionParameterType = m_function->m_params[p];
 //        qDebug() << "NodeBuiltinMethod " << m_function->m_params[p] << m_procName;
         QString cp = QString::number(p+1);
+
+        if (m_params[p]->isPureNumericOrAddress() && !m_params[p]->isPureVariable()) {
+            // Collapse here.. willl that work?
+            int val = m_params[p]->getValueAsInt(as);
+
+/*            auto num = qSharedPointerDynamicCast<NodeNumber>(m_params[p]);
+            if (num!=nullptr) {
+                qDebug() <<"IS NUMBER " <<Util::numToHex(num->m_val);
+                qDebug() << (m_params[p]->m_op.getType())<<m_procName <<Util::numToHex(val)<<m_params[p]->getValue(as);
+            }*/
+            bool isAddress = m_params[p]->isAddress();
+            bool isRef = m_params[p]->isReference();
+            auto n = NodeFactory::CreateNumber(m_params[p]->m_op,val);
+            n->setReference(isRef);
+
+            if (isAddress) {
+                n->m_op.m_type = TokenType::ADDRESS;
+                m_params[p] = n;
+
+            }
+//                n->m_op.m_type = TokenType::INTEGER_CONST;
+  //          else
+    //            n->m_op.m_
+//            qDebug() << isAddress << Util::numToHex(val) <<n->isAddress();
+        }
+
         if (m_function->m_params[p]==BuiltInFunction::ADDRESS) {
 //            qDebug() << m_procedure->m_procName << m_op.m_isReference;
             //qDebug() <<" ARHJ " << m_params[p]->getValue(as);
             if (!m_params[p]->isAddress()) {
 //                qDebug() << "TYPE: " << m_params[p]->m_op.getType() <<m_params[p]->getValue(as);
-                ErrorHandler::e.Error(error + cp + " to be an address. Did you forget a ^?", m_op.m_lineNumber);
+//                ErrorHandler::e.Error(error + cp + " to be an address. Did you forget a ^?", m_op.m_lineNumber);
             }
             // REMEMBER
+//            m_params[p]->setReference(true);
             m_params[p]->VerifyReferences(as);
         }
         if (m_function->m_params[p]==BuiltInFunction::NUMBER) {
-            if (!m_params[p]->isPureNumeric())
+            if (!m_params[p]->isPureNumericOrAddress())
                 ErrorHandler::e.Error(error + cp + " to be pure numeric", m_op.m_lineNumber);
         }
         if (m_function->m_params[p]==BuiltInFunction::PROCEDURE) {

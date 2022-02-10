@@ -2,8 +2,7 @@ program MyProgram;
 var  
    i,j,k,time,m,x,y: byte; 
 
-	@define dataPos $2000   
-	perlin : incbin("data/perlin64.bin",@dataPos);
+	perlin : incbin("data/perlin64.bin");
 	
 	zp:pointer;
    
@@ -23,7 +22,7 @@ begin
 	k:=time;
 	//vera_addr_mid:=0;
 	//vera_addr_lo:=0;
-	zp:=@dataPos;
+	zp:=#perlin;
 //	ram_bank:=0;
 	
 	
@@ -45,6 +44,7 @@ begin
 					x:=j/4;
 					//zp:=@dataPos + 64*y + x;				
 					
+					vera_data1:=j+k;//zp[0];
 					vera_data1:=j+k;//zp[0];
 			
 				end;

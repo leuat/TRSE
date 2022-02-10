@@ -84,11 +84,11 @@ end;
 procedure InitScreen();
 begin
 	// Clear screen with spaces
-	ClearScreen(key_space,screen_char_loc);
+	ClearScreen(key_space,#screen_char_loc);
 	// Fill the upper screen color ram with black
-	fill(screen_col_loc,black,0);	
+	fill(#screen_col_loc,black,0);	
 	// Fill the scroll area with light red
-	fill(screen_col_loc+ypos*screen_width,light_red,0);	
+	fill(#screen_col_loc+ypos*screen_width,light_red,0);	
 	
 	// Print some static text
 	moveto(6,2,hi(screen_char_loc));

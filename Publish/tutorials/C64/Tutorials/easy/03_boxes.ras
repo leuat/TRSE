@@ -23,11 +23,11 @@ begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	
-    clearscreen(key_space, screen_char_loc);
-    clearscreen(black, screen_col_loc);
+    clearscreen(key_space, #screen_char_loc);
+    clearscreen(black, #screen_col_loc);
 	// Sets up the address tables for the screen & color memory    
-	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
-	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
+	createaddresstable(#saddr,#screen_char_loc,screen_width,screen_height);
+	createaddresstable(#caddr,#screen_col_loc,screen_width,screen_height);
 
 	// dx and dy are initialized to 1
 	dx:=1;

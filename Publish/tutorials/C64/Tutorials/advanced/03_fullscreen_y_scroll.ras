@@ -4,10 +4,11 @@ var
 	time, val, color, colorShift,i,j,k : byte = 0;  
 	g_currentBank: byte = 0;
 	temp_colorCopy : array[40] of byte;
-
+	src,dst:pointer;
 	g_vscroll : byte;
-
+	
 /*
+	
 	Full screen y-scrolling.
 	Swapping between two buffers, copying data for each frame
 
@@ -15,7 +16,7 @@ var
 */
 
 	const char : byte = 80;
-	
+	add1,add2 : integer;
 @define charsetLoc $2800
 
    mainChar: IncBin("resources/charsets/charset.bin",@charsetLoc);
@@ -24,48 +25,37 @@ var
 procedure SwitchBank();
 begin
 	if g_currentBank=0 then 
-		SetBank(VIC_BANK1)
+	begin
+		SetBank(VIC_BANK1);
+		add2:=0;
+		add1:=$4000;
+		src:=#screen_char_loc2;
+		dst:=#screen_char_loc+screen_width;
+	end
 	else 
+	begin
 		SetBank(VIC_BANK0);
+		add2:=$4000;
+		add1:=0;
+		src:=#screen_char_loc;
+		dst:=#screen_char_loc2+screen_width;
+		
+	end;
 
 	g_currentBank:=(g_currentBank+1)&1;
 end;
 
-procedure CopyColor( ul2_copycolor:byte );
 
+
+procedure CopyFast(cnt :byte);
 begin
-	 if ul2_copycolor=0 then begin
-		// First, copy the missing line
-		memcpyfast(screen_col_loc+^$208, 0, #temp_colorCopy, 40);
-		copyhalfscreen(screen_col_loc, screen_col_loc+^40,13, 1,1);
-	end
-	else begin 
-		copyhalfscreen(screen_col_loc+^14*^40 , screen_col_loc+^15*^40,10,1,1);
-		memcpyfast(#temp_colorCopy, 0, screen_col_loc + ^14*^40, 40);
-
+	for i:=0 to cnt do
+	begin
+		memcpyunroll(src,0,dst,40*4);
+		src+=40*4;
+		dst+=40*4;
 	end;
 end;
-
-// Copy screen data
-procedure CopyScreen(ul_:byte);
-begin
-
-	if g_currentBank=0  offpage then begin
-		if ul_=0 then
-			copyhalfscreen(screen_char_loc + ^520, screen_char_loc2 + ^40 + ^520,12, 1,1)
-		else
-			copyhalfscreen(screen_char_loc, screen_char_loc2 + ^40, 13, 1,1);
-
-	end;
-	if g_currentBank=1 offpage then begin
-		if ul_=0 then 
-			copyhalfscreen(screen_char_loc2+^520, screen_char_loc + ^40 + ^520, 12, 1,1)
-		else
-			copyhalfscreen(screen_char_loc2, screen_char_loc + ^40,13, 1,1);
-	end;
-
-end;
-
 
 
 /*
@@ -77,21 +67,12 @@ end;
 procedure VerticalScroll();
 begin
 		g_vscroll:=(g_vscroll+1)&7;
+		
 
-		if g_vscroll=0 then begin
-			WaitForRaster(150);
-			// Copy color data on scroll=0, but do it when the raster has passed
-			CopyColor(0);
-		end;
-
-		waitForRaster(251);
 		if g_vscroll=0 then SwitchBank();
-		if g_vscroll=1 then CopyScreen(1);
-		if g_vscroll=4 then CopyScreen(0);
+		if g_vscroll=1 then CopyFast(3);
+		if g_vscroll=2 then CopyFast(3);
 
-		if g_vscroll=0 then begin
-			CopyColor(1);
-		end;	
 		scrolly(g_vscroll);
 
 
@@ -122,18 +103,6 @@ begin
 end;
 
 // Print a line of colors at $D800
-procedure printColor();
-begin
-	colorShift:=0;
-	j:=time/8+colorShift;
-	for i:=0 to screen_width do 
-	begin
-		color:=Luminosities::fromBlue[(j+i)&31];
-	
-		screen_col_loc[i]:=color;
-	end;
-end;
-
 
 // Raster update
 interrupt Update();
@@ -144,11 +113,6 @@ begin
 	time:=time+1;
 
 	VerticalScroll();
-		
-	// Only print a new color line when scrolling index is 0
-	if g_vscroll=0 then 
-		printColor();
-		
 	// Only print a new line when scrolling index is 7
 	if g_vscroll=7 then 
 		PrintLine();
@@ -160,13 +124,12 @@ end;
 
 procedure Setup();
 begin
-	copyfullscreen(^@charsetLoc,^@charsetLoc+bank_size);
-
+	blockmemcpy(^@charsetLoc,^@charsetLoc+bank_size,8);
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 
 	setcharsetlocation(@charsetLoc);
-
+	SwitchBank();
 	hideBorderY(0);
 end;
 
@@ -174,6 +137,6 @@ end;
 begin
 	Setup();
 	preventirq();
-	StartRasterChain(Update(), 0,1);
+	StartRasterChain(Update(), 250,1);
 	Loop();
 end.

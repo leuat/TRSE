@@ -161,9 +161,7 @@ public:
 
     virtual void forceWord() {}
     virtual QString getTypeText(Assembler* as) {return "";}
-    virtual bool isPure() {
-        return isPureNumeric() || isPureVariable();
-    }
+    virtual bool isPure();
     virtual bool isRecord(Assembler* as)  {
         return false;
     }
@@ -176,6 +174,9 @@ public:
     }
 
     virtual bool isPureNumeric() {
+        return false;
+    }
+    virtual bool isPureNumericOrAddress() {
         return false;
     }
     virtual bool isPureVariable() { // Variable with no expressions

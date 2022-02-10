@@ -48,6 +48,10 @@ void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp
         m_right->ReplaceInline(as,inp);
 }
 
+bool Node::isPure() {
+    return isPureNumericOrAddress() || isPureVariable();
+}
+
 Node::Node() {
     m_blockInfo = m_staticBlockInfo;
     s_nodeCount++;
@@ -124,7 +128,7 @@ void Node::ForceAddress() {
 
 void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
     if (!n->isAddress()) {
-        ErrorHandler::e.Error("'"+name + "' requires parameter to be a memory address. Did you forget a '^' symbol such as ^$D800?", ln);
+       // ErrorHandler::e.Error("'"+name + "' requires parameter to be a memory address. Did you forget a '^' symbol such as ^$D800?", ln);
     }
 }
 

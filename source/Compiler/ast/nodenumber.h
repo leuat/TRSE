@@ -41,6 +41,7 @@ public:
 
     bool isAddress() override;
     bool isPureNumeric() override;
+    bool isPureNumericOrAddress() override;
     bool is8bitValue(Assembler* as) override;
 
     bool isWord(Assembler* as) override;

@@ -12,9 +12,10 @@ begin
 	closeirq();
 end;
 
+var
+	zp:pointer;
 
 begin
-	
 	AdlibPlayer::Initialize(#song);
 	// Set timer raster interrupt to point to Raster()
 	SetInterrupt($8,Raster());	

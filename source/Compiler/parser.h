@@ -113,6 +113,7 @@ public:
     QStringList m_parserAppendix;
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QString m_initAssembler = "";
+    QString m_endAssembler = "";
     QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     static QStringList s_usedTRUs, s_usedTRUNames;
@@ -123,7 +124,7 @@ public:
     QString m_vicMemoryConfig;
     QStringList m_initJumps;
     QVector<QSharedPointer<MemoryBlock>> m_userBlocks;
-
+    bool isInBuiltInMethod = false;
     QString m_overrideOutputTarget="";
     QVector<QSharedPointer<Node>> m_proceduresOnly;
 

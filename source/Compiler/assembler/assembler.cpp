@@ -653,7 +653,7 @@ void Assembler::Connect()
     QStringList pre;
 //    EndMemoryBlock();
  //   qDebug() <<m_source;
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65 || Syntax::s.m_currentSystem->m_system==AbstractSystem::X16) {
         for (int i=0;i<m_appendix.count();i++) {
             //                qDebug() << (m_appendix[i].m_pos);
             //    if (!Syntax::s.m_currentSystem->CL65Syntax())

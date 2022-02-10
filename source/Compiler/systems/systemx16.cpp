@@ -35,6 +35,7 @@ void SystemX16::PrepareInitialAssembler(Assembler *as)
     as->EndMemoryBlock();
 //        Comment("End of SYS memory block, starting new");
     as->StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+    as->Write(as->GetOrg(Syntax::s.m_currentSystem->m_programStartAddress));
     as->m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
 
 
@@ -49,7 +50,8 @@ void SystemX16::Assemble(QString &text, QString filename, QString currentDir, QS
     if (!QFile::exists(smc))
         Util::CopyFile(":resources/code/mega65/config.cfg",smc);
     //        QStringList params = QStringList() << "-t none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
-    QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<"--start-addr"<< "$801"<<("-o"+filename+".prg") <<(filename +".asm") ;
+//    QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<"--start-addr"<< "$801"<<("-o"+filename+".prg") <<(filename +".asm") ;
+    QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<("-o"+filename+".prg") <<(filename +".asm") ;
     //        QStringList params = QStringList() <<"--cpu"<<"4510"<<(filename +".asm") <<("-o"+filename+".prg");
     AssembleCL65(text,filename,currentDir,symTab,"prg",params);
     QString f= filename+".prg";
@@ -60,3 +62,4 @@ void SystemX16::Assemble(QString &text, QString filename, QString currentDir, QS
 
     System65C816::Assemble(text,filename,currentDir,symTab);
 }
+

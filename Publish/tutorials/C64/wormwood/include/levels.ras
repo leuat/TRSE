@@ -530,7 +530,7 @@ begin
 
 	fill(^$4400+^40*^11,$20,120);
 	moveto(10,12,$44);
-	printstring(startMessage,0,40);
+	printstring(#startMessage,0,40);
 
 
 	joystickbutton:=0;

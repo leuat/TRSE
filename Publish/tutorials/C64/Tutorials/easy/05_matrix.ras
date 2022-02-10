@@ -23,8 +23,8 @@ begin
 	// ypos has values 0-128
 	for i:=0 to screen_width do ypos[i]:=random()/2;
 	// Lookup address tables for 40 column mode, screen address and color address
-	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
-	createaddresstable(#caddr,screen_col_loc,screen_width,screen_height);
+	createaddresstable(#saddr,#screen_char_loc,screen_width,screen_height);
+	createaddresstable(#caddr,#screen_col_loc,screen_width,screen_height);
 
 end;
 
@@ -85,8 +85,8 @@ begin
 	screen_bg_col:=black;
 	screen_fg_col:=black;
 	// Clear screens	
-	clearscreen(key_space,screen_char_loc);
-	clearscreen(black,screen_col_loc);
+	clearscreen(key_space,#screen_char_loc);
+	clearscreen(black,#screen_col_loc);
 	// Initialize tables	
 	InitTables();
 	

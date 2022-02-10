@@ -42,9 +42,8 @@ begin
 
 	shiftx:=shiftx+31;
 	ystart:=3;
-	moveto(0, ystart, hi(screen_char_loc));
 	colorzp:=#screen_col_loc +ystart*screen_width;
-
+	moveto(0, ystart, hi(screen_char_loc));
 	for y:=0 to 5 do begin // 160*4
 	//	 Original code
 @if OPTIMIZED = 0
@@ -116,9 +115,10 @@ begin
 	ClearScreen(0, screen_char_loc);
 	ClearScreen(black, screen_col_loc);
 	SetCharsetLocation(@charLoc);
-
-	memcpy(^@charLoc+fireChar*^8,0,^@charLoc,0);	
-	fill(^@charLoc+^8*^8,$FF,128);
+	asm(";here");
+	memcpy(^@charLoc+fireChar*8,0,^@charLoc,0);	
+	fill(@charLoc+^8*^8,$FF,128);
+//	fill(^@charLoc,$FF,0);
 	
 	while (true) do 
 		Fire();

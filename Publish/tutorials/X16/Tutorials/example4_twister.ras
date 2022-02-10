@@ -1,5 +1,5 @@
 program Example7_simple_twister;
-@use "screen"
+@use "system/screen"
 var  
    i,j,k,m,l,time,y1,y2,cury: byte = 0;  
    
@@ -7,13 +7,13 @@ var
 	pos:integer;
 
 	
-@define twisterLoc $12000
+@define twisterLoc $8000
 
 
 	sine2 : array[256] of byte;
 
 
-	twisterData : incbin("data/twister.bin");
+	twisterData : incbin("data/twister.bin", @twisterLoc);
 	// 64 frames * 2 for table addresses
 	twisterTable : array[256] of integer = BuildTable("i*8");
 	tabb : array[255] of integer = BuildTable("(i&7) + (Math.floor(i/8.0)*8*8)");
@@ -150,7 +150,6 @@ begin
 
 	// Create twister address table: Twister consist of 64 rows of 16 byte data starting at @twisterLoc	
 //	CreateAddressTable( #twisterTable, @twisterLoc, 64, 256 );
-
 	PrintScreen();	
 	while (true) do
 	begin

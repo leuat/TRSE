@@ -64,3 +64,4 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 override_target_settings_basic = 0
+exomizer_toggle = 0

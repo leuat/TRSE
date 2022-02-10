@@ -1402,7 +1402,7 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
-        if (m_currentToken.m_value=="startassembler") {
+        if (m_currentToken.m_value=="startassembler" || m_currentToken.m_value=="endassembler") {
             Eat();
             Eat();
             return;
@@ -3010,6 +3010,11 @@ void Parser::PreprocessSingle() {
                   m_initAssembler = m_currentToken.m_value;
                   //m_ignoreMethods.append(m_currentToken.m_value);
               }
+              else if (m_currentToken.m_value.toLower() =="endassembler") {
+                  Eat(TokenType::PREPROCESSOR);
+                  m_endAssembler = m_currentToken.m_value;
+                  //m_ignoreMethods.append(m_currentToken.m_value);
+              }
               else if (m_currentToken.m_value.toLower() =="requirefile") {
                   Eat();
                   QString requiredFile = m_currentToken.m_value;
@@ -4608,7 +4613,7 @@ QSharedPointer<Node> Parser::BuiltinFunction()
         Eat(TokenType::LPAREN);
         QVector<QSharedPointer<Node>> paramList;
         QString prev;
-
+        isInBuiltInMethod = true;
         while (m_currentToken.m_type!=TokenType::RPAREN) {
             if (m_currentToken.m_type==TokenType::STRING) {
                 paramList.append( String() );
@@ -4636,6 +4641,7 @@ QSharedPointer<Node> Parser::BuiltinFunction()
 
         Eat(TokenType::RPAREN);
 
+        isInBuiltInMethod = false;
         //qDebug() << "Params count for " << procName << " :" << paramList.count();
         if (noParams!=paramList.count()) {
             QString s = "Error using builtin function " + procName + " \n";
@@ -5916,7 +5922,6 @@ void Parser::HandleUseTPU(QString fileName)
 //    Eat();
 //    qDebug() << m_currentToken.m_value;
 }
-
 QSharedPointer<Node> Parser::Expr()
 {
     QSharedPointer<Node> node = Term();

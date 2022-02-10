@@ -1,9 +1,11 @@
 program MyProgram;
+@use "system/screen"
+
 var  
    i,j,b,k,l,time,k2: byte; 
    in,ia,ib,ix,iy : integer;
 	zp:pointer;   
-	@define spritePos $a000
+	const spriteLoc:address=$8000;
 	curFrame : byte = 0;
 	test:array[10] of byte;
 // Emulator only supports 16 sprites
@@ -11,7 +13,7 @@ var
 @define noSprites 127
 
 @requirefile "data/example7_sprite.bin" "Please run the ray-tracer file 'example7_sprites.fjo' before compiling this program"
-	sprites : incbin("data/example7_sprite.bin",@spritePos);
+	sprites : incbin("data/example7_sprite.bin",spriteLoc);
 	
 // Set som funky palette
 procedure SetPalette(aa,bb,cc:byte);
@@ -40,20 +42,24 @@ begin
 	// Set timers
 	k:=time;
 	k2:=time*2;
+	
 	for i:=0 to @noSprites do 
 	begin
 		// Point to sprite i on VERA
-		initsprite(i);
+		Screen::PointToSprite(i);
 		// Set current frame
 		j:=(j+2)&15;
 		in:=$8200 + j*8;
 		// Set sprite position = $200 = $4000/32 + frame*256 (each frame is 256 byes)
-		setspriteloc(in);
+//		verapokedual($FC,00,hi(in),lo(in));
+	//	setspriteloc(in);
+		Screen::SetSpriteLoc(in);
 		// Set x / y position of individuals
 		ia:=100 + ix+sine[k];
 		ib:=sine[k2]*1+iy;
 		// Set position
-		spritepos(ia, ib);
+		Screen::SetSpritePos(ia,ib);
+	//	spritepos(ia, ib);
 		// Advance counters with some primes
 		k:=k+11;
 		k2:=k2+7;
@@ -63,10 +69,12 @@ end;
 
 procedure InitSprites();
 begin
-	EnableSprites(1);
+	Screen::EnableSprites(1);
 	// Emulator still only supports 16 sprites	
-	for i:=0 to @noSprites offpage  do begin
-		initsprite(i);
+	for i:=0 to @noSprites offpage  do 
+	begin
+		Screen::PointToSprite(i);	
+		
 	    // Set 16x16 (0 = 8, 1=16, 2=32, 3=64)		
 		spritesize(1,1);// 16x16
 		spritedepth(3); // In front ofall
@@ -81,7 +89,7 @@ end;
 
 begin
 
-	CopyDataToVera(^@spritePos, $00,$40,$00, 16);  
+	CopyDataToVera(#spriteLoc, $00,$40, $00, 16);  
 
 	Initpalette(0);
 	SetPalette(8,6,4);

@@ -40,6 +40,14 @@ bool NodeNumber::isAddress() {
 
 
 bool NodeNumber::isPureNumeric() {
+//    return true;
+    if (isAddress() && !isReference()) return false;
+
+    return true;
+}
+
+bool NodeNumber::isPureNumericOrAddress()
+{
     return true;
 }
 
@@ -101,9 +109,6 @@ bool NodeNumber::is8bitValue(Assembler* as)
 QString NodeNumber::HexValue() {
 
     if (m_val>=0)
-
-
-
     return "$" + QString::number((long)m_val,16);
     else
         return "-$" + QString::number((long)abs(m_val),16);

@@ -1294,10 +1294,9 @@ m; SetVideoMode;X16;b,b,b
 m; SetVeraBank;X16; b
 m; SetVeraIncrement;X16; b
 m; SetVeraTileMode; X16; b,b
-m; InitSprite; X16 ; b
-m; SetSpriteLoc; X16; i
-m; enableSprites;X16;b
-m; SpritePos; X16 ; i,i
+#m; InitSprite; X16 ; b
+#m; SetSpriteLoc; X16; i #m; enableSprites;X16;b
+#m; SpritePos; X16 ; i,i
 m; SpriteDepth; X16; b
 m; SpriteSize; X16; b,b
 m; SpritePaletteOffset; X16; b
@@ -1399,6 +1398,7 @@ r; WEDGE; X16,C64, MEGA65, PLUS4, C128
 r; USE; ALL
 r; UNIT; ALL
 r; STARTASSEMBLER; ALL
+r; ENDASSEMBLER; ALL
 r; DONOTREMOVE; ALL
 r; DONOTPREFIXUNIT; ALL
 r; DONOTPREFIX; ALL
