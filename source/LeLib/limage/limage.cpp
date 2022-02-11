@@ -110,6 +110,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 33;
     if (t==LImageGeneric)
         return 34;
+    if (t==GenericSprites)
+        return 35;
 
 
     return 255;
@@ -187,6 +189,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "JDH8";
     if (t==LImageGeneric)
         return "Generic indexed image";
+    if (t==GenericSprites)
+        return "Generic Sprites";
 
     return "Unknown image type";
 
@@ -265,6 +269,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return JDH8;
     if (c==34)
         return LImageGeneric;
+    if (c==35)
+        return GenericSprites;
 
     return NotSupported;
 
