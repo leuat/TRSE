@@ -112,14 +112,15 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     }
 
     if (m_buildSuccess) {
-
-        output ="Assembled file size: <b>" + QString::number(size) + "</b> bytes";
+        output = output.remove("Complete.");
+        output = output + "Assemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>. ";
         if (m_projectIni->getdouble("exomizer_toggle")==1) {
             output=output+" (<font color=\"#70FF40\"> " + QString::number((int)(100.0*(float)size/(float)orgFileSize))+  " % </font> of original size ) <br>";
-            output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
+            output=output+"Original file size: " + QString::number(orgFileSize) + " bytes.";
+            output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
         }
-        output = output + "\nAssemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>";
-        output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
+
+        output+="Assembled file size: <b>" + QString::number(size) + "</b> bytes. ";
 
     }
 

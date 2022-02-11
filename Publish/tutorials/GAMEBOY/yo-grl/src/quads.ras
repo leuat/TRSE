@@ -1,7 +1,7 @@
 
 procedure PrintQuadsScreen();
 begin
-	p1:=temp;					
+	p1:=#temp;					
 	for y:=0 to 8 offpage do
 	begin
 		for x:=0 to 8 offpage do
@@ -40,16 +40,16 @@ begin
 //	memcpy(p1,vram+^$1000,$160);
 //	scrollx:=80;
 	SetBank(bank_cubes);
-	memcpyonhblank(p1,vram+^$1000,$160);
+	memcpyonhblank(p1,#vram+$1000,$160);
 //	scrollx:=0;
 end;
 
 procedure InitQuadWindow();
 begin
-	Screens::ClearScreen(screen0,blank);	
-	Screens::FillVRAM(vram + ^$1000 + filled*^$10,$FF,$10);
+	Screens::ClearScreen(#screen0,blank);	
+	Screens::FillVRAM(#vram + $1000 + filled*$10,$FF,$10);
 	waitforraster(0);
-	Screens::ClearScreen(screen0,blank);	
+	Screens::ClearScreen(#screen0,blank);	
 //	fill(^$D000,0,1024);
 end;
 
@@ -83,7 +83,7 @@ begin
 	Screens::ClearVRAM();
 	PrintQuadsScreen();
 //	memcpyonhblank(temp,^$9c00,1024);
-	Screens::CopyBankHB(temp,^$9c00,4);
+	Screens::CopyBankHB(#temp,^$9c00,4);
 
 	InitQuadWindow();
 	GenerateQuadData();
@@ -117,7 +117,7 @@ begin
 		pos:=pos+1; // Advance text position!	
 
 	end;
-	d1:=screen0;
+	d1:=#screen0;
 //	d1:=d1+(6;
 	i:=(pos&3)*8+24;
 	i:=i&31;
@@ -197,7 +197,7 @@ begin
 		scroll:=scroll+1;
 		return();
 	end;*/
-	d1:=screen0;
+	d1:=#screen0;
 	d1:=d1+(32*9);
 	i:=(pos&3)*8-25;
 	i:=31-i&31;
@@ -321,7 +321,6 @@ begin
 		p3:=p3-acc;
 		
 		acc:=acc-48;
-		asm(";kake");
 		if (hi(acc)=0) then		
 		if (lo(acc)<49) then		
 		begin
@@ -379,7 +378,7 @@ begin
 	x1:=time>>2;
 	for i:=0 to 8 do
 	begin
-		d1:=vram + ^$1000 + boxx*^$10;
+		d1:=#vram + $1000 + boxx*$10;
 		j:=(i+x1)&7;
 		d1:=d1+j*$10;		
 

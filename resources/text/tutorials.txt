@@ -30,7 +30,7 @@ PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus
 
 MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do.
 
-NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p>TRSE currently contains 4 seperate NES example files on how to start building a NES game!
+NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p><img src=":resources/images/NES.png" width="200" class="center"><p>TRSE currently contains 4 seperate NES example files on how to start building a NES game!
 NES; Unit tests; NES/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal 2A03 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
 
 SNES; Main SNES tutorials; SNES/tutorials/;<h2>Main SNES tutorials</h2><p><img src=":resources/images/tutorials/cat.png" width="200" class="center"><p>Learn how to code a game for the Super Nintendo System using TRSE! The starting point for everything SNES.
@@ -88,7 +88,7 @@ POKEMONMINI; Main Pokemon Mini tutorials; POKEMONMINI/tutorials;<h2>Main Pokemon
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/crossplatform.png" width="300" class="center"><p>
 
-X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2>Please note: These are extremely preliminary examples. X16 support was implemented on sept 13th 2019, so very little is yet possible.
+X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2><p><img src=":resources/images/X16.png" width="200" class="center"><p>TRSE tutorials for the Commander X16!
 
 C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
 

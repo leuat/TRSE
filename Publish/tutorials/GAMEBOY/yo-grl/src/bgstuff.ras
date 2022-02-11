@@ -92,7 +92,7 @@ end;
 procedure UpdateBGStuff();
 begin
 //	SetBank(bank_bgstuff);
-	zp:=vram+$1000;
+	zp:=#vram+$1000;
 	if (time&1=0) then 
 		frame:=(frame+1)&63;
 

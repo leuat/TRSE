@@ -1248,7 +1248,7 @@ void BuilderThread::run()
             //    }
             //        qDebug() << m_builder->m_filename;
 
-            m_builder->AddMessage("Assembling & compressing... ");
+//            m_builder->AddMessage("Assembling & compressing... ");
 
             //emit emitText();
 

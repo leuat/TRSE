@@ -398,8 +398,6 @@ begin
 	EnableVBLank();
 
 	
-
-
 	/*
 	
 
@@ -407,6 +405,12 @@ begin
 
 
 	*/
+
+	
+
+
+
+
 
 
 	// PRX logo

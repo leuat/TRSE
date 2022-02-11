@@ -228,11 +228,11 @@ end;
 **/
 procedure ClearScreen(clspos : pointer; cls:byte);
 begin
-	zp:=storage;
+	zp:=#storage;
 	fill(zp,cls,64);
 	for i:=0 to 16 do
 	begin
-		zp:=storage;
+		zp:=#storage;
 		memcpyonhblank4(zp,clspos,64);
 		clspos:=clspos+64;
 	end;
@@ -243,9 +243,9 @@ end;
 **/
 procedure FillVRAM(pvr:pointer;fcls, vlen:byte);
 begin
-	zp:=storage;
+	zp:=#storage;
 	fill(zp, fcls, vlen);
-	zp:=storage;
+	zp:=#storage;
 	memcpyonhblank(zp,pvr,vlen);
 end;
 
@@ -256,7 +256,7 @@ end;
 procedure ClearWindow(clw:byte);
 begin
 	p1:=$9C00;
-	zp:=storage;
+	zp:=#storage;
 	fill(zp,clw,64);
 	for i:=0 to 16 do
 	begin

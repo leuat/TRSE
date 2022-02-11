@@ -81,8 +81,12 @@ bool SourceBuilder::Build(QString source)
      *
      *
     */
-
+    m_system->timer.start();
+    m_system->m_buildSuccess = true;
+    int start = m_system->timer.elapsed();
     compiler->Parse(source,lst, m_currentSourceFile);
+    int end = m_system->timer.elapsed();
+    m_output+="Parse time: <font color=\"#30FF30\">"+Util::MilisecondToString(end-start)+"</font>. ";
 
 
 
@@ -96,8 +100,6 @@ bool SourceBuilder::Build(QString source)
         m_filename = m_currentSourceFile.split(".tru")[0];
 
 
-    m_system->timer.start();
-    m_system->m_buildSuccess = true;
 
 /*    m_system->m_buildSuccess = false;
     return false;
@@ -210,7 +212,7 @@ QStringList SourceBuilder::getFileList()
 
 void SourceBuilder::BuildSuccesString()
 {
-    QString text ="Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
+    QString text ="<br>Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
 //    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
     if (compiler!=nullptr && compiler->m_parser.m_lexer!=nullptr)
         text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->getTotalNumberOfLines()) +"</b> lines of Turbo Rascal to <b>";

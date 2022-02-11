@@ -8,7 +8,7 @@ begin
 	SetBank(bank_cheating);
 	
 	Screens::ClearScreen(screen0,0);
-	zp:=temp+$800;//vram + $1000;
+	zp:=#temp+$800;//vram + $1000;
 	p1:=#cheating_charset;
 //	Screens::ClearSprites(40);
 	for j:=0 to 2 offpage do

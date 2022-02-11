@@ -45,7 +45,7 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
 
         // ARGH! in UPPERCASE
 
-/*        if (m_params[p]->isPureNumericOrAddress() && m_params[p]->m_isCollapsed==false) {
+        if (m_params[p]->isPureNumericOrAddress() && m_params[p]->m_isCollapsed==false) {
             // Collapse here.. willl that work?
             int val = m_params[p]->getValueAsInt(as);
 
@@ -65,7 +65,7 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
   //          else
     //            n->m_op.m_
         }
-*/
+
         if (m_function->m_params[p]==BuiltInFunction::ADDRESS) {
 //            qDebug() << m_procedure->m_procName << m_op.m_isReference;
             //qDebug() <<" ARHJ " << m_params[p]->getValue(as);

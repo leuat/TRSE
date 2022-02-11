@@ -40,7 +40,7 @@ bool NodeNumber::isAddress() {
 
 
 bool NodeNumber::isPureNumeric() {
-   return true;
+   //return true;
 
     if (isReference())
         return true;

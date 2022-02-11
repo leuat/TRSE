@@ -9,16 +9,16 @@ begin
 //	Screens::ClearScreen($F0);
 //	background_palette:=%11001001;
 	Screens::CopyBankHB(#img_prx,^$9000,8);
-	fill(temp,$F0,1024);
-	Screens::RenderOffScreen(temp,#img_prx_tab, 0, bank_prx_logo, 4,20, 16,6);
-	Screens::RenderOffScreen(temp,#img_prx_tab, 16*6, bank_prx_logo, 20,20, 3,6);
+	fill(#temp,$F0,1024);
+	Screens::RenderOffScreen(#temp,#img_prx_tab, 0, bank_prx_logo, 4,20, 16,6);
+	Screens::RenderOffScreen(#temp,#img_prx_tab, 16*6, bank_prx_logo, 20,20, 3,6);
 
 end;
 
 
 procedure PrintPRXScreen();
 begin
-	p1:=temp+^32*^27+^6;
+	p1:=#temp+32*27+6;
 	for i:=0 to 8 do
 	begin
 		k:=presents_list[i];
@@ -40,13 +40,13 @@ procedure InitEffectPrxLogo();
 begin
 //	background_palette:=%10010011;
 //	background_palette:=%01101100;
-	fill(screen0,0,256*4);
+	fill(#screen0,0,256*4);
 //	InitDMAAndVBlank(PRXVBlank());
 	Screens::StopLCD();
 
 	CopyPRXLogo();
 	PrintPRXScreen();
-	memcpyonhblank(temp,screen0,1024);
+	memcpyonhblank(#temp,#screen0,1024);
 	
 	sx:=30;
 	sy:=0;

@@ -14,6 +14,9 @@ var
 	i, j,rnd : byte;
 
 	rand : array[256] of byte = buildtable("Math.random()*256");
+
+	const ball_value : byte = $A0;
+
 	
 procedure getRand();
 begin
@@ -48,7 +51,7 @@ begin
 	for i := 0 to @NUM_BALLS do
 	begin
 		moveto(xp[i]*2,yp[i]);
-		vera_data1:=$A0;		
+		vera_data1:=ball_value;		
 		vera_data1:=6;
 				
 		if (xp[i] = 0 ) then dx[i] := 1;
@@ -62,7 +65,7 @@ begin
 		
 		moveto(xp[i]*2,yp[i]);
 		
-		vera_data1:=$A0;		
+		vera_data1:=ball_value;		
 		vera_data1:=3;		
 
 	end;
@@ -71,6 +74,7 @@ end;
 begin
 	
 	InitialiseBalls(); 	 // initialise the balls
+
 	// infinite loop
 	while(true) do
 	begin
