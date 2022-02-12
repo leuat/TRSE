@@ -229,10 +229,13 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
         as->Asm("sta $2000");
     }
     if (Command("Lo")) {
-        LoHi(as,true);
+        LoHi(as,0);
     }
     if (Command("Hi")) {
-        LoHi(as,false);
+        LoHi(as,1);
+    }
+    if (Command("bankbyte")) {
+        LoHi(as,2);
     }
     if (Command("ToPointer"))
         ToPointer(as);
@@ -2920,41 +2923,49 @@ void Methods6502::CreateInteger(Assembler *as, QString reg)
     LoadVar(as, 1);
 }
 
-void Methods6502::LoHi(Assembler *as, bool isLo)
+void Methods6502::LoHi(Assembler *as, int type)
 {
 //    qDebug() << m_node->m_params.count();
 
      QSharedPointer<NodeProcedure> proc = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
     if (proc!=nullptr) {
             QString name = proc->m_procedure->m_procName;
-            if (isLo)
+            if (type==0)
                 as->Asm("lda #<"+name);
-            else
+            if (type==1)
                 as->Asm("lda #>"+name);
+            if (type==1)
+                as->Asm("lda #^"+name);
             return;
 
      }
 
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
-        if (isLo)
+        if (type==0)
             as->Asm("lda " + m_node->m_params[0]->getAddress());
-        else
+        if (type==1)
             as->Asm("lda " + m_node->m_params[0]->getAddress()+"+1");
+        if (type==2)
+            as->Asm("lda " + m_node->m_params[0]->getAddress()+"+2");
         return;
     }
     if (m_node->m_params[0]->getType(as)==TokenType::ADDRESS) {
-        if (isLo)
+        if (type==0)
             as->Asm("lda #<" + m_node->m_params[0]->getAddress());
-        else
+        if (type==1)
             as->Asm("lda #>" + m_node->m_params[0]->getAddress());
+        if (type==2)
+            as->Asm("lda #^" + m_node->m_params[0]->getAddress());
         return;
     }
     if (m_node->m_params[0]->getType(as)==TokenType::INTEGER) {
-        if (isLo)
-        as->Asm("lda " + m_node->m_params[0]->getValue(as));
-        else
+        if (type==0)
+            as->Asm("lda " + m_node->m_params[0]->getValue(as));
+        if (type==1)
             as->Asm("lda " + m_node->m_params[0]->getValue(as) +"+1");
+        if (type==2)
+            as->Asm("lda " + m_node->m_params[0]->getValue(as) +"+2");
 
 /*        if (isLo)
             as->Asm("lda #" + Util::numToHex(m_node->m_params[0]->getValueAsInt(as)&0xFF));
@@ -2963,9 +2974,11 @@ void Methods6502::LoHi(Assembler *as, bool isLo)
         return;
     }
     if (m_node->m_params[0]->getType(as)==TokenType::BYTE) {
-        if (isLo)
+        if (type==0)
             as->Asm("lda " + m_node->m_params[0]->getValue(as));
-        else
+        if (type==1)
+            as->Asm("lda #0");
+        if (type==2)
             as->Asm("lda #0");
 
         return;

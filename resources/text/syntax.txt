@@ -307,6 +307,7 @@ m; CopyHalfScreen; X16,C64, MEGA65, PLUS4, C128, VIC20, PET,  NES ; a,a,b,b,n
 m; CopyFullScreen; X16,C64, MEGA65, PLUS4, C128, VIC20, PET,  NES ; a,a
 m; Lo; MOS6502, Z80; a
 m; Hi; MOS6502, Z80; a
+m; bankbyte; MOS6502, WDC65C02, WDC65C816, CUSTOM; a
 m; ToPointer;  MOS6502; b,b
 m; ProcedureToPointer;  ALL; p
 m; int2ptr;  MOS6502; i

@@ -79,7 +79,7 @@ public:
     void AddressTable(Assembler *as);
     void ToPointer(Assembler* as);
 
-    void LoHi(Assembler* as, bool isLo);
+    void LoHi(Assembler* as, int type);
 
     void LoadAndStoreInZp(QSharedPointer<Node> n, Assembler* as, QString zp);
 
