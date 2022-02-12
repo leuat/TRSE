@@ -176,7 +176,7 @@ void LGenericSprite::setPixel(double x, double y, uchar color, uchar bitMask)
 
 uchar LGenericSprite::getPixel(double x, double y, uchar bitMask)
 {
-
+    return 0;
 }
 
 
