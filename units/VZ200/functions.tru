@@ -7,6 +7,7 @@ var
   h,l : byte;
   p : pointer;
   s : pointer;
+  Value, BitFlag: byte;
 
 /** 
   Gets a random integer number 0-65535
@@ -139,6 +140,32 @@ begin
     h -= 1;
   end;
     LastIndexOfChar := h;
+end;
+
+// Bitwise functions
+/**
+  Check if a bit is set in a byte
+  eg. if (IsBitSet(flags,16) = false))
+  **/
+function IsBitSet(Value, BitFlag: global byte): Boolean;
+begin
+	IsBitSet := Value & BitFlag;
+end;
+/**
+  Set a bit in a byte
+  eg.  SetBit(flags,16);
+  **/
+function SetBit(Value, BitFlag: global byte): Boolean;
+begin
+	SetBit := Value | BitFlag;
+end;
+/**
+  Reset a bit in a byte
+  eg.  ResetBit(flags,16);
+  **/
+function ResetBit(Value, BitFlag: global byte): Boolean;
+begin
+	ResetBit := Value - BitFlag;
 end;
 
 end.
