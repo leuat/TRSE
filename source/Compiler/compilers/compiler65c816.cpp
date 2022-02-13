@@ -20,6 +20,7 @@ void Compiler65C816::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> s
 void Compiler65C816::Init6502Assembler()
 {
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+    m_assembler->m_endInsertAssembler << m_parser.m_endAssembler;
     //    qDebug() << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 

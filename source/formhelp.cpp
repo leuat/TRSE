@@ -84,10 +84,12 @@ void formHelp::LoadItems(int idx)
             QString word = data[1];
             QString system = data[2].toLower();
             bool isFjong = data[0]=="f";
+//            qDebug() << word <<system;
+
             if (word.toLower().startsWith("init")) continue;
             if (!isFjong && !Syntax::s.m_currentSystem->systemIsOfType(system.split(",")))
                 continue;
-            if (system.contains(currentSystem)||isFjong || system=="all") {
+            if (system.contains(currentSystem)||isFjong || system.contains("all") || system.contains(AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor).toLower())) {
 /*                QString val = word + "(";
                 for (QString s: params) {
                     if (s=="b") val+="[byte variable]";
