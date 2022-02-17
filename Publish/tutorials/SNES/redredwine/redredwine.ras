@@ -1,0 +1,91 @@
+program RedRedWine;
+
+@use "screen"
+@use "music"
+
+@export "resources/gfx/redredfluff.flf" "resources/gfx/redredfluff.bin" 1
+
+var
+	song : incbin("resources/music/redredmusic.bin") bank(3);
+	sounds : incbin("resources/music/redredsounds.bin") bank(6);
+
+	const charset_addr : integer = $3000;
+	sprites : incbin("resources/gfx/redredfluff.bin");
+	palette : incbin("resources/gfx/redredfluff.pal");
+
+	line1 : string = "     [ RED RED WINE [     ";
+	line2 : string = "    \ GOES TO MY HEAD \   ";
+	line3 : string = "] MAKES ME FORGET THAT I ]";
+	line4 : string = "   ^ STILL NEED HER SO ^  ";
+
+	bs : integer = 0; // Bottles scroll counter
+	ts : integer = 0; // Text scroll counter
+	tl : integer = 0; // Text line counter
+
+	// For setting up bottles
+	i, j, val : byte;
+
+	sin256 : array[256] of byte = BuildSineTable(127);
+
+begin
+	Screen::Init();
+	Screen::SetPalette(#palette, 0, $100);
+	Screen::SetGraphicsMode(1, #charset_addr);
+	Screen::CopyToVRAM(#sprites, #charset_addr, 128*128/2);
+	Screen::SetBGScreenLocation(0, hi(#SCREEN_BG1) | Screen::BG_32X32);
+	Screen::SetBGScreenLocation(1, hi(#SCREEN_BG2) | Screen::BG_32X32);
+	Screen::MoveToXY(0, 0, #Screen::BG1);
+	Screen::FillToVRAM(0, 0, 32*32);
+	Music::Init(#song, #sounds, 3, 6);
+
+	// Set up bottles
+	Screen::MoveToXY(0, 0, #Screen::BG2);
+	for j := 0 to 32 do
+	begin
+		for i := 0 to 32 do
+		begin
+			val := mod(i, 4) + 1 + mod(j, 4)*16;
+			Screen::PokeVRAM(val, 0);
+		end;
+	end;
+
+	Screen::EnableGFX(Screen::ENABLE_BG1 | Screen::ENABLE_BG2);
+	Screen::EnableDisplay();
+
+	while (true) offpage do
+	begin
+		Screen::WaitForVerticalBlank();
+
+		// Place text line at center bottom
+		if ts = 0 then
+			Screen::MoveToXY(3, 28, #Screen::BG1);
+
+		// Select text line
+		if (tl = 0 and ts = 0) then
+			Screen::CopyToScreen(#line1, length(line1), Screen::TILE_PRIORITY)
+		else if (tl = 1 and ts = 0) then
+			Screen::CopyToScreen(#line2, length(line2), Screen::TILE_PRIORITY)
+		else if (tl = 2 and ts = 0) then
+			Screen::CopyToScreen(#line3, length(line3), Screen::TILE_PRIORITY)
+		else if (tl = 3 and ts = 0) then
+			Screen::CopyToScreen(#line4, length(line4), Screen::TILE_PRIORITY);
+
+		// Scroll text lines from top to bottom
+		if ts < 256 then
+			Screen::Scroll(0, ts, 0);
+
+		// Scroll bottles in an ellipse
+		Screen::Scroll(sin256[0 - bs], sin256[bs + 32], 2);
+
+		// Update counters
+		bs += 1;
+		ts += 1;
+		if ts >= 336 then // Estimated ticks per pattern
+		begin
+			ts := 0;
+			tl += 1;
+			if tl >= 4 then
+				tl := 0;
+		end;
+	end;
+end.
