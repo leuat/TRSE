@@ -23,6 +23,10 @@ public:
     }
     virtual int addressBusBits() override;
 
+    QString CompressFile(QString fileName) override
+    {
+        return CompressLZ4(fileName);
+    }
 
     QString getCPUAssemblerString();
 
