@@ -707,6 +707,10 @@ void Assembler::Connect()
     //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
 
 
+
+    m_source=m_startInsertAssembler + m_source;
+
+
 }
 
 QString Assembler::StoreInTempVar(QString name, QString type, bool actuallyStore)  {

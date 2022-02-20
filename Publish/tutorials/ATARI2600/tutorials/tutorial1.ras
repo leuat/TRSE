@@ -1,5 +1,8 @@
 program Atari_Tutorial1;
 @use "screen"
+@ignoremethod "init16x8mul"
+@ignoremethod "initeightbitmul"
+var
 /*
  Test : Proof-of-concept that the Atari 2600 can be included in TRSE
  Please contact me if you are interested in developing the library for this computer
@@ -47,3 +50,4 @@ begin
 
 
 end.
+

@@ -11,6 +11,7 @@ public:
 
     void ExportBin(QFile &file) override;
 
+    QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h);
 
 };
 

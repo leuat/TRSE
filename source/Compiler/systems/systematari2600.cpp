@@ -17,3 +17,20 @@ void SystemAtari2600::DefaultValues()
     m_stripPrg = true;
 
 }
+
+void SystemAtari2600::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+    params<< filename+".bin";
+    //        qDebug() << filename;
+
+}
+void SystemAtari2600::PostProcess(QString &text, QString filename, QString currentDir)
+{
+    QByteArray ba = Util::loadBinaryFile(filename+".prg");
+    for (int i=ba.size();i<4096-4;i++)
+        ba.append((uchar)0);
+
+    Util::WriteInt16LH(ba,m_startAddress);
+    Util::WriteInt16LH(ba,m_startAddress);
+
+    Util::SaveByteArray(ba,filename+".bin");
+}

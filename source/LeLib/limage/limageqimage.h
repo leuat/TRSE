@@ -68,6 +68,10 @@ public:
 
     int getGridWidth() override;
 
+
+    QByteArray toQByteArray();
+    void fromQByteArray(QByteArray& ba);
+
     virtual void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
     void fromQImage(QImage* img, LColorList& lst) override;
 

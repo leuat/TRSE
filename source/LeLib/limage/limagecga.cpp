@@ -41,7 +41,7 @@ void LImageCGA::ExportBin(QFile &file)
     file.write(odd);
 }
 
-QStringList LImageCGA::SpriteCompiler(QString name, QString source, QString dst, int xp, int yp, int w, int h) {
+QStringList LImageCGA::SpriteCompiler(QString name, QString currentDir,QString source, QString dst, int xp, int yp, int w, int h) {
     QStringList src;
 
     src<<";Sprite Compiler appendix CGA for : "+name;

@@ -59,3 +59,43 @@ void LImageVZ200::ExportBin(QFile &file)
 
 
 }
+
+QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int xp, int yp, int w, int h)
+{
+    QString fname = currentDir + "/"+name+".inc";
+    if (QFile::exists(fname)) {
+        QFile::remove(fname);
+    }
+
+    QFile file(fname);
+    file.open(QIODevice::WriteOnly| QIODevice::Text);
+    QTextStream f(&file);
+
+    f<<"procedure "+name+"();\n";
+    f<<"begin\n";
+
+
+    for (int y=0;y<h;y++) {
+        for (int x=0;x<w;x+=4) {
+            uchar c = 0;
+            int xx = x + xp;
+            int yy = y + yp;
+            for (int i=0;i<4;i++) {
+                uchar v = getPixel(xx+i,yy);
+                c=c|(v<<(6-2*i));
+            }
+            //data.append(c);
+        }
+    }
+
+
+    f<<"end\n";
+
+
+    file.close();
+
+
+
+
+    return QStringList();
+}

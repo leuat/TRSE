@@ -100,6 +100,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageJDH8(colorType);
     if (t == LImage::LImageGeneric)
         return new LImageGeneric(colorType);
+    if (t == LImage::GenericSprites)
+        return new LImageGenericSprites(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

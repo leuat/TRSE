@@ -326,6 +326,28 @@ int LImageQImage::getGridWidth()
     return m_gridWidthDisplay;
 }
 
+QByteArray LImageQImage::toQByteArray()
+{
+    QByteArray ba;
+    for (int i=0;i<m_qImage->width();i++)
+        for (int j=0;j<m_qImage->height();j++) {
+            unsigned char val = getPixel(i,j);
+            ba.append(val);
+        }
+//    file.write((char*)data, m_width*m_height);
+    return ba;
+}
+
+void LImageQImage::fromQByteArray(QByteArray &ba)
+{
+    int idx = 0;
+    for (int i=0;i<m_qImage->width();i++)
+        for (int j=0;j<m_qImage->height();j++) {
+            setPixel(i,j,(uchar)ba[idx++]);
+        }
+
+}
+
 
 
 void LImageQImage::Initialize(int width, int height)

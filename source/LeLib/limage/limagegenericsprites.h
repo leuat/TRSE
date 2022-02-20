@@ -37,10 +37,11 @@ public:
     void FillColor(int color, int idx) {
     }
 
+
     void Init(int w, int h) override {
         m_height = h;
         m_width = w;
-        m_data.Initialize(m_width, m_height);
+        m_data.Initialize(m_width*8, m_height*8);
         m_header.resize(HEADER_SIZE);
     }
 
@@ -81,6 +82,7 @@ public:
 
 
    void Copy();
+   QPointF getPixelPos(int x, int y );
 
    void setPixel(int x, int y, unsigned int color) override;
 

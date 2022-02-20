@@ -11,11 +11,8 @@ public:
     virtual QString getEmulatorName() override {
         return m_settingsIni->getString("atari2600_emulator");
     }
-    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
-        params<< "-f"<<filename+".prg";
-//        qDebug() << filename;
-
-    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
+    void PostProcess(QString &text, QString filename, QString currentDir) override;
 
 };
 

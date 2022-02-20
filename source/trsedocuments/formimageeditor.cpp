@@ -676,7 +676,7 @@ void FormImageEditor::Initialize()
 
     UpdateAspect();
 
-//    QTimer::singleShot(50, this, SLOT(InitAspect()));
+    QTimer::singleShot(50, this, SLOT(InitAspect()));
 
     //for (int i=0;i<100;i++)
     //    Data::data.UpdatePens();
@@ -719,6 +719,7 @@ void FormImageEditor::InitAspect()
 {
 //    if (m_projectIniFile->contains("aspect_ratio"))
   //      ui->cmbAspect->setCurrentIndex(m_projectIniFile->getdouble("aspect_ratio"));
+//    qDebug() <<GetFooterData(LImageFooter::POS_ASPECT);
     ui->cmbAspect->setCurrentIndex(GetFooterData(LImageFooter::POS_ASPECT));
 }
 

@@ -115,7 +115,6 @@ void Asm6502::InitCStrings()
 void Asm6502::Program(QString programName, QString vicConfig)
 {
 
-    m_source+=m_startInsertAssembler;
 
     Nl();
 

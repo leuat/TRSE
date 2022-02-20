@@ -5646,22 +5646,28 @@ void Parser::HandleSpriteCompiler()
     if (m_pass!=PASS_PRE)
         return;
 
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
+        id = "drawsprite_";
+
+
 //    if (Syntax::s.builtInFunctions.contains(id))
   //      return;
 
     LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
-    m_parserAppendix << img->SpriteCompiler(name,"","",x,y,w,h);
+    m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h);
 
 
+    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
+    {
 
-    QList<BuiltInFunction::Type> paramList;
-    paramList<<BuiltInFunction::ADDRESS;
-    paramList<<BuiltInFunction::ADDRESS;
-    paramList<<BuiltInFunction::INTEGER;
-    paramList<<BuiltInFunction::INTEGER;
+        QList<BuiltInFunction::Type> paramList;
+        paramList<<BuiltInFunction::ADDRESS;
+        paramList<<BuiltInFunction::ADDRESS;
+        paramList<<BuiltInFunction::INTEGER;
+        paramList<<BuiltInFunction::INTEGER;
 
-    Syntax::s.builtInFunctions[id] = BuiltInFunction(id, paramList);
-
+        Syntax::s.builtInFunctions[id] = BuiltInFunction(id, paramList);
+    }
 
     delete img;
 }
