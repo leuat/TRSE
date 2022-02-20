@@ -116,7 +116,6 @@ void SystemVZ200::Assemble(QString &text, QString filename, QString currentDir, 
         text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
     }
 
-    output+="<br>";
 
     time = timer.elapsed();
 

@@ -13,6 +13,7 @@ public:
 
     QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h);
 
+
 };
 
 #endif // LIMAGEVZ200_H

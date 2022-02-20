@@ -5652,6 +5652,8 @@ void Parser::HandleSpriteCompiler()
 
 //    if (Syntax::s.builtInFunctions.contains(id))
   //      return;
+    if (!QFile::exists(m_currentDir+"/"+filename))
+        ErrorHandler::e.Error("Could not find file : "+filename, m_currentToken.m_lineNumber);
 
     LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
     m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h);
