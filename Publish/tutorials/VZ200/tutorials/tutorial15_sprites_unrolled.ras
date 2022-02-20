@@ -1,0 +1,46 @@
+program MyProgram;
+@use "Screen"
+@use "Memory"
+@use "Font"
+@use "Sprite"
+
+ var
+	const N : byte = 4;
+	xp: array[N] of byte = buildtable("i*4");
+	i,j : byte;
+	
+@spritecompiler "images/sprites1.flf" "tank" 3 0 16 8 
+@spritecompiler "images/sprites1.flf" "stuff" 3 8 16 8 
+
+@include "tank.inc"
+@include "stuff.inc"
+
+begin
+	
+	// Set the sprite data
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	Screen::SetPen(1);
+	Font::SetFont(#Font::font1);
+	Font::DrawTextAt("Unrolled sprites!",2,2,true);
+	
+	while(true) do
+	begin	
+		for i:=0 to N do
+		begin
+			if (i<N/2) then
+				tank(0, #screen, xp[i],20+i<<3)
+			else
+				stuff(0, #screen, xp[i],20+i<<3);
+			
+			xp[i] +=1;
+			if (xp[i]>=128) then xp[i]:=0;
+			if (i=N-1) then xp[i]+=1;
+		end;
+		Screen::WaitForVerticalBlank();
+	end;
+	// Draw a sprite to the screen
+
+end.
+	
