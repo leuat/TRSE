@@ -658,5 +658,6 @@
         <file>resources/images/POKEMONMINI.png</file>
         <file>resources/images/TRS80.png</file>
         <file>resources/text/help/r/endassembler.rtf</file>
+        <file>resources/images/JDH8.png</file>
     </qresource>
 </RCC>
