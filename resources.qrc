@@ -659,5 +659,21 @@
         <file>resources/images/TRS80.png</file>
         <file>resources/text/help/r/endassembler.rtf</file>
         <file>resources/images/JDH8.png</file>
+        <file>resources/text/help/c/viccr0.rtf</file>
+        <file>resources/text/help/c/viccr1.rtf</file>
+        <file>resources/text/help/c/viccr2.rtf</file>
+        <file>resources/text/help/c/viccr3.rtf</file>
+        <file>resources/text/help/c/viccr4.rtf</file>
+        <file>resources/text/help/c/viccr5.rtf</file>
+        <file>resources/text/help/c/viccr6.rtf</file>
+        <file>resources/text/help/c/viccr7.rtf</file>
+        <file>resources/text/help/c/viccr8.rtf</file>
+        <file>resources/text/help/c/viccr9.rtf</file>
+        <file>resources/text/help/c/viccra.rtf</file>
+        <file>resources/text/help/c/viccrb.rtf</file>
+        <file>resources/text/help/c/viccrc.rtf</file>
+        <file>resources/text/help/c/viccrd.rtf</file>
+        <file>resources/text/help/c/viccre.rtf</file>
+        <file>resources/text/help/c/viccrf.rtf</file>
     </qresource>
 </RCC>
