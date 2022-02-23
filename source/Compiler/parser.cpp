@@ -5659,7 +5659,7 @@ void Parser::HandleSpriteCompiler()
     m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h);
 
 
-    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::X86)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)
     {
 
         QList<BuiltInFunction::Type> paramList;
