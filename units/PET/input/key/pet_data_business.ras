@@ -97,14 +97,14 @@
 	const KBOPENBRACE:	integer = $0209;	// [ key
 	const KBSPACE:		integer = $0409;	// Space key
 	const KBLESS:		integer = $0809;	// < key
-	const KBSEMICOLON:	integer = $1009;	// Run Stop key
+	const KBRUNSTOP:	integer = $1009;	// Run Stop key
 	//const KNOKEYHERE:	integer = $2009;	// Pet has no key here
 	const KBFULLSTOP:	integer = $4009;	// . key
 	const KBEQUALS:		integer = $8009;	// = key
 
 
 	// unique key / screen codes
-	const QUOTE:		byte = 34; // "
+/*	const QUOTE:		byte = 34; // "
 	const DOLLAR:		byte = 36; // $
 	const COMMA:		byte = 44; // ,
 	const OPENBR:		byte = 40; // (
@@ -121,4 +121,4 @@
 	const INSDELKEY:	byte = 254; // insert / delete	
 	const NOKEY:		byte = 255;
 
-
+*/

@@ -96,7 +96,7 @@
 	const KOPENBRACE:	integer = $0209;	// [ key
 	const KSPACE:		integer = $0409;	// Space key
 	const KLESS:		integer = $0809;	// < key
-	const KSEMICOLON:	integer = $1009;	// Run Stop key
+	const KRUNSTOP:	integer = $1009;	// Run Stop key
 	//const KNOKEYHERE:	integer = $2009;	// Pet has no key here
 	const KFULLSTOP:	integer = $4009;	// . key
 	const KEQUALS:		integer = $8009;	// = key

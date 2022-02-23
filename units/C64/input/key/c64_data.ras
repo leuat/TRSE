@@ -17,7 +17,7 @@
 	const KF1:			integer = $1000; 	// F1 key
 	const KF3:			integer = $2000; 	// F3 key
 	const KF5:			integer = $4000; 	// F5 key
-	const KINSDEL:		integer = $8000; 	//Cursor Up/Down key
+	const KCUPDOWN:		integer = $8000; 	//Cursor Up/Down key
 
 //	ROW1 = 	LSh	E	S	Z	4	A	W	3
 	const K3:			integer = $0101; 	// 3 key
