@@ -659,13 +659,14 @@ QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
     QString labelVar = getLabelEnding(tmpVar) + "\t."+type+"\t0 ";
     m_tempVars << labelVar;
     if (actuallyStore) {
-    Asm("sta " + tmpVar);
-    if (type=="word")
-        if (Syntax::s.m_currentSystem->isWDC65())
-            Asm("sep #$10");
-        Asm("sty " + tmpVar + "+1");
-        if (Syntax::s.m_currentSystem->isWDC65())
-            Asm("rep #$10");
+        Asm("sta " + tmpVar);
+        if (type=="word") {
+            if (Syntax::s.m_currentSystem->isWDC65())
+                Asm("sep #$10");
+            Asm("sty " + tmpVar + "+1");
+            if (Syntax::s.m_currentSystem->isWDC65())
+                Asm("rep #$10");
+        }
     }
     PopLabel(name+ "_var");
     return tmpVar;

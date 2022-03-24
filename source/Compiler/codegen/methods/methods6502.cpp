@@ -2993,6 +2993,7 @@ void Methods6502::LoadAndStoreInZp(QSharedPointer<Node> n, Assembler *as, QStrin
    // qDebug() << n->getType(as);
 
     if (n->getType(as) == TokenType::POINTER) {
+        as->Comment("Loading pointer");
         as->Term("lda ");
         n->Accept(m_codeGen);
         as->Term();
@@ -3003,17 +3004,21 @@ void Methods6502::LoadAndStoreInZp(QSharedPointer<Node> n, Assembler *as, QStrin
         as->Asm("sta "+zp+"+1");
         return;
     }
-    if (n->getType(as) == TokenType::ADDRESS) {
-        as->Asm("lda #" + Util::numToHex(Util::NumberFromStringHex(n->getAddress())&0xFF));
+    if (n->getType(as) == TokenType::VAR || (n->isVariable() && n->isReference())) {
+        as->Comment("Loading variable");
+
+        as->Asm("lda #<" + n->getAddress());
         as->Asm("sta "+zp);
-        as->Asm("lda #" + Util::numToHex((Util::NumberFromStringHex(n->getAddress())>>8)&0xFF));
+        as->Asm("lda #>" + n->getAddress());
         as->Asm("sta "+zp+"+1");
         return;
     }
-    if (n->getType(as) == TokenType::VAR) {
-        as->Asm("lda #>" + n->getAddress());
+    if (n->getType(as) == TokenType::ADDRESS) {
+        as->Comment("Loading address");
+
+        as->Asm("lda #" + Util::numToHex(Util::NumberFromStringHex(n->getAddress())&0xFF));
         as->Asm("sta "+zp);
-        as->Asm("lda #<" + n->getAddress());
+        as->Asm("lda #" + Util::numToHex((Util::NumberFromStringHex(n->getAddress())>>8)&0xFF));
         as->Asm("sta "+zp+"+1");
         return;
     }
