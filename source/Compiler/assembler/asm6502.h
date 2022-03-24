@@ -62,7 +62,6 @@ public:
     int m_curZeroPointer=0;
 
 
-    QVector<int> m_removeLines;
     bool endTerm() {
         if (m_term.split(" ").count()==2)
             return true;
@@ -146,12 +145,6 @@ public:
     void OptimisePassStaLdx(QString x);
     void OptimisePassLdyLdy(QString y);
 
-    QString getLine(int i);
-    QString getNextLine(int i, int &j);
-    bool nextLineIsLabel(int i);
-    QString getToken(QString, int t);
-    void RemoveLines();
-    void RemoveLinesDebug();
 
     bool ContainsAChangingOpcodes(QString l1);
     bool ContainsYUsingOpcodes(QString l1,QString y);

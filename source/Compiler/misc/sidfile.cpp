@@ -50,10 +50,11 @@ void SidFile::Load(QString filename, QString path)
     m_initAddress = (unsigned char)(m_blob.at(0xa))<<8 | (unsigned char)(m_blob.at(0xa+1))<<0;
     m_playAddress = (unsigned char)(m_blob.at(0xc))<<8 | (unsigned char)(m_blob.at(0xc+1))<<0;
 
-
-//    qDebug() << Util::numToHex(m_playAddress);
-  //  qDebug() << Util::numToHex(m_initAddress);
-
+/*
+    qDebug() << Util::numToHex(m_playAddress);
+    qDebug() << Util::numToHex(m_initAddress);
+    qDebug() << Util::numToHex(m_loadAddress);
+*/
     file.close();
 }
 

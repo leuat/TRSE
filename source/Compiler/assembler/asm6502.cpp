@@ -661,7 +661,11 @@ QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
     if (actuallyStore) {
     Asm("sta " + tmpVar);
     if (type=="word")
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("sep #$10");
         Asm("sty " + tmpVar + "+1");
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("rep #$10");
     }
     PopLabel(name+ "_var");
     return tmpVar;
@@ -819,6 +823,11 @@ void Asm6502::Optimise(CIniFile& ini)
 
     OptimisePassLdyLdy("y");
     OptimisePassLdyLdy("x");
+
+
+//    if (ini.getdouble("post_optimizer_passldatax")==1)
+  //      RemoveUnusedLabels();
+
 
 //        OptimisePhaPla2();
   //      OptimiseCmp("cpy");
@@ -1201,81 +1210,6 @@ void Asm6502::OptimiseLdLd()
 
 }
 
-QString Asm6502::getLine(int i)
-{
-    QString s = m_source[i].trimmed().toLower().simplified().remove("\n");
-//    return s;
-
-    if (m_source[i].contains(";keep"))
-            return s;
-    s = s.split(";").first().trimmed();
-    return s;
-}
-
-QString Asm6502::getNextLine(int i, int &j)
-{
-    bool ok = false;
-    i=i+1;
-    QString line ="";
-
-    while (i<m_source.count() && (
-           getLine(i).remove(" ")=="" ||
-           getLine(i).remove(" ")=="\t" ||
-           getLine(i).remove(" ").remove("\t").startsWith(";")==true)) {
-        //if (getLine(i).contains(";"))
-    //            qDebug() << getLine(i);
-        i++;
-    }
-    if (i==m_source.count())
-        return "";
-    j=i;
-//    qDebug() << "RET: " << getLine(i);
-    return getLine(i);
-
-}
-
-bool Asm6502::nextLineIsLabel(int i)
-{
-//    qDebug() <<  "   NXT "<< m_source[i+1] << !(m_source[i+1].remove(" ").startsWith("\t"));
-    if (i>=m_source.count()-1)
-        return "";
-    QString s = m_source[i];
-    return !s.remove(" ").startsWith("\t");
-
-}
-
-QString Asm6502::getToken(QString s, int t)
-{
-    QStringList lst = s.split(" ");
-    if (t>=lst.count())
-        return "";
-    return lst[t];
-}
-
-void Asm6502::RemoveLines()
-{
-    int k=0;
-//    qDebug() << "WOOOT";
-    for (int i: m_removeLines) {
-//        qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
-    //    if (!m_source[i-k].contains(";keep")) {
-            m_source.removeAt(i-k);
-            k++;
-            m_totalOptimizedLines++;
-      //  }
-        //qDebug() << "current :" <<i <<m_removeLines;
-    }
-    m_removeLines.clear();
-}
-
-void Asm6502::RemoveLinesDebug()
-{
-    for (int i: m_removeLines) {
-        //qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
-        m_source[i] +="; DEBUG REMOVE";
-    }
-    m_removeLines.clear();
-}
 
 bool Asm6502::ContainsAChangingOpcodes(QString l1) {
     l1 = l1.trimmed().toLower();

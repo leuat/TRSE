@@ -67,9 +67,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
     if (ln==0) ln++;
     as->PushBlock(node->m_currentLineNumber);
 
-
-
-
     bool blockLabel = false;
     bool blockProcedure = false;
     bool hasLabel = false;

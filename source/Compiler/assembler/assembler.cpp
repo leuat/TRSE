@@ -584,6 +584,123 @@ bool Assembler::DeclareClass(QString name, QString type, int count, QStringList 
 
 }
 
+void Assembler::RemoveLines()
+{
+    int k=0;
+    //    qDebug() << "WOOOT";
+    for (int i: m_removeLines) {
+        //        qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
+        //    if (!m_source[i-k].contains(";keep")) {
+        m_source.removeAt(i-k);
+        k++;
+        m_totalOptimizedLines++;
+        //  }
+        //qDebug() << "current :" <<i <<m_removeLines;
+    }
+    m_removeLines.clear();
+}
+
+void Assembler::RemoveLinesDebug()
+{
+    for (int i: m_removeLines) {
+        //qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
+        m_source[i] +="; DEBUG REMOVE";
+    }
+    m_removeLines.clear();
+}
+
+void Assembler::RemoveUnusedLabels()
+{
+    m_removeLines.clear();
+    QMap<QString, bool> labelsUsed;
+    QMap<QString, int> labelLine;
+    int j,k;
+    for (int i=0;i<m_source.count()-1;i++) {
+        if (nextLineIsLabel(i)) {
+            QString lbl = getLine(i);
+            lbl = lbl.remove(":");
+            labelLine[lbl] = i;
+            labelsUsed[lbl] = false;
+//            qDebug() << "Found label: "<<lbl<<i;
+        }
+
+    }
+    // Then go through every line again
+    auto lst = labelsUsed.keys();
+    for (int i=0;i<m_source.count()-1;i++) {
+        QString line = getLine(i);
+        for (auto& s:lst) {
+            // Don't count as used!
+            if (labelLine[s]!=i) {
+                if (line.contains(s))
+                    labelsUsed[s] = true;
+
+            }
+        }
+    }
+    // Go through all unused labels and remove them
+    for (auto& s : lst ) {
+        if (!labelsUsed[s]) {
+            qDebug() << "Unused label " << s<<" on line "<<labelLine[s];
+        }
+    }
+
+
+    RemoveLines();
+
+}
+
+QString Assembler::getLine(int i)
+{
+    QString s = m_source[i].trimmed().toLower().simplified().remove("\n");
+    //    return s;
+
+    if (m_source[i].contains(";keep"))
+        return s;
+    s = s.split(";").first().trimmed();
+    return s;
+}
+
+QString Assembler::getNextLine(int i, int &j)
+{
+    bool ok = false;
+    i=i+1;
+    QString line ="";
+
+    while (i<m_source.count() && (
+               getLine(i).remove(" ")=="" ||
+               getLine(i).remove(" ")=="\t" ||
+               getLine(i).remove(" ").remove("\t").startsWith(";")==true)) {
+        //if (getLine(i).contains(";"))
+        //            qDebug() << getLine(i);
+        i++;
+    }
+    if (i==m_source.count())
+        return "";
+    j=i;
+    //    qDebug() << "RET: " << getLine(i);
+    return getLine(i);
+
+}
+
+QString Assembler::getToken(QString s, int t)
+{
+    QStringList lst = s.split(" ");
+    if (t>=lst.count())
+        return "";
+    return lst[t];
+}
+
+bool Assembler::nextLineIsLabel(int i)
+{
+    //    qDebug() <<  "   NXT "<< m_source[i+1] << !(m_source[i+1].remove(" ").startsWith("\t"));
+    if (i>=m_source.count()-1)
+        return "";
+    QString s = m_source[i];
+    return !s.remove(" ").startsWith("\t");
+
+}
+
 void Assembler::WriteConstants()
 {
     for (QString key: m_symTab->m_constants.keys()) {

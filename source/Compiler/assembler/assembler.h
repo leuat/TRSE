@@ -140,6 +140,7 @@ public:
     int m_noBanks = 0;
     static int m_prevCycles;
 
+    QVector<int> m_removeLines;
 
 
     void StartExistingBlock(QSharedPointer<Appendix> block);
@@ -315,6 +316,23 @@ public:
 
     virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
     virtual bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos);
+
+
+    virtual void RemoveLines();
+
+    virtual void RemoveLinesDebug();
+
+    virtual void RemoveUnusedLabels();
+
+
+    QString getLine(int i);
+
+    QString getNextLine(int i, int &j);
+
+    bool nextLineIsLabel(int i);
+
+    QString getToken(QString s, int t);
+
 
     void WriteConstants();
 

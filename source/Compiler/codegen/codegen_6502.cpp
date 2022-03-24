@@ -899,7 +899,7 @@ void CodeGen6502::IncSid(QSharedPointer<NodeVarDecl> node) {
           as->m_appendix.append(app);
         }
     }
-
+//    qDebug() << Util::numToHex(node->sid.m_loadAddress)<<Util::numToHex(node->sid.m_initAddress)<<Util::numToHex(node->sid.m_playAddress);
     QString pos = QString::number(node->sid.m_loadAddress,16);
     QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$"+pos));
 //    qDebug() << "INCSID dispatcher"<< pos;
