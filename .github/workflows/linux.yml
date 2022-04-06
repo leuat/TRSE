@@ -49,7 +49,7 @@ jobs:
           wget --tries=3 https://www.irio.co.uk/div/vasm.tar.gz
           tar -xzf vasm.tar.gz
           pushd vasm
-          make CPU=m68k SYNTAX=mot -j 2
+          make CPU=m68k SYNTAX=mot -j 4
           popd
           # rgbasm (GameBoy)
           git clone https://github.com/gbdev/rgbds.git
@@ -57,13 +57,13 @@ jobs:
           # v0.5 removes GLOBAL keyword
           git checkout tags/v0.4.2
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build -j 2
+          cmake --build build -j 4
           popd
           # exomizer
           wget --tries=3 https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
           unzip 3.1.1.zip -d exomizer
           pushd exomizer/*/src
-          make -j 2
+          make -j 4
           popd
           # Install ROMs to be able to run VICE
           wget --tries=3 https://sourceforge.net/projects/vice-emu/files/releases/vice-3.5.tar.gz/download -O vice-3.5.tar.gz
@@ -73,13 +73,13 @@ jobs:
           # Build Caprice32 (Amstrad CPC emulator)
           git clone https://github.com/ColinPitrat/caprice32.git
           pushd caprice32
-          make -j 2
+          make -j 4
           popd
           # Build SameBoy (GameBoy emulator): requires rgbasm (built before)
           export PATH=`pwd`/rgbds/build/src:$PATH
           git clone https://github.com/LIJI32/SameBoy.git
           pushd SameBoy
-          make -j 2
+          make -j 4
           popd
           # leave tools directory
           popd
@@ -104,7 +104,7 @@ jobs:
         run: |
           # PREFIX is here for the AppImage build
           qmake PREFIX=/usr TRSE.pro
-          make -j 2 -k
+          make -j 4 -k
 
       - name: Build OK64
         run: |
