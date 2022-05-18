@@ -1,0 +1,38 @@
+unit Random;
+var
+	@donotremove Seed
+	Seed : integer;
+	
+procedure Init(Seed:global integer);
+begin
+	asm("
+	
+	xor ah,ah  ; ah = 0
+	int 1Ah    ; returns in cx:dx ticks since midnight (18.2Hz ticks)
+	; let's mix the cx:dx a bit together to get a bit more entropy out of it
+	rol cx,8
+	xor dx,cx
+	xor [Random_Seed],dx ; add that entropy to the original seed
+");
+
+end;	
+	
+	
+function Random(): integer;
+begin
+	asm("
+	push dx
+    mov ax, 25173       ; LCG Multiplier
+    mul word [Random_Seed] ; DX:AX = LCG multiplier * seed
+    add ax, 13849       ; Add LCG increment value
+    mov [Random_Seed], ax      ; Update seed
+    ; AX = (multiplier * seed + increment) mod 65536
+    pop dx
+    ");
+
+end;
+
+	
+	
+
+end.

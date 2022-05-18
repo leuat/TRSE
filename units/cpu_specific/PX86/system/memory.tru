@@ -1,0 +1,141 @@
+unit Memory;
+var
+	i1 : integer;
+	p1 : pointer;
+	const DEFAULT_TIMER : integer = 23863;
+	error_code : integer = 0;
+	source,dest : pointer of integer;
+@ifdef QEMU
+	curMem : integer;
+@endif
+
+procedure Poke8(_bx:integer; _di:integer;_ah:byte) inline;
+begin
+	asm("
+		mov es,bx
+		mov [es:di],ah	
+	");
+end;
+
+
+procedure SetTimer(ticks : integer);
+begin
+  asm cli end;
+  asm("
+  	  mov al,$36
+  	  out $43,al
+  	  mov dx,$40
+  	  mov ax,[Memory_ticks]
+  	  out $40,al
+  	  mov al,ah
+  	  out $40,al
+  ");
+  asm sti end;
+end;
+
+
+procedure Init();
+begin
+@ifndef QEMU
+	asm
+	mov	dx,ss		; Stack segment
+	mov	bx,128 / 16 + 1 ; stack size in paragraphs
+	add	bx,dx		; BX = end
+	mov	ax,es		; ES = PSP (start)
+	sub	bx,ax		; BX = new size in paragraphs
+	mov	ah,$4A
+	int	21h
+	; Allocate some memory up to 1024*2
+	mov ah,$48
+	mov bx, $2000-$160-$3D
+	int $21
+	end;
+@endif
+@ifdef QEMU
+	curMem:=$2000; // $2000
+@endif
+end;
+
+function GetBlockMem(blocks: integer):long;
+begin
+	@ifndef QEMU
+	error_code := 0;
+	asm
+		mov ah,$48
+		mov bx, [Memory_blocks]
+		int $21
+		mov [Memory_i1],ax
+		jnc gbe_ok
+		mov [Memory_error_code], ax
+gbe_ok:
+	end;	
+	GetBlockMem := ptr(i1,0);
+	
+	@endif
+	@ifdef QEMU
+	GetBlockMem :=ptr(curMem,0);
+	curMem+=blocks;
+	@endif
+end;
+
+function GetMem(blocks: global integer):long;
+begin
+	// Bug?
+	blocks:=blocks/4;
+	if (blocks=0) then blocks:=1;
+//	blocks+=1;
+
+	@ifndef QEMU
+	asm
+		mov ah,$48
+		mov bx, [Memory_blocks]
+		int $21
+		mov [Memory_i1],ax
+	end;	
+	GetMem := ptr(i1,0);
+	@endif
+	
+	
+	@ifdef QEMU
+	GetMem :=ptr(curMem,0);
+	curMem+=blocks;
+	@endif
+end;
+
+procedure Release(rp: pointer);
+begin
+	@ifndef QEMU
+	asm
+		mov ah,$49
+		mov bx, [Memory_rp+2]
+		int $21
+	end;	
+	@endif
+end;
+
+
+procedure Quit() inline;
+begin
+	@ifndef QEMU
+	asm("
+	mov ah,$4C 
+    int $21	
+    ");
+    @endif
+end;
+
+
+procedure CopyData16(source,dest:global pointer of integer;i1:global integer);
+begin
+  asm
+    mov     cx, [Memory_i1]
+    push    ds
+    les di,[Memory_dest]
+    lds si,[Memory_source]
+    
+    Rep MovsW
+    pop     ds
+  end;
+end;
+
+end.
