@@ -3036,7 +3036,6 @@ void Methods6502::LoadAndStoreInZp(QSharedPointer<Node> n, Assembler *as, QStrin
 
 void Methods6502::LoadPalette(Assembler* as)
 {
-
     QString lbl = as->NewLabel("LoadPalette");
 
 //  as->Asm("LDA $2002");

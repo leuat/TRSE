@@ -9,7 +9,6 @@ program MrTibbles;
 
 
 
-
 var  
 	pad1,pad2 : byte;
 

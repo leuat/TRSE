@@ -29,19 +29,20 @@ top_pall:
 			move.l (a0,d4),d1
 			add.l pa_czz,d1
 
-			divs d1,d5
-			add.l pa_cxx,d5
+                        divs.w d1,d5
+                        add.l pa_cxx,d5
 
-			divs d1,d6
-			add.l pa_cyy,d6
+                        divs.w d1,d6
+                        add.l pa_cyy,d6
 
-			move.l d5,(a2,d2)
-			add.l #4,d2
+
+                        move.w d5,(a2,d2)
+                        add.l #2,d2
 			
-			move.l d6,(a2,d2)
-			add.l #4,d2
+                        move.w d6,(a2,d2)
+                        add.l #2,d2
 			
-			add.l #4,d4
+                        add.l #4,d4
 	
 
                         dbf d3,top_pall

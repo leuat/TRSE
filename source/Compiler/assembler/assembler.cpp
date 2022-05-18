@@ -398,7 +398,7 @@ void Assembler::Label(QString s)
 
 
 
-void Assembler::IncludeFile(QString pfile)
+void Assembler::IncludeFile(QString pfile, bool isInsert)
 {
     QFile file(pfile);
     if(!file.open(QIODevice::ReadOnly)) {
@@ -425,10 +425,19 @@ void Assembler::IncludeFile(QString pfile)
     }
     file.close();
 
-    if (m_currentBlock==nullptr)
-        m_source<<source;
-    else
-        m_currentBlock->m_source<<source;;
+    if (!isInsert) {
+        if (m_currentBlock==nullptr)
+            m_source<<source;
+        else
+            m_currentBlock->m_source<<source;;
+    }
+    else {
+        if (m_currentBlock==nullptr)
+            m_source=source<<m_source;
+        else
+            m_currentBlock->m_source=source<<m_source;;
+
+    }
 
 }
 

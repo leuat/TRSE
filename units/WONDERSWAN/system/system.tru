@@ -1,0 +1,21 @@
+unit System;
+var
+	
+procedure Init() inline;	
+begin
+	asm("
+	  cli
+      cld
+      mov sp,$100
+      xor ax,ax
+      mov ss,ax
+      mov es,ax
+      mov ax, $200
+	  mov ds,ax	  
+  	  mov al,0e0h
+      out 60h,al	;gfx mode
+	");
+end;
+	
+	
+end.

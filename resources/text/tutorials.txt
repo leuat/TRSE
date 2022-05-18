@@ -78,6 +78,8 @@ OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system s
 
 JDH8; Main JDH8 examples ; JDH8/tutorials/; <h2>Main JDH8 tutorials</h2><tr><td><img src=":resources/images/JDH8.png" width="150" class="center"></td><td><p>See https://www.youtube.com/watch?v=vaGZapAGvwM. Still very much experimental. Check out the video! </td></tr>
 
+WONDERSWAN; Main Wonderswan examples ; WONDERSWAN/tutorials/; <h2>Main Wonderswan tutorials</h2><tr><td><img src=":resources/images/WONDERSWAN.png" width="150" class="center"></td><td><p>WIP </td></tr>
+
 TIKI100; Tiki 100 tutorials; TIKI100/tutorials/;  <h2>Main TIKI 100 tutorials</h2><p><img src=":resources/images/TIKI100.png" width="300" class="center">The TIKI 100 was a little-known (and failed) 1980s computer from Norway. A perfect match for TRSE!<br><br>  Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 TRS80; TRS-80 tutorials; TRS80/tutorials/;  <h2>Main TRS-80 tutorials</h2><p><img src=":resources/images/TRS80.png" width="200" class="center"><p>TRS-80 z80 tutorials. Work in progress!<p>Let us know if you're interesting in writing some example files / libraries
 

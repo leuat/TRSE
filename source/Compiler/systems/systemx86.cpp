@@ -159,6 +159,11 @@ bool SystemX86::is8088()
     return m_cpu=="8088" || m_cpu=="8086";
 }
 
+bool SystemX86::SystemX86::is186()
+{
+    return (m_cpu=="186");
+}
+
 QString SystemX86::getEmulatorName() {
     if (m_projectIni->contains("qemu") && m_projectIni->getString("qemu").startsWith("qemu")) {
         QString emu = m_settingsIni->getString("qemu_directory")+QDir::separator()+m_projectIni->getString("qemu");

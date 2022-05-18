@@ -61,6 +61,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leGameboyEmulator->setText(m_ini->getString("gameboy_emulator"));
     ui->leOK64Emulator->setText(m_ini->getString("ok64_emulator"));
     ui->leBBCEmulator->setText(m_ini->getString("bbc_emulator"));
+    ui->leWonderswanEmulator->setText(m_ini->getString("wonderswan_emulator"));
     ui->leAcornEmulator->setText(m_ini->getString("acorn_emulator"));
     ui->leAtari800Emulator->setText(m_ini->getString("atari800_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
@@ -178,6 +179,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("atari2600_emulator", ui->leAtari2600Emulator->text());
     m_ini->setString("ok64_emulator", ui->leOK64Emulator->text());
     m_ini->setString("bbc_emulator", ui->leBBCEmulator->text());
+    m_ini->setString("wonderswan_emulator", ui->leWonderswanEmulator->text());
     m_ini->setString("acorn_emulator", ui->leAcornEmulator->text());
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
@@ -304,7 +306,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"MSX" << "COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -892,5 +894,15 @@ void DialogTRSESettings::on_btnWasm_clicked()
         tr("lwasm assembler"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leWasm->setText(filename);
+}
+
+
+void DialogTRSESettings::on_btnWonderswan_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Wonderswan emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leWonderswanEmulator->setText(filename);
+
 }
 

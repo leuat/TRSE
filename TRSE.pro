@@ -29,7 +29,7 @@ win32:RC_ICONS += trse.ico
 ICON = trse.icns
 
 ARCH = $$QMAKE_HOST.arch
-#ARCH = arm64
+ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
     CONFIG += warn_off
@@ -200,6 +200,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
     source/Compiler/systems/systemvz200.cpp \
+    source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
     source/Compiler/systems/systemx86.cpp \
     source/Compiler/systems/systemz80.cpp \
@@ -477,6 +478,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
     source/Compiler/systems/systemvz200.h \
+    source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \
     source/Compiler/systems/systemx86.h \
     source/Compiler/systems/systemz80.h \

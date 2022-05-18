@@ -819,6 +819,7 @@ void FormImageEditor::UpdatePalette()
         return;
     if (m_work.m_currentImage->m_image == nullptr)
         return;
+
     LColorList* l = &m_work.m_currentImage->m_image->m_colorList;
     //if (m_currentColorList!=l)
     //{

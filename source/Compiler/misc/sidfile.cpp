@@ -32,6 +32,7 @@ void SidFile::Load(QString filename, QString path)
     m_fileName = filename;
     if (!filename.endsWith(".sid"))
         ErrorHandler::e.Error("Unable to load '" + filename +"', must be sid file!");
+
     QFile file(path + filename);
 
     if (!QFile::exists(path + filename))
@@ -42,7 +43,7 @@ void SidFile::Load(QString filename, QString path)
     //qDebug() << "sid file size: " << m_blob.count();
 
 
-    if (!(m_blob.at(0)=='P' && m_blob.at(1)=='S' && m_blob.at(2)=='I' && m_blob.at(3)=='D'))
+    if (!((m_blob.at(0)=='P'||m_blob.at(0)=='R') && m_blob.at(1)=='S' && m_blob.at(2)=='I' && m_blob.at(3)=='D'))
         ErrorHandler::e.Error("File '" + filename +"' not identified as a SID file");
 
 

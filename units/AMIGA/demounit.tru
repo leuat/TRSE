@@ -1,5 +1,6 @@
 unit DemoUnit;
 var
+	from, too, i,j,k,c : integer;
 	time,maxTime,transition : integer;
 	
 
@@ -24,5 +25,30 @@ begin
 		
 	end;
 end;
+
+procedure FadeToColor(from, too:global integer);
+begin
+	i:=from&$F;
+	j:=too&$F;
+	c:=0;
+	if (i<j) then i+=1;
+	if (i>j) then i-=1;
 	
+	c:=c|i;
+
+	i:=(from>>4)&$F;
+	j:=(too>>4)&$F;
+	if (i<j) then i+=1;
+	if (i>j) then i-=1;
+	
+	c:=c|(i<<4);
+
+	i:=(from>>8)&$F;
+	j:=(too>>8)&$F;
+	if (i<j) then i+=1;
+	if (i>j) then i-=1;
+	
+	c:=c|(i<<8);
+	ReturnValue(c);
+end;	
 end.

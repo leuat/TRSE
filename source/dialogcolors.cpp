@@ -70,7 +70,7 @@ void DialogColors::on_pushButton_clicked()
 
     }
 //    m_org->m_list = m_lst->m_list;
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES ) {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES || Syntax::s.m_currentSystem->m_system==AbstractSystem::AMIGA ) {
         m_org->setNoBitplanes(m_lst->m_bpp.x());
     }
 
@@ -159,6 +159,7 @@ void DialogColors::on_cbmBitplanes_currentIndexChanged(int index)
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000 ||
        Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES ) {
         m_lst->setNoBitplanes(index+1);
+//        qDebug() << index+1;
 
     }
 

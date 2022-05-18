@@ -109,6 +109,9 @@ void Compiler65C816::Connect()
 */
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES) {
         m_assembler->StartMemoryBlock("0");
+        if (QFile::exists(m_parser.m_currentDir+"/init.asm"))
+                m_assembler->IncludeFile(m_parser.m_currentDir+"/init.asm");
+        else
         m_assembler->IncludeFile(":resources/code/snes/init.asm");
     }
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
@@ -144,6 +147,10 @@ void Compiler65C816::Connect()
             emit EmitTick(" ["+QString::number(i+1)+"]");
             m_assembler->Optimise(*m_projectIni); }
     }
+
+    if (QFile::exists(m_parser.m_currentDir+"/end.asm"))
+            m_assembler->IncludeFile(m_parser.m_currentDir+"/end.asm");
+
 
     CleanupCycleLinenumbers("", m_assembler->m_cycles, m_assembler->m_cyclesOut);
     CleanupCycleLinenumbers("",m_assembler->m_blockCycles,m_assembler->m_blockCyclesOut);

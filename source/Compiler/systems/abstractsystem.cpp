@@ -118,7 +118,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         if (s == "CUSTOM") return "CUSTOM";//StringFromProcessor("CUSTOM");
         if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII" || s=="ORIC"|| s=="ACORN") return "MOS6502";
         if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
-        if (s == "X86") return "PX86";
+        if (s == "X86" || s=="WONDERSWAN") return "PX86";
         if (s == "M1ARM") return "ARM";
         if (s == "GAMEBOY") return "GBZ80";
         if (s == "SNES") return "WDC65C816";
@@ -199,6 +199,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         return TRS80;
     if (s.toLower()=="trs80coco")
         return TRS80COCO;
+    if (s.toLower()=="wonderswan")
+        return WONDERSWAN;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -237,6 +239,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == POKEMONMINI) return "POKEMONMINI";
     if (s == TRS80) return "TRS80";
     if (s == TRS80COCO) return "TRS80COCO";
+    if (s == WONDERSWAN) return "WONDERSWAN";
     return "";
 }
 
@@ -257,6 +260,8 @@ bool AbstractSystem::systemIsOfType(QString val)
     if (val=="mos6502" && (m_processor==WDC65C02 || m_processor==WDC65C816))
         return true;
     if (val=="z80" && (m_processor==GBZ80))
+        return true;
+    if (val=="px86" && (m_processor==PX86))
         return true;
     if (val=="m6809" && (m_processor==M6809))
         return true;

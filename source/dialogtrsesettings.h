@@ -219,6 +219,8 @@ private slots:
 
     void on_btnWasm_clicked();
 
+    void on_btnWonderswan_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

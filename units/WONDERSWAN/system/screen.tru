@@ -1,0 +1,31 @@
+unit Screen;
+var
+
+	const PALETTE: address = $FE0;
+
+procedure WaitForVerticalBlank();
+begin
+	asm("
+      mov al,144
+
+wait_linia:
+      mov bl,al
+      mov dx,2
+wait1:
+      in al,dx
+      cmp al,bl
+      jne wait1
+      ");
+end;
+
+
+procedure EnableIcons();
+begin
+	asm("
+	mov al, 0xff
+	out IO_LCD_ICONS, al
+	");
+end;
+	
+	
+end.

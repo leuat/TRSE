@@ -675,5 +675,8 @@
         <file>resources/text/help/c/viccrd.rtf</file>
         <file>resources/text/help/c/viccre.rtf</file>
         <file>resources/text/help/c/viccrf.rtf</file>
+        <file>resources/code/wonderswan/init.s</file>
+        <file>resources/code/wonderswan/end.s</file>
+        <file>resources/images/WONDERSWAN.png</file>
     </qresource>
 </RCC>

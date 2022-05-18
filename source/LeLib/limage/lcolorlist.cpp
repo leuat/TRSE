@@ -354,6 +354,7 @@ void LColorList::setNoBitplanes(int bpl)
         InitSNESPens();
         return;
     }
+    m_bpp = QVector3D(bpl,bpl,bpl);
 
     m_list.resize(pow(2,bpl));
     DefaultPen(LPen::SingleSelect);

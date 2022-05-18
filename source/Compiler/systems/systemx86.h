@@ -60,6 +60,7 @@ public:
     virtual bool is386() override;
     virtual bool is286() override;
     virtual bool is8088() override;
+    virtual bool is186() override;
 
     int getPointerSize() override {
         return 4;

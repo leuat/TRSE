@@ -1176,6 +1176,18 @@ void CodeGenX86::BuildToCmp(QSharedPointer<Node> node)
             as->Comment("Compare with pure num / var optimization");
             //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
 //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+            if (node->m_left->isPureNumeric() && node->m_right->isPureNumeric()) {
+//                as->Asm("cmp "+getWordByteType(as,node->m_left) +" " +node->m_left->getValue(as)+","+getWordByteType(as,node->m_left)+" " + node->m_right->getValue(as));
+                as->Comment("Compare two const numbers");
+                if (node->m_left->getValueAsInt(as)==node->m_right->getValueAsInt(as))
+                    as->Asm("xor ax,ax ; clear zero flag");
+                else
+                {
+                    as->Asm("mov ax,1");
+                    as->Asm("sub ax,2");
+                }
+                return;
+            }
             if (node->m_left->isPure()) {
                 as->Asm("cmp ["+node->m_left->getValue(as)+"],"+getWordByteType(as,node->m_left)+" " + node->m_right->getValue(as));
                 return;

@@ -1,0 +1,25 @@
+program wsc_test;
+
+@use "system/memory"
+@use "system/screen"
+@use "system/system"
+
+var
+	p:pointer;
+	i,j:integer;
+	@donotremove tile
+//	tile:array[$100] of byte = buildtable("i");
+
+
+begin
+	System::Init();
+	Screen::EnableIcons();
+	
+	while (true) do
+	begin
+		Screen::WaitForVerticalBlank();
+		Memory::Poke8(#screen::palette,0,i);
+		i+=1;
+	end;
+	
+end.

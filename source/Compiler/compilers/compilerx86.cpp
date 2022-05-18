@@ -22,6 +22,32 @@ void CompilerX86::Connect()
     m_assembler->m_source<<m_parser.m_parserAppendix;
 
     m_assembler->EndMemoryBlock();
+    bool header = false;
+    bool footer = false;
+
+
+    if (QFile::exists(m_parser.m_currentDir+"/init.asm")) {
+            m_assembler->IncludeFile(m_parser.m_currentDir+"/init.asm",true);
+            header = true;
+    }
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::WONDERSWAN && !header) {
+        m_assembler->IncludeFile(":resources/code/wonderswan/init.s",true);
+        header = true;
+    }
+
     m_assembler->Connect();
+
+
+    if (QFile::exists(m_parser.m_currentDir+"/end.asm"))  {
+            m_assembler->IncludeFile(m_parser.m_currentDir+"/end.asm");
+            footer = true;
+
+    }
+
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::WONDERSWAN && !footer) {
+        m_assembler->IncludeFile(":resources/code/wonderswan/end.s");
+        footer = true;
+    }
+
 
 }

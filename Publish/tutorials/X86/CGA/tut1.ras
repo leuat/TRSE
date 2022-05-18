@@ -65,11 +65,12 @@ begin
 	init_cga_scanlines(); // Calculate CGA screen tables for setpixelcga
 	SetScreenMode(mode_cga_320x200); // CGA mode
 
-	SetupBackgroundScreen();
+//	SetupBackgroundScreen();
 	
 	kb:=ka+64;
-	while (true) do
+	while (true=0) do
 	begin
 		RenderEffect();			
 	end;
+	Loop();
 end.
