@@ -52,6 +52,3 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 exomizer_toggle = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/ATARI520ST/unittests/
-open_files = ,unittests/common.tru, utests.ras, test.ras
-current_file = utests.ras

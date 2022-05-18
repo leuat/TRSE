@@ -36,6 +36,3 @@ zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 output_type = prg
 data_header_trse.flf = 0
 exomizer_toggle = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/POKEMONMINI/tutorials/
-open_files = ,tutorial_image.asm, tutorial_twister.ras, tutorial_image.ras
-current_file = tutorial_twister.ras

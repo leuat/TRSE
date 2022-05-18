@@ -64,6 +64,3 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_trse1.flf = 0
 exomizer_toggle = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/JDH8/tutorials/
-open_files = ,tutorial_twister.ras
-current_file = tutorial2.ras
