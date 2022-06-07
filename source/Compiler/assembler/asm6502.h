@@ -83,7 +83,7 @@ public:
     void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos) override;
     void InitZeroPointers(QStringList lst, QStringList tmpList, QStringList varList) override;
 
-    void VarDeclHeader();
+//    void VarDeclHeader();
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
     void DeclareString(QString name, QStringList initval, QStringList flags) override;
     void DeclareCString(QString name, QStringList initval, QStringList flags) override;

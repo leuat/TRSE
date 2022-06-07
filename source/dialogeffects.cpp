@@ -5,6 +5,7 @@ LuaScript* m_script = nullptr;
 QString m_infoText = "", m_error="";
 QString m_currentDir;
 QByteArray m_charData;
+QByteArray m_extraData;
 QVector<int> m_screenData;
 AbstractDemoEffect* m_effect = nullptr;
 Compression m_compression;
@@ -175,7 +176,7 @@ static int AddObjectRegular(lua_State *L)
 //        qDebug() << object << lua_tonumber(L,N);
         obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
                            lua_tonumber(L,N+2),
-                           lua_tonumber(L,N+3),true,lua_tonumber(L,N+4));
+                           lua_tonumber(L,N+3),true,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6));
 
 
     }
@@ -627,6 +628,22 @@ static int SetPosition(lua_State *L)
     return 0;
 }
 
+static int RemoveObject(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    if (!VerifyFjongParameters(L,"RemoveObject"))
+        return 0;
+
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        return 0;
+    }
+    m_rt.m_objects.removeAll(aro);
+
+    return 0;
+}
+
 
 static int DeleteFile(lua_State *L)
 {
@@ -1052,12 +1069,53 @@ static int Save2DInfo(lua_State* L) {
 }
 
 
+static int AddProjectedLineList(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddProjected2DLineRenderList"))
+        return 0;
+
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="<br>Error in AddProjected2DLineRenderList : Could not find object '" + name;;
+        return 0;
+    }
+    m_charData.append(aro->getProjectedLineList());
+//    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
+  //  m_charData.clear();
+    return 0;
+}
+
+
+static int AddProjected2DCoordinatesToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddProjected2DCoordinatesToData"))
+        return 0;
+
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="<br>Error in AddProjected2DCoordinatesToData : Could not find object '" + name;;
+        return 0;
+    }
+    m_charData.append(aro->getProjected8bitData());
+//    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
+  //  m_charData.clear();
+    return 0;
+}
+
 static int SaveData(lua_State* L) {
     if (!VerifyFjongParameters(L,"SaveData"))
         return 0;
 
     Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
     m_charData.clear();
+    return 0;
+}
+static int SaveExtraData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"SaveExtraData"))
+        return 0;
+
+    Util::SaveByteArray(m_extraData,m_currentDir+"/"+ lua_tostring(L,1));
+    m_extraData.clear();
     return 0;
 }
 
@@ -1313,6 +1371,43 @@ static int DrawCircle(lua_State* L) {
     return 0;
 }
 
+static int DrawTriangle(lua_State* L) {
+
+    QPainter painter;
+    painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,7),lua_tonumber(L,8),lua_tonumber(L,9)), lua_tonumber(L,10), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
+    painter.setBrush(QColor(lua_tonumber(L,7),lua_tonumber(L,8),lua_tonumber(L,9)));
+    QPointF points[3] = {
+        QPointF(lua_tonumber(L,1),lua_tonumber(L,2)),
+        QPointF(lua_tonumber(L,3),lua_tonumber(L,4)),
+        QPointF(lua_tonumber(L,5),lua_tonumber(L,6)),
+
+    };
+    painter.drawPolygon(points,3);
+    painter.end();
+//    m_effect->m_img.fill((Qt::red));
+    return 0;
+}
+
+static int DrawQuad(lua_State* L) {
+
+    QPainter painter;
+    painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11)), lua_tonumber(L,12), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
+    painter.setBrush(QColor(lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11)));
+    QPointF points[4] = {
+        QPointF(lua_tonumber(L,1),lua_tonumber(L,2)),
+        QPointF(lua_tonumber(L,3),lua_tonumber(L,4)),
+        QPointF(lua_tonumber(L,5),lua_tonumber(L,6)),
+        QPointF(lua_tonumber(L,7),lua_tonumber(L,8)),
+
+    };
+    painter.drawPolygon(points,4);
+    painter.end();
+//    m_effect->m_img.fill((Qt::red));
+    return 0;
+}
+
 
 
 static int DrawImage(lua_State* L) {
@@ -1459,14 +1554,20 @@ void DialogEffects::LoadScript(QString file)
 
     lua_register(m_script->L, "DeleteFile", DeleteFile);
 
+    lua_register(m_script->L, "RemoveObject", RemoveObject);
+
     // Data registration
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddVZ200ToData", AddVZ200Data);
     lua_register(m_script->L, "AddBBCMode5LineToData", AddBBCMode5LineToData);
     lua_register(m_script->L, "AddVGALineToData", AddToDataVGA);
 
+    lua_register(m_script->L, "AddProjected2DCoordinatesToData", AddProjected2DCoordinatesToData);
+    lua_register(m_script->L, "AddProjectedLineList", AddProjectedLineList);
+
     lua_register(m_script->L, "SaveRawData", SaveData);
     lua_register(m_script->L, "SaveRawScreen", SaveDataScreen);
+    lua_register(m_script->L, "SaveExtraData", SaveExtraData);
 
     lua_register(m_script->L, "CompressAndSaveHorizontalData", CompressAndSaveHorizontalData);
     lua_register(m_script->L, "OptimizeScreenAndCharset", OptimizeScreenAndCharset);
@@ -1520,6 +1621,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "DrawLine", DrawLine);
     lua_register(m_script->L, "DrawRect", DrawRect);
     lua_register(m_script->L, "DrawCircle", DrawCircle);
+    lua_register(m_script->L, "DrawTriangle", DrawTriangle);
+    lua_register(m_script->L, "DrawQuad", DrawQuad);
     lua_register(m_script->L, "DrawImage", DrawImage);
 
     // Particle effects

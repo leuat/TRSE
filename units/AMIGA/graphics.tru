@@ -179,6 +179,81 @@ h_cont:
 end;
 
 
+procedure HlineOR(hx, hy, hl:global integer;pa:global pointer);
+begin
+	asm("
+		moveq #0,d5
+		move.w Graphics_hl,d5
+		lsr #3,d5
+
+	
+		move.l Graphics_pa, a0
+		move.l #Graphics_bytefill1,a1
+		move.l #Graphics_bytefill2,a2
+		moveq #0,d0
+		move.w Graphics_hy, d0
+		mulu.w #40, d0
+		add.l d0, a0
+		
+		move.w Graphics_hx,d0
+		move.w d0,d1
+		and #7,d1
+		add d1,a1
+		
+;		moveq #0,d1
+;		add.w Graphics_hl,d1
+;		add.w Graphics_hx,d1
+;		and #7,d1
+;		add.l d1,a2
+
+		;; end point
+		move.w Graphics_hx,d3 ; find end value
+		and.w #7,d3
+		move.w Graphics_hl,d4 ; find end value
+		and.w #7,d4
+		
+		add.w d4,d3 ; Add hline to find end pos 
+		cmp #8,d3 ; Overflow?
+		bcs ccc
+		add.w #1,d5 ; add a center counter loop!
+ccc:
+
+		and.w #7,d3 
+		add.l d3,a2
+
+
+
+
+		
+		lsr #3,d0
+		add.w d0,a0
+		
+		move.b (a1),d1
+		or.b d1,(a0)+
+		
+		sub #1,d5
+		cmp	#0,d5
+		blt h_cont	
+
+		move.w #$FF, d0 
+hline_i : 
+		or.b d0,(a0)+
+		dbf d5,hline_i
+
+
+h_cont:
+		 
+		move.b (a2),d1
+		or.b d1,(a0)+
+
+		
+
+
+	");		
+
+end;
+
+
 
 /*
 procedure CopySingleBitplaneData(pa,pb : global ^integer; bpl, j : global integer);

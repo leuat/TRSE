@@ -41,6 +41,8 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("swap"))
         Swap(as);
 
+    if (Command("mod"))
+        Mod(as);
 
     if (Command("matmulvec"))
         MatMulVec(as);
@@ -661,6 +663,26 @@ void Methods68000::Swap(Assembler *as)
     as->Asm("move"+t+p1+",d0");
     as->Asm("move"+t+p2+","+p1);
     as->Asm("move"+t+"d0"+","+p2);
+
+}
+
+void Methods68000::Mod(Assembler *as)
+{
+
+//    LoadVariable(as, "move.w",m_node->m_params[4], d0);
+
+    m_codeGen->LoadVariable(m_node->m_params[1]);
+    QString reg = as->m_regAcc.Get();
+    m_codeGen->LoadVariable(m_node->m_params[0]);
+    as->m_regAcc.Pop(reg);
+    auto d0 = as->m_varStack.pop();
+    auto d1 = as->m_varStack.pop();
+    as->Asm("divu.w " + d1 +","+d0);
+    as->Asm("swap "+d0);
+    as->m_varStack.push(d0);
+
+
+
 }
 
 

@@ -640,69 +640,238 @@ void RayObjectRegular3D::Save6502(QString file, float scale) {
     Util::SaveByteArray(data,file);
 }
 
+void RayObjectRegular3D::OptimiseLineList()
+{
+    QVector<int> nl;
+    int removed= 0;
+    for (int i=0;i<m_lineList.count()/2;i++) {
+        int a = m_lineList[2*i];
+        int b = m_lineList[2*i+1];
+        bool exists = false;
+        for (int j=0;j<nl.count()/2;j++) {
+            int ca = nl[2*j];
+            int cb = nl[2*j+1];
+            if ((ca==a && cb==b) || (ca==b && cb==a))
+                exists=true;
+        }
+        if (!exists) {
+            nl.append(a);
+            nl.append(b);
+        }
+        else removed++;
+    }
+    m_lineList=nl;
+    qDebug() << "Removed "+QString::number(removed)+" lines";
+}
+
+void RayObjectRegular3D::CalculateNormals()
+{
+    if (m_isWireframe) {
+        m_normals.clear();
+        for (int i=0;i<m_vertices.count();i++) {
+            QVector<QVector3D> adjacent;
+           for (int j=0;j<m_faces.count()/2;j++) {
+               if (m_faces[j*2]==i) {
+                   adjacent.append(m_vertices[m_faces[j*2+1]]);
+               }
+               if (m_faces[j*2+1]==i) {
+                   adjacent.append(m_vertices[m_faces[j*2]]);
+               }
+           }
+           QVector<QVector3D> ns;
+           // Actually calculate normals
+           if (adjacent.count()>=2)
+
+           for (int j=0;j<adjacent.count()-1;j++) {
+               QVector3D n =  QVector3D::crossProduct(m_vertices[i]-adjacent[j],m_vertices[i]-adjacent[j+1]);
+               ns.append(n);
+           }
+           QVector3D normal = QVector3D(0,0,0);
+           for (auto& n: ns)
+               normal+=n;
+           m_normals.append(normal.normalized());
+
+        }
+    }
+}
+
 void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
     m_rotVertices.resize(m_vertices.count());
+    m_rotNormals.resize(m_normals.count());
     m_projected.resize(m_vertices.count());
+    m_proj8bit.clear();
+    cam.m_aspect=300/200.0;
     cam.setupViewmatrix();
     QMatrix4x4 pvm = cam.m_projection*cam.m_viewMatrix*m_rotmat;
     for (int i=0;i<m_vertices.count();i++) {
         QVector3D r = pvm*m_vertices[i];
+        QVector3D n = QVector3D(0,0,0);
+
+//        if (rand()%100>98)
+  //          qDebug() << m_normals[i];
+
         r.setX(img.width()/2*r.x()+ img.width()/2);
         r.setY(img.height()/2*r.y() + img.height()/2);
         m_projected[i] = r;
+        m_proj8bit.append(((int)r.x())&255);
+        m_proj8bit.append(((int)r.y())&255);
     }
+//    qDebug() << m_proj8bit.count();
     QPainter p;
     p.begin(&img);
-    p.setPen(Qt::white);
+
+
+
 
     if (m_isWireframe) {
         int k=0;
+        p.setPen(Qt::white);
+
+
+        m_lineList.clear();
+        QVector<int> nl;
         for (int i=0;i<m_faces.count()/2;i++) {
             int a = m_faces[k];
             int b = m_faces[k+1];
-            p.drawLine(m_projected[a].x(),m_projected[a].y(),
-                       m_projected[b].x(),m_projected[b].y());
+  //          int c = m_faces[k+2];
+    //        int d = m_faces[k+3];
+//            auto n = (m_rotmat)*m_normals[i];
+            //if (rand()%100>98) qDebug() << n;
+  /*          if (n.z()>0.0) {
+                k+=4;
+                continue;
+            }
+*/
+            m_lineList.append(a);
+            m_lineList.append(b);
+  /*          m_lineList.append(b);
+            m_lineList.append(c);
+            m_lineList.append(c);
+            m_lineList.append(d);
+            m_lineList.append(d);
+            m_lineList.append(a);*/
+/*            nl.append(i);
+            nl.append(i);
+            nl.append(i);
+            nl.append(i);
+*/
             k+=2;
         }
+
+        OptimiseLineList();
+
+        for (int i=0;i<m_lineList.count()/2;i++) {
+            int a = m_lineList[i*2];
+            int b = m_lineList[i*2+1];
+
+                p.drawLine(m_projected[a].x(),m_projected[a].y(),
+                           m_projected[b].x(),m_projected[b].y());
+
+
+        }
+        if (1==2)
+        for (int i=0;i<nl.count();i++) {
+            QVector3D m = (m_vertices[m_lineList[i*2]]+m_vertices[m_lineList[i*2+1]])/2.0;
+            QVector3D mp = pvm*m;
+            mp.setX(img.width()/2*mp.x()+ img.width()/2);
+            mp.setY(img.height()/2*mp.y() + img.height()/2);
+
+            QVector3D r = pvm*(m+m_normals[nl[i]]*2.0);
+
+            p.setPen(Qt::red);
+            r.setX(img.width()/2*r.x()+ img.width()/2);
+            r.setY(img.height()/2*r.y() + img.height()/2);
+              p.drawLine(mp.x(),mp.y(),
+                         r.x(),r.y());
+
+
+        }
+
     }
     p.end();
 
 }
 
-void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type)
+void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float s1, float s2)
 {
     m_isWireframe = isWireframe;
     m_faces.clear();
     m_colors.clear();
     m_type = type;
     m_vertices.clear();
+    m_normals.clear();
     for (int i=0;i<c1;i++) {
-        float ang1 = (i/(float)c1)*2*3.14159;
+        float ang1 = (i/(float)c1+s1)*2*3.14159;
         for (int j=0;j<c2;j++) {
-            float ang2 = (j/(float)c2)*2*3.14159;
+            float ang2 = (j/(float)c2+s2)*2*3.14159;
             QVector3D xx(cos(ang2)*r1+r2,sin(ang2)*r1,0);
+  //          QVector3D nx(cos(ang2)*(r1+0.1)+(r2+0.1),sin(ang2)*(r1+0.1),0);
             QQuaternion q = QQuaternion::fromEulerAngles(QVector3D(0,ang1/3.14159/2*360,0));
             QVector3D v = q*xx;
+    //        QVector3D v2 = q*nx;
 
             m_vertices.append(v);
+//            m_normals.append((v2-v).normalized());
         }
 
     }
-
+    m_normals.clear();
     if (m_isWireframe) {
         for (int i=0;i<c1;i++) {
             for (int j=0;j<c2;j++) {
+                auto a = i*c2 + j;
+                auto b = i*c2 + (j+1)%c2;
+                auto c = ((i+1)%c1)*c2 + (j+1)%c2;
+                auto d = ((i+1)%c1)*c2 + (j)%c2;
                 if ((m_type&1)==1) {
-                m_faces.append(i*c2 + j);
-                m_faces.append(i*c2 + (j+1)%c2);
+                m_faces.append(a);
+                m_faces.append(b);
+                //m_faces.append(c);
+               // m_faces.append(d);
+
+                m_normals.append(
+                  QVector3D::crossProduct(
+                      m_vertices[a]-m_vertices[b],
+                      m_vertices[a]-m_vertices[d]
+                        ).normalized()
+                  );
+
+/*                auto l1 =  m_vertices[(i%c1)*c2 + j]- m_vertices[(i%c1)*c2 + (j+1)%c2];
+
+                auto n1 = QVector3D::crossProduct(
+                           l1,
+                        -m_vertices[((i+1)%c1)*c2 + j]- m_vertices[(i%c1)*c2 + (j)%c2]).normalized();
+
+                auto n2 = QVector3D::crossProduct(
+                            l1,
+                        m_vertices[((i-1+c1)%c1)*c2 + j]- m_vertices[(i%c1)*c2 + (j)%c2]).normalized();
+
+                m_normals.append(n1);
+                m_normals.append(n2);
+*/
                 }
                 if ((m_type&2)==2) {
                    m_faces.append(i*c2 + j);
                    m_faces.append(((i+1)%c1)*c2 + j);
+/*
+                   auto l1 =  m_vertices[(i%c1)*c2 + j]- m_vertices[((i+1)%c1)*c2 + (j)%c2];
+                   auto n1 = QVector3D::crossProduct(
+                              l1,
+                           m_vertices[((i)%c1)*c2 + j]- m_vertices[(i%c1)*c2 + (j+1)%c2] ).normalized();
+
+                   auto n2 = QVector3D::crossProduct(
+                              -l1,
+                           m_vertices[((i)%c1)*c2 + j]- m_vertices[(i%c1)*c2 + (j-1+c2)%c2]).normalized();
+                   m_normals.append(n1);
+                   m_normals.append(n2);
+*/
                 }
+  //              */
                 m_colors.append(1);
             }
         }
 
     }
+    // calculate the 2 normals per line
+//    CalculateNormals();
 }

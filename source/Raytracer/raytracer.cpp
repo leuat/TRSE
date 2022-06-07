@@ -489,6 +489,11 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
         for (QVector3D p: reduced) {
 
             int i = bb + p.x() + p.y()*40;
+
+            if (p.x() + p.y()*40>=1000) {
+                continue;
+            }
+
             if (!types.contains(i))
                 types[i]=type;
 

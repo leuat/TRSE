@@ -39,6 +39,15 @@ public:
     bool doesIntersect = true;
     QVector<AbstractRayObject*> m_children;
 
+
+    virtual QByteArray getProjected8bitData() {
+        return QByteArray();
+    }
+
+    virtual QByteArray getProjectedLineList() {
+        return QByteArray();
+    }
+
     void SetMaterial(Material m) {
         m_material = m;
         for (AbstractRayObject* aro : m_children)
@@ -364,17 +373,51 @@ public:
 
 class RayObjectRegular3D : public AbstractRayObject {
 public:
-    QVector<QVector3D> m_vertices, m_rotVertices, m_projected;
+    QVector<QVector3D> m_vertices, m_rotVertices, m_projected, m_normals, m_rotNormals;
 
     QVector<int> m_faces;
     QVector<int> m_colors;
     QVector<int> m_visible;
+    QVector<int> m_lineList;
+    QByteArray m_proj8bit;
+    virtual QByteArray getProjected8bitData() override {
+        return m_proj8bit;
+    }
+
+    int AddUniquePointToList(char x, char y, QByteArray& lst) {
+        for (int i=0;i<lst.count()/2;i++) {
+            if (lst[i*2]==x && lst[i*2+1]==y)
+                return i*2;
+        }
+        lst.append(x);
+        lst.append(y);
+        return (lst.length()-2);
+    }
+
+    virtual QByteArray getProjectedLineList() override {
+        QByteArray a,l,p;
+        a.append((char)m_lineList.length()/2);
+        for (int i=0;i<m_lineList.length()/2;i++) {
+            int j = m_lineList[2*i]*2;
+            l.append(AddUniquePointToList(m_proj8bit[j],m_proj8bit[j+1],p));
+            j = m_lineList[2*i+1]*2;
+            l.append(AddUniquePointToList(m_proj8bit[j],m_proj8bit[j+1],p));
+        }
+        a.append((char)p.length()/2);
+        a.append(l);
+        a.append(p);
+        return a;
+    }
+
     bool m_isWireframe = true;
     int m_type = 0;
     virtual void Save6502(QString file, float scale);
+    void OptimiseLineList();
+
+    void CalculateNormals();
 
     void Render(Camera& cam, QImage& img) override;
-    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type);
+    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float shift1, float shift2);
 
     float intersect(Ray* ray) override {
         return -1;

@@ -228,13 +228,13 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
     }
 }
 
-
+/*
 void Asm6502::VarDeclHeader()
 {
     m_labelStack["block"].push();
     Asm("jmp "+ getLabel("block"));
 }
-
+*/
 void Asm6502::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
     QString n = name;

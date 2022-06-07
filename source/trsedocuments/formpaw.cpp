@@ -432,10 +432,9 @@ void PawThread::run()
                 params = QStringList() << tt << "--inPlace" << pf.inFile << pf.cFile;
                 output+="Compressing :"+ pf.inFile + "\n";
                 emit EmitTextUpdate();
-
                 //ui->leOutput->setText(output);
 
-                processCompress.start("python", params  );
+                processCompress.start("python3", params  );
 
             }
             else {

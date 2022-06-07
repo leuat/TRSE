@@ -10,7 +10,6 @@ begin
       xor ax,ax
       mov ss,ax
       mov es,ax
-      mov ax, $200
 	  mov ds,ax	  
   	  mov al,0e0h
       out 60h,al	;gfx mode

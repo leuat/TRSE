@@ -44,6 +44,7 @@ public:
     void EnableInterrupt(Assembler* as);
     void ProjectAllVertices(Assembler* as);
     void Swap(Assembler* as);
+    void Mod(Assembler* as);
 
 
 

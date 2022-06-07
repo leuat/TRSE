@@ -871,7 +871,7 @@ void LabelStack::push() {
 
 void LabelStack::pop() {
     if (m_vars.count()==0) {
-                    ErrorHandler::e.Error("Trying to pop labelstack from zero : " + m_current);
+        //            ErrorHandler::e.Error("Trying to pop labelstack from zero : " + m_current);
         return;
     }
     m_vars.remove(m_vars.count()-1);

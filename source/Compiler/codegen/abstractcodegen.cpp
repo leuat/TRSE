@@ -70,7 +70,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
     bool blockLabel = false;
     bool blockProcedure = false;
     bool hasLabel = false;
-
     QString label = as->NewLabel("block");
 
 
@@ -1227,7 +1226,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeAsm> node)
 void AbstractCodeGen::dispatch(QSharedPointer<NodeCompound> node)
 {
     node->DispatchConstructor(as,this);
-
     as->BeginBlock();
     for (QSharedPointer<Node> n: node->children) {
         LineNumber(n->m_op.m_lineNumber+1);

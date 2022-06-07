@@ -18,17 +18,18 @@ var
 	mask: array[200] of byte;
 	//	xi, yi: byte;
 
-	dx,dy,ai,bi,xi,yi,color : byte;
-	d, currbank:byte;
+	d,x1, y1, x2, y2,dx,dy,ai,bi,xi,yi,color,dx2,dy2 : byte at $F0;
+	currbank:byte;
 	low, high, k, i, val : byte;
 	index, bitmapstart : integer;
 	
+	taby: array[8] of integer=(1,1,1,1,1,1,1,320-7);
+	tab8:array[40] of integer = buildtable("i*8");
 
 	addr,p_putpixel : pointer;
 	
 	zp: pointer;
 	
-	x1, y1, x2, y2 : byte;
 
 
 
@@ -58,6 +59,32 @@ begin
 	
 end;
 
+procedure putpixel4() inline;
+begin
+	asm("
+	ldy Gfx_y1
+	ldx Gfx_x1
+	
+	lda Gfx_ytablelow,y
+	sta Gfx_addr
+	
+	lda Gfx_ytablehigh,y
+	clc
+	adc Gfx_currbank
+	sta Gfx_addr+1
+	
+	ldy Gfx_xtablelow,x
+	
+	lda (Gfx_addr),y
+	ora Gfx_mask,x
+	sta (Gfx_addr),y
+	
+	");
+	
+	
+end;
+
+
 
 procedure putpixel2();
 begin
@@ -77,12 +104,13 @@ begin
 	
 	ldy #$00
 	lda (Gfx_addr),y
-	
 	ora Gfx_mask,x
 	sta (Gfx_addr),y
 	");
 	
 end;
+
+
 
 
 /*procedure putpixel(_pixx,_pixy:byte);
@@ -185,9 +213,95 @@ begin
 
 end;
 
+procedure InitBitmapGraphicsNoClear(pi:byte; bsta:integer);
+begin
+	//p_putpixel := proceduretopointer(putpixel2());
+	p_putpixel := #putpixel2;
+	if (pi=2) then 
+		p_putpixel := #putpixel3;
+		
+
+	bitmapstart:=bsta;
+	SetupPixelTables();
+	setbitmapmode();
+	setmulticolormode();
+
+end;
 
 
-procedure Line ( x1, y1, x2, y2, color : global byte);
+
+procedure Line( x1, y1, x2, y2, color : global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	//if (y1>=200 or y1>=200) then return;
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+	begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
+	
+	if y1 < y2 then 
+	begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	
+	else
+	begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	dx2:=dx>>1;
+	dy2:=dy>>1;
+	putpixel4();
+//	call(p_putpixel);
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		d := dy - dx2;
+		while x1 <> x2 do begin
+			if d <128 do begin
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + dy;
+			
+			x1 :=  x1 + xi;
+//			call(p_putpixel);
+			putpixel4();
+		end;
+	end
+	else
+	begin // dy > dx
+		ai := (dx - dy);
+		d := dx - dy2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;
+			end
+			else
+				d := d+  dx;
+			
+			y1 := y1 + yi;
+		//	call(p_putpixel);
+			putpixel4();
+		
+		end;
+		
+	end;
+end;
+
+
+procedure Line2 ( x1, y1, x2, y2, color : global byte);
 begin
 	dx:=0;
 	dy:=0;
@@ -242,11 +356,9 @@ begin
 			if d<128 do begin
 				x1 := x1+ xi;
 				d := d + ai;
-				
 			end
 			else
 				d := d+  bi;
-			
 			
 			y1 := y1 + yi;
 			call(p_putpixel);
@@ -254,7 +366,6 @@ begin
 		
 	end;
 end;
-
 
 
 end.

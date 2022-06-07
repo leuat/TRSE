@@ -23,6 +23,7 @@ var
 	zdiv2 : integer = 4;
 	
 	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte at @lib3d_zeropage;
+	a,b,c,d:byte;
 	clearLines : byte = true;
 	xx,yy,iz:integer;
 	first : byte = 0;
@@ -174,6 +175,22 @@ begin
 	end;
 
 
+end;
+
+procedure RenderLineList();
+begin
+	i:=ppn[0]; // number of lines
+	k:=ppn[1]; // number of points
+	ppn+=2;
+	fp:=ppn+i*2; // move to point location
+	for j:=0 to i do
+	begin
+		a:=ppn[0];
+		b:=ppn[1];
+		Gfx::Line(fp[a],fp[a+1],fp[b],fp[b+1],1);		
+		ppn+=2;
+	end;
+	ppn+=k*2;
 end;
 
 

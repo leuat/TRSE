@@ -153,7 +153,7 @@ public:
     void Atan2(Assembler* as);
     void IsOverlapping(Assembler* as);
     void IsOverlappingWH(Assembler* as);
-    void CopyCharsetFromRom(Assembler* as);;
+    void CopyCharsetFromRom(Assembler* as);
     void IncMax(Assembler* as, QString cmd);
     void SetMemoryConfig(Assembler* as);
     void EnableRasterIRQ(Assembler* as);
