@@ -77,6 +77,4 @@ columns = 40
 vic_memory_config = none
 via_zeropages = ,
 data_header_resources/charsets/charset2_16x16.flf = 0
-open_files = ,easy/07_rasters.ras, Hello.ras
-project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
-current_file = Hello.ras
+open_files =, Hello.ras
