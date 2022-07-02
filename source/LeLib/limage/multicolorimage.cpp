@@ -615,6 +615,14 @@ void MultiColorImage::ExportBin(QFile& ofile)
     int ey = static_cast<int>(m_exportParams["EndY"]);
 
 
+    for (int i=0;i<m_charHeight*m_charWidth;i++) {
+        PixelChar& pc = m_data[i];
+        if (pc.isEmpty())
+            for (int j=0;j<4;j++)
+                pc.c[j] = 0;
+    }
+
+
     for (int j=sy;j<ey;j++)
         for (int i=sx;i<ex;i++)
             data.append(m_data[i + j*m_charWidth].data());

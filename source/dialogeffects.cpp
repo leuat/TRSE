@@ -9,6 +9,7 @@ QByteArray m_extraData;
 QVector<int> m_screenData;
 AbstractDemoEffect* m_effect = nullptr;
 Compression m_compression;
+LImage* m_maskImage;
 
 
 DialogEffects::DialogEffects(QString file, QWidget *parent) :
@@ -327,6 +328,7 @@ static int AddObject(lua_State *L)
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
 
+
         if (m_script->lua_exists(material+".texture")) {
             mat.m_hasTexture = true;
             mat.m_texture.Load(m_currentDir + "/"+ m_script->get<QString>(material+".texture"));
@@ -522,6 +524,9 @@ static int AddObject(lua_State *L)
         if (m_script->lua_exists(material+".uv_scale")) {
             mat.m_uvScale = m_script->getVec(material+".uv_scale");
         }
+        if (m_script->lua_exists(material+".uv_rotation")) {
+            mat.m_uv_rotation = m_script->get<float>(material+".uv_rotation");
+        }
         if (m_script->lua_exists(material+".uvtype")) {
 
             if (m_script->get<QString>(material+".uvtype")=="sphere_map") {
@@ -529,6 +534,20 @@ static int AddObject(lua_State *L)
             //    qDebug() << "HERE";
             }
         }
+
+        if (m_script->lua_exists(material+".drawuvcoord")) {
+            mat.m_drawuvcoord = true;
+        }
+/*        if (m_script->lua_exists(material+".uv_type")) {
+            int t = (int)m_script->get<float>(material+".uv_type");
+            mat.m_type = Material::Type::UV_CUBE;
+            if (t==1)
+                mat.m_type = Material::Type::UV_SPHERE_MAP;
+            if (t==2)
+                mat.m_type = Material::Type::UV_RAW;
+
+        }*/
+
 
         mat.m_shininess_strength = m_script->get<float>(material+".shininess_intensity");
         if (m_script->lua_exists(material+".checkerboard")) {
@@ -565,6 +584,20 @@ static int SetRotation(lua_State *L)
     }
 
     aro->SetRotation(QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
+    return 0;
+}
+
+static int Invert(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="<br>Error in Invert : Could not find object '" + name;;
+        return 0;
+    }
+    aro->m_inverted = !aro->m_inverted;
+//    aro->SetRotation(QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
     return 0;
 }
 
@@ -1056,7 +1089,7 @@ static int Save2DInfo(lua_State* L) {
     int base = lua_tonumber(L,2);
     int maxx = lua_tonumber(L,3);
     QVector<QPoint> killList;
-    m_rt.Compile2DList(file,base,maxx, killList, m_effect->m_post,fileUnroll);
+    m_rt.Compile2DList(file,base,maxx, killList, m_effect->m_post,fileUnroll ,m_maskImage,lua_tonumber(L,5));
 
    // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
   //  mc.m_data[0].C = m_charData;
@@ -1184,7 +1217,8 @@ static int SaveKoalaImage(lua_State* L) {
     return 0;
 }
 
-static int SaveImage(lua_State* L) {
+static int
+SaveImage(lua_State* L) {
     if (!VerifyFjongParameters(L,"SaveImage"))
         return 0;
 
@@ -1444,6 +1478,50 @@ static int DrawImage(lua_State* L) {
 
 }
 
+static int AddCycleMaskImage(lua_State* L) {
+
+    m_maskImage = LImageIO::Load(lua_tostring(L,1));
+
+    return 0;
+
+}
+
+static int DrawMaskImage(lua_State* L) {
+
+    QPainter painter;
+    QImage img(lua_tostring(L,1));
+    QVector3D pos(lua_tonumber(L,2),lua_tonumber(L,3),0);
+    QVector3D scale(lua_tonumber(L,4),lua_tonumber(L,5),0);
+    QColor maskColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8));
+    QColor drawColor(lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
+ //   qDebug() << QFile::exists(lua_tostring(L,1)) <<lua_tostring(L,1);
+    float rot = 0;
+    for (int y=0;y<m_effect->m_img.height();y++)
+        for (int x=0;x<m_effect->m_img.width();x++) {
+            double xs = ((x-pos.x())/(double)(m_effect->m_img.width()))*img.width();
+            double ys = ((y-pos.y())/(double)(m_effect->m_img.height()))*img.height();
+            xs = (xs - img.width()/2);//*scale.x();
+            ys = (ys - img.height()/2);//*scale.y();
+            double xr = xs * cos(rot) -ys*sin(rot);
+            double yr = ys * sin(rot) +ys*cos(rot);
+            xr*=scale.x();
+            yr*=scale.y();
+            xr+=img.width()/2;
+            yr+=img.height()/2;
+            QColor col(0,0,0,0);
+            if (xr>=0 && xr<img.width() && yr>=0 && yr<img.height()) {
+                col = img.pixelColor(xr,yr);
+            }
+            if (rand()%100>98)
+                qDebug() << col<<maskColor;
+            if (!Util::isEqual(maskColor,col)) {
+                m_effect->m_img.setPixelColor(x,y,drawColor);
+                m_effect->m_post.setPixelColor(x,y,drawColor);
+            }
+        }
+    return 0;
+
+}
 
 static int AddRawCharsetData(lua_State* L) {
     int w = lua_tonumber(L,1);
@@ -1548,6 +1626,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddObject", AddObject);
     lua_register(m_script->L, "AddObjectRegular", AddObjectRegular);
     lua_register(m_script->L, "SetRotation", SetRotation);
+    lua_register(m_script->L, "Invert", Invert);
     lua_register(m_script->L, "SetID", SetID);
     lua_register(m_script->L, "SetPosition", SetPosition);
     lua_register(m_script->L, "AddPosition", AddPosition);
@@ -1624,6 +1703,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "DrawTriangle", DrawTriangle);
     lua_register(m_script->L, "DrawQuad", DrawQuad);
     lua_register(m_script->L, "DrawImage", DrawImage);
+    lua_register(m_script->L, "AddCycleMaskImage", AddCycleMaskImage);
+    lua_register(m_script->L, "DrawMaskImage", DrawMaskImage);
 
     // Particle effects
 
@@ -1721,7 +1802,7 @@ void DialogEffects::UpdateGlobals()
     if (m_script->lua_exists("globals.translate"))
         m_rt.m_globals.m_translate = m_script->getVec("globals.translate");
 
-    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA || m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_AMSTRAD)  {
+    if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_VGA || m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_AMSTRAD || m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_AMIGA)  {
         if (m_script->lua_exists("output.palette_file"))
         {
             QString f = m_script->get<QString>("output.palette_file");

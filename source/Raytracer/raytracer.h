@@ -10,7 +10,7 @@
 #include <QImage>
 #include "source/LeLib/objloader/objloader.h"
 #include "source/Raytracer/particles.h"
-
+#include "source/LeLib/limage/limage.h"
 class RayTracer
 {
 public:
@@ -51,7 +51,7 @@ public:
 
     bool RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, int cnt, int tid, QVector3D point);
 
-    void Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList,QImage &img, QString UnrollFileBase);
+    void Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList,QImage &img, QString UnrollFileBase, LImage* mask, int maskColor);
 };
 
 #endif // RAYTRACER_H

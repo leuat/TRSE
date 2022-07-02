@@ -30,6 +30,10 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_AMIGA) {
+       m_mc = new LImageAmiga(LColorList::VGA,1);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+   }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_CGA) {
        m_mc = new LImageCGA(LColorList::CGA1_HIGH);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
@@ -174,6 +178,9 @@ void DemoEffectRaytracer::Render(QImage &img)
         ConvertToCPC(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
     if (m_outputType==RayTracerGlobals::output_type_VGA)
+        ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+
+    if (m_outputType==RayTracerGlobals::output_type_AMIGA)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
     if (m_outputType==RayTracerGlobals::output_type_CGA)

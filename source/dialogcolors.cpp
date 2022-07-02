@@ -117,7 +117,7 @@ void DialogColors::on_btnLoad_clicked()
         LImage* img = LImageIO::Load(f);
 
         if (m_img!=nullptr && img!=nullptr) {
-                            qDebug() << "HER " << f;
+//                            qDebug() << "HER " << f;
             m_lst->CopyFrom(&img->m_colorList);
         }
 

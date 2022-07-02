@@ -434,6 +434,9 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     node->m_left = v;
     bool ignoreLookup = false;
 
+/*    auto пиздец = node->m_right;
+    пиздец->Accept(this);
+*/
     // Get variable name
     QString vname = getValue(v);
     // Make sure write type for classes are the same

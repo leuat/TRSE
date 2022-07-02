@@ -3,6 +3,8 @@
 #include <omp.h>
 #include <algorithm>
 
+#include "source/LeLib/limage/multicolorimage.h"
+
 RayTracer::RayTracer()
 {
 
@@ -425,7 +427,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
     return false;
 }
 
-void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList, QImage &img, QString unrollName)
+void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QPoint>& killList, QImage &img, QString unrollName, LImage* mask, int maskColor)
 {
     QByteArray data;
     data.append(m_objects.count());
@@ -440,6 +442,7 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     unrollData+="begin asm(\" \n";
 
     QMap<int, int> types;
+    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(mask);
 
     for (AbstractRayObject* aro : m_objects) {
         id = aro->m_id;
@@ -492,6 +495,11 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
 
             if (p.x() + p.y()*40>=1000) {
                 continue;
+            }
+            if (mc) {
+                PixelChar& pc = mc->m_data[(int)(p.x() + p.y()*40)];
+                if (!pc.isEmpty())
+                    continue;
             }
 
             if (!types.contains(i))

@@ -108,7 +108,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
         //        qDebug() << "Additional params: "<<pl;
         pl.removeAll("");
-        params<<pl;
+        params = pl<<params;
     }
 
 

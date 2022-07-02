@@ -629,9 +629,9 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
                 rows++;
 
 
-                if (x==2)
+  //              if (x==2)
     //                  qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d)<< "- "<<QString::number(nc) << QString::number(nd) <<  " - " << addy << cnt;
-                      qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
+//                      qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
 
 
                 addy = 0;

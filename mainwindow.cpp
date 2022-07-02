@@ -529,7 +529,8 @@ void MainWindow::UpdateSymbolTree(QString search)
         QSharedPointer<Node> s = p->m_procedures[key];
         QSharedPointer<NodeProcedureDecl> proc = qSharedPointerDynamicCast<NodeProcedureDecl>(s);
         QString params = "(";
-        for (QSharedPointer<Node> n: proc->m_paramDecl) {
+        // Interesting.. crash here?
+        for (QSharedPointer<Node>& n: proc->m_paramDecl) {
             QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
 //            params+=qSharedPointerDynamicCast<NodeVar>(vd->m_varNode)->value+" : ";
             params+=qSharedPointerDynamicCast<NodeVarType>(vd->m_typeNode)->value.toLower() + ",";

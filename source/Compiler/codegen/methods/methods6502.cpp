@@ -1203,7 +1203,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
         x="y";
         if (!m_node->m_params[1]->isPureNumeric() || m_node->m_params[1]->getValueAsInt(as)!=0 )
-            ErrorHandler::e.Error("When src data is a pointer, you cannot use an offset. Please set the second parameter to '0'. ", m_node->m_op.m_lineNumber);
+            ErrorHandler::e.Error("When the source data is a pointer, you cannot use an offset. Please set the second parameter to '0'. ", m_node->m_op.m_lineNumber);
 
     }
 

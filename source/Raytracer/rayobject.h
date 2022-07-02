@@ -29,12 +29,14 @@ public:
     bool m_receivesShadow = true;
     bool m_flatten = true;
     bool m_hasNormal = false;
+    bool m_inverted = false;
     int m_id = 0;
     Material m_material;
     QString m_name;
     static SimplexNoise m_sn;
     Ray m_localRay[32];
     QVector<QVector3D> m_2Dpoints[32];
+    QVector2D m_raw_uv;
     float m_bbRadius;
     bool doesIntersect = true;
     QVector<AbstractRayObject*> m_children;

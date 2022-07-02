@@ -144,3 +144,5 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
+project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/C64/1981/effects/
+open_files = ,poster_scroll.ras

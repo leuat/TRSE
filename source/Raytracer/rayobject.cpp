@@ -32,8 +32,8 @@ QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, float l)
         //            lvl = 4;
         QImage* img = m_material.m_texture.get(lvl);
         if (img->width()!=0) {
-        uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
-        vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+            uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
+            vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
         }
         QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
         //                qDebug() << c <<uv << img->width();
@@ -56,10 +56,28 @@ QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVect
     uu = uv.y();
     vv = uv.x();
     QImage* img = m_material.m_texture.get(0);
+
+    if (m_material.m_uv_rotation!=0) {
+        double t = m_material.m_uv_rotation/360.0*2*3.14159265;
+        float u = (uu) * cos(t) - (vv)*sin(t);
+        float v = (uu) * sin(t) + (vv)*cos(t);
+        uu = u;
+        vv = v;
+
+    }
+
     if (img->width()!=0) {
         uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
         vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
     }
+    if (m_material.m_drawuvcoord) {
+        float s = 1.0;
+//        if (pos.y()>0)
+  //          uu=128-uu;
+        return QVector3D(vv/s,vv/s,vv/s)/100.0;
+    }
+
+
     QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
 //    qDebug() << c;
     return c;
@@ -171,11 +189,13 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                 else res = CalculateSphereUV(pos,n,tangent, l);
 
 
-//                res = QVector3D(res.x()*abs(n.x()), res.y()*abs(n.y()), res.z()*abs(n.z()));
-                col.setX(col.x()*res.x());
-                col.setY(col.y()*res.y());
-                col.setZ(col.z()*res.z());
+//                else {
 
+                    //                res = QVector3D(res.x()*abs(n.x()), res.y()*abs(n.y()), res.z()*abs(n.z()));
+                    col.setX(col.x()*res.x());
+                    col.setY(col.y()*res.y());
+                    col.setZ(col.z()*res.z());
+  //              }
             }
 //            col.setX(1);
 
@@ -367,10 +387,32 @@ QVector3D RayObjectTorus::CalculateUV(QVector3D &pos, QVector3D &normal, QVector
 
         // Now rotate about the y-axis to get the point P into the x-z plane.
     x = len - m_radius.x();
+    double add = 0;
     float  v = (atan2(y, x) + M_PI) / (M_PI*2);
 
+//    if (y>0) { u*=-1; v*=-1; }
 
     return QVector3D(u*2,v,0);
+
+
+/*    QVector3D j = QVector3D(0,1,0);
+
+    QVector3D D = (pos);
+    QVector3D projDN = QVector3D::dotProduct(D,j)*j;
+
+    QVector3D R  = D.normalized();
+    QVector3D cR = (D-projDN).normalized();
+
+    QVector3D C = cR * (m_radius.x() + m_radius.y()*0.5);
+    QVector3D V =  (pos-C).normalized();
+
+    QVector3D uv = QVector3D(atan2(C.x(),C.z())/M_PI, acos(QVector3D::dotProduct(cR,V))/M_PI,0);
+    uv.setX((uv.x()+1.0)*0.5);
+    return uv;
+
+*/
+//    if (pos.y()>0)
+  //      uv*=-1;
 }
 
 float RayObjectTorus::intersect(Ray *ray)
@@ -381,7 +423,8 @@ float RayObjectTorus::intersect(Ray *ray)
     QVector3D pp = pos;
     pp.setY(0);
     QVector3D q = QVector3D(pp.length()-m_radius.x(),pos.y(),0);
-     return q.length()-m_radius.y();
+    double inv = m_inverted?-1:1;
+     return inv*(q.length()-m_radius.y());
 }
 
 

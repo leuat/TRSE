@@ -42,12 +42,14 @@ public:
     QVector3D m_color =QVector3D(1,0.5,0.5);
     float m_shininess_strength =1;
     float m_shininess=0;
-    enum Type {UV_CUBE, UV_SPHERE_MAP};
+    float m_uv_rotation = 0;
+    enum Type {UV_CUBE, UV_SPHERE_MAP, UV_RAW};
     Type m_type = UV_CUBE;
     float m_reflectivity=0.5;
     float m_perlinness = 0.3;
     QVector3D m_uvScale = QVector3D(1,1,1);
     float m_perlinScale = 5;
+    bool m_drawuvcoord = false;
     QVector3D m_checkerBoard = QVector3D(0,0,0);
     QVector3D m_checkerBoard_color = QVector3D(0,0,0);
     Texture m_texture;
