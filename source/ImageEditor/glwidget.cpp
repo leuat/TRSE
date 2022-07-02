@@ -139,6 +139,7 @@ void GLWidget::resizeEvent(QResizeEvent *event)
     QOpenGLWidget::resizeEvent(event);
 }
 
+
 void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
     if (AIE_mouseMoveEvent(e,this))
@@ -147,7 +148,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
         //  qDebug() << (m_updateThread->m_prevPos- m_updateThread->m_currentPos);
 
         //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()>0.0)
-
+//        qDebug() << "HERE "<<rand()%100 ;
         emit EmitMouseMove(e);
 
 

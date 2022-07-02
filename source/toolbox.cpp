@@ -42,7 +42,9 @@ void Toolbox::Initialize(QGridLayout* ly, int windowWidth)
     m_items.append(new Line("",":/resources/images/brush_line.png","Line"));
     m_items.append(new Circle("",":/resources/images/brush_drawcircle.png","Circle"));
     m_items.append(new Box("",":/resources/images/brush_rect.png","Box"));
-    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png","Copy/Paste"));
+    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png","Copy/Paste",0));
+    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png","Cut/Paste",1));
+    m_items.append(new CopyStamp("",":/resources/images/brush_copy.png","Paste",2));
     m_items.append(new RotateAround("",":/resources/images/brush_rotate.png","Rotate"));
     m_items.append(new ShapeBoxFilter("",":/resources/images/brush_circle_background.png", "Background brush"));
 

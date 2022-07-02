@@ -51,6 +51,8 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
 {
     float m= m_size;
     float ll = 0.66;
+    if (button==-1)
+        return;
     MultiColorImage* mci = dynamic_cast<MultiColorImage*>(img);
     if (mci!=nullptr) {
         if (mci->isMultiColor())
@@ -87,6 +89,8 @@ void ShapeBox::Perform(int x, int y, unsigned char color, LImage* img, bool isPr
 void ShapeBoxFilter::Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button)
 {
     float m= m_size;
+    if (button==-1)
+        return;
     img->setBasePixel(x,y);
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
@@ -128,6 +132,8 @@ void Spray::Perform(int x, int y, unsigned char color, LImage *img, bool isPrevi
 {
     float m= m_size;
     img->setBasePixel(x,y);
+    if (button==-1)
+        return;
 
     for (int i=0;i<m;i++)
         for (int j=0;j<m;j++) {
@@ -147,6 +153,8 @@ void Dither::Perform(int x, int y, unsigned char color, LImage *img, bool isPrev
 {
     float m= m_size;
     int shift = m_type;
+    if (button==-1)
+        return;
 
     x = ((int)x/2)*2;
     y = ((int)y/2)*2;
@@ -248,6 +256,8 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
 
 void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
+    if (button==-1)
+        return;
     img->setBasePixel(x,y);
     if (button==0) {
         m_start = QPoint(x,y);
@@ -273,13 +283,12 @@ void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isP
         m_status = Status::Selecting;
         m_start = QPoint(x,y);
        // qDebug() << "Start1";
-        if (m_copy==nullptr)
+        if (m_copy == nullptr)
             m_copy = LImageFactory::Create(img->m_type, img->m_colorList.m_type);
         // New from source
         if (m_copy->m_type!=img->m_type) {
             delete m_copy;
             m_copy = LImageFactory::Create(img->m_type, img->m_colorList.m_type);
-
         }
      //   qDebug() << "Start2";
         m_copy->CopyFrom(img);
@@ -289,20 +298,42 @@ void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isP
 
     if (m_status == Status::Selecting && button==1) {
         m_end = QPoint(x,y);
-        img->drawLine(m_start.x(), m_start.y(), m_start.x(), m_end.y(), frameCol, 1);
-        img->drawLine(m_start.x(), m_start.y(), m_end.x(), m_start.y(), frameCol, 1);
-        img->drawLine(m_start.x(), m_end.y(), m_end.x(), m_end.y(), frameCol, 1);
-        img->drawLine(m_end.x(), m_start.y(), m_end.x(), m_end.y(), frameCol, 1);
+        if (m_type!=1) {
+            img->drawLine(m_start.x(), m_start.y(), m_start.x(), m_end.y(), frameCol, 1);
+            img->drawLine(m_start.x(), m_start.y(), m_end.x(), m_start.y(), frameCol, 1);
+            img->drawLine(m_start.x(), m_end.y(), m_end.x(), m_end.y(), frameCol, 1);
+            img->drawLine(m_end.x(), m_start.y(), m_end.x(), m_end.y(), frameCol, 1);
+        }
+        else // cut
+ //           if (isPreview)
+            for (int i=m_start.x();i<m_end.x();i++)
+                for (int j=m_start.y();j<m_end.y();j++) {
+                    img->setPixel(i,j,Data::data.currentColor);
+                }
     }
 
-    if (m_status== Status::Stamp) {
+    if (m_status== Status::Stamp && button!=1) {
         StampImage(x,y, img);
     }
 
-    if (button==-1 && m_status==Status::Selecting)
+    if (button==-1 && m_status==Status::Selecting) {
         m_status = Status::Stamp;
+        if (m_type==1)
+            for (int i=m_start.x();i<m_end.x();i++)
+                for (int j=m_start.y();j<m_end.y();j++) {
+                    img->setPixel(i,j,Data::data.currentColor);
+                }
+    }
 
 
+}
+
+CopyStamp::CopyStamp() {
+    m_status=Idle;
+}
+
+CopyStamp::CopyStamp(QString name, QString imagefile, QString tooltip, int type) : ToolboxItem(name, imagefile,tooltip) {
+    m_type=type;
 }
 
 LImage* CopyStamp::m_copy=nullptr;
@@ -314,6 +345,8 @@ CopyStamp::Status CopyStamp::m_status;// = Idle;
 
 void CopyStamp::StampImage(int x, int y, LImage* img)
 {
+    if (m_copy == nullptr)
+        return;
     int w = abs(m_end.x()-m_start.x());
     int h = abs(m_end.y()-m_start.y());
     img->setBasePixel(x,y);
@@ -328,6 +361,12 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
 //                for (int xd=0;xd<m_copy->m_scale;xd++)
   //                  img->setPixel(i-w/2.0+x + xd,j-h/2.0+y, col);
         }
+}
+
+void CopyStamp::Init() {
+    m_status = Status::Idle;
+    if (m_type==2) // paste only
+        m_status = Status::Stamp;
 }
 
 

@@ -455,6 +455,11 @@ void MainWindow::VerifyProjectDefaults()
 
 void MainWindow::UpdateSymbolTree(QString search)
 {
+    if (m_currentDoc == nullptr)
+        return;
+    if (m_currentDoc->isBuilding() || Data::data.isBuilding) {
+        return;
+    }
 
     auto doc = getMainDocument();
 
@@ -516,6 +521,8 @@ void MainWindow::UpdateSymbolTree(QString search)
 
     for (QString key : p->m_symTab->m_symbols.keys()) {
         QSharedPointer<Symbol> s = p->m_symTab->m_symbols[key];
+        if (s==nullptr)
+            return;
         QString t = s->m_type;
         if (t.toLower()=="array") t = s->m_arrayTypeText.toLower()+"[ "+QString::number(s->m_size)+ " ]";
         //if (t.toLower()=="record") t = s->m_arrayTypeText +"[ "+QString::number(s->m_size)+ " ]";
@@ -1052,8 +1059,9 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
     FormRasEditor::m_broadcast=true;
 }
 
-void MainWindow::acceptBuildMain(bool run) {
-    if (m_currentDoc->isBuilding()) {
+void MainWindow::acceptBuildMain(bool run
+                                 ) {
+    if (m_currentDoc->isBuilding() || Data::data.isBuilding) {
         return;
     }
     m_keepFile = m_currentDoc->m_currentFileShort;

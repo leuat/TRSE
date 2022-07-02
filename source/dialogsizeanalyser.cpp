@@ -33,6 +33,8 @@ void DialogSizeAnalyser::Initialize(SourceBuilder *sb, CIniFile *ini, int fontSi
 void DialogSizeAnalyser::Build()
 {
     auto orgAsm = m_sb->m_system->m_orgAsm.get();
+    if (orgAsm==nullptr)
+        return;
     maxVal = 0;
     int variableSize = 0;
     for (auto p : m_sb->compiler->m_parser.m_proceduresOnly) {

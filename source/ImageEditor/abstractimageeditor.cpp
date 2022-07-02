@@ -111,6 +111,9 @@ bool AbstractImageEditor::AIE_mouseMoveEvent(QMouseEvent *e, QWidget* p)
     pos.setY(pos.y()*(float)m_work->m_currentImage->m_image->m_height/p->height());
     QPointF f = m_updateThread->m_prevPos;
 
+    if (e->button() == Qt::RightButton || e->button() == Qt::MiddleButton || e->button() == Qt::MiddleButton)
+        return true;
+
 //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()!=0) {
         m_updateThread->m_prevPos = m_updateThread->m_currentPos;
         m_updateThread->m_currentPos = pos;//QPointF(pos.x(), pos.y());

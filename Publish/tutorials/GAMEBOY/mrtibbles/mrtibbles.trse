@@ -65,5 +65,6 @@ show_all_files = 1
 data_header_tiles/tiles.flf = 0
 data_header_sprites/sprites_packed.flf = 0
 data_header_tiles/levels1.flf = 3.0475e-314
-open_files = ,main.ras
+open_files = -1
 project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/mrtibbles/
+current_file = main.ras

@@ -47,6 +47,7 @@ public:
     bool redrawFileList = false;
     bool demomode = false;
     bool abort = false;
+    bool isBuilding = false;
     int imageEvent = 0;
     bool requestSaveAs = false;
     bool requestCloseWindow = false;

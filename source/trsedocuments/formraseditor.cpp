@@ -108,7 +108,10 @@ void FormRasEditor::ExecutePrg(QString fileName)
         QStringList pl = m_iniFile->getString(name).trimmed().split(" ");
         //        qDebug() << "Additional params: "<<pl;
         pl.removeAll("");
-        params = pl<<params;
+        if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
+            params = pl<<params;
+        else
+            params<<pl;
     }
 
 
@@ -309,10 +312,12 @@ void FormRasEditor::Build(bool isShadow)
     while (m_builderThread.isRunning()) {
 
     }
+    Data::data.isBuilding = true;
     if (m_iniFile->getdouble("compile_thread")==1)
         m_builderThread.start();
     else
         m_builderThread.run();
+    Data::data.isBuilding = false;
 
 }
 

@@ -78,22 +78,6 @@ void WorkerThread::UpdateDrawing()
 
 
 
-//    isInWindow = true;
-//    qDebug() << (m_prevPos-m_currentPos);
-
-
-
-
-    //if (!Data::data.forceRedraw && m_currentButton == 0)
-
-//    if ((abs(m_prevPos.x()-m_currentPos.x())<1) && (abs(m_prevPos.y()-m_currentPos.y()))<1)
-  //      return;
-
-//    if (Data::data.imageEvent != 2)
-  //      return;
-
-//    qDebug() << isInWindow;
-
 
     if ( isInWindow || Data::data.forceRedraw )
     {
@@ -138,6 +122,7 @@ void WorkerThread::UpdateDrawing()
 //        pos.setX(pos.x()-0.25f);
 //        pos.setY(pos.y()-0.25f);
         if (!(QApplication::keyboardModifiers() & Qt::ControlModifier) && perform) {
+//            if (!isPreview)
             m_toolBox->m_current->Perform(pos.x(), pos.y(), col, img, isPreview, m_currentButton);
             //if (dynamic_cast<Filler*>(m_toolBox->m_current)!=nullptr) {
             //    msleep(10);
