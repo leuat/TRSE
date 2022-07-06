@@ -66,6 +66,3 @@ vic_memory_config = none
 via_zeropages = ,
 override_target_settings_basic = 0
 cpu_x86_output = exe
-project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/X86/CGA/
-open_files = ,tut7_3d.ras
-current_file = tut7_3d.ras
