@@ -66,6 +66,7 @@ void DialogColors::on_pushButton_clicked()
     // WTF? Why does everything crash if you change color 0?
     for (int i=1;i<m_org->m_list.count();i++) {
 //        qDebug() << m_org->m_list[i].color<<m_lst->m_list[i].color;
+        if (i<m_img->m_colorList.m_list.count() && i<m_lst->m_list.count())
         m_img->m_colorList.m_list[i].color = m_lst->m_list[i].color;
 
     }

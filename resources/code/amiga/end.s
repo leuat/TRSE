@@ -99,6 +99,7 @@ ddfstop:
     dc.w    $00d0
     dc.w    $0108
 copper_mod_even:
+
 ;set bplmodulo here
     dc.w    0,$010a
 copper_mod_odd:

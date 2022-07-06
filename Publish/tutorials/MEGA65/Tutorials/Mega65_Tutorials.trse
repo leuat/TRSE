@@ -62,3 +62,6 @@ custom_system_emulator = -0.5
 custom_system_emulator_parameters = -0.5
 custom_system_assembler_parameters = -0.5
 custom_system_ending = -0.5
+project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/MEGA65/Tutorials/
+open_files = 3.01266e-314
+current_file = easy/12_sqrt_and_atan.ras

@@ -87,3 +87,6 @@ custom_system_assembler_parameters = -0.5
 custom_system_ending = -0.5
 qemu = No
 spectrum_model = 0
+project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/BBCM/Beep/
+open_files = ,demo.ras, readme.rtf
+current_file = readme.rtf

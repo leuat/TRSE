@@ -4771,7 +4771,8 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
 
     for (int i=0;i<cnt;i++) {
         QString str = sentence;
-        QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
+//        QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
+        QJSValue fun = m_jsEngine.evaluate("(function(i) { return "+str+"; })");
         if (fun.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
@@ -4800,7 +4801,6 @@ QStringList Parser::BuildSineTable(int cnt,TokenType::Type type)
     int amplitude = GetParsedInt(TokenType::INTEGER)/2;
 //    Eat(TokenType::RPAREN);
     QStringList data;
-    QJSEngine m_jsEngine;
     int AND = 0xFFFF;
 //    qDebug() << "PARSER " <<TokenType::getType(type);
     if (type==TokenType::BYTE)
@@ -4851,7 +4851,7 @@ QStringList Parser::BuildTable2D(int cnt,TokenType::Type type)
     QString sentence = m_currentToken.m_value;
     Eat(TokenType::STRING);
     QStringList data;
-    QJSEngine m_jsEngine;
+//    QJSEngine m_jsEngine;
     int AND = 0xFFFF;
 //    qDebug() << "PARSER " <<TokenType::getType(type);
     if (type==TokenType::BYTE)

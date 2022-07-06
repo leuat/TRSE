@@ -1538,6 +1538,18 @@ static int AddRawCharsetData(lua_State* L) {
         }
     return 0;
 }
+static int AddInt(lua_State* L) {
+    int w = lua_tonumber(L,1);
+    Util::appendInt16Rev(m_charData,w);
+    return 0;
+}
+
+static int AddByte(lua_State* L) {
+    int w = lua_tonumber(L,1);
+    m_charData.append(w&255);
+    return 0;
+}
+
 
 static int CompressAndSaveHorizontalData(lua_State* L) {
     if (!VerifyFjongParameters(L,"CompressAndSaveHorizontalData"))
@@ -1681,6 +1693,9 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "SaveKoalaImage", SaveKoalaImage);
     lua_register(m_script->L, "SaveImage", SaveImage);
     lua_register(m_script->L, "SaveCompressedTRM", SaveCompressedTRM);
+
+    lua_register(m_script->L, "AddInt", AddInt);
+    lua_register(m_script->L, "AddByte", AddByte);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
     lua_register(m_script->L, "AddC64FullScreen", AddC64FullScreen);

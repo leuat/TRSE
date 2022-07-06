@@ -256,8 +256,8 @@ void Filler::Fill(int i, int j, unsigned char col, unsigned char testCol, LImage
 
 void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
-    if (button==-1)
-        return;
+//    if (button==-1)
+  //      return;
     img->setBasePixel(x,y);
     if (button==0) {
         m_start = QPoint(x,y);

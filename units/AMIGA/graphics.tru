@@ -1,7 +1,9 @@
 unit Graphics;
 var
 	pa,pb : pointer of integer;
-	bpl,j,i,k : integer;
+	pl : pointer of long;
+	ll:long;
+	bpl,j,i,k,x,y,z : integer;
 	const height: integer = 200;
 	hx, hy, hl,hc:integer;
 	@donotremove bytefill1
@@ -10,6 +12,52 @@ var
 	bytefill1 : array[8] of byte =(%11111111,%01111111,%00111111,%00011111,%00001111,%00000111,%00000011,%00000001);
 	bytefill2 : array[8] of byte =(%00000000,%10000000,%11000000,%11100000,%11110000,%11111000,%11111100,%11111110,$FF,$FF);
 	bytefill3 : array[8] of byte =(%11111110,%11111100,%11111000,%11110000,%11100000,%11000000,%10000000,0);
+	
+	px : array[16] of integer = buildtable("Math.pow(2,15-i)");
+	tab40:array[256] of integer = buildtable("i*40");
+	
+		
+	const BLTEN_A:integer = $0800;
+	const BLTEN_B:integer = $0400;
+	const BLTEN_C:integer = $0200;
+	const BLTEN_D:integer = $0100;
+	const BLTEN_AD:integer= (BLTEN_A|BLTEN_D);
+	const BLTEN_ABD:integer= (BLTEN_A|BLTEN_B|BLTEN_D);
+	const BLTEN_ACD:integer = (BLTEN_A|BLTEN_C|BLTEN_D);
+	const BLTEN_ABCD:integer	= (BLTEN_A|BLTEN_B|BLTEN_C|BLTEN_D);
+
+	const BLT_A:integer	= %11110000;
+	const BLT_B:integer	= %11001100;
+	const BLT_C:integer	= %10101010;
+	
+	const BLT_ABD_OR:integer = BLTEN_ABD +(BLT_A|BLT_B);
+
+	
+
+procedure putpixel(pa:global pointer of integer;i,j : global integer);
+begin
+	pa+=40*j;
+	k:=i>>4;
+	pa[k]|=px[i&15];
+end;
+	
+	
+procedure AddCopperCommandBitplane(bpl:global integer; pa: global pointer of integer);
+begin
+	asm("
+		move.l Graphics_pa,d0
+		move.w d0, Graphics_i
+		swap d0
+		move.w d0, Graphics_j
+ 
+	");
+	bpl:=bpl<<2 + $E0;
+	AddCopperCommand(bpl+2,i);
+	AddCopperCommand(bpl,j);
+	
+end;
+	
+	
 	
  /*
 	Sets up the copper list to point to the screen 
@@ -253,7 +301,74 @@ h_cont:
 
 end;
 
+procedure Blit16pix(pa,pl : global pointer of integer;i,j: global integer);
+begin
+//	pa:=pa;
+//	ablit(pa, p1, 0, x, y,  40,  (16*$40)+(2), 40-4,40-4, 40-4,$09E0);
 
+	
+	pl+=tab40[j];
+	pl+=(i>>3)&$FFFE;
+	x:=15-i&15;
+	
+	asm("
+		move.l Graphics_pa,a0
+		move.l Graphics_pl,a1
+		move.w Graphics_x,d2
+		rept 15
+		
+		moveq #0,d0				
+		move.w (a0)+,d0
+;		and.l #$FFFF,d0
+		lsl.l d2,d0
+		or.l d0,(a1)
+		add.l #40,a1
+;		add.l #2,a0
+		
+		endr	
+	
+	
+	");
+	
+/*
+	
+	for k:=0 to 16 do
+	begin
+		asm(";here");
+		ll:=(pa[0])&$FFFF;
+		ll:=ll<<y;
+		pl[0]:=ll;
+		pl+=40;
+		pa+=2;
+	end;
+*/
+end;
+
+procedure Blit16pixMask(pa,pl : global pointer of integer;i,j: global integer);
+begin
+	
+	pl+=tab40[j];
+	pl+=(i>>3)&$FFFE;
+	x:=15-i&15;
+	
+	asm("
+		move.l Graphics_pa,a0
+		move.l Graphics_pl,a1
+		move.w Graphics_x,d2
+		rept 15
+		
+		moveq #$FFFFFFFF,d0				
+		move.w (a0)+,d0
+		lsl.l d2,d0
+		and.l d0,(a1)
+		add.l #40,a1
+		
+		endr	
+	
+	
+	");
+	
+end;
 
 /*
 procedure CopySingleBitplaneData(pa,pb : global ^integer; bpl, j : global integer);

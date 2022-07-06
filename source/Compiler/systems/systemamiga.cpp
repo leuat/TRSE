@@ -22,11 +22,15 @@ void SystemAmiga::Assemble(QString &text, QString filename, QString currentDir, 
     params << "-kick1hunks";
     params << "-Fhunkexe";
     params << "-spaces";
+//    params << "-nosym";
+
     params << "-nosym";
+    params << "-L"<<(currentDir+"/symbols.txt");
     params << "-o" << filename;
     params << filename+".asm";
     // qDebug() << params;
     process.start(m_settingsIni->getString("vasmm"), params);
+    process.setWorkingDirectory(currentDir);
     process.waitForFinished();
     output = process.readAllStandardOutput();
     //qDebug() << output;

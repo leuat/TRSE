@@ -883,6 +883,13 @@ void Util::appendInt16(QByteArray &ba, int val)
 
 }
 
+void Util::appendInt16Rev(QByteArray &ba, int val)
+{
+    ba.append((val>>8)&0xFF);
+    ba.append((val)&0xFF);
+
+}
+
 QStringList Util::ByteArrayToHexQStringList(QByteArray &ba)
 {
     QStringList l;
