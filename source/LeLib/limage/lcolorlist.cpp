@@ -625,9 +625,10 @@ QPixmap LColorList::CreateColorIcon(int col, int s)
 
     for (int y=0;y<s;y++)
     for (int x=0;x<s;x++) {
-        if (s-1-y>x)
+        if ((s-1-y)>x) {
             if (col<m_list.count())
             img.setPixelColor(x,y, m_list[col].color);
+        }
         else
                 if (c2<m_list.count())
             img.setPixelColor(x,y, m_list[c2].color);
