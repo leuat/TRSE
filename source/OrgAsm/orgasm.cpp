@@ -63,21 +63,38 @@ void Orgasm::ProcessSource()
 
 
 
-QString Orgasm::processRepeatIndex(QString s, int current)
+QString Orgasm::processRepeatIndex(QString s, int currentX, int currentY)
 {
-    s = s.replace("[i+1]",QString::number(current+1));
-    s = s.replace("[i-1]",QString::number(current-1));
-    s = s.replace("[i]",QString::number(current));
-    s = s.replace("[i*8]",QString::number(current*8));
-//    qDebug() << current << QString::number(current) << s;
+
+    for (int i=0;i<2;i++) {
+        int val = currentX;
+        QString r = "i";
+        if (i==1) {
+            val = currentY;
+            r = "j";
+        }
+        s = s.replace("["+r+"+1]",QString::number(val+1));
+        s = s.replace("["+r+"-1]",QString::number(val-1));
+        s = s.replace("["+r+"]",QString::number(val));
+        s = s.replace("["+r+"*2]",QString::number(val*2));
+        s = s.replace("["+r+"*4]",QString::number(val*4));
+        s = s.replace("["+r+"*8]",QString::number(val*8));
+        s = s.replace("["+r+"*16]",QString::number(val*16));
+        s = s.replace("["+r+"*256]",QString::number(val*256));
+        s = s.replace("["+r+"*320]",QString::number(val*320));
+        s = s.replace("["+r+"*160]",QString::number(val*160));
+        s = s.replace("["+r+"*40]",QString::number(val*40));
+//        qDebug() << s;
+    }
+    //    qDebug() << current << QString::number(current) << s;
     return s;
 }
 
-QStringList Orgasm::processRepeatIndex(QStringList s, int current)
+QStringList Orgasm::processRepeatIndex(QStringList s, int currentX, int currentY)
 {
     QStringList ret;
     for (QString& l : s)
-       ret<<processRepeatIndex(l,current);
+       ret<<processRepeatIndex(l,currentX, currentY);
     return ret;
 }
 
@@ -87,7 +104,8 @@ void Orgasm::ProcessUnrolling()
     QStringList newLines;
     QStringList repeatList;
     bool isInRepeat = false;
-    int repeatCount = 0;
+    int repeatCountX = 0;
+    int repeatCountY = 0;
     int ln =0;
     for (QString& l  : m_lines) {
         ln++;
@@ -95,14 +113,29 @@ void Orgasm::ProcessUnrolling()
             if (isInRepeat)
                 throw OrgasmError("Cannot do nested unrolling.",ln);
             isInRepeat = true;
-            QString last = l.simplified().split(" ").last();
+            auto lst = l.simplified().split(" ");
+            bool isOk = false;
             bool ok;
-            repeatCount = last.toInt(&ok);
+            if (lst.count()==2) {
+                QString last = lst.last();
+                repeatCountX = last.toInt(&ok);
+                repeatCountY = 1;
+                isOk = true;
+            }
+            if (lst.count()==3) {
+                isOk = true;
+                repeatCountX = lst[lst.count()-2].toInt(&ok);
+                repeatCountY = lst[lst.count()-1].toInt(&ok);
+            }
+            if (!isOk) {
+                throw OrgasmError("Repeat count must be either 1 or 2-dimensional.",ln);
+
+            }
 //            qDebug() << last << ok;
             if (!ok)
                 throw OrgasmError("Repeat count must be a number.",ln);
 
-            if (repeatCount<=0)
+            if (repeatCountX<=0 || repeatCountY<=0)
                 throw OrgasmError("Repeat count must be larger than 0.",ln);
             repeatList.clear();
 //            qDebug() << "Starting REPEAT list!";
@@ -113,15 +146,26 @@ void Orgasm::ProcessUnrolling()
                 throw OrgasmError("Not in an repeat loop.",ln);
             isInRepeat = false;
 
-            for (int i=1;i<repeatCount;i++) {
-                newLines.append(processRepeatIndex(repeatList,i));
+            if (repeatCountY==1) {
+                for (int x=1;x<repeatCountX;x++) {
+                    newLines.append(processRepeatIndex(repeatList,x,0));
+                }
+
             }
-            repeatCount = 0;
+            else
+
+            for (int y=0;y<repeatCountY;y++)
+            for (int x=0;x<repeatCountX;x++) {
+//                qDebug() << "******* " <<x << y;
+                newLines.append(processRepeatIndex(repeatList,x,y));
+            }
+            repeatCountX = 0;
+            repeatCountY = 0;
             repeatList.clear();
             continue;
         }
         if (isInRepeat)
-            newLines +=processRepeatIndex(l,0);
+            newLines +=processRepeatIndex(l,0,0);
         else
             newLines +=l;
         if (isInRepeat)

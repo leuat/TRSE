@@ -70,7 +70,10 @@ init:
 	move.w	INTREQR,d0
 	or.w #$8000,d0
 	move.w d0,oldintreq
-	move.w	ADKCONR,d0;
+
+;        move.w  #$7fff,INTENA
+
+        move.w	ADKCONR,d0;
 	or.w #$8000,d0
 	move.w d0,oldadkcon
 

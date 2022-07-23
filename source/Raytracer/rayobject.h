@@ -11,6 +11,14 @@
 #include <QQuaternion>
 #include "source/LeLib/objloader/objloader.h"
 #include "camera.h"
+
+
+class SortZData {
+public:
+    float z;
+    int idx;
+};
+
 class AbstractRayObject
 {
 public:
@@ -20,7 +28,7 @@ public:
     QMatrix4x4 m_localRotmat, m_localRotmatInv;
     QVector3D m_normal;
     QVector3D m_position;
-    QVector3D m_scale;
+    QVector3D m_scale = QVector3D(1,1,1);
     QVector3D m_rotation;
     QVector3D m_localPos;
     QVector3D m_centerPos;
@@ -31,6 +39,7 @@ public:
     bool m_hasNormal = false;
     bool m_inverted = false;
     int m_id = 0;
+    int m_type = 0;
     Material m_material;
     QString m_name;
     static SimplexNoise m_sn;
@@ -64,7 +73,7 @@ public:
     }
 
     virtual QVector3D getBBBox() {
-       return m_localPos;
+       return m_localPos*m_scale;
     }
 
     QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, float l);
@@ -382,6 +391,7 @@ public:
     QVector<int> m_visible;
     QVector<int> m_lineList;
     QByteArray m_proj8bit;
+
     virtual QByteArray getProjected8bitData() override {
         return m_proj8bit;
     }

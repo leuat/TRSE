@@ -117,6 +117,7 @@ public:
     QMap<QString, QSharedPointer<Symbol>> m_symbols;
     QMap<QString, QSharedPointer<SymbolTable> > m_records;
     QMap<QString, QSharedPointer<Symbol>> m_constants;
+    QStringList m_userConstants;
     QMap<QString, QString> m_extraAtSymbols;
 //    QStack<QString> m_tempPointers;
     Stack m_tempPointers;

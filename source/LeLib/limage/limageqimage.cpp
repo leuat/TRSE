@@ -59,6 +59,8 @@ void LImageQImage::SaveBin(QFile& file)
 {
     if (m_qImage->width()!=m_width || m_qImage->height()!=m_height) {
         qDebug() << "LImageQImage::SaveBin error... width/height are not equal!";
+        qDebug() << m_qImage->width()<<" vs " << m_width;
+        qDebug() << m_qImage->height()<<" vs " << m_height;
         return;
     }
     auto keep = m_footer.get(LImageFooter::POS_DISPLAY_CHAR);
@@ -352,16 +354,16 @@ void LImageQImage::fromQByteArray(QByteArray &ba)
 
 void LImageQImage::Initialize(int width, int height)
 {
-    if (m_width==width && m_height==height && m_qImage!=nullptr)
+   if (m_width==width && m_height==height && m_qImage!=nullptr && width==m_qImage->width() && height == m_qImage->height())
         return;
     if (m_qImage != nullptr)
         delete m_qImage;
 
-    //    qDebug() << "NEWING "<<m_width << this;
     m_width = width;
     m_height = height;
 
     m_qImage = new QImage(width, height, QImage::Format_ARGB32);
+//    qDebug() << "LimageImage:: "<<width << height;
     m_qImage->fill(QColor(0,0,0));
 
 }

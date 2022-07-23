@@ -8,7 +8,7 @@
 #include "source/Compiler/opcodes/opcodes6502.h"
 #include "source/Compiler/symboltable.h"
 #include <QSharedPointer>
-
+#include <QJSEngine>
 
 class OrgasmData {
 public:
@@ -177,6 +177,8 @@ public:
     bool m_success = false;
     int m_constantPassLines;
     int m_hasOverlappingError = false;
+    QJSEngine m_jsEngine;
+
     OrgasmData::PassType m_passType;
     QByteArray m_data;
     QMap<QString, QRegularExpression*> m_regs;
@@ -184,8 +186,8 @@ public:
     QString m_output;
     QString m_prevLabel = "";
 
-    QString processRepeatIndex(QString s, int current);
-    QStringList processRepeatIndex(QStringList s, int current);
+    QString processRepeatIndex(QString s, int currentX, int currentY);
+    QStringList processRepeatIndex(QStringList s, int currentX, int currentY);
 
     QString endl = "\n";
     OrgasmError error;

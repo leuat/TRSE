@@ -21,8 +21,7 @@ void Methods68000Amiga::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         QSharedPointer<NodeProcedure> addr = qSharedPointerDynamicCast<NodeProcedure>(m_node->m_params[0]);
         QString name = addr->m_procedure->m_procName;
 
-        as->Asm("move.l #"+name+",$6c.w");
-    }
+        as->Asm("move.l #"+name+",$6c.w"); }
 
     if (Command("initcustomcopperlist"))
         as->Asm("lea copper_custom,a5");
@@ -56,6 +55,9 @@ void Methods68000Amiga::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->Asm("jsr P61_Music");
         as->Asm("movem.l (sp)+,d0-a6");
 
+    }
+    if (Command("DisableInterrupts")) {
+        as->Asm("move.w  #$7fff,INTENA");
     }
 
     if (Command("addcoppercommand"))

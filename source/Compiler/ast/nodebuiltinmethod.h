@@ -46,7 +46,9 @@ public:
         m_function= bf;
         m_op.m_lineNumber--;
     }
+    ~NodeBuiltinMethod() {
 
+    }
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         for (QSharedPointer<Node> n:m_params)

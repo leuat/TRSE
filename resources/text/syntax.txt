@@ -281,6 +281,7 @@ m; MatMulVecNormal; Amiga, ATARI520ST; a,a,a,i
 m; ProjectToScreen; Amiga, ATARI520ST; a,i,l,l
 m; WaitForBlitter; Amiga;
 m; VBIRQ;Amiga; p
+m; DisableInterrupts; Amiga;
 
 m; ProjectAllVertices; Amiga, ATARI520ST; a,a,l,l,l,l
 
@@ -1250,8 +1251,9 @@ c; COPPER_MODULO_EVEN; Amiga, ATARI520ST;i; $0108
 c; COPPER_MODULO_ODD; Amiga, ATARI520ST;i; $010A
 c; COPPER_IRQ; Amiga, ATARI520ST; i; %00010000
 c; VB_IRQ; Amiga, ATARI520ST; i; %00100000
+c; CIA_IRQ; Amiga; i; %00001000
 c; BLITTER_IRQ; Amiga, ATARI520ST; i; %01000000
-
+c; EXTERN_IRQ; Amiga; i; %10000000000000
 
 # C128 schtøff
 

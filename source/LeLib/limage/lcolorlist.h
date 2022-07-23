@@ -47,7 +47,6 @@ class LColorList : public QObject
     Q_OBJECT
 private:
 
-    QVector<int> m_multicolors;
     int m_currentType = 0;
     int m_currentPalette = 0;
     QVector<QSharedPointer<LPen>> m_pens;
@@ -55,6 +54,7 @@ private:
 
 public:
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
+    QVector<int> m_multicolors;
 //    bool m_isMulticolor = true; // OBSOLETE REWRITE
     QVector<LColor> m_list;
     bool m_isCharset = false;

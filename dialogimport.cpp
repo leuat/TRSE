@@ -51,6 +51,8 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 //    qDebug() << "Currenttype: " <<QString::number(LImage::TypeToChar(m_imageType)) <<m_image->m_width<<img->m_width;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
+    m_work.Initialize(m_image->m_width, m_image->m_height);
+    m_work.m_colorList.CopyFrom(&img->m_colorList);
 //    qDebug() << m_image->m_width << m_imageType;
 
     if (!Syntax::s.m_currentSystem->m_hasVariableColorPalette)
@@ -69,7 +71,6 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
    if (m_image->m_colorList.m_type == LColorList::C64 || m_image->m_colorList.m_type == LColorList::VIC20)
        m_image->m_colorList.m_selectClosestFromPen = false;
-
 
 
     LImageVIC20* vic = dynamic_cast<LImageVIC20*>(img);
@@ -102,16 +103,16 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     if (m_image->m_colorList.m_type==LColorList::C64 || m_image->m_colorList.m_type==LColorList::VIC20) {
 
-    m_image->m_colorList.CreateUI(ui->layoutColors,0);
-/*    m_image->m_colorList.FillComboBox(ui->cmbForeground);
+        m_image->m_colorList.CreateUI(ui->layoutColors,0);
+        /*    m_image->m_colorList.FillComboBox(ui->cmbForeground);
     m_image->m_colorList.FillComboBox(ui->cmbBackground);
     m_image->m_colorList.FillComboBox(ui->cmbMC1);
     m_image->m_colorList.FillComboBox(ui->cmbMC2);
 */
-//    qDebug() << "EXTRACOL 3 " <<QString::number(m_image->m_extraCols[3]);
- //   qDebug() << "EXTRACOL 0 " <<QString::number(m_image->m_extraCols[0]);
+        //    qDebug() << "EXTRACOL 3 " <<QString::number(m_image->m_extraCols[3]);
+        //   qDebug() << "EXTRACOL 0 " <<QString::number(m_image->m_extraCols[0]);
 
-/*    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
+        /*    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr) {
         ui->cmbForeground->setCurrentIndex(m_image->m_colorList.getPen(3));
         ui->cmbBackground->setCurrentIndex(m_image->m_colorList.getPen(0));
         ui->cmbMC1->setCurrentIndex(m_image->m_colorList.getPen(1));
@@ -122,10 +123,12 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
         ui->cmbMC1->setCurrentIndex(6);
 */
 
-    //QObject::connect(this, LColorList::colorValueChanged, UpdateOutput);
-    connect(&m_image->m_colorList, SIGNAL(colorValueChanged()), this, SLOT(UpdateOutput()));
-}
+        //QObject::connect(this, LColorList::colorValueChanged, UpdateOutput);
+        connect(&m_image->m_colorList, SIGNAL(colorValueChanged()), this, SLOT(UpdateOutput()));
+    }
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(slotOk()));
+  //  qDebug() << "INIT1" <<img->m_colorList.m_list.count() << m_imageType << colorType <<m_image->m_type;
+  //  qDebug() << "INIT2" <<m_image->m_colorList.m_list.count();
 }
 
 
@@ -144,6 +147,9 @@ void DialogImport::Convert()
     m_image->m_forceD800Color = ui->leForceD800->text().toInt();
 
     LImageQImage* img = &m_work;
+//    qDebug() << "A0" << img->m_colorList.m_list.count();
+//    if (img->m_colorList.m_list.count()==0)
+  //      return;
 
     if (ui->chkTreatCharset->isChecked()) {
         img = &m_intermediate;
@@ -212,10 +218,19 @@ void DialogImport::Convert()
         orgCols.CopyFrom(&org->m_colorList);
         m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4.0;
         m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4.0;
+   //     qDebug() << "AA" << m_work.m_colorList.m_list.count();
+        m_image->CopyFrom(img);
+     //   qDebug() << m_image->m_colorList.m_list.count();
+
+//        m_image->m_colorList.CopyFrom(&org->m_colorList);
     }
 
-
-    m_image->Clear(0);
+    m_image->Clear(img->getBackground());
+//    m_image->setBackground(img->getBackground());
+/*    MultiColorImage* mc = dynamic_cast<MultiColorImage*>(img);
+    if (img!=nullptr){
+        m_image->m_colorList.m_multicolors = img->m_colorList.m_multicolors;
+    }*/
 /*    if (!useDither)
        m_image->fromQImage(m_output.m_qImage, m_image->m_colorList);
     else
@@ -376,7 +391,7 @@ void DialogImport::on_cmbForeground_activated(int index)
 
 void DialogImport::on_cmbBackground_activated(int index)
 {
-    m_image->setBackground(index);
+//    m_image->setBackground(index);
  //   m_image->setC
     UpdateOutput();
 }

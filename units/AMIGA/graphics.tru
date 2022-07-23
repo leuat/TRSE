@@ -31,9 +31,15 @@ var
 	const BLT_C:integer	= %10101010;
 	
 	const BLT_ABD_OR:integer = BLTEN_ABD +(BLT_A|BLT_B);
+	const BLT_ABD_XOR:integer = BLTEN_ABD +(BLT_A xor BLT_B);
 
 	
+/**
+ Putpixel: Slow AF. 
+   - parameter 1 : pointer to screen
+   - parameter 2,3 : x,y coordinates
 
+**/
 procedure putpixel(pa:global pointer of integer;i,j : global integer);
 begin
 	pa+=40*j;

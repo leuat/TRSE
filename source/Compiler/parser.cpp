@@ -3963,6 +3963,7 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
     if (m_symTab->exists(name))
         ErrorHandler::e.Error("Symbol '"+name+"' is already defined.", m_currentToken.m_lineNumber);
     m_symTab->m_constants[name.toUpper()] = QSharedPointer<Symbol>(new Symbol(name.toUpper(),type.toUpper(),value));
+    m_symTab->m_userConstants<<name.toUpper();
     return QVector<QSharedPointer<Node>>();
 }
 
@@ -4765,14 +4766,14 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
         AND = 0xFFFFFFFF;
 
     QString consts = "";
-    for (QString key:m_symTab->m_constants.keys())
+    for (QString key:m_symTab->m_userConstants)
         consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
 
 
     for (int i=0;i<cnt;i++) {
         QString str = sentence;
-//        QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
-        QJSValue fun = m_jsEngine.evaluate("(function(i) { return "+str+"; })");
+        QJSValue fun = m_jsEngine.evaluate("(function(i) { "+consts+";return "+str+"; })");
+//        QJSValue fun = m_jsEngine.evaluate("(function(i) { return "+str+"; })");
         if (fun.isError())
             ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 

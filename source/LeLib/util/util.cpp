@@ -875,6 +875,11 @@ void Util::setInt16(QByteArray &ba, int pos, int val)
     ba[pos+1] = (val>>8)&0xFF;
     ba[pos] = (val)&0xFF;
 }
+void Util::setInt16Rev(QByteArray &ba, int pos, int val)
+{
+    ba[pos] = (val)&0xFF;
+    ba[pos+1] = (val>>8)&0xFF;
+}
 
 void Util::appendInt16(QByteArray &ba, int val)
 {

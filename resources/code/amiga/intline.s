@@ -9,6 +9,7 @@ initLine:
                 move.w #40,$dff060
 
         bra continueLine
+        line_mode: dw 0
 
 drawLine:
 
@@ -26,7 +27,6 @@ drawLine:
 ;	move.l	#-1,BLTAFWM(a6)
 ;	move.l	#40,d5
 ;	move.w	d5,BLTCMOD(a6)
-
 
 
 
@@ -93,11 +93,14 @@ waitblt:
         move.w	d0,BLTCON0(a6)
         moveq	#0,d0
         move.b	oct(pc,d5.w),d0
-        ; eor.l line_method,d0
-       ; bset	#1,d0
+;         eor.l line_method,d0
+;       bset	#1,d0
 line_method_change:
         bclr #1,d0
+        or line_mode,d0
         move.w	d0,BLTCON1(a6)
+;        move.w  #2,BLTCON1(a6)
+
         move.l	d4,BLTCPTH(a6)
         move.l	d4,BLTDPTH(a6)
         movem.w	d1/d2,BLTBMOD(a6)

@@ -181,6 +181,15 @@ static int AddObjectRegular(lua_State *L)
 
 
     }
+    if (object=="torus_poly") {
+        ValidateNoParameters("AddObject (torus)",L,N+4);
+        obj = new RayObjectRegular3D();
+//        qDebug() << object << lua_tonumber(L,N);
+        obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
+                           lua_tonumber(L,N+2),
+                           lua_tonumber(L,N+3),false,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6));
+
+    }
     if (obj==nullptr) return 1;
 
     obj->m_name= name;
@@ -660,6 +669,22 @@ static int SetPosition(lua_State *L)
     aro->m_position = (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
     return 0;
 }
+static int SetScale(lua_State *L)
+{
+//    int n = lua_gettop(L);
+    if (!VerifyFjongParameters(L,"SetScale"))
+        return 0;
+
+    QString name = lua_tostring(L,1);
+    AbstractRayObject* aro = m_rt.Find(name);
+    if (aro==nullptr) {
+        m_error +="<br>Error in SetPosition : Could not find object '" + name+ "'";
+        return 0;
+    }
+
+    aro->m_scale = (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
+    return 0;
+}
 
 static int RemoveObject(lua_State *L)
 {
@@ -712,11 +737,12 @@ static int SetUVShift(lua_State *L)
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
-        m_error +="<br>Error in SetRotation : Could not find object '" + name+ "'";
+        m_error +="<br>Error in SetUVShift : Could not find object '" + name+ "'";
         return 0;
     }
 
     aro->m_uvShift= (QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),0));
+    aro->m_material.m_uvShift = aro->m_uvShift;
     return 0;
 }
 
@@ -890,7 +916,7 @@ static int AddBitplaneToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
+       m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5), lua_tonumber(L,6));
 
     return 0;
 }
@@ -1217,8 +1243,7 @@ static int SaveKoalaImage(lua_State* L) {
     return 0;
 }
 
-static int
-SaveImage(lua_State* L) {
+static int SaveImage(lua_State* L) {
     if (!VerifyFjongParameters(L,"SaveImage"))
         return 0;
 
@@ -1229,6 +1254,8 @@ SaveImage(lua_State* L) {
 
     if (fname.toLower().endsWith(".png") ||fname.toLower().endsWith(".jpg") )
         m_effect->m_img.save(fname);
+    if (fname.toLower().endsWith(".bin"))
+        m_effect->SaveImageBin(fname);
     if (fname.toLower().endsWith(".flf")) {
         LImageIO::Save(fname,m_effect->m_mc);
     }
@@ -1641,6 +1668,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "Invert", Invert);
     lua_register(m_script->L, "SetID", SetID);
     lua_register(m_script->L, "SetPosition", SetPosition);
+    lua_register(m_script->L, "SetScale", SetScale);
     lua_register(m_script->L, "AddPosition", AddPosition);
 
     lua_register(m_script->L, "DeleteFile", DeleteFile);
@@ -1703,7 +1731,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddCharsetScreen", AddCharsetScreen);
     lua_register(m_script->L, "AddScreenPetscii", AddScreenPetscii);
     lua_register(m_script->L, "AddScreenBinary", AddScreenBinary);
-    lua_register(m_script->L, "Se tQuatAxisAngle", SetQuatAxisAngle);
+    lua_register(m_script->L, "SetQuatAxisAngle", SetQuatAxisAngle);
     lua_register(m_script->L, "SetUVShift", SetUVShift);
     lua_register(m_script->L, "sin", LuaSin);
     lua_register(m_script->L, "SetY", SetY);

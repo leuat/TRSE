@@ -95,6 +95,7 @@ void NodeBinOP::ApplyFlags()
 
     if (m_op.m_type==TokenType::MUL) {
      //   if (a || b)
+        // Crash here.. wtf??
             flags["mul16"] = true;
        // if (!a && !b)
             flags["mul8"] = true;

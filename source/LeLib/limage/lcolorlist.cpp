@@ -652,8 +652,8 @@ void LColorList::CopyFrom(LColorList *other)
         m_pens[i] = other->m_pens[i];
     }
     m_isLevelEditor = other->m_isLevelEditor;
-
-
+    m_multicolors = other->m_multicolors;
+    m_background = other->m_background;
 }
 
 void LColorList::CopyFromKeep(LColorList *other)

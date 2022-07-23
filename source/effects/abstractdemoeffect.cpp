@@ -188,6 +188,19 @@ void AbstractDemoEffect::UpdateScreenDataFrame(QVector<int> &screen, int xp, int
 
 }
 
+void AbstractDemoEffect::SaveImageBin(QString fname)
+{
+    QByteArray ba;
+    for (int y=0;y<m_img.height();y++) {
+        for (int x=0;x<m_img.width();x++) {
+            auto col = QColor(m_img.pixel(x,y));
+            int avg = (col.red()+col.green()+col.blue())/3;
+            ba.append((char)avg);
+        }
+    }
+    Util::SaveByteArray(ba,fname);
+}
+
 
 
 void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorOut(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int endCol) {

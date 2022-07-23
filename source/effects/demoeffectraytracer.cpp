@@ -42,6 +42,11 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageAmstradGeneric(LColorList::AMSTRADCPC);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_SPECTRUM) {
+       m_mc = new LImageSpectrum(LColorList::SPECTRUM);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+
+   }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_VGA) {
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
@@ -75,7 +80,6 @@ void DemoEffectRaytracer::Initialize()
        m_mc->SetColor(0x2C,3);
    }
    m_mc->setMultiColor(true);
-
 
    m_rt->m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
    m_img = QImage(m_rt->m_globals.m_orgWidth,m_rt->m_globals.m_orgHeight,QImage::Format_ARGB32);
@@ -171,6 +175,10 @@ void DemoEffectRaytracer::Render(QImage &img)
     if (m_outputType==RayTracerGlobals::output_type_c64)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
 
+    if (m_outputType==RayTracerGlobals::output_type_SPECTRUM) {
+        ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
+    }
+
     if (m_outputType==RayTracerGlobals::output_type_pico8)
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
@@ -208,16 +216,18 @@ void DemoEffectRaytracer::Render(QImage &img)
 
 
     m_pixmap.convertFromImage(m_img);
+//    if (m_outputType!=RayTracerGlobals::output_type_SPECTRUM) {
     if (m_img.width()<321)
         m_pixmap = m_pixmap.scaled(320, 200, Qt::IgnoreAspectRatio, Qt::FastTransformation);
 
+ //   }
 //    msleep(1000);
     m_ready = false;
     emit SignalImageUpdate();
 
     }
     //qDebug() << "FRAME5";
-
+//    qDebug() << m_img.width();
 }
 
 

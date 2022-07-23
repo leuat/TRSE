@@ -1216,6 +1216,7 @@ void FormImageEditor::on_btnImport_clicked()
         m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
 
         Data::data.redrawOutput = true;
+
     }
     onImageMouseEvent();
 

@@ -4,12 +4,12 @@ LImageSpectrum::LImageSpectrum(LColorList::Type t) : LImageQImage(t)
 {
     m_width = 256;
     m_height = 192;
-    Initialize(m_width,m_height);
     m_scaleX = 1.0f;
     m_noColors = 8;
     m_scale = 1;
     m_type = LImage::Type::Spectrum;
     m_colorList.m_supportsFooterPen = true;
+    Initialize(m_width,m_height);
 
     m_supports.koalaExport = false;
     m_supports.koalaImport = false;

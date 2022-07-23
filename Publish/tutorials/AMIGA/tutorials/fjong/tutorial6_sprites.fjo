@@ -22,11 +22,12 @@ output = {
 --	resolution = { width = 320, height=200},
 	aspect = 1.0,
 	output_type = 3,
-	palette_file = "images/pals.pal",
+--	palette_file = "images/pals.pal",
+	palette = {0,0,0,  64,64,64,128,128,128,255,255,255},
 	aspect = 1,
 	ditherStrength= {x=10, y=1, z=1 },
 	dither = 2,
-	index_colors = { 8,9,10,11 }
+	index_colors = { 0,1,2,3 }
 }
 
 

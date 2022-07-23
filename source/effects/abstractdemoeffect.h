@@ -65,7 +65,7 @@ public:
 
     void UpdateScreenDataFrame(QVector<int>& screen, int xp, int yp, int w, int h, int frame);
 
-
+    void SaveImageBin(QString fname);
     void ExportDiffAsUnrolledBitmap6502ColorOut(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int startCol);
     void ExportDiffAsUnrolledBitmap6502ColorIn(QString file, QString background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed, int startCol);
     void ExportDiffAsUnrolledBitmap6502ColorInAddress(QString file, int background, QString name, QString waitFunc, int base, int xp, int yp, int w, int h, int speed);
