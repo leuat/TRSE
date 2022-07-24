@@ -1,6 +1,9 @@
 unit Memory;
 var
 	useKernal:byte;
+	@donotremove keep
+	keep:byte;
+	
 	
 procedure StartIRQExtended(useKernal : global byte) inline;
 begin
@@ -35,4 +38,37 @@ begin
 	CloseIRQ();
 end;
 
+
+procedure StartIrqMemoryMode() inline;
+begin
+	
+	asm("
+	pha
+	lda 01
+	pha
+	lda Memory_keep
+	sta 01	
+	txa
+	pha
+	tya
+	pha
+	asl $d019
+
+	");
+end;
+
+procedure CloseIrqMemoryMode() inline;
+begin
+	asm("
+	pla
+	tay
+	pla
+	tax
+	pla
+	sta $01
+	pla
+	rti
+	");
+	
+end;
 end.

@@ -1,3 +1,4 @@
+
 name: win32-msvc
 
 on:
@@ -30,7 +31,7 @@ jobs:
       - uses: jurplel/install-qt-action@v2
         with:
           version: '6.0.1'
-          tools: 'tools_ifw,4.0.0,qt.tools.ifw.40 tools_qtcreator,7.0.2,qt.tools.qtcreator'
+          tools: 'tools_ifw,4.0.0,qt.tools.ifw.40 tools_qtcreator,8.0.0,qt.tools.qtcreator'
 
 
       - name: Build TRSE
