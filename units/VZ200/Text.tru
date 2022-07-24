@@ -1,0 +1,165 @@
+Unit Text;
+@use "system/str"
+
+var
+	@donotremove Screen_c
+ 	c : pointer;
+ 	x,y,z : byte;
+  i : Integer;
+  num: string = "        ";
+
+/**
+Prints char c at the current cursor position.
+ Control chars are obeyed not printed.
+ **/
+ 	
+procedure PutChar(c: global pointer);
+begin
+  asm("
+    ld a, [Text_c]
+    call #28a7
+    ld a,#0d
+    call #033a    
+  ")
+end;
+
+/**
+Prints the string at the current cursor position.
+By default VZ200 prints in inverse.
+Control chars are obeyed, not printed.
+**/
+procedure PrintInv(c: global pointer);
+begin
+    asm("
+      ld hl, [Text_c]
+      call #28a7
+      ld a,#0d
+      call #033a
+      ");
+end;
+
+/**
+Prints the string at the current cursor position.
+Control chars are obeyed, not printed.
+**/
+procedure Print(c: global pointer);
+begin
+    asm("
+      ld hl, [Text_c]
+printloop      
+      ld a,(hl)
+      cp #00
+      jr z,printout
+      add a,#80
+      ld (hl),a
+      inc hl
+      jp printloop
+printout  
+      ld hl, [Text_c]
+      call #28a7
+      ld a,#0d
+      call #033a
+      ld hl, [Text_c]
+printloop2      
+      ld a,(hl)
+      cp #00
+      jr z,printend
+      sub #80
+      ld (hl),a
+      inc hl
+      jp printloop2     
+printend  
+      ");
+end;
+
+/** 
+  Move cursor to 0,0
+  **/
+procedure CursorHome();
+begin
+  asm("
+    ld hl,#7000
+    ld (#7820),hl
+    xor a
+    ld(#78a6),a
+    call #0053
+  ");
+end;
+
+/**
+  Move cursor to x,y location onscreen
+  **/
+procedure MoveCursorTo(x, y: global byte);
+begin
+  asm("
+    ld hl,#7000
+    ld a,[Text_x];
+    ld b,0
+    ld c,a
+    add hl,bc
+
+    ld de,#0020
+    ld a,[Text_y]
+    cp #00
+    jr z,noyloop
+    ld b,a
+mctloop
+    add hl,de
+    djnz mctloop  
+noyloop    
+    ld (#7820),hl
+    ld a,[Text_x]
+    ld (#78a6),a
+    call #0053 
+  ");
+end;
+
+/**
+  Prints a number to the mode(0) text screen
+  Number is Integer-sized -32767 to 32768
+  **/
+procedure PrintNumber(i : global Integer);
+begin
+  asm("
+    ld bc,#0000
+    ld de,[Text_i]
+    call #09b4      ; Loads ACC with BCDE
+    call #0a9d      ; Set flag to Integer    
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
+    xor a
+    ld (#409c),a    ; Set output to 0 = video display
+    call #28a7      ; Print number on screen
+    ld a,#0d
+    call #033a      ; Print a <CR>
+  ");
+end;
+
+/* 
+  Outputs a string to the screen at position x,y 
+  the last parameter is 0 for normal text and 1 for inverse
+*/
+procedure PrintAt(x,y: global byte, c: global pointer, z: global byte);
+begin
+  i := 28672 + 32 * y + x;
+  while (c^<>0) do
+  begin
+    if (z = 0) then
+    begin
+      if (c^ > 64) then Screen::Poke(i,c^ - 64) else Screen::Poke(i,c^);
+    end
+    else
+    begin
+      if (c^ > 64) then Screen::Poke(i,c^) else Screen::Poke(i,c^ + 64);
+    end;
+    c += 1;
+    i += 1;
+  end;
+end;
+
+procedure PrintNumberAt(x,y: global byte, i: global Integer, z: global byte);
+begin
+  str::itoa(i,#num,10);
+  PrintAt(x,y,#num, z);
+end;
+
+end.

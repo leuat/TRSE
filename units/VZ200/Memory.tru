@@ -1,0 +1,68 @@
+unit Memory;
+var
+  c : byte = 0;
+
+/**
+Turns on interrupts. Same as "ei"
+**/
+procedure EnableInterrupts() inline;
+begin
+	asm(" ei");
+end;
+
+/**
+Turns off interrupts. Same as "di"
+**/
+procedure DisableInterrupts() inline;
+begin
+	asm(" di");
+end;
+
+/**
+Pushes all registers (both pairs) onto the stack. Typically used in interrupts.
+**/
+procedure PushAll() inline;
+begin
+	asm("
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	push iy
+	exx
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	push iy
+	exx
+	");
+end;
+
+/**
+Pops all registers (both pairs) from the stack. Typically used in interrupts.
+**/
+procedure PopAll() inline;
+begin
+	asm("
+	exx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+	pop bc
+	pop af
+	exx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+	pop bc
+	pop af
+
+	");
+end;
+
+end.

@@ -119,6 +119,9 @@ begin
   ");
 end;
 
+/** 
+  Returns the size of a string in byte format
+  **/
 function SizeOfString(s: global pointer):byte;
 begin
 	j:=0;

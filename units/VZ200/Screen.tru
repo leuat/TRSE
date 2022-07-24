@@ -1,0 +1,583 @@
+unit Screen;
+
+var
+  const screen_char_loc : address = $7000;	
+  const gfxmode : address = $6800;
+  const gfxmode2 : address = $783B;
+	Count, Loc: Integer;
+	c, ga, u : byte;
+	i, j, gfxval, col_and, col_or : byte;
+	dx, dy, d, xi, yi, ai, bi : byte;
+	x1, y1, x2, y2, rx, ry, w, h : byte;
+	@donotremove x
+	@donotremove y
+	@donotremove i
+	@donotremove Loc
+	@donotremove PutPixel
+	x : byte = 0;
+	y : byte = 0;
+	tab32 : array[64] of integer=buildtable("i*32");
+	const screen_pixel_width : byte = 128;
+	const screen_pixel_height : byte = 64;
+
+/* 
+	Clears the screen using mode parameter 0 or 1
+	*/
+procedure Cls(u: global byte);
+begin
+	asm("
+		ld a, [Screen_u]
+		cp #00
+		jp z,mode0
+		xor a
+		ld bc,#0800
+		jr cls
+mode0
+		ld a,#20
+		ld bc,#0200
+cls
+		ld hl,#7000
+		ld de,#7001
+		ld (hl),a
+		ldir
+		jr clsend
+
+clsend
+	");
+end;
+
+/**
+Sets the VZ200 resolution mode.
+<ul>
+<li>0: Text mode</li>
+<li>1: Graphics mode 128x64</li>
+</ul>
+**/
+procedure SetMode(ga: global byte);
+begin
+	asm("
+		ld a,[Screen_ga]
+		cp #00
+		jr nz,md1
+		ld a,($783B)
+		res 3,a
+		ld (#6800),a
+		ld (#783B),a
+		ret
+md1		
+		ld a,(#783B)
+		set 3,a
+		ld (#6800),a
+		ld (#783B),a
+	");
+end;
+
+/**
+	Set pen colour (0-3) for plotting pixels in mode(1)
+	**/
+procedure SetPen(c: global byte);
+begin
+	asm("
+		ld a,[Screen_c]
+		ld (#7846),a
+		");
+end;
+
+/**
+	Get pen colour in mode(1)
+	**/
+function GetPen():byte;
+begin
+	asm("
+		ld a,(#7846)
+		ld [Screen_c],a
+		");
+		GetPen := c;
+end;
+
+/**
+	Set paper (background) color 0 or 1
+	**/
+procedure SetPaper(c : global byte);
+begin
+	asm("
+		ld a,[Screen_c]
+		cp #00
+		jr z,bg1
+		ld a,(#783B)
+		set 4,a
+		ld (#6800),a
+		ld (#783B),a
+		ret
+bg1		
+		ld a,(#783B)
+		res 4,a
+		ld (#6800),a
+		ld (#783B),a
+	");
+end;
+
+/** 
+Sets a pixel in mode(1) at position (x,y) with current colour.
+**/
+// #7846 = current color value
+procedure PutPixel(x, y : global byte);
+begin
+	asm("
+	ld a,(#7846)
+	ld c,a
+	ld      a, [Screen_y]            ; get y
+	ld 			h,a
+	cp      #40             ; >= 64 ?
+	jr      nc, psetx       ; nah, wont pset there
+	ld      a, [Screen_x]            ; get x
+	ld      l,a
+	cp      #80            ; >= 128 ?
+	jr      nc, psetx
+	sla     l               ; calculate screen offset
+	srl     h
+	rr      l
+	srl     h
+	rr      l
+	srl     h
+	rr      l
+	and     #03              ; pixel offset
+	inc     a
+	ld      b, #fc
+pset1   rrc     b
+	rrc     b
+	rrc     c
+	rrc     c
+	dec     a
+	jr      nz, pset1
+	ld	de, #7000
+	add	hl, de
+	ld      a, (hl)
+	and     b
+	or      c
+	ld      (hl), a
+psetx
+	");
+end;
+
+/**
+	Draws a line in mode(1) in current colour
+	**/
+procedure DrawLine( x1, y1, x2, y2: global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+		begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
+	
+	if y1 < y2 then begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	else
+		begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	PutPixel(x1,y1);
+	if dx >= dy then begin
+		ai := (dy - dx);
+		bi := dy;
+		d := bi - dx/2;
+		while x1 <> x2 do begin
+			if d <128 do begin
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + bi;
+				x1 :=  x1 + xi;
+				PutPixel(x1,y1);
+		end;
+	end
+	else
+		begin // dy > dx
+		ai := (dx - dy);
+		bi := dx;
+		d := bi - dy/2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;	
+			end
+			else
+				d := d+  bi;
+				y1 := y1 + yi;
+				PutPixel(x1,y1);
+		end;
+	end;
+end;
+
+/**
+	Draws a rectangle in mode(1) in current colour
+	x,y is top-left corner then width and height.
+	**/
+procedure DrawRect( rx, ry, w, h: global byte);
+begin
+	xi := rx + w;
+	yi := ry + h ;
+asm("
+	ld a,[Screen_rx]
+hloop	
+	ld [Screen_x],a
+	push af
+	ld a,[Screen_ry]
+	ld [Screen_y],a
+	call Screen_PutPixel
+	ld a,[Screen_yi]
+	ld [Screen_y],a
+	call Screen_PutPixel
+	pop af
+	inc a
+	ld d,a
+	ld a,[Screen_xi]
+	cp d
+	ld a,d
+	jr nz,hloop
+	ld a,[Screen_rx]
+	ld [Screen_x],a	
+	ld a,[Screen_ry]
+vloop	
+	ld [Screen_y],a
+	push af
+	ld a,[Screen_rx]
+	ld [Screen_x],a
+	call Screen_PutPixel
+	ld a,[Screen_xi]
+	ld [Screen_x],a
+	call Screen_PutPixel
+	pop af
+	inc a
+	ld d,a
+	ld a,[Screen_yi]
+	cp d
+	ld a,d
+	jr nz,vloop	
+	ld [Screen_y],a
+	call Screen_PutPixel
+");
+end;
+
+/**
+	Draws a filled rectangle in mode(1) in current colour
+	x,y is top-left corner then width and height.
+	**/
+procedure DrawRectFilled( rx, ry, w, h: global byte);
+begin
+	xi := rx + w;
+	yi := ry + h;
+asm("
+	ld a, [Screen_ry]
+y_loop	
+	ld [Screen_y],a
+	ld a, [Screen_rx]
+x_loop	
+	ld [Screen_x],a
+	push af
+	call Screen_PutPixel
+  pop af
+	inc a
+	ld d,a
+	ld a,[Screen_xi]
+	cp d
+	ld a,d
+	jr nz,x_loop
+	ld a,[Screen_y]
+	inc a
+	ld d,a
+	ld a,[Screen_yi]
+	cp d
+	ld a,d
+	jr nz,y_loop
+");
+end;
+
+/**
+	Wait for Vertical Blank
+	**/
+procedure WaitForVerticalBlank();
+begin
+asm ("
+vbloop 
+	ld a, (#6800)
+	rla
+	jr nc,vbloop
+vbloop2
+	ld a, (#6800)
+	rla
+	jr c,vbloop2	
+vbloop3 
+	ld a, (#6800)
+	rla
+	jr nc,vbloop3	
+");	
+end;
+
+/**
+	Look up value at location
+	**/
+function Peek(Loc: global Integer):byte;
+begin
+asm("
+	ld hl,[Screen_Loc]
+	ld a,(hl)
+	ld [Screen_i],a
+");
+		Peek := i;
+end;
+
+/**
+	Put value at location
+	**/
+procedure Poke(Loc: global Integer, i: global byte);
+begin
+asm("
+	ld a,[Screen_i]
+	ld hl,[Screen_Loc]
+	ld (hl),a
+");
+end;
+
+/**
+	1 pixel smooth scroll in mode(1)
+	First parameter is right-most char onscreen of starting location
+	Second parameter is the height of the scroll
+	**/
+procedure doSmoothScroll(Loc: global Integer, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld c,a
+nextline	
+	xor a
+  ld b,#20
+doscroll
+	rl (hl)
+	rla
+	rl (hl)
+	rra
+	dec hl
+  djnz doscroll
+	ld de,#0040
+	add hl,de
+	dec c
+	jr nz,nextline
+");
+end;
+
+/**
+	Coarse scroll in mode(1)
+	First parameter is left-most char onscreen of starting location
+	Second parameter is the height of the scroll
+	**/
+procedure doCoarseScroll(Loc: global Integer, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld b,a
+cscroll	
+	inc hl
+	push bc
+	push hl
+	pop de
+	dec de
+	ld bc,#001f
+	ldir
+	dec hl
+	ld a,#00
+	ld (hl),a
+	inc hl
+	pop bc
+	djnz cscroll
+	");
+end;
+
+/**
+	1 pixel smooth scroll left with wrap-around in mode(1)
+	First parameter is right-most char onscreen of starting location
+	Second parameter is the height of the scroll
+	**/
+procedure doSmoothScrollWrapL(Loc: global Integer, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld c,a
+nextlineWL
+	xor a
+  ld b,#20
+doscrollWL
+	rl (hl)
+	rla
+	rl (hl)
+	rra
+	dec hl
+  djnz doscrollWL
+  ld de,#0020
+  add hl,de
+  rla
+  rla
+  ld d,a
+  ld a,(hl)
+  or d
+  ld (hl),a
+	ld de,#0020
+	add hl,de
+	dec c
+	jr nz,nextlineWL
+
+");
+end;
+
+/**
+	1 pixel smooth scroll right with wrap-around in mode(1)
+	First parameter is left-most char onscreen of starting location
+	Second parameter is the height of the scroll
+	**/
+procedure doSmoothScrollWrapR(Loc: global Integer, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld c,a
+nextlineWR
+	xor a
+  ld b,#20
+doscrollWR
+	rr (hl)
+	rra
+	rr (hl)
+	rla
+	inc hl
+  djnz doscrollWR
+  rra
+  rra
+  ld d,a
+  push de
+  ld de,#-0020
+  add hl,de
+  pop de
+  ld a,(hl)
+  or d
+  ld (hl),a
+	ld de,#0020
+	add hl,de
+	dec c
+	jr nz,nextlineWR
+
+");
+end;
+
+/**
+	4 pixel coarse scroll right with wrap-around in mode(1)
+	First parameter is left-most byte of starting location
+	Second parameter is the length of data to scroll (0-128 bytes)
+	Third parameter is the height of the scroll
+	**/
+procedure doCoarseScrollWrapR(Loc: global Integer, w, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld b,a
+	inc b
+	ld a,[Screen_w]
+	ld c,a
+	dec c
+nextlineCWR
+	push bc
+  ld b,#00
+	ld a,(hl)
+	push hl
+	pop de
+	dec hl
+	lddr
+	inc hl
+	ld (hl),a
+	pop bc
+	ld a,c
+	add a,a
+	ld e,a
+	ld d,#00
+	add hl,de
+	inc hl
+	dec b
+	jr nz,nextlineCWR
+
+");
+end;
+
+/**
+	4 pixel coarse scroll right with wrap-around in mode(1)
+	First parameter is left-most byte of starting location
+	Second parameter is the length of data to scroll (0-128 bytes)
+	Third parameter is the height of the scroll
+	**/
+procedure doCoarseScrollWrapL(Loc: global Integer, w, h: global byte);
+begin
+asm("
+  ld hl,[Screen_Loc]
+	ld a,[Screen_h]
+	ld b,a
+	ld a,[Screen_w]
+	ld c,a
+	dec c
+nextlineCWL
+	push bc
+  ld b,#00
+	ld a,(hl)
+	push hl
+	pop de
+	inc hl
+	ldir
+	dec hl
+	ld (hl),a
+	pop bc
+	inc hl
+	dec b
+	jr nz,nextlineCWL
+
+");
+end;
+
+/** Move hires screen up one line
+		First parameter is start location onscreen.
+		Second parameter is number of lines down
+		**/
+procedure doLineScroll(Loc: global Integer, h: global byte);
+begin
+	Count := h * 32;
+asm("
+  ld hl,[Screen_Loc]
+	push hl
+	ld de,#0020
+	add hl,de
+	pop de
+	ld bc,[Screen_Count]
+	ldir
+	ld hl,#77e0
+	ld de,#77e1
+	ld bc,#001f
+	ld (hl),#00
+	ldir
+");	
+end;
+
+end.
