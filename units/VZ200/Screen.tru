@@ -487,7 +487,7 @@ end;
 
 /**
 	4 pixel coarse scroll right with wrap-around in mode(1)
-	First parameter is right-most byte of starting location
+	First parameter is left-most byte of starting location
 	Second parameter is the length of data to scroll (0-128 bytes)
 	Third parameter is the height of the scroll
 	**/
@@ -497,6 +497,7 @@ asm("
   ld hl,[Screen_Loc]
 	ld a,[Screen_h]
 	ld b,a
+	inc b
 	ld a,[Screen_w]
 	ld c,a
 	dec c
