@@ -1,0 +1,267 @@
+Unit Input;
+
+var  
+  @donotremove c
+  c : byte = 0;
+
+// Defined joystick directions. Delete any not used
+  const Joy_None : byte = 64;
+  const Joy_Up   : byte = 72;
+  const Joy_Right: byte = 65;
+  const Joy_Down : byte = 68;
+  const Joy_Left : byte = 66;
+  const Joy_Fire : byte = 208;
+  const Joy_Arm  : byte = 96;
+
+// Defined keys. Delete any not used.
+  const Key_None : byte = 9;
+  const Key_A : byte =  87;
+  const Key_B : byte =	22;
+  const Key_C : byte =	70;
+  const Key_D : byte =	71;
+  const Key_E : byte =	72;
+  const Key_F : byte =	103;
+  const Key_G : byte =	23;
+  const Key_H : byte =	17;
+  const Key_I : byte =	66;
+  const Key_J : byte =	97;
+  const Key_K : byte =	65;
+  const Key_L : byte =	33;
+  const Key_M : byte =	100;
+  const Key_N : byte =	20;
+  const Key_O : byte =	34;
+  const Key_P : byte =	82;
+  const Key_Q : byte =	88;
+  const Key_R : byte =	104;
+  const Key_S : byte =	39;
+  const Key_T : byte =	24;
+  const Key_U : byte =	98;
+  const Key_V : byte =	102;
+  const Key_W : byte =	40;
+  const Key_X : byte =	38;
+  const Key_Y : byte =	18;
+  const Key_Z : byte =	86;
+  const Key_1 : byte =	85;
+  const Key_2 : byte =	37;
+  const Key_3 : byte =	69;
+  const Key_4 : byte =	101;
+  const Key_5 : byte =	21;
+  const Key_6 : byte =	19;
+  const Key_7 : byte =	99;
+  const Key_8 : byte =	67;
+  const Key_9 : byte =	35;
+  const Key_0 : byte =	83;
+  const Key_SPC : byte =	84;
+  const Key_SHFT : byte =	54;
+  const Key_CTRL : byte =	55;
+  const Key_COMMA : byte =	68;
+  const Key_PERIOD : byte =	36;
+  const Key_RETN : byte =	50;
+  const Key_HYPHEN : byte =	41;
+  const Key_SEMI : byte =	81;
+  const Key_COLON : byte =	49;    
+
+/**
+  Reads the keyboard at this time and returns the value
+  If the value is zero (0) no key was pressed
+  **/
+function ReadKey():byte;
+begin
+  asm("
+    call #2ef4
+    ld [Input_c],a
+  ");
+    ReadKey := c;
+end;
+
+/**
+  Reads the keyboard at this time and returns the value
+  Will loop until any key is pressed
+  **/
+function WaitChar():byte;
+begin
+  asm("
+keyloop  
+    call #2ef4
+    cp #00
+    jr z,keyloop
+    ld [Input_c],a
+  ");
+    WaitChar := c;
+end;
+
+/**
+  Get keyboard key pressed
+  **/
+function GetPressedKey():byte;
+begin
+asm("        
+
+; Taken from MPAGD by Jonathan Cauldwell; VZ keyboard routine by Kees van Oss.
+; Detect keypress.
+; Note that each key causes a logic 0 to appear at the bit position shown, when its row address is read.
+
+;       I/O Address -----------------------------------------------
+;       (Selector)  bit 7 bit 6 bit 5  bit 4  bit 3   bit 2  bit 1  bit 0
+;row 0  0x68FE  	N/A   N/A   R      Q      E              W      T	1111 1110
+;row 1  0x68FD  	N/A   N/A   F      A      D       CTRL   S      G	1111 1101
+;row 2  0x68FB  	N/A   N/A   V      Z      C       SHIFT  X      B	1111 1011
+;row 3  0x68F7  	N/A   N/A   4      1      3              2      5	1111 0111
+;row 4  0x68EF  	N/A   N/A   M      SPACE  ,              .      N	1110 1111
+;row 5  0x68DF  	N/A   N/A   7      0      8       -      9      6	1101 1111
+;row 6  0x68BF  	N/A   N/A   U      P      I       RETURN O      Y	1011 1111
+;row 7  0x687F  	N/A   N/A   J      ;      K       :      L      H	0111 1111
+;
+; If the '2' key were pressed, it would cause bit 1 at address 68F7H to drop to 0.
+; The data retrieved by reading that address, neglecting the 2 most significant bits which are not driven by the keyboard, would be 3DH (binary 111101).
+
+; Wait for keypress.
+prskey	
+	ld b,#01		    ; reset row
+	ld hl,#68fe	    ; high byte of port to read.
+
+; Check every row
+prskey0
+  ld a,l		      ; low byte
+	rrca		        ; Adjust lb port address
+	ld l,a
+	ld a,(hl)	      ; read key
+	and #3f
+	cp #3f		      ; Key pressed?
+	jr nz,prskey1	  ; Yes, exit
+	inc b		        ; increment row counter
+	ld a,b
+	cp #09		      ; last row checked?
+	jr nz,prskey0	  ; no, repeat
+	ret     	      ; yes, no key pressed, check again
+
+; Determine column
+prskey1
+  ld d,a
+	ld c,1		      ; reset column
+prskey2
+  sra d		        ; rotate bit out
+	jr nc,prskey4	  ; key pressed, exit
+	inc c		        ; increment column counter
+	ld a,c
+	cp 7		        ; last column checked?
+	jr nz,prskey2	  ; no, repeat
+prskey3
+  jr prskey	      ; yes, no key pressed, exit
+
+; Key pressed, create keycode
+prskey4	ld a,c		; high nibble=row
+	sla a
+	sla a
+	sla a
+	sla a
+	add a,b		      ; low nibble=column
+	push af
+	pop af
+  ld [Input_c],a
+keyend
+  ");
+    GetPressedKey := c;
+end;
+
+/**
+  Get joystick direction/fire pressed
+  **/
+function GetJoystick(c : global byte):byte;
+begin
+asm("   
+;--------------------------------------------------------
+; Joystick
+;
+; Out: joyval=xx5FUDLR (bit cleared if key pressed)
+;             ||||||||
+;             |||||||+> Right      
+;             ||||||+-> Left       
+;             |||||+--> Down      
+;             ||||+---> Up        
+;             |||+----> Fire1     
+;             ||+-----> Fire2    
+;             |+------> Not used
+;             +-------> Not used
+
+;--------------------------------------------------------
+; Joystick reading routines.
+; The two Joystick units are connected to a plug-in module that
+; contains I/O address decoding and switch matrix encoding.
+; IC U2 (74LS138) enables I/O reads between 20 - 2F Hex.
+; Address lines AO - A3 are used separately to generate active LOW signals
+; on the joystick or switch to be read.
+; Switch state is then read at the resultant address from Data bits DO - D4.
+; When a switch is ON it provides an active-low Data bit. 
+;
+; JOY1 0x2E    JOY2 0x2B
+; U    0xFE    U    0xFE   1111 1110	
+; D    0xFD    D    0xFD   1111 1101   
+; L    0xFB    L    0xFB   1111 1011   
+; R    0xF7    R    0xF7   1111 0111   
+; FIRE 0xEF    FIRE 0xEF   1110 1111   
+
+; 'Arm'0x2D (joy1 button 2)
+; FIRE 0xEF                1110 1111   
+
+; 'Arm'0x27 (joy2 button 2)
+;              FIRE 0xEF   1110 1111 
+
+  ld a,[Input_c]      ; control flag.
+  dec a               ; is it joystick 1?
+  jr z,joy1           ; yes, read it.
+  dec a               ; is it joystick 2?
+  jr z,joy2           ; yes, read it.
+  jr joyend
+
+; Joystick 1.
+joy1
+  in a,(#2e)	             ; read joystick1
+	call readjoy	           ; convert to joyval
+	in a,(#2d)	             ; Read arm button joystick1
+	jr readarm
+
+; Joystick 2.
+joy2
+  in a,(#2b)	             ; read joystick2
+	call readjoy	           ; convert to joyval
+	in a,(#27)	             ; Read arm button joystick1
+	jr readarm
+
+readjoy
+  ld b,#05		             ; read 5 bits from joystick
+read0
+  sra a	
+	ccf		                   ; complement the result (0=not pressed,1=pressed).
+	rl e
+	djnz read0
+	rrc e		                 ; convert VZ values to Kempston
+	jr nc,rstfire
+	set 4,e
+	jr joyend
+rstfire
+  res 4,e
+  jr joyend
+
+readarm
+  and #10		              ; read arm button
+	jr z, joy1a
+	res 5,e		              ; Not pressed, carry clear
+	jr joy1b
+joy1a
+  set 5,e		              ; Pressed, carry set
+
+joy1b
+	set 6,e
+	jr joy1d
+joy1c
+  res 6,e
+joy1d
+  ld a,e                   ; copy e register to accumulator.
+  ld [Input_c],a            ; remember value.
+joyend
+");
+  GetJoystick := c;
+end;
+
+end.
