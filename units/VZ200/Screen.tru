@@ -5,6 +5,7 @@ var
   const gfxmode : address = $6800;
   const gfxmode2 : address = $783B;
 	Count, Loc: Integer;
+	Data : pointer;
 	c, ga, u : byte;
 	i, j, gfxval, col_and, col_or : byte;
 	dx, dy, d, xi, yi, ai, bi : byte;
@@ -13,6 +14,7 @@ var
 	@donotremove y
 	@donotremove i
 	@donotremove Loc
+	@donotremove Data
 	@donotremove PutPixel
 	x : byte = 0;
 	y : byte = 0;
@@ -386,10 +388,10 @@ end;
 	First parameter is left-most char onscreen of starting location
 	Second parameter is the height of the scroll
 	**/
-procedure doCoarseScroll(Loc: global Integer, h: global byte);
+procedure doCoarseScroll(Data: global pointer, h: global byte);
 begin
 asm("
-  ld hl,[Screen_Loc]
+  ld hl,[Screen_Data]
 	ld a,[Screen_h]
 	ld b,a
 cscroll	
@@ -414,10 +416,10 @@ end;
 	First parameter is right-most char onscreen of starting location
 	Second parameter is the height of the scroll
 	**/
-procedure doSmoothScrollWrapL(Loc: global Integer, h: global byte);
+procedure doSmoothScrollWrapL(Data: global pointer, h: global byte);
 begin
 asm("
-  ld hl,[Screen_Loc]
+  ld hl,[Screen_Data]
 	ld a,[Screen_h]
 	ld c,a
 nextlineWL
@@ -451,10 +453,10 @@ end;
 	First parameter is left-most char onscreen of starting location
 	Second parameter is the height of the scroll
 	**/
-procedure doSmoothScrollWrapR(Loc: global Integer, h: global byte);
+procedure doSmoothScrollWrapR(Data: global pointer, h: global byte);
 begin
 asm("
-  ld hl,[Screen_Loc]
+  ld hl,[Screen_Data]
 	ld a,[Screen_h]
 	ld c,a
 nextlineWR
@@ -487,23 +489,22 @@ end;
 
 /**
 	4 pixel coarse scroll right with wrap-around in mode(1)
-	First parameter is left-most byte of starting location
+	First parameter is right-most byte of starting location (Data pointer + width - 1)
 	Second parameter is the length of data to scroll (0-128 bytes)
 	Third parameter is the height of the scroll
 	**/
-procedure doCoarseScrollWrapR(Loc: global Integer, w, h: global byte);
+procedure doCoarseScrollWrapR(Data: global pointer, w, h: global byte);
 begin
 asm("
-  ld hl,[Screen_Loc]
+  ld hl,[Screen_Data]
 	ld a,[Screen_h]
 	ld b,a
-	inc b
+nextlineCWR
 	ld a,[Screen_w]
 	ld c,a
 	dec c
-nextlineCWR
 	push bc
-  ld b,#00
+  ld b,#00 		; Sets b for lddr
 	ld a,(hl)
 	push hl
 	pop de
@@ -530,10 +531,10 @@ end;
 	Second parameter is the length of data to scroll (0-128 bytes)
 	Third parameter is the height of the scroll
 	**/
-procedure doCoarseScrollWrapL(Loc: global Integer, w, h: global byte);
+procedure doCoarseScrollWrapL(Data: global pointer, w, h: global byte);
 begin
 asm("
-  ld hl,[Screen_Loc]
+  ld hl,[Screen_Data]
 	ld a,[Screen_h]
 	ld b,a
 	ld a,[Screen_w]
