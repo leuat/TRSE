@@ -1,5 +1,5 @@
 unit Sprite;
-// Bugfix helped by Leslie Ayling
+
 @use "Screen"
 var
   @donotremove spritewidth
