@@ -271,8 +271,8 @@ void DialogImport::Convert()
     if (chr!=nullptr && chr->m_colorList.m_type!=LColorList::NES) {
         //chr->m_currentMode=CharsetImage::Mode::FULL_IMAGE;
         chr->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
-        chr->SetColor(0,0);
-        chr->SetColor(1,1);
+//        chr->SetColor(0,0);
+  //      chr->SetColor(1,1);
 //        chr->set
 
     }

@@ -44,10 +44,13 @@ macx{
 #    LIBS += -framework SDL2
 
     LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib -lomp
-    DEFINES -=USE_OMP
+    #DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
       QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
     }
+
+    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/usr/local/include
+    QMAKE_LFLAGS += -lomp
 
     contains(ARCH, arm64): {
       message("Arme meg!")

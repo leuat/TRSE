@@ -763,6 +763,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
         m_projected[i] = r;
 
 
+//        qDebug() << "HERE "<<m_type;
         if (m_type==0) {
             m_proj8bit.append(((int)r.x())&255);
             m_proj8bit.append(((int)r.y())&255);
@@ -776,7 +777,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
     p.begin(&img);
 
 
-
+    qDebug() << "HERRR " <<m_isWireframe <<m_type <<m_skipType;
 
     if (m_isWireframe) {
         int k=0;
@@ -953,12 +954,13 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
 
 }
 
-void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float s1, float s2)
+void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float s1, float s2, int skipType)
 {
     m_isWireframe = isWireframe;
     m_faces.clear();
     m_colors.clear();
     m_type = type;
+    m_skipType = skipType;
     m_vertices.clear();
     m_normals.clear();
     for (int i=0;i<c1;i++) {
@@ -984,7 +986,7 @@ void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool 
                 auto b = i*c2 + (j+1)%c2;
                 auto c = ((i+1)%c1)*c2 + (j+1)%c2;
                 auto d = ((i+1)%c1)*c2 + (j)%c2;
-                if ((m_type&1)==1) {
+                if ((m_skipType&1)==1) {
                 m_faces.append(a);
                 m_faces.append(b);
                 //m_faces.append(c);
@@ -1011,7 +1013,8 @@ void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool 
                 m_normals.append(n2);
 */
                 }
-                if ((m_type&2)==2) {
+                if ((m_skipType&2)==2)
+                {
                    m_faces.append(i*c2 + j);
                    m_faces.append(((i+1)%c1)*c2 + j);
 /*

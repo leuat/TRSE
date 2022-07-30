@@ -22,7 +22,7 @@
 #include "formpaw.h"
 #include <QProcess>
 #include "ui_formpaw.h"
-//#include <omp.h
+#include <omp.h>
 
 FormPaw::FormPaw(QWidget *parent) :
     TRSEDocument(parent),
@@ -416,10 +416,10 @@ void PawThread::run()
 
 
     //for (PawFile& pf: *m_files)
-//#pragma omp parallel
+#pragma omp parallel for
     for (int i=0;i<m_files->count();i++)
     {
-        //qDebug() << "THREAD " << omp_get_thread_num();
+//        qDebug() << "THREAD " << omp_get_thread_num();
         PawFile& pf = (*m_files)[i];
             QProcess processCompress;
             QString adr = pf.address;
@@ -457,13 +457,13 @@ void PawThread::run()
                 output = "<b>ERROR</b><br>"+std;
                 emit EmitTextUpdate();
                 //ui->leOutput->setText(output);
-                return;
+                //return;
             }
             if (err.toLower().contains("error")) {
                 output = "<b>ERROR</b><br>"+err;
                 //ui->leOutput->setText(output);
                 emit EmitTextUpdate();
-                return;
+                //return;
             }
             output+=err;// + processCompress.readAllStandardOutput();
   //          qDebug() << std;

@@ -1,0 +1,195 @@
+globals = {
+ 	camera = { x = 65, y=15, z=0 },
+     fov = 30,
+	target = { x = 0, y=12.0, z=0 },
+	light0 = {   	direction = {x=1, y=20.0, z=1 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.4, y = 0.4, z = 0.4 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=0.0, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 0,
+	isPaused = 0
+	
+}
+
+output = {
+	-- resolution of 2x2 multicolor sprites (12x21 each)
+	resolution = { width = 16, height=32},
+--	resolution = { width = 16*2, height=32*2},
+--	resolution = { width = 320, height=320},
+--	resolution = { width = 320, height=200},
+	output_type = 3,
+--	palette_file = "images/pals.pal",
+	palette = {0,0,0,  64,64,64,128,128,128,255,255,255},
+	aspect = 1.2,
+	ditherStrength= {x=10, y=1, z=1 },
+	dither = 2,
+	index_colors = { 0,1,2,3 }
+}
+
+
+MaterialBlue = {
+   color = { x=1, y=0.5, z=0.5 },
+	reflection = 0.0,
+	shininess = 10,
+	shininess_intensity = 1 
+}
+
+MaterialWhite = {
+   color = { x=2, y=2, z=2 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+MaterialBlack = {
+   color = { x=0.5, y=0.0, z=0 },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+frame = 0
+--noFrames = 24
+noFrames = 64
+
+hasSaved = 0
+
+
+function Init()
+
+	w = 0
+	xx = 1.3
+--	AddObject("sphere","d2","","MaterialBlue",w,0,-xx, 3,3,3);
+--	AddObject("sphere","d3","","MaterialBlue",w,0,xx, 3,3,3);
+--	AddObject("torus","d3","","MaterialBlue",0,0,0, 4.3,1.5,1);
+	--AddObject("sphere","d4","","MaterialBlue",w,xx*3,0, 2,3,3);
+	--AddObject("sphere","d5","","MaterialBlue",w,-xx*4,0, 3,3,3);
+	--AddObject("sphere","d2","","MaterialBlue",w,xx*3,0, 1,3,3);
+	--AddObject("sphere","d3","","MaterialBlue",w,-xx*5,0, 2,3,3);
+
+
+	AddObject("mesh","m","","MaterialBlue","data/love.obj", 1,1,0,1,0);
+
+--	AddObject("sphere","d5","","MaterialBlue",w,-xx, xx*2, 2,3,3);
+--	AddObject("sphere","d6","","MaterialBlue",w,-xx,xx*2, 2,3,3);
+
+	dx = -0.2
+	z = 0
+	font = "rom"
+	char = 11
+
+	sx = 1
+	sy = 0.8
+	sz = 1
+--	SetScale("d2",sx,sy,sz);
+--	SetScale("d3",sx,sy,sz);
+--	SetScale("d4",sx,sy,sz);
+
+	jj = 0
+--	SetRotation("char1",0,0,jj);
+
+
+
+end
+
+
+
+function UpdateScene()
+  	t = ((frame)/(noFrames-1)) 
+
+	t2 = t*360
+
+	tt = t*3.14159
+	ph = t*3.14159
+	dt = 0.9
+	dt2 = 1.2
+	
+	r2 = 4
+	r3 = 5
+	--[[
+	SetPosition("d4",r2*cos(tt),r3*cos(tt),r2*sin(tt))
+	SetPosition("d5",r2*cos(tt+dt),-r3*cos(tt+dt),-r2*sin(tt+dt))
+	SetPosition("d2",r2*cos(-tt),-r3*cos(-tt),r2*sin(tt))
+	SetPosition("d3",-r2*cos(tt+dt2),-r3*sin(tt+dt2),-r2*sin(tt+dt2))
+]]--
+	r=46
+	globals.camera.z = r*cos(tt);
+	globals.camera.x = r*sin(tt)
+	globals.camera.y = 65
+	globals.target.y = 12
+	
+	dt = 0.5
+	globals.light0.direction.z = cos(tt+dt)
+	globals.light0.direction.y = 4
+	globals.light0.direction.x = sin(tt+dt)
+	
+--	SetRotation("m",0,t2,0);	
+	
+--	SetRotation("d3",t2,0,t2)
+
+--[[
+	
+	globals.light0.direction.z = cos(tt+dt)*sin(ph+dt)
+	globals.light0.direction.y = sin(tt+dt)*sin(ph+dt)
+	globals.light0.direction.x = cos(ph+dt)
+	r=17
+	globals.target.z = 0
+--	globals.camera.x = cos(tt)
+	
+	globals.camera.z = r*cos(tt)*sin(ph)
+	globals.camera.y = r*sin(tt)*sin(ph)
+	globals.camera.x = r*cos(ph)
+	
+--	globals.up.x = cos(tt)
+--	globals.up.y = sin(tt)
+
+--  normaliz all
+	l = globals.camera.x*globals.camera.x + globals.camera.y*globals.camera.y + globals.camera.z*globals.camera.z;
+	l = math.sqrt(l)
+	-- Normalize		
+	globals.camera.x = r*globals.camera.x/l
+	globals.camera.y = r*globals.camera.y/l
+	globals.camera.z = r*globals.camera.z/l  
+]]--
+end
+
+
+function Update()
+	
+	
+	
+	if (frame  <=noFrames and frame>=1) then
+	-- save 4 sprites! 
+	if (hasSaved == 0) then 
+--	    AddAmigaBitplaneToData(0,0,4,32, 2);
+	    AddAmigaBitplaneToData(0,0,2,32, 2);
+	
+	end
+	end
+	frame=frame+1
+
+
+	if (frame==noFrames+1) then 
+		hasSaved = 1
+		SaveRawData("data/hearts_data.bin");
+		Message("SAVED")
+		Message("You can exit now");
+	end	
+
+	UpdateScene()
+
+
+end

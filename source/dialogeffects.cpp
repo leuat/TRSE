@@ -177,7 +177,7 @@ static int AddObjectRegular(lua_State *L)
 //        qDebug() << object << lua_tonumber(L,N);
         obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
                            lua_tonumber(L,N+2),
-                           lua_tonumber(L,N+3),true,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6));
+                           lua_tonumber(L,N+3),true,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6),lua_tonumber(L,N+7));
 
 
     }
@@ -187,7 +187,7 @@ static int AddObjectRegular(lua_State *L)
 //        qDebug() << object << lua_tonumber(L,N);
         obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
                            lua_tonumber(L,N+2),
-                           lua_tonumber(L,N+3),false,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6));
+                           lua_tonumber(L,N+3),false,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6),lua_tonumber(L,N+7));
 
     }
     if (obj==nullptr) return 1;

@@ -1,0 +1,131 @@
+globals = {
+	camera = { x = 7, y=0.2, z=-0 },
+	fov = 80, 
+	target = { x = 0, y=0.2, z=0 },
+	up = {x = 1, y = 1, z = 0 },
+	light0 = {   	direction = {x=1, y=0, z=0 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0., y = 0., z = 0. },
+--	ambient = { x = 0.3, y = 0.3, z = 0.3 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+-- hi-res sprite! 24x21 = 63 bytes
+	resolution = { width = 16, height=16},
+	output_type = 1, --C64 image type
+	c64_imageType = 1,
+	c64_multicolor = 0,
+	ditherStrength = { x=40, y=1, z=1 },
+	aspect = 1,
+
+	dither = 0,
+	index_colors = { 0,15 }
+}
+
+
+Material0 = {
+   color = { x=1.0, y=1.0, z=1.0 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0
+}
+
+
+-- Init is called on start  
+
+
+charname = "char"
+ 
+function Init()
+	Message("Please wait...")
+
+	radius = 10
+	x  = 0
+	s = 0.7*4;
+	ts = 0.0
+		t = ((frame)/noFrames)*3.14159*s - 3.14159/2/(1/s) + 3.14159;
+		tt = (cos(t)+1)*0.5;
+		font ="rom"
+		font ="fonts/craze.bin"
+		AddObject("char", charname .. tostring(i),"", "Material0",  font, char+1,   
+			0,0,x,            -- position
+			1,1.0,0.5,      -- width xyz 
+			2,0.60-ts,0.55-ts  -- stretch xyz
+		);          
+
+
+	UpdateGraphics();
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 32
+char = 0
+
+
+charFrames = 26
+
+function UpdateGraphics()
+
+	s = 1.0;
+--  	t = ((frame)/noFrames)*3.14159*s - 3.14159/2/(1/s) -0.1;
+  	t = ((frame)/noFrames)*3.14159*s*2 -0.2;-- - 3.14159/2/(1/s) -0.1;
+	
+	globals.up.x = 0
+	globals.up.z = sin(t)
+	globals.up.y = cos(t)
+	
+end
+
+start = 0
+
+function Update()
+	
+	if (start==1) then
+--		AddAtariBitplaneToData(0,0, output.resolution.width/16, output.resolution.height);
+--		AddAtariBitplaneToData(0,0, 2, output.resolution.height,0);
+--		AddAtariSingleBitplaneToData(0,0, 2, output.resolution.height,0);
+		AddAmigaBitplaneToData(0,0, 2, output.resolution.height,1);
+
+	end;
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+
+
+--[[		if char == charFrames/2 then 
+			SaveRawData("data/textsprites0.bin");
+		end
+]]--
+		
+		if char == charFrames then 
+			globals.isPaused = 1
+			SaveRawData("data/textsprites1.bin");
+			Message("Files 1 written")
+			Message("You can close the renderer now.")
+			
+		end
+
+	end
+	UpdateGraphics()
+	frame=frame+1
+
+	start = 1
+		ClearAllObjects()
+		Init()
+
+
+end

@@ -1,0 +1,185 @@
+
+
+s = 1
+
+globals = {
+ 	camera = { x = -1*s, y=0*s, z=3.6*s },
+     fov = 100,
+	target = { x = 1*s, y=0.0, z=0 },
+	light0 = {   	direction = {x=-10.0, y=1, z=1 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+--	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+	ambient = { x = 0.5, y = 0.5, z = 0.5 },
+	ambient = { x = 1.0, y = 1.0, z = 1.0 },
+    raymarch_steps = 90,
+	raymarch_shadow_steps = 0,
+	up = {x=-1, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1.0,
+	isPaused = 0
+	
+}
+
+
+c = 16
+
+-- 10*24
+output = {
+	resolution = { width = 320, height=256},
+--	resolution = { width = 320, height=200},
+	aspect = 1.0,
+--	output_type = 3,
+	output_type = 9,
+	c64_imageType = 0,
+	c64_multicolor=0,
+	dither = 0,
+	ditherStrength = { x = 10, y= 1, z= 1},
+	palette = { 255,0,0,
+				c*1,c*1,c*1,
+				c*2,c*2,c*2,
+				c*3,c*3,c*3,
+				c*4,c*4,c*4,
+				c*5,c*5,c*5,
+				c*6,c*6,c*6,
+				c*7,c*7,c*7,
+				c*8,c*8,c*8,
+				c*9,c*9,c*9,
+				c*10,c*10,c*10,
+				c*11,c*11,c*11,
+				c*12,c*12,c*12,
+				c*13,c*13,c*13,
+				c*14,c*14,c*14,
+				255,255,255 
+				},
+		
+			    
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 }
+}
+
+ll = 1.0
+
+sc = 32
+sc = 24
+sc = 20
+MaterialBlue1 = {
+--	drawuvcoord = 1,
+	uvtype="sphere_map",
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 0,
+	shininess_intensity =0 ,
+	uv_scale= {x=sc, y=sc, z=sc},
+	light_type = 0,
+	uv_rotation = 86,
+--	uv_rotation = 85+45,
+--	uv_rotation = 85+45,
+--	uv_shift = {x=1, y=1, z=1},
+	texture = "images/txt1.png",
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 24
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+count = 3
+
+cur = 0
+
+charname = "char"
+	n = "box"
+
+function Init()
+	ClearAllObjects()
+	AddObject("torus","t1","","MaterialBlue1",0,0,0, s*3.0,s*2.2,0);
+--	AddObject("box",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 1,1,1);
+--	AddObject("sphere",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 1.5,0.9,1);
+
+	Invert("t1");
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+    t = frame/(noFrames-1)*90.0;
+--    if (cur==0 or cur==2) then
+	
+--	end
+  --  if (cur==1) then
+	--SetRotation(n,180,0,t)
+   
+	--end;
+end
+
+function PostProcess()
+--	t = frame/noFrames*50
+--	DrawCircle(output.resolution.width/2,output.resolution.height/2,t,t,255,255,255); 
+
+--[[	for y = 0, output.resolution.height do
+		for x = 0, output.resolution.width do
+			
+			cx = x-output.resolution.width/2
+			cy = y-output.resolution.height/2
+			
+			ang = math.atan2(cy,cx)*10.2;
+
+			circ = 1000.0/math.sqrt( math.pow(cx,2)+math.pow(cy,2))*1
+
+			ang=ang+circ			
+			v = ((ang%16))*16				
+			
+			DrawLine(x,y, x,y, v,v,v)
+		end
+	end
+--	DrawCircle(100,100, 30,30,   255,255,255,255);
+]]--
+
+
+end
+
+
+function Update()
+	
+
+	if (frame>=1) then
+--		CompressCharset(0,40,0,25,  3, 256)
+-- add in binary form
+
+
+
+--		for y = 0, output.resolution.height-1 do
+--		for x = 0, output.resolution.width/scale-1 do
+	--			AddC64LineToData(x,y*8+yy,1,1)
+		  --  AddAmigaBitplaneToData(0,0, output.resolution.width/8, output.resolution.height,1);
+--		end
+--		end
+	
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	---if (frame<noFrames) then
+--	end
+
+	SaveImage("images/torus.flf")
+	
+	frame=frame+1
+	
+
+
+end

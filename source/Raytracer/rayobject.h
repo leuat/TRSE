@@ -40,6 +40,7 @@ public:
     bool m_inverted = false;
     int m_id = 0;
     int m_type = 0;
+    int m_skipType = 0;
     Material m_material;
     QString m_name;
     static SimplexNoise m_sn;
@@ -429,7 +430,7 @@ public:
     void CalculateNormals();
 
     void Render(Camera& cam, QImage& img) override;
-    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float shift1, float shift2);
+    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float shift1, float shift2, int m_skipType);
 
     float intersect(Ray* ray) override {
         return -1;

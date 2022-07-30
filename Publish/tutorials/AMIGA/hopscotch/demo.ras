@@ -1,0 +1,588 @@
+program Hopscotch;
+//@use "lsplayer"
+@use "players/ptplayer"
+@use "graphics"
+@use "demounit"
+@use "compression"
+var  
+	m,current_time, isDone, transition, transition_time, shift, txtCnt,addx,scrollx:integer;
+	xb,yb:byte;
+
+@define USE_ERINGS 1
+
+
+@define erings_pos $7B900
+
+
+
+//@export "images/logo2.flf" "images/logo.bin" 256 1
+@export "images/grl12.flf" "images/logo.bin" 256 1
+@export "images/spaghetti1.flf" "images/spaghetti.bin" 256 1
+@export "images/logo.flf" "images/text.bin" 256
+@export "images/prxlogo2.flf" "images/prxlogo.bin" 256 1
+//@export "images/image_zigg.flf" "images/zigg.bin" 256 1
+
+@export "images/caramel21.flf" "images/credits1.bin" 256 1
+@export "images/credits_caramel.flf" "images/credits_caramel.bin" 256 1
+
+@export "images/leuat.flf" "images/credits2.bin" 256 1
+@export "images/credits_leuat.flf" "images/credits_leuat.bin" 256 1
+@if USE_ERINGS=1
+@export "images/credits_nosf.flf" "images/credits_nosf.bin" 256 1
+@endif
+@export "images/greets.flf" "images/greets.bin" 256 1
+
+@export "images/caramel1.flf" "images/credits3.bin" 256 1
+@export "images/trse1.flf" "images/trse.bin" 256 1 
+@export "images/trse_ending.flf" "images/trse_ending.bin" 256 1
+
+var
+	credits1: incbin("images/credits1.bin") compressed;
+	credits_caramel: incbin("images/credits_caramel.bin") compressed;
+	credits2: incbin("images/credits2.bin") compressed;
+	credits_leuat: incbin("images/credits_leuat.bin") compressed;
+@if USE_ERINGS=1
+	credits3: incbin("images/credits3.bin") compressed;
+	credits_nosf: incbin("images/credits_nosf.bin") compressed;
+@endif
+//	woman1: incbin("images/woman1.bin") compressed;
+	greets: incbin("images/greets.bin") compressed;
+
+var
+	tab_i_scale : array[@RROW] of integer=buildtable("i*1.69");
+	tab40 : array[256] of integer=buildtable("i*40");
+	tab64 : array[256] of integer=buildtable("i*64");
+
+	spagh: incbin("images/spaghetti.bin") compressed;
+	spagh_pal : incbin("images/spaghetti.pal");
+	state,row,it,l3 : integer = 0;
+	tf,bb : integer;
+	// Number of bitplanes	
+	const bpl : integer = 5;
+   	a,b,dx,dy,x,n2,l,l2,xx,yp,y,i, curFrame,time2,j,k,h,w,yy,dh,w1,cnt1,cnt2: integer = 0; 
+	px,py, x1,y1,x2,y2,x3,y3:integer;   	
+	linebuf, colors:pointer of integer;
+	rx1,ry1,rx2,ry2,rx3,ry3,rx4,ry4,tr:integer;   	
+	n,lshift:long;	
+   	logo : incbin("images/logo.bin") compressed;
+   	text_logo : incbin("images/text.bin") compressed;
+//   	prxlogo : incbin("images/prxlogo.bin") compressed;
+  // 	zigg : incbin("images/zigg.bin") compressed;
+@if USE_ERINGS=1
+	erings : incbin("Erings/erings.bin") compressed;
+@endif
+
+@export "images/torus.flf" "images/torus.bin" 256 1
+@export "images/spiral2.flf" "images/torus2.bin" 256 1
+//@export "images/spiral_tent.flf" "images/spiral_tent.bin" 256 1
+
+	torusimage: incbin("images/torus.bin") compressed;
+	sphereimage: incbin("images/torus2.bin") compressed;
+   	
+   	
+	palette : array[32] of integer;
+	logo_palette : incbin("images/logo.pal");
+	@donotremove rest
+	rest : array[32] of integer;
+	curColors,tarColors : array[32] of integer;
+	pp,ss,p4,src,dst,ptr,p1,p2,p3 : pointer of integer;
+	sinx1 : array[256] of integer = buildtable("(Math.sin(3.14159/2.0+i/256*3.14159)+1)*160");
+	tab160 : array[256] of integer = buildtable("40*i");
+	octopussy : incbin("images/trse.bin") compressed;
+	octopussy_pal : incbin("images/trse.pal");
+	orgStart : integer = $2c81;
+	orgEnd : integer = $2cc1;
+
+
+	sin256 : 	array[256] of integer = buildsinetable(255);
+	sinW : 	array[256] of integer = buildsinetable(128); // 217
+
+	// Animation number of frames
+	const maxFrames : integer = 15;
+	
+	imgTab : array[maxFrames+1] of long = BuildTable("i*40*256");
+	
+
+	// Global palette
+	const C_BG: integer = $000;
+	const C_HIGH1 : integer = $FFF;
+	const C_MEDIUM1 : integer = $777;
+	const C_LOW1 : integer = $444;
+	const C_HIGH2 : integer = $B7F;
+	const C_MEDIUM2 : integer = $B6A;
+	const C_LOW2 : integer = $424;
+	
+	const C_MAIN : integer = $B85;
+	
+
+
+
+	mask : array[16] of integer = buildtable("(Math.pow(2,i)-1)^0xFFFF");
+	
+	font : incbin("data/textsprites1.bin");
+
+	image : incbin("images/logo.bin") compressed;	
+	ending_image : incbin("images/trse_ending.bin") compressed;
+
+//	image_tent : incbin("images/spiral_tent.bin") compressed;	
+	image_tent_pal : incbin("images/spiral_tent.pal");
+	
+	bpl_spiral : incbin("data/bpl_spiral.bin") compressed;
+	
+//@export "images/prxlogo.flf" "images/prxlogo.bin" 0 
+//   	inter : incbin("data/inter.bin") compressed;
+   	
+	@donotremove bpl5
+	@donotremove scr
+	@donotremove bpl6
+
+	prxlogo:incbin("images/prxlogo.bin") compressed;	
+		
+	sprite_struct1 : array[2*256] of integer chipmem;
+	modTune : incbin("music/hopscotch.mod") chipmem;	
+	scr:array[2] of byte chipmem;
+	abb,bbb:byte;
+	bpl5,bplX: pointer of byte;
+	pbb : pointer of byte;
+	clear1: incbin("data/clear1.bin");
+//	bpl6 : array[40*256] of byte chipmem;
+ 	
+
+
+
+procedure FadeIn();
+
+procedure FadeTo(ftl:integer);
+var 
+	ftj,ftk : integer;
+	
+begin
+	for ftj:=0 to ftl do
+	begin
+		DemoUnit::FadeToColor(curColors[ftj],tarColors[ftj]);
+		
+		asm("
+		move.w d0,ftk
+		");
+		curColors[ftj]:=ftk;
+	end;
+	setpalette(#curColors,#copper_palette,31);		
+
+end;
+
+// Updates the X/Y position of a sprite
+procedure UpdateSpritePos(spo : pointer of byte; u_cx, u_cy, u_height,u_cf:byte);
+begin
+	spo[1]:=u_cx; // X
+	spo[0]:=u_cy; // Y 
+	spo[2]:=u_cy+u_height; // Y+height
+	spo[3]:=u_cf;
+end;
+
+
+
+procedure FadeToBlack();
+begin
+	fill(#tarColors,0,32/4*2);
+	for i:=0 to 16 do
+	begin
+		waitverticalblank();
+		FadeTo(32);
+	end;
+	
+end;
+
+
+procedure ResetCopperList();
+begin
+	InitCustomCopperList(); // Message start custom copper list
+	
+	AddCopperCommand(copper_diwstrt, $2c81);
+	AddCopperCommand(copper_diwstop, $2cc1);
+
+	AddCopperCommand(copper_ddfstrt, $0038);
+	AddCopperCommand(copper_ddfstop, $00d0);
+	EndCustomCopperList();
+	ApplyCopperList();	
+end;
+
+
+
+
+
+procedure FadeIn();
+begin
+	for i:=0 to 32 do
+	begin
+		k:=curColors[i];
+		l:=p1[i];
+		n2:=0;
+		
+		j:=k&$F;
+		m:=l&$F;
+		if (j<m) then if j<14 then j:=j+1;
+		n2:=n2|j;
+
+		k:=k>>4;
+		l:=l>>4;
+
+		j:=k&$F;
+		m:=l&$F;
+		if (j<m) then if j<14 then j:=j+1;
+		n2:=n2 + (j<<4);
+
+
+		k:=k>>4;
+		l:=l>>4;
+
+		j:=k&$F;
+		m:=l&$F;
+		if (j<m) then if j<14 then j:=j+1;
+		n2:=n2 + (j<<8);
+	
+
+		curColors[i]:=n2;
+		
+	end;
+//	curColors[2]:=$FFF;
+
+end;
+
+interrupt VBlankEmpty();
+begin
+	
+end;
+interrupt VBlankFadeOnly();
+begin
+		FadeTo(16);	
+	
+end;
+procedure ClearScreen();
+begin
+	fill(#scr,0,10*256*7);
+end;
+
+procedure ClearBetween();
+begin
+	vbirq(VBlankEmpty());
+	fill(#scr,0,256*10*5);
+	fill(#curColors,0,4);
+	setpalette(#curColors,#copper_palette,16);
+end;
+
+
+procedure setLineType(i:global integer);
+begin
+	if (i=0) then
+	asm("
+		move.w #$0880, line_method_change
+		")
+	else
+	asm("
+		move.w #$08C0, line_method_change
+		");
+end;
+
+@include "source/effect1.inc"
+@include "source/sphere.inc"
+@include "source/effect3.inc"
+@include "source/lines.inc"
+@include "source/effect_intro.inc"
+@include "source/scroller.inc"
+@include "source/imageshower.inc"
+@include "source/transitions.inc"
+@include "source/clearscreen_slides.inc"
+@include "source/paths.inc"
+@include "source/rdstuff.inc"
+@include "source/precalc.inc"
+@include "source/erings.inc"
+
+
+
+
+procedure Ending();
+begin
+	fill(#curColors,0,4);
+	fill(#tarColors,0,4);
+	time:=0;
+	vbirq(VBlankFadeOnly());
+	ClearScreen();
+	Graphics::SetupNonInterlacedScreen(ptr,1);
+	Compression::Decompress(#ending_image, ptr);
+	tarColors[0]:=$229;
+	tarColors[1]:=$FFF;
+	i:=1;
+	while (time<256+16) do
+	begin
+			waitverticalblank();
+			time+=1;
+			if (time=256) then fill(#tarColors,0,8);	
+
+	end;
+	
+end;
+
+
+
+	@define scale 1
+
+procedure Spaghetti();
+begin
+		// Regular intro
+	DemoUnit::InitEffect(300/@scale);
+	InitIntro();
+	vbirq(VBlankIntro());
+	DemoUnit::UpdateMainEmpty();
+	vbirq(VBlankEmpty());
+	ResetCopperList();
+end;
+
+procedure Scroller(k:global integer);
+begin
+	// Scroller
+	DemoUnit::InitEffect(k/@scale);
+	InitScroller();
+	vbirq(ScrollerVBlank());
+	DemoUnit::UpdateMainEmpty();
+	
+	vbirq(VBlankEmpty());
+	ResetCopperList();
+	
+end;
+
+
+@if ERINGS=0
+procedure Cubes(k:global integer);
+begin
+	vbirq(VBlankEmpty());
+	waitverticalblank();
+	DemoUnit::InitEffect(k/@scale);
+	InitCubes();
+	vbirq(CubesVBlank());
+	DemoUnit::UpdateMainEmpty();
+	vbirq(VBlankEmpty());
+	
+end;	
+@endif
+
+procedure ImageShowerEffect(src, p2:global pointer; lshift: global long;dx,k,addx:global integer);
+begin
+	// Ziggurath
+	DemoUnit::InitEffect(k/@scale);
+	InitImageShower(src, p2, lshift,dx,addx);
+	vbirq(ImageShowerVBlank());
+	DemoUnit::UpdateMainEmpty();
+	
+end;
+
+
+procedure TorusEffect(k:global integer);
+begin
+	// Ziggurath
+	DemoUnit::InitEffect(k/@scale);
+	InitTorus();
+	vbirq(VBlankTorus());
+	DemoUnit::UpdateMainEmpty();
+	ResetCopperList();	
+	vbirq(VBlankEmpty());
+	ClearScreen();	
+end;
+
+
+procedure R3DStuff(k:global integer);
+begin
+	// Ziggurath
+	DemoUnit::InitEffect(k/@scale);
+	Init3DStuff();
+	vbirq(VBlank3DStuff());
+	Update3DStuff();
+//	DemoUnit::UpdateMainEmpty();
+	ResetCopperList();	
+	vbirq(VBlankEmpty());
+	ClearScreen();	
+	UpdateSpritePos(#sprite_struct1, 0,255, 32,0);
+end;
+
+procedure PathEffect(k:global integer);
+begin
+	vbirq(VBlankEmpty());
+	DemoUnit::InitEffect(k/@scale);
+	InitPaths();
+	vbirq(VBlankPaths());
+	UpdatePaths();
+//	DemoUnit::UpdateMainEmpty();
+	ResetCopperList();	
+	vbirq(VBlankEmpty());
+	ClearScreen();	
+end;
+
+procedure SphereEffect(k:global integer);
+begin
+	// Ziggurath
+	DemoUnit::InitEffect(k/@scale);
+	InitSphere();
+	vbirq(VBlankSphere());
+	DemoUnit::UpdateMainEmpty();
+	ResetCopperList();	
+	vbirq(VBlankEmpty());
+	ClearScreen();	
+end;
+
+procedure ClearSingleBitplane(y,dx,dy,l,k,addx:global integer);
+begin
+	DemoUnit::InitEffect(k/@scale);
+	InitClearSingleBitplane(y,dx,dy,l,addx);
+	vbirq(ClearSingleBitplaneVBlank());
+	DemoUnit::UpdateMainEmpty();
+	
+end;
+
+procedure Lines(k:global integer);
+begin
+	vbirq(VBlankEmpty());
+	DemoUnit::InitEffect(k/@scale);
+	ExecuteLines();
+	
+end;
+
+procedure CreditsShow();
+begin
+	SetupEmptyScreen();
+	for i:=1 to 31 do curColors[i]:=$FFF;
+	setpalette(#curColors,#copper_palette,4);
+	
+	@define CREDTIME 180
+	colors:=#colors1;
+	ImageShowerEffect(#credits1,#sinx1,0,0,128,0);
+	ImageShowerEffect(#credits_caramel,#sinx1,40*256,4,@CREDTIME,1);
+	ClearSingleBitplane(2,$8af,0,0,48,1);
+	ClearSingleBitplane(4,$FFF,0,0,48,0);
+
+	SetupEmptyScreen();
+	colors:=#colors2;
+	ImageShowerEffect(#credits2,#sinx1,0,0,128,1);
+	ImageShowerEffect(#credits_leuat,#sinx1,40*256,4,@CREDTIME,0);
+	ClearSingleBitplane(2,$fa7,0,0,48,0);
+	ClearSingleBitplane(4,$FFF,0,0,48,1);
+
+@if USE_ERINGS=1
+	
+	SetupEmptyScreen();
+	colors:=#colors3;
+	ImageShowerEffect(#credits3,#sinx1,0,0,128,0);
+	ImageShowerEffect(#credits_nosf,#sinx1,40*256,4,@CREDTIME,1);
+	ClearSingleBitplane(2,colors[63],0,0,48,1);
+	ClearSingleBitplane(4,$FFF,0,0,48,0);
+@endif	
+	
+	SetupEmptyScreen();
+
+end;
+
+
+procedure Slides1(maxTime:integer);
+begin
+	InitClearscreenSlides();
+	vbirq(VBlankClearscreenSlides());
+	DemoUnit::InitEffect(maxTime);
+	DemoUnit::UpdateMainEmpty();
+	vbirq(VBlankEmpty());
+end;
+
+
+@if USE_ERINGS=1
+
+procedure Erings(k:global integer);
+begin
+	fill(#scr,0,10*256*15);
+	Compression::Decompress(#erings,@erings_pos);
+	ptr:=#scr;
+	p1:=#scr+320*200;
+	vbirq(VBlankEmpty());
+	asm(" 
+		move.l ptr, a0
+		move.l p1, a1
+		moveq.l #0,d0
+		move.w k, d0
+		jsr @erings_pos
+		move.l a1,p1
+		move.l a2,p2
+		jsr (a0)
+	");
+	vbirq(CallErings());
+	asm("
+		move.l p1,a1
+		jsr (a1)
+	");
+	vbirq(VBlankEmpty());
+//	EnableInterrupt(VB_IRQ);
+	
+	
+end;
+@endif
+
+
+
+begin	
+	disableinterrupts();
+
+	Precalc();
+	EnableInterrupt(VB_IRQ);
+	vbirq(VBlankEmpty());
+	ApplyCopperList();	
+	initline();
+	
+	FadeToBlack();
+
+	
+	fill(#scr,0,10*256*7);
+	ptPlayer::Init(#modTune);
+	ptPlayer::Start();
+	waitverticalblank();
+	enableinterrupt(EXTERN_IRQ);
+
+		
+	
+
+
+	ptr:=#src;	
+	bpl5:=#scr+40*256*4;
+	bplX:=#scr+40*256*17;
+
+	TorusEffect(362);
+	
+
+
+	memcpy(#logo_palette,0,#palette,0,32/4,4);	
+	Spaghetti();
+	ClearScreen();
+
+	Transition1(0,C_HIGH1);	
+	Scroller(820);	
+
+
+	
+
+	CreditsShow();
+
+
+	
+
+
+
+	Lines(300);
+@if USE_ERINGS=0
+	Cubes(320);
+@endif	
+
+	SphereEffect(400);
+
+	PathEffect(860);
+	R3DStuff(620);
+	Ending();	
+	Erings(2440);
+	loop();
+	
+	
+end.
+

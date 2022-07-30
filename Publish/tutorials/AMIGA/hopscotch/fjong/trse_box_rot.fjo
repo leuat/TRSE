@@ -1,0 +1,165 @@
+globals = {
+ 	camera = { x = 0, y=0, z=4 },
+     fov = 40,
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = {x=-0.0, y=0, z=1 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0.0, y = 0.0, z = 0.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=0, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+scale = 4
+
+
+-- 10*24
+output = {
+	resolution = { width = 64, height=64},
+--	resolution = { width = 320, height=200},
+	aspect = 0.7,
+	output_type = 3,
+	c64_imageType = 0,
+	c64_multicolor=0,
+	dither = 2,
+	ditherStrength = { x = 1, y= 1, z= 1},
+
+--	c64_colors = { 0,5,14,6 }
+	index_colors = { 0,1,2 }
+}
+
+ll = 1.0
+
+
+MaterialBlue1 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1, y=1, z=1},
+	texture = "images/trse_logo.png"
+}
+
+MaterialBlue2 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1, y=1, z=1},
+	texture = "images/R.jpg"
+}
+
+
+MaterialBlue3 = {
+   color = { x=ll, y=ll, z=ll },
+	reflection = 0.0,
+	shininess = 50,
+	shininess_intensity = 0 ,
+	uv_scale= {x=0.5, y=0.5, z=0.5},
+	light_type = 0,
+	uv_shift = {x=1, y=1, z=1},
+	texture = "images/x.jpg"
+}
+
+
+
+
+MaterialBlack = {
+   color = { x=0, y=0.0, z=0 },
+	reflection = 0.5,
+	shininess = 50,
+	shininess_intensity = 0 
+}
+
+
+
+
+-- Init is called on start  
+ 
+
+N = 6
+distance = 10
+frame = 0
+--noFrames = 24
+noFrames = 32
+char = 0
+curSave = 1
+
+hasSaved = 0
+
+count = 3
+
+cur = 0
+
+charname = "char"
+	n = "box"
+
+function Init()
+--	AddObject("torus",n,"","MaterialBlue",0,0,0, 1,1,1);
+	ClearAllObjects()
+	AddObject("box",n,"","MaterialBlue"..tostring(1),0,0,0, 1,1,1);
+--	AddObject("sphere",n,"","MaterialBlue"..tostring(cur+1),0,0,0, 1.5,0.9,1);
+
+
+	UpdateScene()
+
+end
+
+
+
+function UpdateScene()
+    t = frame/noFrames*90.0+180;
+    if (cur==0 or cur==2) then
+	SetRotation(n,t,0,0)
+	end
+    if (cur==1) then
+	SetRotation(n,180,t+90,0)
+   
+	end;
+end
+cur = 1
+
+function Update()
+	
+
+	if (frame>=1) then
+--		CompressCharset(0,40,0,25,  3, 256)
+-- add in binary form
+		    AddAmigaBitplaneToData(0,0, output.resolution.width/8, output.resolution.height,2,0);
+	
+	end
+
+--	if (frame==noFrames/4 or frame==(noFrames/4)*2 or frame==(noFrames/4)*3 or frame==noFrames) then 
+	if (frame==noFrames and cur<=2) then 
+		if (cur==1) then SaveRawData("data/rot_trse.bin"); end;
+--		if (cur==1) then SaveRawData("data/r_mc.bin"); end;
+--		if (cur==2) then SaveRawData("data/x_mc.bin"); end;
+	--	OptimizeScreenAndCharset(40,25,256, 1);
+	--	SaveScreenAndCharset("data/screen"..tostring(cur)..".bin", "data/charset"..tostring(cur)..".bin");
+		cur = cur+1
+		Message("SAVED")
+		frame = 0
+		if (cur<3) then
+			Init()
+		end
+	end	
+	---if (frame<noFrames) then
+		UpdateScene()
+--	end
+
+
+	frame=frame+1
+	
+
+
+end

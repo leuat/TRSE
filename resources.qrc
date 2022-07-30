@@ -678,5 +678,6 @@
         <file>resources/code/wonderswan/init.s</file>
         <file>resources/code/wonderswan/end.s</file>
         <file>resources/images/WONDERSWAN.png</file>
+        <file>resources/images/tutorials/hopscotch.png</file>
     </qresource>
 </RCC>
