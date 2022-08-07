@@ -92,7 +92,7 @@ QString ObjLoader::ExportX86(QString fname, float scale, QVector3D shift)
     }
     QByteArray ba;
     ba.append((char*)verts);
-    qDebug() <<  "count: "<< ba.count();
+    qDebug() <<  "count: "<< ba.length();
     delete[] verts;
 
     return "";

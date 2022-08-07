@@ -1566,17 +1566,17 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QAction action51("Add existing file", this);
     QAction action8("New folder", this);
     QAction action3("Help - what is this type of file?", this);
-    connect(&action1, SIGNAL(triggered()), this, SLOT(on_actionDelete_file_triggered()));
-    connect(&action3, SIGNAL(triggered()), this, SLOT(on_helpFileType()));
-    connect(&action4, SIGNAL(triggered()), this, SLOT(on_duplicate_file()));
-    connect(&action6, SIGNAL(triggered()), this, SLOT(on_new_ras_file()));
-    connect(&action61, SIGNAL(triggered()), this, SLOT(on_new_inc_file()));
-    connect(&action7, SIGNAL(triggered()), this, SLOT(on_new_tru_file()));
-    connect(&action7_rtf, SIGNAL(triggered()), this, SLOT(on_new_rtf_file()));
-    connect(&action71, SIGNAL(triggered()), this, SLOT(on_new_fjo_file()));
-    connect(&action8, SIGNAL(triggered()), this, SLOT(on_new_folder()));
-    connect(&action5, SIGNAL(triggered()), this, SLOT(on_rename_file()));
-    connect(&action51, SIGNAL(triggered()), this, SLOT(on_add_existing_file()));
+    connect(&action1, SIGNAL(triggered()), this, SLOT(xon_actionDelete_file_triggered()));
+    connect(&action3, SIGNAL(triggered()), this, SLOT(xon_helpFileType()));
+    connect(&action4, SIGNAL(triggered()), this, SLOT(xon_duplicate_file()));
+    connect(&action6, SIGNAL(triggered()), this, SLOT(xon_new_ras_file()));
+    connect(&action61, SIGNAL(triggered()), this, SLOT(xon_new_inc_file()));
+    connect(&action7, SIGNAL(triggered()), this, SLOT(xon_new_tru_file()));
+    connect(&action7_rtf, SIGNAL(triggered()), this, SLOT(xon_new_rtf_file()));
+    connect(&action71, SIGNAL(triggered()), this, SLOT(xon_new_fjo_file()));
+    connect(&action8, SIGNAL(triggered()), this, SLOT(xon_new_folder()));
+    connect(&action5, SIGNAL(triggered()), this, SLOT(xon_rename_file()));
+    connect(&action51, SIGNAL(triggered()), this, SLOT(xon_add_existing_file()));
 
     contextMenu.addAction(&action8); // New Folder
     contextMenu.addAction(&action6); // New RAS
@@ -1777,7 +1777,7 @@ void MainWindow::UpdateFailure()
 }
 
 
-void MainWindow::on_duplicate_file()
+void MainWindow::xon_duplicate_file()
 {
     QModelIndex qlst = ui->treeFiles->currentIndex();
     if (qlst.data(Qt::UserRole).toString()=="")
@@ -1805,7 +1805,7 @@ void MainWindow::on_duplicate_file()
 }
 
 
-void MainWindow::on_rename_file()
+void MainWindow::xon_rename_file()
 {
 
     QModelIndex qlst = ui->treeFiles->currentIndex();
@@ -1831,7 +1831,7 @@ void MainWindow::on_rename_file()
     }
 }
 
-void MainWindow::on_new_folder()
+void MainWindow::xon_new_folder()
 {
     QModelIndex qlst = ui->treeFiles->currentIndex();
     QString path = getProjectPath();
@@ -1857,7 +1857,7 @@ void MainWindow::on_new_folder()
 
 }
 
-void MainWindow::on_new_file(QString name)
+void MainWindow::xon_new_file(QString name)
 {
     QModelIndex qlst = ui->treeFiles->currentIndex();
     QString fn = qlst.data(Qt::UserRole).toString();
@@ -1887,7 +1887,7 @@ void MainWindow::on_new_file(QString name)
 
 }
 
-void MainWindow::on_add_existing_file()
+void MainWindow::xon_add_existing_file()
 {
     QFileDialog dialog;
     QString filename = dialog.getOpenFileName(this, "Import existing file",getProjectPath(),"*.*");
@@ -1908,28 +1908,28 @@ void MainWindow::on_add_existing_file()
 
 }
 
-void MainWindow::on_new_ras_file()
+void MainWindow::xon_new_ras_file()
 {
-    on_new_file("ras");
+    xon_new_file("ras");
 }
-void MainWindow::on_new_inc_file()
+void MainWindow::xon_new_inc_file()
 {
-    on_new_file("inc");
-}
-
-void MainWindow::on_new_fjo_file()
-{
-    on_new_file("fjo");
+    xon_new_file("inc");
 }
 
-void MainWindow::on_new_tru_file()
+void MainWindow::xon_new_fjo_file()
 {
-    on_new_file("tru");
+    xon_new_file("fjo");
 }
 
-void MainWindow::on_new_rtf_file()
+void MainWindow::xon_new_tru_file()
 {
-    on_new_file("rtf");
+    xon_new_file("tru");
+}
+
+void MainWindow::xon_new_rtf_file()
+{
+    xon_new_file("rtf");
 }
 
 // New source file
@@ -1938,7 +1938,7 @@ void MainWindow::on_actionRas_source_file_triggered()
     CreateNewSourceFile("ras");
 }
 
-void MainWindow::on_actionDelete_file_triggered()
+void MainWindow::xon_actionDelete_file_triggered()
 {
 //    qDebug() << (ui->treeFiles->SelectedClicked);
     QModelIndex qlst = ui->treeFiles->currentIndex();

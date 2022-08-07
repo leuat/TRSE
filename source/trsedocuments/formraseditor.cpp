@@ -119,7 +119,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 #ifdef __APPLE__
     if (emu.toLower().endsWith(".app") || emu.toLower().endsWith(".app/")) {
         if (emu.endsWith("/"))
-            emu.remove(emu.count()-1,1);
+            emu.remove(emu.length()-1,1);
         QString ls = emu.split("/").last().remove(".app");
         emu = emu + "/Contents/MacOS/"+ls;
     }
@@ -352,7 +352,7 @@ void FormRasEditor::BuildNes(QString prg)
     data = data.remove(0,2);
 
     data.insert(0,header);
-    int dc = data.count();
+    int dc = data.length();
     //    int dCount = m_projectIniFile->getdouble("nes_16k_blocks");
     //if (dc<pow(2,14))
     int j=pow(2,14)*2-dc+16;

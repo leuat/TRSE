@@ -22,6 +22,8 @@ DEFINES += USE_LUA
 
 DEFINES +=USE_OMP
 
+#DEFINES += QT_ENABLE_DEPRECATED_BEFORE=0x050F00
+
 INCLUDEPATH +=$$PWD/libs/lua/include
 
 DEPENDPATH += $$PWD/../Libs
@@ -32,25 +34,27 @@ ARCH = $$QMAKE_HOST.arch
 #ARCH = arm64
 #QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
 macx{
-    CONFIG += warn_off
+#    CONFIG += warn_off
 
     #LIBS += -openmp
 #    ICON = trse.icns
-    QMAKE_CXXFLAGS += -Werror=return-type
-    QMAKE_CXXFLAGS_RELEASE += -Ofast
+    QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+
+    QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
+
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
 #    QMAKE_LFLAGS += -F /Library/Frameworks
 #    LIBS += -framework SDL2
 
-    LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib -lomp
+    LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib
     #DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
       QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
     }
 
-    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/usr/local/include
-    QMAKE_LFLAGS += -lomp
+    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
 
     contains(ARCH, arm64): {
       message("Arme meg!")

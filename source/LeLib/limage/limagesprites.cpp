@@ -49,7 +49,7 @@ LImageSprites::LImageSprites(LColorList::Type t) : CharsetImage(t) {
 void LImageSprites::FromRaw(QByteArray &arr)
 {
     Clear();
-    int count = m_rawData.count()/64;
+    int count = m_rawData.length()/64;
     // qDebug() << "Count: " << count;
     int xp = 0;
     int yp = 0;
@@ -96,7 +96,7 @@ void LImageSprites::FromRaw(QByteArray &arr)
 void LImageSprites::ToRaw(QByteArray &arr)
 {
     arr.clear();
-    int count = m_rawData.count()/64;
+    int count = m_rawData.length()/64;
     // qDebug() << "Count: " << count;
     int xp = 0;
     int yp = 0;
@@ -133,7 +133,7 @@ void LImageSprites::ToRaw(QByteArray &arr)
         }
         noSprites++;
     }
-    qDebug() << "Converted : " << (arr.count()/64) << " sprites";
+    qDebug() << "Converted : " << (arr.length()/64) << " sprites";
 }
 
 

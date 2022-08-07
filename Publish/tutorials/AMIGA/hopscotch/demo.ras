@@ -1,5 +1,4 @@
 program Hopscotch;
-//@use "lsplayer"
 @use "players/ptplayer"
 @use "graphics"
 @use "demounit"

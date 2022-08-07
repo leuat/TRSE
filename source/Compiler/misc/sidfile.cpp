@@ -133,7 +133,7 @@ void SidFile::Convert(int headerShift, int newAddress, QString fileEnding, int h
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::OK64)
     {
 //        qDebug() << "VSID CONVERSION: ";
-        for (int i=0;i<m_blob.count()-1;i++) {
+        for (int i=0;i<m_blob.length()-1;i++) {
             uchar lo = m_blob[i];
             uchar hi = m_blob[i+1];
             if (hi==0xD4) {

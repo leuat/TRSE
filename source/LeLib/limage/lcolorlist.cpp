@@ -605,9 +605,9 @@ void LColorList::InitSNESPens()
     for (int i=0;i<pow(2,m_bpp.x());i++)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[i],"Color "+QString::number((int)m_bpp.x()),LPen::Dropdown)));
 
-    if (m_nesPPU.count()!=256) {
+    if (m_nesPPU.length()!=256) {
         m_nesPPU.resize(256);
-        for (int i=0;i<m_nesPPU.count();i++)
+        for (int i=0;i<m_nesPPU.length();i++)
             m_nesPPU[i]=i;
     }
 }
@@ -1142,16 +1142,16 @@ QColor LColorList::getClosestColor(QColor col, int& winner)
     float d = 1E20;
     //    qDebug() << "WHOO";
     winner = 0;
-    if (m_customPalette.count()!=0) {
+    if (m_customPalette.length()!=0) {
         // OMG we have a custom palette! let's use it!
         int val = (col.red() + col.green() + col.blue())/3;
-//        int chunk = 256/m_customPalette.count();
-        float pos = (val/256.0)*m_customPalette.count();
+//        int chunk = 256/m_customPalette.length();
+        float pos = (val/256.0)*m_customPalette.length();
         int idx = floor(pos);
         pos-=idx;
 
         QColor c1 = m_list[ m_customPalette[idx]].color;
-        if (idx<m_customPalette.count()-1)
+        if (idx<m_customPalette.length()-1)
             idx++;
         QColor c2 = m_list[m_customPalette[idx]].color;
 

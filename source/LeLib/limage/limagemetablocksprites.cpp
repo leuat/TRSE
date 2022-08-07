@@ -26,8 +26,8 @@ void LImageMetaBlockSprites::SaveBin(QFile &file)
 {
     uchar no = m_items.count();
     file.write( ( char * )( &no ),  1 );
-    for (LImageContainerItem* li : m_items) {
-        LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
+    for (auto li : m_items) {
+        auto m = qSharedPointerDynamicCast<LMetaChunkItem>(li);
         uchar w = m->m_width;
         uchar h = m->m_height;
         file.write( ( char * )( &w ),  1 );
@@ -37,7 +37,7 @@ void LImageMetaBlockSprites::SaveBin(QFile &file)
     }
 
     QByteArray fd =  QByteArray(m_charsetFilename.toLatin1());
-    uchar len = fd.count();
+    uchar len = fd.length();
     file.write( ( char * )( &len ),  1 );
     file.write(fd);
 }
@@ -83,10 +83,10 @@ void LImageMetaBlockSprites::setPixel(int x, int y, unsigned int color)
   //        qDebug() << QString::number(color);
 
   //  if (m_writeType==Character)
-        ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currentChar,m_img->m_bitMask);
+        ((LMetaChunkItem*)m_items[m_current].get())->setPixel(p.x(),p.y(),m_currentChar,m_img->m_bitMask);
 
 //    if (m_writeType==Color)
-        ((LMetaChunkItem*)m_items[m_current])->setPixelAttrib(p.x(),p.y(),(color&3) |m_currentAttribute,m_img->m_bitMask);
+        ((LMetaChunkItem*)m_items[m_current].get())->setPixelAttrib(p.x(),p.y(),(color&3) |m_currentAttribute,m_img->m_bitMask);
 
 }
 
@@ -103,8 +103,8 @@ unsigned int LImageMetaBlockSprites::getPixel(int x, int y)
         return 0;
 
 
-    uchar val = ((LMetaChunkItem*)m_items[m_current])->getPixel(p.x(),p.y(),m_img->m_bitMask);
-    uchar attrib = ((LMetaChunkItem*)m_items[m_current])->getPixelAttrib(p.x(),p.y(),m_img->m_bitMask);
+    uchar val = ((LMetaChunkItem*)m_items[m_current].get())->getPixel(p.x(),p.y(),m_img->m_bitMask);
+    uchar attrib = ((LMetaChunkItem*)m_items[m_current].get())->getPixelAttrib(p.x(),p.y(),m_img->m_bitMask);
     uchar pal = (attrib&3)+4;
     //    if (rand()%100>97 && val!=0)
     //  qDebug() << "Vals : " << QString::number(val);
@@ -141,8 +141,8 @@ unsigned int LImageMetaBlockSprites::getPixel(int x, int y)
 void LImageMetaBlockSprites::ExportBin(QFile &file)
 {
     QByteArray d;
-    for (LImageContainerItem* li : m_items) {
-        LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
+    for (auto li : m_items) {
+        auto m = qSharedPointerDynamicCast<LMetaChunkItem>(li);
         // Regular way
         for (int y=0;y<m->m_height;y++)
             for (int x=0;x<m->m_width;x++) {

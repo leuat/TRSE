@@ -422,7 +422,7 @@ void CodeGenS1C88::AssignString(QSharedPointer<NodeAssign> node) {
         as->Asm("push ds");
         as->Asm("pop es");
         as->Asm("mw si,"+str);
-        as->Asm("mw cx, "+Util::numToHex(right->m_op.m_value.count()+2));
+        as->Asm("mw cx, "+Util::numToHex(right->m_op.m_value.length()+2));
         as->Asm("rep movsb");
     }
     as->PopLabel("stringassignstr");

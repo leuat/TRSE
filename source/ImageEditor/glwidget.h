@@ -26,7 +26,7 @@ public:
     void paintGL() override ;
 //    void paintEvent(QPaintEvent *event) override ;
     void setTexture(QImage& img, QImage& grid);
-    void resizeGL(int width, int height) override;
+    //void resizeGL(int width, int height) override;
 
     void resizeEvent(QResizeEvent *event) override;
     void mouseMoveEvent(QMouseEvent *e) override;

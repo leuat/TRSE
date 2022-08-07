@@ -151,7 +151,7 @@ void LGLSlideshow::setCurrentTexture()
 
 }
 
-
+/*
 void LGLSlideshow::resizeGL(int width, int height)
 {
     int side = qMin(width, height);
@@ -165,8 +165,9 @@ void LGLSlideshow::resizeGL(int width, int height)
     glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
 #endif
     glMatrixMode(GL_MODELVIEW);
-}
 
+}
+*/
 void LGLSlideshow::mouseMoveEvent(QMouseEvent *e)
 {
 

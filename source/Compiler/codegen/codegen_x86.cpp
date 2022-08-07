@@ -595,7 +595,7 @@ void CodeGenX86::AssignString(QSharedPointer<NodeAssign> node) {
         as->Asm("push ds");
         as->Asm("pop es");
         as->Asm("mov si,"+str);
-        as->Asm("mov cx, "+Util::numToHex(right->m_op.m_value.count()+2));
+        as->Asm("mov cx, "+Util::numToHex(right->m_op.m_value.length()+2));
         as->Asm("rep movsb");
     }
     as->PopLabel("stringassignstr");

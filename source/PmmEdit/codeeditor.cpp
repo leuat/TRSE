@@ -770,7 +770,7 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
             {
 
                 QString number = Util::numToHex(m_addresses[ln]).toUpper();
-                for (int i=0;i<5-number.count();i++)
+                for (int i=0;i<5-number.length();i++)
                     number.insert(1,"0");
                 painter.setPen(cyclesColor);
                 painter.drawText(10, top, addressArea->width(), m_metrics->height(),

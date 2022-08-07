@@ -32,10 +32,10 @@ QPoint LImageGenericSprites::getActualPixelWidth(){
 
 void LImageGenericSprites::AddNew(int w, int h)
 {
-    LGenericSprite* s = new LGenericSprite();
+    auto s = QSharedPointer<LGenericSprite>(new LGenericSprite());
     s->Init(w,h);
     m_items.append(s);
-    m_current = m_items.count()-1;
+    m_current = m_items.length()-1;
     //SetColor(m_extraCols[0],0);
     //SetColor(m_extraCols[1],1);
     //SetColor(m_extraCols[2],2);
@@ -45,11 +45,11 @@ void LImageGenericSprites::AddNew(int w, int h)
 void LImageGenericSprites::ImportBin(QFile &f)
 {
     QByteArray a = f.readAll();
-    int cnt = a.count()/64;
+    int cnt = a.length()/64;
     for (int i=0;i<cnt;i++) {
-        LGenericSprite* s = new LGenericSprite(a,i*64,m_bitMask);
+        auto s = QSharedPointer<LGenericSprite>(new LGenericSprite(a,i*64,m_bitMask));
         m_items.append(s);
-        m_current = m_items.count()-1;
+        m_current = m_items.length()-1;
         //for (int j=0;j<4;j++)
           //  SetColor(m_extraCols[j],j);
     }
@@ -59,7 +59,7 @@ void LImageGenericSprites::ExportBin(QFile &f)
 {
 
     for (int i=0;i<m_items.count();i++) {
-        auto s = ((LGenericSprite*) m_items[i]);
+        auto s = ((LGenericSprite*) m_items[i].get());
         f.write(s->m_data.toQByteArray());
     }
 }
@@ -85,9 +85,9 @@ void LImageGenericSprites::CopyFrom(LImage *img)
 //         m_items = mc->m_items;
 
          DeleteAll();
-         for (LImageContainerItem* li: mc->m_items) {
-             LGenericSprite* s= (LGenericSprite*)li;
-             LGenericSprite* s2= new LGenericSprite();
+         for (auto li: mc->m_items) {
+             LGenericSprite* s=  (LGenericSprite*)li.get();
+             auto s2= QSharedPointer<LGenericSprite>(new LGenericSprite());
              s2->Init(s->m_width,s->m_height);
              s2->m_data.CopyFrom(&s->m_data);
              //*s2 = *s;
@@ -118,7 +118,7 @@ void LImageGenericSprites::setPixel(int x, int y, unsigned int color)
 /*    LGenericSprite& s = m_items[m_current];
     CharsetImage::setMultiColor(s.m_header[s.HEADER_MULTICOLOR]==(char)1);
 */
-    LGenericSprite* s = (LGenericSprite*)m_items[m_current];
+    auto s = (LGenericSprite*)m_items[m_current].get();
     auto p = getPixelPos(x,y);
 
     s->m_data.setPixel(p.x(),p.y(),color);
@@ -133,7 +133,7 @@ unsigned int LImageGenericSprites::getPixel(int x, int y)
             return 0 ;
 
 
-    LGenericSprite* s = (LGenericSprite*)m_items[m_current];
+    LGenericSprite* s = (LGenericSprite*)m_items[m_current].get();
 //    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
     auto p = getPixelPos(x,y);
 
@@ -150,7 +150,7 @@ QByteArray LGenericSprite::ToQByteArray(int mask) {
 }
 
 QPointF LImageGenericSprites::getPixelPos(int x, int y) {
-    LGenericSprite* s = (LGenericSprite*)m_items[m_current];
+    LGenericSprite* s = (LGenericSprite*)m_items[m_current].get();
     return QPointF(x/(double)m_width*s->m_width*8, y/(double)m_height*s->m_height*8);
 
 }
@@ -173,9 +173,9 @@ void LImageGenericSprites::SaveBin(QFile& file)
     uchar cnt = m_items.count();
 
     file.write( ( char * )( &cnt ), 1 );
-    for (LImageContainerItem* li : m_items) {
+    for (auto li : m_items) {
 
-        LGenericSprite* s = dynamic_cast<LGenericSprite*>(li);
+        auto s = qSharedPointerDynamicCast<LGenericSprite>(li);
         uchar sx = s->m_width;
         uchar sy = s->m_height;
 
@@ -212,7 +212,7 @@ void LImageGenericSprites::LoadBin(QFile& file)
         file.read( ( char * )( &sy ), 1 );
 
 
-        LGenericSprite* s = new LGenericSprite();
+        auto s = QSharedPointer<LGenericSprite>(new LGenericSprite());
 
         s->Init(sx,sy);
         s->m_header = file.read(s->HEADER_SIZE);
@@ -266,7 +266,7 @@ void LImageGenericSprites::InitPens()
 
 void LImageGenericSprites::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
-    LGenericSprite* s = ((LGenericSprite*)m_items[m_current]);
+    LGenericSprite* s = ((LGenericSprite*)m_items[m_current].get());
     if (s->m_data.m_qImage==nullptr)
         return;
     img = QImage(s->m_data.m_qImage->width(),s->m_data.m_qImage->height(), QImage::Format_ARGB32);
@@ -288,7 +288,7 @@ int LImageGenericSprites::getGridHeight(){
 
 void LImageGenericSprites::ToggleSpriteMulticolor()
 {
-    LGenericSprite* s = ((LGenericSprite*)m_items[m_current]);
+    LGenericSprite* s = ((LGenericSprite*)m_items[m_current].get());
 
     s->m_header[s->HEADER_MULTICOLOR]=(s->m_header[s->HEADER_MULTICOLOR]+1)&1;
 

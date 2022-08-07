@@ -349,7 +349,7 @@ void Compiler::WarningUnusedVariables()
         QString lstStr= "";
         for (QString s: unusedVariables)
             lstStr+= s+ ",";
-        lstStr.remove(lstStr.count()-1,1); // remove last ","
+        lstStr.remove(lstStr.length()-1,1); // remove last ","
         ErrorHandler::e.Warning("Unused variables : " +lstStr);
     }
 

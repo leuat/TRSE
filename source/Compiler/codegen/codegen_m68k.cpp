@@ -124,13 +124,13 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
         return;
     }
 
-//    qDebug() << "Varstack count: " << as->m_varStack.m_vars.count();
-  //  qDebug() << "Binop: " << as->m_varStack.m_vars.count();
+//    qDebug() << "Varstack count: " << as->m_varStack.m_vars.length();
+  //  qDebug() << "Binop: " << as->m_varStack.m_vars.length();
     as->BinOP(node->m_op.m_type);
     QString op = as->m_varStack.pop();
 
 
-//    as->Comment(" ** StartFree registers: " +QString::number(as->m_regAcc.m_free.count()));
+//    as->Comment(" ** StartFree registers: " +QString::number(as->m_regAcc.m_free.length()));
     QString d0 = "";
     bool start = false;
     if (node->m_left->isPureNumeric() || node->m_left->isPureVariable())
@@ -262,7 +262,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBlock> node)
     QString label = as->NewLabel("block");
 
 
-    if (node->m_decl.count()!=0) {
+    if (node->m_decl.length()!=0) {
         as->Asm("jmp " + label);
         hasLabel = true;
         //           as->PushBlock(m_decl[0]->m_op.m_lineNumber-1);
@@ -286,7 +286,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBlock> node)
 
     }
     as->VarDeclEnds();
-    if (node->m_decl.count()!=0)
+    if (node->m_decl.length()!=0)
         as->Asm(" 	CNOP 0,4");
 
     if (!blockLabel && hasLabel) {
@@ -552,7 +552,7 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
 //        qDebug() << n->m_op.getType();
   //      exit(1);
         bool done = false;
-        if (as->m_regAcc.m_latest.count()==2) {
+        if (as->m_regAcc.m_latest.length()==2) {
             //as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
 //            TransformVariable(as,"move.l",as->m_regAcc.m_latest,"#0");
             done = true;
@@ -1087,7 +1087,7 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 //    as->Comment("regacc : " +as->m_regAcc.m_latest);
     as->m_regAcc.m_latest ="";
 //    as->m_regAcc.Pop(as->m_regAcc.m_latest);
-    while (as->m_varStack.m_vars.count()!=0)
+    while (as->m_varStack.m_vars.length()!=0)
         as->m_varStack.pop();
 
     return;

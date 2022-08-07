@@ -1342,10 +1342,10 @@ void MultiColorImage::SaveCharRascal(QString fileName, QString name)
     s<<");\n";
 
     s<< " /* Char data */ \n";
-    s<< " char_"+name+"_data : array[" + QString::number(m_outputData.count()) +"] of byte = (\n";
+    s<< " char_"+name+"_data : array[" + QString::number(m_outputData.length()) +"] of byte = (\n";
     isEnd = false;
-    for (int i=0;i<m_outputData.count();i++) {
-           if (i==m_outputData.count()-1)
+    for (int i=0;i<m_outputData.length();i++) {
+           if (i==m_outputData.length()-1)
                isEnd=true;
 
             s<< QString::number((uchar)m_outputData[i]);
@@ -1463,7 +1463,7 @@ void MultiColorImage::AppendSaveBinCharsetFilename(QFile &file)
     QByteArray fd =  QByteArray(fn.remove(Data::data.currentPath).toLatin1());
 //    qDebug() << fn <<Data::data.currentPath<<fn.remove(Data::data.currentPath);
 
-    uchar len = fd.count();
+    uchar len = fd.length();
     file.write( ( char * )( &len ),  1 );
     file.write(fd);
 

@@ -47,7 +47,7 @@ public:
     void paintGL() override ;
 //    void paintEvent(QPaintEvent *event) override ;
     void setCurrentTexture();
-    void resizeGL(int width, int height) override;
+//    void resizeGL(int width, int height) override;
 
 
     void mouseMoveEvent(QMouseEvent *e) override;

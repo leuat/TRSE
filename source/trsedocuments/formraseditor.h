@@ -183,15 +183,6 @@ private:
 
 
 
-signals:
-    void emitSearchSymbols();
-    void emitMemoryAnalyse();
-    void emitSizeAnalyse();
-    void OpenOtherFile(QString filename, int ln);
-    void NotifyOtherSourceFiles(QSharedPointer<SourceBuilder> builder);
-    void emitFailure();
-    void emitRequestSystemChange(QString val);
-    void emitOutputTextChanged();
 private slots:
     void AcceptRequestSystemChange(QString val);
     void ShadowBuild();

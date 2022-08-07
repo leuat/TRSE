@@ -240,12 +240,12 @@ void LImageLevelSNES::ExportBin(QFile &file)
 
 
         QByteArray data;
-        for (int i=0;i<l->m_CharData.count();i++) {
+        for (int i=0;i<l->m_CharData.length();i++) {
             data.append(l->m_CharData[i]);
             data.append((l->m_ColorData[i]&7)<<2 | (l->m_CharDataHi[i]&3));
         }
         file.write( data);
-        if (l->m_ExtraData.count()!=0)
+        if (l->m_ExtraData.length()!=0)
             file.write( l->m_ExtraData);
 
     }

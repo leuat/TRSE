@@ -803,7 +803,7 @@ static int AddC64FullScreen(lua_State* L) {
 //        if (img->m_items.count()==0)
   //          return 0;
 
-        C64Screen* screen = dynamic_cast<C64Screen*>((img->m_items)[img->m_current]);
+        C64Screen* screen = dynamic_cast<C64Screen*>((img->m_items)[img->m_current].get());
         if (screen==nullptr)
             return 0;
 
@@ -1355,7 +1355,7 @@ static int OptimizeScreenAndCharset(lua_State* L) {
     m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),type,m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
 //    m_charData.clear();
     m_charData = cOut;
-    m_infoText="Total no. chars : "+QString::number(m_charData.count()/(8*scale)) +"\n"+ m_infoText;
+    m_infoText="Total no. chars : "+QString::number(m_charData.length()/(8*scale)) +"\n"+ m_infoText;
 
     m_screenData = sOut;
     return 0;
@@ -1371,7 +1371,7 @@ static int CompressScreenAndCharset(lua_State* L) {
     m_compression.CompressScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),m_effect->m_mc->m_bitMask);
 //    m_charData.clear();
     m_charData = cOut;
-    m_infoText="Total no. chars : "+QString::number(m_charData.count()/(8*scale)) +"\n"+ m_infoText;
+    m_infoText="Total no. chars : "+QString::number(m_charData.length()/(8*scale)) +"\n"+ m_infoText;
 
     m_screenData = sOut;
     return 0;

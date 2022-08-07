@@ -169,7 +169,7 @@ void PostOptimiserZ80::ChangeReg(SourceLine &line, QString reg, QString val)
 
     line.m_changeRegs[reg] = val;
 //    if (reg[1]=='h' || reg[1]=='l')
-    if (reg.count()>=2) {
+    if (reg.length()>=2) {
         if (val.startsWith("$")) {
         line.m_changeRegs[QString(reg[0])] = Util::numToHex(Util::NumberFromStringHex(val)&0xFF);
         line.m_changeRegs[QString(reg[1])] = Util::numToHex((Util::NumberFromStringHex(val)>>8)&0xFF);
@@ -183,7 +183,7 @@ void PostOptimiserZ80::ChangeReg(SourceLine &line, QString reg, QString val)
     // setting ld a,b etc.. to a register.. cancel value
     if (m_registers.contains(val)) {
         line.m_changeRegs[reg]  ="";
-        if (reg.count()>=2) {
+        if (reg.length()>=2) {
             line.m_changeRegs[QString(reg[0])] = "";
             line.m_changeRegs[QString(reg[1])] = "";
 

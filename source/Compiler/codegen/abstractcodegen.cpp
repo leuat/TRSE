@@ -1077,7 +1077,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
             as->DeclareString(v->value, t->m_data, t->m_flags);
             node->m_dataSize = 0;
             for (QString s: t->m_data)
-                node->m_dataSize+=s.count();
+                node->m_dataSize+=s.length();
             node->m_dataSize++; // 0 end
         }
         else
@@ -1085,7 +1085,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
                 as->DeclareCString(v->value, t->m_data, t->m_flags);
                 node->m_dataSize = 0;
                 for (QString s: t->m_data)
-                    node->m_dataSize+=s.count();
+                    node->m_dataSize+=s.length();
                 node->m_dataSize++; // 0 end
             }
             else

@@ -98,7 +98,7 @@ void SystemMSX::PostProcess(QString &text, QString file, QString currentDir)
     h.append(d);
     */
     h.append(d);
-    while (h.count()<0x4000)
+    while (h.length()<0x4000)
         h.append(0xFF);
 
     Util::SaveByteArray(h, file+".rom");

@@ -197,7 +197,7 @@ void LImageLevelNES::ExportBin(QFile &file)
         file.write( l->m_CharData);
 
         QByteArray d;
-        d.resize(l->m_ColorData.count()/4);
+        d.resize(l->m_ColorData.length()/4);
         int j=0;
         int w= m_meta.m_colSizex;
         int h= m_meta.m_colSizey;
@@ -217,7 +217,7 @@ void LImageLevelNES::ExportBin(QFile &file)
             }
         //        qDebug() << d.size();
         file.write(d);
-        if (l->m_ExtraData.count()!=0)
+        if (l->m_ExtraData.length()!=0)
             file.write( l->m_ExtraData);
 
     }

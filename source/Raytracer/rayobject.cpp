@@ -87,7 +87,7 @@ QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVect
 void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
     m_localRotmat = m_rotmat*mat;
 //    m_centerPos = campos;
-    m_localPos = campos + mat.inverted()*m_position;
+    m_localPos = campos + mat.inverted().map(m_position);
     m_localRotmatInv = m_localRotmat.inverted();
     float bbr = m_bbRadius;
     for (AbstractRayObject* aro : m_children) {
@@ -182,7 +182,7 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                 Ray r = *ray;// = new Ray();
                 r = r.Rotate(m_localRotmat,m_position);
                 QVector3D n = normal;
-                n = m_localRotmat*n;
+                n = m_localRotmat.map(n);
                 QVector3D pos = r.m_currentPos;
                 QVector3D res = QVector3D(0,0,0);
                 if (m_material.m_type == Material::Type::UV_CUBE)
@@ -527,7 +527,7 @@ float RayObjectTriangle::intersect(Ray *ray)
 }
 
 QVector3D RayObjectTriangle::getBBBox() {
-    return m_localRotmatInv*m_centerPos*-1;
+    return m_localRotmatInv.map(m_centerPos)*-1;
 }
 
 
@@ -751,8 +751,8 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
     cam.setupViewmatrix();
     QMatrix4x4 pvm = cam.m_projection*cam.m_viewMatrix*m_rotmat;
     for (int i=0;i<m_vertices.count();i++) {
-        QVector3D r = pvm*m_vertices[i];
-        m_rotVertices[i] = cam.m_viewMatrix*m_rotmat*m_vertices[i];
+        QVector3D r = pvm.map(m_vertices[i]);
+        m_rotVertices[i] = (cam.m_viewMatrix*m_rotmat).map(m_vertices[i]);
         QVector3D n = QVector3D(0,0,0);
 
 //        if (rand()%100>98)
@@ -770,7 +770,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
         }
     }
     for (int i=0;i<m_normals.count();i++) {
-            m_rotNormals[i] = (m_rotmat)*m_normals[i];
+            m_rotNormals[i] = (m_rotmat).map(m_normals[i]);
     }
 //    qDebug() << m_proj8bit.count();
     QPainter p;

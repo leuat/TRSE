@@ -1002,7 +1002,7 @@ void Parser::RemoveUnusedProcedures()
     m_proceduresOnly = procs;
 
     if (outputUnusedWarning) {
-        removeProcedures.remove(removeProcedures.count()-1,1);
+        removeProcedures.remove(removeProcedures.length()-1,1);
 //        ErrorHandler::e.Warning(removeProcedures);
     }
 
@@ -2808,10 +2808,10 @@ void Parser::PreprocessSingle() {
 
                   Eat(TokenType::INTEGER_CONST);
                   QByteArray ba = Util::loadBinaryFile(in);
-                  if (split>=ba.count())
+                  if (split>=ba.length())
                       ErrorHandler::e.Error("splitfile split position must be lower than file size!",m_currentToken.m_lineNumber);
                   QByteArray b1 = ba.mid(0,split);
-                  QByteArray b2 = ba.mid(split,ba.count());
+                  QByteArray b2 = ba.mid(split,ba.length());
                   Util::SaveByteArray(b1, f1);
                   Util::SaveByteArray(b2, f2);
               }
@@ -3122,7 +3122,7 @@ void Parser::PreprocessSingle() {
 
 
                       m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
-                      m_lexer->m_pos-=orgL.count();
+                      m_lexer->m_pos-=orgL.length();
 
 
                       //Eat();
@@ -4087,7 +4087,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 //           s->m_size = typeNode->m_op.m_value;
            int len = 0;
            for (QString& s: typeNode->m_data)
-               len+=s.count();
+               len+=s.length();
            s->m_size = len;
        }
 
@@ -5178,7 +5178,7 @@ void Parser::HandleConvertJDH8()
     QByteArray data = Util::loadBinaryFile(inFile);
     QString s ="";
     int cnt = 0;
-    for (int i=0;i<data.count();i++) {
+    for (int i=0;i<data.length();i++) {
         if (cnt==0)
             s+="\n@db ";
         s+="0x"+QString::number((uchar)data[i],16);
@@ -5429,7 +5429,7 @@ void Parser::HandleExportPrg2Bin()
   //  qDebug() << "PRG2BIN "<<Util::numToHex(from) << Util::numToHex(to);
     for (int i=from;i<to;i++) {
         int j = i-start;
-        if (in.count()<j)
+        if (in.length()<j)
             out.append((char)0);
         else
   //          ErrorHandler::e.Error("ExportPrg2Bin error: .prg file does not contain specified binary range.", m_currentToken.m_lineNumber);
@@ -5734,13 +5734,13 @@ void Parser::HandleSpritePacker()
     if (QFile::exists(outSpriteFileName))
         spriteData = Util::loadBinaryFile(outSpriteFileName);
 
-    int curPos = spriteData.count();
+    int curPos = spriteData.length();
 
     imgChrOut->SpritePacker(imgSrc, spriteData, x,y,w,h,comp);
 
     Util::SaveByteArray(spriteData, outSpriteFileName);
     LImageIO::Save(outChrFileName,imgChrOut);
-    ErrorHandler::e.Warning("Added new sprite data from '"+inFile+"' : sprite from "+QString::number(curPos) + "  to " + QString::number(spriteData.count()),m_currentToken.m_lineNumber);
+    ErrorHandler::e.Warning("Added new sprite data from '"+inFile+"' : sprite from "+QString::number(curPos) + "  to " + QString::number(spriteData.length()),m_currentToken.m_lineNumber);
 //    qDebug() << "SPRDATA " <<spriteData;
 
 }

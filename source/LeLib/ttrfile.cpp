@@ -32,7 +32,7 @@ void TTRFile::InsertPattern(int pos) {
     ba.fill(0);
     m_patterns.insert(pos,ba);
     for (QByteArray& ba: m_orders){
-        for (int i=0;i<ba.count();i++)
+        for (int i=0;i<ba.length();i++)
             if ((uchar)ba[i]>pos)
                 ba[i]=ba[i]+1;
     }
@@ -45,7 +45,7 @@ void TTRFile::DeletePattern(int pos)
 
     m_patterns.removeAt(pos);
     for (QByteArray& ba: m_orders){
-        for (int i=0;i<ba.count();i++)
+        for (int i=0;i<ba.length();i++)
             if ((uchar)ba[i]>pos)
                 ba[i]=ba[i]-1;
     }
@@ -337,11 +337,11 @@ void TTRFile::Load(QString filename) {
     cnt = startText;
     bool done = false;
 //    qDebug() << cnt << d.count();;
-    while (!done && cnt<d.count()) {
+    while (!done && cnt<d.length()) {
         if ((uchar)d[cnt]!=0)
             m_text +=QChar(d[cnt]);
         else done = true;
-        if (cnt++>=d.count())
+        if (cnt++>=d.length())
             done = true;
     }
     //qDebug() << "Patterns: " << m_patterns.count();

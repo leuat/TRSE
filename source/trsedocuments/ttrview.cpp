@@ -49,7 +49,7 @@ void TTRView::Calculate()
 
 QString TTRView::UnpackLine(QByteArray &d, int pos)
 {
-    if (pos+4>d.count())
+    if (pos+4>d.length())
         return "";
 //    qDebug() << "unpackline : "<<pos;
     QByteArray line = d.mid(pos,4);
@@ -105,7 +105,7 @@ void TTRView::PackLine(QByteArray &d, int pos, QString line)
     //if (lst[0]!="--" )
     int note = -1;
     lst[0] = lst[0].toUpper();
-    if (lst[0].count()==1) lst[0]+="-";
+    if (lst[0].length()==1) lst[0]+="-";
     if (notes.contains(lst[0]))
         note = notes.indexOf(lst[0]);
 
@@ -736,7 +736,7 @@ void TTRView::keyPressEvent(QKeyEvent *event)
     if (event->key()==Qt::Key_Plus)
     {
         int pos = m_cursorPos/(BYTES_PER_LINE*2)*DISPLAY_DATA_PER_LINE;
-        m_pdata->m_data.remove(m_pdata->m_data.count()-DISPLAY_DATA_PER_LINE,DISPLAY_DATA_PER_LINE);
+        m_pdata->m_data.remove(m_pdata->m_data.length()-DISPLAY_DATA_PER_LINE,DISPLAY_DATA_PER_LINE);
         for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
         m_pdata->m_data.insert(pos,(char)0);
         setVisible = true;
@@ -750,7 +750,7 @@ void TTRView::keyPressEvent(QKeyEvent *event)
         int pos = m_cursorPos/(BYTES_PER_LINE*2)*DISPLAY_DATA_PER_LINE;
         m_pdata->m_data.remove(pos,DISPLAY_DATA_PER_LINE);
         for (int i=0;i<DISPLAY_DATA_PER_LINE;i++)
-        m_pdata->m_data.insert(m_pdata->m_data.count(),(char)0);
+        m_pdata->m_data.insert(m_pdata->m_data.length(),(char)0);
         setVisible = true;
     }
 
@@ -853,7 +853,7 @@ void TTRView::keyPressEvent(QKeyEvent *event)
             m_lastLine = line;
         else {
             if (m_lastLine!="")
-                line = line.mid(0,3) + m_lastLine.mid(3,m_lastLine.count());
+                line = line.mid(0,3) + m_lastLine.mid(3,m_lastLine.length());
         }
 
         if (t=='q' || t=='Q') {

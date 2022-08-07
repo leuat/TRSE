@@ -198,7 +198,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // Missing your favorite opcode? Try a brand new one without the extra "*". What a hack, but works!
     if (!m_opCodes.contains(m_opCode))
         if (m_opCode.endsWith("**"))
-            m_opCode.remove(m_opCode.count()-1,1);
+            m_opCode.remove(m_opCode.length()-1,1);
 
     // Determine type
     OrgasmInstruction::Type type = OrgasmInstruction::none;
@@ -221,7 +221,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // actually only 8-bit relative. Remove a * if needed.
     if (m_opCode.startsWith("jr") || m_opCode.startsWith("djnz")) {
         if (m_opCode.endsWith("**"))
-           m_opCode.remove(m_opCode.count()-1,1);
+           m_opCode.remove(m_opCode.length()-1,1);
         type = OrgasmInstruction::rel;
     }
     /*
@@ -391,9 +391,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (is32bit)
        data.append(code&0xFF);
 
-    if (data.count()>0) {
+    if (data.length()>0) {
         m_data.append(data);
-        m_pCounter+=data.count();
+        m_pCounter+=data.length();
     }
 }
 

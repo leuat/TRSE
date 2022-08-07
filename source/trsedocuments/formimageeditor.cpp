@@ -605,7 +605,7 @@ void FormImageEditor::Initialize()
 
     for (QString q:lst)
         s+= q +",";
-    s.remove(s.count()-1,1);
+    s.remove(s.length()-1,1);
     ui->leHeaders->setText(s);
 
     ui->lblName->setText(LImage::TypeToString(m_work.m_currentImage->m_image->m_type));

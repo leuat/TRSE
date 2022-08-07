@@ -75,7 +75,7 @@ void formHelp::LoadItems(int idx)
 
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 
@@ -131,7 +131,7 @@ void formHelp::LoadItem(QString findword)
 
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 
@@ -368,7 +368,7 @@ void formHelp::SearchForItem(QString item)
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
 
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 

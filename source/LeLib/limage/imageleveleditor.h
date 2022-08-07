@@ -41,7 +41,7 @@ public:
     }
 
     void Clear(int val) {
-        for (int i=0;i<m_CharData.count();i++) {
+        for (int i=0;i<m_CharData.length();i++) {
             m_CharData[i] = val;
             m_CharDataHi[i] = val;
             m_ColorData[i] = 0x5;

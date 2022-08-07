@@ -364,7 +364,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
         QVector3D normal;
          normal = winner->CalcMarchNormal(rotated.m_currentPos);
 
-        normal = winner->m_localRotmatInv*normal;
+        normal = winner->m_localRotmatInv.map(normal);
         QVector3D tt(1,2,-213.123);
         QVector3D tangent = QVector3D::crossProduct(tt,normal).normalized();
         QVector3D bi = QVector3D::crossProduct(tangent,normal).normalized();
@@ -547,7 +547,7 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
              while (cnt!=0)
              {
                 int size = std::min(cnt,255);
-                int sizePos = data.count();
+                int sizePos = data.length();
                 data.append((uchar)size);
 
                 data.append((uchar)id);

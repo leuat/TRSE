@@ -44,11 +44,11 @@ QString AsmTripe::intToHexString(int val)
 {
     QString s = QString::number(val);
     QString line = ".uint8 ";
-    for (int i=0;i<s.count();i++) {
+    for (int i=0;i<s.length();i++) {
         int val = QString(s[i]).toInt() + 0x30;
         line = line + Util::numToHex(val) + " ";
     }
-    line = line.remove(line.count()-1,1);
+    line = line.remove(line.length()-1,1);
     return line;
 
 }

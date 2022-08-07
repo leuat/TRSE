@@ -211,7 +211,7 @@ void LImageVIC20::Color2Raw(QByteArray &ba, int ys,int sx,int sy, int ex,int ey)
 }
 
 void LImageVIC20::FixUp(QByteArray &ba) {
-    for (int i=0;i<ba.count();i++) {
+    for (int i=0;i<ba.length();i++) {
         ba[i] = PixelChar::reverse(PixelChar::VIC20Swap(PixelChar::reverse(ba[i])));
 
     }

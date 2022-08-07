@@ -40,7 +40,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
 //    qDebug() << "Current colors:";
     first = false;
     for (int i=0;i<3;i++)
-        if (i<m_currentLevel->m_ExtraData.count()) {
+        if (i<m_currentLevel->m_ExtraData.length()) {
            m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
            if (m_charset!=nullptr)
                m_charset->m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
@@ -57,7 +57,7 @@ void ImageLevelEditor::SetLevel(QPoint f)
         return;
 
     m_colorList.m_ignoreSetIsMulti = true;
-    if (m_currentLevel->m_ExtraData.count()>=3) {
+    if (m_currentLevel->m_ExtraData.length()>=3) {
         if (!(m_type==LImage::LevelEditorNES || m_type==LImage::LevelEditorGameboy )) {
             m_charset->SetColor(m_currentLevel->m_ExtraData[0], 0);
             m_charset->SetColor(m_currentLevel->m_ExtraData[1], 1);
@@ -219,9 +219,9 @@ void ImageLevelEditor::CopyChar()
 void ImageLevelEditor::PasteChar()
 {
     //        m_copyLevel = *m_currentLevel;
-    if (m_copyLevel.m_CharData.count()!=0) {
+    if (m_copyLevel.m_CharData.length()!=0) {
 
-        if (m_currentLevel->m_CharData.count()!=m_copyLevel.m_CharData.count())
+        if (m_currentLevel->m_CharData.length()!=m_copyLevel.m_CharData.length())
             return;
 
        *m_currentLevel = m_copyLevel;
@@ -247,7 +247,7 @@ void ImageLevelEditor::SetColor(uchar col, uchar idx)
         return;
 
 
-    if (m_currentLevel->m_ExtraData.count()>=3) {
+    if (m_currentLevel->m_ExtraData.length()>=3) {
         m_currentLevel->m_ExtraData[idx] = col;
 //        qDebug() << "Setting : "<<QString::number(idx) << " to col " <<QString::number(col);
     }
@@ -292,7 +292,7 @@ void ImageLevelEditor::SaveBin(QFile &file)
 //        qDebug() << "LevelEditor::savebin count " <<l->m_ColorData.count();
 //        qDebug() << "ImageLevelEditor exportbin " << l->m_ExtraData.count();
 
-        if (l->m_ExtraData.count()!=0)
+        if (l->m_ExtraData.length()!=0)
             file.write( l->m_ExtraData,m_meta.m_extraDataSize);
       //  for (int i=0;i<m_meta.m_extraDataSize;i++)
     //        qDebug() << "Saving extracol: " <<QString::number(l->m_ExtraData[i]);
@@ -316,7 +316,7 @@ void ImageLevelEditor::ExportBin(QFile &file)
         if (m_meta.m_useColors)
            file.write( l->m_ColorData);
 
-        if (l->m_ExtraData.count()!=0)
+        if (l->m_ExtraData.length()!=0)
             file.write( l->m_ExtraData,m_meta.m_extraDataSize);
 
     }
@@ -370,7 +370,7 @@ void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
     int j=0;
     if (m_currentLevel == nullptr)
         return;
-    for (int k=3;k<m_currentLevel->m_ExtraData.count();k++) {
+    for (int k=3;k<m_currentLevel->m_ExtraData.length();k++) {
         tbl->setItem(i,j,new QTableWidgetItem(QString::number(m_currentLevel->m_ExtraData[k])));
         if (++i>=size) {
             i=0;
@@ -387,7 +387,7 @@ void ImageLevelEditor::StoreData(QTableWidget *tbl)
     int j=0;
     if (m_currentLevel==nullptr)
         return;
-    for (int k=3;k<m_currentLevel->m_ExtraData.count();k++) {
+    for (int k=3;k<m_currentLevel->m_ExtraData.length();k++) {
         if (tbl->item(i,j)==nullptr)
                 return;
         uchar val = tbl->item(i,j)->text().toInt();
@@ -823,7 +823,7 @@ void ImageLevelEditor::Resize(CharmapGlobalData newMeta)
         m_meta.m_extraDataSize = 3+m_meta.m_dataChunkSize*m_meta.m_dataChunks;
         m_meta.Calculate();
         for (int i=0;i<m_meta.m_sizex*m_meta.m_sizey;i++) {
-            int k = m_levels[i]->m_ExtraData.count();
+            int k = m_levels[i]->m_ExtraData.length();
             QByteArray newData;
             newData.resize(m_meta.m_extraDataSize);
             newData.fill(0);
@@ -832,7 +832,7 @@ void ImageLevelEditor::Resize(CharmapGlobalData newMeta)
                     int nidx = 3+j*m_meta.m_dataChunkSize+k;
                     int oidx = 3+j*odcs + k;
                     char val = 0;
-                    if (oidx<m_levels[i]->m_ExtraData.count() &&
+                    if (oidx<m_levels[i]->m_ExtraData.length() &&
                        j<odc && k<odcs)
                         val=m_levels[i]->m_ExtraData[oidx];
                     //qDebug() << odcs << " vs "  <<m_meta.m_dataChunkSize << " and k " << k << " :  " << QString::number(val) ;
@@ -911,7 +911,7 @@ QImage CharmapLevel::createImage(int size, LColorList& lst, int width, int heigh
             int pos = x+ width*y;
             uchar val = 32;
             uchar colval = 0;
-            if (pos>=0 && pos<m_CharData.count()) {
+            if (pos>=0 && pos<m_CharData.length()) {
                 val = m_CharData[pos];
                 colval = m_ColorData[pos];
             }

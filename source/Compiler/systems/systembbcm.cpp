@@ -42,7 +42,7 @@ bool SystemBBCM::BuildDiskFiles(DiscImage* di, QString currentDir, QString iniDa
     CIniFile paw;
     paw.Load(currentDir + QDir::separator()+pawFile);
     QStringList data = paw.getStringList("data");
-    int count = data.count()/3;
+    int count = data.length()/3;
 //    std::cout << "data: " << data.join(",").toStdString() << " - count: " << count << std::endl;
 
     for (int i=0;i<count;i++) {
@@ -81,15 +81,15 @@ void SystemBBCM::AddFileToDisk(DiscImage *di, QString filename, QString name, in
 {
     QByteArray data = Util::loadBinaryFile(filename);
     unsigned char d[0x60000];
-    for (int i=0;i<data.count();i++)
+    for (int i=0;i<data.length();i++)
         d[i] = data[i];
 
-    m_totalSize+=data.count();
+    m_totalSize+=data.length();
 //    qDebug() << "Current size: " <<m_totalSize;
-  //  qDebug() << "Adding to disk:" << name << data.count();
+  //  qDebug() << "Adding to disk:" << name << data.length();
     di->AddFile(name.toStdString().c_str(),
                 d,
-                address,address,data.count()
+                address,address,data.length()
                 );
 
 

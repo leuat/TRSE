@@ -68,8 +68,8 @@ void FormHexEdit::on_btnExport_clicked()
     int start = Util::NumberFromStringHex(ui->leStart->text());
     if (start<0) start = 0;
     int end = Util::NumberFromStringHex(ui->leEnd->text());
-    if (end>m_data.count())
-        end = m_data.count();
+    if (end>m_data.length())
+        end = m_data.length();
     int len = end-start;
     if (len<=0)
         return;

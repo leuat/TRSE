@@ -330,12 +330,12 @@ unsigned int FC8::Encode(QString fileIn, QString fileOut)
     int max = 1024*1024;
 
     uint8_t* data = new uint8_t[max];
-    uint8_t* dataIn = new uint8_t[in.count()];
+    uint8_t* dataIn = new uint8_t[in.length()];
 
-    for (int i=0;i<in.count();i++)
+    for (int i=0;i<in.length();i++)
         dataIn[i] = in[i];
 
-    int size = Encode(dataIn,in.count(),data,max);
+    int size = Encode(dataIn,in.length(),data,max);
     QByteArray out;
     for (int i=0;i<size;i++)
         out.append(data[i]);

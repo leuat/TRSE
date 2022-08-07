@@ -630,7 +630,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             QString str = s;
 //            str = str.remove("\"");
             str = str.remove(0,1);
-            str = str.remove(str.count()-1,1);
+            str = str.remove(str.length()-1,1);
             str = str.replace("\\n","\n");
             str = str.replace("\\r","\r");
             //qDebug() << "HERE: " <<s;
@@ -749,7 +749,7 @@ void Orgasm::ProcessIncBin(OrgasmLine &ol)
     QByteArray data = f.readAll();
     f.close();
     m_data.append(data);
-    m_pCounter+=data.count();
+    m_pCounter+=data.length();
 
 
 }
@@ -935,9 +935,9 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 
 
-    if (data.count()>0) {
+    if (data.length()>0) {
         m_data.append(data);
-        m_pCounter+=data.count();
+        m_pCounter+=data.length();
     }
 }
 

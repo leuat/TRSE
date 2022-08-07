@@ -52,10 +52,10 @@ public:
     }
 
     void Clear(int val=0) override {
-        for (int i=0;i<m_rawData.count();i++)
+        for (int i=0;i<m_rawData.length();i++)
             m_rawData[i] = val;
 
-        for (int i=0;i<m_rawData.count();i++)
+        for (int i=0;i<m_rawData.length();i++)
             m_rawColors[i] = 0x2;
     }
 
@@ -161,10 +161,10 @@ public:
     void ImportC(QFile &file) override;
 
     void setExtraData(int idx, char val) override {
-        ((C64Screen*)m_items[m_current])->m_data[idx] = val;
+        ((C64Screen*)m_items[m_current].get())->m_data[idx] = val;
     }
     char getExtraData(int idx) override {
-        return ((C64Screen*)m_items[m_current])->m_data[idx];
+        return ((C64Screen*)m_items[m_current].get())->m_data[idx];
     }
 
     void Transform(int x, int y) override;

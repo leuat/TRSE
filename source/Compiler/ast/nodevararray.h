@@ -45,7 +45,7 @@ public:
     }
 
 
-    void ExecuteSym(QSharedPointer<SymbolTable>  symTab);
+    void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
 
 };

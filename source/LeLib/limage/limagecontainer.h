@@ -2,7 +2,7 @@
 #define LIMAGECONTAINER_H
 
 #include <QVector>
-
+#include <QSharedPointer>
 
 class LImageContainerItem {
 public:
@@ -23,7 +23,7 @@ class LImageContainer
 public:
     LImageContainer();
 
-    QVector<LImageContainerItem*> m_items;
+    QVector<QSharedPointer<LImageContainerItem>> m_items;
 
     int m_current = 0;
 
@@ -39,8 +39,8 @@ public:
 
 
     void DeleteAll() {
-        for (int i=0;i<m_items.count();i++)
-            delete m_items[i];
+//        for (int i=0;i<m_items.count();i++)
+  //          delete m_items[i];
 
         m_items.clear();
 

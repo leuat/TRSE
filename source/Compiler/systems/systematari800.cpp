@@ -21,7 +21,7 @@ void SystemAtari800::PostProcess(QString &text, QString filename, QString curren
     QByteArray data = Util::loadBinaryFile(filename+".prg");
     QByteArray h;
     int start = m_startAddress;
-    int end = start + data.count();
+    int end = start + data.length();
     h.append(0xFF); // Binary header notification
     h.append(0xFF);
     h.append((start&0xff));

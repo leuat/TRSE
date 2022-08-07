@@ -398,7 +398,7 @@ public:
     }
 
     int AddUniquePointToList(char x, char y, QByteArray& lst) {
-        for (int i=0;i<lst.count()/2;i++) {
+        for (int i=0;i<lst.length()/2;i++) {
             if (lst[i*2]==x && lst[i*2+1]==y)
                 return i*2;
         }

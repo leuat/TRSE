@@ -339,45 +339,31 @@ private slots:
 
     void UpdateFailure();
 
-    void on_new_file(QString name);
+    void xon_new_file(QString name);
 
-    void on_add_existing_file();
+    void xon_add_existing_file();
 
-    void on_new_ras_file();
-    void on_new_tru_file();
-    void on_new_rtf_file();
-    void on_new_inc_file();
-    void on_new_fjo_file();
+    void xon_new_ras_file();
+    void xon_new_tru_file();
+    void xon_new_rtf_file();
+    void xon_new_inc_file();
+    void xon_new_fjo_file();
 
 
-    void on_duplicate_file();
-
-    void on_new_folder();
-
-    void on_rename_file();
-
-    void on_actionDelete_file_triggered();
-
+    void xon_duplicate_file();
+    void xon_new_folder();
+    void xon_rename_file();
+    void xon_actionDelete_file_triggered();
     void on_actionImage_triggered();
-
     void on_actionSave_As_triggered();
-
     void on_actionTRSE_Settings_triggered();
-
     void on_actionNew_project_triggered();
-
     void on_actionClose_all_triggered();
-
     void on_actionOpen_project_triggered();
-
     void on_lstRecentProjects_itemDoubleClicked(QListWidgetItem *item);
-
     void on_btnBuild_3_clicked();
-
     void on_btnBuild_4_clicked();
-
     void on_actionAbout_triggered();
-
     void on_actionAuto_ident_triggered();
 
     void on_actionClose_current_project_triggered();

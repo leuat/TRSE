@@ -66,8 +66,8 @@ bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
     int maxV1  = varStart;
     QMap<int,QSharedPointer<MemoryBlock>> banks;
     while (!done) {
-        if (lst[i].count()==0) {
-            done=++i>=lst.count();
+        if (lst[i].length()==0) {
+            done=++i>=lst.length();
             continue;
         }
         QString d = lst[i].split(" ")[0];

@@ -99,7 +99,7 @@ void GLWidget::setTexture(QImage &img, QImage& grid)
     update();
   //  update();
 }
-
+/*
 void GLWidget::resizeGL(int width, int height)
 {
     int side = qMin(width, height);
@@ -113,8 +113,9 @@ void GLWidget::resizeGL(int width, int height)
     glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
 #endif
     glMatrixMode(GL_MODELVIEW);
-}
 
+}
+*/
 void GLWidget::resizeEvent(QResizeEvent *event)
 {
     if (event!=nullptr)

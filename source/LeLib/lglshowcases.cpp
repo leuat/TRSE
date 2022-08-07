@@ -145,7 +145,7 @@ void LGLShowcases::setCurrentTexture()
 }
 
 
-void LGLShowcases::resizeGL(int width, int height)
+/*void LGLShowcases::resizeGL(int width, int height)
 {
     int side = qMin(width, height);
     glViewport((width - side) / 2, (height - side) / 2, side, side);
@@ -159,7 +159,7 @@ void LGLShowcases::resizeGL(int width, int height)
 #endif
     glMatrixMode(GL_MODELVIEW);
 }
-
+*/
 void LGLShowcases::mouseMoveEvent(QMouseEvent *e)
 {
 

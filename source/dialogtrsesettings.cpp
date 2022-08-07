@@ -282,8 +282,7 @@ DialogTRSESettings::~DialogTRSESettings()
 void DialogTRSESettings::FillFont(QComboBox *cbmFont, QString keep) {
     //        QString keep = m_ini->getString("editor_font");
     cbmFont->clear();
-    QFontDatabase d;
-    QStringList fam = d.families();
+    QStringList fam = QFontDatabase::families();
     if (!fam.contains("Courier"))
         fam<<"Courier";
     cbmFont->addItems(fam);

@@ -35,7 +35,7 @@ QString Util::toString(QStringList lst) {
     QString ret="";
     for (QString& s:lst)
         ret+=s+",";
-    ret.remove(ret.count()-1,1);
+    ret.remove(ret.length()-1,1);
     return ret;
 }
 
@@ -308,14 +308,14 @@ int Util::VerifyHexAddress(QString s)
 QString Util::numToHex(long v)
 {
     QString o = QString::number(v,16);
-    if (o.count()==1) o="0"+o;
+    if (o.length()==1) o="0"+o;
     return "$" +o;
 }
 
 QString Util::Util::numToHex0(long v)
 {
     QString o = QString::number(v,16);
-    if (o.count()==1) o="0"+o;
+    if (o.length()==1) o="0"+o;
     return "0x" +o;
 }
 
@@ -426,7 +426,7 @@ bool Util::QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::C
     a=QString(" ").repeated(n-1)+a+QString(" ").repeated(n-1);
     b=QString(" ").repeated(n-1)+b+QString(" ").repeated(n-1);
     QString part;
-    for (int i=0;i<a.count()-(n-1);i++)
+    for (int i=0;i<a.length()-(n-1);i++)
     {
         part=a.mid(i,n);
         if (b.contains(part,caseSense)) hits++;
@@ -581,9 +581,9 @@ bool Util::PointInTriangle(const QVector3D &p, const QVector3D &a, const QVector
 }
 
 QString Util::fixFolder(QString folderName) {
-    if (folderName[folderName.count()-1]=='\\')
+    if (folderName[folderName.length()-1]=='\\')
         return folderName;
-    if (folderName[folderName.count()-1]=='/')
+    if (folderName[folderName.length()-1]=='/')
         return folderName;
     return folderName + "/";
 }
@@ -983,11 +983,11 @@ QString Util::IntToHexString(int val)
 {
     QString s = QString::number(val);
     QString line = ".byte   ";
-    for (int i=0;i<s.count();i++) {
+    for (int i=0;i<s.length();i++) {
         int val = QString(s[i]).toInt() + 0x30;
         line = line + Util::numToHex(val) + ",";
     }
-    line = line.remove(line.count()-1,1);
+    line = line.remove(line.length()-1,1);
     return line;
 
 }

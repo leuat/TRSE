@@ -116,7 +116,7 @@ void SymbolTable::Initialize()
 //    qDebug() << currentSystem;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 
@@ -144,7 +144,7 @@ void SymbolTable::Initialize()
         if (Syntax::s.m_currentSystem->systemIsOfType(system.split(","))) {
 
             long ival = Util::NumberFromStringHex(value);
-            if (ival==0 && value.count()>4) {
+            if (ival==0 && value.length()>4) {
 //                qDebug() << "IVAL zero so : " << value;
                 QString tst = value;
                 tst = tst.remove("$");

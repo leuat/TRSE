@@ -190,7 +190,7 @@ QStringList SourceBuilder::getFileList()
     paw.Load(m_curDir + "/"+pawFile);
     QStringList data = paw.getStringList("data");
     QStringList ret;
-    int count = data.count()/3;
+    int count = data.length()/3;
     for (int i=0;i<count;i++) {
         ret<< data[3*i];
     }
@@ -200,7 +200,7 @@ QStringList SourceBuilder::getFileList()
     CIniFile paw2;
     paw2.Load(m_curDir + "/"+pawFile2);
     QStringList data2 = paw2.getStringList("data");
-    int count2 = data2.count()/3;
+    int count2 = data2.length()/3;
     for (int i=0;i<count2;i++) {
         ret<< data2[3*i];
     }
@@ -248,7 +248,7 @@ void SourceBuilder::AcceptParserTick(QString val)
 {
     if (val.startsWith("&")) {
         val = val.remove("&");
-        int pos = m_buildString.count()-1;
+        int pos = m_buildString.length()-1;
         while (m_buildString[pos]!='[' && pos>0) {
             m_buildString.remove(pos--,1);
         }

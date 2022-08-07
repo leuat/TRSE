@@ -49,7 +49,8 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
 
 
     QString v = getTempName("t_"+getIntType(as,node)+"_");
-
+    if (node->m_left->isWord(as) && !node->m_right->isWord(as))
+        node->m_right->setForceType(TokenType::INTEGER);
     as->ClearTerm();
     as->BinOP(node->m_op.m_type,true);
     QString cmd = as->m_term + "\t"+v;
@@ -115,7 +116,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeString> node)
 {
     node->DispatchConstructor(as,this);
 //    exit(1);
-    if (node->m_val.count()>=1 && node->m_val[0].count()>=1) {
+    if (node->m_val.length()>=1 && node->m_val[0].length()>=1) {
         as->ClearTerm();
 
 //        CStringItem it  = ((AsmTRIPE*)as)->m_cstr[QString(node->m_val[0][0]) ];
@@ -142,7 +143,7 @@ void CodeGenTRIPE::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
 //    as->Asm(".data uint64: "+initVal);
-    as->Asm("declptr\t"+v->value + "\t uint8:0");
+    as->Asm("declptr\t"+v->value + "\t uint16:0");
 
 }
 

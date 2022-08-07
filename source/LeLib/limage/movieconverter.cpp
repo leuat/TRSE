@@ -175,7 +175,7 @@ QByteArray MovieConverter::CompressImage(QByteArray prevFrame, QByteArray newFra
 {
     QByteArray ret;
     uchar skip=0;
-    qDebug() << prevFrame.count();
+    qDebug() << prevFrame.length();
     int c = 0;
     for (int x=0;x<h;x++) {
 
@@ -226,7 +226,7 @@ QByteArray MovieConverter::CompressImage(QByteArray prevFrame, QByteArray newFra
         }
         skip+=40-w;
     }
-    qDebug() << ret.count();
+    qDebug() << ret.length();
     qDebug() << "C:" << c/((float)w*h)*100<< "%";
     compr+=c/((float)w*h);
     ret.append(END);
@@ -237,7 +237,7 @@ QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFr
 {
     QByteArray ret;
     uchar skip=0;
-    qDebug() << prevFrame.count();
+    qDebug() << prevFrame.length();
     int c = 0;
     for (int x=0;x<h;x++) {
 
@@ -286,7 +286,7 @@ QByteArray MovieConverter::CompressScreen(QByteArray prevFrame, QByteArray newFr
         }
 //        skip+=40-w;
     }
-    qDebug() << ret.count();
+    qDebug() << ret.length();
     qDebug() << "C:" << c/((float)w*h)*100<< "%";
     compr+=c/((float)w*h);
     ret.append(MEND);

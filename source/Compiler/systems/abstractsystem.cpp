@@ -447,6 +447,9 @@ bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QStr
     output+= process.readAllStandardError();
     if (output.contains("error"))
         m_buildSuccess = false;
+
+    qDebug().noquote() << output;
+
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
@@ -481,6 +484,7 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
     GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
     if (error.contains("error"))
         m_buildSuccess = false;
+
 //    qDebug() << error;
 
 //    Util::CopyFile()

@@ -28,11 +28,11 @@
 
 int Lexer::getPositionInPercent()
 {
-    if (m_text.count()==0)
+    if (m_text.length()==0)
         return 100;
 
-    int val = (100*m_pos)/m_text.count();
-//    int val = (100*Pmm::Data::d.lineNumber)/m_lines.count();
+    int val = (100*m_pos)/m_text.length();
+//    int val = (100*Pmm::Data::d.lineNumber)/m_lines.length();
     return val;
 }
 
@@ -93,7 +93,7 @@ Lexer::Lexer(QString text, QStringList lines, QString path) {
     m_orgText = text;
     m_pos = 0;
     m_path = path;
-    if (m_text.count()>0)
+    if (m_text.length()>0)
         m_currentChar = m_text[m_pos];
     m_lines = lines;
     m_ignorePreprocessor = true;
@@ -307,7 +307,7 @@ Token Lexer::String()
         if (m_currentChar=="\\" && peek()=="\"") {
             Advance();
             Advance();
-            result[result.count()-1]='\"';
+            result[result.length()-1]='\"';
         }
     }
     Advance();
@@ -372,7 +372,7 @@ void Lexer::Initialize()
 {
     Pmm::Data::d.lineNumber = 0;
     m_finished = false;
-    if (m_text.count()>0)
+    if (m_text.length()>0)
         m_currentChar = m_text[0];
     m_pos = 0;
     m_localPos = 0;
@@ -464,7 +464,7 @@ Token Lexer::GetNextToken()
 
             if (id.m_value.endsWith("^")) {
                 // Replaces p^ with p[0]
-                id.m_value.remove(id.m_value.count()-1,1);
+                id.m_value.remove(id.m_value.length()-1,1);
                 m_text.remove(m_pos-1,1);
                 m_text.insert(m_pos-1,"[0]"); m_currentChar = "[";
 

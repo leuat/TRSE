@@ -30,8 +30,7 @@ DialogImport::DialogImport(QWidget *parent) :
     ui(new Ui::DialogImport)
 {
     ui->setupUi(this);
-    QFontDatabase d;
-    ui->cmbFonts->addItems(d.families());
+    ui->cmbFonts->addItems(QFontDatabase::families());
     ui->cmbFonts->setCurrentText("Courier 10 Pitch");
     ui->cmbDitherY->setCurrentIndex(1);
     ui->cmbDitherX->setCurrentIndex(0);

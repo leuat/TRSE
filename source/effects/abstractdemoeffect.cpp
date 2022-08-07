@@ -114,7 +114,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString ba
                     //uchar inv = (char)((~c)&0xFF);
                     if (!alreadySet.contains(pos)) {
                         uchar inv = (char)((~c)&0xFF);
-                        if (bg.count()==0)
+                        if (bg.length()==0)
                             c = inv;
                         else {
                             c = (bg[pos-base]) & inv;
@@ -550,7 +550,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502In(QString file, QString 
                     //uchar inv = (char)((~c)&0xFF);
                     if (!alreadySet.contains(pos)) {
                         uchar inv = (char)((c)&0xFF);
-                        if (bg.count()==0)
+                        if (bg.length()==0)
                             c = inv;
                         else {
                             c = (bg[pos-base]) & inv;

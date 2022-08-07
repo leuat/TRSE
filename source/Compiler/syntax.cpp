@@ -71,7 +71,7 @@ void Syntax::SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSys
     QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem->m_system).toLower();
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 
@@ -100,7 +100,7 @@ void Syntax::SetupIllegalVariables()
     QString currentSystem = AbstractSystem::StringFromSystem(m_currentSystem->m_system).toLower();
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 
@@ -125,7 +125,7 @@ void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, Abstract
 
     for (QString s: m_syntaxData.split('\n')) {
         s= s.simplified();
-        if (s.count()==0) continue;
+        if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
         s=s.replace(" ", "");
 

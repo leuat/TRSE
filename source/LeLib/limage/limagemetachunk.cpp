@@ -100,12 +100,12 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
         getCur()->m_data = img->getCur()->m_data;*/
 
         DeleteAll();
-        for (LImageContainerItem* li: img->m_items) {
-            LMetaChunkItem* s= (LMetaChunkItem*)li;
+        for (auto li: img->m_items) {
+            LMetaChunkItem* s= (LMetaChunkItem*)li.get();
             LMetaChunkItem* s2= new LMetaChunkItem();
             *s2 = *s;
 
-            m_items.append(s2);
+            m_items.append(QSharedPointer<LMetaChunkItem>(s2));
         }
 
 
@@ -202,9 +202,9 @@ void LImageMetaChunk::setPixel(int x, int y, unsigned int color)
     if (m_img!=nullptr)
         bm = m_img->m_bitMask;
 
-    ((LMetaChunkItem*)m_items[m_current])->setPixel(p.x(),p.y(),m_currentChar,bm);
+    ((LMetaChunkItem*)m_items[m_current].get())->setPixel(p.x(),p.y(),m_currentChar,bm);
     if (isSnes())
-        ((LMetaChunkItem*)m_items[m_current])->setPixelAttrib(p.x(),p.y(),m_currentAttribute,bm);
+        ((LMetaChunkItem*)m_items[m_current].get())->setPixelAttrib(p.x(),p.y(),m_currentAttribute,bm);
 
 }
 
@@ -223,8 +223,8 @@ unsigned int LImageMetaChunk::getPixel(int x, int y)
     int bm=1;
     if (m_img!=nullptr)
         bm = m_img->m_bitMask;
-    uchar val = ((LMetaChunkItem*)m_items[m_current])->getPixel(p.x(),p.y(),bm);
-    uchar attrib = ((LMetaChunkItem*)m_items[m_current])->getPixelAttrib(p.x(),p.y(),bm);
+    uchar val = ((LMetaChunkItem*)m_items[m_current].get())->getPixel(p.x(),p.y(),bm);
+    uchar attrib = ((LMetaChunkItem*)m_items[m_current].get())->getPixelAttrib(p.x(),p.y(),bm);
 
     int xp = x/(float)m_width*m_pixelWidth*getCur()->m_width;
     int yp = y/(float)m_height*m_pixelHeight*getCur()->m_height;
@@ -268,8 +268,8 @@ void LImageMetaChunk::SaveBin(QFile &file)
 {
     uchar no = m_items.count();
     file.write( ( char * )( &no ),  1 );
-    for (LImageContainerItem* li : m_items) {
-        LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
+    for (auto li : m_items) {
+        LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li.get());
         uchar w = m->m_width;
         uchar h = m->m_height;
         file.write( ( char * )( &w ),  1 );
@@ -321,7 +321,7 @@ LMetaChunkItem *LImageMetaChunk::getCur()
 {
     if (m_current>=m_items.count())
         return nullptr;
-    return (LMetaChunkItem*)m_items[m_current];
+    return (LMetaChunkItem*)m_items[m_current].get();
 
 }
 
@@ -360,7 +360,7 @@ void LImageMetaChunk::AddNew(int w, int h)
 {
     LMetaChunkItem* s = new LMetaChunkItem();
     s->Init(w,h);
-    m_items.append(s);
+    m_items.append(QSharedPointer<LMetaChunkItem>(s));
     m_current = m_items.count()-1;
 
 
@@ -461,8 +461,8 @@ QPixmap LImageMetaChunk::ToQPixMap(int chr)
 
 void LImageMetaChunk::ExportBin(QFile &file)
 {
-    for (LImageContainerItem* li : m_items) {
-        LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li);
+    for (auto li : m_items) {
+        LMetaChunkItem *m = dynamic_cast<LMetaChunkItem*>(li.get());
         file.write(m->m_data);
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
             file.write(m->m_attributes);

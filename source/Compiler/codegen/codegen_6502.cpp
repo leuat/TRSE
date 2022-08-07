@@ -832,7 +832,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeString> node)
 {
     node->DispatchConstructor(as,this);
 //    exit(1);
-    if (node->m_val.count()>=1 && node->m_val[0].count()>=1) {
+    if (node->m_val.length()>=1 && node->m_val[0].length()>=1) {
         as->ClearTerm();
 
 //        as->Asm("lda #"+QString::number(QChar(node->m_val[0][0]).unicode()));
@@ -1805,7 +1805,7 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
 void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
 {
     // Override inline parameters
-//    qDebug() << "INLINE cnt :" <<m_inlineParameters.count() << m_inlineParameters.keys();
+//    qDebug() << "INLINE cnt :" <<m_inlineParameters.length() << m_inlineParameters.keys();
     if (m_inlineParameters.contains(node->value)) {
   //      qDebug()<< "INLINE node override : "<< node->value;
         m_inlineParameters[node->value]->Accept(this);
@@ -2917,7 +2917,7 @@ void CodeGen6502::AssignToRegister(QSharedPointer<NodeAssign> node)
     //{
     QString reg = QString(vname[1]);
     as->Comment("Assigning register : " + vname);
-    if (vname.count()==2) {
+    if (vname.length()==2) {
         if (reg=="x" || reg=="y") {
             if (!node->m_right->isPure())
                 ErrorHandler::e.Error("Setting _X and _Y register values must be pure number or variable.", node->m_op.m_lineNumber);
@@ -2930,7 +2930,7 @@ void CodeGen6502::AssignToRegister(QSharedPointer<NodeAssign> node)
         as->Term();
         return;
     }
-    if (vname.count()==3) {
+    if (vname.length()==3) {
         if (!node->m_right->isPure())
             ErrorHandler::e.Error("Setting _AX and _AX, and _XY register values must be pure number or variable.", node->m_op.m_lineNumber);
 

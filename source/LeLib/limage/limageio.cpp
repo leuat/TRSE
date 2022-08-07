@@ -48,7 +48,7 @@ bool LImageIO::Save(QString filename, LImage* img)
 
     // 7 + 4 + 1 + 1 = 13
 
-    file.write( ( char * )( header ), array.count() );
+    file.write( ( char * )( header ), array.length() );
     file.write( ( char * )( version ),sizeof(float) );
     file.write( ( char * )( &imageType ),1 );
     file.write( ( char * )( &colorType ),1 );
@@ -78,7 +78,7 @@ LImage* LImageIO::Load(QString filename)
     unsigned char imageType;
     unsigned char paletteType;
 
-    file.read( ( char * )( header ), array.count() );
+    file.read( ( char * )( header ), array.length() );
     file.read( ( char * )( &version ),sizeof(int) );
     file.read( ( char * )( &imageType ),1);
     file.read( ( char * )( &paletteType ),1);

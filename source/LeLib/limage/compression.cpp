@@ -332,7 +332,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
     }
 */
 
-    int curChars = cOut.count()/8;
+    int curChars = cOut.length()/8;
 
     double compression = 0.03;
     int pass = 0;
@@ -348,11 +348,11 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
     while (curChars>=noTargetChar) {
         qDebug() << "Cur chars " <<curChars << " with compression " << compression;
         // What to do: go through every char and check every other that is the same
-        for (int i=0;i<cOut.count()/8;i++) {
+        for (int i=0;i<cOut.length()/8;i++) {
        //     int found = -1;
             QVector<int> found;
             double curMin = 1E5;
-            for (int j=i+1;j<cOut.count()/8;j++) {
+            for (int j=i+1;j<cOut.length()/8;j++) {
                 double res = Compare(cOut, cOut,j*8,i*8,8, 1, bmask);
                 if (res<compression) {
                     found.append(j);
@@ -367,7 +367,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
                 cOut.remove(f*8,8); // Removed
 //                found = found &0xFF;// noTargetChar;
                // int add = 0;
-                for (int j=0;j<sOut.count();j++) {
+                for (int j=0;j<sOut.length();j++) {
                     if (sOut[j]==f) sOut[j] = i;
                     if (sOut[j]>f) sOut[j]--;
 
@@ -375,7 +375,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
             }
         }
         pass++;
-        curChars = cOut.count()/8;
+        curChars = cOut.length()/8;
         qDebug() << "After pass " << pass <<  "  : " << curChars;
         if (compression ==0) compression = 0.01;
         compression = compression * 1.05;
@@ -420,7 +420,7 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
   //          qDebug() << "   Current s: " << QString::number(s) << " with compression type " <<type ;
             int found = -1;
             double curMin = 8000;
-            for (int j=0;j<cOut.count()/8;j++) {
+            for (int j=0;j<cOut.length()/8;j++) {
              //   int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
                 double res = Compare(cOut, charset,j*8,s*8,8, type, bmask);
 //                double res = 1;
@@ -464,7 +464,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
         for (int x=0;x<sw*sh;x++)
             screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
     }*/
-    qDebug() << sw << sh << charSize << screens << charset.count()/16 << compression;
+    qDebug() << sw << sh << charSize << screens << charset.length()/16 << compression;
     int sum = 0;
     cOut.resize(64);
     for (int i=0;i<8;i++) {
@@ -496,7 +496,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
 //            qDebug() << "   Current s: " << QString::number(s) ;
             int found = -1;
             double curMin = 80000;
-            for (int j=0;j<cOut.count()/16;j++) {
+            for (int j=0;j<cOut.length()/16;j++) {
                 //int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
                 double res = Compare(cOut, charset,j*16,s*16,16,type, bmask);
                 if (res<compression && res<curMin) {
@@ -729,11 +729,11 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
 
 void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, QString tableFile, int address, int compressionLevel)
 {
-    int noSprites = data.count()/64;
+    int noSprites = data.length()/64;
     QByteArray dataOut, tableOut;
     int noSpritesOut = 0;
     int compressed  = 0;
-    qDebug() << data.count();
+    qDebug() << data.length();
     noSpritesOut = 2;
     for (int i=0;i<64;i++) dataOut.append((char)0);
     for (int i=0;i<64;i++) dataOut.append((char)0xFF);
@@ -816,9 +816,9 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
     out.clear();
     table.clear();
 
-    int cnt = dataIn.count()/width;
+    int cnt = dataIn.length()/width;
     qDebug() << "Width : " << width ;
-    qDebug() << "Data count : " <<dataIn.count();
+    qDebug() << "Data count : " <<dataIn.length();
     qDebug() << "total rows: " << cnt;
     qDebug() << "total chars x frames: " << (cnt/width);
     qDebug() << "total chars: " << (cnt/32)/width;
@@ -830,7 +830,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
     for (int i=0;i<cnt;i++) {
         unsigned short currentPointer = 0;
         bool isNew = true;
-        for (int j=0;j<out.count()/width;j++) {
+        for (int j=0;j<out.length()/width;j++) {
             double metric = Compare(dataIn, out, i*width, j*width, width, type, bmask);
             if (metric<compression) {
                 currentPointer =j*width;
@@ -839,7 +839,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
             }
         }
         if (isNew) {
-            currentPointer = out.count();
+            currentPointer = out.length();
             for (int j=0;j<width;j++) {
                 out.append(dataIn[i*width+j]);
             }
@@ -1058,7 +1058,7 @@ void Compression::AddBinaryScreen(QByteArray &data, QImage &img)
 
 void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
 {
-    int count = inData.count()/1000;
+    int count = inData.length()/1000;
     qDebug() << "count screens: " << count;
     MovieConverter mc;
     float compr = 0;

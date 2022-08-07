@@ -324,7 +324,7 @@ unsigned int CharsetImage::getPixel(int x, int y)
 void CharsetImage::FromRaw(QByteArray &arr)
 {
 //    Clear();
-    for (int i=0;i<arr.count()/8;i++) {
+    for (int i=0;i<arr.length()/8;i++) {
         PixelChar& pc = m_data[i];
         int idx=i*8;
         for (int j=0;j<8;j++) {

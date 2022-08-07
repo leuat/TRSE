@@ -54,7 +54,7 @@ void MachineCodeAnalyzer::AnalyzeZP()
 {
     int addr=Syntax::s.m_currentSystem->m_startAddress;
     m_mczp.clear();
-    for (int i=0;i<m_data.count()-1;i++) {
+    for (int i=0;i<m_data.length()-1;i++) {
         uchar d = m_data[i];
         uchar n = m_data[i+1];
 //        if (d==0x81 || d==0x91) {

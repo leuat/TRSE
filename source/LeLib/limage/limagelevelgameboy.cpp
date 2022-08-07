@@ -11,7 +11,7 @@ void LImageLevelGameboy::ExportBin(QFile &file)
     for (CharmapLevel* l : m_levels) {
         file.write( l->m_CharData);
 
-        if (l->m_ExtraData.count()!=0)
+        if (l->m_ExtraData.length()!=0)
             file.write( l->m_ExtraData);
 
     }

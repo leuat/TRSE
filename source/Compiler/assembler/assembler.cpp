@@ -314,7 +314,7 @@ int Assembler::CountCycles(QString s)
         }
         //if (s[0]!="\t") continue; // is label
         QStringList l = s.split(" ");
-        if (l[0].count()==3) {
+        if (l[0].length()==3) {
             //qDebug() << "Adding :" << s;
             int cnt = CountInstructionCycle(l);
             n+=cnt;
@@ -547,7 +547,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
                 QString bytes = "";
                 for (int i=0;i<count-1;i++)
                     bytes+="0,";
-                bytes.remove(bytes.count()-1,1);
+                bytes.remove(bytes.length()-1,1);
                 if (count!=1)
                     Asm("    "+t+" "+bytes);
             }
