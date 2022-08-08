@@ -71,7 +71,7 @@ public:
     void ExportBin(QFile& f) override;
     virtual void FromRaw(QByteArray& arr);
     virtual void ToRaw(QByteArray& arr);
-    virtual QPixmap ToQPixMap(int chr);
+    virtual QPixmap ToQPixMap(int chr) override;
     virtual void setPixel(int x, int y, unsigned int color) override;
 
     virtual void CreateMagicalCharset() override;

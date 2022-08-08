@@ -1949,7 +1949,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
         as->Comment("Load Unknown type array, assuming BYTE");
         unknownType = true;
     }
-    bool disable16bit =false;
+//    bool disable16bit =false;
 
     if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
         as->Asm("ldy #0 ; lhs is byte, but integer required");

@@ -19,7 +19,7 @@ public:
     void Program(QString name, QString vicParam) override;
     void EndProgram() override;
 
-    bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos);
+    bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos) override;
 
     void DeclareArray(QString name, QString type, int count, QStringList data, QString pos) override;
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;

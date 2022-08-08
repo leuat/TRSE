@@ -9,7 +9,7 @@ public:
     LImageOK64();
     LImageOK64(LColorList::Type t);
     QByteArray m_data;
-    void Initialize(int width, int height);
+    void Initialize(int width, int height) override;
 
     void setPixel(int x, int y, unsigned int color) override;
     unsigned int getPixel(int x, int y) override;

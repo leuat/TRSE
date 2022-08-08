@@ -133,8 +133,8 @@ public:
 
 
     bool KeyPress(QKeyEvent *e) override;
-    void CopyChar();
-    void PasteChar();
+    void CopyChar() override;
+    void PasteChar() override;
 
     void AddNew(int w, int h) override;
 
@@ -171,7 +171,7 @@ public:
     void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma = 1.0) override;
 
 
-    QString getMetaInfo();
+    QString getMetaInfo() override;
 
 
 };

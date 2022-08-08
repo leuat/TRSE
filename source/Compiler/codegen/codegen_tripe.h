@@ -119,7 +119,7 @@ public:
 
 //    void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 
-    bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node);
+    bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
 
 
 

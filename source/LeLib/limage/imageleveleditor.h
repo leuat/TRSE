@@ -114,7 +114,8 @@ public:
 
 //        m_headerSize = 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1;
         m_headerSize = 32;
-        int scale = 1;
+       // int scale = 1;
+        scale = 1;
         if (m_is16bit)
             scale = 2;
         // w/h sx/sy  stx/sty   levelSize

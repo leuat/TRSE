@@ -775,7 +775,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
 
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
-    int ln = node->m_currentLineNumber;
+    //int ln = node->m_currentLineNumber;
 //    LineNumber(ln+1);
     bool isInbank = false;
     auto orgBank = as->m_currentBlock;

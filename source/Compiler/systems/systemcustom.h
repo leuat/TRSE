@@ -28,7 +28,7 @@ public:
         return CompressLZ4(fileName);
     }
 
-    QString getCPUAssemblerString();
+    QString getCPUAssemblerString() override;
 
     void PrepareInitialAssembler(Assembler* as) override;
 

@@ -501,7 +501,7 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             return;
         }
 
-        bool done = false;
+//        bool done = false;
         as->Term();
         as->m_regAcc.m_latest="";
 //        QString d0 = as->m_varStack.pop();

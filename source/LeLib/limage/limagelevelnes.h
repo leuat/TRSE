@@ -17,12 +17,12 @@ public:
  //   void setPixel(int x, int y, unsigned int color);
 
 
-    void ExportBin(QFile &file);
+    void ExportBin(QFile &file) override;
 
 
     void setPixel(int x, int y, unsigned int color) override;
 
-    QString getMetaInfo();
+    QString getMetaInfo() override;
 
     void ReInitialize() override;
     void InitPens() override;

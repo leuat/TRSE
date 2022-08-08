@@ -107,7 +107,7 @@ public:
 //    void IncBin(QSharedPointer<NodeVarDecl> node);
 
     void PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
-    void DeclarePointer(QSharedPointer<NodeVarDecl> node);
+    void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
 
 
     void InlineProcedure(QSharedPointer<NodeProcedure> p);

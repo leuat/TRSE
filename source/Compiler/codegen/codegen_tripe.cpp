@@ -438,7 +438,7 @@ void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 
 void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 
-    bool isPointer = node->m_left->isPointer(as);
+//    bool isPointer = node->m_left->isPointer(as);
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 //    QString lbl = as->NewLabel("stringassign");
