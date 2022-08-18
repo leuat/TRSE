@@ -904,7 +904,6 @@ void Asm6502::OptimisePassLdx(QString x)
 
         m_removeLines.clear();
         int j;
-        int shift=0;
         for (int i=0;i<m_source.count()-1;i++) {
             QString l0 = getLine(i);
             QString value = getToken(l0,1);
@@ -912,7 +911,6 @@ void Asm6502::OptimisePassLdx(QString x)
                 bool done = false;
 //                qDebug() << l0;
                 int k=i;
-                int cnt = 0;
                 int curCnt = 0;
                 int ll=i;
                 while (!done) {
@@ -1068,7 +1066,6 @@ void Asm6502::OptimiseJumps()
 void Asm6502::OptimiseCmp(QString op)
 {
     m_removeLines.clear();
-    int j;
     for (int i=0;i<m_source.count()-1;i++) {
         QString l0 = getLine(i).toLower();
         if (l0.contains(op+ " ") && !l0.contains(";keep")) {
@@ -1148,7 +1145,6 @@ void Asm6502::OptimisePhaPla2()
             }
            // if (l1=="pha") {i=j;continue;}
 
-            int two = k;
             j=k;
             if (getNextLine(j,k).toLower().trimmed().startsWith("lda ")) {
                //     m_removeLines.append(two);
@@ -1262,7 +1258,6 @@ int Asm6502::CountInstructionCycle(QStringList s)
 MOSOperation Asm6502::GetOperand(QStringList s)
 {
     MOSOperation op;
-    bool ok= false;
     op.operand = s[0].toLower();
     if (s.count()==1)
         return op;

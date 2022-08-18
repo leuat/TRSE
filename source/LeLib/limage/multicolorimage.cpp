@@ -322,7 +322,7 @@ QString MultiColorImage::getMetaInfo() {
 
 
 
-void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool dither)
+void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool dither, double strength)
 {
 /*    for each y from top to bottom
        for each x from left to right
@@ -338,6 +338,9 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
 
     int height  =std::min(img.height(), m_height);
     int width  =std::min(img.width(), m_width);
+
+
+
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
             QColor oldPixel = QColor(img.pixel(x,y));
@@ -346,6 +349,7 @@ void MultiColorImage::FloydSteinbergDither(QImage &img, LColorList& colors, bool
             //int c = m_colorList.getIndex(newPixel);
             setPixel(x,y,winner);
             QVector3D qErr(oldPixel.red()-newPixel.red(),oldPixel.green()-newPixel.green(),oldPixel.blue()-newPixel.blue());
+            qErr*=strength;
             if (dither) {
                 if (x!=width-1)
                     img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());

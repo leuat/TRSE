@@ -109,7 +109,7 @@ private slots:
 
     void on_cmbMC2_activated(int index);
 
-    void on_chkDither_stateChanged(int arg1);
+//    void on_chkDither_stateChanged(int arg1);
 
     void on_btnFromFont_clicked();
 
@@ -164,6 +164,8 @@ private slots:
     void on_leForceD800_editingFinished();
 
     void on_leForceD800_textChanged(const QString &arg1);
+
+    void on_comboBox_2_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::DialogImport *ui;

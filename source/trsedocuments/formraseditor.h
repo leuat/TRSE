@@ -163,7 +163,7 @@ public:
 
     Ui::FormRasEditor* UI(){return ui;}
 
-    void setOutputText(QString txt);
+    void setOutputText(QString txt) override;
 
     void BuildNes(QString prg);
     void LookupAssemblerUnderCursor() override;

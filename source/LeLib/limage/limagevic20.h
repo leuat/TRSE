@@ -21,7 +21,7 @@ public:
 
     void Color2Raw(QByteArray &ba, int ys,int sx,int sy, int ex,int ey) override;
 
-    virtual void FixUp(QByteArray& ba);
+    virtual void FixUp(QByteArray& ba) override;
 
 
 //    void InitPens() override;

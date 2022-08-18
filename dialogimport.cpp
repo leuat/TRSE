@@ -142,7 +142,7 @@ void DialogImport::Convert()
 {
 //    qDebug()<< "Type" << m_imageType;
     m_output.Release();
-    bool useDither = ui->chkDither->isChecked();
+    bool useDither = ui->cmbDither->currentIndex()!=0;
     if (m_work.m_qImage==nullptr)
         return;
     if (m_image == nullptr)
@@ -170,6 +170,8 @@ void DialogImport::Convert()
                                     );
     }
 
+    double scaleX = 1+(ui->hsScaleX->value()/100.0 - 0.5)*4;
+    double scaleY = 1+(ui->hsScaleY->value()/100.0 - 0.5)*4;
 
 
     m_output.m_qImage = img->Resize(m_work.m_qImage->width(),
@@ -182,8 +184,10 @@ void DialogImport::Convert()
 //    qDebug() << m_image->m_width << m_output.m_qImage->width() << m_work.m_qImage->width();
     //exit(1);
 //    m_image->Clear();
-    m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
-    m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
+//    m_image->m_importScaleX = scaleX;//+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
+//    m_image->m_importScaleY = scaleY;//+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
+    m_image->m_importScaleX = scaleX;//+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
+    m_image->m_importScaleY = scaleY;//+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
 
 //    m_image->setPixel(10,10,1);
 //    qDebug() << m_image->m_importScaleX;
@@ -221,6 +225,7 @@ void DialogImport::Convert()
         m_image->m_colorList.m_selectClosestFromPen = false;
         m_image->m_colorList.CopyFrom(&org->m_colorList);
         orgCols.CopyFrom(&org->m_colorList);
+        m_image->m_colorList.EnableColors(org->m_colorList.m_enabledColors);
         m_image->m_importScaleX = 1+ (ui->hsScaleX->value()/100.0 - 0.5)*4.0;
         m_image->m_importScaleY = 1+ (ui->hsScaleY->value()/100.0 - 0.5)*4.0;
    //     qDebug() << "AA" << m_work.m_colorList.m_list.count();
@@ -241,19 +246,41 @@ void DialogImport::Convert()
     else
 //        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true);
 */
-
     if (!useDither)
         strength.setX(0);
 
-
 //    qDebug() << "IMG WIDTH " <<m_output.m_qImage->width();
-
+    if (org!=nullptr)
+        m_image->m_colorList.CopyFrom(&org->m_colorList);
     if (ui->chkCustom->isChecked()) {
         auto lst = ui->leCustomPalette->text().split("," );
         m_image->m_colorList.m_customPalette = Util::HexQStringListToByteArray(lst);
+
+//        org->m_colorList.m_customPalette = Util::HexQStringListToByteArray(lst);;
     }
     m_image->m_importScale = 2;
-    m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
+//        qDebug() << scaleX;
+  //  m_output.OrdererdDither(*m_output.m_qImage,m_image->m_colorList, QVector3D(0,0,0),QPoint(matrixSizeX,matrixSizeY),1);
+    //*m_output.m_qImage = QImage(m_output.m_qImage->scaled(m_image->GetWidth(),m_image->GetHeight(),Qt::IgnoreAspectRatio));
+    if (ui->cmbDither->currentIndex()==1) {
+        //    QPixmap p = m_pixMapImage.scaled(QSize(grid.width(),grid.height()),  Qt::IgnoreAspectRatio, Qt::FastTransformation);
+  //      LImageQImage* copy = (LImageQImage*)LImageFactory::Create(LImage::QImageBitmap,LColorList::C64);
+      //  m_output.CopyFrom(&m_input);
+      //  copy->CopyFrom(&m_input);
+     //   copy->m_importScaleX = scaleX;//+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
+      //  copy->m_importScaleY = scaleY;//+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
+       // qDebug() << "GERE" <<copy->GetWidth();
+//        m_output.m_importScaleX = scaleX;//+ (ui->hsScaleX->value()/100.0 - 0.5)*4;
+  //      m_output.m_importScaleY = scaleY;//+ (ui->hsScaleY->value()/100.0 - 0.5)*4;
+    //    m_output.CopyFrom(&m_work);
+      //  m_output.OrdererdDither(*m_input.m_qImage,m_image->m_colorList, QVector3D(1,1,1),QPoint(matrixSizeX,matrixSizeY),1);
+        *m_output.m_qImage = QImage(m_output.m_qImage->scaled(m_image->GetWidth(),m_image->GetHeight(),Qt::IgnoreAspectRatio));
+        m_image->FloydSteinbergDither(*m_output.m_qImage,m_image->m_colorList, true,strength.x());
+//        delete copy;
+    }
+    else
+        m_image->OrdererdDither(*m_output.m_qImage,m_image->m_colorList, strength,QPoint(matrixSizeX,matrixSizeY),1);
+
 
     if (ui->chkCustom->isChecked()) {
         m_image->m_colorList.m_customPalette = QByteArray();
@@ -501,13 +528,13 @@ void DialogImport::on_cmbMC2_activated(int index)
     UpdateOutput();
 }
 
-void DialogImport::on_chkDither_stateChanged(int arg1)
+/*void DialogImport::on_chkDither_stateChanged(int arg1)
 {
     SetColors();
     UpdateOutput();
 
 }
-
+*/
 void DialogImport::on_btnFromFont_clicked()
 {
 
@@ -558,7 +585,7 @@ void DialogImport::on_hsScaleY_sliderMoved(int position)
 
 void DialogImport::on_cmbDither_currentIndexChanged(int index)
 {
-    //UpdateOutput();
+    UpdateOutput();
 
 }
 
@@ -694,6 +721,13 @@ void DialogImport::on_leForceD800_editingFinished()
 void DialogImport::on_leForceD800_textChanged(const QString &arg1)
 {
     UpdateSliders();
+    UpdateOutput();
+}
+
+
+void DialogImport::on_comboBox_2_currentIndexChanged(const QString &arg1)
+{
+    SetColors();
     UpdateOutput();
 }
 

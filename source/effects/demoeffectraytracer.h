@@ -62,7 +62,7 @@ public:
     float m_dither = true;
     int m_N = 6;
 
-    void Initialize();
+    void Initialize() override;
 
 
 

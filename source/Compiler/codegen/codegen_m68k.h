@@ -106,7 +106,7 @@ public:
     QString getReturn() override { return "rts";}
     QString getReturnInterrupt() override { return "rti";}
 
-    void AssignString(QSharedPointer<NodeAssign> node, bool isPointer);
+    void AssignStringPtr(QSharedPointer<NodeAssign> node, bool isPointer);
 
 
 };

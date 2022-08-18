@@ -1692,8 +1692,8 @@ void MainWindow::on_helpFileType()
 
 void MainWindow::on_tabMain_currentChanged(int index)
 {
-    FormImageEditor* imageedit = dynamic_cast<FormImageEditor*>(ui->tabMain->widget(index));
-    FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
+//    FormImageEditor* imageedit = dynamic_cast<FormImageEditor*>(ui->tabMain->widget(index));
+  //  FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
 
 
     for (TRSEDocument* doc : m_documents)

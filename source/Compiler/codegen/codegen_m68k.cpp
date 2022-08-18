@@ -923,7 +923,7 @@ void CodeGen68k::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPoi
 
 }
 
-void CodeGen68k::AssignString(QSharedPointer<NodeAssign> node, bool isPointer) {
+void CodeGen68k::AssignStringPtr(QSharedPointer<NodeAssign> node, bool isPointer) {
 
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -1000,7 +1000,7 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
-        AssignString(node,node->m_left->isPointer(as));
+        AssignStringPtr(node,node->m_left->isPointer(as));
         return;
     }
 

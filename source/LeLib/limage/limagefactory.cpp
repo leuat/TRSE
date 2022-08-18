@@ -102,6 +102,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageGeneric(colorType);
     if (t == LImage::GenericSprites)
         return new LImageGenericSprites(colorType);
+    if (t == LImage::CGA160x100)
+        return new LImageCGA160x100(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

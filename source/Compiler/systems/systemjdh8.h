@@ -9,10 +9,10 @@ class SystemJDH8 : public AbstractSystem
 public:
     SystemJDH8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
-    void DefaultValues();
+    void DefaultValues() override;
     void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
     void PostProcess(QString& text, QString file, QString currentDir) override;
-    void applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini);
+    void applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) override;
     QString getEmulatorName() override {
         return m_settingsIni->getString("jdh8_directory") + "/bin/emu";
     }

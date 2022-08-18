@@ -176,7 +176,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
 //    chr.m_colorList.EnableColors(m_colorList.m_enabledColors);
     chr.m_colorList.EnableColors(QVector<int>()<< 0<<1);
     chr.m_colorList.m_selectClosestFromPen = false;
-    chr.FloydSteinbergDither(*img,chr.m_colorList,true);
+    chr.FloydSteinbergDither(*img,chr.m_colorList,true,1);
     QImage out(chr.m_width, chr.m_height,QImage::Format_RGB32);
     chr.ToQImage(chr.m_colorList,out,1,QPointF(160,100));
    // out.save("test.png");

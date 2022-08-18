@@ -314,6 +314,8 @@ m; ProcedureToPointer;  ALL; p
 m; int2ptr;  MOS6502; i
 m; CreateInteger; MOS6502; b,b
 m; CreatePointer; MOS6502; b,b
+m; outportb; X86; i, b
+m; inportb; X86; i
 
 M; CopyBytesShift; X16,C64, MEGA65, PLUS4,C128, VIC20, PET,  NES, OK64, ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a,a,b,b,n
 

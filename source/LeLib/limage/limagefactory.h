@@ -59,6 +59,7 @@
 #include "source/LeLib/limage/limagejdh8.h"
 #include "source/LeLib/limage/limagegeneric.h"
 #include "source/LeLib/limage/limagegenericsprites.h"
+#include "source/LeLib/limage/limagecga160x100.h"
 
 class LImageFactory {
 public:

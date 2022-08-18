@@ -29,19 +29,19 @@ INCLUDEPATH +=$$PWD/libs/lua/include
 DEPENDPATH += $$PWD/../Libs
 win32:RC_ICONS += trse.ico
 ICON = trse.icns
-
+#QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-#ARCH = arm64
-#QMAKE_CXXFLAGS += "-Wno-unused-parameter" "-Wno-unused-value" "-Wno-unused"
+ARCH = arm64
+
 macx{
 #    CONFIG += warn_off
 
     #LIBS += -openmp
 #    ICON = trse.icns
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
-    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+#    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 
-    QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
 
     LIBS += -L$$PWD/libs -Ofast
     LIBS += -ldl
@@ -227,6 +227,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limageamstradgeneric.cpp \
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagebbc.cpp \
+    source/LeLib/limage/limagecga160x100.cpp \
     source/LeLib/limage/limagecustomc64multicolor.cpp \
     source/LeLib/limage/limagefooter.cpp \
     source/LeLib/limage/limagegamboy.cpp \
@@ -505,6 +506,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limageamstradgeneric.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagebbc.h \
+    source/LeLib/limage/limagecga160x100.h \
     source/LeLib/limage/limagecustomc64multicolor.h \
     source/LeLib/limage/limagefooter.h \
     source/LeLib/limage/limagegamboy.h \

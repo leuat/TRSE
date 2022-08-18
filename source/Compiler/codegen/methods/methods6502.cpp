@@ -3185,7 +3185,7 @@ void Methods6502::SetFrequency(Assembler *as)
     }
     QString add = " + " + num->HexValue();
 
-    int SID = 54272;
+//    int SID = 54272;
 //    LoadVar(as, 1);
   //  as->Asm("sta 54272 +24" );
     LoadVar(as, 1);

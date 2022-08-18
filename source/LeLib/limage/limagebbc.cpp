@@ -189,7 +189,7 @@ void LImageBBC::ExportBin(QFile &ofile)
 
 
     if (getMode() == 2) {
-        int y = 0;
+//        int y = 0;
         int dy = 0;
         for (int y=0;y<m_height;y+=8) {
             for (int x=0;x<m_width;x+=2) {
@@ -210,7 +210,7 @@ void LImageBBC::ExportBin(QFile &ofile)
         }
     }
     if (getMode() == 5) {
-        int y = 0;
+//        int y = 0;
         int dy = 0;
         for (int y=0;y<m_height;y+=8) {
             for (int x=0;x<m_width;x+=4) {

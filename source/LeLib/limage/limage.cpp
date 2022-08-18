@@ -112,6 +112,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 34;
     if (t==GenericSprites)
         return 35;
+    if (t==CGA160x100)
+        return 36;
 
 
     return 255;
@@ -191,6 +193,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic indexed image";
     if (t==GenericSprites)
         return "Generic Sprites";
+    if (t==CGA160x100)
+        return "CGA 160x100 16 colour";
 
     return "Unknown image type";
 
@@ -271,6 +275,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return LImageGeneric;
     if (c==35)
         return GenericSprites;
+    if (c==36)
+        return CGA160x100;
 
     return NotSupported;
 
@@ -316,18 +322,21 @@ QString LImage::GetCurrentModeString() {
     return "";
 }
 
-void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither)
+void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither, double strength)
 {
     int height  =std::min(img.height(), m_height);
     int width  =std::min(img.width(), m_width);
     for (int y=0;y<height;y++) {
         for (int x=0;x<width;x++) {
+
+
             QColor oldPixel = QColor(img.pixel(x,y));
             int winner = 0;
             QColor newPixel = colors.getClosestColor(oldPixel, winner);
             //int c = m_colorList.getIndex(newPixel);
             setPixel(x,y,winner);
             QVector3D qErr(oldPixel.red()-newPixel.red(),oldPixel.green()-newPixel.green(),oldPixel.blue()-newPixel.blue());
+            qErr*=strength/100.0;
             if (dither) {
                 if (x!=width-1)
                     img.setPixel(x+1,y,Util::toColor(Util::fromColor(img.pixel(x+1,y))+qErr*7/16.0).rgba());
@@ -351,6 +360,7 @@ void LImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength,
     QMatrix4x4 bayer4x4 = QMatrix4x4(0,8,2,10,  12,4,14,6, 3,11,1,9, 15,7,13,5);
     bayer4x4 = bayer4x4*1/16.0*strength.x();
 //    qDebug() << img.width();
+    qDebug() << m_importScaleX << img.width() << width;
     for (int y=0;y<height;y++) {
 //#pragma omp parallel for
         for (int x=0;x<width;x++) {

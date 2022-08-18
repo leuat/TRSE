@@ -140,6 +140,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 14;
   if (t==VZ200)
       return 15;
+  if (t==DOS)
+      return 16;
 
   return 255;
 }
@@ -178,6 +180,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return SPECTRUM;
     if (c==15)
         return VZ200;
+    if (c==16)
+        return DOS;
 
     return UNSUPPORTED;
 
@@ -272,6 +276,7 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
                     isNew = false;
             if (isNew)
                 m_colorList.append(c1);
+
 //        qDebug() << y ;
     }
 
@@ -400,6 +405,8 @@ void LColorList::Initialize(Type t)
 
     if (m_type == Type::C64)
         InitC64();
+    if (m_type == Type::DOS)
+        InitDOS();
     if (m_type == Type::C64_ORG)
         InitC64_org();
     if (m_type == Type::CGA1_HIGH)
@@ -655,6 +662,7 @@ void LColorList::CopyFrom(LColorList *other)
     m_isLevelEditor = other->m_isLevelEditor;
     m_multicolors = other->m_multicolors;
     m_background = other->m_background;
+    m_enabledColors = other->m_enabledColors;
 }
 
 void LColorList::CopyFromKeep(LColorList *other)
@@ -731,6 +739,29 @@ void LColorList::InitC64()
     m_background = m_list[0];
 //    DefaultPen();
     m_pens.clear();
+
+}
+
+void LColorList::InitDOS()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0x0, 0x0, 0xAA),""));
+    m_list.append(LColor(QColor(0x0, 0xAA, 0x0),""));
+    m_list.append(LColor(QColor(0x0, 0xAA, 0xAA),""));
+    m_list.append(LColor(QColor(0xAA, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xAA, 0x0, 0xAA),""));
+    m_list.append(LColor(QColor(0xAA, 0x55, 0x0),""));
+    m_list.append(LColor(QColor(0xAA, 0xAA, 0xAA),""));
+
+    m_list.append(LColor(QColor(0x55, 0x55, 0x55),""));
+    m_list.append(LColor(QColor(0x55, 0x55, 0xff),""));
+    m_list.append(LColor(QColor(0x55, 0xff, 0x55),""));
+    m_list.append(LColor(QColor(0x55, 0xff, 0xff),""));
+    m_list.append(LColor(QColor(0xff, 0x55, 0x55),""));
+    m_list.append(LColor(QColor(0xff, 0x55, 0xff),""));
+    m_list.append(LColor(QColor(0xff, 0xff, 0x55),""));
+    m_list.append(LColor(QColor(0xff, 0xff, 0xff),""));
 
 }
 

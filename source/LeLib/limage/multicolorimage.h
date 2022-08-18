@@ -138,7 +138,7 @@ public:
     virtual QString getMetaInfo() override;
 
 
-    void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither) override;
+    void FloydSteinbergDither(QImage& img, LColorList& colors, bool dither, double strength) override;
     void OrdererdDither(QImage& img, LColorList& colors, QVector3D strength, QPoint size, float gamma) override;
 
     void Initialize(int width, int height) override {}

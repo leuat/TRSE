@@ -16,6 +16,14 @@ var
 	ytab_cga : array[200] of integer = buildtable("Math.floor(i/2)*80 + 8192*((i)%2)");
 
 	CGA_cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
+	port:integer;
+	val, reg:byte;
+	
+	
+	const CRTCa : integer = $3D8;/* 6845 mode control register */
+	const CRTCb : integer = $3D4; /* 6845 index register */
+	const STATUS_REGISTER : integer = $3DA; /* Input Status Register */
+
 
 
 procedure InitVGABuffers(noBuffers:global integer);
@@ -241,5 +249,14 @@ begin
 	PrintAx();
 	
 end;
+
+
+	
+procedure write_crtc(port:global integer; reg, val:global byte);
+begin
+     outportb(port, reg);
+     outportb(port+1,val);
+end;
+
 
 end.

@@ -88,11 +88,11 @@ public:
         m_mc->m_colorList.EnableColors(m_cols);
 //        qDebug() <<"COLS IN USE " <<m_cols;
         if (dither==1)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true,ditherStrength.x());
         if (dither==2)
             m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size),1);
         if (dither==0)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false,ditherStrength.x());
 
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 
@@ -114,11 +114,11 @@ public:
         m_mc->m_colorList.EnableColors(m_cols);
 //        qDebug() <<"COLS IN USE " <<m_cols;
         if (dither==1)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true,ditherStrength.x());
         if (dither==2)
             m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,size),1);
         if (dither==0)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false,ditherStrength.x());
 
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 
@@ -133,11 +133,11 @@ public:
 
         m_mc->m_colorList.EnableColors(m_cols);
         if (dither==1)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true,ditherStrength.x());
         if (dither==2)
             m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(size,1),1.0);
         if (dither==0)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false,ditherStrength.x());
 
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 
@@ -149,11 +149,11 @@ public:
             return;*/
 //        m_mc->m_colorList.EnableColors(m_cols);
         if (dither==1)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, true,ditherStrength.x());
         if (dither==2)
             m_mc->OrdererdDither(m_img, m_mc->m_colorList, ditherStrength,QPoint(1,2),1);
         if (dither==0)
-            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false);
+            m_mc->FloydSteinbergDither(m_img, m_mc->m_colorList, false,ditherStrength.x());
 
         m_mc->ToQImage(m_mc->m_colorList,m_img,1,QPointF(160,100));
 

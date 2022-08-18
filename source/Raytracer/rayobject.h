@@ -218,8 +218,8 @@ public:
     QVector3D m_radius = QVector3D(1,1,1);
     bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
     float intersect(Ray* ray) override;
-    QVector3D calculateNormal(Ray* ray, QVector3D isp) {return isp;}
-    QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent);
+    QVector3D calculateNormal(Ray* ray, QVector3D isp) override {return isp;}
+    QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
 };
 
 
@@ -329,7 +329,7 @@ class RayObjectTriangle: public AbstractRayObject {
     RayObjectTriangle();
     float intersect(Ray* ray) override;
 
-    virtual QVector3D getBBBox();
+    virtual QVector3D getBBBox() override;
 
 };
 
@@ -424,7 +424,7 @@ public:
 
     bool m_isWireframe = true;
     int m_type = 0;
-    virtual void Save6502(QString file, float scale);
+    virtual void Save6502(QString file, float scale) override;
     void OptimiseLineList();
 
     void CalculateNormals();

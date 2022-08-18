@@ -38,7 +38,7 @@ public:
 
     void Init(LuaScript& s);
 
-    void keyPressEvent(QKeyEvent *e);
+    void keyPressEvent(QKeyEvent *e) override;
 
 
     void Build(bool isShadow=false) override { Run(); }
@@ -46,7 +46,7 @@ public:
 
     void SetupHighlighter();
 
-    void SearchInSource();
+    void SearchInSource(QString text) override;
 
 
 private slots:

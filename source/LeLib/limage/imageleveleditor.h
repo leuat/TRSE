@@ -262,7 +262,7 @@ public:
 
     bool KeyPress(QKeyEvent *e) override;
 
-    virtual QPoint GetCurrentPosInImage(float x, float y) {
+    virtual QPoint GetCurrentPosInImage(float x, float y) override {
         return QPoint(x/8,y/8);
     }
     QVector<QPixmap> CreateIcons();

@@ -226,6 +226,20 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("init_drawline_cga"))
         AddInitMethod(as,"init_drawline_cga","init_drawline_cga.asm");
 
+
+    if (Command("outportb")) {
+        LoadVar(as,0);
+        as->Asm("mov dx,ax");
+        LoadVar(as,1);
+        as->Asm("out dx,al");
+
+    }
+    if (Command("inportb")) {
+        LoadVar(as,0);
+        as->Asm("in al,dx");
+
+    }
+
     if (Command("drawlinecga")) {
         LoadAddress(as,0,false);
         LoadVar(as,1);
