@@ -116,6 +116,3 @@ data_header_images/endlogo.flf = 0
 data_header_images/trse_ending.flf = 3.02736e-314
 data_header_images/grl12.flf = 0
 data_header_images/trse1.flf = 0
-project_path = /Users/leuat/code/TRSE/DebugM1/trse.app/Contents/MacOS/../../tutorials/AMIGA/hopscotch/
-open_files = ,demo.ras
-current_file = demo.ras
