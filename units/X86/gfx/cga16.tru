@@ -1,0 +1,146 @@
+unit CGA16;
+
+
+var
+	status,active,switches:byte;
+	@donotremove switches
+	src, dst: ^byte;
+	size:integer;
+	tmpb:byte;
+	
+@use "system/screen"
+
+	
+procedure Init();
+begin
+	
+	_ax:=$03;
+	genint($10);
+	_al:=0;
+	_ah:=$12;
+	_bl:=$10;
+	genint($10);
+	switches:=_cl;	
+	
+	_ah:=$1a;
+	_al:=0;
+	genint($10);
+	active:=_bl;
+	status:=_al;
+	
+/*	asm("
+		mov ax,$03
+		int $10
+	
+		mov al,0
+		mov ah,$12
+		mov bl,$10
+		int $10
+		mov [CGA16_switches],cl
+
+		mov ah, $1a
+		mov al,0
+		int $10
+		mov [CGA16_active], bl
+		mov [CGA16_status], al
+
+	");	
+*/	
+	if (status=$1a and (active=$7 or active=$8)) then
+	begin
+		status:=inportb(Screen::STATUS_REGISTER);			
+		outportb($03C0,$10);
+		status := inportb($3c1);
+		status&=$F7;
+		outportb($3C0,$10);
+		outportb($3C0, status);
+		Screen::write_crtc(screen::crtcb, $9, $3);
+		
+	end
+		/* EGA */
+	
+	else 
+		if ( 
+             switches = $6 or      /* CGA w/CGA 40x25 */
+             (switches = $7 or      /* CGA w/CGA 80x25 */
+             (switches = $8 or      /* EGA w/CGA 80x25 */
+             (switches = $9 or      /* EGA w/ECD 80x25 */
+             (switches = $B         /* EGA w/MONO */
+                                ))))) then
+           begin
+/*
+       _AL=0x03;
+       _AH=0x10;
+       _BL=0;
+       geninterrupt(0x10);             // turn off blink via EGA BIOS 
+
+       // EGA hires mode is 640x350 with a 9x14 character cell.  The pixel aspect                                                                                      
+         //      ratio is 1:1.37, so if we make the blocks 3 scans tall you get a square                                                                                 
+           //    pixel at 160x100, but some of the scan lines are not used (50) 
+
+       if (
+               switches == 0x09 ||             // EGA Hires monitor attached, 9x14 
+               switches == 0xB         // EGA with Monochrome monitor, 9x14 
+               ) {
+                       write_crtc(CRTCb,0x09,0x02);
+               } else {                                                // Must be CGA 8x8 on EGA card 
+                       write_crtc(CRTCb,0x09,0x01);
+               }
+
+       return 2;       /* EGA */	
+	end
+	else
+	begin
+		asm
+		mov ah,$f
+		mov al,0
+		int $10
+		mov [CGA16_tmpb], al
+		end;
+		if (tmpb <> $07) then              // Check that this is not BW 80x25 
+		begin
+        		outportb(Screen::CRTCa, 1);
+
+            	/* set vert total lines to 127 */
+            	Screen::write_crtc(Screen::CRTCb,$04,$7f);
+            /* set vert displayed char rows to 100 */
+            	Screen::write_crtc(Screen::CRTCb,$06,$64);
+            /* set vert sync position to 112 */
+            	Screen::write_crtc(Screen::CRTCb,$07,$70);
+            /* set char scan line count to 1 */
+            	Screen::write_crtc(Screen::CRTCb,$09,$01);
+			outportb(Screen::CRTCa, 9);
+
+		//	return 1;       /* CGA */
+		end;				
+ 	end;
+ 	
+end;
+	
+	
+procedure CopyScreen(src, dst: global ^byte; size:global integer);
+begin
+
+	asm("
+	
+	push ds
+	mov cx, [CGA16_size]
+	les di,[CGA16_dst]
+	inc di
+	
+	lds si,[CGA16_src]
+
+@lp:	
+	movsb
+	inc di
+	dec cx
+	jne @lp
+	
+	pop ds
+");	
+
+
+end;	
+	
+	
+end.

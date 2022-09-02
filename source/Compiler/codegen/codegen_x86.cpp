@@ -813,7 +813,11 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
             else {
 //                as->Asm("lea si, "+node->m_right->getValue(as));
 //                as->Asm("cld");
-                as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
+//                if (node->m_right->isReference())
+  //                 as->Asm("lea si, "+node->m_right->getValue(as));
+    //            else
+                    as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
+
                 //as->Asm("mov si, "+node->m_right->getValue(as));
                 as->Asm("mov ["+var->getValue(as)+"+2], ds");
                 as->Asm("mov ["+var->getValue(as)+"], si");
@@ -847,7 +851,18 @@ void CodeGenX86::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
 
 void CodeGenX86::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {
-    ErrorHandler::e.Error("Cannot (yet) assign variables from registers on the x86",node->m_op.m_lineNumber);
+//    ErrorHandler::e.Error("Cannot (yet) assign variables from registers on the x86",node->m_op.m_lineNumber);
+    if (!node->m_right->isPure())
+        ErrorHandler::e.Error("When assigning registers, RHS needs to be pure numeric or variable",node->m_op.m_lineNumber);
+    QString vname = getValue(node->m_right);
+
+    vname = vname.toLower();
+
+    QString reg = vname.remove(0,1);
+//        as->Comment("Assigning register : " + vname);
+
+    as->Asm("mov "+getX86Value(as,node->m_left)+", "+reg);
+    return;
 }
 
 void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)

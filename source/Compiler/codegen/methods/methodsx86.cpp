@@ -234,6 +234,14 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->Asm("out dx,al");
 
     }
+    if (Command("genint")) {
+//        LoadVar(as,0);
+        if (!m_node->m_params[0]->isPureNumeric())
+            ErrorHandler::e.Error("GenInt only takes pure numeric value",m_node->m_op.m_lineNumber);
+
+        as->Asm("int "+m_node->m_params[0]->getValue(as));
+
+    }
     if (Command("inportb")) {
         LoadVar(as,0);
         as->Asm("in al,dx");

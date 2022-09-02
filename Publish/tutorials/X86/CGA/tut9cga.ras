@@ -1,0 +1,36 @@
+program CGA16;
+
+/*
+	This example uses the special 16-colour 160x100 CGA mode
+
+*/
+
+@use "gfx/cga16"
+@use "system/screen"
+@use "system/memory"
+@use "gfx/gfx"
+
+// Export the 160x100 CGA image
+@export "images/cga16.flf" "images/cga16.bin" 256
+
+var  
+	// include the image
+	img:incbin("images/cga16.bin");
+	p:^Byte;
+begin
+	
+	init_cga_scanlines();
+	init_keyboard_irq();
+	
+	Memory::Init();
+	
+	
+	CGA16::Init();	
+	fill(Screen::CGA,$DE,16000);
+	CGA16::CopyScreen(#img,ptr(Screen::CGA,0),8000);		
+	while (true) do
+	begin
+		waitforverticalblank();
+	end;
+	
+end.
