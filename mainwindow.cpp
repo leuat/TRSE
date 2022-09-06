@@ -133,12 +133,12 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(ShowFileContext(const QPoint &)));
 
 
-    m_splash = QSharedPointer<DialogSplash>(new DialogSplash(this));
+/*    m_splash = QSharedPointer<DialogSplash>(new DialogSplash(this));
 
 
     m_splash->m_seconds = m_iniFile->getdouble("splash_seconds");
     QTimer::singleShot(10, this, SLOT(ShowSplash()));
-
+*/
     QString t0 = "Number of computer systems supported in TRSE: "+QString::number(ui->cmbSelectSystem->count());
     QString t1 = "Number of sample projects: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "tutorials/",QStringList() <<"trse"));
     QString t2 = "Total number of example source files: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "tutorials/",QStringList() <<"ras"<<"inc"));

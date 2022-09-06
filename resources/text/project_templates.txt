@@ -1,6 +1,7 @@
 
-AMIGA; Amiga 500 Sample project; amiga_general; <h2>Simple Amiga 500 project setup.</h2>
+AMIGA; Amiga 500 sample project; amiga_general; <h2>Simple Amiga 500 project setup.</h2>
 AMSTRADCPC; Amstrad CPC sample project; amstradcpc_general; <h2>Simple Amstrad CPC that displays an image.</h2>
+SPECTRUM; ZX Spectrum sample project; spectrum_general; <h2>ZX Spectrum project template that displays an image and plays some music.</h2>
 APPLEII; Apple II sample project; appleii_general; <h2>Simple Apple II Hello world" sample program.</h2>
 ATARI800; Atari 800 hello world project; atari800_general; <h2>Atari 800 "Hello world" sample program</h2>
 ATARI2600; ATARI 2600 Sample project; atari2600_general; <h2>Simple atari 2600 project setup.</h2>
