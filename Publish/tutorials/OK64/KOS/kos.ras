@@ -84,7 +84,7 @@ var
   tmp:byte;
 begin
 	ResetFileList();
-	zp:=OKVC_FILE;
+	zp:=#OKVC_FILE;
 	tmp:=curCol;
 	curCol:=37;
 	while (zp[0]<>0) do
@@ -98,10 +98,10 @@ end;
 
 procedure PrintHelp();
 begin
-	printText("KOS 0.01 commands:");
+	printText("KOS 0.02 commands:");
 	printText("  ls : list files");
 	printText("  load [file] : load file");
-	printText("  help: this text");
+	printText("  ? : this text");
 	printText("  cls: clear screen");
 
 end;
@@ -123,7 +123,6 @@ begin
 	
 	cmd:=strgetfromindex(#sSplit,0);
 	arg:=strgetfromindex(#sSplit,1);
-	
 	if (strcmp(cmd,cmdList)) then 
 	begin
 		ListFiles();
@@ -143,7 +142,7 @@ begin
 	end;		
 	if (strcmp(cmd,cmdLoad)) then 
 	begin
-		memcpy(arg,0,okvc_file,16);
+		memcpy(arg,0,#okvc_file,16);
 		LoadFile();
 		printText("Could not load:");
 		printText(arg);
@@ -181,13 +180,36 @@ begin
 		curPos:=0;
 		Run();
 	end;
-	if (key=8) then
+	if (key=127) then
 	begin
 		cx:=cx-8;
 		if (cx<@basex) then cx:=@basex;
 		ok:=false;
 		curPos:=curPos-1;
 	end;
+	if (key=19) then
+	begin
+				cy-=8;
+			ok:=false;	
+	end;
+	if (key=21) then
+	begin
+				cy+=8;
+			ok:=false;	
+	end;
+	if (key=20) then
+	begin
+				cx+=8;
+			ok:=false;	
+	end;
+	if (key=18) then
+	begin
+				cx-=8;
+			ok:=false;	
+	end;
+
+
+
 	
 	if (ok)then
 	begin
@@ -214,13 +236,17 @@ begin
 	curCol:=curCol+2;
 	printText("MOS6502 + SID");
 	curCol:=curCol+2;
-	printText("OK64 KOS v0.01.");
+	printText("OK64 KOS v0.02.");
 	curCol:=curCol+1;
 	printText("'?' for help");
 	curCol:=curCol+1;
-	printText("Ready.");
+	printText("");
+	printText("Available programs in ROM:");
 	curCol:=curCol+2;
 	curCol:=i;
+	ListFiles();	
+	curCol:=curCol+1;
+	printText("Ready.");
 end;
 
 

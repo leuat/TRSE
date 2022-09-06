@@ -67,3 +67,4 @@ via_zeropages = ,
 override_target_settings_basic = 0
 cpu_x86_output = exe
 data_header_images/cga16.flf = 0
+exomizer_toggle = 0

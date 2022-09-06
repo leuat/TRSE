@@ -177,9 +177,11 @@ QString SystemX86::getEmulatorName() {
 
 void SystemX86::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     QString fn = filename;
+    bool isQemu = false;
     if (m_projectIni->contains("qemu") && m_projectIni->getString("qemu").startsWith("qemu")) {
         params<<"-boot" <<"c";
         fn+=".bin";
+        isQemu = true;
     }
     else {
         QString type = pini->getString("dosbox_x86_system");
@@ -191,13 +193,14 @@ void SystemX86::applyEmulatorParameters(QStringList &params, QString debugFile, 
     }
     fn = fn.replace("//","/");
     fn = fn.replace("/",QDir::separator());
-    QString cycles = (m_projectIni->getString("dosbox_cycles"));
-    QString cpu = m_cpu;
-    if (cpu=="8086") cpu="8088";
-    if (cycles.trimmed()!="")
-        params <<"-c"<<"cycles "+cycles;
-    params <<"-c" <<"cputype "+cpu;
+    if (!isQemu) {
+        QString cycles = (m_projectIni->getString("dosbox_cycles"));
+        QString cpu = m_cpu;
+        if (cpu=="8086") cpu="8088";
+        if (cycles.trimmed()!="")
+            params <<"-c"<<"cycles "+cycles;
+        params <<"-c" <<"cputype "+cpu;
+    }
     params << fn;
-    //    qDebug() << params;
 }
 

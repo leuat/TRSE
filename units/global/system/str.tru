@@ -99,15 +99,15 @@ end;
 **/
 procedure strcat(p1,p2 : global ^byte); 
 begin
-	ii:=strlen(p1);
-	jj:=0;
-	while (p2[jj]<>0) do
+	i:=strlen(p1);
+	j:=0;
+	while (p2[j]<>0) do
 	begin
-		p1[ii]:=p2[jj];
-		jj+=1;
-		ii+=1;
+		p1[i]:=p2[j];
+		j+=1;
+		i+=1;
 	end;	
-	p1[ii]:=0; // null-terminate
+	p1[i]:=0; // null-terminate
 
 end;
 

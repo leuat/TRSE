@@ -25,6 +25,5 @@ begin
 	Screen::Print("No DOS! No Linux! No Windows!");
 	Screen::NewLine();
 	Screen::Print("This is a message from a brand new OS running directly on X86 hardware");
-	
 	asm(" jmp $");
 end.

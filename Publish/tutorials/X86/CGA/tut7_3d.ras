@@ -22,7 +22,7 @@ begin
 	Screen::InitCGABuffers(4);
 	
 	// Create a torus!	
-	Lib3d::Torus(0, 10,10,3,160,Lib3d::renderType_lines);		
+	Lib3d::Torus(0, 5,5,3,160,Lib3d::renderType_lines);		
 
 
 
@@ -36,7 +36,7 @@ begin
 		Memory::CopyData16(Screen::buffer2, Screen::buffer1,8000);
 		// Rotate object 0 		
 		
-		Lib3d::RotateEuler(0,time,time*2,0-time);
+		Lib3d::RotateEuler(0,time,time*2,0-time*3);
 		
 		// Some sine waves		
 		k:=Tables::sine256[(time*3)&255]/2;

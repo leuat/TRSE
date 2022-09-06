@@ -4,12 +4,14 @@ program TextStuff;
 var  
 	tmp : array[256] of byte; // string storage
 	i : integer;
+	
 begin
 	Screen::Print("Whoooo!");
 	Screen::NewLine();
 	
 	str::strcat(#tmp, "Hello ");	
 	str::strcat(#tmp, "World");
+	
 	Screen::Print(#tmp);
 	Screen::NewLine();
 	i := 5123;
