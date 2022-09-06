@@ -679,5 +679,6 @@
         <file>resources/code/wonderswan/end.s</file>
         <file>resources/images/WONDERSWAN.png</file>
         <file>resources/images/tutorials/hopscotch.png</file>
+        <file>resources/images/tutorials/redwine.png</file>
     </qresource>
 </RCC>
