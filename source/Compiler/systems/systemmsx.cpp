@@ -36,24 +36,19 @@ void SystemMSX::Assemble(QString &text, QString filename, QString currentDir, QS
     int codeEnd = 0;
 
     output+="<br>";
+
+
+//    AssembleOrgasm();
+/*
     QString assembler = m_settingsIni->getString("pasmo");
     if (!QFile::exists(assembler)) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
         m_buildSuccess = false;
         return;
     }
-/*    if (!QFile::exists(m_settingsIni->getString("cpcdisk_location"))) {
-        text  += "<br><font color=\"#FF6040\">Please set up a link to the CPCDiskXP disk utility TRSE 'Utilities' settings panel.</font>";
-        return;
-
-    }
-*/
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
 
-  /*  if (QFile::exists(filename+".dsk"))
-        QFile::remove(filename+".dsk");
-*/
     QProcess process;
     StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", output);
 
@@ -63,8 +58,11 @@ void SystemMSX::Assemble(QString &text, QString filename, QString currentDir, QS
         m_buildSuccess = false;
         return;
     }
+*/
+    if (QFile::exists(filename+".bin"))
+        QFile::remove(filename+".bin");
 
-
+    AssembleZOrgasm(output,text,filename,currentDir,symTab);
 
 
     if (m_buildSuccess) {
@@ -73,7 +71,11 @@ void SystemMSX::Assemble(QString &text, QString filename, QString currentDir, QS
 
     output+="<br>";
 
+
     time = timer.elapsed();
+    if (!output.toLower().contains("complete.")) {
+        m_buildSuccess = false;
+    }
 
 
     text+=output;
@@ -82,6 +84,8 @@ void SystemMSX::Assemble(QString &text, QString filename, QString currentDir, QS
 
 void SystemMSX::PostProcess(QString &text, QString file, QString currentDir)
 {
+    if (!QFile::exists(file+".bin"))
+        return;
     QByteArray d = Util::loadBinaryFile(file+".bin");
     QByteArray h;
     int start = m_programStartAddress;

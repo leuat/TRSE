@@ -28,6 +28,34 @@ _PrintLoop:
 end;
 
 
+procedure WriteVDP(a,b: global byte);
+begin
+	asm("
+VDP_DW	equ	$0007	; VDP data write port
+ 
+; Routine to write a byte to a VDP register.
+ 
+; Entry: A = data, B = register number + 80h (to set the bit 7)
+;
+; Modify: BC 
+ 	ld a,[Screen_b]
+ 	ld b,a
+ 	ld a,[Screen_a]
+ 	
+	push	af
+	ld	a,(VDP_DW)	; A = First writing port used to access the internal VDP
+	ld	c,a
+	inc	c		; C = CPU port connected to the VDP writing port #1
+ 
+	di			; Interrupts must be disabled here
+	pop	af
+	out	(c),a		; Write the data
+	out	(c),b		; Write the register number (with the bit 7 always set)
+	ei			; Interrupts can be enabled here
+	");
+end;
+
+
 procedure ClearScreen() inline;
 begin
 	asm(" xor A");

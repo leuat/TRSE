@@ -817,7 +817,6 @@ c;BDRCLR;MSX;a;$F3EB
 c;CLS;MSX;a;$00C3
 
 
-
 # Commodore-specific
 c; Joy1; VIC20, C64, MEGA65; ;
 c; Joy2; C64, MEGA65; ;

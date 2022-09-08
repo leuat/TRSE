@@ -6,20 +6,20 @@ var
 	
 	v1,zero1,zero2,v2,v3: byte ram;
 	
-
+// If you happen to know anything about the MSX.. do let me know! and start creating tutorials 
 
 begin
+//	Screen::WriteVDP(1,2);
 	Screen::ClearScreen();
 	Screen::SetColors(2,0,0); // text, bg, border
-	
 	
 	Screen::PrintString(#text);
 	Screen::Wait(100);
 	v1:=13;
+	v2:=0;
 	while (true) do
 	begin
 		Screen::PrintString(v1);
-		v1:=v1+1;
 		Screen::Wait(16);
 	end;
 end.

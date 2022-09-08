@@ -4766,8 +4766,17 @@ QStringList Parser::BuildTable(int cnt,TokenType::Type type)
         AND = 0xFFFFFFFF;
 
     QString consts = "";
-    for (QString key:m_symTab->m_userConstants)
+    for (QString& key:m_symTab->m_userConstants)
         consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
+
+
+
+    for (auto& key:m_symTab->m_constants.keys()) {
+        if (key.toLower().contains("screen"))
+            consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
+
+    }
+
 
 
     for (int i=0;i<cnt;i++) {

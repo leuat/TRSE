@@ -125,6 +125,7 @@ void SymbolTable::Initialize()
             continue;
         if (data.count()!=5) {
             qDebug() << "SymbolTable::Initialize reporting ERROR in syntax.txt";
+            qDebug() << "Line: " << s;
             exit(1);
         }
         QString constant = data[1].toUpper();

@@ -29,7 +29,7 @@ VIC20; PBM Unit; VIC20/pbm-pet/; <h2>Pet Bitmap Mode (PBM)</h2><div><img src=":r
 
 PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2>Support for the Plus/4 was added in version 0.08, with a bunch of fresh and new tutorials!<br><img src=":resources/images/tutorials/plus4_tut.png" width="300" class="center"><p><i>Small disclaimer: </i>Most built-in methods are not yet updated to work for the PLUS/4. This will be added later, within a larger project setting.
 
-MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do.
+MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
 
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p><img src=":resources/images/NES.png" width="200" class="center"><p>TRSE currently contains 4 seperate NES example files on how to start building a NES game!
 NES; Unit tests; NES/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal 2A03 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
@@ -68,8 +68,8 @@ BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><
 BBCM; Beep! the demo; BBCM/Beep/ ;  <h2>Beep! the demo</h2><p><img src=":resources/images/beep.png" width="200" class="center"><p>Beep! is multi-part disk-loading demo for the BBC Micro that was made entirely with TRSE. Beep! was released at Deadline 2021.
 BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC Demo setup sample project</h2><p><img src=":resources/images/tutorials/bbc2.png" width="200" class="center">Make a demo for the BBC that loads independent parts from disk!<p>Loader at $1100, effects at $1280. Plays music, loads effects from disk.
 ACORN; Acorn atom tutorials; Acorn/tutorials/ ;  <h2>Acorn Atom tutorials</h2><p><img src=":resources/images/ACORN.png" width="200" class="center">Under construction.
-ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>Under construction.
-APPLEII; Main Apple II tutorials; APPLEII/tutorials/ ;  <h2>Main Apple II tutorials</h2><p><p>Under construction.
+ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
+APPLEII; Main Apple II tutorials; APPLEII/tutorials/ ;  <h2>Main Apple II tutorials</h2><p><p>Under construction. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
 
 VZ200; VZ200 tutorials; VZ200/tutorials/ ;  <h2>Main VZ200 tutorials</h2><p><img src=":resources/images/tutorials/vz200.png" width="200" class="center"><p>Learn how to make stuff for the computer with the objectively most intriguing palette in the world!
 VZ200; Millipede; VZ200/millipede/ ;  <h2>Millipede</h2><p><img src=":resources/images/billboard/b31.png" width="200" class="center"><p>The original Centipede game comes to the VZ200!<p>Shoot the Millipede segments to gain points! Heads give higher points than other body pieces.<p>Watch out for the spider bouncing around the screen. Hit it when close to you to get higher points!<p>Shoot the Scorpion before he poisons the mushrooms. If he does, the millipede will go straight to the bottom of the screen where you are!<p>The Flea will come along and add more mushrooms. Shoot him twice to get him!<p>Millipede was written by Jason Oakley / Blue Bilby using Turbo Rascal Syntax Error (TRSE).

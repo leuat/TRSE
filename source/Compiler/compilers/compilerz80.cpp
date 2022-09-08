@@ -15,8 +15,9 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     if (m_projectIni->getdouble("exomizer_toggle")==1.0)
         Syntax::s.m_currentSystem->m_programStartAddress = 0x300; // Unpack address
 
-
-    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_Z80_system"));
+    auto sys = m_projectIni->getString("cpu_Z80_system");
+    if (sys=="") sys ="z80";
+    m_assembler->Asm("CPU "+sys);
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
@@ -52,8 +53,8 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC ||
-        Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM ||
-        Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
+        Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM
+      ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
         ) {
         m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
         m_assembler->WriteConstants();
