@@ -1,0 +1,331 @@
+/*
+	Joypaddle joystick & paddle tester by Firebay refurb / Jari Tulilahti
+	
+	Made with TRSE: https://turborascal.com
+	
+	Remember to check "Exomize"-tickbox if you want to build CRT!
+	
+	This code demonstrates the use of tiles, textboxes and reading joysticks
+	and paddles "the raw way".
+	
+	JoyPaddle 8k cart binary (for real eprom cart) made from TRSE output:
+		cartconv -i joypaddle.crt -o joypaddletemp.bin (cartconv is VICE tool)
+		dd if=joypaddletemp.bin of=joypaddle.bin bs=1k count=8
+*/
+
+program JoyPaddle;
+
+@export "cusfont.flf" "cusfont.bin" 160
+
+
+var
+	stickdata = record
+		val:byte;
+		x:byte;
+		y:byte;
+		but:byte;
+	end;
+
+	// Array of stickdata record to store previous values
+	sticks : array[2] of stickdata;
+
+	// Generic variables
+	js1 : byte = 0;
+	js2 : byte = 0;
+	b1 : byte = 0;
+	b2: byte = 0;
+	tx : byte = 0;
+	ty : byte = 0;
+	ti : byte = 0;
+	l : byte = 0;
+	pad1: byte = 0;
+	pad2: byte = 0;
+	padbut: byte = 0;
+	pads_old: array[4] of byte = (0,0,0,0);
+ 	
+	// Map arrow tiles to directions
+	TL: array[10] of byte = ($20,$1b,$1d,$1f,$21,$6b,$6d,$70,$72,$1f);
+	TR: array[10] of byte = ($20,$1c,$1e,$6f,$22,$6c,$6e,$71,$73,$1e);
+	BL: array[10] of byte = ($20,$43,$45,$47,$49,$93,$95,$98,$9a,$49);
+	BR: array[10] of byte = ($20,$44,$46,$48,$4a,$94,$96,$99,$9b,$4a);
+
+	// Surrounding box array & color array: TL,T,TR,R,BR,B,BL,L
+	box: array[8] of byte = ($4f,$9d,$77,$76,$74,$9e,$4c,$75);
+	boxcolors: array[8] of byte = (15,3,13,13,7,13,13,3);
+	
+	// Screen & color memory address tables
+	scraddr: array[25] of integer;
+	clraddr: array[25] of integer;
+
+	// Just some defines to arrow directions in tile arrays.
+	@define CL 0
+	@define LT 1
+	@define RT 2
+	@define UP 3
+	@define DN 4
+	@define UPLT 5
+	@define UPRT 6
+	@define DNLT 7
+	@define DNRT 8
+	@define BUT 9
+	
+	// Custom font location
+	@define FNTLOC $2000
+	
+	// Screen defines
+	@define scr_mem $400
+	@define color_mem $D800
+	@define scr_width 40
+	@define scr_height 25
+
+	// Joystick direction to arrow position mapping
+	jsposx: array[34] of byte = (0,11,11,0,8,9,9,0,14,13,13,0,0,0,0,0,0,27,27,0,24,25,25,0,30,29,29,0,0,0,0,0,11,27);
+	jsposy: array[17] of byte = (0,8,14,0,11,9,13,0,11,9,13,0,0,0,0,0,11);
+
+	// Paddle meter bar values
+	padbar: array[8] of byte = (128,129,130,131,132,133,134,135);
+	padbuts: array[2] of byte = (83, 32);
+
+	// Arrow directions to joystick port value mapping
+	jsdir:  array[16] of byte = (0,@UP,@DN,0,@LT,@UPLT,@DNLT,0,@RT,@UPRT,@DNRT,0,0,0,0,0);
+
+	charset: incbin("cusfont.bin", @FNTLOC);
+
+// Delay a while after switching paddle port to give SID time to read paddle value
+procedure paddledelay();
+begin
+	asm("
+	pha
+	tya
+	ldy #$d0
+paddeldelay
+	nop
+	dey
+	bne paddeldelay
+	tay
+	pla
+	");
+end;
+
+// Draw a single paddle "progress bar"
+procedure drawpaddlebar(xloc:byte, yloc:byte, val:byte, but:byte);
+begin
+	moveto(xloc, yloc, $04);
+	for l := 0 to 16 do
+	begin
+		if (val > 7) then
+		begin
+			screenmemory[l] := padbar[7];
+			val := val - 8;
+			continue;
+		end
+		else if (val = 0) then
+		begin
+			screenmemory[l] := 32;
+			continue;
+		end
+		else
+		begin
+			screenmemory[l] := padbar[val];
+			val := 0;
+		end;
+	end;
+	screenmemory[16] := padbuts[but]
+end;
+
+// Read all 4 paddles
+procedure paddle();
+begin
+	// Switch to paddle port 1
+	poke(^56320, 0, 64);
+
+	// Delay a while
+	paddledelay();
+
+	// Read paddle & button values
+	pad1 := 127 - (peek(^54297, 0) >> 1);
+	pad2 := 127 - (peek(^54298, 0) >> 1);
+	padbut := (peek(^56321, 0) >> 2) & 3;
+
+	// Smooth values by old value
+	pad1 := (pad1 + pads_old[0]) >> 1;
+	pad2 := (pad2 + pads_old[1]) >> 1;
+	pads_old[0] := pad1;
+	pads_old[1] := pad2;
+
+	drawpaddlebar(1, 21, pad1, padbut & 1);
+	drawpaddlebar(1, 23, pad2, (padbut >> 1) & 1);
+
+	// Switch to paddle port 2
+	poke(^56320, 0, 128);
+
+	// Delay a while
+	paddledelay();
+
+	// Read paddle & button values
+	pad1 := 127 - (peek(^54297, 0) >> 1);
+	pad2 := 127 - (peek(^54298, 0) >> 1);
+	padbut := (peek(^56320, 0) >> 2) & 3;
+
+	// Smooth values by old value
+	pad1 := (pad1 + pads_old[2]) >> 1;
+	pad2 := (pad2 + pads_old[3]) >> 1;
+	pads_old[2] := pad1;
+	pads_old[3] := pad2;
+
+	drawpaddlebar(22, 21, pad1, padbut & 1);
+	drawpaddlebar(22, 23, pad2, (padbut >> 1) & 1);
+
+	// Disable paddle reading
+	poke(^56320, 0, 0);
+end;
+
+// Draw single joystick arrows and button
+procedure drawstick(ind:byte, sval:byte, bval:byte);
+begin
+	// Fetch arrow position and direction
+	tx := jsposx[sval + (ind * 16)];
+	ty := jsposy[sval];
+	ti := jsdir[sval];
+
+	// Check if joystick direction has changed from previous
+	if (sticks[ind].val <> sval) then
+	begin
+		// Erase old arrow only if we have drawn something
+		if (sticks[ind].x > 0) then
+		begin
+			moveto(sticks[ind].x, sticks[ind].y, $04);
+			tile(#TL,#TR,#BL,#BR,@CL,40);
+		end;
+
+		// Store current values
+		sticks[ind].x := tx;
+		sticks[ind].y := ty;
+		sticks[ind].val := sval;
+
+		// Draw new arrow if position is not zero
+		if (tx > 0) then
+		begin
+			moveto(tx,ty,$04);
+			tile(#TL,#TR,#BL,#BR,ti,40);
+		end;
+	end;
+
+	// Check if button value is different than previous
+	if(sticks[ind].but <> bval) then
+	begin
+		// Only erase if button was previously drawn
+		if(sticks[ind].but = 0) then
+		begin
+			moveto(jsposx[32+ind],jsposy[16],$04);
+			tile(#TL,#TR,#BL,#BR,@CL,40);
+		end;
+
+		// Store current button value
+		sticks[ind].but := bval;
+
+		// If button is pressed (value 0), draw arrow
+		if(bval = 0) then
+		begin
+			moveto(jsposx[32+ind],jsposy[16],$04);
+			tile(#TL,#TR,#BL,#BR,@BUT,40);
+		end;
+	end;
+end;
+
+// Read both joysticks here
+procedure joystick();
+begin
+	// Read joystick directions
+	js1 := 15 - (peek(^56321,0) & 15);
+	js2 := 15 - (peek(^56320,0) & 15);
+
+	// Read joystick buttons
+	b1 := peek(^56321,0) & 16;
+	b2 := peek(^56320,0) & 16;
+
+	drawstick(0, js1, b1);
+	drawstick(1, js2, b2);
+end;
+
+// Draw a surrounding box with custom color map
+procedure colorbox(xl:byte, yl:byte, wid:byte, hei:byte);
+begin
+	drawtextbox(#scraddr, #box, xl, yl, wid, hei);
+	drawtextbox(#clraddr, #boxcolors, xl, yl, wid, hei);
+end;
+
+// Initialize screen colors and texts
+procedure title();
+begin
+	// Fill screen RAM with space
+	clearscreen($20,^@scr_mem);
+	
+	// Fill color RAM with white
+	clearscreen(WHITE,^@color_mem);
+	
+	// Set border color
+	poke(^53280,0,0);
+	
+	// Set screen color
+	poke(^53281,0,0);
+
+	// Put some texts on screen
+	moveto(1,2,$04);
+	printstring("FIREBAY REFURB  JOYSTICK/PADDLE TESTER",0,40);
+	moveto(9,5,$04);
+	printstring("PORT 1",0,40);
+	moveto(25,5,$04);
+	printstring("PORT 2",0,40);
+	
+	moveto(0,18,$04);
+	printstring("PADDLES PORT 1 X/Y",0,40);
+	moveto(22,18,$04);
+	printstring("PADDLES PORT 2 X/Y",0,40);
+
+	// Title surround box
+    colorbox(0, 1, 40, 3);
+end;
+
+// Draw surrounding boxes to joysticks
+procedure joyboxes();
+begin
+    colorbox(7, 7, 10, 10);
+    colorbox(23, 7, 10, 10);
+end;
+
+// Draw surrounding boxes to paddle bars
+procedure paddleboxes();
+begin
+    colorbox(0, 20, 19, 5);
+    colorbox(21, 20, 19, 5);
+end;
+
+// Main loop here
+begin
+	// Disable interrupts fully
+	disableciainterrupts();
+	asm("	sei");
+
+	// Disable keyboard
+	poke(^56322,0,224);
+
+	// Create address table for screen and color memory
+	createaddresstable(#scraddr, @scr_mem, @scr_width, @scr_height);
+	createaddresstable(#clraddr, @color_mem, @scr_width, @scr_height);
+
+	// Set custom font
+	setcharsetlocation(@FNTLOC);
+
+	// Draw texts and surrounding boxes
+	title();
+	joyboxes();
+	paddleboxes();
+
+	// Loop forever reading paddles and joysticks
+	while (1=1) do
+	begin
+		paddle();
+		joystick();
+	end;
+end.
