@@ -3,6 +3,7 @@ Program UnitTests6502;
 
 @addmonitorcommand "command 1  \"save \\\"$DIR/results.bin\\\" 0 8000 8000  ; quit \"  "
 
+
 begin
 	Unittests::Exec();
 	@ifdef __CI

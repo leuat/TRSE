@@ -208,6 +208,7 @@ int Parser::findSymbolLineNumber(QString symbol)
     return 1;
 }
 
+
 void Parser::InitBuiltinFunctions()
 {
     m_initJumps.clear();
@@ -1316,6 +1317,21 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
         }
 
+        if (m_currentToken.m_value=="generate_unrolled_asm1") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+
+        }
         if (m_currentToken.m_value=="exportframe") {
             Eat();
             Eat(TokenType::STRING);
@@ -1480,6 +1496,8 @@ void Parser::HandlePreprocessorInParsing()
         m_pass = i;
         return;
     }
+
+
     if (m_currentToken.m_value=="startblock") {
         int i = m_pass;
 /*        qDebug() << Node::m_staticBlockInfo.m_blockID;
@@ -2849,7 +2867,11 @@ void Parser::PreprocessSingle() {
 //                  if (m_pass == PASS_PRE)
   //                    qDebug() << "Defined: " << key << val;
 
+              } else
+              if (m_currentToken.m_value=="generate_unrolled_asm1") {
+                  GenerateUnrolledAsm1();
               }
+
               else if (m_currentToken.m_value.toLower() =="ignoresystemheaders") {
                   Eat(TokenType::PREPROCESSOR);
                   Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]="1";
@@ -5251,6 +5273,44 @@ void Parser::HandleExportParallaxData()
 
     Compression::GenerateParallaxData(inFile, outFile, x0,y0,x1,y1,param1,param2, param3);
 
+
+}
+
+void Parser::GenerateUnrolledAsm1()
+{
+    Eat();
+    QString name = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    int src = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int dst = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int width = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int height = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int shift1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int shift2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int shift3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+//    Compression::Generate(inFile, outFile, x0,y0,x1,y1,param1,param2, param3);
+    Compression::GenerateUnrolledAsm1(name, outFile, inFile, src,dst,width,height,shift1, shift2, shift3);
 
 }
 

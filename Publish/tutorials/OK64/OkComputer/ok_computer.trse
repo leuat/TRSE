@@ -66,4 +66,6 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
-open_files =, main.ras
+open_files = ,main.asm, main.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/OK64/OkComputer/
+current_file = main.ras

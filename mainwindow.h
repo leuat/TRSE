@@ -195,9 +195,9 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf";
-    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt"<<"*.rtf";
-    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf";
+    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf" << "*.pal";
+    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt"<<"*.rtf" <<"*.pal";
+    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf" <<".pal";
     TRSEDocument* m_currentDoc = nullptr;
 
     void LoadIniFile();
@@ -340,6 +340,8 @@ private slots:
     void UpdateFailure();
 
     void xon_new_file(QString name);
+
+    void xon_new_flf_file();
 
     void xon_add_existing_file();
 

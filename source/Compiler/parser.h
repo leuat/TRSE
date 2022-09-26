@@ -337,7 +337,7 @@ private:
     int getParsedNumberOrConstant();
 
     int findSymbolLineNumber(QString symbol);
-
+    void GenerateUnrolledAsm1();
 
 
     void InitBuiltinFunctions();

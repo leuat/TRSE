@@ -46,3 +46,6 @@ override_target_settings_prg = 0
 build_list = ,
 exomizer_toggle = 0
 show_all_files = 1
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/MSX/Tutorials/
+open_files = ,[ext]units/MSX/screen.tru, tutorial1.ras
+current_file = tutorial1.ras

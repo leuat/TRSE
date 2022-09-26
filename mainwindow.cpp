@@ -703,7 +703,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     if (fileName.contains(".paw")  ) {
         editor = new FormPaw(this);
     }
-    if (fileName.contains(".bin") || fileName.contains(".prg"))  {
+    if (fileName.contains(".bin") || fileName.contains(".prg") || fileName.contains(".pal"))  {
         editor = new FormHexEdit(this);
     }
     if (fileName.contains(".trt"))  {
@@ -1179,8 +1179,10 @@ void MainWindow::setupIcons()
 
     img.load(":resources/images/bin.png");
     m_icons["bin"] = QIcon(QPixmap::fromImage(img));
+    m_icons["pal"] = QIcon(QPixmap::fromImage(img));
     m_icons["bin_c"] = QIcon(QPixmap::fromImage(img));
     m_icons["prg"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["pal"] = QColor(c4,c3,c2);
     m_fileColors["bin"] = QColor(c4,c4,c4);
     m_fileColors["bin_c"] = QColor(c4,c4,c4);
     m_fileColors["prg"] = QColor(c4,c4,c4);
@@ -1562,6 +1564,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QAction action7("New .tru file", this);
     QAction action7_rtf("New .rtf file", this);
     QAction action71("New .fjo ray tracer file", this);
+    QAction action72("New .flf image", this);
     QAction action5("Rename file", this);
     QAction action51("Add existing file", this);
     QAction action8("New folder", this);
@@ -1574,6 +1577,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action7, SIGNAL(triggered()), this, SLOT(xon_new_tru_file()));
     connect(&action7_rtf, SIGNAL(triggered()), this, SLOT(xon_new_rtf_file()));
     connect(&action71, SIGNAL(triggered()), this, SLOT(xon_new_fjo_file()));
+    connect(&action72, SIGNAL(triggered()), this, SLOT(xon_new_flf_file()));
     connect(&action8, SIGNAL(triggered()), this, SLOT(xon_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(xon_rename_file()));
     connect(&action51, SIGNAL(triggered()), this, SLOT(xon_add_existing_file()));
@@ -1583,6 +1587,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     contextMenu.addAction(&action61); // New INC
     contextMenu.addAction(&action7); // New TRU
     contextMenu.addAction(&action71); // New fjo
+    contextMenu.addAction(&action72); // New flf
     contextMenu.addAction(&action7_rtf); // New rtf
     contextMenu.addAction(&action51); // add existing file
     contextMenu.addAction(&action5); // Rename
@@ -1885,6 +1890,11 @@ void MainWindow::xon_new_file(QString name)
         LoadDocument(nf.remove(path));
     }
 
+}
+
+void MainWindow::xon_new_flf_file()
+{
+    on_actionImage_triggered();
 }
 
 void MainWindow::xon_add_existing_file()

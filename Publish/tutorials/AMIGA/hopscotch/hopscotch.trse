@@ -116,3 +116,6 @@ data_header_images/endlogo.flf = 0
 data_header_images/trse_ending.flf = 3.02736e-314
 data_header_images/grl12.flf = 0
 data_header_images/trse1.flf = 0
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMIGA/hopscotch/
+open_files = ,fjong/trse_box_rot.fjo
+current_file = fjong/trse_box_rot.fjo

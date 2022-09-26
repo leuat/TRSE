@@ -1,7 +1,7 @@
 unit Animations;
 var  
 	trm_zp: pointer;   
-	screen_ptr : pointer;
+	screen_ptr,col_ptr : pointer;
 	trm_maxFrames, trm_compressionType, trm_hasTimeStamps, trm_endChar, trm_skipChar, trm_curFrame: byte=0;	
 
 	trm_orgPos : integer;
@@ -51,6 +51,57 @@ begin
 		case trm_pass of
 			0:	trm_s:=screen_ptr;
 			1:	trm_s:=#screen_col_loc;
+		end;
+		trm_s := trm_s +trm_xpos;
+	if (trm_ypos<>0) then
+		trm_s:=trm_s+screen_width*trm_ypos;
+	while (trm_zp[0]<>trm_endChar) do begin
+		if (trm_zp[0] = trm_skipChar) then begin
+			trm_s := trm_s + trm_zp[1]; 
+			trm_zp:=trm_zp+2; 
+		end
+		else 
+		begin
+			trm_s[0]:=trm_zp[0];
+			trm_s := trm_s + 1;
+			trm_zp:=trm_zp+1; 
+		end;
+//		g0:=zp[0];
+
+	end;
+	trm_zp:=trm_zp+1; //inczp(zp,1);
+//	g0:=0;
+	end;
+
+	if (trm_hasTimeStamps) then trm_zp:=trm_zp+1;
+
+	inc(trm_curFrame);
+	if (trm_curFrame=trm_maxFrames) then 
+	begin
+		trm_curFrame:=0;
+		trm_zp:=int2ptr(trm_orgPos+7);
+
+	end;
+end;
+
+procedure RenderNextPackedFrameCompressionType2Custom(screen_ptr, col_ptr:global pointer;trm_data_width, trm_xpos, trm_ypos:byte);
+var
+   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
+   trm_s : pointer;
+begin
+	
+	trm_m:=0;
+	trm_zp := trm_zp + 1;
+	trm_i:=trm_zp[0];
+
+	trm_dw:=trm_data_width;
+	trm_sw:=screen_width-trm_dw;
+	
+	for trm_pass:=0 to 2 do begin
+		
+		case trm_pass of
+			0:	trm_s:=screen_ptr;
+			1:	trm_s:=col_ptr;
 		end;
 		trm_s := trm_s +trm_xpos;
 	if (trm_ypos<>0) then

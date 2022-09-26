@@ -501,6 +501,15 @@ bool Util::CopyRecursively(QString sourceFolder, QString destFolder)
     return true;
 }
 
+uchar Util::MultiCharMask(uchar val)
+{
+    uchar c = 0;
+    for (int i=0;i<4;i++) {
+        if (((val>>(i*2))&0b11)!=0) c|=(0b11<<(i*2));
+    }
+    return c;
+}
+
 void Util::ConvertFileWithLoadAddress(QString input, QString output, int address)
 {
     QFile f(input);

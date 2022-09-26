@@ -1205,6 +1205,72 @@ void Compression::GenerateRotatedCharset(QString inFile, QString outFile, int st
 
 }
 
+void Compression::GenerateUnrolledAsm1(QString name, QString outFile, QString inFile, int src, int dst, int width, int height, int shift1, int shift2, int shift3)
+{
+    QString out="procedure "+name+"();\n";
+
+    out+="begin\n";
+    out+="\tasm(\"\n";
+/*    uchar c = Util::MultiCharMask(0b10000001);
+    QString s = QString::number(c,2);
+    qDebug() << s;
+*/
+    QByteArray img = Util::loadBinaryFile(inFile);
+    for (int j=0;j<height;j++) {
+        for (int i=0;i<width;i++) {
+
+            int pos1 = i*8+j*320+shift1;
+            int pos2 = i*8+j*320+shift1+4;
+            uchar org1 = img[pos1];
+            uchar org2 = img[pos2];
+            uchar m1 = ~Util::MultiCharMask(org1);
+            uchar m2 = ~Util::MultiCharMask(org2);
+//            if (m1!=0)
+  //              qDebug() << (int)m1;
+            // 1000 org
+            // 1100 mask
+            // 0101 val
+            // 1101
+
+            if (org1==0) {
+                out +="\t lda "+Util::numToHex(src)+"+ "+Util::numToHex(i)+"+ "+ Util::numToHex(shift2) +"+"+Util::numToHex(j*160)+"\n";
+                out += "\t sta "+Util::numToHex(dst)+"+"+Util::numToHex(i*8)+"+"+ Util::numToHex(shift1) +"+"+Util::numToHex(j*320)+"\n";
+            }
+            else if (m1!=0){
+                out +="\t lda "+Util::numToHex(src)+"+ "+Util::numToHex(i)+"+ "+ Util::numToHex(shift2) +"+"+Util::numToHex(j*160)+"\n";
+                out+="\t and #"+Util::numToHex((uchar)m1)+"\n";
+//                out+="\t ora #"+Util::numToHex((uchar)org1)+"\n";
+                out += "\t sta "+Util::numToHex(dst)+"+"+Util::numToHex(i*8)+"+"+ Util::numToHex(shift1) +"+"+Util::numToHex(j*320)+"\n";
+
+            }
+            if (org2==0) {
+                out += "\t lda "+Util::numToHex(src)+"+"+Util::numToHex(i)+" +"+ Util::numToHex(shift3) +" +"+Util::numToHex(j*160)+"\n";
+                out += "\t sta "+Util::numToHex(dst)+"+"+Util::numToHex(i*8)+" +"+ Util::numToHex(shift1+4) +" +"+Util::numToHex(j*320)+"\n";
+            }
+            else  if (m2!=0)
+            {
+                out += "\t lda "+Util::numToHex(src)+"+"+Util::numToHex(i)+" +"+ Util::numToHex(shift3) +" +"+Util::numToHex(j*160)+"\n";
+                out+="\t and #"+Util::numToHex((uchar)m2)+"\n";
+  //              out+="\t ora #"+Util::numToHex((uchar)org2)+"\n";
+                out += "\t sta "+Util::numToHex(dst)+"+"+Util::numToHex(i*8)+" +"+ Util::numToHex(shift1+4) +" +"+Util::numToHex(j*320)+"\n";
+
+            }
+
+/*                   sta @SDST+[i*8] +[j*320]
+
+
+                   lda $8000+[i]+80+[j*160]
+                   sta @SDST+4+[i*8]+[j*320]
+*/
+        }
+    }
+
+    out+="\t\");\n";
+    out+="end;";
+    Util::SaveTextFile(outFile,out);
+
+}
+
 /*
 void Compression::FrameConverter(QString dir, QString outFile, QVector<int> cols) {
 
