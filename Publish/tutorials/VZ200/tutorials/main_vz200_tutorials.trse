@@ -70,6 +70,4 @@ charset_ = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1
 data_header_images/level1.flf = 0
 charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
 data_header_images/sprites1.flf = 0
-open_files = ,[ext]units/VZ200/Screen.tru, tutorial8_sprites.ras, tutorial1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/tutorials/
-current_file = tutorial8_sprites.ras
+open_files =, tutorial1.ras

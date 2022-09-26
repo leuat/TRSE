@@ -78,5 +78,3 @@ custom_system_ending = -0.5
 use_tripe = 0
 dosbox_cycles = 6.9532e-310
 data_header_resources/gfx/redredfluff.flf = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/SNES/redredwine/
-open_files = ,redredwine.ras

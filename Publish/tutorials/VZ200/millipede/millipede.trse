@@ -69,5 +69,4 @@ data_header_images/font1.flf = 0
 charset_ = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
 data_header_images/level1.flf = 0
 charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
-open_files = ,millipede.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/millipede/
+open_files =, millipede.ras

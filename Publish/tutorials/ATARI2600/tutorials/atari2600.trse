@@ -43,6 +43,4 @@ override_target_settings_prg = 0
 build_list = ,
 zeropage_colormemory = $fc
 show_all_files = 1
-open_files = ,tutorial4.ras, tutorial1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/ATARI2600/tutorials/
-current_file = tutorial1.ras
+open_files =, tutorial1.ras
