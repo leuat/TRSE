@@ -1030,12 +1030,21 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
         b = getValue(node->m_right);
 
 //    qDebug() << "WOOT " <<TokenType::getType(node->m_right->getType(as));
+    if (b=="#$0") {
+        as->Asm("clc");
+    }
 
     node->m_left->Accept(this);
     as->Term();
     if (b!="") {
-        as->Comment("Compare with pure num / var optimization");
-        as->Asm("cmp " + b+";keep");
+        if (b!="#$0") {
+            as->Comment("Compare with pure num / var optimization");
+            as->Asm("cmp " + b+";keep");
+        }
+        else {
+            as->Comment("cmp #$00 ignored");
+//            as->Asm("cmp " + b+";keep");
+        }
     }
     else {
         // Perform a full compare : create a temp variable
