@@ -21,12 +21,7 @@ begin
     call #0a9d    ; Set flag to Integer
     call #14c9    ; RND routine. Using ACC, not A
     call #0a7f    ; CINT. Puts ACC into HL  
-    ld a,h
-    ld [Functions_h],a
-    ld a,l
-    ld [Functions_l],a
-  ");
-    GetRnd := 256*h+l;
+  ");  // HL is returned by default.
 end;
 
 /** 

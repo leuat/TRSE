@@ -54,4 +54,6 @@ zeropage_colormemory = $fc
 data_header_images/trse.flf = 0
 show_all_files = 1
 data_header_images/trse1.flf = 3.03237e-314
-open_files =, tutorial1.ras
+open_files = -1
+project_path = /home/waulok/Applications/trse/bin/../tutorials/GAMEBOY/tutorials/
+current_file = tutorial3_levels.ras
