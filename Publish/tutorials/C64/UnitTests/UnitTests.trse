@@ -63,3 +63,6 @@ custom_system_assembler_parameters = 2.15889e-314
 custom_system_ending = 2.15889e-314
 use_tripe = 0
 dosbox_cycles = 2.15889e-314
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/UnitTests/
+open_files = 3.04529e-314
+current_file = [ext]units/global/unittests/classes.tru

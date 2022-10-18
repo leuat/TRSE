@@ -9,6 +9,7 @@ var
   matrix: array[8] of byte;
   message: string = ("Print a pointer");
 
+
 begin
   // Set 160x200 16-color mode
   Crtc::SetMode(0);

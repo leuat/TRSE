@@ -3064,7 +3064,8 @@ void Parser::PreprocessSingle() {
                   bool ok=false;
                   if (type.toLower()=="krillsloader") {
                       ok=true;
-                      int ln = Pmm::Data::d.lineNumber;
+                      //int ln = Pmm::Data::d.lineNumber;
+//                      qDebug() << m_lexer->m_lines[Pmm::Data::d.lineNumber];
 
                       //m_lexer->m_lines.removeAt(ln);
                       //m_lexer->m_orgText.replace(orgL,"\n");
@@ -3122,7 +3123,8 @@ void Parser::PreprocessSingle() {
                       //QFile::copy(installerFile, outFile);
 
                       outFile = outFolderShort+"krill_loader.bin";
-                      QString replaceLine = "_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
+                      QString replaceLine = "var\n";
+                      replaceLine+="_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
                       outFile = outFolderShort+"krill_installer.bin";
                       replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
 
@@ -3139,12 +3141,28 @@ void Parser::PreprocessSingle() {
                           replaceLine+="@donotremove "+var+"\n";
 
                       }
-                      QString orgL =  m_lexer->m_lines[ln];
+                      //QString orgL =  m_lexer->m_lines[ln];
+                      QString orgL="@use KrillsLoader "+Util::numToHex(loaderPos)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
+                      if (!m_lexer->m_text.contains(orgL)) {
+                          orgL="@use KrillsLoader $0"+QString::number(loaderPos,16)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
+                      }
+                      if (!m_lexer->m_text.contains(orgL)) {
+                          ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000'",Pmm::Data::d.lineNumber);
+
+                      }
+
+
+
+                   //   qDebug() << replaceLine << orgL;
 
 
 
                       m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
                       m_lexer->m_pos-=orgL.length();
+
+
+                     // qDebug().noquote() <<  m_lexer->m_text;
+
 
 
                       //Eat();
@@ -3162,6 +3180,7 @@ void Parser::PreprocessSingle() {
                           HandleCallMacro(m_currentToken.m_value.toLower(),false);
                   else
                      Eat();
+
               }
 
             /*  else if (m_currentToken.m_value.toLower() =="error") {
