@@ -160,6 +160,7 @@ begin
 	for i:=0 to 256 do 
 		randomTable[i]:=random()&3;
 
+
 		
 	InitMonsters();
 	// Loop	

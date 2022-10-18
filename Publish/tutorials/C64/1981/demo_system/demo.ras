@@ -59,7 +59,7 @@ var
 
 
 
-@use KrillsLoader $0200 $2000 $4000
+@use KrillsLoader $200 $2000 $4000
 
 @define scene_poster 1
 @define scene_moscow 2
