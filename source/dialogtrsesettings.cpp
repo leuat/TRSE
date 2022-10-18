@@ -116,10 +116,10 @@ void DialogTRSESettings::FillFromIni()
         ui->cmbPalette->setCurrentText("Light");
 
 
-    ui->leKeywords->setText( Util::toString(m_ini->getStringList("custom_keyword_list")));
-    ui->leColour->setText( Util::toString(m_ini->getStringList("custom_keyword_colour")));
-    ui->chkBold->setChecked(m_ini->getdouble("custom_keyword_bold")==1.0);
-    ui->chkItalic->setChecked(m_ini->getdouble("custom_keyword_italic")==1.0);
+    ui->leKeywords_2->setText( Util::toString(m_ini->getStringList("custom_keyword_list")));
+    ui->leColour_2->setText( Util::toString(m_ini->getStringList("custom_keyword_colour")));
+    ui->chkBold_2->setChecked(m_ini->getdouble("custom_keyword_bold")==1.0);
+    ui->chkItalic_2->setChecked(m_ini->getdouble("custom_keyword_italic")==1.0);
     QDir directory(Util::path+"themes/");
     QStringList  themes = directory.entryList(QStringList() << "*.ini");
     ui->cmbTheme->clear();
@@ -153,7 +153,7 @@ void DialogTRSESettings::FillFromIni()
 
     ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
     ui->cmbAssemblerZ80->setCurrentText(m_ini->getString("assembler_z80"));
-    ui->cmbPainter->setCurrentIndex((int)m_ini->getdouble("image_painter"));
+    ui->cmbPainter_2->setCurrentIndex((int)m_ini->getdouble("image_painter"));
 
 }
 
@@ -234,7 +234,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setFloat("hide_exomizer_footprint", ui->chkExomizerFootprint->isChecked()?1:0);
 
-    m_ini->setFloat("image_painter",ui->cmbPainter->currentIndex());
+    m_ini->setFloat("image_painter",ui->cmbPainter_2->currentIndex());
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
     m_ini->setFloat("auto_backup", ui->chkBackup->isChecked()?1:0);
@@ -264,10 +264,10 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
     m_ini->setString("assembler_z80", ui->cmbAssemblerZ80->currentText());
 
-    m_ini->setStringList("custom_keyword_list", ui->leKeywords->text().split(","));
-    m_ini->setStringList("custom_keyword_colour", ui->leColour->text().split(","));
-    m_ini->setFloat("custom_keyword_bold",ui->chkBold->isChecked());
-    m_ini->setFloat("custom_keyword_italic",ui->chkItalic->isChecked());
+    m_ini->setStringList("custom_keyword_list", ui->leKeywords_2->text().split(","));
+    m_ini->setStringList("custom_keyword_colour", ui->leColour_2->text().split(","));
+    m_ini->setFloat("custom_keyword_bold",ui->chkBold_2->isChecked());
+    m_ini->setFloat("custom_keyword_italic",ui->chkItalic_2->isChecked());
 
     m_ini->setString("tripe_location",ui->leTripeLoc->text());
 

@@ -11,6 +11,8 @@ var
 	Go to the Project Settings and look at the Target Settings section to change the RAM requirements if desired
 */
 
+
+
 begin
 	/*
 		screen_char_loc and screen_col_loc are built in address constants that return the location for screen and colour memory

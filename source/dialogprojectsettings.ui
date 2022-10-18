@@ -43,1230 +43,1274 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
          <string>Target system</string>
         </attribute>
-        <widget class="QLabel" name="label_2">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>150</y>
-           <width>221</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>System configuration:</string>
-         </property>
-        </widget>
-        <widget class="QTabWidget" name="tabConfigs">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>190</y>
-           <width>981</width>
-           <height>231</height>
-          </rect>
-         </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <widget class="QWidget" name="tabC64">
-          <attribute name="title">
-           <string>C64</string>
-          </attribute>
-         </widget>
-         <widget class="QWidget" name="tabC128">
-          <attribute name="title">
-           <string>C128</string>
-          </attribute>
-          <widget class="QWidget" name="verticalLayoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>651</width>
-             <height>101</height>
-            </rect>
+        <layout class="QGridLayout" name="gridLayout_19">
+         <item row="0" column="0">
+          <widget class="QScrollArea" name="scrollArea">
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Screen column mode:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="cmbColumns">
-                <item>
-                 <property name="text">
-                  <string>40</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>80</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tabVic20">
-          <attribute name="title">
-           <string>VIC-20</string>
-          </attribute>
-          <widget class="QWidget" name="verticalLayoutWidget_2">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>30</y>
-             <width>611</width>
-             <height>131</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>Memory expansion blocks to include:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="cmbVic20Config">
-                <item>
-                 <property name="text">
-                  <string>none</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>3k</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>8k</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>16k</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>24k</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>all</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="label_30">
-                <property name="text">
-                 <string>Four zero page values for VIA IRQ (must not overlap)</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="leViaZP"/>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab_6">
-          <attribute name="title">
-           <string>NES</string>
-          </attribute>
-          <widget class="QWidget" name="gridLayoutWidget_5">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>641</width>
-             <height>176</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_6" columnstretch="5,0">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_19">
-              <property name="text">
-               <string>No 16k blocks</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QComboBox" name="cmbNES8KBlocks">
-              <item>
-               <property name="text">
-                <string>0</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="cmbNES16KBlocks">
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_26">
-              <property name="text">
-               <string>Char file 2</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,1">
-              <item>
-               <widget class="QLineEdit" name="leNESCharFile"/>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnNESLoadCharFile">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_21">
-              <property name="text">
-               <string>Char file 1</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="leNESCodeStart"/>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_20">
-              <property name="text">
-               <string>No 8kb char tiles</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_22">
-              <property name="text">
-               <string>Code start address</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="3,1">
-              <item>
-               <widget class="QLineEdit" name="leNESCharFile_2"/>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnNESLoadCharFile_2">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab_7">
-          <attribute name="title">
-           <string>Amiga</string>
-          </attribute>
-         </widget>
-         <widget class="QWidget" name="tab_10">
-          <attribute name="title">
-           <string>X86</string>
-          </attribute>
-          <widget class="QWidget" name="gridLayoutWidget_2">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>781</width>
-             <height>116</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>DOSBOX emulator system</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_28">
-              <property name="text">
-               <string>ASM CPU Target</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QComboBox" name="cmbX86CPU">
-              <item>
-               <property name="text">
-                <string>8086</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>186</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>286</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>386</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>486</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>PENTIUM</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="leDosboxCycles"/>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="cmbX86Type">
-              <item>
-               <property name="text">
-                <string>default</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>svga_s3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>hercules</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cga</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ega</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pcjr</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>tandy</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_45">
-              <property name="text">
-               <string>Dosbox cycles:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QComboBox" name="cmbX86OutputType">
-              <item>
-               <property name="text">
-                <string>exe</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>com</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_46">
-              <property name="text">
-               <string>Output target type</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab_11">
-          <attribute name="title">
-           <string>PET</string>
-          </attribute>
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>20</y>
-             <width>621</width>
-             <height>81</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>System</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_14">
-            <item row="0" column="0">
-             <layout class="QGridLayout" name="gridLayout_13">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_34">
-                <property name="text">
-                 <string>Pet model:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="cbmPetSystem">
-                <item>
-                 <property name="text">
-                  <string>2001-8N</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>3008</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>3016</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>3032</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>3032B</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>4016</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>4032</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>4032B</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>8032</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>8096</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>8296</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>SuperPET</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab_AmstradCPC">
-          <attribute name="title">
-           <string>Amstrad CPC</string>
-          </attribute>
-          <widget class="QWidget" name="gridLayoutWidget_AmstradCPC">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>781</width>
-             <height>71</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_15">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>Amstrad CPC model:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="cmbAmstradCPCModel">
-              <item>
-               <property name="text">
-                <string>464</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>664</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>6128</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>6128 Plus</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_31">
-              <property name="text">
-               <string>Additional command line options:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="leAmstradCPCOptions"/>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab_12">
-          <attribute name="title">
-           <string>Spectrum</string>
-          </attribute>
-          <widget class="QWidget" name="gridLayoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>771</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_16" columnstretch="1,3">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_23">
-              <property name="text">
-               <string>Spectrum model</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="cbmSpectrumModel">
-              <item>
-               <property name="text">
-                <string>Zx Spectrum 16k</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Zx Spectrum 48k</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Zx Spectrum 128k</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab_13">
-          <attribute name="title">
-           <string>Custom</string>
-          </attribute>
-          <widget class="QWidget" name="gridLayoutWidget_8">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>10</y>
-             <width>751</width>
-             <height>176</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_18">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_36">
-              <property name="text">
-               <string>CPU:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QComboBox" name="cmbCustomAssembler">
-              <item>
-               <property name="text">
-                <string>From System</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Custom</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_41">
-              <property name="text">
-               <string>Emulator:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_37">
-              <property name="text">
-               <string>Built-in methods based on:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QComboBox" name="cmbCustomMethods">
-              <item>
-               <property name="text">
-                <string>C64</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>VIC20</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>SNES</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>NES</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>GAMEBOY</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>AMSTRADCPC</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>MEGA65</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>OK64</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>PET</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>X16</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ATARI512ST</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>AMIGA</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>X86</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>BBCM</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ATARI2600</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QLineEdit" name="leCustomAssemblerParameters"/>
-            </item>
-            <item row="4" column="2">
-             <widget class="QLabel" name="label_42">
-              <property name="text">
-               <string>Emulator parameters:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="label_40">
-              <property name="text">
-               <string>Assembler parameters:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="leCustomAssembler"/>
-            </item>
-            <item row="4" column="3">
-             <widget class="QLineEdit" name="leCustomEmulatorParameters"/>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_39">
-              <property name="text">
-               <string>Custom assembler (if not from system)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="cmbCustomCPU">
-              <item>
-               <property name="text">
-                <string>6502</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>65C816</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>65C02</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Z80</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>GBZ80</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>X86</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>M68000</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_38">
-              <property name="text">
-               <string>Assembler:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="leCustomEmulator"/>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_43">
-              <property name="text">
-               <string>Output filename ending:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLineEdit" name="leCustomEnding"/>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </widget>
-        <widget class="QWidget" name="gridLayoutWidget_7">
-         <property name="geometry">
-          <rect>
-           <x>34</x>
-           <y>30</y>
-           <width>551</width>
-           <height>86</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_17">
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_35">
-            <property name="text">
-             <string>QEMU project (X86 only)</string>
+           <widget class="QWidget" name="scrollAreaWidgetContents">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
             </property>
+            <layout class="QGridLayout" name="gridLayout_20">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_17">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_35">
+                 <property name="text">
+                  <string>QEMU project (X86 only)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="cmbSystem">
+                 <item>
+                  <property name="text">
+                   <string>C64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PLUS4</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>C128</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VIC20</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>NES</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AMIGA</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PET</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>X86</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MEGA65</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SPECTRUM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>OK64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AMSTRADCPC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>GAMEBOY</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TIKI100</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ATARI520ST</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ATARI2600</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>COLECO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>X16</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>BBCM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ATARI800</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MSX</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>APPLEII</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ORIC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SNES</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>M1ARM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CUSTOM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VZ200</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ACORN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>JDH8</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>POKEMONMINI</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TRS80</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TRS80COCO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>WONDERSWAN</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbQuemu">
+                 <item>
+                  <property name="text">
+                   <string>No</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>qemu-system-i386</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>System:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_44">
+                 <property name="text">
+                  <string>Use Tripe (experimental development, ask Leuat)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="cmbUseTripe">
+                 <item>
+                  <property name="text">
+                   <string>No</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Yes</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="title">
+                <string>System configuration</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_21">
+                <item row="0" column="0">
+                 <widget class="QTabWidget" name="tabConfigs">
+                  <property name="currentIndex">
+                   <number>0</number>
+                  </property>
+                  <widget class="QWidget" name="tabC64">
+                   <attribute name="title">
+                    <string>C64</string>
+                   </attribute>
+                  </widget>
+                  <widget class="QWidget" name="tabC128">
+                   <attribute name="title">
+                    <string>C128</string>
+                   </attribute>
+                   <widget class="QWidget" name="verticalLayoutWidget">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>651</width>
+                      <height>101</height>
+                     </rect>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_4">
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_4">
+                       <item>
+                        <widget class="QLabel" name="label_4">
+                         <property name="text">
+                          <string>Screen column mode:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="cmbColumns">
+                         <item>
+                          <property name="text">
+                           <string>40</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>80</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tabVic20">
+                   <attribute name="title">
+                    <string>VIC-20</string>
+                   </attribute>
+                   <widget class="QWidget" name="verticalLayoutWidget_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>30</x>
+                      <y>30</y>
+                      <width>611</width>
+                      <height>131</height>
+                     </rect>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_6">
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_10">
+                       <item>
+                        <widget class="QLabel" name="label_5">
+                         <property name="text">
+                          <string>Memory expansion blocks to include:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="cmbVic20Config">
+                         <item>
+                          <property name="text">
+                           <string>none</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3k</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8k</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>16k</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>24k</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>all</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_8">
+                       <item>
+                        <widget class="QLabel" name="label_30">
+                         <property name="text">
+                          <string>Four zero page values for VIA IRQ (must not overlap)</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="leViaZP"/>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tab_6">
+                   <attribute name="title">
+                    <string>NES</string>
+                   </attribute>
+                   <widget class="QWidget" name="gridLayoutWidget_5">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>641</width>
+                      <height>182</height>
+                     </rect>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_6" columnstretch="5,0">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_19">
+                       <property name="text">
+                        <string>No 16k blocks</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QComboBox" name="cmbNES8KBlocks">
+                       <item>
+                        <property name="text">
+                         <string>0</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>1</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>2</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QComboBox" name="cmbNES16KBlocks">
+                       <item>
+                        <property name="text">
+                         <string>1</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>2</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QLabel" name="label_26">
+                       <property name="text">
+                        <string>Char file 2</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,1">
+                       <item>
+                        <widget class="QLineEdit" name="leNESCharFile"/>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="btnNESLoadCharFile">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="label_21">
+                       <property name="text">
+                        <string>Char file 1</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="4" column="1">
+                      <widget class="QLineEdit" name="leNESCodeStart"/>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_20">
+                       <property name="text">
+                        <string>No 8kb char tiles</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="4" column="0">
+                      <widget class="QLabel" name="label_22">
+                       <property name="text">
+                        <string>Code start address</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="3,1">
+                       <item>
+                        <widget class="QLineEdit" name="leNESCharFile_2"/>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="btnNESLoadCharFile_2">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tab_7">
+                   <attribute name="title">
+                    <string>Amiga</string>
+                   </attribute>
+                  </widget>
+                  <widget class="QWidget" name="tab_10">
+                   <attribute name="title">
+                    <string>X86</string>
+                   </attribute>
+                   <widget class="QWidget" name="gridLayoutWidget_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>781</width>
+                      <height>132</height>
+                     </rect>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_27">
+                       <property name="text">
+                        <string>DOSBOX emulator system</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_28">
+                       <property name="text">
+                        <string>ASM CPU Target</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QComboBox" name="cmbX86CPU">
+                       <item>
+                        <property name="text">
+                         <string>8086</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>186</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>286</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>386</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>486</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>PENTIUM</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="3" column="1">
+                      <widget class="QLineEdit" name="leDosboxCycles"/>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QComboBox" name="cmbX86Type">
+                       <item>
+                        <property name="text">
+                         <string>default</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>svga_s3</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>hercules</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>cga</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>ega</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>pcjr</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>tandy</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QLabel" name="label_45">
+                       <property name="text">
+                        <string>Dosbox cycles:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="1">
+                      <widget class="QComboBox" name="cmbX86OutputType">
+                       <item>
+                        <property name="text">
+                         <string>exe</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>com</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="label_46">
+                       <property name="text">
+                        <string>Output target type</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tab_11">
+                   <attribute name="title">
+                    <string>PET</string>
+                   </attribute>
+                   <widget class="QGroupBox" name="groupBox_4">
+                    <property name="geometry">
+                     <rect>
+                      <x>20</x>
+                      <y>20</y>
+                      <width>621</width>
+                      <height>81</height>
+                     </rect>
+                    </property>
+                    <property name="title">
+                     <string>System</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_14">
+                     <item row="0" column="0">
+                      <layout class="QGridLayout" name="gridLayout_13">
+                       <item row="0" column="0">
+                        <widget class="QLabel" name="label_34">
+                         <property name="text">
+                          <string>Pet model:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QComboBox" name="cbmPetSystem">
+                         <item>
+                          <property name="text">
+                           <string>2001-8N</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3008</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3016</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3032</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3032B</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4016</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4032</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4032B</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8032</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8096</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8296</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>SuperPET</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tab_AmstradCPC">
+                   <attribute name="title">
+                    <string>Amstrad CPC</string>
+                   </attribute>
+                   <widget class="QWidget" name="gridLayoutWidget_AmstradCPC">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>781</width>
+                      <height>71</height>
+                     </rect>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_15">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_27">
+                       <property name="text">
+                        <string>Amstrad CPC model:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QComboBox" name="cmbAmstradCPCModel">
+                       <item>
+                        <property name="text">
+                         <string>464</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>664</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>6128</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>6128 Plus</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_31">
+                       <property name="text">
+                        <string>Additional command line options:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QLineEdit" name="leAmstradCPCOptions"/>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tab_12">
+                   <attribute name="title">
+                    <string>Spectrum</string>
+                   </attribute>
+                   <widget class="QWidget" name="gridLayoutWidget">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>771</width>
+                      <height>80</height>
+                     </rect>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_16" columnstretch="1,3">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_23">
+                       <property name="text">
+                        <string>Spectrum model</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QComboBox" name="cbmSpectrumModel">
+                       <item>
+                        <property name="text">
+                         <string>Zx Spectrum 16k</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>Zx Spectrum 48k</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>Zx Spectrum 128k</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                  <widget class="QWidget" name="tab_13">
+                   <attribute name="title">
+                    <string>Custom</string>
+                   </attribute>
+                   <widget class="QWidget" name="gridLayoutWidget_8">
+                    <property name="geometry">
+                     <rect>
+                      <x>30</x>
+                      <y>10</y>
+                      <width>751</width>
+                      <height>194</height>
+                     </rect>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_18">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_36">
+                       <property name="text">
+                        <string>CPU:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="1">
+                      <widget class="QComboBox" name="cmbCustomAssembler">
+                       <item>
+                        <property name="text">
+                         <string>From System</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>Custom</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="4" column="0">
+                      <widget class="QLabel" name="label_41">
+                       <property name="text">
+                        <string>Emulator:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_37">
+                       <property name="text">
+                        <string>Built-in methods based on:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QComboBox" name="cmbCustomMethods">
+                       <item>
+                        <property name="text">
+                         <string>C64</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>VIC20</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>SNES</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>NES</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>GAMEBOY</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>AMSTRADCPC</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>MEGA65</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>OK64</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>PET</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>X16</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>ATARI512ST</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>AMIGA</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>X86</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>BBCM</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>ATARI2600</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="3" column="3">
+                      <widget class="QLineEdit" name="leCustomAssemblerParameters"/>
+                     </item>
+                     <item row="4" column="2">
+                      <widget class="QLabel" name="label_42">
+                       <property name="text">
+                        <string>Emulator parameters:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="2">
+                      <widget class="QLabel" name="label_40">
+                       <property name="text">
+                        <string>Assembler parameters:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="1">
+                      <widget class="QLineEdit" name="leCustomAssembler"/>
+                     </item>
+                     <item row="4" column="3">
+                      <widget class="QLineEdit" name="leCustomEmulatorParameters"/>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QLabel" name="label_39">
+                       <property name="text">
+                        <string>Custom assembler (if not from system)</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QComboBox" name="cmbCustomCPU">
+                       <item>
+                        <property name="text">
+                         <string>6502</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>65C816</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>65C02</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>Z80</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>GBZ80</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>X86</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>M68000</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="label_38">
+                       <property name="text">
+                        <string>Assembler:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="4" column="1">
+                      <widget class="QLineEdit" name="leCustomEmulator"/>
+                     </item>
+                     <item row="5" column="0">
+                      <widget class="QLabel" name="label_43">
+                       <property name="text">
+                        <string>Output filename ending:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="5" column="1">
+                      <widget class="QLineEdit" name="leCustomEnding"/>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
            </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cmbSystem">
-            <item>
-             <property name="text">
-              <string>C64</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>PLUS4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>C128</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>VIC20</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>NES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>AMIGA</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>PET</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>X86</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>MEGA65</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>SPECTRUM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>OK64</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>AMSTRADCPC</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>GAMEBOY</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TIKI100</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ATARI520ST</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ATARI2600</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>COLECO</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>X16</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>BBCM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ATARI800</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>MSX</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>APPLEII</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ORIC</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>SNES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>M1ARM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>CUSTOM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>VZ200</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ACORN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>JDH8</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>POKEMONMINI</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TRS80</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TRS80COCO</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>WONDERSWAN</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="cmbQuemu">
-            <item>
-             <property name="text">
-              <string>No</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>qemu-system-i386</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>System:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_44">
-            <property name="text">
-             <string>Use Tripe (experimental development, ask Leuat)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="cmbUseTripe">
-            <item>
-             <property name="text">
-              <string>No</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yes</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_9">
         <attribute name="title">
          <string>Pascal settings</string>
         </attribute>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>50</y>
-           <width>771</width>
-           <height>178</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="chkLocalVariables">
-            <property name="text">
-             <string>Allow for local naming of function variables</string>
+        <layout class="QGridLayout" name="gridLayout_22">
+         <item row="0" column="0">
+          <widget class="QScrollArea" name="scrollArea_2">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QTextBrowser" name="textBrowser_3">
-            <property name="html">
-             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+            <layout class="QGridLayout" name="gridLayout_23">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="chkLocalVariables">
+                 <property name="text">
+                  <string>Allow for local naming of function variables</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QTextBrowser" name="textBrowser_3">
+                 <property name="html">
+                  <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;Variables declared within a procedure will be regarded as &amp;quot;local&amp;quot;, and will internally be named &amp;quot;procedurename_variablename&amp;quot;. They are *not* defined on the stack, and are global just as every other variable in TRSE (with the exception of function parameters tagged with the &amp;quot;stack&amp;quot; modifier)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </widget>
-          </item>
-         </layout>
-        </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_5">
         <attribute name="title">
          <string>Target output</string>
         </attribute>
-        <widget class="QWidget" name="gridLayoutWidget_3">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>40</y>
-           <width>501</width>
-           <height>150</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Main RAS file</string>
+        <layout class="QGridLayout" name="gridLayout_25">
+         <item row="0" column="0">
+          <widget class="QScrollArea" name="scrollArea_3">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_3">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
             </property>
+            <layout class="QGridLayout" name="gridLayout_24">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Main RAS file</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="cmbOutputType">
+                 <item>
+                  <property name="text">
+                   <string>prg</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>d64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>crt</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Project output type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbMainRas"/>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>PAW file for .d64 include files</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="cmbPawInclude"/>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Disk 2 d64 Paw file</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="cmbPawInclude2"/>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="title">
+                <string>Cartridge settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_26">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_5">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_10">
+                    <property name="text">
+                     <string>Cartridge border color:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="leBackgroundColor"/>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="leBorderColor"/>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_17">
+                    <property name="text">
+                     <string>Cartridge background color</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_18">
+                    <property name="text">
+                     <string>Initial value of $01</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLineEdit" name="leInitMachineState">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cmbOutputType">
-            <item>
-             <property name="text">
-              <string>prg</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>d64</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>crt</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Project output type</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="cmbMainRas"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>PAW file for .d64 include files</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="cmbPawInclude"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_24">
-            <property name="text">
-             <string>Disk 2 d64 Paw file</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="cmbPawInclude2"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>190</y>
-           <width>581</width>
-           <height>171</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Cartridge settings</string>
-         </property>
-         <widget class="QWidget" name="gridLayoutWidget_4">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>30</y>
-            <width>561</width>
-            <height>121</height>
-           </rect>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>Cartridge border color:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="leBackgroundColor"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="leBorderColor"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>Cartridge background color</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_18">
-             <property name="text">
-              <string>Initial value of $01</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="leInitMachineState">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -1274,227 +1318,35 @@ p, li { white-space: pre-wrap; }
         </attribute>
         <layout class="QGridLayout" name="gridLayout_11">
          <item row="0" column="0">
-          <widget class="QGroupBox" name="groupBox">
-           <property name="title">
-            <string>Zeropages</string>
+          <widget class="QScrollArea" name="scrollArea_4">
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QGridLayout" name="gridLayout_9">
-            <item row="0" column="0">
-             <layout class="QGridLayout" name="gridLayout_3">
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_12">
-                <property name="toolTip">
-                 <string>The built-in &quot;screenmemory&quot; pointer</string>
-                </property>
-                <property name="text">
-                 <string>Screenmemory zero page</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="0">
-               <widget class="QLabel" name="label_33">
-                <property name="toolTip">
-                 <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
-                </property>
-                <property name="text">
-                 <string>User-defined temporary variables</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0">
-               <widget class="QLabel" name="label_14">
-                <property name="toolTip">
-                 <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
-                </property>
-                <property name="text">
-                 <string>Workhorse zeropages</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="3">
-               <widget class="QLineEdit" name="leZeropageColorMemory">
-                <property name="text">
-                 <string>$fc</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="0">
-               <widget class="QLabel" name="label_16">
-                <property name="toolTip">
-                 <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
-                </property>
-                <property name="text">
-                 <string>Temp vars zeropages</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_9"/>
-              </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_29">
-                <property name="toolTip">
-                 <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
-                </property>
-                <property name="text">
-                 <string>Internal variable zeropages</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
-               <widget class="QPushButton" name="btnDefaultZP">
-                <property name="text">
-                 <string>Set platform default values</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="3">
-               <widget class="QLineEdit" name="levarZP"/>
-              </item>
-              <item row="3" column="3">
-               <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,2">
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_7">
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_2">
-                      <item>
-                       <widget class="QLineEdit" name="leDecrunchZp1"/>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="leDecrunchZp2"/>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="leDecrunchZp3"/>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="leDecrunchZp4"/>
-                      </item>
-                     </layout>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_13">
-                  <property name="font">
-                   <font>
-                    <pointsize>6</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>*note: The 2nd zeropage here also uses the following zp+1 zeropage address (so using $48 implies using both $48 and $49)</string>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>false</bool>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="7" column="3">
-               <widget class="QLineEdit" name="leZeropageScreenMemory"/>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_11">
-                <property name="toolTip">
-                 <string>Internal zeropages used when decrunching (exomizer)</string>
-                </property>
-                <property name="text">
-                 <string>Decrunch zero pages</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="3">
-               <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_14">
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_15">
-                      <item>
-                       <widget class="QLineEdit" name="leInternalZp1"/>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="leInternalZp2"/>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="leInternalZp3"/>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="leInternalZp4"/>
-                      </item>
-                     </layout>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_15">
-                  <property name="font">
-                   <font>
-                    <pointsize>6</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>These are used internally in TRSE for increased speed. Note that these are used in 4 pairs, 8 addresses in total</string>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>false</bool>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="2" column="3">
-               <widget class="QLineEdit" name="leZeropages"/>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="label_32">
-                <property name="text">
-                 <string>Colormemory zero page</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="3">
-               <widget class="QLineEdit" name="leTempZP"/>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="toolTip">
-                 <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
-                </property>
-                <property name="text">
-                 <string>Pointer zeropages</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="3">
-               <widget class="QLineEdit" name="leUserDefinedtempVars"/>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QTextBrowser" name="textBrowser">
-           <property name="html">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+           <widget class="QWidget" name="scrollAreaWidgetContents_6">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_27">
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox">
+               <property name="title">
+                <string>Zeropages</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_9">
+                <item row="0" column="0">
+                 <widget class="QTextBrowser" name="textBrowser">
+                  <property name="html">
+                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Zeropages&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt; are the workhorses of the C64, providing the coder with something that acts as pointers. Due to this fact, most flexible projects must use zeropages in one way of another. In TRSE, zeropages are assigned whenever you create a &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;pointer, &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;and lets you perform actions such as:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;The Zeropage address range ($0-$FF)&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt; is the workhorse of the 6502, providing the coder with something that acts as pointers. Due to this fact, most flexible projects must use zeropages in one way of another. In TRSE, zeropages are assigned whenever you create a &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;pointer, &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;and lets you perform actions such as:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-style:italic;&quot;&gt;var &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-style:italic;&quot;&gt;  p: pointer;&lt;/span&gt;&lt;/p&gt;
@@ -1513,7 +1365,232 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;An important note: &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;On larger projects with both rasters and main loop worhorse calculators together with SID music, there is always the possibility that the SID music might use some zeropages that are also being employed in the main loop work routine. In this case, the workhorse might be halted by an interrupt in the middle of a zeropage operation in order to play the SID music in the raster update, which in turn might change that zeropage and enable the main work routine to crash horribly. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;In order to prevent this from happening, please make sure to check whether your SID tunes operates on zeropages that are also used elsewhere in your program. The &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Memory Analyzer &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;tool does exactly this, and will give you a fair warning on whether you might have a conflicting zeropage address problem.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="12" column="3">
+                   <widget class="QLineEdit" name="levarZP"/>
+                  </item>
+                  <item row="8" column="0">
+                   <widget class="QLabel" name="label_32">
+                    <property name="text">
+                     <string>Colormemory zero page</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="11" column="3">
+                   <widget class="QLineEdit" name="leTempZP"/>
+                  </item>
+                  <item row="10" column="3">
+                   <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,2">
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_14">
+                      <item>
+                       <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_15">
+                          <item>
+                           <widget class="QLineEdit" name="leInternalZp1"/>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="leInternalZp2"/>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="leInternalZp3"/>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="leInternalZp4"/>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="label_15">
+                      <property name="font">
+                       <font>
+                        <pointsize>6</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>These are used internally in TRSE for increased speed. Note that these are used in 4 pairs, 8 addresses in total</string>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>false</bool>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item row="3" column="3">
+                   <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,2">
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_7">
+                      <item>
+                       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_2">
+                          <item>
+                           <widget class="QLineEdit" name="leDecrunchZp1"/>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="leDecrunchZp2"/>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="leDecrunchZp3"/>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="leDecrunchZp4"/>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="label_13">
+                      <property name="font">
+                       <font>
+                        <pointsize>6</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>*note: The 2nd zeropage here also uses the following zp+1 zeropage address (so using $48 implies using both $48 and $49)</string>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>false</bool>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item row="8" column="3">
+                   <widget class="QLineEdit" name="leZeropageColorMemory">
+                    <property name="text">
+                     <string>$fc</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="9" column="1">
+                   <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+                  </item>
+                  <item row="2" column="3">
+                   <widget class="QLineEdit" name="leZeropages"/>
+                  </item>
+                  <item row="1" column="3">
+                   <widget class="QPushButton" name="btnDefaultZP">
+                    <property name="text">
+                     <string>Set platform default values</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="13" column="0">
+                   <widget class="QLabel" name="label_33">
+                    <property name="toolTip">
+                     <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+                    </property>
+                    <property name="text">
+                     <string>User-defined temporary variables</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_7">
+                    <property name="toolTip">
+                     <string>These are the zeropages that will be used when declaring &quot;pointers&quot;</string>
+                    </property>
+                    <property name="text">
+                     <string>Pointer zeropages</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="7" column="0">
+                   <widget class="QLabel" name="label_12">
+                    <property name="toolTip">
+                     <string>The built-in &quot;screenmemory&quot; pointer</string>
+                    </property>
+                    <property name="text">
+                     <string>Screenmemory zero page</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="12" column="0">
+                   <widget class="QLabel" name="label_29">
+                    <property name="toolTip">
+                     <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+                    </property>
+                    <property name="text">
+                     <string>Internal variable zeropages</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="13" column="3">
+                   <widget class="QLineEdit" name="leUserDefinedtempVars"/>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_11">
+                    <property name="toolTip">
+                     <string>Internal zeropages used when decrunching (exomizer)</string>
+                    </property>
+                    <property name="text">
+                     <string>Decrunch zero pages</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="7" column="3">
+                   <widget class="QLineEdit" name="leZeropageScreenMemory"/>
+                  </item>
+                  <item row="11" column="0">
+                   <widget class="QLabel" name="label_16">
+                    <property name="toolTip">
+                     <string>Temporary variables are needed in longer expressions. If no temp var zeropages are left, a regular variable is used instead.</string>
+                    </property>
+                    <property name="text">
+                     <string>Temp vars zeropages</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="10" column="0">
+                   <widget class="QLabel" name="label_14">
+                    <property name="toolTip">
+                     <string>Zeropages used in internal methods such as division, multiplication, sqrt etc</string>
+                    </property>
+                    <property name="text">
+                     <string>Workhorse zeropages</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item row="2" column="0">
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -1522,110 +1599,106 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>Target settings</string>
         </attribute>
-        <widget class="QWidget" name="gridLayoutWidget_6">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>60</y>
-           <width>621</width>
-           <height>201</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="chkIgnoreBasic">
-            <property name="text">
-             <string>Ignore BASIC SYS start</string>
+        <layout class="QGridLayout" name="gridLayout_28">
+         <item row="0" column="0">
+          <widget class="QScrollArea" name="scrollArea_5">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_7">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
             </property>
+            <layout class="QGridLayout" name="gridLayout_29">
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="chkOverrideTargetSettings">
+               <property name="text">
+                <string>Override default target settings</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="2" column="1">
+                <widget class="QCheckBox" name="chkIgnoreBasic">
+                 <property name="text">
+                  <string>Ignore BASIC SYS start</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QCheckBox" name="chkDebugSymbols">
+                 <property name="text">
+                  <string>Output debug symbols</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="lblBasicStub">
+                 <property name="text">
+                  <string>Basic stub location</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="leBasicStartAddress">
+                 <property name="text">
+                  <string>$1010</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="leProgramStartAddress">
+                 <property name="text">
+                  <string>$1000</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QCheckBox" name="chkStripPrg">
+                 <property name="text">
+                  <string>Strip PRG 2-byte header</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="lblProgramStartAddress">
+                 <property name="text">
+                  <string>Program start address</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QCheckBox" name="chkIgnoreJump">
+                 <property name="text">
+                  <string>Ignore initial jump</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="0">
+              <widget class="QGroupBox" name="groupBox_3">
+               <property name="title">
+                <string>Global project defines</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_30">
+                <item row="0" column="0">
+                 <widget class="QPlainTextEdit" name="txtGlobalDefines"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
            </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="chkDebugSymbols">
-            <property name="text">
-             <string>Output debug symbols</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="lblBasicStub">
-            <property name="text">
-             <string>Basic stub location</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="leBasicStartAddress">
-            <property name="text">
-             <string>$1010</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="leProgramStartAddress">
-            <property name="text">
-             <string>$1000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="chkStripPrg">
-            <property name="text">
-             <string>Strip PRG 2-byte header</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="lblProgramStartAddress">
-            <property name="text">
-             <string>Program start address</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="chkIgnoreJump">
-            <property name="text">
-             <string>Ignore initial jump</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QCheckBox" name="chkOverrideTargetSettings">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>20</y>
-           <width>281</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Override default target settings</string>
-         </property>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>290</y>
-           <width>621</width>
-           <height>201</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Global project defines</string>
-         </property>
-         <widget class="QPlainTextEdit" name="txtGlobalDefines">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>20</y>
-            <width>621</width>
-            <height>171</height>
-           </rect>
-          </property>
-         </widget>
-        </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab_4">
         <attribute name="title">
@@ -1633,71 +1706,87 @@ p, li { white-space: pre-wrap; }
         </attribute>
         <layout class="QGridLayout" name="gridLayout_12">
          <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Post-optimization passes that are enabled/disabled for this project:</string>
+          <widget class="QScrollArea" name="scrollArea_6">
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="2" column="0">
-            <widget class="QCheckBox" name="chkPassLdaTax">
-             <property name="text">
-              <string>Pass LdaTax</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="chkPassJmp">
-             <property name="text">
-              <string>Pass Jmp</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="chkPassStaLda">
-             <property name="text">
-              <string>Pass StaLda</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="chkPassLdx">
-             <property name="text">
-              <string>Pass Ldx</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="chkPassLda">
-             <property name="text">
-              <string>Pass Lda</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="chkPassCmp0">
-             <property name="text">
-              <string>Pass cmp #0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QCheckBox" name="chkPassPhaPla">
-             <property name="text">
-              <string>Pass pha/pla</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="2" column="0">
-          <widget class="QTextBrowser" name="textBrowser_2">
-           <property name="html">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+           <widget class="QWidget" name="scrollAreaWidgetContents_8">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_31">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Post-optimization passes that are enabled/disabled for this project (6502 only):</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="2" column="0">
+                <widget class="QCheckBox" name="chkPassLdaTax">
+                 <property name="text">
+                  <string>Pass LdaTax</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="chkPassJmp">
+                 <property name="text">
+                  <string>Pass Jmp</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="chkPassStaLda">
+                 <property name="text">
+                  <string>Pass StaLda</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="chkPassLdx">
+                 <property name="text">
+                  <string>Pass Ldx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="chkPassLda">
+                 <property name="text">
+                  <string>Pass Lda</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QCheckBox" name="chkPassCmp0">
+                 <property name="text">
+                  <string>Pass cmp #0</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QCheckBox" name="chkPassPhaPla">
+                 <property name="text">
+                  <string>Pass pha/pla</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="0">
+              <widget class="QTextBrowser" name="textBrowser_2">
+               <property name="html">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Introduction&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -1750,7 +1839,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;label:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;this pass just removes those jumps.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -1759,42 +1852,44 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>Build List</string>
         </attribute>
-        <widget class="QLabel" name="label_25">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>581</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Compile list for automated project build. Executed when the &quot;Build All&quot; signal is triggered.</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton">
-         <property name="geometry">
-          <rect>
-           <x>690</x>
-           <y>10</y>
-           <width>80</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Help</string>
-         </property>
-        </widget>
-        <widget class="QPlainTextEdit" name="teBuildList">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>811</width>
-           <height>401</height>
-          </rect>
-         </property>
-        </widget>
+        <layout class="QGridLayout" name="gridLayout_33">
+         <item row="0" column="0">
+          <widget class="QScrollArea" name="scrollArea_7">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_9">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>957</width>
+              <height>475</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_32">
+             <item row="1" column="0">
+              <widget class="QPlainTextEdit" name="teBuildList"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_25">
+               <property name="text">
+                <string>Compile list for automated project build. Executed when the &quot;Build All&quot; signal is triggered.</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>Help</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
