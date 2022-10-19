@@ -80,7 +80,7 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
 //        Util::SaveByteArray(ba,fn);
         // Make sure there are padding before
         actualStart = 0xB780 - size;
-        text += "<br><font color=\"yellow\">Start address : " +Util::numToHex(actualStart) + " to " + Util::numToHex(actualStart+size) + ".</font>";
+        text += "<br><font color=\"yellow\">Start address : " +Util::numToHex(actualStart) + " to " + Util::numToHex(actualStart+size) + ".</font><br>";
         if (actualStart<0x4100) {
             text += "<br><font color=\"red\">Error compressing CPC file: compressed file is too large : </font>"+Util::numToHex(size)+" > " + Util::numToHex(0xb780-0x4100);
             m_buildSuccess = false;
@@ -115,7 +115,7 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
         text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
     }
 
-    output+="<br>";
+    //output+="<br>";
 
     time = timer.elapsed();
 

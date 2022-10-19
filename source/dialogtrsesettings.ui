@@ -62,7 +62,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -92,7 +92,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>920</width>
-                 <height>1037</height>
+                 <height>1428</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_17">
@@ -998,8 +998,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>1078</width>
-              <height>253</height>
+              <width>950</width>
+              <height>726</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1097,8 +1097,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>1078</width>
-              <height>909</height>
+              <width>950</width>
+              <height>1464</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1542,7 +1542,7 @@ Use Dasm if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>1078</width>
+              <width>950</width>
               <height>669</height>
              </rect>
             </property>
@@ -1795,7 +1795,7 @@ Use Dasm if something goes wrong</string>
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_44">
                     <property name="text">
-                     <string>Numer of backup files to keep :</string>
+                     <string>Number of backup files to keep :</string>
                     </property>
                    </widget>
                   </item>
@@ -1841,8 +1841,8 @@ Use Dasm if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>1078</width>
-              <height>623</height>
+              <width>950</width>
+              <height>1464</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_30">
@@ -1905,7 +1905,7 @@ Use Dasm if something goes wrong</string>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_12">
                <property name="title">
-                <string>DIsk utilities, packers and other external software</string>
+                <string>Disk utilities, packers and other external software</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_37">
                 <item row="0" column="0">

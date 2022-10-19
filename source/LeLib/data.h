@@ -28,6 +28,15 @@
 
 
 
+class CompileData {
+public:
+    float compileTime, assembleTime;
+    int pascalLines, asmLines;
+    bool ok;
+    int optimizedLines, improved;
+};
+
+
 
 class Data : public QObject
 {
