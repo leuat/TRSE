@@ -56,4 +56,5 @@ data_header_chr\font4x8.flf = 0
 data_header_chr/title.flf = 6.95175e-310
 data_header_chr\title.flf = 0
 show_all_files = 1
+data_header_spr/sprites.flf = 0
 open_files =, game.ras

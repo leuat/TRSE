@@ -300,6 +300,8 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
             QString of = outFolder+"/"+iff+"_c.bin";
             //            qDebug() << of;
             d64Params << "-write" <<of << name;
+//            if (!orgFileName.toLower().endsWith(".prg"))
+  //             Util::ConvertFileWithLoadAddress(of,of,address);
 
         }
     }

@@ -5,6 +5,11 @@ var
 	trm_maxFrames, trm_compressionType, trm_hasTimeStamps, trm_endChar, trm_skipChar, trm_curFrame: byte=0;	
 
 	trm_orgPos : integer;
+	
+   	trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
+   	trm_s : pointer;
+	trm_data_width, trm_xpos, trm_ypos:byte;
+	
 // Images are imported using TRSE's petscii importer. Check out the .flf file!
 
 	
@@ -21,7 +26,7 @@ Compression::ReadAnimationHeader( #myTrmFile );
 procedure ReadAnimationHeader(trm_rah_pos:integer);
 begin
 	trm_orgPos:=trm_rah_pos;
-	trm_zp:=int2ptr(trm_rah_pos);
+	trm_zp:=trm_rah_pos;
 	trm_maxFrames := trm_zp[2];
 	trm_compressionType := trm_zp[3];
 	trm_hasTimeStamps:=trm_zp[4];
@@ -33,10 +38,7 @@ begin
 end;
 
 
-procedure RenderNextPackedFrameCompressionType2(screen_ptr:global pointer;trm_data_width, trm_xpos, trm_ypos:byte);
-var
-   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
-   trm_s : pointer;
+procedure RenderNextPackedFrameCompressionType2(screen_ptr:global pointer;trm_data_width, trm_xpos, trm_ypos:global byte);
 begin
 	
 	trm_m:=0;
@@ -84,10 +86,7 @@ begin
 	end;
 end;
 
-procedure RenderNextPackedFrameCompressionType2Custom(screen_ptr, col_ptr:global pointer;trm_data_width, trm_xpos, trm_ypos:byte);
-var
-   trm_m,trm_i,trm_pass,trm_dw,trm_sw: byte;
-   trm_s : pointer;
+procedure RenderNextPackedFrameCompressionType2Custom(screen_ptr, col_ptr:global pointer;trm_data_width, trm_xpos, trm_ypos:global byte);
 begin
 	
 	trm_m:=0;

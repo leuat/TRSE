@@ -439,6 +439,16 @@ void C64FullScreenChar::ExportMovie(QFile &file)
 
     int compressionType = m_exportParams["CompressionType"];
 
+    if (m_exportParams["export1"]==4) {
+        int org = m_current;
+        for (int i=0;i<m_items.count();i++) {
+            m_current = i;
+            ExportBin(file);
+        }
+        m_current = org;
+        return;
+    }
+
     if (!m_silentExport)
     if (compressionType<2 || compressionType>3) {
 
@@ -486,7 +496,7 @@ void C64FullScreenChar::ExportMovie(QFile &file)
     uchar skipChar = cur;
 
 
-//    qDebug() << "endChar " << endChar;
+  //  qDebug() << "endChar " << endChar;
   //  qDebug() << "skipChar " << skipChar;
 //    char endChar = (char)m_exportParams["EndChar"];
   //  char skipChar = (char)m_exportParams["SkipChar"];
@@ -516,6 +526,9 @@ void C64FullScreenChar::ExportMovie(QFile &file)
         data.append(mc.CompressScreen3(screens[i], screens[i+1],
                 m_charWidth, m_charHeight,compr,
                 endChar,skipChar,true));
+
+
+
 
         if (compressionType==2)
         data.append(mc.CompressScreen2(screens[i], screens[i+1],

@@ -523,6 +523,8 @@ void Util::ConvertFileWithLoadAddress(QString input, QString output, int address
     }
     //    qDebug() << a.size() << input;
     //  exit(1);
+    if ((a[0]==(address>>8)&0xFF) && a[1]==(address)&0xFF)
+            return;
     a.insert(0,(address>>8)&0xFF);
     a.insert(0,(address)&0xFF);
 

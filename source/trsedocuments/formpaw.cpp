@@ -64,8 +64,8 @@ void FormPaw::FillToIni()
         if (ui->tabData->item(r,3)!=nullptr)
             useTiny =  ui->tabData->item(r,3)->text();
         data_tinycrunch << useTiny;
-           data<< Util::numToHex(Util::VerifyHexAddress(ui->tabData->item(r,2)->text()));
 
+        data<< Util::numToHex(Util::VerifyHexAddress(ui->tabData->item(r,2)->text()));
         PawFile pf(m_projectIniFile->getString("project_path")+"/"+ui->tabData->item(r,1)->text(),
                    m_projectIniFile->getString("project_path")+"/"+  m_pawData->getString("output_dir")+"/" + ui->tabData->item(r,0)->text() + "_c.bin",
 
@@ -414,7 +414,6 @@ void PawThread::run()
     QString tt = m_iniFile->getString("tinycrunch");
 
 
-
     //for (PawFile& pf: *m_files)
 #pragma omp parallel for
     for (int i=0;i<m_files->count();i++)
@@ -429,12 +428,27 @@ void PawThread::run()
                 params << isExomizer3;
 
             if (pf.tinyCrunch) {
-                params = QStringList() << tt << "--inPlace" << pf.inFile << pf.cFile;
-                output+="Compressing :"+ pf.inFile + "\n";
-                emit EmitTextUpdate();
+                bool hasAddressFile = false;
+                params = QStringList() << tt << "--inPlace";
+                if (!pf.inFile.toLower().endsWith(".prg")) {
+//                    params<<"-s" << pf.address;
+                    Util::ConvertFileWithLoadAddress(pf.inFile,pf.inFile+"_a",Util::NumberFromStringHex(pf.address));
+                    params << pf.inFile+"_a" << pf.cFile;
+                    hasAddressFile = true;
+
+                }
+                else
+                    params << pf.inFile << pf.cFile;
+                //output+="Compressing :"+ pf.inFile + "\n";
+                //emit EmitTextUpdate();
+                //qDebug() << params;
                 //ui->leOutput->setText(output);
 
                 processCompress.start("python3", params  );
+                processCompress.waitForFinished();
+                if (QFile::exists(pf.inFile+"_a"))
+                    QFile::remove(pf.inFile+"_a");
+
 
             }
             else {
