@@ -51,10 +51,10 @@ macx{
     LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib
     #DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
-      QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
+      QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp  -lomp -I/usr/local/include
     }
 
-    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
+    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
 
     contains(ARCH, arm64): {
       message("Arme meg!")

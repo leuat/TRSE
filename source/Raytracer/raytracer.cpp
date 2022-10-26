@@ -1,6 +1,9 @@
 #include "raytracer.h"
 
+
+#ifdef USE_OMP
 #include <omp.h>
+#endif
 #include <algorithm>
 
 #include "source/LeLib/limage/multicolorimage.h"

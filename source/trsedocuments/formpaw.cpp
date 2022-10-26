@@ -22,8 +22,9 @@
 #include "formpaw.h"
 #include <QProcess>
 #include "ui_formpaw.h"
+#ifdef USE_OMP
 #include <omp.h>
-
+#endif
 FormPaw::FormPaw(QWidget *parent) :
     TRSEDocument(parent),
     ui(new Ui::FormPaw)
