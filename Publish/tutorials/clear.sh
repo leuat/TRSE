@@ -41,6 +41,7 @@ echo "open_files =, example1.ras" >> OK64/Tutorials/OK64.trse
 echo "open_files =, kos.ras" >> OK64/KOS/kos.trse
 
 echo "open_files =, graveintentions.ras" >> CrossPlat/GraveIntentions/GraveIntentions.trse
+echo "open_files =, small_game.ras" >> C128/small_game/small_game.trse
 
 echo "open_files =, 01_hello_world.ras" >> PET/examples/examples.trse
 echo "open_files =, main.ras" >> OK64/OkComputer/ok_computer.trse

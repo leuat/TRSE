@@ -762,6 +762,7 @@ DISTFILES += \
     resources/images/portraits/red_sunglasses.png \
     resources/images/portraits/red_sunglasses_small.png \
     resources/images/tutorials/floskel.png \
+    resources/images/tutorials/small_game_c128.png \
     resources/images/wormwood.png \
     resources/text/about.txt \
     resources/text/Documentation.txt \

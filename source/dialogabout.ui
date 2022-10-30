@@ -561,6 +561,33 @@ QA, whip,  game developer</string>
          </item>
         </layout>
        </item>
+       <item row="9" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_44">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/hairguy_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_29">
+           <property name="text">
+            <string>CrazySpence</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
      <item>

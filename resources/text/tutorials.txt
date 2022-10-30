@@ -97,5 +97,6 @@ CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <
 
 X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2><p><img src=":resources/images/X16.png" width="200" class="center"><p>TRSE tutorials for the Commander X16!
 
-C128; Main Commodore 128 tutorials; C128/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
+C128; Main Commodore 128 tutorials; C128/tutorials/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
+C128; A small game; C128/small_game/;<h2>A small game</h2><p><img src=":resources/images/tutorials/small_game_c128.png" width="300" class="center"><p>A small C128 game made by CrazySpence
 
