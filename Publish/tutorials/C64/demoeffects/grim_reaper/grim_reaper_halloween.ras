@@ -1,0 +1,448 @@
+program GrimReaperEffect;
+var
+	
+/*
+
+	Grim Reaper effect from the demo "All Hallows' Eve", released at ZooParty Oct 2022.
+	Effect made by Leuat (Nicolaas Groeneboom)
+	Image made by the Almight God 
+
+	Explanation:
+	
+	The effect uses multicolor bitmap mode. For speed, only every second line is drawn - and ten
+	only updated every 4th line, i.e first frame will update line N, N+4, N+8 etc while the next
+	frame updates lines N+2, N+6, N+10 etc. 
+	
+	When the "RELEASE" define is turned on, code starts at $2000 (since music+demo headers are located at <$2000).
+
+	The line data is a dithering pattern of 256 bytes 
+	
+	 - "jack.flf" contains the original image
+	 - "jack_mask.flf" contains the actual mask used for generating unrolled code
+	 - "fadein.fjo" generates the fadein/fadeout data for the image presentation
+	 - "generate_data.fjo" generates the dithering pattern, 256 bytes  
+	What is going on in this effect?
+
+	First, a 2D table of sqrt() is generated with the buildtable below: 
+	
+		sqr : array[] of byte = buildtable2d(@DWIDTH,160,"255/(Math.sqrt(Math.pow(i-@DWIDTH/2.5,2)*4+Math.pow(j-HEI/2-20,2))+5)*32.0");	
+
+	The effect is also nice if you replace this with an atan instead
+
+		sqr : array[] of byte = buildtable2d(@DWIDTH,160,"Math.atan2((i-20)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
+		
+	First, the actual effect is real simple : take the "sqr" pattern at some shifted position, then
+	subtract the value from the same pattern but at a different shifted position (hence the two circles)
+	When all data has been written to a table, this table is then copied to the screen using
+	unrolled code generated to match the mask from the image in "jack_mask.flf":
+
+@generate_unrolled_asm1 "UpdateTunnelA" "data/updatetunnela.inc" "grim_reaper/jack_mask_data.bin" $8000 $6000 22 28 0 0 80 		
+@generate_unrolled_asm1 "UpdateTunnelB" "data/updatetunnelb.inc" "grim_reaper/jack_mask_data.bin" $8000 $6000 22 28 2 40 120 		
+	
+	This command ("generate_unrolled_asm") will generate a procedure in an include file that 
+	will copy the data based on the mask in "jack_mask.flf".
+		
+	it is also possible to just use 2d unrolled code if you don't have a mask:
+
+procedure UpdateTunnelA();
+begin
+	
+	
+	asm("
+		
+	repeat @WIDTH @HEIGHT
+	
+	lda $8000+[i]+[j*160]
+	sta @SDST+[i*8] +[j*320]
+
+
+	lda $8000+[i]+80+[j*160]
+	sta @SDST+4+[i*8]+[j*320]
+
+	
+	repend
+
+
+	");	
+end;	
+
+procedure UpdateTunnelB();
+begin
+	
+	asm("
+		
+	repeat @WIDTH @HEIGHT
+
+	lda $8000+[i]+40+[j*160]
+	sta @SDST+2+[i*8]+[j*320]
+
+	lda $8000+[i]+120+[j*160]
+	sta @SDST+6+[i*8]+[j*320]
+	
+	repend
+
+
+	");	
+	
+end;	
+
+	
+
+*/	
+	
+	
+		// max height of the effect
+	const hei : byte = 98+16;
+	// Current height being drawn
+	h : byte = 2;
+	// Char width of the circles
+	@define WIDTH 22
+	// Char data width of the circles
+	@define DWIDTH 48
+	// Char width of the circles
+	@define HEIGHT 28
+
+	// Fadein hat 	
+	fadein:incbin("data/fadein_hat_screen.bin",$FB00-$400);
+	// Fadeout bat
+	fadeout:incbin("data/fadeout_bat_screen.bin",$FB00);
+	
+
+@use "screen/fadeinout"
+@use "tables/luminosities"	
+
+
+/* 
+	if RELEASE is turned on, then	
+	
+*/
+
+//@define RELEASE 1
+
+
+// Override start address / ignore basic SYS if release
+@ifdef RELEASE
+@projectsettings "startaddress" $2000
+@projectsettings "basicsysaddress" $2010
+@projectsettings "ignorebasicsysstart" 1
+@endif
+
+// Generate unrolled asm code based on the image mask 
+// Read address, write address, width, height, y shift, data shift 1, data shift 2
+@generate_unrolled_asm1 "UpdateTunnelA" "data/updatetunnela.inc" "grim_reaper/jack_mask_data.bin" $8000 $6000 22 28 0 0 80 		
+@generate_unrolled_asm1 "UpdateTunnelB" "data/updatetunnelb.inc" "grim_reaper/jack_mask_data.bin" $8000 $6000 22 28 2 40 120 		
+
+
+// Place the unrolled code at a convenient location
+@startblock $9200 "Unrolled data"	
+
+@include "data/updatetunnela.inc"
+@include "data/updatetunnelb.inc"
+
+@endblock
+
+
+	var
+	// Generate the 2D array used for the circles. Experiment! 
+	sqr : array[] of byte = buildtable2d(@DWIDTH,160,"255/(Math.sqrt(Math.pow(i-@DWIDTH/2.5,2)*4+Math.pow(j-HEI/2-20,2))+5)*32.0");	
+	
+	// try replacing the above with an atan instead, uncomment the line below!
+	//sqr : array[] of byte = buildtable2d(@DWIDTH,160,"Math.atan2((i-20)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
+	
+	timeCounter:byte;	
+	// Place variables and tables at $E000
+	@startblock $E000 "Code"
+	// The actual dither data
+	data: incbin("data/smooth_data.bin");
+	
+	tbl : array[1000] of byte at $8000;
+	
+	@userdata $8000 $8E00 "Table" 
+	// Variables, pointers
+	src,zp,dst,p1,p2,p3,volume:pointer;
+	il : integer;
+	shift:byte=64;
+	x,y,z,k,time2,time3,tt,l,time1,dx,ctime: byte;
+	inFadeOut : byte = false;
+	time,j,i,t:byte at $80;
+	
+	dy:integer;
+
+// Export the image data	
+@export "grim_reaper/jack.flf" "grim_reaper/jack.bin" 256
+@export "grim_reaper/jack_mask.flf" "grim_reaper/jack_mask.bin" 256
+
+// Include the image data, use bank 1
+
+	img : incbin("grim_reaper/jack_data.bin", $6000);
+	img_col : incbin("grim_reaper/jack_color.bin");	
+	
+
+	r1,ry,ri,rk : byte;
+	// tab@DWIDTH optimization
+	tab40 : array[200] of integer = buildtable("i*@DWIDTH");
+	// Sine table
+	sinx: array[256] of byte=buildsinetable(127);
+	
+	
+// Performs the actual calculation of merging the two circle tables : subtract one from the other. 	
+procedure UpdateTbl();
+begin
+	dst:=#tbl;
+	dx :=sinx[time2]>>3; 
+	dy:=sinx[time3+127];
+	p1:=#sqr+tab40[sinx[time2]>>1];
+	p2:=#sqr+tab40[dy>>1];
+	p1+=sinx[time3]>>3;
+	p2+=dx;
+
+	
+//	t:=sine[time<<1]>>2;
+	t:=time;
+	if (time&1=0) then
+	begin
+		dst+=40;
+		p1+=@DWIDTH;
+		p2+=@DWIDTH;
+	end;
+	k:=time1;
+	if (h<>0) offpage then
+	for j:=0 to h step 2 offpage do
+	begin
+
+	k+=3;
+		
+		asm("
+		ldy #@WIDTH-1
+lp1:
+;		clc
+
+		repeat @WIDTH
+		lda (p2),y
+		sbc (p1),y
+		adc time
+		tax
+		lda data,x
+		sta (dst),y
+		dey
+		repend
+		
+		
+		");
+		p1+=@DWIDTH*2;
+		p2+=@DWIDTH*2;
+		dst+=80;
+	
+	end;
+	// Clear the data when fading out
+	if (timeCounter<=8) then
+	begin
+		dst-=80;
+		fill(dst,0,(@WIDTH-2)*8);
+	end;	
+end;
+
+
+procedure SetVicBank();
+begin
+	@ifndef RELEASE
+	setbank(VIC_BANK1);
+	@endif
+	@ifdef RELEASE
+	//setbank(VIC_BANK1);
+	poke(^$DD02,0,$3C+(3-2));
+	@endif
+end;
+
+/* 
+	Main raaster. Doesn't do much, just plays music (jumping to $800, which is the particular 
+	location that this demo used for music / timing
+	
+*/
+interrupt RasterMain();
+begin
+	startirq(0);
+	setbitmapmode();
+	SetVicBank();	
+	@ifdef RELEASE
+	asm("
+		jsr $800
+	");
+	@endif
+@ifdef RELEASE
+	if (inFadeOut) then
+	begin
+		ctime+=1;
+	
+		if (ctime&7=0) then if volume^<>0 then volume^:=volume^-1;
+	end;
+@endif
+	
+	
+	closeirq();
+end;	
+
+// Initialises the effect, fills the colors etc
+procedure InitActual();
+begin
+	screenoff();
+	setcharsetandscreenlocation($2000,$400);	
+	clearscreen(0,$D800);
+	clearscreen(0,$4400);
+	setmulticolormode();
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	time:=0;
+	// Fadein
+	SetVicBank();	
+	setbitmapmode();
+	
+	clearbitmap(^$8000,$12);
+
+	//clearbitmap(^$8000,16);
+	UpdateTunnelA();
+	UpdateTunnelB();
+	sprite_bitmask:=0;
+
+	p1:=#img_col+2;
+	p2:=#img_col+2+1000;
+	p3:=#img_col+2+1000;
+	// UGLY COLOR FIXES AHEAD! 
+	for j:=0 to 24 do
+	begin
+		for i:=0 to @WIDTH do
+		begin
+			if (p1[i]=0) then p1[i]:=$64;			
+			if (p3[i]=0) then p2[i]:=$1;			
+	//	fill	(p1,$64,@WIDTH);			
+	//	fill	(p2,$1,@WIDTH);
+		end;
+		p1+=40;
+		p2+=40;			
+		p3+=40;
+	end;
+	
+	// Manual fixes
+	zp:=	#img_col+2+16+40*0;
+	// so ugly.. maual fixing
+	zp[0]:=$64;
+	zp[1]:=$64;
+	zp[2]:=$64;
+	zp[3]:=$64;
+	zp+=1000;
+	zp[0]:=$1;
+	zp[1]:=$1;
+	zp[2]:=$1;
+	zp[3]:=$1;
+//	poke(,0,$55);
+	zp:=	#img_col+2+17+40*14;
+	zp[0]:=$64;
+	zp[4*40]:=$64;
+	zp[5*40+1]:=$64;
+
+	zp:=	#img_col+2+10+40*6;
+//	zp[0]:=$64;
+	zp[1*40]:=$64;
+	zp[2*40]:=$64;
+	zp[3*40]:=$64;
+	zp+=1000;
+	zp[1*40]:=$1;
+	zp[2*40]:=$1;
+//	zp[3*40]:=$1;
+
+	zp:=	#img_col+2+6+40*5;
+	zp[2]:=$64;
+	zp:=	#img_col+2+9+40*0;
+	zp[1]:=$64;
+	zp[2+39]:=$64;
+	zp+=1000;
+	zp[2+39]:=$1;
+	
+	zp:=	#img_col+2+18+40*14;
+	zp[0]:=$64;
+	zp[40*3+39]:=$64;
+	zp+=1000;
+	zp[0]:=$1;
+	
+	
+	// Fade in effect
+	FadeInOut::InitCols(#Luminosities::fromBlue);
+	FadeInOut::DefaultFadeIn(#img_col,$4400,#fadein,4);
+
+	
+	
+	copyimagecolordata(#img_col,1);
+end;
+
+// Runs the effect - outside of the raster. 
+procedure Go();
+begin
+	waitforraster(239);
+	asm(" nop");
+	StartRasterChain(RasterMain(),240,0);
+	while (timeCounter<>0) do
+	begin
+		UpdateTbl();
+		// Only updated every second frame! 		
+		if (time&1=1) then
+			UpdateTunnelA()
+		else
+			UpdateTunnelB();
+
+		// Some primeish adds			
+		time-=13;
+		time2+=3;
+		time3+=4;
+		time1+=1;
+		// Main tick counter
+		if (time1&31=0) then dec(timeCounter);
+		if (timeCounter>8) then
+		begin
+			// Increase height 
+			if (h<hei) then begin h+=2; waitforverticalblank();end;
+		end
+		else 
+		begin
+			// End: decrease height
+			if (h=0) then timeCounter:=0;
+			if (h<>0) then begin h-=2; waitforverticalblank();end;
+		end;
+		
+	end;
+	inFadeOut:=true;
+	// Fadeout effect
+	FadeInOut::DefaultFadeOut(#img_col,$4400,#fadeout,4);
+	
+end;
+
+
+@endblock
+
+// Initialise the demo. Actual init placed in another memory block. 
+procedure Init();
+begin
+	
+	@ifndef IS_DEMO
+	setmemoryconfig(1,0,0);
+	@ifndef RELEASE
+	disableciainterrupts();
+	preventirq();
+	timeCounter:=16;
+	@endif
+	@endif
+	InitActual();
+	
+end;
+
+
+// The demo provides a volume address + a timing counter in _ay and _x 	
+begin
+	volume:=_ay;
+	timeCounter:=_x;
+	Init();
+	Go();
+	asm("
+	// Return home!
+	rts
+	");
+end.

@@ -1474,7 +1474,16 @@ static int DrawQuad(lua_State* L) {
 static int DrawImage(lua_State* L) {
 
     QPainter painter;
-    QImage img(lua_tostring(L,1));
+    QString file = lua_tostring(L,1);
+    auto org = file;
+    if (!QFile::exists(file))
+        file = m_currentDir+ "/"+file;
+    if (!QFile::exists(file)) {
+        m_infoText+="Could not find image file : "+org+" (global file or in project directory)";
+        return 0;
+    }
+
+    QImage img(file);
     QVector3D pos(lua_tonumber(L,2),lua_tonumber(L,3),0);
     QVector3D scale(lua_tonumber(L,4),lua_tonumber(L,5),0);
     double rot = lua_tonumber(L,6);

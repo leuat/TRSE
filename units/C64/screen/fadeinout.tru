@@ -1,0 +1,227 @@
+unit FadeInOut;
+/*
+
+Unit for fading in / out an image
+
+*/
+var
+	curColFade : byte = 0;
+	src1,src2,dst,dst_col,dst_color2,sp : pointer;
+	isrc1,idst,isp : integer;
+	ii,jj,speed:byte;
+	cols : array[64] of byte;
+
+	
+procedure InitCols(src:pointer);
+begin
+	for ii:=0 to 64 do begin
+		jj:=ii+24;
+		cols[ii]:=(src[jj&31] &$0F);// | (fromBlack[(j)&31]&$F0) ;
+	end;
+end;
+
+
+	
+	
+	
+procedure UpdateColorsIn(src1, dst, sp : global pointer);
+begin
+	// moveto
+//	dst:=$0400;
+	dst_col:=$D800;
+	src1+=2; // Move 2 ahead
+//	src1:=#cols+2;
+//	sp:=#per;
+	src2:=src1+1000;
+//	copyfullscreen(src1,dst);
+//	copyfullscreen(src12,dst_col);
+
+	for jj:=0 to 10 do begin
+		for ii:=0 to 100 do begin
+			asm("
+
+			ldy FadeInOut_ii
+			lda (FadeInOut_sp),y
+			sbc FadeInOut_curColFade
+			sta $50
+			cmp #8
+			bcs cont2
+			tax
+			lda FadeInOut_cols,x
+;			lda #6
+			sta (FadeInOut_dst),y
+			sta (FadeInOut_dst_col),y
+			jmp jadda
+			
+cont2:		;lda $50
+			cmp #220
+			bcc jadda
+			lda (FadeInOut_src1),y
+			sta (FadeInOut_dst),y
+			lda (FadeInOut_src2),y
+			sta (FadeInOut_dst_col),y
+
+jadda:
+			
+");
+					
+		end;
+		src1:=src1+100;
+		src2:=src2+100;
+		dst:=dst+100;
+		sp:=sp+100;
+		dst_col:=dst_col+100;
+	end;
+	
+	
+//	if (time&3=0) then if curCol<16 then inc(curCol);
+end;
+
+procedure UpdateColorsInPetscii(src1, sp : global pointer);
+begin
+	// moveto
+//	dst:=$0400;
+	dst_col:=$D800;
+	src1+=2; // Move 2 ahead
+//	src1:=#cols+2;
+//	sp:=#per;
+//	src2:=src1+1000;
+//	copyfullscreen(src1,dst);
+//	copyfullscreen(src12,dst_col);
+
+	for jj:=0 to 10 do begin
+		for ii:=0 to 100 do begin
+			asm("
+
+			ldy FadeInOut_ii
+			lda (FadeInOut_sp),y
+			sbc FadeInOut_curColFade
+			sta $50
+			cmp #8
+			bcs cont2
+			tax
+			lda FadeInOut_cols,x
+;			lda #6
+;			sta (FadeInOut_dst),y
+			sta (FadeInOut_dst_col),y
+			jmp jadda
+			
+cont2:		;lda $50
+			cmp #220
+			bcc jadda
+;			lda (FadeInOut_src1),y
+;			sta (FadeInOut_dst),y
+			lda (FadeInOut_src1),y
+			sta (FadeInOut_dst_col),y
+
+jadda:
+			
+");
+					
+		end;
+		src1:=src1+100;
+		src2:=src2+100;
+		dst:=dst+100;
+		sp:=sp+100;
+		dst_col:=dst_col+100;
+	end;
+	
+	
+//	if (time&3=0) then if curCol<16 then inc(curCol);
+end;
+
+
+procedure UpdateColorsOut(src1, dst, sp : global pointer);
+begin
+	// moveto
+	dst_col:=$D800;
+	src1+=2; // Move 2 ahead
+//	src1:=#cols+2;
+//	sp:=#per;
+	src2:=src1+1002;
+	for jj:=0 to 10 do begin
+		for ii:=0 to 100 do begin
+			asm("
+
+			ldy FadeInOut_ii
+			lda (FadeInOut_sp),y
+			adc FadeInOut_curColFade
+			sta $50
+			cmp #4
+			bcs cont2o
+			tax
+			lda FadeInOut_cols,x
+;			lda #6
+			sta (FadeInOut_dst),y
+			sta (FadeInOut_dst_col),y
+			jmp jadda_o
+			
+cont2o:		;lda $50
+			cmp #220
+			bcc jadda_o
+			lda #0
+			sta (FadeInOut_dst),y
+			sta (FadeInOut_dst_col),y
+
+jadda_o:
+			
+");
+/*			k:=(sp[ii] - curCol);
+			if (k<64) then begin
+				dst[ii] := cols[k];
+			end else
+			if k>240 then begin
+				dst[ii] := src1[ii];
+				dst_col[ii]:=src12[ii];
+			end;
+*/
+					
+		end;
+		src1:=src1+100;
+		src2:=src2+100;
+		dst:=dst+100;
+		sp:=sp+100;
+		dst_col:=dst_col+100;
+	end;
+	
+//	if (time&3=0) then if curCol<16 then inc(curCol);
+end;
+procedure DefaultFadeOut(isrc1, idst, isp : global integer;speed: global byte;);
+begin
+	curColFade:=200;
+	while curColFade<>0 do
+	begin
+		UpdateColorsOut(isrc1,idst,isp);
+		waitforverticalblank();
+		curColFade-=speed;
+	end;
+
+end;
+
+
+procedure DefaultFadeIn(isrc1, idst, isp : global integer;speed: global byte;);
+begin
+	curColFade:=4;
+	while curColFade<200 do
+	begin
+		UpdateColorsIn(isrc1, idst, isp);
+		waitforverticalblank();
+		curColFade+=speed;
+	end;
+
+end;
+
+procedure DefaultFadeInPetscii(isrc1, isp : global integer;speed: global byte;);
+begin
+	curColFade:=40;
+	while curColFade<200 do
+	begin
+		UpdateColorsInPetscii(isrc1,  isp);
+		waitforverticalblank();
+		curColFade+=speed;
+	end;
+
+end;
+	
+	
+end.

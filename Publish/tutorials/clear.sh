@@ -67,3 +67,5 @@ echo "open_files =, 01_tiles.ras" >> SNES/tutorials/snes_tutorials.trse
 echo "open_files =, millipede.ras" >> VZ200/millipede/millipede.trse
 
 echo "open_files =, main.ras" >> GAMEBOY/mrtibbles/mrtibbles.trse
+
+echo "open_files =, info.rtf" >> C64/demoeffects/c64_demoeffects.trse

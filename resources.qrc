@@ -682,5 +682,7 @@
         <file>resources/images/tutorials/redwine.png</file>
         <file>resources/images/tutorials/joypaddle.png</file>
         <file>resources/images/tutorials/small_game_c128.png</file>
+        <file>resources/images/tutorials/crossplatform.png</file>
+        <file>resources/images/tutorials/demoeffects.png</file>
     </qresource>
 </RCC>
