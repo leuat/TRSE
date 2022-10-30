@@ -242,14 +242,13 @@ lp1:
 	end;	
 end;
 
-
+// Special VIC bank settings when using Sparkle! 
 procedure SetVicBank();
 begin
 	@ifndef RELEASE
 	setbank(VIC_BANK1);
 	@endif
 	@ifdef RELEASE
-	//setbank(VIC_BANK1);
 	poke(^$DD02,0,$3C+(3-2));
 	@endif
 end;
