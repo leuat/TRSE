@@ -1,0 +1,32 @@
+program Tutorial_4_rasters;
+var
+	a,b:byte;
+	music:incsid("music/fliptape60.sid",2);
+
+@define kernal 1
+
+
+
+interrupt Raster();
+begin
+	StartIRQ(@kernal);
+	// Set Allow for reading the SID
+	setmemoryconfig(0,1,1,0,0);
+	screen_bg_col:=white;
+	call(sidfile_1_play);
+	screen_bg_col:=black;
+	setmemoryconfig(0,1,1,1,0);
+	CloseIRQ();
+
+end;
+
+
+begin
+	disableciainterrupts();
+	preventirq();
+	
+	setmemoryconfig(0,1,1,1,0);
+	InitSid(sidfile_1_init);
+	StartRasterChain(Raster(), 0, @kernal);
+	Loop(); 
+end.
