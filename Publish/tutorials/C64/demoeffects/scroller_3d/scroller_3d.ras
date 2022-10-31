@@ -1,0 +1,275 @@
+program MyProgram;
+var  
+   	i,k,l,t2: byte; 
+   	charset : incbin("scroller_3d/charset.bin",$2000);
+@define tablePos $8800
+
+	data : incbin("scroller_3d/screen_scroller.bin",$2800);
+	table : incbin("scroller_3d/table_scroller.bin",@tablePos);
+	time, t,scroll : byte = 0;
+	zp, zp2, cp,tp,tp2,tp3, tp4,textP,rp : pointer;
+	dp : ^integer;
+
+
+	empty : array[16] of byte = buildtable("0");
+	ytabLo : array[16] of byte;
+	ytabHi : array[16] of byte;
+	text : string = ("   AND ALL OF KINGS HORSES AND ALL OF KINGS MEN HAD A RIOT FOR TWO DAYS AND NIGHTS      ");
+	tdiv : array[80] of byte = buildtable("i/16");
+	// each char is 512 bytes
+	charTab : array[25] of integer = BuildTable("i*512");
+	mul32 : array[128] of integer = buildtable("@tablePos + i*32");
+	rnd:array[256] of byte = buildtable("Math.random()*215213");
+
+
+
+procedure Init();
+begin
+	setcharsetlocation($2000);
+	clearscreen(0,^$0400);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	clearscreen(cyan,^$D800);
+
+	textP:=#text;
+end;
+
+
+// Looks up position of line
+procedure getPos(char, frame, line: byte);
+begin
+	
+	if (char=key_space) then
+	begin	
+		cp:=#empty;
+		return();
+	end;
+
+	dp:=mul32[frame] + charTab[char] + line<<1;
+	cp:=#data + dp^;
+end;
+
+
+procedure Render();
+var
+  pi : byte;
+begin
+	tp:=$0400+40*4;
+	tp2:=$0400+40*8;
+	tp3:=$0400+40*12;
+	tp4:=$0400+40*16;
+	k:=scroll;
+	t:=15-(time/2)&15;
+	for i:=0 to 40 do
+	begin
+//		t:=(t+1)&127;		
+		pi:=tdiv[i+scroll];
+		l:=textP[pi];
+		t2:=(t+rp[pi])&15;		
+
+		getPos(l, t2, k);
+//		cp:=empty;
+		
+/*		for j:=0 to 4 do
+		begin
+			tp[m]:=cp[j];
+			tp2[m]:=cp[j+4];
+			tp3[m]:=cp[j+8];
+			tp4[m]:=cp[j+12];
+			m:=m+40;
+		end;*/
+	
+			asm("
+				ldx i
+				ldy #0
+				lda (cp),y
+				sta $0400+160,x
+				
+				
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+320,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+480,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+640,x
+							
+				
+				txa
+				adc #40
+				tax				
+				
+				ldy #1
+				lda (cp),y
+				sta $0400+160,x
+				
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+320,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+480,x
+
+				tya
+				adc #4
+				tay
+				
+				lda (cp),y
+				sta $0400+640,x
+
+				txa
+				adc #40
+				tax				
+				
+				
+				ldy #2
+				lda (cp),y
+				sta $0400+160,x
+				
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+320,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+480,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+640,x
+				
+				txa
+				adc #40
+				tax				
+			
+				
+				ldy #3
+				lda (cp),y
+				sta $0400+160,x
+				
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+320,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+480,x
+
+				tya
+				adc #4
+				tay
+				lda (cp),y
+				sta $0400+640,x
+							
+				
+			");
+
+
+
+		
+	/*		tp[m]:=cp[0];
+			tp2[m]:=cp[4];
+			tp3[m]:=cp[8];
+			tp4[m]:=cp[12];
+			m:=m+40;
+			tp[m]:=cp[1];
+			tp2[m]:=cp[5];
+			tp3[m]:=cp[7];
+			tp4[m]:=cp[13];
+			m:=m+40;
+			tp[m]:=cp[2];
+			tp2[m]:=cp[6];
+			tp3[m]:=cp[10];
+			tp4[m]:=cp[14];
+			m:=m+40;
+			tp[m]:=cp[3];
+			tp2[m]:=cp[7];
+			tp3[m]:=cp[11];
+			tp4[m]:=cp[15];
+			m:=m+40;
+*/
+
+
+		//end;
+		k:=(k+1)&15;	
+
+	end;
+
+end;
+
+
+interrupt Raster();
+begin
+	startirq(0);
+	Render();
+	inc(time);
+	if (time&3=0) then
+	begin
+		scroll:=scroll+1;
+		if (scroll=16) then
+		begin
+			scroll:=0;
+			textP:=textP+1;
+			rp:=rp+1;
+		end;
+	end;
+	closeirq();
+end;
+
+procedure InitTabs();
+begin
+	tp:=$0400+40*4;
+	for i:=0 to 16 do
+	begin
+		ytabHi[i]:=hi(tp);
+		ytabLo[i]:=lo(tp);
+		tp:=tp+40;
+	end;
+		
+		
+	rp:=#rnd;
+	tp:=#text;
+	while (tp[0]<>0) do
+	begin
+		if (tp[0]>33) then tp[0]:=tp[0]-65;
+		tp:=tp+1;
+	end;
+end;
+
+
+begin
+	Init();	
+	InitTabs();
+	
+
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	StartRasterChain(Raster(),0,0);
+	loop();
+
+end.

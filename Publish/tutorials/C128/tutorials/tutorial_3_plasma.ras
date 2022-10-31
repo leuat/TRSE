@@ -110,7 +110,7 @@ begin
 	ax:=1;
 	ay:=5;
 
-
+	set2mhzmode();
 	// Clear screen and color memory
 	ClearScreen($20, SCREEN_CHAR_LOC);
 	ClearScreen(GREEN, SCREEN_COL_LOC);

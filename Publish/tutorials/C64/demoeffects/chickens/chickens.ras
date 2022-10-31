@@ -1,0 +1,214 @@
+program Ah_Those_Chickens;
+
+@use "tables/luminosities"
+
+var  
+  	const rasterStart : byte = 0;
+  	const noBands : byte = 5;
+  	const startY:byte = 5;
+   	i,j,curCol, init, k,curc: byte = 0;  
+   	t2:byte=64;
+   	ii : integer;
+   	lineshift : array[25] of integer;
+   	scrollVals : array[5] of byte;
+   	@setcompressionweights 100 100 100
+  	curi : byte at $81;
+   	rasterPos : array[6] of byte = BuildTable("(i)*SCREEN_WIDTH+50+STARTY*8");
+
+
+@exportcompressed "chickens/chickens_charset.flf" "chickens/chickens.bin" 0 0 40 25  25
+
+   	screen : incbin("chickens/chickens_screen.bin", $3000);
+   	charset : incbin("chickens/chickens_charset.bin",$2000);
+
+	const screenLoc : address = $4000;
+	
+	scrolls : array[8] of byte = BuildTable("i*64");
+
+
+	zp,p1,sp : ^byte;
+	sx : pointer of byte;
+	time : byte;
+	sinx : 	array[512] of byte = buildtable( "((Math.sin(i/256*3.14159*2)*0x7f + 0x7f))");
+
+	@export "chickens/logo_sprite.flf" "chickens/logo_sprite.bin" 256
+
+@define sprLoc $2800
+
+	sprites : incbin("chickens/logo_sprite.bin", @sprLoc);
+	
+/*
+	Create a large backbuffer of chickens, so copying will be fast
+*/
+procedure SetupScreen();
+begin
+	zp:=#screenLoc;
+	p1:=#screen;
+	for i:=0 to screen_height do
+	begin
+		memcpy(p1,0,zp,screen_width);
+		zp:=zp+40;				
+		memcpy(p1,0,zp,screen_width);
+		zp:=zp+screen_width;
+		
+		p1:=p1+screen_width;
+	end;
+
+end;
+
+/*
+	Copy the data! Fastly, I say!
+*/
+procedure CopyAll(len: byte at $80) inline;
+begin
+	for j:=0 to len do
+	begin
+		p1 := lineshift[curc];
+		curc:=curc+1;
+		memcpyunroll(p1,0,sp,screen_width);
+		sp:=sp+screen_width;
+	end;
+end;
+
+/*
+	Prepares the scrolling values for each band
+
+*/
+procedure Prepare();
+begin
+	zp := #screenLoc;
+	curi:=0;
+	for j:=0 to noBands do
+	begin
+		
+		k:=scrolls[j];
+		k:=sinx[k];
+		scrollVals[j] := 7-k&7;
+		scrolls[j]:=scrolls[j] + 1;
+		k:=scrolls[j];
+		k:=sinx[k];
+
+		k:=k>>3;
+		// Height of chickens, 5 chars
+		for i:=0 to 5 do
+		begin
+			p1:=zp + k;
+
+			lineshift[curi] :=p1; 	
+			curi:=curi+1;
+			zp:=zp+80;
+		end;
+	end;	
+	curi:=0;
+	curc := 0;
+	
+	hideborderx(1);
+	hidebordery(1);
+	// Start position on screen : 0
+	sp := $0400 + startY*40;
+
+end;
+
+procedure UpdateSprites();
+begin
+	if (init=0) then return();
+	if (curCol<>0) then
+		sprite_bitmask:=$ff;
+		
+	fill(sprite_color, Luminosities::fromBlack[curCol&31],8);
+	inc(curCol);
+
+end;
+
+interrupt RasterNext();
+
+// Top raster - sets up everything, updates sprites
+
+interrupt Raster();
+begin
+	startirq(0);
+	Prepare();
+	inc(time);
+	if (time&1=1) then inc(t2);
+	if (time=192) then init:=true;
+	UpdateSprites();
+	curi := 0;
+	RasterIRQ(RasterNext(),rasterPos[curi],0); 
+	
+	closeirq();	
+end;
+
+// One of the chicken bands
+interrupt RasterNext();
+begin
+	StartIRQ(0);
+	scrollx(scrollVals[curi]);	
+	CopyAll(3);
+	
+	inc(curi);
+	
+	if (curi<noBands) then
+	asm("
+		ldx curi		
+		lda rasterPos,x
+		sta $d012
+	
+	")
+	else
+	begin
+		RasterIRQ(Raster(),rasterStart,0); 
+		CopyAll(5);
+	end;
+	CloseIRQ();
+end;
+
+
+
+
+procedure InitSprites();
+begin
+	// x 
+	ii:=135;
+	// y
+	j:=55;
+	for i:=0 to 8 do 
+	begin
+		spritepos(ii,j,i);
+		ii:=ii+23;
+		if (i=3) then 
+		begin
+			j:=j+21;
+			ii:=135;
+		end;	
+		setspriteloc(i,$2800/64+i,0);
+	end;
+	sprite_bitmask:=$00;
+	sprite_stretch_x:=$0;
+	sprite_stretch_y:=$0;
+	fill(sprite_color,0,8);	
+end;
+
+
+begin
+	SetupScreen();
+	setcharsetlocation($2000);
+	setregularcolormode();
+	sx:=#sinx;
+	InitSprites();
+
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+
+	clearscreen(white,#screen_col_loc);
+	// Fill with black char
+	clearscreen(1,^$0400);
+	
+
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+		
+	waitforverticalblank();
+	Prepare();
+	StartRasterchain(Raster(), rasterStart,0);
+	loop();
+end.

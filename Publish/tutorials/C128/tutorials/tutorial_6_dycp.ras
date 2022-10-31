@@ -11,22 +11,26 @@ var
 	charset : IncBin("charsets/charset_8x8.bin", @charmap);
 	image_color: IncBin("images/jack_color.bin", $7000);
 	image_data: IncBin("images/jack_data.bin", $A000);
-
+	g_currentBank:byte = 0;
 	zpc,z : byte=0;
 
 	zeropage2, zeropage3, zeropage5, zeropage4: pointer;
 
 	//charset: IncBin("charsets/tutorial3.bin","@charmap");
 
-// Uses banking	
-@include "../RasLib/banking.ras"
+
 
 // Turn the defines on / off in order to test optimized/unoptimized versions
 
 @define DYCP   "DYCP_Optimized"
 //@define DYCP   "DYCP_Unoptimized"
 
-
+procedure SwitchBank();
+begin
+	if (g_currentBank=1) then SetBank(VIC_BANK0) else SetBank(VIC_BANK1);
+	g_currentBank:=(g_currentBank+1)&1;
+	
+end;
 
 /*
 	Original unoptimized version
@@ -286,7 +290,7 @@ begin
 	time := 0;
 	InitScreenChars();
 	// Banking data loc
-	g_dataLoc := $1A;
+//	g_dataLoc := $1A;
 //	togglebit(^$1, 0, 0);
 	copyimagecolordata(#image_color,2);
 

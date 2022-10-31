@@ -1,0 +1,90 @@
+program GoodOlTimes;
+var  
+
+/*
+	As Simple As It Gets: 
+		- image by Hammerfist
+		- Music by maze
+		 
+	
+	was coded in 20 minutes. you don't need a month to release something for a compo!
+
+*/
+
+
+	music:incsid("goodoltimes/goodoltimes.sid",2);
+
+
+@export "goodoltimes/goodoltimes.flf" "goodoltimes/got.bin" 256
+@export "goodoltimes/assault_charset.flf" "goodoltimes/assault.bin" 256
+
+	data:incbin("goodoltimes/got_data.bin",$6000);
+	colors:incbin("goodoltimes/got_color.bin",$8000);
+	charset:incbin("goodoltimes/assault.bin",$3000);
+	
+	
+	text: cstring=("                                       ",
+				"I DREAMED I SAW A BASILISK   THAT BASKED UPON A ROCKY SHORE   I LOOKED UPON THE BASILISK    WITH EYES OF STONE I LOOKED NO MORE    "
+				"                                       ",
+				);
+
+	scroll : byte = 0;
+	tp:pointer;
+	
+
+	const yp:byte = 24;
+	const yv:byte = yp*8+49;	
+	
+	
+interrupt Raster();
+begin
+	startirq(0);
+	scrollx(0);
+	hideborderx(1);
+	setbitmapmode();
+	setcharsetandscreenlocation($2000,$400);
+
+	setbank(vic_bank1);	
+	setmulticolormode();
+	call(SIDFILE_1_PLAY);	
+
+	memcpy(tp,0,^$0400+yp*40,40);
+	
+	waitforraster(yv);
+	scrollx(7-scroll);
+	settextmode();
+	setregularcolormode();
+//	waitnoraster(1);
+	setcharsetandscreenlocation($3000,$400);
+	
+	setbank(vic_bank0);	
+	
+	inc(scroll);
+	if(scroll=8) then
+	begin
+		scroll:=0;
+		tp+=1;
+		if (tp[40]=0) then tp:=#text;
+	end;
+	
+	
+	closeirq();
+end;
+
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	setbitmapmode();
+	setbank(vic_bank1);
+	setcharsetandscreenlocation($2000,$400);
+	setmulticolormode();
+	copyimagecolordata(#colors,1);	
+	initsid(SIDFILE_1_INIT);	
+	tp:=#text;	
+	fill(^$3087,0,8);
+	startrasterchain(Raster(),0,0);
+	clearscreen($20,^$0400);
+	fill(^$D800+yp*40,black,40);
+	loop();
+
+end.

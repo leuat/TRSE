@@ -1,0 +1,225 @@
+program Xmas;
+var  
+
+	@export "moon/moon0.flf" "moon/moon0.bin" 1000
+	@export "moon/moon1.flf" "moon/moon1.bin" 1000
+	@export "moon/moon2.flf" "moon/moon2.bin" 1000
+
+	@export "moon/sleigh.flf" "moon/sleigh.bin" 8 
+
+@startblock $1E00 "Variables"
+   i, time,k,x,y,z,column,keep,j,time2, spriteTrigger: byte = 0; 
+	in:integer;
+	sx,ii : integer;
+	sy : byte;
+	curX : integer = 480;   
+	bp,zp,zp2,cp,dp:pointer;
+	curBank : byte=0;
+	scroll : byte = 15;	
+	@donotremove x00000000000
+	src, dst,csrc, cdst : pointer;
+	lumi: array[32] of byte = ($06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
+@endblock
+	@define dataLoc1 $8000
+	@define dataLoc2 $A000
+	@define dataLoc3 $C000
+	@define dataLoc4 $E000
+	
+	@define spriteLoc $E00
+	@define spriteLoc2 $4800
+
+	data0 : incbin("moon/moon1.bin", @dataLoc1);
+	data1 : incbin("moon/moon0.bin", @dataLoc2);
+	data2 : incbin("moon/moon2.bin", @dataLoc3);
+	data3 : incbin("moon/moon0.bin", @dataLoc4);
+
+	sleigh0 : incbin("moon/sleigh.bin", @spriteLoc);
+	sleigh1 : incbin("moon/sleigh.bin", @spriteLoc2);
+	
+@userdata $400 $800 "Screen o"
+@userdata $4400 $4800 "Screen 1"
+
+
+
+@startblock $1200 "Main code"
+
+procedure RenderColumn();
+begin
+	dp:=src+8*38;
+	i:=mod(column,40);
+	zp:=@dataLoc2;
+	if (column>=40) then zp:=@dataLoc1;
+	if (column>=80) then zp:=@dataLoc3;
+	if (column>=120) then zp:=@dataLoc4;
+	if (column>160) then i:=39;	
+	zp:=zp+ i*8;
+	keep:=peek(^$01,0);
+	enableallram();
+	for i:=0 to 25 do
+	begin
+		memcpyunroll(zp,0,dp,8);
+		zp:=zp+320;
+		dp:=dp+320;
+
+	end;
+	poke(^$01,0,keep);
+	inc(column);
+end;
+
+
+procedure FlipBank();
+begin
+		if (curBank=1) then
+		begin 	
+			setbank(vic_bank1);
+		end
+		else 
+		begin
+			  setbank(vic_bank0);
+		end;	  
+
+end;
+
+procedure UpdateScroll();
+begin
+	
+	dec(scroll);
+	
+	for i:=0 to 2 do
+	begin
+		memcpyunroll(src,0,dst,256);		
+		asm ( " inc src+1");
+		asm ( " inc dst+1");
+	end;
+
+
+	
+	if (scroll=$FF) then 
+	begin
+		scroll:=15;
+		
+		curBank:=(curBank+1)&1;
+		if (curBank=1) then
+		begin 	
+			src:=$6008;
+			dst:=$2000;
+		end
+		else 
+		begin
+			src:=$2008;
+			dst:=$6000;
+		end;	  
+		RenderColumn();
+	end;
+end;
+@endblock 
+
+
+@startblock $5800 "Main 2 code"
+
+
+
+procedure SetSpritePos();
+begin
+	y := sy;
+	k:=0;
+	for j:=0 to 2 do
+	begin
+		ii:=sx;
+		
+		for i:=0 to 4 do
+		begin
+			spritepos(ii,y,k);		
+			k:=k+1;
+			ii:=ii+24;
+		end;	
+		y:=y+21;
+	end;
+
+end;
+
+
+interrupt Raster();
+begin
+	startirq(0);
+	setbitmapmode();
+	scrollx(scroll/2);
+	hideborderx(1);
+	FlipBank();
+	inc(time);
+	if (time&1=0) then inc(time2);
+	if (time&7=0) then inc(time2);
+
+
+	UpdateScroll();
+	SetSpritePos();
+	sy:=sine[time]>>3 + 80;	
+	sx:=sine[time+64]>>3 + 60;	
+	sx:=sx + sine[time2+64]>>1;	
+	closeirq();
+end;
+
+
+procedure InitSprites();
+begin
+	sprite_bitmask:=$ff;
+	fill(sprite_color,0,8);
+	for i:=0 to 8 do 
+	begin
+		setspriteloc(i,@spriteLoc/64 + i,0);
+		setspriteloc(i,@spriteLoc2/64 + i,1);
+	end;
+
+end;
+
+
+
+procedure Run();
+begin
+	disableciainterrupts();
+	preventirq();
+	enableallram();
+
+	setmemoryconfig(1,0,0);
+	
+	screen_bg_col:=black;
+	InitSprites();
+	i:=peek(^$01,0);
+	setmemoryconfig(1,0,0);
+
+	i:=light_blue |( blue*16);
+	clearscreen(blue + grey*16,^$4400);
+	clearscreen(blue + grey*16,^$0400);
+	clearscreen(white,^$D800);
+	clearbitmap(^$2000,32);
+	setmulticolormode();
+	multicolor_char_col[0] := black;
+	multicolor_char_col[2] := red;
+	multicolor_char_col[1] := blue;
+	src:=$2008;
+	dst:=$6000;
+	csrc:=$0401;
+	cdst:=$4401;
+	
+
+	setbank(vic_bank1);
+	setbitmapmode();
+	vic_data_loc:=$18;
+	setmemoryconfig(1,0,0);
+	preventirq();
+	disableciainterrupts();
+	StartRasterChain(Raster(),0,0);
+	
+
+	Loop();	
+
+
+
+end;
+
+
+@endblock
+
+begin
+	Run();	
+end.

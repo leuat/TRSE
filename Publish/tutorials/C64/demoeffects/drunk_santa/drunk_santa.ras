@@ -1,0 +1,479 @@
+program Drunk_xmas;
+var 
+	sprPtr,copyCnt : byte = 0; 
+   	kl,y,curCnt,i,time,j,k,m,yscroll,t1,frame,l,newx,newy,cur: byte = 0; 
+   	t2:byte=32;
+   	ix : integer;
+   
+	spra, sprb : byte;
+	const cnt : byte = 7;
+	const noFrames : byte = 64;
+
+
+	sprite_colsA : array[4] of byte =(green, blue, green, light_green);
+ 	
+	const rp1 : byte = 0;
+
+	D18Tab : array[2] of byte; 
+
+	sprites : array[4] of integer;
+
+	row1 : array[$11*cnt*noFrames] of byte at $A000;
+//	vals : array[8] of byte = (0,1,2,3,4,5,6,7);
+	vals : array[8] of byte = (0);
+
+	imul11 : array[8] of integer = buildtable("i*0x11");
+	imulFrame : array[noFrames] of integer = buildtable("i*0x11*7");
+
+
+
+
+/*
+	ExportCompressed takes the follow paramters:
+	X start, Y start, width, height, compression level
+	make sure that the compression level creates a charset that is *lower* than 256, 
+	or you'll be missing some chars!
+
+*/
+
+
+
+
+@exportcompressed "drunk_santa/santa.flf" "drunk_santa/santa.bin" 0 0 40 25 30
+
+
+
+	const ystart : byte =59;
+	const xstart : integer =20;
+
+
+	
+
+   image_screen : incbin("drunk_santa/santa_screen.bin");
+   
+
+
+   image_charset : incbin("drunk_santa/santa_charset.bin",$4800);
+
+	const spriteLoc:integer = $5000;
+
+	santa : incbin("drunk_santa/xmassprite.bin", spriteLoc);   
+	
+	
+
+
+
+	const screenLoc1 : address = $8000;
+	rp,zp,p1,p2,sp,cp,spritep, curSpriteLoc,p3 : ^byte;
+	xscroll : integer;
+	
+	spriteTab : array[8*8*16] of byte;
+
+	isin : 	array[256] of integer = buildtable( "(Math.sin(i/128*3.14159*2)*0x7f + 0x7f)");
+	// fast integer i*80 table for screen lookup
+	ytab : array[50] of integer = buildtable("i*80");
+
+
+
+/*
+
+	Sets up the backbuffer screen by creating a 80x50 black screen, and then filling in
+	the 40x25 image at the center
+	
+*/
+
+procedure SetupScreen2(loc, data : pointer);
+begin
+	zp:=loc;
+	p1:=data;
+	p2:=data;
+	for i:=0 to 75 do
+	begin
+		//fill(zp,1,20); // first 		
+		memcpy(p2,0,zp,40); // first image
+		zp:=zp+40;
+		
+		memcpy(p1,0,zp,40); // cneter
+		zp:=zp+40;
+		
+		p2:=p2+40;
+		p1:=p1+40;		
+
+		if (i=24) then p2:=data;				
+		if (i=49) then p2:=data;				
+		if (i=24) then p1:=data;				
+		if (i=49) then p1:=data;				
+	end;
+
+end;
+
+procedure SetupScreen3(loc, data : pointer);
+begin
+	zp:=loc-20;
+		
+	cp := data+ 12*40;
+	p1:=cp;
+	p2:=cp;
+	for i:=0 to 75 do
+	begin
+		//fill(zp,1,20); // first 		
+		for j:=0 to 40 do
+		begin
+			if zp[j]=1 then
+				zp[j]:=p2[j];
+		end;
+		zp:=zp+40;
+		for j:=0 to 40 do
+		begin
+			if zp[j]=1 then
+				zp[j]:=p1[j];
+		end;
+		
+		zp:=zp+40;
+		
+		p2:=p2+40;
+		p1:=p1+40;		
+
+		if (i=12) then begin p2:=data; p1:=data;end;
+		if (i=12+25) then begin p2:=data; p1:=data;end;
+
+		if (i=24) then p2:=cp;				
+		if (i=49) then p2:=cp;				
+		if (i=24) then p1:=cp;				
+		if (i=49) then p1:=cp;				
+	end;
+
+end;
+
+/*
+	Copies the data to the screen on each frame
+*/
+
+
+procedure CopyAll();
+begin
+	for kl:=0 to copyCnt do
+	begin
+//		screen_bg_col:=green;		
+		memcpyunroll(zp,0,p1,40);
+		zp:=zp+80;
+		p1:=p1+40;
+	end;
+
+end;
+
+
+
+procedure UpdateTime();
+// Called before each new vertical blank irq. Sets up the pointers for copying
+procedure Prepare();
+begin
+	if (sprPtr = 0 or sprPtr = 2) then
+	begin	
+		UpdateTime();
+		xscroll:=isin[t2+((t1+1)&1)];
+		yscroll:=sine[t1+1];
+		zp:=#screenLoc1;
+//		prevx := newx;
+//		prevy := newy;
+		newx := xscroll/8;
+		newy := yscroll/8;
+
+		zp:=zp + newx;
+		zp:=zp +ytab[newy];
+
+		
+
+	end;
+	
+	xscroll:=isin[t2];
+	yscroll:=sine[t1];
+	copyCnt:=12 + sprPtr&1;
+	if (sprPtr = 2) then begin
+		p1 := $4400;
+	end;
+	if (sprPtr = 0) then
+	begin 
+		p1 := $4000;
+	end;
+	
+	if (sprPtr = 0) then setscreenlocation($400);
+	if (sprPtr = 2) then setscreenlocation(0);
+
+	if (sprPtr = 0) then begin
+		curSpriteLoc := $47f8;
+	end;
+	if (sprPtr = 2) then
+	begin 
+		curSpriteLoc := $43f8;
+	end;
+
+
+	sprPtr := (sprPtr+1)&3;
+end;
+
+// Updates x and y time counters
+procedure UpdateTime();
+begin
+	if (t1&1=0) then inc(t2);
+	t1:=t1+1;
+end;
+
+
+
+
+
+procedure CalcNextFrame();
+begin
+	
+	i := (time+vals[curCnt])&(noFrames-1);
+	rp := #row1 +imulFrame[i] + imul11[curCnt];// + i*($11*7);
+end;
+
+
+interrupt Raster1();
+interrupt Raster3();
+
+
+procedure CopyX();
+begin
+	asm("
+		ldy #$10
+		lda (rp),y
+		sta $D010
+		ldy #0
+		lda (rp),y
+		sta $D000
+		ldy #2
+		lda (rp),y
+		sta $D002
+		ldy #4
+		lda (rp),y
+		sta $D004
+		ldy #6
+		lda (rp),y
+		sta $D006
+		ldy #8
+		lda (rp),y
+		sta $D008
+		ldy #$A
+		lda (rp),y
+		sta $D00A
+		ldy #$C
+		lda (rp),y
+		sta $D00C
+		ldy #$E
+		lda (rp),y
+		sta $D00E
+
+	");
+end;	
+
+procedure CopyY();
+begin
+	asm("
+		ldy #1
+		lda (rp),y
+		sta $D001
+		ldy #3
+		lda (rp),y
+		sta $D003
+		ldy #5
+		lda (rp),y
+		sta $D005
+		ldy #7
+		lda (rp),y
+		sta $D007
+		ldy #9
+		lda (rp),y
+		sta $D009
+		ldy #$B
+		lda (rp),y
+		sta $D00B
+		ldy #$D
+		lda (rp),y
+		sta $D00D
+		ldy #$F
+		lda (rp),y
+		sta $D00F
+		
+
+	");
+end;	
+
+
+interrupt Raster2();
+begin
+	startirq(0);
+	CopyY();
+	cur:=cur+4;
+	RasterIRQ(Raster3(),cur,0);	
+	closeirq();
+end;
+
+// Raster for chaning pointers
+interrupt Raster3();
+begin
+	startirq(0);
+//	wait(3);
+//	screen_bg_col:=blue;
+	sprite_multicolor_reg1[1] := sprite_colsA[spra];
+	spritep := sprites[spra];
+	memcpyunroll(spritep,0,curSpriteLoc,4);
+	p3:=curSpriteLoc+4;
+	spritep := sprites[sprb];
+	memcpyunroll(spritep,0,p3,4);
+	CopyX();
+	
+	cur:=cur+(23-4);
+	
+	inc(curCnt);
+	CalcNextFrame();
+	sprites[spra] := sprites[spra]+4;	
+	sprites[sprb] := sprites[sprb]+4;	
+	if (curCnt=3) then begin spra:=2; sprb:=3; end;
+		
+	if (curCnt=(cnt-1)) then
+		RasterIRQ(Raster1(),rp1,0)	
+	else
+		RasterIRQ(Raster2(),cur,0);	
+	sprite_multicolor_reg1[1] := sprite_colsA[sprb];
+		
+	closeirq();
+end;
+
+
+interrupt Raster1();
+begin
+	startirq(0);
+	Prepare();
+	scrolly((7-yscroll)&7);
+	scrollx(7-xscroll&7);
+	hideborderx(1);
+	hidebordery(1);
+	spra := 0;
+	sprb := 1;
+//	screen_bg_col:=white;
+	inc(frame);
+
+	cur := ystart-5;
+	curCnt := 0;
+	CalcNextFrame();
+	
+	for j:=0 to 4 do
+	begin
+		i:=(time>>1) + j<<2;
+		i:=i&15;
+
+		sprites[j]:=#spriteTab + (12)*i;
+	end;
+	RasterIRQ(Raster2(),cur,0);	
+	inc(time);
+
+	closeirq();
+end;
+
+procedure SetupSprites();
+begin
+	sprite_bitmask:=$00;
+	rp:=#row1;
+	time:=0;
+	for k:=0 to noFrames do
+	begin
+		y:=ystart+3;		
+		l:=time;
+		for j:=0 to cnt do
+		begin
+			ix := xstart ;
+			m := 60+isin[l]/2;
+			for i:=0 to 8 do
+			begin
+				spritepos(ix+m,y,i);
+				ix:=ix+24;
+				if (i=3) then m:=isin[l+64]/2; 
+			end;
+			memcpy(^$D000,0,rp,$11);
+			rp:=rp+$11;
+			y:=y+23;
+			if (j=2) then l:=l+32;
+//			l:=l+1;
+		end;
+		
+		time:=time + 2;
+	end;
+	spritep := #spriteTab;
+	
+	k:=0;
+	for l:=0 to 16 do
+	begin
+		m:=0;
+		for j:=0 to 3 do
+		begin
+	
+			for i:=0 to 4 do
+			begin
+				y:=k+i+m;		
+				setspriteloc(i,y+(spriteLoc-$4000)/64,1);
+//				k:=k+1;
+			end;
+			m:=m+4;
+			memcpy(^$47f8,0,spritep,4);
+			spritep := spritep +4;
+		end;
+				
+		k:=k+4*3;
+
+	end;
+	time:=0;
+end;
+
+
+begin
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	SetupSprites();
+	sp:=#screenLoc1;
+	cp:=#image_screen;
+	SetupScreen2( sp, cp );
+	SetupScreen3( sp, cp );
+	setcharsetlocation($800);
+	setmulticolormode();
+	screen_bg_col:=black;
+	screen_fg_col:=0;
+	screen_fg_col[2]:=dark_grey;
+	screen_fg_col[1]:=grey;
+	
+
+	screen_bg_col:=red;
+	screen_fg_col:=red;
+	screen_fg_col[1]:=light_red;
+	screen_fg_col[2]:=black;
+	rp := #row1;
+
+	clearscreen(white|8,^$D800);
+	setbank(VIC_BANK1);
+	Prepare();
+	Prepare();
+	yscroll := 0;
+	xscroll := 0;
+	sprite_bitmask:=$FF;
+	StartRasterchain(Raster1(), 20,0);
+
+
+	setscreenlocation(0);
+	D18Tab[1] := peek(^$D018,0);
+	setscreenlocation($400);
+	D18Tab[0] := peek(^$D018,0);
+
+//	Prepare();
+	sprite_multicolor := $FF;
+	sprite_multicolor_reg1[0] := black;
+	sprite_multicolor_reg1[1] := green;
+	fill(sprite_color,white,8);
+	while ( true) do
+	begin
+		waitforraster(37+20);
+		CopyAll();
+	end;
+end.

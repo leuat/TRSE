@@ -684,5 +684,6 @@
         <file>resources/images/tutorials/small_game_c128.png</file>
         <file>resources/images/tutorials/crossplatform.png</file>
         <file>resources/images/tutorials/demoeffects.png</file>
+        <file>resources/images/tutorials/grave_intentions.png</file>
     </qresource>
 </RCC>

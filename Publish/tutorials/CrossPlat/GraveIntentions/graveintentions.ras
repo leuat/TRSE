@@ -1,6 +1,11 @@
 program GraveIntentions;
 var  
 
+
+// Change to VIC-20, C64
+@projectsettings "system" "C64"
+
+
 @define roomID 239
 @define cnl 240
 @define ccol 241

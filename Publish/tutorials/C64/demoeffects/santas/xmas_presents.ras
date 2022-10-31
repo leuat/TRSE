@@ -1,0 +1,148 @@
+program SantasOpenimg;
+
+/*
+	This is the opening effect from the Santas' Christmas Megademo from 2020.
+	Boxes were first ray-traced with TRSE, then each frame was painstakingly 
+	handpainted to look nice.
+	
+	Simple effect that copies bitmap data. That's all. Lots of bitmap data. 
+
+*/
+
+
+var  
+   t,time,i,j,keep: byte = 0;
+
+@startblock $4800 "prx"
+	s_data: incbin("santas/s_mc.bin");
+	a_data: incbin("santas/a_mc.bin");
+	n_data: incbin("santas/n_mc.bin");
+	t_data: incbin("santas/t_mc.bin");
+@endblock
+	zp,tp,sp,zp2,p1 : pointer;
+
+
+@export "santas/kringle_mc.flf" "santas/kringle_mc.bin" 256
+
+	dy,t1,t2 : byte = 0;
+	
+	f1 : byte = 0;
+	ytab : array[25] of integer = BuildTable("0x2000 + i*320");
+
+	bg_data : incbin("santas/kringle_mc_data.bin", $2000);
+	bg_color : incbin("santas/kringle_mc_color.bin", $4000);
+	frameC : array[64] of integer = BuildTable("i*8*8*10");
+	
+	const startx:byte = 14;
+	const starty:byte = 5;
+
+
+
+procedure Update(zp,p1:global pointer;fr:byte);
+begin
+	
+	p1 := p1 + frameC[fr&15];
+	for j:=0 to 10 do
+	begin	
+		memcpyunroll(p1,0,zp,8*8);
+		zp:=zp+(8*screen_width);
+		p1:=p1+(8*8);
+	end;
+end;
+
+
+procedure InitColors();
+begin
+	copyfullscreen(^$4002,^$0400);	
+	// col 1
+	zp := $0400 +startx*1 + starty*40 ;
+	p1 := $D800 +startx*1 + starty*40 ; 
+	for i:=0 to 10 do
+	begin
+		fill(zp,white + cyan*16,8);
+		fill(p1,blue,8);
+		p1:=p1+8;
+		zp:=zp+8;
+		fill(zp,blue + green*16,8);
+		fill(p1,yellow,8);
+		zp:=zp+8;
+		p1:=p1+8;
+		fill(zp,yellow + red*16,8);
+		fill(p1,black,8);
+		p1:=p1+24;
+		zp:=zp+24;
+	end;
+	for i:=0 to 10 do
+	begin
+		fill(zp,green  + yellow*16,8);
+		fill(p1,light_blue,8);
+		p1:=p1+8;
+		zp:=zp+8;
+		fill(zp,cyan  + light_red*16,8);
+		fill(p1,blue,8);
+		zp:=zp+8;
+		p1:=p1+8;
+		fill(zp,green + blue * 16,8);
+		fill(p1,white,8);
+		p1:=p1+24;
+		zp:=zp+24;
+	end;
+	
+end;
+
+procedure Go();
+begin
+	definescreen();
+	screen_bg_col:=0;
+	screen_fg_col:=0;
+
+
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	keep:=peek(^01,0);
+	InitColors();	
+	
+	setcharsetandscreenlocation($2000,$400);
+	setmulticolormode();
+	setbitmapmode();
+	setbank(VIC_BANK0);	
+	poke(^$01,0,keep);
+	t1:=64;
+	t2:=90;
+	
+	EnableAllRam();
+	while (true) do
+	begin
+			
+		dy := starty;
+		t:=time;
+		f1:=sine[t]>>2;
+		Update(ytab[dy]+8*startx, #s_data, f1);
+		f1:=sine[t+t1]>>2;
+		Update(ytab[dy]+(8*(startx+8)), #a_data, f1);
+		f1:=sine[t+t2]>>2;
+		Update(ytab[dy]+(8*(startx+16)), #n_data, f1);
+		dy:=dy+10;
+		t := t + 110;
+		Update(ytab[dy]+(8*startx), #t_data, f1);
+		f1:=sine[t+t1]>>2;
+		Update(ytab[dy]+(8*(startx+8)), #a_data, f1);
+		f1:=sine[t+t2]>>2;
+		Update(ytab[dy]+(8*(startx+16)), #s_data, f1);
+		dy:=dy+10;
+
+		time:=time+1;
+		if (time&31=0) then inc(t1);
+		if (time&63=0) then inc(t2);
+	end;
+
+	loop();
+end;
+
+
+
+
+begin
+	Go();
+end.

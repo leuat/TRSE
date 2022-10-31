@@ -1,0 +1,174 @@
+globals = {
+	camera = { x = 0, y=0.3, z=6.0 },
+	fov = 30, 
+	
+	target = { x = 0, y=0.3, z=0 },
+	up = { x = 0, y=1, z=0 },
+	light0 = {   	direction = {x=1, y=1, z=0 }, 
+				color = {x=1.3, y=1.3, z=1.3}, 
+			},
+	ambient = { x = 0, y = 0, z = 0 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 0.2,
+	isPaused = 0
+	
+}
+
+yp = 0.01
+
+output = {
+	resolution = { width = 16, height=16},
+	output_type = 0,
+	aspect = 1,
+		-- Allow for dithering (2)	
+	dither = 1,
+	-- set dither strength 30
+	ditherStrength= {x=20, y=1, z=1},
+
+
+}
+
+
+Material0 = {
+   color = { x=0.6, y=0.6, z=0.6 },
+	reflection = 0.0,
+	shininess = 1000,
+	shininess_intensity = 0 
+}
+
+
+Material2 = {
+	color = { x=1.0, y=1.0, z=1.0 },
+	reflection = 0.5,
+	shininess = 100,
+	shininess_intensity = 1 
+
+}
+
+
+GroundMaterial = {
+	color = { x=0.2, y=0.4, z=0.1 },
+	reflection = 0.0,
+	shininess = 400,
+	shininess_intensity = 0 
+
+}
+
+
+-- Init is called on start  
+
+
+ 
+function Init()
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.4,0.5, 3 )
+--  AddObject("box","cyl1", "", "Material0", 0,0,0,    1.4,2,0.1 )
+
+	font = "rom"
+	--font = "charsets/worked_charset.flf"
+
+	z = 0.2
+	AddObject("char","char1", "", "Material2",  font, char+1,   
+-0.0,0,-z,            -- position
+0.6,0.6,2.0,      -- width xyz 
+0.250,0.3,0.31  -- stretch xyz
+);          
+
+--[[
+	AddObject("char","char2", "", "Material2",  font, char+1,   
+0,0,z,            -- position
+0.6,0.5,0.5,      -- width xyz 
+0.250,0.26,0.31  -- stretch xyz
+);          
+
+--	jj = sin(char+1)*10
+	jj = 0
+	SetRotation("char1",0,45,jj);
+
+	SetRotation("char2",0,45+90,jj);
+]]--
+
+	
+--	AddObject("perlin","char1","","Material2",  "char1", 0.1,0.05,0);
+
+	SetRotation("char1",45,0,0);
+	
+	--SetRotation("cyl1",0,90,0);
+
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 16
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame+24)/noFrames)*3.14159 + 3*3.14159/2;--*2 
+	r = 8.5
+	globals.camera.x = sin(t)*r
+	globals.target.x = 0.0
+	globals.target.y = -0.0
+	globals.camera.z = cos(t)*r
+	t=t-3.14159/6+-0.3
+	globals.light0.direction.y = yp
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+
+
+
+--[[	SetRotation("char1",0,(t*180+90),0);
+	SetRotation("char2",0,(t*180+90),0);
+	SetRotation("cyl1",0,(t*180+45)*2,0);
+	t=t*3.14159*2;
+	r=1
+	SetPosition("char1",cos(t)*r,0,sin(t)*r);
+	t=t+3.14159
+	SetPosition("char2",cos(t)*r,0,sin(t)*r);
+--	SetPosition("char1",0,0,0);
+]]--
+
+end
+
+
+function Update()
+	
+	frame=frame+1
+
+
+
+	if frame == noFrames then 
+		char=char+1
+		frame = 0
+		if char == 25 then 
+			globals.isPaused = 1
+		--CompressAndSaveHorizontalData(16,3, "data/screen.bin","data/table.bin");
+			CompressAndSaveHorizontalData(16,1, "scroller_3d/screen_scroller.bin","scroller_3d/table_scroller.bin");
+
+
+			Message("Files written")
+			
+		end
+		ClearAllObjects()
+		Init()
+	end
+
+	UpdateGraphics()
+
+
+--     AddScreen(16,16, 0xA0, 30,40, 48)
+--     AddScreen(16,16, 0x00, 32,40, 48)
+     AddScreen(16,16, 0x00, 16,40, 48)
+--     AddScreen(16,16, 0xA0, 32,40, 48)
+	
+
+
+end
