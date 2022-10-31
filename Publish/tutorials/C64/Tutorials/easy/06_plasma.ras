@@ -26,7 +26,7 @@ var
 	sinx : array[screen_width] of byte; 
 
 	// Lookup table for division by 16
-	lookupDiv16 : array[256] of byte;
+	lookupDiv16 : array[256] of byte = buildtable("i/16");
 
 
 
@@ -107,11 +107,6 @@ begin
 end;
 
 
-procedure InitDivision16();
-begin
-	for x:=0 to 256 do lookupDiv16[x]:=x/16; // Simply store values divided by 16
-end;
-
 
 begin
 	// Set color background
@@ -122,7 +117,6 @@ begin
 	// Copy the 16 characters rom baseCharacter to 0
 	asm(";here");
 	memcpy(#charsetLocation +8*baseCharacter, 0, #charsetLocation,8*16);
-	InitDivision16();
 	ax:=1;
 	ay:=5;
 

@@ -33,7 +33,7 @@
 
 class NodeNumber : public Node {
 public:
-    double m_val;
+    long m_val;
     NodeNumber(Token op, long val);
     QString m_strVal = "";
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {

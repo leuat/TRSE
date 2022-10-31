@@ -158,8 +158,9 @@ void SymbolTable::Initialize()
 //            qDebug() << "TRYING : " << value << ival;
             if (type=="b")
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"BYTE", ival));
-            if (type=="a")
+            if (type=="a") {
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol("^"+value,"ADDRESS", ival));
+            }
             if (type=="i")
                 m_constants[constant] = QSharedPointer<Symbol>(new Symbol(value,"INTEGER", ival));
             if (type=="l")

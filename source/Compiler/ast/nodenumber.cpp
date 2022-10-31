@@ -111,8 +111,11 @@ bool NodeNumber::is8bitValue(Assembler* as)
 */
 QString NodeNumber::HexValue() {
 
-    if (m_val>=0)
-    return "$" + QString::number((long)m_val,16);
+//    qDebug() << QString::number((long)m_val,16) <<m_val;
+
+    if (m_val>=0) {
+        return "$" + QString::number((long)m_val,16);
+    }
     else
         return "-$" + QString::number((long)abs(m_val),16);
 

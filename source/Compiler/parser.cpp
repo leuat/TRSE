@@ -1670,6 +1670,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         }
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
+
             t.m_value = "$"+QString::number( (long)s->m_value->m_fVal,16);
             QSharedPointer<NodeVar> nv = QSharedPointer<NodeVar>(new NodeVar(t,expr));
             nv->m_subNode = subVar;
@@ -1679,7 +1680,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         else {
             n = QSharedPointer<NodeNumber>(new NodeNumber(t, s->m_value->m_fVal));
 
-            //qDebug()  << s->m_value->m_fVal;
+//            qDebug()  << s->m_name << n->HexValue();
         }
         if (val=="TRUE" || val=="FALSE")  // setting the boolean flag, used for comparisone
             n->m_isBoolean = true;
@@ -6041,7 +6042,7 @@ QSharedPointer<Node> Parser::Expr()
     if (node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
         // Calculate and COLLAPSE. Easier on the dispatcher.
 //        qDebug() << "COLLAPSE";
-        int val = node->getValueAsInt(nullptr);
+        long val = node->getValueAsInt(nullptr);
         Token t;
         t.m_type = node->VerifyAndGetNumericType();
         t.m_lineNumber = node->m_op.m_lineNumber;

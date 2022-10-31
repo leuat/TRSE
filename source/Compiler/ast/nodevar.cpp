@@ -371,7 +371,6 @@ QString NodeVar::getValue(Assembler* as) {
                 v = tstv;
 
     }
-
     if (isReference() && Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000) return "#" + v;
 //    if (m_forceAddress && !(isPointer(as))) return "#" + v;
     QString test = s->m_type;

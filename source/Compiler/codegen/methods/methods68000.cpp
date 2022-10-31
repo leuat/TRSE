@@ -328,9 +328,9 @@ void Methods68000::Memcpy(Assembler *as)
             ok = false;
         }
     }
-//    qDebug() << "HERE" << m_codeGen->getEndType(as,m_node->m_params[3]);
-  //  qDebug()  << a1;
+//    qDebug()  << "a1";
     m_codeGen->LoadAddress(m_node->m_params[2],a1);
+  //  qDebug()  << "a2";
      m_node->m_params[3]->Accept(m_codeGen);
     if (ok)
         Asm(as,"add"+m_codeGen->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);

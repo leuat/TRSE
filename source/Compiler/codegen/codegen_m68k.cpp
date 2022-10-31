@@ -663,7 +663,14 @@ QString CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
 {
     n->ForceAddress();
     if (n->isPureNumeric() && n->isAddress()) {
-        TransformVariable(as,"move.l",a0,"#"+n->getValue(as));
+//        qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as);
+        QString val = n->getValue(as);
+        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000) {
+            if (val[0]=='-')
+                val = Util::numToHex(0x100000000-abs(Util::NumberFromStringHex("$"+val)));
+        }
+
+        TransformVariable(as,"move.l",a0,"#"+val);
         return "";
     }
     TransformVariable(as,"move.l",a0,n->getLiteral(as));

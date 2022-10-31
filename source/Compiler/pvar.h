@@ -30,7 +30,7 @@
 class PVar {
 public:
     TokenType::Type m_type;
-    long m_fVal;
+    double m_fVal;
   //  bool m_isError = false;
     QString m_strVal;
     PVar() {

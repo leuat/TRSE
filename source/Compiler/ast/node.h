@@ -205,7 +205,7 @@ public:
 
     virtual QString getValue(Assembler* as) {return "";}
     virtual QString getValue8bit(Assembler* as, int isHi) {return "";}
-    virtual int getValueAsInt(Assembler* as) {
+    virtual long getValueAsInt(Assembler* as) {
         return Util::NumberFromStringHex(getValue(as));
     }
     virtual int getArrayDataSize(Assembler* as) {
