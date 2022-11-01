@@ -658,6 +658,7 @@ if (!n->isPure()) {
     as->m_varStack.push(a0);
     as->m_regMem.Pop(a0);
     return "";
+
 }
 
 QString CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)

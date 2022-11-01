@@ -50,6 +50,4 @@ zeropage_colormemory = $fc
 data_header_/users/leuat/code/trse/publish/tutorials/atari520st/tutorials/images/trseflf.flf = 6.42462e-314
 show_all_files = 0
 data_header_images/trseflf.flf = 0
-open_files = ,tut2.ras, tut1.asm, tut1.ras
-project_path = tutorials/ATARI520ST/tutorials/
-current_file = tut2.ras
+open_files =, tut1.ras
