@@ -48,7 +48,7 @@ macx{
 #    QMAKE_LFLAGS += -F /Library/Frameworks
 #    LIBS += -framework SDL2
 
-    LIBS += -L/usr/local/lib /usr/local/lib/libomp.dylib
+    LIBS += -L/usr/local/lib
     #DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
       QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp  -I/usr/local/include
@@ -63,12 +63,15 @@ macx{
       LIBS += -L$$PWD/libs/lua/ -lluamac_arm
       CONFIG += arm64
       QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
+      LIBS+=/usr/local/lib/libomp.dylib
 
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {
         LIBS += -L$$PWD/libs/lua/ -lluamac -L/usr/local/opt/libomp/lib
         QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include
+
    }
+   LIBS += -L/usr/local/opt/libomp/lib
    LIBS += -L$$PWD/libs/lua/ -lluamac
    INCLUDEPATH += /usr/local/include/
    INCLUDEPATH += /opt/homebrew/include/
