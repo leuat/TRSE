@@ -1671,7 +1671,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
         if (t.m_type==TokenType::ADDRESS && expr!=nullptr) {
 
-            t.m_value = "$"+QString::number( (long)s->m_value->m_fVal,16);
+            t.m_value = "$"+QString::number( (ulong)s->m_value->m_fVal,16);
             QSharedPointer<NodeVar> nv = QSharedPointer<NodeVar>(new NodeVar(t,expr));
             nv->m_subNode = subVar;
 //            qDebug()  << "*******" <<s->m_name << nv->HexValue();
@@ -1681,7 +1681,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         else {
             n = QSharedPointer<NodeNumber>(new NodeNumber(t, s->m_value->m_fVal));
 
-  //          qDebug()  << s->m_name << n->HexValue();
+//            qDebug()  << "PARSER::VARIABLE " <<s->m_name << n->HexValue() << s->m_value->m_fVal << n->isAddress();
         }
         if (val=="TRUE" || val=="FALSE")  // setting the boolean flag, used for comparisone
             n->m_isBoolean = true;
@@ -4706,6 +4706,10 @@ QSharedPointer<Node> Parser::BuiltinFunction()
                  }
             }
 
+/*        qDebug() << "PARSER CREATING NEW BUILTIN NODE ";
+        for (auto p:paramList)
+            qDebug() << p->HexValue();
+            */
         return QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod(procName,paramList,&Syntax::s.builtInFunctions[procName]));
         //p->SetParameters(paramList);
 
@@ -6039,6 +6043,7 @@ QSharedPointer<Node> Parser::Expr()
         node = QSharedPointer<NodeBinOP>(new NodeBinOP(node, t, Term()));
 
     }
+//    qDebug() << "PARSER " << node->HexValue();
 
     if (node->isPureNumeric() && qSharedPointerDynamicCast<NodeNumber>(node)==nullptr) {
         // Calculate and COLLAPSE. Easier on the dispatcher.

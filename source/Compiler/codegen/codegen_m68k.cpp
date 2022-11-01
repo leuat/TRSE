@@ -646,7 +646,8 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeProcedure> node)
 QString CodeGen68k::LoadAddress(QSharedPointer<Node> n)
 {
     n->ForceAddress();
-    if (!n->isPure()) {
+//    qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as);
+if (!n->isPure()) {
 //        n->setForceType(TokenType::LONG);
         n->Accept(this);
         return "";
@@ -663,7 +664,7 @@ QString CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
 {
     n->ForceAddress();
     if (n->isPureNumeric() && n->isAddress()) {
-//        qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as);
+//        qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as) << n->HexValue() << qSharedPointerDynamicCast<NodeNumber>(n)->m_val;
         QString val = n->getValue(as);
         if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000) {
             if (val[0]=='-')

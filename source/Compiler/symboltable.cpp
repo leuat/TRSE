@@ -144,13 +144,18 @@ void SymbolTable::Initialize()
 
         if (Syntax::s.m_currentSystem->systemIsOfType(system.split(","))) {
 
-            long ival = Util::NumberFromStringHex(value);
+            ulong ival = Util::NumberFromStringHex(value);
             if (ival==0 && value.length()>4) {
 //                qDebug() << "IVAL zero so : " << value;
                 QString tst = value;
                 tst = tst.remove("$");
                 bool ok;
                 ival = tst.toLongLong(&ok,16);
+
+//                if (constant.contains("PAL"))
+  //                  qDebug() << "SymbolTable constants "<< constant << ival << value<<tst;
+
+
                 if (!ok)
                     ErrorHandler::e.Error("Error reading constant '"+constant+"' with value '"+value+"' in syntax.txt. This should not happen, contant leuat@www.irio.co.uk at once!");
   //              qDebug() << "OK? " <<ok <<tst;

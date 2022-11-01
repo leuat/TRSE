@@ -328,7 +328,7 @@ void Methods68000::Memcpy(Assembler *as)
             ok = false;
         }
     }
-//    qDebug()  << "a1";
+//    qDebug()  << "methonds68000 a1" << m_node->m_params[2]->getValue(as);
     m_codeGen->LoadAddress(m_node->m_params[2],a1);
   //  qDebug()  << "a2";
      m_node->m_params[3]->Accept(m_codeGen);

@@ -45,7 +45,7 @@ begin
 	for i:=0 to 16 do
 	begin
 		// Set some random palette
-		poke16(palette_start,i*2, j);
+		poke16(#palette_start,i*2, j);
 		j:=j+111;
 	end;	
 	

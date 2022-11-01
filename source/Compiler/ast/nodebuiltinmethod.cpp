@@ -45,8 +45,9 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
 
         // ARGH! in UPPERCASE
 
-        if (m_params[p]->isPureNumericOrAddress() && m_params[p]->m_isCollapsed==false) {
+        if (m_params[p]->isPureNumericOrAddress() && m_params[p]->m_isCollapsed==false && qSharedPointerDynamicCast<NodeNumber>(m_params[p])==nullptr) {
             // Collapse here.. willl that work?
+            //qDebug() << "HERE" << m_params[p]->getValueAsInt(as) << m_params[p]->HexValue();
             int val = m_params[p]->getValueAsInt(as);
 
             bool isAddress = m_params[p]->isAddress();

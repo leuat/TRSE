@@ -68,7 +68,7 @@ QString NodeNumber::getValue(Assembler* as) {
         QString hash = "";
         if (as!=nullptr)
             hash = as->m_hash;
-//        qDebug() << "NodeNumber "<< HexValue();
+//        qDebug() << "NodeNumber "<< HexValue() <<m_val;
         if (isAddress()) return HexValue(); else return hash + HexValue();
 }
 
@@ -112,10 +112,10 @@ bool NodeNumber::is8bitValue(Assembler* as)
 */
 QString NodeNumber::HexValue() {
 
-//    qDebug() << QString::number((long)m_val,16) <<m_val;
+//    qDebug() << QString::number((ulong)m_val,16) <<m_val << isAddress();
 
-    if (m_val>=0) {
-        return "$" + QString::number((long)m_val,16);
+    if (m_val>=0 || isAddress()) {
+        return "$" + QString::number((ulong)m_val,16);
     }
     else
         return "-$" + QString::number((long)abs(m_val),16);

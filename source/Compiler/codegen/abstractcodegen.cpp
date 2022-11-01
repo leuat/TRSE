@@ -1322,6 +1322,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
 
 
+//    for (auto m:node->m_params)
+  //      qDebug() << m->HexValue();
+
     node->VerifyParams(as);
     auto system = Syntax::s.m_currentSystem->m_system;
     if (qSharedPointerDynamicCast<SystemCustom>(Syntax::s.m_currentSystem) !=nullptr) {
