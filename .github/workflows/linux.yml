@@ -52,7 +52,7 @@ jobs:
           make CPU=m68k SYNTAX=mot -j 4
           popd
           # rgbasm (GameBoy)
-          git clone https://github.com/gbdev/rgbds.git
+          #git clone https://github.com/gbdev/rgbds.git
           pushd rgbds
           # v0.5 removes GLOBAL keyword
           git checkout tags/v0.4.2
@@ -79,7 +79,7 @@ jobs:
           export PATH=`pwd`/rgbds/build/src:$PATH
           git clone https://github.com/LIJI32/SameBoy.git
           pushd SameBoy
-          make -j 4
+          #make -j 4
           popd
           # leave tools directory
           popd
@@ -154,7 +154,7 @@ jobs:
           cd bin
           # This is the default value but defining the var should avoid logs polluting the output
           export XDG_RUNTIME_DIR=/tmp/runtime-runner
-          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
+          #xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
 
       - name: Build notification
         if: failure()

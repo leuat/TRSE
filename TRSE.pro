@@ -55,17 +55,19 @@ macx{
     }
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
-    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/opt/libomp/include
+    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
 
     contains(ARCH, arm64): {
       message("Arme meg!")
       QMAKE_APPLE_DEVICE_ARCHS=arm64
       LIBS += -L$$PWD/libs/lua/ -lluamac_arm
       CONFIG += arm64
+      QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
 
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {
-        LIBS += -L$$PWD/libs/lua/ -lluamac
+        LIBS += -L$$PWD/libs/lua/ -lluamac -L/usr/local/opt/libomp/lib
+        QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include
    }
    LIBS += -L$$PWD/libs/lua/ -lluamac
    INCLUDEPATH += /usr/local/include/
