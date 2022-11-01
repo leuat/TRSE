@@ -11,6 +11,7 @@ var
 	image : incbin("images/image1.bin");
 	image_pal : incbin("images/image1.pal");
 	
+	p1:pointer;
 /*
   Image is located in images/image1.flf, and is exported automatically on each build
   
@@ -33,9 +34,10 @@ begin
 end;
 
 begin
-	// Set to lores mode
+/*	// Set to lores mode
 	SetLoRes();
-	// Copy palette data*/
+	// Copy palette data
+	asm(";here");
 	memcpy(#image_pal,0,#palette_start,0,16,2);
 	// Get screen pointer
 	GetScreen(screen);
@@ -50,6 +52,10 @@ begin
 	begin
 		done:=keypressed(sc_key_space_pressed);
 	end;	
+*/	
+asm(";h2");
+	p1:=#palette_start;
+	palette_start[0]:=10;
 end.
 
 

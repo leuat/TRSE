@@ -1674,13 +1674,14 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
             t.m_value = "$"+QString::number( (long)s->m_value->m_fVal,16);
             QSharedPointer<NodeVar> nv = QSharedPointer<NodeVar>(new NodeVar(t,expr));
             nv->m_subNode = subVar;
+//            qDebug()  << "*******" <<s->m_name << nv->HexValue();
             //nv->m_expr = expr;
             n=nv;
         }
         else {
             n = QSharedPointer<NodeNumber>(new NodeNumber(t, s->m_value->m_fVal));
 
-//            qDebug()  << s->m_name << n->HexValue();
+  //          qDebug()  << s->m_name << n->HexValue();
         }
         if (val=="TRUE" || val=="FALSE")  // setting the boolean flag, used for comparisone
             n->m_isBoolean = true;

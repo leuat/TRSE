@@ -68,6 +68,7 @@ QString NodeNumber::getValue(Assembler* as) {
         QString hash = "";
         if (as!=nullptr)
             hash = as->m_hash;
+//        qDebug() << "NodeNumber "<< HexValue();
         if (isAddress()) return HexValue(); else return hash + HexValue();
 }
 
