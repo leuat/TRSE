@@ -63,7 +63,7 @@ macx{
       LIBS += -L$$PWD/libs/lua/ -lluamac_arm
       CONFIG += arm64
       QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
-      LIBS+=/usr/local/lib/libomp.dylib
+#      LIBS+=/usr/local/lib/libomp.dylib
 
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {
@@ -71,6 +71,7 @@ macx{
         QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include
 
    }
+   LIBS+= -lomp
    LIBS += -L/usr/local/opt/libomp/lib
    LIBS += -L$$PWD/libs/lua/ -lluamac
    INCLUDEPATH += /usr/local/include/

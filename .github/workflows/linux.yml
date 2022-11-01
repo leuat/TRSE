@@ -53,12 +53,12 @@ jobs:
           popd
           # rgbasm (GameBoy)
           #git clone https://github.com/gbdev/rgbds.git
-          pushd rgbds
+          #pushd rgbds
           # v0.5 removes GLOBAL keyword
-          git checkout tags/v0.4.2
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build -j 4
-          popd
+          #git checkout tags/v0.4.2
+          #cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          #cmake --build build -j 4
+          #popd
           # exomizer
           wget --tries=3 https://bitbucket.org/magli143/exomizer/get/3.1.1.zip
           unzip 3.1.1.zip -d exomizer
@@ -76,11 +76,11 @@ jobs:
           make -j 4
           popd
           # Build SameBoy (GameBoy emulator): requires rgbasm (built before)
-          export PATH=`pwd`/rgbds/build/src:$PATH
-          git clone https://github.com/LIJI32/SameBoy.git
-          pushd SameBoy
+          #export PATH=`pwd`/rgbds/build/src:$PATH
+          #git clone https://github.com/LIJI32/SameBoy.git
+          #pushd SameBoy
           #make -j 4
-          popd
+          #popd
           # leave tools directory
           popd
           # patch dirs
@@ -154,7 +154,7 @@ jobs:
           cd bin
           # This is the default value but defining the var should avoid logs polluting the output
           export XDG_RUNTIME_DIR=/tmp/runtime-runner
-          #xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
+          xvfb-run --auto-servernum python3 ../Publish/verify_all/verify_all.py --trse `pwd`/trse --trse.ini ~/.local/share/TRSE/trse.ini
 
       - name: Build notification
         if: failure()
