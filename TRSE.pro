@@ -51,7 +51,7 @@ macx{
     LIBS += -L/usr/local/lib
     #DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
-      QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp  -I/usr/local/include
+      QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
     }
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include

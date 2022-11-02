@@ -672,6 +672,13 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
 
 
     if (e->key()==Qt::Key_F1) {
+        if (m_help && m_help->isVisible()) {
+            QTextCursor tc = ui->txtEditor->textCursor();
+            tc.select(QTextCursor::WordUnderCursor);
+            QString word = tc.selectedText();
+            Help(word);
+            return;
+        }
         QTextCursor tc = ui->txtEditor->textCursor();
         tc.select(QTextCursor::WordUnderCursor);
         QString word = tc.selectedText();
