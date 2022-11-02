@@ -47,6 +47,11 @@ void DialogHelp::SetFontSize(int size)
     ui->widgetHelp->SetFontSize(size);
 }
 
+void DialogHelp::Search(QString txt)
+{
+    ui->widgetHelp->Search(txt);
+}
+
 
 
 

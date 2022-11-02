@@ -1225,7 +1225,13 @@ void FormRasEditor::HandleBuildComplete()
 }
 
 void FormRasEditor::Help(QString word) {
-    m_help = QSharedPointer<DialogHelp>(new DialogHelp(nullptr, word, m_defaultPalette,m_truList));
+    if (!(m_help && m_help->isVisible()))
+        m_help = QSharedPointer<DialogHelp>(new DialogHelp(nullptr, word, m_defaultPalette,m_truList));
+    else {
+        m_help->Search(word);
+        m_help->setFocus();
+    }
+
     m_help->SetFontSize(m_iniFile->getdouble("font_size"));
     m_help->show();
     //    delete dh;

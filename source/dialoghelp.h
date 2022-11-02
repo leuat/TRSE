@@ -47,6 +47,7 @@ public:
     explicit DialogHelp(QWidget *parent, QString search, QPalette pal, QStringList truFiles);
     ~DialogHelp();
     void SetFontSize(int size);
+    void Search(QString txt);
 
 private:
     Ui::DialogHelp *ui;
