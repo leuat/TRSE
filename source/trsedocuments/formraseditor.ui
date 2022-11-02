@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>963</width>
-    <height>352</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -211,6 +211,13 @@
            <widget class="QPushButton" name="btnViewHelp">
             <property name="text">
              <string>View help in window</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="chkAlwaysUseHelpWindow">
+            <property name="text">
+             <string>Always open TRSE help in a separate window</string>
             </property>
            </widget>
           </item>

@@ -366,6 +366,10 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("auto_inject"))
         m_iniFile->setFloat("auto_inject", 1);
 
+
+    if (!m_iniFile->contains("always_use_help_window"))
+        m_iniFile->setFloat("always_use_help_window", 1);
+
     if (!m_iniFile->contains("editor_cursor_width"))
         m_iniFile->setFloat("editor_cursor_width",1);
 
