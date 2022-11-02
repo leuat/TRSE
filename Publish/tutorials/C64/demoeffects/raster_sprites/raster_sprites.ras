@@ -1,0 +1,186 @@
+program RasterSprites;
+var  
+   i,j,k,time,cur,l: byte = 0;
+   nxt:byte at $80;
+   	lumi:  array[34] of byte = (
+   	$06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06,
+   	$06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06,
+   	$06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06
+   	);
+
+	zp:pointer;
+	
+	
+/*
+	Some random effect that displays 8 sprites with varying sprite multicolour raster bars. 
+	Not much to see here!
+
+*/	
+	
+@define sprloc $2000
+
+@define char $78
+
+	spr : incbin("raster_sprites/sprites.bin",@sprloc);
+
+ 	music: incsid("raster_sprites/rommel.sid",2);
+
+@export "raster_sprites/sprites.flf" "raster_sprites/sprites.bin" 0
+
+
+
+/*
+	Initialises background charset
+	
+*/
+procedure InitCharset();
+var
+	r3 : byte=%10101010;
+	r2 : byte=%01010101;
+	r1 : byte=%11111111;
+begin
+
+
+	zp:=$3000 + @char*8;
+	fill(zp,0,128+16);
+	zp:=zp+128+16;	
+	fill(zp,r1,0);
+	zp:=$3000 + @char*8;
+	zp:=zp+64+16;
+	
+
+	for i:=0 to 64 do
+	begin
+		zp[random()/4+i]:=r1;
+	end;
+	zp:=zp+32;
+	for i:=0 to 32 do
+	begin
+		zp[random()/4+i]:=r2;
+	end;
+	zp:=zp+32;
+	for i:=0 to 32 do
+	begin
+		zp[random()/4+i]:=r3;
+	end;
+
+		
+end;
+
+
+// Updates the sprites
+
+procedure SetSpritePos();
+var
+   y : byte;
+   x : integer;
+begin
+	k:=time+sine[time*2]/2;
+	j:=45+sine[time*1]/2 -k*2;
+	l:=24;//time;
+	if (l=0) then inc(l);
+	for i:=0 to 8 do
+	begin
+		x:=sine[k]/2+90;
+		y:=sine[k+j]/2+54;
+		k:=k+l;	
+		spritepos(x,y,i);
+	end;
+
+end;
+
+interrupt Raster();
+
+// Raster + set multicolour sprite colour per line
+interrupt RasterPart();
+begin
+	startirq(0);
+	sprite_multicolor_reg2:=lumi[cur];
+	cur:=cur+1;
+	
+	asm("
+		lda nxt
+		adc #1
+		sta nxt
+		sta $d012
+//		lda $d012
+		cmp #190
+		bcc contt1
+		");
+	RasterIRQ(Raster(),0,0);
+	screen_fg_col:=0;
+	call(SIDFILE_1_PLAY);
+	asm("
+contt1:	
+		");
+	closeirq();
+end;
+
+
+
+interrupt Raster();
+begin
+	startirq(0);
+	inc(time);
+	SetSpritePos();
+	cur:=time&31;
+	nxt:=56;
+	RasterIRQ(RasterPart(),nxt,0);
+
+	closeirq();
+end;
+
+
+
+procedure init();
+begin
+	clearscreen(key_space,screen_char_loc);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	sprite_bitmask:=$FF;
+	sprite_multicolor:=$FF;
+	sprite_stretch_x:=$FF;
+	sprite_stretch_y:=$FF;
+	sprite_multicolor_reg2:=blue;
+	sprite_multicolor_reg1:=dark_grey;
+	poke(^$D01B,0,$FF);
+	fill(sprite_color,grey,8);
+	for i:=0 to 8 do
+		setspriteloc(i,@sprloc/64,0);
+end;
+
+
+ 
+
+
+procedure InitScreen();
+begin
+	zp:=$0400;
+	for i:=0 to 25 do
+	begin
+		fill(zp,i+@char,40);
+		zp:=zp+40;
+	end;	
+
+	clearscreen(blue+8,^$D800);
+	setmulticolormode();
+	
+	InitCharset();
+
+	multicolor_char_col[1]:=cyan;
+	multicolor_char_col[2]:=yellow;
+
+end;
+
+
+begin
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	initsid(SIDFILE_1_INIT);
+	init();			
+	clearscreen(0,screen_col_loc);
+	InitScreen();
+	setcharsetlocation($3000);
+	StartRasterChain(Raster(),0,0);
+	Loop();
+end.
