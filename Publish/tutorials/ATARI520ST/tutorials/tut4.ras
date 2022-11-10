@@ -5,7 +5,6 @@ var
 	done : integer = 0;
 	buf: array[32000] of byte aligned;
  	j,i,time,x1,t,col : integer = 0;
-	ym_file : incbin("music/test1.ym");
 	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*128 +128");
 	test : pointer of long;
 
@@ -29,13 +28,11 @@ end;
 
 interrupt VBLank();
 begin
-	UpdateMusic();
 	time:=time+1;
 	done:=keypressed(sc_key_space_pressed);
 end;
 
 begin
-	InitMusic(#ym_file);
 	SetLoRes();
 	Graphics::Init();
 	InitGraphics();

@@ -3,7 +3,6 @@ var
 	done : integer = 0;
 	screen : pointer of integer;
  	i,time : integer = 0;
-	ym_file : incbin("music/test1.ym");
 	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*48 +48");
 
 	// Palette gets exported automatically	
@@ -12,7 +11,7 @@ var
 	image : incbin("images/logo.bin");
 	image_pal : incbin("images/logo.pal");
 	
-
+// Moves the screen data
 procedure UpdateLogo();
 begin
 	GetScreen(screen);
@@ -26,7 +25,6 @@ end;
 
 interrupt VBLank();
 begin
-	UpdateMusic();
 	UpdateLogo();
 	time:=time+1;
 	done:=keypressed(sc_key_space_pressed);
@@ -37,10 +35,7 @@ begin
 	SetLoRes();
 	
 	memcpy(#image_pal,0,#palette_start,0,15,2);
-	InitMusic(#ym_file);
 	setirq(VBLank(), irq_verticalblank);
-
-	
 	while (done = false) do
 	begin
 	end;	

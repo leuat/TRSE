@@ -1330,7 +1330,7 @@ bool MainWindow::SaveAs()
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     QString f = ext +" Files (*."+ext+")";
-    QString filename = dialog.getSaveFileName(NULL, "Save file as",getProjectPath(),f);
+    QString filename = dialog.getSaveFileName(this, "Save file as",getProjectPath(),f);
 
     if (filename=="")
         return false;

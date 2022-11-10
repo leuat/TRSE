@@ -30,8 +30,6 @@ begin
 		palette_start[0]:=col
 	else 
 		palette_start[0]:=0;
-
-
 	
 	col:=col+4;
 	line:=line+1;
@@ -48,7 +46,7 @@ begin
 	InitMusic(#ym_file);
 	setirq(VBLank(), irq_verticalblank);
 	settimerirq(Timer(),2);
-	
+		
 	while (done = false) do
 	begin
 		done:=keypressed(sc_key_space_pressed);

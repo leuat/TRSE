@@ -39,16 +39,17 @@ macx{
 
     #LIBS += -openmp
 #    ICON = trse.icns
+    QMAKE_CXXFLAGS += -Ofast
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
 #    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 
 
-    LIBS += -L$$PWD/libs -Ofast
+    LIBS += -L$$PWD/libs
     LIBS += -ldl
 #    QMAKE_LFLAGS += -F /Library/Frameworks
 #    LIBS += -framework SDL2
 
-    LIBS += -L/usr/local/lib
+#    LIBS += -L/usr/local/lib
     #DEFINES -=USE_OMP
     contains(DEFINES, USE_OMP) {
       QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
@@ -59,23 +60,24 @@ macx{
 
     contains(ARCH, arm64): {
       message("Arme meg!")
-      QMAKE_APPLE_DEVICE_ARCHS=arm64
+#      QMAKE_APPLE_DEVICE_ARCHS=arm64
       LIBS += -L$$PWD/libs/lua/ -lluamac_arm
       CONFIG += arm64
       QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
-#      LIBS+=/usr/local/lib/libomp.dylib
+      LIBS+= -L/opt/homebrew/opt/libomp/lib
 
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {
         LIBS += -L$$PWD/libs/lua/ -lluamac -L/usr/local/opt/libomp/lib
         QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include
+        LIBS += -L/usr/local/opt/libomp/lib
 
    }
    LIBS+= -lomp
-   LIBS += -L/usr/local/opt/libomp/lib
    LIBS += -L$$PWD/libs/lua/ -lluamac
-   INCLUDEPATH += /usr/local/include/
-   INCLUDEPATH += /opt/homebrew/include/
+
+#   INCLUDEPATH += /usr/local/include/
+#   INCLUDEPATH += /opt/homebrew/include/
 
 #   LIBS +=  -L/Users/leuat/code/sdl-x86/Versions/A -lSDL2
 

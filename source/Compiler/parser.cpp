@@ -3132,6 +3132,7 @@ void Parser::PreprocessSingle() {
 
                       for (QString s: m_diskFiles) {
                           QString var = s;
+                          if (s=="") ErrorHandler::e.Error("One of your disk files is missing a name. Please correct the .paw file!");
                           for (int i=0;i<256;i++) {
                               QString r = "#P"+QString::number(i)+";";
                               var = var.replace(r,"");
@@ -3163,7 +3164,7 @@ void Parser::PreprocessSingle() {
                       m_lexer->m_pos-=orgL.length();
 
 
-                     // qDebug().noquote() <<  m_lexer->m_text;
+//                      qDebug().noquote() <<  m_lexer->m_text;
 
 
 
