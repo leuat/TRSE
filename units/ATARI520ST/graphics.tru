@@ -58,7 +58,7 @@ var
 	@donotremove shiftTab
 
 	// Tab for shl >8
-	shiftTab : array[32] of integer = (
+	shiftTab : array[] of integer = (
 	0,0, 
 	1,0, 
 	2,0, 

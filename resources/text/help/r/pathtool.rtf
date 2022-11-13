@@ -1,0 +1,9 @@
+<h3>Description</h3>
+PathTool will export a .svg path file (made with gimp or photoshop) to binary data for use in demo effects.
+<p>
+Usage:
+<p>
+@pathtool "my_path.svg" "base_" [ number_of_frames ] [ number of rotation frames ]
+<p>
+pathtool will generate 3 files: base_x.bin, base_y.bin and base_t.bin. X and Y contain [ number of frames ] X/Y coordinates.
+base_t.bin will contain the current frame at the given position.

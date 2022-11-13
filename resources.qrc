@@ -685,5 +685,6 @@
         <file>resources/images/tutorials/crossplatform.png</file>
         <file>resources/images/tutorials/demoeffects.png</file>
         <file>resources/images/tutorials/grave_intentions.png</file>
+        <file>resources/text/help/r/pathtool.rtf</file>
     </qresource>
 </RCC>

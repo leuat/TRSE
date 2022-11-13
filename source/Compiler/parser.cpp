@@ -1144,6 +1144,13 @@ void Parser::HandlePreprocessorInParsing()
                 Eat();
             return;
         }
+        if (m_currentToken.m_value=="pathtool") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="exportsubregion") {
             Eat();
             Eat();
@@ -2926,6 +2933,10 @@ void Parser::PreprocessSingle() {
               else if (m_currentToken.m_value.toLower() =="export") {
                   Eat(TokenType::PREPROCESSOR);
                   HandleExport();
+              }
+              else if (m_currentToken.m_value.toLower() =="pathtool") {
+                  Eat(TokenType::PREPROCESSOR);
+                  HandlePathTool();
               }
               else if (m_currentToken.m_value.toLower() =="exportsubregion") {
                   Eat(TokenType::PREPROCESSOR);
@@ -5222,6 +5233,29 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandlePathTool()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    if (!QFile::exists(inFile))
+        ErrorHandler::e.Error("Pathtool error: could not open file "+inFile,m_currentToken.m_lineNumber);
+
+
+
+
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    Tool::PathTool(inFile, outFile, param1, param2);
 
 }
 
