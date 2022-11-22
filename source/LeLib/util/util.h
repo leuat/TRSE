@@ -69,7 +69,7 @@ public:
     static QMap<QString, long> sm_fileSizes;
 
 
-
+    static char** StringListToChar(QStringList lst);
 
     static QString toString(QStringList lst);
     static unsigned long int Endian_DWord_Conversion(unsigned long int dword);

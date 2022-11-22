@@ -445,7 +445,7 @@ m; StrGetFromIndex;C64, MEGA65, PLUS4, C128, VIC20, PET, X16, OK64; a, b
 # Sprite routines
 
 m; SpritePos; C64, MEGA65, PLUS4, C128 ; ib,b,b
-m; SetSpriteLoc; C64, PLUS4, C128; b,b,n
+m; SetSpriteLoc; C64, PLUS4, C128,  MEGA65; b,b,n
 
 # Sound/Music routines
 
@@ -568,6 +568,7 @@ m; SetPixel; X86, M1ARM; a, i,i,b
 m; SetPixelCGA; X86, M1ARM; a, i,i,b
 m; memcpy8; PX86, M1ARM; a,a,i
 m; memcpy16; PX86, M1ARM; a,a,i
+#m; memcpy16unroll; PX86, M1ARM; a,a,i
 m; memcpy32; PX86, M1ARM; a,a,i
 m; SetCgaPalette; X86, M1ARM; i
 m; toPointer;PX86, M1ARM;i,i
@@ -1431,6 +1432,8 @@ r; TYPE; ALL
 r; INLINE; ALL
 r; COMPRESS; ALL
 r; EXECUTE; ALL
+
+r; KRILLSLOADER; C64
 
 r; PBMEXPORT; C64, MEGA65, PLUS4, C128, VIC20, PET
 r; VBMEXPORT; X16,C64, MEGA65, PLUS4, C128, VIC20, BBCM, ACORN, ATARI800, NES, Amiga, ATARI520ST, OK64, PET

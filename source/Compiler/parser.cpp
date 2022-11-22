@@ -2767,6 +2767,7 @@ QSharedPointer<Node> Parser::Term()
 }
 
 void Parser::PreprocessSingle() {
+
 //              qDebug() << "***PRE" << m_currentToken.m_value << m_pass;
 
 
@@ -3090,7 +3091,8 @@ void Parser::PreprocessSingle() {
                       int installerPos = m_currentToken.m_intVal;
 
 
-                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
+//                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
+                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos);
                       m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
   //                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
   //                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
@@ -3100,8 +3102,8 @@ void Parser::PreprocessSingle() {
 
                       QString pos = QString::number(loaderPos,16);
                       if (pos=="200") pos = "0200";
-                      QString loaderFile =":resources/bin/krill/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
-                      QString installerFile =":resources/bin/krill/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
+                      QString loaderFile =":resources/bin/krill_19/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
+                      QString installerFile =":resources/bin/krill_19/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
 
                       if (!QFile::exists(loaderFile))
                           ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
@@ -3117,6 +3119,7 @@ void Parser::PreprocessSingle() {
                               QDir().mkdir(outFolder);
 
                       QString outFile = outFolder+"krill_loader.bin";
+
                       if (QFile::exists(outFile)) {
                           QFile f(outFile);
                           f.remove();
@@ -3213,8 +3216,14 @@ void Parser::PreprocessAll()
     m_acc = 0;
     m_currentToken = m_lexer->GetNextToken();
     //m_preprocessorDefines.clear();
+
+//    if (m_pass==1)
+//    emit EmitTick("<br><font color=\"grey\">Preprocessing: []");
+
     while (m_currentToken.m_type!=TokenType::TEOF) {
 //        qDebug() << m_currentToken.getType() << m_currentToken.m_value;
+  //      if (m_pass==1)
+  //      emit EmitTick("&"+QString::number((int)(100*m_lexer->m_pos/(float)m_lexer->m_text.size())));
 
 
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
@@ -3276,8 +3285,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
 
     m_symTab->m_currentFilename = m_currentFileShort;
-    emit EmitTick("<font color=\"grey\">Parsing: []");
     m_pass = 0;
+    emit EmitTick("<font color=\"grey\">Parsing: []");
   //  RemoveComments();
     InitObsolete();
 
@@ -3297,6 +3306,9 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     PreprocessAll();
     if (m_abort)
         return nullptr;
+
+
+//    emit EmitTick("Parsing: []");
 
     ApplyTPUBefore();
 //    qDebug().noquote() << "SOURCE" << m_lexer->m_text;

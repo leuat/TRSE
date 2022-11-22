@@ -279,6 +279,15 @@ bool Syntax::isAlnum(QString s) {
     return alnum.contains(s.toLower());
 }
 
+bool Syntax::StringIsAlnum(QString s)
+{
+    for (QChar c : s) {
+        if (!isAlnum(c))
+            return false;
+    }
+    return true;
+}
+
 bool Syntax::isString(QString s) {
     return alnumString.contains(s.toLower());
 }

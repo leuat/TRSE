@@ -2572,6 +2572,11 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("main_ras_file"))
         m_ini->setString("main_ras_file", "none");
 
+    if (!m_ini->contains("dirart_flf_file"))
+        m_ini->setString("dirart_flf_file", "none");
+
+    if (!m_ini->contains("d64name"))
+        m_ini->setString("d64name", "main");
 
 
     if (!m_ini->contains("zeropage_internal1"))

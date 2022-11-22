@@ -1215,14 +1215,22 @@ void Compression::GenerateUnrolledAsm1(QString name, QString outFile, QString in
     QString s = QString::number(c,2);
     qDebug() << s;
 */
+    if (!QFile::exists(inFile))
+    {
+        ErrorHandler::e.Error("Generate unrolled asm code: could not find file "+inFile);
+    }
     QByteArray img = Util::loadBinaryFile(inFile);
     for (int j=0;j<height;j++) {
         for (int i=0;i<width;i++) {
 
             int pos1 = i*8+j*320+shift1;
             int pos2 = i*8+j*320+shift1+4;
-            uchar org1 = img[pos1];
-            uchar org2 = img[pos2];
+            uchar org1=0;
+            uchar org2=0;
+            if (pos1<img.size())
+                org1 = img[pos1];
+            if (pos2<img.size())
+                org2 = img[pos2];
             uchar m1 = ~Util::MultiCharMask(org1);
             uchar m2 = ~Util::MultiCharMask(org2);
 //            if (m1!=0)

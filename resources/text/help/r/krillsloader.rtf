@@ -1,0 +1,24 @@
+<h3>Description</h3>
+<p>Sets up a c64 disk project using krills loader</p>
+<p>Parameters
+@use KrillsLoader [ resident loader address ] [ temporary loader address ] [ temporary loader code ]
+<h3>Example</h3>
+Krill's loader will automatically include 2 files:
+ - a resident loader file.
+ - code that will be written to the c1541 disk drive.
+<p>
+Parameter 1 is the permanent address of the resident loader. this takes up $200 bytes, and the
+recommended location is to place this at $200. Do not overwrite these bytes.
+<p>
+Parameter 2 is the position of the temporary resident loader. this address can be overwritten after
+initkrill() has been executed.
+<p>
+Parameter 3 is the position of the temporary loader program that will be sent to the c1541. this data
+can be overwritten after initkrill has been executed.
+<h3>Example</h3>
+<code>
+@use KrillsLoader $200 $2000 $3000
+</code>
+This code will put the resident loader at $2000 and the loader code at $3000. After "initkrill()" is
+exectued, the loader is placed at $200 and the code will be written to the c1541 drive. All
+memory above $400 is now free for use.

@@ -2223,7 +2223,9 @@ void Methods6502::KrillLoad(Assembler *as, bool isCompressed)
     if (!isCompressed)
         as->Asm("jsr "+as->m_defines["_LoadrawKrill"]);
     else
-        as->Asm("jsr "+Util::numToHex(Util::NumberFromStringHex(as->m_defines["_LoadrawKrill"])+0xb));
+//       as->Asm("jsr "+Util::numToHex(Util::NumberFromStringHex(as->m_defines["_LoadrawKrill"])+0xb));
+      as->Asm("jsr "+Util::numToHex(Util::NumberFromStringHex(as->m_defines["_LoadrawKrill"])+0xe));
+//       as->Asm("jsr "+Util::numToHex(Util::NumberFromStringHex(as->m_defines["_LoadrawKrill"])+0xe));
 //    m_node->m_params[1]->Accept(m_codeGen);
 //    as->Term();
     QString lbl = as->NewLabel("loadkrill");

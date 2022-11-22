@@ -34,6 +34,7 @@ public:
     void AddInitMethod(Assembler* as, QString name, QString file);
 
     void MemCpy(Assembler* as, QString type);
+    void MemCpyUnroll(Assembler* as, QString type);
     void MemCpyFast(Assembler* as);
 
 

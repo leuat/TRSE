@@ -36,9 +36,14 @@ public:
     virtual bool AllowPointerInStructs() override {return false;}
 
     bool VerifyMachineCodeZP(QString fname);
-
-    void CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text);
+    // OBSOLETE
+    void CreateDiskC1541(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text);
+    // IN USE
+    void CreateDiskInternal(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text, QString diskName);
     bool BuildDiskFiles(QString currentDir, QStringList& d64Params, QString iniData);
+    bool BuildDiskFilesCC1541(QString currentDir, QStringList& d64Params, QString iniData, QString &text);
+
+    void ApplyDirArt(QString currentDir, QString dirart, QString disk, QString& text);
 
     void DefaultValues() override;
 

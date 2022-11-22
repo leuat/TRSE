@@ -44,4 +44,5 @@ dosbox_x86_system = default
 cpu_x86_system = 8086
 override_target_settings_basic = 0
 show_all_files = 1
+dirart_flf_file = none
 open_files =, example05_single_sprite.ras

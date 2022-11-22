@@ -147,6 +147,8 @@ public:
     }
     bool m_fixMultiColorYSave = false;
 
+    virtual QByteArray getDirArt() { return QByteArray();}
+
     virtual void CopyImageData(LImage* img);
     virtual int getCharWidthDisplay();
     virtual int getCharHeightDisplay();

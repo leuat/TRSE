@@ -188,6 +188,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     if (Command("memcpy16"))
         MemCpy(as,"w");
 
+    if (Command("memcpy16unroll"))
+        MemCpyUnroll(as,"w");
+
     if (Command("memcpy32"))
         MemCpy(as,"d");
 
@@ -542,6 +545,11 @@ void MethodsX86::MemCpy(Assembler *as, QString type)
 
     as->Asm("rep movs"+type);
     as->Asm("pop ds");
+
+}
+
+void MethodsX86::MemCpyUnroll(Assembler *as, QString type)
+{
 
 }
 

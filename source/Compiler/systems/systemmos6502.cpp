@@ -2,7 +2,10 @@
 #include "source/OrgAsm/orgasm.h"
 #include <QElapsedTimer>
 #include <QProcess>
-
+#include "source/LeLib/limage/c64fullscreenchar.h"
+#include "source/LeLib/limage/limageio.h"
+#include "source/LeLib/util/cc1541.h"
+#include "source/LeLib/util/dirartd64.h"
 
 
 void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab)
@@ -45,13 +48,13 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
     int orgFileSize = QFile(filename+".prg").size();
 
-//    qDebug() << "MOS " << Syntax::s.m_stripPrg << Syntax::s.m_ignoreSys;
+    //    qDebug() << "MOS " << Syntax::s.m_stripPrg << Syntax::s.m_ignoreSys;
 
     if (Syntax::s.m_currentSystem->m_stripPrg)
         Util::ConvertFileWithLoadAddress(filename+".prg", filename+".prg");
 
 
-//    qDebug() << "Exomizer toggle" <<m_projectIni->getdouble("exomizer_toggle");
+    //    qDebug() << "Exomizer toggle" <<m_projectIni->getdouble("exomizer_toggle");
     if (m_projectIni->getdouble("exomizer_toggle")==1 && (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)) {
         QProcess processCompress;
 
@@ -72,13 +75,13 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
             text = text + "<br><font color=\"#FF6040\">Incorrect exomizer path. Please setup exomizer in the TRSE settings panel</font><br>";
             return;
         }
-//            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
+        //            Messages::messages.DisplayMessage(Messages::messages.NO_EXOMIZER);
 
 
         QString startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
         if (Syntax::s.m_ignoreSys)
-//            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
-          startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
+            //            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress+1);
+            startAddress = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
 
         QStringList exoParams = QStringList() << "sfx" << startAddress << target << fn<< "-o" << fn ;
 
@@ -133,9 +136,9 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 void SystemMOS6502::PostProcess(QString &text, QString filename, QString currentDir)
 {
     QString output;
-//    TestForCodeOverwrite(codeEnd,text);
+    //    TestForCodeOverwrite(codeEnd,text);
 
-   /*
+    /*
     *
     *
     * VIC-20
@@ -199,14 +202,14 @@ BLK5 = $A000-$BFFF
     }
 
     if (m_projectIni->getString("output_type")=="d64") {
-        if (!QFile::exists(m_settingsIni->getString("c1541"))) {
+/*        if (!QFile::exists(m_settingsIni->getString("c1541"))) {
             //Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
             text=text + "<br><font color=\"#FF6040\">link to c1541 not set up in the TRSE settings panel.</font><br>";
             m_buildSuccess = false;
             return;
-        }
-        CreateDisk(currentDir, filename, "d64_paw_file", true,output);
-        CreateDisk(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output);
+        }*/
+        CreateDiskInternal(currentDir, filename, "d64_paw_file", true,output,m_projectIni->getString("d64name"));
+        CreateDiskInternal(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output,m_projectIni->getString("d64name"));
     }
 
 
@@ -215,15 +218,17 @@ BLK5 = $A000-$BFFF
 
 bool SystemMOS6502::VerifyMachineCodeZP(QString fname)
 {
-   m_mca.Load(fname);
+    m_mca.Load(fname);
     m_mca.AnalyzeZP();
     return true;
 }
 
-void SystemMOS6502::CreateDisk(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text)
+// OBSOLETE
+void SystemMOS6502::CreateDiskC1541(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text)
 {
     QString f = filename.split("/").last();
-    QStringList d64Params = QStringList() << "-format" << f+",id"<< "d64";
+    QStringList d64Params = QStringList();
+    d64Params << "-format" << f+",id"<< "d64";
     d64Params << filename+".d64";
     d64Params << "-attach" <<filename+".d64";
     if (addPrg)
@@ -232,19 +237,59 @@ void SystemMOS6502::CreateDisk(QString currentDir, QString filename, QString ini
     if (m_projectIni->getString(iniData)!="none") {
         if (!BuildDiskFiles(currentDir, d64Params,iniData)) {
             text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 disk.. please make sure that all the files specified in "+filename+" exist!<br>";
-//            qDebug() << "SystemMos6502 : Could not build disk!";
+            //            qDebug() << "SystemMos6502 : Could not build disk!";
             return;
         }
-
-
         QProcess process1541;
         //     qDebug() <<"Building disk with: " << d64Params;
         process1541.start(m_settingsIni->getString("c1541"), d64Params  );
         process1541.waitForFinished();
-/*        qDebug() << "c1541 output";
+        qDebug() << d64Params;
+        qDebug() << "c1541 output";
         qDebug() << process1541.readAllStandardError();
-        qDebug() << process1541.readAllStandardOutput();*/
+        qDebug() << process1541.readAllStandardOutput();
+
     }
+
+}
+
+void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text, QString diskName)
+{
+    QString f = filename.split("/").last();
+    QStringList d64Params = QStringList();
+
+    if (QFile::exists(filename+".d64"))
+        QFile::remove(filename+".d64");
+
+    // Create a disk
+    QStringList cd64;
+    cd64 << "cc1541"<<"-n" << diskName <<"-d" <<"19";
+    cd64 << filename+".d64";
+    // call
+    cc1541(cd64.size(), Util::StringListToChar(cd64));
+
+
+    // Start building files...
+    d64Params << "cc1541";
+    d64Params  <<"-d"<<"19";
+
+    if (addPrg)
+        d64Params << "-f"<<f << "-w"<<filename+".prg";
+
+
+    if (m_projectIni->getString(iniData)!="none") {
+        if (!BuildDiskFilesCC1541(currentDir, d64Params,iniData, text))
+        {
+            text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 disk.. please make sure that all the files specified in "+filename+" exist!<br>";
+            return;
+        }
+        d64Params<<filename+".d64";
+
+        cc1541(d64Params.size(), Util::StringListToChar(d64Params));
+//        qDebug() << stderr;
+    }
+
+    ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+".d64", text);
 
 }
 
@@ -260,6 +305,48 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
     QString outFolder = currentDir+"/"+ paw.getString("output_dir");
     if (!QDir().exists(outFolder))
         QDir().mkdir(outFolder);
+
+    QString dirart = m_projectIni->getString("dirart_flf_file");
+    QVector<QString> filenames;
+    QVector<QByteArray> filenames_raw;
+    QByteArray all_dirart;
+    if (dirart!="none") {
+        LImage* im = LImageIO::Load(currentDir+"/"+dirart);
+        C64FullScreenChar* img = (C64FullScreenChar*)im;
+        if (img==nullptr) {
+            ErrorHandler::e.Error("Directory art file must of image type 'c64 animation' (petscii)");
+            m_buildSuccess = false;
+            return false;
+        }
+        C64Screen* s = (C64Screen*)img->m_items[0].get();
+
+        for (int i=0;i<img->m_charHeight;i++) {
+            QString line="";
+            QByteArray ba;
+            for (int j=0;j<16;j++) {
+                line+="\\"+QString::number((uchar)(s->m_rawData[img->m_charWidth*i+j]),16);
+                qDebug() << line;
+                //                line+=QChar((s->m_rawData[img->m_charWidth*i+j]));
+                ba.append((uchar)s->m_rawData[img->m_charWidth*i+j]);
+            }
+            filenames.append(line);
+            filenames_raw.append(ba);
+            all_dirart.append(ba);
+        }
+    }
+    QByteArray cleaned;
+    // Clean up petscii
+    for (uchar i : all_dirart) {
+        if (((i>=0xA0 && i<=0xBF) || (i>=0xE0 && i<=0xFF))) {
+            i=0x65;
+        }
+        cleaned.append(i);
+    }
+    all_dirart = cleaned;
+
+    QString fdirart = currentDir+"dirart.bin";
+    if (all_dirart.size()!=0)
+        Util::SaveByteArray(all_dirart,fdirart);
 
     for (int i=0;i<count;i++) {
         QString orgFileName = data[3*i+1];
@@ -287,21 +374,26 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
 
             return false;
         }
+        QString oname = name;
+        // argh
+        //        if (i<filenames.count())
+        //          oname = filenames[i];//+",s";
+
         if (!isCrunched) {
             QString of = outFolder+"/"+orgFileName.split("/").last();
             Util::ConvertFileWithLoadAddress(fn,of,address);
             //        Util::CopyFile(fn,of);
 
-            d64Params << "-write" <<of << name;
+            d64Params << "-write" <<of << oname;
         }
         else {
             //            QString ending = orgFileName.split(".").last();
             QString iff = name;
             QString of = outFolder+"/"+iff+"_c.bin";
             //            qDebug() << of;
-            d64Params << "-write" <<of << name;
-//            if (!orgFileName.toLower().endsWith(".prg"))
-  //             Util::ConvertFileWithLoadAddress(of,of,address);
+            d64Params << "-write" <<of << oname;
+            //            if (!orgFileName.toLower().endsWith(".prg"))
+            //             Util::ConvertFileWithLoadAddress(of,of,address);
 
         }
     }
@@ -309,6 +401,99 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
     return true;
 
 }
+
+bool SystemMOS6502::BuildDiskFilesCC1541(QString currentDir, QStringList &d64Params, QString iniData, QString& text)
+{
+
+    QString pawFile = m_projectIni->getString(iniData);
+    CIniFile paw;
+    paw.Load(currentDir + "/"+pawFile);
+    QStringList data = paw.getStringList("data");
+    QStringList data_tc = paw.getStringList("data_tinycrunch");
+    int count = data.count()/3;
+    QString outFolder = currentDir+"/"+ paw.getString("output_dir");
+
+    if (!QDir().exists(outFolder))
+        QDir().mkdir(outFolder);
+
+
+    for (int i=0;i<count;i++) {
+        QString orgFileName = data[3*i+1];
+
+        bool isCrunched = false;
+        if (i<data_tc.count())
+            isCrunched = data_tc[i]=="1";
+
+        QString name = data[3*i];
+
+
+        if (!Syntax::s.StringIsAlnum(name) || name.contains("_")) {
+            text=text + "<br><font color=\"#FF6040\">Error: Filename '"+name+"' is incorrect since it must be alphanumerical and not contain other characters (a-z-0-9)</font><br>";
+            m_buildSuccess = false;
+            return false;
+
+        }
+
+
+        int address = Util::NumberFromStringHex( data[3*i+2]);
+        QString fn = currentDir+"/"+orgFileName;
+        if (!QFile::exists(fn)) {
+            text=text + "<br><font color=\"#FF6040\">Error: Could not append disk file '"+fn+"' because it does not exist</font><br>";
+            m_buildSuccess = false;
+
+            return false;
+        }
+        QString oname = name;
+
+        if (!isCrunched) {
+            QString of = outFolder+"/"+orgFileName.split("/").last();
+            Util::ConvertFileWithLoadAddress(fn,of,address);
+            d64Params << "-f" <<oname << "-w" <<of;
+        }
+        else {
+            //            QString ending = orgFileName.split(".").last();
+            QString iff = name;
+            QString of = outFolder+"/"+iff+"_c.bin";
+            if (!QFile::exists(of)) {
+                text=text + "<br><font color=\"#FF6040\">Error: Could not append compressed disk file '"+of+"' because it does not exist. Did you build your disk before compiling?</font><br>";
+                m_buildSuccess = false;
+                return false;
+            }
+            d64Params << "-f" << oname << "-w" <<of;
+        }
+    }
+
+    return true;
+
+}
+
+void SystemMOS6502::ApplyDirArt(QString currentDir, QString dirart, QString diskf, QString &text)
+{
+    if (dirart=="none")
+        return;
+
+    if (!QFile::exists(currentDir+dirart))
+        return;
+
+    LImage* img = LImageIO::Load(currentDir + dirart);
+    QString dirartfn = currentDir + "dirart.bin";
+    QByteArray art = img->getDirArt();
+    Util::SaveByteArray(art,dirartfn);
+
+    DirArtD64 da;
+    QStringList p = QStringList() << "" << "-b" << dirartfn << diskf << diskf;
+    try {
+
+        da.Write(p.count(), Util::StringListToChar(p));
+
+    } catch (QString s) {
+        text+="<br><font color=\"#FF6040\">Error: Could not apply dir art: "+s+"</font><br>";
+        m_buildSuccess = false;
+    }
+
+
+}
+
 
 void SystemMOS6502::DefaultValues()
 {
@@ -376,11 +561,11 @@ void SystemMOS6502::PrepareInitialAssembler(Assembler *as) {
     as->Nl();
 
     as->EndMemoryBlock();
-//        Comment("End of SYS memory block, starting new");
+    //        Comment("End of SYS memory block, starting new");
     as->StartMemoryBlock(Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
     as->m_insertEndBlock = "EndBlock"+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress).remove("$");
-//      Comment("Start of MAIN BLOCK");
-//        qDebug() << "INSERT "+m_insertEndBlock;
+    //      Comment("Start of MAIN BLOCK");
+    //        qDebug() << "INSERT "+m_insertEndBlock;
 
 }
 

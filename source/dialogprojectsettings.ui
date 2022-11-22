@@ -1187,11 +1187,14 @@ hr { height: 1px; border-width: 0; }
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
              <item row="0" column="0">
-              <layout class="QGridLayout" name="gridLayout_4">
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_8">
+              <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbMainRas"/>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>Main RAS file</string>
+                  <string>Project output type</string>
                  </property>
                 </widget>
                </item>
@@ -1214,15 +1217,25 @@ hr { height: 1px; border-width: 0; }
                  </item>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_47">
                  <property name="text">
-                  <string>Project output type</string>
+                  <string>Directory art .flf file</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="cmbMainRas"/>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="cmbPawInclude2"/>
+               </item>
+               <item row="4" column="1">
+                <widget class="QComboBox" name="cmbDirArt"/>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Disk 2 d64 Paw file</string>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_9">
@@ -1234,15 +1247,22 @@ hr { height: 1px; border-width: 0; }
                <item row="2" column="1">
                 <widget class="QComboBox" name="cmbPawInclude"/>
                </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_24">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>Disk 2 d64 Paw file</string>
+                  <string>Main RAS file</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QComboBox" name="cmbPawInclude2"/>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_48">
+                 <property name="text">
+                  <string>Name of d64 disk</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="leDiskname"/>
                </item>
               </layout>
              </item>
@@ -1328,7 +1348,7 @@ hr { height: 1px; border-width: 0; }
               <x>0</x>
               <y>0</y>
               <width>957</width>
-              <height>475</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">

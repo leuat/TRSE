@@ -61,6 +61,7 @@ void DialogProjectSettings::FillFromIni()
 
 
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
+    ui->leDiskname->setText( m_ini->getString("d64name"));
 
     ui->txtGlobalDefines->setPlainText(Util::fromStringList( m_ini->getStringList("global_defines")));
 
@@ -155,12 +156,18 @@ void DialogProjectSettings::FillFromIni()
 
 
     QStringList ras = Util::FindFilesOfType(m_currentDir+"/","ras");
+    QStringList flf = Util::FindFilesOfType(m_currentDir+"/","flf");
 //    qDebug() << ras << m_currentDir;
     ui->cmbMainRas->clear();
     ui->cmbMainRas->addItem("none");
     ui->cmbMainRas->addItems(ras);
 
+    ui->cmbDirArt->clear();
+    ui->cmbDirArt->addItem("none");
+    ui->cmbDirArt->addItems(flf);
+
     ui->cmbMainRas->setCurrentText(m_ini->getString("main_ras_file"));
+    ui->cmbDirArt->setCurrentText(m_ini->getString("dirart_flf_file"));
 
 
     ui->leInitMachineState->setText(m_ini->getString("machine_state"));
@@ -296,6 +303,7 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setString("output_type", ui->cmbOutputType->currentText());
     m_ini->setString("main_ras_file", ui->cmbMainRas->currentText());
+    m_ini->setString("dirart_flf_file", ui->cmbDirArt->currentText());
     m_ini->setString("d64_paw_file", ui->cmbPawInclude->currentText());
     m_ini->setString("d64_paw_file_disk2", ui->cmbPawInclude2->currentText());
 
@@ -310,6 +318,8 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setFloat("output_debug_symbols",ui->chkDebugSymbols->isChecked());
     m_ini->setFloat("ignore_initial_jump",ui->chkIgnoreJump->isChecked());
+
+    m_ini->setString("d64name", ui->leDiskname->text());
 
 
 

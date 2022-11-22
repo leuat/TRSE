@@ -170,7 +170,7 @@ begin
 	multicolor_char_col[1]:=cyan;
 	multicolor_char_col[2]:=yellow;
 
-end;
+end;Ω
 
 
 begin

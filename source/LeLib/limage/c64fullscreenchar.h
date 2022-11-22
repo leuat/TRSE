@@ -75,7 +75,7 @@ public:
 */
 
     PixelChar m_color;
-    C64Screen m_copy;
+    static C64Screen m_copy;
 
     unsigned int m_tempChar=0;
     C64FullScreenChar(LColorList::Type t);
@@ -94,6 +94,7 @@ public:
 
     void fromQImage(QImage *img, LColorList &lst) override;
 
+    QByteArray getDirArt() override;
 
     void ReInitialize() override;
 

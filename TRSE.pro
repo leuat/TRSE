@@ -139,6 +139,7 @@ linux*{
 
 
 SOURCES += main.cpp\
+    LeLib/Util/tcencode.cpp \
     formtutorialitem.cpp \
         mainwindow.cpp \
     imageworker.cpp \
@@ -225,6 +226,7 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/Util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
     source/LeLib/bbc/discimage.cpp \
     source/LeLib/bbc/globaldata.cpp \
@@ -262,6 +264,7 @@ SOURCES += main.cpp\
 #    source/LeLib/miniaudio.c \
 #    source/LeLib/miniaudio_engine.c \
     source/LeLib/ttrfile.cpp \
+    source/LeLib/util/cc1541.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
     source/LeLib/util/lz4/lz4.c \
     source/LeLib/util/lz4/lz4hc.c \
@@ -418,6 +421,7 @@ SOURCES += main.cpp\
 
 
 HEADERS  += mainwindow.h \
+    LeLib/Util/tcencode.h \
     formtutorialitem.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
@@ -504,6 +508,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/Util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \
     source/LeLib/bbc/discimage.h \
     source/LeLib/bbc/globaldata.h \
@@ -540,6 +545,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/ssim.h \
     source/LeLib/miniaudio.h \
     source/LeLib/ttrfile.h \
+    source/LeLib/util/cc1541.h \
     source/LeLib/util/fc8/FC8Compression.h \
     source/LeLib/util/lz4/lz4.h \
     source/LeLib/util/lz4/lz4hc.h \

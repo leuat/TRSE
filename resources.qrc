@@ -81,32 +81,6 @@
         <file>resources/code/vic20_playsid_init.asm</file>
         <file>resources/images/BBCM.png</file>
         <file>resources/bin/crt_header.bin</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_F000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_E000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_C000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_B000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_A000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_9000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_8000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_7000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_6000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_5000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_4000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_3000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_2000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_1000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_B000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_A000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_9000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_8000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_7000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_6000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_5000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_4000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_3000-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_2000-c64.prg</file>
-        <file>resources/bin/krill/loader_PAL_NTSC_0200-c64.prg</file>
-        <file>resources/bin/krill/install_PAL_NTSC_1000-c64.prg</file>
         <file>resources/code/nes_init.asm</file>
         <file>resources/code/nes_end.asm</file>
         <file>resources/code/nes_readinput.asm</file>
@@ -686,5 +660,29 @@
         <file>resources/images/tutorials/demoeffects.png</file>
         <file>resources/images/tutorials/grave_intentions.png</file>
         <file>resources/text/help/r/pathtool.rtf</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_B000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_A000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_9000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_8000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_7000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_6000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_5000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_4000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_3000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_2000-c64.prg</file>
+        <file>resources/bin/krill_19/install_PAL_NTSC_1000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_B000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_A000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_9000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_8000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_7000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_6000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_5000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_4000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_3000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_2000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_1000-c64.prg</file>
+        <file>resources/bin/krill_19/loader_PAL_NTSC_0200-c64.prg</file>
+        <file>resources/text/help/r/krillsloader.rtf</file>
     </qresource>
 </RCC>

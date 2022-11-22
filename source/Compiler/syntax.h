@@ -139,6 +139,7 @@ public:
     bool isDigit(QString s);
     bool isDigitHex(QString s);
     bool isAlnum(QString s);
+    bool StringIsAlnum(QString s);
     bool isString(QString s);
 
     bool isAlpha(QString s);

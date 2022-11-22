@@ -23,6 +23,9 @@
 #include "source/LeLib/limage/limagenes.h"
 #include "limageqimage.h"
 
+C64Screen C64FullScreenChar::m_copy;
+
+
 C64FullScreenChar::C64FullScreenChar(LColorList::Type t) : MultiColorImage(t)
 {
 /*    m_charset = new CharsetImage(t);
@@ -232,6 +235,31 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
         }
     //   Reorganize();
 
+}
+
+QByteArray C64FullScreenChar::getDirArt()
+{
+    C64Screen* s = (C64Screen*)m_items[0].get();
+    QByteArray qb;
+    uchar illegal = 0;
+    for (int i=0;i<m_charHeight;i++) {
+        QByteArray ba;
+        for (int j=0;j<16;j++) {
+            uchar c = (uchar)s->m_rawData[m_charWidth*i+j];
+            /*
+            Screen codes $A0-$BF - no petscii equivalent
+            Screen codes $E0-$FF - no petscii equivalent
+            Screen code $8D, PETSCII code $0D - newline
+            Screen code $CD, PETSCII code $8D - line feed
+            Screen code $60, PETSCII code $A0 - used in the disk to mark end of filename
+            */
+            if ((c>=0xA0 && c<=0xBF) || (c>0xE0 && c<0xFF) || c==0x0d || c==0x8D)
+                    c = illegal;
+            ba.append(c);
+        }
+        qb.append(ba);
+    }
+    return qb;
 }
 
 void C64FullScreenChar::ReInitialize()
@@ -568,12 +596,15 @@ void C64FullScreenChar::ImportC(QFile &file)
     txt = txt.replace("\n","").replace("\r","");
     QStringList lst = txt.toLower().split("{");
 
+    QString bgs;
     for (int i=1;i<lst.count();i+=1) {
         QString q = lst[i].split("}")[0];
         QStringList data = q.split(",");
 
         AddNew(m_charWidth, m_charHeight);
         C64Screen* s = dynamic_cast<C64Screen*>(m_items.last().get());
+//        qDebug() <<data[4];
+        bgs+=data[4]+ ", ";
         s->m_data[1] = data[4].toInt();
         int k = 5;
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
@@ -586,6 +617,7 @@ void C64FullScreenChar::ImportC(QFile &file)
         }
 
     }
+    qDebug() << bgs;
 
 }
 

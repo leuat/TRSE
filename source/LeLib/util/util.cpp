@@ -31,6 +31,23 @@ int Util::hexType = 0;
 
 
 
+char **Util::StringListToChar(QStringList lst)
+{
+    char** argv = new char*[lst.size()];
+    int i=0;
+    for (QString s:lst) {
+        argv[i] = new char[512];
+
+        QByteArray nonTemporayByteArray = s.toLatin1();
+        const char *data = nonTemporayByteArray.constData();
+        for (int j=0;j<s.length();j++)
+            argv[i][j] = data[j];
+        //argv[i][s.length()]=0;
+        i++;
+    }
+    return argv;
+}
+
 QString Util::toString(QStringList lst) {
     QString ret="";
     for (QString& s:lst)
