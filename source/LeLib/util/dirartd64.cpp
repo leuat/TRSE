@@ -50,7 +50,8 @@ void DirArtD64::Write(int argc, char* argv[])
             needhelp++;
         else
         {
-            if (outname) err("Too many arguments");
+            if (outname)
+                err("Too many arguments");
             else if (diskname) outname = arg;
             else if (srcname) diskname = arg;
             else srcname = arg;
@@ -232,7 +233,7 @@ int DirArtD64::is_sector_free(int t, int s)
     return (*BAM_OFFS(t,s)) & (1 << (s&7));
 }
 
-void DirArtD64::err(char *s)
+void DirArtD64::err(QString s)
 {
     throw QString(s);
 //    puts(s);

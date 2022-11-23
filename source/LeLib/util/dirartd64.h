@@ -27,7 +27,7 @@ public:
     uint8_t *disk;
 
 
-    void err(char* s);
+    void err(QString s);
 
     int is_sector_free(int t, int s);
 
