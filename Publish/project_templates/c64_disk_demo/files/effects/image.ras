@@ -1,0 +1,77 @@
+program SomeImage;
+@use "demounit"
+@use "tables/luminosities"
+@use "screen/fadeinout"
+
+var  
+
+@export "images/image1.flf" "images/image1.bin" 256
+
+ img_data:incbin("images/image1_data.bin", $6000);
+ img_col : incbin("images/image1_color.bin");
+
+
+@perlinnoise "data/per1.bin" 40 25 2 1 1  170 140
+	fadedata : incbin("data/per1.bin",$B000);
+	
+
+// This effect starts at $1000!	
+
+interrupt Raster();
+begin
+	startirq(0);
+	setbitmapmode();
+	// Call the demo's @callPos to play music and update timing. 
+	// @callpos is defined in the project settings
+	@ifdef IS_DEMO
+		call(^@callPos);
+	@endif
+	RasterIRQ(Raster(),0,0);	
+	closeirq()
+end;
+
+
+procedure Init();
+begin
+
+@ifndef IS_DEMO
+	// Executed in stand-alone
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+@endif	
+	setmulticolormode();
+	setbank(VIC_BANK1);
+	setcharsetandscreenlocation($6000,$4400);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	
+	clearscreen(0,^$4400);	
+	clearscreen(0,^$D800);	
+
+	
+	StartRasterChain(Raster(),0,0);
+	setbitmapmode();
+	// Fadein
+	FadeInOut::InitCols(#Luminosities::fromBlue);
+	FadeInOut::DefaultFadeIn(#img_col,$4400,#fadedata,2);
+end;
+
+
+
+
+
+begin
+	Init();
+	while (true) do
+	begin
+		// EndClearInsideWhileLoop will simply jump to the loader address at $810 if "advance" is set to 1
+		DemoUnit::EndClearInsideWhileLoop();
+		if (peek(^@transition,0)=4) then
+		begin
+			// perform fadeout if transition is close to 0
+			FadeInOut::DefaultFadeOut(#img_col,$4400,#fadedata,4);
+		end;
+	end;
+	
+end.

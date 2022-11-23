@@ -35,13 +35,13 @@ begin
 	// Alternate between showing image 0 and 1	
 	while (true) offpage do begin
 		// Display data while loading! cool stuff
-		if (i=0) then KrillLoad(#octopus_color);
-		if (i=1) then KrillLoad(#moose_color);
+		if (i=0) then KrillLoad(#octopuscolor);
+		if (i=1) then KrillLoad(#moosecolor);
 		
 		copyimagecolordata(^$2000,1);
 
-		if (i=0) then KrillLoad(#octopus_data);
-		if (i=1) then KrillLoad(#moose_data);
+		if (i=0) then KrillLoad(#octopusdata);
+		if (i=1) then KrillLoad(#moosedata);
 		while (keypressed(key_space)=false) do 
 			waitforraster(0);
 

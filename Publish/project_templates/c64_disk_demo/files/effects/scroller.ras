@@ -1,0 +1,101 @@
+program Scroller;
+var  
+
+@use "demounit"
+
+@export "images/image2.flf" "images/image2.bin" 256
+@export "images/charset1.flf" "images/charset1.bin" 256
+
+	data:incbin("images/image2_data.bin",$6000);
+	colors:incbin("images/image2_color.bin",$8000);
+	charset:incbin("images/charset1.bin",$3000);
+	
+	
+	text: cstring=("                                       ",
+				"IN XANADU DID KUBLA KHAN ",
+				"A STATELY PLEASURE-DOME DECREE ",
+				"WHERE ALPH, THE SACRED RIVER, RAN ",
+				"THROUGH CAVERNS MEASURELESS TO MAN ",
+				"                                       ",
+				);
+
+	scroll : byte = 0;
+	tp:pointer;
+
+	const yp:byte = 24;
+	const yv:byte = yp*8+49;	
+
+
+interrupt RasterBottom();
+
+// Top raster: set bitmap mode
+interrupt RasterTop();
+begin
+	startirq(0);
+	RasterIRQ(RasterBottom(),yv,0);
+	
+	scrollx(0);
+	hideborderx(1);
+	setbitmapmode();
+	setcharsetandscreenlocation($2000,$400);
+
+
+
+	setbank(vic_bank1);	
+	setmulticolormode();
+	// call demo music and update
+	@ifdef IS_DEMO
+	call(^@callPos);	
+	@endif
+	memcpy(tp,0,^$0400+yp*40,40);
+	
+	
+	closeirq();
+end;	
+
+// Bottom raster: scroll 
+interrupt RasterBottom();
+begin
+	startirq(0);
+	
+	scrollx(7-scroll);
+	settextmode();
+	setregularcolormode();
+	
+	setcharsetandscreenlocation($3000,$400);
+	
+	setbank(vic_bank0);	
+	
+	inc(scroll);
+	if(scroll=8) then
+	begin
+		scroll:=0;
+		tp+=1;
+		if (tp[40]=0) then tp:=#text;
+	end;
+	
+	RasterIRQ(RasterTop(),0,0);	
+	closeirq();
+end;
+
+begin
+	@ifndef IS_DEMO
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	@endif
+	
+	setbitmapmode();
+	setbank(vic_bank1);
+	setcharsetandscreenlocation($2000,$400);
+	setmulticolormode();
+	copyimagecolordata(#colors,1);	
+	tp:=#text;	
+	fill(^$3087,0,8);
+	startrasterchain(RasterTop(),0,0);
+	clearscreen($20,^$0400);
+	// Yellow text
+	fill(^$D800+yp*40,yellow,40);
+	while (true) do
+		DemoUnit::EndClearInsideWhileLoop();
+
+end.

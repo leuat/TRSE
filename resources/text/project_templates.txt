@@ -14,6 +14,7 @@ C64; Simple C64 project; c64_general2; <h2>Main C64 project</h2><p>Create a smal
 C64; Advanced C64 game project; c64_advanced_game; <h2>C64 game project</h2><p>Sets up a full-sized game project with music, an intro screen with a scroller an image, and a smalle game with a level renderer, player movement and enemy placement.
 C64; C64 cartridge project; c64_crt; <h2>C64 16kb cartridge project</h2><p>A simple setup that compiles to a 16kb crt program. <p>Exomizer must be turned on in order for this project to compile!
 C64; C64 disk project; c64_disk; <h2>C64 disk project</h2><p>A sample project that loads and displays two images from disk. The disk contents are defined in the d64.paw file.
+C64; C64 demo from disk template; c64_disk_demo; <h2>C64 disk demo project</h2><p>This project template will set up a c64 demo system that loads compressed demo parts from disk and manages them.
 GAMEBOY; Gameboy game project; gameboy_game; <h2>Small Gameboy sample project</h2><p>Sets up a Gameboy game project that renders a movable sprite in a collidable level. Charset, tiles, metatiles, level and sprites are included.
 MEGA65; MEGA65 hello world project; mega65_helloworld; <h2>MEGA 65 "Hello world" sample program</h2>
 NES; NES sample project; nes_general; <h2>Small NES sample project</h2><p>Sets up a NES project with a main source file, tile ROM image file and music.
