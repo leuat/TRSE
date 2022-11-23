@@ -68,6 +68,4 @@ build_list = ,setvalue override_target_settings 1, setvalue perform_crunch 0, de
 exomizer_toggle = 0
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
-open_files = ,disk.paw, main.ras
-project_path = tutorials/C64/disk_demo_project/
-current_file = main.ras
+open_files =, main.ras

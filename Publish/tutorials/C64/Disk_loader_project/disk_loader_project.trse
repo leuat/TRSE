@@ -66,6 +66,4 @@ override_target_settings_basic = 0
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
-open_files = ,d64.paw, main.ras
-project_path = tutorials/C64/Disk_loader_project/
-current_file = main.ras
+open_files =, main.ras
