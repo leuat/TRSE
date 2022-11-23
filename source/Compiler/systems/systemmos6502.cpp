@@ -263,14 +263,18 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
 
     // Create a disk
     QStringList cd64;
-    cd64 << "cc1541"<<"-n" << diskName <<"-d" <<"19";
+#ifdef _WIN32
+#else
+#endif
+    cd64<<"cc1541";
+    d64Params <<"cc1541";
+    cd64 << "-n" << diskName <<"-d" <<"19";
     cd64 << filename+".d64";
     // call
     cc1541(cd64.size(), Util::StringListToChar(cd64));
 
 
     // Start building files...
-    d64Params << "cc1541";
     d64Params  <<"-d"<<"19";
 
     if (addPrg)
@@ -284,12 +288,16 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
             return;
         }
         d64Params<<filename+".d64";
-
+      //  qDebug() << d64Params;
         cc1541(d64Params.size(), Util::StringListToChar(d64Params));
 //        qDebug() << stderr;
     }
 
-    ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+".d64", text);
+    if (QFile::exists(filename+".d64")) {
+        qDebug() << "Applying dir art to " +filename;
+
+        ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+".d64", text);
+    }
 
 }
 
@@ -481,7 +489,14 @@ void SystemMOS6502::ApplyDirArt(QString currentDir, QString dirart, QString disk
     Util::SaveByteArray(art,dirartfn);
 
     DirArtD64 da;
-    QStringList p = QStringList() << "" << "-b" << dirartfn << diskf << diskf;
+    QStringList p;
+#ifdef _WIN32
+#else
+#endif
+    p<<"";
+
+
+    p  << "-b" << dirartfn << diskf << diskf;
     try {
 
         da.Write(p.count(), Util::StringListToChar(p));

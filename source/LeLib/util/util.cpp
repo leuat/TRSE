@@ -42,7 +42,7 @@ char **Util::StringListToChar(QStringList lst)
         const char *data = nonTemporayByteArray.constData();
         for (int j=0;j<s.length();j++)
             argv[i][j] = data[j];
-        //argv[i][s.length()]=0;
+        argv[i][s.length()]=0;
         i++;
     }
     return argv;
