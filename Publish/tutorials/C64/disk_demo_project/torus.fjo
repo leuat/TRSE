@@ -55,8 +55,8 @@ function Init()
 
 
 	-- saves the object to disk, 8 bit style
-	Save3DObject("t1","resources/data/torus1.bin",4);
-	Message("saved to resources/data/torus1.bin");
+	Save3DObject("t1","data/torus1.bin",4);
+	Message("saved to data/torus1.bin");
 
 	UpdateGraphics()
 	isInit = 1
@@ -86,5 +86,4 @@ function Update()
 	UpdateGraphics()
 	frame=frame+1
 --	globals.sky = frame/100.0
---	Message("halla");
 end

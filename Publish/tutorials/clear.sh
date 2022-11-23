@@ -25,6 +25,7 @@ echo "open_files =, main.ras" >> C64/Disk_loader_project/disk_loader_project.trs
 echo "open_files =, part3.ras" >> C64/TutorialGame_Introduction/Introductiongame.trse
 echo "open_files =, intro.ras" >> C64/4kDreams/4kDreams.trse
 echo "open_files =, main.ras" >> C64/16kb_cartridge_project/crt_project.trse
+echo "open_files =, main.ras" >> C64/disk_demo_project/disk_demo_project.trse
 
 echo "open_files =, easy/01_hello_world.ras" >> MEGA65/Tutorials/Mega65_Tutorials.trsee
 echo "open_files =, example05_single_sprite.ras" >> MEGA65/Raytracer/DemoEffects_raytracer.trse

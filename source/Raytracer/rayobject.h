@@ -67,7 +67,9 @@ public:
 
     }
 
-    virtual void Save6502(QString file, float scale) {}
+    virtual void Save6502(QString file, float scale) {
+
+    }
 
     virtual void Render(Camera& cam, QImage& img) {
 

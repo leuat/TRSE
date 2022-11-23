@@ -165,7 +165,7 @@ begin
 //			setregularcolormode();
 
 		asm("
-		jmp $810
+		jmp @loaderPos
 pp_cnt2:
 	
 	");

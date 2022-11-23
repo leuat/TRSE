@@ -1,0 +1,247 @@
+program DiskDemoSampleProject;
+var
+	
+
+/*
+
+	Welcome to the TRSE Disk Demo Template project sample!
+
+	This is an example setup of a demo loader that will load compressed demo effects from 
+	disk and then start them. The order+timing of effects is defined in the "order" array.
+	
+	Before you can compile this project, you will need the following stuff set up:
+     - Exomizer + point to it in the TRSE project settings
+	 - Python installed
+     - TinyCrunch (python program) installed (https://csdb.dk/release/?id=168629) + point to "tc_encode.py" in the TRSE project settings
+  
+	Then, in order to compile, do the following:
+	 - Press the "Build all" button in the lower left corner. This will execute the 
+	   "build list" script that is defined in the project settings, ensuring that each
+	   individual effect is built with the @IS_DEMO flag set + the correct program address.
+	 - Open the "disk.paw" file and press ctrl+B to build. This will execute tinycrunch (python)
+	   on the built effect files, compressing them 
+	 - You can now run the demo by pressing ctrl+R. The disk will be automatically built on eacn build. 
+	 - Directory art is in images/dirart.flf, and can be set up in the project settings. Dirart is applied
+	   with each build. 
+	 
+	 HOW THE DEMO SYSTEM WORKS: 
+	 
+	 The loader (this program, "main.ras/prg") is a small program that manages the entire 
+	 load process of the demo. It starts at $810 after a regular BASIC hook, then proceeds
+	 to set up krill's loader, initialises music etc. After this, the loader will look up
+	 the current demo effect ID in the "order" array, before finding the next filename.
+	 It then proceeds by loading and extracting this file, before jumping to the 
+	 effect's start address - here set up at $1000. All effects share this address, meaning
+	 that your individual effects will have the space $400-$7FF + $1000-$E000 free for use. 
+	 
+	 In addition to this, there are two specific addresses in this loader: 
+	  - @callPos at $B00 (Main Updater), which is called on each frame from each of the effects. This
+	    method will play music, increase counters - and set the value "advance" to "1" if it is time to move on. 
+	    The individual demo effects will test this value "advance" on whether it is 0 or 1
+	  - $BA0 - the address to call to retrieve the "advance" variable in order to check whether it is time to move on or not.  
+	  
+	When a demo effect sees that "advance" is set to 1, it should clean up it's business and jump to the
+	loader address at $810. But before that, it can check the @transition address for the current countdown to zero -
+	and perform suitable transition effects.
+	
+	Note that this current setup allows you to execute each of the effects individually, without
+	having to use the loader. Just remember to trigger the "build all" + bulld the paw disk (compress the built files) again
+	before executing the demo. 
+
+*/
+
+   	i,j : byte;
+	advance : byte; // message to the different parts on whether to advance or not
+	isInitialized: byte;
+	ldr : byte = 0; // the current position in the order array
+	zp:pointer;
+	
+	// Music is placed conveniently at $e000. Your effects must not use this area. 
+	music:incsid("music/rommel.sid",2);
+
+
+@define useKernal 0
+
+
+// Make sure that we compile the demo only when pressing ctrl+R here
+@setvalue "remove_unused_symbols" "0"
+// always toggle exomizer on
+@setvalue "exomizer_toggle" 1
+@setvalue "main_ras_file" "demo.ras"
+// Set disk output
+@setvalue "output_type" "d64"
+
+// Loader at $200
+@use KrillsLoader $0200 $2000 $4000
+
+
+@donotremove MainUpdate
+@donotremove OuterLoop
+
+/*
+	Define the effects corresponding to files in disk.paw
+
+*/	
+	const scene_3d : byte = 1;
+	const scene_image : byte = 2;
+	const scene_scroller: byte = 3;
+	
+
+/*
+	
+		ORDER of the demo effects:
+			scene ID, time
+		
+*/
+	order : array[] of byte = (
+		scene_image,15,
+		scene_3d,15,
+		scene_scroller,40,
+		scene_image,10,
+		scene_scroller,40,
+		scene_3d,30,
+
+		);
+
+// Empty NMI interrupt
+interrupt NMI();
+begin
+end;
+
+
+/*
+
+	Main update block: 
+	
+	This address is called once per frame from each of the demo effects.
+	The method updates the time counter, sets the transition count - and sets 
+	"advance" to 1 to order the current effect to jump back to the main loader at $810.
+	
+	All these addresses are defined as constants in the project settings. 
+
+*/
+@startblock $B00 "Main Update"
+
+@donotremove MainUpdate
+procedure MainUpdate();
+var
+	transition, curData, time, time2, timeStop : byte = 0;
+begin
+	// Only play music if initialised
+	if (isInitialized=1) then 
+		call(sidfile_1_play);
+		
+	inc(time);
+	if (time&31=0) then inc(time2);
+	// calculate time for transition
+	transition:=abs(time2-timeStop);
+	// order the effect the end 
+	if (time2>timeStop) then advance:=1;
+end;
+
+
+// This interrupt is initialised and call from this loader - and ensures that music
+// plays during load
+
+interrupt RasterMain();
+begin
+	startirq(0);
+	call(sidfile_1_play);
+	closeirq();
+end;
+
+
+
+@endblock
+
+
+@startblock $BA0 "Main Loop Update"
+// This is a special address $BA0 that the effects call in order to 
+// test whether it is time to end the effect and return to the loader
+procedure OuterLoop();
+begin
+	asm(" lda advance");
+end;
+
+// Convenient way to save space: put startrasterchan in a procedure
+procedure StartChain();
+begin
+	StartRasterChain(RasterMain(), 0,@useKernal); // play music while loading
+end;
+
+
+begin
+	// Reset the advance variable so effects won't instantly return to the loader
+	advance:=0;
+	// If the loader has initialised, this part will be executed between effects, setting up
+	// the correct music player routine and performing a rudimentary cleanup of the screen.
+	// Ideally, every effect should clean up after themselves (turning off sprites etc) 
+	if (isInitialized<>0) offpage then 
+	begin
+		// Black screen in between loading
+		StartChain();
+		// Cleanup
+		
+		setbank(vic_bank0);
+		screen_fg_col:=black;
+		screen_bg_col:=black;
+		setcharsetlocation($1000);
+		clearscreen($20,^$0400);
+		setregularcolormode();
+		
+		sprite_bitmask:=0;
+		
+		setregularcolormode();
+		// Reset time counters
+		time:=0;
+		time2:=0;
+		transition:=0;
+	end else 
+	begin
+		// First time the loader is run! 
+		// Set an empty NMI irq
+		nmiirq(NMI());				
+		// Initialise Krill	
+		InitKrill();
+		preventirq();
+		disableciainterrupts();
+	end;	
+	// Ensure memory config is correctly set	
+	setmemoryconfig(1,@useKernal,0);
+	
+
+	if (isInitialized=0) then begin	
+		// Initialse the SID file for first use		
+		initsid(sidfile_1_init);
+		isInitialized:=1;
+		// Start the music while loading the first part. Remove the next line if you don't want that. 
+		StartChain();
+	
+		
+	end;
+	// Point to the first file on disk	
+	zp:=#f1;
+	// get timestop of the effect
+	timeStop:=order[ldr+1];
+	// get the current effect from the list
+	i:=order[ldr]-1;
+	// Find next filename
+	while (i<>0) then begin
+		while zp[0]<>0 then 
+			zp:=zp+1;
+		zp:=zp+1;
+		dec(i);
+	end;
+	// Filename is now in zp
+	// advace the demo effect order counter to point to the next effect
+	ldr+=2;
+	// Load compressed .prg file
+	KrillLoadCompressed(zp);
+	// start the demo effect - in this example they all start at $1000.
+	// @programStartAddress is defined in the project settings
+	asm( " jmp @programStartAddress")
+	
+end.
+@endblock
+
+

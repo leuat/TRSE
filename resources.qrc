@@ -684,5 +684,6 @@
         <file>resources/bin/krill_19/loader_PAL_NTSC_1000-c64.prg</file>
         <file>resources/bin/krill_19/loader_PAL_NTSC_0200-c64.prg</file>
         <file>resources/text/help/r/krillsloader.rtf</file>
+        <file>resources/images/tutorials/fig3d.png</file>
     </qresource>
 </RCC>
