@@ -1,0 +1,55 @@
+program SimpleControlStatements;
+var  
+   i,j,k: byte; 
+
+/*
+	Control statements are single statements that will alter the flow of a loop. TRSE
+	currently supports 2 control statements : break and continue. 
+	
+	- calling "break" within a loop will simply exit it. It will *not* exit nested loops. 
+	- calling "continue" within a loop will simply increase the counter 
+	 and jump back to the start of the loop. 
+	
+*/
+
+
+begin
+	// Outer loop
+	for k:=0 to 10 do
+	begin
+
+		inc(screen_bg_col);
+		// Wait a bit!
+		ClearScreen(key_space, #screen_char_loc);
+		moveto(18,10,hi(screen_char_loc));
+		printdecimal(k,1);
+		for j:=0 to 200 do waitforraster(250); 
+		// ignore every second k, jump back to start of the outer loop
+		if (k&1=0) then 
+			continue; 
+		
+		// Inner loop
+		for i:=0 to 256 do 
+		begin
+			for j:=0 to 6 do waitforraster(250); 
+		
+		// Stops after 2 rows, breaks out of the loop
+			if (i>=screen_width*2) then 
+				break;
+		
+		// Print char
+		
+			poke(screen_char_loc,i,i);		
+		
+		// Skip settings colors after 1 row 
+			if (i>=screen_width) then 
+				continue;
+			
+		// Print color
+			poke(screen_col_loc,i,i);		
+
+		end;
+	end;
+	loop();
+
+end.

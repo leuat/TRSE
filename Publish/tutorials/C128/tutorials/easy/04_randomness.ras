@@ -1,0 +1,61 @@
+program Randomness;
+
+var  
+	screen_height : byte = 25; //Not defined for some reason on C128
+	 
+	random_color,x,y,index: byte; 
+	// Array of random bytes
+	random_values : array[256] of byte; 
+	// Pointer to screen and color ram
+	screenP, colorP : pointer of byte; // or just "pointer", or "^byte"
+
+
+   
+    
+// Initialize a random table of 256 bytes
+// generator
+procedure InitializeRandom();
+begin
+	// same as : for x:=0 to 0 do begin..
+	for x:=0 to 256 do begin 
+		random_values[x]:=Random();
+    end;
+end;
+
+begin
+	InitializeRandom();
+	// Set screen foreground and background to black. The second parameter is an offset.
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	
+	// point to start of random table
+	index:=0; 
+	// infinite loop
+	while (true) do  begin
+		// Set pointer to point to beginning of screen/color ram ($0400 and $D800)
+		screenP:=#screen_char_loc;
+		colorP:=#screen_col_loc;
+		// loop y		
+		for y:=0 to screen_height do begin
+			// moves current screen position
+			// Select some random color
+			for x:=0 to screen_width do begin
+				// Sets both screen and color values
+				screenP[x] := random_values[index];
+				// increases screen X counter
+				// Increase by some random non-repeatable prime
+				index+=17;
+	    		end;
+			// Select some random color
+			random_color := random_values[index];
+			// Fill the current line in colorP with 40 bytes of random_color
+			fill(colorP,random_color,screen_width);
+			// Increase screen and color pointers
+			screenP:=screenP+screen_width;
+			colorP:=colorP+screen_width;
+		end
+	end;
+
+end.
+
+

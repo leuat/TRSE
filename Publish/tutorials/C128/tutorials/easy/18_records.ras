@@ -1,0 +1,131 @@
+program Records;
+var  
+   i,j,shift,k: byte = 0;
+   saddr: array[25] of integer; // Screen address table
+/*
+	The famous MCMC random walk!	
+
+*/	
+
+	// Monsterbtw: since the difference between hybrid/ multicolor/hires doesn't seem to be that big in terms of code, perhaps we should instead have a drop down list that lets you select multicolor type : record	
+	monster_type = record
+		prevx, prevy : byte; // previous position of monster
+		x,y : byte; // Current position of monster 
+		color : byte; // Current colour of monster
+		// if you try to declare arrays within a record, you'll get an error message if you try to
+		// create another array of the record type
+//		faulty : array[10] of byte;
+	end;
+
+	randomTable : array[256] of byte;
+
+	// Number of walkers
+	const no : byte = 32;
+	// Monster array allocation will fail if it is an array. 
+	monsters : array[no] of monster_type;
+	// The following is allowed even if monster_type contains an array
+	singleMonster : monster_type;
+
+
+
+/*
+	Initialize all the monsters
+*/
+procedure InitMonsters();
+begin
+	for i:=0 to no do
+	begin
+		monsters[i].x:=mod(random(),screen_width); // Random x-position
+		monsters[i].y:=mod(random(),25); // Random t-position
+		monsters[i].prevx := monsters[i].x;
+		monsters[i].prevy := monsters[i].y;
+		monsters[i].color:=mod(random(),14)+blue+1; // Random colour excluding background
+	end;
+
+end;
+/*
+	Render all the monsters by first erasing the old position, then paining the new
+*/
+procedure RenderMonsters(render_char:byte);
+begin
+	for i:=0 to no do
+	begin
+		screenmemory:=addresstable(#saddr,monsters[i].prevx,monsters[i].prevy);
+		screenmemory[0]:=key_space;
+
+		screenmemory:=addresstable(#saddr,monsters[i].x,monsters[i].y);
+		screenmemory[0]:=render_char;
+		screenmemory:=screenmemory+$D400;
+		screenmemory[0]:=monsters[i].color;
+		
+	end;	
+
+end;
+
+
+
+// Random walk: up, down,left,right, stop at walls
+// Uses a lookup random table to decide which direction to go
+procedure UpdateMonsters();
+var
+	dx,dy : byte;
+begin
+	k:=shift;
+	for i:=0 to no do
+	begin
+		monsters[i].prevx := monsters[i].x;
+		monsters[i].prevy := monsters[i].y;
+		j:=randomTable[k];
+		dx:=0;
+		dy:=0;
+		
+		
+ 		if (monsters[i].x<>0) then
+ 			if (j=0) then dx:=-1;
+ 		if (monsters[i].x<>screen_width-1) then
+			if (j=3) then dx:=1; // Wall X
+
+		k+=11;			
+		j:=randomTable[k];
+		
+		if (monsters[i].y<>0) then // Wall Y
+			if (j=0) then dy:=-1;
+			
+		if (monsters[i].y<>25-1) then // Wall Y
+			if (j=3) then dy:=1;
+			
+		monsters[i].x+=dx;
+		monsters[i].y+=dy;
+	end;	
+
+end;
+
+ 
+begin
+	// Initialize
+	screen_bg_col:=blue;
+	screen_fg_col:=blue;
+	clearscreen(key_space,screen_char_loc);
+	clearscreen(black,screen_col_loc);
+	DefineScreen();
+	// Initialize tables
+	createaddresstable(#saddr,screen_char_loc,screen_width,25);
+	for i:=0 to 256 do 
+		randomTable[i]:=random()&3;
+
+		
+	InitMonsters();
+	// Loop	
+	while (true) do
+	begin
+		UpdateMonsters();
+		RenderMonsters(0);// 'at' sign
+		// Wait a bit each frame
+		
+		for i:=0 to 4 do
+			waitforraster(250);
+		shift+=1; // Some prime number
+	end;	
+
+	Loop();
+end.

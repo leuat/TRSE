@@ -1,0 +1,31 @@
+program Sinewave;
+var  
+
+	i: byte;
+	precalculated_sinewave_table: array[256] of byte = buildsinetable(16);
+	x_position: byte=0;
+	symbol:	string="*";
+
+begin
+
+	clearscreen(key_space,screen_char_loc);
+	
+	
+	// Use the table in real time to calculate a sine wave value on the fly
+	
+	while (true) do begin
+		waitforraster(250);
+		moveto(x_position, precalculated_sinewave_table[i], hi(screen_char_loc));
+		printstring(#symbol,0,1);
+		
+		i:=i+8;
+
+		x_position+=1;
+		if (x_position=screen_width) then begin
+			x_position:=0;
+			clearscreen(key_space,screen_char_loc);
+		end;
+
+		
+	end;	
+end.

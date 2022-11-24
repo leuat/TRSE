@@ -1,0 +1,50 @@
+program BCDNumbers;
+var  
+	// create two BCD numbers in memory, least significant byte first
+	score: array[] of byte = ($00, $00, $00, $00, $00);
+	hiscore: array[] of byte = ($00, $10, $00, $00, $00);
+
+	scoreAdd: array[] of byte = ($01, $00, $00, $00, $00);
+	
+/*
+	BCD numbers are just a different way to store and manipulate numbers.  They have their advantages and 
+	disadvantages.  A mΩjor advantage is they can define very large numbers so are useful for scores
+	and anything like that.
+	
+	TRSE has some helper commands to manipulate and display them.
+
+	BcdAdd()
+	BcdSub()
+
+	BcdCompare()
+	BcdIsEqual()
+	
+	BcdPrint()
+*/
+	
+begin
+
+	definescreen();
+	clearscreen($20, screen_char_loc);
+	clearscreen(white, screen_col_loc);
+	screen_fg_col := black;
+	screen_bg_col := cyan;
+
+	screenmemory := #screen_char_loc;
+	printstring("HI SCORE:",0,8);
+	screenmemory := #screen_char_loc + 10;
+	BcdPrint( #hiscore, 5 );  // print the high score using 5 bytes
+
+	screenmemory := #screen_char_loc + screen_width;
+	printstring("SCORE:",0,5);
+	screenmemory := #screen_char_loc + screen_width + 10;
+	
+	// repeat this loop until score has reached the high score
+	while (BcdIsEqual(#score, #hiscore, 5) = false) do
+	begin
+		BcdAdd( #score, #scoreAdd, 5 );	// add scoreAdd to score
+		BcdPrint( #score, 5 ); // print the current score
+		waitforverticalblank();	
+	end;
+	loop();
+end.

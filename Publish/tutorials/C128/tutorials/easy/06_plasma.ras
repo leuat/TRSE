@@ -1,0 +1,132 @@
+program PlasmaProgram;
+
+var
+
+// set to "0" to get the unoptimized version
+@define OPTIMIZED 1
+
+	// some plasma variables
+	c,val,c2x, c2y,ax, ay : byte;
+	x,y : byte;
+	colorP: ^byte; // same as "pointer" or "pointer of byte";	
+
+// charset will be placed at $2000 in bank 1	
+	const charsetLocation: address = $2800;
+ // look in the character set
+ 	const baseCharacter:byte = $68;
+
+	// Use custom charset
+	charset: IncBin("resources/charsets/charset.bin",charsetLocation);
+	// nice colors
+	fade : array [] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
+	
+
+	// mini sine table
+    siny : array[25] of byte; 
+	sinx : array[screen_width] of byte; 
+
+	// Lookup table for division by 16
+	lookupDiv16 : array[256] of byte = buildtable("i/16");
+
+
+
+	const yStart:byte = 2;
+	const yEnd:byte = 23;
+	const xStart:byte = 1;
+	const xEnd:byte = 39;
+
+
+
+// Plasma procedure
+
+procedure Plasma();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to 25 do begin 
+		siny[x]:=  sine[c2x] + sine[c2y];
+		c2x:=c2x+4;
+		c2y:=c2y+9;
+	end;
+
+	ax:=ax+3;
+	ay:=ay-5;
+
+	// Set up x-sine table
+	for x:=0 to screen_width do begin 
+		sinx[x] := sine[c2x] + sine[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	// Move cursor to (1,y) on $0400 on bank 1
+	moveto(0,yStart, hi(screen_char_loc));
+	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
+	
+	colorP:=#screen_col_loc + yStart*screen_width;
+	
+	for y:=yStart to yEnd do 
+	begin
+		val:=siny[y];
+		for x:=xStart to xEnd do 
+		begin
+		
+@if OPTIMIZED = 0
+			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
+			// we have created a lookup table instead!
+			c:=lookupDiv16[ (sinx[x] +val) ];
+			// Set the screen memory
+			screenmemory[x]:=c;
+			// Set color memory
+			colorP[x] := fade[ c ];
+@endif
+// This is the optimized version
+@if OPTIMIZED = 1
+			asm("
+				ldx x
+				lda sinx,x
+				adc val
+				tax
+				lda lookupDiv16,x
+				ldy x
+				sta (screenmemory),y
+				tax
+				lda fade,x
+				sta (colorP),y
+			");
+@endif
+		end;
+		// Increase screen memory pointer by 40 (next row)
+		screenmemory+=+screen_width;
+		// Increase color pointer by 40 (next row)
+		colorP+=screen_width;
+	end;
+
+end;
+
+
+
+
+begin
+	// Set color background
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	// Set charmap location at $2000
+	SetCharsetLocation(charsetLocation);
+	// Copy the 16 characters rom baseCharacter to 0
+	memcpy(charsetLocation +8*baseCharacter, 0, charsetLocation,8*16);
+	InitDivision16();
+	ax:=1;
+	ay:=5;
+
+	// Clear screen and color memory
+	ClearScreen(key_space, screen_char_loc);
+	// Main loop
+	while (true) do begin
+		//waitforverticalblank(); Doesnt work on C128
+		Plasma();
+	end;
+
+end.

@@ -1,0 +1,38 @@
+program Rasters;
+var
+	const useKernal:byte=0; //This works with this flag set on C128 but not with it off. Opposite of the C64 tutorial
+
+
+interrupt IRQ1();
+
+interrupt IRQ0();
+begin
+	StartIRQ(useKernal);
+	screen_bg_col:=red;
+	RasterIRQ(IRQ1(),$40,useKernal);
+	CloseIRQ();
+end;
+
+interrupt IRQ2();
+begin
+	StartIRQ(useKernal);
+	screen_bg_col:=yellow;
+	RasterIRQ(IRQ0(),$00,useKernal);
+	CloseIRQ();
+end;
+
+interrupt IRQ1();
+begin
+	StartIRQ(useKernal);
+	screen_bg_col:=green;
+	RasterIRQ(IRQ2(),$80,useKernal);
+	CloseIRQ();
+end;
+
+begin
+	disableciainterrupts(); // prevent CIA
+	setmemoryconfig(0,1,1,1,0); 
+	//setmemoryconfig(1,0,0); // Enable all ram, turn off BASIC
+    StartRasterChain(IRQ0(), 0,useKernal); // Don't use kernal
+	Loop(); 
+end.
