@@ -32,7 +32,7 @@ VIC20; PBM Unit; VIC20/pbm-pet/; <h2>Pet Bitmap Mode (PBM)</h2><div><img src=":r
 PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2>Support for the Plus/4 was added in version 0.08, with a bunch of fresh and new tutorials!<br><img src=":resources/images/tutorials/plus4_tut.png" width="300" class="center"><p><i>Small disclaimer: </i>Most built-in methods are not yet updated to work for the PLUS/4. This will be added later, within a larger project setting.
 
 
-C128; Main Commodore 128 tutorials; C128/tutorials/;<h2>Main C128 tutorials</h2><p><img src=":resources/images/tutorials/c128.png" width="300" class="center"><p>The official C128 introductory tutorials in TRSE.
+C128; Main Commodore 128 tutorials; C128/tutorials/;<h2>Main C128 tutorials</h2><p><img src=":resources/images/tutorials/c128.png" width="300" class="center"><p>The official TRSE C128 introductory tutorials.
 C128; A small game; C128/small_game/;<h2>A small game</h2><p><img src=":resources/images/tutorials/small_game_c128.png" width="300" class="center"><p>A small C128 game made by CrazySpence
 
 PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2><p><img src=":resources/images/PET.png" width="300" class="center">The official PET tutorials!
