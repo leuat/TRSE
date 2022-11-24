@@ -1,0 +1,317 @@
+program Display_multicolor_image;
+@use "demounit"
+
+/*
+
+	This effect was coded by Leuat and was used in the C64 demo "Salvaged" that was released at revision 2022.
+
+	The basics:
+	- VSP scroller moving the image
+	- a column of black sprites that hides the transition area
+    - only a row of screen data needs to be updated because of VSP	
+
+*/
+
+
+@define VSP_POS "$82DB" // exact 0
+@use "screen/fadeinout"
+@use "tables/luminosities"
+@use "screen/vsp"
+var
+	
+	ix,ixx:integer;
+	zp,src,dst,colp,dst2:pointer;
+	i,ii,jj,time,dir,j,curx,icnt,start,transition,st,done:byte;
+	firstWait : byte = 128;
+	// Sine data
+	sinx : array[256] of byte = BuildTable("(Math.sin((i+0)/256.0*3.14159*2)+1)*77+1") at $B400;
+
+	const sizey : byte = 6;
+	dx:byte=0;
+	const sprPos : address = $4800;
+	// Fadein data
+	per : array[1000] of byte = buildtable2d(40,25,"10*(Math.sin(j*0.5+i*0.5)+Math.cos(j*0.3)+1)+10*Math.sqrt(0.5*Math.pow(i-20,2)+Math.pow(j-12,2))") at $B000;	
+
+	RasterPos : byte=0;
+
+	// Images by optic
+	@export "vsp_image/optic2.flf" "vsp_image/optic1.bin" 0
+	@export "vsp_image/optic1.flf" "vsp_image/optic2.bin" 0
+
+	image1_color: IncBin("vsp_image/optic1_color.bin", $B500);
+	image1_data: IncBin("vsp_image/optic1_data.bin", $2000);
+
+	image2_color: IncBin("vsp_image/optic2_color.bin", $8800);
+	image2_data: IncBin("vsp_image/optic2_data.bin", $9000);
+
+	tab8 : array[320] of integer = buildtable("i*8");
+
+procedure CopyData();
+begin
+	ix:=curx*2;
+	j:=ix/8;
+	dst:=$6000 + tab8[j+dx];
+	if (dir>127) then
+	begin
+		src:=#image1_data+tab8[j];
+		dx:=0;
+	end
+	else
+	begin
+		src:=#image2_data+tab8[j];
+		dx:=0;
+	end;
+	
+	for i:=0 to 24 do
+	begin
+		memcpyunroll(src,0,dst,8);
+		src+=320;
+		dst+=320;
+	end;
+		
+end;
+
+
+procedure CopyColor();
+begin
+	ix:=curx*2;
+	j:=ix/8;
+	colp := $D800 + j+dx;
+	dst:=$4400 + j+dx;
+
+
+	if (dir>127) then
+	begin
+		src:=#image1_color+j+2;
+		zp:=src+1000;
+	end
+	else
+	begin
+		src:=#image2_color+j+2;
+		zp:=src+1000;
+	end;
+	// Transition underway
+	if (st) then
+	begin
+		src:=$0400;					
+		zp:=$0400;
+	end;
+	
+	
+	for i:=0 to 8 do
+	begin
+		dst[0]:=src[0];
+		colp[0]:=zp[0];
+		dst[40]:=src[40];
+		colp[40]:=zp[40];
+		dst[80]:=src[80];
+		colp[80]:=zp[80];
+		src+=120;
+		dst+=120;
+		zp+=120;
+		colp+=120;
+	end;
+	if (dir<127) then
+	begin
+		dst[0]:=src[0];
+		colp[0]:=zp[0];
+	end;		
+end;
+
+
+
+
+procedure UpdateSpritesUpper();
+begin
+	jj:=54;
+				
+	for ii:=0 to 1 do
+	begin
+		poke(^$D001,0,jj);					
+		poke(^$D001,2,jj+42);					
+		poke(^$D001,4,jj+42*2);					
+		poke(^$D001,6,jj+42*3);					
+		poke(^$D001,8,jj+42*4);					
+		poke(^$D001,10,jj+42*5);					
+		jj+=(42*4);
+
+	end;	
+	
+end;
+
+procedure InitSpriteData();
+begin
+	zp:=#sprPos;
+	for i:=0 to 8 do
+	begin
+		for j:=0 to 21 do
+		begin
+			zp[2]:=0;
+			zp[0]:=0;
+			zp[1]:=0;
+			if (j<8) then 
+			begin
+				zp[1]:=%00111111;
+				zp[2]:=%11111111;
+			end;
+			zp+=3;
+		end;
+		zp+=1;
+	end;
+end;
+
+
+procedure UpdateTrans() inline;
+begin
+	if (keypressed(key_space)=true) then
+		transition:=1;
+		
+	if (transition and time=64) then st:=1;		
+end;
+
+// Top raster. plays music in the demo etc, sets up the current VSP values
+
+interrupt Raster0();
+interrupt Raster();
+begin
+	DemoUnit::StartDemoIRQ();
+	hidebordery(1);
+	hideborderx(0);
+	RasterIRQ(Raster0(), 0,0);
+	curx:=sinx[time+128];
+	ix:=curx*2;
+	j:=ix/8;
+	vsp::offset := 39-j;
+	curx:=sinx[time];
+	dir:=time+64;
+	UpdateTrans();
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+// Sets up sprites
+procedure InitSprites();
+begin
+	sprite_bitmask := $ff;
+	for i:=0 to 8 do
+	begin
+		setspriteloc(i,$800/64,1);		
+	end;
+	zp:=$4800;
+	for i:=0 to 21 do
+	begin
+		zp[0]:=$FF;
+		zp[1]:=$FF;
+		zp[2]:=$FF;
+		zp+=3;
+	end;
+	
+end;
+
+
+interrupt Raster0();
+begin
+	DemoUnit::StartDemoIRQ();
+	setbitmapmode();
+	Hidebordery(1);	
+	
+	if (start) then 
+	begin
+		if (firstWait<>0) then firstWait-=1 else
+		time+=1;
+	end;
+	// VSP action!
+	if (vsp::offset<>0) then	
+		RasterIRQ(vsp::raster(), vsp::line,0);
+	
+	
+	DemoUnit::CloseDemoIRQ();
+end;
+
+
+procedure InitSpr();
+begin
+		sprite_bitmask:=0;
+	for i:=0 to 8 do sprite_color[i]:=0;
+	vsp::shift_irq_pos:=$34+2;
+	vsp::next_raster_pos:=$34+4;	
+	RasterPos := $40;
+	
+	for ii:=0 to 8 do
+		spritepos(16,100,ii);
+
+	
+	
+	//loop();	
+	UpdateSpritesUpper();
+	vsp::proc := #Raster;
+	sprite_bitmask:=%00011111;	
+
+end;
+
+begin
+	time:=64;
+	// Turn off multicolor if you want hires! 
+	
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	screenoff();	
+	
+	clearscreen(0,^$0400);
+	clearscreen(0,^$4400);
+	clearscreen(0,^$D800);
+	
+	setmulticolormode();
+	InitSpriteData();	
+	// Set data pointer to $6000
+	setcharsetandscreenlocation($6000,$4400);
+	
+	// Initialise black sprites
+	InitSprites();	
+	sprite_stretch_y:=$FF;
+	sprite_stretch_x:=$00;
+	// Setup image	
+	zp:=#image1_color+40*24+2;
+	
+	zp:=#image2_color+40*24+2;
+	// prev 180
+	fill(zp,0,180);
+	zp+=1000;
+	fill(zp,0,180);
+	fill(^$6000+8000,0,256);
+	
+	zp:=$6000;
+	src:=#image2_data;
+	for i:=0 to 80 do 
+	begin
+		memcpyfast(src,0,zp,100);
+		zp+=100;
+		src+=100;
+	end;
+	setbitmapmode();
+	setbank(vic_bank1);
+	setmulticolormode();	
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	
+	scrollx(3);
+	InitSpr();	
+	startrasterchain(Raster(),RasterPos,0);
+	screenon();
+	
+	FadeInOut::InitCols(#Luminosities::fromBlue);
+	FadeInOut::DefaultFadeIn(#image2_color,$4400,#per,4);
+	start:=1;	
+	
+	while (done=false) do
+	begin
+		waitforraster(8);
+		CopyData();
+		CopyColor();
+		scrollx((7-(ix&7)));
+		icnt+=1;
+		if (icnt=2) then icnt:=0;
+	end;
+	loop();
+	
+end.
