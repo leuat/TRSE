@@ -10,7 +10,6 @@ public:
 
     void Assemble(Assembler* as, AbstractCodeGen* dispenser) override;
 
-    void WaitForVerticalBlank(Assembler* as);
     void Jammer(Assembler *as);
 
     void FLD(Assembler *as);

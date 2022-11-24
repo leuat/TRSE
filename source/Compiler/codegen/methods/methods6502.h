@@ -103,6 +103,8 @@ public:
     void LoadSong(Assembler *as);
     void PPUDrawColumn(Assembler* as);
     void Clearsound(Assembler* as);
+    void SetBitmapLocation(Assembler *as);
+
     void SetCharsetLocation(Assembler* as);
     void SetCharsetAndScreenLocation(Assembler* as);
     void SetScreenLocation(Assembler* as);
@@ -130,6 +132,9 @@ public:
     void ClearScreen(Assembler* as);
     void WaitForRaster(Assembler* as);
     void WaitNoRasterLines(Assembler* as);
+    void WaitForVerticalBlank(Assembler *as);
+
+
     void SetSpriteLoc(Assembler* as);
     void ClearBitmap(Assembler* as);
     void Swap(Assembler* as);

@@ -15,7 +15,7 @@ var
     siny : array[25] of byte; 
 	sinx : array[40] of byte; 
 
-
+	tab16 : array[256] of byte = buildtable("i/16 + 64");
 
 
 // Define y_start as a global preprocessor constant
@@ -61,7 +61,7 @@ begin
 	for y:= @y_start to 23 do begin
 		val:=siny[y];
 		for x:=1 to 36 do begin
-			screenmemory[x]:=64+(sinx[x] +val)/16;
+			screenmemory[x]:=tab16[(sinx[x] +val)];
 		end;
 		// Increase x by 40 (next row)
 		screenmemory+=screen_width;
@@ -80,7 +80,7 @@ begin
 		val:=siny[y];
 		for x:=1 to 36 do begin
 			// Color that screen
-			screenmemory[x] := fade[8+ (sinx[x] +val)/16 ];;
+			screenmemory[x] := fade[(sinx[x] +val)/16 ];
 
 		end;
 		// Inc screen x by 40
@@ -98,13 +98,11 @@ end;
 
 begin
 	// Set color background
-	SCREEN_BG_COL:=BLACK;
-	SCREEN_FG_COL:=BLACK;
+	screen_fg_col:=black;
+	screen_bg_col:=black;
 
-//	Loop();
 	// Set charmap location at $2000
 	SetCharsetLocation($2800);
-//	poke(^$0A2C, 0,$18);
 	// Set custom character pos
 	// Initialize sine functions
 	ax:=1;
@@ -112,13 +110,13 @@ begin
 
 	set2mhzmode();
 	// Clear screen and color memory
-	ClearScreen($20, SCREEN_CHAR_LOC);
-	ClearScreen(GREEN, SCREEN_COL_LOC);
+	ClearScreen($20, #screen_char_loc);
+	ClearScreen(green, #screen_col_loc);
 //	setmulticolormode();
 	// Main loop
-	while 1<>2 do begin
-		time:=time+1;
-//		waitForRaster(0);
+	while (true) do begin
+		waitforverticalblank();
+		time+=1;
 		Plasma();
 	end;
 end.

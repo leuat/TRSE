@@ -66,23 +66,6 @@ iLoop:
 				cpy #80
 				bne iLoop
 			");
-/*			i:=(zp1[x]+time);
-			j:=(zp2[x]);
-
-			k:=i&15 + j;
-			//k:=j*16+i;
-			k:=peek(perlin, k)+add ;
-
-
-
-/*			i:=zp2[x]+time;
-			j:=sine[zp1[x]-time];
-
-			k:=(i+j)&15 + add;
-			//k:=j*16+i;*/
-//			poke(^$D601,0,k);
-
-//		end;
 		zp1:=zp1+80;
 		zp2:=zp2+80;
 

@@ -515,6 +515,9 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("setcharsetlocation")) {
         SetCharsetLocation(as);
     }
+    if (Command("setbitmaplocation")) {
+        SetBitmapLocation(as);
+    }
     if (Command("SetCharsetAndScreenLocation")) {
         SetCharsetAndScreenLocation(as);
     }
@@ -646,6 +649,9 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
             as->Asm("sta $d016");
         }
     }
+    if (Command("waitforverticalblank"))
+        WaitForVerticalBlank(as);
+
     if (Command("setregularcolormode")) {
         as->Comment("Regularcolor mode");
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4) {
@@ -685,6 +691,18 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     }
     if (Command("settextmode")) {
         as->Comment("Regular text mode ");
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
+            as->Asm("lda $00D8");
+            as->Asm("and #%11011111");
+            as->Asm("sta $00D8");
+            as->Asm("lda $D011");
+            as->Asm("and #%01011111");
+            as->Asm("sta $D011");
+            return;
+
+        }
+
+
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4) {
             as->Asm("lda $ff06");
             as->Asm("and #%11011111");
@@ -719,6 +737,12 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
 
     if (Command("setbitmapmode")) {
         as->Comment("Bitmap mode ");
+        if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
+            as->Asm("lda $00D8");
+            as->Asm("ora #$20");
+            as->Asm("sta $00D8");
+
+        }
         as->Asm("lda #$3b");
         as->Asm("sta $d011");
     }
@@ -3469,6 +3493,27 @@ void Methods6502::Clearsound(Assembler *as)
     as->Asm("cli");*/
 }
 
+void Methods6502::SetBitmapLocation(Assembler *as) {
+    QSharedPointer<NodeNumber> v = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
+    if (v==nullptr)
+        ErrorHandler::e.Error("SetBitmapLocation parameter must be an address!", m_node->m_op.m_lineNumber);
+
+
+    int n = (unsigned int)v->m_val % 0x4000;
+    bool ok=false;
+    uchar b = 0;
+    if (n==0x00) { b=0b0000; ok=true;}
+    if (n==0x2000) { b=0b1000; ok=true;}
+    if (!ok)
+        ErrorHandler::e.Error("SetBitmapLocation parameter must be one of the following values: $0000,$2000,$4000,$8000,$A000, $C000, $E000", m_node->m_op.m_lineNumber);
+
+    as->Asm("lda $d018");
+    as->Asm("ora #"+QString::number(b));
+    as->Asm("sta $d018");
+
+}
+
+
 void Methods6502::SetCharsetLocation(Assembler *as)
 {
 /*    QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
@@ -4616,6 +4661,12 @@ void Methods6502::StartIRQ(Assembler *as)
         }
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
+        as->Asm("pha");
+        as->Asm("txa");
+        as->Asm("pha");
+        as->Asm("tya");
+        as->Asm("pha");
+
         as->Asm("lda $d019");
         as->Asm("sta $d019");
         as->Asm("lda $FF00");
@@ -4706,7 +4757,18 @@ void Methods6502::CloseIRQ(Assembler *as, bool isWedge)
 
         as->Asm("lda #$00");
         as->Asm("sta $d030");
-        as->Asm("jmp $fa65");
+
+        as->Asm("pla");
+        as->Asm("tay");
+        as->Asm("pla");
+        as->Asm("tax");
+        as->Asm("pla");
+
+//        m_node->RequireNumber(m_node->m_params[0], "StartIRQ", m_node->m_op.m_lineNumber);
+/*        QSharedPointer<NodeNumber> n = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
+        if (m_node->m_params[0]->getValueAsInt(as)==1)
+            as->Asm("jmp $fa65");
+*/
 
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIC20) {
@@ -5647,15 +5709,32 @@ void Methods6502::WaitNoRasterLines(Assembler *as)
 //    as->PopLabel("waitnoraster");
 }
 
+void Methods6502::WaitForVerticalBlank(Assembler *as)
+{
+    QString l1 = as->NewLabel("verticalblank1");
+    QString l2 = as->NewLabel("verticalblank2");
+
+    as->Label(l1);
+    as->Asm("bit $D011");
+    as->Asm("bpl "+l1);
+    as->Label(l2);
+    as->Asm("bit $D011");
+    as->Asm("bmi "+l2);
+
+
+    as->PopLabel("verticalblank1");
+    as->PopLabel("verticalblank2");
+}
+
 
 
 
 void Methods6502::WaitForRaster(Assembler *as)
 {
     as->Comment("wait for raster");
-//    LoadVar(as, 0,"", "ldx ");
+    //    LoadVar(as, 0,"", "ldx ");
 
-/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
+    /*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
  //       m_node->m_params[0]->setForceType(TokenType::BYTE);
         if (m_node->m_params[0]->isPureNumericOrAddress()) {
             int val =  m_node->m_params[0]->getValueAsInt(as);

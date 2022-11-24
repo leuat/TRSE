@@ -266,8 +266,6 @@ end;
 procedure InitAll();
 begin
 	
-//	zeropage1:=@charmap;
-//	copycharsetfromrom(^@charmap);
 	setmemoryconfig(0,1,1,1,0);
 	for a:=0 to 255 do sine[a]:=sine[a]/12;
 	sine[255] := sine[0];

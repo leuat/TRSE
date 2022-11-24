@@ -9,9 +9,6 @@ void Methods6502C64::Assemble(Assembler *as, AbstractCodeGen *dispenser)
 {
     Methods6502::Assemble(as,dispenser);
 
-    if (Command("waitforverticalblank"))
-        WaitForVerticalBlank(as);
-    else
     if (Command("fld"))
         FLD(as);
     else
@@ -19,23 +16,6 @@ void Methods6502C64::Assemble(Assembler *as, AbstractCodeGen *dispenser)
         Jammer(as);
 
 
-}
-
-void Methods6502C64::WaitForVerticalBlank(Assembler *as)
-{
-    QString l1 = as->NewLabel("verticalblank1");
-    QString l2 = as->NewLabel("verticalblank2");
-
-    as->Label(l1);
-    as->Asm("bit $D011");
-    as->Asm("bpl "+l1);
-    as->Label(l2);
-    as->Asm("bit $D011");
-    as->Asm("bmi "+l2);
-
-
-    as->PopLabel("verticalblank1");
-    as->PopLabel("verticalblank2");
 }
 
 void Methods6502C64::Jammer(Assembler *as)

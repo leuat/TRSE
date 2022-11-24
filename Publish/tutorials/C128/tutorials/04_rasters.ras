@@ -2,7 +2,8 @@ program Tutorial_4_rasters;
 var
 	a,b:byte;
 
-@define kernal "1"
+// kernal 1 not working yet
+@define kernal "0"
 
 interrupt IRQ1();
 
@@ -12,8 +13,6 @@ begin
 	StartIRQ(@kernal);
 	SCREEN_BG_COL:=RED;
 	RasterIRQ(IRQ1(),$40,@kernal);
-
-//	RasterIRQ(IRQ1(),$40,@kernal);
 	
 	CloseIRQ();
 end;
@@ -40,6 +39,9 @@ end;
 
 
 begin
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(0,1,1,1,0);
 	StartRasterChain(IRQ0(), 0, @kernal);
 	Loop(); 
 end.

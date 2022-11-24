@@ -182,7 +182,7 @@ void SymbolTable::Initialize()
 
      }
 //    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::NES)
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65 ||  Syntax::s.m_currentSystem->m_system==AbstractSystem::C128)
     if (!m_constants.contains("SIDFILE_1_INIT")) {
         for (int i=1;i<10;i++) {
            if (!m_constants.contains("SIDFILE_"+QString::number(i)+"_INIT")) {

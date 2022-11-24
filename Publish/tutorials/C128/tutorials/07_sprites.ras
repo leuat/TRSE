@@ -1,0 +1,73 @@
+program Tutorial_10_sprites;
+var
+	a,b:byte;
+@define kernal "0"
+
+@export "images/sprites.flf" "images/sprites.bin" 256
+
+	rnd: array[256] of byte = buildtable("Math.random()*255");
+	const sprPos : address = $3000;
+	sprites : incbin("images/sprites.bin", sprPos);
+	px : integer = 160;
+	py : byte = 100;
+	zp : pointer;
+	x,y,i : byte;
+	r1,r2 : byte;
+
+
+// fill the screen with random stuff
+
+procedure UpdateScreen();
+begin
+	x:=mod(rnd[r1],screen_width );
+	y:=mod(rnd[r2],screen_height );
+	zp:=#screen_char_loc + y*screen_width + x;
+	zp^:=rnd[r1+r2]; // set a random value
+	zp+=$D800-#screen_char_loc;
+	zp^:=rnd[r2-r1];
+	r1+=1;
+	r2+=1;
+	if (r2&15=0) then r2+=1;
+end;
+
+// Update the joystick. 
+procedure UpdateJoystick();
+begin
+	joystick(1);
+	if (joystickright = 1) then px+=1;
+	if (joystickleft = 1) then px-=1;
+	if (joystickup = 1) then py-=1;
+	if (joystickdown = 1) then py+=1;
+	
+end;
+	
+interrupt Raster();
+begin
+	StartIRQ(@kernal);
+	spritepos(px,py,0);
+	CloseIRQ();
+end;
+
+
+
+
+begin
+	disableciainterrupts();
+	preventirq();
+	
+	
+	setmemoryconfig(0,1,1,1,0);
+	setspriteloc(0,$3000/64,0);
+	sprite_bitmask:=%00000111;
+	
+	StartRasterChain(Raster(), 0, @kernal);
+	while (true) do
+	begin
+		waitforverticalblank();			
+		UpdateJoystick();
+		for i:=0 to 20 do			
+			UpdateScreen();
+		
+	end;
+	
+end.

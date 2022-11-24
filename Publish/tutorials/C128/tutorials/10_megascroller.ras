@@ -23,7 +23,7 @@ var
 	zeropage1:pointer;
 	
 	// Turn ON of off KERNAL (0/1)
-	@define useKernal "1"
+	@define useKernal "0"
 	
 	
 	@define clearVal "$20"
@@ -226,6 +226,9 @@ begin
 	scrollsplit := 0;
 	// Hook the raster
 	hideborderx(0);
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(0,1,1,1,0);
 	StartRasterChain(Raster1(),1,@useKernal);
 	Loop();
 end.

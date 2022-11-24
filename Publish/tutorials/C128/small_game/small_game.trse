@@ -63,4 +63,6 @@ override_target_settings_basic = 2.13558e-314
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+dirart_flf_file = none
+d64name = main
 open_files =, small_game.ras

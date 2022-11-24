@@ -31,7 +31,31 @@ VIC20; PBM Unit; VIC20/pbm-pet/; <h2>Pet Bitmap Mode (PBM)</h2><div><img src=":r
 
 PLUS4; Main Commodore PLUS/4 tutorials; PLUS4/Tutorials/;<h2>Main Commodore Plus/4 tutorials</h2>Support for the Plus/4 was added in version 0.08, with a bunch of fresh and new tutorials!<br><img src=":resources/images/tutorials/plus4_tut.png" width="300" class="center"><p><i>Small disclaimer: </i>Most built-in methods are not yet updated to work for the PLUS/4. This will be added later, within a larger project setting.
 
-MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
+
+C128; Main Commodore 128 tutorials; C128/tutorials/;<h2>Main C128 tutorials</h2><p><img src=":resources/images/tutorials/c128.png" width="300" class="center"><p>The official C128 introductory tutorials in TRSE.
+C128; A small game; C128/small_game/;<h2>A small game</h2><p><img src=":resources/images/tutorials/small_game_c128.png" width="300" class="center"><p>A small C128 game made by CrazySpence
+
+PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2><p><img src=":resources/images/PET.png" width="300" class="center">The official PET tutorials!
+PET; PETFrog; PET/PETFrog/;<h2>PET Frog game</h2><p><img src=":resources/images/billboard/b30.png" width="300" class="center"><p>PET Frog for the VIC-20!<p>By Chris Garrett
+PET; PBM Unit; PET/pbm-pet/; <h2>Pet Bitmap Mode (PBM)</h2><div><img src=":resources/images/tutorials/pbm.png" width="300" class="center"><p>For drawing using PETSCII 2x2 blocks, provides a low-res 80x50 bitmap out of characters. Supports drawing sprites and tiles, including mirrored drawing.</p><p>PBM created by Andy H (HEWCO)
+
+X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2><p><img src=":resources/images/X16.png" width="200" class="center"><p>TRSE tutorials for the Commander X16!
+
+OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2><tr><td><img src=":resources/images/tutorials/ok1.png" width="150" class="center"></td><td>OK64 is Leuat's very own fake 6502 computer!<p>The OK64 hardware supports a 6502 with 64kb of program RAM. In addition to this, the OKVC (OK video chip) supports an additional 1mb Video RAM - and features a handy command interface that the 6502 can use to draw graphic primitives such as polygons, circles and lines. The screen is 256x256 pixels, with a selection of 256 colours from a RGB24 palette. The OK64 also supports a SID chip. </td></tr>
+OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2><tr><td><img src=":resources/images/tutorials/ok2.png" width="150" class="center"></td><td>The first demo made for the OK64! Presented at Revision 2020.</td></tr>
+OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system source</h2><p><img src=":resources/images/tutorials/ok3.png" width="300" class="center"><p>Simple source code for the extremely basic KOS - (O)K Operating System.
+
+ATARI2600; Atari 2600 tutorials; ATARI2600/tutorials/;  <h2>Main Atari 2600 tutorials</h2><p><img src=":resources/images/ATARI2600.png" width="200" class="center"><p>Proof-of-concept, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
+
+MEGA65; Main Mega65 tutorials; MEGA65/Tutorials/ ;  <h2>Main Mega65 tutorials</h2><p><img src=":resources/images/tutorials/mega1.png" width="200" class="center"><p>Recommended starting point for anybody interested in coding for the MEGA65.
+MEGA65; Mega65 Demoeffects (raytracer); MEGA65/RayTracer/ ;  <h2><p><img src=":resources/images/tutorials/mega2.png" width="200" class="center"><p>The Mega65 demo effect ray tracer tutorials!</h2><p>Under construction.
+
+BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><p><img src=":resources/images/tutorials/bbc1.png" width="200" class="center"><p><p>Main BBC Micro (32k) tutorials.
+BBCM; Beep! the demo; BBCM/Beep/ ;  <h2>Beep! the demo</h2><p><img src=":resources/images/beep.png" width="200" class="center"><p>Beep! is multi-part disk-loading demo for the BBC Micro that was made entirely with TRSE. Beep! was released at Deadline 2021.
+BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC Demo setup sample project</h2><p><img src=":resources/images/tutorials/bbc2.png" width="200" class="center">Make a demo for the BBC that loads independent parts from disk!<p>Loader at $1100, effects at $1280. Plays music, loads effects from disk.
+
+
+
 
 NES; Main NES tutorials; NES/intro_tutorial/;<h2>Main NES tutorials</h2><p><img src=":resources/images/NES.png" width="200" class="center"><p>TRSE currently contains 4 seperate NES example files on how to start building a NES game!
 NES; Unit tests; NES/UnitTests/; <h2>TRSE internal unit tests</h2><p>This project contains various unit test files for testing and verifying that the internal 2A03 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
@@ -44,61 +68,49 @@ GAMEBOY; Yo-grl (demo); GAMEBOY/yo-grl/; <h2>Yo-grl makes a demo</h2><p><tr><td>
 GAMEBOY; Mr. Tibbles; GAMEBOY/mrtibbles/ ;  <h2>Mr. Tibbles</h2><p><img src=":resources/images/tutorials/mrtibbles.png" width="200" class="center"><p>Mr. Tibbles is a sample gameboy project that lets you move a cat around in a level.
 GAMEBOY; Unit tests; GAMEBOY/UnitTests/; <h2>TRSE internal unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>This project contains various unit test files for testing and verifying that the internal Z80 arithmetic / methods / Dispatcher stuff is working. Which not everything is. Yet. <p>Not complete, still under construction.
 
-X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p><img src=":resources/images/tutorials/dos1.png" width="200" class="center"><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
-X86; X86 Simple OS; X86/X86-OS/; <h2>Write your own X86 OS using TRSE</h2><p><img src=":resources/images/tutorials/dos2.png" width="200" class="center"><p>Did you know that it is possible to write a fully functional i386-X86 OS using TRSE? In this single tutorial, we show you how.
-X86; VGA (386) + Adlib tutorials; X86/VGA_386/; <h2>Main 386 VGA + Adlib player tutorials</h2><p><img src=":resources/images/tutorials/dos3.png" width="200" class="center"><p>386 VGA + Adllib DOS tutorials.
-X86; Unit tests; X86/unittests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>TRSE X86 internal Unit tests
 
+AMSTRADCPC; Main Amstrad CPC tutorials; AMSTRADCPC/tutorials/;<h2>Main Amstrad CPC</h2><p><img src=":resources/images/AMSTRADCPC.png" width="200" class="center"><p>Amstrad CPC main example files!
+AMSTRADCPC; Mørketid (demo); AMSTRADCPC/Morketid/;<h2>Mørketid</h2><p><img src=":resources/images/morketid.png" width="200" class="center"><p>Mørketid is a full Amstrad CPC demo that was made with TRSE. The demo competed at Syntax 2020, and can be found on pouet here : https://www.pouet.net/prod.php?which=87509.<br><br>This project contains the full source code with all resources for the demo.
+AMSTRADCPC; SuperSki2021 (text game); AMSTRADCPC/SuperSki2021/;<h2>SuperSki2021</h2><p><img src=":resources/images/superski2021.png" width="200" class="center"><p>SuperSki2021 is a small Amstrad CPC game in text mode (using user defined char) in Mode 1 that was made with TRSE and demonstrates the usage of some Amstrad CPC and z80 units.<br><br>Note: The game is not optimized. This is not a good showcase of what TRSE can achieve!
+AMSTRADCPC; Unit tests; AMSTRADCPC/UnitTests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>Z80/CPC unit tests.
 SPECTRUM; ZX Spectrum tutorials; SPECTRUM/tutorials/;  <h2>Main ZX Spectrum tutorials</h2><p><p><img src=":resources/images/tutorials/zx.png" width="256" class="center"><p>Main ZX spectrum tutorials in TRSE.
-ATARI2600; Atari 2600 tutorials; ATARI2600/tutorials/;  <h2>Main Atari 2600 tutorials</h2><p><img src=":resources/images/ATARI2600.png" width="200" class="center"><p>Proof-of-concept, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
+VZ200; VZ200 tutorials; VZ200/tutorials/ ;  <h2>Main VZ200 tutorials</h2><p><img src=":resources/images/tutorials/vz200.png" width="200" class="center"><p>Learn how to make stuff for the computer with the objectively most intriguing palette in the world!
+VZ200; Millipede; VZ200/millipede/ ;  <h2>Millipede</h2><p><img src=":resources/images/billboard/b31.png" width="200" class="center"><p>The original Centipede game comes to the VZ200!<p>Shoot the Millipede segments to gain points! Heads give higher points than other body pieces.<p>Watch out for the spider bouncing around the screen. Hit it when close to you to get higher points!<p>Shoot the Scorpion before he poisons the mushrooms. If he does, the millipede will go straight to the bottom of the screen where you are!<p>The Flea will come along and add more mushrooms. Shoot him twice to get him!<p>Millipede was written by Jason Oakley / Blue Bilby using Turbo Rascal Syntax Error (TRSE).
+VZ200; Small VZ200 TRSE demo; VZ200/TRSEdemo/ ;  <h2>Small VZ200 demo project</h2><p><img src=":resources/images/tutorials/vz200_demo.png" width="200" class="center"><p>Small VZ200 graphics demo
+
+MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
+
 AMIGA; Main Amiga 500 tutorials; AMIGA/tutorials/;<h2>Main Amiga 500 tutorials</h2><p>The main Amiga 500 tutorials in TRSE<p><img src=":resources/images/AMIGA.png" width="256" class="center"><p>TRSE currently containts 8 stand-alone Amiga 500 example files, ranging from sprite handling to bitplane manipulation, 3D and text rendering. <p>More tutorials to come soon!
 AMIGA; Hopscotch (demo) ; AMIGA/hopscotch/;<h2>Hopscotch</h2><img src=":resources/images/tutorials/hopscotch.png" width="200" height="200" class="center"><p>Hopscotch is an Amiga 500 OCS demo made by Proxima. Full source + resources, just press ctrl+B to build! Released at Black Valley demoparty 2022.
 AMIGA; Amiga small intro; AMIGA/small_intro/;<h2>Amiga 500 small intro</h2><p><img src=":resources/images/amiga_intro.png" width="320" class="center">A small Amiga 500 intro made with TRSE!
 ATARI520ST; Main Atari 520 ST tutorials; ATARI520ST/tutorials/;<h2>Main Atari 520 ST tutorials</h2><p>The main Atari ST 520 tutorials in TRSE<p><img src=":resources/images/ATARI520ST.png" width="300" class="center"><p>TRSE currently containts 5 stand-alone Atari ST example files, all being demo-oriented.  <p>More tutorials to come soon!
 ATARI520ST; Atari 520 Unit tests; ATARI520ST/unittests/; <h2>TRSE internal unit tests for the m68k</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>This project contains various unit test files for testing and verifying that the compiler is working as it should.
 
-AMSTRADCPC; Main Amstrad CPC tutorials; AMSTRADCPC/tutorials/;<h2>Main Amstrad CPC</h2><p><img src=":resources/images/AMSTRADCPC.png" width="200" class="center"><p>Amstrad CPC main example files!
-AMSTRADCPC; Mørketid (demo); AMSTRADCPC/Morketid/;<h2>Mørketid</h2><p><img src=":resources/images/morketid.png" width="200" class="center"><p>Mørketid is a full Amstrad CPC demo that was made with TRSE. The demo competed at Syntax 2020, and can be found on pouet here : https://www.pouet.net/prod.php?which=87509.<br><br>This project contains the full source code with all resources for the demo.
-AMSTRADCPC; SuperSki2021 (text game); AMSTRADCPC/SuperSki2021/;<h2>SuperSki2021</h2><p><img src=":resources/images/superski2021.png" width="200" class="center"><p>SuperSki2021 is a small Amstrad CPC game in text mode (using user defined char) in Mode 1 that was made with TRSE and demonstrates the usage of some Amstrad CPC and z80 units.<br><br>Note: The game is not optimized. This is not a good showcase of what TRSE can achieve!
-AMSTRADCPC; Unit tests; AMSTRADCPC/UnitTests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>Z80/CPC unit tests.
 
 
-MEGA65; Main Mega65 tutorials; MEGA65/Tutorials/ ;  <h2>Main Mega65 tutorials</h2><p><img src=":resources/images/tutorials/mega1.png" width="200" class="center"><p>Recommended starting point for anybody interested in coding for the MEGA65.
-MEGA65; Mega65 Demoeffects (raytracer); MEGA65/RayTracer/ ;  <h2><p><img src=":resources/images/tutorials/mega2.png" width="200" class="center"><p>The Mega65 demo effect ray tracer tutorials!</h2><p>Under construction.
 
-BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><p><img src=":resources/images/tutorials/bbc1.png" width="200" class="center"><p><p>Main BBC Micro (32k) tutorials.
-BBCM; Beep! the demo; BBCM/Beep/ ;  <h2>Beep! the demo</h2><p><img src=":resources/images/beep.png" width="200" class="center"><p>Beep! is multi-part disk-loading demo for the BBC Micro that was made entirely with TRSE. Beep! was released at Deadline 2021.
-BBCM; BBC Disk Loading Demo Setup; BBCM/BBCDemoSetup/ ;  <h2>Disk Loading BBC Demo setup sample project</h2><p><img src=":resources/images/tutorials/bbc2.png" width="200" class="center">Make a demo for the BBC that loads independent parts from disk!<p>Loader at $1100, effects at $1280. Plays music, loads effects from disk.
+
 ACORN; Acorn atom tutorials; Acorn/tutorials/ ;  <h2>Acorn Atom tutorials</h2><p><img src=":resources/images/ACORN.png" width="200" class="center">Under construction.
 ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
 APPLEII; Main Apple II tutorials; APPLEII/tutorials/ ;  <h2>Main Apple II tutorials</h2><p><p>Under construction. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
 
-VZ200; VZ200 tutorials; VZ200/tutorials/ ;  <h2>Main VZ200 tutorials</h2><p><img src=":resources/images/tutorials/vz200.png" width="200" class="center"><p>Learn how to make stuff for the computer with the objectively most intriguing palette in the world!
-VZ200; Millipede; VZ200/millipede/ ;  <h2>Millipede</h2><p><img src=":resources/images/billboard/b31.png" width="200" class="center"><p>The original Centipede game comes to the VZ200!<p>Shoot the Millipede segments to gain points! Heads give higher points than other body pieces.<p>Watch out for the spider bouncing around the screen. Hit it when close to you to get higher points!<p>Shoot the Scorpion before he poisons the mushrooms. If he does, the millipede will go straight to the bottom of the screen where you are!<p>The Flea will come along and add more mushrooms. Shoot him twice to get him!<p>Millipede was written by Jason Oakley / Blue Bilby using Turbo Rascal Syntax Error (TRSE).
-VZ200; Small VZ200 TRSE demo; VZ200/TRSEdemo/ ;  <h2>Small VZ200 demo project</h2><p><img src=":resources/images/tutorials/vz200_demo.png" width="200" class="center"><p>Small VZ200 graphics demo
 
-OK64; Main OK64 examples ; OK64/Tutorials/; <h2>Main OK64 tutorials</h2><tr><td><img src=":resources/images/tutorials/ok1.png" width="150" class="center"></td><td>OK64 is Leuat's very own fake 6502 computer!<p>The OK64 hardware supports a 6502 with 64kb of program RAM. In addition to this, the OKVC (OK video chip) supports an additional 1mb Video RAM - and features a handy command interface that the 6502 can use to draw graphic primitives such as polygons, circles and lines. The screen is 256x256 pixels, with a selection of 256 colours from a RGB24 palette. The OK64 also supports a SID chip. </td></tr>
-OK64; OK Computer (demo) ; OK64/OkComputer/; <h2>OK Computer</h2><tr><td><img src=":resources/images/tutorials/ok2.png" width="150" class="center"></td><td>The first demo made for the OK64! Presented at Revision 2020.</td></tr>
-OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system source</h2><p><img src=":resources/images/tutorials/ok3.png" width="300" class="center"><p>Simple source code for the extremely basic KOS - (O)K Operating System.
-
-JDH8; Main JDH8 examples ; JDH8/tutorials/; <h2>Main JDH8 tutorials</h2><tr><td><img src=":resources/images/JDH8.png" width="150" class="center"></td><td><p>See https://www.youtube.com/watch?v=vaGZapAGvwM. Still very much experimental. Check out the video! </td></tr>
-
-WONDERSWAN; Main Wonderswan examples ; WONDERSWAN/tutorials/; <h2>Main Wonderswan tutorials</h2><tr><td><img src=":resources/images/WONDERSWAN.png" width="150" class="center"></td><td><p>WIP </td></tr>
 
 TIKI100; Tiki 100 tutorials; TIKI100/tutorials/;  <h2>Main TIKI 100 tutorials</h2><p><img src=":resources/images/TIKI100.png" width="300" class="center">The TIKI 100 was a little-known (and failed) 1980s computer from Norway. A perfect match for TRSE!<br><br>  Proof-of-concept that the Z80 works, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 TRS80; TRS-80 tutorials; TRS80/tutorials/;  <h2>Main TRS-80 tutorials</h2><p><img src=":resources/images/TRS80.png" width="200" class="center"><p>TRS-80 z80 tutorials. Work in progress!<p>Let us know if you're interesting in writing some example files / libraries
 
-PET; Main Commodore PET tutorials; PET/examples/;<h2>Main Commodore PET tutorials</h2><p><img src=":resources/images/PET.png" width="300" class="center">The official PET tutorials!
-PET; PETFrog; PET/PETFrog/;<h2>PET Frog game</h2><p><img src=":resources/images/billboard/b30.png" width="300" class="center"><p>PET Frog for the VIC-20!<p>By Chris Garrett
-PET; PBM Unit; PET/pbm-pet/; <h2>Pet Bitmap Mode (PBM)</h2><div><img src=":resources/images/tutorials/pbm.png" width="300" class="center"><p>For drawing using PETSCII 2x2 blocks, provides a low-res 80x50 bitmap out of characters. Supports drawing sprites and tiles, including mirrored drawing.</p><p>PBM created by Andy H (HEWCO)
+
+X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p><img src=":resources/images/tutorials/dos1.png" width="200" class="center"><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
+X86; X86 Simple OS; X86/X86-OS/; <h2>Write your own X86 OS using TRSE</h2><p><img src=":resources/images/tutorials/dos2.png" width="200" class="center"><p>Did you know that it is possible to write a fully functional i386-X86 OS using TRSE? In this single tutorial, we show you how.
+X86; VGA (386) + Adlib tutorials; X86/VGA_386/; <h2>Main 386 VGA + Adlib player tutorials</h2><p><img src=":resources/images/tutorials/dos3.png" width="200" class="center"><p>386 VGA + Adllib DOS tutorials.
+X86; Unit tests; X86/unittests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>TRSE X86 internal Unit tests
+
+WONDERSWAN; Main Wonderswan examples ; WONDERSWAN/tutorials/; <h2>Main Wonderswan tutorials</h2><tr><td><img src=":resources/images/WONDERSWAN.png" width="150" class="center"></td><td><p>WIP </td></tr>
 
 POKEMONMINI; Main Pokemon Mini tutorials; POKEMONMINI/tutorials;<h2>Main Pokemon Mini tutorials</h2><p>Please note that this compiler is a work in progress!
+JDH8; Main JDH8 examples ; JDH8/tutorials/; <h2>Main JDH8 tutorials</h2><tr><td><img src=":resources/images/JDH8.png" width="150" class="center"></td><td><p>See https://www.youtube.com/watch?v=vaGZapAGvwM. Still very much experimental. Check out the video! </td></tr>
 
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2><p><img src=":resources/images/tutorials/grave_intentions.png" width="300"><p>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/tutorials/crossplatform.png" width="300" class="center"><p>
 
-X16; Main X16 examples; X16/Tutorials/; <h2>Main Commander X16 tutorials</h2><p><img src=":resources/images/X16.png" width="200" class="center"><p>TRSE tutorials for the Commander X16!
-
-C128; Main Commodore 128 tutorials; C128/tutorials/;<h2>Main C128 tutorials</h2><p>C128 tutorials will be overhauled in a future release of TRSE.
-C128; A small game; C128/small_game/;<h2>A small game</h2><p><img src=":resources/images/tutorials/small_game_c128.png" width="300" class="center"><p>A small C128 game made by CrazySpence
 
