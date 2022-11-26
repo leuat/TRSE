@@ -72,3 +72,5 @@ dosbox_cycles = 0
 columns = 40
 vic_memory_config = all
 via_zeropages = ,$64, $65, $66, $67
+dirart_flf_file = none
+d64name = main

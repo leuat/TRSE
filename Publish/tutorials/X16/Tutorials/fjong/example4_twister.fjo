@@ -24,8 +24,8 @@ output = {
 	c64_imageType=0,
 	aspect=1,
 	c64_multicolor=0,
-	dither = 2,
-	ditherStrength={x=30,y=1,z=1},
+	dither = 1,
+	ditherStrength={x=0.5,y=10,z=1},
 	index_colors = { 0,1 }
 }
 

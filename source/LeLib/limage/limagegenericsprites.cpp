@@ -1,5 +1,5 @@
 #include "limagegenericsprites.h"
-
+#include "source/Compiler/syntax.h"
 
 LImageGenericSprites::LImageGenericSprites(LColorList::Type t) : LImageQImage(t) {
     m_type = LImage::Type::GenericSprites;
@@ -60,8 +60,19 @@ void LImageGenericSprites::ExportBin(QFile &f)
 
     for (int i=0;i<m_items.count();i++) {
         auto s = ((LGenericSprite*) m_items[i].get());
-        f.write(s->m_data.toQByteArray());
+        QByteArray data = s->m_data.toQByteArray(Syntax::s.m_currentSystem->m_system==AbstractSystem::X16);
+//        qDebug() << "Exporting sprite... "<<i << (data.size()/64);;
+
+        f.write(data);
+//        f.write(s->m_data.toQByteArray(false));
     }
+
+    QString palName = Util::getFileWithoutEnding(f.fileName()) + ".pal";
+    if (QFile::exists(palName))
+        QFile::remove(palName);
+
+    m_colorList.ExportVGAPalette(palName);
+
 }
 
 QString LImageGenericSprites::getMetaInfo() {

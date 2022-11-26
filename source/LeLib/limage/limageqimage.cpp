@@ -43,14 +43,14 @@ LImageQImage::LImageQImage(LColorList::Type t)  : LImage(t)
 
 void LImageQImage::LoadBin(QFile& file)
 {
-//    m_width = 320;
-//    m_height = 200;
+    //    m_width = 320;
+    //    m_height = 200;
     m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
     unsigned char *data = new unsigned char[m_width*m_height];
     file.read((char*)data, m_width*m_height);
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
-           setPixel(i,j, data[i+j*m_width]);
+            setPixel(i,j, data[i+j*m_width]);
         }
     delete[] data;
 }
@@ -85,8 +85,8 @@ void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h,in
 
     if (type==1) {
 
-            for (int x=0;x<w;x++)
-                for (int y=0;y<h;y++) {
+        for (int x=0;x<w;x++)
+            for (int y=0;y<h;y++) {
                 int p = getPixel(x+xx,y+yy);
                 if (p!=0)
                     c |= 1<<(cnt);
@@ -125,20 +125,20 @@ void LImageQImage::ExportBlackWhite(QFile &file, int xx, int yy, int w, int h,in
 
     }
     if (type==0)
-    for (int y=0;y<h;y++)
-        for (int x=0;x<w;x++) {
-            int p = getPixel(x+xx,y+yy);
-            if (p!=0)
-                c |= 1<<(cnt);
+        for (int y=0;y<h;y++)
+            for (int x=0;x<w;x++) {
+                int p = getPixel(x+xx,y+yy);
+                if (p!=0)
+                    c |= 1<<(cnt);
 
-            cnt++;
-            if (cnt==8) {
-                data.append(c);
-                c = 0;
-                cnt = 0;
+                cnt++;
+                if (cnt==8) {
+                    data.append(c);
+                    c = 0;
+                    cnt = 0;
+                }
+
             }
-
-        }
     file.write(data);
 }
 
@@ -227,12 +227,12 @@ void LImageQImage::LoadQImage(QString filename)
 }
 
 double LImageQImage::getVal(int x, int y) {
-  //  unsigned int col = getPixel(x,y);// % 16;
+    //  unsigned int col = getPixel(x,y);// % 16;
 
-//            img->setPixel(i,j,QRgb(col));
+    //            img->setPixel(i,j,QRgb(col));
     QVector3D c = Util::fromColor(m_qImage->pixelColor(x,y));
 
-//    if (rand()%100>98) qDebug() << c << m_qImage->pixelColor(x,y);
+    //    if (rand()%100>98) qDebug() << c << m_qImage->pixelColor(x,y);
     return (c.x() + c.y() + c.z())/3.0/255.0;
 }
 
@@ -254,10 +254,10 @@ QPoint LImageQImage::getPixelPosition(int x, int y)
         int y1 = ((int)(m_currentChar/getCharWidthDisplay()))*8;
         xx = x1 + ((int)((x/(double)m_width)*8*cx*scale))%(8*cx);
         yy = y1 + ((int)((y/(double)m_height)*8*cy*scale))%(8*cy);
-//        xx = x1 + (x/(double)m_width)*8.0*cx;
-  //      yy = y1 + (y/(double)m_height)*8.0*cy;
-//        if (rand()%100>98)
-  //          qDebug() <<xx<<yy;
+        //        xx = x1 + (x/(double)m_width)*8.0*cx;
+        //      yy = y1 + (y/(double)m_height)*8.0*cy;
+        //        if (rand()%100>98)
+        //          qDebug() <<xx<<yy;
 
     }
     return QPoint(xx,yy);
@@ -285,7 +285,7 @@ QPixmap LImageQImage::ToQPixMap(int chr)
 
             unsigned int col = getPixel(xx,yy);// % 16;
 
-//            img->setPixel(i,j,QRgb(col));
+            //            img->setPixel(i,j,QRgb(col));
             img.setPixel(i,j,m_colorList.get(col).color.rgb());
         }
     }
@@ -297,7 +297,7 @@ QPixmap LImageQImage::ToQPixMap(int chr)
 
 int LImageQImage::getCharWidthDisplay()
 {
-/*    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
+    /*    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
         int i =1;
         if (m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1)
             i=3;
@@ -328,15 +328,29 @@ int LImageQImage::getGridWidth()
     return m_gridWidthDisplay;
 }
 
-QByteArray LImageQImage::toQByteArray()
+QByteArray LImageQImage::toQByteArray(bool inverted)
 {
     QByteArray ba;
-    for (int i=0;i<m_qImage->width();i++)
-        for (int j=0;j<m_qImage->height();j++) {
-            unsigned char val = getPixel(i,j);
-            ba.append(val);
-        }
-//    file.write((char*)data, m_width*m_height);
+    if (!inverted){
+        for (int i=0;i<m_qImage->width();i++)
+            for (int j=0;j<m_qImage->height();j++) {
+                unsigned char val = getPixel(i,j);
+                ba.append(val);
+            }
+    }
+    else
+    {
+        for (int i=0;i<m_qImage->height();i++)
+  //      for (int i=0;i<8;i++)
+            for (int j=0;j<m_qImage->width();j++) {
+                //int yy = m_qImage->height()-8-y*8;
+//                int yy = y*8; //m_qImage->height()-8-y*8;
+                unsigned char val = getPixel(m_qImage->width()-1-j,m_qImage->height()-1-i);
+                ba.append(val);
+            }
+
+    }
+    //    file.write((char*)data, m_width*m_height);
     return ba;
 }
 
@@ -354,7 +368,7 @@ void LImageQImage::fromQByteArray(QByteArray &ba)
 
 void LImageQImage::Initialize(int width, int height)
 {
-   if (m_width==width && m_height==height && m_qImage!=nullptr && width==m_qImage->width() && height == m_qImage->height())
+    if (m_width==width && m_height==height && m_qImage!=nullptr && width==m_qImage->width() && height == m_qImage->height())
         return;
     if (m_qImage != nullptr)
         delete m_qImage;
@@ -363,7 +377,7 @@ void LImageQImage::Initialize(int width, int height)
     m_height = height;
 
     m_qImage = new QImage(width, height, QImage::Format_ARGB32);
-//    qDebug() << "LimageImage:: "<<width << height;
+    //    qDebug() << "LimageImage:: "<<width << height;
     m_qImage->fill(QColor(0,0,0));
 
 }
@@ -371,7 +385,7 @@ void LImageQImage::Initialize(int width, int height)
 
 QImage* LImageQImage::ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effect)
 {
-//    if(src.isNull()) return QImage(); //No need to do anything else!
+    //    if(src.isNull()) return QImage(); //No need to do anything else!
     if (effect==nullptr)
         return &src; //No need to do anything else!
 
@@ -399,8 +413,8 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
     center.setX(center.x()/(double)m_width*width/scale);
     center.setY(center.y()/(double)m_height*height);
 
-//    double xp = (((i-center.x())*(double)zoom)+ center.x());
-  //  double yp = (((j-center.y())*(double)zoom)+ center.y());
+    //    double xp = (((i-center.x())*(double)zoom)+ center.x());
+    //  double yp = (((j-center.y())*(double)zoom)+ center.y());
 
     for (float i=1;i<x;i++)
         for (float j = 0;j<height;j++) {
@@ -452,8 +466,8 @@ void LImageQImage::CopyFrom(LImage *img) {
     if (mc!=nullptr) {
         *m_qImage = *mc->m_qImage;
     }
-  //  m_banks = mc->m_banks;
-//    m_qImage = mc->m_qImage;
+    //  m_banks = mc->m_banks;
+    //    m_qImage = mc->m_qImage;
 
 }
 
@@ -504,8 +518,8 @@ void LImageQImage::setPixel(int x, int y, unsigned int color)
 
     QPoint p = getPixelPosition(x,y);
 
-//    if (rand()%1000>900)
-  //      qDebug() <<p;
+    //    if (rand()%1000>900)
+    //      qDebug() <<p;
 
     if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height())
         m_qImage->setPixel(p.x(),p.y(),QRgb(color));
@@ -568,8 +582,8 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
     }
     aspectY = 1.0/aspect;
     QColor black(0,0,0);
-//    qDebug() << sx << sy << aspectX << aspectY;
-//#pragma omp parallel for
+    //    qDebug() << sx << sy << aspectX << aspectY;
+    //#pragma omp parallel for
     for (int i=0;i<x;i++)
         for (int j=0;j<y;j++) {
             QColor color = black;
@@ -578,8 +592,8 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
             int xx = ((i-x/2.0)*aspectX + x/2.0)/sx + addx;
             int yy = ((j-y/2.0)*aspectY + y/2.0)/sy + addy;
 
-//            int xx = ((i-x/4)*1.4 + x/4)/sx + addx;
-//            int yy = j/sy + addy;
+            //            int xx = ((i-x/4)*1.4 + x/4)/sx + addx;
+            //            int yy = j/sy + addy;
 
             if (xx>=0 && xx<m_qImage->width() && yy>=0 && yy<m_qImage->height())
                 color = QColor(m_qImage->pixel(xx,yy));
@@ -606,7 +620,7 @@ QImage* LImageQImage::Resize(int x, int y, LColorList& lst, float gamma, float s
                 newCol = Util::toColor(v);
             else
                 newCol = lst.getClosestColor(Util::toColor(v),winner);
- //           QColor newCol = lst.getClosestColor(org);
+            //           QColor newCol = lst.getClosestColor(org);
 
             other->setPixel(i,j,newCol.rgb());
 
@@ -631,7 +645,7 @@ QImage *LImageQImage::Blur(float blurRadius)
 
 void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center)
 {
-//#pragma omp parallel for
+    //#pragma omp parallel for
     for (int i=0;i<m_width;i++)
         for (int j=0;j<m_height;j++) {
 
@@ -640,7 +654,7 @@ void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF c
 
             unsigned int col = getPixel(xp,yp);// % 16;
 
-//            img->setPixel(i,j,QRgb(col));
+            //            img->setPixel(i,j,QRgb(col));
             img.setPixel(i,j,lst.get(col).color.rgb());
         }
     //return img;
@@ -648,7 +662,7 @@ void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF c
 
 void LImageQImage::fromQImage(QImage *img, LColorList &lst)
 {
-//#pragma omp parallel for
+    //#pragma omp parallel for
     for (int i=0;i<m_qImage->width();i++)
         for (int j=0;j<m_qImage->height();j++) {
             unsigned char col = lst.getIndex(QColor(img->pixel(i, j)));

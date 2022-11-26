@@ -145,7 +145,7 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
     if (e!=nullptr && e->type()==QEvent::Wheel)
         wheelEvent((QWheelEvent*)e);
     UpdateImage();
-    if (dynamic_cast<LImageSprites2*>(m_work.m_currentImage->m_image)!=nullptr)
+    if (dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
     if (dynamic_cast<C64FullScreenChar*>(m_work.m_currentImage->m_image)!=nullptr)
         UpdateSpriteImages();
@@ -1767,6 +1767,7 @@ void FormImageEditor::UpdateSpriteImages()
     LImageContainer* cont = dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
 
     ui->leTimeStamp->setText(QString::number(cont->getExtraData(0)));
+
 
     if (cont==nullptr)
         return;

@@ -8,8 +8,6 @@ var
 	const lag : byte = 32;
 	x,y : byte;
 
-
-
 procedure Render(str:pointer;t, color:byte);
 begin
 	x:=sin[t]>>1+16;
@@ -31,13 +29,12 @@ begin
 	
 	time+=1;		
 	
-		
-	
 	Memory::CloseIRQ();
 	
 end;	
 	
 begin
+	Memory_SetBank(0);
 	Screen::ClearScreen(32,blue<<4);
 	Screen::PrintString("HELLO WORLD ON THE X16 FROM TRSE ",22,5, black |(light_grey<<4));
 	Memory::VSyncIRQ(#Raster);

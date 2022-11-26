@@ -6,7 +6,7 @@ var
 	
 	@donotremove def_irq	
 	
-	def_irq : pointer;
+	def_irq : long;
 
 	const VERA_L : address=$9F20;
 	const VERA_M : address=$9F21;
@@ -14,7 +14,11 @@ var
 	const VERA_D : address=$9F23;
 	const IRQ : address = $0314;		
 
-procedure VSyncIRQ(i1:global integer) inline;
+
+	const SCREEN : address = $B000;
+	const SCREEN_BANK : byte = 1;
+
+procedure VSyncIRQ(i1:global long) inline;
 begin
 	asm(" sei");
 	asm("
@@ -22,9 +26,12 @@ begin
 		sta Memory_def_irq
 		lda	$0314+1
 		sta Memory_def_irq+1
+		lda	$0314+2
+		sta Memory_def_irq+2
 	");
 	IRQ[0]:=lo(i1);
 	IRQ[1]:=hi(i1);
+	IRQ[2]:=bankbyte(i1);
 	asm(" cli");
 end;
 

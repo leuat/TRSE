@@ -62,7 +62,6 @@ public:
 
 
     LGenericSprite m_copy;
-
     QPoint getActualPixelWidth() override;
 
     void ImportBin(QFile& f) override;

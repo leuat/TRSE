@@ -12,7 +12,7 @@ void Compiler65C816::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> s
 
     m_assembler->byte=".byte";
     m_assembler->word=".word";
-    m_assembler->llong=".long";
+    m_assembler->llong=".dword";
 
 
 }

@@ -2965,7 +2965,7 @@ void Methods6502::LoHi(Assembler *as, int type)
                 as->Asm("lda #<"+name);
             if (type==1)
                 as->Asm("lda #>"+name);
-            if (type==1)
+            if (type==2)
                 as->Asm("lda #^"+name);
             return;
 

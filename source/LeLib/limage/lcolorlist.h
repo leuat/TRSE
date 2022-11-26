@@ -166,6 +166,8 @@ public:
     void ExportAmigaPalette(QString filename);
     void ExportSNESPalette(QString filename);
     void ExportAtariSTPalette(QString filename);
+    void ExportVGAPalette(QString filename);
+    void ExportX16Palette(QString filename);
 
 
     void PenToFooter(LImageFooter* footer);

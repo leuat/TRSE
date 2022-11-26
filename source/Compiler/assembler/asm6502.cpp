@@ -262,6 +262,10 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
         t = byte;
 
     }
+    if (type.toLower()=="long") {
+        t = llong;
+
+    }
     if (Syntax::s.m_currentSystem->useZByte) {
         Write(name +"\t=\t"+Util::numToHex(m_zbyte));
         m_zbyte++;

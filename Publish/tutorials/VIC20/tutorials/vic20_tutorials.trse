@@ -71,4 +71,6 @@ qemu = No
 amstradcpc_options = -0.5
 spectrum_model = 0
 columns = 40
+dirart_flf_file = none
+d64name = main
 open_files =, easy/01_hello_world.ras

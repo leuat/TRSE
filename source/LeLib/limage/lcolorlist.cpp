@@ -1318,6 +1318,27 @@ void LColorList::ExportAtariSTPalette(QString filename)
     Util::SaveByteArray(data, filename);
 }
 
+void LColorList::ExportVGAPalette(QString filename)
+{
+    QByteArray data;
+    for (LColor l: m_list) {
+        data.append(l.color.blue()/4);
+        data.append(l.color.green()/4);
+        data.append(l.color.red()/4);
+    }
+    Util::SaveByteArray(data, filename);
+}
+void LColorList::ExportX16Palette(QString filename)
+{
+    QByteArray data;
+    for (LColor l: m_list) {
+        data.append(l.color.blue()/16);
+        data.append(l.color.green()/16);
+        data.append(l.color.red()/16);
+    }
+    Util::SaveByteArray(data, filename);
+}
+
 void LColorList::PenToFooter(LImageFooter *footer)
 {
     for (int i=0;i<m_pens.count();i++) {

@@ -1,7 +1,7 @@
 unit Screen;
 @use "system/memory"
 var
-	b1,b2,b3,py:byte;
+	b1,b2,b3,py,len,i,j:byte;
 	
 	const L0_CONFIG : address=$9F2D;
 	const L1_CONFIG : address=$9F34;
@@ -9,6 +9,11 @@ var
 	const L0_TILEBASE : address = $9F2F;
 	const L1_TILEBASE : address = $9F36;
 
+
+	const SpriteSize8 : byte = 0;
+	const SpriteSize16 : byte = 1;
+	const SpriteSize32 : byte = 2;
+	
 
 	const screen_width:byte = 80;
 	const screen_height:byte = 60;
@@ -86,7 +91,8 @@ Fills the text mode screen with char b1 and color b2
 procedure ClearScreen(b1,b2:global byte);
 begin
 	vera_addr_lo:=0;
-	vera_addr_mid:=0;
+	vera_addr_mid:=$b0;
+	vera_addr_hi:=1;
 	setveraincrement(1);
 	asm("
 		ldy #30
@@ -130,6 +136,9 @@ begin
 	poke(Memory::vera_m,0,hi(i1));
 	setveraincrement(1);
 end;
+
+
+
 /**
 
  SetColor(r,g,b). Make sure you are pointing to the palette first with PointTopalette
@@ -142,12 +151,32 @@ begin
 	
 end;
 
+/**
+ 
+	Sets a 786-byte TRSE RGB palette. aa = number of colors
+	
+**/
+procedure SetPalette(ptr:pointer of byte; len: global byte );
+begin
+	PointToPalette(0);
+
+	for i:=0 to len do 
+	begin
+		Screen::SetColor(ptr[0]>>2,ptr[1]>>2,ptr[2]>>2);
+		ptr+=3;
+	end;
+
+end;
+
 procedure SetSpriteLoc(i1:global integer);
 begin
-	poke(Memory::vera_d,0,lo(i1));
-	inc(Memory::vera_l);
-	poke(Memory::vera_d,0,hi(i1));
-	dec(Memory::vera_l);
+	i1:=i1>>6;
+	Memory::vera_d:=lo(i1);
+	Memory::vera_l+=1;
+	Memory::vera_d:=Memory::vera_d&%11111000;
+	Memory::vera_d:=Memory::vera_d|hi(i1);
+	Memory::vera_l-=1;
+	
 end;
 
 
@@ -160,6 +189,29 @@ begin
 	b3 |= b2<<4;
 	Memory::vera_d:=b3;
 	Memory::vera_l-=7;	
+	
+end;
+
+procedure SetSpriteBpp(b1:global byte);
+begin
+	// Point to sprite size
+	Memory::vera_l+=1;	
+	b3 := (Memory::vera_d &%01111111)	;
+	b3 |= b1<<7;
+	Memory::vera_d:=b3;
+	Memory::vera_l-=1;	
+	
+end;
+
+procedure SetSpriteFlip(b1,b2:global byte);
+begin
+	// Point to sprite size
+	Memory::vera_l+=6;	
+	b3 := (Memory::vera_d &%11111100)	;
+	b3 |= b1;
+	b3 |= (b2<<1);
+	Memory::vera_d:=b3;
+	Memory::vera_l-=6;	
 	
 end;
 
@@ -217,9 +269,11 @@ end;
 Prints a string at position b1,b2 with color b3
 
 **/
-procedure PrintString(ptr:global pointer;b1,b2,b3: byte);
+procedure PrintString(ptr:global pointer;b1,b2,b3: global byte);
 begin
-	Memory::VeraPointDual(b1<<1,b2);
+	Memory::VeraPointDual(b1<<1,$b0+b2);
+	vera_addr_hi:=1;
+//	vera_addr_mid:=$b0;
 	setveraincrement(1);
 	while (ptr^<>0) do
 	begin
@@ -232,6 +286,10 @@ begin
 	end;
 end;
 
+procedure MoveTo(b1,b2 : global byte);
+begin
+	Memory::VeraPointDual(b1<<1,$b0+b2);
+end;
 
 
 
