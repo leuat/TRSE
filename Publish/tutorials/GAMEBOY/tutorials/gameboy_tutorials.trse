@@ -54,4 +54,6 @@ zeropage_colormemory = $fc
 data_header_images/trse.flf = 0
 show_all_files = 1
 data_header_images/trse1.flf = 3.03237e-314
+dirart_flf_file = none
+d64name = main
 open_files =, tutorial1.ras

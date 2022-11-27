@@ -84,4 +84,6 @@ data_header_images/yo-tuv-work.flf = 6.89897e-310
 data_header_images/test2.flf = 6.89897e-310
 zeropage_colormemory = $fc
 show_all_files = 1
+dirart_flf_file = none
+d64name = main
 open_files =, demo.ras

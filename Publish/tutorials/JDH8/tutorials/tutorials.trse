@@ -64,3 +64,5 @@ override_target_settings_prg = 0
 build_list = ,
 data_header_trse1.flf = 0
 exomizer_toggle = 0
+dirart_flf_file = none
+d64name = main

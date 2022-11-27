@@ -87,3 +87,5 @@ custom_system_assembler_parameters = -0.5
 custom_system_ending = -0.5
 qemu = No
 spectrum_model = 0
+dirart_flf_file = none
+d64name = main

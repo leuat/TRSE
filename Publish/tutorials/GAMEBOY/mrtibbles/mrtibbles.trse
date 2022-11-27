@@ -65,4 +65,6 @@ show_all_files = 1
 data_header_tiles/tiles.flf = 0
 data_header_sprites/sprites_packed.flf = 0
 data_header_tiles/levels1.flf = 3.0475e-314
+dirart_flf_file = none
+d64name = main
 open_files =, main.ras

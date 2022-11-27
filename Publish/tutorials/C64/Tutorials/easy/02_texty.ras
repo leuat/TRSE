@@ -7,7 +7,6 @@ var
 begin
 
 
-
  	// First, fill color ram with white
 	ClearScreen(white, #screen_col_loc);
 	// Set black border

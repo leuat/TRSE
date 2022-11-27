@@ -47,4 +47,6 @@ ignore_initial_jump = 0
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 show_all_files = 1
+dirart_flf_file = none
+d64name = main
 open_files =, intro.ras

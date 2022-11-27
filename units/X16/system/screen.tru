@@ -280,6 +280,7 @@ begin
 		b1:=ptr^;
 		if (b1>64) then
 			b1-=64;
+			
 		Memory::Vera_d:=b1;
 		Memory::Vera_d:=b3;
 		ptr+=1;
