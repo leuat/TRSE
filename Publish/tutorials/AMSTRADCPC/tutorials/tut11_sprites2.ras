@@ -10,7 +10,7 @@ var
 
 	const background : address = $6000;
 	spriteData : incbin("resources/images/sprites.bin");
-	palette : incbin("resources/images/sprite1_palette.bin");
+	palette : incbin("resources/images/background2_palette.bin");
 	bg : incbin("resources/images/background2.bin",$5000) compressed;
 
     siny : array[256] of byte = BuildSineTable(120);
@@ -19,7 +19,7 @@ var
 	curSpr : byte = 0;
 	const maxSpr : byte = 3;
 
-	tab32x32spr : array[8] of integer = buildtable("32*32/8*4*i");
+	tab32x32spr : array[8] of integer = buildtable("32*32/2*i");
 
 interrupt MainRaster();
 begin
