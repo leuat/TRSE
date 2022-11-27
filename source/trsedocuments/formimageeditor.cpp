@@ -1755,6 +1755,7 @@ void FormImageEditor::UpdateSpriteImages()
 //    QImage m_tmpImage = QImage(img->m_width,img->m_height,QImage::Format_ARGB32);
     QImage m_tmpImage = QImage(m_work.m_currentImage->m_image->m_width,m_work.m_currentImage->m_image->m_height,QImage::Format_ARGB32);
 
+
     if (m_keepSpriteChar.count()==0)
         m_keepSpriteChar.resize(3);
 
@@ -2732,5 +2733,18 @@ void FormImageEditor::on_cmbZoomLevel_activated(int index)
 void FormImageEditor::on_cmbAspect_activated(int index)
 {
     on_cmbAspect_currentIndexChanged(ui->cmbAspect->currentIndex());
+}
+
+
+void FormImageEditor::on_btnDuplicate_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->Duplicate();
+    auto img= dynamic_cast<LImageContainer*>(m_work.m_currentImage->m_image);
+    if (img!=nullptr)
+        img->Next();
+    onImageMouseEvent();
+
+
 }
 

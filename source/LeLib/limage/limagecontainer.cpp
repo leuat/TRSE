@@ -12,12 +12,14 @@ LImageContainer::LImageContainer()
 void LImageContainer::Prev()  {
     if (m_current>0)
         m_current--;
+
 }
 
 //template <class T>
 void LImageContainer::Next()  {
     if (m_current<m_items.count()-1)
         m_current++;
+
 }
 
 //template<class T>

@@ -1,0 +1,59 @@
+program Sprites;
+@use "crtc"
+@use "compression"
+var  
+   time,x,y,cnt,t: byte; 
+	t2:byte = 64;
+
+@export "resources/images/sprites.flf" "resources/images/sprites.bin" 256
+@export "resources/images/background2.flf" "resources/images/background2.bin" 256
+
+	const background : address = $6000;
+	spriteData : incbin("resources/images/sprites.bin");
+	palette : incbin("resources/images/sprite1_palette.bin");
+	bg : incbin("resources/images/background2.bin",$5000) compressed;
+
+    siny : array[256] of byte = BuildSineTable(120);
+    sinx : array[256] of byte = BuildSineTable(60);
+
+	curSpr : byte = 0;
+	const maxSpr : byte = 3;
+
+	tab32x32spr : array[8] of integer = buildtable("32*32/8*4*i");
+
+interrupt MainRaster();
+begin
+	Memory::PushAll();
+	
+	x:= sinx[time];
+	y:= 40+siny[t2];
+	
+	
+	
+	Memory::EnableLRom();
+	Crtc::CopyImageTransparent(#spriteData +tab32x32spr[curSpr], #background, 32,32, x, y, 0);
+	Memory::DisableLRom();
+	
+	time:=time+1;
+	if (time&7=0) then curSpr := mod(curSpr+1,maxSpr);
+	t2:=t2+1;
+	if (time&3=0) then t2:=t2+1;
+	Memory::EnableInterrupts();
+	
+	Memory::PopAll();
+end;
+
+begin
+	Crtc::InitDefault(0);
+	Crtc::SetPalette(#palette);
+	Compression::Decompress(#bg, ^$C000);
+	// Copy back to background in a format that the sprite renderer can use
+	Crtc::CopyScreenToBuffer(0,200,#background);
+	
+
+//	fill(#background,0,80*150);
+	Crtc::Synchronize();
+	RasterIRQ(MainRaster());
+	
+	Loop();
+end.

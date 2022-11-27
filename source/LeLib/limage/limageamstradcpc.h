@@ -27,7 +27,7 @@ public:
     int m_mode;
     virtual void InitPens() override;
 
-    void setPixel(int x, int y, unsigned int color) override;
+//    void setPixel(int x, int y, unsigned int color) override;
 
     void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 

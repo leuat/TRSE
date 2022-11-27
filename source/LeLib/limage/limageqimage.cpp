@@ -521,8 +521,12 @@ void LImageQImage::setPixel(int x, int y, unsigned int color)
     //    if (rand()%1000>900)
     //      qDebug() <<p;
 
-    if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height())
-        m_qImage->setPixel(p.x(),p.y(),QRgb(color));
+    if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height()) {
+        if (!usePens)
+            m_qImage->setPixel(p.x(),p.y(),QRgb(color));
+        else
+            m_qImage->setPixel(p.x(),p.y(), QRgb(m_colorList.getPenIndex(color)));
+    }
 }
 
 

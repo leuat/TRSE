@@ -14,6 +14,7 @@ LImageAmstradCPC::LImageAmstradCPC(LColorList::Type t)  : LImageQImage(t)
     m_supports.flfSave = true;
     m_supports.flfLoad = true;
     m_colorList.m_supportsFooterPen = true;
+    usePens = true;
 
 /*    m_metaParams.append(new MetaParameter("mode","Mode",0,3,3));
     m_metaParams.append(new MetaParameter("screen_width","Screen width",160,2,1000));
@@ -60,7 +61,7 @@ void LImageAmstradCPC::InitPens()
     //  m_colorList.InitPalettePens(m_colors);
 }
 
-
+/*
 void LImageAmstradCPC::setPixel(int x, int y, unsigned int color)
 {
     if (m_qImage==nullptr)
@@ -77,6 +78,7 @@ void LImageAmstradCPC::setPixel(int x, int y, unsigned int color)
     if (x>=0 && x<m_qImage->width() && y>=0 && y<m_qImage->height())
         m_qImage->setPixel(x,y,QRgb(m_colorList.getPenIndex(color)));
 }
+*/
 /*
 unsigned int LImageAmstradCPC::getPixel(int x, int y)
 {

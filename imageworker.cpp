@@ -61,6 +61,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Gameboy Level Editor", "gameboy",LImage::Type::LevelEditorGameboy,LColorList::Type::NES));
     m_types.append(ImageType("320x200 16 color Atari ST", "atari520st",LImage::Type::ATARI320x200,LColorList::Type::C64));
     m_types.append(ImageType("160x200 16 color Amstrad CPC", "amstradcpc",LImage::Type::AmstradCPC,LColorList::Type::AMSTRADCPC));
+    m_types.append(ImageType("Amstrad CPC sprites", "amstradcpc",LImage::Type::AmstradSprites,LColorList::Type::AMSTRADCPC));
     m_types.append(ImageType("generic NxM color Amstrad", "amstradcpc",LImage::Type::AmstradCPCGeneric,LColorList::Type::AMSTRADCPC));
     m_types.append(ImageType("BBC Image", "bbcm",LImage::Type::BBC,LColorList::Type::BBC));
     m_types.append(ImageType("VGA 320x200", "x86",LImage::Type::VGA, LColorList::Type::VGA));

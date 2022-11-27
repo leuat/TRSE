@@ -61,13 +61,16 @@ public:
 //    LImageSprites2() {}
 
 
-    LGenericSprite m_copy;
+    static LGenericSprite m_copy;
     QPoint getActualPixelWidth() override;
 
     void ImportBin(QFile& f) override;
     void ExportBin(QFile& f) override;
 
     virtual QString getMetaInfo() override;
+    virtual void Clear(int val=0) override;
+
+    void Duplicate() override;
 
     void CopyFrom(LImage* mc) override;
 
@@ -80,7 +83,6 @@ public:
     }
 
 
-   void Copy();
    QPointF getPixelPos(int x, int y );
 
    void setPixel(int x, int y, unsigned int color) override;

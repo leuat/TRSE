@@ -114,6 +114,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 35;
     if (t==CGA160x100)
         return 36;
+    if (t==AmstradSprites)
+        return 37;
 
 
     return 255;
@@ -195,6 +197,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic Sprites";
     if (t==CGA160x100)
         return "CGA 160x100 16 colour";
+    if (t==AmstradSprites)
+        return "Amstrad sprites";
 
     return "Unknown image type";
 
@@ -277,6 +281,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return GenericSprites;
     if (c==36)
         return CGA160x100;
+    if (c==37)
+        return AmstradSprites;
 
     return NotSupported;
 

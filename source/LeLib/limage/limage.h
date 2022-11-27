@@ -103,7 +103,8 @@ public:
                 NotSupported, Tiff, CharMapMulticolor, FullScreenChar, LevelEditor, CharmapRegular, CharMapMultiColorFixed,
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
                 OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset,
-                AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES,VZ200, CustomC64, JDH8, LImageGeneric, GenericSprites, CGA160x100
+                AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES,VZ200, CustomC64, JDH8, LImageGeneric, GenericSprites, CGA160x100,
+                AmstradSprites
               };
 
 
@@ -419,6 +420,7 @@ public:
 
     virtual void CopyFrom(LImage* img);
 
+    virtual void Duplicate() {}
 
     virtual int getCharAtPos(QPoint p, float zoom, QPointF center) { return 0;}
 

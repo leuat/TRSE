@@ -236,6 +236,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/lcolor.cpp \
     source/LeLib/limage/limageamstradcpc.cpp \
     source/LeLib/limage/limageamstradgeneric.cpp \
+    source/LeLib/limage/limageamstradsprites.cpp \
     source/LeLib/limage/limageatari520st.cpp \
     source/LeLib/limage/limagebbc.cpp \
     source/LeLib/limage/limagecga160x100.cpp \
@@ -518,6 +519,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/lcolor.h \
     source/LeLib/limage/limageamstradcpc.h \
     source/LeLib/limage/limageamstradgeneric.h \
+    source/LeLib/limage/limageamstradsprites.h \
     source/LeLib/limage/limageatari520st.h \
     source/LeLib/limage/limagebbc.h \
     source/LeLib/limage/limagecga160x100.h \
