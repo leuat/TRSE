@@ -1,0 +1,38 @@
+program MyProgram;
+@use "screen/screen"
+var  
+ 	y : byte = 20;
+	time : byte;
+
+
+
+interrupt RasterTop();
+
+interrupt RasterBottom();
+begin
+	startirq(0);
+	screen_bg_col:=red;
+	RasterIRQ(RasterTop(),0,0);
+	Screen::DisableRasterLinesGreaterThan256();
+	// Raster top will now trigger at y = 0
+	closeirq();
+end;
+
+interrupt RasterTop();
+begin
+	startirq(0);
+	screen_bg_col:=black;
+	RasterIRQ(RasterBottom(),y,0);
+	Screen::EnableRasterLinesGreaterThan256();
+	// Raster bottom will now trigger at line y+256 = 276
+	closeirq();
+end;
+
+
+begin
+	setmemoryconfig(1,0,0);
+	disableciainterrupts();
+	startrasterchain(RasterTop(),0,0);
+	loop();
+
+end.

@@ -12,6 +12,28 @@ var
 	i2 : integer;
 
 /**
+
+	Toggles raster interrupts on lines above than 256
+
+**/
+
+procedure EnableRasterLinesGreaterThan256() inline ;
+begin
+	screen_ctrl:=screen_ctrl|%10000000;
+end;
+
+/**
+
+	Toggles raster interrupts on lines below 256
+
+**/
+
+procedure DisableRasterLinesGreaterThan256() inline;
+begin
+	screen_ctrl:=screen_ctrl&%01111111;
+end;
+
+/**
 	Prints a single character to the screen
 **/
 procedure PrintSingleChar( i : global byte) inline;
