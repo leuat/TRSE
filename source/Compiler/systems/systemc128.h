@@ -12,6 +12,7 @@ public:
         m_systemColor = QColor(20,100,80);
         m_startAddress =getDefaultBasicAddress();
         m_programStartAddress = 0x1C10;
+        m_memorySize = 65536*2;
 
 
         m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
