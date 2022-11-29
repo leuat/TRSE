@@ -7,6 +7,8 @@
 class LImageContainerItem {
 public:
     int m_width, m_height;
+    int m_blockSize = 8;
+
     virtual void Init(int w, int h) = 0;
 
     virtual QByteArray ToQByteArray(int) = 0;

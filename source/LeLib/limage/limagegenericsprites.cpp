@@ -28,16 +28,19 @@ LImageGenericSprites::LImageGenericSprites(LColorList::Type t) : LImageQImage(t)
 }
 
 QPoint LImageGenericSprites::getActualPixelWidth(){
-    return QPoint(8*m_items[m_current]->m_width,m_items[m_current]->m_height*8);
+    return QPoint(m_blockSize*m_items[m_current]->m_width,m_items[m_current]->m_height*m_blockSize);
 
 }
 
 void LImageGenericSprites::AddNew(int w, int h)
 {
     auto s = QSharedPointer<LGenericSprite>(new LGenericSprite());
+    s->m_blockSize = m_blockSize;
     s->Init(w,h);
-    m_items.append(s);
-    m_current = m_items.length()-1;
+    m_items.insert(m_current,s);
+
+//    m_items.append(s);
+//    m_current = m_items.length()-1;
     //SetColor(m_extraCols[0],0);
     //SetColor(m_extraCols[1],1);
     //SetColor(m_extraCols[2],2);
@@ -182,7 +185,7 @@ void LImageGenericSprites::Duplicate() {
 
 QPointF LImageGenericSprites::getPixelPos(int x, int y) {
     LGenericSprite* s = (LGenericSprite*)m_items[m_current].get();
-    return QPointF(x/(double)m_width*s->m_width*8, y/(double)m_height*s->m_height*8);
+    return QPointF(x/(double)m_width*s->m_width*m_blockSize, y/(double)m_height*s->m_height*m_blockSize);
 
 }
 
@@ -220,7 +223,7 @@ void LImageGenericSprites::SaveBin(QFile& file)
 //        for (int i=0;i<sx*sy*8*8;i++)
   //          qDebug().noquote()<<(QString::number(tst[i]));
 
-        file.write( s->m_data.toQByteArray(), sx*sy*8*8);
+        file.write( s->m_data.toQByteArray(), sx*sy*m_blockSize*m_blockSize);
 
     }
 
@@ -244,11 +247,11 @@ void LImageGenericSprites::LoadBin(QFile& file)
 
 
         auto s = QSharedPointer<LGenericSprite>(new LGenericSprite());
-
+        s->m_blockSize = m_blockSize;
         s->Init(sx,sy);
         s->m_header = file.read(s->HEADER_SIZE);
 
-        QByteArray data = file.read(sx*sy*8*8);
+        QByteArray data = file.read(sx*sy*m_blockSize*m_blockSize);
         s->m_data.fromQByteArray(data);
         m_items.append(s);
     }
@@ -319,12 +322,23 @@ void LImageGenericSprites::ToQImage(LColorList &lst, QImage &img, double zoom, Q
 }
 
 int LImageGenericSprites::getGridWidth() {
-    return m_items[m_current]->m_width*24;
+    return m_items[m_current]->m_width*m_blockSize;
 }
 
 int LImageGenericSprites::getGridHeight(){
 
-    return m_items[m_current]->m_height*21;
+    return m_items[m_current]->m_height*m_blockSize;
+}
+
+QPoint LImageGenericSprites::GetCurrentPosInImage(float x, float y) {
+    return QPoint(x/m_width*m_items[m_current]->m_width*m_blockSize,y/m_height*m_items[m_current]->m_height*m_blockSize);
+}
+
+QString LImageGenericSprites::getSpriteInfo() {
+    auto tx = m_items[m_current]->m_width*m_blockSize;
+    auto ty = m_items[m_current]->m_height*m_blockSize;
+    return "Block size: ("+QString::number(m_items[m_current]->m_width)+","+QString::number(m_items[m_current]->m_height)+") "+
+           "    Pixel size: ("+QString::number(tx) +"px," +QString::number(ty) +"px)";
 }
 
 
@@ -342,8 +356,8 @@ void LImageGenericSprites::ToggleSpriteMulticolor()
 void LImageGenericSprites::MegaTransform(int flip, int ix, int iy)
 {
     auto s = ((LGenericSprite*)m_items[m_current].get());
-    int wx = (s->m_width*8);
-    int wy = (s->m_height*8);
+    int wx = (s->m_width*m_blockSize);
+    int wy = (s->m_height*m_blockSize);
     LGenericSprite* n = new LGenericSprite();
     n->Init(s->m_width, s->m_height);
     n->Clear(0);
@@ -379,10 +393,10 @@ void LImageGenericSprites::MegaTransform(int flip, int ix, int iy)
 
             unsigned int u = s->m_data.getPixel(ii,jj);
             if (flip==1)
-                n->m_data.m_qImage->setPixel(i,s->m_height*8-1-j,u);
+                n->m_data.m_qImage->setPixel(i,s->m_height*m_blockSize-1-j,u);
 
             if (flip==0) {
-                n->m_data.m_qImage->setPixel(s->m_width*8-1-i,j,u);
+                n->m_data.m_qImage->setPixel(s->m_width*m_blockSize-1-i,j,u);
             }
             if (flip==3) {
                 n->m_data.m_qImage->setPixel(i,j,u);

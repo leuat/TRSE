@@ -78,6 +78,8 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
     //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
 
+    ui->chkUseViceC1541->setChecked(m_ini->getdouble("use_vice_c1541")==1);
+
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
     ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
     ui->chkPassLdaTax->setChecked(m_ini->getdouble("post_optimizer_passldatax")==1);
@@ -262,6 +264,7 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setString("system", ui->cmbSystem->currentText());
 
+    m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
 
     m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
     m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());

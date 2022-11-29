@@ -21,6 +21,8 @@
 
 #include "sidfile.h"
 #include <QDebug>
+QByteArray SidFile::m_zp;
+
 SidFile::SidFile()
 {
 
@@ -50,6 +52,19 @@ void SidFile::Load(QString filename, QString path)
     m_loadAddress = (unsigned char)(m_blob.at(8))<<8 | (unsigned char)(m_blob.at(8+1))<<0;
     m_initAddress = (unsigned char)(m_blob.at(0xa))<<8 | (unsigned char)(m_blob.at(0xa+1))<<0;
     m_playAddress = (unsigned char)(m_blob.at(0xc))<<8 | (unsigned char)(m_blob.at(0xc+1))<<0;
+
+    m_zp.clear();
+    for (int i=0;i<m_blob.size();i++) {
+        uchar d = m_blob[i];
+        uchar n = m_blob[i+1];
+//        if (d==0x81 || d==0x91) {
+            if (d==0x85 || d==0xA5) {
+//                if (d==0xB1 || d==0x91) {
+                if (!m_zp.contains(n))
+                     m_zp.append(n);
+        }
+
+    }
 
 /*
     qDebug() << Util::numToHex(m_playAddress);

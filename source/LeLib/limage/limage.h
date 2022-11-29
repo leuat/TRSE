@@ -375,6 +375,7 @@ public:
     virtual QPoint GetCurrentPosInImage(float x, float y) {
         return QPoint(x,y);
     }
+    virtual QString getSpriteInfo() { return "";}
 
     virtual void ExportSubregion(QString outfile,int x, int y, int w, int h,int type);
 

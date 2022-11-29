@@ -79,4 +79,5 @@ via_zeropages = ,
 data_header_resources/charsets/charset2_16x16.flf = 0
 dirart_flf_file = none
 d64name = main
+use_vice_c1541 = 0
 open_files =, Hello.ras

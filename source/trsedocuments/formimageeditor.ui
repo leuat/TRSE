@@ -1069,6 +1069,13 @@
            <item row="0" column="0">
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
+              <widget class="QLabel" name="lblSpriteInfo">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_5">
                <item>
                 <widget class="QPushButton" name="lblSprite1">
@@ -1178,6 +1185,46 @@
                    <string>8</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>9</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>11</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>12</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>13</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>14</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>15</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>16</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>
@@ -1229,12 +1276,66 @@
                    <string>8</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>9</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>10</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>11</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>12</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>13</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>14</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>15</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>16</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
               <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
+               <item row="1" column="1">
+                <widget class="QPushButton" name="btnPasteSprite">
+                 <property name="text">
+                  <string>Paste</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QPushButton" name="btnMoveSpriteRight">
+                 <property name="text">
+                  <string>Move right</string>
+                 </property>
+                </widget>
+               </item>
                <item row="3" column="1">
                 <widget class="QPushButton" name="btnFlipYSprite">
                  <property name="text">
@@ -1242,10 +1343,30 @@
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1">
-                <widget class="QPushButton" name="btnMoveSpriteRight">
+               <item row="0" column="0">
+                <widget class="QPushButton" name="btnDeleteSprite">
                  <property name="text">
-                  <string>Move right</string>
+                  <string>Delete</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="1">
+                <spacer name="verticalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="btnSpriteMulticolor">
+                 <property name="text">
+                  <string>Toggle multicolor</string>
                  </property>
                 </widget>
                </item>
@@ -1256,14 +1377,42 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QPushButton" name="btnPasteSprite">
+               <item row="2" column="0">
+                <widget class="QPushButton" name="btnDuplicate">
                  <property name="text">
-                  <string>Paste</string>
+                  <string>Duplicate</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="1">
+               <item row="3" column="0">
+                <widget class="QPushButton" name="btnFlipXSprite">
+                 <property name="text">
+                  <string>Flip X</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QPushButton" name="btnMoveSpriteLeft">
+                 <property name="text">
+                  <string>Move left</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QPushButton" name="btnPanRight">
+                 <property name="text">
+                  <string>Shift Left</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QPushButton" name="btnPanDown">
+                 <property name="text">
+                  <string>Shift Up</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="1">
                 <layout class="QHBoxLayout" name="hlTimeStamp">
                  <item>
                   <widget class="QLabel" name="lblTimeStamp">
@@ -1277,65 +1426,17 @@
                  </item>
                 </layout>
                </item>
-               <item row="0" column="1">
-                <widget class="QPushButton" name="btnSpriteMulticolor">
-                 <property name="text">
-                  <string>Toggle multicolor</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QPushButton" name="btnDeleteSprite">
-                 <property name="text">
-                  <string>Delete</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QPushButton" name="btnFlipXSprite">
-                 <property name="text">
-                  <string>Flip X</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QPushButton" name="btnPanRight">
-                 <property name="text">
-                  <string>Pan horizontal</string>
-                 </property>
-                </widget>
-               </item>
                <item row="5" column="0">
-                <widget class="QPushButton" name="btnMoveSpriteLeft">
+                <widget class="QPushButton" name="btnPanLeft">
                  <property name="text">
-                  <string>Move left</string>
+                  <string>Shift Right</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
-                <widget class="QPushButton" name="btnPanDown">
+               <item row="5" column="1">
+                <widget class="QPushButton" name="btnPanUp">
                  <property name="text">
-                  <string>Pan vertical</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="1">
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="2" column="0">
-                <widget class="QPushButton" name="btnDuplicate">
-                 <property name="text">
-                  <string>Duplicate</string>
+                  <string>Shift Down</string>
                  </property>
                 </widget>
                </item>

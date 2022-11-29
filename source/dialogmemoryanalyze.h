@@ -42,6 +42,7 @@ class DialogMemoryAnalyze : public QDialog
     int m_fontSize,xsize,ysize,shift;
     QVector<QSharedPointer<MemoryBlock>> m_blocks;
     QSharedPointer<CIniFile> m_iniFile = nullptr;
+    QSharedPointer<CIniFile> m_projectIni = nullptr;
     AbstractSystem *m_system = nullptr;
     QString curT = "";
     QPoint cur;
@@ -54,7 +55,7 @@ class DialogMemoryAnalyze : public QDialog
 
 public:
     bool m_success;
-    explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system, QWidget *parent = 0);
+    explicit DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pini, AbstractSystem* system, QWidget *parent = 0);
     void Initialize(QVector<QSharedPointer<MemoryBlock>>& blocks, int fontSize);
     int m_noBanks = 0;
     QMap<QString, QColor> m_colors;

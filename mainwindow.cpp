@@ -2631,6 +2631,9 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("show_all_files"))
         m_ini->setFloat("show_all_files",1);
 
+    if (!m_ini->contains("use_vice_c1541"))
+        m_ini->setFloat("use_vice_c1541",0);
+
     if (m_ini->getString("system")=="X86") {
         if (!m_ini->contains("dosbox_x86_system"))
             m_ini->setString("dosbox_x86_system","default");

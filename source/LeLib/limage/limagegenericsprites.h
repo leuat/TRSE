@@ -24,7 +24,6 @@ public:
 
 
 
-
     void Clear(int val=0) override {
         m_data.m_qImage->fill(val);
     }
@@ -41,7 +40,7 @@ public:
     void Init(int w, int h) override {
         m_height = h;
         m_width = w;
-        m_data.Initialize(m_width*8, m_height*8);
+        m_data.Initialize(m_width*m_blockSize, m_height*m_blockSize);
         m_header.resize(HEADER_SIZE);
     }
 
@@ -60,6 +59,7 @@ public:
 
 //    LImageSprites2() {}
 
+    int m_blockSize = 8;
 
     static LGenericSprite m_copy;
     QPoint getActualPixelWidth() override;
@@ -120,7 +120,9 @@ public:
 
    virtual int getGridWidth() override;
    virtual int getGridHeight()  override;
+   QPoint GetCurrentPosInImage(float x, float y) override;
 
+   virtual QString getSpriteInfo();
 
 
 

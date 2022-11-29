@@ -208,8 +208,16 @@ BLK5 = $A000-$BFFF
             m_buildSuccess = false;
             return;
         }*/
-        CreateDiskInternal(currentDir, filename, "d64_paw_file", true,output,m_projectIni->getString("d64name"));
-        CreateDiskInternal(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output,m_projectIni->getString("d64name"));
+        if (m_projectIni->getdouble("use_vice_c1541")!=1) {
+            CreateDiskInternal(currentDir, filename, "d64_paw_file", true,output,m_projectIni->getString("d64name"));
+            CreateDiskInternal(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output,m_projectIni->getString("d64name"));
+        }
+        else {
+            CreateDiskC1541(currentDir, filename, "d64_paw_file", true,output);
+            CreateDiskC1541(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output);
+
+        }
+
     }
 
 
@@ -290,11 +298,11 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
         d64Params<<filename+".d64";
       //  qDebug() << d64Params;
         cc1541(d64Params.size(), Util::StringListToChar(d64Params));
-//        qDebug() << stderr;
+        qDebug() << stderr;
     }
 
     if (QFile::exists(filename+".d64")) {
-        qDebug() << "Applying dir art to " +filename;
+//        qDebug() << "Applying dir art to " +filename;
 
         ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+".d64", text);
     }
@@ -317,44 +325,7 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
     QString dirart = m_projectIni->getString("dirart_flf_file");
     QVector<QString> filenames;
     QVector<QByteArray> filenames_raw;
-    QByteArray all_dirart;
-    if (dirart!="none") {
-        LImage* im = LImageIO::Load(currentDir+"/"+dirart);
-        C64FullScreenChar* img = (C64FullScreenChar*)im;
-        if (img==nullptr) {
-            ErrorHandler::e.Error("Directory art file must of image type 'c64 animation' (petscii)");
-            m_buildSuccess = false;
-            return false;
-        }
-        C64Screen* s = (C64Screen*)img->m_items[0].get();
 
-        for (int i=0;i<img->m_charHeight;i++) {
-            QString line="";
-            QByteArray ba;
-            for (int j=0;j<16;j++) {
-                line+="\\"+QString::number((uchar)(s->m_rawData[img->m_charWidth*i+j]),16);
-                qDebug() << line;
-                //                line+=QChar((s->m_rawData[img->m_charWidth*i+j]));
-                ba.append((uchar)s->m_rawData[img->m_charWidth*i+j]);
-            }
-            filenames.append(line);
-            filenames_raw.append(ba);
-            all_dirart.append(ba);
-        }
-    }
-    QByteArray cleaned;
-    // Clean up petscii
-    for (uchar i : all_dirart) {
-        if (((i>=0xA0 && i<=0xBF) || (i>=0xE0 && i<=0xFF))) {
-            i=0x65;
-        }
-        cleaned.append(i);
-    }
-    all_dirart = cleaned;
-
-    QString fdirart = currentDir+"dirart.bin";
-    if (all_dirart.size()!=0)
-        Util::SaveByteArray(all_dirart,fdirart);
 
     for (int i=0;i<count;i++) {
         QString orgFileName = data[3*i+1];
@@ -486,7 +457,11 @@ void SystemMOS6502::ApplyDirArt(QString currentDir, QString dirart, QString disk
     LImage* img = LImageIO::Load(currentDir + dirart);
     QString dirartfn = currentDir + "dirart.bin";
     QByteArray art = img->getDirArt();
+
+    while (art.size()>0 && art[art.size()-1]==0x20)
+        art.remove(art.size()-1,1);
     Util::SaveByteArray(art,dirartfn);
+
 
     DirArtD64 da;
     QStringList p;

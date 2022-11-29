@@ -154,6 +154,8 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 
     updateSingleCharSet();
 
+
+    ui->lblSpriteInfo->setText(m_work.m_currentImage->m_image->getSpriteInfo());
     //showDetailCharButtons(m_prefMode!=CharsetImage::Mode::FULL_IMAGE);
 
     // This will update the current cell
@@ -2283,6 +2285,26 @@ void FormImageEditor::on_btnPanDown_clicked()
     onImageMouseEvent();
 
 }
+
+
+void FormImageEditor::on_btnPanUp_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->Transform(0,-1);
+    onImageMouseEvent();
+
+}
+
+
+void FormImageEditor::on_btnPanLeft_clicked()
+{
+    m_work.m_currentImage->AddUndo();
+    m_work.m_currentImage->m_image->Transform(-1,0);
+    onImageMouseEvent();
+
+}
+
+
 
 void FormImageEditor::on_lblSprite1_clicked()
 {

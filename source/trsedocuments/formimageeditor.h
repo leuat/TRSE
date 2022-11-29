@@ -313,6 +313,8 @@ private slots:
     void on_cmbZoomLevel_activated(int index);
     void on_cmbAspect_activated(int index);
     void on_btnDuplicate_clicked();
+    void on_btnPanUp_clicked();
+    void on_btnPanLeft_clicked();
 };
 
 

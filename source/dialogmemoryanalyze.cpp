@@ -22,14 +22,16 @@
 #include "dialogmemoryanalyze.h"
 #include "ui_dialogmemoryanalyze.h"
 #include "source/LeLib/util/util.h"
+#include "source/Compiler/misc/sidfile.h"
 
-DialogMemoryAnalyze::DialogMemoryAnalyze(QSharedPointer<CIniFile> ini, AbstractSystem* system,QWidget *parent) :
+DialogMemoryAnalyze::DialogMemoryAnalyze(QSharedPointer<CIniFile> ini,QSharedPointer<CIniFile> pini, AbstractSystem* system,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogMemoryAnalyze)
 {
     ui->setupUi(this);
     m_system = system;
     m_iniFile = ini;
+    m_projectIni = pini;
 }
 
 
@@ -296,6 +298,8 @@ void DialogMemoryAnalyze::VerifyZPMusic(QVector<QSharedPointer<MemoryBlock>> &bl
             music.append(mb);
     }
     QString infoText="";
+
+/*
     for (QSharedPointer<MemoryBlock> mb: music) {
         bool overlaps=false;
         QString overlapString="";
@@ -317,6 +321,14 @@ void DialogMemoryAnalyze::VerifyZPMusic(QVector<QSharedPointer<MemoryBlock>> &bl
         }
 
     }
+    */
+    infoText +="SID file uses zp: ";
+    for (int i=0;i<SidFile::m_zp.size();i++) {
+        infoText+= Util::numToHex((uchar)SidFile::m_zp[i]) + ",";
+
+    }
+    infoText.remove(infoText.size()-1,1);
+
     ui->leInfoText->setText(infoText);
 }
 

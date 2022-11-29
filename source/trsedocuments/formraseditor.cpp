@@ -1019,7 +1019,7 @@ void FormRasEditor::MemoryAnalyze(bool isHidden)
 
     m_mca.ClassifyZP(m_builderThread.m_builder->compiler->m_assembler->blocks);
 
-    DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_builderThread.m_builder->m_system.get());
+    DialogMemoryAnalyze* dma = new DialogMemoryAnalyze(m_iniFile,m_projectIniFile, m_builderThread.m_builder->m_system.get());
     dma->m_success = m_builderThread.m_builder->m_buildSuccess;
     dma->Initialize(m_builderThread.m_builder->compiler->m_assembler->blocks, m_iniFile->getInt("memory_analyzer_font_size"));
     dma->resize(m_iniFile->getdouble("memory_analyzer_window_width"),m_iniFile->getdouble("memory_analyzer_window_height"));

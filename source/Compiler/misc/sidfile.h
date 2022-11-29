@@ -36,6 +36,7 @@ public:
     QByteArray m_blob, m_stripped;
     unsigned short m_loadAddress, m_initAddress, m_playAddress;
     QString m_outFile, m_fileName, m_path;
+    static QByteArray m_zp;
 
     void Load(QString filename, QString path);
     void LoadNSF(QString filename, QString path);

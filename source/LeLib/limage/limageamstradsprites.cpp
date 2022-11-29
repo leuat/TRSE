@@ -22,6 +22,8 @@ LImageAmstradSprites::LImageAmstradSprites(LColorList::Type t) : LImageGenericSp
     m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
     m_colorList.m_supportsFooterPen = true;
     usePens = true;
+    m_blockSize = 4;
+    m_items.clear();
     AddNew(1,1);
     //Data::data.currentColor=0;
 
@@ -66,10 +68,10 @@ QByteArray LImageAmstradSprites::ExportFrame(int frame)
     LGenericSprite* s = ((LGenericSprite*)m_items[frame].get());
 
 
-    for (int i=0;i<s->m_height*8;i++) {
+    for (int i=0;i<s->m_height*m_blockSize;i++) {
         char c = 0;
         int curBit = 0;
-        for (int x=0;x<s->m_width*8;x++) {
+        for (int x=0;x<s->m_width*m_blockSize;x++) {
             //int pixel = ((dy+y)/10)&15;
             int pixel = s->m_data.getPixel(x,i);
             //pixel = m_colorList.getPen(pixel);
@@ -121,8 +123,8 @@ void LImageAmstradSprites::ToQImage(LColorList &lst, QImage &img, double zoom, Q
     //    qDebug() << s->m_data.m_qImage->width()<<img.width();
     //    exit(1);
 
-    for (int i=0;i<s->m_width*8;i++)
-        for (int j=0;j<s->m_height*8;j++) {
+    for (int i=0;i<s->m_width*m_blockSize;i++)
+        for (int j=0;j<s->m_height*m_blockSize;j++) {
 
             float xp = ((i-center.x())*zoom)+ center.x();
             float yp = ((j-center.y())*zoom) + center.y();
