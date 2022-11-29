@@ -458,7 +458,7 @@ void SystemMOS6502::ApplyDirArt(QString currentDir, QString dirart, QString disk
     QString dirartfn = currentDir + "dirart.bin";
     QByteArray art = img->getDirArt();
 
-    while (art.size()>0 && art[art.size()-1]==0x20)
+    while (art.size()>0 && ((uchar)art[art.size()-1]==(uchar)0x20))
         art.remove(art.size()-1,1);
     Util::SaveByteArray(art,dirartfn);
 

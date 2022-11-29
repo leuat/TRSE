@@ -282,6 +282,9 @@ Token Lexer::_Id()
     }
     bool isRef =  m_nextIsReference;
     m_nextIsReference = false;
+    if (isRef && Syntax::s.isDigit(result[0]))
+        ErrorHandler::e.Error("Constant numbers cannot be referenced by #",Pmm::Data::d.lineNumber);
+//    qDebug() << result << isRef;
     return Syntax::s.GetID(result,isRef);
 
 }

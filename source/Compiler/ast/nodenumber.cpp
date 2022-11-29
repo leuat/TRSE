@@ -30,6 +30,9 @@ NodeNumber::NodeNumber(Token op, long val) :Node() {
     if (m_op.m_type!=TokenType::ADDRESS)
         m_op.m_type = TokenType::INTEGER_CONST;
 
+//    if (op.m_isReference)
+  //          ErrorHandler::e.Error("Constant numbers cannot be referenced with #.",op.m_lineNumber);
+
 }
 
 

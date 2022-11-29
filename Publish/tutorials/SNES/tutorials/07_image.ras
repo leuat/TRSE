@@ -9,6 +9,16 @@ var
 // Where we decide to put the charset in VRAM
 	const charset1_addr : integer = $3000;
 
+/*
+
+	To create your own image:
+	file -> new .flf image -> 4 bpp SNES image -> import image
+	click the "generate palette", import your image, play around with the params. 
+	rename the .flf file above in the @export@ command (line 7) to point to your image.
+
+*/
+
+
 // The tile data. 
 	tiles : incbin("resources/gfx/image.bin");
 // "export" automatically exports the palette as well
@@ -16,7 +26,6 @@ var
 // Some random string	
 	
 	
-	i1:integer;
 	i,j,val,col,cnt:byte;
 
 
@@ -74,9 +83,8 @@ begin
  	begin
 	 	// wait for vsync
 	 	Screen::WaitForVerticalBlank();
-		// Scroll background 2 with some increasing value. 
+		// Show the center of the screen	 	
 		Screen::Scroll(0,100,0);
-		i1+=1;
 		
  	end;
  	
