@@ -19,7 +19,7 @@ SystemNES::SystemNES(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
     m_labels.append(SystemLabel(SystemLabel::ROM,"PRG ROM",0x8000,0xFFFF));
     // Of course, FFFA-FFFF contains NMI/IRQ/Reset vectors
     // The PPU has its own memory layout (including the CHRROM, etc)
-
+    m_hasVariableColorPalette = true;
     m_systemColor = QColor(138, 137, 136); // Dark gray NES
 }
 

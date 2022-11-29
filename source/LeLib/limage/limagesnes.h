@@ -22,6 +22,9 @@ public:
 
     virtual void SetBank(int bnk) override;
 
+    void SavePalette();
+
+
 //    unsigned int getPixelPalette(int x, int y, int pal) override;
 
     void ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center) override;

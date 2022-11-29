@@ -20,7 +20,7 @@ SystemAmstradCPC::SystemAmstradCPC(QSharedPointer<CIniFile> settings, QSharedPoi
 
     m_systemColor = QColor(40,90,40);
     m_requireEmulatorWorkingDirectory = true;
-
+    m_hasVariableColorPalette = true;
 }
 
 void SystemAmstradCPC::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)

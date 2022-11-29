@@ -1,0 +1,83 @@
+program Tutorial1_Tiles;
+
+// The unit "Screen" contains all the important methods for VRAM operations
+@use "screen"
+var
+// Automatically export "tiles.flf", and export only 1 (128x128) bank	
+@export "resources/gfx/image.flf" "resources/gfx/image.bin" 1
+
+// Where we decide to put the charset in VRAM
+	const charset1_addr : integer = $3000;
+
+// The tile data. 
+	tiles : incbin("resources/gfx/image.bin");
+// "export" automatically exports the palette as well
+	palette_tiles: incbin("resources/gfx/image.pal");
+// Some random string	
+	
+	
+	i1:integer;
+	i,j,val,col,cnt:byte;
+
+
+
+begin
+	// Initialses the SNES
+	Screen::Init();
+	// Copies the palette to VRAM
+	Screen::SetPalette(#palette_tiles,0,$100);
+	// Sets mode 1, points all background VRAM to the same address. 
+	// If you want your backgrounds to use independent tile data, set this up here	
+	Screen::SetGraphicsMode(1, #charset1_addr);
+	// Copes all the tile data to VRAM
+	Screen::CopyToVRAM(#tiles,#charset1_addr,128*128/2);
+	// Sets up the background 0 and 1 to pointt to $1000 and $1400. Only works for 32x32 playfields, if
+	// you are using 64x64, you need to set BG2 to be BG1+64*64
+	Screen::SetBGScreenLocation(0,hi(#SCREEN_BG1) | Screen::BG_32X32);
+	
+	// Fill background 1 with value 0 (all black) and attribute 0
+	Screen::MoveToXY(0,0, #Screen::BG1);
+	Screen::FillToVRAM(0, 0 , 32*32);
+	
+	// Turn on background 1 and 2
+	Screen::EnableGFX(Screen::ENABLE_BG1);
+
+	// Print the text, set priority high (so it will be displayed on top of everything)
+	Screen::MoveToXY(10,20, #Screen::BG1);
+//	Screen::CopyToScreen(#tileData,length(tileData),Screen::TILE_PRIORITY);	
+
+	// Draw the image: paint 16x16
+	Screen::MoveToXY(0,0, #Screen::BG1);
+	val:=0;
+	cnt:=0;
+	for j:=0 to 16 do 
+	begin
+		for i:=0 to 32 do
+		begin
+			val:=0;
+			if (i>=8 and i<16+8) then 
+			begin
+				val:=cnt;
+				cnt+=1;
+			end;
+			// Some random colour
+			col:=0;
+			// 3-bit colour data starts at bit 2, so we need to SHL with 2
+			Screen::PokeVRAM(val,col);
+		end;
+	end;
+
+	 // Turn on the screen. 
+	Screen::EnableDisplay();
+	// Infinite loop		
+ 	while (true) offpage do
+ 	begin
+	 	// wait for vsync
+	 	Screen::WaitForVerticalBlank();
+		// Scroll background 2 with some increasing value. 
+		Screen::Scroll(0,100,0);
+		i1+=1;
+		
+ 	end;
+ 	
+end.

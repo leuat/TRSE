@@ -58,6 +58,7 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
     m_image = LImageFactory::Create(m_imageType, colorType);
     m_work.Initialize(m_image->m_width, m_image->m_height);
     m_work.m_colorList.CopyFrom(&img->m_colorList);
+    //qDebug() << "COUNT : " << m_work.m_colorList.m_list.count();
 //    qDebug() << m_image->m_width << m_imageType;
 
     if (!Syntax::s.m_currentSystem->m_hasVariableColorPalette)
@@ -326,7 +327,6 @@ void DialogImport::Convert()
     }
 
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
-
 }
 
 void DialogImport::Blur()

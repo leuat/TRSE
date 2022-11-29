@@ -11,6 +11,7 @@ begin
 	StartIRQ(@kernal);
 	// Enable SID addresses for reading the SID
 	setmemoryconfig(0,1,1,0,0);
+	waitforraster(100);
 	screen_bg_col:=white;
 	call(sidfile_1_play);
 	screen_bg_col:=black;

@@ -39,6 +39,7 @@ LImageSNES::LImageSNES(LColorList::Type t) : LImageAmiga(t,0)
     m_supports.displayCmbColors = true;
     m_supports.displayColors = true;
     m_supports.displayCharOperations = true;
+//    usePens = true;
 
     m_GUIParams[btnLoadCharset] ="";
     m_GUIParams[btn1x1] = "8x8";
@@ -63,6 +64,7 @@ LImageSNES::LImageSNES(LColorList::Type t) : LImageAmiga(t,0)
     m_GUIParams[col4] = "Color 3";
 
     m_GUIParams[tabCharset] = "1";
+
     m_updateCharsetPosition = true;
     m_colorList.m_isCharset = true;
 
@@ -106,6 +108,9 @@ void LImageSNES::Initialize(int width, int height)
 void LImageSNES::SaveBin(QFile &file)
 {
     int pal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
+    m_updatePaletteInternal = true;
+    SetPalette(0);
+    SetPalette(1);
     SetPalette(0);
     auto qi = m_qImage;
     for (int i=0;i<m_banks.count();i++) {
@@ -115,18 +120,24 @@ void LImageSNES::SaveBin(QFile &file)
     m_qImage = qi;
     QByteArray data;
     m_colorList.toArray(data);
+
     file.write(data);
     uchar bpp = m_colorList.m_bpp.x();
     file.write((char*)&bpp,1);
 //    qDebug() << Util::numToHex(m_colorList.m_nesPPU[4*2]);
+//    for (int i=0;i<16;i++)
+  //      qDebug() << Util::numToHex(m_colorList.m_nesPPU[i]);
+
+    SetPalette(pal);
+
     file.write(m_colorList.m_nesPPU);
     //qDebug() << "C";
-    SetPalette(pal);
     //qDebug() << "D";
 }
 
 void LImageSNES::LoadBin(QFile &file)
 {
+    m_colorList.InitSNES();
     QVector<unsigned char*> d;
     for (int i=0;i<m_banks.count();i++) {
         unsigned char *data = new unsigned char[m_width*m_height];
@@ -136,6 +147,7 @@ void LImageSNES::LoadBin(QFile &file)
     uchar size;
 
     file.read((char*)&size,1);
+//    qDebug() << "SIZE READ : "<< QString::number(size);
 
     if (!file.atEnd()) {
         int cnt = size;
@@ -143,10 +155,11 @@ void LImageSNES::LoadBin(QFile &file)
         QByteArray d = file.read(cnt*3);
 //        qDebug() <<QString::number(d[3])<<QString::number(d[4])<<QString::number(d[5]);
 //        d.insert(0,(char)0);
-        m_colorList.fromArray(d);
+//        m_colorList.fromArray(d);
     }
     uchar bpp;
     file.read((char*)&bpp,1);
+//    qDebug() << bpp;
     m_colorList.setNoBitplanes(bpp);
     for (int k=0;k<m_banks.count();k++) {
         SetBank(k);
@@ -161,6 +174,10 @@ void LImageSNES::LoadBin(QFile &file)
 
     SetBank(0);
     m_colorList.m_nesPPU = file.read(0x100);
+//    for (int i=0;i<16;i++)
+  //      qDebug() << Util::numToHex(m_colorList.m_nesPPU[i]);
+    SetPalette(0);
+    m_colorList.UpdateUI();
 //    qDebug() << Util::numToHex(m_colorList.m_nesPPU[4*2]);
 
 
@@ -180,6 +197,7 @@ void LImageSNES::SetBank(int bnk) {
     if (bnk<m_banks.count() && bnk>=0)
         m_qImage = m_banks[bnk].get();
 }
+
 
 
 void LImageSNES::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
@@ -289,6 +307,17 @@ void LImageSNES::ReInitialize()
 {
     m_colorList.setNoBitplanes(getMetaParameter("bitplanes")->value);
 }
+
+void LImageSNES::SavePalette()
+{
+    int noCol = pow(2,m_colorList.m_bpp.x());
+    int pal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
+    for (int i=0;i<noCol;i++)  {
+        m_colorList.m_nesPPU[pal*noCol +i] = (uchar)m_colorList.getPen(i);
+    }
+
+}
+
 
 void LImageSNES::SetPalette(int pal)
 {

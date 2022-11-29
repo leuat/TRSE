@@ -414,10 +414,13 @@ public:
     void drawLine(float x0, float y0, float x1, float y1, unsigned int col, int size);
     void drawCircle(float x0, float y0, float r, float r0, unsigned int col);
 
+    bool usePens = false;
 
     void Box(int x, int y, unsigned char col, int size);
 
     virtual void ToQImage(LColorList& lst, QImage& img, double zoom = 1, QPointF center = QPointF(160,100)) = 0;
+
+    virtual void SavePalette() {}
 
     virtual void CopyFrom(LImage* img);
 

@@ -53,3 +53,6 @@ zeropage_colormemory = $fc
 exomizer_toggle = 0
 show_all_files = 1
 charset_tiles/game_sprite_meta.flf = /Users/leuat/code/TRSE/Publish/tutorials/NES/intro_tutorial/tiles/game_tiles.flf
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0

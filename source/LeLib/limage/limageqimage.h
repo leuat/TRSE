@@ -37,7 +37,6 @@ public:
         Release();
     }
 
-    bool usePens = false;
 
 
     void Initialize(int width, int height) override;

@@ -294,10 +294,11 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
     }
   */
 
-    qDebug() << " # unique colours : " << m_colorList.count();
-
     int reducedCount = m_list.count();
+    if (m_pens.size()>0)
+        reducedCount = m_pens.count();
     float distance = 1;
+    qDebug() << " # unique colours : " << m_colorList.count() << reducedCount;
     while (m_colorList.count()>reducedCount) {
         QVector<QVector3D> m_newList;
         for (int i=0;i<m_colorList.count();i++) {
@@ -318,13 +319,21 @@ void LColorList::GeneratePaletteFromQImage(QImage &img)
     // Sort colors
    std::sort(m_colorList.begin(), m_colorList.end(), sortColors);
    int shift=0;
-   if (m_type==SNES) {
+   if (m_selectClosestFromPen) {
        // remember to set current palette
        shift = m_curPal*pow(2,m_bpp.x());
-       qDebug()<<shift;
        for (int i=0;i<m_colorList.count();i++) {
-           m_nesPPU[shift+i]=shift+i;
+           int winner = 0;
+           QColor c= Util::toColor(m_colorList[i]);
+           m_selectClosestFromPen = false;
+           getClosestColor(c, winner);
+           m_selectClosestFromPen = true;
+           setPen(i,winner);
+           if (shift+i<m_nesPPU.size())
+             m_nesPPU[shift+i]=getPen(i);
        }
+
+       return;
    }
    for (int i=0;i<m_colorList.count();i++) {
         m_list[i + shift].color = Util::toColor(m_colorList[i]);
@@ -663,6 +672,8 @@ void LColorList::CopyFrom(LColorList *other)
     m_multicolors = other->m_multicolors;
     m_background = other->m_background;
     m_enabledColors = other->m_enabledColors;
+    m_nesPPU = other->m_nesPPU;
+
 }
 
 void LColorList::CopyFromKeep(LColorList *other)
