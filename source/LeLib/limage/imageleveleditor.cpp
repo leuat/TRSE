@@ -26,7 +26,7 @@
 
 CharmapLevel ImageLevelEditor::m_copyLevel;
 
-void ImageLevelEditor::SetLevel(QPoint f)
+void ImageLevelEditor::SetLevel(QPoint f, bool updateUi)
 {
     // Clamp
     f.setX(Util::clamp(f.x(), 0, m_meta.m_sizex-1));
@@ -39,6 +39,8 @@ void ImageLevelEditor::SetLevel(QPoint f)
 
 //    qDebug() << "Current colors:";
     first = false;
+    if (!updateUi)
+        return;
     for (int i=0;i<3;i++)
         if (i<m_currentLevel->m_ExtraData.length()) {
            m_colorList.setPen(i,m_currentLevel->m_ExtraData[i]);
@@ -48,13 +50,15 @@ void ImageLevelEditor::SetLevel(QPoint f)
 
 //    qDebug() << "** Manual INIPENS" <<m_colorList.getPenList() <<&m_colorList;
 //    MultiColorImage::InitPens();
-    m_colorList.UpdateUI();
+    if (updateUi)
+        m_colorList.UpdateUI();
 
   //  qDebug() << "** Manual INIPENS end";
 
 //        qDebug() << QString::number(m_currentLevel->m_ExtraData[i]);
     if (m_charset==nullptr)
         return;
+
 
     m_colorList.m_ignoreSetIsMulti = true;
     if (m_currentLevel->m_ExtraData.length()>=3) {
@@ -236,6 +240,7 @@ void ImageLevelEditor::InitPens()
         SetColor(m_colorList.getPen(0),0);
         SetColor(m_colorList.getPen(1),1);
         SetColor(m_colorList.getPen(2),2);
+        first = false;
     }
     MultiColorImage::InitPens();
 //    SetLevel(m_currentLevelPos);
@@ -355,6 +360,7 @@ void ImageLevelEditor::LoadBin(QFile &file)
     m_charWidthDisplay = m_meta.m_width;
     m_charHeightDisplay = m_meta.m_height;
     first=true;
+
 }
 
 void ImageLevelEditor::BuildData(QTableWidget *tbl, QStringList header)
@@ -786,7 +792,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
   //          m_extraCols[i] = c->m_extraCols[i];
         //SetLevel(QPoint(0,0));
         m_currentLevelPos = c->m_currentLevelPos;
-        SetLevel(m_currentLevelPos);
+        SetLevel(m_currentLevelPos, false);
         renderPathGrid = c->renderPathGrid;
         m_scale = c->m_scale;
         m_colorList.CopyFrom(&c->m_colorList);

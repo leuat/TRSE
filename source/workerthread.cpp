@@ -311,6 +311,7 @@ void WorkerThread::RunContents()
         LImage* img = m_work->m_currentImage->m_image;
         if (isPreview) {
             img = m_work->m_currentImage->m_temp;
+//            img->m_colorList.CopyFrom(&m_work->m_currentImage->m_image->m_colorList);
         }
         //qDebug() << "Updating image" << m_time;
         UpdateImage(img);

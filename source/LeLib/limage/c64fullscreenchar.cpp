@@ -596,7 +596,8 @@ void C64FullScreenChar::ImportC(QFile &file)
     txt = txt.replace("\n","").replace("\r","");
     QStringList lst = txt.toLower().split("{");
 
-    QString bgs;
+    QString bg;
+    QString border;
     for (int i=1;i<lst.count();i+=1) {
         QString q = lst[i].split("}")[0];
         QStringList data = q.split(",");
@@ -604,7 +605,8 @@ void C64FullScreenChar::ImportC(QFile &file)
         AddNew(m_charWidth, m_charHeight);
         C64Screen* s = dynamic_cast<C64Screen*>(m_items.last().get());
 //        qDebug() <<data[4];
-        bgs+=data[4]+ ", ";
+        bg+=data[3].remove("colors")+ ", ";
+        border+=data[4]+ ", ";
         s->m_data[1] = data[4].toInt();
         int k = 5;
         for (int i=0;i<m_charWidth*m_charHeight;i++) {
@@ -617,7 +619,10 @@ void C64FullScreenChar::ImportC(QFile &file)
         }
 
     }
-    qDebug() << bgs;
+    qDebug() << "Border colours:";
+    qDebug() << bg;
+    qDebug() << "Background colours:";
+    qDebug() << border;
 
 }
 

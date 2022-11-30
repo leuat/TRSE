@@ -393,30 +393,41 @@ void LMetaChunkItem::setPixel(float x, float y, uchar color, uchar bitMask)
 {
     if (x<0 || x>=m_width || y<0 || y>=m_height)
         return;
-    m_data[(int)(y*m_width+x)] = color;
+    int idx = (int)(y*m_width+x);
+    if (idx<m_data.size())
+        m_data[idx] = color;
+
 }
 
 void LMetaChunkItem::setPixelAttrib(float x, float y, uchar color, uchar bitMask)
 {
     if (x<0 || x>=m_width || y<0 || y>=m_height)
         return;
-    m_attributes[(int)(y*m_width+x)] = color;
+    int idx = (int)(y*m_width+x);
+    if (idx<m_data.size())
+        m_attributes[idx] = color;
+
 }
 
 uchar LMetaChunkItem::getPixel(float x, float y, uchar bitMask)
 {
     if (x<0 || x>=m_width || y<0 || y>=m_height)
         return 0;
-    return m_data[(int)(y*m_width+x)];
+    int idx = (int)(y*m_width+x);
+    if (idx<m_data.size())
+        return m_data[idx];
 
-
+    return 0;
 }
 
 uchar LMetaChunkItem::getPixelAttrib(float x, float y, uchar bitMask)
 {
     if (x<0 || x>=m_width || y<0 || y>=m_height)
         return 0;
-    return m_attributes[(int)(y*m_width+x)];
+    int idx = (int)(y*m_width+x);
+    if (idx<m_data.size())
+        return m_attributes[idx];
+   return 0;
 
 
 }

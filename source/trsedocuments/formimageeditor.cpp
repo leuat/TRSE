@@ -188,9 +188,10 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 void FormImageEditor::onPenChanged()
 {
 
-
+//    qDebug() << "PEN CHANGED" << Data::data.currentColor;
     m_work.m_currentImage->m_image->InitPens();
     m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+//    if (m_work.m_currentImage->m_image->Copy)
 //    qDebug() << "INITING PENS";
 
     onImageMouseEvent();
@@ -682,6 +683,7 @@ void FormImageEditor::Initialize()
 
     //for (int i=0;i<100;i++)
     //    Data::data.UpdatePens();
+
     QTimer::singleShot(50, this, SLOT(onPenChanged()));
 
 //    m_work.m_currentImage->m_image->m_colorList.m_pens[1].

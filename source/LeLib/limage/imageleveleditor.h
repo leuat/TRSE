@@ -211,7 +211,7 @@ public:
     }
 
 
-    void SetLevel(QPoint f);
+    void SetLevel(QPoint f, bool updateUi=true);
     ImageLevelEditor(LColorList::Type t);
 //    void Initialize(CharmapGlobalData meta);
     void ReInitialize() override;

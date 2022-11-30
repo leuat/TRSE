@@ -469,6 +469,10 @@ void MultiColorImage::CopyFrom(LImage* img)
         m_charHeightDisplay = mc->m_charHeightDisplay;
         CopyImageData(img);
 
+/*        m_charset = mc->m_charset;;
+        if (m_charset!=nullptr)
+            m_charset->m_colorList.CopyFrom(&m_colorList);
+            */
     }
     else
     {
@@ -1168,6 +1172,10 @@ void MultiColorImage::InitPens() {
         }
         else {
 //            QVector<int> keep = m_charset->m_colorList.getPenList();
+ //           m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
+//            m_colorList.CopyFrom(&m_charset->m_colorList);
+
+            //m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
             m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
             m_colorList.CopyFrom(&m_charset->m_colorList);
   //          for (int i=0;i<keep.count();i++)
