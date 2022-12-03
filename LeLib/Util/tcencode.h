@@ -8,12 +8,12 @@
 class OptToken {
     int cost, length,offset;
     QVector<uchar> data;
-    OptToken* next;
+//    OptToken* next = nullptr;
 
 
 
-    OptToken(int pcost, QVector<uchar> pdata, OptToken* pnext, int plength, int poffset):cost(pcost), data(pdata), next(pnext), length(plength), offset(poffset) {
-    }
+//    OptToken(int pcost, QVector<uchar> pdata, OptToken* pnext, int plength, int poffset):cost(pcost), data(pdata), next(pnext), length(plength), offset(poffset) {
+  //  }
 /*
     void repr() {
         QString dr = "";

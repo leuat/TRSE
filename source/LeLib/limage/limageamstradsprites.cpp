@@ -1,4 +1,4 @@
-#include "LImageAmstradSprites.h"
+#include "limageamstradsprites.h"
 #include "source/Compiler/syntax.h"
 #include "source/LeLib/limage/limageamstradcpc.h"
 
