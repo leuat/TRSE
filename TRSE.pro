@@ -32,7 +32,7 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-##ARCH = arm64
+###ARCH = arm64
 
 macx{
 #    CONFIG += warn_off
