@@ -105,3 +105,8 @@ void LImageGamboy::Initialize(int width, int height) {
 //    qDebug() << "LIMAGEGAMEBOY::INIT";
  //   qDebug() << m_width;
 }
+
+void LImageGamboy::InitPens()
+{
+    m_colorList.InitNESPens();
+}

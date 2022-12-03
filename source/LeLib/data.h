@@ -50,6 +50,7 @@ public:
     CompilerState compilerState = PREPROCESSOR;
     QString unitPath = "units";
     QString cpuUnitPath = "cpu_specific";
+    QString currentDoc = "";
     bool redrawOutput=false;
     bool redrawInput=false;
     bool forceRedraw = false;

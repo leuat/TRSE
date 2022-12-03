@@ -1705,8 +1705,10 @@ void MainWindow::on_tabMain_currentChanged(int index)
   //  FormRasEditor* rasedit = dynamic_cast<FormRasEditor*>(ui->tabMain->widget(index));
 
 
-    for (TRSEDocument* doc : m_documents)
+    for (TRSEDocument* doc : m_documents) {
         doc->m_hasFocus = false;
+        doc->LoseFocus();
+    }
 
     if (dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index))!=nullptr) {
         m_currentDoc = dynamic_cast<TRSEDocument*>(ui->tabMain->widget(index));
@@ -1716,6 +1718,7 @@ void MainWindow::on_tabMain_currentChanged(int index)
         }
         if (m_currentDoc!=nullptr && index!=0) {
             m_currentDoc->Reload();
+            m_currentDoc->SetFocus();
             m_currentDoc->m_hasFocus = true;
         }
 

@@ -122,7 +122,9 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
 
 //    QObject::connect(ui->splitter, SIGNAL(splitterMoved(int,int)), this, SLOT(UpdateAspect()));
 //    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onImageMouseEvent()));
-    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
+//    QObject::disconnect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
+
+
     if (m_work.m_currentImage!=nullptr) {
 
         QObject::connect(m_work.m_currentImage->m_image, SIGNAL(emitImportRom()), this, SLOT(ImportROM()));
@@ -188,9 +190,12 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 void FormImageEditor::onPenChanged()
 {
 
-//    qDebug() << "PEN CHANGED" << Data::data.currentColor;
+//    qDebug() << "PEN CHANGED A "  << Data::data.currentColor;
+   // qDebug() << LImage::TypeToString(m_work.m_currentImage->m_image->m_type);
     m_work.m_currentImage->m_image->InitPens();
+  //  qDebug() << "PEN CHANGED B "  << Data::data.currentColor;
     m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+  //  qDebug() << "PEN CHANGED C " << Data::data.currentColor;
 //    if (m_work.m_currentImage->m_image->Copy)
 //    qDebug() << "INITING PENS";
 
@@ -1988,6 +1993,16 @@ void FormImageEditor::Update()
     Data::data.Redraw();
 //    updateCharSet();
     onImageMouseEvent();
+
+}
+
+void FormImageEditor::LoseFocus() {
+    QObject::disconnect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
+
+}
+
+void FormImageEditor::SetFocus() {
+    QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
 
 }
 

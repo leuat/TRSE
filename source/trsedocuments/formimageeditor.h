@@ -170,6 +170,12 @@ public:
 
     void Update();
 
+
+    void LoseFocus() override;
+
+    void SetFocus() override;
+
+
 /*signals:
     void EmitMouseEvent();
 */

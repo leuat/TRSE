@@ -33,6 +33,7 @@
 #define VERSION STR(MAJOR) "." STR(FEATURE) "." STR(NIGHTLY)
 
 Data Data::data;
+#include <QDebug>
 
 Data::Data()
 {
@@ -46,7 +47,6 @@ void Data::Redraw()
 
 void Data::UpdatePens()
 {
-//    redrawOutput = true;
     emit EmitPenChanged();
 
 }

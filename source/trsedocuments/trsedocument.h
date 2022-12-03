@@ -69,7 +69,13 @@ public:
 
     virtual void UpdateHelpText(QStringList& files) {};
 
+    virtual void LoseFocus() {
 
+    }
+
+    virtual void SetFocus() {
+
+    }
     virtual QString getBuildText() { return ""; }
     bool SaveChanges();
     void SaveCurrent() {
