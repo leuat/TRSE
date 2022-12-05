@@ -107,11 +107,10 @@ void LImageSNES::Initialize(int width, int height)
 
 void LImageSNES::SaveBin(QFile &file)
 {
-    int pal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
+//    int pal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
     m_updatePaletteInternal = true;
-    SetPalette(0);
-    SetPalette(1);
-    SetPalette(0);
+    SaveCurrentPaletteToPPU();
+    m_firstIgnoreDone = true;
     auto qi = m_qImage;
     for (int i=0;i<m_banks.count();i++) {
         SetBank(i);
@@ -128,9 +127,12 @@ void LImageSNES::SaveBin(QFile &file)
 //    for (int i=0;i<16;i++)
   //      qDebug() << Util::numToHex(m_colorList.m_nesPPU[i]);
 
-    SetPalette(pal);
-
     file.write(m_colorList.m_nesPPU);
+/*    int noCol = pow(2,m_colorList.m_bpp.x());
+    for (int i=0;i<4;i++) {
+        qDebug()<< " LImageSnes::SaveBin palette"<<i << " color 0 " << Util::numToHex(m_colorList.m_nesPPU[i*noCol]);
+    }*/
+
     //qDebug() << "C";
     //qDebug() << "D";
 }
@@ -174,9 +176,16 @@ void LImageSNES::LoadBin(QFile &file)
 
     SetBank(0);
     m_colorList.m_nesPPU = file.read(0x100);
+/*
+    int noCol = pow(2,m_colorList.m_bpp.x());
+    for (int i=0;i<4;i++) {
+        qDebug()<< " LImageSnes::LoadBin palette"<<i << " color 0 " << Util::numToHex(m_colorList.m_nesPPU[i*noCol]);
+    }
+*/
 //    for (int i=0;i<16;i++)
   //      qDebug() << Util::numToHex(m_colorList.m_nesPPU[i]);
-    SetPalette(0);
+  //  qDebug() << "LoadBin setpalette end";
+//    SetPalette(0);
     m_colorList.UpdateUI();
 //    qDebug() << Util::numToHex(m_colorList.m_nesPPU[4*2]);
 
@@ -321,15 +330,16 @@ void LImageSNES::SavePalette()
 
 void LImageSNES::SetPalette(int pal)
 {
-
     int m_oldPal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
+    qDebug() << "LimageSnes::SetPalette  old, new "<<pal << m_oldPal;
 
     int noCol = pow(2,m_colorList.m_bpp.x());
      //   qDebug() << "OLD " <<noCol<< pal<<m_oldPal;
     if (m_oldPal!=pal && m_updatePaletteInternal && m_firstIgnoreDone) {
         for (int i=0;i<noCol;i++) {
             m_colorList.m_nesPPU[m_oldPal*noCol +i] = (uchar)m_colorList.getPen(i);
-              //        qDebug() << " ** " <<Util::numToHex((uchar)m_colorList.getPen(i));
+            if (i==0)
+               qDebug() << " ** WRITING TO PPU " <<Util::numToHex((uchar)m_colorList.getPen(i));
         }
     }
     //     m_colorList.m_nesPPU[m_oldPal*4 +1 +3] = m_colorList.getPen(3);
@@ -337,7 +347,8 @@ void LImageSNES::SetPalette(int pal)
 
     for (int i=0;i<noCol;i++) {
         m_colorList.setPen(i,(uchar)m_colorList.m_nesPPU[pal*noCol +i]);
-        //   qDebug() << " NEW ** " <<Util::numToHex((uchar)m_colorList.m_nesPPU[pal*noCol +i]);
+        if (i==0)
+             qDebug() << " NEW ** " <<Util::numToHex((uchar)m_colorList.m_nesPPU[pal*noCol +i]);
     }
     m_colorList.m_curPal = pal;
     m_firstIgnoreDone = true;

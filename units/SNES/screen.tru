@@ -392,6 +392,7 @@ begin
 end;
 
 
+
 procedure MoveToCRAM(i1:global integer) inline;
 begin
 	asm("

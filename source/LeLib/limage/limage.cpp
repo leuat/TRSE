@@ -723,6 +723,19 @@ void LImage::CopyFrom(LImage *img) {
 
 }
 
+void LImage::SaveCurrentPaletteToPPU()
+{
+    int pal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
+//    qDebug() << "LImage::SaveCurrentPaletteToPPU  CURRENT PALETTE "<< pal;
+    int noCol = pow(2,m_colorList.m_bpp.x());
+    for (int i=0;i<noCol;i++) {
+        m_colorList.m_nesPPU[pal*noCol +i] = (uchar)m_colorList.getPen(i);
+  //      if (i==0)
+    //        qDebug() << "COLOR 0 is "<<Util::numToHex(m_colorList.getPen(i));
+    }
+
+}
+
 
 void LImage::EnsureSystemColours()
 {

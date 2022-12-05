@@ -213,8 +213,9 @@ fillRasList(len(tests)-1,".")
 # Fails with various errors
 #tests.append([ "C64/DemoMaker", []]);
 #fillRasList(len(tests)-1,".")
-tests.append([ "C64/Disk_loader_project", []]);
-fillRasList(len(tests)-1,".")
+
+#tests.append([ "C64/Disk_loader_project", []]);
+#fillRasList(len(tests)-1,".")
 tests.append([ "C64/Floskel", []]);
 fillRasList(len(tests)-1,".")
 tests.append([ "C64/MusicPlayer", []]);

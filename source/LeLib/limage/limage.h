@@ -426,6 +426,8 @@ public:
 
     virtual void Duplicate() {}
 
+    virtual void SaveCurrentPaletteToPPU();
+
     virtual int getCharAtPos(QPoint p, float zoom, QPointF center) { return 0;}
 
     virtual void SetCurrentType(WriteType wt) {

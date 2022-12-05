@@ -2534,6 +2534,7 @@ void FormImageEditor::on_cmbNesPalette_currentIndexChanged(int index)
     */
     m_ignoreMC = false;
 
+//    qDebug() << "FormImageEditor::CurrentIndexChanged new palette index "<<idx;
     m_work.m_currentImage->m_image->SetPalette(idx);
     SetFooterData(LImageFooter::POS_CURRENT_PALETTE,index);
 

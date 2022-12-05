@@ -145,6 +145,9 @@ void LImageLevelSNES::LoadCharset(QString file, int skipBttes)
 void LImageLevelSNES::InitPens()
 {
 //    m_colorList.InitSNESPens();
+
+
+
     m_colorList.DefaultPen(LPen::FixedSingleNumbers,8);
 
 }
