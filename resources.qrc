@@ -686,5 +686,6 @@
         <file>resources/text/help/r/krillsloader.rtf</file>
         <file>resources/images/tutorials/fig3d.png</file>
         <file>resources/images/tutorials/c128.png</file>
+        <file>resources/images/tutorials/SGATBG.gif</file>
     </qresource>
 </RCC>

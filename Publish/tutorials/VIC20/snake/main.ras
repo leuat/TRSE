@@ -1,0 +1,545 @@
+program MainProgram;
+/*
+
+	Vic 20 unexpanded template
+	Snake Games are the Best Games
+	By Andy H - HEWCO.UK
+	
+	Optimised to run on an unexpanded Vic 20, with only a couple of bytes spare!
+
+	-------------------
+	
+	Dev Note:	Zero Page addresses have been defined in project settings
+				for the Vic 20 build.
+
+*/
+//@define DEBUG		1		// uncomment to show debugging timings as rasterbar blocks on the screen
+
+@VicMemoryConfig "none"
+
+//@define CHEAT 1
+
+// comment out if using multiplcation or division, otherwise save space
+@ignoremethod "init16x8mul"
+@ignoremethod "init16x8div"
+@ignoremethod "init8x8div"
+@ignoremethod "initeightbitmul"
+
+// deprecated commands - ensure not included
+@ignoremethod "initjoystick"
+@ignoremethod "initmoveto"
+
+var  
+@use "screen"
+@use "input/key"
+
+/*
+	Memory areas to use.
+
+	Most of these locations can be used if not returning to BASIC.
+	
+	Zero page is a good place to use commonly used variables becasue 6502 instructions take
+	one less byte to access zero page and is a little WaitForRaster
+
+	Other areas of RAM are good for general variables used less frequently rather than using main program RAM.
+
+	Use the 'at $nn' or 'at $nnnn' modifier when setting variables in these locations, replacing nn with the hex address
+
+*/
+
+// ------------------------------
+// Constants
+
+	// used for snake direction look up table
+	const LRIGHT: byte = 0;
+	const LDOWN: byte = 1;
+	const LLEFT: byte = 2;
+	const LUP: byte = 3;
+
+	// character set values
+	const CHAR_OFFSET: byte = 6; // moved chars by this offset to recover ram
+	const CHAR_SPACE: byte = 28+CHAR_OFFSET;
+
+	const CHAR_SNAKEHEADRIGHT: byte = 12+CHAR_OFFSET;
+	const CHAR_SNAKEHEADDOWN: byte = 14+CHAR_OFFSET;
+	const CHAR_SNAKEHEADLEFT: byte = 16+CHAR_OFFSET;
+	const CHAR_SNAKEHEADUP: byte = 18+CHAR_OFFSET;
+	
+	const CHAR_SNAKEBODYHORIZ: byte = 0+CHAR_OFFSET;
+	const CHAR_SNAKEBODYVERT: byte = 2+CHAR_OFFSET;
+	
+	const CHAR_SNAKETAILRIGHT: byte = 20+CHAR_OFFSET;
+	const CHAR_SNAKETAILDOWN: byte = 21+CHAR_OFFSET;
+	const CHAR_SNAKETAILLEFT: byte = 22+CHAR_OFFSET;
+	const CHAR_SNAKETAILUP: byte = 23+CHAR_OFFSET;
+
+	// snake body bending chars (change dir)
+	const CHAR_SNAKESE: byte = 4+CHAR_OFFSET; // south east
+	const CHAR_SNAKESW: byte = 6+CHAR_OFFSET; // south west
+	const CHAR_SNAKENE: byte = 8+CHAR_OFFSET; // north east
+	const CHAR_SNAKENW: byte = 10+CHAR_OFFSET;// north west
+	
+	const CHAR_CHERRY: byte = 29+CHAR_OFFSET;
+	const CHAR_APPLE: byte = 30+CHAR_OFFSET;
+	const CHAR_GRAPES: byte = 31+CHAR_OFFSET;
+	const CHAR_JELLY: byte = 32+CHAR_OFFSET;
+	const CHAR_BUG: byte = 33+CHAR_OFFSET;
+	const CHAR_MUSHROOM3: byte = 24+CHAR_OFFSET;
+	const CHAR_MUSHROOM2: byte = 25+CHAR_OFFSET;
+	const CHAR_MUSHROOM1: byte = 26+CHAR_OFFSET;
+	const CHAR_MUSHROOM0: byte = 27+CHAR_OFFSET;
+	
+	const CHAR_EGG: byte = 34+CHAR_OFFSET;
+	const CHAR_CHECK: byte = 35+CHAR_OFFSET;
+	const CHAR_EGG2: byte = 36+CHAR_OFFSET;
+	const CHAR_BABYSNAKE: byte = 37+CHAR_OFFSET;
+	
+	const CHAR_BONUS0: byte = 38+CHAR_OFFSET;
+	
+	
+	// screeen upper and lower boundaries
+	const SCREENTOP: address = $1e16;		// this is second row on screen below score row
+	const SCREENBOTTOM: address = $1ff9;	// this is the last char location at bottom right
+	const SCREENBOTTOMMINUS1: address = $1ff8;
+	const SCREENSIZE: integer = 22*22;
+	
+	// flags used for eating and other things
+	const FLAG_CHERRY: byte =	%00000001;
+	const FLAG_APPLE: byte =	%00000010;
+	const FLAG_GRAPES: byte =	%00000100;
+	const FLAG_ALLFOOD: byte =	%00000111; // when all food collected (used in test)
+	const FLAG_CLEARFOOD: byte =%11111000; // used to reset food flags back to 0
+	
+	// addresses of animation frames for snake body
+	const SRCBODY0: address = $1c00 + 60 * 8;
+	const SRCBODY1: address = $1c00 + 61 * 8;
+	const SRCBODY2: address = $1c00 + 62 * 8;
+	const SRCBODY3: address = $1c00 + 63 * 8;
+
+	// addresses of where to copy snake animation frames to	
+	const DSTBODY0: address = $1c30;
+	const DSTBODY1: address = $1c30 + 2 * 8;	
+	
+	// animation frames and addresses for the Green Jelly
+	const SRCJELLY0: address = $1c20;	
+	const SRCJELLY1: address = $1c28;	
+	const DSTJELLY: address = $1c00 + 38 * 8;
+
+	// Used to control the sound
+	const SOUND_HISSDURATION: byte = 2; // total duration of hiss
+	const SOUND_FOODDURATION: byte = 14;
+	const SOUND_JELLYDURATION: byte = 28;
+	const SOUND_BUGDURATION: byte = 4;
+
+	// game modes
+	const GAME_EASY: byte = 1; // not starting at 0 so can use these values as scores
+	const GAME_NORMAL: byte = 2; // but does mean my lookup array wastes a byte
+	const GAME_HARD: byte = 3;
+	const GAME_EVIL: byte = 4;
+	
+	const SNAKE_MAXMASK: byte = 15; 
+	const SNAKE_EASY: byte = 14;
+	const SNAKE_NORMAL: byte = 10;
+	const SNAKE_HARD: byte = 7;
+	const SNAKE_EVIL: byte = 4;
+	const SNAKE_FASTEST: byte = 3;
+	
+	const GAME_TITLE: byte = 0;
+	const GAME_PLAYING: byte = 1;
+	const GAME_OVER: byte = 2;
+	const GAME_PRETITLE: byte = 3;
+	
+	const GAMEOVERSOUNDSTART: byte = 230;
+	
+// ------------------------------
+
+
+	sh: pointer;		// pointer to screen where snake head is
+	st: pointer;		// pointer to screen where snake tail is
+	
+	mu: pointer;		// mushroom screen scan
+
+	p1: pointer;		// general purpose pointer
+
+// ------------------------------
+// Zero Page:	$00-$5d - 94 bytes
+	
+	i: byte at $00;	// general purpose, reusable variables, good for FOR loops and counters
+	j: byte at $01;
+	k: byte at $02;
+	l: byte at $03;
+	m: byte at $04;
+	n: byte at $05;
+	
+	seedlo: byte at $06; // random number seed 
+	seedhi: byte at $07; // random number seed
+
+	food: byte at $08; // counter 0 - 3, of food combo counter
+	foodAnim: byte at $09; // set to 1 if eaten food last time, used to animate the body to show eaten state
+	flag: byte at $0a; // various flags inc food types eaten
+	
+	anim: byte at $0b; // anim counter - used for snake head toggle 0 / 1
+	
+	tailChar: byte at $0c; // the character to use to erase tail; space, mushroom or jelly
+	
+	joy: byte at $0d; // holds last joystick movement - improves responsiveness
+	
+	snakeSpeed: byte at $0e; // used to set speed of snake
+	// 3=freemove, 7=hard, 15=normal, 31=easy
+	
+	hissDuration: byte at $0f; // how long to play the hiss sound
+	foodDuration: byte at $10; // how long to play the collect food sound
+	
+	numFood: byte at $11; // number of food chars on screen - use for next round
+	
+	snakeCounter: byte at $12; // counter up to speed
+	
+	round: byte at $13; // current round number
+	roundsPerWave: byte at $14; // how many rounds per wave
+	numMushrooms: byte at $15; // mushrooms per wave
+	
+	numStartFood: byte at $16; // min number of food
+	
+	waveNum: byte at $17; // duplicate of wave, but as normal number
+	
+	gameMode: byte at $18; // game mode- playing, titlescreen, gameover
+	
+	gameOverSound: byte at $19; // counter plays sound down
+	
+	oldSnakeCount: byte at $1a; // when turn early, store left over move counter to add on next move
+	
+	pa: byte at $1b;
+	pb: byte at $1c;
+	
+	defaultGameSpeed: byte at $1d;
+	
+//	oldticks: byte at $5d;
+// $7d - one byte gap
+ 	ticks:	byte at $7d;
+
+// ------------------------------
+// BASIC input buffer:	$0200-$0258 - 88 bytes
+
+// ------------------------------
+// Indirect vectors:	$02A1-$02FF - 94 bytes 
+
+// ------------------------------
+// Cassette buffer:		$033C-$03FB (828-1019) - 192 bytes
+
+
+// ------------------------------
+// variables in any program RAM location (assembler decides) 
+
+	// used to display text
+	// Note, on unexpanded Vic with the characterset moved, I get 64 chars to redefine.
+	// Using the invert modifier on the text uses the trick to set the 7th bit and this forces
+	// the use of characters in the ROM.
+	scoreLabel: cstring no_term invert = ("SC");
+	hiscoreLabel: cstring no_term invert = ("HI");
+	stageLabel: cstring no_term invert = ("W");
+	
+	// Score and High score stored as BCD numbers
+	score: array[] of byte = ($00,$00,$00);
+	hiscore: array[] of byte = ($00,$00,$00);
+
+	stage: array[] of byte = ($01);
+	stageadd: array[] of byte = ($01);
+	
+	scoreadd: array[3] of byte at $1e;
+	jellyadd: array[] of byte = ($20,$00,$00);
+
+
+	// rdlu order - what snake body char for turning from this dir
+	bodyTurnRight: array[] of byte = (
+		CHAR_SNAKESW, CHAR_SNAKENW, CHAR_SNAKENE, CHAR_SNAKESE
+	);
+	bodyTurnLeft: array[] of byte = (
+		CHAR_SNAKENW, CHAR_SNAKENE, CHAR_SNAKESE, CHAR_SNAKESW
+	);
+
+	// Title screen text, again using INVERT'ed text
+	title1: cstring no_term invert = ("SNAKE GAMES");
+	title2: cstring no_term invert = ("ARE THE");
+	title3: cstring no_term invert = ("BEST GAMES");
+	title3a: byte = 52+CHAR_OFFSET;
+	hewco: byte = 53+CHAR_OFFSET; 
+	hewco2: cstring no_term invert = ("2022 HEWCO");
+	tfw8b:  cstring no_term invert = ("TFW8B.COM");
+	TRSE:  cstring no_term invert = ("TURBORASCAL.COM");
+
+	startF1:cstring no_term invert = ("F1=EASY");
+	startF3:cstring no_term invert = ("F3=FAIR");
+	startF5:cstring no_term invert = ("F5=HARD");
+	startF7:cstring no_term invert = ("F7=EVIL");
+
+	@donotremove "title3a"
+	@donotremove "hewco2"
+
+	// starting speed for the snake at different levels of difficulty
+	snakeSpeedTable: array[] of byte = ( SNAKE_EASY,SNAKE_EASY, SNAKE_NORMAL, SNAKE_HARD, SNAKE_EVIL );
+
+	// Colours to use for each wave (repeats after 4th)
+	colrs: array[] of byte = (
+		RED + SCREEN_BG_ORANGE,
+		PURPLE + SCREEN_BG_PINK,
+		RED + SCREEN_BG_LTORANGE,
+		BLUE + SCREEN_BG_LTBLUE
+		);
+
+// ------------------------------
+// Total program memory:$1000-$1DFF (4096-7679) - 3584 bytes
+// Working memory:		$1000-$1BFF (4096-7167) - 3072 bytes
+// Character memory:	$1C00-$1DFF (7168-7679) -  512 bytes
+
+	// characterset of 64 chars at $1e00, I don't use some of them as my program needed more space for code
+	// with charset here, I can access characters in ROM with (invert) text, see notes above on cstring's
+
+	@export "chr\chars.flf" "chr\chars.bin" 6 64
+	charset: incbin("chr\chars.bin", $1c30); 
+
+	@export "chr\chars.flf" "chr\jelly.bin" 0 2
+	jellychar: incbin("chr\jelly.bin", $1c20); 
+
+// ------------------------------
+// Screen memory:		$1E00-$1FFA (7680-8186) - 506 bytes
+
+@userdata $1e00 $1ffa "Screen"
+
+// ------------------------------
+// unused Colour memory:$9400-$95FA (37888-38394) - 506 bytes
+// Colour memory:		$9600-$97FA (38400-38906) - 506 bytes
+
+// -------------------------------------------------------------------------------
+	
+
+@include "helpers.inc"
+@include "sound.inc"
+@include "ui.inc"
+@include "snake.inc"
+@include "game.inc"
+
+
+
+procedure GameLoop();
+begin
+	
+	readjoy1();
+
+	// map keys to joystick
+	Key::Read();
+	if ( Key::Pressed( Key::KW )) then joy1pressed := joy1pressed | JOY_UP;
+	if ( Key::Pressed( Key::KA )) then joy1pressed := joy1pressed | JOY_LEFT;
+	if ( Key::Pressed( Key::KS )) then joy1pressed := joy1pressed | JOY_DOWN;
+	if ( Key::Pressed( Key::KD )) then joy1pressed := joy1pressed | JOY_RIGHT;
+
+	oldSnakeCount := 0;
+
+	Snake_MaskOutOppDir(); // stop moving back on yourself
+	if (joy1pressed <> 0 ) then 
+	begin
+		// next line is what makes snake move feel more responsive
+		joy := joy1pressed; // stores intended input for next head move
+		hissDuration := SOUND_HISSDURATION;
+		
+		if (snakeCounter > SNAKE_FASTEST) then 
+		begin
+			oldSnakeCount := snakeCounter - SNAKE_FASTEST; // store left over time
+			snakeCounter := SNAKE_FASTEST;
+		end;
+			
+	end;
+	
+	snakeCounter -= 1;
+	if  (snakeCounter = 0) then 
+	begin
+		Snake_MoveHead();
+		if (foodAnim = 0) then Snake_MoveTail();
+		snakeCounter := (snakeSpeed + oldSnakeCount);// & SNAKE_MAXMASK; // if turned early, add on left over time
+	end;
+	
+	@ifdef DEBUG	// for testing speed of your drawing loop
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_ORANGE;
+	@endif
+
+	PlayHiss();
+	PlayFood();
+	
+	// round check
+	if (numFood = 0) then Game_NextRound(); // new round
+
+	
+	// high score?
+	if (bcdcompare(#score,#hiscore,3)) then 
+	begin
+		memcpyfast(#score,0,#hiscore,3);
+		UI_DrawAll();
+	end;
+
+	// grow new mushrooms
+	Game_GrowShrooms();
+	
+end;
+
+procedure GameOver();
+begin
+	
+	//if (ticks&3=0) then Snake_MoveTail();
+	asm
+		
+	lda ticks
+	and #$3
+	bne GameOver_NotTimeToMove
+	jsr Snake_MoveTail
+GameOver_NotTimeToMove
+		
+	end;
+	
+	SOUNDFX_REGISTER := gameOverSound;
+	if (gameOverSound > 129) then gameOverSound -= 1;
+	
+end;
+
+Procedure DrawTitleScreen();
+begin
+	gameMode := GAME_TITLE;
+	UI_DrawNewScreen();
+	UI_DrawTitle();
+
+end;
+
+procedure EggWait();
+begin
+	Sound_Egg(230);
+	Long_Wait();	
+end;
+// animate the egg hatching
+procedure GamePreTitle();
+begin
+	
+	SOUNDFX_REGISTER := 0;
+	
+	EggWait();
+
+	st[ 0 ] := CHAR_EGG2;
+	
+	EggWait();
+	
+	st[ 0 ] := CHAR_BABYSNAKE;
+	colormemory[ 0 ] := BLACK;
+	
+	Sound_Egg(240);
+	Long_Wait();
+	
+	DrawTitleScreen();
+	
+end;
+
+
+procedure GameNew();
+begin
+
+	score[0] := 0; score[1] := 0; score[2] := 0;
+	
+	scoreadd[ 0 ] := defaultGameSpeed;
+	jellyadd[ 0 ] := defaultGameSpeed << 3;
+		
+	j := snakeSpeedTable[ defaultGameSpeed ];
+	snakeSpeed := j;
+	snakeCounter := j;
+	
+	Game_New();
+	Game_StartWave();
+	
+	Game_DrawRoundStart();
+	Game_DrawNextRound();
+	
+	gameMode := GAME_PLAYING;
+
+end;
+
+procedure GameTitle();
+begin
+
+	RND(); // cycle through random numbers
+	
+	Key::Read(); readjoy1();
+	if (joy1pressed & JOY_FIRE = JOY_FIRE) then GameNew(); // start using the last defaultGameSpeed chosen
+	
+	if ( Key::Pressed( Key::KF1 )) then 
+	begin
+		
+		defaultGameSpeed := GAME_EASY;
+		GameNew();
+
+	end;
+	if ( Key::Pressed( Key::KF3 )) then 
+	begin
+		
+		defaultGameSpeed := GAME_NORMAL;
+		GameNew();
+
+	end;
+	if ( Key::Pressed( Key::KF5 )) then 
+	begin
+		
+		defaultGameSpeed := GAME_HARD;
+		GameNew();
+
+	end;
+	if ( Key::Pressed( Key::KF7 )) then 
+	begin
+		
+		defaultGameSpeed := GAME_EVIL;
+		GameNew();
+
+	end;
+
+end;
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+// program e n d = $1bfd
+
+begin
+	
+	
+	DefineScreen();
+	
+	//seedhi := 122; seedlo := 223;
+	
+	Screen::SetScreenCharAddress( 
+		Screen::SCREEN_1c00 + Screen::CHAR_1c00, 
+		Screen::SCREEN_ADD_0200 );
+	
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	
+	defaultGameSpeed := GAME_NORMAL;
+	
+	Game_New();
+	
+	DrawTitleScreen();
+	
+	// main game loop
+	while (true) do 
+	begin
+		
+		if (gameMode = GAME_TITLE) then GameTitle();
+		if (gameMode = GAME_PLAYING) then GameLoop();
+		if (gameMode = GAME_OVER) then GameOver(); // game over anim
+		if (gameMode = GAME_PRETITLE) then GamePreTitle();
+
+		@ifdef DEBUG	// for testing speed of your drawing loop
+		SCREEN_BG_COLOR := RED + SCREEN_BG_ORANGE;
+		@endif
+
+		VblWait();
+
+		@ifdef DEBUG	// for testing speed of your drawing loop
+		SCREEN_BG_COLOR := CYAN + SCREEN_BG_ORANGE;
+		@endif
+				
+	end;
+
+end.
