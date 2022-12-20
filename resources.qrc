@@ -687,5 +687,6 @@
         <file>resources/images/tutorials/fig3d.png</file>
         <file>resources/images/tutorials/c128.png</file>
         <file>resources/images/tutorials/SGATBG.gif</file>
+        <file>resources/text/news.txt</file>
     </qresource>
 </RCC>

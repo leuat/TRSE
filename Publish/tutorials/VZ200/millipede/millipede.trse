@@ -69,4 +69,7 @@ data_header_images/font1.flf = 0
 charset_ = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
 data_header_images/level1.flf = 0
 charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/font1.flf
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0
 open_files =, millipede.ras

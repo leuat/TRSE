@@ -145,6 +145,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QString t3 = "Total number of units: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "units/",QStringList()<<"tru"));
 
 
+    ui->txtNews->setText(Util::loadTextFile(":resources/text/news.txt"));
+
+
+
 //    ui->lblBrag1->setText(t0);
 //    ui->lblBrag2->setText(t0 + "\n" +t1+ "\n" + t2 + "\n" + t3);
 

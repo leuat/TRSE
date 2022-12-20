@@ -1,0 +1,20 @@
+<h1>TRSE News and Updates</h1>
+<h2>December 2022</h2>
+<ul>
+  <li>This news feed was added
+  <li>Hewco's "Snake Games are the Best Games" added
+  <li>Updated / fixed up image editor issues for the SNES.
+  <li>Updated disk loader tutorial project for the C64
+  <li>New "demo system" project for the C64 + new project template
+  <li>Commander X16 updated, tutorials fixed up
+</ul>
+<h2>November 2022</h2>
+<ul>
+    <li>C128 tutorials added + new methods added, multicolor image support etc
+    <li>Loading compressed data from disk now works (c64)
+    <li>Atari ST 520 bugfixes, a couple of more tutorials
+    <li>C64 disk directory art support
+    <li>external C1541 replaced with internal code
+    <li>Amstrad CPC multiplele sprites example
+
+</ul>

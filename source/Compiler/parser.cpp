@@ -4150,6 +4150,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     }
     // Set all types and array types, sizes
     for (auto& s: syms) {
+        if (typeNode->m_position!="")
+            s->m_doNotOptimize = true;
         s->m_type = typeNode->m_op.m_value;
         s->m_flags = typeNode->m_flags;
         s->m_bank = typeNode->m_bank;
