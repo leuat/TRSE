@@ -1,7 +1,13 @@
 <h1>TRSE News and Updates</h1>
 <h2>December 2022</h2>
+<h3>Compiler changes</h3>
+<ul>
+  <li>Variables declared at absolute addresses will not be optimised away
+</ul>
+<h3>Tutorials and editor</h3>
 <ul>
   <li>This news feed was added
+  <li>Shift + enter will insert a new line below the current cursor. Alt+shift+enter will insert a new line above the current cursor.
   <li>Hewco's "Snake Games are the Best Games" added
   <li>Updated / fixed up image editor issues for the SNES.
   <li>Updated disk loader tutorial project for the C64
