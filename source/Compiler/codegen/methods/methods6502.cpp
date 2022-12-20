@@ -5235,6 +5235,7 @@ void Methods6502::InitDiv8x8(Assembler* as) {
 
     as->Comment("Normal 8x8 bin div");
     as->Label("div8x8_procedure");
+    as->Asm(m_codeGen->getInitProcedure());;
 
     as->Asm("lda #$00");
     as->Asm("ldx #$07");

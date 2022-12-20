@@ -104,7 +104,7 @@ public:
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
                 OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset,
                 AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES,VZ200, CustomC64, JDH8, LImageGeneric, GenericSprites, CGA160x100,
-                AmstradSprites
+                AmstradSprites, SNESGeneric
               };
 
 
@@ -149,6 +149,7 @@ public:
     bool m_fixMultiColorYSave = false;
 
     virtual QByteArray getDirArt() { return QByteArray();}
+    virtual QByteArray getBinaryExportData() { return QByteArray();}
 
     virtual void CopyImageData(LImage* img);
     virtual int getCharWidthDisplay();
@@ -266,7 +267,7 @@ public:
     }
 
 
-    virtual void SpritePacker(LImage* in, QByteArray& sprData, int x, int y, int w, int h, int comp) {
+    virtual void SpritePacker(LImage* in, QByteArray& rawDataOut, QByteArray& sprData, int x, int y, int w, int h, int comp, int& noChars) {
         qDebug() << "LImage::SpritePacker not implemented for this image type : " <<m_type;
     }
     int m_charWidth=40;

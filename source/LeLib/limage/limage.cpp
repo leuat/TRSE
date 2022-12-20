@@ -116,6 +116,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 36;
     if (t==AmstradSprites)
         return 37;
+    if (t==SNESGeneric)
+        return 38;
 
 
     return 255;
@@ -199,6 +201,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "CGA 160x100 16 colour";
     if (t==AmstradSprites)
         return "Amstrad sprites";
+    if (t==SNESGeneric)
+        return "Generic SNES image";
 
     return "Unknown image type";
 
@@ -283,6 +287,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return CGA160x100;
     if (c==37)
         return AmstradSprites;
+    if (c==38)
+        return SNESGeneric;
 
     return NotSupported;
 

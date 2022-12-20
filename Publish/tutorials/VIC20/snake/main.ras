@@ -294,11 +294,11 @@ var
 	// characterset of 64 chars at $1e00, I don't use some of them as my program needed more space for code
 	// with charset here, I can access characters in ROM with (invert) text, see notes above on cstring's
 
-	@export "chr\chars.flf" "chr\chars.bin" 6 64
-	charset: incbin("chr\chars.bin", $1c30); 
+	@export "chr/chars.flf" "chr/chars.bin" 6 64
+	charset: incbin("chr/chars.bin", $1c30); 
 
-	@export "chr\chars.flf" "chr\jelly.bin" 0 2
-	jellychar: incbin("chr\jelly.bin", $1c20); 
+	@export "chr/chars.flf" "chr/jelly.bin" 0 2
+	jellychar: incbin("chr/jelly.bin", $1c20); 
 
 // ------------------------------
 // Screen memory:		$1E00-$1FFA (7680-8186) - 506 bytes

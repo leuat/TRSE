@@ -2798,6 +2798,7 @@ void Parser::PreprocessSingle() {
         if (QFile::exists(m_currentDir+file))
             QFile::remove(m_currentDir+file);
 
+
     }
     else
         if (m_currentToken.m_value.toLower() =="define") {
@@ -5218,7 +5219,7 @@ void Parser::HandleExport()
 
 
     LImage* img = LImageIO::Load(inFile);
-    if (dynamic_cast<CharsetImage*>(img)!=nullptr || img->m_type == LImage::SNES) {
+    if (dynamic_cast<CharsetImage*>(img)!=nullptr || img->isSnes()) {
         img->m_exportParams["Start"] = param1;
         img->m_exportParams["End"] = param2;
     }
@@ -5849,15 +5850,17 @@ void Parser::HandleSpritePacker()
     LImage* imgChrOut = nullptr;
     LImage* imgSrc = nullptr;
 
-    if (QFile::exists(outChrFileName)) {
+    if (QFile::exists(outChrFileName) && type=="gameboy") {
         imgChrOut = LImageIO::Load(outChrFileName);
     }
     else {
         if (type=="gameboy")
             imgChrOut = LImageFactory::Create(LImage::GAMEBOY, LColorList::NES);
+        if (type=="snes")
+            imgChrOut = LImageFactory::Create(LImage::SNES, LColorList::SNES);
     }
     if (imgChrOut == nullptr)
-        ErrorHandler::e.Error("Unknown image type : "+type+". For now, only 'gameboy' is supported.", m_currentToken.m_lineNumber);
+        ErrorHandler::e.Error("Unknown image type : "+type+". For now, only 'gameboy' and 'snes' is supported.", m_currentToken.m_lineNumber);
 
     if (inFile.toLower().endsWith(".bin") || inFile.toLower().endsWith(".chr")) {
         imgSrc = LImageFactory::Create(imgChrOut);
@@ -5866,8 +5869,9 @@ void Parser::HandleSpritePacker()
         imgSrc->ImportBin(f);
         f.close();
     }
-    if (inFile.toLower().endsWith(".flf"))
+    if (inFile.toLower().endsWith(".flf")) {
         imgSrc = LImageIO::Load(inFile);
+    }
 
     if (imgSrc == nullptr) {
         ErrorHandler::e.Error("Importing char error : unknown filetype for input binary '"+inFile +"'");
@@ -5879,12 +5883,17 @@ void Parser::HandleSpritePacker()
         spriteData = Util::loadBinaryFile(outSpriteFileName);
 
     int curPos = spriteData.length();
-
-    imgChrOut->SpritePacker(imgSrc, spriteData, x,y,w,h,comp);
+    QByteArray rawDataOut;
+    int noChars = 0;
+    imgChrOut->SpritePacker(imgSrc, rawDataOut, spriteData, x,y,w,h,comp,noChars);
 
     Util::SaveByteArray(spriteData, outSpriteFileName);
-    LImageIO::Save(outChrFileName,imgChrOut);
-    ErrorHandler::e.Warning("Added new sprite data from '"+inFile+"' : sprite from "+QString::number(curPos) + "  to " + QString::number(spriteData.length()),m_currentToken.m_lineNumber);
+    if (rawDataOut.size()==0)
+        LImageIO::Save(outChrFileName,imgChrOut);
+    else
+        Util::SaveByteArray(rawDataOut, outChrFileName);
+
+    ErrorHandler::e.Warning("Added new sprite data from '"+inFile+"' : sprite from "+QString::number(curPos) + "  to " + QString::number(spriteData.size()) + ". Sprite size: "+QString::number(noChars),m_currentToken.m_lineNumber);
     //    qDebug() << "SPRDATA " <<spriteData;
 
 }

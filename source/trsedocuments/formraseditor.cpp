@@ -316,6 +316,7 @@ void FormRasEditor::Build(bool isShadow)
         m_builderThread.start();
     else
         m_builderThread.run();
+
     Data::data.isBuilding = false;
 
 }

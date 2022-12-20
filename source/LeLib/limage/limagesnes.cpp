@@ -1,4 +1,5 @@
 #include "limagesnes.h"
+#include "source/LeLib/limage/compression.h"
 
 LImageSNES::LImageSNES(LColorList::Type t) : LImageAmiga(t,0)
 {
@@ -88,13 +89,12 @@ void LImageSNES::Initialize(int width, int height)
 {
     if (m_width==width && m_height==height && m_qImage!=nullptr)
         return;
-    if (m_qImage != nullptr)
-        delete m_qImage;
+//    if (m_qImage != nullptr)
+  //      delete m_qImage;
 
     //    qDebug() << "NEWING "<<m_width << this;
     m_width = width;
     m_height = height;
-
     m_banks.clear();
     for (int i=0;i<8;i++) {
         auto img = QSharedPointer<QImage>(new QImage(width, height, QImage::Format_ARGB32));
@@ -238,6 +238,53 @@ void LImageSNES::setPixel(int x, int y, unsigned int color)
         m_qImage->setPixel(p.x(),p.y(),QRgb(m_colorList.getPenIndex(color)));
 }
 
+QByteArray LImageSNES::getBinaryExportData()
+{
+    int nobp = m_colorList.m_bpp.x();//m_colorList.getNoBitplanes();
+    QByteArray data;
+    data.resize(m_height*m_width/8*nobp);
+//    qDebug() << m_height<<m_width<<nobp;
+    data.fill(0);
+    int idx = 0;
+    // 0123
+    // 2301
+    // 0132
+    // 0231
+    // 0213
+    // 0321
+//        int planes[4] = {1,0,2,3};
+//        int planes[4] = {1,0,2,3};
+
+    for (int y=0;y<m_height;y+=8) {
+        for (int x=0;x<m_width;x+=8) {
+            for (int split = 0;split<nobp/2;split++) {
+                for (int dy=0;dy<8;dy++) {
+                    for (int i=0;i<2;i++) {
+                        for (int dx=0;dx<8;dx++) {
+
+                            char val = m_qImage->pixel(x+dx,y+dy) ;
+                            int tst = (i+(split*2));
+                            int bit = CHECK_BIT(val,planes[tst]);
+                            if (val!=0)
+                                data[idx] = data[idx] | (bit<<(7-dx));
+
+                            //                          data[idx]=1<<(dy+i+split*2);
+                            //
+                        }
+                        idx++;
+                        // qDebug() <<idx<<x<<y<<data.count()<<i<<idx;
+
+                    }
+                }
+            }
+            //            qDebug() << QString::number(idx);
+
+        }
+    }
+    return data;
+}
+
+
 void LImageSNES::ExportBin(QFile &file)
 {
     int nobp = m_colorList.m_bpp.x();//m_colorList.getNoBitplanes();
@@ -246,60 +293,28 @@ void LImageSNES::ExportBin(QFile &file)
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     QByteArray data;
     int noBanksToExport = fmin(m_exportParams["End"],m_banks.count());
+ //   qDebug() << noBanksToExport;
     bool isSprite = m_exportParams["Start"]==1.0;
     auto qi = m_qImage;
     //
-    int planes[4] = {1,0,2,3};
     if (isSprite) {
         planes[0]=0;
         planes[1]=1;
         planes[2]=3;
         planes[3]=2;
     }
+    else {
+        planes[0]=1;
+        planes[1]=0;
+        planes[2]=2;
+        planes[3]=3;
+    }
 
     for (int bank=0;bank<noBanksToExport;bank++)
     {
         SetBank(bank);
         int curBit = 0;
-        data.resize(m_height*m_width/8*nobp);
-        data.fill(0);
-        int idx = 0;
-        // 0123
-        // 2301
-        // 0132
-        // 0231
-        // 0213
-        // 0321
-//        int planes[4] = {1,0,2,3};
-//        int planes[4] = {1,0,2,3};
-
-        for (int y=0;y<m_height;y+=8) {
-            for (int x=0;x<m_width;x+=8) {
-                for (int split = 0;split<nobp/2;split++) {
-                    for (int dy=0;dy<8;dy++) {
-                        for (int i=0;i<2;i++) {
-                            for (int dx=0;dx<8;dx++) {
-
-                                char val = m_qImage->pixel(x+dx,y+dy) ;
-                                int tst = (i+(split*2));
-                                int bit = CHECK_BIT(val,planes[tst]);
-                                if (val!=0)
-                                    data[idx] = data[idx] | (bit<<(7-dx));
-
-                                //                          data[idx]=1<<(dy+i+split*2);
-                                //
-                            }
-                            idx++;
-                            // qDebug() <<idx<<x<<y<<data.count()<<i<<idx;
-
-                        }
-                    }
-                }
-                //            qDebug() << QString::number(idx);
-
-            }
-        }
-        file.write(data);
+        file.write(getBinaryExportData());
 
     }
     m_qImage = qi;
@@ -328,18 +343,35 @@ void LImageSNES::SavePalette()
 }
 
 
+void LImageSNES::SpritePacker(LImage *in, QByteArray& rawDataOut, QByteArray &sprData, int x, int y, int w, int h, int compression,int& noChars)
+{
+    QByteArray rawDataIn = in->getBinaryExportData();
+    QVector<int> arr;
+    noChars = Compression::BitplaneCharsetSpritePacker(rawDataIn, rawDataOut, arr,x,y,w,h,compression,in->m_colorList.m_bpp.x());
+    for (int&v : arr) {
+//        if (v>255)
+  //          qDebug() << v;
+        sprData.append(v&255);
+        sprData.append((v>>8)&255);
+    }
+ //   ErrorHandler::e.Warning("Total number of compressed chars: "+totalChars,0);
+
+
+}
+
+
 void LImageSNES::SetPalette(int pal)
 {
     int m_oldPal = m_footer.get(LImageFooter::POS_CURRENT_PALETTE);
-    qDebug() << "LimageSnes::SetPalette  old, new "<<pal << m_oldPal;
+//    qDebug() << "LimageSnes::SetPalette  old, new "<<pal << m_oldPal;
 
     int noCol = pow(2,m_colorList.m_bpp.x());
      //   qDebug() << "OLD " <<noCol<< pal<<m_oldPal;
     if (m_oldPal!=pal && m_updatePaletteInternal && m_firstIgnoreDone) {
         for (int i=0;i<noCol;i++) {
             m_colorList.m_nesPPU[m_oldPal*noCol +i] = (uchar)m_colorList.getPen(i);
-            if (i==0)
-               qDebug() << " ** WRITING TO PPU " <<Util::numToHex((uchar)m_colorList.getPen(i));
+  //          if (i==0)
+    //           qDebug() << " ** WRITING TO PPU " <<Util::numToHex((uchar)m_colorList.getPen(i));
         }
     }
     //     m_colorList.m_nesPPU[m_oldPal*4 +1 +3] = m_colorList.getPen(3);
@@ -347,8 +379,8 @@ void LImageSNES::SetPalette(int pal)
 
     for (int i=0;i<noCol;i++) {
         m_colorList.setPen(i,(uchar)m_colorList.m_nesPPU[pal*noCol +i]);
-        if (i==0)
-             qDebug() << " NEW ** " <<Util::numToHex((uchar)m_colorList.m_nesPPU[pal*noCol +i]);
+      //  if (i==0)
+        //     qDebug() << " NEW ** " <<Util::numToHex((uchar)m_colorList.m_nesPPU[pal*noCol +i]);
     }
     m_colorList.m_curPal = pal;
     m_firstIgnoreDone = true;

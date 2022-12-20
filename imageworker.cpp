@@ -68,6 +68,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("ZX Spectrum 256x192", "spectrum",LImage::Type::Spectrum, LColorList::Type::SPECTRUM));
     m_types.append(ImageType("SNES tilemap/sprites", "snes",LImage::Type::SNES, LColorList::Type::SNES));
     m_types.append(ImageType("SNES Level editor", "snes",LImage::Type::LevelEditorSNES, LColorList::Type::SNES));
+    m_types.append(ImageType("SNES generic image", "snes",LImage::Type::SNESGeneric, LColorList::Type::SNES));
     m_types.append(ImageType("VZ200 mode 1 (128x64)", "vz200",LImage::Type::VZ200, LColorList::Type::VZ200));
     m_types.append(ImageType("JDH8", "jdh8",LImage::Type::JDH8, LColorList::Type::CGA1_HIGH));
     m_types.append(ImageType("Generic indexed image", "all",LImage::Type::LImageGeneric, LColorList::Type::C64));

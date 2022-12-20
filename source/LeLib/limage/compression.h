@@ -46,6 +46,11 @@ public:
     static void SaveSinusScrollerData_OLD(MultiColorImage*, int height, int startaddr, QString fname);
 
 
+    static int BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &outData, QVector<int> &arrangement, int x, int y, int w, int h, int compression, int noBitplanes);
+
+
+
+
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);
 
     static double Compare(QByteArray& a, QByteArray& b, int p1, int p2, int length, int type, int bmask);

@@ -16,13 +16,20 @@ public:
 
     void Initialize(int width, int height) override;
 
-    void SaveBin(QFile &file) override;
-    void LoadBin(QFile &file) override;
+    virtual void SaveBin(QFile &file) override;
+    virtual void LoadBin(QFile &file) override;
     QStringList getBankNames() override;
 
     virtual void SetBank(int bnk) override;
 
     void SavePalette();
+
+    int planes[4] = {1,0,2,3};
+
+    virtual QByteArray getBinaryExportData();
+
+
+    void SpritePacker(LImage *in, QByteArray& rawDataOut, QByteArray &sprData, int x, int y, int w, int h, int compression,int& noChars) override;
 
 
 //    unsigned int getPixelPalette(int x, int y, int pal) override;

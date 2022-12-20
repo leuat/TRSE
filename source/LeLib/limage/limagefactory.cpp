@@ -106,6 +106,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageCGA160x100(colorType);
     if (t == LImage::AmstradSprites)
         return new LImageAmstradSprites(colorType);
+    if (t == LImage::SNESGeneric)
+        return new LImageSnesGeneric(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
