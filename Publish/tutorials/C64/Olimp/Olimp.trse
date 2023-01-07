@@ -61,3 +61,6 @@ via_zeropages = ,
 data_header_lalala.flf = 4.63557e-310
 charset_lalala.flf = /home/zzarko/Programming/Olimp/Olimp/font.flf
 charset_imported_screen.flf = /home/zzarko/Programming/Olimp/Olimp/font.flf
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0

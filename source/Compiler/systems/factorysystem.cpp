@@ -75,6 +75,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemTRS80CoCo(settings, proj);
     if (type==AbstractSystem::WONDERSWAN)
         return new SystemWonderswan(settings, proj);
+    if (type==AbstractSystem::TIM)
+        return new SystemTIM(settings, proj);
 
 
     return s;

@@ -688,5 +688,20 @@
         <file>resources/images/tutorials/c128.png</file>
         <file>resources/images/tutorials/SGATBG.gif</file>
         <file>resources/text/news.txt</file>
+        <file>resources/images/TIM.png</file>
+        <file>resources/bin/tim_floppy/empty_9600.img</file>
+        <file>resources/bin/tim_floppy/diskdefs</file>
+        <file>resources/bin/tim_floppy/floppy/names.ndr</file>
+        <file>resources/bin/tim_floppy/floppy/wheel.com</file>
+        <file>resources/bin/tim_floppy/floppy/tim.fcp</file>
+        <file>resources/bin/tim_floppy/floppy/tim.z3t</file>
+        <file>resources/bin/tim_floppy/floppy/tim.iop</file>
+        <file>resources/bin/tim_floppy/floppy/tim.rcp</file>
+        <file>resources/bin/tim_floppy/floppy/start.com</file>
+        <file>resources/bin/tim_floppy/floppy/zcpr3.sys</file>
+        <file>resources/bin/tim_floppy/floppy/valias.com</file>
+        <file>resources/bin/tim_floppy/floppy/emu.com</file>
+        <file>resources/bin/tim_floppy/floppy/ldr.com</file>
+        <file>resources/bin/tim_floppy/floppy/mdsk.com</file>
     </qresource>
 </RCC>

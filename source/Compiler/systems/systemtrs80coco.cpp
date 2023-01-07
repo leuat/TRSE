@@ -120,6 +120,7 @@ void SystemTRS80CoCo::applyEmulatorParameters(QStringList &params, QString debug
     params << "coco3";
     params << "-flop1" <<filename+".dsk";
     params <<  "-resolution0" << "640x480@60" <<"-window";
+    params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "loadm \"T\":exec\\n";
     //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
 
     m_requireEmulatorWorkingDirectory = true;

@@ -221,6 +221,10 @@ private slots:
 
     void on_btnWonderswan_clicked();
 
+    void on_btnTimEmulator_clicked();
+
+    void on_btnCPMTOOLS_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

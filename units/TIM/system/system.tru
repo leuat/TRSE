@@ -1,0 +1,63 @@
+unit System;
+var
+	
+procedure CPMInit() inline;
+begin
+	asm("
+	// Set stack under BDOS (xx00h)
+    ld  hl,($6)
+    ld  l,0
+    ld  sp,hl
+
+	// Leave space for stack and init. variables
+    //ld  de,ccSTACKSIZE
+    ld  de,512
+    or  a
+    sbc hl,de
+    dec hl
+    ld  (ccfreelast),hl
+    ld  de,ccfreemem			// Last location of the program
+    ld  (ccfreefirst),de
+    or  a
+    sbc hl,de
+    inc hl
+    ld  (ccfreebytes),hl
+    jr  nc,ccargs
+
+	// Error, no memory for stack
+    ld  c,9
+    ld  de,ccerrstack
+    call 5
+    jp  0
+
+run_bios:
+	ld   hl,($1)
+	ld   d,0
+	add  hl,de
+	jp   (hl)
+
+ccerrstack:
+    dc.b 'Runtime Error - No stack$'
+ccargs:
+	");
+end;
+
+procedure CPMExit() inline;
+begin
+	asm("
+exit:
+    nop ; Patch for atexit() -- 3 bytes.
+    nop
+    nop	
+    jp  0
+
+// Variables for memory functions
+ccfreefirst: dc.w 0 // Adr. first free byte
+ccfreelast:  dc.w 0 // Adr. last free byte
+ccfreebytes: dc.w 0 // Number of free bytes
+ccfreemem:
+	");	
+end;
+
+
+end.

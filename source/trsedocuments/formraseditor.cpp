@@ -190,12 +190,14 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
 
     process.startDetached(emu, params);
+
     //qDebug() << params;
 #endif
     //    process.pi
     QString output(process.readAllStandardOutput()+process.readAllStandardError());
 //    qDebug() <<output;
     QDir::setCurrent(orgDir);
+    Syntax::s.m_currentSystem->ExtraEmulatorCommands();
     //    process.waitForFinished();
 }
 

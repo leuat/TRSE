@@ -1,0 +1,37 @@
+unit Screen;
+var
+	
+procedure putch(putch_chr: byte);
+begin
+	asm("
+	ld   a,[putch_chr]
+	ld   c,a
+	ld   e,9
+	call run_bios
+	ret
+	");	
+end;
+
+procedure puts(puts_str: pointer);
+begin
+	asm("
+	ld   hl,(Screen_puts_str)
+puts_char:
+	push hl
+	ld a,(hl)
+	or a
+	jr z,puts_end
+	ld c,a
+	ld e,9
+	call run_bios
+	pop hl
+	inc hl
+	jp puts_char
+puts_end:
+	pop hl
+	ret
+	");	
+end;
+
+
+end.
