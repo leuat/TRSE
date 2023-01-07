@@ -140,7 +140,7 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
 
 
 
-    //    CleanupDisk(currentDir);
+    CleanupDisk(currentDir);
 
 
 
