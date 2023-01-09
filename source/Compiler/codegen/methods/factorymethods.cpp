@@ -30,6 +30,9 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
         return QSharedPointer<Methods6502OK64>(new Methods6502OK64);
 
 
+    if (s==AbstractSystem::TIM)
+        return QSharedPointer<MethodsZ80>(new MethodsZ80);
+
     if (s==AbstractSystem::X86 ||s==AbstractSystem::WONDERSWAN )
         return QSharedPointer<MethodsX86>(new MethodsX86);
 

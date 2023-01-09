@@ -1859,6 +1859,8 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
 
         if (((s->getTokenType()==TokenType::ADDRESS || s->getTokenType()==TokenType::INCBIN || node->isReference())  && as->m_term=="")) {
             if (!node->isPointer(as)) {
+                if (!node->isReference())
+                    ErrorHandler::e.Error("'"+val+"' is an array. Did you mean to reference it with '#'?",node->m_op.m_lineNumber);
                 as->Asm("lda #<" + val);
                 Disable16bit();
                 as->Asm("ldy #>" + val);
