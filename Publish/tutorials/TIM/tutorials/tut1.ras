@@ -11,7 +11,4 @@ begin
 	System::CPMInit();
 	Screen::puts("TRSE compiles code for TIM-011!!!");
 	System::CPMExit();
-	asm(";here");
-	poke(^$10,0,0);
-	loop();
 end.
