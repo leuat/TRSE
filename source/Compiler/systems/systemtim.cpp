@@ -1,5 +1,5 @@
 #include "systemtim.h"
-
+#include <QThread>
 
 SystemTIM::SystemTIM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
 {
@@ -159,13 +159,38 @@ void SystemTIM::ExtraEmulatorCommands()
     "sleep 0.2"
     "sendKey F10 F11 Scroll_Lock"
             ""
+
+
 */
+    //sendkeys -a "tim011" -c "<c:return> hello"
+#ifdef __APPLE__
+    qDebug() << "HER";
+    QThread::sleep(3);
+    qDebug() << "HER2";
+    SendKeyCommand("<c:space:space>");
+
+ #endif
+}
+
+void SystemTIM::SendKeyCommand(QString keys)
+{
+    auto cmd ="/opt/homebrew/sendkeys";
+    if (!QFile::exists(cmd))
+        return;
+    QString out;
+    StartProcess(cmd, QStringList() << "-a"<<"tim011"<<
+                 "-c"<<cmd,
+                 out,true
+                 );
+    qDebug() << "*** OUT:";
+    qDebug() << out;
+#
 }
 
 void SystemTIM::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
 
-    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres"<<"-flop1"  <<filename+".img";
+    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres"<<"-nothrottle" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;
 }

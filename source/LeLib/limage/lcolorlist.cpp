@@ -142,6 +142,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 15;
   if (t==DOS)
       return 16;
+  if (t==TIM)
+      return 17;
 
   return 255;
 }
@@ -182,6 +184,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return VZ200;
     if (c==16)
         return DOS;
+    if (c==17)
+        return TIM;
 
     return UNSUPPORTED;
 
@@ -450,6 +454,8 @@ void LColorList::Initialize(Type t)
         InitSPECTRUM();
     if (m_type == Type::VZ200)
         InitVZ200();
+    if (m_type == Type::TIM)
+        InitTIM();
 
 
 
@@ -1115,6 +1121,20 @@ void LColorList::InitVZ200()
     m_list.append(LColor(QColor(0xFF,0xFF,0x0),"Yellow"));
     m_list.append(LColor(QColor(0x00,0x00,0xFF),"Blue"));
     m_list.append(LColor(QColor(0xFF,0x00,0x0),"Red"));
+    m_pens.clear();
+    for (int i=0;i<m_list.count();i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
+    }
+
+}
+
+void LColorList::InitTIM()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0,0x00,0),"Black"));
+    m_list.append(LColor(QColor(0x00,0x55,0x0),"G1"));
+    m_list.append(LColor(QColor(0x00,0xAA,0x00),"G2"));
+    m_list.append(LColor(QColor(0x00,0xFF,0x0),"G3"));
     m_pens.clear();
     for (int i=0;i<m_list.count();i++) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));

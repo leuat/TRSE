@@ -118,6 +118,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 37;
     if (t==SNESGeneric)
         return 38;
+    if (t==TIM)
+        return 39;
 
 
     return 255;
@@ -203,6 +205,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Amstrad sprites";
     if (t==SNESGeneric)
         return "Generic SNES image";
+    if (t==TIM)
+        return "Generic TIM image";
 
     return "Unknown image type";
 
@@ -289,6 +293,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return AmstradSprites;
     if (c==38)
         return SNESGeneric;
+    if (c==39)
+        return TIM;
 
     return NotSupported;
 

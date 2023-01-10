@@ -1,0 +1,28 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+var  
+   v: byte; 
+
+@export "images/image1.flf" "images/image1.bin" 256
+
+	zp:pointer;
+	image:incbin("images/image1.bin",$800,00,$7400) compressed;
+
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	System::SetScreenPos(0);
+
+	Compression::Decompress(#image,$4400);
+	Screen::CopyToScreen($4400, $8000, 512*256/4);
+	loop();
+	Z80CPM::Exit();
+
+end.

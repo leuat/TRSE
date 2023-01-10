@@ -323,4 +323,25 @@ begin
 end;
 
 
+procedure CopyToScreen(from, too : pointer; size:integer);
+begin
+	asm("
+		ld de,[Screen_size]
+		ld hl,[Screen_from]			
+		ld bc,[Screen_too]
+tp:		
+		ld a,[hl]
+		out (c),a
+		inc hl
+		inc bc
+		dec de
+		ld a,d
+		or e
+		
+		jr  nz,tp
+	
+	");
+	
+end;
+
 end.

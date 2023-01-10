@@ -62,6 +62,7 @@
 #include "source/LeLib/limage/limagecga160x100.h"
 #include "source/LeLib/limage/limageamstradsprites.h"
 #include "source/LeLib/limage/limagesnesgeneric.h"
+#include "source/LeLib/limage/limagetim.h"
 
 class LImageFactory {
 public:

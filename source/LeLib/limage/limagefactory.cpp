@@ -108,6 +108,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageAmstradSprites(colorType);
     if (t == LImage::SNESGeneric)
         return new LImageSnesGeneric(colorType);
+    if (t == LImage::TIM)
+        return new LImageTIM(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

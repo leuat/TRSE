@@ -67,3 +67,5 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 exomizer_toggle = 0
+data_header_images:image1.flf = 0
+data_header_images/image1.flf = 0
