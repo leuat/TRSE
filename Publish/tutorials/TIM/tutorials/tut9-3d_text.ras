@@ -1,0 +1,55 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+var  
+   v,i,j,k,curFrame: byte; 
+
+@export "images/image1.flf" "images/image1.bin" 256
+
+	// 3d data generated with fjong/text.fjo
+	zp:pointer;
+	data:incbin("data/textdata.bin");
+	// Number of frames in animation
+	const noFrames: byte = 64;
+	// Width of each frame /4
+	const width: byte = 32/4;
+	// Height of each frame
+	const height: byte = 32;
+	// Frame lookup tab
+	frameTab : array[noFrames] of integer = buildtable("i*WIDTH*HEIGHT");
+
+
+procedure PlaceFrame(frame:byte; loc:pointer);
+begin
+	zp:=#data + frameTab[frame];
+	for i:=0 to 	width do
+	begin
+		Screen::CopyToScreen(zp, loc, height);
+		loc+=256;
+		zp+=height;		
+	end;
+end;
+
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	System::SetScreenPos(0);
+	
+	while(true) do
+	begin
+		curFrame:=(curFrame+1)&63;
+		PlaceFrame(curFrame,$8000+50+50*256);
+		for j:=0 to 4 do 
+		for i:=0 to 200 do 
+			wait(128);
+	end;
+	loop();
+	Z80CPM::Exit();
+
+end.
