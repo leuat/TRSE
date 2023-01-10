@@ -16,7 +16,8 @@ var
 	data : incbin("data/twister_data.bin");
 
 	text : string="TRSE ON THE TIM    SO MANY BYTES    LOREM IPSUM DOLOR SIT AMET CONSECTETUR ADIPISCING ELIT CURABITUR DIGNISSIM MALESUADA ULTRICIES DUIS NEC CONGUE QUAM PELLENTESQUE DICTUM AUGUE EU ELEIFEND ";
-    sin : array[256] of byte = BuildSineTable(28);
+    sin1 : array[256] of byte = BuildSineTable(38);
+    sin2 : array[256] of byte = BuildSineTable(20);
 
 	// Text pointer, destination ptr
 	textp, dst, src : ^byte;
@@ -47,8 +48,8 @@ begin
 		for i:=0 to text_width do
 		begin
 			// twist some opposite sines!
-			j:=sin[(m-time)&255]; // Twist turning
-			j+=sin[(time2-m)&255]; // Twist turning
+			j:=sin1[(time)]; // Twist turning
+			j+=sin2[(m-time2)]; // Twist turning
 			// Lookup frame "j" in the current lookup table
 			ip2 := ip + frameTab[j&(noFrames-1)];
 			// find actual data from the lookup table
@@ -92,6 +93,7 @@ begin
 		time+=1;
 		if (time&1=0) then 
 		time2-=1;
+		
 	end;
 	Z80CPM::Exit();
 
