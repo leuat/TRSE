@@ -1,0 +1,148 @@
+/*
+
+	Code from this unit was largely taken/adapted from MESCC compiler by Miguel I. Garcia Lopez / FloppySoftware
+	https://github.com/MiguelVis/mescc
+	See mescc.h and conio.h
+
+*/
+
+unit Z80CPM;
+var
+	chr: byte;
+	str: pointer;
+	
+procedure Startup() inline;
+begin
+	asm("
+	// Set stack under BDOS (xx00h)
+    ld  hl,($6)
+    ld  l,0
+    ld  sp,hl
+
+	// Leave space for stack and init. variables
+    //ld  de,ccSTACKSIZE
+    ld  de,512
+    or  a
+    sbc hl,de
+    dec hl
+    ld  (ccfreelast),hl
+    ld  de,ccfreemem			// Last location of the program
+    ld  (ccfreefirst),de
+    or  a
+    sbc hl,de
+    inc hl
+    ld  (ccfreebytes),hl
+    jr  nc,ccargs
+
+	// Error, no memory for stack
+    ld  c,9
+    ld  de,ccerrstack
+    call 5
+    jp  0
+
+run_bios:
+	ld   hl,($1)
+	ld   d,0
+	add  hl,de
+	jp   (hl)
+
+ccerrstack:
+    dc.b 'Runtime Error - No stack$'
+ccargs:
+	");
+end;
+
+procedure Exit() inline;
+begin
+	asm("
+exit:
+    nop ; Patch for atexit() -- 3 bytes.
+    nop
+    nop	
+    jp  0
+
+// Variables for memory functions
+ccfreefirst: dc.w 0 // Adr. first free byte
+ccfreelast:  dc.w 0 // Adr. last free byte
+ccfreebytes: dc.w 0 // Number of free bytes
+ccfreemem:
+	");	
+end;
+
+
+// puts a char to terminal
+procedure putch(chr: global byte);
+begin
+	asm("
+	ld   a,[Z80CPM_chr]
+	ld   c,a
+	ld   e,9
+	jp run_bios
+	");	
+end;
+
+
+// gets a char from terminal, waits for press
+function getch(): integer;
+begin
+	asm("
+	ld e,6
+	call run_bios
+	ld h,0
+	ld l,a
+	");	
+end;
+
+
+// checks if there are characters in terminal's keyboard buffer 
+function kbhit(): integer;
+begin
+	asm("
+	ld e,3
+	call run_bios
+	ld h,a
+	ld l,a
+	");	
+end;
+
+
+// puts a char to terminal, adds LF after CR
+procedure putchar(chr: global byte);
+begin
+	if chr = 13 then putch(10);
+	putch(chr);
+end;
+
+
+// gets a char from terminal, waits for press, produces echo
+function getchar(): integer;
+begin
+	getchar := getch();
+	putchar(getchar);
+end;
+
+
+// puts a null-terminated string to terminal
+procedure puts(str: global pointer);
+begin
+	asm("
+	ld   hl,(Z80CPM_str)
+puts_char:
+	push hl
+	ld a,(hl)
+	or a
+	jr z,puts_end
+	ld c,a
+	ld e,9
+	call run_bios
+	pop hl
+	inc hl
+	jp puts_char
+puts_end:
+	pop hl
+	ret
+	");	
+end;
+
+
+end.

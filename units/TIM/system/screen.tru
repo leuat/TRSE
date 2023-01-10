@@ -1,36 +1,325 @@
+/*
+	This unit uses 8x8 fonts to draw directly into video memory (instead of using TIM's terminal)
+	Uses the same coordinates as Tiles unit
+*/
+
 unit Screen;
+
 var
+	x, y, char: integer;
+	font_ptr, str: pointer;
+
+	cursorx, cursory: integer; // current cursor position
+	chrinv: integer = $0800; // XOR value for drawing (0800 - no changes, 08FF - inverted chars)
+	chrsub: integer = $0020; // value to substract from char code (20 - ASCII, 0 - screen codes)
+
+	scrl_x, scrl_y, scrl_pos: integer;
+	scrl_w, scrl_stp, scrl_phs: byte;
+	scrl_txt: pointer;
 	
-procedure putch(putch_chr: byte);
+@donotremove x
+@donotremove y
+@donotremove char
+@donotremove str
+@donotremove font_ptr
+@donotremove cursorx
+@donotremove cursory
+@donotremove chrinv
+@donotremove chrsub
+@donotremove PrintChrXY
+
+// puts character to screen and updates cursor position
+// prchrxy(x, y, chr)
+// x = 0 .. 127, y = 0 .. 63, chr 0-255 
+procedure PrintChrXY(x, y, char: global integer);
 begin
 	asm("
-	ld   a,[putch_chr]
-	ld   c,a
-	ld   e,9
-	call run_bios
-	ret
+	ld bc, (Screen_x)
+	ld de, (Screen_y)
+	ld hl, (Screen_char)
+	
+    // save current position
+    ld (Screen_cursorx), bc
+    ld (Screen_cursory), de
+
+    // entry point for the rest of char printing routines
+_prchrxy0:
+	// video memory ofset = x*128*2 + y*2*2 + 8000H
+    // calculate video address
+    ld b, c
+    sla b
+    scf     // add 80h
+    rr b
+    sla e
+    sla e
+    ld c, e
+
+    // calculate char address, each char is 16 bytes
+    and a
+    ld de, (Screen_chrsub)    // substract Screen_chrsub value
+    sbc hl, de
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    ld de, (Screen_font_ptr)
+    add hl, de
+
+    ld e, 2
+_prchrxy1:
+    push bc
+    push de
+    ld de,(Screen_chrinv)      // load Screen_chrinv
+
+_prchrxy2:
+    ld a,(hl)
+    xor e
+    out (c), a
+
+    inc hl
+    inc bc
+    dec d
+    jp nz, _prchrxy2
+
+    pop de
+    pop bc
+    inc b
+    dec e
+    jp nz, _prchrxy1
+
+    // calculate next char position
+    // x+=2// if (x>=128) {x=0// y+=2// if (y>=64) y=0//}
+_prchrxy3:
+    ld a,(Screen_cursorx) // x+=2
+    inc a
+    inc a
+//    bit 7,a         // 6th bit set => x>=128
+//    jp z, _prchrxy5
+    cp 127
+    jp c, _prchrxy5
+    ld a,(Screen_cursory) // y+=2
+    inc a
+    inc a
+    bit 6,a         // 5th bit set => y>=64
+    jp z, _prchrxy4
+    xor a           // y=0
+_prchrxy4:
+    ld (Screen_cursory),a
+    xor a           // x=0
+_prchrxy5:
+    ld (Screen_cursorx),a
 	");	
 end;
 
-procedure puts(puts_str: pointer);
+
+// sets pointer to font data
+procedure SetFont(addr: pointer);
+begin
+	font_ptr := addr;
+end;
+
+
+// prints one character at current cursor position
+procedure PrintChr(char: global integer);
 begin
 	asm("
-	ld   hl,(Screen_puts_str)
-puts_char:
-	push hl
-	ld a,(hl)
-	or a
-	jr z,puts_end
-	ld c,a
-	ld e,9
-	call run_bios
-	pop hl
-	inc hl
-	jp puts_char
-puts_end:
-	pop hl
-	ret
-	");	
+    ld bc,(Screen_cursorx)
+    ld de,(Screen_cursory)
+	ld hl, (Screen_char)
+    jp _prchrxy0
+    ");
+end;
+
+
+// prints null-terminated string at current cursor position
+procedure PrintStr(str: global pointer);
+begin
+	asm("
+    ld hl,(Screen_str)
+_prstr1:
+    push hl
+    ld l,(hl)   // get net char
+    inc l       // check if null
+    dec l
+    jp z, _prstr2
+    ld h, 0
+    ld bc,(Screen_cursorx)
+    ld de,(Screen_cursory)
+    call _prchrxy0
+    pop hl
+    inc hl
+    jp _prstr1
+_prstr2:
+    pop hl
+	");
+end;
+
+
+// prints up to n chars of null-terminated string at current cursor position
+procedure PrintNStr(str: global pointer, n: integer);
+begin
+	asm("
+    ld hl, (Screen_str)
+    ld de, (Screen_n)
+_prnstr1:
+    push hl
+    push de
+    ld l,(hl)   // get net xhar
+    inc l       // check if null
+    dec l
+    jp z, _prnstr2
+    ld h, 0
+    ld bc,(Screen_cursorx)
+    ld de,(Screen_cursory)
+    call _prchrxy0
+    pop de
+    pop hl
+    inc hl
+    dec e
+    jp nz, _prnstr1
+    ret
+_prnstr2:
+    pop hl
+    pop de
+	");
+end;
+
+
+// sets cursor position
+// x = 0 .. 127, y = 0 .. 63
+procedure GotoXY(x, y: global integer);
+begin
+    cursorx := x;
+    cursory := y;
+end;
+
+
+// sets XOR value for character drawing
+// xor=0 - normal drawing,  xor=0xFF - inverted drawing
+procedure SetPrintInv(x: global integer);
+begin
+	if x = 0 then
+		chrinv := $0800
+	else
+		chrinv := $08FF;
+end;
+
+
+// sets the value to be substracted from character code
+// sub=0x20 - ASCII coding,  sub=0 - no coding
+procedure SetPrintSub(x: global integer);
+begin
+	chrsub := x;
+end;
+
+
+// Fills box (0..127,0..63) with a byte pattern
+procedure ClearBox(x, y: global integer, width, height, pattern: integer);
+begin
+	asm("
+	ld de, (Screen_height)
+	ld h, e
+	ld de, (Screen_width)
+	ld l, e
+
+	ld de, (Screen_y)
+	ld bc, (Screen_x)
+
+    sla h   // height * 4
+    sla h
+
+    // x*256
+    ld b, c
+    // add 80h to addr hi
+    sla b
+    scf
+    rr b
+    // y*4
+    sla e
+    sla e
+    ld c, e
+
+    ld d, l // width
+    ld a, (Screen_pattern)
+_clrbx1:
+    ld e, h // height
+    push bc
+_clrbx2:
+    out (c),a
+    inc bc
+    dec e
+    jp nz, _clrbx2
+    pop bc
+    inc b
+    dec d
+    jp nz, _clrbx1
+    ret
+    ");
+end;
+
+
+// sets up an area for scrolling text
+// x,y - screen cooridinates
+// fwidth - width of scrolling area
+// str - pointer to NULL-terminated string
+procedure SetScroll(x, y: global integer, fwidth: byte, str: global pointer);
+var
+	scrl_i: byte;
+begin
+    scrl_x := x;
+    scrl_y := y;
+    scrl_w := fwidth;
+    scrl_txt := str;
+    scrl_pos := 1;
+    scrl_stp := 0;
+    scrl_phs := 0;
+    GotoXY(x, y);
+    for scrl_i :=0 to fwidth do
+        PrintChr(32);
+end;
+
+
+// runs one step of the scrolling
+// should be called from loop or interrupt
+procedure DoScroll();
+var
+	txtChars : integer;
+begin
+    txtChars := scrl_w - 1;
+    if scrl_phs = 0 then begin
+        if scrl_pos >= txtChars then begin
+			scrl_phs := 1;
+			scrl_pos := 0;
+		end else begin
+            if scrl_stp = 0 then begin
+                GotoXY((txtChars-scrl_pos)*2 + 1 + scrl_x, scrl_y);
+                PrintNStr(scrl_txt, scrl_pos);
+                scrl_stp := 1;
+            end else begin
+                GotoXY((txtChars-scrl_pos)*2 + scrl_x, scrl_y);
+                PrintNStr(scrl_txt, scrl_pos+1);
+                scrl_pos += 1;
+                scrl_stp := 0;
+            end
+        end
+    end;
+    if scrl_phs = 1 then begin
+        if scrl_txt[scrl_pos] = 0 then begin
+			scrl_phs := 0;
+			scrl_pos := 1;
+		end else begin
+            if scrl_stp = 0 then begin
+                GotoXY(1 + scrl_x, scrl_y);
+                PrintNStr(scrl_txt + scrl_pos, txtChars);
+                scrl_stp := 1;
+            end else begin
+                GotoXY(scrl_x, scrl_y);
+                PrintNStr(scrl_txt + scrl_pos, scrl_w);
+                scrl_pos += 1;
+                scrl_stp := 0;
+            end
+        end
+    end;
 end;
 
 

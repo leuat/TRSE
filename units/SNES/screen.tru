@@ -42,7 +42,7 @@ var
 	@donotremove i1
 	
 	/**
-	Copies [param 3] bytes from [param 1] to the palette register starting with color [param 2]
+	Copies [param 3] bytes <b>from</b> [param 1] to the palette register starting with color [param 2]
 	
 	**/
 	

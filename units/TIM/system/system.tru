@@ -1,62 +1,53 @@
 unit System;
 var
-	
-procedure CPMInit() inline;
+
+// Turning cursor off, by directly changing EMU.COM code
+// found by Marko Solajic
+procedure CursorOff();
 begin
 	asm("
-	// Set stack under BDOS (xx00h)
-    ld  hl,($6)
-    ld  l,0
-    ld  sp,hl
-
-	// Leave space for stack and init. variables
-    //ld  de,ccSTACKSIZE
-    ld  de,512
-    or  a
-    sbc hl,de
-    dec hl
-    ld  (ccfreelast),hl
-    ld  de,ccfreemem			// Last location of the program
-    ld  (ccfreefirst),de
-    or  a
-    sbc hl,de
-    inc hl
-    ld  (ccfreebytes),hl
-    jr  nc,ccargs
-
-	// Error, no memory for stack
-    ld  c,9
-    ld  de,ccerrstack
-    call 5
-    jp  0
-
-run_bios:
-	ld   hl,($1)
-	ld   d,0
-	add  hl,de
-	jp   (hl)
-
-ccerrstack:
-    dc.b 'Runtime Error - No stack$'
-ccargs:
-	");
+    ld a, $C9
+    ld hl, $E806
+    ld (hl), a
+    ");
 end;
 
-procedure CPMExit() inline;
+
+// Turning cursor on, by directly changing EMU.COM code
+// found by Marko Solajic
+procedure CursorOn();
 begin
 	asm("
-exit:
-    nop ; Patch for atexit() -- 3 bytes.
-    nop
-    nop	
-    jp  0
+    ld a, $C3
+    ld hl, $E806
+    ld (hl), a
+    ");
+end;
 
-// Variables for memory functions
-ccfreefirst: dc.w 0 // Adr. first free byte
-ccfreelast:  dc.w 0 // Adr. last free byte
-ccfreebytes: dc.w 0 // Number of free bytes
-ccfreemem:
-	");	
+
+// Set new routine for 100ms timer (original one blinks the cursor), by changing BIOS code
+// found by Marko Solajic
+procedure SetTimerFunction(timerfunc: integer);
+begin
+	if timerfunc = 0 then timerfunc := $E806; // set to $E806 to resume cursor blinking
+	asm("
+    di
+    ld hl,(System_timerfunc)
+    ld ($DA32),hl
+    ei
+    ");
+end;
+
+
+// sets the value of TIM-011 scroll register at IO adress 00D0h
+// scrpos = 0 .. 255
+procedure SetScreenPos(scrpos: integer);
+begin
+	asm("
+	ld de,(System_scrpos)
+    ld bc,$00D0
+    out (c), e
+    ");
 end;
 
 

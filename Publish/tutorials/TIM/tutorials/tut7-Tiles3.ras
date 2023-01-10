@@ -1,0 +1,125 @@
+program Tutorial7;
+@use "system/z80cpm"
+@use "system/screen"
+@use "system/tiles"
+@use "system/system"
+@use "system/graphics"
+
+var
+	font: incbin("zxchars.bin");
+	scrolltxt: string = ("Space invaders demo        o/p - left/right    q - quit ");
+	sprites: incbin("sprites.bin");
+
+	i,j,x,y: integer;
+
+	shipx, shipdx, shipauto : integer;
+	backgr: array[64] of byte = BuildTable("0");	// empty tile
+
+    invx,invdx: integer;
+    skip,phase: integer;
+    ch: integer;
+
+
+// draws two rows of invaders
+procedure drawinv(x, y: global integer, inva, invb: integer);
+begin
+	// address is passed as last parameter
+    Tiles::PutTile(x-4, y, #backgr);
+    for i := 0 to 16 step 2 do begin
+	    // index is passed as last parameter
+        Tiles::PutTile(x, y, inva);
+        x += 4;
+	    // index is passed as last parameter
+        Tiles::PutTile(x, y, invb);
+        x += 4;
+    end;
+	// address is passed as last parameter
+    Tiles::PutTile(x, y, #backgr);
+end;
+
+// draws player ship
+procedure drawship(x, y: global integer);
+begin
+    Tiles::PutTile(x-4, y, #backgr);
+    Tiles::PutTile(x, y, 17);
+    Tiles::PutTile(x+4, y, 18);
+    Tiles::PutTile(x+8, y, #backgr);
+end;
+
+// automatic ship movement, called from interrupt
+procedure moveship();
+begin
+    if shipauto = 0 then begin
+        shipx += shipdx;
+        if shipx>110 then shipdx := 0-shipdx;
+        if shipx<6 then shipdx := 0-shipdx;
+    end
+    else shipauto -= 1;
+    Screen::DoScroll();
+end;
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	System::SetScreenPos(0);
+	Screen::SetFont(#font);
+	Tiles::SetIndexTiles(#sprites);
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+    invx := 10;
+    invdx := 1;
+    shipx := 5;
+    shipdx := 1;
+    skip := 0;
+    phase := 0;
+    shipauto := 0;
+
+	Screen::SetScroll(64-24,0,24,#scrolltxt);
+    System::SetTimerFunction(#moveship);
+
+    while (1) do begin
+        if phase < 8 then begin
+            drawinv(invx, 5, 15, 16);
+            drawinv(invx, 9, 16, 15);
+            drawinv(invx, 13, 13, 14);
+            drawinv(invx, 17, 14, 13);
+        end else begin
+            drawinv(invx, 5, 16, 15);
+            drawinv(invx, 9, 15, 16);
+            drawinv(invx, 13, 14, 13);
+            drawinv(invx, 17, 13, 14);
+        end;
+        
+        phase += 1;
+        if phase>15 then phase := 0;
+
+        if skip = 0 then begin
+            invx += invdx;
+            if invx>50 then invdx := 0-invdx;
+            if invx<11 then invdx := 0-invdx;
+        end;
+        skip +=1;
+        if skip>3 then skip := 0;
+
+		// check if key was pressed
+        if Z80CPM::kbhit() <> 0 then begin
+            ch := Z80CPM::getch();
+            if $6f = ch then begin // 'o'
+                if shipx>=6 then shipx -= 1;
+                shipauto := 10;
+            end else if $70 = ch then begin // 'p'
+                if shipx<=110 then shipx += 1;
+                shipauto := 10;
+            end
+            else if $71 = ch then break; // 'q'
+        end;
+
+        drawship(shipx, 25);
+    end;
+
+    System::SetTimerFunction(0);
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	System::CursorOn();
+	Z80CPM::Exit();
+end.

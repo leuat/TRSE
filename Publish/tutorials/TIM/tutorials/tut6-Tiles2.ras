@@ -1,0 +1,106 @@
+program Tutorial6;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/tiles"
+@use "system/graphics"
+
+var
+	font: incbin("zxchars.bin");
+	sprites: incbin("sprites.bin");	// include sprites
+	backgr1,backgr2,backgr3,backgr4: array[64] of byte;	// memory for getting a tile from screen
+
+	i,j,y,p,pp,col,ch: integer;
+	
+	// indexes of Dizzy sprite inside sprites.bin
+	const dizzy1: integer = 9;
+	const dizzy2: integer = 10;
+	const dizzy3: integer = 11;
+	const dizzy4: integer = 12;
+
+procedure PressAny();
+begin
+	Screen::GotoXY(10,0);
+	Screen::PrintStr("Press any key...");
+	ch := Z80CPM::getch();
+	Screen::GotoXY(10,0);
+	Screen::PrintStr("                ");
+end;
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	System::SetScreenPos(0);
+	Screen::SetFont(#font);
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	// set indexed tiles address	
+	Tiles::SetIndexTiles(#sprites);
+
+	// plot some lines as background
+	Screen::ClearBox(0, 0, 128, 64, 0);
+    col := 1;
+    j := 511;
+    for i := 0 to 512 step 8 do begin
+        Graphics::Line(i, 0, j, 255, col);
+        col +=1;
+        if col >= 4 then col := 1;
+        j -= 8;
+    end;
+    j := 255;
+    for i := 0 to 252 step 4 do begin
+        Graphics::Line(0, j, 511, i, col);
+        col +=1;
+        if col >= 4 then col := 1;
+        j -= 4;
+    end;
+
+	// move Dizzy across the screen
+    pp := 600;
+    y := 5;
+    for j := 0 to 4 do begin
+		// initial save of background for 4 tiles (2x2)
+        Tiles::GetTile(0, y, #backgr1);
+        Tiles::GetTile(4, y, #backgr2);
+        Tiles::GetTile(0, y+4, #backgr3);
+        Tiles::GetTile(4, y+4, #backgr4);
+        
+        // move Dizzy across the screen
+        for i := 1 to 121 do begin
+            // first restore saved background
+            Tiles::PutTile(i-1,   y, #backgr1);
+            Tiles::PutTile(i-1+4, y, #backgr2);
+            Tiles::PutTile(i-1,   y+4, #backgr3);
+            Tiles::PutTile(i-1+4, y+4, #backgr4);
+
+            // get background for next position
+            Tiles::GetTile(i,   y, #backgr1);
+            Tiles::GetTile(i+4, y, #backgr2);
+            Tiles::GetTile(i,   y+4, #backgr3);
+            Tiles::GetTile(i+4, y+4, #backgr4);
+
+            // draw Dizzy using OR with background
+            Tiles::OrTile(i,   y, dizzy1);
+            Tiles::OrTile(i+4, y, dizzy2);
+            Tiles::OrTile(i,   y+4, dizzy3);
+            Tiles::OrTile(i+4, y+4, dizzy4);
+
+			// small pause, shorter each time
+            if pp>0 then for p :=0 to pp do;
+        end;
+
+        // final restore of background
+        Tiles::PutTile(120, y, #backgr1);
+        Tiles::PutTile(124, y, #backgr2);
+        Tiles::PutTile(120, y+4, #backgr3);
+        Tiles::PutTile(124, y+4, #backgr4);
+        pp -= 200;
+        y += 15;
+    end;
+    PressAny();
+
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	System::CursorOn();
+	Z80CPM::Exit();
+end.
