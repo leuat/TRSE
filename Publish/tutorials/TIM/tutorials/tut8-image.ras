@@ -11,7 +11,7 @@ var
 @export "images/image1.flf" "images/image1.bin" 256
 
 	zp:pointer;
-	image:incbin("images/image1.bin",$800,00,$7400) compressed;
+	image:incbin("images/image1.bin") compressed;
 
 
 
@@ -20,8 +20,8 @@ begin
 	System::CursorOff();
 	System::SetScreenPos(0);
 
-	Compression::Decompress(#image,$4400);
-	Screen::CopyToScreen($4400, $8000, 512*256/4);
+	Compression::Decompress(#image,$3E00);
+	Screen::CopyToScreen($3E00, $8000, 512*256/4);
 	loop();
 	Z80CPM::Exit();
 
