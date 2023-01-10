@@ -164,10 +164,8 @@ void SystemTIM::ExtraEmulatorCommands()
 */
     //sendkeys -a "tim011" -c "<c:return> hello"
 #ifdef __APPLE__
-    qDebug() << "HER";
-    QThread::sleep(3);
-    qDebug() << "HER2";
-    SendKeyCommand("<c:space:space>");
+//    QThread::sleep(3);
+  //  SendKeyCommand("<c:space:space>");
 
  #endif
 }
