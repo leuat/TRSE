@@ -65,7 +65,7 @@ begin
 				ld de,data
 top1:				
 			
-				repeat 40
+				repeat 40 
 				
 				ld a,[time3]
 				add a,[ix] ; add first value to time
@@ -115,8 +115,8 @@ begin
 		Render();
 
 		
-		time+=1;
-		if (time&1=0) then 
+		time+=2;
+//		if (time&1=0) then 
 			time2-=1;
 		//if (mod(time,3)=0) then 
 		dx+=1;
