@@ -72,22 +72,24 @@ top1:
 				ld a,[time3]
 				add a,[hl]
 				ex de,hl
-				pop de
+				
+				
 				sbc a,[hl]
 				; lookup table				
-				push hl
-				ld hl,data
-				add a,l
-				ld l,a
-				ld a,[hl]			
+;				push hl
+				ld de,data
+				add a,e
+				ld e,a
+				ld a,[de]			
 				out (c),a
+				pop de
 				
 				inc bc
 				inc bc
 				inc bc
 				inc bc
 				
-				pop hl
+;				pop hl
 				
 				inc hl	
 				inc hl	
