@@ -1,0 +1,129 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+@export "images/image2.flf" "images/image2.bin" 256
+
+var  
+	time, time2, i,j,x,y,k,l,m,n, time3 : byte;
+	
+	// Char width of the circles
+	const width : byte= 60;
+	// Char data width of the circles
+	const dwidth : byte = width+16;
+	// Char width of the circles
+	const height:byte = 120;
+
+	image:incbin("images/image2.bin") compressed;
+
+	const hei : byte = 28;
+	data : incbin("data/smooth_data.bin", $7F00);
+	sqr : array[] of byte = buildtable2d(height,DWIDTH,"256/(Math.sqrt(Math.pow(i-DWIDTH/2-15,2)/2+Math.pow(j-HEI/2-15,2))+4)*32.0");	
+	//sqr : array[] of byte = buildtable2d(height,dwidth,"Math.atan2((i-20)/2-20,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
+	dx:byte=64;
+	src,dst,zp, zp2 : pointer;
+	const tmp: address = $4000;
+	
+	shift: byte=0;
+	sinx:array[256] of byte = buildsinetable(16);
+	siny:array[256] of byte = buildsinetable(32);
+	tabWidth : array[200] of integer=buildtable("i*HEIGHT");
+	in : integer;
+	
+procedure Render();
+begin
+	i:=sinx[time];
+	zp2:=#sqr+tabWidth[i];
+	i:=siny[time2];
+	zp2+=i + shift;
+
+	i:=sinx[time2+dx];
+	zp:=#sqr+tabWidth[i];
+	i:=siny[time+dx];
+	zp+=i + shift;
+	
+	dst:=$8000+50+256*4+shift;
+	for x:=0 to width offpage do
+	begin
+		//for y:=0 to height do
+		begin
+					
+			/*
+				non-optimised
+				k:=zp[y]+time-zp2|y];
+				dst[0]:=data[k];
+				
+			*/
+			asm("
+			
+				ld hl,[zp]
+				ld bc,[dst]
+				ld ix,[zp2]
+				ld de,data
+top1:				
+			
+				repeat 40 
+				
+				ld a,[time3]
+				add a,[ix] ; add first value to time
+				
+				sbc a,[hl] ; subtract other value
+				; lookup table				
+				
+				ld e,a
+				ld a,[de]			
+				out (c),a
+				
+				
+				inc bc
+				inc bc
+				inc bc
+				inc bc
+				
+							
+				inc hl	
+				inc hl	
+			
+				inc ix
+				inc ix
+				
+				repend
+					
+			");
+			//dst+=2;
+
+		end;
+		zp+=height;
+		zp2+=height;
+		dst+=256;
+	end;
+end;	
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	time:=0;
+	Compression::DecompressToPort(#image,$8000); // doesn't work completely yet
+	while (true) do
+	begin
+		Render();
+
+		
+		time+=2;
+//		if (time&1=0) then 
+			time2-=1;
+		//if (mod(time,3)=0) then 
+		dx+=1;
+		shift:=(shift+2)&3;
+		time3+=7;
+		
+	end;
+	Z80CPM::Exit();
+
+end.
