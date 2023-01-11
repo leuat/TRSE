@@ -120,6 +120,7 @@ begin
 			time2-=1;
 		//if (mod(time,3)=0) then 
 		dx+=1;
+		if (time&31) then dx+=1;
 		shift:=(shift+2)&3;
 		time3+=7;
 		
