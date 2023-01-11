@@ -69,3 +69,4 @@ build_list = ,
 exomizer_toggle = 0
 data_header_images:image1.flf = 0
 data_header_images/image1.flf = 0
+data_header_images/image2.flf = 0

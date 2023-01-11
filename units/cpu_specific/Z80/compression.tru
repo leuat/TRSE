@@ -387,5 +387,348 @@ mediumlength
 	");*/
 end;
 
+procedure DecompressToPort(in, out : global pointer of integer);
+begin
+
+	asm("
+; HL - pointer to the buffer with compressed source data
+; DE - pointer to the destination buffer for decompressed data
+; BC - size of the compressed data
+
+	ld hl,[Compression_in]
+	ld de,[Compression_out]
+
+
+	");
+	
+	asm("
+	
+;
+; LZ4 decompression algorithm - Copyright (c) 2011-2015, Yann Collet
+; All rights reserved. 
+; LZ4 implementation for z80 and compatible processors - Copyright (c) 2013-2015 Piotr Drapich
+; All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without modification, 
+; are permitted provided that the following conditions are met: 
+; 
+; * Redistributions of source code must retain the above copyright notice, this 
+;   list of conditions and the following disclaimer. 
+; 
+; * Redistributions in binary form must reproduce the above copyright notice, this 
+;   list of conditions and the following disclaimer in the documentation and/or 
+;   other materials provided with the distribution. 
+;
+; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND 
+; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR 
+; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
+; ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+;
+; The latest version always available from http://www.union.org.pl/download/z80
+; Questions, ideas, optimization suggestions, consulting requests? Send email to union@union.pl
+; 
+; Only 219 bytes of fully relocatable code with raw data decompression routine taking only 109 bytes.
+; Supports both legacy and latest LZ4 data format without framing support.
+; History:
+; version 1.0 (18.09.2013)
+; - initial implementation for legacy compression formats, generated with lz4 1.3.3 or earlier
+; version 1.1 (28.02.2015)
+; - added support for files, compressed with the lz4 version 1.41
+; Available functions:
+; LZ4_decompress
+; - decompresses files, packed with lz4 command line tool, preferably with options -Sx -B4
+; input parameters:
+; HL - pointer to the buffer with compressed source data
+; DE - pointer to the destination buffer for decompressed data
+; on exit:
+; A  - contains exit code: 
+; 	0 - decompression successful
+;	1 - compressed size is bigger than 64kb
+;	2 - unsupported version of lz4 compression format
+; HL - the number of decompressed bytes
+; Contents of AF,BC,DE,HL are not preserved.
+; LZ4_decompress_raw
+; - decompresses raw LZ4 compressed data 
+; input parameters:
+; HL - pointer to the buffer with compressed source data
+; DE - pointer to the destination buffer for decompressed data
+; BC - size of the compressed data
+; on exit:
+; A  - exit code: 
+; 	0 - decompression successful
+; HL - the number of decompressed bytes
+
+LZ4_decompress:
+; check the magic number
+	ld 		bc,0
+	ld		a,(hl)
+	cp 		#4
+	jr 		z, LZ4_Version4
+	cp 		#3
+	jr 		z, LZ4_LegacyVersion3
+	cp 		#2
+	jr 		z, LZ4_LegacyVersion2
+LZ4_version_not_supported:
+	ld 		a,2
+	jr		LZ4_decompress_finished
+LZ4_decompress_error:
+	ld 		a,1
+LZ4_decompress_finished:
+	ret
+
+LZ4_Version4:
+; check version 1.41 magic 
+	inc		hl
+	ld 		a,(hl)
+	inc		hl
+	cp		#$22
+	jr		nz, LZ4_version_not_supported
+	ld		a,(hl)
+	inc		hl
+	cp		#$4D
+	jr		nz, LZ4_version_not_supported
+	ld		a,(hl)
+	inc		hl
+	cp		#$18
+	jr		nz, LZ4_version_not_supported
+; parse version 1.41 spec header
+	ld		a,(hl)
+	inc		hl
+; check version bits for version 01
+	bit		7,a
+	jr		nz, LZ4_version_not_supported
+	bit		6,a
+	jr		z, LZ4_version_not_supported
+; is content size set?
+	bit		3,a
+	jr		z, LZ4_no_content_size
+; skip content size
+	ld		c,8
+LZ4_no_content_size:
+	bit		0,a
+	jr		z, LZ4_no_preset_dictionary
+; skip dictionary id
+	ld		a,c
+	add		a,4
+	ld		c,a
+LZ4_no_preset_dictionary:
+	ld		a,(hl)
+	inc		hl
+; strip reserved bits (and #70) and check if block max size is set to 64kb (4)
+	and		#$40
+	jr		z, LZ4_version_not_supported
+; skip header checksum
+	inc		bc
+	jr		LZ4_start_decompression
+
+LZ4_LegacyVersion3:
+	ld		c,8
+LZ4_LegacyVersion2:
+	inc		hl
+	ld		a,(hl)
+	inc		hl
+	cp		#$21
+	jr		nz, LZ4_version_not_supported
+	ld		a,(hl)
+	inc		hl
+	cp		#$4c
+	jr		nz, LZ4_version_not_supported
+	ld		a,(hl)
+	inc		hl
+	cp		#$18
+	jr		nz, LZ4_version_not_supported
+LZ4_start_decompression:
+	add		hl,bc
+; load low 16 bit of compreesed block size to bc
+	ld		c,(hl)
+	inc		hl
+	ld		b,(hl)
+	inc		hl
+; check if compressed size <64kb - high 16 bits of compressed size must be 0
+	ld		a,(hl)
+	cp		0
+	jr		nz,LZ4_decompress_error
+	inc		hl
+	ld		a,(hl)
+	cp		0
+	jr		nz,LZ4_decompress_error
+	inc		hl
+
+; decompress raw lz4 data packet
+; on entry hl - start of packed buffer, de - destination buffer, bc - size of packed data
+LZ4_decompress_raw:
+	push	de							; store original destination pointer
+	push	hl							; store start of compressed data source
+	add		hl,bc       				; calculate end address of compressed block
+	ld		b,h							; move end address of compressed data to bc
+	ld		c,l	
+	pop		hl							; restore start of compressed data source
+	push	bc							; store end address of compessed data
+; now hl - start of packed buffer, de - destination, bc - end of packed buffer
+	ld		b,0		         			; clear b, c is set later
+
+; get decompression token
+LZ4_GetToken:
+	xor		a 							; reset c flag for sbc later
+	ld		a,(hl)						; read token
+	inc		hl
+	push	af							; store token
+; unpack 4 high bits to get the length of literal
+	rlca
+	rlca
+	rlca
+	rlca
+; copy literals
+	and		#$f							; token can be max 15 - mask out unimportant bits
+	jr		z,LZ4_skipcalc   			; there is no literals, skip calculation of literal size
+	ld		c,a							; set the count for calculation
+	cp		#$f							; if literal size <15
+	jr		nz, LZ4_copyliterals2		; copy literal, else
+; calculate total literal size by adding contents of following bytes
+	push	de							; store destination
+	ex		de,hl
+; a = size of literal to copy, de=pointer to data to be added
+	ld		h,0         				; set hl with size of literal to copy 
+	ld		l,a
+
+LZ4_calcloop:
+	ld		a,(de)						; get additional literal size to add 
+	inc		de
+	ld		c,a							; set bc to the length of literal
+	add		hl,bc						; add it to the total literal length
+	cp		#$ff							; if literal=255
+	jr		z,LZ4_calcloop				; continue calculating the total literal size
+	ld		b,h							; store total literal size to copy in bc
+	ld		c,l
+	ex		de,hl						; hl now contains current compressed data pointer  
+	pop		de							; restore destination to de 
+
+LZ4_copyliterals2:
+;	push af
+
+	push bc
+	ld b,d
+	ld c,e
+	;LD (DE),(HL), then increments DE, HL, and decrements BC) until BC=0
+	ld a,[hl]
+	out (c),a
+	pop bc
+	inc hl
+	inc de
+	dec bc
+;	jr nz, LZ4_copyliterals2
+	ld a,b
+	or c
+	
+ 	jr nz, LZ4_copyliterals2
+	;ldir								; copy literal to destination
+		
+LZ4_skipcalc:
+; check for end of compressed data
+	pop		af							; restore token, carry is cleared because of xor a at the beginning of GetToken
+	pop		bc							; restore end address of compressed data 
+	push	hl							; store current compressed data pointer 
+	sbc		hl, bc						; check if we reached the end of compressed data buffer
+	pop		hl							; restore current compressed data pointer
+	jr		z,LZ4_decompress_success	; decompression finished
+	push	bc							; store end address of compressed data
+
+; Copy Matches
+	and		#$f							; token can be max 15 - mask out unimportant bits. resets also c flag for sbc later
+; get the offset
+	ld		c,(hl)
+	inc		hl
+	ld		b,(hl)						; bc now contains the offset
+	inc		hl
+	push	hl							; store current compressed data pointer
+	push	de							; store destination pointer
+
+	ex		de,hl
+	sbc		hl,bc   					; calculate from the offset the new decompressed data source to copy from
+; hl contains new copy source, de source ptr
+
+	ld		b,0     					; load bc with the token
+	ld		c,a
+	cp		#$f							; if matchlength <15
+	jr nz, LZ4_copymatches				; copy matches. else 
+
+; calculate total matchlength by adding additional bytes
+	push	hl							; store current decompressed data source
+; a = size of match to copy, de= pointer to data to be added
+	ld		h,0     					; set hl with initial matchlength to copy
+	ld		l,a
+LZ4_calcloop2:
+	ld		a,(de)						; get additional matchlength to add
+	inc		de
+	ld		c,a							; set bc to the matchlength
+	add		hl,bc						; add it to the total match length
+	cp		#$ff							; if matchlength=255
+	jr		z,LZ4_calcloop2				; continue calculating the total match length		
+	ld		b,h							; store total matchlength to copy in bc
+	ld		c,l			 
+	pop		hl							; restore current decompressed data source
+	pop		af							; set stack to proper position by restoring destination pointer temporarily into af  
+	ex		de,hl
+	ex		(sp),hl						; update current compressed data pointer on the stack to the new value from de
+	ex		de,hl 
+	push	af							; restore stack
+
+LZ4_copymatches:
+	pop		de							; restore destination pointer
+	inc		bc							; add base length of 4 to get the correct size of matchlength 
+	inc		bc
+	inc		bc
+	inc		bc
+
+;	ldir
+;	push af
+;	push af
+
+iloop:
+	push bc
+	ld b,d
+	ld c,e
+	;LD (DE),(HL), then increments DE, HL, and decrements BC) until BC=0
+	ld a,[hl]
+	;out (c),a
+	pop bc
+	inc hl
+	inc de
+	dec bc
+	ld a,b
+	or c
+ 	jr nz, iloop
+ 	;ld a,0
+ 	
+	pop		hl							; restore current compressed data source
+	jr		LZ4_GetToken				; continue decompression
+
+;LZ4_copymatches:
+;	pop		de							; restore destination pointer
+;	inc		bc							; add base length of 4 to get the correct size of matchlength 
+;	inc		bc
+;	inc		bc
+;	inc		bc
+;	ldir								; copy match
+;	pop		hl							; restore current compressed data source
+;	jr		LZ4_GetToken				; continue decompression
+
+	
+	
+LZ4_decompress_success:
+	pop		hl							; store destination pointer 
+	sbc		hl,de						; calculate the number of decompressed bytes 
+	xor		a							; clear exit code
+	ret
+	");
+
+end;
+
 
 end.
