@@ -33,7 +33,7 @@ output = {
 	output_type = 3,
 	aspect = 1.0,
 	dither = 1,
-	ditherStrength = { x = 50, y= 5, z= 5},
+	ditherStrength = { x = 80, y= 5, z= 5},
 
 --	c64_colors = { 0,5,14,6 }
 --	palette_file = "images/pals.pal",
