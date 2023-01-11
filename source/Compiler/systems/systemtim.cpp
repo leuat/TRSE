@@ -110,7 +110,8 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
     QString out;
 
 #ifdef __linux__
-    base = base.remove("x16emu");
+    //base = base.remove("x16emu");
+    StartProcess("chmod",QStringList() <<"a+rw"<<dname,out,true,workDir);
 #endif
 #ifdef __APPLE__
     StartProcess("chmod",QStringList() <<"a+rw"<<dname,out,true,workDir);
