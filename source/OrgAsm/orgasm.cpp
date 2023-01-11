@@ -65,6 +65,35 @@ void Orgasm::ProcessSource()
 
 QString Orgasm::processRepeatIndex(QString s, int currentX, int currentY)
 {
+    QJSEngine jsEngine;
+
+    int start = s.indexOf("{");
+    if (start!=-1) {
+        // evalue expression
+        int end = s.split(";").first().indexOf("}");
+        auto orgStr = s.mid(start,end-start+1);
+        if (orgStr.contains("{") )
+        {
+            auto str = orgStr;
+            str = str.replace("{","").replace("}","");
+            str = str.replace("i",QString::number(currentX));
+            str = str.replace("j",QString::number(currentY));
+
+
+            auto val = jsEngine.evaluate(str);
+            if (val.isError()) {
+                //qDebug() << str;//<< orgStr <<str <<val.toString();
+                throw OrgasmError("Error evaluation expression in unrolled code : " + orgStr + " <br><br>",0);
+
+
+            }
+
+            s = s.replace(orgStr,val.toString());
+            return s;
+
+        }
+
+    }
 
     for (int i=0;i<2;i++) {
         int val = currentX;
@@ -73,6 +102,7 @@ QString Orgasm::processRepeatIndex(QString s, int currentX, int currentY)
             val = currentY;
             r = "j";
         }
+
         s = s.replace("["+r+"+1]",QString::number(val+1));
         s = s.replace("["+r+"-1]",QString::number(val-1));
         s = s.replace("["+r+"]",QString::number(val));

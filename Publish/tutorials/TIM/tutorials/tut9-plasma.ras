@@ -24,7 +24,7 @@ var
 
 // Plasma procedure
 
-procedure Plasma();
+procedure Calculate();
 begin
 	c2x:=ax;
 	c2y:=ay;
@@ -47,6 +47,12 @@ begin
 
 	end;
 	dst:=$8000+28+shift;
+	
+end;
+
+
+procedure Plasma0();
+begin
 	for x:=0 to width  offpage do 
 	begin
 		val:=siny[x];
@@ -72,19 +78,51 @@ begin
 			ld a,[val] ; current value, store in l
 			ld l,a
 			repeat 50
+						
+			ld c,{i*4+10} ; b is aligned, set c to the desired location - every 4th line
 			
 			ld a,l ; current value
-			add a,[ix+[i]] ; add sine value
+			add a,[ix+{i}] ; add sine value
 			; lookup in data[e] 
 			ld e,a
 			ld a,[de]
 			; now out it!
 			out (c),a
 			
-			inc bc
-			inc bc
-			inc bc
-			inc bc
+			
+			
+			repend
+		");
+			
+		dst+=256;
+	end;
+
+end;
+
+procedure Plasma1();
+begin
+	for x:=0 to width  offpage do 
+	begin
+		val:=siny[x];
+		asm("
+			ld bc,[dst]
+			ld ix,sinx ; sin table
+			ld de,data ; data lookup for screen
+			ld a,[val] ; current value, store in l
+			ld l,a
+			repeat 50
+						
+			ld c,{i*4+12} ; b is aligned, set c to the desired location - every 4th line
+			
+			ld a,l ; current value
+			add a,[ix+{i}] ; add sine value
+			; lookup in data[e] 
+			ld e,a
+			ld a,[de]
+			; now out it!
+			out (c),a
+			
+			
 			
 			repend
 		");
@@ -102,11 +140,14 @@ begin
 
 	while (true) do
 	begin
-		Plasma();
 
-		
+		Calculate();
 		time+=5;
-		shift:=(shift+2)&3;
+		// Alternate updating every 2nd line
+		if (time&1=0) then
+			Plasma0()
+		else 
+			Plasma1();
 		
 	end;
 	Z80CPM::Exit();
