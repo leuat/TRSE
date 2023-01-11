@@ -63,21 +63,17 @@ begin
 				ld hl,[zp]
 				ld bc,[dst]
 				ld ix,[zp2]
+				ld de,data
 top1:				
 			
 				repeat 40
 				
-				;ex de,hl
 				ld a,[time3]
 				add a,[ix] ; add first value to time
-				;ex de,hl
-				
 				
 				sbc a,[hl] ; subtract other value
 				; lookup table				
 				
-				ld de,data
-				add a,e
 				ld e,a
 				ld a,[de]			
 				out (c),a
