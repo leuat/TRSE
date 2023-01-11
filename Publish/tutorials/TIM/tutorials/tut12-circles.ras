@@ -59,7 +59,6 @@ begin
 			*/
 			asm("
 			
-;				ld e, 60 ; height
 				ld hl,[zp]
 				ld bc,[dst]
 				ld ix,[zp2]
@@ -84,7 +83,7 @@ top1:
 				inc bc
 				inc bc
 				
-				
+							
 				inc hl	
 				inc hl	
 			
