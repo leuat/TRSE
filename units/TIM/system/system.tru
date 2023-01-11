@@ -1,6 +1,6 @@
 unit System;
 var
-
+	i,j:byte;
 // Turning cursor off, by directly changing EMU.COM code
 // found by Marko Solajic
 procedure CursorOff();
@@ -12,6 +12,12 @@ begin
     ");
 end;
 
+
+procedure MegaWait(i:global byte);
+begin
+	for j:=0 to i do	
+		wait(64); 
+end;
 
 // Turning cursor on, by directly changing EMU.COM code
 // found by Marko Solajic

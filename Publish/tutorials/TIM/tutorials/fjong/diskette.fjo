@@ -17,7 +17,7 @@ globals = {
 
 output = {
 	-- resolution of 2x2 multicolor sprites (12x21 each)
-	resolution = { width = 24, height=42},
+	resolution = { width = 64, height=32},
 --	resolution = { width = 320, height=200},
 	output_type = 3,
 --	palette_file = "images/pals.pal",
@@ -61,7 +61,7 @@ MaterialBlack = {
 
 frame = 0
 --noFrames = 24
-noFrames = 95
+noFrames = 64
 
 hasSaved = 0
 
@@ -133,7 +133,7 @@ function Update()
 		--#0
 		for x=0, output.resolution.width/4-1 do
 			for y=0, output.resolution.height-1 do
-				--Add4PixelData(x*4,y,1,1);
+				Add4PixelToData(x*4,y,1,1);
 			end
 		end
 		
