@@ -3,11 +3,14 @@ var
 	x,y,x1,y1,x2,y2,col: integer;
 @donotremove col
 
+/**
+	Plots a pixel at coordinates x,y with color col, where x = 0..511, y = 0..255, col = 0 ..3
+**/
+procedure Plot(x, y: global integer, col: global integer);
 // Pixel plot routine based on TIM-011 video memory layout, 512x256 with 2-bit pixels in shades of green or gray
 // x = 0..511, y = 0..255, col = 0 ..3
 // offset = int(x/4)*256 + y + 8000h
 // pixelmask = col << ((x%4)*2)
-procedure Plot(x, y: global integer, col: global integer);
 begin
 	asm("
     ld de, (Graphics_col)
@@ -57,10 +60,12 @@ plottbl:
 end;
 @donotremove Plot
 
-
+/**
+	Draws a line from x1,y1 to x2,y2 with color col, where x1,x2 = 0..511, y1,y2 = 0..255, col = 0 ..3
+**/
+procedure Line(x1,y1,x2,y2: global integer, col: global integer);
 // draws a line from x0,y0 to x1,y1
 // line(col, x0, y0, x1, y1)
-procedure Line(x1,y1,x2,y2: global integer, col: global integer);
 begin
 	asm("
 line:
@@ -330,15 +335,13 @@ _linerr:    dc.w 0
 end;
 
 
-/*
-
-	Circle drawing routine taken/adapted from XPCW library by Miguel I. Garcia Lopez / FloppySoftware
-    https://github.com/MiguelVis/xpcw
-    See xdraw.h
-
-*/
-
+/**
+	Draws a circle with center at x1,y1, where x1 = 0..511, y1 = 0..255, col = 0 ..3 and radius should be within screen limits
+**/
 procedure Circle(x1, y1: global integer, radius: integer, col: global integer);
+// Circle drawing routine taken/adapted from XPCW library by Miguel I. Garcia Lopez / FloppySoftware
+// https://github.com/MiguelVis/xpcw
+// See xdraw.h
 var
 	xh, yh, decision: integer;
 begin
@@ -372,6 +375,9 @@ begin
 end;
 
 
+/**
+	Draws a box from x1,y1 to x2,y2 with color col, where x1,x2 = 0..511, y1,y2 = 0..255, col = 0 ..3
+**/
 procedure Box(xb1,yb1,xb2,yb2: integer, col: global integer);
 begin
     Line(xb1, yb1, xb2, yb1, col);
