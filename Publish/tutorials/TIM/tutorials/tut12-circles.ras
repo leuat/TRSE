@@ -62,39 +62,38 @@ begin
 ;				ld e, 60 ; height
 				ld hl,[zp]
 				ld bc,[dst]
-				ld de,[zp2]
+				ld ix,[zp2]
 top1:				
 			
 				repeat 40
-				push de
 				
-				ex de,hl
+				;ex de,hl
 				ld a,[time3]
-				add a,[hl]
-				ex de,hl
+				add a,[ix] ; add first value to time
+				;ex de,hl
 				
 				
-				sbc a,[hl]
+				sbc a,[hl] ; subtract other value
 				; lookup table				
-;				push hl
+				
 				ld de,data
 				add a,e
 				ld e,a
 				ld a,[de]			
 				out (c),a
-				pop de
+				
 				
 				inc bc
 				inc bc
 				inc bc
 				inc bc
 				
-;				pop hl
 				
 				inc hl	
 				inc hl	
-				inc de			
-				inc de			
+			
+				inc ix
+				inc ix
 				
 				repend
 					
@@ -121,11 +120,6 @@ begin
 		Render();
 
 		
-		// silly wait		
-//		for j:=0 to 2 do
-//		for i:=0 to 100 do wait(200);
-		
-		// update time and time2
 		time+=1;
 		if (time&1=0) then 
 			time2-=1;
