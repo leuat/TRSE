@@ -15,6 +15,7 @@ var
 	// mini sine table
 	const width : byte = 512/4;
 	const height : byte = 100;	
+	// The tables must be aligned at $xx00
     siny : array[width] of byte at $7F00; 
 	sinx : array[height] of byte at $7E00; 
 	sin : array[256] of byte = buildsinetable(127);
@@ -66,23 +67,24 @@ begin
 		// unroll the code
 		asm("
 			ld bc,[dst]
-			ld hl,sinx
-			ld de,data
-			
+			ld ix,sinx ; sin table
+			ld de,data ; data lookup for screen
+			ld a,[val] ; current value, store in l
+			ld l,a
 			repeat 50
 			
-			ld l,[i]
-			ld a,[val]
-			add a,[hl]
+			ld a,l ; current value
+			add a,[ix+[i]] ; add sine value
+			; lookup in data[e] 
 			ld e,a
 			ld a,[de]
-			; now setting
+			; now out it!
 			out (c),a
+			
 			inc bc
 			inc bc
 			inc bc
 			inc bc
-			inc e
 			
 			repend
 		");
