@@ -1,9 +1,14 @@
 unit System;
 var
 	i,j:byte;
+
+
+/**
+	Turns off CP/M terminal cursor.
+**/
+procedure CursorOff();
 // Turning cursor off, by directly changing EMU.COM code
 // found by Marko Solajic
-procedure CursorOff();
 begin
 	asm("
     ld a, $C9
@@ -19,9 +24,13 @@ begin
 		wait(64); 
 end;
 
+
+/**
+	Turns on CP/M terminal cursor.
+**/
+procedure CursorOn();
 // Turning cursor on, by directly changing EMU.COM code
 // found by Marko Solajic
-procedure CursorOn();
 begin
 	asm("
     ld a, $C3
@@ -31,9 +40,12 @@ begin
 end;
 
 
+/**
+	Set routine for 100ms timer (the one that blinks the terminal cursor). 0 value restores OS routine.
+**/
+procedure SetTimerFunction(timerfunc: integer);
 // Set new routine for 100ms timer (original one blinks the cursor), by changing BIOS code
 // found by Marko Solajic
-procedure SetTimerFunction(timerfunc: integer);
 begin
 	if timerfunc = 0 then timerfunc := $E806; // set to $E806 to resume cursor blinking
 	asm("
@@ -45,8 +57,9 @@ begin
 end;
 
 
-// sets the value of TIM-011 scroll register at IO adress 00D0h
-// scrpos = 0 .. 255
+/**
+	Sets the value of TIM-011 scroll register at IO adress 00D0h, where scrpos = 0..255
+**/
 procedure SetScreenPos(scrpos: integer);
 begin
 	asm("

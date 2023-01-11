@@ -11,6 +11,10 @@ var
 	chr: byte;
 	str: pointer;
 	
+
+/**
+	Startup code for Z80 CP/M, must be first executed code in TIM-011 program
+**/
 procedure Startup() inline;
 begin
 	asm("
@@ -52,6 +56,10 @@ ccargs:
 	");
 end;
 
+
+/**
+	Exit code for Z80 CP/M, must be last executed code in TIM-011 program
+**/
 procedure Exit() inline;
 begin
 	asm("
@@ -70,7 +78,9 @@ ccfreemem:
 end;
 
 
-// puts a char to terminal
+/**
+	Puts a character to CP/M terminal, where chr is ASCII code
+**/
 procedure putch(chr: global byte);
 begin
 	asm("
@@ -82,7 +92,9 @@ begin
 end;
 
 
-// gets a char from terminal, waits for press
+/**
+	Gets an ASCII character from terminal, waits for keypress.
+**/
 function getch(): integer;
 begin
 	asm("
@@ -94,7 +106,9 @@ begin
 end;
 
 
-// checks if there are characters in terminal's keyboard buffer 
+/**
+	Checks if there are characters in CP/M terminal's keyboard buffer 
+**/
 function kbhit(): integer;
 begin
 	asm("
@@ -106,7 +120,9 @@ begin
 end;
 
 
-// puts a char to terminal, adds LF after CR
+/**
+	Puts a character to CP/M terminal plus adds LF after CR, where chr is ASCII code
+**/
 procedure putchar(chr: global byte);
 begin
 	if chr = 13 then putch(10);
@@ -114,15 +130,18 @@ begin
 end;
 
 
-// gets a char from terminal, waits for press, produces echo
+/**
+	Gets an ASCII character from terminal, waits for keypress, produces echo
+**/
 function getchar(): integer;
 begin
 	getchar := getch();
 	putchar(getchar);
 end;
 
-
-// puts a null-terminated string to terminal
+/**
+	Puts a null-terminated string to terminal
+**/
 procedure puts(str: global pointer);
 begin
 	asm("

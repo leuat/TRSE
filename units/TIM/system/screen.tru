@@ -28,10 +28,14 @@ var
 @donotremove chrsub
 @donotremove PrintChrXY
 
+/**
+	Prints a 8x8 character to screen at given coordinates, where x = 0..127, y = 0..63, chr 0..255.
+	Character resolution is 64x32, but characters can be printed at half width and height.
+**/
+procedure PrintChrXY(x, y, char: global integer);
 // puts character to screen and updates cursor position
 // prchrxy(x, y, chr)
 // x = 0 .. 127, y = 0 .. 63, chr 0-255 
-procedure PrintChrXY(x, y, char: global integer);
 begin
 	asm("
 	ld bc, (Screen_x)
@@ -111,15 +115,19 @@ _prchrxy5:
 	");	
 end;
 
-
-// sets pointer to font data
+/**
+	Sets pointer to font data, probably something loaded with incbin.
+**/
 procedure SetFont(addr: pointer);
 begin
 	font_ptr := addr;
 end;
 
 
-// prints one character at current cursor position
+/**
+	Prints a 8x8 character to screen at current cursor position, where chr 0..255.
+	Character resolution is 64x32, but characters can be printed at half width and height.
+**/
 procedure PrintChr(char: global integer);
 begin
 	asm("
@@ -131,7 +139,10 @@ begin
 end;
 
 
-// prints null-terminated string at current cursor position
+/**
+	Prints a null-terminated string to screen at current cursor position
+	Character resolution is 64x32, but characters can be printed at half width and height.
+**/
 procedure PrintStr(str: global pointer);
 begin
 	asm("
@@ -155,7 +166,10 @@ _prstr2:
 end;
 
 
-// prints up to n chars of null-terminated string at current cursor position
+/**
+	Prints up to n chars of a null-terminated string to screen at current cursor position
+	Character resolution is 64x32, but characters can be printed at half width and height.
+**/
 procedure PrintNStr(str: global pointer, n: integer);
 begin
 	asm("
@@ -185,8 +199,10 @@ _prnstr2:
 end;
 
 
-// sets cursor position
-// x = 0 .. 127, y = 0 .. 63
+/**
+	Sets cursor position, where x = 0..127, y = 0..63
+	Character resolution is 64x32, but characters can be printed at half width and height.
+**/
 procedure GotoXY(x, y: global integer);
 begin
     cursorx := x;
@@ -194,8 +210,9 @@ begin
 end;
 
 
-// sets XOR value for character drawing
-// xor=0 - normal drawing,  xor=0xFF - inverted drawing
+/**
+	Sets normal or inverted printing, where 0 means normal and 1 inverted
+**/
 procedure SetPrintInv(x: global integer);
 begin
 	if x = 0 then
@@ -205,15 +222,19 @@ begin
 end;
 
 
-// sets the value to be substracted from character code
-// sub=0x20 - ASCII coding,  sub=0 - no coding
+/**
+	Sets the value to be substracted from character code to get position in font. $20 is for ASCII coding, $0 is for no coding
+**/
 procedure SetPrintSub(x: global integer);
 begin
 	chrsub := x;
 end;
 
 
-// Fills box (0..127,0..63) with a byte pattern
+/**
+	Fills box with a byte pattern, where x = 0..127, y = 0..63, width and height must be within screen.
+	$00 is black, $55, $AA and $FF are solid colors.
+**/
 procedure ClearBox(x, y: global integer, width, height, pattern: integer);
 begin
 	asm("
@@ -258,29 +279,29 @@ _clrbx2:
 end;
 
 
-// sets up an area for scrolling text
-// x,y - screen cooridinates
-// fwidth - width of scrolling area
-// str - pointer to NULL-terminated string
-procedure SetScroll(x, y: global integer, fwidth: byte, str: global pointer);
+/**
+	Initialization of simple scrolling, whewe x = 0..127, y = 0..63, cwidth is width in characters (1 character is two X positions!), and str is pointer to a null-terminated string.
+**/
+procedure SetScroll(x, y: global integer, cwidth: byte, str: global pointer);
 var
 	scrl_i: byte;
 begin
     scrl_x := x;
     scrl_y := y;
-    scrl_w := fwidth;
+    scrl_w := cwidth;
     scrl_txt := str;
     scrl_pos := 1;
     scrl_stp := 0;
     scrl_phs := 0;
     GotoXY(x, y);
-    for scrl_i :=0 to fwidth do
+    for scrl_i :=0 to cwidth do
         PrintChr(32);
 end;
 
 
-// runs one step of the scrolling
-// should be called from loop or interrupt
+/**
+	Runs one step of simple scrolling, should be called from loop or interrupt.
+**/
 procedure DoScroll();
 var
 	txtChars : integer;

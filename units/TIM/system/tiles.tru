@@ -22,6 +22,12 @@ var
 //@donotremove SPRWBYT
 //@donotremove SPRHPIX
 
+/**
+	Tiles/sprites are 16x16 pixels graphic blocks. They can be positioned on 4-pixel boundaries
+	anywhere inside TIM-011 video memory. This gives 0-127 for X and 0-63 for Y coordinate.
+	
+	This function sets the address for tiles accessed by index.
+**/
 procedure SetIndexTiles(tiles: pointer);
 begin
 	timtiles := tiles;
@@ -55,11 +61,12 @@ end;
 @donotremove tileaddr
 
 
-// puts tile on screen using OR with current content
-// ortile(x, y, addr)
+/**
+	Puts tile on screen using OR with current content, where x = 0..127, y = 0..63, tile = 0..255 for index based, or full address
+**/
+procedure OrTile(x, y: global integer, tile: global integer);
 // x = 0 .. 127, y = 0 .. 63, addr 0-255 index based, or full address
 // ofset = x*256 + y*4 + 8000H
-procedure OrTile(x, y: global integer, tile: global integer);
 begin
 	asm("
 	ld hl, (Tiles_tile)
@@ -102,10 +109,12 @@ ortile2:
 end;
 
 
-// gets tile from screen
+/**
+	Gets 64 bytes for tile from screen into a array variable, where x = 0..127, y = 0..63, tile = 0..255 for index based, or full address
+**/
+procedure GetTile(x, y: global integer, tile: global integer);
 // x = 0 .. 127, y = 0 .. 63, addr 0-255 index based, or full address
 // ofset = x*256 + y*4 + 8000H
-procedure GetTile(x, y: global integer, tile: global integer);
 begin
 	asm("
 	ld hl, (Tiles_tile)
@@ -143,10 +152,12 @@ gettile2:
 end;
 
 
-// puts tile to screen
+/**
+	Puts tile on screen, where x = 0..127, y = 0..63, tile = 0..255 for index based, or full address
+**/
+procedure PutTile(x, y: global integer, tile: global integer);
 // x = 0 .. 127, y = 0 .. 63, addr 0-255 index based, or full address
 // ofset = x*256 + y*4 + 8000H
-procedure PutTile(x, y: global integer, tile: global integer);
 begin
 	asm("
 	ld hl, (Tiles_tile)
@@ -184,8 +195,9 @@ puttile2:
 end;
 
 
-// flips tile pixels horizontaly
-// addr 0-255 index based, or full address
+/**
+	Flips tile pixels horizontaly, where tile = 0..255 for index based, or full address
+**/
 procedure FlipTileX(tile: global integer);
 begin
 	asm("
@@ -265,8 +277,9 @@ flip1byt:
 end;
 
 
-// flips tile pixels vertically
-// addr 0-255 index based, or full address
+/**
+	Flips tile pixels vertically, where tile = 0..255 for index based, or full address
+**/
 procedure FlipTileY(tile: global integer);
 begin
 	asm("
