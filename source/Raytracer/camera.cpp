@@ -94,7 +94,7 @@ void Camera::setupViewmatrix() {
       */
 
     m_projection.setToIdentity();
-    m_projection.perspective(m_fov,m_aspect,1,100.0);
+    m_projection.perspective(m_fov,m_aspect,1,10000.0);
     m_viewMatrix.setToIdentity();
     //    m_viewMatrix.lookAt(m_target, m_camera, m_up);
 //    m_viewMatrix.lookAt(m_rotMatrix* m_target, m_rotMatrix* m_camera, m_rotMatrix* m_up);

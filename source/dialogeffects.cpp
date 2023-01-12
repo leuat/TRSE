@@ -899,7 +899,15 @@ static int Add4PixelData(lua_State* L) {
 
     return 0;
 }
+static int AddSpecialC64bitmapModeToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddSpecialC64bitmapModeToData"))
+        return 0;
 
+    if (m_effect!=nullptr)
+       m_compression.AddSpecialC64bitmapModeToData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
 static int AddBBCMode5LineToData(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddBBCMode5LineToData"))
         return 0;
@@ -1697,6 +1705,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddVZ200ToData", AddVZ200Data);
     lua_register(m_script->L, "Add4PixelToData", Add4PixelData);
+    lua_register(m_script->L, "AddSpecialC64bitmapModeToData", AddSpecialC64bitmapModeToData);
     lua_register(m_script->L, "AddBBCMode5LineToData", AddBBCMode5LineToData);
     lua_register(m_script->L, "AddVGALineToData", AddToDataVGA);
 

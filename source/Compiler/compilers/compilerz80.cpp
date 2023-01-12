@@ -55,6 +55,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC ||
         Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM
       ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
+            ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::TIM
         ) {
         m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
         m_assembler->WriteConstants();

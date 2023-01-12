@@ -20,7 +20,7 @@ begin
     push de // save col
     push hl // save x
 
-    srl h   // 16bit shift left 2
+    srl h  ; // 16bit shift left 2
     rr l
     srl h
     scf     // add 80h to final value

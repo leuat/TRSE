@@ -92,24 +92,23 @@ _prchrxy2:
     jp nz, _prchrxy1
 
     // calculate next char position
-    // x+=2// if (x>=128) {x=0// y+=2// if (y>=64) y=0//}
 _prchrxy3:
-    ld a,(Screen_cursorx) // x+=2
+    ld a,(Screen_cursorx) ;// x+=2
     inc a
     inc a
-//    bit 7,a         // 6th bit set => x>=128
-//    jp z, _prchrxy5
+;//    bit 7,a         // 6th bit set => x>=128
+;//    jp z, _prchrxy5
     cp 127
     jp c, _prchrxy5
-    ld a,(Screen_cursory) // y+=2
+    ld a,(Screen_cursory) ;// y+=2
     inc a
     inc a
-    bit 6,a         // 5th bit set => y>=64
+    bit 6,a        ; // 5th bit set => y>=64
     jp z, _prchrxy4
-    xor a           // y=0
+    xor a         ;  // y=0
 _prchrxy4:
     ld (Screen_cursory),a
-    xor a           // x=0
+    xor a        ;   // x=0
 _prchrxy5:
     ld (Screen_cursorx),a
 	");	

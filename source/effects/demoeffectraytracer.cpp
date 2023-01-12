@@ -30,6 +30,10 @@ void DemoEffectRaytracer::Initialize()
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
    }
+   if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_c64_qimage) {
+       m_mc = new LImageQImage(LColorList::C64);
+       m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
+   }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_AMIGA) {
        m_mc = new LImageAmiga(LColorList::VGA,1);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);
@@ -174,6 +178,9 @@ void DemoEffectRaytracer::Render(QImage &img)
 
     if (m_outputType==RayTracerGlobals::output_type_c64)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
+
+    if (m_outputType==RayTracerGlobals::output_type_c64_qimage)
+        ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
 
     if (m_outputType==RayTracerGlobals::output_type_SPECTRUM) {
         ConvertToP8(m_rt->m_globals.m_dither,m_rt->m_globals.m_ditherStrength);
