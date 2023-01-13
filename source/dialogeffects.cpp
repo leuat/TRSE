@@ -1449,6 +1449,33 @@ static int DrawCircle(lua_State* L) {
     return 0;
 }
 
+
+static void DrawDiamond(QPainter& p, int x, int y, int w, int h) {
+
+    for (int j=0;j<h;j++) {
+        for (int i=0;i<w;i++) {
+            p.drawPoint(x+i,y+j);
+
+        }
+    }
+
+}
+
+static int DrawIsometricFont(lua_State* L) {
+
+    CharsetImage* img = (CharsetImage*)LImageIO::Load( m_currentDir +  "/"+lua_tostring(L,1));
+
+    qDebug() << "HERE";
+
+    QPainter painter;
+    painter.begin(&m_effect->m_img);
+    painter.setPen(QPen(QColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8)), lua_tonumber(L,9), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
+//    painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
+    DrawDiamond(painter,lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),lua_tonumber(L,5));
+    painter.end();
+    return 0;
+}
+
 static int DrawTriangle(lua_State* L) {
 
     QPainter painter;
@@ -1771,6 +1798,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "DrawLine", DrawLine);
     lua_register(m_script->L, "DrawRect", DrawRect);
     lua_register(m_script->L, "DrawCircle", DrawCircle);
+    lua_register(m_script->L, "DrawIsometricFont", DrawIsometricFont);
     lua_register(m_script->L, "DrawTriangle", DrawTriangle);
     lua_register(m_script->L, "DrawQuad", DrawQuad);
     lua_register(m_script->L, "DrawImage", DrawImage);

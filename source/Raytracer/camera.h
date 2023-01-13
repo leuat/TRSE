@@ -14,28 +14,28 @@ public:
     QVector3D m_up = QVector3D(0,1,0.001);
     QMatrix4x4 m_matrix;
     QMatrix4x4 m_viewMatrix, m_viewMatrixInv, m_projection,  m_rotMatrix, m_invVP;
-    float m_fov = 70;
-    float m_aspect = 1;
+    double m_fov = 70;
+    double m_aspect = 1;
 
 
     Camera();
     void TranslateXY(QVector3D& delta);
 
-    void ZoomXY(float delta);
+    void ZoomXY(double delta);
 
-    void RotateUp(float r);
+    void RotateUp(double r);
 
 
     QMatrix4x4 GetRotationMatrix();
 
-    void RotateVertical(float angle);
-    void RotateHorisontal(float angle);
+    void RotateVertical(double angle);
+    void RotateHorisontal(double angle);
 
 
     void setupViewmatrix();
 
-    QVector3D coord2ray(float x, float y, float width, float height);
-    QVector3D fisheye(float x, float y, float width, float height);
+    QVector3D coord2ray(double x, double y, double width, double height);
+    QVector3D fisheye(double x, double y, double width, double height);
 
 
     void setRotation(QVector3D& v);

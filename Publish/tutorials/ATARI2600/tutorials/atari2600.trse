@@ -43,4 +43,7 @@ override_target_settings_prg = 0
 build_list = ,
 zeropage_colormemory = $fc
 show_all_files = 1
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0
 open_files =, tutorial1.ras

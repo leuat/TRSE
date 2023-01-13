@@ -16,11 +16,11 @@ void Camera::TranslateXY(QVector3D &delta) {
     m_target = m_target + d;
 }
 
-void Camera::ZoomXY(float delta) {
+void Camera::ZoomXY(double delta) {
     m_camera = m_camera - (m_camera-m_target).normalized()*delta;
 }
 
-void Camera::RotateUp(float r) {
+void Camera::RotateUp(double r) {
     QVector3D d = (m_camera-m_target).normalized();
     QVector3D right = QVector3D::crossProduct(d, m_up).normalized();
     m_up = QVector3D::crossProduct(right, d).normalized();
@@ -72,7 +72,7 @@ QMatrix4x4 Camera::GetRotationMatrix() {
 
 }
 
-void Camera::RotateVertical(float angle) {
+void Camera::RotateVertical(double angle) {
     QVector3D d = m_camera - m_target;
     QVector3D side = QVector3D::crossProduct( m_up, d);
     QQuaternion q = QQuaternion::fromAxisAndAngle(side,angle);
@@ -108,7 +108,7 @@ void Camera::setupViewmatrix() {
 
 }
 
-QVector3D Camera::coord2ray(float x, float y, float width, float height) {
+QVector3D Camera::coord2ray(double x, double y, double width, double height) {
 
     double xx = x / (width  * 0.5) - 1.0;
     double yy = y / (height * 0.5) - 1.0;
@@ -126,7 +126,7 @@ QVector3D Camera::coord2ray(float x, float y, float width, float height) {
     return worldPos.toVector3D().normalized();
 }
 
-QVector3D Camera::fisheye(float x, float y, float width, float height)
+QVector3D Camera::fisheye(double x, double y, double width, double height)
 {
 
     double xx = x / (width  * 0.5) - 1.0;
@@ -135,11 +135,11 @@ QVector3D Camera::fisheye(float x, float y, float width, float height)
 
 
 
-    float th = 0;//x/width*3.14159*2.0;
+    double th = 0;//x/width*3.14159*2.0;
 
     QVector2D UV(xx,yy);
 //    QVector3D fvcam(xx,yy, th);
-    //    float th = cos(time/100.0)*2+1;
+    //    double th = cos(time/100.0)*2+1;
     QMatrix2x2 rmat;// =  QMatrix2x2(cos(th),-sin(th),sin(th),cos(th));
     //        QVector2D p2 = rmat*UV;
     QVector2D p2 = QVector2D(cos(th)*UV.x() - sin(th)*UV.y(),sin(th)*UV.x() + cos(th)*UV.y());

@@ -67,6 +67,7 @@ public:
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
 
     void LoadPointer(QSharedPointer<Node> node) override;
+    void LoadPointerToHl(QSharedPointer<Node> node);
 
 
     void AssignString(QSharedPointer<NodeAssign>node) override;

@@ -79,7 +79,7 @@ begin
 	// Move cursor to (1,y) on $0400 on bank 1
 	//moveto(0,yStart, hi(screen_char_loc));
 //	Screen::PointToY(0);
-	Screen::screenPtr:=#$5800+320*5;
+	Screen::screenPtr:=$5800+320*5;
 	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
 	
 	

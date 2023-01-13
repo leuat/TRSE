@@ -56,3 +56,6 @@ data_header_resources/images/test.flf = 0
 zeropages_userdefined = ,
 petmodel = 2001-8N
 show_all_files = 1
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0

@@ -67,4 +67,5 @@ data_header_sprites/sprites_packed.flf = 0
 data_header_tiles/levels1.flf = 3.0475e-314
 dirart_flf_file = none
 d64name = main
+use_vice_c1541 = 0
 open_files =, main.ras

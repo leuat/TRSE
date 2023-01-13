@@ -149,6 +149,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
             QVector3D dir;
             if (m_globals.m_type==RayTracerGlobals::regular)
+//                dir = m_camera.coord2ray(x+0.5,y+0.5,w,h);;
                 dir = m_camera.coord2ray(x+0.5,y+0.5,w,h);;
             if (m_globals.m_type==RayTracerGlobals::fisheye)
                 dir = m_camera.fisheye(x+0.5,y+0.5,w,h);;
@@ -385,7 +386,7 @@ bool RayTracer::RayMarchSingle(Ray& ray, Pass pass, AbstractRayObject* ignore, i
 
 
 
-        QVector<float> shadows;
+        QVector<double> shadows;
         for (int i=0;i<m_globals.m_lights.count();i++)
             shadows.append(1);
         //        if (pass==Image)

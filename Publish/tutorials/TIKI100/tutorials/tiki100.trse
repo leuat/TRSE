@@ -60,4 +60,7 @@ spectrum_model = 0
 columns = 40
 vic_memory_config = none
 via_zeropages = ,
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0
 open_files =, tutorial1.ras

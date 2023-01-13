@@ -1082,6 +1082,21 @@ void CodeGenZ80::LoadPointer(QSharedPointer<Node> node)
 
 }
 
+void CodeGenZ80::LoadPointerToHl(QSharedPointer<Node> node)
+{
+    QString name = getValue(node);
+    as->Comment("Loading pointer");
+    if (!isGB())
+        as->Asm("ld hl,["+name+"]");
+    else {
+        as->Asm("ld a,["+name+"]");
+        as->Asm("ld h,a");
+        as->Asm("ld a,["+name+"+1]");
+        as->Asm("ld l,a");
+    }
+
+}
+
 
 
 /*
@@ -1533,7 +1548,17 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         // P := Address / variable
         if (node->m_right->isPure()) {
             if (node->m_right->isWord(as) && !node->m_right->isReference() && node->m_right->isVariable()) {
+                LoadPointerToHl(node->m_right);
+/*                if (isGB()) {
+                    as->Asm("ld a, ["+node->m_right->getValue(as)+"]");
+                    as->Asm("ld l, a");
+                    as->Asm("ld a, ["+node->m_right->getValue(as)+"+1]");
+                    as->Asm("ld h, l");
+
+                }
+                else
                as->Asm("ld hl, ["+node->m_right->getValue(as)+"]");
+               */
 
             }
             else
@@ -1686,7 +1711,16 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
                     as->Comment("Optimization: rhs is integer, but pure");
                     if (node->m_right->isPureVariable()) {
                         as->Asm("push hl");
-                        as->Asm("ld hl,["+node->m_right->getValue(as)+"]");
+                        LoadPointerToHl(node->m_right);
+/*                        if (isGB()) {
+                            as->Asm("ld a, ["+node->m_right->getValue(as)+"]");
+                            as->Asm("ld l, a");
+                            as->Asm("ld a, ["+node->m_right->getValue(as)+"+1]");
+                            as->Asm("ld h, l");
+
+                        }
+                        else
+                        as->Asm("ld hl,["+node->m_right->getValue(as)+"]");*/
                         as->Asm("pop de");
                     }
                     else // is number
