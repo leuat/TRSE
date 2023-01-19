@@ -77,6 +77,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemWonderswan(settings, proj);
     if (type==AbstractSystem::TIM)
         return new SystemTIM(settings, proj);
+    if (type==AbstractSystem::VIDEOTON)
+        return new SystemVideoton(settings, proj);
 
 
     return s;

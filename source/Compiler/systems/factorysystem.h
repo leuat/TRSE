@@ -36,6 +36,7 @@
 #include "systemtrs80coco.h"
 #include "systemwonderswan.h"
 #include "systemtim.h"
+#include "systemvideoton.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

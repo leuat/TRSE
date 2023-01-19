@@ -218,6 +218,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemtim.cpp \
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
+    source/Compiler/systems/systemvideoton.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
@@ -505,6 +506,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemtim.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
+    source/Compiler/systems/systemvideoton.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \

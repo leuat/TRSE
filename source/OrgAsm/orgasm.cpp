@@ -108,6 +108,7 @@ QString Orgasm::processRepeatIndex(QString s, int currentX, int currentY)
         s = s.replace("["+r+"]",QString::number(val));
         s = s.replace("["+r+"*2]",QString::number(val*2));
         s = s.replace("["+r+"*4]",QString::number(val*4));
+        s = s.replace("["+r+"*3]",QString::number(val*3));
         s = s.replace("["+r+"*8]",QString::number(val*8));
         s = s.replace("["+r+"*16]",QString::number(val*16));
         s = s.replace("["+r+"*256]",QString::number(val*256));

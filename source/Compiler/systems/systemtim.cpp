@@ -8,7 +8,7 @@ SystemTIM::SystemTIM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
 
     m_startAddress = 0x0100;
     m_programStartAddress = 0x0100;
-    m_supportsExomizer = true;
+    m_supportsExomizer = false;
 
 
     //   m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"System values",0,0x00FF));

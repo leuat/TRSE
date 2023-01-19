@@ -233,6 +233,11 @@
                  </item>
                  <item>
                   <property name="text">
+                   <string>VIDEOTON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
                    <string>TRS80COCO</string>
                   </property>
                  </item>

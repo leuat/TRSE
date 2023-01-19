@@ -225,6 +225,10 @@ private slots:
 
     void on_btnCPMTOOLS_clicked();
 
+    void on_btnVideotonEmulator_clicked();
+
+    void on_btnHelpVideoton_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

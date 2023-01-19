@@ -40,7 +40,7 @@ void DialogEffects::Abort()
         m_effect->terminate();
         m_effect->wait();
         m_effect->deleteLater();
-//        delete m_effect;
+        //        delete m_effect;
     }
 
 }
@@ -51,7 +51,7 @@ static RayTracer m_rt;
 static bool VerifyFjongParameters(lua_State* L, QString method) {
     BuiltInFunction f = Syntax::s.builtinFunctionsFjong[method.toLower()];
     int N = 0;
-//    qDebug() <<"HERE" << f.m_params.count();
+    //    qDebug() <<"HERE" << f.m_params.count();
     for (BuiltInFunction::Type t : f.m_params) {
         N++;
         if (t==BuiltInFunction::IGNOREPARAM)
@@ -91,22 +91,22 @@ void DialogEffects::Create()
         m_effect = new DemoEffectTwister(ui->glParams);
 */
 
-  //  if (ui->comboBox->currentText()=="Raytracer") {
-        m_effect = new DemoEffectRaytracer();
-        if (m_script!=nullptr) {
+    //  if (ui->comboBox->currentText()=="Raytracer") {
+    m_effect = new DemoEffectRaytracer();
+    if (m_script!=nullptr) {
 
-            dynamic_cast<DemoEffectRaytracer*>(m_effect)->m_rt = &m_rt;
-            dynamic_cast<DemoEffectRaytracer*>(m_effect)->m_script = m_script;
-        }
+        dynamic_cast<DemoEffectRaytracer*>(m_effect)->m_rt = &m_rt;
+        dynamic_cast<DemoEffectRaytracer*>(m_effect)->m_script = m_script;
+    }
 
 
-//    }
+    //    }
     m_effect->Initialize();
     connect(m_effect,SIGNAL(SignalImageUpdate()),this,SLOT(UpdateImage()));
 
 
 
-//    m_effect->FillToGUI();
+    //    m_effect->FillToGUI();
     m_effect->start();
 }
 
@@ -147,7 +147,7 @@ static int AddLight(lua_State *L) {
     if (m_rt.m_globals.m_lights.count()<=no)
         m_rt.m_globals.m_lights.resize(no+1);
 
-//    qDebug() << m_rt.m_globals.m_lights.count();
+    //    qDebug() << m_rt.m_globals.m_lights.count();
     if (m_rt.m_globals.m_lights[no]==nullptr)
         m_rt.m_globals.m_lights[no] = new DirectionalLight(dir,col);
 
@@ -174,7 +174,7 @@ static int AddObjectRegular(lua_State *L)
     if (object=="torus_wire") {
         ValidateNoParameters("AddObject (torus)",L,N+4);
         obj = new RayObjectRegular3D();
-//        qDebug() << object << lua_tonumber(L,N);
+        //        qDebug() << object << lua_tonumber(L,N);
         obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
                            lua_tonumber(L,N+2),
                            lua_tonumber(L,N+3),true,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6),lua_tonumber(L,N+7));
@@ -184,7 +184,7 @@ static int AddObjectRegular(lua_State *L)
     if (object=="torus_poly") {
         ValidateNoParameters("AddObject (torus)",L,N+4);
         obj = new RayObjectRegular3D();
-//        qDebug() << object << lua_tonumber(L,N);
+        //        qDebug() << object << lua_tonumber(L,N);
         obj->GenerateTorus(lua_tonumber(L,N),lua_tonumber(L,N+1),
                            lua_tonumber(L,N+2),
                            lua_tonumber(L,N+3),false,lua_tonumber(L,N+4),lua_tonumber(L,N+5),lua_tonumber(L,N+6),lua_tonumber(L,N+7));
@@ -213,11 +213,11 @@ static int AddObject(lua_State *L)
     if (!VerifyFjongParameters(L,"AddObject"))
         return 0;
 
-//    qDebug();// << text;
+    //    qDebug();// << text;
     int args = lua_gettop(L);
-  //  if (n!=5) {
-//       return 0;
-   // }
+    //  if (n!=5) {
+    //       return 0;
+    // }
     QString object = QString::fromStdString(lua_tostring(L,1)).toLower();
 
 
@@ -232,28 +232,28 @@ static int AddObject(lua_State *L)
     if (object=="torus") {
         ValidateNoParameters("AddObject (torus)",L,N+4);
         obj =
-                    new RayObjectTorus(
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),0),
-                        QVector3D(0,1,0),
-                        mat);
+                new RayObjectTorus(
+                    QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                    QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),0),
+                    QVector3D(0,1,0),
+                    mat);
 
     }
 
     if (object=="cylinder") {
         obj =
-                    new RayObjectCylinder(
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
-                        mat);
+                new RayObjectCylinder(
+                    QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                    QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                    mat);
 
     }
     if (object=="sphere") {
         obj =
-                    new RayObjectSphere(
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
-                        mat);
+                new RayObjectSphere(
+                    QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                    QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                    mat);
 
 
 
@@ -262,18 +262,18 @@ static int AddObject(lua_State *L)
         QString type = lua_tostring(L,N);
         N++;
         obj =
-                    new RayObjectGenMesh(type,
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
-                        mat);
+                new RayObjectGenMesh(type,
+                                     QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                                     QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                                     mat);
     }
 
     if (object=="plane") {
         obj =
-                    new RayObjectPlane(
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
-                        mat);
+                new RayObjectPlane(
+                    QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                    QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                    mat);
 
     }
 
@@ -285,7 +285,7 @@ static int AddObject(lua_State *L)
         AbstractRayObject* o1 = m_rt.Find(lua_tostring(L,N+2));
         AbstractRayObject* o2 = m_rt.Find(lua_tostring(L,N+3));
         obj =
-                    new RayObjectOperation(type, blend, o1, o2);
+                new RayObjectOperation(type, blend, o1, o2);
 
         m_rt.m_objects.removeAll(o1);
         m_rt.m_objects.removeAll(o2);
@@ -297,7 +297,7 @@ static int AddObject(lua_State *L)
         N++;
         QVector3D vals = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
         obj =
-                    new RayObjectPerlin(vals,o1);
+                new RayObjectPerlin(vals,o1);
         obj->m_position = o1->m_position;
         obj->m_rotation = o1->m_rotation;
         obj->m_bbRadius = o1->m_bbRadius;
@@ -309,7 +309,7 @@ static int AddObject(lua_State *L)
         N++;
         QVector3D vals = QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
         obj =
-                    new RayObjectHoles(vals,o1);
+                new RayObjectHoles(vals,o1);
         obj->m_position = o1->m_position;
         obj->m_rotation = o1->m_rotation;
         obj->m_bbRadius = o1->m_bbRadius;
@@ -346,8 +346,8 @@ static int AddObject(lua_State *L)
         m_rt.LoadMesh(fn, meshscale,orgPos, mat,name, invertN==1);
         return 0;
 
-//        QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
-//        QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
+        //        QVector3D scale = QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
+        //        QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
         //obj = new RayObjectEmpty(orgPos);
         //obj->LoadMesh(fn, meshscale);
 
@@ -356,30 +356,30 @@ static int AddObject(lua_State *L)
 
     if (object=="box") {
         obj =
-                    new RayObjectBox(
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
-                        mat);
+                new RayObjectBox(
+                    QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                    QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
+                    QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                    mat);
 
-//        obj->m_flatten = false;
+        //        obj->m_flatten = false;
 
     }
 
     if (object=="triangleprism") {
         obj =
-                    new RayObjectTrianglePrism(
-                        QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
-                        QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
-                        QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
-                        mat);
+                new RayObjectTrianglePrism(
+                    QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2)) ,
+                    QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8)),
+                    QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5)),
+                    mat);
 
-//        obj->m_flatten = false;
+        //        obj->m_flatten = false;
 
     }
     if (object=="triangle") {
         auto o =
-                    new RayObjectTriangle();
+                new RayObjectTriangle();
         o->m_material = mat;
         o->m_pos[0] =   QVector3D(lua_tonumber(L,N),lua_tonumber(L,N+1),lua_tonumber(L,N+2));
         o->m_pos[1] =   QVector3D(lua_tonumber(L,N+3),lua_tonumber(L,N+4),lua_tonumber(L,N+5));
@@ -388,7 +388,7 @@ static int AddObject(lua_State *L)
         o->m_position = QVector3D(0,0,0);
         o->m_normal = QVector3D::crossProduct(o->m_pos[0]-o->m_pos[1],o->m_pos[2]-o->m_pos[1]).normalized();
         o->m_bbRadius = 10;
-//        obj->m_flatten = false;
+        //        obj->m_flatten = false;
         obj = o;
 
     }
@@ -473,7 +473,7 @@ static int AddObject(lua_State *L)
         QVector3D size = QVector3D(lua_tonumber(L,N+6),lua_tonumber(L,N+7),lua_tonumber(L,N+8));
         obj = new RayObjectEmpty(orgPos);
         obj->m_flatten = false;
-//        obj = new RayObjectUnion(orgPos);
+        //        obj = new RayObjectUnion(orgPos);
 
         for (int y=0;y<boxwidth;y++)
             for (int x=0;x<boxheight;x++) {
@@ -487,9 +487,9 @@ static int AddObject(lua_State *L)
                     QVector3D pos = QVector3D(0,yy,xx);
 
                     AbstractRayObject* aro = new RayObjectBox(pos,QVector3D(0,1,0),
-                                                           size, mat);
+                                                              size, mat);
                     aro->m_name = name + "_"+QString::number(x) +"_"+QString::number(y);
-  //                  qDebug() << aro->m_name;
+                    //                  qDebug() << aro->m_name;
                     //((RayObjectUnion*)obj)->m_objects.append(aro);
                     obj->m_children.append(aro);
                 }
@@ -540,14 +540,14 @@ static int AddObject(lua_State *L)
 
             if (m_script->get<QString>(material+".uvtype")=="sphere_map") {
                 mat.m_type = Material::Type::UV_SPHERE_MAP;
-            //    qDebug() << "HERE";
+                //    qDebug() << "HERE";
             }
         }
 
         if (m_script->lua_exists(material+".drawuvcoord")) {
             mat.m_drawuvcoord = true;
         }
-/*        if (m_script->lua_exists(material+".uv_type")) {
+        /*        if (m_script->lua_exists(material+".uv_type")) {
             int t = (int)m_script->get<float>(material+".uv_type");
             mat.m_type = Material::Type::UV_CUBE;
             if (t==1)
@@ -584,7 +584,7 @@ static int AddObject(lua_State *L)
 
 static int SetRotation(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -598,7 +598,7 @@ static int SetRotation(lua_State *L)
 
 static int Invert(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -606,13 +606,13 @@ static int Invert(lua_State *L)
         return 0;
     }
     aro->m_inverted = !aro->m_inverted;
-//    aro->SetRotation(QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
+    //    aro->SetRotation(QVector3D(lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4)));
     return 0;
 }
 
 static int Save3DObject(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -627,7 +627,7 @@ static int Save3DObject(lua_State *L)
 
 static int SetID(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -641,7 +641,7 @@ static int SetID(lua_State *L)
 
 static int SetQuatAxisAngle(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -655,7 +655,7 @@ static int SetQuatAxisAngle(lua_State *L)
 
 static int SetPosition(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     if (!VerifyFjongParameters(L,"SetPosition"))
         return 0;
 
@@ -671,7 +671,7 @@ static int SetPosition(lua_State *L)
 }
 static int SetScale(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     if (!VerifyFjongParameters(L,"SetScale"))
         return 0;
 
@@ -688,7 +688,7 @@ static int SetScale(lua_State *L)
 
 static int RemoveObject(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     if (!VerifyFjongParameters(L,"RemoveObject"))
         return 0;
 
@@ -705,7 +705,7 @@ static int RemoveObject(lua_State *L)
 
 static int DeleteFile(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
 
     QString fname = m_currentDir+"/"+lua_tostring(L,1);
     if (QFile::exists(fname))
@@ -716,7 +716,7 @@ static int DeleteFile(lua_State *L)
 
 static int AddPosition(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     if (!VerifyFjongParameters(L,"AddPosition"))
         return 0;
 
@@ -733,7 +733,7 @@ static int AddPosition(lua_State *L)
 
 static int SetUVShift(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -748,7 +748,7 @@ static int SetUVShift(lua_State *L)
 
 static int SetY(lua_State *L)
 {
-//    int n = lua_gettop(L);
+    //    int n = lua_gettop(L);
     QString name = lua_tostring(L,1);
     AbstractRayObject* aro = m_rt.Find(name);
     if (aro==nullptr) {
@@ -768,7 +768,7 @@ int DialogEffects::Message(lua_State *L)
         return 0;
 
     m_infoText=QString(lua_tostring(L,1)) +"\n"+ m_infoText;
-//    m_infoText+="\n";
+    //    m_infoText+="\n";
     return 0;
 }
 
@@ -800,8 +800,8 @@ static int AddC64FullScreen(lua_State* L) {
         if (img==nullptr)
             return 0;
 
-//        if (img->m_items.count()==0)
-  //          return 0;
+        //        if (img->m_items.count()==0)
+        //          return 0;
 
         C64Screen* screen = dynamic_cast<C64Screen*>((img->m_items)[img->m_current].get());
         if (screen==nullptr)
@@ -813,8 +813,8 @@ static int AddC64FullScreen(lua_State* L) {
 
 
         //QByteArray ba;
-  //      qDebug() << "Image size : " << img->m_height << img->m_width;
-/*        for (int y=0;y<img->m_height;y++)
+        //      qDebug() << "Image size : " << img->m_height << img->m_width;
+        /*        for (int y=0;y<img->m_height;y++)
             for (int x=0;x<img->m_width;x++) {
 
                 m_screenData.append(img->getPixel(x,y));
@@ -876,7 +876,7 @@ static int AddToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddToDataX(m_charData, *((MultiColorImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -886,7 +886,7 @@ static int AddVZ200Data(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddToVZ200Data(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddToVZ200Data(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -895,7 +895,7 @@ static int Add4PixelData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddTo4PixelData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddTo4PixelData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -904,7 +904,7 @@ static int AddSpecialC64bitmapModeToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddSpecialC64bitmapModeToData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddSpecialC64bitmapModeToData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -913,7 +913,7 @@ static int AddBBCMode5LineToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddToDataBBCMode5(m_charData, m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddToDataBBCMode5(m_charData, m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -923,7 +923,7 @@ static int AddToDataVGA(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddToDataVGA(m_charData, *((LImageQImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddToDataVGA(m_charData, *((LImageQImage*)m_effect->m_mc) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -933,7 +933,7 @@ static int AddBitplaneToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5), lua_tonumber(L,6));
+        m_compression.AddBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5), lua_tonumber(L,6));
 
     return 0;
 }
@@ -943,7 +943,7 @@ static int AddAmstradCPCToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddAmstradCPCToData(m_charData, m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddAmstradCPCToData(m_charData, m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -953,7 +953,7 @@ static int AddAtariBitplaneToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddAtariBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddAtariBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -963,7 +963,7 @@ static int AddAtariSingleBitplaneToData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddSingleAtariBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4),lua_tonumber(L,5));
+        m_compression.AddSingleAtariBitplaneToData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4),lua_tonumber(L,5));
 
     return 0;
 }
@@ -974,7 +974,7 @@ static int AddGameboyData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-       m_compression.AddGameboyData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddGameboyData(m_charData, *((MultiColorImage*)(m_effect->m_mc)) ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
 
     return 0;
 }
@@ -1019,7 +1019,7 @@ static int SaveSinusScrollerData(lua_State* L) {
 
 
     Compression::SaveSinusScrollerData(mc,lua_tonumber(L,1),lua_tonumber(L,2),m_currentDir+"/"+lua_tostring(L,3));
-//    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type,false);
+    //    mc->CompressAndSave(m_charData, m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3),lua_tonumber(L,4),noChars,lua_tonumber(L,5),  lua_tonumber(L,6), type,false);
     return 0;
 }
 
@@ -1055,7 +1055,7 @@ static int ExportDiffAsUnrolledBitmap(lua_State* L) {
                                              lua_tonumber(L,7),
                                              lua_tonumber(L,8),
                                              lua_tonumber(L,9));
-   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
     return 0;
 }
 
@@ -1065,11 +1065,11 @@ static int ExportDiffAsUnrolledBitmapIn(lua_State* L) {
     QString bg = m_currentDir+"/"+ lua_tostring(L,2);
     QString waitFunc = lua_tostring(L,4);
     m_effect->ExportDiffAsUnrolledBitmap6502In(file,bg, name,waitFunc,lua_tonumber(L,5),
-                                             lua_tonumber(L,6),
-                                             lua_tonumber(L,7),
-                                             lua_tonumber(L,8),
-                                             lua_tonumber(L,9));
-   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+                                               lua_tonumber(L,6),
+                                               lua_tonumber(L,7),
+                                               lua_tonumber(L,8),
+                                               lua_tonumber(L,9));
+    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
     return 0;
 }
 
@@ -1079,11 +1079,11 @@ static int ExportDiffAsUnrolledBitmapColorOut(lua_State* L) {
     QString bg = m_currentDir+"/"+ lua_tostring(L,2);
     QString waitFunc = lua_tostring(L,4);
     m_effect->ExportDiffAsUnrolledBitmap6502ColorOut(file,bg, name,waitFunc,lua_tonumber(L,5),
-                                             lua_tonumber(L,6),
-                                             lua_tonumber(L,7),
-                                             lua_tonumber(L,8),
-                                             lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
-   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+                                                     lua_tonumber(L,6),
+                                                     lua_tonumber(L,7),
+                                                     lua_tonumber(L,8),
+                                                     lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
+    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
     return 0;
 }
 
@@ -1093,21 +1093,21 @@ static int ExportDiffAsUnrolledBitmapColorIn(lua_State* L) {
     QString bg = m_currentDir+"/"+ lua_tostring(L,2);
     QString waitFunc = lua_tostring(L,4);
     m_effect->ExportDiffAsUnrolledBitmap6502ColorIn(file,bg, name,waitFunc,lua_tonumber(L,5),
-                                             lua_tonumber(L,6),
-                                             lua_tonumber(L,7),
-                                             lua_tonumber(L,8),
-                                             lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
-   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+                                                    lua_tonumber(L,6),
+                                                    lua_tonumber(L,7),
+                                                    lua_tonumber(L,8),
+                                                    lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
+    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
     return 0;
 }
 
 static int UpdateScreenDataFrame(lua_State* L) {
     m_effect->UpdateScreenDataFrame(m_screenData,lua_tonumber(L,1),
-                                             lua_tonumber(L,2),
-                                             lua_tonumber(L,3),
-                                             lua_tonumber(L,4),
-                                             lua_tonumber(L,5));
-   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+                                    lua_tonumber(L,2),
+                                    lua_tonumber(L,3),
+                                    lua_tonumber(L,4),
+                                    lua_tonumber(L,5));
+    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
     return 0;
 }
 
@@ -1115,14 +1115,14 @@ static int UpdateScreenDataFrame(lua_State* L) {
 static int ExportDiffAsUnrolledBitmapColorInAddress(lua_State* L) {
     QString file = m_currentDir+"/"+ lua_tostring(L,1);
     QString name = lua_tostring(L,3);
-//    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
+    //    QString bg = m_currentDir+"/"+ lua_tostring(L,2);
     QString waitFunc = lua_tostring(L,4);
     m_effect->ExportDiffAsUnrolledBitmap6502ColorInAddress(file,lua_tonumber(L,2), name,waitFunc,lua_tonumber(L,5),
-                                             lua_tonumber(L,6),
-                                             lua_tonumber(L,7),
-                                             lua_tonumber(L,8),
-                                             lua_tonumber(L,9),lua_tonumber(L,10));
-   // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
+                                                           lua_tonumber(L,6),
+                                                           lua_tonumber(L,7),
+                                                           lua_tonumber(L,8),
+                                                           lua_tonumber(L,9),lua_tonumber(L,10));
+    // void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString name, int base, int xp, int yp, int w, int h) {
     return 0;
 }
 
@@ -1134,9 +1134,9 @@ static int Save2DInfo(lua_State* L) {
     QVector<QPoint> killList;
     m_rt.Compile2DList(file,base,maxx, killList, m_effect->m_post,fileUnroll ,m_maskImage,lua_tonumber(L,5));
 
-   // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
-  //  mc.m_data[0].C = m_charData;
-   // m_effect->m_mc
+    // MultiColorImage mc(m_effect->m_mc->m_colorList.m_type);
+    //  mc.m_data[0].C = m_charData;
+    // m_effect->m_mc
     int bg = m_effect->m_mc->getBackground();
     for (QPoint k: killList)
         m_effect->m_mc->setPixel(k.x(),k.y(),bg);
@@ -1156,8 +1156,8 @@ static int AddProjectedLineList(lua_State* L) {
         return 0;
     }
     m_charData.append(aro->getProjectedLineList());
-//    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
-  //  m_charData.clear();
+    //    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
+    //  m_charData.clear();
     return 0;
 }
 
@@ -1173,8 +1173,8 @@ static int AddProjected2DCoordinatesToData(lua_State* L) {
         return 0;
     }
     m_charData.append(aro->getProjected8bitData());
-//    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
-  //  m_charData.clear();
+    //    Util::SaveByteArray(m_charData,m_currentDir+"/"+ lua_tostring(L,1));
+    //  m_charData.clear();
     return 0;
 }
 
@@ -1223,8 +1223,8 @@ static int SaveMulticolorImage(lua_State* L) {
     if (QFile::exists(fname))
         QFile::remove(fname);
     QFile f(fname);
-//    f.open(QFile::WriteOnly);
-//    exit(1);
+    //    f.open(QFile::WriteOnly);
+    //    exit(1);
     m_effect->m_mc->setMultiColor(false);
     m_effect->m_mc->m_exportParams["StartX"]=0;
     m_effect->m_mc->m_exportParams["StartY"]=0;
@@ -1232,10 +1232,10 @@ static int SaveMulticolorImage(lua_State* L) {
     m_effect->m_mc->m_exportParams["EndY"]=25;
 
     dynamic_cast<MultiColorImage*>(m_effect->m_mc)->ForceExportBin(f);
-//    f.open()
-  //  m_effect->m_mc->SaveBin(f);
+    //    f.open()
+    //  m_effect->m_mc->SaveBin(f);
     m_charData.clear();
-  //  f.close();
+    //  f.close();
     return 0;
 }
 
@@ -1245,7 +1245,7 @@ static int SaveKoalaImage(lua_State* L) {
         QFile::remove(fname);
     QFile f(fname);
     f.open(QFile::WriteOnly);
-//    exit(1);
+    //    exit(1);
     m_effect->m_mc->setMultiColor(false);
     m_effect->m_mc->m_exportParams["StartX"]=0;
     m_effect->m_mc->m_exportParams["StartY"]=0;
@@ -1253,10 +1253,10 @@ static int SaveKoalaImage(lua_State* L) {
     m_effect->m_mc->m_exportParams["EndY"]=25;
 
     dynamic_cast<MultiColorImage*>(m_effect->m_mc)->ExportKoa(f);
-//    f.open()
-  //  m_effect->m_mc->SaveBin(f);
+    //    f.open()
+    //  m_effect->m_mc->SaveBin(f);
     m_charData.clear();
-  //  f.close();
+    //  f.close();
     return 0;
 }
 
@@ -1277,10 +1277,10 @@ static int SaveImage(lua_State* L) {
         LImageIO::Save(fname,m_effect->m_mc);
     }
 
-//    f.open()
-  //  m_effect->m_mc->SaveBin(f);
-//    m_charData.clear();
-  //  f.close();
+    //    f.open()
+    //  m_effect->m_mc->SaveBin(f);
+    //    m_charData.clear();
+    //  f.close();
     return 0;
 }
 
@@ -1332,7 +1332,7 @@ static int AddBinaryScreen(lua_State* L) {
 
 static int AddScreenPetscii(lua_State* L) {
     m_compression.AddPetsciiScreen(m_charData, m_effect->m_img);
-//    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    //    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
     m_infoText+="Added petscii screen";
     return 0;
 }
@@ -1340,7 +1340,7 @@ static int AddScreenPetscii(lua_State* L) {
 static int AddScreenBinary(lua_State* L) {
 
     m_compression.AddBinaryScreen(m_charData, m_effect->m_img);
-//    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
+    //    m_rt.m_particles.CollideSphere(lua_tonumber(L,1));
     return 0;
 }
 
@@ -1360,8 +1360,8 @@ static int OptimizeScreenAndCharset(lua_State* L) {
     QVector<int> sOut;
     int type = 0;
     int scale = 1;
-//    if (lua_isuserdata(L, 5))
-        type = lua_tonumber(L,5);
+    //    if (lua_isuserdata(L, 5))
+    type = lua_tonumber(L,5);
 
 
     if (dynamic_cast<LImageGamboy*>(m_effect->m_mc)!=nullptr) {
@@ -1369,8 +1369,8 @@ static int OptimizeScreenAndCharset(lua_State* L) {
         m_compression.OptimizeScreenAndCharsetGB(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),type,m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
     }
     else
-    m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),type,m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
-//    m_charData.clear();
+        m_compression.OptimizeScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),type,m_effect->m_mc->m_colorList,m_effect->m_mc->m_bitMask);
+    //    m_charData.clear();
     m_charData = cOut;
     m_infoText="Total no. chars : "+QString::number(m_charData.length()/(8*scale)) +"\n"+ m_infoText;
 
@@ -1386,7 +1386,7 @@ static int CompressScreenAndCharset(lua_State* L) {
     QVector<int> sOut;
     int scale = 1;
     m_compression.CompressScreenAndCharset(m_screenData, m_charData, sOut, cOut,  lua_tonumber(L,1), lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),m_effect->m_mc->m_bitMask);
-//    m_charData.clear();
+    //    m_charData.clear();
     m_charData = cOut;
     m_infoText="Total no. chars : "+QString::number(m_charData.length()/(8*scale)) +"\n"+ m_infoText;
 
@@ -1406,7 +1406,7 @@ static int DrawLine(lua_State* L) {
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.drawLine(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
-//    m_effect->m_img.fill((Qt::red));
+    //    m_effect->m_img.fill((Qt::red));
     return 0;
 }
 
@@ -1418,12 +1418,12 @@ static int DrawRect(lua_State* L) {
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
-   painter.begin(&m_effect->m_post);
+    painter.begin(&m_effect->m_post);
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
-//    m_effect->m_img.fill((Qt::red));
+    //    m_effect->m_img.fill((Qt::red));
     return 0;
 }
 
@@ -1435,43 +1435,156 @@ static int DrawCircle(lua_State* L) {
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawEllipse(lua_tonumber(L,1)-lua_tonumber(L,3)/(float)2,
-                       lua_tonumber(L,2)-lua_tonumber(L,4)/(float)2,
-                       lua_tonumber(L,3),lua_tonumber(L,4));
+                        lua_tonumber(L,2)-lua_tonumber(L,4)/(float)2,
+                        lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
     painter.begin(&m_effect->m_post);
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
     painter.drawEllipse(lua_tonumber(L,1)-lua_tonumber(L,3)/(float)2,
-                       lua_tonumber(L,2)-lua_tonumber(L,4)/(float)2,
-                       lua_tonumber(L,3),lua_tonumber(L,4));
+                        lua_tonumber(L,2)-lua_tonumber(L,4)/(float)2,
+                        lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
-//    m_effect->m_img.fill((Qt::red));
+    //    m_effect->m_img.fill((Qt::red));
     return 0;
 }
 
 
-static void DrawDiamond(QPainter& p, int x, int y, int w, int h) {
+static void DrawDiamond(QPainter& p, float x, float y, float w, float h, QColor c1, QColor c2) {
 
-    for (int j=0;j<h;j++) {
-        for (int i=0;i<w;i++) {
-            p.drawPoint(x+i,y+j);
 
-        }
-    }
+    QPen p1 = QPen(c1, 1, Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin);
+    QPen p2 = QPen(c2, 1, Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin);
+    QBrush b(c1, Qt::SolidPattern);
+    QBrush b2(c2, Qt::SolidPattern);
+
+
+    p.setPen(p1);
+    p.setBrush(b);
+/*    QPointF points[4] = {
+        QPointF((x+w/2.0), y),
+        QPointF((x+w), y+h/2.0),
+        QPointF((x+w/2.0), y+h),
+        QPointF((x), y+h/2.0),
+
+    };
+    p.drawPolygon(points,4);*/
+        QPointF points[4] = {
+            QPointF((x+w/2.0), y),
+            QPointF((x+w), y+h/2.0),
+            QPointF((x+w/2.0), y+h),
+//            QPointF((x), y+h/2.0),
+
+        };
+        p.drawPolygon(points,3);
+        p.setPen(p2);
+        p.setBrush(b2);
+
+        QPointF points2[4] = {
+            QPointF((x+w/2.0), y),
+            QPointF((x), y+h/2.0),
+            QPointF((x+w/2.0), y+h),
+//            QPointF((x), y+h/2.0),
+
+        };
+        p.drawPolygon(points2,3);
 
 }
+
+static void DrawHalfDiamond(QPainter& p, float x, float y, float w, float h, int top, int bottom) {
+
+    QPointF points[4] = {
+        QPointF((x+w/2.0), y),
+        QPointF((x+w), y+h/2.0),
+//        QPointF((x), y+h/2.0),
+        QPointF((x+w/2.0), y+h),
+//        QPointF((x), y+h/2.0),
+
+    };
+    p.drawPolygon(points,3);
+/*
+    if (top!=0)  {
+        QPointF top[4] = {
+            QPointF(x, y),
+            QPointF((x+w), y),
+            QPointF((x+w), y+h/2),
+            QPointF((x), y+h/2),
+
+        };
+        p.drawPolygon(top,4);
+    }
+    if (bottom!=0)  {
+        QPointF top[4] = {
+            QPointF(x, y+h/2),
+            QPointF((x+w), y+h/2),
+            QPointF((x+w), y+h),
+            QPointF((x), y+h),
+
+        };
+//        p.drawPolygon(top,4);
+
+    }
+    */
+}
+
+
+
 
 static int DrawIsometricFont(lua_State* L) {
 
     CharsetImage* img = (CharsetImage*)LImageIO::Load( m_currentDir +  "/"+lua_tostring(L,1));
 
-    qDebug() << "HERE";
 
     QPainter painter;
     painter.begin(&m_effect->m_img);
-    painter.setPen(QPen(QColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8)), lua_tonumber(L,9), Qt::SolidLine,Qt::SquareCap, Qt::BevelJoin));
-//    painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
-    DrawDiamond(painter,lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4),lua_tonumber(L,5));
+    QColor c1 = QColor(lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
+    QColor c2 = QColor(lua_tonumber(L,12),lua_tonumber(L,13),lua_tonumber(L,14));
+//    int startx = lua_tonumber(L,12);
+  //  int endx = lua_tonumber(L,13);
+
+    int ch = lua_tonumber(L,2);
+    float sx = lua_tonumber(L,3);
+    float sy = lua_tonumber(L,4);
+    float sdx = lua_tonumber(L,7);
+    float sdy = lua_tonumber(L,8);
+    float orgx = lua_tonumber(L,5);
+    float orgy = lua_tonumber(L,6);
+    float xx = 0;
+    float yy = 0;
+    PixelChar pc = img->m_data[ch];
+    float dy=0;
+    int startx = 0;
+    float dx = startx*sdx/2;
+    int endx = 8;
+    for (int y=0;y<8;y++) {
+        xx=0;
+        dy=sdy*4;
+        for (int x=startx;x<endx;x++) {
+            //           qDebug() << ch%40 << (ch/40.0)*40;
+            //            PixelChar pc = img->getPixelChar(0,0);
+
+//            auto down = 1;
+  //          if (y<7) down = pc.get(x,y+1,0b1);
+            auto left = 0;
+            if (x>0 )
+                left = pc.get(x-1,y,0b1);
+
+            QColor pc1 = c1;
+            QColor pc2 = c1;
+            if (left==0 && x<3) pc2=c2;
+                    //            if (y<3 && x>1) pc2=pc1;
+
+
+            if (pc.get(x,y,0b1)!=0)
+                DrawDiamond(painter,xx+dx+orgx,orgy+yy+dy,sx,sy,pc1,pc2);
+
+            xx+=sdx/2;
+            dy-=sdx/2;
+
+        }
+        yy+=sdx/2;
+        dx+=sdx/2;
+    }
     painter.end();
     return 0;
 }
@@ -1490,7 +1603,7 @@ static int DrawTriangle(lua_State* L) {
     };
     painter.drawPolygon(points,3);
     painter.end();
-//    m_effect->m_img.fill((Qt::red));
+    //    m_effect->m_img.fill((Qt::red));
     return 0;
 }
 
@@ -1509,10 +1622,41 @@ static int DrawQuad(lua_State* L) {
     };
     painter.drawPolygon(points,4);
     painter.end();
-//    m_effect->m_img.fill((Qt::red));
+    //    m_effect->m_img.fill((Qt::red));
     return 0;
 }
 
+static int GenerateSpecialClearScreen(lua_State* L) {
+
+    QString file = m_currentDir + "/"+lua_tostring(L,1);
+    QString name = lua_tostring(L,2);
+    if (QFile::exists(file))
+        QFile::remove(file);
+
+    int pos = lua_tonumber(L,3);
+    int sp1 = lua_tonumber(L,4);
+    int sp2 = lua_tonumber(L,5);
+
+
+    QString s = "procedure "+name+"();\n";
+    s+="begin\n";
+    s+="  asm(\"";
+    for (int y=0;y<25;y++) {
+        for (int x=0;x<40;x++) {
+            int xp = ((39-x)/40.0*25);
+            if (/*xp>y-sp1 && */xp<y+sp2)
+               s+= "  sta "+Util::numToHex(pos + y*40 +x) + "\n";
+        }
+    }
+    s+="  \");\n";
+    s+="end;\n";
+
+    Util::SaveTextFile(file,s);
+
+
+
+    return 0;
+}
 
 
 static int DrawImage(lua_State* L) {
@@ -1531,7 +1675,7 @@ static int DrawImage(lua_State* L) {
     QVector3D pos(lua_tonumber(L,2),lua_tonumber(L,3),0);
     QVector3D scale(lua_tonumber(L,4),lua_tonumber(L,5),0);
     double rot = lua_tonumber(L,6);
- //   qDebug() << QFile::exists(lua_tostring(L,1)) <<lua_tostring(L,1);
+    //   qDebug() << QFile::exists(lua_tostring(L,1)) <<lua_tostring(L,1);
 
     for (int y=0;y<m_effect->m_img.height();y++)
         for (int x=0;x<m_effect->m_img.width();x++) {
@@ -1574,7 +1718,7 @@ static int DrawMaskImage(lua_State* L) {
     QVector3D scale(lua_tonumber(L,4),lua_tonumber(L,5),0);
     QColor maskColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8));
     QColor drawColor(lua_tonumber(L,9),lua_tonumber(L,10),lua_tonumber(L,11));
- //   qDebug() << QFile::exists(lua_tostring(L,1)) <<lua_tostring(L,1);
+    //   qDebug() << QFile::exists(lua_tostring(L,1)) <<lua_tostring(L,1);
     float rot = 0;
     for (int y=0;y<m_effect->m_img.height();y++)
         for (int x=0;x<m_effect->m_img.width();x++) {
@@ -1673,7 +1817,7 @@ static int CopyFile(lua_State* L) {
 
 
 static int AddToPng(lua_State* L) {
-//    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tonumber(L,2));
+    //    Util::CopyFile(m_currentDir+"/"+ lua_tostring(L,1), m_currentDir+"/"+lua_tonumber(L,2));
     if (!VerifyFjongParameters(L,"AddToPng"))
         return 0;
     QString inFile = m_currentDir+"/"+ lua_tostring(L,1);
@@ -1705,7 +1849,7 @@ void DialogEffects::LoadScript(QString file)
         return;
     }
 
-//    m_rt.m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
+    //    m_rt.m_globals.m_lights[0]->m_color = QVector3D(1,1,0.7);
     m_rt.m_objects.clear();
 
 
@@ -1795,6 +1939,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "Message", Message);
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
 
+    lua_register(m_script->L, "GenerateSpecialClearScreen", GenerateSpecialClearScreen);
     lua_register(m_script->L, "DrawLine", DrawLine);
     lua_register(m_script->L, "DrawRect", DrawRect);
     lua_register(m_script->L, "DrawCircle", DrawCircle);
@@ -1872,7 +2017,7 @@ void DialogEffects::UpdateGlobals()
     if (m_script->lua_exists("output.charset")) {
         QString charName = m_script->get<QString>("output.charset");
         m_rt.m_globals.m_charset = m_script->get<QString>("output.charset");;
-//        qDebug() << "LOADING : "<< charName;
+        //        qDebug() << "LOADING : "<< charName;
         if (m_rt.m_globals.m_charset.toLower()!="rom")
             m_rt.m_globals.m_charset = m_currentDir+"/"+m_rt.m_globals.m_charset;
 
@@ -1911,9 +2056,9 @@ void DialogEffects::UpdateGlobals()
                     if (f.endsWith(".flf")) {
                         LImage* img = LImageIO::Load(m_currentDir + f);
 
-//                        m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
+                        //                        m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
                         if (img!=nullptr) {
-//                            qDebug() << "HER " << f;
+                            //                            qDebug() << "HER " << f;
                             m_effect->m_mc->m_colorList.CopyFrom(&img->m_colorList);
                             delete img;
                         }
@@ -1931,7 +2076,7 @@ void DialogEffects::UpdateGlobals()
     }
 
     if (m_script->lua_exists("output.palette")) {
-//            qDebug() << "PALETTE";
+        //            qDebug() << "PALETTE";
         if (m_effect!=nullptr)
             if (m_effect->m_mc!=nullptr)
                 m_effect->m_mc->m_colorList.fromArrayList(m_script->getIntVector("output.palette"));
@@ -1945,7 +2090,7 @@ void DialogEffects::UpdateGlobals()
     if (m_script->lua_exists("output.index_colors"))
         m_rt.m_globals.m_c64Colors = m_script->getIntVector("output.index_colors");
 
-  //  if (m_script->lua_exists(material+".checkerboard")) {
+    //  if (m_script->lua_exists(material+".checkerboard")) {
 
 
     if (m_rt.m_globals.m_outputType==RayTracerGlobals::output_type_BINARY)  {
@@ -2015,7 +2160,7 @@ void DialogEffects::UpdateImage()
         if (m_script->m_error!="") m_error = m_script->m_error;
 
     }
-//    qDebug() << "KAKE";
+    //    qDebug() << "KAKE";
 
 
     m_effect->m_ready = true;

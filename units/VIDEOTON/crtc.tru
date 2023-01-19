@@ -1,0 +1,529 @@
+Unit Crtc;
+@use "memory"
+var 
+	@donotremove none
+	@donotremove none2
+	ga,gb,col,pix,x,none,y,none2 : byte=0; 
+	xi : integer=0;
+	@donotremove sp
+	pa,sp,pb,p1 : pointer;
+	j,k: byte;
+
+	
+	
+
+	
+	@donotremove y_lookup
+	y_lookup : array[200] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
+	// Lookup for mode 0 pixel 0
+	
+	hwConv : array[26] of byte = (
+	$14,$4,$15,$1c,$18,$1D,$0c,$05,$D,$16,$06,$17,$1E,$00,$1F,$0e,$07,$0f,$12,$02,$13,$1A,$19,$1b,$0a,$03,$0b);
+
+	ytab : array[200] of integer = BuildTable("i*80");
+
+/*
+	Pixtab1 and pixtab2 are used to correctly set pixel 0 and 1 for each byte in CPC 16-color 160x200 VRAM.
+	You'd *think* that the two 4-bit colors in each byte would be stored in an upper/lower nibble, but
+	oh no. Mr. Sugar saved every penny so *you* would be able to use this abomination of a table!
+
+*/	
+	pixtab1 : array[16] of byte=(
+%00000000,
+%10000000,
+%00001000,
+%10001000,
+%00100000,
+%10100000,
+%00101000,
+%10101000,
+
+%00000010,
+%10000010,
+%00001010,
+%10001010,
+%00100010,
+%10100010,
+%00101010,
+%10101010);
+
+	// Lookup for mode 0 pixel 1	
+	pixtab2 : array[16] of byte=(
+%00000000,
+%01000000,
+%00000100,
+%01000100,
+%00010000,
+%01010000,
+%00010100,
+%01010100,
+
+%00000001,
+%01000001,
+%00000101,
+%01000101,
+%00010001,
+%01010001,
+%00010101,
+%01010101);
+
+/**
+Waits until a vertical sync has been performed.
+**/
+procedure WaitForSync();
+begin
+	asm("
+wf_Sync:
+    ld b,#f5
+    in a,(c)
+    rra
+    jr nc,wf_Sync + 2
+    ei
+    nop
+    halt
+    halt
+    di
+    ");
+end;
+
+/*
+Waits until a horizontal sync has been performed
+*/
+procedure WaitForHSync();
+begin
+	asm("
+hf_Sync:
+    ld b,#f5
+    in a,(c)
+    rra
+    jr nc,hf_Sync + 2
+    ei
+    nop
+    halt
+    halt
+    di
+    ");
+end;
+
+
+/**
+Sets the CPC resolution mode. 
+<ul>
+<li>0: 160x200 16 color mode.</li>
+<li>1: 320x200 4 color mode.</li>
+<li>2: 640x200 2 color mode.</li>
+</ul>
+**/
+procedure SetMode(ga: global byte);
+begin
+	asm("
+    ld  a,[Crtc_ga]
+    call  $BC0E
+	");
+end;
+
+/**
+Synchronizes timing with VSYNC
+**/
+procedure Synchronize();
+begin
+asm("
+;; wait vsync (loop passes if VSYNC signal is high = in vsync)
+	ld b,$f5
+__wait1:
+	in a,(c)
+	rra
+	jr nc,__wait1
+;; wait for end of vsync (loop passes when VSYNC signal is low = out of vsync)
+__wait2:
+	in a,(c)
+	rra
+	jr c,__wait2
+;; now wait again for start (because we know we found the end, if we wait for VSYNC to be active
+;; we know it will be the start)
+__wait3:
+	in a,(c)
+	rra
+	jr nc,__wait3
+");
+end;
+
+/**
+Sets ink to a given color.
+<ul>
+<li>Parameter 0: ink value (0-15)</li>
+<li>Parameter 1: color value (0-31)</li>
+</ul>
+**/
+procedure SetInk(ga,gb : global byte);
+begin
+	asm("
+	ld a,[Crtc_gb]
+    ld c, a     
+    ld b, a    
+    ld a, [Crtc_ga]
+    call #$BC32 ; set palette
+    ");
+end;
+
+
+/**
+Sets a single color palette using hardware ports. Firmware must be disabled. 
+<ul>
+<li>Parameter 0: color index (0-15)</li>
+<li>Parameter 1: color value (0-25)</li>
+</ul>
+**/
+
+
+procedure SetSinglePaletteHW(ga, gb: global byte);
+begin
+	gb := hwConv[gb];
+asm("
+	ld a,[Crtc_ga]
+	ld l,a
+	ld a,[Crtc_gb]
+	ld h,a
+	ld c,0
+;	ld a,$0
+	ld c,0
+	
+
+   ld     b, $7F ;; [2] B = Gate Array Port (0x7F). C has the command that GA will execute.
+   out  (c), l             ;; [4] GA command: Select PENR. C = Command + Parameter (PENR + PEN number to select)
+
+   ld     a, $40     ;; [2] (CCCnnnnn) Mix 3 bits for INKR command (C) and 5 for INKR number (n). 
+   or     h                ;; [1]
+   out  (c), a             ;; [4] GA command: Set INKR. A = Command + Parameter 
+                           ;; .... (INKR + INK to be set for selected PEN number)
+	");
+end;
+
+/**
+Sets a 16-color palette using hardware ports. Parameter 1 points to a list of 16 bytes. 
+
+**/
+procedure SetPalette(pa : global pointer);
+begin
+/*	for ga:=0 to 16 do
+	begin
+		gb:=pa[ga];
+		asm("
+
+		ld a, [Crtc_gb]
+    	ld c, a     
+    	ld b, a    
+    	ld a, [Crtc_ga]
+    	call $BC32 ; set palette
+    ");
+    	end;
+*/
+	for j:=0 to 16 do
+		SetSinglePaletteHW(j,pa[j]);
+
+end;
+
+
+/**
+	Sets the border color to [ parameter 1 ] using firmware. 
+
+**/
+procedure SetBorder(ga: global byte);
+begin
+	asm("
+    ld a,[Crtc_ga]
+    ld b,a
+    ld c, b
+    call $BC38
+	");
+end;
+
+/**
+Sets the width of the screen to 256 bytes. Screen hack!
+**/
+procedure SetWidth256();
+begin
+
+	asm("
+	
+	; ChibiAkumas' set screen width
+
+	; send the CRTC (CRT Chip) values
+	ld hl,Crtc_256widthList
+	ld bc,&bc00
+
+set_Crtc_vals:
+	out (c),c	;choose register
+	inc b
+	ld a,(hl)
+	out (c),a	; send the new value
+	dec b
+	inc hl
+	inc c
+	ld a,c
+	cp 14		; update 14 registers
+	jr nz,set_Crtc_vals
+
+	ret
+
+
+Crtc_256widthList:
+
+	db $3f	; R0  - horizontal total
+	db 32		; R1  - horizontal displayed (32 chars wide)
+	db 42		; R2  - Horizontal sync position (centralises screen)
+	db $86	; R3  - Horizontal and Vertical sync widths
+	db 38		; R4  - Vertical total
+	db 0		; R5  - Vertical adjust
+	db 24		; R6  - Vertical displayed (24 chars tall)
+	db 31		; R7  - Vertical sync position (centralises screen)
+	db 0		; R8  - Interlace
+	db 7		; R9  - Max Raster
+	db 0		; R10 - Cusror (not used)
+	db 0		; R11 - Cursor (not used)
+	db $30	; R12 - screen start (at &c000)
+	db $00	; R13 - screen start
+
+	");
+
+end;
+
+
+
+
+/**
+Points the internal pointer Crtc::sp to the correcy y-line in 160x200 mode 0 using [parameter 1].
+<p>The VRAM of the CPC isn't stored linearly. In mode 0 (160x200 16 colour), a line of 160 pixels takes up
+80 bytes of data. However, the next 80 bytes are located 8 rows down. In order to get 1 row down, you need to add 
+$800 to the pointer etc. Needless to say, this becomes tedious - unless you use a lookup table.
+<p>With this method, you can easily point to a specific line in vram. 
+<p>
+<code>
+// points cp to line 16 
+Crtc::PointToY(16);
+// Fills 80 bytes of zero
+fill(cp,0,80); 
+</code>
+**/
+procedure PointToY(y : global byte);
+begin
+	asm("
+		ld hl,Crtc_y_lookup
+		ld b,0
+		ld a,[Crtc_y]
+		ld c,a
+		add hl,bc
+		add hl,bc
+
+		ld a,[hl]
+		ld [Crtc_sp],a
+		inc hl
+		ld a,[hl]
+		ld [Crtc_sp+1],a
+	");
+end;
+
+/**
+Sets a pixel in mode 0 at position (x,y) with color c.
+**/
+procedure PutPixelMode0(x,y,col : global byte);
+begin
+	// Simply looks up the y-value and adds x
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[Crtc_y]
+		add hl,bc
+		add hl,bc
+
+		ld de,Crtc_pa
+		ldi
+		ldi
+	");
+	// 2 pixels per byte
+	pa:=pa+x>>1;
+
+	ga := pa[0];
+
+	if (x&1=0) then
+		ga := ga & 85 + pixtab1[col]
+	else
+		ga := ga & 170 + pixtab2[col];
+
+	pa[0]:=ga;
+end;
+
+/**
+Sets a pixel in mode 1 at position (x,y) with color c.
+**/
+procedure PutPixelMode1(xi: global integer, y,col : global byte);
+begin
+	// Simply looks up the y-value and adds x
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[Crtc_y]
+		add hl,bc
+		add hl,bc
+
+		ld de,Crtc_pa
+		ldi
+		ldi
+	");
+	// 4 pixels per byte
+	pa:=pa+(xi>>2);
+
+	ga := pa[0];
+
+	x := xi; // Take the lower byte because 16-bit shifts are not supported
+	x := 3 - (x & 3);
+	j := 0;
+	if (col & 1) <> 0 then j |= 16;
+	if (col & 2) <> 0 then j |= 1;
+	// j masks in the pixel's bits for this color
+	j := j << x;
+	// k masks out the pixel's bits
+	k := ($11 << x) ^ $ff;
+
+	ga := (ga & k) | j;
+
+	pa[0]:=ga;
+end;
+
+/**
+Sets a pixel in mode 2 at position (x,y) with color c.
+**/
+procedure PutPixelMode2(xi: global integer, y,col : global byte);
+begin
+	// Simply looks up the y-value and adds x
+	asm("
+		ld hl,Crtc_y_lookup
+		ld bc,[Crtc_y]
+		add hl,bc
+		add hl,bc
+
+		ld de,Crtc_pa
+		ldi
+		ldi
+	");
+	// 8 pixels per byte
+	pa:=pa+(xi>>3);
+
+	ga := pa[0];
+
+	x := xi; // Take the lower byte because 16-bit shifts are not supported
+	x := 7 - (x & 7);
+	j := 1 << x;
+	if (col <> 0) then col := j;
+	// J masks out the pixel's bit
+	j := j ^ $ff;
+
+	ga := (ga & j) | col;
+
+	pa[0]:=ga;
+end;
+
+/**
+Copies a transparent image from [pa] to the screen while blending with background data located in [pb].
+The dimensions of the original data is given by [ci_width, ci_height], and the position on-screen
+by [ci_px, ci_py]. 
+<p>See the "sprite" tutorial numer 7 as an example.
+<code>
+// Copies a 32x32 sprite (#sprites) blended with background located at #background to position x,y
+Crtc::CopyImageTransparent(#sprites, #background, 32,32, x, y, 0);
+</code>
+**/
+procedure CopyImageTransparent(pa,pb:global pointer; ci_width, ci_height,ci_px,ci_py, ci_pyshift: byte);
+begin
+	ga := ci_width>>1;
+		
+	pb:=pb+ci_px;
+//	pb:=pb-1;
+	pb:=pb+ ytab[ci_py-ci_pyshift];	
+	for gb:=0 to ci_height do
+	begin
+		Crtc::PointToY(ci_py);
+		
+		sp := sp + ci_px;
+			
+//		memcpy(pb, sp, ga);
+		
+		asm("
+		
+			di
+			
+			ld hl,[Crtc_pb]
+			ex de,hl
+			ld hl,[Crtc_pa]
+			
+			exx
+			ld hl, [Crtc_sp]
+			exx
+			ld a,[Crtc_ga]
+			ld c,a
+copy_or 
+			
+			ld a,[hl]
+			cp 0
+			jr nz, __contcopy
+			ld a,[de]
+						
+__contcopy			
+			exx
+			ld [hl],a
+			inc hl
+			exx
+			inc de
+			inc hl
+			dec c
+			jr nz,copy_or		
+			
+			ei
+		");
+		
+		pa:=pa+ga;
+		ci_py:=ci_py+1;
+		pb:=pb + 80;
+		
+	end;
+	// End with exrra line
+//	ci_py:=ci_py+1;
+
+/*		Crtc::PointToY(ci_py);
+		memcpy(keep, Crtc::sp, 80);
+		Crtc::PointToY(ci_py+1);
+		keep:=keep+80;
+		memcpy(keep, Crtc::sp, 80);
+*/
+end;
+
+
+/**
+Copies a portion of the screen between y-lines [paramter 1, parameter 2] to a buffer located at [parameter 3]
+<p>Note that the copy will be stored with ordered y-lines, as opposed to the internal VRAM structure.
+**/
+procedure CopyScreenToBuffer(ga, gb: global byte; pa : global pointer);
+begin
+//	zp := free2;
+	for y:=ga to gb do
+	begin
+		PointToY(y);
+		memcpy(sp,pa,80);
+		pa:=pa+80;
+	end;
+end;
+
+procedure InitDefault(ga:global byte);
+begin
+	SetBorder(0); // black border
+	SetMode(ga); // 160x200 bitmap	
+	
+	Memory::DisableFirmware(); 
+	Memory::DisableLRom();
+
+	Crtc::Synchronize();
+	Memory::DisableInterrupts();
+	
+end;
+
+
+
+end.
