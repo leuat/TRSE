@@ -1,6 +1,7 @@
 program Tutorial1;
 @use "crtc"
 @use "memory"
+@use "text"
 /*
 
  Hi there, and welcome to the first tutorial for the amstrad CPC in TRSE!
@@ -24,19 +25,39 @@ var
 // Include the exported image data + palette
 	image : incbin("resources/images/trse.bin");
 	palette : incbin("resources/images/trse_palette.bin");
+  // Print with immediate value
 	
-	
+	zp:pointer;
+	ii:byte;
 	
 begin
-	
 	// Set 160x200 16-color mode
-	Crtc::InitDefault(0);
+//	Crtc::InitDefault(0);
+	//Crtc::SetMode(0);
 	// Set palette
-	Crtc::SetPalette(#palette);
+	//loop();
 	// Copy image to screen 
-	memcpy(#image, $C000, $4000);
+	
+//  Text::MoveCursorTo(3, 3);
+ // Text::Print("Print a string\r\n");
+  
+
+	asm("
+	    ld a,$50
+		ld ($3),A
+		out ($2),a
+	");
+	//memcpy(#image, $8000, $4000);
+	zp:=$8000;
+	for ii:=0 to 128 do zp[ii]:=ii;
+	
+	
+	while (true) do
+	begin	
+		
+	end;
 	// halt the computer
-	Loop();
+//	Loop();
 	
 
 end.

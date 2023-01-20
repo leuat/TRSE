@@ -1,0 +1,299 @@
+Unit Text;
+var  
+   c: byte=0;
+   x: byte=0;
+   y: byte=0;
+   x2: byte=0;
+   y2: byte=0;
+   p: pointer;
+   user_defined_char_initialized: byte=0;
+
+/** Resets the text VDU.
+ If c = 0, do a partial reset (text VDU indirections and control code table)
+ If c != 0, do a full reset (same + select stream 0, reset paper and pen colors, move cursor to top left, ...)
+ **/
+procedure Reset(c: global byte);
+begin
+  if c = 0 then
+    asm("
+      call #bb51
+    ")
+  else
+    asm("
+      call #bb4e
+    ");
+end;
+
+// Enables or disable the text VDU.
+// If c = 0, prevents char from being printed in the current stream
+// If c != 0, allows char to be printed in the current stream
+procedure Enable(c: global byte);
+begin
+  if c = 0 then
+    asm("
+      call #bb57
+    ")
+  else
+    asm("
+      call #bb54
+    ");
+end;
+
+///////////////////
+// Text handling //
+///////////////////
+
+// Prints char c at the current cursor position.
+// Control chars are obeyed not printed.
+procedure PutChar(c: global byte);
+begin
+  asm("
+    ld a, [Text_c]
+    call #bb5a
+  ")
+end;
+
+// Prints char c at the current cursor position.
+// Control chars are printed not obeyed.
+procedure PutControlChar(c: global byte);
+begin
+  asm("
+    ld a, [Text_c]
+    call #bb5d
+  ")
+end;
+
+// Reads the char at the current cursor position.
+// TODO(ColinPitrat): #bb60 sets carry to false in case of failure.
+// This is only useful to differentiate true 0 char from failure.
+function GetChar():byte;
+begin
+  asm("
+    call #bb60
+    ld [Text_c], a
+  ");
+  GetChar := c;
+end;
+
+// Prints the string pointed to by p at the current cursor position.
+// Control chars are obeyed, not printed.
+procedure Print(p: global pointer);
+begin
+    asm("
+      ld hl, [Text_p]
+    text_print_loop:
+      ld a, (hl)
+      cp 0
+      jr z, text_print_finished
+      call #bb5a
+      inc hl
+      jp text_print_loop
+    text_print_finished:
+    ");
+end;
+
+// Prints the string pointed to by p at the current cursor position.
+// Control chars are printed, not obeyed.
+procedure PrintControl(p: global pointer);
+begin
+  asm("
+    ld hl, [Text_p]
+  text_print_control_loop:
+    ld a, (hl)
+    cp 0
+    jr z, text_print_control_exit
+    call #bb5d
+    inc hl
+    jp text_print_control_loop
+  text_print_control_exit:
+  ")
+end;
+
+/////////////////////
+// Cursor handling //
+/////////////////////
+
+// Forces to display the cursor.
+procedure EnableCursor(c: global byte);
+begin
+  if c = 1 then
+    asm("
+      call #bb7b
+      call #bb81
+    ")
+  else
+    asm("
+      call #bb7e
+      call #bb84
+    ");    
+end;
+
+// Forces to hide the cursor.
+procedure MoveCursorTo(x: global byte, y: global byte);
+begin
+  asm("
+    ld a, [Text_x]
+    call #bb6f
+    ld a, [Text_y]
+    call #bb72
+  ");
+end;
+
+////////////////////
+// Color handling //
+////////////////////
+
+// Returns the foreground color currently used.
+function GetPen():byte;
+begin
+  asm("
+    call #bb93
+    ld [Text_c], a
+  ");
+  GetPen := c;
+end;
+
+// Changes the foreground color.
+procedure SetPen(c: global byte);
+begin
+  asm("
+    ld a, [Text_c]
+    call #bb90
+  ");
+end;
+
+// Returns the background color currently used.
+function GetPaper():byte;
+begin
+  asm("
+    call #bb99
+    ld [Text_c], a
+  ");
+  GetPaper := c;
+end;
+
+// Changes the background color.
+procedure SetPaper(c: global byte);
+begin
+  asm("
+    ld a, [Text_c]
+    call #bb96
+  ");
+end;
+
+// Swaps the colors of pen and paper.
+procedure SwapPenPaper();
+begin
+  asm("
+    call #bb9c
+  ");
+end;
+
+// Sets the background to be transparent or opaque.
+// if c = 0, set background to opaque, otherwise set backtround to transparent
+procedure SetTransparent(c: global byte);
+begin
+  asm("
+    ld a, [Text_c]
+    call #bb9f
+  ");
+end;
+
+// Returns whether the background is transparent.
+// 0 means background is opaque, otherwise it is transparent.
+function GetTransparent():byte;
+begin
+  asm("
+    call #bba2
+    ld [Text_c], a
+  ");
+  GetTransparent := c;
+end;
+
+////////////////////////////////
+// User-defined char handling //
+////////////////////////////////
+
+/*
+TODO(ColinPitrat): Any use for these?
+ BBA5 TXT_GET_MATRIX    in: A=char, out: HL=char bitmap ptr, cy:0=ROM,1=RAM
+ BBAE TXT_GET_M_TABLE   out: cy=1=RAM, A=1st char, HL=RAM chars
+*/
+
+// Setups the user defined char table. This is not meant to be called directly.
+// This is called transparently when needed.
+// Calling this method will automatically take up 2kB of RAM to store your user-defined characters.
+procedure EnableUserDefinedChar();
+var
+  // We rely on this being global though only included in the program if the method is used
+  user_defined_char_matrix: array[8*256] of byte;
+begin
+  user_defined_char_initialized := 1;
+  asm("
+    ld d, 0
+    ld e, 0
+    ld hl, localVariable_Text_EnableUserDefinedChar_Text_user_defined_char_matrix
+    call #bbab
+  ");
+end;
+
+// Changes the appearance of a character.
+// c is the character to modify
+// p is a pointer to an array of 8 bytes, each byte describing a row, each bit describing a pixel.
+// Calling this method with c < 240 will take up 2kB of RAM to store user-defined characters.
+procedure SetCharMatrix(c: global byte, p: global pointer);
+begin
+  if c < 240 then EnableUserDefinedChar();
+  asm("
+    ld a, [Text_c]
+    ld hl, [Text_p]
+    call #bba8
+  ");
+end;
+
+//////////////////////////////
+// Windows/Streams handling //
+//////////////////////////////
+
+/*
+TODO(ColinPitrat): Any use for these?
+ BB69 TXT_GET_WINDOW    out: H=x1, L=y1, D=x2, E=y2, cy=0=hardware scrolling
+ BBB7 TXT_SWAP_STREAMS  in: B,C=window numbers to be exchanged
+*/
+
+// Set the current window to be the window number c.
+// There can be up to 8 windows: c=0..7
+procedure SelectWindow(c: global byte);
+begin
+  asm("
+    ld a, [Text_c]
+    call #bbb4
+  ");
+end;
+
+// Sets current window boundaries to (x,y) (x2, y2).
+// x=0..79, y=0..24
+procedure SetWindow(x: global byte, y: global byte, x2: global byte, y2: global byte);
+begin
+  asm("
+    ld a, [Text_x]
+    ld h, a
+    ld a, [Text_y]
+    ld l, a
+    ld a, [Text_x2]
+    ld d, a
+    ld a, [Text_y2]
+    ld e, a
+    call #bb66
+  ");
+end;
+
+// Fills the current window with paper color.
+procedure ClearWindow();
+begin
+  asm("
+    call #bb6c
+  ")
+end;
+
+end.

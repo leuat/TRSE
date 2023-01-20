@@ -5,9 +5,10 @@ SystemVideoton::SystemVideoton(QSharedPointer<CIniFile> settings, QSharedPointer
     m_processor = Z80;
     m_system = AbstractSystem::VIDEOTON;
 
-    m_startAddress = 0x1A01;
-    m_programStartAddress = 0x1A01;
+    m_startAddress = 0x19EF;
+    m_programStartAddress = 0x19EF;
     m_supportsExomizer = false;
+
 
 
     //   m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"System values",0,0x00FF));
@@ -44,22 +45,40 @@ void SystemVideoton::Assemble(QString &text, QString filename, QString currentDi
 
     //output+="<br>";
 
+
     // Create header
     QByteArray d = Util::loadBinaryFile(filename+".bin");
-    int len = d.size();
+
+
+    QByteArray bas;
+
+    bas.resize(16);
+    bas.fill(0);
+    bas[0] = 0x00;
+    bas[1] = 0x01;
+    bas[2] = d.size()&0xFF;
+    bas[3] = (d.size()>>8)&0xFF;
+    bas[4] = 0xFF;
+
+//    bas[19] = 0xf5;
+
+    int len = d.size()-20;//+bas.size();
 
     QByteArray h;
     h.resize(128);
     h.fill(0);
-    int bsize = len>>7;
+    uint bsize = (len)>>7;
+
     h[0] = 0x11;
-    h[2] = (bsize)&0xff;
-    h[3] = (bsize>>8)&0xff;
+    h[2] = (uchar)(bsize)&0xff;
+    h[3] = (uchar)(bsize>>8)&0xff;
     h[4] = len&0x7F;
 
+    h.append(bas);
     h.append(d);
 
-    Util::SaveByteArray(h,filename+".bin");
+
+    Util::SaveByteArray(h,filename+".cas");
     time = timer.elapsed();
 
     text+=output;
@@ -70,7 +89,7 @@ void SystemVideoton::Assemble(QString &text, QString filename, QString currentDi
 void SystemVideoton::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
 
-    params <<filename+".bin";
+    params <<filename+".cas";
   //  params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;

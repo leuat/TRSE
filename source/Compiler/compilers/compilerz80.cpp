@@ -50,8 +50,10 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
         m_assembler->IncludeFile(":resources/code/coleco/header.asm");
 //        m_assembler->Asm(" org 8000h");
 
-
     }
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::VIDEOTON)
+        m_assembler->IncludeFile(":resources/code/videoton.asm");
+
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMSTRADCPC ||
         Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM
       ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
