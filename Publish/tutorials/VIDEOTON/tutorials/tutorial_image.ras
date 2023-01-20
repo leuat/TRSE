@@ -7,7 +7,8 @@ program ShowCompressedImage;
 	Loads a compressed TRSE image (located in the resources/images folder" for 256x240 4-colour mode
 
 */
-
+ 
+ 
 // Automatically export
 @export "resources/images/trse.flf" "resources/images/trse.bin" 256
 
