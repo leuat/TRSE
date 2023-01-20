@@ -66,7 +66,4 @@ override_target_settings_basic = 3.03209e-314
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
-project_path = tutorials/VIDEOTON/tutorials/
-open_files = ,[ext]units\VIDEOTON\crtc.tru, cas.bin, tutorial1.asm, tutorial1.ras
-current_file = tutorial1.ras
 data_header_resources\images\trse.flf = 0
