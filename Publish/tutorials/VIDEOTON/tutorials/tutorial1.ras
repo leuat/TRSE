@@ -40,7 +40,6 @@ begin
 	
 //  Text::MoveCursorTo(3, 3);
  // Text::Print("Print a string\r\n");
-  
 
 	asm("
 	    ld a,$50
