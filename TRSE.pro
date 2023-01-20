@@ -230,6 +230,7 @@ SOURCES += main.cpp\
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
+    source/LeLib/limage/limagevideoton.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
     source/LeLib/bbc/discimage.cpp \
@@ -517,6 +518,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagesnesgeneric.h \
+    source/LeLib/limage/limagevideoton.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \
     source/LeLib/bbc/discimage.h \

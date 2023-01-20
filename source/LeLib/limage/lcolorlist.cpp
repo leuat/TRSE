@@ -144,6 +144,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 16;
   if (t==TIM)
       return 17;
+  if (t==VIDEOTON)
+      return 18;
 
   return 255;
 }
@@ -186,6 +188,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return DOS;
     if (c==17)
         return TIM;
+    if (c==18)
+        return VIDEOTON;
 
     return UNSUPPORTED;
 
@@ -456,6 +460,8 @@ void LColorList::Initialize(Type t)
         InitVZ200();
     if (m_type == Type::TIM)
         InitTIM();
+    if (m_type == Type::VIDEOTON)
+        InitVideoton();
 
 
 
@@ -756,6 +762,20 @@ void LColorList::InitC64()
     m_background = m_list[0];
 //    DefaultPen();
     m_pens.clear();
+
+}
+
+void LColorList::InitVideoton()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xAA, 0x00, 0x0),""));
+    m_list.append(LColor(QColor(0x0, 0xAA, 0x00),""));
+    m_list.append(LColor(QColor(0x0, 0x00, 0xAA),""));
+    m_pens.clear();
+    for (int i=0;i<m_list.count();i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
+    }
 
 }
 

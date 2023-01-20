@@ -73,7 +73,6 @@ void SystemVideoton::Assemble(QString &text, QString filename, QString currentDi
     h[2] = (uchar)(bsize)&0xff;
     h[3] = (uchar)(bsize>>8)&0xff;
     h[4] = len&0x7F;
-
     h.append(bas);
     h.append(d);
 

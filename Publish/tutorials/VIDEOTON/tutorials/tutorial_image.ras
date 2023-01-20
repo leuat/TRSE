@@ -1,0 +1,31 @@
+program ShowCompressedImage;
+@use "crtc"
+@use "memory"
+@use "text"
+@use "compression"
+/*
+	Loads a compressed TRSE image (located in the resources/images folder" for 256x240 4-colour mode
+
+*/
+
+// Automatically export
+@export "resources/images/trse.flf" "resources/images/trse.bin" 256
+
+var  
+// Include the exported image data + palette
+	image : incbin("resources/images/trse.bin") compressed;
+	
+	
+begin
+
+	asm("
+	    ld a,$50
+		ld ($3),A
+		out ($2),a
+	");
+	// Copy to VRAM
+	Compression::Decompress(#image, $8000);
+
+	loop();	
+
+end.
