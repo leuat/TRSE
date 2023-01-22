@@ -87,8 +87,16 @@ void SystemVideoton::Assemble(QString &text, QString filename, QString currentDi
 
 void SystemVideoton::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
+#ifndef __APPLE__
 
     params <<filename+".cas";
+#else
+    Util::CopyFile(filename+".cas","/Users/leuat/.wine/drive_c/trse.cas");
+//    params << "c:\\trse.cas";
+
+//    qDebug() << params;
+
+#endif
   //  params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;

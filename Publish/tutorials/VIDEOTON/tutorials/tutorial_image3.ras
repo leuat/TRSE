@@ -1,0 +1,30 @@
+program ShowCompressedImage;
+@use "crtc"
+@use "memory"
+@use "system"
+@use "text"
+@use "compression"
+/*
+	Loads a compressed TRSE image (located in the resources/images folder" for 512x240 2-colour mode
+
+*/
+ 
+ 
+// Automatically export
+@export "resources/images/image2.flf" "resources/images/image2.bin" 256
+
+var  
+// Include the exported image data + palette
+	image : incbin("resources/images/image2.bin") compressed;
+	
+	
+begin
+	Crtc::SetMode(Crtc::mode_2_color);
+	Crtc::EnableVRAM();
+	Crtc::SetPalette(1,Crtc::green);
+	// Copy to VRAM
+	Compression::Decompress(#image, $8000);
+
+	loop();	
+
+end.

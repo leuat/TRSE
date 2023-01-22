@@ -1,6 +1,7 @@
 program ShowCompressedImage;
 @use "crtc"
 @use "memory"
+@use "system"
 @use "text"
 @use "compression"
 /*
@@ -9,7 +10,8 @@ program ShowCompressedImage;
 */
  
  
-// Automatically export
+// Automatically export 256x240 4-color image
+
 @export "resources/images/trse.flf" "resources/images/trse.bin" 256
 
 var  
@@ -18,12 +20,12 @@ var
 	
 	
 begin
-
-	asm("
-	    ld a,$50
-		ld ($3),A
-		out ($2),a
-	");
+	Crtc::SetMode(Crtc::mode_4_color);
+	Crtc::EnableVRAM();
+	Crtc::SetPalette(0,Crtc::black);
+	Crtc::SetPalette(1,Crtc::yellow);
+	Crtc::SetPalette(2,Crtc::green);
+	Crtc::SetPalette(3,Crtc::blue);
 	// Copy to VRAM
 	Compression::Decompress(#image, $8000);
 

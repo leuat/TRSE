@@ -23,6 +23,7 @@ LImageVideoton::LImageVideoton(LColorList::Type t)  : LImageQImage(t)
     m_width = 128;
     m_height=240;
     SetMode();
+    m_colorList.InitPalettePens(m_colors);
 
 }
 
@@ -93,6 +94,12 @@ void LImageVideoton::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF
         }
     //return img;
 }
+
+void LImageVideoton::InitPens()
+{
+    m_colorList.InitPalettePens(m_colors);
+
+}
 /*
 void LImageVideoton::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
 {
@@ -160,6 +167,21 @@ void LImageVideoton::ExportBin(QFile &ofile)
     if (m_width==256)  xw=64;
 */
     QByteArray data;
+    if (m_colors==2)
+    for (int y=0;y<m_height;y++) {
+        for (int x=0;x<m_width/8;x++) {
+            char c = 0;
+            int curBit = 0;
+            for (int p=0;p<8;p++) {
+                uchar p1 = getPixel(x*8+p,y)&1;
+                c |= (p1&0b01)<<(7-curBit);
+
+                curBit+=1;
+            }
+            data.append(c);
+
+        }
+    }
     if (m_colors==4)
     for (int y=0;y<m_height;y++) {
         for (int x=0;x<m_width/4;x++) {
@@ -176,6 +198,25 @@ void LImageVideoton::ExportBin(QFile &ofile)
 
         }
     }
+    if (m_colors==16) {
+    for (int y=0;y<m_height;y++) {
+        for (int x=0;x<m_width/2;x++) {
+            char c = 0;
+            int curBit = 0;
+            for (int i=0;i<2;i++) {
+                auto col = m_colorList.getPenColour(getPixel(x*2+1-i,y));
+                if (col.red()!=0) c|=(0b00000100<<i);
+                if (col.green()!=0) c|=(0b00010000<<i);
+                if (col.blue()!=0) c|=(0b00000001<<i);
+                if (col.blue()>0.8 || col.red()>0.8 || col.green()>0.8) c|=(0b01000000<<i);
+            }
+            // Transfer
+
+            data.append(c);
+
+        }
+    }
+    }
 
 
 
@@ -191,8 +232,9 @@ void LImageVideoton::LoadBin(QFile &file)
 
 
     Initialize(m_width,m_height);
-
+    InitPens();
     LImageQImage::LoadBin(file);
+
 }
 
 void LImageVideoton::SaveBin(QFile &file)

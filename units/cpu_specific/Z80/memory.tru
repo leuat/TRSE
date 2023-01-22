@@ -1,7 +1,18 @@
 unit Memory;
 var	
+	ga,gb : byte;
 	
-	
+
+procedure Out(ga,gb:global byte);
+begin
+	asm("
+		ld a,[Memory_ga]
+		ld c,a
+		ld a,[Memory_gb]
+		ld b,0
+		out (c),a
+	");
+end;
 	
 	
 procedure DisableInterrupts() inline;

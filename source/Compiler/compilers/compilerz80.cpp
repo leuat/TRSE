@@ -58,6 +58,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
         Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM
       ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX
             ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::TIM
+            ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::VIDEOTON
         ) {
         m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
         m_assembler->WriteConstants();

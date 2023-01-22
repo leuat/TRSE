@@ -1,4 +1,5 @@
-unit Memory;
+unit System;
+@use "memory"
 var
 	src, dst : pointer;
 	len : integer;

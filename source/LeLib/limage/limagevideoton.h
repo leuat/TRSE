@@ -29,7 +29,7 @@ public:
 
     void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 
-
+    void InitPens() override;
 
     void ReInitialize()
     {
