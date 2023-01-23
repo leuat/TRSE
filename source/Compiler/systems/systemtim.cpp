@@ -34,21 +34,18 @@ void SystemTIM::SetupDisk(QString projectPath)
     QDir().mkdir(path);
     QDir().mkdir(path+"/floppy");
 
-    Util::CopyFile(":resources/bin/tim_floppy/diskdefs",path+"/diskdefs");
-    Util::CopyFile(":resources/bin/tim_floppy/empty_9600.img",path+"/empty_9600.img");
 
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/emu.com",path+"/floppy/emu.com");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/ldr.com",path+"/floppy/ldr.com");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/mdsk.com",path+"/floppy/mdsk.com");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/names.ndr",path+"/floppy/names.ndr");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/start.com",path+"/floppy/start.com");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/tim.fcp",path+"/floppy/tim.fcp");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/tim.iop",path+"/floppy/tim.iop");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/tim.rcp",path+"/floppy/tim.rcp");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/tim.z3t",path+"/floppy/tim.z3t");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/valias.com",path+"/floppy/valias.com");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/wheel.com",path+"/floppy/wheel.com");
-    Util::CopyFile(":resources/bin/tim_floppy/floppy/zcpr3.sys",path+"/floppy/zcpr3.sys");
+    QString orgDir  = ":resources/bin/tim_floppy/";
+
+
+//    Util::CopyFile(":resources/bin/tim_floppy/diskdefs",path+"/diskdefs");
+  //  Util::CopyFile(":resources/bin/tim_floppy/empty_9600.img",path+"/empty_9600.img");
+
+
+    Util::CopyFilesInDirectory("*", orgDir+"/floppy",path+"/floppy");
+    Util::CopyFilesInDirectory("*", orgDir,path);
+
+
 
 
 }
