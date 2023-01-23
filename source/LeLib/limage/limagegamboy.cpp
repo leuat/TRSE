@@ -33,8 +33,7 @@ void LImageGamboy::ExportBin(QFile &file)
 
 }
 
-void LImageGamboy::SpritePacker(LImage *in, QByteArray &sprData, int x, int y, int w, int h, int compression) {
-
+void LImageGamboy::SpritePacker(LImage *in, QByteArray& rawDataOut, QByteArray &sprData, int x, int y, int w, int h, int compression,int& noChars) {
     int cur = 1;
     while (!(m_data[cur*2].isEmpty() && m_data[cur*2+1].isEmpty())) { //Find first non-empty sprite
         cur++;

@@ -26,6 +26,8 @@ public:
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div);
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
     void AddToVZ200Data(QByteArray& data, LImage& img,int x, int y, int w, int h);
+    void AddTo4PixelData(QByteArray& data, LImage& img,int x, int y, int w, int h);
+    void AddSpecialC64bitmapModeToData(QByteArray& data, LImage& img,int x, int y, int w, int h);
     void AddToDataBBCMode5(QByteArray& data, LImage* img,int x, int y, int w, int h);
     void AddToDataVGA(QByteArray& data, LImageQImage& img,int x, int y, int w, int h);
     void AddBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl, int shift);
@@ -44,6 +46,11 @@ public:
 
     static void SaveSinusScrollerData(MultiColorImage*, int height, int startaddr, QString fname);
     static void SaveSinusScrollerData_OLD(MultiColorImage*, int height, int startaddr, QString fname);
+
+
+    static int BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &outData, QVector<int> &arrangement, int x, int y, int w, int h, int compression, int noBitplanes);
+
+
 
 
     void SaveCompressedSpriteData(QByteArray& data, QString dataFile, QString tableFile, int address, int compressionLevel);

@@ -1,0 +1,167 @@
+/*
+
+	Code from this unit was largely taken/adapted from MESCC compiler by Miguel I. Garcia Lopez / FloppySoftware
+	https://github.com/MiguelVis/mescc
+	See mescc.h and conio.h
+
+*/
+
+unit Z80CPM;
+var
+	chr: byte;
+	str: pointer;
+	
+
+/**
+	Startup code for Z80 CP/M, must be first executed code in TIM-011 program
+**/
+procedure Startup() inline;
+begin
+	asm("
+	// Set stack under BDOS (xx00h)
+    ld  hl,($6)
+    ld  l,0
+    ld  sp,hl
+
+	// Leave space for stack and init. variables
+    //ld  de,ccSTACKSIZE
+    ld  de,512
+    or  a
+    sbc hl,de
+    dec hl
+    ld  (ccfreelast),hl
+    ld  de,ccfreemem			// Last location of the program
+    ld  (ccfreefirst),de
+    or  a
+    sbc hl,de
+    inc hl
+    ld  (ccfreebytes),hl
+    jr  nc,ccargs
+
+	// Error, no memory for stack
+    ld  c,9
+    ld  de,ccerrstack
+    call 5
+    jp  0
+
+run_bios:
+	ld   hl,($1)
+	ld   d,0
+	add  hl,de
+	jp   (hl)
+
+ccerrstack:
+    dc.b 'Runtime Error - No stack$'
+ccargs:
+	");
+end;
+
+
+/**
+	Exit code for Z80 CP/M, must be last executed code in TIM-011 program
+**/
+procedure Exit() inline;
+begin
+	asm("
+exit:
+    nop ; Patch for atexit() -- 3 bytes.
+    nop
+    nop	
+    jp  0
+
+// Variables for memory functions
+ccfreefirst: dc.w 0 // Adr. first free byte
+ccfreelast:  dc.w 0 // Adr. last free byte
+ccfreebytes: dc.w 0 // Number of free bytes
+ccfreemem:
+	");	
+end;
+
+
+/**
+	Puts a character to CP/M terminal, where chr is ASCII code
+**/
+procedure putch(chr: global byte);
+begin
+	asm("
+	ld   a,[Z80CPM_chr]
+	ld   c,a
+	ld   e,9
+	jp run_bios
+	");	
+end;
+
+
+/**
+	Gets an ASCII character from terminal, waits for keypress.
+**/
+function getch(): integer;
+begin
+	asm("
+	ld e,6
+	call run_bios
+	ld h,0
+	ld l,a
+	");	
+end;
+
+
+/**
+	Checks if there are characters in CP/M terminal's keyboard buffer 
+**/
+function kbhit(): integer;
+begin
+	asm("
+	ld e,3
+	call run_bios
+	ld h,a
+	ld l,a
+	");	
+end;
+
+
+/**
+	Puts a character to CP/M terminal plus adds LF after CR, where chr is ASCII code
+**/
+procedure putchar(chr: global byte);
+begin
+	if chr = 13 then putch(10);
+	putch(chr);
+end;
+
+
+/**
+	Gets an ASCII character from terminal, waits for keypress, produces echo
+**/
+function getchar(): integer;
+begin
+	getchar := getch();
+	putchar(getchar);
+end;
+
+/**
+	Puts a null-terminated string to terminal
+**/
+procedure puts(str: global pointer);
+begin
+	asm("
+	ld   hl,(Z80CPM_str)
+puts_char:
+	push hl
+	ld a,(hl)
+	or a
+	jr z,puts_end
+	ld c,a
+	ld e,9
+	call run_bios
+	pop hl
+	inc hl
+	jp puts_char
+puts_end:
+	pop hl
+	ret
+	");	
+end;
+
+
+end.

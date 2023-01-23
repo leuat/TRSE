@@ -15,7 +15,7 @@
 
 class SortZData {
 public:
-    float z;
+    double z;
     int idx;
 };
 
@@ -47,7 +47,7 @@ public:
     Ray m_localRay[32];
     QVector<QVector3D> m_2Dpoints[32];
     QVector2D m_raw_uv;
-    float m_bbRadius;
+    double m_bbRadius;
     bool doesIntersect = true;
     QVector<AbstractRayObject*> m_children;
 
@@ -67,7 +67,7 @@ public:
 
     }
 
-    virtual void Save6502(QString file, float scale) {
+    virtual void Save6502(QString file, double scale) {
 
     }
 
@@ -79,9 +79,9 @@ public:
        return m_localPos*m_scale;
     }
 
-    QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, float l);
+    QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, double l);
 
-    QVector3D CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, float l);
+    QVector3D CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, double l);
 
     void AddToFlattened(QVector<AbstractRayObject*>& list) {
        list.append(this);
@@ -120,7 +120,7 @@ public:
         m_rotmatInv = m_rotmat.inverted(&b);
     }
 
-    void SetQuatAxisAngle(QVector3D v, float angle) {
+    void SetQuatAxisAngle(QVector3D v, double angle) {
         m_rotation = v;
         QMatrix3x3 rot = QQuaternion::fromAxisAndAngle(v,angle).toRotationMatrix();
         m_rotmat.setToIdentity();
@@ -139,20 +139,20 @@ public:
     virtual QVector3D calculateNormal(Ray* ray, QVector3D isp) {return QVector3D(0,0,0);}
     virtual bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) {return false;}
 
-    QVector3D ApplyDirectionalLight(QVector3D normal, RayTracerGlobals& globals,QVector<float>& shadows);
-    QVector3D ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals& globals, Material& mat,QVector<float>& shadows);
+    QVector3D ApplyDirectionalLight(QVector3D normal, RayTracerGlobals& globals,QVector<double>& shadows);
+    QVector3D ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals& globals, Material& mat,QVector<double>& shadows);
     virtual QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) {return QVector3D(0,0,0);}
 
-    void CalculateLight(Ray* ray, QVector3D& normal,  QVector3D& tangent, QVector3D& localIsp,  RayTracerGlobals& globals, QVector3D reflectDir,QVector<AbstractRayObject*>& objects, int pass, QVector<float>& shadows);
+    void CalculateLight(Ray* ray, QVector3D& normal,  QVector3D& tangent, QVector3D& localIsp,  RayTracerGlobals& globals, QVector3D reflectDir,QVector<AbstractRayObject*>& objects, int pass, QVector<double>& shadows);
 
     QVector3D GetPerturbedNormal(QVector3D pos, QVector3D normal, QVector3D tangent, RayTracerGlobals& globals);
 
     QVector3D Reflect(AbstractRayObject* me,  QVector3D isp, QVector3D normal, RayTracerGlobals& globals, QVector<AbstractRayObject*>& objects, int reflect);
     QVector3D ReflectMarch(AbstractRayObject* me,  QVector3D isp, QVector3D normal, RayTracerGlobals& globals, QVector<AbstractRayObject*>& objects, int reflect);
 
-    virtual float intersect(Ray* ray) {return 110;}
+    virtual double intersect(Ray* ray) {return 110;}
 
-    float intersect(QVector3D pos) {
+    double intersect(QVector3D pos) {
         Ray r(pos,pos);
         r.m_currentPos = pos;
         return intersect(&r);
@@ -169,7 +169,7 @@ public:
         m_position = pos;
         m_bbRadius = 0.01;
     }
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -185,7 +185,7 @@ public:
     QVector<AbstractRayObject*> m_objects;
 
 
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -193,9 +193,9 @@ public:
 class RayObjectOperation : public AbstractRayObject {
 public:
     QString m_type;
-    float m_blend;
+    double m_blend;
     AbstractRayObject* m_o1, *m_o2;
-    RayObjectOperation(QString type, float blend, AbstractRayObject* o1, AbstractRayObject* o2) {
+    RayObjectOperation(QString type, double blend, AbstractRayObject* o1, AbstractRayObject* o2) {
         m_type = type.toLower();
        m_blend = blend;
        m_o1 = o1;
@@ -204,7 +204,7 @@ public:
     }
 
 
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -219,7 +219,7 @@ public:
     }
     QVector3D m_radius = QVector3D(1,1,1);
     bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
     QVector3D calculateNormal(Ray* ray, QVector3D isp) override {return isp;}
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
 };
@@ -237,8 +237,8 @@ public:
         m_material = material;
         m_bbRadius = rad.length();
     }
-    float intersect(Ray* ray) override;
-    float Duck(Ray* ray);
+    double intersect(Ray* ray) override;
+    double Duck(Ray* ray);
 };
 
 
@@ -254,7 +254,7 @@ public:
         m_bbRadius = 1000;
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
     bool RayTrace(Ray* ray, RayTracerGlobals& globals, QVector3D& isp, int pass,QVector<AbstractRayObject*>& objects) override;
 };
@@ -279,7 +279,7 @@ public:
         m_bbRadius = m_box.length();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -302,7 +302,7 @@ public:
         m_bbRadius = m_box.length();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -320,7 +320,7 @@ public:
         m_bbRadius = (radius.x()+radius.y());
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -329,7 +329,7 @@ class RayObjectTriangle: public AbstractRayObject {
     QVector3D m_pos[3];
 
     RayObjectTriangle();
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
     virtual QVector3D getBBBox() override;
 
@@ -348,7 +348,7 @@ public:
         m_bbRadius = 1.5*radius.length();
     }
     QVector3D CalculateUV(QVector3D& pos, QVector3D& normal, QVector3D& tangent) override;
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -366,7 +366,7 @@ public:
         m_bbRadius = obj->m_bbRadius;
     }
 
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -380,7 +380,7 @@ public:
         m_obj = obj;
     }
 
-    float intersect(Ray* ray) override;
+    double intersect(Ray* ray) override;
 
 };
 
@@ -426,15 +426,15 @@ public:
 
     bool m_isWireframe = true;
     int m_type = 0;
-    virtual void Save6502(QString file, float scale) override;
+    virtual void Save6502(QString file, double scale) override;
     void OptimiseLineList();
 
     void CalculateNormals();
 
     void Render(Camera& cam, QImage& img) override;
-    void GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float shift1, float shift2, int m_skipType);
+    void GenerateTorus(int c1, int c2, double r1, double r2, bool isWireframe, int type, double shift1, double shift2, int m_skipType);
 
-    float intersect(Ray* ray) override {
+    double intersect(Ray* ray) override {
         return -1;
     }
 

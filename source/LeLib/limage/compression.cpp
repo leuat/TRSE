@@ -89,6 +89,45 @@ void Compression::AddToVZ200Data(QByteArray &data, LImage &img, int xp, int yp, 
         }
 
 }
+void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=4) {
+            uchar c = 0;
+            int xx = xp+x;
+            int yy = yp+y;
+            for (int j=0;j<4;j++) {
+                uchar v = img.getPixel(xx+j,yy);
+                c=c|(v<<(2*j));
+            }
+            data.append(c);
+
+//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+
+}
+
+void Compression::AddSpecialC64bitmapModeToData(QByteArray &data, LImage &img, int x1, int y1, int w, int h)
+{
+    for (int y=0;y<h;y+=3)
+        for (int x=0;x<w;x+=1) {
+            uchar c = 0;
+            int xx = x1+x;
+            int yy = y1+y;
+
+            uchar v1 = img.getPixel(xx,yy)&15;
+            uchar v2 = img.getPixel(xx,yy+1)&15;
+            uchar v3 = img.getPixel(xx,yy+2)&15;
+            c = v2 | v1<<4;
+            data.append(c);
+            data.append(v3);
+
+//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+
+}
 
 void Compression::AddToDataBBCMode5(QByteArray &data, LImage *img, int xp, int yp, int w, int h)
 {
@@ -527,6 +566,61 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
 void Compression::SaveSinusScrollerData_OLD(MultiColorImage* mc, int height, int startaddr, QString fname)
 {
 }
+
+
+
+int Compression::BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &outData, QVector<int> &arrangement,
+                                              int x, int y, int w, int h, int compression, int noBitplanes) {
+    int cur = 0;
+    outData.clear();
+    int foundChars = 0;
+    int totalChars = 0;
+ //   qDebug() << arrangement.size();
+    for (int j=0;j<h;j++)
+        for (int i=0;i<w;i++) {
+            // Lookup in array
+            int ii =(i+(j)*w)*noBitplanes*8;
+//            qDebug() << "Currently on "<<ii<<i<<j << " with total size" << totalChars << " found chars" << foundChars;
+/*            QByteArray org;
+            for (int i=0;i<noBitplanes;i++)
+                org.append(ii + i);
+*/
+            //double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length, int type, int bmask)
+            int found = -1;
+            double best = 1E30;
+            for (int k=0;k<totalChars;k++) {
+                double res = Compare(inData, outData,ii,k*noBitplanes*8,8*noBitplanes, TYPE_REGULAR, 1);
+//                qDebug() << res;
+                if (res<compression) {
+                    if (res<best) {
+                        found = k;
+                        best = res;
+                    }
+//                    break;
+                }
+
+            }
+
+            if (found==-1) {
+                // Copy and add data
+                for (int k=0;k<noBitplanes*8;k++) {
+                    outData.append( inData[ii+k]);
+                }
+
+                arrangement.append(totalChars);
+                totalChars+=1;
+
+            }
+            else {
+                arrangement.append(found);
+                foundChars +=1;
+            }
+        }
+//    qDebug() << "Compression::BitplaneCharsetSpritePacker found / total " << foundChars << totalChars << " Arrangement size " << arrangement.size();
+    return totalChars;
+}
+
+
 void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int startaddr, QString fname)
 {
     QString dfname = fname;
@@ -560,7 +654,7 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
             c = mc->m_data[pos].c[1];
             d = mc->m_data[pos].c[2];
             y++;
-          }
+        }
         y--;
         // here we start
         uchar oc = 0;

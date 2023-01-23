@@ -46,3 +46,6 @@ override_target_settings_prg = 1
 build_list = ,
 exomizer_toggle = 0
 show_all_files = 1
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0

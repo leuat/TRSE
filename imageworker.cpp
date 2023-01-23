@@ -68,11 +68,14 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("ZX Spectrum 256x192", "spectrum",LImage::Type::Spectrum, LColorList::Type::SPECTRUM));
     m_types.append(ImageType("SNES tilemap/sprites", "snes",LImage::Type::SNES, LColorList::Type::SNES));
     m_types.append(ImageType("SNES Level editor", "snes",LImage::Type::LevelEditorSNES, LColorList::Type::SNES));
+    m_types.append(ImageType("SNES generic image", "snes",LImage::Type::SNESGeneric, LColorList::Type::SNES));
     m_types.append(ImageType("VZ200 mode 1 (128x64)", "vz200",LImage::Type::VZ200, LColorList::Type::VZ200));
     m_types.append(ImageType("JDH8", "jdh8",LImage::Type::JDH8, LColorList::Type::CGA1_HIGH));
     m_types.append(ImageType("Generic indexed image", "all",LImage::Type::LImageGeneric, LColorList::Type::C64));
     m_types.append(ImageType("Generic 256-color sprites", "x16",LImage::Type::GenericSprites, LColorList::Type::VGA));
     m_types.append(ImageType("CGA/EGA 160x100 16 colour", "x86",LImage::Type::CGA160x100, LColorList::Type::DOS));
+    m_types.append(ImageType("TIM 512x256", "TIM",LImage::Type::TIM, LColorList::Type::TIM));
+    m_types.append(ImageType("Videoton generic", "VIDEOTON",LImage::Type::Videoton, LColorList::Type::VIDEOTON));
 
 //    m_types.append(ImageType("Hybrid multicolor/hires charset", "c64",LImage::Type::HybridCharset,LColorList::Type::C64));
   //  m_types.append(ImageType("Hybrid multicolor/hires charset", "vic20",LImage::Type::HybridCharset,LColorList::Type::VIC20));

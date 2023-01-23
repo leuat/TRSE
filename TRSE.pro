@@ -32,7 +32,7 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-###ARCH = arm64
+######ARCH = arm64
 
 macx{
 #    CONFIG += warn_off
@@ -215,8 +215,10 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemsnes.cpp \
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemtiki100.cpp \
+    source/Compiler/systems/systemtim.cpp \
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
+    source/Compiler/systems/systemvideoton.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
@@ -227,6 +229,8 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/limage/limagesnesgeneric.cpp \
+    source/LeLib/limage/limagevideoton.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
     source/LeLib/bbc/discimage.cpp \
@@ -259,6 +263,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagespectrum.cpp \
     source/LeLib/limage/limagevga.cpp \
     source/LeLib/limage/limagevz200.cpp \
+    source/LeLib/limage/limagetim.cpp \
     source/LeLib/limage/limagex16.cpp \
     source/LeLib/limage/lpen.cpp \
     source/LeLib/limage/pixelchar.cpp \
@@ -498,8 +503,10 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemsnes.h \
     source/Compiler/systems/systemspectrum.h \
     source/Compiler/systems/systemtiki100.h \
+    source/Compiler/systems/systemtim.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
+    source/Compiler/systems/systemvideoton.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \
@@ -510,6 +517,8 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/limage/limagesnesgeneric.h \
+    source/LeLib/limage/limagevideoton.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \
     source/LeLib/bbc/discimage.h \
@@ -542,6 +551,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagespectrum.h \
     source/LeLib/limage/limagevga.h \
     source/LeLib/limage/limagevz200.h \
+    source/LeLib/limage/limagevtim.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \

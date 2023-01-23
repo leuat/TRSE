@@ -48,4 +48,7 @@ zeropage_colormemory = $fc
 data_header_/users/leuat/code/trse/publish/tutorials/amiga/tutorials/images/trse.flf = 6.41269e-314
 data_header_images/trse.flf = 6.41269e-314
 show_all_files = 1
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0
 open_files =, tutorial1.ras

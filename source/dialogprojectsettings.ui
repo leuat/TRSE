@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>4</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -233,12 +233,22 @@
                  </item>
                  <item>
                   <property name="text">
+                   <string>VIDEOTON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
                    <string>TRS80COCO</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
                    <string>WONDERSWAN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TIM</string>
                   </property>
                  </item>
                 </widget>

@@ -1,0 +1,109 @@
+--[[
+
+Generates a 256-byte smooth dithering pattern
+
+]]--
+
+c1 = 0.7
+globals = {
+ 	camera = { x = 0, y=0, z=3.6 },
+     fov = 45,
+	target = { x = 0, y=0.0, z=0 },
+	light0 = {   	direction = {x=-0.2, y=0.2, z=1 }, 
+				color = {x=c1, y=c1, z=c1}, 
+				power = 1.5,
+			},
+	ambient = { x = 1.0, y = 1.0, z = 1.0 },
+    raymarch_steps = 30,
+	raymarch_shadow_steps = 4,
+	up = {x=0, y=1, z=0 },
+	sky = 0,
+	shadow_scale = 1,
+	isPaused = 0
+	
+}
+
+
+
+
+-- 10*24
+output = {
+	resolution = { width = 4, height=8},
+--	resolution = { width = 320, height=200},
+	output_type = 3,
+	aspect = 1.0,
+	dither = 1,
+	ditherStrength = { x = 80, y= 5, z= 5},
+
+--	c64_colors = { 0,5,14,6 }
+--	palette_file = "images/pals.pal",
+	palette = {0,0,0,  85,85,85,170,170,170,255,255,255},
+		index_colors = { 0,1,2,3 }
+
+}
+
+
+-- Init is called on start  
+ 
+
+frame = 0
+--noFrames = 24
+noFrames = 256
+curSave = 1
+
+hasSaved = 0
+
+
+
+function Init()
+
+
+	UpdateScene()
+
+end
+
+function PostProcess();
+	t = frame/noFrames
+	if (t>0.5) then 
+		t = 1-t;
+	end
+	c = t * 255 *2
+	w = 0.2
+	rnd = math.random()*w+(1-w)
+	c = c*rnd
+	
+	
+	
+	for i= 0,output.resolution.height do	 
+		DrawLine(0,i,4,i, c,c,c);
+	end
+	
+
+end
+
+
+function UpdateScene()
+end
+
+
+function Update()
+	
+
+	if (frame>=1) then
+		Add4PixelToData(0,0,1,1)
+--		Add4PixelToData(0,1,1,1)
+	
+	end
+
+	if (frame==noFrames) then 
+		SaveRawData("data/smooth_data.bin");
+		Message("saved. please close!")
+	end	
+		UpdateScene()
+
+
+	frame=frame+1
+	
+
+
+end

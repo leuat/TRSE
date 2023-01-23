@@ -68,4 +68,5 @@ data_header_chickens/logo_sprite.flf = 0
 dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
+data_header_chickens/chickens_charset.flf = 0
 open_files =, info.rtf

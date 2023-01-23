@@ -1,0 +1,63 @@
+program Tutorial2;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+
+var
+	font: incbin("zxchars.bin");	// load an 8x8 font
+	text: string = ("Quick brown fox jumps over the lazy dog... Once Upon a Byte... ");
+
+	i,ch: integer;
+
+begin
+	Z80CPM::Startup();
+	
+	// turn off terminal cursor
+	System::CursorOff();
+	
+	// set hardware scroll to 0 (otherwise garphics coordinates could be translated)
+	System::SetScreenPos(0);
+	
+	// set printing font
+	Screen::SetFont(#font);
+
+	// clear screen
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	
+	// "clear" a few boxes with different patterns
+	Screen::ClearBox(10, 50, 30, 10, $55);
+	Screen::ClearBox(50, 50, 30, 10, $AA);
+	Screen::ClearBox(90, 50, 30, 10, $FF);
+
+	// print a char on (0,0)
+	Screen::PrintChrXY(0,0,$30);
+	// print a few more chars after the previous one
+	Screen::PrintChr($31);
+	Screen::PrintChr($32);
+	
+	// goto next line on screen (character coordinates can be on half a char too)
+	Screen::GotoXY(0,2);
+
+	// print part of the string	
+	Screen::PrintNStr("La la not printed", 6);
+	
+	//print some more strings
+	for i:= 1 to 10 do begin
+		Screen::SetPrintInv(1);
+		Screen::PrintStr(#text);
+		Screen::SetPrintInv(0);
+		Screen::PrintStr(#text);
+	end;
+
+	Screen::GotoXY(30,40);
+	Screen::PrintStr("Press any key...");
+	ch := Z80CPM::getch();
+
+	// clear screen
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	// turn on terminal cursor
+	System::CursorOn();
+
+	Z80CPM::Exit();
+end.

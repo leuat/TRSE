@@ -122,6 +122,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         QString ls = emu.split("/").last().remove(".app");
         emu = emu + "/Contents/MacOS/"+ls;
     }
+
 #endif
     // Custom must be at last, since it overwrites parameters
     if (Syntax::s.m_currentSystem->isCustom()) {
@@ -137,7 +138,13 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
     QProcess process;
 
-
+#ifdef __APPLE__
+    if (emu.endsWith(".exe")) {
+        // USE WINE
+        params.insert(0,emu);
+        emu = "/opt/homebrew/bin/wine64";
+       }
+#endif
 
     process.waitForFinished();
     QString orgDir = QDir::currentPath();
@@ -179,7 +186,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         process.startDetached();
     }
     else {
-//        qDebug() <<emu<<params;
+        qDebug() <<emu<<params;
         process.startDetached(emu, params);
 
     }
@@ -190,12 +197,14 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
 
     process.startDetached(emu, params);
+
     //qDebug() << params;
 #endif
     //    process.pi
     QString output(process.readAllStandardOutput()+process.readAllStandardError());
 //    qDebug() <<output;
     QDir::setCurrent(orgDir);
+    Syntax::s.m_currentSystem->ExtraEmulatorCommands();
     //    process.waitForFinished();
 }
 
@@ -316,6 +325,7 @@ void FormRasEditor::Build(bool isShadow)
         m_builderThread.start();
     else
         m_builderThread.run();
+
     Data::data.isBuilding = false;
 
 }

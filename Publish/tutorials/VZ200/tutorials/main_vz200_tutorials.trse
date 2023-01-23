@@ -72,4 +72,5 @@ charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutor
 data_header_images/sprites1.flf = 0
 dirart_flf_file = none
 d64name = main
+use_vice_c1541 = 0
 open_files =, tutorial1.ras

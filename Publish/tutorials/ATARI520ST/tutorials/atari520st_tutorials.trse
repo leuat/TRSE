@@ -51,4 +51,7 @@ data_header_/users/leuat/code/trse/publish/tutorials/atari520st/tutorials/images
 show_all_files = 0
 data_header_images/trseflf.flf = 0
 data_header_images/background.flf = 0
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0
 open_files =, tut1.ras

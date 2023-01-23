@@ -1,0 +1,155 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+@export "images/image2.flf" "images/image2.bin" 256
+
+var  
+	// some plasma variables
+	val,val2,c2x, c2y,ax, ay,time : byte;
+	x,y,shift : byte;
+	dst,zp : ^byte;
+	// mini sine table
+	const width : byte = 512/4;
+	const height : byte = 100;	
+	// The tables must be aligned at $xx00
+    siny : array[width] of byte at $7F00; 
+	sinx : array[height] of byte at $7E00; 
+	sin : array[256] of byte = buildsinetable(127);
+
+	data : incbin("data/smooth_data.bin", $7D00);
+
+// Plasma procedure
+
+procedure Calculate();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to width do begin 
+		siny[x]:=  sin[c2x] + sin[c2y]-time;
+		c2x:=c2x+2;
+		c2y:=c2y+5;
+	end;
+
+	ax:=ax+2;
+	ay:=ay-3;
+
+	// Set up x-sine table
+	for x:=0 to height/2 do begin 
+		sinx[x] := sin[c2x] + sin[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	dst:=$8000+28+shift;
+	
+end;
+
+
+procedure Plasma0();
+begin
+	for x:=0 to width  offpage do 
+	begin
+		val:=siny[x];
+/*		for y:=0 to height do 
+		begin
+			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
+			// we have created a lookup table instead!
+			val2:=data[ (sinx[y] +val) ];
+			// Set the screen memory
+			asm("
+				ld bc,[zp]
+				ld a,[val2]
+				out (c),a
+			");
+			zp+=1;
+			// Set color memory
+		end;*/
+		// unroll the code
+		asm("
+			ld bc,[dst]
+			ld ix,sinx ; sin table
+			ld de,data ; data lookup for screen
+			ld a,[val] ; current value, store in l
+			ld l,a
+			repeat 50
+						
+			ld c,{i*4+10} ; b is aligned, set c to the desired location - every 4th line
+			
+			ld a,l ; current value
+			add a,[ix+{i}] ; add sine value
+			; lookup in data[e] 
+			ld e,a
+			ld a,[de]
+			; now out it!
+			out (c),a
+			
+			
+			
+			repend
+		");
+			
+		dst+=256;
+	end;
+
+end;
+
+procedure Plasma1();
+begin
+	for x:=0 to width  offpage do 
+	begin
+		val:=siny[x];
+		asm("
+			ld bc,[dst]
+			ld ix,sinx ; sin table
+			ld de,data ; data lookup for screen
+			ld a,[val] ; current value, store in l
+			ld l,a
+			repeat 50
+						
+			ld c,{i*4+12} ; b is aligned, set c to the desired location - every 4th line
+			
+			ld a,l ; current value
+			add a,[ix+{i}] ; add sine value
+			; lookup in data[e] 
+			ld e,a
+			ld a,[de]
+			; now out it!
+			out (c),a
+			
+			
+			
+			repend
+		");
+			
+		dst+=256;
+	end;
+
+end;
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	while (true) do
+	begin
+
+		Calculate();
+		time+=5;
+		// Alternate updating every 2nd line
+		if (time&1=0) then
+			Plasma0()
+		else 
+			Plasma1();
+		
+	end;
+	Z80CPM::Exit();
+
+end.

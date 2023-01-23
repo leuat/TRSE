@@ -97,7 +97,7 @@ void SystemCustom::Assemble(QString &text, QString filename, QString currentDir,
     m_orgOutput = "";
     if (output.toLower().contains("error")) {
         m_orgOutput = output;
-        text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
+        text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>"+output;
         m_buildSuccess = false;
     }
 

@@ -1,0 +1,321 @@
+unit Tiles;
+/*
+    TILE routines
+
+    Tiles/sprites are 16x16 pixels graphic blocks. They can be positioned on 4-pixel boundaries
+    anywhere inside TIM-011 video memory. This gives 0-127 for X and 0-63 for Y coordinate.
+	
+	Tile data is organized by columns because TIM-011 video memory is organized by columns
+*/
+var
+	// tile size is 16x16 pixels, which is 4 bytes wide (2 bits per pixel) and 16 bytes high
+	//const SPRWBYT: byte = 4;	// cannot use constants in assembly code
+	//const SPRHPIX: byte = 16;
+
+	timtiles: pointer;
+	x,y : integer;
+	tile: integer;
+
+@donotremove x
+@donotremove y
+@donotremove tile
+//@donotremove SPRWBYT
+//@donotremove SPRHPIX
+
+/**
+	Tiles/sprites are 16x16 pixels graphic blocks. They can be positioned on 4-pixel boundaries
+	anywhere inside TIM-011 video memory. This gives 0-127 for X and 0-63 for Y coordinate.
+	
+	This function sets the address for tiles accessed by index.
+**/
+procedure SetIndexTiles(tiles: pointer);
+begin
+	timtiles := tiles;
+end;
+
+// helper routine to calculate tile address
+// if address in HL is 00-FFH, it is considered that this is tile index, and real address is calculated as timtiles + L*64
+// if address in HL is greater than 00FFH, it is considered as memory address
+procedure tileaddr();
+begin
+	asm("
+tileaddr:	
+    inc h
+    dec h
+    jp nz, tileaddr0
+    // shift left by 6 positions
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    // add base tile address
+    push de
+    ld de, (Tiles_timtiles)
+    add hl, de
+    pop de
+tileaddr0:
+	");
+end;
+@donotremove tileaddr
+
+
+/**
+	Puts tile on screen using OR with current content, where x = 0..127, y = 0..63, tile = 0..255 for index based, or full address
+**/
+procedure OrTile(x, y: global integer, tile: global integer);
+// x = 0 .. 127, y = 0 .. 63, addr 0-255 index based, or full address
+// ofset = x*256 + y*4 + 8000H
+begin
+	asm("
+	ld hl, (Tiles_tile)
+	ld de, (Tiles_y)
+	ld bc, (Tiles_x)
+    call tileaddr
+
+    // x*256
+    ld b, c
+    // add 80h to addr hi
+    sla b
+    scf
+    rr b
+    // y*4
+    sla e
+    sla e
+    ld c, e
+
+    ld d, 4	// SPRWBYT
+    // place two columns of 16 bytes to two adjacent rows of video memory using OR
+ortile1:
+    push bc
+    ld e, 16 // SPRHPIX
+
+ortile2:
+    in a,(c)
+    or (hl)
+    out (c), a
+
+    inc hl
+    inc bc
+    dec e
+    jp nz, ortile2
+
+    pop bc
+    inc b
+    dec d
+    jp nz, ortile1
+	");
+end;
+
+
+/**
+	Gets 64 bytes for tile from screen into a array variable, where x = 0..127, y = 0..63, tile = 0..255 for index based, or full address
+**/
+procedure GetTile(x, y: global integer, tile: global integer);
+// x = 0 .. 127, y = 0 .. 63, addr 0-255 index based, or full address
+// ofset = x*256 + y*4 + 8000H
+begin
+	asm("
+	ld hl, (Tiles_tile)
+	ld de, (Tiles_y)
+	ld bc, (Tiles_x)
+    call tileaddr
+
+    ld b, c
+    sla b
+    scf
+    rr b
+    sla e
+    sla e
+    ld c, e
+
+    ld d, 4 // SPRWBYT
+gettile1:
+    push bc
+    ld e, 16 // SPRHPIX
+
+gettile2:
+    in a,(c)
+    ld (hl), a
+
+    inc hl
+    inc bc
+    dec e
+    jp nz, gettile2
+
+    pop bc
+    inc b
+    dec d
+    jp nz, gettile1
+	");
+end;
+
+
+/**
+	Puts tile on screen, where x = 0..127, y = 0..63, tile = 0..255 for index based, or full address
+**/
+procedure PutTile(x, y: global integer, tile: global integer);
+// x = 0 .. 127, y = 0 .. 63, addr 0-255 index based, or full address
+// ofset = x*256 + y*4 + 8000H
+begin
+	asm("
+	ld hl, (Tiles_tile)
+	ld de, (Tiles_y)
+	ld bc, (Tiles_x)
+    call tileaddr
+
+    ld b, c
+    sla b
+    scf
+    rr b
+    sla e
+    sla e
+    ld c, e
+
+    ld d, 4 // SPRWBYT
+puttile1:
+    push bc
+    ld e, 16 // SPRHPIX
+
+puttile2:
+    ld a,(hl)
+    out (c), a
+
+    inc hl
+    inc bc
+    dec e
+    jp nz, puttile2
+
+    pop bc
+    inc b
+    dec d
+    jp nz, puttile1
+	");
+end;
+
+
+/**
+	Flips tile pixels horizontaly, where tile = 0..255 for index based, or full address
+**/
+procedure FlipTileX(tile: global integer);
+begin
+	asm("
+	ld hl,(Tiles_tile)
+    call tileaddr
+    ex de,hl
+
+    // first, swap columns 0 and 3
+    ld h, d
+    ld a, 48	// SPRHPIX*3
+    add a, e        // a = e + sprhpix*3
+    jp nc, flptilex0
+    inc h
+flptilex0:
+    ld l, a         // hl = de + sprhpix*3
+
+    // column 0 and 3 swapping
+    ld b, 16 // SPRHPIX
+flptilex1:
+    ld a, (de)
+    call flip1byt
+    ex af,af'
+    ld a, (hl)
+    call flip1byt
+    ld (de), a
+    ex af,af'
+    ld (hl), a
+
+    inc hl
+    inc de
+    dec b
+    jp nz, flptilex1
+
+    // second, swap columns 1 and 2
+    ld h, d
+    ld a, 16 // SPRHPIX
+    add a, e        // a = e + sprhpix
+    jp nc, flptilex2
+    inc h
+flptilex2:
+    ld l, a         // hl = de + sprhpix
+
+    // column 1 and 2 swapping
+    ld b, 16 // SPRHPIX
+flptilex3:
+    ld a, (de)
+    call flip1byt
+    ex af,af'
+    ld a, (hl)
+    call flip1byt
+    ld (de), a
+    ex af,af'
+    ld (hl), a
+
+    inc hl
+    inc de
+    dec b
+    jp nz, flptilex3
+    
+    ret
+
+// helper function for flptilex
+// flips 4 pixels inside one byte
+//   7   6   5   4   3   2   1   0       start positions
+//   <2  <2  >2  >2  <2  <2  >2  >2      movement to get to final position
+//   1   0   3   2   5   4   7   6       final positions
+flip1byt:
+    ld c,a
+    rrc c
+    rrc c   // 10765432
+    rlca
+    rlca    // 54321076
+    xor c    
+    and       %00110011
+    xor c   // 10325476
+	");
+end;
+
+
+/**
+	Flips tile pixels vertically, where tile = 0..255 for index based, or full address
+**/
+procedure FlipTileY(tile: global integer);
+begin
+	asm("
+	ld hl,(Tiles_tile)
+    call tileaddr
+    ex de,hl
+
+    ld b, 4
+flptiley0:
+    ld c, 8 // SPRHPIX/2
+    ld h, d
+    ld a, 15 // SPRHPIX-1
+    add a, e        // a = e + sprhpix-1
+    jp nc, flptiley1
+    inc h
+flptiley1:
+    ld l, a         // hl = de + sprhpix-1
+    push hl
+
+flptiley2:
+    ld a,(de)
+    ex af,af'
+    ld a,(hl)
+    ld (de), a
+    ex af,af'
+    ld (hl), a
+    inc de
+    dec hl
+    dec c
+    jp nz, flptiley2
+
+    pop de
+    inc de
+    dec b
+    jp nz, flptiley0
+	");
+end;
+
+end.

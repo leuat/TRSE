@@ -42,7 +42,7 @@ var
 	@donotremove i1
 	
 	/**
-	Copies [param 3] bytes from [param 1] to the palette register starting with color [param 2]
+	Copies [param 3] bytes <b>from</b> [param 1] to the palette register starting with color [param 2]
 	
 	**/
 	
@@ -538,6 +538,23 @@ Wait_NMI:
 begin
 	asm(" wai");
 end;	
+/*
+procedure CopyArrangementImageData(zp, p1:global pointer; x,y: global byte);
+begin
+	for j:=0 to y do 
+	begin
+		for i:=0 to x do
+		begin
+			zp[0]:=p1[0];
+			zp[1]:=p1[1];
+			zp+=2;
+			p1+=2;
+		end;
+	end;
+//	Screen::CopyToVRAM(zp,#Screen::BG1,32*32*2);
+	
+end;
+*/
 
 procedure Scroll(i1,i2:global integer;i3 : global integer);
 begin

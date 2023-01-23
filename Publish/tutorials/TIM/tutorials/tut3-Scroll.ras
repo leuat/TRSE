@@ -1,0 +1,48 @@
+program Tutorial3;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+
+var
+	font: incbin("zxchars.bin");
+	scrolltxt: string = ("Quick brown fox jumps over the lazy dog... Once Upon a Byte... And some mooooore teeeext... ");
+
+	i,j,ch: integer;
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	System::SetScreenPos(0);
+	Screen::SetFont(#font);
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	// prepare scrolling arrea
+	Screen::ClearBox(0, 44, 128, 20, $55);
+	Screen::SetScroll(5, 50, 40, #scrolltxt);
+
+	Screen::GotoXY(20,20);
+	Screen::PrintStr("Scrolling in a loop...");
+
+	// run for 350 cycles
+	for i := 0 to 350 do begin
+		for j:= 0 to 2000 do; // small pause
+		// scrolls the message for half a character
+		Screen::DoScroll();
+	end;
+
+	Screen::GotoXY(10,20);
+	Screen::PrintStr("Scrolling from 100ms timer interrupt... Press any key...");
+
+	// sets function to be called every 100ms from TIM's interrupt
+	System::SetTimerFunction(#Screen::DoScroll);
+
+	// now the scrolling is done from interrupt, main code just waits for keypress
+	ch := Z80CPM::getch();
+	
+	// returns interrupt function to normal
+	System::SetTimerFunction(0);
+
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	System::CursorOn();
+	Z80CPM::Exit();
+end.

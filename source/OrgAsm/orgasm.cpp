@@ -65,6 +65,35 @@ void Orgasm::ProcessSource()
 
 QString Orgasm::processRepeatIndex(QString s, int currentX, int currentY)
 {
+    QJSEngine jsEngine;
+
+    int start = s.indexOf("{");
+    if (start!=-1) {
+        // evalue expression
+        int end = s.split(";").first().indexOf("}");
+        auto orgStr = s.mid(start,end-start+1);
+        if (orgStr.contains("{") )
+        {
+            auto str = orgStr;
+            str = str.replace("{","").replace("}","");
+            str = str.replace("i",QString::number(currentX));
+            str = str.replace("j",QString::number(currentY));
+
+
+            auto val = jsEngine.evaluate(str);
+            if (val.isError()) {
+                //qDebug() << str;//<< orgStr <<str <<val.toString();
+                throw OrgasmError("Error evaluation expression in unrolled code : " + orgStr + " <br><br>",0);
+
+
+            }
+
+            s = s.replace(orgStr,val.toString());
+            return s;
+
+        }
+
+    }
 
     for (int i=0;i<2;i++) {
         int val = currentX;
@@ -73,17 +102,21 @@ QString Orgasm::processRepeatIndex(QString s, int currentX, int currentY)
             val = currentY;
             r = "j";
         }
+
         s = s.replace("["+r+"+1]",QString::number(val+1));
         s = s.replace("["+r+"-1]",QString::number(val-1));
         s = s.replace("["+r+"]",QString::number(val));
         s = s.replace("["+r+"*2]",QString::number(val*2));
         s = s.replace("["+r+"*4]",QString::number(val*4));
+        s = s.replace("["+r+"*3]",QString::number(val*3));
         s = s.replace("["+r+"*8]",QString::number(val*8));
         s = s.replace("["+r+"*16]",QString::number(val*16));
         s = s.replace("["+r+"*256]",QString::number(val*256));
         s = s.replace("["+r+"*320]",QString::number(val*320));
         s = s.replace("["+r+"*160]",QString::number(val*160));
         s = s.replace("["+r+"*40]",QString::number(val*40));
+        s = s.replace("["+r+"*80]",QString::number(val*80));
+        s = s.replace("["+r+"*120]",QString::number(val*120));
 //        qDebug() << s;
     }
     //    qDebug() << current << QString::number(current) << s;

@@ -115,7 +115,6 @@ begin
 	// Set charmap location at $2000
 	SetCharsetLocation(charsetLocation);
 	// Copy the 16 characters rom baseCharacter to 0
-	asm(";here");
 	memcpy(#charsetLocation +8*baseCharacter, 0, #charsetLocation,8*16);
 	ax:=1;
 	ay:=5;

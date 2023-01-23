@@ -117,6 +117,8 @@ public:
     static void CopyFileMSVCBug(QString i, QString o);
     static void CopyFileBytes(QString i, QString o);
 
+    static void CopyFilesInDirectory(QString fileType, QString src, QString dst);
+
     static bool CopyRecursively(QString sourceFolder, QString destFolder);
 
     static uchar MultiCharMask(uchar val);

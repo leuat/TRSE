@@ -92,6 +92,7 @@ void TRSEDocument::keyPressEvent(QKeyEvent *e) {
         SaveCurrent();
     }
     if (e->key() == Qt::Key_B &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+        m_run=false;
         Build();
     }
 

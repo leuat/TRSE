@@ -52,3 +52,6 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 qemu = No
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0

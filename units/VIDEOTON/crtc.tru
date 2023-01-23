@@ -1,0 +1,161 @@
+Unit Crtc;
+@use "memory"
+@use "memory"
+var 
+	@donotremove none
+	@donotremove none2
+	ga,gb,col,pix,x,none,y,none2 : byte=0; 
+	xi : integer=0;
+	@donotremove sp
+	pa,sp,pb,p1 : pointer;
+	j,k: byte;
+
+	const sys_graph_mode:address = $0B13;
+	const graphics_mode_port:address = 6;
+	
+
+	const mode_16_color : byte = 2;
+	const mode_4_color : byte = 1;
+	const mode_2_color : byte = 0;
+
+	const black : byte = $00;
+	const dark_blue : byte = $1;
+	const dark_red : byte = $4;
+	const dark_magenta : byte = $5;
+	const dark_green : byte = $10;
+	const dark_cyan : byte = $11;
+	const dark_yellow : byte = $14;
+	const gray : byte = $15;
+	
+	const blue : byte = $41;
+	const red : byte = $44;
+	const magenta : byte = $45;
+	const green : byte = $50;
+	const cyan : byte = $51;
+	const yellow : byte = $54;
+	const white : byte = $55;
+
+	
+
+	ytab : array[240] of integer = BuildTable("i*64");
+
+
+/**
+Enables video ram at $8000
+
+**/
+
+procedure EnableVRAM() inline;
+begin
+	asm("
+	    ld a,$50
+		ld ($3),A
+		out ($2),a
+	");
+end;
+
+/**
+Waits until a vertical sync has been performed.
+**/
+procedure WaitForSync();
+begin
+end;
+
+/*
+Waits until a horizontal sync has been performed
+*/
+procedure WaitForHSync();
+begin
+end;
+
+
+/**
+Sets the CRTC resolution mode. 
+<ul>
+<li>2: 128x240 16 color mode.</li>
+<li>1: 256x240 4 color mode.</li>
+<li>0: 512x240 2 color mode.</li>
+</ul>
+**/
+procedure SetMode(ga: global byte);
+begin
+	
+	asm("
+			ld a,[Crtc_ga]
+			ld	B, a
+			ld	A,(CRTC_SYS_GRAPH_MODE)
+			and	128+64+32+16+8+4	; clear bit #0 and #1
+			or	B			; set graph mode to bit #0 and #1
+			ld	(CRTC_SYS_GRAPH_MODE),A	; set to system variable
+			out	(CRTC_GRAPHICS_MODE_PORT),A	; send to port
+			");
+end;
+
+
+
+
+/**
+Synchronizes timing with VSYNC
+**/
+procedure Synchronize();
+begin
+end;
+
+/**
+Sets ink to a given color.
+<ul>
+<li>Parameter 0: ink value (0-15)</li>
+<li>Parameter 1: color value (0-31)</li>
+</ul>
+**/
+procedure SetInk(ga,gb : global byte);
+begin
+end;
+
+
+
+/**
+Sets a 16-color palette using hardware ports. Parameter 1 points to a list of 16 bytes. 
+
+**/
+procedure SetPalette(ga, gb : global byte);
+begin
+	Memory::Out($60+ga,gb);
+
+end;
+
+
+/**
+	Sets the border color to [ parameter 1 ] using firmware. 
+
+**/
+procedure SetBorder(ga: global byte);
+begin
+	asm("
+    ld a,[Crtc_ga]
+    ld b,a
+    ld c, b
+    call $BC38
+	");
+end;
+
+/**
+Sets the width of the screen to 256 bytes. Screen hack!
+**/
+procedure SetWidth256();
+begin
+
+
+end;
+
+
+
+
+
+procedure InitDefault(ga:global byte);
+begin
+end;
+
+
+
+end.

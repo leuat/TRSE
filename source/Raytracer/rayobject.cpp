@@ -3,14 +3,14 @@
 SimplexNoise AbstractRayObject::m_sn;
 
 
-QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, float l)
+QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, double l)
 {
     QVector3D res;
     for (int a = 0;a<3;a++) {
 
 
-        float uu =0;
-        float vv =0;
+        double uu =0;
+        double vv =0;
         // Project 3 directions.. but pr
         if (a==0) {
             uu = pos.x();
@@ -27,13 +27,13 @@ QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, float l)
             vv = pos.z();
 //                        if (pos.y()<0) uu=-uu;
         }
-        float lvl = pow(0.1*l,0.9);
+        double lvl = pow(0.1*l,0.9);
         //                lvl = 0;
         //            lvl = 4;
         QImage* img = m_material.m_texture.get(lvl);
         if (img->width()!=0) {
-            uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
-            vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+            uu = abs((int)((uu+m_material.m_uvShift.x())*(double)img->width()*m_material.m_uvScale.x())%img->width());
+            vv = abs((int)((vv+m_material.m_uvShift.y())*(double)img->height()*m_material.m_uvScale.y())%img->height());
         }
         QVector3D c = Util::fromColor(QColor(img->pixel(uu,vv)))/256.;
         //                qDebug() << c <<uv << img->width();
@@ -47,9 +47,9 @@ QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, float l)
     return res;
 }
 
-QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, float l)
+QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, double l)
 {
-    float uu=0,vv=0;
+    double uu=0,vv=0;
   //  uu = n.y();
    // vv = (((atan2(n.z(),n.x()))/3.14159)+1)/2.0;
     QVector3D uv = CalculateUV(pos,n,t);
@@ -59,20 +59,20 @@ QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVect
 
     if (m_material.m_uv_rotation!=0) {
         double t = m_material.m_uv_rotation/360.0*2*3.14159265;
-        float u = (uu) * cos(t) - (vv)*sin(t);
-        float v = (uu) * sin(t) + (vv)*cos(t);
+        double u = (uu) * cos(t) - (vv)*sin(t);
+        double v = (uu) * sin(t) + (vv)*cos(t);
         uu = u;
         vv = v;
 
     }
     if (img->width()!=0) {
-        uu = abs((int)((uu+m_material.m_uvShift.x())*(float)img->width()*m_material.m_uvScale.x())%img->width());
-        vv = abs((int)((vv+m_material.m_uvShift.y())*(float)img->height()*m_material.m_uvScale.y())%img->height());
+        uu = abs((int)((uu+m_material.m_uvShift.x())*(double)img->width()*m_material.m_uvScale.x())%img->width());
+        vv = abs((int)((vv+m_material.m_uvShift.y())*(double)img->height()*m_material.m_uvScale.y())%img->height());
 //        if (rand()%1000>995)
   //      qDebug() << m_material.m_uvShift;
     }
     if (m_material.m_drawuvcoord) {
-        float s = 1.0;
+        double s = 1.0;
 //        if (pos.y()>0)
   //          uu=128-uu;
         return QVector3D(vv/s,vv/s,vv/s)/100.0;
@@ -89,7 +89,7 @@ void AbstractRayObject::SetLocalPos(QVector3D campos, QMatrix4x4 mat) {
 //    m_centerPos = campos;
     m_localPos = campos + mat.inverted().map(m_position);
     m_localRotmatInv = m_localRotmat.inverted();
-    float bbr = m_bbRadius;
+    double bbr = m_bbRadius;
     for (AbstractRayObject* aro : m_children) {
         aro->SetLocalPos(m_localPos, m_localRotmat);
         bbr = std::max(bbr, aro->m_position.length()+aro->m_bbRadius);
@@ -109,7 +109,7 @@ AbstractRayObject::AbstractRayObject()
     m_rotmat.setToIdentity();
 }
 
-QVector3D AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGlobals &globals,QVector<float>& shadows)
+QVector3D AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGlobals &globals,QVector<double>& shadows)
 {
     QVector3D l = QVector3D(0,0,0);
     int cnt = 0;
@@ -124,7 +124,7 @@ QVector3D AbstractRayObject::ApplyDirectionalLight(QVector3D normal, RayTracerGl
     return l;
 }
 
-QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals &globals, Material &mat,QVector<float>& shadows)
+QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view, RayTracerGlobals &globals, Material &mat,QVector<double>& shadows)
 {
     QVector3D l = QVector3D(0,0,0);
     int cnt = 0;
@@ -142,7 +142,7 @@ QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view
 
 }
 
-void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& tangent, QVector3D& isp, RayTracerGlobals &globals,QVector3D reflectDir, QVector<AbstractRayObject*>& objects, int pass, QVector<float>& shadows)
+void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& tangent, QVector3D& isp, RayTracerGlobals &globals,QVector3D reflectDir, QVector<AbstractRayObject*>& objects, int pass, QVector<double>& shadows)
 {
 
     double l = (ray->m_origin-(isp+m_localPos)).length();
@@ -152,7 +152,7 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
 
         QVector3D col = m_material.m_color;
         if (m_material.m_checkerBoard.x()!=0) {
-            float x = m_material.m_checkerBoard.x();
+            double x = m_material.m_checkerBoard.x();
             //QVector3D mul = QVector3D(1,1,1);
             QVector3D n = normal.normalized();
             Ray r = *ray;// = new Ray();
@@ -166,7 +166,7 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
             //mul.setX(fmod(abs(n.x()), x)>x/2);
             //mul.setY(fmod(abs(n.y()), x)>x/2);
             //mul.setZ(fmod(abs(n.z()), x)>x/2);
-            float mul = fmod(abs(n.x()+100), x)>x/3;
+            double mul = fmod(abs(n.x()+100), x)>x/3;
             mul = mul*fmod(abs(n.y()+100), x)>x/3;
 
 //            mul = mul*fmod(abs(n.z()), x)>x/2;
@@ -255,7 +255,7 @@ QVector3D AbstractRayObject::Reflect(AbstractRayObject* me, QVector3D isp, QVect
         I=I+ray.m_intensity;
   //  }
 //    I= QVector3D(1,0,0);
-        return I;///(float)N;
+        return I;///(double)N;
 }
 
 QVector3D AbstractRayObject::ReflectMarch(AbstractRayObject *me, QVector3D isp, QVector3D normal, RayTracerGlobals &globals, QVector<AbstractRayObject *> &objects, int reflect)
@@ -277,7 +277,7 @@ QVector3D AbstractRayObject::ReflectMarch(AbstractRayObject *me, QVector3D isp, 
 
         I=I+ray.m_intensity;
         // TODO(ColinPitrat): This is very suspicious: we always return on the first iteration of the loop?!
-        return I;///(float)N;
+        return I;///(double)N;
     }
     return I;
 }
@@ -330,7 +330,7 @@ bool RayObjectSphere::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D& i
     return false;
 }
 
-float RayObjectSphere::intersect(Ray *ray)
+double RayObjectSphere::intersect(Ray *ray)
 {
     double inv = m_inverted?-1:1;
 
@@ -351,7 +351,7 @@ QVector3D RayObjectPlane::CalculateUV(QVector3D &pos, QVector3D &normal, QVector
     return QVector3D(QVector3D::dotProduct(bt,pos),QVector3D::dotProduct(tangent,pos),0)*m_material.m_uvScale;
 }
 
-float RayObjectPlane::intersect(Ray *ray)
+double RayObjectPlane::intersect(Ray *ray)
 {
     return (-m_localPos.y() + ray->m_currentPos.y());
 }
@@ -382,17 +382,17 @@ bool RayObjectPlane::RayTrace(Ray *ray, RayTracerGlobals &globals, QVector3D &is
 
 QVector3D RayObjectTorus::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D &tangent)
 {
-    float z = pos.z();
-    float x = pos.x();
-    float y = pos.y();
-    float u = (1.0 - (atan2(z, x) + M_PI) / (M_PI*2));
+    double z = pos.z();
+    double x = pos.x();
+    double y = pos.y();
+    double u = (1.0 - (atan2(z, x) + M_PI) / (M_PI*2));
 
-    float len = sqrt(x * x + z * z);
+    double len = sqrt(x * x + z * z);
 
         // Now rotate about the y-axis to get the point P into the x-z plane.
     x = len - m_radius.x();
     double add = 0;
-    float  v = (atan2(y, x) + M_PI) / (M_PI*2);
+    double  v = (atan2(y, x) + M_PI) / (M_PI*2);
 
 //    if (y>0) { u*=-1; v*=-1; }
 
@@ -419,7 +419,7 @@ QVector3D RayObjectTorus::CalculateUV(QVector3D &pos, QVector3D &normal, QVector
   //      uv*=-1;
 }
 
-float RayObjectTorus::intersect(Ray *ray)
+double RayObjectTorus::intersect(Ray *ray)
 {
 
     QVector3D pos = m_localPos + ray->m_currentPos;
@@ -438,7 +438,7 @@ QVector3D RayObjectBox::CalculateUV(QVector3D &pos, QVector3D &normal, QVector3D
     return QVector3D(pos.x(),pos.y(),0);
 }
 
-float RayObjectBox::intersect(Ray *ray)
+double RayObjectBox::intersect(Ray *ray)
 {
     QVector3D d = Util::abss(m_localPos+ ray->m_currentPos) - m_box;// +ray->m_currentPos;
     float r=m_pNormal.x();
@@ -450,7 +450,7 @@ QVector3D RayObjectCylinder::CalculateUV(QVector3D &pos, QVector3D &normal, QVec
     return QVector3D(0,0,0);
 }
 
-float RayObjectCylinder::intersect(Ray *ray)
+double RayObjectCylinder::intersect(Ray *ray)
 {
     QVector3D pos = m_localPos+ray->m_currentPos;
     QVector3D p = QVector3D(pos.x(), pos.z(),0);
@@ -459,8 +459,8 @@ float RayObjectCylinder::intersect(Ray *ray)
     return std::min(std::max(d.x(),d.y()),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length() - m_radius.y();
 }
 
-float RayObjectUnion::intersect(Ray *ray) {
-    float d = 0;
+double RayObjectUnion::intersect(Ray *ray) {
+    double d = 0;
     for (AbstractRayObject* aro: m_objects) {
   //      c.m_origin+=aro->m_position;
 //        c.m_currentPos+=aro->m_position;
@@ -470,8 +470,8 @@ float RayObjectUnion::intersect(Ray *ray) {
 
 }
 
-float RayObjectEmpty::intersect(Ray *ray) {
-    float d = 1E10;
+double RayObjectEmpty::intersect(Ray *ray) {
+    double d = 1E10;
 
     if (m_flatten)
         return d;
@@ -494,7 +494,7 @@ RayObjectTriangle::RayObjectTriangle() {
     m_hasNormal = true;
 }
 
-float RayObjectTriangle::intersect(Ray *ray)
+double RayObjectTriangle::intersect(Ray *ray)
 {
 /*    return 100;
     if (QVector3D::dotProduct(m_normal,ray->m_direction)>0)
@@ -531,9 +531,9 @@ QVector3D RayObjectTriangle::getBBBox() {
 }
 
 
-/*    float sdEquilateralTriangle(  in vec2 p )
+/*    double sdEquilateralTriangle(  in vec2 p )
     {
-        const float k = 1.73205;//sqrt(3.0);
+        const double k = 1.73205;//sqrt(3.0);
         p.x = abs(p.x) - 1.0;
         p.y = p.y + 1.0/k;
         if( p.x + k*p.y > 0.0 ) p = vec2( p.x - k*p.y, -k*p.x - p.y )/2.0;
@@ -541,27 +541,27 @@ QVector3D RayObjectTriangle::getBBBox() {
         return -length(p)*sign(p.y);
     }
 
-    float sdTriPrism( vec3 p, vec2 h )
+    double sdTriPrism( vec3 p, vec2 h )
     {
         vec3 q = abs(p);
-        float d1 = q.z-h.y;
+        double d1 = q.z-h.y;
         h.x *= 0.866025;
-        float d2 = sdEquilateralTriangle(p.xy/h.x)*h.x;
+        double d2 = sdEquilateralTriangle(p.xy/h.x)*h.x;
         return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);
     }
   */
 
-float RayObjectGenMesh::intersect(Ray *ray)
+double RayObjectGenMesh::intersect(Ray *ray)
 {
     if (m_type=="duck")
         return Duck(ray);
     return 1;
 }
 
-float RayObjectGenMesh::Duck(Ray *ray)
+double RayObjectGenMesh::Duck(Ray *ray)
 {
     m_bbRadius = m_radius.x()*2;
-    float cur = 100;
+    double cur = 100;
     QVector3D cp = m_localPos+ray->m_currentPos;
     //cp.setY(cp.y()/0.8);
     cp = cp*QVector3D(1,1.2,1);
@@ -570,8 +570,8 @@ float RayObjectGenMesh::Duck(Ray *ray)
     cpBottom = cpBottom*QVector3D(0.7, 1.3 *(1+0.3* pow(1.2*sin(cpBottom.x()),3)), 1.0);
 
 
-    float top = (cp - QVector3D(0.3,1.4,0)).length() - m_radius.x()*0.8;
-    float bottom = (cpBottom).length() - m_radius.x();
+    double top = (cp - QVector3D(0.3,1.4,0)).length() - m_radius.x()*0.8;
+    double bottom = (cpBottom).length() - m_radius.x();
 
 
     cur = std::min(top, bottom);
@@ -581,7 +581,7 @@ float RayObjectGenMesh::Duck(Ray *ray)
     return cur;
 }
 
-float RayObjectOperation::intersect(Ray *ray)
+double RayObjectOperation::intersect(Ray *ray)
 {
     if (m_type == "blend") {
         return (m_blend*m_o1->intersect(ray) + (1-m_blend)*m_o2->intersect(ray));
@@ -591,15 +591,15 @@ float RayObjectOperation::intersect(Ray *ray)
     if (m_type == "min")
         return std::max(m_o1->intersect(ray),m_o2->intersect(ray));
     if (m_type == "sub")
-        return m_o1->intersect(ray)*std::max(-m_o2->intersect(ray),0.0f);
+        return m_o1->intersect(ray)*std::max(-m_o2->intersect(ray),0.0);
     // TODO(ColinPitrat): Is this really what we want to return by default?
     return 0.0;
 }
 
-float RayObjectPerlin::intersect(Ray *ray)
+double RayObjectPerlin::intersect(Ray *ray)
 {
-    float amp=m_perlinVals.x();
-    float scale=m_perlinVals.y();
+    double amp=m_perlinVals.x();
+    double scale=m_perlinVals.y();
 //    qDebug() << m_obj->m_children.count();
     AbstractRayObject* m_obj = m_children[0];
     Ray r = *ray;// = new Ray();
@@ -607,12 +607,12 @@ float RayObjectPerlin::intersect(Ray *ray)
 
     QVector3D d2 =  ray->m_currentPos;// +ray->m_currentPos;
   //  if (m_obj->m_children.count()==0) {
-        float mm = m_obj->intersect(ray);
+        double mm = m_obj->intersect(ray);
         if (mm>0.2) return mm;
         return mm + amp*m_sn.noise(d2.x()*scale, d2.y()*scale, d2.z()*scale);
 
     /*
-    float d = 0;
+    double d = 0;
 
     for (AbstractRayObject* aro: m_obj->m_children) {
         Ray r = *ray;// = new Ray();
@@ -630,25 +630,25 @@ float RayObjectPerlin::intersect(Ray *ray)
 
 }
 
-float RayObjectHoles::intersect(Ray *ray)
+double RayObjectHoles::intersect(Ray *ray)
 {
     QVector3D d2 =  ray->m_currentPos;// +ray->m_currentPos;
 //    d2.setX(fmod(d2.x(),m_vals.x()));
 //    if (d2.x()>m_vals.x()/2) d2.setX(1000);
 
     ray->m_currentPos = d2;
-    float mm = m_obj->intersect(ray);
+    double mm = m_obj->intersect(ray);
 
     QVector3D d = Util::abss(m_localPos+ ray->m_currentPos) - m_vals;// +ray->m_currentPos;
     d.setX(fmodf(abs(d.x()),m_vals.x())-m_vals.x()*0.50f);
     d.setY(fmodf(abs(d.y()),m_vals.y())-m_vals.y()*0.50f);
     d.setZ(fmodf(abs(d.z()),m_vals.z())-m_vals.z()*0.50f);
-    float cut= std::min(std::max(d.x(),std::max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
+    double cut= std::min(std::max(d.x(),std::max(d.y(),d.z())),0.0f) + Util::maxx(d,QVector3D(0,0,0)).length();
 
 
 /*    if (mm>0.2) return mm;
-    float amp=0.9;
-    float deltay = fmod(abs(d2.x()),m_vals.x())>m_vals.x()/5.0;
+    double amp=0.9;
+    double deltay = fmod(abs(d2.x()),m_vals.x())>m_vals.x()/5.0;
 */
     return std::max(mm,cut);// + amp*deltay;
 
@@ -659,7 +659,7 @@ QVector3D RayObjectTrianglePrism::CalculateUV(QVector3D &pos, QVector3D &normal,
     return QVector3D(0,0,0);
 }
 
-float RayObjectTrianglePrism::intersect(Ray *ray)
+double RayObjectTrianglePrism::intersect(Ray *ray)
 {
     QVector3D p = m_localPos+ ray->m_currentPos;
     QVector3D q = Util::abss(m_localPos+ ray->m_currentPos);// +ray->m_currentPos;
@@ -667,7 +667,7 @@ float RayObjectTrianglePrism::intersect(Ray *ray)
 
 }
 
-void RayObjectRegular3D::Save6502(QString file, float scale) {
+void RayObjectRegular3D::Save6502(QString file, double scale) {
     if (QFile::exists(file))
         QFile::remove(file);
 
@@ -954,7 +954,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
 
 }
 
-void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool isWireframe, int type, float s1, float s2, int skipType)
+void RayObjectRegular3D::GenerateTorus(int c1, int c2, double r1, double r2, bool isWireframe, int type, double s1, double s2, int skipType)
 {
     m_isWireframe = isWireframe;
     m_faces.clear();
@@ -964,9 +964,9 @@ void RayObjectRegular3D::GenerateTorus(int c1, int c2, float r1, float r2, bool 
     m_vertices.clear();
     m_normals.clear();
     for (int i=0;i<c1;i++) {
-        float ang1 = (i/(float)c1+s1)*2*3.14159;
+        double ang1 = (i/(double)c1+s1)*2*3.14159;
         for (int j=0;j<c2;j++) {
-            float ang2 = (j/(float)c2+s2)*2*3.14159;
+            double ang2 = (j/(double)c2+s2)*2*3.14159;
             QVector3D xx(cos(ang2)*r1+r2,sin(ang2)*r1,0);
   //          QVector3D nx(cos(ang2)*(r1+0.1)+(r2+0.1),sin(ang2)*(r1+0.1),0);
             QQuaternion q = QQuaternion::fromEulerAngles(QVector3D(0,ang1/3.14159/2*360,0));

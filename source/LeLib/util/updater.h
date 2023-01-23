@@ -1,7 +1,7 @@
 #ifndef UPDATER_H
 #define UPDATER_H
 
-#include "source/util/downloadmanager.h".h"
+#include "source/util/downloadmanager.h"
 
 class Updater
 {

@@ -1,0 +1,121 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+var  
+   	v,i,j,f,frame,n,m,o,dy: byte; 
+	time,time2:byte;
+	k:integer;
+
+	// curCnt keeps track of the horizontal shift of the text, 1-8 bytes
+	curCnt : byte = 7;
+	// tables and data generated with fjong/twister.fjo
+	tables : incbin("data/twister_table.bin");
+	data : incbin("data/twister_data.bin");
+
+	// Text to be displayed
+	text : string="TRSE ON THE TIM    SO MANY BYTES    LOREM IPSUM DOLOR SIT AMET CONSECTETUR ADIPISCING ELIT CURABITUR DIGNISSIM MALESUADA ULTRICIES DUIS NEC CONGUE QUAM PELLENTESQUE DICTUM AUGUE EU ELEIFEND ";
+
+	// Some sine tables for the twisting	
+    sin1 : array[256] of byte = BuildSineTable(38);
+    sin2 : array[256] of byte = BuildSineTable(20);
+
+	// Text pointer, destination ptr
+	textp, dst, src : ^byte;
+	ip,ip2 : ^integer;
+
+	// width and height of the 	
+	const text_width: byte = 32/4; // in bytes
+	const text_height: byte = 24; // in pixels
+
+	const noFrames : byte = 16; // number of frames
+
+	// tab for looking up position in the generated lookup table. each
+	// line i stored as a 2-byte address
+	charTab : array[32] of integer = buildtable("2*NOFRAMES*TEXT_WIDTH*i");
+	// specific frame tab
+	frameTab : array[noFrames] of integer = buildtable("2*TEXT_WIDTH*i");
+	// a 256-byte table for speed
+	tab256 : array[8] of integer = buildtable("256*i");
+	// shift value
+	dx:byte=0;
+	
+	
+procedure Render();
+begin
+	// m = current twist shift
+	m:=time+dx;
+	// position to write to screen
+	dst:=($8000+50) + tab256[curCnt];
+	// drop 15 chars onto the screen
+	for n:=0 to 15 do
+	begin
+		// find text char
+		j:=textp[n];
+		if (j=32) then // if space
+			j:=26 // our space char
+		else // get lookup from ascii value
+			j:=j-65;
+		// Lookup char "j" in the data pointer lookup table	
+		ip:=#tables + charTab[j];
+		
+		for i:=0 to text_width do
+		begin
+			// twist some opposite sines!
+			j:=sin1[(time)]; // Twist turning
+			j+=sin2[(m-time2)]; // Twist turning
+			// Lookup frame "j" in the current lookup table
+			ip2 := ip + frameTab[j&(noFrames-1)];
+			// find actual data from the lookup table
+			src:=#data+ip2[i];
+			// copy text_heiht bytes of compressed data to scren!
+			Screen::CopyToScreen(src, dst, text_height);
+			dst+=256;
+			m+=1;
+			
+		end;	
+	end;
+end;
+
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	textp:=#text;
+	time:=0;
+	while (true) do
+	begin
+		Render();
+
+		// update horizontal movement			
+		if (time&3=0) then 
+			curCnt-=1;
+		// reset, increase text pointer
+		if (curCnt=255) then
+		begin
+			curCnt:=7;
+			textp+=1;
+			if (textp[15]=0) then textp:=#text;//reset
+			dx+=8;
+		//	time2-=4*4;
+		end;
+		
+		// silly wait		
+		for j:=0 to 2 do
+		for i:=0 to 100 do wait(200);
+		
+		// update time and time2
+		time+=1;
+		if (time&1=0) then 
+		time2-=1;
+		
+	end;
+	Z80CPM::Exit();
+
+end.

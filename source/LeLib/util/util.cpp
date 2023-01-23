@@ -483,6 +483,14 @@ void Util::CopyFileBytes(QString i, QString o) {
     SaveByteArray(a,o);
 }
 
+void Util::CopyFilesInDirectory(QString fileType, QString src, QString dst)
+{
+    auto files = Util::FindFilesOfType(src,fileType);
+    for (auto& f: files)
+        Util::CopyFile(src+"/"+f,dst+"/"+f);
+
+}
+
 bool Util::CopyRecursively(QString sourceFolder, QString destFolder)
 {
     bool success = false;

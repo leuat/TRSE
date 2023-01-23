@@ -22,6 +22,7 @@
 #ifndef LIMAGEFACTORY_H
 #define LIMAGEFACTORY_H
 
+#include "source/LeLib/limage/limage.h"
 #include "source/LeLib/limage/limageqimage.h"
 #include "source/LeLib/limage/multicolorimage.h"
 #include "source/LeLib/limage/standardcolorimage.h"
@@ -61,6 +62,9 @@
 #include "source/LeLib/limage/limagegenericsprites.h"
 #include "source/LeLib/limage/limagecga160x100.h"
 #include "source/LeLib/limage/limageamstradsprites.h"
+#include "source/LeLib/limage/limagesnesgeneric.h"
+#include "source/LeLib/limage/limagetim.h"
+#include "source/LeLib/limage/limagevideoton.h"
 
 class LImageFactory {
 public:

@@ -994,6 +994,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 
     if (node->m_right->isPureNumeric() && !var->isWord(as)) {
+//        if (node->isWord())
         as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
         as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
         return true;
@@ -1077,6 +1078,21 @@ void CodeGenZ80::LoadPointer(QSharedPointer<Node> node)
         as->Asm("ld ["+name+"],a");
         as->Asm("ld a,l");
         as->Asm("ld ["+name+"+1],a");
+    }
+
+}
+
+void CodeGenZ80::LoadPointerToHl(QSharedPointer<Node> node)
+{
+    QString name = getValue(node);
+    as->Comment("Loading pointer");
+    if (!isGB())
+        as->Asm("ld hl,["+name+"]");
+    else {
+        as->Asm("ld a,["+name+"]");
+        as->Asm("ld h,a");
+        as->Asm("ld a,["+name+"+1]");
+        as->Asm("ld l,a");
     }
 
 }
@@ -1531,6 +1547,21 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
 
         // P := Address / variable
         if (node->m_right->isPure()) {
+            if (node->m_right->isWord(as) && !node->m_right->isReference() && node->m_right->isVariable()) {
+                LoadPointerToHl(node->m_right);
+/*                if (isGB()) {
+                    as->Asm("ld a, ["+node->m_right->getValue(as)+"]");
+                    as->Asm("ld l, a");
+                    as->Asm("ld a, ["+node->m_right->getValue(as)+"+1]");
+                    as->Asm("ld h, l");
+
+                }
+                else
+               as->Asm("ld hl, ["+node->m_right->getValue(as)+"]");
+               */
+
+            }
+            else
             LoadAddress(node->m_right);
             StoreAddress(var);
             return true;
@@ -1680,7 +1711,16 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
                     as->Comment("Optimization: rhs is integer, but pure");
                     if (node->m_right->isPureVariable()) {
                         as->Asm("push hl");
-                        as->Asm("ld hl,["+node->m_right->getValue(as)+"]");
+                        LoadPointerToHl(node->m_right);
+/*                        if (isGB()) {
+                            as->Asm("ld a, ["+node->m_right->getValue(as)+"]");
+                            as->Asm("ld l, a");
+                            as->Asm("ld a, ["+node->m_right->getValue(as)+"+1]");
+                            as->Asm("ld h, l");
+
+                        }
+                        else
+                        as->Asm("ld hl,["+node->m_right->getValue(as)+"]");*/
                         as->Asm("pop de");
                     }
                     else // is number

@@ -1,0 +1,882 @@
+diskdef tim011
+  seclen 1024
+  tracks 160
+  sectrk 5
+  secbase 17
+  blocksize 2048
+  maxdir 256
+  skew 1
+  boottrk 2
+  os 2.2
+end
+
+diskdef ibm-3740
+  seclen 128
+  tracks 77
+  sectrk 26
+  blocksize 1024
+  maxdir 64
+  skew 6
+  boottrk 2
+  os 2.2
+end
+
+diskdef 4mb-hd
+  seclen 128
+  tracks 1024
+  sectrk 32
+  blocksize 2048
+  maxdir 256
+  skew 1
+  boottrk 0
+  os p2dos
+end
+
+diskdef pcw
+  seclen 512
+  tracks 40
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 1
+  boottrk 1
+  os 3
+end
+
+diskdef pc1.2m
+  seclen 512
+  tracks 80
+  # this format uses 15 sectors per track, but 30 per cylinder
+  sectrk 30
+  blocksize 4096
+  maxdir 256
+  skew 1
+  boottrk 0
+  os 3
+end
+
+# CP/M 86 on 1.44MB floppies
+diskdef cpm86-144feat
+  seclen 512
+  tracks 160
+  sectrk 18
+  blocksize 4096
+  maxdir 256
+  skew 1
+  boottrk 2
+  os 3
+end
+
+# CP/M 86 on 720KB floppies
+diskdef cpm86-720
+  seclen 512
+  tracks 160
+  sectrk 9 
+  blocksize 2048
+  maxdir 256
+  skew 1
+  boottrk 2
+  os 3
+end
+
+diskdef cf2dd
+  seclen 512
+  tracks 160
+  sectrk 9
+  blocksize 2048
+  maxdir 256
+  skew 1
+  boottrk 1
+  os 3
+end
+
+#amstrad: values are read from super block (special name hardcoded)
+
+# Royal alphatronic
+# setfdprm /dev/fd1 dd ssize=256 cyl=40 sect=16 head=2
+diskdef alpha
+  seclen 256
+  tracks 40
+  sectrk 32
+  blocksize 2048
+  maxdir 128
+  skew 1
+  boottrk 2
+  os 2.2
+end
+
+# Apple II CP/M skew o Apple II DOS 3.3 skew
+diskdef apple-do
+  seclen 256
+  tracks 35
+  sectrk 16
+  blocksize 1024
+  maxdir 64
+  skewtab 0,6,12,3,9,15,14,5,11,2,8,7,13,4,10,1
+  boottrk 3
+  os 2.2
+end
+
+# Apple II CP/M skew o Apple II PRODOS skew
+diskdef apple-po
+  seclen 256
+  tracks 35
+  sectrk 16
+  blocksize 1024
+  maxdir 64
+  skewtab 0,9,3,12,6,15,1,10,4,13,7,8,2,11,5,14
+  boottrk 3
+  os 2.2
+end
+
+# MYZ80 hard drive (only works with libdsk, because it has a 256-byte header)
+diskdef myz80
+  seclen 1024
+  tracks 64
+  sectrk 128
+  blocksize 4096
+  maxdir 1024
+  skew 1
+  boottrk 0
+  os 3
+end
+
+# Despite being Amstrad formats, CPC System and CPC Data don't have an Amstrad 
+# superblock. You'll need to use libdsk to access them because the Linux 
+# and Windows kernel drivers won't touch them.
+diskdef cpcsys
+  seclen 512
+  tracks 40
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 1
+  boottrk 2
+  os 3
+end
+diskdef cpcdata
+  seclen 512
+  tracks 40
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 1
+  boottrk 0
+  os 3
+end
+
+# after being read in with no sector skew.
+diskdef nigdos
+  seclen 512
+  # NigDos double sided disk format, 42 tracks * 2 sides
+  tracks 84
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skew 1
+  boottrk 0
+  # this format wastes half of the directory entry
+  logicalextents 1
+  os 3
+end
+
+diskdef epsqx10
+  seclen 512
+  tracks 40
+  sectrk 20
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+end
+
+diskdef ibm-8ss
+  seclen 512
+  tracks 40
+  sectrk 8
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 1
+  os 2.2
+end
+
+diskdef ibm-8ds
+  seclen 512
+  tracks 40
+  sectrk 8
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 1
+  os 2.2
+end
+
+diskdef electroglas
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 256
+  skew 0
+  boottrk 1
+  os 3
+end
+
+# IBM CP/M-86
+# setfdprm /dev/fd1 sect=8 dtr=1 hd ssize=512 tpi=48 head=1
+diskdef ibmpc-514ss
+   seclen 512
+   tracks 40
+   sectrk 8
+   blocksize 1024
+   maxdir 64
+   skew 1
+   boottrk 1
+   os 2.2
+end
+
+# IBM CP/M-86
+# setfdprm /dev/fd1 sect=8 dtr=1 hd ssize=512 tpi=48
+diskdef ibmpc-514ds
+   seclen 512
+   tracks 80
+   sectrk 8
+   blocksize 2048
+   maxdir 64
+   skew 0
+   boottrk 2
+   os 2.2
+end
+
+diskdef p112
+  seclen 512
+  tracks 160
+  sectrk 18
+  blocksize 2048
+  maxdir 256
+  skew 1
+  boottrk 2
+  os 3
+end
+
+diskdef p112-old
+  seclen 512
+  tracks 160
+  sectrk 18
+  blocksize 2048
+  maxdir 128
+  skew 1
+  boottrk 1
+  os 3
+end
+
+diskdef gide-cfa
+  seclen 512
+  tracks 1000
+  sectrk 16
+  blocksize 4096
+  maxdir 1024
+  skew 0
+  boottrk 2
+  os 3
+end
+
+diskdef gide-cfb
+  seclen 512
+  tracks 1000
+  sectrk 16
+  blocksize 4096
+  maxdir 1024
+  skew 0
+  boottrk 0
+# Start of second partition
+  offset 1000trk
+  os 3
+end
+
+# AT&T/Olivetti Word Processor
+diskdef attwp
+   seclen 256
+   tracks 80
+   sectrk 32
+   blocksize 2048
+   maxdir 128
+   boottrk 1
+   logicalextents 1
+   skewtab 0,2,4,6,8,10,12,14,1,3,5,7,9,11,13,15,16,18,20,22,24,26,28,30,17,19,21,23,25,27,29,31
+   os 2.2
+end
+
+# Kaypro II
+diskdef kpii
+  seclen 512
+  tracks 40
+  sectrk 10
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 1
+  os 2.2
+end
+
+# Kayro IV
+diskdef kpiv
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 64
+  skew 0
+  boottrk 1
+  os 2.2
+end
+
+# setfdprm /dev/fd0 dd sect=10
+diskdef interak
+  seclen 512
+  tracks 80
+  sectrk 20
+  blocksize 4096
+  maxdir 256
+  skew 1
+  boottrk 2
+  os 2.2
+end
+
+# Timex FDD3000 3"
+diskdef fdd3000
+  seclen 256
+  tracks 40
+  sectrk 16
+  blocksize 1024
+  maxdir 128
+  boottrk 4
+  os 2.2
+  skew 7
+end
+
+# Timex FDD3000 3"
+diskdef fdd3000_2
+  seclen 256
+  tracks 40
+  sectrk 16
+  blocksize 1024
+  maxdir 128
+  boottrk 2
+  os 2.2
+  skew 5
+end
+
+# Robotron 1715
+diskdef 1715
+  seclen 1024
+  tracks 40
+  sectrk 5
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 3
+  os 2.2
+end
+
+# Robotron 1715 with SCP3
+diskdef 17153
+  seclen 1024
+  tracks 160
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 4
+  os 3
+end
+
+#DDR
+diskdef scp624
+  seclen 256
+  tracks 160
+  sectrk 16
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+end
+
+diskdef scp640
+  seclen 256
+  tracks 160
+  sectrk 16
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 0
+  os 2.2
+end
+
+diskdef scp780
+  seclen 1024
+  tracks 160
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+end
+
+diskdef scp800
+  seclen 1024
+  tracks 160
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 0
+  os 2.2
+end 
+
+diskdef z9001
+  seclen 1024
+  tracks 160
+  sectrk 5
+  blocksize 2048
+  maxdir 192
+  skew 0
+  boottrk 0
+  os 2.2
+end 
+
+# Visual Technology Visual 1050 computer
+diskdef v1050
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 3
+end
+
+# Microbee 40 track 5.25" disks
+diskdef microbee40
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skewtab 1,4,7,0,3,6,9,2,5,8
+  boottrk 2
+  os 2.2
+end
+
+diskdef dreamdisk40
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skewtab 1,4,7,0,3,6,9,2,5,8
+  boottrk 2
+  os 2.2
+end
+
+diskdef dreamdisk80
+  seclen 512
+  tracks 160
+  sectrk 10
+  blocksize 2048
+  maxdir 256
+  skewtab 1,4,7,0,3,6,9,2,5,8
+  boottrk 2
+  os 2.2
+end
+
+diskdef rc759
+  seclen 1024
+  tracks 154
+  sectrk 8
+  blocksize 2048
+  maxdir 512
+  boottrk 4
+  os 3
+end
+
+# ICL Comet: 40 track 5.25" Single Sided
+#
+diskdef icl-comet-525ss
+   seclen 512
+   tracks 40
+   sectrk 10
+   blocksize 1024
+   maxdir 64
+   skewtab 0,3,6,9,2,5,8,1,4,7
+   boottrk 2
+   os 2.2
+end
+
+diskdef z80pack-hd
+  seclen 128
+  tracks 255
+  sectrk 128
+  blocksize 2048
+  maxdir 1024
+  skew 0
+  boottrk 0
+  os 2.2
+end
+
+diskdef z80pack-hdb
+  seclen 128
+  tracks 256
+  sectrk 16384
+  blocksize 16384
+  maxdir 8192
+  skew 0
+  boottrk 0
+  os 2.2
+end
+
+# Bondwell 12 and 14 disk images in IMD raw binary format
+diskdef bw12
+  seclen 256
+  tracks 40
+  sectrk 18
+  blocksize 2048
+  maxdir 64
+  skew 1
+  boottrk 2
+  os 2.2
+end
+
+diskdef bw14
+  seclen 256
+  tracks 80
+  sectrk 18
+  blocksize 2048
+  maxdir 64
+  skew 1
+  boottrk 2
+  os 2.2
+end
+
+############################
+# north star cp/m  disks
+############################
+
+#North Star floppy 360K
+
+diskdef nsfd
+  seclen 512
+  tracks 70 
+  sectrk 10 
+  blocksize 2048
+  maxdir 64
+  skew 5  
+  boottrk 2
+  os 2.2
+end
+
+
+#North Star CP/M Virtual-Disk file on Hard Disk
+# prepared with allocation factor = 4
+# as in "CR CPMB 4000 4"
+# needs to be copied off hard drive before you can 
+# work on it with cpmtools
+
+diskdef nshd4
+  seclen 512
+  tracks 512
+  sectrk 16 
+  blocksize 4096
+  maxdir 256
+  skew 0  
+  boottrk 0
+  os 2.2
+end
+
+
+#North Star CP/M Virtual-Disk file on Hard Disk
+# prepared with allocation factor = 8
+# as in "CR CPMB 6000 8"
+# needs to be copied off hard drive before you can
+# work on it with cpmtools
+
+diskdef nshd8
+  seclen 512
+  tracks 1024
+  sectrk 16 
+  blocksize 8192
+  maxdir 256
+  skew 0  
+  boottrk 0
+  os 2.2
+end
+
+# Northstar Micro-Disk System MDS-A-D 175
+diskdef mdsad175
+    seclen 512
+    blocksize 1024
+    tracks 35
+    maxdir 64
+    boottrk 2
+    sectrk 10
+    skew 5
+    os 2.2
+end
+
+
+# Northstar Micro-Disk System MDS-A-D 350
+diskdef mdsad350
+   seclen 512
+   blocksize 2048
+   tracks 70
+   maxdir 64
+   boottrk 2
+   sectrk 10
+   skew 5
+   os 2.2
+end
+
+
+# Osborne 1
+diskdef osborne1
+   seclen 1024
+   tracks 40
+   sectrk 5
+   blocksize 1024
+   maxdir 64
+   boottrk 3
+   os 2.2
+end
+
+# Osborne Nuevo/Vixen/4
+diskdef osborne4
+   seclen 1024
+   tracks 80
+   sectrk 5
+   blocksize 2048
+   maxdir 128
+   skew 2
+   boottrk 2
+   os 2.2
+end
+
+# Lobo Max-80 8" CP/M 2
+diskdef lobo2
+  seclen 256
+  tracks 77
+  sectrk 30
+  blocksize 2048
+  maxdir 64
+  skew 0
+  boottrk 2
+  os 2.2
+end
+
+#Lobo Max-80 8" CP/M 3
+diskdef lobo3
+  seclen 512
+  tracks 77
+  sectrk 17
+  blocksize 2048
+  maxdir 64
+  skew 0
+  boottrk 2
+  os 3
+end
+
+# PRO CP/M RZ50 DZ format (Perhaps only 79 tracks should be used?)
+diskdef dec_pro
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skew 2
+  boottrk 2
+  os 2.2
+end
+
+# TDOS with DateStamper
+diskdef tdos-ds
+  seclen 1024
+  tracks 77
+  sectrk 16
+  blocksize 2048
+  maxdir 256
+  skew 0
+  boottrk 1
+  os zsys
+end
+
+# The following entires are tested and working
+# Most of the images are either from Don Maslin's archive or from
+# Dave Dunfield's site, but not all - they are noted as well as
+# their size.
+
+# PMC Micromate
+# Dave Dunfield's Imagedisk information from DSK conversion from IMD:
+# IMageDisk Utility 1.18 / Mar 07 2012
+# IMD 1.14: 10/03/2007 11:13:27
+# PMC-101 MicroMate
+# CP/M Plus
+# System Master
+# Assuming 1:1 for Binary output
+# 0/0 250 kbps DD  5x1024
+# 80 tracks(40/40), 400 sectors (12 Compressed)
+# Entry derived from above - image size = 409,600, from Dave Dunfield
+diskdef pmc101
+  seclen 1024
+  tracks 80
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 3
+end
+  
+# BEGIN td143ssdd8  Turbo Dos 1.43 - SSDD 8" - 512 x 16
+# Test OK - image size = 630,784, from Don Maslin's archive
+diskdef td143ssdd8
+  seclen 512
+  tracks 77
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 0
+  os 2.2
+# DENSITY MFM ,LOW 
+end
+
+# BEGIN headsdd8  Heath H89, Magnolia CP/M - SSDD 8" - 512 x 16
+# Test OK - image size = 630,784, from Don Maslin's archive
+diskdef heassdd8
+  seclen 512
+  tracks 77
+  sectrk 16
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+# DENSITY MFM ,LOW 
+end
+
+# Morrow Designs Micro-Decision         DOUBLE
+# 64k CP/M Vers. 2.2 Rev.2.3            SIDED
+# Copyright '76, '77, '78, '79, '80
+# Digital Research
+# Copyright 1982,1983 Morrow Designs, Inc.
+# Assuming 1:1 for Binary output
+#  0/0 250 kbps DD  5x1024
+# 80 tracks(40/40), 400 sectors (128 Compressed)
+# Entry derived from above data
+# Test OK - image siae = 409600, from Dave Dunfield
+diskdef mordsdd
+  seclen 1024
+  tracks 80
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 3
+  boottrk 2
+  OS 2.2
+end
+
+
+# BEGIN morsddd Morrow MD2 - SSDD 48 tpi 5.25" - 1024 x 5
+# Test OK - image size = 204,800, from Don Maslin's archive
+# Also tested with image from Dave Dunfield
+diskdef morsddd
+  seclen 1024
+  tracks 40
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 3
+  boottrk 2
+  os 2.2
+# DENSITY MFM ,LOW 
+# BSH 4 BLM 15 EXM 1 DSM 94 DRM 127 AL0 0C0H AL1 0 OFS 2
+end
+
+# BEGIN osb1sssd  Osborne 1 - SSSD 48 tpi 5.25" - 256 x 10
+# Test OK - image size = 102,400, from Don Maslin's archive
+diskdef osb1sssd
+  seclen 256
+  tracks 40
+  sectrk 10
+  blocksize 2048
+  maxdir 64
+  skew 2
+  boottrk 3
+  os 2.2
+# DENSITY MFM ,LOW 
+# BSH 4 BLM 15 EXM 1 DSM 45 DRM 63 AL0 080H AL1 0 OFS 3
+end
+
+# BEGIN ampdsdd  Ampro - DSDD 48 tpi 5.25" - 512 x 10
+# Test OK - image size = 409,600, from Don Maslin's archive
+diskdef ampdsdd
+  seclen 512
+  tracks 80
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+# DENSITY MFM ,LOW 
+# BSH 4 BLM 15 EXM 1 DSM 194 DRM 127 AL0 0C0H AL1 0 OFS 2
+end
+
+# BEGIN ampdsdd80  Ampro - DSDD 96 tpi 5.25" - 512 x 10
+# Test OK - image size = 819,200, from Don Maslin's archive
+diskdef ampdsdd80
+  seclen 512
+  tracks 160
+  sectrk 10
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+# DENSITY MFM ,LOW 
+# BSH 4 BLM 15 EXM 1 DSM 194 DRM 127 AL0 0C0H AL1 0 OFS 2
+end
+
+# BEGIN altdsdd  Altos - DSDD 5" - 512 x 9
+# Test OK - both CP/M and MP/M - image size = 737,280, from Dave Dunfield
+diskdef altdsdd
+  seclen 512
+  tracks 160
+  sectrk 9
+  blocksize 4096
+  maxdir 177
+  skew 0
+  boottrk 2
+  os 3
+# DENSITY MFM ,HIGH 
+# BSH 5 BLM 31 EXM 3 DSM 176 DRM 176 AL0 0C0H AL1 0 OFS 2
+end
+
+# BEGIN trsomsssd  TRS-80 Model 1, Omikron CP/M - SSSD 48 tpi 5.25" - 128 x 18
+# Test OK - image size = 80,640, from TRS-80 Yahoo Group posting
+diskdef trsomsssd
+  seclen 128
+  tracks 35
+  sectrk 18
+  blocksize 1024
+  maxdir 64
+  skew 4
+  boottrk 3
+  os 2.2
+# DENSITY FM ,LOW 
+# BSH 3 BLM 7 EXM 0 DSM 71 DRM 63 AL0 0C0H AL1 0 OFS 3
+end

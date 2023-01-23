@@ -446,6 +446,23 @@ void CodeEditor::updateCycleNumberAreaWidth(int /* newBlockCount */)
 
 void CodeEditor::keyPressEvent(QKeyEvent *e)
 {
+    if ((e->modifiers() & Qt::ShiftModifier) && (e->modifiers() & Qt::AltModifier) &&e->key()==Qt::Key_Return) {
+        QTextCursor tc = textCursor();
+        tc.movePosition(QTextCursor::StartOfLine);
+        tc.movePosition(QTextCursor::Up);
+        tc.insertText("\n");
+        setTextCursor(tc);
+        return;
+
+    }
+    if ((e->modifiers() & Qt::ShiftModifier) && e->key()==Qt::Key_Return) {
+        QTextCursor tc = textCursor();
+        tc.movePosition(QTextCursor::EndOfLine);
+        tc.insertText("\n");
+        setTextCursor(tc);
+        return;
+
+    }
     // Indent handling
     if (!(c && c->popup()->isVisible()) && e->key()==Qt::Key_Return) {
         SetIndent(e->modifiers() & Qt::ShiftModifier);
@@ -484,6 +501,7 @@ void CodeEditor::keyPressEvent(QKeyEvent *e)
         TabBackTab(e, e->key()==Qt::Key_Backtab);
         return;
     }
+    // Insert new line below
 
     if ((e->modifiers() & Qt::ControlModifier)) {
         c->popup()->hide();

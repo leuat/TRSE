@@ -142,6 +142,10 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 15;
   if (t==DOS)
       return 16;
+  if (t==TIM)
+      return 17;
+  if (t==VIDEOTON)
+      return 18;
 
   return 255;
 }
@@ -182,6 +186,10 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return VZ200;
     if (c==16)
         return DOS;
+    if (c==17)
+        return TIM;
+    if (c==18)
+        return VIDEOTON;
 
     return UNSUPPORTED;
 
@@ -450,6 +458,10 @@ void LColorList::Initialize(Type t)
         InitSPECTRUM();
     if (m_type == Type::VZ200)
         InitVZ200();
+    if (m_type == Type::TIM)
+        InitTIM();
+    if (m_type == Type::VIDEOTON)
+        InitVideoton();
 
 
 
@@ -750,6 +762,32 @@ void LColorList::InitC64()
     m_background = m_list[0];
 //    DefaultPen();
     m_pens.clear();
+
+}
+
+void LColorList::InitVideoton()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xAA, 0x00, 0x0),""));
+    m_list.append(LColor(QColor(0x0, 0x00, 0xAA),""));
+    m_list.append(LColor(QColor(0xAA, 0x00, 0xAA),""));
+    m_list.append(LColor(QColor(0x0, 0xAA, 0x00),""));
+    m_list.append(LColor(QColor(0x0, 0xAA, 0xAA),""));
+    m_list.append(LColor(QColor(0xAA, 0xAA, 0x00),""));
+    m_list.append(LColor(QColor(0xAA, 0xAA, 0xAA),""));
+    m_list.append(LColor(QColor(0x0, 0x00, 0x00),""));
+    m_list.append(LColor(QColor(0x0FF, 0x00, 0x00),""));
+    m_list.append(LColor(QColor(0x0, 0x00, 0xFF),""));
+    m_list.append(LColor(QColor(0xFF, 0x00, 0xFF),""));
+    m_list.append(LColor(QColor(0x0, 0xFF, 0x00),""));
+    m_list.append(LColor(QColor(0x0, 0xFF, 0xFF),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0x00),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
+    m_pens.clear();
+//    for (int i=0;i<m_list.count();i++) {
+  //      m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
+    //}
 
 }
 
@@ -1122,14 +1160,29 @@ void LColorList::InitVZ200()
 
 }
 
+void LColorList::InitTIM()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0,0x00,0),"Black"));
+    m_list.append(LColor(QColor(0x00,0x55,0x0),"G1"));
+    m_list.append(LColor(QColor(0x00,0xAA,0x00),"G2"));
+    m_list.append(LColor(QColor(0x00,0xFF,0x0),"G3"));
+    m_pens.clear();
+    for (int i=0;i<m_list.count();i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
+    }
+
+}
+
 void LColorList::InitPalettePens(int cnt)
 {
+//    qDebug() << m_pens.count() << cnt;
     if (m_pens.count()==cnt)
         return;
     m_pens.clear();
 //    qDebug() << "IniTPalettePens called";
 //    m_pens.append(LPen(&m_pens, 0,m_,LPen::Fixed));
-    for (int i=0;i<16;i++) {
+    for (int i=0;i<cnt;i++) {
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
     }
 

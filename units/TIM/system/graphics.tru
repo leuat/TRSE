@@ -1,0 +1,390 @@
+unit Graphics;
+var
+	x,y,x1,y1,x2,y2,col: integer;
+@donotremove col
+
+/**
+	Plots a pixel at coordinates x,y with color col, where x = 0..511, y = 0..255, col = 0 ..3
+**/
+procedure Plot(x, y: global integer, col: global integer);
+// Pixel plot routine based on TIM-011 video memory layout, 512x256 with 2-bit pixels in shades of green or gray
+// x = 0..511, y = 0..255, col = 0 ..3
+// offset = int(x/4)*256 + y + 8000h
+// pixelmask = col << ((x%4)*2)
+begin
+	asm("
+    ld de, (Graphics_col)
+    ld bc, (Graphics_y)
+    ld hl, (Graphics_x)
+
+    push de // save col
+    push hl // save x
+
+    srl h  ; // 16bit shift left 2
+    rr l
+    srl h
+    scf     // add 80h to final value
+    rr l    // l = int(x/4)
+    ld b, l // b = (x/4) + 80h, c = y, bc = int(x/4)*256 + y + 8000h
+
+    pop de  // x from stack
+    ld a, e
+    and 3  // a = x%4
+
+    ld de, plottbl
+    ld h, 0
+    ld l, a
+    add hl, de  // hl = plottbl + x mod 4
+
+    in a,(c) // read pixels
+    and (hl) // clear two bits
+
+    pop de  // col from stack
+    sla e
+    sla e   // de = col << 2
+    jp z, plotout
+
+    add hl, de  // add offset for color table
+    or (hl)
+
+plotout:
+    out (c), a  // write pixels
+    ret
+
+plottbl:
+    dc.b %11111100, %11110011, %11001111, %00111111   // inverted mask for color 00b
+    dc.b %00000001, %00000100, %00010000, %01000000   // masks for color 01b
+    dc.b %00000010, %00001000, %00100000, %10000000   // masks for color 10b
+    dc.b %00000011, %00001100, %00110000, %11000000   // masks for color 11b
+    ");
+end;
+@donotremove Plot
+
+/**
+	Draws a line from x1,y1 to x2,y2 with color col, where x1,x2 = 0..511, y1,y2 = 0..255, col = 0 ..3
+**/
+procedure Line(x1,y1,x2,y2: global integer, col: global integer);
+// draws a line from x0,y0 to x1,y1
+// line(col, x0, y0, x1, y1)
+begin
+	asm("
+line:
+	ld bc,(Graphics_y2)
+	ld hl,(Graphics_x2)
+	exx
+	ld de,(Graphics_x2)
+	ld bc,(Graphics_y1)
+	ld hl,(Graphics_x1)
+
+    // compare x0 and x1 - both positive numbers, can compare with simpler code
+    and a   // clear carry
+    sbc hl, de
+    add hl, de
+    jp c, _lindxdy
+    exx     // swap if x1<x0
+
+    // NOW: HL,BC - x0,y0     HL',BC' - x1,y1     where x0<=x1 => sx = 1, dx >=0
+
+	// calculate dx, dy and sy
+_lindxdy:
+    ld (_linxleft), hl  // x0
+    ld (_linyleft), bc  // y0
+    ld (_lindx), hl     // x0
+    ld (_lindy), bc     // y0
+    exx // hl,bc - x1,y1
+    push hl
+    push bc
+    // calculate dx, xleft=dx and assume err=dx
+    ld de, (_lindx)
+    and a
+    sbc hl, de  // x1-x0
+    ld (_lindx), hl
+    ld (_linxleft), hl
+    ld (_linerr), hl    // assume err = dx
+    // calculate -dx
+    ld a,h      // negate hl
+    xor $FF
+    ld h,a
+    ld a,l
+    xor $FF
+    ld l,a
+    ld de, 1    // add 1
+    and a
+    add hl, de
+    ld (_lindxneg), hl  // _lindxneg = -dx
+    // dy = y1-y0// if(dy<0) dy=-dy// sy = y0<y1 ? 1 : -1//
+    pop hl  // y1
+    ld a, 1
+    ld (_linsy), a      // assume sy = 1
+    // calculate y1-y0
+    ld de, (_lindy)
+    and a
+    sbc hl, de  // y1-y0
+    jp nc, _lindxdy1
+    // calculate -dy
+    ld a,h      // negate hl
+    xor $FF
+    ld h,a
+    ld a,l
+    xor $FF
+    ld l,a
+    ld de, 1    // add 1
+    and a
+    add hl, de
+    // sy = -1
+    ld a, $FF
+    ld (_linsy), a
+_lindxdy1:
+    // store calculated values
+    ld (_lindy), hl
+    ld (_linyleft), hl
+    pop hl  // x1
+    exx // hl,bc - x0,y0
+
+_linerr1:       // err = (dx>dy ? dx : -dy) >> 1//   it is already assumed err = dx
+    push hl     // x0
+    // compare dx and dy - both positive numbers, can compare with simpler code
+    ld hl, (_lindx)
+    ld de, (_lindy)
+    and a
+    sbc hl, de
+    jp nc, _linerrsh
+_linerr2:
+    ex de,hl    // hl = _lindy
+    ld a,h      // negate hl
+    xor $FF
+    ld h,a
+    ld a,l
+    xor $FF
+    ld l,a
+    ld de, 1    // add 1
+    and a
+    add hl, de
+_linerrsh:
+    // >> 1
+    sra h
+    rr l
+    ld (_linerr), hl
+    pop hl      // x0
+
+_linpix:
+    // calculate IO address and mask, taken from plotxy
+    //pop de  // col
+    ld de, (Graphics_col)
+    push de // save col
+    push hl // save x
+
+    srl h   // 16bit shift left 2
+    rr l
+    srl h
+    scf     // add 80h to final value
+    rr l    // l = int(x/4)
+    ld b, l // b = (x/4) + 80h, c = y, bc = int(x/4)*256 + y + 8000h
+
+    pop de  // x from stack
+    ld a, e
+    and 3  // a = x%4
+    ld (_linxpos), a
+
+    ld de, plottbl
+    ld h, 0
+    ld l, a
+    add hl, de  // hl = plottbl + x mod 4
+
+    // NOW: HL - ponts to clear mask, BC - points to IO
+
+    ld a, (hl)  // a - clear mask
+    pop de  // col from stack
+    sla e
+    sla e   // de = col << 2
+    add hl, de  // hl now points to one of color masks
+    inc de      // check if color was 0
+    dec de
+    jp z, _linblack // if yes, leave set mask at zero
+    ld d, (hl)
+_linblack:
+    ld e, a
+
+    // NOW: D - set mask, E - clear mask, BC - points to IO
+
+	// main line drawing loop
+_linloop:
+    in a,(c)    // read pixels
+    and e       // clear two bits
+    or  d       // set pixels
+    out (c), a  // wtite to video memory
+
+    // check if all pixels are drawn (_linxleft == _linyleft == 0)
+    ld hl, _linxleft
+    ld a, (hl)
+    inc hl
+    or (hl)
+    inc hl
+    or (hl)
+    inc hl
+    or (hl)
+    jp z, _linend
+
+    push de     // masks
+    // e2 = err// if(e2 >-dx) { err -= dy// x0 += sx// }
+    ld de, (_linerr)    // e2 = err
+    push de     // e2
+    ld hl, (_lindxneg)  // -dx
+
+    // compare -dx < e2
+    ld a,h
+    xor d
+    jp m,_lincmp12
+    sbc hl,de
+    jr nc,_lincmp13
+_lincmp11:
+    jp _lincmp15
+_lincmp12:
+    bit 7,d
+    jr z,_lincmp15
+_lincmp13:
+    or a
+_lincmp14:
+    jp nc, _line21
+_lincmp15:
+
+    // err -= dy
+    pop hl      // e2=err
+    push hl
+    ld de, (_lindy)
+    and a
+    sbc hl, de
+    ld (_linerr), hl
+    // inc x coordinate = rotate masks, inc IO byte column
+    pop hl      // e2
+    pop de      // masks
+    rlc d
+    rlc d
+    rlc e
+    rlc e
+    push de     // masks
+    // increment xpos and check if next column
+    ld a, (_linxpos)
+    inc a
+    and 3
+    ld (_linxpos),a
+    jp nz, _line20
+    // next byte column
+    inc b
+_line20:
+    // dec xleft
+    push hl     // e2
+    ld hl, (_linxleft)
+    dec hl
+    ld (_linxleft), hl
+
+_line21:
+    pop hl      // e2
+    // if(e2 < dy) { err += dx// y0 += sy// }
+    ld de,(_lindy)
+
+    // compare e2 < dy
+    ld a,h
+    xor d
+    jp m,_lincmp22
+    sbc hl,de
+    jr nc,_lincmp23
+_lincmp21:
+    jp _lincmp25
+_lincmp22:
+    bit 7,d
+    jr z,_lincmp25
+_lincmp23:
+    or a
+_lincmp24:
+    jp nc, _linnext
+_lincmp25:
+
+    // err += dx
+    ld hl,(_linerr)
+    ld de,(_lindx)
+    add hl,de
+    ld (_linerr),hl
+    // inc/dec y coordinate = go to next/previous byte in column
+    ld a,(_linsy)
+    add a,c
+    ld c,a
+    // dec _linyleft
+    push hl
+    ld hl, (_linyleft)
+    dec hl
+    ld (_linyleft), hl
+    pop hl
+_linnext:
+    pop de
+    jp _linloop
+
+_linend:
+    ret
+
+	// helper variables for line drawing
+_linxpos:   dc.b 0    // current x%4 value
+_lindx:     dc.w 0    // abs(x1-x0)
+_lindxneg:  dc.w 0    // -abs(x1-x0)
+_lindy:     dc.w 0    // abs(y1-y0)
+_linxleft   dc.w 0    // how many x movements is left
+_linyleft:  dc.w 0    // how many y movements is left
+_linsy:     dc.b 0    // 1 or -1(255)
+_linerr:    dc.w 0
+    ");
+end;
+
+
+/**
+	Draws a circle with center at x1,y1, where x1 = 0..511, y1 = 0..255, col = 0 ..3 and radius should be within screen limits
+**/
+procedure Circle(x1, y1: global integer, radius: integer, col: global integer);
+// Circle drawing routine taken/adapted from XPCW library by Miguel I. Garcia Lopez / FloppySoftware
+// https://github.com/MiguelVis/xpcw
+// See xdraw.h
+var
+	xh, yh, decision: integer;
+begin
+	x2 := radius;
+	y2 := 0;
+	decision := 1 - x2;
+
+	while x2 >= y2 do begin
+
+		xh := x2 shr 1;
+		yh := y2 shr 1;
+
+		Plot(x1 + x2, y1 + yh, col);
+		Plot(x1 + y2, y1 + xh, col);
+		Plot(x1 - x2, y1 + yh, col);
+		Plot(x1 - y2, y1 + xh, col);
+		Plot(x1 - x2, y1 - yh, col);
+		Plot(x1 - y2, y1 - xh, col);
+		Plot(x1 + x2, y1 - yh, col);
+		Plot(x1 + y2, y1 - xh, col);
+
+		y2 += 1;
+
+		if ((decision >= 32768) or (decision = 0)) then begin
+			decision := decision + (y2 shl 1) + 1;
+		end else begin
+			x2 -= 1;
+			decision := decision + ((y2 - x2) shl 1) + 1;
+		end;
+	end;
+end;
+
+
+/**
+	Draws a box from x1,y1 to x2,y2 with color col, where x1,x2 = 0..511, y1,y2 = 0..255, col = 0 ..3
+**/
+procedure Box(xb1,yb1,xb2,yb2: integer, col: global integer);
+begin
+    Line(xb1, yb1, xb2, yb1, col);
+    Line(xb1, yb2, xb2, yb2, col);
+    Line(xb1, yb1, xb1, yb2, col);
+    Line(xb2, yb1, xb2, yb2, col);
+end;
+
+
+end.
