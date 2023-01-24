@@ -1,0 +1,20 @@
+unit Memory;
+var
+	
+	
+procedure Copy(src, dst: pointer; len : byte);
+begin
+	asm("
+	ldb len
+	ldx src
+	ldy dst
+memcpy_loop:
+	lda ,x+
+	sta ,y+
+	decb
+	bne memcpy_loop
+	");
+end;	
+	
+	
+end.

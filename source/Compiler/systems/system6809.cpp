@@ -36,7 +36,8 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
 
-    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
+//    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
+    StartProcess(assembler, QStringList() << "--decb" <<"--6809"  <<filename+".asm" <<"-o"+filename+".bin", text);
 
 
 

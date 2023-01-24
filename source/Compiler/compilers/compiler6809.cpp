@@ -27,6 +27,13 @@ void Compiler6809::Connect()
             m_assembler->Optimise(*m_projectIni); }
     }
 
+/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
+        m_assembler->m_source<<	" org $CFFE";
+        m_assembler->m_source<<	"vector__:";
+        m_assembler->m_source<< "   fcb $40,00";
+
+    }
+*/
     CleanupBlockLinenumbers();
 /*    for (QString&s : m_assembler->m_source) {
         s = s.replace("sta(","sta (");
@@ -41,7 +48,7 @@ void Compiler6809::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
 
 void Compiler6809::Init6809Assembler()
 {
-    m_assembler->m_startInsertAssembler<<" org $4000";
+    m_assembler->m_startInsertAssembler<<" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
@@ -177,6 +184,7 @@ void Compiler6809::ConnectBlockSymbols(QVector<int> &blockEndSymbols)
             //     qDebug() << Util::numToHex(sym) << " " << winnerBlock->Type();
         }
     }
+
 
 
 }

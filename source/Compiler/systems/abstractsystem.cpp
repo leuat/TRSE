@@ -57,8 +57,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         process.setWorkingDirectory(currentDir);
     process.start(file, params);
     process.waitForFinished();
-        qDebug() << process.readAllStandardOutput();;
-        qDebug() << process.readAllStandardError();
+//        qDebug() << process.readAllStandardOutput();;
+  //      qDebug() << process.readAllStandardError();
     //        output+= process.readAllStandardOutput();
     if (standardOutput)
         output+= process.readAllStandardOutput();

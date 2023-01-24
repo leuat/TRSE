@@ -1,0 +1,31 @@
+unit Screen;
+var
+	
+	
+procedure EnableVsync();
+begin
+asm("
+
+  LDA    $FF03 * Load A with the value stored at $FF03
+  ORA    #$01  * Set bit 1 high
+  STA    $FF03 * Store A at $FF03 - VSYNC is now enabled
+  
+");	
+end;
+
+procedure WaitForVsync();
+begin
+asm("
+
+* Wait for VSYNC to occur
+	   lda     $FF02 * Acknowledge the VSYNC interrupt
+V_VWAIT:
+	   lda     $FF03 * Loop until Vsync is triggered
+       bpl     V_VWAIT * If bit 7 is low then keep looping
+
+");	
+end;
+	
+	
+	
+end.
