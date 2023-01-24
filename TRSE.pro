@@ -51,9 +51,9 @@ macx{
 
 #    LIBS += -L/usr/local/lib
     #DEFINES -=USE_OMP
-    contains(DEFINES, USE_OMP) {
-      QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
-    }
+#    contains(DEFINES, USE_OMP) {
+ #     QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
+ #   }
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
     QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
@@ -157,6 +157,7 @@ SOURCES += main.cpp\
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/codegen/abstractcodegen.cpp \
     source/Compiler/codegen/codegen_6502.cpp \
+    source/Compiler/codegen/codegen_6809.cpp \
     source/Compiler/codegen/codegen_arm.cpp \
     source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
@@ -218,7 +219,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemtim.cpp \
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
-    source/Compiler/systems/systemvideoton.cpp \
+    source/Compiler/systems/systemtvc.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
@@ -230,7 +231,7 @@ SOURCES += main.cpp\
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
-    source/LeLib/limage/limagevideoton.cpp \
+    source/LeLib/limage/limagetvc.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
     source/LeLib/bbc/discimage.cpp \
@@ -437,6 +438,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asmjdh8.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
+    source/Compiler/codegen/codegen_6809.h \
     source/Compiler/codegen/codegen_arm.h \
     source/Compiler/codegen/codegen_jdh8.h \
     source/Compiler/codegen/codegen_s1c88.h \
@@ -506,7 +508,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemtim.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
-    source/Compiler/systems/systemvideoton.h \
+    source/Compiler/systems/systemtvc.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \
@@ -518,7 +520,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagesnesgeneric.h \
-    source/LeLib/limage/limagevideoton.h \
+    source/LeLib/limage/limagetvc.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \
     source/LeLib/bbc/discimage.h \

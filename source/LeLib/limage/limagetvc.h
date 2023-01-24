@@ -1,14 +1,14 @@
-#ifndef LIMAGEVIDEOTON_H
-#define LIMAGEVIDEOTON_H
+#ifndef LIMAGETVC_H
+#define LIMAGETVC_H
 
 #include "limageqimage.h"
 #include <QMatrix4x4>
 #include "pixelchar.h"
 
-class LImageVideoton : public LImageQImage
+class LImageTVC : public LImageQImage
 {
 public:
-    LImageVideoton(LColorList::Type t);
+    LImageTVC(LColorList::Type t);
 
 
     static QVector<int> table160;
@@ -48,4 +48,4 @@ public:
 
 };
 
-#endif // LIMAGEVIDEOTON_H
+#endif // LIMAGETVC_H

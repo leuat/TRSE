@@ -461,6 +461,8 @@ QString Asm6502::String(QStringList lst, bool term)
 
     QString res;
     QString mark = "dc.b";
+    if (Syntax::s.m_currentSystem->is6809())
+        mark = "fcc";
     if (Syntax::s.m_currentSystem->CL65Syntax()) {
         mark = ".asciiz";
         term = false;
@@ -480,7 +482,7 @@ QString Asm6502::String(QStringList lst, bool term)
 
     }
     if (term)
-        res=res + "\t"+mark+"\t0";
+        res=res + "\t"+byte+"\t0";
     m_term +=res;
     return res;
 }

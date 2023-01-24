@@ -64,7 +64,7 @@
 #include "source/LeLib/limage/limageamstradsprites.h"
 #include "source/LeLib/limage/limagesnesgeneric.h"
 #include "source/LeLib/limage/limagetim.h"
-#include "source/LeLib/limage/limagevideoton.h"
+#include "source/LeLib/limage/limagetvc.h"
 
 class LImageFactory {
 public:

@@ -137,9 +137,11 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
 
 
 #pragma omp parallel for
+
        for (int j=0;j<h;j++)
            for (int i=0;i<w;i++)
         {
+//               qDebug() << "Thread number: " << omp_get_thread_num();
 
             float x = (i-w/2)*m_globals.m_aspect +w/2;//*aspect;
             float y = j;//*aspect;

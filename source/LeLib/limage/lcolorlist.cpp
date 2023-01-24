@@ -144,7 +144,7 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 16;
   if (t==TIM)
       return 17;
-  if (t==VIDEOTON)
+  if (t==TVC)
       return 18;
 
   return 255;
@@ -189,7 +189,7 @@ LColorList::Type LColorList::CharToType(unsigned char c)
     if (c==17)
         return TIM;
     if (c==18)
-        return VIDEOTON;
+        return TVC;
 
     return UNSUPPORTED;
 
@@ -460,8 +460,8 @@ void LColorList::Initialize(Type t)
         InitVZ200();
     if (m_type == Type::TIM)
         InitTIM();
-    if (m_type == Type::VIDEOTON)
-        InitVideoton();
+    if (m_type == Type::TVC)
+        InitTVC();
 
 
 
@@ -765,7 +765,7 @@ void LColorList::InitC64()
 
 }
 
-void LColorList::InitVideoton()
+void LColorList::InitTVC()
 {
     m_list.clear();
     m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));

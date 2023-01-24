@@ -2,7 +2,7 @@
 
 void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
-    m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
+    m_codeGen = QSharedPointer<CodeGen6809>(new CodeGen6809());
     m_assembler = QSharedPointer<Asm6502>(new Asm6502());
 
     m_assembler->byte="fcb";
@@ -27,7 +27,6 @@ void Compiler6809::Connect()
             m_assembler->Optimise(*m_projectIni); }
     }
 
-
     CleanupBlockLinenumbers();
 /*    for (QString&s : m_assembler->m_source) {
         s = s.replace("sta(","sta (");
@@ -42,6 +41,7 @@ void Compiler6809::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
 
 void Compiler6809::Init6809Assembler()
 {
+    m_assembler->m_startInsertAssembler<<" org $4000";
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 

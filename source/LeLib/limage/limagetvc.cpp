@@ -1,13 +1,13 @@
-#include "limagevideoton.h"
+#include "limageTVC.h"
 
-QVector<int> LImageVideoton::table160 =  {0b00000000, 0b00000001,0b00000100,0b00000101,
+QVector<int> LImageTVC::table160 =  {0b00000000, 0b00000001,0b00000100,0b00000101,
                           0b00010000, 0b00010001,0b00010100,0b00010101,
                           0b01000000, 0b01000001,0b01000100,0b01000101,
                           0b01010000, 0b01010001,0b01010100,0b01010101};
 
-LImageVideoton::LImageVideoton(LColorList::Type t)  : LImageQImage(t)
+LImageTVC::LImageTVC(LColorList::Type t)  : LImageQImage(t)
 {
-    m_type = LImage::Type::Videoton;
+    m_type = LImage::Type::TVC;
     m_supports.asmExport = false;
     m_supports.binaryLoad = false   ;
     m_supports.binarySave = false;
@@ -27,27 +27,27 @@ LImageVideoton::LImageVideoton(LColorList::Type t)  : LImageQImage(t)
 
 }
 
-uchar LImageVideoton::CrazySwap(uchar c) {
+uchar LImageTVC::CrazySwap(uchar c) {
 //    return ((c&0b11000000) | ((c&0b00000011)<<2) | ((c&0b00001100)<<2) | ((c&0b00110000)>>4));
     return (((c&0b00000011)<<6) | ((c&0b00001100)<<0) | ((c&0b00110000)<<0) | ((c&0b11000000)>>6));
 }
 
-void LImageVideoton::SetMode()
+void LImageTVC::SetMode()
 {
     m_qImage = nullptr;
     Initialize(m_width,m_height);
     InitPens();
 }
 
-/*void LImageVideoton::InitPens()
+/*void LImageTVC::InitPens()
 {
-    //m_colorList.InitVideoton();
+    //m_colorList.InitTVC();
 //    qDebug() << "HERE INITPENS";
     //  m_colorList.InitPalettePens(m_colors);
 }
 */
 /*
-void LImageVideoton::setPixel(int x, int y, unsigned int color)
+void LImageTVC::setPixel(int x, int y, unsigned int color)
 {
     if (m_qImage==nullptr)
         return;
@@ -65,7 +65,7 @@ void LImageVideoton::setPixel(int x, int y, unsigned int color)
 }
 */
 /*
-unsigned int LImageVideoton::getPixel(int x, int y)
+unsigned int LImageTVC::getPixel(int x, int y)
 {
     if (m_qImage==nullptr)
         return 0;
@@ -77,7 +77,7 @@ unsigned int LImageVideoton::getPixel(int x, int y)
     return 0;
 }
 */
-void LImageVideoton::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
+void LImageTVC::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
 //#pragma omp parallel for
     for (int i=0;i<m_width;i++)
@@ -95,13 +95,13 @@ void LImageVideoton::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF
     //return img;
 }
 
-void LImageVideoton::InitPens()
+void LImageTVC::InitPens()
 {
     m_colorList.InitPalettePens(m_colors);
 
 }
 /*
-void LImageVideoton::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
+void LImageTVC::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)
 {
     int height  =min(img.height(), m_height);
     int width  =min(img.width(), m_width);
@@ -137,7 +137,7 @@ void LImageVideoton::OrdererdDither(QImage &img, LColorList &colors, QVector3D s
 
 }
 */
-void LImageVideoton::ExportBin(QFile &ofile)
+void LImageTVC::ExportBin(QFile &ofile)
 {
 
     QString f = ofile.fileName();
@@ -224,7 +224,7 @@ void LImageVideoton::ExportBin(QFile &ofile)
     ofile.write(data);
 }
 
-void LImageVideoton::LoadBin(QFile &file)
+void LImageTVC::LoadBin(QFile &file)
 {
     file.read((char*)&m_width,sizeof(int));
     file.read((char*)&m_height,sizeof(int));
@@ -237,7 +237,7 @@ void LImageVideoton::LoadBin(QFile &file)
 
 }
 
-void LImageVideoton::SaveBin(QFile &file)
+void LImageTVC::SaveBin(QFile &file)
 {
     file.write((char*)&m_width,sizeof(int));
     file.write((char*)&m_height,sizeof(int));

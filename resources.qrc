@@ -703,7 +703,7 @@
         <file>resources/bin/tim_floppy/floppy/emu.com</file>
         <file>resources/bin/tim_floppy/floppy/ldr.com</file>
         <file>resources/bin/tim_floppy/floppy/mdsk.com</file>
-        <file>resources/images/VIDEOTON.png</file>
+        <file>resources/images/TVC.png</file>
         <file>resources/code/videoton.asm</file>
     </qresource>
 </RCC>

@@ -68,4 +68,5 @@ build_list = ,setvalue override_target_settings 1, setvalue perform_crunch 0, de
 exomizer_toggle = 0
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
+use_vice_c1541 = 0
 open_files =, main.ras
