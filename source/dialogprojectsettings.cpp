@@ -157,8 +157,8 @@ void DialogProjectSettings::FillFromIni()
 //    ui->chkPOEnabled->setChecked(m_ini->getdouble("post_optimize")==1);
 
 
-    QStringList ras = Util::FindFilesOfType(m_currentDir+"/","ras");
-    QStringList flf = Util::FindFilesOfType(m_currentDir+"/","flf");
+    QStringList ras = Util::FindFilesOfType(m_currentDir+"/","*.ras");
+    QStringList flf = Util::FindFilesOfType(m_currentDir+"/","*.flf");
 //    qDebug() << ras << m_currentDir;
     ui->cmbMainRas->clear();
     ui->cmbMainRas->addItem("none");
@@ -174,7 +174,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leInitMachineState->setText(m_ini->getString("machine_state"));
 
-    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","paw");
+    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","*.paw");
 //    qDebug() << ras << m_currentDir;
     ui->cmbPawInclude->clear();
     ui->cmbPawInclude->addItem("none");
