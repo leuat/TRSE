@@ -556,7 +556,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagespectrum.h \
     source/LeLib/limage/limagevga.h \
     source/LeLib/limage/limagevz200.h \
-    source/LeLib/limage/limagevtim.h \
+    source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \

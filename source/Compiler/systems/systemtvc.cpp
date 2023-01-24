@@ -1,4 +1,4 @@
-#include "systemTVC.h"
+#include "systemtvc.h"
 
 SystemTVC::SystemTVC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
 {
