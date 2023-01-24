@@ -42,12 +42,17 @@ void SystemTIM::SetupDisk(QString projectPath)
   //  Util::CopyFile(":resources/bin/tim_floppy/empty_9600.img",path+"/empty_9600.img");
 
 
-    Util::CopyFilesInDirectory("*", orgDir+"/floppy",path+"/floppy");
+    //Util::CopyFilesInDirectory("*", orgDir+"/floppy",path+"/floppy"); // not needed, the one below copies all
     Util::CopyFilesInDirectory("*", orgDir,path);
 
 
-
-
+    // copy all files from "copy_to_img" directory (if it exists) into a floppy image
+    QString imgFilesPath = projectPath + "/copy_to_img";
+    QDir imgFilesDir(imgFilesPath);
+    if (imgFilesDir.exists())
+    {
+        Util::CopyFilesInDirectory("*", imgFilesPath, path+"/floppy");
+    }
 }
 
 void SystemTIM::CleanupDisk(QString projectPath)
