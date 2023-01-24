@@ -146,6 +146,7 @@ SOURCES += main.cpp\
     imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
+    source/Compiler/assembler/asm6809.cpp \
     source/Compiler/assembler/asmTripe.cpp \
     source/Compiler/assembler/asmarm.cpp \
     source/Compiler/assembler/asmjdh8.cpp \
@@ -433,6 +434,7 @@ HEADERS  += mainwindow.h \
     formtutorialitem.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
+    source/Compiler/assembler/asm6809.h \
     source/Compiler/assembler/asmTripe.h \
     source/Compiler/assembler/asmarm.h \
     source/Compiler/assembler/asmjdh8.h \
@@ -520,6 +522,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagesnesgeneric.h \
+    source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagetvc.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \

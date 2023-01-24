@@ -19,100 +19,26 @@
  *   If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "asm6502.h"
+#include "asm6809.h"
 #include "source/Compiler/syntax.h"
 
 
-QString Asm6502::m_defaultZeroPointers = "$02, $04, $08, $16, $0B,$0D, $10, $12, $22,$24, $68";
-QString Asm6502::m_defaultViaZeroPointers = "$5B, $5C, $5D, $5E";
-QString Asm6502::m_defaultTempZeroPointers = "$54, $56, $58, $5A";
+QString Asm6809::m_defaultZeroPointers = "$02, $04, $08, $16, $0B,$0D, $10, $12, $22,$24, $68";
+QString Asm6809::m_defaultViaZeroPointers = "$5B, $5C, $5D, $5E";
+QString Asm6809::m_defaultTempZeroPointers = "$54, $56, $58, $5A";
 
 
-Asm6502::Asm6502() :Assembler()
+Asm6809::Asm6809() :Assembler()
 {
 //    m_stack["for"] = new Stack();
-    m_opCycles.InitMosOpCycles();
-    InitCStrings();
-    m_countCycles = true;
+    m_countCycles = false;
 }
 
-Asm6502::~Asm6502() {
-}
-
-
-void Asm6502::InitCStrings()
-{
-    m_cstr.clear();
-    m_cstr["\\"] = CStringItem("\\", 28,28);
-    m_cstr["£"] = CStringItem("£", 28,28);
-    m_cstr[" "] = CStringItem("32", 32,32);
-    m_cstr["!"] = CStringItem("!", 33,33);
-    m_cstr[""""] = CStringItem("""", 34,34);
-    m_cstr["#"] = CStringItem("#", 35,35);
-    m_cstr["$"] = CStringItem("$", 36,36);
-    m_cstr["%"] = CStringItem("%", 37,37);
-    m_cstr["&"] = CStringItem("&", 38,38);
-    m_cstr["'"] = CStringItem("'",39 ,39);
-    m_cstr["("] = CStringItem("(",40 ,40);
-    m_cstr[")"] = CStringItem(")",41 ,41);
-    m_cstr["*"] = CStringItem("*", 42,42);
-    m_cstr["+"] = CStringItem("+", 43,43);
-    m_cstr[","] = CStringItem(",", 44,44);
-    m_cstr["-"] = CStringItem("-", 45,45);
-    m_cstr["."] = CStringItem(".",46 ,46);
-    m_cstr["/"] = CStringItem("/", 47,47);
-    m_cstr["0"] = CStringItem("0", 48,48);
-    m_cstr["1"] = CStringItem("1", 49,49);
-    m_cstr["2"] = CStringItem("2", 50,50);
-    m_cstr["3"] = CStringItem("3", 51,51);
-    m_cstr["4"] = CStringItem("4", 52,52);
-    m_cstr["5"] = CStringItem("5", 53,53);
-    m_cstr["6"] = CStringItem("6", 54,54);
-    m_cstr["7"] = CStringItem("7", 55,55);
-    m_cstr["8"] = CStringItem("8", 56,56);
-    m_cstr["9"] = CStringItem("9", 57,57);
-    m_cstr[":"] = CStringItem(":", 58,58);
-    m_cstr[";"] = CStringItem(";", 59,59);
-    m_cstr["<"] = CStringItem("<", 60,60);
-    m_cstr["="] = CStringItem("=", 61,61);
-    m_cstr[">"] = CStringItem(">", 62,62);
-    m_cstr["?"] = CStringItem("?", 63,63);
-    m_cstr["@"] = CStringItem("@", 64,64 -64);
-    m_cstr["A"] = CStringItem("A", 65,65-64);
-    m_cstr["B"] = CStringItem("B", 66,66-64);
-    m_cstr["C"] = CStringItem("C", 67,67-64);
-    m_cstr["D"] = CStringItem("D", 68,68-64);
-    m_cstr["E"] = CStringItem("E", 69,69-64);
-    m_cstr["F"] = CStringItem("F", 70,70-64);
-    m_cstr["G"] = CStringItem("G", 71,71-64);
-    m_cstr["H"] = CStringItem("H", 72,72-64);
-    m_cstr["I"] = CStringItem("I", 73,73-64);
-    m_cstr["J"] = CStringItem("J", 74,74-64);
-    m_cstr["K"] = CStringItem("K", 75,75-64);
-    m_cstr["L"] = CStringItem("L", 76,76-64);
-    m_cstr["M"] = CStringItem("M", 77,77-64);
-    m_cstr["N"] = CStringItem("N", 78,78-64);
-    m_cstr["O"] = CStringItem("O", 79,79-64);
-    m_cstr["P"] = CStringItem("P", 80,80-64);
-    m_cstr["Q"] = CStringItem("Q", 81,81-64);
-    m_cstr["R"] = CStringItem("R", 82,82-64);
-    m_cstr["S"] = CStringItem("S", 83,83-64);
-    m_cstr["T"] = CStringItem("T", 84,84-64);
-    m_cstr["U"] = CStringItem("U", 85,85-64);
-    m_cstr["V"] = CStringItem("V", 86,86-64);
-    m_cstr["W"] = CStringItem("W", 87,87-64);
-    m_cstr["X"] = CStringItem("X", 88,88-64);
-    m_cstr["Y"] = CStringItem("Y", 89,89-64);
-    m_cstr["Z"] = CStringItem("Z", 90,90-64);
-    m_cstr["["] = CStringItem("",91, 91-64);
-    m_cstr["£"] = CStringItem("",92,92-64);
-    m_cstr["]"] = CStringItem("",93,93-64);
-//    m_cstr[""] = CStringItem("", ,);
-
+Asm6809::~Asm6809() {
 }
 
 
-void Asm6502::Program(QString programName, QString vicConfig)
+void Asm6809::Program(QString programName, QString vicConfig)
 {
 
 
@@ -130,7 +56,7 @@ void Asm6502::Program(QString programName, QString vicConfig)
     Label(programName);
 }
 
-void Asm6502::EndProgram()
+void Asm6809::EndProgram()
 {
 //    Asm("rts");
     //if (m_hasOpenBlock)
@@ -147,7 +73,7 @@ void Asm6502::EndProgram()
 }
 
 
-void Asm6502::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void Asm6809::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 {
     QString t = byte;
 
@@ -203,7 +129,7 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
                 s=s+"\n";
                 s=s + "\t" +t + " ";
             }
-            else if (i!=data.count()-1) s=s+", ";
+            else if (i!=data.count()-1) s=s+",";
 
         }
         QStringList lst = s.split("\n");
@@ -229,13 +155,13 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
 }
 
 /*
-void Asm6502::VarDeclHeader()
+void Asm6809::VarDeclHeader()
 {
     m_labelStack["block"].push();
     Asm("jmp "+ getLabel("block"));
 }
 */
-void Asm6502::DeclareVariable(QString name, QString type, QString initval, QString position)
+void Asm6809::DeclareVariable(QString name, QString type, QString initval, QString position)
 {
     QString n = name;
     n=n.toLower();
@@ -300,9 +226,9 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
 
 }
 
-void Asm6502::DeclareString(QString name, QStringList initval, QStringList flags)
+void Asm6809::DeclareString(QString name, QStringList initval, QStringList flags)
 {
-//    qDebug() << "Asm6502 FLAGS " <<flags <<!flags.contains("no_term");
+//    qDebug() << "Asm6809 FLAGS " <<flags <<!flags.contains("no_term");
 
 /*    QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
     app->Append("org " + pos,1);
@@ -320,7 +246,7 @@ void Asm6502::DeclareString(QString name, QStringList initval, QStringList flags
     m_term="";
 }
 
-void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flags)
+void Asm6809::DeclareCString(QString name, QStringList initVal, QStringList flags)
 {
     Write(getLabelEnding(name) + "\t");
     bool done=false;
@@ -361,12 +287,6 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
                 //qDebug() << c;
 //                qDebug() << curStr << m_cstr.keys();
 
-                if (m_cstr.contains(c)) {
-                    uchar sc = m_cstr[c].m_screenCode;
-                    if (flags.contains("invert")) sc |= 128;
-                    curOutData+=Util::numToHex(sc);
-
-                }
             }
 
         if (curOut++<8)
@@ -410,26 +330,26 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
 }
 
 
-void Asm6502::BeginBlock()
+void Asm6809::BeginBlock()
 {
     Nl();
 }
 
 
-void Asm6502::EndBlock()
+void Asm6809::EndBlock()
 {
     Nl();
     m_labelStack["block"].pop();
 }
 
-void Asm6502::ApplyTerm()
+void Asm6809::ApplyTerm()
 {
     //Asm("sta " + m_currentVar);
 
     m_currentVar = "";
 }
 
-void Asm6502::Number(QString n)
+void Asm6809::Number(QString n)
 {
 
     m_term +=n;
@@ -451,12 +371,12 @@ void Asm6502::Number(QString n)
 
 }
 
-void Asm6502::Comment(QString s)
+void Asm6809::Comment(QString s)
 {
     Asm("; "+ s) ;
 }
 
-QString Asm6502::String(QStringList lst, bool term)
+QString Asm6809::String(QStringList lst, bool term)
 {
 
     QString res;
@@ -487,51 +407,50 @@ QString Asm6502::String(QStringList lst, bool term)
     return res;
 }
 
-/*void Asm6502::AssignVariable(QString v)
+/*void Asm6809::AssignVariable(QString v)
 {
     m_currentVar = v;
     m_term="lda ";
 }
 
-void Asm6502::EndAssignVariable(QString variable)
+void Asm6809::EndAssignVariable(QString variable)
 {
     Asm(m_term);
     Asm("sta " + variable);
 }
 */
-void Asm6502::BinOP(TokenType::Type t,  bool clearFlag)
+void Asm6809::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         if (clearFlag)
-        Asm("clc");
-        m_term = "adc ";
+        m_term = "adda ";
     }
 
     if (t == TokenType::MINUS) {
         if (clearFlag)
-        Asm("sec");
-        m_term = "sbc ";
+        m_term = "suba ";
     }
 
     if (t == TokenType::BITAND) {
-        m_term = "and ";
+        m_term = "anda ";
     }
 
     if (t == TokenType::BITOR) {
         m_term = "ora ";
     }
     if (t == TokenType::XOR) {
-        m_term = "eor ";
+        m_term = "eora ";
     }
 
 }
 
 
 
+
 /*
 
 
-void Asm6502::Poke(bool start)
+void Asm6809::Poke(bool start)
 {
     //if (start)
      //   m_term = "lda ";
@@ -539,7 +458,7 @@ void Asm6502::Poke(bool start)
        m_term = "sta ";
 }
 
-void Asm6502::Peek(bool start)
+void Asm6809::Peek(bool start)
 {
     if (start)
         m_term = "lda ";
@@ -547,14 +466,14 @@ void Asm6502::Peek(bool start)
 
 }
 */
-QString Asm6502::PushZeroPointer()
+QString Asm6809::PushZeroPointer()
 {
     QString zp = m_zeroPointers[m_curZeroPointer];
     m_curZeroPointer++;
     return zp;
 }
 
-void Asm6502::PopZeroPointer()
+void Asm6809::PopZeroPointer()
 {
     if (m_curZeroPointer<=0)
         ErrorHandler::e.Error("Zero pointer cannot be pushed below zero");
@@ -562,14 +481,14 @@ void Asm6502::PopZeroPointer()
     m_curZeroPointer--;
 }
 
-bool Asm6502::CheckZPAvailability()
+bool Asm6809::CheckZPAvailability()
 {
     if (m_curZeroPointer<m_zeroPointers.count())
         return true;
     return false;
 }
 
-QString Asm6502::GetOrg(int pos)
+QString Asm6809::GetOrg(int pos)
 {
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
         return "";
@@ -579,13 +498,13 @@ QString Asm6502::GetOrg(int pos)
     return "org " + Util::numToHex(pos);
 }
 
-QString Asm6502::GetOrg() {
+QString Asm6809::GetOrg() {
     if (Syntax::s.m_currentSystem->CL65Syntax())
         return ".org ";
     return "org ";
 }
 
-void Asm6502::DeclareInternalVariable(QString name)
+void Asm6809::DeclareInternalVariable(QString name)
 {
     if (m_varZeroPointers.count()!=0) {
         QString addr = m_varZeroPointers[0];
@@ -598,7 +517,7 @@ void Asm6502::DeclareInternalVariable(QString name)
 //    m_tempVars << (name + " dc.b 0");
 }
 
-int Asm6502::CodeSizeEstimator(QStringList &lines) {
+int Asm6809::CodeSizeEstimator(QStringList &lines) {
     int size = 0;
  //   qDebug() << "EST START";
     for (auto&s : lines) {
@@ -634,7 +553,7 @@ int Asm6502::CodeSizeEstimator(QStringList &lines) {
     return size;
 }
 
-QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
+QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
 {
     if (m_zpStack.count()<m_tempZeroPointers.count()) {
        // qDebug() << "B" << m_tempZeroPointers.count();
@@ -682,7 +601,7 @@ QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
     return tmpVar;
 }
 
-void Asm6502::PopTempVar()
+void Asm6809::PopTempVar()
 {
     if (m_zpStack.count()>0) {
         m_zpStack.removeLast();
@@ -692,7 +611,7 @@ void Asm6502::PopTempVar()
 }
 
 /*
-void Asm6502::Writeln()
+void Asm6809::Writeln()
 {
     m_labelStack["writeln"].push();
     QString l = "L" + getLabel("writeln");
@@ -709,7 +628,7 @@ void Asm6502::Writeln()
 
 }
 
-void Asm6502::EndWriteln()
+void Asm6809::EndWriteln()
 {
     Asm(m_term + ",0");
     Label("L"+getLabel("writeln")+"2");
@@ -717,12 +636,12 @@ void Asm6502::EndWriteln()
 
 }
 */
-void Asm6502::LoadVariable(QString var)
+void Asm6809::LoadVariable(QString var)
 {
     Asm("lda "+ var);
 }
 
-void Asm6502::Variable(QString v, bool isByte)
+void Asm6809::Variable(QString v, bool isByte)
 {
     if (isByte) {
         if (m_term=="")
@@ -731,12 +650,7 @@ void Asm6502::Variable(QString v, bool isByte)
     }
     else {
         Comment("integer assignment NodeVar");
-//        if (m_term=="")
-            m_term = "ldy ";
-        m_term+=v + "+1 ; keep";
-        Term();
-//        Asm("tay");
-        Term("lda "+v);
+        Term("ldy "+v);
 
     }
 }
@@ -744,11 +658,11 @@ void Asm6502::Variable(QString v, bool isByte)
 
 
 /*
-void Asm6502::StartForLoop(QString var, QString startVal)
+void Asm6809::StartForLoop(QString var, QString startVal)
 {
 }
 
-void Asm6502::EndForLoop(QString endVal)
+void Asm6809::EndForLoop(QString endVal)
 {
     m_stack["for"].pop();
     m_labelStack["forLoopFix"].push();
@@ -783,7 +697,7 @@ void Asm6502::EndForLoop(QString endVal)
 
 */
 // 8790 vs 8717
-void Asm6502::Optimise(CIniFile& ini)
+void Asm6809::Optimise(CIniFile& ini)
 {
 
     if (ini.getdouble("post_optimizer_passldatax")==1)
@@ -796,7 +710,7 @@ void Asm6502::Optimise(CIniFile& ini)
 
     if (ini.getdouble("post_optimizer_passstalda")==1) {
         OptimisePassStaLda();
-        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
+        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M6809)
             OptimisePassStaLda2();
     }
 
@@ -847,7 +761,7 @@ void Asm6502::Optimise(CIniFile& ini)
 }
 
 
-void Asm6502::OptimisePassStaLda()
+void Asm6809::OptimisePassStaLda()
 {
     m_removeLines.clear();
     int j;
@@ -876,7 +790,7 @@ void Asm6502::OptimisePassStaLda()
     RemoveLines();
 }
 
-void Asm6502::OptimisePassStaLdx(QString x)
+void Asm6809::OptimisePassStaLdx(QString x)
 {
     m_removeLines.clear();
     int j;
@@ -906,7 +820,7 @@ void Asm6502::OptimisePassStaLdx(QString x)
 
 
 
-void Asm6502::OptimisePassLdx(QString x)
+void Asm6809::OptimisePassLdx(QString x)
 {
 
     bool allDone = false;
@@ -1007,7 +921,7 @@ void Asm6502::OptimisePassLdx(QString x)
     }
 }
 
-void Asm6502::OptimisePassLdaTax(QString x)
+void Asm6809::OptimisePassLdaTax(QString x)
 {
     m_removeLines.clear();
     int j;
@@ -1047,7 +961,7 @@ void Asm6502::OptimisePassLdaTax(QString x)
 }
 
 
-void Asm6502::OptimiseJumps()
+void Asm6809::OptimiseJumps()
 {
     m_removeLines.clear();
     int j;
@@ -1073,7 +987,7 @@ void Asm6502::OptimiseJumps()
 
 }
 
-void Asm6502::OptimiseCmp(QString op)
+void Asm6809::OptimiseCmp(QString op)
 {
     m_removeLines.clear();
     for (int i=0;i<m_source.count()-1;i++) {
@@ -1097,7 +1011,7 @@ void Asm6502::OptimiseCmp(QString op)
 
 }
 
-void Asm6502::OptimisePhaPla1()
+void Asm6809::OptimisePhaPla1()
 {
 
     /*
@@ -1138,7 +1052,7 @@ void Asm6502::OptimisePhaPla1()
  * lda ...
  *
  * */
-void Asm6502::OptimisePhaPla2()
+void Asm6809::OptimisePhaPla2()
 {
     m_removeLines.clear();
     int j,k;
@@ -1171,7 +1085,7 @@ void Asm6502::OptimisePhaPla2()
 
 }
 
-void Asm6502::OptimisePhaLdxPla()
+void Asm6809::OptimisePhaLdxPla()
 {
 
     m_removeLines.clear();
@@ -1199,7 +1113,7 @@ void Asm6502::OptimisePhaLdxPla()
 }
 
 
-void Asm6502::OptimiseLdLd()
+void Asm6809::OptimiseLdLd()
 {
     m_removeLines.clear();
     int j,k;
@@ -1218,7 +1132,7 @@ void Asm6502::OptimiseLdLd()
 }
 
 
-bool Asm6502::ContainsAChangingOpcodes(QString l1) {
+bool Asm6809::ContainsAChangingOpcodes(QString l1) {
     l1 = l1.trimmed().toLower();
     return    l1.startsWith("txa") || l1.startsWith("tya")
             || l1.startsWith("lda") || l1.startsWith("pla")
@@ -1231,21 +1145,21 @@ bool Asm6502::ContainsAChangingOpcodes(QString l1) {
 
 }
 
-bool Asm6502::ContainsYUsingOpcodes(QString l1,QString y)
+bool Asm6809::ContainsYUsingOpcodes(QString l1,QString y)
 {
     l1 = l1.trimmed().toLower();
     return  l1.startsWith("t"+y+"a") || l1.startsWith("st"+y) || l1.contains(","+y) || l1.contains(", "+y)  || ContainsBranches(l1);;
 
 }
 
-bool Asm6502::ContainsYChangingOpcodes(QString l1,QString y)
+bool Asm6809::ContainsYChangingOpcodes(QString l1,QString y)
 {
     l1 = l1.trimmed().toLower();
     return  l1.startsWith("ta"+y) || l1.startsWith("ld"+y) || ContainsBranches(l1);
 
 }
 
-bool Asm6502::ContainsBranches(QString l1)
+bool Asm6809::ContainsBranches(QString l1)
 {
     l1 = l1.trimmed().toLower();
     return
@@ -1258,14 +1172,14 @@ bool Asm6502::ContainsBranches(QString l1)
 
 }
 
-int Asm6502::CountInstructionCycle(QStringList s)
+int Asm6809::CountInstructionCycle(QStringList s)
 {
     MOSOperation op = GetOperand(s);
     return CalculateCycles(op);
 
 }
 
-MOSOperation Asm6502::GetOperand(QStringList s)
+MOSOperation Asm6809::GetOperand(QStringList s)
 {
     MOSOperation op;
     op.operand = s[0].toLower();
@@ -1302,15 +1216,16 @@ MOSOperation Asm6502::GetOperand(QStringList s)
 
 }
 
-int Asm6502::CalculateCycles(MOSOperation op)
+int Asm6809::CalculateCycles(MOSOperation op)
 {
     if (op.operand.contains("\t"))
         return 0;
-    if (!m_opCycles.contains(op.operand)) {
+    return 0;
+//    if (!m_opCycles.contains(op.operand)) {
         //qDebug() << "Error: could not count operands for type:" << op.operand;
-        return 0;
-    }
-    MOSOperandCycle oc = m_opCycles[op.operand];
+    //    return 0;
+  //  }
+/*    MOSOperandCycle oc = m_opCycles[op.operand];
     // is immediate
     if (op.param1=="")
         return oc.m_implied;
@@ -1327,13 +1242,13 @@ int Asm6502::CalculateCycles(MOSOperation op)
         return oc.m_immediate;
 
     return oc.m_absolute;
-
+    */
 
 }
 
 
 
-void Asm6502::InitZeroPointers(QStringList lst, QStringList tmpList, QStringList varList)
+void Asm6809::InitZeroPointers(QStringList lst, QStringList tmpList, QStringList varList)
 {
     m_zeroPointers.clear();
     for (QString s: lst) {
@@ -1357,13 +1272,13 @@ void Asm6502::InitZeroPointers(QStringList lst, QStringList tmpList, QStringList
         if (zp!="") {
             m_varZeroPointers.append(zp);
         }
-//       qDebug() << "Asm6502 initzero " <<m_tempZeroPointers;
+//       qDebug() << "Asm6809 initzero " <<m_tempZeroPointers;
 
 
 }
 
 // Optimises: "sta p1   lda p1"
-void Asm6502::OptimisePassStaLda2()
+void Asm6809::OptimisePassStaLda2()
 {
     m_removeLines.clear();
     int j;
@@ -1429,7 +1344,7 @@ void Asm6502::OptimisePassStaLda2()
 }
 
 // Optimises: "sta p1   lda p1"
-void Asm6502::OptimisePassLdyLdy(QString y)
+void Asm6809::OptimisePassLdyLdy(QString y)
 {
     m_removeLines.clear();
     int j;

@@ -4199,12 +4199,16 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     if (isGlobal) { // Typecheck that they exist
         for (QSharedPointer<Node> n : vars) {
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+            QSharedPointer<Symbol> sym = nullptr;
             try {
-                m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
+                sym = m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
+                // check if global type matches parameter type:
             } catch (FatalErrorException& fe) {
                 fe.message = fe.message + "When using the <font color=\"yellow\">global</font> keyword, the variable must in question must be declared in the global variable scope. ";
                 throw fe;
             }
+            if (sym->m_type!=typeNode->m_op.m_value)
+                throw FatalErrorException("Global parameters must be the same type as defined globally ("+sym->m_type.toLower()+" != " + typeNode->m_op.m_value.toLower()+") ", m_currentToken.m_lineNumber);
 
         }
     }

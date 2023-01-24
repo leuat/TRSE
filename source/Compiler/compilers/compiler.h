@@ -24,6 +24,7 @@
 
 #include "../parser.h"
 #include "source/Compiler/assembler/asm6502.h"
+#include "source/Compiler/assembler/asm6809.h"
 #include "source/Compiler/assembler/asm68000.h"
 #include "source/Compiler/assembler/asmx86.h"
 #include "source/Compiler/assembler/asmz80.h"

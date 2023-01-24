@@ -1,6 +1,8 @@
 unit Screen;
 var
-	
+	const pos : address = $400;
+	p : pointer;
+	b : byte;
 	
 procedure EnableVsync();
 begin
@@ -25,7 +27,6 @@ V_VWAIT:
 
 ");	
 end;
-	
 	
 	
 end.

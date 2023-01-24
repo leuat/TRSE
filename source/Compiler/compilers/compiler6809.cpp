@@ -3,7 +3,7 @@
 void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_codeGen = QSharedPointer<CodeGen6809>(new CodeGen6809());
-    m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+    m_assembler = QSharedPointer<Asm6809>(new Asm6809());
 
     m_assembler->byte="fcb";
     m_assembler->word="fdb";
