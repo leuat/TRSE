@@ -78,11 +78,6 @@ begin
 			
 		end;	
 	end;
-	asm("
-	
-	ret nc
-
-	");
 end;
 
 
