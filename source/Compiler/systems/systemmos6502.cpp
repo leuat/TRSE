@@ -271,9 +271,6 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
 
     // Create a disk
     QStringList cd64;
-#ifdef _WIN32
-#else
-#endif
     cd64<<"cc1541";
     d64Params <<"cc1541";
     cd64 << "-n" << diskName <<"-d" <<"19";

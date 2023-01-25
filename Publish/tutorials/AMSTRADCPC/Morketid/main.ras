@@ -167,7 +167,7 @@ var
  Initializes a new effect, resetting time and counters
  
 */
-procedure InitEffect(maxTime:global integer);
+procedure InitEffect(maxTime:global byte);
 begin
 	time:=0;
 	done:=false;	

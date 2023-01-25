@@ -58,20 +58,20 @@ begin
 	moveto(11,14,hi(screen_char_loc));
 	// convert the number "ii" to decimal:
 	str::itoa(ii, #buf, 10);
-	printstring(	buf,0,40);
+	printstring(#buf,0,40);
 	
 	
 	
 	moveto(19,14,hi(screen_char_loc));
 	// convert the number in "ii" to hex
 	str::itoa(ii, #buf, 16);
-	printstring(	buf,0,40);
+	printstring(#buf,0,40);
 	
 
 	moveto(10,17,hi(screen_char_loc));
 	// Copy a substring to the buffer ("MEOW")
 	str::substr(#buf, #longString, 2,4);
-	printstring(	buf,0,40);
+	printstring(#buf,0,40);
 	
 	moveto(0,19,hi(screen_char_loc));
 	// Copy a substring to the buffer ("MEOW")

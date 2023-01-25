@@ -75,7 +75,7 @@ end;
 
 
 
-procedure PutPixel (x1,y : global integer; color : global Byte); 
+procedure PutPixel (x1,y : global integer; color : global integer); 
 begin
 @ifdef CPU_FLAVOR_8086
   asm
@@ -113,7 +113,7 @@ begin
 end;
 
 
-Procedure DrawLine(a,b,c,d:integer;color:global byte;where:pointer); 
+Procedure DrawLine(a,b,c,d:integer;color:global integer;where:pointer); 
 var i,s,d1x,d1y,d2x,d2y,u,v,m,n:integer;
 	@donotremove s
 	@donotremove d1x
@@ -273,7 +273,7 @@ end;
 
 
 
-Procedure Hline (x1,x2,y:global integer;color:global byte;addr:global pointer);
+Procedure Hline (x1,x2,y:global integer;color:global integer;addr:global pointer);
 begin
 asm
   ;cmp [Gfx_y],200

@@ -14,14 +14,16 @@ var
 */
 
 
-@define sz integer
+//@define sz integer
+@define sz byte
 @ifdef CPU_MOS6502
 @define sz byte
 @endif
 	
 	p1,p2,p3 : ^byte;
 	i,j : @sz;
-	b,li,c,ii,jj:byte;
+	li,ii,jj:byte;
+	b,c : @sz;
 	num : integer;
 	chars : string="0123456789ABCDEF";
 
@@ -70,7 +72,7 @@ itoa(1234, p1, 16); // coverts "1234" to a hexadecimal string stored in p1
 	</code>
 
 **/
-procedure itoa( num:global integer; p1: global ^byte; b:global byte);
+procedure itoa( num:global integer; p1: global ^byte; b:global @sz);
 begin
 	i:=0;
 	

@@ -150,7 +150,7 @@ begin
 end;
 
 
-procedure ProjectSimple(i,cx,cy,cz,zdiv: global integer);
+procedure ProjectSimple(i,cx,cy,cz: global byte;zdiv :global integer);
 begin
 	ip := objects[i].vertices_rot;
 	cp := ppn;

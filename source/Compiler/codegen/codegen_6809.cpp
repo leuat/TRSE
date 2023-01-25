@@ -888,9 +888,10 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
    // node->m_right->setForceType(TokenType::INTEGER);
     node->m_left->setForceType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::PLUS) {
-
         LoadIndex(node->m_right,TokenType::BYTE);
+        as->Asm("pshs d");
         LoadVariable(node->m_left);
+        as->Asm("puls d");
         as->Asm("leay d,y");
     }
     if (node->m_op.m_type==TokenType::MINUS) {
@@ -1036,27 +1037,26 @@ QString CodeGen6809::getIncbin() {
 void CodeGen6809::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
 {
 
-    QString bcs ="bcs ";
-    QString bcc ="bcc ";
+    QString bcs ="lbcs ";
+    QString bcc ="lbcc ";
     if (node->isSigned(as)) {
         as->Comment("Signed compare");
-        bcs = "bpl ";
-        bcc = "bmi ";
+        bcs = "lbpl ";
+        bcc = "lbmi ";
     }
-
     if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("bne " + lblFailed);
+        as->Asm("lbne " + lblFailed);
     if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("beq " + lblFailed);
+        as->Asm("lbeq " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATEREQUAL) {
         as->Asm(bcc + lblFailed);
     }
     if (node->m_op.m_type==TokenType::GREATER) {
         as->Asm(bcc + lblFailed);
-        as->Asm("beq " + lblFailed);
+        as->Asm("lbeq " + lblFailed);
     }
     if (node->m_op.m_type==TokenType::LESSEQUAL ) {
-        as->Asm("beq " + lblSuccess);
+        as->Asm("lbeq " + lblSuccess);
         as->Asm(bcs + lblFailed);
     }
 
@@ -1169,6 +1169,7 @@ void CodeGen6809::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QSt
 {
 
     if (node->isWord(as)) {
+        as->Comment("Binary clause Simplified integer: " + node->m_op.getType());
         BinaryClauseInteger(node,lblSuccess, lblFailed, page);
         return;
     }
@@ -1177,7 +1178,6 @@ void CodeGen6809::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QSt
     //    as->Asm("pha"); // Push that baby
 
     BuildToCmp(node);
-
     PrintCompare(node, lblSuccess,lblFailed);
 
 
@@ -1255,58 +1255,7 @@ void CodeGen6809::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
         as->Asm("ldy "+lo1);
         as->Asm("cmpy "+node->m_right->getValue(as));
         as->Asm("beq "+lbl2);
-/*        as->Asm("lda " + hi1 + "   ; compare high bytes");
-        as->Asm("cmp " + hi2 + " ;keep");
-        as->Asm("beq " + lblPass1);
-        as->Asm("jmp " + lbl1);
-        as->Label(lblPass1);
-        as->Asm("lda " + lo1);
-        as->Asm("cmp " + lo2+" ;keep");
-        as->Asm("beq " + lbl2);
-        as->Asm("jmp " + lbl1);
-        as->PopLabel("pass1");
-*/
-
     }
-    /*        as->Label(lbl1); // ok
-        as->Asm("lda #1");
-        as->Asm("jmp " + lbl3);
-        as->Label(lbl2); // failed
-        as->Asm("lda #2");
-
-        as->Label(lbl3); // DONE
-
-*/
-    // Now all is ok
-    //  }
-    /*  else {
-        ErrorHandler::e.Error("Comparison of integer only implemented for pure number or variable",node->m_op.m_lineNumber);
-    }
-*/
-
-
-
-    /*
-        if (m_op.m_type==TokenType::EQUALS)
-            as->Asm("bne " + lblFailed);
-        if (m_op.m_type==TokenType::NOTEQUALS)
-            as->Asm("beq " + lblFailed);
-        if (m_op.m_type==TokenType::GREATER)
-            as->Asm("bcc " + lblFailed);
-        if (m_op.m_type==TokenType::LESS)
-            as->Asm("bcs " + lblFailed);
-
-        as->Asm("lda #1; success");
-        as->Asm("jmp " + lblFinished);
-        as->Label(lblFailed);
-        as->Asm("lda #0 ; failed state");
-        as->Label(lblFinished);
-    */
-    //   as->PopLabel("binaryclauseinteger_success");
-    //   as->PopLabel("binaryclauseinteger_fail");
-    //   as->PopLabel("binaryclauseintegerfinished");
-    // as->PopLabel("binary_clause_temp_var");
-    //  as->PopLabel("binary_clause_temp_lab");
 }
 
 
@@ -1535,7 +1484,7 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
         return;
 
     }
-    QString cmp ="cmp ";
+    QString cmp ="cmpa ";
     as->ClearTerm();
 
     if (!nodeA->m_left->isPureVariable() || nodeA->m_left->hasArrayIndex()) {
@@ -1592,7 +1541,7 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
 
             if (stepValue == 1 || stepValue == -1) {
                 // increments / decrements of 1 are safe for BNE
-                as->Asm("bne "+loopNotDone);
+                as->Asm("lbne "+loopNotDone);
             } else if (stepValue > 1) {
                 as->Asm("beq "+loopDone); // FOR index == TO value
                 as->Asm("bcs "+loopNotDone); // or FOR index > TO value
@@ -1643,14 +1592,36 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
     LoadIndex(node->m_expr, node->getArrayType(as));
     as->Asm("ldx "+addr+node->getValue(as));
     as->Asm("leax d,x");
-    if (node->m_forceType==TokenType::INTEGER) {
+    if (node->m_forceType==TokenType::INTEGER && node->getArrayType(as)==TokenType::BYTE) {
+        as->Comment("Forcing data data from byte array to be integer ");
         as->Asm("ldb ,x");
         as->Asm("lda #0");
         as->Asm("tfr d,y");
     }
-        else
-        as->Asm("lda ,x");
+    else
+    {
+        if (node->getArrayType(as)==TokenType::INTEGER)
+        {
+            as->Asm("ldy ,x");
+            if (node->m_forceType==TokenType::BYTE) {
+                as->Comment("load from integer array, force result to be byte");
+                as->Asm("exg a,b");
 
+            }
+        }
+        else
+        {
+            if (node->m_forceType==TokenType::INTEGER) {
+                    as->Comment("Forcing data data from byte array to be integer ");
+                    as->Asm("ldb ,x");
+                    as->Asm("lda #0");
+                    as->Asm("tfr d,y");
+            }
+            else
+              as->Asm("lda ,x");
+        }
+
+    }
 
 
 }
@@ -1726,9 +1697,11 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
             if (node->m_forceType == TokenType::INTEGER) {
                 // OOps byte but must be integer
                 as->Comment("Forcing byte to be integer");
+                as->Asm("pshs d");
                 as->Asm("ldb "+val);
                 as->Asm("lda #0");
                 as->Asm("tfr d,y");
+                as->Asm("puls d");
             }
             else {
                 if (as->m_term=="")
@@ -2012,19 +1985,14 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
-                as->Asm("sta " + getValue(node) + "+"+ QString::number(i));
-                Disable16bit();
-                as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1));
-                Enable16bit();
+                as->Asm("sty " + getValue(node) + "+"+ QString::number(i));
 
             }
             else {
+                if (node->m_writeType==TokenType::BYTE)
                 as->Asm("sta " + getValue(node) + "+"+ getValue(node->m_expr));
-                if (node->m_writeType==TokenType::INTEGER) {
-                    Disable16bit();
-                    as->Asm("sty " + getValue(node) + "+"+ getValue(node->m_expr)+"+1");
-                    Enable16bit();
-                }
+                else
+                 as->Asm("sty " + getValue(node) + "+"+ getValue(node->m_expr));
             }
             //                as->Asm("tya");
             return;
@@ -2104,8 +2072,12 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
     node->Accept(this);
     as->Term();
     as->Asm("tfr y,d");
-    if (arrayType==TokenType::INTEGER)
-        as->Asm("asl");
+    if (arrayType==TokenType::INTEGER) {
+        as->Comment("Multiply by two to lookup integer");
+        as->Asm("aslb");
+        as->Asm("rola");
+//        as->Asm("addd y");
+    }
 
 }
 
@@ -2215,10 +2187,7 @@ bool CodeGen6809::AssignPointer(QSharedPointer<NodeAssign> node) {
     as->Term();
     node->m_right->Accept(this);
     as->Term();
-    as->Asm("sta " + getValue(aVar));
-    Disable16bit();
-    as->Asm("sty "+ getValue(aVar)+"+1");
-    Enable16bit();
+    as->Asm("sty " + getValue(aVar));
 
     return true;
     //     ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);
@@ -2410,11 +2379,19 @@ bool CodeGen6809::IsSimpleIncDec(QSharedPointer<NodeAssign> node) {
     if (operand=="")
         return false; // other operand
 
-    as->Comment("Test Inc dec D");
+//    as->Comment("Test Inc dec D");
 
 
     if (!var->hasArrayIndex() && !rvar->hasArrayIndex()) {
-        as->Asm(operand +getValue(var));
+//        as->Comment(" inc dec here");
+        if (var->isWord(as)){
+            as->Comment("Inc/dec integer");
+            LoadVariable(var);
+            as->Asm("inc d");
+            StoreVariable(var);
+        }
+        else
+            as->Asm(operand +getValue(var));
 
         return true;
     }
@@ -2504,7 +2481,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeRepeatUntil> node)
             node->m_clause->Accept(this);
 
             as->Asm("cmp #1");
-            as->Asm("beq " + lblDone);
+            as->Asm("lbeq " + lblDone);
             // Do we have an else block?
             as->Asm("jmp " + lbl);
         }
@@ -2747,7 +2724,8 @@ void CodeGen6809::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Nod
 
 */
 
-    if (!isOffPage) {
+    //if (!isOffPage)
+    {
         QString loopDone = as->NewLabel("loopdone");
         as->Comment("Compare is onpage");
 
@@ -2791,10 +2769,10 @@ void CodeGen6809::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPo
     nodeB->Accept(this);
     as->Term();
     as->Asm("cmp " + nodeA->getValue(as) +" ;keep");
-    as->Asm("bne " +lblJump);
+    as->Asm("lbne " +lblJump);
     if (nodeA->isWord(as)) {
         as->Asm("cpy " + nodeA->getValue(as) +"+1 ;keep");
-        as->Asm("bne " +lblJump);
+        as->Asm("lbne " +lblJump);
 
     }
     return;

@@ -4423,6 +4423,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
                 if (m_currentToken.m_type==TokenType::BUILDTABLE) {
                     data = BuildTable(count, dataType);
+//                    qDebug() << data;
                 }
                 else
                     if (m_currentToken.m_type==TokenType::BUILDSINETABLE) {

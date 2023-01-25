@@ -431,11 +431,11 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     for (int i=0;i<m_lines.count();i++) {
         if (m_lines[i]=="") continue;
         OrgasmLine ol = LexLine(i);
-//        if (ol.m_instruction.m_opCode.contains("ret"))
-  //      qDebug() << ol.m_expr << ol.m_orgLine;
         ol.m_lineNumber = i;
         if (!ol.m_ignore)
             m_olines.append(ol);
+//        if (ol.m_expr.contains("(C)"))
+  //      qDebug() << ol.m_expr;
     }
 
     emit EmitTick(" [constants] ");
@@ -832,6 +832,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         if (!tst.startsWith("$"))
         for (QString& sym : m_symbolsList)
         {
+//            qDebug() << "Testing for symbol " << sym << tst;
             if (!tst.contains(sym))
                 continue;
 
