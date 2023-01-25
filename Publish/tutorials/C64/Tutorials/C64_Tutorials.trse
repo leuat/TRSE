@@ -81,4 +81,5 @@ dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
 data_header_test.flf = 0
+cc1541_disk_type = d64
 open_files =, Hello.ras

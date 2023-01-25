@@ -30,7 +30,7 @@ FormPaw::FormPaw(QWidget *parent) :
     ui(new Ui::FormPaw)
 {
     ui->setupUi(this);
-    auto labels = QStringList() << "Filename on d64" <<"File on disk"<<"Load address"<<"Is crunched (no=0, 1=tinycrunch)";
+    auto labels = QStringList() << "Filename on d64/d81" <<"File on disk"<<"Load address"<<"Is crunched (no=0, 1=tinycrunch)";
     ui->tabData->setHorizontalHeaderLabels(labels);
     ui->tabData->horizontalHeader()->show();
     ui->tabData->setColumnWidth(0, 200);

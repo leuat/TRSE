@@ -59,4 +59,34 @@ begin
 	end;
 end;
 
+procedure ExecCoco3();
+begin
+	currentTest := 0;
+	isDone := false;
+	Common::TestInit();
+	ForLoop::Exec();
+/*	while (Common::Status() = 0 and isDone = false) do
+	begin
+	//	Common::TestSuiteInit();
+//		if (currentTest=0) then Classes::Exec();
+//		if (currentTest=6) then ForLoop::Exec();
+		if (currentTest=1) then CaseTest::Exec();
+		if (currentTest=5) then MulDiv::Exec();
+		if (currentTest=2) then IfThenElse::Exec();
+		if (currentTest=3) then IntegerTest::Exec();
+		// Pointer tests - the x86 needs a different set of pointer tests.
+		if (currentTest=4) then AdvancedMath::Exec();
+		if (currentTest=7) then Registers::Exec();
+		if (currentTest=8) then Various::Exec();
+		if (currentTest=9) then Strings::Exec();
+
+		currentTest+=1;
+				
+		if (currentTest>=noTests) then
+			isDone := true;
+		
+	end;
+	*/
+end;
+
 end.

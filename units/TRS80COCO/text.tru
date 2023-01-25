@@ -91,10 +91,9 @@ begin
 	begin
 		PutChar(p^);
 		p:=p+1;
-//		curx+=1;
 	end;
-//	curx:=0;
-//	cury+=1;
+	curx:=0;
+	cury+=1;
 end;
 /*
 // Prints the string pointed to by p at the current cursor position.

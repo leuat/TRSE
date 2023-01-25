@@ -2569,6 +2569,8 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("zeropage_decrunch4"))
         m_ini->setString("zeropage_decrunch4","$4B");
 
+    if (!m_ini->contains("cc1541_disk_type"))
+        m_ini->setString("cc1541_disk_type","d64");
 
     if (!m_ini->contains("pascal_settings_use_local_variables"))
         m_ini->setFloat("pascal_settings_use_local_variables", 1);

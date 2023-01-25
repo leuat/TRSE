@@ -34,6 +34,8 @@ void Compiler6809::Connect()
 
     }
 */
+    m_assembler->m_source<<"	END START";
+
     CleanupBlockLinenumbers();
 /*    for (QString&s : m_assembler->m_source) {
         s = s.replace("sta(","sta (");

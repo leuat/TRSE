@@ -1198,8 +1198,12 @@ hr { height: 1px; border-width: 0; }
             <layout class="QGridLayout" name="gridLayout_24">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="leDiskname"/>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_48">
+                 <property name="text">
+                  <string>Name of d64 disk</string>
+                 </property>
+                </widget>
                </item>
                <item row="0" column="1">
                 <widget class="QComboBox" name="cmbOutputType">
@@ -1220,6 +1224,26 @@ hr { height: 1px; border-width: 0; }
                  </item>
                 </widget>
                </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Main RAS file</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="cmbPawInclude"/>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbMainRas"/>
+               </item>
+               <item row="7" column="0">
+                <widget class="QLabel" name="label_49">
+                 <property name="text">
+                  <string>Use Vice's c1541 instead of CC1541</string>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_9">
                  <property name="text">
@@ -1230,21 +1254,15 @@ hr { height: 1px; border-width: 0; }
                <item row="4" column="1">
                 <widget class="QComboBox" name="cmbDirArt"/>
                </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="cmbMainRas"/>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="cmbPawInclude"/>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Disk 2 d64 Paw file</string>
+                 </property>
+                </widget>
                </item>
                <item row="3" column="1">
                 <widget class="QComboBox" name="cmbPawInclude2"/>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Project output type</string>
-                 </property>
-                </widget>
                </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="label_47">
@@ -1253,38 +1271,41 @@ hr { height: 1px; border-width: 0; }
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="label_48">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>Name of d64 disk</string>
+                  <string>Project output type</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="text">
-                  <string>Main RAS file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_24">
-                 <property name="text">
-                  <string>Disk 2 d64 Paw file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="label_49">
-                 <property name="text">
-                  <string>Use Vice's c1541 instead of CC1541</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
+               <item row="7" column="1">
                 <widget class="QCheckBox" name="chkUseViceC1541">
                  <property name="text">
                   <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="leDiskname"/>
+               </item>
+               <item row="6" column="1">
+                <widget class="QComboBox" name="cmbDiskType">
+                 <item>
+                  <property name="text">
+                   <string>d64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>d81</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="label_50">
+                 <property name="text">
+                  <string>Disk type</string>
                  </property>
                 </widget>
                </item>

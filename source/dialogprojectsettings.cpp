@@ -127,6 +127,9 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leDosboxCycles->setText(m_ini->getString("dosbox_cycles"));
 
+    ui->cmbDiskType->setCurrentText(m_ini->getString("cc1541_disk_type"));
+
+
 //    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
 
 
@@ -302,6 +305,10 @@ void DialogProjectSettings::FillToIni()
         m_ini->setString("nes_8k_file_2",ui->leNESCharFile_2->text());
         m_ini->setString("nes_code_start",ui->leNESCodeStart->text());
     }
+
+
+
+    m_ini->setString("cc1541_disk_type", ui->cmbDiskType->currentText());
 
 
     m_ini->setString("output_type", ui->cmbOutputType->currentText());

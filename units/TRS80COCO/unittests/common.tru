@@ -2,6 +2,7 @@ unit Common;
 //@use "format"
 @use "text"
 @use "unittests/vars"
+@use "memory"
 var
   cpc_unittests_common_string : array[9] of byte;
   cpc_unittests_status : byte = 0;
@@ -9,6 +10,7 @@ var
 // Called at the beginning of the testing
 procedure TestInit();
 begin
+	Memory::Fill16($400,$60,512);
 end;
 
 // Called at the beginning of each test suite (multiple test cases grouped together)
@@ -52,7 +54,7 @@ end;
 procedure DebugValue(v:integer);
 begin
   // TODO(ColinPitrat): Print value to screen
-  Format::Itos(v, #cpc_unittests_common_string);
+//  Format::Itos(v, #cpc_unittests_common_string);
   Text::Print(#cpc_unittests_common_string);
 end;
 

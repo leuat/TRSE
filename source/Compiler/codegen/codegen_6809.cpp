@@ -864,20 +864,20 @@ void CodeGen6809::IncSid(QSharedPointer<NodeVarDecl> node) {
 
 void CodeGen6809::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
-    if (!as->CheckZPAvailability())
-        ErrorHandler::e.Error("Could not allocate more free pointers! Please free some up, or declare more in the settings page. ", node->m_op.m_lineNumber);
+//    if (!as->CheckZPAvailability())
+  //      ErrorHandler::e.Error("Could not allocate more free pointers! Please free some up, or declare more in the settings page. ", node->m_op.m_lineNumber);
 
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString initVal = t->initVal;
 
     //    qDebug() << "POINTER INIT VAL " <<initVal;
-    if (initVal=="") {
+/*    if (initVal=="") {
         initVal = as->PushZeroPointer();
         node->m_pushedPointers++;
     }
-
+*/  if (initVal.trimmed()=="") initVal="$00";
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    as->Label(v->value + "\t= " + initVal);
+    as->Write(v->value + ":\tfdb\t" + initVal,0);
 
 }
 
@@ -1123,10 +1123,10 @@ void CodeGen6809::BuildToCmp(QSharedPointer<Node> node)
     if (b!="") {
         if (b!="#$0") {
             as->Comment("Compare with pure num / var optimization");
-            as->Asm("cmp " + b+";keep");
+            as->Asm("cmpa " + b);
         }
         else {
-            as->Comment("cmp #$00 ignored");
+            as->Comment("cmpa #$00 ignored");
             //            as->Asm("cmp " + b+";keep");
         }
     }
@@ -1137,7 +1137,7 @@ void CodeGen6809::BuildToCmp(QSharedPointer<Node> node)
         as->Term();
         QString tmpVarA = as->StoreInTempVar("binary_clause_temp_2");
         as->Asm("lda " + tmpVarB);
-        as->Asm("cmp " + tmpVarA +";keep");
+        as->Asm("cmpa " + tmpVarA);
         as->PopTempVar();
         as->PopTempVar();
     }
@@ -1241,20 +1241,15 @@ void CodeGen6809::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
 
     }
     if (node->m_op.m_type==TokenType::EQUALS) {
-        as->Asm("lda " + hi1 + "   ; compare high bytes");
-        as->Asm("cmp " + hi2 + " ;keep");
-        as->Asm("bne " + lbl2);
-        as->Asm("lda " + lo1);
-        as->Asm("cmp " + lo2+" ;keep");
-        as->Asm("bne " + lbl2);
-        as->Asm("jmp " + lbl1);
+        as->Asm("ldy "+lo1);
+        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("lbne "+lbl2);
     }
     if (node->m_op.m_type==TokenType::NOTEQUALS){
         //            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
-        QString lblPass1  = as->NewLabel("pass1");
         as->Asm("ldy "+lo1);
         as->Asm("cmpy "+node->m_right->getValue(as));
-        as->Asm("beq "+lbl2);
+        as->Asm("lbeq "+lbl2);
     }
 }
 
@@ -1580,14 +1575,18 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
     QString m = as->m_term;
 
 
-    if (node->m_expr==nullptr) {
-        as->Asm("ldx "+getValue(node));
-        return;
-    }
-
     QString addr = "#";
     if (node->isPointer(as))
         addr="";
+
+    if (node->m_expr==nullptr) {
+        as->Comment("No index load");
+        as->ClearTerm();
+        as->Asm("ldy "+addr+getValue(node));
+        as->Term();
+        return;
+    }
+
 
     LoadIndex(node->m_expr, node->getArrayType(as));
     as->Asm("ldx "+addr+node->getValue(as));
@@ -2036,21 +2035,22 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             as->Asm("sta " + getValue(node));
             return;
         }
-        else
-            if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
 
-                as->Asm("sta " + getValue(node));
-                return;
-            }
-            else
-                if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
+            as->Asm("sta " + getValue(node));
+            return;
+        }
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
 
-                    as->Asm("sty " + getValue(node));
-                    return;
-                }
-                else {
-                    ErrorHandler::e.Error("Unable to assign variable : "+getValue(node)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
-                }
+            as->Asm("sty " + getValue(node));
+            return;
+        }
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::POINTER || node->m_writeType==TokenType::INTEGER) {
+
+            as->Asm("sty " + getValue(node));
+            return;
+        }
+        ErrorHandler::e.Error("Unable to assign variable : "+getValue(node)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
 
     }
 
@@ -2129,18 +2129,16 @@ void CodeGen6809::AssignString(QSharedPointer<NodeAssign> node) {
     //    qDebug() << "IS POINTER " << isPointer;
     if (isPointer && node->m_left->hasArrayIndex()==false) {
         //      qDebug() << "HERE";
-        as->Asm("lda #<"+str);
-        as->Asm("sta "+getValue(left));
-        as->Asm("lda #>"+str);
-        as->Asm("sta "+getValue(left)+"+1");
+        as->Asm("ldy #"+str);
+        as->Asm("sty "+getValue(left));
     }
     else {
-        as->Asm("ldx #0");
+        as->Asm("ldx #"+str);
+        as->Asm("ldy #"+getValue(left));
         as->Label(lblCpy);
-        as->Asm("lda " + str+",x");
-        as->Asm("sta "+getValue(left) +",x");
-        as->Asm("inx");
-        as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
+        as->Asm("lda ,x+");
+        as->Asm("sta ,y+");
+        as->Asm("cmpa #0 ;keep");  // ask post optimiser to not remove this
         as->Asm("bne " + lblCpy);
     }
     //  as->PopLabel("stringassign");
