@@ -21,6 +21,7 @@ end;
 
 begin
 	InitSid(sidfile_1_init);
+	disableciainterrupts();
 	setmemoryconfig(1,0,useKernal);
 	StartRasterChain(Raster1(),$50,useKernal);
 	Loop();

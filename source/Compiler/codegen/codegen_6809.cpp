@@ -1202,41 +1202,24 @@ void CodeGen6809::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
     }
 
 
-    QString bcc = "bcc";
-    QString bcs = "bcs";
+    QString bcc = "lbcc";
+    QString bcs = "lbcs";
 
     as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
     if (node->m_op.m_type==TokenType::GREATER) {
-        as->Asm("lda " + hi1 + "   ; compare high bytes");
-        as->Asm("cmp " + hi2 + " ;keep");
-        as->Asm(bcc + lbl2);
-        //    as->Asm("beq " + lbl2);
-        as->Asm("bne " + lbl1);
-        as->Asm("lda " + lo1);
-        as->Asm("cmp " + lo2 +" ;keep");
-        as->Asm(bcc + lbl2);
-        as->Asm("beq " + lbl2);
+        as->Asm("ldy "+lo1);
+        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm(bcc+" "+lbl2);
     }
     if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("lda " + hi1 + "   ; compare high bytes");
-        as->Asm("cmp " + hi2 + " ;keep");
-        as->Asm(bcc + lbl2);
-        as->Asm("bne " + lbl1);
-        as->Asm("lda " + lo1);
-        as->Asm("cmp " + lo2 +" ;keep");
-        as->Asm(bcc + lbl2);
+        as->Asm("ldy "+lo1);
+        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm(bcc+" "+lbl2);
     }
     if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
-        as->Asm("lda " + hi1 + "   ; compare high bytes");
-        as->Asm("cmp " + hi2 + " ;keep");
-        as->Asm(bcc + lbl1);
-        as->Asm("bne " + lbl2);
-        as->Asm("lda " + lo1);
-        as->Asm("cmp " + lo2+" ;keep");
-        if (node->m_op.m_type==TokenType::LESSEQUAL)
-            as->Asm("beq "+lbl1);
-        as->Asm(bcs + lbl2);
-
+        as->Asm("ldy "+lo1);
+        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm(bcs +" "+lbl2);
 
 
     }

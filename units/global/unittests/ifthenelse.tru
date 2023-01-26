@@ -464,12 +464,12 @@ begin
 	
 	// Greater than conditional tests 
 	IGT1_GreaterThan_True();
-	@ifndef TRS80COCO
 
 	IGT2_GreaterThan_False();
 	IGT3_GreaterThan_False();
 	IGT4_GreaterThan_False();
 	IGT5_GreaterThan_True();
+	@ifndef TRS80COCO
 	
 	// Greater than or equal to conditional tests
 	IGTE1_GreaterEqual_True();
