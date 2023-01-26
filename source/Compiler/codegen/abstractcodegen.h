@@ -106,6 +106,7 @@ public:
 
     virtual void ExDeHl() {}
     virtual void SbcHlDe() {}
+    virtual void TransferType(TokenType::Type from, TokenType::Type to) {}
 
 
     QString getBank(QSharedPointer<NodeVarType> t);

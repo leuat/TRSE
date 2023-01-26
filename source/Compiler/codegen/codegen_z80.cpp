@@ -830,6 +830,20 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 }
 
+void CodeGenZ80::TransferType(TokenType::Type from, TokenType::Type to)
+{
+    if (from==to)
+        return;
+
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+        as->Asm("ld l,a");
+        as->Asm("ld h,0");
+    }
+    if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        as->Asm("ld a,l");
+    }
+}
+
 void CodeGenZ80::ExDeHl()
 {
     if (isGB()) {

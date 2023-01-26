@@ -122,6 +122,9 @@ public:
     virtual void setForceType(TokenType::Type t) {
         m_forceType  =t;
     }
+    virtual void setForceTypeFunctions(TokenType::Type t) {
+//        m_forceType  =t;
+    }
 
     virtual bool isStackVariable() { return false;}
     virtual int getStackShift() { return 0;}

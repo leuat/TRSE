@@ -66,3 +66,4 @@ dosbox_cycles = 2.15889e-314
 dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
+cc1541_disk_type = d64

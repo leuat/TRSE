@@ -450,6 +450,15 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::INTEGER);
     }
 */
+    // Set force type for functions
+    if (v->isByte(as))
+        node->m_right->setForceTypeFunctions(TokenType::BYTE);
+    if (v->isWord(as))
+        node->m_right->setForceTypeFunctions(TokenType::INTEGER);
+    if (v->isLong(as))
+        node->m_right->setForceTypeFunctions(TokenType::LONG);
+
+
     // ****** REGISTERS TO
     if (v->m_isRegister) {
         as->Comment("Assigning to register");
@@ -946,7 +955,14 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     }
 
     ProcedureStart(as);
+//    if (node->m_procedure->m_returnType!=nullptr)
+  //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
+
+    if (node->m_procedure->m_returnType!=nullptr)
+        if (node->m_procedure->m_returnType->m_op.m_type!=node->m_forceType) {
+            TransferType(node->m_procedure->m_returnType->m_op.m_type, node->m_forceType);
+        }
     ProcedureEnd(as);
     PopLostStack(lostStack);
 }

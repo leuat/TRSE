@@ -55,6 +55,7 @@ public:
     bool isWord(Assembler* as) override;
 
     void setForceType(TokenType::Type t) override;
+    void setForceTypeFunctions(TokenType::Type t);
 
     bool isPurePointer(Assembler *as) override {
         return m_left->isPurePointer(as) && m_right->isPurePointer(as);
