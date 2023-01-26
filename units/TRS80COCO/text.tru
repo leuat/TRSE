@@ -1,4 +1,5 @@
 Unit Text;
+@use "memory"
 var  
    c: byte=0;
    x: byte=0;
@@ -6,12 +7,14 @@ var
    x2: byte=0;
    y2: byte=0;
    p: pointer;
+   t:integer;
    user_defined_char_initialized: byte=0;
    	   
    
    curx, cury : byte;
    sptr : pointer;
    tab32 : array[64] of integer = buildtable("i*32");
+   
    /* ORIGINALLY FROM THE AMSTRAD CPC. NOT DONE! */
 
 /** Resets the text VDU.
@@ -49,6 +52,31 @@ end;
 ///////////////////
 // Text handling //
 ///////////////////
+
+
+procedure Reset();
+begin
+	Memory::Fill16($400,$20,512);
+	curx:=0;
+	cury:=0;
+end;
+
+
+procedure MoveDown();
+begin
+	sptr:=$400;
+	for y:=0 to 15 do
+	begin
+		for x:=0 to 32 do
+		begin
+			sptr[x]:=sptr[x+32];
+		end;
+		sptr+=32;
+	end;
+	for t:=0 to 2000 do asm(" nop ");
+	
+	Memory::Fill($400+32*15,$20,32);	
+end;
 
 // Prints char c at the current cursor position.
 // Control chars are obeyed not printed.
@@ -92,8 +120,22 @@ begin
 		PutChar(p^);
 		p:=p+1;
 	end;
+end;
+
+procedure Println(p: global pointer);
+begin
+	while (p^<>0) do
+	begin
+		PutChar(p^);
+		p:=p+1;
+	end;
 	curx:=0;
 	cury+=1;
+	if (cury=16) then
+	begin
+		MoveDown();
+		cury:=15;
+	end;
 end;
 /*
 // Prints the string pointed to by p at the current cursor position.

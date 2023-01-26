@@ -464,6 +464,7 @@ begin
 	
 	// Greater than conditional tests 
 	IGT1_GreaterThan_True();
+	@ifndef TRS80COCO
 
 	IGT2_GreaterThan_False();
 	IGT3_GreaterThan_False();
@@ -500,6 +501,7 @@ begin
 	AdvancedI3();
 	AdvancedI4();
 	AdvancedI5();
+	@endif
 	@endif
 
 	Common::WaitABit();

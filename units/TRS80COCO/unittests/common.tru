@@ -10,20 +10,19 @@ var
 // Called at the beginning of the testing
 procedure TestInit();
 begin
-	Memory::Fill16($400,$60,512);
+	Text::Reset();
 end;
 
 // Called at the beginning of each test suite (multiple test cases grouped together)
 procedure TestSuiteInit();
 begin
+	Text::Reset();
 end;
 	
 procedure Initialise(zp:pointer);
 begin
-  Text::Print("\r\n");
-  Text::Print(zp);
-  Text::Print("\r\n");
-  Text::Print("\r\n");
+	Text::Reset();
+  Text::Println(zp);
 end;
 
 function Status() : byte;
@@ -35,20 +34,20 @@ end;
 procedure PASS();
 begin
   Text::Print(#Vars::text);
-  Text::Print(": PASS\r\n");
+  Text::Println(": PASS");
 end;
 
 // Print NEGATIVE result of a test - ftext must be 8 characters or less
 procedure FAIL();
 begin
   Text::Print(#Vars::text);
-  Text::Print(": FAIL\r\n");
+  Text::Println(": FAIL");
   cpc_unittests_status := 1;
 end;
 
 procedure WaitABit();
 begin
-//  for Vars::v1:=0 to 16 do for Vars::v2:=0 to 255 do asm("nop");
+  for Vars::i1:=0 to 20000 do nop(50);
 end;
 
 procedure DebugValue(v:integer);

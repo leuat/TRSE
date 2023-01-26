@@ -1037,8 +1037,8 @@ QString CodeGen6809::getIncbin() {
 void CodeGen6809::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
 {
 
-    QString bcs ="lbcs ";
-    QString bcc ="lbcc ";
+    QString bcs ="lbcc ";
+    QString bcc ="lbcs ";
     if (node->isSigned(as)) {
         as->Comment("Signed compare");
         bcs = "lbpl ";
@@ -1511,9 +1511,10 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
         if (!isLarge) {
 
             if (stepValue > 0) {
-                as->Asm("bcs "+loopNotDone); // or FOR index > TO value
+                as->Comment("fori include step >0");
+                as->Asm("bcc "+loopNotDone); // or FOR index > TO value
             } else { //if (stepValue < -1) {
-                as->Asm("bcc "+loopNotDone); // FOR index < TO value
+                as->Asm("bcs "+loopNotDone); // FOR index < TO value
                 as->Asm("beq "+loopNotDone); // BEQ then the BCC below
             }
 
@@ -1521,10 +1522,10 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
         else {
             // LargeLoops needs checking
             if (stepValue > 0) {
-                as->Asm("bcc "+loopDone); // or FOR index > TO value
+                as->Asm("bcs "+loopDone); // or FOR index > TO value
             } else { //if (stepValue < -1) {
                 as->Asm("beq "+loopNotDone); // BEQ then the BCC below
-                as->Asm("bcs "+loopDone); // FOR index < TO value
+                as->Asm("bcc "+loopDone); // FOR index < TO value
             }
 
         }
@@ -1532,34 +1533,16 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     }
     else {            // TRSE version will END on the TO value
 
-        if (!isLarge) {
 
             if (stepValue == 1 || stepValue == -1) {
                 // increments / decrements of 1 are safe for BNE
                 as->Asm("lbne "+loopNotDone);
             } else if (stepValue > 1) {
-                as->Asm("beq "+loopDone); // FOR index == TO value
-                as->Asm("bcs "+loopNotDone); // or FOR index > TO value
+                as->Asm("lbeq "+loopDone); // FOR index == TO value
+                as->Asm("lbcc "+loopNotDone); // or FOR index > TO value
             } else { //if (stepValue < -1) {
-                as->Asm("bcc "+loopNotDone); // FOR index < TO value
+                as->Asm("bcs "+loopNotDone); // FOR index < TO value
             }
-
-        }
-        else {
-
-            // LargeLoops needs checking
-            //as->Asm("beq "+loopDone);
-            if (stepValue == 1 || stepValue == -1) {
-                // increments / decrements of 1 are safe for BNE
-                as->Asm("beq "+loopDone);
-            } else if (stepValue > 1) {
-                as->Asm("beq "+loopDone); // FOR index == TO value
-                as->Asm("bcc "+loopDone); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                as->Asm("bcs "+loopDone); // FOR index < TO value
-            }
-
-        }
 
         return;
     }
@@ -2232,9 +2215,13 @@ bool CodeGen6809::isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<No
 
     as->Comment("Optimizer: a = a +/- b");
     LoadVariable(bvar);
+//    as->Comment("binop");
     as->BinOP(rterm->m_op.m_type);
-    rterm->m_right->Accept(this);
+  //  as->Comment("accept");
+    as->Term(rterm->m_right->getValue(as));
+    //rterm->m_right->Accept(this);
     as->Term();
+    as->Comment("store");
     StoreVariable(var);
     return true;
 }

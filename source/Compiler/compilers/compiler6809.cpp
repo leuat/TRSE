@@ -19,14 +19,14 @@ void Compiler6809::Connect()
     m_assembler->Connect();
 
 
-    if (m_ini->getdouble("post_optimize")==1.0) {
+/*    if (m_ini->getdouble("post_optimize")==1.0) {
         emit EmitTick("<br>Optimising pass: ");
         m_assembler->m_totalOptimizedLines = 0;
         for (int i=0;i<4;i++) {
             emit EmitTick(" ["+QString::number(i+1)+"]");
             m_assembler->Optimise(*m_projectIni); }
     }
-
+*/
 /*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
         m_assembler->m_source<<	" org $CFFE";
         m_assembler->m_source<<	"vector__:";
