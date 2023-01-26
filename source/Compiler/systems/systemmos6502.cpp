@@ -279,11 +279,11 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
     cd64 << "-n" << diskName <<"-d" <<"19";
     cd64 << filename+"."+type;
     // call
-    cc1541(cd64.size(), Util::StringListToChar(cd64));
+//    cc1541(cd64.size(), Util::StringListToChar(cd64));
 
 
     // Start building files...
-    d64Params  <<"-d"<<"19";
+    d64Params  <<"-d"<<"19" <<"-n" << diskName;
 
     if (addPrg)
         d64Params << "-f"<<f << "-w"<<filename+".prg";
@@ -296,9 +296,10 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
             return;
         }
         d64Params<<filename+"."+type;
-      //  qDebug() << d64Params;
+        qDebug() << d64Params;
         cc1541(d64Params.size(), Util::StringListToChar(d64Params));
-        qDebug() << stderr;
+        std::cout << stdout;
+        std::cout << stderr;
     }
 
     if (QFile::exists(filename+"."+type)) {
