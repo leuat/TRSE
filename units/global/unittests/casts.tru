@@ -1,0 +1,170 @@
+unit Casts;
+var
+
+// casts int to byte
+procedure Test1();
+begin
+	Vars::text := "T1:";
+	Vars::i1 := 513;
+	Vars::v1 := Vars::i1;
+	
+	Common::CR();
+	if (Vars::v1=1) then Common::PASS() else Common::FAIL();
+end;
+
+// casts byte to int 
+procedure Test2();
+begin
+	Vars::text := "T2:";
+	Vars::v1 := 255;
+	Vars::i1 := Vars::v1;
+	Common::CR();
+	if (Vars::i1=255) then Common::PASS() else Common::FAIL();
+end;
+
+// casts byte array to int, const lookup 
+procedure Test3();
+begin
+	Vars::text := "T3:";
+	Vars::i1 := Vars::ba1[5];
+	Common::CR();
+	if (Vars::i1=5) then Common::PASS() else Common::FAIL();
+end;
+
+// casts byte array to int, byte lookup 
+procedure Test4();
+begin
+	Vars::text := "T4:";
+	Vars::v1 := 5;
+	Vars::i1 := Vars::ba1[Vars::v1];
+	Common::CR();
+	if (Vars::i1=5) then Common::PASS() else Common::FAIL();
+end;
+
+// casts byte array to int, int lookup 
+procedure Test5();
+begin
+	Vars::text := "T5:";
+	Vars::i2 := 5;
+	Vars::i1 := Vars::ba1[Vars::i2];
+	Common::CR();
+	if (Vars::i1=5) then Common::PASS() else Common::FAIL();
+end;
+
+// casts integer array to byte, const lookup 
+procedure Test6();
+begin
+	Vars::text := "T6:";
+	Vars::v1 := Vars::ia1[2];
+	Common::CR();
+	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
+end;
+
+// casts integer array to byte, byte lookup
+procedure Test7();
+begin
+	Vars::text := "T7:";
+	Vars::v2 := 2;
+	Vars::v1 := Vars::ia1[Vars::v2];
+	Common::CR();
+	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
+end;
+
+// casts integer array to byte, integer lookup
+procedure Test8();
+begin
+	Vars::text := "T8:";
+	Vars::i2 := 2;
+	Vars::v1 := Vars::ia1[Vars::i2];
+	Common::CR();
+	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
+end;
+
+// POINTERS
+// casts byte pointer array to integer, const lookup
+procedure Test9();
+begin
+	Vars::text := "T9:";
+	Vars::p1 := #Vars::ba1;
+	Vars::i1 := Vars::p1[8];
+	Common::CR();
+	if (Vars::i1=8) then Common::PASS() else Common::FAIL();
+end;
+
+// casts byte pointer array to integer, byte lookup
+procedure Test10();
+begin
+	Vars::text := "T10:";
+	Vars::p1 := #Vars::ba1;
+	Vars::v2 := 8;
+	Vars::i1 := Vars::p1[Vars::v2];
+	Common::CR();
+	if (Vars::i1=8) then Common::PASS() else Common::FAIL();
+end;
+
+// casts byte pointer array to integer, integer lookup
+procedure Test11();
+begin
+	Vars::text := "T11:";
+	Vars::p1 := #Vars::ba1;
+	Vars::i2 := 8;
+	Vars::i1 := Vars::p1[Vars::i2];
+	Common::CR();
+	if (Vars::i1=8) then Common::PASS() else Common::FAIL();
+end;
+
+// casts integer pointer array to byte, const lookup
+procedure Test12();
+begin
+	Vars::text := "T12:";
+	Vars::ip := #Vars::ia1;
+	Vars::v1 := Vars::ip[2];
+	Common::CR();
+	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
+end;
+
+// casts integer pointer array to byte, byte lookup
+procedure Test13();
+begin
+	Vars::text := "T13:";
+	Vars::ip := #Vars::ia1;
+	Vars::v2 := 2;
+	Vars::v1 := Vars::ip[Vars::v2];
+	Common::CR();
+	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
+end;
+
+// casts integer pointer array to byte, integer lookup
+procedure Test14();
+begin
+	Vars::text := "T14:";
+	Vars::ip := #Vars::ia1;
+	Vars::i2 := 2;
+	Vars::v1 := Vars::ip[Vars::i2];
+	Common::CR();
+	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
+end;
+
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("CASTS");
+	
+	Test1();
+	Test2();
+	Test3();
+	Test4();
+	Test5();
+	Test6();
+	Test7();
+	Test8();
+	Test9();
+	Test10();
+	Test11();
+	Test12();
+	Test13();
+	Test14();
+	Common::WaitABit();
+end;
+
+end.

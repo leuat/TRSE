@@ -2,6 +2,7 @@ Unit Unittests;
 
 @use "unittests/common"
 @use "unittests/case"
+@use "unittests/casts"
 @use "unittests/integer"
 @use "unittests/classes"
 @use "unittests/ifthenelse"
@@ -39,7 +40,8 @@ begin
 		if (currentTest=0) then Classes::Exec();
 		if (currentTest=6) then ForLoop::Exec();
 		@endif
-		if (currentTest=1) then CaseTest::Exec();
+		if (currentTest=10) then CaseTest::Exec();
+		if (currentTest=1) then Casts::Exec();
 		if (currentTest=5) then MulDiv::Exec();
 		if (currentTest=2) then IfThenElse::Exec();
 		if (currentTest=3) then IntegerTest::Exec();

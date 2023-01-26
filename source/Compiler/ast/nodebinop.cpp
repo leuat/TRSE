@@ -129,9 +129,13 @@ void NodeBinOP::setForceType(TokenType::Type t) {
     m_right->setForceType(t);
 }
 
-void NodeBinOP::setForceTypeFunctions(TokenType::Type t) {
+/*void NodeBinOP::setForceTypeFunctions(TokenType::Type t) {
     m_left->setForceTypeFunctions(t);
     m_right->setForceTypeFunctions(t);
+}*/
+void NodeBinOP::setCastType(TokenType::Type t) {
+    m_left->setCastType(t);
+    m_right->setCastType(t);
 }
 
 bool NodeBinOP::containsPointer(Assembler *as)

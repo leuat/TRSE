@@ -12,6 +12,16 @@ begin
     Screen::NewLine();
 end;
 
+procedure CR() inline;
+begin
+	asm("
+	mov ax,0
+	mov dx,0
+	mov di,0
+	mov si,0
+	");
+end;
+
 // Called at the beginning of the testing
 procedure TestInit();
 begin

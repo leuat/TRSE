@@ -310,6 +310,12 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
     as->Term();
     as->Comment("Calling storevariable on generic assign expression");
 //    StoreVariable(VarOrNum(node->m_left));
+  //  as->Comment("RHS is byte: "+Util::numToHex(node->m_right->isByte(as)) + " "+node->m_right->getTypeText(as) + " " +TokenType::getType(node->m_right->getType(as)));
+    //as->Comment("LHS is byte: "+Util::numToHex(node->m_left->isByte(as)) + " "+node->m_left->getTypeText(as) + " " +TokenType::getType(node->m_left->getType(as)));
+//    as->Comment("CastType: "+TokenType::getType(n));
+
+    if (node->m_right->getTypeText(as)=="BYTE")
+        Cast(TokenType::BYTE,node->m_right->m_castType);
     StoreVariable(VarOrNum(node->m_left));
 }
 
@@ -443,6 +449,8 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     if (v->m_writeType==TokenType::NADA)
         v->m_writeType = node->m_right->getWriteType();
 
+
+
 //    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
 
 /*    if (v->m_writeType==TokenType::INTEGER) {
@@ -452,11 +460,11 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 */
     // Set force type for functions
     if (v->isByte(as))
-        node->m_right->setForceTypeFunctions(TokenType::BYTE);
+        node->m_right->setCastType(TokenType::BYTE);
     if (v->isWord(as))
-        node->m_right->setForceTypeFunctions(TokenType::INTEGER);
+        node->m_right->setCastType(TokenType::INTEGER);
     if (v->isLong(as))
-        node->m_right->setForceTypeFunctions(TokenType::LONG);
+        node->m_right->setCastType(TokenType::LONG);
 
 
     // ****** REGISTERS TO
@@ -960,8 +968,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
 
     if (node->m_procedure->m_returnType!=nullptr)
-        if (node->m_procedure->m_returnType->m_op.m_type!=node->m_forceType) {
-            TransferType(node->m_procedure->m_returnType->m_op.m_type, node->m_forceType);
+        if (node->m_procedure->m_returnType->m_op.m_type!=node->m_castType) {
+            Cast(node->m_procedure->m_returnType->m_op.m_type, node->m_castType);
         }
     ProcedureEnd(as);
     PopLostStack(lostStack);

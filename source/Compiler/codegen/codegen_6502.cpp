@@ -2462,6 +2462,7 @@ bool CodeGen6502::isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<No
     as->BinOP(rterm->m_op.m_type);
     rterm->m_right->Accept(this);
     as->Term();
+//    Cast(var->getType(as), rterm->m_castType);
     StoreVariable(var);
     return true;
 }
@@ -2913,6 +2914,23 @@ void CodeGen6502::PopLostStack(int num)
     for (int i=0;i<num;i++)
         as->Asm("pla");
     as->Asm("txa");
+}
+
+void CodeGen6502::Cast(TokenType::Type from, TokenType::Type to)
+{
+    //    qDebug() <<"Cast " <<TokenType::getType(from) << " " << TokenType::getType(to);
+    if (from==to)
+        return;
+
+    if (from==TokenType::BYTE && (to == TokenType::INTEGER || to ==TokenType::INTEGER_CONST)) {
+        as->Comment("Casting from byte to integer");
+        as->Asm("ldy #0");
+    }
+ /*   if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        as->Comment("Casting from integer to byte");
+        as->Asm("ld a,l");
+    }
+*/
 }
 
 void CodeGen6502::AssignFromRegister(QSharedPointer<NodeAssign> node)

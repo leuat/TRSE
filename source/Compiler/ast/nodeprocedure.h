@@ -52,11 +52,11 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
-    void setForceTypeFunctions(TokenType::Type t) {
+/*    void setForceTypeFunctions(TokenType::Type t) {
         if (m_procedure->m_returnValue!=nullptr)
             m_forceType = t;
     }
-
+*/
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
 

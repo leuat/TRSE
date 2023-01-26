@@ -92,6 +92,7 @@ public:
     MemoryBlockInfo m_blockInfo;
 
     TokenType::Type m_forceType = TokenType::NADA;
+    TokenType::Type m_castType = TokenType::NADA;
     // Line number for keeping track of current cycles
     static int m_currentLineNumber;
 
@@ -120,10 +121,11 @@ public:
 
     // Force a specific type to be set for this node
     virtual void setForceType(TokenType::Type t) {
-        m_forceType  =t;
+        m_forceType = t;
     }
-    virtual void setForceTypeFunctions(TokenType::Type t) {
-//        m_forceType  =t;
+    // Force a specific type to be set for this node
+    virtual void setCastType(TokenType::Type t) {
+        m_castType  = t;
     }
 
     virtual bool isStackVariable() { return false;}

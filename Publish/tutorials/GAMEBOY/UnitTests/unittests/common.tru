@@ -17,6 +17,14 @@ var
 	const COLUMNWIDTH:byte=5;
 	text: array[COLUMNWIDTH] of byte wram;	
 	
+procedure CR() inline;
+begin
+	asm("
+	ld a,0
+	ld hl,0
+	ld de,0
+	");
+end;	
 	
 procedure Advance();
 begin

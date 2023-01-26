@@ -75,3 +75,7 @@ qemu = No
 use_tripe = 0
 dosbox_cycles = 2.19303e-314
 cpu_x86_output = exe
+cc1541_disk_type = d64
+dirart_flf_file = none
+d64name = main
+use_vice_c1541 = 0
