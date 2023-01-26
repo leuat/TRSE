@@ -1,8 +1,33 @@
 <h3>Description</h3>
-<p></p>
+<p>
+Includes a SID file at the position specified in the SID header. Extracts the load and play address to
+"sidfile_1_load" and "sidfile_1_play".
+<p>
+Note that the second parameter "2" is required for SID files *not* being exported with Deflemas (due to a header mismatch)
+<p>
+Since a SID file is compiled binary code, it is difficult to relocate it to another memory location once exported.
+In order to relocate a file, you can try to use https://www.linusakesson.net/software/sidreloc/index.php.
 
 
 <h3>Example</h3>
-
 <code>
+var
+   music : incsid("music/mysid.sid","2"); // sid made with goattracker
+
+interrupt Raster();
+begin
+    startirq(0);
+    call(sidfile_1_play); // play the song
+    closeirq();
+end;
+
+...
+begin
+    // you can set subtubes as such:
+    // _a := 1;
+    // _x := 1; // sets subtune 1
+    call(sidfile_1_init);
+    setmemoryconfig(1,0,0); // enable all ram
+    StartRasterChain(Raster(),0,0); // start the raster interrupt, play some music
+    ...
 </code>
