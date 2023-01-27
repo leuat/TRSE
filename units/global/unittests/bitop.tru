@@ -101,11 +101,11 @@ end;
 procedure Test10();
 begin
 	Vars::text := "T10:";
-	Vars::i1 := $1000;
+	Vars::i1 := $100;
 	Vars::v1 := 1;
-	Vars::i1<<=(Vars::ba1[Vars::v1]+1);
+	Vars::i1<<=(Vars::ba1[Vars::v1]+1)*2;
 	Common::CR();
-	if (Vars::i1=$4000) then Common::PASS() else Common::FAIL();
+	if (Vars::i1=$1000) then Common::PASS() else Common::FAIL();
 end;
 
 

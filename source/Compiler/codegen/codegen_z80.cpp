@@ -23,12 +23,16 @@ void CodeGenZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
     if (!node->m_right->isPureNumeric()){
         node->m_right->setCastType(TokenType::BYTE);
         node->m_right->setForceType(TokenType::BYTE);
+        auto skip = as->NewLabel("16_bit_shift_skip");
         if (!node->m_right->isPure())
             as->Asm("push hl");
         node->m_right->Accept(this);
         as->Asm("ld b,a");
         if (!node->m_right->isPure())
             as->Asm("pop hl");
+        as->Asm("cp 0");
+        as->Asm("jr z,"+skip);
+
         auto lbl = as->NewLabel("16_bit_shift");
         as->Label(lbl);
         if (node->m_op.m_type == TokenType::SHL) {
@@ -42,6 +46,8 @@ void CodeGenZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
         as->Asm("dec b");
         as->Asm("jr nz,"+lbl);
         as->PopLabel("16_bit_shift");
+        as->Label(skip);
+        as->PopLabel("16_bit_shift_skip");
     }
     //    ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
 
