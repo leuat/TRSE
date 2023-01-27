@@ -68,8 +68,8 @@ public:
     QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
-    void Cast(TokenType::Type from, TokenType::Type to);
-    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
+    void Cast(TokenType::Type from, TokenType::Type to) override;
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
     QString getJmp(bool isOffPage) override {
         return "jmp";

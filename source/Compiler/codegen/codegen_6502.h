@@ -75,8 +75,8 @@ public:
      * NodeBinOP Specific functions
      *
     */
-    void Cast(TokenType::Type from, TokenType::Type to);
-    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
+    void Cast(TokenType::Type from, TokenType::Type to) override;
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
 
     void EightBitDiv(QSharedPointer<Node> node);

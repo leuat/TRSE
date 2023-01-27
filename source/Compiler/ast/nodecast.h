@@ -54,7 +54,7 @@ public:
 
     void setForceType(TokenType::Type t) override;
 //    void setForceTypeFunctions(TokenType::Type t);
-    void setCastType(TokenType::Type t);
+    void setCastType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {
         return m_right->isPurePointer(as);
