@@ -60,6 +60,7 @@ void DialogProjectSettings::FillFromIni()
     ui->leInternalZp4->setText(m_ini->getString("zeropage_internal4"));
 
 
+
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
     ui->leDiskname->setText( m_ini->getString("d64name"));
 
@@ -78,7 +79,9 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
     //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
 
+
     ui->chkUseViceC1541->setChecked(m_ini->getdouble("use_vice_c1541")==1);
+    ui->chkCompilerComments->setChecked(m_ini->getdouble("disable_compiler_comments")==1);
 
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
     ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
@@ -268,6 +271,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("system", ui->cmbSystem->currentText());
 
     m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
+    m_ini->setFloat("disable_compiler_comments", ui->chkCompilerComments->isChecked());
+
 
     m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
     m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());

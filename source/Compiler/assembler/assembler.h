@@ -41,6 +41,8 @@ class MemoryBlock {
     Type m_type = CODE;
     bool m_isOverlapping = false;
     int m_shift = 0;
+
+
     QVector<int> m_zeropages;
     QString m_name;
     int m_currentLineNumber;
@@ -136,6 +138,7 @@ public:
 
     QSharedPointer<PostOptimiser> m_optimiser = nullptr;
 
+    bool m_disableComments = false;
     bool m_countCycles = false;
     int m_noBanks = 0;
     static int m_prevCycles;
@@ -290,7 +293,7 @@ public:
 //    virtual void Poke(bool start) = 0;
 //    virtual void Peek(bool start) {}
     virtual void Term(QString s, bool write=false);
-    virtual void Comment(QString s) {    Asm("; "+ s) ;}
+    virtual void Comment(QString s);
     void Term();
   //  virtual void Writeln() = 0;
   //  virtual void EndWriteln() = 0;

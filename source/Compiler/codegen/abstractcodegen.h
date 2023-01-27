@@ -23,8 +23,10 @@ class NodeBuiltinMethod;
 class NodeAsm;
 class NodeBinaryClause;
 class NodeCase;
+class NodeCast;
 class NodeRepeatUntil;
 class NodeComment;
+class Node;
 class NodeControlStatement;
 
 
@@ -72,6 +74,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
     virtual void dispatch(QSharedPointer<NodeCase> node);
+    virtual void dispatch(QSharedPointer<NodeCast> node);
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
     virtual void dispatch(QSharedPointer<NodeComment> node) = 0;
     virtual void dispatch(QSharedPointer<NodeControlStatement> node);
@@ -107,6 +110,7 @@ public:
     virtual void ExDeHl() {}
     virtual void SbcHlDe() {}
     virtual void Cast(TokenType::Type from, TokenType::Type to) {}
+    virtual void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) {}
 
 
     QString getBank(QSharedPointer<NodeVarType> t);

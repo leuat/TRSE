@@ -787,7 +787,6 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             as->Comment("; Byte, but forced to be integer");
         }
 */
-        as->Comment("Here1");
         Cast(node->getType(as), node->m_castType);
         return;
     }
@@ -804,14 +803,9 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
     {
 
         if (node->getOrgType(as) == TokenType::POINTER) {
-            //as->Asm("ld a,["+node->getValue(as)+"+1]");
-            //as->Asm("ld "+QString(hl[0])+",a");
             LoadAddress(node);
         }
         else if (node->getOrgType(as)==TokenType::INTEGER) {
-            //LoadVariable(node);
-            //node->Accept(this);
-            as->Comment("Integer");
             LoadInteger(node);
 
         }
@@ -827,16 +821,16 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 
             as->Asm("ld a,["+node->getValue(as)+"]");
             as->Asm("ld "+QString(hl[1])+",a");
-            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+            as->Asm("ld "+QString(hl[0])+",0");
+
+/*            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
                 //                as->Asm("xor a,a");
                 as->Asm("ld "+QString(hl[0])+",0");
             }
             else
             {
-                //                as->Asm("xor a");
-                //          as->Asm("ld "+QString(hl[0])+",a");
                 as->Asm("ld "+QString(hl[0])+",0");
-            }
+            }*/
         }
         Cast(node->getType(as), node->m_castType);
 
@@ -880,6 +874,34 @@ void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to)
     if (from==TokenType::INTEGER && to == TokenType::BYTE) {
         as->Comment("Casting from integer to byte");
         as->Asm("ld a,l");
+    }
+
+}
+void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType)
+{
+    if (from==to==writeType)
+        return;
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+        if (writeType==TokenType::INTEGER) {
+            as->Comment("Casting from byte to integer to integer");
+            as->Asm("ld l,a");
+            as->Asm("ld h,0");
+        }
+        if (writeType==TokenType::BYTE) {
+            as->Comment("Casting from byte to integer to byte");
+//            as->Asm("ld l,a");
+  //          as->Asm("ld h,0");
+        }
+    }
+    if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        if (writeType==TokenType::BYTE) {
+            as->Comment("Casting from integer to byte");
+            as->Asm("ld a,l");
+        }
+        if (writeType==TokenType::INTEGER) {
+            as->Comment("Casting from integer to byte to integer");
+            as->Asm("ld h,0");
+        }
     }
 
 }

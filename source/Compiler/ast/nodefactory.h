@@ -23,6 +23,7 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodecase.h"
+#include "source/Compiler/ast/nodecast.h"
 #include "source/Compiler/ast/nodecontrolstatement.h"
 
 
@@ -49,6 +50,7 @@ public:
     static QSharedPointer<NodeBlock> CreateBlockFromStatements(Token t, QVector<QSharedPointer<Node>> statementlist);
     static QSharedPointer<NodeConditional> CreateSingleConditional(Token t, TokenType::Type clause, bool isLarge, QSharedPointer<Node> left, QSharedPointer<Node> right, QSharedPointer<Node> block);
 
+    static QSharedPointer<NodeCast> CreateCast(Token t, QSharedPointer<Node> node);
 
 /*
 

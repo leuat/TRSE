@@ -2618,6 +2618,35 @@ void CodeGen6502::Cast(TokenType::Type from, TokenType::Type to)
 */
 }
 
+void CodeGen6502::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType)
+{
+    if (from==to==writeType)
+        return;
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+        if (writeType==TokenType::INTEGER) {
+            as->Comment("Casting from byte to integer to integer");
+            as->Asm("ldy #0");
+        }
+        if (writeType==TokenType::BYTE) {
+            as->Comment("Casting from byte to integer to byte");
+            //            as->Asm("ld l,a");
+            //          as->Asm("ld h,0");
+        }
+    }
+    if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        if (writeType==TokenType::BYTE) {
+            as->Comment("Casting from integer to byte");
+ //           as->Asm("ld a,l");
+        }
+        if (writeType==TokenType::INTEGER) {
+            as->Comment("Casting from integer to byte to integer");
+            as->Asm("ldy #0");
+   //         as->Asm("ld h,0");
+        }
+    }
+
+}
+
 void CodeGen6502::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {
     QString vname = node->m_left->getValue(as);

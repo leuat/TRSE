@@ -2582,7 +2582,14 @@ QSharedPointer<Node> Parser::Factor()
         return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
     }
 
+    if (m_currentToken.m_type == TokenType::BYTE || m_currentToken.m_type == TokenType::INTEGER || m_currentToken.m_type == TokenType::LONG) {
+        auto t = m_currentToken;
+        // Casting
+        Eat();
 
+        return NodeFactory::CreateCast(t,Factor());
+
+    }
 
     if (m_currentToken.m_type == TokenType::LENGTH) {
         Eat();

@@ -153,6 +153,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
     source/Compiler/ast/nodecase.cpp \
+    source/Compiler/ast/nodecast.cpp \
     source/Compiler/ast/nodecontrolstatement.cpp \
     source/Compiler/ast/nodefactory.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
@@ -440,6 +441,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asmjdh8.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
+    source/Compiler/ast/nodecast.h \
     source/Compiler/codegen/codegen_6809.h \
     source/Compiler/codegen/codegen_arm.h \
     source/Compiler/codegen/codegen_jdh8.h \

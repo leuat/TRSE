@@ -221,6 +221,10 @@ public:
 
     }
 
+    virtual TokenType::Type getOrgType(Assembler *as) {
+        return m_op.m_type;
+    }
+
     void RequireAddress(QSharedPointer<Node> n,QString name, int ln);
 
     void RequireNumber(QSharedPointer<Node> n,QString name, int ln);

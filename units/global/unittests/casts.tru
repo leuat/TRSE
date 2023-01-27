@@ -179,6 +179,16 @@ begin
 	if (Vars::IntegerReturn(2)=4) then Common::PASS() else Common::FAIL();
 end;
 
+// test cast integer to byte
+procedure Test19();
+begin
+	Vars::text := "T19:";
+	Common::CR();
+	Vars::i1 := $104;
+	Vars::i1 := byte(Vars::i1);
+	if (Vars::i1=$04) then Common::PASS() else Common::FAIL();
+end;
+
 /* MAIN PROGRAM */
 procedure Exec();
 begin
@@ -203,6 +213,7 @@ begin
 	Test16();
 	Test17();
 	Test18();
+	Test19();
 	Common::WaitABit();
 end;
 

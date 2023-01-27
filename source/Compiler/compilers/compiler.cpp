@@ -92,6 +92,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     try {
         // Set up assembler and dispatcher for the current system
         InitAssemblerAnddispatcher(system);
+        m_assembler->m_disableComments = m_projectIni->getdouble("disable_compiler_comments")==1;
         m_assembler->m_curDir = project_dir;
 //        m_codeGen->m_rasSource = m_lexer->m_lines;
         if (system->m_processor==AbstractSystem::MOS6502)

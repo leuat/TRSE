@@ -76,6 +76,8 @@ public:
      *
     */
     void Cast(TokenType::Type from, TokenType::Type to);
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
+
 
     void EightBitDiv(QSharedPointer<Node> node);
     void EightBitMul(QSharedPointer<Node> node);

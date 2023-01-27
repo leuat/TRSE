@@ -68,3 +68,4 @@ d64name = main
 use_vice_c1541 = 0
 cc1541_disk_type = d64
 cpu_x86_output = exe
+disable_compiler_comments = 0

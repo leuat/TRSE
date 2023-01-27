@@ -46,6 +46,7 @@ public:
     void dispatch(QSharedPointer<NodeNumber>node) override;
 
     void Cast(TokenType::Type from, TokenType::Type to) override;
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
 
 //    void dispatch(QSharedPointer<NodeForLoop> node);

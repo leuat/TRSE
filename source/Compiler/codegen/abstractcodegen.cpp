@@ -9,6 +9,7 @@
 #include "source/Compiler/ast/nodeprogram.h"
 #include "source/Compiler/ast/nodevardecl.h"
 #include "source/Compiler/ast/nodeasm.h"
+#include "source/Compiler/ast/nodecast.h"
 #include "source/Compiler/ast/nodecompound.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodeunaryop.h"
@@ -45,6 +46,15 @@ void AbstractCodeGen::UpdateDispatchCounter()
 void AbstractCodeGen::dispatch(QSharedPointer<NodeAssign> node)  {
     node->DispatchConstructor(as,this);
     AssignVariable(node);
+}
+
+void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
+{
+    node->DispatchConstructor(as,this);
+    node->m_right->Accept(this);
+//    as->Comment("WriteType : "+TokenType::getType(node->m_right->m_castType));
+    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+
 }
 /*
  *

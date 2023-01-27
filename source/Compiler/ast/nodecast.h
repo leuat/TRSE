@@ -34,13 +34,11 @@
 #include "source/Compiler/codegen/abstractcodegen.h"
 
 
-class NodeBinOP : public Node {
+class NodeCast : public Node {
 public:
-    QVector<int> power2 = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192, 8192*2,8192*4,8192*8};
-    NodeBinOP(QSharedPointer<Node> left, Token op, QSharedPointer<Node> right);
+    NodeCast(Token op, QSharedPointer<Node> right);
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
-    QString BothConstants(Assembler* as);
 
     bool containsVariables() override;
     bool isPureNumeric() override;
@@ -59,38 +57,26 @@ public:
     void setCastType(TokenType::Type t);
 
     bool isPurePointer(Assembler *as) override {
-        return m_left->isPurePointer(as) && m_right->isPurePointer(as);
+        return m_right->isPurePointer(as);
     }
 
     bool isPointer(Assembler *as) override
     {
-        return m_left->isPointer(as) | m_right->isPointer(as);
+        return m_right->isPointer(as);
 
     }
-    TokenType::Type getOrgType(Assembler *as) override {
-        auto t1 = m_right->getOrgType(as);
-        auto t2 = m_left->getOrgType(as);
-        if (t1==TokenType::LONG || t2==TokenType::LONG) return TokenType::LONG;
-        if (t1==TokenType::INTEGER || t2==TokenType::INTEGER) return TokenType::INTEGER;
-        return t1;
-     }
 
     QString getAddress() override {
         return HexValue();
     }
 
     void forceWord() override {
-       m_left->forceWord();
        m_right->forceWord();
     }
     bool containsPointer(Assembler* as) override;
 
-    void SwapVariableFirst();
 
     virtual bool isReference() override;
-
-    bool ContainsVariable(Assembler* as, QString var);
-
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override;
 
@@ -102,24 +88,20 @@ public:
 
     bool isPure() override;
 
-    TokenType::Type VerifyAndGetNumericType() override;
 
 
-    QString getStringOperation();
 
-    QString getLiteral(Assembler* as) override;
 
 
     int numValue() override;
 
     QString HexValue() override;
 
-    int BothPureNumbersBinOp(Assembler *as);
 
 
     void Accept(AbstractCodeGen* dispatcher) override {
-        dispatcher->dispatch(qSharedPointerDynamicCast<NodeBinOP>(sharedFromThis()));
-    };
+        dispatcher->dispatch(qSharedPointerDynamicCast<NodeCast>(sharedFromThis()));
+    }
 
 };
 

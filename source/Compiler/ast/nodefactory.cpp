@@ -100,3 +100,9 @@ QSharedPointer<NodeConditional> NodeFactory::CreateSingleConditional(Token t,Tok
     return CreateConditional(t,binaryclause,block,isLarge);
 }
 
+QSharedPointer<NodeCast> NodeFactory::NodeFactory::CreateCast(Token t, QSharedPointer<Node> node)
+{
+    return QSharedPointer<NodeCast>(new NodeCast(t,node));
+
+}
+
