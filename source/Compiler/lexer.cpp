@@ -504,6 +504,14 @@ Token Lexer::GetNextToken()
                 return Token(TokenType::GREATEREQUAL, ">=");
             }
             if (peek()==">") {
+                if (peek(2)=="=") {
+                    Advance();
+                    Advance();
+                    Advance();
+                    return Token(TokenType::ASSIGNOP, ">>");
+
+                }
+
                 Advance();
                 Advance();
                 return Token(TokenType::SHR, ">>");
@@ -512,12 +520,21 @@ Token Lexer::GetNextToken()
             return Token(TokenType::GREATER, ">");
         }
         if (m_currentChar=="<") {
+            QString c = m_currentChar;
             if (peek()=="=") {
                 Advance();
                 Advance();
                 return Token(TokenType::LESSEQUAL, "<=");
             }
             if (peek()=="<") {
+                if (peek(2)=="=") {
+                    Advance();
+                    Advance();
+                    Advance();
+                    return Token(TokenType::ASSIGNOP, "<<");
+
+                }
+
                 Advance();
                 Advance();
                 return Token(TokenType::SHL, "<<");

@@ -1,0 +1,131 @@
+unit BitOp;
+var
+
+// byte shift 1
+procedure Test1();
+begin
+	Vars::text := "T1:";
+	Vars::v1 := 2;
+	Vars::v1<<=1;
+	Common::CR();
+	if (Vars::v1=4) then Common::PASS() else Common::FAIL();
+end;
+
+// byte shr 1
+procedure Test2();
+begin
+	Vars::text := "T2:";
+	Vars::v1 := 4;
+	Vars::v1>>=1;
+	Common::CR();
+	if (Vars::v1=2) then Common::PASS() else Common::FAIL();
+end;
+
+// byte shl b
+procedure Test3();
+begin
+	Vars::text := "T3";
+	Vars::v1 := 2;
+	Vars::v2 := 1;
+	Vars::v1<<=Vars::v2;
+	Common::CR();
+	if (Vars::v1=4) then Common::PASS() else Common::FAIL();
+end;
+
+// byte shr b
+procedure Test4();
+begin
+	Vars::text := "T4";
+	Vars::v1 := 4;
+	Vars::v2 := 1;
+	Vars::v1>>=Vars::v2;
+	Common::CR();
+	if (Vars::v1=2) then Common::PASS() else Common::FAIL();
+end;
+
+// integer shiftl 1
+procedure Test5();
+begin
+	Vars::text := "T5:";
+	Vars::i1 := 2;
+	Vars::i1<<=1;
+	Common::CR();
+	if (Vars::i1=4) then Common::PASS() else Common::FAIL();
+end;
+
+// integer shiftr r
+procedure Test6();
+begin
+	Vars::text := "T6:";
+	Vars::i1 := 4;
+	Vars::i1>>=1;
+	Common::CR();
+	if (Vars::i1=2) then Common::PASS() else Common::FAIL();
+end;
+
+// integer shiftl b
+procedure Test7();
+begin
+	Vars::text := "T7:";
+	Vars::i1 := $1000;
+	Vars::v1 := 1;
+	Vars::i1<<=Vars::v1;
+	Common::CR();
+	if (Vars::i1=$2000) then Common::PASS() else Common::FAIL();
+end;
+
+
+// integer shiftr b
+procedure Test8();
+begin
+	Vars::text := "T8:";
+	Vars::i1 := $1000;
+	Vars::v1 := 1;
+	Vars::i1>>=Vars::v1;
+	Common::CR();
+	if (Vars::i1=$800) then Common::PASS() else Common::FAIL();
+end;
+
+// integer shiftl advanced #1
+procedure Test9();
+begin
+	Vars::text := "T9:";
+	Vars::i1 := $1000;
+	Vars::v1 := 1;
+	Vars::i1<<=Vars::v1+1;
+	Common::CR();
+	if (Vars::i1=$4000) then Common::PASS() else Common::FAIL();
+end;
+
+// integer shiftl advanced #2
+procedure Test10();
+begin
+	Vars::text := "T10:";
+	Vars::i1 := $1000;
+	Vars::v1 := 1;
+	Vars::i1<<=(Vars::ba1[Vars::v1]+1);
+	Common::CR();
+	if (Vars::i1=$4000) then Common::PASS() else Common::FAIL();
+end;
+
+
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("BITOP");
+	
+	Test1();
+	Test2();
+	Test3();
+	Test4();
+	Test5();
+	Test6();
+	Test7();
+	Test8();
+	Test9();
+	Test10();
+	
+Common::WaitABit();
+end;
+
+end.

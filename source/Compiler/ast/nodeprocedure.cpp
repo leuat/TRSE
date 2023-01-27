@@ -85,7 +85,7 @@ bool NodeProcedure::isByte(Assembler *as)
     if (m_procedure->m_returnType!=nullptr)
         return m_procedure->m_returnType->getType(as)==TokenType::BYTE;
 
-    return false;
+    return true;
 
 }
 

@@ -96,6 +96,10 @@ TokenType::Type Token::getBinopTokenTypeFromString(QString c) {
         return TokenType::BITOR;
     if (c=="^")
         return TokenType::XOR;
+    if (c=="<<")
+        return TokenType::SHL;
+    if (c==">>")
+        return TokenType::SHR;
 
     return TokenType::NADA;
 

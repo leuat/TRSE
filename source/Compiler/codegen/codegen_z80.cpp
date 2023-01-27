@@ -20,8 +20,31 @@ void CodeGenZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
     //    as->Asm("ld l,a");
     //    as->Asm("ld h,0");
     // sorry!
-    if (!node->m_right->isPureNumeric())
-        ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
+    if (!node->m_right->isPureNumeric()){
+        node->m_right->setCastType(TokenType::BYTE);
+        node->m_right->setForceType(TokenType::BYTE);
+        if (!node->m_right->isPure())
+            as->Asm("push hl");
+        node->m_right->Accept(this);
+        as->Asm("ld b,a");
+        if (!node->m_right->isPure())
+            as->Asm("pop hl");
+        auto lbl = as->NewLabel("16_bit_shift");
+        as->Label(lbl);
+        if (node->m_op.m_type == TokenType::SHL) {
+            as->Asm("add hl,hl");
+        }
+        if (node->m_op.m_type == TokenType::SHR) {
+            as->Asm("srl h");
+            as->Asm("rr l");
+        }
+
+        as->Asm("dec b");
+        as->Asm("jr nz,"+lbl);
+        as->PopLabel("16_bit_shift");
+    }
+    //    ErrorHandler::e.Error("Only constant 16-bit shifts are supported", node->m_op.m_lineNumber);
+
 
     int val = node->m_right->getValueAsInt(as);
     // Shl: simply add hl N times
