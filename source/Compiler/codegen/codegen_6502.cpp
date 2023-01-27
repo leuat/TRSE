@@ -87,12 +87,8 @@ void CodeGen6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->Term();
     QString lbl = as->StoreInTempVar("rightvarInteger", "word");
 
-    //    as->Asm("sta " +lbl);
-    //    as->Asm("sty " +lbl+"+1"); // J is stored
     as->Term();
 
-    //as->Variable(getValue(v), false);
-    //as->Asm("lda " + getValue(v) + "+1");
     node->m_left->m_isWord = true;
     node->m_left->Accept(this);
     as->Term();
@@ -100,24 +96,12 @@ void CodeGen6502::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->BinOP(node->m_op.m_type);
     as->Term(lbl, true); // high bit added to a
 
-    /*  if (node->m_op.m_type==TokenType::PLUS) {
-        as->Asm("bcc "+lblword);
-        as->Asm("inc " +lbl+"+1");
-    }
-    else {
-        as->Asm("bcs "+lblword);
-        as->Asm("inc  " +lbl+"+1");
-    }
-*/
     as->Label(lblword);
     as->Asm("sta "+lbl);
     as->Comment("High-bit binop");
     Disable16bit();
     as->Asm("tya");
 
-    //    as->BinOP(m_op.m_type);
-    //    if (node->m_op.m_type==TokenType::PLUS)
-    //      as->Asm("clc");
     as->BinOP(node->m_op.m_type,false);
 
     as->Term(lbl+"+1",true);
@@ -142,9 +126,6 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
     //        QString lblJmp = as->NewLabel("jmprightvarInteger");
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
-    //as->Asm("jmp " + lblJmp);
-    //as->Write(lbl +"\t.word\t0");
-    //as->Label(lblJmp);
 
     as->Comment("HandleVarBinopB16bit");
 
@@ -187,27 +168,9 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
             as->Asm("pla ");
         }
         return;
-        //        as->Asm("sta " + varName);
-
-
-
-        /*        if (node->m_op.m_type==TokenType::PLUS) {
-
-            as->Asm("bcc "+lblword);
-            as->Asm("iny");
-
-        }
-        else {
-  //          as->Asm("bcs "+lblword);
-            as->Asm("dey");
-        }
-        as->Label(lblword);
-*/
     }
 
 
-    //    qDebug() << node->m_right
-    //qDebug() << "NodeBinop : " << TokenType::getType(node->m_right->getType(as)) <<TokenType::getType(node->m_left->getType(as)) ;
 
     if (node->m_right->getType(as)==TokenType::ADDRESS && node->m_left->getType(as)==TokenType::ADDRESS )
         ErrorHandler::e.Warning("You are adding together two addresses. Is this really what you indend?", node->m_op.m_lineNumber);
@@ -220,10 +183,7 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
     //    as->Asm("sty " +lbl+"+1");
     //        qDebug() << as->m_term;
     as->Term();
-    //  as->Asm("clc");
-    //as->Variable(getValue(v), false);
-    //  as->Comment(";HEREHERE");
-    //    exit(1);
+
     if (!v->hasArrayIndex()) {
         if (v->getType(as)==TokenType::POINTER || (v->m_op.m_type!=TokenType::ADDRESS && !v->m_fake16bit) )
             as->Asm("lda " + getValue(v) + "+1");
@@ -317,8 +277,6 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
     as->PopLabel("wordAdd");
     as->PopTempVar();
-    //        as->PopLabel("rightvarInteger");
-    //      as->PopLabel("jmprightvarInteger");
 
 }
 
@@ -328,15 +286,8 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
     QSharedPointer<NodeVar> vnum = qSharedPointerDynamicCast<NodeVar>(node->m_right);
     QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     if (num!=nullptr || vnum!=nullptr) {
-        /*        if (num!=nullptr)
-            qDebug() << "Number:"  <<num->m_val;
-        if (vnum!=nullptr)
-            qDebug() << "Var:"  <<vnum->getValue(as);*/
         as->Comment("Add/sub where right value is constant number");
         if (num!=nullptr && num->m_op.m_type==TokenType::ADDRESS && var!=nullptr) {
-            //qDebug() << "ADDRESS: " << num->StringValue();
-            //exit(1);
-            //as->
             as->ClearTerm();
             as->Term("lda " + getValue(var) + " + " + num->StringValue());
             return true;
@@ -546,10 +497,7 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     if (node->m_left->isWord(as)) {
 
         LoadVariable(node->m_left);
-        //        if (!node->m_left->isWord(as))
         as->Term();
-        //        if (!node->m_left->isWord(as))
-        //          as->Asm("ldy #0");
 
         as->Asm("sta mul16x8_num1");
         as->Asm("sty mul16x8_num1Hi");
@@ -623,18 +571,10 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
         }
         else {
             as->Comment("Add/sub right value is variable/expression");
-
-            //       QString lbl = as->NewLabel("rightvar");
-            //QString lblJmp = as->NewLabel("jmprightvar");
-            //as->Asm("jmp " + lblJmp);
-            //as->Write(lbl +"\t.byte\t0");
-            //as->Label(lblJmp);
             as->ClearTerm();
             node->m_right->Accept(this);
             as->Term();
             QString lbl = as->StoreInTempVar("rightvarAddSub");
-            //as->Asm("sta " +lbl);
-            //as->Term();
 
             node->m_left->Accept(this);
             as->Term();
@@ -642,8 +582,6 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
             as->BinOP(node->m_op.m_type);
             as->Term(lbl,true);
             as->PopTempVar();
-            //as->PopLabel("rightvar");
-            //as->PopLabel("jmprightvar");
         }
     }
     else {
@@ -796,18 +734,10 @@ void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
  *  */
 
 
-
-
-
-
 void CodeGen6502::dispatch(QSharedPointer<Node> node)
 {
     node->DispatchConstructor(as,this);
     node->m_currentLineNumber = node->m_op.m_lineNumber;
-
-
-    //    qDebug() << "CodeGen6502 UNKNOWN TYPE! Should never be called.";
-    //    exit(1);
 }
 
 
@@ -834,9 +764,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeString> node)
     if (node->m_val.length()>=1 && node->m_val[0].length()>=1) {
         as->ClearTerm();
 
-        //        as->Asm("lda #"+QString::number(QChar(node->m_val[0][0]).unicode()));
         CStringItem it  = ((Asm6502*)as)->m_cstr[QString(node->m_val[0][0]) ];
-        //        as->Asm("lda #"+QString::number(it.m_char.unicode()->unicode()));
         as->Asm("lda #"+QString::number(it.m_screenCode));
         as->Term();
         return;
@@ -979,42 +907,7 @@ void CodeGen6502::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QS
         as->Asm(bcs + lblFailed);
 
 }
-/*
-void CodeGen6502::BinaryClause(QSharedPointer<Node> node)
-{
 
-    as->Comment("Binary clause: " + node->m_op.getType());
-
-    BuildToCmp(node);
-    as->Comment("BC done");
-    QString lblFailed = as->m_lblFailed;
-    bool isNew= false;
-    if (lblFailed=="") {
-        lblFailed = as->NewLabel("binaryclausefailed");
-        isNew=true;
-    }
-    QString lblFinished = as->NewLabel("binaryclausefinished");
-
-    QString lblSuccess = as->NewLabel("binaryclausesuccess");
-    PrintCompare(node, lblSuccess,lblFailed);
-    as->Label(lblSuccess);
-    if (!node->m_ignoreSuccess) {
-        as->Asm("lda #1; success");
-        as->Asm("jmp " + lblFinished);
-        as->Label(lblFailed);
-        as->Asm("lda #0 ; failed state");
-        as->Label(lblFinished);
-    }
-    if (isNew)
-        as->PopLabel("binaryclausefailed");
-
-    as->PopLabel("binaryclausefinished");
-    as->PopLabel("binaryclausesuccess");
-    // as->PopLabel("binary_clause_temp_var");
-    //  as->PopLabel("binary_clause_temp_lab");
-
-}
-*/
 void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
 {
     QString b="";
@@ -1079,7 +972,7 @@ void CodeGen6502::Enable16bit()
     }
 
 }
-
+// Builds a simple if block (no nested conditionals)
 void CodeGen6502::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
 
@@ -1206,45 +1099,6 @@ void CodeGen6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
         as->PopLabel("pass1");
 
     }
-    /*        as->Label(lbl1); // ok
-        as->Asm("lda #1");
-        as->Asm("jmp " + lbl3);
-        as->Label(lbl2); // failed
-        as->Asm("lda #2");
-
-        as->Label(lbl3); // DONE
-
-*/
-    // Now all is ok
-    //  }
-    /*  else {
-        ErrorHandler::e.Error("Comparison of integer only implemented for pure number or variable",node->m_op.m_lineNumber);
-    }
-*/
-
-
-
-    /*
-        if (m_op.m_type==TokenType::EQUALS)
-            as->Asm("bne " + lblFailed);
-        if (m_op.m_type==TokenType::NOTEQUALS)
-            as->Asm("beq " + lblFailed);
-        if (m_op.m_type==TokenType::GREATER)
-            as->Asm("bcc " + lblFailed);
-        if (m_op.m_type==TokenType::LESS)
-            as->Asm("bcs " + lblFailed);
-
-        as->Asm("lda #1; success");
-        as->Asm("jmp " + lblFinished);
-        as->Label(lblFailed);
-        as->Asm("lda #0 ; failed state");
-        as->Label(lblFinished);
-    */
-    //   as->PopLabel("binaryclauseinteger_success");
-    //   as->PopLabel("binaryclauseinteger_fail");
-    //   as->PopLabel("binaryclauseintegerfinished");
-    // as->PopLabel("binary_clause_temp_var");
-    //  as->PopLabel("binary_clause_temp_lab");
 }
 
 
@@ -1298,9 +1152,6 @@ bool CodeGen6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString l
     }
     return false;
 
-    //    as->m_lblFailed="";
-    //  as->m_lblSuccess="";
-    //  return true;
 }
 
 QString CodeGen6502::getReturn() {
@@ -1339,8 +1190,6 @@ QString CodeGen6502::getInitProcedure() {
 bool CodeGen6502::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
 {
 
-    //    qDebug() << "HERE" <<node->m_right->isPointer(as);
-    //  qDebug() << TokenType::getType(as->m_symTab->Lookup(node->m_left->getValue(as), node->m_op.m_lineNumber)->getTokenType());
     // Only assign pure variables ( z := ... and not z[i] := ....)
     if (node->m_left->hasArrayIndex())
         return false;
@@ -1582,171 +1431,6 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
 
 
 
-/*
- *
- *
- *
- *
- * NodeConditional
- *
- *
- *
-*/
-
-
-
-/*
-void CodeGen6502::dispatch(QSharedPointer<NodeConditional> node)
-{
-    node->DispatchConstructor(as,this);
-
-
-//    as->PushCounter();
-    QString labelStartOverAgain = as->NewLabel("while");
-    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
-
-    QString labelElse = as->NewLabel("elseblock");
-    QString labelElseDone = as->NewLabel("elsedoneblock");
-    // QString labelFailed = as->NewLabel("conditionalfailed");
-
-    if (node->m_isWhileLoop)
-        as->Label(labelStartOverAgain);
-
-    // Test all binary clauses:
-    bool isSimplified = false;
-    bool isOKBranchSize = true;
-    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause);
-
-//    qDebug() << "TESTVERIFY BRANCH SIZE ";
-    if (node->verifyBlockBranchSize(as, node->m_block)) {
-        isSimplified = !bn->cannotBeSimplified(as);
-    }
-    else isOKBranchSize = false;
-
-    // Then, check m_forcepage
-    if (node->m_forcePage==1) // force OFFPAGE
-        isSimplified = false;
-
-    if (node->m_forcePage==2) {
-        if (!bn->cannotBeSimplified(as)) // force ONPAGE
-            isSimplified = true;
-        else ErrorHandler::e.Error("keyword onpage can only be used with 1 compare clause (no and, or etc)", node->m_op.m_lineNumber);
-    }
-
-    if (!isSimplified) {
-//        node->m_binaryClause->Build(as);
-        if (isOKBranchSize && IsSimpleAndOr(qSharedPointerDynamicCast<NodeBinaryClause>(node->m_binaryClause), lblstartTrueBlock,labelElse)){
-        }
-        else {
-            as->Comment("Full binary clause");
-//            as->Comment(" Here : " + QString::number(isOKBranchSize) +" "  +
-  //                      QString::number(IsSimpleAndOr(dynamic_cast<QSharedPointer<NodeBinaryClause>>(node->m_binaryClause), lblstartTrueBlock,labelElse)));
-            node->m_binaryClause->Accept(this);
-            // Now, a should be either true or false
-
-            as->Asm("cmp #1");
-            as->Asm("beq " + lblstartTrueBlock); // All conditionals checked out!
-            // Do we have an else block?
-            if (node->m_elseBlock!=nullptr)
-                as->Asm("jmp " + labelElse); // All conditionals false: skip to end (or else block)
-            as->Asm("jmp " + labelElseDone);
-        }
-    }
-    else {
-        // Simplified version <80 instructions & just one clause
-
-        QString failedLabel = labelElseDone;
-        if (node->m_elseBlock!=nullptr)
-            failedLabel = labelElse;
-        BuildSimple(bn,  lblstartTrueBlock,failedLabel,node->m_forcePage==1 );
-    }
-    // Start main block
-    as->Label(lblstartTrueBlock); // This means skip inside
-
-    node->m_block->Accept(this);
-
-    if (node->m_elseBlock!=nullptr)
-        as->Asm("jmp " + labelElseDone);
-
-    // If while loop, return to beginning of conditionals
-    if (node->m_isWhileLoop)
-        as->Asm("jmp " + labelStartOverAgain);
-
-    // An else block?
-    as->Label(labelElse);
-    if (node->m_elseBlock!=nullptr) {
-//        as->Label(labelElse);
-        node->m_elseBlock->Accept(this);
-//        m_elseBlock->Build(as);
-
-    }
-    as->Label(labelElseDone); // Jump here if not
-
-    as->PopLabel("while");
-    as->PopLabel("ConditionalTrueBlock");
-    as->PopLabel("elseblock");
-    as->PopLabel("elsedoneblock");
-//    as->PopLabel("conditionalfailed");
-
-  //  as->PopCounter(node->m_op.m_lineNumber);
-
-}
-
-*/
-/*
- *
- *
- *
- *
- * NodeForLoop
- *
- *
- *
-*/
-
-
-/*
-void CodeGen6502::dispatch(QSharedPointer<NodeForLoop> node)
-{
-    node->DispatchConstructor(as,this);
-
-
-    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-
-    // get the inclusive flag for the method used for the coparison, ie: false is < and true is <=
-    bool inclusive =(node->m_inclusive);
-
-    // left QSharedPointer<Node> must* be an assign statement (e.g a:=10)
-    if (nVar==nullptr)
-        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
-
-
-    // Get the variable name
-    QString var = getValue(nVar->m_left);
-    // accept statement (assign variable)
-    node->m_a->Accept(this);
-
-
-    as->m_stack["for"].push(var);
-
-    as->Label(as->NewLabel("for"));
-
-    bool isSmall = node->verifyBlockBranchSize(as, node->m_block,nullptr,this);
-
-    if (node->m_forcePage == 1)
-        isSmall = false;
-
-    if (node->m_forcePage == 2)
-        isSmall = true;
-
-    if (isSmall)
-        SmallLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);
-    else
-        LargeLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);
-
-}
-*/
-
 
 
 void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
@@ -1937,18 +1621,6 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     if (node->isReference()) {
         // This should now be handled by the parser
         ErrorHandler::e.Error("Unknown syntax: referenced address with index. ", node->m_op.m_lineNumber);
-        // Handle reference! 16-bit
-        //Load16bitVariable(node);
-        /*        if (node->m_expr->isPureNumeric()) {
-            as->Asm("ldy "+getValue8bit(node,true));
-            int size = 1;
-            if (node->getArrayType(as)==TokenType::INTEGER)
-                size=2;
-            as->Asm("lda "+getValue8bit(node,false) +" + "+ Util::numToHex(node->m_expr->getValueAsInt(as)*size));
-
-        }
-        return;
-*/
     }
     bool unknownType = false;
     bool scale = true;
@@ -2264,7 +1936,19 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
         return;
     }
     else {
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
+
+        as->Asm("sta " + getValue(node));
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
+            as->Asm("sta " + getValue(node));
+            Disable16bit();
+
+            as->Asm("sty " + getValue(node) + "+1");
+            Enable16bit();
+        }
+
+
+
+ /*       if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
             as->Asm("sta " + getValue(node));
             return;
         }
@@ -2287,6 +1971,7 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
                 else {
                     ErrorHandler::e.Error("Unable to assign variable : "+getValue(node)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
                 }
+                */
 
     }
 

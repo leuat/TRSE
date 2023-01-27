@@ -60,6 +60,11 @@ public:
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
 
+    bool isWord(Assembler* as) override;
+    bool isLong(Assembler* as) override;
+    bool isByte(Assembler* as) override;
+
+
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));
     }

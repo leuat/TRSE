@@ -145,6 +145,40 @@ begin
 	if (Vars::v1=200) then Common::PASS() else Common::FAIL();
 end;
 
+// test function return calls. Call integer, return int
+procedure Test15();
+begin
+	Vars::text := "T15:";
+	Vars::v1 := Vars::IntegerReturn(2);
+	Common::CR();
+	if (Vars::v1=4) then Common::PASS() else Common::FAIL();
+end;
+
+// test function return calls. Call integer, return int
+procedure Test16();
+begin
+	Vars::text := "T16:";
+	Vars::i1 := Vars::ByteReturn(2);
+	Common::CR();
+	if (Vars::i1=4) then Common::PASS() else Common::FAIL();
+end;
+
+// test function return calls. Call integer, return int
+procedure Test17();
+begin
+	Vars::text := "T17:";
+	Common::CR();
+	if (Vars::ByteReturn(2)=4) then Common::PASS() else Common::FAIL();
+end;
+
+// test function return calls. Call integer, return int
+procedure Test18();
+begin
+	Vars::text := "T18:";
+	Common::CR();
+	if (Vars::IntegerReturn(2)=4) then Common::PASS() else Common::FAIL();
+end;
+
 /* MAIN PROGRAM */
 procedure Exec();
 begin
@@ -164,6 +198,11 @@ begin
 	Test12();
 	Test13();
 	Test14();
+	// integer returns
+	Test15();
+	Test16();
+	Test17();
+	Test18();
 	Common::WaitABit();
 end;
 

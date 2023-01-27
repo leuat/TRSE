@@ -66,4 +66,22 @@ var
 	monsters: array[ NN ] of Monster;
 	zp: pointer;
 
+
+
+function IntegerReturn(ir_p1 : byte) : integer;  
+var
+	
+begin
+	j2:=ir_p1*2;
+	IntegerReturn:=j2;
+end;	
+
+function ByteReturn(ir_p1 : global byte) : byte;  
+var
+	
+begin
+	v3:=ir_p1*2;
+	ByteReturn:=v3;
+end;	
+
 end.
