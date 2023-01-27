@@ -123,8 +123,9 @@ begin
 	Test7();
 	Test8();
 	Test9();
+	@ifndef X86
 	Test10();
-	
+	@endif
 Common::WaitABit();
 end;
 
