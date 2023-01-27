@@ -29,7 +29,7 @@ public:
     void SetupDisk(QString projectPath);
     void CleanupDisk(QString projectPath);
 
-    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
     void ExtraEmulatorCommands() override;
     void SendKeyCommand(QString keys);

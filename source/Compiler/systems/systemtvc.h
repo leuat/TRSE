@@ -26,7 +26,7 @@ public:
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 
 
-    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
 
 

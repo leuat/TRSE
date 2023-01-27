@@ -31,7 +31,7 @@ public:
 
     void InitPens() override;
 
-    void ReInitialize()
+    void ReInitialize() override
     {
         m_width = getMetaParameter("screen_width")->value;
         m_height = getMetaParameter("screen_height")->value;

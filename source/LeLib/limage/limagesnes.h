@@ -22,11 +22,11 @@ public:
 
     virtual void SetBank(int bnk) override;
 
-    void SavePalette();
+    void SavePalette() override;
 
     int planes[4] = {1,0,2,3};
 
-    virtual QByteArray getBinaryExportData();
+    virtual QByteArray getBinaryExportData() override;
 
 
     void SpritePacker(LImage *in, QByteArray& rawDataOut, QByteArray &sprData, int x, int y, int w, int h, int compression,int& noChars) override;

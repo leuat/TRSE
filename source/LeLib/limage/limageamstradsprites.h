@@ -27,7 +27,7 @@ public:
 //    LImageSprites2() {}
 
 
-    void ExportBin(QFile &ofile);
+    void ExportBin(QFile &ofile) override;
     QByteArray ExportFrame(int i);
 
     void ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center) override;
