@@ -879,7 +879,7 @@ void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to)
 }
 void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType)
 {
-    if (from==to==writeType)
+    if (from==to && to==writeType)
         return;
     if (from==TokenType::BYTE && to == TokenType::INTEGER) {
         if (writeType==TokenType::INTEGER) {

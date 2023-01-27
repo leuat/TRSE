@@ -13,6 +13,15 @@ begin
 	Text::Reset();
 end;
 
+procedure CR() inline;
+begin
+	asm("
+		ldd #0
+		ldx #0
+		ldy #0
+	");
+end;
+
 // Called at the beginning of each test suite (multiple test cases grouped together)
 procedure TestSuiteInit();
 begin
