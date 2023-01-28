@@ -192,7 +192,7 @@ void SystemTIM::applyEmulatorParameters(QStringList &params, QString debugFile, 
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
 
     params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres"<<"-nothrottle" <<"-flop1"  <<filename+".img";
-  //  params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
+//    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;
 }

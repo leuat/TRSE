@@ -26,18 +26,20 @@ int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 QString Node::sForceFlag = "";
-uint Node::s_nodeCount = 0;
 Assembler* Node::s_as;
 
 QMap<QString, bool> Node::flags;
 QSharedPointer<SymbolTable>  Node::parserSymTab;
-
+uint Node::s_nodeCount = 0;
 //QMap<QSharedPointer<Node>, QSharedPointer<Node>> Node::s_uniqueSymbols;
 
 void Node::SwapNodes() {
+    if (m_hasSwapped)
+        return;
     QSharedPointer<Node> n = m_left;
     m_left = m_right;
     m_right = n;
+    m_hasSwapped = true;
 }
 
 void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp)

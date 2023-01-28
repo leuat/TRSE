@@ -756,7 +756,8 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
 
 
 bool AbstractCodeGen::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2) {
-    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
+    bool onPage = true;
+//    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
 
     if (node->m_forcePage == 1)
         onPage = false;

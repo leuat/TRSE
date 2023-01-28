@@ -1487,11 +1487,10 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
         return;
     }
 
-
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
-        auto n = node->m_right;
-        node->m_right = node->m_left;
-        node->m_left = n;
+//        as->Comment("LESS equal flipped perform actual flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
+        node->SwapNodes();
+  //      as->Comment("AFTER  flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
     }
 
     BuildToCmp(node);
@@ -1521,6 +1520,7 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
         //        as->Asm("j"+p+" z, " + lblFailed);
         // Flipped!
+ //       as->Comment("LESS equal flipped");
         as->Asm("j"+p+" c," + lblFailed);
     }
 

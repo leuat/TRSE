@@ -1202,35 +1202,33 @@ void CodeGen6809::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
     }
 
 
-    QString bcc = "lbcc";
-    QString bcs = "lbcs";
+    QString bcc = "lbcs";
+    QString bcs = "lbcc";
 
     as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
-    if (node->m_op.m_type==TokenType::GREATER) {
-        as->Asm("ldy "+lo1);
+    as->Asm("ldy "+lo1);
+    if (node->m_op.m_type==TokenType::LESSEQUAL) {
         as->Asm("cmpy "+node->m_right->getValue(as));
-        as->Asm(bcc+" "+lbl2);
+        as->Asm("lbgt "+ lbl2);
+    }
+    if (node->m_op.m_type==TokenType::LESS) {
+        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("lbge "+lbl2);
     }
     if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("ldy "+lo1);
         as->Asm("cmpy "+node->m_right->getValue(as));
-        as->Asm(bcc+" "+lbl2);
+        as->Asm("lbcs "+lbl2);
     }
-    if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
-        as->Asm("ldy "+lo1);
+    if (node->m_op.m_type==TokenType::GREATER) {
         as->Asm("cmpy "+node->m_right->getValue(as));
-        as->Asm(bcs +" "+lbl2);
-
-
+        as->Asm("lble "+lbl2);
     }
     if (node->m_op.m_type==TokenType::EQUALS) {
-        as->Asm("ldy "+lo1);
         as->Asm("cmpy "+node->m_right->getValue(as));
         as->Asm("lbne "+lbl2);
     }
     if (node->m_op.m_type==TokenType::NOTEQUALS){
         //            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
-        as->Asm("ldy "+lo1);
         as->Asm("cmpy "+node->m_right->getValue(as));
         as->Asm("lbeq "+lbl2);
     }

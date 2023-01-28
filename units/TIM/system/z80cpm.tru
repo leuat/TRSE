@@ -163,5 +163,23 @@ puts_end:
 	");	
 end;
 
+/**
+	Puts a hex nibble to terminal
+**/
+procedure puthexn(hexn: byte);
+begin
+	if hexn < 10 then
+		putch($30 + hexn)
+	else
+		putch($37 + hexn);
+end;
+/**
+	Puts a hex byte to terminal
+**/
+procedure puthexb(hexb: byte);
+begin
+	puthexn(hexb >> 4);
+	puthexn(hexb & $0F);
+end;
 
 end.

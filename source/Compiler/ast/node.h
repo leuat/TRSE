@@ -60,6 +60,7 @@ public:
     // Toggle nodes as "used" and "used by" - necessary for the optimizer for
     // automatic removal of nodes
     bool m_isUsed = false;
+    bool m_hasSwapped = false;
     QStringList m_isUsedBy;
     static Assembler* s_as;
     // Used in x86 to specity if is an index or not

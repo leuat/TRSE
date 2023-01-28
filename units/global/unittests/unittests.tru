@@ -68,8 +68,9 @@ begin
 	currentTest := 0;
 	isDone := false;
 	Common::TestInit();
-	ForLoop::Exec();
-	IfThenElse::Exec();
+	IntegerTest::Exec();
+//	ForLoop::Exec();
+//	IfThenElse::Exec();
 /*	while (Common::Status() = 0 and isDone = false) do
 	begin
 	//	Common::TestSuiteInit();
