@@ -4395,9 +4395,10 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                 arrayType.m_value = "INTEGER";
 
                 Eat(TokenType::LPAREN);
-                QVector<Token> tmp_data;
+                QVector<QSharedPointer<Node>> tmp_data;
                 while (m_currentToken.m_type != TokenType::RPAREN && m_currentToken.m_type!=TokenType::TEOF) {
-                    tmp_data.append(m_currentToken);
+                    //tmp_data.append(m_currentToken);
+                    tmp_data.append(String(false));
                     //                    qDebug() << m_currentToken.m_value;
                     Eat();
                     if (m_currentToken.m_type == TokenType::COMMA)
@@ -4413,12 +4414,13 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                 for (auto d: tmp_data) {
                     QString name = "tmp_"+QString::number((rand()%1000000)) + "_string"+QString::number(cnt);
                     names.append(name);
-                    QSharedPointer<NodeVar> var = NodeFactory::CreateVariable(d,name);
-                    Token tt = d;
+                    auto str = qSharedPointerDynamicCast<NodeString>(d);
+                    QSharedPointer<NodeVar> var = NodeFactory::CreateVariable(str->m_op,name);
+                    Token tt = d->m_op;
                     tt.m_type = TokenType::STRING;
                     tt.m_value = "STRING";
                     auto type = QSharedPointer<NodeVarType>(new NodeVarType(tt,""));
-                    type->m_data.append(d.m_value);
+                    type->m_data.append(str->m_val);
                     //                    qDebug() << d.m_value;
                     QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(var, type));
 
