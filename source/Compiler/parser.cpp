@@ -3278,6 +3278,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     // Call preprocessor for include files etc
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
     m_lexer->m_text = m_lexer->m_orgText;
+
+
     m_removeUnusedDecls = removeUnusedDecls;
     Node::m_curMemoryBlock = nullptr; //
     Node::m_staticBlockInfo.m_blockID = -1;
@@ -3304,7 +3306,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Symbol::s_currentProcedure = "main";
     m_inCurrentProcedure = "main";
 
-    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
+    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000 && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80)
         StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
 
     Data::data.compilerState = Data::PREPROCESSOR;
@@ -3621,6 +3623,7 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     QString numID = "";
     if (isCString)
         numID = "*&NUM";
+
 
     while (m_currentToken.m_type!=TokenType::RPAREN) {
         //GetParsedInt(TokenType::INTEGER);
@@ -4506,7 +4509,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
         }
         //        QStringList flags = getFlags();
-
         t.m_intVal = count;
         //        qDebug() << "Type: " << t.m_value;
         //      t.m_type = arrayType.m_type;
@@ -4530,6 +4532,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         nt->m_flags = flags;
         nt->VerifyFlags(isInProcedure);
         nt->m_declaredCount = count;
+
         return nt;
 
 
@@ -4553,7 +4556,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
 
         }
-
 
         QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
         str->m_flags = flags;

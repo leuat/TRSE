@@ -305,6 +305,7 @@ Token Lexer::String()
 {
     QString result="";
     while (!m_finished && m_currentChar!="\"") {
+//        qDebug() <<m_currentChar << result;
         result +=m_currentChar;
         Advance();
         if (m_currentChar=="\\" && peek()=="\"") {
