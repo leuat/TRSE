@@ -5,6 +5,7 @@ var
 // memory inc test
 	@ifndef X86
 	@ifndef ATARI520ST
+	
 procedure Test1();
 begin
 	
@@ -17,6 +18,23 @@ begin
 end;
 	@endif
 @endif
+
+procedure LoHi1();
+begin
+	Vars::i1 := $1234;
+	Vars::text := "T2:";
+	Common::CR();
+	if (lo(Vars::i1)=$34) then Common::PASS() else Common::FAIL();
+end;
+
+procedure LoHi2();
+begin
+	Vars::i1 := $1234;
+	Vars::text := "T3:";
+	Common::CR();
+	if (hi(Vars::i1)=$12) then Common::PASS() else Common::FAIL();
+end;
+
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
@@ -29,6 +47,8 @@ begin
 	Test1();
 	@endif
 	@endif
+	LoHi1();
+	LoHi2();
 	Common::WaitABit();
 end;
 

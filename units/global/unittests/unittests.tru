@@ -29,7 +29,7 @@ begin
 	isDone := false;
 	Common::TestInit();
 @ifndef ATARI520ST
-	while (Common::Status() = 0 and isDone = false) do
+	while (Common::Status() = 0 and isDone = false) offpage do
 @endif
 	
 @ifdef ATARI520ST
@@ -38,7 +38,7 @@ begin
 	begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
-		if (currentTest=0) then Classes::Exec();
+		if (currentTest=8) then Classes::Exec();
 		if (currentTest=6) then ForLoop::Exec();
 		@endif
 		if (currentTest=10) then CaseTest::Exec();
@@ -52,7 +52,7 @@ begin
 		if (currentTest=4) then AdvancedMath::Exec();
 		@endif
 		if (currentTest=7) then Registers::Exec();
-		if (currentTest=8) then Various::Exec();
+		if (currentTest=0) then Various::Exec();
 		if (currentTest=9) then Strings::Exec();
 
 		currentTest+=1;
