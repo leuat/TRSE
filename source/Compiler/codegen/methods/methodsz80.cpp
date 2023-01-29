@@ -762,14 +762,14 @@ void MethodsZ80::HiLo(Assembler *as, bool isHi)
     if (m_node->m_params[0]->isPureVariable())
     {
         if (m_node->m_params[0]->isWord(as)) {
-            if (isHi)
+            if (!isHi)
                 as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"]");
             else
                 as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"+1]");
             return;
         }
     }
-    ErrorHandler::e.Error("Hi / lo uknown parameter type", m_node->m_op.m_lineNumber);
+    ErrorHandler::e.Error("Hi / lo only implemented for pure variables/numbers", m_node->m_op.m_lineNumber);
 
 }
 

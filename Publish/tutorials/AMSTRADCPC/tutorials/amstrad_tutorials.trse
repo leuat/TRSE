@@ -69,4 +69,6 @@ d64name = main
 data_header_resources/images/background2.flf = 0
 use_vice_c1541 = 0
 data_header_resources/images/srpites.flf = 0
+disable_compiler_comments = 0
+cc1541_disk_type = d64
 open_files =, tut1.ras
