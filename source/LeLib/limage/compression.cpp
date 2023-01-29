@@ -115,7 +115,7 @@ void Compression::AddTo4PixelDataTVC(QByteArray &data, LImage &img, int xp, int 
             uchar c = 0;
             int curBit = 0;
             for (int p=0;p<4;p++) {
-                uchar p1 = img.getPixel(xp+x*4+p,yp+y)&3;
+                uchar p1 = img.getPixel(xp+x+p,yp+y)&3;
                 c |= (p1&0b01)<<(7-curBit);
                 c |= ((p1&0b10)>>1)<<((3-curBit));
 

@@ -92,7 +92,6 @@ function Update()
 
 	if (frame>=1) then
 		Add4PixelToDataTVC(0,0,1,1)
---		Add4PixelToData(0,1,1,1)
 	
 	end
 

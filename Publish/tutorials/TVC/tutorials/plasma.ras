@@ -69,8 +69,7 @@ begin
 			ld b,a
 			repeat 64
 			
-			ld hl,sinx
-			ld l,[i] ; ith element
+			ld hl,sinx +[i]
 			
 			ld a,b  ; a = val
 			add a,[hl] ; a+ sinx[x]
