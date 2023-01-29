@@ -763,15 +763,17 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         //      as->Asm("ld hl,"+node->getValue(as));
         LoadAddress(node);
         as->Asm("add hl,de");
-        if (node->getArrayType(as)==TokenType::INTEGER && node->m_writeType==TokenType::NADA)
+
+        as->Comment("TYPETEST : "+TokenType::getType(node->getArrayType(as)));
+        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
             as->Asm("add hl,de");
 
 
 
         as->Asm("ld a,[hl]");
 
-        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
-        if (node->getArrayType(as)==TokenType::INTEGER) // More complicated: Load integer byte array into de
+//        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
+        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER)) // More complicated: Load integer byte array into de
         {
             as->Asm("ld e,a");
             as->Asm("inc hl");
