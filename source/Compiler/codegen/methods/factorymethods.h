@@ -11,6 +11,7 @@
 #include "methods68000atari.h"
 #include "methodsz80.h"
 #include "methodsx86.h"
+#include "methods6809.h"
 
 class FactoryMethods
 {

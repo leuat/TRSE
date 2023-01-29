@@ -555,47 +555,17 @@ int Asm6809::CodeSizeEstimator(QStringList &lines) {
 
 QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
 {
-    if (m_zpStack.count()<m_tempZeroPointers.count()) {
-       // qDebug() << "B" << m_tempZeroPointers.count();
-
-        int i = m_zpStack.count();
-        m_zpStack.append(m_tempZeroPointers[i]);
-//        qDebug() << name << " INCREASE TO " << m_zpStack.count();
-
-        QString tmpVar = NewLabel(name+"_var");
-        QString labelVar = tmpVar + " = " + m_zpStack.last();
-        Label(labelVar);
-//        m_tempVars << labelVar;
-        if (actuallyStore) {
-        Asm("sta " + tmpVar);
-        if (type=="word") {
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("sep #$10");
-            Asm("sty " + tmpVar + "+1");
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("rep #$10");
-        }
-        }
-        PopLabel(name+ "_var");
-        return tmpVar;
-
-    }
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
-         ErrorHandler::e.Error("Error: Out of memory addresses for temp values for the SNES (must not reside in ROM). Please go to the project settings -> zeropages -> add new addresses to the 'temp vars zeropages!'");
-
    // qDebug() << "Using reglar variables: " << m_zpStack.count();
     QString tmpVar = NewLabel(name+"_var");
     QString labelVar = getLabelEnding(tmpVar) + "\t."+type+"\t0 ";
     m_tempVars << labelVar;
     if (actuallyStore) {
-        Asm("sta " + tmpVar);
-        if (type=="word") {
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("sep #$10");
-            Asm("sty " + tmpVar + "+1");
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("rep #$10");
-        }
+
+        if (type=="word")
+            Asm("sty " + tmpVar);
+        else
+            Asm("sta " + tmpVar);
+
     }
     PopLabel(name+ "_var");
     return tmpVar;

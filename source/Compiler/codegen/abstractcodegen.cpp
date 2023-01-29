@@ -51,6 +51,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeAssign> node)  {
 void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
 {
     node->DispatchConstructor(as,this);
+/*    if (node->m_op.m_type==TokenType::INTEGER)
+        node->m_right->setForceType(TokenType::INTEGER);
+    if (node->m_op.m_type==TokenType::BYTE)
+       node->m_right->setForceType(TokenType::BYTE);*/
     node->m_right->Accept(this);
 //    as->Comment("WriteType : "+TokenType::getType(node->m_right->m_castType));
     Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
@@ -253,6 +257,20 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
     }
     if (node->m_op.m_type == TokenType::RETURN)
         as->Asm(getReturn());
+}
+
+void AbstractCodeGen::Cast(QString from, QString to)
+{
+    TokenType::Type f,t;
+    from = from.toLower();
+    to = to.toLower();
+    if (from=="integer") f=TokenType::INTEGER;
+    if (from=="byte") f=TokenType::BYTE;
+    if (from=="long") f=TokenType::LONG;
+    if (to=="integer") t=TokenType::INTEGER;
+    if (to=="byte") t=TokenType::BYTE;
+    if (to=="long") t=TokenType::LONG;
+    Cast(f,t);
 }
 
 QString AbstractCodeGen::getBank(QSharedPointer<NodeVarType> t) {
@@ -881,8 +899,11 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
     // Return value
     if (node->m_returnValue!=nullptr) {
-        if (node->m_returnType->getValue(as).toLower()=="integer")
-            node->m_returnType->setForceType(TokenType::INTEGER);
+        if (node->m_returnType->getValue(as).toLower()=="integer") {
+            node->m_returnValue->setForceType(TokenType::INTEGER);
+
+        }
+
         as->ClearTerm();
         node->m_returnValue->Accept(this);
         as->Term();

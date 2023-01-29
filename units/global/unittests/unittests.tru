@@ -67,10 +67,12 @@ procedure ExecCoco3();
 begin
 	currentTest := 0;
 	isDone := false;
+	BitOp::Exec();
+/*	CaseTest::Exec();
 	Common::TestInit();
 	IntegerTest::Exec();
-//	ForLoop::Exec();
-//	IfThenElse::Exec();
+	ForLoop::Exec();
+	IfThenElse::Exec();*/
 /*	while (Common::Status() = 0 and isDone = false) do
 	begin
 	//	Common::TestSuiteInit();

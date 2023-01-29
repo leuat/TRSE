@@ -67,6 +67,9 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
     if (s==AbstractSystem::MEGA65)
         return QSharedPointer<Methods6502C64>(new Methods6502C64);
 
+    if (s==AbstractSystem::TRS80COCO)
+        return QSharedPointer<Methods6809>(new Methods6809);
+
     // Default one
     return QSharedPointer<Methods6502>(new Methods6502);
 }

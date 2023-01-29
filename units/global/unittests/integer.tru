@@ -178,8 +178,8 @@ begin
 
 	T066();
 	T07();
-	T08();
 	@ifndef TRS80COCO
+	T08();
 	T09();
 	T10();
 	

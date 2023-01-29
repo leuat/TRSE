@@ -422,11 +422,16 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
 
 void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 {
+
     if (node->m_left->isWord(as))
         node->m_right->setForceType(TokenType::INTEGER);
 
     if (node->m_right->isWord(as))
         node->m_left->setForceType(TokenType::INTEGER);
+
+//    as->Comment("Cast type " + TokenType::getType(node->m_castType));
+    if (node->m_castType==TokenType::INTEGER)
+        node->setForceType(TokenType::INTEGER);
 
 
     if (node->isPureNumeric()) {
@@ -483,7 +488,20 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
         }
         if (node->m_op.m_type == TokenType::MUL) {
             QString skip1 = as->NewLabel("skip1");
+
+            // Is 16 bit
+//            as->Comment("Left : " +Util::numToHex(node->m_left->isWord(as)));
+  //          as->Comment("Right : " +Util::numToHex(node->m_right->isWord(as)));
+            if (node->m_left->getOrgType(as)==TokenType::BYTE) {
+//                qDebug() << "SWAPP";
+                node->SwapNodes();
+            }
+            node->m_right->setCastType(TokenType::NADA);
+            node->m_right->setForceType(TokenType::BYTE);
+            //node->m_left->setForceType(TokenType::INTEGER);
+
             as->Comment("Generic mul");
+            // make sure 16 bit number is loaded first
             if (!node->isWord(as)) {
                 node->m_right->Accept(this);
                 as->Asm("ld e,a");
@@ -500,7 +518,6 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
                 return;
             }
-            // Is 16 bit
 
             //                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
 
@@ -513,7 +530,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 as->Asm("ld d,h");
                 as->Asm("ld e,l");
             }
-            node->m_right->setForceType(TokenType::BYTE);
+//            node->m_right->setForceType(TokenType::BYTE);
             node->m_right->Accept(this);
             //                as->Asm("ld a,l");
             as->Asm("ld hl,0");
@@ -522,7 +539,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             as->Asm("call mul_16x8");
             //                as->Asm("ld a,l");
 
-
+//            node->setForceType(TokenType::INTEGER);
 
             //            }
 
@@ -777,6 +794,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 
     }
 
+//    if (node->getOrgType(as)!=TokenType::INTEGER) {
     if (!node->isWord(as)) {
         if (node->isPureVariable())
             as->Asm("ld a,["+node->getValue(as)+"]");

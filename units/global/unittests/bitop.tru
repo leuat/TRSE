@@ -115,6 +115,7 @@ begin
 	Common::Initialise("BITOP");
 	
 	Test1();
+	@ifndef TRSE80COCO
 	Test2();
 	Test3();
 	Test4();
@@ -126,6 +127,8 @@ begin
 	@ifndef X86
 	Test10();
 	@endif
+	@endif
+	
 Common::WaitABit();
 end;
 

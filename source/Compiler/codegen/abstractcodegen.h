@@ -109,6 +109,7 @@ public:
 
     virtual void ExDeHl() {}
     virtual void SbcHlDe() {}
+    virtual void Cast(QString from, QString to);
     virtual void Cast(TokenType::Type from, TokenType::Type to) {}
     virtual void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) {}
 

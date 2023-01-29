@@ -176,6 +176,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/methods/methods68000.cpp \
     source/Compiler/codegen/methods/methods68000atari.cpp \
     source/Compiler/codegen/methods/methods6800amiga.cpp \
+    source/Compiler/codegen/methods/methods6809.cpp \
     source/Compiler/codegen/methods/methodsx86.cpp \
     source/Compiler/codegen/methods/methodsz80.cpp \
     source/Compiler/codegen/registerstack.cpp \
@@ -467,6 +468,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/methods/methods68000.h \
     source/Compiler/codegen/methods/methods68000atari.h \
     source/Compiler/codegen/methods/methods6800amiga.h \
+    source/Compiler/codegen/methods/methods6809.h \
     source/Compiler/codegen/methods/methodsx86.h \
     source/Compiler/codegen/methods/methodsz80.h \
     source/Compiler/codegen/registerstack.h \

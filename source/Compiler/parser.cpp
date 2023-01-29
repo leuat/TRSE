@@ -3435,6 +3435,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
                 ErrorHandler::e.Error("You can only set the return value once in the scope of the function.",m_currentToken.m_lineNumber);
 
             node->m_returnValue = Expr();
+
             isAssign=true;
             return nullptr;
         }
