@@ -738,6 +738,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             }
             else*/
             as->Asm("ld a,[hl]");
+            if (node->isWord(as)) {
+               as->Asm("ld e,a");
+               as->Asm("inc hl");
+               as->Asm("ld a,[hl]");
+               as->Asm("ld d,a");
+               as->Asm("ex de,hl");
+            }
+
             Cast(node->getArrayType(as), node->m_castType);
 
             return;
@@ -1125,11 +1133,19 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
             as->Comment("Storing in 16-bit array index");
             as->Asm("push hl");
             LoadAddress(var);
+            if (var->m_expr->isPureNumeric()) {
+                if (var->m_expr->getValueAsInt(as)!=0) {
+                    as->Asm("ld de,"+Util::numToHex(var->m_expr->getValueAsInt(as)*2));
+                    as->Asm("add hl,de");
+                }
+            }
+            else {
             var->m_expr->Accept(this);
-            as->Asm("ld d,0");
-            as->Asm("ld e,a");
-            as->Asm("add hl,de");
-            as->Asm("add hl,de");
+                as->Asm("ld d,0");
+                as->Asm("ld e,a");
+                as->Asm("add hl,de");
+                as->Asm("add hl,de");
+            }
             as->Asm("pop de");
             as->Asm("ld a,e");
             as->Asm("ld [hl],a");
