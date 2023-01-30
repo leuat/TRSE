@@ -37,10 +37,22 @@ end;
 @endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
+
+procedure TestAutomaticOffpage();
+begin
+	Vars::text := "TPAGE:";
+	Vars::v1:=0;
+	if (Vars::v1=0) then
+	begin
+		nop(128); // automatically make offpage
+	end;
+end;
+
 procedure Exec();
 begin
 	Common::Initialise("VARIOUS");
 	
+	TestAutomaticOffpage();
 	// Mul and div
 	@ifndef X86
 	@ifndef ATARI520ST
@@ -53,5 +65,7 @@ begin
 	@endif
 	Common::WaitABit();
 end;
+
+
 
 end.
