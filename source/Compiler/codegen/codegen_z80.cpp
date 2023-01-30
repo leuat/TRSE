@@ -773,7 +773,8 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         as->Asm("add hl,de");
 
         as->Comment("TYPETEST : "+TokenType::getType(node->getArrayType(as)));
-        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
+//        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
+            if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
             as->Asm("add hl,de");
 
 
@@ -781,7 +782,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         as->Asm("ld a,[hl]");
 
 //        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
-        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER)) // More complicated: Load integer byte array into de
+        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER) && node->m_writeType==TokenType::NADA) // More complicated: Load integer byte array into de
         {
             as->Asm("ld e,a");
             as->Asm("inc hl");
