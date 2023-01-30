@@ -1,0 +1,80 @@
+program Twister;
+@use "crtc"
+
+var  
+  	k,j,time,tt,t2,ll,frame,y: byte; 
+  	
+//   	data : incbin("data/twister_data.bin");
+   	data : incbin("data/twister_data.bin");
+   	table : incbin("data/twister_table.bin");
+   	
+	dst,zp,tp,p1 : pointer;
+	tab : pointer of integer;   
+	text : string = ("WHOO THIS IS A SCROLLTEXT YES IT IS ");
+    sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256 
+
+	charLookup : array[32] of integer = BuildTable("(2*16*16*i)");
+	frameLookup : array[16] of integer = BuildTable("(2*16*i)");
+
+@requirefile "data/twister_data.bin" "Please run the corresponding fjong file (twister.fjo) before compiling this program"
+
+procedure RenderTwister(tx:byte);
+begin
+	t2:=t2+1;
+	tt:=0-tx; // Text goes up
+	t2:=tx; // Twist goes down
+	tp:=#text;
+	j:=0;
+	y:=0;
+	dst:=$8000 + 30;
+	for k:=0 to 120 offpage do
+	begin
+		j:=sine32[(k+t2)&255]; // Twist turning
+		frame:=(((tx-j))&15); // Current rotation frame
+		ll:=(k-tt); // Current shift & text position in y
+		j:=ll>>4; // Twister yeah!
+	 	j:=(tp[j]-1)&31; // Look up current character, store in j
+		if (j=31) then j:=25;	
+ 	
+		tab :=#table + frameLookup[frame];
+		tab :=tab +charLookup[j];
+		
+	
+		zp :=tab[ll&15];
+		zp:=#data+zp;
+
+
+		// Copy 2 rows of data
+		memcpy(zp,dst,8);
+		dst+=64; // next line
+		memcpy(zp,dst,8);
+		dst+=64; // next line
+		
+
+	end;
+	
+end;
+
+
+begin
+	Crtc::SetMode(Crtc::mode_4_color);
+	Crtc::EnableVRAM();
+	Crtc::SetPalette(0,Crtc::black);
+	Crtc::SetPalette(1,Crtc::blue);
+	Crtc::SetPalette(2,Crtc::gray);
+	Crtc::SetPalette(3,Crtc::white);
+	
+	// Clearscreen
+	Fill($8000,0,64*200);
+	
+	time := 0;	
+	while (true) do
+	begin
+		RenderTwister(time);
+		time:=time+1;
+	end;
+
+
+
+end.

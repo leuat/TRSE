@@ -70,7 +70,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
     ui->leTimEmulator->setText(m_ini->getString("tim_emulator"));
-    ui->leVideotonEmulator->setText(m_ini->getString("videoton_emulator"));
+    ui->leTVCEmulator->setText(m_ini->getString("TVC_emulator"));
 
     ui->leTRS80->setText(m_ini->getString("trs80_emulator"));    ui->leSNES->setText(m_ini->getString("snes_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
@@ -189,7 +189,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
     m_ini->setString("tim_emulator", ui->leTimEmulator->text());
-    m_ini->setString("videoton_emulator", ui->leVideotonEmulator->text());
+    m_ini->setString("TVC_emulator", ui->leTVCEmulator->text());
     m_ini->setString("trs80_emulator", ui->leTRS80->text());
     m_ini->setString("snes_emulator", ui->leSNES->text());
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
@@ -318,7 +318,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"MSX" << "VIDEOTON"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"MSX" << "TVC"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -939,19 +939,19 @@ void DialogTRSESettings::on_btnCPMTOOLS_clicked()
 }
 
 
-void DialogTRSESettings::on_btnVideotonEmulator_clicked()
+void DialogTRSESettings::on_btnTVCEmulator_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,
-        tr("Videoton TV Emulator"), m_ini->getString("project_path"), "*");
+        tr("TVC TV Emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
-        ui->leVideotonEmulator->setText(filename);
+        ui->leTVCEmulator->setText(filename);
 
 }
 
 
-void DialogTRSESettings::on_btnHelpVideoton_clicked()
+void DialogTRSESettings::on_btnHelpTVC_clicked()
 {
-    Help("Videoton Emulator","???");
+    Help("TVC Emulator","???");
 
 }
 

@@ -66,3 +66,5 @@ via_zeropages = ,
 dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
+cc1541_disk_type = d64
+disable_compiler_comments = 0

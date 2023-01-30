@@ -2,8 +2,8 @@
 
 void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
-    m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
-    m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+    m_codeGen = QSharedPointer<CodeGen6809>(new CodeGen6809());
+    m_assembler = QSharedPointer<Asm6809>(new Asm6809());
 
     m_assembler->byte="fcb";
     m_assembler->word="fdb";
@@ -19,14 +19,22 @@ void Compiler6809::Connect()
     m_assembler->Connect();
 
 
-    if (m_ini->getdouble("post_optimize")==1.0) {
+/*    if (m_ini->getdouble("post_optimize")==1.0) {
         emit EmitTick("<br>Optimising pass: ");
         m_assembler->m_totalOptimizedLines = 0;
         for (int i=0;i<4;i++) {
             emit EmitTick(" ["+QString::number(i+1)+"]");
             m_assembler->Optimise(*m_projectIni); }
     }
+*/
+/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
+        m_assembler->m_source<<	" org $CFFE";
+        m_assembler->m_source<<	"vector__:";
+        m_assembler->m_source<< "   fcb $40,00";
 
+    }
+*/
+    m_assembler->m_source<<"	END START";
 
     CleanupBlockLinenumbers();
 /*    for (QString&s : m_assembler->m_source) {
@@ -42,59 +50,21 @@ void Compiler6809::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
 
 void Compiler6809::Init6809Assembler()
 {
+    m_assembler->m_startInsertAssembler<<" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
 
-    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI2600)
-        m_assembler->IncludeFile(":resources/code/atari2600/init.asm");
 
 
-
-    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));
-    m_assembler->m_zeropageScreenMemory = m_projectIni->getString("zeropage_screenmemory");
-    m_assembler->m_zeropageColorMemory = m_projectIni->getString("zeropage_colormemory");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP1"] = m_projectIni->getString("zeropage_decrunch1");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP2"] = m_projectIni->getString("zeropage_decrunch2");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP3"] = m_projectIni->getString("zeropage_decrunch3");
-    m_assembler->m_replaceValues["@DECRUNCH_ZP4"] = m_projectIni->getString("zeropage_decrunch4");
-
+//    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));
 /*    qDebug() << m_projectIni->contains("ignore_initial_jump");
     for (CItem i : m_projectIni->items)
         qDebug() << i.name;
 */
     m_assembler->m_ignoreInitialJump = m_projectIni->getdouble("ignore_initial_jump")==1.0;
 
-
-
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20) {
-    QStringList lst = m_projectIni->getStringList("via_zeropages");
-    if (lst.count()<4)
-        ErrorHandler::e.Error("VIC-20 compilation error: You need to specify 4 1-byte VIA zero page values in the project settings.",0);
-    m_assembler->m_replaceValues["@VIA_ZP1"] = lst[0];
-    m_assembler->m_replaceValues["@VIA_ZP2"] = lst[1];
-    m_assembler->m_replaceValues["@VIA_ZP3"] = lst[2];
-    m_assembler->m_replaceValues["@VIA_ZP4"] = lst[3];
-    }
-
-
-
-    m_assembler->m_internalZP =
-            RegisterStack(QStringList()
-                          <<m_projectIni->getString("zeropage_internal1")
-                          <<m_projectIni->getString("zeropage_internal2")
-                          <<m_projectIni->getString("zeropage_internal3")
-                          <<m_projectIni->getString("zeropage_internal4"));
-
-
-    /*    m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal1");
-        m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal2");
-        m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal3");
-        m_assembler->m_internalZP << m_projectIni->getString("zeropage_internal4");
-    */
-
-
-    if (m_projectIni->getdouble("override_target_settings")==1) {
+  if (m_projectIni->getdouble("override_target_settings")==1) {
         Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
         Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
@@ -177,6 +147,7 @@ void Compiler6809::ConnectBlockSymbols(QVector<int> &blockEndSymbols)
             //     qDebug() << Util::numToHex(sym) << " " << winnerBlock->Type();
         }
     }
+
 
 
 }

@@ -55,6 +55,8 @@ public:
     bool isWord(Assembler* as) override;
 
     void setForceType(TokenType::Type t) override;
+//    void setForceTypeFunctions(TokenType::Type t);
+    void setCastType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {
         return m_left->isPurePointer(as) && m_right->isPurePointer(as);
@@ -65,6 +67,13 @@ public:
         return m_left->isPointer(as) | m_right->isPointer(as);
 
     }
+    TokenType::Type getOrgType(Assembler *as) override {
+        auto t1 = m_right->getOrgType(as);
+        auto t2 = m_left->getOrgType(as);
+        if (t1==TokenType::LONG || t2==TokenType::LONG) return TokenType::LONG;
+        if (t1==TokenType::INTEGER || t2==TokenType::INTEGER) return TokenType::INTEGER;
+        return t1;
+     }
 
     QString getAddress() override {
         return HexValue();

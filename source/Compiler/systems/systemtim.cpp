@@ -42,12 +42,17 @@ void SystemTIM::SetupDisk(QString projectPath)
   //  Util::CopyFile(":resources/bin/tim_floppy/empty_9600.img",path+"/empty_9600.img");
 
 
-    Util::CopyFilesInDirectory("*", orgDir+"/floppy",path+"/floppy");
+    //Util::CopyFilesInDirectory("*", orgDir+"/floppy",path+"/floppy"); // not needed, the one below copies all
     Util::CopyFilesInDirectory("*", orgDir,path);
 
 
-
-
+    // copy all files from "copy_to_img" directory (if it exists) into a floppy image
+    QString imgFilesPath = projectPath + "/copy_to_img";
+    QDir imgFilesDir(imgFilesPath);
+    if (imgFilesDir.exists())
+    {
+        Util::CopyFilesInDirectory("*", imgFilesPath, path+"/floppy");
+    }
 }
 
 void SystemTIM::CleanupDisk(QString projectPath)
@@ -187,7 +192,7 @@ void SystemTIM::applyEmulatorParameters(QStringList &params, QString debugFile, 
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
 
     params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres"<<"-nothrottle" <<"-flop1"  <<filename+".img";
-  //  params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
+//    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;
 }

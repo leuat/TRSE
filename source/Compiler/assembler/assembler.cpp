@@ -728,6 +728,11 @@ void Assembler::Term(QString s, bool write)
     }
 }
 
+void Assembler::Comment(QString s) {
+    if (!m_disableComments)
+        Asm("; "+ s) ;
+}
+
 void Assembler::Term()
 {
     Asm(m_term);

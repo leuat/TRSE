@@ -110,8 +110,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageSnesGeneric(colorType);
     if (t == LImage::TIM)
         return new LImageTIM(colorType);
-    if (t == LImage::Videoton)
-        return new LImageVideoton(colorType);
+    if (t == LImage::TVC)
+        return new LImageTVC(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

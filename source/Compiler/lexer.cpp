@@ -282,8 +282,8 @@ Token Lexer::_Id()
     }
     bool isRef =  m_nextIsReference;
     m_nextIsReference = false;
-    if (isRef && Syntax::s.isDigit(QString(result[0])))
-        ErrorHandler::e.Error("Constant numbers cannot be referenced by #",Pmm::Data::d.lineNumber);
+//    if (isRef && Syntax::s.isDigit(QString(result[0])))
+  //      ErrorHandler::e.Error("Constant numbers cannot be referenced by #",Pmm::Data::d.lineNumber);
 //    qDebug() << result << isRef;
     return Syntax::s.GetID(result,isRef);
 
@@ -305,6 +305,7 @@ Token Lexer::String()
 {
     QString result="";
     while (!m_finished && m_currentChar!="\"") {
+//        qDebug() <<m_currentChar << result;
         result +=m_currentChar;
         Advance();
         if (m_currentChar=="\\" && peek()=="\"") {
@@ -504,6 +505,14 @@ Token Lexer::GetNextToken()
                 return Token(TokenType::GREATEREQUAL, ">=");
             }
             if (peek()==">") {
+                if (peek(2)=="=") {
+                    Advance();
+                    Advance();
+                    Advance();
+                    return Token(TokenType::ASSIGNOP, ">>");
+
+                }
+
                 Advance();
                 Advance();
                 return Token(TokenType::SHR, ">>");
@@ -512,12 +521,21 @@ Token Lexer::GetNextToken()
             return Token(TokenType::GREATER, ">");
         }
         if (m_currentChar=="<") {
+            QString c = m_currentChar;
             if (peek()=="=") {
                 Advance();
                 Advance();
                 return Token(TokenType::LESSEQUAL, "<=");
             }
             if (peek()=="<") {
+                if (peek(2)=="=") {
+                    Advance();
+                    Advance();
+                    Advance();
+                    return Token(TokenType::ASSIGNOP, "<<");
+
+                }
+
                 Advance();
                 Advance();
                 return Token(TokenType::SHL, "<<");

@@ -1,14 +1,14 @@
-#ifndef LIMAGEVIDEOTON_H
-#define LIMAGEVIDEOTON_H
+#ifndef LIMAGETVC_H
+#define LIMAGETVC_H
 
 #include "limageqimage.h"
 #include <QMatrix4x4>
 #include "pixelchar.h"
 
-class LImageVideoton : public LImageQImage
+class LImageTVC : public LImageQImage
 {
 public:
-    LImageVideoton(LColorList::Type t);
+    LImageTVC(LColorList::Type t);
 
 
     static QVector<int> table160;
@@ -31,7 +31,7 @@ public:
 
     void InitPens() override;
 
-    void ReInitialize()
+    void ReInitialize() override
     {
         m_width = getMetaParameter("screen_width")->value;
         m_height = getMetaParameter("screen_height")->value;
@@ -48,4 +48,4 @@ public:
 
 };
 
-#endif // LIMAGEVIDEOTON_H
+#endif // LIMAGETVC_H

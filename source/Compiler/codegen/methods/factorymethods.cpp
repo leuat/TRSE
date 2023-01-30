@@ -30,7 +30,7 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
         return QSharedPointer<Methods6502OK64>(new Methods6502OK64);
 
 
-    if (s==AbstractSystem::TIM || s==AbstractSystem::VIDEOTON)
+    if (s==AbstractSystem::TIM || s==AbstractSystem::TVC)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 
     if (s==AbstractSystem::X86 ||s==AbstractSystem::WONDERSWAN )
@@ -66,6 +66,9 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
 
     if (s==AbstractSystem::MEGA65)
         return QSharedPointer<Methods6502C64>(new Methods6502C64);
+
+    if (s==AbstractSystem::TRS80COCO)
+        return QSharedPointer<Methods6809>(new Methods6809);
 
     // Default one
     return QSharedPointer<Methods6502>(new Methods6502);

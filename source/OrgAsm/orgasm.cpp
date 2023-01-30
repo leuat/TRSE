@@ -988,11 +988,15 @@ void Orgasm::SaveSymbolsList(QString filename)
 
         stream<<"; labels" << endl;
         for (QString s: m_symbolsList) {
+            isSet[m_symbols[s]] = false;
+        }
+        for (QString s: m_symbolsList) {
             if (!s.startsWith("trse_breakpoint") && !s.startsWith("trse_disassemble"))
                 if (!isSet[m_symbols[s]]) {
                     stream << "al  " << Util::numToHex(m_symbols[s]) << " ."<< s << endl;
-                    isSet[m_symbols[s]]=true;
+  //                  isSet[m_symbols[s]]=true;
                 }
+//            else qDebug() << "ISSET "<<s;
         }
         for (QString s: m_extraSymbols.keys()) {
             stream << "al  " << m_extraSymbols[s] << " ."<< s << endl;

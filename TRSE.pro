@@ -51,9 +51,9 @@ macx{
 
 #    LIBS += -L/usr/local/lib
     #DEFINES -=USE_OMP
-    contains(DEFINES, USE_OMP) {
-      QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
-    }
+#    contains(DEFINES, USE_OMP) {
+ #     QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
+ #   }
 
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
     QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
@@ -146,17 +146,20 @@ SOURCES += main.cpp\
     imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
+    source/Compiler/assembler/asm6809.cpp \
     source/Compiler/assembler/asmTripe.cpp \
     source/Compiler/assembler/asmarm.cpp \
     source/Compiler/assembler/asmjdh8.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
     source/Compiler/ast/nodecase.cpp \
+    source/Compiler/ast/nodecast.cpp \
     source/Compiler/ast/nodecontrolstatement.cpp \
     source/Compiler/ast/nodefactory.cpp \
     source/Compiler/ast/noderepeatuntil.cpp \
     source/Compiler/codegen/abstractcodegen.cpp \
     source/Compiler/codegen/codegen_6502.cpp \
+    source/Compiler/codegen/codegen_6809.cpp \
     source/Compiler/codegen/codegen_arm.cpp \
     source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
@@ -173,6 +176,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/methods/methods68000.cpp \
     source/Compiler/codegen/methods/methods68000atari.cpp \
     source/Compiler/codegen/methods/methods6800amiga.cpp \
+    source/Compiler/codegen/methods/methods6809.cpp \
     source/Compiler/codegen/methods/methodsx86.cpp \
     source/Compiler/codegen/methods/methodsz80.cpp \
     source/Compiler/codegen/registerstack.cpp \
@@ -218,7 +222,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemtim.cpp \
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
-    source/Compiler/systems/systemvideoton.cpp \
+    source/Compiler/systems/systemtvc.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
@@ -230,7 +234,7 @@ SOURCES += main.cpp\
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
-    source/LeLib/limage/limagevideoton.cpp \
+    source/LeLib/limage/limagetvc.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
     source/LeLib/bbc/discimage.cpp \
@@ -432,11 +436,14 @@ HEADERS  += mainwindow.h \
     formtutorialitem.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
+    source/Compiler/assembler/asm6809.h \
     source/Compiler/assembler/asmTripe.h \
     source/Compiler/assembler/asmarm.h \
     source/Compiler/assembler/asmjdh8.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
+    source/Compiler/ast/nodecast.h \
+    source/Compiler/codegen/codegen_6809.h \
     source/Compiler/codegen/codegen_arm.h \
     source/Compiler/codegen/codegen_jdh8.h \
     source/Compiler/codegen/codegen_s1c88.h \
@@ -461,6 +468,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/methods/methods68000.h \
     source/Compiler/codegen/methods/methods68000atari.h \
     source/Compiler/codegen/methods/methods6800amiga.h \
+    source/Compiler/codegen/methods/methods6809.h \
     source/Compiler/codegen/methods/methodsx86.h \
     source/Compiler/codegen/methods/methodsz80.h \
     source/Compiler/codegen/registerstack.h \
@@ -506,7 +514,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemtim.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
-    source/Compiler/systems/systemvideoton.h \
+    source/Compiler/systems/systemtvc.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \
@@ -518,7 +526,8 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagesnesgeneric.h \
-    source/LeLib/limage/limagevideoton.h \
+    source/LeLib/limage/limagetim.h \
+    source/LeLib/limage/limagetvc.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \
     source/LeLib/bbc/discimage.h \
@@ -551,7 +560,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagespectrum.h \
     source/LeLib/limage/limagevga.h \
     source/LeLib/limage/limagevz200.h \
-    source/LeLib/limage/limagevtim.h \
+    source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagex16.h \
     source/LeLib/limage/lpen.h \
     source/LeLib/limage/pixelchar.h \

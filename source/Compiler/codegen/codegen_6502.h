@@ -75,6 +75,9 @@ public:
      * NodeBinOP Specific functions
      *
     */
+    void Cast(TokenType::Type from, TokenType::Type to) override;
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
+
 
     void EightBitDiv(QSharedPointer<Node> node);
     void EightBitMul(QSharedPointer<Node> node);

@@ -1,5 +1,5 @@
-#ifndef SYSTEMVIDEOTON_H
-#define SYSTEMVIDEOTON_H
+#ifndef SYSTEMTVC_H
+#define SYSTEMTVC_H
 
 
 
@@ -8,10 +8,10 @@
 #include "source/LeLib/util/util.h"
 #include "source/Compiler/systems/systemz80.h"
 
-class SystemVideoton : public SystemZ80
+class SystemTVC : public SystemZ80
 {
 public:
-    SystemVideoton(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
+    SystemTVC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
 
 
@@ -21,16 +21,16 @@ public:
         return "";
     }
     virtual QString getEmulatorName() override {
-        return m_settingsIni->getString("videoton_emulator");
+        return m_settingsIni->getString("TVC_emulator");
     }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 
 
-    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
+    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
 
 
 };
 
 
-#endif // SYSTEMVIDEOTON_H
+#endif // SYSTEMTVC_H

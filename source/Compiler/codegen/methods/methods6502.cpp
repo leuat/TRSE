@@ -394,8 +394,17 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
             as->Asm("jmp $ea81        ; return to kernal interrupt routine");
     }
 
-    if (Command("Loop"))
+    if (Command("Loop")) {
+        if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M6809) {
+            QString lbl = as->NewLabel("loop_internal");
+
+            as->Label(lbl);
+            as->Asm("jmp "+lbl);
+            as->PopLabel("loop_internal");
+            return;
+        }
         as->Asm("jmp * ; loop like (�/%");
+    }
 
     if (Command("Call")) {
         Call(as);

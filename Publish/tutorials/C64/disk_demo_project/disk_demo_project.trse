@@ -1,5 +1,5 @@
-zeropages = ,$20, $22, $24, $26, $28, $2A, $2C, $30, $32, $34, $36, $38, $3A, $3C, $3E, $40, $42, $44
-temp_zeropages = ,$54, $56, $58, $5A
+zeropages = ,$20,  $22,  $24,  $26,  $28,  $2A,  $2C,  $30,  $32,  $34,  $36,  $38,  $3A,  $3C,  $3E,  $40,  $42,  $44
+temp_zeropages = ,$54,  $56,  $58,  $5A
 zeropage_screenmemory = $fd
 zeropage_colormemory = $fb
 zeropage_decrunch1 = $47
@@ -68,4 +68,6 @@ build_list = ,setvalue override_target_settings 1, setvalue perform_crunch 0, de
 exomizer_toggle = 0
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
+use_vice_c1541 = 0
+cc1541_disk_type = d64
 open_files =, main.ras

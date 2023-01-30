@@ -52,7 +52,7 @@ public:
 
     TokenType::Type getWriteType()  override { return m_writeType; }
 
-    TokenType::Type getOrgType(Assembler *as);
+    TokenType::Type getOrgType(Assembler *as) override;
 
     TokenType::Type getType(Assembler* as) override;
     QString getTypeText(Assembler* as) override;

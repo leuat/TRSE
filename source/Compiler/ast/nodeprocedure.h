@@ -44,7 +44,6 @@ public:
 
     bool isAddress() override;
     bool m_classTagged = false;
-
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_procedure!=nullptr)
             m_procedure->parseConstants(symTab);
@@ -53,9 +52,18 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
-
+/*    void setForceTypeFunctions(TokenType::Type t) {
+        if (m_procedure->m_returnValue!=nullptr)
+            m_forceType = t;
+    }
+*/
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
+
+    bool isWord(Assembler* as) override;
+    bool isLong(Assembler* as) override;
+    bool isByte(Assembler* as) override;
+
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeProcedure>(sharedFromThis()));

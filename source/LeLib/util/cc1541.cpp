@@ -1,5 +1,5 @@
 #include "cc1541.h"
-
+#include <QDebug>
 CC1541::CC1541()
 {
 
@@ -1301,7 +1301,7 @@ next_dir_entry(image_type type, const unsigned char* image, int *track, int *sec
         }
         if(blockmap[b]) {
             dir_error = DIR_CYCLIC_TS;
-            return false;
+            //return false;
         }
         *track = next_track;
         *sector = next_sector;
@@ -1611,6 +1611,7 @@ print_file_allocation(image_type type, const unsigned char* image, imagefile* fi
             case FILETYPEPRG: {
                 int track = image[b + FILETRACKOFFSET];
                 int sector = image[b + FILESECTOROFFSET];
+                int numsectors = image[b + FILEBLOCKSLOOFFSET] + 256*image[b+FILEBLOCKSHIOFFSET];
                 const unsigned char *filename = image + b + FILENAMEOFFSET;
                 b = linear_sector(type, track, sector);
                 if (b >= 0) {
@@ -1620,7 +1621,7 @@ print_file_allocation(image_type type, const unsigned char* image, imagefile* fi
                     existing_files[num_files].direntryindex = num_files;
                     existing_files[num_files].direntrysector = s;
                     existing_files[num_files].direntryoffset = o;
-                    existing_files[num_files].nrSectors = image[b + FILEBLOCKSLOOFFSET] + 256 * image[b + FILEBLOCKSHIOFFSET];
+                    existing_files[num_files].nrSectors = numsectors;
 
                     if (is_transwarp_file(image, b)) {
                         existing_files[num_files].filetype = filetype | FILETYPETRANSWARPMASK;
@@ -4398,6 +4399,7 @@ cc1541(int argc, char* argv[])
         usage();
     }
     for (j = 1; j < argc - 1; j++) {
+//        qDebug() << argv[j+1];
         if (strcmp(argv[j], "-n") == 0) {
             if (argc < j + 2) {
                 fprintf(stderr, "ERROR: Error parsing argument for -n\n");

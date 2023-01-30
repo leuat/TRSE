@@ -1,4 +1,19 @@
 <h1>TRSE News and Updates</h1>
+<h2>January 2022</h2>
+<h3>Compiler changes</h3>
+<ul>
+  <li>"global" keyword is now stricter: your global parameter definition type must match the re-used variable's type
+  <li>Zorgasm z80 assembler had some missing instructions, which have been added (ret nz, ret po, ret m etc)
+</ul>
+<h3>Systems</h3>
+<ul>
+  <li>TIM-001 system added + tutorials! Zarko is hard at work implementing units. New image types added as well.
+  <li>Videoton TVC support added. 3 image types. Demo effects to come later.
+  <li>Started work on TRS-80 Coco3 support (6809). Still a long way to go.
+  <li>C64 .d81 disk support. Change your preferences in the project settings.
+ </ul>
+
+
 <h2>December 2022</h2>
 <h3>Compiler changes</h3>
 <ul>

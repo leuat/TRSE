@@ -1,9 +1,9 @@
-#include "systemvideoton.h"
+#include "systemtvc.h"
 
-SystemVideoton::SystemVideoton(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
+SystemTVC::SystemTVC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
 {
     m_processor = Z80;
-    m_system = AbstractSystem::VIDEOTON;
+    m_system = AbstractSystem::TVC;
 
     m_startAddress = 0x19EF;
     m_programStartAddress = 0x19EF;
@@ -23,7 +23,7 @@ SystemVideoton::SystemVideoton(QSharedPointer<CIniFile> settings, QSharedPointer
 
 }
 
-void SystemVideoton::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
+void SystemTVC::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;
     int time = timer.elapsed();
@@ -85,7 +85,7 @@ void SystemVideoton::Assemble(QString &text, QString filename, QString currentDi
 }
 
 
-void SystemVideoton::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+void SystemTVC::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
 #ifndef __APPLE__
 

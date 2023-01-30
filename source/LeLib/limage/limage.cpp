@@ -120,7 +120,7 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 38;
     if (t==TIM)
         return 39;
-    if (t==Videoton)
+    if (t==TVC)
         return 40;
 
 
@@ -209,8 +209,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic SNES image";
     if (t==TIM)
         return "Generic TIM image";
-    if (t==Videoton)
-        return "Generic Videoton image";
+    if (t==TVC)
+        return "Generic TVC image";
 
     return "Unknown image type";
 
@@ -300,7 +300,7 @@ LImage::Type LImage::CharToType(unsigned char c)
     if (c==39)
         return TIM;
     if (c==40)
-        return Videoton;
+        return TVC;
 
     return NotSupported;
 

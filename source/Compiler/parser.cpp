@@ -2582,7 +2582,14 @@ QSharedPointer<Node> Parser::Factor()
         return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
     }
 
+    if (m_currentToken.m_type == TokenType::BYTE || m_currentToken.m_type == TokenType::INTEGER || m_currentToken.m_type == TokenType::LONG) {
+        auto t = m_currentToken;
+        // Casting
+        Eat();
 
+        return NodeFactory::CreateCast(t,Factor());
+
+    }
 
     if (m_currentToken.m_type == TokenType::LENGTH) {
         Eat();
@@ -3271,6 +3278,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     // Call preprocessor for include files etc
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
     m_lexer->m_text = m_lexer->m_orgText;
+
+
     m_removeUnusedDecls = removeUnusedDecls;
     Node::m_curMemoryBlock = nullptr; //
     Node::m_staticBlockInfo.m_blockID = -1;
@@ -3297,7 +3306,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Symbol::s_currentProcedure = "main";
     m_inCurrentProcedure = "main";
 
-    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000)
+    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000 && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80)
         StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
 
     Data::data.compilerState = Data::PREPROCESSOR;
@@ -3428,6 +3437,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
                 ErrorHandler::e.Error("You can only set the return value once in the scope of the function.",m_currentToken.m_lineNumber);
 
             node->m_returnValue = Expr();
+
             isAssign=true;
             return nullptr;
         }
@@ -3613,6 +3623,7 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     QString numID = "";
     if (isCString)
         numID = "*&NUM";
+
 
     while (m_currentToken.m_type!=TokenType::RPAREN) {
         //GetParsedInt(TokenType::INTEGER);
@@ -4199,12 +4210,16 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     if (isGlobal) { // Typecheck that they exist
         for (QSharedPointer<Node> n : vars) {
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+            QSharedPointer<Symbol> sym = nullptr;
             try {
-                m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
+                sym = m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
+                // check if global type matches parameter type:
             } catch (FatalErrorException& fe) {
                 fe.message = fe.message + "When using the <font color=\"yellow\">global</font> keyword, the variable must in question must be declared in the global variable scope. ";
                 throw fe;
             }
+            if (sym->m_type!=typeNode->m_op.m_value)
+                throw FatalErrorException("Global parameters must be the same type as defined globally ("+sym->m_type.toLower()+" != " + typeNode->m_op.m_value.toLower()+") ", m_currentToken.m_lineNumber);
 
         }
     }
@@ -4380,9 +4395,10 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                 arrayType.m_value = "INTEGER";
 
                 Eat(TokenType::LPAREN);
-                QVector<Token> tmp_data;
+                QVector<QSharedPointer<Node>> tmp_data;
                 while (m_currentToken.m_type != TokenType::RPAREN && m_currentToken.m_type!=TokenType::TEOF) {
-                    tmp_data.append(m_currentToken);
+                    //tmp_data.append(m_currentToken);
+                    tmp_data.append(String(false));
                     //                    qDebug() << m_currentToken.m_value;
                     Eat();
                     if (m_currentToken.m_type == TokenType::COMMA)
@@ -4398,12 +4414,13 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                 for (auto d: tmp_data) {
                     QString name = "tmp_"+QString::number((rand()%1000000)) + "_string"+QString::number(cnt);
                     names.append(name);
-                    QSharedPointer<NodeVar> var = NodeFactory::CreateVariable(d,name);
-                    Token tt = d;
+                    auto str = qSharedPointerDynamicCast<NodeString>(d);
+                    QSharedPointer<NodeVar> var = NodeFactory::CreateVariable(str->m_op,name);
+                    Token tt = d->m_op;
                     tt.m_type = TokenType::STRING;
                     tt.m_value = "STRING";
                     auto type = QSharedPointer<NodeVarType>(new NodeVarType(tt,""));
-                    type->m_data.append(d.m_value);
+                    type->m_data.append(str->m_val);
                     //                    qDebug() << d.m_value;
                     QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(var, type));
 
@@ -4419,6 +4436,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
                 if (m_currentToken.m_type==TokenType::BUILDTABLE) {
                     data = BuildTable(count, dataType);
+//                    qDebug() << data;
                 }
                 else
                     if (m_currentToken.m_type==TokenType::BUILDSINETABLE) {
@@ -4493,7 +4511,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
         }
         //        QStringList flags = getFlags();
-
         t.m_intVal = count;
         //        qDebug() << "Type: " << t.m_value;
         //      t.m_type = arrayType.m_type;
@@ -4517,6 +4534,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         nt->m_flags = flags;
         nt->VerifyFlags(isInProcedure);
         nt->m_declaredCount = count;
+
         return nt;
 
 
@@ -4540,7 +4558,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             position = Util::numToHex(GetParsedInt(TokenType::ADDRESS));
 
         }
-
 
         QSharedPointer<NodeVarType> str = QSharedPointer<NodeVarType>(new NodeVarType(t,initData));
         str->m_flags = flags;

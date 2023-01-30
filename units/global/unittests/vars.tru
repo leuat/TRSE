@@ -7,8 +7,13 @@ var
 	v1, v2,v3,rb,v4 : byte;
 	i1, i2,i3,i4,ri, j2 : integer;
 	p1, p2,rp : pointer;
+	ip : pointer of integer;
 	a1,a2 : array[10] of integer;
 	j,i : byte;
+	
+	
+	ia1 : array[10] of integer = buildtable("i*100");
+	ba1 : array[10] of byte = buildtable("i");
 
 	Mini = class
 		a:integer; // 4   // 7
@@ -60,5 +65,23 @@ var
 	const NN : integer = 10;
 	monsters: array[ NN ] of Monster;
 	zp: pointer;
+
+
+
+function IntegerReturn(ir_p1 : byte) : integer;  
+var
+	
+begin
+	j2:=ir_p1*2;
+	IntegerReturn:=j2;
+end;	
+
+function ByteReturn(ir_p1 : global byte) : byte;  
+var
+	
+begin
+	v3:=ir_p1*2;
+	ByteReturn:=v3;
+end;	
 
 end.

@@ -31,7 +31,7 @@ begin
 	j:=0;
 //		zp:=#data;
 	y:=0;
-	for k:=0 to 100 do
+	for k:=0 to 100 offpage do
 	begin
 		j:=sine32[(k+t2)&255]; // Twist turning
 		frame:=(((tx-j))&15); // Current rotation frame

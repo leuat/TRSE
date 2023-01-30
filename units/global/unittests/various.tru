@@ -17,6 +17,24 @@ begin
 end;
 	@endif
 @endif
+
+	@ifndef TRS80COCO
+procedure LoHi1();
+begin
+	Vars::i1 := $1234;
+	Vars::text := "T2:";
+	Common::CR();
+	if (lo(Vars::i1)=$34) then Common::PASS() else Common::FAIL();
+end;
+
+procedure LoHi2();
+begin
+	Vars::i1 := $1234;
+	Vars::text := "T3:";
+	Common::CR();
+	if (hi(Vars::i1)=$12) then Common::PASS() else Common::FAIL();
+end;
+@endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
@@ -28,6 +46,10 @@ begin
 	@ifndef ATARI520ST
 	Test1();
 	@endif
+	@endif
+	@ifndef TRS80COCO
+	LoHi1();
+	LoHi2();
 	@endif
 	Common::WaitABit();
 end;

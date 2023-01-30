@@ -1,0 +1,50 @@
+unit Memory;
+var
+	src, dst : pointer;
+	len, b : byte;
+	ilen : integer;
+	
+procedure Copy(src, dst: global pointer; len : global byte);
+begin
+	asm("
+	ldb Memory_len
+	ldx Memory_src
+	ldy Memory_dst
+memcpy_loop:
+	lda ,x+
+	sta ,y+
+	decb
+	bne memcpy_loop
+	");
+end;	
+	
+procedure Fill( dst:global pointer; b: global byte; len: global byte );	
+begin
+	asm("
+		lda Memory_b
+		ldb Memory_len
+		ldx Memory_dst
+fill_loop:
+		sta ,x+
+		decb
+		bne fill_loop
+
+	");	
+end;
+
+
+procedure Fill16( dst:global pointer; b: global byte; ilen: global integer );	
+begin
+	asm("
+		lda Memory_b
+		ldy Memory_ilen
+		ldx Memory_dst
+fill16_loop:
+		sta ,x+
+		leay -1,y
+		bne fill16_loop
+
+	");	
+end;
+
+end.

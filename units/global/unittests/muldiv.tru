@@ -328,10 +328,10 @@ begin
 	Shift1();
 	Shift2();
 	Shift4();
-	@ifdef C64
+//	@ifdef C64
 	Shift5();
 	Shift6();
-	@endif
+//	@endif
 	
 	Common::WaitABit();
 

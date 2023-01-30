@@ -108,6 +108,27 @@ void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp,
 
 }
 
+void Compression::AddTo4PixelDataTVC(QByteArray &data, LImage &img, int xp, int yp, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=4) {
+            uchar c = 0;
+            int curBit = 0;
+            for (int p=0;p<4;p++) {
+                uchar p1 = img.getPixel(xp+x+p,yp+y)&3;
+                c |= (p1&0b01)<<(7-curBit);
+                c |= ((p1&0b10)>>1)<<((3-curBit));
+
+                curBit+=1;
+            }
+            data.append(c);
+
+//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+
+}
+
 void Compression::AddSpecialC64bitmapModeToData(QByteArray &data, LImage &img, int x1, int y1, int w, int h)
 {
     for (int y=0;y<h;y+=3)

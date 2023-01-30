@@ -118,3 +118,4 @@ data_header_images/grl12.flf = 0
 data_header_images/trse1.flf = 0
 dirart_flf_file = none
 d64name = main
+use_vice_c1541 = 0

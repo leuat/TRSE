@@ -53,11 +53,18 @@ QString ZOrgasm::Process(QString s, OrgasmLine& ol)
       //    tst = tst.replace(")","");
 
         if (!tst.startsWith("$"))
+//            qDebug() << tst;
             for (QString& sym : m_symbolsList)
             {
 //                qDebug() << "Contains symbol: " <<tst <<sym;
+                //qDebug() << "Testing for symbol " << sym << tst<<m_symbolsList;
                 if (!tst.contains(sym))
                     continue;
+                if (tst=="nz") {
+                    ok = true;
+//                    qDebug() << "setting nz";
+                    continue;
+                }
 
 
                 int i = m_symbols[sym];
@@ -81,6 +88,8 @@ QString ZOrgasm::Process(QString s, OrgasmLine& ol)
                 cur++;
             }
         if (!ok && !Util::isNumber(tst) && !tst.startsWith("($") && !tst.startsWith("(0x")){ // && !tst.startsWith("*")) {
+  //          qDebug() << "Testing for symbol " << tst<<m_symbolsList;
+
             throw OrgasmError("Symbol '"+tst+"' undefined",ol);
         }
 
@@ -97,6 +106,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QString orgexpr = expr;
     QByteArray data;
     ol.m_instruction.m_opCode = ol.m_instruction.m_opCode.toLower();
+
+
+
 
     if (m_ignoreCommands.contains(ol.m_instruction.m_opCode))
         return;
@@ -297,11 +309,10 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     // Get actual opcode
     if (m_opCodes.contains(m_opCode))
         code = m_opCodes[m_opCode];
+
     else {
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
     }
-//    if (code==0x3E)
-  //     qDebug() << Util::numToHex(m_pCounter)<<  m_opCode << Util::numToHex(code) <<expr << value<<value2 << ol.m_orgLine << type;
 
     // calculate the parameter numeric values
     int val=0;
@@ -370,8 +381,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     else
         // Immediate 8-bit vale?
-//        if (m_opCode.contains("nn"))
-  //          qDebug() << m_opCode <<val << val2 << hasValue2 << type;
+
         if (type==OrgasmInstruction::imm) {
             data.append(val);
             // Has additional data? only imm has this (some select few operations)
@@ -484,7 +494,7 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
         value = t.split("+")[1];
         return ("(iy+*)");
     }
-    // return "(hl)";
+
     if (isRegister(t))
         return test;
 

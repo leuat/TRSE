@@ -497,6 +497,50 @@ QString CodeGenX86::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
     return "1";
 }
 
+void CodeGenX86::Cast(TokenType::Type from, TokenType::Type to)
+{
+    //    qDebug() <<"Cast " <<TokenType::getType(from) << " " << TokenType::getType(to);
+    if (from==to)
+        return;
+
+    if (from==TokenType::BYTE && (to == TokenType::INTEGER || to ==TokenType::INTEGER_CONST)) {
+        as->Comment("Casting from byte to integer");
+        as->Asm("mov ah,0");
+    }
+   if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        as->Comment("Casting from integer to byte");
+        as->Asm("mov ah,0");
+    }
+}
+
+void CodeGenX86::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType)
+{
+    if (from==to && to==writeType)
+        return;
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+        if (writeType==TokenType::INTEGER) {
+            as->Comment("Casting from byte to integer to integer");
+            as->Asm("mov ah,0");
+        }
+        if (writeType==TokenType::BYTE) {
+            as->Comment("Casting from byte to integer to byte");
+            //            as->Asm("ld l,a");
+            //          as->Asm("ld h,0");
+        }
+    }
+    if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        if (writeType==TokenType::BYTE) {
+            as->Comment("Casting from integer to byte");
+//            as->Asm("ld a,l");
+        }
+        if (writeType==TokenType::INTEGER) {
+            as->Comment("Casting from integer to byte to integer");
+            as->Asm("mov ah,0");
+        }
+    }
+
+}
+
 QString CodeGenX86::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
 

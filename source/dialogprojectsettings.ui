@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -233,7 +233,7 @@
                  </item>
                  <item>
                   <property name="text">
-                   <string>VIDEOTON</string>
+                   <string>TVC</string>
                   </property>
                  </item>
                  <item>
@@ -1136,14 +1136,7 @@
             <layout class="QGridLayout" name="gridLayout_23">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout_8">
-               <item row="0" column="0">
-                <widget class="QCheckBox" name="chkLocalVariables">
-                 <property name="text">
-                  <string>Allow for local naming of function variables</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QTextBrowser" name="textBrowser_3">
                  <property name="html">
                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1152,6 +1145,20 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;Variables declared within a procedure will be regarded as &amp;quot;local&amp;quot;, and will internally be named &amp;quot;procedurename_variablename&amp;quot;. They are *not* defined on the stack, and are global just as every other variable in TRSE (with the exception of function parameters tagged with the &amp;quot;stack&amp;quot; modifier)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="chkLocalVariables">
+                 <property name="text">
+                  <string>Allow for local naming of function variables</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="chkCompilerComments">
+                 <property name="text">
+                  <string>Turn off compiler chatter (comments) in generated assembly code</string>
                  </property>
                 </widget>
                </item>
@@ -1198,8 +1205,12 @@ hr { height: 1px; border-width: 0; }
             <layout class="QGridLayout" name="gridLayout_24">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="leDiskname"/>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_48">
+                 <property name="text">
+                  <string>Name of d64 disk</string>
+                 </property>
+                </widget>
                </item>
                <item row="0" column="1">
                 <widget class="QComboBox" name="cmbOutputType">
@@ -1220,6 +1231,26 @@ hr { height: 1px; border-width: 0; }
                  </item>
                 </widget>
                </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Main RAS file</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="cmbPawInclude"/>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbMainRas"/>
+               </item>
+               <item row="7" column="0">
+                <widget class="QLabel" name="label_49">
+                 <property name="text">
+                  <string>Use Vice's c1541 instead of CC1541</string>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_9">
                  <property name="text">
@@ -1230,21 +1261,15 @@ hr { height: 1px; border-width: 0; }
                <item row="4" column="1">
                 <widget class="QComboBox" name="cmbDirArt"/>
                </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="cmbMainRas"/>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="cmbPawInclude"/>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>Disk 2 d64 Paw file</string>
+                 </property>
+                </widget>
                </item>
                <item row="3" column="1">
                 <widget class="QComboBox" name="cmbPawInclude2"/>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Project output type</string>
-                 </property>
-                </widget>
                </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="label_47">
@@ -1253,38 +1278,41 @@ hr { height: 1px; border-width: 0; }
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="label_48">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>Name of d64 disk</string>
+                  <string>Project output type</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="text">
-                  <string>Main RAS file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_24">
-                 <property name="text">
-                  <string>Disk 2 d64 Paw file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="label_49">
-                 <property name="text">
-                  <string>Use Vice's c1541 instead of CC1541</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
+               <item row="7" column="1">
                 <widget class="QCheckBox" name="chkUseViceC1541">
                  <property name="text">
                   <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="leDiskname"/>
+               </item>
+               <item row="6" column="1">
+                <widget class="QComboBox" name="cmbDiskType">
+                 <item>
+                  <property name="text">
+                   <string>d64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>d81</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="label_50">
+                 <property name="text">
+                  <string>Disk type</string>
                  </property>
                 </widget>
                </item>

@@ -63,6 +63,32 @@ QString NodeProcedure::getValue8bit(Assembler *as,  int isHi)
 
 }
 
+bool NodeProcedure::isWord(Assembler *as)
+{
+    if (m_procedure->m_returnType!=nullptr)
+        return m_procedure->m_returnType->getType(as)==TokenType::INTEGER;
+
+    return false;
+}
+
+bool NodeProcedure::isLong(Assembler *as)
+{
+    if (m_procedure->m_returnType!=nullptr)
+        return m_procedure->m_returnType->getType(as)==TokenType::LONG;
+
+    return false;
+
+}
+
+bool NodeProcedure::isByte(Assembler *as)
+{
+    if (m_procedure->m_returnType!=nullptr)
+        return m_procedure->m_returnType->getType(as)==TokenType::BYTE;
+
+    return true;
+
+}
+
 void NodeProcedure::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
 {
     m_procedure->ReplaceInline(as,inp);

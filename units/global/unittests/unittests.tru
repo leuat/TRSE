@@ -2,6 +2,7 @@ Unit Unittests;
 
 @use "unittests/common"
 @use "unittests/case"
+@use "unittests/casts"
 @use "unittests/integer"
 @use "unittests/classes"
 @use "unittests/ifthenelse"
@@ -10,6 +11,7 @@ Unit Unittests;
 @use "unittests/registers"
 @use "unittests/various"
 @use "unittests/strings"
+@use "unittests/bitop"
 
 @use "unittests/advanced_math"
 
@@ -27,7 +29,7 @@ begin
 	isDone := false;
 	Common::TestInit();
 @ifndef ATARI520ST
-	while (Common::Status() = 0 and isDone = false) do
+	while (Common::Status() = 0 and isDone = false) offpage do
 @endif
 	
 @ifdef ATARI520ST
@@ -36,17 +38,52 @@ begin
 	begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
-		if (currentTest=0) then Classes::Exec();
+		if (currentTest=8) then Classes::Exec();
 		if (currentTest=6) then ForLoop::Exec();
 		@endif
-		if (currentTest=1) then CaseTest::Exec();
+		if (currentTest=10) then CaseTest::Exec();
+		if (currentTest=2) then Casts::Exec();
+		if (currentTest=1) then BitOp::Exec();
 		if (currentTest=5) then MulDiv::Exec();
-		if (currentTest=2) then IfThenElse::Exec();
+		if (currentTest=11) then IfThenElse::Exec();
 		if (currentTest=3) then IntegerTest::Exec();
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=4) then AdvancedMath::Exec();
 		@endif
+		if (currentTest=7) then Registers::Exec();
+		if (currentTest=0) then Various::Exec();
+		if (currentTest=9) then Strings::Exec();
+
+		currentTest+=1;
+				
+		if (currentTest>=noTests) then
+			isDone := true;
+		
+	end;
+end;
+
+procedure ExecCoco3();
+begin
+	currentTest := 0;
+	isDone := false;
+	BitOp::Exec();
+/*	CaseTest::Exec();
+	Common::TestInit();
+	IntegerTest::Exec();
+	ForLoop::Exec();
+	IfThenElse::Exec();*/
+/*	while (Common::Status() = 0 and isDone = false) do
+	begin
+	//	Common::TestSuiteInit();
+//		if (currentTest=0) then Classes::Exec();
+//		if (currentTest=6) then ForLoop::Exec();
+		if (currentTest=1) then CaseTest::Exec();
+		if (currentTest=5) then MulDiv::Exec();
+		if (currentTest=2) then IfThenElse::Exec();
+		if (currentTest=3) then IntegerTest::Exec();
+		// Pointer tests - the x86 needs a different set of pointer tests.
+		if (currentTest=4) then AdvancedMath::Exec();
 		if (currentTest=7) then Registers::Exec();
 		if (currentTest=8) then Various::Exec();
 		if (currentTest=9) then Strings::Exec();
@@ -57,6 +94,7 @@ begin
 			isDone := true;
 		
 	end;
+	*/
 end;
 
 end.

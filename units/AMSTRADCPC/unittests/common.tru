@@ -15,6 +15,16 @@ end;
 procedure TestSuiteInit();
 begin
 end;
+
+procedure CR() inline;
+begin
+	asm("
+		ld a,0
+		ld hl,0
+		ld de,0
+	");
+end;
+
 	
 procedure Initialise(zp:pointer);
 begin

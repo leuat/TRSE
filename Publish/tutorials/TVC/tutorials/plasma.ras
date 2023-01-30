@@ -1,0 +1,111 @@
+program Plasma;
+@use "crtc"
+
+
+// Good old plasma example!
+
+var  
+	// some plasma variables
+	val,val2,c2x, c2y,ax, ay,time, time2 : byte;
+	x,y,shift : byte;
+	dst : ^byte;
+	// mini sine table
+	const width : byte = 512/8;
+	const height : byte = 64/2;	
+	// The tables must be aligned at $xx00
+    siny : array[width] of byte at $7F00; 
+	sinx : array[height] of byte at $7E00; 
+	// Org sine table
+	sin : array[256] of byte = buildsinetable(127);
+ 	// smooth data generated in resources/fjong/generate_data.fjo
+	data : incbin("data/smooth_data.bin", $7D00);
+
+// Plasma procedure
+
+procedure Calculate();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to height do begin 
+		siny[x]:=  sin[c2x] + sin[c2y]-time2;
+		c2x:=c2x+2;
+		c2y:=c2y+5;
+	end;
+
+	ax:=ax+2;
+	ay:=ay-3;
+
+	// Set up x-sine table
+	for x:=0 to width do begin 
+		sinx[x] := sin[c2x] + sin[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	// alternate every 2nd line
+	dst:=$8000+shift<<7 + 128*32;
+	
+end;
+
+
+procedure Plasma();
+begin
+	for y:=0 to height  offpage do 
+	begin
+		val:=siny[y];
+/*		for x:=0 to width do 
+		begin
+			val2:=data[ (sinx[x] +val) ];
+			dst^:=val2;
+			zp+=1;
+			dst+=1;
+		end;*/
+		//unrolled
+		asm("
+			ld de,[dst]
+			ld a,[val]
+			ld b,a
+			repeat 64
+			
+			ld hl,sinx +[i]
+			
+			ld a,b  ; a = val
+			add a,[hl] ; a+ sinx[x]
+			; lookup table data [ ...]
+			ld hl,data
+			ld l,a ; +data[a]
+			
+			ldi ; ld [de],[hl], inc de
+			
+			repend
+		
+		");
+		dst+=64*4;
+	end;
+
+end;
+
+
+begin
+	Crtc::SetMode(Crtc::mode_4_color);
+	Crtc::EnableVRAM();
+	Crtc::SetPalette(0,Crtc::black);
+	Crtc::SetPalette(1,Crtc::dark_blue);
+	Crtc::SetPalette(2,Crtc::dark_magenta);
+	Crtc::SetPalette(3,Crtc::yellow);
+	
+	// Clearscreen
+	Fill($8000,0,64*height);
+	while (true) do
+	begin
+		Calculate();
+		time2+=5;
+		time+=1;
+		shift:=time&1;
+		Plasma()
+		
+	end;
+
+end.

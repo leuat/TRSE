@@ -24,6 +24,7 @@
 
 #include "../parser.h"
 #include "source/Compiler/assembler/asm6502.h"
+#include "source/Compiler/assembler/asm6809.h"
 #include "source/Compiler/assembler/asm68000.h"
 #include "source/Compiler/assembler/asmx86.h"
 #include "source/Compiler/assembler/asmz80.h"
@@ -37,6 +38,7 @@
 #include "source/Compiler/codegen/codegen_jdh8.h"
 #include "source/Compiler/codegen/codegen_tripe.h"
 #include "source/Compiler/codegen/codegen_s1c88.h"
+#include "source/Compiler/codegen/codegen_6809.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"

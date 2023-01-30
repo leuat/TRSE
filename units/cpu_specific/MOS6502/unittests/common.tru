@@ -10,6 +10,16 @@ begin
 	poke(^$8000,0,0); // all pass
 end;
 
+
+procedure CR() inline;
+begin
+	asm("
+	lda #0
+	ldx #0
+	ldy #0
+	");
+end;
+
 // Called at the beginning of each test suite (multiple test cases grouped together)
 procedure TestSuiteInit();
 begin

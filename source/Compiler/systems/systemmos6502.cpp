@@ -266,24 +266,28 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
     QString f = filename.split("/").last();
     QStringList d64Params = QStringList();
 
-    if (QFile::exists(filename+".d64"))
-        QFile::remove(filename+".d64");
 
+    QString type = m_projectIni->getString("cc1541_disk_type");
+
+    if (QFile::exists(filename+"."+type))
+        QFile::remove(filename+"."+type);
+
+
+
+    QStringList shadowDir = QStringList()<<"-d" <<"19";
     // Create a disk
+
     QStringList cd64;
-#ifdef _WIN32
-#else
-#endif
     cd64<<"cc1541";
     d64Params <<"cc1541";
-    cd64 << "-n" << diskName <<"-d" <<"19";
-    cd64 << filename+".d64";
+    cd64 << "-n" << diskName <<shadowDir;
+    cd64 << filename+"."+type;
     // call
-    cc1541(cd64.size(), Util::StringListToChar(cd64));
+//    cc1541(cd64.size(), Util::StringListToChar(cd64));
 
 
     // Start building files...
-    d64Params  <<"-d"<<"19";
+    d64Params  <<"-d"<<"19" <<"-n" << diskName << shadowDir;
 
     if (addPrg)
         d64Params << "-f"<<f << "-w"<<filename+".prg";
@@ -295,16 +299,18 @@ void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QSt
             text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 disk.. please make sure that all the files specified in "+filename+" exist!<br>";
             return;
         }
-        d64Params<<filename+".d64";
-      //  qDebug() << d64Params;
+        d64Params<<filename+"."+type;
+        qDebug() << d64Params;
         cc1541(d64Params.size(), Util::StringListToChar(d64Params));
-        qDebug() << stderr;
+        std::cout << stdout;
+        std::cout << stderr;
     }
 
-    if (QFile::exists(filename+".d64")) {
+    if (QFile::exists(filename+"."+type)) {
 //        qDebug() << "Applying dir art to " +filename;
 
-        ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+".d64", text);
+        QString type = m_projectIni->getString("cc1541_disk_type");
+        ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+"."+type, text);
     }
 
 }
@@ -523,7 +529,11 @@ void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString deb
     if (m_settingsIni->getdouble("auto_inject")==1.0) {
         params << "-autostartprgmode" << "1";
     }
-    params << filename+"."+m_projectIni->getString("output_type");;
+    auto type=m_projectIni->getString("output_type");
+    if (type!="d64")
+        params << filename+"."+type;
+    else
+        params << filename+"."+m_projectIni->getString("cc1541_disk_type");
 
 }
 

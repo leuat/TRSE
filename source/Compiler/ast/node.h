@@ -60,6 +60,7 @@ public:
     // Toggle nodes as "used" and "used by" - necessary for the optimizer for
     // automatic removal of nodes
     bool m_isUsed = false;
+    bool m_hasSwapped = false;
     QStringList m_isUsedBy;
     static Assembler* s_as;
     // Used in x86 to specity if is an index or not
@@ -92,6 +93,7 @@ public:
     MemoryBlockInfo m_blockInfo;
 
     TokenType::Type m_forceType = TokenType::NADA;
+    TokenType::Type m_castType = TokenType::NADA;
     // Line number for keeping track of current cycles
     static int m_currentLineNumber;
 
@@ -120,7 +122,11 @@ public:
 
     // Force a specific type to be set for this node
     virtual void setForceType(TokenType::Type t) {
-        m_forceType  =t;
+        m_forceType = t;
+    }
+    // Force a specific type to be set for this node
+    virtual void setCastType(TokenType::Type t) {
+        m_castType  = t;
     }
 
     virtual bool isStackVariable() { return false;}
@@ -214,6 +220,10 @@ public:
 //        if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
         return 1;
 
+    }
+
+    virtual TokenType::Type getOrgType(Assembler *as) {
+        return m_op.m_type;
     }
 
     void RequireAddress(QSharedPointer<Node> n,QString name, int ln);

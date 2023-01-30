@@ -455,9 +455,9 @@ bool Util::QStringIsSimilar(QString a, QString b, qreal percentage, int n, Qt::C
 QStringList Util::FindFilesOfType(QString dir, QString type)
 {
     QStringList l;
-    QDirIterator it(dir, QStringList() << "*."+type, QDir::Files, QDirIterator::Subdirectories);
+    QDirIterator it(dir, QStringList() << type, QDir::Files, QDirIterator::Subdirectories);
     while (it.hasNext())
-        l << it.next().toLower().remove(dir.toLower());
+        l << it.next().remove(dir);
     return l;
 }
 

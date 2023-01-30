@@ -160,7 +160,7 @@ end;
 
 
 
-procedure Putpixel(addr, x,y,col:global integer);
+procedure Putpixel(addr:global ^integer; x,y,col:global integer);
 begin
 	asm("
 		move.l Graphics_addr,a0

@@ -122,7 +122,7 @@ public:
    virtual int getGridHeight()  override;
    QPoint GetCurrentPosInImage(float x, float y) override;
 
-   virtual QString getSpriteInfo();
+   virtual QString getSpriteInfo() override;
 
 
 

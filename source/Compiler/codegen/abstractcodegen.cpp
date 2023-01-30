@@ -9,6 +9,7 @@
 #include "source/Compiler/ast/nodeprogram.h"
 #include "source/Compiler/ast/nodevardecl.h"
 #include "source/Compiler/ast/nodeasm.h"
+#include "source/Compiler/ast/nodecast.h"
 #include "source/Compiler/ast/nodecompound.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodeunaryop.h"
@@ -45,6 +46,19 @@ void AbstractCodeGen::UpdateDispatchCounter()
 void AbstractCodeGen::dispatch(QSharedPointer<NodeAssign> node)  {
     node->DispatchConstructor(as,this);
     AssignVariable(node);
+}
+
+void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
+{
+    node->DispatchConstructor(as,this);
+/*    if (node->m_op.m_type==TokenType::INTEGER)
+        node->m_right->setForceType(TokenType::INTEGER);
+    if (node->m_op.m_type==TokenType::BYTE)
+       node->m_right->setForceType(TokenType::BYTE);*/
+    node->m_right->Accept(this);
+//    as->Comment("WriteType : "+TokenType::getType(node->m_right->m_castType));
+    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+
 }
 /*
  *
@@ -245,6 +259,20 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
         as->Asm(getReturn());
 }
 
+void AbstractCodeGen::Cast(QString from, QString to)
+{
+    TokenType::Type f,t;
+    from = from.toLower();
+    to = to.toLower();
+    if (from=="integer") f=TokenType::INTEGER;
+    if (from=="byte") f=TokenType::BYTE;
+    if (from=="long") f=TokenType::LONG;
+    if (to=="integer") t=TokenType::INTEGER;
+    if (to=="byte") t=TokenType::BYTE;
+    if (to=="long") t=TokenType::LONG;
+    Cast(f,t);
+}
+
 QString AbstractCodeGen::getBank(QSharedPointer<NodeVarType> t) {
     QString bnk = t->m_flags[t->m_flags.indexOf("bank")+1];//Banks always placed +1
     if (!as->m_banks.contains(bnk)) {
@@ -310,6 +338,12 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
     as->Term();
     as->Comment("Calling storevariable on generic assign expression");
 //    StoreVariable(VarOrNum(node->m_left));
+  //  as->Comment("RHS is byte: "+Util::numToHex(node->m_right->isByte(as)) + " "+node->m_right->getTypeText(as) + " " +TokenType::getType(node->m_right->getType(as)));
+    //as->Comment("LHS is byte: "+Util::numToHex(node->m_left->isByte(as)) + " "+node->m_left->getTypeText(as) + " " +TokenType::getType(node->m_left->getType(as)));
+//    as->Comment("CastType: "+TokenType::getType(n));
+
+    if (node->m_right->getTypeText(as)=="BYTE")
+        Cast(TokenType::BYTE,node->m_right->m_castType);
     StoreVariable(VarOrNum(node->m_left));
 }
 
@@ -443,6 +477,8 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     if (v->m_writeType==TokenType::NADA)
         v->m_writeType = node->m_right->getWriteType();
 
+
+
 //    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
 
 /*    if (v->m_writeType==TokenType::INTEGER) {
@@ -450,6 +486,15 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         node->m_right->setForceType(TokenType::INTEGER);
     }
 */
+    // Set force type for functions
+    if (v->isByte(as))
+        node->m_right->setCastType(TokenType::BYTE);
+    if (v->isWord(as))
+        node->m_right->setCastType(TokenType::INTEGER);
+    if (v->isLong(as))
+        node->m_right->setCastType(TokenType::LONG);
+
+
     // ****** REGISTERS TO
     if (v->m_isRegister) {
         as->Comment("Assigning to register");
@@ -729,7 +774,8 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
 
 
 bool AbstractCodeGen::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2) {
-    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
+    bool onPage = true;
+//    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
 
     if (node->m_forcePage == 1)
         onPage = false;
@@ -853,8 +899,11 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
     // Return value
     if (node->m_returnValue!=nullptr) {
-        if (node->m_returnType->getValue(as).toLower()=="integer")
-            node->m_returnType->setForceType(TokenType::INTEGER);
+        if (node->m_returnType->getValue(as).toLower()=="integer") {
+            node->m_returnValue->setForceType(TokenType::INTEGER);
+
+        }
+
         as->ClearTerm();
         node->m_returnValue->Accept(this);
         as->Term();
@@ -946,7 +995,14 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     }
 
     ProcedureStart(as);
+//    if (node->m_procedure->m_returnType!=nullptr)
+  //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
+
+    if (node->m_procedure->m_returnType!=nullptr)
+        if (node->m_procedure->m_returnType->m_op.m_type!=node->m_castType) {
+            Cast(node->m_procedure->m_returnType->m_op.m_type, node->m_castType);
+        }
     ProcedureEnd(as);
     PopLostStack(lostStack);
 }

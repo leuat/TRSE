@@ -60,6 +60,7 @@ void DialogProjectSettings::FillFromIni()
     ui->leInternalZp4->setText(m_ini->getString("zeropage_internal4"));
 
 
+
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
     ui->leDiskname->setText( m_ini->getString("d64name"));
 
@@ -78,7 +79,9 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
     //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
 
+
     ui->chkUseViceC1541->setChecked(m_ini->getdouble("use_vice_c1541")==1);
+    ui->chkCompilerComments->setChecked(m_ini->getdouble("disable_compiler_comments")==1);
 
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
     ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
@@ -127,6 +130,9 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leDosboxCycles->setText(m_ini->getString("dosbox_cycles"));
 
+    ui->cmbDiskType->setCurrentText(m_ini->getString("cc1541_disk_type"));
+
+
 //    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
 
 
@@ -157,8 +163,8 @@ void DialogProjectSettings::FillFromIni()
 //    ui->chkPOEnabled->setChecked(m_ini->getdouble("post_optimize")==1);
 
 
-    QStringList ras = Util::FindFilesOfType(m_currentDir+"/","ras");
-    QStringList flf = Util::FindFilesOfType(m_currentDir+"/","flf");
+    QStringList ras = Util::FindFilesOfType(m_currentDir+"/","*.ras");
+    QStringList flf = Util::FindFilesOfType(m_currentDir+"/","*.flf");
 //    qDebug() << ras << m_currentDir;
     ui->cmbMainRas->clear();
     ui->cmbMainRas->addItem("none");
@@ -174,7 +180,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leInitMachineState->setText(m_ini->getString("machine_state"));
 
-    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","paw");
+    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","*.paw");
 //    qDebug() << ras << m_currentDir;
     ui->cmbPawInclude->clear();
     ui->cmbPawInclude->addItem("none");
@@ -265,6 +271,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("system", ui->cmbSystem->currentText());
 
     m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
+    m_ini->setFloat("disable_compiler_comments", ui->chkCompilerComments->isChecked());
+
 
     m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
     m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());
@@ -302,6 +310,10 @@ void DialogProjectSettings::FillToIni()
         m_ini->setString("nes_8k_file_2",ui->leNESCharFile_2->text());
         m_ini->setString("nes_code_start",ui->leNESCodeStart->text());
     }
+
+
+
+    m_ini->setString("cc1541_disk_type", ui->cmbDiskType->currentText());
 
 
     m_ini->setString("output_type", ui->cmbOutputType->currentText());

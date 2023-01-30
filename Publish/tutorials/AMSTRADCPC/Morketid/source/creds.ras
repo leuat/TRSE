@@ -75,7 +75,7 @@ var
 //	0,0,0,0, 15,3,0,0,   0,0,0,0,    0,0,0,0);
 	0,0,0,0, 5,1,0,0,   0,0,0,0,    0,0,0,0);
 */
-procedure EffectCreds(yy, x,y,c1 : global integer; textp : global pointer);
+procedure EffectCreds(yy, x,y,c1 : global byte; textp : global pointer);
 begin
 	
 	fill(#coltab1,15,15);

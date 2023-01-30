@@ -49,4 +49,5 @@ show_all_files = 1
 charset_ = /Users/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/resources/charsets/charset.flf
 dirart_flf_file = none
 d64name = main
+use_vice_c1541 = 0
 open_files =, 01_hello_world.ras
