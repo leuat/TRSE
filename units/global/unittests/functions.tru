@@ -1,0 +1,93 @@
+unit Functions;
+var
+	fn1:byte;
+	
+function FnByte(fn1:global byte):byte;
+begin
+	Vars::v1:=fn1*2;
+	FnByte:=Vars::v1;
+end;
+
+function FnByteAdv(fn1:global byte):byte;
+begin
+	FnByteAdv:=(fn1*10 +5)*2;
+end;
+
+function FnByteInt(fn1:global byte):byte;
+begin
+	Vars::i2:=fn1*200;
+	FnByteInt:=Vars::i2;
+end;
+
+function FnInt1(fn1:global byte):integer;
+begin
+	FnInt1:=fn1*2;
+end;
+
+function FnInt2(fn1:global byte):integer;
+begin
+	FnInt2:=fn1*200 + 10;
+end;
+
+function FnInt3(fn1:global byte):integer;
+begin
+	Vars::v1:=2;
+	FnInt3:=((fn1*200)+ 10)*Vars::v1;
+end;
+
+
+// simple byte return value
+procedure Test1();
+begin
+	Vars::text := "T1:";
+	if (FnByte(2)=4) then Common::PASS() else Common::FAIL();
+end;
+
+// byte function returns integer
+procedure Test2();
+begin
+	Vars::text := "T2:";
+	if (FnByteAdv(2)=50) then Common::PASS() else Common::FAIL();
+end;
+
+// byte function returns integer
+procedure Test3();
+begin
+	Vars::text := "T3:";
+	if (FnByteInt(2)=144) then Common::PASS() else Common::FAIL();
+end;
+
+procedure Test4();
+begin
+	Vars::text := "T4:";
+	if (FnInt1(200)=400) then Common::PASS() else Common::FAIL();
+end;
+
+procedure Test5();
+begin
+	Vars::text := "T5:";
+	if (FnInt2(10)=2010) then Common::PASS() else Common::FAIL();
+end;
+
+procedure Test6();
+begin
+	Vars::text := "T6:";
+	if (FnInt3(10)=2010*2) then Common::PASS() else Common::FAIL();
+end;
+
+
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("FUNCTIONS");
+	
+	Test1();
+	Test2();
+	Test3();
+	Test4();
+	Test5();
+	Test6();
+	Common::WaitABit();
+end;
+
+end.

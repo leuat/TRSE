@@ -12,6 +12,7 @@ Unit Unittests;
 @use "unittests/various"
 @use "unittests/strings"
 @use "unittests/bitop"
+@use "unittests/functions"
 
 @use "unittests/advanced_math"
 
@@ -19,7 +20,7 @@ Unit Unittests;
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests : byte = 10;
+	const noTests : byte = 13;
 	currentTest : byte;
 	isDone: boolean;
 
@@ -46,7 +47,7 @@ begin
 		if (currentTest=1) then BitOp::Exec();
 		if (currentTest=5) then MulDiv::Exec();
 		if (currentTest=11) then IfThenElse::Exec();
-		if (currentTest=3) then IntegerTest::Exec();
+		if (currentTest=12) then IntegerTest::Exec();
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=4) then AdvancedMath::Exec();
@@ -54,6 +55,7 @@ begin
 		if (currentTest=7) then Registers::Exec();
 		if (currentTest=0) then Various::Exec();
 		if (currentTest=9) then Strings::Exec();
+		if (currentTest=3) then Functions::Exec();
 
 		currentTest+=1;
 				

@@ -901,7 +901,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     if (node->m_returnValue!=nullptr) {
         if (node->m_returnType->getValue(as).toLower()=="integer") {
             node->m_returnValue->setForceType(TokenType::INTEGER);
-
+        }
+        if (node->m_returnType->getValue(as).toLower()=="byte") {
+            node->m_returnValue->setForceType(TokenType::BYTE);
         }
 
         as->ClearTerm();
