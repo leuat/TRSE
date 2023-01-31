@@ -33,18 +33,6 @@ begin
 	Vars::text := "T4:";
 	Vars::v1:=1;
 	Vars::p1 := Vars::strLst[1];
-/*	asm("
-		mov ax,[Vars_p1+2]
-		mov bx,ds
-		add ax,bx
-		mov word [Vars_p1+2],ax
-		
-	");*/
-//	Vars::p1:=#Vars_strLst+16;
-//	Vars_p1+=ptr($192,0);
-	Screen::PrintAx();
-	Screen::NewLine();	
-	Screen::Print(Vars::p1);	
 	if (Vars::p1[1]='2') then Common::PASS() else Common::FAIL();
 end;
 
