@@ -7,6 +7,7 @@ void CompilerX86::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     m_codeGen = QSharedPointer<CodeGenX86>(new CodeGenX86());
 
     m_assembler->Asm("CPU "+m_projectIni->getString("cpu_x86_system"));
+    m_assembler->Asm("[map symbols "+m_parser.m_currentDir+"symbols.map]");
     Syntax::s.m_currentSystem->m_systemParams["cpu"] = m_projectIni->getString("cpu_x86_system");
 
     if (m_projectIni->getdouble("override_target_settings")==1) {

@@ -231,6 +231,7 @@ public:
     void RequireNumber(QSharedPointer<Node> n,QString name, int ln);
 
     virtual bool isWord(Assembler* as) { return false;}
+    virtual bool isStringList(Assembler* as) {return false;}
     virtual bool isLong(Assembler* as) { return false;}
     virtual bool isByte(Assembler* as) { return false;}
 

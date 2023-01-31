@@ -211,7 +211,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 
     if (Command("hi")) {
         LoadAddress(as,0,false);
-        as->Asm("mov "+disp->getAx(m_node)+",[di+]");
+        as->Asm("mov "+disp->getAx(m_node)+",[di+1]");
     }
     if (Command("lo")) {
         LoadAddress(as,0,false);

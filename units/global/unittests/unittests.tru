@@ -39,7 +39,7 @@ begin
 	begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
-		if (currentTest=2) then Classes::Exec();
+		if (currentTest=9) then Classes::Exec();
 		if (currentTest=6) then ForLoop::Exec();
 		@endif
 		if (currentTest=10) then CaseTest::Exec();
@@ -54,7 +54,7 @@ begin
 		@endif
 		if (currentTest=7) then Registers::Exec();
 		if (currentTest=0) then Various::Exec();
-		if (currentTest=9) then Strings::Exec();
+		if (currentTest=2) then Strings::Exec();
 		if (currentTest=3) then Functions::Exec();
 
 		currentTest+=1;

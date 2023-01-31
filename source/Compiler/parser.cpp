@@ -4392,7 +4392,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             if (isStringList) {
                 dataType = Syntax::s.m_currentSystem->getSystemPointerArrayType();
                 arrayType.m_type = Syntax::s.m_currentSystem->getSystemPointerArrayType();
-                arrayType.m_value = "INTEGER";
+                arrayType.m_value = TokenType::getType(arrayType.m_type);
+
 
                 Eat(TokenType::LPAREN);
                 QVector<QSharedPointer<Node>> tmp_data;
@@ -4400,7 +4401,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     //tmp_data.append(m_currentToken);
                     tmp_data.append(String(false));
                     //                    qDebug() << m_currentToken.m_value;
-                    Eat();
+//                    Eat();
                     if (m_currentToken.m_type == TokenType::COMMA)
                         Eat();
                 }

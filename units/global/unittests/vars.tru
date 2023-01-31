@@ -27,6 +27,9 @@ var
 	end;
 
 
+	strLst : array[] of string = ("S1","S2",("J",75), "S3");
+
+
 	Point = class
 		minis : array[2] of Mini;
 		x,y : byte;

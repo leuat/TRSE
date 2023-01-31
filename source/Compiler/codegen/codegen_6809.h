@@ -191,8 +191,8 @@ public:
     void LoadStackVariable(QSharedPointer<NodeVar> node);
 
     bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
-    void Cast(TokenType::Type from, TokenType::Type to);
-    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
+    void Cast(TokenType::Type from, TokenType::Type to) override;
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
 
     bool StoreStackParameter(QSharedPointer<NodeAssign> n) override;

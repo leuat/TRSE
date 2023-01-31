@@ -190,8 +190,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
-    QString lblForEnd =as->NewLabel("forloopend");
-    QString lblForCounter =as->NewLabel("forloopcounter");
+//    QString lblForEnd =as->NewLabel("forloopend");
+    //QString lblForCounter =as->NewLabel("forloopcounter");
 
     QString lblLoopStart = as->NewLabel("loopstart");
     QString lblLoopEnd = as->NewLabel("loopend");
@@ -220,15 +220,15 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
 
     // Perform counter increase and jimps (individual for each target cpu)
-    as->Label(lblForCounter);
+//    as->Label(lblForCounter);
     as->Label(lblLoopStart);
     CompareAndJumpIfNotEqualAndIncrementCounter(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
 
-    as->Label(lblForEnd);
+  //  as->Label(lblForEnd);
     as->Label(lblLoopEnd);
     as->PopLabel("forloop");
-    as->PopLabel("forloopend");
-    as->PopLabel("forloopcounter");
+   // as->PopLabel("forloopend");
+ //   as->PopLabel("forloopcounter");
 
     as->PopLabel("loopend");// for BREAK and CONT
     as->PopLabel("loopstart"); // for BREAK and CONT

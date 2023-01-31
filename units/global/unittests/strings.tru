@@ -25,7 +25,36 @@ begin
 	Vars::text := "T1:";
 	if (Vars::p1[4]=1) then Common::PASS() else Common::FAIL();
 end;
+
 @endif
+
+procedure TestLst1();
+begin
+	Vars::text := "T4:";
+	Vars::v1:=1;
+	Vars::p1 := Vars::strLst[1];
+/*	asm("
+		mov ax,[Vars_p1+2]
+		mov bx,ds
+		add ax,bx
+		mov word [Vars_p1+2],ax
+		
+	");*/
+//	Vars::p1:=#Vars_strLst+16;
+//	Vars_p1+=ptr($192,0);
+	Screen::PrintAx();
+	Screen::NewLine();	
+	Screen::Print(Vars::p1);	
+	if (Vars::p1[1]='2') then Common::PASS() else Common::FAIL();
+end;
+
+procedure TestLst2();
+begin
+	Vars::text := "T5:";
+	Vars::p1 := Vars::strLst[2];
+	if (Vars::p1[2]=75) then Common::PASS() else Common::FAIL();
+end;
+
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
@@ -38,8 +67,8 @@ begin
 	Test2();
 	Test3();
 	@endif
+	TestLst1();
 	
-	// Mul and div
 	Common::WaitABit();
 end;
 

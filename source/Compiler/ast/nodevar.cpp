@@ -205,10 +205,16 @@ bool NodeVar::isWord(Assembler *as) {
 
 
 bool NodeVar::isLong(Assembler *as) {
-    return getType(as)==TokenType::LONG  && m_expr==nullptr;
+    return (getType(as)==TokenType::LONG || getArrayType(as)==TokenType::LONG)  && m_expr==nullptr;
 }
 bool NodeVar::isByte(Assembler *as) {
     return getType(as)==TokenType::BYTE  && m_expr==nullptr;
+}
+
+bool NodeVar::isStringList(Assembler *as)
+{
+//    qDebug() << getValue(as) << TokenType::getType(getTyp)<< TokenType::getType(getArrayType(as));
+   return (getArrayType(as)==Syntax::s.m_currentSystem->getSystemPointerArrayType());
 }
 
 bool NodeVar::containsPointer(Assembler *as)
