@@ -57,7 +57,6 @@ var
 	// Sprite location
    @define sprLoc $4400
    	spraits: incbin("data/sprites.bin", @sprLoc);
-   @donotremove StretchTab
    	// Tab used for sprite stretching
 	StretchTab : array[256] of byte at $4300;
 	// Sine 1 for stretching	
@@ -78,7 +77,6 @@ var
 
 	// Pointers used
 	p1,src,dst,txt,spr,psmall:pointer;
-	@donotremove code
 	code : pointer;
 // Calculates the stretching table for each frame
 procedure CalcStretch();

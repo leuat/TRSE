@@ -34,4 +34,7 @@ output_type = prg
 exomizer_toggle = 0
 zeropage_colormemory = $fc
 show_all_files = 1
+use_track_19 = 1
+disable_compiler_comments = 0
+use_vice_c1541 = 0
 open_files =, floskel.ras

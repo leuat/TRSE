@@ -18,7 +18,7 @@ QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
     QByteArray out;
     out.resize(65536);
     //LZ4LIB_API int LZ4_compress_default(const char* src, char* dst, int srcSize, int dstCapacity);
-//    int size = LZ4_compress_default(in.data(),out.data(), in.length(),65535);
+    //    int size = LZ4_compress_default(in.data(),out.data(), in.length(),65535);
     int size = LZ4_compress_HC(in.data(),out.data(), in.length(),65535,12);
     out.resize(size);
     QByteArray header;
@@ -26,9 +26,9 @@ QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
     header.append(0x22);
     header.append(0x4d);
     header.append(0x18); // magic number
-//    header.append((0x64 | in.length()) & 0xFF); // lo size
+    //    header.append((0x64 | in.length()) & 0xFF); // lo size
     header.append((0x64)); // lo size
-//    header.append((in.length()>>8)&0xFF);
+    //    header.append((in.length()>>8)&0xFF);
     header.append(0x40);
 
     //        header<<0x04<<0x22<<0x4d<<0x18<<0x64<<0x40<<0xa7<<0x4d<<0x15<<0x00<<0x00;
@@ -57,8 +57,8 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
         process.setWorkingDirectory(currentDir);
     process.start(file, params);
     process.waitForFinished();
-//        qDebug() << process.readAllStandardOutput();;
-  //      qDebug() << process.readAllStandardError();
+    //        qDebug() << process.readAllStandardOutput();;
+    //      qDebug() << process.readAllStandardError();
     //        output+= process.readAllStandardOutput();
     if (standardOutput)
         output+= process.readAllStandardOutput();
@@ -66,7 +66,7 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
 
 }
 
-    void AbstractSystem::InitLabelColors() {
+void AbstractSystem::InitLabelColors() {
     m_labelColors[SystemLabel::IO] = QColor(255,128,50);
     m_labelColors[SystemLabel::SID] = QColor(255,255,128);
     m_labelColors[SystemLabel::VIC] = QColor(64,128,255);
@@ -80,89 +80,89 @@ void AbstractSystem::StartProcess(QString file, QStringList params, QString& out
     m_labelColors[SystemLabel::ZEROPAGE] = QColor(64,255,128);
 
 
-    }
+}
 
-    QString AbstractSystem::StringFromProcessor(Processor s) {
-        if (s == MOS6502) return "MOS6502";
-        if (s == M68000) return "M68000";
-        if (s == PX86) return "PX86";
-        if (s == GBZ80) return "GBZ80";
-        if (s == Z80) return "Z80";
-        if (s == ARM) return "ARM";
-        if (s == WDC65C816) return "WDC65C816";
-        if (s == WDC65C02) return "WDC65C02";
-        if (s == PJDH8) return "JDH8";
-        if (s == S1C88) return "S1C88";
-        if (s == M6809) return "M6809";
-        qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
-        return "";
-    }
+QString AbstractSystem::StringFromProcessor(Processor s) {
+    if (s == MOS6502) return "MOS6502";
+    if (s == M68000) return "M68000";
+    if (s == PX86) return "PX86";
+    if (s == GBZ80) return "GBZ80";
+    if (s == Z80) return "Z80";
+    if (s == ARM) return "ARM";
+    if (s == WDC65C816) return "WDC65C816";
+    if (s == WDC65C02) return "WDC65C02";
+    if (s == PJDH8) return "JDH8";
+    if (s == S1C88) return "S1C88";
+    if (s == M6809) return "M6809";
+    qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
+    return "";
+}
 
-    AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
-        if (s == "MOS6502" || s=="6502") return MOS6502;
-        if (s == "M68000") return M68000;
-        if (s == "PX86" || s=="X86") return PX86;
-        if (s == "GBZ80") return GBZ80;
-        if (s == "Z80") return Z80;
-        if (s == "ARM") return ARM;
-        if (s == "WDC65C816" || s=="65C816") return WDC65C816;
-        if (s == "WDC65C02" || s =="65C02") return WDC65C02;
-        if (s == "PJDH8") return PJDH8;
-        if (s == "S1C88") return S1C88;
-        if (s == "M6809") return M6809;
-        qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
-        return MOS6502;
-    }
+AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
+    if (s == "MOS6502" || s=="6502") return MOS6502;
+    if (s == "M68000") return M68000;
+    if (s == "PX86" || s=="X86") return PX86;
+    if (s == "GBZ80") return GBZ80;
+    if (s == "Z80") return Z80;
+    if (s == "ARM") return ARM;
+    if (s == "WDC65C816" || s=="65C816") return WDC65C816;
+    if (s == "WDC65C02" || s =="65C02") return WDC65C02;
+    if (s == "PJDH8") return PJDH8;
+    if (s == "S1C88") return S1C88;
+    if (s == "M6809") return M6809;
+    qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
+    return MOS6502;
+}
 
-    QString AbstractSystem::StringFromProcessor(QString s) {
-        if (s == "CUSTOM") return "CUSTOM";//StringFromProcessor("CUSTOM");
-        if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII" || s=="ORIC"|| s=="ACORN") return "MOS6502";
-        if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
-        if (s == "X86" || s=="WONDERSWAN") return "PX86";
-        if (s == "M1ARM") return "ARM";
-        if (s == "GAMEBOY") return "GBZ80";
-        if (s == "SNES") return "WDC65C816";
-        if (s == "MEGA65") return "WDC65C02";
-        if (s == "JDH8") return "PJDH8";
-        if (s == "TRS80COCO") return "M6809";
-        if (s == "POKEMONMINI") return "S1C88";
-        if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC") return "Z80";
+QString AbstractSystem::StringFromProcessor(QString s) {
+    if (s == "CUSTOM") return "CUSTOM";//StringFromProcessor("CUSTOM");
+    if (s == "PET" || s == "C64" || s == "ATARI2600" ||s == "VIC20" || s == "NES" || s == "OK64" || s == "C128" || s == "PLUS4" || s == "X16" || s == "BBCM" || s=="ATARI800"|| s=="APPLEII" || s=="ORIC"|| s=="ACORN") return "MOS6502";
+    if (s == "AMIGA" || s == "ATARI520ST") return "M68000";
+    if (s == "X86" || s=="WONDERSWAN") return "PX86";
+    if (s == "M1ARM") return "ARM";
+    if (s == "GAMEBOY") return "GBZ80";
+    if (s == "SNES") return "WDC65C816";
+    if (s == "MEGA65") return "WDC65C02";
+    if (s == "JDH8") return "PJDH8";
+    if (s == "TRS80COCO") return "M6809";
+    if (s == "POKEMONMINI") return "S1C88";
+    if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC") return "Z80";
 
-        qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
-        return "";
-    }
+    qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
+    return "";
+}
 
 
-    AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
+AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
 
-        if (s.toLower()=="c64")
-            return C64;
-        if (s.toLower()=="c128")
-            return C128;
-        if (s.toLower()=="pet")
-            return PET;
-        if (s.toLower()=="vic20")
-            return VIC20;
-        if (s.toLower()=="nes")
-            return NES;
-        if (s.toLower()=="bbcm")
-            return BBCM;
-        if (s.toLower()=="amiga")
-            return AMIGA;
-        if (s.toLower()=="plus4")
-            return PLUS4;
-        if (s.toLower()=="ok64")
-            return OK64;
-        if (s.toLower()=="x16")
-            return X16;
-        if (s.toLower()=="x86")
-            return X86;
-        if (s.toLower()=="gameboy")
-            return GAMEBOY;
-        if (s.toLower()=="spectrum")
-            return SPECTRUM;
-        if (s.toLower()=="tiki100")
-            return TIKI100;
+    if (s.toLower()=="c64")
+        return C64;
+    if (s.toLower()=="c128")
+        return C128;
+    if (s.toLower()=="pet")
+        return PET;
+    if (s.toLower()=="vic20")
+        return VIC20;
+    if (s.toLower()=="nes")
+        return NES;
+    if (s.toLower()=="bbcm")
+        return BBCM;
+    if (s.toLower()=="amiga")
+        return AMIGA;
+    if (s.toLower()=="plus4")
+        return PLUS4;
+    if (s.toLower()=="ok64")
+        return OK64;
+    if (s.toLower()=="x16")
+        return X16;
+    if (s.toLower()=="x86")
+        return X86;
+    if (s.toLower()=="gameboy")
+        return GAMEBOY;
+    if (s.toLower()=="spectrum")
+        return SPECTRUM;
+    if (s.toLower()=="tiki100")
+        return TIKI100;
     if (s.toLower()=="atari2600")
         return ATARI2600;
     if (s.toLower()=="atari520st")
@@ -378,7 +378,7 @@ void AbstractSystem::AssembleCL65(QString &text, QString filename, QString curre
     process.waitForFinished();
     //process;
     output = process.readAllStandardOutput() + process.readAllStandardError();
-//    qDebug() << output;
+    //    qDebug() << output;
     // codeEnd=FindEndSymbol(output);
 
     int assembleTime = timer.elapsed()- time;
@@ -417,7 +417,7 @@ void AbstractSystem::AssembleCL65(QString &text, QString filename, QString curre
             output=output+"Original file size: " + QString::number(orgFileSize) + " bytes";
         }
         output = output + "\nAssemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>";
- //       output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
+        //       output = output + "Crunch time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(crunchTime)) + "</font>";
 
     }
 
@@ -425,6 +425,54 @@ void AbstractSystem::AssembleCL65(QString &text, QString filename, QString curre
     text+=output;
 
 
+}
+
+QStringList AbstractSystem::AnalyseForPotentialVariables(QString asmCode)
+{
+    QStringList lst = asmCode.split("\n");
+    QStringList results;
+    for (auto s : lst) {
+        s = s.trimmed().simplified();
+        if (s.startsWith(";"))
+            continue;
+        QStringList p = s.split(" ");
+        // variables only show up in "lda myvar etc"
+        for (int i=1;i<p.count();i++) {
+            QStringList split = p[i].split(","); // Might be a comma!
+            for (auto sp : split) {
+                QStringList v = Wash(sp);
+                for (auto item:v) {
+                    if (Syntax::s.m_currentSystem->m_registers.contains(item.toLower()))
+                        continue;
+                    results.append(item);
+                }
+            }
+        }
+    }
+    results.removeAll("");
+//    qDebug() << results;
+    return results;
+}
+
+QStringList AbstractSystem::Wash(QString s)
+{
+    s = s.replace("[","");
+    s = s.replace("]","");
+    s = s.replace("(","");
+    s = s.replace(")","");
+    s = s.replace("#","");
+    s = s.replace("<","");
+    s = s.replace(">","");
+
+    s = s.trimmed().simplified();
+    QStringList allHoly;
+    allHoly<< s.split("+");
+    allHoly<< s.split("-");
+    allHoly<< s.split("*");
+    allHoly<< s.split("/");
+    allHoly.removeDuplicates();
+
+    return allHoly;
 }
 
 bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QString error, QString &text, QString workingDir)
@@ -481,8 +529,8 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
     QStringList params  = QStringList() << "-arch" <<"trasm2tripe" << "-i"<< file+"_tripe.asm" << "-o"<<file+".trp";
     GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
 
-//    qDebug() << m_settingsIni->getString("tripe_location");
-  //  qDebug() << params;
+    //    qDebug() << m_settingsIni->getString("tripe_location");
+    //  qDebug() << params;
 
     //qDebug() << error<<text;
 
@@ -491,9 +539,9 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
     if (error.contains("error"))
         m_buildSuccess = false;
 
-//    qDebug() << error;
+    //    qDebug() << error;
 
-//    Util::CopyFile()
+    //    Util::CopyFile()
 
 }
 /*

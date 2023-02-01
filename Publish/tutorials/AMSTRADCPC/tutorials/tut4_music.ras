@@ -10,7 +10,6 @@ program Tutorial4_music;
 var  
 	image : incbin("resources/images/image1.bin");
 	palette : incbin("resources/images/image1_palette.bin");
-	@donotremove music
 
 /*
   How to do music: 

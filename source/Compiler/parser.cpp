@@ -4804,6 +4804,15 @@ QSharedPointer<Node> Parser::InlineAssembler()
     }
     t.m_value = m_currentToken.m_value;
     QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
+    QStringList potentialUsedVariables = Syntax::s.m_currentSystem->AnalyseForPotentialVariables(t.m_value);
+    for (auto s: potentialUsedVariables) {
+        if (m_symTab->m_symbols.contains(s)) {
+            m_symTab->m_symbols[s]->isUsed = true;
+            m_symTab->m_symbols[s]->m_doNotOptimize = true;
+        }
+        if (m_procedures.contains(s))
+            m_procedures[s]->m_isUsed = true;
+    }
     Eat(TokenType::STRING);
     if (pascalStyleAsm) {
         Eat(TokenType::END);

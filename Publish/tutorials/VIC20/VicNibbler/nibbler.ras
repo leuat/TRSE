@@ -300,7 +300,6 @@ end;
 procedure ResetVars();
 var
 	hacker: string = ("HELLO HAXOR.URL33T.ENJOY");
-	@donotremove hacker
 begin
 
 	time := 99;

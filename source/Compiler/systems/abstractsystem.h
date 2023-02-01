@@ -176,6 +176,9 @@ public:
     void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
     void AssembleCL65(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, QString ending, QStringList params);
 
+    virtual QStringList AnalyseForPotentialVariables(QString asmCode);
+    virtual QStringList Wash(QString s);
+
     virtual QString getCPUAssemblerString() {
         return "";
     }

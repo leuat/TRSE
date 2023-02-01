@@ -72,3 +72,4 @@ data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 cc1541_disk_type = d64
 disable_compiler_comments = 0
+use_track_19 = 1

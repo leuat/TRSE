@@ -49,4 +49,7 @@ zeropage_colormemory = $fc
 show_all_files = 1
 dirart_flf_file = none
 d64name = main
+use_track_19 = 1
+disable_compiler_comments = 0
+use_vice_c1541 = 0
 open_files =, intro.ras
