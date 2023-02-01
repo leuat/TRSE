@@ -1,0 +1,765 @@
+program BigPixelIntro;
+
+var
+	// music
+	sidfile : incsid("music/HelloWorld.sid", 2);	// $1000-$1641
+
+@startblock $1641 "DATA_1"
+	// tree 1 sprite
+	TREE1_ADR : IncBin("graphic/tree1.bin");
+
+	// tables needed for sprite drawing
+	screenRowLo : array[25] of byte = BuildTable("(i*40) & 0xFF"); @donotremove screenRowLo
+	screenRowHi : array[25] of byte = BuildTable("(i*40) >> 8"); @donotremove screenRowHi
+@endblock
+
+	// background
+	const BACK_ADR : address = $1800;
+	binBack : IncBin("graphic/background2.bin", BACK_ADR);
+
+	// screen buffers
+	const SCRCHRBUF_ADR : address = $1800;
+	const SCRCHRBUF_HI : byte = $18;
+	const SCRCOLBUF_ADR : address = $1C00;
+	const SCRCOLBUF_HI : byte = $1c;
+
+	// screen locations
+	const SCRCHR1_ADR : address = $2000;
+	const SCRCHR1_HI : byte = $20;
+	const SCRCHR2_ADR : address = $2400;
+	const SCRCHR2_HI : byte = $24;
+	
+	// 80x50 font
+	const FONT_ADR : address = $2800;
+	binFont : IncBin("font/80x50font.bin", FONT_ADR);
+
+	const useKernal : byte = 0;
+
+	// switch screen data trigger
+	switchScreen : byte = 0;
+	switchScreen2 : byte = 0;
+
+@startblock $3000 "DATA_2"
+	// letter sprites
+	LETTERS_ADR : IncBin("graphic/letters.bin");
+
+	// tables needed for letter addressing
+	letterAdrLo : array[36] of byte = BuildTable("((i*90)+0x3000) & 0xFF"); @donotremove letterAdrLo	
+	letterAdrHi : array[36] of byte = BuildTable("((i*90)+0x3000) >> 8"); @donotremove letterAdrHi
+
+	// tree 2 sprite
+	TREE2_ADR : IncBin("graphic/tree2.bin");
+	
+	// cloud sprite
+	CLOUD_ADR : IncBin("graphic/cloud2.bin");
+
+@endblock
+
+	generalPtr : pointer;
+	i : byte;
+
+	// pointers used to draw sprites
+	psSpritePtr: pointer;
+	psDataPtr: pointer;
+	psClearPtr: pointer;
+
+	// animation data
+	tree1X, tree1Y, tree1DX, tree1Dist, tree1Num, tree1Max, tree1MaxAdd, tree1Type, tree1TypeStart: byte;
+	tree2X, tree2Y, tree2DX, tree2Dist, tree2Num, tree2Max, tree2MaxAdd : byte;
+	lettersX, lettersY, lettersDX, lettersDist, lettersNum : byte;
+	letterAddr : integer;
+	drawScreenHi : byte = SCRCHR1_HI;
+	message : string = ("                  CSDB ",$FE,"INTRO CREATION COMPO 2021     ",$FD,"      MY FIRST ATTEMPT AT MAKING SOMETHING LIKE AN INTRO       ",
+					    "MANY THANKS TO POPMILO FOR ENCOURAGEMENT TO FINISH THIS         GREETINGS GO TO      TEMPEST      MSOLAJIC      VICE TEAM      TRSE TEAM       ",
+					    "AND ALL OF YOU STILL MAKING AND RUNNING C64 STUFF          NO VIC II TRICKS IN HERE         NO SPRITES WERE HARMED WHILE RUNNING THIS INTRO         ",
+						"MADE USING TRSE         80X50 SOFTSPRITE ROUTINES SOON AVAILABLE THERE         ",
+						"ONCEUPONABYTE DOT ORG         8BITCHIP DOT INFO","               ",$FF, $FF);
+	messageEnd : string = ("               IDEA CODE AND GRAPHICS BY ZZARKO         MUSIC WAS MADE FOR CRX 2020 BY HASSE    ", $F1,"  ", $F1, "                ", $FF, $FF);
+	messageCnt : byte = 0;
+	messageLetter : byte;
+	letterYVal : array[10] of byte = (27,28,29,29,28,27,26,25,25,26);
+	letterYPos : byte = 0;
+	letterYCnt : byte;
+	cloudX : byte;
+	
+	generateScreenMax : byte = 4;
+	generateScreen : byte = 0;
+	generateScreenCnt : byte = 4;
+	spacePressed : byte = 0;
+
+/*
+# sprite data:
+#   plotAddrLo   \      00
+#   plotAddrHi   |x4
+#   clearAddrLo  |
+#   clearAddrHi  /
+#   width               16
+#   height              17
+#   bufferAddrLo        18
+#   bufferAddrHi        19
+#   bufferMemLo         20
+#   bufferMemHi         21
+#   plot data x4
+#   clear data x4
+#   buffer data
+*/
+
+procedure putSprite(y: byte, x:byte, spriteData:integer, screenHi: byte, colorHi: byte, col:byte);
+var
+	w,h,i,j,k: byte;
+begin
+	psSpritePtr := spriteData;
+	asm("
+		lda localVariable_putSprite_x
+		ror
+		lda localVariable_putSprite_y
+		rol
+		and #$03
+		asl
+		asl
+		tay
+		lda (psSpritePtr),y
+		sta psDataPtr
+		iny
+		lda (psSpritePtr),y
+		sta psDataPtr+1
+		iny
+		lda (psSpritePtr),y
+		sta psClearPtr
+		iny
+		lda (psSpritePtr),y
+		sta psClearPtr+1
+	");
+	w := psSpritePtr[16];
+	h := psSpritePtr[17];
+	k := 0;
+
+	asm("
+		lda localVariable_putSprite_y
+		lsr	// y>>1
+		tax
+		ldy screenRowLo,x
+		sty screenmemory
+		sty psSpritePtr
+		lda screenRowHi,x
+		clc
+		adc localVariable_putSprite_screenHi
+		sta screenmemory+1
+		lda screenRowHi,x
+		clc
+		adc localVariable_putSprite_colorHi
+		sta psSpritePtr+1
+
+		lda localVariable_putSprite_x
+		lsr	// x>>1
+		clc
+		adc screenmemory
+		sta screenmemory
+		sta psSpritePtr
+		bcc putSprite_l1
+		inc screenmemory+1
+		inc psSpritePtr+1
+putSprite_l1:
+	");
+
+	asm("
+		ldx localVariable_putSprite_col
+putSprite_forlooph:
+		lda localVariable_putSprite_w
+		sta localVariable_putSprite_j
+		lda #0
+		sta localVariable_putSprite_i
+
+putSprite_forloopw:
+		ldy localVariable_putSprite_i
+break_here:
+		lda (screenmemory),y
+		ldy localVariable_putSprite_k
+		and (psClearPtr),y
+		ora (psDataPtr),y
+		ldy localVariable_putSprite_i
+		sta (screenmemory),y
+
+		txa
+		bmi putSprite_l2
+		ldy localVariable_putSprite_k
+		lda (psClearPtr),y
+		cmp #$FF
+		beq putSprite_l2
+		ldy localVariable_putSprite_i
+		txa
+		sta (psSpritePtr),y
+putSprite_l2:
+		inc localVariable_putSprite_k
+		inc localVariable_putSprite_i
+		dec localVariable_putSprite_j
+		bne putSprite_forloopw
+		
+		lda screenmemory
+		clc
+		adc #40
+		sta screenmemory
+		sta psSpritePtr
+		bcc putSprite_l3
+		inc screenmemory+1
+		inc psSpritePtr+1
+putSprite_l3:
+		dec localVariable_putSprite_h
+		bne putSprite_forlooph
+	");
+end;
+
+
+procedure putSpriteClip(y: byte, x:byte, spriteData:integer, screenHi: byte, colorHi: byte, col:byte);
+var
+	w,h,i,j,k,xx,yy: byte;
+begin
+	psSpritePtr := spriteData;
+	asm("
+		lda localVariable_putSpriteClip_x
+		ror
+		lda localVariable_putSpriteClip_y
+		rol
+		and #$03
+		asl
+		asl
+		tay
+		lda (psSpritePtr),y
+		sta psDataPtr
+		iny
+		lda (psSpritePtr),y
+		sta psDataPtr+1
+		iny
+		lda (psSpritePtr),y
+		sta psClearPtr
+		iny
+		lda (psSpritePtr),y
+		sta psClearPtr+1
+	");
+	w := psSpritePtr[16];
+	h := psSpritePtr[17];
+	k := 0;
+
+	asm("
+		lda localVariable_putSpriteClip_y
+		pha
+		lsr
+		sta localVariable_putSpriteClip_yy
+		pla
+		bpl putSpriteClip_y_1
+		eor #$FF
+		clc
+		adc #02
+		lsr
+		tax
+
+		lda #00
+		sec
+		sbc screenRowLo,x
+		sta screenmemory
+		lda localVariable_putSpriteClip_screenHi
+		sbc screenRowHi,x
+		sta screenmemory+1
+
+		lda localVariable_putSpriteClip_yy
+		ora #$80
+		sta localVariable_putSpriteClip_yy
+		bmi putSpriteClip_y_3
+putSpriteClip_y_1:
+		cmp #50
+		bmi putSpriteClip_y_2
+		rts
+putSpriteClip_y_2:
+		lsr
+		tax
+
+		lda 	screenRowLo,x
+		sta screenmemory
+		lda screenRowHi,x
+		clc
+		adc localVariable_putSpriteClip_screenHi
+		sta screenmemory+1
+putSpriteClip_y_3:
+	");
+
+	asm("
+		lda localVariable_putSpriteClip_x
+		pha
+		lsr
+		sta localVariable_putSpriteClip_xx
+		pla
+		bpl putSpriteClip_x_1
+		eor #$FF
+		clc
+		adc #02
+		lsr
+		sta localVariable_putSpriteClip_y // reusing y variable, as it is not needed later (x is needed)
+		lda screenmemory
+		sec
+		sbc localVariable_putSpriteClip_y
+		sta screenmemory
+		sta psSpritePtr
+		bcs putSpriteClip_x_0
+		dec screenmemory+1
+putSpriteClip_x_0:
+		lda localVariable_putSpriteClip_xx
+		ora #$80
+		sta localVariable_putSpriteClip_x
+		bmi putSpriteClip_x_3
+putSpriteClip_x_1:
+		cmp #80
+		bmi putSpriteClip_x_2
+		rts
+putSpriteClip_x_2:
+		ldx localVariable_putSpriteClip_xx
+		stx localVariable_putSpriteClip_x
+		lsr
+		clc
+		adc 	screenmemory
+		sta screenmemory
+		sta psSpritePtr
+		bcc putSpriteClip_x_3
+		inc screenmemory+1
+putSpriteClip_x_3:
+		lda localVariable_putSpriteClip_colorHi
+		sec
+		sbc localVariable_putSpriteClip_screenHi
+		clc
+		adc screenmemory+1
+		sta psSpritePtr+1
+	");
+
+	asm("
+		ldx localVariable_putSpriteClip_col
+putSpriteClip_forlooph:
+		lda localVariable_putSpriteClip_yy
+		bmi putSpriteClip_l4
+		cmp #25
+		bpl putSpriteClip_l4
+
+		lda localVariable_putSpriteClip_w
+		sta localVariable_putSpriteClip_j
+		lda localVariable_putSpriteClip_x
+		sta localVariable_putSpriteClip_xx
+		lda #0
+		sta localVariable_putSpriteClip_i
+
+putSpriteClip_forloopw:
+		lda localVariable_putSpriteClip_xx
+		bmi putSpriteClip_l2
+		cmp #40
+		bpl putSpriteClip_l2
+		
+		ldy localVariable_putSpriteClip_i
+		lda (screenmemory),y
+		ldy localVariable_putSpriteClip_k
+		and (psClearPtr),y
+		ora (psDataPtr),y
+		ldy localVariable_putSpriteClip_i
+		sta (screenmemory),y
+
+		txa
+		bmi putSpriteClip_l2
+		ldy localVariable_putSpriteClip_k
+		lda (psClearPtr),y
+		cmp #$FF
+		beq putSpriteClip_l2
+		ldy localVariable_putSpriteClip_i
+		txa
+		sta (psSpritePtr),y
+putSpriteClip_l2:
+		inc localVariable_putSpriteClip_k
+		inc localVariable_putSpriteClip_i
+		inc localVariable_putSpriteClip_xx
+		dec localVariable_putSpriteClip_j
+		bne putSpriteClip_forloopw
+		beq putSpriteClip_l5
+putSpriteClip_l4:
+		lda localVariable_putSpriteClip_w
+		clc
+		adc localVariable_putSpriteClip_k
+		sta localVariable_putSpriteClip_k
+putSpriteClip_l5:
+		lda screenmemory
+		clc
+		adc #40
+		sta screenmemory
+		sta psSpritePtr
+		bcc putSpriteClip_l3
+		inc screenmemory+1
+		inc psSpritePtr+1
+putSpriteClip_l3:
+		inc localVariable_putSpriteClip_yy
+		dec localVariable_putSpriteClip_h
+		bne putSpriteClip_forlooph
+	");
+end;
+
+procedure fixSpritePointers(addr: integer);
+begin
+	asm("
+		lda localVariable_fixSpritePointers_addr
+		sta screenmemory
+		lda localVariable_fixSpritePointers_addr+1
+		sta screenmemory+1
+		ldx #08
+		ldy #00
+fixSpritePointers_l1:
+		lda (screenmemory),y
+		clc
+		adc localVariable_fixSpritePointers_addr
+		sta (screenmemory),y
+		iny
+		lda (screenmemory),y
+		adc localVariable_fixSpritePointers_addr+1
+		sta (screenmemory),y
+		iny
+		dex
+		bne fixSpritePointers_l1
+	");
+end;
+
+procedure nops();
+begin
+	asm("
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+	");
+end;
+
+interrupt Raster2();
+interrupt Raster3();
+
+interrupt Raster1();
+begin
+	StartIRQ(useKernal);
+	// Turn on background color only when SID file is playing
+	nops();
+	screen_bg_col:=BLUE;
+	screen_fg_col:=BLUE;
+	call(sidfile_1_play);
+	if generateScreenCnt > 0 then begin
+		generateScreenCnt := generateScreenCnt - 1;
+	end else begin
+		generateScreenCnt := generateScreenMax;
+		generateScreen := 1;
+	end;
+	asm("
+		lda #$7F
+		sta $DC00
+		lda $DC01
+		and #$10
+		bne NoSpace
+		lda #01
+		ora spacePressed
+		sta spacePressed
+NoSpace:		
+	");
+	// Turn off (black) backgrund color. We can now observe how much raster time has been used!
+	//screen_bg_col:=black;
+	RasterIRQ(Raster2(), 149, useKernal);
+	CloseIRQ();
+end;
+
+interrupt Raster2();
+begin
+	StartIRQ(useKernal);
+	// Turn on background color only when SID file is playing
+	nops();
+	screen_bg_col:=BROWN;
+	screen_fg_col:=BROWN;
+	if switchScreen <> 0 then begin
+		CopyHalfScreen(SCRCOLBUF_ADR, SCREEN_COL_LOC, 12, 0, 0);
+		asm("
+			lda SCRCOLBUF_ADR + 479
+			sta SCREEN_COL_LOC + 479
+		");
+		switchScreen2 := 1;
+		// just for debug
+		//screen_bg_col:=BLACK;
+	end;
+	RasterIRQ(Raster3(), 250, useKernal);
+	CloseIRQ();
+end;
+
+interrupt Raster3();
+begin
+	StartIRQ(useKernal);
+	nops();
+	screen_bg_col:=BLACK;
+	screen_fg_col:=BLACK;
+	if switchScreen2 <> 0 then begin
+		CopyHalfScreen(SCRCOLBUF_ADR+12*40, SCREEN_COL_LOC+12*40, 5, 0, 0);
+		asm("
+			lda SCRCOLBUF_ADR + 679
+			sta SCREEN_COL_LOC + 679
+		");
+		// just for debug
+		//screen_bg_col:=BLACK;
+		if switchScreen > 1 then
+			SetCharsetAndScreenLocation(FONT_ADR, SCRCHR2_ADR)
+		else
+			SetCharsetAndScreenLocation(FONT_ADR, SCRCHR1_ADR);
+		switchScreen := 0;
+		switchScreen2 := 0;
+	end;
+	RasterIRQ(Raster1(), 49, useKernal);
+	CloseIRQ();
+end;
+
+@startblock $3EE4 "MAINCODE"
+procedure SpriteDemo4();
+begin
+	tree1X := 240;
+    tree1Y := 15;
+	tree1DX := 1;
+	tree1Dist := 20;
+	tree1Num := 5;
+	tree1Max := 4;
+	tree1MaxAdd := 0;
+	tree1Type := 0;
+	tree1TypeStart := 0;
+
+	tree2X := 250;
+    tree2Y := 25;
+	tree2DX := 2;
+	tree2Dist := 30;
+	tree2Num := 5;
+	tree2Max := 24;
+	tree2MaxAdd := 0;
+	
+	lettersX := 0;
+	lettersY := 24;
+	lettersDX := $FF;
+	lettersDist := 6;
+	lettersNum := 15;
+	
+	cloudX := 215;
+	
+	asm("
+		lda #BLACK
+		ldx #00
+groundcol:
+		sta SCRCOLBUF_ADR + $200,x
+		sta SCRCOLBUF_ADR + $2E8,x
+		inx
+		bne groundcol
+	");
+
+	generalPtr := #message;
+	
+	while True do begin
+		if spacePressed = 1 then begin
+/*			setmemoryconfig(1,1,0);
+			asm("
+				jmp 64738
+			");*/
+			generalPtr := #messageEnd;
+			spacePressed := $FF;
+			tree1MaxAdd := 0;
+			tree2MaxAdd := 0;
+			lettersDX := $FD;
+			generateScreenMax := 2;
+		end;
+
+		while switchScreen <> 0 do begin
+		end;
+		while generateScreen = 0 do begin
+		end;
+		generateScreen := 0;
+		if drawScreenHi = SCRCHR1_HI then begin
+//			CopyFullscreen(SCRCHRBUF_ADR, SCRCHR1_ADR)
+			CopyHalfScreen(SCRCHRBUF_ADR, SCRCHR1_ADR, 12, 0, 0);
+			CopyHalfScreen(SCRCHRBUF_ADR+12*40, SCRCHR1_ADR+12*40, 10, 0, 0);
+			asm("
+				lda SCRCHRBUF_ADR + 879
+				sta SCRCHR1_ADR + 879
+			");
+//			ClearScreen(0, SCRCHR1_ADR)
+		end else begin
+//			CopyFullscreen(SCRCHRBUF_ADR, SCRCHR2_ADR);
+			CopyHalfScreen(SCRCHRBUF_ADR, SCRCHR2_ADR, 12, 0, 0);
+			CopyHalfScreen(SCRCHRBUF_ADR+12*40, SCRCHR2_ADR+12*40, 10, 0, 0);
+			asm("
+				lda SCRCHRBUF_ADR + 879
+				sta SCRCHR2_ADR + 879
+			");
+//			ClearScreen(0, SCRCHR2_ADR);
+		end;
+		asm("
+			lda #YELLOW
+			ldx #00
+yellowsun:
+			sta SCRCOLBUF_ADR,x
+			sta SCRCOLBUF_ADR + 256,x
+			inx
+			bne yellowsun
+		");
+
+		putSpriteClip(0, cloudX, #CLOUD_ADR, drawScreenHi, SCRCOLBUF_HI , WHITE);
+		cloudX := cloudX - 2;
+		if ((cloudX < 230) and (cloudX > 220)) then cloudX := 91;
+
+		
+		if tree1MaxAdd <> 0 then begin
+			i := tree1X;
+			tree1Type := tree1TypeStart;
+			tree1X := tree1X + tree1DX;
+			while ((i < tree1Max) or (i>230)) do begin
+				if (i < 60) then begin
+					if tree1Type = 0 then
+						putSprite(tree1Y, i, #TREE1_ADR, drawScreenHi, SCRCOLBUF_HI , GREEN)
+					else
+						putSprite(tree1Y, i, #TREE2_ADR, drawScreenHi, SCRCOLBUF_HI , ORANGE);
+				end else begin
+					if tree1Type = 0 then
+						putSpriteClip(tree1Y, i, #TREE1_ADR, drawScreenHi, SCRCOLBUF_HI , GREEN)
+					else
+						putSpriteClip(tree1Y, i, #TREE2_ADR, drawScreenHi, SCRCOLBUF_HI , ORANGE);
+				end;
+				i := i + tree1Dist;
+				tree1Type := (tree1Type + 1) & $01;
+			end;
+			if tree1X = 4 then begin
+				tree1X := 240;
+				tree1Max := tree1Max + tree1MaxAdd;
+				if tree1Max > 80 then tree1Max := 80;
+				tree1TypeStart := (tree1TypeStart + 1) & $01;
+			end;
+		end;
+
+		i := lettersX;
+		messageLetter := generalPtr[0];
+		if messageLetter & $80 then begin
+			if messageLetter = $FE then begin
+				tree1MaxAdd := tree1Dist;
+			end
+			else if messageLetter = $FD then begin
+				tree2MaxAdd := tree2Dist;
+			end
+			else if messageLetter = $F1 then begin
+				setmemoryconfig(1,1,0);
+				asm("
+					jmp 64738
+				");
+			end;
+			generalPtr += 1;
+		end;
+		messageCnt := 0;
+		letterYCnt := letterYPos;
+		while ((i < 80) or (i>250)) do begin
+			messageLetter := generalPtr[messageCnt];
+			if messageLetter & $80 then begin
+				messageCnt += 1;
+				messageLetter := generalPtr[messageCnt];
+			end;
+			if messageLetter <> 100 then begin
+				asm("
+					ldx messageLetter
+					lda letterAdrLo,x
+					sta letterAddr
+					lda letterAdrHi,x
+					sta letterAddr+1
+				");
+				if (i < 60) then
+					putSprite(letterYVal[letterYCnt], i, letterAddr, drawScreenHi, SCRCOLBUF_HI , YELLOW)
+				else
+					putSpriteClip(letterYVal[letterYCnt], i, letterAddr, drawScreenHi, SCRCOLBUF_HI , YELLOW);
+			end;
+			i := i + lettersDist;
+			messageCnt := messageCnt + 1;
+			letterYCnt := letterYCnt + 1;
+			if letterYCnt >= 10 then letterYCnt := 0;
+		end;
+		lettersX := lettersX + lettersDX;
+		if ((lettersX <= 250) and (lettersX >= 240)) then begin
+			lettersX := 0;
+			generalPtr += 1;
+			if generalPtr[15] = $FF then generalPtr := #message;
+		end;
+		letterYPos := letterYPos + 1;
+		if letterYPos >= 10 then letterYPos := 0;
+
+		if tree2MaxAdd <> 0 then begin
+			i := tree2X;
+			tree2X := tree2X + tree2DX;
+			while ((i < tree2Max) or (i>230)) do begin
+				if (i < 60) then
+					putSprite(tree2Y, i, #TREE2_ADR, drawScreenHi, SCRCOLBUF_HI , BLACK)
+				else
+					putSpriteClip(tree2Y, i, #TREE2_ADR, drawScreenHi, SCRCOLBUF_HI , BLACK);
+				i := i + tree2Dist;
+			end;
+			if tree2X = 24 then begin
+				tree2X := 250;
+				tree2Max := tree2Max + tree2MaxAdd;
+				if tree2Max > 80 then tree2Max := 80;
+			end;
+		end;
+		
+		if drawScreenHi = SCRCHR1_HI then begin
+			drawScreenHi := SCRCHR2_HI;
+			switchScreen := 1;
+		end else begin
+			drawScreenHi := SCRCHR1_HI;
+			switchScreen := 2;
+		end;
+	end;
+end;
+
+procedure FixMessage();
+begin
+	messageLetter := generalPtr[0];
+	while messageLetter <> $FF do begin
+		if messageLetter >= 128 then messageLetter := messageLetter
+		else if messageLetter >= 65 then messageLetter := messageLetter - 65
+		else if messageLetter >= 48 then messageLetter := messageLetter - 22
+		else if messageLetter = 32 then messageLetter := 100;
+		generalPtr[0] := messageLetter;
+		generalPtr += 1;
+		messageLetter := generalPtr[0];
+	end;
+end;
+
+
+begin
+	switchScreen := 0;
+	definescreen();
+
+	InitSid(sidfile_1_init);
+	setmemoryconfig(1,useKernal,0);
+	StartRasterChain(Raster1(),49,useKernal);
+
+//	clearscreen($00, SCRCHR2_ADR);
+	ClearScreen($00, SCREEN_COL_LOC);
+	CopyFullscreen(SCRCHRBUF_ADR, SCRCHR1_ADR);
+	CopyFullscreen(SCRCHRBUF_ADR, SCRCHR2_ADR);
+
+//	ClearScreen($00, SCRCOLBUF_ADR);
+	SetCharsetAndScreenLocation(FONT_ADR, SCRCHR2_ADR);
+	
+//	clearscreen(WHITE, SCRCOLBUF_ADR);
+	
+	// fix sprite pointers
+	generalPtr := #LETTERS_ADR;
+	for	i:= 0 to 36 do begin
+		fixSpritePointers(generalPtr);
+		generalPtr += 90;
+	end;
+	fixSpritePointers(#TREE1_ADR);
+	fixSpritePointers(#TREE2_ADR);
+	fixSpritePointers(#CLOUD_ADR);
+	generalPtr := #messageEnd;
+	FixMessage();
+	generalPtr := #message;
+	FixMessage();
+	SpriteDemo4();
+end.
+@endblock
