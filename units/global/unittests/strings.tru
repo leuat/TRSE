@@ -21,9 +21,9 @@ end;
 procedure Test3();
 begin
 	Vars::p1 := $4000;
-	Vars::p1[4] :="A";
+	Vars::p1[4] :='A';
 	Vars::text := "T1:";
-	if (Vars::p1[4]=1) then Common::PASS() else Common::FAIL();
+	if (Vars::p1[4]='A') then Common::PASS() else Common::FAIL();
 end;
 
 @endif
@@ -40,8 +40,27 @@ procedure TestLst2();
 begin
 	Vars::text := "T5:";
 	Vars::p1 := Vars::strLst[2];
-	if (Vars::p1[2]=75) then Common::PASS() else Common::FAIL();
+	if (Vars::p1[1]=75) then Common::PASS() else Common::FAIL();
 end;
+
+// Copy string directly to list
+procedure TestLst3();
+begin
+	Vars::text := "T6:";
+	asm(";here2");
+	Vars::strLst[2]:="DE";
+	Vars::p1 := Vars::strLst[2];
+	if (Vars::p1[1]='E') then Common::PASS() else Common::FAIL();
+end;
+
+// Setting a pointer to string
+procedure TestLst4();
+begin
+	Vars::text := "T7:";
+	Vars::p1 := "MY";
+	if (Vars::p1[1]='Y') then Common::PASS() else Common::FAIL();
+end;
+
 
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
@@ -56,6 +75,9 @@ begin
 	Test3();
 	@endif
 	TestLst1();
+	TestLst2();
+	TestLst3();
+	TestLst4();
 	
 	Common::WaitABit();
 end;

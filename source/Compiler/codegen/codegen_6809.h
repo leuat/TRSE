@@ -57,7 +57,7 @@ public:
 
 
 
-    void LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType);
+    void LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType) override;
 
 
     QString getJmp(bool isOffPage) override {

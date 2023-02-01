@@ -534,8 +534,14 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
     }
     // ****** STRINGS
-    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
+//    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
         as->Comment("Assigning a string : " + getValue(v));
+//        qDebug() << v->getValue(as) <<v->getTypeText(as) << TokenType::getType(v->getArrayType(as)) << TokenType::getType(Syntax::s.m_currentSystem->getSystemPointerArrayType());
+        if (v->hasArrayIndex() && v->getArrayType(as)!=Syntax::s.m_currentSystem->getSystemPointerArrayType())
+            ErrorHandler::e.Error("Can only assign strings to arrays of pointers (such as string lists)",v->m_op.m_lineNumber);
+        if (!v->hasArrayIndex() && (!(v->isPointer(as) || v->getType(as)==TokenType::STRING)))
+            ErrorHandler::e.Error("Can only assign strings to pointers, strings or arrays of strings",v->m_op.m_lineNumber);
         AssignString(node);
         return;
     }

@@ -103,6 +103,8 @@ public:
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
     QString LoadAddress(QSharedPointer<Node> n) override;
+    void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType);
+
     void LoadInteger(QSharedPointer<Node> n);
     void StoreAddress(QSharedPointer<Node> n);
     QString getHL();

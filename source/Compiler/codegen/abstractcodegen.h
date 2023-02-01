@@ -86,6 +86,8 @@ public:
     virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
     virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
 
+
+    virtual void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType) {}
     virtual void StoreVariable(QSharedPointer<NodeVar> n) = 0;
     virtual void LoadVariable(QSharedPointer<NodeVar> n) = 0;
     virtual void LoadVariable(QSharedPointer<Node> n) = 0;
