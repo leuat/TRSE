@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -1203,122 +1203,7 @@ hr { height: 1px; border-width: 0; }
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
-             <item row="0" column="0">
-              <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
-               <item row="5" column="0">
-                <widget class="QLabel" name="label_48">
-                 <property name="text">
-                  <string>Name of d64 disk</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="cmbOutputType">
-                 <item>
-                  <property name="text">
-                   <string>prg</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>d64</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>crt</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="text">
-                  <string>Main RAS file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="cmbPawInclude"/>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="cmbMainRas"/>
-               </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="label_49">
-                 <property name="text">
-                  <string>Use Vice's c1541 instead of CC1541</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_9">
-                 <property name="text">
-                  <string>PAW file for .d64 include files</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1">
-                <widget class="QComboBox" name="cmbDirArt"/>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_24">
-                 <property name="text">
-                  <string>Disk 2 d64 Paw file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QComboBox" name="cmbPawInclude2"/>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_47">
-                 <property name="text">
-                  <string>Directory art .flf file</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Project output type</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="1">
-                <widget class="QCheckBox" name="chkUseViceC1541">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="leDiskname"/>
-               </item>
-               <item row="6" column="1">
-                <widget class="QComboBox" name="cmbDiskType">
-                 <item>
-                  <property name="text">
-                   <string>d64</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>d81</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="label_50">
-                 <property name="text">
-                  <string>Disk type</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QGroupBox" name="groupBox_2">
                <property name="title">
                 <string>Cartridge settings</string>
@@ -1326,13 +1211,6 @@ hr { height: 1px; border-width: 0; }
                <layout class="QGridLayout" name="gridLayout_26">
                 <item row="0" column="0">
                  <layout class="QGridLayout" name="gridLayout_5">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_10">
-                    <property name="text">
-                     <string>Cartridge border color:</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="1" column="1">
                    <widget class="QLineEdit" name="leBackgroundColor"/>
                   </item>
@@ -1343,6 +1221,13 @@ hr { height: 1px; border-width: 0; }
                    <widget class="QLabel" name="label_17">
                     <property name="text">
                      <string>Cartridge background color</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_10">
+                    <property name="text">
+                     <string>Cartridge border color:</string>
                     </property>
                    </widget>
                   </item>
@@ -1365,7 +1250,47 @@ hr { height: 1px; border-width: 0; }
                </layout>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,0">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Project output type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Main RAS file</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="cmbOutputType">
+                 <item>
+                  <property name="text">
+                   <string>prg</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>d64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>crt</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbMainRas"/>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="0">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -1377,6 +1302,49 @@ hr { height: 1px; border-width: 0; }
                 </size>
                </property>
               </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_6">
+               <property name="title">
+                <string>Disk settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_38" rowstretch="3,0,0,0,0,0,0,0,0" columnstretch="6,0,0">
+                <item row="5" column="0">
+                 <layout class="QGridLayout" name="grdDisks"/>
+                </item>
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_39">
+                  <item row="0" column="1">
+                   <widget class="QPushButton" name="pushButton_3">
+                    <property name="text">
+                     <string>Delete last disk</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QPushButton" name="pushButton_2">
+                    <property name="text">
+                     <string>New disk</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <spacer name="horizontalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>

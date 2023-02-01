@@ -73,6 +73,7 @@ private slots:
     void on_pushButton_clicked();
     void UpdateSystem();
 
+
     void on_btnNESLoadCharFile_2_clicked();
 
     void on_btnNESLoadCharFile_clicked();
@@ -82,6 +83,10 @@ private slots:
     void on_cmbSystem_currentIndexChanged(int index);
 
     void on_chkIgnoreBasic_clicked(bool checked);
+    void CreateCombobox(QStringList lst, QString name,int r, int col);
+    void on_pushButton_2_clicked();
+    void PopulateDiskList();
+    void on_pushButton_3_clicked();
 
 private:
     void FillFromIni();

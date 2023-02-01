@@ -96,6 +96,27 @@ public:
     }
 
     void VerifyDefaults();
+    void ConvertFromOldDiskSystem()
+    {
+     //   cc1541_disk_type
+       //  d64name
+    //    dirart_flf_file
+    //    d64_paw_file
+        if (m_ini->contains("d64_paw_file") && m_ini->getString("d64_paw_file")!="none") {
+            // Convert!
+            m_ini->setString("disk1_paw",m_ini->getString("d64_paw_file"));
+            m_ini->setString("disk1_name",m_ini->getString("d64name"));
+            m_ini->setString("disk1_type",m_ini->getString("cc1541_disk_type"));
+            m_ini->setString("disk1_flf",m_ini->getString("dirart_flf_file"));
+
+            m_ini->remove("d64_paw_file_disk2");
+            m_ini->remove("d64name");
+            m_ini->remove("dirart_flf_file");
+            m_ini->remove("d64_paw_file");
+
+        }
+    }
+
 
 
     void Close() {

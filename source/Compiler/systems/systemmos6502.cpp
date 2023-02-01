@@ -200,24 +200,14 @@ BLK5 = $A000-$BFFF
         o.close();
 
     }
-
-    if (m_projectIni->getString("output_type")=="d64") {
-/*        if (!QFile::exists(m_settingsIni->getString("c1541"))) {
-            //Messages::messages.DisplayMessage(Messages::messages.NO_C1541);
-            text=text + "<br><font color=\"#FF6040\">link to c1541 not set up in the TRSE settings panel.</font><br>";
-            m_buildSuccess = false;
+    int disk = 1;
+    if (m_projectIni->getString("output_type")=="d64")
+    while (m_projectIni->contains("disk"+QString::number(disk))+"_paw") {
+        QString d = "disk"+QString::number(disk);;
+        if (!CreateDiskInternal(currentDir, d,filename, disk==1,output))
+            text+=output;
             return;
-        }*/
-        if (m_projectIni->getdouble("use_vice_c1541")!=1) {
-            CreateDiskInternal(currentDir, filename, "d64_paw_file", true,output,m_projectIni->getString("d64name"));
-            CreateDiskInternal(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output,m_projectIni->getString("d64name"));
-        }
-        else {
-            CreateDiskC1541(currentDir, filename, "d64_paw_file", true,output);
-            CreateDiskC1541(currentDir,filename+"_side2", "d64_paw_file_disk2",false,output);
-
-        }
-
+        disk+=1;
     }
 
 
@@ -231,7 +221,7 @@ bool SystemMOS6502::VerifyMachineCodeZP(QString fname)
     return true;
 }
 
-// OBSOLETE
+/*// OBSOLETE
 void SystemMOS6502::CreateDiskC1541(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text)
 {
     QString f = filename.split("/").last();
@@ -260,60 +250,58 @@ void SystemMOS6502::CreateDiskC1541(QString currentDir, QString filename, QStrin
     }
 
 }
-
-void SystemMOS6502::CreateDiskInternal(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text, QString diskName)
+*/
+bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text)
 {
     QString f = filename.split("/").last();
     QStringList d64Params = QStringList();
 
 
-    QString type = m_projectIni->getString("cc1541_disk_type");
+    QString type = m_projectIni->getString(disk+"_type");
 
     if (QFile::exists(filename+"."+type))
         QFile::remove(filename+"."+type);
 
 
 
-    QStringList shadowDir = QStringList()<<"-d" <<"19";
+//    QStringList shadowDir = QStringList()<<"-d" <<"19";
     // Create a disk
 
-    QStringList cd64;
-    cd64<<"cc1541";
-    d64Params <<"cc1541";
+//    QStringList cd64;
+/*    cd64<<"cc1541";
     cd64 << "-n" << diskName <<shadowDir;
-    cd64 << filename+"."+type;
+    cd64 << filename+"."+type;*/
     // call
-//    cc1541(cd64.size(), Util::StringListToChar(cd64));
+    //    cc1541(cd64.size(), Util::StringListToChar(cd64));
 
 
     // Start building files...
-    d64Params  <<"-d"<<"19" <<"-n" << diskName << shadowDir;
-
+//    qDebug() << m_projectIni->getString(disk+"_name");
+    d64Params  <<"cc1541"<<"-d"<<"19" <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
     if (addPrg)
         d64Params << "-f"<<f << "-w"<<filename+".prg";
 
 
-    if (m_projectIni->getString(iniData)!="none") {
-        if (!BuildDiskFilesCC1541(currentDir, d64Params,iniData, text))
-        {
-            text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 disk.. please make sure that all the files specified in "+filename+" exist!<br>";
-            return;
-        }
-        d64Params<<filename+"."+type;
-        qDebug() << d64Params;
-        cc1541(d64Params.size(), Util::StringListToChar(d64Params));
-        std::cout << stdout;
-        std::cout << stderr;
+    if (!BuildDiskFilesCC1541(currentDir, d64Params,m_projectIni->getString(disk+"_paw"), text))
+    {
+        text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 "+disk+".. please make sure that all the files specified in "+filename+" exist!<br>";
+        return false;
     }
+    d64Params<<filename+"_"+disk+"."+type;
+//    qDebug() << d64Params;
+    cc1541(d64Params.size(), Util::StringListToChar(d64Params));
+    std::cout << stdout;
+    std::cout << stderr;
+
+
 
     if (QFile::exists(filename+"."+type)) {
-//        qDebug() << "Applying dir art to " +filename;
-
-        QString type = m_projectIni->getString("cc1541_disk_type");
-        ApplyDirArt(currentDir,m_projectIni->getString("dirart_flf_file"),filename+"."+type, text);
+        ApplyDirArt(currentDir,m_projectIni->getString(disk+"_flf"),filename+"."+type, text);
     }
-
+    return true;
 }
+
+
 
 bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, QString iniData)
 {
@@ -387,10 +375,9 @@ bool SystemMOS6502::BuildDiskFiles(QString currentDir, QStringList &d64Params, Q
 
 }
 
-bool SystemMOS6502::BuildDiskFilesCC1541(QString currentDir, QStringList &d64Params, QString iniData, QString& text)
+bool SystemMOS6502::BuildDiskFilesCC1541(QString currentDir, QStringList &d64Params, QString pawFile, QString& text)
 {
 
-    QString pawFile = m_projectIni->getString(iniData);
     CIniFile paw;
     paw.Load(currentDir + "/"+pawFile);
     QStringList data = paw.getStringList("data");
@@ -404,7 +391,6 @@ bool SystemMOS6502::BuildDiskFilesCC1541(QString currentDir, QStringList &d64Par
 
     for (int i=0;i<count;i++) {
         QString orgFileName = data[3*i+1];
-
         bool isCrunched = false;
         if (i<data_tc.count())
             isCrunched = data_tc[i]=="1";
@@ -530,10 +516,11 @@ void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString deb
         params << "-autostartprgmode" << "1";
     }
     auto type=m_projectIni->getString("output_type");
+    qDebug() << type;
     if (type!="d64")
         params << filename+"."+type;
     else
-        params << filename+"."+m_projectIni->getString("cc1541_disk_type");
+        params << filename+"_disk1."+m_projectIni->getString("disk1_type");
 
 }
 

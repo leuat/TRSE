@@ -2542,6 +2542,8 @@ void MainWindow::on_btnBuildAll_clicked()
 }
 
 void TRSEProject::VerifyDefaults() {
+    ConvertFromOldDiskSystem();
+
     if (!m_ini->contains("zeropages"))
         m_ini->setStringList("zeropages", Asm6502::m_defaultZeroPointers.split(","));
 
@@ -2571,9 +2573,6 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("zeropage_decrunch4"))
         m_ini->setString("zeropage_decrunch4","$4B");
 
-    if (!m_ini->contains("cc1541_disk_type"))
-        m_ini->setString("cc1541_disk_type","d64");
-
     if (!m_ini->contains("pascal_settings_use_local_variables"))
         m_ini->setFloat("pascal_settings_use_local_variables", 1);
 
@@ -2582,12 +2581,6 @@ void TRSEProject::VerifyDefaults() {
 
     if (!m_ini->contains("main_ras_file"))
         m_ini->setString("main_ras_file", "none");
-
-    if (!m_ini->contains("dirart_flf_file"))
-        m_ini->setString("dirart_flf_file", "none");
-
-    if (!m_ini->contains("d64name"))
-        m_ini->setString("d64name", "main");
 
 
     if (!m_ini->contains("zeropage_internal1"))
