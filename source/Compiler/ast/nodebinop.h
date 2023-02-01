@@ -1,3 +1,4 @@
+asm(";here");
 /*
  * Turbo Rascal Syntax error, “;” expected but “BEGIN” (TRSE, Turbo Rascal SE)
  * 8 bit software development IDE for the Commodore 64
@@ -99,6 +100,7 @@ public:
     QString getValue8bit(Assembler* as, int isHi) override;
 
     TokenType::Type getType(Assembler *as) override;
+    QString getTypeText(Assembler* as) override;
 
     bool isPure() override;
 

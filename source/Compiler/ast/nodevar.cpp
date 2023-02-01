@@ -209,6 +209,7 @@ bool NodeVar::isLong(Assembler *as) {
 }
 bool NodeVar::isByte(Assembler *as) {
     return getType(as)==TokenType::BYTE  && m_expr==nullptr;
+//    return getType(as)==TokenType::BYTE  || getArrayType(as)==TokenType::BYTE;
 }
 
 bool NodeVar::isStringList(Assembler *as)

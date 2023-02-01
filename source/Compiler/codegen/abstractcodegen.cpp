@@ -487,13 +487,24 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 */
     // Set force type for functions
-    if (v->isByte(as))
+    if (v->isByte(as) || v->getArrayType(as)==TokenType::BYTE) {
+//        as->Comment("SETTING BYTE CAST TYPE");
         node->m_right->setCastType(TokenType::BYTE);
-    if (v->isWord(as))
+    }
+    if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
         node->m_right->setCastType(TokenType::INTEGER);
-    if (v->isLong(as))
+    if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
         node->m_right->setCastType(TokenType::LONG);
 
+/*    if (v->isByte(as)) {
+//        as->Comment("SETTING BYTE CAST TYPE");
+        node->m_right->setCastType(TokenType::BYTE);
+    }
+    if (v->isWord(as) )
+        node->m_right->setCastType(TokenType::INTEGER);
+    if (v->isLong(as) )
+        node->m_right->setCastType(TokenType::LONG);
+*/
 
     // ****** REGISTERS TO
     if (v->m_isRegister) {

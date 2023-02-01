@@ -136,6 +136,7 @@ void NodeBinOP::setForceType(TokenType::Type t) {
 void NodeBinOP::setCastType(TokenType::Type t) {
     m_left->setCastType(t);
     m_right->setCastType(t);
+//    m_castType = t;
 }
 
 bool NodeBinOP::containsPointer(Assembler *as)
@@ -236,6 +237,10 @@ TokenType::Type NodeBinOP::getType(Assembler *as) {
         return TokenType::INTEGER;
     return TokenType::BYTE;
 
+}
+
+QString NodeBinOP::getTypeText(Assembler *as) {
+    return m_left->getTypeText(as);
 }
 
 bool NodeBinOP::isPure() {

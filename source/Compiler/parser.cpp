@@ -4173,6 +4173,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
             for (QString& s: typeNode->m_data)
                 len+=s.length();
             s->m_size = len;
+            if (isProcedureParams)
+                ErrorHandler::e.Error("TRSE does not support string parameters. Please use a byte pointer parameter instead",m_currentToken.m_lineNumber);
         }
 
 
@@ -4277,6 +4279,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     //    return vars;
     var_decleratons.append(m_extraDecls); // Extra variables such as string lists
     m_extraDecls.clear();
+//    m_extraDeclsNames.clear();
     return var_decleratons;
 }
 
@@ -4426,6 +4429,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(var, type));
 
                     m_extraDecls.append(decl);
+                    SymbolTable::s_ignoreUnusedSymbolWarning.append(name);
                     cnt++;
                 }
                 // Ok : strings are added. Now create the actual pointer list!

@@ -70,6 +70,54 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
 
 
 
+void Methods6809::Modulo(Assembler *as)
+{
+    as->Comment("Modulo");
+
+/*
+    if (m_node->m_params[0]->isWord(as)) {
+//        InitDiv16x8()
+        //as->m_internalZP[0]
+        Node::flags["div16"] = true;
+        LoadVar(as,1);
+        as->Asm("sta "+as->m_internalZP[0]);
+        as->Asm("sty "+as->m_internalZP[0]+"+1");
+        LoadVar(as,0);
+        as->Asm("sta "+as->m_internalZP[1]);
+        if (m_node->m_params[1]->isWord(as)) {
+            as->Asm("sty "+as->m_internalZP[1]+"+1");
+
+        }
+        else {
+            as->Asm("ldy #0 ; force 16-bit");
+            as->Asm("sty "+as->m_internalZP[1]+"+1");
+        }
+        as->Asm("jsr divide16x8");
+        as->Asm("lda "+as->m_internalZP[2]);
+        as->Asm("ldy "+as->m_internalZP[2]+"+1");
+        return;
+    }
+    */
+    LoadVar(as,1);
+    as->Term();
+    QString val = as->StoreInTempVar("val");
+
+    LoadVar(as,0);
+    as->Term();
+//    QString mod = as->StoreInTempVar("modulo");
+//    as->Asm("sec");
+    QString lbl = as->NewLabel("modulo");
+    as->Label(lbl);
+    as->Asm("suba "+val);
+    as->Asm("bcs "+lbl);
+    as->Asm("adca "+val);
+
+
+    as->PopLabel("modulo");
+
+    as->PopTempVar();
+
+}
 
 
 
@@ -168,52 +216,6 @@ void Methods6809::Peek(Assembler* as)
 
 }
 
-void Methods6809::Modulo(Assembler *as)
-{
-    as->Comment("Modulo");
-
-    /*
-    if (m_node->m_params[0]->isWord(as)) {
-//        InitDiv16x8()
-        //as->m_internalZP[0]
-        Node::flags["div16"] = true;
-        LoadVar(as,1);
-        as->Asm("sta "+as->m_internalZP[0]);
-        as->Asm("sty "+as->m_internalZP[0]+"+1");
-        LoadVar(as,0);
-        as->Asm("sta "+as->m_internalZP[1]);
-        if (m_node->m_params[1]->isWord(as)) {
-            as->Asm("sty "+as->m_internalZP[1]+"+1");
-
-        }
-        else {
-            as->Asm("ldy #0 ; force 16-bit");
-            as->Asm("sty "+as->m_internalZP[1]+"+1");
-        }
-        as->Asm("jsr divide16x8");
-        as->Asm("lda "+as->m_internalZP[2]);
-        as->Asm("ldy "+as->m_internalZP[2]+"+1");
-        return;
-    }
-    */
-    LoadVar(as,1);
-    QString val = as->StoreInTempVar("val");
-
-    LoadVar(as,0);
-    //    QString mod = as->StoreInTempVar("modulo");
-    as->Asm("sec");
-    QString lbl = as->NewLabel("modulo");
-    as->Label(lbl);
-    as->Asm("sbc "+val);
-    as->Asm("bcs "+lbl);
-    as->Asm("adc "+val);
-
-
-    as->PopLabel("modulo");
-
-    as->PopTempVar();
-
-}
 
 void Methods6809::Modulo16(Assembler *as)
 {
@@ -522,52 +524,7 @@ void Methods6809::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         node = m_codeGen->m_inlineParameters[node->getValue(as)];
 */
 
-    QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
-    if (node->isPureNumericOrAddress() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
-        m_codeGen->Disable16bit();
-        as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
-        as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
-        m_codeGen->Enable16bit();
-        return;
-    }
-    bool disable16bit = true;
-    if (lda=="ldx" || lda=="ldy" || (node->getType(as)==TokenType::POINTER && nodevar->m_expr==nullptr) || reg!="")
-        disable16bit = true;
-
-
-
-    if (qSharedPointerDynamicCast<NodeVar>(node)!=nullptr ||
-        qSharedPointerDynamicCast<NodeNumber>(node)!=nullptr) {
-
-        if (disable16bit)
-            m_codeGen->Disable16bit();
-
-
-        as->ClearTerm();
-        if (lda=="")
-            as->Term("lda ");
-        else
-            as->Term(lda);
-
-
-        m_node->m_params[paramNo]->Accept(m_codeGen);
-        if (reg!="")
-            reg = "," + reg;
-
-        as->Term(reg, true);
-
-        if (nodevar!=nullptr)
-        if (node->getType(as)==TokenType::POINTER && nodevar->m_expr==nullptr) {
-            as->Asm("ldy " + node->getValue(as)+"+1");
-        }
-
-        if (disable16bit)
-            m_codeGen->Enable16bit();
-
-
-    }
-    else
-        m_node->m_params[paramNo]->Accept(m_codeGen);
+   m_node->m_params[paramNo]->Accept(m_codeGen);
 
 
 }

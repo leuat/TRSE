@@ -27,6 +27,7 @@ int SymbolTable::m_currentSid = 0;
 QString Symbol::s_currentProcedure = "";
 QMap<QString,int> SymbolTable::s_classSizes;
 int SymbolTable::pass = 0;
+QStringList SymbolTable::s_ignoreUnusedSymbolWarning;
 
 
 //QString SymbolTable::m_gPrefix = "";
@@ -471,7 +472,7 @@ QStringList SymbolTable::getUnusedVariables()
 {
     QStringList lst;
     for (QString s : m_symbols.keys()) {
-        if (!m_symbols[s]->isUsed)
+        if (!m_symbols[s]->isUsed && !s_ignoreUnusedSymbolWarning.contains(s))
             lst<<s;
     }
     return lst;

@@ -16,6 +16,7 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 
 void Compiler6809::Connect()
 {
+    m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
 
 

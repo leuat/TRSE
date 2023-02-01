@@ -78,7 +78,6 @@ public:
      *
     */
 
-    void EightBitDiv(QSharedPointer<Node> node);
     void EightBitMul(QSharedPointer<Node> node);
     void Mul16x8(QSharedPointer<Node> node);
     void Div16x8(QSharedPointer<Node> node);

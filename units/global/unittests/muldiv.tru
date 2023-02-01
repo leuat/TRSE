@@ -282,6 +282,59 @@ begin
 	
 end;
 
+procedure TRS80);
+begin
+	Common::Initialise("MULDIV TESTS");
+		// Mul and div
+	ByteMulByte01();
+	ByteMulBytePow202();
+	IntByteMul06();
+	IntMulPow07();
+	IntMulMix13();
+	// Z80 lacks int*int
+	IntMulInt14(); // Not implemented, fails
+	IntMulAdvancedMix15(); // fails
+	ByteMulAdvanced16();
+	
+	IntMulConst17();
+	
+	IntCombConst18();
+	
+	IntCombConst19();
+	
+	IntShift20();
+	IntShift21();
+	
+	ByteMulMul05();
+	
+	Array1();
+	
+
+	ByteDivBytePow203();
+	ByteDivByte04();/*
+	
+	IntDivByte08();
+	IntDivInt09();
+	IntDivPow210();
+	IntDivMix11();
+	IntDivMix12();
+	
+	IntMulAdvancedMix15();
+	
+	Shift0();
+	Shift1();
+	Shift2();
+	Shift4();
+//	@ifdef C64
+	Shift5();
+	Shift6();
+//	@endif
+*/
+	Common::WaitABit();
+
+	
+end;
+
 procedure Exec();
 begin
 	// initialise everything
@@ -332,7 +385,6 @@ begin
 	Shift5();
 	Shift6();
 //	@endif
-	
 	Common::WaitABit();
 
 end;

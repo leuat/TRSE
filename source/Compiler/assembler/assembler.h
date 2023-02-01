@@ -289,6 +289,7 @@ public:
     virtual void Number(QString n) {}
     virtual QString  String(QStringList s, bool term) { return "";}
     virtual void BinOP(TokenType::Type t, bool clearFlag=true){}
+    virtual void BinOP16(TokenType::Type t, bool clearFlag=true){}
  //   virtual void BinOP(TokenType::Type t, bool clearFlag=true){ BinOP(t,false,true);}
 //    virtual void Poke(bool start) = 0;
 //    virtual void Peek(bool start) {}

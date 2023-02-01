@@ -468,7 +468,7 @@ m; PlayVIC20Sid; VIC20; a
 # Math routines
 
 
-m; mod; Z80, GBZ80; i,b
+m; mod; Z80, GBZ80, M6809; i,b
 
 m; Atan2 ; X16,C64, MEGA65, PLUS4, C128, VIC20, PET,  NES , OK64, BBCM, ACORN, ATARI800 ; b,b,b,b
 m; Sqrt ; X16,C64, MEGA65, PLUS4, C128, VIC20, PET,  NES, OK64, BBCM, ACORN, ATARI800  ; ib

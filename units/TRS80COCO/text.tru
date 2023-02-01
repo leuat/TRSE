@@ -1,20 +1,21 @@
 Unit Text;
 @use "memory"
 var  
-   c: byte=0;
+   c,i: byte=0;
    x: byte=0;
    y: byte=0;
    x2: byte=0;
    y2: byte=0;
-   p: pointer;
-   t:integer;
+   p,p1: pointer;
+   t,num:integer;
    user_defined_char_initialized: byte=0;
-   	   
+   chars : string="0123456789ABCDEF";
+
    
    curx, cury : byte;
    sptr : pointer;
    tab32 : array[64] of integer = buildtable("i*32");
-   
+   text : string=("            ");
    /* ORIGINALLY FROM THE AMSTRAD CPC. NOT DONE! */
 
 /** Resets the text VDU.
@@ -78,6 +79,18 @@ begin
 	Memory::Fill($400+32*15,$20,32);	
 end;
 
+procedure itohexstring( num:global integer; p1: global ^byte);
+begin
+	i:=0;
+	p1[2]:=0;
+	i:=(num&$F);
+	p1[1]:=chars[i];
+	i:=(num>>4);
+	
+	p1[0]:=chars[i];
+end;
+
+
 // Prints char c at the current cursor position.
 // Control chars are obeyed not printed.
 procedure PutChar(c: global byte);
@@ -137,6 +150,16 @@ begin
 		cury:=15;
 	end;
 end;
+
+procedure PrintIntegerHex(t:global integer);
+begin
+	p:=#t;
+	itohexstring(p[0], #text);
+	itohexstring(p[1], #text+2);
+	Print(#text);
+	
+end;
+
 /*
 // Prints the string pointed to by p at the current cursor position.
 // Control chars are printed, not obeyed.
