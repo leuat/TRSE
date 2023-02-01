@@ -168,6 +168,8 @@ private:
     QVector<QString> m_lastKey;
     QVector<bool> m_lastIfdef;
 
+    QString m_keepPrefix; // prefix outside class definition
+    void DefineSymbol(QSharedPointer<Symbol> s, bool isRecord);
 
     QSharedPointer<Node> ManageClassProcedureCalls(QSharedPointer<Node> left);
     QVector<QSharedPointer<Node>> m_extraDecls;

@@ -3739,6 +3739,12 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     }
     QStringList flags = getFlags();
     Eat(TokenType::SEMI);
+    bool isForward = false;
+    if (m_currentToken.m_type == TokenType::FORWARD) {
+        isForward = true;
+        Eat(TokenType::FORWARD);
+        Eat(TokenType::SEMI);
+    }
     QSharedPointer<Node> block = nullptr;
     QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
     //    qDebug() << "Starting new procedure decl block with : "<< procName << procDecl->m_blockInfo.m_blockID;
@@ -3802,7 +3808,8 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 
 
     // For recursive procedures, it is vital that we forward declare the current procedure
-    block = Block(false, procName);
+    if (!isForward)
+        block = Block(false, procName);
     //        if (block==nullptr)
     //          qDebug() << "Procedure decl: " << procName;
     //decl.append(procDecl);

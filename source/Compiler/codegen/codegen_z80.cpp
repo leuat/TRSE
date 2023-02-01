@@ -1018,9 +1018,11 @@ void CodeGenZ80::StoreVariable(QSharedPointer<NodeVar> node)
         }
         else {
             as->Comment("Store to byte array");
-            as->Asm("push af");
+            if (!node->isPure())
+                as->Asm("push af");
             LoadIndex(node,TokenType::BYTE);
-            as->Asm("pop af");
+            if (!node->isPure())
+                as->Asm("pop af");
             as->Asm("ld [hl],a");
 
         }

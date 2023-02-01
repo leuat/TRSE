@@ -82,4 +82,5 @@ custom_system_ending = 0
 use_tripe = 0
 dosbox_cycles = 0
 cpu_x86_output = exe
+use_track_19 = 1
 open_files =, tut1.ras

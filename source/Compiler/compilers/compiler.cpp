@@ -110,8 +110,17 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         return false;
 
     // Map forwarded symbols
-    for (QString s: m_parser.m_symTab->m_forwardedVariables)
-        m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+    for (QString s: m_parser.m_symTab->m_forwardedVariables) {
+        /*m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+        if (m_assembler->m_symTab->m_forwardedSymbols[s]==nullptr) {
+            qDebug() << "UUURGH " +s;
+            qDebug() << m_assembler->m_symTab->m_forwardedVariables;
+            qDebug() << m_assembler->m_symTab->m_forwarded
+            ErrorHandler::e.Error("Compiler::116 forwarded symbol null"+s);
+        }
+        */
+    }
+    m_assembler->m_symTab->m_forwardedVariables = m_parser.m_symTab->m_forwardedVariables;
 
 //    m_assembler->m_symTab->m_forwardedSymbols = m_parser.m_symTab->m_forwardedSymbols;
     m_assembler->m_projectDir = project_dir;
