@@ -707,5 +707,6 @@
         <file>resources/code/videoton.asm</file>
         <file>resources/code/6809/mul16.asm</file>
         <file>resources/images/tutorials/bigpixelintro.png</file>
+        <file>resources/images/tutorials/soundtest.png</file>
     </qresource>
 </RCC>

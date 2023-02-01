@@ -1,0 +1,281 @@
+program SoundTest;
+var
+	WF_SAW : string =   "SID SAW  ";
+	WF_PULSE : string = "SID PULSE";
+	WF_TRI : string =   "SID TRI  ";
+	WF_NOISE : string = "SID NOISE";
+	
+	volume : string = "VOLUME";
+	freqhi : string = "FREQ HI";
+	attack : string = "ATTACK";
+	decay : string = "DECAY";
+	attdecout : string = "ATT PARAM";
+	sustain : string = "SUSTAIN";
+	release : string = "RELEASE";
+	susrelout : string = "SUS PARAM";
+	waveform : string = "WAVE";
+	
+	volctrl : array[6] of byte = (60,49,32,50,62,0);
+	freqctrl : array[6] of byte = (60,51,32,52,62,0);
+	attctrl : array[6] of byte = (60,53,32,54,62,0);
+	decctrl : array[6] of byte = (60,55,32,56,62,0);
+	susctrl : array[6] of byte = (60,57,32,48,62,0);
+	relctrl : array[6] of byte = (60,21,32,9,62,0);
+	wavctrl : array[3] of byte = (15,62,0);
+	playctrl : string = "(P)LAY";
+	infotext : string = "TRSE PLAYSOUND() PARAMETERS";
+	
+	curselect : byte = 0;
+	wavselect : array[4] of byte = (SID_TRI, SID_SAW, SID_PULSE, SID_NOISE);
+	
+	vol : byte = 15;
+	freq : byte = 30;
+	att : byte = 4;
+	decc : byte = 4;
+	attdec : byte = 68;
+	sus : byte = 4;
+	rel : byte = 4;
+	susrel : byte = 68;
+	wave : byte = SID_TRI;
+	
+	keypress0 : boolean = false;
+	keypress1 : boolean = false;
+	
+procedure Init();
+begin
+	ScreenOn();
+	SetBank(VIC_BANK0);
+	DisableCIAInterrupts();						// prevent CIA
+	SetMemoryConfig(1, 0, 0);					// Enable all ram, turn off BASIC
+	ClearScreen(32, SCREEN_CHAR_LOC);			// clear video mem
+	ClearScreen(LIGHT_BLUE, SCREEN_COL_LOC);	// clear color mem
+	
+	// VOL
+	SCREEN_COL_LOC[20 + 1 * 40] := GREEN;
+	SCREEN_COL_LOC[21 + 1 * 40] := GREEN;
+	
+	// FREQ HI
+	SCREEN_COL_LOC[20 + 3 * 40] := GREEN;
+	SCREEN_COL_LOC[21 + 3 * 40] := GREEN;
+	SCREEN_COL_LOC[22 + 3 * 40] := GREEN;
+	
+	// ATTDEC
+	SCREEN_COL_LOC[20 + 9 * 40] := GREEN;
+	SCREEN_COL_LOC[21 + 9 * 40] := GREEN;
+	SCREEN_COL_LOC[22 + 9 * 40] := GREEN;
+	
+	// SUSREL
+	SCREEN_COL_LOC[20 + 15 * 40] := GREEN;
+	SCREEN_COL_LOC[21 + 15 * 40] := GREEN;
+	SCREEN_COL_LOC[22 + 15 * 40] := GREEN;
+	
+	// WAVEFORM
+	fill(SCREEN_COL_LOC + 20 + 17 * 40, GREEN, 9);
+	
+	// INFOTEXT
+	fill(SCREEN_COL_LOC + 7 + 22 * 40, GREEN, 27);
+end;
+
+procedure HandleInput();
+begin
+	keypress0 := keypress1;
+	
+	if ((keypress0 = false) OR (keypress1 = true)) then
+	begin
+		keypress1 := false;
+		
+		if (KeyPressed(KEY_1)) then
+		begin
+			if (keypress0 = false) then vol := (vol - 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_2)) then
+		begin
+			if (keypress0 = false) then vol := (vol + 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_3)) then
+		begin
+			freq := freq - 1;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_4)) then
+		begin
+			freq := freq + 1;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_5)) then
+		begin
+			if (keypress0 = false) then att := (att - 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_6)) then
+		begin
+			if (keypress0 = false) then att := (att + 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_7)) then
+		begin
+			if (keypress0 = false) then decc := (decc - 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_8)) then
+		begin
+			if (keypress0 = false) then decc := (decc + 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_9)) then
+		begin
+			if (keypress0 = false) then sus := (sus - 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_0)) then
+		begin
+			if (keypress0 = false) then sus := (sus + 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_U)) then
+		begin
+			if (keypress0 = false) then rel := (rel - 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_I)) then
+		begin
+			if (keypress0 = false) then rel := (rel + 1) & 15;
+			keypress1 := true;
+		end;
+		if (KeyPressed(KEY_O)) then
+		begin
+			if (keypress0 = false) then
+			begin
+				curselect := mod(curselect + 1, 4);
+				wave := wavselect[curselect];
+			end;
+			keypress1 := true;
+		end;
+		
+		// Create attack & sustain values
+		attdec := (att SHL 4) | decc;
+		susrel := (sus SHL 4) | rel;
+		if (KeyPressed(KEY_P)) then
+		begin
+			if (keypress0 = false) then // Play sound
+				PlaySound(SID_CHANNEL1, vol, freq, attdec, susrel, 1 + wave, wave);
+			keypress1 := true;
+		end;
+	end;
+end;
+
+procedure PrintWaveform(wavef : byte);
+begin
+	if (wavef =SID_SAW) then
+		PrintString(#WF_SAW, 0, 40)
+	else if (wavef = SID_PULSE) then
+		PrintString(#WF_PULSE, 0, 40)
+	else if (wavef = SID_TRI) then
+		PrintString(#WF_TRI, 0, 40)
+	else
+		PrintString(#WF_NOISE, 0, 40);
+end;
+
+procedure Render();
+var
+	screenpage : byte;
+	
+begin
+	screenpage := Hi(SCREEN_CHAR_LOC);
+	
+	MoveTo(3, 1, screenpage);
+	PrintString(#volume, 0, 6);
+	
+	MoveTo(20, 1, screenpage);
+	PrintDecimal(vol, 1);
+	
+	MoveTo(30, 1, screenpage);
+	PrintString(#volctrl, 0, 40);
+	
+	MoveTo(3, 3, screenpage);
+	PrintString(#freqhi, 0, 40);
+	
+	MoveTo(20, 3, screenpage);
+	PrintDecimal(freq, 2);
+	
+	MoveTo(30, 3, screenpage);
+	PrintString(#freqctrl, 0, 40);
+	
+	MoveTo(3, 5, screenpage);
+	PrintString(#attack, 0, 40);
+	
+	MoveTo(20, 5, screenpage);
+	PrintDecimal(att, 1);
+	
+	MoveTo(30, 5, screenpage);
+	PrintString(#attctrl, 0, 40);
+	
+	MoveTo(3, 7, screenpage);
+	PrintString(#decay, 0, 40);
+	
+	MoveTo(20, 7, screenpage);
+	PrintDecimal(decc, 1);
+	
+	MoveTo(30, 7, screenpage);
+	PrintString(#decctrl, 0, 40);
+	
+	MoveTo(3, 9, screenpage);
+	PrintString(#attdecout, 0, 40);
+	
+	MoveTo(20, 9, screenpage);
+	PrintDecimal(attdec, 2);
+	
+	MoveTo(3, 11, screenpage);
+	PrintString(#sustain, 0, 40);
+	
+	MoveTo(20, 11, screenpage);
+	PrintDecimal(sus, 1);
+	
+	MoveTo(30, 11, screenpage);
+	PrintString(#susctrl, 0, 40);
+	
+	MoveTo(3, 13, screenpage);
+	PrintString(#release, 0, 40);
+	
+	MoveTo(20, 13, screenpage);
+	PrintDecimal(rel, 1);
+	
+	MoveTo(30, 13, screenpage);
+	PrintString(#relctrl, 0, 40);
+	
+	MoveTo(3, 15, screenpage);
+	PrintString(#susrelout, 0, 40);
+	
+	MoveTo(20, 15, screenpage);
+	PrintDecimal(susrel, 2);
+	
+	MoveTo(3, 17, screenpage);
+	PrintString(#waveform, 0, 40);
+	
+	MoveTo(20, 17, screenpage);
+	PrintWaveform(wave);
+	
+	MoveTo(30, 17, screenpage);
+	PrintString(#wavctrl, 0, 40);
+	
+	MoveTo(17, 20, screenpage);
+	PrintString(#playctrl, 0, 40);
+	
+	MoveTo(17, 20, screenpage);
+	PrintString(#playctrl, 0, 40);
+	
+	MoveTo(7, 22, screenpage);
+	PrintString(#infotext, 0, 40);
+end;
+
+begin
+	Init();
+	while (true) do
+	begin						// Main loop
+		WaitForVerticalBlank();
+		HandleInput();
+		Render();
+	end;
+end.
