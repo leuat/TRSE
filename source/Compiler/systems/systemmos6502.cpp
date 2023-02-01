@@ -201,10 +201,12 @@ BLK5 = $A000-$BFFF
 
     }
     int disk = 1;
+    int track = 18;
+    if (m_projectIni->getdouble("use_track_19")==1.0) track=19;
     if (m_projectIni->getString("output_type")=="d64")
     while (m_projectIni->contains("disk"+QString::number(disk))+"_paw") {
         QString d = "disk"+QString::number(disk);;
-        if (!CreateDiskInternal(currentDir, d,filename, disk==1,output))
+        if (!CreateDiskInternal(currentDir, d,filename, disk==1,output,track))
             text+=output;
             return;
         disk+=1;
@@ -251,7 +253,7 @@ void SystemMOS6502::CreateDiskC1541(QString currentDir, QString filename, QStrin
 
 }
 */
-bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text)
+bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text, int track)
 {
     QString f = filename.split("/").last();
     QStringList d64Params = QStringList();
@@ -262,22 +264,7 @@ bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString
     if (QFile::exists(filename+"."+type))
         QFile::remove(filename+"."+type);
 
-
-
-//    QStringList shadowDir = QStringList()<<"-d" <<"19";
-    // Create a disk
-
-//    QStringList cd64;
-/*    cd64<<"cc1541";
-    cd64 << "-n" << diskName <<shadowDir;
-    cd64 << filename+"."+type;*/
-    // call
-    //    cc1541(cd64.size(), Util::StringListToChar(cd64));
-
-
-    // Start building files...
-//    qDebug() << m_projectIni->getString(disk+"_name");
-    d64Params  <<"cc1541"<<"-d"<<"19" <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
+    d64Params  <<"cc1541"<<"-d"<<QString::number(track) <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
     if (addPrg)
         d64Params << "-f"<<f << "-w"<<filename+".prg";
 
@@ -288,14 +275,14 @@ bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString
         return false;
     }
     d64Params<<filename+"_"+disk+"."+type;
-//    qDebug() << d64Params;
+
     cc1541(d64Params.size(), Util::StringListToChar(d64Params));
     std::cout << stdout;
     std::cout << stderr;
 
 
 
-    if (QFile::exists(filename+"."+type)) {
+    if (QFile::exists(filename+"."+type) && track==19) {
         ApplyDirArt(currentDir,m_projectIni->getString(disk+"_flf"),filename+"."+type, text);
     }
     return true;

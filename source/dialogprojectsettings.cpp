@@ -81,6 +81,7 @@ void DialogProjectSettings::FillFromIni()
 
 
 //    ui->chkUseViceC1541->setChecked(m_ini->getdouble("use_vice_c1541")==1);
+    ui->chkTrack19->setChecked(m_ini->getdouble("use_track_19")==1);
     ui->chkCompilerComments->setChecked(m_ini->getdouble("disable_compiler_comments")==1);
 
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
@@ -275,7 +276,7 @@ void DialogProjectSettings::FillToIni()
 
 //    m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
     m_ini->setFloat("disable_compiler_comments", ui->chkCompilerComments->isChecked());
-
+    m_ini->setFloat("use_track_19", ui->chkTrack19->isChecked());
 
     m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
     m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());

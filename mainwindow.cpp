@@ -2547,6 +2547,8 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("zeropages"))
         m_ini->setStringList("zeropages", Asm6502::m_defaultZeroPointers.split(","));
 
+    if (!m_ini->contains("use_track_19"))
+        m_ini->setFloat("use_track_19",1);
 
     if (!m_ini->contains("disable_compiler_comments"))
         m_ini->setFloat("disable_compiler_comments",0);

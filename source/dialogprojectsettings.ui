@@ -1308,9 +1308,16 @@ hr { height: 1px; border-width: 0; }
                <property name="title">
                 <string>Disk settings</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_38" rowstretch="3,0,0,0,0,0,0,0,0" columnstretch="6,0,0">
+               <layout class="QGridLayout" name="gridLayout_38" rowstretch="3,0,0,0,0,0,0,0" columnstretch="6">
                 <item row="5" column="0">
                  <layout class="QGridLayout" name="grdDisks"/>
+                </item>
+                <item row="7" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Please note that your main program .prg will only be added to disk1. Also, in order to be able to use directory art, you need to enable track 19.</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="0">
                  <layout class="QGridLayout" name="gridLayout_39">
@@ -1342,6 +1349,13 @@ hr { height: 1px; border-width: 0; }
                    </spacer>
                   </item>
                  </layout>
+                </item>
+                <item row="6" column="0">
+                 <widget class="QCheckBox" name="chkTrack19">
+                  <property name="text">
+                   <string>Use track 19. If not, track 18 will be used.</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>

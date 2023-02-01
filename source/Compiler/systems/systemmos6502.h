@@ -39,7 +39,7 @@ public:
     // OBSOLETE
 //    void CreateDiskC1541(QString currentDir, QString filename, QString iniData, bool addPrg, QString& text);
     // IN USE
-    bool CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text);
+    bool CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text, int track);
     bool BuildDiskFiles(QString currentDir, QStringList& d64Params, QString iniData);
     bool BuildDiskFilesCC1541(QString currentDir, QStringList& d64Params, QString iniData, QString &text);
 
