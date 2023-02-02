@@ -4,7 +4,7 @@
 
 PostOptimiserZ80::PostOptimiserZ80()
 {
-    m_registers = QStringList() <<"a"<<"b"<<"c"<<"d"<<"af"<<"bc"<<"de"<<"hl"<<"ix"<<"iy"<<"p"<<"sp";
+    m_registers = QStringList() <<"a"<<"b"<<"c"<<"d"<<"h"<<"l"<<"d"<<"e"<<"af"<<"bc"<<"de"<<"hl"<<"ix"<<"iy"<<"p"<<"sp";
     m_branches = QStringList() <<"call" <<"jp";
     m_registerChangingCommands = QStringList() << "call" <<"jp";
     m_bops = QStringList() << "add"<<"sub"<<"xor"<<"or"<<"and"<<"inc"<<"dec"<<"adc"<<"sbc";
@@ -64,6 +64,8 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
             if (!m_registers.contains(par[1]))
                 line.m_potentialOptimise = true;
 
+
+
             if (par[1].contains("[") || par[1].contains("("))
                 line.m_potentialOptimise = false;
 
@@ -76,7 +78,7 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
             }
 
 //            if (line.m_potentialOptimise)
-  //              qDebug() << "Changinbg : " <<reg<<par[1];
+  //              qDebug() << "Changing : " <<reg<<par[1] << line.m_orgLine;
 
             ChangeReg(line, reg, par[1]);
 
