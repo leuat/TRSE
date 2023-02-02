@@ -2038,7 +2038,7 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
         as->Asm("lda #>"+str);
         as->Asm("sta "+getValue(left)+"+1");*/
 //            left->m_expr->Accept(this);
-        if (left->hasArrayIndex())
+//        if (left->hasArrayIndex())
             as->Asm(";has array index");
             as->Asm("lda #<"+str);
             as->Asm("ldy #>"+str);
