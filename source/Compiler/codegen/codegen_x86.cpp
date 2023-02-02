@@ -338,12 +338,12 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("mov di,"+Util::numToHex(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as)));
             }
             else {
-                if (!node->m_expr->getOrgType(as)!=TokenType::INTEGER)
+/*                if (node->m_expr->getArrayType(as)==TokenType::LONG)
                 {
                     node->m_expr->Accept(this);
                     as->Asm("mov di,ax");
                 }
-                else
+                else*/
                     as->Asm ("mov di,"+getX86Value(as,node->m_expr));
                 if (node->getArrayType(as)==TokenType::INTEGER)
                     as->Asm("shl di,1 ; Accomodate for word");

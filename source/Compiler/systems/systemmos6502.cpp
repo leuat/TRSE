@@ -206,9 +206,10 @@ BLK5 = $A000-$BFFF
     if (m_projectIni->getString("output_type")=="d64")
     while (m_projectIni->contains("disk"+QString::number(disk))+"_paw") {
         QString d = "disk"+QString::number(disk);;
-        if (!CreateDiskInternal(currentDir, d,filename, disk==1,output,track))
+        if (!CreateDiskInternal(currentDir, d,filename, disk==1,output,track)) {
             text+=output;
             return;
+        }
         disk+=1;
     }
 

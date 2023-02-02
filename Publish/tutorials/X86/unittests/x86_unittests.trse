@@ -80,3 +80,7 @@ dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
 disable_compiler_comments = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/X86/unittests/
+use_track_19 = 1
+open_files = ,[ext]units/global/unittests/strings.tru, utests.ras
+current_file = [ext]units/global/unittests/strings.tru
