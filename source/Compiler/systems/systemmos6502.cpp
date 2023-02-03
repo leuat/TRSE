@@ -265,8 +265,6 @@ bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString
     if (QFile::exists(filename+"."+type))
         QFile::remove(filename+"."+type);
 
-//    qDebug() << QString::number(track);
-//    track = 19;
 
     QStringList shadow;
     if (track==19)

@@ -708,5 +708,28 @@
         <file>resources/code/6809/mul16.asm</file>
         <file>resources/images/tutorials/bigpixelintro.png</file>
         <file>resources/images/tutorials/soundtest.png</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_B000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_A000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_9000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_8000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_7000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_6000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_5000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_4000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_3000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_2000-c64.prg</file>
+        <file>resources/bin/krill_18/install_PAL_NTSC_1000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_B000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_A000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_9000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_8000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_7000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_6000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_5000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_4000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_3000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_2000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_1000-c64.prg</file>
+        <file>resources/bin/krill_18/loader_PAL_NTSC_0200-c64.prg</file>
     </qresource>
 </RCC>

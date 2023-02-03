@@ -5711,6 +5711,9 @@ void Parser::HandleKrillsLoader()
     int loaderOrgPos = m_currentToken.m_intVal;
     Eat();
     int installerPos = m_currentToken.m_intVal;
+    QString track = "19";
+    if (m_projectIni->contains("use_track_19") && m_projectIni->getdouble("use_track_19")!=1.0)
+        track="18";
 
 
     //                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
@@ -5724,8 +5727,9 @@ void Parser::HandleKrillsLoader()
 
     QString pos = QString::number(loaderPos,16);
     if (pos=="200") pos = "0200";
-    QString loaderFile =":resources/bin/krill_19/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
-    QString installerFile =":resources/bin/krill_19/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
+    QString loaderFile =":resources/bin/krill_"+track+"/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
+    QString installerFile =":resources/bin/krill_"+track+"/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
+
 
     if (!QFile::exists(loaderFile))
         ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
@@ -5786,7 +5790,7 @@ void Parser::HandleKrillsLoader()
         orgL="@use KrillsLoader $0"+QString::number(loaderPos,16)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
     }
     if (!m_lexer->m_text.contains(orgL)) {
-        ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000'",Pmm::Data::d.lineNumber);
+        ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000 '",Pmm::Data::d.lineNumber);
 
     }
 

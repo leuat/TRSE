@@ -1,5 +1,5 @@
-zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
-temp_zeropages = ,$54, $56, $58, $5A
+zeropages = ,$02,  $04,  $08,  $16,  $0B,  $0D,  $10,  $12,  $22,  $24,  $68
+temp_zeropages = ,$54,  $56,  $58,  $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -72,7 +72,7 @@ disable_compiler_comments = 0
 disk2_paw = 0
 disk2_flf = 0
 disk2_type = 0
-use_track_19 = 0
+use_track_19 = 1
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0

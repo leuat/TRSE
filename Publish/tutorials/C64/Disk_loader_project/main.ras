@@ -1,8 +1,9 @@
 program disk_loader_project;
 @use "system"
 var  
+   @define KRILLTRACK 18
    i: byte; 
-	@use KrillsLoader $200 $2000 $8000 
+	@use KrillsLoader $200 $2000 $8000
 	/* Place initial loader data at $2000 and installer at $8000. 
 	 Loader will be copied to $0200 when "initkrill" is called
 
