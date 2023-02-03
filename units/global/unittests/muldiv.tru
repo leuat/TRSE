@@ -311,7 +311,7 @@ begin
 	
 
 	ByteDivBytePow203();
-	ByteDivByte04();/*
+	ByteDivByte04();
 	
 	IntDivByte08();
 	IntDivInt09();
@@ -329,7 +329,7 @@ begin
 	Shift5();
 	Shift6();
 //	@endif
-*/
+
 	Common::WaitABit();
 
 	

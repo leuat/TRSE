@@ -266,9 +266,13 @@ bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString
         QFile::remove(filename+"."+type);
 
 //    qDebug() << QString::number(track);
-    track = 19;
+//    track = 19;
 
-    d64Params  <<"cc1541"<<"-d"<<QString::number(track) <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
+    QStringList shadow;
+    if (track==19)
+        shadow <<"-d"<<QString::number(track) ;
+
+    d64Params  <<"cc1541"<<shadow <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
     if (addPrg)
         d64Params << "-f"<<f << "-w"<<filename+".prg";
 
