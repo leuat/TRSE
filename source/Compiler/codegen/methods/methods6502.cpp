@@ -5849,12 +5849,6 @@ void Methods6502::SetSpriteLoc(Assembler *as)
 void Methods6502::ClearBitmap(Assembler *as)
 {
 
-    qDebug() << m_node->m_params[0]->getValue(as) <<  m_node->m_params[1]->getValue(as);
-    qDebug() << m_node->m_params[0]->getTypeText(as);
-    qDebug() << m_node->m_params[0]->isPureNumericOrAddress();
-    qDebug() << m_node->m_params[1]->isPureNumericOrAddress();
-    qDebug() << m_node->m_params[0]->isVariable();
-    qDebug() << as->m_symTab->m_constants.keys();
     if (!m_node->m_params[0]->isPureNumericOrAddress() || !m_node->m_params[1]->isPureNumericOrAddress())
         ErrorHandler::e.Error("ClearBitmap: both parameters must be integer constants");
 

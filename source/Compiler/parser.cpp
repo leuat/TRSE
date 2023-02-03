@@ -1622,7 +1622,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     //    qDebug() << "SUBVAR  "<< isSubVar << m_currentToken.m_value;
 
     if (m_currentToken.m_value == Syntax::s.thisName)
-        m_currentToken.m_value = m_currentClass+"_"+m_currentToken.m_value;
+        m_currentToken.m_value = m_symTab->m_currentClass+"_"+m_currentToken.m_value;
 
     m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
     // Rename "i" with "_var_i" for disallowed variables (Z80, GB)
@@ -1926,11 +1926,13 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
     //m_symTab->Define(new Symbol(name,"record"));
     record->setName(name);
     QString oldPrefix = m_symTab->m_gPrefix;
+//    m_symTab->m_gPrefix=m_symTab->m_currentUnit+"_"+name+"_";
     m_symTab->m_gPrefix=name+"_";
     m_isRecord = true;
     bool first = true;
 
     if (isClass) {
+        // Defining "this" for the current class in unit
         QString of = m_symTab->m_gPrefix;
         //        if (!m_symTab->m_gPrefix.startsWith("localVariable"))
         m_symTab->m_gPrefix = "";
@@ -1951,7 +1953,7 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
 
         if (isClass) {
-            m_currentClass = name;
+            m_symTab->m_currentClass = name;
             if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::FUNCTION || m_currentToken.m_type==TokenType::INTERRUPT) {
                 QVector<QSharedPointer<Node>> procs;
 
@@ -2025,7 +2027,7 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
     SymbolTable::s_classSizes[name] = record->getSize();
     //    qDebug() << "Size: " <<name<<SymbolTable::s_classSizes[name];
-    m_currentClass = "";
+    m_symTab->m_currentClass = "";
     m_isRecord = false;
     //    m_symTab = oldTab;
     m_symTab->m_gPrefix = oldPrefix;
@@ -2094,7 +2096,7 @@ QSharedPointer<Node> Parser::AssignStatementBetweenObjects(QSharedPointer<Node> 
 
 void Parser::VerifyNotInClassAssignTypespec()
 {
-    if (m_currentClass!="")
+    if (m_symTab->m_currentClass!="")
         ErrorHandler::e.Error("Class variables cannot have default values. These must be set manually or in a constructor (which is currently not yet implemented)",m_currentToken.m_lineNumber);
 }
 
@@ -3086,122 +3088,11 @@ void Parser::PreprocessSingle() {
         else if (m_currentToken.m_value.toLower() =="use") {
             Eat();
             QString type = m_currentToken.m_value;
-            bool ok=false;
-            if (type.toLower()=="krillsloader") {
-                ok=true;
-                //int ln = Pmm::Data::d.lineNumber;
-                //                      qDebug() << m_lexer->m_lines[Pmm::Data::d.lineNumber];
-
-                //m_lexer->m_lines.removeAt(ln);
-                //m_lexer->m_orgText.replace(orgL,"\n");
-                Eat();
-                int loaderPos = m_currentToken.m_intVal;
-                Eat();
-                int loaderOrgPos = m_currentToken.m_intVal;
-                Eat();
-                int installerPos = m_currentToken.m_intVal;
-
-
-                //                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
-                m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos);
-                m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
-                //                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
-                //                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
-                m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
-                m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
-
-
-                QString pos = QString::number(loaderPos,16);
-                if (pos=="200") pos = "0200";
-                QString loaderFile =":resources/bin/krill_19/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
-                QString installerFile =":resources/bin/krill_19/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
-
-                if (!QFile::exists(loaderFile))
-                    ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
-
-                if (!QFile::exists(installerFile))
-                    ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
-
-
-                QString outFolder = m_currentDir+"/auto_bin/";
-                QString outFolderShort = "auto_bin/";
-
-                if (!QDir().exists(outFolder))
-                    QDir().mkdir(outFolder);
-
-                QString outFile = outFolder+"krill_loader.bin";
-
-                if (QFile::exists(outFile)) {
-                    QFile f(outFile);
-                    f.remove();
-                }
-                //                    QFile::copy(loaderFile, outFile);
-                Util::ConvertFileWithLoadAddress(loaderFile,outFile);
-
-                outFile = outFolder+"krill_installer.bin";
-                if (QFile::exists(outFile)) {
-                    QFile f(outFile);
-                    f.remove();
-                }
-                Util::ConvertFileWithLoadAddress(installerFile,outFile);
-                //                    QFile in(installerFile);
-                //                  QByteArray data =
-
-                //QFile::copy(installerFile, outFile);
-
-                outFile = outFolderShort+"krill_loader.bin";
-                QString replaceLine = "var\n";
-                replaceLine+="_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
-                outFile = outFolderShort+"krill_installer.bin";
-                replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
-
-                for (QString s: m_diskFiles) {
-                    QString var = s;
-                    if (s=="") ErrorHandler::e.Error("One of your disk files is missing a name. Please correct the .paw file!");
-                    for (int i=0;i<256;i++) {
-                        QString r = "#P"+QString::number(i)+";";
-                        var = var.replace(r,"");
-                        //                            s = s.replace(r,QChar(i));
-                        //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
-                    }
-
-                    replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
-                    replaceLine+="@donotremove "+var+"\n";
-
-                }
-                //QString orgL =  m_lexer->m_lines[ln];
-                QString orgL="@use KrillsLoader "+Util::numToHex(loaderPos)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
-                if (!m_lexer->m_text.contains(orgL)) {
-                    orgL="@use KrillsLoader $0"+QString::number(loaderPos,16)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
-                }
-                if (!m_lexer->m_text.contains(orgL)) {
-                    ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000'",Pmm::Data::d.lineNumber);
-
-                }
-
-
-
-                //   qDebug() << replaceLine << orgL;
-
-
-
-                m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
-                m_lexer->m_pos-=orgL.length();
-
-
-                //                      qDebug().noquote() <<  m_lexer->m_text;
-
-
-
-                //Eat();
-            }
-            else {
-                //                    if (m_pass==0)
+            if (type.toLower()=="krillsloader")
+                HandleKrillsLoader();
+            else
                 HandleUseTPU(type);
-            }
-            /*              if (!ok) {
-                      ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
-                  }*/
+
         }
         else {
             if (m_macros.contains(m_currentToken.m_value.toLower()))
@@ -4221,6 +4112,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
             QSharedPointer<Symbol> sym = nullptr;
             try {
+
                 sym = m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
                 // check if global type matches parameter type:
             } catch (FatalErrorException& fe) {
@@ -5811,6 +5703,111 @@ void Parser::HandleAKGCompiler()
         ErrorHandler::e.Error("Could not find music for inclusion : "+filename+".asm");
 }
 
+void Parser::HandleKrillsLoader()
+{
+    Eat();
+    int loaderPos = m_currentToken.m_intVal;
+    Eat();
+    int loaderOrgPos = m_currentToken.m_intVal;
+    Eat();
+    int installerPos = m_currentToken.m_intVal;
+
+
+    //                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
+    m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos);
+    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+    //                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+    //                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
+    m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
+    m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
+
+
+    QString pos = QString::number(loaderPos,16);
+    if (pos=="200") pos = "0200";
+    QString loaderFile =":resources/bin/krill_19/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
+    QString installerFile =":resources/bin/krill_19/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
+
+    if (!QFile::exists(loaderFile))
+        ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
+
+    if (!QFile::exists(installerFile))
+        ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
+
+
+    QString outFolder = m_currentDir+"/auto_bin/";
+    QString outFolderShort = "auto_bin/";
+
+    if (!QDir().exists(outFolder))
+        QDir().mkdir(outFolder);
+
+    QString outFile = outFolder+"krill_loader.bin";
+
+    if (QFile::exists(outFile)) {
+        QFile f(outFile);
+        f.remove();
+    }
+    //                    QFile::copy(loaderFile, outFile);
+    Util::ConvertFileWithLoadAddress(loaderFile,outFile);
+
+    outFile = outFolder+"krill_installer.bin";
+    if (QFile::exists(outFile)) {
+        QFile f(outFile);
+        f.remove();
+    }
+    Util::ConvertFileWithLoadAddress(installerFile,outFile);
+    //                    QFile in(installerFile);
+    //                  QByteArray data =
+
+    //QFile::copy(installerFile, outFile);
+
+    outFile = outFolderShort+"krill_loader.bin";
+    QString replaceLine = "var\n";
+    replaceLine+="_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
+    outFile = outFolderShort+"krill_installer.bin";
+    replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
+
+    for (QString s: m_diskFiles) {
+        QString var = s;
+        if (s=="") ErrorHandler::e.Error("One of your disk files is missing a name. Please correct the .paw file!");
+        for (int i=0;i<256;i++) {
+            QString r = "#P"+QString::number(i)+";";
+            var = var.replace(r,"");
+            //                            s = s.replace(r,QChar(i));
+            //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
+        }
+
+        replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
+        replaceLine+="@donotremove "+var+"\n";
+
+    }
+    //QString orgL =  m_lexer->m_lines[ln];
+    QString orgL="@use KrillsLoader "+Util::numToHex(loaderPos)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
+    if (!m_lexer->m_text.contains(orgL)) {
+        orgL="@use KrillsLoader $0"+QString::number(loaderPos,16)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
+    }
+    if (!m_lexer->m_text.contains(orgL)) {
+        ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000'",Pmm::Data::d.lineNumber);
+
+    }
+
+
+
+    //   qDebug() << replaceLine << orgL;
+
+
+
+    m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
+    m_lexer->m_pos-=orgL.length();
+
+
+    //                      qDebug().noquote() <<  m_lexer->m_text;
+
+
+
+    //Eat();
+
+}
+
 void Parser::HandleSpriteCompiler()
 {
 
@@ -6105,8 +6102,9 @@ void Parser::HandleUseTPU(QString fileName)
         m_symTab->m_globalList.append(s);
     }
     // qDebug() << "LIST : " <<m_symTab->m_symbols.keys();
-    if (!m_tpus.contains(p))
+    if (!m_tpus.contains(p)) {
         m_tpus.append(p);
+    }
 
     //    qDebug() << m_currentToken.m_value;
     //    Eat();

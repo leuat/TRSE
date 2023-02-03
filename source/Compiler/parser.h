@@ -157,7 +157,6 @@ private:
     QSharedPointer<Node> m_currentProcedureCall;
     QString m_addInitialReferenceToProcedureCall = "";
 
-    QString m_currentClass ="";
 
     QStringList m_removedProcedures;
     QVector<QStringList> m_obsoleteWarnings;
@@ -330,6 +329,7 @@ private:
     void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
     void HandleAKGCompiler();
+    void HandleKrillsLoader();
     void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();
