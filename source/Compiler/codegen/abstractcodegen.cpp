@@ -344,6 +344,8 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
 
     if (node->m_right->getTypeText(as)=="BYTE")
         Cast(TokenType::BYTE,node->m_right->m_castType);
+    if (node->m_right->getTypeText(as)=="INTEGER")
+        Cast(TokenType::INTEGER,node->m_right->m_castType);
     StoreVariable(VarOrNum(node->m_left));
 }
 

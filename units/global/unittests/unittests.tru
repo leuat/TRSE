@@ -70,9 +70,9 @@ begin
 	currentTest := 0;
 	isDone := false;
 	MulDiv::TRS80();
-//	IntegerTest::Exec();
-//	BitOp::Exec();
-/*	CaseTest::Exec();
+/*	IntegerTest::Exec();
+	BitOp::Exec();
+	CaseTest::Exec();
 	Common::TestInit();
 	IntegerTest::Exec();
 	ForLoop::Exec();
