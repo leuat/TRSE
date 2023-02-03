@@ -1,15 +1,22 @@
 program disk_loader_project;
+@use "system"
 var  
    i: byte; 
-	@use KrillsLoader $200 $2000 $4000 
-	/* Place initial loader data at $2000 and installer at $4000. 
+	@use KrillsLoader $200 $2000 $8000 
+	/* Place initial loader data at $2000 and installer at $8000. 
 	 Loader will be copied to $0200 when "initkrill" is called
 
 	 Files are defined in "d64.paw"
 
 	disk setup under project settings/target setup
+
+	- Image 1 will be loaded with kernal methods. Slow.
+	- Kernal methods then overwritten witk Krill's intialiser
+	- Image 2 will be loaded with tinycrunch-compression using Krill
+    - Image 3 will be loaded raw using Krill 
+
 	
-	Note: two of the files here are compressed and loaded with the "krillloadcompressed" command. 
+	Note: one of the files here are compressed and loaded with the "krillloadcompressed" command. 
 	While the compressed files are included with this project, if you want to use your own data
 	you will need the following installed:
 	 - python version 3 installed on your computer
@@ -22,27 +29,44 @@ var
 	
 // Force exomizing ON
 @projectsettings "exomize" "1"
+
+@export "images/image1.flf" "images/image1.bin" 256 // will create image1_data and image1_color
+@export "images/image2.flf" "images/image2.bin" 256 // will create image1_data and image1_color
+@export "images/image3.flf" "images/image3.bin" 256 // will create image1_data and image1_color
 	
 begin
-	
-	InitKrill();
 
-	setmemoryconfig(1,0,0);
+	disableciainterrupts();
+	preventirq();
+	// set screen position
+	setcharsetandscreenlocation($2000,$400);
+	screen_fg_col:=black;
+	screen_bg_col:=black;
+	setbank(vic_bank1);
 	setmulticolormode();
 	setbitmapmode();
-	// Bitmap points to $6000 etc
-	vic_data_loc := $18;
-	screen_fg_col:=black;
+
+	// First, load from disk using KERNAL. Slow as %($/%
+	
+	System::LoadFileKernal(#image3color, length(image3color), $3000);
+	copyfullscreen(^$3002,#screen_char_loc2);
+	copyfullscreen(^$3002+1000,#screen_col_loc);
+	System::LoadFileKernal(#image3, length(image3), $6000);	
+	// overwrite 1541 commands with krill's loader
+	InitKrill();
+	// Bitmap points to $6000 etc. Load from disk
 	i:=0;
-	setbank(vic_bank1);
 	while (true) do begin
 		// Display data while loading! cool stuff
-		if (i=0) then KrillLoad(#octopuscolor);
-		if (i=1) then KrillLoadcompressed(#moosecolor);
+		
+	
+		if (i=0) then KrillLoad(#image1color); // first load non-compressed 
+		if (i=1) then KrillLoadcompressed(#image2color); // then load compressed
 		copyimagecolordata(^$2000,1);
+		if (i=0) then KrillLoad(#image1);
+		if (i=1) then KrillLoadcompressed(#image2);
 
-		if (i=0) then KrillLoad(#octopusdata);
-		if (i=1) then KrillLoadcompressed(#moosedata);
+		
 		while (keypressed(key_space)=false) do 
 			waitforraster(0);
 

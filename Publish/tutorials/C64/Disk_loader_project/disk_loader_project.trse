@@ -73,4 +73,7 @@ disk2_paw = 0
 disk2_flf = 0
 disk2_type = 0
 use_track_19 = 1
+data_header_images/image1.flf = 0
+data_header_images/image2.flf = 0
+data_header_images/image3.flf = 0
 open_files =, main.ras
