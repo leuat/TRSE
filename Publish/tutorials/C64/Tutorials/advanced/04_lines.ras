@@ -72,7 +72,7 @@ end;
 begin	
 	screen_bg_col:=black;
 	Gfx::currbank :=0; // Current bitmap bank (added to high bit of putpixel)
-	Gfx::InitBitmapGraphics(1, #Gfx::bank1);
+	//Gfx::InitBitmapGraphics(1, #Gfx::bank1);
 	vic_data_loc:=$18;
 	
 	setmulticolormode();

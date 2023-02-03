@@ -6016,23 +6016,9 @@ void Parser::HandleProjectSettingsPreprocessors()
 void Parser::HandleUseTPU(QString fileName)
 {
     QString pos = "";
-    //    if (m_currentToken.m_type==TokenType::INTEGER_CONST)
-    //      pos = GetParsedInt(TokenType::INTEGER);
-    //    qDebug() << m_currentToken.m_value;
-    /*    Eat();
-    if (m_currentToken.m_type==TokenType::COMMA) {
-        Eat();
-        pos = m_currentToken.getNumAsHexString();
-  //      qDebug()<< sp;
-//        pos = GetParsedInt(TokenType::INTEGER);
-    }
-
-*/
     if (s_usedTRUs.contains(fileName)) {
         return;
     }
-    //    qDebug() << pos;
-
 
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
@@ -6065,7 +6051,7 @@ void Parser::HandleUseTPU(QString fileName)
     p->m_symTab->m_symbols = m_symTab->m_symbols;
     p->m_symTab->m_records = m_symTab->m_records;
     p->m_symTab->m_externalRecords = m_symTab->m_records.keys();
-
+    p->m_symTab->m_constants = m_symTab->m_constants;
     //    qDebug() << "Copying over: " << m_procedures.keys();
     p->m_procedures = m_procedures;
 

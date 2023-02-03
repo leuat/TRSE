@@ -83,4 +83,5 @@ use_vice_c1541 = 0
 data_header_test.flf = 0
 cc1541_disk_type = d64
 disable_compiler_comments = 0
+use_track_19 = 1
 open_files =, Hello.ras

@@ -546,12 +546,16 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         if (m_forwardedSymbols.contains(name))
             return m_forwardedSymbols[name];
         name = name.remove(m_gPrefix);
+        if (m_symbols.contains(name))
+            return m_symbols[name];
+        if (m_constants.contains(name))
+            return m_constants[name];
         similarSymbol = similarSymbol.remove(m_gPrefix);
         QString em = "";
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";
         }
-//        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< m_currentProcedure<<localName <<m_symbols.keys();;
+        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    LOCALHAME "<< m_currentProcedure<<localName <<m_symbols.keys();;
 
 
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);

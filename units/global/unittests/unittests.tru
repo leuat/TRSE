@@ -9,10 +9,10 @@ Unit Unittests;
 @use "unittests/muldiv"
 @use "unittests/forloop"
 @use "unittests/registers"
-@use "unittests/various"
 @use "unittests/strings"
 @use "unittests/bitop"
 @use "unittests/functions"
+@use "unittests/various"
 
 @use "unittests/advanced_math"
 
@@ -42,7 +42,7 @@ begin
 		if (currentTest=9) then Classes::Exec();
 		if (currentTest=6) then ForLoop::Exec();
 		@endif
-		if (currentTest=10) then CaseTest::Exec();
+		if (currentTest=0) then CaseTest::Exec();
 		if (currentTest=8) then Casts::Exec();
 		if (currentTest=1) then BitOp::Exec();
 		if (currentTest=5) then MulDiv::Exec();
@@ -53,7 +53,7 @@ begin
 		if (currentTest=4) then AdvancedMath::Exec();
 		@endif
 		if (currentTest=7) then Registers::Exec();
-		if (currentTest=0) then Various::Exec();
+		if (currentTest=10) then Various::Exec();
 		if (currentTest=2) then Strings::Exec();
 		if (currentTest=3) then Functions::Exec();
 

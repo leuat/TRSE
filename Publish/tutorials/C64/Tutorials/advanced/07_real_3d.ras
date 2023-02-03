@@ -12,7 +12,6 @@ program real3d;
 
 @use "gfx/lib3d"
 
-
 var
 	bb,x1,x2,y1,y2,l,i,j,k,f,x3,y3,time,time2,t: byte;
 	zp,keep : pointer;
