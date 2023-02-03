@@ -205,7 +205,6 @@ BLK5 = $A000-$BFFF
     if (m_projectIni->getdouble("use_track_19")==1.0) track=19;
     if (m_projectIni->getString("output_type")=="d64")
     while (m_projectIni->contains("disk"+QString::number(disk)+"_paw")) {
-        qDebug() << disk;
         QString d = "disk"+QString::number(disk);;
         if (!CreateDiskInternal(currentDir, d,filename, disk==1,output,track)) {
             text+=output;
@@ -265,6 +264,9 @@ bool SystemMOS6502::CreateDiskInternal(QString currentDir, QString disk, QString
 
     if (QFile::exists(filename+"."+type))
         QFile::remove(filename+"."+type);
+
+//    qDebug() << QString::number(track);
+    track = 19;
 
     d64Params  <<"cc1541"<<"-d"<<QString::number(track) <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
     if (addPrg)
