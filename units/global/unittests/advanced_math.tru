@@ -105,6 +105,37 @@ begin
 end;
 */
 
+procedure MulDivCombo1();
+begin
+	Vars::text := "MD1:";
+	Vars::v1 := $10;
+	Vars::i2 := $0200;
+	// $100/$02*$10 = $800
+	Vars::i1 := ($100 / (hi(Vars::i2)) ) * Vars::v1; 
+	if Vars::i1=$800 then Common::PASS() else Common::FAIL();
+end;
+
+procedure MulDivCombo2();
+begin
+	Vars::text := "MD2:";
+	Vars::v1 := $10;
+	Vars::i2 := $0400;
+	// $100*$04/$10 = $40
+	asm(";hupp");
+	Vars::i1 := ($100 * (hi(Vars::i2)) ) / Vars::v1; 
+	if Vars::i1=$40 then Common::PASS() else Common::FAIL();
+end;
+
+procedure MulDivCombo3();
+begin
+	Vars::text := "MD3:";
+	Vars::v1 := $10;
+	Vars::v2 := $4;
+	Vars::i2 := $0200;
+	// $10*$100/$02*4 = $2000
+	Vars::i1 :=  (Vars::v1*($100 / (hi(Vars::i2)) ))*Vars::v2; 
+	if Vars::i1=$2000 then Common::PASS() else Common::FAIL();
+end;
 
 
 procedure Exec();
@@ -129,6 +160,9 @@ begin
 	@ifdef C64
 	AdvFactorial();
 	@endif
+	MulDivCombo1();
+	MulDivCombo2();
+	MulDivCombo3();
 //	Advanced09();// fails
 	Common::WaitABit();
 end;

@@ -232,7 +232,8 @@ begin
   asm("
     ld d, 0
     ld e, 0
-    ld hl, localVariable_Text_EnableUserDefinedChar_Text_user_defined_char_matrix
+;    ld hl, localVariable_Text_EnableUserDefinedChar_Text_user_defined_char_matrix
+	ld hl,Text_user_defined_char_matrix
     call #bbab
   ");
 end;

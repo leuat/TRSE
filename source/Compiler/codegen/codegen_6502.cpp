@@ -495,7 +495,6 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     }
     //    Disable16bit();
     if (node->m_left->isWord(as)) {
-
         LoadVariable(node->m_left);
         as->Term();
 
@@ -1772,7 +1771,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
 {
     as->ClearTerm();
     //   qDebug() << "OAD NUMBER";
-    if (node->isReference()) {
+    if (node->isReference() || node->getValueAsInt(as)>255) {
         as->ClearTerm();
         as->Asm("lda "+node->getValue8bit(as,false));
         as->Asm("ldy "+node->getValue8bit(as,true));

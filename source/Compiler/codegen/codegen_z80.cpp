@@ -467,10 +467,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 node->m_right->Accept(this);
                 //                as->Asm("ex de,hl");
                 ExDeHl();
+                if (!node->m_left->isPure())
+                    as->Asm("push de");
                 node->m_left->Accept(this);
                 //                as->Asm("ld ac,hl");
                 as->Asm("ld a,h");
                 as->Asm("ld c,l");
+                if (!node->m_left->isPure())
+                    as->Asm("pop de");
                 //               as->Asm("clc");
                 as->Asm("call div_16x16");
                 as->Asm("ld h,a");
@@ -499,12 +503,15 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             // Is 16 bit
             //            as->Comment("Left : " +Util::numToHex(node->m_left->isWord(as)));
             //          as->Comment("Right : " +Util::numToHex(node->m_right->isWord(as)));
-            if (node->m_left->getOrgType(as)==TokenType::BYTE) {
+            as->Comment("INT VAL "+Util::numToHex(node->m_right->getValueAsInt(as)));
+            if (node->m_right->getOrgType(as)==TokenType::BYTE ||
+                    (node->m_right->getOrgType(as)==TokenType::INTEGER_CONST && node->m_right->getValueAsInt(as)<0x100)) {
                 //                qDebug() << "SWAPP";
+                as->Comment("Swapping nodes");
                 node->SwapNodes();
             }
-            node->m_right->setCastType(TokenType::NADA);
-            node->m_right->setForceType(TokenType::BYTE);
+            node->m_left->setCastType(TokenType::NADA);
+            node->m_left->setForceType(TokenType::BYTE);
             //node->m_left->setForceType(TokenType::INTEGER);
 
             as->Comment("Generic mul");
@@ -527,21 +534,28 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             }
 
             //                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
+            as->Comment("Node is pure : "+QString::number(node->m_right->isPure()));
 
-            if (node->m_left->isPure()) {
-                m_useNext ="de";
-                node->m_left->Accept(this);
-            }
-            else {
-                node->m_left->Accept(this);
-                as->Asm("ld d,h");
-                as->Asm("ld e,l");
-            }
+            node->m_left->Accept(this);
+            if (!node->m_right->isPureNumeric())
+                as->Asm("push af");
             //            node->m_right->setForceType(TokenType::BYTE);
+            // Push pop de since not pure
+
             node->m_right->Accept(this);
+            ExDeHl();
             //                as->Asm("ld a,l");
+        //    if (node->m_left->isWord(as)) {
+          //      ExDeHl();
+         //   }
             as->Asm("ld hl,0");
             as->Asm("ld c,0");
+            if (!node->m_right->isPureNumeric()) {
+  //              if (!node->m_left->isWord(as))
+    //                as->Asm("pop af");
+      //          else
+                as->Asm("pop af");
+            }
             //         as->Asm("clc");
             as->Asm("call mul_16x8");
             //                as->Asm("ld a,l");
