@@ -127,92 +127,36 @@ void Methods6809::Poke(Assembler* as)
 {
     // Optimization : if parameter 1 is zero, drop the ldx / tax
     as->Comment("Poke");
-    //m_node->RequireAddress(m_node->m_params[0],"Poke", m_node->m_op.m_lineNumber);
-    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
+    //m_node->m_params[0]->Accept(as);
 
-    // Parameter is pointer
-    if (m_node->m_params[0]->isPointer(as)) {
-        // change to zp[b] := c;
-        if (!m_node->m_params[0]->isPure())
-            ErrorHandler::e.Error("Pointer must be pure variable",m_node->m_op.m_lineNumber);
-        QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
-        var->m_expr = m_node->m_params[1];
-        auto assign = NodeFactory::CreateAssign(m_node->m_op,var,m_node->m_params[2]);
-        assign->Accept(m_codeGen);
-        return;
+    auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
+    if (!m_node->m_params[2]->isPureNumericOrAddress()) {
+        m_node->m_params[2]->Accept(m_codeGen);
+        as->Term();
+        as->Asm("pshs d");
+        bop->Accept(m_codeGen);
+        as->Asm("puls d");
+        as->Asm("sta ,y");
+
     }
+    else {
+        bop->Accept(m_codeGen);
+        m_node->m_params[2]->Accept(m_codeGen);
+        as->Asm("sta ,y");
 
-
-    if (num!=nullptr && num->m_val==0) {
-        as->Comment("Optimization: shift is zero");
-        LoadVar(as,2);
-        SaveVar(as,0);
-        return;
     }
-    // Optimization #2 : if parameter is num AND parameter 2 is num, just add
-    QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (num2!=nullptr && num!=nullptr) {
-        as->Comment("Optimization: both storage and shift are constant");
-        LoadVar(as,2);
-        //SaveVar(as,0);
-        as->Asm("sta $" + QString::number((int)(num2->m_val + num->m_val),16));
-        return;
-    }
-
-
-
-    if (m_node->m_params[2]->isPure()) {
-        LoadVar(as,1);
-        as->Asm("tax");
-        LoadVar(as,2);
-        SaveVar(as,0,"x");
-        return;
-    }
-
-    // Generic case
-    LoadVar(as,1);
-    QString zp = as->m_internalZP[2];
-    as->Asm("sta "+zp);
-    LoadVar(as,2);
-    as->Asm("ldx "+zp);
-    SaveVar(as,0,"x");
-
 }
 
 void Methods6809::Peek(Assembler* as)
 {
+    // Optimization : if parameter 1 is zero, drop the ldx / tax
     as->Comment("Peek");
-    //m_node->RequireAddress(m_node->m_params[0],"Peek", m_node->m_op.m_lineNumber);
+    //m_node->m_params[0]->Accept(as);
 
-    // If pointer
-    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
-        as->Term("ldy ");
-        m_node->m_params[1]->Accept(m_codeGen);
-        as->Term();
-        as->Term("lda (");
-        m_node->m_params[0]->Accept(m_codeGen);
-        as->Term("),y", true);
-        return;
-    }
+    auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
+    bop->Accept(m_codeGen);
+    as->Asm("lda ,y");
 
-    // Optimize if numeric
-    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (num!=nullptr && m_node->m_params[0]->isPure()) {
-        QString add = m_node->m_params[1]->getValue(as);
-        QString org = m_node->m_params[0]->getValue(as);
-        as->Asm("lda "+org + " + "+add.remove("#") + ";keep");
-        /*        as->ClearTerm();
-        as->Term("lda ");
-        m_node->m_params[0]->Accept(m_codeGen);
-        as->Term(" + " + num->HexValue());
-        as->Term();*/
-        return;
-
-    }
-    LoadVar(as, 1);
-    as->Asm("tax");
-    LoadVar(as,0,"x");
-    //SaveVar(as,2);
 
 }
 

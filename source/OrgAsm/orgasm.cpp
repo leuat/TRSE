@@ -625,9 +625,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
         m_data.append((char)0x00);
         return;
     }
-//    qDebug() << ol.m_expr;
-
-
     QStringList lst = Util::fixStringListSplitWithCommaThatContainsStrings(ol.m_expr.split(","));
 
     for (QString s: lst) {

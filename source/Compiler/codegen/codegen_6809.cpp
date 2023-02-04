@@ -314,11 +314,12 @@ void CodeGen6809::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
         //else
         //ErrorHandler::e.Error("16 bit Binary operation / not implemented for this value yet ( " + QString::number(val) + ")");
         Div16x8(node);
+        Cast(TokenType::INTEGER, node->m_left->m_castType);
+
         return;
         //return;
     }
-    as->Comment("16 bit mul or div");
-
+    as->Comment("16 bit mul or div power of two");
     QString command = "";
     QString varName;
     if (node->m_op.m_type == TokenType::DIV)
@@ -327,23 +328,27 @@ void CodeGen6809::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
         Mul16x8(node);
         return;
     }
+    as->Asm("tfr y,d");
 
 
-    as->Asm("");
+    as->Term();
     LoadVariable(node->m_left);
     as->Term();
     varName = as->StoreInTempVar("int_shift", "word");
-    //    as->ClearTerm();
-    //  as->Asm("sty "+varName);
-    // as->Asm("sta "+varName+"+1");
-    command = "\tlsr " + varName +"+1"+ "\n";
-    command += "\tror " + varName+"+0" + "\n";
+    if (node->m_op.m_type == TokenType::DIV) {
+        command = "\tlsr " + varName +"+0"+ "\n";
+        command += "\tror " + varName+"+1" + "\n";
+    }
+    else {
+        command = "\tasl " + varName +"+0"+ "\n";
+        command += "\trol " + varName+"+1" + "\n";
+    }
 
     for (int i=0;i<cnt;i++)
         as->Asm(command);
 
-    as->Asm("lda " + varName);
-    as->Asm("ldy " + varName+"+1");
+    as->Asm("ldy " + varName);
+ //   Cast(TokenType::INTEGER, node->m_left->t)
 
     as->PopTempVar();
 }
@@ -431,7 +436,7 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
         node->m_right->Accept(this);
         as->Term();
         QString lblCancel = as->NewLabel("lblShiftCancel");
-        as->Asm("tfr a,x");
+        as->Asm("tfr y,x");
         as->Asm("cmpx #0");
         as->Asm("beq "+lblCancel);
         QString lbl = as->NewLabel("lblShift");
@@ -726,7 +731,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeString> node)
 {
     node->DispatchConstructor(as,this);
     //    exit(1);
-    if (node->m_val.length()>=1 && node->m_val[0].length()>=1) {
+/*    if (node->m_val.length()>=1 && node->m_val[0].length()>=1) {
         as->ClearTerm();
 
         //        as->Asm("lda #"+QString::number(QChar(node->m_val[0][0]).unicode()));
@@ -735,7 +740,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeString> node)
         as->Asm("lda #"+QString::number(it.m_screenCode));
         as->Term();
         return;
-    }
+    }*/
     as->String(node->m_val,true);
 }
 

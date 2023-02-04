@@ -5,8 +5,10 @@ var
 // memory inc test
 	@ifndef X86
 	@ifndef ATARI520ST
+	
 procedure Test1();
 begin
+	Vars::text := "PEEKPOKE:";
 	
 	
 	poke(^$4000,0,10);
@@ -46,6 +48,8 @@ begin
 	begin
 		nop(128); // automatically make offpage
 	end;
+	Common::PASS();
+	
 end;
 
 procedure Exec();

@@ -1723,6 +1723,9 @@ void CodeGen6502::LoadVariable(QSharedPointer<Node> node)
 
 void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
 
+    /*        if (as->m_symTab->Lookup(value)==nullptr)
+                ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.",m_op.m_lineNumber);
+    */
     TokenType::Type t = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType();
     QString type = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->m_type;
     if (as->m_symTab->m_records.contains(type))
