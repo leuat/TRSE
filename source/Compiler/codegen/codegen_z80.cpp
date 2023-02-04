@@ -503,7 +503,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             // Is 16 bit
             //            as->Comment("Left : " +Util::numToHex(node->m_left->isWord(as)));
             //          as->Comment("Right : " +Util::numToHex(node->m_right->isWord(as)));
-            as->Comment("INT VAL "+Util::numToHex(node->m_right->getValueAsInt(as)));
+            //as->Comment("INT VAL "+Util::numToHex(node->m_right->getValueAsInt(as)));
             if (node->m_right->getOrgType(as)==TokenType::BYTE ||
                     (node->m_right->getOrgType(as)==TokenType::INTEGER_CONST && node->m_right->getValueAsInt(as)<0x100)) {
                 //                qDebug() << "SWAPP";

@@ -4027,7 +4027,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
         for (QSharedPointer<Symbol> s: syms) {
             if (Syntax::s.m_illegaVariableNames.contains(s->m_name))
                 ErrorHandler::e.Error("Illegal variable name '" + s->m_name +"' on the "+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+" (name already used in the assembler etc) ",m_currentToken.m_lineNumber);
-            if (m_isRecord)
+            if (m_isRecord && !isProcedureParams)
                 s->m_isClassVariable = true;
             //qDebug() << "Defining RECORD: " << s->m_name;
             QString sn = s->m_name;
@@ -4190,6 +4190,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     // So here is something interesting: if you're in a class on the m68k,
     // then if you have defined a byte it MUST become an integer due to the alignment requires
     bool forceByteAlignment =(Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000 && m_isRecord);
+//    qDebug() << "TYPESPEC " <<m_currentToken.getType() << varNames << m_symTab->m_currentClass;
 
     if (forceByteAlignment && t.m_type==TokenType::BYTE) {
         t.m_type = TokenType::INTEGER;
@@ -4285,6 +4286,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         bool isStringList = dataType==TokenType::STRING;
 
         // string lists are treated as pointer lists
+
 
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
