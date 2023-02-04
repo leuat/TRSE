@@ -111,8 +111,11 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
 
     QString t = byte;
-    if (type.toLower()=="integer")
+    int scale = 1;
+    if (type.toLower()=="integer") {
         t = word;
+        scale = 2;
+    }
     if (type.toLower()=="byte")
         t = byte;
 
@@ -139,13 +142,13 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
         if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram || m_currentBlock==m_ram) {
 
-            Write(name+":" +"\t ds "+QString::number(count),0);
-            m_currentBlock->m_dataSize+=count;
+            Write(name+":" +"\t ds "+QString::number(count*scale),0);
+            m_currentBlock->m_dataSize+=count*scale;
 
         }
         else
 
-        Write(name+":" +"\t ds "+QString::number(count));// +" "+t+" 0",0);
+        Write(name+":" +"\t ds "+QString::number(count*scale));// +" "+t+" 0",0);
 
     }
     else {
