@@ -44,6 +44,7 @@ procedure PASS();
 begin
   Text::Print(#Vars::text);
   Text::Println(": PASS");
+  for Vars::i1:=0 to 2000 do nop(30);
 end;
 
 // Print NEGATIVE result of a test - ftext must be 8 characters or less

@@ -4,7 +4,9 @@ Unit Unittests;
 @use "unittests/case"
 @use "unittests/casts"
 @use "unittests/integer"
+@ifndef CPU_M6809
 @use "unittests/classes"
+@endif
 @use "unittests/ifthenelse"
 @use "unittests/muldiv"
 @use "unittests/forloop"
@@ -39,7 +41,9 @@ begin
 	begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
+@ifndef CPU_M6809
 		if (currentTest=9) then Classes::Exec();
+@endif
 		if (currentTest=6) then ForLoop::Exec();
 		@endif
 		if (currentTest=0) then CaseTest::Exec();
@@ -69,33 +73,29 @@ procedure ExecCoco3();
 begin
 	currentTest := 0;
 	
-	Various::Exec();
-	
-		/*
-	isDone := false;
+	AdvancedMath::Exec();	
+	return;
+	Casts::Exec();
+//	return;
+	Strings::Exec();
+	Various::Exec();	
+	Casts::Exec();
 	MulDiv::TRS80();
+		
+	isDone := false;
+	Registers::Exec();
 	IntegerTest::Exec();
 	BitOp::Exec();
 	CaseTest::Exec();
 	Common::TestInit();
 	IntegerTest::Exec();
 	ForLoop::Exec();
-	IfThenElse::Exec();*/
+	IfThenElse::Exec();
+	
 /*	while (Common::Status() = 0 and isDone = false) do
 	begin
 	//	Common::TestSuiteInit();
-//		if (currentTest=0) then Classes::Exec();
-		if (currentTest=6) then ForLoop::Exec();
-		if (currentTest=1) then CaseTest::Exec();
-		if (currentTest=5) then MulDiv::Exec();
-		if (currentTest=2) then IfThenElse::Exec();
-		if (currentTest=3) then IntegerTest::Exec();
-		// Pointer tests - the x86 needs a different set of pointer tests.
-	//	if (currentTest=4) then AdvancedMath::Exec();
-		if (currentTest=7) then Registers::Exec();
-		if (currentTest=8) then Various::Exec();
-		if (currentTest=9) then Strings::Exec();
-
+//	
 		currentTest+=1;
 				
 		if (currentTest>=noTests) then

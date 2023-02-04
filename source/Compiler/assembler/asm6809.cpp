@@ -85,13 +85,16 @@ void Asm6809::DeclareArray(QString name, QString type, int count, QStringList da
 
 
 
-    if (type.toLower()=="integer")
+
+    if (type.toLower()=="integer" || type.toLower()=="pointer")
         t = word;
     if (type.toLower()=="byte")
         t = byte;
 
     if (type.toLower()=="string")
         t = byte;
+
+//    qDebug() << "Declaring array "+name+" of type " + type + " " +t;
 
      if (data.count()==0 && pos!="") {
          Write(name + " = " + pos);
@@ -403,6 +406,7 @@ QString Asm6809::String(QStringList lst, bool term)
     }
     if (term)
         res=res + "\t"+byte+"\t0";
+
     m_term +=res;
     return res;
 }

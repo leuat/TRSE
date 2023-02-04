@@ -30,6 +30,8 @@ QSharedPointer<Node> NodeFactory::CreateBinop(Token t,TokenType::Type tt, QShare
             return right;
         if (right==nullptr)
             return left;
+        if (right!=nullptr && right->isPureNumeric() && (qSharedPointerDynamicCast<NodeNumber>(right)->m_val==0))
+            return left;
     }
     if (left->isPureNumeric() && right->isPureNumeric()) {
         if (t.m_type==TokenType::PLUS)

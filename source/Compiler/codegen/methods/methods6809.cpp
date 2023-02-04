@@ -46,6 +46,7 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     }
     if (Command("mod"))
         Modulo(as);
+
     if (Command("mod16"))
         Modulo16(as);
 
@@ -53,10 +54,18 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("poke"))
         Poke(as);
 
+    if (Command("inc"))
+        IncDec(as, "inc");
 
 
     if (Command("peek"))
         Peek(as);
+
+    if (Command("hi"))
+        LoHi(as,true);
+
+    if (Command("lo"))
+        LoHi(as,false);
 
     if (Command("memcpy"))
         MemCpy(as,false);
@@ -128,6 +137,8 @@ void Methods6809::Poke(Assembler* as)
     // Optimization : if parameter 1 is zero, drop the ldx / tax
     as->Comment("Poke");
     //m_node->m_params[0]->Accept(as);
+//    m_node->m_params[0]->setReference(true);
+    m_node->m_params[0]->setReference(true);
 
     auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
     if (!m_node->m_params[2]->isPureNumericOrAddress()) {
@@ -152,7 +163,7 @@ void Methods6809::Peek(Assembler* as)
     // Optimization : if parameter 1 is zero, drop the ldx / tax
     as->Comment("Peek");
     //m_node->m_params[0]->Accept(as);
-
+    m_node->m_params[0]->setReference(true);
     auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
     bop->Accept(m_codeGen);
     as->Asm("lda ,y");
@@ -373,6 +384,29 @@ void Methods6809::MemCpyUnroll(Assembler* as, bool isReverse)
         }
     }
 
+}
+
+void Methods6809::LoHi(Assembler *as, bool isHi)
+{
+    if (!m_node->m_params[0]->isWord(as))
+        return;
+    if (isHi) {
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Asm("tfr y,d");
+        as->Asm("ldb #0");
+    }
+    if (!isHi) {
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Asm("tfr y,d");
+        as->Asm("exg a,b");
+        as->Asm("ldb #0");
+    }
+    if (m_node->m_castType==TokenType::INTEGER)
+    {
+        as->Asm("exg a,b");
+        as->Asm("tfr d,y");
+
+    }
 }
 
 

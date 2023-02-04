@@ -200,7 +200,7 @@ public:
 
     bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
 
-    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
+//    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
     void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
 

@@ -13,6 +13,7 @@ public:
         m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
         m_exomizerName ="Compress executable";
         m_renameVariables << "a" <<"b"<<"c"<<"d"<<"i"<<"af"<<"bc"<<"de"<<"hl"<<"ix"<<"iy"<<"sp"<<"h"<<"l"<<"p"<<"r"<<"pc"<<"e"<<"sz"<<"pnc" <<"z"<<"nz"<<"nc" <<"po"<<"pe"<<"m";
+        m_allowClasses = true;
 //        m_registers <<"_a" <<"_b"<<"_c"<<"_d"<<"_af"<<"_bc"<<"_de"<<"_hl"<<"_ix"<<"_iy"<<"_h"<<"_l";
     }
     // Performs the full assembling + post processing stuff

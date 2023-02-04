@@ -1916,6 +1916,9 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 {
     QVector<QSharedPointer<Node>> decls;
     bool isClass = m_currentToken.m_type==TokenType::CLASS;
+    if (isClass && !Syntax::s.m_currentSystem->m_allowClasses)
+        ErrorHandler::e.Error("TRSE doesn't support classes on this CPU yet",m_currentToken.m_lineNumber);
+
     Eat();
     //    SymbolTable
     QSharedPointer<SymbolTable>  record = QSharedPointer<SymbolTable> (new SymbolTable());

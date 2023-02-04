@@ -660,7 +660,6 @@ void CodeGen6502::dispatch(QSharedPointer<NodeBinOP>node)
         QString s = "#";
         if (node->m_left->isAddress() || node->m_right->isAddress())
             s = "";
-
         if (as->m_term=="")
             if (!node->isWord(as))
                 as->Asm("lda " + s + QString::number(val));

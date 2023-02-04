@@ -32,6 +32,7 @@ procedure ByteDivByte04();
 begin
 	Vars::v1 := 100;
 	Vars::v2 := 5;
+
 	Vars::rb:=Vars::v1/Vars::v2;
 	Vars::text := "04:"; if Vars::rb=20 then Common::PASS() else Common::FAIL();
 end;

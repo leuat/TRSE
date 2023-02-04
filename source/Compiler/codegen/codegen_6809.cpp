@@ -296,7 +296,6 @@ void CodeGen6809::HandleMulDiv(QSharedPointer<Node> node) {
         Div16x8(node);
         // Since div always 16 bit
 //        as->Asm(";Casting? "+TokenType::getType(node->m_left->m_castType));
-        Cast(TokenType::INTEGER, node->m_left->m_castType);
 
 
         return;
@@ -314,7 +313,6 @@ void CodeGen6809::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
         //else
         //ErrorHandler::e.Error("16 bit Binary operation / not implemented for this value yet ( " + QString::number(val) + ")");
         Div16x8(node);
-        Cast(TokenType::INTEGER, node->m_left->m_castType);
 
         return;
         //return;
@@ -489,18 +487,24 @@ void CodeGen6809::Mul16x8(QSharedPointer<Node> node) {
 }
 
 void CodeGen6809::Div16x8(QSharedPointer<Node> node) {
-    as->Comment("16x8 div");
+    as->Comment("16x16 div");
 
     node->m_left->setForceType(TokenType::INTEGER);
     node->m_right->setForceType(TokenType::INTEGER);
     LoadVariable(node->m_right);
 
     as->Asm("tfr y,x");
+    if (!node->m_left->isPure())
+        as->Asm("pshs x");
     LoadVariable(node->m_left);
     as->Term();
+    if (!node->m_left->isPure())
+        as->Asm("puls x");
     as->Asm("pshs x,y");
     as->Asm("jsr UDIV16");
     as->Asm("puls y");
+    as->Comment("; CAST TYPE "+TokenType::getType(node->m_left->m_castType));
+    Cast(TokenType::INTEGER, node->m_left->m_castType);
 
 
 }
@@ -579,7 +583,9 @@ void CodeGen6809::RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node) {
             EightBitMul(node);
         else
             //ErrorHandler::e.Error("Binary operation / not implemented for this value yet ( " + QString::number(val) + ")");
+        {
             Div16x8(node);
+        }
         return;
     }
     as->Comment("8 bit mul of power 2");
@@ -844,8 +850,8 @@ void CodeGen6809::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
 void CodeGen6809::BinOp16(QSharedPointer<Node> node)
 {
-    if (node->m_op.m_type!=TokenType::PLUS && node->m_op.m_type!=TokenType::MINUS)
-        ErrorHandler::e.Error("Only + and - are currently implemented",node->m_op.m_lineNumber);
+//    if (node->m_op.m_type!=TokenType::PLUS && node->m_op.m_type!=TokenType::MINUS)
+  //      ErrorHandler::e.Error("Only + and - are currently implemented",node->m_op.m_lineNumber);
    // node->m_right->setForceType(TokenType::INTEGER);
     node->m_left->setForceType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::PLUS) {
@@ -880,120 +886,10 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
 
 void CodeGen6809::AssignVariable(QSharedPointer<NodeAssign> node)
 {
-    // Begin by validating all nodes
-    ValidateAssignStatement(node);
-    as->ClearTerm();
-    auto v = VarOrNum(node->m_left);
-    node->m_left = v;
-    bool ignoreLookup = false;
-  // Get variable name
-    QString vname = getValue(v);
-    // Make sure write type for classes are the same
-    if (v->m_writeType==TokenType::NADA)
-        v->m_writeType = node->m_right->getWriteType();
-
-
-
-    if (v->isByte(as) || v->getArrayType(as)==TokenType::BYTE) {
-//        as->Comment("SETTING BYTE CAST TYPE");
-        node->m_right->setCastType(TokenType::BYTE);
-    }
-    if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
-        node->m_right->setCastType(TokenType::INTEGER);
-    if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
-        node->m_right->setCastType(TokenType::LONG);
-
-
-
-    //    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
-  // ****** REGISTERS TO
-    if (v->m_isRegister) {
-        as->Comment("Assigning to register");
-        AssignToRegister(node);
-        return;
-    }
-
-    if (!v->isWord(as)) {
+    if (!node->m_left->isWord(as)) {
         node->m_right->setForceType(TokenType::BYTE);
     }
-
-    // ****** REGISTERS FROM
-    if (node->m_right->m_isRegister) {
-        as->Comment("Assigning from register");
-        AssignFromRegister(node);
-        return;
-    }
-
-    // Ignore silly stuff such as a:=a; and zp:=zp;
-    if (node->m_right->isPureVariable()) {
-        if (vname == node->m_right->getValue(as))
-            return;
-    }
-
-
-    // ****** RECORDS AND CLASSES DIRECT ASSIGNMENT
-    if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
-        as->Comment("Assigning pure records/classes");
-        AssignPureRecords(node);
-        return;
-    }
-    // ****** STRINGS
-    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
-        as->Comment("Assigning a string : " + getValue(v));
-        AssignString(node);
-        return;
-    }
-    // ** Override
-    // someInt := b[c];
-    if (IsSimpleAssignInteger(node))
-        return;
-
-
-    // ****** Pointer handling
-    if (AssignPointer(node)) {
-        return;
-    }
-    // Lookup for a type check
-    if (!ignoreLookup)
-        QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
-
-
-    if (node->m_left->isWord(as)) {
-        //        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
-        node->m_right->setForceType(TokenType::INTEGER);
-    }
-
-    // stack parameters
-    if (StoreStackParameter(node))
-        return;
-
-
-
-    // For constant i:=i+1;
-    if (IsSimpleIncDec(node))
-        return;
-
-    //a:=5; some simplest case
-    if (StoreVariableSimplified(node))
-        return;
-
-    // p := #data;
-    if (IsSimpleAssignPointer(node))
-        return;
-
-    // p[i] := 10;
-    if (IsAssignPointerWithIndex(node))
-        return;
-
-
-    // arr[i] := 10;
-    if (IsAssignArrayWithIndex(node))
-        return;
-
-
-
-    GenericAssign(node);
-
+    AbstractCodeGen::AssignVariable(node);
 }
 
 QString CodeGen6809::getIncbin() {
@@ -1225,7 +1121,7 @@ QString CodeGen6809::getInitProcedure() {
 
 bool CodeGen6809::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
 {
-
+    return false;
     //    qDebug() << "HERE" <<node->m_right->isPointer(as);
     //  qDebug() << TokenType::getType(as->m_symTab->Lookup(node->m_left->getValue(as), node->m_op.m_lineNumber)->getTokenType());
     // Only assign pure variables ( z := ... and not z[i] := ....)
@@ -1247,10 +1143,13 @@ bool CodeGen6809::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
             as->Asm("ldy #"+Util::numToHex(ptr->m_expr->getValueAsInt(as)*2));
         }
         else {
-            ptr->m_expr->Accept(this);
+/*            ptr->m_expr->Accept(this);
             as->Term();
             as->Asm("asl ; integer shift");
-            as->Asm("tay");
+            as->Asm("tay");*/
+            as->Asm(";c22");
+            LoadIndex(ptr->m_expr,ptr->getArrayType(as));
+
         }
         as->Asm("lda ("+ptr->getValue(as)+"),y");
         as->Asm("sta "+var->getValue(as)+"");
@@ -1269,7 +1168,7 @@ bool CodeGen6809::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
 }
 
 
-bool CodeGen6809::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
+/*bool CodeGen6809::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     if (var==nullptr)
@@ -1334,7 +1233,7 @@ bool CodeGen6809::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     return false;
 }
 
-
+*/
 
 
 
@@ -1473,6 +1372,7 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
             as->Asm("ldy ,x");
             if (node->m_forceType==TokenType::BYTE) {
                 as->Comment("load from integer array, force result to be byte");
+                as->Asm("tfr y,d");
                 as->Asm("exg a,b");
 
             }
@@ -1565,6 +1465,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("lda #0");
                 as->Asm("tfr d,y");
                 as->Asm("puls d");
+//                node->m_castType = TokenType::NADA;
 //                Cast(node->getOrgType(as),node->m_castType);
 
             }
@@ -1940,42 +1841,18 @@ void CodeGen6809::AssignString(QSharedPointer<NodeAssign> node) {
     bool isPointer = node->m_left->isPointer(as);
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    //    QString lbl = as->NewLabel("stringassign");
-
-    /*    if (isPointer && node->m_left->hasArrayIndex()) {
-        right->Accept(this);
-
-        as->Asm("sta ("+ getValue(left)+"),y");
-        return;
-
-    }
-*/
 
     QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
 
-    //    as->Asm("jmp " + lbl);
     as->StartExistingBlock(as->m_tempVarsBlock);
-    if (right->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-    }
-    else {
-        //        QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
-        as->DeclareString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-        //      as->m_tempVars<<strAssign;
-    }
-
+    as->DeclareString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
     as->EndCurrentBlock();
 
-    //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
-    //  as->Label(lbl);
-
-    //    qDebug() << "IS POINTER " << isPointer;
-    if (isPointer && node->m_left->hasArrayIndex()==false) {
-        //      qDebug() << "HERE";
-        as->Asm("ldy #"+str);
-        as->Asm("sty "+getValue(left));
+    if (isPointer || left->isStringList(as)) {
+            as->Asm("ldy #"+str);
+            StoreVariable(left);
     }
     else {
         as->Asm("ldx #"+str);
@@ -2123,7 +2000,7 @@ bool CodeGen6809::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPoint
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
 
-    if (var->isWord(as) && rterm->m_right->isPure()) {
+//    if (var->isWord(as) && rterm->m_right->isPure()) {
 
         as->Comment(" integer a:=a+b");
         BinOp16(node->m_right);
@@ -2132,11 +2009,6 @@ bool CodeGen6809::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPoint
         as->Asm("leay d,y");*/
         StoreVariable(var);
         return true;
-    }
-    else {
-        ErrorHandler::e.Error("Codegen_6809::isSimpleAeqAOpB16Bit not implemented yet", node->m_op.m_lineNumber);
-    }
-    //        as->Asm("sty " + getValue(var) +"+1");
 
     return false;
 
@@ -2724,8 +2596,8 @@ void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to)
 
     if (from==TokenType::BYTE && to == TokenType::INTEGER) {
         as->Comment("Casting from byte to integer");
-        as->Asm("exg b,a");
         as->Asm("ldb #0");
+        as->Asm("exg b,a");
         as->Asm("tfr d,y");
     }
     if (from==TokenType::INTEGER && to == TokenType::BYTE) {
@@ -2740,11 +2612,9 @@ void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type
 {
     if (from==to && to==writeType)
         return;
-  /*  if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
         if (writeType==TokenType::INTEGER) {
             as->Comment("Casting from byte to integer to integer");
-            as->Asm("ld l,a");
-            as->Asm("ld h,0");
         }
         if (writeType==TokenType::BYTE) {
             as->Comment("Casting from byte to integer to byte");
@@ -2755,14 +2625,15 @@ void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type
     if (from==TokenType::INTEGER && to == TokenType::BYTE) {
         if (writeType==TokenType::BYTE) {
             as->Comment("Casting from integer to byte");
-            as->Asm("ld a,l");
         }
         if (writeType==TokenType::INTEGER) {
             as->Comment("Casting from integer to byte to integer");
-            as->Asm("ld h,0");
+            as->Asm("tfr y,d");
+            as->Asm("lda #0");
+            as->Asm("tfr d,y");
         }
     }
-*/
+
 }
 
 bool CodeGen6809::StoreStackParameter(QSharedPointer<NodeAssign> n)

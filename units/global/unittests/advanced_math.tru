@@ -111,6 +111,7 @@ begin
 	Vars::v1 := $10;
 	Vars::i2 := $0200;
 	// $100/$02*$10 = $800
+	asm(";ccc");
 	Vars::i1 := ($100 / (hi(Vars::i2)) ) * Vars::v1; 
 	if Vars::i1=$800 then Common::PASS() else Common::FAIL();
 end;
@@ -121,7 +122,6 @@ begin
 	Vars::v1 := $10;
 	Vars::i2 := $0400;
 	// $100*$04/$10 = $40
-	asm(";hupp");
 	Vars::i1 := ($100 * (hi(Vars::i2)) ) / Vars::v1; 
 	if Vars::i1=$40 then Common::PASS() else Common::FAIL();
 end;

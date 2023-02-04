@@ -15,14 +15,14 @@ end;
 @ifdef C64
 procedure Test2();
 begin
-	Vars::text := "T1:";
+	Vars::text := "T2:";
 	if (sizeof(teststr2)=10) then Common::PASS() else Common::FAIL();
 end;
 procedure Test3();
 begin
 	Vars::p1 := $4000;
 	Vars::p1[4] :='A';
-	Vars::text := "T1:";
+	Vars::text := "T3:";
 	if (Vars::p1[4]='A') then Common::PASS() else Common::FAIL();
 end;
 
@@ -32,6 +32,7 @@ procedure TestLst1();
 begin
 	Vars::text := "T4:";
 	Vars::v1:=1;
+
 	Vars::p1 := Vars::strLst[1];
 	if (Vars::p1[1]='2') then Common::PASS() else Common::FAIL();
 end;

@@ -489,8 +489,9 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 */
     // Set force type for functions
+
+
     if (v->isByte(as) || v->getArrayType(as)==TokenType::BYTE) {
-//        as->Comment("SETTING BYTE CAST TYPE");
         node->m_right->setCastType(TokenType::BYTE);
     }
     if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
