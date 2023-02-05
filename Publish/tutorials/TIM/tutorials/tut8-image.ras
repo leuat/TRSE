@@ -8,7 +8,7 @@ program Image;
 var  
    v: byte; 
 
-@export "images/image1.flf" "images/image1.bin" 256
+@export "images/image1.flf" "images/image1.bin" 256 1 
 
 	zp:pointer;
 	image:incbin("images/image1.bin") compressed;
@@ -23,8 +23,7 @@ begin
 //	Compression::DecompressToPort(#image,$8000);
 //	Compression::DecompressToPort(#image,$3E00);
 	Screen::CopyToScreen($3E00, $8000, 512*256/4);
-
-	Z80CPM::GetChar();
-	System::CursorOn();
+	loop();
 	Z80CPM::Exit();
+
 end.

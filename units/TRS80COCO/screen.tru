@@ -41,7 +41,7 @@ begin
 	 stb $FF90
 	");
 	videomode:=%10000000;
-	videores := %01100001 | b;
+	videores := %01100000 | b | c;
 	asm("
 	ldd #$EE00
  	sta $FF9D	MSB = ($70000 + addr) / 2048
@@ -157,22 +157,6 @@ begin
 	palette[c]:=r|g|b;
 end;
 
-/*procedure SetPalette();
-begin
-	asm("
-	
- lda #0		; BLACK
- sta $ffb0
- lda #48 	; YELLOW
- sta $ffb1
- lda #$12 	; GREEN
- sta $ffb2
- lda #$3f 	; WHITE
- sta $ffb3
-	
-	
-	");
-end;	*/
 procedure EnableVsync();
 begin
 asm("

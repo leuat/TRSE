@@ -48,6 +48,7 @@ public:
 
     void SaveBin(QFile &f) override;
     void LoadBin(QFile &f) override;
+    virtual LImage* getCharset() override { return this; }
 
     void LoadQImage(QString filename);
 
