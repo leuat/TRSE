@@ -1168,73 +1168,6 @@ bool CodeGen6809::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
 }
 
 
-/*bool CodeGen6809::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
-{
-    auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    if (var==nullptr)
-        return false;
-
-    if (var->getType(as)!=TokenType::POINTER)
-        return false;
-
-    if (var->m_expr==nullptr)
-        return false;
-
-
-    if (var->m_writeType==TokenType::INTEGER) {
-        as->Comment("Writing an integer class pointer");
-        //        node->m_right->setForceType(TokenType::INTEGER);
-        as->ClearTerm();
-        node->m_right->Accept(this);
-        as->Term();
-        as->Asm("pha");
-        //        as->Asm("tax");
-        as->Asm("tya");
-        as->Asm("pha");
-        //      as->Asm("txa");
-        var->m_expr->Accept(this);
-        as->Term();
-        as->Asm("tay");
-        as->Asm("pla");
-        as->Asm("iny");
-        as->Asm("sta ("+var->getValue(as)+"),y");
-        as->Asm("dey");
-        as->Asm("pla");
-        as->Asm("sta ("+var->getValue(as)+"),y");
-
-        return true;
-    }
-
-
-    if (var->getArrayType(as)==TokenType::INTEGER) {
-        if (!node->m_right->isPure())
-
-            return false; // for now, only pure RHS expr
-        as->Comment("Is simple pointer assigning : p[n] := expr");
-        // First, set up y:
-        if (!var->m_expr->isPureNumeric()) {
-            as->ClearTerm();
-            var->m_expr->Accept(this);
-            as->Term();
-            as->Asm("asl");
-            as->Asm("tay");
-        }
-        else as->Asm("ldy #"+QString::number(var->m_expr->getValueAsInt(as)*2));
-        as->Asm("lda "+node->m_right->getValue8bit(as,false));
-        as->Asm("sta ("+var->getValue(as)+"),y");
-        as->Asm("iny");
-        as->Asm("lda "+node->m_right->getValue8bit(as,true));
-        as->Asm("sta ("+var->getValue(as)+"),y");
-        return true;
-    }
-
-
-
-    return false;
-}
-
-*/
-
 
 
 
@@ -1690,6 +1623,9 @@ void CodeGen6809::LoadVariable(QSharedPointer<NodeNumber>node)
     //   qDebug() << "OAD NUMBER";
     if (node->isReference()) {
         as->ClearTerm();
+        if (node->getValue(as).startsWith("#"))
+        as->Asm("ldy "+node->getValue(as));
+        else
         as->Asm("ldy #"+node->getValue(as));
         return;
     }
@@ -1753,7 +1689,10 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             // get index
             as->Asm("pshs a");
             LoadIndex(node->m_expr, node->getArrayType(as));
-            as->Asm("ldx "+node->getValue(as));
+            if (node->isAddress() && node->getValue(as).startsWith("$"))
+                as->Asm("ldx #"+node->getValue(as) +" is pure address");
+            else
+                as->Asm("ldx "+node->getValue(as));
             as->Asm("leax d,x");
             as->Asm("puls a");
             as->Asm("sta ,x");
@@ -2503,7 +2442,7 @@ void CodeGen6809::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPo
 
 
 
-
+/*
 bool CodeGen6809::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
 {
     //QSharedPointer<NodeNumber> num = dynamic_cast<QSharedPointer<NodeNumber>>(node->m_expr);
@@ -2586,7 +2525,7 @@ bool CodeGen6809::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
     return true;
 
 }
-
+*/
 void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to)
 {
     //    qDebug() <<"Cast " <<TokenType::getType(from) << " " << TokenType::getType(to);

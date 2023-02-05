@@ -731,5 +731,6 @@
         <file>resources/bin/krill_18/loader_PAL_NTSC_2000-c64.prg</file>
         <file>resources/bin/krill_18/loader_PAL_NTSC_1000-c64.prg</file>
         <file>resources/bin/krill_18/loader_PAL_NTSC_0200-c64.prg</file>
+        <file>resources/images/TRS80COCO.png</file>
     </qresource>
 </RCC>

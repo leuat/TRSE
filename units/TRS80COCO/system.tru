@@ -1,0 +1,52 @@
+unit System;
+var
+	stack : array[512] of byte;
+	
+	
+procedure SetFast() inline;
+begin
+	asm("
+ sta $FFD9
+	");
+end;
+
+procedure SetSlow() inline;
+begin
+	asm("
+ sta $FFD8	
+	");
+end;
+	
+procedure DisableInterrupts() inline;
+begin
+	asm("
+	orcc #%01010000	
+	");
+end;	
+	
+procedure DisableROM() inline;
+begin
+	asm("
+    sta $FFDF
+ 	");
+end;
+
+
+procedure Init() inline;
+begin
+	DisableInterrupts();
+	DisableROM();
+	asm("
+		
+	clra
+	tfr a,dp
+	lds #System_stack
+	");
+	SetFast();
+
+	
+end;
+	
+	
+	
+end.

@@ -2,8 +2,177 @@ unit Screen;
 var
 	const pos : address = $400;
 	p : pointer;
-	b : byte;
+	b,c,r,g : byte;
 	
+	const BORDER : address = $FF9A;
+	const VIDEOMODE : address = $FF98;
+	const VIDEORES : address = $FF99;
+	const VSCROLL : address = $FF9C;
+	const VDVG : address=$FF22;
+	const INIT0 : address=$FF90;
+	const gfx : address = $7000;
+	const palette : address = $ffb0;
+	x,y : integer;
+	color : byte;
+	bytetbl1 : array[4] of byte=(%00111111,%11001111,%11110011,%11111100);
+	bytetbl2 : array[4] of byte=(%11000000,%00110000,%00001100,%00000011);
+
+	ctab : array[4] of byte = (%00000000,%01000000,%10000000,%11000000);
+	colors : array[4] of byte = (%00000000,%01010101,%10101010,%11111111);
+
+	const BPL_16 : byte = %00000;
+	const BPL_20 : byte = %00100;
+	const BPL_32 : byte = %01000;
+	const BPL_40 : byte = %01100;
+	const BPL_64 : byte = %10000;
+	const BPL_80 : byte = %10100;
+	const BPL_128 : byte = %11000;
+	const BPL_160 : byte = %11100;
+
+/**
+	First parameter is bytes per line, second is number of colours
+	SetbitmapMode(Screen::BPL_40, 1); // will set 4-colour 320x224 mode
+
+**/
+procedure SetBitmapMode(b,c:global byte);
+begin
+	asm("
+	 ldb #$08
+	 stb $FF90
+	");
+	videomode:=%10000000;
+	videores := %01100001 | b;
+	asm("
+	ldd #$EE00
+ 	sta $FF9D	MSB = ($70000 + addr) / 2048
+ 	stb $FF9E	LSB = (addr / 8) AND $ff	
+	clr $FF9F
+	");
+end;	
+	
+procedure PutPixel320(x,y:global integer;color:global byte);
+begin
+//	p:=#gfx;
+/*	color := ctab[color];
+	c:=2*(x&3);
+	color := color >>c;
+	p:=#gfx + 40*y;
+	p:=p+(x>>2);
+	x:=x&3;
+	b:=p^&(bytetbl1[x]);
+	p^:=b|color;
+	//p^:=color;
+	return;*/
+	asm("
+;pset
+; pshs b
+	ldx Screen_x
+	ldy Screen_y
+	ldb Screen_color
+	pshs b
+	
+ ldu #$7000
+ tfr y,d
+ lda #40
+ mul
+ leau d,u
+ tfr x,d ; * 4
+ asra
+ rorb
+ asra
+ rorb
+ leau d,u ; pointer to screen byte
+ tfr x,d
+ andb #$03
+ leax Screen_bytetbl1,pcr
+ leay Screen_bytetbl2,pcr
+ lda ,u
+ anda b,x
+ sta ,u
+ lda ,s
+ anda b,y
+ ora ,u
+ sta ,u
+ 
+ puls b
+; puls b,pc	
+	");
+	
+	
+end;
+
+procedure PutPixel640(x,y:global integer;color:global byte);
+begin
+	
+	asm("
+;pset
+; pshs b
+	ldx Screen_x
+	ldy Screen_y
+	ldb Screen_color
+ ldu #$7000
+ tfr y,d
+ lda #160
+ mul
+ leau d,u
+ tfr x,d
+ asra
+ rorb
+ asra
+ rorb
+ leau d,u ; pointer to screen byte
+ tfr x,d
+ andb #$03
+ leax Screen_bytetbl1,pcr
+ leay Screen_bytetbl2,pcr
+ lda ,u
+ anda b,x
+ sta ,u
+ lda ,s
+ anda b,y
+ ora ,u
+ sta ,u
+; puls b,pc	
+	");
+	
+	
+end;
+
+
+
+
+procedure SetColor(b,c : global byte);
+begin
+	palette[b]:=c;
+end;
+
+procedure SetColorRGB(c,r,g,b : global byte);
+begin
+	if (r&2=2) then r:=r|%01000000;
+	r:=r&%11111101;
+	if (g&2=2) then g:=g|%00100000;
+	g:=g&%11111101;
+	if (b&2=2) then b:=b|%00010000;
+	b:=b&%11111101;
+	palette[c]:=r|g|b;
+end;
+
+/*procedure SetPalette();
+begin
+	asm("
+	
+ lda #0		; BLACK
+ sta $ffb0
+ lda #48 	; YELLOW
+ sta $ffb1
+ lda #$12 	; GREEN
+ sta $ffb2
+ lda #$3f 	; WHITE
+ sta $ffb3
+	
+	
+	");
+end;	*/
 procedure EnableVsync();
 begin
 asm("
