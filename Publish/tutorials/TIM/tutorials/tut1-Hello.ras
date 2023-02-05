@@ -11,25 +11,25 @@ begin
 	Z80CPM::Startup();
 	
 	// print newline
-	Z80CPM::putchar(13);
+	Z80CPM::PutCharLF(13);
 
 	for i:= 0 to 10 do begin
 		// print message
-		Z80CPM::puts(#msg);
+		Z80CPM::PutString(#msg);
 		// print space
-		Z80CPM::putch(32);
+		Z80CPM::PutChar(32);
 	end;
 
-	Z80CPM::puts("\n\rPress any key...");
+	Z80CPM::PutString("\n\rPress any key...");
 	
 	// wait for keypress and read key
-	ch := Z80CPM::getch();
+	ch := Z80CPM::GetCharEcho();
 
 	// print pressed key	
-	Z80CPM::puts("\n\rYou pressed: ");
-	Z80CPM::putch(ch);
+	Z80CPM::PutString("\n\rYou pressed: ");
+	Z80CPM::PutChar(ch);
 
-	Z80CPM::putchar(13);
+	Z80CPM::PutCharLF(13);
 
 	// Exit code for CP/M programs
 	Z80CPM::Exit();

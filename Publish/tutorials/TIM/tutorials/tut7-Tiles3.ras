@@ -103,16 +103,16 @@ begin
         if skip>3 then skip := 0;
 
 		// check if key was pressed
-        if Z80CPM::kbhit() <> 0 then begin
-            ch := Z80CPM::getch();
-            if $6f = ch then begin // 'o'
+        if Z80CPM::KeyPressed() then begin
+            ch := Z80CPM::GetChar();
+            if ASCII::lower_o = ch then begin
                 if shipx>=6 then shipx -= 1;
                 shipauto := 10;
-            end else if $70 = ch then begin // 'p'
+            end else if ASCII::lower_p = ch then begin
                 if shipx<=110 then shipx += 1;
                 shipauto := 10;
             end
-            else if $71 = ch then break; // 'q'
+            else if ASCII::lower_q = ch then break;
         end;
 
         drawship(shipx, 25);

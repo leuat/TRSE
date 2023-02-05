@@ -2,18 +2,60 @@
 
 	Code from this unit was largely taken/adapted from MESCC compiler by Miguel I. Garcia Lopez / FloppySoftware
 	https://github.com/MiguelVis/mescc
-	See mescc.h and conio.h
+	See mescc.h, cpm.h, fileio.h and conio.h
 
 */
 
 unit Z80CPM;
+@use "system/ascii"
 var
+
 	chr: byte;
 	str: pointer;
+	reg_bc, reg_de: integer;
+	fname, fp: pointer;
 	
+	const FILENAME_MAX: byte = 15;  /* d:filename.typ + ZERO */
+	const _FCB_SIZE:    byte = 36;
+	const EOF:          integer = $FFFF;
+
+	const _XF_READ:  byte =  1;   /* Read mode */
+	const _XF_WRITE: byte =  2;   /* Write mode */
+	const _XF_BIN:   byte =  4;   /* Binary mode */
+	const _XF_EOF:   byte =  8;   /* End of file */
+	const _XF_ERR:   byte =  16;  /* I/O error */
+
+	const _XF_IMOD:  byte =  0;   /* Mode (1 byte) */
+	const _XF_IPOS:  byte =  1;   /* Position in buffer (1 byte) */
+	const _XF_IBUF:  byte =  2;   /* Buffer (128 bytes) */
+	const _XF_IFCX:  byte =  130; /* FCX (37 bytes: USER (1) + FCB (36)) */
+	const _XF_ISIZ:  byte =  166; /* Data block size */
+	const _XF_IRND:  byte =  163; /* Random record # in FCB */
+
+
+	// BDOS FUNCTIONS
+	const BF_GETDRV   : byte = 25;
+	const BF_SETDRV   : byte = 14;
+	const BF_USER     : byte = 32;
+	const BF_DMA      : byte = 26;
+	const BF_FIND1ST  : byte = 17;
+	const BF_FINDNEXT : byte = 18;
+	const BF_OSVER    : byte = 12;
+	const BF_CONST    : byte = 11;
+	const BF_FSIZE    : byte = 35;
+	const BF_OPEN     : byte = 15;
+	const BF_DELETE   : byte = 19;
+	const BF_CREATE   : byte = 22;
+	const BF_READSEQ  : byte = 20;
+	const BF_WRITESEQ : byte = 21;
+	const BF_RENAME   : byte = 23;
+	const BF_CLOSE    : byte = 16;
+	const BF_ATTRIB   : byte = 30;
+	const BF_READRND  : byte = 33;
+	const BF_WRITERND : byte = 34;
 
 /**
-	Startup code for Z80 CP/M, must be first executed code in TIM-011 program
+	Startup code for Z80 CP/M, must be first executed code in CP/M (and TIM-011) program
 **/
 procedure Startup() inline;
 begin
@@ -56,9 +98,50 @@ ccargs:
 	");
 end;
 
+procedure run_bios();
+begin
+	asm("
+	ld   hl,($1)
+	ld   d,0
+	add  hl,de
+	jp   (hl)
+	");
+end;
+
+/*
+ * @fn     unsigned int bdos_hl(unsigned int bc, unsigned int de)
+ * @brief  Call to BDOS.
+ * @param  bc - bc register
+ * @param  de - de register
+ * @return value of hl register
+ */
+function bdos_hl(reg_bc, reg_de: global integer): integer;
+begin
+	asm("
+	ld bc, (Z80CPM_reg_bc)
+	ld de, (Z80CPM_reg_de)
+	jp 5
+	");
+end;
+
+/*
+ * @fn     unsigned char bdos_a(unsigned int bc, unsigned int de)
+ * @brief  Call to BDOS.
+ * @param  bc - bc register
+ * @param  de - de register
+ * @return value of a register
+ */
+function bdos_a(reg_bc, reg_de: global integer): byte;
+begin
+	asm("
+	ld bc, (Z80CPM_reg_bc)
+	ld de, (Z80CPM_reg_de)
+	jp 5
+	");
+end;
 
 /**
-	Exit code for Z80 CP/M, must be last executed code in TIM-011 program
+	Exit code for Z80 CP/M, must be last executed code in CP/M (and TIM-011) program
 **/
 procedure Exit() inline;
 begin
@@ -81,7 +164,7 @@ end;
 /**
 	Puts a character to CP/M terminal, where chr is ASCII code
 **/
-procedure putch(chr: global byte);
+procedure PutChar(chr: global byte);
 begin
 	asm("
 	ld   a,[Z80CPM_chr]
@@ -93,56 +176,55 @@ end;
 
 
 /**
-	Gets an ASCII character from terminal, waits for keypress.
+	Puts a character to CP/M terminal plus adds LF after CR, where chr is ASCII code
 **/
-function getch(): integer;
+procedure PutCharLF(chr: global byte);
 begin
-	asm("
-	ld e,6
-	call run_bios
-	ld h,0
-	ld l,a
-	");	
+	PutChar(chr);
+	if chr = ASCII::CR then PutChar(ASCII::LF);
 end;
 
 
 /**
 	Checks if there are characters in CP/M terminal's keyboard buffer 
 **/
-function kbhit(): integer;
+function KeyPressed(): boolean;
 begin
 	asm("
 	ld e,3
-	call run_bios
-	ld h,a
-	ld l,a
+	jp run_bios
+//	ld h,a
+//	ld l,a
 	");	
 end;
 
 
 /**
-	Puts a character to CP/M terminal plus adds LF after CR, where chr is ASCII code
+	Gets an ASCII character from terminal, waits for keypress.
 **/
-procedure putchar(chr: global byte);
+function GetChar(): byte;
 begin
-	if chr = 13 then putch(10);
-	putch(chr);
+	asm("
+	ld e,6
+	jp run_bios
+	");	
 end;
 
 
 /**
 	Gets an ASCII character from terminal, waits for keypress, produces echo
 **/
-function getchar(): integer;
+function GetCharEcho(): integer;
 begin
-	getchar := getch();
-	putchar(getchar);
+	chr := GetChar();
+	PutCharLF(chr);
+	GetCharEcho := chr;
 end;
 
 /**
 	Puts a null-terminated string to terminal
 **/
-procedure puts(str: global pointer);
+procedure PutString(str: global pointer);
 begin
 	asm("
 	ld   hl,(Z80CPM_str)
@@ -163,16 +245,19 @@ puts_end:
 	");	
 end;
 
+
+
 /**
 	Puts a hex nibble to terminal
 **/
 procedure puthexn(hexn: byte);
 begin
 	if hexn < 10 then
-		putch($30 + hexn)
+		PutChar($30 + hexn)
 	else
-		putch($37 + hexn);
+		PutChar($37 + hexn);
 end;
+
 /**
 	Puts a hex byte to terminal
 **/
@@ -180,6 +265,209 @@ procedure puthexb(hexb: byte);
 begin
 	puthexn(hexb >> 4);
 	puthexn(hexb & $0F);
+end;
+
+/**
+	Puts a hex integer to terminal
+**/
+procedure puthexi(hexi: integer);
+begin
+	asm("
+		ld hl,(Z80CPM_hexi)
+		push hl
+		ld a, h
+		ld (Z80CPM_hexb), a
+		call Z80CPM_puthexb
+		pop hl
+		ld a, l
+		ld (Z80CPM_hexb), a
+		jp Z80CPM_puthexb
+	");
+end;
+
+
+// int xfnamb(char *fn) : check if fn is an ambiguous filename -- return 1 if true, else 0.
+function xfnamb(fn: pointer): byte;
+var
+	xfnamb_ret: byte;
+begin
+	xfnamb_ret := 0;
+	while fn^ <> 0 do begin
+		if ( (fn^ = ASCII::QUESTION) or (fn^ = ASCII::ASTERISK) ) then begin
+			xfnamb_ret := 1;
+			break;
+		end;
+		fn += 1;
+	end;
+	xfnamb := xfnamb_ret;
+end;
+
+/*
+ * @fn     int setfcb(char *fname, char *fcb)
+ * @brief  Make FCB.
+ *
+ * This function is available if CC_FCX is not defined.
+ *
+ * @param  fname - filename
+ * @param  fcb - destination FCB
+ * @return 0 on success, else != 0
+ */
+
+function setfcb(fname: global pointer, fcb: pointer): byte;
+begin
+	asm("
+	ld hl, (Z80CPM_fname)
+	ld de, (Z80CPM_fcb)
+
+	inc	hl		//Check for optional A: ... P: drive
+	ld	a,(hl)
+	dec	hl
+	cp	ASCII_COLON
+	jr	nz,sfcbdef
+	ld	a,(hl)
+	call	sfcbupp
+	cp	ASCII_LOWER_A
+	jr	c,sfcberr
+	cp	ASCII_LOWER_P + 1
+	jr	nc,sfcberr
+	sub	ASCII_LOWER_A - 1
+	inc	hl
+	inc	hl
+	jr	sfcbdrv
+
+sfcbdef
+	xor	a		//Default drive
+
+sfcbdrv
+	ld	(de),a		//Set drive in fcb
+	inc	de
+
+sfcbnam
+	ld	c,ASCII_DOT		//Set name in fcb
+	ld	b,8
+	call	sfcbtok
+	ld	a,b
+	cp	8
+	jr	z,sfcberr
+	ld	a,(hl)
+	or	a
+	jr	z,sfcbtyp
+	cp	ASCII_DOT
+	jr	nz,sfcberr
+	inc	hl
+
+sfcbtyp
+	ld	c,0		//Set type in fcb
+	ld	b,3
+	call	sfcbtok
+	ld	a,(hl)
+	or	a
+	jr	nz,sfcberr
+
+	ld	a,0		//Fill the rest of the fcb with zeroes
+	ld	b,24
+	call	sfcbset
+
+	ld	hl,0		//success
+	ret
+
+	//Error entry for sfcbtok
+
+sfcbtke
+	pop	hl		//Remove address from stack
+
+sfcberr
+	ld	hl,1		//Error
+	ret
+
+	//Set field (name or type)
+	//
+	//In:
+	//	C = delimiter ('.' for name, 0 for type)
+	//	B = Max. field length (8 for name, 3 for type)
+	//
+	//Out:
+	//	B = Remain length
+
+sfcbtok
+	ld	a,(hl)		//End of string?
+	or	a
+	jr	z,sfcbspc
+	cp	c		//Delimiter?
+	jr	z,sfcbspc
+	cp	ASCII_ASTERISK		//Wildcard?
+	jr	z,sfcbamb
+
+	//Accept only valid characters
+
+	cp	ASCII_HASH		//# $ %
+	jr	c,sfcbtke
+	cp	ASCII_PERCENT + 1
+	jr	c,sfcbtks
+	cp	ASCII_NUM0		//0 ... 9
+	jr	c,sfcbtke
+	cp	ASCII_NUM9 + 1
+	jr	c,sfcbtks
+	call	sfcbupp		//? @ a ... z
+	cp	ASCII_QUESTION
+	jr	c,sfcbtke
+	cp	ASCII_Z + 1
+	jr	c,sfcbtks
+	cp	ASCII_UNDER		//_
+	jr	nz,sfcbtke
+
+sfcbtks
+	ld	(de),a		//Set character in fcb
+	inc	hl
+	inc	de
+	djnz	sfcbtok		//Continue upto max. length
+	ret
+
+	//Fill the remain field length with spaces,
+	//and return the remain length.
+
+sfcbspc
+	ld	a, ASCII_SPACE
+	ld	c,b
+	call	sfcbset
+	ld	b,c
+	ret
+
+	//Fill the remain field length with '?'
+	//and set remain length to 0.
+
+sfcbamb
+	ld	a, ASCII_QUESTION
+	inc	hl
+
+	//Fill memory
+	//
+	//In:
+	//	DE = address
+	//	B  = length
+	//	A  = value
+
+sfcbset
+	ld	(de),a
+	inc	de
+	djnz	sfcbset
+	ret
+
+	//Convert character to uppercase
+	//
+	//In:
+	//	A = Character
+	//
+	//Out:
+	//	A = Character converted to uppercase if it was: a ... z
+
+sfcbupp
+	cp	ASCII_LOWER_A
+	ret	c
+	cp	ASCII_LOWER_Z + 1
+	ret nc
+	sub	32
+	");
 end;
 
 end.

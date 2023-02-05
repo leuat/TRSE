@@ -1,0 +1,266 @@
+/*
+
+	Code from this unit was largely taken/adapted from MESCC compiler by Miguel I. Garcia Lopez / FloppySoftware
+	https://github.com/MiguelVis/mescc
+	See mescc.h, cpm.h, fileio.h and conio.h
+
+*/
+
+unit File;
+@use "system/z80cpm"
+
+var
+	const ModeRead: byte = 1;
+	const ModeWrite: byte = 2;
+	const EOF: byte = $FF;
+	cpmfName, cpmfBuffer: pointer;
+	cpmfPos, cpmfByt, cpmfVal: byte;
+
+
+/**
+	Class that realizes file access for Z80 CP/M
+**/
+	Handle = class
+		Mode : byte;						// read or write
+		ReadPos : byte;					// current position in buffer, $FF means EOF
+		Buffer : array[128] of byte;		// 128 bytes read from file
+		FCX : array[37] of byte;			// FCX, USER (1) + FCB (36)
+
+/**
+	Reads next 128 bytes from file into handle's buffer
+**/
+		function ReadChunk(): boolean;
+		var
+			ReadChunk_ret: boolean;
+		begin
+			ReadChunk_ret := false;
+			while (1) offpage do begin
+				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
+		
+				if Z80CPM::bdos_a(Z80CPM::BF_READSEQ, this.FCX) <> 0 then begin
+					this.ReadPos := EOF;
+					break;
+				end;
+				this.ReadPos := 0;
+				ReadChunk_ret := true;
+				break;
+			end;
+		
+			Handle::ReadChunk := ReadChunk_ret;
+		end;
+
+/**
+	Opens a file with read or write access (ModeREad or ModeWrite) <br>
+	After opening, ReadChunk is called to load first 128 bytes from file. <br><br>
+	Fot text files, CP/M assumes that line endings are [CR][LF].<br><br>
+	Be aware that many CP/M systems do not have information about exact nuber of bytes in the last file chunk.
+	That means that every file's length is a multiple of 128 bytes.<br><br>
+	If you need exact file length, be sure to somehow put that information in the file itself, for example first two bytes can be number of chunks and number of bytes in the last chunk.
+**/
+		function Open(File::cpmfName: global pointer, cpmfMode: byte): boolean;
+		var
+			Open_ret: boolean;
+		begin
+			Open_ret := false;
+			while (1) offpage do begin
+				// Filename can't be ambiguous
+				if Z80CPM::xfnamb(File::cpmfName) <> 0 then begin
+					break;
+				end;
+				
+				// Make FCB
+				if Z80CPM::setfcb(File::cpmfName, this.FCX) <> 0 then begin
+					break;
+				end;
+		
+				// Prepare file buffer
+				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
+			
+				if cpmfMode = ModeRead then begin
+					if Z80CPM::bdos_a(Z80CPM::BF_OPEN, this.FCX) = 255 then begin
+						break;
+					end;
+					// Read first chunk from the file
+					//Handle::ReadChunk(this);
+					this.ReadChunk();
+				end else begin
+					if Z80CPM::bdos_a(Z80CPM::BF_FIND1ST, this.FCX) <> 255 then begin
+						if Z80CPM::bdos_a(Z80CPM::BF_DELETE, this.FCX) = 255 then begin
+							break;
+						end;
+					end;
+		
+					if Z80CPM::bdos_a(Z80CPM::BF_CREATE, this.FCX) = 255 then begin
+						break;
+					end;
+		
+					this.ReadPos := 0;  // No data in buffer
+				end;
+			
+				// Set file mode
+				this.Mode := cpmfMode;
+				Open_ret := true;
+				break;
+			end;
+		
+			Handle::Open := Open_ret;
+		end;
+
+/**
+	Closes the file
+**/
+		function Close(): boolean;
+		var
+			Close_ret: boolean;
+		begin
+			Close_ret := false;
+			while (1) do begin
+				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
+				if Z80CPM::bdos_a(Z80CPM::BF_CLOSE, this.FCX) = 255 then break;
+			
+				// Success
+				Close_ret := true;
+				break;
+			end;
+			
+			Handle::Close := Close_ret;
+		end;
+
+/**
+	Reads one byte from file's buffer and returns it.<br>
+	Sets handle's ReadPos to EOF if end of file is encountered.
+**/
+		function ReadByte(): byte;
+		var
+			ReadByte_ret: byte;
+		begin
+			ReadByte_ret := EOF;
+			// Read next record if needed
+			if this.ReadPos = 128 then this.ReadChunk();
+			// Read byte
+			if this.ReadPos <> EOF then begin
+				ReadByte_ret := this.Buffer[this.ReadPos];
+				this.ReadPos += 1;
+			end;
+			Handle::ReadByte := ReadByte_ret;
+		end;
+
+/**
+	Reads a sequence of bytes from file until a defined value (cpmfVal) is encountered.<br>
+	Provided buffer will include that value and zero byte after it.<br>
+	Returns number of read bytes.<br>
+	Sets handle's ReadPos to EOF if end of file is encountered.
+**/
+		function ReadUntil(File::cpmfBuffer: global pointer, File::cpmfVal: global byte): byte;
+		begin
+			cpmfPos := 0;
+			while this.ReadPos <> EOF do begin
+				cpmfByt := Handle::ReadByte(this);
+				cpmfBuffer[cpmfPos] := cpmfByt;
+				cpmfPos += 1;
+				if cpmfByt = cpmfVal then break;
+			end;
+			cpmfBuffer[cpmfPos] := 0;
+			Handle::ReadUntil := cpmfPos;
+		end;
+
+/**
+	Reads cpmfVal bytes from file and fills provieded buffer with them.<br>
+	Returns number of read bytes.<br>
+	Sets handle's ReadPos to EOF if end of file is encountered.
+**/
+		function ReadBytes(File::cpmfBuffer: global pointer, File::cpmfVal: global byte): byte;
+		begin
+			cpmfPos := 0;
+			while this.ReadPos <> EOF do begin
+				cpmfByt := Handle::ReadByte(this);
+				cpmfBuffer[cpmfPos] := cpmfByt;
+				cpmfPos += 1;
+				cpmfVal -= 1;
+				if cpmfVal = 0 then break;
+			end;
+			Handle::ReadBytes := cpmfPos;
+		end;
+
+	end;
+
+/**
+	Displays a TPC picture on coordinates (x,y) <br>
+	Coordinates are the same as tile cooridinates [0..127, 0..63].
+**/
+procedure ShowPic(x, y: byte, tpcName: pointer);
+var
+	adr, adr1: integer;
+	fpp3: pointer;
+	width, height, buffCnt, buffLeft, byteCnt, hCnt: byte;
+	PicFile : Handle;
+begin
+
+    if PicFile.Open(tpcName, ModeRead) offpage then begin
+//        adr1 := $8000 + (x shl 8) + (y shl 2);
+//        adr1 := $8000 + x * 256 + y * 4;
+		asm("
+			// y*4
+			ld a,(File_y)
+			sla a
+			sla a
+			ld l,a
+			// x*256, x just goes into high byte
+			ld a,(File_x)
+			ld h, a
+			// add video address start
+			ld de,$8000
+			add hl, de
+			ld (File_adr1), hl
+		");
+        adr := adr1;
+
+        width := PicFile.Buffer[0];
+        height := PicFile.Buffer[1] << 2;
+        buffCnt := 2;        // 2 bytes were used for dimensions
+        buffLeft := 126;     // max 126 bytes are left in the buffer
+        while width > 0 offpage do begin
+            hCnt := height;
+            while hCnt > 0 offpage do begin
+                //byteCnt = (hCnt <= buffLeft) ? hCnt : buffLeft;
+                if hCnt <= buffLeft then
+                    byteCnt := hCnt
+                else
+                    byteCnt := buffLeft;
+
+                // write bytes to video memory
+                fpp3 := #PicFile.Buffer[buffCnt];
+                asm("
+                		ld bc, (File_adr)
+                		ld hl, (File_fpp3)
+                		ld de, (File_byteCnt)
+                		ld e, d
+                		ld d, 0
+				_outv1:
+				    ld a, (hl)
+				    out (c), a
+				    inc c
+				    inc hl
+				    dec e
+				    jp nz, _outv1
+                ");
+
+                buffCnt += byteCnt;
+                buffLeft -= byteCnt;
+                hCnt -= byteCnt;
+                adr += byteCnt;
+                if buffLeft = 0 then begin
+                    PicFile.ReadChunk();
+                    buffCnt := 0;
+                    buffLeft := 128;
+                end;
+            end;
+            adr1 += $100;
+            adr := adr1;
+            width -= 1;
+        end;
+        PicFile.Close();
+    end;
+end;
+
+end.

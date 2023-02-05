@@ -73,3 +73,6 @@ data_header_images/image2.flf = 0
 cc1541_disk_type = d64
 disable_compiler_comments = 0
 use_track_19 = 1
+project_path = /home/zzarko/Programming/trse/GIT3/TRSE/Release/tutorials/TIM/tutorials/
+open_files = ,tut15-TPC.ras, tut14-File.ras, [ext]units/TIM/system/fileio.tru
+current_file = tut14-File.ras

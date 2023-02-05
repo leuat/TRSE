@@ -29,6 +29,7 @@ var
 	const xbase : byte = 30;
 	const ybase: byte = 30;
 	
+	kbcheck: byte;
 	
 procedure Render();
 begin
@@ -51,6 +52,8 @@ begin
 	System::CursorOff();
 	Screen::ClearBox(0, 0, 128, 64, 0);
 
+	kbcheck := 20;
+
 //	System::SetTimerFunction(#Render);
 	while (true) do
 	begin
@@ -58,7 +61,17 @@ begin
 		System::MegaWait(64);
 		frame:=(frame+1)	&(noFrames-1);
 		time+=1;
+
+		kbcheck -= 1;
+		if kbcheck = 0 then
+		begin
+			if Z80CPM::KeyPressed() then break;
+			kbcheck := 20;	// check every 20 frames
+		end;
 	end;
+
+	Z80CPM::GetChar();
+	System::CursorOn();
 	Z80CPM::Exit();
 
 end.

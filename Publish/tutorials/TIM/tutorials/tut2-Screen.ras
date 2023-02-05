@@ -51,7 +51,7 @@ begin
 
 	Screen::GotoXY(30,40);
 	Screen::PrintStr("Press any key...");
-	ch := Z80CPM::getch();
+	ch := Z80CPM::GetChar();
 
 	// clear screen
 	Screen::ClearBox(0, 0, 128, 64, 0);

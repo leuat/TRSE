@@ -1,0 +1,29 @@
+program Tutorial1;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/file"
+
+var
+	TextFile: File::Handle;
+	ch: byte;
+	buffer: array[256] of byte;
+
+begin
+	Z80CPM::Startup();
+	
+	System::SetScreenPos(0);
+	System::CursorOff();
+	
+	TextFile.Open("message.txt", File::ModeRead);
+	while TextFile.ReadPos <> File::EOF do begin
+		ch := TextFile.ReadByte();
+		Z80CPM::PutChar(ch);
+		if ch = ASCII::LF then break;
+	end;
+	TextFile.ReadUntil(#buffer, ASCII::LF);
+	Z80CPM::PutString(#buffer);
+	TextFile.Close();
+
+	System::CursorOn();
+	Z80CPM::Exit();
+end.

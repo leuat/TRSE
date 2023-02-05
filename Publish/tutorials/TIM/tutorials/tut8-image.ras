@@ -23,7 +23,8 @@ begin
 //	Compression::DecompressToPort(#image,$8000);
 //	Compression::DecompressToPort(#image,$3E00);
 	Screen::CopyToScreen($3E00, $8000, 512*256/4);
-	loop();
-	Z80CPM::Exit();
 
+	Z80CPM::GetChar();
+	System::CursorOn();
+	Z80CPM::Exit();
 end.
