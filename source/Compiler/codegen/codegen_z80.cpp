@@ -81,7 +81,7 @@ void CodeGenZ80::AssignString(QSharedPointer<NodeAssign> node) {
     if (isPointer || left->isStringList(as)) {
         as->Asm("ld hl,"+str);
         StoreVariable(left);
-//        LoadPointer(left);
+        //        LoadPointer(left);
     }
     else {
         // If not a pointer, copy everything
@@ -545,15 +545,15 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             node->m_right->Accept(this);
             ExDeHl();
             //                as->Asm("ld a,l");
-        //    if (node->m_left->isWord(as)) {
-          //      ExDeHl();
-         //   }
+            //    if (node->m_left->isWord(as)) {
+            //      ExDeHl();
+            //   }
             as->Asm("ld hl,0");
             as->Asm("ld c,0");
             if (!node->m_right->isPureNumeric()) {
-  //              if (!node->m_left->isWord(as))
-    //                as->Asm("pop af");
-      //          else
+                //              if (!node->m_left->isWord(as))
+                //                as->Asm("pop af");
+                //          else
                 as->Asm("pop af");
             }
             //         as->Asm("clc");
@@ -626,6 +626,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             as->Asm("ld b,a");
         }
         else {
+            if (node->m_right->isPureNumeric()) {
+                // PURE numeric
+                as->Comment("RHS is pure numeric optimisation");
+                node->m_left->Accept(this);
+                as->Asm(getBinaryOperation(node)+" "+node->m_right->getValue(as));
+
+                return;
+            }
             as->Asm("ld b,"+node->m_right->getValue(as));
         }
         node->m_left->Accept(this);
@@ -1634,39 +1642,38 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
 void CodeGenZ80::BuildToCmp(QSharedPointer<Node> node)
 {
 
-    if (node->m_left->getValue(as)!="") {
-        if (node->m_right->isPureNumeric())
-        {
-            as->Comment("Compare with pure num / var optimization");
-            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-            LoadVariable(node->m_left);
-            as->Asm("cp " + node->m_right->getValue(as));
+    if (node->m_right->isPureNumeric())
+    {
+        as->Comment("Compare with pure num / var optimization");
+        //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+        //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+        LoadVariable(node->m_left);
+        as->Asm("cp " + node->m_right->getValue(as));
 
-            return;
-        } else
-        {
-            as->Comment("Compare two vars optimization");
-            if (node->m_right->isPureVariable()) {
-                //QString wtf = as->m_regAcc.Get();
-                LoadVariable(node->m_right);
-                as->Asm("ld b,a");
-                LoadVariable(node->m_left);
-                //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
-                //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
-                as->Asm("cp b");
+        return;
+    }
 
-                return;
-            }
-            /*
+    as->Comment("Compare two vars optimization");
+    if (node->m_right->isPureVariable()) {
+        //QString wtf = as->m_regAcc.Get();
+        LoadVariable(node->m_right);
+        as->Asm("ld b,a");
+        LoadVariable(node->m_left);
+        //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
+        //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
+        as->Asm("cp b");
+
+        return;
+    }
+    /*
             node->m_right->Accept(this);
 
             as->Asm("cp " + getAx(node->m_right));
 
             //            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
             return;*/
-        }
-    }
+
+
     node->m_right->Accept(this);
     as->Term();
     as->Asm("ld c, a");
