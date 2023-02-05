@@ -1,0 +1,23 @@
+program Tutorial1;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/file"
+
+var
+	TextFile: File::Handle;
+	ch: byte;
+	buffer: array[256] of byte;
+
+begin
+	Z80CPM::Startup();
+	
+	System::SetScreenPos(0);
+	System::CursorOff();
+	
+	File::ShowPic(0,0,"console.tpc");
+	File::ShowPic(80,15,"console.tpc");
+	File::ShowPic(40,10,"console.tpc");
+
+	System::CursorOn();
+	Z80CPM::Exit();
+end.

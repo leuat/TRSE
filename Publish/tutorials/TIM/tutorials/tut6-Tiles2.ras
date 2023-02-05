@@ -22,7 +22,7 @@ procedure PressAny();
 begin
 	Screen::GotoXY(10,0);
 	Screen::PrintStr("Press any key...");
-	ch := Z80CPM::getch();
+	ch := Z80CPM::GetChar();
 	Screen::GotoXY(10,0);
 	Screen::PrintStr("                ");
 end;
