@@ -284,6 +284,10 @@ SOURCES += main.cpp\
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
     source/LeLib/util/utilclasses.cpp \
+    source/LeLib/util/zx0/compress.c \
+    source/LeLib/util/zx0/memory.c \
+    source/LeLib/util/zx0/optimize.c \
+    source/LeLib/util/zx0/zx0.c \
     source/OrgAsm/zorgasm.cpp \
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
@@ -577,6 +581,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \
     source/LeLib/util/utilclasses.h \
+    source/LeLib/util/zx0/zx0.h \
     source/OrgAsm/zorgasm.h \
     source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \

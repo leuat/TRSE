@@ -4,7 +4,9 @@
 #include "source/LeLib/util/util.h"
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/zorgasm.h"
-
+extern "C" {
+    #include "source/LeLib/util/zx0/zx0.h"
+}
 QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
@@ -47,6 +49,16 @@ QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
 
 
 
+}
+
+QString AbstractSystem::CompressZX0(QString fileName, QString outFileName)
+{
+    QStringList params;
+    if (QFile::exists(outFileName))
+        QFile::remove(outFileName);
+    params<<"zx0"<<fileName<<outFileName;
+    zx0_compress(3,Util::StringListToChar(params));
+    return outFileName;
 }
 
 

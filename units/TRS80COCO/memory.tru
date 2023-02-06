@@ -17,17 +17,18 @@ memcpy_loop:
 	bne memcpy_loop
 	");
 end;	
-procedure Copy16(src, dst: global pointer; ilen : global integer);
+procedure Copy16(src, dst: global pointer; ilen2 : integer);
 begin
 	asm("
-	ldx Memory_ilen
-	ldu Memory_src
-	ldy Memory_dst
-memcpy_loop:
-	lda ,u+
-	sta ,y+
+	
+	ldx Memory_ilen2
+	ldy Memory_src
+	ldu Memory_dst
+memcpy_loop16:
+	ldd ,y+
+	std ,u+
 	leax -1,x
-	bne memcpy_loop
+	bne memcpy_loop16
 	");
 end;	
 	
@@ -51,9 +52,9 @@ begin
 	asm("
 		lda Memory_b
 		ldy Memory_ilen
-		ldx Memory_dst
+		ldu Memory_dst
 fill16_loop:
-		sta ,x+
+		sta ,u+
 		leay -1,y
 		bne fill16_loop
 

@@ -46,5 +46,5 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
 QString System6809::CompressFile(QString fileName)
 {
-    return CompressLZ4(fileName);
+    return CompressZX0(fileName);
 }

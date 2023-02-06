@@ -77,6 +77,10 @@ public:
         return CompressLZ4(fileName, fileName +"_c");
     }
     QString CompressLZ4(QString fileName, QString outFileName);
+    QString CompressZX0(QString fileName) {
+        return CompressZX0(fileName, fileName +"_c");
+    }
+    QString CompressZX0(QString fileName, QString outFileName);
 
 
     virtual QString getArkosTrackerSystemString() {return "";}

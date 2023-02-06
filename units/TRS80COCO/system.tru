@@ -40,7 +40,7 @@ begin
 		
 	clra
 	tfr a,dp
-	lds #System_stack
+	lds #System_stack+64
 	");
 	SetFast();
 
