@@ -360,7 +360,21 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
     Evaluate16bitExpr(node->m_right,lo2,hi2);
 */
 
+    // First, check for the special case <>0
+    if (node->m_right->isPureNumeric())
+        if (node->m_right->getValueAsInt(as)==0)
+            if (node->m_op.m_type==TokenType::NOTEQUALS)
+            {
+                as->Comment("Special case for integer<>0");
+                node->m_left->setForceType(TokenType::INTEGER);
+                node->m_left->Accept(this);
+                as->Term();
+                as->Asm("ld a,h");
+                as->Asm("or l");
+                as->Asm("jr z, "+lblFailed);
+                return;
 
+            }
 
     QString bcs ="bcs ";
     QString bcc ="bcc ";
