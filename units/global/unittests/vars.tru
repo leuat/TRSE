@@ -10,8 +10,20 @@ var
 	ip : pointer of integer;
 	a1,a2 : array[10] of integer;
 	j,i : byte;
-	
-	
+	const addr : address = $8800;
+/*
+@ifdef CPU_Z80	
+@endif
+@ifdef CPU_MOS6502	
+	const addr : address = $8800;
+@endif
+@ifdef CPU_M6809
+	const addr : address = $8800;
+@endif
+@ifdef CPU_PX86
+	const addr : address = $8800;
+@endif
+*/	
 	ia1 : array[10] of integer = buildtable("i*100");
 	ba1 : array[10] of byte = buildtable("i");
 	strLst : array[] of string = ("S1","S2",("J",75), "S3");

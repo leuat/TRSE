@@ -20,7 +20,7 @@ begin
 end;
 procedure Test3();
 begin
-	Vars::p1 := $4000;
+	Vars::p1 := #Vars::addr;
 	Vars::p1[4] :='A';
 	Vars::text := "T3:";
 	if (Vars::p1[4]='A') then Common::PASS() else Common::FAIL();

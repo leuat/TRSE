@@ -11,11 +11,11 @@ begin
 	Vars::text := "PEEKPOKE:";
 	
 	
-	poke(^$4000,0,10);
-	inc(^$4000);	
-	Vars::v1:=peek(^$4000,0);
+	poke(Vars::addr,0,10);
+	inc(Vars::addr);	
+	Vars::v1:=peek(Vars::addr,0);
 	
-	if (peek(^$4000,0)=11) then Common::PASS() else Common::FAIL();
+	if (peek(Vars::addr,0)=11) then Common::PASS() else Common::FAIL();
 end;
 	@endif
 @endif
@@ -52,6 +52,28 @@ begin
 	
 end;
 
+
+procedure TestAddress1();
+begin
+	Vars::text := "A1:";
+	Vars::addr := $80;
+	if (Vars::addr=$80) then Common::PASS() else Common::FAIL();
+	
+end;
+procedure TestAddress2();
+begin
+	Vars::text := "A2:";
+	Vars::addr[1] := $90;
+	if (Vars::addr[1]=$90) then Common::PASS() else Common::FAIL();
+end;
+procedure TestAddress3();
+begin
+	Vars::text := "A3:";
+	Vars::v1 := 1;
+	Vars::addr[Vars::v1] := $A0;
+	if (Vars::addr[Vars::v1]=$A0) then Common::PASS() else Common::FAIL();
+end;
+
 procedure Exec();
 begin
 	Common::Initialise("VARIOUS");
@@ -67,6 +89,9 @@ begin
 	LoHi1();
 	LoHi2();
 	@endif
+	TestAddress1();
+	TestAddress2();
+	TestAddress3();
 	Common::WaitABit();
 end;
 
