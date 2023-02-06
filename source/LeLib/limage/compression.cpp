@@ -89,7 +89,7 @@ void Compression::AddToVZ200Data(QByteArray &data, LImage &img, int xp, int yp, 
         }
 
 }
-void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp, int w, int h)
+void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp, int w, int h, bool invert)
 {
     for (int y=0;y<h;y+=1)
         for (int x=0;x<w;x+=4) {
@@ -98,6 +98,9 @@ void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp,
             int yy = yp+y;
             for (int j=0;j<4;j++) {
                 uchar v = img.getPixel(xx+j,yy);
+                if (invert)
+                    c=c|(v<<(6-2*j));
+                else
                 c=c|(v<<(2*j));
             }
             data.append(c);
@@ -940,6 +943,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
     qDebug() << "Compression : " << compression;
 
     qDebug() << "cnt SHOULD be " << (32*width*6*21);
+    qDebug() << "INVERT table "<<invertTable;
 
 
     for (int i=0;i<cnt;i++) {
@@ -963,6 +967,7 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
         char lo = currentPointer&0xff;
         char hi = (currentPointer>>8)&0xff;
 //        qDebug() << QString::number(lo) << QString::number(hi);
+
         if (invertTable) {
 
             table.append(hi);

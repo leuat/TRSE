@@ -7,28 +7,21 @@ program Tutorial1;
 @use "compression/compression"
 var
 	
-	@export "images/image1.flf" "images/image1.bin" 256
-	image : incbin("images/image1.bin") compressed;
-	i:byte=0;
+	@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+	image : incbin("resources/images/image1.bin") compressed;
 
 	
 begin
 	System::Init();
+	// 320x225 4-colour 
 	Screen::SetBitmapMode(Screen::BPL_80, 1);
 	Screen::SetColor(0,0); // black
 	Screen::SetColor(1,$b); // from flf image
 	Screen::SetColor(2,$1c); 
 	Screen::SetColor(3,$33); 
 
-	Memory::Fill16(#Screen::gfx, 0, 40*225);
-//	Memory::Copy16(#image,#Screen::gfx, 40*224);
+	Memory::Fill16(#Screen::gfx, 0, 80*225);
+	
 	Compression::Decompress(#image,#Screen::gfx);
-	Screen::EnableVsync();
-	while(true) do
-	begin
-		Screen::WaitForVsync();
-		i+=1; 
-		
-	end;
 	loop();
 end.

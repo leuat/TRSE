@@ -41,7 +41,6 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
     StartProcess(assembler, QStringList() << "--decb" <<"--6809"  <<filename+".asm" <<"-o"+filename+".bin", text);
 
 
-
 }
 
 QString System6809::CompressFile(QString fileName)

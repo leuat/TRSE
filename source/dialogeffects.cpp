@@ -895,7 +895,7 @@ static int Add4PixelData(lua_State* L) {
         return 0;
 
     if (m_effect!=nullptr)
-        m_compression.AddTo4PixelData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+        m_compression.AddTo4PixelData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4),lua_tonumber(L,5)==1.0);
 
     return 0;
 }

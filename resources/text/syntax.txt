@@ -263,6 +263,7 @@ m; toPointer;Amiga, ATARI520ST;l
 m; swap; Amiga, ATARI520ST; a,a,b
 
 
+m; memcpyunroll16; M6809; a, a, i
 
 m; InitCustomCopperList; Amiga;
 m; EndCustomCopperList; Amiga;

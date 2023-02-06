@@ -26,7 +26,7 @@ public:
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div);
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
     void AddToVZ200Data(QByteArray& data, LImage& img,int x, int y, int w, int h);
-    void AddTo4PixelData(QByteArray& data, LImage& img,int x, int y, int w, int h);
+    void AddTo4PixelData(QByteArray& data, LImage& img,int x, int y, int w, int h, bool inv);
     void AddTo4PixelDataTVC(QByteArray& data, LImage& img,int x, int y, int w, int h);
     void AddSpecialC64bitmapModeToData(QByteArray& data, LImage& img,int x, int y, int w, int h);
     void AddToDataBBCMode5(QByteArray& data, LImage* img,int x, int y, int w, int h);

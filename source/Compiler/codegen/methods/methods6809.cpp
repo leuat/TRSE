@@ -64,6 +64,9 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("hi"))
         LoHi(as,true);
 
+    if (Command("memcpyunroll16"))
+        MemCpyUnroll(as);
+
     if (Command("lo"))
         LoHi(as,false);
 
@@ -406,6 +409,20 @@ void Methods6809::LoHi(Assembler *as, bool isHi)
         as->Asm("exg a,b");
         as->Asm("tfr d,y");
 
+    }
+}
+
+void Methods6809::MemCpyUnroll(Assembler *as)
+{
+    if (!m_node->m_params[2]->isPureNumeric())
+        ErrorHandler::e.Error("Memcpyunroll16 parameter 1 must be a numeric constant", m_node->m_op.m_lineNumber);
+    int cnt = m_node->m_params[2]->getValueAsInt(as);
+    m_node->m_params[1]->Accept(m_codeGen);
+    as->Asm("tfr y,u");
+    m_node->m_params[0]->Accept(m_codeGen);
+    for (int i=0;i<cnt;i++) {
+        as->Asm("ldd ,y+");
+        as->Asm("std ,u+");
     }
 }
 
