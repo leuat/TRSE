@@ -57,6 +57,10 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
 */
     if (cmd=="ld") {
         QString reg = par[0];
+        if (prevLine->m_orgLine.toLower().simplified()==line.m_orgLine.toLower().simplified()) {
+            line.m_forceOptimise = true;
+
+        }
         if (m_registers.contains(reg))
         {
             // Don't assume "mov ax,dx" to hold

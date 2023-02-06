@@ -1196,6 +1196,8 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
     }
 
 
+
+
     as->Comment("generic assign ");
     QString name = var->getValue(as);
     if (var->isWord(as)) {
@@ -1234,6 +1236,20 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
         LoadPointer(var);
         return;
     }
+    // special case : byte := integer
+    if (node->m_right->isPureVariable())
+//    if (node->m_right->isWord(as))
+        if (node->m_left->getOrgType(as)==TokenType::BYTE)
+            if (!node->m_right->hasArrayIndex())
+                if (!node->m_right->hasArrayIndex()) {
+                    // simple byte := integer;
+                    node->m_right->setCastType(TokenType::NONE);
+                    as->Asm("ld a,["+node->m_right->getValue(as)+"]");
+                    as->Asm("ld ["+name + "], "+getAx(node->m_left));
+                    return;
+
+                }
+//    as->Comment(";gen");
     node->m_right->Accept(this);
 
 
@@ -1242,7 +1258,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
         return;
     }
     if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
-        as->Asm(" ld a,l ; word assigned to byte");
+        as->Asm(" ld a,l ");
     }
     //    as->Comment(TokenType::getType(node->m_left->getType(as)));
     Cast(node->m_left->getType(as), node->m_right->m_castType);

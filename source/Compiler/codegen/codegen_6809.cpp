@@ -1689,8 +1689,9 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             // get index
             as->Asm("pshs a");
             LoadIndex(node->m_expr, node->getArrayType(as));
-            if (node->isAddress() && node->getValue(as).startsWith("$"))
-                as->Asm("ldx #"+node->getValue(as) +" is pure address");
+//            as->Asm(";is address ???");
+            if (!node->isPointer(as) || (node->isAddress() && node->getValue(as).startsWith("$")))
+                as->Asm("ldx #"+node->getValue(as));
             else
                 as->Asm("ldx "+node->getValue(as));
             as->Asm("leax d,x");

@@ -107,7 +107,6 @@ void PostOptimiser::RemoveAllFlagged()
             }
 //            nlst.append(l);
 
-           //e nlst.append(l);
             m_linesOptimized++;
         }
     m_lines = nlst;

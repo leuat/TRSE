@@ -4967,6 +4967,7 @@ void Parser::HandleMacro()
 
 
     m_macros[name.toLower()] = m;
+//    qDebug() << m_currentToken.m_value;
 
     Eat();
     Eat(); // endmacro
@@ -5007,6 +5008,8 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
+    if (m_pass!=1)
+        return;
     //    qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
     // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
@@ -5048,7 +5051,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
                                        "\n function Write(__v) {__oo=__oo+__v; } "
                                        "\n function write(__v) {__oo=__oo+__v; } "
                                        "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
-    qDebug() <<m_macros[name].str;
+//    qDebug() <<m_macros[name].str;
     if (fun.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
