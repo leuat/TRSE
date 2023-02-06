@@ -792,6 +792,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     if (forceType==TokenType::INTEGER || forceType==TokenType::INTEGER_CONST || forceType==TokenType::ADDRESS)
         return r&0xFFFF;
 
+
     return ret.toInt();
 }
 
@@ -4379,7 +4380,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                                 }
                                 if (!found) {
 
-                                    data << "$0"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
+                                    data << "$"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
                                 }
                                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                                 if (m_currentToken.m_type!=TokenType::RPAREN) {
