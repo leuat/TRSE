@@ -82,6 +82,7 @@ public:
  //   void AssignVariable(QString v) override;
  //   void EndAssignVariable(QString variable) override;
     void BinOP(TokenType::Type t, bool clearFlag=true) override;
+    void BinOP16(TokenType::Type t, bool clearFlag=true) override;
  //   void Poke(bool start) override;
  //   void Peek(bool start) override;
 

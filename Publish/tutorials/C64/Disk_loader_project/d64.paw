@@ -3,5 +3,5 @@ packed_address = $00
 output_dir = d64_auto/
 use_exomizer3 = 0
 address_field = 0
-data = ,octopusdata, images/octopus_data.bin, $6000, octopuscolor, images/octopus_color.bin, $2000, moosedata, images/moose_data.bin, $6000, moosecolor, images/moose_color.bin, $2000
-data_tinycrunch = ,0, 0, 1, 1
+data = ,image1, images/image1_data.bin, $6000, image1color, images/image1_color.bin, $2000, image2, images/image2_data.bin, $6000, image2color, images/image2_color.bin, $2000, image3, images/image3_data.bin, $6000, image3color, images/image3_color.bin, $4000
+data_tinycrunch = ,0, 0, 1, 1, 0, 0

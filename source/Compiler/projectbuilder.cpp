@@ -50,6 +50,9 @@ void ProjectBuilder::Build(QString file)
 void ProjectBuilder::run()
 {
     m_output = "";
+    QString keep = m_projectIniFile->getString("output_type");
+    m_projectIniFile->setString("output_type","prg");
+
     for (QString& s: m_list) {
         QStringList cmdList = s.trimmed().simplified().split(" ");
         if (cmdList.count()==0)
@@ -99,6 +102,7 @@ void ProjectBuilder::run()
 
     }
     Message("<font color=\"#80FF80\">All done!</font>");
+    m_projectIniFile->setString("output_type",keep);
     emitTextUpdate();
 
 }

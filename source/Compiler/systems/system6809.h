@@ -17,6 +17,9 @@ public:
     virtual QString getTripePointerType() override {
         return "uint16";
     }
+    TokenType::Type getSystemPointerArrayType() override {
+        return TokenType::INTEGER;
+    }
 
     QString CompressFile(QString fileName) override;
 

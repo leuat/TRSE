@@ -75,8 +75,8 @@ QString Util::BinopString(QString a) {
     a=a.simplified().trimmed();
 
     if (a.contains("'")) {
-      for (QChar c:str)
-          a = a.replace("'"+QString(c)+"'",Util::numToHex(c.toLatin1()));
+        for (QChar c:str)
+            a = a.replace("'"+QString(c)+"'",Util::numToHex(c.toLatin1()));
     }
 
 
@@ -97,9 +97,9 @@ QString Util::BinopString(QString a) {
     for (int i=0;i<str.length();i++)
         q=q.replace(str[i],"");
 
-//    qDebug() << q;
-//    qDebug() << lst;
-//    exit(1);
+    //    qDebug() << q;
+    //    qDebug() << lst;
+    //    exit(1);
     long val = 0;
     bool ok=Util::NumberFromStringHex(lst[0],val);
     if (!ok)
@@ -107,7 +107,7 @@ QString Util::BinopString(QString a) {
 
     for (int i=0;i<q.length();i++) {
         long v;
-//        ok = false;
+        //        ok = false;
         ok = Util::NumberFromStringHex(lst[i+1],v);
         if (!ok)
             return pa+a+pb;
@@ -116,7 +116,7 @@ QString Util::BinopString(QString a) {
         if (q[i]=='-')
             val-=v;
     }
-//    qDebug() << "BinopString  DONE ";
+    //    qDebug() << "BinopString  DONE ";
 
     return pa + Util::numToHex(val) + pb;
 
@@ -291,7 +291,7 @@ QString Util::GetSystemPrefix()
     dir = QApplication::applicationDirPath()+"/../";
 #endif
 #ifdef __APPLE__
-//    dir = Util::path;
+    //    dir = Util::path;
     dir = QApplication::applicationDirPath()+"/../../";
 #endif
     return dir;
@@ -399,14 +399,24 @@ QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst
     for (auto s: lst) {
         bool add = true;
         cur += s;
-        if (s.startsWith("\"")) {
-            isInString = true;
+        if (s=="\"" && !isInString) {
             add = false;
-        }
+            isInString=!isInString;
 
-        if (s.endsWith("\"")) {
-            isInString = false;
-            add = true;
+        }
+        else
+        {
+            if (s.startsWith("\"")) {
+                isInString = true;
+                add = false;
+            }
+
+            if (s.endsWith("\"")) {
+                isInString = false;
+                add = true;
+//                if (s=="\"")
+  //                  cur+=",";
+            }
         }
         if (isInString) cur+=",";
         if (add) {
@@ -549,7 +559,7 @@ void Util::ConvertFileWithLoadAddress(QString input, QString output, int address
     //    qDebug() << a.size() << input;
     //  exit(1);
     if ((((char)a[0])==(char)((address>>8)&0xFF)) && (((char)a[1])==((char)(address)&0xFF)))
-            return;
+        return;
     a.insert(0,(address>>8)&0xFF);
     a.insert(0,(address)&0xFF);
 
@@ -652,19 +662,19 @@ QString Util::findFileInDirectory(QString search, QString dir, QString extension
 
 QString Util::listFiles(QDir directory, QString searchFile)
 {
-        QDir dir(directory);
-        QFileInfoList list = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-        foreach(QFileInfo finfo, list) {
-                if (finfo.isDir()) {
-                        QString s = listFiles(QDir(finfo.absoluteFilePath()), searchFile);
-                        if (s!="")
-                            return s;
-                }
-                if (finfo.fileName().toLower()==searchFile.toLower())
-                    return finfo.absoluteFilePath();
-
+    QDir dir(directory);
+    QFileInfoList list = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    foreach(QFileInfo finfo, list) {
+        if (finfo.isDir()) {
+            QString s = listFiles(QDir(finfo.absoluteFilePath()), searchFile);
+            if (s!="")
+                return s;
         }
-        return "";
+        if (finfo.fileName().toLower()==searchFile.toLower())
+            return finfo.absoluteFilePath();
+
+    }
+    return "";
 }
 
 float Util::floatRandom(const float &min, const float &max) {
@@ -1008,8 +1018,8 @@ int Util::CountFilesInAllDirectories(QString dir, QStringList fileTypes)
     {
         QString s = it.next();
         for (QString& ft: fileTypes)
-          if (s.toLower().endsWith("."+ft))
-              cnt+=1;
+            if (s.toLower().endsWith("."+ft))
+                cnt+=1;
         if (fileTypes.count()==0) cnt++;
     }
     return cnt;

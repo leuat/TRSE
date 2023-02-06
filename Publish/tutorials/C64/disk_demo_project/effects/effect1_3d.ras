@@ -12,6 +12,9 @@ program effect1_3d;
 @define objPos $8800
 @define max3dobjects 1
 
+@ifndef IS_DEMO
+@setvalue "output_type" "prg"
+@endif
 @use "gfx/lib3d"
 @use "demounit"
 
@@ -32,7 +35,7 @@ var
 	ix,m:integer;
 
 
-@startblock $A000 "Code"
+@startblock $4000 "Code"
 	
 procedure SwitchDrawBank();
 begin
@@ -88,25 +91,18 @@ end;
 procedure Run();
 begin
 
-	@ifndef IS_DEMO
-	disableciainterrupts(); // prevent CIA
-	preventirq();
-	setmemoryconfig(1,0,0);	
-	@endif
 	StartRasterChain(Raster(),0,0);
 	Gfx::currbank :=0; // Current bitmap bank (added to high bit of putpixel)
 	Gfx::InitBitmapGraphics(1, #Gfx::bank1);
 	vic_data_loc:=$18;
-	
 	setmulticolormode();
 	setbitmapmode();
 	
 	SCREEN_BG_COL:=BLUE;
 	SCREEN_FG_COL:=RED;
 	
-	clearscreen(YELLOW,screen_col_loc);
-	clearscreen(BLUE,screen_char_loc2);
-
+	clearscreen(YELLOW,#screen_col_loc);
+	clearscreen(BLUE,#screen_char_loc2);
 
 	// Setup 3D
 	Lib3d::InitializeData(@objPos);	
@@ -131,6 +127,11 @@ end;
 
 // This effect starts at $1000
 begin
+	@ifndef IS_DEMO
+	disableciainterrupts(); // prevent CIA
+	preventirq();
+	@endif
+	setmemoryconfig(1,0,0);
 
 	Run();
 end.

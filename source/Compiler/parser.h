@@ -157,7 +157,6 @@ private:
     QSharedPointer<Node> m_currentProcedureCall;
     QString m_addInitialReferenceToProcedureCall = "";
 
-    QString m_currentClass ="";
 
     QStringList m_removedProcedures;
     QVector<QStringList> m_obsoleteWarnings;
@@ -168,6 +167,8 @@ private:
     QVector<QString> m_lastKey;
     QVector<bool> m_lastIfdef;
 
+    QString m_keepPrefix; // prefix outside class definition
+    void DefineSymbol(QSharedPointer<Symbol> s, bool isRecord);
 
     QSharedPointer<Node> ManageClassProcedureCalls(QSharedPointer<Node> left);
     QVector<QSharedPointer<Node>> m_extraDecls;
@@ -328,6 +329,7 @@ private:
     void HandleSpritePacker();
     void HandleProjectSettingsPreprocessors();
     void HandleAKGCompiler();
+    void HandleKrillsLoader();
     void HandleUseTPU(QString fileName);
     void Eat();
     void HandleImportChar();

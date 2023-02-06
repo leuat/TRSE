@@ -17,14 +17,14 @@ SourceBuilder::SourceBuilder(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFi
 }
 
 SourceBuilder::~SourceBuilder() {
-//    qDebug() << "~SourceBuilder destroying : "<<compiler;
+    //    qDebug() << "~SourceBuilder destroying : "<<compiler;
 }
 
 bool SourceBuilder::Build(QString source)
 {
     m_system = QSharedPointer<AbstractSystem>(FactorySystem::Create(AbstractSystem::SystemFromString(
-                                         m_projectIniFile->getString("system")),
-                                        m_iniFile,
+                                                                        m_projectIniFile->getString("system")),
+                                                                    m_iniFile,
                                                                     m_projectIniFile));
 
     compiler = QSharedPointer<Compiler>(FactoryCompiler::CreateCompiler(m_iniFile, m_projectIniFile));
@@ -35,15 +35,15 @@ bool SourceBuilder::Build(QString source)
 
     if (m_currentSourceFile.toLower().endsWith(".asm")) {
         m_buildSuccess=true;
-       m_assembleSuccess=false;
+        m_assembleSuccess=false;
 
-       m_filename = Util::getFileWithoutEnding(m_currentSourceFile);
-/*       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
+        m_filename = Util::getFileWithoutEnding(m_currentSourceFile);
+        /*       m_system = FactorySystem::Create(AbstractSystem::SystemFromString(
                                             m_projectIniFile.getString("system")),
                                            &m_iniFile, &m_projectIniFile);
 */
-       m_useSyntaxSystem = true;
-       return true;
+        m_useSyntaxSystem = true;
+        return true;
     }
 
     m_useSyntaxSystem = false;
@@ -51,15 +51,15 @@ bool SourceBuilder::Build(QString source)
     m_assembleSuccess = false;
     m_output = "";
     if (!(m_currentSourceFile.toLower().endsWith(".ras") || m_currentSourceFile.toLower().endsWith(".tru"))) {
-       m_output = "Turbo Rascal SE can only compile .ras files";
-       return false;
-       //ErrorHandler::e.CatchError(fe, e + msg);
+        m_output = "Turbo Rascal SE can only compile .ras files";
+        return false;
+        //ErrorHandler::e.CatchError(fe, e + msg);
 
-  //      return false;
-//        ErrorHandler::e.Error("BALLE");
+        //      return false;
+        //        ErrorHandler::e.Error("BALLE");
     }
     m_source = source;
-//    QString text = ui->txtEditor->toPlainText();
+    //    QString text = ui->txtEditor->toPlainText();
     ErrorHandler::e.m_level = ErrorHandler::e.ERROR_ONLY;
     ErrorHandler::e.m_teOut = "";
     ErrorHandler::e.exitOnError = false;
@@ -67,14 +67,14 @@ bool SourceBuilder::Build(QString source)
     QStringList lst = source.split("\n");
 
 
-//    qDebug() << "CREATED COMPILER " <<compiler;
+    //    qDebug() << "CREATED COMPILER " <<compiler;
     if (!m_isShadow)
         connect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
 
     compiler->m_parser.m_diskFiles = getFileList();
     compiler->m_parser.m_currentDir = m_curDir;
 
-//    qDebug() << lst;
+    //    qDebug() << lst;
     compiler->m_isTRU = m_isTRU;
     /*
      *   P A R S I N G
@@ -90,8 +90,8 @@ bool SourceBuilder::Build(QString source)
 
 
 
-//    if (compiler->m_tree==nullptr)
-  //      return true;
+    //    if (compiler->m_tree==nullptr)
+    //      return true;
 
     QString path = m_curDir+"/";//m_projectIniFile.getString("project_path") + "/";
     if (m_currentSourceFile.toLower().endsWith(".ras"))
@@ -101,7 +101,7 @@ bool SourceBuilder::Build(QString source)
 
 
 
-/*    m_system->m_buildSuccess = false;
+    /*    m_system->m_buildSuccess = false;
     return false;
 */
     if (!m_isShadow)
@@ -109,8 +109,8 @@ bool SourceBuilder::Build(QString source)
 
     // Main BUILD of the assembler (dispatcher)
     m_buildSuccess = compiler->Build(m_system, path);
-//    m_buildString+="<br>Post";
-//    emit EmitBuildString();
+    //    m_buildString+="<br>Post";
+    //    emit EmitBuildString();
 
     if (!m_isShadow)
         disconnect(&compiler->m_parser, SIGNAL(EmitTick(QString)), this, SLOT( AcceptParserTick(QString)));
@@ -121,26 +121,26 @@ bool SourceBuilder::Build(QString source)
 
 
 
-/*    if (m_buildSuccess)
+    /*    if (m_buildSuccess)
         BuildSuccesString();
 */
     if (!m_isShadow)
-         compiler->SaveBuild(m_filename + ".asm");
-//     qDebug() << "Saving to "+m_filename + ".asm";
+        compiler->SaveBuild(m_filename + ".asm");
+    //     qDebug() << "Saving to "+m_filename + ".asm";
 
 
-     return m_buildSuccess;
+    return m_buildSuccess;
 }
 
 void SourceBuilder::Destroy()
 {
-/*    if (compiler!=nullptr) {
+    /*    if (compiler!=nullptr) {
         qDebug() << "~SourceBuilder TRYING TO DESTROY COMPILER " <<compiler;
         compiler->Destroy();
         delete compiler;
         compiler = nullptr;
     }*/
-/*    if (m_system!=nullptr && !m_useSyntaxSystem) {
+    /*    if (m_system!=nullptr && !m_useSyntaxSystem) {
         delete m_system;
     }
     m_system = nullptr;
@@ -150,8 +150,8 @@ void SourceBuilder::Destroy()
 
 bool SourceBuilder::Assemble()
 {
-//    qDebug() << m_filename << m_curDir;
-//    qDebug() << m_system;
+    //    qDebug() << m_filename << m_curDir;
+    //    qDebug() << m_system;
     if (compiler->m_parser.m_isTRU) {
         BuildSuccesString();
 
@@ -161,14 +161,14 @@ bool SourceBuilder::Assemble()
     Data::data.compilerState = Data::ASSEMBLER;
     m_system->Assemble(m_output,m_filename, m_curDir,compiler->m_parser.m_symTab);
     if (compiler->m_assembler!=nullptr && m_system!=nullptr) {
-       compiler->m_assembler->m_addresses = m_system->m_addresses;
+        compiler->m_assembler->m_addresses = m_system->m_addresses;
         compiler->CleanupCycleLinenumbers("",compiler->m_assembler->m_addresses,compiler->m_assembler->m_addressesOut,false);
     }
 
     if (m_system->m_buildSuccess)
         m_system->PostProcess(m_output, m_filename, m_curDir);
 
-  //  qDebug() << "AA2";
+    //  qDebug() << "AA2";
     m_assembleSuccess=m_system->m_buildSuccess;
     if (m_buildSuccess && m_assembleSuccess)
         BuildSuccesString();
@@ -184,26 +184,22 @@ QString SourceBuilder::getOutput() {
 
 QStringList SourceBuilder::getFileList()
 {
-    QString pawFile = m_projectIniFile->getString("d64_paw_file");
-    if (pawFile=="none") return QStringList();
-    CIniFile paw;
-    paw.Load(m_curDir + "/"+pawFile);
-    QStringList data = paw.getStringList("data");
+    int disk=1;
     QStringList ret;
-    int count = data.length()/3;
-    for (int i=0;i<count;i++) {
-        ret<< data[3*i];
+    while (m_projectIniFile->contains("disk"+QString::number(disk)+"_paw")) {
+        QString d = "disk"+QString::number(disk);
+        QString pawFile = m_projectIniFile->getString(d+"_paw");
+//        if (pawFile=="none") return QStringList();
+        CIniFile paw;
+        paw.Load(m_curDir + "/"+pawFile);
+        QStringList data = paw.getStringList("data");
+        int count = data.length()/3;
+        for (int i=0;i<count;i++) {
+            ret<< data[3*i];
+        }
+        disk+=1;
     }
 
-    QString pawFile2 = m_projectIniFile->getString("d64_paw_file_disk2");
-    if (pawFile2=="none") return ret;
-    CIniFile paw2;
-    paw2.Load(m_curDir + "/"+pawFile2);
-    QStringList data2 = paw2.getStringList("data");
-    int count2 = data2.length()/3;
-    for (int i=0;i<count2;i++) {
-        ret<< data2[3*i];
-    }
 
 
     return ret;
@@ -213,7 +209,7 @@ QStringList SourceBuilder::getFileList()
 void SourceBuilder::BuildSuccesString()
 {
     QString text ="<br>Build <b><font color=\"#90FF90\">Successful</font>!</b> ( "+  (Util::MilisecondToString(m_system->timer.elapsed())) +")<br>";
-//    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
+    //    text+="Assembler file saved to : <b>" + m_filename+".asm</b><br>";
     if (compiler!=nullptr && compiler->m_parser.m_lexer!=nullptr)
         text+="Compiled <b>" + QString::number(compiler->m_parser.m_lexer->getTotalNumberOfLines()) +"</b> lines of Turbo Rascal to <b>";
     if (compiler!=nullptr && compiler->m_assembler!=nullptr) {
@@ -256,7 +252,7 @@ void SourceBuilder::AcceptParserTick(QString val)
 
     }
     else
-    m_buildString +=val;
+        m_buildString +=val;
 
     emit EmitBuildString();
 }

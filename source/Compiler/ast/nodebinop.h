@@ -99,6 +99,7 @@ public:
     QString getValue8bit(Assembler* as, int isHi) override;
 
     TokenType::Type getType(Assembler *as) override;
+    QString getTypeText(Assembler* as) override;
 
     bool isPure() override;
 

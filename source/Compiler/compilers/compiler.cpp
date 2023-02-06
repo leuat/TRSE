@@ -60,7 +60,9 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     Parser::s_usedTRUs.clear(); // None TRU's are marked
     Parser::s_usedTRUNames.clear(); // None TRU's are marked
     Parser::m_tpus.clear();
+
     SymbolTable::pass = 0;
+    SymbolTable::s_ignoreUnusedSymbolWarning.clear();
     // MAIN parser
     try {
         m_tree = m_parser.Parse( m_projectIni->getdouble("remove_unused_symbols")==1.0 &&
@@ -94,6 +96,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         InitAssemblerAnddispatcher(system);
         m_assembler->m_disableComments = m_projectIni->getdouble("disable_compiler_comments")==1;
         m_assembler->m_curDir = project_dir;
+
 //        m_codeGen->m_rasSource = m_lexer->m_lines;
         if (system->m_processor==AbstractSystem::MOS6502)
             m_codeGen->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
@@ -108,8 +111,18 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         return false;
 
     // Map forwarded symbols
-    for (QString s: m_parser.m_symTab->m_forwardedVariables)
-        m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+    for (QString s: m_parser.m_symTab->m_forwardedVariables) {
+        /*m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+        if (m_assembler->m_symTab->m_forwardedSymbols[s]==nullptr) {
+            qDebug() << "UUURGH " +s;
+            qDebug() << m_assembler->m_symTab->m_forwardedVariables;
+            qDebug() << m_assembler->m_symTab->m_forwarded
+            ErrorHandler::e.Error("Compiler::116 forwarded symbol null"+s);
+        }
+        */
+    }
+    // COPY SYMBOL TABLE
+    m_assembler->m_symTab->m_forwardedVariables = m_parser.m_symTab->m_forwardedVariables;
 
 //    m_assembler->m_symTab->m_forwardedSymbols = m_parser.m_symTab->m_forwardedSymbols;
     m_assembler->m_projectDir = project_dir;
@@ -117,6 +130,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     m_assembler->m_symTab->m_useLocals = m_parser.m_symTab->m_useLocals;
     m_assembler->m_symTab->m_records = m_parser.m_symTab->m_records;
     m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants; // Write init assembler code
+    m_assembler->m_symTab->m_units = Parser::s_usedTRUNames;
 
     for (QSharedPointer<SymbolTable>  st : m_parser.m_symTab->m_records)
         m_assembler->m_symTab->Define(QSharedPointer<Symbol>(new Symbol(st->m_name, "RECORD")));
@@ -141,7 +155,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         m_tree->Accept(m_codeGen.get());
 
     } catch (const FatalErrorException& e) {
-        HandleError(e,"Error during build (dispatcher) :");
+        HandleError(e,"Error during build (codegen) :");
         return false;
     }
     emit EmitTick("&100"); // Emit 100%

@@ -5,8 +5,10 @@ var
 // memory inc test
 	@ifndef X86
 	@ifndef ATARI520ST
+	
 procedure Test1();
 begin
+	Vars::text := "PEEKPOKE:";
 	
 	
 	poke(^$4000,0,10);
@@ -37,10 +39,24 @@ end;
 @endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
+
+procedure TestAutomaticOffpage();
+begin
+	Vars::text := "TPAGE:";
+	Vars::v1:=0;
+	if (Vars::v1=0) then
+	begin
+		nop(128); // automatically make offpage
+	end;
+	Common::PASS();
+	
+end;
+
 procedure Exec();
 begin
 	Common::Initialise("VARIOUS");
 	
+	TestAutomaticOffpage();
 	// Mul and div
 	@ifndef X86
 	@ifndef ATARI520ST
@@ -53,5 +69,7 @@ begin
 	@endif
 	Common::WaitABit();
 end;
+
+
 
 end.

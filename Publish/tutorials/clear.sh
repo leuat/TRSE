@@ -70,3 +70,4 @@ echo "open_files =, millipede.ras" >> VZ200/millipede/millipede.trse
 echo "open_files =, main.ras" >> GAMEBOY/mrtibbles/mrtibbles.trse
 
 echo "open_files =, info.rtf" >> C64/demoeffects/c64_demoeffects.trse
+echo "open_files =, tutorial1_putpixel.ras" >> TRS80COCO/tutorials/trs80coco_tutorials.trse

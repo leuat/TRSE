@@ -67,6 +67,8 @@ public:
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;
+    bool isStringList(Assembler* as) override;
+
     bool containsPointer(Assembler* as) override;
     bool isRecord(Assembler* as) override;
     bool isRecord(QSharedPointer<SymbolTable> s, QString& str) override;

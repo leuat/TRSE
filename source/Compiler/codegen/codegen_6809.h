@@ -57,7 +57,7 @@ public:
 
 
 
-    void LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType);
+    void LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType) override;
 
 
     QString getJmp(bool isOffPage) override {
@@ -78,7 +78,6 @@ public:
      *
     */
 
-    void EightBitDiv(QSharedPointer<Node> node);
     void EightBitMul(QSharedPointer<Node> node);
     void Mul16x8(QSharedPointer<Node> node);
     void Div16x8(QSharedPointer<Node> node);
@@ -128,8 +127,6 @@ public:
 
     void BuildToCmp(QSharedPointer<Node> node);
 
-    void Disable16bit() override;
-    void Enable16bit() override;
 
 
 //    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
@@ -190,9 +187,9 @@ public:
 
     void LoadStackVariable(QSharedPointer<NodeVar> node);
 
-    bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
-    void Cast(TokenType::Type from, TokenType::Type to);
-    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
+//    bool StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode) override;
+    void Cast(TokenType::Type from, TokenType::Type to) override;
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
 
     bool StoreStackParameter(QSharedPointer<NodeAssign> n) override;
@@ -203,7 +200,7 @@ public:
 
     bool IsSimpleIncDec(QSharedPointer<NodeAssign> node) override;
 
-    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
+//    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
     void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
 

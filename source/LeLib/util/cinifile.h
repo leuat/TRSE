@@ -96,6 +96,8 @@ public:
 
     double getdouble(QString name);
 
+    void remove(QString name);
+
 /*    bool find(QString key, QString value) {
         QQString actualValue = QQString::fromStdQString(getQString(key.toLower().toStdQString()));
         return value.toLower().compare(actualValue) == 0;

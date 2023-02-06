@@ -43,6 +43,7 @@ var
 	// shift value
 	dx:byte=0;
 	
+	kbcheck: byte;
 	
 procedure Render();
 begin
@@ -86,6 +87,8 @@ begin
 	Z80CPM::Startup();
 	System::CursorOff();
 	Screen::ClearBox(0, 0, 128, 64, 0);
+	
+	kbcheck := 20;
 
 	textp:=#text;
 	time:=0;
@@ -109,13 +112,23 @@ begin
 		// silly wait		
 		for j:=0 to 2 do
 		for i:=0 to 100 do wait(200);
+
 		
 		// update time and time2
 		time+=1;
 		if (time&1=0) then 
 		time2-=1;
 		
+		kbcheck -= 1;
+		if kbcheck = 0 then
+		begin
+			if Z80CPM::KeyPressed() then break;
+			kbcheck := 20;	// check every 20 frames
+		end;
 	end;
+
+	Z80CPM::GetChar();
+	System::CursorOn();
 	Z80CPM::Exit();
 
 end.

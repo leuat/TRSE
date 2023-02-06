@@ -14,7 +14,6 @@ var
 
 
 @donotremove Texts
-@donotremove pattern0
 
 
 @define SceneTwister 0
@@ -76,6 +75,7 @@ var
 //	pattern0: byte = 0; // Dummy pointer
 	scroll,scrollx,l,val,m, animShift,vscroll,cx,cy,idx, noBalls, ignoreColor,charVal,clearFlag,vscrollTarget : byte = 0;
 	goCrazy,isPal,pattern0:byte=1;
+	@donotremove pattern0
 	c2x,c2y, shiftx, clearVal:byte=0;
 	// Animation stuff
 	curFrame, maxFrames, pass, g0, g1,tmp, textCounter : byte = 0;

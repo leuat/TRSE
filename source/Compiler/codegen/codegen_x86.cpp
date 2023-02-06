@@ -222,8 +222,8 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
     }
     QString ending = "]";
     if (node->m_expr!=nullptr) {
-
-        if (node->getArrayType(as)==TokenType::POINTER && node->m_classApplied==false) {
+//        qDebug() << node->getValue(as) <<TokenType::getType(node->getArrayType(as));
+        if (node->getArrayType(as)==TokenType::LONG && node->m_classApplied==false) {
             as->Comment("Looking up array of pointer : "+node->value);
 
             node->m_expr->setForceType(TokenType::INTEGER);
@@ -235,6 +235,8 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("lea si,["+node->getValue(as)+ "]");
             as->Asm("mov di,[ds:si+bx]");
             as->Asm("mov ax,[ds:si+bx+2]");
+            as->Asm("mov bx,ds");
+            as->Asm("add ax,bx");
             as->Asm("mov es,ax");
             //            as->Asm("mov di,cx");
 
@@ -336,7 +338,13 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("mov di,"+Util::numToHex(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as)));
             }
             else {
-                as->Asm("mov di,"+getX86Value(as,node->m_expr));
+/*                if (node->m_expr->getArrayType(as)==TokenType::LONG)
+                {
+                    node->m_expr->Accept(this);
+                    as->Asm("mov di,ax");
+                }
+                else*/
+                    as->Asm ("mov di,"+getX86Value(as,node->m_expr));
                 if (node->getArrayType(as)==TokenType::INTEGER)
                     as->Asm("shl di,1 ; Accomodate for word");
                 if (node->getArrayType(as)==TokenType::LONG)
@@ -816,6 +824,7 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
         node->m_right->VerifyReferences(as);
         if (!node->m_right->isReference())
+            if (!node->m_right->isStringList(as))
             if (!node->m_right->isPointer(as))
                 if ((node->m_right->isWord(as) || node->m_right->isByte(as))) {
                     if (node->m_right->getWriteType()!=TokenType::LONG)

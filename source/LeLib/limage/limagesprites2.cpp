@@ -16,6 +16,8 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_GUIParams[tabSprites] ="Sprites";
 
 //    m_supports.displayForeground = true;
+//    m_GUIParams[col3] = "Multicolor 2";
+  //  m_GUIParams[col4] = "Multicolor 1";
 
     m_exportParams.clear();
     m_supports.displayCharOperations = false;

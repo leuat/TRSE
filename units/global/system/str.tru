@@ -64,6 +64,7 @@ begin
 	end;
 end;
 
+
 /**
 	Converts a number to a string in base b
 	example:
@@ -72,6 +73,7 @@ itoa(1234, p1, 16); // coverts "1234" to a hexadecimal string stored in p1
 	</code>
 
 **/
+
 procedure itoa( num:global integer; p1: global ^byte; b:global @sz);
 begin
 	i:=0;

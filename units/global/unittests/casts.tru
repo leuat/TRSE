@@ -159,6 +159,7 @@ procedure Test16();
 begin
 	Vars::text := "T16:";
 	Vars::i1 := Vars::ByteReturn(2);
+	
 	Common::CR();
 	if (Vars::i1=4) then Common::PASS() else Common::FAIL();
 end;

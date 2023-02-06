@@ -1,0 +1,36 @@
+unit System;
+var
+	fp : pointer;
+	len : byte;
+	
+	
+/**
+	Loads a file from disk using KERNAL. Please note that this method is extremely slow.
+	usage:
+	<code>
+	LoadFileFromKernal(#filename,len(filename), address_to_load_to);
+	</code>
+
+**/
+procedure LoadFileKernal(fp:global pointer;len:global byte;addr:integer);
+begin
+asm("
+	 lda System_len
+     ldx System_fp
+     ldy System_fp+1
+     jsr $ffbd    // call setnam
+     ldx $ba       // last used device number
+     bne loadfile_loop
+     ldx #$08      // default to device 8
+loadfile_loop				ldy #$00      // $00 means: load to new address
+     jsr $ffba    // call setlfs
+     ldx System_addr
+     ldy System_addr+1
+     lda #$00      // $00 means: load to memory (not verify)
+     jsr $ffd5      // call load
+
+");	
+end;	
+	
+	
+end.

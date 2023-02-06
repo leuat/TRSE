@@ -37,7 +37,7 @@ begin
 	System::SetTimerFunction(#Screen::DoScroll);
 
 	// now the scrolling is done from interrupt, main code just waits for keypress
-	ch := Z80CPM::getch();
+	ch := Z80CPM::GetChar();
 	
 	// returns interrupt function to normal
 	System::SetTimerFunction(0);

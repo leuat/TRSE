@@ -28,6 +28,7 @@ begin
 	Vars::v1 := 2;
 	Vars::v2 := 1;
 	Vars::v1<<=Vars::v2;
+
 	Common::CR();
 	if (Vars::v1=4) then Common::PASS() else Common::FAIL();
 end;
@@ -115,12 +116,12 @@ begin
 	Common::Initialise("BITOP");
 	
 	Test1();
-	@ifndef TRSE80COCO
 	Test2();
 	Test3();
 	Test4();
 	Test5();
 	Test6();
+	@ifndef TRS80COCO
 	Test7();
 	Test8();
 	Test9();
@@ -128,6 +129,7 @@ begin
 	Test10();
 	@endif
 	@endif
+	
 	
 Common::WaitABit();
 end;

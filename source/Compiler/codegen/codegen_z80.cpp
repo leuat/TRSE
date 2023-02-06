@@ -78,15 +78,22 @@ void CodeGenZ80::AssignString(QSharedPointer<NodeAssign> node) {
     // Temp vars are place with variables in the code, no need for a jmp
     as->m_tempVars<<strAssign;
 
-    if (isPointer) {
+    if (isPointer || left->isStringList(as)) {
         as->Asm("ld hl,"+str);
-        LoadPointer(left);
-        //        as->Asm("ld ["+getValue(left)+"],hl");
+        StoreVariable(left);
+        //        LoadPointer(left);
     }
     else {
         // If not a pointer, copy everything
-        as->Asm("ld hl,"+str);
+        /*        as->Asm("ld de,"+getValue(left));
+        if (left->hasArrayIndex()){
+
+        }
+  */
+
         as->Asm("ld de,"+getValue(left));
+
+        as->Asm("ld hl,"+str);
         as->Label(lblCpy);
         if (isGB())
             as->Asm("ld a,[hl+]");
@@ -429,7 +436,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
     if (node->m_right->isWord(as))
         node->m_left->setForceType(TokenType::INTEGER);
 
-//    as->Comment("Cast type " + TokenType::getType(node->m_castType));
+    //    as->Comment("Cast type " + TokenType::getType(node->m_castType));
     if (node->m_castType==TokenType::INTEGER)
         node->setForceType(TokenType::INTEGER);
 
@@ -460,10 +467,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 node->m_right->Accept(this);
                 //                as->Asm("ex de,hl");
                 ExDeHl();
+                if (!node->m_left->isPure())
+                    as->Asm("push de");
                 node->m_left->Accept(this);
                 //                as->Asm("ld ac,hl");
                 as->Asm("ld a,h");
                 as->Asm("ld c,l");
+                if (!node->m_left->isPure())
+                    as->Asm("pop de");
                 //               as->Asm("clc");
                 as->Asm("call div_16x16");
                 as->Asm("ld h,a");
@@ -490,14 +501,17 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             QString skip1 = as->NewLabel("skip1");
 
             // Is 16 bit
-//            as->Comment("Left : " +Util::numToHex(node->m_left->isWord(as)));
-  //          as->Comment("Right : " +Util::numToHex(node->m_right->isWord(as)));
-            if (node->m_left->getOrgType(as)==TokenType::BYTE) {
-//                qDebug() << "SWAPP";
+            //            as->Comment("Left : " +Util::numToHex(node->m_left->isWord(as)));
+            //          as->Comment("Right : " +Util::numToHex(node->m_right->isWord(as)));
+            //as->Comment("INT VAL "+Util::numToHex(node->m_right->getValueAsInt(as)));
+            if (node->m_right->getOrgType(as)==TokenType::BYTE ||
+                    (node->m_right->getOrgType(as)==TokenType::INTEGER_CONST && node->m_right->getValueAsInt(as)<0x100)) {
+                //                qDebug() << "SWAPP";
+                as->Comment("Swapping nodes");
                 node->SwapNodes();
             }
-            node->m_right->setCastType(TokenType::NADA);
-            node->m_right->setForceType(TokenType::BYTE);
+            node->m_left->setCastType(TokenType::NADA);
+            node->m_left->setForceType(TokenType::BYTE);
             //node->m_left->setForceType(TokenType::INTEGER);
 
             as->Comment("Generic mul");
@@ -520,26 +534,33 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             }
 
             //                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
+            as->Comment("Node is pure : "+QString::number(node->m_right->isPure()));
 
-            if (node->m_left->isPure()) {
-                m_useNext ="de";
-                node->m_left->Accept(this);
-            }
-            else {
-                node->m_left->Accept(this);
-                as->Asm("ld d,h");
-                as->Asm("ld e,l");
-            }
-//            node->m_right->setForceType(TokenType::BYTE);
+            node->m_left->Accept(this);
+            if (!node->m_right->isPureNumeric())
+                as->Asm("push af");
+            //            node->m_right->setForceType(TokenType::BYTE);
+            // Push pop de since not pure
+
             node->m_right->Accept(this);
+            ExDeHl();
             //                as->Asm("ld a,l");
+            //    if (node->m_left->isWord(as)) {
+            //      ExDeHl();
+            //   }
             as->Asm("ld hl,0");
             as->Asm("ld c,0");
+            if (!node->m_right->isPureNumeric()) {
+                //              if (!node->m_left->isWord(as))
+                //                as->Asm("pop af");
+                //          else
+                as->Asm("pop af");
+            }
             //         as->Asm("clc");
             as->Asm("call mul_16x8");
             //                as->Asm("ld a,l");
 
-//            node->setForceType(TokenType::INTEGER);
+            //            node->setForceType(TokenType::INTEGER);
 
             //            }
 
@@ -605,6 +626,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             as->Asm("ld b,a");
         }
         else {
+            if (node->m_right->isPureNumeric()) {
+                // PURE numeric
+                as->Comment("RHS is pure numeric optimisation");
+                node->m_left->Accept(this);
+                as->Asm(getBinaryOperation(node)+" "+node->m_right->getValue(as));
+
+                return;
+            }
             as->Asm("ld b,"+node->m_right->getValue(as));
         }
         node->m_left->Accept(this);
@@ -738,6 +767,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             }
             else*/
             as->Asm("ld a,[hl]");
+            if (node->isWord(as)) {
+                as->Asm("ld e,a");
+                as->Asm("inc hl");
+                as->Asm("ld a,[hl]");
+                as->Asm("ld d,a");
+                as->Asm("ex de,hl");
+            }
+
             Cast(node->getArrayType(as), node->m_castType);
 
             return;
@@ -765,6 +802,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         as->Asm("add hl,de");
 
         as->Comment("TYPETEST : "+TokenType::getType(node->getArrayType(as)));
+        //        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
         if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
             as->Asm("add hl,de");
 
@@ -772,8 +810,8 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 
         as->Asm("ld a,[hl]");
 
-//        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
-        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER)) // More complicated: Load integer byte array into de
+        //        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
+        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER) && node->m_writeType==TokenType::NADA) // More complicated: Load integer byte array into de
         {
             as->Asm("ld e,a");
             as->Asm("inc hl");
@@ -796,7 +834,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 
     }
 
-//    if (node->getOrgType(as)!=TokenType::INTEGER) {
+    //    if (node->getOrgType(as)!=TokenType::INTEGER) {
     if (!node->isWord(as)) {
         if (node->isPureVariable())
             as->Asm("ld a,["+node->getValue(as)+"]");
@@ -843,7 +881,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ld "+QString(hl[1])+",a");
             as->Asm("ld "+QString(hl[0])+",0");
 
-/*            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
+            /*            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY) {
                 //                as->Asm("xor a,a");
                 as->Asm("ld "+QString(hl[0])+",0");
             }
@@ -881,7 +919,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to)
 {
-//    qDebug() <<"Cast " <<TokenType::getType(from) << " " << TokenType::getType(to);
+    //    qDebug() <<"Cast " <<TokenType::getType(from) << " " << TokenType::getType(to);
     if (from==to)
         return;
 
@@ -909,8 +947,8 @@ void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type 
         }
         if (writeType==TokenType::BYTE) {
             as->Comment("Casting from byte to integer to byte");
-//            as->Asm("ld l,a");
-  //          as->Asm("ld h,0");
+            //            as->Asm("ld l,a");
+            //          as->Asm("ld h,0");
         }
     }
     if (from==TokenType::INTEGER && to == TokenType::BYTE) {
@@ -968,9 +1006,53 @@ void CodeGenZ80::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 }
 
+void CodeGenZ80::LoadIndex(QSharedPointer<Node> n, TokenType::Type arrayType)
+{
+    auto node = qSharedPointerDynamicCast<NodeVar>(n);
+    node->m_expr->setForceType(TokenType::INTEGER);
+
+    node->m_expr->Accept(this);
+    ExDeHl();
+    if (node->isPointer(as))
+        LoadPointer(node);
+    else
+        as->Asm("ld hl,"+node->getValue(as));
+
+    as->Asm("add hl,de");
+    if (arrayType==TokenType::INTEGER)
+        as->Asm("add hl,de ; integer array");
+
+}
+
 void CodeGenZ80::StoreVariable(QSharedPointer<NodeVar> node)
 {
+    if (node->hasArrayIndex()) {
+        if (node->getArrayType(as)==TokenType::INTEGER) {
+            as->Comment("Store to integer array");
+            as->Asm("push hl");
+            LoadIndex(node,TokenType::INTEGER);
+            as->Asm("pop bc");
+            as->Asm("ld a,c");
+            as->Asm("ld [hl],a");
+            as->Asm("ld a,b");
+            as->Asm("inc hl");
+            as->Asm("ld [hl],a");
+        }
+        else {
+            as->Comment("Store to byte array");
+            if (!node->isPure())
+                as->Asm("push af");
+            LoadIndex(node,TokenType::BYTE);
+            if (!node->isPure())
+                as->Asm("pop af");
+            as->Asm("ld [hl],a");
 
+        }
+        return;
+    }
+    if (node->isWord(as))
+        LoadPointer(node);
+    else as->Asm(" ld a,["+node->getValue(as)+"]");
 }
 
 bool CodeGenZ80::StoreVariableSimplified(QSharedPointer<NodeAssign> node) {
@@ -1125,11 +1207,19 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
             as->Comment("Storing in 16-bit array index");
             as->Asm("push hl");
             LoadAddress(var);
-            var->m_expr->Accept(this);
-            as->Asm("ld d,0");
-            as->Asm("ld e,a");
-            as->Asm("add hl,de");
-            as->Asm("add hl,de");
+            if (var->m_expr->isPureNumeric()) {
+                if (var->m_expr->getValueAsInt(as)!=0) {
+                    as->Asm("ld de,"+Util::numToHex(var->m_expr->getValueAsInt(as)*2));
+                    as->Asm("add hl,de");
+                }
+            }
+            else {
+                var->m_expr->Accept(this);
+                as->Asm("ld d,0");
+                as->Asm("ld e,a");
+                as->Asm("add hl,de");
+                as->Asm("add hl,de");
+            }
             as->Asm("pop de");
             as->Asm("ld a,e");
             as->Asm("ld [hl],a");
@@ -1154,7 +1244,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
     if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
         as->Asm(" ld a,l ; word assigned to byte");
     }
-//    as->Comment(TokenType::getType(node->m_left->getType(as)));
+    //    as->Comment(TokenType::getType(node->m_left->getType(as)));
     Cast(node->m_left->getType(as), node->m_right->m_castType);
     as->Asm("ld ["+name + "], "+getAx(node->m_left));
 }
@@ -1453,6 +1543,7 @@ QString CodeGenZ80::LoadAddress(QSharedPointer<Node> n)
     return "";
 }
 
+
 void CodeGenZ80::LoadInteger(QSharedPointer<Node> n)
 {
     QString hl =getHL();
@@ -1508,9 +1599,9 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
     }
 
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
-//        as->Comment("LESS equal flipped perform actual flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
+        //        as->Comment("LESS equal flipped perform actual flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
         node->SwapNodes();
-  //      as->Comment("AFTER  flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
+        //      as->Comment("AFTER  flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
     }
 
     BuildToCmp(node);
@@ -1540,7 +1631,7 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
         //        as->Asm("j"+p+" z, " + lblFailed);
         // Flipped!
- //       as->Comment("LESS equal flipped");
+        //       as->Comment("LESS equal flipped");
         as->Asm("j"+p+" c," + lblFailed);
     }
 
@@ -1551,39 +1642,38 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
 void CodeGenZ80::BuildToCmp(QSharedPointer<Node> node)
 {
 
-    if (node->m_left->getValue(as)!="") {
-        if (node->m_right->isPureNumeric())
-        {
-            as->Comment("Compare with pure num / var optimization");
-            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-            LoadVariable(node->m_left);
-            as->Asm("cp " + node->m_right->getValue(as));
+    if (node->m_right->isPureNumeric())
+    {
+        as->Comment("Compare with pure num / var optimization");
+        //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+        //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+        LoadVariable(node->m_left);
+        as->Asm("cp " + node->m_right->getValue(as));
 
-            return;
-        } else
-        {
-            as->Comment("Compare two vars optimization");
-            if (node->m_right->isPureVariable()) {
-                //QString wtf = as->m_regAcc.Get();
-                LoadVariable(node->m_right);
-                as->Asm("ld b,a");
-                LoadVariable(node->m_left);
-                //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
-                //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
-                as->Asm("cp b");
+        return;
+    }
 
-                return;
-            }
-            /*
+    as->Comment("Compare two vars optimization");
+    if (node->m_right->isPureVariable()) {
+        //QString wtf = as->m_regAcc.Get();
+        LoadVariable(node->m_right);
+        as->Asm("ld b,a");
+        LoadVariable(node->m_left);
+        //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
+        //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
+        as->Asm("cp b");
+
+        return;
+    }
+    /*
             node->m_right->Accept(this);
 
             as->Asm("cp " + getAx(node->m_right));
 
             //            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
             return;*/
-        }
-    }
+
+
     node->m_right->Accept(this);
     as->Term();
     as->Asm("ld c, a");

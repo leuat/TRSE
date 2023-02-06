@@ -194,157 +194,6 @@ QA, whip,  game developer</string>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,0,0,0">
-       <item row="3" column="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,100">
-         <item>
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/brain_small.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblDate_6">
-           <property name="text">
-            <string>Jari Tulilahti</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,100">
-         <item>
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/robot_small.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblDate_9">
-           <property name="text">
-            <string>Bones</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>15</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="7" column="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,100">
-         <item>
-          <widget class="QLabel" name="label_34">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/brain_small.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblDate_23">
-           <property name="text">
-            <string>Tony Brice</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="3">
-        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,100">
-         <item>
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/bowler_small.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblDate_13">
-           <property name="text">
-            <string>Róbert Kisnémeth</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="3" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,100">
-         <item>
-          <widget class="QLabel" name="label_28">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/prettyboy_small.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblDate_17">
-           <property name="text">
-            <string>Phaze101</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="7" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="1,100">
          <item>
@@ -391,33 +240,6 @@ QA, whip,  game developer</string>
           <widget class="QLabel" name="lblDate_16">
            <property name="text">
             <string>Pushead</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="8" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,100">
-         <item>
-          <widget class="QLabel" name="label_35">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/leuat_small.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lblDate_24">
-           <property name="text">
-            <string>Optic</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -480,15 +302,15 @@ QA, whip,  game developer</string>
          </item>
         </layout>
        </item>
-       <item row="7" column="3">
-        <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,100">
+       <item row="1" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,100">
          <item>
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="label_9">
            <property name="text">
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources.qrc">:/resources/images/portraits/megane_small.png</pixmap>
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/robot_small.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -496,9 +318,36 @@ QA, whip,  game developer</string>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="lblDate_14">
+          <widget class="QLabel" name="lblDate_9">
            <property name="text">
-            <string>Chris Garrett</string>
+            <string>Bones</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_28">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/prettyboy_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_17">
+           <property name="text">
+            <string>Phaze101</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -561,6 +410,33 @@ QA, whip,  game developer</string>
          </item>
         </layout>
        </item>
+       <item row="7" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_34">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/brain_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_23">
+           <property name="text">
+            <string>Tony Brice</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="9" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="1,100">
          <item>
@@ -580,6 +456,157 @@ QA, whip,  game developer</string>
           <widget class="QLabel" name="lblDate_29">
            <property name="text">
             <string>CrazySpence</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/brain_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_6">
+           <property name="text">
+            <string>Jari Tulilahti</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/bowler_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_13">
+           <property name="text">
+            <string>Róbert Kisnémeth</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>15</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="8" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_35">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/leuat_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_24">
+           <property name="text">
+            <string>Optic</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/megane_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_14">
+           <property name="text">
+            <string>Chris Garrett</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="9" column="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_49">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/hat_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_30">
+           <property name="text">
+            <string>Shinzo81</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

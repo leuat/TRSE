@@ -238,6 +238,10 @@ TokenType::Type NodeBinOP::getType(Assembler *as) {
 
 }
 
+QString NodeBinOP::getTypeText(Assembler *as) {
+    return m_left->getTypeText(as);
+}
+
 bool NodeBinOP::isPure() {
     if (isPureNumeric())
         return true;

@@ -8,7 +8,7 @@ program Image;
 var  
    v: byte; 
 
-@export "images/image1.flf" "images/image1.bin" 256
+@export "images/image1.flf" "images/image1.bin" 256 1 
 
 	zp:pointer;
 	image:incbin("images/image1.bin") compressed;

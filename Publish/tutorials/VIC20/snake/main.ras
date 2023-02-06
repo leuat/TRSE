@@ -272,8 +272,8 @@ var
 	startF5:cstring no_term invert = ("F5=HARD");
 	startF7:cstring no_term invert = ("F7=EVIL");
 
-	@donotremove "title3a"
-	@donotremove "hewco2"
+//	@donotremove "title3a"
+//	@donotremove "hewco2"
 
 	// starting speed for the snake at different levels of difficulty
 	snakeSpeedTable: array[] of byte = ( SNAKE_EASY,SNAKE_EASY, SNAKE_NORMAL, SNAKE_HARD, SNAKE_EVIL );

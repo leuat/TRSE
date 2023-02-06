@@ -190,8 +190,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
-    QString lblForEnd =as->NewLabel("forloopend");
-    QString lblForCounter =as->NewLabel("forloopcounter");
+//    QString lblForEnd =as->NewLabel("forloopend");
+    //QString lblForCounter =as->NewLabel("forloopcounter");
 
     QString lblLoopStart = as->NewLabel("loopstart");
     QString lblLoopEnd = as->NewLabel("loopend");
@@ -220,15 +220,15 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
 
     // Perform counter increase and jimps (individual for each target cpu)
-    as->Label(lblForCounter);
+//    as->Label(lblForCounter);
     as->Label(lblLoopStart);
     CompareAndJumpIfNotEqualAndIncrementCounter(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
 
-    as->Label(lblForEnd);
+  //  as->Label(lblForEnd);
     as->Label(lblLoopEnd);
     as->PopLabel("forloop");
-    as->PopLabel("forloopend");
-    as->PopLabel("forloopcounter");
+   // as->PopLabel("forloopend");
+ //   as->PopLabel("forloopcounter");
 
     as->PopLabel("loopend");// for BREAK and CONT
     as->PopLabel("loopstart"); // for BREAK and CONT
@@ -344,6 +344,8 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
 
     if (node->m_right->getTypeText(as)=="BYTE")
         Cast(TokenType::BYTE,node->m_right->m_castType);
+    if (node->m_right->getTypeText(as)=="INTEGER")
+        Cast(TokenType::INTEGER,node->m_right->m_castType);
     StoreVariable(VarOrNum(node->m_left));
 }
 
@@ -487,13 +489,25 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
 */
     // Set force type for functions
-    if (v->isByte(as))
+
+
+    if (v->isByte(as) || v->getArrayType(as)==TokenType::BYTE) {
         node->m_right->setCastType(TokenType::BYTE);
-    if (v->isWord(as))
+    }
+    if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
         node->m_right->setCastType(TokenType::INTEGER);
-    if (v->isLong(as))
+    if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
         node->m_right->setCastType(TokenType::LONG);
 
+/*    if (v->isByte(as)) {
+//        as->Comment("SETTING BYTE CAST TYPE");
+        node->m_right->setCastType(TokenType::BYTE);
+    }
+    if (v->isWord(as) )
+        node->m_right->setCastType(TokenType::INTEGER);
+    if (v->isLong(as) )
+        node->m_right->setCastType(TokenType::LONG);
+*/
 
     // ****** REGISTERS TO
     if (v->m_isRegister) {
@@ -523,8 +537,14 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
     }
     // ****** STRINGS
-    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
+//    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
+    if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
         as->Comment("Assigning a string : " + getValue(v));
+//        qDebug() << v->getValue(as) <<v->getTypeText(as) << TokenType::getType(v->getArrayType(as)) << TokenType::getType(Syntax::s.m_currentSystem->getSystemPointerArrayType());
+        if (v->hasArrayIndex() && v->getArrayType(as)!=Syntax::s.m_currentSystem->getSystemPointerArrayType())
+            ErrorHandler::e.Error("Can only assign strings to arrays of pointers (such as string lists)",v->m_op.m_lineNumber);
+        if (!v->hasArrayIndex() && (!(v->isPointer(as) || v->getType(as)==TokenType::STRING)))
+            ErrorHandler::e.Error("Can only assign strings to pointers, strings or arrays of strings",v->m_op.m_lineNumber);
         AssignString(node);
         return;
     }
@@ -774,8 +794,8 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
 
 
 bool AbstractCodeGen::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2) {
-    bool onPage = true;
-//    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
+  //  bool onPage = true;
+    bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
 
     if (node->m_forcePage == 1)
         onPage = false;
@@ -901,7 +921,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     if (node->m_returnValue!=nullptr) {
         if (node->m_returnType->getValue(as).toLower()=="integer") {
             node->m_returnValue->setForceType(TokenType::INTEGER);
-
+        }
+        if (node->m_returnType->getValue(as).toLower()=="byte") {
+            node->m_returnValue->setForceType(TokenType::BYTE);
         }
 
         as->ClearTerm();

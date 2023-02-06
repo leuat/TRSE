@@ -46,6 +46,7 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     }
     if (Command("mod"))
         Modulo(as);
+
     if (Command("mod16"))
         Modulo16(as);
 
@@ -53,10 +54,18 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("poke"))
         Poke(as);
 
+    if (Command("inc"))
+        IncDec(as, "inc");
 
 
     if (Command("peek"))
         Peek(as);
+
+    if (Command("hi"))
+        LoHi(as,true);
+
+    if (Command("lo"))
+        LoHi(as,false);
 
     if (Command("memcpy"))
         MemCpy(as,false);
@@ -70,109 +79,11 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
 
 
 
-
-
-
-
-
-void Methods6809::Poke(Assembler* as)
-{
-    // Optimization : if parameter 1 is zero, drop the ldx / tax
-    as->Comment("Poke");
-    //m_node->RequireAddress(m_node->m_params[0],"Poke", m_node->m_op.m_lineNumber);
-    QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-
-    // Parameter is pointer
-    if (m_node->m_params[0]->isPointer(as)) {
-        // change to zp[b] := c;
-        if (!m_node->m_params[0]->isPure())
-            ErrorHandler::e.Error("Pointer must be pure variable",m_node->m_op.m_lineNumber);
-        QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(m_node->m_params[0]);
-        var->m_expr = m_node->m_params[1];
-        auto assign = NodeFactory::CreateAssign(m_node->m_op,var,m_node->m_params[2]);
-        assign->Accept(m_codeGen);
-        return;
-    }
-
-
-    if (num!=nullptr && num->m_val==0) {
-        as->Comment("Optimization: shift is zero");
-        LoadVar(as,2);
-        SaveVar(as,0);
-        return;
-    }
-    // Optimization #2 : if parameter is num AND parameter 2 is num, just add
-    QSharedPointer<NodeNumber> num2 = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[0]);
-    if (num2!=nullptr && num!=nullptr) {
-        as->Comment("Optimization: both storage and shift are constant");
-        LoadVar(as,2);
-        //SaveVar(as,0);
-        as->Asm("sta $" + QString::number((int)(num2->m_val + num->m_val),16));
-        return;
-    }
-
-
-
-    if (m_node->m_params[2]->isPure()) {
-        LoadVar(as,1);
-        as->Asm("tax");
-        LoadVar(as,2);
-        SaveVar(as,0,"x");
-        return;
-    }
-
-    // Generic case
-    LoadVar(as,1);
-    QString zp = as->m_internalZP[2];
-    as->Asm("sta "+zp);
-    LoadVar(as,2);
-    as->Asm("ldx "+zp);
-    SaveVar(as,0,"x");
-
-}
-
-void Methods6809::Peek(Assembler* as)
-{
-    as->Comment("Peek");
-    //m_node->RequireAddress(m_node->m_params[0],"Peek", m_node->m_op.m_lineNumber);
-
-    // If pointer
-    if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
-        as->Term("ldy ");
-        m_node->m_params[1]->Accept(m_codeGen);
-        as->Term();
-        as->Term("lda (");
-        m_node->m_params[0]->Accept(m_codeGen);
-        as->Term("),y", true);
-        return;
-    }
-
-    // Optimize if numeric
-    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
-    if (num!=nullptr && m_node->m_params[0]->isPure()) {
-        QString add = m_node->m_params[1]->getValue(as);
-        QString org = m_node->m_params[0]->getValue(as);
-        as->Asm("lda "+org + " + "+add.remove("#") + ";keep");
-        /*        as->ClearTerm();
-        as->Term("lda ");
-        m_node->m_params[0]->Accept(m_codeGen);
-        as->Term(" + " + num->HexValue());
-        as->Term();*/
-        return;
-
-    }
-    LoadVar(as, 1);
-    as->Asm("tax");
-    LoadVar(as,0,"x");
-    //SaveVar(as,2);
-
-}
-
 void Methods6809::Modulo(Assembler *as)
 {
     as->Comment("Modulo");
 
-    /*
+/*
     if (m_node->m_params[0]->isWord(as)) {
 //        InitDiv16x8()
         //as->m_internalZP[0]
@@ -197,16 +108,18 @@ void Methods6809::Modulo(Assembler *as)
     }
     */
     LoadVar(as,1);
+    as->Term();
     QString val = as->StoreInTempVar("val");
 
     LoadVar(as,0);
-    //    QString mod = as->StoreInTempVar("modulo");
-    as->Asm("sec");
+    as->Term();
+//    QString mod = as->StoreInTempVar("modulo");
+//    as->Asm("sec");
     QString lbl = as->NewLabel("modulo");
     as->Label(lbl);
-    as->Asm("sbc "+val);
+    as->Asm("suba "+val);
     as->Asm("bcs "+lbl);
-    as->Asm("adc "+val);
+    as->Asm("adca "+val);
 
 
     as->PopLabel("modulo");
@@ -214,6 +127,50 @@ void Methods6809::Modulo(Assembler *as)
     as->PopTempVar();
 
 }
+
+
+
+
+
+void Methods6809::Poke(Assembler* as)
+{
+    // Optimization : if parameter 1 is zero, drop the ldx / tax
+    as->Comment("Poke");
+    //m_node->m_params[0]->Accept(as);
+//    m_node->m_params[0]->setReference(true);
+    m_node->m_params[0]->setReference(true);
+
+    auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
+    if (!m_node->m_params[2]->isPureNumericOrAddress()) {
+        m_node->m_params[2]->Accept(m_codeGen);
+        as->Term();
+        as->Asm("pshs d");
+        bop->Accept(m_codeGen);
+        as->Asm("puls d");
+        as->Asm("sta ,y");
+
+    }
+    else {
+        bop->Accept(m_codeGen);
+        m_node->m_params[2]->Accept(m_codeGen);
+        as->Asm("sta ,y");
+
+    }
+}
+
+void Methods6809::Peek(Assembler* as)
+{
+    // Optimization : if parameter 1 is zero, drop the ldx / tax
+    as->Comment("Peek");
+    //m_node->m_params[0]->Accept(as);
+    m_node->m_params[0]->setReference(true);
+    auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
+    bop->Accept(m_codeGen);
+    as->Asm("lda ,y");
+
+
+}
+
 
 void Methods6809::Modulo16(Assembler *as)
 {
@@ -429,6 +386,29 @@ void Methods6809::MemCpyUnroll(Assembler* as, bool isReverse)
 
 }
 
+void Methods6809::LoHi(Assembler *as, bool isHi)
+{
+    if (!m_node->m_params[0]->isWord(as))
+        return;
+    if (isHi) {
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Asm("tfr y,d");
+        as->Asm("ldb #0");
+    }
+    if (!isHi) {
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Asm("tfr y,d");
+        as->Asm("exg a,b");
+        as->Asm("ldb #0");
+    }
+    if (m_node->m_castType==TokenType::INTEGER)
+    {
+        as->Asm("exg a,b");
+        as->Asm("tfr d,y");
+
+    }
+}
+
 
 
 
@@ -522,52 +502,7 @@ void Methods6809::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         node = m_codeGen->m_inlineParameters[node->getValue(as)];
 */
 
-    QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
-    if (node->isPureNumericOrAddress() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
-        m_codeGen->Disable16bit();
-        as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
-        as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
-        m_codeGen->Enable16bit();
-        return;
-    }
-    bool disable16bit = true;
-    if (lda=="ldx" || lda=="ldy" || (node->getType(as)==TokenType::POINTER && nodevar->m_expr==nullptr) || reg!="")
-        disable16bit = true;
-
-
-
-    if (qSharedPointerDynamicCast<NodeVar>(node)!=nullptr ||
-        qSharedPointerDynamicCast<NodeNumber>(node)!=nullptr) {
-
-        if (disable16bit)
-            m_codeGen->Disable16bit();
-
-
-        as->ClearTerm();
-        if (lda=="")
-            as->Term("lda ");
-        else
-            as->Term(lda);
-
-
-        m_node->m_params[paramNo]->Accept(m_codeGen);
-        if (reg!="")
-            reg = "," + reg;
-
-        as->Term(reg, true);
-
-        if (nodevar!=nullptr)
-        if (node->getType(as)==TokenType::POINTER && nodevar->m_expr==nullptr) {
-            as->Asm("ldy " + node->getValue(as)+"+1");
-        }
-
-        if (disable16bit)
-            m_codeGen->Enable16bit();
-
-
-    }
-    else
-        m_node->m_params[paramNo]->Accept(m_codeGen);
+   m_node->m_params[paramNo]->Accept(m_codeGen);
 
 
 }

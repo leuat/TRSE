@@ -21,6 +21,7 @@ LImageTIM::LImageTIM(LColorList::Type t)  : LImageQImage(t)
     m_GUIParams[tabEffects] = "Effects";
 
     m_GUIParams[btnEditFullCharset] = "Char";
+    m_supports.displayCharOperations = true;
 
 
     m_GUIParams[col1] = "Background";
@@ -34,6 +35,7 @@ LImageTIM::LImageTIM(LColorList::Type t)  : LImageQImage(t)
 
     m_charWidth=64;
     m_charHeight=32;
+    m_updateCharsetPosition = true;
 
     m_supports.displayCharOperations = true;
 
@@ -42,7 +44,11 @@ LImageTIM::LImageTIM(LColorList::Type t)  : LImageQImage(t)
 void LImageTIM::ExportBin(QFile &file)
 {
     QByteArray data;
-
+    if (m_exportParams.contains("export1"))
+        if (m_exportParams["export1"]==1) {
+            data.append(m_width);
+            data.append(m_height);
+        }
     for (int x=0;x<m_width;x+=4) {
         for (int y=0;y<m_height;y++) {
             uchar c = 0;
@@ -55,6 +61,34 @@ void LImageTIM::ExportBin(QFile &file)
     }
     file.write(data);
 
+
+
+
+}
+
+void LImageTIM::ExportSubregion(QString outfile, int x, int y, int w, int h, int type) {
+
+    QByteArray data;
+    //    qDebug() << x<<type;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+
+    for (int i=0;i<w/4;i++)
+        for (int j=0;j<h;j++)
+        {
+            uchar c = 0;
+            for (int p=0;p<4;p++) {
+                uchar v = getPixel(x+i*4+p,y+j);
+                c=c|(v<<2*p);//'(6-2*i));
+            }
+            data.append(c);
+//            qDebug() << c << x+i*4 << y+j;
+        }
+    QByteArray existing;
+    if (QFile::exists(outfile))
+        existing = Util::loadBinaryFile(outfile);
+
+    existing.append(data);
+    Util::SaveByteArray(existing,outfile);
 
 
 

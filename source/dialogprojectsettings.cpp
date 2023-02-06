@@ -28,6 +28,7 @@ DialogProjectSettings::DialogProjectSettings(QString dir, QWidget *parent) :
 {
     m_currentDir = dir;
     ui->setupUi(this);
+
 }
 
 DialogProjectSettings::~DialogProjectSettings()
@@ -45,7 +46,6 @@ void DialogProjectSettings::on_btnClose_clicked()
 
 void DialogProjectSettings::FillFromIni()
 {
-
     ui->leZeropageScreenMemory->setText(m_ini->getString("zeropage_screenmemory"));
     ui->leZeropageColorMemory->setText(m_ini->getString("zeropage_colormemory"));
 
@@ -62,7 +62,7 @@ void DialogProjectSettings::FillFromIni()
 
 
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
-    ui->leDiskname->setText( m_ini->getString("d64name"));
+//    ui->leDiskname->setText( m_ini->getString("d64name"));
 
     ui->txtGlobalDefines->setPlainText(Util::fromStringList( m_ini->getStringList("global_defines")));
 
@@ -80,7 +80,8 @@ void DialogProjectSettings::FillFromIni()
     //ui->leMainFile->setText(m_ini->getString("main_ras_file"));
 
 
-    ui->chkUseViceC1541->setChecked(m_ini->getdouble("use_vice_c1541")==1);
+//    ui->chkUseViceC1541->setChecked(m_ini->getdouble("use_vice_c1541")==1);
+    ui->chkTrack19->setChecked(m_ini->getdouble("use_track_19")==1);
     ui->chkCompilerComments->setChecked(m_ini->getdouble("disable_compiler_comments")==1);
 
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
@@ -130,7 +131,7 @@ void DialogProjectSettings::FillFromIni()
 
     ui->leDosboxCycles->setText(m_ini->getString("dosbox_cycles"));
 
-    ui->cmbDiskType->setCurrentText(m_ini->getString("cc1541_disk_type"));
+//    ui->cmbDiskType->setCurrentText(m_ini->getString("cc1541_disk_type"));
 
 
 //    qDebug() <<"PROJECTSETTINGS OUT" << m_ini->getString("cpu_x86_system");
@@ -170,17 +171,17 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbMainRas->addItem("none");
     ui->cmbMainRas->addItems(ras);
 
-    ui->cmbDirArt->clear();
+/*    ui->cmbDirArt->clear();
     ui->cmbDirArt->addItem("none");
     ui->cmbDirArt->addItems(flf);
-
+*/
     ui->cmbMainRas->setCurrentText(m_ini->getString("main_ras_file"));
-    ui->cmbDirArt->setCurrentText(m_ini->getString("dirart_flf_file"));
+  //  ui->cmbDirArt->setCurrentText(m_ini->getString("dirart_flf_file"));
 
 
     ui->leInitMachineState->setText(m_ini->getString("machine_state"));
 
-    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","*.paw");
+/*    QStringList paw = Util::FindFilesOfType(m_currentDir+"/","*.paw");
 //    qDebug() << ras << m_currentDir;
     ui->cmbPawInclude->clear();
     ui->cmbPawInclude->addItem("none");
@@ -189,14 +190,14 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbPawInclude2->clear();
     ui->cmbPawInclude2->addItem("none");
     ui->cmbPawInclude2->addItems(paw);
-    ui->teBuildList->document()->setPlainText(Util::fromStringList(    m_ini->getStringList("build_list")));
 
 
 
     ui->cmbPawInclude->setCurrentText(m_ini->getString("d64_paw_file"));
 
     ui->cmbPawInclude2->setCurrentText(m_ini->getString("d64_paw_file_disk2"));
-
+*/
+    ui->teBuildList->document()->setPlainText(Util::fromStringList(    m_ini->getStringList("build_list")));
     ui->leBackgroundColor->setText(QString::number(m_ini->getdouble("background_color")));
     ui->leBorderColor->setText(QString::number(m_ini->getdouble("border_color")));
 
@@ -211,8 +212,11 @@ void DialogProjectSettings::FillFromIni()
     ui->leCustomEnding->setText(m_ini->getString("custom_system_ending"));
 
     on_cmbSystem_currentIndexChanged(ui->cmbSystem->currentIndex());
+    PopulateDiskList();
 
 }
+
+
 
 void DialogProjectSettings::FillToIni()
 {
@@ -270,9 +274,9 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setString("system", ui->cmbSystem->currentText());
 
-    m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
+//    m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
     m_ini->setFloat("disable_compiler_comments", ui->chkCompilerComments->isChecked());
-
+    m_ini->setFloat("use_track_19", ui->chkTrack19->isChecked());
 
     m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
     m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());
@@ -313,14 +317,14 @@ void DialogProjectSettings::FillToIni()
 
 
 
-    m_ini->setString("cc1541_disk_type", ui->cmbDiskType->currentText());
+//    m_ini->setString("cc1541_disk_type", ui->cmbDiskType->currentText());
 
 
     m_ini->setString("output_type", ui->cmbOutputType->currentText());
     m_ini->setString("main_ras_file", ui->cmbMainRas->currentText());
-    m_ini->setString("dirart_flf_file", ui->cmbDirArt->currentText());
-    m_ini->setString("d64_paw_file", ui->cmbPawInclude->currentText());
-    m_ini->setString("d64_paw_file_disk2", ui->cmbPawInclude2->currentText());
+  //  m_ini->setString("dirart_flf_file", ui->cmbDirArt->currentText());
+//    m_ini->setString("d64_paw_file", ui->cmbPawInclude->currentText());
+//    m_ini->setString("d64_paw_file_disk2", ui->cmbPawInclude2->currentText());
 
 
     m_ini->setFloat("override_target_settings", ui->chkOverrideTargetSettings->isChecked());
@@ -334,9 +338,9 @@ void DialogProjectSettings::FillToIni()
     m_ini->setFloat("output_debug_symbols",ui->chkDebugSymbols->isChecked());
     m_ini->setFloat("ignore_initial_jump",ui->chkIgnoreJump->isChecked());
 
-    m_ini->setString("d64name", ui->leDiskname->text());
+//    m_ini->setString("d64name", ui->leDiskname->text());
 
-
+    PopulateDiskList();
 
 //    FillTabDataToIni();
 
@@ -473,5 +477,93 @@ void DialogProjectSettings::UpdateSystem()
 void DialogProjectSettings::on_chkIgnoreBasic_clicked(bool checked)
 {
 //    ui->leBasicStartAddress->setEnabled(!checked);
-//    ui->leBasicStartAddress->setVisible(!checked);
+    //    ui->leBasicStartAddress->setVisible(!checked);
 }
+
+void DialogProjectSettings::CreateCombobox(QStringList lst, QString name, int r, int c)
+{
+    QComboBox* cmbPaw = new QComboBox();
+    cmbPaw->addItems(lst);
+    cmbPaw->setCurrentText(m_ini->getString(name));
+    ui->grdDisks->addWidget(cmbPaw,r,c);
+
+    QObject::connect(cmbPaw, &QComboBox::currentTextChanged, [=]() {
+        m_ini->setString(name,cmbPaw->currentText());
+    });
+
+}
+
+// Add disk
+void DialogProjectSettings::on_pushButton_2_clicked()
+{
+    int disk = 1;
+    while (m_ini->contains("disk"+QString::number(disk)+"_paw"))
+        disk+=1;
+    QString d = "disk"+QString::number(disk);
+    m_ini->setString(d+"_paw","");
+    m_ini->setString(d+"_flf","");
+    m_ini->setString(d+"_type","");
+    FillFromIni();
+    FillToIni();
+}
+
+void DialogProjectSettings::PopulateDiskList()
+{
+    int disk = 1;
+    Util::clearLayout(ui->grdDisks);
+    int row=0;
+    while (m_ini->contains("disk"+QString::number(disk)+"_paw")) {
+        QString d = "disk"+QString::number(disk);
+
+        ui->grdDisks->addWidget(new QLabel("Disk "+QString::number(disk)),row,0);
+        ui->grdDisks->addWidget(new QLabel("Name"+QString::number(disk)),row,1);
+
+        ui->grdDisks->addWidget(new QLabel("Paw"),row,3);
+        ui->grdDisks->addWidget(new QLabel("Dirart"),row,5);
+        ui->grdDisks->addWidget(new QLabel("Type"),row,7);
+
+//        cmb->setFocusPolicy( Qt::StrongFocus );
+  //      cmb->installEventFilter(m_eventFilter);
+        QStringList flf = QStringList()<<"none"<<Util::FindFilesOfType(m_currentDir+"/","*.flf");
+        QStringList paw = Util::FindFilesOfType(m_currentDir+"/","*.paw");
+    //    qDebug() << ras << m_currentDir;
+
+        QLineEdit* le=new QLineEdit();
+        le->setText(m_ini->getString(d+"_name"));
+        ui->grdDisks->addWidget(le,row,2);
+        QObject::connect(le, &QLineEdit::textChanged, [=]() {
+            m_ini->setString(d+"_name",le->text());
+        });
+
+
+        CreateCombobox(paw,d+"_paw",row,4);
+        CreateCombobox(flf,d+"_flf",row,6);
+        CreateCombobox(QStringList()<<"d64"<<"d81",d+"_type",row,8);
+
+
+        disk+=1;
+        row+=1;
+
+    }
+
+}
+
+// delete disk
+void DialogProjectSettings::on_pushButton_3_clicked()
+{
+    int disk = 1;
+    if (!m_ini->contains("disk1_paw"))
+        return;
+
+    while (m_ini->contains("disk"+QString::number(disk)+"_paw"))
+        disk+=1;
+
+    QString d = "disk"+QString::number(disk-1);
+    m_ini->remove(d+"_paw");
+    m_ini->remove(d+"_flf");
+    m_ini->remove(d+"_name");
+    m_ini->remove(d+"_type");
+    PopulateDiskList();
+
+}
+

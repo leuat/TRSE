@@ -105,6 +105,36 @@ begin
 end;
 
 
+
+// test break
+procedure TestBreak();
+begin
+	Vars::text := "TB:";
+	Vars::v2 := 0;
+	for Vars::v1:=0 to 20 do 
+	begin
+		if (Vars::v1=5) then break;
+		Vars::v2+=1;
+	end;
+	if (Vars::v2=5) then Common::PASS() else Common::FAIL();
+end;
+
+// test break
+procedure TestContinue();
+begin
+	Vars::text := "TC:";
+	Vars::v2 := 0;
+	for Vars::v1:=0 to 20 do 
+	begin
+		if (Vars::v1>=5) then 
+			continue;
+			
+		Vars::v2+=1;
+	end;
+	if (Vars::v2=5) then Common::PASS() else Common::FAIL();
+end;
+
+
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
@@ -121,6 +151,8 @@ begin
 	@ifndef X86
 	Test8();
 	@endif
+	TestBreak();
+	TestContinue();
 	Common::WaitABit();
 end;
 

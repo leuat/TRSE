@@ -1338,7 +1338,6 @@ void FormImageEditor::updateCharSet()
 
     QVector<QPixmap> maps;
     charmap->ToQPixMaps(maps);
-
     ui->lstCharMap->setSelectionMode(QAbstractItemView::SingleSelection);
 
     ui->lstCharMap->clearContents();

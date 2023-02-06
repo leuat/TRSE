@@ -1622,7 +1622,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
     //    qDebug() << "SUBVAR  "<< isSubVar << m_currentToken.m_value;
 
     if (m_currentToken.m_value == Syntax::s.thisName)
-        m_currentToken.m_value = m_currentClass+"_"+m_currentToken.m_value;
+        m_currentToken.m_value = m_symTab->m_currentClass+"_"+m_currentToken.m_value;
 
     m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
     // Rename "i" with "_var_i" for disallowed variables (Z80, GB)
@@ -1916,6 +1916,9 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 {
     QVector<QSharedPointer<Node>> decls;
     bool isClass = m_currentToken.m_type==TokenType::CLASS;
+    if (isClass && !Syntax::s.m_currentSystem->m_allowClasses)
+        ErrorHandler::e.Error("TRSE doesn't support classes on this CPU yet",m_currentToken.m_lineNumber);
+
     Eat();
     //    SymbolTable
     QSharedPointer<SymbolTable>  record = QSharedPointer<SymbolTable> (new SymbolTable());
@@ -1926,11 +1929,13 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
     //m_symTab->Define(new Symbol(name,"record"));
     record->setName(name);
     QString oldPrefix = m_symTab->m_gPrefix;
+//    m_symTab->m_gPrefix=m_symTab->m_currentUnit+"_"+name+"_";
     m_symTab->m_gPrefix=name+"_";
     m_isRecord = true;
     bool first = true;
 
     if (isClass) {
+        // Defining "this" for the current class in unit
         QString of = m_symTab->m_gPrefix;
         //        if (!m_symTab->m_gPrefix.startsWith("localVariable"))
         m_symTab->m_gPrefix = "";
@@ -1951,7 +1956,7 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
 
         if (isClass) {
-            m_currentClass = name;
+            m_symTab->m_currentClass = name;
             if (m_currentToken.m_type==TokenType::PROCEDURE || m_currentToken.m_type==TokenType::FUNCTION || m_currentToken.m_type==TokenType::INTERRUPT) {
                 QVector<QSharedPointer<Node>> procs;
 
@@ -2025,7 +2030,7 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
 
     SymbolTable::s_classSizes[name] = record->getSize();
     //    qDebug() << "Size: " <<name<<SymbolTable::s_classSizes[name];
-    m_currentClass = "";
+    m_symTab->m_currentClass = "";
     m_isRecord = false;
     //    m_symTab = oldTab;
     m_symTab->m_gPrefix = oldPrefix;
@@ -2094,7 +2099,7 @@ QSharedPointer<Node> Parser::AssignStatementBetweenObjects(QSharedPointer<Node> 
 
 void Parser::VerifyNotInClassAssignTypespec()
 {
-    if (m_currentClass!="")
+    if (m_symTab->m_currentClass!="")
         ErrorHandler::e.Error("Class variables cannot have default values. These must be set manually or in a constructor (which is currently not yet implemented)",m_currentToken.m_lineNumber);
 }
 
@@ -3086,122 +3091,11 @@ void Parser::PreprocessSingle() {
         else if (m_currentToken.m_value.toLower() =="use") {
             Eat();
             QString type = m_currentToken.m_value;
-            bool ok=false;
-            if (type.toLower()=="krillsloader") {
-                ok=true;
-                //int ln = Pmm::Data::d.lineNumber;
-                //                      qDebug() << m_lexer->m_lines[Pmm::Data::d.lineNumber];
-
-                //m_lexer->m_lines.removeAt(ln);
-                //m_lexer->m_orgText.replace(orgL,"\n");
-                Eat();
-                int loaderPos = m_currentToken.m_intVal;
-                Eat();
-                int loaderOrgPos = m_currentToken.m_intVal;
-                Eat();
-                int installerPos = m_currentToken.m_intVal;
-
-
-                //                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
-                m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos);
-                m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
-                //                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
-                //                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
-                m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
-                m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
-
-
-                QString pos = QString::number(loaderPos,16);
-                if (pos=="200") pos = "0200";
-                QString loaderFile =":resources/bin/krill_19/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
-                QString installerFile =":resources/bin/krill_19/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
-
-                if (!QFile::exists(loaderFile))
-                    ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
-
-                if (!QFile::exists(installerFile))
-                    ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
-
-
-                QString outFolder = m_currentDir+"/auto_bin/";
-                QString outFolderShort = "auto_bin/";
-
-                if (!QDir().exists(outFolder))
-                    QDir().mkdir(outFolder);
-
-                QString outFile = outFolder+"krill_loader.bin";
-
-                if (QFile::exists(outFile)) {
-                    QFile f(outFile);
-                    f.remove();
-                }
-                //                    QFile::copy(loaderFile, outFile);
-                Util::ConvertFileWithLoadAddress(loaderFile,outFile);
-
-                outFile = outFolder+"krill_installer.bin";
-                if (QFile::exists(outFile)) {
-                    QFile f(outFile);
-                    f.remove();
-                }
-                Util::ConvertFileWithLoadAddress(installerFile,outFile);
-                //                    QFile in(installerFile);
-                //                  QByteArray data =
-
-                //QFile::copy(installerFile, outFile);
-
-                outFile = outFolderShort+"krill_loader.bin";
-                QString replaceLine = "var\n";
-                replaceLine+="_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
-                outFile = outFolderShort+"krill_installer.bin";
-                replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
-
-                for (QString s: m_diskFiles) {
-                    QString var = s;
-                    if (s=="") ErrorHandler::e.Error("One of your disk files is missing a name. Please correct the .paw file!");
-                    for (int i=0;i<256;i++) {
-                        QString r = "#P"+QString::number(i)+";";
-                        var = var.replace(r,"");
-                        //                            s = s.replace(r,QChar(i));
-                        //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
-                    }
-
-                    replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
-                    replaceLine+="@donotremove "+var+"\n";
-
-                }
-                //QString orgL =  m_lexer->m_lines[ln];
-                QString orgL="@use KrillsLoader "+Util::numToHex(loaderPos)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
-                if (!m_lexer->m_text.contains(orgL)) {
-                    orgL="@use KrillsLoader $0"+QString::number(loaderPos,16)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
-                }
-                if (!m_lexer->m_text.contains(orgL)) {
-                    ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000'",Pmm::Data::d.lineNumber);
-
-                }
-
-
-
-                //   qDebug() << replaceLine << orgL;
-
-
-
-                m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
-                m_lexer->m_pos-=orgL.length();
-
-
-                //                      qDebug().noquote() <<  m_lexer->m_text;
-
-
-
-                //Eat();
-            }
-            else {
-                //                    if (m_pass==0)
+            if (type.toLower()=="krillsloader")
+                HandleKrillsLoader();
+            else
                 HandleUseTPU(type);
-            }
-            /*              if (!ok) {
-                      ErrorHandler::e.Error("Uknown @use parameter : "+type, m_currentToken.m_lineNumber);
-                  }*/
+
         }
         else {
             if (m_macros.contains(m_currentToken.m_value.toLower()))
@@ -3739,6 +3633,12 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     }
     QStringList flags = getFlags();
     Eat(TokenType::SEMI);
+    bool isForward = false;
+    if (m_currentToken.m_type == TokenType::FORWARD) {
+        isForward = true;
+        Eat(TokenType::FORWARD);
+        Eat(TokenType::SEMI);
+    }
     QSharedPointer<Node> block = nullptr;
     QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
     //    qDebug() << "Starting new procedure decl block with : "<< procName << procDecl->m_blockInfo.m_blockID;
@@ -3802,7 +3702,8 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 
 
     // For recursive procedures, it is vital that we forward declare the current procedure
-    block = Block(false, procName);
+    if (!isForward)
+        block = Block(false, procName);
     //        if (block==nullptr)
     //          qDebug() << "Procedure decl: " << procName;
     //decl.append(procDecl);
@@ -4129,7 +4030,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
         for (QSharedPointer<Symbol> s: syms) {
             if (Syntax::s.m_illegaVariableNames.contains(s->m_name))
                 ErrorHandler::e.Error("Illegal variable name '" + s->m_name +"' on the "+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+" (name already used in the assembler etc) ",m_currentToken.m_lineNumber);
-            if (m_isRecord)
+            if (m_isRecord && !isProcedureParams)
                 s->m_isClassVariable = true;
             //qDebug() << "Defining RECORD: " << s->m_name;
             QString sn = s->m_name;
@@ -4173,6 +4074,8 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
             for (QString& s: typeNode->m_data)
                 len+=s.length();
             s->m_size = len;
+            if (isProcedureParams)
+                ErrorHandler::e.Error("TRSE does not support string parameters. Please use a byte pointer parameter instead",m_currentToken.m_lineNumber);
         }
 
 
@@ -4212,6 +4115,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
             QSharedPointer<Symbol> sym = nullptr;
             try {
+
                 sym = m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
                 // check if global type matches parameter type:
             } catch (FatalErrorException& fe) {
@@ -4277,6 +4181,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     //    return vars;
     var_decleratons.append(m_extraDecls); // Extra variables such as string lists
     m_extraDecls.clear();
+//    m_extraDeclsNames.clear();
     return var_decleratons;
 }
 
@@ -4288,6 +4193,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     // So here is something interesting: if you're in a class on the m68k,
     // then if you have defined a byte it MUST become an integer due to the alignment requires
     bool forceByteAlignment =(Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000 && m_isRecord);
+//    qDebug() << "TYPESPEC " <<m_currentToken.getType() << varNames << m_symTab->m_currentClass;
 
     if (forceByteAlignment && t.m_type==TokenType::BYTE) {
         t.m_type = TokenType::INTEGER;
@@ -4384,6 +4290,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
         // string lists are treated as pointer lists
 
+
         // Contains constant init?
         if (m_currentToken.m_type==TokenType::EQUALS) {
             VerifyNotInClassAssignTypespec();
@@ -4392,7 +4299,8 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             if (isStringList) {
                 dataType = Syntax::s.m_currentSystem->getSystemPointerArrayType();
                 arrayType.m_type = Syntax::s.m_currentSystem->getSystemPointerArrayType();
-                arrayType.m_value = "INTEGER";
+                arrayType.m_value = TokenType::getType(arrayType.m_type);
+
 
                 Eat(TokenType::LPAREN);
                 QVector<QSharedPointer<Node>> tmp_data;
@@ -4400,7 +4308,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     //tmp_data.append(m_currentToken);
                     tmp_data.append(String(false));
                     //                    qDebug() << m_currentToken.m_value;
-                    Eat();
+//                    Eat();
                     if (m_currentToken.m_type == TokenType::COMMA)
                         Eat();
                 }
@@ -4425,6 +4333,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     QSharedPointer<NodeVarDecl> decl = QSharedPointer<NodeVarDecl>(new NodeVarDecl(var, type));
 
                     m_extraDecls.append(decl);
+                    SymbolTable::s_ignoreUnusedSymbolWarning.append(name);
                     cnt++;
                 }
                 // Ok : strings are added. Now create the actual pointer list!
@@ -4792,6 +4701,15 @@ QSharedPointer<Node> Parser::InlineAssembler()
     }
     t.m_value = m_currentToken.m_value;
     QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
+    QStringList potentialUsedVariables = Syntax::s.m_currentSystem->AnalyseForPotentialVariables(t.m_value);
+    for (auto s: potentialUsedVariables) {
+        if (m_symTab->m_symbols.contains(s)) {
+            m_symTab->m_symbols[s]->isUsed = true;
+            m_symTab->m_symbols[s]->m_doNotOptimize = true;
+        }
+        if (m_procedures.contains(s))
+            m_procedures[s]->m_isUsed = true;
+    }
     Eat(TokenType::STRING);
     if (pascalStyleAsm) {
         Eat(TokenType::END);
@@ -5790,6 +5708,115 @@ void Parser::HandleAKGCompiler()
         ErrorHandler::e.Error("Could not find music for inclusion : "+filename+".asm");
 }
 
+void Parser::HandleKrillsLoader()
+{
+    Eat();
+    int loaderPos = m_currentToken.m_intVal;
+    Eat();
+    int loaderOrgPos = m_currentToken.m_intVal;
+    Eat();
+    int installerPos = m_currentToken.m_intVal;
+    QString track = "19";
+    if (m_projectIni->contains("use_track_19") && m_projectIni->getdouble("use_track_19")!=1.0)
+        track="18";
+
+
+    //                      m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos + 0x1390);
+    m_preprocessorDefines["_InstallKrill"] = Util::numToHex(installerPos);
+    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+    //                    m_preprocessorDefines["_LoadrawKrill"] = Util::numToHex(loaderPos);
+    //                    qDebug() << m_preprocessorDefines["_LoadrawKrill"];
+    m_preprocessorDefines["_ResidentLoaderSource"] = Util::numToHex(loaderOrgPos);
+    m_preprocessorDefines["_ResidentLoaderDestination"] = Util::numToHex(loaderPos);
+
+
+    QString pos = QString::number(loaderPos,16);
+    if (pos=="200") pos = "0200";
+    QString loaderFile =":resources/bin/krill_"+track+"/loader_PAL_NTSC_"+pos.toUpper()+"-c64.prg";
+    QString installerFile =":resources/bin/krill_"+track+"/install_PAL_NTSC_"+QString::number(installerPos,16).toUpper()+"-c64.prg";
+
+
+    if (!QFile::exists(loaderFile))
+        ErrorHandler::e.Error("When using krills loader, the loader location must be either 0200, 1000,2000 etc");
+
+    if (!QFile::exists(installerFile))
+        ErrorHandler::e.Error("When using krills loader, the installer location must be either 1000, 2000, 3000 etc");
+
+
+    QString outFolder = m_currentDir+"/auto_bin/";
+    QString outFolderShort = "auto_bin/";
+
+    if (!QDir().exists(outFolder))
+        QDir().mkdir(outFolder);
+
+    QString outFile = outFolder+"krill_loader.bin";
+
+    if (QFile::exists(outFile)) {
+        QFile f(outFile);
+        f.remove();
+    }
+    //                    QFile::copy(loaderFile, outFile);
+    Util::ConvertFileWithLoadAddress(loaderFile,outFile);
+
+    outFile = outFolder+"krill_installer.bin";
+    if (QFile::exists(outFile)) {
+        QFile f(outFile);
+        f.remove();
+    }
+    Util::ConvertFileWithLoadAddress(installerFile,outFile);
+    //                    QFile in(installerFile);
+    //                  QByteArray data =
+
+    //QFile::copy(installerFile, outFile);
+
+    outFile = outFolderShort+"krill_loader.bin";
+    QString replaceLine = "var\n";
+    replaceLine+="_ResidentLoader_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(loaderOrgPos,16)+");";
+    outFile = outFolderShort+"krill_installer.bin";
+    replaceLine += "\n_Installer_Binary: 	incbin (\""+outFile+ "\",$"+QString::number(installerPos,16)+");";
+
+    for (QString s: m_diskFiles) {
+        QString var = s;
+        if (s=="") ErrorHandler::e.Error("One of your disk files is missing a name. Please correct the .paw file!");
+        for (int i=0;i<256;i++) {
+            QString r = "#P"+QString::number(i)+";";
+            var = var.replace(r,"");
+            //                            s = s.replace(r,QChar(i));
+            //                           s = s.replace(r,"\""  +QString::number(i)  + "\"");
+        }
+
+        replaceLine+= var + ": string=(\""+s.toUpper()+"\");";
+        replaceLine+="@donotremove "+var+"\n";
+
+    }
+    //QString orgL =  m_lexer->m_lines[ln];
+    QString orgL="@use KrillsLoader "+Util::numToHex(loaderPos)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
+    if (!m_lexer->m_text.contains(orgL)) {
+        orgL="@use KrillsLoader $0"+QString::number(loaderPos,16)+" " +Util::numToHex(loaderOrgPos) + " " + Util::numToHex(installerPos);
+    }
+    if (!m_lexer->m_text.contains(orgL)) {
+        ErrorHandler::e.Error("Something went wrong with the krill loader implementation: please make sure that the loader line is exactly of the following format (including spaces and letter cases etc): '@use KrillsLoader $0200 $2000 $3000 '",Pmm::Data::d.lineNumber);
+
+    }
+
+
+
+    //   qDebug() << replaceLine << orgL;
+
+
+
+    m_lexer->m_text.replace(orgL,replaceLine+"\n\t");
+    m_lexer->m_pos-=orgL.length();
+
+
+    //                      qDebug().noquote() <<  m_lexer->m_text;
+
+
+
+    //Eat();
+
+}
+
 void Parser::HandleSpriteCompiler()
 {
 
@@ -5995,23 +6022,9 @@ void Parser::HandleProjectSettingsPreprocessors()
 void Parser::HandleUseTPU(QString fileName)
 {
     QString pos = "";
-    //    if (m_currentToken.m_type==TokenType::INTEGER_CONST)
-    //      pos = GetParsedInt(TokenType::INTEGER);
-    //    qDebug() << m_currentToken.m_value;
-    /*    Eat();
-    if (m_currentToken.m_type==TokenType::COMMA) {
-        Eat();
-        pos = m_currentToken.getNumAsHexString();
-  //      qDebug()<< sp;
-//        pos = GetParsedInt(TokenType::INTEGER);
-    }
-
-*/
     if (s_usedTRUs.contains(fileName)) {
         return;
     }
-    //    qDebug() << pos;
-
 
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
@@ -6044,7 +6057,7 @@ void Parser::HandleUseTPU(QString fileName)
     p->m_symTab->m_symbols = m_symTab->m_symbols;
     p->m_symTab->m_records = m_symTab->m_records;
     p->m_symTab->m_externalRecords = m_symTab->m_records.keys();
-
+    p->m_symTab->m_constants = m_symTab->m_constants;
     //    qDebug() << "Copying over: " << m_procedures.keys();
     p->m_procedures = m_procedures;
 
@@ -6098,8 +6111,9 @@ void Parser::HandleUseTPU(QString fileName)
         m_symTab->m_globalList.append(s);
     }
     // qDebug() << "LIST : " <<m_symTab->m_symbols.keys();
-    if (!m_tpus.contains(p))
+    if (!m_tpus.contains(p)) {
         m_tpus.append(p);
+    }
 
     //    qDebug() << m_currentToken.m_value;
     //    Eat();

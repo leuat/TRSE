@@ -16,6 +16,7 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 
 void Compiler6809::Connect()
 {
+    m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
 
 
@@ -52,6 +53,8 @@ void Compiler6809::Init6809Assembler()
 {
     m_assembler->m_startInsertAssembler<<" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+    m_assembler->m_startInsertAssembler << "START:";
+
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
 

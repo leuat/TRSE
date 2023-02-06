@@ -63,6 +63,7 @@ public:
     void InitPrintDecimal(Assembler* as);
     void InitPlaySidVIC20(Assembler* as);
     void InitBcd(Assembler* as);
+    void LoHi(Assembler*as, bool isHi);
 
     void LoadAddress(Assembler* as, int paramNo);
     void LoadVar(Assembler* as, int paramNo, QString registe, QString load="");

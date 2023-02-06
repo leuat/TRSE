@@ -205,10 +205,17 @@ bool NodeVar::isWord(Assembler *as) {
 
 
 bool NodeVar::isLong(Assembler *as) {
-    return getType(as)==TokenType::LONG  && m_expr==nullptr;
+    return (getType(as)==TokenType::LONG || getArrayType(as)==TokenType::LONG)  && m_expr==nullptr;
 }
 bool NodeVar::isByte(Assembler *as) {
     return getType(as)==TokenType::BYTE  && m_expr==nullptr;
+//    return getType(as)==TokenType::BYTE  || getArrayType(as)==TokenType::BYTE;
+}
+
+bool NodeVar::isStringList(Assembler *as)
+{
+//    qDebug() << getValue(as) << TokenType::getType(getTyp)<< TokenType::getType(getArrayType(as));
+   return (getArrayType(as)==Syntax::s.m_currentSystem->getSystemPointerArrayType());
 }
 
 bool NodeVar::containsPointer(Assembler *as)
@@ -230,6 +237,8 @@ bool NodeVar::isRecord(Assembler *as)
 bool NodeVar::isStackVariable()
 {
     QSharedPointer<Symbol> s = s_as->m_symTab->Lookup(value,m_op.m_lineNumber,true);
+    if (s==nullptr)
+        return false;
     return s->m_isStackVariable;
 
 }

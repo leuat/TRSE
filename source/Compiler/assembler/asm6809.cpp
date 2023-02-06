@@ -85,13 +85,16 @@ void Asm6809::DeclareArray(QString name, QString type, int count, QStringList da
 
 
 
-    if (type.toLower()=="integer")
+
+    if (type.toLower()=="integer" || type.toLower()=="pointer")
         t = word;
     if (type.toLower()=="byte")
         t = byte;
 
     if (type.toLower()=="string")
         t = byte;
+
+//    qDebug() << "Declaring array "+name+" of type " + type + " " +t;
 
      if (data.count()==0 && pos!="") {
          Write(name + " = " + pos);
@@ -114,8 +117,8 @@ void Asm6809::DeclareArray(QString name, QString type, int count, QStringList da
         }
 
 
-        Write(getLabelEnding(name) +"\t" + t + "\t ");
-        Asm("org "+name+"+" +QString::number(count*scale));
+        Write(getLabelEnding(name) +"\t" + "fill" + "\t 0,"+QString::number(count));
+//        Asm("org "+name+"+" +QString::number(count*scale));
 
     }
     else {
@@ -394,7 +397,7 @@ QString Asm6809::String(QStringList lst, bool term)
         if (!ok)
             res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
 
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+        else res=res + "\t"+"fcb"+"\t"+QString::number(val) + "\n";
 
 /*        if (s!=lst.last())
             res=res + "\n";
@@ -403,6 +406,7 @@ QString Asm6809::String(QStringList lst, bool term)
     }
     if (term)
         res=res + "\t"+byte+"\t0";
+
     m_term +=res;
     return res;
 }
@@ -440,6 +444,31 @@ void Asm6809::BinOP(TokenType::Type t,  bool clearFlag)
     }
     if (t == TokenType::XOR) {
         m_term = "eora ";
+    }
+
+}
+
+void Asm6809::BinOP16(TokenType::Type t, bool clearFlag)
+{
+    if (t == TokenType::PLUS) {
+        if (clearFlag)
+        m_term = "addd ";
+    }
+
+    if (t == TokenType::MINUS) {
+        if (clearFlag)
+        m_term = "subd ";
+    }
+
+    if (t == TokenType::BITAND) {
+        m_term = "andd ";
+    }
+
+    if (t == TokenType::BITOR) {
+        m_term = "ord ";
+    }
+    if (t == TokenType::XOR) {
+        m_term = "eord ";
     }
 
 }

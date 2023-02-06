@@ -14,7 +14,9 @@ var
 	
 	ia1 : array[10] of integer = buildtable("i*100");
 	ba1 : array[10] of byte = buildtable("i");
+	strLst : array[] of string = ("S1","S2",("J",75), "S3");
 
+@ifndef CPU_M6809
 	Mini = class
 		a:integer; // 4   // 7
 		b:byte;    // 6   // 9
@@ -25,6 +27,8 @@ var
 		end;
 		
 	end;
+
+
 
 
 	Point = class
@@ -64,6 +68,7 @@ var
 	m : Monster;
 	const NN : integer = 10;
 	monsters: array[ NN ] of Monster;
+@endif
 	zp: pointer;
 
 

@@ -92,14 +92,14 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
                 v->ExecuteSym(as->m_symTab);
 
                 if (m_function->m_params[p]==BuiltInFunction::BYTE) {
-                    if (v->isWord(as))
-                        ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p+1)+", but an integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
+//                    if (v->isWord(as))
+  //                      ErrorHandler::e.Warning("Method '"+m_procName+"' requires byte value for parameter "+QString::number(p+1)+", but an integer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
                 }
                 if (m_function->m_params[p]==BuiltInFunction::INTEGER || m_function->m_params[p]==BuiltInFunction::BYTE) {
-                    if (v->isPointer(as)) {
+/*                    if (v->isPointer(as)) {
                         if (!v->hasArrayIndex())
                         ErrorHandler::e.Warning("Method '"+m_procName+"' requires a byte/integer value for parameter "+QString::number(p+1)+", but a pointer is provided. Might yield incorrect result. ",m_op.m_lineNumber);
-                    }
+                    }*/
                 }
 
 
@@ -109,17 +109,30 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
     }
 }
 
+bool NodeBuiltinMethod::isPureVariable() {
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::X86 ||
+            Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80 ||
+            Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 ||
+            Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000
+            )
+    {
+        if (m_procName.toLower()=="hi" || m_procName.toLower()=="lo")
+            return true;
+    }
+    return false;
+}
+
 void NodeBuiltinMethod::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
 {
     for (int i=0;i<m_params.count();i++) {
         auto n = m_params[i];
- //       qDebug() << "Testing parameter pureness " <<n->isPure();
+        //       qDebug() << "Testing parameter pureness " <<n->isPure();
         if (n->isPure()) {
-//            qDebug() << n->getValue(as);
+            //            qDebug() << n->getValue(as);
             for (QString k: inp.keys())
-            if (n->getValue(as)==k) {
-                m_params[i] = inp[k];
-            }
+                if (n->getValue(as)==k) {
+                    m_params[i] = inp[k];
+                }
 
         }
         else

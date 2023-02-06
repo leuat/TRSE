@@ -56,6 +56,9 @@ public:
 
     }
 
+    TokenType::Type getSystemPointerArrayType() override {
+        return TokenType::LONG;
+    }
     virtual bool is486() override;
     virtual bool is386() override;
     virtual bool is286() override;

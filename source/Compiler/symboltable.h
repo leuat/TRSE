@@ -134,7 +134,10 @@ public:
     QString m_currentUnit = "";
     QString m_currentFilename="";
     QStringList m_extraMonCommands;
+    QStringList m_units; // used for dispatcher only
     QStringList m_externalRecords; // used for keeping track of merging records from units
+    static QStringList s_ignoreUnusedSymbolWarning;
+    QString m_currentClass ="";
     bool m_addToGlobals = false;
     bool m_isClass = false;
     ~SymbolTable();

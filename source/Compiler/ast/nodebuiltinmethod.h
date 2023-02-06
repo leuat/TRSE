@@ -54,6 +54,7 @@ public:
         for (QSharedPointer<Node> n:m_params)
             n->parseConstants(symTab);
     }
+    bool isPureVariable() override;
 
 
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;

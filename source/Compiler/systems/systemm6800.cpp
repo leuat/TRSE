@@ -92,5 +92,5 @@ SystemM68000::SystemM68000(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global" << "aligned";
     m_processor = M68000;
     m_allowedBaseTypes<<"LONG";
-
+    m_allowClasses = true;
 }

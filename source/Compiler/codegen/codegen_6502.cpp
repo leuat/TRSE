@@ -495,7 +495,6 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     }
     //    Disable16bit();
     if (node->m_left->isWord(as)) {
-
         LoadVariable(node->m_left);
         as->Term();
 
@@ -661,7 +660,6 @@ void CodeGen6502::dispatch(QSharedPointer<NodeBinOP>node)
         QString s = "#";
         if (node->m_left->isAddress() || node->m_right->isAddress())
             s = "";
-
         if (as->m_term=="")
             if (!node->isWord(as))
                 as->Asm("lda " + s + QString::number(val));
@@ -1772,7 +1770,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
 {
     as->ClearTerm();
     //   qDebug() << "OAD NUMBER";
-    if (node->isReference()) {
+    if (node->isReference() || node->getValueAsInt(as)>255) {
         as->ClearTerm();
         as->Asm("lda "+node->getValue8bit(as,false));
         as->Asm("ldy "+node->getValue8bit(as,true));
@@ -1936,6 +1934,11 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
         return;
     }
     else {
+        if (node->isPointer(as)) {
+            as->Asm("sta " + getValue(node));
+            as->Asm("sty " + getValue(node)+"+1");
+            return;
+        }
 
         as->Asm("sta " + getValue(node));
         if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
@@ -2026,19 +2029,42 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     //  as->Label(lbl);
 
     //    qDebug() << "IS POINTER " << isPointer;
-    if (isPointer && node->m_left->hasArrayIndex()==false) {
+    if (isPointer || left->isStringList(as)) {
         //      qDebug() << "HERE";
-        as->Asm("lda #<"+str);
+/*        as->Asm("lda #<"+str);
         as->Asm("sta "+getValue(left));
         as->Asm("lda #>"+str);
-        as->Asm("sta "+getValue(left)+"+1");
+        as->Asm("sta "+getValue(left)+"+1");*/
+//            left->m_expr->Accept(this);
+//        if (left->hasArrayIndex())
+            as->Asm(";has array index");
+            as->Asm("lda #<"+str);
+            as->Asm("ldy #>"+str);
+            StoreVariable(left);
+
+
     }
     else {
-        as->Asm("ldx #0");
+        QString val = getValue(left);
+
+/*            as->Comment("Storing in string array");
+            left->Accept(this);
+            as->Term();
+            QString zp = as->m_internalZP.Get();
+
+            as->m_internalZP.Pop(zp);
+            as->Asm("sta "+zp);
+            as->Asm("sty "+zp+"+1");
+            val = "("+zp+")"; // store in zp*/
+//        }
+
+
+
+        as->Asm("ldy #0");
         as->Label(lblCpy);
-        as->Asm("lda " + str+",x");
-        as->Asm("sta "+getValue(left) +",x");
-        as->Asm("inx");
+        as->Asm("lda " + str+",y");
+        as->Asm("sta "+val +",y");
+        as->Asm("iny");
         as->Asm("cmp #0 ;keep");  // ask post optimiser to not remove this
         as->Asm("bne " + lblCpy);
     }

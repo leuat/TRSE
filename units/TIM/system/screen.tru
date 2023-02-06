@@ -17,17 +17,7 @@ var
 	scrl_w, scrl_stp, scrl_phs: byte;
 	scrl_txt: pointer;
 	
-@donotremove x
-@donotremove y
-@donotremove char
-@donotremove str
-@donotremove font_ptr
-@donotremove cursorx
-@donotremove cursory
-@donotremove chrinv
-@donotremove chrsub
 @donotremove PrintChrXY
-
 /**
 	Prints a 8x8 character to screen at given coordinates, where x = 0..127, y = 0..63, chr 0..255.
 	Character resolution is 64x32, but characters can be printed at half width and height.

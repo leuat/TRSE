@@ -355,6 +355,18 @@ double CIniFile::getdouble(QString name) {
     return 0;
 }
 
+void CIniFile::remove(QString name)
+{
+    for (int i=0;i<items.size();i++) {
+        if (items[i].name==name.toLower().trimmed()) {
+            items.removeAt(i);
+            return;
+        }
+
+    }
+
+}
+
 
 
 

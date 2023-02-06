@@ -95,9 +95,12 @@ void AsmX86::DeclareArray(QString name, QString type, int count, QStringList dat
         t = word;
     if (type.toLower()=="byte")
         t = byte;
+    if (type.toLower()=="pointer" || type.toLower()=="long")
+        t = llong;
 
     if (type.toLower()=="string")
         t = byte;
+
 // array  resb  251*256  ;251 ROWS X 256 COLUMNS.
 
      if (data.count()==0 && pos!="") {

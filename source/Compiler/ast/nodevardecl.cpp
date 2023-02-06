@@ -51,7 +51,6 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
             typeName = typeNode->m_arrayVarType.m_value;
 
     }
-
     QSharedPointer<Symbol> typeSymbol = symTab->Lookup(typeName, m_op.m_lineNumber);
 
 
@@ -113,7 +112,8 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
     }
 //    qDebug() <<"NODEVARDECL " <<varSymbol->m_name <<varSymbol->m_size <<typeNode->m_declaredCount;
 
-
+//    if (varSymbol->m_name.contains("balle"))
+//        qDebug() << "NODEVARDECL :: "<<(varSymbol->m_name);
     symTab->Define(varSymbol,isFlaggedAsUsed);
 
 

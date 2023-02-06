@@ -421,7 +421,22 @@ Token Lexer::GetNextToken()
             }
 
         }
-        // Generate string
+        // Convert ascii to number
+        if (m_currentChar=="'") {
+            Advance();
+            int c = m_currentChar.toLatin1()[0];
+//            qDebug() << c;
+            Advance();
+            if (m_currentChar!="'")
+                ErrorHandler::e.Error( "Chars chan only contain one symbol",Pmm::Data::d.lineNumber );
+
+            Advance();
+
+            return Token(TokenType::INTEGER_CONST, c);
+
+
+        }
+
         if (m_currentChar=="\"") {
             Advance();
             return String();

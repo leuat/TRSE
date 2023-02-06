@@ -6,17 +6,25 @@ program Tutorial5;
 @use "system/graphics"
 
 var
+	
+	@deletefile "images/tiles.bin"	
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 0 16 16
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32 0 16 16
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 48 0 16 16
+
+	
 	font: incbin("zxchars.bin");
-	sprites: incbin("sprites.bin");	// include sprites
+	sprites: incbin("images/tiles.bin");	// include sprites
+//	sprites: incbin("sprites.bin");	// include sprites
 
 	i,j,col,ch,sprite,f: integer;
-	
+
 
 procedure PressAny();
 begin
 	Screen::GotoXY(10,0);
 	Screen::PrintStr("Press any key...");
-	ch := Z80CPM::getch();
+	ch := Z80CPM::GetChar();
 	Screen::GotoXY(10,0);
 	Screen::PrintStr("                ");
 end;
