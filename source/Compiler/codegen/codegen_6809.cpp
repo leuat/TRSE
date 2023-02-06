@@ -893,7 +893,7 @@ void CodeGen6809::AssignVariable(QSharedPointer<NodeAssign> node)
 }
 
 QString CodeGen6809::getIncbin() {
-    return "incbin";
+    return "includebin";
 }
 
 void CodeGen6809::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)

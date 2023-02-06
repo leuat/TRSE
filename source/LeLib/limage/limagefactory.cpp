@@ -112,6 +112,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageTIM(colorType);
     if (t == LImage::TVC)
         return new LImageTVC(colorType);
+    if (t == LImage::COCO3)
+        return new LImageCOCO3(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

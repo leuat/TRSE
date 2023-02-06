@@ -1,17 +1,15 @@
-#ifndef LIMAGETVC_H
-#define LIMAGETVC_H
+#ifndef LIMAGECOCO3_H
+#define LIMAGECOCO3_H
 
 #include "limageqimage.h"
 #include <QMatrix4x4>
 #include "pixelchar.h"
 
-class LImageTVC : public LImageQImage
+class LImageCOCO3 : public LImageQImage
 {
 public:
-    LImageTVC(LColorList::Type t);
+    LImageCOCO3(LColorList::Type t);
 
-
-    static QVector<int> table160;
 
 
 
@@ -47,4 +45,4 @@ public:
 
 };
 
-#endif // LIMAGETVC_H
+#endif // LIMAGECOCO3_H

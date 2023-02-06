@@ -186,8 +186,8 @@ begin
 	Vars::text := "T19:";
 	Common::CR();
 	Vars::i1 := $104;
-	Vars::i1 := byte(Vars::i1);
-	if (Vars::i1=$04) then Common::PASS() else Common::FAIL();
+	Vars::i1 := byte(Vars::i1*2);
+	if (Vars::i1=$08) then Common::PASS() else Common::FAIL();
 end;
 
 /* MAIN PROGRAM */

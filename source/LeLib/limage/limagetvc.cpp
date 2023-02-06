@@ -24,13 +24,10 @@ LImageTVC::LImageTVC(LColorList::Type t)  : LImageQImage(t)
     m_height=240;
     SetMode();
     m_colorList.InitPalettePens(m_colors);
+    m_supports.displayCharOperations = true;
 
 }
 
-uchar LImageTVC::CrazySwap(uchar c) {
-//    return ((c&0b11000000) | ((c&0b00000011)<<2) | ((c&0b00001100)<<2) | ((c&0b00110000)>>4));
-    return (((c&0b00000011)<<6) | ((c&0b00001100)<<0) | ((c&0b00110000)<<0) | ((c&0b11000000)>>6));
-}
 
 void LImageTVC::SetMode()
 {

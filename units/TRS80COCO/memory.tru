@@ -17,6 +17,19 @@ memcpy_loop:
 	bne memcpy_loop
 	");
 end;	
+procedure Copy16(src, dst: global pointer; ilen : global integer);
+begin
+	asm("
+	ldx Memory_ilen
+	ldu Memory_src
+	ldy Memory_dst
+memcpy_loop:
+	lda ,u+
+	sta ,y+
+	leax -1,x
+	bne memcpy_loop
+	");
+end;	
 	
 procedure Fill( dst:global pointer; b: global byte; len: global byte );	
 begin

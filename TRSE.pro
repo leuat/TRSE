@@ -233,6 +233,7 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/limage/limagecoco3.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
     source/LeLib/limage/limagetvc.cpp \
     source/LeLib/util/dirartd64.cpp \
@@ -525,6 +526,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/limage/limagecoco3.h \
     source/LeLib/limage/limagesnesgeneric.h \
     source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagetvc.h \

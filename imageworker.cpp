@@ -76,6 +76,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("CGA/EGA 160x100 16 colour", "x86",LImage::Type::CGA160x100, LColorList::Type::DOS));
     m_types.append(ImageType("TIM 512x256", "TIM",LImage::Type::TIM, LColorList::Type::TIM));
     m_types.append(ImageType("TVC generic", "TVC",LImage::Type::TVC, LColorList::Type::TVC));
+    m_types.append(ImageType("CoCo3 generic", "TRS80COCO",LImage::Type::COCO3, LColorList::Type::COCO3));
 
 //    m_types.append(ImageType("Hybrid multicolor/hires charset", "c64",LImage::Type::HybridCharset,LColorList::Type::C64));
   //  m_types.append(ImageType("Hybrid multicolor/hires charset", "vic20",LImage::Type::HybridCharset,LColorList::Type::VIC20));
