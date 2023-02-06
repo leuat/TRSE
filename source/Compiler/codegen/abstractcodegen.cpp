@@ -55,9 +55,11 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
         node->m_right->setForceType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::BYTE)
        node->m_right->setForceType(TokenType::BYTE);*/
+    node->m_right->setForceType(node->m_op.m_type);
     node->m_right->Accept(this);
-//    as->Comment("WriteType : "+TokenType::getType(node->m_right->m_castType));
-    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+    as->Comment("WriteType : "+TokenType::getType(node->m_castType) + " " +TokenType::getType(node->m_forceType));
+//    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+    Cast(node->m_op.m_type, node->m_forceType);
 
 }
 /*

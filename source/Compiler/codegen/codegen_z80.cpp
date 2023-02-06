@@ -1648,6 +1648,7 @@ void CodeGenZ80::BuildToCmp(QSharedPointer<Node> node)
         //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
         //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
         LoadVariable(node->m_left);
+    //    if (node->m_right->getValueAsInt(as)!=0)
         as->Asm("cp " + node->m_right->getValue(as));
 
         return;

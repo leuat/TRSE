@@ -33,7 +33,7 @@ begin
 		begin
 			x:=sinx[t]+20;
 			l:=t+delta;
-			y:=sinx[l]+40;
+			y:=sinx[byte(t+delta)];
 			// Put pixel on screen
 			Screen::PutPixel320(x,y,Screen::colors[col]);
 		end;
