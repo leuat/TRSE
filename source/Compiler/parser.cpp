@@ -3351,7 +3351,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
 
                 }
                 else {
-                    ErrorHandler::e.Error("Uknown token '"+m_currentToken.m_value+"'. Please separate your parameter list by commas. ",m_currentToken.m_lineNumber);
+                    ErrorHandler::e.Error("Uknown token '"+m_currentToken.m_value+"'. Please separate your parametes by commas. ",m_currentToken.m_lineNumber);
 
                 }
                 //if (m_currentToken.m_type==TokenType::SEMI)
