@@ -192,6 +192,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
     source/Compiler/optimiser/postoptimiser.cpp \
+    source/Compiler/optimiser/postoptimizer6809.cpp \
     source/Compiler/optimiser/postoptimizerm68k.cpp \
     source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/optimiser/postoptimizerz80.cpp \
@@ -489,6 +490,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
     source/Compiler/optimiser/postoptimiser.h \
+    source/Compiler/optimiser/postoptimizer6809.h \
     source/Compiler/optimiser/postoptimizerm68k.h \
     source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/optimiser/postoptimizerz80.h \

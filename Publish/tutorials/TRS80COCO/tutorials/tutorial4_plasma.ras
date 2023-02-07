@@ -93,16 +93,14 @@ begin
 	begin
 		val:=siny[y];
 		// Unrolled slow AF
-/*		for x:=0 to width do 
+	/*	for x:=0 to width do 
 		begin
-			val2:=(sinx[x] +val);
-			dst[x]:=data[ val2 ];;
+			dst[x]:=data[ byte(sinx[x] +val) ];;
 		end;*/
+		
 		asm("
 		
 		
-		;here
-;		ldb #40
 		ldy #sinx
 		ldu dst
 		ldx #data+128  
@@ -118,15 +116,19 @@ begin
 		WriteAsm();		
 		WriteAsm();		
 		WriteAsm();		
-		WriteAsm();		
 		
 		dst+=40*4;
 	end;
 
 end;
-
+var
+	i3:integer;
 
 begin
+	asm("
+	;ccc
+	");
+	i3:=x*4;
 	System::Init();
 	// 320x225 4-colour 
 	Screen::SetBitmapMode(Screen::BPL_40, 1);

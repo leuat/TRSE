@@ -48,7 +48,7 @@ void SystemTRS80CoCo::Assemble(QString &text, QString filename, QString currentD
         text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
     }
 
-    output+="<br>";
+//    output+="<br>";
 
     time = timer.elapsed();
 

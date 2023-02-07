@@ -14,6 +14,9 @@ var
 
 	
 begin
+	
+	
+	
 	System::Init();
 	Screen::SetBitmapMode(Screen::BPL_40, 1);
 	Screen::SetColor(0,0); // black

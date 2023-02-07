@@ -59,10 +59,15 @@ public:
 
     void LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType) override;
 
-
+    int dstack = 0;
+    bool isIndex = false;
     QString getJmp(bool isOffPage) override {
         return "jmp";
     }
+
+    void PushD();
+
+    void PopD();
 
     bool UseBlocks() override { return true;}
 
@@ -109,7 +114,6 @@ public:
 
     void PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-
 
     void InlineProcedure(QSharedPointer<NodeProcedure> p);
     void BinOp16(QSharedPointer<Node> node);

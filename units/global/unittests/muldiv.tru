@@ -340,6 +340,7 @@ procedure Exec();
 begin
 	// initialise everything
 	Common::Initialise("MULDIV TESTS");
+
 	
 	// Mul and div
 	ByteMulByte01();
@@ -351,6 +352,7 @@ begin
 	// Z80 lacks int*int
 	IntMulInt14(); // Not implemented, fails
 	IntMulAdvancedMix15(); // fails
+	
 	@endif
 	ByteMulAdvanced16();
 	@ifndef GAMEBOY

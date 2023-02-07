@@ -57,7 +57,7 @@ void CodeGen6809::HandleGenericBinop16bit(QSharedPointer<Node> node) {
 
     // 255 + k - j doesn't work
     as->Term();
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+    QString lbl = as->StoreInTempVar("rightvarInteger", as->word);
 
     //    as->Asm("sta " +lbl);
     //    as->Asm("sty " +lbl+"+1"); // J is stored
@@ -117,7 +117,7 @@ void CodeGen6809::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
     as->Term();
     //    as->Asm("sta " +lbl);
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+    QString lbl = as->StoreInTempVar("rightvarInteger", as->word);
     //    as->Asm("sty " +lbl+"+1");
     //        qDebug() << as->m_term;
     as->Term();
@@ -332,7 +332,7 @@ void CodeGen6809::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
     as->Term();
     LoadVariable(node->m_left);
     as->Term();
-    varName = as->StoreInTempVar("int_shift", "word");
+    varName = as->StoreInTempVar("int_shift", as->word);
     if (node->m_op.m_type == TokenType::DIV) {
         command = "\tlsr " + varName +"+0"+ "\n";
         command += "\tror " + varName+"+1" + "\n";
@@ -396,7 +396,7 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
     if (!isSimpleAeqAopB) {
         node->m_left->Accept(this);
         as->Term();
-        varName = as->StoreInTempVar("tempVarShift","word");
+        varName = as->StoreInTempVar("tempVarShift",as->word);
     }
     else
         varName = getValue(node);
@@ -857,10 +857,10 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
     if (node->m_op.m_type==TokenType::PLUS) {
         LoadIndex(node->m_right,TokenType::BYTE);
         if (!node->m_left->isPure())
-            as->Asm("pshs d");
+            PushD();
         LoadVariable(node->m_left);
         if (!node->m_left->isPure())
-            as->Asm("puls d");
+            PopD();
         as->Asm("leay d,y");
     }
     if (node->m_op.m_type==TokenType::MINUS) {
@@ -870,11 +870,11 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
         as->Asm("negb");
         as->Asm("sex");
         if (!node->m_left->isPure())
-            as->Asm("pshs d");
+            PushD();
         LoadVariable(node->m_left);
         as->Term();
         if (!node->m_left->isPure())
-            as->Asm("puls d");
+            PopD();
 
 //        as->Asm("nega");
 //        as->Asm("puls y");
@@ -1393,13 +1393,16 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
             if (node->m_forceType == TokenType::INTEGER) {
                 // OOps byte but must be integer
                 as->Comment("Forcing byte to be integer");
-                as->Asm("pshs d");
+                if (dstack!=0)
+                    as->Asm("pshs d");
                 as->Asm("ldb "+val);
                 as->Asm("lda #0");
                 as->Asm("tfr d,y");
-                as->Asm("puls d");
-//                node->m_castType = TokenType::NADA;
-//                Cast(node->getOrgType(as),node->m_castType);
+                if (dstack!=0)
+                    as->Asm("puls d");
+                if (node->m_castType==TokenType::INTEGER)
+                    node->m_castType = TokenType::NADA;
+                //                Cast(node->getOrgType(as),node->m_castType);
 
             }
             else {
@@ -1753,9 +1756,14 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
         as->Asm("tfr a,b");
         as->Asm("lda #0");
     }*/
+    as->Comment("Loading index");
     node->setForceType(TokenType::INTEGER);
     as->ClearTerm();
+    if (!node->isPure())
+        dstack++;
     node->Accept(this);
+    if (!node->isPure())
+        dstack--;
     as->Term();
     as->Asm("tfr y,d");
     if (arrayType==TokenType::INTEGER) {
@@ -1764,7 +1772,20 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
         as->Asm("rola");
 //        as->Asm("addd y");
     }
+    as->Comment("End load index");
 
+}
+
+void CodeGen6809::PushD() {
+    //        if (dstack!=0)
+    as->Asm("pshs d");
+    dstack++;
+}
+
+void CodeGen6809::PopD() {
+    //      if (dstack!=0)
+    as->Asm("puls d");
+    dstack--;
 }
 
 void CodeGen6809::LoadStackVariable(QSharedPointer<NodeVar> node) {
