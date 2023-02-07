@@ -128,6 +128,7 @@ public:
     virtual void setCastType(TokenType::Type t) {
         m_castType  = t;
     }
+    virtual void clearComment();
 
     virtual bool isStackVariable() { return false;}
     virtual int getStackShift() { return 0;}

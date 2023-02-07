@@ -47,6 +47,13 @@ public:
     QString m_initCode = "";
 
 
+    void clearComment() override {
+        m_comment = "";
+        if (m_compoundStatement!=nullptr)
+            m_compoundStatement->clearComment();
+    }
+
+
     NodeBlock(Token t, QVector<QSharedPointer<Node>> decl, QSharedPointer<Node> comp, bool useOwnSymTab = true):Node() {
         m_compoundStatement = comp;
         m_decl = decl;

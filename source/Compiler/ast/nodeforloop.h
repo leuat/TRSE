@@ -35,7 +35,7 @@
 class NodeForLoop : public Node {
 public:
 
-    QSharedPointer<Node> m_a=nullptr, m_b = nullptr;
+//    QSharedPointer<Node> m_a=nullptr, m_b = nullptr;
     QSharedPointer<Node> m_block=nullptr;
     bool m_unroll = false;
     QSharedPointer<Node> m_step = nullptr;
@@ -44,12 +44,18 @@ public:
 
     NodeForLoop(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> block, QSharedPointer<Node> step, bool unroll, int forcePage, int loopCounter, bool inclusive);
 
+    void clearComment() override {
+        m_comment = "";
+        if (m_block!=nullptr)
+        m_block->clearComment();
+    }
+
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
-        if (m_a!=nullptr)
-            m_a->parseConstants(symTab);
-        if (m_b!=nullptr)
-            m_b->parseConstants(symTab);
+        if (m_left!=nullptr)
+            m_left->parseConstants(symTab);
+        if (m_right!=nullptr)
+            m_right->parseConstants(symTab);
         if (m_block!=nullptr)
             m_block->parseConstants(symTab);
         if (m_step!=nullptr)

@@ -177,7 +177,7 @@ public:
 
 
     void AssembleOrgasm(QString& output,QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
+    void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, int orgType=0);
     void AssembleCL65(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, QString ending, QStringList params);
 
     virtual QStringList AnalyseForPotentialVariables(QString asmCode);

@@ -36,7 +36,8 @@ void Compiler6809::Connect()
 
     }
 */
-    m_assembler->m_source<<"	END START";
+    if (m_ini->getString("assembler_6809")=="lwasm")
+        m_assembler->m_source<<"	END START";
 
     CleanupBlockLinenumbers();
 /*    for (QString&s : m_assembler->m_source) {

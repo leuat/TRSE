@@ -34,11 +34,18 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
 
     QString assembler = m_settingsIni->getString("lwasm");
+    bool useMorgasm = (m_settingsIni->getString("assembler_6809")=="orgasm");
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
 
+    QString output = "";
+
 //    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
-    StartProcess(assembler, QStringList() << "--decb" <<"--6809"  <<filename+".asm" <<"-o"+filename+".bin", text);
+    if (useMorgasm) {
+        AssembleZOrgasm(output,text,filename,currentDir, symTab,1);
+    }
+    else
+        StartProcess(assembler, QStringList() << "--decb" <<"--6809"  <<filename+".asm" <<"-o"+filename+".bin", text);
 
 
 }

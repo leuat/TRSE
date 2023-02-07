@@ -4,6 +4,8 @@
 #include "source/LeLib/util/util.h"
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/zorgasm.h"
+#include "source/OrgAsm/morgasm.h"
+
 extern "C" {
     #include "source/LeLib/util/zx0/zx0.h"
 }
@@ -331,10 +333,15 @@ void AbstractSystem::AssembleOrgasm(QString& output,QString &text, QString filen
 
 }
 
-void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
+void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, int orgType)
 {
-    m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
+    if (orgType==0)
+        m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
+    if (orgType==1)
+        m_orgAsm = QSharedPointer<MOrgasm>(new MOrgasm());
 
+    if (m_orgAsm == nullptr)
+        return;
     m_orgAsm->m_cpuFlavor = getCPUFlavorint();
 
     emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");

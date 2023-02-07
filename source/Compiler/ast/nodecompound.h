@@ -37,6 +37,11 @@ public:
         m_op = t;
     }
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
+    void clearComment() {
+        m_comment = "";
+        for (auto n : children)
+            n->clearComment();
+    }
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeCompound>(sharedFromThis()));

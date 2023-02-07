@@ -289,6 +289,7 @@ SOURCES += main.cpp\
     source/LeLib/util/zx0/memory.c \
     source/LeLib/util/zx0/optimize.c \
     source/LeLib/util/zx0/zx0.c \
+    source/OrgAsm/morgasm.cpp \
     source/OrgAsm/zorgasm.cpp \
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
@@ -584,6 +585,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/tool.h \
     source/LeLib/util/utilclasses.h \
     source/LeLib/util/zx0/zx0.h \
+    source/OrgAsm/morgasm.h \
     source/OrgAsm/zorgasm.h \
     source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \

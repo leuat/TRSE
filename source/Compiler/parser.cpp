@@ -3343,8 +3343,17 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
             while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
                 paramList.append(Expr());
 
-                if (m_currentToken.m_type==TokenType::COMMA)
+                if (m_currentToken.m_type==TokenType::COMMA) {
                     Eat(TokenType::COMMA);
+                }
+                else
+                if (m_currentToken.m_type==TokenType::RPAREN) {
+
+                }
+                else {
+                    ErrorHandler::e.Error("Uknown token '"+m_currentToken.m_value+"'. Please separate your parameter list by commas. ",m_currentToken.m_lineNumber);
+
+                }
                 //if (m_currentToken.m_type==TokenType::SEMI)
                 //    ErrorHandler::e.Error("Syntax errror", m_currentToken.m_lineNumber);
             }
@@ -3435,7 +3444,12 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
             for (QSharedPointer<Node> n: ns) {
                 decl.append(n);
             }
-            Eat(m_currentToken.m_type);
+//            qDebug() << TokenType::getType(m_currentToken.m_type);
+//            Eat(m_currentToken.m_type);
+            if (m_currentToken.m_type==TokenType::COMMA || m_currentToken.m_type==TokenType::SEMI || m_currentToken.m_type==TokenType::RPAREN)
+                Eat();
+            else
+                ErrorHandler::e.Error("Unexpected token '"+m_currentToken.m_value+"'", m_currentToken.m_lineNumber);
         }
     }
     m_inProcedureVariableDecl = false;
@@ -4550,7 +4564,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
         return nvt;
     }
-
 
     Eat();
     // Is regular single byte / pointer

@@ -167,10 +167,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as,this);
 
-    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-    // Must be a variable
-    if (nVar==nullptr)
-        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_left);
 
     // Get name
     if (nVar->m_left->m_isRegister )
@@ -180,6 +177,27 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
     if (v == nullptr )
         ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
 
+    if (node->m_unroll) {
+        node->clearComment();
+        if (!node->m_right->isPureNumeric())
+            ErrorHandler::e.Error("For unrolled loop, right value must be a constant value", node->m_op.m_lineNumber);
+
+        int cnt = node->m_right->getValueAsInt(as);
+        qDebug() << cnt;
+        as->Comment("Unrolled loop, counter not updated yet");
+        for (int i=0;i<cnt;i++) {
+            node->m_block->Accept(this);
+        }
+        return;
+
+    }
+
+
+    // Must be a variable
+    if (nVar==nullptr)
+        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
+
 //    qDebug() <<(Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502);
   //  qDebug() <<nVar->isWord(as) << nVar->getValue(as);
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 && nVar->m_left->isWord(as)) {
@@ -188,7 +206,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
      QString var = v->getValue(as);//  m_a->Build(as);
     // Perform assigment
-    node->m_a->Accept(this);
+    node->m_left->Accept(this);
 
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
@@ -215,7 +233,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Maintain b has same type as a
     if (nVar->m_left->isWord(as))
-        node->m_b->setForceType(TokenType::INTEGER);
+        node->m_right->setForceType(TokenType::INTEGER);
 
     // Perform block
     node->m_block->Accept(this);
@@ -224,7 +242,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
     // Perform counter increase and jimps (individual for each target cpu)
 //    as->Label(lblForCounter);
     as->Label(lblLoopStart);
-    CompareAndJumpIfNotEqualAndIncrementCounter(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
+    CompareAndJumpIfNotEqualAndIncrementCounter(node->m_left, node->m_right,  node->m_step, lblFor, offpage,node->m_inclusive);
 
   //  as->Label(lblForEnd);
     as->Label(lblLoopEnd);

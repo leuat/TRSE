@@ -48,7 +48,7 @@ begin
 		if (currentTest=3) then Functions::Exec();
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
-		if (currentTest=5) then AdvancedMath::Exec();
+		if (currentTest=12) then AdvancedMath::Exec();
 		@endif
 		if (currentTest=0) then MulDiv::Exec();
 		if (currentTest=6) then ForLoop::Exec();
@@ -58,7 +58,7 @@ begin
 		if (currentTest=10) then IntegerTest::Exec();
 		if (currentTest=11) then Various::Exec();
 @ifndef CPU_M6809
-		if (currentTest=12) then Classes::Exec();
+		if (currentTest=5) then Classes::Exec();
 @endif
 
 		currentTest+=1;

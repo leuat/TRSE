@@ -198,3 +198,11 @@ void Node::setReference(bool ref) {
         m_right->setReference(ref);
 
 }
+
+void Node::clearComment() {
+    m_comment = "";
+    if (m_right!=nullptr)
+        m_right->clearComment();;
+    if (m_left!=nullptr)
+        m_left->clearComment();;
+}

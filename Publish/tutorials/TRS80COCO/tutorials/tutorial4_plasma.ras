@@ -62,22 +62,7 @@ begin
 		adda val
 		lda a,x
 		sta ,u+
-
-		lda ,y+ 
-		adda val
-		lda a,x
-		sta ,u+
-
-		lda ,y+ 
-		adda val
-		lda a,x
-		sta ,u+
-
-		lda ,y+ 
-		adda val
-		lda a,x
-		sta ,u+
-	
+		
 	");	
 end;
 
@@ -107,15 +92,11 @@ begin
 
 			");
 		// write 10 * 4 = 40 byte unrolled
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
-		WriteAsm();		
+
+		asm(";here");		
+		
+		for val:=0 to 40 unroll do
+			WriteAsm();		
 		
 		dst+=40*4;
 	end;
