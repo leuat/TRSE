@@ -52,9 +52,12 @@ begin
 	for i:=0 to screen_width do 
 	begin
 		// Calculate actualy y screen position
+		
 		j:=ypos[i]/8;
 		// Print random character
 		if (j<screen_height) then begin
+			asm(";here");
+			AddressTable(#saddr,i,j);
 			sp:=AddressTable(#saddr,i,j);
 			sp^:=random()/4; // random character is located between 0 and 64
 			// sp^ is the same as sp[0]

@@ -20,7 +20,7 @@
 */
 
 #include "nodecompound.h"
-
+#include "nodebuiltinmethod.h"
 
 void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);

@@ -56,6 +56,7 @@ public:
     }*/
     NodeConditional(Token op, int forcePage, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isWhile, QSharedPointer<Node> elseBlock=nullptr);
 
+    void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) override;
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_block!=nullptr)

@@ -36,7 +36,7 @@ begin
 	
 	// Set up y-sine table
 	x1:=time<<2;
-	for x:=0 to sy do begin 
+	for x:=0 to sy unroll do begin 
 		i1:=sin[c2x] + sin[c2y];
 		siny[x]:=i1+x1; 
 		c2x:=c2x+7;
@@ -47,7 +47,7 @@ begin
 	aay:=aay-5;
 
 	// Set up x-sine table
-	for x:=0 to sx do begin 
+	for x:=0 to sx unroll do begin 
 		i1 := sin[c2x] + sin[c2y];
 		sinx[x] := i1;
 		c2x:=c2x+5;

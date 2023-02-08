@@ -32,6 +32,17 @@ NodeConditional::NodeConditional(Token op, int forcePage, QSharedPointer<Node> c
     m_forcePage = forcePage;
 }
 
+void NodeConditional::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node)
+{
+    Node::ReplaceVariable(as,name,node);
+    if (m_block!=nullptr)
+        m_block->ReplaceVariable(as,name,node);
+    if (m_elseBlock!=nullptr)
+        m_elseBlock->ReplaceVariable(as,name,node);
+    if (m_binaryClause!=nullptr)
+        m_binaryClause->ReplaceVariable(as,name,node);
+}
+
 
 
 
