@@ -4399,8 +4399,10 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                                     //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
                                 }
                                 if (!found) {
-
-                                    data << "$"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
+                                    QString extra="";
+                                    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000)
+                                        extra="0";
+                                     data << "$"+extra+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
                                 }
                                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                                 if (m_currentToken.m_type!=TokenType::RPAREN) {
