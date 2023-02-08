@@ -34,6 +34,11 @@ public:
         m_block = block;
     }
 
+    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override {
+        Node::ReplaceVariable(as,name,node);
+        if (m_block!=nullptr)
+            m_block->ReplaceVariable(as,name,node);
+    }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
     void Accept(AbstractCodeGen* dispatcher) override {

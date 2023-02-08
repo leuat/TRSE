@@ -16,6 +16,15 @@ public:
         m_conditionals.append(c);
         m_statements.append(b);
     }
+    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override {
+        Node::ReplaceVariable(as,name,node);
+        for (auto p:m_conditionals)
+            p->ReplaceVariable(as,name,node);
+        for (auto p:m_statements)
+            p->ReplaceVariable(as,name,node);
+        if (m_elseBlock!=nullptr)
+            m_elseBlock->ReplaceVariable(as,name,node);
+    }
 
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
