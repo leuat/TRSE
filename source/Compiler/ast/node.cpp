@@ -206,3 +206,17 @@ void Node::clearComment() {
     if (m_left!=nullptr)
         m_left->clearComment();;
 }
+
+void Node::ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node)
+{
+    if (m_right!=nullptr)
+        if (m_right->isPureVariable() && m_right->getValue(as)==name)
+            m_right = node;
+    if (m_left!=nullptr)
+        if (m_left->isPureVariable() && m_left->getValue(as)==name)
+            m_left = node;
+    if (m_right!=nullptr)
+        m_right->ReplaceVariable(as,name,node);
+    if (m_right!=nullptr)
+        m_left->ReplaceVariable(as,name,node);
+}

@@ -28,6 +28,17 @@ NodeProcedure::NodeProcedure(QSharedPointer<NodeProcedureDecl> proc, QVector<QSh
     m_op = t;
 }
 
+void NodeProcedure::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) {
+    int i=0;
+    for (auto p:m_parameters) {
+        p->ReplaceVariable(as,name,node);
+        if (p->isPureVariable() && p->getValue(as)==name)
+            m_parameters[i] = node;
+
+        i++;
+    }
+}
+
 bool NodeProcedure::isAddress() {
     return m_op.m_isReference;
 }

@@ -49,6 +49,7 @@ public:
     ~NodeBuiltinMethod() {
 
     }
+    void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node);
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         for (QSharedPointer<Node> n:m_params)

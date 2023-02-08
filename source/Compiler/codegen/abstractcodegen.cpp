@@ -181,11 +181,17 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
         node->clearComment();
         if (!node->m_right->isPureNumeric())
             ErrorHandler::e.Error("For unrolled loop, right value must be a constant value", node->m_op.m_lineNumber);
+        if (!node->m_left->m_right->isPureNumeric())
+            ErrorHandler::e.Error("For unrolled loop, left value must be a constant value", node->m_op.m_lineNumber);
 
         int cnt = node->m_right->getValueAsInt(as);
-        qDebug() << cnt;
-        as->Comment("Unrolled loop, counter not updated yet");
-        for (int i=0;i<cnt;i++) {
+        int from = node->m_left->m_right->getValueAsInt(as);
+        as->Comment("Unrolled loop");
+        auto num = NodeFactory::CreateNumber(v->m_op,0);
+        node->m_block->ReplaceVariable(as,v->getValue(as),num);
+        for (int i=from;i<cnt;i++) {
+            // replace all "var" with numerical values
+            num->m_val = i;
             node->m_block->Accept(this);
         }
         return;

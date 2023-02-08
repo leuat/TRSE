@@ -30,6 +30,13 @@ void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     }
 }
 
+void NodeCompound::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node)
+{
+    Node::ReplaceVariable(as,name,node);
+    for (auto n:children)
+        n->ReplaceVariable(as,name,node);
+}
+
 void NodeCompound::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
 {
     for (auto n: children)

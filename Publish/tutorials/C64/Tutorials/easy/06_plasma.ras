@@ -45,7 +45,7 @@ begin
 	c2y:=ay;
 	
 	// Set up y-sine table
-	for x:=0 to screen_height do begin 
+	for x:=0 to screen_height unroll do begin 
 		siny[x]:=  sine[c2x] + sine[c2y];
 		c2x:=c2x+4;
 		c2y:=c2y+9;
@@ -55,7 +55,7 @@ begin
 	ay:=ay-5;
 
 	// Set up x-sine table
-	for x:=0 to screen_width do begin 
+	for x:=0 to screen_width unroll do begin 
 		sinx[x] := sine[c2x] + sine[c2y];
 		c2x:=c2x+3;
 		c2y:=c2y+7;

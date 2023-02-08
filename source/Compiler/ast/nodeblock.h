@@ -80,6 +80,12 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBlock>(sharedFromThis()));
     }
 
+    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override
+    {
+        Node::ReplaceVariable(as,name,node);
+        m_compoundStatement->ReplaceVariable(as,name,node);
+    }
+
 };
 
 #endif // NODEBLOCK_H

@@ -50,6 +50,17 @@ void NodeVar::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &
     }*/
 }
 
+void NodeVar::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node)
+{
+    Node::ReplaceVariable(as,name,node);
+    if (m_expr!=nullptr) {
+        if (m_expr->isPureVariable() && m_expr->getValue(as)==name)
+            m_expr = node;
+        m_expr->ReplaceVariable(as,name,node);
+    }
+
+}
+
 
 
 TokenType::Type NodeVar::getOrgType(Assembler *as) {
@@ -60,7 +71,7 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
             QSharedPointer<Symbol> s = parserSymTab->Lookup(value, m_op.m_lineNumber);
-//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
+            //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
             if (s!=nullptr)
                 t= s->getTokenType();
         }

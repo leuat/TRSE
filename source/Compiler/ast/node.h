@@ -129,7 +129,7 @@ public:
         m_castType  = t;
     }
     virtual void clearComment();
-
+    virtual void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node);
     virtual bool isStackVariable() { return false;}
     virtual int getStackShift() { return 0;}
 

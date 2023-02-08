@@ -1,12 +1,50 @@
 <h1>TRSE News and Updates</h1>
-<h2>January 2022</h2>
+<h2>January/Feb 2023</h2>
 <h3>Compiler changes</h3>
 <ul>
-  <li>"global" keyword is now stricter: your global parameter definition type must match the re-used variable's type
+
+<li>Added "Unroll" parameter for unrolling for loops. Needs numeric values. For i:=0 to 10 unroll do printnumber(i) will unroll the loop.
+
+<li>More strict syntax. was a bug where parameters didn't need ",". wtf.
+
+<li>6809 support
+<li>Z80 optimisations
+
+<li>casts. Especially useful for declaring compound strings on the fly :
+Print(string("My",10, " STRING);
+
+<li>Fixed a bug where units addressing constants in other units failed
+<li>Better error message when trying to use a global variable as a parameter in a class function within a unit
+<li>Optimiser will better recognise variables used in asm ("") blocks, so you won't have to use @donotremove as much
+optional"forward" keyword added for forward procedure/function declarations. Until now, TRSE has been guessing whether a procedure declaration is forward or not, which will fail in certain situations (followed by a new var block etc). While option, wholeheartedly recommended. procedure MyProc(a:byte); forward;
+<li>Working on 6809 support.. still quite a long way to go
+<li>Chars can now be used in TRSE. Syntactially, they are the same as bytes, so
+myByte := 'C'; // myByte contains the value 67
+myByte:='0' + 5; // myByte contains the char value of '5'
+Note that the old myByte:="A" has been deprecated and is not allowed anymore.
+<li>String Lists are now much better handled. You can have more advanced string lists:
+myLst : array[] of string = ("HELLO" ,("YOU ",65,88, " EH", "WORLD");
+<li>You can assign new strings to list and use them as regular, mye myLst[2]:="OOPS";
+<li>Compiler more strict: cannot use "string" as procedure parameter (use reference(byte pointer instead)). This was never implemented into TRSE, as string copying when calling string parameters is.. silly. Might implement it in the future though.
+<li>Removed uneccesary warnings
+<li>Fixed an illusive bug where using a less than or equal "<=" if statement within a for loop failed on the z80
+short hand SHL SHR implemented: a<<=1; for a := a << 1
+<li>Z80 bugfixes. Casting between int/byte works for functions, int/byte arrays, array pointers, conditionals calling functions of various types.
+<li>Z80 16 bit shifts properly implemented
+<li>New unit tests for casts. Caught and fixed a bug with integer assignment on the 6502
+<li>Compiler more strict: "global" keyword parameters must have the same type as the originally declared variables
   <li>Zorgasm z80 assembler had some missing instructions, which have been added (ret nz, ret po, ret m etc)
 </ul>
 <h3>Systems</h3>
 <ul>
+<li>New disk system. You can now (on commodore systems) define multiple disks, not just the fixed 2. See the project settings for details.
+6809 compiler v1 finished. Needs some optimisations, but at least it works. All unit tests pass correctly. Classes not added yet.
+<li>Coco3 with a couple of tutorials (plasma, twister, putpixel)
+
+<li>New disk system for the C64. Define unlimited disks in the project settings, all will be automatically created on build. No more limitations to 1.
+<li>"Sound Test" small C64 SID sample project added
+<li>"Big Pixel Intro" c64 sample project added
+<li>C64 D81 support (in the project settings). Also, you can now define multiple disks, not just two.
   <li>TIM-001 system added + tutorials! Zarko is hard at work implementing units. New image types added as well.
   <li>Videoton TVC support added. 3 image types. Demo effects to come later.
   <li>Started work on TRS-80 Coco3 support (6809). Still a long way to go.
