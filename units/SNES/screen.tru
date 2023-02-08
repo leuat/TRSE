@@ -371,7 +371,7 @@ begin
 end;	
 
 
-procedure MoveToXY(x,y,i1:global integer);
+procedure MoveToXY(x,y:global byte,i1:global integer);
 begin
 	i:=0;
 	if (x>31) then 
