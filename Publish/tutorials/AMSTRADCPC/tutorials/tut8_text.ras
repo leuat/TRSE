@@ -23,7 +23,7 @@ begin
 
   // Print with immediate value
   Text::MoveCursorTo(3, 3);
-  Text::Print("Print a string\r\n");
+  Text::Print(string("Print"," a", " string\r\n"));
   Input::WaitKey();
 
   // Print with a string variable

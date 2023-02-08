@@ -246,6 +246,8 @@ public:
     virtual void Disable16bit() {}
     virtual void Enable16bit() {}
 
+    virtual QString DefineTempString(QSharedPointer<Node> node);
+
 public:
 signals:
     void EmitTick(QString val);

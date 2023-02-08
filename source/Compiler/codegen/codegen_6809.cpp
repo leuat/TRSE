@@ -1803,13 +1803,10 @@ void CodeGen6809::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
-    QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
 
-    as->StartExistingBlock(as->m_tempVarsBlock);
-    as->DeclareString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-    as->EndCurrentBlock();
+    QString str = DefineTempString(right);
 
     if (isPointer || left->isStringList(as)) {
             as->Asm("ldy #"+str);

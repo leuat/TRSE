@@ -2588,6 +2588,13 @@ QSharedPointer<Node> Parser::Factor()
         return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
     }
 
+    // string cast
+    if (m_currentToken.m_type == TokenType::STRING && m_currentToken.m_value=="STRING") {
+        Eat();
+        return qSharedPointerDynamicCast<NodeString>(String(false));
+
+
+    }
     if (m_currentToken.m_type == TokenType::BYTE || m_currentToken.m_type == TokenType::INTEGER || m_currentToken.m_type == TokenType::LONG) {
         auto t = m_currentToken;
         // Casting
@@ -3536,7 +3543,6 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
 
     while (m_currentToken.m_type!=TokenType::RPAREN) {
         //GetParsedInt(TokenType::INTEGER);
-
         if (m_currentToken.m_value=="" || m_currentToken.m_type==TokenType::ID || m_currentToken.m_type==TokenType::LPAREN)
             m_currentToken.m_value = numID + QString::number(GetParsedInt(TokenType::INTEGER));
 

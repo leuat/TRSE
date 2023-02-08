@@ -2008,23 +2008,10 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     }
 */
 
-    QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
 
-    //    as->Asm("jmp " + lbl);
-    as->StartExistingBlock(as->m_tempVarsBlock);
-    if (right->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-    }
-    else {
-        //        QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
-        as->DeclareString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-        //      as->m_tempVars<<strAssign;
-    }
-
-    as->EndCurrentBlock();
-
+    QString str = DefineTempString(right);
     //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
     //  as->Label(lbl);
 

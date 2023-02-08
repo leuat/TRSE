@@ -629,6 +629,7 @@ void CodeGenX86::AssignString(QSharedPointer<NodeAssign> node) {
     QString lblCpy=as->NewLabel("stringassigncpy");
     bool isPointer = left->isPointer(as);
     QString strAssign = str + "\t db \"" + right->m_op.m_value + "\",0";
+
     as->m_tempVars<<strAssign;
     if (isPointer) {
         as->Asm("mov si, "+str+"");

@@ -71,12 +71,10 @@ void CodeGenZ80::AssignString(QSharedPointer<NodeAssign> node) {
     bool isPointer = node->m_left->isPointer(as);
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    QString str = as->NewLabel("stringassignstr");
+//    QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
-    QString strAssign = str + ": db \"" + right->m_op.m_value + "\",0";
-    // Temp vars are place with variables in the code, no need for a jmp
-    as->m_tempVars<<strAssign;
+    QString str = DefineTempString(right);
 
     if (isPointer || left->isStringList(as)) {
         as->Asm("ld hl,"+str);
