@@ -25,7 +25,7 @@ end;
 
 procedure Advanced04();
 begin
-	Vars::p2:=$4000;
+	Vars::p2:=#Vars::addr;
 	Vars::v1:=1;
 	Vars::p2[Vars::v1]:=2;
 	Vars::p1:=$0400;
@@ -107,18 +107,17 @@ end;
 
 procedure MulDivCombo1();
 begin
-	Vars::text := "MD1:";
+	Vars::text := "M1:";
 	Vars::v1 := $10;
 	Vars::i2 := $0200;
 	// $100/$02*$10 = $800
-	asm(";ccc");
 	Vars::i1 := ($100 / (hi(Vars::i2)) ) * Vars::v1; 
 	if Vars::i1=$800 then Common::PASS() else Common::FAIL();
 end;
 
 procedure MulDivCombo2();
 begin
-	Vars::text := "MD2:";
+	Vars::text := "M2:";
 	Vars::v1 := $10;
 	Vars::i2 := $0400;
 	// $100*$04/$10 = $40
@@ -128,7 +127,7 @@ end;
 
 procedure MulDivCombo3();
 begin
-	Vars::text := "MD3:";
+	Vars::text := "M3:";
 	Vars::v1 := $10;
 	Vars::v2 := $4;
 	Vars::i2 := $0200;

@@ -11,6 +11,7 @@ var
 	a1,a2 : array[10] of integer;
 	j,i : byte;
 	const addr : address = $8800;
+	bl1,bl2 : boolean;
 /*
 @ifdef CPU_Z80	
 @endif

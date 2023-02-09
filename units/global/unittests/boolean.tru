@@ -1,0 +1,47 @@
+unit BooleanTest;
+var
+
+function InvertB( bl : boolean) : boolean;
+begin
+	InvertB := not bl;
+end;
+
+procedure T1();
+begin
+	Vars::text := "T1:";
+	Vars::bl1 := not true;
+	
+	Common::CR();
+	if (Vars::bl1=false) then Common::PASS() else Common::FAIL();
+end;
+
+procedure T2();
+begin
+	Vars::text := "T2:";
+	
+	Common::CR();
+	if (InvertB(true)=false) then Common::PASS() else Common::FAIL();
+end;
+
+procedure T3();
+begin
+	Vars::text := "T3:";
+	
+	Common::CR();
+	if (not InvertB(true)=true) then Common::PASS() else Common::FAIL();
+end;
+
+/* MAIN PROGRAM */
+procedure Exec();
+begin
+	Common::Initialise("BOOLEAN");
+	
+	T1();
+	T2();
+	T3();
+	
+	
+	Common::WaitABit();
+end;
+
+end.

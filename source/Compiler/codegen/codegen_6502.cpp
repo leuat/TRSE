@@ -302,6 +302,10 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
 
         m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
+        if (node->m_left->isBool(as)) {
+            as->Asm("and #1");
+        }
+
         return true;
     }
 
@@ -581,6 +585,10 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
             as->BinOP(node->m_op.m_type);
             as->Term(lbl,true);
             as->PopTempVar();
+            if (node->m_left->isBool(as)) {
+                as->Asm("and #1");
+            }
+
         }
     }
     else {

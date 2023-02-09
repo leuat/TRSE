@@ -91,7 +91,7 @@ begin
 	Vars::v2 := 0;
 	Vars::v3:=3;
 	@ifndef X86
-	Vars::p1:=$4000;
+	Vars::p1:=#Vars::addr;
 	@endif
 	@ifdef X86
 	Vars::p1 := ptr($3000,0);

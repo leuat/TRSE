@@ -2,6 +2,7 @@ Unit Unittests;
 
 @use "unittests/common"
 @use "unittests/case"
+@use "unittests/advanced_math"
 @use "unittests/casts"
 @use "unittests/integer"
 @ifndef CPU_M6809
@@ -15,14 +16,14 @@ Unit Unittests;
 @use "unittests/bitop"
 @use "unittests/functions"
 @use "unittests/various"
+@use "unittests/boolean"
 
-@use "unittests/advanced_math"
 
 
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests : byte = 13;
+	const noTests : byte = 14;
 	currentTest : byte;
 	isDone: boolean;
 
@@ -42,23 +43,25 @@ begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
 		@endif
-		if (currentTest=4) then CaseTest::Exec();
-		if (currentTest=8) then BitOp::Exec();
-		if (currentTest=2) then Strings::Exec();
-		if (currentTest=3) then Functions::Exec();
+		
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
-		if (currentTest=12) then AdvancedMath::Exec();
+		if (currentTest=13) then AdvancedMath::Exec();
 		@endif
-		if (currentTest=0) then MulDiv::Exec();
+		if (currentTest=0) then BooleanTest::Exec();
+		if (currentTest=1) then MulDiv::Exec();
+		if (currentTest=2) then Strings::Exec();
+		if (currentTest=3) then Functions::Exec();
+		if (currentTest=4) then CaseTest::Exec();
+		if (currentTest=5) then Casts::Exec();
 		if (currentTest=6) then ForLoop::Exec();
 		if (currentTest=7) then Registers::Exec();
-		if (currentTest=1) then Casts::Exec();
+		if (currentTest=8) then BitOp::Exec();
 		if (currentTest=9) then IfThenElse::Exec();
 		if (currentTest=10) then IntegerTest::Exec();
 		if (currentTest=11) then Various::Exec();
 @ifndef CPU_M6809
-		if (currentTest=5) then Classes::Exec();
+		if (currentTest=12) then Classes::Exec();
 @endif
 
 		currentTest+=1;
