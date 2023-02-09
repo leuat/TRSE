@@ -96,6 +96,8 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
 
 TokenType::Type NodeVar::getType(Assembler *as) {
 
+    if (m_op.m_isBoolean)
+            return TokenType::BOOLEAN;
     if (as==nullptr) {
         // Use parser symbtab
         TokenType::Type t = m_op.m_type;
@@ -115,18 +117,19 @@ TokenType::Type NodeVar::getType(Assembler *as) {
 
     TokenType::Type t = m_op.m_type;
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
-//    qDebug() << "VAL "<<getValue(as) ;
+//    qDebug() << "VAL "<< getValue(as) ;
+
     if (s!=nullptr)
         t= as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->getTokenType();
 
 
-//    qDebug() <<  + " " + TokenType::getType(t);
 
 
 
     if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
         return m_forceType;
 
+//    qDebug() <<   " " + TokenType::getType(t);
 
 //    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
   //      return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
@@ -180,6 +183,17 @@ bool NodeVar::DataEquals(QSharedPointer<Node> other) {
     if (var==nullptr)
         return false;
     return var->value==value;
+}
+
+bool NodeVar::isBool(Assembler* as)  {
+//    if (getType(as)==TokenType::ADDRESS)
+  //      return (getArrayType(as)==TokenType::BOOLEAN);
+    if (getType(as)==TokenType::POINTER && m_expr!=nullptr) {
+        if (getArrayType(as)==TokenType::BOOLEAN)
+            return true;
+    }
+    return getType(as)==TokenType::BOOLEAN;
+
 }
 
 bool NodeVar::isWord(Assembler *as) {

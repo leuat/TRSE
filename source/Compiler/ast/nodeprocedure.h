@@ -62,6 +62,7 @@ public:
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
 
+    bool isBool(Assembler* as) override;
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;

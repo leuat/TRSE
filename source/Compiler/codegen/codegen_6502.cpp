@@ -1997,16 +1997,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     bool isPointer = node->m_left->isPointer(as);
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    //    QString lbl = as->NewLabel("stringassign");
-
-    /*    if (isPointer && node->m_left->hasArrayIndex()) {
-        right->Accept(this);
-
-        as->Asm("sta ("+ getValue(left)+"),y");
-        return;
-
-    }
-*/
 
     QString lblCpy=as->NewLabel("stringassigncpy");
 
@@ -2017,13 +2007,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
 
     //    qDebug() << "IS POINTER " << isPointer;
     if (isPointer || left->isStringList(as)) {
-        //      qDebug() << "HERE";
-/*        as->Asm("lda #<"+str);
-        as->Asm("sta "+getValue(left));
-        as->Asm("lda #>"+str);
-        as->Asm("sta "+getValue(left)+"+1");*/
-//            left->m_expr->Accept(this);
-//        if (left->hasArrayIndex())
             as->Asm(";has array index");
             as->Asm("lda #<"+str);
             as->Asm("ldy #>"+str);
@@ -2033,19 +2016,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     }
     else {
         QString val = getValue(left);
-
-/*            as->Comment("Storing in string array");
-            left->Accept(this);
-            as->Term();
-            QString zp = as->m_internalZP.Get();
-
-            as->m_internalZP.Pop(zp);
-            as->Asm("sta "+zp);
-            as->Asm("sty "+zp+"+1");
-            val = "("+zp+")"; // store in zp*/
-//        }
-
-
 
         as->Asm("ldy #0");
         as->Label(lblCpy);

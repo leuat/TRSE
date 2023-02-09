@@ -22,7 +22,6 @@
 #include "node.h"
 #include "source/Compiler/codegen/codegen_6502.h"
 
-bool Node::s_isInOffpageTest = false;
 
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;

@@ -100,6 +100,15 @@ bool NodeProcedure::isByte(Assembler *as)
 
 }
 
+bool NodeProcedure::isBool(Assembler *as)
+{
+    if (m_procedure->m_returnType!=nullptr)
+        return m_procedure->m_returnType->getType(as)==TokenType::BOOLEAN;
+
+    return true;
+
+}
+
 void NodeProcedure::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
 {
     m_procedure->ReplaceInline(as,inp);

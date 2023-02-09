@@ -62,6 +62,7 @@ public:
 
     bool isPointer(Assembler* as) override;
     bool isPurePointer(Assembler* as) override;
+    bool isBool(Assembler* as) override;
 
     bool containsVariables() override {return true;}
 

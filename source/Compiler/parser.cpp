@@ -1647,7 +1647,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="WORD") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
-        if (s->m_type=="BOOLEAN") m_currentToken.m_type=TokenType::BYTE;
+        if (s->m_type=="BOOLEAN") m_currentToken.m_type=TokenType::BOOLEAN;
         if (s->m_type=="STRING") m_currentToken.m_type=TokenType::STRING;
         if (s->m_type=="CSTRING") m_currentToken.m_type=TokenType::CSTRING;
 
@@ -2584,7 +2584,17 @@ QSharedPointer<Node> Parser::Factor()
         Eat();
 
         auto t = m_currentToken;
-
+//        qDebug() << t.m_value;
+//        if (m_currentToken.m_type == TokenType::NOT) {
+            if (t.m_value.toLower()=="true") {
+                Eat();
+                return NodeFactory::CreateNumber(t,0);
+            }
+            if (t.m_value.toLower()=="false") {
+                Eat();
+                return NodeFactory::CreateNumber(t,1);
+            }
+  //      }
         return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
     }
 
@@ -3647,9 +3657,9 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         Eat(TokenType::COLON);
         funcType = TypeSpec(false,QStringList());
         auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
-        QStringList allowed = QStringList() << "integer" <<"byte" <<"long";
+        QStringList allowed = QStringList() << "integer" <<"byte" <<"long" << "boolean";
         if (!(allowed.contains(t->value.toLower()))) {
-            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer' and 'long'",t->m_op.m_lineNumber);
+            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer', 'boolean' and 'long'",t->m_op.m_lineNumber);
         }
     }
     QStringList flags = getFlags();
@@ -4612,13 +4622,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     if (t.m_type == TokenType::BOOLEAN) {
         //        qDebug() << "Replace bool with byte";
-        t.m_value="BYTE";
+        t.m_value="BOOLEAN";
         t.m_type = TokenType::BYTE;
         if (forceByteAlignment) {
-            t.m_value="INTEGER";
+            t.m_value="BOOLEAN";
             t.m_type = TokenType::INTEGER;
 
         }
+        t.m_isBoolean = true;
     }
 
     QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));

@@ -701,6 +701,8 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::PURE_VARIABLE;
     if (m_type.toLower()=="pure_number")
         return TokenType::PURE_NUMBER;
+    if (m_type.toLower()=="boolean")
+        return TokenType::BOOLEAN;
 
     return TokenType::NADA;
 }

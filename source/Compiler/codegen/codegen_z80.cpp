@@ -641,7 +641,12 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 // PURE numeric
                 as->Comment("RHS is pure numeric optimisation");
                 node->m_left->Accept(this);
+//                qDebug() << node->m_left->isBool(as) <<  node->m_left->getValue(as);
+
                 as->Asm(getBinaryOperation(node)+" "+node->m_right->getValue(as));
+                if (node->m_left->isBool(as)) {
+                    as->Asm("and 1");
+                }
 
                 return;
             }
@@ -689,8 +694,13 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
     node->m_right->Accept(this);
     as->Asm("ld b,a");
     as->Asm("pop af");
+
+//        as->Comment("RHS is type "+node->m_right->getTypeText(as) + " " + TokenType::getType(node->m_right->m_op.m_type));
     as->Asm(getBinaryOperation(node)+" b");
 
+    if (node->m_left->isBool(as)) {
+        as->Asm("and 1");
+    }
 
 
 }

@@ -219,7 +219,7 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
     if (type.toLower()=="integer")  {
         t = word;
     }
-    if (type.toLower()=="byte") {
+    if (type.toLower()=="byte"  || type.toLower()=="boolean") {
         t = byte;
 
     }

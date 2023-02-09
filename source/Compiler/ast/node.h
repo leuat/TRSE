@@ -108,7 +108,6 @@ public:
     void DispatchConstructor(Assembler* as, AbstractCodeGen* dispatcher);
     // Makes sure that the node and blocks are in sync
     int MaintainBlocks(Assembler* as);
-    static bool s_isInOffpageTest;
 
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
@@ -180,6 +179,9 @@ public:
     virtual bool isRecordData(Assembler* as)  {
         return false;
     }
+    virtual bool isBool(Assembler* as)  {
+        return false;
+    }
 
     virtual bool isPureNumeric() {
         return false;
@@ -199,6 +201,8 @@ public:
     /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
     virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {
+        if (m_op.m_isBoolean)
+            return TokenType::BOOLEAN;
         return m_op.m_type;
     }
     virtual TokenType::Type getArrayType(Assembler* as) {
