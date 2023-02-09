@@ -81,10 +81,10 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         //  ldy #blah
         //  tfr y,d
         //  to  ldd #blah
-        if (l1 =="tfr y,d") {
-            if (prevLine->m_cmd=="ldy") {
+        if (l1 =="tfr x,d") {
+            if (prevLine->m_cmd=="ldx") {
                 line.m_forceOptimise = true;
-                prevLine->m_orgLine = prevLine->m_orgLine.replace("ldy","ldd");
+                prevLine->m_orgLine = prevLine->m_orgLine.replace("ldx","ldd");
             }
         }
 
