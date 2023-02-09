@@ -254,6 +254,8 @@ bool CodeGen6809::HandleSingleAddSub(QSharedPointer<Node> node) {
 
         m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
+        if (node->m_left->isBool(as))
+            as->Asm("anda #1 ; boolean");
         return true;
     }
 
@@ -559,6 +561,8 @@ void CodeGen6809::HandleRestBinOp(QSharedPointer<Node> node) {
             as->BinOP(node->m_op.m_type);
             as->Term(lbl,true);
             as->PopTempVar();
+            if (node->m_left->isBool(as))
+                as->Asm("anda #1");
             //as->PopLabel("rightvar");
             //as->PopLabel("jmprightvar");
         }
@@ -1388,7 +1392,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ldy #0 ; Fake 16 bit");
 
         as->Variable(val, isOK);*/
-        if (node->getOrgType(as)==TokenType::BYTE ) {
+        if (node->getOrgType(as)==TokenType::BYTE || node->getOrgType(as)==TokenType::BOOLEAN) {
 
             if (node->m_forceType == TokenType::INTEGER) {
                 // OOps byte but must be integer
@@ -1720,21 +1724,22 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
         return;
     }
     else {
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
+        TokenType::Type t = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType();
+        if (t == TokenType::BYTE || t == TokenType::ADDRESS || t == TokenType::BOOLEAN) {
             as->Asm("sta " + getValue(node));
             return;
         }
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
+        if (t == TokenType::ADDRESS) {
 
             as->Asm("sta " + getValue(node));
             return;
         }
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
+        if (t == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
 
             as->Asm("sty " + getValue(node));
             return;
         }
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::POINTER || node->m_writeType==TokenType::INTEGER) {
+        if (t == TokenType::POINTER || node->m_writeType==TokenType::INTEGER) {
 
             as->Asm("sty " + getValue(node));
             return;

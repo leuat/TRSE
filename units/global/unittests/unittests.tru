@@ -33,7 +33,7 @@ begin
 	isDone := false;
 	Common::TestInit();
 @ifndef ATARI520ST
-	while (Common::Status() = 0 and isDone = false) offpage do
+	while (Common::Status() = 0 and isDone = false) do
 @endif
 	
 @ifdef ATARI520ST
@@ -43,6 +43,7 @@ begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
 		@endif
+	   Text::Println("WOOT");
 		
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.

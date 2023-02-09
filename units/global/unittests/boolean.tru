@@ -20,6 +20,7 @@ begin
 	Vars::text := "T2:";
 	
 	Common::CR();
+	asm(";ccc");
 	if (InvertB(true)=false) then Common::PASS() else Common::FAIL();
 end;
 

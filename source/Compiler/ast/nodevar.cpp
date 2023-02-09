@@ -233,7 +233,7 @@ bool NodeVar::isLong(Assembler *as) {
     return (getType(as)==TokenType::LONG || getArrayType(as)==TokenType::LONG)  && m_expr==nullptr;
 }
 bool NodeVar::isByte(Assembler *as) {
-    return getType(as)==TokenType::BYTE  && m_expr==nullptr;
+    return (getType(as)==TokenType::BYTE || getType(as)==TokenType::BOOLEAN)  && m_expr==nullptr;
 //    return getType(as)==TokenType::BYTE  || getArrayType(as)==TokenType::BYTE;
 }
 
