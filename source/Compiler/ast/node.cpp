@@ -227,3 +227,12 @@ void Node::ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> nod
     if (m_left!=nullptr)
         m_left->ReplaceVariable(as,name,node);
 }
+
+int Node::getArrayDataSize(Assembler* as) {
+    if (getArrayType(as)==TokenType::INTEGER) return 2;
+    if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
+    if (getArrayType(as)==TokenType::LONG) return 4;
+//        if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
+    return 1;
+
+}

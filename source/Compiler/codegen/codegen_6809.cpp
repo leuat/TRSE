@@ -437,7 +437,7 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
         as->Term();
         QString lblCancel = as->NewLabel("lblShiftCancel");
         as->Asm("tfr x,y");
-        as->Asm("cmpx #0");
+        as->Asm("cmpy #0");
         as->Asm("beq "+lblCancel);
         QString lbl = as->NewLabel("lblShift");
         as->Label(lbl);
@@ -1297,7 +1297,7 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
     if (node->m_expr->isPureNumeric()) {
         as->Comment("Special case when expression is const");
         as->Asm("ldx "+addr+node->getValue(as));
-        shift = QString::number(node->m_expr->getValueAsInt(as));
+        shift = QString::number(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as));
     }
     else
         LoadIndex(node->m_expr, node->getArrayType(as));
@@ -1708,7 +1708,7 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
                 else
                     as->Asm("ldx "+node->getValue(as));
 
-                as->Asm("sta "+QString::number(node->m_expr->getValueAsInt(as))+",x");
+                as->Asm("sta "+QString::number(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as))+",x");
                 return;
             }
             as->Asm("pshs a");
