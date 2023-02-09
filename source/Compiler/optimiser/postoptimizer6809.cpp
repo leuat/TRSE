@@ -62,14 +62,22 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         auto l1 = line.m_orgLine.toLower().simplified();
         if (l0==l1)
             line.m_forceOptimise = true;
-        if (l0=="tfr y,d" && l1=="tfr d,y") {
+        if (l0=="tfr x,d" && l1=="tfr d,x") {
             prevLine->m_forceOptimise = true;
             line.m_forceOptimise = true;
         }
-        if (l0=="tfr d,y" && l1=="tfr y,d") {
+        if (l0=="tfr d,x" && l1=="tfr x,d") {
             prevLine->m_forceOptimise = true;
             line.m_forceOptimise = true;
         }
+        if (l0=="tfr d,x" && l1=="tfr x,y") {
+            prevLine->m_forceOptimise = true;
+            line.m_orgLine = "\ttfr d,y";
+        }
+
+//        tfr d,x
+//        tfr x,y
+
         //  ldy #blah
         //  tfr y,d
         //  to  ldd #blah

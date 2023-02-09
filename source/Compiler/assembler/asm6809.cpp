@@ -597,7 +597,7 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
     if (actuallyStore) {
 
         if (type==word)
-            Asm("sty " + tmpVar);
+            Asm("stx " + tmpVar);
         else
             Asm("sta " + tmpVar);
 

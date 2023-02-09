@@ -30,6 +30,7 @@ begin
 	tp:=#text;
 	j:=0;
 	y:=0;
+	asm(";here");
 	dst:=#Screen::gfx+16;
 	for k:=0 to 110 offpage do
 	begin
@@ -40,7 +41,7 @@ begin
 	 	j:=(tp[j]-1)&31; // Look up current character, store in j
 		if (j=31) then j:=23;	
 		
- 		
+ 		asm(";here");
 		tab :=#table + frameLookup[frame] +charLookup[j];
 
 		zp :=#data +tab[byte(ll&15)];
@@ -48,7 +49,6 @@ begin
 
 		// Copy 2 rows of data
 	//	Memory::Copy16(zp,dst,7);
-		asm(";here");
 		MemCpyUnroll16(zp,dst,7);
 		dst+=40; // next line
 		MemCpyUnroll16(zp,dst,7);
@@ -70,8 +70,6 @@ begin
 	Screen::SetColor(3,$33); 
 	// Clearscreen
 	Memory::Fill16(#Screen::gfx,0,40*225);
-//	Compression::Decompress(#data, #dataPos);	
-//	loop();
 	time := 0;	
 	while (true) do
 	begin

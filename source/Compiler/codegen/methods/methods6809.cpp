@@ -150,13 +150,13 @@ void Methods6809::Poke(Assembler* as)
         as->Asm("pshs d");
         bop->Accept(m_codeGen);
         as->Asm("puls d");
-        as->Asm("sta ,y");
+        as->Asm("sta ,x");
 
     }
     else {
         bop->Accept(m_codeGen);
         m_node->m_params[2]->Accept(m_codeGen);
-        as->Asm("sta ,y");
+        as->Asm("sta ,x");
 
     }
 }
@@ -169,7 +169,7 @@ void Methods6809::Peek(Assembler* as)
     m_node->m_params[0]->setReference(true);
     auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
     bop->Accept(m_codeGen);
-    as->Asm("lda ,y");
+    as->Asm("lda ,x");
 
 
 }
@@ -395,19 +395,19 @@ void Methods6809::LoHi(Assembler *as, bool isHi)
         return;
     if (isHi) {
         m_node->m_params[0]->Accept(m_codeGen);
-        as->Asm("tfr y,d");
+        as->Asm("tfr x,d");
         as->Asm("ldb #0");
     }
     if (!isHi) {
         m_node->m_params[0]->Accept(m_codeGen);
-        as->Asm("tfr y,d");
+        as->Asm("tfr x,d");
         as->Asm("exg a,b");
         as->Asm("ldb #0");
     }
     if (m_node->m_castType==TokenType::INTEGER)
     {
         as->Asm("exg a,b");
-        as->Asm("tfr d,y");
+        as->Asm("tfr d,x");
 
     }
 }
@@ -418,10 +418,10 @@ void Methods6809::MemCpyUnroll(Assembler *as)
         ErrorHandler::e.Error("Memcpyunroll16 parameter 1 must be a numeric constant", m_node->m_op.m_lineNumber);
     int cnt = m_node->m_params[2]->getValueAsInt(as);
     m_node->m_params[1]->Accept(m_codeGen);
-    as->Asm("tfr y,u");
+    as->Asm("tfr x,u");
     m_node->m_params[0]->Accept(m_codeGen);
     for (int i=0;i<cnt;i++) {
-        as->Asm("ldd ,y+");
+        as->Asm("ldd ,x+");
         as->Asm("std ,u+");
     }
 }

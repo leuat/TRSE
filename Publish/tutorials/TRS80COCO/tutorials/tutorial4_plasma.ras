@@ -10,6 +10,7 @@ program PlasmaExample;
 // Good old plasma example!
 
 var  
+	Calculate_rightvarInteger_var187:integer;
 	// some plasma variables
 	val,val2,c2x, c2y,ax, ay,time, time2 : byte;
 	x,y,shift : byte;
@@ -43,7 +44,7 @@ begin
 	ay:=ay-3;
 
 	// Set up x-sine table
-	for x:=0 to width  unroll do begin 
+	for x:=0 to width unroll do begin 
 		sinx[x] := sin[c2x] + sin[c2y];
 		c2x:=c2x+9;
 		c2y:=c2y+13;
@@ -51,7 +52,6 @@ begin
 	end;
 	// alternate every 2nd line
 	dst:=#Screen::gfx + shift*40;
-	
 end;
 
 
@@ -74,17 +74,17 @@ begin
 @else
 		
 		asm("
-		ldy #sinx
+		ldx #sinx
 		ldu dst
-		ldx #data+128  
+		ldy #data+128  
 			");
 		// write 10 * 4 = 40 byte unrolled
 
 		for val:=0 to 40 unroll do
 		asm("
-		lda ,y+ 
+		lda ,x+ 
 		adda val
-		lda a,x
+		lda a,y
 		sta ,u+
 		");
 @endif		

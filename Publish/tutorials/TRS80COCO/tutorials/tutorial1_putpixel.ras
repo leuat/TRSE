@@ -26,7 +26,7 @@ begin
 
 	Screen_EnableVsync();
 	// Clear scren
-	Memory::Fill16(#Screen::gfx,0,160*225);
+	Memory::Fill16(#Screen::gfx,00,160*225);
 	while (true) do
 	begin
 		// Set the border color to time

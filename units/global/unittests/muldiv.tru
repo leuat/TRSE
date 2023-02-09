@@ -53,6 +53,7 @@ procedure IntByteMul06();
 begin
 	Vars::i1 := 1010;
 	Vars::v1 := 3;
+	asm(";ccc");
 	Vars::ri := Vars::i1*Vars::v1;
 	Vars::text := "06:"; 
 	if (Vars::ri=3030) then Common::PASS() else Common::FAIL();
