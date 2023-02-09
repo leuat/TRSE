@@ -1513,7 +1513,11 @@ QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
 {
     //    as->Asm("jmp " + lbl);
     QString strName = as->NewLabel("stringassignstr");
-
+/*    if (Node::s_isInOffpageTest) {
+        qDebug() << "ABSTRACTCODEGEN RETURN "<< strName;
+        return strName;
+    }*/
+//    qDebug() << "ABSTRACTCODEGEN "<< strName;
     as->StartExistingBlock(as->m_tempVarsBlock);
     auto ns = qSharedPointerDynamicCast<NodeString>(node);
     if (ns==nullptr)

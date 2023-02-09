@@ -75,7 +75,6 @@ void CodeGenZ80::AssignString(QSharedPointer<NodeAssign> node) {
     QString lblCpy=as->NewLabel("stringassigncpy");
 
     QString str = DefineTempString(right);
-
     if (isPointer || left->isStringList(as)) {
         as->Asm("ld hl,"+str);
         StoreVariable(left);

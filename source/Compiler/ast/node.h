@@ -108,7 +108,7 @@ public:
     void DispatchConstructor(Assembler* as, AbstractCodeGen* dispatcher);
     // Makes sure that the node and blocks are in sync
     int MaintainBlocks(Assembler* as);
-
+    static bool s_isInOffpageTest;
 
     // And now for a ton of methods that can/should be implemented by all the subclasses
 

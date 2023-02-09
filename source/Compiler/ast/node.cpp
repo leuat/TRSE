@@ -22,6 +22,8 @@
 #include "node.h"
 #include "source/Compiler/codegen/codegen_6502.h"
 
+bool Node::s_isInOffpageTest = false;
+
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
@@ -146,7 +148,11 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
   //  tmpAsm.m_symTab = as->m_symTab;
 //    CodeGen6502 dispatcher;
 //    dispatcher.as = &tmpAsm;
+//    s_isInOffpageTest = true;
     auto app = QSharedPointer<Appendix>(new Appendix);
+    auto newtemp = QSharedPointer<Appendix>(new Appendix);
+    auto keep2 = as->m_tempVarsBlock;
+    as->m_tempVarsBlock = newtemp;
     auto keep = as->m_currentBlock;
     as->m_currentBlock = app;
     QStringList keepTemps = as->m_tempVars;
@@ -158,6 +164,7 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
 
     int count = as->CodeSizeEstimator(app->m_source);
     as->m_currentBlock = keep;
+    as->m_tempVarsBlock = keep2;
 
 
     return count<120;
