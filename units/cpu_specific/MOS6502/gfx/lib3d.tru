@@ -49,7 +49,6 @@ begin
 end;
 
 
-
 procedure InitializeData(startPos: global integer);
 begin
 	curPos := startPos;

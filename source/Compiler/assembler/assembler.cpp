@@ -398,7 +398,7 @@ void Assembler::Label(QString s)
 
 
 
-void Assembler::IncludeFile(QString pfile, bool isInsert)
+void Assembler::IncludeFile(QString pfile, bool isInsert, bool isHeader)
 {
     QFile file(pfile);
     if(!file.open(QIODevice::ReadOnly)) {
@@ -424,6 +424,11 @@ void Assembler::IncludeFile(QString pfile, bool isInsert)
         //      QStringList fields = line.split(",");
     }
     file.close();
+
+    if (isHeader) {
+        m_startInsertAssembler <<source;
+        return;
+    }
 
     if (!isInsert) {
         if (m_currentBlock==nullptr)

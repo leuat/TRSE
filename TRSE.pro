@@ -224,6 +224,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
     source/Compiler/systems/systemtvc.cpp \
+    source/Compiler/systems/systemvectrex.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
@@ -523,6 +524,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
     source/Compiler/systems/systemtvc.h \
+    source/Compiler/systems/systemvectrex.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \

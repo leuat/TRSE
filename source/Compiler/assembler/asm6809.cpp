@@ -34,6 +34,7 @@ Asm6809::Asm6809() :Assembler()
     m_countCycles = false;
 
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiser6809());
+    m_wram = QSharedPointer<Appendix>(new Appendix("$C800"));
 
 
 }

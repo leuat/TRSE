@@ -229,6 +229,8 @@ private slots:
 
     void on_btnHelpTVC_clicked();
 
+    void on_btnVectrexEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

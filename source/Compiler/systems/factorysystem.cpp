@@ -79,6 +79,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemTIM(settings, proj);
     if (type==AbstractSystem::TVC)
         return new SystemTVC(settings, proj);
+    if (type==AbstractSystem::VECTREX)
+        return new SystemVectrex(settings, proj);
 
 
     return s;

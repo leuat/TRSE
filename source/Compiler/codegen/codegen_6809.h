@@ -61,15 +61,13 @@ public:
 
     int dstack = 0;
     bool isIndex = false;
-    QString getJmp(bool isOffPage) override {
-        return "jmp";
-    }
+    QString getJmp(bool isOffPage) override;
 
     void PushD();
 
     void PopD();
 
-    bool UseBlocks() override { return true;}
+    bool UseBlocks() override;
 
     void HackPointer(Assembler* as, QSharedPointer<Node> node);
 

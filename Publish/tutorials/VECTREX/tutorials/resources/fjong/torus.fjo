@@ -1,0 +1,117 @@
+--h  =-3.7
+--xx = 10.8
+h  =-4.1
+xx = 0
+globals = {
+	camera = { x = xx, y=h, z=-17.0 },
+	fov = 90, 
+	target = { x = xx, y=h, z=0 },
+	up = { x=0, y=1, z=0 },
+	light0 = {   	direction = {x=-2, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+  	ambient = { x = 0.4, y = 0.4, z = 0.4 },
+     raymarch_steps = 80,
+	raymarch_shadow_steps = 40,
+
+	sky = 0,
+	shadow_scale = 0,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+--	resolution = { width = 160, height=160},
+--	resolution = { width = 320, height=160},
+	resolution = { width = 160, height=200},
+	output_type = 0,
+--	palette_file = "images/pals.pal",
+	c64_imageType = 0,
+	aspect = 0.66,
+	dither = 2,
+	ditherStrength= {x=6, y=1, z=2 },
+--	index_colors = { 0,1,2,3 }
+	index_colors = { 0,1,2,3 }
+--	index_colors = { 0,2,3,1 }
+--	index_colors = { 0,2,3,1 }
+--	c64_colors = { 0,1}
+}
+
+
+Material0 = {
+   color = { x=1.0, y=0, z=1 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0.0
+}
+
+-- Init is called on start  
+
+function lerp(a, b, t)
+	return a + (b - a) * t
+end
+
+
+ 
+function Init()
+  	t = ((frame)/(noFrames))
+	RemoveObject("t1");
+	--16
+	globals.camera.z= (14.0+ 2*(1+sin(t*3.14159*4-1)))*1.3
+	-- Generates a torus
+	-- 5,3
+	AddObjectRegular("torus_wire","t1", "", "Material2", 5,3, 2+1.0*cos(1.9+t*3.14159*2),5,0,0,0,3);
+--	AddObjectRegular("torus_wire","t1", "", "Material2",  8,8, 2,8, 3);
+
+
+	-- saves the object to disk, 8 bit style
+	Save3DObject("t1","data/torus1.bin",4);
+--	Message("saved to resources/data/torus1.bin");
+
+	UpdateGraphics()
+	isInit = 1
+end
+
+
+frame = 0
+noFrames = 128
+char = 0
+isInit = 0
+
+t1 = 0
+
+function UpdateGraphics()
+
+  	t = ((frame)/(noFrames))/1.0--*360
+  	t = lerp(0,360,cos(t*3.14159)*0.5)
+	r = 20
+	t=t+90
+	t1 = t1+0.02	
+	s = 2
+	SetRotation("t1",t*2-45*s,t*s,t*s)
+--	globals.camera.x = sin(t1)*r
+--	globals.camera.y = cos(t1)*r
+--	globals.camera.z = cos(-t1)*r
+	
+
+end
+
+
+function Update()
+	
+	UpdateGraphics()
+	if (frame<noFrames) then
+		AddProjected2DCoordinatesToData("t1")
+--		AddProjectedLineList("t1")
+	end
+	frame=frame+1
+	if (frame == noFrames) then
+		Message("Saved")
+		SaveRawData("data/2d_dump.bin")
+	end
+	Init()	
+--	globals.sky = frame/100.0
+--	Message("halla");
+end

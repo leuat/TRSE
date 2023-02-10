@@ -777,7 +777,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
     p.begin(&img);
 
 
-    qDebug() << "HERRR " <<m_isWireframe <<m_type <<m_skipType;
+//    qDebug() << "HERRR " <<m_isWireframe <<m_type <<m_skipType;
 
     if (m_isWireframe) {
         int k=0;

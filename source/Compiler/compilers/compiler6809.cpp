@@ -16,26 +16,15 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 
 void Compiler6809::Connect()
 {
+
     m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
 
-/*
-    if (m_ini->getdouble("post_optimize")==1.0) {
-        emit EmitTick("<br>Optimising pass: ");
-        m_assembler->m_totalOptimizedLines = 0;
-        for (int i=0;i<4;i++) {
-            emit EmitTick(" ["+QString::number(i+1)+"]");
-            m_assembler->Optimise(*m_projectIni);
-        }
+        m_assembler->m_source << "\torg $C800";
+        m_assembler->m_source <<m_assembler->m_wram->m_source;
     }
-*/
-/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
-        m_assembler->m_source<<	" org $CFFE";
-        m_assembler->m_source<<	"vector__:";
-        m_assembler->m_source<< "   fcb $40,00";
 
-    }
-*/
     if (m_ini->getString("assembler_6809")=="lwasm")
         m_assembler->m_source<<"	END START";
 
@@ -60,6 +49,8 @@ void Compiler6809::Init6809Assembler()
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX)
+        m_assembler->IncludeFile(":resources/code/6809/vectrex_header.asm", true, true);
 
 
 //    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));

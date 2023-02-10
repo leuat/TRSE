@@ -1,0 +1,55 @@
+unit System;
+var
+	p1:pointer ram;
+	@donotremove wtf
+	wtf: array[256] of byte;
+procedure SetLargeFont() inline;
+begin
+	asm("	
+	ldd #$F848
+	std $2A
+	");
+end;	
+
+procedure SetSmallFont() inline;
+begin
+	asm("	
+	ldd #$FC38
+	std $2A
+	");
+end;	
+
+procedure WaitFrameBoundary() inline;
+begin
+	asm("
+	jsr $f192
+	");	
+end;
+
+procedure SetDpD0() inline;
+begin
+	asm("
+	lda #$d0				
+	tfr a,dp
+	");	
+end;
+
+procedure SetDpC8() inline;
+begin
+	asm("
+	lda #$c8		
+	tfr a,dp
+	");	
+end;
+
+
+procedure DisplayTextList(p1:global pointer);
+begin
+	SetDpD0();
+	asm("
+	ldu System_p1
+	jsr $F38C	
+	");
+end;	
+
+end.

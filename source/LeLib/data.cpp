@@ -27,8 +27,8 @@
 #define STR(x) STR_HELPER(x)
 
 #define MAJOR 0
-#define FEATURE 15
-#define NIGHTLY 139
+#define FEATURE 16
+#define NIGHTLY 0
 
 #define VERSION STR(MAJOR) "." STR(FEATURE) "." STR(NIGHTLY)
 

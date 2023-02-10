@@ -10,7 +10,7 @@ SystemTRS80CoCo::SystemTRS80CoCo(QSharedPointer<CIniFile> settings, QSharedPoint
 
     m_startAddress = 0x2000;
     m_programStartAddress = 0x2000;
-    m_supportsExomizer = true;
+    m_supportsExomizer = false;
 
 
  //   m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"System values",0,0x00FF));

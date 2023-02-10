@@ -767,7 +767,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVarDecl> node)
 
     QSharedPointer<Appendix> old = as->m_currentBlock;
 
-    if (t->m_flags.contains("wram")) {
+    if (t->m_flags.contains("ram")) {
         as->m_currentBlock = as->m_wram;
     }
 
@@ -775,11 +775,11 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVarDecl> node)
         QString bnk = getBank(t);
         as->m_currentBlock = as->m_banks[bnk];
     }
-    if (v->m_isGlobal) {
+/*    if (v->m_isGlobal) {
         as->m_currentBlock = nullptr;
         return;
     }
-
+*/
 
     //    qDebug() << "" <<as->m_currentBlock;
     AbstractCodeGen::dispatch(node);
@@ -1299,9 +1299,10 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
         as->Asm("ldx "+addr+node->getValue(as));
         shift = QString::number(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as));
     }
-    else
+    else {
         LoadIndex(node->m_expr, node->getArrayType(as));
-    as->Asm("ldx "+addr+node->getValue(as));
+        as->Asm("ldx "+addr+node->getValue(as));
+    }
 //    as->Asm("leax d,x");
     if (node->m_forceType==TokenType::INTEGER && node->getArrayType(as)==TokenType::BYTE) {
         as->Comment("Forcing data data from byte array to be integer ");
@@ -1813,6 +1814,10 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
 
 }
 
+QString CodeGen6809::getJmp(bool isOffPage) {
+    return "lbra";
+}
+
 void CodeGen6809::PushD() {
     //        if (dstack!=0)
     as->Asm("pshs d");
@@ -1823,6 +1828,9 @@ void CodeGen6809::PopD() {
     //      if (dstack!=0)
     as->Asm("puls d");
     dstack--;
+}
+
+bool CodeGen6809::UseBlocks() { return false;
 }
 
 void CodeGen6809::LoadStackVariable(QSharedPointer<NodeVar> node) {

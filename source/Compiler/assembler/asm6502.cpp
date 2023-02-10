@@ -33,6 +33,7 @@ Asm6502::Asm6502() :Assembler()
 //    m_stack["for"] = new Stack();
     m_opCycles.InitMosOpCycles();
     InitCStrings();
+
     m_countCycles = true;
 }
 

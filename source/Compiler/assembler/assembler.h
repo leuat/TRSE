@@ -315,7 +315,7 @@ public:
     virtual void Label(QString s);
     virtual void Optimise(CIniFile& ini) {}
 
-    virtual void IncludeFile(QString pfile, bool isInsert =false);
+    virtual void IncludeFile(QString pfile, bool isInsert =false, bool isHeader = false);
 
 
     virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);
