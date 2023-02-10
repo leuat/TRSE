@@ -593,8 +593,12 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
     QString tmpVar = NewLabel(name+"_var");
     if (type=="byte") type=byte;
     if (type=="word") type=word;
+    Comment("Store in temp var");
     QString labelVar = getLabelEnding(tmpVar) + "\t "+type+"\t0 ";
-    m_tempVars << labelVar;
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX)
+        m_wram->Append(labelVar,0);
+    else
+        m_tempVars << labelVar;
     if (actuallyStore) {
 
         if (type==word)

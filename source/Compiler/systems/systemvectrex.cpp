@@ -1,7 +1,7 @@
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
 #include "systemvectrex.h"
-
+#include <QMessageBox>
 
 SystemVectrex::SystemVectrex(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : System6809(settings,proj)
 {
@@ -71,8 +71,18 @@ void SystemVectrex::PostProcess(QString &text, QString file, QString currentDir)
 
 void SystemVectrex::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
 #ifdef __APPLE__
-    params << "-L"<<"/Users/leuat/Library/Application Support/RetroArch/cores/vecx_libretro.dylib";
 #endif
+    QString core = m_settingsIni->getString("vectrex_core");
+    if (!QFile::exists(core)) {
+        QMessageBox msgBox;
+        msgBox.setText("RetroArch requires the Vectrex core module as a parameter. Please set up a link to the RetroArch vectrex core in the project settings/misc. \n\nOn macos, the location is typically ~/Library/Application\ Support/RetroArch/cores/vecx_libretro.dylib");
+        msgBox.exec();
+        params.clear();
+        return;
+    }
+
+
+    params << "-L"<<core;
     params << filename+".vec";
     //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
 //    params <<"-L"<<

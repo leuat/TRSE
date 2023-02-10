@@ -735,5 +735,6 @@
         <file>resources/text/help/r/forward.rtf</file>
         <file>resources/text/opcodes_6809.txt</file>
         <file>resources/code/6809/vectrex_header.asm</file>
+        <file>resources/images/VECTREX.png</file>
     </qresource>
 </RCC>

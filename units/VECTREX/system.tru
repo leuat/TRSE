@@ -3,6 +3,26 @@ var
 	p1:pointer ram;
 	@donotremove wtf
 	wtf: array[256] of byte;
+	x1,y1,x2,y2, c  : byte ram;
+	scale : byte ram;
+	
+procedure SetScale() inline;
+begin
+	asm("
+		lda     System_scale                    ; scaling factor of $80 to A
+        	sta     $D004           ; move to time 1 lo, this
+
+	");	
+end;
+
+procedure SetIntensity5() inline;
+begin
+	asm("
+  		jsr $F2A5 ;; intensity
+	
+	");
+end;
+	
 procedure SetLargeFont() inline;
 begin
 	asm("	
@@ -51,5 +71,48 @@ begin
 	jsr $F38C	
 	");
 end;	
+
+procedure DrawLine(x1,y1,x2,y2:global byte);
+begin
+//	x2:=x2-x1;
+//	y2:=y2-y1;
+	asm("
+	
+                LDA     System_y1                      ; to 0 (y)
+                LDB     System_x1                      ; to 0 (x)
+                JSR     $F312                 ; move the vector beam the
+                                                ; relative position
+  ;              JSR     Intensity_5F            ; Sets the intensity of the
+                                                ; vector beam to $5f
+                CLR     $C823           ; in order for drawing only 1
+                                                ; vector, this must be set to
+                                                ; 0
+                LDA     System_y2                    ; to 100 (y)
+                sbca    System_y1
+                LDB     System_x2                     ; to 50 (x)
+                sbcb    System_x1
+                JSR     $F3DF  
+        ");
+end;
+
+procedure ResetPenPos();
+begin
+	asm("
+	
+	pshs x,d
+;Zero the integrators only 		
+		jsr $F36B	;ZERO - Zero the integrators only
+;Reset Pos /Scale 
+		ldx #PositionList	;Position Vector (Y,X)
+		ldb #127	;Scale (127=normal 64=half 255=double)
+		jsr $F30E	;POSITB - Release integrators and position beam
+	puls x,d,pc
+
+PositionList:
+	fcb 0,0		
+	");
+	
+end;
+
 
 end.

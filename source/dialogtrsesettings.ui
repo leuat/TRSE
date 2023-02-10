@@ -1088,8 +1088,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>950</width>
-              <height>226</height>
+              <width>309</width>
+              <height>177</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1187,7 +1187,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>950</width>
+              <width>542</width>
               <height>984</height>
              </rect>
             </property>
@@ -1662,7 +1662,7 @@ Use Pasmo if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>950</width>
+              <width>455</width>
               <height>669</height>
              </rect>
             </property>
@@ -1962,212 +1962,11 @@ Use Pasmo if something goes wrong</string>
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>658</height>
+              <height>728</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_30">
-             <item row="2" column="0">
-              <widget class="QGroupBox" name="groupBox_13">
-               <property name="title">
-                <string>User defined commands (Ctrl-T): type @prg to use the current .prg output file</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_35">
-                <item row="0" column="0">
-                 <layout class="QGridLayout" name="gridLayout_25">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_12">
-                    <property name="text">
-                     <string>User-defined program:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="leUserDefinedParameters"/>
-                  </item>
-                  <item row="0" column="2">
-                   <widget class="QPushButton" name="btnUserDefinedCommand">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_50">
-                    <property name="text">
-                     <string>User-defined parameters:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLineEdit" name="leUserDefined"/>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_15">
-               <property name="title">
-                <string>Vice settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_38">
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="chkAutoInject">
-                  <property name="text">
-                   <string>Auto inject program (for VICE systems only)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="groupBox_12">
-               <property name="title">
-                <string>Disk utilities, packers and other external software</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_37">
-                <item row="0" column="0">
-                 <layout class="QGridLayout" name="gridLayout_20">
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="leCPCDisk"/>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="QLineEdit" name="leLZ4"/>
-                  </item>
-                  <item row="0" column="2">
-                   <widget class="QPushButton" name="btnC1541Emulator">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_45">
-                    <property name="text">
-                     <string>SID player location:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="2">
-                   <widget class="QPushButton" name="btnCPCDIsk">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_19">
-                    <property name="text">
-                     <string>C1541 location:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="2">
-                   <widget class="QPushButton" name="btnSidPlayer">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_42">
-                    <property name="text">
-                     <string>Amstrad CPCDiskXP utility (exe file):</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QLabel" name="label_54">
-                    <property name="text">
-                     <string>LZ4 executable (lz4.exe/lz4 on *ux):</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLineEdit" name="leC1541"/>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QLineEdit" name="leSidplayer"/>
-                  </item>
-                  <item row="3" column="2">
-                   <widget class="QPushButton" name="btnLZ4">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="label_109">
-                    <property name="text">
-                     <string>CPMTools directory:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="1">
-                   <widget class="QLineEdit" name="leCpmTools"/>
-                  </item>
-                  <item row="4" column="2">
-                   <widget class="QPushButton" name="btnCPMTOOLS">
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
              <item row="5" column="0">
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="3" column="0">
-              <widget class="QGroupBox" name="groupBox_14">
-               <property name="title">
-                <string>Image editor settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_34">
-                <item row="0" column="0">
-                 <layout class="QGridLayout" name="gridLayout_36">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_71">
-                    <property name="text">
-                     <string>Window painter mode:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QComboBox" name="cmbPainter_2">
-                    <item>
-                     <property name="text">
-                      <string>opengl</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>qtimage</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="4" column="0">
               <widget class="QGroupBox" name="groupBox_16">
                <property name="title">
                 <string>Custom keywords syntax highlighting</string>
@@ -2224,6 +2023,233 @@ Use Pasmo if something goes wrong</string>
                    </widget>
                   </item>
                  </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_15">
+               <property name="title">
+                <string>Vice settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_38">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="chkAutoInject">
+                  <property name="text">
+                   <string>Auto inject program (for VICE systems only)</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QGroupBox" name="groupBox_14">
+               <property name="title">
+                <string>Image editor settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_34">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_36">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_71">
+                    <property name="text">
+                     <string>Window painter mode:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QComboBox" name="cmbPainter_2">
+                    <item>
+                     <property name="text">
+                      <string>opengl</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>qtimage</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_13">
+               <property name="title">
+                <string>User defined commands (Ctrl-T): type @prg to use the current .prg output file</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_35">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_25">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_12">
+                    <property name="text">
+                     <string>User-defined program:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="leUserDefinedParameters"/>
+                  </item>
+                  <item row="0" column="2">
+                   <widget class="QPushButton" name="btnUserDefinedCommand">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_50">
+                    <property name="text">
+                     <string>User-defined parameters:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="leUserDefined"/>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_12">
+               <property name="title">
+                <string>Disk utilities, packers and other external software</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_37">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_20">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_19">
+                    <property name="text">
+                     <string>C1541 location:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <widget class="QPushButton" name="btnC1541Emulator">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="leC1541"/>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_42">
+                    <property name="text">
+                     <string>Amstrad CPCDiskXP utility (exe file):</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QLineEdit" name="leCpmTools"/>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="label_109">
+                    <property name="text">
+                     <string>CPMTools directory:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QLineEdit" name="leLZ4"/>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_54">
+                    <property name="text">
+                     <string>LZ4 executable (lz4.exe/lz4 on *ux):</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="2">
+                   <widget class="QPushButton" name="btnSidPlayer">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="2">
+                   <widget class="QPushButton" name="btnLZ4">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_45">
+                    <property name="text">
+                     <string>SID player location:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="leCPCDisk"/>
+                  </item>
+                  <item row="1" column="2">
+                   <widget class="QPushButton" name="btnCPCDIsk">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLineEdit" name="leSidplayer"/>
+                  </item>
+                  <item row="4" column="2">
+                   <widget class="QPushButton" name="btnCPMTOOLS">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QGroupBox" name="groupBox_20">
+               <property name="title">
+                <string>Additional Emulator settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_43">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_30">
+                  <property name="text">
+                   <string>RetroArch VECTREX core file:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="leVectrexCore"/>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QPushButton" name="leVectrexCore_2">
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>

@@ -73,7 +73,7 @@ void CodeGen6809::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     as->BinOP16(node->m_op.m_type);
     as->Term(lbl, true); // high bit added to a
     as->Asm("tfr d,x");
-    as->Asm("stx "+lbl);
+//    as->Asm("stx "+lbl);
     as->PopLabel("wordAdd");
 
     //as->PopLabel("rightvarInteger");
@@ -556,7 +556,6 @@ void CodeGen6809::HandleRestBinOp(QSharedPointer<Node> node) {
             QString lbl = as->StoreInTempVar("rightvarAddSub");
             //as->Asm("sta " +lbl);
             //as->Term();
-
             node->m_left->Accept(this);
             as->Term();
 
