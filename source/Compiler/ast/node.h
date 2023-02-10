@@ -179,7 +179,7 @@ public:
     virtual bool isRecordData(Assembler* as)  {
         return false;
     }
-    virtual bool isBool(Assembler* as)  {
+    virtual bool isBool(Assembler* as){
         return false;
     }
 
