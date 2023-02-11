@@ -6,9 +6,17 @@ program Tutorial7;
 @use "system/graphics"
 
 var
+	@deletefile "images/tiles.bin"	
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 112 16 16 // invad 1A
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32 112 16 16 // invad 1B
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 128 16 16 // invad 1A
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32 128 16 16 // invad 1B
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 144 16 16 // ship 1A
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 144 16 16 // ship 1B
+	sprites: incbin("images/tiles.bin");	// include sprites
+
 	font: incbin("zxchars.bin");
 	scrolltxt: string = ("Space invaders demo        o/p - left/right    q - quit ");
-	sprites: incbin("sprites.bin");
 
 	i,j,x,y: integer;
 
@@ -41,8 +49,8 @@ end;
 procedure drawship(x, y: global integer);
 begin
     Tiles::PutTile(x-4, y, #backgr);
-    Tiles::PutTile(x, y, 17);
-    Tiles::PutTile(x+4, y, 18);
+    Tiles::PutTile(x, y, 4);
+    Tiles::PutTile(x+4, y, 5);
     Tiles::PutTile(x+8, y, #backgr);
 end;
 
@@ -80,15 +88,15 @@ begin
 
     while (1) do begin
         if phase < 8 then begin
-            drawinv(invx, 5, 15, 16);
-            drawinv(invx, 9, 16, 15);
-            drawinv(invx, 13, 13, 14);
-            drawinv(invx, 17, 14, 13);
+            drawinv(invx, 5, 2, 3);
+            drawinv(invx, 9, 3, 2);
+            drawinv(invx, 13, 0, 1);
+            drawinv(invx, 17, 1, 0);
         end else begin
-            drawinv(invx, 5, 16, 15);
-            drawinv(invx, 9, 15, 16);
-            drawinv(invx, 13, 14, 13);
-            drawinv(invx, 17, 13, 14);
+            drawinv(invx, 5, 3, 2);
+            drawinv(invx, 9, 2, 3);
+            drawinv(invx, 13, 1, 0);
+            drawinv(invx, 17, 0, 1);
         end;
         
         phase += 1;

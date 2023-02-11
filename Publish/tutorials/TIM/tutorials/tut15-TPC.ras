@@ -4,6 +4,9 @@ program Tutorial1;
 @use "system/file"
 
 var
+	@deletefile "copy_to_img/consoles.tpc"
+	@exportsubregion "images/consoles.flf" "copy_to_img/consoles.tpc" 0 0 168 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+
 	TextFile: File::Handle;
 	ch: byte;
 	buffer: array[256] of byte;
@@ -14,9 +17,9 @@ begin
 	System::SetScreenPos(0);
 	System::CursorOff();
 	
-	File::ShowPic(0,0,"console.tpc");
-	File::ShowPic(80,15,"console.tpc");
-	File::ShowPic(40,10,"console.tpc");
+	File::ShowPic(0,0,"consoles.tpc");
+	File::ShowPic(80,15,"consoles.tpc");
+	File::ShowPic(40,10,"consoles.tpc");
 
 	System::CursorOn();
 	Z80CPM::Exit();

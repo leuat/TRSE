@@ -46,8 +46,8 @@ void LImageTIM::ExportBin(QFile &file)
     QByteArray data;
     if (m_exportParams.contains("export1"))
         if (m_exportParams["export1"]==1) {
-            data.append(m_width);
-            data.append(m_height);
+            data.append(m_width/4);
+            data.append(m_height/4);
         }
     for (int x=0;x<m_width;x+=4) {
         for (int y=0;y<m_height;y++) {
@@ -72,8 +72,8 @@ void LImageTIM::ExportSubregion(QString outfile, int x, int y, int w, int h, int
     //    qDebug() << x<<type;
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     if (type==1) {
-            data.append(w);
-            data.append(h);
+            data.append(w/4);
+            data.append(h/4);
         }
 
     for (int i=0;i<w/4;i++)
