@@ -121,7 +121,7 @@ void NodeBuiltinMethod::ReplaceVariable(Assembler *as, QString name, QSharedPoin
 }
 
 bool NodeBuiltinMethod::isPureVariable() {
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::X86 ||
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::PX86 ||
             Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80 ||
             Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 ||
             Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000

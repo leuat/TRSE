@@ -75,7 +75,7 @@ void SystemVectrex::applyEmulatorParameters(QStringList &params, QString debugFi
     QString core = m_settingsIni->getString("vectrex_core");
     if (!QFile::exists(core)) {
         QMessageBox msgBox;
-        msgBox.setText("RetroArch requires the Vectrex core module as a parameter. Please set up a link to the RetroArch vectrex core in the project settings/misc. \n\nOn macos, the location is typically ~/Library/Application\ Support/RetroArch/cores/vecx_libretro.dylib");
+        msgBox.setText("RetroArch requires the Vectrex core module as a parameter. Please set up a link to the RetroArch vectrex core in the project settings/misc. \n\nOn macos, the location is typically ~/Library/Application Support/RetroArch/cores/vecx_libretro.dylib");
         msgBox.exec();
         params.clear();
         return;
