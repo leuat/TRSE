@@ -8,9 +8,9 @@ program Tutorial5;
 var
 	
 	@deletefile "images/tiles.bin"	
-	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 0 16 16
-	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32 0 16 16
-	@exportsubregion "images/tiles.flf" "images/tiles.bin" 48 0 16 16
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 0 16 16 1
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32 0 16 16 
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 48 0 16 16 
 
 	
 	font: incbin("zxchars.bin");

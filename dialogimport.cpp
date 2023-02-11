@@ -454,6 +454,16 @@ void DialogImport::on_btnImport_clicked()
         tr("Open Image"), "", tr("Image Files (*.png *.jpg *.bmp *.jpeg *.gif)"));
 
     m_input.LoadQImage(fileName);
+
+    if (m_input.m_width<=m_work.m_width || m_input.m_height<=m_work.m_height) {
+        QMessageBox msgBox;
+        QString resIn = QString::number(m_input.m_width) + "x"+QString::number(m_input.m_height);
+        QString resOut = QString::number(m_work.m_width) + "x"+QString::number(m_work.m_height);
+        msgBox.setText("Your input image has a lower resolution ("+resIn+") than the output image ("+resOut+"). The input image should be the same resolution (or larger) than the target resolution, so this conversion might produce incorrect results.");
+        msgBox.exec();
+    }
+
+
     if (ui->chkGenPal->isChecked()) {
         m_image->m_colorList.GeneratePaletteFromQImage(*m_input.m_qImage);
         m_image->m_colorList.CreateUI(ui->layoutColors,0);
