@@ -10,7 +10,13 @@ var
 
 	@donotremove angle
 	v:integer;// at $31;
-	c,s,ci,cj,ck, i,j,k,angle,v0,v1,v2,a0 : byte at @matrix_zeropage;
+	
+	@ifdef CPU_MOS6502
+		c,s,ci,cj,ck, i,j,k,angle,v0,v1,v2,a0 : byte at @matrix_zeropage;
+	@else
+		c,s,ci,cj,ck, i,j,k,angle,v0,v1,v2,a0 : byte;
+	@endif
+	
 	m:matp;
 	p1,pb : pointer of byte;
 	res : pointer of integer;

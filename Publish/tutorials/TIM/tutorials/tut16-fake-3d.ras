@@ -1,0 +1,72 @@
+program Image;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+@define max3dobjects 1
+// color 0 to clear
+@define lib3d_clearlines 0 
+@define linemethod "Graphics::Line"
+
+@use "gfx/lib3d"
+
+
+var  
+	time, time2, i,j, kbcheck, curFrame : byte;
+	size : integer;
+	obj1 : incbin("data/torus1.bin");
+	tables2d : incbin("data/2d_dump.bin", $4000);
+	// number of frames of the anim
+	const noFrames: byte = 100;
+	const objPos : address = $2000;
+	
+
+procedure Render();
+begin
+	
+	Lib3d::RenderWireframeColor(0,3);
+	Lib3d::ppo:=Lib3d::ppn;	
+	Lib3d::ppn+=size;	
+	time+=1;
+	curFrame+=1;
+	if (curFrame=noFrames) then
+	begin
+		curFrame:=0;
+		Lib3d::ppn:=#tables2d;
+	end;
+
+end;	
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64,0);
+
+	kbcheck := 20;
+	
+	
+	Lib3d::InitializeData(#objPos);	
+	Lib3d::LoadObject(0, #obj1);
+	size:=Lib3d::objects[0].noVerts*2;
+	Lib3d::ppn:=#tables2d;
+	Lib3d::ppo:=#tables2d;
+	time:=0;
+	while (true) do
+	begin
+		Render();
+		time+=1;
+		kbcheck -= 1;
+		if kbcheck = 0 then
+		begin
+			if Z80CPM::KeyPressed() then break;
+			kbcheck := 20;	// check every 20 frames
+		end;
+	end;
+
+	Z80CPM::GetChar();
+	System::CursorOn();
+	Z80CPM::Exit();
+
+end.

@@ -21,8 +21,18 @@ var
 	ip:pointer of integer;
 	zdiv : integer = 127;
 	zdiv2 : integer = 4;
+
+@ifndef "linemethod"
+@raiseerror "You need to define your line method in 'linemethod' before including the lib3d library"
+@endif
+
 	
+@ifdef CPU_MOS6502
 	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte at @lib3d_zeropage;
+@else
+	i,j,k,f,v,i1,i2,cx,cy,cz,zz : byte;
+
+@endif	
 	a,b,c,d:byte;
 	clearLines : byte = true;
 	xx,yy,iz:integer;
@@ -89,9 +99,29 @@ begin
 		k+=2;
 @ifdef lib3d_clearlines
 		if (first=1) then
-			Gfx::Line(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
+			@linemethod(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
 @endif			
-		Gfx::Line(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],cp[j]);		
+		@linemethod(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],cp[j]);		
+	end;
+	first := 1;	
+
+end;
+
+procedure RenderWireframeColor(i,f:global byte);
+begin
+	fp := objects[i].faces;
+	k:=0;
+
+	for j:=0 to objects[i].noFaces do
+	begin
+		i1 := fp[k];
+		i2 := fp[k+1];
+		k+=2;
+		// clear previous line
+		if (first=1) then
+			@linemethod(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
+		// draw the line
+		@linemethod(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],f);		
 	end;
 	first := 1;	
 
@@ -186,7 +216,7 @@ begin
 	begin
 		a:=ppn[0];
 		b:=ppn[1];
-		Gfx::Line(fp[a],fp[a+1],fp[b],fp[b+1],1);		
+		@linemethod(fp[a],fp[a+1],fp[b],fp[b+1],1);		
 		ppn+=2;
 	end;
 	ppn+=k*2;
