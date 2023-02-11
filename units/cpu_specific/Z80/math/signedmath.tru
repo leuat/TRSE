@@ -9,7 +9,7 @@ var
 	@donotremove PRODUCT
 	PRODUCT: integer;
 	neg: byte; // temp value area	
-	T1, T2 : integer;
+	T1, T2: byte;
 
 
 
@@ -50,19 +50,29 @@ mul0bit:
 	");
 end;
 
-function Muls8x8(T1,T2 : global integer):integer;
+function Muls8x8(T1,T2 : global byte):integer;
 begin
 	asm(" 
-		ld hl, [SignedMath_T1]
-		ld b,h
-		ld c,l
-		ld de, [SignedMath_T2]
-		call multiply_8bit_signed 
+		ld a, [SignedMath_T1]
+		ld c,a
+ 	    add a, a  ; Push sign into carry
+ 	    sbc a,a     ; Turn it into 0 or -1
+        ld  b, a  ; Store high byte
+		
+		ld a, [SignedMath_T2]
+;		;; signed extend 8 to 16 bit
+		 
+		ld e,a
+ 	    add a, a  ; Push sign into carry
+ 	    sbc a,a     ; Turn it into 0 or -1
+        ld  d, a  ; Store high byte
+          
+ 		call multiply_8bit_signed 
 ;		ex de,hl
 	");
 end;
 
-function Divs16x8(PRODUCT:global integer; T1 : global integer):integer;
+function Divs16x8(PRODUCT:global integer; T1 : global byte):integer;
 begin
 		
 	

@@ -788,7 +788,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             }
             else*/
             as->Asm("ld a,[hl]");
-            if (node->isWord(as)) {
+            if (node->isWord(as) && node->getArrayType(as)==TokenType::INTEGER) {
                 as->Asm("ld e,a");
                 as->Asm("inc hl");
                 as->Asm("ld a,[hl]");

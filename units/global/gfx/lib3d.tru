@@ -117,8 +117,10 @@ begin
 		i2 := fp[k+1];
 		k+=2;
 		// clear previous line
+@ifdef lib3d_clearlines
 		if (first=1) then
 			@linemethod(ppo[i1],ppo[i1+1],ppo[i2],ppo[i2+1],@lib3d_clearlines);		
+@endif			
 		// draw the line
 		@linemethod(ppn[i1],ppn[i1+1],ppn[i2],ppn[i2+1],f);		
 	end;
