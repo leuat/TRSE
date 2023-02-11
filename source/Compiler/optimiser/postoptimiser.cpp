@@ -103,7 +103,7 @@ void PostOptimiser::RemoveAllFlagged()
 
             if (!l.m_orgLine.contains(";REMOVAL") && (!l.m_orgLine.contains(";keep"))) {
                 l.m_orgLine+=";REMOVAL";
-//                qDebug() << "Removing : "<<l.m_lineNumber << l.m_orgLine;
+  //              qDebug() << "Removing : "<<l.m_lineNumber << l.m_orgLine;
             }
 //            nlst.append(l);
 
