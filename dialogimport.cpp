@@ -455,7 +455,7 @@ void DialogImport::on_btnImport_clicked()
 
     m_input.LoadQImage(fileName);
 
-    if (m_input.m_width<=m_work.m_width || m_input.m_height<=m_work.m_height) {
+    if (m_input.m_width<m_work.m_width || m_input.m_height<m_work.m_height) {
         QMessageBox msgBox;
         QString resIn = QString::number(m_input.m_width) + "x"+QString::number(m_input.m_height);
         QString resOut = QString::number(m_work.m_width) + "x"+QString::number(m_work.m_height);

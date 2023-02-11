@@ -7,15 +7,23 @@ program Tutorial5;
 
 var
 	
-	@deletefile "images/tiles.bin"	
-	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 0 16 16 1
-	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32 0 16 16 
-	@exportsubregion "images/tiles.flf" "images/tiles.bin" 48 0 16 16 
-
+	@deletefile "images/tiles.bin"
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16  0 16 16	// pacman 1
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 32  0 16 16	// pacman 2
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 48  0 16 16	// pacman 3
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 0  16 16 16	// manic
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 16 16 16 // ball
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 48 16 16 // gng 1
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 48 16 16 // gng 2
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 64 16 16 // gng 3
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 64 16 16 // gng 4
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 80 16 16 // dizzy 1
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 80 16 16 // dizzy 2
+	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 96 16 16 // dizzy 3
+	@exportsubregion "images/tiles.flf" "images/tiles.bin" 16 96 16 16 // dizzy 4
+	sprites: incbin("images/tiles.bin");	// include sprites
 	
 	font: incbin("zxchars.bin");
-	sprites: incbin("images/tiles.bin");	// include sprites
-//	sprites: incbin("sprites.bin");	// include sprites
 
 	i,j,col,ch,sprite,f: integer;
 
