@@ -36,7 +36,7 @@ begin
 		for i:=0 to 3 do
 		begin
 			v:=0;		
-			for k:=0 to 3 do
+			for k:=0 tco 3 do
 			begin
 				v0:=i<<2+k;
 				v1:=k<<2+j;

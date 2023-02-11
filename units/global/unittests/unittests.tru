@@ -43,13 +43,12 @@ begin
 		Common::TestSuiteInit();
 		@ifndef GAMEBOY  // Fails because of `org`
 		@endif
-	   Text::Println("WOOT");
 		
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=13) then AdvancedMath::Exec();
 		@endif
-		if (currentTest=0) then BooleanTest::Exec();
+		if (currentTest=12) then BooleanTest::Exec();
 		if (currentTest=1) then MulDiv::Exec();
 		if (currentTest=2) then Strings::Exec();
 		if (currentTest=3) then Functions::Exec();
@@ -62,7 +61,7 @@ begin
 		if (currentTest=10) then IntegerTest::Exec();
 		if (currentTest=11) then Various::Exec();
 @ifndef CPU_M6809
-		if (currentTest=12) then Classes::Exec();
+		if (currentTest=0) then Classes::Exec();
 @endif
 
 		currentTest+=1;

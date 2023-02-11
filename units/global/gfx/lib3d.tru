@@ -21,7 +21,6 @@ var
 	ip:pointer of integer;
 	zdiv : integer = 127;
 	zdiv2 : integer = 4;
-
 @ifndef "linemethod"
 @raiseerror "You need to define your line method in 'linemethod' before including the lib3d library"
 @endif
@@ -205,6 +204,26 @@ begin
 
 
 end;
+
+procedure Ortho(i: global byte);
+begin
+	ip := objects[i].vertices_rot;
+	cp := ppn;
+	
+	for j:=0 to objects[i].noVerts do
+	begin
+		xx:=ip[0];
+		cp[0]:=SignedMath::Divs16x8(xx,8)+256;
+		xx:=ip[1];
+		cp[1]:=SignedMath::Divs16x8(xx,8)+128;
+			
+		cp+=2;
+		ip+=6;		
+	end;
+
+
+end;
+
 
 procedure RenderLineList();
 begin

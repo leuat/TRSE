@@ -757,18 +757,22 @@ bool Util::isNumber(QString s)
         base = 16;
         s = s.remove("$");
     }
+    else
     if (s.startsWith("0x")) {
         base = 16;
         s = s.remove("0x");
     }
+    else
     if (s.startsWith("#")) {
         base = 16;
         s = s.remove("#");
     }
+    else
     if (s.startsWith("%")) {
         base = 2;
         s = s.remove("%");
     }
+    else
     if (s.startsWith("0b")) {
         base = 2;
         s = s.remove("0b");

@@ -1,0 +1,134 @@
+program Image;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+@define max3dobjects 1
+// color 0 to clear
+@define lib3d_clearlines 0 
+@define linemethod "Graphics::Line"
+
+@use "gfx/lib3d"
+
+
+var  
+	time, time2, i,j, kbcheck, curFrame : byte;
+	size : integer;
+	obj1 : incbin("data/torus1.bin");
+	// number of frames of the anim
+	const noFrames: byte = 100;
+	const objPos : address = $2000;
+	matX, matY, matZ, matT : Matrix::mat4;
+
+	@donotremove Z80CPM_puthexb
+	v1: array[3] of byte;
+	res: array[3] of integer;
+	
+procedure PrintMatrix(pi : pointer of integer);
+begin
+	for i:=0 to 4 do
+	begin
+		for j:=0 to 4 do
+		begin
+			
+			Z80CPM::puthexi(pi^);
+		    Z80CPM::PutString(", ");
+			pi+=2;
+		end;
+		Z80CPM::PutString("\n\r");
+	end;	
+	
+end;
+
+procedure PrintVec3(pi2 : pointer of integer);
+begin
+	for j:=0 to 3 do
+	begin
+			
+		Z80CPM::puthexi(pi2^);
+		Z80CPM::PutString(", ");
+		pi2+=2;
+	end;
+	Z80CPM::PutString("\n\r");
+	
+end;
+	
+
+procedure Render();
+begin
+	
+	Lib3d::FlipPointPointers(0);
+	Matrix::RotateX(#matX, time*4);
+	Matrix::RotateZ(#matY, time*3);
+	Matrix::RotateZ(#matZ, time*2);
+	
+	Matrix::MatMul3(#matX, #matY, #matT);
+	
+//	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
+	Matrix::Identity(Lib3d::objects[0].rotmat);
+	
+	Matrix::RotateX(Lib3d::objects[0].rotmat, time*4);
+	
+	
+//	PrintMatrix(Lib3d::objects[0].rotmat);
+	PrintMatrix(#matX);
+
+	v1[0]:=$81;	
+	v1[1]:=2;	
+	v1[2]:=3;	
+	
+	Matrix::MatMulVec3(#matX, #v1, #res);
+	PrintVec3(#res);
+
+	Lib3d::RotateVertices(0);	
+
+	Lib3d::ProjectSimple(0,200,128,128,  60);
+//	Lib3d::Ortho(0);
+/*	Z80CPM::puthexb(Lib3d::ppn[0]);
+	Z80CPM::puthexb(Lib3d::ppn[1]);
+	Z80CPM::puthexb(Lib3d::ppn[2]);
+	Z80CPM::puthexb(Lib3d::ppn[3]);
+	Z80CPM::puthexb(Lib3d::ppn[4]);
+	Z80CPM::puthexb(Lib3d::ppn[5]);
+		Z80CPM::PutString("\n\r");
+
+*/	
+	Lib3d::RenderWireframeColor(0,3);
+
+end;	
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64,0);
+
+	kbcheck := 20;
+	Lib3d::InitializeData(#objPos);	
+	Lib3d::LoadObject(0, #obj1);
+
+	Matrix::Identity(#matX);
+	Matrix::Identity(#matY);
+	Matrix::Identity(#matZ);
+	Matrix::Identity(Lib3d::objects[0].rotmat);
+	
+	
+	time:=16;
+//	while (true) do
+	begin
+		Render();
+		time+=1;/*
+		kbcheck -= 1;
+		if kbcheck = 0 then
+		begin
+			if Z80CPM::KeyPressed() then break;
+			kbcheck := 20;	// check every 20 frames
+		end;*/
+	end;
+
+	Z80CPM::GetChar();
+	System::CursorOn();
+	Z80CPM::Exit();
+
+end.

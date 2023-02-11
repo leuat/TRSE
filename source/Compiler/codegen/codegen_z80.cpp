@@ -815,7 +815,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             else {
                 as->Term();
                 as->Asm("ld e,a ; variable is 8-bit");
-                as->Asm("ld d,0");
+                as->Asm("ld d,0 ;keep");
             }
         }
         //      as->Asm("ld hl,"+node->getValue(as));
@@ -1311,8 +1311,11 @@ void CodeGenZ80::LoadPointerToHl(QSharedPointer<Node> node)
 {
     QString name = getValue(node);
     as->Comment("Loading pointer");
-    if (!isGB())
+    if (!isGB()) {
         as->Asm("ld hl,["+name+"]");
+        if (node->getOrgType(as)==TokenType::BYTE || node->getOrgType(as)==TokenType::BOOLEAN)
+            as->Asm("ld h,0 ; variable is byte");
+    }
     else {
         as->Asm("ld a,["+name+"]");
         as->Asm("ld h,a");
@@ -1906,7 +1909,10 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         {
             if (var->m_expr->isPureNumeric()) {
                 as->Comment("; index is pure number optimization");
-                as->Asm("ld de,"+var->m_expr->getValue(as));
+                int scale = var->getArrayDataSize(as);
+                if (var->m_writeType!=TokenType::NADA)
+                    scale = 1;
+                as->Asm("ld de,"+Util::numToHex(var->m_expr->getValueAsInt(as)*scale));
                 as->Asm("add hl,de");
             }
             else {
@@ -1926,6 +1932,8 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
                     var->m_expr->Accept(this);
                     as->Asm("ld e,a");
                     as->Asm("add hl,de");
+                    if (var->getArrayType(as)==TokenType::INTEGER)
+                        as->Asm("add hl,de ; integer array");
                 }
             }
         }
@@ -1949,6 +1957,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
                         else
                         as->Asm("ld hl,["+node->m_right->getValue(as)+"]");*/
                         as->Asm("pop de");
+                        ExDeHl();
                     }
                     else // is number
                         as->Asm("ld de,"+Util::numToHex(node->m_right->getValueAsInt(as)));

@@ -8,89 +8,66 @@ unit SignedMath;
 var
 	@donotremove PRODUCT
 	PRODUCT: integer;
-	T1,T2,neg: byte; // temp value area	
-	
-	@donotremove square1_lo
-	@donotremove square1_hi
-	@donotremove square2_lo
-	@donotremove square2_hi
-
-
-
-@startblock @muldivtables "Signed mul/div tables"
-	square1_lo :array[512] of byte=BuildTable("((i*i)/4)&0xFF");
-	square1_hi :array[512] of byte=BuildTable("(i*i)/4/256");
-	square2_lo :array[512] of byte=BuildTable("(i-255)*(i-255)/4");
-	square2_hi :array[512] of byte=BuildTable("(((i-255)*(i-255))/4)>>8");
-@endblock
+	neg: byte; // temp value area	
+	T1, T2 : integer;
 
 
 
 @donotremove Init
 procedure Init();
 begin
-/*	asm("
-	; by jackasser
-
-multiply_8bit_unsigned
-                bcc m8b_next
-                    lda SignedMath_T1
-                    sta m8s_sm1+1
-                    sta m8s_sm3+1
-                    eor #$ff
-                    sta m8s_sm2+1
-                    sta m8s_sm4+1
-m8b_next:
-
-                ldx SignedMath_T2
-                sec
-m8s_sm1:            lda SignedMath_square1_lo,x
-m8s_sm2:            sbc SignedMath_square2_lo,x
-                sta SignedMath_PRODUCT+0
-m8s_sm3:            lda SignedMath_square1_hi,x
-m8s_sm4:            sbc SignedMath_square2_hi,x
-                sta SignedMath_PRODUCT+1
-
-                rts
-
-
+	asm("
 multiply_8bit_signed:
-                jsr multiply_8bit_unsigned
+  xor a
+  ld h,a
+  ld l,a
 
-                ; Apply sign (See C=Hacking16 for details).
-                lda SignedMath_T1
-                bpl sign_nxt
-                    sec
-                    lda SignedMath_PRODUCT+1
-                    sbc SignedMath_T2
-                    sta SignedMath_PRODUCT+1
-sign_nxt:
-                lda SignedMath_T2
-                bpl sign_nxt2
-                    sec
-                    lda SignedMath_PRODUCT+1
-                    sbc SignedMath_T1
-                    sta SignedMath_PRODUCT+1
-sign_nxt2
+  bit 7,d
+  jr z,muldpos
+  sbc hl,bc
+muldpos:
 
-                rts
+  or b
+  jp p,mulbpos
+  sbc hl,de
+mulbpos:
+
+  ld a,16
+mulloop:
+  add hl,hl
+  rl e
+  rl d
+  jr nc,mul0bit
+  add hl,bc
+  jr nc,mul0bit
+  inc de
+mul0bit:
+  dec a
+  jr nz,mulloop
+                	
 	
 
-	");*/
-end;
-
-procedure Muls8x8(T1,T2 : global byte);
-begin
-	asm(" 
-		sec
-		jsr multiply_8bit_signed 
-		lda SignedMath_PRODUCT
-		ldy SignedMath_PRODUCT+1
 	");
 end;
 
-procedure Divs16x8(PRODUCT:global integer; T1 : global byte);
+function Muls8x8(T1,T2 : global integer):integer;
 begin
+	asm(" 
+		ld hl, [SignedMath_T1]
+		ld b,h
+		ld c,l
+		ld de, [SignedMath_T2]
+		call multiply_8bit_signed 
+;		ex de,hl
+	");
+end;
+
+function Divs16x8(PRODUCT:global integer; T1 : global integer):integer;
+begin
+		
+	
+	
+	
 	if (hi(PRODUCT)>=128) then 
 	begin
 		neg:=true;
@@ -101,10 +78,12 @@ begin
 	PRODUCT := PRODUCT/T1;
 	
 	if (neg=true) then 
-		PRODUCT := 0 - PRODUCT
-	else
-		asm("
-		lda SignedMath_PRODUCT
+		PRODUCT := 0 - PRODUCT;
+	
+	
+	asm("
+		ld hl, [SignedMath_PRODUCT]
+		
 		
 		");		
 /*	asm(" 
@@ -112,5 +91,5 @@ begin
 		ldy SignedMath_PRODUCT+1
 	");
 */	
-end;
+	end;
 end.

@@ -89,7 +89,7 @@ QString ZOrgasm::Process(QString s, OrgasmLine& ol)
             }
         if (!ok && !Util::isNumber(tst) && !tst.startsWith("($") && !tst.startsWith("(0x")){ // && !tst.startsWith("*")) {
   //          qDebug() << "Testing for symbol " << tst<<m_symbolsList;
-
+            qDebug() <<Util::isNumber(tst) << tst;
             throw OrgasmError("Symbol '"+tst+"' undefined",ol);
         }
 

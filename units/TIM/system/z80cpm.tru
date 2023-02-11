@@ -14,7 +14,7 @@ var
 	str: pointer;
 	reg_bc, reg_de: integer;
 	fname, fp: pointer;
-	
+	hexb: byte;
 	const FILENAME_MAX: byte = 15;  /* d:filename.typ + ZERO */
 	const _FCB_SIZE:    byte = 36;
 	const EOF:          integer = $FFFF;
@@ -261,7 +261,7 @@ end;
 /**
 	Puts a hex byte to terminal
 **/
-procedure puthexb(hexb: byte);
+procedure puthexb(hexb: global byte);
 begin
 	puthexn(hexb >> 4);
 	puthexn(hexb & $0F);
