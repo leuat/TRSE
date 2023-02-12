@@ -1,0 +1,55 @@
+unit Benchmark;
+@use "system/system"
+@use "system/screen"
+@use "system/ascii"
+
+var  
+	benchTime: integer;
+	benchFps, drawCount: byte;
+	const FPSY: byte = 0;
+	const FPSTX: byte = 50;
+	const FPSNX: byte = FPSTX + 8;
+
+procedure IncBenchTime();
+begin
+	benchTime += 1;
+	if benchTime >= 100 then begin
+		benchTime := 0;
+		benchFps := drawCount;
+		drawCount := 0;
+	end;
+end;
+
+procedure Setup();
+begin
+	Screen::GotoXY(FPSTX, FPSY);
+	Screen::PrintStr("FPS: ");
+	drawCount := 0;
+	benchTime := 0;
+	benchFps := 0;
+	System::SetTimerFunction(#IncBenchTime);
+end;
+
+procedure Cleanup();
+begin
+	System::SetTimerFunction(0);
+end;
+
+procedure Display();
+var
+	tmp: byte;
+begin
+	Screen::GotoXY(FPSNX, FPSY);
+	Screen::PrintChr($30 + (benchFps/10));
+	Screen::PrintChr(ASCII::DOT);
+	//Screen::PrintChr($30 + mod(benchFps, 10));
+	tmp := mod(benchFps, 10);
+	Screen::PrintChr($30 + tmp);
+//	Screen::PrintChr(ASCII::SPACE);
+//	Screen::puthexb(benchFps);
+//	Screen::PrintChr(ASCII::SPACE);
+//	Screen::puthexb(tmp);
+	benchFps := 0;
+end;
+
+end.
