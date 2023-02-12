@@ -30,16 +30,23 @@ begin
 		Screen::DoScroll();
 	end;
 
-	Screen::GotoXY(10,20);
-	Screen::PrintStr("Scrolling from 100ms timer interrupt... Press any key...");
+	Screen::GotoXY(8,20);
+	Screen::PrintStr("Scrolling from timer interrupt, main code can do whatever...");
+	Screen::GotoXY(50,24);
+	Screen::PrintStr("Press any key...");
 
-	// sets function to be called every 100ms from TIM's interrupt
+	// sets function to be called from TIM's interrupt (every 100ms by default)
 	System::SetTimerFunction(#Screen::DoScroll);
+	// sets timer interrupt to fire faster
+	System::SetTimerCountdown($30);
+
 
 	// now the scrolling is done from interrupt, main code just waits for keypress
 	ch := Z80CPM::GetChar();
 	
-	// returns interrupt function to normal
+	// sets timer interrupt to fire at default rate
+	System::SetTimerCountdown(0);
+	// returns interrupt function to OS default
 	System::SetTimerFunction(0);
 
 	Screen::ClearBox(0, 0, 128, 64, 0);

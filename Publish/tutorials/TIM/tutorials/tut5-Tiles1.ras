@@ -53,7 +53,7 @@ begin
 	//   - if address is passed, then that address is used as tile address
 	Screen::ClearBox(0, 0, 128, 64, 0);
 
-	// pacman is on indexes 0-2 in sprites.bin
+	// pacman is on indexes 0-2 in tiles.bin
 	Tiles::PutTile(2,2,0);
 	Tiles::PutTile(6,2,1);
 	Tiles::PutTile(10,2,2);
