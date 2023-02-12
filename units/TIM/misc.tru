@@ -1,0 +1,33 @@
+unit Misc;
+@use "system/z80cpm"
+var
+	keyPressed : boolean = 0;
+	kbcheck : byte = 0;
+	maxkbTest : byte = 20;
+/**
+
+	Check for any keypress and toggle a value if true. Used in the internal TIM TRSE tutorials.  
+
+**/	
+
+procedure InitKeyboardCheck(maxkbTest : global byte);
+begin
+	kbcheck := maxkbTest;
+	keyPressed := false;
+	
+end;
+
+procedure KeyboardCheck();
+begin
+	kbcheck -= 1;
+	if kbcheck = 0 then
+	begin
+		if Z80CPM::KeyPressed() then keyPressed:=true;
+		kbcheck := maxkbTest;	// check every 20 frames
+	end;
+	
+end;
+	
+	
+	
+end.

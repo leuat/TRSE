@@ -4,6 +4,7 @@ program Image;
 @use "system/screen"
 @use "system/graphics"
 @use "benchmark"
+@use "misc"
 
 @define max3dobjects 1
 // color 0 to clear
@@ -13,7 +14,7 @@ program Image;
 @use "gfx/lib3d"
 
 var  
-	time, time2, i,j, kbcheck, curFrame : byte;
+	time, time2, i,j, curFrame : byte;
 	size : integer;
 	obj1 : incbin("data/torus1.bin");
 	tables2d : incbin("data/2d_dump.bin", $4000);
@@ -58,7 +59,6 @@ begin
 @endif
 	Screen::GotoXY(0,2);
 
-	kbcheck := 20;
 
 	Lib3d::InitializeData(#objPos);	
 	Lib3d::LoadObject(0, #obj1);
@@ -67,17 +67,13 @@ begin
 	Lib3d::ppo:=#tables2d;
 	time:=0;
 	Benchmark::Setup();
-	while (true) do
+	Misc::InitKeyboardCheck(5);
+	while (not Misc::keyPressed) do
 	begin
 		Render();
 		time+=1;
 		Benchmark::drawCount += 1;
-		kbcheck -= 1;
-		if kbcheck = 0 then
-		begin
-			if Z80CPM::KeyPressed() then break;
-			kbcheck := 20;	// check every 20 frames
-		end;
+		Misc::KeyboardCheck();
 		if Benchmark::benchFps <> 0 then Benchmark::Display();
 	end;
 

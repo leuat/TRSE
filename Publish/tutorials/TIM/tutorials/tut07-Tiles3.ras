@@ -86,7 +86,8 @@ begin
 	Screen::SetScroll(64-24,0,24,#scrolltxt);
     System::SetTimerFunction(#moveship);
 
-    while (1) do begin
+    while (true) do 
+	begin
         if phase < 8 then begin
             drawinv(invx, 5, 2, 3);
             drawinv(invx, 9, 3, 2);

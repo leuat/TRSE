@@ -4,7 +4,7 @@ program Image;
 @use "system/system"
 @use "system/screen"
 @use "system/graphics"
-
+@use "misc"
 var  
    v: byte; 
 
@@ -23,7 +23,13 @@ begin
 //	Compression::DecompressToPort(#image,$8000);
 //	Compression::DecompressToPort(#image,$3E00);
 	Screen::CopyToScreen($3E00, $8000, 512*256/4);
-	loop();
+	Misc::InitKeyboardCheck(5);
+	while (Misc::keyPressed=false) do
+	begin
+		Misc::KeyboardCheck();	
+	end;
+	Z80CPM::GetChar();
+	
 	Z80CPM::Exit();
 
 end.

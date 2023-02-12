@@ -4,6 +4,7 @@ program Image;
 @use "system/screen"
 @use "system/graphics"
 @use "benchmark"
+@use "misc"
 
 @define max3dobjects 1
 // color 0 to clear
@@ -14,29 +15,34 @@ program Image;
 
 
 var  
-	time, time2, i,j, kbcheck, curFrame : byte;
+	time, time2, i,j, curFrame : byte;
 	size : integer;
 	obj1 : incbin("data/torus1.bin");
-	// number of frames of the anim
+	// objPos is the location where the object is stored: rotation matrix, 
+	// rotated vertices and projected 2d coordinates
 	const objPos : address = $2000;
+	// Three matrices
 	matX, matY, matZ, matT : Matrix::mat4;
 
 	font: incbin("zxchars.bin", $4000);	// load an 8x8 font
 
 procedure Render();
 begin
-	
+	// Flips the projection pointers so that we always keep a copy of the previous line list for 
+	// black line clearing
 	Lib3d::FlipPointPointers(0);
+	// Rotate x,y and z with some random time value
 	Matrix::RotateX(#matX, time*4);
 	Matrix::RotateZ(#matY, time*3);
 	Matrix::RotateZ(#matZ, time*2);
-	
+
+	// Mul X and Y to a temp mat T	
 	Matrix::MatMul3(#matX, #matY, #matT);
-	
+	// Mul together and store in the objects rotation matrix
 	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
-
+	// Perform the rotation (rotation_matrix * each vertex_in_the_object)
 	Lib3d::RotateVertices(0);	
-
+	// Projects the rotated vertices in a simple manner to 2d coordinates
 	Lib3d::ProjectSimple(0,100,128,90,  60);
 	
 @ifndef lib3d_clearlines
@@ -60,7 +66,6 @@ begin
 	Screen::PrintStr("ClearBox(...)");
 @endif
 
-	kbcheck := 20;
 
 	Lib3d::InitializeData(#objPos);	
 	Lib3d::LoadObject(0, #obj1);
@@ -72,22 +77,18 @@ begin
 	
 	time:=16;
 	Benchmark::Setup();
-	while (true) do
+	Misc::InitKeyboardCheck(5);
+	while (not Misc::keyPressed) do
 	begin
 		Render();
 		time+=1;
 		Benchmark::drawCount += 1;
-		kbcheck -= 1;
-		if kbcheck = 0 then
-		begin
-			if Z80CPM::KeyPressed() then break;
-			kbcheck := 20;	// check every 20 frames
-		end;
+		Misc::KeyboardCheck();
 		if Benchmark::benchFps <> 0 then Benchmark::Display();
 	end;
 
-	Benchmark::Cleanup();
 	Z80CPM::GetChar();
+	Benchmark::Cleanup();
 	System::CursorOn();
 	Z80CPM::Exit();
 end.
