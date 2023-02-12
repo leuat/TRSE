@@ -1,0 +1,22 @@
+program Assign;
+var
+	x: byte;
+	l : integer;
+function Lalala(la: integer):byte;
+var
+	Lalala_ret: integer;
+	someVal : integer;
+begin
+	if (x=5) then
+		someVal := 12
+	else 
+		someVal := 42;
+
+
+	Lalala := someVal;
+end;
+
+begin
+	asm(";here");
+	l := Lalala(5);
+end.

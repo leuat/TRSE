@@ -1,0 +1,51 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+
+@export "images/image2.flf" "images/image2.bin" 256
+
+var  
+	time, time2, i,j,x,y,k,l,m,n, time3 : byte;
+	
+	// Char width of the circles
+	const width : byte= 64;
+	// Char data width of the circles
+	const height:byte = 48;
+
+	image:incbin("images/image2.bin") compressed;
+
+	sqr : array[] of byte = buildtable2d(height,width,"256/(Math.sqrt(Math.pow(i-WIDTH/2-15,2)/2+Math.pow(j-HEIGHT/2-15,2))+4)*32.0");	
+
+
+procedure ConvertToScreen(src, dst: pointer);
+begin
+	
+end;	
+
+	
+procedure Render();
+begin
+end;	
+	
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	
+	time:=0;
+	Compression::DecompressToPort(#image,$8000); // doesn't work completely yet
+	while (true) do
+	begin
+		Render();
+
+		
+		time+=1;
+		
+	end;
+	Z80CPM::Exit();
+
+end.

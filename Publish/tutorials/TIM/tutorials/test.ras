@@ -1,0 +1,22 @@
+program MyProgram;
+var
+		arr : array[4] of integer = (1,2,3,4);
+		p : pointer of integer;
+		y,iy : integer;
+		v,z:byte;
+		
+function Test(): integer;
+begin
+	Test:=v;
+end;	
+
+begin
+	iy:=$104;
+	asm(";here");
+	iy := integer (z);
+	
+	asm(";ends");
+	
+	p:=#arr;
+	z:=p[v];
+end.
