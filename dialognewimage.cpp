@@ -55,7 +55,7 @@ void DialogNewImage::CreateCategories()
 
 
    ui->cmbSystem->addItems(m_categories);
-   ui->cmbSystem->setCurrentText(Syntax::s.m_systemString);
+   ui->cmbSystem->setCurrentText(Syntax::s.m_systemString.toLower());
 }
 
 void DialogNewImage::SetResizeMeta(CharmapGlobalData gd)

@@ -53,6 +53,7 @@ void LImageSprites2::ImportBin(QFile &f)
         LSprite* s = new LSprite(a,i*64,m_bitMask);
         m_items.append(QSharedPointer<LSprite>(s));
         m_current = m_items.count()-1;
+
         //for (int j=0;j<4;j++)
           //  SetColor(m_extraCols[j],j);
     }
@@ -220,6 +221,27 @@ QByteArray LSprite::ToQByteArray(int mask) {
 
 
     return data;
+}
+
+LSprite::LSprite(QByteArray &a, int index, int mask) {
+    int c = index;
+    Init(1,1);
+    for (int y=0;y<3;y++) {
+        for (int x=0;x<3;x++) {
+            for (int j=0;j<8;j++) {
+                int d = c+3*j;
+                m_data[y*3+x].p[j] = PixelChar::reverse(a[d]);
+                m_data[y*3+x].p[j] = m_data[y*3+x].flipSpriteBit(j, mask);
+            }
+            m_data[y*3+x].c[0]=0;
+            m_data[y*3+x].c[1]=1;
+            m_data[y*3+x].c[2]=2;
+            m_data[y*3+x].c[3]=3;
+            c++;
+        }
+        c+=7*3;
+    }
+
 }
 
 PixelChar *LSprite::GetSetData(double x, double y, double &ix, double &iy, uchar bitMask)
