@@ -42,7 +42,6 @@ void SidFile::Load(QString filename, QString path)
 
     file.open(QIODevice::ReadOnly);
     m_blob = file.readAll();
-    //qDebug() << "sid file size: " << m_blob.count();
 
 
     if (!((m_blob.at(0)=='P'||m_blob.at(0)=='R') && m_blob.at(1)=='S' && m_blob.at(2)=='I' && m_blob.at(3)=='D'))
@@ -54,7 +53,7 @@ void SidFile::Load(QString filename, QString path)
     m_playAddress = (unsigned char)(m_blob.at(0xc))<<8 | (unsigned char)(m_blob.at(0xc+1))<<0;
 
     m_zp.clear();
-    for (int i=0;i<m_blob.size();i++) {
+    for (int i=0;i<m_blob.size()-1;i++) {
         uchar d = m_blob[i];
         uchar n = m_blob[i+1];
 //        if (d==0x81 || d==0x91) {

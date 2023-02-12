@@ -175,6 +175,7 @@ void DialogImport::Convert()
     double scaleY = 1+(ui->hsScaleY->value()/100.0 - 0.5)*4;
 
 
+
     m_output.m_qImage = img->Resize(m_work.m_qImage->width(),
                                     m_work.m_qImage->height(),
                                     m_image->m_colorList,
@@ -259,7 +260,7 @@ void DialogImport::Convert()
 
 //        org->m_colorList.m_customPalette = Util::HexQStringListToByteArray(lst);;
     }
-    m_image->m_importScale = 2;
+   // m_image->m_importScale = 2;
 //        qDebug() << scaleX;
   //  m_output.OrdererdDither(*m_output.m_qImage,m_image->m_colorList, QVector3D(0,0,0),QPoint(matrixSizeX,matrixSizeY),1);
     //*m_output.m_qImage = QImage(m_output.m_qImage->scaled(m_image->GetWidth(),m_image->GetHeight(),Qt::IgnoreAspectRatio));
@@ -318,6 +319,7 @@ void DialogImport::Convert()
     if (inter!=nullptr) {
         // Need to convert back to c64 cells
         m_image = org;
+//        qDebug() << m_image->m_width << m_image->m_height << inter->m_width << inter->m_height;
         m_image->FromLImageQImage(inter);
         m_image->m_colorList.CopyFrom(&orgCols);
 
@@ -454,6 +456,7 @@ void DialogImport::on_btnImport_clicked()
         tr("Open Image"), "", tr("Image Files (*.png *.jpg *.bmp *.jpeg *.gif)"));
 
     m_input.LoadQImage(fileName);
+    m_input.m_qImage->save("test.png");
 
     if (m_input.m_width<m_work.m_width || m_input.m_height<m_work.m_height) {
         QMessageBox msgBox;

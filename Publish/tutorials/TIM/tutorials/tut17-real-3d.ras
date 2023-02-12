@@ -39,7 +39,7 @@ begin
 
 	Lib3d::RotateVertices(0);	
 
-	Lib3d::ProjectSimple(0,200,128,90,  60);
+	Lib3d::ProjectSimple(0,100,128,90,  60);
 	
 	Lib3d::RenderWireframeColor(0,3);
 
