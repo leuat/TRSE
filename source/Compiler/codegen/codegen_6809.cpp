@@ -460,6 +460,9 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
 void CodeGen6809::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
+    if (node->m_right->isPureNumeric() && node->m_left->getOrgType(as)==TokenType::BYTE)
+        node->SwapNodes();
+    else
     if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
         node->SwapNodes();
     }

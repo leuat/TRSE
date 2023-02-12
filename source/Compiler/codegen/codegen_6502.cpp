@@ -493,7 +493,12 @@ void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
 
 void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
-    if (node->m_left->getOrgType(as)==TokenType::BYTE && node->m_right->isWord(as)) {
+    // First check for simple stuff like x*320
+    if (node->m_right->isPureNumeric() && node->m_left->getOrgType(as)==TokenType::BYTE)
+        node->SwapNodes();
+    else
+
+    if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
         node->SwapNodes();
     }
     //    Disable16bit();

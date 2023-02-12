@@ -72,40 +72,4 @@ begin
 	end;
 end;
 
-procedure ExecCoco3();
-begin
-	currentTest := 0;
-	
-	AdvancedMath::Exec();	
-	return;
-	Casts::Exec();
-//	return;
-	Strings::Exec();
-	Various::Exec();	
-	Casts::Exec();
-	MulDiv::TRS80();
-		
-	isDone := false;
-	Registers::Exec();
-	IntegerTest::Exec();
-	BitOp::Exec();
-	CaseTest::Exec();
-	Common::TestInit();
-	IntegerTest::Exec();
-	ForLoop::Exec();
-	IfThenElse::Exec();
-	
-/*	while (Common::Status() = 0 and isDone = false) do
-	begin
-	//	Common::TestSuiteInit();
-//	
-		currentTest+=1;
-				
-		if (currentTest>=noTests) then
-			isDone := true;
-		
-	end;
-*/	
-end;
-
 end.
