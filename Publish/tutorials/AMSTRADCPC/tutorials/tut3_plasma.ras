@@ -193,7 +193,7 @@ end;
 
 begin
 	Init();
-	while (done=0) do
+	while (true) do
 	begin
 		CalculatePlasmaTables();
 		time:=time+1;

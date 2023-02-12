@@ -148,11 +148,15 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
 //    CodeGen6502 dispatcher;
 //    dispatcher.as = &tmpAsm;
 //    s_isInOffpageTest = true;
+
     auto app = QSharedPointer<Appendix>(new Appendix);
     auto newtemp = QSharedPointer<Appendix>(new Appendix);
     auto keep2 = as->m_tempVarsBlock;
-    as->m_tempVarsBlock = newtemp;
+  //  if (as->offPageStack==0)
+        as->m_tempVarsBlock = newtemp;
     auto keep = as->m_currentBlock;
+    as->offPageStack++;
+
     as->m_currentBlock = app;
     QStringList keepTemps = as->m_tempVars;
     if (testBlockA!=nullptr)
@@ -163,7 +167,10 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
 
     int count = as->CodeSizeEstimator(app->m_source);
     as->m_currentBlock = keep;
-    as->m_tempVarsBlock = keep2;
+    as->offPageStack--;
+
+//    if (as->offPageStack==0)
+        as->m_tempVarsBlock = keep2;
 
 
     return count<120;

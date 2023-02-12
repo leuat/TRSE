@@ -34,6 +34,7 @@ class NodeString : public Node {
 public:
     QStringList m_val;
     bool m_isCString = false;
+    bool m_hasBeenDefined = false;
     NodeString(Token op, QStringList val, bool isCString):Node() {
         m_op = op;
         m_val = val;

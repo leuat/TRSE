@@ -254,6 +254,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 }
 
 void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {
+    Comment("Declaring string asmz80");
     Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
@@ -418,7 +419,8 @@ QString AsmZ80::String(QStringList lst, bool term)
     }
     if (term)
         res=res + "\t"+mark+"\t0";
-    m_term +=res;
+
+    //m_term +=res;
     return res;
 }
 

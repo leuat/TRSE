@@ -1511,7 +1511,11 @@ QString AbstractCodeGen::getValue8bit(QSharedPointer<Node> n, int isHi) {
 
 QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
 {
+/*    auto right = qSharedPointerDynamicCast<NodeString>(node);
     //    as->Asm("jmp " + lbl);
+    if (right->m_hasBeenDefined == true)
+        return "";
+*/
     QString strName = as->NewLabel("stringassignstr");
 /*    if (Node::s_isInOffpageTest) {
         qDebug() << "ABSTRACTCODEGEN RETURN "<< strName;
@@ -1526,12 +1530,11 @@ QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
         as->DeclareCString(strName,ns->m_val,node->flags.keys());
     }
     else {
-        //        QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
         as->DeclareString(strName,ns->m_val,node->flags.keys());
-        //      as->m_tempVars<<strAssign;
     }
 
     as->EndCurrentBlock();
+  //  right->m_hasBeenDefined = true;
 
     return strName;
 }

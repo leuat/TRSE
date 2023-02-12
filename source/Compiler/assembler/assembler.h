@@ -271,7 +271,7 @@ public:
 
     virtual QString GetOrg(int pos ) = 0;
     virtual QString GetOrg();
-
+    int offPageStack = 0;
 
 
     virtual void Program(QString name, QString vicParam) {};

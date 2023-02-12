@@ -2006,8 +2006,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
     QString lblCpy=as->NewLabel("stringassigncpy");
-
-
     QString str = DefineTempString(right);
     //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
     //  as->Label(lbl);

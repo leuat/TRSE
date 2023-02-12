@@ -72,6 +72,8 @@ void CodeGenZ80::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 //    QString str = as->NewLabel("stringassignstr");
+    if (as->offPageStack!=0)
+        return;
     QString lblCpy=as->NewLabel("stringassigncpy");
 
     QString str = DefineTempString(right);
@@ -362,6 +364,17 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
         if (node->m_right->getValueAsInt(as)==0)
             if (node->m_op.m_type==TokenType::NOTEQUALS)
             {
+                // First check for "while true" stuff
+                if (node->m_left->isPureNumeric()) {
+                    if (node->m_left->getValueAsInt(as)!=node->m_right->getValueAsInt(as) ){
+                        as->Asm("Comparing two non-equal numerical values");
+                        as->Asm("jr "+lblFailed);
+                        return;
+                    }
+
+                }
+
+
                 as->Comment("Special case for integer<>0");
                 node->m_left->setForceType(TokenType::INTEGER);
                 node->m_left->Accept(this);
@@ -1643,14 +1656,32 @@ void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QSt
         node->SwapNodes();
         //      as->Comment("AFTER  flip "+node->m_right->getValue(as) + " " +node->m_left->getValue(as));
     }
+    QString p = "r";
+    if (offPage)
+        p="p";
+
+    // comparing two non-identical integers
+    if (node->m_op.m_type==TokenType::NOTEQUALS)
+        if (node->m_right->isPureNumeric())
+            if (node->m_left->isPureNumeric()) {
+                if (node->m_left->getValueAsInt(as)!=node->m_right->getValueAsInt(as) ){
+                    as->Comment("Comparing two non-equal numerical values");
+                    as->Asm("j"+p+" "+lblSuccess);
+                    return;
+                }
+                else {
+                    as->Comment("Comparing two equal numerical values");
+                    as->Asm("j"+p+" "+lblFailed);
+
+                }
+
+            }
+
 
     BuildToCmp(node);
 
 
     QSharedPointer<NodeConditional> n = qSharedPointerDynamicCast<NodeConditional>(node);
-    QString p = "r";
-    if (offPage)
-        p="p";
 
     if (node->m_op.m_type==TokenType::EQUALS)
         as->Asm("j"+p+" nz," + lblFailed);
