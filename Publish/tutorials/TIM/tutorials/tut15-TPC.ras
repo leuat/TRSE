@@ -4,19 +4,21 @@ program Tutorial1;
 @use "system/file"
 
 var
+	// delete existing TPC file
 	@deletefile "copy_to_img/consoles.tpc"
+	// create TPC file from consoles.flf
+	// last parameter (1) is needed for TPC as it adds TPC header to the file
 	@exportsubregion "images/consoles.flf" "copy_to_img/consoles.tpc" 0 0 168 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
 
 	TextFile: File::Handle;
-	ch: byte;
-	buffer: array[256] of byte;
 
 begin
 	Z80CPM::Startup();
 	
 	System::SetScreenPos(0);
 	System::CursorOff();
-	
+
+	// show 	consoles.tpc at three different locations on screen
 	File::ShowPic(0,0,"consoles.tpc");
 	File::ShowPic(80,15,"consoles.tpc");
 	File::ShowPic(40,10,"consoles.tpc");

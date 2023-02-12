@@ -1,7 +1,7 @@
 unit System;
 var
-	i,j:byte;
-
+	value: byte;
+	ioaddr: integer;
 
 /**
 	Turns off CP/M terminal cursor.
@@ -11,16 +11,18 @@ procedure CursorOff();
 // found by Marko Solajic
 begin
 	asm("
-    ld a, $C9
-    ld hl, $E806
-    ld (hl), a
+	    ld a, $C9
+	    ld hl, $E806
+	    ld (hl), a
     ");
 end;
 
 
-procedure MegaWait(i:global byte);
+procedure MegaWait(value: byte);
+var
+	j: byte;
 begin
-	for j:=0 to i do	
+	for j:=0 to value do	
 		wait(64); 
 end;
 
@@ -33,15 +35,15 @@ procedure CursorOn();
 // found by Marko Solajic
 begin
 	asm("
-    ld a, $C3
-    ld hl, $E806
-    ld (hl), a
+	    ld a, $C3
+	    ld hl, $E806
+	    ld (hl), a
     ");
 end;
 
 
 /**
-	Set routine for 100ms timer (the one that blinks the terminal cursor). 0 value restores OS routine.
+	Set routine for 100ms timer (the default one blinks the terminal cursor). 0 value restores OS routine.
 **/
 procedure SetTimerFunction(timerfunc: integer);
 // Set new routine for 100ms timer (original one blinks the cursor), by changing BIOS code
@@ -49,25 +51,56 @@ procedure SetTimerFunction(timerfunc: integer);
 begin
 	if timerfunc = 0 then timerfunc := $E806; // set to $E806 to resume cursor blinking
 	asm("
-    di
-    ld hl,(System_timerfunc)
-    ld ($DA32),hl
-    ei
+	    di
+	    ld hl,(System_timerfunc)
+	    ld ($DA32),hl
+	    ei
     ");
+end;
+
+
+/**
+	Gets a value from I/O address ($0000-$FFFF).
+**/
+function GetIO(ioaddr: global integer): byte;
+begin
+	asm("
+		ld bc,(System_ioaddr)
+		in a,(c)
+	");
+end;
+
+
+/**
+	Sets a value to I/O address ($0000-$FFFF).
+**/
+procedure SetIO(ioaddr: global integer, value: global byte);
+begin
+	asm("
+		ld bc,(System_ioaddr)
+		ld a,(System_value)
+		out (c),a
+	");
+end;
+
+
+/**
+	Sets countdown value for 100ms timer ($78 or 120 is the default).<br>
+	Lower values make a faster timer. Setting value to 0 restores default value.
+**/
+procedure SetTimerCountdown(value: global byte);
+begin
+	if value = 0 then value := $78;
+	SetIO($000F, value);
 end;
 
 
 /**
 	Sets the value of TIM-011 scroll register at IO adress 00D0h, where scrpos = 0..255
 **/
-procedure SetScreenPos(scrpos: integer);
+procedure SetScreenPos(value: global byte);
 begin
-	asm("
-	ld de,(System_scrpos)
-    ld bc,$00D0
-    out (c), e
-    ");
+	SetIO($00D0, value);
 end;
-
 
 end.

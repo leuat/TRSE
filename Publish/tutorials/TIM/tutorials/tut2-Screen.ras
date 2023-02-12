@@ -30,10 +30,10 @@ begin
 	Screen::ClearBox(90, 50, 30, 10, $FF);
 
 	// print a char on (0,0)
-	Screen::PrintChrXY(0,0,$30);
+	Screen::PrintChrXY(0,0,ASCII::NUM0);
 	// print a few more chars after the previous one
-	Screen::PrintChr($31);
-	Screen::PrintChr($32);
+	Screen::PrintChr(ASCII::NUM1);
+	Screen::PrintChr(ASCII::NUM2);
 	
 	// goto next line on screen (character coordinates can be on half a char too)
 	Screen::GotoXY(0,2);
