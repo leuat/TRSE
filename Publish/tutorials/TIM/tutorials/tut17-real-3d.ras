@@ -3,6 +3,7 @@ program Image;
 @use "system/system"
 @use "system/screen"
 @use "system/graphics"
+@use "benchmark"
 
 @define max3dobjects 1
 // color 0 to clear
@@ -20,8 +21,7 @@ var
 	const objPos : address = $2000;
 	matX, matY, matZ, matT : Matrix::mat4;
 
-	
-	
+	font: incbin("zxchars.bin", $4000);	// load an 8x8 font
 
 procedure Render();
 begin
@@ -34,24 +34,34 @@ begin
 	Matrix::MatMul3(#matX, #matY, #matT);
 	
 	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
-	
-	
 
 	Lib3d::RotateVertices(0);	
 
 	Lib3d::ProjectSimple(0,200,128,90,  60);
 	
+@ifndef lib3d_clearlines
+	Screen::ClearBox(35,18,30,30,0);
+@endif
 	Lib3d::RenderWireframeColor(0,3);
 
 end;	
-
 
 begin
 	Z80CPM::Startup();
 	System::CursorOff();
 	Screen::ClearBox(0, 0, 128, 64,0);
+	Screen::SetFont(#font);
+
+	Screen::GotoXY(10,2);
+	Screen::PrintStr("Realtime calculation, clearing with ");
+@ifdef lib3d_clearlines
+	Screen::PrintStr("Line(...)");
+@else
+	Screen::PrintStr("ClearBox(...)");
+@endif
 
 	kbcheck := 20;
+
 	Lib3d::InitializeData(#objPos);	
 	Lib3d::LoadObject(0, #obj1);
 
@@ -60,22 +70,24 @@ begin
 	Matrix::Identity(#matZ);
 	Matrix::Identity(Lib3d::objects[0].rotmat);
 	
-	
 	time:=16;
+	Benchmark::Setup();
 	while (true) do
 	begin
 		Render();
 		time+=1;
+		Benchmark::drawCount += 1;
 		kbcheck -= 1;
 		if kbcheck = 0 then
 		begin
 			if Z80CPM::KeyPressed() then break;
 			kbcheck := 20;	// check every 20 frames
 		end;
+		if Benchmark::benchFps <> 0 then Benchmark::Display();
 	end;
 
+	Benchmark::Cleanup();
 	Z80CPM::GetChar();
 	System::CursorOn();
 	Z80CPM::Exit();
-
 end.

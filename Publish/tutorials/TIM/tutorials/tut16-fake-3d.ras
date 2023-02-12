@@ -3,6 +3,7 @@ program Image;
 @use "system/system"
 @use "system/screen"
 @use "system/graphics"
+@use "benchmark"
 
 @define max3dobjects 1
 // color 0 to clear
@@ -10,7 +11,6 @@ program Image;
 @define linemethod "Graphics::Line"
 
 @use "gfx/lib3d"
-
 
 var  
 	time, time2, i,j, kbcheck, curFrame : byte;
@@ -21,10 +21,14 @@ var
 	const noFrames: byte = 100;
 	const objPos : address = $2000;
 	
+	font: incbin("zxchars.bin");	// load an 8x8 font
+
 
 procedure Render();
 begin
-	
+@ifndef lib3d_clearlines
+	Screen::ClearBox(22,18,34,34,0);
+@endif
 	Lib3d::RenderWireframeColor(0,3);
 	Lib3d::ppo:=Lib3d::ppn;	
 	Lib3d::ppn+=size;	
@@ -43,28 +47,41 @@ begin
 	Z80CPM::Startup();
 	System::CursorOff();
 	Screen::ClearBox(0, 0, 128, 64,0);
+	Screen::SetFont(#font);
+
+	Screen::GotoXY(10,2);
+	Screen::PrintStr("Precalculated data, clearing with ");
+@ifdef lib3d_clearlines
+	Screen::PrintStr("Line(...)");
+@else
+	Screen::PrintStr("ClearBox(...)");
+@endif
+	Screen::GotoXY(0,2);
 
 	kbcheck := 20;
-	
-	
+
 	Lib3d::InitializeData(#objPos);	
 	Lib3d::LoadObject(0, #obj1);
 	size:=Lib3d::objects[0].noVerts*2;
 	Lib3d::ppn:=#tables2d;
 	Lib3d::ppo:=#tables2d;
 	time:=0;
+	Benchmark::Setup();
 	while (true) do
 	begin
 		Render();
 		time+=1;
+		Benchmark::drawCount += 1;
 		kbcheck -= 1;
 		if kbcheck = 0 then
 		begin
 			if Z80CPM::KeyPressed() then break;
 			kbcheck := 20;	// check every 20 frames
 		end;
+		if Benchmark::benchFps <> 0 then Benchmark::Display();
 	end;
 
+	Benchmark::Cleanup();
 	Z80CPM::GetChar();
 	System::CursorOn();
 	Z80CPM::Exit();
