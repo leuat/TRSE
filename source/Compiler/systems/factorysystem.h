@@ -38,6 +38,7 @@
 #include "systemtim.h"
 #include "systemtvc.h"
 #include "systemvectrex.h"
+#include "systemthomson.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

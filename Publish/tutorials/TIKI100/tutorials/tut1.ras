@@ -12,6 +12,8 @@ var
 	j,la,time : byte=0;
 	p1:pointer;
 	y:byte;
+	@donotremove screenmem
+
 
 procedure InitScreen();
 begin
@@ -30,17 +32,19 @@ end;
 
 procedure RenderRandomStuff();
 begin
-	p1:=$000;
+	p1:=$2000;
 	j:=time;
-	for k:=0 to 128 do  
-	begin
+//	for k:=0 to 128 do  
+//	begin
 		fill(p1,j,255);
-		p1:=p1+$100;
+//		p1:=p1+$100;
+		
 		j:=j+10;
-	end;
+//	end;
 end;
 
 
+procedure Init();
 begin
 	InitScreen();
 	while (true) do
@@ -48,4 +52,10 @@ begin
 		RenderRandomStuff();
 		time:=time+1;
 	end;
+	
+end;
+
+begin
+	Init();
 end.
+

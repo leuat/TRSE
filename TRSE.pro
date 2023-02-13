@@ -219,6 +219,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systempokemonmini.cpp \
     source/Compiler/systems/systemsnes.cpp \
     source/Compiler/systems/systemspectrum.cpp \
+    source/Compiler/systems/systemthomson.cpp \
     source/Compiler/systems/systemtiki100.cpp \
     source/Compiler/systems/systemtim.cpp \
     source/Compiler/systems/systemtrs80.cpp \
@@ -519,6 +520,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systempokemonmini.h \
     source/Compiler/systems/systemsnes.h \
     source/Compiler/systems/systemspectrum.h \
+    source/Compiler/systems/systemthomson.h \
     source/Compiler/systems/systemtiki100.h \
     source/Compiler/systems/systemtim.h \
     source/Compiler/systems/systemtrs80.h \

@@ -17,7 +17,33 @@ System6809::System6809(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
 void System6809::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;
-    //    AssembleZOrgasm(output,text,filename,currentDir,symTab);
+    int time = timer.elapsed();
+
+    output+="<br>";
+
+    PerformAssembling(filename,text,currentDir,symTab);
+
+    if (!QFile::exists(filename+".bin")) {
+        text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
+        text+=output;
+        m_buildSuccess = false;
+        return;
+    }
+
+
+
+
+    if (m_buildSuccess) {
+        text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
+    }
+
+    //    output+="<br>";
+
+    time = timer.elapsed();
+
+
+    text+=output;
+
 
 }
 
@@ -48,9 +74,10 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
     QString output = "";
     QString format = "-r";
-    if (m_system==TRS80COCO)
+    if (m_system==TRS80COCO )
         format ="-decb";
-//    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
+//    qDebug() << format;
+    //    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
     if (useMorgasm) {
         AssembleZOrgasm(output,text,filename,currentDir, symTab,1);
     }

@@ -256,6 +256,11 @@
                    <string>VECTREX</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>THOMSON</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="1" column="1">

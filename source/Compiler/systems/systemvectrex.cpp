@@ -27,38 +27,6 @@ SystemVectrex::SystemVectrex(QSharedPointer<CIniFile> settings, QSharedPointer<C
 
 }
 
-void SystemVectrex::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
-{
-    QString output;
-    int time = timer.elapsed();
-
-    output+="<br>";
-
-    PerformAssembling(filename,text,currentDir,symTab);
-
-    if (!QFile::exists(filename+".bin")) {
-        text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
-        text+=output;
-        m_buildSuccess = false;
-        return;
-    }
-
-
-
-
-    if (m_buildSuccess) {
-        text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
-    }
-
-//    output+="<br>";
-
-    time = timer.elapsed();
-//    QFile::rename(filename+".bin", filename+".vec");
-
-    text+=output;
-
-}
-
 void SystemVectrex::PostProcess(QString &text, QString file, QString currentDir)
 {
     QByteArray b = Util::loadBinaryFile(file+".bin");

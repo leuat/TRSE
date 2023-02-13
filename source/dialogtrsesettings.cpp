@@ -66,6 +66,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAtari800Emulator->setText(m_ini->getString("atari800_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
+    ui->leThomsonEmulator->setText(m_ini->getString("thomson_emulator"));
     ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
@@ -188,6 +189,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("wonderswan_emulator", ui->leWonderswanEmulator->text());
     m_ini->setString("acorn_emulator", ui->leAcornEmulator->text());
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
+    m_ini->setString("thomson_emulator", ui->leThomsonEmulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
@@ -324,7 +326,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"MSX" << "TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"THOMSON"<<"MSX" << "TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -978,6 +980,23 @@ void DialogTRSESettings::on_leVectrexCore_2_clicked()
         tr("RetroArch vectrex core file"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leVectrexCore->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnHelpThomson_clicked()
+{
+    Help("Thomson Emulator","Mame (for now)");
+
+}
+
+
+void DialogTRSESettings::on_btnThomsonEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Thomson emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leThomsonEmulator->setText(filename);
 
 }
 

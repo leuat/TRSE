@@ -233,6 +233,10 @@ private slots:
 
     void on_leVectrexCore_2_clicked();
 
+    void on_btnHelpThomson_clicked();
+
+    void on_btnThomsonEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

@@ -40,7 +40,6 @@ begin
 	 	j:=(tp[j]-1)&31; // Look up current character, store in j
 		if (j=31) then j:=23;	
 		
- 		asm(";here");
 		tab :=#table + frameLookup[frame] +charLookup[j];
 
 		zp :=#data +tab[byte(ll&15)];

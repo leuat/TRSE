@@ -1,5 +1,5 @@
-#ifndef SYSTEMTRS80COCO_H
-#define SYSTEMTRS80COCO_H
+#ifndef SYSTEMTHOMSON
+#define SYSTEMTHOMSON
 
 
 
@@ -10,10 +10,10 @@
 
 
 
-class SystemTRS80CoCo : public System6809
+class SystemThomson : public System6809
 {
 public:
-    SystemTRS80CoCo(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
+    SystemThomson(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
 
     void PostProcess(QString &text, QString file, QString currentDir) override;
@@ -22,9 +22,10 @@ public:
         return "";
     }
     virtual QString getEmulatorName() override {
-        return m_settingsIni->getString("pokemonmini_emulator");
+        return m_settingsIni->getString("thomson_emulator");
     }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
+    void Createk5Tape(QString filename);
 
 
 };
