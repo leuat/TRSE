@@ -736,5 +736,6 @@
         <file>resources/text/opcodes_6809.txt</file>
         <file>resources/code/6809/vectrex_header.asm</file>
         <file>resources/images/VECTREX.png</file>
+        <file>resources/text/help/m/returnvalue.rtf</file>
     </qresource>
 </RCC>
