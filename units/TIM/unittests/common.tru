@@ -1,0 +1,79 @@
+unit Common;
+//@use "format"
+@use "system/z80cpm"
+@use "system/system"
+@use "unittests/vars"
+var
+  cpc_unittests_common_string : array[9] of byte;
+  cpc_unittests_status : byte = 0;
+
+// Called at the beginning of the testing
+procedure TestInit();
+begin
+//	Text::Reset();
+end;
+
+procedure CR() inline;
+begin
+	asm("
+		ld hl,0
+		ld de,0
+		ld a,0
+	    ld b,0
+	    ld c,0
+	");
+end;
+
+// Called at the beginning of each test suite (multiple test cases grouped together)
+procedure TestSuiteInit();
+begin
+	//Text::Reset();
+end;
+	
+procedure Initialise(zp:pointer);
+begin
+//	Text::Reset();
+    Z80CPM::PutString(zp);
+  Z80CPM::PutString("\n\r");
+  Z80CPM::PutString("\n\r");
+end;
+
+function Status() : byte;
+begin
+	Status := cpc_unittests_status;
+end;
+
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+  Z80CPM::PutString(#Vars::text);
+  Z80CPM::PutString("  PASS");
+  Z80CPM::PutString("\n\r");
+end;
+
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+  Z80CPM::PutString(#Vars::text);
+  Z80CPM::PutString("  FAIL");
+  Z80CPM::PutString("\n\r");
+  cpc_unittests_status := 1;
+  for Vars::i1:=0 to 50000 do nop(30);
+end;
+
+procedure WaitABit();
+begin
+  for Vars::i1:=0 to 200 do nop(50);
+end;
+
+procedure DebugValue(v:integer);
+begin
+  // TODO(ColinPitrat): Print value to screen
+//  Format::Itos(v, #cpc_unittests_common_string);
+  Z80CPM::PutString(#cpc_unittests_common_string);
+  Z80CPM::PutString("\n\r");
+end;
+
+end.
+
+

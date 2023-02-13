@@ -145,7 +145,7 @@ begin
 	Advanced01();
 	Advanced02();
 	Advanced03();
-	@ifndef AMSTRADCPC
+	@ifndef CPU_Z80
 	Advanced04();
 	Advanced05();
 	@ifndef ATARI520ST

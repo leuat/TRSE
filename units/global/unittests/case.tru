@@ -55,7 +55,7 @@ begin
 	// Mul and div
 	Test1();
 	@ifndef GAMEBOY
-	@ifndef AMSTRADCPC
+	@ifndef CPU_Z80
 	Test2();
 	@endif
 	@endif

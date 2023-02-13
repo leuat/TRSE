@@ -10,7 +10,12 @@ var
 	ip : pointer of integer;
 	a1,a2 : array[10] of integer;
 	j,i : byte;
+@ifdef OVERRIDE
+	const addr : address = @OVERRIDE;
+@else
 	const addr : address = $8800;
+
+@endif
 	bl1,bl2 : boolean;
 /*
 @ifdef CPU_Z80	

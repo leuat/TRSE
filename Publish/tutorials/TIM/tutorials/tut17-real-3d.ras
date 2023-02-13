@@ -47,8 +47,8 @@ begin
 	// Mul together and store in the objects rotation matrix
 	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
 	// Perform the rotation (rotation_matrix * each vertex_in_the_object)
-//	Lib3d::RotateVertices(0);	
-	Lib3d::RotateVerticesOptimisedZ80(0);	
+	Lib3d::RotateVertices(0);	
+//	Lib3d::RotateVerticesOptimisedZ80(0);	
 	// Projects the rotated vertices in a simple manner to 2d coordinates
 	Lib3d::ProjectSimple(0,128,64,90,  80);
 	
