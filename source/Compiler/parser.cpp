@@ -4733,6 +4733,11 @@ QSharedPointer<Node> Parser::InlineAssembler()
         VerifyInlineSymbols6502(m_currentToken.m_value);
     }
     t.m_value = m_currentToken.m_value;
+
+    if (m_settingsIni->getString("assembler_z80")=="Pasmo" && Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80) {
+        t.m_value=t.m_value.replace("//",";");
+    }
+
     QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
     QStringList potentialUsedVariables = Syntax::s.m_currentSystem->AnalyseForPotentialVariables(t.m_value);
     for (auto s: potentialUsedVariables) {

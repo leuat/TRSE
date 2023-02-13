@@ -33,25 +33,25 @@ begin
 	ld de, (Screen_y)
 	ld hl, (Screen_char)
 	
-    // save current position
+  ;  // save current position
     ld (Screen_cursorx), bc
     ld (Screen_cursory), de
 
-    // entry point for the rest of char printing routines
+   ; // entry point for the rest of char printing routines
 _prchrxy0:
-	// video memory ofset = x*128*2 + y*2*2 + 8000H
-    // calculate video address
+	;// video memory ofset = x*128*2 + y*2*2 + 8000H
+    ;// calculate video address
     ld b, c
     sla b
-    scf     // add 80h
+    scf     ;// add 80h
     rr b
     sla e
     sla e
     ld c, e
 
-    // calculate char address, each char is 16 bytes
+    ;// calculate char address, each char is 16 bytes
     and a
-    ld de, (Screen_chrsub)    // substract Screen_chrsub value
+    ld de, (Screen_chrsub)    ;// substract Screen_chrsub value
     sbc hl, de
     add hl, hl
     add hl, hl
@@ -64,7 +64,7 @@ _prchrxy0:
 _prchrxy1:
     push bc
     push de
-    ld de,(Screen_chrinv)      // load Screen_chrinv
+    ld de,(Screen_chrinv)      ;// load Screen_chrinv
 
 _prchrxy2:
     ld a,(hl)
@@ -82,7 +82,7 @@ _prchrxy2:
     dec e
     jp nz, _prchrxy1
 
-    // calculate next char position
+;    // calculate next char position
 _prchrxy3:
     ld a,(Screen_cursorx) ;// x+=2
     inc a
@@ -141,8 +141,8 @@ begin
     ld hl,(Screen_str)
 _prstr1:
     push hl
-    ld l,(hl)   // get net char
-    inc l       // check if null
+    ld l,(hl)   ;// get net char
+    inc l       ;// check if null
     dec l
     jp z, _prstr2
     ld h, 0
@@ -171,8 +171,8 @@ begin
 _prnstr1:
     push hl
     push de
-    ld l,(hl)   // get net xhar
-    inc l       // check if null
+    ld l,(hl)   ;// get net xhar
+    inc l       ;// check if null
     dec l
     jp z, _prnstr2
     ld h, 0
@@ -240,24 +240,24 @@ begin
 	ld de, (Screen_y)
 	ld bc, (Screen_x)
 
-    sla h   // height * 4
+    sla h   ;// height * 4
     sla h
 
-    // x*256
+;    // x*256
     ld b, c
-    // add 80h to addr hi
+ ;   // add 80h to addr hi
     sla b
     scf
     rr b
-    // y*4
+;    // y*4
     sla e
     sla e
     ld c, e
 
-    ld d, l // width
+    ld d, l ;// width
     ld a, (Screen_pattern)
 _clrbx1:
-    ld e, h // height
+    ld e, h ;// height
     push bc
 _clrbx2:
     out (c),a

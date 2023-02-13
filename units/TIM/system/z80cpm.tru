@@ -93,7 +93,7 @@ run_bios:
 	jp   (hl)
 
 ccerrstack:
-    dc.b 'Runtime Error - No stack$'
+    db 'Runtime Error - No stack$'
 ccargs:
 	");
 end;
@@ -153,9 +153,9 @@ exit:
     jp  0
 
 // Variables for memory functions
-ccfreefirst: dc.w 0 // Adr. first free byte
-ccfreelast:  dc.w 0 // Adr. last free byte
-ccfreebytes: dc.w 0 // Number of free bytes
+ccfreefirst: dw 0 // Adr. first free byte
+ccfreelast:  dw 0 // Adr. last free byte
+ccfreebytes: dw 0 // Number of free bytes
 ccfreemem:
 	");	
 end;
@@ -193,8 +193,8 @@ begin
 	asm("
 	ld e,3
 	jp run_bios
-//	ld h,a
-//	ld l,a
+;	ld h,a
+;	ld l,a
 	");	
 end;
 
@@ -319,7 +319,7 @@ begin
 	ld hl, (Z80CPM_fname)
 	ld de, (Z80CPM_fcb)
 
-	inc	hl		//Check for optional A: ... P: drive
+	inc	hl		;//Check for optional A: ... P: drive
 	ld	a,(hl)
 	dec	hl
 	cp	ASCII_COLON
@@ -336,14 +336,14 @@ begin
 	jr	sfcbdrv
 
 sfcbdef
-	xor	a		//Default drive
+	xor	a		;//Default drive
 
 sfcbdrv
-	ld	(de),a		//Set drive in fcb
+	ld	(de),a		;//Set drive in fcb
 	inc	de
 
 sfcbnam
-	ld	c,ASCII_DOT		//Set name in fcb
+	ld	c,ASCII_DOT		;//Set name in fcb
 	ld	b,8
 	call	sfcbtok
 	ld	a,b
@@ -357,58 +357,58 @@ sfcbnam
 	inc	hl
 
 sfcbtyp
-	ld	c,0		//Set type in fcb
+	ld	c,0		;//Set type in fcb
 	ld	b,3
 	call	sfcbtok
 	ld	a,(hl)
 	or	a
 	jr	nz,sfcberr
 
-	ld	a,0		//Fill the rest of the fcb with zeroes
+	ld	a,0		;//Fill the rest of the fcb with zeroes
 	ld	b,24
 	call	sfcbset
 
-	ld	hl,0		//success
+	ld	hl,0		;//success
 	ret
 
-	//Error entry for sfcbtok
+;	//Error entry for sfcbtok
 
 sfcbtke
-	pop	hl		//Remove address from stack
+	pop	hl		;//Remove address from stack
 
 sfcberr
-	ld	hl,1		//Error
+	ld	hl,1		;//Error
 	ret
 
-	//Set field (name or type)
-	//
-	//In:
-	//	C = delimiter ('.' for name, 0 for type)
-	//	B = Max. field length (8 for name, 3 for type)
-	//
-	//Out:
-	//	B = Remain length
+;	//Set field (name or type)
+;	//
+;	//In:
+;	//	C = delimiter ('.' for name, 0 for type)
+;	//	B = Max. field length (8 for name, 3 for type)
+;	//
+;	//Out:
+;	//	B = Remain length
 
 sfcbtok
-	ld	a,(hl)		//End of string?
+	ld	a,(hl)		;//End of string?
 	or	a
 	jr	z,sfcbspc
-	cp	c		//Delimiter?
+	cp	c		;//Delimiter?
 	jr	z,sfcbspc
-	cp	ASCII_ASTERISK		//Wildcard?
+	cp	ASCII_ASTERISK		;//Wildcard?
 	jr	z,sfcbamb
 
-	//Accept only valid characters
+	;//Accept only valid characters
 
-	cp	ASCII_HASH		//# $ %
+	cp	ASCII_HASH		;//# $ %
 	jr	c,sfcbtke
 	cp	ASCII_PERCENT + 1
 	jr	c,sfcbtks
-	cp	ASCII_NUM0		//0 ... 9
+	cp	ASCII_NUM0		;//0 ... 9
 	jr	c,sfcbtke
 	cp	ASCII_NUM9 + 1
 	jr	c,sfcbtks
-	call	sfcbupp		//? @ a ... z
+	call	sfcbupp		;//? @ a ... z
 	cp	ASCII_QUESTION
 	jr	c,sfcbtke
 	cp	ASCII_Z + 1
@@ -417,14 +417,14 @@ sfcbtok
 	jr	nz,sfcbtke
 
 sfcbtks
-	ld	(de),a		//Set character in fcb
+	ld	(de),a		;//Set character in fcb
 	inc	hl
 	inc	de
-	djnz	sfcbtok		//Continue upto max. length
+	djnz	sfcbtok		;//Continue upto max. length
 	ret
 
-	//Fill the remain field length with spaces,
-	//and return the remain length.
+;	//Fill the remain field length with spaces,
+;	//and return the remain length.
 
 sfcbspc
 	ld	a, ASCII_SPACE
@@ -433,19 +433,19 @@ sfcbspc
 	ld	b,c
 	ret
 
-	//Fill the remain field length with '?'
-	//and set remain length to 0.
+;	//Fill the remain field length with '?'
+;	//and set remain length to 0.
 
 sfcbamb
 	ld	a, ASCII_QUESTION
 	inc	hl
 
-	//Fill memory
-	//
-	//In:
-	//	DE = address
-	//	B  = length
-	//	A  = value
+;	//Fill memory
+;	//
+;	//In:
+;	//	DE = address
+;	//	B  = length
+;	//	A  = value
 
 sfcbset
 	ld	(de),a
@@ -453,13 +453,13 @@ sfcbset
 	djnz	sfcbset
 	ret
 
-	//Convert character to uppercase
-	//
-	//In:
-	//	A = Character
-	//
-	//Out:
-	//	A = Character converted to uppercase if it was: a ... z
+;	//Convert character to uppercase
+;	//
+;	//In:
+;	//	A = Character
+;	//
+;	//Out:
+;	//	A = Character converted to uppercase if it was: a ... z
 
 sfcbupp
 	cp	ASCII_LOWER_A

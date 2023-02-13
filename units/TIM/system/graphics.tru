@@ -5,6 +5,11 @@ var
 	
 @donotremove col
 
+	plottbl:array[] of byte =(
+    %11111100, %11110011, %11001111, %00111111, 
+    %00000001, %00000100, %00010000, %01000000, 
+    %00000010, %00001000, %00100000, %10000000, 
+    %00000011, %00001100, %00110000, %11000000); 
 /**
 	Plots a pixel at coordinates x,y with color col, where x = 0..511, y = 0..255, col = 0 ..3
 **/
@@ -33,7 +38,7 @@ begin
     ld a, e
     and 3  // a = x%4
 
-    ld de, plottbl
+    ld de, Graphics_plottbl
     ld h, 0
     ld l, a
     add hl, de  // hl = plottbl + x mod 4
@@ -53,11 +58,6 @@ plotout:
     out (c), a  // write pixels
     ret
 
-plottbl:
-    dc.b %11111100, %11110011, %11001111, %00111111   // inverted mask for color 00b
-    dc.b %00000001, %00000100, %00010000, %01000000   // masks for color 01b
-    dc.b %00000010, %00001000, %00100000, %10000000   // masks for color 10b
-    dc.b %00000011, %00001100, %00110000, %11000000   // masks for color 11b
     ");
 end;
 

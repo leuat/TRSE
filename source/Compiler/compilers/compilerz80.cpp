@@ -17,7 +17,8 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     auto sys = m_projectIni->getString("cpu_Z80_system");
     if (sys=="") sys ="z80";
-    m_assembler->Asm("CPU "+sys);
+    if (m_ini->getString("assembler_z80")!="Pasmo")
+        m_assembler->Asm("CPU "+sys);
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
