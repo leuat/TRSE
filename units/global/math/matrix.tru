@@ -93,6 +93,34 @@ begin
 
 
 end;
+
+/**
+	Multiplies a matrix 'a' with a vector3 'vec' with result in 'res'.
+
+**/
+
+@ifdef CPU_Z80
+procedure MatMulVec3Z80( pb: global pointer of byte; p1:global pointer of byte;res:global pointer of integer );
+begin
+	v0:=p1[0];
+	v1:=p1[1];
+	v2:=p1[2];
+	for i:=0 to 3 unroll do
+	begin
+		v:=0;
+		if (v0<>0) then	
+		v+=SignedMath::Muls8x8(v0,pb[0]);
+		if (v1<>0) then	
+		v+=SignedMath::Muls8x8(v1,pb[2]);
+		if (v1<>0) then	
+		v+=SignedMath::Muls8x8(v2,pb[4]);
+		res[i] := v;
+		pb+=(4*2);
+     end;
+end;
+@endif
+
+
 /*
 procedure Normalize3(a : global matp);
 begin

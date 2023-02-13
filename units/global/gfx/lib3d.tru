@@ -179,6 +179,25 @@ begin
 
 end;
 
+@ifdef CPU_Z80
+procedure RotateVerticesOptimisedZ80(i:global byte);
+var
+	mat : integer;
+begin
+
+	fp := objects[i].vertices;
+	ip := objects[i].vertices_rot;
+	mat := objects[i].rotmat;
+		
+	for j:=0 to objects[i].noVerts do
+	begin
+		Matrix::MatMulVec3Z80(mat, fp, ip);
+		fp:=fp+3;
+		ip:=ip+6;
+	end;
+
+end;
+@endif
 
 procedure ProjectSimple(i,cx,cy,cz: global byte;zdiv :global integer);
 begin
@@ -197,7 +216,12 @@ begin
 		
 		yy:=SignedMath::Divs16x8(ip[2],zz);
 			
+@ifdef lib3d_projection_x_scale
+		cp[0] := lo(xx)*@lib3d_projection_x_scale+cx;		
+@else
 		cp[0] := lo(xx)+cx;		
+
+@endif		
 		cp[1] := lo(yy)+cy;
 
 		cp+=2;

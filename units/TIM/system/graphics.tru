@@ -1,6 +1,7 @@
 unit Graphics;
 var
 	x,y,x1,y1,x2,y2,col: integer;
+	
 @donotremove col
 
 /**
@@ -384,6 +385,75 @@ begin
     Line(xb1, yb2, xb2, yb2, col);
     Line(xb1, yb1, xb1, yb2, col);
     Line(xb2, yb1, xb2, yb2, col);
+end;
+
+var
+	dx,dy,d,xi,yi,ai : byte;
+
+procedure BLine( bx1, by1, bx2, by2, color : byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	if bx1 < bx2 then begin
+		xi := 1;
+		dx := bx2 - bx1;
+	end
+	else
+	begin
+		xi := 255;
+		dx := bx1 - bx2;
+	end;
+	
+	if by1 < by2 then 
+	begin
+		yi := 1;
+		dy := by2 - by1;
+	end
+	
+	else
+	begin
+		yi := 255;
+		dy := by1 - by2;
+	end;
+	dx:=dx>>1;
+	dy:=dy>>1;
+	Plot(bx1,by1,color);
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		d := dy - dx;
+		while bx1 <> bx2 do begin
+			if d <128 do begin
+				by1 := by1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + dy;
+			
+			bx1 :=  bx1 + xi;
+			Plot(bx1,by1,color);
+		end;
+	end
+	else
+	begin // dy > dx
+		ai := (dx - dy);
+		d := dx - dy;
+		
+		while by1 <> by2 do begin
+			if d<128 do begin
+				bx1 := bx1+ xi;
+				d := d + ai;
+			end
+			else
+				d := d+  dx;
+			
+			by1 := by1 + yi;
+			Plot(bx1,by1,color);
+		
+		end;
+		
+	end;
 end;
 
 

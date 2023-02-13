@@ -84,6 +84,8 @@ begin
 end;
 
 
+
+
 // to value
 procedure Test8();
 begin
@@ -135,12 +137,43 @@ begin
 end;
 
 
+procedure NegativeStep1();
+begin
+	Vars::text := "N1:";
+	for Vars::v1:=20 to 0 step -2 do 
+	begin
+	end;
+	if (Vars::v2=2) then Common::PASS() else Common::FAIL();
+end;
+
+procedure NegativeStep2();
+begin
+	Vars::text := "N2:"; 
+	fori Vars::v1:=20 to 2 step -2 do 
+	begin
+	end;
+	if (Vars::v2=2) then Common::PASS() else Common::FAIL();
+end;
+
+// negative to 0 is problematic
+procedure NegativeStep3();
+begin
+	Vars::text := "N3:"; 
+	fori Vars::v1:=20 to 0 step -2 do 
+	begin
+	end;
+	if (Vars::v2=0) then Common::PASS() else Common::FAIL();
+end;
+
+
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
 begin
 	Common::Initialise("FOR LOOP");
 	
+	NegativeStep1();
+	NegativeStep2();
 	Test1();
 	Test2();
 	Test3();

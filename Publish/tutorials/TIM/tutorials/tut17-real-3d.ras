@@ -9,7 +9,8 @@ program Image;
 @define max3dobjects 1
 // color 0 to clear
 @define lib3d_clearlines 0 
-@define linemethod "Graphics::Line"
+@define lib3d_projection_x_scale 2
+@define linemethod "Graphics::BLine"
 
 @use "gfx/lib3d"
 
@@ -41,9 +42,10 @@ begin
 	// Mul together and store in the objects rotation matrix
 	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
 	// Perform the rotation (rotation_matrix * each vertex_in_the_object)
-	Lib3d::RotateVertices(0);	
+//	Lib3d::RotateVertices(0);	
+	Lib3d::RotateVerticesOptimisedZ80(0);	
 	// Projects the rotated vertices in a simple manner to 2d coordinates
-	Lib3d::ProjectSimple(0,100,128,90,  60);
+	Lib3d::ProjectSimple(0,100,128,90,  80);
 	
 @ifndef lib3d_clearlines
 	Screen::ClearBox(35,18,30,30,0);
