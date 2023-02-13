@@ -1,6 +1,7 @@
 unit Graphics;
 var
-	x,y,x1,y1,x2,y2,col: integer;
+	x,y,x1,y1,x2,y2,col,i: integer;
+	src, dst : pointer;
 	
 @donotremove col
 
@@ -23,7 +24,7 @@ begin
 
     srl h  ; // 16bit shift left 2
     rr l
-    srl h
+   srl h
     scf     // add 80h to final value
     rr l    // l = int(x/4)
     ld b, l // b = (x/4) + 80h, c = y, bc = int(x/4)*256 + y + 8000h
@@ -59,7 +60,99 @@ plottbl:
     dc.b %00000011, %00001100, %00110000, %11000000   // masks for color 11b
     ");
 end;
+
+var
+	
+	tab128 : array[256] of integer = buildtable("0x4000 + i*128");
+    ip : integer;
+procedure Plot256(x, y: global integer, col: global integer);
+// Pixel plot routine based on TIM-011 video memory layout, 512x256 with 2-bit pixels in shades of green or gray
+// x = 0..511, y = 0..255, col = 0 ..3
+// offset = int(x/4)*256 + y + 8000h
+// pixelmask = col << ((x%4)*2)
+begin
+	asm("
+    ld de, (Graphics_col)
+    ld bc, (Graphics_y)
+    ld hl, (Graphics_x)
+
+    push de // save col
+    push hl // save x
+
+	");
+		ip:=tab128[x>>2]+y;		
+		
+	asm("	
+		ld hl,Graphics_ip
+		ld a,[hl]
+		ld c,a
+		inc hl
+		ld a,[hl]
+		ld b,a
+		
+		
+    pop de  // x from stack
+    ld a, e
+    and 3  // a = x%4
+
+    ld de, plottbl
+    ld h, 0
+    ld l, a
+    add hl, de  // hl = plottbl + x mod 4
+
+    ld a,(bc) // read pixels
+    and (hl) // clear two bits
+
+    pop de  // col from stack
+    sla e
+    sla e   // de = col << 2
+    jp z, plotout2
+
+    add hl, de  // add offset for color table
+    or (hl)
+
+plotout2:
+    ld (bc), a  // write pixels
+    ret
+	");
+end;
+
 @donotremove Plot
+
+
+procedure CopyBuffer128ToScreen(src, dst : global pointer);
+begin
+	for i:=0 to 64 offpage do
+	begin
+		asm("
+			// copy buffer to screen
+			ld hl, [Graphics_src]
+			ld bc, [Graphics_dst]
+			
+		repeat 128
+			
+			ld a,[hl]
+			out (c),a
+			inc hl
+			inc bc
+			
+		repend
+			
+			// Then clear original buffer
+			ld hl, [Graphics_src]
+			ld a,0
+		repeat 128
+			ld [hl],a
+			inc hl
+		repend			
+		
+		");
+		src+=128;
+		dst+=256;
+	end;
+end;
+
+
 
 /**
 	Draws a line from x1,y1 to x2,y2 with color col, where x1,x2 = 0..511, y1,y2 = 0..255, col = 0 ..3
@@ -418,7 +511,7 @@ begin
 	end;
 	dx:=dx>>1;
 	dy:=dy>>1;
-	Plot(bx1,by1,color);
+	Plot256(bx1,by1,color);
 	if dx >= dy then begin
 		
 		ai := (dy - dx);
@@ -432,7 +525,7 @@ begin
 				d := d + dy;
 			
 			bx1 :=  bx1 + xi;
-			Plot(bx1,by1,color);
+			Plot256(bx1,by1,color);
 		end;
 	end
 	else
@@ -449,7 +542,7 @@ begin
 				d := d+  dx;
 			
 			by1 := by1 + yi;
-			Plot(bx1,by1,color);
+			Plot256(bx1,by1,color);
 		
 		end;
 		

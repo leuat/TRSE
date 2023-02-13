@@ -111,7 +111,7 @@ begin
 	fp := objects[i].faces;
 	k:=0;
 
-	for j:=0 to objects[i].noFaces do
+	for j:=0 to objects[i].noFaces offpage do
 	begin
 		i1 := fp[k];
 		i2 := fp[k+1];
