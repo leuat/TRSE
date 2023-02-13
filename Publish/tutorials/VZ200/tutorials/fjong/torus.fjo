@@ -63,12 +63,14 @@ function Init()
 	-- Generates a torus
 	-- 5,3
 	s = 1.0
-	AddObjectRegular("torus_wire","t1", "", "Material2", 6,4, s*(2+1.0*cos(1.9+t*3.14159*2)),s*5,0,0,0,3);
+	AddObjectRegular("torus_wire","t1", "", "Material2", 5,4, s*(2+1.0*cos(1.9+t*3.14159*2)),s*5,0,0,0,3);
 --	AddObjectRegular("torus_wire","t1", "", "Material2",  8,8, 2,8, 3);
 
 
 	-- saves the object to disk, 8 bit style
-	Save3DObject("t1","data/torus1.bin",4);
+	if (frame==16) then
+	Save3DObject("t1","data/torus1.bin",3,0.0);
+	end
 --	Message("saved to resources/data/torus1.bin");
 
 	UpdateGraphics()

@@ -667,7 +667,7 @@ double RayObjectTrianglePrism::intersect(Ray *ray)
 
 }
 
-void RayObjectRegular3D::Save6502(QString file, double scale) {
+void RayObjectRegular3D::Save6502(QString file, double scale, double xscale) {
     if (QFile::exists(file))
         QFile::remove(file);
 
@@ -676,7 +676,7 @@ void RayObjectRegular3D::Save6502(QString file, double scale) {
     data.append(m_faces.count()/2);
     for (int i=0;i<m_vertices.count();i++) {
         data.append(m_vertices[i].y()*scale);
-        data.append(m_vertices[i].x()*scale);
+        data.append(m_vertices[i].x()*scale*xscale);
         data.append(m_vertices[i].z()*scale);
     }
     if (m_isWireframe)

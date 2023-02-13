@@ -620,8 +620,8 @@ static int Save3DObject(lua_State *L)
         return 0;
     }
     QString fname = m_currentDir+"/"+lua_tostring(L,2);
-
-    aro->Save6502(fname,lua_tonumber(L,3));
+    float xscale = 1 + lua_tonumber(L,4);
+    aro->Save6502(fname,lua_tonumber(L,3),xscale);
     return 0;
 }
 
