@@ -129,12 +129,12 @@ begin
 			ld hl, [Graphics_src]
 			ld bc, [Graphics_dst]
 			
-			ld b,0 ; clear val
+			ld e,0 ; clear val
 		repeat 128
 			
 			ld a,[hl]
 			out (c),a
-			ld [hl],b ; clear back buffer
+			ld [hl],e ; clear back buffer
 			inc hl
 			inc bc
 			
