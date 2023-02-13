@@ -1,0 +1,79 @@
+program Image;
+@use "Screen"
+@use "Memory"
+
+@define max3dobjects 1
+// color 0 to clear
+@define lib3d_clearlines 0 
+@define linemethod "Screen::DrawLineColor"
+
+@use "gfx/lib3d"
+
+
+var  
+	time, time2, i,j : byte;
+	size : integer;
+	p : ^byte;
+	obj1 : incbin("data/torus1.bin");
+	// objPos is the location where the object is stored: rotation matrix, 
+	// rotated vertices and projected 2d coordinates
+	const objPos : address = $B000;
+	// Three matrices
+	matX, matY, matZ, matT : Matrix::mat4;
+
+
+procedure Render();
+begin
+	// Flips the projection pointers so that we always keep a copy of the previous line list for 
+	// black line clearing
+	Lib3d::FlipPointPointers(0);
+	// Rotate x,y and z with some random time value
+	Matrix::RotateX(#matX, time*4);
+	Matrix::RotateZ(#matY, time*3);
+	Matrix::RotateZ(#matZ, time*2);
+
+	// Mul X and Y to a temp mat T	
+	Matrix::MatMul3(#matX, #matY, #matT);
+	// Mul together and store in the objects rotation matrix
+	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
+	// Perform the rotation (rotation_matrix * each vertex_in_the_object)
+	Lib3d::RotateVertices(0);	
+	// Projects the rotated vertices in a simple manner to 2d coordinates
+	Lib3d::ProjectSimple(0,30,30,128,  90);
+	
+	Lib3d::RenderWireframe(0);
+
+end;	
+
+begin
+	Memory::DisableInterrupts();
+	// Set Graphics mode
+	Screen::SetMode(1);
+	// Clear screen using Graphics mode
+	Screen::Cls(1);
+	
+	Lib3d::InitializeData(#objPos);	
+	Lib3d::LoadObject(0, #obj1);
+
+	Matrix::Identity(#matX);
+	Matrix::Identity(#matY);
+	Matrix::Identity(#matZ);
+	Matrix::Identity(Lib3d::objects[0].rotmat);
+	// fill with 3 colors
+	p:=#Lib3d::objects[0].color;
+	j:=1;
+	for i:=0 to Lib3d::objects[0].noFaces do
+	begin
+		p[0]:=j&3;
+		p+=1;
+		j+=1;
+		if (j=4) then j:=1;
+	end;
+	
+	while (true) do
+	begin
+		Render();
+		time+=1;
+	end;
+
+end.

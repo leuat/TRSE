@@ -22,18 +22,6 @@ begin
 	Screen::SetPen(3);
 	// Do a little loop to draw a line
 	zp:=$7000;
-	while (true) do
-	begin
-	for v:=0 to 32 do
-	begin
-		zp[v]:=i;
-	end;
-	i+=1;
-	zp+=32;
-		Screen::WaitForVerticalBlank();
-	end;
-	loop();
-	
 	
 	for v := 0 to 127 do
 	begin
@@ -46,5 +34,6 @@ begin
 	// Draw a diagonal line on the screen
 	Screen::DrawLine(20,20,50,50);
 	// Draw a rectangle on the screen
-	Screen::DrawRect(80,20,20,30);	Loop();
+	Screen::DrawRect(80,20,20,30);	
+	loop();
 end.
