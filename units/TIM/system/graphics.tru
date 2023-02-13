@@ -133,18 +133,12 @@ begin
 			
 			ld a,[hl]
 			out (c),a
+			ld a,0
+			ld [hl],a ; clear back buffer
 			inc hl
 			inc bc
 			
 		repend
-			
-			// Then clear original buffer
-			ld hl, [Graphics_src]
-			ld a,0
-		repeat 128
-			ld [hl],a
-			inc hl
-		repend			
 		
 		");
 		src+=128;
