@@ -57,6 +57,9 @@ var
 /**
 	Startup code for Z80 CP/M, must be first executed code in CP/M (and TIM-011) program
 **/
+var
+	ccerrstack : string=("Runtime Error - No stack$");
+
 procedure Startup() inline;
 begin
 	asm("
@@ -82,7 +85,7 @@ begin
 
 	// Error, no memory for stack
     ld  c,9
-    ld  de,ccerrstack
+    ld  de,Z80CPM_ccerrstack
     call 5
     jp  0
 
@@ -92,8 +95,6 @@ run_bios:
 	add  hl,de
 	jp   (hl)
 
-ccerrstack:
-    db 'Runtime Error - No stack$'
 ccargs:
 	");
 end;
