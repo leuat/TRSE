@@ -238,6 +238,7 @@ SOURCES += main.cpp\
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limagecoco3.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
+    source/LeLib/limage/limagethomson.cpp \
     source/LeLib/limage/limagetvc.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
@@ -539,6 +540,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limagecoco3.h \
     source/LeLib/limage/limagesnesgeneric.h \
+    source/LeLib/limage/limagethomson.h \
     source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagetvc.h \
     source/LeLib/util/dirartd64.h \

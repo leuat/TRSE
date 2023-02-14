@@ -19,7 +19,7 @@ begin
 end;
 
 
-procedure MegaWait(value: byte);
+procedure MegaWait(value: global byte);
 var
 	j: byte;
 begin

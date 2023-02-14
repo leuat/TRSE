@@ -74,7 +74,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
     QString output = "";
     QString format = "-r";
-    if (m_system==TRS80COCO )
+    if (m_system==TRS80COCO || m_system==THOMSON )
         format ="-decb";
 //    qDebug() << format;
     //    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);

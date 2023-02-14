@@ -42,9 +42,8 @@ void SystemThomson::PostProcess(QString &text, QString file, QString currentDir)
 
 void SystemThomson::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     params << "mo5";
-    filename = "/Users/leuat/code/TRSE/Publish/tutorials/THOMSON/tutorials/agenda";
     //params <<"-dump"<<filename+".sna";
-    params <<"-cass"<<filename+".k7";
+    params <<"-cass"<<filename+".k5";
     params <<  "-resolution0" << "640x480@60" <<"-window";
     params <<"-nothrottle";
     params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "loadm \"\",,R\\n";
@@ -57,7 +56,7 @@ void SystemThomson::applyEmulatorParameters(QStringList &params, QString debugFi
 void SystemThomson::Createk5Tape(QString filename)
 {
     char** argv = Util::StringListToChar(QStringList() << "" <<filename+".bin");
-    char argc = 2;
+    int argc = 2;
 
         const uint8_t sync[] = {
             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0x3C,0x5A
@@ -68,7 +67,7 @@ void SystemThomson::Createk5Tape(QString filename)
             char* path = argv[argc];
             FILE *in, *out;
             in = fopen(path, "rb");
-            out = fopen(QString(filename+".k7").toStdString().c_str(), "wb");
+            out = fopen(QString(filename+".k5").toStdString().c_str(), "wb");
 
             // HEADER BLOCK
             fwrite(sync, 1, sizeof(sync), out);

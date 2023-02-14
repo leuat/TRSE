@@ -737,5 +737,6 @@
         <file>resources/code/6809/vectrex_header.asm</file>
         <file>resources/images/VECTREX.png</file>
         <file>resources/text/help/m/returnvalue.rtf</file>
+        <file>resources/images/THOMSON.png</file>
     </qresource>
 </RCC>

@@ -1,5 +1,24 @@
 unit System;
 var
-	
+	const SCREEN : address = 0;
+
+procedure SetColors() inline;
+begin
+	asm("		
+	lda $a7c0
+	anda #$fe	; ram color
+	sta $a7c0
+	");
+end;
+
+procedure SetPixels();
+begin
+	asm("
+	lda $a7c0
+	ora #$01	; pixels
+	sta $a7c0
+	");
+end;	
+
 	
 end.

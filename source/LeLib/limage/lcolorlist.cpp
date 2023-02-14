@@ -148,6 +148,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 18;
   if (t==COCO3)
       return 19;
+  if (t==THOMSON)
+      return 20;
 
   return 255;
 }
@@ -194,6 +196,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return TVC;
     if (c==19)
         return COCO3;
+    if (c==20)
+        return THOMSON;
 
     return UNSUPPORTED;
 
@@ -428,6 +432,8 @@ void LColorList::Initialize(Type t)
         InitC64();
     if (m_type == Type::COCO3)
         InitCOCO3();
+    if (m_type == Type::THOMSON)
+        InitThomson();
     if (m_type == Type::DOS)
         InitDOS();
     if (m_type == Type::C64_ORG)
@@ -865,6 +871,32 @@ void LColorList::InitCOCO3()
     m_list.append(LColor(QColor(0xa9, 0xff, 0xff),""));
     m_list.append(LColor(QColor(0xff, 0xff, 0xff),""));
     m_pens.clear();
+
+}
+
+void LColorList::InitThomson()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x00,0x00,0x00),""));
+    m_list.append(LColor(QColor(0xFF,0x00,0x00),""));
+    m_list.append(LColor(QColor(0x00,0xFF,0x00),""));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x00),""));
+    m_list.append(LColor(QColor(0x00,0x00,0xFF),""));
+    m_list.append(LColor(QColor(0xFF,0x00,0xFF),""));
+    m_list.append(LColor(QColor(0x00,0xFF,0xFF),""));
+    m_list.append(LColor(QColor(0xFF,0xFF,0xFF),""));
+    m_list.append(LColor(QColor(0x7F,0x7F,0x7F),""));
+    m_list.append(LColor(QColor(0xFF,0x7F,0x7F),""));
+    m_list.append(LColor(QColor(0x7F,0xFF,0x7F),""));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x7F),""));
+    m_list.append(LColor(QColor(0x7F,0x7F,0xFF),""));
+    m_list.append(LColor(QColor(0xFF,0x7F,0xFF),""));
+    m_list.append(LColor(QColor(0x7F,0xFF,0xFF),""));
+    m_list.append(LColor(QColor(0xFF,0xA5,0x10),""));
+    m_pens.clear();
+    for (int i=0;i<m_list.count();i++) {
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,i,"",LPen::Dropdown, m_bpp)));
+    }
 
 }
 

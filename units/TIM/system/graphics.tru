@@ -274,7 +274,7 @@ _linpix:
     and 3  // a = x%4
     ld (_linxpos), a
 
-    ld de, plottbl
+    ld de, Graphics_plottbl
     ld h, 0
     ld l, a
     add hl, de  // hl = plottbl + x mod 4

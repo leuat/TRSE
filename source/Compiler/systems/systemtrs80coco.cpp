@@ -33,7 +33,6 @@ void SystemTRS80CoCo::PostProcess(QString &text, QString file, QString currentDi
 
     QString tool = getEmulatorName();
     QString imgtool = QFileInfo(tool).absoluteDir().absolutePath()+"/imgtool";
-    qDebug() << imgtool;
 #ifdef _WIN32
     imgtool+=".exe";
 #endif
