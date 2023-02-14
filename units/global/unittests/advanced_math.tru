@@ -29,6 +29,7 @@ begin
 	Vars::v1:=1;
 	Vars::p2[Vars::v1]:=2;
 	Vars::p1:=$0400;
+	asm(";cc2");
 	Vars::p1:=Vars::p1 + Vars::p2[Vars::v1];
 	Vars::text := "04:"; if Vars::p1=$0402 then Common::PASS() else Common::FAIL();
 end;
@@ -145,7 +146,6 @@ begin
 	Advanced01();
 	Advanced02();
 	Advanced03();
-	@ifndef CPU_Z80
 	Advanced04();
 	Advanced05();
 	@ifndef ATARI520ST
@@ -153,7 +153,6 @@ begin
 	Advanced07(); 
 	@endif
 	Advanced08();
-	@endif
 	@endif
 	@ifdef C64
 	AdvFactorial();

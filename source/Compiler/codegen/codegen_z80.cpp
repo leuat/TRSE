@@ -670,7 +670,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
         return;
     }
 
-    if (node->m_right->isWord(as)) {
+    if (node->m_right->isWord(as) || node->m_right->m_castType==TokenType::INTEGER) {
         as->Comment("Generic 16-bit binop");
         //        if (node->m_right->isWord(as))
         //          as->Asm("ld d,0");
