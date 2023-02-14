@@ -10,7 +10,6 @@ program PlasmaExample;
 // Good old plasma example!
 
 var  
-	Calculate_rightvarInteger_var187:integer;
 	// some plasma variables
 	val,val2,c2x, c2y,ax, ay,time, time2 : byte;
 	x,y,shift : byte;
@@ -96,10 +95,6 @@ var
 	i3:integer;
 
 begin
-	asm("
-	;ccc
-	");
-	i3:=x*4;
 	System::Init();
 	// 320x225 4-colour 
 	Screen::SetBitmapMode(Screen::BPL_40, 1);
