@@ -1,4 +1,4 @@
-#include "limageThomson.h"
+#include "limagethomson.h"
 
 
 LImageThomson::LImageThomson(LColorList::Type t)  : LImageQImage(t)

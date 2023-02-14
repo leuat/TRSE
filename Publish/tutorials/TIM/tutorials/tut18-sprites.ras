@@ -1,0 +1,75 @@
+program Tutorial18;
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/tiles"
+@use "system/graphics"
+@use "misc"
+
+var
+	
+	
+	font: incbin("zxchars.bin");
+
+	t,i,j,time,x,y,ot,t2: byte;
+	dx : byte = 64;
+	sprites : incbin("data/sprites_data.bin");
+	noFrames : byte = 64;
+	sin : array[256] of byte = buildsinetable(110);
+	
+procedure Render();
+begin
+	t:=time;
+	j:=time;
+	t2:=ot;
+	for i:=0 to 24 do
+	begin
+		// clear old one
+		x:=sin[t2];
+		y:=sin[t2+dx]>>1;
+		Screen::ClearBox(x, y-2, 24/4, 28/4, 00);
+		
+		
+		x:=sin[t];
+		y:=sin[t+dx]>>1;
+		j:=j&(noFrames-1);
+		Tiles::PutTile(x,y,j);
+		
+		t+=7;
+		t2+=7;
+		j+=3;
+	end;
+	if (time&1=0) then
+		dx+=1;
+	
+end;
+
+
+begin
+	Z80CPM::Startup();
+	asm(" di");
+	System::CursorOff();
+	System::SetScreenPos(0);
+	Screen::SetFont(#font);
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	// set indexed tiles address	
+	Tiles::SetIndexTiles(#sprites);
+
+	Misc::InitKeyboardCheck(5);
+
+	while (not Misc::keyPressed) do
+	begin
+		Render();
+		ot:=time;
+		time+=1;
+		Misc::KeyboardCheck();
+		System::MegaWait(255);
+	end;
+
+	Z80CPM::GetChar();
+
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	System::CursorOn();
+	Z80CPM::Exit();
+end.

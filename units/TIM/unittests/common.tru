@@ -36,6 +36,8 @@ begin
     Z80CPM::PutString(zp);
   Z80CPM::PutString("\n\r");
   Z80CPM::PutString("\n\r");
+ for Vars::i1:=0 to 50000 do nop(30);
+ 
 end;
 
 function Status() : byte;
