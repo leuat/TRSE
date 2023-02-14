@@ -606,7 +606,8 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
     }
 
     if (node->m_op.m_type == TokenType::SHR || node->m_op.m_type == TokenType::SHL) {
-        if (node->getType(as)==TokenType::INTEGER) {
+        as->Comment("Node is integer : ");
+        if (node->isWord(as)) {
             Handle16bitShift(node);
             return;
         }

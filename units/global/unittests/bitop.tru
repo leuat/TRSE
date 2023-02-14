@@ -110,6 +110,25 @@ begin
 end;
 
 
+// integer shiftl advanced #2
+procedure Test11();
+begin
+	Vars::text := "T11:";
+	Vars::i1:=Vars::IntegerReturn($10)<<2;
+	Common::CR();
+	if (Vars::i1=$80) then Common::PASS() else Common::FAIL();
+end;
+
+// integer shiftl advanced #2
+procedure Test12();
+begin
+	Vars::text := "T12:";
+	Vars::i1:=Vars::IntegerReturn(15)|%0000000000001111;
+	Common::CR();
+	if (Vars::i1=14) then Common::PASS() else Common::FAIL();
+end;
+
+
 /* MAIN PROGRAM */
 procedure Exec();
 begin
@@ -127,6 +146,8 @@ begin
 	Test9();
 	@ifndef X86
 	Test10();
+	Test11();
+//	Test12();
 	@endif
 	@endif
 	
