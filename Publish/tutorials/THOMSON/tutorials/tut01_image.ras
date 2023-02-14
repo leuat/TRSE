@@ -1,0 +1,34 @@
+program main;
+@use "system/system"
+@use "compression/compression"
+@use "memory"
+var
+	x,y,i : integer;
+	j,k : byte;
+	p : ^byte;
+
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+
+	image : incbin("resources/images/image1.bin") compressed;
+	
+begin
+	
+	System::SetPixels();
+	Compression::Decompress(#image, #System::screen);		
+	
+	
+	System::SetColors();
+	p := #System::screen;
+	j:=%00001010;
+	for y:=0 to 200 do
+	begin
+		for x:=0 to 40 do
+		begin
+			p[x]:=j;			
+		end;
+		p+=40;
+	end;
+
+	
+	loop();
+end.

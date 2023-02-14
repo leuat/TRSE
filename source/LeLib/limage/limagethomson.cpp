@@ -59,21 +59,20 @@ void LImageThomson::ExportBin(QFile &ofile)
 {
 
     QString f = ofile.fileName();
-    int y = 0;
-    int dy = 0;
-    int xw;
     QByteArray data;
     for (int y=0;y<m_height;y++) {
         for (int x=0;x<m_width/8;x++) {
-            char c = 0;
-            int curBit = 0;
+            uchar c = 0;
             for (int p=0;p<8;p++) {
-                uchar p1 = getPixel(x*4+p,y)&1;
-                c |= p1<<(6-p);
+                uchar p1 = getPixel(x*8+p,y);
+                if (p1!=0) p1=0; else p1=1;
+                c |= (p1)<<(7-p);
 
 //                curBit+=1;
             }
             data.append(c);
+            if (c!=0)
+                qDebug() << Util::numToHex(c);
         }
     }
 

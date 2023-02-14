@@ -87,6 +87,7 @@ VZ200; Small VZ200 TRSE demo; VZ200/TRSEdemo/ ;  <h2>Small VZ200 demo project</h
 TRS80COCO; Tutorials; TRS80COCO/tutorials/;<h2>TRS80 Coco3 tutorials</h2><p><img src=":resources/images/TRS80COCO.png" width="200" height="200" class="center"><p>Official TRSE tutorials for the TRS80 CoCo3. Under development.
 TRS80COCO; Unit tests; TRS80COCO/unittests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>Internal TRSE 6809 unit tests
 VECTREX; Main Vectrex examples ; VECTREX/tutorials/; <h2>Main Vectrex tutorials</h2><tr><td><img src=":resources/images/VECTREX.png" width="150" class="center"></td><td><p>Under construction</td></tr>
+THOMSON; Thomson mo5 examples ; THOMSON/tutorials/; <h2>Main Thomson tutorials</h2><tr><td><img src=":resources/images/THOMSON.png" width="150" class="center"></td><td><p>Under construction</td></tr>
 
 MSX; Main MSX tutorials; MSX/Tutorials/;<h2>Main MSX tutorials</h2>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
 
