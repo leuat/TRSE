@@ -18,9 +18,12 @@ public:
     QStringList m_16bitRegs = QStringList() << "af"<<"bc"<<"hl"<<"de"<<"ix"<<"iy"<<"sp"<<"af";
     QStringList m_8bitRegs = QStringList() << "r"<<"i"<<"a" <<"b"<<"c"<<"d"<<"z" <<"h" <<"l"<<"e"<<"ixh"<<"iyh"<<"ixl"<<"iyl" <<"nz" << "nc" <<"po"<<"pe" <<"m"<<"p";
     QStringList m_ignoreCommands = QStringList() << "processor" <<"cpu" <<"org" << "end";
+    QStringList m_illegalCodes = QStringList();
     bool isRegister(QString str) {
         return m_regs.contains(str.toLower());
-    };
+    }
+    void ApplyCPUType() override;
+
     void LoadCodes(int CPUflavor) override;
     QMap<QString,int> m_opCodes;
     QString m_opCode;

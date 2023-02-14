@@ -679,7 +679,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
 
     QString localFailed = failedLabel;
 
-    if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
+    if (offpage && !Syntax::s.m_currentSystem->isZ80()) {
         localFailed = as->NewLabel("localfailed");
     }
     // Main recursive method that tests everything. Evaluates all logical
@@ -688,7 +688,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
 
     // OFFPAGE branching for z80:
 
-    if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
+    if (offpage && !Syntax::s.m_currentSystem->isZ80()) {
         as->Asm(getJmp(offpage) + " "+as->jumpLabel(lblstartTrueBlock));
         as->Label(localFailed);
         as->PopLabel("localfailed");

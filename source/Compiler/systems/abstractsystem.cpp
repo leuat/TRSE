@@ -102,6 +102,7 @@ QString AbstractSystem::StringFromProcessor(Processor s) {
     if (s == PX86) return "PX86";
     if (s == GBZ80) return "GBZ80";
     if (s == Z80) return "Z80";
+    if (s == Z180) return "Z180";
     if (s == ARM) return "ARM";
     if (s == WDC65C816) return "WDC65C816";
     if (s == WDC65C02) return "WDC65C02";
@@ -123,6 +124,7 @@ AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
     if (s == "WDC65C02" || s =="65C02") return WDC65C02;
     if (s == "PJDH8") return PJDH8;
     if (s == "S1C88") return S1C88;
+    if (s == "Z180") return Z180;
     if (s == "M6809") return M6809;
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return MOS6502;
@@ -286,6 +288,8 @@ bool AbstractSystem::systemIsOfType(QString val)
     if (val=="mos6502" && (m_processor==WDC65C02 || m_processor==WDC65C816))
         return true;
     if (val=="z80" && (m_processor==GBZ80))
+        return true;
+    if (val=="z180" && (m_processor==Z180))
         return true;
     if (val=="px86" && (m_processor==PX86))
         return true;

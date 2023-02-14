@@ -738,5 +738,6 @@
         <file>resources/images/VECTREX.png</file>
         <file>resources/text/help/m/returnvalue.rtf</file>
         <file>resources/images/THOMSON.png</file>
+        <file>resources/code/Z80/init_z180.s</file>
     </qresource>
 </RCC>

@@ -6071,7 +6071,10 @@ void Parser::HandleUseTPU(QString fileName)
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+ QDir::separator();
-    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+ QDir::separator();
+    // Special case for Z80
+    QString cpu = AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor);
+    if (cpu=="Z180") cpu="Z80";
+    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+cpu+ QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+"global"+ QDir::separator();
 
     QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);

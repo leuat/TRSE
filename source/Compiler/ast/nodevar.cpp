@@ -341,7 +341,7 @@ QString NodeVar::getValue8bit(Assembler *as, int isHi) {
     }
     QString pa="";
     QString pb="";
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80){
+    if (Syntax::s.m_currentSystem->isZ80()){
         pa="(";pb=")";
     }
     if (isHi==1) {

@@ -259,7 +259,7 @@ void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 void MethodsZ80::Fill(Assembler *as)
 {
 
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80) {
+    if (Syntax::s.m_currentSystem->isZ80()) {
        as->Comment("Updated fast fill");
        LoadVar(as,2,"bc");
        LoadVar(as,1);

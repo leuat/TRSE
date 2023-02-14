@@ -1175,12 +1175,6 @@ void FormRasEditor::HandleErrorDialogs(QString& output)
 
 
     if (!output.toLower().contains("complete.")) {
-        if (output=="") {
-            Messages::messages.DisplayMessage(Messages::messages.NO_DASM);
-
-            output = output + "\nCould not find Dasm.exe. Did you set the correct environment variables?";
-        }
-
     }
 
 }

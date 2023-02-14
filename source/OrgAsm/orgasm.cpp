@@ -216,10 +216,6 @@ OrgasmLine Orgasm::LexLine(int i) {
 //    line = line.replace("//",";");
     line = line.replace("\t", " ");
     line = line.replace("dc.b", ".byte");
-    if (m_cpuFlavor==CPUFLAVOR_Z80) {
-//        line = line.replace("dw", ".word");
-  //      line = line.replace(" db", ".byte");
-    }
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
@@ -321,7 +317,7 @@ OrgasmLine Orgasm::LexLine(int i) {
 
 //        qDebug() <<"LABEL " <<lbl <<line;
     }
-    if (m_cpuFlavor==CPUFLAVOR_Z80) {
+    if (m_cpuFlavor==CPUFLAVOR_Z80 || m_cpuFlavor==CPUFLAVOR_Z80) {
         if (line.trimmed().simplified().split(" ").first().endsWith(":")) {
             QString lbl = line.trimmed().simplified().split(" ").first().remove(":");
             l.m_label = lbl;
@@ -420,6 +416,8 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 {
     m_success = false;
     LoadFile(filename);
+    FindCPUtype();
+    ApplyCPUType();
     m_olines.clear();
   //  m_symbols.clear();
 //    m_symbolsList.clear();
@@ -483,6 +481,15 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 */
 
     return m_success;
+}
+
+void Orgasm::FindCPUtype()
+{
+    for (auto s:m_lines) {
+        if (s.trimmed().simplified().toLower().startsWith("cpu ")) {
+            m_subCpu = s.simplified().split(" ").last();
+        }
+    }
 }
 
 void Orgasm::PassReplaceConstants()

@@ -109,7 +109,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 
 
-
     if (m_ignoreCommands.contains(ol.m_instruction.m_opCode))
         return;
 
@@ -151,7 +150,9 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     // Get opcode
     m_opCode = ol.m_instruction.m_opCode.toLower();
-    MOSOperandCycle cyc;
+    if (m_illegalCodes.contains(m_opCode))
+        throw OrgasmError("Your assembly contains illegal opcodes for this CPU : " + m_opCode + " " +expr + " on line " + QString::number(ol.m_lineNumber),ol);
+
     // Force () instead of []
     expr = expr.replace("[","(").replace("]",")");
     QString value = "";
@@ -404,6 +405,13 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     if (data.length()>0) {
         m_data.append(data);
         m_pCounter+=data.length();
+    }
+}
+
+void ZOrgasm::ApplyCPUType()
+{
+    if (m_subCpu.toLower()=="z180") {
+        m_illegalCodes << "sll";
     }
 }
 

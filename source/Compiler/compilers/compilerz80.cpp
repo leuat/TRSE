@@ -16,9 +16,9 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
         Syntax::s.m_currentSystem->m_programStartAddress = 0x300; // Unpack address
 
     auto sys = m_projectIni->getString("cpu_Z80_system");
-    if (sys=="") sys ="z80";
+//    if (sys=="") sys ="z80";
     if (m_ini->getString("assembler_z80")!="Pasmo")
-        m_assembler->Asm("CPU "+sys);
+        m_assembler->Asm("CPU "+Syntax::s.m_currentSystem->StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
         m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
@@ -82,6 +82,10 @@ void CompilerZ80::Connect()
 //    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::TRS80)
   //  {
         m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z180) {
+        m_assembler->IncludeFile(":resources/code/Z80/init_z180.s");
+    }
+    else
         m_assembler->IncludeFile(":resources/code/Z80/init.s");
     //    }
     m_assembler->Connect();

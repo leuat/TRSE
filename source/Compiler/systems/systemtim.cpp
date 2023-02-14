@@ -3,7 +3,7 @@
 
 SystemTIM::SystemTIM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
 {
-    m_processor = Z80;
+    m_processor = Z180;
     m_system = TIM;
 
     m_startAddress = 0x0100;
