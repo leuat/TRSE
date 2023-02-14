@@ -40,7 +40,7 @@ void SystemVectrex::PostProcess(QString &text, QString file, QString currentDir)
 void SystemVectrex::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
 #ifdef __APPLE__
 #endif
-    QString core = m_settingsIni->getString("vectrex_core");
+  /*  QString core = m_settingsIni->getString("vectrex_core");
     if (!QFile::exists(core)) {
         QMessageBox msgBox;
         msgBox.setText("RetroArch requires the Vectrex core module as a parameter. Please set up a link to the RetroArch vectrex core in the project settings/misc. \n\nOn macos, the location is typically ~/Library/Application Support/RetroArch/cores/vecx_libretro.dylib");
@@ -49,8 +49,8 @@ void SystemVectrex::applyEmulatorParameters(QStringList &params, QString debugFi
         return;
     }
 
-
-    params << "-L"<<core;
+*/
+//    params << "-L"<<core;
     params << filename+".vec";
     //        qDebug() <<"CURRADDR" <<"0x"+QString::number(Syntax::s.m_currentSystem->m_programStartAddress,16);
 //    params <<"-L"<<

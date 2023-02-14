@@ -4744,6 +4744,7 @@ QSharedPointer<Node> Parser::InlineAssembler()
         if (m_symTab->m_symbols.contains(s)) {
             m_symTab->m_symbols[s]->isUsed = true;
             m_symTab->m_symbols[s]->m_doNotOptimize = true;
+//            qDebug() << s;
         }
         if (m_procedures.contains(s))
             m_procedures[s]->m_isUsed = true;
