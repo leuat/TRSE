@@ -29,6 +29,8 @@ Compiler *FactoryCompiler::CreateCompiler(QSharedPointer<CIniFile> ini, QSharedP
         return new CompilerS1C88(ini,pIni);
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M6809)
         return new Compiler6809(ini,pIni);
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::PCHIP8)
+        return new CompilerChip8(ini,pIni);
 
     qDebug() << "ERROR COULD NOT INTIIALISE COMPILER in factorycompiler::createcompiler! Should never happen";
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>2000</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,8 +91,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>920</width>
-                 <height>1828</height>
+                 <width>358</width>
+                 <height>1177</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_17">
@@ -1118,8 +1118,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>950</width>
-              <height>926</height>
+              <width>309</width>
+              <height>177</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1218,7 +1218,7 @@
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>1864</height>
+              <height>1054</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1722,8 +1722,8 @@ Use Dasm if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>950</width>
-              <height>1864</height>
+              <width>455</width>
+              <height>669</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_26">
@@ -2021,8 +2021,8 @@ Use Dasm if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>950</width>
-              <height>1864</height>
+              <width>508</width>
+              <height>658</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_30">

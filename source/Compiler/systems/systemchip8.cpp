@@ -8,6 +8,20 @@
 #include "source/LeLib/util/dirartd64.h"
 
 
+SystemChip8::SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
+    m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert";
+    m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global";
+    m_supportsExomizer = true;
+    //   m_registers "_y" <<"_ax" <<"_ay" <<"_xy";
+    m_canRunAsmFiles = false;
+    m_allowClasses = false; // EXPERIMENTAL
+
+    m_processor = PCHIP8;
+    m_system = CHIP8;
+
+
+}
+
 void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab)
 {
 
@@ -24,10 +38,16 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     //qDebug() << m_settingsIni->getString("assembler");
     emit EmitTick("<br>Assembling with c8asm ...");
     QProcess process;
+    if (!QFile::exists(m_settingsIni->getString("c8asm"))) {
+        text  += "<br><font color=\"#FF6040\">Please set up a link to the c8asm assembler in the TRSE settings panel, or use c8gasm (which isn't done yet.. so use lwasm).</font>";
+        m_buildSuccess = false;
+        return;
+
+    }
     process.start(m_settingsIni->getString("c8asm"), QStringList()<< ("-o"+filename+".ch8") << (filename +".asm"));//) << "-v3");
     process.waitForFinished();
     //process;
-    //qDebug() <<process.readAllStandardOutput();
+    qDebug() <<process.readAllStandardOutput();
     output = process.readAllStandardOutput();
 
     // codeEnd=FindEndSymbol(output);

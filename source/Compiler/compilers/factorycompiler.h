@@ -11,6 +11,7 @@
 #include "compilers1c88.h"
 #include "compilerarm.h"
 #include "compiler6809.h"
+#include "compilerchip8.h"
 
 class FactoryCompiler
 {

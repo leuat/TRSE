@@ -8,16 +8,7 @@
 class SystemChip8 : public AbstractSystem
 {
 public:
-    SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
-        m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert";
-        m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert" <<"global";
-        m_supportsExomizer = true;
-     //   m_registers "_y" <<"_ax" <<"_ay" <<"_xy";
-        m_canRunAsmFiles = false;
-        m_allowClasses = false; // EXPERIMENTAL
-
-
-    }
+    SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
     virtual void PostProcess(QString& text, QString file, QString currentDir) override;
