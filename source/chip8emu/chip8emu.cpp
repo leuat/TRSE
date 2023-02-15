@@ -1,5 +1,4 @@
 #include "chip8emu.h"
-#include <sys/time.h>
 #include "source/LeLib/util/util.h"
 #include <QDebug>
 /*
@@ -457,29 +456,6 @@ void Chip8Emu::step() {
         Chip8Emu::unknownOpcode();
     }
 
-
-    // Update Timers
-    static struct timeval lastFireTime = {.tv_sec = 0, .tv_usec = 0};
-    struct timeval currentTime;
-    struct timeval timeDiff;
-
-    gettimeofday(&currentTime, NULL);
-    timersub(&currentTime, &lastFireTime, &timeDiff);
-    double totalTime = (timeDiff.tv_sec * 1000000.0 + timeDiff.tv_usec) / 1000000.0;
-
-    if (totalTime >= 1.0/60.0f) {
-
-        lastFireTime = currentTime;
-
-        if (delay_timer > 0) {
-            delay_timer--;
-        }
-
-        if (sound_timer > 0) {
-            //NSBeep();
-            sound_timer--;
-        }
-    }
 }
 
 void Chip8Emu::unknownOpcode() {
