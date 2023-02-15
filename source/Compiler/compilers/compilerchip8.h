@@ -2,7 +2,7 @@
 #define COMPILERCHIP8_H
 
 #include "compiler.h"
-#include "source/Compiler/assembler/asmjdh8.h"
+#include "source/Compiler/assembler/asmchip8.h"
 #include "source/Compiler/codegen/codegen_chip8.h"
 
 class CompilerChip8 : public Compiler

@@ -7,7 +7,7 @@ CompilerChip8::CompilerChip8(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFi
 
 void CompilerChip8::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
-    m_assembler = QSharedPointer<AsmJDH8>(new AsmJDH8());//
+    m_assembler = QSharedPointer<AsmChip8>(new AsmChip8());//
     m_codeGen = QSharedPointer<CodeGenChip8>(new CodeGenChip8());
     m_codeGen->m_outputLineNumbers = false;
 
@@ -28,7 +28,7 @@ void CompilerChip8::Connect()
     m_assembler->Connect();
     m_assembler->EndMemoryBlock();
     for (QString&s :m_assembler->m_source) {
-        s = s.replace("$","0x");
+        s = s.replace("$","#");
     }
 
 }

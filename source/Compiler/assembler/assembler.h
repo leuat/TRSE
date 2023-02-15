@@ -312,7 +312,7 @@ public:
 //    virtual void StartForLoop(QString a, QString b) {}
 //    virtual void EndForLoop(QString endVal) {}
 
-    void Asm(QString s, QString comment="");
+    virtual void Asm(QString s, QString comment="");
     virtual void Label(QString s);
     virtual void Optimise(CIniFile& ini) {}
 

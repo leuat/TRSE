@@ -23,6 +23,8 @@ dialogchip8::dialogchip8(QString file,QWidget *parent) :
 
 dialogchip8::~dialogchip8()
 {
+    if (timer)
+        timer->stop();
     delete ui;
 }
 

@@ -73,7 +73,7 @@ public:
     }
 
     QString getJmp(bool isOffPage) override {
-        return "jmp";
+        return "jp";
     }
     QString getCallSubroutine() override;
     bool m_isPurePointer = false;

@@ -49,7 +49,6 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     process.start(m_settingsIni->getString("c8asm"), QStringList()<< ("-o"+filename+".ch8") << (filename +".asm"));//) << "-v3");
     process.waitForFinished();
     //process;
-    qDebug() <<process.readAllStandardOutput();
     output = process.readAllStandardOutput();
 
     // codeEnd=FindEndSymbol(output);
@@ -70,6 +69,7 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     if (output.toLower().contains("error")) {
         m_orgOutput = output;
         text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
+        text+=output;
         m_buildSuccess = false;
         return;
     }

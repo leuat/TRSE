@@ -149,6 +149,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/asm6809.cpp \
     source/Compiler/assembler/asmTripe.cpp \
     source/Compiler/assembler/asmarm.cpp \
+    source/Compiler/assembler/asmchip8.cpp \
     source/Compiler/assembler/asmjdh8.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
@@ -454,6 +455,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asm6809.h \
     source/Compiler/assembler/asmTripe.h \
     source/Compiler/assembler/asmarm.h \
+    source/Compiler/assembler/asmchip8.h \
     source/Compiler/assembler/asmjdh8.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
