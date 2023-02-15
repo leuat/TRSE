@@ -70,15 +70,12 @@ void LImageThomson::setPixel(int x, int y, unsigned int color)
 
     uchar c1 = m_cols[cp*2];
     uchar c2 = m_cols[cp*2+1];
-    uchar xp = 1<<(7-p.x()&7);
+    uchar xp = 1<<(7-(p.x()&7));
     uchar c = (m_data[ip]);
 
     if (color!=c1 && color!=c2) {
-        //if (!(color==c2 || color==c1))
         {
             uchar cnt = Util::CountBits(c);
-//            if (rand()%1000>998)
-  //              qDebug() << QString::number(cnt);
             if (cnt>7-cnt)
                  c1 = color;
             else c2 = color;
@@ -87,7 +84,6 @@ void LImageThomson::setPixel(int x, int y, unsigned int color)
 
 
     if (color == c1) {
-        // already cleared
         c = c& ~xp;
     }
     else
@@ -111,7 +107,7 @@ unsigned int LImageThomson::getPixel(int x, int y)
 
     int cp = (p.y()*m_width+p.x())/8;
     uchar xp = 1<<(7-p.x()&7);
-    int add = (m_data[ip] & xp)>>(7-p.x()&7);
+    int add = (m_data[ip] & xp)>>(7-(p.x()&7));
     return m_cols[cp*2 +add];
 
 }
@@ -143,7 +139,7 @@ void LImageThomson::ExportBin(QFile &ofile)
     */
     data.append(m_data);
     for (int i=0;i<m_cols.size()/2;i++) {
-        uchar c = lcols[m_cols[i*2]] | (lcols[m_cols[i*2+1]]<<4);
+        uchar c = lcols[(int)m_cols[i*2]] | (lcols[(int)m_cols[i*2+1]]<<4);
         cols.append(c);
     }
 

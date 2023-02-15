@@ -1,4 +1,4 @@
-#include "systemChip8.h"
+#include "systemchip8.h"
 #include "source/OrgAsm/orgasm.h"
 #include <QElapsedTimer>
 #include <QProcess>
