@@ -40,7 +40,8 @@ var
 	tmp: byte;
 begin
 	Screen::GotoXY(FPSNX, FPSY);
-	Screen::PrintChr($30 + (benchFps/10));
+	tmp := (benchFps/10);
+	Screen::PrintChr($30 + tmp);
 	Screen::PrintChr(ASCII::DOT);
 	//Screen::PrintChr($30 + mod(benchFps, 10));
 	tmp := mod(benchFps, 10);
