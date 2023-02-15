@@ -14,7 +14,7 @@ var
 	x,y : byte;
 procedure Init();
 begin
-	asm("
+	asm("dd
 		cls
 	");
 //	asm(";here");

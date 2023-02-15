@@ -301,6 +301,7 @@ SOURCES += main.cpp\
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/PmmEdit/trsehighlighter.cpp \
+    source/chip8emu/c8asm.c \
     source/chip8emu/chip8emu.cpp \
     source/chip8emu/dialogchip8.cpp \
     source/dialogcolorselect.cpp \
@@ -606,6 +607,8 @@ HEADERS  += mainwindow.h \
     source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \
     source/PmmEdit/trsehighlighter.h \
+    source/chip8emu/c8asm.h \
+    source/chip8emu/chip8.h \
     source/chip8emu/chip8emu.h \
     source/chip8emu/dialogchip8.h \
     source/dialogcolorselect.h \

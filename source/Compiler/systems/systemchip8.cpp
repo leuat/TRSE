@@ -6,7 +6,9 @@
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/util/cc1541.h"
 #include "source/LeLib/util/dirartd64.h"
-
+extern "C" {
+#include "source/chip8emu/c8asm.h"
+}
 
 SystemChip8::SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
     m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"invert";
@@ -39,19 +41,19 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
 
     //qDebug() << m_settingsIni->getString("assembler");
     emit EmitTick("<br>Assembling with c8asm ...");
-    QProcess process;
+/*    QProcess process;
     if (!QFile::exists(m_settingsIni->getString("c8asm"))) {
         text  += "<br><font color=\"#FF6040\">Please set up a link to the c8asm assembler in the TRSE settings panel, or use c8gasm (which isn't done yet.. so use lwasm).</font>";
         m_buildSuccess = false;
         return;
 
-    }
-    process.start(m_settingsIni->getString("c8asm"), QStringList()<< ("-o"+filename+".ch8") << (filename +".asm"));//) << "-v3");
-    process.waitForFinished();
-    //process;
-    output = process.readAllStandardOutput();
+    }*/
+    QByteArray ba = txt.toLocal8Bit();
+    const char *asm_c = ba.data();
+    c8_assemble(asm_c);
+    c8_save_file((filename+".ch8").toStdString().c_str());
 
-    // codeEnd=FindEndSymbol(output);
+    output += QString(c8_message_text);
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
