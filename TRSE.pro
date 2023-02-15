@@ -161,6 +161,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/codegen_6502.cpp \
     source/Compiler/codegen/codegen_6809.cpp \
     source/Compiler/codegen/codegen_arm.cpp \
+    source/Compiler/codegen/codegen_chip8.cpp \
     source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
     source/Compiler/codegen/codegen_s1c88.cpp \
@@ -184,6 +185,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compiler65c816.cpp \
     source/Compiler/compilers/compiler6809.cpp \
     source/Compiler/compilers/compilerarm.cpp \
+    source/Compiler/compilers/compilerchip8.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerjdh8.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
@@ -458,6 +460,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/ast/nodecast.h \
     source/Compiler/codegen/codegen_6809.h \
     source/Compiler/codegen/codegen_arm.h \
+    source/Compiler/codegen/codegen_chip8.h \
     source/Compiler/codegen/codegen_jdh8.h \
     source/Compiler/codegen/codegen_s1c88.h \
     source/Compiler/codegen/codegen_tripe.h \
@@ -489,6 +492,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compiler65c816.h \
     source/Compiler/compilers/compiler6809.h \
     source/Compiler/compilers/compilerarm.h \
+    source/Compiler/compilers/compilerchip8.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerjdh8.h \
     source/Compiler/compilers/compilerm68k.h \

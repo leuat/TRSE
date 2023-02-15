@@ -83,6 +83,11 @@ void SystemChip8::DefaultValues()
 
 }
 
+void SystemChip8::applyEmulatorParameters(QStringList &params, QString debugFile, QString baseFile, CIniFile *pini)
+{
+    params << baseFile+".ch8";
+}
+
 void SystemChip8::PrepareInitialAssembler(Assembler *as) {
 
 }

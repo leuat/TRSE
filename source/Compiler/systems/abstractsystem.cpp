@@ -109,6 +109,7 @@ QString AbstractSystem::StringFromProcessor(Processor s) {
     if (s == PJDH8) return "JDH8";
     if (s == S1C88) return "S1C88";
     if (s == M6809) return "M6809";
+    if (s == PCHIP8) return "PCHIP8";
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return "";
 }
@@ -126,6 +127,7 @@ AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
     if (s == "S1C88") return S1C88;
     if (s == "Z180") return Z180;
     if (s == "M6809") return M6809;
+    if (s == "PCHIP8") return PCHIP8;
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return MOS6502;
 }
@@ -143,7 +145,7 @@ QString AbstractSystem::StringFromProcessor(QString s) {
     if (s == "TRS80COCO" || s=="VECTREX" || s=="THOMSON") return "M6809";
     if (s == "POKEMONMINI") return "S1C88";
     if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC") return "Z80";
-
+    if (s == "CHIP8") return "PCHIP8";
     qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
     return "";
 }
@@ -225,6 +227,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return VECTREX;
     if (s.toLower()=="thomson")
         return THOMSON;
+    if (s.toLower()=="chip8")
+        return CHIP8;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -268,6 +272,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == TVC) return "TVC";
     if (s == VECTREX) return "VECTREX";
     if (s == THOMSON) return "THOMSON";
+    if (s == CHIP8) return "CHIP8";
     return "";
 }
 
@@ -294,6 +299,8 @@ bool AbstractSystem::systemIsOfType(QString val)
     if (val=="px86" && (m_processor==PX86))
         return true;
     if (val=="m6809" && (m_processor==M6809))
+        return true;
+    if (val=="chip8")
         return true;
 
     return false;

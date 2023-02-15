@@ -122,7 +122,7 @@ void Chip8Emu::init() {
     sound_timer = 0;
 
     // seed random
-    srandom((unsigned int)time(NULL));
+    //srandom((unsigned int)time(NULL));
 }
 
 
@@ -323,7 +323,7 @@ void Chip8Emu::step() {
     else if (maskedOpcode == 0xC000) {
         unsigned char X = GetX(opcode);
         unsigned char NN = GetNN(opcode);
-        unsigned char randomByte = random();
+        unsigned char randomByte = rand()%1000000;
         V[X] = randomByte & NN;
         pc += 2;
     }

@@ -83,6 +83,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemVectrex(settings, proj);
     if (type==AbstractSystem::THOMSON)
         return new SystemThomson(settings, proj);
+    if (type==AbstractSystem::CHIP8)
+        return new SystemChip8(settings, proj);
 
 
     return s;

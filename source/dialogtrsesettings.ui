@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>600</height>
+    <height>2000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -92,7 +92,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>920</width>
-                 <height>1177</height>
+                 <height>1828</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_17">
@@ -1119,7 +1119,7 @@
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>226</height>
+              <height>926</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1218,7 +1218,7 @@
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>984</height>
+              <height>1864</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1230,6 +1230,76 @@
                   <string>Assembler selection</string>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_6">
+                  <item row="4" column="0">
+                   <widget class="QGroupBox" name="groupBox_4">
+                    <property name="title">
+                     <string>Motorola 68000 (Amiga/Atari ST etc) Assembler settings</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_13">
+                     <item row="0" column="0">
+                      <layout class="QGridLayout" name="gridLayout_9">
+                       <item row="0" column="1">
+                        <widget class="QLineEdit" name="leVasmm"/>
+                       </item>
+                       <item row="0" column="2">
+                        <widget class="QPushButton" name="btnVasmm">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QLabel" name="label_25">
+                         <property name="text">
+                          <string>Target deployment directory for the Amiga:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QLabel" name="label_24">
+                         <property name="minimumSize">
+                          <size>
+                           <width>300</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string>Vasmm assembler location:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="2">
+                        <widget class="QPushButton" name="btn68kTargetDir">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QLineEdit" name="le68kTargetDir"/>
+                       </item>
+                       <item row="2" column="0">
+                        <widget class="QLabel" name="label_40">
+                         <property name="text">
+                          <string>Target deployment directory for Atari ST 512:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="1">
+                        <widget class="QLineEdit" name="le68kTargetDirAtariST"/>
+                       </item>
+                       <item row="2" column="2">
+                        <widget class="QPushButton" name="btn68kTargetDirAtariST">
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
                   <item row="1" column="0">
                    <widget class="QGroupBox" name="groupBox_2">
                     <property name="title">
@@ -1307,211 +1377,6 @@
                         </widget>
                        </item>
                       </layout>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item row="5" column="0">
-                   <widget class="QGroupBox" name="groupBox_18">
-                    <property name="title">
-                     <string>X86 Assembler settings</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_32">
-                     <item row="1" column="0">
-                      <widget class="QLabel" name="label_67">
-                       <property name="text">
-                        <string>PMAS assembler location (S1C88):</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="1">
-                      <widget class="QLineEdit" name="lePMAS">
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QLineEdit" name="leNasm"/>
-                     </item>
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label_35">
-                       <property name="minimumSize">
-                        <size>
-                         <width>300</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>X86 assembler NASM location:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="2">
-                      <widget class="QPushButton" name="btnNasm">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="2">
-                      <widget class="QPushButton" name="btnPMAS">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QGroupBox" name="groupBox_4">
-                    <property name="title">
-                     <string>Motorola 68000 (Amiga/Atari ST etc) Assembler settings</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_13">
-                     <item row="0" column="0">
-                      <layout class="QGridLayout" name="gridLayout_9">
-                       <item row="0" column="1">
-                        <widget class="QLineEdit" name="leVasmm"/>
-                       </item>
-                       <item row="0" column="2">
-                        <widget class="QPushButton" name="btnVasmm">
-                         <property name="text">
-                          <string>...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QLabel" name="label_25">
-                         <property name="text">
-                          <string>Target deployment directory for the Amiga:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="0">
-                        <widget class="QLabel" name="label_24">
-                         <property name="minimumSize">
-                          <size>
-                           <width>300</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="text">
-                          <string>Vasmm assembler location:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="2">
-                        <widget class="QPushButton" name="btn68kTargetDir">
-                         <property name="text">
-                          <string>...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="1">
-                        <widget class="QLineEdit" name="le68kTargetDir"/>
-                       </item>
-                       <item row="2" column="0">
-                        <widget class="QLabel" name="label_40">
-                         <property name="text">
-                          <string>Target deployment directory for Atari ST 512:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="2" column="1">
-                        <widget class="QLineEdit" name="le68kTargetDirAtariST"/>
-                       </item>
-                       <item row="2" column="2">
-                        <widget class="QPushButton" name="btn68kTargetDirAtariST">
-                         <property name="text">
-                          <string>...</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QGroupBox" name="groupBox_10">
-                    <property name="title">
-                     <string>6502 Assembler settings</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_10" columnstretch="0,0,0">
-                     <item row="3" column="2">
-                      <widget class="QPushButton" name="btnCL65">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="0">
-                      <widget class="QLabel" name="label_2">
-                       <property name="text">
-                        <string>If not Orgasm, Dasm location:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="2">
-                      <widget class="QPushButton" name="btnDasm">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="1">
-                      <widget class="QLineEdit" name="leCL65">
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="1">
-                      <widget class="QComboBox" name="cmbAssembler">
-                       <item>
-                        <property name="text">
-                         <string>Dasm</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>OrgAsm</string>
-                        </property>
-                       </item>
-                      </widget>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QLabel" name="label_61">
-                       <property name="text">
-                        <string>WDC65C816 assembler CL65 executable:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="1">
-                      <widget class="QLineEdit" name="leDasm"/>
-                     </item>
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label_17">
-                       <property name="minimumSize">
-                        <size>
-                         <width>300</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>OrgAsm is TRSE's built-in assembler. 
-Use Dasm if something goes wrong</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QLabel" name="label_15">
-                       <property name="text">
-                        <string>6502 Assembler:</string>
-                       </property>
-                      </widget>
                      </item>
                     </layout>
                    </widget>
@@ -1602,6 +1467,141 @@ Use Pasmo if something goes wrong</string>
                     </layout>
                    </widget>
                   </item>
+                  <item row="0" column="0">
+                   <widget class="QGroupBox" name="groupBox_10">
+                    <property name="title">
+                     <string>6502 Assembler settings</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_10" columnstretch="0,0,0">
+                     <item row="3" column="2">
+                      <widget class="QPushButton" name="btnCL65">
+                       <property name="text">
+                        <string>...</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="label_2">
+                       <property name="text">
+                        <string>If not Orgasm, Dasm location:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="2">
+                      <widget class="QPushButton" name="btnDasm">
+                       <property name="text">
+                        <string>...</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="1">
+                      <widget class="QLineEdit" name="leCL65">
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QComboBox" name="cmbAssembler">
+                       <item>
+                        <property name="text">
+                         <string>Dasm</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>OrgAsm</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QLabel" name="label_61">
+                       <property name="text">
+                        <string>WDC65C816 assembler CL65 executable:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="1">
+                      <widget class="QLineEdit" name="leDasm"/>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_17">
+                       <property name="minimumSize">
+                        <size>
+                         <width>300</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>OrgAsm is TRSE's built-in assembler. 
+Use Dasm if something goes wrong</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_15">
+                       <property name="text">
+                        <string>6502 Assembler:</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item row="5" column="0">
+                   <widget class="QGroupBox" name="groupBox_18">
+                    <property name="title">
+                     <string>X86 Assembler settings</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_32">
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_67">
+                       <property name="text">
+                        <string>PMAS assembler location (S1C88):</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QLineEdit" name="lePMAS">
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QLineEdit" name="leNasm"/>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_35">
+                       <property name="minimumSize">
+                        <size>
+                         <width>300</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>X86 assembler NASM location:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="2">
+                      <widget class="QPushButton" name="btnNasm">
+                       <property name="text">
+                        <string>...</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="2">
+                      <widget class="QPushButton" name="btnPMAS">
+                       <property name="text">
+                        <string>...</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
                   <item row="6" column="0">
                    <widget class="QGroupBox" name="groupBox_19">
                     <property name="title">
@@ -1653,6 +1653,36 @@ Use Pasmo if something goes wrong</string>
                     </layout>
                    </widget>
                   </item>
+                  <item row="7" column="0">
+                   <widget class="QGroupBox" name="groupBox_20">
+                    <property name="title">
+                     <string>Chip8 Assembler settings</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_46">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_101">
+                       <property name="text">
+                        <string>ch8asm</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QLineEdit" name="lec8asm">
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="2">
+                      <widget class="QPushButton" name="btnWasm_2">
+                       <property name="text">
+                        <string>...</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
                  </layout>
                 </widget>
                </item>
@@ -1693,7 +1723,7 @@ Use Pasmo if something goes wrong</string>
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>669</height>
+              <height>1864</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_26">
@@ -1992,11 +2022,40 @@ Use Pasmo if something goes wrong</string>
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>728</height>
+              <height>1864</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_30">
              <item row="5" column="0">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_15">
+               <property name="title">
+                <string>Vice settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_38">
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="chkAutoInject">
+                  <property name="text">
+                   <string>Auto inject program (for VICE systems only)</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="4" column="0">
               <widget class="QGroupBox" name="groupBox_16">
                <property name="title">
                 <string>Custom keywords syntax highlighting</string>
@@ -2057,70 +2116,7 @@ Use Pasmo if something goes wrong</string>
                </layout>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_15">
-               <property name="title">
-                <string>Vice settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_38">
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="chkAutoInject">
-                  <property name="text">
-                   <string>Auto inject program (for VICE systems only)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QGroupBox" name="groupBox_14">
-               <property name="title">
-                <string>Image editor settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_34">
-                <item row="0" column="0">
-                 <layout class="QGridLayout" name="gridLayout_36">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_71">
-                    <property name="text">
-                     <string>Window painter mode:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QComboBox" name="cmbPainter_2">
-                    <item>
-                     <property name="text">
-                      <string>opengl</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>qtimage</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="3" column="0">
+             <item row="2" column="0">
               <widget class="QGroupBox" name="groupBox_13">
                <property name="title">
                 <string>User defined commands (Ctrl-T): type @prg to use the current .prg output file</string>
@@ -2154,6 +2150,40 @@ Use Pasmo if something goes wrong</string>
                   </item>
                   <item row="0" column="1">
                    <widget class="QLineEdit" name="leUserDefined"/>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_14">
+               <property name="title">
+                <string>Image editor settings</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_34">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_36">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_71">
+                    <property name="text">
+                     <string>Window painter mode:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QComboBox" name="cmbPainter_2">
+                    <item>
+                     <property name="text">
+                      <string>opengl</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>qtimage</string>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -2254,32 +2284,6 @@ Use Pasmo if something goes wrong</string>
                    </widget>
                   </item>
                  </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QGroupBox" name="groupBox_20">
-               <property name="title">
-                <string>Additional Emulator settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_43">
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_30">
-                  <property name="text">
-                   <string>RetroArch VECTREX core file:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="leVectrexCore"/>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QPushButton" name="leVectrexCore_2">
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </widget>
                 </item>
                </layout>
               </widget>

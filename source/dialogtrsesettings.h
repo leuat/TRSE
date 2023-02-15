@@ -231,7 +231,6 @@ private slots:
 
     void on_btnVectrexEmulator_clicked();
 
-    void on_leVectrexCore_2_clicked();
 
     void on_btnHelpThomson_clicked();
 

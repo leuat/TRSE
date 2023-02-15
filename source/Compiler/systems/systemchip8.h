@@ -32,6 +32,9 @@ public:
 
     void DefaultValues() override;
 
+    virtual QString getEmulatorName() { return "chip8";}
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) override;
+
 
     TokenType::Type getSystemPointerArrayType() override {
         return TokenType::INTEGER;

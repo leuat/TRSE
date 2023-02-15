@@ -77,7 +77,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     ui->leVectrexEmulator->setText(m_ini->getString("vectrex_emulator"));
-    ui->leVectrexCore->setText(m_ini->getString("vectrex_core"));
+    ui->lec8asm->setText(m_ini->getString("c8asm"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
     ui->leJDH8Emulator->setText(m_ini->getString("jdh8_directory"));
     ui->leCpmTools->setText(m_ini->getString("cpmtools_directory"));
@@ -201,7 +201,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
     m_ini->setString("vectrex_emulator", ui->leVectrexEmulator->text());
-    m_ini->setString("vectrex_core", ui->leVectrexCore->text());
+    m_ini->setString("c8asm", ui->lec8asm->text());
     m_ini->setString("qemu_directory",ui->leQemuDir->text());
     m_ini->setString("jdh8_directory",ui->leJDH8Emulator->text());
     m_ini->setString("cmptools_directory",ui->leCpmTools->text());
@@ -973,15 +973,6 @@ void DialogTRSESettings::on_btnVectrexEmulator_clicked()
 
 }
 
-
-void DialogTRSESettings::on_leVectrexCore_2_clicked()
-{
-    QString filename = QFileDialog::getOpenFileName(this,
-        tr("RetroArch vectrex core file"), m_ini->getString("project_path"), "*");
-    if (filename!="")
-        ui->leVectrexCore->setText(filename);
-
-}
 
 
 void DialogTRSESettings::on_btnHelpThomson_clicked()
