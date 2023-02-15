@@ -112,7 +112,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
     QString t = byte;
     int scale = 1;
-    if (type.toLower()=="integer") {
+    if (type.toLower()=="integer" || type.toLower()=="pointer") {
         t = word;
         scale = 2;
     }
