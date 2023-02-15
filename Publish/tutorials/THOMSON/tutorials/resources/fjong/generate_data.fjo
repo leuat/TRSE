@@ -28,7 +28,7 @@ globals = {
 
 -- 10*24
 output = {
-	resolution = { width = 4, height=8},
+	resolution = { width = 8, height=8},
 --	resolution = { width = 320, height=200},
 	output_type = 3,
 	aspect = 1.0,
@@ -38,7 +38,7 @@ output = {
 --	c64_colors = { 0,5,14,6 }
 --	palette_file = "images/pals.pal",
 	palette = {0,0,0,  85,85,85,170,170,170,255,255,255},
-		index_colors = { 0,1,2,3 }
+		index_colors = { 0,3 }
 
 }
 
@@ -75,7 +75,7 @@ function PostProcess();
 	
 	
 	for i= 0,output.resolution.height do	 
-		DrawLine(0,i,4,i, c,c,c);
+		DrawLine(0,i,8,i, c,c,c);
 	end
 	
 
@@ -90,8 +90,7 @@ function Update()
 	
 
 	if (frame>=1) then
-		Add4PixelToData(0,0,1,1)
---		Add4PixelToData(0,1,1,1)
+		Add8PixelToData(0,4,1,1)
 	
 	end
 

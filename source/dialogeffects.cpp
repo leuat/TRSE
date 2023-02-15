@@ -899,6 +899,15 @@ static int Add4PixelData(lua_State* L) {
 
     return 0;
 }
+static int Add8PixelData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddVZ200ToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+        m_compression.AddTo8PixelData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4),lua_tonumber(L,5)==1.0);
+
+    return 0;
+}
 static int Add4PixelDataTVC(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddVZ200ToData"))
         return 0;
@@ -1885,6 +1894,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddVZ200ToData", AddVZ200Data);
     lua_register(m_script->L, "Add4PixelToData", Add4PixelData);
+    lua_register(m_script->L, "Add8PixelToData", Add8PixelData);
     lua_register(m_script->L, "Add4PixelToDataTVC", Add4PixelDataTVC);
     lua_register(m_script->L, "AddSpecialC64bitmapModeToData", AddSpecialC64bitmapModeToData);
     lua_register(m_script->L, "AddBBCMode5LineToData", AddBBCMode5LineToData);
