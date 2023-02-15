@@ -795,7 +795,8 @@ void FormRasEditor::on_leSearch2_textChanged()
 
 void FormRasEditor::AcceptBuildString()
 {
-    ui->txtOutput->setHtml(m_builderThread.m_builder->m_buildString);
+    //ui->txtOutput->setHtml(m_builderThread.m_builder->m_buildString);
+    setOutputText(m_builderThread.m_builder->m_buildString);
     //    float t = 0.02;
     //  m_curCol = m_endCol;//(m_curCol)*(1-t) + m_endCol*t;
     ui->lblLight->setStyleSheet("QLabel { background-color : \""+ Util::toColor(m_curCol).name() + "\"; color : blue; }");
@@ -1197,7 +1198,7 @@ void FormRasEditor::HandleErrorDialogs(QString& output)
 }
 void FormRasEditor::HandleUpdateBuildText()
 {
-    ui->txtOutput->setHtml(m_builderThread.m_builder->getOutput());
+    setOutputText(m_builderThread.m_builder->getOutput());
 
 }
 

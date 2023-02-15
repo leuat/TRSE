@@ -326,6 +326,25 @@ begin
 	if (Vars::ri=900) then Common::PASS() else Common::FAIL();
 end;
 
+// Byte mul byte plus 
+procedure ByteMulBytePlus01();
+begin
+	Vars::v1 := 15; 
+	Vars::v2 := 9;
+	Vars::rb:=10 + Vars::v1*Vars::v2;
+	
+	Vars::text := "B1:"; if Vars::rb=145 then Common::PASS() else Common::FAIL();
+end;
+
+// Byte mul byte plus 
+procedure ByteMulBytePlus02();
+begin
+	Vars::v1 := 15; 
+	Vars::v2 := 3;
+	Vars::rb:=10 + Vars::v1/Vars::v2;
+	
+	Vars::text := "B2:"; if Vars::rb=15 then Common::PASS() else Common::FAIL();
+end;
 
 
 
@@ -337,6 +356,8 @@ begin
 
 	
 	// Mul and div
+	ByteMulBytePlus01();
+	ByteMulBytePlus02();
 	IntByteMulR1();
 	IntByteMulR2();
 	IntByteMulR3();
