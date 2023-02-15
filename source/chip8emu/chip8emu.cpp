@@ -76,7 +76,7 @@ void Chip8Emu::loadROM(QString file) {
 }
 
 
-void Chip8Emu::init() {
+void Chip8Emu::Init() {
 
     m_screen = QImage(64,32,QImage::Format_ARGB32);
     // init the registers and memory
@@ -126,7 +126,7 @@ void Chip8Emu::init() {
 }
 
 
-void Chip8Emu::step() {
+void Chip8Emu::Step() {
 
     // fetch opcode
     // fetch one opcode from the memory at the location specified by the program counter (pc).
@@ -298,7 +298,7 @@ void Chip8Emu::step() {
             pc += 2;
         }
         else {
-            unknownOpcode();
+            qDebug() << "Unknown opcode";
         }
     }
     else if (maskedOpcode == 0x9000) {
@@ -379,7 +379,7 @@ void Chip8Emu::step() {
             }
         }
         else {
-            unknownOpcode();
+            qDebug() << "Unknown opcode";
         }
     }
     else if (maskedOpcode == 0xF000) {
@@ -449,21 +449,17 @@ void Chip8Emu::step() {
             pc += 2;
         }
         else {
-            Chip8Emu::unknownOpcode();
+            qDebug() << "Unknown opcode";
         }
     }
     else {
-        Chip8Emu::unknownOpcode();
+        qDebug() << "Unknown opcode";
     }
 
 }
 
-void Chip8Emu::unknownOpcode() {
 
-    printf("Unknown opcode: 0x%X at PC: %d\n", opcode, pc);
-}
-
-void Chip8Emu::keydown(unsigned char k) {
+void Chip8Emu::Keydown(unsigned char k) {
 
     switch (k) {
         case '1':
@@ -515,12 +511,11 @@ void Chip8Emu::keydown(unsigned char k) {
             key[0xF] = 1;
             break;
         default:
-            printf("Chip8: Unrecognized key");
             break;
     }
 }
 
-void Chip8Emu::keyup(unsigned char k) {
+void Chip8Emu::Keyup(unsigned char k) {
 
     switch (k) {
         case '1':
@@ -576,13 +571,6 @@ void Chip8Emu::keyup(unsigned char k) {
     }
 }
 
-bool Chip8Emu::needsDisplay() {
-    return _needsDisplay;
-}
-
-void Chip8Emu::setNeedsDisplay(bool needsDisplay) {
-    _needsDisplay = needsDisplay;
-}
 
 QPixmap Chip8Emu::getScreen(int w, int h)
 {

@@ -8,14 +8,14 @@ dialogchip8::dialogchip8(QString file,QWidget *parent) :
     ui(new Ui::dialogchip8)
 {
     ui->setupUi(this);
-    c8.init();
+    c8.Init();
     c8.loadROM(file);
 
     timer = new QTimer();
     timer->setInterval(1); //Time in milliseconds
     //timer->setSingleShot(false); //Setting this to true makes the timer run only once
     connect(timer, &QTimer::timeout, this, [=](){
-        c8.step();
+        c8.Step();
         ui->lblScreen->setPixmap(c8.getScreen(ui->lblScreen->width(),ui->lblScreen->height()));
     });
     timer->start(); //Call start() AFTER connect
