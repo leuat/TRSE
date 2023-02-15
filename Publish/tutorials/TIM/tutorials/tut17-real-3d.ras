@@ -6,13 +6,31 @@ program Image;
 @use "benchmark"
 @use "misc"
 
-@define max3dobjects 1
+//-----------------------------------------
+// uncomment JUST ONE of these three !
+//@define clear_method_line 0
+//@define clear_method_box 0
+@define clear_method_backbuffer 0
+//-----------------------------------------
+
+@ifdef clear_method_line
 // color 0 to clear
-//@define lib3d_clearlines 0 
-@define lib3d_projection_x_scale 2
-//@define linemethod "Graphics::Line"
+@define lib3d_clearlines 0
+@define linemethod "Graphics::Line"
+@endif
+
+@ifdef clear_method_box
+@define linemethod "Graphics::Line"
+@endif
+
+@ifdef clear_method_backbuffer
 // Use pascal version
 @define linemethod "Graphics::BLine"
+@endif
+
+
+@define max3dobjects 1
+@define lib3d_projection_x_scale 2
 
 @use "gfx/lib3d"
 
@@ -29,6 +47,17 @@ var
 
 	font: incbin("zxchars.bin", $3000);	// load an 8x8 font
 	src, dst : pointer;
+@ifdef clear_method_line
+	clear_method_string: string = ("Line(...)");
+@endif
+
+@ifdef clear_method_box
+	clear_method_string: string = ("ClearBox(...)");
+@endif
+
+@ifdef clear_method_backbuffer
+	clear_method_string: string = ("Backbuffer");
+@endif
 	
 
 
@@ -52,9 +81,16 @@ begin
 	// Projects the rotated vertices in a simple manner to 2d coordinates
 	Lib3d::ProjectSimple(0,128,64,90,  80);
 	
+@ifdef clear_method_box
+	//Screen::ClearBox(35,18,30,30,$55);
+	Screen::ClearBox(5,4,55,25,0);
+@endif
 	Lib3d::RenderWireframeColor(0,3);
 	
+@ifdef clear_method_backbuffer
 	Graphics::CopyBuffer128ToScreen($4000, $8A40);
+@endif
+
 end;	
 
 begin
@@ -65,12 +101,7 @@ begin
 
 	Screen::GotoXY(10,2);
 	Screen::PrintStr("Realtime calculation, clearing with ");
-@ifdef lib3d_clearlines
-	Screen::PrintStr("Line(...)");
-@else
-	Screen::PrintStr("ClearBox(...)");
-@endif
-
+	Screen::PrintStr(#clear_method_string);
 
 	Lib3d::InitializeData(#objPos);	
 	Lib3d::LoadObject(0, #obj1);
@@ -87,8 +118,8 @@ begin
 	begin
 		Render();
 		time+=1;
-		Benchmark::drawCount += 1;
 		Misc::KeyboardCheck();
+		Benchmark::drawCount += 1;
 		if Benchmark::benchFps <> 0 then Benchmark::Display();
 	end;
 
