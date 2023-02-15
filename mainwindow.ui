@@ -526,7 +526,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <addaction name="actionTRSE_Settings"/>
     <addaction name="actionWavefront_obj_to_amiga_converter"/>
-    <addaction name="actionChip_8_emulator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
