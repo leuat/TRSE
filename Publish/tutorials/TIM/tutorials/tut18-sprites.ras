@@ -11,7 +11,7 @@ var
 	
 	font: incbin("zxchars.bin");
 
-	t,i,j,time,x,y,ot,t2: byte;
+	t,i,j,time,x,y,ot,t2,odx: byte;
 	dx : byte = 64;
 	sprites : incbin("data/sprites_data.bin");
 	noFrames : byte = 64;
@@ -26,12 +26,12 @@ begin
 	begin
 		// clear old one
 		x:=sin[t2];
-		y:=sin[t2+dx]>>1;
-		Screen::ClearBox(x, y-2, 24/4, 28/4, 00);
+		y:=sin[t2*2+odx]>>1;
+		Screen::ClearBox(x, y, 16/4, 16/4, 00);
 		
 		
 		x:=sin[t];
-		y:=sin[t+dx]>>1;
+		y:=sin[t*2+dx]>>1;
 		j:=j&(noFrames-1);
 		Tiles::PutTile(x,y,j);
 		
@@ -39,8 +39,12 @@ begin
 		t2+=7;
 		j+=3;
 	end;
-	if (time&1=0) then
+	
+//	if (time&1=0) then
+	begin
+		odx:=dx;
 		dx+=1;
+	end;
 	
 end;
 
@@ -57,7 +61,7 @@ begin
 	Tiles::SetIndexTiles(#sprites);
 
 	Misc::InitKeyboardCheck(5);
-
+	odx:=dx;
 	while (not Misc::keyPressed) do
 	begin
 		Render();
