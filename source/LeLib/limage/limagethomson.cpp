@@ -143,7 +143,7 @@ void LImageThomson::ExportBin(QFile &ofile)
     */
     data.append(m_data);
     for (int i=0;i<m_cols.size()/2;i++) {
-        uchar c = lcols[m_cols[i*2]] | (lcols[m_cols[i*2+1]]<<4);
+        uchar c = lcols[m_cols[i*2]] | (lcols[m_cols[i*2+1]]<<4);
         cols.append(c);
     }
 
