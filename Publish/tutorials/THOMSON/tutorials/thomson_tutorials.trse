@@ -66,3 +66,4 @@ override_target_settings_prg = 0
 build_list = ,
 exomizer_toggle = 0
 data_header_resources/images/image1.flf = 0
+data_header_resources/images/image2.flf = 3.01116e-314

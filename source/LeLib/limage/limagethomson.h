@@ -11,12 +11,30 @@ public:
     LImageThomson(LColorList::Type t);
 
 
+    int lcols [16]  {
+        0b0000,
+        0b0001,
+        0b0010,
+        0b0011,
+        0b0100,
+        0b0101,
+        0b0110  ,
+        0b1111,
+        0b1000,
+        0b1001,
+        0b1010,
+        0b1011,
+        0b1100,
+        0b1101,
+        0b1110,
+        0b1111
+    };
 
 
 
 
-    QVector<int> m_data;
-    unsigned char *temp_data = nullptr;
+    QByteArray m_data;
+    QByteArray m_cols;
 
     virtual void SetMode();
 //    virtual void InitPens() override;
@@ -25,6 +43,8 @@ public:
 
     void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 
+    void setPixel(int x, int y, unsigned int color) override;
+    unsigned int getPixel(int x, int y) override;
 
     void ReInitialize() override
     {
@@ -38,6 +58,7 @@ public:
     void ExportBin(QFile& ofile) override;
     void LoadBin(QFile& file) override;
     void SaveBin(QFile& file) override;
+    void CopyFrom(LImage *img) override;
 
 
 };

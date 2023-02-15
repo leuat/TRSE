@@ -336,6 +336,17 @@ QString Util::Util::numToHex0(long v)
     return "0x" +o;
 }
 
+uchar Util::CountBits(uchar c)
+{
+    uchar cnt=0;
+    for (int i=0;i<8;i++) {
+        uchar s = 1<<i;
+        if ((c&s)==s)
+            cnt+=1;
+    }
+    return cnt;
+}
+
 QByteArray Util::toQByteArray(QVector<int> &data)
 {
     QByteArray a;
