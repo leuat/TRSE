@@ -63,6 +63,13 @@ public:
     virtual void PrepareInitialAssembler(Assembler* as) override;
 
 
+    virtual bool HasCycleCounter() override {
+        return true;
+    }
+    virtual bool HasAddressCounter() override {
+        return true;
+    }
+
 };
 
 #endif // SYSTEMMOS6502_H

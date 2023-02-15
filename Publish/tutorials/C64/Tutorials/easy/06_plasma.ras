@@ -14,7 +14,7 @@ var
 	const charsetLocation: address = $2000;
  // look in the character set
  	const baseCharacter:byte = $68;
-
+ 	
 	// Use custom charset
 	charset: IncBin("resources/charsets/charset.bin",charsetLocation);
 	// nice colors

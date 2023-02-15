@@ -60,17 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
     Data::data.fontFamily = QFontDatabase::applicationFontFamilies(id).at(0);
 
     TRSEDocument::m_defaultPalette = m_defaultPalette;
-//    qRegisterMetaTypeStreamOperators<CItem>("CItem");
 
-
-    // make me crash
-/*    int a[4];
-    for (int i=0;i<10000;i++)
-    qDebug() << a[i];
-*/
     this->setMouseTracking(true);
     m_currentDoc = nullptr;
-//    setupIcons();
 
 #if defined(Q_OS_MAC)
     Util::path = QCoreApplication::applicationDirPath() + "/../../";
@@ -2887,7 +2879,6 @@ void MainWindow::LoadIniFile()
 
     m_iniFile->isMainSettings = true;
     auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-//    qDebug() << "MAIN " <<path;
     if (!QDir().exists(path)) {
         QDir().mkdir(path);
     }
@@ -2895,17 +2886,14 @@ void MainWindow::LoadIniFile()
 
     if (QFile::exists(m_iniFileName)) {
        m_iniFile->Load(m_iniFileName);
-//       qDebug() << "Loading NEW file type "<<m_iniFileName;
        if (m_iniFile->getString("amstradcpc464_emulator") != "" &&
            m_iniFile->getString("amstradcpc_emulator") == "") {
-           qDebug() << "Transparently migrating amstradcpc464_emulator to amstradcpc_emulator. See https://github.com/leuat/TRSE/pull/604.";
            m_iniFile->setString("amstradcpc_emulator", m_iniFile->getString("amstradcpc464_emulator"));
        }
     }
     else {
         if (QFile::exists(m_iniFileNameOld)) {
             m_iniFile->Load(m_iniFileNameOld);
-  //          qDebug() << "Loading OLD file type";
         }
     }
 
@@ -2963,7 +2951,6 @@ void MainWindow::removeFromRecentList()
 {
     int idx = ui->lstRecentProjects->currentRow();
     QStringList l = m_iniFile->getStringList("recent_projects");
-//    qDebug() << idx << l[idx] << ui->lstRecentProjects->currentItem()->text();
     l.removeAt(idx);
     m_iniFile->setStringList("recent_projects",l);
     UpdateRecentProjects();
@@ -3050,7 +3037,6 @@ void MainWindow::on_action_Rename_current_file_triggered()
 {
     QString orgFile = m_currentPath + QDir::separator() + m_currentDoc->m_currentFileShort;
     if (SaveAs()) {
-//        qDebug() << orgFile;
         QFile::remove(orgFile);
     }
     RefreshFileList();

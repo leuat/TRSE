@@ -10,7 +10,6 @@ var
 	
 	
 	font: incbin("zxchars.bin");
-
 	t,i,j,time,x,y,ot,t2,odx: byte;
 	dx : byte = 64;
 	sprites : incbin("data/sprites_data.bin");

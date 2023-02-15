@@ -154,6 +154,14 @@ public:
         return false;
     }
 
+
+    virtual bool HasCycleCounter() {
+        return false;
+    }
+    virtual bool HasAddressCounter() {
+        return false;
+    }
+
     virtual QString getEmulatorName() = 0;
     virtual void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) = 0;
 

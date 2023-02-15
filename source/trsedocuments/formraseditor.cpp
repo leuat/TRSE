@@ -83,11 +83,21 @@ void FormRasEditor::UpdateHelpText(QStringList& truFiles)
 
 void FormRasEditor::FocusOnOutput()
 {
-    ui->tabOutputs->setCurrentIndex(0);
+    //ui->tabOutputs->setCurrentIndex(0);
 }
 
 void FormRasEditor::setOutputText(QString text) {
-    ui->txtOutput->setHtml(text);
+
+    QStringList lst = text.split("<br>");
+    QString out, warning;
+    for (auto& s : lst) {
+        if (s.contains("Warning"))
+            warning+=s+"<br>";
+       else
+            out+=s+"<br>";
+    }
+    ui->txtOutput->setHtml(out);
+    ui->txtWarnings->setHtml(warning);
 //    PropagateMainOutput();
 }
 
@@ -700,7 +710,7 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
         QString word = tc.selectedText();
 */
         ui->widgetHelp->BuildTRU(m_truList);
-        ui->tabOutputs->setCurrentIndex(1);
+        //ui->tabOutputs->setCurrentIndex(1);
 
         ui->widgetHelp->SetFontSize(m_iniFile->getdouble("font_size"));
         //        ui->tabHelp->setFocus();
@@ -945,6 +955,9 @@ void FormRasEditor::FillFromIni()
     ui->chkExomize->setChecked(m_projectIniFile->getdouble("exomizer_toggle")==1);
     ui->chkRemoveUnusedSymbols->setChecked(m_projectIniFile->getdouble("remove_unused_symbols")==1);
     ui->chkWarnings->setChecked(m_iniFile->getdouble("display_warnings")==1);
+    ui->chkWarnings->setVisible(false);
+    ui->chkDisplayAddresses->setVisible(Syntax::s.m_currentSystem->HasAddressCounter());
+    ui->chkDisplayCycles->setVisible(Syntax::s.m_currentSystem->HasCycleCounter());
     //    qDebug() << "FillFromIni" << m_iniFile->getdouble("perform_crunch");
 
 
@@ -964,9 +977,13 @@ void FormRasEditor::FillToIni()
     m_iniFile->setFloat("post_optimize",ui->chkPostOpt->isChecked()?1:0);
     m_projectIniFile->setFloat("exomizer_toggle",ui->chkExomize->isChecked()?1:0);
     m_projectIniFile->setFloat("remove_unused_symbols",ui->chkRemoveUnusedSymbols->isChecked()?1:0);
-    m_iniFile->setFloat("display_warnings",ui->chkWarnings->isChecked()?1:0);
+    m_iniFile->setFloat("display_warnings",1);
 
     m_iniFile->setFloat("display_addresses",ui->chkDisplayAddresses->isChecked()?1:0);
+    if (!Syntax::s.m_currentSystem->HasAddressCounter())
+        m_iniFile->setFloat("display_addresses",0);
+    if (!Syntax::s.m_currentSystem->HasCycleCounter())
+        m_iniFile->setFloat("display_cycles",0);
     m_iniFile->setFloat("display_cycles",ui->chkDisplayCycles->isChecked()?1:0);
 
     ui->txtEditor->m_displayCycles = ui->chkDisplayCycles->isChecked();

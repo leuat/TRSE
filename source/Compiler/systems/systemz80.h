@@ -39,6 +39,9 @@ public:
         return 3; // z80
     }
 
+    virtual bool HasAddressCounter() override {
+        return false;
+    }
 
 };
 
