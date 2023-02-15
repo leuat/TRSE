@@ -111,9 +111,12 @@ public:
 
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
-    TokenType::Type m_returnType = TokenType::NADA;
+//    TokenType::Type m_returnType = TokenType::NADA;
 
     virtual void ForceAddress();
+
+    virtual void FindPotentialSymbolsInAsmCode(QStringList& lst);
+
 
     virtual bool isReference() { return false;}
     virtual void setReference(bool ref);

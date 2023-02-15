@@ -42,6 +42,7 @@ public:
         for (auto n : children)
             n->clearComment();
     }
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
 
     void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override;
 

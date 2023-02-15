@@ -24,6 +24,11 @@
 #include "source/Compiler/syntax.h"
 
 
+void NodeProcedureDecl::FindPotentialSymbolsInAsmCode(QStringList &lst) {
+    if (m_block!=nullptr)
+        m_block->FindPotentialSymbolsInAsmCode(lst);
+}
+
 NodeProcedureDecl::NodeProcedureDecl(Token t, QString m):Node() {
     m_op = t;
     m_procName = m;

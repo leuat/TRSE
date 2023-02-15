@@ -49,6 +49,8 @@ public:
     QSharedPointer<Node> m_block = nullptr;
 
 
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
+
     NodeProcedureDecl(Token t, QString m);
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_block!=nullptr)

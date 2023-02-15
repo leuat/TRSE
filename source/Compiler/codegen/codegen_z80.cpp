@@ -1297,7 +1297,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
         as->Asm("ld [hl], a");
         return;
     }
-    if (node->m_right->isWord(as) && !node->m_left->isWord(as) && node->m_returnType!=TokenType::BYTE) {
+    if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
         as->Asm("ld a,l ");
     }
     //    as->Comment(TokenType::getType(node->m_left->getType(as)));

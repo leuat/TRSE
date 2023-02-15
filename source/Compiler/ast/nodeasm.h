@@ -41,6 +41,7 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
 
     }
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeAsm>(sharedFromThis()));

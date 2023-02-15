@@ -53,6 +53,7 @@ public:
             m_compoundStatement->clearComment();
     }
 
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
 
     NodeBlock(Token t, QVector<QSharedPointer<Node>> decl, QSharedPointer<Node> comp, bool useOwnSymTab = true):Node() {
         m_compoundStatement = comp;

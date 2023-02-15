@@ -84,7 +84,7 @@ var
 
 	pm : pointer of Monster;
 	m : Monster;
-	const NN : integer = 10;
+	const NN : byte = 10;
 	monsters: array[ NN ] of Monster;
 @endif
 	zp: pointer;

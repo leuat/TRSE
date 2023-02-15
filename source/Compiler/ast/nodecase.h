@@ -26,6 +26,13 @@ public:
             m_elseBlock->ReplaceVariable(as,name,node);
     }
 
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override {
+        for (auto p:m_statements)
+            p->FindPotentialSymbolsInAsmCode(lst);
+        if (m_elseBlock!=nullptr)
+            m_elseBlock->FindPotentialSymbolsInAsmCode(lst);
+
+    }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
         m_variable->ExecuteSym(symTab);

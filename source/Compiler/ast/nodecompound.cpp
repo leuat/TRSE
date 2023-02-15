@@ -30,6 +30,12 @@ void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     }
 }
 
+void NodeCompound::FindPotentialSymbolsInAsmCode(QStringList &lst) {
+    for (auto n : children)
+        n->FindPotentialSymbolsInAsmCode(lst);
+
+}
+
 void NodeCompound::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node)
 {
     Node::ReplaceVariable(as,name,node);

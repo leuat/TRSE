@@ -61,6 +61,10 @@ public:
         if (m_step!=nullptr)
             m_step->parseConstants(symTab);
     }
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override {
+        if (m_block!=nullptr)
+            m_block->FindPotentialSymbolsInAsmCode(lst);
+    }
 
 
 

@@ -127,6 +127,14 @@ void Node::ForceAddress() {
         m_right->ForceAddress();
 }
 
+void Node::FindPotentialSymbolsInAsmCode(QStringList &lst)
+{
+    if (m_left)
+        m_left->FindPotentialSymbolsInAsmCode(lst);
+    if (m_right)
+        m_right->FindPotentialSymbolsInAsmCode(lst);
+}
+
 
 
 void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {

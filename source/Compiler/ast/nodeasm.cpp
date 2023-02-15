@@ -21,3 +21,7 @@
 
 #include "nodeasm.h"
 
+
+void NodeAsm::FindPotentialSymbolsInAsmCode(QStringList &lst) {
+    lst <<Syntax::s.m_currentSystem->AnalyseForPotentialVariables(m_asm);
+}
