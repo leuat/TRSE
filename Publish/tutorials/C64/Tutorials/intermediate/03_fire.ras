@@ -36,7 +36,7 @@ var
 	- Turn on / off OPTIMIZED flag to view the effect optimized in assembler and unoptimized
 
 */
-
+@startblock $4000 "Code"
 procedure Fire();
 begin
 
@@ -44,7 +44,7 @@ begin
 	ystart:=3;
 	colorzp:=#screen_col_loc +ystart*screen_width;
 	moveto(0, ystart, hi(screen_char_loc));
-	for y:=0 to 5 do begin // 160*4
+	for y:=0 to 5 offpage do begin // 160*4
 	//	 Original code
 @if OPTIMIZED = 0
 		for x:=0 to 160 do begin
@@ -57,11 +57,13 @@ begin
 @endif
 @if OPTIMIZED=1
 			
-			// Optimized
-			for x:=0 to 160 onpage do 
+//			for x:=0 to 160 do 
+			// Unrolled
 			asm("
-				lda x
-								
+			
+				repeat 160
+			
+				lda #[i]							
 				adc #38
 				tay
 				lda (screenmemory),y
@@ -79,12 +81,13 @@ begin
 				lsr
 				lsr
 
-				ldy x
+				ldy #[i]							
 				sta (screenmemory),y		
 				tax
 				lda color,x
 				sta (colorzp),y
 
+				repend
 			");		
 @endif
 		screenmemory+=160;
@@ -95,6 +98,8 @@ begin
 		screenmemory[i+screen_width]:=rands[i-shiftx];
 	end;
 end;	
+@endblock
+
 
 procedure InitRandom();
 begin
