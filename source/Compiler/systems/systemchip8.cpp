@@ -30,10 +30,12 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     int time = timer.elapsed();
     int codeEnd = 0;
 
-    m_buildSuccess = true;
-    AssembleTripe(text,filename,currentDir,symTab);
-    if (!m_buildSuccess)
-        return;
+    auto txt = Util::loadTextFile(filename+".asm");
+    txt = txt.replace("main_block_end_:","");
+    Util::SaveTextFile(filename+".asm",txt);
+
+    if (QFile::exists(filename+".ch8"))
+        QFile::remove(filename+".ch8");
 
     //qDebug() << m_settingsIni->getString("assembler");
     emit EmitTick("<br>Assembling with c8asm ...");
@@ -69,11 +71,10 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
         m_orgOutput = output;
         text="<font color=\"#FF6040\">Fatal error during assembly!</font><br>";
         m_buildSuccess = false;
+        return;
     }
-
-    if (!output.toLower().contains("complete.")) {
-        m_buildSuccess = false;
-    }
+    if (QFile::exists(filename+".ch8"))
+        m_buildSuccess = true;
 
     if (m_buildSuccess) {
         output = output.remove("Complete.");

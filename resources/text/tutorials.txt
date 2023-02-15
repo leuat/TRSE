@@ -101,6 +101,7 @@ ATARI520ST; Atari 520 Unit tests; ATARI520ST/unittests/; <h2>TRSE internal unit 
 
 
 
+
 ACORN; Acorn atom tutorials; Acorn/tutorials/ ;  <h2>Acorn Atom tutorials</h2><p><img src=":resources/images/ACORN.png" width="200" class="center">Under construction.
 ATARI800; Main Atari800 tutorials; ATARI800/Tutorials/ ;  <h2>Main Atari 800 tutorials</h2><p><p>To do. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
 APPLEII; Main Apple II tutorials; APPLEII/tutorials/ ;  <h2>Main Apple II tutorials</h2><p><p>Under construction. Let us know if you have experience with this computer, and are willing/able to create some libraries+example files!
@@ -120,6 +121,8 @@ WONDERSWAN; Main Wonderswan examples ; WONDERSWAN/tutorials/; <h2>Main Wonderswa
 
 POKEMONMINI; Main Pokemon Mini tutorials; POKEMONMINI/tutorials;<h2>Main Pokemon Mini tutorials</h2><p>Please note that this compiler is a work in progress!
 JDH8; Main JDH8 examples ; JDH8/tutorials/; <h2>Main JDH8 tutorials</h2><tr><td><img src=":resources/images/JDH8.png" width="150" class="center"></td><td><p>See https://www.youtube.com/watch?v=vaGZapAGvwM. Still very much experimental. Check out the video! </td></tr>
+CHIP8; Main Chip8 examples ; CHIP8/tutorials/ ; <h2>Main chip8 tutorials</h2><p><img src=":resources/images/JDH8.png" width="150" class="center"><br><p>Under construction.. only assembler stuff as of now
+
 
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2><p><img src=":resources/images/tutorials/grave_intentions.png" width="300"><p>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/tutorials/crossplatform.png" width="300" class="center"><p>

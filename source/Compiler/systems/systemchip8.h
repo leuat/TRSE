@@ -23,7 +23,7 @@ public:
 
     void DefaultValues() override;
 
-    virtual QString getEmulatorName() { return "chip8";}
+    virtual QString getEmulatorName() { return "internal";}
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) override;
 
 

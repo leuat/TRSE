@@ -3129,7 +3129,5 @@ void MainWindow::on_btnSizeAnalyser_clicked()
 
 void MainWindow::on_actionChip_8_emulator_triggered()
 {
-    dialogchip8* d8 = new dialogchip8();
-    d8->exec();
 }
 

@@ -587,7 +587,7 @@ void Chip8Emu::setNeedsDisplay(bool needsDisplay) {
 QPixmap Chip8Emu::getScreen(int w, int h)
 {
     QColor set = QColor(255,200,30);
-    QColor bg = QColor(32,16,8);
+    QColor bg = QColor(48,32,12);
     for (int y=0;y<m_screen.height();y++)
         for (int x=0;x<m_screen.width();x++) {
             if (gfx[x][y]!=0)

@@ -17,7 +17,7 @@ class dialogchip8 : public QDialog
 public:
     Chip8Emu c8;
     QTimer* timer = nullptr;
-    explicit dialogchip8(QWidget *parent = nullptr);
+    explicit dialogchip8(QString file,QWidget *parent = nullptr);
     ~dialogchip8();
 
 private slots:

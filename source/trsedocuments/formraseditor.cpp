@@ -25,7 +25,7 @@
 #include <QElapsedTimer>
 #include "source/LeLib/util/util.h"
 #include <QScrollBar>
-
+#include "source/chip8emu/dialogchip8.h"
 
 
 
@@ -107,10 +107,20 @@ void FormRasEditor::ExecutePrg(QString fileName)
 //    QString emu = m_iniFile->getString("emulator");
     QString emu = Syntax::s.m_currentSystem->getEmulatorName();
 
+
     QStringList params;
 //    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
   //  qDebug() << debugFile <<fileName;
     Syntax::s.m_currentSystem->applyEmulatorParameters(params,fileName+".sym", fileName,m_builderThread.m_builder->m_projectIniFile.get());
+    if (emu=="internal") {
+        // Internal emulator!
+        if (Syntax::s.m_currentSystem->m_system==AbstractSystem::CHIP8) {
+            dialogchip8* dc8 = new dialogchip8(params[0]);
+            dc8->exec();
+            return;
+        }
+    }
+
     QString name = "emulator_additional_parameters_"+ AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system);
     // Additional parameters
     if (m_iniFile->contains(name)) {

@@ -3,13 +3,13 @@
 #include <QTimer>
 #include <QDebug>
 
-dialogchip8::dialogchip8(QWidget *parent) :
+dialogchip8::dialogchip8(QString file,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::dialogchip8)
 {
     ui->setupUi(this);
     c8.init();
-    c8.loadROM("/Users/leuat/code/ch8/chip8/examples/cube.ch8");
+    c8.loadROM(file);
 
     timer = new QTimer();
     timer->setInterval(1); //Time in milliseconds

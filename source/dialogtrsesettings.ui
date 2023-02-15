@@ -62,7 +62,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -91,7 +91,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>358</width>
+                 <width>920</width>
                  <height>1177</height>
                 </rect>
                </property>
@@ -1118,8 +1118,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>309</width>
-              <height>177</height>
+              <width>950</width>
+              <height>226</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1722,7 +1722,7 @@ Use Dasm if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>455</width>
+              <width>950</width>
               <height>669</height>
              </rect>
             </property>
@@ -2021,7 +2021,7 @@ Use Dasm if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>508</width>
+              <width>950</width>
               <height>658</height>
              </rect>
             </property>
