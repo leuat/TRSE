@@ -69,6 +69,7 @@ public:
     QStringList m_lines;
     QString m_path;
     QVector<FilePart> m_includeFiles;
+    int m_currentLineCount;
     bool m_ignorePreprocessor, m_nextIsReference = false;
     bool m_isCurrentlyInABlockComment = false;
     int getPositionInPercent();

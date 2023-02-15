@@ -6136,6 +6136,7 @@ void Parser::HandleUseTPU(QString fileName)
         e.linenr = m_currentToken.m_lineNumber;
         throw e;
     }
+    m_lexer->m_currentLineCount += p->m_lexer->getTotalNumberOfLines();
     /*
     Node::m_staticBlockInfo.m_blockID = -1;
     Node::m_staticBlockInfo.m_blockPos = "";
