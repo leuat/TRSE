@@ -60,3 +60,6 @@ override_target_settings_basic = -0.5
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
+use_track_19 = 1
+disable_compiler_comments = 0
+use_vice_c1541 = 0

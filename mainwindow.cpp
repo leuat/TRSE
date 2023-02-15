@@ -49,6 +49,8 @@
 #include <QInputDialog>
 #include "source/dialogsizeanalyser.h"
 
+#include "source/chip8emu/dialogchip8.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -3122,5 +3124,12 @@ void MainWindow::on_btnSizeAnalyser_clicked()
     ds->exec();
     delete ds;
 
+}
+
+
+void MainWindow::on_actionChip_8_emulator_triggered()
+{
+    dialogchip8* d8 = new dialogchip8();
+    d8->exec();
 }
 

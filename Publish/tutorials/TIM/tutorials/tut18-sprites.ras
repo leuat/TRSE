@@ -50,7 +50,6 @@ end;
 
 begin
 	Z80CPM::Startup();
-	asm(" di");
 	System::CursorOff();
 	System::SetScreenPos(0);
 	Screen::SetFont(#font);
