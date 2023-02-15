@@ -10,14 +10,11 @@ public:
 
     void loadROM(QString file);
 
-    void step();
+    void Step();
 
-    void keydown(unsigned char k);
-    void keyup(unsigned char k);
-    void init();
-    void unknownOpcode();
-    bool needsDisplay();
-    void setNeedsDisplay(bool needsDisplay);
+    void Keydown(unsigned char k);
+    void Keyup(unsigned char k);
+    void Init();
     QImage m_screen;
     QPixmap getScreen(int w, int h);
 

@@ -118,25 +118,6 @@ void LImageThomson::ExportBin(QFile &ofile)
 
     QString f = ofile.fileName();
     QByteArray data, cols;
-/*    for (int y=0;y<m_height;y++) {
-        for (int x=0;x<m_width/8;x++) {
-            uchar c = 0;
-            for (int p=0;p<8;p++) {
-                uchar p1 = getPixel(x*8+p,y);
-                if (p1!=0) p1=0; else p1=1;
-                c |= (p1)<<(7-p);
-
-//                curBit+=1;
-            }
-            data.append(c);
-            uchar c1 = getPixel(x*8+0,y);
-            uchar c2 = getPixel(x*8+4,y);
-            uchar col = lcols[c1] | (lcols[c2]<<4);
-            cols.append(col);
-
-        }
-    }
-    */
     data.append(m_data);
     for (int i=0;i<m_cols.size()/2;i++) {
         uchar c = lcols[(int)m_cols[i*2]] | (lcols[(int)m_cols[i*2+1]]<<4);
