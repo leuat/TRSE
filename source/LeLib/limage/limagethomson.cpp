@@ -106,7 +106,7 @@ unsigned int LImageThomson::getPixel(int x, int y)
         return 0;
 
     int cp = (p.y()*m_width+p.x())/8;
-    uchar xp = 1<<(7-p.x()&7);
+    uchar xp = 1<<(7-(p.x()&7));
     int add = (m_data[ip] & xp)>>(7-(p.x()&7));
     return m_cols[cp*2 +add];
 
