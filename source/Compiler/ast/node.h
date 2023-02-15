@@ -111,6 +111,8 @@ public:
 
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
+    TokenType::Type m_returnType = TokenType::NADA;
+
     virtual void ForceAddress();
 
     virtual bool isReference() { return false;}

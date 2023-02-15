@@ -56,7 +56,9 @@ begin
 	Test1();
 	@ifndef GAMEBOY
 	@ifndef CPU_Z80
+	@ifndef CPU_Z180
 	Test2();
+	@endif
 	@endif
 	@endif
 		

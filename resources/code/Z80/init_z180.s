@@ -129,14 +129,8 @@ div_16x16:
 
 _loop16:
 
-   ; oh so slow! sloooow
-   push af
-   ld a,c
-   sla a
-   or 1
-   ld c,a
-   pop af
-
+   sla c
+   inc c
    rla
    adc	hl, hl
    sbc	hl, de

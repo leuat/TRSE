@@ -516,6 +516,11 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             //               as->Asm("clc");
             as->Asm("call div_16x8");
             as->Asm("ld a,l");
+//            node->m_returnType = TokenType::BYTE;
+            if (node->m_forceType==TokenType::NADA)
+                 node->m_left->setForceType(TokenType::NADA);
+
+
             return;
 
 
@@ -1292,8 +1297,8 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
         as->Asm("ld [hl], a");
         return;
     }
-    if (node->m_right->isWord(as) && !node->m_left->isWord(as)) {
-        as->Asm(" ld a,l ");
+    if (node->m_right->isWord(as) && !node->m_left->isWord(as) && node->m_returnType!=TokenType::BYTE) {
+        as->Asm("ld a,l ");
     }
     //    as->Comment(TokenType::getType(node->m_left->getType(as)));
     Cast(node->m_left->getType(as), node->m_right->m_castType);

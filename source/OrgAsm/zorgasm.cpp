@@ -411,7 +411,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 void ZOrgasm::ApplyCPUType()
 {
     if (m_subCpu.toLower()=="z180") {
-        m_illegalCodes << "sll";
+//        m_illegalCodes << "sll";
     }
 }
 
