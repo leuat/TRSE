@@ -28,7 +28,7 @@ AsmChip8::AsmChip8()
 
 void AsmChip8::Asm(QString s, QString comment)
 {
-    Write(s,0);
+    Write(s,1);
 }
 
 void AsmChip8::Connect() {
@@ -160,10 +160,7 @@ void AsmChip8::DeclareArray(QString name, QString type, int count, QStringList d
         }
         else {
             QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
-            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::GAMEBOY)
-                app->Append("org [" + pos +"]",1);
-            else
-                app->Append("org " + pos +"",1);
+            app->Append("org " + pos +"",1);
             for (int i=0;i<lst.count();i++)
                 app->Append(lst[i],0);
 

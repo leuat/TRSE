@@ -270,24 +270,24 @@ QString CodeGenChip8::getReg(int dd) {
 
 void CodeGenChip8::ldr(QString x0, QString x1)
 {
-    as->Asm("mw "+x1+",["+x0+"]");
+    as->Asm("ld "+x1+",["+x0+"]");
 }
 
 void CodeGenChip8::str(QString x0, QString x1)
 {
-    as->Asm("sw ["+x1+"],"+x0);
+    as->Asm("ld ["+x1+"],"+x0);
 }
 
 void CodeGenChip8::str(QSharedPointer<Node> var)
 {
     if (var->isWord(as)) {
-        QString x0 = getReg();
+/*        QString x0 = getReg();
         QString x1 = m_regs[m_lvl+1];
-        as->Asm("sw16 ["+var->getValue(as)+"],"+x0+","+x1);
+        as->Asm("ld ["+var->getValue(as)+"],"+x0+","+x1);*/
     }
     else {
         QString x0 = getReg();
-        as->Asm("sw ["+var->getValue(as)+"],"+x0);
+        as->Asm("ld ["+var->getValue(as)+"],"+x0);
 
     }
 }

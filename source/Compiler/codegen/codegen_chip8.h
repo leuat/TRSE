@@ -61,10 +61,10 @@ public:
     QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
     int m_lvl = 0;
-    QStringList m_regs = QStringList({"a","b","c","d"});
+    QStringList m_regs = QStringList({"V0","V1","V2","V3","V4","V5"});
 
-    QString m_jmp = "jmp ";
-    QString m_mov = "mw ";
+    QString m_jmp = "jp ";
+    QString m_mov = "ld ";
     QString m_cmp = "cmp ";
     QString m_jne = "jz ";
 
