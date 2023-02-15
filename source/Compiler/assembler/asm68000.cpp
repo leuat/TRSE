@@ -243,18 +243,9 @@ QString Asm68000::String(QStringList lst, bool term)
     QString res;
     QString mark = "dc.b";
 
+
     for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
-
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
-
-        /*        if (s!=lst.last())
-                res=res + "\n";
-    */
-
+        res+=DeclareSingleString(s,mark,mark);
     }
     if (term)
         res=res + "\t"+mark+"\t0";

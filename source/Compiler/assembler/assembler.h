@@ -286,6 +286,7 @@ public:
 //    virtual void AssignVariable(QString var) = 0;
 //    virtual void EndAssignVariable(QString var) {}
     virtual void ApplyTerm() {}
+    QString DeclareSingleString(QString str, QString mark, QString markByte);
     virtual void Number(QString n) {}
     virtual QString  String(QStringList s, bool term) { return "";}
     virtual void BinOP(TokenType::Type t, bool clearFlag=true){}

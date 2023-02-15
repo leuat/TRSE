@@ -100,6 +100,18 @@ QString Assembler::GetOrg() {
     return "org ";
 }
 
+QString Assembler::DeclareSingleString(QString s, QString mark, QString markByte)
+{
+    if (s.startsWith(Syntax::s.m_numID)) {
+        s = s.remove(Syntax::s.m_numID);
+        int val = Util::NumberFromStringHex(s);
+        return "\t"+markByte+"\t"+QString::number(val) + "\n";
+    }
+    else
+        return "\t"+mark+"\t" +"\"" + s + "\"\n";
+
+}
+
 bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPointer<Appendix> s2)
 {
     QString sa = s1->m_pos.toLower().replace("$","0x");

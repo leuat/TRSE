@@ -404,19 +404,9 @@ QString AsmZ80::String(QStringList lst, bool term)
     QString res;
     QString mark = byte;
 
-    for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+    for (QString s:lst)
+        res+=DeclareSingleString(s,mark,mark);
 
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
-
-        /*        if (s!=lst.last())
-                    res=res + "\n";
-        */
-
-    }
     if (term)
         res=res + "\t"+mark+"\t0";
 

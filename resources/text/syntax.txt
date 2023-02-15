@@ -311,7 +311,7 @@ m; Lo; MOS6502, Z80, Z180, M6809; a
 m; Hi; MOS6502, Z80, Z180, M6809; a
 m; bankbyte; MOS6502, WDC65C02, WDC65C816, CUSTOM; a
 m; ToPointer;  MOS6502; b,b
-m; ProcedureToPointer;  ALL; p
+#m; ProcedureToPointer;  ALL; p
 m; int2ptr;  MOS6502; i
 m; CreateInteger; MOS6502; b,b
 m; CreatePointer; MOS6502; b,b

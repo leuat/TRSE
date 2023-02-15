@@ -1024,6 +1024,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
     for (QSharedPointer<Node> n: m_proceduresOnly)
         n->FindPotentialSymbolsInAsmCode(potentialUsedVariables);
 
+    // Make sure that variables used in non-removed asm blocks are kept
     for (auto s: potentialUsedVariables) {
         if (m_symTab->m_symbols.contains(s)) {
             m_symTab->m_symbols[s]->isUsed = true;
@@ -1033,9 +1034,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
             m_procedures[s]->m_isUsed = true;
     }
 
-
-
-
+    // Go through all variables and remove the unused ones
     for (QSharedPointer<Node> n: root->m_NodeBlock->m_decl) {
         bool add = true;
 
@@ -3568,8 +3567,8 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     //    lst<<m_currentToken.m_value;
     int max=0;
     QString numID = "";
-    if (isCString)
-        numID = "*&NUM";
+//    if (isCString)
+        numID = Syntax::s.m_numID;
 
 
     while (m_currentToken.m_type!=TokenType::RPAREN) {

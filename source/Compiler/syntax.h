@@ -104,6 +104,8 @@ public:
     QString m_syntaxData; // File syntax data
     QString m_systemString;
 
+    QString m_numID = "*&NUM";
+
     QString thisName = "this";
 
     QMap<QString, bool> m_reservedWordsRegularFont;

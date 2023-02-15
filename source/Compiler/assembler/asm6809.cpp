@@ -397,12 +397,8 @@ QString Asm6809::String(QStringList lst, bool term)
     }
 
     for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
-
-        else res=res + "\t"+"fcb"+"\t"+QString::number(val) + "\n";
+        for (QString s:lst)
+            res+=DeclareSingleString(s,mark,"fcb");
 
 /*        if (s!=lst.last())
             res=res + "\n";

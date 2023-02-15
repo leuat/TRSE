@@ -468,21 +468,11 @@ QString Asm6502::String(QStringList lst, bool term)
         term = false;
     }
 
-    for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
-
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
-
-/*        if (s!=lst.last())
-            res=res + "\n";
-*/
-
-    }
+    for (QString s:lst)
+        res+=DeclareSingleString(s,mark, mark);
     if (term)
         res=res + "\t"+byte+"\t0";
+
     m_term +=res;
     return res;
 }
