@@ -156,8 +156,8 @@ void SystemThomson::CreatekCart(QString filename)
     ba[ 0x3fe0 +3 ] = QChar('S').toLatin1(); // terminate ascii
     ba[ 0x3fe0 +4 ] = QChar('E').toLatin1(); // terminate ascii
     ba[ 0x3fe0 +5 ] = 0x4; // terminate ascii
-    ba[0x3ffe] = (m_programStartAddress>>8)&0xFF;
-    ba[0x3fff] = m_programStartAddress&0xFF;
+    ba[0x3fff] = (m_programStartAddress>>8)&0xFF;
+    ba[0x3ffe] = m_programStartAddress&0xFF;
 
 
     Util::SaveByteArray(ba,filename+".rom");

@@ -109,8 +109,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
 
 
     QStringList params;
-//    QString debugFile =Util::getFileWithoutEnding(fileName)+".sym";
-  //  qDebug() << debugFile <<fileName;
+
     Syntax::s.m_currentSystem->applyEmulatorParameters(params,fileName+".sym", fileName,m_builderThread.m_builder->m_projectIniFile.get());
     if (emu=="internal") {
         // Internal emulator!
