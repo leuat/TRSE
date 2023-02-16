@@ -293,12 +293,12 @@ def CompileRegularRas():
 	#tests.append([ "GAMEBOY/UnitTests",["unittests.ras"]])
 
 
-CompileUnitTests()
 
 if (utestsonly==False):
 	CompileRegularRas();
 else:
 	print("Skipping compilation of regular tests")
+	CompileUnitTests()
 
 
 def c(path,f1):
@@ -525,11 +525,11 @@ def GBUnitTests():
 
 def UnitTests():
 	# add coco
-#	COCO3UnitTests();
-#	DOSUnitTests();
-#	C64UnitTests();
-#	CPCUnitTests();
-#	GBUnitTests();
+	COCO3UnitTests();
+	DOSUnitTests();
+	C64UnitTests();
+	CPCUnitTests();
+	GBUnitTests();
 
 
 def CompileTests():
