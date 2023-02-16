@@ -334,7 +334,7 @@ int c8_assemble(const char *text) {
     static Stepper stepper;
     int i, j, regx = -1, regy = 0;
     stepper.in = text;
-
+    c8_message_text[0]=0;
     if(c8_verbose) c8_message("Assembling...\n");
 
     next_instr = 512;

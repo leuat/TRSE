@@ -12,17 +12,19 @@ var
 	,$FF,$FF,$FF
 );
 	x,y : byte;
+	
 procedure Init();
 begin
-	asm("dd
-		cls
+	
+	asm("
+;		cls
 	");
 //	asm(";here");
 //	y:=16;
 	asm("
-	ld v0, 16
-	ld i,y
-	ld [i],v0
+;	ld v0, 16
+;	ld i,y
+;	ld [i],v0
 	
 	");
 end;
