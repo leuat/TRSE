@@ -1,0 +1,105 @@
+unit SignedMath;
+
+@ifndef @muldivtables
+//@error "Please declare the preprocessor 'muldivtables' to point to a available memory position starting on a new page (ie ends with $XX0) before using this unit."
+@endif
+
+
+var
+	@donotremove PRODUCT
+	PRODUCT: integer;
+	neg: byte; // temp value area	
+	T1, T2: byte;
+
+
+
+@donotremove Init
+procedure Init();
+begin
+	asm("
+multiply_8bit_signed:
+  xor a
+  ld h,a
+  ld l,a
+
+  bit 7,d
+  jr z,muldpos
+  sbc hl,bc
+muldpos:
+
+  or b
+  jp p,mulbpos
+  sbc hl,de
+mulbpos:
+
+  ld a,16
+mulloop:
+  add hl,hl
+  rl e
+  rl d
+  jr nc,mul0bit
+  add hl,bc
+  jr nc,mul0bit
+  inc de
+mul0bit:
+  dec a
+  jr nz,mulloop
+                	
+	
+
+	");
+end;
+
+function Muls8x8(T1,T2 : global byte):integer;
+begin
+	asm(" 
+		ld a, [SignedMath_T1]
+		ld c,a
+ 	    add a, a  ; Push sign into carry
+ 	    sbc a,a     ; Turn it into 0 or -1
+        ld  b, a  ; Store high byte
+		
+		ld a, [SignedMath_T2]
+;		;; signed extend 8 to 16 bit
+		 
+		ld e,a
+ 	    add a, a  ; Push sign into carry
+ 	    sbc a,a     ; Turn it into 0 or -1
+        ld  d, a  ; Store high byte
+          
+ 		call multiply_8bit_signed 
+;		ex de,hl
+	");
+end;
+
+function Divs16x8(PRODUCT:global integer; T1 : global byte):integer;
+begin
+		
+	
+	
+	
+	if (hi(PRODUCT)>=128) then 
+	begin
+		neg:=true;
+		PRODUCT := 0 - PRODUCT;
+		
+	end else neg:=false;
+	
+	PRODUCT := PRODUCT/T1;
+	
+	if (neg=true) then 
+		PRODUCT := 0 - PRODUCT;
+	
+	
+	asm("
+		ld hl, [SignedMath_PRODUCT]
+		
+		
+		");		
+/*	asm(" 
+		lda SignedMath_PRODUCT
+		ldy SignedMath_PRODUCT+1
+	");
+*/	
+	end;
+end.

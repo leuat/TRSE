@@ -399,8 +399,10 @@ void MultiColorImage::OrdererdDither(QImage &img, LColorList &colors, QVector3D 
             int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
             int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
             if (m_importScaleX==1.0 && m_importScaleY==1.0) { // prevent rounding errors on windows.. damn
-               xx = x*m_importScale;
-               yy = y;
+                if (m_type!=LImage::CharMapMulticolor) {
+                    xx = x*m_importScale;
+                    yy = y;
+                }
             }
 
 
@@ -970,6 +972,7 @@ void MultiColorImage::FromLImageQImage(LImage *other)
 /*   QImage test(other->m_width, other->m_height, QImage::Format_ARGB32);
    ((LImageQImage*)(other))->ToQImage(other->m_colorList,test,1,QPointF(80,100));
    test.save("test.png");*/
+//    qDebug() << other->m_width << other->m_height;
     for (int y=0; y<m_charHeight;y++)
         for (int x=0; x<m_charWidth;x++) {
             int num  =x + y*m_charWidth;
@@ -987,9 +990,10 @@ void MultiColorImage::FromLImageQImage(LImage *other)
 
             for (int j=0;j<8;j++) {
                 for (int i=0;i<8/m_scale;i++) {
+  //                  qDebug() << QString::number(dy+j);
                     uchar c = other->getPixel(dx+i, dy+j);
-                 //   qDebug() << QString::number(c);
-                    cols[c].setX(cols[c].x()+1);
+                    if (c<cols.count())
+                       cols[c].setX(cols[c].x()+1);
 
                 }
             }
@@ -1027,7 +1031,8 @@ void MultiColorImage::FromLImageQImage(LImage *other)
                     uchar c = other->getPixel(dx+i, dy+j);
   //                  if (winners.contains(c))
                     int winner =  0;
-                    m_colorList.getClosestColor(other->m_colorList.m_list[c].color, winner);
+                    if (c<other->m_colorList.m_list.count())
+                       m_colorList.getClosestColor(other->m_colorList.m_list[c].color, winner);
                     pc.set(i*m_scale,j,winner,m_bitMask);
 //                    pc.set(i*m_scale,j,c,m_bitMask);
                 }

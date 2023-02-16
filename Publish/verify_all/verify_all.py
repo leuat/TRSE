@@ -19,9 +19,11 @@ class Option(object):
 
 options = [
 	Option('trse', 'Path to the TRSE binary. Required.'),
+	Option('utestsonly', 'Compile and execute unit tests only. Optional.',default_value='no'),
 	Option('trse.ini', 'Path to the trse.ini file. If provided, used to determine all tools path although later options can override them.'),
 	Option('x64', 'Path to the x64 binary (VICE emulator for C64)', trse_ini_key='emulator'),
 	Option('cap32', 'Path to the cap32 binary (Amstrad CPC emulator)', trse_ini_key='amstradcpc_emulator'),
+	Option('mame', 'Path to the mame binary (COCO3 emulator)', trse_ini_key='mame_emulator'),
 	Option('dosbox', 'Path to the dosbox binary (DOS emulator)', trse_ini_key='dosbox'),
 	Option('sameboy', 'Path to the sameboy binary (GameBoy emulator)', trse_ini_key='gameboy_emulator'),
 	Option('assemble', 'Whether to assemble when compiling ("yes" or "no")', default_value='yes'),
@@ -97,6 +99,13 @@ cap32 = GetOption('cap32')
 assemble = GetOption('assemble')
 dosbox = GetOption('dosbox')
 sameboy = GetOption('sameboy')
+mame = GetOption('mame')
+
+utestsonly = False
+if GetOption('utestsonly'):
+	if GetOption('utestsonly')=="yes":
+		utestsonly = True
+
 
 if (dosbox.endswith(".app")):
 	dosbox+="/Contents/MacOS/DOSBox"
@@ -111,146 +120,185 @@ lp = "../tutorials/"
 tests = [ ]
 
 
+
+
 def fillRasList(idx,path):
 	for file in os.listdir(lp+tests[idx][0]+"/"+path):
 		if file.endswith(".ras"):
 			tests[idx][1].append(path+"/"+file)
 
 
-# SPECTRUM
-
-tests.append([ "SPECTRUM/tutorials/",[]])
-fillRasList(len(tests)-1,".")
-
-
-# CPC
-
-tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
-tests.append([ "AMSTRADCPC/tutorials",[]])
-fillRasList(len(tests)-1,".")
-tests.append([ "AMSTRADCPC/UnitTests", ["unittests.ras"]]);
+def CompileUnitTests():
+	print("Compiling TRSE unit tests...")
+	tests.append([ "AMSTRADCPC/UnitTests", ["unittests.ras"]]);
+	tests.append([ "X86/unittests", ["utests.ras"]])
+	tests.append([ "C64/UnitTests", ["unittests.ras"]]);
+	tests.append([ "TRS80COCO/unittests", ["unittests.ras"]]);
 
 
-# AMIGA
+def CompileRegularRas():
+	# SNES
+	print("Compiling tutorials...")
 
-tests.append([ "AMIGA/tutorials",[]])
-fillRasList(len(tests)-1,".")
-tests.append([ "AMIGA/small_intro",["intro.ras"]])
+	tests.append([ "SNES/tutorials/",[]])
+	fillRasList(len(tests)-1,".")
 
-# ATARI
+	# TIM
 
-tests.append([ "ATARI520ST/tutorials",[]])
-fillRasList(len(tests)-1,".")
+	tests.append([ "TIM/tutorials/",[]])
+	fillRasList(len(tests)-1,".")
 
-# BBC
+	# TRS80COCO
 
-tests.append([ "BBCM/Tutorials",[]])
-fillRasList(len(tests)-1,".")
-#tests.append([ "BBCM/Beep",[]])
-#fillRasList(len(tests)-1,".")
-# Has dependencies, ignore
-#tests.append([ "BBCM/BBCDemoSetup",["demo.ras"]])
+	tests.append([ "TRS80COCO/tutorials/",[]])
+	tests.append([ "TRS80COCO/unittests",["unittests.ras"]])
+	fillRasList(len(tests)-1,".")
 
-# MEGA64
+	# vZ200
 
-tests.append([ "MEGA65/Tutorials",[]])
-fillRasList(len(tests)-1,".")
-
-# ATARI2600
-
-tests.append([ "ATARI2600/tutorials",[]])
-fillRasList(len(tests)-1,".")
+	tests.append([ "VZ200/tutorials/",[]])
+	tests.append([ "VZ200/millipede",["millipede.ras"]])
+	fillRasList(len(tests)-1,".")
 
 
+	# SPECTRUM
+
+	tests.append([ "SPECTRUM/tutorials/",[]])
+	fillRasList(len(tests)-1,".")
 
 
-# X86
-tests.append([ "X86/CGA",[]])
-fillRasList(len(tests)-1,".")
+	# CPC
 
-tests.append([ "X86/VGA_386",[]])
-fillRasList(len(tests)-1,".")
-
-tests.append([ "X86/unittests", ["utests.ras"]])
+	tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
+	tests.append([ "AMSTRADCPC/tutorials",[]])
+	fillRasList(len(tests)-1,".")
 
 
-# PET
+	# AMIGA
 
-# fails for some reason
-#tests.append([ "PET/examples/",[]])
-#fillRasList(len(tests)-1,".")
+	tests.append([ "AMIGA/tutorials",[]])
+	fillRasList(len(tests)-1,".")
+	tests.append([ "AMIGA/small_intro",["intro.ras"]])
 
-#tests.append([ "PET/pbm-pet/",[]])
-#fillRasList(len(tests)-1,".")
+	# ATARI
 
-tests.append([ "PET/PETFrog/",["petfrog.ras"]])
+	tests.append([ "ATARI520ST/tutorials",[]])
+	fillRasList(len(tests)-1,".")
 
-# NES
+	# BBC
 
-tests.append([ "NES/intro_tutorial/",[]])
-fillRasList(len(tests)-1,".")
+	tests.append([ "BBCM/Tutorials",[]])
+	fillRasList(len(tests)-1,".")
+	#tests.append([ "BBCM/Beep",[]])
+	#fillRasList(len(tests)-1,".")
+	# Has dependencies, ignore
+	#tests.append([ "BBCM/BBCDemoSetup",["demo.ras"]])
 
-# OK64
+	# MEGA64
 
-tests.append([ "OK64/Tutorials/",[]])
-fillRasList(len(tests)-1,".")
-tests.append([ "OK64/OkComputer/",["main.ras"]])
+	tests.append([ "MEGA65/Tutorials",[]])
+	fillRasList(len(tests)-1,".")
 
-# ************ BUILD TEST LIST 
-# C64 
-tests.append([ "C64/TutorialGame_RogueBurgerOne",["RogueBurgerOne.ras"]])
-tests.append([ "C64/Tutorials",[]])
-fillRasList(len(tests)-1,"easy")
-fillRasList(len(tests)-1,"intermediate")
-fillRasList(len(tests)-1,"advanced")
-tests.append([ "C64/DemoEffects_raytracer",[]])
-fillRasList(len(tests)-1,".")
-tests.append([ "C64/16kb_cartridge_project", []]);
-fillRasList(len(tests)-1,".")
-tests.append([ "C64/4kDreams", ["intro.ras"]]);
-tests.append([ "C64/DemoEffects_raytracer", []]);
-fillRasList(len(tests)-1,".")
-# Fails with various errors
-#tests.append([ "C64/DemoMaker", []]);
-#fillRasList(len(tests)-1,".")
+	# ATARI2600
 
-#tests.append([ "C64/Disk_loader_project", []]);
-#fillRasList(len(tests)-1,".")
-tests.append([ "C64/Floskel", []]);
-fillRasList(len(tests)-1,".")
-tests.append([ "C64/MusicPlayer", []]);
-fillRasList(len(tests)-1,".")
-#tests.append([ "C64/Olimp", []]);
-#fillRasList(len(tests)-1,".")
-tests.append([ "C64/wormwood", []]);
-fillRasList(len(tests)-1,".")
-tests.append([ "C64/TutorialGame_Introduction", []]);
-fillRasList(len(tests)-1,".")
-tests.append([ "C64/UnitTests", ["unittests.ras"]]);
-#fillRasList(len(tests)-1,"arithmetic")
-#fillRasList(len(tests)-1,"conditional")
-#fillRasList(len(tests)-1,"keywords")
-#fillRasList(len(tests)-1,"structures")
+	tests.append([ "ATARI2600/tutorials",[]])
+	fillRasList(len(tests)-1,".")
 
 
-# VIC 20
 
-tests.append([ "VIC20/PurplePlanetYo",["demo.ras"]])
-tests.append([ "VIC20/VicNibbler",["nibbler.ras"]])
-tests.append([ "VIC20/cheesy",["main.ras"]])
-tests.append([ "VIC20/PumpKid",["pumpkid.ras"]])
-tests.append([ "VIC20/tutorials",[]])
-fillRasList(len(tests)-1,".")
 
-# Gameboy
+	# X86
+	tests.append([ "X86/CGA",[]])
+	fillRasList(len(tests)-1,".")
 
-# RGBASM doesn't compile...
+	tests.append([ "X86/VGA_386",[]])
+	fillRasList(len(tests)-1,".")
 
-#tests.append([ "GAMEBOY/tutorials",[]])
-#fillRasList(len(tests)-1,".")
-#tests.append([ "GAMEBOY/yo-grl",["demo.ras"]])
-#tests.append([ "GAMEBOY/UnitTests",["unittests.ras"]])
 
+
+	# PET
+
+	# fails for some reason
+	#tests.append([ "PET/examples/",[]])
+	#fillRasList(len(tests)-1,".")
+
+	#tests.append([ "PET/pbm-pet/",[]])
+	#fillRasList(len(tests)-1,".")
+
+	tests.append([ "PET/PETFrog/",["petfrog.ras"]])
+
+	# NES
+
+	tests.append([ "NES/intro_tutorial/",[]])
+	fillRasList(len(tests)-1,".")
+
+	# OK64
+
+	tests.append([ "OK64/Tutorials/",[]])
+	fillRasList(len(tests)-1,".")
+	tests.append([ "OK64/OkComputer/",["main.ras"]])
+
+	# ************ BUILD TEST LIST 
+	# C64 
+	tests.append([ "C64/TutorialGame_RogueBurgerOne",["RogueBurgerOne.ras"]])
+	tests.append([ "C64/Tutorials",[]])
+	fillRasList(len(tests)-1,"easy")
+	fillRasList(len(tests)-1,"intermediate")
+	fillRasList(len(tests)-1,"advanced")
+	tests.append([ "C64/DemoEffects_raytracer",[]])
+	fillRasList(len(tests)-1,".")
+	tests.append([ "C64/16kb_cartridge_project", []]);
+	fillRasList(len(tests)-1,".")
+	tests.append([ "C64/4kDreams", ["intro.ras"]]);
+	tests.append([ "C64/DemoEffects_raytracer", []]);
+	fillRasList(len(tests)-1,".")
+	# Fails with various errors
+	#tests.append([ "C64/DemoMaker", []]);
+	#fillRasList(len(tests)-1,".")
+
+	#tests.append([ "C64/Disk_loader_project", []]);
+	#fillRasList(len(tests)-1,".")
+	tests.append([ "C64/Floskel", []]);
+	fillRasList(len(tests)-1,".")
+	tests.append([ "C64/MusicPlayer", []]);
+	fillRasList(len(tests)-1,".")
+	#tests.append([ "C64/Olimp", []]);
+	#fillRasList(len(tests)-1,".")
+	tests.append([ "C64/wormwood", []]);
+	fillRasList(len(tests)-1,".")
+	tests.append([ "C64/TutorialGame_Introduction", []]);
+	fillRasList(len(tests)-1,".")
+	#fillRasList(len(tests)-1,"arithmetic")
+	#fillRasList(len(tests)-1,"conditional")
+	#fillRasList(len(tests)-1,"keywords")
+	#fillRasList(len(tests)-1,"structures")
+
+
+	# VIC 20
+
+	tests.append([ "VIC20/PurplePlanetYo",["demo.ras"]])
+	tests.append([ "VIC20/VicNibbler",["nibbler.ras"]])
+	tests.append([ "VIC20/cheesy",["main.ras"]])
+	tests.append([ "VIC20/PumpKid",["pumpkid.ras"]])
+	tests.append([ "VIC20/tutorials",[]])
+	fillRasList(len(tests)-1,".")
+
+	# Gameboy
+
+	# RGBASM doesn't compile...
+
+	#tests.append([ "GAMEBOY/tutorials",[]])
+	#fillRasList(len(tests)-1,".")
+	#tests.append([ "GAMEBOY/yo-grl",["demo.ras"]])
+	#tests.append([ "GAMEBOY/UnitTests",["unittests.ras"]])
+
+
+#CompileUnitTests()
+
+if (utestsonly==False):
+	CompileRegularRas();
+else:
+	print("Skipping compilation of regular tests")
 
 
 def c(path,f1):
@@ -356,6 +404,36 @@ def DOSUnitTests():
 		print("Skipping DOS tests: emulator path '%s'" % dosbox)
 
 
+def COCO3UnitTests():
+	os.chdir(orgPath)
+	if dosbox and os.path.exists(mame):
+		path =  os.path.abspath(lp+'TRS80COCO/unittests/')
+		resultFile = path+"/RESULT.BIN"
+		if (os.path.exists(resultFile)):
+			os.remove(resultFile)
+
+		try:
+			result = subprocess.run([mame,"coco3", "-flop1",path+"/unittests/unittests.dsk","-resolution0", "640x480@60", "-window", "-nothrottle", "-skip_gameinfo","-autoboot_delay","1","-autoboot_command","loadm \"T\":exec\\n"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT, cwd=os.path.realpath(mame))
+			if result.stdout: print(result.stdout.decode('utf-8'))
+		except subprocess.TimeoutExpired as err:
+			print("ERROR: Timeout for COCO3 unit tests expired.")
+			if err.stdout: print(err.stdout.decode('utf-8'))
+#		print(os.path.exists(resultFile))
+		if (not os.path.exists(resultFile)):
+			time.sleep(8)
+		with open(resultFile, "rb") as f:
+			data = array('B')
+			# byte 2 should have 0 for success 
+			data.fromfile(f, 1)
+			if (data[0]==1):
+				failed.append([path, "unittests.dsk"])
+				print("******* SEVERE ERROR : COCO3 Execution unit test FAILED! Please fix up unittests")
+			else:
+				print("COCO3 Unittest SUCCESS!")
+	else:
+		print("Skipping COCO3 tests: emulator path '%s'" % mame)
+
+
 
 def CPCUnitTests():
 	os.chdir(orgPath)
@@ -445,6 +523,8 @@ def GBUnitTests():
 
 
 def UnitTests():
+	# add coco
+	#COCO3UnitTests();
 	DOSUnitTests();
 	C64UnitTests();
 	CPCUnitTests();

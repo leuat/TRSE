@@ -87,8 +87,11 @@ void WorkerThread::UpdateDrawing()
         if (m_work->m_currentImage->m_image==nullptr) return;
 
 
-
-
+/*        qDebug() << "workerthread";
+        qDebug() <<m_work->m_currentImage->m_temp->m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+        qDebug() <<m_work->m_currentImage->m_temp->m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+        qDebug() <<m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+        qDebug() <<m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);*/
         m_work->m_currentImage->m_temp->CopyFrom(m_work->m_currentImage->m_image);
         Data::data.forceRedraw = false;
         m_hasLeft = false;

@@ -1,0 +1,80 @@
+program Twister;
+@use "system"
+@use "memory"
+@use "screen"
+@use "compression/compression"
+
+var  
+  	k,j,time,tt,t2,ll,frame,y: byte; 
+  	
+   	data : incbin("data/twister_data.bin");
+ 	table : incbin("data/twister_table.bin");
+   	
+   	
+	dst,zp,tp,p1 : pointer;
+	tab : pointer of integer;   
+	text : string = ("WHOO THIS IS A TRSE ON THE COCO  ");
+    sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
+@export "resources/images/image1.flf" "resources/images/image1.bin" 256 
+
+	charLookup : array[32] of integer = BuildTable("(2*16*16*i)");
+	frameLookup : array[16] of integer = BuildTable("(2*16*i)");
+
+@requirefile "data/twister_data.bin" "Please run the corresponding fjong file (twister.fjo) before compiling this program"
+
+procedure RenderTwister(tx:byte);
+begin
+	t2:=t2+1;
+	tt:=0-tx; // Text goes up
+	t2:=tx; // Twist goes down
+	tp:=#text;
+	j:=0;
+	y:=0;
+	dst:=#Screen::gfx+16;
+	for k:=0 to 110 offpage do
+	begin
+		j:=sine32[byte(k+t2)]; // Twist turning
+		frame:=(((tx-j))&15); // Current rotation frame
+		ll:=(k-tt)>>1; // Current shift & text position in y
+		j:=ll>>4; // Twister yeah!
+	 	j:=(tp[j]-1)&31; // Look up current character, store in j
+		if (j=31) then j:=23;	
+		
+ 		
+		tab :=#table + frameLookup[frame] +charLookup[j];
+
+		zp :=#data +tab[byte(ll&15)];
+
+		MemCpyUnroll16(zp,dst,7);
+		dst+=40; // next line
+		MemCpyUnroll16(zp,dst,7);
+		dst+=40; // next line
+		
+
+	end;
+	
+end;
+
+
+begin
+	System::Init();
+	// 320x225 4-colour 
+	Screen::SetBitmapMode(Screen::BPL_40, 1);
+	Screen::SetColor(0,0); // black
+	Screen::SetColor(1,$b); // from flf image
+	Screen::SetColor(2,$1c); 
+	Screen::SetColor(3,$33); 
+	// Clearscreen
+	Memory::Fill16(#Screen::gfx,0,40*225);
+//	Compression::Decompress(#data, #dataPos);	
+//	loop();
+	time := 0;	
+	while (true) do
+	begin
+		RenderTwister(time);
+		time:=time+1;
+	end;
+
+
+
+end.

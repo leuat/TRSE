@@ -1,0 +1,7 @@
+
+# name, imm,  direct, indexed, extended, inherent
+
+
+# 6809 NOT IMPLEMENTED YET, WIP
+
+lda,  0x86,   0xA9,    0x96,    0xA6,    0xB6

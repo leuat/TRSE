@@ -35,7 +35,6 @@ var
 
 
 	some_song : incbin("resources/music/beeb.bin",$A800);
-@donotremove dummy
 	
 	j1,j2,time : byte = 0;
 	

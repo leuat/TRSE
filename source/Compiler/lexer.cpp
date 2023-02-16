@@ -40,7 +40,7 @@ int Lexer::getTotalNumberOfLines()
 {
     QStringList lst = m_text.split("\n");
     lst.removeAll("");
-    return lst.count();
+    return lst.count() + m_currentLineCount;
 }
 
 int Lexer::getLineNumber(QString find)

@@ -56,6 +56,7 @@ public:
     }*/
     NodeConditional(Token op, int forcePage, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isWhile, QSharedPointer<Node> elseBlock=nullptr);
 
+    void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) override;
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
         if (m_block!=nullptr)
@@ -67,6 +68,12 @@ public:
     }
 
 
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override {
+        if (m_block!=nullptr)
+            m_block->FindPotentialSymbolsInAsmCode(lst);
+        if (m_elseBlock!=nullptr)
+            m_elseBlock->FindPotentialSymbolsInAsmCode(lst);
+    }
 
 /*    void ConditionalTryFail(Assembler* , QString labelFail, int i);
     void ConditionalTrySuccess(Assembler* , QString labelFail, int i);

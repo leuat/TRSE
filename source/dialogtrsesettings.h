@@ -229,6 +229,13 @@ private slots:
 
     void on_btnHelpTVC_clicked();
 
+    void on_btnVectrexEmulator_clicked();
+
+
+    void on_btnHelpThomson_clicked();
+
+    void on_btnThomsonEmulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

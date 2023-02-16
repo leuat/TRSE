@@ -1,0 +1,117 @@
+program PlasmaTutorial;
+@use "system/system"
+@use "memory"
+
+
+var  
+	// some plasma variables
+	i,val,val2,c2x, c2y,ax, ay,time : byte;
+	x,y,shift : byte;
+	dst,zp : ^byte;
+	// mini sine table
+	const width : byte = 40;
+	const height : byte = 200;	
+	// The tables must be aligned at $xx00
+    sinx : array[width] of byte; 
+	siny : array[height] of byte; 
+	sin : array[256] of byte = buildsinetable(127);
+
+	data : incbin("data/smooth_data.bin");
+	
+	coltab : array[8] of byte = (
+	%0100,
+	%0101,
+	%0110,
+	%0111,
+	%0110,
+	%0101,
+	%0100,
+	%0100 
+	);
+	
+	
+
+// Plasma procedure
+
+procedure Calculate();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	
+	// Set up y-sine table
+	for x:=0 to width do begin 
+		sinx[x]:=  sin[c2x] + sin[c2y]-time;
+		c2x:=c2x+12;
+		c2y:=c2y+15;
+	end;
+
+	ax:=ax+2;
+	ay:=ay-3;
+
+	// Set up x-sine table
+	for x:=0 to height/4 do begin 
+		siny[x] := sin[c2x] + sin[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+	dst:=0+shift*40;
+	
+end;
+
+
+procedure Plasma();
+begin
+	for y:=0 to height/4  offpage do 
+	begin
+		val:=siny[y];
+		
+		asm("
+			ldx #sinx
+			ldy #data+128
+		 	ldu dst ; screen
+		");		
+		for i:=0 to 40 unroll do
+		begin
+			asm("
+				lda ,x+
+				adda val
+				lda a,y
+				sta ,u+
+				
+			");		
+		end;
+
+
+		
+		dst+=80*2;
+	end;
+
+end;
+
+
+
+
+begin
+	System::SetColors();
+	dst:=0;
+	for i:=0 to 200 do 
+	begin
+		Memory::Fill16(dst, coltab[byte((i>>3)&7)],40);
+		dst+=40;
+	end;
+	
+	
+	System::SetPixels();
+	while (true) do
+	begin
+
+		Calculate();
+		time+=1;
+		shift:=time&3;
+		// Alternate updating every 2nd line
+		Plasma();
+	end;
+
+
+end.

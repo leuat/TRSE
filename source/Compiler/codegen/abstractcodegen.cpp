@@ -55,9 +55,11 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
         node->m_right->setForceType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::BYTE)
        node->m_right->setForceType(TokenType::BYTE);*/
+    node->m_right->setForceType(node->m_op.m_type);
     node->m_right->Accept(this);
-//    as->Comment("WriteType : "+TokenType::getType(node->m_right->m_castType));
-    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+    as->Comment("WriteType : "+TokenType::getType(node->m_castType) + " " +TokenType::getType(node->m_forceType));
+//    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+    Cast(node->m_op.m_type, node->m_forceType);
 
 }
 /*
@@ -165,10 +167,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as,this);
 
-    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_a);
-    // Must be a variable
-    if (nVar==nullptr)
-        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+    QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_left);
 
     // Get name
     if (nVar->m_left->m_isRegister )
@@ -178,6 +177,33 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
     if (v == nullptr )
         ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
 
+    if (node->m_unroll) {
+        node->clearComment();
+        if (!node->m_right->isPureNumeric())
+            ErrorHandler::e.Error("For unrolled loop, right value must be a constant value", node->m_op.m_lineNumber);
+        if (!node->m_left->m_right->isPureNumeric())
+            ErrorHandler::e.Error("For unrolled loop, left value must be a constant value", node->m_op.m_lineNumber);
+
+        int cnt = node->m_right->getValueAsInt(as);
+        int from = node->m_left->m_right->getValueAsInt(as);
+        as->Comment("Unrolled loop");
+        auto num = NodeFactory::CreateNumber(v->m_op,0);
+        node->m_block->ReplaceVariable(as,v->getValue(as),num);
+        for (int i=from;i<cnt;i++) {
+            // replace all "var" with numerical values
+            num->m_val = i;
+            node->m_block->Accept(this);
+        }
+        return;
+
+    }
+
+
+    // Must be a variable
+    if (nVar==nullptr)
+        ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
+
+
 //    qDebug() <<(Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502);
   //  qDebug() <<nVar->isWord(as) << nVar->getValue(as);
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 && nVar->m_left->isWord(as)) {
@@ -186,7 +212,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
      QString var = v->getValue(as);//  m_a->Build(as);
     // Perform assigment
-    node->m_a->Accept(this);
+    node->m_left->Accept(this);
 
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
@@ -213,7 +239,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Maintain b has same type as a
     if (nVar->m_left->isWord(as))
-        node->m_b->setForceType(TokenType::INTEGER);
+        node->m_right->setForceType(TokenType::INTEGER);
 
     // Perform block
     node->m_block->Accept(this);
@@ -222,7 +248,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
     // Perform counter increase and jimps (individual for each target cpu)
 //    as->Label(lblForCounter);
     as->Label(lblLoopStart);
-    CompareAndJumpIfNotEqualAndIncrementCounter(node->m_a, node->m_b,  node->m_step, lblFor, offpage,node->m_inclusive);
+    CompareAndJumpIfNotEqualAndIncrementCounter(node->m_left, node->m_right,  node->m_step, lblFor, offpage,node->m_inclusive);
 
   //  as->Label(lblForEnd);
     as->Label(lblLoopEnd);
@@ -653,7 +679,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
 
     QString localFailed = failedLabel;
 
-    if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
+    if (offpage && !Syntax::s.m_currentSystem->isZ80()) {
         localFailed = as->NewLabel("localfailed");
     }
     // Main recursive method that tests everything. Evaluates all logical
@@ -662,7 +688,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
 
     // OFFPAGE branching for z80:
 
-    if (offpage && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80) {
+    if (offpage && !Syntax::s.m_currentSystem->isZ80()) {
         as->Asm(getJmp(offpage) + " "+as->jumpLabel(lblstartTrueBlock));
         as->Label(localFailed);
         as->PopLabel("localfailed");
@@ -1481,6 +1507,36 @@ QString AbstractCodeGen::getValue8bit(QSharedPointer<Node> n, int isHi) {
         return m_inlineParameters[n->getValue(as)]->getValue8bit(as,isHi);
 
     return n->getValue8bit(as,isHi);
+}
+
+QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
+{
+/*    auto right = qSharedPointerDynamicCast<NodeString>(node);
+    //    as->Asm("jmp " + lbl);
+    if (right->m_hasBeenDefined == true)
+        return "";
+*/
+    QString strName = as->NewLabel("stringassignstr");
+/*    if (Node::s_isInOffpageTest) {
+        qDebug() << "ABSTRACTCODEGEN RETURN "<< strName;
+        return strName;
+    }*/
+//    qDebug() << "ABSTRACTCODEGEN "<< strName;
+    as->StartExistingBlock(as->m_tempVarsBlock);
+    auto ns = qSharedPointerDynamicCast<NodeString>(node);
+    if (ns==nullptr)
+        return "";
+    if (node->m_op.m_type==TokenType::CSTRING) {
+        as->DeclareCString(strName,ns->m_val,node->flags.keys());
+    }
+    else {
+        as->DeclareString(strName,ns->m_val,node->flags.keys());
+    }
+
+    as->EndCurrentBlock();
+  //  right->m_hasBeenDefined = true;
+
+    return strName;
 }
 
 

@@ -1,0 +1,44 @@
+<h3>Description</h3>
+ReturnValue is a semi-obsolete method that was used before TRSE supported functions.
+Calling "ReturnValue( int / byte )" will load the parameter value into the internal
+byte / int registers for the current CPU, and return from the function (rts/ret etc), allowing
+for function-like return values as such:
+<code>
+procedure Calculate( i : byte );
+begin
+    // will return a byte value i + 2
+    // on the 6502/z80, the value will be stored in a, on the x86 in al etc
+    ReturnValue( i + 2 );
+end;
+...
+  myByte := Calculate( j );
+
+</code>
+<b>Note: </b>A major flaw with "Returnvalue" - and why <b>functions</b> should be used instead - is that
+the compiler is unable to obtain the correct return value type. The following code will therefore fail:
+<code>
+   // The compiler doesnt know whether "Calculate" returns a byte or an integer, but since
+   // "someInteger" is an int it assumes this incorrectly.
+   // Buggy on the 6502 (since the contents of "y" is unknown)
+   // Fatal on the Z80 since bytes are stored in "a" while ints in "hl"
+   someInteger := Calculate( j );
+</code>
+Internally, a function in TRSE is just a procedure with a defined return value type that automatically
+calls "Returnvalue" on exit, but the compiler now has the possibility of casting the returned value
+to the correct write type.
+The correct way of defining the function would be
+<code>
+function Calculate( i : byte ) : byte;
+begin
+    Calculate := i + 2;
+end;
+
+// or
+
+function Calculate( i : byte ) : byte;
+begin
+    ReturnValue( i + 2 );
+end;
+
+</code>
+

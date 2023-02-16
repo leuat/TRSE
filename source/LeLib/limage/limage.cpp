@@ -122,6 +122,10 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 39;
     if (t==TVC)
         return 40;
+    if (t==COCO3)
+        return 41;
+    if (t==THOMSON)
+        return 42;
 
 
     return 255;
@@ -211,6 +215,11 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic TIM image";
     if (t==TVC)
         return "Generic TVC image";
+    if (t==COCO3)
+        return "Generic TRS80 CoCo3 image";
+    if (t==THOMSON)
+        return "Generic Thomson mo5 image";
+
 
     return "Unknown image type";
 
@@ -301,6 +310,10 @@ LImage::Type LImage::CharToType(unsigned char c)
         return TIM;
     if (c==40)
         return TVC;
+    if (c==41)
+        return COCO3;
+    if (c==42)
+        return THOMSON;
 
     return NotSupported;
 

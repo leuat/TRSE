@@ -15,7 +15,6 @@ public:
 
 
 
-    static uchar CrazySwap(uchar c);
 
 
     QVector<int> m_data;

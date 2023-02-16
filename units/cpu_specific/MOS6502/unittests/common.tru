@@ -34,8 +34,8 @@ begin
 	SCREEN_FG_COL := BLACK;
 	Vars::sc := #SCREEN_CHAR_LOC;
 	Vars::co := #SCREEN_COL_LOC;
-	clearscreen(32, SCREEN_CHAR_LOC);
-	clearscreen(WHITE, SCREEN_COL_LOC);
+	clearscreen(32, #SCREEN_CHAR_LOC);
+	clearscreen(WHITE, #SCREEN_COL_LOC);
 	moveto(0,0,04);
 	printstring(zp,0,40);
 	Vars::sc+=80;

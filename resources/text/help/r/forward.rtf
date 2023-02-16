@@ -1,0 +1,37 @@
+<h3>Forward</h3>
+Usually, it is possible to define forward methods by just declaring them empty:
+<code>
+procedure MyCalculation(a:byte);
+
+...
+
+procedure ThatOtherThing();
+begin
+    MyCalculation(); // Body not declared yet
+end;
+
+
+procedure MyCalculation();
+begin
+    // actual implementation
+
+end;
+</code>
+However, due to the syntax of the Pascal language, it is sometimes necessary to be explicit when
+forwarding a method. This is especially important if the next statement is a "var" block, as the parser
+will incorrectly assume that the "var" is part of the procedure definition...
+<p>
+You can avoid this problem by explicitly declaring a function as forwarded:
+<code>
+procedure MyCalculation(a:byte); forward;
+...
+var
+   someGlobalVariable:byte;
+
+..
+
+procedure MyCalculation(a:byte);
+begin
+... implementation
+
+</code>

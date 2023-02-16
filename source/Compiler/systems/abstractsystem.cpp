@@ -4,7 +4,11 @@
 #include "source/LeLib/util/util.h"
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/zorgasm.h"
+#include "source/OrgAsm/morgasm.h"
 
+extern "C" {
+    #include "source/LeLib/util/zx0/zx0.h"
+}
 QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
@@ -49,6 +53,16 @@ QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
 
 }
 
+QString AbstractSystem::CompressZX0(QString fileName, QString outFileName)
+{
+    QStringList params;
+    if (QFile::exists(outFileName))
+        QFile::remove(outFileName);
+    params<<"zx0"<<fileName<<outFileName;
+    zx0_compress(3,Util::StringListToChar(params));
+    return outFileName;
+}
+
 
 void AbstractSystem::StartProcess(QString file, QStringList params, QString& output, bool standardOutput, QString currentDir) {
     // qDebug() << params;
@@ -88,12 +102,14 @@ QString AbstractSystem::StringFromProcessor(Processor s) {
     if (s == PX86) return "PX86";
     if (s == GBZ80) return "GBZ80";
     if (s == Z80) return "Z80";
+    if (s == Z180) return "Z180";
     if (s == ARM) return "ARM";
     if (s == WDC65C816) return "WDC65C816";
     if (s == WDC65C02) return "WDC65C02";
     if (s == PJDH8) return "JDH8";
     if (s == S1C88) return "S1C88";
     if (s == M6809) return "M6809";
+    if (s == PCHIP8) return "PCHIP8";
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return "";
 }
@@ -109,7 +125,9 @@ AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
     if (s == "WDC65C02" || s =="65C02") return WDC65C02;
     if (s == "PJDH8") return PJDH8;
     if (s == "S1C88") return S1C88;
+    if (s == "Z180") return Z180;
     if (s == "M6809") return M6809;
+    if (s == "PCHIP8") return PCHIP8;
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return MOS6502;
 }
@@ -124,10 +142,10 @@ QString AbstractSystem::StringFromProcessor(QString s) {
     if (s == "SNES") return "WDC65C816";
     if (s == "MEGA65") return "WDC65C02";
     if (s == "JDH8") return "PJDH8";
-    if (s == "TRS80COCO") return "M6809";
+    if (s == "TRS80COCO" || s=="VECTREX" || s=="THOMSON") return "M6809";
     if (s == "POKEMONMINI") return "S1C88";
     if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC") return "Z80";
-
+    if (s == "CHIP8") return "PCHIP8";
     qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
     return "";
 }
@@ -205,6 +223,12 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return TIM;
     if (s.toLower()=="tvc")
         return TVC;
+    if (s.toLower()=="vectrex")
+        return VECTREX;
+    if (s.toLower()=="thomson")
+        return THOMSON;
+    if (s.toLower()=="chip8")
+        return CHIP8;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -246,6 +270,9 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == WONDERSWAN) return "WONDERSWAN";
     if (s == TIM) return "TIM";
     if (s == TVC) return "TVC";
+    if (s == VECTREX) return "VECTREX";
+    if (s == THOMSON) return "THOMSON";
+    if (s == CHIP8) return "CHIP8";
     return "";
 }
 
@@ -267,9 +294,13 @@ bool AbstractSystem::systemIsOfType(QString val)
         return true;
     if (val=="z80" && (m_processor==GBZ80))
         return true;
+    if (val=="z180" && (m_processor==Z180))
+        return true;
     if (val=="px86" && (m_processor==PX86))
         return true;
     if (val=="m6809" && (m_processor==M6809))
+        return true;
+    if (val=="chip8")
         return true;
 
     return false;
@@ -319,10 +350,15 @@ void AbstractSystem::AssembleOrgasm(QString& output,QString &text, QString filen
 
 }
 
-void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
+void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, int orgType)
 {
-    m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
+    if (orgType==0)
+        m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
+    if (orgType==1)
+        m_orgAsm = QSharedPointer<MOrgasm>(new MOrgasm());
 
+    if (m_orgAsm == nullptr)
+        return;
     m_orgAsm->m_cpuFlavor = getCPUFlavorint();
 
     emit EmitTick("<br></font><font color=\"yellow\">Assembling with OrgAsm ");

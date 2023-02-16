@@ -57,7 +57,7 @@ void CodeGen6809::HandleGenericBinop16bit(QSharedPointer<Node> node) {
 
     // 255 + k - j doesn't work
     as->Term();
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+    QString lbl = as->StoreInTempVar("rightvarInteger", as->word);
 
     //    as->Asm("sta " +lbl);
     //    as->Asm("sty " +lbl+"+1"); // J is stored
@@ -68,12 +68,12 @@ void CodeGen6809::HandleGenericBinop16bit(QSharedPointer<Node> node) {
     node->m_left->m_isWord = true;
     node->m_left->Accept(this);
     as->Term();
-    as->Asm("tfr y,d");
+    as->Asm("tfr x,d");
     as->Comment("binop:");
     as->BinOP16(node->m_op.m_type);
     as->Term(lbl, true); // high bit added to a
-    as->Asm("tfr d,y");
-    as->Asm("sty "+lbl);
+    as->Asm("tfr d,x");
+//    as->Asm("stx "+lbl);
     as->PopLabel("wordAdd");
 
     //as->PopLabel("rightvarInteger");
@@ -117,7 +117,7 @@ void CodeGen6809::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
     as->Term();
     //    as->Asm("sta " +lbl);
-    QString lbl = as->StoreInTempVar("rightvarInteger", "word");
+    QString lbl = as->StoreInTempVar("rightvarInteger", as->word);
     //    as->Asm("sty " +lbl+"+1");
     //        qDebug() << as->m_term;
     as->Term();
@@ -254,6 +254,8 @@ bool CodeGen6809::HandleSingleAddSub(QSharedPointer<Node> node) {
 
         m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
+        if (node->m_left->isBool(as))
+            as->Asm("anda #1 ; boolean");
         return true;
     }
 
@@ -326,13 +328,13 @@ void CodeGen6809::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
         Mul16x8(node);
         return;
     }
-    as->Asm("tfr y,d");
+    as->Asm("tfr x,d");
 
 
     as->Term();
     LoadVariable(node->m_left);
     as->Term();
-    varName = as->StoreInTempVar("int_shift", "word");
+    varName = as->StoreInTempVar("int_shift", as->word);
     if (node->m_op.m_type == TokenType::DIV) {
         command = "\tlsr " + varName +"+0"+ "\n";
         command += "\tror " + varName+"+1" + "\n";
@@ -345,7 +347,7 @@ void CodeGen6809::RightIsPureNumericMulDiv16bit(QSharedPointer<Node> node) {
     for (int i=0;i<cnt;i++)
         as->Asm(command);
 
-    as->Asm("ldy " + varName);
+    as->Asm("ldx " + varName);
  //   Cast(TokenType::INTEGER, node->m_left->t)
 
     as->PopTempVar();
@@ -396,7 +398,7 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
     if (!isSimpleAeqAopB) {
         node->m_left->Accept(this);
         as->Term();
-        varName = as->StoreInTempVar("tempVarShift","word");
+        varName = as->StoreInTempVar("tempVarShift",as->word);
     }
     else
         varName = getValue(node);
@@ -434,14 +436,14 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
         node->m_right->Accept(this);
         as->Term();
         QString lblCancel = as->NewLabel("lblShiftCancel");
-        as->Asm("tfr y,x");
-        as->Asm("cmpx #0");
+        as->Asm("tfr x,y");
+        as->Asm("cmpy #0");
         as->Asm("beq "+lblCancel);
         QString lbl = as->NewLabel("lblShift");
         as->Label(lbl);
         as->Asm(command);
-        as->Asm("leax -1,x");
-        as->Asm("cmpx #0");
+        as->Asm("leay -1,y");
+        as->Asm("cmpy #0");
         as->Asm("bne "+lbl);
         as->Label(lblCancel);
 
@@ -449,7 +451,7 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
         as->PopLabel("lblShiftCancel");
     }
     if (!isSimpleAeqAopB) {
-        as->Asm("ldy "+varName);
+        as->Asm("ldx "+varName);
 //        as->Asm("ldy "+varName +"+1");
         as->PopTempVar();
     }
@@ -458,24 +460,28 @@ void CodeGen6809::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
 void CodeGen6809::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
     as->Asm("");
+    if (node->m_right->isPureNumeric() && node->m_left->getOrgType(as)==TokenType::BYTE)
+        node->SwapNodes();
+    else
     if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
         node->SwapNodes();
     }
     //    Disable16bit();
     LoadVariable(node->m_left);
 
-    as->Asm("tfr y,x");
+    as->Asm("tfr x,y");
     if (!node->m_right->isPure())
-        as->Asm("pshs x");
+        as->Asm("pshs y");
     LoadVariable(node->m_right);
     if (!node->m_right->isPure())
-        as->Asm("puls x");
+        as->Asm("puls y");
     as->Term();
+    as->Asm("exg x,y");
     as->Asm("pshs x,y");
     as->Asm("jsr mul16_internal");
-    as->Asm("puls x,y");
+    as->Asm("puls y,x");
     as->Asm("puls d");
-
+    as->Asm("tfr y,x");
 /*    ldx i1
     ldy i2
     pshs x,y
@@ -493,16 +499,17 @@ void CodeGen6809::Div16x8(QSharedPointer<Node> node) {
     node->m_right->setForceType(TokenType::INTEGER);
     LoadVariable(node->m_right);
 
-    as->Asm("tfr y,x");
+    as->Asm("tfr x,y");
     if (!node->m_left->isPure())
-        as->Asm("pshs x");
+        as->Asm("pshs y");
     LoadVariable(node->m_left);
     as->Term();
     if (!node->m_left->isPure())
-        as->Asm("puls x");
+        as->Asm("puls y");
+    as->Asm("exg x,y");
     as->Asm("pshs x,y");
     as->Asm("jsr UDIV16");
-    as->Asm("puls y");
+    as->Asm("puls x");
     as->Comment("; CAST TYPE "+TokenType::getType(node->m_left->m_castType));
     Cast(TokenType::INTEGER, node->m_left->m_castType);
 
@@ -552,13 +559,14 @@ void CodeGen6809::HandleRestBinOp(QSharedPointer<Node> node) {
             QString lbl = as->StoreInTempVar("rightvarAddSub");
             //as->Asm("sta " +lbl);
             //as->Term();
-
             node->m_left->Accept(this);
             as->Term();
 
             as->BinOP(node->m_op.m_type);
             as->Term(lbl,true);
             as->PopTempVar();
+            if (node->m_left->isBool(as))
+                as->Asm("anda #1");
             //as->PopLabel("rightvar");
             //as->PopLabel("jmprightvar");
         }
@@ -651,7 +659,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeBinOP>node)
             if (!node->isWord(as))
                 as->Asm("lda " + s + QString::number(val));
             else {
-                as->Asm("ldy " + s+QString::number(val));
+                as->Asm("ldx " + s+QString::number(val));
             }
 
         else
@@ -761,7 +769,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVarDecl> node)
 
     QSharedPointer<Appendix> old = as->m_currentBlock;
 
-    if (t->m_flags.contains("wram")) {
+    if (t->m_flags.contains("ram")) {
         as->m_currentBlock = as->m_wram;
     }
 
@@ -769,11 +777,11 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVarDecl> node)
         QString bnk = getBank(t);
         as->m_currentBlock = as->m_banks[bnk];
     }
-    if (v->m_isGlobal) {
+/*    if (v->m_isGlobal) {
         as->m_currentBlock = nullptr;
         return;
     }
-
+*/
 
     //    qDebug() << "" <<as->m_currentBlock;
     AbstractCodeGen::dispatch(node);
@@ -857,11 +865,11 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
     if (node->m_op.m_type==TokenType::PLUS) {
         LoadIndex(node->m_right,TokenType::BYTE);
         if (!node->m_left->isPure())
-            as->Asm("pshs d");
+            PushD();
         LoadVariable(node->m_left);
         if (!node->m_left->isPure())
-            as->Asm("puls d");
-        as->Asm("leay d,y");
+            PopD();
+        as->Asm("leax d,x");
     }
     if (node->m_op.m_type==TokenType::MINUS) {
         LoadIndex(node->m_right,TokenType::BYTE);
@@ -870,15 +878,15 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
         as->Asm("negb");
         as->Asm("sex");
         if (!node->m_left->isPure())
-            as->Asm("pshs d");
+            PushD();
         LoadVariable(node->m_left);
         as->Term();
         if (!node->m_left->isPure())
-            as->Asm("puls d");
+            PopD();
 
 //        as->Asm("nega");
 //        as->Asm("puls y");
-        as->Asm("leay d,y");
+        as->Asm("leax d,x");
     }
 //    StoreVariable(node->m_left);
 
@@ -893,7 +901,7 @@ void CodeGen6809::AssignVariable(QSharedPointer<NodeAssign> node)
 }
 
 QString CodeGen6809::getIncbin() {
-    return "incbin";
+    return "includebin";
 }
 
 void CodeGen6809::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
@@ -1002,30 +1010,30 @@ void CodeGen6809::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
     QString bcs = "lbcc";
 
     as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
-    as->Asm("ldy "+lo1);
+    as->Asm("ldx "+lo1);
     if (node->m_op.m_type==TokenType::LESSEQUAL) {
-        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("cmpx "+node->m_right->getValue(as));
         as->Asm("lbgt "+ lbl2);
     }
     if (node->m_op.m_type==TokenType::LESS) {
-        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("cmpx "+node->m_right->getValue(as));
         as->Asm("lbge "+lbl2);
     }
     if (node->m_op.m_type==TokenType::GREATEREQUAL) {
-        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("cmpx "+node->m_right->getValue(as));
         as->Asm("lbcs "+lbl2);
     }
     if (node->m_op.m_type==TokenType::GREATER) {
-        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("cmpx "+node->m_right->getValue(as));
         as->Asm("lble "+lbl2);
     }
     if (node->m_op.m_type==TokenType::EQUALS) {
-        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("cmpx "+node->m_right->getValue(as));
         as->Asm("lbne "+lbl2);
     }
     if (node->m_op.m_type==TokenType::NOTEQUALS){
         //            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
-        as->Asm("cmpy "+node->m_right->getValue(as));
+        as->Asm("cmpx "+node->m_right->getValue(as));
         as->Asm("lbeq "+lbl2);
     }
 }
@@ -1140,7 +1148,7 @@ bool CodeGen6809::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
         if (!var) return false;
         // First, evaluate the expression
         if (ptr->m_expr->isPureNumeric()) {
-            as->Asm("ldy #"+Util::numToHex(ptr->m_expr->getValueAsInt(as)*2));
+            as->Asm("ldx #"+Util::numToHex(ptr->m_expr->getValueAsInt(as)*2));
         }
         else {
 /*            ptr->m_expr->Accept(this);
@@ -1283,29 +1291,35 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
     if (node->m_expr==nullptr) {
         as->Comment("No index load");
         as->ClearTerm();
-        as->Asm("ldy "+addr+getValue(node));
+        as->Asm("ldx "+addr+getValue(node));
         as->Term();
         return;
     }
-
-
-    LoadIndex(node->m_expr, node->getArrayType(as));
-    as->Asm("ldx "+addr+node->getValue(as));
-    as->Asm("leax d,x");
+    QString shift="d";
+    if (node->m_expr->isPureNumeric()) {
+        as->Comment("Special case when expression is const");
+        as->Asm("ldx "+addr+node->getValue(as));
+        shift = QString::number(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as));
+    }
+    else {
+        LoadIndex(node->m_expr, node->getArrayType(as));
+        as->Asm("ldx "+addr+node->getValue(as));
+    }
+//    as->Asm("leax d,x");
     if (node->m_forceType==TokenType::INTEGER && node->getArrayType(as)==TokenType::BYTE) {
         as->Comment("Forcing data data from byte array to be integer ");
-        as->Asm("ldb ,x");
+        as->Asm("ldb "+shift+",x");
         as->Asm("lda #0");
-        as->Asm("tfr d,y");
+        as->Asm("tfr d,x");
     }
     else
     {
         if (node->getArrayType(as)==TokenType::INTEGER)
         {
-            as->Asm("ldy ,x");
+            as->Asm("ldx "+shift+",x");
             if (node->m_forceType==TokenType::BYTE) {
                 as->Comment("load from integer array, force result to be byte");
-                as->Asm("tfr y,d");
+                as->Asm("tfr x,d");
                 as->Asm("exg a,b");
 
             }
@@ -1314,12 +1328,12 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
         {
             if (node->m_forceType==TokenType::INTEGER) {
                     as->Comment("Forcing data data from byte array to be integer ");
-                    as->Asm("ldb ,x");
+                    as->Asm("ldb "+shift+",x");
                     as->Asm("lda #0");
-                    as->Asm("tfr d,y");
+                    as->Asm("tfr d,x");
             }
             else
-              as->Asm("lda ,x");
+              as->Asm("lda "+shift+",x");
         }
 
     }
@@ -1373,13 +1387,13 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
                 if (!node->isReference())
                     ErrorHandler::e.Error("'"+val+"' is an array. Did you mean to reference it with '#'?",node->m_op.m_lineNumber);
 
-                as->Asm("ldy #" + val);
+                as->Asm("ldx #" + val);
             }
             else {
                 if (node->m_castType==TokenType::BYTE)
                     as->Asm("lda " + val+"+1");
                 else
-                as->Asm("ldy " + val);
+                as->Asm("ldx " + val);
 
             }
             return;
@@ -1388,18 +1402,21 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
             as->Asm("ldy #0 ; Fake 16 bit");
 
         as->Variable(val, isOK);*/
-        if (node->getOrgType(as)==TokenType::BYTE ) {
+        if (node->getOrgType(as)==TokenType::BYTE || node->getOrgType(as)==TokenType::BOOLEAN) {
 
             if (node->m_forceType == TokenType::INTEGER) {
                 // OOps byte but must be integer
-                as->Comment("Forcing byte to be integer");
-                as->Asm("pshs d");
+                as->Comment("Forcing byte to be integer ");
+ //               if (dstack==0)
+   //                 as->Asm("pshs d");
                 as->Asm("ldb "+val);
                 as->Asm("lda #0");
-                as->Asm("tfr d,y");
-                as->Asm("puls d");
-//                node->m_castType = TokenType::NADA;
-//                Cast(node->getOrgType(as),node->m_castType);
+                as->Asm("tfr d,x");
+     //           if (dstack==0)
+       //             as->Asm("puls d");
+                if (node->m_castType==TokenType::INTEGER)
+                    node->m_castType = TokenType::NADA;
+                //                Cast(node->getOrgType(as),node->m_castType);
 
             }
             else {
@@ -1416,7 +1433,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
                 return;
             }
 
-            as->Term("ldy "+val);
+            as->Term("ldx "+val);
             as->Term();
            // Cast(node->getOrgType(as),node->m_castType);
             as->Comment("HERE cast type: "+TokenType::getType(node->m_castType));
@@ -1436,7 +1453,7 @@ bool CodeGen6809::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<No
     if (other==nullptr)
         return false;
     bool isNumber = other->isPureNumeric();
-    QString operand = "ldy ";
+    QString operand = "ldx ";
 
 
 
@@ -1446,7 +1463,7 @@ bool CodeGen6809::LoadXYVarOrNum(QSharedPointer<NodeVar> node, QSharedPointer<No
             //as->Asm("txa   ; watch for bug, Integer array has index range of 0 to 127");
             as->Asm("lda "+ getValue(var));
             as->Asm("asl");
-            as->Asm("tra a,y");
+            as->Asm("tra a,x");
         }
         else {
             as->Asm(operand + getValue(var));
@@ -1498,7 +1515,7 @@ void CodeGen6809::LoadByteArray(QSharedPointer<NodeVar> node) {
     //    bool disable16bit =false;
 
     if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
-        as->Asm("ldy #0 ; lhs is byte, but integer required");
+//        as->Asm("ldy #0 ; lhs is byte, but integer required");
     }
     // Optimization : ldx #3, lda a,x   FIX
     if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
@@ -1542,7 +1559,7 @@ void CodeGen6809::LoadByteArray(QSharedPointer<NodeVar> node) {
     as->Asm(m+  getValue(node)+",x");
 
     if (s->m_arrayType==TokenType::INTEGER) { // integer array need to load the high byte also
-        as->Asm("ldy "+  getValue(node)+"+1,x");
+        as->Asm("ldx "+  getValue(node)+"+1,x");
     }
 }
 
@@ -1624,13 +1641,13 @@ void CodeGen6809::LoadVariable(QSharedPointer<NodeNumber>node)
     if (node->isReference()) {
         as->ClearTerm();
         if (node->getValue(as).startsWith("#"))
-        as->Asm("ldy "+node->getValue(as));
+        as->Asm("ldx "+node->getValue(as));
         else
-        as->Asm("ldy #"+node->getValue(as));
+        as->Asm("ldx #"+node->getValue(as));
         return;
     }
     if (node->isWord(as)) {
-        as->Asm("ldy "+node->getValue(as));
+        as->Asm("ldx "+node->getValue(as));
         return;
     }
 
@@ -1640,7 +1657,7 @@ void CodeGen6809::LoadVariable(QSharedPointer<NodeNumber>node)
 
 void CodeGen6809::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
-    as->Asm("ldy #"+node->m_procedure->m_procName);
+    as->Asm("ldx #"+node->m_procedure->m_procName);
 }
 
 
@@ -1668,7 +1685,7 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
                 int i = node->m_expr->getValueAsInt(as)*2;
-                as->Asm("sty " + getValue(node) + "+"+ QString::number(i));
+                as->Asm("stx " + getValue(node) + "+"+ QString::number(i));
 
             }
             else {
@@ -1687,10 +1704,22 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
 
             as->ClearTerm();
             // get index
+            if (node->m_expr->isPureNumeric()) {
+                as->Comment("Index is constant number optimisation");
+                if (!node->isPointer(as) || (node->isAddress() && node->getValue(as).startsWith("$")))
+                    as->Asm("ldx #"+node->getValue(as));
+                else
+                    as->Asm("ldx "+node->getValue(as));
+
+                as->Asm("sta "+QString::number(node->m_expr->getValueAsInt(as)*node->getArrayDataSize(as))+",x");
+                return;
+            }
             as->Asm("pshs a");
+
             LoadIndex(node->m_expr, node->getArrayType(as));
-            if (node->isAddress() && node->getValue(as).startsWith("$"))
-                as->Asm("ldx #"+node->getValue(as) +" is pure address");
+//            as->Asm(";is address ???");
+            if (!node->isPointer(as) || (node->isAddress() && node->getValue(as).startsWith("$")))
+                as->Asm("ldx #"+node->getValue(as));
             else
                 as->Asm("ldx "+node->getValue(as));
             as->Asm("leax d,x");
@@ -1716,23 +1745,24 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
         return;
     }
     else {
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::BYTE) {
+        TokenType::Type t = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType();
+        if (t == TokenType::BYTE || t == TokenType::ADDRESS || t == TokenType::BOOLEAN) {
             as->Asm("sta " + getValue(node));
             return;
         }
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::ADDRESS) {
+        if (t == TokenType::ADDRESS) {
 
             as->Asm("sta " + getValue(node));
             return;
         }
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
+        if (t == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
 
-            as->Asm("sty " + getValue(node));
+            as->Asm("stx " + getValue(node));
             return;
         }
-        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::POINTER || node->m_writeType==TokenType::INTEGER) {
+        if (t == TokenType::POINTER || node->m_writeType==TokenType::INTEGER) {
 
-            as->Asm("sty " + getValue(node));
+            as->Asm("stx " + getValue(node));
             return;
         }
         ErrorHandler::e.Error("Unable to assign variable : "+getValue(node)+ " of type "+node->getTypeText(as),node->m_op.m_lineNumber);
@@ -1752,18 +1782,57 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
         as->Asm("tfr a,b");
         as->Asm("lda #0");
     }*/
-    node->setForceType(TokenType::INTEGER);
     as->ClearTerm();
-    node->Accept(this);
-    as->Term();
-    as->Asm("tfr y,d");
+    as->Comment("Loading index");
+    if (node->isPure()) {
+//        as->Comment(";fix");
+        QString ref = "";
+        if (node->isReference())
+            ref="#";
+        if (node->isByte(as)) {
+            as->Asm("ldb "+ref+node->getValue(as));
+            as->Asm("lda #0");
+        }
+        else
+            as->Asm("ldd "+ref+node->getValue(as));
+    }
+    else {
+        node->setForceType(TokenType::INTEGER);
+        if (!node->isPure())
+            dstack++;
+        node->Accept(this);
+        if (!node->isPure())
+            dstack--;
+        as->Term();
+        as->Asm("tfr x,d");
+    }
     if (arrayType==TokenType::INTEGER) {
         as->Comment("Multiply by two to lookup integer");
         as->Asm("aslb");
         as->Asm("rola");
 //        as->Asm("addd y");
     }
+    as->Comment("End load index");
 
+}
+
+QString CodeGen6809::getJmp(bool isOffPage) {
+    return "lbra";
+}
+
+void CodeGen6809::PushD() {
+    //        if (dstack!=0)
+    as->Asm("pshs d");
+    dstack++;
+}
+
+void CodeGen6809::PopD() {
+    //      if (dstack!=0)
+    as->Asm("puls d");
+    dstack--;
+}
+
+bool CodeGen6809::UseBlocks() { return false;
 }
 
 void CodeGen6809::LoadStackVariable(QSharedPointer<NodeVar> node) {
@@ -1781,16 +1850,13 @@ void CodeGen6809::AssignString(QSharedPointer<NodeAssign> node) {
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
-    QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
 
 
-    as->StartExistingBlock(as->m_tempVarsBlock);
-    as->DeclareString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-    as->EndCurrentBlock();
+    QString str = DefineTempString(right);
 
     if (isPointer || left->isStringList(as)) {
-            as->Asm("ldy #"+str);
+            as->Asm("ldx #"+str);
             StoreVariable(left);
     }
     else {
@@ -1834,8 +1900,8 @@ bool CodeGen6809::AssignPointer(QSharedPointer<NodeAssign> node) {
         QString ref="";
         if (node->m_right->isReference())
             ref="#";
-        as->Asm("ldy "+ref + getValue(node->m_right));
-        as->Asm("sty "+ getValue(aVar));
+        as->Asm("ldx "+ref + getValue(node->m_right));
+        as->Asm("stx "+ getValue(aVar));
 
         return true;
     }
@@ -1846,7 +1912,7 @@ bool CodeGen6809::AssignPointer(QSharedPointer<NodeAssign> node) {
     as->Term();
     node->m_right->Accept(this);
     as->Term();
-    as->Asm("sty " + getValue(aVar));
+    as->Asm("stx " + getValue(aVar));
 
     return true;
     //     ErrorHandler::e.Error("Right-hand side must be constant or address", node->m_op.m_lineNumber);
@@ -2433,7 +2499,7 @@ void CodeGen6809::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPo
        }
     else
      {
-        as->Asm("cmpy " + nodeA->getValue(as) );
+        as->Asm("cmpx " + nodeA->getValue(as) );
         as->Asm("lbne " +lblJump);
 
     }
@@ -2537,11 +2603,11 @@ void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to)
         as->Comment("Casting from byte to integer");
         as->Asm("ldb #0");
         as->Asm("exg b,a");
-        as->Asm("tfr d,y");
+        as->Asm("tfr d,x");
     }
     if (from==TokenType::INTEGER && to == TokenType::BYTE) {
         as->Comment("Casting from integer to byte");
-        as->Asm("tfr y,d");
+        as->Asm("tfr x,d");
         as->Asm("exg a,b");
     }
 
@@ -2567,9 +2633,9 @@ void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type
         }
         if (writeType==TokenType::INTEGER) {
             as->Comment("Casting from integer to byte to integer");
-            as->Asm("tfr y,d");
+            as->Asm("tfr x,d");
             as->Asm("lda #0");
-            as->Asm("tfr d,y");
+            as->Asm("tfr d,x");
         }
     }
 

@@ -42,6 +42,8 @@ public:
 
     virtual bool isReference() override { return m_op.m_isReference; }
 
+    void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node);
+
     bool isAddress() override;
     bool m_classTagged = false;
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
@@ -60,6 +62,7 @@ public:
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
 
+    bool isBool(Assembler* as) override;
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
     bool isByte(Assembler* as) override;

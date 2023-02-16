@@ -67,7 +67,7 @@ public:
 
     }
 
-    virtual void Save6502(QString file, double scale) {
+    virtual void Save6502(QString file, double scale, double xscale) {
 
     }
 
@@ -426,7 +426,7 @@ public:
 
     bool m_isWireframe = true;
     int m_type = 0;
-    virtual void Save6502(QString file, double scale) override;
+    virtual void Save6502(QString file, double scale, double xscale) override;
     void OptimiseLineList();
 
     void CalculateNormals();

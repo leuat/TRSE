@@ -1,0 +1,86 @@
+program VectorsOnVectrex;
+@use "system"
+
+var
+	txt:string=(
+			127,128,"TEXT",$80,
+			);
+			
+			
+	sinx : array[256] of byte = buildsinetable(128);		
+	time,i,px1,px2,py1,py2,y,t:byte ram;			
+
+	obj1 : incbin("data/torus1.bin");
+	tables:incbin("data/2d_dump.bin");
+	
+	noVerts, noFaces, size: byte ram;
+	ppn,faces,p1 : pointer ram;
+	i1, i2,k,j : byte ram;
+	frame : byte ram;
+	
+	const noFrames: byte = 128;
+	
+
+
+
+procedure RenderWireframe();
+begin
+	p1 := faces;
+	k:=0;
+	for j:=0 to noFaces do
+	begin
+		System::ResetPenPos();
+		i1 := p1[0];
+		i2 := p1[1];
+		p1+=2;
+		px1:=ppn[i1];
+		py1:=ppn[byte(i1+1)];
+		px2:=ppn[i2];
+		py2:=ppn[byte(i2+1)];
+		System::SetScale();
+		System::DrawLine(px1+160,py1+100,px2+160,py2+100);		
+	end;
+
+end;
+
+	
+procedure InitObject(p1:global pointer);
+begin
+	noVerts := p1[0];
+	noFaces := p1[1];
+	p1+=2;
+	p1+=(noVerts*3);	
+	faces := p1;
+	
+	size:=noVerts*2;
+
+end;	
+	
+
+
+
+ 			
+begin
+	System::SetLargeFont();
+	InitObject(#obj1);
+	ppn:=#tables;
+	while (true) do
+	begin
+		System::WaitFrameBoundary();
+		System::DisplayTextList(#txt);
+		time+=1;
+		t:=time;
+		System::scale := sinx[byte(time)]+$80;
+
+		RenderWireframe();
+		ppn+=size;
+		frame+=1;
+		
+		if (frame=noFrames) then
+		begin
+			frame:=0;
+			ppn:=#tables;
+		end;
+	end;	
+	
+end.

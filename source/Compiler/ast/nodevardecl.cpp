@@ -40,8 +40,10 @@ void NodeVarDecl::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
 //    qDebug() << varName << typeNode->m_flags;
     if (!symTab->isRegisterName(varName))
 //        if (!symTab->isThisPointer(varName))
-        if (symTab->exists(varName))
+        if (symTab->exists(varName)) {
+            varName = varName.remove("varPrefixed_");
               ErrorHandler::e.Error("Variable '" + varName +"' is already defined!",m_op.m_lineNumber);
+        }
 
 
     if (typeName=="ARRAY"){

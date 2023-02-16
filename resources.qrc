@@ -732,5 +732,13 @@
         <file>resources/bin/krill_18/loader_PAL_NTSC_1000-c64.prg</file>
         <file>resources/bin/krill_18/loader_PAL_NTSC_0200-c64.prg</file>
         <file>resources/images/TRS80COCO.png</file>
+        <file>resources/text/help/r/forward.rtf</file>
+        <file>resources/text/opcodes_6809.txt</file>
+        <file>resources/code/6809/vectrex_header.asm</file>
+        <file>resources/images/VECTREX.png</file>
+        <file>resources/text/help/m/returnvalue.rtf</file>
+        <file>resources/images/THOMSON.png</file>
+        <file>resources/code/Z80/init_z180.s</file>
+        <file>resources/images/CHIP8.png</file>
     </qresource>
 </RCC>

@@ -102,12 +102,12 @@ begin
         ");
         for i:=0 to 256 do
 		begin
-			pos[0]:=lo(intPos);
-			pos[1]:=hi(intPos);
+			pos[1]:=lo(intPos);
+			pos[0]:=hi(intPos);
 			pos:=pos+2;
 		end; 
-		intPos[0]:=$fb;
-		intPos[1]:=$c9;
+		intPos[0]:=$fb; // ei
+		intPos[1]:=$c9; // ret
 		asm(" ei");
         /*
         inc a

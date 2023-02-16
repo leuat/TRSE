@@ -792,6 +792,7 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     if (forceType==TokenType::INTEGER || forceType==TokenType::INTEGER_CONST || forceType==TokenType::ADDRESS)
         return r&0xFFFF;
 
+
     return ret.toInt();
 }
 
@@ -1014,6 +1015,26 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 {
     QVector<QSharedPointer<Node>> newDecl;
     QStringList removedSymbols;
+
+    // First, check whether anything is used in asm:
+
+    QStringList potentialUsedVariables;
+    root->FindPotentialSymbolsInAsmCode(potentialUsedVariables);
+
+    for (QSharedPointer<Node> n: m_proceduresOnly)
+        n->FindPotentialSymbolsInAsmCode(potentialUsedVariables);
+
+    // Make sure that variables used in non-removed asm blocks are kept
+    for (auto s: potentialUsedVariables) {
+        if (m_symTab->m_symbols.contains(s)) {
+            m_symTab->m_symbols[s]->isUsed = true;
+            m_symTab->m_symbols[s]->m_doNotOptimize = true;
+        }
+        if (m_procedures.contains(s))
+            m_procedures[s]->m_isUsed = true;
+    }
+
+    // Go through all variables and remove the unused ones
     for (QSharedPointer<Node> n: root->m_NodeBlock->m_decl) {
         bool add = true;
 
@@ -1646,7 +1667,7 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         if (s->m_type=="INTEGER") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="WORD") m_currentToken.m_type=TokenType::INTEGER;
         if (s->m_type=="BYTE") m_currentToken.m_type=TokenType::BYTE;
-        if (s->m_type=="BOOLEAN") m_currentToken.m_type=TokenType::BYTE;
+        if (s->m_type=="BOOLEAN") m_currentToken.m_type=TokenType::BOOLEAN;
         if (s->m_type=="STRING") m_currentToken.m_type=TokenType::STRING;
         if (s->m_type=="CSTRING") m_currentToken.m_type=TokenType::CSTRING;
 
@@ -2583,10 +2604,27 @@ QSharedPointer<Node> Parser::Factor()
         Eat();
 
         auto t = m_currentToken;
-
+//        qDebug() << t.m_value;
+//        if (m_currentToken.m_type == TokenType::NOT) {
+            if (t.m_value.toLower()=="true") {
+                Eat();
+                return NodeFactory::CreateNumber(t,0);
+            }
+            if (t.m_value.toLower()=="false") {
+                Eat();
+                return NodeFactory::CreateNumber(t,1);
+            }
+  //      }
         return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
     }
 
+    // string cast
+    if (m_currentToken.m_type == TokenType::STRING && m_currentToken.m_value=="STRING") {
+        Eat();
+        return qSharedPointerDynamicCast<NodeString>(String(false));
+
+
+    }
     if (m_currentToken.m_type == TokenType::BYTE || m_currentToken.m_type == TokenType::INTEGER || m_currentToken.m_type == TokenType::LONG) {
         auto t = m_currentToken;
         // Casting
@@ -3342,8 +3380,17 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
             while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
                 paramList.append(Expr());
 
-                if (m_currentToken.m_type==TokenType::COMMA)
+                if (m_currentToken.m_type==TokenType::COMMA) {
                     Eat(TokenType::COMMA);
+                }
+                else
+                if (m_currentToken.m_type==TokenType::RPAREN) {
+
+                }
+                else {
+                    ErrorHandler::e.Error("Uknown token '"+m_currentToken.m_value+"'. Please separate your parametes by commas. ",m_currentToken.m_lineNumber);
+
+                }
                 //if (m_currentToken.m_type==TokenType::SEMI)
                 //    ErrorHandler::e.Error("Syntax errror", m_currentToken.m_lineNumber);
             }
@@ -3434,7 +3481,12 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
             for (QSharedPointer<Node> n: ns) {
                 decl.append(n);
             }
-            Eat(m_currentToken.m_type);
+//            qDebug() << TokenType::getType(m_currentToken.m_type);
+//            Eat(m_currentToken.m_type);
+            if (m_currentToken.m_type==TokenType::COMMA || m_currentToken.m_type==TokenType::SEMI || m_currentToken.m_type==TokenType::RPAREN)
+                Eat();
+            else
+                ErrorHandler::e.Error("Unexpected token '"+m_currentToken.m_value+"'", m_currentToken.m_lineNumber);
         }
     }
     m_inProcedureVariableDecl = false;
@@ -3515,13 +3567,12 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     //    lst<<m_currentToken.m_value;
     int max=0;
     QString numID = "";
-    if (isCString)
-        numID = "*&NUM";
+//    if (isCString)
+        numID = Syntax::s.m_numID;
 
 
     while (m_currentToken.m_type!=TokenType::RPAREN) {
         //GetParsedInt(TokenType::INTEGER);
-
         if (m_currentToken.m_value=="" || m_currentToken.m_type==TokenType::ID || m_currentToken.m_type==TokenType::LPAREN)
             m_currentToken.m_value = numID + QString::number(GetParsedInt(TokenType::INTEGER));
 
@@ -3626,9 +3677,9 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         Eat(TokenType::COLON);
         funcType = TypeSpec(false,QStringList());
         auto t = qSharedPointerDynamicCast<NodeVarType>(funcType);
-        QStringList allowed = QStringList() << "integer" <<"byte" <<"long";
+        QStringList allowed = QStringList() << "integer" <<"byte" <<"long" << "boolean";
         if (!(allowed.contains(t->value.toLower()))) {
-            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer' and 'long'",t->m_op.m_lineNumber);
+            ErrorHandler::e.Error("TRSE currently only supports return values of type 'byte', 'integer', 'boolean' and 'long'",t->m_op.m_lineNumber);
         }
     }
     QStringList flags = getFlags();
@@ -4378,8 +4429,10 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                                     //                    qDebug() << "ADDRESS " << m_currentToken.m_value <<m_symTab->LookupConstants(m_currentToken.m_value.toUpper());
                                 }
                                 if (!found) {
-
-                                    data << "$0"+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
+                                    QString extra="";
+                                    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000)
+                                        extra="0";
+                                     data << "$"+extra+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
                                 }
                                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                                 if (m_currentToken.m_type!=TokenType::RPAREN) {
@@ -4550,7 +4603,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         return nvt;
     }
 
-
     Eat();
     // Is regular single byte / pointer
     QString position = "";
@@ -4590,13 +4642,14 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
     if (t.m_type == TokenType::BOOLEAN) {
         //        qDebug() << "Replace bool with byte";
-        t.m_value="BYTE";
+        t.m_value="BOOLEAN";
         t.m_type = TokenType::BYTE;
         if (forceByteAlignment) {
-            t.m_value="INTEGER";
+            t.m_value="BOOLEAN";
             t.m_type = TokenType::INTEGER;
 
         }
+        t.m_isBoolean = true;
     }
 
     QSharedPointer<NodeVarType> nvt = QSharedPointer<NodeVarType>(new NodeVarType(t,initVal));
@@ -4700,16 +4753,12 @@ QSharedPointer<Node> Parser::InlineAssembler()
         VerifyInlineSymbols6502(m_currentToken.m_value);
     }
     t.m_value = m_currentToken.m_value;
-    QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
-    QStringList potentialUsedVariables = Syntax::s.m_currentSystem->AnalyseForPotentialVariables(t.m_value);
-    for (auto s: potentialUsedVariables) {
-        if (m_symTab->m_symbols.contains(s)) {
-            m_symTab->m_symbols[s]->isUsed = true;
-            m_symTab->m_symbols[s]->m_doNotOptimize = true;
-        }
-        if (m_procedures.contains(s))
-            m_procedures[s]->m_isUsed = true;
+
+    if (m_settingsIni->getString("assembler_z80")=="Pasmo" && Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80) {
+        t.m_value=t.m_value.replace("//",";");
     }
+
+    QSharedPointer<Node> n = QSharedPointer<NodeAsm>(new NodeAsm(t));
     Eat(TokenType::STRING);
     if (pascalStyleAsm) {
         Eat(TokenType::END);
@@ -4966,6 +5015,7 @@ void Parser::HandleMacro()
 
 
     m_macros[name.toLower()] = m;
+//    qDebug() << m_currentToken.m_value;
 
     Eat();
     Eat(); // endmacro
@@ -5006,6 +5056,8 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
+    if (m_pass!=1)
+        return;
     //    qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
     // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
@@ -5047,7 +5099,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
                                        "\n function Write(__v) {__oo=__oo+__v; } "
                                        "\n function write(__v) {__oo=__oo+__v; } "
                                        "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
-    qDebug() <<m_macros[name].str;
+//    qDebug() <<m_macros[name].str;
     if (fun.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
@@ -6029,7 +6081,10 @@ void Parser::HandleUseTPU(QString fileName)
     QStringList dirs;
     dirs << m_currentDir + QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system)+ QDir::separator();
-    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)+ QDir::separator();
+    // Special case for Z80
+    QString cpu = AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor);
+    if (cpu=="Z180") cpu="Z80";
+    dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+Data::data.cpuUnitPath+QDir::separator()+cpu+ QDir::separator();
     dirs << Util::GetSystemPrefix()+ Data::data.unitPath + QDir::separator()+"global"+ QDir::separator();
 
     QString fname = Util::findFileInDirectories(fileName + ".tru", dirs);
@@ -6091,6 +6146,7 @@ void Parser::HandleUseTPU(QString fileName)
         e.linenr = m_currentToken.m_lineNumber;
         throw e;
     }
+    m_lexer->m_currentLineCount += p->m_lexer->getTotalNumberOfLines();
     /*
     Node::m_staticBlockInfo.m_blockID = -1;
     Node::m_staticBlockInfo.m_blockPos = "";

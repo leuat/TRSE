@@ -33,22 +33,7 @@ public:
             pc.Clear(pc.c[0]);
     }
 
-    LSprite(QByteArray& a, int index, int mask) {
-        int c = index;
-        Init(1,1);
-        for (int y=0;y<3;y++) {
-            for (int x=0;x<3;x++) {
-                for (int j=0;j<8;j++) {
-                    int d = c+3*j;
-                    m_data[y*3+x].p[j] = PixelChar::reverse(a[d]);
-                    m_data[y*3+x].p[j] = m_data[y*3+x].flipSpriteBit(j, mask);
-                }
-                c++;
-            }
-            c+=7*3;
-        }
-
-    }
+    LSprite(QByteArray& a, int index, int mask);
 
     void FillColor(int color, int idx) {
         for (int i=0;i<m_data.count();i++) {

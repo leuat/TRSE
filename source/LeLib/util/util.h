@@ -83,6 +83,8 @@ public:
 
     static int hexType;
 
+    static uchar CountBits(uchar c);
+
     static QByteArray toQByteArray(QVector<int>& data);
 
     static QColor colorScale(QColor& col, int mean, int std);

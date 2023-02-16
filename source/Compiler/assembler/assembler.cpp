@@ -100,6 +100,18 @@ QString Assembler::GetOrg() {
     return "org ";
 }
 
+QString Assembler::DeclareSingleString(QString s, QString mark, QString markByte)
+{
+    if (s.startsWith(Syntax::s.m_numID)) {
+        s = s.remove(Syntax::s.m_numID);
+        int val = Util::NumberFromStringHex(s);
+        return "\t"+markByte+"\t"+QString::number(val) + "\n";
+    }
+    else
+        return "\t"+mark+"\t" +"\"" + s + "\"\n";
+
+}
+
 bool caseInsensitiveLessThan(const QSharedPointer<Appendix> s1, const QSharedPointer<Appendix> s2)
 {
     QString sa = s1->m_pos.toLower().replace("$","0x");
@@ -398,7 +410,7 @@ void Assembler::Label(QString s)
 
 
 
-void Assembler::IncludeFile(QString pfile, bool isInsert)
+void Assembler::IncludeFile(QString pfile, bool isInsert, bool isHeader)
 {
     QFile file(pfile);
     if(!file.open(QIODevice::ReadOnly)) {
@@ -424,6 +436,11 @@ void Assembler::IncludeFile(QString pfile, bool isInsert)
         //      QStringList fields = line.split(",");
     }
     file.close();
+
+    if (isHeader) {
+        m_startInsertAssembler <<source;
+        return;
+    }
 
     if (!isInsert) {
         if (m_currentBlock==nullptr)

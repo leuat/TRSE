@@ -47,6 +47,14 @@ public:
     QString m_initCode = "";
 
 
+    void clearComment() override {
+        m_comment = "";
+        if (m_compoundStatement!=nullptr)
+            m_compoundStatement->clearComment();
+    }
+
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
+
     NodeBlock(Token t, QVector<QSharedPointer<Node>> decl, QSharedPointer<Node> comp, bool useOwnSymTab = true):Node() {
         m_compoundStatement = comp;
         m_decl = decl;
@@ -71,6 +79,12 @@ public:
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBlock>(sharedFromThis()));
+    }
+
+    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override
+    {
+        Node::ReplaceVariable(as,name,node);
+        m_compoundStatement->ReplaceVariable(as,name,node);
     }
 
 };

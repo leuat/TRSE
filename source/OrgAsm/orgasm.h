@@ -212,17 +212,21 @@ public:
     static const int CPUFLAVOR_Z80 = 3;
     static const int CPUFLAVOR_S1C88 = 4;
 
+    QString m_subCpu = "";
+
     int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
 
     virtual void LoadCodes(int CPUflavor);
     void ProcessSource();
     void ProcessUnrolling();
+    virtual void ApplyCPUType() {}
 
     bool isLittleEndian = true;
     OrgasmLine LexLine(int i);
 
     bool Assemble(QString filename, QString out);
 
+    void FindCPUtype();
     void PassFindConstants();
     void PassReplaceConstants();
     void PassLabels();

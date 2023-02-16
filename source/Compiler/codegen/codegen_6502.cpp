@@ -302,6 +302,10 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
 
         m_flag1=false;
         as->Term(" ; end add / sub var with constant", true);
+        if (node->m_left->isBool(as)) {
+            as->Asm("and #1");
+        }
+
         return true;
     }
 
@@ -489,7 +493,11 @@ void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
 
 void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
-    as->Asm("");
+    // First check for simple stuff like x*320
+    if (node->m_right->isPureNumeric() && node->m_left->getOrgType(as)==TokenType::BYTE)
+        node->SwapNodes();
+    else
+
     if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
         node->SwapNodes();
     }
@@ -581,6 +589,10 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
             as->BinOP(node->m_op.m_type);
             as->Term(lbl,true);
             as->PopTempVar();
+            if (node->m_left->isBool(as)) {
+                as->Asm("and #1");
+            }
+
         }
     }
     else {
@@ -1997,46 +2009,14 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     bool isPointer = node->m_left->isPointer(as);
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    //    QString lbl = as->NewLabel("stringassign");
 
-    /*    if (isPointer && node->m_left->hasArrayIndex()) {
-        right->Accept(this);
-
-        as->Asm("sta ("+ getValue(left)+"),y");
-        return;
-
-    }
-*/
-
-    QString str = as->NewLabel("stringassignstr");
     QString lblCpy=as->NewLabel("stringassigncpy");
-
-
-    //    as->Asm("jmp " + lbl);
-    as->StartExistingBlock(as->m_tempVarsBlock);
-    if (right->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-    }
-    else {
-        //        QString strAssign = str + "\t.dc \"" + right->m_op.m_value + "\",0";
-        as->DeclareString(str,QStringList() <<right->m_op.m_value,right->flags.keys());
-        //      as->m_tempVars<<strAssign;
-    }
-
-    as->EndCurrentBlock();
-
+    QString str = DefineTempString(right);
     //as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
     //  as->Label(lbl);
 
     //    qDebug() << "IS POINTER " << isPointer;
     if (isPointer || left->isStringList(as)) {
-        //      qDebug() << "HERE";
-/*        as->Asm("lda #<"+str);
-        as->Asm("sta "+getValue(left));
-        as->Asm("lda #>"+str);
-        as->Asm("sta "+getValue(left)+"+1");*/
-//            left->m_expr->Accept(this);
-//        if (left->hasArrayIndex())
             as->Asm(";has array index");
             as->Asm("lda #<"+str);
             as->Asm("ldy #>"+str);
@@ -2046,19 +2026,6 @@ void CodeGen6502::AssignString(QSharedPointer<NodeAssign> node) {
     }
     else {
         QString val = getValue(left);
-
-/*            as->Comment("Storing in string array");
-            left->Accept(this);
-            as->Term();
-            QString zp = as->m_internalZP.Get();
-
-            as->m_internalZP.Pop(zp);
-            as->Asm("sta "+zp);
-            as->Asm("sty "+zp+"+1");
-            val = "("+zp+")"; // store in zp*/
-//        }
-
-
 
         as->Asm("ldy #0");
         as->Label(lblCpy);

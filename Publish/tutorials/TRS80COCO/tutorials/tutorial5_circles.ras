@@ -1,0 +1,100 @@
+program CirclesOhYes;
+@use "system"
+@use "memory"
+@use "screen"
+@use "compression/compression"
+
+
+
+
+// Good old plasma example!
+
+var  
+	// some plasma variables
+	ctr,val,val2,c2x, c2y,ax, ay,time, time2,time3,z : byte;
+	x,y,shift,i : byte;
+	// mini sine table
+	// Org sine table
+	sin : array[256] of byte = buildsinetable(127);
+ 	// smooth data generated in resources/fjong/generate_data.fjo
+	data : incbin("data/smooth_data.bin");
+
+	// Char width of the circles
+	const width : byte= 40;
+	// Char data width of the circles
+	const dwidth : byte = width+32;
+	// Char width of the circles
+	const height:byte = 180;
+
+	const hei : byte = 80;
+	sqr : array[] of byte = buildtable2d(dwidth,height,"256/(Math.sqrt(Math.pow(i-DWIDTH/2,2)*8+Math.pow(j-HEI/2-50,2))+8)*64.0");	
+	//sqr : array[] of byte = buildtable2d(height,dwidth,"Math.atan2((i-20)/2-20,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
+	dx:byte=64;
+	src1, src2, dst : ^byte;
+	taby : array[200] of integer = buildtable("i*DWIDTH");
+
+
+procedure Circles();
+begin
+	y := sin[time2]>>1+shift;
+	src1 := #sqr + sin[byte(time*2)]>>2 + taby[y];
+	
+	y := sin[byte(time2+dx)]>>1+shift;
+	src2 := #sqr + sin[time]>>2 + taby[y];
+	
+	dst := #Screen::gfx + shift*40;
+	for y:=0 to 100 step 2 offpage  do 
+	begin
+		asm("
+		ldy src1
+		ldx src2
+		ldu dst
+		ldb #0
+		");
+		for z:=0 to width unroll do
+		begin
+			asm("
+				lda ,y+
+				adda time3
+				suba ,x+
+				pshs x
+				ldx #data+128
+				lda a,x
+				puls x
+				
+				sta ,u+
+			
+			");
+		end;	
+		
+	
+		dst+=40*4;
+		src1+=dwidth*2;
+		src2+=dwidth*2;
+	end;
+
+end;
+var
+	i3:integer;
+
+begin
+	System::Init();
+	// 320x225 4-colour 
+	Screen::SetBitmapMode(Screen::BPL_40, 1);
+	Screen::SetColor(0,0); // black
+	Screen::SetColor(1,$f);
+	Screen::SetColor(2,$2c); 
+	Screen::SetColor(3,63); 
+	// Clearscreen
+	Memory::Fill16(#Screen::gfx,0,40*225);
+	while (true) do
+	begin
+		Circles();
+		time+=1;
+		time2+=3;
+		time3-=13;
+		if (time&3=0) then dx+=1;
+		shift:=(shift+1)&3;
+	end;
+
+end.

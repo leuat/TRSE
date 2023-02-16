@@ -1239,6 +1239,20 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
             ErrorHandler::e.Error("When the source data is a pointer, you cannot use an offset. Please set the second parameter to '0'. ", m_node->m_op.m_lineNumber);
 
     }
+    // if length isn't pure..
+
+
+    QString cnt = "";
+    if (!m_node->m_params[3]->isPure()) {
+        m_node->m_params[3]->Accept(m_codeGen);
+        as->Asm("sta "+as->m_tempZeroPointers[2]);
+        cnt = as->m_tempZeroPointers[2];
+    }
+    else
+        cnt = m_node->m_params[3]->getValue(as);
+
+
+
 
     if (!isFast)
         as->Comment("memcpy");
@@ -1253,8 +1267,8 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
             as->Asm("ld"+x+ " #"+ QString::number((unsigned char)(Util::NumberFromStringHex(m_node->m_params[3]->getValue(as).remove("#"))-1)) );
         }
         else {
-            as->Term("ld"+x+" ");
-            m_node->m_params[3]->Accept(m_codeGen);
+            as->Term("ld"+x+" " + cnt);
+//            m_node->m_params[3]->Accept(m_codeGen);
             as->Term();
             as->Asm("de"+x);
         }
@@ -1273,7 +1287,6 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
         as->Asm("lda " +addr + v + ","+x);
     }
     as->ClearTerm();
-
 
     as->Term("sta " + bp1);
     m_node->m_params[2]->Accept(m_codeGen);
@@ -1296,7 +1309,8 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
             as->Term("#"+Util::numToHex(m_node->m_params[3]->getValueAsInt(as)),true);
         }
         else
-        m_node->m_params[3]->Accept(m_codeGen);
+            as->Term(cnt);//m_node->m_params[3]->Accept(m_codeGen);
+
         as->Term();
 
         as->Asm("bne " + lbl);
@@ -5904,7 +5918,8 @@ void Methods6502::MemCpyLarge(Assembler *as)
         ErrorHandler::e.Error("MemCpyLarge parameter 0 must be Variable location");
     QSharedPointer<NodeNumber> num = (QSharedPointer<NodeNumber>)qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[3]);
     if (num==nullptr)
-        ErrorHandler::e.Error("MemCpyLarge parameter 4 must be constant");
+        ErrorHandler::e.Error("
+Large parameter 4 must be constant");
     QString defs = as->NewLabel("memcpy_defs");
     QString counter = as->NewLabel("memcpy_counter");
     QString carry = as->NewLabel("memcpy_carry");

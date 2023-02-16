@@ -109,10 +109,14 @@ public:
     // Makes sure that the node and blocks are in sync
     int MaintainBlocks(Assembler* as);
 
-
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
+//    TokenType::Type m_returnType = TokenType::NADA;
+
     virtual void ForceAddress();
+
+    virtual void FindPotentialSymbolsInAsmCode(QStringList& lst);
+
 
     virtual bool isReference() { return false;}
     virtual void setReference(bool ref);
@@ -128,7 +132,8 @@ public:
     virtual void setCastType(TokenType::Type t) {
         m_castType  = t;
     }
-
+    virtual void clearComment();
+    virtual void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node);
     virtual bool isStackVariable() { return false;}
     virtual int getStackShift() { return 0;}
 
@@ -179,6 +184,9 @@ public:
     virtual bool isRecordData(Assembler* as)  {
         return false;
     }
+    virtual bool isBool(Assembler* as){
+        return false;
+    }
 
     virtual bool isPureNumeric() {
         return false;
@@ -198,6 +206,8 @@ public:
     /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
     virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as) {
+        if (m_op.m_isBoolean)
+            return TokenType::BOOLEAN;
         return m_op.m_type;
     }
     virtual TokenType::Type getArrayType(Assembler* as) {
@@ -214,13 +224,7 @@ public:
     virtual ulong getValueAsInt(Assembler* as) {
         return Util::NumberFromStringHex(getValue(as));
     }
-    virtual int getArrayDataSize(Assembler* as) {
-        if (getArrayType(as)==TokenType::INTEGER) return 2;
-        if (getArrayType(as)==TokenType::LONG) return 4;
-//        if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
-        return 1;
-
-    }
+    virtual int getArrayDataSize(Assembler* as);
 
     virtual TokenType::Type getOrgType(Assembler *as) {
         return m_op.m_type;

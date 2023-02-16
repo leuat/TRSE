@@ -13,7 +13,7 @@ Compiler *FactoryCompiler::CreateCompiler(QSharedPointer<CIniFile> ini, QSharedP
         return new CompilerX86(ini,pIni);
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M68000)
         return new CompilerM68K(ini,pIni);
-    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::Z80)
+    if (Syntax::s.m_currentSystem->isZ80())
         return new CompilerZ80(ini,pIni);
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::GBZ80)
         return new CompilerGBZ80(ini,pIni);
@@ -29,6 +29,8 @@ Compiler *FactoryCompiler::CreateCompiler(QSharedPointer<CIniFile> ini, QSharedP
         return new CompilerS1C88(ini,pIni);
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::M6809)
         return new Compiler6809(ini,pIni);
+    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::PCHIP8)
+        return new CompilerChip8(ini,pIni);
 
     qDebug() << "ERROR COULD NOT INTIIALISE COMPILER in factorycompiler::createcompiler! Should never happen";
 

@@ -8,9 +8,9 @@ SystemTRS80CoCo::SystemTRS80CoCo(QSharedPointer<CIniFile> settings, QSharedPoint
     m_processor = M6809;
     m_system = TRS80COCO;
 
-    m_startAddress = 0x4000;
-    m_programStartAddress = 0x4000;
-    m_supportsExomizer = true;
+    m_startAddress = 0x2000;
+    m_programStartAddress = 0x2000;
+    m_supportsExomizer = false;
 
 
  //   m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"System values",0,0x00FF));
@@ -25,37 +25,6 @@ SystemTRS80CoCo::SystemTRS80CoCo(QSharedPointer<CIniFile> settings, QSharedPoint
 
 }
 
-void SystemTRS80CoCo::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
-{
-    QString output;
-    int time = timer.elapsed();
-
-    output+="<br>";
-
-    PerformAssembling(filename,text,currentDir,symTab);
-
-    if (!QFile::exists(filename+".bin")) {
-        text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
-        text+=output;
-        m_buildSuccess = false;
-        return;
-    }
-
-
-
-
-    if (m_buildSuccess) {
-        text +="<br>Assembled file size: <b>" + QString::number(QFileInfo(filename+".bin").size()) + "</b> bytes";
-    }
-
-    output+="<br>";
-
-    time = timer.elapsed();
-
-
-    text+=output;
-
-}
 
 void SystemTRS80CoCo::PostProcess(QString &text, QString file, QString currentDir)
 {
@@ -64,7 +33,6 @@ void SystemTRS80CoCo::PostProcess(QString &text, QString file, QString currentDi
 
     QString tool = getEmulatorName();
     QString imgtool = QFileInfo(tool).absoluteDir().absolutePath()+"/imgtool";
-    qDebug() << imgtool;
 #ifdef _WIN32
     imgtool+=".exe";
 #endif

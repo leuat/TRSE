@@ -6,7 +6,7 @@ PostOptimiserZ80::PostOptimiserZ80()
 {
     m_registers = QStringList() <<"a"<<"b"<<"c"<<"d"<<"h"<<"l"<<"d"<<"e"<<"af"<<"bc"<<"de"<<"hl"<<"ix"<<"iy"<<"p"<<"sp";
     m_branches = QStringList() <<"call" <<"jp";
-    m_registerChangingCommands = QStringList() << "call" <<"jp";
+    m_registerChangingCommands = QStringList() << "call" <<"jp" << "pop";
     m_bops = QStringList() << "add"<<"sub"<<"xor"<<"or"<<"and"<<"inc"<<"dec"<<"adc"<<"sbc";
 //    m_axModifiers = QStringList() << "div"<<"idiv"<<"mul"<<"imul";
 }
@@ -47,6 +47,8 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
         st = st.simplified().trimmed();
 
 
+    if (line.m_orgLine.contains(";keep"))
+        return;
     // Not implemented anything yet!
     // Below are stuff for the x86
 /*
@@ -57,6 +59,10 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
 */
     if (cmd=="ld") {
         QString reg = par[0];
+        if (prevLine->m_orgLine.toLower().simplified()==line.m_orgLine.toLower().simplified()) {
+            line.m_forceOptimise = true;
+
+        }
         if (m_registers.contains(reg))
         {
             // Don't assume "mov ax,dx" to hold

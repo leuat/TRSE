@@ -37,6 +37,14 @@ public:
         m_op = t;
     }
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
+    void clearComment() override {
+        m_comment = "";
+        for (auto n : children)
+            n->clearComment();
+    }
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
+
+    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override;
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeCompound>(sharedFromThis()));

@@ -40,7 +40,7 @@ public:
     ImageType(QString n,QString cat,LImage::Type t, LColorList::Type colType) {
         type = t;
         name = n;
-        category = cat;
+        category = cat.toUpper();
         colorType = colType;
     }
 };

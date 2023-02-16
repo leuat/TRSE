@@ -59,6 +59,8 @@ begin
 end;
 
 
+
+
 procedure IntMulPow07();
 begin
 	Vars::i1 := 1010;
@@ -283,65 +285,83 @@ begin
 	
 end;
 
-procedure TRS80);
+// Byte int mul
+procedure IntByteMulR1();
 begin
-	Common::Initialise("MULDIV TESTS");
-		// Mul and div
-	ByteMulByte01();
-	ByteMulBytePow202();
-	IntByteMul06();
-	IntMulPow07();
-	IntMulMix13();
-	// Z80 lacks int*int
-	IntMulInt14(); // Not implemented, fails
-	IntMulAdvancedMix15(); // fails
-	ByteMulAdvanced16();
-	
-	IntMulConst17();
-	
-	IntCombConst18();
-	
-	IntCombConst19();
-	
-	IntShift20();
-	IntShift21();
-	
-	ByteMulMul05();
-	
-	Array1();
-	
-
-	ByteDivBytePow203();
-	ByteDivByte04();
-	
-	IntDivByte08();
-	IntDivInt09();
-	IntDivPow210();
-	IntDivMix11();
-	IntDivMix12();
-	
-	IntMulAdvancedMix15();
-	
-	Shift0();
-	Shift1();
-	Shift2();
-	Shift4();
-//	@ifdef C64
-	Shift5();
-	Shift6();
-//	@endif
-
-	Common::WaitABit();
-
-	
+	Vars::v1 := 3;
+	Vars::ri := 500;
+	Vars::ri += 1000*Vars::v1;
+	Vars::text := "R1:"; 
+	if (Vars::ri=3500) then Common::PASS() else Common::FAIL();
 end;
+
+// Byte int mul
+procedure IntByteMulR2();
+begin
+	Vars::v1 := 4;
+	Vars::ri := 500;
+	Vars::ri += Vars::v1*1000;
+	Vars::text := "R2:"; 
+	if (Vars::ri=4500) then Common::PASS() else Common::FAIL();
+end;
+
+
+// Byte int mul
+procedure IntByteMulR3();
+begin
+	Vars::v1 := 3;
+	Vars::ri := 500;
+	Vars::ri += 100*Vars::v1;
+	Vars::text := "R3:"; 
+	if (Vars::ri=800) then Common::PASS() else Common::FAIL();
+end;
+
+// Byte int mul
+procedure IntByteMulR4();
+begin
+	Vars::v1 := 4;
+	Vars::ri := 500;
+	Vars::ri += Vars::v1*100;
+	Vars::text := "R4:"; 
+	if (Vars::ri=900) then Common::PASS() else Common::FAIL();
+end;
+
+// Byte mul byte plus 
+procedure ByteMulBytePlus01();
+begin
+	Vars::v1 := 15; 
+	Vars::v2 := 9;
+	Vars::rb:=10 + Vars::v1*Vars::v2;
+	
+	Vars::text := "B1:"; if Vars::rb=145 then Common::PASS() else Common::FAIL();
+end;
+
+// Byte mul byte plus 
+procedure ByteMulBytePlus02();
+begin
+	Vars::v1 := 15; 
+	Vars::v2 := 3;
+	Vars::rb:=10 + Vars::v1/Vars::v2;
+	
+	Vars::text := "B2:"; if Vars::rb=15 then Common::PASS() else Common::FAIL();
+end;
+
+
+
 
 procedure Exec();
 begin
 	// initialise everything
 	Common::Initialise("MULDIV TESTS");
+
 	
 	// Mul and div
+	ByteMulBytePlus01();
+	ByteMulBytePlus02();
+	IntByteMulR1();
+	IntByteMulR2();
+	IntByteMulR3();
+	IntByteMulR4();
 	ByteMulByte01();
 	ByteMulBytePow202();
 	@ifndef GAMEBOY  // Doesn't work because of `ex`
@@ -351,6 +371,7 @@ begin
 	// Z80 lacks int*int
 	IntMulInt14(); // Not implemented, fails
 	IntMulAdvancedMix15(); // fails
+	
 	@endif
 	ByteMulAdvanced16();
 	@ifndef GAMEBOY

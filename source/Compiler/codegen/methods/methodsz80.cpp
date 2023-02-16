@@ -49,6 +49,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         Nop(as);
     if (Command("returnvalue")) {
         m_node->m_params[0]->Accept(m_codeGen);
+        as->Asm(m_codeGen->getReturn());
+
     }
 
     if (Command("inc"))
@@ -257,7 +259,7 @@ void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 void MethodsZ80::Fill(Assembler *as)
 {
 
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80) {
+    if (Syntax::s.m_currentSystem->isZ80()) {
        as->Comment("Updated fast fill");
        LoadVar(as,2,"bc");
        LoadVar(as,1);

@@ -68,10 +68,11 @@ begin
 	sptr:=$400;
 	for y:=0 to 15 do
 	begin
-		for x:=0 to 32 do
+/*		for x:=0 to 32 do
 		begin
 			sptr[x]:=sptr[x+32];
-		end;
+		end;*/
+		memcpyunroll16(sptr+32, sptr,16);
 		sptr+=32;
 	end;
 //	for t:=0 to 2000 do asm(" nop ");

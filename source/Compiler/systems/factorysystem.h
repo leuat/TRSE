@@ -37,6 +37,9 @@
 #include "systemwonderswan.h"
 #include "systemtim.h"
 #include "systemtvc.h"
+#include "systemvectrex.h"
+#include "systemthomson.h"
+#include "systemchip8.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

@@ -20,7 +20,7 @@
 */
 
 #include "nodecompound.h"
-
+#include "nodebuiltinmethod.h"
 
 void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);
@@ -28,6 +28,19 @@ void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
         ErrorHandler::e.DebugLow("Calling Compound Node",level);
         n->ExecuteSym(symTab);
     }
+}
+
+void NodeCompound::FindPotentialSymbolsInAsmCode(QStringList &lst) {
+    for (auto n : children)
+        n->FindPotentialSymbolsInAsmCode(lst);
+
+}
+
+void NodeCompound::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node)
+{
+    Node::ReplaceVariable(as,name,node);
+    for (auto n:children)
+        n->ReplaceVariable(as,name,node);
 }
 
 void NodeCompound::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)

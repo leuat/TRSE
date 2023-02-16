@@ -261,6 +261,10 @@ void SymbolTable::Define(QSharedPointer<Symbol> s, bool isUsed) {
     if (m_ignoreAllprefixes)
         name = s->m_name;
 
+/*    if (m_ contains(name)) {
+        ErrorHandler::e.Error("There is already a unit defined with the name '"+name+"'");
+    }
+*/
     if (isRegisterName(s->m_name))
         name = s->m_name;
 
@@ -701,6 +705,8 @@ TokenType::Type Symbol::getTokenType() {
         return TokenType::PURE_VARIABLE;
     if (m_type.toLower()=="pure_number")
         return TokenType::PURE_NUMBER;
+    if (m_type.toLower()=="boolean")
+        return TokenType::BOOLEAN;
 
     return TokenType::NADA;
 }

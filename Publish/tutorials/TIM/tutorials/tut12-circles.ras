@@ -4,6 +4,7 @@ program Image;
 @use "system/system"
 @use "system/screen"
 @use "system/graphics"
+@use "misc"
 
 @export "images/image2.flf" "images/image2.bin" 256
 
@@ -33,7 +34,6 @@ var
 	tabWidth : array[200] of integer=buildtable("i*HEIGHT");
 	in : integer;
 	
-	kbcheck: byte;
 
 procedure Render();
 begin
@@ -110,11 +110,11 @@ begin
 	System::CursorOff();
 	Screen::ClearBox(0, 0, 128, 64, 0);
 
-	kbcheck := 20;
 
 	time:=0;
 	Compression::DecompressToPort(#image,$8000); // doesn't work completely yet
-	while (true) do
+	Misc::InitKeyboardCheck(5);
+	while (Misc::keyPressed=false) do
 	begin
 		Render();
 
@@ -127,13 +127,7 @@ begin
 		if (time&31) then dx+=1;
 		shift:=(shift+2)&3;
 		time3+=7;
-		
-		kbcheck -= 1;
-		if kbcheck = 0 then
-		begin
-			if Z80CPM::KeyPressed() then break;
-			kbcheck := 20;	// check every 20 frames
-		end;
+		Misc::KeyboardCheck();		
 	end;
 
 	Z80CPM::GetChar();

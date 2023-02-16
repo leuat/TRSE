@@ -92,7 +92,8 @@ void NodeCast::setForceType(TokenType::Type t) {
     m_right->setForceTypeFunctions(t);
 }*/
 void NodeCast::setCastType(TokenType::Type t) {
-    m_right->setCastType(t);
+//    m_right->setCastType(t);
+    m_castType = t;
 }
 
 bool NodeCast::containsPointer(Assembler *as)

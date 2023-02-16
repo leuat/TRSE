@@ -33,6 +33,7 @@ Asm6502::Asm6502() :Assembler()
 //    m_stack["for"] = new Stack();
     m_opCycles.InitMosOpCycles();
     InitCStrings();
+
     m_countCycles = true;
 }
 
@@ -258,9 +259,8 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
     if (type.toLower()=="integer")  {
         t = word;
     }
-    if (type.toLower()=="byte") {
+    if (type.toLower()=="byte" || type.toLower()=="boolean") {
         t = byte;
-
     }
     if (type.toLower()=="long") {
         t = llong;
@@ -468,21 +468,11 @@ QString Asm6502::String(QStringList lst, bool term)
         term = false;
     }
 
-    for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
-
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
-
-/*        if (s!=lst.last())
-            res=res + "\n";
-*/
-
-    }
+    for (QString s:lst)
+        res+=DeclareSingleString(s,mark, mark);
     if (term)
         res=res + "\t"+byte+"\t0";
+
     m_term +=res;
     return res;
 }

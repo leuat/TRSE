@@ -32,7 +32,7 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-########ARCH = arm64
+#########ARCH = arm64
 
 macx{
 #    CONFIG += warn_off
@@ -149,6 +149,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/asm6809.cpp \
     source/Compiler/assembler/asmTripe.cpp \
     source/Compiler/assembler/asmarm.cpp \
+    source/Compiler/assembler/asmchip8.cpp \
     source/Compiler/assembler/asmjdh8.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
@@ -161,6 +162,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/codegen_6502.cpp \
     source/Compiler/codegen/codegen_6809.cpp \
     source/Compiler/codegen/codegen_arm.cpp \
+    source/Compiler/codegen/codegen_chip8.cpp \
     source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
     source/Compiler/codegen/codegen_s1c88.cpp \
@@ -184,6 +186,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compiler65c816.cpp \
     source/Compiler/compilers/compiler6809.cpp \
     source/Compiler/compilers/compilerarm.cpp \
+    source/Compiler/compilers/compilerchip8.cpp \
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerjdh8.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
@@ -192,6 +195,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilerz80.cpp \
     source/Compiler/compilers/factorycompiler.cpp \
     source/Compiler/optimiser/postoptimiser.cpp \
+    source/Compiler/optimiser/postoptimizer6809.cpp \
     source/Compiler/optimiser/postoptimizerm68k.cpp \
     source/Compiler/optimiser/postoptimizerx86.cpp \
     source/Compiler/optimiser/postoptimizerz80.cpp \
@@ -205,6 +209,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systematari520st.cpp \
     source/Compiler/systems/systematari800.cpp \
     source/Compiler/systems/systembbcm.cpp \
+    source/Compiler/systems/systemchip8.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemcustom.cpp \
     source/Compiler/systems/systemgameboy.cpp \
@@ -218,11 +223,13 @@ SOURCES += main.cpp\
     source/Compiler/systems/systempokemonmini.cpp \
     source/Compiler/systems/systemsnes.cpp \
     source/Compiler/systems/systemspectrum.cpp \
+    source/Compiler/systems/systemthomson.cpp \
     source/Compiler/systems/systemtiki100.cpp \
     source/Compiler/systems/systemtim.cpp \
     source/Compiler/systems/systemtrs80.cpp \
     source/Compiler/systems/systemtrs80coco.cpp \
     source/Compiler/systems/systemtvc.cpp \
+    source/Compiler/systems/systemvectrex.cpp \
     source/Compiler/systems/systemvz200.cpp \
     source/Compiler/systems/systemwonderswan.cpp \
     source/Compiler/systems/systemx16.cpp \
@@ -233,7 +240,9 @@ SOURCES += main.cpp\
     source/ImageEditor/glwidget.cpp \
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
+    source/LeLib/limage/limagecoco3.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
+    source/LeLib/limage/limagethomson.cpp \
     source/LeLib/limage/limagetvc.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
@@ -283,10 +292,18 @@ SOURCES += main.cpp\
     source/LeLib/util/tikidisk.cpp \
     source/LeLib/util/tool.cpp \
     source/LeLib/util/utilclasses.cpp \
+    source/LeLib/util/zx0/compress.c \
+    source/LeLib/util/zx0/memory.c \
+    source/LeLib/util/zx0/optimize.c \
+    source/LeLib/util/zx0/zx0.c \
+    source/OrgAsm/morgasm.cpp \
     source/OrgAsm/zorgasm.cpp \
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/PmmEdit/trsehighlighter.cpp \
+    source/chip8emu/c8asm.c \
+    source/chip8emu/chip8emu.cpp \
+    source/chip8emu/dialogchip8.cpp \
     source/dialogcolorselect.cpp \
     source/dialogexport3d.cpp \
     source/dialoginfo.cpp \
@@ -439,12 +456,14 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asm6809.h \
     source/Compiler/assembler/asmTripe.h \
     source/Compiler/assembler/asmarm.h \
+    source/Compiler/assembler/asmchip8.h \
     source/Compiler/assembler/asmjdh8.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
     source/Compiler/ast/nodecast.h \
     source/Compiler/codegen/codegen_6809.h \
     source/Compiler/codegen/codegen_arm.h \
+    source/Compiler/codegen/codegen_chip8.h \
     source/Compiler/codegen/codegen_jdh8.h \
     source/Compiler/codegen/codegen_s1c88.h \
     source/Compiler/codegen/codegen_tripe.h \
@@ -476,6 +495,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compiler65c816.h \
     source/Compiler/compilers/compiler6809.h \
     source/Compiler/compilers/compilerarm.h \
+    source/Compiler/compilers/compilerchip8.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerjdh8.h \
     source/Compiler/compilers/compilerm68k.h \
@@ -484,6 +504,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilerz80.h \
     source/Compiler/compilers/factorycompiler.h \
     source/Compiler/optimiser/postoptimiser.h \
+    source/Compiler/optimiser/postoptimizer6809.h \
     source/Compiler/optimiser/postoptimizerm68k.h \
     source/Compiler/optimiser/postoptimizerx86.h \
     source/Compiler/optimiser/postoptimizerz80.h \
@@ -497,6 +518,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systematari520st.h \
     source/Compiler/systems/systematari800.h \
     source/Compiler/systems/systembbcm.h \
+    source/Compiler/systems/systemchip8.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemcustom.h \
     source/Compiler/systems/systemgameboy.h \
@@ -510,11 +532,13 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systempokemonmini.h \
     source/Compiler/systems/systemsnes.h \
     source/Compiler/systems/systemspectrum.h \
+    source/Compiler/systems/systemthomson.h \
     source/Compiler/systems/systemtiki100.h \
     source/Compiler/systems/systemtim.h \
     source/Compiler/systems/systemtrs80.h \
     source/Compiler/systems/systemtrs80coco.h \
     source/Compiler/systems/systemtvc.h \
+    source/Compiler/systems/systemvectrex.h \
     source/Compiler/systems/systemvz200.h \
     source/Compiler/systems/systemwonderswan.h \
     source/Compiler/systems/systemx16.h \
@@ -525,7 +549,9 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/glwidget.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
+    source/LeLib/limage/limagecoco3.h \
     source/LeLib/limage/limagesnesgeneric.h \
+    source/LeLib/limage/limagethomson.h \
     source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagetvc.h \
     source/LeLib/util/dirartd64.h \
@@ -575,10 +601,16 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/tikidisk.h \
     source/LeLib/util/tool.h \
     source/LeLib/util/utilclasses.h \
+    source/LeLib/util/zx0/zx0.h \
+    source/OrgAsm/morgasm.h \
     source/OrgAsm/zorgasm.h \
     source/PmmEdit/asmhighlighter.h \
     source/PmmEdit/fjonghighlighter.h \
     source/PmmEdit/trsehighlighter.h \
+    source/chip8emu/c8asm.h \
+    source/chip8emu/chip8.h \
+    source/chip8emu/chip8emu.h \
+    source/chip8emu/dialogchip8.h \
     source/dialogcolorselect.h \
     source/dialogexport3d.h \
     source/dialoginfo.h \
@@ -733,6 +765,7 @@ FORMS    += mainwindow.ui \
     dialognewimage.ui \
     dialogimport.ui \
     formtutorialitem.ui \
+    source/chip8emu/dialogchip8.ui \
     source/dialogcolorselect.ui \
     source/dialogexport3d.ui \
     source/dialoginfo.ui \

@@ -1,0 +1,31 @@
+Program UnitTestsTIM;
+// Temp vars address
+@define OVERRIDE $6800
+@use "system/z80cpm"
+@use "system/system"
+
+@use "unittests/unittests"
+@use "unittests/common"
+
+procedure TestResult(s : pointer);
+begin
+	Z80CPM::PutString(s);
+end;
+
+
+begin
+	Z80CPM::Startup();
+
+	Unittests::Exec();
+	if Common::cpc_unittests_status = 0 then
+		TestResult("SUCCESS")
+	else
+		TestResult("FAILURE");
+	@ifdef __CI
+	@endif
+	@ifndef __CI
+//	loop();
+	@endif
+	Z80CPM::Exit();
+	
+end.

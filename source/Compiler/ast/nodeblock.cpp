@@ -21,6 +21,13 @@
 
 #include "nodeblock.h"
 
+void NodeBlock::FindPotentialSymbolsInAsmCode(QStringList &lst) {
+    if (m_compoundStatement!=nullptr)
+        m_compoundStatement->FindPotentialSymbolsInAsmCode(lst);
+    for (auto d : m_decl)
+        d->FindPotentialSymbolsInAsmCode(lst);
+}
+
 void NodeBlock::SetParameter(QString name, PVar var) {
     QSharedPointer<Symbol> s = m_symTab->Lookup(name, m_op.m_lineNumber);
     //        if (s==nullptr)

@@ -112,7 +112,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
     QString t = byte;
     int scale = 1;
-    if (type.toLower()=="integer") {
+    if (type.toLower()=="integer" || type.toLower()=="pointer") {
         t = word;
         scale = 2;
     }
@@ -204,7 +204,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     if (type.toLower()=="integer")
         t = word;
-    if (type.toLower()=="byte") {
+    if (type.toLower()=="byte"  || type.toLower()=="boolean") {
         t = byte;
     }
 
@@ -254,6 +254,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 }
 
 void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {
+    Comment("Declaring string asmz80");
     Write(name +":\t" + String(initVal,!flags.contains("no_term")),0);
 }
 
@@ -403,22 +404,13 @@ QString AsmZ80::String(QStringList lst, bool term)
     QString res;
     QString mark = byte;
 
-    for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+    for (QString s:lst)
+        res+=DeclareSingleString(s,mark,mark);
 
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
-
-        /*        if (s!=lst.last())
-                    res=res + "\n";
-        */
-
-    }
     if (term)
         res=res + "\t"+mark+"\t0";
-    m_term +=res;
+
+    //m_term +=res;
     return res;
 }
 

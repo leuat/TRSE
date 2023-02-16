@@ -98,7 +98,7 @@ public:
 
     int CodeSizeEstimator(QStringList& lines) override;
 
-    QString StoreInTempVar(QString name, QString type="byte", bool actuallyStore=true) override;
+    QString StoreInTempVar(QString name, QString type="fcb", bool actuallyStore=true) override;
 
 
 //    void Writeln() override;
@@ -116,27 +116,6 @@ public:
   //  void EndForLoop(QString endVal) override;
 
     void Optimise(CIniFile& ini) override;
-    void OptimisePassStaLda();
-    void OptimisePassStaLda2();
-
-    void OptimisePassLdx(QString x);
-    void OptimisePassLdaTax(QString x);
-    void OptimiseJumps();
-    void OptimiseCmp(QString op);
-    void OptimisePhaPla1();
-    void OptimisePhaPla2();
-    void OptimisePhaLdxPla();
-    void OptimiseLdLd();
-    void OptimisePassStaLdx(QString x);
-    void OptimisePassLdyLdy(QString y);
-
-
-    bool ContainsAChangingOpcodes(QString l1);
-    bool ContainsYUsingOpcodes(QString l1,QString y);
-    bool ContainsYChangingOpcodes(QString l1,QString y);
-    bool ContainsBranches(QString l1);
-
-
 
 
     MOSOperation GetOperand(QStringList s);

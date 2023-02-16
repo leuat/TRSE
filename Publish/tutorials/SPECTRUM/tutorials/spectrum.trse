@@ -61,4 +61,6 @@ via_zeropages = ,
 dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
+use_track_19 = 1
+disable_compiler_comments = 0
 open_files =, tutorial1.ras

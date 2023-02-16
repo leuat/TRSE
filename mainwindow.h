@@ -500,6 +500,8 @@ private slots:
 
     void on_btnSizeAnalyser_clicked();
 
+    void on_actionChip_8_emulator_triggered();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 

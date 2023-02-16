@@ -29,6 +29,9 @@ public:
     TokenType::Type getSystemPointerArrayType() override {
         return TokenType::INTEGER;
     }
+    virtual bool isZ80() {
+        return true;
+    }
 
     QString CompressFile(QString fileName) override;
 
@@ -36,6 +39,9 @@ public:
         return 3; // z80
     }
 
+    virtual bool HasAddressCounter() override {
+        return false;
+    }
 
 };
 

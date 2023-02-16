@@ -225,6 +225,14 @@ begin
 	end;
 end;
 
+
+procedure DrawLineColor(x1,y1,x2,y2, x:global byte);
+begin
+	SetPen(x);
+	DrawLine(x1,y1,x2,y2);	
+end;
+
+
 /**
 	Draws a rectangle in mode(1) in current colour
 	x,y is top-left corner then width and height.

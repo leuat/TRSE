@@ -77,6 +77,10 @@ public:
         return CompressLZ4(fileName, fileName +"_c");
     }
     QString CompressLZ4(QString fileName, QString outFileName);
+    QString CompressZX0(QString fileName) {
+        return CompressZX0(fileName, fileName +"_c");
+    }
+    QString CompressZX0(QString fileName, QString outFileName);
 
 
     virtual QString getArkosTrackerSystemString() {return "";}
@@ -133,8 +137,8 @@ public:
     static void InitLabelColors();
  //   virtual bool hasFixedProgramAddress() {return true;}
 
-    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200, ACORN, JDH8, POKEMONMINI, TRS80, TRS80COCO, WONDERSWAN, TIM, TVC};
-    enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02, PJDH8, S1C88, M6809};
+    enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA, PLUS4, OK64, X16,X86, GAMEBOY, SPECTRUM, TIKI100, ATARI2600, ATARI520ST, AMSTRADCPC, COLECO, MEGA65, ATARI800, MSX, APPLEII, M1ARM, ORIC, SNES, CUSTOM, VZ200, ACORN, JDH8, POKEMONMINI, TRS80, TRS80COCO, WONDERSWAN, TIM, TVC, VECTREX, THOMSON, CHIP8};
+    enum Processor {MOS6502, M68000,PX86, GBZ80, Z80, ARM, WDC65C816, WDC65C02, PJDH8, S1C88, M6809, Z180, PCHIP8};
 
     static QString StringFromProcessor(Processor s);
     static Processor ProcessorFromString(QString s);
@@ -144,6 +148,18 @@ public:
 
     virtual int addressBusBits() {
         return 16;
+    }
+
+    virtual bool isZ80() {
+        return false;
+    }
+
+
+    virtual bool HasCycleCounter() {
+        return false;
+    }
+    virtual bool HasAddressCounter() {
+        return false;
     }
 
     virtual QString getEmulatorName() = 0;
@@ -173,7 +189,7 @@ public:
 
 
     void AssembleOrgasm(QString& output,QString& text, QString filename, QString currentDir, QSharedPointer<SymbolTable>  symTab);
-    void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab);
+    void AssembleZOrgasm(QString& output,QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, int orgType=0);
     void AssembleCL65(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab, QString ending, QStringList params);
 
     virtual QStringList AnalyseForPotentialVariables(QString asmCode);

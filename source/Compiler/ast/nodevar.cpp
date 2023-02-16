@@ -50,6 +50,17 @@ void NodeVar::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &
     }*/
 }
 
+void NodeVar::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node)
+{
+    Node::ReplaceVariable(as,name,node);
+    if (m_expr!=nullptr) {
+        if (m_expr->isPureVariable() && m_expr->getValue(as)==name)
+            m_expr = node;
+        m_expr->ReplaceVariable(as,name,node);
+    }
+
+}
+
 
 
 TokenType::Type NodeVar::getOrgType(Assembler *as) {
@@ -60,7 +71,7 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
             QSharedPointer<Symbol> s = parserSymTab->Lookup(value, m_op.m_lineNumber);
-//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
+            //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
             if (s!=nullptr)
                 t= s->getTokenType();
         }
@@ -85,6 +96,8 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
 
 TokenType::Type NodeVar::getType(Assembler *as) {
 
+    if (m_op.m_isBoolean)
+            return TokenType::BOOLEAN;
     if (as==nullptr) {
         // Use parser symbtab
         TokenType::Type t = m_op.m_type;
@@ -104,18 +117,19 @@ TokenType::Type NodeVar::getType(Assembler *as) {
 
     TokenType::Type t = m_op.m_type;
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(value, m_op.m_lineNumber);
-//    qDebug() << "VAL "<<getValue(as) ;
+//    qDebug() << "VAL "<< getValue(as) ;
+
     if (s!=nullptr)
         t= as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->getTokenType();
 
 
-//    qDebug() <<  + " " + TokenType::getType(t);
 
 
 
     if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
         return m_forceType;
 
+//    qDebug() <<   " " + TokenType::getType(t);
 
 //    if (as->m_symTab->Lookup(value, m_op.m_lineNumber)!=nullptr)
   //      return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType();
@@ -171,6 +185,17 @@ bool NodeVar::DataEquals(QSharedPointer<Node> other) {
     return var->value==value;
 }
 
+bool NodeVar::isBool(Assembler* as)  {
+//    if (getType(as)==TokenType::ADDRESS)
+  //      return (getArrayType(as)==TokenType::BOOLEAN);
+    if (getType(as)==TokenType::POINTER && m_expr!=nullptr) {
+        if (getArrayType(as)==TokenType::BOOLEAN)
+            return true;
+    }
+    return getType(as)==TokenType::BOOLEAN;
+
+}
+
 bool NodeVar::isWord(Assembler *as) {
 
     //    if (getType(as)==TokenType::POINTER)
@@ -208,7 +233,7 @@ bool NodeVar::isLong(Assembler *as) {
     return (getType(as)==TokenType::LONG || getArrayType(as)==TokenType::LONG)  && m_expr==nullptr;
 }
 bool NodeVar::isByte(Assembler *as) {
-    return getType(as)==TokenType::BYTE  && m_expr==nullptr;
+    return (getType(as)==TokenType::BYTE || getType(as)==TokenType::BOOLEAN)  && m_expr==nullptr;
 //    return getType(as)==TokenType::BYTE  || getArrayType(as)==TokenType::BYTE;
 }
 
@@ -316,7 +341,7 @@ QString NodeVar::getValue8bit(Assembler *as, int isHi) {
     }
     QString pa="";
     QString pb="";
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80){
+    if (Syntax::s.m_currentSystem->isZ80()){
         pa="(";pb=")";
     }
     if (isHi==1) {

@@ -22,6 +22,7 @@
 #include "node.h"
 #include "source/Compiler/codegen/codegen_6502.h"
 
+
 int Node::m_currentLineNumber;
 MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
@@ -126,6 +127,14 @@ void Node::ForceAddress() {
         m_right->ForceAddress();
 }
 
+void Node::FindPotentialSymbolsInAsmCode(QStringList &lst)
+{
+    if (m_left)
+        m_left->FindPotentialSymbolsInAsmCode(lst);
+    if (m_right)
+        m_right->FindPotentialSymbolsInAsmCode(lst);
+}
+
 
 
 void Node::RequireAddress(QSharedPointer<Node> n, QString name, int ln) {
@@ -146,8 +155,16 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
   //  tmpAsm.m_symTab = as->m_symTab;
 //    CodeGen6502 dispatcher;
 //    dispatcher.as = &tmpAsm;
+//    s_isInOffpageTest = true;
+
     auto app = QSharedPointer<Appendix>(new Appendix);
+    auto newtemp = QSharedPointer<Appendix>(new Appendix);
+    auto keep2 = as->m_tempVarsBlock;
+  //  if (as->offPageStack==0)
+        as->m_tempVarsBlock = newtemp;
     auto keep = as->m_currentBlock;
+    as->offPageStack++;
+
     as->m_currentBlock = app;
     QStringList keepTemps = as->m_tempVars;
     if (testBlockA!=nullptr)
@@ -158,6 +175,10 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
 
     int count = as->CodeSizeEstimator(app->m_source);
     as->m_currentBlock = keep;
+    as->offPageStack--;
+
+//    if (as->offPageStack==0)
+        as->m_tempVarsBlock = keep2;
 
 
     return count<120;
@@ -196,5 +217,37 @@ void Node::setReference(bool ref) {
         m_left->setReference(ref);
     if (m_right!=nullptr)
         m_right->setReference(ref);
+
+}
+
+void Node::clearComment() {
+    m_comment = "";
+    if (m_right!=nullptr)
+        m_right->clearComment();;
+    if (m_left!=nullptr)
+        m_left->clearComment();;
+}
+
+void Node::ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node)
+{
+    if (m_right!=nullptr)
+        if (m_right->isPureVariable() && m_right->getValue(as)==name)
+            m_right = node;
+    if (m_left!=nullptr)
+        if (m_left->isPureVariable() && m_left->getValue(as)==name)
+            m_left = node;
+
+    if (m_right!=nullptr)
+        m_right->ReplaceVariable(as,name,node);
+    if (m_left!=nullptr)
+        m_left->ReplaceVariable(as,name,node);
+}
+
+int Node::getArrayDataSize(Assembler* as) {
+    if (getArrayType(as)==TokenType::INTEGER) return 2;
+    if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
+    if (getArrayType(as)==TokenType::LONG) return 4;
+//        if (getArrayType(as)==TokenType::POINTER) return Syntax::s.m_currentSystem->getPointerSize();
+    return 1;
 
 }

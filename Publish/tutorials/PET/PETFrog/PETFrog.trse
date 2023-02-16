@@ -46,3 +46,6 @@ override_target_settings_basic = 0
 zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 8032
 show_all_files = 1
+use_track_19 = 1
+disable_compiler_comments = 0
+use_vice_c1541 = 0

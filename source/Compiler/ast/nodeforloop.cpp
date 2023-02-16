@@ -23,14 +23,15 @@
 #include "nodenumber.h"
 
 NodeForLoop::NodeForLoop(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> block, QSharedPointer<Node> step, bool unroll, int forcePage, int loopCounter, bool inclusive) :Node(){
-    m_a = a;
-    m_b = b;
+    m_left = a;
+    m_right = b;
     m_block = block;
     m_inclusive = false; // to change
     m_forcePage = forcePage;
     m_step = step;
     m_loopCounter = loopCounter;
     m_inclusive = inclusive;
+    m_unroll = unroll;
     //        m_op = op;
 }
 

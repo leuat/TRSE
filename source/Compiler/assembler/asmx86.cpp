@@ -169,7 +169,7 @@ void AsmX86::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     if (type.toLower()=="integer")
         t = word;
-    if (type.toLower()=="byte") {
+    if (type.toLower()=="byte"|| type.toLower()=="boolean") {
         t = byte;
     }
 
@@ -245,16 +245,7 @@ QString AsmX86::String(QStringList lst, bool term)
     QString mark = "db";
 
     for (QString s:lst) {
-        bool ok=false;
-        uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
-
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
-
-        /*        if (s!=lst.last())
-                    res=res + "\n";
-        */
+        res+=DeclareSingleString(s,mark,mark);
 
     }
     if (term)

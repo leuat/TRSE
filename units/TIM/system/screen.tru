@@ -19,8 +19,9 @@ var
 	
 @donotremove PrintChrXY
 /**
-	Prints a 8x8 character to screen at given coordinates, where x = 0..127, y = 0..63, chr 0..255.
-	Character resolution is 64x32, but characters can be printed at half width and height.
+	Prints a 8x8 character to screen at given coordinates, where x = 0..127, y = 0..63, chr 0..255. <br>
+	Character resolution is 64x32, but characters can be printed at half width and height. <br>
+	Control codes are not recognized!
 **/
 procedure PrintChrXY(x, y, char: global integer);
 // puts character to screen and updates cursor position
@@ -32,25 +33,25 @@ begin
 	ld de, (Screen_y)
 	ld hl, (Screen_char)
 	
-    // save current position
+  ;  // save current position
     ld (Screen_cursorx), bc
     ld (Screen_cursory), de
 
-    // entry point for the rest of char printing routines
+   ; // entry point for the rest of char printing routines
 _prchrxy0:
-	// video memory ofset = x*128*2 + y*2*2 + 8000H
-    // calculate video address
+	;// video memory ofset = x*128*2 + y*2*2 + 8000H
+    ;// calculate video address
     ld b, c
     sla b
-    scf     // add 80h
+    scf     ;// add 80h
     rr b
     sla e
     sla e
     ld c, e
 
-    // calculate char address, each char is 16 bytes
+    ;// calculate char address, each char is 16 bytes
     and a
-    ld de, (Screen_chrsub)    // substract Screen_chrsub value
+    ld de, (Screen_chrsub)    ;// substract Screen_chrsub value
     sbc hl, de
     add hl, hl
     add hl, hl
@@ -63,7 +64,7 @@ _prchrxy0:
 _prchrxy1:
     push bc
     push de
-    ld de,(Screen_chrinv)      // load Screen_chrinv
+    ld de,(Screen_chrinv)      ;// load Screen_chrinv
 
 _prchrxy2:
     ld a,(hl)
@@ -81,7 +82,7 @@ _prchrxy2:
     dec e
     jp nz, _prchrxy1
 
-    // calculate next char position
+;    // calculate next char position
 _prchrxy3:
     ld a,(Screen_cursorx) ;// x+=2
     inc a
@@ -114,8 +115,9 @@ end;
 
 
 /**
-	Prints a 8x8 character to screen at current cursor position, where chr 0..255.
-	Character resolution is 64x32, but characters can be printed at half width and height.
+	Prints a 8x8 character to screen at current cursor position, where chr 0..255. <br>
+	Character resolution is 64x32, but characters can be printed at half width and height.<br>
+	Control codes are not recognized!
 **/
 procedure PrintChr(char: global integer);
 begin
@@ -129,8 +131,9 @@ end;
 
 
 /**
-	Prints a null-terminated string to screen at current cursor position
-	Character resolution is 64x32, but characters can be printed at half width and height.
+	Prints a null-terminated string to screen at current cursor position.<br>
+	Character resolution is 64x32, but characters can be printed at half width and height.<br>
+	Control codes are not recognized!
 **/
 procedure PrintStr(str: global pointer);
 begin
@@ -138,8 +141,8 @@ begin
     ld hl,(Screen_str)
 _prstr1:
     push hl
-    ld l,(hl)   // get net char
-    inc l       // check if null
+    ld l,(hl)   ;// get net char
+    inc l       ;// check if null
     dec l
     jp z, _prstr2
     ld h, 0
@@ -156,8 +159,9 @@ end;
 
 
 /**
-	Prints up to n chars of a null-terminated string to screen at current cursor position
-	Character resolution is 64x32, but characters can be printed at half width and height.
+	Prints up to n chars of a null-terminated string to screen at current cursor position.<br>
+	Character resolution is 64x32, but characters can be printed at half width and height.<br>
+	Control codes are not recognized!
 **/
 procedure PrintNStr(str: global pointer, n: integer);
 begin
@@ -167,8 +171,8 @@ begin
 _prnstr1:
     push hl
     push de
-    ld l,(hl)   // get net xhar
-    inc l       // check if null
+    ld l,(hl)   ;// get net xhar
+    inc l       ;// check if null
     dec l
     jp z, _prnstr2
     ld h, 0
@@ -189,7 +193,7 @@ end;
 
 
 /**
-	Sets cursor position, where x = 0..127, y = 0..63
+	Sets cursor position, where x = 0..127, y = 0..63<br>
 	Character resolution is 64x32, but characters can be printed at half width and height.
 **/
 procedure GotoXY(x, y: global integer);
@@ -212,7 +216,8 @@ end;
 
 
 /**
-	Sets the value to be substracted from character code to get position in font. $20 is for ASCII coding, $0 is for no coding
+	Sets the value to be substracted from character code to get position in font.<br>
+	$20 is for ASCII coding (default), $0 is for no coding
 **/
 procedure SetPrintSub(x: global integer);
 begin
@@ -221,7 +226,7 @@ end;
 
 
 /**
-	Fills box with a byte pattern, where x = 0..127, y = 0..63, width and height must be within screen.
+	Fills box with a byte pattern, where x = 0..127, y = 0..63, width and height must be within screen.<br>
 	$00 is black, $55, $AA and $FF are solid colors.
 **/
 procedure ClearBox(x, y: global integer, width, height, pattern: integer);
@@ -235,24 +240,24 @@ begin
 	ld de, (Screen_y)
 	ld bc, (Screen_x)
 
-    sla h   // height * 4
+    sla h   ;// height * 4
     sla h
 
-    // x*256
+;    // x*256
     ld b, c
-    // add 80h to addr hi
+ ;   // add 80h to addr hi
     sla b
     scf
     rr b
-    // y*4
+;    // y*4
     sla e
     sla e
     ld c, e
 
-    ld d, l // width
+    ld d, l ;// width
     ld a, (Screen_pattern)
 _clrbx1:
-    ld e, h // height
+    ld e, h ;// height
     push bc
 _clrbx2:
     out (c),a

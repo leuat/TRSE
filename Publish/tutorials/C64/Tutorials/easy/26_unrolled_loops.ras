@@ -1,0 +1,48 @@
+program Unrolled_Loops;
+var
+	i,j:byte;
+	zp:pointer;
+	val : byte;
+
+/*
+
+   In this example, we unroll a loop to make it about 50% faster
+
+*/
+
+
+procedure NoUnroll(val:global byte);
+begin
+	zp:=#screen_char_loc;
+	// output 250 bytes to the screen 
+ 	for j:=0 to 250 do
+	begin
+		zp[j]:=val;
+	end;
+	
+end;
+	
+procedure Unrolled(val:global byte);
+begin
+	zp:=#screen_char_loc;
+	// output 250 bytes to the screen unolled
+	for j:=0 to 250 unroll do
+	begin
+		zp[j]:=val;
+	end;
+	
+end;
+	
+begin
+		
+	while(true) do
+	begin	
+		waitforverticalblank();
+		screen_bg_col:=red; 
+		NoUnroll(1); // slow
+		screen_bg_col:=blue;
+		Unrolled(2); // fast
+		screen_bg_col:=black;
+	end;
+	
+end.

@@ -16,26 +16,17 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 
 void Compiler6809::Connect()
 {
+
     m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
 
-
-/*    if (m_ini->getdouble("post_optimize")==1.0) {
-        emit EmitTick("<br>Optimising pass: ");
-        m_assembler->m_totalOptimizedLines = 0;
-        for (int i=0;i<4;i++) {
-            emit EmitTick(" ["+QString::number(i+1)+"]");
-            m_assembler->Optimise(*m_projectIni); }
+        m_assembler->m_source << "\torg $C800";
+        m_assembler->m_source <<m_assembler->m_wram->m_source;
     }
-*/
-/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TRS80COCO) {
-        m_assembler->m_source<<	" org $CFFE";
-        m_assembler->m_source<<	"vector__:";
-        m_assembler->m_source<< "   fcb $40,00";
 
-    }
-*/
-    m_assembler->m_source<<"	END START";
+    if (m_ini->getString("assembler_6809")=="lwasm")
+        m_assembler->m_source<<"	END START";
 
     CleanupBlockLinenumbers();
 /*    for (QString&s : m_assembler->m_source) {
@@ -51,6 +42,19 @@ void Compiler6809::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
 
 void Compiler6809::Init6809Assembler()
 {
+    if (m_projectIni->getdouble("override_target_settings")==1) {
+          Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
+          Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
+          Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
+          Syntax::s.m_currentSystem->m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
+          if (Syntax::s.m_ignoreSys)
+              Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->m_programStartAddress;
+      } else {
+          Syntax::s.m_currentSystem->DefaultValues();
+          Syntax::s.m_ignoreSys = Syntax::s.m_currentSystem->m_ignoreSys;
+   //       Syntax::s.m_stripPrg = false;
+
+      }
     m_assembler->m_startInsertAssembler<<" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
     m_assembler->m_startInsertAssembler << "START:";
@@ -58,6 +62,8 @@ void Compiler6809::Init6809Assembler()
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
 
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX)
+        m_assembler->IncludeFile(":resources/code/6809/vectrex_header.asm", true, true);
 
 
 //    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));
@@ -67,32 +73,6 @@ void Compiler6809::Init6809Assembler()
 */
     m_assembler->m_ignoreInitialJump = m_projectIni->getdouble("ignore_initial_jump")==1.0;
 
-  if (m_projectIni->getdouble("override_target_settings")==1) {
-        Syntax::s.m_currentSystem->m_startAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_basic"));
-        Syntax::s.m_ignoreSys = m_projectIni->getdouble("override_target_settings_sys")==1;
-        Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
-        Syntax::s.m_currentSystem->m_stripPrg = m_projectIni->getdouble("override_target_settings_prg")==1;
-        if (Syntax::s.m_ignoreSys)
-            Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->m_programStartAddress;
-    } else {
-        Syntax::s.m_currentSystem->DefaultValues();
-        Syntax::s.m_ignoreSys = Syntax::s.m_currentSystem->m_ignoreSys;
- //       Syntax::s.m_stripPrg = false;
-
-    }
-   /* if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI2600 ||
-          Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI2600  ) {
-        Syntax::s.m_ignoreSys = true;
-        Syntax::s.m_stripPrg = true;
-
-    }*/
-
-/*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
-        Syntax::s.m_ignoreSys = true;
-        Syntax::s.m_stripPrg = false;
-
-    }
-*/
 
     if (Syntax::s.m_currentSystem->isCommodoreSystem() && !Syntax::s.m_ignoreSys)
         Syntax::s.m_currentSystem->m_startAddress = Syntax::s.m_currentSystem->getDefaultBasicAddress();

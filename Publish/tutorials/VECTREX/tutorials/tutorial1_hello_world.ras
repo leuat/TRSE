@@ -1,0 +1,44 @@
+program Tutorial1_Hello_world;
+@use "system"
+
+var
+	txtHello:string=(
+			127,128,"HELLO WORLD",$80,
+			107,128,	
+			"THIS IS STRANGE",$80,
+			80,128,	
+			"TRSE ON THE VECTREX",$80
+			);
+			
+			
+	sinx : array[256] of byte = buildsinetable(128);		
+	time,i,t,px1,px2,py1,py2,t2,t3:byte ram;			
+
+	
+ 			
+begin
+	System::SetLargeFont();
+	while (true) do
+	begin
+		System::WaitFrameBoundary();
+		System::DisplayTextList(#txtHello);
+		time+=1;
+		t:=time;
+		for i:=0 to 10 do
+		begin
+			System::ResetPenPos();
+			px1:=sinx[t];			
+			py1:=sinx[byte(t+64)];			
+			px2:=sinx[byte(t+128+t2)];			
+			py2:=sinx[byte(t+192+t2)];			
+			if (px1<>px2 and (py1<>py2)) then
+			System::DrawLine(px1,py1,px2,py2);
+			t+=15;
+		end;	
+		t2+=3;
+		t2+=2;
+		System::scale := sinx[byte(time)]+$80;
+
+	end;	
+	
+end.

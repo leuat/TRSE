@@ -109,9 +109,20 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
     }
 }
 
+void NodeBuiltinMethod::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) {
+    int i=0;
+    for (auto p:m_params) {
+        if (p->isPureVariable() && p->getValue(as)==name)
+            m_params[i] = node;
+
+        p->ReplaceVariable(as,name,node);
+        i++;
+    }
+}
+
 bool NodeBuiltinMethod::isPureVariable() {
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::X86 ||
-            Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z80 ||
+    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::PX86 ||
+            Syntax::s.m_currentSystem->isZ80() ||
             Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 ||
             Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000
             )

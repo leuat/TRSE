@@ -461,7 +461,8 @@ void LImageQImage::CopyFrom(LImage *img) {
     m_footer = img->m_footer;
     m_scaleX = img->m_scaleX;
     m_currentChar = img->m_currentChar;
-
+    m_charWidthDisplay = img->m_charWidthDisplay;
+    m_charWidth = img->m_charWidth;
     LImageQImage* mc = dynamic_cast<LImageQImage*>(img);
     if (mc!=nullptr) {
         *m_qImage = *mc->m_qImage;

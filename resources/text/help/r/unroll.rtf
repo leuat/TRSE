@@ -1,8 +1,16 @@
-<h3>Description</h3>
-<p></p>
-
-
-<h3>Example</h3>
-
+<h3>unroll</h3>
+The <b>unroll</b> keyword will mark the compiler to unroll a for loop, or output the contents of the for block a fixed number of types.
+Useful for speeding up your program, at the expense of producing larger code.
+<p>
+When unrollling a for loop, the "from" and "to" index counters must be numerical values.
+<p>Example:
+<p>
 <code>
+for i:=5 to 10 unroll do
+begin
+    // will replace "i" with [5,9] and execute the code 5 times
+    // code gets larger, but faster
+    printnumber(i+10);
+end;
+
 </code>

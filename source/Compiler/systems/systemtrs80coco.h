@@ -15,7 +15,6 @@ class SystemTRS80CoCo : public System6809
 public:
     SystemTRS80CoCo(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
-    void Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab) override;
 
     void PostProcess(QString &text, QString file, QString currentDir) override;
 

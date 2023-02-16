@@ -271,7 +271,7 @@ public:
 
     virtual QString GetOrg(int pos ) = 0;
     virtual QString GetOrg();
-
+    int offPageStack = 0;
 
 
     virtual void Program(QString name, QString vicParam) {};
@@ -286,6 +286,7 @@ public:
 //    virtual void AssignVariable(QString var) = 0;
 //    virtual void EndAssignVariable(QString var) {}
     virtual void ApplyTerm() {}
+    QString DeclareSingleString(QString str, QString mark, QString markByte);
     virtual void Number(QString n) {}
     virtual QString  String(QStringList s, bool term) { return "";}
     virtual void BinOP(TokenType::Type t, bool clearFlag=true){}
@@ -311,11 +312,11 @@ public:
 //    virtual void StartForLoop(QString a, QString b) {}
 //    virtual void EndForLoop(QString endVal) {}
 
-    void Asm(QString s, QString comment="");
+    virtual void Asm(QString s, QString comment="");
     virtual void Label(QString s);
     virtual void Optimise(CIniFile& ini) {}
 
-    virtual void IncludeFile(QString pfile, bool isInsert =false);
+    virtual void IncludeFile(QString pfile, bool isInsert =false, bool isHeader = false);
 
 
     virtual bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos);

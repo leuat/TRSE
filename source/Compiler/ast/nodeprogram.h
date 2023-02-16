@@ -50,6 +50,10 @@ public:
     }
 
 
+    void FindPotentialSymbolsInAsmCode(QStringList& lst)  override {
+        if (m_NodeBlock!=nullptr)
+            m_NodeBlock->FindPotentialSymbolsInAsmCode(lst);
+    }
 
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;

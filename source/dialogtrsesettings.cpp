@@ -66,6 +66,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAtari800Emulator->setText(m_ini->getString("atari800_emulator"));
     ui->lePlus4Emulator->setText(m_ini->getString("plus4_emulator"));
     ui->leX16Emu->setText(m_ini->getString("x16_emulator"));
+    ui->leThomsonEmulator->setText(m_ini->getString("thomson_emulator"));
     ui->leMSXEmulator->setText(m_ini->getString("msx_emulator"));
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
@@ -75,6 +76,8 @@ void DialogTRSESettings::FillFromIni()
     ui->leTRS80->setText(m_ini->getString("trs80_emulator"));    ui->leSNES->setText(m_ini->getString("snes_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
+    ui->leVectrexEmulator->setText(m_ini->getString("vectrex_emulator"));
+    //ui->lec8asm->setText(m_ini->getString("c8asm"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
     ui->leJDH8Emulator->setText(m_ini->getString("jdh8_directory"));
     ui->leCpmTools->setText(m_ini->getString("cpmtools_directory"));
@@ -156,6 +159,7 @@ void DialogTRSESettings::FillFromIni()
 
     ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
     ui->cmbAssemblerZ80->setCurrentText(m_ini->getString("assembler_z80"));
+    ui->cmb6809Assembler->setCurrentText(m_ini->getString("assembler_6809"));
     ui->cmbPainter_2->setCurrentIndex((int)m_ini->getdouble("image_painter"));
 
 }
@@ -185,6 +189,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("wonderswan_emulator", ui->leWonderswanEmulator->text());
     m_ini->setString("acorn_emulator", ui->leAcornEmulator->text());
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
+    m_ini->setString("thomson_emulator", ui->leThomsonEmulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
@@ -195,6 +200,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
+    m_ini->setString("vectrex_emulator", ui->leVectrexEmulator->text());
+    //m_ini->setString("c8asm", ui->lec8asm->text());
     m_ini->setString("qemu_directory",ui->leQemuDir->text());
     m_ini->setString("jdh8_directory",ui->leJDH8Emulator->text());
     m_ini->setString("cmptools_directory",ui->leCpmTools->text());
@@ -270,6 +277,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
     m_ini->setString("assembler_z80", ui->cmbAssemblerZ80->currentText());
+    m_ini->setString("assembler_6809", ui->cmb6809Assembler->currentText());
 
     m_ini->setStringList("custom_keyword_list", ui->leKeywords_2->text().split(","));
     m_ini->setStringList("custom_keyword_colour", ui->leColour_2->text().split(","));
@@ -318,7 +326,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"MSX" << "TVC"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"THOMSON"<<"MSX" << "TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -951,7 +959,35 @@ void DialogTRSESettings::on_btnTVCEmulator_clicked()
 
 void DialogTRSESettings::on_btnHelpTVC_clicked()
 {
-    Help("TVC Emulator","???");
+    Help("TVC Emulator","WinTVC: http://gaia.atilia.eu/category/wintvc/ ");
+
+}
+
+
+void DialogTRSESettings::on_btnVectrexEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Vectrex Emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leVectrexEmulator->setText(filename);
+
+}
+
+
+
+void DialogTRSESettings::on_btnHelpThomson_clicked()
+{
+    Help("Thomson Emulator","Mame (for now)");
+
+}
+
+
+void DialogTRSESettings::on_btnThomsonEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Thomson emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leThomsonEmulator->setText(filename);
 
 }
 

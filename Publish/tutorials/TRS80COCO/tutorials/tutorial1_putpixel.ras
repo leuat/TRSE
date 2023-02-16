@@ -14,6 +14,9 @@ var
 
 	
 begin
+	
+	
+	
 	System::Init();
 	Screen::SetBitmapMode(Screen::BPL_40, 1);
 	Screen::SetColor(0,0); // black
@@ -23,17 +26,17 @@ begin
 
 	Screen_EnableVsync();
 	// Clear scren
-	Memory::Fill16(#Screen::gfx,0,160*225);
+	Memory::Fill16(#Screen::gfx,00,160*225);
 	while (true) do
 	begin
 		// Set the border color to time
 		Screen::Border:=time;
 		// Draw a circle
-		for t:=0 to 255 do
+		for t:=0 to 255  do
 		begin
 			x:=sinx[t]+20;
 			l:=t+delta;
-			y:=sinx[l]+40;
+			y:=sinx[byte(t+delta)];
 			// Put pixel on screen
 			Screen::PutPixel320(x,y,Screen::colors[col]);
 		end;
