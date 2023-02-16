@@ -13,6 +13,16 @@ Hexadecimal constants can be written as
 #include <ctype.h>
 #include <assert.h>
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdarg.h>
+#include <time.h>
+#include <assert.h>
+
+
 #include "c8asm.h"
 
 #define TOK_SIZE    64
@@ -330,7 +340,10 @@ static int get_word(const Stepper * stepper) {
 }
 char c8_message_text[1024];
 
+
+
 int c8_assemble(const char *text) {
+//    c8_reset();
     static Stepper stepper;
     int i, j, regx = -1, regy = 0;
     stepper.in = text;

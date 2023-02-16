@@ -1,5 +1,6 @@
 program Tut1;
 var
+	@donotremove sprite
 	sprite : array[8] of byte =(
     %01101110,
     %10000001,
@@ -17,12 +18,12 @@ procedure Init();
 begin
 	
 	asm("
-;		cls
+		cls
 	");
 //	asm(";here");
 //	y:=16;
 	asm("
-;	ld v0, 16
+	ld v0, 16
 ;	ld i,y
 ;	ld [i],v0
 	
@@ -50,8 +51,8 @@ begin
 	; Load the variables' initial values
 	LD  boxx, 1
 	LD  dirx, 1
-	ld i,y
-	LD  boxy, [i]
+;	ld i,y
+	LD  boxy, 10
 	LD  I, sprite
 	DRW boxx, boxy, 12
 	LD  tmp, 1  

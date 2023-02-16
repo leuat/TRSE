@@ -117,6 +117,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::CHIP8) {
             dialogchip8* dc8 = new dialogchip8(params[0]);
             dc8->exec();
+            delete dc8;
             return;
         }
     }

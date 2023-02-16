@@ -280,7 +280,7 @@ int c8_message(const char *msg, ...);
 /** `extern char c8_message_text[];`  \
  * The internal buffer used by `c8_message()`.
  */
-extern char c8_message_text[];
+extern char c8_message_text[1024];
 
 /** ## Assembler */
 

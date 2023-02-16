@@ -16,9 +16,11 @@ class dialogchip8 : public QDialog
 
 public:
     Chip8Emu c8;
-    QTimer* timer = nullptr;
+    QSharedPointer<QTimer> timer = nullptr;
     explicit dialogchip8(QString file,QWidget *parent = nullptr);
     ~dialogchip8();
+
+    void stop();
 
 private slots:
     void on_pushButton_clicked();

@@ -11,10 +11,10 @@ dialogchip8::dialogchip8(QString file,QWidget *parent) :
     c8.Init();
     c8.loadROM(file);
 
-    timer = new QTimer();
+    timer = QSharedPointer<QTimer>(new QTimer());
     timer->setInterval(1); //Time in milliseconds
     //timer->setSingleShot(false); //Setting this to true makes the timer run only once
-    connect(timer, &QTimer::timeout, this, [=](){
+    connect(timer.get(), &QTimer::timeout, this, [=](){
         c8.Step();
         ui->lblScreen->setPixmap(c8.getScreen(ui->lblScreen->width(),ui->lblScreen->height()));
     });
@@ -23,9 +23,12 @@ dialogchip8::dialogchip8(QString file,QWidget *parent) :
 
 dialogchip8::~dialogchip8()
 {
-    if (timer)
-        timer->stop();
-    delete ui;
+     delete ui;
+}
+
+void dialogchip8::stop()
+{
+
 }
 
 void dialogchip8::on_pushButton_clicked()
