@@ -76,8 +76,10 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
     QString format = "-r";
     if (m_system==TRS80COCO || m_system==THOMSON )
         format ="-decb";
-//    qDebug() << format;
-    //    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
+    if (m_system==THOMSON && (m_projectIni->getString("thomson_media")=="CART") ||(m_projectIni->getString("thomson_media")=="RAW") )
+        format ="-r";
+
+ //   qDebug() << format;
     if (useMorgasm) {
         AssembleZOrgasm(output,text,filename,currentDir, symTab,1);
     }

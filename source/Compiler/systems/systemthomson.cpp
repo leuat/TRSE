@@ -8,8 +8,8 @@ SystemThomson::SystemThomson(QSharedPointer<CIniFile> settings, QSharedPointer<C
     m_processor = M6809;
     m_system = THOMSON;
 
-    m_startAddress = 0x2100;
-    m_programStartAddress = 0x2100;
+    m_startAddress = 0x2400;
+    m_programStartAddress = 0x2400;
     m_supportsExomizer = false;
 
 
@@ -35,6 +35,8 @@ void SystemThomson::PostProcess(QString &text, QString file, QString currentDir)
     m_mediaType = 0;
     if (m_projectIni->getString("thomson_media")=="CART")
         m_mediaType = 1;
+    if (m_projectIni->getString("thomson_media")=="RAW")
+        m_mediaType = 2;
 
     if (m_mediaType==0)
         Createk5Tape(file);
@@ -59,6 +61,14 @@ void SystemThomson::applyEmulatorParameters(QStringList &params, QString debugFi
     }
     if (m_mediaType ==1 ) {
         params <<"-cart"<<filename+".rom";
+        params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "exec &HB000\\n";
+
+
+    }
+    if (m_mediaType ==2 ) {
+        params <<filename+".rom";
+
+
     }
 
     m_requireEmulatorWorkingDirectory = true;
@@ -156,12 +166,11 @@ void SystemThomson::CreatekCart(QString filename)
     ba[ 0x3fe0 +3 ] = QChar('S').toLatin1(); // terminate ascii
     ba[ 0x3fe0 +4 ] = QChar('E').toLatin1(); // terminate ascii
     ba[ 0x3fe0 +5 ] = 0x4; // terminate ascii
-    ba[0x3fff] = (m_programStartAddress>>8)&0xFF;
-    ba[0x3ffe] = m_programStartAddress&0xFF;
+    ba[0x3ffe] = 0x80;//(m_programStartAddress>>8)&0xFF;
+    ba[0x3fff] = 00;//m_programStartAddress&0xFF;
 
 
     Util::SaveByteArray(ba,filename+".rom");
-
 }
 
 

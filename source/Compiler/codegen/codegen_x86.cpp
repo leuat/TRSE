@@ -66,10 +66,20 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
         as->BinOP(node->m_op.m_type);
         if (bx[0]!='a')  {
             as->Asm("push ax");
-            as->Asm("mov ax,"+bx);
+            if (bx=="bl") {
+                as->Asm("mov al,"+bx);
+                as->Asm("mov ah,0");
+            }
+            else
+                as->Asm("mov ax,"+bx);
         }
         as->Asm(sign+as->m_term +" " +  ax);
         if (bx[0]!='a')  {
+            if (bx=="bl") {
+                as->Asm("mov "+bx+",al");
+
+            }
+            else
             as->Asm("mov "+bx+",ax");
             as->Asm("pop ax");
         }

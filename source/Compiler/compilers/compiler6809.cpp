@@ -55,6 +55,14 @@ void Compiler6809::Init6809Assembler()
    //       Syntax::s.m_stripPrg = false;
 
       }
+    // Special case: Thomson CART
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::THOMSON) {
+        if (m_projectIni->getString("thomson_media")=="CART") {
+          Syntax::s.m_currentSystem->m_startAddress = 0xB000;
+          Syntax::s.m_currentSystem->m_programStartAddress = 0xB000;
+        }
+
+    }
     m_assembler->m_startInsertAssembler<<" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
     m_assembler->m_startInsertAssembler << "START:";
