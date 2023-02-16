@@ -1,0 +1,22 @@
+Program UnitTests6809;
+@use "unittests/unittests"
+@use "unittests/common"
+
+procedure TestResult(s : pointer);
+begin
+	Text::Println(s);
+end;
+
+
+begin
+	Unittests::Exec();
+	if Common::cpc_unittests_status = 0 then
+		TestResult("SUCCESS")
+	else
+		TestResult("FAILURE");
+	@ifdef __CI
+	@endif
+	@ifndef __CI
+	loop();
+	@endif
+end.

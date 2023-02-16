@@ -31,7 +31,15 @@ void SystemThomson::PostProcess(QString &text, QString file, QString currentDir)
     if (!m_buildSuccess)
         return;
 
-    Createk5Tape(file);
+
+    m_mediaType = 0;
+    if (m_projectIni->getString("thomson_media")=="CART")
+        m_mediaType = 1;
+
+    if (m_mediaType==0)
+        Createk5Tape(file);
+    if (m_mediaType==1)
+        CreatekCart(file);
 /*    auto in = Util::loadBinaryFile(file+".bin");
     QByteArray b;
     b.resize(m_startAddress);
@@ -43,10 +51,15 @@ void SystemThomson::PostProcess(QString &text, QString file, QString currentDir)
 void SystemThomson::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     params << "mo5";
     //params <<"-dump"<<filename+".sna";
-    params <<"-cass"<<filename+".k5";
     params <<  "-resolution0" << "640x480@60" <<"-window";
     params <<"-nothrottle";
-    params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "loadm \"\",,R\\n";
+    if (m_mediaType ==0 ) {
+        params <<"-cass"<<filename+".k5";
+        params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "loadm \"\",,R\\n";
+    }
+    if (m_mediaType ==1 ) {
+        params <<"-cart"<<filename+".rom";
+    }
 
     m_requireEmulatorWorkingDirectory = true;
 
@@ -130,6 +143,25 @@ void SystemThomson::Createk5Tape(QString filename)
             fclose(out);
 
         }
+}
+
+void SystemThomson::CreatekCart(QString filename)
+{
+    QByteArray ba = Util::loadBinaryFile(filename+".bin");
+    while (ba.size()<0x4000)
+        ba.append((uchar)0);
+    ba[0x3fe] = 0x4; // terminate ascii
+    ba[ 0x3fe0 +1 ] = QChar('T').toLatin1(); // terminate ascii
+    ba[ 0x3fe0 +2 ] = QChar('R').toLatin1(); // terminate ascii
+    ba[ 0x3fe0 +3 ] = QChar('S').toLatin1(); // terminate ascii
+    ba[ 0x3fe0 +4 ] = QChar('E').toLatin1(); // terminate ascii
+    ba[ 0x3fe0 +5 ] = 0x4; // terminate ascii
+    ba[0x3ffe] = (m_programStartAddress>>8)&0xFF;
+    ba[0x3fff] = m_programStartAddress&0xFF;
+
+
+    Util::SaveByteArray(ba,filename+".rom");
+
 }
 
 

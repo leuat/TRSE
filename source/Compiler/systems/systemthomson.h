@@ -26,7 +26,8 @@ public:
     }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
     void Createk5Tape(QString filename);
-
+    void CreatekCart(QString filename);
+    int m_mediaType=0;
 
 };
 
