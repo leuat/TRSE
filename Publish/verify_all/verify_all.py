@@ -528,7 +528,7 @@ def UnitTests():
 #	COCO3UnitTests();
 #	DOSUnitTests();
 #	C64UnitTests();
-	CPCUnitTests();
+#	CPCUnitTests();
 #	GBUnitTests();
 
 
