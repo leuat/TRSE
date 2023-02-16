@@ -328,6 +328,7 @@ static int get_word(const Stepper * stepper) {
         exit_error("error:%d: invalid word value %d (%04X)\n", stepper->linenum, a, a);
     return a;
 }
+char c8_message_text[1024];
 
 int c8_assemble(const char *text) {
     static Stepper stepper;

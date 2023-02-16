@@ -8,8 +8,8 @@ SystemThomson::SystemThomson(QSharedPointer<CIniFile> settings, QSharedPointer<C
     m_processor = M6809;
     m_system = THOMSON;
 
-    m_startAddress = 0x2600;
-    m_programStartAddress = 0x2600;
+    m_startAddress = 0x2100;
+    m_programStartAddress = 0x2100;
     m_supportsExomizer = false;
 
 
