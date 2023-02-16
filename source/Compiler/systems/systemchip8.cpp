@@ -99,8 +99,8 @@ void SystemChip8::PostProcess(QString &text, QString filename, QString currentDi
 
 void SystemChip8::DefaultValues()
 {
-    m_startAddress = 0x512;
-    m_programStartAddress = 0x512;
+    m_startAddress = 512;
+    m_programStartAddress = 512;
     m_ignoreSys = true;
     m_stripPrg = false;
 
