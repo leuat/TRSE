@@ -76,7 +76,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
     QString format = "-r";
     if (m_system==TRS80COCO || m_system==THOMSON )
         format ="-decb";
-    if (m_system==THOMSON && (m_projectIni->getString("thomson_media")=="CART") ||(m_projectIni->getString("thomson_media")=="RAW") )
+    if ((m_system==THOMSON) && ((m_projectIni->getString("thomson_media")=="CART") || (m_projectIni->getString("thomson_media")=="RAW")) )
         format ="-r";
 
  //   qDebug() << format;
