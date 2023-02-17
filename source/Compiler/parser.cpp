@@ -2298,6 +2298,8 @@ QSharedPointer<Node> Parser::Case()
     if (n->m_variable==nullptr)
         ErrorHandler::e.Error("Case statements only work with variables.", m_currentToken.m_lineNumber);
         */
+    int forcePage = findPage();
+
     Eat(TokenType::OF);
     while (m_currentToken.m_type != TokenType::END && m_currentToken.m_type != TokenType::ELSE) {
         QSharedPointer<Node> expr = Expr();
@@ -2313,6 +2315,8 @@ QSharedPointer<Node> Parser::Case()
     }
     else
         Eat(); // Eat final END
+
+    n->m_forcePage = forcePage;
     return n;
 
 }

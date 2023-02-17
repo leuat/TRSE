@@ -1548,6 +1548,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
     // Loop through all the conditionals in the case statement
 
     auto expr = node->m_variable;
+    //bool offpage = isOffPage(node, node, nullptr);
+
 
     if (!expr->isPureVariable()) {
         // Uh oh, we need to store in a temp one
@@ -1592,7 +1594,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
         QString labelNext = as->NewLabel("casenext");
         as->PopLabel("casenext");
         // perform the actual CPU-dependent comparison of the two numbers
-        CompareAndJumpIfNotEqual(expr, node->m_conditionals[i], labelNext,false);
+        CompareAndJumpIfNotEqual(expr, node->m_conditionals[i], labelNext,node->m_forcePage);
         // Print the current statement block
         node->m_statements[i]->Accept(this);
         // Jump to the end, done with case
