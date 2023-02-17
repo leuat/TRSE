@@ -1,7 +1,7 @@
 unit Memory;
 var	
 	ga,gb : byte;
-	
+	source, destination, count: integer;	
 
 procedure Out(ga,gb:global byte);
 begin
@@ -20,5 +20,26 @@ begin
 	asm(" di");
 end;
 
+
+procedure MemCpyLDDR(source, destination, count: global integer);
+begin
+	asm("
+		ld hl,(Memory_source)
+		ld de,(Memory_destination)
+		ld bc,(Memory_count)
+		lddr
+	");
+end;
+
+
+procedure MemCpyLDIR(source, destination, count: global integer);
+begin
+	asm("
+		ld hl,(Memory_source)
+		ld de,(Memory_destination)
+		ld bc,(Memory_count)
+		ldir
+	");
+end;
 
 end.
