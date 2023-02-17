@@ -103,6 +103,7 @@ public:
     static uchar flipBit(uchar val, int bit);
 
     static QString findFileInDirectories(QString fileName, QStringList dirs);
+    static QStringList splitStringSafely(QString str);
 
 
 

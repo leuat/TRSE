@@ -50,7 +50,10 @@ begin
 	Vars::text := "T6:";
 	asm(";here2");
 	Vars::strLst[2]:="DE";
+	asm(";here3");
 	Vars::p1 := Vars::strLst[2];
+	Screen::Print(Vars::p1);	
+
 	if (Vars::p1[1]='E') then Common::PASS() else Common::FAIL();
 end;
 

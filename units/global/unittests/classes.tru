@@ -151,7 +151,6 @@ begin
 	Vars::text := "T8:";
 	Vars::pm.pos.minis[1].a:=10;
 	Vars::pm.pos.minis[1].b:=20;
-	
 	Vars::pm.pos.minis[1].IncA(); // calculates a+=b, so A should be 30
 		
 	

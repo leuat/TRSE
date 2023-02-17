@@ -202,6 +202,7 @@ QString Util::findFileInDirectories(QString fileName, QStringList dirs)
 
 
 
+
 QVector3D Util::fromSpherical(float r, float t, float p) {
     return QVector3D( r*sin(t)*cos(p), r*sin(t)*sin(p), r*cos(t)  );
 }
@@ -402,6 +403,29 @@ void Util::WriteInt16LH(QByteArray &ba, int val)
 
 }
 
+QStringList Util::splitStringSafely(QString str)
+{
+    bool insideString = false;
+    QString internalDelimiter = "#;&ÆÆ";
+    QString res = "";
+    for (int i=0;i<str.length();i++) {
+        QString c = str[i];
+        if (c=="\"")
+            insideString=!insideString;
+
+        if (c=="," && !insideString) {
+            c = internalDelimiter;
+        }
+//        qDebug() << c << insideString;
+        res+=c;
+    }
+  //  qDebug() << "RES : " <<res;
+    return res.split(internalDelimiter);
+
+
+}
+
+
 QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst)
 {
     QStringList fixList;
@@ -410,6 +434,7 @@ QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst
     for (auto s: lst) {
         bool add = true;
         cur += s;
+        qDebug() << cur  << isInString;
         if (s=="\"" && !isInString) {
             add = false;
             isInString=!isInString;

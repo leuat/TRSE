@@ -102,13 +102,13 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
         if (node->m_right->isPointer(as)) {
             if (!node->m_right->isPure()) {
 //                ErrorHandler::e.Error("Pointers can only add / sub with other pure pointers.", node->m_op.m_lineNumber);
-                as->Comment("Interesting..");
+                //as->Comment("Interesting..");
                 as->ClearTerm();
                 node->m_right->Accept(this);
                 as->Asm("push ax");
 
                 QString ax =getAx(node->m_right);
-                as->Comment("Interesting ends");
+                //as->Comment("Interesting ends");
                 node->m_left->Accept(this);
 
                 QString bx =getAx(node->m_left);
@@ -259,7 +259,12 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
             if (node->m_expr->isPureNumeric()) {
 //                as->Comment("Data size:"+QString::number(node->getArrayDataSize(as)));
                 QString scale = "*"+QString::number(node->getArrayDataSize(as));
+                if (node->m_writeType!=TokenType::NADA) {
+                    if (node->m_writeType==TokenType::BYTE)
+                        scale = "";
+                }
 
+//                as->Comment("Scale : "+scale + " " + TokenType::getType(node->m_writeType));
                 as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+scale+"]");
                 if (node->m_writeType==TokenType::LONG || node->isLong(as)) {
                     as->Asm("mov bx, word [es:di + "+node->m_expr->getValue(as)+"+2]");
@@ -465,7 +470,14 @@ void CodeGenX86::dispatch(QSharedPointer<NodeComment> node)
 
 void CodeGenX86::StoreVariable(QSharedPointer<NodeVar> n)
 {
+/*    if (n->isPointer(as) && n->hasArrayIndex()) {
+        n->m_expr->Accept(this);
+        as->Asm("mov ax,bx");
+        as->Asm("push di");
+        as->Asm("ld di, "+n->getValue(as));
+        as->Asm("mov [es:di + 0"
 
+    }*/
 }
 
 bool CodeGenX86::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
@@ -508,6 +520,13 @@ void CodeGenX86::LoadVariable(QSharedPointer<NodeNumber>n)
 
 QString CodeGenX86::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
 {
+/*    auto v = qSharedPointerDynamicCast<NodeVar>(var);
+
+    if (v!=nullptr) {
+        as->Comment(TokenType::getType(v->m_writeType));
+        if (v->m_writeType==TokenType::NADA)
+            return "1";
+    }*/
     if (var->isWord(as))
         return "2";
     if (var->isLong(as))
@@ -645,6 +664,15 @@ void CodeGenX86::AssignString(QSharedPointer<NodeAssign> node) {
         as->Asm("mov si, "+str+"");
         as->Asm("mov ["+left->getValue(as)+"+2], ds");
         as->Asm("mov ["+left->getValue(as)+"], si");
+
+    }
+    else
+    if (left->isStringList(as)) {
+        as->Asm("mov di, "+str+"");
+        StoreVariable(qSharedPointerDynamicCast<NodeVar>(node->m_left));
+//        left->Accept(this);
+  //      as->Asm("mov ["+left->getValue(as)+"+2], ds");
+    //    as->Asm("mov ["+left->getValue(as)+"], si");
 
     }
     else {

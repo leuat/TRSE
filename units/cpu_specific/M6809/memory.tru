@@ -25,9 +25,9 @@ begin
 	ldy Memory_src
 	ldu Memory_dst
 memcpy_loop16:
-	ldd ,y+
-	std ,u+
-	leax -1,x
+	ldd ,y++
+	std ,u++
+	leax -2,x
 	bne memcpy_loop16
 	");
 end;	

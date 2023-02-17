@@ -632,7 +632,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
         m_data.append((char)0x00);
         return;
     }
-    QStringList lst = Util::fixStringListSplitWithCommaThatContainsStrings(ol.m_expr.split(","));
+    QStringList lst = Util::splitStringSafely(ol.m_expr);
 
     for (QString s: lst) {
 
@@ -670,7 +670,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             str = str.remove(str.length()-1,1);
             str = str.replace("\\n","\n");
             str = str.replace("\\r","\r");
-            //qDebug() << "HERE: " <<s;
             for (int i=0;i<str.length();i++) {
 
                 int c = str.at(i).toLatin1();
