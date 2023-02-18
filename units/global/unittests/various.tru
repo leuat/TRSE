@@ -8,9 +8,9 @@ var
 	
 procedure Test1();
 begin
-	Vars::text := "PEEKPOKE:";
+	Vars::text := "PP:";
 	
-	
+
 	poke(Vars::addr,0,10);
 	inc(Vars::addr);	
 	Vars::v1:=peek(Vars::addr,0);

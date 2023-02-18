@@ -428,23 +428,23 @@ void Asm6809::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         if (clearFlag)
-        m_term = "adda ";
+        m_term = "addb ";
     }
 
     if (t == TokenType::MINUS) {
         if (clearFlag)
-        m_term = "suba ";
+        m_term = "subb ";
     }
 
     if (t == TokenType::BITAND) {
-        m_term = "anda ";
+        m_term = "andb ";
     }
 
     if (t == TokenType::BITOR) {
-        m_term = "ora ";
+        m_term = "orb ";
     }
     if (t == TokenType::XOR) {
-        m_term = "eora ";
+        m_term = "eorb ";
     }
 
 }
@@ -600,7 +600,7 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
         if (type==word)
             Asm("stx " + tmpVar);
         else
-            Asm("sta " + tmpVar);
+            Asm("stb " + tmpVar);
 
     }
     PopLabel(name+ "_var");

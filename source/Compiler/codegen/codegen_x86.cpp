@@ -181,11 +181,10 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             ax="di";
 
         as->Asm(as->m_term + " "+ax+", "+getX86Value(as,node->m_right));
-        as->ClearTerm();
-
         if (node->m_left->isBool(as)) {
             as->Asm("and "+ax+",1");
         }
+        as->ClearTerm();
         return;
 
     }
@@ -552,14 +551,21 @@ QString CodeGenX86::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
 
 void CodeGenX86::LoadIndex(QSharedPointer<Node> n, QString reg)
 {
+    as->Asm("mov di,"+getX86Value(as,n) +" ; index is word");
     if (n->isPure()) {
         if (n->getOrgType(as)!=TokenType::BYTE)
             as->Asm("mov di,"+getX86Value(as,n) +" ; index is word");
         else  {
-            as->Asm("mov al,"+ getX86Value(as,n));
-            as->Asm("mov ah,0");
-            as->Asm("mov di,ax");
+
+            as->Asm("mov cl,"+ getX86Value(as,n));
+            as->Asm("mov ch,0");
+            as->Asm("mov di,cx");
         }
+    }
+    else
+    {
+        n->Accept(this);
+        as->Asm("mov di,ax");
     }
 
 }

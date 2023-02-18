@@ -1,0 +1,9 @@
+program MyProgram;
+var  
+   i: byte; 
+
+begin
+	asm("
+		lda #0
+	");
+end.

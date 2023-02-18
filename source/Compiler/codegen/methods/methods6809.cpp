@@ -150,13 +150,13 @@ void Methods6809::Poke(Assembler* as)
         as->Asm("pshs d");
         bop->Accept(m_codeGen);
         as->Asm("puls d");
-        as->Asm("sta ,x");
+        as->Asm("stb ,x");
 
     }
     else {
         bop->Accept(m_codeGen);
         m_node->m_params[2]->Accept(m_codeGen);
-        as->Asm("sta ,x");
+        as->Asm("stb ,x");
 
     }
 }
@@ -169,7 +169,7 @@ void Methods6809::Peek(Assembler* as)
     m_node->m_params[0]->setReference(true);
     auto bop = NodeFactory::CreateBinop(m_node->m_op,TokenType::PLUS,m_node->m_params[0], m_node->m_params[1]);
     bop->Accept(m_codeGen);
-    as->Asm("lda ,x");
+    as->Asm("ldb ,x");
 
 
 }
@@ -396,17 +396,17 @@ void Methods6809::LoHi(Assembler *as, bool isHi)
     if (isHi) {
         m_node->m_params[0]->Accept(m_codeGen);
         as->Asm("tfr x,d");
-        as->Asm("ldb #0");
+        as->Asm("exg a,b");
+        as->Asm("lda #0");
     }
     if (!isHi) {
         m_node->m_params[0]->Accept(m_codeGen);
         as->Asm("tfr x,d");
-        as->Asm("exg a,b");
-        as->Asm("ldb #0");
+        as->Asm("lda #0");
     }
     if (m_node->m_castType==TokenType::INTEGER)
     {
-        as->Asm("exg a,b");
+//        as->Asm("exg a,b");
         as->Asm("tfr d,x");
 
     }

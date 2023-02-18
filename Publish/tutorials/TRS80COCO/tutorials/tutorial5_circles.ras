@@ -7,11 +7,11 @@ program CirclesOhYes;
 
 
 
-// Good old plasma example!
+// Good old circles example!
 
 var  
 	// some plasma variables
-	ctr,val,val2,c2x, c2y,ax, ay,time, time2,time3,z : byte;
+	ctr,val,val2,time, time2,time3,z : byte;
 	x,y,shift,i : byte;
 	// mini sine table
 	// Org sine table
