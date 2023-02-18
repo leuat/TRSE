@@ -3520,7 +3520,9 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
         if (m_currentToken.m_type==TokenType::STEP) {
             Eat();
             step = Expr();
-            //qDebug() << TokenType::getType(step->m_op.m_type);
+/*            qDebug() << TokenType::getType(step->m_op.m_type);
+            auto num = qSharedPointerDynamicCast<NodeNumber>(step);
+            qDebug() << num->m_val;*/
         }
         if (m_currentToken.m_type==TokenType::LOOPX) {
             Eat();

@@ -862,15 +862,29 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
    // node->m_right->setForceType(TokenType::INTEGER);
     node->m_left->setForceType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::PLUS) {
-        LoadIndex(node->m_right,TokenType::BYTE);
-        if (!node->m_left->isPure())
-            PushD();
-        LoadVariable(node->m_left);
-        if (!node->m_left->isPure())
-            PopD();
-        as->Asm("leax d,x");
+        if (node->m_right->isPureNumeric() && !node->m_right->isReference()) {
+            LoadVariable(node->m_left);
+            as->Asm("leax " + QString::number(node->m_right->getValueAsInt(as))+ ",x");
+            return;
+        }
+        else
+        {
+            LoadIndex(node->m_right,TokenType::BYTE);
+            if (!node->m_left->isPure())
+                PushD();
+            LoadVariable(node->m_left);
+            if (!node->m_left->isPure())
+                PopD();
+            as->Asm("leax d,x");
+        }
+//        as->Asm(";cc1");
     }
     if (node->m_op.m_type==TokenType::MINUS) {
+        if (node->m_right->isPureNumeric() && !node->m_right->isReference()) {
+            LoadVariable(node->m_left);
+            as->Asm("leax -" + QString::number(node->m_right->getValueAsInt(as))+ ",x");
+            return;
+        }
         LoadIndex(node->m_right,TokenType::BYTE);
       //  as->Asm("pshs y");
         //as->Asm("tfr y,d");
@@ -1436,7 +1450,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
             as->Term("ldx "+val);
             as->Term();
            // Cast(node->getOrgType(as),node->m_castType);
-            as->Comment("HERE cast type: "+TokenType::getType(node->m_castType));
+//            as->Comment("HERE cast type: "+TokenType::getType(node->m_castType));
 
         }
 
@@ -1593,7 +1607,7 @@ void CodeGen6809::LoadVariable(QSharedPointer<NodeVar> node) {
     if (as->m_symTab->m_records.contains(type))
         t = TokenType::ADDRESS; // Working with a CLASS directly (not pointer)
 
-    as->Comment("LoadVariable");
+//    as->Comment("LoadVariable");
 
 
     if (node->isStackVariable()) {

@@ -10,11 +10,11 @@ begin
 	Text::Reset();
 	Text::Print("HELLO THERE");
 	p:=$400;
-	for i:=0 to 1000 do
+	for i:=1000 to 0 step -1 do
 	begin
-		asm(";here");
-		p[1]:=i;
-		p+=1;	
+		p^:=i;
+		asm(";here2");	
+		p+=1;
 	end;
 	
 	
