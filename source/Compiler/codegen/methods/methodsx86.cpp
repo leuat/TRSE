@@ -224,15 +224,6 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         else
             as->Asm("mov "+disp->getAx(m_node)+",[di]");
     }
-    /*    if (Command("hi")) {
-            LoadAddress(as,0,false);
-            as->Asm("mov "+disp->getAx(m_node)+",es");
-        }
-        if (Command("lo")) {
-            LoadAddress(as,0,false);
-            as->Asm("mov "+disp->getAx(m_node)+",di");
-        }
-  */
 
     if (Command("nosound")) {
         as->Comment("No sound");

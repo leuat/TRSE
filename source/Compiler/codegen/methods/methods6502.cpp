@@ -1942,23 +1942,6 @@ void Methods6502::PrintString(Assembler *as)
 
 
 
-/*    if (var!=nullptr && var->isPointer(as)) {
-        as->Asm("lda "+var->getValue(as));
-        as->Asm("ldy "+var->getValue(as)+"+1");
-    }
-    else {
-
-
-
-
-        as->Asm("clc");
-        as->Asm("lda #<" +varName);
-        as->Term("adc ");
-        m_node->m_params[1]->Accept(m_codeGen);
-        as->Term();
-        as->Asm("ldy #>" +varName);
-    }
-*/
     if (str!=nullptr) {
         as->Asm("clc");
         as->Asm("lda #<" +varName);
@@ -1970,7 +1953,11 @@ void Methods6502::PrintString(Assembler *as)
     }
     else {
         as->ClearTerm();
-        m_node->m_params[0]->Accept(m_codeGen);
+        auto bop = m_node->m_params[0];
+        if (!(m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0))
+           bop = NodeFactory::CreateBinop(bop->m_op,TokenType::PLUS, m_node->m_params[0], m_node->m_params[1]);
+        bop->setForceType(TokenType::INTEGER);
+        bop->Accept(m_codeGen);
         as->Term();
     }
     as->Asm("sta print_text+0");
@@ -5894,7 +5881,6 @@ void Methods6502::Swap(Assembler *as)
         vars[i]=var;
     }
     as->Comment("Swap variables");
-//    as->Asm("lda " + vars[0]->getValue(as));
     LoadVar(as, 0);
     as->Asm("tay ");
     LoadVar(as, 1);
@@ -6667,7 +6653,6 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
 
 void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
-
     QSharedPointer<Node> node = m_node->m_params[paramNo];
 
 /*

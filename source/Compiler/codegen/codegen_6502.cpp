@@ -1569,7 +1569,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
             }
             return;
         }
-        if (node->m_fake16bit && s->getTokenType()==TokenType::BYTE )
+        if ((node->m_fake16bit || node->m_forceType==TokenType::INTEGER) && s->getTokenType()==TokenType::BYTE )
             as->Asm("ldy #0 ; Fake 16 bit");
 
         as->Variable(val, isOK);
