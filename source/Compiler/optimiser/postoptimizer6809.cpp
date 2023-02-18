@@ -93,6 +93,13 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         }
 
     }
+    if (cmd.startsWith("ld")) {
+        // Two ldxes
+        QString check = "st"+QString(cmd[2])+" "+par[0];
+//        qDebug() << check << prevLine->m_orgLine.simplified();
+        if (prevLine->m_orgLine.simplified() == check)
+            line.m_forceOptimise = true;
+    }
 
     if (cmd=="puls") {
         for (auto&s: par) {
@@ -113,7 +120,7 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
 
 
         line.m_potentialOptimise = true;
-
+//        qDebug() << cmd << " register "<< reg<<"  Changing to "<< par[0];
         ChangeReg(line, reg, par[0]);
         if (reg=="d")  {
             ChangeReg(line, "a", "");
