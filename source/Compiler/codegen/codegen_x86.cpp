@@ -237,7 +237,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
     QString ending = "]";
     if (node->m_expr!=nullptr) {
         //        qDebug() << node->getValue(as) <<TokenType::getType(node->getArrayType(as));
-        if (node->getArrayType(as)==TokenType::LONG && node->m_classApplied==false) {
+        if ((node->getArrayType(as)==TokenType::POINTER || node->getArrayType(as)==TokenType::LONG) && node->m_classApplied==false) {
             as->Comment("Looking up array of pointer : "+node->value);
 
             node->m_expr->setForceType(TokenType::INTEGER);
