@@ -5,9 +5,9 @@
 PostOptimiser6809::PostOptimiser6809()
 {
     m_registers = QStringList() <<"a"<<"b"<<"y"<<"x"<<"u"<<"d"<<"s";
-    m_branches = QStringList() <<"bra" <<"jsr" << "jmp";
+    m_branches = QStringList() <<"bra" <<"jsr" << "jmp" << "lbra" <<"lbcc" <<"bcc" <<"bne"<<"lbne"<<"beq"<<"lbeq"<<"lbpl"<<"lbmi";
     m_registerChangingCommands = QStringList() << "bra" <<"jsr"<<"jmp";
-    m_bops = QStringList() << "add"<<"sub"<<"xor"<<"or"<<"and"<<"inc"<<"dec"<<"adc"<<"sbc";
+    m_bops = QStringList() << "adda"<<"addb"<<"suba"<<"subb"<<"eora"<<"eorb"<<"ora"<<"orb"<<"anda"<<"andb"<<"inca"<<"incb"<<"deca"<<"decb"<<"mul"<<"rola"<<"rolb"<<"asla"<<"aslb"<<"lsrb"<<"lsra"<<"addd"<<"leax"<<"leay";
 //    m_axModifiers = QStringList() << "div"<<"idiv"<<"mul"<<"imul";
 }
 
@@ -86,47 +86,79 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
                 line.m_forceOptimise = true;
                 prevLine->m_orgLine = prevLine->m_orgLine.replace("ldx","ldd");
             }
+            ChangeReg(line, "d", ""); // Clear current register
+            ChangeReg(line, "a", ""); // Clear current register
+            ChangeReg(line, "b", ""); // Clear current register
+
         }
 
+    }
 
-        if (m_registers.contains(reg))
-        {
-            // Don't assume "mov ax,dx" to hold
+    if (cmd=="puls") {
+        for (auto&s: par) {
+            if (s=="d" || s=="a" || s=="b") {
+                ChangeReg(line, "d", "");
+                ChangeReg(line, "a", "");
+                ChangeReg(line, "b", "");
 
-            if (!m_registers.contains(par[1]))
-                line.m_potentialOptimise = true;
-
-
-
-//            if (par[1].contains("[") || par[1].contains("("))
-  //              line.m_potentialOptimise = false;
-
-            // Check the HL set
-            if (prevPar.count()>=2 && prevCmd=="ld") {
-                if (prevPar[0]==par[1] && prevPar[1]==par[0]) {
-                    line.m_potentialOptimise = true;
-                    line.m_forceOptimise = true;
-                }
             }
-
-//            if (line.m_potentialOptimise)
-  //              qDebug() << "Changing : " <<reg<<par[1] << line.m_orgLine;
-
-            ChangeReg(line, reg, par[1]);
-
+            else
+                ChangeReg(line, s, "");
         }
     }
 
+    if (cmd=="lda" || cmd=="ldb" || cmd=="ldx" || cmd=="ldy" || cmd=="ldd" )
+    {
+        QString reg = QString(cmd[2]);
 
 
-    if (m_bops.contains(cmd)) {
-        QString reg = par[0];
-        if (m_registers.contains(reg))
-        {
-            line.m_potentialOptimise = false;
-            ChangeReg(line, reg, ""); // Clear current register
+        line.m_potentialOptimise = true;
+
+        ChangeReg(line, reg, par[0]);
+        if (reg=="d")  {
+            ChangeReg(line, "a", "");
+            ChangeReg(line, "b", "");
+
         }
 
+    }
+
+    bool isBop = false;
+
+    if (m_bops.contains(cmd)) {
+        if (cmd=="mul") {
+            ChangeReg(line, "a", ""); // Clear current register
+            ChangeReg(line, "b", ""); // Clear current register
+            ChangeReg(line, "d", ""); // Clear current register
+
+        }else {
+            QString reg = QString(cmd[cmd.length()-1]);
+
+             line.m_potentialOptimise = false;
+             ChangeReg(line, reg, ""); // Clear current register
+             if (reg=="d") {
+                 ChangeReg(line, "a", ""); // Clear current register
+                 ChangeReg(line, "b", ""); // Clear current register
+
+             }
+            }
+    }
+    if (cmd =="tfr") {
+        ChangeReg(line, par[1], ""); // Clear current register
+        if (par[1]=="d") {
+            ChangeReg(line, "a", ""); // Clear current register
+            ChangeReg(line, "b", ""); // Clear current register
+
+        }
+    }
+    if (line.m_orgLine.contains("x+")) {
+        ChangeReg(line, "x", ""); // Clear current register
+    }
+    if (line.m_orgLine.contains("y+")) {
+        ChangeReg(line, "y", ""); // Clear current register
+    }
+    if (line.m_orgLine.contains("u+")) {
+        ChangeReg(line, "u", ""); // Clear current register
     }
     prevCmd = cmd;
     prevPar = par;

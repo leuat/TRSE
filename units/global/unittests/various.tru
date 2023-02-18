@@ -70,6 +70,7 @@ procedure TestAddress3();
 begin
 	Vars::text := "A3:";
 	Vars::v1 := 1;
+	asm(";bbb");
 	Vars::addr[Vars::v1] := $A0;
 	if (Vars::addr[Vars::v1]=$A0) then Common::PASS() else Common::FAIL();
 end;

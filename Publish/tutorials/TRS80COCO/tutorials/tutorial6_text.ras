@@ -2,7 +2,7 @@ program TextStuff;
 @use "text"
 @use "system"
 var
-	p:^byte;
+	p: pointer;
 	i: integer;
 	
 begin
@@ -12,7 +12,8 @@ begin
 	p:=$400;
 	for i:=0 to 1000 do
 	begin
-		p^:=i;
+		asm(";here");
+		p[1]:=i;
 		p+=1;	
 	end;
 	

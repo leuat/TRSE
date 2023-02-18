@@ -1428,6 +1428,8 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
             if (node->m_forceType == TokenType::BYTE) {
                 as->Comment("Force integer to be byte");
                 as->Asm("ldb "+val+"+1");
+             //   node->setForceType(TokenType::NADA);
+                node->m_castType = TokenType::INTEGER;
                 return;
             }
 
@@ -1810,7 +1812,6 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
         as->Asm("rola");
 //        as->Asm("addd y");
     }
-    as->Comment("End load index");
 
 }
 
