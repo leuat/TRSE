@@ -42,7 +42,7 @@ public:
 
     virtual bool isReference() override { return m_op.m_isReference; }
 
-    void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node);
+    void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) override;
 
     bool isAddress() override;
     bool m_classTagged = false;

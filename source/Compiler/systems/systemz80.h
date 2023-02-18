@@ -29,7 +29,7 @@ public:
     TokenType::Type getSystemPointerArrayType() override {
         return TokenType::INTEGER;
     }
-    virtual bool isZ80() {
+    virtual bool isZ80() override {
         return true;
     }
 

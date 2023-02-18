@@ -50,7 +50,7 @@ public:
     bool m_isGlobal = false;
     void ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp) override;
 
-    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node);
+    void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override;
 
     TokenType::Type getWriteType()  override { return m_writeType; }
 

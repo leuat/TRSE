@@ -409,7 +409,7 @@ QStringList Util::splitStringSafely(QString str)
     QString internalDelimiter = "#;&ÆÆ";
     QString res = "";
     for (int i=0;i<str.length();i++) {
-        QString c = str[i];
+        QString c = QString(str[i]);
         if (c=="\"")
             insideString=!insideString;
 
