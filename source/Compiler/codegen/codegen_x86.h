@@ -60,6 +60,8 @@ public:
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
 
+    void LoadIndex(QSharedPointer<Node> n, QString reg);
+
     QString m_jmp = "jmp ";
     QString m_mov = "mov ";
     QString m_cmp = "cmp ";

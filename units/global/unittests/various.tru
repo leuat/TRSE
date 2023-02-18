@@ -85,13 +85,17 @@ begin
 	Test1();
 	@endif
 	@endif
+	
 	@ifndef TRS80COCO
 	LoHi1();
 	LoHi2();
 	@endif
+	
+	@ifndef X86
 	TestAddress1();
 	TestAddress2();
 	TestAddress3();
+	@endif
 	Common::WaitABit();
 end;
 
