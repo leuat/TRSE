@@ -91,7 +91,18 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
             ChangeReg(line, "b", ""); // Clear current register
 
         }
-
+        // test for ldx #$40 tfr x,y
+        if (prevLine->m_cmd.startsWith("ld")) {
+             QString reg = prevLine->m_cmd[2];
+             //ldX
+             // is it tfr x,y
+             if (par[0]==reg && reg=="x" || reg=="y" || reg=="d") {
+                 QString target = par[1];
+                 line.m_forceOptimise = true; // remove tfr x,y
+                 prevLine->m_orgLine.replace("ld"+reg,"ld"+target);
+                 prevLine->m_cmd = "ld"+target;
+             }
+        }
     }
     if (cmd.startsWith("ld")) {
         // Two ldxes

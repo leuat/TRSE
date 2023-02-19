@@ -1,7 +1,7 @@
-zeropages = ,$02,   $04,   $08,   $16,   $0B,   $0D,   $10,   $12,   $22,   $24,   $68
+zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 use_track_19 = 1
 disable_compiler_comments = 0
-temp_zeropages = ,$54,   $56,   $58,   $5A
+temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fd
 zeropage_colormemory = $fb
 zeropage_decrunch1 = $47
