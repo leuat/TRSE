@@ -2,7 +2,7 @@ unit Random;
 var
 
 
-procedure Random1();
+function Random1() : integer;
 begin
 	asm("
 ; 16-bit xorshift pseudorandom number generator by John Metcalf
