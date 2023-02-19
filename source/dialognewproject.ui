@@ -113,6 +113,11 @@
           </item>
           <item>
            <property name="text">
+            <string>TVC</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>ATARI520ST</string>
            </property>
           </item>

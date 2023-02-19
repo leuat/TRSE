@@ -1,0 +1,26 @@
+program ShowCompressedImage;
+@use "crtc"
+@use "memory"
+@use "system"
+@use "text"
+@use "compression"
+ 
+ 
+// Automatically export 256x240 16-color image
+
+@export "resources/images/image.flf" "resources/images/image.bin" 256
+
+var  
+// Include the exported image data + palette
+	image : incbin("resources/images/image.bin") compressed;
+	
+	
+begin
+	Crtc::SetMode(Crtc::mode_16_color);
+	Crtc::EnableVRAM();
+	// Decompress to VRAM
+	Compression::Decompress(#image, $8000);
+
+	loop();	
+
+end.
