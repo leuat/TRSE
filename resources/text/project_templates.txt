@@ -8,6 +8,7 @@ ATARI2600; ATARI 2600 Sample project; atari2600_general; <h2>Simple atari 2600 p
 ATARI520ST; Atari 520 ST Sample project; atari520st_general; <h2>Simple Atari 520 ST project setup.</h2>
 BBCM; BBC Micro sample project; bbcm_general; <h2>Simple BBC Micro sample program that displays an image.</h2>
 BBCM; BBC Micro disk demo project; bbcm_disk; <h2>BBC Micro sample solution that loads effects from disk and executes them all while playing music in an IRQ handler.</h2>
+C128; C128 empty project; c128_text; <h2>Small Commodore C128 40-column project</h2><p>A small sample project for the C128 that prints out some text to the screen.
 C128; C128 80 column project; c128_general; <h2>Small Commodore C128 80-column project</h2><p>A small sample project for the C128 that serves as a starting point.
 C64; Empty C64 project; c64_general; <h2>Empty C64 project</h2><p>Create an empty C64 project.
 C64; Simple C64 project; c64_general2; <h2>Main C64 project</h2><p>Create a small C64 project with a SID file, a raster loop and a custom charset.
