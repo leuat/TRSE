@@ -13,7 +13,7 @@ Linux:
 - qmake TRSE.pro
 - make -j8 
 
-On windowws/macos, you need to download and install the qt libraries etc:
+On windows/macos, you need to download and install the qt libraries, msvc, xcode etc:
 Windows:
 - install MSVC 2019
 - download the Qt framework from https://www.qt.io/download. Install the latest framework of Qt6 (desktop application).
