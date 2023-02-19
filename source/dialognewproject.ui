@@ -118,6 +118,11 @@
           </item>
           <item>
            <property name="text">
+            <string>THOMSON</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>ATARI520ST</string>
            </property>
           </item>
