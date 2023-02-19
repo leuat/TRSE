@@ -121,8 +121,13 @@ void Asm6809::DeclareArray(QString name, QString type, int count, QStringList da
             return;
         }
 
+        if (!m_isOrgasm)
+            Write(getLabelEnding(name) +"\t" + "fill" + "\t 0,"+QString::number(count));
+        else {
+            Write(getLabelEnding(name) +"\t" + t + "\t ");
+            Asm("org "+name+"+" +QString::number(count*scale));
 
-        Write(getLabelEnding(name) +"\t" + "fill" + "\t 0,"+QString::number(count));
+        }
 //        Asm("org "+name+"+" +QString::number(count*scale));
 
     }

@@ -1,7 +1,6 @@
 program PlasmaExample;
-@use "system"
+@use "system/system"
 @use "memory"
-@use "screen"
 @use "compression/compression"
 
 
@@ -50,7 +49,7 @@ begin
 
 	end;
 	// alternate every 2nd line
-	dst:=#Screen::gfx + shift*40;
+	dst:=0 + shift*40;
 end;
 
 
@@ -92,16 +91,40 @@ begin
 
 end;
 
+
+
+procedure InitScreenAndPalette();
+begin
+	asm("
+	lda #$59
+	sta $a7dc // 320x200 4-colour mode
+	LDA #$00 *COR ONDE COMECAR formato BGR
+	ASLA
+	STA	$A7DB
+	LDD	#$0000 *cor 0
+	STB $A7DA
+	STA $A7DA *O REGISTO DE PALETTE E' INCREMENTADO AUTOMATICAMENTE
+	LDD	#$0008 *cor 1
+	STB $A7DA
+	STA $A7DA
+	LDD	#$0048 *cor2
+	STB $A7DA
+	STA $A7DA
+	LDD	#$0078 *cor3
+	STB $A7DA
+	STA $a7DA
+	");
+
+end;
+
+
+
+
 begin
 	System::Init();
-	// 320x225 4-colour 
-	Screen::SetBitmapMode(Screen::BPL_40, 1);
-	Screen::SetColor(0,0); // black
-	Screen::SetColor(1,$b); // from flf image
-	Screen::SetColor(2,$1c); 
-	Screen::SetColor(3,$33); 
+	InitScreenAndPalette();
 	// Clearscreen
-	Memory::Fill16(#Screen::gfx,0,40*225);
+	Memory::Fill16(0,0,40*225);
 	while (true) do
 	begin
 		Calculate();

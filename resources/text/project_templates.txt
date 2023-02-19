@@ -35,4 +35,4 @@ TRS80COCO; TRS80 COCO3 image project; coco3_image; <h2>Simple project that displ
 TVC; TVC image project; tvc_image; <h2>Simple project that displays a compressed image.</h2>
 TIM; TIM-001 empty project; tim_general; <h2>Simple project that displays some text.</h2>
 TIM; TIM-001 tiles project; tim_tiles; <h2>Project that displays some moving tiles.</h2>
-THOMSON; Thomson mo5 image project; thomson_image; <h2>Simple project that displays a compressed image.</h2>
+THOMSON; Thomson MO5 image project; thomson_image; <h2>Simple project that displays a compressed image.</h2>

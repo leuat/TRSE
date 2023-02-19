@@ -51,7 +51,7 @@ void SystemThomson::PostProcess(QString &text, QString file, QString currentDir)
 }
 
 void SystemThomson::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
-    params << "mo5";
+    params << m_projectIni->getString("thomson_subtype");
     //params <<"-dump"<<filename+".sna";
     params <<  "-resolution0" << "640x480@60" <<"-window";
     params <<"-nothrottle";

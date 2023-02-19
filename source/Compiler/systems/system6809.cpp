@@ -60,7 +60,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
 
     QString assembler = m_settingsIni->getString("lwasm");
-    bool useMorgasm = (m_settingsIni->getString("assembler_6809")=="orgasm");
+    bool useMorgasm = (m_settingsIni->getString("assembler_6809")=="OrgAsm");
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
 
@@ -79,6 +79,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
     if ((m_system==THOMSON) && ((m_projectIni->getString("thomson_media")=="CART") || (m_projectIni->getString("thomson_media")=="RAW")) )
         format ="-r";
 
+//    format = "-r";
  //   qDebug() << format;
     if (useMorgasm) {
         AssembleZOrgasm(output,text,filename,currentDir, symTab,1);

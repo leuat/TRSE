@@ -1,8 +1,11 @@
 program MyProgram;
+@use "system"
 var  
    i: byte; 
 
 begin
+	System::Init();
+
 	asm("
 		lda #0
 	");
