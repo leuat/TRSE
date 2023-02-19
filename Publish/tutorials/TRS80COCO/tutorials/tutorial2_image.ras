@@ -1,4 +1,4 @@
-program Tutorial1;
+program Tutorial2;
 @use "screen"
 @use "memory"
 @use "system/str"

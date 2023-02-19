@@ -38,6 +38,7 @@ public:
     QStringList m_branches;
     QStringList m_registerChangingCommands;
     QStringList m_bops;
+    int m_currentPass = 0;
 
     QStringList PostOptimize(QStringList& src);
     void CreateLines(QStringList& src);

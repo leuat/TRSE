@@ -92,15 +92,21 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
 
         }
         // test for ldx #$40 tfr x,y
+        // ldx
         if (prevLine->m_cmd.startsWith("ld")) {
              QString reg = QString(prevLine->m_cmd[2]);
              //ldX
              // is it tfr x,y
-             if (par[0]==reg && (reg=="x" || reg=="y" || reg=="d")) {
+//             ldx dst
+  //           tfr x,u
+             if (par[0]==reg && (reg=="x" || reg=="y" || reg=="d" || reg=="u")) {
                  QString target = par[1];
                  line.m_forceOptimise = true; // remove tfr x,y
                  prevLine->m_orgLine.replace("ld"+reg,"ld"+target);
                  prevLine->m_cmd = "ld"+target;
+                 prevLine->m_potentialOptimise = false;
+                 prevLine->m_forceOptimise = false;
+                return;
              }
         }
     }
@@ -125,7 +131,7 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         }
     }
 
-    if (cmd=="lda" || cmd=="ldb" || cmd=="ldx" || cmd=="ldy" || cmd=="ldd" )
+    if (cmd=="lda" || cmd=="ldb" || cmd=="ldx" || cmd=="ldy" || cmd=="ldd" || cmd=="ldu" )
     {
         QString reg = QString(cmd[2]);
 
@@ -133,6 +139,7 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         line.m_potentialOptimise = true;
 //        qDebug() << cmd << " register "<< reg<<"  Changing to "<< par[0];
         ChangeReg(line, reg, par[0]);
+
         if (reg=="d")  {
             ChangeReg(line, "a", "");
             ChangeReg(line, "b", "");
@@ -177,6 +184,9 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
     }
     if (line.m_orgLine.contains("u+")) {
         ChangeReg(line, "u", ""); // Clear current register
+    }
+    if (line.m_orgLine.contains("d+")) {
+        ChangeReg(line, "d", ""); // Clear current register
     }
     prevCmd = cmd;
     prevPar = par;

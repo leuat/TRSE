@@ -35,7 +35,7 @@ Asm6809::Asm6809() :Assembler()
 
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiser6809());
     m_wram = QSharedPointer<Appendix>(new Appendix("$C800"));
-
+    m_optimiser->m_noPasses = 3;
 
 }
 

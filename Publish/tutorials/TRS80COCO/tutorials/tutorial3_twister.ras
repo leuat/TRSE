@@ -46,7 +46,9 @@ begin
 
 
 		// Copy 2 rows of data
+		asm(";here");
 		MemCpyUnroll16(zp,dst,7);
+		asm(";here2");
 		dst+=40; // next line
 		MemCpyUnroll16(zp,dst,7);
 		dst+=40; // next line

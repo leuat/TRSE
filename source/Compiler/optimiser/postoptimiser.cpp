@@ -12,6 +12,7 @@ QStringList PostOptimiser::PostOptimize(QStringList& src) {
     m_linesOptimized = 0;
 
     for (int i=0;i<m_noPasses;i++) {
+        m_currentPass = i;
         CreateLines(ret);
         Passes();
         ret.clear();
@@ -105,7 +106,7 @@ void PostOptimiser::RemoveAllFlagged()
                 l.m_orgLine+=";REMOVAL";
  //               qDebug() << "Removing : "<<l.m_lineNumber << l.m_orgLine;
             }
- //           nlst.append(l);
+           // nlst.append(l);
 
             m_linesOptimized++;
         }
