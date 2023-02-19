@@ -93,10 +93,10 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         }
         // test for ldx #$40 tfr x,y
         if (prevLine->m_cmd.startsWith("ld")) {
-             QString reg = prevLine->m_cmd[2];
+             QString reg = QString(prevLine->m_cmd[2]);
              //ldX
              // is it tfr x,y
-             if (par[0]==reg && reg=="x" || reg=="y" || reg=="d") {
+             if (par[0]==reg && (reg=="x" || reg=="y" || reg=="d")) {
                  QString target = par[1];
                  line.m_forceOptimise = true; // remove tfr x,y
                  prevLine->m_orgLine.replace("ld"+reg,"ld"+target);
