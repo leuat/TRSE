@@ -32,3 +32,5 @@ VZ200; VZ200 blank project; vz200_general; <h2>Generic VZ200 sample project that
 TRS80COCO; TRS80 COCO3 empty project; coco3_clean; <h2>Empty coco3 sample project that prints a string to the screen.</h2>
 TRS80COCO; TRS80 COCO3 image project; coco3_image; <h2>Simple project that displays a compressed image and plots some pixels.</h2>
 TVC; TVC image project; tvc_image; <h2>Simple project that displays a compressed image.</h2>
+TIM; TIM-001 empty project; tim_general; <h2>Simple project that displays some text.</h2>
+TIM; TIM-001 tiles project; tim_tiles; <h2>Project that displays some moving tiles.</h2>

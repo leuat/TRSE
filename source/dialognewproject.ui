@@ -138,6 +138,11 @@
           </item>
           <item>
            <property name="text">
+            <string>TIM</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>ATARI800</string>
            </property>
           </item>

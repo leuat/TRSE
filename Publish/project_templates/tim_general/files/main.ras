@@ -1,0 +1,23 @@
+program MyProgram;
+@use "system/z80cpm"
+@use "system/system"
+
+var
+	i : integer;
+
+begin
+	// Startup code for CP/M programs
+	Z80CPM::Startup();
+	
+	// print newline
+	Z80CPM::PutCharLF(ASCII::CR);
+
+	for i:= 0 to 10 do begin
+		// print message
+		Z80CPM::PutString("Welcome to the TIM-001 with TRSE!\n\r");
+	end;
+
+
+	// Exit code for CP/M programs
+	Z80CPM::Exit();
+end.
