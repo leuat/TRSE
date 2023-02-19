@@ -88,6 +88,11 @@
           </item>
           <item>
            <property name="text">
+            <string>TRS80COCO</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>X86</string>
            </property>
           </item>

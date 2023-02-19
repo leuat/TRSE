@@ -1,0 +1,54 @@
+program MyProgram;
+@use "screen"
+@use "memory"
+@use "system/str"
+@use "text"
+@use "system"
+@use "compression/compression"
+var
+	x,y : integer;
+	time, t, t2 : byte;
+	delta: byte = 64;	
+	sinx : array[256] of integer = buildsinetable(159);
+
+
+@export "resources/images/image.flf" "resources/images/image.bin" 256
+
+	image : incbin("resources/images/image1.bin") compressed;
+	
+begin
+	
+	
+	
+	System::Init();
+	Screen::SetBitmapMode(Screen::BPL_40, 1);
+	Screen::SetColor(0,0); // black
+	Screen::SetColor(1,$b); // some color
+	Screen::SetColor(2,$1c); 
+	Screen::SetColor(3,$33); 
+	// clear the screen	
+	Memory::Fill16(#Screen::gfx,0,40*225);
+	// decompress image	
+	Compression::Decompress(#image, #Screen::gfx);
+	
+	Screen_EnableVsync();
+	while (true) do
+	begin
+		// Draw a circle
+		t2:=time;
+		// clear the dots	
+		Memory::Fill16(#Screen::gfx + 40*160,0,40*40);
+		for t:=0 to 255  do
+		begin
+			x:=sinx[t];
+			y:=sinx[byte(t2+delta)]>>2+160;
+			t2+=3;
+			// Put pixel on screen
+			Screen::PutPixel320(x,y,Screen::colors[byte((t2)&3)]);
+		end;
+		time+=1;	
+		// Increase delta
+		delta+=1;
+		
+	end;		
+end.
