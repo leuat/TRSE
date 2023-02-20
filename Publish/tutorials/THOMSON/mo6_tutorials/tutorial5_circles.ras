@@ -13,6 +13,7 @@ var
 	// some plasma variables
 	ctr,val,val2,time, time2,time3,z : byte;
 	x,y,shift,i : byte;
+	keep_s: integer;
 	// mini sine table
 	// Org sine table
 	sin : array[256] of byte = buildsinetable(127);
@@ -46,10 +47,18 @@ begin
 	for y:=0 to 100 step 2 offpage  do 
 	begin
 		asm("
+		; using S didn't work, even though it does on the coco3.. hmm..
+;		tfr s,d
+		; OOOPS this method screws with the stack! No interrupts please!
+;		std [keep_s]
+;		lds #data+128
+		
+		
 		ldy src1
 		ldx src2
 		ldu dst
 		ldb #0
+		
 		");
 		for z:=0 to width unroll do
 		begin
@@ -57,21 +66,26 @@ begin
 				lda ,y+
 				adda time3
 				suba ,x+
+				; lda a,s
 				pshs x
 				ldx #data+128
 				lda a,x
 				puls x
-				
 				sta ,u+
 			
 			");
 		end;	
+		asm("
 		
+;		ldd [keep_s]
+;		tfr d,s
+		");
 	
 		dst+=40*4;
 		src1+=dwidth*2;
 		src2+=dwidth*2;
 	end;
+		
 
 end;
 var

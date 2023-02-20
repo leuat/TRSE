@@ -56,7 +56,7 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
     }
 */
 
-    if (cmd=="tfr") {
+    if (cmd=="tfr" && par[1]!="dp" && par[1]!="s") {
         QString reg = par[0];
         auto l0 = prevLine->m_orgLine.toLower().simplified();
         auto l1 = line.m_orgLine.toLower().simplified();
