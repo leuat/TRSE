@@ -421,8 +421,8 @@ void Methods6809::MemCpyUnroll(Assembler *as)
     as->Asm("tfr x,u");
     m_node->m_params[0]->Accept(m_codeGen);
     for (int i=0;i<cnt;i++) {
-        as->Asm("ldd ,x+");
-        as->Asm("std ,u+");
+        as->Asm("ldd ,x++");
+        as->Asm("std ,u++");
     }
 }
 

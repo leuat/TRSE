@@ -9,7 +9,7 @@ System6809::System6809(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
     m_allowedGlobalTypeFlags << "compressed" <<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
     m_exomizerName ="Compress executable";
-    m_renameVariables << "a" <<"b"<<"x"<<"y";
+    m_renameVariables << "a" <<"b"<<"x"<<"y"<<"sp"<<"dp"<<"d"<<"u";
 
     //        m_registers <<"_a" <<"_b"<<"_c"<<"_d"<<"_af"<<"_bc"<<"_de"<<"_hl"<<"_ix"<<"_iy"<<"_h"<<"_l";
 }

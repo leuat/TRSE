@@ -1,0 +1,31 @@
+unit Screen;
+var
+	const gfx : address = $0000;
+	
+procedure MO6Init4ColorMode();
+begin
+	asm("
+	
+	lda #$59
+	sta $a7dc // 320x200 4-colour mode
+	LDA #$00 *COR ONDE COMECAR formato BGR
+	ASLA
+	STA	$A7DB
+	LDD	#$0000 *cor 0
+	STB $A7DA
+	STA $A7DA *O REGISTO DE PALETTE E' INCREMENTADO AUTOMATICAMENTE
+	LDD	#$0008 *cor 1
+	STB $A7DA
+	STA $A7DA
+	LDD	#$0048 *cor2
+	STB $A7DA
+	STA $A7DA
+	LDD	#$0078 *cor3
+	STB $A7DA
+	STA $a7DA
+	");
+
+end;
+
+
+end.

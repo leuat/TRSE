@@ -52,16 +52,20 @@ void SystemThomson::PostProcess(QString &text, QString file, QString currentDir)
 
 void SystemThomson::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     params << m_projectIni->getString("thomson_subtype");
+    QString delay = "1";
+    if (m_projectIni->getString("thomson_subtype")=="MO6")
+        delay = "3";
+
     //params <<"-dump"<<filename+".sna";
     params <<  "-resolution0" << "640x480@60" <<"-window";
     params <<"-nothrottle";
     if (m_mediaType ==0 ) {
         params <<"-cass"<<filename+".k5";
-        params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "loadm \"\",,R\\n";
+        params << "-skip_gameinfo" << "-autoboot_delay"<< delay <<"-autoboot_command"<< "loadm \"\",,R\\n";
     }
     if (m_mediaType ==1 ) {
         params <<"-cart"<<filename+".rom";
-        params << "-skip_gameinfo" << "-autoboot_delay"<< "1" <<"-autoboot_command"<< "exec &HB000\\n";
+        params << "-skip_gameinfo";
 
 
     }
