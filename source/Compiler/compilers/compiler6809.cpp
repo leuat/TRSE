@@ -12,6 +12,7 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
         m_assembler->byte="db";
         m_assembler->word="dw";
 
+
     }
 
     m_assembler->m_zbyte = 0x10;
@@ -23,8 +24,8 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 void Compiler6809::Connect()
 {
     bool useMorgasm = (m_ini->getString("assembler_6809")=="OrgAsm");
-    if (!useMorgasm)
-        m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
+    //if (!useMorgasm)
+     //   m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
 

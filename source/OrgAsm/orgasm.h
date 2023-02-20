@@ -203,6 +203,7 @@ public:
 
 
     int m_pCounter = 0;
+    int m_startAddress = -1;
     bool m_done = false;
     void LoadFile(QString filename);
 
@@ -220,7 +221,9 @@ public:
     void ProcessSource();
     void ProcessUnrolling();
     virtual void ApplyCPUType() {}
-
+    static const int HEADER_RAW = 0;
+    static const int HEADER_DECB = 1;
+    int m_header = 0;
 
     bool isLittleEndian = true;
     OrgasmLine LexLine(int i);

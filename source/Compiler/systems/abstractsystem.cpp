@@ -356,6 +356,11 @@ void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString fil
         m_orgAsm = QSharedPointer<ZOrgasm>(new ZOrgasm());
     if (orgType==1)
         m_orgAsm = QSharedPointer<MOrgasm>(new MOrgasm());
+    if (orgType==2) {
+        m_orgAsm = QSharedPointer<MOrgasm>(new MOrgasm());
+        m_orgAsm->m_header = Orgasm::HEADER_DECB;
+        qDebug() << "HERE";
+    }
 
     if (m_orgAsm == nullptr)
         return;

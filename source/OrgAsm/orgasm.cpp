@@ -460,9 +460,26 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);
+
+    if (m_header==HEADER_DECB) {
+        int size = m_data.size();
+        m_data.insert(0,(uchar)0);
+        m_data.insert(1,(size>>8)&0xFF);
+        m_data.insert(2,(size)&0xFF);
+        m_data.insert(3,(m_startAddress>>8)&0xFF);
+        m_data.insert(4,(m_startAddress)&0xFF);
+        // Appendix
+        m_data.append(0xff);
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
+        m_data.append(3,(m_startAddress>>8)&0xFF);
+        m_data.append(4,(m_startAddress)&0xFF);
+    }
+
     if (m_success) {
         QFile out(outFile);
         out.open(QFile::WriteOnly);
+
         out.write(m_data);
         out.close();
     }
@@ -747,6 +764,8 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
             m_data.append((val>>8)&0xFF);
         }
         m_pCounter = val;
+        if (m_startAddress==-1)
+            m_startAddress = m_pCounter;
         return;
     }
     else {

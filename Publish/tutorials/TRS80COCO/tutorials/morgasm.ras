@@ -1,12 +1,43 @@
 program MyProgram;
 @use "system"
+@use "screen"
 var  
-   i: byte; 
-
+    i: byte; 
+	zp:pointer;
+	
 begin
 	System::Init();
+	zp:=$400;
 	for i:=0 to 255 do
 	begin
-		
+		zp[i]:=i;
 	end;
+	asm("
+topp:	
+	lbra topp
+			leax a,x
+			leax a,y
+			leax a,u
+			leax a,s
+			leax b,x
+			leax b,y
+			leax b,u
+			leax b,s
+			leax d,x
+			leax d,y
+			leax d,u
+			leax d,s
+			leax ,x
+			leax ,y
+			leax ,u
+			leax ,s
+			leax 1000,x
+			leax 1000,y
+			leax 1000,u
+			leax 1000,s
+			
+	
+	
+	");
+	
 end.

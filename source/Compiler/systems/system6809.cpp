@@ -74,15 +74,20 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
     QString output = "";
     QString format = "-r";
-    if (m_system==TRS80COCO || m_system==THOMSON )
+    int iformat = 1;
+    if (m_system==TRS80COCO || m_system==THOMSON ) {
         format ="-decb";
-    if ((m_system==THOMSON) && ((m_projectIni->getString("thomson_media")=="CART") || (m_projectIni->getString("thomson_media")=="RAW")) )
+        iformat = 2;
+    }
+    if ((m_system==THOMSON) && ((m_projectIni->getString("thomson_media")=="CART") || (m_projectIni->getString("thomson_media")=="RAW")) ) {
         format ="-r";
+        iformat = 2;
+    }
 
 //    format = "-r";
  //   qDebug() << format;
     if (useMorgasm) {
-        AssembleZOrgasm(output,text,filename,currentDir, symTab,1);
+        AssembleZOrgasm(output,text,filename,currentDir, symTab,iformat);
     }
     else
         StartProcess(assembler, QStringList() << format<<"--6809"  <<filename+".asm" <<"-o"+filename+".bin" << "--symbol-dump="+filename+".sym", text);

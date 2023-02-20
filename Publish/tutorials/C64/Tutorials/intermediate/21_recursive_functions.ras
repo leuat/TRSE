@@ -28,7 +28,6 @@ begin
 		p:=p*Factorial(p-1);
 		
 	Factorial:=p;
-
 end;
 
 

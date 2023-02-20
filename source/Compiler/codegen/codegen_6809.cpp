@@ -851,7 +851,7 @@ void CodeGen6809::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
     }
 */  if (initVal.trimmed()=="") initVal="$00";
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
-    as->Write(v->value + ":\tfdb\t" + initVal,0);
+    as->Write(v->value + ":\t"+as->word+"\t" + initVal,0);
 
 }
 

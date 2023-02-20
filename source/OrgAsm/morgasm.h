@@ -43,9 +43,13 @@ public:
     }
 
     QMap<QString,int> m_codeReg;
+    QMap<QString,int> m_pushPullReg;
+    QMap<QString,int> m_lea;
     uchar getRegisterCodeFromParams(QString s);
-    int getTypeFromParams(QString op, QString s);
-    int getParsedValue(QString expr);
+    uchar getPushPullParams(OrgasmLine& ol);
+    int getLeaParams(OrgasmLine& ol, int&size);
+    int getTypeFromParams(OrgasmLine& ol);
+    int getParsedValue(OrgasmLine& ol, int& size, int type);
     void LoadCodes(int CPUflavor) override;
     QMap<QString,QSharedPointer<Op6809>> m_instructions;
     QString m_opCode;
