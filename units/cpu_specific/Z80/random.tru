@@ -1,7 +1,11 @@
 unit Random;
 var
 
+@donotremove Random1
 
+/**
+	Generates 16-bit random number
+**/
 function Random1() : integer;
 begin
 	asm("
@@ -46,5 +50,40 @@ xrnd:
 
 end;
 
+
+/**
+	Generates 8-bit random number
+**/
+function RandomByte(): byte;
+begin
+	asm("
+		call Random_Random1;
+		xor l
+	");
+end;
+	
+
+/**
+	Sets seed for random number generator
+**/
+procedure SetSeed(seed: integer);
+begin
+	asm("
+		ld hl,Random_seed
+ 		ld (xrnd+1),hl
+	");
+end;
+
+
+/**
+	Sets seed for random number generator from R register
+**/
+procedure SetRSeed();
+begin
+	asm("
+		ld a,r
+ 		ld (xrnd+1),a
+	");
+end;
 
 end.
