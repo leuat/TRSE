@@ -221,6 +221,7 @@ public:
     void ProcessUnrolling();
     virtual void ApplyCPUType() {}
 
+
     bool isLittleEndian = true;
     OrgasmLine LexLine(int i);
 

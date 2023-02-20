@@ -43,8 +43,9 @@ public:
     }
 
     QMap<QString,int> m_codeReg;
-
+    uchar getRegisterCodeFromParams(QString s);
     int getTypeFromParams(QString op, QString s);
+    int getParsedValue(QString expr);
     void LoadCodes(int CPUflavor) override;
     QMap<QString,QSharedPointer<Op6809>> m_instructions;
     QString m_opCode;

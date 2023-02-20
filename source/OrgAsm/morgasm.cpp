@@ -65,7 +65,7 @@ QString MOrgasm::Process(QString s, OrgasmLine& ol)
 }
 int MOrgasm::getTypeFromParams(QString op, QString s)
 {
-    if (s=="tfr") return Op6809::imm;
+    if (op=="tfr") return Op6809::imm;
     s=s.toLower().simplified();
     //        qDebug() << " Getting type from : " << s;
 
@@ -91,6 +91,21 @@ int MOrgasm::getTypeFromParams(QString op, QString s)
             return Op6809::ext;
     }
     return Op6809::inh;
+}
+
+int MOrgasm::getParsedValue(QString expr)
+{
+    if (m_symbolsList.contains(expr))
+        return m_symbols[expr];
+
+    for (auto& l:m_symbolsList) {
+        if (expr.contains(l)) {
+            expr = expr.replace(l,QString::number(m_symbols[l]));
+            expr = expr.replace("#"+l,QString::number(m_symbols[l]));
+        }
+    }
+    expr = Util::BinopString(expr);
+    return Util::NumberFromStringHex(expr);
 }
 
 void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
@@ -121,6 +136,18 @@ void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     m_data.append(data);
     m_pCounter+=data.length();
 
+}
+
+uchar MOrgasm::getRegisterCodeFromParams(QString s)
+{
+  auto lst = s.simplified().toLower().split(",");
+  uchar c = 0;
+  if (s.size()>0)
+      c |= m_codeReg[lst[0]]<<4;
+  if (s.size()>1)
+      c |= (m_codeReg[lst[1]]);
+
+  return c;
 }
 
 
@@ -180,16 +207,17 @@ void MOrgasm::Write(QByteArray &data, OrgasmLine &l, int type) {
         return;
     int val = 0;
     if (m_passType==OrgasmData::PASS_SYMBOLS) {
-        if (m_symbolsList.contains(l.m_expr.simplified())) {
-            val = m_symbols[l.m_expr.simplified()];
+            val = getParsedValue(l.m_expr.simplified());
             if (type==Op6809::rel) {
                 val-=m_pCounter+3;
             }
  //           qDebug() << Util::numToHex(val) << l.m_expr << code;
         }
 
-        else
-            val = Util::NumberFromStringHex(l.m_expr);
+
+
+    if (code==0x1F)  {// TFRRR
+        val = getRegisterCodeFromParams(l.m_expr);
     }
     WriteNumber(data, val, size);
  }
