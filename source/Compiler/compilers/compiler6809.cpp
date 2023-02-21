@@ -25,7 +25,7 @@ void Compiler6809::Connect()
 {
     bool useMorgasm = (m_ini->getString("assembler_6809")=="OrgAsm");
     //if (!useMorgasm)
-     //   m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
+     m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
 

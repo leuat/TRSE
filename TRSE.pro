@@ -243,6 +243,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagecoco3.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
     source/LeLib/limage/limagethomson.cpp \
+    source/LeLib/limage/limagetimgen.cpp \
     source/LeLib/limage/limagetvc.cpp \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
@@ -553,6 +554,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagesnesgeneric.h \
     source/LeLib/limage/limagethomson.h \
     source/LeLib/limage/limagetim.h \
+    source/LeLib/limage/limagetimgen.h \
     source/LeLib/limage/limagetvc.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \

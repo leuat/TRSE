@@ -14,8 +14,7 @@ var
 	const ModeWrite: byte = 2;
 	const EOF: byte = $FF;
 	cpmfName, cpmfBuffer: pointer;
-	cpmfPos, cpmfByt, cpmfVal: byte;
-
+	cpmfPos, cpmfByt, cpmfVal, i,j,k,l: byte;
 
 /**
 	Class that realizes file access for Z80 CP/M
@@ -34,7 +33,7 @@ var
 			ReadChunk_ret: boolean;
 		begin
 			ReadChunk_ret := false;
-			while (1) offpage do begin
+			while (true) offpage do begin
 				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
 		
 				if Z80CPM::bdos_a(Z80CPM::BF_READSEQ, this.FCX) <> 0 then begin
@@ -180,6 +179,25 @@ var
 				if cpmfVal = 0 then break;
 			end;
 			Handle::ReadBytes := cpmfPos;
+		end;
+
+		procedure ReadAll(File::cpmfBuffer: global pointer);
+		begin
+			File::j:=Handle::ReadByte(this);			
+			File::k:=Handle::ReadByte(this);			
+			if (File::j<>0) then
+			begin
+				this.ReadBytes(cpmfBuffer,126);
+				cpmfBuffer+=126;
+				if (File::j<>1) then
+				for File::i:=1 to File::j do
+				begin
+					this.ReadBytes(cpmfBuffer,128);
+					cpmfBuffer+=128;
+				end;
+			end;
+			if (File::k<>0) then
+				this.ReadBytes(cpmfBuffer,File::k);
 		end;
 
 	end;

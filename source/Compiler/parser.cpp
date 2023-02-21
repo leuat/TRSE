@@ -1138,6 +1138,17 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="copyfile") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="addcpmheader") {
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="compress") {
             Eat();
             Eat();
@@ -2852,6 +2863,37 @@ void Parser::PreprocessSingle() {
         if (QFile::exists(m_currentDir+file))
             QFile::remove(m_currentDir+file);
 
+
+    }
+    else
+    if (m_currentToken.m_value.toLower() =="copyfile") {
+        Eat(TokenType::PREPROCESSOR);
+        QString src = m_currentToken.m_value;
+        Eat();
+        QString dst = m_currentToken.m_value;
+        Eat();
+        if (!QFile::exists(m_currentDir+src))
+            ErrorHandler::e.Error("Could not find file to copy: "+src,m_currentToken.m_lineNumber);
+
+        if (QFile::exists(m_currentDir+dst))
+            QFile::remove(m_currentDir+dst);
+        Util::CopyFile(m_currentDir+src,m_currentDir+dst);
+
+    }
+    if (m_currentToken.m_value.toLower() =="addcpmheader") {
+        Eat(TokenType::PREPROCESSOR);
+        QString src = m_currentToken.m_value;
+        Eat();
+        if (!QFile::exists(m_currentDir+src))
+            ErrorHandler::e.Error("Could not find file to add to header: "+src,m_currentToken.m_lineNumber);
+
+        QByteArray d = Util::loadBinaryFile(m_currentDir+src);
+        int i = d.size();
+        d.insert(0,i/128);
+        d.insert(1,i&127);
+        if (QFile::exists(m_currentDir+src))
+            QFile::remove(m_currentDir+src);
+        Util::SaveByteArray(d,m_currentDir+src);
 
     }
     else

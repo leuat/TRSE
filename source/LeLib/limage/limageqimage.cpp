@@ -454,7 +454,7 @@ void LImageQImage::CopyFrom(LImage *img) {
     if (m_width!=img->m_width || m_height!=img->m_height) {
         m_width = img->m_width;
         m_height = img->m_height;
-
+//        Initialize(m_width, m_height);
     }
 
     m_colorList.CopyFrom(&img->m_colorList);
@@ -463,6 +463,7 @@ void LImageQImage::CopyFrom(LImage *img) {
     m_currentChar = img->m_currentChar;
     m_charWidthDisplay = img->m_charWidthDisplay;
     m_charWidth = img->m_charWidth;
+    m_charHeight = img->m_charHeight;
     LImageQImage* mc = dynamic_cast<LImageQImage*>(img);
     if (mc!=nullptr) {
         *m_qImage = *mc->m_qImage;
