@@ -111,6 +111,11 @@ void FormRasEditor::ExecutePrg(QString fileName)
     QStringList params;
 
     Syntax::s.m_currentSystem->applyEmulatorParameters(params,fileName+".sym", fileName,m_builderThread.m_builder->m_projectIniFile.get());
+    // Add custom emulator params
+    if (m_builderThread.m_builder!=nullptr)
+        if (m_builderThread.m_builder->compiler!=nullptr)
+                params <<m_builderThread.m_builder->compiler->m_parser.m_additionalEmulatorParams;
+
     if (emu=="internal") {
         // Internal emulator!
         if (Syntax::s.m_currentSystem->m_system==AbstractSystem::CHIP8) {

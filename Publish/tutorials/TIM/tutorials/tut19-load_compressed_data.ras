@@ -54,7 +54,7 @@ begin
 	while (Misc::keyPressed=false) do
 	begin
 		DisplayImage(#dataLoc,#Screen::gfx,30,40,256/4-1,128,120);
-		time+=1;
+		time+=7;
 		Misc::KeyboardCheck();
 	end;
 	// Exit gracefully

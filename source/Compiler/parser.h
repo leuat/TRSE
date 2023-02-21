@@ -138,6 +138,7 @@ public:
     ~Parser() {
         Delete();
     }
+    QStringList m_additionalEmulatorParams;
 
 
 private:

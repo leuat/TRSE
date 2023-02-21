@@ -1149,6 +1149,11 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="addemulatorparam") {
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="compress") {
             Eat();
             Eat();
@@ -2895,7 +2900,13 @@ void Parser::PreprocessSingle() {
             QFile::remove(m_currentDir+src);
         Util::SaveByteArray(d,m_currentDir+src);
 
+    }else
+    if (m_currentToken.m_value.toLower() =="addemulatorparam") {
+        Eat(TokenType::PREPROCESSOR);
+        m_additionalEmulatorParams<<m_currentToken.m_value;
+        Eat();
     }
+
     else
         if (m_currentToken.m_value.toLower() =="define") {
             Eat(TokenType::PREPROCESSOR);
