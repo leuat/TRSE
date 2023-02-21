@@ -42,50 +42,6 @@ MOrgasm::MOrgasm()
 
 
 
-QString MOrgasm::Process(QString s, OrgasmLine& ol)
-{
-//    qDebug() << "Processing : " <<s;
-    QString expr = s.trimmed();
-    if (expr.trimmed()=="")
-        return "";
-
-    if (m_passType==OrgasmData::PASS_LABELS) {
-
-    }
-
-/*    expr = expr.replace("[","(").replace("]",")");
-    expr = expr.replace("(+","(");
-//    qDebug() << "Processing: " << expr;
-    long val = 0;
-    QString repl = "";
-    if (m_passType==OrgasmData::PASS_LABELS)
-        repl = "$1000";
-    if (expr.contains("<") || expr.contains(">"))
-        repl= "$10";
-    expr = expr.replace("#","$");
-    QString oexpr = expr;
-    expr = expr.replace("<","").replace(">","");
-    if (!(expr.startsWith("(") && expr.endsWith(")"))) {
-        if (m_regs.contains(expr))
-            return expr;
-//        qDebug() << "PROCESS: " <<expr <<oexpr << repl;
-        expr = OrgasmData::BinopExpr(oexpr, val, repl);
-
-    }
-    */
-    if (m_passType==OrgasmData::PASS_SYMBOLS) {
-        QString tst = expr;
-        QString org = expr;
-        int cur = 0;
-        bool ok =  false;
-    //      tst = tst.replace("(","");
-      //    tst = tst.replace(")","");
-
-
-
-    }
-    return expr;
-}
 int MOrgasm::getTypeFromParams(OrgasmLine& ol)
 {
     QString op = ol.m_instruction.m_opCode.toLower().simplified();
@@ -155,7 +111,7 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
     if (m_lea.contains(p2))
         val |= (m_lea[p2]<<4) << shl;
 
-    qDebug() << ol.m_orgLine << Util::numToHex(val);
+//    qDebug() << ol.m_orgLine << Util::numToHex(val);
 
     return val;
 }
@@ -199,9 +155,11 @@ void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     QByteArray data;
     ol.m_instruction.m_opCode = ol.m_instruction.m_opCode.toLower();
     QString op = ol.m_instruction.m_opCode.simplified().toLower();
+//    qDebug() << op;
     if (!m_instructions.contains(op))
         throw OrgasmError("Unknown instruction (opcode missing or not implemented yet. Bug Leuat!) : "+ol.m_orgLine.simplified(),ol);
 
+    ol.m_expr.replace("*",Util::numToHex(m_pCounter));
 
     if (ol.m_instruction.m_opCode=="processor")
         return;
@@ -306,8 +264,11 @@ void MOrgasm::Write(QByteArray &data, OrgasmLine &l, int type) {
     Op6809* op = getOpcode(l);
     int code = op->opcodes[type];
     int size = op->size[type];
-    if (code>=256)
+    int ds = 1;
+    if (code>=256) {
         data.append((code>>8)&0xFF);
+        ds+=1;
+    }
     data.append(code&0xFF);
     if (type==Op6809::inh)
         return;
@@ -316,8 +277,8 @@ void MOrgasm::Write(QByteArray &data, OrgasmLine &l, int type) {
         {
             val = getParsedValue(l,size, type);
             if (type==Op6809::rel) {
-                int add = 3;
-                if (val<m_pCounter) add+=1;
+                int add = ds+2;
+//                if (val<m_pCounter) add-=1;
                 val-=m_pCounter+add;
             }
  //           qDebug() << Util::numToHex(val) << l.m_expr << code;
@@ -340,58 +301,6 @@ void MOrgasm::WriteNumber(QByteArray &data, int val, int size)
 
 
 
-}
-/*
- *
- * Washes parameter for opcode
- * for instance: (a) iy de etc are returned as is
- * (iy + #10) returned as "(iy+*)
- * anything else (**) or **
- *
-*/
-QString MOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
-{
-    if (test=="")
-        return "";
-    if (isRegister(test.toLower()))
-        return test.toLower();
-
-    QString t = test;
-    t = t.remove("(").remove(")");
-
-    if (t.toLower().startsWith("ix+")) {
-        value = t.split("+")[1];
-        return ("(ix+*)");
-    }
-    // Null test
-    if (m_opCode!="jp") {
-        if (test.toLower()=="(iy)") {
-            value ="0";
-            return "(iy+*)";
-        }
-        if (test.toLower()=="(ix)"){
-            value ="0";
-            return "(ix+*)";
-        }
-
-    }
-    if (t.toLower().startsWith("iy+")) {
-        value = t.split("+")[1];
-        return ("(iy+*)");
-    }
-
-    if (isRegister(t))
-        return test;
-
-    value = Process(test,ol);
-    // everything else starting with ( is an address **
-    if (test.startsWith("(")) {
-        return "(**)";
-    }
-
-
-    // Symbols are also addresses
-    return "**";
 }
 
 

@@ -2,16 +2,21 @@ program MyProgram;
 @use "system"
 @use "screen"
 var  
-    i: byte; 
+    i,time: byte; 
 	zp:pointer;
 	
 begin
 	System::Init();
 	zp:=$400;
-	for i:=0 to 255 do
+	while(true) do
 	begin
-		zp[i]:=i;
+		for i:=0 to 255 do
+		begin
+			zp[i]:=i+time;
+		end;
+		time+=1;
 	end;
+	loop();
 	asm("
 topp:	
 	lbra topp

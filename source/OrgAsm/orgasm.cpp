@@ -461,7 +461,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
     if (QFile::exists(outFile))
         QFile::remove(outFile);
 
-    if (m_header==HEADER_DECB) {
+    if (m_header==HEADER_DECB && m_success) {
         int size = m_data.size();
         m_data.insert(0,(uchar)0);
         m_data.insert(1,(size>>8)&0xFF);

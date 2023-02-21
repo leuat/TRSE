@@ -56,9 +56,7 @@ public:
     Op6809* getOpcode(OrgasmLine&ol);
     void Write(QByteArray& d, OrgasmLine&l, int type);
     void WriteNumber(QByteArray&d, int val, int type);
-    QString WashForOpcode(QString s, QString& value,OrgasmLine& ol);
 
-    QString Process(QString s, OrgasmLine& ol);
 };
 
 #endif // MORGASM_H
