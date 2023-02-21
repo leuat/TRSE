@@ -5093,7 +5093,7 @@ void Parser::HandlePerlinNoise()
     int amp = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     SimplexNoise sn;
-    qDebug() << "PARSER:::" <<file;
+//    qDebug() << "PARSER:::" <<file;
     sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
 
 }
