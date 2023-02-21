@@ -17,6 +17,8 @@ var
 	scrl_w, scrl_stp, scrl_phs: byte;
 	scrl_txt: pointer;
 	
+	const gfx:address = $8000;
+	
 @donotremove PrintChrXY
 /**
 	Prints a 8x8 character to screen at given coordinates, where x = 0..127, y = 0..63, chr 0..255. <br>

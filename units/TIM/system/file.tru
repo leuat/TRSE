@@ -8,12 +8,14 @@
 
 unit File;
 @use "system/z80cpm"
+@use "compression"
 
 var
 	const ModeRead: byte = 1;
 	const ModeWrite: byte = 2;
 	const EOF: byte = $FF;
 	cpmfName, cpmfBuffer: pointer;
+	dst, ptmp : ^byte;
 	cpmfPos, cpmfByt, cpmfVal, i,j,k,l: byte;
 
 /**
@@ -180,7 +182,18 @@ var
 			end;
 			Handle::ReadBytes := cpmfPos;
 		end;
+/*
+		Reads all the data from a file marked with the 2-byte cpm header to a memory location .
+		Usage: 
+			<code> 
+@copyfile "d1.bin" "copy_to_img/d1.bin"	
+@addcpmheader "copy_to_img/d1.bin"
 
+..
+f.ReadAll(...);
+			</code>
+
+*/
 		procedure ReadAll(File::cpmfBuffer: global pointer);
 		begin
 			File::j:=Handle::ReadByte(this);			
@@ -199,6 +212,49 @@ var
 			if (File::k<>0) then
 				this.ReadBytes(cpmfBuffer,File::k);
 		end;
+/**
+		Loads the contents of a file to memory.
+		Usage:
+			<code> 
+@copyfile "d1.bin" "copy_to_img/d1.bin"	
+@addcpmheader "copy_to_img/d1.bin"
+
+..
+f.LoadFile(d1.bin",$4000); 
+			</code> 
+
+**/
+
+		procedure LoadFile(File::cpmfName: global pointer, File::dst : global ^byte);
+		begin
+			this.Open(File::cpmfName, ModeRead);
+			this.ReadAll(File::dst);
+			this.Close();
+		end;
+
+/**
+		Loads the contents of a compressed file to temporary buffer, then extracts it to a destination.
+		Usage:
+			<code> 
+@copyfile "d1.bin" "copy_to_img/d1.bin"	
+@addcpmheader "copy_to_img/d1.bin"
+
+..
+// Loads the file to $7000, then extracts data to $4000
+f.LoadCompressedFile(d1.bin",$4000, $7000); 
+			</code> 
+
+**/
+		
+		procedure LoadCompressedFile(File::cpmfName: global pointer, File::dst, File::ptmp : global ^byte);
+		begin
+			this.Open(File::cpmfName, ModeRead);
+			this.ReadAll(File::ptmp);
+			this.Close();
+			Compression::Decompress(File::ptmp,File::dst);
+	end;
+
+
 
 	end;
 

@@ -31,6 +31,26 @@ begin
 	");
 end;
 
+procedure MemCpyOut(source, destination, count: global integer);
+begin
+	asm("
+		ld hl,(Memory_source)
+		ld bc,(Memory_destination)
+		ld de,(Memory_count)
+memcpyout_loop:
+		ld a,[hl]
+		out (c),a
+		inc bc
+		inc hl
+		dec de
+		ld a,d
+		or e
+		jr nz,memcpyout_loop
+
+		
+	");
+end;
+
 
 procedure MemCpyLDIR(source, destination, count: global integer);
 begin

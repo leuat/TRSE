@@ -1,0 +1,65 @@
+program LoadCompressedData;
+var
+@use "system/screen"
+@use "system/graphics"
+@use "misc"
+@use "system/system"
+@use "memory"
+@use "system/file"
+
+var
+	// a sine wobble
+	sin : array[256] of byte = buildsinetable(127);
+
+	// original image is 256x128 bytes, images/grl1.flf
+	
+	@export "images/grl1.flf" "images/grl1.bin" 256
+
+	// $1000 byte temp address to load compressed files to
+	const temp : address = $7000;
+	// Another temp address to extract the compressed data to
+	const dataLoc : address = $4000;
+	// lz4-compress the image to the disk dir 
+	@compress "images/grl1.bin" "copy_to_img/img.bin" 
+	// add a 2-byte cpm header to the file so it an be loaded with the file class
+	@addcpmheader "copy_to_img/img.bin"
+
+	time,i,j : byte;
+	
+	f : File::Handle;
+
+procedure DisplayImage(src, dst: pointer; x,y,w,h,dh : byte );
+begin
+	dst+=y+x*256;
+	j:=time;
+	for i:=0 to w do
+	begin
+		Memory::MemCpyOut(src+sin[j]>>4,dst,dh);
+		dst+=256;
+		src+=h;
+		j+=7;
+	end;	
+	
+end;
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	
+	f.LoadCompressedFile("img.bin", #dataLoc, #temp);	
+	
+	Misc::InitKeyboardCheck(5);
+	while (Misc::keyPressed=false) do
+	begin
+		DisplayImage(#dataLoc,#Screen::gfx,30,40,256/4-1,128,120);
+		time+=1;
+		Misc::KeyboardCheck();
+	end;
+	// Exit gracefully
+	Z80CPM::GetChar();
+	System::CursorOn();
+	Z80CPM::Exit();
+
+end.	
