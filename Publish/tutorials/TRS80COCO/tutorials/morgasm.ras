@@ -20,6 +20,14 @@ begin
 	asm("
 topp:	
 	lbra topp
+			leax 1,x
+			leay 1,y
+			leax 1,y
+			leax -1,x
+			leay -1,y
+			leax -1,y
+	
+	
 			sta ,u
 			sta ,u+
 			sta ,s
@@ -46,6 +54,13 @@ topp:
 			lda 1024,x
 			lda 1024,y
 			lda 1024,u
+				
+			lda -1,pc
+			lda -$20,s
+			lda -1024,s
+			lda -1024,x
+			lda -1024,y
+			lda -1024,u
 				
 	
 	
@@ -77,6 +92,17 @@ topp:
 			leax 10,y
 			leax 10,u
 			leax 10,s
+			leax -1000,x
+			leax -1000,y
+			leax -1000,u
+			leax -1000,s
+			leax -100,x
+			leax -100,y
+			leax -100,u
+			leax -10,s
+			leax -10,y
+			leax -10,u
+			leax -10,s
 	
 	");
 	

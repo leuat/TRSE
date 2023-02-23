@@ -100,9 +100,11 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
     int shl=0;
     for (auto& s : lst)
         s = s.simplified().toLower();
-
+    bool isNegative = 0;
     QString p1 = lst[0];
     QString p2 = lst[1];
+    if (p1.startsWith("-"))
+        isNegative = 1;
     if (m_lea.contains(p1))
         val |= m_lea[lst[0]];
     else {
@@ -110,16 +112,16 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
             val|=m_lea["none"];
         else {
             int shift = Util::NumberFromStringHex(p1);
-            if (shift<16) {
+            if (abs(shift)<16) {
                 // Special case for s
                 val=shift&15;
-                return val | (m_lda[p2]<<4);
+                return val | ((m_lda[p2]+isNegative)<<4);
             }
-            if (shift<256) {
+            if (abs(shift)<256) {
                 // 8 bit num
                 val=(val|(m_lea["num"]-1))<<8;
                 shl=8;
-                val|=(shift);
+                val|=(shift&0xFF);
                 size+=1;
             }
             else
@@ -127,7 +129,7 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
                 // 16 bit num
                     val=(val|(m_lea["num"]))<<16;
                     shl=16;
-                    val|=(shift);
+                    val|=(shift&0xFFFF);
                     size+=2;
                 }
         }
@@ -154,6 +156,11 @@ int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
 
     QString p1 = lst[0];
     QString p2 = lst[1];
+    int isNegative = 0;
+    if (p1.startsWith("-"))
+        isNegative = 1;
+//    if (ol.m_orgLine.contains("-1000"))
+  //      qDebug() << "*** "<< ol.m_orgLine;
 
     int incType = 0;
     if (m_lea.contains(p1) && m_lea.contains(p2))
@@ -163,7 +170,7 @@ int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
             if (p2.contains("+")) incType = 1;
             if (p2.contains("-")) incType = 2;
             p2 = p2.remove("+").remove("-");
-
+            // does it have + or -?
             if (incType==0)
                 val|=m_lea["none"];
             if (incType==2)
@@ -176,23 +183,33 @@ int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
         else {
             val = 0;
             int shift = Util::NumberFromStringHex(p1);
-            if (shift>=16 || p2=="pc") {
+            bool isNeg = shift<0;
+    //        if (ol.m_orgLine.contains("-1000"))
+      //          qDebug() << "*** "<<size << shift << p1;
+            if (abs(shift)>=16 || p2=="pc") {
                 size+=1;
+                int an = 0xFFFF;
                 int orand = 8;
-                if (shift>=256) {
+                if (abs(shift)>=256) {
                     orand = 9;
-                   size+=1;
+                    size+=1;
+                }
+                else {
+                    // 8 bit negative number
+                    if (isNeg)
+                        an = 0xff;
+
                 }
                 if (p2=="pc")
                     val = ((m_lea[p2]) | (orand)<<4)<<((size-1)*8);
                 else
                     val = ((m_lea[p2]<<4) | (orand))<<((size-1)*8);
-                val = val | (shift);
+                val = val | (shift&an);
+                if (ol.m_orgLine.contains("-1000"))
+                    qDebug() << ol.m_orgLine << Util::numToHex(val) << p2 << size;
 
                 return val;
             }
-            if (ol.m_orgLine.contains("sta"))
-                qDebug() << ol.m_orgLine << Util::numToHex(val) << p2;
 
             if (m_lda.contains(p2))
                 val |= m_lda[p2]<<4;

@@ -161,13 +161,14 @@ bool Util::NumberFromStringHex(QString s, long &num) {
         type = 2;
         s = s.replace(">","");
     }
-    if (s.startsWith("$"))
+
+    if (s.startsWith("$") || s.startsWith("-$"))
         val = s.remove("$").toLong(&ok, 16);
     else
-        if (s.toLower().startsWith("0x"))
+        if (s.toLower().startsWith("0x") || s.toLower().startsWith("-0x"))
             val = s.remove("0x").toLong(&ok, 16);
         else
-            if (s.toLower().startsWith("%"))
+            if (s.toLower().startsWith("%") || s.toLower().startsWith("-%"))
                 val= s.remove("%").toLong(&ok, 2);
             else
                 val = s.toInt(&ok, 10);
