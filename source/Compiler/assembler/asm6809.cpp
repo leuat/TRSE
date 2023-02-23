@@ -394,12 +394,8 @@ QString Asm6809::String(QStringList lst, bool term)
 
     QString res;
     QString mark = "dc.b";
-    if (Syntax::s.m_currentSystem->is6809())
+    if (!m_isOrgasm)
         mark = "fcc";
-    if (Syntax::s.m_currentSystem->CL65Syntax()) {
-        mark = ".asciiz";
-        term = false;
-    }
 
     for (QString s:lst) {
         for (QString s:lst)

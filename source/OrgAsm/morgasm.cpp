@@ -57,7 +57,7 @@ int MOrgasm::getTypeFromParams(OrgasmLine& ol)
 {
     QString op = ol.m_instruction.m_opCode.toLower().simplified();
     QString s = ol.m_expr.simplified();
-    if (op=="tfr" || op=="pshs" || op=="puls") {
+    if (op=="tfr" || op=="pshs" || op=="puls" || op=="exg") {
         return Op6809::imm;
     }
     s=s.toLower().simplified();
@@ -127,14 +127,14 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
                 val=shift&15;
                 return val | ((m_lda[p2]+isNegative)<<4);
             }
-            if (abs(shift)<256) {
+/*            if (abs(shift)<256) {
                 // 8 bit num
                 val=(val|(m_lea["num"]-1))<<8;
                 shl=8;
                 val|=(shift&0xFF);
                 size+=1;
             }
-            else
+            else*/
                {
                 // 16 bit num
                     val=(val|(m_lea["num"]))<<16;
@@ -256,7 +256,7 @@ int MOrgasm::getParsedValue(OrgasmLine& ol, int& size, int type)
         return getPushPullParams(ol);
 
 
-    if (op.startsWith("tfr"))
+    if (op.startsWith("tfr") || op.startsWith("exg"))
         return getRegisterCodeFromParams(expr);
 
     if (expr.contains(",")) {

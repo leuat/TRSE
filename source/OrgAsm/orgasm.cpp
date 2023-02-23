@@ -472,8 +472,8 @@ bool Orgasm::Assemble(QString filename, QString outFile)
         m_data.append(0xff);
         m_data.append((char)0x00);
         m_data.append((char)0x00);
-        m_data.append(3,(m_startAddress>>8)&0xFF);
-        m_data.append(4,(m_startAddress)&0xFF);
+        m_data.append((m_startAddress>>8)&0xFF);
+        m_data.append((m_startAddress)&0xFF);
     }
 
     if (m_success) {
