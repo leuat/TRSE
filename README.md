@@ -34,4 +34,4 @@ TRSE uses a couple of directories that needs to be linked with symlinks:
 # Source code information
 A compiler UML diagram can be found here: https://github.com/leuat/TRSE/blob/master/uml/compiler.png
 
-![Anurag's github stats](https://github-readme-stats.vercel.app/api?username=anuraghazra)
+![Leuatstats](https://github-readme-stats.vercel.app/api?username=leuat)
