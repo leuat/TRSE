@@ -3,12 +3,11 @@
 MOrgasm::MOrgasm()
 {
     m_codeReg.clear();
-    m_codeReg["d"] = 0b0000;
     m_codeReg["x"] = 0b0001;
     m_codeReg["y"] = 0b0010;
     m_codeReg["u"] = 0b0011;
     m_codeReg["s"] = 0b0100;
-   m_codeReg["pc"] = 0b0101;
+    m_codeReg["pc"] = 0b0101;
     m_codeReg["w"] = 0b0110;
     m_codeReg["v"] = 0b0111;
     m_codeReg["a"] = 0b1000;
@@ -17,6 +16,7 @@ MOrgasm::MOrgasm()
     m_codeReg["dp"] = 0b1011;
     m_codeReg["e"] = 0b1110;
     m_codeReg["f"] = 0b1111;
+
     m_pushPullReg["ccr"] = 1;
     m_pushPullReg["a"] = 2;
     m_pushPullReg["b"] = 4;
@@ -26,6 +26,7 @@ MOrgasm::MOrgasm()
     m_pushPullReg["s"] = 64;
     m_pushPullReg["u"] = 64;
     m_pushPullReg["pc"] = 128;
+    m_pushPullReg["d"] =  m_pushPullReg["a"] | m_pushPullReg["b"];
 
 
     m_lea["x"] = 8;
@@ -37,6 +38,14 @@ MOrgasm::MOrgasm()
     m_lea["d"] = 0xb;
     m_lea["none"] = 0x4;
     m_lea["num"] = 0x9;
+    m_lea["pc"] = 0xc;
+
+    m_lda["s"] = 6;
+    m_lda["u"] = 4;
+    m_lda["x"] = 0;
+    m_lda["y"] = 2;
+    m_lda["pc"] = 8;
+
 
 }
 
@@ -74,7 +83,7 @@ int MOrgasm::getTypeFromParams(OrgasmLine& ol)
     long i = 0;
     bool ok;
     if (s.contains(",")) {
-//        ok = Util::NumberFromStringHex(s.split(",")[0],i);
+        //        ok = Util::NumberFromStringHex(s.split(",")[0],i);
     }
     else
     {
@@ -91,6 +100,7 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
     int shl=0;
     for (auto& s : lst)
         s = s.simplified().toLower();
+
     QString p1 = lst[0];
     QString p2 = lst[1];
     if (m_lea.contains(p1))
@@ -99,21 +109,108 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
         if (p1=="")
             val|=m_lea["none"];
         else {
-            val=(val|m_lea["num"])<<16;
-            shl=16;
-            val|=(Util::NumberFromStringHex(p1));
-            size+=2;
+            int shift = Util::NumberFromStringHex(p1);
+            if (shift<16) {
+                // Special case for s
+                val=shift&15;
+                return val | (m_lda[p2]<<4);
+            }
+            if (shift<256) {
+                // 8 bit num
+                val=(val|(m_lea["num"]-1))<<8;
+                shl=8;
+                val|=(shift);
+                size+=1;
+            }
+            else
+               {
+                // 16 bit num
+                    val=(val|(m_lea["num"]))<<16;
+                    shl=16;
+                    val|=(shift);
+                    size+=2;
+                }
         }
-//        else
-  //          throw OrgasmError("Incorrect lea: unknown parameter "+p1,ol);
+        //        else
+        //          throw OrgasmError("Incorrect lea: unknown parameter "+p1,ol);
 
     }
     if (m_lea.contains(p2))
         val |= (m_lea[p2]<<4) << shl;
 
-//    qDebug() << ol.m_orgLine << Util::numToHex(val);
+    //    qDebug() << ol.m_orgLine << Util::numToHex(val);
 
     return val;
+}
+
+int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
+{
+    auto lst = ol.m_expr.simplified().toLower().split(",");
+    int val = 0;
+    size = 1;
+    int shl=0;
+    for (auto& s : lst)
+        s = s.simplified().toLower();
+
+    QString p1 = lst[0];
+    QString p2 = lst[1];
+
+    int incType = 0;
+    if (m_lea.contains(p1) && m_lea.contains(p2))
+        return m_lea[p1] | (m_lea[p2]<<4);
+    else {
+        if (p1=="") {
+            if (p2.contains("+")) incType = 1;
+            if (p2.contains("-")) incType = 2;
+            p2 = p2.remove("+").remove("-");
+
+            if (incType==0)
+                val|=m_lea["none"];
+            if (incType==2)
+                val|=2; // - opcode
+            if (m_lea.contains(p2))
+                val |= (m_lea[p2]<<4) << shl;
+            return val;
+        }
+
+        else {
+            val = 0;
+            int shift = Util::NumberFromStringHex(p1);
+            if (shift>=16 || p2=="pc") {
+                size+=1;
+                int orand = 8;
+                if (shift>=256) {
+                    orand = 9;
+                   size+=1;
+                }
+                if (p2=="pc")
+                    val = ((m_lea[p2]) | (orand)<<4)<<((size-1)*8);
+                else
+                    val = ((m_lea[p2]<<4) | (orand))<<((size-1)*8);
+                val = val | (shift);
+
+                return val;
+            }
+            if (ol.m_orgLine.contains("sta"))
+                qDebug() << ol.m_orgLine << Util::numToHex(val) << p2;
+
+            if (m_lda.contains(p2))
+                val |= m_lda[p2]<<4;
+
+            //val=(val|m_lda["num"])<<16;
+            //shl=16;
+            val|=(shift&15);
+            //size+=2;
+        }
+        //        else
+        //          throw OrgasmError("Incorrect lea: unknown parameter "+p1,ol);
+
+    }
+
+    //    qDebug() << ol.m_orgLine << Util::numToHex(val);
+
+    return val;
+
 }
 
 
@@ -129,19 +226,22 @@ int MOrgasm::getParsedValue(OrgasmLine& ol, int& size, int type)
         return getRegisterCodeFromParams(expr);
 
     if (expr.contains(",")) {
-         return getLeaParams(ol,size);
+        if (ol.m_instruction.m_opCode.contains("lea"))
+            return getLeaParams(ol,size);
+        return getLdaParams(ol,size);
+
     }
 
     if (m_symbolsList.contains(expr))
         return m_symbols[expr];
 
     if (m_passType == OrgasmData::PASS_SYMBOLS)
-    for (auto& l:m_symbolsList) {
-        if (expr.contains(l)) {
-            expr = expr.replace(l,QString::number(m_symbols[l]));
-            expr = expr.replace("#"+l,QString::number(m_symbols[l]));
+        for (auto& l:m_symbolsList) {
+            if (expr.contains(l)) {
+                expr = expr.replace(l,QString::number(m_symbols[l]));
+                expr = expr.replace("#"+l,QString::number(m_symbols[l]));
+            }
         }
-    }
     expr = Util::BinopString(expr);
     return Util::NumberFromStringHex(expr);
 
@@ -149,13 +249,14 @@ int MOrgasm::getParsedValue(OrgasmLine& ol, int& size, int type)
 
 void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 {
-//    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
-
+    //    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
+//    if (ol.m_orgLine.contains("ldb"))
+  //      qDebug() <<ol.m_orgLine;
     QString expr = ol.m_expr;
     QByteArray data;
     ol.m_instruction.m_opCode = ol.m_instruction.m_opCode.toLower();
     QString op = ol.m_instruction.m_opCode.simplified().toLower();
-//    qDebug() << op;
+    //    qDebug() << op;
     if (!m_instructions.contains(op))
         throw OrgasmError("Unknown instruction (opcode missing or not implemented yet. Bug Leuat!) : "+ol.m_orgLine.simplified(),ol);
 
@@ -163,16 +264,16 @@ void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     if (ol.m_instruction.m_opCode=="processor")
         return;
-//    qDebug() << line;
+    //    qDebug() << line;
 
     if (ol.m_instruction.m_opCode=="org")
         return;
 
     int type = getTypeFromParams(ol);
-//    qDebug() << op<<type;
-//    if (type==Op6809::imm || type==Op6809::ext || type==Op6809::inh || type==Op6809::rel)
-        Write(data,ol,type);
-  //  else
+    //    qDebug() << op<<type;
+    //    if (type==Op6809::imm || type==Op6809::ext || type==Op6809::inh || type==Op6809::rel)
+    Write(data,ol,type);
+    //  else
     //    throw OrgasmError("Unknown instruction / opcode : "+ol.m_orgLine.simplified(),ol);
 
 
@@ -184,16 +285,16 @@ void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 uchar MOrgasm::getRegisterCodeFromParams(QString s)
 {
-  auto lst = s.simplified().toLower().split(",");
-  uchar c = 0;
-  for (auto& s : lst)
-      s = s.simplified();
-  if (lst.size()>0 && m_codeReg.contains(lst[0]))
-      c |= m_codeReg[lst[0]]<<4;
-  if (lst.size()>1 && m_codeReg.contains(lst[1]))
-      c |= (m_codeReg[lst[1]]);
+    auto lst = s.simplified().toLower().split(",");
+    uchar c = 0;
+    for (auto& s : lst)
+        s = s.simplified();
+    if (lst.size()>0 && m_codeReg.contains(lst[0]))
+        c |= m_codeReg[lst[0]]<<4;
+    if (lst.size()>1 && m_codeReg.contains(lst[1]))
+        c |= (m_codeReg[lst[1]]);
 
-  return c;
+    return c;
 }
 
 uchar MOrgasm::getPushPullParams(OrgasmLine&ol)
@@ -246,14 +347,14 @@ void MOrgasm::LoadCodes(int CPUflavor)
             op->opcodes.append( code );
             op->size.append(size);
         }
- //       qDebug() << op->name << op->opcodes;
+        //       qDebug() << op->name << op->opcodes;
         m_instructions[op->name] = QSharedPointer<Op6809>(op);
     }
 
 
 }
 
- Op6809* MOrgasm::getOpcode(OrgasmLine&ol) {
+Op6809* MOrgasm::getOpcode(OrgasmLine&ol) {
     QString code = ol.m_instruction.m_opCode.toLower();
     if (!m_instructions.contains(code))
         throw OrgasmError("Instruction '"+code+"' unrecognised or not implemented.",ol);
@@ -274,21 +375,25 @@ void MOrgasm::Write(QByteArray &data, OrgasmLine &l, int type) {
         return;
     int val = 0;
     //if (m_passType==OrgasmData::PASS_SYMBOLS)
-        {
-            val = getParsedValue(l,size, type);
-            if (type==Op6809::rel) {
-                int add = ds+2;
-//                if (val<m_pCounter) add-=1;
-                val-=m_pCounter+add;
-            }
- //           qDebug() << Util::numToHex(val) << l.m_expr << code;
+    {
+        val = getParsedValue(l,size, type);
+        if (type==Op6809::rel) {
+
+            int add = ds+1;
+            // accomodate for lbra opcode size
+            if (l.m_instruction.m_opCode.startsWith("l"))
+                add+=1;
+            //                if (val<m_pCounter) add-=1;
+            val-=m_pCounter+add;
         }
+        //           qDebug() << Util::numToHex(val) << l.m_expr << code;
+    }
 
 
     // tfr, puls,
-//    qDebug() << l.m_orgLine << size;
+    //    qDebug() << l.m_orgLine << size;
     WriteNumber(data, val, size);
- }
+}
 
 void MOrgasm::WriteNumber(QByteArray &data, int val, int size)
 {

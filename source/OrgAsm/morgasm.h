@@ -45,9 +45,11 @@ public:
     QMap<QString,int> m_codeReg;
     QMap<QString,int> m_pushPullReg;
     QMap<QString,int> m_lea;
+    QMap<QString,int> m_lda;
     uchar getRegisterCodeFromParams(QString s);
     uchar getPushPullParams(OrgasmLine& ol);
     int getLeaParams(OrgasmLine& ol, int&size);
+    int getLdaParams(OrgasmLine& ol, int&size);
     int getTypeFromParams(OrgasmLine& ol);
     int getParsedValue(OrgasmLine& ol, int& size, int type);
     void LoadCodes(int CPUflavor) override;

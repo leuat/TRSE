@@ -466,86 +466,86 @@ begin
 ; 	0 - decompression successful
 ; HL - the number of decompressed bytes
 
-LZ4_decompress:
+LZ4_decompressP:
 ; check the magic number
 	ld 		bc,0
 	ld		a,(hl)
 	cp 		#4
-	jr 		z, LZ4_Version4
+	jr 		z, LZ4_Version4P
 	cp 		#3
-	jr 		z, LZ4_LegacyVersion3
+	jr 		z, LZ4_LegacyVersion3P
 	cp 		#2
-	jr 		z, LZ4_LegacyVersion2
-LZ4_version_not_supported:
+	jr 		z, LZ4_LegacyVersion2P
+LZ4_version_not_supportedP:
 	ld 		a,2
-	jr		LZ4_decompress_finished
-LZ4_decompress_error:
+	jr		LZ4_decompress_finishedP
+LZ4_decompress_errorP:
 	ld 		a,1
-LZ4_decompress_finished:
+LZ4_decompress_finishedP:
 	ret
 
-LZ4_Version4:
+LZ4_Version4P:
 ; check version 1.41 magic 
 	inc		hl
 	ld 		a,(hl)
 	inc		hl
 	cp		#$22
-	jr		nz, LZ4_version_not_supported
+	jr		nz, LZ4_version_not_supportedP
 	ld		a,(hl)
 	inc		hl
 	cp		#$4D
-	jr		nz, LZ4_version_not_supported
+	jr		nz, LZ4_version_not_supportedP
 	ld		a,(hl)
 	inc		hl
 	cp		#$18
-	jr		nz, LZ4_version_not_supported
+	jr		nz, LZ4_version_not_supportedP
 ; parse version 1.41 spec header
 	ld		a,(hl)
 	inc		hl
 ; check version bits for version 01
 	bit		7,a
-	jr		nz, LZ4_version_not_supported
+	jr		nz, LZ4_version_not_supportedP
 	bit		6,a
-	jr		z, LZ4_version_not_supported
+	jr		z, LZ4_version_not_supportedP
 ; is content size set?
 	bit		3,a
-	jr		z, LZ4_no_content_size
-; skip content size
+	jr		z, LZ4_no_content_sizeP
+; skip content sizeP
 	ld		c,8
-LZ4_no_content_size:
+LZ4_no_content_sizeP:
 	bit		0,a
-	jr		z, LZ4_no_preset_dictionary
+	jr		z, LZ4_no_preset_dictionaryP
 ; skip dictionary id
 	ld		a,c
 	add		a,4
 	ld		c,a
-LZ4_no_preset_dictionary:
+LZ4_no_preset_dictionaryP:
 	ld		a,(hl)
 	inc		hl
 ; strip reserved bits (and #70) and check if block max size is set to 64kb (4)
 	and		#$40
-	jr		z, LZ4_version_not_supported
+	jr		z, LZ4_version_not_supportedP
 ; skip header checksum
 	inc		bc
-	jr		LZ4_start_decompression
+	jr		LZ4_start_decompressionP
 
-LZ4_LegacyVersion3:
+LZ4_LegacyVersion3P:
 	ld		c,8
-LZ4_LegacyVersion2:
+LZ4_LegacyVersion2P:
 	inc		hl
 	ld		a,(hl)
 	inc		hl
 	cp		#$21
-	jr		nz, LZ4_version_not_supported
+	jr		nz, LZ4_version_not_supportedP
 	ld		a,(hl)
 	inc		hl
 	cp		#$4c
-	jr		nz, LZ4_version_not_supported
+	jr		nz, LZ4_version_not_supportedP
 	ld		a,(hl)
 	inc		hl
 	cp		#$18
-	jr		nz, LZ4_version_not_supported
-LZ4_start_decompression:
+	jr		nz, LZ4_version_not_supportedP
+LZ4_start_decompressionP:
 	add		hl,bc
 ; load low 16 bit of compreesed block size to bc
 	ld		c,(hl)
@@ -555,16 +555,16 @@ LZ4_start_decompression:
 ; check if compressed size <64kb - high 16 bits of compressed size must be 0
 	ld		a,(hl)
 	cp		0
-	jr		nz,LZ4_decompress_error
+	jr		nz,LZ4_decompress_errorP
 	inc		hl
 	ld		a,(hl)
 	cp		0
-	jr		nz,LZ4_decompress_error
+	jr		nz,LZ4_decompress_errorP
 	inc		hl
 
 ; decompress raw lz4 data packet
 ; on entry hl - start of packed buffer, de - destination buffer, bc - size of packed data
-LZ4_decompress_raw:
+LZ4_decompress_rawP:
 	push	de							; store original destination pointer
 	push	hl							; store start of compressed data source
 	add		hl,bc       				; calculate end address of compressed block
@@ -576,7 +576,7 @@ LZ4_decompress_raw:
 	ld		b,0		         			; clear b, c is set later
 
 ; get decompression token
-LZ4_GetToken:
+LZ4_GetTokenP:
 	xor		a 							; reset c flag for sbc later
 	ld		a,(hl)						; read token
 	inc		hl
@@ -588,10 +588,10 @@ LZ4_GetToken:
 	rlca
 ; copy literals
 	and		#$f							; token can be max 15 - mask out unimportant bits
-	jr		z,LZ4_skipcalc   			; there is no literals, skip calculation of literal size
+	jr		z,LZ4_skipcalcP   			; there is no literals, skip calculation of literal size
 	ld		c,a							; set the count for calculation
 	cp		#$f							; if literal size <15
-	jr		nz, LZ4_copyliterals2		; copy literal, else
+	jr		nz, LZ4_copyliterals2P		; copy literal, else
 ; calculate total literal size by adding contents of following bytes
 	push	de							; store destination
 	ex		de,hl
@@ -599,21 +599,21 @@ LZ4_GetToken:
 	ld		h,0         				; set hl with size of literal to copy 
 	ld		l,a
 
-LZ4_calcloop:
+LZ4_calcloopP:
 	ld		a,(de)						; get additional literal size to add 
 	inc		de
 	ld		c,a							; set bc to the length of literal
 	add		hl,bc						; add it to the total literal length
 	cp		#$ff							; if literal=255
-	jr		z,LZ4_calcloop				; continue calculating the total literal size
+	jr		z,LZ4_calcloopP				; continue calculating the total literal size
 	ld		b,h							; store total literal size to copy in bc
 	ld		c,l
 	ex		de,hl						; hl now contains current compressed data pointer  
 	pop		de							; restore destination to de 
 
-LZ4_copyliterals2:
+LZ4_copyliterals2P:
 ;	push af
-lp2:
+lp2P:
 
 	push bc
 	ld b,d
@@ -629,7 +629,7 @@ lp2:
 	ld a,b
 	or c
 	
- 	jr nz, lp2
+ 	jr nz, lp2P
 ; 	ld a,[hl]
 ;	
 
@@ -637,14 +637,14 @@ lp2:
  ;	pop af
 ;	ldir								; copy literal to destination
 		
-LZ4_skipcalc:
+LZ4_skipcalcP:
 ; check for end of compressed data
 	pop		af							; restore token, carry is cleared because of xor a at the beginning of GetToken
 	pop		bc							; restore end address of compressed data 
 	push	hl							; store current compressed data pointer 
 	sbc		hl, bc						; check if we reached the end of compressed data buffer
 	pop		hl							; restore current compressed data pointer
-	jr		z,LZ4_decompress_success	; decompression finished
+	jr		z,LZ4_decompress_successP	; decompression finished
 	push	bc							; store end address of compressed data
 
 ; Copy Matches
@@ -667,20 +667,20 @@ LZ4_skipcalc:
 	ld		b,0     					; load bc with the token
 	ld		c,a
 	cp		#$f							; if matchlength <15
-	jr nz, LZ4_copymatches				; copy matches. else 
+	jr nz, LZ4_copymatchesP				; copy matches. else 
 
 ; calculate total matchlength by adding additional bytes
 	push	hl							; store current decompressed data source
 ; a = size of match to copy, de= pointer to data to be added
 	ld		h,0     					; set hl with initial matchlength to copy
 	ld		l,a
-LZ4_calcloop2:
+LZ4_calcloop2P:
 	ld		a,(de)						; get additional matchlength to add
 	inc		de
 	ld		c,a							; set bc to the matchlength
 	add		hl,bc						; add it to the total match length
 	cp		#$ff							; if matchlength=255
-	jr		z,LZ4_calcloop2				; continue calculating the total match length		
+	jr		z,LZ4_calcloop2P				; continue calculating the total match length		
 	ld		b,h							; store total matchlength to copy in bc
 	ld		c,l			 
 	pop		hl							; restore current decompressed data source
@@ -690,7 +690,7 @@ LZ4_calcloop2:
 	ex		de,hl 
 	push	af							; restore stack
 
-LZ4_copymatches:
+LZ4_copymatchesP:
 	pop		de							; restore destination pointer
 	inc		bc							; add base length of 4 to get the correct size of matchlength 
 	inc		bc
@@ -700,7 +700,7 @@ LZ4_copymatches:
 ;	ldir
 	push af
 	
-iloop:
+iloopP:
 	xor a
 	push bc
 	ld b,d
@@ -716,12 +716,12 @@ iloop:
 	ld a,b
 	or c
 	
- 	jr nz, iloop
+ 	jr nz, iloopP
 ;	ldir	
 	
 	pop af
 	pop		hl							; restore current compressed data source
-	jp		LZ4_GetToken				; continue decompression
+	jp		LZ4_GetTokenP				; continue decompression
 
 ;LZ4_copymatches:
 ;	pop		de							; restore destination pointer
@@ -735,7 +735,7 @@ iloop:
 
 	
 	
-LZ4_decompress_success:
+LZ4_decompress_successP:
 	pop		hl							; store destination pointer 
 	sbc		hl,de						; calculate the number of decompressed bytes 
 	xor		a							; clear exit code
