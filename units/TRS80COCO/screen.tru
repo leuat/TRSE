@@ -44,8 +44,10 @@ begin
 	videores := %01100000 | b | c;
 	asm("
 	ldd #$EE00
- 	sta $FF9D	MSB = ($70000 + addr) / 2048
- 	stb $FF9E	LSB = (addr / 8) AND $ff	
+;	MSB = ($70000 + addr) / 2048
+ 	sta $FF9D	
+; LSB = (addr / 8) AND $ff	 	
+ 	stb $FF9E	
 	clr $FF9F
 	");
 end;	

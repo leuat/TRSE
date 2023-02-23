@@ -39,6 +39,7 @@ MOrgasm::MOrgasm()
     m_lea["none"] = 0x4;
     m_lea["num"] = 0x9;
     m_lea["pc"] = 0xc;
+    m_lea["pcr"] = 0xd;
 
     m_lda["s"] = 6;
     m_lda["u"] = 4;
@@ -46,6 +47,7 @@ MOrgasm::MOrgasm()
     m_lda["y"] = 2;
     m_lda["pc"] = 8;
 
+    isLittleEndian = false;
 
 }
 
@@ -94,24 +96,32 @@ int MOrgasm::getTypeFromParams(OrgasmLine& ol)
 }
 int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
 {
-    auto lst = ol.m_expr.simplified().toLower().split(",");
+    auto lst = ol.m_expr.simplified().split(",");
     int val = 0;
     size = 1;
     int shl=0;
-    for (auto& s : lst)
-        s = s.simplified().toLower();
+    for (auto& s : lst) {
+        s = s.simplified();//.toLower();
+        if (m_regs.contains(s.toLower()))
+            s = s.toLower();
+
+    }
+
+
     bool isNegative = 0;
     QString p1 = lst[0];
     QString p2 = lst[1];
     if (p1.startsWith("-"))
         isNegative = 1;
     if (m_lea.contains(p1))
-        val |= m_lea[lst[0]];
+        val |= m_lea[p1];
     else {
         if (p1=="")
             val|=m_lea["none"];
         else {
-            int shift = Util::NumberFromStringHex(p1);
+            int shift = getParsedInt(p1);
+            if (ol.m_orgLine.contains("pcr"))
+                    qDebug() << ol.m_orgLine << shift << p1;
             if (abs(shift)<16) {
                 // Special case for s
                 val=shift&15;
@@ -131,6 +141,13 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
                     shl=16;
                     val|=(shift&0xFFFF);
                     size+=2;
+
+                    if (p2=="pcr") {
+                        // special snowflake blargh
+                        val=((shift-m_pCounter-4)&0xFFFF) | 0x8d<<16;
+                        return val;
+
+                    }
                 }
         }
         //        else
@@ -139,8 +156,8 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
     }
     if (m_lea.contains(p2))
         val |= (m_lea[p2]<<4) << shl;
-
-    //    qDebug() << ol.m_orgLine << Util::numToHex(val);
+    if (ol.m_orgLine.contains("pcr"))
+          qDebug() << ol.m_orgLine << Util::numToHex(val) << shl;
 
     return val;
 }
@@ -205,8 +222,8 @@ int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
                 else
                     val = ((m_lea[p2]<<4) | (orand))<<((size-1)*8);
                 val = val | (shift&an);
-                if (ol.m_orgLine.contains("-1000"))
-                    qDebug() << ol.m_orgLine << Util::numToHex(val) << p2 << size;
+//                if (ol.m_orgLine.contains("-1000"))
+  //                  qDebug() << ol.m_orgLine << Util::numToHex(val) << p2 << size;
 
                 return val;
             }
@@ -245,6 +262,7 @@ int MOrgasm::getParsedValue(OrgasmLine& ol, int& size, int type)
     if (expr.contains(",")) {
         if (ol.m_instruction.m_opCode.contains("lea"))
             return getLeaParams(ol,size);
+
         return getLdaParams(ol,size);
 
     }
@@ -252,11 +270,29 @@ int MOrgasm::getParsedValue(OrgasmLine& ol, int& size, int type)
     if (m_symbolsList.contains(expr))
         return m_symbols[expr];
 
-    if (m_passType == OrgasmData::PASS_SYMBOLS)
+    return getParsedInt(expr);
+}
+
+int MOrgasm::getParsedInt(QString expr)
+{
+//    if (m_passType == OrgasmData::PASS_SYMBOLS)
+    std::sort(m_symbolsList.begin(), m_symbolsList.end(), [](QString a, QString b)
+                                     {
+                                         return a.length() > b.length();
+                                     });
+
         for (auto& l:m_symbolsList) {
             if (expr.contains(l)) {
-                expr = expr.replace(l,QString::number(m_symbols[l]));
-                expr = expr.replace("#"+l,QString::number(m_symbols[l]));
+                int num = 0x1000; // some temp 16-bit number
+                if (m_passType == OrgasmData::PASS_SYMBOLS)
+                    num = m_symbols[l];
+                auto oe = expr;
+
+                expr = expr.replace(l,QString::number(num));
+                expr = expr.replace("#"+l,QString::number(num));
+                if (oe.contains("Screen_bytetbl1"))
+                    qDebug() << expr << l;
+
             }
         }
     expr = Util::BinopString(expr);

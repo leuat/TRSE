@@ -4,7 +4,7 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 {
     m_codeGen = QSharedPointer<CodeGen6809>(new CodeGen6809());
     m_assembler = QSharedPointer<Asm6809>(new Asm6809());
-    bool useOrgasm = m_ini->getString("assembler_6809")=="OrgAsm";
+    bool useOrgasm = m_ini->getString("assembler_6809").toLower()=="orgasm";
     m_assembler->m_isOrgasm = useOrgasm;
     m_assembler->byte="fcb";
     m_assembler->word="fdb";

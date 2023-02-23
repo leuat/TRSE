@@ -673,7 +673,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             }
 
 
-//            if (lst.count()>1)  qDebug() << "Adding: " <<  Util::NumberFromStringHex(s);
             m_data.append(Util::NumberFromStringHex(s));
 
 //            qDebug() << Util::NumberFromStringHex(s);
@@ -743,12 +742,25 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
         if (s.trimmed()=="") continue;
         s = s.trimmed().simplified();
         if (m_symbolsList.contains(s)) {
-            m_data.append(m_symbols[s]&0xFF);
-            m_data.append((m_symbols[s]>>8)&0xFF);
+            if (isLittleEndian) {
+                m_data.append(m_symbols[s]&0xFF);
+                m_data.append((m_symbols[s]>>8)&0xFF);
+            }
+            else {
+                m_data.append((m_symbols[s]>>8)&0xFF);
+                m_data.append(m_symbols[s]&0xFF);
+            }
         }
         else {
-            m_data.append(Util::NumberFromStringHex(s)&0xFF);
-            m_data.append(Util::NumberFromStringHex(s)>>8);
+            if (isLittleEndian) {
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+                m_data.append(Util::NumberFromStringHex(s)>>8);
+            }
+            else {
+                m_data.append(Util::NumberFromStringHex(s)>>8);
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+
+            }
         }
         m_pCounter++;
         m_pCounter++;

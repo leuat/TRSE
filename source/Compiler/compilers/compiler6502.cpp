@@ -11,6 +11,7 @@ void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
     else {
         m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
         m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+        m_assembler->m_isOrgasm = m_ini->getString("assembler").toLower()=="orgasm";
     }
     m_assembler->m_zbyte = 0x10;
 

@@ -914,6 +914,8 @@ void CodeGen6809::AssignVariable(QSharedPointer<NodeAssign> node)
 }
 
 QString CodeGen6809::getIncbin() {
+    if (as->m_isOrgasm)
+        return "incbin";
     return "includebin";
 }
 

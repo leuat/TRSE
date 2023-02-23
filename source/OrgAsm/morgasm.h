@@ -34,7 +34,7 @@ class MOrgasm : public Orgasm
 public:
     MOrgasm();
     void ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd) override;
-    QStringList m_regs = QStringList() << "a"<<"b"<<"d"<<"x"<<"y"<<"u" <<"s";
+    QStringList m_regs = QStringList() << "a"<<"b"<<"d"<<"x"<<"y"<<"u" <<"s"<<"pc"<<"pcr";
     QStringList m_16bitRegs = QStringList() << "x"<<"u"<<"y"<<"s";
     QStringList m_8bitRegs = QStringList() << "a"<<"b";
     QStringList m_ignoreCommands = QStringList() << "processor" <<"cpu" <<"org" << "end";
@@ -52,6 +52,7 @@ public:
     int getLdaParams(OrgasmLine& ol, int&size);
     int getTypeFromParams(OrgasmLine& ol);
     int getParsedValue(OrgasmLine& ol, int& size, int type);
+    int getParsedInt(QString p1);
     void LoadCodes(int CPUflavor) override;
     QMap<QString,QSharedPointer<Op6809>> m_instructions;
     QString m_opCode;

@@ -20,6 +20,8 @@ begin
 	asm("
 topp:	
 	lbra topp
+			 leau d,u
+	
 			leax 1,x
 			leay 1,y
 			leax 1,y

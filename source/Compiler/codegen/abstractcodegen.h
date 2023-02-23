@@ -60,7 +60,6 @@ public:
     bool m_outputSource = false; // Turned off for now
     QStringList m_rasSource;
     bool m_isFarAway = false;
-
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch
     virtual void dispatch(QSharedPointer<NodeBinOP> node) = 0;
