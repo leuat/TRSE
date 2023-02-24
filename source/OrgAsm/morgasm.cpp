@@ -109,6 +109,7 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
 
 
     bool isNegative = 0;
+    QString op = ol.m_instruction.m_opCode;
     QString p1 = lst[0];
     QString p2 = lst[1];
     if (p1.startsWith("-"))
@@ -127,14 +128,15 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
                 val=shift&15;
                 return val | ((m_lda[p2]+isNegative)<<4);
             }
-/*            if (abs(shift)<256) {
+
+            if (abs(shift)<256 && (op=="leax" || op=="leay")) {
                 // 8 bit num
                 val=(val|(m_lea["num"]-1))<<8;
                 shl=8;
                 val|=(shift&0xFF);
                 size+=1;
             }
-            else*/
+            else
                {
                 // 16 bit num
                     val=(val|(m_lea["num"]))<<16;
@@ -184,7 +186,12 @@ int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
         return m_lea[p1] | (m_lea[p2]<<4);
     else {
         if (p1=="") {
+            if (p2.contains("++")) incType = 3;
+            else
+            if (p2.contains("--")) incType = 4;
+            else
             if (p2.contains("+")) incType = 1;
+            else
             if (p2.contains("-")) incType = 2;
             p2 = p2.remove("+").remove("-");
             // does it have + or -?
@@ -192,6 +199,11 @@ int MOrgasm::getLdaParams(OrgasmLine &ol, int &size)
                 val|=m_lea["none"];
             if (incType==2)
                 val|=2; // - opcode
+            if (incType==3)
+                val|=1; // - opcode
+            // Yet another special snowflake
+     //       if (incType==1)
+       //         val|=1; // - opcode
             if (m_lea.contains(p2))
                 val |= (m_lea[p2]<<4) << shl;
             return val;

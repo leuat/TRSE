@@ -20,6 +20,35 @@ begin
 	asm("
 topp:	
 	lbra topp
+	
+	
+	
+		lda ,x++
+		ldy ,x++
+		ldb ,x++
+		lda ,u++
+		ldb ,u++
+		ldx ,u++
+		sta ,x++
+		stb ,x++
+		sta ,u++
+		stb ,u++
+		stx ,u++
+		lda ,y++
+		ldy ,y++
+		ldb ,y++
+		sta ,y++
+		stb ,y++
+		stx ,y++
+		ldd ,x++
+		ldd ,u++
+		ldd ,u++
+		ldd ,x++
+
+
+
+	
+	
 			 leau d,u
 	
 			leax 1,x
