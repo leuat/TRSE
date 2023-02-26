@@ -399,7 +399,7 @@ QString Asm6809::String(QStringList lst, bool term)
 
     for (QString s:lst) {
         for (QString s:lst)
-            res+=DeclareSingleString(s,mark,"fcb");
+            res+=DeclareSingleString(s,mark,byte);
 
 /*        if (s!=lst.last())
             res=res + "\n";
@@ -589,6 +589,8 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
    // qDebug() << "Using reglar variables: " << m_zpStack.count();
     QString tmpVar = NewLabel(name+"_var");
     if (type=="byte") type=byte;
+    if (m_isOrgasm && type=="fcb")
+        type = byte;
     if (type=="word") type=word;
     Comment("Store in temp var");
     QString labelVar = getLabelEnding(tmpVar) + "\t "+type+"\t0 ";

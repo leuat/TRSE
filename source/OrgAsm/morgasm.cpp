@@ -129,14 +129,15 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
                 return val | ((m_lda[p2]+isNegative)<<4);
             }
 
-            if (abs(shift)<256 && (op=="leax" || op=="leay")) {
+/*            if (abs(shift)<256)  // && (op=="leax" || op=="leay"))
+             {
                 // 8 bit num
                 val=(val|(m_lea["num"]-1))<<8;
                 shl=8;
                 val|=(shift&0xFF);
                 size+=1;
             }
-            else
+            else*/
                {
                 // 16 bit num
                     val=(val|(m_lea["num"]))<<16;

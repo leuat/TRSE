@@ -1,0 +1,103 @@
+unit System;
+var
+	val,x,y,line,c,result : byte; 
+
+procedure Clear() inline;
+begin
+	asm("cls");
+end;
+
+function Random() : byte;
+begin
+	 
+	asm("
+		RND V0, #FF
+		LD I, result
+		LD [I], V0
+	");
+	Random := result;
+end;
+procedure DrawLine(x,y,line:global byte);
+begin 
+    asm("
+        LD I, System_x
+        LD V1, [I]
+        LD I, System_line
+        DRW V0, V1, 1
+    ");
+end;
+procedure PutPixel(x,y:global byte ) ;
+begin
+    DrawLine(x,y,$80);
+end;
+
+
+
+procedure Beep(x : global byte);
+begin
+    asm("
+        LD I, System_x
+        LD V0, [I]
+        LD ST, V0
+    ");
+end;
+
+procedure PrintHexChar(x,y,c : global byte);
+
+begin
+    asm("
+
+        LD I, System_x
+        LD V2, [I]
+        LD F, V2
+        DRW V0, V1, 5 
+    ");
+end;
+
+function WaitForKey(): byte;
+begin
+    asm("
+        LD I, System_result
+        LD V0, K
+        LD [I], V0
+    ");
+    WaitForKey := result;
+end;
+
+procedure setDT(x : global byte);
+begin
+    asm("
+        LD I, System_x
+        LD V0, [I]
+        LD DT, V0
+    ");
+
+end;
+
+function getDT() : byte;
+begin
+    asm("
+        LD I, System_result
+        LD V0, DT
+        LD [I], V0
+    ");
+    getDT := result;
+
+end;
+
+function isKeydown(c : global byte) : boolean;
+begin
+    asm("
+        LD I, System_c
+        LD V0, [I]
+        LD V1, 0
+        SKNP V0
+        LD V1, 1
+        LD V0, V1
+        LD I,result
+        LD [I], V0
+    ");
+    isKeydown := result;
+end;
+
+end.
