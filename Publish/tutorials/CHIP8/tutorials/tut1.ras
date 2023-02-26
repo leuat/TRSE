@@ -13,7 +13,7 @@ var
     %01111110
 	,$FF,$FF,$FF
 );
-	x,y : byte;
+	x,y,z : byte;
 	
 procedure Init();
 begin
@@ -39,6 +39,7 @@ begin
 	for x:=0 to 100 do
 	begin
 		y:=x+10;
+		z:=System::Random();
 		System::DrawLine(x,y,$FF);
 	end;	
 	

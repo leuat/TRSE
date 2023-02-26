@@ -197,8 +197,7 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeVar> n)
 QString CodeGenChip8::LoadAddress(QSharedPointer<Node> n)
 {
     QString reg = PushReg();
-    as->Asm("adrp "+reg+", "+n->getValue(as)+"@PAGE");
-    as->Asm("add "+reg+","+reg+","+n->getValue(as)+"@PAGEOFF");
+    as->Asm("ld "+reg+","+n->getValue(as));
     return reg;
 }
 
@@ -578,43 +577,6 @@ void CodeGenChip8::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, Q
 
 void CodeGenChip8::BuildToCmp(QSharedPointer<Node> node)
 {
-/*    if (node->m_left->getValue(as)!="") {
-        if (node->m_right->isPureNumeric())
-        {
-            as->Comment("Compare with pure num / var optimization");
-            //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-//            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-            if (node->m_left->isPure()) {
-                as->Asm("cmp ["+node->m_left->getValue(as)+"],"+getWordByteType(as,node->m_left)+" " + node->m_right->getValue(as));
-                return;
-            }
-
-            LoadVariable(node->m_left);
-            as->Asm("cmp "+getReg()+"," + node->m_right->getValue(as));
-
-            return;
-        } else
-        {
-            as->Comment("Compare two vars optimization");
-
-            if (node->m_right->isPureVariable()) {
-                //QString wtf = as->m_regAcc.Get();
-                LoadVariable(node->m_right);
-                //TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>node->m_left);
-                //TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
-                as->Asm("cmp  ["+node->m_left->getValue(as) +"]," + getReg());
-
-                return;
-            }
-            node->m_right->Accept(this);
-            as->Term();
-
-            as->Asm("cmp  "+node->m_left->getValue(as) +"," + getReg());
-
-//            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>node->m_left,as->m_varStack.pop());
-            return;
-        }
-    }*/
     QString ax = getReg();
     node->m_left->Accept(this);
 

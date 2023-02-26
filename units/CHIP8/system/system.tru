@@ -9,13 +9,9 @@ end;
 
 function Random() : byte;
 begin
-	 
 	asm("
 		RND V0, #FF
-		LD I, result
-		LD [I], V0
 	");
-	Random := result;
 end;
 procedure DrawLine(x,y,line:global byte);
 begin 
