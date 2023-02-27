@@ -7,7 +7,7 @@ begin
 	asm("cls");
 end;
 
-function Random() : byte;
+function Random() inline : byte;
 begin
 	asm("
 		RND V0, #FF
@@ -50,14 +50,9 @@ begin
     ");
 end;
 
-function WaitForKey(): byte;
+function WaitForKey() inline : byte;
 begin
-    asm("
-        LD I, System_result
-        LD V0, K
-        LD [I], V0
-    ");
-    WaitForKey := result;
+    asm("LD V0, K");
 end;
 
 procedure setDT(x : global byte);
@@ -70,14 +65,9 @@ begin
 
 end;
 
-function getDT() : byte;
+function getDT() inline : byte;
 begin
-    asm("
-        LD I, System_result
-        LD V0, DT
-        LD [I], V0
-    ");
-    getDT := result;
+    asm("LD V0, DT");
 
 end;
 
@@ -90,10 +80,7 @@ begin
         SKNP V0
         LD V1, 1
         LD V0, V1
-        LD I,result
-        LD [I], V0
     ");
-    isKeydown := result;
 end;
 
 end.
