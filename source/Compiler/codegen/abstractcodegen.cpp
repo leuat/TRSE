@@ -210,7 +210,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
         ErrorHandler::e.Warning("Using integer '"+nVar->m_left->getValue(as)+"' as a for loop index can result in unpredictable behavior on the 6502. Please keep to using byte indicies, and use pointers to cover data > 255 bytes. See the TRSE tutorials for examples.", node->m_op.m_lineNumber);
     }
 
-     QString var = v->getValue(as);//  m_a->Build(as);
     // Perform assigment
     node->m_left->Accept(this);
 

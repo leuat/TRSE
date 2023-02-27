@@ -37,7 +37,7 @@ In this program, we simply display these 16 screens while updating the character
 procedure SetScreen();
 begin
 	// Ugly but works, sets p1 to point to screen memory location 1000*frame 
-	p1:=#screen+frame*4*250;
+	p1:=#screen+frame*1000;
 	
 
 	// Enable bank switching to remove flickering
@@ -73,6 +73,7 @@ begin
 		for y:=0 to 25 do begin
 			for x:=0 to 40 do 
 				p1[x]:=p1[x]+k;
+				
 			p1:=p1+screen_width;
 		end;	
 		

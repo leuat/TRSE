@@ -110,7 +110,7 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
              }
         }
     }
-    if (cmd.startsWith("ld")) {
+    if (cmd.startsWith("ld") && par.count()!=0) {
         // Two ldxes
         QString check = "st"+QString(cmd[2])+" "+par[0];
 //        qDebug() << check << prevLine->m_orgLine.simplified();
