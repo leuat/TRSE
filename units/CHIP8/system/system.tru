@@ -1,6 +1,6 @@
 unit System;
 var
-	val,x,y,line,c,result : byte; 
+	val,x,y,c : byte; 
 
 procedure Clear() inline;
 begin
@@ -13,12 +13,12 @@ begin
 		RND V0, #FF
 	");
 end;
-procedure DrawLine(x,y,line:global byte);
+procedure DrawLine(x,y,c:global byte);
 begin 
     asm("
         LD I, System_x
         LD V1, [I]
-        LD I, System_line
+        LD I, System_c
         DRW V0, V1, 1
     ");
 end;
