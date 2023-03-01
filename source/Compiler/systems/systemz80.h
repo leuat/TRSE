@@ -33,6 +33,9 @@ public:
         return true;
     }
 
+    void PackProgram(QString filename, int start, int actualStarto, QString&text, QString currentDir, QSharedPointer<SymbolTable> st, QString asmFile);
+
+
     QString CompressFile(QString fileName) override;
 
     virtual int getCPUFlavorint() override {

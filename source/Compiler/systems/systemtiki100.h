@@ -12,6 +12,8 @@ public:
 
         m_startAddress = 0x0100;
         m_programStartAddress = 0x0100;
+        m_supportsExomizer = true;
+
     }
 
 

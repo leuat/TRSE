@@ -393,6 +393,7 @@ void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString fil
         m_orgAsm->SaveSymbolsList(filename+".sym");
 
     text+=output;
+    m_buildSuccess = m_orgAsm->m_success;
 
 }
 

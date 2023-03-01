@@ -741,5 +741,6 @@
         <file>resources/code/Z80/init_z180.s</file>
         <file>resources/images/CHIP8.png</file>
         <file>resources/text/help/r/addemulatorparam.rtf</file>
+        <file>resources/code/tiki100/unpack.asm</file>
     </qresource>
 </RCC>
