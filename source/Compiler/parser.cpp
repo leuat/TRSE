@@ -5354,14 +5354,53 @@ void Parser::HandleCompress()
     Eat(TokenType::STRING);
     QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
     Eat(TokenType::STRING);
-
+    int split = 1;
+    if (m_currentToken.m_type==TokenType::INTEGER_CONST) {
+        split = m_currentToken.m_intVal;
+        Eat();
+    }
     QString lz4 = m_settingsIni->getString("lz4");
     if (!QFile::exists(lz4))
         ErrorHandler::e.Error("In order to compress files, please set up the 'lz4' path in the 'Utilities' section in the TRSE settings panel.", m_currentToken.m_lineNumber);
+    QString out, err;
+    if (split!=1) {
+        QByteArray da = Util::loadBinaryFile(inFile);
+        int start = 0;
+        int sz = da.size()/split;
+        for (int i=0;i<split;i++) {
+            qDebug() << i;
+            QString of = outFile + QString::number(i);
+            QString tmp = inFile+"_tmp"+QString::number(i);
+            QByteArray d = da.mid(start,sz);
+            start+=sz;
+            qDebug() << d.size();
+            if (QFile::exists(tmp))
+                QFile::remove(tmp);
+            if (QFile::exists(of))
+                QFile::remove(of);
+            Util::SaveByteArray(d,tmp);
+
+            QStringList params = QStringList() << "-l" << tmp << of;
+            Syntax::s.m_currentSystem->StartProcess(lz4,params,out,true);
+
+            // Automatically add header to TIM
+            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TIM) {
+                QByteArray d = Util::loadBinaryFile(of);
+                int i = d.size();
+                d.insert(0,i/128);
+                d.insert(1,i&127);
+                if (QFile::exists(of))
+                    QFile::remove(of);
+                Util::SaveByteArray(d,of);
+
+            }
+
+        }
+        return;
+    }
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);
-    QString out, err;
     QStringList params = QStringList() << "-l" << inFile << outFile;
     Syntax::s.m_currentSystem->StartProcess(lz4,params,out,true);
 

@@ -5,7 +5,7 @@ var
 	len : integer;
 	@donotremove temp
 	temp:integer;
- 
+ 	t1 : byte;
 
 procedure Decompress(in, out : global pointer of integer);
 begin
@@ -389,6 +389,9 @@ mediumlength
 	 );*/
 end;
 
+
+
+
 procedure DecompressToPort(in, out : global pointer of integer);
 begin
 
@@ -618,9 +621,9 @@ lp2P:
 	push bc
 	ld b,d
 	ld c,e
-	;outi
 	ld a,[hl]
 	out (c),a
+;	ld [Compression_t1],a	
  	;ld [de],a
 	pop bc
 	inc hl
@@ -629,9 +632,11 @@ lp2P:
 	ld a,b
 	or c
 	
+	
  	jr nz, lp2P
 ; 	ld a,[hl]
 ;	
+;	ld a,[Compression_t1]
 
  	; preserve latest a
  ;	pop af
@@ -684,6 +689,7 @@ LZ4_calcloop2P:
 	ld		b,h							; store total matchlength to copy in bc
 	ld		c,l			 
 	pop		hl							; restore current decompressed data source
+	
 	pop		af							; set stack to proper position by restoring destination pointer temporarily into af  
 	ex		de,hl
 	ex		(sp),hl						; update current compressed data pointer on the stack to the new value from de
@@ -698,28 +704,36 @@ LZ4_copymatchesP:
 	inc		bc
 
 ;	ldir
-	push af
+;	push af
 	
-iloopP:
-	xor a
 	push bc
 	ld b,d
 	ld c,e
-	;outi
-	ld a,[hl]
-	;out (c),a
-	;ld [de],a
-	pop bc
-	inc hl
-	inc de
-	dec bc
-	ld a,b
-	or c
+	pop de	
 	
+iloopP:
+;	xor a
+;	push bc
+	ld a,[hl]
+	out (c),a
+	inc hl
+	inc bc
+	dec de
+	ld a,d
+	or e
  	jr nz, iloopP
+ 	
+ 	push bc
+ 	pop de
+ 	ld b,0
+ 	ld c,0
+ 	
+;	ld a,[Compression_t1]
+ 	
 ;	ldir	
 	
-	pop af
+;	pop af
+cnt1:
 	pop		hl							; restore current compressed data source
 	jp		LZ4_GetTokenP				; continue decompression
 
@@ -741,7 +755,26 @@ LZ4_decompress_successP:
 	xor		a							; clear exit code
 	ret
 	 ");
+/*
 
+LZ4_copymatches:
+	pop		de							; restore destination pointer
+	inc		bc							; add base length of 4 to get the correct size of matchlength 
+	inc		bc
+	inc		bc
+	inc		bc
+	ldir								; copy match
+	pop		hl							; restore current compressed data source
+	jr		LZ4_GetToken				; continue decompression
+LZ4_decompress_success:
+	pop		hl							; store destination pointer 
+	sbc		hl,de						; calculate the number of decompressed bytes 
+	xor		a							; clear exit code
+	ret
+
+
+
+*/
 end;
 
 procedure DecompressToPort2(in, out : global pointer of integer);

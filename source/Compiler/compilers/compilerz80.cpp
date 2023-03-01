@@ -18,9 +18,11 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     auto sys = m_projectIni->getString("cpu_Z80_system");
 //    if (sys=="") sys ="z80";
     if (m_ini->getString("assembler_z80")!="Pasmo")
+  //      if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm("CPU "+Syntax::s.m_currentSystem->StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
+//        if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {

@@ -1,6 +1,10 @@
 #include "compilergbz80.h"
 
 
+CompilerGBZ80::CompilerGBZ80(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni) : Compiler(ini, pIni) {
+
+}
+
 void CompilerGBZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
     m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
