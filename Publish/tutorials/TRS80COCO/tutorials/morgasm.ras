@@ -16,11 +16,13 @@ begin
 	System::Init();
 	zp:=$400;
 	Memory::Fill16(#tmp,0,100);
-	i:=-$F2;
-	i1:=-$5523;
+	i:=100;
+	i1:=1213;
 
 	i:=abs(i);
 	i1:=abs(i1);
+	asm(";here");
+	i1:=mod(i1,1000);
 	Text::Reset();
 	//str::itoa(i,#tmp,10);
 	Text_PrintIntegerHex(i1);

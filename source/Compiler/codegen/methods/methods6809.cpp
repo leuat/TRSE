@@ -89,30 +89,32 @@ void Methods6809::Modulo(Assembler *as)
 {
     as->Comment("Modulo");
 
-/*
-    if (m_node->m_params[0]->isWord(as)) {
-//        InitDiv16x8()
-        //as->m_internalZP[0]
-        Node::flags["div16"] = true;
-        LoadVar(as,1);
-        as->Asm("sta "+as->m_internalZP[0]);
-        as->Asm("sty "+as->m_internalZP[0]+"+1");
-        LoadVar(as,0);
-        as->Asm("sta "+as->m_internalZP[1]);
-        if (m_node->m_params[1]->isWord(as)) {
-            as->Asm("sty "+as->m_internalZP[1]+"+1");
 
-        }
-        else {
-            as->Asm("ldy #0 ; force 16-bit");
-            as->Asm("sty "+as->m_internalZP[1]+"+1");
-        }
-        as->Asm("jsr divide16x8");
-        as->Asm("lda "+as->m_internalZP[2]);
-        as->Asm("ldy "+as->m_internalZP[2]+"+1");
+    if (m_node->m_params[0]->isWord(as)) {
+        m_node->m_params[1]->setForceType(TokenType::INTEGER);
+        LoadVar(as,1);
+        as->Term();
+        QString val = as->StoreInTempVar("val","word");
+
+        LoadVar(as,0);
+        as->Asm("tfr x,d");
+        as->Term();
+    //    QString mod = as->StoreInTempVar("modulo");
+    //    as->Asm("sec");
+        QString lbl = as->NewLabel("modulo");
+        as->Label(lbl);
+        as->Asm("subd "+val);
+        as->Asm("bcc "+lbl);
+        as->Asm("addd "+val);
+        as->Asm("tfr d,x");
+
+
+        as->PopLabel("modulo");
+
+        as->PopTempVar();
         return;
     }
-    */
+
     LoadVar(as,1);
     as->Term();
     QString val = as->StoreInTempVar("val");
@@ -123,9 +125,9 @@ void Methods6809::Modulo(Assembler *as)
 //    as->Asm("sec");
     QString lbl = as->NewLabel("modulo");
     as->Label(lbl);
-    as->Asm("suba "+val);
-    as->Asm("bcs "+lbl);
-    as->Asm("adca "+val);
+    as->Asm("subb "+val);
+    as->Asm("bcc "+lbl);
+    as->Asm("addb "+val);
 
 
     as->PopLabel("modulo");
