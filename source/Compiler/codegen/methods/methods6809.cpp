@@ -70,6 +70,9 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("lo"))
         LoHi(as,false);
 
+    if (Command("abs"))
+        Abs(as);
+
     if (Command("memcpy"))
         MemCpy(as,false);
 
@@ -387,6 +390,44 @@ void Methods6809::MemCpyUnroll(Assembler* as, bool isReverse)
         }
     }
 
+}
+
+void Methods6809::Abs(Assembler *as)
+{
+
+    if (m_node->m_params[0]->isWord(as)) {
+
+        as->Comment("abs(x) integer");
+        as->ClearTerm();
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Term();
+        QString l = as->NewLabel("abslabel");
+        as->Asm("tfr x,d");
+        as->Asm("cmpd #32767");
+        as->Asm("bcs " + l);
+
+        as->Asm("eorb #$ff"); // negate hi
+        as->Asm("eora #$ff"); // negate hi
+        as->Asm("addd #$01");
+        as->Asm("tfr d,x");
+        as->Label(l);
+
+        as->PopLabel("abslabel");
+
+
+        return;
+    }
+    as->Comment("abs(x) byte");
+    as->ClearTerm();
+    m_node->m_params[0]->Accept(m_codeGen);
+    as->Term();
+    QString l = as->NewLabel("abslabel");
+    as->Asm("cmpb #127"); // sets the Carry flag if -ve number
+    as->Asm("bcs " + l); // branch if carry clear
+    as->Asm("eorb #$ff"); // negate
+    //as->Asm("clc"); // can save an instruction
+    as->Asm("addb #$01"); // add just the carry from above
+    as->Label(l);
 }
 
 void Methods6809::LoHi(Assembler *as, bool isHi)

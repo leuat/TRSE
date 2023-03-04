@@ -1,13 +1,32 @@
 program MyProgram;
 @use "system"
 @use "screen"
+@use "text"
+@use "system/str"
+
 var  
     i,time: byte; 
 	zp:pointer;
+	tmp : array[100] of byte;
+	i1 : integer;
+	
+	@addemulatorparam "-nothrottle"
 	
 begin
 	System::Init();
 	zp:=$400;
+	Memory::Fill16(#tmp,0,100);
+	i:=-$F2;
+	i1:=-$5523;
+
+	i:=abs(i);
+	i1:=abs(i1);
+	Text::Reset();
+	//str::itoa(i,#tmp,10);
+	Text_PrintIntegerHex(i1);
+	loop();	
+	
+	
 	while(true) do
 	begin
 		for i:=0 to 255 do
