@@ -57,6 +57,7 @@ public:
     bool m_stripPrg = false;
     bool m_canRunAsmFiles = false;
 
+
     virtual TokenType::Type getSystemPointerArrayType() {
         return TokenType::POINTER;
     }
@@ -106,6 +107,7 @@ public:
     QStringList m_allowedProcedureTypeFlags;
 
     bool m_requireEmulatorWorkingDirectory = false;
+    bool m_isBigEndian = false;
 
     virtual bool is8bit() {
         return true;

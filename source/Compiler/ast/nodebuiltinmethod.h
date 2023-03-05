@@ -60,9 +60,11 @@ public:
 
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
 
+
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
 
     }
+    QString getValue(Assembler* as) override;
 
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBuiltinMethod>(sharedFromThis()));

@@ -8,15 +8,12 @@ MethodsZ80::MethodsZ80()
 void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 {
     m_codeGen = dispatcher;
-/*    if (Command("Writeln")) {
-        as->Writeln();
-
-        m_node->m_params[0]->Accept(dispatcher);
-        as->EndWriteln();
-    }
-*/
   //   CodeGenZ80* disp = dynamic_cast<CodeGenZ80*>(m_codeGen);
     as->ClearTerm();
+
+    qDebug() << m_node->m_procName.toLower();
+
+
     if (Command("mod"))
         Mod(as);
     if (Command("fill"))
@@ -185,7 +182,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->Asm("pop af");
 
     }
-    else if (Command("wait")) {
+    else
+        if (Command("wait")) {
         as->Comment("Wait");
         QString lbl = as->NewLabel("wait");
         LoadVar(as,0);
@@ -195,7 +193,6 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->PopLabel("wait");
 
     }
-    else
     if (Command("hi")) {
         HiLo(as, true);
     }
@@ -770,6 +767,7 @@ void MethodsZ80::HiLo(Assembler *as, bool isHi)
                 as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"]");
             else
                 as->Asm("ld a,["+m_node->m_params[0]->getValue(as)+"+1]");
+
             return;
         }
     }
