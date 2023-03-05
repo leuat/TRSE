@@ -284,12 +284,13 @@ void CodeGenChip8::str(QString x0, QString x1)
 void CodeGenChip8::str(QSharedPointer<Node> var)
 {
     if (var->isWord(as)) {
-        QString x0 = getReg();
-        QString x1 = getReg();
+        QString x0 = getReg(); PushReg();
+        QString x1 = getReg(); 
         as->Asm("LD I, "+var->getValue(as));
         if (x0!="V0") as->Asm("ld V0, "+x0);
         if (x1!="V1") as->Asm("ld V1, "+x1);
         as->Asm("LD [I], V1");
+        PopReg();
 
     }
     else {
@@ -317,12 +318,13 @@ void CodeGenChip8::ldr(QSharedPointer<Node> var)
     }
 */
     if (var->isWord(as)) {
-        QString x0 = getReg();
+        QString x0 = getReg(); PushReg();
         QString x1 = getReg();
         as->Asm("ld I,"+var->getValue(as));
         as->Asm("LD V1, [I]");
         if (x0!="V0") as->Asm("ld "+x0+", V0");
         if (x1!="V1") as->Asm("ld "+x1+", V1");
+        PopReg();
         
     }
     else {
