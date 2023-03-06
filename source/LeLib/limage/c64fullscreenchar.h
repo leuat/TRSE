@@ -97,7 +97,6 @@ public:
     QByteArray getDirArt() override;
 
     void ReInitialize() override;
-
     void Initialize(int width, int height) override;
 
 //    void FromRaw(QByteArray& arr);
@@ -173,6 +172,7 @@ public:
 
 
     QString getMetaInfo() override;
+    void setMultiColor(bool doSet) override;
 
 
 };

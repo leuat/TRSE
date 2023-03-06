@@ -1,0 +1,113 @@
+program Spacescroller;
+var
+	@export "resources/charsets/space.flf" "resources/charsets/space.bin" 256
+	@export "resources/images/space_map.flf" "resources/charsets/space_map.bin"  256 1
+	
+	charset1 : incbin("resources/charsets/space.bin", $3800);
+	charset2 : incbin("resources/charsets/space.bin", $7800);
+	
+	mapData : incbin("resources/charsets/space_map.bin", $8000);
+	
+	
+	curBank, scrollVal, time, row : byte = 0;
+
+	src, dst, map, tmp : ^byte;
+	const maxrow : byte = 99;
+	
+/*
+  Update banks when scroll = 8
+  Sets pointers etc
+
+*/
+procedure UpdateBanks();
+begin
+	curBank := (curBank+1)&1;
+	if (curBank=0) then
+	begin
+		setbank(vic_bank0);
+		src:=#screen_char_loc;
+		dst:=#screen_char_loc2+40;
+	end
+	else
+	begin
+		setbank(vic_bank1);
+		src:=#screen_char_loc2;
+		dst:=#screen_char_loc+40;
+	end;
+	// Copy first line
+	tmp:=dst-40;
+	memcpyfast(map, 0, tmp, 40);
+//	fill(tmp,time,40);
+	map -= 40; 
+end;
+
+
+/*
+	Copy 120 bytes every frame
+*/
+procedure CopyPart();
+begin
+	memcpyunroll(src,0,dst,120);
+	dst+=120;
+	src+=120;
+	
+end;
+
+
+procedure UpdateScroll();
+begin
+	scrollVal+=1;
+	if (scrollVal=8) then
+	begin
+		UpdateBanks();
+		scrollVal:=0;
+		row+=1;
+		// reset map pointers at the end
+		if (row = maxrow) then
+		begin
+			map := #mapData+40*99; // bottom of the map
+			row := 0;
+		end;
+		
+		
+	end;
+	// Set scroll value
+	scrolly(scrollVal);
+	// Show bg color speed
+	screen_bg_col:=blue;
+	CopyPart();
+	screen_bg_col:=black;
+	
+	
+end;
+	
+	
+interrupt Raster();
+begin
+	StartIRQ(0);
+	hidebordery(1);
+	UpdateScroll();
+	time+=1;
+	closeirq();
+end;	
+	
+procedure Init();
+begin
+	clearscreen($20,#screen_char_loc);
+	clearscreen($20,#screen_char_loc2);
+	clearscreen(red,#screen_col_loc);
+	setcharsetlocation($3800);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	map := #mapData+40*99; // bottom of the map
+end;	
+	
+begin
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+	Init();
+	UpdateBanks();
+	startrasterchain(Raster(),0,0);
+	loop();
+end.
