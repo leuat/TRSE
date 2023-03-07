@@ -1,0 +1,76 @@
+program Lbm8_01;
+/*
+
+In this first example well use the defaults that allow for one sprite.
+See the other examples for the compiler directives
+
+*/
+
+var
+
+// unexpanded Vic 20
+@vicmemoryconfig "none" 
+
+@use "output/lbm8"
+@use screen
+
+	
+	// export the default characterset
+	@export "chr\char.flf" "chr\char.bin" 64
+	charset: incbin("chr\char.bin", $1c00); // unexpanded location for char setcharset 
+
+
+	// export the 8 16x8 preshifted sprites
+	const ADRSPRITE: address = $1a00;
+	@vbmexport "chr\sprites.flf" "chr\lbm8sprite.bin" 0 16 1 0
+	lbm8Sprite: incbin( "chr\lbm8sprite.bin", ADRSPRITE );
+
+	// the pre-shift array
+	sprites: array[8] of integer = buildtable( " ADRSPRITE + (i*16)" );	
+	
+	// x and y position
+	xp, yp: byte;
+	
+	i: byte;
+
+	
+begin
+
+	DefineScreen();
+
+	ClearScreen( 32, #SCREEN_CHAR_LOC); 	// ^$9600 - unexpanded colour location
+
+	ClearScreen( GREEN, #SCREEN_COL_LOC); 	// ^$9600 - unexpanded colour location
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+	Screen::SetScreenCharAddress( 
+		Screen::SCREEN_1c00 + Screen::CHAR_1c00, 
+		Screen::SCREEN_ADD_0200 );
+
+	// put some characters on the screen
+	screenmemory := $1e00+88;
+	for i := 0 to 54 do screenmemory[ i ] := i+10;	
+
+	xp := 100; yp := 10;
+
+	while (true) do
+	begin
+
+		
+		ReadJoy1();
+		if (joy1 & JOY_RIGHT) then xp+=1;
+		if (joy1 & JOY_LEFT) then xp-=1;
+		if (joy1 & JOY_DOWN) then yp+=1;
+		if (joy1 & JOY_UP and yp >0) then yp-=1;
+				
+	
+		WaitForRaster(130);
+		
+		lbm8::RestoreBG();
+		lbm8::DrawAt( 0, xp, yp, #sprites );
+
+	end;
+
+end.
