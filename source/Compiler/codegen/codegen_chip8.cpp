@@ -84,9 +84,10 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
     if (node->isReference()) {
-        //for this code to work I need to add LO and HI to Wernsey's Assembler 
-        as->Asm("LD V0, "+node->getValue(as));
-        as->Asm("LD V1, "+node->getValue(as));
+        QString x0 = getReg(); PushReg();
+        QString x1 = getReg(); 
+        as->Asm("LD "+x0+", "+node->getValue(as)">>8");
+        as->Asm("LD "+x1+", "+node->getValue(as)"&#ff");
         return;
 
     } else if (node->m_expr!=nullptr) {
