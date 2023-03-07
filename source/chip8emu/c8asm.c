@@ -6,7 +6,7 @@ Hexadecimal constants can be written as
 */
 /*
 original assembler by https://github.com/wernsey (2015-2023)
-fork of assembler by https://github.com/oshaboy (2023)
+fork by https://github.com/oshaboy (2023)
 licensed under the the terms of Apache License 2.0
 */
 /* CHIP-8 Assembler. */
