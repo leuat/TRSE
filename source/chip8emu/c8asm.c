@@ -4,6 +4,11 @@ Mostly based on the syntax of "Cowgod's Chip-8 Technical Reference v1.0",
 by Thomas P. Greene, http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
 Hexadecimal constants can be written as
 */
+/*
+original assembler by https://github.com/wernsey (2015-2023)
+fork of assembler by https://github.com/oshaboy (2023)
+licensed under the the terms of Apache License 2.0
+*/
 /* CHIP-8 Assembler. */
 #include <stdio.h>
 #include <stdlib.h>
