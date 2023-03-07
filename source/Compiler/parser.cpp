@@ -433,6 +433,9 @@ void Parser::InitSystemPreprocessors()
     m_preprocessorDefines["CPU_"+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)] = "1";
     if (Syntax::s.m_currentSystem->getCPUFlavor()!="")
         m_preprocessorDefines["CPU_FLAVOR_"+Syntax::s.m_currentSystem->getCPUFlavor()] = "1";
+    m_preprocessorDefines["SUPPORTS_FORI"] = QString::number((int)Syntax::s.m_currentSystem->m_supportsInclusiveFor);
+
+
 
     Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 
@@ -3553,8 +3556,12 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
 QSharedPointer<Node> Parser::ForLoop(bool inclusive)
 {
     int ln = m_currentToken.m_lineNumber;
-    if (inclusive)
+    if (inclusive) {
         Eat(TokenType::FORI);
+        if ((!Syntax::s.m_currentSystem->m_supportsInclusiveFor))
+            ErrorHandler::e.Error("Current system does not support inclusive for (FORI).", m_currentToken.m_lineNumber);
+
+    }
     else
         Eat(TokenType::FOR);
 
@@ -5244,9 +5251,11 @@ void Parser::HandleExport()
     int param1 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     int param2 = 0;
+    bool singleParam = true;
     if (m_currentToken.m_type==TokenType::INTEGER_CONST) {
         param2 = m_currentToken.m_intVal;
         Eat(TokenType::INTEGER_CONST);
+        singleParam = false;
 
     }
     else {
@@ -5289,8 +5298,9 @@ void Parser::HandleExport()
     img->m_silentExport = true;
 
 
-    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr) {
+    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr && singleParam) {
         C64FullScreenChar* c = dynamic_cast<C64FullScreenChar*>(img);
+
         c->ExportMovie(file);
     }
     else

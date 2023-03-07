@@ -38,6 +38,7 @@ public:
         m_renameVariables << "es"<<"ds"<<"si"<<"di";
 
 
+        m_supportsInclusiveFor = false;
 
     }
 

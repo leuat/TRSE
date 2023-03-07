@@ -14,7 +14,9 @@ Hexadecimal constants can be written as
 #include <assert.h>
 #include <stdbool.h>
 
-#include "chip8.h"
+
+#include "c8asm.h"
+
 
 #define TOK_SIZE    64
 
@@ -77,6 +79,7 @@ typedef struct {
 	char token[TOK_SIZE];
 } Stepper;
 
+
 #define BITNESS_BITMASK 0b0011
 #define EXPRESSION_BITMASK 0b0100
 #define EMIT8_BITMASK 0b1000
@@ -107,6 +110,8 @@ typedef struct {
 	uint16_t value;
 } Emitted;
 
+
+} LABEL_TYPE;
 /* Generated instructions before binary output */
 static struct {
 	struct {
@@ -119,24 +124,29 @@ static struct {
 
 	uint16_t next_instr; /* Address of next instruction */
 	uint16_t max_instr;  /* Largest instruction address for output */
+
 } program;
 
 /* Lookup table for labels for JP and CALL instructions */
 static struct {
 	char label[TOK_SIZE];
 	uint16_t addr;
+
 } lookup[MAX_LOOKUP];
 static int n_lookup;
 
 /* Lookup table for DEFINE identifier value statements */
 static struct {
+
 	char name[TOK_SIZE];
 	SYMBOL type;
 	char value[TOK_SIZE];
+
 } defs[MAX_DEFS];
 static int n_defs;
 
 static void exit_error(const char *msg, ...) {
+
 	char buffer[MAX_MESSAGE_TEXT];
 	if(msg) {
 		va_list arg;
@@ -224,8 +234,6 @@ static int parse_int(const char ** expression,const int linenum){
 	if (base!=10)
 		(*expression)++;
 	return (int)strtol(*expression, expression, base);	
-}
-
 
 
 static void copy_arithmetic_expression(char * buffer, const char ** in){
@@ -285,7 +293,7 @@ static  int apply_binary_op(const  int l_op, const char op, const  int r_op, con
 	/*unreachable*/
 	return -1;
 
-}
+
 static int evaluate_arithmetic_expression(const char * expression, const int linenum){
 
 	struct {unsigned char stack[STACK_HEIGHT]; unsigned char * top;} operators; operators.top=operators.stack-1;
@@ -952,3 +960,4 @@ int c8_assemble(const char *text) {
 
 	return 0;
 }
+char c8_message_text[1024];

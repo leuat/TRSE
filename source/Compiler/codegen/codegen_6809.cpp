@@ -598,7 +598,6 @@ void CodeGen6809::RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node) {
     as->Comment("8 bit mul of power 2");
 
     QString command = "";
-    QString varName;
     if (node->m_op.m_type == TokenType::DIV)
         command = "lsrb";
     if (node->m_op.m_type == TokenType::MUL)
@@ -1618,12 +1617,6 @@ void CodeGen6809::LoadVariable(QSharedPointer<NodeVar> node) {
     }
 
 
-    //    qDebug() << "LoadVariable: "<<pp;
-/*    if (t==TokenType::ADDRESS || t==TokenType::STRING || t==TokenType::CSTRING || t==TokenType::INCBIN) {
-        ErrorHandler::e.Error("Not implemented yet", node->m_op.m_lineNumber);
-//        LoadByteArray(node);
-        return;
-    }*/
     if (t==TokenType::POINTER || t==TokenType::ADDRESS || t==TokenType::STRING || t==TokenType::CSTRING || t==TokenType::INCBIN) {
         LoadPointer(node);
         return;

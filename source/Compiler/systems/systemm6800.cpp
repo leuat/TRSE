@@ -93,4 +93,5 @@ SystemM68000::SystemM68000(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
     m_processor = M68000;
     m_allowedBaseTypes<<"LONG";
     m_allowClasses = true;
+    m_supportsInclusiveFor = false;
 }

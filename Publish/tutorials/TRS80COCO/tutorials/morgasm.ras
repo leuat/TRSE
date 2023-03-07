@@ -24,8 +24,9 @@ begin
 	asm(";here");
 	i1:=mod(i1,1000);
 	Text::Reset();
-	//str::itoa(i,#tmp,10);
-	Text_PrintIntegerHex(i1);
+	str::itoa(i,#tmp,16);
+//	Text_PrintIntegerHex(i1);
+	Text::Println(#tmp);
 	loop();	
 	
 	

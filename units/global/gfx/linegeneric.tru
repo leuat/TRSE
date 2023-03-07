@@ -1,0 +1,151 @@
+unit LineGeneric;
+
+
+var
+	d,x1, y1, x2, y2,dx,dy,ai,bi,xi,yi,color,dx2,dy2 : byte;
+	low, high, k, i, val : byte;
+	index, bitmapstart : integer;
+	
+	putpixel : pointer;
+/*	
+@ifndef putpixel
+@raiseerror "You need to define a putpixel routine before including this file"
+@endif 	
+*/
+
+
+procedure Line( x1, y1, x2, y2, color : global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	//if (y1>=200 or y1>=200) then return;
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+	begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
+	
+	if y1 < y2 then 
+	begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	
+	else
+	begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	dx2:=dx>>1;
+	dy2:=dy>>1;
+	call(putpixel);
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		d := dy - dx2;
+		while x1 <> x2 do begin
+			if d <128 do begin
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + dy;
+			
+			x1 :=  x1 + xi;
+			call(putpixel);
+		end;
+	end
+	else
+	begin // dy > dx
+		ai := (dx - dy);
+		d := dx - dy2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;
+			end
+			else
+				d := d+  dx;
+			
+			y1 := y1 + yi;
+			call(putpixel);
+		
+		end;
+		
+	end;
+end;
+
+/*
+procedure Line2 ( x1, y1, x2, y2, color : global byte);
+begin
+	dx:=0;
+	dy:=0;
+	d:=0;
+	if x1 < x2 then begin
+		xi := 1;
+		dx := x2 - x1;
+	end
+	else
+		begin
+		xi := 255;
+		dx := x1 - x2;
+	end;
+	
+	if y1 < y2 then begin
+		yi := 1;
+		dy := y2 - y1;
+	end
+	
+	else
+		begin
+		yi := 255;
+		dy := y1 - y2;
+	end;
+	call(p_putpixel);
+	if dx >= dy then begin
+		
+		ai := (dy - dx);
+		bi := dy;
+		d := bi - dx/2;
+		while x1 <> x2 do begin
+			if d <128 do begin
+
+				y1 := y1 + yi;
+				d := d + ai;
+			end
+			else
+				d := d + bi;
+			
+			x1 :=  x1 + xi;
+			call(p_putpixel);
+		end;
+	end
+	else
+		begin // dy > dx
+		ai := (dx - dy);
+		bi := dx;
+		d := bi - dy/2;
+		
+		while y1 <> y2 do begin
+			if d<128 do begin
+				x1 := x1+ xi;
+				d := d + ai;
+			end
+			else
+				d := d+  bi;
+			
+			y1 := y1 + yi;
+			call(p_putpixel);
+		end;
+		
+	end;
+end;
+*/
+
+end.

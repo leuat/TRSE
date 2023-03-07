@@ -20,6 +20,7 @@ SystemChip8::SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
 
     m_processor = PCHIP8;
     m_system = CHIP8;
+    m_supportsInclusiveFor = false;
 
 
 }

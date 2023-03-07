@@ -1,0 +1,353 @@
+Unit lbm8; 
+
+var  
+/*
+optional compiler directives to customise lbm8 sprite routine
+
+*/
+// where to find the screen 
+@IFNDEF SCREENADDRESS
+	@DEFINE SCREENADDRESS $1e00 
+@ENDIF
+
+// where to find the character data
+@IFNDEF CHARADDRESS
+	@DEFINE CHARADDRESS $1c00 
+@ENDIF
+// number of characters in charset, eg: 64 or 255
+@IFNDEF NUMCHARS
+	@DEFINE NUMCHARS 64
+@ENDIF
+
+// width of the screen
+@IFNDEF SCREENWIDTH
+	@DEFINE SCREENWIDTH 22
+@ENDIF
+// height of the screen
+@IFNDEF SCREENHEIGHT
+	@DEFINE SCREENHEIGHT 23
+@ENDIF
+
+// how many buffers to store
+@IFNDEF BGBUFFERS
+	@DEFINE BGBUFFERS 4
+@ENDIF
+
+	// look ups for speed
+	Scr: array[ @SCREENHEIGHT ] of integer = buildtable(" @SCREENADDRESS + ( i * @SCREENWIDTH ) ");
+	Chr: array[ @NUMCHARS ] of integer = buildtable(" @CHARADDRESS + ( i * 8 ) ");
+
+
+
+	bgAddr: array[ @BGBUFFERS ] of integer; // store the screen addresses
+	bgChar: array[ @BGBUFFERS ] of byte; // store the character to restore
+
+	s, d: pointer;  // source and destination pointers for bitmap
+
+// 13 bytes used for units data - store in Zero Page memory
+@IFDEF LBM8ZEROPAGE
+	
+	const lbm8zp: address = @LBM8ZEROPAGE;
+	pa: byte at lbm8zp;
+	
+	i, j: byte at lbm8zp + 1;
+
+	bg: byte at lbm8zp + 3; // current BG position in lists
+
+	x, y: byte at lbm8zp + 4;
+	xo, yo: byte at lbm8zp + 6;
+	xc, yc: byte at lbm8zp + 8;
+	
+	sp: integer at lbm8zp +10; // sprite left and right params
+	
+	char: byte at lbm8zp + 12;
+	
+@ENDIF
+// Otherwise create with program code
+@IFNDEF LBM8ZEROPAGE
+
+	pa: byte;
+	
+	i, j: byte;
+
+	bg: byte = 0; // current BG position in lists
+
+	x, y: byte;
+	xo, yo: byte;
+	xc, yc: byte;
+	
+	sp: integer; // sprite left and right params
+	
+	char: byte;
+
+@ENDIF	
+
+
+
+
+/** 
+<p>Store the character on the screen (pointed to by screenmemory) 
+into the buffer. The buffer records all screen locations that will 
+need to be restored before redrawing sprites.
+**/
+procedure _AddBG();
+begin
+	
+	// store the address
+	bgAddr[ bg ] := screenmemory;
+	bgChar[ bg ] := screenmemory[ 0 ];
+
+	// set the source pointer for bitmap copying
+	i := bgChar[ bg ];
+	s := Chr[ i ];
+
+	bg += 1; // next slot in array
+	
+end;
+
+/** 
+<p>Copy the bitmap / character definition for a background character on the screen 
+to the character used to display a sprite. The sprite will later be merged with this.
+<p>The procedure takes no paramters but requires the followinf pointers to be set:
+<ul>
+<li>s - the source pointer set to the BG characters bitmap address 
+<li>d - the destination pointer set to the sprite characters bitmap address
+**/  
+procedure _RenderBG();
+begin
+
+	asm ; render BG bitmap to char
+		; s and d pointers should be set 
+	
+	ldy #7
+	
+DrawAt_RenderBG_loop
+	
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	dey		
+	bpl DrawAt_RenderBG_loop
+		
+	end;
+
+end;
+
+
+
+/**
+<p>Draw an LBM8 sprite to the screen 
+<ul>
+<li>pa - the character number to start rendering a sprite to. See notes.
+<li>x  - the horizontal position in pixels to display the sprite
+<li>y  - the vertical position in pixels to display the sprite
+<li>sp - the sprite lookup table. See notes.
+</ul>
+<h3>Example</h3>
+<p>lbm8::DrawAt( 0, xp, yp, #playerLookup );
+<h3>Notes</h3>
+<p>The number of characters required to render a sprite depends upon how 
+the sprite will move across the screen. 
+<ul>
+<li>If it is free moving in all directions you will need to reserve 
+4 characters to render the sprite.</li>  
+<li>If you limit the sprite to only move on one axis (x or y) and the 
+other axis is aligned completely to a character cell 
+then you will only need to reserve 2 characters to render the sprite. Think of pac-man 
+style of movement, where it can move up and down, or left and right, but one axis is always
+fixed in position due to the shape of the maze. IE: pac-man cannot move in disagonals.
+</li>
+</ul>
+<p>The sprite lookup table tells the routine where to find in memory each of the 
+8 pre-shifted sprite bitmap data.
+<p>An example of the command you can use 
+<code>
+// address where our pre-shifted bitmaps will be stored
+const ADRPLAYER: address = $1a00;
+
+// export a sprite - pre-shifted in 8 positions (16 characters are need to pre-shift 8 times)
+@vbmexport "chr\lbm8.flf" "chr\lbm8player.bin" 0 16 1 0
+
+// include the bitmap at the specified address
+lbm8player: incbin( "chr\lbm8player.bin", ADRPLAYER );
+
+// build the look up table
+playerLookup: array[8] of integer = buildtable( " ADRPLAYER + (i*16)" );
+
+**/
+procedure DrawAt( pa, x, y: global byte, sp: global integer);
+begin
+	
+	xo := (x & $07) << 1;	// X offset 0-7 but require * 2 for integer lookup
+	yo := y & 7;			// Y offset 0-7
+	
+	xc := x >> 3;			// X character position on screen
+	yc := y >> 3;			// Y character position on screen
+
+	fori j := 0 to 1 do // up to two columns for an 8x8 sprite (left and right)
+	begin
+	
+		// if first column (left) or x offset crossing over to right column
+		if (j = 0 or xo <> 0) then
+		begin
+			
+			char := pa; // Save sprite starting character for later
+			
+			// set screen memory address to x and y character coordinates
+			screenmemory := Scr[ yc ] + xc + j;
+
+			_AddBG();					// save BG character that sprite will replace			
+			screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+			d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+			_RenderBG();
+			
+			pa += 1;					// next char
+						
+			if (yo <> 0 ) then
+			begin
+				
+				screenmemory += @SCREENWIDTH; // y offset is not 0, so need another char below
+				
+				_AddBG();					// save BG character that sprite will replace			
+				screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+				d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+				_RenderBG( );
+
+				pa += 1; 					// next char
+		
+			end;
+		
+		end;
+
+
+		// render the sprite bitmap into the sprite character(s)
+		// this will do if first column or x offset is not zero (second column)
+		if (j = 0 or xo <> 0) then
+		begin
+		
+			d := sp;					// address of sprite pre-shift lookup table
+			
+			asm ; Find address of left side of pre-shifted sprite from lookup table
+			
+			ldy lbm8_xo
+			lda (lbm8_d),y
+			sta lbm8_s
+	
+			iny
+			
+			lda (lbm8_d),y 
+			sta lbm8_s+1
+	
+			end;
+
+			if (j > 0 ) then  s := s + 8; // get right side of pre-shifted sprite?
+			
+			d := Chr[ char ] + yo;		// address of sprite character to write to
+	
+			asm ; unrolled - merge sprite bitmap with sprite bg bitmap
+					
+			;lda #$ff ; testing
+			ldy #0
+			
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			iny
+			lda (lbm8_d),y
+			ora (lbm8_s),y
+			sta (lbm8_d),y
+			
+			end;
+		
+		end;
+
+	end;
+		
+end;
+
+
+/**
+<p>Restores the original characters that sprites covered back to the screen. This must be
+done every screen refresh before sprites are drawn.
+<p>Typically:
+<ol>
+<li>Wait for the raster line to reach the bottom border, or the last vertical position on screen
+where you will be drawing sprites to
+<li>Call lbm8::RestoreBG();
+<li>Then call lbm8:DrawAt( ... ) for each sprite you wish to display
+**/
+procedure RestoreBG();
+begin
+
+	asm ;
+
+
+	lda lbm8_bg					; get end of list
+	beq lbm8_RestoreBG_done		; if zero, there is nothing to process
+
+	; subtract 1 from BG as BG usually points to the NEXT (free) item
+	sec
+	sbc #$1
+	tax
+	
+lbm8_RestoreBG_loop 
+
+	; get the screen address
+	txa	
+	asl
+	tay
+	lda lbm8_bgAddr,y
+	sta screenmemory
+	lda lbm8_bgAddr+1,y
+	sta screenmemory+1
+
+	; get the character
+	lda lbm8_bgChar,x
+	
+	; write the character back to the screen
+	ldy #$0
+	sta (screenmemory),y
+	
+	; go to the previous item in the list
+	dex 
+	bpl lbm8_RestoreBG_loop ; if NOT gone below zero, loop back to process more
+	
+lbm8_RestoreBG_done
+
+	; we're done, reset the end pointer for the list back to the start
+	lda #$0
+	sta lbm8_bg
+	rts
+
+	end;	
+
+end;
+
+
+
+end.

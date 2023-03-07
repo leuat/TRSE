@@ -49,12 +49,12 @@ begin
 		if (currentTest=13) then AdvancedMath::Exec();
 		@endif
 		if (currentTest=12) then BooleanTest::Exec();
-		if (currentTest=1) then MulDiv::Exec();
+		if (currentTest=6) then MulDiv::Exec();
 		if (currentTest=2) then Strings::Exec();
 		if (currentTest=3) then Functions::Exec();
 		if (currentTest=4) then CaseTest::Exec();
 		if (currentTest=5) then Casts::Exec();
-		if (currentTest=6) then ForLoop::Exec();
+		if (currentTest=1) then ForLoop::Exec();
 		if (currentTest=7) then Registers::Exec();
 		if (currentTest=8) then BitOp::Exec();
 		if (currentTest=9) then IfThenElse::Exec();
