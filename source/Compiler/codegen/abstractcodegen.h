@@ -26,7 +26,6 @@ class NodeCase;
 class NodeCast;
 class NodeRepeatUntil;
 class NodeComment;
-class Node;
 class NodeControlStatement;
 
 

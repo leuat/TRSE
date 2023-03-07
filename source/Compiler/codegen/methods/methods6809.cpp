@@ -70,6 +70,9 @@ void Methods6809::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
     if (Command("lo"))
         LoHi(as,false);
 
+    if (Command("abs"))
+        Abs(as);
+
     if (Command("memcpy"))
         MemCpy(as,false);
 
@@ -86,30 +89,32 @@ void Methods6809::Modulo(Assembler *as)
 {
     as->Comment("Modulo");
 
-/*
-    if (m_node->m_params[0]->isWord(as)) {
-//        InitDiv16x8()
-        //as->m_internalZP[0]
-        Node::flags["div16"] = true;
-        LoadVar(as,1);
-        as->Asm("sta "+as->m_internalZP[0]);
-        as->Asm("sty "+as->m_internalZP[0]+"+1");
-        LoadVar(as,0);
-        as->Asm("sta "+as->m_internalZP[1]);
-        if (m_node->m_params[1]->isWord(as)) {
-            as->Asm("sty "+as->m_internalZP[1]+"+1");
 
-        }
-        else {
-            as->Asm("ldy #0 ; force 16-bit");
-            as->Asm("sty "+as->m_internalZP[1]+"+1");
-        }
-        as->Asm("jsr divide16x8");
-        as->Asm("lda "+as->m_internalZP[2]);
-        as->Asm("ldy "+as->m_internalZP[2]+"+1");
+    if (m_node->m_params[0]->isWord(as)) {
+        m_node->m_params[1]->setForceType(TokenType::INTEGER);
+        LoadVar(as,1);
+        as->Term();
+        QString val = as->StoreInTempVar("val","word");
+
+        LoadVar(as,0);
+        as->Asm("tfr x,d");
+        as->Term();
+    //    QString mod = as->StoreInTempVar("modulo");
+    //    as->Asm("sec");
+        QString lbl = as->NewLabel("modulo");
+        as->Label(lbl);
+        as->Asm("subd "+val);
+        as->Asm("bcc "+lbl);
+        as->Asm("addd "+val);
+        as->Asm("tfr d,x");
+
+
+        as->PopLabel("modulo");
+
+        as->PopTempVar();
         return;
     }
-    */
+
     LoadVar(as,1);
     as->Term();
     QString val = as->StoreInTempVar("val");
@@ -120,9 +125,9 @@ void Methods6809::Modulo(Assembler *as)
 //    as->Asm("sec");
     QString lbl = as->NewLabel("modulo");
     as->Label(lbl);
-    as->Asm("suba "+val);
-    as->Asm("bcs "+lbl);
-    as->Asm("adca "+val);
+    as->Asm("subb "+val);
+    as->Asm("bcc "+lbl);
+    as->Asm("addb "+val);
 
 
     as->PopLabel("modulo");
@@ -387,6 +392,44 @@ void Methods6809::MemCpyUnroll(Assembler* as, bool isReverse)
         }
     }
 
+}
+
+void Methods6809::Abs(Assembler *as)
+{
+
+    if (m_node->m_params[0]->isWord(as)) {
+
+        as->Comment("abs(x) integer");
+        as->ClearTerm();
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Term();
+        QString l = as->NewLabel("abslabel");
+        as->Asm("tfr x,d");
+        as->Asm("cmpd #32767");
+        as->Asm("bcs " + l);
+
+        as->Asm("eorb #$ff"); // negate hi
+        as->Asm("eora #$ff"); // negate hi
+        as->Asm("addd #$01");
+        as->Asm("tfr d,x");
+        as->Label(l);
+
+        as->PopLabel("abslabel");
+
+
+        return;
+    }
+    as->Comment("abs(x) byte");
+    as->ClearTerm();
+    m_node->m_params[0]->Accept(m_codeGen);
+    as->Term();
+    QString l = as->NewLabel("abslabel");
+    as->Asm("cmpb #127"); // sets the Carry flag if -ve number
+    as->Asm("bcs " + l); // branch if carry clear
+    as->Asm("eorb #$ff"); // negate
+    //as->Asm("clc"); // can save an instruction
+    as->Asm("addb #$01"); // add just the carry from above
+    as->Label(l);
 }
 
 void Methods6809::LoHi(Assembler *as, bool isHi)

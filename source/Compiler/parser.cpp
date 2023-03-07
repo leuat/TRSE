@@ -5244,9 +5244,11 @@ void Parser::HandleExport()
     int param1 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     int param2 = 0;
+    bool singleParam = true;
     if (m_currentToken.m_type==TokenType::INTEGER_CONST) {
         param2 = m_currentToken.m_intVal;
         Eat(TokenType::INTEGER_CONST);
+        singleParam = false;
 
     }
     else {
@@ -5289,8 +5291,9 @@ void Parser::HandleExport()
     img->m_silentExport = true;
 
 
-    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr) {
+    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr && singleParam) {
         C64FullScreenChar* c = dynamic_cast<C64FullScreenChar*>(img);
+
         c->ExportMovie(file);
     }
     else

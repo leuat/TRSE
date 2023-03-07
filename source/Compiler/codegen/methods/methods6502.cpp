@@ -1221,8 +1221,6 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     m_node->RequireAddress(m_node->m_params[0], "MemCpy", m_node->m_op.m_lineNumber);
     m_node->RequireAddress(m_node->m_params[2], "MemCpy", m_node->m_op.m_lineNumber);
 
-    QString ap1 = "";
-    QString ap2 = "";
     QString bp1 = "";
     QString bp2 = "";
 

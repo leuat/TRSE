@@ -169,7 +169,7 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
     float sy = img->height()/m_charHeight;
 
  //   float sy = img->height()/25;
-    //qDebug() <<"WHOO" << m_charWidth << m_charHeight;
+//    qDebug() <<"WHOO" << m_charWidth << m_charHeight << sx << sy << img->width() << img->height();
    // img->save("test2.png");
 
     lst.m_selectClosestFromPen = false;
@@ -229,9 +229,9 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
             setPixel(i*sx,j*sy,col);
             */
             m_writeType=Color;
-            setPixel(i*sx,j*sy,col);
+            setPixel(i*8,j*8,col);
             m_writeType=Character;
-            setPixel(i*sx,j*sy,col);
+            setPixel(i*8,j*8,col);
         }
     //   Reorganize();
 
@@ -264,9 +264,14 @@ QByteArray C64FullScreenChar::getDirArt()
 
 void C64FullScreenChar::ReInitialize()
 {
+    m_charWidth = getMetaParameter("screen_width")->value;
+    m_charHeight = getMetaParameter("screen_height")->value;
+    m_width = m_charWidth*8;
+    m_height = m_charHeight*8;
     DeleteAll();
     AddNew(m_charWidth, m_charHeight);
     emit emitImportRom();
+   // qDebug() << "WOOT reinit "<<m_charWidth <<m_charHeight<< m_width << m_height;
 
 }
 
@@ -274,11 +279,13 @@ void C64FullScreenChar::Initialize(int width, int height) {
 //    exit(1);
     m_width = width;
     m_height = height;
-    m_charWidth = width/8;
-    m_charHeight = height/8;
+    //m_charWidth = width/8;
+   // m_charHeight = height/8;
 //    qDebug() << "Addnew Initing : " <<m_charWidth<<m_charHeight << width << height;
+//    DeleteAll();
+  //  AddNew(m_charWidth, m_charHeight);
 
-    ReInitialize();
+   // ReInitialize();
 }
 
 void C64FullScreenChar::setBackground(unsigned int col)
@@ -350,6 +357,8 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
  //   y=y*m_charHeight/25.0;
 
 
+    if (isMultiColor())
+        x*=2;
 
 
     if (m_writeType==Character || m_forcePaintColorAndChar)
@@ -375,8 +384,11 @@ unsigned int C64FullScreenChar::getPixel(int x, int y)
     int oy = y;
   // x=x*m_charWidth/40.0;
   //  y=y*m_charHeight/25.0;
-
+    if (isMultiColor())
+        x*=2;
     int pp = (x/8) + (y/8)*m_charWidth;
+ //   if (rand()%100000>99998)
+   //     qDebug() << m_charWidth << m_charHeight << m_width << m_height;
     C64Screen* cur = ((C64Screen*)m_items[m_current].get());
     uchar v = 0, col = 0;
     if (pp<cur->m_rawData.length())
@@ -438,6 +450,9 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
 
         m_charWidth = c->m_charWidth;
         m_charHeight = c->m_charHeight;
+        m_height = c->m_height;
+        m_width = c->m_width;
+        m_bitMask = c->m_bitMask;
         m_forcePaintColorAndChar  = mc->m_forcePaintColorAndChar;
         DeleteAll();
         for (auto li: c->m_items) {
@@ -654,6 +669,32 @@ QString C64FullScreenChar::getMetaInfo()
     return txt;
 }
 
+void C64FullScreenChar::setMultiColor(bool doSet)
+{
+    if (doSet) {
+        m_bitMask = 0b11;
+        m_noColors = 4;
+        m_scale = 2;
+        m_minCol = 0;
+        m_colorList.InitC64Multicolor();
+    }
+    else {
+        m_bitMask = 0b1;
+        m_noColors = 2;
+        m_scale = 1;
+        m_minCol = 0;
+
+    }
+    //    for (int i=0;i<1000;i++)
+    //      m_data->c[0] = m_extraCols[0];
+    if (m_charset!=nullptr)
+        m_charset->setMultiColor(doSet);
+
+    //     SetPens();
+    if (m_type!=Sprites2)
+        InitPens();
+}
+
 void C64FullScreenChar::CopyChar()
 {
     if (m_current<0) return;
@@ -710,14 +751,15 @@ void C64FullScreenChar::LoadBin(QFile& file)
     file.read( ( char * )( &m_charHeight), 1 );
     uchar cnt;
     file.read( ( char * )( &cnt), 1 );
-
+//qDebug() << m_charWidth << m_charHeight;
     char tmp = 0;
     for (int i=0;i<11;i++)
         file.read( ( char * )( &tmp), 1 );
 
     m_items.clear();
-
-
+    Initialize(8*m_charWidth, 8*m_charHeight);
+//    m_width = ;
+  //  m_height = 8*m_charHeight;
     for (int i=0;i<cnt;i++) {
         C64Screen* s = new C64Screen();
 

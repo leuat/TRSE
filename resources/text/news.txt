@@ -1,4 +1,26 @@
 <h1>TRSE News and Updates</h1>
+
+<h2>March 2023</h2>
+
+<h3>Compiler</h3>
+<ul>
+    <li>Internal 6809 OrgAsm assembler 85% complete
+    <li>6809 compiler improvements. post-optimiser added.
+    <li>X86 bugfixes, all unit tests now works
+    <li>Lots of more z80 bugfixes and unit tests
+    <li>6809 “Abs” and “mod” added
+    <li>3d library works on the z80, with signed mul/div. Added TIM-001 and VZ200 3d examples.
+    <li>6809 changes. switched from using register “y” as integers to “x”. much faster.
+    <li>“boolean” type better fleshed out. Now works in tandem with “not”, ie “if (not exists(“hello.txt”)) then”
+</ul>
+
+<h2>Systems/tutorials</h2>
+<ul>
+    <li>Vectrex support with two example files
+    <li>TIM tutorial updates
+    <li>Thomson mo5+mo6 support + a couple of tutorials
+    <li>New project templates updated
+</ul>
 <h2>January/Feb 2023</h2>
 <h3>Compiler changes</h3>
 <ul>
