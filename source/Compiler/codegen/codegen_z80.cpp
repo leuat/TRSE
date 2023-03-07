@@ -211,8 +211,11 @@ void CodeGenZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
     }
     //    PushX();
     QString inc = "";
-    if (isInclusive)
+    if (isInclusive) {
         inc = "+1";
+        if (step!=nullptr)
+            inc="+"+step->getValue(as);
+    }
     QString ax = getAx(nodeA->m_left);
     //  PopX();
     as->Asm(m_mov+ax+",["+var+"]");

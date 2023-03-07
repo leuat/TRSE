@@ -12,6 +12,7 @@ begin
 	if (Vars::v1=240) then Common::PASS() else Common::FAIL();
 end;
 
+@if SUPPORTS_FORI = "1"
 // regular fori loop
 procedure Test2();
 begin
@@ -22,7 +23,7 @@ begin
 	end;
 	if (Vars::v1=241) then Common::PASS() else Common::FAIL();
 end;
-
+@endif
 
 // regular for loop integer
 procedure Test3();
@@ -34,6 +35,7 @@ begin
 	end;
 	if (Vars::i1=1000) then Common::PASS() else Common::FAIL();
 end;
+@if SUPPORTS_FORI = "1"
 
 // regular for loop integer
 procedure Test4();
@@ -45,7 +47,7 @@ begin
 	end;
 	if (Vars::i1=1001) then Common::PASS() else Common::FAIL();
 end;
-
+@endif
 
 // step byte
 procedure Test5();
@@ -136,23 +138,23 @@ begin
 	if (Vars::v2=5) then Common::PASS() else Common::FAIL();
 end;
 
-
 procedure NegativeStep1();
 begin
 	Vars::text := "N1:";
 	for Vars::v1:=20 to 0 step -2 do 
 	begin
 	end;
-	if (Vars::v2=2) then Common::PASS() else Common::FAIL();
+	if (Vars::v1=0) then Common::PASS() else Common::FAIL();
 end;
 
+@if SUPPORTS_FORI = "1"
 procedure NegativeStep2();
 begin
 	Vars::text := "N2:"; 
 	fori Vars::v1:=20 to 2 step -2 do 
 	begin
 	end;
-	if (Vars::v2=2) then Common::PASS() else Common::FAIL();
+	if (Vars::v1=0) then Common::PASS() else Common::FAIL();
 end;
 
 // negative to 0 is problematic
@@ -162,23 +164,29 @@ begin
 	fori Vars::v1:=20 to 0 step -2 do 
 	begin
 	end;
-	if (Vars::v2=0) then Common::PASS() else Common::FAIL();
+	if (Vars::v1=254) then Common::PASS() else Common::FAIL();
 end;
 
-
+@endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */
 procedure Exec();
 begin
 	Common::Initialise("FOR LOOP");
 	
-/*	NegativeStep1();
-	NegativeStep2();  FAILS FIX UP
-	NegativeStep3();*/
+	NegativeStep1();
+@if SUPPORTS_FORI = "1"
+	NegativeStep2();  
+	NegativeStep3();
+@endif
 	Test1();
+@if SUPPORTS_FORI = "1"
 	Test2();
+@endif
 	Test3();
+@if SUPPORTS_FORI = "1"
 	Test4();
+@endif
 	Test5();
 	Test6();
 	Test7();
