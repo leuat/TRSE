@@ -5,6 +5,12 @@ by Thomas P. Greene, http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
 Hexadecimal constants can be written as
 */
 /* CHIP-8 Assembler. */
+
+/*
+original assembler by https://github.com/wernsey (2015-2023)
+fork by https://github.com/oshaboy (2023)
+licensed under the the terms of Apache License 2.0
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -244,12 +244,13 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
         m_updateThread.m_zoom = std::max(m_updateThread.m_zoom, 0.1f);
-        float t = 1.0f;
-
-        QPointF pos = (m_updateThread.m_currentPos -m_updateThread.m_zoomCenter)*m_updateThread.m_zoom + m_updateThread.m_currentPos ;
-
-
-        m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*pos);//*(2-2*m_zoom);
+        float t = 0.0f;
+        QPointF mid = 0.5*(QPointF(ui->lblImage->width(),ui->lblImage->height()));
+        QPointF pos = m_updateThread.m_currentPos - mid;//(m_updateThread.m_currentPos -m_updateThread.m_zoomCenter)*m_updateThread.m_zoom + m_updateThread.m_currentPos ;
+  //      pos = 0.5*(pos + m_updateThread.m_zoomCenter);
+//        pos = m_updateThread.m_zoomCenter*0.5 + pos*0.5;
+        m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*pos) + mid;//*(2-2*m_zoom);
+//        QCursor::setPos(m_updateThread.m_zoomCenter.x(),m_updateThread.m_zoomCenter.y());
       //  m_updateThread.m_zoomCenter = (m_updateThread.m_currentPos);//*(2-2*m_zoom);
         UpdateGrid();
         emit onImageMouseEvent();
