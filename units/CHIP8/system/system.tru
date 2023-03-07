@@ -1,7 +1,7 @@
 unit System;
 var
-	val,x,y,c : byte; 
-
+	x,y,c : byte; 
+    ptr : Integer;
 procedure Clear() inline;
 begin
 	asm("cls");
@@ -82,5 +82,20 @@ begin
         LD V0, V1
     ");
 end;
-
+//Moves ptr to I, this is a procedure because it requires Self Modifying code. 
+//This procedure is only used in codegen and should not be used in High Level code
+procedure loadPointer(ptr : global Integer);
+begin
+    if (ptr <= $fff) then begin
+        asm("
+        LD I, System_ptr
+        LD V1, [I]
+        ADD V0, #A0
+        LD I, load_inst
+        LD [I], V1
+    load_inst:
+        LD I, 0
+        ");
+    end;
+end;
 end.

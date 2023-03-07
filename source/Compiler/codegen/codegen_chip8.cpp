@@ -34,7 +34,6 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 {
     as->Comment("Binary operation of type: "+TokenType::getType(node->m_op.m_type));
     if (node->isWord(as)) {
-//        node->SwapNodes();
         node->m_left->Accept(this);
         QString a = getReg();
         PushReg();
@@ -85,44 +84,64 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
     if (node->isReference()) {
-        as->Asm("lda "+node->getValue(as));
-        as->Asm("mw16 a,b,h,l");
+        //for this code to work I need to add LO and HI to Wernsey's Assembler 
+        as->Asm("LD V0, "+node->getValue(as));
+        as->Asm("LD V1, "+node->getValue(as));
         return;
 
-    }
-    QString ending = "]";
-    if (node->m_expr!=nullptr) {
+    } else if (node->m_expr!=nullptr) {
         if (node->isPointer(as)) {
-            // i := p[2] etc;
-            node->m_expr->setForceType(TokenType::INTEGER);
+            //I could make it support words, but that's for later
+            node->m_expr->setForceType(TokenType::BYTE); 
             node->m_expr->Accept(this);
-            as->Asm("lw16 h,l,["+node->getValue(as)+"]");
-            as->Asm("add16 h,l,a,b");
+            QString v0_save = getReg();PushReg();
+            as->Asm("LD "+ v0_save + ", V0");
+            as->Asm("LD I, System_ptr");
+            as->Asm("LD V1, [I]");
+            as->Asm("call System_loadPointer");
+            as->Asm("ADD I, "+ v0_save);
+
             if (node->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("add16 h,l,a,b");
-                as->Asm("lw b,h,l ");
-                as->Asm("add16 h,l,1");
-                as->Asm("lw a,h,l ");
-                return;
+                as->Asm("ADD I, " + v0_save);
+                PopReg();
+                as->Asm("LD V1, [I]");
+                QString x0 = getReg(); PushReg();
+                QString x1 = getReg(); 
+                as->Asm("LD " +x0+", V0");
+                as->Asm("LD " +x1+", V1");
+                PopReg();
+            } else {
+                PopReg();
+                as->Asm("LD V0, [I]");
+                QString x0 = getReg();
+                as->Asm("LD " +x0+", V0");
             }
-            as->Asm("lw a,h,l ");
+
+
             return;
 
-        }
-        // Regular array
-        node->m_expr->setForceType(TokenType::INTEGER);
-        node->m_expr->Accept(this);
-        as->Asm("lda ["+node->getValue(as)+"]");
-        as->Asm("add16 h,l,a,b");
-        if (node->getArrayType(as)==TokenType::INTEGER) {
-            as->Asm("add16 h,l,a,b");
-            as->Asm("lw b,h,l ");
-            as->Asm("add16 h,l,1");
-            as->Asm("lw a,h,l ");
+        } else {
+            // Regular array
+            node->m_expr->setForceType(TokenType::BYTE);
+            node->m_expr->Accept(this);
+            as->Asm("LD I, "+node->getValue(as));
+            as->Asm("ADD I, V0");
+            if (node->getArrayType(as)==TokenType::INTEGER) {
+                as->Asm("ADD I, V0");
+                as->Asm("LD V1, [I]");
+                QString x0 = getReg(); PushReg();
+                QString x1 = getReg(); 
+                as->Asm("LD " +x0+", V0");
+                as->Asm("LD " +x1+", V1");
+                PopReg();
+            } else {
+                as->Asm("LD V0, [I]");
+                QString x0 = getReg();
+                as->Asm("LD " +x0+", V0");
+
+            }
             return;
         }
-        as->Asm("lw a,h,l ");
-        return;
     }
 
     ldr(node);
