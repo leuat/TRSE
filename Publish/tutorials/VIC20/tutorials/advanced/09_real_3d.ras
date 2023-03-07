@@ -118,6 +118,7 @@ begin
 	clearscreen(key_space,screen_char_loc);
 
 	Gfx::buf := #buf;
+	ClearBuffer();	
 	// Setup 3D
 	Lib3d::InitializeData(@objPos);	
 	Lib3d::LoadObject(0, #obj1);

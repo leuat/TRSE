@@ -11,7 +11,7 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
   //   CodeGenZ80* disp = dynamic_cast<CodeGenZ80*>(m_codeGen);
     as->ClearTerm();
 
-    qDebug() << m_node->m_procName.toLower();
+//    qDebug() << m_node->m_procName.toLower();
 
 
     if (Command("mod"))

@@ -56,7 +56,7 @@ public:
     bool m_ignoreSys = false;
     bool m_stripPrg = false;
     bool m_canRunAsmFiles = false;
-
+    bool m_supportsInclusiveFor = true;
 
     virtual TokenType::Type getSystemPointerArrayType() {
         return TokenType::POINTER;
