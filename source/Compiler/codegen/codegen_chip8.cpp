@@ -88,6 +88,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         QString x1 = getReg(); 
         as->Asm("LD "+x0+", "+node->getValue(as)">>8");
         as->Asm("LD "+x1+", "+node->getValue(as)"&#ff");
+        PopReg();
         return;
 
     } else if (node->m_expr!=nullptr) {
