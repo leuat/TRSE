@@ -91,6 +91,8 @@ public:
     QPixmap m_pixMapImage;
     bool isPreview;
 
+    int m_displayImageWidth = 320;
+
     void UpdateDrawing();
     void UpdateMousePosition();
     void UpdatePanning();

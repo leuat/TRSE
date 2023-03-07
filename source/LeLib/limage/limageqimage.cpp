@@ -519,9 +519,8 @@ void LImageQImage::setPixel(int x, int y, unsigned int color)
         return;
 
     QPoint p = getPixelPosition(x,y);
-
-    //    if (rand()%1000>900)
-    //      qDebug() <<p;
+//        if (rand()%1000>950)
+  //        qDebug() <<p << m_qImage->width() <<m_width;
 
     if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height()) {
         if (!usePens)

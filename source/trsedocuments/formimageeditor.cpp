@@ -240,12 +240,16 @@ FormImageEditor::~FormImageEditor()
 void FormImageEditor::wheelEvent(QWheelEvent *event)
 {
     float f = event->angleDelta().y()/100.0f;
-    if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+    if ((QApplication::keyboardModifiers() & Qt::ShiftModifier)  && (event->button() != Qt::RightButton)) {
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
         m_updateThread.m_zoom = std::max(m_updateThread.m_zoom, 0.1f);
-        float t = 0.0f;
-        m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*m_updateThread.m_currentPos);//*(2-2*m_zoom);
+        float t = 1.0f;
+
+        QPointF pos = (m_updateThread.m_currentPos -m_updateThread.m_zoomCenter)*m_updateThread.m_zoom + m_updateThread.m_currentPos ;
+
+
+        m_updateThread.m_zoomCenter = (m_updateThread.m_zoomCenter*t + (1-t)*pos);//*(2-2*m_zoom);
       //  m_updateThread.m_zoomCenter = (m_updateThread.m_currentPos);//*(2-2*m_zoom);
         UpdateGrid();
         emit onImageMouseEvent();
@@ -1046,6 +1050,10 @@ void FormImageEditor::resizeEvent(QResizeEvent *event)
     m_oldWidth = w->width();
 //    UpdateAspect();
     SetMCColors();
+    if (m_painterType == OpenGL)
+        m_updateThread.m_displayImageWidth = ui->lblImage->width();
+    else
+        m_updateThread.m_displayImageWidth = ui->lblImageQt->width();
     //ui->lblGrid->setGeometry(ui->lblImage->geometry());
     //ui->lblGrid->repaint();
     // qDebug() <<

@@ -115,8 +115,10 @@ void LImageAmstradSprites::ToQImage(LColorList &lst, QImage &img, double zoom, Q
 
     }
 
-
     LGenericSprite* s = ((LGenericSprite*)m_items[m_current].get());
+    m_width = s->m_data.m_qImage->width();
+    m_height = s->m_data.m_qImage->height();
+
     if (s->m_data.m_qImage==nullptr)
         return;
     img = QImage(s->m_data.m_qImage->width(),s->m_data.m_qImage->height(), QImage::Format_ARGB32);
