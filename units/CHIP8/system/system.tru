@@ -1,7 +1,7 @@
 unit System;
 var
 	x,y,c : byte; 
-    ptr : Integer;
+    ptr,word : Integer;
 procedure Clear() inline;
 begin
 	asm("cls");
@@ -37,7 +37,38 @@ begin
         LD ST, V0
     ");
 end;
+procedure Wait(word : global Integer);
+begin
+    asm("
+        LD I, word
+        LD V1, [I]
+        LD DT, V1
+        System_wait_loop1:
+        LD V1, DT
+        SE V1, 0
+        JP System_wait_loop1
+        LD V1, 128 
 
+        System_wait_loop2:
+        SNE V0, 0
+        RET
+        LD DT, V1
+        System_wait_inner_loop_1:
+        LD V1, DT
+        SE V1, 0
+        JP System_wait_inner_loop_1
+        LD DT, V1
+        System_wait_inner_loop_2:
+        LD V1, DT
+        SE V1, 0
+        JP System_wait_inner_loop_2
+        ADD V0, -1
+        JP System_wait_loop2
+
+
+
+    ");
+end; 
 procedure PrintHexChar(x,y,c : global byte);
 
 begin
