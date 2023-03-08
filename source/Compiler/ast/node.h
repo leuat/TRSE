@@ -47,53 +47,54 @@ public:
  *
  * */
 class Node : public QEnableSharedFromThis<Node> {
-public:
-    // Token contains node type data and values from the parser
-    Token m_op;
+protected:
+    // Toggle nodes as "used" and "used by" - necessary for the optimizer for
+    // automatic removal of nodes
+    bool m_hasSwapped = false;
+    bool m_isUsed = false;
+    QStringList m_isUsedBy;
 
 //    int m_lineNumber;
     uint level = 0;
-    static uint s_nodeCount;
     // Comments associated with current node.
     QString m_comment = "";
-    BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
-    // Toggle nodes as "used" and "used by" - necessary for the optimizer for
-    // automatic removal of nodes
-    bool m_isUsed = false;
-    bool m_hasSwapped = false;
-    QStringList m_isUsedBy;
+
     static Assembler* s_as;
     // Used in x86 to specity if is an index or not
     bool m_isIndex = false;
     // Forced values
     bool m_forceAddress = false;
-    bool m_classApplied = false;
-    bool m_ignoreSuccess = false; // Used for binary expressions
-    bool m_isBoolean = false;
-    // Force page for conditionals (while/if/repeat until etc)
-    int m_forcePage = 0;
     static QString sForceFlag;
-    // Is the current node a register? (applicable to variables only)
-    bool m_isRegister = false;
 
+    static QSharedPointer<SymbolTable>  parserSymTab;
+
+    // Current block information
+    static MemoryBlockInfo m_staticBlockInfo;
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
-    static QSharedPointer<SymbolTable>  parserSymTab;
+
+
+    bool m_ignoreSuccess = false; // Used for binary expressions
+    bool m_classApplied = false;
+    static uint s_nodeCount;
+    MemoryBlockInfo m_blockInfo;
+public:
+    friend class Parser;
+    // Token contains node type data and values from the parser
+    Token m_op;
     // Base node has 2 children: left and right
     QSharedPointer<Node> m_left = nullptr;
     QSharedPointer<Node> m_right = nullptr;
-    // Swaps left and right nodes
-    void SwapNodes();
-
-    bool m_isWord = false;
-    // Current block information
-    static MemoryBlockInfo m_staticBlockInfo;
+    // Is the current node a register? (applicable to variables only)
+    bool m_isRegister = false;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
-
-    MemoryBlockInfo m_blockInfo;
-
     TokenType::Type m_forceType = TokenType::NADA;
+    bool m_isBoolean = false;
     TokenType::Type m_castType = TokenType::NADA;
+    bool m_isWord = false;
+    // Force page for conditionals (while/if/repeat until etc)
+    int m_forcePage = 0;
+    BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
     // Line number for keeping track of current cycles
     static int m_currentLineNumber;
 
@@ -102,6 +103,8 @@ public:
      *  Methods
      *
      * */
+    // Swaps left and right nodes
+    void SwapNodes();
 
     Node();
     // called manually on each dispatch visitor
@@ -261,8 +264,14 @@ public:
     virtual bool isSigned(Assembler* as);
 
     virtual bool hasFlag(Assembler* as, QString flag);
-
-
+    inline static void setAssembler(Assembler * as){s_as = as;}
+    inline QList<QString> getFlagKeys(){return flags.keys();}
+    inline void ignoreSuccess(){m_ignoreSuccess=false;}
+    inline void dontIgnoreSuccess(){m_ignoreSuccess=true;}
+    inline static uint getNodeCount(){return s_nodeCount;}
+    inline bool isClassApplied(){return m_classApplied;}
+    inline MemoryBlockInfo getBlockInfo(){return m_blockInfo;}
+    
 };
 
 

@@ -9,7 +9,7 @@ void CompilerS1C88::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sy
     m_assembler->llong=".dl";
 
     m_codeGen = QSharedPointer<CodeGenS1C88>(new CodeGenS1C88());
-    m_codeGen->m_outputLineNumbers = false;
+    m_codeGen->dontOutputLineNumbers();
 
     if (m_projectIni->getdouble("override_target_settings")==1) {
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
