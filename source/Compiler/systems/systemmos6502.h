@@ -18,6 +18,7 @@ public:
         m_canRunAsmFiles = true;
         m_allowClasses = true; // EXPERIMENTAL
 
+        m_allowedBaseTypes << "LONG";
 
     }
 

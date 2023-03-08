@@ -166,6 +166,15 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
             as->Term(node->m_right->getValue8bit(as,true),true);
             as->Asm("tay ");
             as->Asm("pla ");
+            if (node->m_left->isLong(as)) {
+                as->Asm("pha ");
+                as->Asm("txa ");
+                as->BinOP(node->m_op.m_type,false);
+                as->Term(node->m_right->getValue8bit(as,2),true);
+                as->Asm("tax ");
+                as->Asm("pla ");
+
+            }
         }
         return;
     }
@@ -315,6 +324,8 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
 
 void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
 
+    if (node->m_left->isLong(as) || node->m_right->isLong(as))
+        ErrorHandler::e.Error("Mul/div not implemented for 24-bit longs",node->m_op.m_lineNumber);
     if (node->m_left->isPureNumeric() && !node->m_right->isPureNumeric() && node->m_op.m_type==TokenType::MUL ) {
         QSharedPointer<Node> tmp = node->m_left;
         node->m_left = node->m_right;
@@ -567,10 +578,10 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
 
     //    if (node->)
 
-
     //    qDebug() << node->m_op.m_value;
     // check if both are constant values:
-    if (!isWord16) {
+
+    if (!isWord16 && !node->isLong(as) && node->m_forceType!=TokenType::LONG) {
         as->Comment("8 bit binop");
         // Optimizing check: if right var is number, then cut losses
         if (HandleSingleAddSub(node)) {
@@ -1502,7 +1513,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
         bool isOK = true;
         //        qDebug() << val << " is " << s->getTokenType();
 
-        if (s->getTokenType()==TokenType::INTEGER)
+        if (s->getTokenType()==TokenType::INTEGER || s->getTokenType()==TokenType::LONG)
             isOK = false;
         if (s->getTokenType()==TokenType::POINTER && as->m_term=="") {
             isOK = false;
@@ -1526,6 +1537,17 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
             }
             return;
         }
+
+        if (node->isLong(as)) {
+            as->Comment("Loading long "+as->m_term);
+            as->Asm("lda "+node->getValue8bit(as,0));
+            Disable16bit();
+            as->Asm("ldy "+node->getValue8bit(as,1));
+            as->Asm("ldx "+node->getValue8bit(as,2));
+            Enable16bit();
+            return;
+        }
+
         if ((node->m_fake16bit || node->m_forceType==TokenType::INTEGER) && s->getTokenType()==TokenType::BYTE )
             as->Asm("ldy #0 ; Fake 16 bit");
 
@@ -1714,7 +1736,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
         return;
     }
 
-    if (t==TokenType::BYTE) {
+    if (t==TokenType::BYTE)  {
         if (node->m_expr!=nullptr)
             LoadByteArray(node);
         else {
@@ -1722,7 +1744,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
         }
         return;
     }
-    if (t == TokenType::INTEGER) {
+    if (t == TokenType::INTEGER || t==TokenType::LONG) {
         node->m_isWord = true;
         if (node->m_expr!=nullptr)
             LoadByteArray(node);
@@ -1730,6 +1752,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeVar> node) {
             Load16bitVariable(node);
         return;
     }
+
     ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + getValue(node));
     return;
 }
@@ -2096,6 +2119,8 @@ bool CodeGen6502::isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<No
     if (var->isWord(as))
         return false;
 
+    if (var->isLong(as))
+        return false;
 
 
     //    return false;

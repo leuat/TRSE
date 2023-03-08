@@ -159,6 +159,8 @@ QString NodeBuiltinMethod::getValue(Assembler *as)
     bool isHi = m_procName.toLower()=="hi";
     if (Syntax::s.m_currentSystem->m_isBigEndian)
         isHi=!isHi;
+    if (m_params.count()==0)
+        return "";
     if (m_params[0]->isPure())
         if (m_procName.toLower()=="hi" || m_procName.toLower()=="lo")
                 return m_params[0]->getValue8bit(as,isHi);

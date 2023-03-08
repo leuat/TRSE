@@ -220,6 +220,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
+    line = line.replace("dc.l", ".long24");
     line = line.replace(" EQU ", " = ");
     line = line.replace(" equ ", " = ");
 
@@ -385,6 +386,12 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_type = OrgasmLine::WORD;
         l.m_expr = line.replace(".word", "").trimmed();//.simplified();
         l.m_expr = line.replace(" dw ", "").trimmed();//.simplified();
+        return l;
+    }
+    if (lst[0].toLower()==".long24" || lst[0].toLower()=="dc.l") {
+        l.m_type = OrgasmLine::LONG24;
+        l.m_expr = line.replace(".long24", "").trimmed();//.simplified();
+        l.m_expr = line.replace(" dc.l ", "").trimmed();//.simplified();
         return l;
     }
     l.m_type = OrgasmLine::INSTRUCTION;
@@ -626,6 +633,9 @@ void Orgasm::Compile(OrgasmData::PassType pt)
         if (ol.m_type==OrgasmLine::WORD)
             ProcessWordData(ol);
 
+        if (ol.m_type==OrgasmLine::LONG24)
+            ProcessLong24Data(ol);
+
         if (ol.m_type==OrgasmLine::ORG)
             ProcessOrgData(ol);
 
@@ -762,6 +772,50 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
 
             }
         }
+        m_pCounter++;
+        m_pCounter++;
+    }
+}
+
+void Orgasm::ProcessLong24Data(OrgasmLine &ol)
+{
+    if (ol.m_expr=="") {
+        m_pCounter+=3;
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
+        return;
+    }
+    QStringList lst = ol.m_expr.split(",");
+    for (QString s: lst) {
+        if (s.trimmed()=="") continue;
+        s = s.trimmed().simplified();
+        if (m_symbolsList.contains(s)) {
+            if (isLittleEndian) {
+                m_data.append(m_symbols[s]&0xFF);
+                m_data.append((m_symbols[s]>>8)&0xFF);
+                m_data.append((m_symbols[s]>>16)&0xFF);
+            }
+            else {
+                m_data.append((m_symbols[s]>>16)&0xFF);
+                m_data.append((m_symbols[s]>>8)&0xFF);
+                m_data.append(m_symbols[s]&0xFF);
+            }
+        }
+        else {
+            if (isLittleEndian) {
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+                m_data.append((Util::NumberFromStringHex(s)>>8)&0xFF);
+                m_data.append((Util::NumberFromStringHex(s)>>16)&0xFF);
+            }
+            else {
+                m_data.append((Util::NumberFromStringHex(s)>>16)&0xFF);
+                m_data.append((Util::NumberFromStringHex(s)>>8)&0xFF);
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+
+            }
+        }
+        m_pCounter++;
         m_pCounter++;
         m_pCounter++;
     }
