@@ -380,12 +380,12 @@ void AbstractCodeGen::IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<
 
     if (step==nullptr) step = NodeFactory::CreateNumber(var->m_op,1);
     auto bop = NodeFactory::CreateBinop(var->m_op,TokenType::PLUS,var,step);
-    if (step->isPureNumeric())
+/*    if (step->isPureNumeric())
     if (step->getValueAsInt(as)>127) {
         auto ns = qSharedPointerDynamicCast<NodeNumber>(step);
         ns->m_val = 256-ns->m_val;
         bop = NodeFactory::CreateBinop(var->m_op,TokenType::MINUS,var,step);
-    }
+    }*/
     auto assign = NodeFactory::CreateAssign(var->m_op,var,bop);
     assign->Accept(this);
 

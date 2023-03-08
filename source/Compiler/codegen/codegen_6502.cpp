@@ -642,6 +642,16 @@ void CodeGen6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
     as->ClearTerm();
     //    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
 
+    as->Comment("Forcetype:  "+TokenType::getType(node->m_castType));
+    if (node->isLong(as) || (node->m_castType==TokenType::LONG)) {
+  //      as->Comment("Var is LONG");
+//        as->ClearTerm();
+        as->Asm("ldy "+getValue8bit(node,true));
+        as->Asm("ldx "+getValue8bit(node,2));
+        as->Asm("lda "+getValue8bit(node,false));
+        return;
+
+    }
 
     if (node->isWord(as))
         as->Asm("ld"+reg+" "+getValue8bit(node,true));
@@ -1345,6 +1355,13 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     }
     else {
         as->ClearTerm();
+        auto var = nodeB;
+        if (inclusive) {
+            if (step!=nullptr)
+                var = NodeFactory::CreateBinop(var->m_op,TokenType::PLUS,var,step);
+            else
+                var = NodeFactory::CreateBinop(var->m_op,TokenType::PLUS,var,NodeFactory::CreateNumber(var->m_op,1));
+        }
 
         if (!nodeA->m_left->isPureVariable() || nodeA->m_left->hasArrayIndex()) {
             as->Comment("Compare variable is complex, storing in temp variable : "+nodeA->getValue(as));
@@ -1352,82 +1369,22 @@ void CodeGen6502::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
             as->Term();
             QString temp = as->StoreInTempVar("compare_temp");
             as->ClearTerm();
-            nodeB->Accept(this);
+            var->Accept(this);
             as->Term();
             as->Asm(cmp+temp+" ;keep");
         }
         else {
-            nodeB->Accept(this);
+            var->Accept(this);
             as->Term();
             as->Asm(cmp + nodeA->m_left->getValue(as) +" ;keep");
         }
     }
-    int stepValue = 1; // do we have a step value?
-    if (step != nullptr) {
-        stepValue = step->getValueAsInt(as); //node->m_step->getValue(as);
-        if (stepValue>127)
-            stepValue=-(256-stepValue);
 
-        if (stepValue==0)
-            stepValue =1;
-    }
-    if (inclusive) {    // inclusive version will END after the TO value
+    if (!isLarge)
+        as->Asm("bne "+loopNotDone);
+    else
+        as->Asm("beq "+loopDone);
 
-        if (!isLarge) {
-
-            if (stepValue > 0) {
-                as->Asm("bcs "+loopNotDone); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                as->Asm("bcc "+loopNotDone); // FOR index < TO value
-                as->Asm("beq "+loopNotDone); // BEQ then the BCC below
-            }
-
-        }
-        else {
-            // LargeLoops needs checking
-            if (stepValue > 0) {
-                as->Asm("bcc "+loopDone); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                as->Asm("beq "+loopNotDone); // BEQ then the BCC below
-                as->Asm("bcs "+loopDone); // FOR index < TO value
-            }
-
-        }
-
-    }
-    else {            // TRSE version will END on the TO value
-
-        if (!isLarge) {
-
-            if (stepValue == 1 || stepValue == -1) {
-                // increments / decrements of 1 are safe for BNE
-                as->Asm("bne "+loopNotDone);
-            } else if (stepValue > 1) {
-                as->Asm("beq "+loopDone); // FOR index == TO value
-                as->Asm("bcs "+loopNotDone); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                as->Asm("bcc "+loopNotDone); // FOR index < TO value
-            }
-
-        }
-        else {
-
-            // LargeLoops needs checking
-            //as->Asm("beq "+loopDone);
-            if (stepValue == 1 || stepValue == -1) {
-                // increments / decrements of 1 are safe for BNE
-                as->Asm("beq "+loopDone);
-            } else if (stepValue > 1) {
-                as->Asm("beq "+loopDone); // FOR index == TO value
-                as->Asm("bcc "+loopDone); // or FOR index > TO value
-            } else { //if (stepValue < -1) {
-                as->Asm("bcs "+loopDone); // FOR index < TO value
-            }
-
-        }
-
-        return;
-    }
 
 }
 
@@ -1958,6 +1915,14 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
             Disable16bit();
 
             as->Asm("sty " + getValue(node) + "+1");
+            Enable16bit();
+        }
+        if (as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber)->getTokenType() == TokenType::LONG || node->m_writeType==TokenType::LONG) {
+  //          as->Asm("sta " + getValue(node));
+            Disable16bit();
+
+            as->Asm("sty " + getValue(node) + "+1");
+            as->Asm("stx " + getValue(node) + "+2");
             Enable16bit();
         }
 
@@ -2771,7 +2736,9 @@ void CodeGen6502::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Nod
         QString loopDone = as->NewLabel("loopdone");
         as->Comment("Compare is onpage");
 
+ //       qDebug() << "CODEGEN_6502 "<< step->getValueAsInt(as);
         IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
+   //     qDebug() << "CODEGEN_6502 "<< step->getValueAsInt(as);
         Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
         as->PopLabel("loopdone");
         as->Label(loopDone+": ;keep");

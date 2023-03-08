@@ -16,6 +16,8 @@ var
 // Position of scroller raster line
 	const yposRaster:byte=$90;
 
+	ll : long = 200000;
+
 
 /*
   The following method just copes the current contents of textPointer to screenmemory
@@ -110,6 +112,8 @@ begin
 	Screen::EnableVIC4();
 //	Screen::SetFastMode();
 	InitScreen();
+	asm(";here");
+	ll := 100000;
 	// Let the text pointer point to the actual text
 	textPointer:=#text;
 	// Start the raster chain!
