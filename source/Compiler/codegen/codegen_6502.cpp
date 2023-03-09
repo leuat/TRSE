@@ -2794,14 +2794,6 @@ void CodeGen6502::HackPointer(Assembler *as, QSharedPointer<Node> n)
 
 }
 
-void CodeGen6502::PopLostStack(int num)
-{
-    if (num==0) return;
-    as->Asm("tax");
-    for (int i=0;i<num;i++)
-        as->Asm("pla");
-    as->Asm("txa");
-}
 
 void CodeGen6502::Cast(TokenType::Type from, TokenType::Type to)
 {
@@ -3136,5 +3128,29 @@ bool CodeGen6502::StoreStackParameter(QSharedPointer<NodeAssign> n)
 
 
     return true;
+
+}
+void CodeGen6502::dispatch(QSharedPointer<NodeProcedure> node){
+    for (int i=0; i<node->m_parameters.count();i++) {
+        // Assign all variables
+        //node->m_parameters[i]->ApplyHack(as);
+        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
+        QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
+        if (vd->m_varNode->isStackVariable()) {
+            lostStack++;
+            if (vd->isWord(as))
+                lostStack++;
+            na->m_isProcedureParameterAssign = true;
+        }
+        na->Accept(this);
+    }
+    AbstractCodeGen::dispatch(node);
+    if (lostStack==0) return;
+    as->Asm("tax");
+    for (int i=0;i<lostStack;i++)
+        as->Asm("pla");
+    as->Asm("txa");
+}
+void CodeGen6502::ProcedureStart(Assembler* as){
 
 }
