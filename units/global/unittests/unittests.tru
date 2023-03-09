@@ -17,13 +17,14 @@ Unit Unittests;
 @use "unittests/functions"
 @use "unittests/various"
 @use "unittests/boolean"
+@use "unittests/long"
 
 
 
 
 var
 //	allTests: array[] of integer = (#AdvancedTests);
-	const noTests : byte = 14;
+	const noTests : byte = 15;
 	currentTest : byte;
 	isDone: boolean;
 
@@ -47,7 +48,6 @@ begin
 		if (currentTest=13) then AdvancedMath::Exec();
 		@endif
 		
-		if (currentTest=12) then BooleanTest::Exec();
 		if (currentTest=6) then MulDiv::Exec();
 		if (currentTest=2) then Strings::Exec();
 		if (currentTest=3) then Functions::Exec();
@@ -59,6 +59,8 @@ begin
 		if (currentTest=9) then IfThenElse::Exec();
 		if (currentTest=10) then IntegerTest::Exec();
 		if (currentTest=11) then Various::Exec();
+		if (currentTest=12) then BooleanTest::Exec();
+		if (currentTest=14) then LongTest::Exec();
 @ifndef CPU_M6809
 		if (currentTest=0) then Classes::Exec();
 @endif

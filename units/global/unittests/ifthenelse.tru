@@ -387,7 +387,6 @@ end;
 // when Vars::v1 is zero and Vars::v2 is 255
 procedure LGT4_GreaterThan_False();
 begin
-	asm(";ball2");
 	Vars::l1 := 0; Vars::l2 := 2550;
 	Vars::text := "  LL4 4:"; if Vars::l1 > Vars::l2 then begin Common::FAIL(); end else begin Common::PASS(); end;
 end;
