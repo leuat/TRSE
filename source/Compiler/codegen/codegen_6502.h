@@ -125,9 +125,10 @@ public:
 //    void BinaryClause(QSharedPointer<Node> node);
 
     void BuildToCmp(QSharedPointer<Node> node);
-
-    void Disable16bit() override;
-    void Enable16bit() override;
+    
+    // WDC68c816 only. Turns on / off 16-bit mode.
+    void Disable16bit();
+    void Enable16bit();
 
 
 //    void BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);

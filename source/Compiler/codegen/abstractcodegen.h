@@ -148,10 +148,7 @@ public:
      */
     virtual QString ProcedureEndWithoutReturn() { return "";}
 
-    // Z80 functions that does a ex de,hl and sbc hl,de. As these two instructions doesn't exist
-    // on the gameboy, they are implemented manually on the GBZ80.
-    virtual void ExDeHl() {}
-    virtual void SbcHlDe() {}
+
 
     // Casts the internal register values from one type to another
     virtual void Cast(QString from, QString to);
@@ -347,10 +344,6 @@ public:
      */
     QString getValue(QSharedPointer<Node> n);
     QString getValue8bit(QSharedPointer<Node> n, int isHi);
-
-    // WDC68c816 only. Turns on / off 16-bit mode.
-    virtual void Disable16bit() {}
-    virtual void Enable16bit() {}
 
     // Method that defines a temporary string. Only used on the 6502, marked obsolete.
     virtual QString DefineTempString(QSharedPointer<Node> node);

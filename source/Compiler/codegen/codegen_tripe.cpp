@@ -421,9 +421,9 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeNumber>node)
 void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
     as->Asm("lda #<"+node->m_procedure->m_procName);
-    Disable16bit();
+    //Disable16bit();
     as->Asm("ldy #>"+node->m_procedure->m_procName);
-    Enable16bit();
+    //Enable16bit();
 }
 
 
