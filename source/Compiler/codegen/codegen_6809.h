@@ -71,7 +71,6 @@ public:
 
     void HackPointer(Assembler* as, QSharedPointer<Node> node);
 
-    void PopLostStack(int num) override;
 
 
 
@@ -113,7 +112,6 @@ public:
     void PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
 
-    void InlineProcedure(QSharedPointer<NodeProcedure> p);
     void BinOp16(QSharedPointer<Node> node);
 
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
@@ -131,8 +129,8 @@ public:
 
 
 
-//    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
-    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+//    void BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
+    void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 
@@ -194,7 +192,6 @@ public:
     void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
 
-    bool StoreStackParameter(QSharedPointer<NodeAssign> n) override;
 
     void AssignString(QSharedPointer<NodeAssign>node) override;
 
@@ -204,7 +201,6 @@ public:
 
 //    bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
@@ -220,9 +216,7 @@ public:
 
     QString getCallSubroutine() override;
 
-    virtual QString ProcedureEndWithoutReturn() override;
 
-    virtual QString getInitProcedure() override;
 
     bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
 

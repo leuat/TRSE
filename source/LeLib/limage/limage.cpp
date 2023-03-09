@@ -126,6 +126,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 41;
     if (t==THOMSON)
         return 42;
+    if (t==TIMG)
+        return 43;
 
 
     return 255;
@@ -219,6 +221,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic TRS80 CoCo3 image";
     if (t==THOMSON)
         return "Generic Thomson mo5 image";
+    if (t==TIMG)
+        return "Generic TIM image";
 
 
     return "Unknown image type";
@@ -314,6 +318,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return COCO3;
     if (c==42)
         return THOMSON;
+    if (c==43)
+        return TIMG;
 
     return NotSupported;
 
@@ -359,8 +365,19 @@ QString LImage::GetCurrentModeString() {
     return "";
 }
 
-void LImage::FloydSteinbergDither(QImage &img, LColorList &colors, bool dither, double strength)
+void LImage::FloydSteinbergDither(QImage &oimg, LColorList &colors, bool dither, double strength)
 {
+
+/*    int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
+    int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
+
+    if (m_importScaleX==1.0 && m_importScaleY==1.0) { // prevent rounding errors on windows.. damn
+       xx = dx;
+       yy = dy;
+    }
+
+  */
+    QImage img = oimg.scaled(oimg.width()*m_importScaleX,oimg.height()*m_importScaleY,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     int height  =std::min(img.height(), m_height);
     int width  =std::min(img.width(), m_width);
     for (int y=0;y<height;y++) {

@@ -206,8 +206,9 @@ void Orgasm::ProcessUnrolling()
 
     }
     m_lines = newLines;
-  //  qDebug().noquote() << m_lines;
+    //  qDebug().noquote() << m_lines;
 }
+
 
 OrgasmLine Orgasm::LexLine(int i) {
     OrgasmLine l;
@@ -219,6 +220,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
     line = line.replace("dc.w", ".word");
+    line = line.replace("dc.l", ".long24");
     line = line.replace(" EQU ", " = ");
     line = line.replace(" equ ", " = ");
 
@@ -386,6 +388,12 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_expr = line.replace(" dw ", "").trimmed();//.simplified();
         return l;
     }
+    if (lst[0].toLower()==".long24" || lst[0].toLower()=="dc.l") {
+        l.m_type = OrgasmLine::LONG24;
+        l.m_expr = line.replace(".long24", "").trimmed();//.simplified();
+        l.m_expr = line.replace(" dc.l ", "").trimmed();//.simplified();
+        return l;
+    }
     l.m_type = OrgasmLine::INSTRUCTION;
     l.m_instruction.Init(lst);
 
@@ -459,9 +467,26 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);
+
+    if (m_header==HEADER_DECB && m_success) {
+        int size = m_data.size();
+        m_data.insert(0,(uchar)0);
+        m_data.insert(1,(size>>8)&0xFF);
+        m_data.insert(2,(size)&0xFF);
+        m_data.insert(3,(m_startAddress>>8)&0xFF);
+        m_data.insert(4,(m_startAddress)&0xFF);
+        // Appendix
+        m_data.append(0xff);
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
+        m_data.append((m_startAddress>>8)&0xFF);
+        m_data.append((m_startAddress)&0xFF);
+    }
+
     if (m_success) {
         QFile out(outFile);
         out.open(QFile::WriteOnly);
+
         out.write(m_data);
         out.close();
     }
@@ -608,6 +633,9 @@ void Orgasm::Compile(OrgasmData::PassType pt)
         if (ol.m_type==OrgasmLine::WORD)
             ProcessWordData(ol);
 
+        if (ol.m_type==OrgasmLine::LONG24)
+            ProcessLong24Data(ol);
+
         if (ol.m_type==OrgasmLine::ORG)
             ProcessOrgData(ol);
 
@@ -632,7 +660,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
         m_data.append((char)0x00);
         return;
     }
-    QStringList lst = Util::fixStringListSplitWithCommaThatContainsStrings(ol.m_expr.split(","));
+    QStringList lst = Util::splitStringSafely(ol.m_expr);
 
     for (QString s: lst) {
 
@@ -655,7 +683,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             }
 
 
-//            if (lst.count()>1)  qDebug() << "Adding: " <<  Util::NumberFromStringHex(s);
             m_data.append(Util::NumberFromStringHex(s));
 
 //            qDebug() << Util::NumberFromStringHex(s);
@@ -670,7 +697,6 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
             str = str.remove(str.length()-1,1);
             str = str.replace("\\n","\n");
             str = str.replace("\\r","\r");
-            //qDebug() << "HERE: " <<s;
             for (int i=0;i<str.length();i++) {
 
                 int c = str.at(i).toLatin1();
@@ -726,13 +752,70 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
         if (s.trimmed()=="") continue;
         s = s.trimmed().simplified();
         if (m_symbolsList.contains(s)) {
-            m_data.append(m_symbols[s]&0xFF);
-            m_data.append((m_symbols[s]>>8)&0xFF);
+            if (isLittleEndian) {
+                m_data.append(m_symbols[s]&0xFF);
+                m_data.append((m_symbols[s]>>8)&0xFF);
+            }
+            else {
+                m_data.append((m_symbols[s]>>8)&0xFF);
+                m_data.append(m_symbols[s]&0xFF);
+            }
         }
         else {
-            m_data.append(Util::NumberFromStringHex(s)&0xFF);
-            m_data.append(Util::NumberFromStringHex(s)>>8);
+            if (isLittleEndian) {
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+                m_data.append(Util::NumberFromStringHex(s)>>8);
+            }
+            else {
+                m_data.append(Util::NumberFromStringHex(s)>>8);
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+
+            }
         }
+        m_pCounter++;
+        m_pCounter++;
+    }
+}
+
+void Orgasm::ProcessLong24Data(OrgasmLine &ol)
+{
+    if (ol.m_expr=="") {
+        m_pCounter+=3;
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
+        m_data.append((char)0x00);
+        return;
+    }
+    QStringList lst = ol.m_expr.split(",");
+    for (QString s: lst) {
+        if (s.trimmed()=="") continue;
+        s = s.trimmed().simplified();
+        if (m_symbolsList.contains(s)) {
+            if (isLittleEndian) {
+                m_data.append(m_symbols[s]&0xFF);
+                m_data.append((m_symbols[s]>>8)&0xFF);
+                m_data.append((m_symbols[s]>>16)&0xFF);
+            }
+            else {
+                m_data.append((m_symbols[s]>>16)&0xFF);
+                m_data.append((m_symbols[s]>>8)&0xFF);
+                m_data.append(m_symbols[s]&0xFF);
+            }
+        }
+        else {
+            if (isLittleEndian) {
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+                m_data.append((Util::NumberFromStringHex(s)>>8)&0xFF);
+                m_data.append((Util::NumberFromStringHex(s)>>16)&0xFF);
+            }
+            else {
+                m_data.append((Util::NumberFromStringHex(s)>>16)&0xFF);
+                m_data.append((Util::NumberFromStringHex(s)>>8)&0xFF);
+                m_data.append(Util::NumberFromStringHex(s)&0xFF);
+
+            }
+        }
+        m_pCounter++;
         m_pCounter++;
         m_pCounter++;
     }
@@ -747,6 +830,8 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
             m_data.append((val>>8)&0xFF);
         }
         m_pCounter = val;
+        if (m_startAddress==-1)
+            m_startAddress = m_pCounter;
         return;
     }
     else {

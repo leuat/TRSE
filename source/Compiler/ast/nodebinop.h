@@ -53,6 +53,7 @@ public:
     int m_value = 0;
 
     bool isWord(Assembler* as) override;
+    bool isLong(Assembler* as) override;
 
     void setForceType(TokenType::Type t) override;
 //    void setForceTypeFunctions(TokenType::Type t);

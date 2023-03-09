@@ -29,9 +29,12 @@ public:
     TokenType::Type getSystemPointerArrayType() override {
         return TokenType::INTEGER;
     }
-    virtual bool isZ80() {
+    virtual bool isZ80() override {
         return true;
     }
+
+    void PackProgram(QString filename, int start, int actualStarto, QString&text, QString currentDir, QSharedPointer<SymbolTable> st, QString asmFile);
+
 
     QString CompressFile(QString fileName) override;
 

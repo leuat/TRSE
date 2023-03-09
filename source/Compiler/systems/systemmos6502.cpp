@@ -203,15 +203,23 @@ BLK5 = $A000-$BFFF
     int disk = 1;
     int track = 18;
     if (m_projectIni->getdouble("use_track_19")==1.0) track=19;
-    if (m_projectIni->getString("output_type")=="d64")
-    while (m_projectIni->contains("disk"+QString::number(disk)+"_paw")) {
-        QString d = "disk"+QString::number(disk);;
-        if (!CreateDiskInternal(currentDir, d,filename, disk==1,output,track)) {
-            text+=output;
+    if (m_projectIni->getString("output_type")=="d64") {
+        while (m_projectIni->contains("disk"+QString::number(disk)+"_paw")) {
+            QString d = "disk"+QString::number(disk);;
+            if (!CreateDiskInternal(currentDir, d,filename, disk==1,output,track)) {
+                text+=output;
+                return;
+            }
+            disk+=1;
+        }
+        if (disk==1) {
+            text +="<br>You need to set up at least one disk in the project settings.";
+            m_buildSuccess = false;
             return;
         }
-        disk+=1;
     }
+
+
 
 
     text+=output;

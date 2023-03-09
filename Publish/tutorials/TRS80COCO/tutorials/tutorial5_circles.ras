@@ -7,12 +7,13 @@ program CirclesOhYes;
 
 
 
-// Good old plasma example!
+// Good old circles example!
 
 var  
 	// some plasma variables
-	ctr,val,val2,c2x, c2y,ax, ay,time, time2,time3,z : byte;
+	ctr,val,val2,time, time2,time3,z : byte;
 	x,y,shift,i : byte;
+	keep_s : integer;
 	// mini sine table
 	// Org sine table
 	sin : array[256] of byte = buildsinetable(127);
@@ -46,10 +47,17 @@ begin
 	for y:=0 to 100 step 2 offpage  do 
 	begin
 		asm("
+		tfr s,d
+		; OOOPS this method screws with the stack! No interrupts please!
+		std [keep_s]
+		lds #data+128
+		
+		
 		ldy src1
 		ldx src2
 		ldu dst
 		ldb #0
+		
 		");
 		for z:=0 to width unroll do
 		begin
@@ -57,16 +65,16 @@ begin
 				lda ,y+
 				adda time3
 				suba ,x+
-				pshs x
-				ldx #data+128
-				lda a,x
-				puls x
-				
+				lda a,s
 				sta ,u+
 			
 			");
 		end;	
+		asm("
 		
+		ldd [keep_s]
+		tfr d,s
+		");
 	
 		dst+=40*4;
 		src1+=dwidth*2;

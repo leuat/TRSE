@@ -161,13 +161,14 @@ bool Util::NumberFromStringHex(QString s, long &num) {
         type = 2;
         s = s.replace(">","");
     }
-    if (s.startsWith("$"))
+
+    if (s.startsWith("$") || s.startsWith("-$"))
         val = s.remove("$").toLong(&ok, 16);
     else
-        if (s.toLower().startsWith("0x"))
+        if (s.toLower().startsWith("0x") || s.toLower().startsWith("-0x"))
             val = s.remove("0x").toLong(&ok, 16);
         else
-            if (s.toLower().startsWith("%"))
+            if (s.toLower().startsWith("%") || s.toLower().startsWith("-%"))
                 val= s.remove("%").toLong(&ok, 2);
             else
                 val = s.toInt(&ok, 10);
@@ -199,6 +200,7 @@ QString Util::findFileInDirectories(QString fileName, QStringList dirs)
     }
     return "";
 }
+
 
 
 
@@ -402,6 +404,29 @@ void Util::WriteInt16LH(QByteArray &ba, int val)
 
 }
 
+QStringList Util::splitStringSafely(QString str)
+{
+    bool insideString = false;
+    QString internalDelimiter = "#;&ÆÆ";
+    QString res = "";
+    for (int i=0;i<str.length();i++) {
+        QString c = QString(str[i]);
+        if (c=="\"")
+            insideString=!insideString;
+
+        if (c=="," && !insideString) {
+            c = internalDelimiter;
+        }
+//        qDebug() << c << insideString;
+        res+=c;
+    }
+  //  qDebug() << "RES : " <<res;
+    return res.split(internalDelimiter);
+
+
+}
+
+
 QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst)
 {
     QStringList fixList;
@@ -410,6 +435,7 @@ QStringList Util::fixStringListSplitWithCommaThatContainsStrings(QStringList lst
     for (auto s: lst) {
         bool add = true;
         cur += s;
+        qDebug() << cur  << isInString;
         if (s=="\"" && !isInString) {
             add = false;
             isInString=!isInString;

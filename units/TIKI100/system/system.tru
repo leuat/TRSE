@@ -1,0 +1,72 @@
+unit System;
+var
+	const mode_2_colors : byte = %010000;
+	const mode_4_colors : byte = %100000;
+	const mode_16_colors : byte = %110000;
+	
+	c,d,i,j,r,g,b,mode : byte;
+	stack : array[256] of byte;
+	
+procedure SetMode(mode : global byte);
+begin
+	asm("
+	ld a,[System_mode]
+ 	out [$0c],a
+
+
+ 	; vram at 0
+ 	ld a,%00001100
+ 	out [$1c],a
+	
+	");
+
+end;	
+
+procedure SetSingleColor(i : global byte);
+begin
+	asm("
+		ld a,[System_mode]
+		ld b,a
+		ld a,[System_i]
+		or b
+		or %10000000
+		out ($0c),a
+	");
+end;
+
+procedure SetColor(c,r,g,b : global byte);
+begin
+	b:=7-b;
+	g:=7-g;
+	r:=7-r;
+	i:=(b>>1) | (g<<2) | (r<<5);
+	asm("
+		ld a,[System_i]
+		out ($14),a
+	");	
+	for i:=0 to 200 do nop(10);
+	if (mode=mode_4_colors) then
+	begin
+		SetSingleColor(c);
+		SetSingleColor(c+4);
+		SetSingleColor(c+8);
+		SetSingleColor(c+12);
+	end;
+
+	if (mode=mode_16_colors) then
+	begin
+		SetSingleColor(c);
+	end;
+	
+end;
+
+
+procedure Init() inline;
+begin
+	asm("
+		di
+		ld sp,System_stack+255
+	");
+end;
+
+end.

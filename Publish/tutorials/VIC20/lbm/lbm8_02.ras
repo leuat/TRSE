@@ -1,0 +1,153 @@
+program Lbm8_02;
+
+// options to customise lbm8:
+// --------------------------
+
+// optional - define how big the BG buffer is for storing screen characters used by
+// lbm8::RestoreBG();
+// The default is 4 which will serve one free roaming sprite.
+// - 4 characters are needed for each sprite that is free roaming on both axis
+// - 2 characters are needed for each sprite that will only move on one axis at a time
+// note:   each buffer unit uses 3 bytes (and address and the character code)
+// note 2: you will potentially get crashes or corruption if not set correctly
+@DEFINE BGBUFFERS 16 
+
+// Screen and character data
+// -------------------------
+// Optional - The Screen address, set to $1e00 by default, suitable for an unexpanded Vic 20.
+//            Specify another address if needed
+@DEFINE SCREENADDRESS $1e00
+// Optional - The Character address, set to $1c00 by default.
+//            Specify another address if needed
+@DEFINE CHARADDRESS $1c00 
+
+// Optional - Specify the number of characters in your characterset. The defult is 64
+// which is often the limit (not always) on an unexpanded Vic 20. The max is 256.
+// Creates a look up table set to this size.
+@DEFINE NUMCHARS 64
+
+// Screen dimensions, needed to create a look up table
+// -----------------
+// optional - tell lbm8 if you set a different screen width 
+@DEFINE SCREENWIDTH 22
+// optional - tell lbm8 if you ser a different screen height
+@DEFINE SCREENHEIGHT 23
+
+// placing lbm8's variables in zero page memory will have a performance and size benefit
+// Specify the address in ZP memory where lbm8's variables will be stored.
+// 13 bytes are required from this zp memory location
+@DEFINE LBM8ZEROPAGE 0 
+
+var
+
+// unexpanded Vic 20
+@vicmemoryconfig "none" 
+
+@use "output/lbm8"
+@use screen
+
+	
+	// export the default characterset
+	@export "chr\char.flf" "chr\char.bin" 64
+	charset: incbin("chr\char.bin", $1c00); // unexpanded location for char setcharset 
+
+
+	// export the 8 16x8 preshifted sprites
+	const ADRSPRITE: address = $1a00;
+	@vbmexport "chr\sprites.flf" "chr\lbm8sprite.bin" 0 16 1 0
+	lbm8Sprite: incbin( "chr\lbm8sprite.bin", ADRSPRITE );
+
+	// the pre-shift array
+	sprites: array[8] of integer = buildtable( " ADRSPRITE + (i*16)" );	
+	
+	// x and y position
+	xp, yp: byte;
+
+	xx: array[ 3 ] of byte;
+	yy: array[ 3 ] of byte;
+
+	dx: array[ 3 ] of byte;
+	dy: array[ 3 ] of byte;
+	
+	i, j: byte;
+
+	
+begin
+
+	DefineScreen();
+
+	ClearScreen( 32, #SCREEN_CHAR_LOC); 	// ^$9600 - unexpanded colour location
+
+	ClearScreen( GREEN, #SCREEN_COL_LOC); 	// ^$9600 - unexpanded colour location
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+
+	Screen::SetScreenCharAddress( 
+		Screen::SCREEN_1c00 + Screen::CHAR_1c00, 
+		Screen::SCREEN_ADD_0200 );
+
+	// put some characters on the screen
+	screenmemory := $1e00+88+88;
+	for i := 0 to 44 do screenmemory[ i ] := i+20;	
+
+
+	// set some starting positions
+	for i := 0 to 3 do
+	begin
+		xx[ i ] := 50+i <<3;
+		yy[ i ] := 50+i <<3;
+		
+		if ( i & 1 =1 ) then
+		begin
+			
+			dx[ i ] := 1;
+			dy[ i ] := 1;
+			
+		end
+		else
+		begin
+			
+			dx[ i ] := -1;
+			dy[ i ] := -1;
+						
+		end;
+	end;
+
+	xp := 100; yp := 10;
+
+	while (true) do
+	begin
+
+		
+		ReadJoy1();
+		if (joy1 & JOY_RIGHT) then xp+=1;
+		if (joy1 & JOY_LEFT) then xp-=1;
+		if (joy1 & JOY_DOWN) then yp+=1;
+		if (joy1 & JOY_UP and yp >0) then yp-=1;
+				
+	
+		WaitForRaster(130);
+		
+		lbm8::RestoreBG();
+		lbm8::DrawAt( 0, xp, yp, #sprites );
+
+		for j := 0 to 3 do
+		begin
+		
+			lbm8::DrawAt( 4 + (j<<2), xx[ j ], yy[ j ], #sprites );
+			
+			xx[ j ] := xx[ j ] + dx[ j ];
+			yy[ j ] := yy[ j ] + dy[ j ];
+			
+			if (xx[ j ] >= 21*8) then dx[ j ] := -1;
+			if (yy[ j ] >= 22*8) then dy[ j ] := -1;
+
+			if (xx[ j ] < 2) then dx[ j ] := 1;
+			if (yy[ j ] < 4) then dy[ j ] := 1;
+			
+		end;
+
+	end;
+
+end.

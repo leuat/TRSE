@@ -293,12 +293,12 @@ def CompileRegularRas():
 	#tests.append([ "GAMEBOY/UnitTests",["unittests.ras"]])
 
 
-#CompileUnitTests()
 
 if (utestsonly==False):
 	CompileRegularRas();
 else:
 	print("Skipping compilation of regular tests")
+	CompileUnitTests()
 
 
 def c(path,f1):
@@ -413,7 +413,7 @@ def COCO3UnitTests():
 			os.remove(resultFile)
 
 		try:
-			result = subprocess.run([mame,"coco3", "-flop1",path+"/unittests/unittests.dsk","-resolution0", "640x480@60", "-window", "-nothrottle", "-skip_gameinfo","-autoboot_delay","1","-autoboot_command","loadm \"T\":exec\\n"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT, cwd=os.path.realpath(mame))
+			result = subprocess.run([mame,"coco3", "-flop1",path+"/unittests.dsk","-resolution0", "640x480@60", "-window", "-nothrottle", "-skip_gameinfo","-autoboot_delay","1","-autoboot_command","loadm \"T\":exec\\n"], timeout=10*60, stdout=PIPE, stderr=subprocess.STDOUT, cwd=os.path.dirname(mame))
 			if result.stdout: print(result.stdout.decode('utf-8'))
 		except subprocess.TimeoutExpired as err:
 			print("ERROR: Timeout for COCO3 unit tests expired.")
@@ -421,15 +421,16 @@ def COCO3UnitTests():
 #		print(os.path.exists(resultFile))
 		if (not os.path.exists(resultFile)):
 			time.sleep(8)
-		with open(resultFile, "rb") as f:
-			data = array('B')
-			# byte 2 should have 0 for success 
-			data.fromfile(f, 1)
-			if (data[0]==1):
-				failed.append([path, "unittests.dsk"])
-				print("******* SEVERE ERROR : COCO3 Execution unit test FAILED! Please fix up unittests")
-			else:
-				print("COCO3 Unittest SUCCESS!")
+		if os.path.exists(resultFile):
+			with open(resultFile, "rb") as f:
+				data = array('B')
+				# byte 2 should have 0 for success 
+				data.fromfile(f, 1)
+				if (data[0]==1):
+					failed.append([path, "unittests.dsk"])
+					print("******* SEVERE ERROR : COCO3 Execution unit test FAILED! Please fix up unittests")
+				else:
+					print("COCO3 Unittest SUCCESS!")
 	else:
 		print("Skipping COCO3 tests: emulator path '%s'" % mame)
 
@@ -524,7 +525,7 @@ def GBUnitTests():
 
 def UnitTests():
 	# add coco
-	#COCO3UnitTests();
+	COCO3UnitTests();
 	DOSUnitTests();
 	C64UnitTests();
 	CPCUnitTests();

@@ -46,9 +46,9 @@ begin
 
 
 		// Copy 2 rows of data
-		MemCpyUnroll16(zp,dst,7);
+		MemCpyUnroll16(zp,dst,4);
 		dst+=40; // next line
-		MemCpyUnroll16(zp,dst,7);
+		MemCpyUnroll16(zp,dst,4);
 		dst+=40; // next line
 		
 

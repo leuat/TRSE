@@ -61,7 +61,7 @@ public:
     QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
     int m_lvl = 0;
-    QStringList m_regs = QStringList({"V0","V1","V2","V3","V4","V5"});
+    QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7", "V8", "V9", "VA", "VB", "VC", "VD", "VE"});
 
     QString m_jmp = "jp ";
     QString m_mov = "ld ";
@@ -107,19 +107,17 @@ public:
 
     QString PushReg();
     void PopReg();
-    QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
 
 
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-    QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
 
 
 //    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+    virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
 
@@ -164,10 +162,6 @@ public:
 
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
 
-
-    void ProcedureStart(Assembler* as) override;
-
-    void ProcedureEnd(Assembler* as) override;
 
 
 

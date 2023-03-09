@@ -433,6 +433,10 @@ void Parser::InitSystemPreprocessors()
     m_preprocessorDefines["CPU_"+AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor)] = "1";
     if (Syntax::s.m_currentSystem->getCPUFlavor()!="")
         m_preprocessorDefines["CPU_FLAVOR_"+Syntax::s.m_currentSystem->getCPUFlavor()] = "1";
+    m_preprocessorDefines["SUPPORTS_FORI"] = QString::number((int)Syntax::s.m_currentSystem->m_supportsInclusiveFor);
+    m_preprocessorDefines["SUPPORTS_LONG"] = QString::number((int)Syntax::s.m_currentSystem->m_allowedBaseTypes.contains("LONG"));
+
+
 
     Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 
@@ -1134,6 +1138,22 @@ void Parser::HandlePreprocessorInParsing()
             return;
         }
         if (m_currentToken.m_value=="deletefile") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="copyfile") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="addcpmheader") {
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="addemulatorparam") {
             Eat();
             Eat();
             return;
@@ -2298,6 +2318,8 @@ QSharedPointer<Node> Parser::Case()
     if (n->m_variable==nullptr)
         ErrorHandler::e.Error("Case statements only work with variables.", m_currentToken.m_lineNumber);
         */
+    int forcePage = findPage();
+
     Eat(TokenType::OF);
     while (m_currentToken.m_type != TokenType::END && m_currentToken.m_type != TokenType::ELSE) {
         QSharedPointer<Node> expr = Expr();
@@ -2313,6 +2335,8 @@ QSharedPointer<Node> Parser::Case()
     }
     else
         Eat(); // Eat final END
+
+    n->m_forcePage = forcePage;
     return n;
 
 }
@@ -2850,6 +2874,43 @@ void Parser::PreprocessSingle() {
 
 
     }
+    else
+    if (m_currentToken.m_value.toLower() =="copyfile") {
+        Eat(TokenType::PREPROCESSOR);
+        QString src = m_currentToken.m_value;
+        Eat();
+        QString dst = m_currentToken.m_value;
+        Eat();
+        if (!QFile::exists(m_currentDir+src))
+            ErrorHandler::e.Error("Could not find file to copy: "+src,m_currentToken.m_lineNumber);
+
+        if (QFile::exists(m_currentDir+dst))
+            QFile::remove(m_currentDir+dst);
+        Util::CopyFile(m_currentDir+src,m_currentDir+dst);
+
+    }
+    if (m_currentToken.m_value.toLower() =="addcpmheader") {
+        Eat(TokenType::PREPROCESSOR);
+        QString src = m_currentToken.m_value;
+        Eat();
+        if (!QFile::exists(m_currentDir+src))
+            ErrorHandler::e.Error("Could not find file to add to header: "+src,m_currentToken.m_lineNumber);
+
+        QByteArray d = Util::loadBinaryFile(m_currentDir+src);
+        int i = d.size();
+        d.insert(0,i/128);
+        d.insert(1,i&127);
+        if (QFile::exists(m_currentDir+src))
+            QFile::remove(m_currentDir+src);
+        Util::SaveByteArray(d,m_currentDir+src);
+
+    }else
+    if (m_currentToken.m_value.toLower() =="addemulatorparam") {
+        Eat(TokenType::PREPROCESSOR);
+        m_additionalEmulatorParams<<m_currentToken.m_value;
+        Eat();
+    }
+
     else
         if (m_currentToken.m_value.toLower() =="define") {
             Eat(TokenType::PREPROCESSOR);
@@ -3496,8 +3557,12 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
 QSharedPointer<Node> Parser::ForLoop(bool inclusive)
 {
     int ln = m_currentToken.m_lineNumber;
-    if (inclusive)
+    if (inclusive) {
         Eat(TokenType::FORI);
+        if ((!Syntax::s.m_currentSystem->m_supportsInclusiveFor))
+            ErrorHandler::e.Error("Current system does not support inclusive for (FORI).", m_currentToken.m_lineNumber);
+
+    }
     else
         Eat(TokenType::FOR);
 
@@ -3516,7 +3581,9 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
         if (m_currentToken.m_type==TokenType::STEP) {
             Eat();
             step = Expr();
-            //qDebug() << TokenType::getType(step->m_op.m_type);
+/*            qDebug() << TokenType::getType(step->m_op.m_type);
+            auto num = qSharedPointerDynamicCast<NodeNumber>(step);
+            qDebug() << num->m_val;*/
         }
         if (m_currentToken.m_type==TokenType::LOOPX) {
             Eat();
@@ -5045,6 +5112,7 @@ void Parser::HandlePerlinNoise()
     int amp = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     SimplexNoise sn;
+//    qDebug() << "PARSER:::" <<file;
     sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
 
 }
@@ -5184,9 +5252,11 @@ void Parser::HandleExport()
     int param1 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
     int param2 = 0;
+    bool singleParam = true;
     if (m_currentToken.m_type==TokenType::INTEGER_CONST) {
         param2 = m_currentToken.m_intVal;
         Eat(TokenType::INTEGER_CONST);
+        singleParam = false;
 
     }
     else {
@@ -5229,8 +5299,9 @@ void Parser::HandleExport()
     img->m_silentExport = true;
 
 
-    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr) {
+    if (dynamic_cast<C64FullScreenChar*>(img)!=nullptr && singleParam) {
         C64FullScreenChar* c = dynamic_cast<C64FullScreenChar*>(img);
+
         c->ExportMovie(file);
     }
     else
@@ -5294,14 +5365,53 @@ void Parser::HandleCompress()
     Eat(TokenType::STRING);
     QString outFile = m_currentDir+"/"+ m_currentToken.m_value;
     Eat(TokenType::STRING);
-
+    int split = 1;
+    if (m_currentToken.m_type==TokenType::INTEGER_CONST) {
+        split = m_currentToken.m_intVal;
+        Eat();
+    }
     QString lz4 = m_settingsIni->getString("lz4");
     if (!QFile::exists(lz4))
         ErrorHandler::e.Error("In order to compress files, please set up the 'lz4' path in the 'Utilities' section in the TRSE settings panel.", m_currentToken.m_lineNumber);
+    QString out, err;
+    if (split!=1) {
+        QByteArray da = Util::loadBinaryFile(inFile);
+        int start = 0;
+        int sz = da.size()/split;
+        for (int i=0;i<split;i++) {
+            qDebug() << i;
+            QString of = outFile + QString::number(i);
+            QString tmp = inFile+"_tmp"+QString::number(i);
+            QByteArray d = da.mid(start,sz);
+            start+=sz;
+            qDebug() << d.size();
+            if (QFile::exists(tmp))
+                QFile::remove(tmp);
+            if (QFile::exists(of))
+                QFile::remove(of);
+            Util::SaveByteArray(d,tmp);
+
+            QStringList params = QStringList() << "-l" << tmp << of;
+            Syntax::s.m_currentSystem->StartProcess(lz4,params,out,true);
+
+            // Automatically add header to TIM
+            if (Syntax::s.m_currentSystem->m_system==AbstractSystem::TIM) {
+                QByteArray d = Util::loadBinaryFile(of);
+                int i = d.size();
+                d.insert(0,i/128);
+                d.insert(1,i&127);
+                if (QFile::exists(of))
+                    QFile::remove(of);
+                Util::SaveByteArray(d,of);
+
+            }
+
+        }
+        return;
+    }
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);
-    QString out, err;
     QStringList params = QStringList() << "-l" << inFile << outFile;
     Syntax::s.m_currentSystem->StartProcess(lz4,params,out,true);
 

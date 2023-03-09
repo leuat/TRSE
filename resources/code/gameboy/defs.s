@@ -695,7 +695,8 @@ SCRN_VY    EQU  256 ; Virtual height of screen in pixels
 SCRN_VX_B  EQU  32  ; Virtual width of screen in bytes
 SCRN_VY_B  EQU  32  ; Virtual height of screen in bytes
 
-NINTENDO_LOGO:   MACRO
+;NINTENDO_LOGO:   MACRO
+MACRO NINTENDO_LOGO
 ;*
 ;* Nintendo scrolling logo
 ;* (Code won't work on a real GameBoy)
@@ -707,7 +708,7 @@ NINTENDO_LOGO:   MACRO
         ENDM
 
 
-ROM_HEADER:   MACRO
+MACRO ROM_HEADER
 ;*
 ;* Nintendo scrolling logo
 ;* (Code won't work on a real GameBoy)

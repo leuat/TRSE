@@ -35,7 +35,7 @@ Asm6809::Asm6809() :Assembler()
 
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiser6809());
     m_wram = QSharedPointer<Appendix>(new Appendix("$C800"));
-
+    m_optimiser->m_noPasses = 3;
 
 }
 
@@ -121,8 +121,13 @@ void Asm6809::DeclareArray(QString name, QString type, int count, QStringList da
             return;
         }
 
+        if (!m_isOrgasm)
+            Write(getLabelEnding(name) +"\t" + "fill" + "\t 0,"+QString::number(count));
+        else {
+            Write(getLabelEnding(name) +"\t" + t + "\t ");
+            Asm("org "+name+"+" +QString::number(count*scale));
 
-        Write(getLabelEnding(name) +"\t" + "fill" + "\t 0,"+QString::number(count));
+        }
 //        Asm("org "+name+"+" +QString::number(count*scale));
 
     }
@@ -389,16 +394,12 @@ QString Asm6809::String(QStringList lst, bool term)
 
     QString res;
     QString mark = "dc.b";
-    if (Syntax::s.m_currentSystem->is6809())
+    if (!m_isOrgasm)
         mark = "fcc";
-    if (Syntax::s.m_currentSystem->CL65Syntax()) {
-        mark = ".asciiz";
-        term = false;
-    }
 
     for (QString s:lst) {
         for (QString s:lst)
-            res+=DeclareSingleString(s,mark,"fcb");
+            res+=DeclareSingleString(s,mark,byte);
 
 /*        if (s!=lst.last())
             res=res + "\n";
@@ -428,23 +429,23 @@ void Asm6809::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         if (clearFlag)
-        m_term = "adda ";
+        m_term = "addb ";
     }
 
     if (t == TokenType::MINUS) {
         if (clearFlag)
-        m_term = "suba ";
+        m_term = "subb ";
     }
 
     if (t == TokenType::BITAND) {
-        m_term = "anda ";
+        m_term = "andb ";
     }
 
     if (t == TokenType::BITOR) {
-        m_term = "ora ";
+        m_term = "orb ";
     }
     if (t == TokenType::XOR) {
-        m_term = "eora ";
+        m_term = "eorb ";
     }
 
 }
@@ -588,6 +589,8 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
    // qDebug() << "Using reglar variables: " << m_zpStack.count();
     QString tmpVar = NewLabel(name+"_var");
     if (type=="byte") type=byte;
+    if (m_isOrgasm && type=="fcb")
+        type = byte;
     if (type=="word") type=word;
     Comment("Store in temp var");
     QString labelVar = getLabelEnding(tmpVar) + "\t "+type+"\t0 ";
@@ -600,7 +603,7 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
         if (type==word)
             Asm("stx " + tmpVar);
         else
-            Asm("sta " + tmpVar);
+            Asm("stb " + tmpVar);
 
     }
     PopLabel(name+ "_var");

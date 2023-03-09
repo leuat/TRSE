@@ -1,0 +1,134 @@
+program real3d;
+
+
+@projectsettings "startaddress" $1C00
+@projectsettings "basicsysaddress" $1C10
+@projectsettings "ignorebasicsysstart" 0
+@define lib3d_projection_x_scale "2"
+
+@define lib3d_yscale2 1 // Pixels wider than height
+
+@define signedmath_zeropage $20 // $20-25
+@define lib3d_zeropage $90 // $90-A0
+@define matrix_zeropage $c0 // $C0-cf
+@define muldivtables $4000
+@define objPos $4800
+@define max3dobjects 1
+var
+const buf : address = $3800;
+
+@define linemethod "LineGeneric::Line"
+@use "gfx/lib3d"
+@use "gfx/gfx"
+@use "gfx/linegeneric"
+@use "compression/compression"
+@export "resources/charsets/charset_gfx.flf" "resources/charsets/charset_gfx.bin" 256
+
+//@startblock $4000 "Code"
+
+var
+	bb,x1,x2,y1,y2,l,i,j,k,f,x3,y3,time,time2,t: byte;
+	zp,dst : pointer;
+	ip:pointer of integer;
+	
+	const charsetLoc:address = $1800;
+	
+	obj1 : incbin("resources/data/torus1.bin");
+//	charset : incbin("resources/charsets/c64_charset.bin") compressed;
+	charset : incbin("resources/charsets/charset_gfx.bin") compressed;
+	
+	const sh: byte = 8;
+
+
+	matX, matY, matZ, matT : Matrix::mat4;
+	x,y,char : byte=0;
+	len:byte=1;
+	ix,m:integer;
+	
+
+procedure ClearBuffer();
+begin
+	asm("
+		lda #$0
+		repeat 506
+		sta BUF + [i]
+		repend
+	
+	");
+
+end;
+
+procedure CopyToScreen();
+begin
+	dst:=#screen_char_loc;
+	zp:=#buf;
+	for i:=0 to 23 offpage do
+	begin
+		asm("
+			ldy #0
+			repeat 22
+			lda (zp),y
+			sta (dst),y
+			iny
+			repend
+		
+		");
+		zp+=screen_width;
+		dst+=screen_width;
+	end;	
+		
+end;
+
+procedure Render();
+begin
+	ClearBuffer();	
+	Lib3d::FlipPointPointers(0);
+	
+	Matrix::RotateX(#matX, time*3);
+	Matrix::RotateZ(#matY, time*7);
+	Matrix::RotateZ(#matZ, time*5);
+	
+	Matrix::MatMul3(#matX, #matY, #matT);
+	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
+	
+
+	Lib3d::RotateVertices(0);	
+	
+	Lib3d::ProjectSimple(0,12*4,11*2,170, 90);
+	
+	Lib3d::RenderWireframe(0);
+	// Then... copy
+	CopyToScreen();
+	time+=1;
+
+end;
+//@endblock	
+
+begin
+
+	DisableVIC20IRQ();
+	LineGeneric::putpixel := #Gfx::PutPixel;
+
+	zp:=#screen_char_loc;
+	Compression::Decompress(#charset, $1400);
+	setscreenlocation($1000);
+	setcharsetlocation($1400);
+	
+	clearscreen(black,screen_col_loc);
+	clearscreen(key_space,screen_char_loc);
+
+	Gfx::buf := #buf;
+	ClearBuffer();	
+	// Setup 3D
+	Lib3d::InitializeData(@objPos);	
+	Lib3d::LoadObject(0, #obj1);
+
+	Matrix::Identity(#matX);
+	Matrix::Identity(#matY);
+	Matrix::Identity(#matZ);
+	Matrix::Identity(Lib3d::objects[0].rotmat);
+	
+	while (true) do 
+		Render();
+
+end.

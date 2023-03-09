@@ -13,11 +13,11 @@ var
 	cols : incbin("resources/images/image1_color.bin") compressed;
 	
 begin
-	
+	System::Init();
 	System::SetPixels();
 	Compression::Decompress(#image, #System::screen);		
 	System::SetColors();
 	Compression::Decompress(#cols, #System::screen);		
-	
+
 	loop();
 end.

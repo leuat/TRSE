@@ -2,6 +2,7 @@ Unit Music;
 var 
    val : byte;
    p:pointer;
+   
 procedure InitMusic(p:global pointer;val:global byte);
 begin
 	asm("

@@ -1,0 +1,10 @@
+program MyProgram;
+@use "text"
+@use "system"
+	
+begin
+	System::Init();
+	Text::Reset();
+	Text::Print("HELLO THERE");
+	loop();
+end.

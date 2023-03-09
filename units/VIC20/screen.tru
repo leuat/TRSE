@@ -1,13 +1,34 @@
 Unit Screen;
 var  
 /*
+	COMPILER DIRECTIVES
+	-------------------------
+	
+	Use these to change the properties
+	
+*/
+@IFNDEF SCREENADDRESS
+	@DEFINE SCREENADDRESS $1e00 
+@ENDIF
+
+@IFNDEF SCREENWIDTH
+	@DEFINE SCREENWIDTH 22
+@ENDIF
+@IFNDEF SCREENHEIGHT
+	@DEFINE SCREENHEIGHT 23
+@ENDIF
+
+	ytab : array[screen_height] of integer = BuildTable("@SCREENADDRESS + i* @SCREENWIDTH");
+
+/*
 
 	SCREEN and CHAR locations
-	------------------------
+	-------------------------
 	screen = high nibble + bit 7
 	chars  = low nibble
 	 
 	SCREEN bits 7654 + 7
+	-------------------------
 	address	$9005	$9002
 	1000	1100 	0
 	1200	1100	1
@@ -19,6 +40,7 @@ var
 	1e00	1111	1
 
 	CHAR
+	-------------------------
 	address	$9005	location
 	1000	1100 	RAM 256 characters
 	1400	1101	RAM 256 characters
@@ -54,12 +76,6 @@ const CHAR_8c00: byte   = %00000011;
 	const SCREEN_PARAMS: address	= $03f0;		// Put params here just in case
 	pa, pb, pc, pd, pe, pf: byte at SCREEN_PARAMS;	// parameters for methods
 
-	ytab : array[screen_height] of integer = BuildTable("SCREEN_CHAR_LOC + i*SCREEN_WIDTH");
-
-
-@ifdef SCREENWIDTH
-	@RAISEERROR "SCREENWIDTH:byte constant missing. Set to width of screen, eg: 22"
-@endif
 
 
 // Set the screen and character addresses

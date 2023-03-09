@@ -4,9 +4,16 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 {
     m_codeGen = QSharedPointer<CodeGen6809>(new CodeGen6809());
     m_assembler = QSharedPointer<Asm6809>(new Asm6809());
-
+    bool useOrgasm = m_ini->getString("assembler_6809").toLower()=="orgasm";
+    m_assembler->m_isOrgasm = useOrgasm;
     m_assembler->byte="fcb";
     m_assembler->word="fdb";
+    if (useOrgasm) {
+        m_assembler->byte="db";
+        m_assembler->word="dw";
+
+
+    }
 
     m_assembler->m_zbyte = 0x10;
 
@@ -16,8 +23,9 @@ void Compiler6809::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 
 void Compiler6809::Connect()
 {
-
-    m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
+    bool useMorgasm = (m_ini->getString("assembler_6809")=="OrgAsm");
+    //if (!useMorgasm)
+     m_assembler->IncludeFile(":resources/code/6809/mul16.asm");
     m_assembler->Connect();
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
 
@@ -55,6 +63,14 @@ void Compiler6809::Init6809Assembler()
    //       Syntax::s.m_stripPrg = false;
 
       }
+    // Special case: Thomson CART
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::THOMSON) {
+        if (m_projectIni->getString("thomson_media")=="CART") {
+          Syntax::s.m_currentSystem->m_startAddress = 0xB000;
+          Syntax::s.m_currentSystem->m_programStartAddress = 0xB000;
+        }
+
+    }
     m_assembler->m_startInsertAssembler<<" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress);
     m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
     m_assembler->m_startInsertAssembler << "START:";

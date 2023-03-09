@@ -1,6 +1,6 @@
 globals = {
 	camera = { x = 57, y=-45.0, z=0.0 },
-	fov = 14, 
+	fov = 44, 
 	target = { x = 0, y=0.0, z=0 },
 	up = {x=0, y=1, z=0 },
 	light0 = {   	direction = { x=3.6, y=-0.9, z=0 }, 
@@ -108,7 +108,7 @@ end
 
 function Update()
 
-	compression = 4
+	compression = 5
 	maxchars = 64
 
 	CompressCharset(0,40,0,25,  compression, maxchars)

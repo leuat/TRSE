@@ -13,6 +13,14 @@ void SystemTiki100::Assemble(QString &text, QString filename, QString currentDir
 
 
     PerformAssembling(filename,text,currentDir,symTab);
+    if (!m_buildSuccess)
+        return;
+
+    if (m_projectIni->getdouble("exomizer_toggle")==1)
+        PackProgram(filename,0x300, 0x300, text, currentDir, symTab,":resources/code/tiki100/unpack.asm");
+
+
+
     Util::CopyFile(filename+".bin",filename+".com");
 
     if (!QFile::exists(filename+".com")) {

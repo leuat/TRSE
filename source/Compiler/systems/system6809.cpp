@@ -9,7 +9,9 @@ System6809::System6809(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
     m_allowedGlobalTypeFlags << "compressed" <<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term";
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
     m_exomizerName ="Compress executable";
-    m_renameVariables << "a" <<"b"<<"x"<<"y";
+    m_renameVariables << "a" <<"b"<<"x"<<"y"<<"sp"<<"dp"<<"d"<<"u";
+    m_isBigEndian = true;
+    m_supportsInclusiveFor = false;
 
     //        m_registers <<"_a" <<"_b"<<"_c"<<"_d"<<"_af"<<"_bc"<<"_de"<<"_hl"<<"_ix"<<"_iy"<<"_h"<<"_l";
 }
@@ -60,7 +62,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
 
     QString assembler = m_settingsIni->getString("lwasm");
-    bool useMorgasm = (m_settingsIni->getString("assembler_6809")=="orgasm");
+    bool useMorgasm = (m_settingsIni->getString("assembler_6809")=="OrgAsm");
     if (QFile::exists(filename+".bin"))
         QFile::remove(filename+".bin");
 
@@ -74,12 +76,20 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
     QString output = "";
     QString format = "-r";
-    if (m_system==TRS80COCO || m_system==THOMSON )
+    int iformat = 1;
+    if (m_system==TRS80COCO || m_system==THOMSON ) {
         format ="-decb";
-//    qDebug() << format;
-    //    StartProcess(assembler, QStringList() << "-9bl" <<"-p" <<"cd"<<filename+".asm" <<"-o"+filename+".bin", text);
+        iformat = 2;
+    }
+    if ((m_system==THOMSON) && ((m_projectIni->getString("thomson_media")=="CART") || (m_projectIni->getString("thomson_media")=="RAW")) ) {
+        format ="-r";
+        iformat = 2;
+    }
+
+//    format = "-r";
+ //   qDebug() << format;
     if (useMorgasm) {
-        AssembleZOrgasm(output,text,filename,currentDir, symTab,1);
+        AssembleZOrgasm(output,text,filename,currentDir, symTab,iformat);
     }
     else
         StartProcess(assembler, QStringList() << format<<"--6809"  <<filename+".asm" <<"-o"+filename+".bin" << "--symbol-dump="+filename+".sym", text);

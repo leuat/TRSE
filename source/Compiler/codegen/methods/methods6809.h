@@ -51,6 +51,9 @@ public:
     void InitRandom(Assembler* as);
     void InitRandom256(Assembler* as);
 
+    void Abs(Assembler* as);
+
+
     void InitSinusTable(Assembler* as);
     void DefineScreen(Assembler *as);
     void SetColorMemoryAddress(Assembler *as);

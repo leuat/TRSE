@@ -19,6 +19,9 @@ public:
     virtual QString getEmulatorName() override {
         return m_settingsIni->getString("gameboy_emulator");
     }
+    bool isZ80() override {
+        return false;
+    }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
         params<< filename+".gb";
     }

@@ -1,52 +1,33 @@
 program Tiki100_Tutorial1;
-/*
- Test : Proof-of-concept that the Tiki 100 can be included in TRSE
- Please contact me if you are interested in developing the library for this computer
- 
- NOTE: Emulator does NOT support command-line parameters on windows (for some reason), 
- so eh, you'll have to manually load the disk for each compile =) 
-*/
+@use "system/system"
 
 var
 	k : byte=0;
 	j,la,time : byte=0;
 	p1:pointer;
 	y:byte;
-	@donotremove screenmem
+
+@setvalue exomizer_toggle 1
 
 
-procedure InitScreen();
-begin
-	asm("
-	 di
-	ld a,%00110000
- 	out [$0c],a
-
-
- 	; vram at 0
- 	ld a,%00001100
- 	out [$1c],a
-	");
-end;
 
 
 procedure RenderRandomStuff();
 begin
-	p1:=$2000;
+	p1:=$0000;
 	j:=time;
-//	for k:=0 to 128 do  
-//	begin
+	for k:=0 to 64 do  
+	begin
 		fill(p1,j,255);
-//		p1:=p1+$100;
+		p1:=p1+$100;
 		
 		j:=j+10;
-//	end;
+	end;
 end;
 
 
-procedure Init();
+procedure Run();
 begin
-	InitScreen();
 	while (true) do
 	begin
 		RenderRandomStuff();
@@ -56,6 +37,8 @@ begin
 end;
 
 begin
-	Init();
+	System::Init();
+	System::SetMode(System::mode_16_colors);	
+	Run();
 end.
 

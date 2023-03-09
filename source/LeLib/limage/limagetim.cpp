@@ -44,11 +44,16 @@ LImageTIM::LImageTIM(LColorList::Type t)  : LImageQImage(t)
 void LImageTIM::ExportBin(QFile &file)
 {
     QByteArray data;
+    int type=0;
     if (m_exportParams.contains("export1"))
         if (m_exportParams["export1"]==1) {
             data.append(m_width/4);
             data.append(m_height/4);
         }
+    if (m_exportParams["export1"]==2) {
+        type = 1;
+    }
+    if (type==0)
     for (int x=0;x<m_width;x+=4) {
         for (int y=0;y<m_height;y++) {
             uchar c = 0;
@@ -59,11 +64,18 @@ void LImageTIM::ExportBin(QFile &file)
             data.append(c);
         }
     }
+    if (type==1)
+        for (int y=0;y<m_height;y++) {
+            for (int x=0;x<m_width;x+=4) {
+            uchar c = 0;
+            for (int i=0;i<4;i++) {
+                uchar v = getPixel(x+i,y);
+                c=c|(v<<(2*i));//(6-2*i));
+            }
+            data.append(c);
+        }
+    }
     file.write(data);
-
-
-
-
 }
 
 void LImageTIM::ExportSubregion(QString outfile, int x, int y, int w, int h, int type) {

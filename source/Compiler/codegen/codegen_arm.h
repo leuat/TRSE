@@ -101,19 +101,17 @@ public:
 
     QString PushReg();
     void PopReg();
-    QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
 
 
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-    QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
 
 
 //    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+    virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
 

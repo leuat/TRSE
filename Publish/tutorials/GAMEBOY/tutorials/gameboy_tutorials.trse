@@ -57,4 +57,6 @@ data_header_images/trse1.flf = 3.03237e-314
 dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0
+use_track_19 = 1
+disable_compiler_comments = 0
 open_files =, tutorial1.ras

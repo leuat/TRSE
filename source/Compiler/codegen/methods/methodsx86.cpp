@@ -211,12 +211,20 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 
     if (Command("hi")) {
         LoadAddress(as,0,false);
-        as->Asm("mov "+disp->getAx(m_node)+",[di+1]");
+        if (m_node->m_params[0]->isPointer(as))
+            as->Asm("mov "+disp->getAx(m_node)+",es");
+        else
+            as->Asm("mov "+disp->getAx(m_node)+",[di+1]");
+
     }
     if (Command("lo")) {
         LoadAddress(as,0,false);
-        as->Asm("mov "+disp->getAx(m_node)+",[di]");
+        if (m_node->m_params[0]->isPointer(as))
+            as->Asm("mov "+disp->getAx(m_node)+",di");
+        else
+            as->Asm("mov "+disp->getAx(m_node)+",[di]");
     }
+
     if (Command("nosound")) {
         as->Comment("No sound");
         as->Asm("in al,61h");

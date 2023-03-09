@@ -5,9 +5,9 @@
 PostOptimiser6809::PostOptimiser6809()
 {
     m_registers = QStringList() <<"a"<<"b"<<"y"<<"x"<<"u"<<"d"<<"s";
-    m_branches = QStringList() <<"bra" <<"jsr" << "jmp";
+    m_branches = QStringList() <<"bra" <<"jsr" << "jmp" << "lbra" <<"lbcc" <<"bcc" <<"bne"<<"lbne"<<"beq"<<"lbeq"<<"lbpl"<<"lbmi";
     m_registerChangingCommands = QStringList() << "bra" <<"jsr"<<"jmp";
-    m_bops = QStringList() << "add"<<"sub"<<"xor"<<"or"<<"and"<<"inc"<<"dec"<<"adc"<<"sbc";
+    m_bops = QStringList() << "adda"<<"addb"<<"suba"<<"subb"<<"eora"<<"eorb"<<"ora"<<"orb"<<"anda"<<"andb"<<"inca"<<"incb"<<"deca"<<"decb"<<"mul"<<"rola"<<"rolb"<<"asla"<<"aslb"<<"lsrb"<<"lsra"<<"addd"<<"leax"<<"leay";
 //    m_axModifiers = QStringList() << "div"<<"idiv"<<"mul"<<"imul";
 }
 
@@ -56,7 +56,7 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
     }
 */
 
-    if (cmd=="tfr") {
+    if (cmd=="tfr" && par[1]!="dp" && par[1]!="s") {
         QString reg = par[0];
         auto l0 = prevLine->m_orgLine.toLower().simplified();
         auto l1 = line.m_orgLine.toLower().simplified();
@@ -86,47 +86,107 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
                 line.m_forceOptimise = true;
                 prevLine->m_orgLine = prevLine->m_orgLine.replace("ldx","ldd");
             }
+            ChangeReg(line, "d", ""); // Clear current register
+            ChangeReg(line, "a", ""); // Clear current register
+            ChangeReg(line, "b", ""); // Clear current register
+
         }
+        // test for ldx #$40 tfr x,y
+        // ldx
+        if (prevLine->m_cmd.startsWith("ld")) {
+             QString reg = QString(prevLine->m_cmd[2]);
+             //ldX
+             // is it tfr x,y
+//             ldx dst
+  //           tfr x,u
+             if (par[0]==reg && (reg=="x" || reg=="y" || reg=="d" || reg=="u")) {
+                 QString target = par[1];
+                 line.m_forceOptimise = true; // remove tfr x,y
+                 prevLine->m_orgLine.replace("ld"+reg,"ld"+target);
+                 prevLine->m_cmd = "ld"+target;
+                 prevLine->m_potentialOptimise = false;
+                 prevLine->m_forceOptimise = false;
+                return;
+             }
+        }
+    }
+    if (cmd.startsWith("ld") && par.count()!=0) {
+        // Two ldxes
+        QString check = "st"+QString(cmd[2])+" "+par[0];
+//        qDebug() << check << prevLine->m_orgLine.simplified();
+        if (prevLine->m_orgLine.simplified() == check)
+            line.m_forceOptimise = true;
+    }
 
+    if (cmd=="puls") {
+        for (auto&s: par) {
+            if (s=="d" || s=="a" || s=="b") {
+                ChangeReg(line, "d", "");
+                ChangeReg(line, "a", "");
+                ChangeReg(line, "b", "");
 
-        if (m_registers.contains(reg))
-        {
-            // Don't assume "mov ax,dx" to hold
-
-            if (!m_registers.contains(par[1]))
-                line.m_potentialOptimise = true;
-
-
-
-//            if (par[1].contains("[") || par[1].contains("("))
-  //              line.m_potentialOptimise = false;
-
-            // Check the HL set
-            if (prevPar.count()>=2 && prevCmd=="ld") {
-                if (prevPar[0]==par[1] && prevPar[1]==par[0]) {
-                    line.m_potentialOptimise = true;
-                    line.m_forceOptimise = true;
-                }
             }
-
-//            if (line.m_potentialOptimise)
-  //              qDebug() << "Changing : " <<reg<<par[1] << line.m_orgLine;
-
-            ChangeReg(line, reg, par[1]);
-
+            else
+                ChangeReg(line, s, "");
         }
     }
 
+    if (cmd=="lda" || cmd=="ldb" || cmd=="ldx" || cmd=="ldy" || cmd=="ldd" || cmd=="ldu" )
+    {
+        QString reg = QString(cmd[2]);
 
 
-    if (m_bops.contains(cmd)) {
-        QString reg = par[0];
-        if (m_registers.contains(reg))
-        {
-            line.m_potentialOptimise = false;
-            ChangeReg(line, reg, ""); // Clear current register
+        line.m_potentialOptimise = true;
+//        qDebug() << cmd << " register "<< reg<<"  Changing to "<< par[0];
+        ChangeReg(line, reg, par[0]);
+
+        if (reg=="d")  {
+            ChangeReg(line, "a", "");
+            ChangeReg(line, "b", "");
+
         }
 
+    }
+
+    bool isBop = false;
+
+    if (m_bops.contains(cmd)) {
+        if (cmd=="mul") {
+            ChangeReg(line, "a", ""); // Clear current register
+            ChangeReg(line, "b", ""); // Clear current register
+            ChangeReg(line, "d", ""); // Clear current register
+
+        }else {
+            QString reg = QString(cmd[cmd.length()-1]);
+
+             line.m_potentialOptimise = false;
+             ChangeReg(line, reg, ""); // Clear current register
+             if (reg=="d") {
+                 ChangeReg(line, "a", ""); // Clear current register
+                 ChangeReg(line, "b", ""); // Clear current register
+
+             }
+            }
+    }
+    if (cmd =="tfr") {
+        ChangeReg(line, par[1], ""); // Clear current register
+        if (par[1]=="d") {
+            ChangeReg(line, "a", ""); // Clear current register
+            ChangeReg(line, "b", ""); // Clear current register
+
+        }
+    }
+    if (line.m_orgLine.contains("x+")) {
+        ChangeReg(line, "x", ""); // Clear current register
+    }
+    if (line.m_orgLine.contains("y+")) {
+        ChangeReg(line, "y", ""); // Clear current register
+    }
+    if (line.m_orgLine.contains("u+")) {
+        ChangeReg(line, "u", ""); // Clear current register
+    }
+    if (line.m_orgLine.contains("d+")) {
+        ChangeReg(line, "d", ""); // Clear current register
     }
     prevCmd = cmd;
     prevPar = par;

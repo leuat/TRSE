@@ -5,7 +5,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 {
     m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
     m_codeGen = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
-    m_codeGen->m_outputLineNumbers = false;
+    m_codeGen->dontOutputLineNumbers();
 
     if (m_projectIni->getdouble("override_target_settings")==1) {
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
@@ -18,9 +18,11 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     auto sys = m_projectIni->getString("cpu_Z80_system");
 //    if (sys=="") sys ="z80";
     if (m_ini->getString("assembler_z80")!="Pasmo")
+  //      if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm("CPU "+Syntax::s.m_currentSystem->StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
+//        if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
@@ -42,11 +44,11 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::TIKI100) {
 //        m_assembler->Asm(" jp $8000");
-        m_assembler->m_source.clear();
-        m_assembler->Asm(" org $100");
-        m_assembler->Asm(" jp mainstart");
-        m_assembler->Asm(" org $7900");
-        m_assembler->Label("mainstart");
+//        m_assembler->m_source.clear();
+//        m_assembler->Asm(" org $100");
+  //      m_assembler->Asm(" jp mainstart");
+    //    m_assembler->Asm(" org $7900");
+      //  m_assembler->Label("mainstart");
 
 
 

@@ -114,7 +114,7 @@ function UpdateScene()
 end
 
 -- Experiment with the compression level - between 0(no compression) and 1 (compresses to 0 chars)
-compression = 0.1
+compression = 5
 
 function Update()
 	

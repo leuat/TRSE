@@ -11,6 +11,7 @@ void Compiler6502::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
     else {
         m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
         m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+        m_assembler->m_isOrgasm = m_ini->getString("assembler").toLower()=="orgasm";
     }
     m_assembler->m_zbyte = 0x10;
 
@@ -64,7 +65,7 @@ void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
             int count = ocycles[i];
             int nl = i;
   //          acc = 0;
-            for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
+            for (FilePart& fp : m_parser.m_lexer->getIncludeFiles()) {
                 // Modify bi filepart
                 if (nl>fp.m_startLine && nl<fp.m_endLine) {
                     if (isCycles)
@@ -90,7 +91,7 @@ void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &
             int count = ocycles[i];
             int nl = i;
 
-            for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
+            for (FilePart& fp : m_parser.m_lexer->getIncludeFiles()) {
                 {
                     if (fp.m_name == currentFile)
                         if (nl>fp.m_startLineAcc && nl<fp.m_endLineAcc) {

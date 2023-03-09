@@ -265,7 +265,7 @@ public:
     void Save(QString filename);
     void Nl();
     virtual void Write(QString str, int level=0);
-
+    bool m_isOrgasm = false;
 
 
 

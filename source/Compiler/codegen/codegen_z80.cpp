@@ -211,8 +211,11 @@ void CodeGenZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
     }
     //    PushX();
     QString inc = "";
-    if (isInclusive)
+    if (isInclusive) {
         inc = "+1";
+        if (step!=nullptr)
+            inc="+"+step->getValue(as);
+    }
     QString ax = getAx(nodeA->m_left);
     //  PopX();
     as->Asm(m_mov+ax+",["+var+"]");
@@ -1646,7 +1649,7 @@ QString CodeGenZ80::getHL() {
     return hl;
 }
 
-void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool offPage)
+void CodeGenZ80::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool offPage)
 {
 
     as->Comment("Binary clause core: " + node->m_op.getType());

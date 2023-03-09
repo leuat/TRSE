@@ -44,3 +44,4 @@ Publish/tutorials/**/*.prg
 #Publish/tutorials/**/*.chr
 #Publish/tutorials/**/*.dat
 .DS_Store
+.qmake.stash

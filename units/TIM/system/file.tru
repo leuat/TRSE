@@ -8,14 +8,15 @@
 
 unit File;
 @use "system/z80cpm"
+@use "compression"
 
 var
 	const ModeRead: byte = 1;
 	const ModeWrite: byte = 2;
 	const EOF: byte = $FF;
 	cpmfName, cpmfBuffer: pointer;
-	cpmfPos, cpmfByt, cpmfVal: byte;
-
+	dst, ptmp : ^byte;
+	cpmfPos, cpmfByt, cpmfVal, i,j,k,l: byte;
 
 /**
 	Class that realizes file access for Z80 CP/M
@@ -34,7 +35,7 @@ var
 			ReadChunk_ret: boolean;
 		begin
 			ReadChunk_ret := false;
-			while (1) offpage do begin
+			while (true) offpage do begin
 				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
 		
 				if Z80CPM::bdos_a(Z80CPM::BF_READSEQ, this.FCX) <> 0 then begin
@@ -181,6 +182,79 @@ var
 			end;
 			Handle::ReadBytes := cpmfPos;
 		end;
+/*
+		Reads all the data from a file marked with the 2-byte cpm header to a memory location .
+		Usage: 
+			<code> 
+@copyfile "d1.bin" "copy_to_img/d1.bin"	
+@addcpmheader "copy_to_img/d1.bin"
+
+..
+f.ReadAll(...);
+			</code>
+
+*/
+		procedure ReadAll(File::cpmfBuffer: global pointer);
+		begin
+			File::j:=Handle::ReadByte(this);			
+			File::k:=Handle::ReadByte(this);			
+			if (File::j<>0) then
+			begin
+				this.ReadBytes(cpmfBuffer,126);
+				cpmfBuffer+=126;
+				if (File::j<>1) then
+				for File::i:=1 to File::j do
+				begin
+					this.ReadBytes(cpmfBuffer,128);
+					cpmfBuffer+=128;
+				end;
+			end;
+			if (File::k<>0) then
+				this.ReadBytes(cpmfBuffer,File::k);
+		end;
+/**
+		Loads the contents of a file to memory.
+		Usage:
+			<code> 
+@copyfile "d1.bin" "copy_to_img/d1.bin"	
+@addcpmheader "copy_to_img/d1.bin"
+
+..
+f.LoadFile(d1.bin",$4000); 
+			</code> 
+
+**/
+
+		procedure LoadFile(File::cpmfName: global pointer, File::dst : global ^byte);
+		begin
+			this.Open(File::cpmfName, ModeRead);
+			this.ReadAll(File::dst);
+			this.Close();
+		end;
+
+/**
+		Loads the contents of a compressed file to temporary buffer, then extracts it to a destination.
+		Usage:
+			<code> 
+@copyfile "d1.bin" "copy_to_img/d1.bin"	
+@addcpmheader "copy_to_img/d1.bin"
+
+..
+// Loads the file to $7000, then extracts data to $4000
+f.LoadCompressedFile(d1.bin",$4000, $7000); 
+			</code> 
+
+**/
+		
+		procedure LoadCompressedFile(File::cpmfName: global pointer, File::dst, File::ptmp : global ^byte);
+		begin
+			this.Open(File::cpmfName, ModeRead);
+			this.ReadAll(File::ptmp);
+			this.Close();
+			Compression::Decompress(File::ptmp,File::dst);
+	end;
+
+
 
 	end;
 

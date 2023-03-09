@@ -73,6 +73,8 @@ void WorkerThread::UpdateDrawing()
     }
 
     QPointF pos = (m_currentPos - QPointF(0.5, 0.5) -m_zoomCenter)*m_zoom + m_zoomCenter ;
+//    if (rand()%100>95)
+  //      qDebug() << pos << m_zoomCenter;
     bool isInWindow  =(pos.x()>=0 && pos.x()<m_work->m_currentImage->m_image->m_width &&
                        pos.y()>=0 && pos.y()<m_work->m_currentImage->m_image->m_height);
 
@@ -160,12 +162,21 @@ void WorkerThread::UpdatePanning()
     m_isPanning = false;
 //    if (m_currentButton == 2 && (QApplication::keyboardModifiers() & Qt::ShiftModifier)) {
         if (m_currentButton == 4) {
+            auto sz = m_work->m_currentImage->m_image->getActualPixelWidth();
+            //m_panningScale =  sz.x()/(float)m_displayImageWidth*8;
+
+//            qDebug() << m_panningScale;
             //QPointF delta = (m_prevPos - m_currentPos);
    /*         QPointF delta = (QPoint(m_work->m_currentImage->m_image->m_width,
                                     m_work->m_currentImage->m_image->m_height)/2
                                      - (m_currentPos-m_prevPos));*/
           //  QPointF delta = (m_currentPos-m_prevPos);
             m_zoomCenter-=(QPointF)m_delta*m_zoom*m_panningScale;
+            if (m_zoomCenter.x()<0) m_zoomCenter.setX(0);
+            if (m_zoomCenter.y()<0) m_zoomCenter.setY(0);
+//            qDebug() << m_work->m_currentImage->m_image->getActualPixelWidth();
+            if (m_zoomCenter.x()>sz.x()) m_zoomCenter.setX(sz.x());
+            if (m_zoomCenter.y()>sz.y()) m_zoomCenter.setY(sz.y());
             //        qDebug() << delta;
             m_isPanning = true;
             Data::data.Redraw();

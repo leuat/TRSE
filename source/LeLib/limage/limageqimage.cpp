@@ -454,7 +454,7 @@ void LImageQImage::CopyFrom(LImage *img) {
     if (m_width!=img->m_width || m_height!=img->m_height) {
         m_width = img->m_width;
         m_height = img->m_height;
-
+//        Initialize(m_width, m_height);
     }
 
     m_colorList.CopyFrom(&img->m_colorList);
@@ -463,6 +463,7 @@ void LImageQImage::CopyFrom(LImage *img) {
     m_currentChar = img->m_currentChar;
     m_charWidthDisplay = img->m_charWidthDisplay;
     m_charWidth = img->m_charWidth;
+    m_charHeight = img->m_charHeight;
     LImageQImage* mc = dynamic_cast<LImageQImage*>(img);
     if (mc!=nullptr) {
         *m_qImage = *mc->m_qImage;
@@ -518,9 +519,8 @@ void LImageQImage::setPixel(int x, int y, unsigned int color)
         return;
 
     QPoint p = getPixelPosition(x,y);
-
-    //    if (rand()%1000>900)
-    //      qDebug() <<p;
+//        if (rand()%1000>950)
+  //        qDebug() <<p << m_qImage->width() <<m_width;
 
     if (p.x()>=0 && p.x()<m_qImage->width() && p.y()>=0 && p.y()<m_qImage->height()) {
         if (!usePens)

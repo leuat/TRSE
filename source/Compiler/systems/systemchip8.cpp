@@ -20,6 +20,7 @@ SystemChip8::SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
 
     m_processor = PCHIP8;
     m_system = CHIP8;
+    m_supportsInclusiveFor = false;
 
 
 }
@@ -50,21 +51,17 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     }*/
     QByteArray ba = txt.toLocal8Bit();
     const char *asm_c = ba.data();
+//    qDebug() << "A";
     c8_assemble(asm_c);
+  //  qDebug() << "B";
     c8_save_file((filename+".ch8").toStdString().c_str());
 
     output += QString(c8_message_text);
+    qDebug() << output;
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
     //        qDebug() << "Code end: " << Util::numToHex(codeEnd) << codeEnd;
-    int orgFileSize = QFile(filename+".ch8").size();
-
-    //    qDebug() << "MOS " << Syntax::s.m_stripPrg << Syntax::s.m_ignoreSys;
-
-    int size = QFile(filename+".ch8").size();
-
-
 
     m_buildSuccess = true;
     m_orgOutput = "";
@@ -78,7 +75,18 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     if (QFile::exists(filename+".ch8"))
         m_buildSuccess = true;
 
+
+
+
     if (m_buildSuccess) {
+        int orgFileSize = QFile(filename+".ch8").size();
+
+        //    qDebug() << "MOS " << Syntax::s.m_stripPrg << Syntax::s.m_ignoreSys;
+
+        int size = QFile(filename+".ch8").size();
+
+
+
         output = output.remove("Complete.");
         output = output + "Assemble time: <font color=\"#70FF40\">"+ (Util::MilisecondToString(assembleTime)) + "</font>. ";
 

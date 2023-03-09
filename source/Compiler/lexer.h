@@ -58,8 +58,7 @@ public:
  * */
 class Lexer
 {
-
-public:
+private:
     QString m_currentChar;
     uint m_pos =0, m_prevPos = 0;
     bool m_finished = false;
@@ -68,21 +67,27 @@ public:
     uint m_localPos = 0;
     QStringList m_lines;
     QString m_path;
-    QVector<FilePart> m_includeFiles;
     int m_currentLineCount = 0;
     bool m_ignorePreprocessor, m_nextIsReference = false;
     bool m_isCurrentlyInABlockComment = false;
+
+    QString m_currentComment="";
+    QVector<uint> m_stack;
+    QVector<FilePart> m_includeFiles;
+public:
+    friend class Parser;
+    inline bool isFinished(){return m_finished;}
+    inline QVector<FilePart>& getIncludeFiles(){return m_includeFiles;}
+
     int getPositionInPercent();
     int getTotalNumberOfLines();
 
-    QString m_currentComment="";
 
 
     int getLineNumber(QString find);
 
     void FindLineNumberAndFile(int inLe, QString& file, int& outle);
 
-    QVector<uint> m_stack;
 
     // Initialises the parser
     void Initialize();

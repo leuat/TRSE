@@ -18,42 +18,6 @@ var
    text : string=("            ");
    /* ORIGINALLY FROM THE AMSTRAD CPC. NOT DONE! */
 
-/** Resets the text VDU.
- If c = 0, do a partial reset (text VDU indirections and control code table)
- If c != 0, do a full reset (same + select stream 0, reset paper and pen colors, move cursor to top left, ...)
- **/
-/*procedure Reset(c: global byte);
-begin
-  if c = 0 then
-    asm("
-      call #bb51
-    ")
-  else
-    asm("
-      call #bb4e
-    ");
-end;
-*/
-// Enables or disable the text VDU.
-// If c = 0, prevents char from being printed in the current stream
-// If c != 0, allows char to be printed in the current stream
-/*
-procedure Enable(c: global byte);
-begin
-  if c = 0 then
-    asm("
-      call #bb57
-    ")
-  else
-    asm("
-      call #bb54
-    ");
-end;
-*/
-///////////////////
-// Text handling //
-///////////////////
-
 
 procedure Reset();
 begin

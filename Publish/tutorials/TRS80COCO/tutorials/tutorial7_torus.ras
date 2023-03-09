@@ -1,0 +1,111 @@
+program Torus;
+@use "system"
+@use "memory"
+@use "screen"
+
+//@addemulatorparam "-nothrottle"
+
+var
+	const hei : byte = 115;
+	@define WIDTH 40
+	@define DWIDTH 60
+	@define HEIGHT 26
+
+	data: incbin("data/smooth_data.bin");
+	sqr : incbin("data/inside_torus.bin");
+	
+	src,zp,dst,p1,p2:pointer;
+	tp : pointer of integer;
+	il, add : integer;
+	shift:byte=64;
+	t,x,y,z,i,j,k,time,time2,time3,tt,l,time1,dx,m : byte;
+	dy:integer;
+
+	r1,ry,ri,rk : byte;
+
+	tab40 : array[260] of integer = buildtable("i*@DWIDTH");
+	sinx: array[256] of byte = buildsinetable(64);
+	siny: array[256] of byte = buildsinetable(45);
+	sinx2: array[256] of byte = buildsinetable(127/6);
+	sinxx: array[256] of byte = buildsinetable(20);
+//	@perlinnoise "data/per1.bin" 16 16 1 1 1  2 50
+
+//	per:incbin("data/per1.bin");
+	
+procedure UpdateTbl();
+begin
+	dst:=$7000;
+	dx :=sinxx[time2]; 
+	dy:=siny[byte(time3+shift)];
+	
+	t:=time;
+	if (time&1=0) then
+	begin
+		dst+=80;
+	end;
+	k:=time1*6;
+	t:=sinx[time]-time;
+	
+	if (time1>140) then t:=time;
+	
+	for j:=0 to hei step 2 offpage do
+	begin
+		add := j+sinx2[j];
+		add+=dy;
+		
+		tp:=#tab40 + add<<1;
+		p2:=#sqr+tp^ + dx;
+		
+		asm("
+		ldy #data+128
+		ldu dst
+		ldx p2
+lp1:
+
+		repeat @WIDTH
+		lda ,x+
+		adca t
+		
+		ldb a,y
+		stb ,u+
+		
+		repend
+		
+		
+		");
+//		p1+=@DWIDTH*2;
+		dst+=160;
+	
+	end;
+	
+end;
+	
+
+
+	
+
+	
+begin
+	System::Init();
+	// 320x225 4-colour 
+	Screen::SetBitmapMode(Screen::BPL_40, 1);
+	Screen::SetColor(0,4); // black
+	Screen::SetColor(1,23);
+	Screen::SetColor(2,40); 
+	Screen::SetColor(3,63); 
+	// Clearscreen
+	Memory::Fill16(#Screen::gfx,0,40*225);
+
+	while (true) do
+	begin
+		UpdateTbl();
+		
+		if (time&1=0) then shift+=1;
+		
+		time-=13;
+		time2+=3;
+		time3+=4;
+		time1+=1;
+	end;
+	
+end.

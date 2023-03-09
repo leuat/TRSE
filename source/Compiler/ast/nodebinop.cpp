@@ -122,6 +122,10 @@ bool NodeBinOP::isWord(Assembler *as) {
     return ((m_left->isWord(as) || m_right->isWord(as)) || (m_forceType==TokenType::INTEGER));
 }
 
+bool NodeBinOP::isLong(Assembler *as) {
+    return ((m_left->isLong(as) || m_right->isLong(as)) || (m_forceType==TokenType::LONG));
+}
+
 void NodeBinOP::setForceType(TokenType::Type t) {
 //    qDebug() << "Binop set force type " << TokenType::getType(t);
     m_forceType  =t;

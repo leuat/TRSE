@@ -321,7 +321,7 @@
                 <item row="0" column="0">
                  <widget class="QTabWidget" name="tabConfigs">
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>9</number>
                   </property>
                   <widget class="QWidget" name="tabC64">
                    <attribute name="title">
@@ -935,12 +935,17 @@
                      <widget class="QComboBox" name="cmbThomsonMedia">
                       <item>
                        <property name="text">
+                        <string>TAPE</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
                         <string>CART</string>
                        </property>
                       </item>
                       <item>
                        <property name="text">
-                        <string>TAPE</string>
+                        <string>RAW</string>
                        </property>
                       </item>
                      </widget>
@@ -1206,8 +1211,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>445</width>
+              <height>156</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_23">
@@ -1277,8 +1282,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>893</width>
+              <height>384</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
@@ -1460,8 +1465,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>623</height>
+              <width>474</width>
+              <height>681</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1745,8 +1750,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>341</width>
+              <height>319</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1850,8 +1855,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>498</width>
+              <height>217</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_31">
@@ -2000,8 +2005,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>629</width>
+              <height>132</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_32">

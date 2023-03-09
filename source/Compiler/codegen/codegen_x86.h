@@ -60,6 +60,8 @@ public:
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
 
+    void LoadIndex(QSharedPointer<Node> n, QString reg);
+
     QString m_jmp = "jmp ";
     QString m_mov = "mov ";
     QString m_cmp = "cmp ";
@@ -92,19 +94,17 @@ public:
 
     void PushX();
     void PopX();
-    QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
 
 
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-    QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
 
 
 //    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+    virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
 

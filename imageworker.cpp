@@ -75,6 +75,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Generic 256-color sprites", "x16",LImage::Type::GenericSprites, LColorList::Type::VGA));
     m_types.append(ImageType("CGA/EGA 160x100 16 colour", "x86",LImage::Type::CGA160x100, LColorList::Type::DOS));
     m_types.append(ImageType("TIM 512x256", "TIM",LImage::Type::TIM, LColorList::Type::TIM));
+    m_types.append(ImageType("TIM generic image", "TIM",LImage::Type::TIMG, LColorList::Type::TIM));
     m_types.append(ImageType("TVC generic", "TVC",LImage::Type::TVC, LColorList::Type::TVC));
     m_types.append(ImageType("CoCo3 generic", "TRS80COCO",LImage::Type::COCO3, LColorList::Type::COCO3));
     m_types.append(ImageType("Thomson generic", "THOMSON",LImage::Type::THOMSON, LColorList::Type::THOMSON));

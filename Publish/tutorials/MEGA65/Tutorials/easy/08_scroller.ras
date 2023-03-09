@@ -17,6 +17,7 @@ var
 	const yposRaster:byte=$90;
 
 
+
 /*
   The following method just copes the current contents of textPointer to screenmemory
 */

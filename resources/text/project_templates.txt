@@ -8,6 +8,7 @@ ATARI2600; ATARI 2600 Sample project; atari2600_general; <h2>Simple atari 2600 p
 ATARI520ST; Atari 520 ST Sample project; atari520st_general; <h2>Simple Atari 520 ST project setup.</h2>
 BBCM; BBC Micro sample project; bbcm_general; <h2>Simple BBC Micro sample program that displays an image.</h2>
 BBCM; BBC Micro disk demo project; bbcm_disk; <h2>BBC Micro sample solution that loads effects from disk and executes them all while playing music in an IRQ handler.</h2>
+C128; C128 empty project; c128_text; <h2>Small Commodore C128 40-column project</h2><p>A small sample project for the C128 that prints out some text to the screen.
 C128; C128 80 column project; c128_general; <h2>Small Commodore C128 80-column project</h2><p>A small sample project for the C128 that serves as a starting point.
 C64; Empty C64 project; c64_general; <h2>Empty C64 project</h2><p>Create an empty C64 project.
 C64; Simple C64 project; c64_general2; <h2>Main C64 project</h2><p>Create a small C64 project with a SID file, a raster loop and a custom charset.
@@ -29,3 +30,9 @@ VIC20; VBM 32K cartridge; vic20_vbm32kcart; <h2>Vic 20 VBM 32k cartridge project
 VIC20; Unexpanded Vic; vic20_unexp; <h2>Unexpanded Vic 20 project</h2><p>Vic 20 project with a basic set up ready to use.</p>
 X86; X86 8086 CGA sample project; x86_cga_general; <h2>X86 8086 CGA sample project with sprites and an image.</h2><p>NB: The X86 compiler is still very much in beta, and is considered pre-alpha / WIP until TRSE 0.14!
 VZ200; VZ200 blank project; vz200_general; <h2>Generic VZ200 sample project that displays an included image.</h2>
+TRS80COCO; TRS80 COCO3 empty project; coco3_clean; <h2>Empty coco3 sample project that prints a string to the screen.</h2>
+TRS80COCO; TRS80 COCO3 image project; coco3_image; <h2>Simple project that displays a compressed image and plots some pixels.</h2>
+TVC; TVC image project; tvc_image; <h2>Simple project that displays a compressed image.</h2>
+TIM; TIM-001 empty project; tim_general; <h2>Simple project that displays some text.</h2>
+TIM; TIM-001 tiles project; tim_tiles; <h2>Project that displays some moving tiles.</h2>
+THOMSON; Thomson MO5 image project; thomson_image; <h2>Simple project that displays a compressed image.</h2>

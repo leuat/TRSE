@@ -1,0 +1,96 @@
+program Twister;
+@use "system/system"
+
+var  
+  	k,j,time,tt,t2,ll,frame,y: byte; 
+  	
+//   	data : incbin("data/twister_data.bin");
+   	data : incbin("data/twister_data.bin");
+   	table : incbin("data/twister_table.bin");
+   	
+	dst,zp,tp,p1 : pointer;
+	tab : pointer of integer;   
+	text : string = ("WHOO THIS IS A SCROLLTEXT YES IT IS ");
+    sine32 : array[256] of byte = BuildTable("(Math.sin(i/256.0*Math.PI*2.0)*80+79)/7");
+
+	charLookup : array[32] of integer = BuildTable("(2*16*16*i)");
+	frameLookup : array[16] of integer = BuildTable("(2*16*i)");
+
+@requirefile "data/twister_data.bin" "Please run the corresponding fjong file (twister.fjo) before compiling this program"
+procedure Copy();
+begin
+	asm("
+		ld de,[dst]	
+		ld hl,[zp]	
+	
+		repeat 8
+		
+		ldi
+		
+		repend
+	
+	");
+	
+end;
+
+
+procedure RenderTwister(tx:byte);
+begin
+	t2:=t2+1;
+	tt:=0-tx; // Text goes up
+	t2:=tx; // Twist goes down
+	tp:=#text;
+	j:=0;
+	y:=0;
+	dst:=$0000 + 30;
+	for k:=0 to 120 offpage do
+	begin
+		j:=sine32[(k+t2)&255]; // Twist turning
+		frame:=(((tx-j))&15); // Current rotation frame
+		ll:=(k-tt); // Current shift & text position in y
+		j:=ll>>4; // Twister yeah!
+	 	j:=(tp[j]-1)&31; // Look up current character, store in j
+		if (j=31) then j:=25;	
+ 	
+		tab :=#table + frameLookup[frame];
+		tab :=tab +charLookup[j];
+		
+	
+		zp :=tab[ll&15];
+		zp:=#data+zp;
+
+
+		// Copy 2 rows of data
+		Copy();
+		//memcpy(zp,dst,8);
+		dst+=128; // next line
+		Copy();
+		//memcpy(zp,dst,16);
+		dst+=128; // next line
+		
+
+	end;
+	
+end;
+
+
+begin
+	System::Init();
+	System::SetMode(System::mode_4_colors);
+	
+	// Clearscreen
+	Fill($0000,0,256*128);
+	System::SetColor(0, 0,0,2);
+	System::SetColor(1, 2,2,4);
+	System::SetColor(2, 5,3,6);
+	System::SetColor(3, 7,6,7);
+	time := 0;	
+	while (true) do
+	begin
+		RenderTwister(time);
+		time:=time+1;
+	end;
+
+
+
+end.

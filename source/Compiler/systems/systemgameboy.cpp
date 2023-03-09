@@ -51,20 +51,20 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
 //    Util::CopyFile(":resources/bin/gbt-player/gbt_player_bank1.o",currentDir+"/gbt_player_bank1.o");
     //qDebug() << m_settingsIni->getString("assembler");
         QProcess process;
-        QStringList params;
+        QStringList params = QStringList() <<"-H"<<"-l";
        // -kick1hunks  -o example$1 -nosym source$1.asm
   //      params << "-kick1hunks";
     //    params << "-Fhunkexe";
         QFile::remove(filename+".o");
-        StartProcess(assembler, QStringList() <<"-o" << filename + ".o"<<filename+".asm", output);
+        StartProcess(assembler, QStringList() <<"-o" << filename + ".o"<<filename+".asm" << params, output);
 
         // Assemble the player:
         Util::CopyFile(":resources/code/gameboy/gbt_player.asm",currentDir+"/gbt_player.asm");
         Util::CopyFile(":resources/code/gameboy/gbt_player.inc",currentDir+"/gbt_player.inc");
         Util::CopyFile(":resources/code/gameboy/gbt_player_bank1.asm",currentDir+"/gbt_player_bank1.asm");
         Util::CopyFile(":resources/code/gameboy/hardware.inc",currentDir+"/hardware.inc");
-        StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player.o"<<currentDir+"/gbt_player.asm" <<"-i" <<currentDir+"/", output);
-        StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player_bank1.o"<<currentDir+"/gbt_player_bank1.asm"<<"-i" <<currentDir, output);
+        StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player.o"<<currentDir+"/gbt_player.asm" <<"-i" <<currentDir+"/"<<params, output);
+        StartProcess(assembler, QStringList() <<"-o" << currentDir+"/gbt_player_bank1.o"<<currentDir+"/gbt_player_bank1.asm"<<"-i" <<currentDir<<params, output);
 
 
 

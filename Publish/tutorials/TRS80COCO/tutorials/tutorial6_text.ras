@@ -1,0 +1,21 @@
+program TextStuff;
+@use "text"
+@use "system"
+var
+	p: pointer;
+	i: integer;
+	
+begin
+	System::Init();
+	Text::Reset();
+	Text::Print("HELLO THERE");
+	p:=$400;
+	for i:=0 to 1000 do
+	begin
+		p^:=i;
+		p+=1;
+	end;
+	
+	
+	loop();
+end.

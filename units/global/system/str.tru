@@ -26,7 +26,9 @@ var
 	b,c : @sz;
 	num : integer;
 	chars : string="0123456789ABCDEF";
-
+@if SUPPORTS_LONG = 1
+	lnum : long;
+@endif
 
 /**
 
@@ -95,6 +97,58 @@ begin
 	reverse(p1);	
 	
 end;
+
+@if SUPPORTS_LONG = 1
+
+/**
+	Converts a number to a string in base b
+	example:
+	<code>
+itoa(1234, p1, 16); // coverts "1234" to a hexadecimal string stored in p1
+	</code>
+
+**/
+
+procedure ltoa( lnum:global long; p1: global ^byte; b:global @sz);
+begin
+	i:=0;
+	
+	if (num = 0) then
+	begin
+		p1[0]:=$30; // Simply 0
+		p1[1]:=0; 
+		return;
+	end;
+	
+	while (num <> 0) do
+	begin
+ 		p1[i] :=chars[mod(num,b)];
+		i+=1;
+		num:=num/b;
+    end;
+	p1[i]:=0; // null-term string    
+	reverse(p1);	
+	
+end;
+@endif
+/**
+  Converts a long into a hex text string
+
+**/
+procedure ltoh(p2, p1:global ^byte);
+begin
+	p3:=p1;
+	for ii:=0 to 3 do
+	begin
+		p1^:=chars[(p2^&$F)];
+		p1+=1;
+		p1^:=chars[((p2^>>4)&$F)];
+		p1+=1;
+		p2+=1;
+	end;	
+	p1^:=0; // null-term string    
+	reverse(p3);	
+end;
 /**
 
 	Appends a copy of the source string (p2) to the destination string (p1).
@@ -112,7 +166,7 @@ begin
 		i+=1;
 	end;	
 	p1[i]:=0; // null-terminate
-
+	
 end;
 
 /**

@@ -1,5 +1,5 @@
 #include "methods6502.h"
-
+#include "source/Compiler/codegen/codegen_6502.h"
 Methods6502::Methods6502()
 {
 
@@ -1221,8 +1221,6 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
     m_node->RequireAddress(m_node->m_params[0], "MemCpy", m_node->m_op.m_lineNumber);
     m_node->RequireAddress(m_node->m_params[2], "MemCpy", m_node->m_op.m_lineNumber);
 
-    QString ap1 = "";
-    QString ap2 = "";
     QString bp1 = "";
     QString bp2 = "";
 
@@ -1632,7 +1630,7 @@ void Methods6502::InitEightBitMul(Assembler *as)
     QString l = as->NewLabel("multiply_eightbit");
 //    as->Asm("jmp " + l);
   //  as->Label("multiplier .byte 0");
-    m_codeGen->Disable16bit();
+    (static_cast<CodeGen6502*>(m_codeGen))->Disable16bit();
     as->Label("multiplier = " + as->m_internalZP[0]);
     as->Label("multiplier_a = " + as->m_internalZP[1]);
     as->Label("multiply_eightbit");
@@ -1660,7 +1658,7 @@ void Methods6502::InitEightBitMul(Assembler *as)
     as->Label("mul_end");
     as->Asm("txa");
 //    as->Asm("ldy #0");
-    m_codeGen->Enable16bit();
+    (static_cast<CodeGen6502*>(m_codeGen))->Enable16bit();
     as->Asm(m_codeGen->getReturn());
 
 
@@ -1942,23 +1940,6 @@ void Methods6502::PrintString(Assembler *as)
 
 
 
-/*    if (var!=nullptr && var->isPointer(as)) {
-        as->Asm("lda "+var->getValue(as));
-        as->Asm("ldy "+var->getValue(as)+"+1");
-    }
-    else {
-
-
-
-
-        as->Asm("clc");
-        as->Asm("lda #<" +varName);
-        as->Term("adc ");
-        m_node->m_params[1]->Accept(m_codeGen);
-        as->Term();
-        as->Asm("ldy #>" +varName);
-    }
-*/
     if (str!=nullptr) {
         as->Asm("clc");
         as->Asm("lda #<" +varName);
@@ -1970,7 +1951,11 @@ void Methods6502::PrintString(Assembler *as)
     }
     else {
         as->ClearTerm();
-        m_node->m_params[0]->Accept(m_codeGen);
+        auto bop = m_node->m_params[0];
+        if (!(m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0))
+           bop = NodeFactory::CreateBinop(bop->m_op,TokenType::PLUS, m_node->m_params[0], m_node->m_params[1]);
+        bop->setForceType(TokenType::INTEGER);
+        bop->Accept(m_codeGen);
         as->Term();
     }
     as->Asm("sta print_text+0");
@@ -5422,7 +5407,7 @@ void Methods6502::InitMul16x8(Assembler *as)
 
     as->Label("mul16x8_procedure");
     as->Asm(m_codeGen->getInitProcedure());;
-    m_codeGen->Disable16bit();
+    (static_cast<CodeGen6502*>(m_codeGen))->Disable16bit();
     as->Asm("lda #$00");
     as->Asm("ldy #$00");
 //    as->Asm("tay");
@@ -5447,7 +5432,7 @@ void Methods6502::InitMul16x8(Assembler *as)
     as->Asm("bcs mul16x8_doAdd");
     as->Asm("bne mul16x8_loop");
 //    as->Asm(m_codeGen->ProcedureEndWithoutReturn());
-    m_codeGen->Enable16bit();
+    (static_cast<CodeGen6502*>(m_codeGen))->Enable16bit();
   //  as->Asm("rts");
 
 //    as->Label("mul16x8_def_end");
@@ -5894,7 +5879,6 @@ void Methods6502::Swap(Assembler *as)
         vars[i]=var;
     }
     as->Comment("Swap variables");
-//    as->Asm("lda " + vars[0]->getValue(as));
     LoadVar(as, 0);
     as->Asm("tay ");
     LoadVar(as, 1);
@@ -6667,7 +6651,6 @@ void Methods6502::SaveVar(Assembler *as, int paramNo, QString reg, QString extra
 
 void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 {
-
     QSharedPointer<Node> node = m_node->m_params[paramNo];
 
 /*
@@ -6679,10 +6662,10 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
 
     QSharedPointer<NodeVar> nodevar = qSharedPointerDynamicCast<NodeVar>(node);
     if (node->isPureNumericOrAddress() && node->getValueAsInt(as)>=256 && !node->isAddress()) {
-        m_codeGen->Disable16bit();
+        (static_cast<CodeGen6502*>(m_codeGen))->Disable16bit();
         as->Asm("lda #" + Util::numToHex(node->getValueAsInt(as)&0xff));
         as->Asm("ldy #" + Util::numToHex((node->getValueAsInt(as)>>8)&0xff));
-        m_codeGen->Enable16bit();
+        (static_cast<CodeGen6502*>(m_codeGen))->Enable16bit();
         return;
     }
     bool disable16bit = true;
@@ -6695,7 +6678,7 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         qSharedPointerDynamicCast<NodeNumber>(node)!=nullptr) {
 
         if (disable16bit)
-            m_codeGen->Disable16bit();
+            (static_cast<CodeGen6502*>(m_codeGen))->Disable16bit();
 
 
         as->ClearTerm();
@@ -6717,7 +6700,7 @@ void Methods6502::LoadVar(Assembler *as, int paramNo, QString reg, QString lda)
         }
 
         if (disable16bit)
-            m_codeGen->Enable16bit();
+            (static_cast<CodeGen6502*>(m_codeGen))->Enable16bit();
 
 
     }

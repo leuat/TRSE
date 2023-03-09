@@ -157,7 +157,11 @@ unsigned int LImageGenericSprites::getPixel(int x, int y)
             return 0 ;
 
 
+
     LGenericSprite* s = (LGenericSprite*)m_items[m_current].get();
+
+
+
 //    CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
     auto p = getPixelPos(x,y);
 

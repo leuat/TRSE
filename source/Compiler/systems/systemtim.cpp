@@ -191,7 +191,9 @@ void SystemTIM::SendKeyCommand(QString keys)
 void SystemTIM::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
 
-    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres"<<"-nothrottle" <<"-flop1"  <<filename+".img";
+    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
+    params << "-skip_gameinfo" << "-autoboot_delay"<< "3" <<"-autoboot_command"<< "r\\n";
+
 //    params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;

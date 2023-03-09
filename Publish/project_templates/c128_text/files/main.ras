@@ -1,0 +1,22 @@
+program MyProgram;
+var
+	time,pos:byte;	
+	text : string = "HELLO TRSE WORLD ON THE C128 THIS IS NOT A SCROLLER NO INDEED IT IS NOT SIR IT'S JUST SOME TEXT BEING PRINTED TO THE SCREEN";
+	
+	
+begin
+	moveto(0,16,hi(#screen_char_loc));
+	while (true) do
+	begin
+		waitforverticalblank();
+		printstring(#text,pos,40);
+		time+=1;
+		if (time&7=0) then
+		begin
+			pos+=1;
+			if (pos+40>length(text)) then pos:=0;
+		end;
+		
+	end;
+	
+end.

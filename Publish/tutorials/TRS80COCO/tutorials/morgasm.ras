@@ -1,0 +1,163 @@
+program MyProgram;
+@use "system"
+@use "screen"
+@use "text"
+@use "system/str"
+
+var  
+    i,time: byte; 
+	zp:pointer;
+	tmp : array[100] of byte;
+	i1 : integer;
+	
+	@addemulatorparam "-nothrottle"
+	
+begin
+	System::Init();
+	zp:=$400;
+	Memory::Fill16(#tmp,0,100);
+	i:=100;
+	i1:=1213;
+
+	i:=abs(i);
+	i1:=abs(i1);
+	asm(";here");
+	i1:=mod(i1,1000);
+	Text::Reset();
+	str::itoa(i,#tmp,16);
+//	Text_PrintIntegerHex(i1);
+	Text::Println(#tmp);
+	loop();	
+	
+	
+	while(true) do
+	begin
+		for i:=0 to 255 do
+		begin
+			zp[i]:=i+time;
+		end;
+		time+=1;
+	end;
+	loop();
+	asm("
+topp:	
+	lbra topp
+	
+	
+	
+		lda ,x++
+		ldy ,x++
+		ldb ,x++
+		lda ,u++
+		ldb ,u++
+		ldx ,u++
+		sta ,x++
+		stb ,x++
+		sta ,u++
+		stb ,u++
+		stx ,u++
+		lda ,y++
+		ldy ,y++
+		ldb ,y++
+		sta ,y++
+		stb ,y++
+		stx ,y++
+		ldd ,x++
+		ldd ,u++
+		ldd ,u++
+		ldd ,x++
+
+
+
+	
+	
+			 leau d,u
+	
+			leax 1,x
+			leay 1,y
+			leax 1,y
+			leax -1,x
+			leay -1,y
+			leax -1,y
+	
+	
+			sta ,u
+			sta ,u+
+			sta ,s
+			sta ,s+
+			sta ,-s
+			sta ,s
+	
+	
+			pshs a
+			pshs d
+			pshs u	
+			lda ,s
+			lda b,s
+			lda d,s
+			lda a,x
+			lda 1,s
+			lda 2,u
+			lda $20,u
+			lda 8,x
+			lda 15,y
+			lda 1,pc
+			lda $20,s
+			lda 1024,s
+			lda 1024,x
+			lda 1024,y
+			lda 1024,u
+				
+			lda -1,pc
+			lda -$20,s
+			lda -1024,s
+			lda -1024,x
+			lda -1024,y
+			lda -1024,u
+				
+	
+	
+	
+			leax a,x
+			leax a,y
+			leax a,u
+			leax a,s
+			leax b,x
+			leax b,y
+			leax b,u
+			leax b,s
+			leax d,x
+			leax d,y
+			leax d,u
+			leax d,s
+			leax ,x
+			leax ,y
+			leax ,u
+			leax ,s
+			leax 1000,x
+			leax 1000,y
+			leax 1000,u
+			leax 1000,s
+			leax 100,x
+			leax 100,y
+			leax 100,u
+			leax 10,s
+			leax 10,y
+			leax 10,u
+			leax 10,s
+			leax -1000,x
+			leax -1000,y
+			leax -1000,u
+			leax -1000,s
+			leax -100,x
+			leax -100,y
+			leax -100,u
+			leax -10,s
+			leax -10,y
+			leax -10,u
+			leax -10,s
+	
+	");
+	
+	
+end.

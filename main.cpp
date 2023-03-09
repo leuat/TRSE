@@ -30,6 +30,30 @@ void fixCurrentDir(QString execFile) {
     QFileInfo exec(execFile);
     QDir::setCurrent(exec.absoluteDir().absolutePath());
 }
+#include "source/LeLib/limage/multicolorimage.h"
+void CreateVICCharset() {
+    QByteArray ba;
+    for (int i=0;i<256;i++) {
+        PixelChar pc;
+        for (int j=0;j<8;j++) {
+            //0000
+            //0000
+            if (((i>>j)&1)==1) {
+                int x = j%4;
+                int y = (int)(j/4);
+                for (int dy=0;dy<4;dy++)
+                    for (int dx=0;dx<2;dx++)
+                        pc.set(x*2+dx,y*4+dy,1,0b1);
+            }
+        }
+        for (int i=0;i<8;i++)
+            ba.append(PixelChar::reverse(pc.p[i]));
+    }
+    Util::SaveByteArray(ba,"/Users/leuat/code/TRSE/Publish/tutorials/VIC20/tutorials/resources/charsets/gen.bin");
+
+}
+
+
 
 int main(int argc, char *argv[])
 {
@@ -40,7 +64,7 @@ int main(int argc, char *argv[])
             return ras.Perform();
         }
     }
-
+//    CreateVICCharset();
     // Start main application
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");

@@ -1,0 +1,40 @@
+unit Gfx;
+
+@use "math/math"
+@define putpixel "PutPixel"
+@use "gfx/linegeneric"
+
+var
+	fontTable : array[16] of byte = ($20, $7e, $7C, $E2, 
+									$6C, $7f, $E1,  $Fb,
+									$7b, $61, $ff, $ec,
+									$62, $fc, $fe, $53);
+
+//	tab : array[4] of byte = ($7E, $7C, $7B, $6C);	
+	idx,x,y : byte;
+	buf,zp,src,dst : pointer;
+//	tab : array[4] of byte = (1,2,8,4);
+	tabx : array[4] of byte = (1,2,4,8,16,32,64,128);
+	
+	taby : array[50] of integer = buildtable("SCREEN_WIDTH*i");
+	
+	
+procedure PutPixel();
+begin
+/*	if (LineGeneric::y1>22*2) then
+		return;
+	if (LineGeneric::x1>21*2) then
+		return;
+*/		
+	zp:=buf + taby[LineGeneric::y1>>1] + LineGeneric::x1>>2;
+	x:= LineGeneric::x1&3;
+	y:= (LineGeneric::y1&1)<<2;
+	idx := tabx[x+y];
+	zp^ |= idx;
+
+end;
+
+
+
+
+end.
