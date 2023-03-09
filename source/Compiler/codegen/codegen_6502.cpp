@@ -2969,20 +2969,12 @@ void CodeGen6502::dispatch(QSharedPointer<NodeUnaryOp> node)
 
 void CodeGen6502::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
-    /*    if (!isOffPage)
-        SmallLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);
-    else
-        LargeLoop(node,qSharedPointerDynamicCast<NodeVar>(nVar->m_left), inclusive);
-
-*/
 
     if (!isOffPage) {
         QString loopDone = as->NewLabel("loopdone");
         as->Comment("Compare is onpage");
 
- //       qDebug() << "CODEGEN_6502 "<< step->getValueAsInt(as);
         IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
-   //     qDebug() << "CODEGEN_6502 "<< step->getValueAsInt(as);
         Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
         as->PopLabel("loopdone");
         as->Label(loopDone+": ;keep");
