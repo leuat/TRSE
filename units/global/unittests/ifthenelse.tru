@@ -354,6 +354,7 @@ end;
 
 
 @if SUPPORTS_LONG = "1"
+@ifndef CPU_PX86
 
 /*
 
@@ -516,7 +517,7 @@ end;
 
 
 @endif
-
+@endif
 
 
 
@@ -657,6 +658,7 @@ begin
 	ILTE5_GreaterThan_True();
 
 @if SUPPORTS_LONG = "1"
+@ifndef CPU_PX86
 
 	// Greater than conditional tests 
 	LGT1_GreaterThan_True();
@@ -689,7 +691,7 @@ begin
 	LLTE5_GreaterThan_True();
 
 
-
+@endif
 @endif
 
 
