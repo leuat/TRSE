@@ -71,9 +71,8 @@ public:
     // 6502 only
     // When using stack parameters on the 6502, you need to pop the stack N times when exiting a subroutine.
     // this method performs this action, and is called at the end of every procedure that has stack params.
-    void PopLostStack(int num);
+    void PopLostStack(int num) override;
 
-    void dispatch(QSharedPointer<NodeProcedure> node) override;
 
     /*
      *

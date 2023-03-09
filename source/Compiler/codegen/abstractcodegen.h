@@ -336,6 +336,8 @@ public:
     QString getValue(QSharedPointer<Node> n);
     QString getValue8bit(QSharedPointer<Node> n, int isHi);
 
+    virtual void PopLostStack(int cnt) {}
+
     // Method that defines a temporary string. Only used on the 6502, marked obsolete.
     virtual QString DefineTempString(QSharedPointer<Node> node);
 

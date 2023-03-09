@@ -81,6 +81,3 @@ cpu_x86_output = exe
 cc1541_disk_type = d64
 disable_compiler_comments = 0
 use_track_19 = 1
-project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/TRS80COCO/unittests/
-open_files = ,unittests.ras
-current_file = unittests.ras
