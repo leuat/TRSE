@@ -14,9 +14,13 @@ var
 	const addr : address = @OVERRIDE;
 @else
 	const addr : address = $8800;
-
+	
 @endif
 	bl1,bl2 : boolean;
+@if SUPPORTS_LONG = "1"
+	l1, l2 : long;
+
+@endif
 /*
 @ifdef CPU_Z80	
 @endif

@@ -1649,7 +1649,7 @@ QString CodeGenZ80::getHL() {
     return hl;
 }
 
-void CodeGenZ80::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool offPage)
+void CodeGenZ80::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool offPage)
 {
 
     as->Comment("Binary clause core: " + node->m_op.getType());

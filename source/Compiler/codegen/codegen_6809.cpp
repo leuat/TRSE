@@ -985,7 +985,7 @@ void CodeGen6809::BuildToCmp(QSharedPointer<Node> node)
 
 
 }
-void CodeGen6809::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+void CodeGen6809::BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
 
     if (node->isWord(as)) {
@@ -1123,23 +1123,8 @@ QString CodeGen6809::getCallSubroutine() {
     return "jsr";
 }
 
-QString CodeGen6809::ProcedureEndWithoutReturn() {
-    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816) {
-        return "plb\n";
-    }
-    return "";
-
-}
 
 
-QString CodeGen6809::getInitProcedure() {
-    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816) {
-        return "phb\n"
-               "\tphk\n"
-               "\tplb\n";
-    }
-    return "";
-}
 
 bool CodeGen6809::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node)
 {
@@ -2220,7 +2205,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeRepeatUntil> node)
     }
     else {
         // Simplified version <80 instructions & just one clause
-        BuildSimple(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
+        BuildConditional(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
     }
     // Start main block
 
@@ -2320,14 +2305,6 @@ void CodeGen6809::HackPointer(Assembler *as, QSharedPointer<Node> n)
 
 }
 
-void CodeGen6809::PopLostStack(int num)
-{
-    if (num==0) return;
-    as->Asm("tax");
-    for (int i=0;i<num;i++)
-        as->Asm("pla");
-    as->Asm("txa");
-}
 
 void CodeGen6809::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {
@@ -2386,38 +2363,6 @@ void CodeGen6809::AssignToRegister(QSharedPointer<NodeAssign> node)
         return;
     }
     return;
-}
-
-void CodeGen6809::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler* as)
-{
-    if (node->m_left->isWord(as)) // no word optimizations.. yet
-        return;
-
-    //    return;
-    if (node->m_right->isPureNumeric()) {
-        // is numeric
-        //   a >= N+1  is better than a > N
-        int val = node->m_right->getValueAsInt(as);
-        if (node->m_op.m_type == TokenType::GREATER && val!=255) {
-            node->m_op.m_type = TokenType::GREATEREQUAL;
-            Token t = node->m_right->m_op;
-            t.m_intVal = val+1;
-            // Replace with N+1
-            node->m_right = QSharedPointer<NodeNumber>(new NodeNumber(t,t.m_intVal));
-            as->Comment("Optimization: replacing a > N with a >= N+1");
-            return;
-        }
-        if (node->m_op.m_type == TokenType::LESSEQUAL && val!=0 && val!=255) {
-            as->Comment("Optimization: replacing a <= N with a <= N-1");
-            node->m_op.m_type = TokenType::LESS;
-            Token t = node->m_right->m_op;
-            t.m_intVal = val+1;
-            // Replace with N+1
-            node->m_right = QSharedPointer<NodeNumber>(new NodeNumber(t,t.m_intVal));
-            return;
-        }
-
-    }
 }
 
 void CodeGen6809::dispatch(QSharedPointer<NodeUnaryOp> node)
@@ -2647,32 +2592,3 @@ void CodeGen6809::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type
 
 }
 
-bool CodeGen6809::StoreStackParameter(QSharedPointer<NodeAssign> n)
-{
-    auto var = qSharedPointerDynamicCast<NodeVar>(n->m_left);
-    if (var==nullptr)
-        return false;
-
-    if (!var->isStackVariable())
-        return false;
-
-    LoadVariable(n->m_right);
-
-    if (n->m_isProcedureParameterAssign) {
-        as->Asm("pha");
-        if (var->isWord(as)) {
-            as->Asm("tya");
-            as->Asm("pha");
-        }
-        return true;
-    }
-
-    as->Asm("tsx");
-    //    as->Asm("txa");
-    as->Asm("sta $103+"+QString::number(var->getStackShift())+",x");
-
-
-
-    return true;
-
-}

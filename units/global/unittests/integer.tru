@@ -65,7 +65,6 @@ begin
 	Vars::i1:=1000;
 	Vars::i2:=2000;
 	Vars::i1:=Vars::i1 + Vars::i2;
-	asm(";here");
 	Vars::text := "08:"; if Vars::i1=3000 then Common::PASS() else Common::FAIL();
 end;
 
