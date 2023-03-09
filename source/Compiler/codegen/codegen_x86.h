@@ -94,13 +94,11 @@ public:
 
     void PushX();
     void PopX();
-    QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
 
 
 
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-    QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
 
 

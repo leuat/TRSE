@@ -95,13 +95,7 @@ public:
 
 
 
-    /*
-     *   M68K only
-     *   getEndType is only used on the M68K, where it will return a vasmm_m68k-style
-     *   opcode type for the current variable/number, such as ".w" (word) in "move.w", ".b" as in "move.b"
-    */
-    virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
-    virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
+
 
     // M6809 only. Loads an variable and transfers it to the internal index register.
     virtual void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType) {}
@@ -134,10 +128,7 @@ public:
     // Resolves the string value of a temporary (*this) pointer for a class
     virtual QString resolveTemporaryClassPointer(QString name, int mul, int &res) { return "";}
 
-    // 6502 only
-    // When using stack parameters on the 6502, you need to pop the stack N times when exiting a subroutine.
-    // this method performs this action, and is called at the end of every procedure that has stack params.
-    virtual void PopLostStack(int num) {}
+
    /*
     * method that is called at the start of every procedure, in case some stack manipulation is needed.
     * currently only used with the WDC65C816
@@ -287,7 +278,7 @@ public:
 
 
     /*
-     *  Inserts custom .asm code at every procedure start/end. Currently only used on the ARM.
+     *  Inserts custom .asm code at every procedure start/end.
      *
      */
     virtual void ProcedureStart(Assembler* as) { }

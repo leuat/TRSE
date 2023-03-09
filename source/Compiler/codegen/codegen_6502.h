@@ -30,6 +30,8 @@
 
 class CodeGen6502 : public AbstractCodeGen
 {
+private:
+    int lostStack = 0;
 public:
     CodeGen6502();
     int m_stackShift = 0;
@@ -66,9 +68,12 @@ public:
 
     void HackPointer(Assembler* as, QSharedPointer<Node> node);
 
-    void PopLostStack(int num) override;
+    // 6502 only
+    // When using stack parameters on the 6502, you need to pop the stack N times when exiting a subroutine.
+    // this method performs this action, and is called at the end of every procedure that has stack params.
+    void PopLostStack(int num);
 
-
+    void dispatch(QSharedPointer<NodeProcedure> node) override;
 
     /*
      *
@@ -225,7 +230,7 @@ public:
 
     bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
 
-
+    void ProcedureStart(Assembler* as) override;
 
     //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 

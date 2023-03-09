@@ -677,10 +677,6 @@ void CodeGenX86::PopX() {
     m_lvl--;
 }
 
-QString CodeGenX86::getEndType(Assembler *as, QSharedPointer<Node> v)
-{
-    return "";
-}
 
 
 
@@ -1271,10 +1267,7 @@ void CodeGenX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenX86::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
+
 
 
 void CodeGenX86::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)

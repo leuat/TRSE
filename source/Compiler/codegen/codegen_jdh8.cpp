@@ -368,10 +368,6 @@ void CodeGenJDH8::PopReg() {
     m_lvl--;
 }
 
-QString CodeGenJDH8::getEndType(Assembler *as, QSharedPointer<Node> v)
-{
-    return "";
-}
 
 
 
@@ -767,10 +763,7 @@ void CodeGenJDH8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenJDH8::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
+
 
 
 void CodeGenJDH8::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
