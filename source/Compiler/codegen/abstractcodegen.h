@@ -95,11 +95,7 @@ public:
 
 
 
-    /*
-     *   opcode type for the current variable/number, such as ".w" (word) in "move.w", ".b" as in "move.b"
-    */
-    virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
-    virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
+
 
     // M6809 only. Loads an variable and transfers it to the internal index register.
     virtual void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType) {}
