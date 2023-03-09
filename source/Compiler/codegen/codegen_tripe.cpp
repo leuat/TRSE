@@ -260,7 +260,7 @@ QString CodeGenTRIPE::TripeValue(Assembler *as, QSharedPointer<Node> node)
 }
 
 
-void CodeGenTRIPE::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+void CodeGenTRIPE::BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

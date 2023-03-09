@@ -527,6 +527,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
     if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
         node->m_right->setCastType(TokenType::INTEGER);
+
     if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
         node->m_right->setCastType(TokenType::LONG);
 
@@ -595,9 +596,11 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     if (node->m_left->isWord(as)) {
-//        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->setForceType(TokenType::INTEGER);
     }
+    if (node->m_left->isLong(as))
+        node->m_right->setForceType(TokenType::LONG);
+
 
     // stack parameters
      if (StoreStackParameter(node))
@@ -792,7 +795,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
         }
 
         OptimizeBinaryClause(node,as);
-        BuildSimple(node,  lblSuccess, lblFailed, offpage);
+        BuildConditional(node,  lblSuccess, lblFailed, offpage);
         return;
     }
 
@@ -1491,6 +1494,22 @@ bool AbstractCodeGen::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, 
     QString lbl = as->StoreInTempVar("rightvarInteger", "word");
     lo = lbl;
     hi = lbl+"+1";
+    return false;
+}
+
+bool AbstractCodeGen::Evaluate24bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi, QString& z)
+{
+    if (node->isPure()) {
+        lo = getValue8bit(node,false);
+        hi = getValue8bit(node,true);
+        z = getValue8bit(node,2);
+        return true;
+    }
+    node->Accept(this);
+    QString lbl = as->StoreInTempVar("rightvarInteger", "long");
+    lo = lbl;
+    hi = lbl+"+1";
+    z = lbl+"+2";
     return false;
 }
 

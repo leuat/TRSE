@@ -99,7 +99,6 @@ public:
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
 
-    void InlineProcedure(QSharedPointer<NodeProcedure> p);
 
     virtual QString getIncbin() override;
 
@@ -115,7 +114,7 @@ public:
     QString TripeNumber(Assembler* as,QSharedPointer<Node> node);
     QString TripeValue(Assembler* as,QSharedPointer<Node> node);
 
-    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+    void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
 //    void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 

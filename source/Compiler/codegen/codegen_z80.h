@@ -110,7 +110,7 @@ public:
     void StoreAddress(QSharedPointer<Node> n);
     QString getHL();
 
-    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+    void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BuildToCmp(QSharedPointer<Node> node) override;
 

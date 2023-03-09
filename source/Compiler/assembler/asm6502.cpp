@@ -30,7 +30,7 @@ QString Asm6502::m_defaultTempZeroPointers = "$54, $56, $58, $5A";
 
 Asm6502::Asm6502() :Assembler()
 {
-//    m_stack["for"] = new Stack();
+    //    m_stack["for"] = new Stack();
     m_opCycles.InitMosOpCycles();
     InitCStrings();
 
@@ -108,7 +108,7 @@ void Asm6502::InitCStrings()
     m_cstr["["] = CStringItem("",91, 91-64);
     m_cstr["£"] = CStringItem("",92,92-64);
     m_cstr["]"] = CStringItem("",93,93-64);
-//    m_cstr[""] = CStringItem("", ,);
+    //    m_cstr[""] = CStringItem("", ,);
 
 }
 
@@ -133,10 +133,10 @@ void Asm6502::Program(QString programName, QString vicConfig)
 
 void Asm6502::EndProgram()
 {
-//    Asm("rts");
+    //    Asm("rts");
     //if (m_hasOpenBlock)
     Comment("End of program");
-/*    if (m_currentBlock==nullptr) {
+    /*    if (m_currentBlock==nullptr) {
         if (m_insertEndBlock!="") {
             Write(m_insertEndBlock,0);
         }
@@ -168,10 +168,10 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
     if (type.toLower()=="string")
         t = byte;
 
-     if (data.count()==0 && pos!="") {
-         Write(name + " = " + pos);
-         return;
-     }
+    if (data.count()==0 && pos!="") {
+        Write(name + " = " + pos);
+        return;
+    }
 
 
 
@@ -184,7 +184,7 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
             scale = 3;
 
         if (Syntax::s.m_currentSystem->CL65Syntax()) {
-           Write(getLabelEnding(name) +"\t.res\t" + QString::number(count*scale) + ",0");
+            Write(getLabelEnding(name) +"\t.res\t" + QString::number(count*scale) + ",0");
             return;
         }
 
@@ -214,7 +214,7 @@ void Asm6502::DeclareArray(QString name, QString type, int count, QStringList da
         }
         else {
             QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
-//            app->Append("org " + pos,1);
+            //            app->Append("org " + pos,1);
             app->Append(GetOrg(Util::NumberFromStringHex(pos)),1);
             for (int i=0;i<lst.count();i++)
                 app->Append(lst[i],0);
@@ -246,9 +246,9 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
     if (initval=="")
         initval="0";
     if (DeclareRecord(name,type,1,QStringList(),position))
-         return;
+        return;
     if (DeclareClass(name,type,1,QStringList(),position))
-         return;
+        return;
 
     if (type.toLower()=="const") {
         Write(name + " = " + initval);
@@ -276,7 +276,7 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
         return;
     }
 
-/*    if (m_symTab->m_records.contains(type)) {
+    /*    if (m_symTab->m_records.contains(type)) {
 //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
         QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
         for (QSharedPointer<Symbol> s : st->m_symbols) {
@@ -302,9 +302,9 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
 
 void Asm6502::DeclareString(QString name, QStringList initval, QStringList flags)
 {
-//    qDebug() << "Asm6502 FLAGS " <<flags <<!flags.contains("no_term");
+    //    qDebug() << "Asm6502 FLAGS " <<flags <<!flags.contains("no_term");
 
-/*    QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
+    /*    QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix(pos));
     app->Append("org " + pos,1);
     for (int i=0;i<lst.count();i++)
         app->Append(lst[i],0);
@@ -331,7 +331,7 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
         Write("\t"+byte+"\t");
         return;
     }
-//    qDebug() << initVal.count();
+    //    qDebug() << initVal.count();
     QString curStr = initVal[curLin];
     QString curOutData = "";
     while (!done) {
@@ -349,7 +349,7 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
                 //qDebug() << "IS NUMBER : " << isNumber;
                 curOutData += curStr;
                 curIdx = curStr.length();
-  //              continue;
+                //              continue;
             }
         }
 
@@ -359,7 +359,7 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
 
                 QString c = curStr[curIdx].toUpper();
                 //qDebug() << c;
-//                qDebug() << curStr << m_cstr.keys();
+                //                qDebug() << curStr << m_cstr.keys();
 
                 if (m_cstr.contains(c)) {
                     uchar sc = m_cstr[c].m_screenCode;
@@ -381,10 +381,10 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
         if (curIdx>=curStr.length()) {
             curIdx=0;
             curLin++;
-//            qDebug() << curLin;
+            //            qDebug() << curLin;
             if (curLin<initVal.count()) {
                 curStr=initVal[curLin];
-  //              qDebug() << curStr;
+                //              qDebug() << curStr;
             }
             else done=true;
         }
@@ -404,8 +404,8 @@ void Asm6502::DeclareCString(QString name, QStringList initVal, QStringList flag
     }
 
     else
-    if (!flags.contains("no_term"))
-        Write("\tdc.b\t0 "); // add 0
+        if (!flags.contains("no_term"))
+            Write("\tdc.b\t0 "); // add 0
 
 }
 
@@ -438,9 +438,9 @@ void Asm6502::Number(QString n)
     if (m_term=="")
         m_term = "lda ";
 
-//    if (m_term.contains("sta"))
-        m_term +=n;
-  //  else
+    //    if (m_term.contains("sta"))
+    m_term +=n;
+    //  else
     //    m_term+="\#" + n;
     if (endTerm()) {
         Asm(m_term);
@@ -461,8 +461,8 @@ QString Asm6502::String(QStringList lst, bool term)
 
     QString res;
     QString mark = "dc.b";
-//    if (Syntax::s.m_currentSystem->is6809())
-  //      mark = "fcc";
+    //    if (Syntax::s.m_currentSystem->is6809())
+    //      mark = "fcc";
     if (Syntax::s.m_currentSystem->CL65Syntax()) {
         mark = ".asciiz";
         term = false;
@@ -493,13 +493,13 @@ void Asm6502::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
         if (clearFlag)
-        Asm("clc");
+            Asm("clc");
         m_term = "adc ";
     }
 
     if (t == TokenType::MINUS) {
         if (clearFlag)
-        Asm("sec");
+            Asm("sec");
         m_term = "sbc ";
     }
 
@@ -564,8 +564,8 @@ QString Asm6502::GetOrg(int pos)
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
         return "";
     if (Syntax::s.m_currentSystem->CL65Syntax())
-//        return ".res " + Util::numToHex(pos)+"-*";
-      return ".org " + Util::numToHex(pos);
+        //        return ".res " + Util::numToHex(pos)+"-*";
+        return ".org " + Util::numToHex(pos);
     return "org " + Util::numToHex(pos);
 }
 
@@ -580,17 +580,17 @@ void Asm6502::DeclareInternalVariable(QString name)
     if (m_varZeroPointers.count()!=0) {
         QString addr = m_varZeroPointers[0];
         m_varZeroPointers.removeFirst();
-//        m_tempVars << (name + " = " + addr);
+        //        m_tempVars << (name + " = " + addr);
         Write(name + " = " + addr);
         return;
     }
     Write(name + ": "+byte+" 0");
-//    m_tempVars << (name + " dc.b 0");
+    //    m_tempVars << (name + " dc.b 0");
 }
 
 int Asm6502::CodeSizeEstimator(QStringList &lines) {
     int size = 0;
- //   qDebug() << "EST START";
+    //   qDebug() << "EST START";
     for (auto&s : lines) {
         if (!s.startsWith("\t")) // IS label
             continue;
@@ -608,68 +608,89 @@ int Asm6502::CodeSizeEstimator(QStringList &lines) {
             p = ps[0]; // pick first one, ignore ",x" etc
             if (p.startsWith("#")) { add=2; }
             else add=3;
-//            else size+=3;
-/*            p = p.remove("$");
+            //            else size+=3;
+            /*            p = p.remove("$");
             bool conversionOk = false;
             int value = p.toInt(&conversionOk, 16);
             if (conversionOk)*/
 
         }
-//        qDebug() << t << add;
+        //        qDebug() << t << add;
         size+=add;
 
     }
-//    if (size>100)
-//        qDebug() << "********************** EST SIZE "<< size;
+    //    if (size>100)
+    //        qDebug() << "********************** EST SIZE "<< size;
     return size;
 }
 
 QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
 {
     if (m_zpStack.count()<m_tempZeroPointers.count()) {
-       // qDebug() << "B" << m_tempZeroPointers.count();
+        // qDebug() << "B" << m_tempZeroPointers.count();
 
         int i = m_zpStack.count();
         m_zpStack.append(m_tempZeroPointers[i]);
-//        qDebug() << name << " INCREASE TO " << m_zpStack.count();
+        //        qDebug() << name << " INCREASE TO " << m_zpStack.count();
 
         QString tmpVar = NewLabel(name+"_var");
         QString labelVar = tmpVar + " = " + m_zpStack.last();
         Label(labelVar);
-//        m_tempVars << labelVar;
+        //        m_tempVars << labelVar;
         if (actuallyStore) {
-        Asm("sta " + tmpVar);
-        if (type=="word") {
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("sep #$10");
-            Asm("sty " + tmpVar + "+1");
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("rep #$10");
-        }
-        }
-        PopLabel(name+ "_var");
-        return tmpVar;
+            Asm("sta " + tmpVar);
+            if (type=="word") {
+                if (Syntax::s.m_currentSystem->isWDC65())
+                    Asm("sep #$10");
+                Asm("sty " + tmpVar + "+1");
+                if (Syntax::s.m_currentSystem->isWDC65())
+                    Asm("rep #$10");
+
+            }
+            if (type=="long" || type=="long24") {
+                if (Syntax::s.m_currentSystem->isWDC65())
+                    Asm("sep #$10");
+                Asm("sty " + tmpVar + "+1");
+                Asm("stx " + tmpVar + "+2");
+                if (Syntax::s.m_currentSystem->isWDC65())
+                    Asm("rep #$10");
+            }
+
 
     }
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
-         ErrorHandler::e.Error("Error: Out of memory addresses for temp values for the SNES (must not reside in ROM). Please go to the project settings -> zeropages -> add new addresses to the 'temp vars zeropages!'");
-
-   // qDebug() << "Using reglar variables: " << m_zpStack.count();
-    QString tmpVar = NewLabel(name+"_var");
-    QString labelVar = getLabelEnding(tmpVar) + "\t."+type+"\t0 ";
-    m_tempVars << labelVar;
-    if (actuallyStore) {
-        Asm("sta " + tmpVar);
-        if (type=="word") {
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("sep #$10");
-            Asm("sty " + tmpVar + "+1");
-            if (Syntax::s.m_currentSystem->isWDC65())
-                Asm("rep #$10");
-        }
-    }
+//     else ErrorHandler::e.Error("No more free temp zps");
     PopLabel(name+ "_var");
     return tmpVar;
+
+}
+if (Syntax::s.m_currentSystem->m_system==AbstractSystem::SNES)
+ErrorHandler::e.Error("Error: Out of memory addresses for temp values for the SNES (must not reside in ROM). Please go to the project settings -> zeropages -> add new addresses to the 'temp vars zeropages!'");
+
+// qDebug() << "Using reglar variables: " << m_zpStack.count();
+QString tmpVar = NewLabel(name+"_var");
+QString labelVar = getLabelEnding(tmpVar) + "\t."+type+"\t0 ";
+m_tempVars << labelVar;
+if (actuallyStore) {
+    Asm("sta " + tmpVar);
+    if (type=="word") {
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("sep #$10");
+        Asm("sty " + tmpVar + "+1");
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("rep #$10");
+    }
+    if (type=="long" || type=="long24") {
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("sep #$10");
+        Asm("sty " + tmpVar + "+1");
+        Asm("stx " + tmpVar + "+2");
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("rep #$10");
+    }
+
+}
+PopLabel(name+ "_var");
+return tmpVar;
 }
 
 void Asm6502::PopTempVar()
@@ -677,8 +698,8 @@ void Asm6502::PopTempVar()
     if (m_zpStack.count()>0) {
         m_zpStack.removeLast();
     }
-//    else
-  //      ErrorHandler::e.Error("COMPILER ERROR: Assembler::PopTempVar Trying to pop tempvar from zero");
+    //    else
+    //      ErrorHandler::e.Error("COMPILER ERROR: Assembler::PopTempVar Trying to pop tempvar from zero");
 }
 
 /*
@@ -721,11 +742,11 @@ void Asm6502::Variable(QString v, bool isByte)
     }
     else {
         Comment("integer assignment NodeVar");
-//        if (m_term=="")
-            m_term = "ldy ";
+        //        if (m_term=="")
+        m_term = "ldy ";
         m_term+=v + "+1 ; keep";
         Term();
-//        Asm("tay");
+        //        Asm("tay");
         Term("lda "+v);
 
     }
@@ -809,10 +830,10 @@ void Asm6502::Optimise(CIniFile& ini)
     if (ini.getdouble("post_optimizer_passjmp")==1)
         OptimiseJumps();
 
-//    if (ini.getdouble("post_optimizer_passcmp")==1)
+    //    if (ini.getdouble("post_optimizer_passcmp")==1)
     if (ini.getdouble("post_optimizer_passcmp")==1)
         OptimiseCmp("cmp");
-            // 6157
+    // 6157
     if (ini.getdouble("post_optimizer_passphapla")==1)
         OptimisePhaPla1();
 
@@ -826,13 +847,13 @@ void Asm6502::Optimise(CIniFile& ini)
     OptimisePassLdyLdy("x");
 
 
-//    if (ini.getdouble("post_optimizer_passldatax")==1)
-  //      RemoveUnusedLabels();
+    //    if (ini.getdouble("post_optimizer_passldatax")==1)
+    //      RemoveUnusedLabels();
 
 
-//        OptimisePhaPla2();
-  //      OptimiseCmp("cpy");
-  //      OptimiseCmp("cpx");
+    //        OptimisePhaPla2();
+    //      OptimiseCmp("cpy");
+    //      OptimiseCmp("cpx");
 
 }
 
@@ -848,7 +869,7 @@ void Asm6502::OptimisePassStaLda()
             if (l0==l1 && !
                     l1.contains("keep")) {
 
-//                qDebug() << "Removing: " << l0 << l1 << " on line " << j;
+                //                qDebug() << "Removing: " << l0 << l1 << " on line " << j;
 
                 m_removeLines.append(j);
                 continue;
@@ -856,7 +877,7 @@ void Asm6502::OptimisePassStaLda()
             QString var = getToken(l0,1);
             if (getToken(l1,1)==var && getToken(l1,0)=="lda") {
 
-//                qDebug() << "Removing: " << l0 << l1<< " on line " << j;
+                //                qDebug() << "Removing: " << l0 << l1<< " on line " << j;
                 m_removeLines.append(j);
                 i++;
                 continue;
@@ -874,7 +895,7 @@ void Asm6502::OptimisePassStaLdx(QString x)
         QString l0 = getLine(i);
         if (l0.contains("sta")) {
             QString l1 = getNextLine(i,j);
-/*            if (l0==l1) {
+            /*            if (l0==l1) {
                 //qDebug() << "Removing " <<l0;
                 m_removeLines.append(j);
                 continue;
@@ -882,8 +903,8 @@ void Asm6502::OptimisePassStaLdx(QString x)
             QString var = getToken(l0,1);
             if (getToken(l1,1)==var && getToken(l1,0)=="ld"+x) {
 
-              //  qDebug() << "Removing: " << l1 << " on line " << j;
-//                m_removeLines.append(j);
+                //  qDebug() << "Removing: " << l1 << " on line " << j;
+                //                m_removeLines.append(j);
                 m_source[j] = "\tta"+x+" ; optimized "+x+", look out for bugs L22 ORG " + m_source[j];
 
                 i++;
@@ -909,7 +930,7 @@ void Asm6502::OptimisePassLdx(QString x)
             QString value = getToken(l0,1);
             if (l0.contains("ld"+x)) {
                 bool done = false;
-//                qDebug() << l0;
+                //                qDebug() << l0;
                 int k=i;
                 int curCnt = 0;
                 int ll=i;
@@ -918,11 +939,11 @@ void Asm6502::OptimisePassLdx(QString x)
                     k=j;
                     QString op2 = getToken(l1,1);
                     QString op = getToken(l1,0);
-  //                  qDebug() << op2 << op << l0 << l1<<value;
+                    //                  qDebug() << op2 << op << l0 << l1<<value;
                     if (l0==l1 && !op2.startsWith("(") && !op2.contains(",") && !op2.startsWith("$")) {
-//                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
-//                        if (x=="x")
-//                           qDebug () << "Removing because equal: " << l0 << ", " << l1 << "  on line " <<i;
+                        //                      if (l0==l1 && !op2.startsWith("(") && !op2.contains(",")) {
+                        //                        if (x=="x")
+                        //                           qDebug () << "Removing because equal: " << l0 << ", " << l1 << "  on line " <<i;
                         if (!l1.contains(";keep"))
                             m_removeLines.append(j);
                         curCnt++;
@@ -931,11 +952,11 @@ void Asm6502::OptimisePassLdx(QString x)
                     //qDebug() << "curop:" << op;
                     // Changex in x
                     if (x=="x" || x=="y")
-                    if (op==("ld"+x) || op==("ta"+x) || op=="jmp" || op=="rts" || op=="jsr" ||
-                            op==("in" +x) || op==("de"+x)|| op.length()!=3)
-//                        op==("in" +x) || op==("de"+x)|| op==("sta")|| op.length()!=3 ) {
-//                        qDebug() << "Done because: " << l1;
-                        done=true;
+                        if (op==("ld"+x) || op==("ta"+x) || op=="jmp" || op=="rts" || op=="jsr" ||
+                                op==("in" +x) || op==("de"+x)|| op.length()!=3)
+                            //                        op==("in" +x) || op==("de"+x)|| op==("sta")|| op.length()!=3 ) {
+                            //                        qDebug() << "Done because: " << l1;
+                            done=true;
                     // Stuff like
                     // ldx i
                     // inc i
@@ -959,7 +980,7 @@ void Asm6502::OptimisePassLdx(QString x)
 
 
                     ll++;
-                     if (x=="a") {
+                    if (x=="a") {
                         if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
                                 op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")
                                 || op=="clc" || op=="sec" || op=="asl" || op=="rol" || op=="ror" || op=="lsr"
@@ -967,10 +988,10 @@ void Asm6502::OptimisePassLdx(QString x)
                                 || op=="and" || op=="ora" || op=="eor" || op=="bit"
                                 )
 
-//                          if (!(op[2] == "x" || op[2] == "y" || op[2]=="sta"))
+                            //                          if (!(op[2] == "x" || op[2] == "y" || op[2]=="sta"))
 
-                        done = true;
-/*                        if (curCnt!=0 && done==true) {
+                            done = true;
+                        /*                        if (curCnt!=0 && done==true) {
                             for (int kk=i;kk<ll;kk++) {
                                 QString ss =QString::number(kk) +("   " + l0)+ " : " +getLine(kk);// << "  :  " << l1;
                                 if (kk-i==curCnt-1)
@@ -981,7 +1002,7 @@ void Asm6502::OptimisePassLdx(QString x)
                             qDebug() << "**** DONE";
                      }*/
 
-                     }
+                    }
 
 
                 }
@@ -1006,29 +1027,29 @@ void Asm6502::OptimisePassLdaTax(QString x)
         if (l0.contains("lda") && !l0.contains(",")) {
             int k=i;
             int n;
-                QString l1 = getNextLine(k,j);
-                QString l2 = getNextLine(j,n);
-                k=j;
-                QString op = getToken(l1,0);
-                if (op==("ta"+x) && !l1.contains(";keep")) {
-                    bool perform=true;
-                    QString tst = getToken(l2,0);
-                    if (tst.startsWith("ta") || tst=="sta")
-                        perform=false;
-//                    qDebug() << "TEST " << perform << tst ;
-                    if (perform) {
-                        m_removeLines.append(j);
-                        QString org = m_source[i];
-                        m_source[i] = m_source[i].replace("lda", "ld"+x)+" ; optimized, look out for bugs";
-  //                      qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
-                    }
-                    //m_removeLines.append(i);
+            QString l1 = getNextLine(k,j);
+            QString l2 = getNextLine(j,n);
+            k=j;
+            QString op = getToken(l1,0);
+            if (op==("ta"+x) && !l1.contains(";keep")) {
+                bool perform=true;
+                QString tst = getToken(l2,0);
+                if (tst.startsWith("ta") || tst=="sta")
+                    perform=false;
+                //                    qDebug() << "TEST " << perform << tst ;
+                if (perform) {
+                    m_removeLines.append(j);
+                    QString org = m_source[i];
+                    m_source[i] = m_source[i].replace("lda", "ld"+x)+" ; optimized, look out for bugs";
+                    //                      qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
+                }
+                //m_removeLines.append(i);
 
 
 
             }
-//            if (m_removeLines.count()!=0)
-  //              break;
+            //            if (m_removeLines.count()!=0)
+            //              break;
         }
     }
 
@@ -1049,9 +1070,9 @@ void Asm6502::OptimiseJumps()
             //qDebug() << lbl0 << " vs " << l1 ;
             if (l1.toLower().contains(lbl0.toLower()) && !l1.toLower().contains("keep"))
             {
-//                qDebug() << "Removing:";
- //               qDebug() << " " + l0;
-  //              qDebug() << " " + l1;
+                //                qDebug() << "Removing:";
+                //               qDebug() << " " + l0;
+                //              qDebug() << " " + l1;
                 m_removeLines.append(i);
                 //m_removeLines.append(j);
                 i++;
@@ -1078,7 +1099,7 @@ void Asm6502::OptimiseCmp(QString op)
                 int num = Util::NumberFromStringHex(lbl0);
                 if (num==0) {
                     m_removeLines.append(i);
-                   // qDebug() << "REmoving: " << l0;
+                    // qDebug() << "REmoving: " << l0;
                 }
             }
         }
@@ -1137,21 +1158,21 @@ void Asm6502::OptimisePhaPla2()
         if (l0 == "pha") {
             QString l1="";
             k=i;
-         //   qDebug() << " START ************************";
+            //   qDebug() << " START ************************";
             while (!(l1=="pla" || l1=="pha")) {
                 j=k;
                 l1 = getNextLine(j,k).toLower().trimmed();
                 //qDebug() << l1;
             }
-           // if (l1=="pha") {i=j;continue;}
+            // if (l1=="pha") {i=j;continue;}
 
             j=k;
             if (getNextLine(j,k).toLower().trimmed().startsWith("lda ")) {
-               //     m_removeLines.append(two);
-                 //   m_removeLines.append(i);
-                    //qDebug() << "Removing: "<< m_source[two];
-                    //qDebug() << "Removing: "<< m_source[i];
-                    //qDebug() << getNextLine(j,k).toLower().trimmed();
+                //     m_removeLines.append(two);
+                //   m_removeLines.append(i);
+                //qDebug() << "Removing: "<< m_source[two];
+                //qDebug() << "Removing: "<< m_source[i];
+                //qDebug() << getNextLine(j,k).toLower().trimmed();
             }
 
             i=k;
@@ -1178,11 +1199,11 @@ void Asm6502::OptimisePhaLdxPla()
                 }
             }
             else
-            if (l1=="pla") {
-               m_removeLines.append(i);
-               m_removeLines.append(j);
-//               qDebug() << l0 << l1;
-            }
+                if (l1=="pla") {
+                    m_removeLines.append(i);
+                    m_removeLines.append(j);
+                    //               qDebug() << l0 << l1;
+                }
         }
     }
     RemoveLines();
@@ -1199,7 +1220,7 @@ void Asm6502::OptimiseLdLd()
             QString a = QString(l0[2]);
             QString l1 = getNextLine(i,j);
             if (l1.toLower().trimmed().startsWith("ld"+a)) {
-               m_removeLines.append(i);
+                m_removeLines.append(i);
             }
         }
     }
@@ -1277,7 +1298,7 @@ MOSOperation Asm6502::GetOperand(QStringList s)
     if (op.param1.startsWith("#"))
         op.isNumeric = true;
 
-/*    op.param1 = op.param1.remove("#");
+    /*    op.param1 = op.param1.remove("#");
     op.param1 = op.param1.remove("$");
     op.param1 = op.param1.remove("%");
 
@@ -1330,9 +1351,9 @@ void Asm6502::InitZeroPointers(QStringList lst, QStringList tmpList, QStringList
         QString test=s;
         test = test.replace("$", "");
         bool ok = true;
-//        int testVal = test.toInt(&ok);
-  //      if (!ok)
-    //        qDebug() << "NOT OK for " << s << " " << test;
+        //        int testVal = test.toInt(&ok);
+        //      if (!ok)
+        //        qDebug() << "NOT OK for " << s << " " << test;
         if (s!="" && ok)
             m_zeroPointers.append(s);
     }
@@ -1347,7 +1368,7 @@ void Asm6502::InitZeroPointers(QStringList lst, QStringList tmpList, QStringList
         if (zp!="") {
             m_varZeroPointers.append(zp);
         }
-//       qDebug() << "Asm6502 initzero " <<m_tempZeroPointers;
+    //       qDebug() << "Asm6502 initzero " <<m_tempZeroPointers;
 
 
 }
@@ -1363,37 +1384,37 @@ void Asm6502::OptimisePassStaLda2()
         if (l0.contains("sta ") && !l0.contains(",") && !nextLineIsLabel(i)) {
             curA = l0.split(" ")[1];
             QString l1 = getNextLine(i,j);
-        //    qDebug() << "FOUND sta "<<l0;
+            //    qDebug() << "FOUND sta "<<l0;
             bool done = false;
             int old_j = -1;
             while (!done) {
 
-/*                if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
+                /*                if (op==("lda") || op==("txa") || op==("tya") || op=="jmp" || op=="rts" || op=="jsr" ||
                         op==("ina") || op==("dea")|| op.length()!=3  || op==("adc") || op==("sbc") || op==("cmp")
                         || op=="clc" || op=="sec" || op=="asl" || op=="rol" || op=="ror" || op=="lsr"
                         || op=="bcc" || op=="bcs" || op=="pla" || op=="beq" || op=="bpl" || op=="bne"
                         || op=="and" || op=="ora" || op=="eor" || op=="bit"
   */
                 bool abort = ContainsAChangingOpcodes(l1) & !nextLineIsLabel(j);
-;
-//                qDebug() << "NEXT IS LABEL " <<nextLineIsLabel(j);
+                ;
+                //                qDebug() << "NEXT IS LABEL " <<nextLineIsLabel(j);
                 old_j=j;
                 while ((done==false && !l1.startsWith("lda")) && !abort && !nextLineIsLabel(j)) {
                     l1 = getNextLine(j,j);
-//                    qDebug() << l1;
+                    //                    qDebug() << l1;
                     if (!l1.startsWith("lda")) {
                         abort = ContainsAChangingOpcodes(l1);
                         if (!abort) {
                             abort = nextLineIsLabel(j);
-                   //         if (abort)
-                     //           qDebug() << "ABORTING NEXT LINE IS LABEL "<<l1;
+                            //         if (abort)
+                            //           qDebug() << "ABORTING NEXT LINE IS LABEL "<<l1;
 
                         }
-                       /* if (abort) {
+                        /* if (abort) {
                             qDebug() << "ABORTING because "<<l1;
                         }*/
                     }
-//                    qDebug() << j <<old_j<<m_source.count();
+                    //                    qDebug() << j <<old_j<<m_source.count();
                     if (j>=m_source.count()-2 || old_j==j)
                         done = true;
                     if (old_j==j)
@@ -1405,7 +1426,7 @@ void Asm6502::OptimisePassStaLda2()
                     QStringList lst = l1.split(" ");
                     if (lst.count()>=2)
                         if (lst[0] == "lda" && lst[1]==curA &&!l1.contains("keep")) {
-                      //      qDebug() << "Removing: " << l1 << " on line " << j << lst[0] << lst[1] << curA;
+                            //      qDebug() << "Removing: " << l1 << " on line " << j << lst[0] << lst[1] << curA;
                             m_removeLines.append(j);
                             //                    done = false;
 
@@ -1436,9 +1457,9 @@ void Asm6502::OptimisePassLdyLdy(QString y)
                 QString l1 = getNextLine(j,j);
 
                 if (ContainsYUsingOpcodes(l1,y) || nextLineIsLabel(j) || j>=m_source.count()) {
-                        done = true;
-                        deleteme = false;
-                   }
+                    done = true;
+                    deleteme = false;
+                }
                 if (ContainsYChangingOpcodes(l1,y)) {
                     done = true;
                 }

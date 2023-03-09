@@ -510,14 +510,6 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenJDH8::ProcedureStart(Assembler *as) {
-
-}
-
-void CodeGenJDH8::ProcedureEnd(Assembler *as) {
-
-}
-
 
 /*void CodeGenJDH8::AssignVariable(QSharedPointer<NodeAssign> node)
 {
@@ -781,7 +773,7 @@ QString CodeGenJDH8::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedP
 }
 
 
-void CodeGenJDH8::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+void CodeGenJDH8::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

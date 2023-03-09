@@ -87,6 +87,7 @@ public:
 
     void HandleShiftLeftRight(QSharedPointer<NodeBinOP> node);
     void HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP> node, bool isSimpleAeqAopB);
+    void HandleShiftLeftRightLong(QSharedPointer<NodeBinOP> node, bool isSimpleAeqAopB);
 
     void HandleGenericBinop16bit(QSharedPointer<Node> node);
     void HandleVarBinopB16bit(QSharedPointer<Node> node);
@@ -113,7 +114,6 @@ public:
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
 
 
-    void InlineProcedure(QSharedPointer<NodeProcedure> p);
 
     virtual QString getIncbin() override;
 
@@ -130,10 +130,11 @@ public:
     void Enable16bit();
 
 
-//    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
-    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+//    void BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
+    void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
+    void BinaryClauseLong(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 
 
 

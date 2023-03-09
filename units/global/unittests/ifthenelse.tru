@@ -353,6 +353,170 @@ end;
 
 
 
+@if SUPPORTS_LONG = "1"
+
+/*
+
+	L O N G
+	
+
+*/
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure LGT1_GreaterThan_True();
+begin
+	Vars::l1 := 100000; Vars::l2 := 50000;
+	Vars::text := "   L1 1:"; if Vars::l1 > Vars::l2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure LGT2_GreaterThan_False();
+begin
+	Vars::l1 := 100000; Vars::l2 := 500000;
+	Vars::text := "  LGI 2:"; if Vars::l1 > Vars::l2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure LGT3_GreaterThan_False();
+begin
+	Vars::l1 := 50000; Vars::l2 := 50000;
+	Vars::text := "  LGI 3:"; if Vars::l1 > Vars::l2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure LGT4_GreaterThan_False();
+begin
+	Vars::l1 := 0; Vars::l2 := 2550;
+	Vars::text := "  LL4 4:"; if Vars::l1 > Vars::l2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure LGT5_GreaterThan_True();
+begin
+	Vars::l1 := 255000; Vars::l2 := 0;
+	Vars::text := "  LGI 5:"; if Vars::l1 > Vars::l2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure LGTE1_GreaterEqual_True();
+begin
+	Vars::i1 := 510000; Vars::i2 := 500000;
+	Vars::text := " LGIE 1:"; if Vars::l1 >= Vars::l2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure LGTE2_GreaterThan_False();
+begin
+	Vars::l1 := 490000; Vars::l2 := 500000;
+	Vars::text := " LGIE 2:"; if Vars::l1 >= Vars::l2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure LGTE3_GreaterThan_True();
+begin
+	Vars::l1 := 500000; Vars::l2 := 500000;
+	Vars::text := " LGIE 3:"; if Vars::l1 >= Vars::l2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure LGTE4_GreaterThan_False();
+begin
+	Vars::l1 := 0; Vars::l2 := 255000;
+	Vars::text := " LGIE 4:"; if Vars::l1 >= Vars::l2 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure LGTE5_GreaterThan_True();
+begin
+	Vars::l1 := 255000; Vars::l2 := 51300;
+	Vars::text := " LGIE 5:"; if Vars::l1 >= Vars::l2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+
+/*
+
+ Long LESS THAN
+
+*/
+
+// when Vars::v1 is greater than Vars::v2
+procedure LLT1_GreaterThan_True();
+begin
+	Vars::l1 := 100000; Vars::l2 := 5000;
+	Vars::text := "   LI 1:"; if Vars::l2 < Vars::l1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure LLT2_GreaterThan_False();
+begin
+	Vars::l1 := 10000; Vars::l2 := 50000;
+	Vars::text := "   LI 2:"; if Vars::l2 < Vars::l1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure LLT3_GreaterThan_False();
+begin
+	Vars::l1 := 500000; Vars::l2 := 500000;
+	Vars::text := "   LI 3:"; if Vars::l2 < Vars::l1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure LLT4_GreaterThan_False();
+begin
+	Vars::l1 := 0; Vars::l2 := 255000;
+	Vars::text := "   LI 4:"; if Vars::l2 < Vars::l1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure LLT5_GreaterThan_True();
+begin
+	Vars::l1 := 2550; Vars::l2 := 0;
+	Vars::text := "   LI 5:"; if Vars::l2 < Vars::l1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+// when Vars::v1 is greater than Vars::v2
+procedure LLTE1_GreaterEqual_True();
+begin
+	Vars::l1 := 510000; Vars::l2 := 500000;
+	Vars::text := "  LIE 1:"; if Vars::l2 <= Vars::l1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is not greater than Vars::v2
+procedure LLTE2_GreaterThan_False();
+begin
+	Vars::l1 := 49000; Vars::l2 := 50000;
+	Vars::text := "  LIE 2:"; if Vars::l2 <= Vars::l1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is equal to Vars::v2
+procedure LLTE3_GreaterThan_True();
+begin
+	Vars::l1 := 500000; Vars::l2 := 500000;
+	Vars::text := "  LIE 3:"; if Vars::l2 <= Vars::l1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+// when Vars::v1 is zero and Vars::v2 is 255
+procedure LLTE4_GreaterThan_False();
+begin
+	Vars::l1 := 0; Vars::l2 := 255000;
+	Vars::text := "  LIE 4:"; if Vars::l2 <= Vars::l1 then begin Common::FAIL(); end else begin Common::PASS(); end;
+end;
+
+// when Vars::v1 is 255 and Vars::v2 is 0
+procedure LLTE5_GreaterThan_True();
+begin
+	Vars::l1 := 255000; Vars::l2 := 51300;
+	Vars::text := "  LIE 5:"; if Vars::l2 <= Vars::l1 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
+
+
+@endif
+
 
 
 
@@ -491,6 +655,43 @@ begin
 	ILTE3_GreaterThan_True();
 	ILTE4_GreaterThan_False();
 	ILTE5_GreaterThan_True();
+
+@if SUPPORTS_LONG = "1"
+
+	// Greater than conditional tests 
+	LGT1_GreaterThan_True();
+
+	LGT2_GreaterThan_False();
+	LGT3_GreaterThan_False();
+	LGT4_GreaterThan_False();
+	LGT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	LGTE1_GreaterEqual_True();
+	LGTE2_GreaterThan_False();
+	LGTE3_GreaterThan_True();
+	LGTE4_GreaterThan_False();
+	LGTE5_GreaterThan_True();
+
+	
+	// Integer less than conditional tests 
+	LLT1_GreaterThan_True();
+	LLT2_GreaterThan_False();
+	LLT3_GreaterThan_False();
+	LLT4_GreaterThan_False();
+	LLT5_GreaterThan_True();
+	
+	// Greater than or equal to conditional tests
+	LLTE1_GreaterEqual_True();
+	LLTE2_GreaterThan_False();
+	LLTE3_GreaterThan_True();
+	LLTE4_GreaterThan_False();
+	LLTE5_GreaterThan_True();
+
+
+
+@endif
+
 
 
 	AdvancedI1();

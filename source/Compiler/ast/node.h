@@ -117,10 +117,10 @@ public:
 //    TokenType::Type m_returnType = TokenType::NADA;
 
     virtual void ForceAddress();
-
+    // Returns a list of potential symols in asm code. Recursive. Used for preventing removal of unused symbols that are actually used within asm blocks
     virtual void FindPotentialSymbolsInAsmCode(QStringList& lst);
 
-
+    // returns whether node is a reference # or not
     virtual bool isReference() { return false;}
     virtual void setReference(bool ref);
 
@@ -136,6 +136,7 @@ public:
         m_castType  = t;
     }
     virtual void clearComment();
+    // Replaces all variables of a given name within the subnodes with another one
     virtual void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node);
     virtual bool isStackVariable() { return false;}
     virtual int getStackShift() { return 0;}
@@ -161,22 +162,14 @@ public:
     virtual int numValue() { return 0;}
 
     virtual QString getAddress() {return "";}
-
-    virtual TokenType::Type getWriteType() {
-        TokenType::Type t1=TokenType::NADA,t2=TokenType::NADA;
-        if (m_left!=nullptr)
-            t1 = m_left->getWriteType();
-        if (m_left!=nullptr)
-            t2 = m_left->getWriteType();
-
-        if (t1!=TokenType::NADA) return t1;
-        if (t2!=TokenType::NADA) return t2;
-        return TokenType::NADA;
-    }
+    // Writetype is used for writing data to class objects
+    virtual TokenType::Type getWriteType();
 
     virtual void forceWord() {}
     virtual QString getTypeText(Assembler* as) {return "";}
+    // Is the node a pure variable or number?
     virtual bool isPure();
+    // Is ita record (or a class)
     virtual bool isRecord(Assembler* as)  {
         return false;
     }
@@ -208,11 +201,7 @@ public:
     }
     /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
     virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
-    virtual TokenType::Type getType(Assembler* as) {
-        if (m_op.m_isBoolean)
-            return TokenType::BOOLEAN;
-        return m_op.m_type;
-    }
+    virtual TokenType::Type getType(Assembler* as);
     virtual TokenType::Type getArrayType(Assembler* as) {
         return m_op.m_type;
     }
@@ -273,6 +262,12 @@ public:
     inline MemoryBlockInfo getBlockInfo(){return m_blockInfo;}
     
 };
+
+inline TokenType::Type Node::getType(Assembler *as) {
+    if (m_op.m_isBoolean)
+        return TokenType::BOOLEAN;
+    return m_op.m_type;
+}
 
 
 
