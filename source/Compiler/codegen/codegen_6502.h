@@ -125,7 +125,8 @@ public:
 //    void BinaryClause(QSharedPointer<Node> node);
 
     void BuildToCmp(QSharedPointer<Node> node);
-
+    
+    // WDC68c816 only. Turns on / off 16-bit mode.
     void Disable16bit();
     void Enable16bit();
 
