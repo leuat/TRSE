@@ -510,14 +510,6 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenJDH8::ProcedureStart(Assembler *as) {
-
-}
-
-void CodeGenJDH8::ProcedureEnd(Assembler *as) {
-
-}
-
 
 /*void CodeGenJDH8::AssignVariable(QSharedPointer<NodeAssign> node)
 {

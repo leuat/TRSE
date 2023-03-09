@@ -523,14 +523,6 @@ void CodeGenS1C88::AssignToRegister(QSharedPointer<NodeAssign> node)
 {
 }
 
-void CodeGenS1C88::ProcedureStart(Assembler *as) {
-
-}
-
-void CodeGenS1C88::ProcedureEnd(Assembler *as) {
-
-}
-
 
 void CodeGenS1C88::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 {

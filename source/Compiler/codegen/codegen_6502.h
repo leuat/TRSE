@@ -114,7 +114,6 @@ public:
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
 
 
-    void InlineProcedure(QSharedPointer<NodeProcedure> p);
 
     virtual QString getIncbin() override;
 

@@ -550,13 +550,6 @@ void CodeGenChip8::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenChip8::ProcedureStart(Assembler *as) {
-
-}
-
-void CodeGenChip8::ProcedureEnd(Assembler *as) {
-
-}
 
 void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 {

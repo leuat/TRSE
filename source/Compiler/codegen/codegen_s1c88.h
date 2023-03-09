@@ -163,9 +163,6 @@ public:
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
 
 
-    void ProcedureStart(Assembler* as) override;
-
-    void ProcedureEnd(Assembler* as) override;
 
 
 };
