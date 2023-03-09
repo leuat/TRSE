@@ -123,7 +123,7 @@ bool NodeBinOP::isWord(Assembler *as) {
 }
 
 bool NodeBinOP::isLong(Assembler *as) {
-    return ((m_left->isLong(as) || m_right->isLong(as)) || (m_forceType==TokenType::INTEGER));
+    return ((m_left->isLong(as) || m_right->isLong(as)) || (m_forceType==TokenType::LONG));
 }
 
 void NodeBinOP::setForceType(TokenType::Type t) {

@@ -324,8 +324,10 @@ bool CodeGen6502::HandleSingleAddSub(QSharedPointer<Node> node) {
 
 void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
 
-    if (node->m_left->isLong(as) || node->m_right->isLong(as))
+    if (node->m_left->isLong(as) || node->m_right->isLong(as)) {
         ErrorHandler::e.Error("Mul/div not implemented for 24-bit longs",node->m_op.m_lineNumber);
+    }
+
     if (node->m_left->isPureNumeric() && !node->m_right->isPureNumeric() && node->m_op.m_type==TokenType::MUL ) {
         QSharedPointer<Node> tmp = node->m_left;
         node->m_left = node->m_right;

@@ -41,13 +41,12 @@ begin
 @endif 
 	begin
 		Common::TestSuiteInit();
-		@ifndef GAMEBOY  // Fails because of `org`
-		@endif
 		
 		@ifndef X86
 		// Pointer tests - the x86 needs a different set of pointer tests.
 		if (currentTest=13) then AdvancedMath::Exec();
 		@endif
+		
 		if (currentTest=12) then BooleanTest::Exec();
 		if (currentTest=6) then MulDiv::Exec();
 		if (currentTest=2) then Strings::Exec();
