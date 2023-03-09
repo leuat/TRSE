@@ -117,7 +117,7 @@ public:
 
 //    void IncBin(Assembler* as, QSharedPointer<NodeVarDecl> node);
 
-    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+    virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     virtual void BuildToCmp(QSharedPointer<Node> node);
 

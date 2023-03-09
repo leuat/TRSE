@@ -792,7 +792,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
         }
 
         OptimizeBinaryClause(node,as);
-        BuildSimple(node,  lblSuccess, lblFailed, offpage);
+        BuildConditional(node,  lblSuccess, lblFailed, offpage);
         return;
     }
 
@@ -1491,6 +1491,22 @@ bool AbstractCodeGen::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, 
     QString lbl = as->StoreInTempVar("rightvarInteger", "word");
     lo = lbl;
     hi = lbl+"+1";
+    return false;
+}
+
+bool AbstractCodeGen::Evaluate24bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi, QString& z)
+{
+    if (node->isPure()) {
+        lo = getValue8bit(node,false);
+        hi = getValue8bit(node,true);
+        z = getValue8bit(node,2);
+        return true;
+    }
+    node->Accept(this);
+    QString lbl = as->StoreInTempVar("rightvarInteger", "long");
+    lo = lbl;
+    hi = lbl+"+1";
+    z = lbl+"+2";
     return false;
 }
 

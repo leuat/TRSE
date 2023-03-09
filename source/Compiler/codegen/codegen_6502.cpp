@@ -359,7 +359,6 @@ void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
 
         if (node->isWord(as))
             Div16x8(node);
-        //                ErrorHandler::e.Error("16 bit div not implemented",m_op.m_lineNumber);
         else
             RightIsPureNumericMulDiv8bit(node);
         Enable16bit();
@@ -1006,9 +1005,13 @@ void CodeGen6502::Enable16bit()
 
 }
 // Builds a simple if block (no nested conditionals)
-void CodeGen6502::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+void CodeGen6502::BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
 
+    if (node->isLong(as)) {
+        BinaryClauseLong(node,lblSuccess, lblFailed, page);
+        return;
+    }
     if (node->isWord(as)) {
         BinaryClauseInteger(node,lblSuccess, lblFailed, page);
         return;
@@ -1045,7 +1048,7 @@ void CodeGen6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
         bcs = "bpl ";
         bcc = "bmi ";
         QString label1 = as->NewLabel("label1");
-        QString label2 = as->NewLabel("label1");
+        QString label2 = as->NewLabel("label2");
 
         if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
             as->Asm("sec");
@@ -1066,14 +1069,15 @@ void CodeGen6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
 
         }
         ErrorHandler::e.Error("Signed integer comparison: only 'less' (&le;) is currently implemented.", node->m_op.m_lineNumber);
-
+        as->PopLabel("label1");
+        as->PopLabel("label2");
 
     }
 
 
 
 
-    as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
+//    as->Comment("Compare INTEGER with pure num / var optimization. GREATER. ");
     if (node->m_op.m_type==TokenType::GREATER) {
         as->Asm("lda " + hi1 + "   ; compare high bytes");
         as->Asm("cmp " + hi2 + " ;keep");
@@ -1130,6 +1134,133 @@ void CodeGen6502::BinaryClauseInteger(QSharedPointer<Node> node,QString lblSucce
         as->Asm("beq " + lbl2);
         as->Asm("jmp " + lbl1);
         as->PopLabel("pass1");
+
+    }
+}
+
+void CodeGen6502::BinaryClauseLong(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page)
+{
+
+    as->Comment("Binary clause LONG: " + node->m_op.getType());
+    QString lbl2 = lblFailed;
+    QString lbl1 = lblSuccess;
+
+    QString lo1,lo2,hi1,hi2,zhi1, zhi2;
+    Evaluate24bitExpr(node->m_left,lo1,hi1,zhi1);
+    Evaluate24bitExpr(node->m_right,lo2,hi2,zhi2);
+
+
+
+    QString bcs ="bcs ";
+    QString bcc ="bcc ";
+    if (node->isSigned(as)) {
+/*        as->Comment("Signed compare");
+        bcs = "bpl ";
+        bcc = "bmi ";
+        QString label1 = as->NewLabel("label1");
+        QString label2 = as->NewLabel("label2");
+
+        if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
+            as->Asm("sec");
+            as->Asm("lda " + hi1 + "   ; compare high bytes");
+            as->Asm("sbc " + hi2 + " ");
+            as->Asm("bvc " + label1);
+            as->Asm("eor #$80");
+            as->Label(label1);
+            as->Asm("bmi "+lblSuccess);
+            as->Asm("bvc "+label2);
+            as->Asm("eor #$80");
+            as->Label(label2);
+            as->Asm("bne "+lblFailed);
+            as->Asm("lda " + lo1 + "   ; compare high bytes");
+            as->Asm("sbc " + lo2 + " ");
+            as->Asm("bcs "+lblFailed);
+            return;
+
+        }*/
+        ErrorHandler::e.Error("Signed long comparison not implemented yet.", node->m_op.m_lineNumber);
+
+
+    }
+
+
+
+
+    if (node->m_op.m_type==TokenType::GREATER) {
+        as->Asm("lda " + zhi1 + "   ; compare high bytes");
+        as->Asm("cmp " + zhi2 + " ;keep");
+        as->Asm(bcc + lbl2);
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm(bcc + lbl2);
+        //    as->Asm("beq " + lbl2);
+        as->Asm("bne " + lbl1);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2 +" ;keep");
+        as->Asm(bcc + lbl2);
+        as->Asm("beq " + lbl2);
+    }
+    if (node->m_op.m_type==TokenType::GREATEREQUAL) {
+        as->Asm("lda " + zhi1 + "   ; compare high bytes");
+        as->Asm("cmp " + zhi2 + " ;keep");
+        as->Asm(bcc + lbl2);
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm(bcc + lbl2);
+        as->Asm("bne " + lbl1);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2 +" ;keep");
+        as->Asm(bcc + lbl2);
+    }
+    if (node->m_op.m_type==TokenType::LESS || node->m_op.m_type==TokenType::LESSEQUAL) {
+        as->Asm("lda " + zhi1 + "   ; compare high bytes");
+        as->Asm("cmp " + zhi2 + " ;keep");
+        as->Asm(bcc + lbl1);
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm(bcc + lbl1);
+        as->Asm("bne " + lbl2);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2+" ;keep");
+        if (node->m_op.m_type==TokenType::LESSEQUAL)
+            as->Asm("beq "+lbl1);
+        as->Asm(bcs + lbl2);
+
+
+
+    }
+    if (node->m_op.m_type==TokenType::EQUALS) {
+        as->Asm("lda " + zhi1 + "   ; compare high+1 bytes");
+        as->Asm("cmp " + zhi2 + " ;keep");
+        as->Asm("bne " + lbl2);
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm("bne " + lbl2);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2+" ;keep");
+        as->Asm("bne " + lbl2);
+        as->Asm("jmp " + lbl1);
+    }
+    if (node->m_op.m_type==TokenType::NOTEQUALS){
+        //            ErrorHandler::e.Error("Comparison of integer NOTEQUALS<> not implemented!", node->m_op.m_lineNumber);
+        QString lblPass1  = as->NewLabel("pass1");
+        QString lblPass2  = as->NewLabel("pass2");
+        as->Asm("lda " + zhi1 + "   ; compare high bytes");
+        as->Asm("cmp " + zhi2 + " ;keep");
+        as->Asm("beq " + lblPass2);
+        as->Asm("jmp " + lbl1);
+        as->Label(lblPass2);
+        as->Asm("lda " + hi1 + "   ; compare high bytes");
+        as->Asm("cmp " + hi2 + " ;keep");
+        as->Asm("beq " + lblPass1);
+        as->Asm("jmp " + lbl1);
+        as->Label(lblPass1);
+        as->Asm("lda " + lo1);
+        as->Asm("cmp " + lo2+" ;keep");
+        as->Asm("beq " + lbl2);
+        as->Asm("jmp " + lbl1);
+        as->PopLabel("pass1");
+        as->PopLabel("pass2");
 
     }
 }
@@ -2478,7 +2609,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeRepeatUntil> node)
     }
     else {
         // Simplified version <80 instructions & just one clause
-        BuildSimple(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
+        BuildConditional(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
     }
     // Start main block
 

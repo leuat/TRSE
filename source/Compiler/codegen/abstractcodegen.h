@@ -188,7 +188,7 @@ public:
 
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage);
 
-    virtual void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)  = 0;
+    virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)  = 0;
 
     bool isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2);
 
@@ -241,6 +241,7 @@ public:
 
 
     virtual bool Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi);
+    virtual bool Evaluate24bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi, QString &z);
 
 
     QString getValue(QSharedPointer<Node> n);

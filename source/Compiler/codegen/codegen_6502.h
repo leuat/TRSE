@@ -130,10 +130,11 @@ public:
     void Enable16bit() override;
 
 
-//    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
-    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+//    void BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
+    void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BinaryClauseInteger(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
+    void BinaryClauseLong(QSharedPointer<Node> node,QString lblSuccess, QString lblFailed, bool page);
 
 
 

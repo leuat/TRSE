@@ -1277,7 +1277,7 @@ QString CodeGenX86::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPo
 }
 
 
-void CodeGenX86::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+void CodeGenX86::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

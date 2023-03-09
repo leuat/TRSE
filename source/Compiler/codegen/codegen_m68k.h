@@ -87,8 +87,8 @@ public:
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
     void IncBin(QSharedPointer<NodeVarDecl> node) override;
 
-//    void BuildSimple(QSharedPointer<Node> node, QString lblFailed);
-    void BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
+//    void BuildConditional(QSharedPointer<Node> node, QString lblFailed);
+    void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BuildToCmp(QSharedPointer<Node> node);
 

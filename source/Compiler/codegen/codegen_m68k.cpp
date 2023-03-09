@@ -1161,7 +1161,7 @@ void CodeGen68k::IncBin(QSharedPointer<NodeVarDecl> node) {
     }
 }
 
-void CodeGen68k::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+void CodeGen68k::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
 //    as->Comment("Binary clause Simplified: " + node->m_op.getType());

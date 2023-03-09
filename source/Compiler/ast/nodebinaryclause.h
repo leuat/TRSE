@@ -57,6 +57,7 @@ public:
     }
 
     bool isWord(Assembler *as) override;
+    bool isLong(Assembler *as) override;
 
 
 };

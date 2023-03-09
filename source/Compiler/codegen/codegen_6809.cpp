@@ -985,7 +985,7 @@ void CodeGen6809::BuildToCmp(QSharedPointer<Node> node)
 
 
 }
-void CodeGen6809::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+void CodeGen6809::BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
 
     if (node->isWord(as)) {
@@ -2220,7 +2220,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeRepeatUntil> node)
     }
     else {
         // Simplified version <80 instructions & just one clause
-        BuildSimple(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
+        BuildConditional(node->m_clause,  lblDone,lbl, node->m_forcePage==1);
     }
     // Start main block
 

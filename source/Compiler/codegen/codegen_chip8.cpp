@@ -576,7 +576,7 @@ QString CodeGenChip8::getEndType(Assembler *as, QSharedPointer<Node> v1, QShared
 }
 
 
-void CodeGenChip8::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
