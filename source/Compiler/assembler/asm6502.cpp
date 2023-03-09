@@ -647,7 +647,7 @@ QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
                     Asm("rep #$10");
 
             }
-            if (type=="long") {
+            if (type=="long" || type=="long24") {
                 if (Syntax::s.m_currentSystem->isWDC65())
                     Asm("sep #$10");
                 Asm("sty " + tmpVar + "+1");
@@ -658,6 +658,7 @@ QString Asm6502::StoreInTempVar(QString name, QString type, bool actuallyStore)
 
 
     }
+//     else ErrorHandler::e.Error("No more free temp zps");
     PopLabel(name+ "_var");
     return tmpVar;
 
@@ -678,6 +679,15 @@ if (actuallyStore) {
         if (Syntax::s.m_currentSystem->isWDC65())
             Asm("rep #$10");
     }
+    if (type=="long" || type=="long24") {
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("sep #$10");
+        Asm("sty " + tmpVar + "+1");
+        Asm("stx " + tmpVar + "+2");
+        if (Syntax::s.m_currentSystem->isWDC65())
+            Asm("rep #$10");
+    }
+
 }
 PopLabel(name+ "_var");
 return tmpVar;

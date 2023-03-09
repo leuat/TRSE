@@ -87,6 +87,7 @@ public:
 
     void HandleShiftLeftRight(QSharedPointer<NodeBinOP> node);
     void HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP> node, bool isSimpleAeqAopB);
+    void HandleShiftLeftRightLong(QSharedPointer<NodeBinOP> node, bool isSimpleAeqAopB);
 
     void HandleGenericBinop16bit(QSharedPointer<Node> node);
     void HandleVarBinopB16bit(QSharedPointer<Node> node);

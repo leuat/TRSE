@@ -503,6 +503,66 @@ void CodeGen6502::HandleShiftLeftRightInteger(QSharedPointer<NodeBinOP>node, boo
     }
 }
 
+void CodeGen6502::HandleShiftLeftRightLong(QSharedPointer<NodeBinOP>node, bool isSimpleAeqAopB)
+{
+    // Not yet implemented
+
+    QString varName = "";
+    if (!isSimpleAeqAopB) {
+        node->m_left->Accept(this);
+        as->Term();
+        varName = as->StoreInTempVar("tempVarShift","long24");
+    }
+    else
+        varName = getValue(node);
+
+    //    QString cmd = node->m_op.m_type==TokenType::SHR?"lsr":"asl";
+    QString command = "";
+    if (node->m_op.m_type==TokenType::SHR) {
+        command = "lsr " + varName +"+2 ;keep"+ "\n";
+        command += "\tror " + varName +"+1 ;keep"+ "\n";
+        command += "\tror " + varName+"+0 ;keep" + "\n";
+    }
+    else {
+        command = "asl " + varName +"+0 ;keep"+ "\n";
+        command += "\trol " + varName+"+1 ;keep" + "\n";
+        command += "\trol " + varName+"+2 ;keep" + "\n";
+    }
+    if (node->m_right->isPureNumeric()) {
+
+        int val = node->m_right->getValueAsInt(as);
+        as->Comment("COUNT : "+QString::number(val));
+        for (int i=0;i<val;i++)
+            as->Asm(command);
+
+
+    }
+    else {
+        node->m_right->Accept(this);
+        as->Term();
+        QString lblCancel = as->NewLabel("lblShiftCancel");
+        as->Asm("tax");
+        as->Asm("cpx #0");
+        as->Asm("beq "+lblCancel);
+        QString lbl = as->NewLabel("lblShift");
+        as->Label(lbl);
+        as->Asm(command);
+        as->Asm("dex");
+        as->Asm("cpx #0");
+        as->Asm("bne "+lbl);
+        as->Label(lblCancel);
+
+        as->PopLabel("lblShift");
+        as->PopLabel("lblShiftCancel");
+    }
+    if (!isSimpleAeqAopB) {
+        as->Asm("lda "+varName);
+        as->Asm("ldy "+varName +"+1");
+        as->Asm("ldx "+varName +"+2");
+        as->PopTempVar();
+    }
+}
+
 void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     as->Comment("Mul 16x8 setup");
     // First check for simple stuff like x*320
@@ -716,6 +776,9 @@ void CodeGen6502::dispatch(QSharedPointer<NodeBinOP>node)
         //      if (node->)
 
 
+        if (node->isLong(as))
+            HandleShiftLeftRightLong(node,false);
+        else
         if (node->isWord(as))
             HandleShiftLeftRightInteger(node,false);
         else
