@@ -65,8 +65,8 @@ public:
         return false;
     }
 
-    void ExDeHl() override;
-    void SbcHlDe() override;
+    void ExDeHl();
+    void SbcHlDe();
 
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
 

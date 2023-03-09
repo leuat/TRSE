@@ -126,8 +126,8 @@ public:
 
     void BuildToCmp(QSharedPointer<Node> node);
 
-    void Disable16bit() override;
-    void Enable16bit() override;
+    void Disable16bit();
+    void Enable16bit();
 
 
 //    void BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);

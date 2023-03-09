@@ -113,8 +113,7 @@ public:
 
     virtual QString getInitProcedure() { return "";}
 
-    virtual void ExDeHl() {}
-    virtual void SbcHlDe() {}
+
     virtual void Cast(QString from, QString to);
     virtual void Cast(TokenType::Type from, TokenType::Type to) {}
     virtual void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) {}
@@ -247,8 +246,7 @@ public:
 
     QString getValue8bit(QSharedPointer<Node> n, int isHi);
 
-    virtual void Disable16bit() {}
-    virtual void Enable16bit() {}
+
 
     virtual QString DefineTempString(QSharedPointer<Node> node);
 
