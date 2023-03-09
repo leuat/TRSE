@@ -1035,20 +1035,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         return;
     }
 
-    int lostStack = 0;
-    for (int i=0; i<node->m_parameters.count();i++) {
-        // Assign all variables
-//        node->m_parameters[i]->ApplyHack(as);
-        QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
-        QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
-        if (vd->m_varNode->isStackVariable()) {
-            lostStack++;
-            if (vd->isWord(as))
-                lostStack++;
-            na->m_isProcedureParameterAssign = true;
-        }
-        na->Accept(this);
-    }
+
 
     ProcedureStart(as);
 //    if (node->m_procedure->m_returnType!=nullptr)
@@ -1060,7 +1047,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
             Cast(node->m_procedure->m_returnType->m_op.m_type, node->m_castType);
         }
     ProcedureEnd(as);
-    PopLostStack(lostStack);
 }
 /*
  *
