@@ -29,7 +29,7 @@ AbstractCodeGen::AbstractCodeGen()
 
 void AbstractCodeGen::UpdateDispatchCounter()
 {
-    int nc = Node::s_nodeCount;
+    int nc = Node::getNodeCount();
     if (nc==0) nc++;
     int p = std::min((int)((100*m_currentNode)/nc),100);
 
@@ -890,7 +890,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
     else
     if (UseBlocks()) {
-        as->Comment("NodeProcedureDecl "+ QString::number(node->m_blockInfo.m_blockID));
+        as->Comment("NodeProcedureDecl "+ QString::number(node->getBlockInfo().m_blockID));
         int ret = node->MaintainBlocks(as);
         if (ret==3) node->m_curMemoryBlock=nullptr;
         if (as->m_currentBlock!=nullptr) {
@@ -900,7 +900,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
                 QString p = as->m_currentBlock->m_pos;
                 int pos = p.remove("$").toInt(&ok, 16);
 //                as->StartMemoryBlock()
-                node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->m_blockInfo.m_blockName));
+                node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->getBlockInfo().m_blockName));
                 as->userBlocks.append(node->m_curMemoryBlock);
             }
         }
@@ -1138,7 +1138,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
                     bool ok;
                     QString p = as->m_currentBlock->m_pos;
                     int pos = p.remove("$").toInt(&ok, 16);
-                    node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
+                    node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->getBlockInfo().m_blockName));
                     as->blocks.append(node->m_curMemoryBlock);
                 }
             }
@@ -1532,10 +1532,10 @@ QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
     if (ns==nullptr)
         return "";
     if (node->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(strName,ns->m_val,node->flags.keys());
+        as->DeclareCString(strName,ns->m_val,node->getFlagKeys());
     }
     else {
-        as->DeclareString(strName,ns->m_val,node->flags.keys());
+        as->DeclareString(strName,ns->m_val,node->getFlagKeys());
     }
 
     as->EndCurrentBlock();

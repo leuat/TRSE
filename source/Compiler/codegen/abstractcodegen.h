@@ -44,21 +44,27 @@ class ProcedureParameter {
 class AbstractCodeGen : public QObject
 {
     Q_OBJECT
-public:
-
-    Assembler* as = nullptr;
+private:
     int m_ticks = 0;
     uint m_currentNode = 0;
     int m_currentPercent = -1;
-    AbstractCodeGen();
     QStack<ProcedureParameter> m_parameters;
-    QString m_useNext="";
-    QMap< QString,QSharedPointer<Node>> m_inlineParameters;
-    bool m_flag1 = false;
     bool m_outputLineNumbers = true;
     bool m_outputSource = false; // Turned off for now
     QStringList m_rasSource;
     bool m_isFarAway = false;
+protected:
+    Assembler* as = nullptr;
+    QMap< QString,QSharedPointer<Node>> m_inlineParameters;
+    bool m_flag1 = false;
+    QString m_useNext="";
+public:
+
+    inline void dontOutputLineNumbers(){m_outputLineNumbers=false;}
+    inline void outputLineNumbers(){m_outputLineNumbers=true;}
+    inline void useThisNext(QString s){m_useNext=s;}
+    inline void setAssembler(Assembler* as ){this->as=as;}
+    AbstractCodeGen();
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch
     virtual void dispatch(QSharedPointer<NodeBinOP> node) = 0;

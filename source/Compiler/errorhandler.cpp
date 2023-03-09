@@ -37,7 +37,7 @@ void ErrorHandler::Warning(QString str, int lineNumber) {
         if (m_lexer!=nullptr && lineNumber!=0) {
             m_lexer->FindLineNumberAndFile(linenr, file, linenr);
 
-            if (linenr!=0 && !m_lexer->m_finished) ln = " at line " + QString::number(linenr);
+            if (linenr!=0 && !m_lexer->isFinished()) ln = " at line " + QString::number(linenr);
             if (file!="") ln +=" in file '"+file+"'";
         }
 

@@ -1151,8 +1151,8 @@ bool CodeGen6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString l
 
     //    return false;
     if (node->m_op.m_type==TokenType::AND) {
-        a->m_ignoreSuccess = true;
-        b->m_ignoreSuccess = true;
+        a->ignoreSuccess();
+        b->ignoreSuccess();
 
         as->m_lblFailed = labelFail;
         //        as->m_lblSuccess = labelSuccess;
@@ -1164,8 +1164,8 @@ bool CodeGen6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString l
     }
 
     if (node->m_op.m_type==TokenType::OR) {
-        a->m_ignoreSuccess = true;
-        b->m_ignoreSuccess = true;
+        a->ignoreSuccess();
+        b->ignoreSuccess();
         QString tempFailLabel = as->NewLabel("tempfail");
         // as->m_lblSuccess = labelSuccess;
         as->m_lblFailed = tempFailLabel;

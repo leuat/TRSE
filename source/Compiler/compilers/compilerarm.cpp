@@ -5,7 +5,7 @@ void CompilerArm::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 {
     m_assembler = QSharedPointer<AsmARM>(new AsmARM());//
     m_codeGen = QSharedPointer<CodeGenARM>(new CodeGenARM());
-    m_codeGen->m_outputLineNumbers = false;
+    m_codeGen->dontOutputLineNumbers();
 
 //    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_Z80_system"));
 

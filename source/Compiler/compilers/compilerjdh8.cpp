@@ -9,7 +9,7 @@ void CompilerJDH8::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sys
 {
     m_assembler = QSharedPointer<AsmJDH8>(new AsmJDH8());//
     m_codeGen = QSharedPointer<CodeGenJDH8>(new CodeGenJDH8());
-    m_codeGen->m_outputLineNumbers = false;
+    m_codeGen->dontOutputLineNumbers();
 
 //    m_assembler->Asm("BALLE");
 
