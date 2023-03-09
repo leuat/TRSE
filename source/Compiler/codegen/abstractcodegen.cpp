@@ -527,6 +527,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
     if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
         node->m_right->setCastType(TokenType::INTEGER);
+
     if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
         node->m_right->setCastType(TokenType::LONG);
 
@@ -595,9 +596,11 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     if (node->m_left->isWord(as)) {
-//        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->setForceType(TokenType::INTEGER);
     }
+    if (node->m_left->isLong(as))
+        node->m_right->setForceType(TokenType::LONG);
+
 
     // stack parameters
      if (StoreStackParameter(node))

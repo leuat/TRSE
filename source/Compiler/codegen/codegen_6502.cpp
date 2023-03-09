@@ -741,9 +741,13 @@ void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
 {
     node->DispatchConstructor(as,this);
 
+    as->Comment("Forcetype: "+TokenType::getType(node->m_forceType));
     QString val = getValue(node);
-    if (node->m_forceType==TokenType::INTEGER && node->m_val<=255) {
+    if ((node->m_forceType==TokenType::INTEGER || node->m_forceType==TokenType::LONG) && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
+    }
+    if (node->m_forceType==TokenType::LONG && node->m_val<=65535) {
+        as->Asm("ldx #0   ; Force long");
     }
 
     //    as->Comment("Value assignment : " + Util::numToHex(node->m_val) + " "+ val + " " +QString::number(node->getValueAsInt(as)));
@@ -1190,6 +1194,7 @@ void CodeGen6502::BinaryClauseLong(QSharedPointer<Node> node,QString lblSuccess,
         as->Asm("lda " + zhi1 + "   ; compare high bytes");
         as->Asm("cmp " + zhi2 + " ;keep");
         as->Asm(bcc + lbl2);
+        as->Asm("bne " + lbl1);
         as->Asm("lda " + hi1 + "   ; compare high bytes");
         as->Asm("cmp " + hi2 + " ;keep");
         as->Asm(bcc + lbl2);
@@ -1204,6 +1209,7 @@ void CodeGen6502::BinaryClauseLong(QSharedPointer<Node> node,QString lblSuccess,
         as->Asm("lda " + zhi1 + "   ; compare high bytes");
         as->Asm("cmp " + zhi2 + " ;keep");
         as->Asm(bcc + lbl2);
+        as->Asm("bne " + lbl1);
         as->Asm("lda " + hi1 + "   ; compare high bytes");
         as->Asm("cmp " + hi2 + " ;keep");
         as->Asm(bcc + lbl2);
@@ -1216,6 +1222,7 @@ void CodeGen6502::BinaryClauseLong(QSharedPointer<Node> node,QString lblSuccess,
         as->Asm("lda " + zhi1 + "   ; compare high bytes");
         as->Asm("cmp " + zhi2 + " ;keep");
         as->Asm(bcc + lbl1);
+        as->Asm("bne " + lbl2);
         as->Asm("lda " + hi1 + "   ; compare high bytes");
         as->Asm("cmp " + hi2 + " ;keep");
         as->Asm(bcc + lbl1);
@@ -1597,6 +1604,10 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
     as->Asm(m+  ""+p1+"" + getValue(node)+""+p2+",y");
     if (node->m_forceType == TokenType::INTEGER)
         as->Asm("ldy #0 ; Loading 8-bit pointer, but return type should be integer");
+    if (node->m_forceType == TokenType::LONG) {
+        as->Asm("ldy #0 ; Loading 8-bit pointer, but return type should be integer");
+        as->Asm("ldx #0 ; Loading 8-bit pointer, but return type should be integer");
+    }
 
     if (disable)
         Enable16bit();
@@ -1683,6 +1694,10 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
 
         if ((node->m_fake16bit || node->m_forceType==TokenType::INTEGER) && s->getTokenType()==TokenType::BYTE )
             as->Asm("ldy #0 ; Fake 16 bit");
+        if ((node->m_fake16bit || node->m_forceType==TokenType::LONG) && s->getTokenType()==TokenType::BYTE ) {
+            as->Asm("ldy #0 ; Fake 24 bit");
+            as->Asm("ldx #0 ; Fake 24 bit");
+        }
 
         as->Variable(val, isOK);
     }
@@ -1895,6 +1910,14 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
 {
     as->ClearTerm();
     //   qDebug() << "OAD NUMBER";
+//    as->Comment("Loadvariable numbr");
+    if (node->m_castType==TokenType::LONG) {
+        as->Asm("lda "+node->getValue8bit(as,false));
+        as->Asm("ldy "+node->getValue8bit(as,true));
+        as->Asm("ldx "+node->getValue8bit(as,2));
+        as->Term();
+        return;
+    }
     if (node->isReference() || node->getValueAsInt(as)>255) {
         as->ClearTerm();
         as->Asm("lda "+node->getValue8bit(as,false));

@@ -51,6 +51,18 @@ void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp
         m_right->ReplaceInline(as,inp);
 }
 
+TokenType::Type Node::getWriteType() {
+    TokenType::Type t1=TokenType::NADA,t2=TokenType::NADA;
+    if (m_left!=nullptr)
+        t1 = m_left->getWriteType();
+    if (m_left!=nullptr)
+        t2 = m_left->getWriteType();
+
+    if (t1!=TokenType::NADA) return t1;
+    if (t2!=TokenType::NADA) return t2;
+    return TokenType::NADA;
+}
+
 bool Node::isPure() {
     return isPureNumericOrAddress() || isPureVariable();
 }
