@@ -1,6 +1,7 @@
 #ifndef METHODS6502_H
 #define METHODS6502_H
 
+
 #include "source/Compiler/codegen/abstractcodegen.h"
 #include "source/Compiler/codegen/methods/abstractmethods.h"
 #include "source/Compiler/assembler/assembler.h"
@@ -16,7 +17,6 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodenumber.h"
-
 
 class Methods6502 : public AbstractMethods
 {

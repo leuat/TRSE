@@ -98,8 +98,9 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
         m_assembler->m_curDir = project_dir;
 
 //        m_codeGen->m_rasSource = m_lexer->m_lines;
-        if (system->m_processor==AbstractSystem::MOS6502)
-            m_codeGen->m_outputLineNumbers =  m_ini->getdouble("display_addresses")==1.0;
+        if (system->m_processor==AbstractSystem::MOS6502 && m_ini->getdouble("display_addresses")!=1.0){
+            m_codeGen->dontOutputLineNumbers();
+        }
 
 
     } catch (const FatalErrorException& e) {
@@ -145,11 +146,11 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     if (m_tree!=nullptr)
         try {
         qSharedPointerDynamicCast<NodeProgram>(m_tree)->m_initJumps = m_parser.m_initJumps;
-        m_codeGen->as = m_assembler.get();
+        m_codeGen->setAssembler(m_assembler.get());
         // Visit that AST node tree baby!
         Data::data.compilerState = Data::DISPATCHER;
 //        qDebug() << "Compiler.cpp DISPATCHER starts";
-        Node::s_as = m_assembler.get();
+        Node::setAssembler(m_assembler.get());
         //m_tree->ExecuteSym(m_assembler->m_symTab);
         //qDebug() << m_assembler->m_symTab->m_symbols.keys();
         m_tree->Accept(m_codeGen.get());
@@ -196,7 +197,7 @@ void Compiler::CleanupBlockLinenumbers()
 
         int count = m_assembler->m_blockIndent[i];
         int nl = i;
-        for (FilePart& fp : m_parser.m_lexer->m_includeFiles) {
+        for (FilePart& fp : m_parser.m_lexer->getIncludeFiles()) {
             // Modify bi filepart
             if (nl>fp.m_startLine && nl<fp.m_endLine) {
                 blocks[fp.m_startLine]+=count;

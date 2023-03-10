@@ -387,10 +387,7 @@ QString CodeGenS1C88::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
 }
 
 
-QString CodeGenS1C88::getEndType(Assembler *as, QSharedPointer<Node> v)
-{
-    return "";
-}
+
 
 
 
@@ -523,14 +520,6 @@ void CodeGenS1C88::AssignToRegister(QSharedPointer<NodeAssign> node)
 {
 }
 
-void CodeGenS1C88::ProcedureStart(Assembler *as) {
-
-}
-
-void CodeGenS1C88::ProcedureEnd(Assembler *as) {
-
-}
-
 
 void CodeGenS1C88::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 {
@@ -544,13 +533,10 @@ void CodeGenS1C88::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenS1C88::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
 
 
-void CodeGenS1C88::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+
+void CodeGenS1C88::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

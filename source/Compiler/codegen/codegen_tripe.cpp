@@ -260,7 +260,7 @@ QString CodeGenTRIPE::TripeValue(Assembler *as, QSharedPointer<Node> node)
 }
 
 
-void CodeGenTRIPE::BuildSimple(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
+void CodeGenTRIPE::BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
@@ -421,9 +421,9 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeNumber>node)
 void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
     as->Asm("lda #<"+node->m_procedure->m_procName);
-    Disable16bit();
+    //Disable16bit();
     as->Asm("ldy #>"+node->m_procedure->m_procName);
-    Enable16bit();
+    //Enable16bit();
 }
 
 

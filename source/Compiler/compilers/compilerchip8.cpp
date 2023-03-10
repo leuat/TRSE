@@ -9,7 +9,7 @@ void CompilerChip8::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sy
 {
     m_assembler = QSharedPointer<AsmChip8>(new AsmChip8());//
     m_codeGen = QSharedPointer<CodeGenChip8>(new CodeGenChip8());
-    m_codeGen->m_outputLineNumbers = false;
+    m_codeGen->dontOutputLineNumbers();
 
 //    m_assembler->Asm("BALLE");
 

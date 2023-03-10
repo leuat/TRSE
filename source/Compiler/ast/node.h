@@ -47,53 +47,54 @@ public:
  *
  * */
 class Node : public QEnableSharedFromThis<Node> {
-public:
-    // Token contains node type data and values from the parser
-    Token m_op;
+protected:
+    // Toggle nodes as "used" and "used by" - necessary for the optimizer for
+    // automatic removal of nodes
+    bool m_hasSwapped = false;
+    bool m_isUsed = false;
+    QStringList m_isUsedBy;
 
 //    int m_lineNumber;
     uint level = 0;
-    static uint s_nodeCount;
     // Comments associated with current node.
     QString m_comment = "";
-    BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
-    // Toggle nodes as "used" and "used by" - necessary for the optimizer for
-    // automatic removal of nodes
-    bool m_isUsed = false;
-    bool m_hasSwapped = false;
-    QStringList m_isUsedBy;
+
     static Assembler* s_as;
     // Used in x86 to specity if is an index or not
     bool m_isIndex = false;
     // Forced values
     bool m_forceAddress = false;
-    bool m_classApplied = false;
-    bool m_ignoreSuccess = false; // Used for binary expressions
-    bool m_isBoolean = false;
-    // Force page for conditionals (while/if/repeat until etc)
-    int m_forcePage = 0;
     static QString sForceFlag;
-    // Is the current node a register? (applicable to variables only)
-    bool m_isRegister = false;
 
+    static QSharedPointer<SymbolTable>  parserSymTab;
+
+    // Current block information
+    static MemoryBlockInfo m_staticBlockInfo;
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
-    static QSharedPointer<SymbolTable>  parserSymTab;
+
+
+    bool m_ignoreSuccess = false; // Used for binary expressions
+    bool m_classApplied = false;
+    static uint s_nodeCount;
+    MemoryBlockInfo m_blockInfo;
+public:
+    friend class Parser;
+    // Token contains node type data and values from the parser
+    Token m_op;
     // Base node has 2 children: left and right
     QSharedPointer<Node> m_left = nullptr;
     QSharedPointer<Node> m_right = nullptr;
-    // Swaps left and right nodes
-    void SwapNodes();
-
-    bool m_isWord = false;
-    // Current block information
-    static MemoryBlockInfo m_staticBlockInfo;
+    // Is the current node a register? (applicable to variables only)
+    bool m_isRegister = false;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
-
-    MemoryBlockInfo m_blockInfo;
-
     TokenType::Type m_forceType = TokenType::NADA;
+    bool m_isBoolean = false;
     TokenType::Type m_castType = TokenType::NADA;
+    bool m_isWord = false;
+    // Force page for conditionals (while/if/repeat until etc)
+    int m_forcePage = 0;
+    BuiltInFunction::Type m_builtInFunctionParameterType = BuiltInFunction::BYTE;
     // Line number for keeping track of current cycles
     static int m_currentLineNumber;
 
@@ -102,6 +103,8 @@ public:
      *  Methods
      *
      * */
+    // Swaps left and right nodes
+    void SwapNodes();
 
     Node();
     // called manually on each dispatch visitor
@@ -114,10 +117,10 @@ public:
 //    TokenType::Type m_returnType = TokenType::NADA;
 
     virtual void ForceAddress();
-
+    // Returns a list of potential symols in asm code. Recursive. Used for preventing removal of unused symbols that are actually used within asm blocks
     virtual void FindPotentialSymbolsInAsmCode(QStringList& lst);
 
-
+    // returns whether node is a reference # or not
     virtual bool isReference() { return false;}
     virtual void setReference(bool ref);
 
@@ -133,6 +136,7 @@ public:
         m_castType  = t;
     }
     virtual void clearComment();
+    // Replaces all variables of a given name within the subnodes with another one
     virtual void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node);
     virtual bool isStackVariable() { return false;}
     virtual int getStackShift() { return 0;}
@@ -158,22 +162,14 @@ public:
     virtual int numValue() { return 0;}
 
     virtual QString getAddress() {return "";}
-
-    virtual TokenType::Type getWriteType() {
-        TokenType::Type t1=TokenType::NADA,t2=TokenType::NADA;
-        if (m_left!=nullptr)
-            t1 = m_left->getWriteType();
-        if (m_left!=nullptr)
-            t2 = m_left->getWriteType();
-
-        if (t1!=TokenType::NADA) return t1;
-        if (t2!=TokenType::NADA) return t2;
-        return TokenType::NADA;
-    }
+    // Writetype is used for writing data to class objects
+    virtual TokenType::Type getWriteType();
 
     virtual void forceWord() {}
     virtual QString getTypeText(Assembler* as) {return "";}
+    // Is the node a pure variable or number?
     virtual bool isPure();
+    // Is ita record (or a class)
     virtual bool isRecord(Assembler* as)  {
         return false;
     }
@@ -205,11 +201,7 @@ public:
     }
     /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
     virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
-    virtual TokenType::Type getType(Assembler* as) {
-        if (m_op.m_isBoolean)
-            return TokenType::BOOLEAN;
-        return m_op.m_type;
-    }
+    virtual TokenType::Type getType(Assembler* as);
     virtual TokenType::Type getArrayType(Assembler* as) {
         return m_op.m_type;
     }
@@ -261,9 +253,21 @@ public:
     virtual bool isSigned(Assembler* as);
 
     virtual bool hasFlag(Assembler* as, QString flag);
-
-
+    inline static void setAssembler(Assembler * as){s_as = as;}
+    inline QList<QString> getFlagKeys(){return flags.keys();}
+    inline void ignoreSuccess(){m_ignoreSuccess=false;}
+    inline void dontIgnoreSuccess(){m_ignoreSuccess=true;}
+    inline static uint getNodeCount(){return s_nodeCount;}
+    inline bool isClassApplied(){return m_classApplied;}
+    inline MemoryBlockInfo getBlockInfo(){return m_blockInfo;}
+    
 };
+
+inline TokenType::Type Node::getType(Assembler *as) {
+    if (m_op.m_isBoolean)
+        return TokenType::BOOLEAN;
+    return m_op.m_type;
+}
 
 
 

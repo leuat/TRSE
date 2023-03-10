@@ -237,7 +237,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
     QString ending = "]";
     if (node->m_expr!=nullptr) {
         //        qDebug() << node->getValue(as) <<TokenType::getType(node->getArrayType(as));
-        if ((node->getArrayType(as)==TokenType::POINTER || node->getArrayType(as)==TokenType::LONG) && node->m_classApplied==false) {
+        if ((node->getArrayType(as)==TokenType::POINTER || node->getArrayType(as)==TokenType::LONG) && !node->isClassApplied()) {
             as->Comment("Looking up array of pointer : "+node->value);
 
             node->m_expr->setForceType(TokenType::INTEGER);
@@ -677,10 +677,6 @@ void CodeGenX86::PopX() {
     m_lvl--;
 }
 
-QString CodeGenX86::getEndType(Assembler *as, QSharedPointer<Node> v)
-{
-    return "";
-}
 
 
 
@@ -1271,13 +1267,10 @@ void CodeGenX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenX86::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
 
 
-void CodeGenX86::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+
+void CodeGenX86::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

@@ -29,7 +29,7 @@ AbstractCodeGen::AbstractCodeGen()
 
 void AbstractCodeGen::UpdateDispatchCounter()
 {
-    int nc = Node::s_nodeCount;
+    int nc = Node::getNodeCount();
     if (nc==0) nc++;
     int p = std::min((int)((100*m_currentNode)/nc),100);
 
@@ -527,6 +527,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
     if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
         node->m_right->setCastType(TokenType::INTEGER);
+
     if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
         node->m_right->setCastType(TokenType::LONG);
 
@@ -595,9 +596,11 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     if (node->m_left->isWord(as)) {
-//        as->Asm("ldy #0");    // AH:20190722: Does not appear to serve a purpose - takes up space in prg. Breaks TRSE scroll in 4K C64 demo if take this out
         node->m_right->setForceType(TokenType::INTEGER);
     }
+    if (node->m_left->isLong(as))
+        node->m_right->setForceType(TokenType::LONG);
+
 
     // stack parameters
      if (StoreStackParameter(node))
@@ -792,7 +795,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
         }
 
         OptimizeBinaryClause(node,as);
-        BuildSimple(node,  lblSuccess, lblFailed, offpage);
+        BuildConditional(node,  lblSuccess, lblFailed, offpage);
         return;
     }
 
@@ -890,7 +893,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
     else
     if (UseBlocks()) {
-        as->Comment("NodeProcedureDecl "+ QString::number(node->m_blockInfo.m_blockID));
+        as->Comment("NodeProcedureDecl "+ QString::number(node->getBlockInfo().m_blockID));
         int ret = node->MaintainBlocks(as);
         if (ret==3) node->m_curMemoryBlock=nullptr;
         if (as->m_currentBlock!=nullptr) {
@@ -900,7 +903,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
                 QString p = as->m_currentBlock->m_pos;
                 int pos = p.remove("$").toInt(&ok, 16);
 //                as->StartMemoryBlock()
-                node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->m_blockInfo.m_blockName));
+                node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->getBlockInfo().m_blockName));
                 as->userBlocks.append(node->m_curMemoryBlock);
             }
         }
@@ -1031,11 +1034,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         InlineProcedure(node);
         return;
     }
-
     int lostStack = 0;
     for (int i=0; i<node->m_parameters.count();i++) {
         // Assign all variables
-//        node->m_parameters[i]->ApplyHack(as);
+        //node->m_parameters[i]->ApplyHack(as);
         QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
         QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
         if (vd->m_varNode->isStackVariable()) {
@@ -1046,6 +1048,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         }
         na->Accept(this);
     }
+
 
     ProcedureStart(as);
 //    if (node->m_procedure->m_returnType!=nullptr)
@@ -1138,7 +1141,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
                     bool ok;
                     QString p = as->m_currentBlock->m_pos;
                     int pos = p.remove("$").toInt(&ok, 16);
-                    node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->m_blockInfo.m_blockName));
+                    node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::ARRAY, node->getBlockInfo().m_blockName));
                     as->blocks.append(node->m_curMemoryBlock);
                 }
             }
@@ -1494,6 +1497,22 @@ bool AbstractCodeGen::Evaluate16bitExpr(QSharedPointer<Node> node, QString &lo, 
     return false;
 }
 
+bool AbstractCodeGen::Evaluate24bitExpr(QSharedPointer<Node> node, QString &lo, QString &hi, QString& z)
+{
+    if (node->isPure()) {
+        lo = getValue8bit(node,false);
+        hi = getValue8bit(node,true);
+        z = getValue8bit(node,2);
+        return true;
+    }
+    node->Accept(this);
+    QString lbl = as->StoreInTempVar("rightvarInteger", "long");
+    lo = lbl;
+    hi = lbl+"+1";
+    z = lbl+"+2";
+    return false;
+}
+
 QString AbstractCodeGen::getValue(QSharedPointer<Node> n) {
 
 
@@ -1532,10 +1551,10 @@ QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
     if (ns==nullptr)
         return "";
     if (node->m_op.m_type==TokenType::CSTRING) {
-        as->DeclareCString(strName,ns->m_val,node->flags.keys());
+        as->DeclareCString(strName,ns->m_val,node->getFlagKeys());
     }
     else {
-        as->DeclareString(strName,ns->m_val,node->flags.keys());
+        as->DeclareString(strName,ns->m_val,node->getFlagKeys());
     }
 
     as->EndCurrentBlock();

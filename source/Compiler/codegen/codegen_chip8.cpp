@@ -408,10 +408,7 @@ void CodeGenChip8::PopReg() {
     m_lvl--;
 }
 
-QString CodeGenChip8::getEndType(Assembler *as, QSharedPointer<Node> v)
-{
-    return "";
-}
+
 
 
 
@@ -550,13 +547,6 @@ void CodeGenChip8::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenChip8::ProcedureStart(Assembler *as) {
-
-}
-
-void CodeGenChip8::ProcedureEnd(Assembler *as) {
-
-}
 
 void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 {
@@ -570,13 +560,10 @@ void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenChip8::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
 
 
-void CodeGenChip8::BuildSimple(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
+
+void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());

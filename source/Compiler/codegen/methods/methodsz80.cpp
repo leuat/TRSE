@@ -224,7 +224,7 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo, QString s)
         }
 
 //   qDebug() << "ISN " << qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[paramNo]);
-   m_codeGen->m_useNext = s;
+   m_codeGen->useThisNext(s);
    m_node->m_params[paramNo]->Accept(m_codeGen);
 
 
@@ -232,7 +232,7 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo, QString s)
 
 void MethodsZ80::LoadAddress(Assembler *as, int paramNo, QString reg)
 {
-    m_codeGen->m_useNext = reg;
+    m_codeGen->useThisNext(reg);
     m_codeGen->LoadAddress(m_node->m_params[paramNo]);
 
 

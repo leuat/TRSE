@@ -1037,7 +1037,7 @@ void MainWindow::AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBui
     QStringList files;
     if (sourceBuilder==nullptr)
         return;
-    for (FilePart& fp: sourceBuilder->compiler->m_parser.m_lexer->m_includeFiles)
+    for (FilePart& fp: sourceBuilder->compiler->m_parser.m_lexer->getIncludeFiles())
         files<<fp.m_name;
   //  qDebug() << files;
     for (TRSEDocument* t : m_documents) {

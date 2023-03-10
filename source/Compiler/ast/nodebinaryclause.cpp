@@ -49,4 +49,10 @@ bool NodeBinaryClause::isWord(Assembler *as)
 }
 
 
+bool NodeBinaryClause::isLong(Assembler *as)
+{
+    return m_left->isLong(as) | m_right->isLong(as);
+}
+
+
 

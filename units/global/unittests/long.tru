@@ -1,0 +1,77 @@
+Unit LongTest;
+var
+	@if SUPPORTS_LONG = "1"
+
+@ifndef CPU_PX86
+
+// plus Simple
+procedure T01();
+begin
+	Vars::l1:=100000;
+	Vars::l2:=200000;
+	Vars::l1:=Vars::l1 + Vars::l2;
+	Common::CR();
+	Vars::text := "01:"; if Vars::l1=300000 then Common::PASS() else Common::FAIL();
+end;
+
+// minus Simple
+procedure T02();
+begin
+	Vars::l1:=100000;
+	Vars::l2:=2000;
+	Vars::l1:=Vars::l1 - Vars::l2;
+	Common::CR();
+	Vars::text := "02:"; if Vars::l1=98000 then Common::PASS() else Common::FAIL();
+end;
+
+// shl simple
+procedure T03();
+begin
+	Vars::l1:=220000;
+	Vars::l1 := Vars::l1<<2;
+	Common::CR();
+	Vars::text := "03:"; if Vars::l1=880000 then Common::PASS() else Common::FAIL();
+end;
+
+// shr simple
+procedure T04();
+begin
+	Vars::l1:=220040;
+	Vars::l1:=Vars::l1>>1;
+	Common::CR();
+	Vars::text := "04:"; if Vars::l1=110020 then Common::PASS() else Common::FAIL();
+end;
+
+
+// shl adv
+procedure T05();
+begin
+	Vars::l1:=220000;
+	Vars::v2 := 2;
+	Vars::l1:=Vars::l1<<Vars::v2;
+	Common::CR();
+	Vars::text := "05:"; if Vars::l1=880000 then Common::PASS() else Common::FAIL();
+end;
+
+@endif
+@endif
+procedure Exec();
+begin
+	@if SUPPORTS_LONG = "1"
+@ifndef CPU_PX86
+	// initialise everything
+	Common::Initialise("LONG TESTS");
+	T01();
+	T02();
+	T03();
+	T04();
+	T05();
+	
+	@endif
+	
+@endif
+	Common::WaitABit();
+	
+end;
+
+end.
