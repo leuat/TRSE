@@ -83,6 +83,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::SIGNED] = "signed";
     m_typeFlags[TokenType::GLOBAL] = "global";
     m_typeFlags[TokenType::STACK] = "stack";
+    m_typeFlags[TokenType::VOLATILE] = "volatile";
 
     while (!done)  {
         done = true;
