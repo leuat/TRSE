@@ -6,6 +6,7 @@ var
 @use "system/system"
 @use "memory"
 @use "system/file"
+@addemulatorparam "-nothrottle"
 
 var
 	// a sine wobble

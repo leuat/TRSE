@@ -15,10 +15,15 @@ var
 //			Common::DebugValue(this.str);
 			StrItem::getValue := this.str;
 		end;
+		
+		procedure Init( ss1 : integer);
+		begin
+			this.str := ss1;
+		end;
 //		c : array[3] of byte;
 	end;
-	
-	
+	s1 : StrItem;	
+		
 	StringList = class
 		items : array[16] of StrItem;	
 		curLen: byte;
@@ -153,8 +158,6 @@ begin
 	Vars::pm.pos.minis[1].IncA(); // calculates a+=b, so A should be 30
 		
 	
-	
-	
 
 	if (Vars::pm.pos.minis[1].a=30) then Common::PASS() else Common::FAIL();
 end;
@@ -235,6 +238,13 @@ begin
 	if (Vars::v1=3+3*2) then Common::PASS() else Common::FAIL();
 end;
 
+procedure CTest11();
+begin
+	s1.Init(1000);
+	Vars::text := "C11:";
+	if (s1.str=1000) then Common::PASS() else Common::FAIL();
+end;
+
 
 
 procedure Exec();
@@ -256,6 +266,7 @@ begin
     CTest9(); 
     
     CTest10();
+    CTest11();
  
     @endif
 	@ifdef C64

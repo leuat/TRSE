@@ -3,6 +3,7 @@ program Tutorial1;
 @use "system/system"
 @use "system/file"
 
+@addemulatorparam "-nothrottle"
 var
 	// type used for files
 	TextFile: File::Handle;
