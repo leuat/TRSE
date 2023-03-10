@@ -236,6 +236,10 @@ private slots:
 
     void on_btnThomsonEmulator_clicked();
 
+    void on_btnPCWEmulator_clicked();
+
+    void on_btnHelpPCW_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

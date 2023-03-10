@@ -266,6 +266,11 @@
                    <string>CHIP8</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>PCW</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="1" column="1">
@@ -1211,8 +1216,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>445</width>
-              <height>156</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_23">
@@ -1282,8 +1287,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>893</width>
-              <height>384</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
@@ -1465,8 +1470,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>474</width>
-              <height>681</height>
+              <width>957</width>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1750,8 +1755,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>341</width>
-              <height>319</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1855,8 +1860,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>498</width>
-              <height>217</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_31">
@@ -2005,8 +2010,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>629</width>
-              <height>132</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_32">
