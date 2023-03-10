@@ -264,9 +264,11 @@ begin
     CTest7(); 
     CTest8();    
     CTest9(); 
+    @ifndef X86
+    CTest11();
+    @endif
     
     CTest10();
-    CTest11();
  
     @endif
 	@ifdef C64

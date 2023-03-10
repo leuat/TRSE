@@ -3911,8 +3911,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         // the entire thing is being transformed to writing to a pointer
         int scale = 1;
         if (s->m_isClassVariable) {
-//            qDebug() << "PARSERR: " <<v->value<<m_currentToken.m_isReference <<TokenType::getType(s->getTokenType()) << TokenType::getType(s->m_arrayType) << m_isClassReference;
             v->setReference(m_isClassReference);
+            if (s->m_type!="POINTER")
             if (s->m_arrayType!=TokenType::NADA)
                 if (v->m_expr==nullptr)
                     if (!v->isReference())
