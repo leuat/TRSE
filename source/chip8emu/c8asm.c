@@ -19,7 +19,7 @@ licensed under the the terms of Apache License 2.0
 #include <ctype.h>
 #include <assert.h>
 #include <stdbool.h>
-
+#include <setjmp.h>
 #include "c8asm.h"
 
 #define TOK_SIZE    64
@@ -141,7 +141,7 @@ static struct {
     char value[TOK_SIZE];
 } defs[MAX_DEFS];
 static int n_defs;
-
+static jmp_buf exit_assembler;
 static void exit_error(const char *msg, ...) {
     char buffer[MAX_MESSAGE_TEXT];
     if(msg) {
@@ -151,7 +151,7 @@ static void exit_error(const char *msg, ...) {
         va_end (arg);
         c8_message("%s", buffer);
     }
-    exit(1);
+    longjmp(exit_assembler,1);
 }
 static bool is_arith(char c){
     switch (c){
@@ -308,7 +308,7 @@ static int evaluate_arithmetic_expression(const char * expression, const int lin
     *figures.stack=0;figures.top=figures.stack;
     bool is_prev_figure = true;
     bool is_first_char_of_clause = true;
-    while (1){
+    while (*expression){
         int prec;
         int base;
 
@@ -404,7 +404,7 @@ static int evaluate_arithmetic_expression(const char * expression, const int lin
                     break;
                 }
             }
-            if(!success) break;
+            if(!success) exit_error("error%d: Invalid Identifier %s in arithmetic expression\n", linenum,buffer);
         }
     }
 
@@ -616,362 +616,362 @@ int c8_assemble(const char *text) {
     stepper.in = text;
 
     if(c8_verbose) c8_message("Assembling...\n");
+    int return_code=setjmp(exit_assembler);
+    if (!return_code){
+        program.max_instr = 0;
 
+        stepper.linenum = 1;
+        stepper.last = NULL;
 
-    program.max_instr = 0;
+        n_lookup = 0;
+        n_defs = 0;
 
-    stepper.linenum = 1;
-    stepper.last = NULL;
+        memset(program.bytes, 0, sizeof program);
+        program.next_instr = 512;
 
-    n_lookup = 0;
-    n_defs = 0;
-
-    memset(program.bytes, 0, sizeof program);
-    program.next_instr = 512;
-
-    nextsym(&stepper);
-    while(stepper.sym != SYM_END) {
-        switch(stepper.sym){
-        case SYM_DEFINE:
-        {
-            char name[TOK_SIZE];
-            nextsym(&stepper);
-            /* "Identifier expected" may also mean that the name has
-                already been used, eg. if aaa is already defined as 123
-                then define aaa 456 looks like define 123 456 */
-            if(stepper.sym != SYM_IDENTIFIER)
-                exit_error("error:%d: identifier expected, found %s\n", stepper.linenum, stepper.token);
-            strcpy(name,stepper.token);
-            nextsym(&stepper); /*
-            if(stepper.sym != SYM_NUMBER && stepper.sym != SYM_REGISTER)
-                exit_error("error:%d: value expected\n", stepper.linenum);
-            */
-            add_definition(&stepper, name);
-            nextsym(&stepper);
-        }
-        break;
-        case SYM_OFFSET:
-            nextsym(&stepper);
-            if(stepper.sym != SYM_NUMBER)
-                exit_error("error:%d: offset expected\n", stepper.linenum);
-            program.next_instr = get_num(stepper.token,3,stepper.linenum);
-            nextsym(&stepper);
-        break;
-        case SYM_DB:
-            do {
+        nextsym(&stepper);
+        while(stepper.sym != SYM_END) {
+            switch(stepper.sym){
+            case SYM_DEFINE:
+            {
+                char name[TOK_SIZE];
                 nextsym(&stepper);
-                if(stepper.sym == SYM_END)
-                    break;
+                /* "Identifier expected" may also mean that the name has
+                    already been used, eg. if aaa is already defined as 123
+                    then define aaa 456 looks like define 123 456 */
+                if(stepper.sym != SYM_IDENTIFIER)
+                    exit_error("error:%d: identifier expected, found %s\n", stepper.linenum, stepper.token);
+                strcpy(name,stepper.token);
+                nextsym(&stepper); /*
+                if(stepper.sym != SYM_NUMBER && stepper.sym != SYM_REGISTER)
+                    exit_error("error:%d: value expected\n", stepper.linenum);
+                */
+                add_definition(&stepper, name);
+                nextsym(&stepper);
+            }
+            break;
+            case SYM_OFFSET:
+                nextsym(&stepper);
                 if(stepper.sym != SYM_NUMBER)
-                    exit_error("error:%d: byte value expected\n", stepper.linenum);
-                Emitted e={/*
-                    .type=ET_IMM8,
-                    .value.imm8=get_num(&stepper,2),
-                    .tlabel=LT_NONE*/
-                    .type=ET_EXP8_EMIT8,
-                    .value=0
+                    exit_error("error:%d: offset expected\n", stepper.linenum);
+                program.next_instr = get_num(stepper.token,3,stepper.linenum);
+                nextsym(&stepper);
+            break;
+            case SYM_DB:
+                do {
+                    nextsym(&stepper);
+                    if(stepper.sym == SYM_END)
+                        break;
+                    if(stepper.sym != SYM_NUMBER)
+                        exit_error("error:%d: byte value expected\n", stepper.linenum);
+                    Emitted e={/*
+                        .type=ET_IMM8,
+                        .value.imm8=get_num(&stepper,2),
+                        .tlabel=LT_NONE*/
+                        .type=ET_EXP8_EMIT8,
+                        .value=0
 
 
-                };
-
-                emit(&stepper,e);
-                nextsym(&stepper);
-            } while(stepper.sym == ',');
-        break;
-        case SYM_DW:
-            do {
-                nextsym(&stepper);
-                if(stepper.sym == SYM_END)
-                    break;
-                if(stepper.sym != SYM_NUMBER && stepper.sym != SYM_IDENTIFIER)
-                    exit_error("error:%d: byte value expected\n", stepper.linenum);
-                emit_e(&stepper,0, 4);
-                nextsym(&stepper);
-            } while(stepper.sym == ',');
-        break;
-        case SYM_IDENTIFIER:
-            add_label(stepper.token, stepper.linenum);
-            expect(&stepper, ':');
-        break;
-        case SYM_INSTRUCTION:
-            if(!strcmp("cls", stepper.token))
-                emit_w(&stepper, 0x00E0);
-            else if(!strcmp("ret", stepper.token))
-                emit_w(&stepper, 0x00EE);
-            else if(!strcmp("jp", stepper.token)) {
-                nextsym(&stepper);
-                if(stepper.sym == SYM_IDENTIFIER || stepper.sym == SYM_NUMBER){
-                    const Emitted e={
-                        .type=ET_EXP16,
-                        .value=0x1000
                     };
-                    emit(&stepper, e);
-                }
-                else if(stepper.sym == SYM_REGISTER) {
-                    if(strcmp(stepper.token, "v0"))
-                        exit_error("error:%d: JP applies to V0 only\n", stepper.linenum);
-                    expect(&stepper, ',');
+
+                    emit(&stepper,e);
+                    nextsym(&stepper);
+                } while(stepper.sym == ',');
+            break;
+            case SYM_DW:
+                do {
+                    nextsym(&stepper);
+                    if(stepper.sym == SYM_END)
+                        break;
+                    if(stepper.sym != SYM_NUMBER && stepper.sym != SYM_IDENTIFIER)
+                        exit_error("error:%d: byte value expected\n", stepper.linenum);
+                    emit_e(&stepper,0, 4);
+                    nextsym(&stepper);
+                } while(stepper.sym == ',');
+            break;
+            case SYM_IDENTIFIER:
+                add_label(stepper.token, stepper.linenum);
+                expect(&stepper, ':');
+            break;
+            case SYM_INSTRUCTION:
+                if(!strcmp("cls", stepper.token))
+                    emit_w(&stepper, 0x00E0);
+                else if(!strcmp("ret", stepper.token))
+                    emit_w(&stepper, 0x00EE);
+                else if(!strcmp("jp", stepper.token)) {
+                    nextsym(&stepper);
                     if(stepper.sym == SYM_IDENTIFIER || stepper.sym == SYM_NUMBER){
                         const Emitted e={
                             .type=ET_EXP16,
-                            .value=0xB000
+                            .value=0x1000
                         };
                         emit(&stepper, e);
                     }
-                    else
-                        emit_e(&stepper, 0xB000 ,3);
-                } else
-                    emit_e(&stepper, 0x1000 , 3);
-            } else if(!strcmp("call", stepper.token)) {
-                nextsym(&stepper);
-                if(stepper.sym != SYM_IDENTIFIER && stepper.sym != SYM_NUMBER){
-                    exit_error("error:%d: address expected", stepper.linenum);
-                }
-                const Emitted e={
-                    .type=ET_EXP16,
-                    .value=0x2000
-                };
-                emit(&stepper, e);
+                    else if(stepper.sym == SYM_REGISTER) {
+                        if(strcmp(stepper.token, "v0"))
+                            exit_error("error:%d: JP applies to V0 only\n", stepper.linenum);
+                        expect(&stepper, ',');
+                        if(stepper.sym == SYM_IDENTIFIER || stepper.sym == SYM_NUMBER){
+                            const Emitted e={
+                                .type=ET_EXP16,
+                                .value=0xB000
+                            };
+                            emit(&stepper, e);
+                        }
+                        else
+                            emit_e(&stepper, 0xB000 ,3);
+                    } else
+                        emit_e(&stepper, 0x1000 , 3);
+                } else if(!strcmp("call", stepper.token)) {
+                    nextsym(&stepper);
+                    if(stepper.sym != SYM_IDENTIFIER && stepper.sym != SYM_NUMBER){
+                        exit_error("error:%d: address expected", stepper.linenum);
+                    }
+                    const Emitted e={
+                        .type=ET_EXP16,
+                        .value=0x2000
+                    };
+                    emit(&stepper, e);
 
-            } else if(!strcmp("se", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER)
-                    emit_e(&stepper, 0x3000 | (regx << 8), 2);
-                else if(stepper.sym == SYM_REGISTER) {
-                    int regy = get_register(&stepper);
-                    emit_w(&stepper, 0x5000 | (regx << 8) | (regy << 4));
-                } else
-                    exit_error("error:%d: operand expected\n", stepper.linenum);
-            } else if(!strcmp("sne", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                if(stepper.sym == SYM_NUMBER || stepper.sym==SYM_IDENTIFIER)
-                    emit_e(&stepper, 0x4000 | (regx << 8) ,2);
-                else if(stepper.sym == SYM_REGISTER) {
-                    int regy = get_register(&stepper);
-                    emit_w(&stepper, 0x9000 | (regx << 8) | (regy << 4));
-                } else
-                    exit_error("error:%d: operand expected\n", stepper.linenum);
-            } else if(!strcmp("add", stepper.token)) {
-                nextsym(&stepper);
-                if(stepper.sym == SYM_I) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF01E | (get_register(&stepper) << 8));
-                } else {
+                } else if(!strcmp("se", stepper.token)) {
+                    nextsym(&stepper);
                     int regx = get_register(&stepper);
                     expect(&stepper, ',');
                     if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER)
-                        emit_e(&stepper, 0x7000 | (regx << 8) ,2);
-                     else if(stepper.sym == SYM_REGISTER) {
+                        emit_e(&stepper, 0x3000 | (regx << 8), 2);
+                    else if(stepper.sym == SYM_REGISTER) {
                         int regy = get_register(&stepper);
-                        emit_w(&stepper, 0x8004 | (regx << 8) | (regy << 4));
+                        emit_w(&stepper, 0x5000 | (regx << 8) | (regy << 4));
                     } else
                         exit_error("error:%d: operand expected\n", stepper.linenum);
-                }
-            } else if(!strcmp("ld", stepper.token)) {
-                nextsym(&stepper);
-                if(stepper.sym == SYM_I) {
-                    expect(&stepper, ',');
-                    if(stepper.sym == SYM_IDENTIFIER || stepper.sym == SYM_NUMBER){
-                        const Emitted e={
-                            .type=ET_EXP16,
-                            .value=0xA000
-                        };
-                        emit(&stepper, e);
-                    } else
-                        emit_e(&stepper, 0xA000,3);
-                } else if(stepper.sym == SYM_DT) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF015 | (get_register(&stepper) << 8));
-                } else if(stepper.sym == SYM_ST) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF018 | (get_register(&stepper) << 8));
-                } else if(stepper.sym == SYM_F) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF029 | (get_register(&stepper) << 8));
-                } else if(stepper.sym == SYM_B) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF033 | (get_register(&stepper) << 8));
-                } else if(stepper.sym == '[') {
-                    if(nextsym(&stepper) != SYM_I || nextsym(&stepper) != ']')
-                        exit_error("error:%d: [I] expected\n", stepper.linenum);
-                    if(nextsym(&stepper) != ',')
-                        exit_error("error:%d: ',' expected\n", stepper.linenum);
+                } else if(!strcmp("sne", stepper.token)) {
                     nextsym(&stepper);
-                    emit_w(&stepper, 0xF055 | (get_register(&stepper) << 8));
-                } else if(stepper.sym == SYM_HF) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF030 | (get_register(&stepper) << 8));
-                } else if(stepper.sym == SYM_R) {
-                    expect(&stepper, ',');
-                    emit_w(&stepper, 0xF075 | (get_register(&stepper) << 8));
-                } else {
                     int regx = get_register(&stepper);
                     expect(&stepper, ',');
-                    if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER)
-                        emit_e(&stepper, 0x6000 | (regx << 8) , 2);
-                     else if(stepper.sym == SYM_REGISTER) {
+                    if(stepper.sym == SYM_NUMBER || stepper.sym==SYM_IDENTIFIER)
+                        emit_e(&stepper, 0x4000 | (regx << 8) ,2);
+                    else if(stepper.sym == SYM_REGISTER) {
                         int regy = get_register(&stepper);
-                        emit_w(&stepper, 0x8000 | (regx << 8) | (regy << 4));
-                    } else if(stepper.sym == SYM_DT)
-                        emit_w(&stepper, 0xF007 | (regx << 8));
-                    else if(stepper.sym == SYM_K)
-                        emit_w(&stepper, 0xF00A | (regx << 8));
-
-                    else if(stepper.sym == '[') {
+                        emit_w(&stepper, 0x9000 | (regx << 8) | (regy << 4));
+                    } else
+                        exit_error("error:%d: operand expected\n", stepper.linenum);
+                } else if(!strcmp("add", stepper.token)) {
+                    nextsym(&stepper);
+                    if(stepper.sym == SYM_I) {
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF01E | (get_register(&stepper) << 8));
+                    } else {
+                        int regx = get_register(&stepper);
+                        expect(&stepper, ',');
+                        if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER)
+                            emit_e(&stepper, 0x7000 | (regx << 8) ,2);
+                        else if(stepper.sym == SYM_REGISTER) {
+                            int regy = get_register(&stepper);
+                            emit_w(&stepper, 0x8004 | (regx << 8) | (regy << 4));
+                        } else
+                            exit_error("error:%d: operand expected\n", stepper.linenum);
+                    }
+                } else if(!strcmp("ld", stepper.token)) {
+                    nextsym(&stepper);
+                    if(stepper.sym == SYM_I) {
+                        expect(&stepper, ',');
+                        if(stepper.sym == SYM_IDENTIFIER || stepper.sym == SYM_NUMBER){
+                            const Emitted e={
+                                .type=ET_EXP16,
+                                .value=0xA000
+                            };
+                            emit(&stepper, e);
+                        } else
+                            emit_e(&stepper, 0xA000,3);
+                    } else if(stepper.sym == SYM_DT) {
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF015 | (get_register(&stepper) << 8));
+                    } else if(stepper.sym == SYM_ST) {
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF018 | (get_register(&stepper) << 8));
+                    } else if(stepper.sym == SYM_F) {
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF029 | (get_register(&stepper) << 8));
+                    } else if(stepper.sym == SYM_B) {
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF033 | (get_register(&stepper) << 8));
+                    } else if(stepper.sym == '[') {
                         if(nextsym(&stepper) != SYM_I || nextsym(&stepper) != ']')
                             exit_error("error:%d: [I] expected\n", stepper.linenum);
-                        emit_w(&stepper, 0xF065 | (regx << 8));
+                        if(nextsym(&stepper) != ',')
+                            exit_error("error:%d: ',' expected\n", stepper.linenum);
+                        nextsym(&stepper);
+                        emit_w(&stepper, 0xF055 | (get_register(&stepper) << 8));
+                    } else if(stepper.sym == SYM_HF) {
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF030 | (get_register(&stepper) << 8));
                     } else if(stepper.sym == SYM_R) {
-                        emit_w(&stepper, 0xF085 | (regx << 8));
+                        expect(&stepper, ',');
+                        emit_w(&stepper, 0xF075 | (get_register(&stepper) << 8));
+                    } else {
+                        int regx = get_register(&stepper);
+                        expect(&stepper, ',');
+                        if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER)
+                            emit_e(&stepper, 0x6000 | (regx << 8) , 2);
+                        else if(stepper.sym == SYM_REGISTER) {
+                            int regy = get_register(&stepper);
+                            emit_w(&stepper, 0x8000 | (regx << 8) | (regy << 4));
+                        } else if(stepper.sym == SYM_DT)
+                            emit_w(&stepper, 0xF007 | (regx << 8));
+                        else if(stepper.sym == SYM_K)
+                            emit_w(&stepper, 0xF00A | (regx << 8));
+
+                        else if(stepper.sym == '[') {
+                            if(nextsym(&stepper) != SYM_I || nextsym(&stepper) != ']')
+                                exit_error("error:%d: [I] expected\n", stepper.linenum);
+                            emit_w(&stepper, 0xF065 | (regx << 8));
+                        } else if(stepper.sym == SYM_R) {
+                            emit_w(&stepper, 0xF085 | (regx << 8));
+                        } else
+                            exit_error("error:%d: operand expected, found %s[%d]\n", stepper.linenum, stepper.token, stepper.sym);
+                    }
+                } else if(!strcmp("or", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    int regy = get_register(&stepper);
+                    emit_w(&stepper, 0x8001 | (regx << 8) | (regy << 4));
+                } else if(!strcmp("and", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    int regy = get_register(&stepper);
+                    emit_w(&stepper, 0x8002 | (regx << 8) | (regy << 4));
+                } else if(!strcmp("xor", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    int regy = get_register(&stepper);
+                    emit_w(&stepper, 0x8003 | (regx << 8) | (regy << 4));
+                } else if(!strcmp("sub", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    int regy = get_register(&stepper);
+                    emit_w(&stepper, 0x8005 | (regx << 8) | (regy << 4));
+                } else if(!strcmp("shr", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    int regy = 0;
+                    nextsym(&stepper);
+                    if(stepper.sym == ',') {
+                        nextsym(&stepper);
+                        regy = get_register(&stepper);
                     } else
-                        exit_error("error:%d: operand expected, found %s[%d]\n", stepper.linenum, stepper.token, stepper.sym);
-                }
-            } else if(!strcmp("or", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                int regy = get_register(&stepper);
-                emit_w(&stepper, 0x8001 | (regx << 8) | (regy << 4));
-            } else if(!strcmp("and", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                int regy = get_register(&stepper);
-                emit_w(&stepper, 0x8002 | (regx << 8) | (regy << 4));
-            } else if(!strcmp("xor", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                int regy = get_register(&stepper);
-                emit_w(&stepper, 0x8003 | (regx << 8) | (regy << 4));
-            } else if(!strcmp("sub", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                int regy = get_register(&stepper);
-                emit_w(&stepper, 0x8005 | (regx << 8) | (regy << 4));
-            } else if(!strcmp("shr", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                int regy = 0;
-                nextsym(&stepper);
-                if(stepper.sym == ',') {
+                        stepper.in=stepper.last;
+                    emit_w(&stepper, 0x8006 | (regx << 8) | (regy << 4));
+                } else if(!strcmp("subn", stepper.token)) {
                     nextsym(&stepper);
-                    regy = get_register(&stepper);
-                } else
-                    stepper.in=stepper.last;
-                emit_w(&stepper, 0x8006 | (regx << 8) | (regy << 4));
-            } else if(!strcmp("subn", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                int regy = get_register(&stepper);
-                emit_w(&stepper, 0x8007 | (regx << 8) | (regy << 4));
-            } else if(!strcmp("shl", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                int regy=0;
-                nextsym(&stepper);
-                if(stepper.sym == ',') {
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    int regy = get_register(&stepper);
+                    emit_w(&stepper, 0x8007 | (regx << 8) | (regy << 4));
+                } else if(!strcmp("shl", stepper.token)) {
                     nextsym(&stepper);
-                    regy = get_register(&stepper);
-                } else
-                    stepper.in=stepper.last;
-                emit_w(&stepper, 0x800E | (regx << 8) | (regy << 4));
-            } else if(!strcmp("rnd", stepper.token)) {
-                nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER){
-                    emit_e(&stepper, 0xC000 | (regx << 8) ,2);
+                    int regx = get_register(&stepper);
+                    int regy=0;
+                    nextsym(&stepper);
+                    if(stepper.sym == ',') {
+                        nextsym(&stepper);
+                        regy = get_register(&stepper);
+                    } else
+                        stepper.in=stepper.last;
+                    emit_w(&stepper, 0x800E | (regx << 8) | (regy << 4));
+                } else if(!strcmp("rnd", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    if(stepper.sym == SYM_NUMBER || stepper.sym == SYM_IDENTIFIER){
+                        emit_e(&stepper, 0xC000 | (regx << 8) ,2);
+                    }
+                    else exit_error("error:%d: operand expected\n", stepper.linenum);
+                }  else if(!strcmp("drw", stepper.token)) {
+                    nextsym(&stepper);
+                    int regx = get_register(&stepper);
+                    expect(&stepper, ',');
+                    int regy = get_register(&stepper);
+                    expect(&stepper, ',');
+                    emit_e(&stepper, 0xD000 | (regx << 8) | (regy << 4),1);
+                } else if(!strcmp("skp", stepper.token)) {
+                    nextsym(&stepper);
+                    emit_w(&stepper, 0xE09E | (get_register(&stepper) << 8));
+                } else if(!strcmp("sknp", stepper.token)) {
+                    nextsym(&stepper);
+                    emit_w(&stepper, 0xE0A1 | (get_register(&stepper) << 8));
+                } else if(!strcmp("scd", stepper.token)) {
+                    nextsym(&stepper);
+                    emit_e(&stepper, 0x00C0 ,1);
+                } else if(!strcmp("scr", stepper.token)) {
+                    emit_w(&stepper, 0x00FB);
+                } else if(!strcmp("scl", stepper.token)) {
+                    emit_w(&stepper, 0x00FC);
+                } else if(!strcmp("exit", stepper.token)) {
+                    emit_w(&stepper, 0x00FD);
+                } else if(!strcmp("low", stepper.token)) {
+                    emit_w(&stepper, 0x00FE);
+                } else if(!strcmp("high", stepper.token)) {
+                    emit_w(&stepper, 0x00FF);
+                } else if(!strcmp("sys", stepper.token)) {
+                    nextsym(&stepper);
+                    emit_e(&stepper, 0x0000,3);
                 }
-                else exit_error("error:%d: operand expected\n", stepper.linenum);
-            }  else if(!strcmp("drw", stepper.token)) {
+
                 nextsym(&stepper);
-                int regx = get_register(&stepper);
-                expect(&stepper, ',');
-                int regy = get_register(&stepper);
-                expect(&stepper, ',');
-                emit_e(&stepper, 0xD000 | (regx << 8) | (regy << 4),1);
-            } else if(!strcmp("skp", stepper.token)) {
-                nextsym(&stepper);
-                emit_w(&stepper, 0xE09E | (get_register(&stepper) << 8));
-            } else if(!strcmp("sknp", stepper.token)) {
-                nextsym(&stepper);
-                emit_w(&stepper, 0xE0A1 | (get_register(&stepper) << 8));
-            } else if(!strcmp("scd", stepper.token)) {
-                nextsym(&stepper);
-                emit_e(&stepper, 0x00C0 ,1);
-            } else if(!strcmp("scr", stepper.token)) {
-                emit_w(&stepper, 0x00FB);
-            } else if(!strcmp("scl", stepper.token)) {
-                emit_w(&stepper, 0x00FC);
-            } else if(!strcmp("exit", stepper.token)) {
-                emit_w(&stepper, 0x00FD);
-            } else if(!strcmp("low", stepper.token)) {
-                emit_w(&stepper, 0x00FE);
-            } else if(!strcmp("high", stepper.token)) {
-                emit_w(&stepper, 0x00FF);
-            } else if(!strcmp("sys", stepper.token)) {
-                nextsym(&stepper);
-                emit_e(&stepper, 0x0000,3);
+            break;
+            default:
+                exit_error("error:%d: unexpected token [%d]: '%s'\n", stepper.linenum, stepper.sym, stepper.token);
+            }
+        }
+
+        if(c8_verbose) c8_message("Resolving labels...\n");
+        size_t n = PROG_OFFSET;
+        bool success=false;
+        for(int i = PROG_OFFSET; i < program.max_instr; i++) {
+            uint16_t result=0;
+            if(program.bytes[i].type & EXPRESSION_BITMASK) {
+                result = get_num(program.bytes[i].expression, (program.bytes[i].type & BITNESS_BITMASK)+1,program.bytes[i].linenum);
+
+            }
+            if ((program.bytes[i].type != CONTINUED) && (program.bytes[i].type & EMIT8_BITMASK)) {
+                program.bytes[i].byte |= result &0xff;
+            } else {
+                program.bytes[i].byte |= result >> 8;
+                program.bytes[i+1].byte |= result & 0xff;
             }
 
-            nextsym(&stepper);
-        break;
-        default:
-            exit_error("error:%d: unexpected token [%d]: '%s'\n", stepper.linenum, stepper.sym, stepper.token);
+
+
+
+            if(c8_verbose > 1) {
+                if(!(i & 0x01))
+                    c8_message("%03X: %02X", i, program.bytes[i].byte);
+                else
+                    c8_message("%02X\n", program.bytes[i].byte);
+            }
+
+            c8_set(n++, program.bytes[i].byte);
         }
+        //Stupid Off by one
+        if (program.max_instr < TOTAL_RAM && program.bytes[program.max_instr].byte != 0){
+            c8_set(n++, program.bytes[program.max_instr].byte);
+        }
+        if(c8_verbose > 1 && success)
+            c8_message("\n");
+
+        if(c8_verbose) c8_message("Assembled; %d bytes.\n", program.max_instr - PROG_OFFSET);
     }
-
-    if(c8_verbose) c8_message("Resolving labels...\n");
-    size_t n = PROG_OFFSET;
-    bool success=false;
-    for(int i = PROG_OFFSET; i < program.max_instr; i++) {
-        uint16_t result=0;
-        if(program.bytes[i].type & EXPRESSION_BITMASK) {
-            result = get_num(program.bytes[i].expression, (program.bytes[i].type & BITNESS_BITMASK)+1,program.bytes[i].linenum);
-
-        }
-        if ((program.bytes[i].type != CONTINUED) && (program.bytes[i].type & EMIT8_BITMASK)) {
-            program.bytes[i].byte |= result &0xff;
-        } else {
-            program.bytes[i].byte |= result >> 8;
-            program.bytes[i+1].byte |= result & 0xff;
-        }
-
-
-
-
-        if(c8_verbose > 1) {
-            if(!(i & 0x01))
-                c8_message("%03X: %02X", i, program.bytes[i].byte);
-            else
-                c8_message("%02X\n", program.bytes[i].byte);
-        }
-
-        c8_set(n++, program.bytes[i].byte);
-    }
-    //Stupid Off by one
-    if (program.max_instr < TOTAL_RAM && program.bytes[program.max_instr].byte != 0){
-        c8_set(n++, program.bytes[program.max_instr].byte);
-    }
-    if(c8_verbose > 1 && success)
-        c8_message("\n");
-
-    if(c8_verbose) c8_message("Assembled; %d bytes.\n", program.max_instr - PROG_OFFSET);
-
-    return 0;
+    return return_code;
 }
 
 static uint8_t RAM[TOTAL_RAM]; /* Interpreter RAM */
 
 int c8_verbose = 0;
-int c8_message(const char *msg, ...) {
+void c8_message(const char *msg, ...) {
     if(msg) {
         va_list arg;
         va_start (arg, msg);

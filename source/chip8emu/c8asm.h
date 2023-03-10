@@ -275,7 +275,7 @@ extern int (*c8_puts)(const char* s);
  *
  * Returns the value of the `c8_puts()` call.
  */
-int c8_message(const char *msg, ...);
+void c8_message(const char *msg, ...);
 
 /** `extern char c8_message_text[];`  \
  * The internal buffer used by `c8_message()`.

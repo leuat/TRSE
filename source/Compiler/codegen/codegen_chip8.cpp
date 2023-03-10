@@ -5,30 +5,44 @@ CodeGenChip8::CodeGenChip8()
 {
 }
 
-void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1, QString value, bool is16bit)
+void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1)
 {
-    QString a = "";
-
-    if (is16bit)
-        a="16";
     if (type==TokenType::Type::PLUS)
-        Binop("add"+a,x0,x1,value);
+        as->Asm("add "+x0+","+x1);
     if (type==TokenType::Type::MINUS)
-        Binop("sub"+a,x0,x1,value);
+        as->Asm("sub "+x0+","+x1);
 /*    if (type==TokenType::Type::MUL)
         Binop("mul",x0,x1,value);
     if (type==TokenType::Type::DIV)
         Binop("div",x0,x1,value);*/
     if (type==TokenType::Type::BITOR)
-        Binop("or"+a,x0,x1,value);
+        as->Asm("or "+x0+","+x1);
     if (type==TokenType::Type::XOR)
-        Binop("xor"+a,x0,x1,value);
+        as->Asm("xor "+x0+","+x1);
     if (type==TokenType::Type::BITAND)
-        Binop("and"+a,x0,x1,value);
+        as->Asm("and "+x0+","+x1);
 
 }
 
+void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo)
+{
+    QString op;
+    if (type==TokenType::Type::PLUS)
+        op="add ";
+    if (type==TokenType::Type::MINUS)
+        op="sub ";
+    if (type==TokenType::Type::BITOR)
+        op="or ";
+    if (type==TokenType::Type::XOR)
+        op="xor ";
+    if (type==TokenType::Type::BITAND)
+        op="and ";
+    printf("here\n");
+    as->Asm(op+x0_lo+","+x1_lo);
+    as->Asm(op+x0_hi+", VF");
+    as->Asm(op+x0_hi+","+ x1_hi);
 
+}
 
 void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 {
@@ -42,11 +56,11 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
         QString c = getReg();
         PushReg();
         QString d = getReg();
-        PopReg();
         node->m_right->Accept(this);
         PopReg();
         PopReg();
-        PrintBop(node->m_op.m_type,a,b,c+","+d,true);
+        PopReg();
+        PrintBop16(node->m_op.m_type,a,b,c,d);
 
     }
     else {
@@ -56,7 +70,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
         QString b = getReg();
         node->m_right->Accept(this);
         PopReg();
-        PrintBop(node->m_op.m_type,a,b,"",false);
+        PrintBop(node->m_op.m_type,a,b);
 
     }
 }
@@ -70,7 +84,9 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeNumber>node)
     {
         PushReg();
         QString bx = getReg();
-        as->Asm("ld "+ax+", "+bx+","+ node->getValue(as));
+        QString imm = node->getValue(as);
+        as->Asm("ld "+ax+", " + imm+">>8" );
+        as->Asm("ld "+bx+", " + imm+"&#ff" );
         PopReg();
 
     }
@@ -553,7 +569,7 @@ void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 //    as->Write(".align 4");
-    as->Write(v->getValue(as)+ ": \n\t@dd  0",0);
+    as->Write(v->getValue(as)+ ": \n\tdw  0",0);
   //  as->Write(".align 4");
 
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
@@ -569,7 +585,8 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
 
-    BuildToCmp(node);
+
+    /*
     QString jg ="jg ";
     QString jl ="jl ";
     QString jge ="jge ";
@@ -579,20 +596,49 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
         jl = "blo ";
         jge = "bhi ";
         jle = "blo ";
-    }
-    if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("jne " + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("jeq " + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::LESS)
-        as->Asm(jge  + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm(jle  + as->jumpLabel(lblFailed));
+    }*/
 
-    if (node->m_op.m_type==TokenType::LESSEQUAL)
-        as->Asm(jg  + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::GREATEREQUAL)
-        as->Asm(jl  + as->jumpLabel(lblFailed));
+
+    //as->Term();
+
+    //as->Term();
+    as->Comment("Evaluate full expression");
+    node->m_left->Accept(this);
+    QString ax = getReg(); PushReg();
+    node->m_right->Accept(this);
+    QString rvalue; 
+    rvalue = getReg();
+    if (node->m_op.m_type==TokenType::EQUALS)
+        as->Asm("se " + ax + "," + rvalue);
+    
+     else if (node->m_op.m_type==TokenType::NOTEQUALS) 
+        as->Asm("sne " + ax + "," +  rvalue);
+     else if (node->m_op.m_type==TokenType::GREATER){
+        as->Asm("subn "+rvalue+","+ax);
+        //(ax > rvalue) 
+        as->Asm("sne VF, 0");
+
+
+     } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
+        as->Asm("subn "+ax+","+rvalue);
+        //!(rvalue > ax) 
+        as->Asm("se VF, 0");
+
+
+     } else if (node->m_op.m_type==TokenType::LESS){
+        as->Asm("subn "+ax+","+rvalue);
+        //(rvalue > ax) 
+        as->Asm("sne VF, 0");
+
+
+     } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+        as->Asm("subn "+rvalue+","+ax);
+        //!(ax > rvalue) 
+        as->Asm("se VF, 0");
+     }
+    PopReg();
+    
+    as->Asm("jp "+as->jumpLabel(lblFailed));
 
 
 
@@ -600,28 +646,24 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 
 void CodeGenChip8::BuildToCmp(QSharedPointer<Node> node)
 {
-    QString ax = getReg();
-    node->m_left->Accept(this);
 
-    as->Term();
-    if (node->m_right->isPureNumeric()) {
-        as->Asm("cmp  "+ax+", " + getChip8Value(as,node->m_right));
-        return;
 
+
+    /*
+    //if (node->m_op.m_type==TokenType::EQUALS){
+        as->Asm("seq " + ax + "," + rvalue);
+    
+    } else if (node->m_op.m_type==TokenType::NOTEQUALS) {
+        as->Asm("sne " + ax + "," +  rvalue);
     }
-    as->Comment("Evaluate full expression");
-    QString bx = PushReg();
-    node->m_right->Accept(this);
-    as->Term();
-
-    as->Asm("cmp "+ax+","+bx);
+    */
+    
     PopReg();
-
-
 }
-
 void CodeGenChip8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
+
+#if 0
     if (step!=nullptr)
         ErrorHandler::e.Error("For loops currently don't support step",nodeA->m_op.m_lineNumber);
 
@@ -664,10 +706,11 @@ void CodeGenChip8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
     }
     as->Asm("jp "+lblJump);
 
+#endif
 }
-
 void CodeGenChip8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
+    #if 0
     if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
     LoadVariable(nodeA);
     QString ax = getReg();
@@ -677,7 +720,7 @@ void CodeGenChip8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedP
     PopReg();
     as->Asm(m_cmp+ax+","+bx);
     as->Asm(m_jne+lblJump);
-
+    #endif 
 }
 
 QString CodeGenChip8::getReturn() { return "ret";}

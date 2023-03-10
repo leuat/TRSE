@@ -1,7 +1,25 @@
 unit System;
 var
 	x,y,c : byte; 
-    ptr,word : Integer;
+    ptr : pointer;
+	word : Integer;
+	
+//Moves ptr to I, this is a procedure because it requires Self Modifying code. 
+//This procedure is only used in codegen and should not be used in High Level code
+procedure loadPointer(ptr : global pointer);
+begin
+    if (ptr <= $fff) then begin
+        asm("
+        LD I, System_ptr
+        LD V1, [I]
+        ADD V0, #A0
+        LD I, load_inst
+        LD [I], V1
+    load_inst:
+        LD I, 0
+        ");
+    end;
+end;
 procedure Clear() inline;
 begin
 	asm("cls");
@@ -13,14 +31,42 @@ begin
 		RND V0, #FF
 	");
 end;
-procedure DrawLine(x,y,c:global byte);
+procedure DrawLine(x,y:global byte ; line : byte);
 begin 
     asm("
         LD I, System_x
         LD V1, [I]
-        LD I, System_c
+        LD I, System_line
         DRW V0, V1, 1
     ");
+end;
+function DrawSprite(ptr: global pointer; x,y,c : global byte) : boolean;
+begin
+    if (c<=15) then begin 
+    asm("
+
+        ;SMC to set DRW correctly
+        LD I, System_c 
+        LD V0, [I]
+        ADD V0, #30
+        LD I, drw_insertion_point+1
+        LD [I], V0
+
+        LD I, System_x
+        LD V1, [I]
+        LD V2, V0
+        LD V3, V1
+    ");
+
+    loadPointer(ptr);
+    asm("
+    drw_insertion_point:
+        DRW V2, V3, 0
+        LD V0, VF
+        
+
+    ");
+    end;
 end;
 procedure PutPixel(x,y:global byte ) ;
 begin
@@ -113,20 +159,5 @@ begin
         LD V0, V1
     ");
 end;
-//Moves ptr to I, this is a procedure because it requires Self Modifying code. 
-//This procedure is only used in codegen and should not be used in High Level code
-procedure loadPointer(ptr : global Integer);
-begin
-    if (ptr <= $fff) then begin
-        asm("
-        LD I, System_ptr
-        LD V1, [I]
-        ADD V0, #A0
-        LD I, load_inst
-        LD [I], V1
-    load_inst:
-        LD I, 0
-        ");
-    end;
-end;
+
 end.

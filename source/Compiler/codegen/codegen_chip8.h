@@ -65,8 +65,8 @@ public:
 
     QString m_jmp = "jp ";
     QString m_mov = "ld ";
-    QString m_cmp = "cmp ";
-    QString m_jne = "jz ";
+    //QString m_cmp = "cmp ";
+    //QString m_jne = "jz ";
 
     QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
@@ -136,7 +136,8 @@ public:
      */
 
 
-    void PrintBop(TokenType::Type type, QString x0, QString x1, QString value, bool is16bit=false);
+    void PrintBop(TokenType::Type type, QString x0, QString x1);
+    void PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo);
 
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 
@@ -161,8 +162,6 @@ public:
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
-
-
 
 
 };
