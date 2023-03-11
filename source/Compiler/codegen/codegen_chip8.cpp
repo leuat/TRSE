@@ -112,10 +112,15 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
             //I could make it support words, but that's for later
             node->m_expr->setForceType(TokenType::BYTE); 
             node->m_expr->Accept(this);
-            QString v0_save = getReg();PushReg();
+            QString ptr_hi, ptr_lo;
+            ptr_hi = getReg(); PushReg();
+            ptr_lo = getReg(); PushReg();
+            //TODO: replace V0 with the index register 
             as->Asm("LD "+ v0_save + ", V0");
+            as->Asm("LD V0, ptr_hi");
+            as->Asm("LD V1, ptr_lo");
             as->Asm("LD I, System_ptr");
-            as->Asm("LD V1, [I]");
+            as->Asm("LD [I], V1");
             as->Asm("call System_loadPointer");
             as->Asm("ADD I, "+ v0_save);
 
@@ -250,7 +255,7 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeProcedure> node)
 
 void CodeGenChip8::LoadPointer(QSharedPointer<Node> n)
 {
-
+    printf("here\n");
 }
 
 void CodeGenChip8::LoadVariable(QSharedPointer<Node> n)
@@ -403,10 +408,6 @@ QString CodeGenChip8::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         return "and";
     if (bop->m_op.m_type == TokenType::XOR)
         return "xor";
-    if (bop->m_op.m_type == TokenType::DIV)
-        return "idiv";
-    if (bop->m_op.m_type == TokenType::MUL)
-        return "imul";
     return " UNKNOWN BINARY OPERATION";
 }
 

@@ -65,5 +65,5 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 project_path = /home/oshaboy/Documents/GitHub/TRSE/Publish/tutorials/CHIP8/tutorials/
-open_files = ,test.ras, [ext]units/CHIP8/system/system.tru
-current_file = test.asm
+open_files = ,test.asm, test.ras, [ext]units/CHIP8/system/system.tru
+current_file = test.ras
