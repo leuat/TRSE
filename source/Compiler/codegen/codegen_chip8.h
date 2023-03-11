@@ -42,17 +42,15 @@ public:
     CodeGenChip8();
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
-//    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     virtual void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
-    //void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
-//    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
+    void dispatch(QSharedPointer<NodeProgram> node) override;
 
 
 
@@ -64,19 +62,16 @@ public:
     virtual void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
-    QString getShift(QSharedPointer<NodeVar> n);
 
 
-    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
     int m_lvl = 0;
     QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7", "V8", "V9", "VA", "VB", "VC", "VD", "VE"});
 
+/*
     QString m_jmp = "jp ";
     QString m_mov = "ld ";
-    //QString m_cmp = "cmp ";
-    //QString m_jne = "jz ";
-
+*/
     QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
@@ -128,7 +123,6 @@ public:
 
     virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
-    virtual void BuildToCmp(QSharedPointer<Node> node);
 
     virtual void CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
     virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB,QString lblJump, bool isOffpage) override;

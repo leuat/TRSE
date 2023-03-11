@@ -1,25 +1,10 @@
 unit System;
 var
 	n,x,y,c : byte; 
-    ptr : pointer;
 	word : Integer;
+    ptr : pointer;
 	
-//Moves ptr to I, this is a procedure because it requires Self Modifying code. 
-//This procedure is only used in codegen and should not be used in High Level code
-procedure loadPointer(ptr : global pointer);
-begin
-    if (ptr <= $fff) then begin
-        asm("
-        LD I, System_ptr
-        LD V1, [I]
-        ADD V0, #A0
-        LD I, load_inst
-        LD [I], V1
-    load_inst:
-        LD I, 0
-        ");
-    end;
-end;
+
 procedure Clear() inline;
 begin
 	asm("cls");
@@ -44,24 +29,23 @@ function DrawSprite(ptr: global pointer; x,y,c : global byte) : boolean;
 begin
     if (c<=15) then begin 
     asm("
-
-        ;SMC to set DRW correctly
         LD I, System_c 
         LD V0, [I]
-        ADD V0, #70
+        ADD V0, #40
         LD I, drw_insertion_point+1
         LD [I], V0
 
         LD I, System_x
         LD V1, [I]
-        LD V6, V0
-        LD V7, V1
-    ");
-
-    loadPointer(ptr);
-    asm("
+        LD V3, V0
+        LD V4, V1
+        LD I, System_ptr
+        LD V1, [I]
+		LD I, Inject_ptr
+		LD [I], V1
+		call Inject_LoadPointer
     drw_insertion_point:
-        DRW V6, V7, 0
+        DRW V3, V4, 0
         LD V0, VF
         
 
