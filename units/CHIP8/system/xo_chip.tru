@@ -1,2 +1,18 @@
 Unit XO_Chip;
 @use "system/Schip"
+var
+	ptr:pointer;
+//Moves ptr to I, this is a procedure because it requires Self Modifying code. 
+//This procedure is only used in codegen and should not be used in High Level code
+procedure loadPointer16(ptr : global pointer);
+begin
+	asm("
+	LD I, XO_CHIP_ptr
+	LD V1, [I]
+	LD I, load_inst
+	LD [I], V1
+	dw #f000
+load_inst:
+	dw 0
+	");
+end;

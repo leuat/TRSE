@@ -27,8 +27,17 @@
 #include "source/Compiler/codegen/methods/abstractmethods.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+enum CHIP8_TYPE{
+    OG,
+    SCHIP,
+    CHIPX,
+    MEGA,
+    XO_CHIP
+};
 class CodeGenChip8 : public AbstractCodeGen
 {
+private: 
+    CHIP8_TYPE chip_type = OG;
 public:
     CodeGenChip8();
 
@@ -162,7 +171,7 @@ public:
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
-
+    
 
 };
 #endif
