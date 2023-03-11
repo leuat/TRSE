@@ -48,20 +48,20 @@ begin
         ;SMC to set DRW correctly
         LD I, System_c 
         LD V0, [I]
-        ADD V0, #30
+        ADD V0, #70
         LD I, drw_insertion_point+1
         LD [I], V0
 
         LD I, System_x
         LD V1, [I]
-        LD V2, V0
-        LD V3, V1
+        LD V6, V0
+        LD V7, V1
     ");
 
     loadPointer(ptr);
     asm("
     drw_insertion_point:
-        DRW V2, V3, 0
+        DRW V6, V7, 0
         LD V0, VF
         
 
@@ -131,15 +131,19 @@ var
 hundreds, tens, units: byte;
 begin
     asm("
-        LD I, n 
+        LD I, System_n 
         LD V0,[I]
         LD I, System_hundreds
         LD B, V0
     ");
-    PrintHexChar(x,y,hundreds);
-    x+=5;
-    PrintHexChar(x,y,tens);
-    x+=5;
+    if (n>=100) then begin
+        PrintHexChar(x,y,hundreds);
+        x+=5;
+    end;
+    if (n>=10) then begin
+        PrintHexChar(x,y,tens);
+        x+=5;
+    end;
     PrintHexChar(x,y,units);
 end;
 function WaitForKey() inline : byte;

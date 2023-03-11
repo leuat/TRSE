@@ -617,7 +617,7 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
         } else if (node->m_op.m_type==TokenType::NOTEQUALS) {
             as->Asm("se " + ax_hi + "," +  rvalue_hi);
             as->Asm("sne " + ax_lo + "," +  rvalue_lo);
-        } else if (node->m_op.m_type==TokenType::GREATER){
+        } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
             as->Asm("subn "+rvalue_hi+","+ax_hi);
             as->Asm("sne VF, 0");
             as->Asm("jp "+as->jumpLabel(lblSuccess));
@@ -630,7 +630,7 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
             
 
 
-        } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
+        } else if (node->m_op.m_type==TokenType::GREATER){
             as->Asm("subn "+rvalue_hi+","+ax_hi);
             as->Asm("sne VF, 0");
             as->Asm("jp "+as->jumpLabel(lblSuccess));
@@ -641,7 +641,7 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
             as->Asm("se VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESS){
+        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
             as->Asm("subn "+rvalue_hi+","+ax_hi);
             as->Asm("sne VF, 0");
             as->Asm("jp "+as->jumpLabel(lblFailed));
@@ -653,7 +653,7 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
             as->Asm("sne VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+        } else if (node->m_op.m_type==TokenType::LESS){
             as->Asm("subn "+rvalue_hi+","+ax_hi);
             as->Asm("sne VF, 0");
             as->Asm("jp "+as->jumpLabel(lblFailed));
@@ -664,7 +664,7 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
             //!(ax > rvalue) 
             as->Asm("se VF, 0");
         }
-        PopReg();
+        PopReg(); PopReg(); PopReg();
     } else {
         node->m_left->Accept(this);
         QString ax = getReg(); PushReg();
@@ -676,27 +676,27 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
         
         else if (node->m_op.m_type==TokenType::NOTEQUALS) 
             as->Asm("sne " + ax + "," +  rvalue);
-        else if (node->m_op.m_type==TokenType::GREATER){
+        else if (node->m_op.m_type==TokenType::GREATEREQUAL){
             as->Asm("subn "+rvalue+","+ax);
-            //(ax > rvalue) 
+            //(ax >= rvalue) 
             as->Asm("sne VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
+        } else if (node->m_op.m_type==TokenType::GREATER){
             as->Asm("subn "+ax+","+rvalue);
-            //!(rvalue > ax) 
+            //!(rvalue >= ax) 
             as->Asm("se VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESS){
+        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
             as->Asm("subn "+ax+","+rvalue);
-            //(rvalue > ax) 
+            //(rvalue >= ax) 
             as->Asm("sne VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+        } else if (node->m_op.m_type==TokenType::LESS){
             as->Asm("subn "+rvalue+","+ax);
-            //!(ax > rvalue) 
+            //!(ax >= rvalue) 
             as->Asm("se VF, 0");
         }
         PopReg();
