@@ -67,7 +67,6 @@ void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo
         op="xor ";
     if (type==TokenType::Type::BITAND)
         op="and ";
-    printf("here\n");
     as->Asm(op+x0_lo+","+x1_lo);
     as->Asm(op+x0_hi+", VF");
     as->Asm(op+x0_hi+","+ x1_hi);
@@ -294,7 +293,6 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeProcedure> node)
 
 void CodeGenChip8::LoadPointer(QSharedPointer<Node> n)
 {
-    printf("here\n");
 }
 
 void CodeGenChip8::LoadVariable(QSharedPointer<Node> n)
