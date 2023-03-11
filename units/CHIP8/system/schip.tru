@@ -1,6 +1,7 @@
 Unit Schip;
 var
 	n: byte;
+	pram : array[8] of byte;
 procedure HiRes() inline;
 begin
 	asm("HIGH");
@@ -23,5 +24,31 @@ begin
 		");
 	end;
 
+end;
+procedure ScrollLeft() inline;
+begin
+	asm("SCL");
+end;
+procedure ScrollRight() inline;
+begin
+	asm("SCR");
+end;
+
+
+procedure SaveToPRAM(pram: global array[8] of byte)
+begin
+	asm("
+	LD I , Schip_pram
+	LD V7, [I]
+	LD R, V7
+	");
+end;
+procedure SaveFromPRAM(pram: global array[8] of byte)
+begin
+	asm("
+	LD V7, R
+	LD I , Schip_pram
+	LD [I], V7
+	");
 end;
 end.

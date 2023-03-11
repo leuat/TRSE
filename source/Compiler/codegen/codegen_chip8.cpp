@@ -15,7 +15,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeProgram> node){
         LD V1, [I] \n\
         LD V2, #10 \n\
         SUBN V2, V0 \n\
-        SNE VF, 0 \n\
+        SE VF, 0 \n\
         RET \n\
         ADD V0, #A0 \n\
         LD I, Inject_load_inst \n\
