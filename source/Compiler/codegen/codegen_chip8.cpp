@@ -408,10 +408,7 @@ void CodeGenChip8::PopReg() {
     m_lvl--;
 }
 
-QString CodeGenChip8::getEndType( QSharedPointer<Node> v)
-{
-    return "";
-}
+
 
 
 
@@ -563,10 +560,7 @@ void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenChip8::getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
+
 
 
 void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)

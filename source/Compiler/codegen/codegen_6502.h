@@ -30,6 +30,8 @@
 
 class CodeGen6502 : public AbstractCodeGen
 {
+private:
+    int lostStack = 0;
 public:
     CodeGen6502();
     int m_stackShift = 0;
@@ -66,8 +68,10 @@ public:
 
     void HackPointer(QSharedPointer<Node> node);
 
+    // 6502 only
+    // When using stack parameters on the 6502, you need to pop the stack N times when exiting a subroutine.
+    // this method performs this action, and is called at the end of every procedure that has stack params.
     void PopLostStack(int num) override;
-
 
 
     /*
@@ -125,9 +129,10 @@ public:
 //    void BinaryClause(QSharedPointer<Node> node);
 
     void BuildToCmp(QSharedPointer<Node> node);
-
-    void Disable16bit() override;
-    void Enable16bit() override;
+    
+    // WDC68c816 only. Turns on / off 16-bit mode.
+    void Disable16bit();
+    void Enable16bit();
 
 
 //    void BuildConditional(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed);
@@ -224,7 +229,7 @@ public:
 
     bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
 
-
+    void ProcedureStart(Assembler* as) override;
 
     //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 

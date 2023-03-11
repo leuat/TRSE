@@ -7,6 +7,7 @@
 #include "source/Compiler/ast/nodebuiltinmethod.h"
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodeprocedure.h"
+#include "source/Compiler/codegen/codegen_m68k.h"
 
 class Methods68000 : public AbstractMethods
 {
@@ -17,7 +18,9 @@ public:
 
     bool Command(QString name) override;
     void Asm(Assembler* as, QString cmd, QString a, QString b, QSharedPointer<Node> n) {
-        as->Asm(cmd + m_codeGen->getEndType(n) + " " + a +","+b);
+
+        as->Asm(cmd + (static_cast<CodeGen68k*>(m_codeGen))->getEndType(n) + " " + a +","+b);
+
     }
     void Asm(Assembler* as, QString cmd, QString a, QString b) {
         as->Asm(cmd + " " + a +","+b);

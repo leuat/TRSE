@@ -1034,11 +1034,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         InlineProcedure(node);
         return;
     }
-
     int lostStack = 0;
     for (int i=0; i<node->m_parameters.count();i++) {
         // Assign all variables
-//        node->m_parameters[i]->ApplyHack(as);
+        //node->m_parameters[i]->ApplyHack(as);
         QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
         QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(vd->m_varNode, node->m_parameters[i]->m_op, node->m_parameters[i]));
         if (vd->m_varNode->isStackVariable()) {

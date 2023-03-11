@@ -82,7 +82,9 @@ public:
     void TransformVariable(QString op, QString n, QSharedPointer<NodeVar> val);
     void TransformVariable(QString op, QString n, QString val);
 
-    QString getEndType(QSharedPointer<Node> v) override;
+
+    QString getEndType(QSharedPointer<Node> v);
+
 
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
     void IncBin(QSharedPointer<NodeVarDecl> node) override;
@@ -94,7 +96,10 @@ public:
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
     bool m_clearFlag = false;
-    QString getEndType(QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
+    /*
+     *   opcode type for the current variable/number, such as ".w" (word) in "move.w", ".b" as in "move.b"
+    */
+
 
     bool HandleSimpleAeqAopConst(QSharedPointer<NodeAssign>node);
     bool HandleSimpleAeqBopConst(QSharedPointer<NodeAssign>node);

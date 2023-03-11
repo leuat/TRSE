@@ -101,13 +101,13 @@ public:
 
     QString PushReg();
     void PopReg();
-    QString getEndType(QSharedPointer<Node> v) override;
+
 
 
 
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-    QString getEndType(QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
+
 
 
 

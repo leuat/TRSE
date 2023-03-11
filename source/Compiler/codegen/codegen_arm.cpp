@@ -288,10 +288,7 @@ void CodeGenARM::PopReg() {
     m_lvl--;
 }
 
-QString CodeGenARM::getEndType( QSharedPointer<Node> v)
-{
-    return "";
-}
+
 
 
 
@@ -713,10 +710,6 @@ void CodeGenARM::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenARM::getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2)
-{
-    return "";
-}
 
 
 void CodeGenARM::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)

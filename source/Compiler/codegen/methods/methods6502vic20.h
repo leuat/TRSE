@@ -2,13 +2,14 @@
 #define METHODS6502VIC20_H
 
 #include "methods6502.h"
+#include "source/Compiler/codegen/codegen_6502.h"
 
 class Methods6502Vic20 : public Methods6502
 {
 public:
     Methods6502Vic20();
 
-    void Assemble(Assembler* as, AbstractCodeGen* dispenser) override;
+    void Assemble(Assembler* as, AbstractCodeGen* dispenser);
 
     void PlayVIC20Sid(Assembler *as);
 

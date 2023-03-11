@@ -43,6 +43,7 @@ public:
     bool m_scaleApplied = false; // used for class array index scaling in parser
     bool m_hasGlobalFlag = false;
     TokenType::Type m_writeType = TokenType::NADA;
+    bool m_isArrayInClass = false;
     NodeVar(Token t);
 
     NodeVar(Token t, QSharedPointer<Node> expr);

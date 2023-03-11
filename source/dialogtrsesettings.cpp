@@ -71,6 +71,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leAppleIIEmulator->setText(m_ini->getString("appleii_emulator"));
     ui->leOricEmulator->setText(m_ini->getString("oric_emulator"));
     ui->leTimEmulator->setText(m_ini->getString("tim_emulator"));
+    ui->lePCWEmulator->setText(m_ini->getString("pcw_emulator"));
     ui->leTVCEmulator->setText(m_ini->getString("TVC_emulator"));
 
     ui->leTRS80->setText(m_ini->getString("trs80_emulator"));    ui->leSNES->setText(m_ini->getString("snes_emulator"));
@@ -194,6 +195,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
     m_ini->setString("tim_emulator", ui->leTimEmulator->text());
+    m_ini->setString("pcw_emulator", ui->lePCWEmulator->text());
     m_ini->setString("TVC_emulator", ui->leTVCEmulator->text());
     m_ini->setString("trs80_emulator", ui->leTRS80->text());
     m_ini->setString("snes_emulator", ui->leSNES->text());
@@ -989,5 +991,21 @@ void DialogTRSESettings::on_btnThomsonEmulator_clicked()
     if (filename!="")
         ui->leThomsonEmulator->setText(filename);
 
+}
+
+
+void DialogTRSESettings::on_btnPCWEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("PCW emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->lePCWEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnHelpPCW_clicked()
+{
+    Help("PCW Emulator","Mame");
 }
 

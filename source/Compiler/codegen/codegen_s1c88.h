@@ -105,13 +105,12 @@ public:
 
     virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
 
-    QString getEndType(QSharedPointer<Node> v) override;
+
 
 
 
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-    QString getEndType(QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
 
 

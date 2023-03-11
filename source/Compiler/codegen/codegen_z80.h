@@ -64,9 +64,11 @@ public:
     bool IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node) override {
         return false;
     }
-
-    void ExDeHl() override;
-    void SbcHlDe() override;
+    
+    // Z80 functions that does a ex de,hl and sbc hl,de. As these two instructions doesn't exist
+    // on the gameboy, they are implemented manually on the GBZ80.
+    void ExDeHl();
+    void SbcHlDe();
 
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
 
