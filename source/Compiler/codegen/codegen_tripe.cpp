@@ -19,11 +19,11 @@ void CodeGenTRIPE::HandleGenericBinop(QSharedPointer<Node> node) {
 
 }
 
-void CodeGenTRIPE::Doublette(Assembler *as, QSharedPointer<Node> a, QSharedPointer<Node> b, QString cmd)
+void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString cmd)
 {
     QString l = "";
     if (a->isPure())
-        l = TripeValue(as,a);
+        l = TripeValue(a);
     else {
         a->Accept(this);
         l = m_curTemp.pop();
@@ -31,7 +31,7 @@ void CodeGenTRIPE::Doublette(Assembler *as, QSharedPointer<Node> a, QSharedPoint
 
     QString r = "";
     if (b->isPure()) {
-        r = TripeValue(as,b);
+        r = TripeValue(b);
     }
     else {
         b->Accept(this);
@@ -48,7 +48,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
     node->DispatchConstructor(as,this);
 
 
-    QString v = getTempName("t_"+getIntType(as,node)+"_");
+    QString v = getTempName("t_"+getIntType(node)+"_");
     if (node->m_left->isWord(as) && !node->m_right->isWord(as))
         node->m_right->setForceType(TokenType::INTEGER);
     as->ClearTerm();
@@ -57,7 +57,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
     as->ClearTerm();
 
 //    as->Asm(s+"\t"+ v+"\t"+ l+"\t"+r);
-    Doublette(as, node->m_left, node->m_right,cmd);
+    Doublette( node->m_left, node->m_right,cmd);
    // return v;
 
 
@@ -236,23 +236,23 @@ void CodeGenTRIPE::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, Q
 }
 void CodeGenTRIPE::BuildToCmp(QSharedPointer<Node> node)
 {
-//    Doublette(as,node->m_left,node->m_right,"cmp");
+//    Doublette(node->m_left,node->m_right,"cmp");
 
 }
 
-QString CodeGenTRIPE::TripeNumber(Assembler* as,QSharedPointer<Node> node)
+QString CodeGenTRIPE::TripeNumber(QSharedPointer<Node> node)
 {
     QString s = Util::numToHex0(node->getValueAsInt(as));
-    QString t = getIntType(as, node);
+    QString t = getIntType( node);
 
     return t+":"+s;
 
 }
 
-QString CodeGenTRIPE::TripeValue(Assembler *as, QSharedPointer<Node> node)
+QString CodeGenTRIPE::TripeValue(QSharedPointer<Node> node)
 {
     if (node->isPureNumeric())
-        return TripeNumber(as,node);
+        return TripeNumber(node);
     if (node->isPureVariable())
         return node->getValue(as);
     return node->getValue(as);
@@ -298,7 +298,7 @@ QString CodeGenTRIPE::getInitProcedure() {
 
 void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
-    Doublette(as,nodeA->m_left,nodeB,"cmp");
+    Doublette(nodeA->m_left,nodeB,"cmp");
  //   BuildToCmp()
 //    PrintCompare(nodeA->m_left, lblSuccess,lblFailed);
     as->Asm("bne "+loopNotDone);
@@ -454,7 +454,7 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 
 
 }
-/*QString CodeGenTRIPE::BinopTemp(Assembler *as, QSharedPointer<Node> node)
+/*QString CodeGenTRIPE::BinopTemp( QSharedPointer<Node> node)
 {
 
 }
@@ -465,14 +465,14 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
     if (!node->m_left->hasArrayIndex()) {
 
         if (node->m_right->isPure()) {
-            as->Asm("mov "+TripeValue(as,node->m_left)+" "+TripeValue(as,node->m_right));
+            as->Asm("mov "+TripeValue(node->m_left)+" "+TripeValue(node->m_right));
         }
         else if (qSharedPointerDynamicCast<NodeBinOP>(node->m_right)!=nullptr) {
 //            ErrorHandler::e.Error("BinOp not yet supported",node->m_op.m_lineNumber);
             //QString tempVar = BinopTemp(as,node->m_right);
             node->m_right->Accept(this);
             QString tempVar = m_curTemp.pop();
-            as->Asm("mov "+TripeValue(as,node->m_left)+" "+tempVar);
+            as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
 
         }
         return true;
@@ -488,7 +488,7 @@ bool CodeGenTRIPE::AssignPointer(QSharedPointer<NodeAssign> node) {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
     if (var->isPointer(as) && var->hasArrayIndex()) {
         if (node->m_right->isPure() && var->m_expr->isPure()) {
-            as->Asm("store_p "+TripeValue(as,var)+" "+TripeValue(as,var->m_expr) + " " +TripeValue(as, node->m_right));
+            as->Asm("store_p "+TripeValue(var)+" "+TripeValue(var->m_expr) + " " +TripeValue( node->m_right));
 
         }
         else {
@@ -522,7 +522,7 @@ QString CodeGenTRIPE::resolveTemporaryClassPointer(QString name, int mul, int& r
     return "";
 }
 
-QString CodeGenTRIPE::getIntType(Assembler *as, QSharedPointer<Node> node) {
+QString CodeGenTRIPE::getIntType( QSharedPointer<Node> node) {
     QString t = "uint8";
     if (node->isWord(as))
         t = "uint16";
@@ -562,7 +562,7 @@ void CodeGenTRIPE::AssignToRegister(QSharedPointer<NodeAssign> node)
 {
 }
 
-void CodeGenTRIPE::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler* as)
+void CodeGenTRIPE::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 }
 
@@ -616,7 +616,7 @@ void CodeGenTRIPE::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
 
 void CodeGenTRIPE::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
-    Doublette(as,nodeA,nodeB,"cmp");
+    Doublette(nodeA,nodeB,"cmp");
     as->Asm("bne " +lblJump);
     return;
 }

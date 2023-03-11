@@ -128,7 +128,7 @@ void CodeGenARM::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenARM::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         node->m_right->Accept(this);
@@ -204,7 +204,7 @@ QString CodeGenARM::getShift(QSharedPointer<NodeVar> var)
     return "";
 }
 
-QString CodeGenARM::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenARM::getIndexScaleVal(QSharedPointer<Node> var)
 {
     if (var->isWord(as))
         return "2";
@@ -288,7 +288,7 @@ void CodeGenARM::PopReg() {
     m_lvl--;
 }
 
-QString CodeGenARM::getEndType(Assembler *as, QSharedPointer<Node> v)
+QString CodeGenARM::getEndType( QSharedPointer<Node> v)
 {
     return "";
 }
@@ -419,7 +419,7 @@ bool CodeGenARM::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenARM::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenARM::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -439,18 +439,18 @@ void CodeGenARM::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("mov "+reg+", "+getARMValue(as,node->m_right));
+    as->Asm("mov "+reg+", "+getARMValue(node->m_right));
     return;
 
 }
 
-void CodeGenARM::ProcedureStart(Assembler *as) {
+void CodeGenARM::ProcedureStart() {
     as->Asm("sub sp, sp, #16");
     as->Asm("stp x29, x30, [sp, #16]  ; store frame pointer + link register ");
 
 }
 
-void CodeGenARM::ProcedureEnd(Assembler *as) {
+void CodeGenARM::ProcedureEnd() {
     as->Asm("ldp x29, x30, [sp, #16]  ; restore frame pointer + link register ");
     as->Asm("add sp, sp, #16");
 
@@ -713,7 +713,7 @@ void CodeGenARM::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenARM::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
+QString CodeGenARM::getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2)
 {
     return "";
 }
@@ -798,7 +798,7 @@ void CodeGenARM::BuildToCmp(QSharedPointer<Node> node)
 
     as->Term();
     if (node->m_right->isPureNumeric()) {
-        as->Asm("cmp  "+ax+", " + getARMValue(as,node->m_right));
+        as->Asm("cmp  "+ax+", " + getARMValue(node->m_right));
         return;
 
     }

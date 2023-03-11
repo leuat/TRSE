@@ -64,7 +64,7 @@ public:
 
     bool UseBlocks() override { return true;}
 
-    void HackPointer(Assembler* as, QSharedPointer<Node> node);
+    void HackPointer(QSharedPointer<Node> node);
 
     void PopLostStack(int num) override;
 
@@ -202,7 +202,7 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 

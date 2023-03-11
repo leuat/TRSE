@@ -100,8 +100,8 @@ public:
      *   getEndType is only used on the M68K, where it will return a vasmm_m68k-style
      *   opcode type for the current variable/number, such as ".w" (word) in "move.w", ".b" as in "move.b"
     */
-    virtual QString getEndType(Assembler* as, QSharedPointer<Node> v) {return "";}
-    virtual QString getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
+    virtual QString getEndType(QSharedPointer<Node> v) {return "";}
+    virtual QString getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2) {return "";}
 
     // M6809 only. Loads an variable and transfers it to the internal index register.
     virtual void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType) {}
@@ -263,7 +263,7 @@ public:
      *  Sometimes compound binary clauses can be optimised. Only used on the 6502 for now.
      *
      */
-    virtual void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) {}
+    virtual void OptimizeBinaryClause(QSharedPointer<Node> node) {}
 
 
 
@@ -293,8 +293,8 @@ public:
      *  Inserts custom .asm code at every procedure start/end. Currently only used on the ARM.
      *
      */
-    virtual void ProcedureStart(Assembler* as) { }
-    virtual void ProcedureEnd(Assembler* as) { }
+    virtual void ProcedureStart() { }
+    virtual void ProcedureEnd() { }
 
     /*
      * Prints out the "incbin" command for the current cpu/assembler.

@@ -2762,7 +2762,7 @@ QString CodeGen6502::resolveTemporaryClassPointer(QString name, int mul, int& re
 
 
 
-void CodeGen6502::HackPointer(Assembler *as, QSharedPointer<Node> n)
+void CodeGen6502::HackPointer(QSharedPointer<Node> n)
 {
     if (n==nullptr)
         return;
@@ -2908,7 +2908,7 @@ void CodeGen6502::AssignToRegister(QSharedPointer<NodeAssign> node)
     return;
 }
 
-void CodeGen6502::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler* as)
+void CodeGen6502::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
     if (node->m_left->isWord(as)) // no word optimizations.. yet
         return;

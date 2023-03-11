@@ -69,7 +69,7 @@ public:
 
     bool UseBlocks() override;
 
-    void HackPointer(Assembler* as, QSharedPointer<Node> node);
+    void HackPointer(QSharedPointer<Node> node);
 
 
 

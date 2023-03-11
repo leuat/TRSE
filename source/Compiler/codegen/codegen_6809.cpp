@@ -2273,7 +2273,7 @@ QString CodeGen6809::resolveTemporaryClassPointer(QString name, int mul, int& re
 
 
 
-void CodeGen6809::HackPointer(Assembler *as, QSharedPointer<Node> n)
+void CodeGen6809::HackPointer( QSharedPointer<Node> n)
 {
     if (n==nullptr)
         return;

@@ -194,7 +194,7 @@ void CodeGenChip8::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
@@ -266,7 +266,7 @@ QString CodeGenChip8::getShift(QSharedPointer<NodeVar> var)
     return "";
 }
 
-QString CodeGenChip8::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenChip8::getIndexScaleVal( QSharedPointer<Node> var)
 {
     if (var->isWord(as))
         return "2";
@@ -408,7 +408,7 @@ void CodeGenChip8::PopReg() {
     m_lvl--;
 }
 
-QString CodeGenChip8::getEndType(Assembler *as, QSharedPointer<Node> v)
+QString CodeGenChip8::getEndType( QSharedPointer<Node> v)
 {
     return "";
 }
@@ -525,7 +525,7 @@ bool CodeGenChip8::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenChip8::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenChip8::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -545,7 +545,7 @@ void CodeGenChip8::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("ld "+reg+", "+getChip8Value(as,node->m_right));
+    as->Asm("ld "+reg+", "+getChip8Value(node->m_right));
     return;
 
 }
@@ -563,7 +563,7 @@ void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 }
 
-QString CodeGenChip8::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
+QString CodeGenChip8::getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2)
 {
     return "";
 }
@@ -611,7 +611,7 @@ void CodeGenChip8::BuildToCmp(QSharedPointer<Node> node)
 
     as->Term();
     if (node->m_right->isPureNumeric()) {
-        as->Asm("cmp  "+ax+", " + getChip8Value(as,node->m_right));
+        as->Asm("cmp  "+ax+", " + getChip8Value(node->m_right));
         return;
 
     }

@@ -77,12 +77,12 @@ public:
         return "jmp";
     }
 
-    void TransformVariable(Assembler* as, QString op, QString n, QString val, QSharedPointer<Node> t);
-    void TransformVariable(Assembler* as, QString op, QSharedPointer<NodeVar> n, QString val);
-    void TransformVariable(Assembler* as, QString op, QString n, QSharedPointer<NodeVar> val);
-    void TransformVariable(Assembler* as, QString op, QString n, QString val);
+    void TransformVariable(QString op, QString n, QString val, QSharedPointer<Node> t);
+    void TransformVariable(QString op, QSharedPointer<NodeVar> n, QString val);
+    void TransformVariable(QString op, QString n, QSharedPointer<NodeVar> val);
+    void TransformVariable(QString op, QString n, QString val);
 
-    QString getEndType(Assembler* as, QSharedPointer<Node> v) override;
+    QString getEndType(QSharedPointer<Node> v) override;
 
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
     void IncBin(QSharedPointer<NodeVarDecl> node) override;
@@ -94,7 +94,7 @@ public:
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
     bool m_clearFlag = false;
-    QString getEndType(Assembler *as, QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
+    QString getEndType(QSharedPointer<Node> v1,QSharedPointer<Node> v2) override;
 
     bool HandleSimpleAeqAopConst(QSharedPointer<NodeAssign>node);
     bool HandleSimpleAeqBopConst(QSharedPointer<NodeAssign>node);
