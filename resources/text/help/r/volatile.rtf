@@ -1,0 +1,15 @@
+<h3>Volatile</h3>
+Note: Volatile is only implemented on the 6502, and is currently experimental.
+Define a volatile byte/integer:
+<code>
+var
+   b : byte volatile at $300;
+
+</code>
+Reading / writing to this variable will not be optimised away, ie the optimiser will not remove the second line
+in the following expression:
+<code>
+b:=10;
+b:=10;
+</code>
+Volatile is useful for computers that require multiple reads/writes from specific hardware registers (such aas the SNES, NES)

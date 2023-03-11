@@ -9,8 +9,8 @@ program Image;
 //-----------------------------------------
 // uncomment JUST ONE of these three !
 //@define clear_method_line 0
-@define clear_method_box 0
-//@define clear_method_backbuffer 0
+//@define clear_method_box 0
+@define clear_method_backbuffer 0
 //-----------------------------------------
 
 @ifdef clear_method_line

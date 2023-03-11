@@ -85,6 +85,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemThomson(settings, proj);
     if (type==AbstractSystem::CHIP8)
         return new SystemChip8(settings, proj);
+    if (type==AbstractSystem::PCW)
+        return new SystemPCW(settings, proj);
 
 
     return s;

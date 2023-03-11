@@ -56,6 +56,7 @@ QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::Sy
             s==AbstractSystem::TIKI100 ||
             s==AbstractSystem::COLECO ||
             s==AbstractSystem::TRS80 ||
+            s==AbstractSystem::PCW ||
             s==AbstractSystem::AMSTRADCPC)
         return QSharedPointer<MethodsZ80>(new MethodsZ80);
 

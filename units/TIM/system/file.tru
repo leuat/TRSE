@@ -36,9 +36,9 @@ var
 		begin
 			ReadChunk_ret := false;
 			while (true) offpage do begin
-				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
+				Z80CPM::bdos_hl(Z80CPM::BF_DMA, #this.Buffer);
 		
-				if Z80CPM::bdos_a(Z80CPM::BF_READSEQ, this.FCX) <> 0 then begin
+				if Z80CPM::bdos_a(Z80CPM::BF_READSEQ, #this.FCX) <> 0 then begin
 					this.ReadPos := EOF;
 					break;
 				end;
@@ -70,28 +70,28 @@ var
 				end;
 				
 				// Make FCB
-				if Z80CPM::setfcb(File::cpmfName, this.FCX) <> 0 then begin
+				if Z80CPM::setfcb(File::cpmfName, #this.FCX) <> 0 then begin
 					break;
 				end;
 		
 				// Prepare file buffer
-				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
+				Z80CPM::bdos_hl(Z80CPM::BF_DMA, #this.Buffer);
 			
 				if cpmfMode = ModeRead then begin
-					if Z80CPM::bdos_a(Z80CPM::BF_OPEN, this.FCX) = 255 then begin
+					if Z80CPM::bdos_a(Z80CPM::BF_OPEN, #this.FCX) = 255 then begin
 						break;
 					end;
 					// Read first chunk from the file
 					//Handle::ReadChunk(this);
 					this.ReadChunk();
 				end else begin
-					if Z80CPM::bdos_a(Z80CPM::BF_FIND1ST, this.FCX) <> 255 then begin
-						if Z80CPM::bdos_a(Z80CPM::BF_DELETE, this.FCX) = 255 then begin
+					if Z80CPM::bdos_a(Z80CPM::BF_FIND1ST, #this.FCX) <> 255 then begin
+						if Z80CPM::bdos_a(Z80CPM::BF_DELETE, #this.FCX) = 255 then begin
 							break;
 						end;
 					end;
 		
-					if Z80CPM::bdos_a(Z80CPM::BF_CREATE, this.FCX) = 255 then begin
+					if Z80CPM::bdos_a(Z80CPM::BF_CREATE, #this.FCX) = 255 then begin
 						break;
 					end;
 		
@@ -116,8 +116,8 @@ var
 		begin
 			Close_ret := false;
 			while (1) do begin
-				Z80CPM::bdos_hl(Z80CPM::BF_DMA, this.Buffer);
-				if Z80CPM::bdos_a(Z80CPM::BF_CLOSE, this.FCX) = 255 then break;
+				Z80CPM::bdos_hl(Z80CPM::BF_DMA, #this.Buffer);
+				if Z80CPM::bdos_a(Z80CPM::BF_CLOSE, #this.FCX) = 255 then break;
 			
 				// Success
 				Close_ret := true;

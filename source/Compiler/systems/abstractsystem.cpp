@@ -144,7 +144,7 @@ QString AbstractSystem::StringFromProcessor(QString s) {
     if (s == "JDH8") return "PJDH8";
     if (s == "TRS80COCO" || s=="VECTREX" || s=="THOMSON") return "M6809";
     if (s == "POKEMONMINI") return "S1C88";
-    if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC") return "Z80";
+    if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC" || s=="PCW") return "Z80";
     if (s == "CHIP8") return "PCHIP8";
     qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
     return "";
@@ -229,6 +229,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return THOMSON;
     if (s.toLower()=="chip8")
         return CHIP8;
+    if (s.toLower()=="pcw")
+        return PCW;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -273,6 +275,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == VECTREX) return "VECTREX";
     if (s == THOMSON) return "THOMSON";
     if (s == CHIP8) return "CHIP8";
+    if (s == PCW) return "PCW";
     return "";
 }
 
