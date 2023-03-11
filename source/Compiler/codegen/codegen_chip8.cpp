@@ -47,6 +47,7 @@ void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo
 void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 {
     as->Comment("Binary operation of type: "+TokenType::getType(node->m_op.m_type));
+    auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
     if (node->isWord(as)) {
         node->m_left->Accept(this);
         QString a = getReg();
@@ -62,8 +63,14 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
         PopReg();
         PrintBop16(node->m_op.m_type,a,b,c,d);
 
-    }
-    else {
+    } else if (right_imm!=nullptr &&
+        (node->m_op.m_type == TokenType::Type::PLUS || node->m_op.m_type == TokenType::Type::MINUS)){
+            QString negate = node->m_op.m_type==TokenType::Type::MINUS?"-":"";
+            node->m_left->Accept(this);
+            QString a = getReg();
+            as->Asm("ADD "+a+", "+negate+right_imm->StringValue());
+        
+    }  else {
         node->m_left->Accept(this);
         QString a = getReg();
         PushReg();
@@ -110,50 +117,51 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
     } else if (node->m_expr!=nullptr) {
         if (node->isPointer(as)) {
             //I could make it support words, but that's for later
+            QString x0 = getReg(); PushReg();
+            QString x1 = getReg(); PushReg();
             node->m_expr->setForceType(TokenType::BYTE); 
             node->m_expr->Accept(this);
+            QString index;
             QString ptr_hi, ptr_lo;
+            index = getReg(); PushReg();
             ptr_hi = getReg(); PushReg();
-            ptr_lo = getReg(); PushReg();
+            ptr_lo = getReg(); 
             //TODO: replace V0 with the index register 
-            as->Asm("LD "+ v0_save + ", V0");
-            as->Asm("LD V0, ptr_hi");
-            as->Asm("LD V1, ptr_lo");
+            as->Asm("LD V0, "+ptr_hi);
+            as->Asm("LD V1, "+ptr_lo);
             as->Asm("LD I, System_ptr");
             as->Asm("LD [I], V1");
             as->Asm("call System_loadPointer");
-            as->Asm("ADD I, "+ v0_save);
+            as->Asm("ADD I, "+ index);
 
             if (node->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("ADD I, " + v0_save);
-                PopReg();
+                as->Asm("ADD I, " + index);
                 as->Asm("LD V1, [I]");
-                QString x0 = getReg(); PushReg();
-                QString x1 = getReg(); 
                 as->Asm("LD " +x0+", V0");
                 as->Asm("LD " +x1+", V1");
-                PopReg();
             } else {
-                PopReg();
                 as->Asm("LD V0, [I]");
                 QString x0 = getReg();
                 as->Asm("LD " +x0+", V0");
             }
+            PopReg(); PopReg(); PopReg(); PopReg();
 
 
             return;
 
         } else {
             // Regular array
+            QString x0 = getReg(); PushReg();
+            QString x1 = getReg(); PushReg();
             node->m_expr->setForceType(TokenType::BYTE);
             node->m_expr->Accept(this);
+            QString index;
+            index = getReg(); 
             as->Asm("LD I, "+node->getValue(as));
-            as->Asm("ADD I, V0");
+            as->Asm("ADD I, "+index);
             if (node->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("ADD I, V0");
+                as->Asm("ADD I, "+index);
                 as->Asm("LD V1, [I]");
-                QString x0 = getReg(); PushReg();
-                QString x1 = getReg(); 
                 as->Asm("LD " +x0+", V0");
                 as->Asm("LD " +x1+", V1");
                 PopReg();
@@ -163,6 +171,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("LD " +x0+", V0");
 
             }
+            PopReg(); PopReg(); PopReg(); PopReg();
             return;
         }
     }
@@ -586,121 +595,217 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
 
 
-    /*
-    QString jg ="jg ";
-    QString jl ="jl ";
-    QString jge ="jge ";
-    QString jle ="jle ";
-    if (!(node->m_left->isSigned(as) || node->m_right->isSigned(as))) {
-        jg = "bhi ";
-        jl = "blo ";
-        jge = "bhi ";
-        jle = "blo ";
-    }*/
 
-
-    //as->Term();
-
-    //as->Term();
     as->Comment("Evaluate full expression");
     if (node->isWord(as)){
-        node->m_left->Accept(this);
-        QString ax_hi = getReg(); PushReg();
-        QString ax_lo = getReg(); PushReg();
-        node->m_right->Accept(this);
-        QString rvalue_hi, rvalue_lo; 
-        rvalue_hi = getReg(); PushReg();
-        rvalue_lo = getReg();
+
         if (node->m_op.m_type==TokenType::EQUALS){
-            as->Asm("sne " + ax_hi + "," + rvalue_hi);
-            as->Asm("se " + ax_lo + ","+ rvalue_lo);
+
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (left_imm && right_imm){
+                if (left_imm->m_val != right_imm->m_val)
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+                return;
+                
+            } else if (left_imm) { 
+                node->m_right->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("sne " + ax_hi + "," + left_imm->StringValue()+">>8");
+                as->Asm("se " + ax_lo + ","+ left_imm->StringValue()+"&#ff");
+
+                PopReg();
+            } else if (right_imm) {
+                node->m_left->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("sne " + ax_hi + "," + right_imm->StringValue()+">>8");
+                as->Asm("se " + ax_lo + ","+ right_imm->StringValue()+"&#ff");
+                PopReg();
+            } else {
+                QString ax_lo, ax_hi, bx_hi, bx_lo; 
+                ax_hi = getReg(); PushReg();
+                ax_lo = getReg(); PushReg();
+                bx_hi = getReg(); PushReg();
+                bx_lo = getReg();
+                as->Asm("sne " + ax_hi + "," + bx_hi);
+                as->Asm("se " + ax_lo + ","+ bx_lo);
+                PopReg(); PopReg(); PopReg();
+            }
 
         } else if (node->m_op.m_type==TokenType::NOTEQUALS) {
-            as->Asm("se " + ax_hi + "," +  rvalue_hi);
-            as->Asm("sne " + ax_lo + "," +  rvalue_lo);
-        } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
-            as->Asm("subn "+rvalue_hi+","+ax_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblSuccess));
-            as->Asm("subn "+ax_hi+","+rvalue_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblFailed));
-            as->Asm("subn "+rvalue_lo+","+ax_lo);
-            as->Asm("sne VF, 0");
 
-            
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (left_imm && right_imm){
+                if (left_imm->m_val == right_imm->m_val)
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+                return;
+
+                
+            } else if (left_imm) { 
+                node->m_right->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("se " + ax_hi + "," + left_imm->StringValue()+">>8");
+                as->Asm("sne " + ax_lo + ","+ left_imm->StringValue()+"&#ff");
+
+                PopReg();
+            } else if (right_imm) {
+                node->m_left->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("se " + ax_hi + "," + right_imm->StringValue()+">>8");
+                as->Asm("sne " + ax_lo + ","+ right_imm->StringValue()+"&#ff");
+                PopReg();
+            } else {
+                QString ax_lo, ax_hi, bx_hi, bx_lo; 
+                ax_hi = getReg(); PushReg();
+                ax_lo = getReg(); PushReg();
+                bx_hi = getReg(); PushReg();
+                bx_lo = getReg();
+                as->Asm("se " + ax_hi + "," + bx_hi);
+                as->Asm("sne " + ax_lo + ","+ bx_lo);
+                PopReg(); PopReg(); PopReg();
+            }
+        } else {
+
+            QString ax_lo, ax_hi, bx_hi, bx_lo; 
+            node->m_left->Accept(this);
+            ax_hi = getReg(); PushReg();
+            ax_lo = getReg(); PushReg();
+            node->m_right->Accept(this);
+            bx_hi = getReg(); PushReg();
+            bx_lo = getReg();
+            if (node->m_op.m_type==TokenType::GREATEREQUAL){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+bx_lo+","+ax_lo);
+                as->Asm("sne VF, 0");
+
+                
 
 
-        } else if (node->m_op.m_type==TokenType::GREATER){
-            as->Asm("subn "+rvalue_hi+","+ax_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblSuccess));
-            as->Asm("subn "+ax_hi+","+rvalue_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblFailed));
-            as->Asm("subn "+ax_lo+","+rvalue_lo);
-            as->Asm("se VF, 0");
+            } else if (node->m_op.m_type==TokenType::GREATER){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+ax_lo+","+bx_lo);
+                as->Asm("se VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
-            as->Asm("subn "+rvalue_hi+","+ax_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblFailed));
-            as->Asm("subn "+ax_hi+","+rvalue_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblSuccess));
-            as->Asm("subn "+ax_lo+","+rvalue_lo);
-            //(rvalue > ax) 
-            as->Asm("sne VF, 0");
+            } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+ax_lo+","+bx_lo);
+                //(bx > ax) 
+                as->Asm("sne VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESS){
-            as->Asm("subn "+rvalue_hi+","+ax_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblFailed));
-            as->Asm("subn "+ax_hi+","+rvalue_hi);
-            as->Asm("sne VF, 0");
-            as->Asm("jp "+as->jumpLabel(lblSuccess));
-            as->Asm("subn "+rvalue_lo+","+ax_lo);
-            //!(ax > rvalue) 
-            as->Asm("se VF, 0");
+            } else if (node->m_op.m_type==TokenType::LESS){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+bx_lo+","+ax_lo);
+                //!(ax > bx) 
+                as->Asm("se VF, 0");
+            }
+            PopReg(); PopReg(); PopReg();
         }
-        PopReg(); PopReg(); PopReg();
     } else {
-        node->m_left->Accept(this);
-        QString ax = getReg(); PushReg();
-        node->m_right->Accept(this);
-        QString rvalue; 
-        rvalue = getReg();
-        if (node->m_op.m_type==TokenType::EQUALS)
-            as->Asm("se " + ax + "," + rvalue);
         
-        else if (node->m_op.m_type==TokenType::NOTEQUALS) 
-            as->Asm("sne " + ax + "," +  rvalue);
-        else if (node->m_op.m_type==TokenType::GREATEREQUAL){
-            as->Asm("subn "+rvalue+","+ax);
-            //(ax >= rvalue) 
-            as->Asm("sne VF, 0");
+
+        if (node->m_op.m_type==TokenType::EQUALS){
+
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (right_imm && left_imm){
+                if (left_imm->m_val != right_imm->m_val) 
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+
+            } else if (right_imm){
+                node->m_left->Accept(this);
+                QString ax= getReg();
+                as->Asm("se " + ax + "," + right_imm->StringValue());
+            }else if (left_imm){
+                node->m_right->Accept(this);
+                QString ax= getReg();
+                as->Asm("se " + ax + "," + left_imm->StringValue());
+            } else {
+                QString ax= getReg(); PushReg();
+                QString bx= getReg();
+                as->Asm("se " + ax + "," + bx);
+                PopReg();
+            }   
+            return;
+        
+        }else if (node->m_op.m_type==TokenType::NOTEQUALS) {
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (right_imm && left_imm){
+                if (left_imm->m_val == right_imm->m_val) 
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+            } else if (right_imm) {
+                node->m_left->Accept(this);
+                QString ax= getReg();
+                as->Asm("sne " + ax + "," + right_imm->StringValue());
+            } else if (left_imm) {
+                node->m_right->Accept(this);
+                QString ax= getReg();
+                as->Asm("sne " + ax + "," + left_imm->StringValue());
+            } else {
+                QString ax= getReg(); PushReg();
+                QString bx= getReg();
+                as->Asm("sne " + ax + "," + bx);
+                PopReg();
+            }
+            return;
+        } else {
+
+            node->m_left->Accept(this);
+            QString ax = getReg(); PushReg();
+            node->m_right->Accept(this);
+            QString bx = getReg();
+            if (node->m_op.m_type==TokenType::GREATEREQUAL){
+                as->Asm("subn "+bx+","+ax);
+                //(ax >= bx) 
+                as->Asm("sne VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::GREATER){
-            as->Asm("subn "+ax+","+rvalue);
-            //!(rvalue >= ax) 
-            as->Asm("se VF, 0");
+            } else if (node->m_op.m_type==TokenType::GREATER){
+                as->Asm("subn "+ax+","+bx);
+                //!(bx >= ax) 
+                as->Asm("se VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
-            as->Asm("subn "+ax+","+rvalue);
-            //(rvalue >= ax) 
-            as->Asm("sne VF, 0");
+            } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+                as->Asm("subn "+ax+","+bx);
+                //(bx >= ax) 
+                as->Asm("sne VF, 0");
 
 
-        } else if (node->m_op.m_type==TokenType::LESS){
-            as->Asm("subn "+rvalue+","+ax);
-            //!(ax >= rvalue) 
-            as->Asm("se VF, 0");
+            } else if (node->m_op.m_type==TokenType::LESS){
+                as->Asm("subn "+bx+","+ax);
+                //!(ax >= bx) 
+                as->Asm("se VF, 0");
+            }
+            PopReg();
         }
-        PopReg();
     }
     as->Asm("jp "+as->jumpLabel(lblFailed));
 
@@ -713,14 +818,6 @@ void CodeGenChip8::BuildToCmp(QSharedPointer<Node> node)
 
 
 
-    /*
-    //if (node->m_op.m_type==TokenType::EQUALS){
-        as->Asm("seq " + ax + "," + rvalue);
-    
-    } else if (node->m_op.m_type==TokenType::NOTEQUALS) {
-        as->Asm("sne " + ax + "," +  rvalue);
-    }
-    */
     
     PopReg();
 }
