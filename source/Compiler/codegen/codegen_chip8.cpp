@@ -123,9 +123,9 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
             node->m_expr->Accept(this);
             QString index;
             QString ptr_hi, ptr_lo;
-            index = getReg(); PushReg();
             ptr_hi = getReg(); PushReg();
-            ptr_lo = getReg(); 
+            ptr_lo = getReg(); PushReg();
+            index = getReg(); 
             //TODO: replace V0 with the index register 
             as->Asm("LD V0, "+ptr_hi);
             as->Asm("LD V1, "+ptr_lo);
