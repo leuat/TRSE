@@ -83,6 +83,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::SIGNED] = "signed";
     m_typeFlags[TokenType::GLOBAL] = "global";
     m_typeFlags[TokenType::STACK] = "stack";
+    m_typeFlags[TokenType::VOLATILE] = "volatile";
 
     while (!done)  {
         done = true;
@@ -1661,9 +1662,13 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
     //    qDebug() << "IS REGISTER: "<< m_currentToken.m_value << isRegister;
     //    qDebug() << "SUBVAR  "<< isSubVar << m_currentToken.m_value;
+    if (!isSubVar)
+        m_isClassReference = false;
 
-    if (m_currentToken.m_value == Syntax::s.thisName)
+    if (m_currentToken.m_value == Syntax::s.thisName) {
         m_currentToken.m_value = m_symTab->m_currentClass+"_"+m_currentToken.m_value;
+        m_isClassReference = m_currentToken.m_isReference;
+    }
 
     m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
     // Rename "i" with "_var_i" for disallowed variables (Z80, GB)
@@ -3907,6 +3912,12 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         // the entire thing is being transformed to writing to a pointer
         int scale = 1;
         if (s->m_isClassVariable) {
+            v->setReference(m_isClassReference);
+            if (s->m_type!="POINTER")
+            if (s->m_arrayType!=TokenType::NADA)
+                if (v->m_expr==nullptr)
+                    if (!v->isReference())
+                        ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v->value+")</font>",m_currentToken.m_lineNumber);
             QString et = s->getEndType();
             if (s->m_type.toLower()=="pointer") {
                 v->m_writeType = Syntax::s.m_currentSystem->getPointerType();
@@ -6015,7 +6026,6 @@ void Parser::HandleSpriteCompiler()
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)
     {
-
         QList<BuiltInFunction::Type> paramList;
         paramList<<BuiltInFunction::ADDRESS;
         paramList<<BuiltInFunction::ADDRESS;

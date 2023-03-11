@@ -149,7 +149,7 @@ private:
     QString m_procPrefix = "";
     int m_prevPercent = -1;
     int m_pass = 0, m_acc=0;
-
+    bool m_isClassReference = false;
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;

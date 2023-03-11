@@ -219,6 +219,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemoric.cpp \
+    source/Compiler/systems/systempcw.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systempokemonmini.cpp \
     source/Compiler/systems/systemsnes.cpp \
@@ -529,6 +530,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemoric.h \
+    source/Compiler/systems/systempcw.h \
     source/Compiler/systems/systemplus4.h \
     source/Compiler/systems/systempokemonmini.h \
     source/Compiler/systems/systemsnes.h \

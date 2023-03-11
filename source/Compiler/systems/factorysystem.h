@@ -40,6 +40,7 @@
 #include "systemvectrex.h"
 #include "systemthomson.h"
 #include "systemchip8.h"
+#include "systempcw.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem
