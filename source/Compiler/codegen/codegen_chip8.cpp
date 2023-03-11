@@ -583,7 +583,6 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
-    //    as->Asm("pha"); // Push that baby
 
 
     /*
@@ -603,41 +602,105 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 
     //as->Term();
     as->Comment("Evaluate full expression");
-    node->m_left->Accept(this);
-    QString ax = getReg(); PushReg();
-    node->m_right->Accept(this);
-    QString rvalue; 
-    rvalue = getReg();
-    if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("se " + ax + "," + rvalue);
-    
-     else if (node->m_op.m_type==TokenType::NOTEQUALS) 
-        as->Asm("sne " + ax + "," +  rvalue);
-     else if (node->m_op.m_type==TokenType::GREATER){
-        as->Asm("subn "+rvalue+","+ax);
-        //(ax > rvalue) 
-        as->Asm("sne VF, 0");
+    if (node->isWord(as)){
+        node->m_left->Accept(this);
+        QString ax_hi = getReg(); PushReg();
+        QString ax_lo = getReg(); PushReg();
+        node->m_right->Accept(this);
+        QString rvalue_hi, rvalue_lo; 
+        rvalue_hi = getReg(); PushReg();
+        rvalue_lo = getReg();
+        if (node->m_op.m_type==TokenType::EQUALS){
+            as->Asm("sne " + ax_hi + "," + rvalue_hi);
+            as->Asm("se " + ax_lo + ","+ rvalue_lo);
+
+        } else if (node->m_op.m_type==TokenType::NOTEQUALS) {
+            as->Asm("se " + ax_hi + "," +  rvalue_hi);
+            as->Asm("sne " + ax_lo + "," +  rvalue_lo);
+        } else if (node->m_op.m_type==TokenType::GREATER){
+            as->Asm("subn "+rvalue_hi+","+ax_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblSuccess));
+            as->Asm("subn "+ax_hi+","+rvalue_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblFailed));
+            as->Asm("subn "+rvalue_lo+","+ax_lo);
+            as->Asm("sne VF, 0");
+
+            
 
 
-     } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
-        as->Asm("subn "+ax+","+rvalue);
-        //!(rvalue > ax) 
-        as->Asm("se VF, 0");
+        } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
+            as->Asm("subn "+rvalue_hi+","+ax_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblSuccess));
+            as->Asm("subn "+ax_hi+","+rvalue_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblFailed));
+            as->Asm("subn "+ax_lo+","+rvalue_lo);
+            as->Asm("se VF, 0");
 
 
-     } else if (node->m_op.m_type==TokenType::LESS){
-        as->Asm("subn "+ax+","+rvalue);
-        //(rvalue > ax) 
-        as->Asm("sne VF, 0");
+        } else if (node->m_op.m_type==TokenType::LESS){
+            as->Asm("subn "+rvalue_hi+","+ax_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblFailed));
+            as->Asm("subn "+ax_hi+","+rvalue_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblSuccess));
+            as->Asm("subn "+ax_lo+","+rvalue_lo);
+            //(rvalue > ax) 
+            as->Asm("sne VF, 0");
 
 
-     } else if (node->m_op.m_type==TokenType::LESSEQUAL){
-        as->Asm("subn "+rvalue+","+ax);
-        //!(ax > rvalue) 
-        as->Asm("se VF, 0");
-     }
-    PopReg();
-    
+        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+            as->Asm("subn "+rvalue_hi+","+ax_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblFailed));
+            as->Asm("subn "+ax_hi+","+rvalue_hi);
+            as->Asm("sne VF, 0");
+            as->Asm("jp "+as->jumpLabel(lblSuccess));
+            as->Asm("subn "+rvalue_lo+","+ax_lo);
+            //!(ax > rvalue) 
+            as->Asm("se VF, 0");
+        }
+        PopReg();
+    } else {
+        node->m_left->Accept(this);
+        QString ax = getReg(); PushReg();
+        node->m_right->Accept(this);
+        QString rvalue; 
+        rvalue = getReg();
+        if (node->m_op.m_type==TokenType::EQUALS)
+            as->Asm("se " + ax + "," + rvalue);
+        
+        else if (node->m_op.m_type==TokenType::NOTEQUALS) 
+            as->Asm("sne " + ax + "," +  rvalue);
+        else if (node->m_op.m_type==TokenType::GREATER){
+            as->Asm("subn "+rvalue+","+ax);
+            //(ax > rvalue) 
+            as->Asm("sne VF, 0");
+
+
+        } else if (node->m_op.m_type==TokenType::GREATEREQUAL){
+            as->Asm("subn "+ax+","+rvalue);
+            //!(rvalue > ax) 
+            as->Asm("se VF, 0");
+
+
+        } else if (node->m_op.m_type==TokenType::LESS){
+            as->Asm("subn "+ax+","+rvalue);
+            //(rvalue > ax) 
+            as->Asm("sne VF, 0");
+
+
+        } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+            as->Asm("subn "+rvalue+","+ax);
+            //!(ax > rvalue) 
+            as->Asm("se VF, 0");
+        }
+        PopReg();
+    }
     as->Asm("jp "+as->jumpLabel(lblFailed));
 
 

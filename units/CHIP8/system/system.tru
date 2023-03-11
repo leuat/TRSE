@@ -1,6 +1,6 @@
 unit System;
 var
-	x,y,c : byte; 
+	n,x,y,c : byte; 
     ptr : pointer;
 	word : Integer;
 	
@@ -126,7 +126,22 @@ begin
         DRW V0, V1, 5 
     ");
 end;
-
+procedure PrintByte(n,x,y:global byte);
+var 
+hundreds, tens, units: byte;
+begin
+    asm("
+        LD I, n 
+        LD V0,[I]
+        LD I, System_hundreds
+        LD B, V0
+    ");
+    PrintHexChar(x,y,hundreds);
+    x+=5;
+    PrintHexChar(x,y,tens);
+    x+=5;
+    PrintHexChar(x,y,units);
+end;
 function WaitForKey() inline : byte;
 begin
     asm("LD V0, K");
