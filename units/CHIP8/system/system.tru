@@ -59,7 +59,7 @@ begin
     end;
     DrawSprite := result;
 end;
-procedure PutPixel(x,y:global byte ) ;
+procedure PutPixel(x,y:global byte) inline;
 begin
     DrawLine(x,y,$80);
 end;
@@ -137,7 +137,7 @@ begin
     end;
     PrintHexChar(x,y,units);
 end;
-function WaitForKey()  : byte;
+function WaitForKey() : byte;
 begin
     asm("
         LD V0, K
