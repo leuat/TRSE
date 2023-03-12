@@ -103,7 +103,9 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         m_node->m_params[0]->Accept(m_codeGen);
         QString var = as->m_varStack.pop();
         QString reg = as->m_regAcc.Get();
-        QString e = (static_cast<CodeGen68k*>(m_codeGen))->getEndType(as,m_node->m_params[0]);
+
+        QString e = (static_cast<CodeGen68k*>(m_codeGen))->getEndType(m_node->m_params[0]);
+
         if (var!=reg)
             as->Asm("move"+e + " "+var+","+ reg);
         as->Asm("cmp"+e+" #0,"+reg);
@@ -319,7 +321,8 @@ void Methods68000::Memcpy(Assembler *as)
     m_node->m_params[1]->Accept(m_codeGen);
 
     if (!(m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0))
-       Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
+
+       Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(m_node->m_params[1]),as->m_varStack.pop(), a0);
 
 
     bool ok = true;
@@ -333,7 +336,8 @@ void Methods68000::Memcpy(Assembler *as)
   //  qDebug()  << "a2";
      m_node->m_params[3]->Accept(m_codeGen);
     if (ok)
-        Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
+
+        Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(m_node->m_params[3]),as->m_varStack.pop(), a1);
 
     as->Label(lbl);
     as->Asm("move"+ending+" ("+a0+")+,("+a1+")+");
@@ -368,7 +372,9 @@ void Methods68000::MemcpyUnroll(Assembler *as)
     m_codeGen->LoadAddress(m_node->m_params[0],a0);
  //   m_codeGen->LoadAddress()
     m_node->m_params[1]->Accept(m_codeGen);
-    Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(as,m_node->m_params[1]),as->m_varStack.pop(), a0);
+
+    Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(m_node->m_params[1]),as->m_varStack.pop(), a0);
+
 
 
     m_codeGen->LoadAddress(m_node->m_params[2],a1);
@@ -376,7 +382,9 @@ void Methods68000::MemcpyUnroll(Assembler *as)
     if (m_node->m_params[3]->isPureNumeric() && m_node->m_params[3]->getValueAsInt(as)==0)
         ok = false;
     if (ok)
-        Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(as,m_node->m_params[3]),as->m_varStack.pop(), a1);
+
+        Asm(as,"add"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(m_node->m_params[3]),as->m_varStack.pop(), a1);
+
     for (int i=0;i<cnt;i++)
         as->Asm("move"+ending+" ("+a0+")+,("+a1+")+");
 
@@ -577,7 +585,9 @@ void Methods68000::MatMulVecNormalZ(Assembler *as, bool isZonly)
 //    m_codeGen->LoadVariable(m_node->m_params[3]);
     as->Asm("  moveq.l #0,d7");
 
-    as->Asm("move"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(as,m_node->m_params[3])+" "+ as->m_varStack.pop()+",d7");
+
+    as->Asm("move"+(static_cast<CodeGen68k*>(m_codeGen))->getEndType(m_node->m_params[3])+" "+ as->m_varStack.pop()+",d7");
+
 
 //    moveq.l #0,d6
     //	move.w index,d6

@@ -347,7 +347,7 @@ void CodeGen6502::HandleMulDiv(QSharedPointer<Node> node) {
     if (node->m_op.m_type==TokenType::MUL) {
         Disable16bit();
 
-        if (node->isWord(as))
+        if (node->isWord(as) || node->getWriteType()==TokenType::INTEGER)
             Mul16x8(node);
         else
             EightBitMul(node);
@@ -573,8 +573,11 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
         node->SwapNodes();
     }
-    //    Disable16bit();
-    if (node->m_left->isWord(as)) {
+/*    if (node->m_left->getWriteType()!=TokenType::INTEGER && node->m_right->getWriteType()==TokenType::INTEGER) {
+        node->SwapNodes();
+    }
+  */  //    Disable16bit();
+    if (node->m_left->isWord(as) || node->m_left->getWriteType()==TokenType::INTEGER) {
         LoadVariable(node->m_left);
         as->Term();
 
@@ -1873,8 +1876,13 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     //    bool disable16bit =false;
 
-    if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
+    if (((node->getOrgType(as)!=TokenType::INTEGER) && node->m_forceType == TokenType::INTEGER)) {
         as->Asm("ldy #0 ; lhs is byte, but integer required");
+    }
+    as->Comment("CAST type "+TokenType::getType(node->m_forceType));
+    if (node->m_writeType==TokenType::BYTE) {
+       // as->Asm("ldy #0 ; lhs is byte, but integer required");
+        as->Asm("ldy #0");
     }
     // Optimization : ldx #3, lda a,x   FIX
     if ((s->m_arrayType==TokenType::BYTE||unknownType) && node->m_expr!=nullptr) {
@@ -2060,7 +2068,9 @@ void CodeGen6502::StoreVariable(QSharedPointer<NodeVar> node) {
         { // IS NUMBER optimize}
             if (node->getArrayType(as)==TokenType::INTEGER) {
                 // Store integer array
-                int i = node->m_expr->getValueAsInt(as)*2;
+                int i = node->m_expr->getValueAsInt(as);
+                if (node->m_writeType==TokenType::NADA)
+                    i*=2; // pure integer, not a class var
                 as->Asm("sta " + getValue(node) + "+"+ QString::number(i) + vol);
                 Disable16bit();
                 as->Asm("sty "  + getValue(node) +"+"+ QString::number(i+1) + vol);
@@ -2798,7 +2808,7 @@ QString CodeGen6502::resolveTemporaryClassPointer(QString name, int mul, int& re
 
 
 
-void CodeGen6502::HackPointer(Assembler *as, QSharedPointer<Node> n)
+void CodeGen6502::HackPointer(QSharedPointer<Node> n)
 {
     if (n==nullptr)
         return;
@@ -2936,7 +2946,7 @@ void CodeGen6502::AssignToRegister(QSharedPointer<NodeAssign> node)
     return;
 }
 
-void CodeGen6502::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler* as)
+void CodeGen6502::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
     if (node->m_left->isWord(as)) // no word optimizations.. yet
         return;
@@ -3164,8 +3174,5 @@ bool CodeGen6502::StoreStackParameter(QSharedPointer<NodeAssign> n)
 
 
     return true;
-
-}
-void CodeGen6502::ProcedureStart(Assembler* as){
 
 }

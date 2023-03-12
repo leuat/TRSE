@@ -391,6 +391,24 @@ void AbstractCodeGen::IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<
 
 }
 
+void AbstractCodeGen::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive)
+{
+
+    Token t = nodeA->m_op;
+
+    auto nasm = NodeFactory::CreateAsm(t,"\t"+getJmp(isLarge) + " " + loopNotDone + "\n");
+    auto block = NodeFactory::CreateBlockFromStatements(t,QVector<QSharedPointer<Node>>() <<nasm);
+
+    if (inclusive)
+        nodeB = NodeFactory::CreateBinop(t,TokenType::PLUS,nodeB,NodeFactory::CreateNumber(t,1));
+
+    auto cond = NodeFactory::CreateSingleConditional(t,TokenType::EQUALS,isLarge,nodeA->m_left, nodeB,block);
+
+
+    as->Comment("Executing integer comparison " + nodeB->getValue(as));
+    cond->Accept(this);
+}
+
 void AbstractCodeGen::SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive)
 {
     QString loopDone = as->NewLabel("forLoopDone");
@@ -413,7 +431,6 @@ void AbstractCodeGen::LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer
     QString loopForFix = as->NewLabel("forLoopFix");
     QString loopDone = as->NewLabel("forLoopDone");
     QString loopNotDone = as->NewLabel("forLoopNotDone");
-
     as->Label(loopForFix);
     node->m_block->Accept(this);
     as->m_stack["for"].pop();
@@ -794,7 +811,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
             }
         }
 
-        OptimizeBinaryClause(node,as);
+        OptimizeBinaryClause(node);
         BuildConditional(node,  lblSuccess, lblFailed, offpage);
         return;
     }
@@ -1049,8 +1066,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         na->Accept(this);
     }
 
-
-    ProcedureStart(as);
+    ProcedureStart();
 //    if (node->m_procedure->m_returnType!=nullptr)
   //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
@@ -1059,7 +1075,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         if (node->m_procedure->m_returnType->m_op.m_type!=node->m_castType) {
             Cast(node->m_procedure->m_returnType->m_op.m_type, node->m_castType);
         }
-    ProcedureEnd(as);
+    ProcedureEnd();
     PopLostStack(lostStack);
 }
 /*

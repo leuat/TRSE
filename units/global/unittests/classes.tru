@@ -9,7 +9,7 @@ var
 		@ifdef X86
 		str: pointer;
 		@endif
-		
+		b : integer;
 		function getValue() : integer;
 		begin
 //			Common::DebugValue(this.str);
@@ -20,9 +20,19 @@ var
 		begin
 			this.str := ss1;
 		end;
+		procedure MulTest1();
+		begin
+			this.b:=this.b*this.a;
+		end;
+		procedure MulTest2();
+		begin
+			this.b:=this.a*this.b;
+		end;
 //		c : array[3] of byte;
 	end;
 	s1 : StrItem;	
+	ps1 : pointer of StrItem;
+
 		
 	StringList = class
 		items : array[16] of StrItem;	
@@ -246,6 +256,49 @@ begin
 end;
 
 
+procedure MTest1();
+begin
+	s1.a := 100;
+	s1.b := 100;
+	s1.MulTest1();	
+	Vars::text := "M1:";
+	if (s1.b=10000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+procedure MTest2();
+begin
+	s1.a := 200;
+	s1.b := 200;
+	s1.MulTest2();	
+	Vars::text := "M2:";
+	if (s1.b=40000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+
+procedure MTest3();
+begin
+	ps1:=#s1;
+	ps1.a := 100;
+	ps1.b := 100;
+	ps1.MulTest1();	
+	Vars::text := "M3:";
+	if (ps1.b=10000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+procedure MTest4();
+begin
+	ps1:=#s1;
+	ps1.a := 200;
+	ps1.b := 100;
+	ps1.MulTest2();	
+	Vars::text := "M4:";
+	if (ps1.b=20000) then Common::PASS() else Common::FAIL();
+	
+end;
+
 
 procedure Exec();
 begin
@@ -286,8 +339,12 @@ begin
 //    CTestC2(); // FAILS fix
 //      CTestC2(); // FAILS fix
   @endif
-
-
+@ifdef NOT_DEFINED_YET_FIX_THIS_UP
+	MTest1();
+	MTest2();
+	MTest3();
+	MTest4();
+@endif
     // Fails for now - FIX UP
 	Common::WaitABit();
 

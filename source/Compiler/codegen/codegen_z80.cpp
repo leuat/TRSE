@@ -124,7 +124,7 @@ bool CodeGenZ80::UseBlocks() {
             Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM);
 }
 
-void CodeGenZ80::Load16bitToHl(Assembler *as)
+void CodeGenZ80::Load16bitToHl()
 {
     as->Asm("ld a,[hl]");
     as->Asm("ld e,a");
@@ -153,7 +153,6 @@ void CodeGenZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
             as->Comment("; 16 bit counter with STEP");
             step->setForceType(TokenType::INTEGER);
             step->Accept(this);
-            as->Comment(";here");
             //            as->Asm("ex de,hl");
             ExDeHl();
             nodeA->m_left->Accept(this);
@@ -1584,7 +1583,7 @@ QString CodeGenZ80::getA(QSharedPointer<Node> n) {
 
 }
 
-QString CodeGenZ80::getX86Value(Assembler *as, QSharedPointer<Node> n) {
+QString CodeGenZ80::getX86Value( QSharedPointer<Node> n) {
     if (n->isPureVariable())
         return "["+n->getValue(as)+"]";
     return n->getValue(as);

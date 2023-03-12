@@ -33,6 +33,7 @@ Publish/tutorials/**/*.gb
 Publish/tutorials/**/*.sym
 Publish/tutorials/**/*.ssd
 Publish/tutorials/**/*.tos
+Publish/tutorials/**/*.ch8
 
 # Those files have only 1 file checked-in, mistake?
 Publish/tutorials/**/*.pal
@@ -45,6 +46,9 @@ Publish/tutorials/**/*.prg
 #Publish/tutorials/**/*.dat
 .DS_Store
 .qmake.stash
-themes/
 
+# Chip8 stuff
+bin/.asm
 Publish/tutorials/CHIP8/tutorials/test.ras
+themes
+units/CHIP8/system/system.asm

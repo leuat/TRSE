@@ -3,36 +3,80 @@
 
 CodeGenChip8::CodeGenChip8()
 {
+
 }
+void CodeGenChip8::dispatch(QSharedPointer<NodeProgram> node){
 
-void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1, QString value, bool is16bit)
+    AbstractCodeGen::dispatch(node);
+    QString injected_assembly=" \
+    Inject_ptr: dw 0 \n\
+    Inject_LoadPointer: \n\
+        LD I, Inject_ptr \n\
+        LD V1, [I] \n\
+        LD V2, #10 \n\
+        SUBN V2, V0 \n\
+        SE VF, 0 \n\
+        RET \n\
+        ADD V0, #A0 \n\
+        LD I, Inject_load_inst \n\
+        LD [I], V1 \n\
+    Inject_load_inst: \n\
+        LD I, 0 \n\
+    ";
+    if (chip_type==XO_CHIP){
+        injected_assembly+=" \
+        LD I, Inject_ptr \n\
+        LD V1, [I] \n\
+        LD I, XO_CHIP_load_inst \n\
+        LD [I], V1 \n\
+        dw #f000 \n\
+        XO_CHIP_load_inst: \n\
+        dw 0 \n";
+    }
+    as->Asm(injected_assembly);
+}
+void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1)
 {
-    QString a = "";
-
-    if (is16bit)
-        a="16";
     if (type==TokenType::Type::PLUS)
-        Binop("add"+a,x0,x1,value);
-    if (type==TokenType::Type::MINUS)
-        Binop("sub"+a,x0,x1,value);
+        as->Asm("add "+x0+","+x1);
+    else if (type==TokenType::Type::MINUS)
+        as->Asm("sub "+x0+","+x1);
 /*    if (type==TokenType::Type::MUL)
         Binop("mul",x0,x1,value);
     if (type==TokenType::Type::DIV)
         Binop("div",x0,x1,value);*/
-    if (type==TokenType::Type::BITOR)
-        Binop("or"+a,x0,x1,value);
-    if (type==TokenType::Type::XOR)
-        Binop("xor"+a,x0,x1,value);
-    if (type==TokenType::Type::BITAND)
-        Binop("and"+a,x0,x1,value);
+    else if (type==TokenType::Type::BITOR)
+        as->Asm("or "+x0+","+x1);
+    else if (type==TokenType::Type::XOR)
+        as->Asm("xor "+x0+","+x1);
+    else if (type==TokenType::Type::BITAND)
+        as->Asm("and "+x0+","+x1);
 
 }
 
+void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo)
+{
+    QString op;
+    if (type==TokenType::Type::PLUS)
+        op="add ";
+    if (type==TokenType::Type::MINUS)
+        op="sub ";
+    if (type==TokenType::Type::BITOR)
+        op="or ";
+    if (type==TokenType::Type::XOR)
+        op="xor ";
+    if (type==TokenType::Type::BITAND)
+        op="and ";
+    as->Asm(op+x0_lo+","+x1_lo);
+    as->Asm(op+x0_hi+", VF");
+    as->Asm(op+x0_hi+","+ x1_hi);
 
+}
 
 void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 {
     as->Comment("Binary operation of type: "+TokenType::getType(node->m_op.m_type));
+    auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
     if (node->isWord(as)) {
         node->m_left->Accept(this);
         QString a = getReg();
@@ -42,21 +86,27 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
         QString c = getReg();
         PushReg();
         QString d = getReg();
-        PopReg();
         node->m_right->Accept(this);
         PopReg();
         PopReg();
-        PrintBop(node->m_op.m_type,a,b,c+","+d,true);
+        PopReg();
+        PrintBop16(node->m_op.m_type,a,b,c,d);
 
-    }
-    else {
+    } else if (right_imm!=nullptr &&
+        (node->m_op.m_type == TokenType::Type::PLUS || node->m_op.m_type == TokenType::Type::MINUS)){
+            QString negate = node->m_op.m_type==TokenType::Type::MINUS?"-":"";
+            node->m_left->Accept(this);
+            QString a = getReg();
+            as->Asm("ADD "+a+", "+negate+right_imm->StringValue());
+        
+    }  else {
         node->m_left->Accept(this);
         QString a = getReg();
         PushReg();
         QString b = getReg();
         node->m_right->Accept(this);
         PopReg();
-        PrintBop(node->m_op.m_type,a,b,"",false);
+        PrintBop(node->m_op.m_type,a,b);
 
     }
 }
@@ -70,7 +120,9 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeNumber>node)
     {
         PushReg();
         QString bx = getReg();
-        as->Asm("ld "+ax+", "+bx+","+ node->getValue(as));
+        QString imm = node->getValue(as);
+        as->Asm("ld "+ax+", " + imm+">>8" );
+        as->Asm("ld "+bx+", " + imm+"&#ff" );
         PopReg();
 
     }
@@ -94,45 +146,51 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
     } else if (node->m_expr!=nullptr) {
         if (node->isPointer(as)) {
             //I could make it support words, but that's for later
+            QString x0 = getReg(); PushReg();
+            QString x1 = getReg(); PushReg();
             node->m_expr->setForceType(TokenType::BYTE); 
             node->m_expr->Accept(this);
-            QString v0_save = getReg();PushReg();
-            as->Asm("LD "+ v0_save + ", V0");
-            as->Asm("LD I, System_ptr");
-            as->Asm("LD V1, [I]");
-            as->Asm("call System_loadPointer");
-            as->Asm("ADD I, "+ v0_save);
+            QString index;
+            QString ptr_hi, ptr_lo;
+            ptr_hi = getReg(); PushReg();
+            ptr_lo = getReg(); PushReg();
+            index = getReg(); 
+            //TODO: replace V0 with the index register 
+            as->Asm("LD V0, "+ptr_hi);
+            as->Asm("LD V1, "+ptr_lo);
+            as->Asm("LD I, Inject_ptr");
+            as->Asm("LD [I], V1");
+            as->Asm("call Inject_loadPointer");
+            as->Asm("ADD I, "+ index);
 
             if (node->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("ADD I, " + v0_save);
-                PopReg();
+                as->Asm("ADD I, " + index);
                 as->Asm("LD V1, [I]");
-                QString x0 = getReg(); PushReg();
-                QString x1 = getReg(); 
                 as->Asm("LD " +x0+", V0");
                 as->Asm("LD " +x1+", V1");
-                PopReg();
             } else {
-                PopReg();
                 as->Asm("LD V0, [I]");
                 QString x0 = getReg();
                 as->Asm("LD " +x0+", V0");
             }
+            PopReg(); PopReg(); PopReg(); PopReg();
 
 
             return;
 
         } else {
             // Regular array
+            QString x0 = getReg(); PushReg();
+            QString x1 = getReg(); PushReg();
             node->m_expr->setForceType(TokenType::BYTE);
             node->m_expr->Accept(this);
+            QString index;
+            index = getReg(); 
             as->Asm("LD I, "+node->getValue(as));
-            as->Asm("ADD I, V0");
+            as->Asm("ADD I, "+index);
             if (node->getArrayType(as)==TokenType::INTEGER) {
-                as->Asm("ADD I, V0");
+                as->Asm("ADD I, "+index);
                 as->Asm("LD V1, [I]");
-                QString x0 = getReg(); PushReg();
-                QString x1 = getReg(); 
                 as->Asm("LD " +x0+", V0");
                 as->Asm("LD " +x1+", V1");
                 PopReg();
@@ -142,6 +200,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("LD " +x0+", V0");
 
             }
+            PopReg(); PopReg(); PopReg(); PopReg();
             return;
         }
     }
@@ -194,7 +253,7 @@ void CodeGenChip8::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
@@ -234,7 +293,6 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeProcedure> node)
 
 void CodeGenChip8::LoadPointer(QSharedPointer<Node> n)
 {
-
 }
 
 void CodeGenChip8::LoadVariable(QSharedPointer<Node> n)
@@ -248,25 +306,8 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeNumber>n)
 
 }
 
-QString CodeGenChip8::getShift(QSharedPointer<NodeVar> var)
-{
-    if (var->isPointer(as) || var->m_expr!=nullptr) {
-        if (var->getArrayType(as)==TokenType::LONG)
-            return ",lsl 2";
-        if (var->getArrayType(as)==TokenType::INTEGER)
-            return ",lsl 1";
-    }
 
-
-    if (var->isWord(as))
-        return ",lsl 1";
-    if (var->isLong(as))
-        return ",lsl 2";
-
-    return "";
-}
-
-QString CodeGenChip8::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenChip8::getIndexScaleVal( QSharedPointer<Node> var)
 {
     if (var->isWord(as))
         return "2";
@@ -327,17 +368,7 @@ void CodeGenChip8::str(QSharedPointer<Node> var)
 void CodeGenChip8::ldr(QSharedPointer<Node> var)
 {
     auto nv = qSharedPointerDynamicCast<NodeVar>(var);
-//    as->Comment("Loading var is ")
-//    as->Comment("Left right : "+QString::number(var->isWord(as)));
 
-/*    if (nv && (var->m_forceType==TokenType::INTEGER && nv->getOrgType(as)==TokenType::BYTE)) {
-        QString x0 = getReg();
-        QString x1 = m_regs[m_lvl+1];
-        as->Asm("ld I,"+x0+",0");
-        as->Asm("ld "+x1+",[I]");
-        return;
-    }
-*/
     if (var->isWord(as)) {
         QString x0 = getReg(); PushReg();
         QString x1 = getReg();
@@ -359,19 +390,6 @@ void CodeGenChip8::ldr(QSharedPointer<Node> var)
 
 }
 
-void CodeGenChip8::Binop(QString bop, QString x0, QString x1, QString x2)
-{
-    if (x2=="")
-        as->Asm(bop+" "+x0+","+x1);
-    else
-        as->Asm(bop+" "+x0+","+x1+","+x2);
-
-}
-
-QString CodeGenChip8::BinopVariableNumber(QSharedPointer<Node> n, QString value, TokenType::Type type)
-{
-    return "";
-}
 
 
 
@@ -387,10 +405,6 @@ QString CodeGenChip8::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         return "and";
     if (bop->m_op.m_type == TokenType::XOR)
         return "xor";
-    if (bop->m_op.m_type == TokenType::DIV)
-        return "idiv";
-    if (bop->m_op.m_type == TokenType::MUL)
-        return "imul";
     return " UNKNOWN BINARY OPERATION";
 }
 
@@ -414,7 +428,7 @@ void CodeGenChip8::PopReg() {
 
 
 void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
-
+    //TODO: Convert to Chip8
 
     QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
     QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -449,6 +463,7 @@ void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 {
+    // TODO: Check if this is necessary
     if (node->m_left->isPointer(as) && node->m_left->hasArrayIndex()) {
         // Storing p[i] := something;
         auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -522,7 +537,7 @@ bool CodeGenChip8::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenChip8::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenChip8::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -542,7 +557,7 @@ void CodeGenChip8::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("ld "+reg+", "+getChip8Value(as,node->m_right));
+    as->Asm("ld "+reg+", "+getChip8Value(node->m_right));
     return;
 
 }
@@ -553,7 +568,7 @@ void CodeGenChip8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 //    as->Write(".align 4");
-    as->Write(v->getValue(as)+ ": \n\t@dd  0",0);
+    as->Write(v->getValue(as)+ ": \n\tdw  0",0);
   //  as->Write(".align 4");
 
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
@@ -567,61 +582,240 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 {
 
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
-    //    as->Asm("pha"); // Push that baby
-
-    BuildToCmp(node);
-    QString jg ="jg ";
-    QString jl ="jl ";
-    QString jge ="jge ";
-    QString jle ="jle ";
-    if (!(node->m_left->isSigned(as) || node->m_right->isSigned(as))) {
-        jg = "bhi ";
-        jl = "blo ";
-        jge = "bhi ";
-        jle = "blo ";
-    }
-    if (node->m_op.m_type==TokenType::EQUALS)
-        as->Asm("jne " + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::NOTEQUALS)
-        as->Asm("jeq " + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::LESS)
-        as->Asm(jge  + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::GREATER)
-        as->Asm(jle  + as->jumpLabel(lblFailed));
-
-    if (node->m_op.m_type==TokenType::LESSEQUAL)
-        as->Asm(jg  + as->jumpLabel(lblFailed));
-    if (node->m_op.m_type==TokenType::GREATEREQUAL)
-        as->Asm(jl  + as->jumpLabel(lblFailed));
 
 
 
-}
-
-void CodeGenChip8::BuildToCmp(QSharedPointer<Node> node)
-{
-    QString ax = getReg();
-    node->m_left->Accept(this);
-
-    as->Term();
-    if (node->m_right->isPureNumeric()) {
-        as->Asm("cmp  "+ax+", " + getChip8Value(as,node->m_right));
-        return;
-
-    }
     as->Comment("Evaluate full expression");
-    QString bx = PushReg();
-    node->m_right->Accept(this);
-    as->Term();
+    if (node->isWord(as)){
 
-    as->Asm("cmp "+ax+","+bx);
-    PopReg();
+        if (node->m_op.m_type==TokenType::EQUALS){
+
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (left_imm && right_imm){
+                if (left_imm->m_val != right_imm->m_val)
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+                return;
+                
+            } else if (left_imm) { 
+                node->m_right->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("sne " + ax_hi + "," + left_imm->StringValue()+">>8");
+                as->Asm("se " + ax_lo + ","+ left_imm->StringValue()+"&#ff");
+
+                PopReg();
+            } else if (right_imm) {
+                node->m_left->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("sne " + ax_hi + "," + right_imm->StringValue()+">>8");
+                as->Asm("se " + ax_lo + ","+ right_imm->StringValue()+"&#ff");
+                PopReg();
+            } else {
+                QString ax_lo, ax_hi, bx_hi, bx_lo; 
+                ax_hi = getReg(); PushReg();
+                ax_lo = getReg(); PushReg();
+                bx_hi = getReg(); PushReg();
+                bx_lo = getReg();
+                as->Asm("sne " + ax_hi + "," + bx_hi);
+                as->Asm("se " + ax_lo + ","+ bx_lo);
+                PopReg(); PopReg(); PopReg();
+            }
+
+        } else if (node->m_op.m_type==TokenType::NOTEQUALS) {
+
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (left_imm && right_imm){
+                if (left_imm->m_val == right_imm->m_val)
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+                return;
+                
+            } else if (left_imm) { 
+                node->m_right->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("se " + ax_hi + "," + left_imm->StringValue()+">>8");
+                as->Asm("sne " + ax_lo + ","+ left_imm->StringValue()+"&#ff");
+
+                PopReg();
+            } else if (right_imm) {
+                node->m_left->Accept(this);
+                QString ax_hi = getReg(); PushReg();
+                QString ax_lo = getReg(); 
+                as->Asm("se " + ax_hi + "," + right_imm->StringValue()+">>8");
+                as->Asm("sne " + ax_lo + ","+ right_imm->StringValue()+"&#ff");
+                PopReg();
+            } else {
+                QString ax_lo, ax_hi, bx_hi, bx_lo; 
+                ax_hi = getReg(); PushReg();
+                ax_lo = getReg(); PushReg();
+                bx_hi = getReg(); PushReg();
+                bx_lo = getReg();
+                as->Asm("se " + ax_hi + "," + bx_hi);
+                as->Asm("sne " + ax_lo + ","+ bx_lo);
+                PopReg(); PopReg(); PopReg();
+            }
+        } else {
+
+            QString ax_lo, ax_hi, bx_hi, bx_lo; 
+            node->m_left->Accept(this);
+            ax_hi = getReg(); PushReg();
+            ax_lo = getReg(); PushReg();
+            node->m_right->Accept(this);
+            bx_hi = getReg(); PushReg();
+            bx_lo = getReg();
+            if (node->m_op.m_type==TokenType::GREATEREQUAL){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+bx_lo+","+ax_lo);
+                as->Asm("sne VF, 0");
+
+                
+
+
+            } else if (node->m_op.m_type==TokenType::GREATER){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+ax_lo+","+bx_lo);
+                as->Asm("se VF, 0");
+
+
+            } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+ax_lo+","+bx_lo);
+                //(bx > ax) 
+                as->Asm("sne VF, 0");
+
+
+            } else if (node->m_op.m_type==TokenType::LESS){
+                as->Asm("subn "+bx_hi+","+ax_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblFailed));
+                as->Asm("subn "+ax_hi+","+bx_hi);
+                as->Asm("sne VF, 0");
+                as->Asm("jp "+as->jumpLabel(lblSuccess));
+                as->Asm("subn "+bx_lo+","+ax_lo);
+                //!(ax > bx) 
+                as->Asm("se VF, 0");
+            }
+            PopReg(); PopReg(); PopReg();
+        }
+    } else {
+        
+
+        if (node->m_op.m_type==TokenType::EQUALS){
+
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (right_imm && left_imm){
+                if (left_imm->m_val != right_imm->m_val) 
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+
+            } else if (right_imm){
+                node->m_left->Accept(this);
+                QString ax= getReg();
+                as->Asm("se " + ax + "," + right_imm->StringValue());
+            }else if (left_imm){
+                node->m_right->Accept(this);
+                QString ax= getReg();
+                as->Asm("se " + ax + "," + left_imm->StringValue());
+            } else {
+                QString ax= getReg(); PushReg();
+                QString bx= getReg();
+                as->Asm("se " + ax + "," + bx);
+                PopReg();
+            }   
+            return;
+        
+        }else if (node->m_op.m_type==TokenType::NOTEQUALS) {
+            auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+            auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+            if (right_imm && left_imm){
+                if (left_imm->m_val == right_imm->m_val) 
+                    as->Asm("jp "+as->jumpLabel(lblFailed));
+            } else if (right_imm) {
+                node->m_left->Accept(this);
+                QString ax= getReg();
+                as->Asm("sne " + ax + "," + right_imm->StringValue());
+            } else if (left_imm) {
+                node->m_right->Accept(this);
+                QString ax= getReg();
+                as->Asm("sne " + ax + "," + left_imm->StringValue());
+            } else {
+                QString ax= getReg(); PushReg();
+                QString bx= getReg();
+                as->Asm("sne " + ax + "," + bx);
+                PopReg();
+            }
+            return;
+        } else {
+
+            node->m_left->Accept(this);
+            QString ax = getReg(); PushReg();
+            node->m_right->Accept(this);
+            QString bx = getReg();
+            if (node->m_op.m_type==TokenType::GREATEREQUAL){
+                as->Asm("subn "+bx+","+ax);
+                //(ax >= bx) 
+                as->Asm("sne VF, 0");
+
+
+            } else if (node->m_op.m_type==TokenType::GREATER){
+                as->Asm("subn "+ax+","+bx);
+                //!(bx >= ax) 
+                as->Asm("se VF, 0");
+
+
+            } else if (node->m_op.m_type==TokenType::LESSEQUAL){
+                as->Asm("subn "+ax+","+bx);
+                //(bx >= ax) 
+                as->Asm("sne VF, 0");
+
+
+            } else if (node->m_op.m_type==TokenType::LESS){
+                as->Asm("subn "+bx+","+ax);
+                //!(ax >= bx) 
+                as->Asm("se VF, 0");
+            }
+            PopReg();
+        }
+    }
+    as->Asm("jp "+as->jumpLabel(lblFailed));
+
 
 
 }
+
 
 void CodeGenChip8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
+
+    QString loopDone = as->NewLabel("loopdone");
+    as->Comment("Compare is onpage");
+
+    IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
+    Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
+    as->PopLabel("loopdone");
+    as->Label(loopDone+": ;keep");
+    return;
+
+
+#if 0
     if (step!=nullptr)
         ErrorHandler::e.Error("For loops currently don't support step",nodeA->m_op.m_lineNumber);
 
@@ -664,10 +858,11 @@ void CodeGenChip8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
     }
     as->Asm("jp "+lblJump);
 
+#endif
 }
-
 void CodeGenChip8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
+    #if 0
     if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
     LoadVariable(nodeA);
     QString ax = getReg();
@@ -677,7 +872,7 @@ void CodeGenChip8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedP
     PopReg();
     as->Asm(m_cmp+ax+","+bx);
     as->Asm(m_jne+lblJump);
-
+    #endif 
 }
 
 QString CodeGenChip8::getReturn() { return "ret";}

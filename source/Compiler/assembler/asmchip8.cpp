@@ -16,8 +16,8 @@ AsmChip8::AsmChip8()
 
 
     byte = "db";
-    word = "dd";
-    llong = "dd";
+    ppointer=word="dw";
+    //llong = "dd";
 /*    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY) {
         byte = "ld [b @:]";
     }
