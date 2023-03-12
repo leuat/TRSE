@@ -794,7 +794,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
             }
         }
 
-        OptimizeBinaryClause(node,as);
+        OptimizeBinaryClause(node);
         BuildConditional(node,  lblSuccess, lblFailed, offpage);
         return;
     }
@@ -1049,8 +1049,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         na->Accept(this);
     }
 
-
-    ProcedureStart(as);
+    ProcedureStart();
 //    if (node->m_procedure->m_returnType!=nullptr)
   //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
@@ -1059,7 +1058,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         if (node->m_procedure->m_returnType->m_op.m_type!=node->m_castType) {
             Cast(node->m_procedure->m_returnType->m_op.m_type, node->m_castType);
         }
-    ProcedureEnd(as);
+    ProcedureEnd();
     PopLostStack(lostStack);
 }
 /*
