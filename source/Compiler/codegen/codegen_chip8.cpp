@@ -194,7 +194,6 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("LD " +x1+", V1");
             } else {
                 as->Asm("LD V0, [I]");
-                QString x0 = getReg();
                 as->Asm("LD " +x0+", V0");
 
             }
