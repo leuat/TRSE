@@ -5838,7 +5838,7 @@ void Parser::HandleVBMCompileChunk()
     int ln = m_currentToken.m_lineNumber;
     QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
     Eat(TokenType::STRING);
-    QString outFile = m_currentDir + "/" + m_currentToken.m_value + ".inc";     //m_currentDir+"/"+ m_currentToken.m_value;
+    QString outFile = m_currentDir + "/" + m_currentToken.m_value;     //m_currentDir+"/"+ m_currentToken.m_value;
     Eat(TokenType::STRING);
 
     QString procName =m_currentToken.m_value;

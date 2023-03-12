@@ -957,7 +957,17 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
 }
 
 
-// exports sprite data as code in procedures to draw it,
+/*
+   Exports sprite data as code in procedures to draw it
+
+   It takes three strategies:
+   1. Identify a group of the same data values, this offers opportunity to do one LDA followed by either LDY or INY
+   2. Identify unique values and attempt to optimise ASM with INY instead of LDY (size benefit, both use same number of cycles)
+   3. Discards 0 (zero) values as these do not need to be drawn, saves time and space like the disk drive on a Tardis.
+
+   The end result is some specific code that draws the bitmap data for the sprite in an efficient way
+
+*/
 void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString pointerName, QString asmOperation, int start, int width, int height, int isMulticolor)
 {
     //QByteArray charByte;
@@ -968,8 +978,8 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
         int pos;
     };
 
-    charData d[255]; // sorted array on values - used for groups of same data
-    charData u[255]; // sorted array on char line/row position - used for unique data
+    charData d[255]; // sorted array on values - priority for groups of same data
+    charData u[255]; // sorted array on char line/row position - priority for unique data
 
     QVector<PixelChar*> pcList;
 
@@ -1033,22 +1043,35 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
 
                 f << QString::number(nextLine)+"\n";
 
-                short last = 0;
+                short last = 0; // used to store last character
+                int lpos = 0; // used to store last y position in sprite drawing (what line to draw to)
 
+                // process Grouped data
                 for (int k = 0; k <=nextLine; k++){
                     if ((last == d[k].val || d[k+1].val == d[k].val) && k != nextLine)
                     {
-                        f<< "pos "+ QString::number(d[k].pos) +" char="+ QString::number(d[k].val) + "\n";
+                        int p = d[k].pos;
+                        if (lpos != 0 && lpos+1 == p )
+                            f<< " iny\n";
+                        else
+                            f<< " ldy #" + QString::number(p) + "\n";
+
+                        f<< " lda #"+Util::numToHex( d[k].val ) + "\n";
+                        f<< " "+ asmOperation +" ("+ pointerName +"),y\n";
+                        f<< " sta ("+ pointerName +"),y\n";
+                        lpos = d[k].pos;
+                        //f<< "pos "+ QString::number(d[k].pos) +" char="+ QString::number(d[k].val) + "\n";
                     }
                     else
                     {
-                        d[k].val = 0;
+                        d[k].val = 0; // remove from list
                     }
                     last = d[k].val;
                 }
 
                 f<<"\n";
 
+                // process unique data
                 for (int k = 0; k <nextLine; k++){
 
                     // make sure it is not in the sorted d list
@@ -1056,14 +1079,28 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
                     for (int kk = 0; kk < nextLine; kk++)
                         if (u[k].val == d[kk].val) found = true;
 
-                    if (!found)
-                        f<< "pos "+ QString::number(u[k].pos) +" char="+ QString::number(u[k].val) + "\n";
+                    if (!found) {
+
+                        int p = u[k].pos;
+                        if (lpos != 0 && lpos+1 == p )
+                            f<< " iny\n";
+                        else
+                            f<< " ldy #" + QString::number(p) + "\n";
+
+                        f<< " lda #"+Util::numToHex( u[k].val ) + "\n";
+                        f<< " "+ asmOperation +" ("+ pointerName +"),y\n";
+                        f<< " sta ("+ pointerName +"),y\n";
+                        lpos = u[k].pos;
+
+                        //f<< "pos "+ QString::number(u[k].pos) +" char="+ Util::numToHex(u[k].val) + "\n";
+
+                    }
                 }
                 f<<"\n";
 
-
+                 // debug - all values from u
                 for (int k = 0; k <nextLine; k++){
-                        f<< "pos "+ QString::number(u[k].pos) +" char="+ QString::number(u[k].val) + "\n";
+                        f<< "pos "+ QString::number(u[k].pos) +" char="+ Util::numToHex(u[k].val) + "\n";
                 }
 
 

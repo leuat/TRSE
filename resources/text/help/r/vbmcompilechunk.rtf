@@ -1,0 +1,35 @@
+<h3>Description</h3>
+<p>Preprocessor that exports from a TRSE image file (.flf) to an text include file as assembler instructions
+on build in a format suitable for the Local Bitmap Mode (LBM) unit and also the Vic Bitmap Mode (VBM).</p>
+<p>
+    LBM Compile Chunk takes nine parameters.
+</p>
+<ul>
+    <li>The source flf file</li>
+    <li>The destination inc source code file to create</li>
+    <li>The base name of the procedures to create in the destination file</li>
+    <li>The name of the pointer to use to write to the destination bitmap</li>
+    <li>The assembler operation to use, use ORA or EOR</li>
+    <li>The start character</li>
+    <li>The width in characters</li>
+    <li>The height in characters</li>
+    <li>Hires (0) or multicolour (1)</li>
+</ul>
+<p>A Turbo Rascal inc file is created with a procedure for each character column containing lda, eor/ora, sta statements
+to draw the character data onto a target bitmap specified by the pointer named. The Pointer should be set to the start
+address of where to draw to.
+</p>
+<p>
+This method of drawing a bitmap through code rather than storing the data as binary for another routine to draw
+can have some speed and size benefits. The code is generated as follows:
+</p>
+<ul>
+<li>Any lines containing a 0 (zero) are excluded as these do not need to be drawn.</li>
+<li>In each character column, all rows containing the same data are grouped together. Only on LDA #value is needed. For unique values they are ordered and drawn in their position sequence.</li>
+<li>For all rows, any that are sequential in position generate an INY to move to the next line saving a byte each time, otherwise LDY #line-pos is used. There is no speed advantage but the assembled code will be a little smaller.</li>
+</ul>
+<p>Example: Export from character 40, 16 characters wide with each character column 1 character high. The file output.inc is generated
+containing 16 procedures and a look up table. The pointer name is 'd' and the operation to perform is 'ora'.</p>
+<code>
+@vbmcompilechunk "chr\lbm8.flf" "output.inc" "MyProc" "d" "ora" 40 16 1 0
+</code>

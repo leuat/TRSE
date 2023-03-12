@@ -742,5 +742,6 @@
         <file>resources/images/CHIP8.png</file>
         <file>resources/text/help/r/addemulatorparam.rtf</file>
         <file>resources/code/tiki100/unpack.asm</file>
+        <file>resources/text/help/r/vbmcompilechunk.rtf</file>
     </qresource>
 </RCC>
