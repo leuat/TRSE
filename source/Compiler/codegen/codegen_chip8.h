@@ -87,7 +87,6 @@ public:
     void str (QString x0, QString x1);
 
     void str(QSharedPointer<Node> var);
-    void ldr(QSharedPointer<Node> var);
     void Binop (QString bop, QString x0, QString x1, QString x2);
 
     virtual bool UseBlocks() override { return true;}
