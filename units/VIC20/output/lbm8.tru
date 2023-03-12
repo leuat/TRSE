@@ -195,6 +195,7 @@ style of movement, where it can move up and down, or left and right, but one axi
 fixed in position due to the shape of the maze. IE: pac-man cannot move in disagonals.
 </li>
 </ul>
+<p>Use @DEFINE BGBUFFERS [number] to set the number of buffers you need
 <p>The sprite lookup table tells the routine where to find in memory each of the 
 8 pre-shifted sprite bitmap data.
 <p>An example of the command you can use 
@@ -349,6 +350,35 @@ DrawAt_RenderSprite_loop
 		
 end;
 
+
+/**
+<p>Draw an LBM8 sprite to the screen using the code generated data (see @vbmCompileChunk) 
+<ul>
+<li>pa - the character number to start rendering a sprite to. See notes.
+<li>x  - the horizontal position in pixels to display the sprite
+<li>y  - the vertical position in pixels to display the sprite
+<li>sp - the generated sprite lookup table. See notes.
+</ul>
+<h3>Example</h3>
+<p>lbm8::DrawAt( 0, xp, yp, #MySprite );
+<h3>Notes</h3>
+<p>The number of characters required to render a sprite depends upon how 
+the sprite will move across the screen. 
+<ul>
+<li>If it is free moving in all directions you will need to reserve 
+4 characters to render the sprite.</li>  
+<li>If you limit the sprite to only move on one axis (x or y) and the 
+other axis is aligned completely to a character cell 
+then you will only need to reserve 2 characters to render the sprite. Think of pac-man 
+style of movement, where it can move up and down, or left and right, but one axis is always
+fixed in position due to the shape of the maze. IE: pac-man cannot move in disagonals.
+</li>
+</ul>
+<p>Use @DEFINE BGBUFFERS [number] to set the number of buffers you need
+<p>The generated sprite lookup table tells the routine where to find each of the 
+8 pre-shifted sprite procedures.
+
+**/
 procedure DrawCAt( pa, x, y: global byte, sp: global integer);
 begin
 	
