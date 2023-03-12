@@ -61,20 +61,16 @@ void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo
         as->Asm("add "+x0_hi+", VF");
         as->Asm("add "+x0_hi+","+ x1_hi);
     } else if (type==TokenType::Type::MINUS){
-        
         as->Asm("sub "+x0_lo+","+x1_lo);
         as->Asm("sub "+x0_hi+", VF");
         as->Asm("sub "+x0_hi+","+ x1_hi);
     } else if (type==TokenType::Type::BITOR){
-
         as->Asm("or "+x0_lo+","+x1_lo);
         as->Asm("or "+x0_hi+","+ x1_hi);
     } else if (type==TokenType::Type::XOR){
         as->Asm("xor "+x0_lo+","+x1_lo);
         as->Asm("xor "+x0_hi+","+ x1_hi);
-
-    }else if (type==TokenType::Type::BITAND){
-
+    } else if (type==TokenType::Type::BITAND){
         as->Asm("and "+x0_lo+","+x1_lo);
         as->Asm("and "+x0_hi+","+ x1_hi);
     }
