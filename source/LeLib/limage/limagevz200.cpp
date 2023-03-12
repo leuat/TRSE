@@ -72,30 +72,30 @@ QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QStrin
     QTextStream f(&file);
     for (int i=0;i<4;i++) {
 
-//    return QStringList();
-    f<<"procedure "+name+"_"+QString::number(i)+"();\n";
-    f<<"begin\n";
-    f<<"asm (\"\n";
-    f<<"  ld de, "+Util::numToHex(32-w/4)+"\n";
+    //    return QStringList();
+        f<<"procedure "+name+"_"+QString::number(i)+"();\n";
+        f<<"begin\n";
+        f<<"asm (\"\n";
+        f<<"  ld de, "+Util::numToHex(32-w/4)+"\n";
 
-    for (int y=0;y<h;y++) {
-        for (int x=0;x<w;x+=4) {
-            uchar c = 0;
-            int xx = x + xp-i;
-            int yy = y + yp;
-            for (int j=0;j<4;j++) {
-                uchar v = getPixel(xx+j,yy);
-                c=c|(v<<(6-2*j));
+        for (int y=0;y<h;y++) {
+            for (int x=0;x<w;x+=4) {
+                uchar c = 0;
+                int xx = x + xp-i;
+                int yy = y + yp;
+                for (int j=0;j<4;j++) {
+                    uchar v = getPixel(xx+j,yy);
+                    c=c|(v<<(6-2*j));
+                }
+                f<< " ld a,"+ Util::numToHex(c) + "\n";
+                f<< " ld [hl],a\n";
+                f<< " inc hl \n";
+                //data.append(c);
             }
-            f<< " ld a,"+ Util::numToHex(c) + "\n";
-            f<< " ld [hl],a\n";
-            f<< " inc hl \n";
-            //data.append(c);
+            f<<"  add hl,de\n";
         }
-        f<<"  add hl,de\n";
-    }
-    f<<"\");\n";
-    f<<"end;\n";
+        f<<"\");\n";
+        f<<"end;\n";
     }
 
 

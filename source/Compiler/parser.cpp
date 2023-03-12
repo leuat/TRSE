@@ -1369,6 +1369,22 @@ void Parser::HandlePreprocessorInParsing()
             Eat(TokenType::INTEGER_CONST);
             return;
         }
+
+        if (m_currentToken.m_value=="vbmcompilechunk") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            return;
+        }
+
+
         if (m_currentToken.m_value=="ignoresystemheaders") {
             Eat();
         }
@@ -3158,6 +3174,10 @@ void Parser::PreprocessSingle() {
         else if (m_currentToken.m_value.toLower() =="vbmexportchunk") {
             Eat(TokenType::PREPROCESSOR);
             HandleVBMExportChunk();
+        }
+        else if (m_currentToken.m_value.toLower() =="vbmcompilechunk") {
+            Eat(TokenType::PREPROCESSOR);
+            HandleVBMCompileChunk();
         }
         else if (m_currentToken.m_value.toLower() =="exportframe") {
             Eat(TokenType::PREPROCESSOR);
@@ -5859,6 +5879,50 @@ void Parser::HandleVBMExportChunk()
     img->m_silentExport = true;
 
     img->VBMExportChunk(file,param1,param2,param3,param4);
+
+    file.close();
+
+}
+
+void Parser::HandleVBMCompileChunk()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir + "/" + m_currentToken.m_value;     //m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QString procName =m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString pointerName =m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString asmOperation =m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param4 = m_currentToken.m_intVal;
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    LImage* img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+
+    img->m_silentExport = true;
+
+//    file.open(QFile::WriteOnly);
+    file.open(QIODevice::WriteOnly| QIODevice::Text);
+    QTextStream f(&file);
+
+    img->VBMCompileChunk(f,procName,pointerName,asmOperation,param1,param2,param3,param4);
 
     file.close();
 
