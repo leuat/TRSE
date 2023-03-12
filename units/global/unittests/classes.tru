@@ -28,6 +28,10 @@ var
 		begin
 			this.b:=this.a*this.b;
 		end;
+		procedure DivTest1();
+		begin
+			this.b:=this.b/this.a;
+		end;
 //		c : array[3] of byte;
 	end;
 	s1 : StrItem;	
@@ -299,6 +303,17 @@ begin
 	
 end;
 
+procedure DTest1();
+begin
+	ps1:=#s1;
+	ps1.b := 200;
+	ps1.a := 10;
+	ps1.DivTest1();	
+	Vars::text := "D1:";
+	if (ps1.b=20) then Common::PASS() else Common::FAIL();
+	
+end;
+
 
 procedure Exec();
 begin
@@ -344,6 +359,7 @@ begin
 	MTest2();
 	MTest3();
 	MTest4();
+	DTest1();
 //@endif
     // Fails for now - FIX UP
 	Common::WaitABit();

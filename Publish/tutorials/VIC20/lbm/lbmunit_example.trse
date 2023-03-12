@@ -69,3 +69,4 @@ use_vice_c1541 = 0
 use_tripe = 0
 dosbox_cycles = 0
 cpu_x86_output = exe
+data_header_chr/char.flf = 0

@@ -63,15 +63,15 @@ var
 
 	
 	// export the default characterset
-	@export "chr\char.flf" "chr\char.bin" 64
-	charset: incbin("chr\char.bin", $1c00); // unexpanded location for char setcharset 
+	@export "chr/char.flf" "chr/char.bin" 64
+	charset: incbin("chr/char.bin", $1c00); // unexpanded location for char setcharset 
 
 
 	// instead of a binary file of data for the pre-shifted sprite, we can ask
 	// TRSE to create the code to draw the sprites instead. This does have some advantages.
 	// 1) it doesn't have to draw empty lines so it is faster
 	// 2) if loads the values directly rather than lookup so is faster and a bit smaller
-	@vbmcompilechunk "chr\sprites.flf" "sprites.inc" "MySprite" "lbm8_d" "ora" 0 16 1 0
+	@vbmcompilechunk "chr/sprites.flf" "sprites.inc" "MySprite" "lbm8_d" "ora" 0 16 1 0
 
 	
 	// x and y position

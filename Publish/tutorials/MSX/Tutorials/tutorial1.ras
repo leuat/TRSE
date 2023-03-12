@@ -8,18 +8,19 @@ var
 	
 // If you happen to know anything about the MSX.. do let me know! and start creating tutorials 
 
+
 begin
-//	Screen::WriteVDP(1,2);
 	Screen::ClearScreen();
 	Screen::SetColors(2,0,0); // text, bg, border
-	
+//	Screen::SetMode4();
 	Screen::PrintString(#text);
-	Screen::Wait(100);
+//	Screen::Wait(100);
+	Screen::WriteVDP(1,2);
 	v1:=13;
 	v2:=0;
 	while (true) do
 	begin
-		Screen::PrintString(v1);
+//		Screen::PrintString(v1);
 		Screen::Wait(16);
 	end;
 end.
