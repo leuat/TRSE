@@ -10,18 +10,18 @@ class SystemChip8 : public AbstractSystem
 public:
     SystemChip8(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
 
-    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
-    virtual void PostProcess(QString& text, QString file, QString currentDir) override;
+    void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
+    void PostProcess(QString& text, QString file, QString currentDir) override;
 
-    virtual QString getTripePointerType() override {
+    QString getTripePointerType() override {
         return "uint16";
     }
 
-    virtual bool useZeroPagePointers() override { return true;}
+    bool useZeroPagePointers() override { return true;}
 
-    virtual bool AllowPointerInStructs() override {return false;}
+    bool AllowPointerInStructs() override {return false;}
 
-    void DefaultValues() override;
+    virtual void DefaultValues() override;
 
     virtual QString getEmulatorName() { return "internal";}
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) override;
@@ -31,7 +31,7 @@ public:
         return TokenType::INTEGER;
     }
 
-    virtual void PrepareInitialAssembler(Assembler* as) override;
+    void PrepareInitialAssembler(Assembler* as) override;
 
 
 };

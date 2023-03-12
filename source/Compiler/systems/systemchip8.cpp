@@ -32,6 +32,7 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     QString output;
     int time = timer.elapsed();
     int codeEnd = 0;
+    int error_code;
 
     auto txt = Util::loadTextFile(filename+".asm");
     txt = txt.replace("main_block_end_:","");
@@ -52,7 +53,9 @@ void SystemChip8::Assemble(QString& text, QString filename, QString currentDir, 
     QByteArray ba = txt.toLocal8Bit();
     const char *asm_c = ba.data();
 //    qDebug() << "A";
-    c8_assemble(asm_c);
+    if ((error_code=c8_assemble(asm_c))){
+        qDebug() << "Assembler returned error code: " << error_code;
+    }
   //  qDebug() << "B";
     c8_save_file((filename+".ch8").toStdString().c_str());
 
