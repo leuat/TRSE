@@ -531,13 +531,12 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
         if (node->m_op.m_type == TokenType::MUL) {
             QString skip1 = as->NewLabel("skip1");
 
-            // Is 16 bit
-            //            as->Comment("Left : " +Util::numToHex(node->m_left->isWord(as)));
-            //          as->Comment("Right : " +Util::numToHex(node->m_right->isWord(as)));
-            //as->Comment("INT VAL "+Util::numToHex(node->m_right->getValueAsInt(as)));
             if (node->m_right->getOrgType(as)==TokenType::BYTE ||
                     (node->m_right->getOrgType(as)==TokenType::INTEGER_CONST && node->m_right->getValueAsInt(as)<0x100)) {
-                //                qDebug() << "SWAPP";
+                as->Comment("Swapping nodes");
+                node->SwapNodes();
+            }
+            if (node->m_right->getWriteType()==TokenType::BYTE && node->m_left->getWriteType()==TokenType::INTEGER) {
                 as->Comment("Swapping nodes");
                 node->SwapNodes();
             }
@@ -547,7 +546,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
             as->Comment("Generic mul");
             // make sure 16 bit number is loaded first
-            if (!node->isWord(as)) {
+            if (!node->isWord(as) && node->getWriteType()!=TokenType::INTEGER) {
                 node->m_right->Accept(this);
                 as->Asm("ld e,a");
                 as->Asm("ld d,0");

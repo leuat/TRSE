@@ -339,12 +339,12 @@ begin
 //    CTestC2(); // FAILS fix
 //      CTestC2(); // FAILS fix
   @endif
-@ifdef NOT_DEFINED_YET_FIX_THIS_UP
+//@ifdef NOT_DEFINED_YET_FIX_THIS_UP
 	MTest1();
 	MTest2();
 	MTest3();
 	MTest4();
-@endif
+//@endif
     // Fails for now - FIX UP
 	Common::WaitABit();
 

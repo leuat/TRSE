@@ -142,6 +142,16 @@ void NodeBinOP::setCastType(TokenType::Type t) {
     m_right->setCastType(t);
 }
 
+TokenType::Type NodeBinOP::getWriteType() {
+    if (m_left->getWriteType()==TokenType::LONG || m_right->getWriteType()==TokenType::LONG)
+        return TokenType::LONG;
+    if (m_left->getWriteType()==TokenType::INTEGER || m_right->getWriteType()==TokenType::INTEGER)
+        return TokenType::INTEGER;
+    if (m_left->getWriteType()==TokenType::BYTE || m_right->getWriteType()==TokenType::BYTE)
+        return TokenType::BYTE;
+    return TokenType::NADA;
+}
+
 bool NodeBinOP::containsPointer(Assembler *as)
 {
     return m_left->containsPointer(as) || m_right->containsPointer(as);

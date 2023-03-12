@@ -573,10 +573,13 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     if (!node->m_left->isWord(as) && node->m_right->isWord(as)) {
         node->SwapNodes();
     }
-/*    if (node->m_left->getWriteType()!=TokenType::INTEGER && node->m_right->getWriteType()==TokenType::INTEGER) {
+    else
+    if (node->m_left->getWriteType()!=TokenType::INTEGER && node->m_right->getWriteType()==TokenType::INTEGER) {
         node->SwapNodes();
     }
-  */  //    Disable16bit();
+//    as->Asm(" ;L / R : " + TokenType::getType(node->m_left->getWriteType())+  "  " +TokenType::getType(node->m_right->getWriteType()));
+//    node->SwapNodes();
+    //    Disable16bit();
     if (node->m_left->isWord(as) || node->m_left->getWriteType()==TokenType::INTEGER) {
         LoadVariable(node->m_left);
         as->Term();
@@ -1852,7 +1855,7 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     QString vol = "";
     if (s->m_flags.contains("volatile"))
         vol = ";keep";
-    if (node->isReference()) {
+    if (node->isReference() && node->m_writeType==TokenType::NADA) {
         // This should now be handled by the parser
         ErrorHandler::e.Error("Unknown syntax: referenced address with index. ", node->m_op.m_lineNumber);
     }
