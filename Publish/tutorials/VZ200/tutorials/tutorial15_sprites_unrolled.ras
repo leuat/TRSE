@@ -12,6 +12,8 @@ program UnrolledSprites;
 @spritecompiler "images/sprites1.flf" "tank" 3 0 16 8 
 @spritecompiler "images/sprites1.flf" "stuff" 3 8 16 8 
 
+
+
 @include "tank.inc"
 @include "stuff.inc"
 

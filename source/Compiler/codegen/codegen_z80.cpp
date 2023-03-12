@@ -153,7 +153,6 @@ void CodeGenZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
             as->Comment("; 16 bit counter with STEP");
             step->setForceType(TokenType::INTEGER);
             step->Accept(this);
-            as->Comment(";here");
             //            as->Asm("ex de,hl");
             ExDeHl();
             nodeA->m_left->Accept(this);

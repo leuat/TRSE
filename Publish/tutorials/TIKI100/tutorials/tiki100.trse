@@ -69,4 +69,6 @@ use_tripe = 0
 dosbox_cycles = 0
 cpu_x86_output = exe
 exomizer_toggle = 1
-open_files =, tutorial1.ras
+open_files = ,tut2.ras, tutorial1.ras
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/TIKI100/tutorials/
+current_file = tut2.ras
