@@ -209,6 +209,7 @@ public:
     // Method that will increase a variable in <var> with the value in <step>
     // used in for loops
     void IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<Node> var);
+    virtual void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
 
 

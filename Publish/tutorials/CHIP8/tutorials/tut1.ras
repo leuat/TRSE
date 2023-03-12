@@ -20,19 +20,19 @@ var
 begin
 	System::Clear();
 	System::Beep(100);
-	
-	for x:=0 to 100 do
+
+	for x:=0 to 10 do
 	begin
-		y:=x+10;
+		asm(";here");
 		z:=System::Random();
-		System::DrawLine(x,y,$FF);
+		System::DrawLine(z,x,%10000001);
 	end;	
-	
+
+
 	asm("
 loop:
-
 	jp loop
-	
+
 	");
 
 	

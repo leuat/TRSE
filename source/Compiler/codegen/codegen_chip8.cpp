@@ -805,6 +805,16 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 void CodeGenChip8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
 
+    QString loopDone = as->NewLabel("loopdone");
+    as->Comment("Compare is onpage");
+
+    IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
+    Compare(nodeA, nodeB, step, false, loopDone, lblJump, isInclusive);
+    as->PopLabel("loopdone");
+    as->Label(loopDone+": ;keep");
+    return;
+
+
 #if 0
     if (step!=nullptr)
         ErrorHandler::e.Error("For loops currently don't support step",nodeA->m_op.m_lineNumber);

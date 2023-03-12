@@ -614,6 +614,7 @@ int c8_assemble(const char *text) {
 
     static Stepper stepper;
     stepper.in = text;
+    c8_message_text[0] = 0;
 
     if(c8_verbose) c8_message("Assembling...\n");
     int return_code=setjmp(exit_assembler);
