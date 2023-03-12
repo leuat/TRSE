@@ -955,6 +955,128 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
     }
     file.write(data);
 }
+
+
+// exports sprite data as code in procedures to draw it,
+void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString pointerName, QString asmOperation, int start, int width, int height, int isMulticolor)
+{
+    //QByteArray charByte;
+
+    struct charData
+    {
+        short val;
+        int pos;
+    };
+
+    charData d[255]; // sorted array on values - used for groups of same data
+    charData u[255]; // sorted array on char line/row position - used for unique data
+
+    QVector<PixelChar*> pcList;
+
+    for (int i=0;i<width;i++) { // x
+
+        int nextLine = 0;
+
+        for (int j=0; j<height; j++) { // y
+
+            // Convert to POS in charset:
+            int x = i; // % m_charWidthDisplay;
+            int y = j; // ((i/m_charWidthDisplay));
+            int pos = x+(y*m_charWidthDisplay) + start;
+
+            //qDebug() <<i <<j <<"-" << x << y << pos;
+
+            // check in bounds
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<8;i++) {
+
+                    short val = 0;
+
+                    // VIC20 and Multicolor mode - swap bit
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
+                    {
+                       val = PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i]));
+                    }
+                    else
+                    {
+                        val = PixelChar::reverse(pc.p[i]);
+                    }
+
+                    // don't add character data of 0 because when drawing sprite
+                    if (val != 0){
+                        d[nextLine].pos = j+i; d[nextLine].val = val; // this will be sorted on char value
+                        u[nextLine].pos = j+i; u[nextLine].val = val; // this will remain in row/line order
+                        nextLine++;
+                    }
+
+                }
+                pos += m_charWidthDisplay;
+
+                d[nextLine].pos = -1; // end of list
+
+                // sort array by char data values (allows us to get groups of data together)
+                for (int ii = 0; ii < nextLine; ++ii){
+                   for (int jj = ii + 1; jj < nextLine; ++jj){
+                      if (d[ii].val > d[jj].val){
+                         charData a = d[ii];
+                         d[ii] = d[jj];
+                         d[jj] = a;
+                      }
+                   }
+                }
+
+                // generate procedure
+
+                f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
+                f<<"begin\n";
+
+                f << QString::number(nextLine)+"\n";
+
+                short last = 0;
+
+                for (int k = 0; k <=nextLine; k++){
+                    if ((last == d[k].val || d[k+1].val == d[k].val) && k != nextLine)
+                    {
+                        f<< "pos "+ QString::number(d[k].pos) +" char="+ QString::number(d[k].val) + "\n";
+                    }
+                    else
+                    {
+                        d[k].val = 0;
+                    }
+                    last = d[k].val;
+                }
+
+                f<<"\n";
+
+                for (int k = 0; k <nextLine; k++){
+
+                    // make sure it is not in the sorted d list
+                    bool found = false;
+                    for (int kk = 0; kk < nextLine; kk++)
+                        if (u[k].val == d[kk].val) found = true;
+
+                    if (!found)
+                        f<< "pos "+ QString::number(u[k].pos) +" char="+ QString::number(u[k].val) + "\n";
+                }
+                f<<"\n";
+
+
+                for (int k = 0; k <nextLine; k++){
+                        f<< "pos "+ QString::number(u[k].pos) +" char="+ QString::number(u[k].val) + "\n";
+                }
+
+
+                f<<"end;\n\n";
+            }
+
+        } // y
+
+    } // x
+
+    //file.write(charByte);
+}
+
 /*bool SortFunc(const int &s1, const int &s2)
 {
     return s1 < s2;
