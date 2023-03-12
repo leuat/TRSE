@@ -99,9 +99,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 
     } else if (node->m_op.m_type == TokenType::Type::PLUS || node->m_op.m_type == TokenType::Type::MINUS){
         QString negate = node->m_op.m_type==TokenType::Type::MINUS?"-":"";
-        if (right_imm!=nullptr && left_imm!=nullptr){
-
-        } else if (right_imm!=nullptr) {
+        if (right_imm!=nullptr) {
             node->m_left->Accept(this);
             as->Asm("ADD "+getReg()+", "+negate+right_imm->StringValue());
         } else if (left_imm!=nullptr) {
