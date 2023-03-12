@@ -164,7 +164,7 @@ begin
         LD I, System_result
         LD [I], V0
     ");
-    getDT := System_result;
+    getDT := result;
 end;
 
 function isKeydown(c : global byte) : boolean;
@@ -179,7 +179,7 @@ begin
         LD I, System_result
         LD [I], V0
     ");
-    isKeydown := System_result;
+    isKeydown := result;
 end;
 
 end.

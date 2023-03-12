@@ -11,11 +11,10 @@ var
 	
 @include "charset.inc"
 
-procedure DrawChar(p: global ^byte, x, y, c: global byte);
+procedure DrawChar(x, y, c: global byte);
 begin
-	for z:=0 to 8 do
-		p+=c;
-		
+	asm(";here");
+	p:=#chars + c*8;
 	for z:=0 to 8 do
 	begin
 		v:=p[z];
@@ -29,11 +28,11 @@ begin
 	System::Clear();
 	System::Beep(100);
 	//System::PrintHexChar(5,5,15);
-	DrawChar(#chars, 5,5,1);
+	DrawChar(5,5,1);
 	for x:=0 to 10 do
 	begin
 		z:=System::Random();
-		System::DrawLine(z,x,%10000001);
+//		System::DrawLine(x,x,%10000001);
 	end;	
 
 

@@ -2,13 +2,14 @@ unit Screen;
 var
 	ytab : array[193] of integer=BuildTable("0x4000 + (i&0b00111000)*4 | (i&7 | (i&0b11000000)/8)*0x100 ");
 	ytab_color : array[24] of integer=BuildTable("0x5800+i*32 ");
-	@donotremove ytab
-	@donotremove tabpow
+	//@donotremove ytab
+	//@donotremove tabpow
 	tabpow: array[] of byte = (128,64,32,16,8,4,2,1);
 	i,j:byte;
 	x,y,x2,y2 : byte;
 	zp:pointer;
-
+	const width:integer = 256;
+	const height:byte = 192;
 
 	
 procedure BorderColor(_a:byte);
