@@ -983,6 +983,8 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
 
     QVector<PixelChar*> pcList;
 
+    f << "// This is an auto-generated file created by @VBMCompileChunk.\n// Do not edit. Ensure this file is not open in the editor when building.\n\n";
+
     for (int i=0;i<width;i++) { // x
 
         int nextLine = 0;
@@ -1038,10 +1040,9 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
 
                 // generate procedure
 
+                f<<"@donotremove "+ procName+"_"+QString::number(i) +"\n";
                 f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
-                f<<"begin\n";
-
-                f << QString::number(nextLine)+"\n";
+                f<<"begin\n    asm ; draw "+ QString::number(nextLine) +" lines\n\n";
 
                 short last = 0; // used to store last character
                 int lpos = 0; // used to store last y position in sprite drawing (what line to draw to)
@@ -1052,15 +1053,15 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
                     {
                         int p = d[k].pos;
                         if (lpos != 0 && lpos+1 == p )
-                            f<< " iny\n";
+                            f<< "    iny\n";
                         else
-                            f<< " ldy #" + QString::number(p) + "\n";
+                            f<< "    ldy #" + QString::number(p) + "\n";
 
-                        f<< " lda #"+Util::numToHex( d[k].val ) + "\n";
-                        f<< " "+ asmOperation +" ("+ pointerName +"),y\n";
-                        f<< " sta ("+ pointerName +"),y\n";
+                        //if (last != d[k].val) f<< "    ; group\n    lda #"+Util::numToHex( d[k].val ) + "\n";
+                        f<< "    ; group\n    lda #"+Util::numToHex( d[k].val ) + "\n";
+                        f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                        f<< "    sta ("+ pointerName +"),y\n";
                         lpos = d[k].pos;
-                        //f<< "pos "+ QString::number(d[k].pos) +" char="+ QString::number(d[k].val) + "\n";
                     }
                     else
                     {
@@ -1069,7 +1070,7 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
                     last = d[k].val;
                 }
 
-                f<<"\n";
+                f<<"\n    ; unique\n";
 
                 // process unique data
                 for (int k = 0; k <nextLine; k++){
@@ -1083,35 +1084,42 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
 
                         int p = u[k].pos;
                         if (lpos != 0 && lpos+1 == p )
-                            f<< " iny\n";
+                            f<< "    iny\n";
                         else
-                            f<< " ldy #" + QString::number(p) + "\n";
+                            f<< "    ldy #" + QString::number(p) + "\n";
 
-                        f<< " lda #"+Util::numToHex( u[k].val ) + "\n";
-                        f<< " "+ asmOperation +" ("+ pointerName +"),y\n";
-                        f<< " sta ("+ pointerName +"),y\n";
+                        f<< "    lda #"+Util::numToHex( u[k].val ) + "\n";
+                        f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                        f<< "    sta ("+ pointerName +"),y\n";
                         lpos = u[k].pos;
-
-                        //f<< "pos "+ QString::number(u[k].pos) +" char="+ Util::numToHex(u[k].val) + "\n";
-
                     }
                 }
                 f<<"\n";
 
+                f<<"    end; // asm\nend;\n\n";
+
+                /*
                  // debug - all values from u
                 for (int k = 0; k <nextLine; k++){
                         f<< "pos "+ QString::number(u[k].pos) +" char="+ Util::numToHex(u[k].val) + "\n";
                 }
-
-
-                f<<"end;\n\n";
+                */
             }
 
         } // y
 
     } // x
 
-    //file.write(charByte);
+    f<<"\n\n// Lookup table for LBM8\n";
+    f<<"var\n";
+    f<<"    " + procName + ": array[] of integer = (\n        ";
+    for (int i=0;i<width;i++) {
+        f << "#" + procName+"_"+QString::number(i);
+        if (i!=width-1) f << ", ";
+        if (i != 0 && i % 4 == 0) f << "\n        ";
+    }
+    f<<"\n    );\n";
+
 }
 
 /*bool SortFunc(const int &s1, const int &s2)

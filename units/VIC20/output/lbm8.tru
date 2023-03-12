@@ -116,19 +116,57 @@ to the character used to display a sprite. The sprite will later be merged with 
 procedure _RenderBG();
 begin
 
-	asm ; render BG bitmap to char
-		; s and d pointers should be set 
-	
+@ifdef LBM8SAVEBYTES
+
+	asm ; render BG bitmap to char using a loop - slower but smaller
+		; s and d pointers should be set
+
 	ldy #7
 	
 DrawAt_RenderBG_loop
-	
 	lda (lbm8_s),y
 	sta (lbm8_d),y
 	dey		
 	bpl DrawAt_RenderBG_loop
+	
+	end;
+	
+@endif
+
+@ifndef LBM8SAVEBYTES
+
+	asm ; render BG bitmap to char
+		; s and d pointers should be set 
+	
+	ldy #0
+		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
+	iny		
+	lda (lbm8_s),y
+	sta (lbm8_d),y
 		
 	end;
+	
+@endif
 
 end;
 
@@ -244,50 +282,173 @@ begin
 			if (j > 0 ) then  s := s + 8; // get right side of pre-shifted sprite?
 			
 			d := Chr[ char ] + yo;		// address of sprite character to write to
+
+@ifdef LBM8SAVEBYTES
+
+			asm ; render BG bitmap to char using a loop - slower but smaller
+				; s and d pointers should be set
+		
+			ldy #7
 	
+DrawAt_RenderSprite_loop
+			lda (lbm8_s),y
+			ora (lbm8_d),y
+			sta (lbm8_d),y
+			dey		
+			bpl DrawAt_RenderSprite_loop
+			
+			end;
+	
+@endif
+
+@ifndef	LBM8SAVEBYTES
+
 			asm ; unrolled - merge sprite bitmap with sprite bg bitmap
 					
-			;lda #$ff ; testing
 			ldy #0
 			
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			iny
-			lda (lbm8_d),y
-			ora (lbm8_s),y
+			lda (lbm8_s),y
+			ora (lbm8_d),y
 			sta (lbm8_d),y
 			
 			end;
 		
+@endif
+
 		end;
 
 	end;
 		
+end;
+
+procedure DrawCAt( pa, x, y: global byte, sp: global integer);
+begin
+	
+	xo := (x & $07) << 2;	// X offset 0-7 but require * 4 for integer lookup
+	yo := y & 7;			// Y offset 0-7
+	
+	xc := x >> 3;			// X character position on screen
+	yc := y >> 3;			// Y character position on screen
+
+	fori j := 0 to 1 do // up to two columns for an 8x8 sprite (left and right)
+	begin
+	
+		// if first column (left) or x offset crossing over to right column
+		if (j = 0 or xo <> 0) then
+		begin
+			
+			char := pa; // Save sprite starting character for later
+			
+			// set screen memory address to x and y character coordinates
+			screenmemory := Scr[ yc ] + xc + j;
+
+			_AddBG();					// save BG character that sprite will replace			
+			screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+			d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+			_RenderBG();
+			
+			pa += 1;					// next char
+						
+			if (yo <> 0 ) then
+			begin
+				
+				screenmemory += @SCREENWIDTH; // y offset is not 0, so need another char below
+				
+				_AddBG();					// save BG character that sprite will replace			
+				screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+				d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+				_RenderBG( );
+
+				pa += 1; 					// next char
+		
+			end;
+		
+		end;
+
+
+
+		// render the sprite bitmap into the sprite character(s)
+		// this will do if first column or x offset is not zero (second column)
+		if (j = 0 or xo <> 0) then
+		begin
+
+			d := sp;					// address of sprite pre-shift lookup table
+			
+			asm ; Find address of left side of pre-shifted sprite from lookup table
+			
+			lda lbm8_j
+			beq lbm8_leftSide
+			
+			lda lbm8_xo ; xo is already * by 4
+			clc
+			adc #2	;; add 2 to get right side
+			bcc lbm8_rightSide 
+			
+lbm8_leftSide
+			lda lbm8_xo ; xo is already * by 4
+lbm8_rightSide
+	
+			tay
+			
+			; change the jsr addresss (self modify)
+			lda (lbm8_d),y
+			sta lbm8_callSprite+1
+	
+			iny
+			
+			lda (lbm8_d),y 
+			sta lbm8_callSprite+2
+	
+			end;
+			
+			d := Chr[ char ] + yo;		// address of sprite character to write to
+	
+			// call sprite code here
+			asm ; jump
+			
+lbm8_callSprite jsr lbm8_dummy
+			
+			end;
+			
+			
+		end;
+
+	end;
+		
+	asm ; used as a dummy label reference for sprite calling routine
+lbm8_dummy	
+	end;
+
 end;
 
 
