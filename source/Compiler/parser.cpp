@@ -1277,6 +1277,13 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             return;
         }
+        if (m_currentToken.m_value=="bin2inc") {
+            Eat();
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value=="exportprg2bin") {
             Eat();
             Eat();
@@ -3054,6 +3061,10 @@ void Parser::PreprocessSingle() {
         else if (m_currentToken.m_value.toLower() =="export") {
             Eat(TokenType::PREPROCESSOR);
             HandleExport();
+        }
+        else if (m_currentToken.m_value.toLower() =="bin2inc") {
+            Eat(TokenType::PREPROCESSOR);
+            HandleBin2Inc();
         }
         else if (m_currentToken.m_value.toLower() =="pathtool") {
             Eat(TokenType::PREPROCESSOR);
@@ -5320,6 +5331,34 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleBin2Inc()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QString name = m_currentToken.m_value;
+
+    if (!QFile::exists(inFile))
+        ErrorHandler::e.Error("Bin2Inc error: could not open file "+inFile,m_currentToken.m_lineNumber);
+
+    QByteArray data = Util::loadBinaryFile(inFile);
+    QString d = "var "+name+" : array["+QString::number(data.size())+"] of byte =( \n\t";
+    for (int i=0;i<data.size();i++) {
+        d+=Util::numToHex(data[i]);
+        if (i!=data.size()-1)
+            d+=",";
+        if ((i&15)==15) d+="\n\t";
+
+    }
+    d+=");\n";
+    Util::SaveTextFile(outFile,d);
+
 
 }
 

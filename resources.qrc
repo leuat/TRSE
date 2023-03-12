@@ -743,5 +743,6 @@
         <file>resources/text/help/r/addemulatorparam.rtf</file>
         <file>resources/code/tiki100/unpack.asm</file>
         <file>resources/text/help/r/volatile.rtf</file>
+        <file>resources/text/help/r/bin2inc.rtf</file>
     </qresource>
 </RCC>

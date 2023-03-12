@@ -1,0 +1,10 @@
+Parameters: @bin2inc [input file] [output file] [name of array]
+<p>@bin2inc will convert a binary file (param 1) to a TRSE .include file (param 2) that
+contains an array with the data from the binary file.
+<code>
+@incbin "data.bin" "data.inc" "myData"
+</code>
+"data.inc" will now look something like this:
+</code>
+var myData : array [32] of byte = ($10,$20,$30 ....);
+</code>

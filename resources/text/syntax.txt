@@ -1381,7 +1381,7 @@ r; SHR; ALL
 r; SHL; ALL
 r; XOR; ALL
 r; NOT; ALL
-
+r; BIN2INC; ALL
 r; INTERRUPT; ALL
 r; ELSE; ALL
 r; OR; ALL

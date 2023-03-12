@@ -312,6 +312,7 @@ private:
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleBin2Inc();
     void HandlePathTool();
     void HandleConvertJDH8();
     void HandleExportShiftedCharset();

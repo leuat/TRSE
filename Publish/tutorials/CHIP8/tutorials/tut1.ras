@@ -1,21 +1,13 @@
 program Tut1;
 @use "system/system"
+
+
+@export "resources/charsets/charset1.flf" "resources/charsets/charset1.bin" 26
+@bin2inc "resources/charsets/charset1.bin" "charset.inc" chars
 var
-	@donotremove sprite
-	sprite : array[8] of byte =(
-    %01101110,
-    %10000001,
-    %10100101,
-    %10111101,
-    %10101101,
-    %10011001,
-    %10000001,
-    %01111110
-	,$FF,$FF,$FF
-);
 	x,y,z : byte;
 	
-
+@include "charset.inc"
 	
 begin
 	System::Clear();
