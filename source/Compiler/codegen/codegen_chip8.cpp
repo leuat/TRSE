@@ -56,20 +56,28 @@ void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1)
 
 void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo)
 {
-    QString op;
-    if (type==TokenType::Type::PLUS)
-        op="add ";
-    if (type==TokenType::Type::MINUS)
-        op="sub ";
-    if (type==TokenType::Type::BITOR)
-        op="or ";
-    if (type==TokenType::Type::XOR)
-        op="xor ";
-    if (type==TokenType::Type::BITAND)
-        op="and ";
-    as->Asm(op+x0_lo+","+x1_lo);
-    as->Asm(op+x0_hi+", VF");
-    as->Asm(op+x0_hi+","+ x1_hi);
+    if (type==TokenType::Type::PLUS){
+        as->Asm("add "+x0_lo+","+x1_lo);
+        as->Asm("add "+x0_hi+", VF");
+        as->Asm("add "+x0_hi+","+ x1_hi);
+    } else if (type==TokenType::Type::MINUS){
+        
+        as->Asm("sub "+x0_lo+","+x1_lo);
+        as->Asm("sub "+x0_hi+", VF");
+        as->Asm("sub "+x0_hi+","+ x1_hi);
+    } else if (type==TokenType::Type::BITOR){
+
+        as->Asm("or "+x0_lo+","+x1_lo);
+        as->Asm("or "+x0_hi+","+ x1_hi);
+    } else if (type==TokenType::Type::XOR){
+        as->Asm("xor "+x0_lo+","+x1_lo);
+        as->Asm("xor "+x0_hi+","+ x1_hi);
+
+    }else if (type==TokenType::Type::BITAND){
+
+        as->Asm("and "+x0_lo+","+x1_lo);
+        as->Asm("and "+x0_hi+","+ x1_hi);
+    }
 
 }
 
