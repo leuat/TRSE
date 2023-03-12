@@ -744,5 +744,6 @@
         <file>resources/code/tiki100/unpack.asm</file>
         <file>resources/text/help/r/volatile.rtf</file>
         <file>resources/text/help/r/bin2inc.rtf</file>
+        <file>resources/text/help/r/vbmcompilechunk.rtf</file>
     </qresource>
 </RCC>
