@@ -147,7 +147,11 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         if (node->isPointer(as)) {
             //I could make it support words, but that's for later
             QString x0 = getReg(); PushReg();
-            QString x1 = getReg(); PushReg();
+            QString x1;
+            if (node->getArrayType(as)==TokenType::INTEGER){
+                x1 = getReg(); PushReg();
+            }
+
             node->m_expr->setForceType(TokenType::BYTE); 
             node->m_expr->Accept(this);
             QString index;
@@ -180,7 +184,10 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         } else {
             // Regular array
             QString x0 = getReg(); PushReg();
-            QString x1 = getReg(); PushReg();
+            QString x1;
+            if (node->getArrayType(as)==TokenType::INTEGER){
+                x1=getReg(); PushReg();
+            }
             node->m_expr->setForceType(TokenType::BYTE);
             node->m_expr->Accept(this);
             QString index;
@@ -200,9 +207,25 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
             PopReg(); PopReg(); 
             return;
         }
+    } else if (var->isWord(as)) {
+        QString x0 = getReg(); PushReg();
+        QString x1 = getReg();
+        as->Asm("ld I,"+var->getValue(as));
+        as->Asm("LD V1, [I]");
+        if (x0!="V0") as->Asm("ld "+x0+", V0");
+        if (x1!="V1") as->Asm("ld "+x1+", V1");
+        PopReg();
+        
     }
+    else {
+        QString x0 = getReg();
+        as->Asm("ld I,"+var->getValue(as));
+        as->Asm("ld V0,[I]");
+        if (x0!="V0") as->Asm("ld "+x0+",V0");
+        
 
-    ldr(node);
+    }
+    
 
 
 
@@ -362,30 +385,7 @@ void CodeGenChip8::str(QSharedPointer<Node> var)
     }
 }
 
-void CodeGenChip8::ldr(QSharedPointer<Node> var)
-{
-    auto nv = qSharedPointerDynamicCast<NodeVar>(var);
 
-    if (var->isWord(as)) {
-        QString x0 = getReg(); PushReg();
-        QString x1 = getReg();
-        as->Asm("ld I,"+var->getValue(as));
-        as->Asm("LD V1, [I]");
-        if (x0!="V0") as->Asm("ld "+x0+", V0");
-        if (x1!="V1") as->Asm("ld "+x1+", V1");
-        PopReg();
-        
-    }
-    else {
-        QString x0 = getReg();
-        as->Asm("ld I,"+var->getValue(as));
-        as->Asm("ld V0,[I]");
-        if (x0!="V0") as->Asm("ld "+x0+",V0");
-        
-
-    }
-
-}
 
 
 
