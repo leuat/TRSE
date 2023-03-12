@@ -229,7 +229,6 @@ public:
 
     bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
 
-    void ProcedureStart(Assembler* as) override;
 
     //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 

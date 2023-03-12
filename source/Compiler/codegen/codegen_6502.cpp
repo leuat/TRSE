@@ -3176,6 +3176,3 @@ bool CodeGen6502::StoreStackParameter(QSharedPointer<NodeAssign> n)
     return true;
 
 }
-void CodeGen6502::ProcedureStart(Assembler* as){
-
-}

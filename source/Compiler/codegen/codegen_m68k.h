@@ -84,6 +84,7 @@ public:
 
 
     QString getEndType(QSharedPointer<Node> v);
+    QString getEndType(QSharedPointer<Node> v1,QSharedPointer<Node> v2);
 
 
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
