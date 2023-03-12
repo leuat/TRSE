@@ -58,7 +58,7 @@ public:
     QString getShift(QSharedPointer<NodeVar> n);
 
 
-    QString getIndexScaleVal(QSharedPointer<Node> var);
+    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
     int m_lvl = 0;
     QStringList m_regs = QStringList({"x0","x1","x2","x3","x4","x4","x5","x6","x7","x8","x9","x10","x11"});
@@ -68,7 +68,7 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jne ";
 
-    QString getWordByteType(QSharedPointer<Node> n) {
+    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
 
@@ -89,7 +89,7 @@ public:
     QString BinopVariableNumber(QSharedPointer<Node> n, QString value, TokenType::Type type);
 
 
-    virtual QString getARMValue(QSharedPointer<Node> n) {
+    virtual QString getARMValue(Assembler* as, QSharedPointer<Node> n) {
         if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
@@ -105,9 +105,7 @@ public:
 
 
 
-
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
-
 
 
 
@@ -152,16 +150,16 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
 
 
-    void ProcedureStart() override;
+    void ProcedureStart(Assembler* as) override;
 
-    void ProcedureEnd() override;
+    void ProcedureEnd(Assembler* as) override;
 
 
 

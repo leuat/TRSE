@@ -124,7 +124,7 @@ bool CodeGenZ80::UseBlocks() {
             Syntax::s.m_currentSystem->m_system == AbstractSystem::SPECTRUM);
 }
 
-void CodeGenZ80::Load16bitToHl()
+void CodeGenZ80::Load16bitToHl(Assembler *as)
 {
     as->Asm("ld a,[hl]");
     as->Asm("ld e,a");
@@ -1584,7 +1584,7 @@ QString CodeGenZ80::getA(QSharedPointer<Node> n) {
 
 }
 
-QString CodeGenZ80::getX86Value( QSharedPointer<Node> n) {
+QString CodeGenZ80::getX86Value(Assembler *as, QSharedPointer<Node> n) {
     if (n->isPureVariable())
         return "["+n->getValue(as)+"]";
     return n->getValue(as);
