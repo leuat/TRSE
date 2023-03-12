@@ -61,10 +61,10 @@ public:
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
     int block16bit=0;
 
-    QString getIntType(Assembler* as, QSharedPointer<Node> node);
+    QString getIntType( QSharedPointer<Node> node);
     QString getTempName(QString t);
 
-    void Doublette(Assembler* as, QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);
+    void Doublette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);
 
 
     QString getJmp(bool isOffPage) override {
@@ -73,7 +73,7 @@ public:
 
     bool UseBlocks() override { return true;}
 
-    void HackPointer(Assembler* as, QSharedPointer<Node> node);
+    void HackPointer(QSharedPointer<Node> node);
 
 
 
@@ -111,8 +111,8 @@ public:
 
     void BuildToCmp(QSharedPointer<Node> node);
 
-    QString TripeNumber(Assembler* as,QSharedPointer<Node> node);
-    QString TripeValue(Assembler* as,QSharedPointer<Node> node);
+    QString TripeNumber(QSharedPointer<Node> node);
+    QString TripeValue(QSharedPointer<Node> node);
 
     void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
@@ -183,7 +183,7 @@ public:
 
 
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 

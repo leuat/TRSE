@@ -251,7 +251,7 @@ public:
      *  Sometimes compound binary clauses can be optimised. Only used on the 6502 for now.
      *
      */
-    virtual void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) {}
+    virtual void OptimizeBinaryClause(QSharedPointer<Node> node) {}
 
 
 
@@ -281,8 +281,8 @@ public:
      *  Inserts custom .asm code at every procedure start/end.
      *
      */
-    virtual void ProcedureStart(Assembler* as) { }
-    virtual void ProcedureEnd(Assembler* as) { }
+    virtual void ProcedureStart() { }
+    virtual void ProcedureEnd() { }
 
     /*
      * Prints out the "incbin" command for the current cpu/assembler.

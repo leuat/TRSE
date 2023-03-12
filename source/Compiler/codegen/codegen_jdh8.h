@@ -58,7 +58,7 @@ public:
     QString getShift(QSharedPointer<NodeVar> n);
 
 
-    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
+    QString getIndexScaleVal(QSharedPointer<Node> var);
 
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
@@ -68,7 +68,7 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jz ";
 
-    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+    QString getWordByteType(QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
 
@@ -95,7 +95,7 @@ public:
     }
 
 
-    virtual QString getJDH8Value(Assembler* as, QSharedPointer<Node> n) {
+    virtual QString getJDH8Value( QSharedPointer<Node> n) {
         if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
@@ -111,7 +111,9 @@ public:
 
 
 
+
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
+
 
 
 
@@ -156,7 +158,7 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
