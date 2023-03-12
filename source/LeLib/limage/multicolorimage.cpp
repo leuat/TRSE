@@ -1041,7 +1041,7 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
                         f<< "    ldy #" + QString::number(p) + "\n";
 
                     f<< "    lda #"+Util::numToHex( d[k].val ) + "\n";
-                    f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                    if (asmOperation != "") f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
                     f<< "    sta ("+ pointerName +"),y\n";
                     lpos = d[k].pos;
 
