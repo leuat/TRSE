@@ -180,7 +180,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
         if (node->m_left->isReference())
             ax="di";
 
-        as->Asm(as->m_term + " "+ax+", "+getX86Value(as,node->m_right));
+        as->Asm(as->m_term + " "+ax+", "+getX86Value(node->m_right));
         if (node->m_left->isBool(as)) {
             as->Asm("and "+ax+",1");
         }
@@ -498,7 +498,7 @@ void CodeGenX86::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenX86::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
 
     if (node->m_right->isPureNumeric() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Asm("mov ["+var->getValue(as)+ "], "+type+ " "+node->m_right->getValue(as));
@@ -533,7 +533,7 @@ void CodeGenX86::LoadVariable(QSharedPointer<NodeNumber>n)
 
 }
 
-QString CodeGenX86::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenX86::getIndexScaleVal( QSharedPointer<Node> var)
 {
     /*    auto v = qSharedPointerDynamicCast<NodeVar>(var);
 
@@ -551,13 +551,13 @@ QString CodeGenX86::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
 
 void CodeGenX86::LoadIndex(QSharedPointer<Node> n, QString reg)
 {
-    as->Asm("mov di,"+getX86Value(as,n) +" ; index is word");
+    as->Asm("mov di,"+getX86Value(n) +" ; index is word");
     if (n->isPure()) {
         if (n->getOrgType(as)!=TokenType::BYTE)
-            as->Asm("mov di,"+getX86Value(as,n) +" ; index is word");
+            as->Asm("mov di,"+getX86Value(n) +" ; index is word");
         else  {
 
-            as->Asm("mov cl,"+ getX86Value(as,n));
+            as->Asm("mov cl,"+ getX86Value(n));
             as->Asm("mov ch,0");
             as->Asm("mov di,cx");
         }
@@ -681,6 +681,7 @@ void CodeGenX86::PopX() {
 
 
 
+
 void CodeGenX86::AssignString(QSharedPointer<NodeAssign> node) {
 
 
@@ -758,7 +759,7 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
         as->Term();
         if (var->m_expr->isPureNumeric() && node->getWriteType()!=TokenType::LONG) {
             as->Asm("les di, ["+var->getValue(as)+"]");
-            as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(as,var)+"],"+getAx("a",var));
+            as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(var)+"],"+getAx("a",var));
             return true;
 
         }
@@ -864,7 +865,7 @@ bool CodeGenX86::IsSimpleIncDec(QSharedPointer<NodeAssign> node)
 {
     // Check for a:=a+2;
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
     if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::BITOR || bop->m_op.m_type==TokenType::BITAND || bop->m_op.m_type==TokenType::XOR )) {
         if (bop->ContainsVariable(as,var->getValue(as))) {
@@ -969,7 +970,7 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenX86::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenX86::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -986,7 +987,7 @@ void CodeGenX86::AssignFromRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
     //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("mov "+getX86Value(as,node->m_left)+", "+reg);
+    as->Asm("mov "+getX86Value(node->m_left)+", "+reg);
     return;
 }
 
@@ -1000,7 +1001,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
     //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("mov "+reg+", "+getX86Value(as,node->m_right));
+    as->Asm("mov "+reg+", "+getX86Value(node->m_right));
     return;
 
 }
@@ -1037,7 +1038,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
         QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-        as->Asm("mov "+reg+", "+getX86Value(as,node->m_right));
+        as->Asm("mov "+reg+", "+getX86Value(node->m_right));
         return;
         //}
     }
@@ -1137,7 +1138,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
         as->Asm("les di, ["+var->getValue(as)+"]");
         if (var->m_expr->isPureNumeric()) {
 
-            as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(as,var)+"],"+getAx("a",var));
+            as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(var)+"],"+getAx("a",var));
             return;
 
         }
@@ -1195,7 +1196,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
                 return;
             }
             else {
-                as->Asm("mov di,"+getX86Value(as,var->m_expr));
+                as->Asm("mov di,"+getX86Value(var->m_expr));
                 if (var->isWord(as))
                     as->Asm("shl di,1");
             }
@@ -1217,7 +1218,7 @@ void CodeGenX86::AssignToRegister(QSharedPointer<NodeAssign> node)
 
 //    if (var->getValue())
     // Simple a:=b;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
 
     if (node->m_right->isPureNumeric()) {
         as->Asm("mov ["+var->getValue(as)+ "], "+type+ " "+node->m_right->getValue(as));
@@ -1314,7 +1315,7 @@ void CodeGenX86::BuildToCmp(QSharedPointer<Node> node)
             //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             //            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             if (node->m_left->isPureNumeric() && node->m_right->isPureNumeric()) {
-                //                as->Asm("cmp "+getWordByteType(as,node->m_left) +" " +node->m_left->getValue(as)+","+getWordByteType(as,node->m_left)+" " + node->m_right->getValue(as));
+                //                as->Asm("cmp "+getWordByteType(node->m_left) +" " +node->m_left->getValue(as)+","+getWordByteType(node->m_left)+" " + node->m_right->getValue(as));
                 as->Comment("Compare two const numbers");
                 if (node->m_left->getValueAsInt(as)==node->m_right->getValueAsInt(as))
                     as->Asm("xor ax,ax ; clear zero flag");
@@ -1326,7 +1327,7 @@ void CodeGenX86::BuildToCmp(QSharedPointer<Node> node)
                 return;
             }
             if (node->m_left->isPure()) {
-                as->Asm("cmp ["+node->m_left->getValue(as)+"],"+getWordByteType(as,node->m_left)+" " + node->m_right->getValue(as));
+                as->Asm("cmp ["+node->m_left->getValue(as)+"],"+getWordByteType(node->m_left)+" " + node->m_right->getValue(as));
                 return;
             }
 
@@ -1361,7 +1362,7 @@ void CodeGenX86::BuildToCmp(QSharedPointer<Node> node)
     node->m_left->Accept(this);
     as->Term();
     if (node->m_right->isPure()) {
-        as->Asm("cmp  "+ax+", " + getX86Value(as,node->m_right));
+        as->Asm("cmp  "+ax+", " + getX86Value(node->m_right));
         return;
 
     }
@@ -1385,7 +1386,7 @@ void CodeGenX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
         as->Asm("mov cx,ax");
     }
     if (step==nullptr)
-        as->Asm("add ["+var+"],"+getWordByteType(as,nodeA->m_left)+" 1");
+        as->Asm("add ["+var+"],"+getWordByteType(nodeA->m_left)+" 1");
     else
         as->Asm("add ["+var+"],cx");
     /*
@@ -1400,7 +1401,7 @@ void CodeGenX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
         as->Asm("add "+getAx(nodeB)+",1");
 
 
-    as->Asm(m_cmp+getAx(nodeB)+","+getWordByteType(as,nodeA->m_left)+" ["+var+"]");
+    as->Asm(m_cmp+getAx(nodeB)+","+getWordByteType(nodeA->m_left)+" ["+var+"]");
     as->Asm(m_jne+lblJump);
 
 }

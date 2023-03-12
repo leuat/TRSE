@@ -66,7 +66,7 @@ public:
 
     bool UseBlocks() override { return true;}
 
-    void HackPointer(Assembler* as, QSharedPointer<Node> node);
+    void HackPointer(QSharedPointer<Node> node);
 
     // 6502 only
     // When using stack parameters on the 6502, you need to pop the stack N times when exiting a subroutine.
@@ -207,7 +207,7 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
@@ -229,7 +229,6 @@ public:
 
     bool IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) override;
 
-    void ProcedureStart(Assembler* as) override;
 
     //    void HandleNodeAssignCopyRecord(QSharedPointer<NodeAssign>node);
 

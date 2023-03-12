@@ -253,7 +253,7 @@ void CodeGenChip8::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
@@ -307,6 +307,14 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeNumber>n)
 }
 
 
+QString CodeGenChip8::getIndexScaleVal( QSharedPointer<Node> var)
+{
+    if (var->isWord(as))
+        return "2";
+    if (var->isLong(as))
+        return "4";
+    return "1";
+}
 
 QString CodeGenChip8::getCallSubroutine() {
     return "call";
@@ -529,7 +537,7 @@ bool CodeGenChip8::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenChip8::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenChip8::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -549,7 +557,7 @@ void CodeGenChip8::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("ld "+reg+", "+getChip8Value(as,node->m_right));
+    as->Asm("ld "+reg+", "+getChip8Value(node->m_right));
     return;
 
 }
@@ -623,7 +631,6 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
                 if (left_imm->m_val == right_imm->m_val)
                     as->Asm("jp "+as->jumpLabel(lblFailed));
                 return;
-
                 
             } else if (left_imm) { 
                 node->m_right->Accept(this);

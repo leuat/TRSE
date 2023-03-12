@@ -38,18 +38,18 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
 //    as->Comment("BOP NEW register: " + d0);
 //    if (m_clearFlag) {
 
-     TransformVariable(as,"moveq",d0,"#0");
+     TransformVariable("moveq",d0,"#0");
     //    m_clearFlag=false;
   //  }
     node->m_left->Accept(this);
-    QString endtype = getEndType(as,node->m_left, node->m_right);
+    QString endtype = getEndType(node->m_left, node->m_right);
     if (node->m_left->isByte(as))
         endtype =".b";
 
     QString d1 = as->m_varStack.pop();
     if (m_regs.contains(d1) && m_regs.contains(d0))
         endtype = ".l";
-    TransformVariable(as,"move"+endtype,d0 + "     ; BOP move",d1);
+    TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
 
 
 
@@ -70,23 +70,23 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
         }
     }
 
-    else op=op + getEndType(as,node->m_left, node->m_right);//+m_lastSize;//+".l";
+    else op=op + getEndType(node->m_left, node->m_right);//+m_lastSize;//+".l";
 
 //    as->Comment("d0 used:" +d0);
     if (adv) {
         QString d1 = as->m_regAcc.Get();
 
         node->m_right->Accept(this);
-        TransformVariable(as,"move"+getEndType(as,node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
+        TransformVariable("move"+getEndType(node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
 
-        TransformVariable(as,op,d0,d1);
+        TransformVariable(op,d0,d1);
 
         as->m_regAcc.Pop(d1);
 
     }
     else {
         node->m_right->Accept(this);
-        TransformVariable(as,op,d0,as->m_varStack.pop());
+        TransformVariable(op,d0,as->m_varStack.pop());
     }
 
 
@@ -148,7 +148,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
 
         }
         if (m_clearFlag)
-            TransformVariable(as,"moveq",d0,"#0");
+            TransformVariable("moveq",d0,"#0");
 
         as->m_regAcc.m_latest = d0;
     }
@@ -165,7 +165,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
   //      LoadVariable(node->m_left);
         as->Comment("BOP Start : " + d0);
 
-        TransformVariable(as,"move",d0,as->m_varStack.pop(),node->m_left);
+        TransformVariable("move",d0,as->m_varStack.pop(),node->m_left);
     }
 
 
@@ -179,7 +179,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
 
     as->Comment("d0 used:" +d0);
 
-    TransformVariable(as,op,d0,right);
+    TransformVariable(op,d0,right);
 
 
     as->m_varStack.push(d0);
@@ -490,12 +490,12 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             QString a0 = as->m_regMem.Get();
 
             if (n->getType(as)==TokenType::POINTER)
-                TransformVariable(as,"move.l",a0,n->getValue(as));
+                TransformVariable("move.l",a0,n->getValue(as));
             else
-                TransformVariable(as,"lea",a0,n->getValue(as));
+                TransformVariable("lea",a0,n->getValue(as));
 
 //            as->Comment(";general X");
-            TransformVariable(as,"move"+getEndType(as,n),Util::numToHex(val)+"("+a0+")",d0);
+            TransformVariable("move"+getEndType(n),Util::numToHex(val)+"("+a0+")",d0);
 
             as->m_regMem.Pop(a0);
             return;
@@ -523,11 +523,11 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             as->Asm("lsl #2,"+d1);
         }
         if (n->getType(as)==TokenType::POINTER)
-            TransformVariable(as,"move.l",a0,n->getValue(as));
+            TransformVariable("move.l",a0,n->getValue(as));
         else
-            TransformVariable(as,"lea",a0,n->getValue(as));
+            TransformVariable("lea",a0,n->getValue(as));
 
-        TransformVariable(as,"move"+getEndType(as,n),"("+a0+","+d1+")",d0);
+        TransformVariable("move"+getEndType(n),"("+a0+","+d1+")",d0);
 
         as->m_regMem.Pop(a0);
         if (m_regs.contains(d2)) {
@@ -540,7 +540,7 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
     }
     QString d0 = as->m_varStack.pop();
 
-    TransformVariable(as,"move"+getEndType(as,n),n->getValue(as),d0);
+    TransformVariable("move"+getEndType(n),n->getValue(as),d0);
 }
 
 
@@ -554,7 +554,7 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
         bool done = false;
         if (as->m_regAcc.m_latest.length()==2) {
             //as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
-//            TransformVariable(as,"move.l",as->m_regAcc.m_latest,"#0");
+//            TransformVariable("move.l",as->m_regAcc.m_latest,"#0");
             done = true;
         }
 //        move.b (a0,$1),d0             ; LoadVariable:: is array
@@ -566,12 +566,12 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
         if (n->m_expr->isPureNumeric() && !n->isPointer(as)) {
             as->Comment("Shift is pure numeric optimization");
             if (n->isPointer(as))
-                TransformVariable(as,"move.l",a0,n->getValue(as));
+                TransformVariable("move.l",a0,n->getValue(as));
             else
-                TransformVariable(as,"lea",a0,n->getValue(as));
+                TransformVariable("lea",a0,n->getValue(as));
 
             int shift = n->m_expr->getValueAsInt(as)*n->m_expr->getArrayDataSize(as);
-            as->Asm("move"+getEndType(as,n)+" "+Util::numToHex(shift)+"("+a0+"),"+d0);
+            as->Asm("move"+getEndType(n)+" "+Util::numToHex(shift)+"("+a0+"),"+d0);
             as->m_varStack.push(d0);
 
             as->m_regMem.Pop(a0);
@@ -584,7 +584,7 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
         if (!done ) {
 //            as->Comment("Clearing : " + d0 + " YO");
             m_clearFlag=true;
-           // TransformVariable(as,"move.l",d0,"#0");
+           // TransformVariable("move.l",d0,"#0");
         }
         //qDebug() << "Loading array: expression";
         LoadVariable(n->m_expr);
@@ -603,12 +603,12 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
 //        as->Comment("Raw type: " + TokenType::getType(as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType()));
         //as->Comment("Is Pointer : " + QString::number(n->isPointer(as)));
         if (n->isPointer(as))
-            TransformVariable(as,"move.l",a0 + trp,n->getValue(as));
+            TransformVariable("move.l",a0 + trp,n->getValue(as));
         else
-            TransformVariable(as,"lea",a0+trp,n->getValue(as));
+            TransformVariable("lea",a0+trp,n->getValue(as));
 
-//        TransformVariable(as,"lea",a0,n->getValue(as));
-        TransformVariable(as,"move",d0+trp,"("+a0+","+d1+")",n);
+//        TransformVariable("lea",a0,n->getValue(as));
+        TransformVariable("move",d0+trp,"("+a0+","+d1+")",n);
         //qDebug() << "Cleaning up loadvar: " <<d1;
         as->m_varStack.push(d0);
 
@@ -629,11 +629,11 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
     QString d0 = as->m_regAcc.Get();
     if (m_clearFlag || n->isByte(as)) {
 //        as->Comment("LoadVariable:: Clearing");
-        TransformVariable(as,"move.l",d0,"#0");
+        TransformVariable("move.l",d0,"#0");
 
         m_clearFlag=0;
     }
-    TransformVariable(as,"move"+getEndType(as,n),d0+"          ; Loadvar regular end",n->getValue(as));
+    TransformVariable("move"+getEndType(n),d0+"          ; Loadvar regular end",n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 }
@@ -654,7 +654,7 @@ if (!n->isPure()) {
     }
 
     QString a0 = as->m_regMem.Get();
-    TransformVariable(as,"move.l",a0,n->getLiteral(as));
+    TransformVariable("move.l",a0,n->getLiteral(as));
     as->m_varStack.push(a0);
     as->m_regMem.Pop(a0);
     return "";
@@ -672,10 +672,10 @@ QString CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
                 val = Util::numToHex(0x100000000-abs(Util::NumberFromStringHex("$"+val)));
         }
 
-        TransformVariable(as,"move.l",a0,"#"+val);
+        TransformVariable("move.l",a0,"#"+val);
         return "";
     }
-    TransformVariable(as,"move.l",a0,n->getLiteral(as));
+    TransformVariable("move.l",a0,n->getLiteral(as));
     return "";
 }
 
@@ -683,7 +683,7 @@ void CodeGen68k::LoadPointer(QSharedPointer<Node> n)
 {
     QString d0 = as->m_regAcc.Get();
     //    n->Accept(m_)
-    TransformVariable(as,"move"+getEndType(as,n),d0,n->getValue(as));
+    TransformVariable("move"+getEndType(n),d0,n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 
@@ -713,43 +713,43 @@ void CodeGen68k::LoadVariable(QSharedPointer<Node> n)
 void CodeGen68k::LoadVariable(QSharedPointer<NodeNumber>n)
 {
     QString d0 = as->m_regAcc.Get();
-    TransformVariable(as,"move",d0, n->getValue(as));
+    TransformVariable("move",d0, n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 
 }
 
-void CodeGen68k::TransformVariable(Assembler *as, QString op, QString n, QString val, QSharedPointer<Node> t)
+void CodeGen68k::TransformVariable(QString op, QString n, QString val, QSharedPointer<Node> t)
 {
-//    as->Asm(op+getEndType(as,t) +" "+val + "," + n);
-    m_lastSize = getEndType(as,t);
-    as->Asm(op+getEndType(as,t) +" "+val + "," + n);
+//    as->Asm(op+getEndType(t) +" "+val + "," + n);
+    m_lastSize = getEndType(t);
+    as->Asm(op+getEndType(t) +" "+val + "," + n);
 
 }
 
-void CodeGen68k::TransformVariable(Assembler* as, QString op, QSharedPointer<NodeVar> n, QString val)
+void CodeGen68k::TransformVariable(QString op, QSharedPointer<NodeVar> n, QString val)
 {
-    as->Asm(op+getEndType(as,n) +" "+val + "," + n->getValue(as));
-    m_lastSize = getEndType(as,n);
+    as->Asm(op+getEndType(n) +" "+val + "," + n->getValue(as));
+    m_lastSize = getEndType(n);
 
-//    qDebug() << " ** OP : " << op+getEndType(as,n) +" "+val + "," + n->getValue(as);
+//    qDebug() << " ** OP : " << op+getEndType(n) +" "+val + "," + n->getValue(as);
 }
 
-void CodeGen68k::TransformVariable(Assembler *as, QString op, QString n, QSharedPointer<NodeVar> val)
+void CodeGen68k::TransformVariable( QString op, QString n, QSharedPointer<NodeVar> val)
 {
-    as->Asm(op+getEndType(as,val) +" "+val->getValue(as) + "," + n);
-    m_lastSize = getEndType(as,val);
+    as->Asm(op+getEndType(val) +" "+val->getValue(as) + "," + n);
+    m_lastSize = getEndType(val);
 
 //
 }
 
-void CodeGen68k::TransformVariable(Assembler* as, QString op, QString n, QString val)
+void CodeGen68k::TransformVariable(QString op, QString n, QString val)
 {
     QString flag="";
     as->Asm(op+flag +" "+val + "," + n);
 }
 
-QString CodeGen68k::getEndType(Assembler *as, QSharedPointer<Node> v) {
+QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
 //    getType(as)==TokenType::LONG
     if (v->m_forceType==TokenType::LONG)
         return ".l";
@@ -853,12 +853,12 @@ bool CodeGen68k::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
 
     // Can be done directly
     if (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::OR || bop->m_op.m_type==TokenType::AND)
-        as->Asm(op +getEndType(as,v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
+        as->Asm(op +getEndType(v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
     else {
         QString d0 = as->m_regAcc.Get();
-        as->Asm("move"+getEndType(as,v2) + " "+var+","+d0);
-        as->Asm(op +getEndType(as,v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
-        as->Asm("move"+getEndType(as,v2) + " "+d0+","+var);
+        as->Asm("move"+getEndType(v2) + " "+var+","+d0);
+        as->Asm(op +getEndType(v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
+        as->Asm("move"+getEndType(v2) + " "+d0+","+var);
         as->m_regAcc.Pop(d0);
     }
 
@@ -873,7 +873,7 @@ bool CodeGen68k::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
     if (node->m_right->isPure() && !node->m_right->hasArrayIndex() && !node->m_left->hasArrayIndex()) {
         QString rval = node->m_right->getValue(as);
 
-        as->Asm("move"+getEndType(as,node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
+        as->Asm("move"+getEndType(node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
         return true;
     }
     // Stop here for now
@@ -906,12 +906,12 @@ bool CodeGen68k::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
 
     // Can be done directly
     if (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::OR || bop->m_op.m_type==TokenType::AND)
-        as->Asm(op +getEndType(as,v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
+        as->Asm(op +getEndType(v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
     else {
         QString d0 = as->m_regAcc.Get();
-        as->Asm("move"+getEndType(as,v2) + " "+var+","+d0);
-        as->Asm(op +getEndType(as,v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
-        as->Asm("move"+getEndType(as,v2) + " "+d0+","+var);
+        as->Asm("move"+getEndType(v2) + " "+var+","+d0);
+        as->Asm(op +getEndType(v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
+        as->Asm("move"+getEndType(v2) + " "+d0+","+var);
         as->m_regAcc.Pop(d0);
     }
 
@@ -927,7 +927,7 @@ void CodeGen68k::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPoi
 
     QString var = nodeA->getValue(as);
     LoadVariable(nodeB);
-    TransformVariable(as,"cmp"+getEndType(as,nodeA),as->m_varStack.pop(),var);
+    TransformVariable("cmp"+getEndType(nodeA),as->m_varStack.pop(),var);
     as->Asm("bne "+lblJump);
 
 }
@@ -986,9 +986,9 @@ void CodeGen68k::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
     LoadVariable(nodeB);
     QString d0 = as->m_varStack.pop();
     if (isInclusive)
-        TransformVariable(as,"add",d0,"#1");
+        TransformVariable("add",d0,"#1");
 
-    TransformVariable(as,"cmp"+getEndType(as,var),d0,var->getValue(as));
+    TransformVariable("cmp"+getEndType(var),d0,var->getValue(as));
     as->Asm("bne "+lblJump);
 
 }
@@ -1223,8 +1223,8 @@ void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
         if (node->m_right->isPureNumeric())
         {
   //          as->Comment("Compare with pure num / var optimization");
-//            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
-            TransformVariable(as,"cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+//            TransformVariable("cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+            TransformVariable("cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             return;
         } else
         {
@@ -1232,16 +1232,16 @@ void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
             if (node->m_right->isPureVariable()) {
                 QString wtf = as->m_regAcc.Get();
                 LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
-                TransformVariable(as,"move",wtf,qSharedPointerDynamicCast<NodeVar>(node->m_left));
-                TransformVariable(as,"cmp"+getEndType(as,node->m_left),wtf,as->m_varStack.pop());
-//                TransformVariable(as,"cmp",wtf,as->m_varStack.pop());
+                TransformVariable("move",wtf,qSharedPointerDynamicCast<NodeVar>(node->m_left));
+                TransformVariable("cmp"+getEndType(node->m_left),wtf,as->m_varStack.pop());
+//                TransformVariable("cmp",wtf,as->m_varStack.pop());
                 as->m_regAcc.Pop(wtf);
                 return;
             }
                  else
                 node->m_right->Accept(this);
 
-            TransformVariable(as,"cmp",qSharedPointerDynamicCast<NodeVar>(node->m_left),as->m_varStack.pop());
+            TransformVariable("cmp",qSharedPointerDynamicCast<NodeVar>(node->m_left),as->m_varStack.pop());
             return;
         }
     }
@@ -1254,8 +1254,8 @@ void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
     as->m_regAcc.Pop(tmp);
 //    qDebug() << "VARSTACK" <<d0 << d1;
 
-    as->Asm("cmp"+getEndType(as,node->m_left)+" "+d1+"," +d0);
-    //TransformVariable(as,"cmp",node->m_left, as->m_varStack.pop());
+    as->Asm("cmp"+getEndType(node->m_left)+" "+d1+"," +d0);
+    //TransformVariable("cmp",node->m_left, as->m_varStack.pop());
 
         // Perform a full compare : create a temp variable
 //        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
@@ -1277,12 +1277,12 @@ void CodeGen68k::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
 }
 
-QString CodeGen68k::CodeGen68k::getEndType(Assembler *as, QSharedPointer<Node> v1, QSharedPointer<Node> v2)
+QString CodeGen68k::CodeGen68k::getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2)
 {
     if (v1->isReference() || v2->isReference())
         return ".l";
-    QString t1 = getEndType(as,v1);
-    QString t2 = getEndType(as,v2);
+    QString t1 = getEndType(v1);
+    QString t2 = getEndType(v2);
     if (t1 ==".l" || t2==".l")
         return ".l";
     if (t1 ==".w" || t2==".w")

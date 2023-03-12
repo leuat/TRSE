@@ -173,7 +173,7 @@ void CodeGenJDH8::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenJDH8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
@@ -246,7 +246,7 @@ QString CodeGenJDH8::getShift(QSharedPointer<NodeVar> var)
     return "";
 }
 
-QString CodeGenJDH8::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenJDH8::getIndexScaleVal(QSharedPointer<Node> var)
 {
     if (var->isWord(as))
         return "2";
@@ -372,6 +372,7 @@ void CodeGenJDH8::PopReg() {
 
 
 
+
 void CodeGenJDH8::AssignString(QSharedPointer<NodeAssign> node) {
 
 
@@ -481,7 +482,7 @@ bool CodeGenJDH8::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenJDH8::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenJDH8::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -501,7 +502,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("mw "+reg+", "+getJDH8Value(as,node->m_right));
+    as->Asm("mw "+reg+", "+getJDH8Value(node->m_right));
     return;
 
 }
@@ -765,7 +766,6 @@ void CodeGenJDH8::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
 
 
-
 void CodeGenJDH8::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
@@ -845,7 +845,7 @@ void CodeGenJDH8::BuildToCmp(QSharedPointer<Node> node)
 
     as->Term();
     if (node->m_right->isPureNumeric()) {
-        as->Asm("cmp  "+ax+", " + getJDH8Value(as,node->m_right));
+        as->Asm("cmp  "+ax+", " + getJDH8Value(node->m_right));
         return;
 
     }

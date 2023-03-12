@@ -64,15 +64,14 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
 
+    QString getIndexScaleVal(QSharedPointer<Node> var);
 
     int m_lvl = 0;
     QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7", "V8", "V9", "VA", "VB", "VC", "VD", "VE"});
+    QString m_cmp = "cmp ";
+    QString m_jne = "jz ";
 
-/*
-    QString m_jmp = "jp ";
-    QString m_mov = "ld ";
-*/
-    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+    QString getWordByteType(QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
 
@@ -99,7 +98,7 @@ public:
     }
 
 
-    virtual QString getChip8Value(Assembler* as, QSharedPointer<Node> n) {
+    virtual QString getChip8Value(QSharedPointer<Node> n) {
         if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
@@ -111,6 +110,7 @@ public:
 
     QString PushReg();
     void PopReg();
+
 
 
 
@@ -160,7 +160,7 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 

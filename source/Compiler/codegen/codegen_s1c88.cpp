@@ -125,7 +125,7 @@ void CodeGenS1C88::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenS1C88::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
@@ -194,7 +194,7 @@ QString CodeGenS1C88::getShift(QSharedPointer<NodeVar> var)
     return "";
 }
 
-QString CodeGenS1C88::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenS1C88::getIndexScaleVal(QSharedPointer<Node> var)
 {
     if (var->isWord(as))
         return "2";
@@ -506,7 +506,7 @@ bool CodeGenS1C88::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenS1C88::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenS1C88::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
