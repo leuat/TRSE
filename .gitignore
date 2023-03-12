@@ -45,3 +45,6 @@ Publish/tutorials/**/*.prg
 #Publish/tutorials/**/*.dat
 .DS_Store
 .qmake.stash
+themes/
+
+Publish/tutorials/CHIP8/tutorials/test.ras
