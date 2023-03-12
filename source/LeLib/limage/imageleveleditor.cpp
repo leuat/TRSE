@@ -149,9 +149,9 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
 void ImageLevelEditor::ReInitialize()
 {
 //    m_meta = meta;
-    m_meta.Calculate();
-//    qDebug() << meta.m_width;
-  //  qDebug() << meta.dataSize();
+//    m_meta.Calculate();
+  //  qDebug() << m_meta.m_width <<m_meta.m_sizex;
+  //  qDebug() << m_meta.dataSize();
     m_levels.resize(m_meta.m_sizex*m_meta.m_sizey);
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++)

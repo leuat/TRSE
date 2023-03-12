@@ -68,6 +68,7 @@
 #include "source/LeLib/limage/limagecoco3.h"
 #include "source/LeLib/limage/limagethomson.h"
 #include "source/LeLib/limage/limagetimgen.h"
+#include "source/LeLib/limage/limagelevelgeneric.h"
 
 class LImageFactory {
 public:
