@@ -15,19 +15,14 @@ procedure DrawChar(x, y, c: global byte);
 begin
 	asm(";here");
 	p:=#chars + c<<3;
-	//System::DrawSprite(p,x,y,8);
-	for z:=0 to 8 do
-	begin
-		v:=p[z];
-		System::DrawLine(x,y+z,v);
-	end;		
+	System::DrawSprite(p,x,y,8);
 	
 end;
 
 	
 begin
 	System::Clear();
-	System::Beep(100);
+	System::Beep(10);
 	//System::PrintHexChar(5,5,15);
 	DrawChar(5,5,1);
 	for x:=0 to 10 do
