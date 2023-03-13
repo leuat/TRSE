@@ -14,7 +14,8 @@ var
 procedure DrawChar(x, y, c: global byte);
 begin
 	asm(";here");
-	p:=#chars + c*8;
+	p:=#chars + c<<3;
+	//System::DrawSprite(p,x,y,8);
 	for z:=0 to 8 do
 	begin
 		v:=p[z];

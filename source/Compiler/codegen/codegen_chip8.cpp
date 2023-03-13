@@ -10,19 +10,24 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeProgram> node){
     AbstractCodeGen::dispatch(node);
     QString injected_assembly=" \
     Inject_ptr: dw 0 \n\
+    Inject_save_p2: db 0,0,0 \n\
     Inject_LoadPointer: \n\
         LD I, Inject_ptr \n\
         LD V1, [I] \n\
+        LD I, Inject_save_p2 \n\
+        LD [I], V2 \n\
         LD V2, #10 \n\
         SUBN V2, V0 \n\
         SE VF, 0 \n\
         RET \n\
+        LD I, Inject_save_p2 \n\
+        LD V2, [I] \n\
         ADD V0, #A0 \n\
         LD I, Inject_load_inst \n\
         LD [I], V1 \n\
     Inject_load_inst: \n\
         LD I, 0 \n\
-    ";
+        RET";
     if (chip_type==XO_CHIP){
         injected_assembly+=" \
         LD I, Inject_ptr \n\
@@ -31,7 +36,8 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeProgram> node){
         LD [I], V1 \n\
         dw #f000 \n\
         XO_CHIP_load_inst: \n\
-        dw 0 \n";
+        dw 0 \n\
+        RET\n";
     }
     as->Asm(injected_assembly);
 }
@@ -51,6 +57,25 @@ void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1)
         as->Asm("xor "+x0+","+x1);
     else if (type==TokenType::Type::BITAND)
         as->Asm("and "+x0+","+x1);
+    else if (type==TokenType::Type::SHL || type==TokenType::Type::SHR){
+        QString op = (type==TokenType::Type::SHR)?"SHR ":"SHL ";
+        QString loop_lbl = as->NewLabel("shift_loop");
+        QString end_lbl = as->NewLabel("shift_end");
+        QString zero_lbl = as->NewLabel("shift_zero");
+        as->Asm("LD V0, 8");
+        as->Asm("SUBN V0, "+x1);
+        as->Asm("SE VF, 0");
+        as->Asm("JP "+zero_lbl);
+        as->Label(loop_lbl);
+        as->Asm("SNE "+x1+",0");
+        as->Asm("JP "+end_lbl);
+        as->Asm("ADD "+x1+",-1");
+        as->Asm(op+x0+","+x0);
+        as->Asm("JP "+ loop_lbl);
+        as->Label(zero_lbl);
+        as->Asm("LD "+x0+",0");
+        as->Label(end_lbl);
+    } 
 
 }
 
@@ -73,28 +98,66 @@ void CodeGenChip8::PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo
     } else if (type==TokenType::Type::BITAND){
         as->Asm("and "+x0_lo+","+x1_lo);
         as->Asm("and "+x0_hi+","+ x1_hi);
+    } else if (type==TokenType::Type::SHL || type==TokenType::Type::SHR){
+        QString loop_lbl = as->NewLabel("shift_loop");
+        QString end_lbl = as->NewLabel("shift_end");
+        QString zero_lbl = as->NewLabel("shift_zero");
+        as->Asm("SE "+x1_hi+", 0");
+        as->Asm("JP "+zero_lbl);
+        as->Asm("LD V0, 8");
+        as->Asm("SUBN V0, "+x1_lo);
+        as->Asm("SE VF, 0");
+        as->Asm("JP "+zero_lbl);
+        as->Label(loop_lbl);
+        as->Asm("SNE "+x1_lo+",0");
+        as->Asm("JP "+end_lbl);
+        as->Asm("ADD "+x1_lo+",-1");
+        if (type==TokenType::Type::SHL){
+            as->Asm("SHL "+x0_hi+","+x0_hi);
+            as->Asm("SHL "+x0_lo+","+x0_lo);
+            as->Asm("ADD "+x0_hi+",VF");
+        } else {
+            as->Asm("SHR "+x0_lo+","+x0_lo);
+            as->Asm("SHR "+x0_hi+","+x0_hi);
+            as->Asm("SE VF, 0");
+            as->Asm("ADD "+x0_lo+",#80");
+
+        }
+        as->Asm("JP "+ loop_lbl);
+        as->Label(zero_lbl);
+        as->Asm("LD "+x0_lo+",0");
+        as->Asm("LD "+x0_hi+",0");
+        as->Label(end_lbl);
     }
 
 }
 
 void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 {
+
     as->Comment("Binary operation of type: "+TokenType::getType(node->m_op.m_type));
     auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
     auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
     if (node->isWord(as)) {
+        as->Comment("accept left");
         node->m_left->Accept(this);
-        QString a = getReg();
-        PushReg();
-        QString b = getReg();
-        PushReg();
-        QString c = getReg();
-        PushReg();
-        QString d = getReg();
+        QString a = getReg(); PushReg();
+        QString b = getReg(); PushReg();
+        if (!node->m_left->isWord(as)){
+            as->Comment("Word Adjust Left");
+            as->Asm("LD "+b+","+a);
+            as->Asm("LD "+a+",0");
+        }
+        as->Comment("accept right");
         node->m_right->Accept(this);
-        PopReg();
-        PopReg();
-        PopReg();
+        QString c = getReg(); PushReg();
+        QString d = getReg();
+        if (!node->m_right->isWord(as)){
+            as->Comment("Word Adjust Right");
+            as->Asm("LD "+d+","+c);
+            as->Asm("LD "+c+",0");
+        }
+        PopReg(); PopReg(); PopReg();
         PrintBop16(node->m_op.m_type,a,b,c,d);
 
     } else if (node->m_op.m_type == TokenType::Type::PLUS || node->m_op.m_type == TokenType::Type::MINUS){
@@ -106,10 +169,10 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
             node->m_right->Accept(this);
             as->Asm("ADD "+getReg()+", "+negate+left_imm->StringValue());
 
-        } else goto normal_binop;
+        } else goto register_register_binop;
 
     } else {
-    normal_binop:
+    register_register_binop:
         node->m_left->Accept(this);
         QString a = getReg();
         PushReg();
@@ -146,6 +209,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
     if (node->isReference()) {
+        as->Comment("Load Reference");
         QString x0 = getReg(); PushReg();
         QString x1 = getReg(); 
         as->Asm("LD "+x0+", "+node->getValue(as)+">>8");
@@ -155,23 +219,15 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 
     } else if (node->m_expr!=nullptr) {
         if (node->isPointer(as)) {
+            as->Comment("Load Pointer");
             //I could make it support words, but that's for later
-            QString x0 = getReg(); PushReg();
-            QString x1;
-            if (node->getArrayType(as)==TokenType::INTEGER){
-                x1 = getReg(); PushReg();
-            }
-
             node->m_expr->setForceType(TokenType::BYTE); 
             node->m_expr->Accept(this);
-            QString index;
-            QString ptr_hi, ptr_lo;
-            ptr_hi = getReg(); PushReg();
-            ptr_lo = getReg(); PushReg();
-            index = getReg(); 
-            //TODO: replace V0 with the index register 
-            as->Asm("LD V0, "+ptr_hi);
-            as->Asm("LD V1, "+ptr_lo);
+            QString x0=getReg(); PushReg();
+            QString x1=getReg(); PushReg();
+            QString index=getReg();
+            as->Asm("ld I,"+node->getValue(as));
+            as->Asm("LD V1, [I]");
             as->Asm("LD I, Inject_ptr");
             as->Asm("LD [I], V1");
             as->Asm("call Inject_loadPointer");
@@ -182,16 +238,17 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("LD V1, [I]");
                 as->Asm("LD " +x0+", V0");
                 as->Asm("LD " +x1+", V1");
-                PopReg();
             } else {
                 as->Asm("LD V0, [I]");
                 as->Asm("LD " +x0+", V0");
-            } PopReg(); PopReg(); PopReg();
+            }
+            PopReg(); PopReg(); 
 
 
             return;
 
         } else {
+            as->Comment("Load Array");
             // Regular array
             QString x0 = getReg(); PushReg();
             QString x1;
@@ -219,6 +276,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
             return;
         }
     } else if (node->isWord(as)) {
+        as->Comment("Load Word");
         QString x0 = getReg(); PushReg();
         QString x1 = getReg();
         as->Asm("ld I,"+node->getValue(as));
@@ -229,6 +287,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
         
     }
     else {
+        as->Comment("Load Byte");
         QString x0 = getReg();
         as->Asm("ld I,"+node->getValue(as));
         as->Asm("ld V0,[I]");
@@ -283,16 +342,22 @@ void CodeGenChip8::StoreVariable(QSharedPointer<NodeVar> n)
 
 bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
-    auto var = node->m_left;
-    QString type =getWordByteType(var);
+    QString type =getWordByteType(node->m_left);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
-        if (var->isWord(as))
-            node->m_right->setForceType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
         QString x0 = getReg();
-        str(var);
+
+        if (node->m_left->isWord(as) && !node->m_right->isWord(as)){
+            PushReg();
+            QString x0_lo = getReg(); 
+            as->Asm("LD "+x0_lo+","+x0);
+            as->Asm("LD "+x0+",0");
+            PopReg();
+            //node->m_right->setForceType(TokenType::INTEGER);
+        }
+        str(node->m_left);
 
         return true;
     }
@@ -360,19 +425,7 @@ QString CodeGenChip8::getReg(int dd) {
 
 }
 
-void CodeGenChip8::ldr(QString x0, QString x1)
-{
-    as->Asm("ld I,"+x1);
-    as->Asm("ld V0, [I]");
-    if (x0 != "V0") as->Asm("ld "+x0+", V0");
-}
 
-void CodeGenChip8::str(QString x0, QString x1)
-{
-    as->Asm("ld I,"+x1);
-    if (x0 != "V0") as->Asm("ld V0, "+x0);
-    as->Asm("ld [I], V0");
-}
 
 void CodeGenChip8::str(QSharedPointer<Node> var)
 {
@@ -401,7 +454,7 @@ void CodeGenChip8::str(QSharedPointer<Node> var)
 
 
 
-
+#if 0
 QString CodeGenChip8::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
     if (bop->m_op.m_type == TokenType::PLUS)
         return "add";
@@ -415,7 +468,7 @@ QString CodeGenChip8::getBinaryOperation(QSharedPointer<NodeBinOP> bop) {
         return "xor";
     return " UNKNOWN BINARY OPERATION";
 }
-
+#endif
 QString CodeGenChip8::PushReg() {
     if (m_lvl==12)
         ErrorHandler::e.Error("Error in Chip8 dispatcher PopReg : trying to push regstack from max");
@@ -471,16 +524,16 @@ void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 {
-    // TODO: Check if this is necessary
+
     if (node->m_left->isPointer(as) && node->m_left->hasArrayIndex()) {
         // Storing p[i] := something;
         auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
         as->Comment("storing pointer");
         as->Comment("loading expression:");
 
-        var->m_expr->setForceType(TokenType::INTEGER);
+        //var->m_expr->setForceType(TokenType::INTEGER);
         var->m_expr->Accept(this);
-
+        QString index=getReg();
         as->Comment("load value:");
         as->Asm("lw16 h,l,["+var->getValue(as)+"]");
         as->Asm("add16 h,l,a,b"); // add shift
