@@ -128,6 +128,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 42;
     if (t==TIMG)
         return 43;
+    if (t==LevelEditorGeneric)
+        return 44;
 
 
     return 255;
@@ -223,6 +225,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic Thomson mo5 image";
     if (t==TIMG)
         return "Generic TIM image";
+    if (t==LevelEditorGeneric)
+        return "Generic Level Editor";
 
 
     return "Unknown image type";
@@ -320,6 +324,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return THOMSON;
     if (c==43)
         return TIMG;
+    if (c==44)
+        return LevelEditorGeneric;
 
     return NotSupported;
 

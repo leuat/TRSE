@@ -72,3 +72,6 @@ dosbox_cycles = 0
 columns = 40
 vic_memory_config = all
 via_zeropages = ,$64, $65, $66, $67
+use_track_19 = 1
+disable_compiler_comments = 0
+use_vice_c1541 = 0

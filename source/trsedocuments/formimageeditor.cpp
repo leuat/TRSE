@@ -1342,6 +1342,7 @@ void FormImageEditor::updateCharSet()
 
     QVector<QPixmap> maps;
     charmap->ToQPixMaps(maps);
+//    qDebug() << maps.count();
     ui->lstCharMap->setSelectionMode(QAbstractItemView::SingleSelection);
 
     ui->lstCharMap->clearContents();
@@ -1371,9 +1372,12 @@ void FormImageEditor::updateCharSet()
     for (int k=0;k<maps.count();k++) {
 
         QPixmap q = maps[k];
-
+  /*      if (k==0)
+          q.save("test.png");
+*/
         QTableWidgetItem *itm = ui->lstCharMap->item(j,i);
         if (itm == nullptr) {
+//            qDebug() << k;
             itm = new QTableWidgetItem(q,nullptr,Qt::DisplayRole);
             ui->lstCharMap->setItem(j,i,itm);
 
@@ -1421,7 +1425,7 @@ void FormImageEditor::updateSingleCharSet()
 {
     UpdateCurrentMode();
     LImage* charmap = m_work.m_currentImage->m_image->getCharset();
-    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
+//    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
 /*    if (le!=nullptr && charmap==nullptr) {
         Messages::messages.DisplayMessage(Messages::messages.CHARSET_WARNING);
         return;

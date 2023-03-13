@@ -57,10 +57,10 @@ begin
 	");
 
 end;
-
+@startblock $5000 "code"
 procedure CopyToScreen();
 begin
-	dst:=#screen_char_loc;
+/*	dst:=#screen_char_loc;
 	zp:=#buf;
 	for i:=0 to 23 offpage do
 	begin
@@ -76,9 +76,10 @@ begin
 		zp+=screen_width;
 		dst+=screen_width;
 	end;	
-		
+*/
+	memcpyunroll(#buf,0,#screen_char_loc,506);		
 end;
-
+@endblock
 procedure Render();
 begin
 	ClearBuffer();	

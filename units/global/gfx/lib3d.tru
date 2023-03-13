@@ -76,7 +76,7 @@ begin
 	objects[i].points_new := curPos;
 	curPos += v*2; // 2 bytes per point
 	objects[i].color := curPos;
-	curPos += v; // 2 bytes per point
+	curPos += v; // 1 byte per point
 	objects[i].rotmat := curPos;
 	curPos += 4*4*2; // 32 bytes per matrix
 	objects[i].noVerts := v;
