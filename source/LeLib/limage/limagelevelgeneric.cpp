@@ -114,9 +114,10 @@ void LImageLevelGeneric::LoadCharset(QString file, int skipBttes)
 //    if (m_charset!=nullptr)
   //      m_colorList.m_nesPPU = m_charset->m_colorList.m_nesPPU;
 
-    m_charWidthDisplay = m_charset->m_charWidthDisplay;
-    m_gridWidthDisplay = m_charset->m_gridWidthDisplay;
-    m_charHeightDisplay = m_charset->m_charHeightDisplay;;//m_meta.m_height;
+    m_charset->m_charWidthDisplay = m_charWidthDisplay;
+//    m_charWidthDisplay = m_charset->m_charWidthDisplay;
+    m_charset->m_gridWidthDisplay =  m_gridWidthDisplay;
+  //  m_charHeightDisplay = m_charset->m_charHeightDisplay;;//m_meta.m_height;
 //    m_charset->m_colorList.m_nesPPU.clear();
 //    m_charset->InitPens();
 //    InitPens();
@@ -205,6 +206,7 @@ void LImageLevelGeneric::CopyFrom(LImage *mc)
 
 }
 
+
 void LImageLevelGeneric::ReInitialize()
 {
     ImageLevelEditor::ReInitialize();
@@ -223,7 +225,7 @@ void LImageLevelGeneric::ExportBin(QFile &file)
         QByteArray data;
         for (int i=0;i<l->m_CharData.length();i++) {
             data.append(l->m_CharData[i]);
-            data.append((l->m_ColorData[i]&7)<<2 | (l->m_CharDataHi[i]&3));
+//            data.append((l->m_ColorData[i]&7)<<2 | (l->m_CharDataHi[i]&3));
         }
         file.write( data);
         if (l->m_ExtraData.length()!=0)

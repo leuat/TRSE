@@ -60,7 +60,7 @@ void LImageVZ200::ExportBin(QFile &file)
 
 }
 
-QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int xp, int yp, int w, int h)
+QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int xp, int yp, int w, int h,QString pparam)
 {
     QString fname = currentDir + "/"+name+".inc";
     if (QFile::exists(fname)) {
@@ -70,6 +70,7 @@ QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QStrin
     QFile file(fname);
     file.open(QIODevice::WriteOnly| QIODevice::Text);
     QTextStream f(&file);
+    if (pparam=="")
     for (int i=0;i<4;i++) {
 
     //    return QStringList();
@@ -97,25 +98,80 @@ QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QStrin
         f<<"\");\n";
         f<<"end;\n";
     }
+    else
+        for (int i=0;i<4;i++) {
+
+        //    return QStringList();
+            f<<"procedure "+name+"_"+QString::number(i)+"();\n";
+            f<<"begin\n";
+            f<<"asm (\"\n";
+//            f<<" ld bc,32\n";
+            f<<"  ld de, "+Util::numToHex(32-w/4)+"\n";
+            for (int y=0;y<h;y++) {
+                for (int x=0;x<w;x+=4) {
+                    uchar c = 0;
+                    int xx = x + xp-i;
+                    int yy = y + yp;
+                    for (int j=0;j<4;j++) {
+                        uchar v = getPixel(xx+j,yy);
+                        c=c|(v<<(6-2*j));
+                    }
+                    f<< " ld a,[ix+0] \n";
+                    f<< " or "+ Util::numToHex(c) + "\n";
+                    f<< " ld [hl],a\n";
+                    f<< " inc hl \n";
+                    f<< " inc ix \n";
+                    //data.append(c);
+                }
+                f<<"  add hl,de\n";
+                f<<"  add ix,de\n";
+
+            }
+            f<<"\");\n";
+            f<<"end;\n";
+        }
 
 
+    if (pparam=="") {
+        f<<"var "+name+"_pi : integer;\n";
+        f<<"@donotremove "+name+"_dst \n";
+        f<<"procedure "+name+"("+name+"_src,"+name+"_dst : pointer; "+name+"px,"+name+"py : byte);\n";
+        f<<"begin\n";
+        f<<"  "+name+"_pi:="+name+"_dst + "+name+"py<<5 + "+name+"px>>2;\n";
+        f<<  "asm(\"";
+    //    f<<  "  ld hl, ["+name+"_src] \n";
+     //   f<<  "  ex de, hl\n";
+        f<<  "  ld hl, ["+name+"_pi]\n";
+        f<<  "\");\n";
+        f<< " "+name+"px:="+name+"px&3;\n";
+        f<< " if ("+name+"px=0) then "+name+"_0();\n";
+        f<< " if ("+name+"px=1) then "+name+"_1();\n";
+        f<< " if ("+name+"px=2) then "+name+"_2();\n";
+        f<< " if ("+name+"px=3) then "+name+"_3();\n";
+        f<<"end;\n";
+    }
+    else {
+        f<<"var "+name+"_pi : integer;\n";
+        f<<"var "+name+"_buf : integer;\n";
+        f<<"@donotremove "+name+"_dst \n";
+        f<<"procedure "+name+"("+name+"_src,"+name+"_dst : pointer; "+name+"px,"+name+"py : byte);\n";
+        f<<"begin\n";
+        f<<"  "+name+"_pi:="+name+"_dst + "+name+"py<<5 + "+name+"px>>2;\n";
+        f<<"  "+name+"_buf:=#"+pparam+" + "+name+"py<<5 + "+name+"px>>2;\n";
+        f<<  "asm(\"";
+        f<<  "  ld ix, ["+name+"_buf] \n";
+//        f<<  "  ex de, hl\n";
+        f<<  "  ld hl, ["+name+"_pi]\n";
+        f<<  "\");\n";
+        f<< " "+name+"px:="+name+"px&3;\n";
+        f<< " if ("+name+"px=0) then "+name+"_0();\n";
+        f<< " if ("+name+"px=1) then "+name+"_1();\n";
+        f<< " if ("+name+"px=2) then "+name+"_2();\n";
+        f<< " if ("+name+"px=3) then "+name+"_3();\n";
+        f<<"end;\n";
 
-    f<<"var "+name+"_pi : integer;\n";
-    f<<"@donotremove "+name+"_dst \n";
-    f<<"procedure "+name+"("+name+"_src,"+name+"_dst : pointer; "+name+"px,"+name+"py : byte);\n";
-    f<<"begin\n";
-    f<<"  "+name+"_pi:="+name+"_dst + "+name+"py<<5 + "+name+"px>>2;\n";
-    f<<  "asm(\"";
-    f<<  "  ld hl, ["+name+"_src] \n";
-    f<<  "  ex de, hl\n";
-    f<<  "  ld hl, ["+name+"_pi]\n";
-    f<<  "\");\n";
-    f<< " "+name+"px:="+name+"px&3;\n";
-    f<< " if ("+name+"px=0) then "+name+"_0();\n";
-    f<< " if ("+name+"px=1) then "+name+"_1();\n";
-    f<< " if ("+name+"px=2) then "+name+"_2();\n";
-    f<< " if ("+name+"px=3) then "+name+"_3();\n";
-    f<<"end;\n";
+    }
+
 
 
     file.close();

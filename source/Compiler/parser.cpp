@@ -1325,6 +1325,8 @@ void Parser::HandlePreprocessorInParsing()
             Eat(); // Y
             Eat(); // W
             Eat(); // H
+            if (m_currentToken.m_type==TokenType::STRING)
+                Eat(); // H
         }
 
         if (m_currentToken.m_value=="pbmexport") {
@@ -6108,6 +6110,11 @@ void Parser::HandleSpriteCompiler()
     Eat(TokenType::INTEGER_CONST); // W
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // H
+    QString pparam = "";
+    if (m_currentToken.m_type==TokenType::STRING) {
+        pparam = m_currentToken.m_value;
+        Eat(); // H
+    }
 
     QString id = "drawsprite_cga_"+name;
 
@@ -6124,7 +6131,7 @@ void Parser::HandleSpriteCompiler()
         ErrorHandler::e.Error("Could not find file : "+filename, m_currentToken.m_lineNumber);
 
     LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
-    m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h);
+    m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h,pparam);
 
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)

@@ -1,0 +1,156 @@
+program Levels;
+@use "Screen"
+@use "Memory"
+@use "gfx/GenericLevels"
+@use "Font"
+@use "Sprite"
+@use "gfx/tiles"
+@use "Input"
+
+@export "images/level1.flf" "images/level1.bin" 256
+@export "images/tiles.flf" "images/tiles.bin" 1024
+
+ var
+	const N : byte = 4;
+	ddy,ccy : integer;
+	xp: array[N] of byte = buildtable("i*4");
+	i,j,xx,yy: byte;
+	level : GenericLevels::Level;
+	levels : incbin("images/level1.bin");
+	tiles : incbin("images/tiles.bin");
+	dst,src : ^byte;
+	ok,ground : boolean;
+	buf : array[2048] of byte;
+	
+	Player = record
+		x, y : integer; // pos * 16
+		sx, sy : integer; // speed
+		lx, ly : byte; // pos in level
+	end;
+	
+	p1 : Player;	
+	
+	levelTxt : array[] of string = (
+		"Hi there!", "Hurry up", "You're so cool", "what's this then?",
+		"","","","",
+		"","","","",
+		"","","",""
+	);
+
+	const background : byte =  %00;
+	
+	
+	
+@spritecompiler "images/sprites2.flf" "tank2" 3 0 16 8 "buf"
+
+	zp:^byte;
+	
+
+@include "tank2.inc"
+
+
+procedure UpdateLevel();
+begin
+	Screen::WaitForVerticalBlank();
+	for i:=0 to 200 do wait(190);
+	level.RenderLevel(p1.lx,p1.ly, 4,8);
+	Screen::SetPen(2);
+	Font::SetFont(#Font::font1);
+	Font::DrawTextAt(levelTxt[p1.lx+p1.ly<<2],0,64-8,true);
+	memcpy(#Screen::screen_char_loc, #buf, 2048);
+end;
+
+procedure VerifyMove(cx,cy,dx, dy : integer);
+begin
+	xx := (p1.x+cx*8+16*8)/(16);
+	yy := (p1.y+cy*4+8*8)/(16);
+	
+	
+	
+	ok:=true;
+//	Screen::SetPen(1);
+	
+	if (dx<>0) then
+	for j:=0 to 4 step 2 do
+	begin	
+	//	if Screen::getPixel(#buf, xx,yy+j-4)<>background then ok:=false;
+	end;
+	if (dy<>0) then
+	begin
+		for j:=0 to 16 step 4 do
+		begin	
+			if Screen::getPixel(#buf, xx+j-16,yy)<>background then ok:=false;
+//			Screen::PutPixel(xx+j-16,yy);
+		end;
+		if (not ok and ddy<30000) then ground:=true else ground:=false;
+	end;
+	
+//	ok := true;
+	
+	if (ok) then
+	begin
+		p1.x += dx/2;
+		p1.y += dy/2;
+		
+	end;
+	
+end;
+
+
+
+procedure UpdatePlayer();
+begin
+	tank2(0, #screen, p1.x/16,p1.y/16);
+	i := Input::GetPressedKey();
+	if (i = Input::Key_D) then VerifyMove(16,16,24,0);
+	if (i = Input::Key_A) then VerifyMove(16,16,65536-24,0);
+	if (i = Input::Key_W and ground) then ddy:=65505;//VerifyMove(0,65536-24);
+//	if (ddy<>0) then
+	ccy:=16;
+	if (ddy>30000) then ccy:=65536-16;
+	VerifyMove(16,ccy,0,ddy);
+	
+	
+	
+	xx := p1.x>>4;
+	yy := p1.y>>4;
+	
+	if (xx>150) then if (p1.lx<>0) then begin p1.lx-=1; p1.x:=111*16; xx:=111; UpdateLevel(); end else begin p1.x:=2; xx:=2; end;
+	if (xx>112) then if (p1.lx<level.sizex) then begin p1.lx+=1; p1.x:=1; xx:=1; UpdateLevel(); end else begin p1.x:=111*16;xx:=111;end;
+	if (yy>70) then if (p1.lx<>0) then begin p1.ly-=1; p1.y:=55*16; yy:=55; UpdateLevel(); end else begin p1.y:=2; yy:=2; end;
+	if (yy>64-8) then if (p1.ly<level.sizey) then begin p1.ly+=1; p1.y:=1; yy:=1; UpdateLevel(); end else begin p1.y:=55*16;yy:=55;end;
+	if (not ground) then
+		ddy+=1;
+		
+end;
+
+
+procedure Init();
+begin
+	Tiles::SetTileLoc(#tiles);
+	level.ReadHeader(#levels);
+	Tiles::tile := #tiles;
+	p1.lx := 0;
+	p1.ly := 0;
+	p1.x := 10;
+	p1.y := 10;
+end;
+
+begin
+	// Set the sprite data
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	
+	Init();
+
+	UpdateLevel();	
+	
+	while(true) do
+	begin	
+		Screen::WaitForVerticalBlank();
+		UpdatePlayer();		
+	end;
+
+end.
+	

@@ -197,7 +197,7 @@ public:
 
     }
 
-    virtual QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h) {return QStringList();}
+    virtual QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h, QString pparam) {return QStringList();}
 
     virtual void BeforeRightButton() {}
     virtual void AfterRightButton() {}

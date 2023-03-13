@@ -21,6 +21,7 @@ var
 	tab32 : array[64] of integer=buildtable("i*32");
 	const screen_pixel_width : byte = 128;
 	const screen_pixel_height : byte = 64;
+//	pixelTab : array[4] of byte = (0,1,2,3);
 
 /* 
 	Clears the screen using mode parameter 0 or 1
@@ -118,6 +119,17 @@ bg1
 		ld (#783B),a
 	");
 end;
+
+
+function getPixel(Data: global ^byte, x,y : global byte) : byte;
+begin
+	Data += (x>>2) + tab32[y];
+	x:=(x&3)<<1;
+	x := Data^>>x;
+	getPixel := x&3;
+//	Data^:=%1010;
+end;
+
 
 /** 
 Sets a pixel in mode(1) at position (x,y) with current colour.
