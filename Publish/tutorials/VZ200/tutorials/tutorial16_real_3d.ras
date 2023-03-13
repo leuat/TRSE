@@ -4,7 +4,8 @@ program Image;
 
 @define max3dobjects 1
 // color 0 to clear
-@define lib3d_clearlines 0 
+@define lib3d_clearlines 2 
+//@define lib3d_projection_x_scale 2
 @define linemethod "Screen::DrawLineColor"
 
 @use "gfx/lib3d"
@@ -39,9 +40,9 @@ begin
 	// Perform the rotation (rotation_matrix * each vertex_in_the_object)
 	Lib3d::RotateVertices(0);	
 	// Projects the rotated vertices in a simple manner to 2d coordinates
-	Lib3d::ProjectSimple(0,30,30,128,  90);
+	Lib3d::ProjectSimple(0,50, 30, 128,  80);
 	
-	Lib3d::RenderWireframe(0);
+	Lib3d::RenderWireframeColor(0,1);
 
 end;	
 
@@ -50,7 +51,7 @@ begin
 	// Set Graphics mode
 	Screen::SetMode(1);
 	// Clear screen using Graphics mode
-	Screen::Cls(1);
+	Fill(#Screen::screen_char_loc,%10101010,128*64/4);
 	
 	Lib3d::InitializeData(#objPos);	
 	Lib3d::LoadObject(0, #obj1);
@@ -59,17 +60,6 @@ begin
 	Matrix::Identity(#matY);
 	Matrix::Identity(#matZ);
 	Matrix::Identity(Lib3d::objects[0].rotmat);
-	// fill with 3 colors
-	p:=#Lib3d::objects[0].color;
-	j:=1;
-	for i:=0 to Lib3d::objects[0].noFaces do
-	begin
-		p[0]:=j&3;
-		p+=1;
-		j+=1;
-		if (j=4) then j:=1;
-	end;
-	
 	while (true) do
 	begin
 		Render();
