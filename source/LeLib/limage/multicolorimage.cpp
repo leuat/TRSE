@@ -1029,21 +1029,27 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
                 f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
                 f<<"begin\n    asm ; draw "+ QString::number(nextLine) +" lines\n\n";
 
-                int lpos = 0; // used to store last y position in sprite drawing (what line to draw to)
+                int lpos = -1; // used to store last y position in sprite drawing (what line to draw to)
 
                 // process unique data
                 for (int k = 0; k <nextLine; k++){
 
                     int p = d[k].pos;
-                    if (lpos != 0 && lpos+1 == p )
-                        f<< "    iny\n";
+
+                    f << "; row "+QString::number(p) + "\n";
+
+                    if ( lpos == -1 )
+                        f<< "    ldy #" + QString::number(p) + " ; start of data\n";
+                    else if ( p == lpos+1 )
+                        f<< "    iny ; next\n";
                     else
-                        f<< "    ldy #" + QString::number(p) + "\n";
+                        f<< "    ldy #" + QString::number(p) + "; skip ahead\n";
 
                     f<< "    lda #"+Util::numToHex( d[k].val ) + "\n";
                     if (asmOperation != "") f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
                     f<< "    sta ("+ pointerName +"),y\n";
-                    lpos = d[k].pos;
+
+                    lpos = p;
 
                 }
                 f<<"\n";
