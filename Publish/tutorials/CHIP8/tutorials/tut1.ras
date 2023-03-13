@@ -13,11 +13,12 @@ var
 
 procedure DrawChar(x, y, c: global byte);
 begin
-	asm(";here");
-	p:=#chars + c*8;
+		asm(";here");
+	p:=#chars;// + c*8;
 	for z:=0 to 8 do
 	begin
-		v:=p[z];
+		v:=chars[z];
+//		v:=p[z];
 		System::DrawLine(x,y+z,v);
 	end;		
 	
@@ -28,8 +29,8 @@ begin
 	System::Clear();
 	System::Beep(100);
 	//System::PrintHexChar(5,5,15);
-	DrawChar(5,5,1);
-	for x:=0 to 10 do
+	DrawChar(0,0,1);
+//	for x:=0 to 10 do
 	begin
 		z:=System::Random();
 //		System::DrawLine(x,x,%10000001);
