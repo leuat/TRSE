@@ -139,6 +139,9 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
     auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
     auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
     if (node->isWord(as)) {
+        auto workaround = node->m_forceType;
+        node->setForceType(TokenType::NADA);
+
         as->Comment("accept left");
         node->m_left->Accept(this);
         QString a = getReg(); PushReg();
@@ -159,6 +162,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
         }
         PopReg(); PopReg(); PopReg();
         PrintBop16(node->m_op.m_type,a,b,c,d);
+        node->setForceType(workaround);
 
     } else if (node->m_op.m_type == TokenType::Type::PLUS || node->m_op.m_type == TokenType::Type::MINUS){
         QString negate = node->m_op.m_type==TokenType::Type::MINUS?"-":"";
@@ -222,9 +226,9 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
             as->Comment("Load Pointer");
             //I could make it support words, but that's for later
             node->m_expr->setForceType(TokenType::BYTE); 
-            node->m_expr->Accept(this);
             QString x0=getReg(); PushReg();
             QString x1=getReg(); PushReg();
+            node->m_expr->Accept(this);
             QString index=getReg();
             as->Asm("ld I,"+node->getValue(as));
             as->Asm("LD V1, [I]");
