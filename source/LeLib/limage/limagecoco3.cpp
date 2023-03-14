@@ -107,7 +107,7 @@ void LImageCOCO3::ExportBin(QFile &ofile)
             int curBit = 0;
             for (int p=0;p<2;p++) {
                 uchar p1 = getPixel(x*2+p,y)&15;
-                c |= p1<<(4*p);
+                c |= p1<<(4-4*p);
 
 //                curBit+=1;
             }
