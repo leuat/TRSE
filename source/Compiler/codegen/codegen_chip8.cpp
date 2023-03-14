@@ -224,7 +224,8 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 			as->Comment("Load Pointer");
 			//I could make it support words, but that's for later
 			QString index;
-			bool has_index=node->hasArrayIndex() && node->getValue(as) != 0 ;
+			const auto node_m_expr_number = qSharedPointerDynamicCast<NodeNumber>(node->m_expr);
+			const bool has_index=node->hasArrayIndex() || (node_m_expr_number != nullptr && node_m_expr_number->m_val != 0) ;
 			if (has_index) {
 				node->m_expr->setForceType(TokenType::BYTE); 
 				node->m_expr->Accept(this);
@@ -251,7 +252,8 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 		} else {
 			as->Comment("Load Array");
 			QString index;
-			const bool has_index=node->hasArrayIndex() && node->getValue(as) != 0 ;
+			const auto node_m_expr_number = qSharedPointerDynamicCast<NodeNumber>(node->m_expr);
+			const bool has_index=node->hasArrayIndex() || (node_m_expr_number != nullptr && node_m_expr_number->m_val != 0) ;
 			if (has_index) {
 				node->m_expr->setForceType(TokenType::BYTE);
 				node->m_expr->Accept(this);
@@ -482,12 +484,6 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 {
 
 	auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-	qDebug()<<var->getValue(as)<<"\n";
-	qDebug()<<node->m_right->getValue(as)<<"\n";
-	if (var->m_expr != nullptr) 
-		qDebug()<<var->m_expr->getValue(as)<<"\n";
-	else 
-		qDebug()<<"null\n";
 	if (var != nullptr){
 		if (var->isPointer(as)){
 			if (node->m_right->isReference() || node->m_right->isPointer(as)) {
@@ -510,7 +506,8 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 					rvalue_save_lo = getReg(); PushReg();
 					as->Asm("LD "+rvalue_save_lo+", V1");
 				}
-				const bool has_index = var->hasArrayIndex() && var->m_expr->getValue(as) != 0 ;
+				const auto var_m_expr_num = qSharedPointerDynamicCast<NodeNumber>(var->m_expr);
+				const bool has_index = var->hasArrayIndex() || (var_m_expr_num != nullptr && var_m_expr_num->m_val != 0);
 				QString index;
 				if (has_index) {
 					var->m_expr->setForceType(TokenType::BYTE);
