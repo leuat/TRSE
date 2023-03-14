@@ -529,28 +529,64 @@ void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
 bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 {
 
-    if (node->m_left->isPointer(as) && node->m_left->hasArrayIndex()) {
-        // Storing p[i] := something;
-        auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-        as->Comment("storing pointer");
-        as->Comment("loading expression:");
+    auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
+    if (var->hasArrayIndex()){
+        if (var->isPointer(as) ) {
+            // Storing p[i] := something;
+            as->Comment("storing to pointer");
+            as->Comment("loading expression:");
 
-        //var->m_expr->setForceType(TokenType::INTEGER);
-        var->m_expr->Accept(this);
-        QString index=getReg();
-        as->Comment("load value:");
-        as->Asm("lw16 h,l,["+var->getValue(as)+"]");
-        as->Asm("add16 h,l,a,b"); // add shift
+            var->m_expr->setForceType(TokenType::BYTE);
+            var->m_expr->Accept(this);
+            QString index=getReg(); PushReg();
+            as->Comment("load value:");
+            as->Asm("ld I,"+var->getValue(as));
+            as->Asm("LD V1, [I]");
+            as->Asm("LD I, Inject_ptr");
+            as->Asm("LD [I], V1");
+            as->Asm("call Inject_loadPointer");
+            as->Asm("add I,"+index); 
+            node->m_right->Accept(this);
+            QString x0 = getReg(); PushReg();
+            QString x1 = getReg(); 
+            if (var->m_expr->getArrayType(as)==TokenType::INTEGER) {
+                as->Asm("LD V0,"+x0);
+                as->Asm("LD V1,"+x1);
+                as->Asm("LD [I], V1");
+            }
+            else{
+                as->Asm("LD V0,"+x0);
+                as->Asm("LD [I], V0");
+            }
+            PopReg(); PopReg();
+            return true;
+        } else {
+            // Storing p[i] := something;
+            as->Comment("storing to array");
+            as->Comment("loading expression:");
 
-        node->m_right->Accept(this);
-        if (node->m_right->getArrayType(as)==TokenType::INTEGER) {
-            ErrorHandler::e.Error("Integer pointers not implemented yet");
-            as->Asm("sw16 h,l,a,b");
+            var->m_expr->setForceType(TokenType::BYTE);
+            var->m_expr->Accept(this);
+            QString index=getReg(); PushReg();
+            as->Comment("load value:");
+
+            node->m_right->Accept(this);
+            QString x0 = getReg(); PushReg();
+            QString x1 = getReg(); 
+            as->Asm("ld I,"+var->getValue(as));
+            as->Asm("add I,"+index); 
+            if (var->getArrayType(as)==TokenType::INTEGER) {
+                as->Asm("LD V0,"+x0);
+                as->Asm("LD V1,"+x1);
+                as->Asm("LD [I], V1");
+            }
+            else{
+                as->Asm("LD V0,"+x0);
+                as->Asm("LD [I], V0");
+            }
+            PopReg(); PopReg();
+            return true;
         }
-        else
-            as->Asm("sw h,l,a");
-
-        return true;
     }
     return false;
 }

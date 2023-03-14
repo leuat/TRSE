@@ -77,7 +77,7 @@ end;
 procedure Wait(word : global Integer);
 begin
     asm("
-        LD I, word
+        LD I, System_word
         LD V1, [I]
         LD DT, V1
         System_wait_loop1:
