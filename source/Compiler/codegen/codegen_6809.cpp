@@ -30,7 +30,6 @@ void CodeGen6809::EightBitMul(QSharedPointer<Node> node) {
     as->Term();
 
     as->Asm("mul");
-//    as->Asm("tfr b,a");
 
 }
 
