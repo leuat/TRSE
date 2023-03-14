@@ -1,7 +1,6 @@
 unit System;
 var
 	n,x,y,c : byte; 
-    result : byte;
 	word : Integer;
     ptr : pointer;
 	
@@ -11,14 +10,11 @@ begin
 	asm("cls");
 end;
 
-function Random() : byte;
+function Random() inline : byte;
 begin
 	asm("
 		RND V0, #FF
-        LD I, System_result
-        LD [I], V0
 	");
-    Random := result;
 end;
 procedure DrawLine(x,y:global byte ; line : byte);
 begin 
@@ -51,13 +47,10 @@ begin
     drw_insertion_point:
         DRW V3, V4, 0
         LD V0, VF
-        LD I, System_result
-        LD [I], V0
         
 
     ");
     end;
-    DrawSprite := result;
 end;
 procedure PutPixel(x,y:global byte) inline;
 begin
@@ -77,7 +70,7 @@ end;
 procedure Wait(word : global Integer);
 begin
     asm("
-        LD I, word
+        LD I, System_word
         LD V1, [I]
         LD DT, V1
         System_wait_loop1:
@@ -137,14 +130,11 @@ begin
     end;
     PrintHexChar(x,y,units);
 end;
-function WaitForKey() : byte;
+function WaitForKey() inline : byte;
 begin
     asm("
         LD V0, K
-        LD I, System_result
-        LD [I], V0
     ");
-    WaitForKey:=result;
 end;
 
 procedure setDT(x : global byte);
@@ -157,14 +147,11 @@ begin
 
 end;
 
-function getDT() : byte;
+function getDT() inline : byte;
 begin
     asm("
         LD V0, DT
-        LD I, System_result
-        LD [I], V0
     ");
-    getDT := result;
 end;
 
 function isKeydown(c : global byte) : boolean;
@@ -176,10 +163,7 @@ begin
         SKNP V0
         LD V1, 1
         LD V0, V1
-        LD I, System_result
-        LD [I], V0
     ");
-    isKeydown := result;
 end;
 
 end.

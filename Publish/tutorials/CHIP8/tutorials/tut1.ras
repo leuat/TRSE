@@ -8,26 +8,21 @@ var
 	x,y,z,c,v : byte;
 	p : pointer;
 	
-	
 @include "charset.inc"
+
 
 procedure DrawChar(x, y, c: global byte);
 begin
-		asm(";here");
-	p:=#chars;// + c*8;
-	for z:=0 to 8 do
-	begin
-		v:=chars[z];
-//		v:=p[z];
-		System::DrawLine(x,y+z,v);
-	end;		
+	asm(";here");
+	p:=#chars + c<<3;
+	System::DrawSprite(p,x,y,8);
 	
 end;
 
 	
 begin
 	System::Clear();
-	System::Beep(100);
+	System::Beep(10);
 	//System::PrintHexChar(5,5,15);
 	DrawChar(0,0,1);
 //	for x:=0 to 10 do
@@ -37,11 +32,7 @@ begin
 	end;	
 
 
-	asm("
-loop:
-	jp loop
-
-	");
-
+	while(1) do; 
+	
 	
 end.

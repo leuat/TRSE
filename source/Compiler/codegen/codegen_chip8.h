@@ -62,7 +62,7 @@ public:
     virtual void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
-
+    void castToWord(QString x0, QString x1);
 
     QString getIndexScaleVal(QSharedPointer<Node> var);
 
@@ -83,9 +83,6 @@ public:
 
     virtual QString getReg(int dd=0);
 
-    void ldr (QString x0, QString x1);
-    void str (QString x0, QString x1);
-
     void str(QSharedPointer<Node> var);
     void Binop (QString bop, QString x0, QString x1, QString x2);
 
@@ -105,7 +102,7 @@ public:
     }
 
 
-    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
+
 
     QString PushReg();
     void PopReg();
