@@ -76,4 +76,5 @@ data_header_resources/images/tiles.flf = 0
 data_header_resources/images/levels.flf = 0
 charset_resources/images/levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/TRS80COCO/tutorials/resources/images/tiles.flf
 data_header_resources/images/image1.flf = 0
+data_header_resources/images/squiddy.flf = 0
 open_files =, tutorial1_putpixel.ras
