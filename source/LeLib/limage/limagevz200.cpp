@@ -42,6 +42,7 @@ LImageVZ200::LImageVZ200(LColorList::Type t)  : LImageQImage(t)
 void LImageVZ200::ExportBin(QFile &file)
 {
     QByteArray data;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
 
 
     if (m_exportParams["export1"]==1.0) {
