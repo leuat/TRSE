@@ -3,7 +3,7 @@ program Torus;
 @use "memory"
 @use "screen"
 
-//@addemulatorparam "-nothrottle"
+@addemulatorparam "-nothrottle"
 
 var
 	const hei : byte = 115;
