@@ -42,7 +42,39 @@ LImageVZ200::LImageVZ200(LColorList::Type t)  : LImageQImage(t)
 void LImageVZ200::ExportBin(QFile &file)
 {
     QByteArray data;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
 
+
+    if (m_exportParams["export1"]==1.0) {
+        // Export as sprites
+        m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+        int noSprites = m_exportParams["param2"];
+        int xx = 0;
+        int yy = 0;
+        int cx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X);
+        int cy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y);
+//        qDebug() << cx*8 << cy*8;
+        for (int k=0;k<noSprites;k++) {
+            for (int y=0;y<cy*8;y++) {
+                for (int x=0;x<cx*8;x+=4) {
+                    uchar c = 0;
+                    for (int i=0;i<4;i++) {
+                        uchar v = getPixel(xx+x+i,yy+y);
+                        qDebug() << (xx+x+i ) << yy+y;
+                        c=c|(v<<(6-2*i));
+                    }
+                    data.append(c);
+                }
+            }
+            xx+=cx*8;
+            if (xx>=m_width) {
+                xx=0;
+                yy+=cy*8;
+            }
+
+        }
+    }
+    else
     for (int y=0;y<m_height;y++) {
         for (int x=0;x<m_width;x+=4) {
             uchar c = 0;
@@ -88,8 +120,10 @@ QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QStrin
                     uchar v = getPixel(xx+j,yy);
                     c=c|(v<<(6-2*j));
                 }
-                f<< " ld a,"+ Util::numToHex(c) + "\n";
-                f<< " ld [hl],a\n";
+                if (c!=0) {
+                    f<< " ld a,"+ Util::numToHex(c) + "\n";
+                    f<< " ld [hl],a\n";
+                }
                 f<< " inc hl \n";
                 //data.append(c);
             }
@@ -116,9 +150,10 @@ QStringList LImageVZ200::SpriteCompiler(QString name, QString currentDir, QStrin
                         uchar v = getPixel(xx+j,yy);
                         c=c|(v<<(6-2*j));
                     }
-                    f<< " ld a,[ix+0] \n";
-                    f<< " or "+ Util::numToHex(c) + "\n";
-                    f<< " ld [hl],a\n";
+                        f<< " ld a,[ix+0] \n";
+                        if (c!=0)
+                            f<< " or "+ Util::numToHex(c) + "\n";
+                        f<< " ld [hl],a\n";
                     f<< " inc hl \n";
                     f<< " inc ix \n";
                     //data.append(c);

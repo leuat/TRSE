@@ -5331,6 +5331,7 @@ void Parser::HandleExport()
         img->m_exportParams["End"] = param2;
     }
     img->m_exportParams["export1"] = param2;
+    img->m_exportParams["param2"] = param1;
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);
