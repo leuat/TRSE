@@ -68,5 +68,5 @@ data_header_resources/charsets/charset1.flf = 0
 charset_resources/charsets/charset1.flf = :resources/character.rom
 exomizer_toggle = 0
 project_path = /home/oshaboy/Documents/GitHub/TRSE/Publish/tutorials/CHIP8/tutorials/
-open_files = ,test.asm, test.ras, charset.inc, resources/charsets/charset1.flf, [ext]units/CHIP8/system/system.tru, [ext]units/CHIP8/system/schip.tru
+open_files = ,test.asm, test.ras, resources/charsets/charset1.flf, [ext]units/CHIP8/system/system.tru, [ext]units/CHIP8/system/schip.tru
 current_file = test.asm

@@ -62,7 +62,7 @@ public:
     virtual void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
-
+    void castToWord(QString x0, QString x1);
 
     QString getIndexScaleVal(QSharedPointer<Node> var);
 
