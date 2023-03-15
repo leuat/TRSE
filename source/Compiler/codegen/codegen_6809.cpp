@@ -1782,6 +1782,8 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
         QString ref = "";
         if (node->isReference())
             ref="#";
+        if (node->getValue(as)[0]=='#')
+            ref = "";
         if (node->isByte(as)) {
             as->Asm("ldb "+ref+node->getValue(as));
             as->Asm("lda #0");

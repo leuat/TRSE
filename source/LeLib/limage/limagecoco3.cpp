@@ -67,7 +67,8 @@ void LImageCOCO3::ExportBin(QFile &ofile)
 {
 
     QString f = ofile.fileName();
-/*
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+
 
     QString filenameBase = Util::getFileWithoutEnding(f);
 
@@ -76,23 +77,14 @@ void LImageCOCO3::ExportBin(QFile &ofile)
     if (QFile::exists(fColor))
         QFile::remove(fColor);
 
-    QByteArray palette,data;
+    QByteArray palette, data;
 
     QVector<int> lst = m_colorList.getPenList();
     for (auto i : lst)
         palette.append(((unsigned char)i));
-//    qDebug() << lst;
 
     Util::SaveByteArray(palette,fColor);
-*/
-    int y = 0;
-    int dy = 0;
-    int xw;
-/*    if (m_width==320)  xw=80;
-    if (m_width==160)  xw=80;
-    if (m_width==256)  xw=64;
-*/
-    QByteArray data;
+
     if (m_colors==4)
     for (int y=0;y<m_height;y++) {
         for (int x=0;x<m_width/4;x++) {
@@ -101,6 +93,21 @@ void LImageCOCO3::ExportBin(QFile &ofile)
             for (int p=0;p<4;p++) {
                 uchar p1 = getPixel(x*4+p,y)&3;
                 c |= p1<<(6-2*p);
+
+//                curBit+=1;
+            }
+            data.append(c);
+
+        }
+    }
+    if (m_colors==16)
+    for (int y=0;y<m_height;y++) {
+        for (int x=0;x<m_width/2;x++) {
+            char c = 0;
+            int curBit = 0;
+            for (int p=0;p<2;p++) {
+                uchar p1 = getPixel(x*2+p,y)&15;
+                c |= p1<<(4-4*p);
 
 //                curBit+=1;
             }
