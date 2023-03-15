@@ -522,6 +522,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systematari800.h \
     source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systemchip8.h \
+    source/Compiler/systems/systemschip.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemcustom.h \
     source/Compiler/systems/systemgameboy.h \

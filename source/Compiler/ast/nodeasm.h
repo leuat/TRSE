@@ -27,9 +27,11 @@
 
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* Node for an asm block */
 class NodeAsm : public Node
 {
 public:
+    /* Assembly code given as a string */
     QString m_asm;
 
 

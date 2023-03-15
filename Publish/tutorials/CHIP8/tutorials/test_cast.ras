@@ -1,0 +1,12 @@
+program Test;
+@use "system/system"
+
+
+var 
+	word : Integer;
+	bb : byte;
+begin
+	bb:=5;
+	word:=bb;
+	while(1) do;
+end.
