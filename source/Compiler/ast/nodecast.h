@@ -33,7 +33,12 @@
 
 #include "source/Compiler/codegen/abstractcodegen.h"
 
-
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeCast : public Node {
 public:
     NodeCast(Token op, QSharedPointer<Node> right);
@@ -53,7 +58,6 @@ public:
     bool isWord(Assembler* as) override;
 
     void setForceType(TokenType::Type t) override;
-//    void setForceTypeFunctions(TokenType::Type t);
     void setCastType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {

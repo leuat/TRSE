@@ -3,6 +3,12 @@
 
 #include "node.h"
 #include "nodevar.h"
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeCase : public Node
 {
 public:

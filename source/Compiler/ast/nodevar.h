@@ -30,12 +30,17 @@
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    A Node representing a variable. 
+    m_left: undefined 
+    m_right: undefined
+    m_op: ?
+*/
 class NodeVar : public Node {
 private:
 public:
     QString value;
     QSharedPointer<Node> m_expr = nullptr;
-    //QSharedPointer<NodeVarType> m_type;
     bool m_fake16bit = false;
     QSharedPointer<Node> m_subNode = nullptr;
     bool m_ignoreRecordExpr = false;
@@ -122,8 +127,6 @@ public:
     QString getValue(Assembler* as) override;
     QString getLiteral(Assembler* as) override {
         return getValue(as);
-        //if (m_forceAddress) return "#" + value;
-        //return value;
     }
 
     bool isAddress() override;
@@ -137,12 +140,6 @@ public:
     }
 
 
-
-/*    void LoadVariable(AbstractCodeGen* dispatcher) override;
-    void LoadPointer(Assembler* as);
-
-    void StoreVariable(AbstractCodeGen* dispatcher) override;
-*/
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override;
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVar>(sharedFromThis()));

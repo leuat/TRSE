@@ -32,7 +32,12 @@
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodeassign.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
-
+/* 
+   ?
+    m_left: ?
+    m_right: ?
+    m_op: undefined
+*/
 class NodeProcedure : public Node {
 public:
     QSharedPointer<NodeProcedureDecl> m_procedure;
@@ -54,11 +59,7 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
-/*    void setForceTypeFunctions(TokenType::Type t) {
-        if (m_procedure->m_returnValue!=nullptr)
-            m_forceType = t;
-    }
-*/
+
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
 

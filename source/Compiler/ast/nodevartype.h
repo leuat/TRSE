@@ -30,6 +30,12 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeVarType : public Node {
 public:
     QString value;

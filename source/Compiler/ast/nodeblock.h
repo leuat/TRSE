@@ -32,7 +32,12 @@
 #include "source/Compiler/ast/nodevar.h"
 //#include "source/Compiler/ast/nodeproceduredecl.h"
 #include "source/Compiler/ast/nodevardecl.h"
-
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeBlock : public Node {
 public:
     QVector<QSharedPointer<Node>> m_decl;

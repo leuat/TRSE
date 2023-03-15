@@ -52,15 +52,6 @@ public:
 
     static QSharedPointer<NodeCast> CreateCast(Token t, QSharedPointer<Node> node);
 
-/*
-
-
-
-
-    QSharedPointer<NodeConditional> cond = QSharedPointer<NodeConditional>(
-                new NodeConditional(t,isLarge,clause,block,false));
-
-  */
 
 };
 

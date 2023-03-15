@@ -30,7 +30,12 @@
 #include "source/Compiler/codegen/abstractcodegen.h"
 #include "source/Compiler/ast/node.h"
 
-
+/* 
+    A node representing an immediate number.
+    m_left: undefined
+    m_right: undefined
+    m_op: undefined
+*/
 class NodeNumber : public Node {
 public:
     long m_val;

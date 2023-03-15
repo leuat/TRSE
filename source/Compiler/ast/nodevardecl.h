@@ -36,7 +36,12 @@
 
 
 
-
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeVarDecl : public Node {
 public:
     QSharedPointer<Node> m_varNode = nullptr;

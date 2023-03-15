@@ -3,7 +3,12 @@
 
 #include "source/Compiler/ast/node.h"
 
-
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeControlStatement : public Node
 {
 public:

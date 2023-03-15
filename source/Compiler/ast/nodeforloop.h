@@ -31,11 +31,15 @@
 #include "source/Compiler/ast/nodevar.h"
 
 #include "source/Compiler/codegen/abstractcodegen.h"
-
+/* 
+    A node representing a for loop. 
+    m_left: ?
+    m_right: ?
+    m_op: undefined
+*/
 class NodeForLoop : public Node {
 public:
 
-//    QSharedPointer<Node> m_a=nullptr, m_b = nullptr;
     QSharedPointer<Node> m_block=nullptr;
     bool m_unroll = false;
     QSharedPointer<Node> m_step = nullptr;

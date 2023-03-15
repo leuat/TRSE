@@ -4846,7 +4846,6 @@ QSharedPointer<Node> Parser::InlineAssembler()
     bool pascalStyleAsm = false;
     // Original pascal-style ASM without (" ");
     if (m_currentToken.m_type!=TokenType::LPAREN){
-        //qDebug() <<m_currentToken.m_value;
         QString org = m_currentToken.m_value;
         m_currentToken = m_lexer->InlineAsm();
 

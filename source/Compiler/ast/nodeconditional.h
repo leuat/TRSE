@@ -31,29 +31,24 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include <QVector>
 #include "source/Compiler/codegen/abstractcodegen.h"
-
+/* 
+    Node representing a conditional statement (such as a<b)
+    m_left: The first operand
+    m_right: The second operand
+    m_op: The comparision operation to perform
+*/
 class NodeConditional : public Node {
 public:
 
-//    QVector<QSharedPointer<Node>> m_a, m_b;
 
     QSharedPointer<Node> m_block = nullptr;
     QSharedPointer<Node> m_binaryClause = nullptr;
-/*    QVector<Token> m_compares;
-    QVector<Token> m_conditionals;*/
+
     QSharedPointer<Node> m_elseBlock = nullptr;
     bool m_isWhileLoop;
 
 
-/*    NodeConditional(QVector<Token> op, QVector<QSharedPointer<Node>> a, QVector<QSharedPointer<Node>> b, QSharedPointer<Node> block, bool isWhile, QVector<Token> conditionals, QSharedPointer<Node> elseBlock=nullptr) {
-        m_a = a;
-        m_b = b;
-        m_block = block;
-        m_compares = op;
-        m_isWhileLoop = isWhile;
-        m_elseBlock = elseBlock;
-        m_conditionals = conditionals;
-    }*/
+
     NodeConditional(Token op, int forcePage, QSharedPointer<Node> clause, QSharedPointer<Node> block, bool isWhile, QSharedPointer<Node> elseBlock=nullptr);
 
     void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) override;
@@ -75,9 +70,7 @@ public:
             m_elseBlock->FindPotentialSymbolsInAsmCode(lst);
     }
 
-/*    void ConditionalTryFail(Assembler* , QString labelFail, int i);
-    void ConditionalTrySuccess(Assembler* , QString labelFail, int i);
-*/
+
 
 
 
