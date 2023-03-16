@@ -27,6 +27,7 @@
 #include "source/Compiler/codegen/methods/abstractmethods.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/*
 enum CHIP8_TYPE{
     OG,
     SCHIP,
@@ -34,10 +35,16 @@ enum CHIP8_TYPE{
     MEGA,
     XO_CHIP
 };
+*/
 class CodeGenChip8 : public AbstractCodeGen
 {
 private: 
-    CHIP8_TYPE chip_type = OG;
+    void castToWord(QString hi, QString lo);
+    void castToByte(QString hi, QString lo);
+    void PrintBop(TokenType::Type type, QString x0, QString x1);
+    void PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo);
+    int m_lvl = 0;
+    QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7","V8","V9","VA","VB","VC","VD","VE"});
 public:
     CodeGenChip8();
 
@@ -62,23 +69,22 @@ public:
     virtual void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
-    void castToWord(QString x0, QString x1);
 
-    QString getIndexScaleVal(QSharedPointer<Node> var);
+    //QString getIndexScaleVal(QSharedPointer<Node> var);
 
-    int m_lvl = 0;
-    QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7", "V8", "V9", "VA", "VB", "VC", "VD", "VE"});
-    QString m_cmp = "cmp ";
-    QString m_jne = "jz ";
+
+
 
     QString getWordByteType(QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
 
-    QString getJmp(bool isOffPage) override {
+    inline QString getJmp(bool isOffPage) override {
         return "jp";
     }
-    QString getCallSubroutine() override;
+    inline QString getCallSubroutine() override {
+	    return "call";
+    };
     bool m_isPurePointer = false;
 
     virtual QString getReg(int dd=0);
@@ -135,8 +141,6 @@ public:
      */
 
 
-    void PrintBop(TokenType::Type type, QString x0, QString x1);
-    void PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo);
 
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 

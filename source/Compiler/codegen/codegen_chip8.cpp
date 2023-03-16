@@ -28,7 +28,8 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeProgram> node){
 	Inject_load_inst: \n\
 		LD I, 0 \n\
 		RET";
-	if (chip_type==XO_CHIP){
+	#if 0
+	if (m_system==XO_CHIP){
 		injected_assembly+=" \
 		LD I, Inject_ptr \n\
 		LD V1, [I] \n\
@@ -39,6 +40,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeProgram> node){
 		dw 0 \n\
 		RET\n";
 	}
+	#endif
 	as->Asm(injected_assembly);
 }
 void CodeGenChip8::PrintBop(TokenType::Type type, QString x0, QString x1)
@@ -193,15 +195,13 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 
 void CodeGenChip8::dispatch(QSharedPointer<NodeNumber>node)
 {
-	QString ax = "V0";
 	if (!node->isWord(as))
-		as->Asm("ld "+ax+", " + node->getValue(as));
+		as->Asm("ld V0, " + node->getValue(as));
 	else
 	{
 		QString imm = node->getValue(as);
-		as->Asm("ld "+ax+", " + imm+">>8" );
+		as->Asm("ld V0, " + imm+">>8" );
 		as->Asm("ld V1, " + imm+"&#ff" );
-		//PopReg();
 
 	}
 }
@@ -209,7 +209,6 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeNumber>node)
 void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 {
 	if (m_inlineParameters.contains(node->value)) {
-  //      qDebug()<< "INLINE node override : "<< node->value;
 		m_inlineParameters[node->value]->Accept(this);
 		return;
 	}
@@ -332,15 +331,15 @@ void CodeGenChip8::StoreVariable(QSharedPointer<NodeVar> n)
 
 bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
-	QString type =getWordByteType(node->m_left);
+	QString type = getWordByteType(node->m_left);
 	if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
 		as->Comment("Store variable simplified");
 
 		node->m_right->Accept(this);
-
-		if (node->m_left->isWord(as) && !node->m_right->isWord(as)){
+		qDebug() << node->m_left->isWord(as) << "\n" <<
+			node->m_right->isWord(as) << "\n";
+		if (node->m_left->isWord(as) && !node->m_right->isWord(as))
 			castToWord("V0","V1");
-		} 
 		str(node->m_left);
 
 		return true;
@@ -387,18 +386,8 @@ void CodeGenChip8::LoadVariable(QSharedPointer<NodeNumber>n)
 }
 
 
-QString CodeGenChip8::getIndexScaleVal( QSharedPointer<Node> var)
-{
-	if (var->isWord(as))
-		return "2";
-	if (var->isLong(as))
-		return "4";
-	return "1";
-}
 
-QString CodeGenChip8::getCallSubroutine() {
-	return "call";
-}
+
 
 QString CodeGenChip8::getReg(int dd) {
 	if (m_lvl+dd>=m_regs.count()) {
@@ -482,7 +471,7 @@ void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 {
-
+	qDebug()<<"AssignPointer()\n";
 	auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 	if (var != nullptr){
 		if (var->isPointer(as)){
@@ -517,10 +506,8 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 				}
 
 				as->Comment("load value:");
-				//var->Accept(this);
 				as->Asm("LD I, "+var->getValue(as));
 				as->Asm("LD V1, [I]");
-				//as->Asm("LD I, Inject_ptr");
 				as->Asm("LD I, Inject_ptr");
 				as->Asm("LD [I], V1");
 				as->Asm("call Inject_loadPointer");
@@ -721,17 +708,15 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 				as->Asm("sne V0," + right_imm->StringValue()+">>8");
 				as->Asm("se V1,"+ right_imm->StringValue()+"&#ff");
 			} else {
-				QString  ax_hi, ax_lo, bx_hi, bx_lo; 
-				ax_hi = "V0";
-				ax_lo = "V1";
+				QString  bx_hi, bx_lo; 
 				bx_hi = getReg(); PushReg();
 				bx_lo = getReg(); PushReg();
 				node->m_right->Accept(this);
 				as->Asm("LD "+bx_hi+",V0");
 				as->Asm("LD "+bx_lo+",V1");
 				node->m_left->Accept(this);
-				as->Asm("sne " + ax_hi + "," + bx_hi);
-				as->Asm("se " + ax_lo + ","+ bx_lo);
+				as->Asm("sne V0," + bx_hi);
+				as->Asm("se V1,"+ bx_lo);
 				PopReg(); PopReg();
 			}
 
@@ -753,74 +738,70 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 				as->Asm("se V0," + right_imm->StringValue()+">>8");
 				as->Asm("sne V1,"+ right_imm->StringValue()+"&#ff");
 			} else {
-				QString ax_lo, ax_hi, bx_hi, bx_lo; 
-				ax_hi = "V0";
-				ax_lo = "V1";
+				QString bx_hi, bx_lo; 
 				bx_hi = getReg(); PushReg();
 				bx_lo = getReg();
 				node->m_right->Accept(this);
 				as->Asm("LD "+bx_hi+",V0");
 				as->Asm("LD "+bx_lo+",V1");
 				node->m_left->Accept(this);
-				as->Asm("se " + ax_hi + "," + bx_hi);
-				as->Asm("sne " + ax_lo + ","+ bx_lo);
+				as->Asm("se V0," + bx_hi);
+				as->Asm("sne V1,"+ bx_lo);
 				PopReg(); 
 			}
 		} else {
 
-			QString ax_lo, ax_hi, bx_hi, bx_lo; 
+			QString bx_hi, bx_lo; 
 			node->m_right->Accept(this);
 			bx_hi = getReg(); PushReg();
 			bx_lo = getReg(); PushReg();
 			as->Asm("LD "+bx_hi+",V0");
 			as->Asm("LD "+bx_lo+",V1");
 			node->m_left->Accept(this);
-			ax_hi = "V0";
-			ax_lo = "V1";
 			if (node->m_op.m_type==TokenType::GREATEREQUAL){
-				as->Asm("subn "+bx_hi+","+ax_hi);
+				as->Asm("subn "+bx_hi+",V0");
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblSuccess));
-				as->Asm("subn "+ax_hi+","+bx_hi);
+				as->Asm("subn V0,"+bx_hi);
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblFailed));
-				as->Asm("subn "+bx_lo+","+ax_lo);
+				as->Asm("subn "+bx_lo+",V1");
 				as->Asm("sne VF, 0");
 
 				
 
 
 			} else if (node->m_op.m_type==TokenType::GREATER){
-				as->Asm("subn "+bx_hi+","+ax_hi);
+				as->Asm("subn "+bx_hi+",V0");
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblSuccess));
-				as->Asm("subn "+ax_hi+","+bx_hi);
+				as->Asm("subn V0,"+bx_hi);
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblFailed));
-				as->Asm("subn "+ax_lo+","+bx_lo);
+				as->Asm("subn V1,"+bx_lo);
 				as->Asm("se VF, 0");
 
 
 			} else if (node->m_op.m_type==TokenType::LESSEQUAL){
-				as->Asm("subn "+bx_hi+","+ax_hi);
+				as->Asm("subn "+bx_hi+",V0");
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblFailed));
-				as->Asm("subn "+ax_hi+","+bx_hi);
+				as->Asm("subn V0,"+bx_hi);
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblSuccess));
-				as->Asm("subn "+ax_lo+","+bx_lo);
+				as->Asm("subn V1,"+bx_lo);
 				//(bx > ax) 
 				as->Asm("sne VF, 0");
 
 
 			} else if (node->m_op.m_type==TokenType::LESS){
-				as->Asm("subn "+bx_hi+","+ax_hi);
+				as->Asm("subn "+bx_hi+",V0");
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblFailed));
-				as->Asm("subn "+ax_hi+","+bx_hi);
+				as->Asm("subn V0,"+bx_hi);
 				as->Asm("sne VF, 0");
 				as->Asm("jp "+as->jumpLabel(lblSuccess));
-				as->Asm("subn "+bx_lo+","+ax_lo);
+				as->Asm("subn "+bx_lo+",V1");
 				//!(ax > bx) 
 				as->Asm("se VF, 0");
 			}
@@ -839,12 +820,10 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 
 			} else if (right_imm){
 				node->m_left->Accept(this);
-				QString ax= "V0";
-				as->Asm("se " + ax + "," + right_imm->StringValue());
+				as->Asm("se V0," + right_imm->StringValue());
 			}else if (left_imm){
 				node->m_right->Accept(this);
-				QString ax= "V0";
-				as->Asm("se " + ax + "," + left_imm->StringValue());
+				as->Asm("se V0," + left_imm->StringValue());
 			} else {
 				node->m_right->Accept(this);
 				QString bx= getReg();
@@ -861,16 +840,13 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 					as->Asm("jp "+as->jumpLabel(lblFailed));
 			} else if (right_imm) {
 				node->m_left->Accept(this);
-				QString ax= "V0";
-				as->Asm("sne " + ax + "," + right_imm->StringValue());
+				as->Asm("sne V0," + right_imm->StringValue());
 			} else if (left_imm) {
 				node->m_right->Accept(this);
-				QString ax= "V0";
-				as->Asm("sne " + ax + "," + left_imm->StringValue());
+				as->Asm("sne V0," + left_imm->StringValue());
 			} else {
-				QString ax= "V0";
 				QString bx= getReg();
-				as->Asm("sne " + ax + "," + bx);
+				as->Asm("sne V0," + bx);
 				//PopReg();
 			}
 			return;
@@ -988,9 +964,12 @@ void CodeGenChip8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedP
 
 QString CodeGenChip8::getReturn() { return "ret";}
 
-void CodeGenChip8::castToWord(QString x0, QString x1){
+void CodeGenChip8::castToWord(QString hi, QString lo){
 	as->Comment("Cast to Word");
-	as->Asm("LD "+x1+","+x0);
-	as->Asm("LD "+x0+",0");
-
+	as->Asm("LD "+lo+","+hi);
+	as->Asm("LD "+hi+",0");
+}
+void CodeGenChip8::castToByte(QString hi, QString lo){
+	as->Comment("Cast to Byte");
+	as->Asm("LD "+hi+","+lo);
 }

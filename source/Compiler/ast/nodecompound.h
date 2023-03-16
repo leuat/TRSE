@@ -29,7 +29,12 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 #include "source/Compiler/ast/node.h"
-
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeCompound : public Node {
 public:
     QVector<QSharedPointer<Node>> children;

@@ -25,6 +25,12 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    A Node ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeWhileLoop : public Node
 {
 public:
@@ -41,9 +47,7 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
-    void Accept(AbstractCodeGen* dispatcher) override {
-        //dispatcher->dispatch(qSharedPointerDynamicCast<NodeWhileLoop>(sharedFromThis()));
-    }
+    void Accept(AbstractCodeGen* dispatcher) override {}
 
 
 

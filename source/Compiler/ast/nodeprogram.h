@@ -33,6 +33,13 @@
 #include "source/Compiler/ast/nodeproceduredecl.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/*
+    The Parent node of the entire program. 
+    m_left: undefined
+    m_right: undefined
+    m_op: undefined
+
+*/
 class NodeProgram : public Node {
 public:
     QString m_name, m_param;

@@ -25,7 +25,12 @@
 #include "node.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
-
+/* 
+    ?
+    m_left: ?
+    m_right: ?
+    m_op: ?
+*/
 class NodeBinaryClause : public Node
 {
 public:

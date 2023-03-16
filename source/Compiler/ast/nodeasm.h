@@ -27,9 +27,16 @@
 
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    Node for an asm block
+    m_left: undefined
+    m_right: undefined
+    m_op: Token associated with the assembly string.
+*/
 class NodeAsm : public Node
 {
 public:
+    /* Assembly code associated with the node as a QString */
     QString m_asm;
 
 

@@ -29,7 +29,12 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
-
+/* 
+   A Node representing a string. 
+    m_left: undefined 
+    m_right: undefined
+    m_op: the String's token. 
+*/
 class NodeString : public Node {
 public:
     QStringList m_val;
