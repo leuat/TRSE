@@ -80,16 +80,6 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
- ld a,[ix+0] 
- ld [iy+0],a
- ld a,[ix+1] 
- ld [iy+1],a
- ld a,[ix+2] 
- ld [iy+2],a
- ld a,[ix+3] 
- ld [iy+3],a
-  add iy,de
-  add ix,de
 ");
 end;
 procedure player_sprite2_1();
@@ -169,16 +159,6 @@ asm ("
  ld [iy+1],a
  ld a,[ix+2] 
  or $a2
- ld [iy+2],a
- ld a,[ix+3] 
- ld [iy+3],a
-  add iy,de
-  add ix,de
- ld a,[ix+0] 
- ld [iy+0],a
- ld a,[ix+1] 
- ld [iy+1],a
- ld a,[ix+2] 
  ld [iy+2],a
  ld a,[ix+3] 
  ld [iy+3],a
@@ -268,16 +248,6 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
- ld a,[ix+0] 
- ld [iy+0],a
- ld a,[ix+1] 
- ld [iy+1],a
- ld a,[ix+2] 
- ld [iy+2],a
- ld a,[ix+3] 
- ld [iy+3],a
-  add iy,de
-  add ix,de
 ");
 end;
 procedure player_sprite2_3();
@@ -359,16 +329,6 @@ asm ("
  ld [iy+2],a
  ld a,[ix+3] 
  or $20
- ld [iy+3],a
-  add iy,de
-  add ix,de
- ld a,[ix+0] 
- ld [iy+0],a
- ld a,[ix+1] 
- ld [iy+1],a
- ld a,[ix+2] 
- ld [iy+2],a
- ld a,[ix+3] 
  ld [iy+3],a
   add iy,de
   add ix,de
