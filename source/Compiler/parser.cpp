@@ -1253,6 +1253,9 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            while (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+
             return;
         }
         if (m_currentToken.m_value=="exportblackwhite") {
@@ -5152,10 +5155,15 @@ void Parser::HandlePerlinNoise()
     float pers = m_currentToken.m_intVal/100.0;
     Eat();
     int amp = m_currentToken.m_intVal;
+    float pow = 1;
     Eat(TokenType::INTEGER_CONST);
+    if (m_currentToken.m_type == TokenType::INTEGER_CONST) {
+        pow = m_currentToken.m_intVal/100.0;
+        Eat(TokenType::INTEGER_CONST);
+    }
     SimplexNoise sn;
 //    qDebug() << "PARSER:::" <<file;
-    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
+    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
 
 }
 

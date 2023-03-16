@@ -53,6 +53,17 @@ void CreateVICCharset() {
 
 }
 
+void CreateMergedTorus() {
+    auto b1 = Util::loadBinaryFile("/Users/leuat/code/TRSE/Publish/tutorials/TIM/tutorials/data/inside_torus.bin");
+    auto b2 = Util::loadBinaryFile("/Users/leuat/code/TRSE/Publish/tutorials/TIM/tutorials/data/inside_torus2.bin");
+    QByteArray d;
+    for (int i=0;i<b1.size();i++)
+        d.append((b2[i]/16)&15 | (((b1[i]/8)&15)<<4));
+
+    Util::SaveByteArray(d,"/Users/leuat/code/TRSE/Publish/tutorials/TIM/tutorials/data/combined.bin");
+
+
+}
 
 
 int main(int argc, char *argv[])
@@ -65,6 +76,7 @@ int main(int argc, char *argv[])
         }
     }
 //    CreateVICCharset();
+ //   CreateMergedTorus();
     // Start main application
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
@@ -78,6 +90,5 @@ int main(int argc, char *argv[])
     w.show();
     w.AfterStart(oldCurDir);
     w.RestoreSettings();
-
     return a.exec();
 }
