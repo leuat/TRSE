@@ -2493,7 +2493,6 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 
     // Start
     Token t = m_currentToken;
-    bool done=false;
     int linenum = m_currentToken.m_lineNumber;
 
     QSharedPointer<Node> clause = BinaryClause();

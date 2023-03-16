@@ -39,7 +39,7 @@ void AbstractCodeGen::UpdateDispatchCounter()
 
     }
     m_currentNode++;
-//    qDebug() <<p << m_currentNode << Node::s_nodeCount;
+    //    qDebug() <<p << m_currentNode << Node::s_nodeCount;
 
 }
 
@@ -51,14 +51,14 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeAssign> node)  {
 void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
 {
     node->DispatchConstructor(as,this);
-/*    if (node->m_op.m_type==TokenType::INTEGER)
+    /*    if (node->m_op.m_type==TokenType::INTEGER)
         node->m_right->setForceType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::BYTE)
        node->m_right->setForceType(TokenType::BYTE);*/
     node->m_right->setForceType(node->m_op.m_type);
     node->m_right->Accept(this);
     as->Comment("WriteType : "+TokenType::getType(node->m_castType) + " " +TokenType::getType(node->m_forceType));
-//    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+    //    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
     Cast(node->m_op.m_type, node->m_forceType);
 
 }
@@ -74,7 +74,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
     node->DispatchConstructor(as,this);
     as->ClearTerm();
     LineNumber(node->m_op.m_lineNumber);
- //   AbstractCodeGen::dispatch(node);
+    //   AbstractCodeGen::dispatch(node);
 
 
     // In case memory block is acive
@@ -204,8 +204,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
         ErrorHandler::e.Error("Index must be variable", node->m_op.m_lineNumber);
 
 
-//    qDebug() <<(Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502);
-  //  qDebug() <<nVar->isWord(as) << nVar->getValue(as);
+    //    qDebug() <<(Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502);
+    //  qDebug() <<nVar->isWord(as) << nVar->getValue(as);
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502 && nVar->m_left->isWord(as)) {
         ErrorHandler::e.Warning("Using integer '"+nVar->m_left->getValue(as)+"' as a for loop index can result in unpredictable behavior on the 6502. Please keep to using byte indicies, and use pointers to cover data > 255 bytes. See the TRSE tutorials for examples.", node->m_op.m_lineNumber);
     }
@@ -215,7 +215,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Define main for label
     QString lblFor =as->NewLabel("forloop");
-//    QString lblForEnd =as->NewLabel("forloopend");
+    //    QString lblForEnd =as->NewLabel("forloopend");
     //QString lblForCounter =as->NewLabel("forloopcounter");
 
     QString lblLoopStart = as->NewLabel("loopstart");
@@ -226,7 +226,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
 
     Token t_cond = node->m_op;
- /*
+    /*
     QSharedPointer<NodeBinaryClause> bc = new QSharedPointer<NodeBinaryClause>(
                 new NodeBinaryClause(t_bc,node->m_a,node->m_b))
 
@@ -245,15 +245,15 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
 
     // Perform counter increase and jimps (individual for each target cpu)
-//    as->Label(lblForCounter);
+    //    as->Label(lblForCounter);
     as->Label(lblLoopStart);
     CompareAndJumpIfNotEqualAndIncrementCounter(node->m_left, node->m_right,  node->m_step, lblFor, offpage,node->m_inclusive);
 
-  //  as->Label(lblForEnd);
+    //  as->Label(lblForEnd);
     as->Label(lblLoopEnd);
     as->PopLabel("forloop");
-   // as->PopLabel("forloopend");
- //   as->PopLabel("forloopcounter");
+    // as->PopLabel("forloopend");
+    //   as->PopLabel("forloopcounter");
 
     as->PopLabel("loopend");// for BREAK and CONT
     as->PopLabel("loopstart"); // for BREAK and CONT
@@ -262,7 +262,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
 void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
 {
-/*    QString labelStartOverAgain = as->NewLabel("while");
+    /*    QString labelStartOverAgain = as->NewLabel("while");
     QString labelElseDone = as->NewLabel("elsedoneblock");
   */
     node->DispatchConstructor(as,this);
@@ -272,13 +272,13 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
         if (as->m_labelStack["loopend"].m_vars.count()!=0) // for loops
             as->Asm(getJmp(true) + " " + as->jumpLabel(as->getLabel("loopend")));
         else
-        ErrorHandler::e.Error("'Break' can only be used within a for / while loop", node->m_op.m_lineNumber);
+            ErrorHandler::e.Error("'Break' can only be used within a for / while loop", node->m_op.m_lineNumber);
     }
     if (node->m_op.m_type == TokenType::CONTINUE) {
         if (as->m_labelStack["loopstart"].m_vars.count()!=0)
             as->Asm(getJmp(true) + " " + as->jumpLabel(as->getLabel("loopstart")));
         else
-         ErrorHandler::e.Error("'Continue' can only be used within a for / while loop", node->m_op.m_lineNumber);
+            ErrorHandler::e.Error("'Continue' can only be used within a for / while loop", node->m_op.m_lineNumber);
     }
     if (node->m_op.m_type == TokenType::RETURN)
         as->Asm(getReturn());
@@ -330,23 +330,23 @@ void AbstractCodeGen::ValidateAssignStatement(QSharedPointer<NodeAssign> node)
     // Verify pointer integrity
     if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
         if (!node->m_right->isRecordData(as)) {
-               ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
+            ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
 
             as->Comment("Assigning pointer to record/class");
         }
 
     }
     if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as)) && !node->m_right->isClass(as)) {
-//        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
-            ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
+        //        if (!Syntax::s.m_currentSystem->m_allowRecordPointers)
+        ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
     }
 
     // Double check
     if (node->m_right==nullptr)
-         ErrorHandler::e.Error("Right hand of assign statement must be expression.", node->m_op.m_lineNumber);
+        ErrorHandler::e.Error("Right hand of assign statement must be expression.", node->m_op.m_lineNumber);
 
     // Ignore this one, as it is used a lot
-/*    if (v->getTypeText(as).toLower()=="array" && v->m_expr==nullptr) {
+    /*    if (v->getTypeText(as).toLower()=="array" && v->m_expr==nullptr) {
 
     }
   */
@@ -362,10 +362,10 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
     node->m_right->Accept(this);
     as->Term();
     as->Comment("Calling storevariable on generic assign expression");
-//    StoreVariable(VarOrNum(node->m_left));
-  //  as->Comment("RHS is byte: "+Util::numToHex(node->m_right->isByte(as)) + " "+node->m_right->getTypeText(as) + " " +TokenType::getType(node->m_right->getType(as)));
+    //    StoreVariable(VarOrNum(node->m_left));
+    //  as->Comment("RHS is byte: "+Util::numToHex(node->m_right->isByte(as)) + " "+node->m_right->getTypeText(as) + " " +TokenType::getType(node->m_right->getType(as)));
     //as->Comment("LHS is byte: "+Util::numToHex(node->m_left->isByte(as)) + " "+node->m_left->getTypeText(as) + " " +TokenType::getType(node->m_left->getType(as)));
-//    as->Comment("CastType: "+TokenType::getType(n));
+    //    as->Comment("CastType: "+TokenType::getType(n));
 
     if (node->m_right->getTypeText(as)=="BYTE")
         Cast(TokenType::BYTE,node->m_right->m_castType);
@@ -511,7 +511,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     node->m_left = v;
     bool ignoreLookup = false;
 
-/*    auto пиздец = node->m_right;
+    /*    auto пиздец = node->m_right;
     пиздец->Accept(this);
 */
     // Get variable name
@@ -522,9 +522,9 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
 
-//    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
+    //    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
 
-/*    if (v->m_writeType==TokenType::INTEGER) {
+    /*    if (v->m_writeType==TokenType::INTEGER) {
         v->setForceType(TokenType::INTEGER);
         node->m_right->setForceType(TokenType::INTEGER);
     }
@@ -541,7 +541,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
         node->m_right->setCastType(TokenType::LONG);
 
-/*    if (v->isByte(as)) {
+    /*    if (v->isByte(as)) {
 //        as->Comment("SETTING BYTE CAST TYPE");
         node->m_right->setCastType(TokenType::BYTE);
     }
@@ -579,10 +579,10 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
     }
     // ****** STRINGS
-//    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
+    //    if (qSharedPointerDynamicCast<NodeString>(node->m_right) && !v->hasArrayIndex()) {
     if (qSharedPointerDynamicCast<NodeString>(node->m_right)) {
         as->Comment("Assigning a string : " + getValue(v));
-//        qDebug() << v->getValue(as) <<v->getTypeText(as) << TokenType::getType(v->getArrayType(as)) << TokenType::getType(Syntax::s.m_currentSystem->getSystemPointerArrayType());
+        //        qDebug() << v->getValue(as) <<v->getTypeText(as) << TokenType::getType(v->getArrayType(as)) << TokenType::getType(Syntax::s.m_currentSystem->getSystemPointerArrayType());
         if (v->hasArrayIndex() && v->getArrayType(as)!=Syntax::s.m_currentSystem->getSystemPointerArrayType())
             ErrorHandler::e.Error("Can only assign strings to arrays of pointers (such as string lists)",v->m_op.m_lineNumber);
         if (!v->hasArrayIndex() && (!(v->isPointer(as) || v->getType(as)==TokenType::STRING)))
@@ -602,7 +602,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     }
     // Lookup for a type check
     if (!ignoreLookup)
-       QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
+        QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(v), node->m_op.m_lineNumber, v->isAddress());
 
 
     if (node->m_left->isWord(as)) {
@@ -613,7 +613,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     // stack parameters
-     if (StoreStackParameter(node))
+    if (StoreStackParameter(node))
         return;
 
 
@@ -623,7 +623,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
         return;
 
     //a:=5; some simplest case
-     if (StoreVariableSimplified(node))
+    if (StoreVariableSimplified(node))
         return;
 
     // p := #data;
@@ -713,7 +713,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
         as->Asm(getJmp(offpage) + " " + as->jumpLabel(failedLabel));
     }
 
-   // Start main block
+    // Start main block
     as->Label(lblstartTrueBlock+": ;Main true block ;keep "); // This means skip inside
     node->m_block->Accept(this);
 
@@ -732,7 +732,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
 
     }
     as->Term();
-//    as->Comment("; ELSEDONE HERE "+labelElseDone);
+    //    as->Comment("; ELSEDONE HERE "+labelElseDone);
     as->Label(labelElseDone); // Jump here if not
     if (lblLoopEnd!="")
         as->Label(lblLoopEnd);
@@ -773,17 +773,17 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
                 if (node->m_op.m_type == TokenType::LESS)
                     node->m_op.m_type = TokenType::GREATER;
                 else
-            if (node->m_op.m_type == TokenType::LESSEQUAL)
-                node->m_op.m_type = TokenType::GREATEREQUAL;
-            else
-            if (node->m_op.m_type == TokenType::GREATEREQUAL)
-                node->m_op.m_type = TokenType::LESSEQUAL;
+                    if (node->m_op.m_type == TokenType::LESSEQUAL)
+                        node->m_op.m_type = TokenType::GREATEREQUAL;
+                    else
+                        if (node->m_op.m_type == TokenType::GREATEREQUAL)
+                            node->m_op.m_type = TokenType::LESSEQUAL;
 
             as->Comment("Swapped comparison expressions");
         }
 
         if (node->m_right->m_isBoolean) {
-//            qDebug() << "Right is boolean!" << node->m_right->getValue(as);
+            //            qDebug() << "Right is boolean!" << node->m_right->getValue(as);
             if (node->m_right->getValueAsInt(as)==1) {
                 // ooh flip to FALSE and invert
                 auto num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
@@ -794,12 +794,12 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
                     //qDebug() << "Flipping IS TRUE to NOT EQ FALSE";
                 }
                 else
-                if (node->m_op.m_type == TokenType::NOTEQUALS) {
-                    num->m_strVal="0";
-                    num->m_val = 0;
-                    node->m_op.m_type = TokenType::EQUALS;
-                    //qDebug() << "Flipping IS NOT TRUE to EQ FALSE";
-                }
+                    if (node->m_op.m_type == TokenType::NOTEQUALS) {
+                        num->m_strVal="0";
+                        num->m_val = 0;
+                        node->m_op.m_type = TokenType::EQUALS;
+                        //qDebug() << "Flipping IS NOT TRUE to EQ FALSE";
+                    }
 
             }
         }
@@ -811,7 +811,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
 
     if (node->m_op.m_type == TokenType::AND) {
         QString lblLocalSuccess = as->NewLabel("localsuccess");
-//        HandleCompoundBinaryClause(node->m_left,  lblFailed, lblSuccess, offpage);
+        //        HandleCompoundBinaryClause(node->m_left,  lblFailed, lblSuccess, offpage);
         HandleCompoundBinaryClause(node->m_left,  lblFailed, lblLocalSuccess, offpage);
         as->Label(lblLocalSuccess+": ;keep");
         as->Comment("; logical AND, second requirement");
@@ -838,7 +838,7 @@ void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QStr
 
 
 bool AbstractCodeGen::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> b1, QSharedPointer<Node> b2) {
-  //  bool onPage = true;
+    //  bool onPage = true;
     bool onPage = node->verifyBlockBranchSize(as, b1,b2,this);
 
     if (node->m_forcePage == 1)
@@ -847,7 +847,7 @@ bool AbstractCodeGen::isOffPage(QSharedPointer<Node> node, QSharedPointer<Node> 
     if (node->m_forcePage == 2)
         onPage = true;
 
-//    qDebug() << "FORCEPAGE " <<node->m_forcePage;
+    //    qDebug() << "FORCEPAGE " <<node->m_forcePage;
 
     return !onPage;
 }
@@ -871,7 +871,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
             // Print label at end of vardecl
             auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
             auto var = qSharedPointerDynamicCast<NodeVar>(vd->m_varNode);
-/*            if (!(var->m_isGlobal))
+            /*            if (!(var->m_isGlobal))
             if (vd!=nullptr) {
                 vd->ExecuteSym(as->m_symTab);
             }*/
@@ -886,7 +886,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
     as->m_symTab->SetCurrentProcedure(node->m_procName+"_");
     //int ln = node->m_currentLineNumber;
-//    LineNumber(ln+1);
+    //    LineNumber(ln+1);
     bool isInbank = false;
     auto orgBank = as->m_currentBlock;
     if (node->m_flags.contains("bank")) {
@@ -894,7 +894,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
         isInbank = true;
         if (!as->m_banks.contains(bnk)) {
             as->m_banks[bnk] = QSharedPointer<Appendix>(new Appendix());
-//            as->m_banks[bnk]->m_pos = "$4000";
+            //            as->m_banks[bnk]->m_pos = "$4000";
             as->m_banks[bnk]->m_isMainBlock = false;
         }
         as->m_currentBlock = as->m_banks[bnk];
@@ -902,26 +902,26 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
     }
     else
-    if (UseBlocks()) {
-        as->Comment("NodeProcedureDecl "+ QString::number(node->getBlockInfo().m_blockID));
-        int ret = node->MaintainBlocks(as);
-        if (ret==3) node->m_curMemoryBlock=nullptr;
-        if (as->m_currentBlock!=nullptr) {
-            if (node->m_curMemoryBlock==nullptr) {
-                bool ok;
-                //            qDebug() << "Creating new block procedure for " << m_procName;
-                QString p = as->m_currentBlock->m_pos;
-                int pos = p.remove("$").toInt(&ok, 16);
-//                as->StartMemoryBlock()
-                node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->getBlockInfo().m_blockName));
-                as->userBlocks.append(node->m_curMemoryBlock);
+        if (UseBlocks()) {
+            as->Comment("NodeProcedureDecl "+ QString::number(node->getBlockInfo().m_blockID));
+            int ret = node->MaintainBlocks(as);
+            if (ret==3) node->m_curMemoryBlock=nullptr;
+            if (as->m_currentBlock!=nullptr) {
+                if (node->m_curMemoryBlock==nullptr) {
+                    bool ok;
+                    //            qDebug() << "Creating new block procedure for " << m_procName;
+                    QString p = as->m_currentBlock->m_pos;
+                    int pos = p.remove("$").toInt(&ok, 16);
+                    //                as->StartMemoryBlock()
+                    node->m_curMemoryBlock = QSharedPointer<MemoryBlock>(new MemoryBlock(pos,pos,MemoryBlock::CODE, node->getBlockInfo().m_blockName));
+                    as->userBlocks.append(node->m_curMemoryBlock);
+                }
             }
-        }
-        else {
-            //node->m_curMemoryBlock=nullptr;
-        }
+            else {
+                //node->m_curMemoryBlock=nullptr;
+            }
 
-    }
+        }
     //MaintainBlocks(as);
     if (node->m_block==nullptr) {  // Is builtin procedure
         node->m_block = QSharedPointer<NodeBuiltinMethod>(new NodeBuiltinMethod(node->m_procName, QVector<QSharedPointer<Node>>(), nullptr));
@@ -981,7 +981,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
             as->Asm(getReturn());
         }
         else {
- //           as->Asm(endInterrupt());
+            //           as->Asm(endInterrupt());
             as->Asm(getReturnInterrupt());
         }
     }
@@ -1035,10 +1035,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         if (vt->m_flags.contains("pure_variable"))
             if (!node->m_parameters[i]->isPureVariable())
                 ErrorHandler::e.Error("Procedure '"+node->m_procedure->m_procName+"' requires parameter "+QString::number(i) +" to be a pure variable", node->m_op.m_lineNumber);
-//        qDebug() <<"typenode flags" <<node->m_procedure->m_procName<<vt->m_flags << vd->m_varNode->getValue(as);
+        //        qDebug() <<"typenode flags" <<node->m_procedure->m_procName<<vt->m_flags << vd->m_varNode->getValue(as);
     }
 
-//    as->Comment("calling procedure: "+node->m_procedure->m_procName);
+    //    as->Comment("calling procedure: "+node->m_procedure->m_procName);
 
     if (node->m_procedure->m_isInline) {
         InlineProcedure(node);
@@ -1060,8 +1060,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     }
 
     ProcedureStart();
-//    if (node->m_procedure->m_returnType!=nullptr)
-  //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
+    //    if (node->m_procedure->m_returnType!=nullptr)
+    //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
 
     if (node->m_procedure->m_returnType!=nullptr)
@@ -1120,7 +1120,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProgram> node)
     node->m_NodeBlock->m_isMainBlock = true;
     node->m_NodeBlock->Accept(this);
 
-//    as->EndMemoryBlock();
+    //    as->EndMemoryBlock();
     as->EndProgram();
 }
 
@@ -1317,7 +1317,7 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
         app->Append("end_incbin_"+v->value+":",0);
 
         as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(start,start+size, MemoryBlock::DATA,filename)));
-//        app->Append("EndBlock"+t->m_position+":",0);
+        //        app->Append("EndBlock"+t->m_position+":",0);
     }
 }
 
@@ -1396,7 +1396,7 @@ void AbstractCodeGen::HandleNodeAssignCopyClass(QSharedPointer<NodeAssign> node)
     QSharedPointer<SymbolTable>  stab = as->m_symTab->m_records[node->m_right->getTypeText(as)];
     as->Comment("Handle assign copy records");
     // NOT IMPLEMENTED, SEE PARSER FOR COPYING
- /*   for (QSharedPointer<Symbol> s: stab->m_symbols) {
+    /*   for (QSharedPointer<Symbol> s: stab->m_symbols) {
 
         QSharedPointer<NodeVar> l = QSharedPointer<NodeVar>(new NodeVar(Token(TokenType::ID,getValue(node->m_left))));
         l->m_op.m_lineNumber = node->m_op.m_lineNumber;
@@ -1430,7 +1430,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 {
     node->DispatchConstructor(as,this);
 
-/*    if (m_inlineParameters.count()!=0) {
+    /*    if (m_inlineParameters.count()!=0) {
         // We have INLINE parameters! replace
         for (auto p : node->m_params) {
             p->ReplaceInline(as, m_inlineParameters);
@@ -1443,8 +1443,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node)
 
 
 
-//    for (auto m:node->m_params)
-  //      qDebug() << m->HexValue();
+    //    for (auto m:node->m_params)
+    //      qDebug() << m->HexValue();
 
     node->VerifyParams(as);
     auto system = Syntax::s.m_currentSystem->m_system;
@@ -1453,7 +1453,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node)
     }
     QSharedPointer<AbstractMethods> methods = FactoryMethods::CreateMethods(system);
     methods->m_node = node;
-//    qDebug() << "BALLE"<<methods << Syntax::s.m_currentSystem->m_system << qSharedPointerDynamicCast<Methods6502>(methods);
+    //    qDebug() << "BALLE"<<methods << Syntax::s.m_currentSystem->m_system << qSharedPointerDynamicCast<Methods6502>(methods);
     methods->Assemble(as,this);
 }
 
@@ -1461,7 +1461,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
     node->DispatchConstructor(as,this);
 
-//    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
+    //    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 
     if (node->m_right->isPureNumeric()) {
         int s = node->getValueAsInt(as);
@@ -1488,7 +1488,7 @@ void AbstractCodeGen::LineNumber(int ln) {
         as->Comment("LineNumber: "+QString::number(ln));
     if (m_outputSource)
         if (ln<m_rasSource.count())
-           as->Comment(m_rasSource[ln]);
+            as->Comment(m_rasSource[ln]);
 
 }
 
@@ -1544,17 +1544,17 @@ QString AbstractCodeGen::getValue8bit(QSharedPointer<Node> n, int isHi) {
 
 QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
 {
-/*    auto right = qSharedPointerDynamicCast<NodeString>(node);
+    /*    auto right = qSharedPointerDynamicCast<NodeString>(node);
     //    as->Asm("jmp " + lbl);
     if (right->m_hasBeenDefined == true)
         return "";
 */
     QString strName = as->NewLabel("stringassignstr");
-/*    if (Node::s_isInOffpageTest) {
+    /*    if (Node::s_isInOffpageTest) {
         qDebug() << "ABSTRACTCODEGEN RETURN "<< strName;
         return strName;
     }*/
-//    qDebug() << "ABSTRACTCODEGEN "<< strName;
+    //    qDebug() << "ABSTRACTCODEGEN "<< strName;
     as->StartExistingBlock(as->m_tempVarsBlock);
     auto ns = qSharedPointerDynamicCast<NodeString>(node);
     if (ns==nullptr)
@@ -1567,7 +1567,7 @@ QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node)
     }
 
     as->EndCurrentBlock();
-  //  right->m_hasBeenDefined = true;
+    //  right->m_hasBeenDefined = true;
 
     return strName;
 }
@@ -1586,10 +1586,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
 
     if (!expr->isPureVariable()) {
         // Uh oh, we need to store in a temp one
-//        if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::MOS6502)
-  //          ErrorHandler::e.Error("Cases can only operate on pure variables (for now). Not implemented on the z80 / m68k / x86 yet, please nag the developer!",node->m_op.m_lineNumber);
+        //        if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::MOS6502)
+        //          ErrorHandler::e.Error("Cases can only operate on pure variables (for now). Not implemented on the z80 / m68k / x86 yet, please nag the developer!",node->m_op.m_lineNumber);
 
-/*        QString name = as->m_internalZP[as->m_internalZP.count()-1];
+        /*        QString name = as->m_internalZP[as->m_internalZP.count()-1];
         as->Comment("expr is not pure, need to save to temp var");
         as->ClearTerm();
         expr->Accept(this);
@@ -1605,7 +1605,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node)
             type="integer";
         QString name = as->StoreInTempVar("case",type,false);
 
-//        qDebug() << name;
+        //        qDebug() << name;
 
         auto sym = QSharedPointer<Symbol>(new Symbol(name,type));
         as->m_symTab->m_ignoreAllprefixes = true;
