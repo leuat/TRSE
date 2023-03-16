@@ -5,7 +5,7 @@ program CirclesOhYes;
 @use "compression/compression"
 
 
-
+@addemulatorparam "-nothrottle"
 
 // Good old tunnel example!
 

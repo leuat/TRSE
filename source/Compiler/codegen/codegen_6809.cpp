@@ -15,10 +15,6 @@ CodeGen6809::CodeGen6809()
 
 
 void CodeGen6809::EightBitMul(QSharedPointer<Node> node) {
-
-
-
-
     as->Comment("8 bit mul");
     as->ClearTerm();
     node->m_left->Accept(this);
