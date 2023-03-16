@@ -30,7 +30,6 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodestring.h"
-#include "source/Compiler/ast/nodevararray.h"
 #include "source/Compiler/ast/nodebinop.h"
 
 #include "source/Compiler/codegen/abstractcodegen.h"

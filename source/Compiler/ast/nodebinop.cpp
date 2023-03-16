@@ -86,13 +86,6 @@ bool NodeBinOP::is8bitValue(Assembler *as)
 
 void NodeBinOP::ApplyFlags()
 {
-//    qDebug() << "::NodeBinop Applying Flags";
-
-    //bool a = m_left->isWord(nullptr);
-    //bool b = m_right->isWord(nullptr);
-
-   // qDebug() << "::NodeBinop a b " << a << b;
-
     if (m_op.m_type==TokenType::MUL) {
      //   if (a || b)
         // Crash here.. wtf??
@@ -192,11 +185,6 @@ bool NodeBinOP::ContainsVariable(Assembler *as, QString var)
 
 void NodeBinOP::parseConstants(QSharedPointer<SymbolTable>  symTab) {
 
- //   qDebug() << "NodeBinOp :: parse HERE1" << m_left->isPureNumeric() <<m_right->isPureNumeric();
-//    int a = m_left->getValueAsInt(nullptr);
-//    int b = m_right->getValueAsInt(nullptr);
- //   qDebug() << a << b;
-
     if (!isPureNumericOrAddress()) {
         if (m_left!=nullptr)
             m_left->parseConstants(symTab);
@@ -204,12 +192,6 @@ void NodeBinOP::parseConstants(QSharedPointer<SymbolTable>  symTab) {
             m_right->parseConstants(symTab);
         return;
     }
-//    qDebug() << "NodeBinOp :: parse HERE2";
-//    m_value = numValue();
-  //  m_isCollapsed = true;
-/*    int a = m_left->getValueAsInt(nullptr);
-    int b = m_right->getValueAsInt(nullptr);
-*/
 }
 
 QString NodeBinOP::getValue(Assembler *as) {
@@ -341,9 +323,6 @@ QString NodeBinOP::HexValue() {
 int NodeBinOP::BothPureNumbersBinOp(Assembler *as) {
 
 
-    //QSharedPointer<NodeNumber>a = (QSharedPointer<NodeNumber>)dynamic_cast<const QSharedPointer<NodeNumber>>(m_left);
-    //QSharedPointer<NodeNumber>b = (QSharedPointer<NodeNumber>)dynamic_cast<const QSharedPointer<NodeNumber>>(m_right);
-    //BothConstants(as);
     if (qSharedPointerDynamicCast<NodeUnaryOp>(m_left)!=nullptr) {
         QSharedPointer<NodeNumber>b = qSharedPointerDynamicCast<NodeNumber>(m_right);
         if (m_left->m_op.m_type==TokenType::MINUS) {

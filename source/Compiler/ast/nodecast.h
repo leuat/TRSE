@@ -34,10 +34,12 @@
 #include "source/Compiler/codegen/abstractcodegen.h"
 
 /* 
-    ?
-    m_left: ?
-    m_right: ?
-    m_op: ?
+    NodeCast (WIP)
+    Casts an expression from one type (BYTE etc) to another (INTEGER etc)
+    m_left: unused
+    m_right: the expression (a+3*b) etc
+    m_op: the cast type
+
 */
 class NodeCast : public Node {
 public:

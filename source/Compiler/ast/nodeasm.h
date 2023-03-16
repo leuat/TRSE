@@ -48,6 +48,8 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {
 
     }
+    // This method is used for finding symbols/variables used in the assembly block, so the
+    // optimiser won't flag them as "unused"
     void FindPotentialSymbolsInAsmCode(QStringList& lst)  override;
 
     void Accept(AbstractCodeGen* dispatcher) override {

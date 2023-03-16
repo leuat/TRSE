@@ -35,6 +35,7 @@
     m_left: undefined 
     m_right: undefined
     m_op: ?
+    m_expr : index, for instance var[idx*2]  then m_expr will be a nodebinop (idx*2)
 */
 class NodeVar : public Node {
 private:

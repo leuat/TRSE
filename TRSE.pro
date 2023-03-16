@@ -32,7 +32,7 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-############ARCH = arm64
+#############ARCH = arm64
 
 macx{
 #    CONFIG += warn_off
@@ -375,10 +375,8 @@ SOURCES += main.cpp\
     source/Compiler/ast/nodestring.cpp \
     source/Compiler/ast/nodeunaryop.cpp \
     source/Compiler/ast/nodevar.cpp \
-    source/Compiler/ast/nodevararray.cpp \
     source/Compiler/ast/nodevardecl.cpp \
     source/Compiler/ast/nodevartype.cpp \
-    source/Compiler/ast/nodewhileloop.cpp \
     source/Compiler/misc/sidfile.cpp \
     source/LeLib/data.cpp \
     source/LeLib/limage/c64fullscreenchar.cpp \
@@ -690,10 +688,8 @@ HEADERS  += mainwindow.h \
     source/Compiler/ast/nodestring.h \
     source/Compiler/ast/nodeunaryop.h \
     source/Compiler/ast/nodevar.h \
-    source/Compiler/ast/nodevararray.h \
     source/Compiler/ast/nodevardecl.h \
     source/Compiler/ast/nodevartype.h \
-    source/Compiler/ast/nodewhileloop.h \
     source/Compiler/misc/sidfile.h \
     source/LeLib/data.h \
     source/LeLib/limage/c64fullscreenchar.h \

@@ -4,10 +4,10 @@
 #include "source/Compiler/ast/node.h"
 
 /* 
-    ?
-    m_left: ?
-    m_right: ?
-    m_op: ?
+    Control statements in for loops, ie "break", "continue" and "return
+    m_left: not used
+    m_right: not used
+    m_op: control type: BREAK, CONTINUE or RETURN
 */
 class NodeControlStatement : public Node
 {

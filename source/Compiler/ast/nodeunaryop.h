@@ -34,7 +34,7 @@
 #include "source/Compiler/codegen/abstractcodegen.h"
 /* 
     a Node for a unary operation (such as -a)
-    m_left: ?
+    m_left: undefined
     m_right: the value to perform the unary operation on. 
     m_op: the unary operation
 */
