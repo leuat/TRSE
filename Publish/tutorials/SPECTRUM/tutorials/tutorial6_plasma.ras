@@ -65,7 +65,7 @@ begin
 		asm("
 		ld a,[val]
 		ld c,a
-		ld de,[dst]
+		ld iy,[dst]
 		ld ix,sinx ; sin table
 		ld hl,data ; data lookup for screen
 		repeat 32
@@ -76,8 +76,7 @@ begin
 		ld l,a
 		; now out it!
 		ld a,[hl]
-		ld [de],a
-		inc de
+		ld [iy+[i]],a
 		
 		repend
 		

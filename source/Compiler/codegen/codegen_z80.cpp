@@ -979,9 +979,11 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
     }
 
 
-
-    if (!node->isWord(as))
-        as->Asm("ld a,"+node->getValue(as));
+/*    as->Comment("Casttype : "+TokenType::getType(node->m_castType)) ;
+    as->Comment("Forcetype : "+TokenType::getType(node->m_forceType)) ;
+    as->Comment("Writetype : "+TokenType::getType(node->getWriteType())) ;*/
+    if (!node->isWord(as) )
+        as->Asm("ld a,"+node->getValue(as) );
     else
         as->Asm("ld "+hl+","+node->getValue(as));
 
@@ -1183,7 +1185,12 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 
     if (var->hasArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
+/*        as->Comment("Casttype : "+TokenType::getType(var->m_castType)) ;
+        as->Comment("Forcetype : "+TokenType::getType(var->m_forceType)) ;
+        as->Comment("Writetype : "+TokenType::getType(var->getWriteType())) ;*/
+
         if (var->m_expr->isPureNumeric()) {
+            node->m_right->setForceType(TokenType::INTEGER);
             node->m_right->Accept(this);
             as->Asm("ld a,l");
             as->Asm("ld ["+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
@@ -1197,8 +1204,9 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
     if ((var->hasArrayIndex() && !var->isWord(as))) {
         // Is an array
-        as->Comment("Storing to array");
+        as->Comment("Storing to array  ");
         // Optimization : array[ constant ] := expr
+
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
             as->Term();

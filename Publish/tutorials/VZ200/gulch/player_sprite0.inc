@@ -25,16 +25,6 @@ asm ("
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
- ld [iy+1],a
- ld a,[ix+2] 
- ld [iy+2],a
- ld a,[ix+3] 
- ld [iy+3],a
-  add iy,de
-  add ix,de
- ld a,[ix+0] 
- ld [iy+0],a
- ld a,[ix+1] 
  or $0a
  ld [iy+1],a
  ld a,[ix+2] 
@@ -80,12 +70,6 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
-");
-end;
-procedure player_sprite0_1();
-begin
-asm ("
-  ld de, $20
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
@@ -96,6 +80,12 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
+");
+end;
+procedure player_sprite0_1();
+begin
+asm ("
+  ld de, $20
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
@@ -164,12 +154,6 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
-");
-end;
-procedure player_sprite0_2();
-begin
-asm ("
-  ld de, $20
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
@@ -180,6 +164,12 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
+");
+end;
+procedure player_sprite0_2();
+begin
+asm ("
+  ld de, $20
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
@@ -248,12 +238,6 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
-");
-end;
-procedure player_sprite0_3();
-begin
-asm ("
-  ld de, $20
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
@@ -264,6 +248,12 @@ asm ("
  ld [iy+3],a
   add iy,de
   add ix,de
+");
+end;
+procedure player_sprite0_3();
+begin
+asm ("
+  ld de, $20
  ld a,[ix+0] 
  ld [iy+0],a
  ld a,[ix+1] 
@@ -329,6 +319,16 @@ asm ("
  ld [iy+2],a
  ld a,[ix+3] 
  or $20
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  ld [iy+3],a
   add iy,de
   add ix,de

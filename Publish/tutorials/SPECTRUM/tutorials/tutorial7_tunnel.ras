@@ -4,12 +4,11 @@ program Tunnels;
 // Good old tunnel example!
 
 var  
-	// some plasma variables
 	ctr,val,val2,time, time2,time3,zz,h : byte;
 	x,y,shift,i : byte;
 	keep_s : integer;
 	// mini sine table
-	// Org sine table
+	
 	sin : array[256] of byte = buildsinetable(127);
  	// smooth data generated in resources/fjong/generate_data.fjo
 	@perlinnoise "data/perlin16.dat" 16 16 1 1 1 0 32
@@ -56,35 +55,37 @@ begin
 @else
 
 		asm("
-			ld iy,zz
+			ld a,[zz]
+			ld e,a
+			ld a,[time]
+			ld d,a
 			ld ix,[src1]
 			ld bc,[src2]
-			ld de,[dst]
+			ld iy,[dst]
 			exx 
 			ld hl,$a000
 			ld de,$A100
 			exx			
 			
 			repeat 30
+			
 			ld a,[bc]
 			ld l,a
-			ld a,[time]
-			add a,[ix]
+			ld a,d
+			add a,[ix+[i]]
 			and #$F
 			or l
-			add a,[iy]
+			add a,e
 			exx
 			ld l,a
 			ld a,[hl]
 			ld e,a
 			ld a,[de]
 			exx
-			ld [de],a
+			ld [iy+[i]],a
 			
 			
-			inc de
 			inc bc
-			inc ix
 			repend
 		
 		");
