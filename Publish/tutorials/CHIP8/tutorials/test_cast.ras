@@ -4,9 +4,13 @@ program Test;
 
 var 
 	word : Integer;
+	word2 : Integer;
 	bb : byte;
+	bb2 : byte;
 begin
-	bb:=5;
 	word:=bb;
+	word:=word2;
+	bb:=word;
+	bb:=bb2;
 	while(1) do;
 end.

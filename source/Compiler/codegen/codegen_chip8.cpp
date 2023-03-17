@@ -272,7 +272,9 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 			return;
 		}
 	} else if (node->isWord(as)) {
+		auto imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 		as->Comment("Load Word");
+		
 		as->Asm("ld I,"+node->getValue(as));
 		as->Asm("LD V1, [I]");
 		
@@ -334,11 +336,14 @@ bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 	QString type = getWordByteType(node->m_left);
 	if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
 		as->Comment("Store variable simplified");
-
+		qDebug()<<node->isWord(as)<< " " << node->m_left->isWord(as) <<  " " << node->m_right->isWord(as) << "\n";
+		qDebug()<< (node->m_right->m_castType==TokenType::INTEGER) << " " << (node->m_right->m_castType==TokenType::BYTE) << "\n";
+		qDebug()<< (node->m_left->m_castType==TokenType::INTEGER) << " " << (node->m_left->m_castType==TokenType::BYTE) << "\n";
+		qDebug()<< (node->m_castType==TokenType::INTEGER) << " " << (node->m_castType==TokenType::BYTE) << "\n\n";
 		node->m_right->Accept(this);
-		qDebug() << node->m_left->isWord(as) << "\n" <<
-			node->m_right->isWord(as) << "\n";
-		if (node->m_left->isWord(as) && !node->m_right->isWord(as))
+		if (node->m_left->isWord(as) && node->m_right->m_castType==TokenType::BYTE)
+			castToByte("V0","V1");
+		else if ((!node->m_left->isWord(as)) && node->m_right->m_castType==TokenType::INTEGER)
 			castToWord("V0","V1");
 		str(node->m_left);
 
@@ -471,7 +476,6 @@ void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
 
 bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 {
-	qDebug()<<"AssignPointer()\n";
 	auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 	if (var != nullptr){
 		if (var->isPointer(as)){
@@ -544,48 +548,6 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 				}
 				return true;
 			} 
-			#if 0
-			else {
-				// Storing p[i] := something;
-				as->Comment("storing to array");
-				as->Comment("loading expression:");
-
-				const bool has_index=var->hasArrayIndex();
-				QString index;
-				if (has_index) {
-					var->m_expr->setForceType(TokenType::BYTE);
-					var->m_expr->Accept(this);
-					index=getReg(); PushReg();
-					as->Asm("LD "+index+",V0");
-				}
-				as->Comment("load value:");
-
-				node->m_right->Accept(this);
-				as->Asm("ld I,"+var->getValue(as));
-				if (has_index){
-					as->Asm("add I,"+index); 
-					if (var->getArrayType(as)==TokenType::INTEGER) {
-						as->Comment("store word with index to array");
-						as->Asm("add I,"+index); 
-						as->Asm("LD [I], V1");
-					} else {
-						as->Comment("store byte with index to array");
-						as->Asm("LD [I], V0");
-					}
-					PopReg(); 
-				} else {
-					if (var->isWord(as)) {
-						as->Comment("store word to array");
-						as->Asm("LD [I], V1");
-					} else {
-						as->Comment("store byte to array");
-						as->Asm("LD [I], V0");
-					}
-
-				}
-				return true;
-			}
-			#endif
 		} else {
 			as->Comment("storing to non pointer");
 
@@ -687,13 +649,12 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 
 
 
-	as->Comment("Evaluate full expression");
+	auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
+	auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 	if (node->isWord(as)){
 
 		if (node->m_op.m_type==TokenType::EQUALS){
 
-			auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
-			auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 			if (left_imm && right_imm){
 				if (left_imm->m_val != right_imm->m_val)
 					as->Asm("jp "+as->jumpLabel(lblFailed));
@@ -722,8 +683,6 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 
 		} else if (node->m_op.m_type==TokenType::NOTEQUALS) {
 
-			auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
-			auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 			if (left_imm && right_imm){
 				if (left_imm->m_val == right_imm->m_val)
 					as->Asm("jp "+as->jumpLabel(lblFailed));
@@ -812,11 +771,10 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 
 		if (node->m_op.m_type==TokenType::EQUALS){
 
-			auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
-			auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 			if (right_imm && left_imm){
 				if (left_imm->m_val != right_imm->m_val) 
 					as->Asm("jp "+as->jumpLabel(lblFailed));
+				return;
 
 			} else if (right_imm){
 				node->m_left->Accept(this);
@@ -827,17 +785,16 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 			} else {
 				node->m_right->Accept(this);
 				QString bx= getReg();
+				as->Asm("ld "+bx+", V0");
 				node->m_left->Accept(this);
 				as->Asm("se V0," + bx);
 			}   
-			return;
 		
 		}else if (node->m_op.m_type==TokenType::NOTEQUALS) {
-			auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
-			auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 			if (right_imm && left_imm){
 				if (left_imm->m_val == right_imm->m_val) 
 					as->Asm("jp "+as->jumpLabel(lblFailed));
+				return;
 			} else if (right_imm) {
 				node->m_left->Accept(this);
 				as->Asm("sne V0," + right_imm->StringValue());
@@ -845,38 +802,38 @@ void CodeGenChip8::BuildConditional(QSharedPointer<Node> node,  QString lblSucce
 				node->m_right->Accept(this);
 				as->Asm("sne V0," + left_imm->StringValue());
 			} else {
+				node->m_right->Accept(this);
 				QString bx= getReg();
+				as->Asm("ld "+bx+", V0");
+				node->m_left->Accept(this);
 				as->Asm("sne V0," + bx);
-				//PopReg();
 			}
-			return;
 		} else {
 			node->m_right->Accept(this);
 			QString bx = getReg();
 			as->Asm("LD "+bx+", V0");
 
 			node->m_left->Accept(this);
-			QString ax = "V0";
 			if (node->m_op.m_type==TokenType::GREATEREQUAL){
-				as->Asm("subn "+bx+","+ax);
+				as->Asm("subn "+bx+",V0");
 				//(ax >= bx) 
 				as->Asm("sne VF, 0");
 
 
 			} else if (node->m_op.m_type==TokenType::GREATER){
-				as->Asm("subn "+ax+","+bx);
+				as->Asm("subn V0,"+bx);
 				//!(bx >= ax) 
 				as->Asm("se VF, 0");
 
 
 			} else if (node->m_op.m_type==TokenType::LESSEQUAL){
-				as->Asm("subn "+ax+","+bx);
+				as->Asm("subn V0,"+bx);
 				//(bx >= ax) 
 				as->Asm("sne VF, 0");
 
 
 			} else if (node->m_op.m_type==TokenType::LESS){
-				as->Asm("subn "+bx+","+ax);
+				as->Asm("subn "+bx+",V0");
 				//!(ax >= bx) 
 				as->Asm("se VF, 0");
 			}
