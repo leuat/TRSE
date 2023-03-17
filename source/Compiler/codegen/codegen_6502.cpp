@@ -182,7 +182,7 @@ void CodeGen6502::HandleVarBinopB16bit(QSharedPointer<Node> node) {
 
 
     if (node->m_right->getType(as)==TokenType::ADDRESS && node->m_left->getType(as)==TokenType::ADDRESS )
-        ErrorHandler::e.Warning("You are adding together two addresses. Is this really what you indend?", node->m_op.m_lineNumber);
+        ErrorHandler::e.Warning("You are adding together two addresses. Is this really what you intend?", node->m_op.m_lineNumber);
 
     node->m_right->Accept(this);
 

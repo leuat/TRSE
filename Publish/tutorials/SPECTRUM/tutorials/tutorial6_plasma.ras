@@ -30,17 +30,17 @@ begin
 	// Set up y-sine table
 	for x:=0 to height do begin 
 		siny[x]:=  sin[c2x] + sin[c2y] - time;
-		c2x:=c2x+4;
-		c2y:=c2y+3;
+		c2x:=c2x+7;
+		c2y:=c2y+5;
 	end;
 
-	ax:=ax+1;
+	ax:=ax+3;
 	ay:=ay-2;
 
 	// Set up x-sine table
 	for x:=0 to width do begin 
 		sinx[x] := sin[c2x] + sin[c2y];
-		c2x:=c2x-5;
+		c2x:=c2x-9;
 		c2y:=c2y+7;
 
 	end;
@@ -65,7 +65,7 @@ begin
 		asm("
 		ld a,[val]
 		ld c,a
-		ld de,[dst]
+		ld iy,[dst]
 		ld ix,sinx ; sin table
 		ld hl,data ; data lookup for screen
 		repeat 32
@@ -76,8 +76,7 @@ begin
 		ld l,a
 		; now out it!
 		ld a,[hl]
-		ld [de],a
-		inc de
+		ld [iy+[i]],a
 		
 		repend
 		

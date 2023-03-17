@@ -1,0 +1,25 @@
+program Tutorial9_16_colors;
+@use "screen"
+@use "memory"
+@use "system/str"
+@use "text"
+@use "system"
+@use "compression/compression"
+
+@addemulatorparam "-nothrottle"
+
+var
+	@export "resources/images/squiddy.flf" "resources/images/squiddy.bin" 256
+	image : incbin("resources/images/squiddy.bin") compressed;
+	pal : incbin("resources/images/squiddy_palette.bin");
+	
+begin
+	System::Init();
+	// 320x225 16-colour 
+	Screen::SetBitmapMode(Screen::BPL_128, 3);
+	Screen::SetPalette(#pal, 16);
+	Memory::Fill16(#Screen::gfx, 0, 128*225);
+	
+	Compression::Decompress(#image,#Screen::gfx);
+	loop();
+end.

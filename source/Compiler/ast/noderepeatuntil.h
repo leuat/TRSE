@@ -31,11 +31,22 @@
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include <QVector>
 #include "source/Compiler/codegen/abstractcodegen.h"
+/* 
+   Repeat ...  until block
+   example:
+   repeat
+        i:=i+1;
+        Print(i);
+   until i=22;
 
+
+    m_left: undefined
+    m_right: undefined
+    m_op: undefined
+*/
 class NodeRepeatUntil : public Node {
 public:
 
-//    QVector<QSharedPointer<Node>> m_a, m_b;
 
     QSharedPointer<Node> m_block = nullptr;
     QSharedPointer<NodeBinaryClause> m_clause = nullptr;

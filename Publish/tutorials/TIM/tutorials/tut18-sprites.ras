@@ -6,6 +6,9 @@ program Tutorial18;
 @use "system/graphics"
 @use "misc"
 
+
+@addemulatorparam "-nothrottle"
+
 var
 	
 	

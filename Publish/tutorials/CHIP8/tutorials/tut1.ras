@@ -6,30 +6,39 @@ program Tut1;
 @bin2inc "resources/charsets/charset1.bin" "charset.inc" chars
 var
 	x,y,z,c,v : byte;
-	p : pointer;
-	
-	
+	p,src : pointer;
+	s1 : string ="HELLO";
 @include "charset.inc"
+
 
 procedure DrawChar(x, y, c: global byte);
 begin
-		asm(";here");
-	p:=#chars;// + c*8;
-	for z:=0 to 8 do
-	begin
-		v:=chars[z];
-//		v:=p[z];
-		System::DrawLine(x,y+z,v);
-	end;		
+	p:=#chars + c<<3;
+	System::DrawSprite(p,x,y,8);
 	
 end;
+
+procedure PrintString(src:global ^byte, x,y : global byte);
+begin
+	while (src^<>0) do
+	begin
+		c:=src^;
+		c:=c+0;
+		DrawChar(x,y,c);
+		src+=1;
+		x+=8;		
+	end;
+end;
+
+
 
 	
 begin
 	System::Clear();
-	System::Beep(100);
+	System::Beep(10);
 	//System::PrintHexChar(5,5,15);
-	DrawChar(0,0,1);
+//	DrawChar(0,0,1);
+	PrintString(#s1, 0,0);
 //	for x:=0 to 10 do
 	begin
 		z:=System::Random();
@@ -37,11 +46,7 @@ begin
 	end;	
 
 
-	asm("
-loop:
-	jp loop
-
-	");
-
+	while(1) do; 
+	
 	
 end.

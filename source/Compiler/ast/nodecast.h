@@ -33,7 +33,14 @@
 
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    NodeCast (WIP)
+    Casts an expression from one type (BYTE etc) to another (INTEGER etc)
+    m_left: unused
+    m_right: the expression (a+3*b) etc
+    m_op: the cast type
 
+*/
 class NodeCast : public Node {
 public:
     NodeCast(Token op, QSharedPointer<Node> right);
@@ -53,7 +60,6 @@ public:
     bool isWord(Assembler* as) override;
 
     void setForceType(TokenType::Type t) override;
-//    void setForceTypeFunctions(TokenType::Type t);
     void setCastType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {

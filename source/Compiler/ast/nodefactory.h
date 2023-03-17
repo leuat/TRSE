@@ -17,7 +17,6 @@
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-#include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
@@ -52,15 +51,6 @@ public:
 
     static QSharedPointer<NodeCast> CreateCast(Token t, QSharedPointer<Node> node);
 
-/*
-
-
-
-
-    QSharedPointer<NodeConditional> cond = QSharedPointer<NodeConditional>(
-                new NodeConditional(t,isLarge,clause,block,false));
-
-  */
 
 };
 

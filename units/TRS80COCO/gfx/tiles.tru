@@ -1,0 +1,30 @@
+unit Tiles;
+@use "memory"
+@use "screen"
+var
+	tlookup2x1 : array[256] of integer = buildtable("((i%16)*4)+((Math.floor((i/16.0)))*( 8*64))");
+	tab32 : array[200] of integer=buildtable("i*128");
+	dst, src, tile : ^byte;
+	i : byte;
+	
+procedure SetTileLoc(tile: global ^byte);
+begin
+	
+end;
+
+	
+procedure WriteToScreen(xx,yy,val,wx,wy : byte);
+begin
+	dst:=#Screen::gfx + tab32[yy] + xx;
+	src:=tile+ tlookup2x1[val];
+	for i:=0 to wy do
+	begin
+		Memory::Copy(src, dst, wx);
+		src+=64;
+		dst+=128;
+	end;
+end;
+	
+	
+end.
+

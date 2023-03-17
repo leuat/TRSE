@@ -1,0 +1,103 @@
+program Levels;
+@use "Screen"
+@use "Memory"
+@use "gfx/GenericLevels"
+@use "Font"
+@use "Sprite"
+@use "gfx/tiles"
+@use "Input"
+@use "compression"
+@use "sound"
+@use "trtplayer"
+
+// Automatically export level
+@export "resources/level.flf" "resources/level1.bin" 256
+// Automatically export the tiles
+@export "resources/tiles.flf" "resources/tiles.bin" 1024
+@export "resources/title.flf" "resources/title.bin" 1024
+//@export "resources/sprites.flf" "resources/sprites.bin" 1 1
+ var
+	ddy,ccy : integer;
+	i,j,k,l,m,xx,yy: byte;
+	gameover, isMoving : boolean;
+	
+	level : GenericLevels::Level;
+	levels : incbin("resources/level1.bin");
+	tiles : incbin("resources/tiles.bin");
+//	sprites : incbin("resources/sprites.bin");
+	title : incbin("resources/title.bin") compressed;
+	ok : boolean;
+	// Background buffer of the screen for EORing
+	buf : array[2048] of byte;
+	sinx : array[256] of byte = buildsinetable(127);
+	const spriteSpeed : byte = 8;
+	Player = record
+		x, y : integer; // pos * 16
+		sx, sy : integer; // speed
+		lx, ly, curSprite : byte; // pos in level
+		moveRight, onGround : boolean;
+		nextSprite : byte = 0;
+	end;
+		
+	p1 : Player;	
+	// Text message for each level	
+	levelTxt : array[] of string = (
+
+		"zxfthblth", "ycklthf", "zzzzfhzzz", "what's this then?",
+		"","","","",
+		"","","","",
+		"","","",""
+	);
+	// Background value for collision detection
+	const background : byte =  %00;
+
+
+	@export "resources/introtune.trt" 
+		 	"resources/introtune.bin" 4 
+
+	introtune : incbin("resources/introtune.bin");
+	
+// Compile up some sprites	
+@spritecompiler "resources/sprites.flf" "player_sprite0" 0 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite1" 16 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite2" 32 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite3" 48 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite4" 64 0 16 8 "buf"
+
+
+
+@include "player_sprite0.inc"
+@include "player_sprite1.inc"
+@include "player_sprite2.inc"
+@include "player_sprite3.inc"
+@include "player_sprite4.inc"
+
+@include "player.inc"
+@include "title.inc"
+
+procedure GameLoop();
+begin
+	gameover := false;
+	while (not gameover) do
+	begin
+		Screen::WaitForVerticalBlank();
+		UpdatePlayer();		
+	end;
+end;
+
+
+begin
+	// Set the sprite data
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	
+	while(true) do
+	begin	
+		TitleScreen();
+		ResetGame();
+		GameLoop();
+	end;
+
+end.
+	

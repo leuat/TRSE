@@ -32,7 +32,15 @@
 #include "source/Compiler/ast/nodevar.h"
 #include "source/Compiler/ast/nodeassign.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
+/* 
+   Represents a procedure call, ie "SomeProcedure(param1);"
+    m_left: undefined
+    m_right: undefined
+    m_op: undefined
 
+    m_parameters: list of parameter expressions, ie "param1"
+    m_procedureDecl : link to the definition of the procedure
+*/
 class NodeProcedure : public Node {
 public:
     QSharedPointer<NodeProcedureDecl> m_procedure;
@@ -54,11 +62,7 @@ public:
     }
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
-/*    void setForceTypeFunctions(TokenType::Type t) {
-        if (m_procedure->m_returnValue!=nullptr)
-            m_forceType = t;
-    }
-*/
+
     QString getValue(Assembler* as) override;
     QString getValue8bit(Assembler* as, int isHi) override;
 

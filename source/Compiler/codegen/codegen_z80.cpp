@@ -809,20 +809,23 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
                 return;
             as->Asm("ld a,[hl]");
             if ((node->isWord(as) && node->getArrayType(as)==TokenType::INTEGER) && node->m_writeType==TokenType::NADA ) {//|| node->getWriteType()==TokenType::INTEGER*/) {
-                as->Asm("ld e,a");
+                wt = TokenType::INTEGER;
+/*                as->Asm("ld e,a");
                 as->Asm("inc hl");
                 as->Asm("ld a,[hl]");
                 as->Asm("ld d,a");
-                wt = TokenType::INTEGER;
-                ExDeHl();
+                ExDeHl();*/
+                as->Asm("inc hl");
+                as->Asm("ld h,[hl]");
+                as->Asm("ld l,a");
             }
             if (node->m_writeType==TokenType::INTEGER) {//|| node->getWriteType()==TokenType::INTEGER*/) {
-                as->Asm("ld e,a");
+//                as->Asm("ld e,a");
                 as->Asm("inc hl");
-                as->Asm("ld a,[hl]");
-                as->Asm("ld d,a");
+                as->Asm("ld h,[hl]");
+                as->Asm("ld l,a");
                 wt = TokenType::INTEGER;
-                ExDeHl();
+//                ExDeHl();
             }
             if (node->m_writeType==TokenType::NADA) // not in a class
                 Cast(node->getArrayType(as), node->m_castType);
@@ -867,21 +870,21 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         //        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
         if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER) && node->m_writeType==TokenType::NADA) // More complicated: Load integer byte array into de
         {
-            as->Asm("ld e,a");
+//            as->Asm("ld e,a");
             as->Asm("inc hl");
-            as->Asm("ld a,[hl]");
-            as->Asm("ld d,a");
+            as->Asm("ld h,[hl]");
+            as->Asm("ld l,a");
             wt = TokenType::INTEGER;
-            ExDeHl();
+//            ExDeHl();
         }
         if ( node->m_writeType==TokenType::INTEGER) // More complicated: Load integer byte array into de
         {
-            as->Asm("ld e,a");
+//            as->Asm("ld e,a");
             as->Asm("inc hl");
-            as->Asm("ld a,[hl]");
-            as->Asm("ld d,a");
+            as->Asm("ld h,[hl]");
+            as->Asm("ld l,a");
             wt = TokenType::INTEGER;
-            ExDeHl();
+//            ExDeHl();
         }
         if (node->m_writeType==TokenType::NADA) // not in a class
             Cast(node->getArrayType(as), node->m_castType);
@@ -979,9 +982,11 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
     }
 
 
-
-    if (!node->isWord(as))
-        as->Asm("ld a,"+node->getValue(as));
+/*    as->Comment("Casttype : "+TokenType::getType(node->m_castType)) ;
+    as->Comment("Forcetype : "+TokenType::getType(node->m_forceType)) ;
+    as->Comment("Writetype : "+TokenType::getType(node->getWriteType())) ;*/
+    if (!node->isWord(as) )
+        as->Asm("ld a,"+node->getValue(as) );
     else
         as->Asm("ld "+hl+","+node->getValue(as));
 
@@ -1183,7 +1188,12 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 
     if (var->hasArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
+/*        as->Comment("Casttype : "+TokenType::getType(var->m_castType)) ;
+        as->Comment("Forcetype : "+TokenType::getType(var->m_forceType)) ;
+        as->Comment("Writetype : "+TokenType::getType(var->getWriteType())) ;*/
+
         if (var->m_expr->isPureNumeric()) {
+            node->m_right->setForceType(TokenType::INTEGER);
             node->m_right->Accept(this);
             as->Asm("ld a,l");
             as->Asm("ld ["+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
@@ -1197,8 +1207,9 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
     if ((var->hasArrayIndex() && !var->isWord(as))) {
         // Is an array
-        as->Comment("Storing to array");
+        as->Comment("Storing to array  ");
         // Optimization : array[ constant ] := expr
+
         if (var->m_expr->isPureNumeric()) {
             node->m_right->Accept(this);
             as->Term();

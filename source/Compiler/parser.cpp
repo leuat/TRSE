@@ -1253,6 +1253,9 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            while (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+
             return;
         }
         if (m_currentToken.m_value=="exportblackwhite") {
@@ -2493,7 +2496,6 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 
     // Start
     Token t = m_currentToken;
-    bool done=false;
     int linenum = m_currentToken.m_lineNumber;
 
     QSharedPointer<Node> clause = BinaryClause();
@@ -4846,7 +4848,6 @@ QSharedPointer<Node> Parser::InlineAssembler()
     bool pascalStyleAsm = false;
     // Original pascal-style ASM without (" ");
     if (m_currentToken.m_type!=TokenType::LPAREN){
-        //qDebug() <<m_currentToken.m_value;
         QString org = m_currentToken.m_value;
         m_currentToken = m_lexer->InlineAsm();
 
@@ -5154,10 +5155,15 @@ void Parser::HandlePerlinNoise()
     float pers = m_currentToken.m_intVal/100.0;
     Eat();
     int amp = m_currentToken.m_intVal;
+    float pow = 1;
     Eat(TokenType::INTEGER_CONST);
+    if (m_currentToken.m_type == TokenType::INTEGER_CONST) {
+        pow = m_currentToken.m_intVal/100.0;
+        Eat(TokenType::INTEGER_CONST);
+    }
     SimplexNoise sn;
 //    qDebug() << "PARSER:::" <<file;
-    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
+    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
 
 }
 
@@ -5331,6 +5337,7 @@ void Parser::HandleExport()
         img->m_exportParams["End"] = param2;
     }
     img->m_exportParams["export1"] = param2;
+    img->m_exportParams["param2"] = param1;
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);

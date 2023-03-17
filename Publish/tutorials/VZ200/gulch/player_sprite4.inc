@@ -1,0 +1,399 @@
+procedure player_sprite4_0();
+begin
+asm ("
+  ld de, $20
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $0a
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $a0
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $26
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $98
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $2a
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $a8
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $08
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $20
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $08
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $20
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+");
+end;
+procedure player_sprite4_1();
+begin
+asm ("
+  ld de, $20
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $02
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $a8
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $09
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $a6
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $0a
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $aa
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $02
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $08
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $02
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $08
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+");
+end;
+procedure player_sprite4_2();
+begin
+asm ("
+  ld de, $20
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $aa
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $02
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $69
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $80
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ or $02
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $aa
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $80
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $82
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $82
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+");
+end;
+procedure player_sprite4_3();
+begin
+asm ("
+  ld de, $20
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $2a
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $80
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $9a
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $60
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $aa
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $a0
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $20
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $80
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ or $20
+ ld [iy+2],a
+ ld a,[ix+3] 
+ or $80
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+ ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
+  add ix,de
+");
+end;
+var player_sprite4_pi : integer;
+var player_sprite4_buf : integer;
+@donotremove player_sprite4_dst 
+procedure player_sprite4(player_sprite4_src,player_sprite4_dst : pointer; player_sprite4px,player_sprite4py : byte);
+begin
+  player_sprite4_pi:=player_sprite4_dst + player_sprite4py<<5 + player_sprite4px>>2;
+  player_sprite4_buf:=#buf + player_sprite4py<<5 + player_sprite4px>>2;
+asm("  ld ix, [player_sprite4_buf] 
+  ld iy, [player_sprite4_pi]
+");
+ player_sprite4px:=player_sprite4px&3;
+ if (player_sprite4px=0) then player_sprite4_0();
+ if (player_sprite4px=1) then player_sprite4_1();
+ if (player_sprite4px=2) then player_sprite4_2();
+ if (player_sprite4px=3) then player_sprite4_3();
+end;

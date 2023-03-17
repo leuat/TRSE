@@ -29,7 +29,20 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
+/* 
+    NodeBuiltinMethods manages the TRSE built in methods listed in syntax.txt. For example,
+    lo(someVar) or poke(#address,0,i) are built-in methods that are defined in synatx.txt
+    with code generated in methods6502.cpp/methodsz80.cpp etc
 
+    m_left: unused
+    m_right: unused
+    m_op: unused
+
+    m_procName : name of the procedure, ie "poke" or "rasterirq"
+    m_params : a list of Node that contains the params, ie (#address,0,i)
+
+
+*/
 class NodeBuiltinMethod : public Node {
 public:
     QString m_procName;

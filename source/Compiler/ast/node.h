@@ -114,7 +114,6 @@ public:
 
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
-//    TokenType::Type m_returnType = TokenType::NADA;
 
     virtual void ForceAddress();
     // Returns a list of potential symols in asm code. Recursive. Used for preventing removal of unused symbols that are actually used within asm blocks
@@ -199,8 +198,6 @@ public:
     virtual bool isVariable() { // Variable with possible expressions
         return false;
     }
-    /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
-    virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as);
     virtual TokenType::Type getArrayType(Assembler* as) {
         return m_op.m_type;

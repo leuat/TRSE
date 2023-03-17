@@ -15,10 +15,6 @@ CodeGen6809::CodeGen6809()
 
 
 void CodeGen6809::EightBitMul(QSharedPointer<Node> node) {
-
-
-
-
     as->Comment("8 bit mul");
     as->ClearTerm();
     node->m_left->Accept(this);
@@ -30,7 +26,6 @@ void CodeGen6809::EightBitMul(QSharedPointer<Node> node) {
     as->Term();
 
     as->Asm("mul");
-//    as->Asm("tfr b,a");
 
 }
 
@@ -1783,6 +1778,8 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
         QString ref = "";
         if (node->isReference())
             ref="#";
+        if (node->getValue(as)[0]=='#')
+            ref = "";
         if (node->isByte(as)) {
             as->Asm("ldb "+ref+node->getValue(as));
             as->Asm("lda #0");

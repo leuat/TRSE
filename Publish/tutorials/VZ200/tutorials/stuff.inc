@@ -1,441 +1,281 @@
 procedure stuff_0();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+0],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+1],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+2],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+3],a
  ld a,$03
- ld [hl],a
- inc hl 
+ ld [ix+32],a
  ld a,$fc
- ld [hl],a
- inc hl 
+ ld [ix+33],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+34],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+35],a
  ld a,$0f
- ld [hl],a
- inc hl 
+ ld [ix+64],a
  ld a,$7f
- ld [hl],a
- inc hl 
+ ld [ix+65],a
  ld a,$f7
- ld [hl],a
- inc hl 
+ ld [ix+66],a
  ld a,$c0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+67],a
  ld a,$0f
- ld [hl],a
- inc hl 
+ ld [ix+96],a
  ld a,$d7
- ld [hl],a
- inc hl 
+ ld [ix+97],a
  ld a,$57
- ld [hl],a
- inc hl 
+ ld [ix+98],a
  ld a,$c0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+99],a
  ld a,$0f
- ld [hl],a
- inc hl 
+ ld [ix+128],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+129],a
  ld a,$fc
- ld [hl],a
- inc hl 
+ ld [ix+130],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+131],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+160],a
  ld a,$ee
- ld [hl],a
- inc hl 
+ ld [ix+161],a
  ld a,$c0
- ld [hl],a
- inc hl 
+ ld [ix+162],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+163],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+192],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+193],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+194],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+195],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+224],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+225],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+226],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+227],a
 ");
 end;
 procedure stuff_1();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+0],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+1],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+2],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+3],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+32],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+33],a
  ld a,$3f
- ld [hl],a
- inc hl 
+ ld [ix+34],a
  ld a,$c0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+35],a
  ld a,$03
- ld [hl],a
- inc hl 
+ ld [ix+64],a
  ld a,$df
- ld [hl],a
- inc hl 
+ ld [ix+65],a
  ld a,$fd
- ld [hl],a
- inc hl 
+ ld [ix+66],a
  ld a,$f0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+67],a
  ld a,$03
- ld [hl],a
- inc hl 
+ ld [ix+96],a
  ld a,$f5
- ld [hl],a
- inc hl 
+ ld [ix+97],a
  ld a,$d5
- ld [hl],a
- inc hl 
+ ld [ix+98],a
  ld a,$f0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+99],a
  ld a,$03
- ld [hl],a
- inc hl 
+ ld [ix+128],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+129],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+130],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+131],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+160],a
  ld a,$3b
- ld [hl],a
- inc hl 
+ ld [ix+161],a
  ld a,$b0
- ld [hl],a
- inc hl 
+ ld [ix+162],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+163],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+192],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+193],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+194],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+195],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+224],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+225],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+226],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+227],a
 ");
 end;
 procedure stuff_2();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+0],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+1],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+2],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+3],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+32],a
  ld a,$3f
- ld [hl],a
- inc hl 
+ ld [ix+33],a
  ld a,$cf
- ld [hl],a
- inc hl 
+ ld [ix+34],a
  ld a,$f0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+35],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+64],a
  ld a,$f7
- ld [hl],a
- inc hl 
+ ld [ix+65],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+66],a
  ld a,$7c
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+67],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+96],a
  ld a,$fd
- ld [hl],a
- inc hl 
+ ld [ix+97],a
  ld a,$75
- ld [hl],a
- inc hl 
+ ld [ix+98],a
  ld a,$7c
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+99],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+128],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+129],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+130],a
  ld a,$c0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+131],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+160],a
  ld a,$0e
- ld [hl],a
- inc hl 
+ ld [ix+161],a
  ld a,$ec
- ld [hl],a
- inc hl 
+ ld [ix+162],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+163],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+192],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+193],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+194],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+195],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+224],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+225],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+226],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+227],a
 ");
 end;
 procedure stuff_3();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+0],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+1],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+2],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+3],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+32],a
  ld a,$0f
- ld [hl],a
- inc hl 
+ ld [ix+33],a
  ld a,$f3
- ld [hl],a
- inc hl 
+ ld [ix+34],a
  ld a,$fc
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+35],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+64],a
  ld a,$3d
- ld [hl],a
- inc hl 
+ ld [ix+65],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+66],a
  ld a,$df
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+67],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+96],a
  ld a,$3f
- ld [hl],a
- inc hl 
+ ld [ix+97],a
  ld a,$5d
- ld [hl],a
- inc hl 
+ ld [ix+98],a
  ld a,$5f
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+99],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+128],a
  ld a,$3f
- ld [hl],a
- inc hl 
+ ld [ix+129],a
  ld a,$ff
- ld [hl],a
- inc hl 
+ ld [ix+130],a
  ld a,$f0
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+131],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+160],a
  ld a,$03
- ld [hl],a
- inc hl 
+ ld [ix+161],a
  ld a,$bb
- ld [hl],a
- inc hl 
+ ld [ix+162],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+163],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+192],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+193],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+194],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+195],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+224],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+225],a
  ld a,$00
- ld [hl],a
- inc hl 
+ ld [ix+226],a
  ld a,$00
- ld [hl],a
- inc hl 
-  add hl,de
+ ld [ix+227],a
 ");
 end;
 var stuff_pi : integer;
@@ -443,9 +283,7 @@ var stuff_pi : integer;
 procedure stuff(stuff_src,stuff_dst : pointer; stuffpx,stuffpy : byte);
 begin
   stuff_pi:=stuff_dst + stuffpy<<5 + stuffpx>>2;
-asm("  ld hl, [stuff_src] 
-  ex de, hl
-  ld hl, [stuff_pi]
+asm("  ld ix, [stuff_pi]
 ");
  stuffpx:=stuffpx&3;
  if (stuffpx=0) then stuff_0();

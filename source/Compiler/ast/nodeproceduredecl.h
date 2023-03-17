@@ -31,6 +31,23 @@
 #include "source/Compiler/ast/nodevardecl.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+
+/*
+   Represents a procedure declaration, for example
+   procedure SomeProcedure(param1 : byte);
+   begin
+       val:=param1*2;
+   end;
+
+    m_left: undefined
+    m_right: undefined
+    m_op: undefined
+
+    m_paramDecl: list of parameter delcarations, for example "param1:byte"
+    m_flags : procedure flags such as "forward"
+    m_block : the actual code/variable definitions of the procedure
+*/
+
 class NodeProcedureDecl : public Node {
 public:
     QString m_procName, m_fileName;
