@@ -90,7 +90,7 @@ function Update()
 	
 
 	if (frame>=1) then
-		Add8PixelToData(0,0,1,1)
+		Add8PixelToData(0,4,1,1)
 --		Add4PixelToData(0,1,1,1)
 	
 	end

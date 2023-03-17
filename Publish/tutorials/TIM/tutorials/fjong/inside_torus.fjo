@@ -62,7 +62,7 @@ ll = 1.0
 
 sc = 32
 sc = 24
-sc = 6
+sc = 3
 MaterialBlue1 = {
 --	drawuvcoord = 1,
 	uvtype="sphere_map",

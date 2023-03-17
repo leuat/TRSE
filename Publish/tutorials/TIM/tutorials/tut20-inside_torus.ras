@@ -14,7 +14,7 @@ program Image;
 var  
 	// some plasma variables
 	val,val2,c2x, c2y,ax, ay,time,t2 : byte;
-	x,y,shift : byte;
+	x,y,shift,i,t : byte;
 	dst,zp,src,per : ^byte;
 	// mini sine table
 	const width : byte = 512/4;
@@ -36,28 +36,32 @@ begin
 	src:=#map + (sin[time*4]>>2);
 	dst:=$8000+28;//+32*256;
 	per := #perlin0;	
+	t:=time;
 	for x:=0 to width  offpage do 
 	begin
 		asm("
 			ld bc,[dst]
-			ld iy,[src]
+			ld de,[src]
 			ld ix,time ; sin table
-			ld de,data ; data lookup for screen
-			ld a,[time]
+;			ld de,data ; data lookup for screen
+			ld a,[t]
+			ld ixl,a
 			ld l,a
 			ld hl,[per] 
 			
+			
 			repeat 80
 			; load data			
-			ld a,[iy + {i}]
+			ld a,[de]
+			inc de
 			; add time
-			add a,[ix]
-			; lookup in perlin
+			add a,ixl
 			ld l,a
-			ld e,[hl]
+			; lookup in perlin
+			ld a,[hl]
 			
 			; lookup in data[e] 
-			ld a,[de]
+;			ld a,[de]
 			; now out it!
 			ld c, {i*2+50}
 			out (c),a
@@ -69,13 +73,23 @@ begin
 	end;
 
 end;
+procedure FixPerlinTable();
+begin
+	per:=#perlin0;
+	src:=#data;
+	for i:=0 to 256 do
+	begin
+		x:=per[i];
+		per[i]:=src[x];
+	end;
+end;
 
 
 begin
 	Z80CPM::Startup();
 	System::CursorOff();
 	Screen::ClearBox(0, 0, 128, 64, 0);
-
+	FixPerlinTable();
 	Misc::InitKeyboardCheck(5);
 	while (Misc::keyPressed=false) do
 	begin

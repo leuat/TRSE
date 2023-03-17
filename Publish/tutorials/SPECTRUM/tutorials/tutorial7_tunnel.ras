@@ -12,7 +12,7 @@ var
 	sin : array[256] of byte = buildsinetable(127);
  	// smooth data generated in resources/fjong/generate_data.fjo
 	data : incbin("data/smooth_data.bin",$a100);
-	@perlinnoise "data/perlin16.dat" 16 16 1 1 1 0 32
+	@perlinnoise "data/perlin16.dat" 16 16 1 1 1 0 128 80
 	perlin : incbin("data/perlin16.dat", $a000);
 	
 	

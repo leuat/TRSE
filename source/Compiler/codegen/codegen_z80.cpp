@@ -809,20 +809,23 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
                 return;
             as->Asm("ld a,[hl]");
             if ((node->isWord(as) && node->getArrayType(as)==TokenType::INTEGER) && node->m_writeType==TokenType::NADA ) {//|| node->getWriteType()==TokenType::INTEGER*/) {
-                as->Asm("ld e,a");
+                wt = TokenType::INTEGER;
+/*                as->Asm("ld e,a");
                 as->Asm("inc hl");
                 as->Asm("ld a,[hl]");
                 as->Asm("ld d,a");
-                wt = TokenType::INTEGER;
-                ExDeHl();
+                ExDeHl();*/
+                as->Asm("inc hl");
+                as->Asm("ld h,[hl]");
+                as->Asm("ld l,a");
             }
             if (node->m_writeType==TokenType::INTEGER) {//|| node->getWriteType()==TokenType::INTEGER*/) {
-                as->Asm("ld e,a");
+//                as->Asm("ld e,a");
                 as->Asm("inc hl");
-                as->Asm("ld a,[hl]");
-                as->Asm("ld d,a");
+                as->Asm("ld h,[hl]");
+                as->Asm("ld l,a");
                 wt = TokenType::INTEGER;
-                ExDeHl();
+//                ExDeHl();
             }
             if (node->m_writeType==TokenType::NADA) // not in a class
                 Cast(node->getArrayType(as), node->m_castType);
@@ -867,21 +870,21 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         //        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
         if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER) && node->m_writeType==TokenType::NADA) // More complicated: Load integer byte array into de
         {
-            as->Asm("ld e,a");
+//            as->Asm("ld e,a");
             as->Asm("inc hl");
-            as->Asm("ld a,[hl]");
-            as->Asm("ld d,a");
+            as->Asm("ld h,[hl]");
+            as->Asm("ld l,a");
             wt = TokenType::INTEGER;
-            ExDeHl();
+//            ExDeHl();
         }
         if ( node->m_writeType==TokenType::INTEGER) // More complicated: Load integer byte array into de
         {
-            as->Asm("ld e,a");
+//            as->Asm("ld e,a");
             as->Asm("inc hl");
-            as->Asm("ld a,[hl]");
-            as->Asm("ld d,a");
+            as->Asm("ld h,[hl]");
+            as->Asm("ld l,a");
             wt = TokenType::INTEGER;
-            ExDeHl();
+//            ExDeHl();
         }
         if (node->m_writeType==TokenType::NADA) // not in a class
             Cast(node->getArrayType(as), node->m_castType);
