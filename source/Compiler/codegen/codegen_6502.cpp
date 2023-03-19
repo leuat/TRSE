@@ -717,21 +717,55 @@ void CodeGen6502::RightIsPureNumericMulDiv8bit(QSharedPointer<Node> node) {
 
 void CodeGen6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
 {
-    as->ClearTerm();
-    //    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
-
-//    as->Comment("WOOT:  "+TokenType::getType(node->m_castType));
-    if (node->isLong(as) || (node->m_castType==TokenType::LONG)) {
-  //      as->Comment("Var is LONG");
-//        as->ClearTerm();
-        as->Asm("ldy "+getValue8bit(node,true));
-        as->Asm("ldx "+getValue8bit(node,2));
-        as->Asm("lda "+getValue8bit(node,false));
+    if (as->m_term!="") {
+        as->Term(node->getValue(as));
         return;
     }
-    if (node->isWord(as) || (node->m_castType==TokenType::INTEGER))
+
+    as->ClearTerm();
+    as->Comment("Load16bitvariable : "+node->getValue(as));
+    if (node->isLong(as) || (node->m_castType==TokenType::LONG) || node->getLoadType()==TokenType::LONG) {
+        as->Asm("ldx "+getValue8bit(node,2));
+    }
+    if (node->isWord(as) || (node->m_castType==TokenType::INTEGER) || node->getLoadType()==TokenType::LONG)
         as->Asm("ld"+reg+" "+getValue8bit(node,true));
+
     as->Asm("lda "+getValue8bit(node,false));
+}
+
+/*
+ *
+ *  NODE NUMBER dispatcher
+ *
+ *  */
+
+void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
+{
+ //   node->DispatchConstructor(as,this);
+ //   Load16bitVariable(node,"y");
+//    return;
+
+//    as->Comment("Forcetype: "+TokenType::getType(node->getLoadType()));
+    QString val = getValue(node);
+    if ((node->m_castType==TokenType::INTEGER ||node->getLoadType()==TokenType::INTEGER || node->getLoadType()==TokenType::LONG) && node->m_val<=255) {
+        as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
+    }
+    if (node->getLoadType()==TokenType::LONG && node->m_val<=65535) {
+        as->Asm("ldx #0   ; Force long");
+    }
+
+    //    as->Comment("Value assignment : " + Util::numToHex(node->m_val) + " "+ val + " " +QString::number(node->getValueAsInt(as)));
+    if (((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) && as->m_term=="") {
+        as->Comment("Integer constant assigning");
+        Load16bitVariable(node,"y");
+        return;
+
+    }
+
+    if (as->m_term=="")
+        as->Term("lda " + val);
+    else
+        as->Term(val);
 }
 
 
@@ -798,38 +832,6 @@ void CodeGen6502::dispatch(QSharedPointer<NodeBinOP>node)
 
 
 
-/*
- *
- *  NODE NUMBER dispatcher
- *
- *  */
-
-void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
-{
-    node->DispatchConstructor(as,this);
-
-    as->Comment("Forcetype: "+TokenType::getType(node->getLoadType()));
-    QString val = getValue(node);
-    if ((node->m_castType==TokenType::INTEGER ||node->getLoadType()==TokenType::INTEGER || node->getLoadType()==TokenType::LONG) && node->m_val<=255) {
-        as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
-    }
-    if (node->getLoadType()==TokenType::LONG && node->m_val<=65535) {
-        as->Asm("ldx #0   ; Force long");
-    }
-
-    //    as->Comment("Value assignment : " + Util::numToHex(node->m_val) + " "+ val + " " +QString::number(node->getValueAsInt(as)));
-    if (((node->m_op.m_type==TokenType::INTEGER_CONST && node->m_val>255) || node->isReference()) && as->m_term=="") {
-        as->Comment("Integer constant assigning");
-        Load16bitVariable(node,"y");
-        return;
-
-    }
-
-    if (as->m_term=="")
-        as->Term("lda " + val);
-    else
-        as->Term(val);
-}
 /*
  *
  *  SMALL NODE dispatcherS

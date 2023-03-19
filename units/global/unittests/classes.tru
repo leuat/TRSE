@@ -216,7 +216,6 @@ begin
 	sl.Add("HALLO");
 	sl.Add(#text);
 	sl.Add("BALL");
-
 	zp := sl.items[2].str;
 	Vars::text := "C1:";
 
@@ -262,7 +261,6 @@ end;
 
 procedure MTest1();
 begin
-	asm(";balle");
 	s1.a := 100;
 	s1.b := 100;
 	s1.MulTest1();	
