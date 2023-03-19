@@ -75,9 +75,9 @@ public:
 
 
 
-    QString getWordByteType(QSharedPointer<Node> n) {
+    /*QString getWordByteType(QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
-    }
+    }*/
 
     inline QString getJmp(bool isOffPage) override {
         return "jp";

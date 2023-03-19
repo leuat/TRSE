@@ -333,18 +333,13 @@ void CodeGenChip8::StoreVariable(QSharedPointer<NodeVar> n)
 
 bool CodeGenChip8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
-	QString type = getWordByteType(node->m_left);
 	if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
 		as->Comment("Store variable simplified");
-		qDebug()<<node->isWord(as)<< " " << node->m_left->isWord(as) <<  " " << node->m_right->isWord(as) << "\n";
-		qDebug()<< (node->m_right->m_castType==TokenType::INTEGER) << " " << (node->m_right->m_castType==TokenType::BYTE) << "\n";
-		qDebug()<< (node->m_left->m_castType==TokenType::INTEGER) << " " << (node->m_left->m_castType==TokenType::BYTE) << "\n";
-		qDebug()<< (node->m_castType==TokenType::INTEGER) << " " << (node->m_castType==TokenType::BYTE) << "\n\n";
 		node->m_right->Accept(this);
-		if (node->m_left->isWord(as) && node->m_right->m_castType==TokenType::BYTE)
-			castToByte("V0","V1");
-		else if ((!node->m_left->isWord(as)) && node->m_right->m_castType==TokenType::INTEGER)
+		if (node->m_left->isWord(as) && node->m_right->getOrgType(as)==TokenType::BYTE)
 			castToWord("V0","V1");
+		else if ((!node->m_left->isWord(as)) && node->m_right->getOrgType(as)==TokenType::INTEGER)
+			castToByte("V0","V1");
 		str(node->m_left);
 
 		return true;
@@ -550,6 +545,7 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 			} 
 		} else {
 			as->Comment("storing to non pointer");
+			return false;
 
 		}
 	}
