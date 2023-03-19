@@ -34,7 +34,7 @@ LImageLevelSNES::LImageLevelSNES(LColorList::Type t) : ImageLevelEditor(t)
 
     m_GUIParams[btnEditFullCharset] = "";
 
-    m_writeType = Character;
+    m_classvariableType = Character;
 
     //    m_GUIParams[tabSprites] ="Metachunks";
     m_currentChar = 1;
@@ -208,7 +208,7 @@ void LImageLevelSNES::CopyFrom(LImage *mc)
         m_charset = c->m_charset;
         m_charWidthDisplay = c->m_charWidthDisplay;
         m_gridWidthDisplay = c->m_gridWidthDisplay;
-        m_writeType = c->m_writeType;
+        m_classvariableType = c->m_classvariableType;
         //        for (int i=0;i<4;i++)
         //          m_extraCols[i] = c->m_extraCols[i];
         //SetLevel(QPoint(0,0));

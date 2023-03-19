@@ -58,10 +58,10 @@ program Levels;
 	introtune : incbin("resources/introtune.bin");
 	
 // Compile up some sprites	
-@spritecompiler "resources/sprites.flf" "player_sprite0" 0 0 16 8 "buf"
-@spritecompiler "resources/sprites.flf" "player_sprite1" 16 0 16 8 "buf"
-@spritecompiler "resources/sprites.flf" "player_sprite2" 32 0 16 8 "buf"
-@spritecompiler "resources/sprites.flf" "player_sprite3" 48 0 16 8 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite0" 0 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite1" 16 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite2" 32 1 16 7 "buf"
+@spritecompiler "resources/sprites.flf" "player_sprite3" 48 1 16 7 "buf"
 @spritecompiler "resources/sprites.flf" "player_sprite4" 64 0 16 8 "buf"
 
 

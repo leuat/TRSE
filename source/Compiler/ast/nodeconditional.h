@@ -32,10 +32,22 @@
 #include <QVector>
 #include "source/Compiler/codegen/abstractcodegen.h"
 /* 
-    Node representing a conditional statement (such as a<b)
-    m_left: The first operand
-    m_right: The second operand
-    m_op: The comparision operation to perform
+    Node representing a full conditional statement + block, ie
+    if (a>b and c!=d*2) then
+    begin
+        ...
+    end
+    else
+    begin
+        ..
+    end;
+
+
+    m_left: unused
+    m_right: unused
+    m_block : the main block if the conditional is true
+    m_elseBlock : the block if the conditional fails
+    m_binaryClause : the actual binary clause (a>b and c!=d*2)
 */
 class NodeConditional : public Node {
 public:

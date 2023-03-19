@@ -1,639 +1,383 @@
 procedure player_sprite4_0();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $0a
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $a0
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $26
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $98
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $2a
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $a8
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $08
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $20
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $08
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $20
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
 ");
 end;
 procedure player_sprite4_1();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $02
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $a8
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $09
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $a6
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $0a
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $aa
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $02
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $08
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $02
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $08
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
 ");
 end;
 procedure player_sprite4_2();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $aa
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $02
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $69
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $80
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
  or $02
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $aa
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $80
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $82
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $82
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
 ");
 end;
 procedure player_sprite4_3();
 begin
 asm ("
-  ld de, $1c
+  ld de, $20
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $2a
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $80
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $9a
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $60
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $aa
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $a0
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $20
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $80
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
  or $20
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
+ ld [iy+2],a
+ ld a,[ix+3] 
  or $80
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+3],a
+  add iy,de
   add ix,de
  ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
- ld a,[ix+0] 
- ld [hl],a
- inc hl 
- inc ix 
-  add hl,de
+ ld [iy+0],a
+ ld a,[ix+1] 
+ ld [iy+1],a
+ ld a,[ix+2] 
+ ld [iy+2],a
+ ld a,[ix+3] 
+ ld [iy+3],a
+  add iy,de
   add ix,de
 ");
 end;
@@ -645,7 +389,7 @@ begin
   player_sprite4_pi:=player_sprite4_dst + player_sprite4py<<5 + player_sprite4px>>2;
   player_sprite4_buf:=#buf + player_sprite4py<<5 + player_sprite4px>>2;
 asm("  ld ix, [player_sprite4_buf] 
-  ld hl, [player_sprite4_pi]
+  ld iy, [player_sprite4_pi]
 ");
  player_sprite4px:=player_sprite4px&3;
  if (player_sprite4px=0) then player_sprite4_0();

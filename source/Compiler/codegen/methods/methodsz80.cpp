@@ -219,7 +219,7 @@ void MethodsZ80::LoadVar(Assembler *as, int paramNo, QString s)
     //    qDebug() << "LOADVAR FORCE WORD  TYPE "<<paramNo <<m_node->m_params[paramNo]->m_builtInFunctionParameterType  <<m_node->m_params[paramNo]->isWord(as);
         if (m_node->m_params[paramNo]->m_builtInFunctionParameterType==BuiltInFunction::INTEGER
                 && !m_node->m_params[paramNo]->isWord(as)) {
-            m_node->m_params[paramNo]->setForceType(TokenType::INTEGER);
+            m_node->m_params[paramNo]->setLoadType(TokenType::INTEGER);
       //      qDebug() << "LOADVAR FORCE WORD "<<paramNo ;
         }
 
@@ -338,7 +338,7 @@ void MethodsZ80::Fill(Assembler *as)
 void MethodsZ80::Mod(Assembler *as)
 {
     //LoadVar(as,0,"bc");
-//    m_node->m_params[0]->setForceType(TokenType::INTEGER);
+//    m_node->m_params[0]->setLoadType(TokenType::INTEGER);
     m_node->m_params[0]->Accept(m_codeGen);
     if (m_node->m_params[0]->isWord(as)) {
         as->Asm("ld b,h");
@@ -352,7 +352,7 @@ void MethodsZ80::Mod(Assembler *as)
     if (!m_node->m_params[1]->isPure()) {
         as->Asm("push bc");
     }
-    m_node->m_params[1]->setForceType(TokenType::INTEGER);
+    m_node->m_params[1]->setLoadType(TokenType::INTEGER);
     LoadVar(as,1,"de");
 //    m_codeGen->ExDeHl();
 

@@ -46,7 +46,6 @@ var
 		
 		procedure IncA();
 		begin
-			asm(";here");
 			this.a+=this.b;
 		end;
 		

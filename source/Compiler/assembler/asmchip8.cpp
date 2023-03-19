@@ -380,10 +380,20 @@ QString AsmChip8::String(QStringList lst, bool term)
     for (QString s:lst) {
         bool ok=false;
         uchar val = s.toInt(&ok);
-        if (!ok)
-            res=res+"\t@ds\t" +"\"" + s + "\"\n";
+        QString org = s;
+        s = "";
+        for (QChar& c: org) {
+            s = s + Util::numToHex(c.toLatin1()) + ",";
+        }
+        // remove ","
+        s=s.remove(s.length()-1,1);
 
-        else res=res + "\t@db\t"+QString::number(val) + "\n";
+
+        if (!ok)
+//            res=res+"\tds\t" +"\"" + s + "\"\n";
+             res=res+"\tdb\t" + s +"\n";
+
+        else res=res + "\tdb\t"+QString::number(val) + "\n";
 
         /*        if (s!=lst.last())
                     res=res + "\n";
@@ -391,7 +401,7 @@ QString AsmChip8::String(QStringList lst, bool term)
 
     }
     if (term)
-        res=res + "\t@db\t0";
+        res=res + "\tdb\t0";
     m_term +=res;
     return res;
 }

@@ -1301,7 +1301,7 @@ void Methods6502::MemCpy(Assembler* as, bool isFast)
         // BUG HERE INTEGER
         if (m_node->m_params[3]->isWord(as) && is6502()) {
             ErrorHandler::e.Error("Error: memcpy cannot take an integer as count, must be byte. ",m_node->m_op.m_lineNumber);
-//            m_node->m_params[3]->setForceType(TokenType::BYTE);
+//            m_node->m_params[3]->setLoadType(TokenType::BYTE);
         }
         if (!is6502()&&m_node->m_params[3]->isPureNumericOrAddress()) {
             as->Term("#"+Util::numToHex(m_node->m_params[3]->getValueAsInt(as)),true);
@@ -1954,7 +1954,7 @@ void Methods6502::PrintString(Assembler *as)
         auto bop = m_node->m_params[0];
         if (!(m_node->m_params[1]->isPureNumeric() && m_node->m_params[1]->getValueAsInt(as)==0))
            bop = NodeFactory::CreateBinop(bop->m_op,TokenType::PLUS, m_node->m_params[0], m_node->m_params[1]);
-        bop->setForceType(TokenType::INTEGER);
+        bop->setLoadType(TokenType::INTEGER);
         bop->Accept(m_codeGen);
         as->Term();
     }
@@ -5744,7 +5744,7 @@ void Methods6502::WaitForRaster(Assembler *as)
     //    LoadVar(as, 0,"", "ldx ");
 
     /*    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 || Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65) {
- //       m_node->m_params[0]->setForceType(TokenType::BYTE);
+ //       m_node->m_params[0]->setLoadType(TokenType::BYTE);
         if (m_node->m_params[0]->isPureNumericOrAddress()) {
             int val =  m_node->m_params[0]->getValueAsInt(as);
              if (val<=255) {
@@ -5826,7 +5826,7 @@ void Methods6502::SetSpriteLoc(Assembler *as)
         LoadVar(as,1);
     } else {
 /*        if (m_node->m_params[0]->isPureNumericOrAddress())
-            m_node->m_params[0]->setForceType(TokenType::BYTE);*/
+            m_node->m_params[0]->setLoadType(TokenType::BYTE);*/
         LoadVar(as,0);
         QString zp = as->m_internalZP[2];
         as->Asm("sta "+zp);

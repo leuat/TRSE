@@ -129,7 +129,7 @@ bool CodeGenS1C88::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
-            node->m_right->setForceType(TokenType::INTEGER);
+            node->m_right->setLoadType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
         str(var);
@@ -239,7 +239,7 @@ void CodeGenS1C88::ldr(QSharedPointer<Node> var, QString forceReg)
 //    as->Comment("Loading var is ")
 //    as->Comment("Left right : "+QString::number(var->isWord(as)));
 
-/*    if (nv && (var->m_forceType==TokenType::INTEGER && nv->getOrgType(as)==TokenType::BYTE)) {
+/*    if (nv && (var->getLoadType()==TokenType::INTEGER && nv->getOrgType(as)==TokenType::BYTE)) {
         QString x0 = getReg();
         QString x1 = m_regs[m_lvl+1];
         as->Asm("mw "+x0+",0");
@@ -259,7 +259,7 @@ void CodeGenS1C88::ldr(QSharedPointer<Node> var, QString forceReg)
 
 
     if (var->hasArrayIndex()) {
-        nv->m_expr->setForceType(TokenType::INTEGER);
+        nv->m_expr->setLoadType(TokenType::INTEGER);
         auto di = m_reg16.Get();
         as->Comment("Loading byte array");
         nv->m_expr->Accept(this);
@@ -302,7 +302,7 @@ void CodeGenS1C88::ldr(QSharedPointer<Node> var, QString forceReg)
     else {
 
         as->Asm("movb "+m_reg8.Get()+", ["+var->getValue(as)+"]");
-/*        if (var->m_forceType==TokenType::INTEGER) {
+/*        if (var->getLoadType()==TokenType::INTEGER) {
             as->Asm("mov x")
         }
 */
@@ -435,7 +435,7 @@ bool CodeGenS1C88::AssignPointer(QSharedPointer<NodeAssign> node)
         as->Comment("loading expression:");
         m_reg16.Push();
         auto bx = m_reg16.Get();
-        var->m_expr->setForceType(TokenType::INTEGER);
+        var->m_expr->setLoadType(TokenType::INTEGER);
         var->m_expr->Accept(this);
         m_reg16.Pop();
         auto ax = m_reg16.Get();
@@ -638,7 +638,7 @@ void CodeGenS1C88::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
 
 void CodeGenS1C88::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
-    if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
+    if (nodeA->isWord(as)) nodeB->setLoadType(TokenType::INTEGER);
     LoadVariable(nodeA);
     QString ax = m_reg8.Get();
     m_reg8.Push();

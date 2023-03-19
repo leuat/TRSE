@@ -94,7 +94,7 @@ void CodeGenJDH8::dispatch(QSharedPointer<NodeVar> node)
     if (node->m_expr!=nullptr) {
         if (node->isPointer(as)) {
             // i := p[2] etc;
-            node->m_expr->setForceType(TokenType::INTEGER);
+            node->m_expr->setLoadType(TokenType::INTEGER);
             node->m_expr->Accept(this);
             as->Asm("lw16 h,l,["+node->getValue(as)+"]");
             as->Asm("add16 h,l,a,b");
@@ -110,7 +110,7 @@ void CodeGenJDH8::dispatch(QSharedPointer<NodeVar> node)
 
         }
         // Regular array
-        node->m_expr->setForceType(TokenType::INTEGER);
+        node->m_expr->setLoadType(TokenType::INTEGER);
         node->m_expr->Accept(this);
         as->Asm("lda ["+node->getValue(as)+"]");
         as->Asm("add16 h,l,a,b");
@@ -177,7 +177,7 @@ bool CodeGenJDH8::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         if (var->isWord(as))
-            node->m_right->setForceType(TokenType::INTEGER);
+            node->m_right->setLoadType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
         QString x0 = getReg();
@@ -298,7 +298,7 @@ void CodeGenJDH8::ldr(QSharedPointer<Node> var)
 //    as->Comment("Loading var is ")
 //    as->Comment("Left right : "+QString::number(var->isWord(as)));
 
-    if (nv && (var->m_forceType==TokenType::INTEGER && nv->getOrgType(as)==TokenType::BYTE)) {
+    if (nv && (var->getLoadType()==TokenType::INTEGER && nv->getOrgType(as)==TokenType::BYTE)) {
         QString x0 = getReg();
         QString x1 = m_regs[m_lvl+1];
         as->Asm("mw "+x0+",0");
@@ -415,7 +415,7 @@ bool CodeGenJDH8::AssignPointer(QSharedPointer<NodeAssign> node)
         as->Comment("storing pointer");
         as->Comment("loading expression:");
 
-        var->m_expr->setForceType(TokenType::INTEGER);
+        var->m_expr->setLoadType(TokenType::INTEGER);
         var->m_expr->Accept(this);
 
         as->Comment("load value:");
@@ -512,7 +512,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
 {
 
     if (node->m_left->isWord(as)) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
 
     as->ClearTerm();
@@ -550,11 +550,11 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
     }
 
 
-    if (var->m_writeType==TokenType::INTEGER) {
-        node->m_right->setForceType(TokenType::INTEGER);
+    if (var->m_classvariableType==TokenType::INTEGER) {
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
-    if (var->m_writeType==TokenType::LONG)
-        node->m_right->setForceType(TokenType::LONG);
+    if (var->m_classvariableType==TokenType::LONG)
+        node->m_right->setLoadType(TokenType::LONG);
 
 
     if (var->isPointer(as) && !var->hasArrayIndex()) {
@@ -568,7 +568,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
         as->Comment("Assigning pointer");
 
         QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
-//        node->m_right->setForceType(TokenType::POINTER);
+//        node->m_right->setLoadType(TokenType::POINTER);
         if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::BITOR || bop->m_op.m_type==TokenType::BITAND || bop->m_op.m_type==TokenType::XOR )) {
             if (bop->m_left->getValue(as)==var->getValue(as)) {
 
@@ -613,7 +613,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
             as->Comment("Setting PURE POINTER "+QString::number(node->isPointer(as)));
 //            m_isPurePointer = true;
  //           if (node->m_left->isPointer(as))
-   //            node->m_right->setForceType(TokenType::POINTER);
+   //            node->m_right->setLoadType(TokenType::POINTER);
             node->m_right->Accept(this);
   //          m_isPurePointer = false;
             as->Comment("Setting PURE POINTER ends");
@@ -630,9 +630,9 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
         // TO DO: Optimize special cases
 
         as->ClearTerm();
-        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_writeType));
+        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_classvariableType));
         if (var->isWord(as))
-            node->m_right->setForceType(TokenType::INTEGER);
+            node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);
 
         as->Term();
@@ -655,7 +655,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
         }
 
         as->Asm("push ax");
-        var->m_expr->setForceType(TokenType::INTEGER);
+        var->m_expr->setLoadType(TokenType::INTEGER);
         var->m_expr->Accept(this);
         as->Term();
         if (var->isWord(as))
@@ -691,7 +691,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
         node->m_right->Accept(this);
         // Handle var[ i ] :=
         if (var->m_expr->isPure()) {
-            var->m_expr->setForceType(TokenType::INTEGER);
+            var->m_expr->setLoadType(TokenType::INTEGER);
             if (var->m_expr->isPureNumeric()) {
                 as->Asm("mw ["+var->getValue(as) + "+" + Util::numToHex(var->m_expr->getValueAsInt(as)*var->getArrayDataSize(as))+"],"+getReg() );
                 return;
@@ -704,7 +704,7 @@ void CodeGenJDH8::AssignToRegister(QSharedPointer<NodeAssign> node)
         }
         else {
             as->Asm("push ax");
-            var->m_expr->setForceType(TokenType::INTEGER);
+            var->m_expr->setLoadType(TokenType::INTEGER);
             var->m_expr->Accept(this);
             as->Asm("mw di,ax");
             if (var->isWord(as))
@@ -905,7 +905,7 @@ void CodeGenJDH8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Nod
 
 void CodeGenJDH8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
-    if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
+    if (nodeA->isWord(as)) nodeB->setLoadType(TokenType::INTEGER);
     LoadVariable(nodeA);
     QString ax = getReg();
     PushReg();

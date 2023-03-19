@@ -32,10 +32,17 @@
 #include <QVector>
 #include "source/Compiler/codegen/abstractcodegen.h"
 /* 
-   ?
-    m_left: ?
-    m_right: ?
-    m_op: ?
+   Repeat ...  until block
+   example:
+   repeat
+        i:=i+1;
+        Print(i);
+   until i=22;
+
+
+    m_left: undefined
+    m_right: undefined
+    m_op: undefined
 */
 class NodeRepeatUntil : public Node {
 public:

@@ -33,10 +33,13 @@
 #include "source/Compiler/ast/nodeassign.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 /* 
-   ?
-    m_left: ?
-    m_right: ?
+   Represents a procedure call, ie "SomeProcedure(param1);"
+    m_left: undefined
+    m_right: undefined
     m_op: undefined
+
+    m_parameters: list of parameter expressions, ie "param1"
+    m_procedureDecl : link to the definition of the procedure
 */
 class NodeProcedure : public Node {
 public:

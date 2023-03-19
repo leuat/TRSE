@@ -33,7 +33,7 @@ LImageLevelNES::LImageLevelNES(LColorList::Type t) : ImageLevelEditor(t)
 
     m_GUIParams[btnEditFullCharset] = "";
 
-    m_writeType = Character;
+    m_classvariableType = Character;
 
 //    m_GUIParams[tabSprites] ="Metachunks";
     m_currentChar = 1;
@@ -105,9 +105,9 @@ void LImageLevelNES::setPixel(int x, int y, unsigned int color)
         return; // out of bounds
 
 
-    if (m_writeType==Character  || m_forcePaintColorAndChar)
+    if (m_classvariableType==Character  || m_forcePaintColorAndChar)
         m_currentLevel->m_CharData[pos] = m_currentChar;
-    if (m_writeType==Color  || m_forcePaintColorAndChar)
+    if (m_classvariableType==Color  || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[posC] = color;
 
 

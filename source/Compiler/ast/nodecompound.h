@@ -30,10 +30,17 @@
 #include "source/Compiler/codegen/abstractcodegen.h"
 #include "source/Compiler/ast/node.h"
 /* 
-    ?
-    m_left: ?
-    m_right: ?
-    m_op: ?
+    NodeCompound contains a list of statements, and corresponds to the begin/end part of a nodeblock
+    ex:
+    begin
+        i:=10*v;
+        Print(i);
+    end;
+    "i:=10*v" and "Print(i)" will be the two statements located in the "children" list
+
+    m_left: unused
+    m_right: unused
+    m_op: unused
 */
 class NodeCompound : public Node {
 public:

@@ -60,13 +60,13 @@ public:
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
 
-    void setForceType(TokenType::Type t) override;
-    void setCastType(TokenType::Type t) override;
+    void setLoadType(TokenType::Type t) override;
+    void setStoreType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {
         return m_left->isPurePointer(as) && m_right->isPurePointer(as);
     }
-    TokenType::Type getWriteType()  override;
+    TokenType::Type getClassvariableType()  override;
 
     bool isPointer(Assembler *as) override
     {

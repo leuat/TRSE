@@ -64,7 +64,7 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 
 
     if (Command("topointer")) {
-        //m_node->setForceType(TokenType::ADDRESS);
+        //m_node->setLoadType(TokenType::ADDRESS);
         if (m_node->m_params[0]->isPureVariable())
             m_node->m_params[0]->ForceAddress();
         m_node->m_params[0]->Accept(m_codeGen);
@@ -213,7 +213,7 @@ void Methods68000::Fill(Assembler *as)
     m_node->m_params[2]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d0");
     QString d0 = as->m_regAcc.Get();
-    m_node->m_params[1]->setForceType(TokenType::LONG);
+    m_node->m_params[1]->setLoadType(TokenType::LONG);
     m_node->m_params[1]->Accept(m_codeGen);
     Asm(as,"move.l",as->m_varStack.pop(),"d1");
 //    m_node->m_params[0]->Accept(m_codeGen);

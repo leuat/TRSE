@@ -216,7 +216,6 @@ begin
 	sl.Add("HALLO");
 	sl.Add(#text);
 	sl.Add("BALL");
-
 	zp := sl.items[2].str;
 	Vars::text := "C1:";
 

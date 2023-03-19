@@ -50,7 +50,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
 
     QString v = getTempName("t_"+getIntType(node)+"_");
     if (node->m_left->isWord(as) && !node->m_right->isWord(as))
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     as->ClearTerm();
     as->BinOP(node->m_op.m_type,true);
     QString cmd = as->m_term + "\t"+v;

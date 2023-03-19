@@ -78,22 +78,22 @@ bool NodeCast::isAddress() {
 
 
 bool NodeCast::isWord(Assembler *as) {
-    return ((m_right->isWord(as)) || (m_forceType==TokenType::INTEGER));
+    return ((m_right->isWord(as)) || (m_loadType==TokenType::INTEGER));
 }
 
-void NodeCast::setForceType(TokenType::Type t) {
+void NodeCast::setLoadType(TokenType::Type t) {
 //    qDebug() << "Binop set force type " << TokenType::getType(t);
-    m_forceType  =t;
-    m_right->setForceType(t);
+    m_loadType  =t;
+    m_right->setLoadType(t);
 }
 
-/*void NodeCast::setForceTypeFunctions(TokenType::Type t) {
-    m_left->setForceTypeFunctions(t);
-    m_right->setForceTypeFunctions(t);
+/*void NodeCast::setLoadTypeFunctions(TokenType::Type t) {
+    m_left->setLoadTypeFunctions(t);
+    m_right->setLoadTypeFunctions(t);
 }*/
-void NodeCast::setCastType(TokenType::Type t) {
-//    m_right->setCastType(t);
-    m_castType = t;
+void NodeCast::setStoreType(TokenType::Type t) {
+//    m_right->setStoreType(t);
+    m_storeType = t;
 }
 
 bool NodeCast::containsPointer(Assembler *as)

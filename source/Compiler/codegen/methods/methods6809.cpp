@@ -91,7 +91,7 @@ void Methods6809::Modulo(Assembler *as)
 
 
     if (m_node->m_params[0]->isWord(as)) {
-        m_node->m_params[1]->setForceType(TokenType::INTEGER);
+        m_node->m_params[1]->setLoadType(TokenType::INTEGER);
         LoadVar(as,1);
         as->Term();
         QString val = as->StoreInTempVar("val","word");
@@ -447,7 +447,7 @@ void Methods6809::LoHi(Assembler *as, bool isHi)
         as->Asm("tfr x,d");
         as->Asm("lda #0");
     }
-    if (m_node->m_castType==TokenType::INTEGER)
+    if (m_node->getStoreType()==TokenType::INTEGER)
     {
 //        as->Asm("exg a,b");
         as->Asm("tfr d,x");

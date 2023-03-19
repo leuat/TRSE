@@ -31,10 +31,10 @@
 #include "source/Compiler/codegen/abstractcodegen.h"
 
 /* 
-    ?
-    m_left: ?
-    m_right: ?
-    m_op: ?
+    Variable type, for example: Integer, byte, SomeRecord, SomeClass, Mat4x4 etc
+    m_left: unused
+    m_right: unused
+    m_op: unused
 */
 class NodeVarType : public Node {
 public:

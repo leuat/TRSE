@@ -1253,6 +1253,9 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            while (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+
             return;
         }
         if (m_currentToken.m_value=="exportblackwhite") {
@@ -2493,7 +2496,6 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 
     // Start
     Token t = m_currentToken;
-    bool done=false;
     int linenum = m_currentToken.m_lineNumber;
 
     QSharedPointer<Node> clause = BinaryClause();
@@ -3953,17 +3955,17 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
                         ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v->value+")</font>",m_currentToken.m_lineNumber);
             QString et = s->getEndType();
             if (s->m_type.toLower()=="pointer") {
-                v->m_writeType = Syntax::s.m_currentSystem->getPointerType();
+                v->m_classvariableType = Syntax::s.m_currentSystem->getPointerType();
                 scale = Syntax::s.m_currentSystem->getPointerSize();
             }
             if (et.toLower()=="byte")
-                v->m_writeType = TokenType::BYTE;
+                v->m_classvariableType = TokenType::BYTE;
             if (et.toLower()=="integer") {
-                v->m_writeType = TokenType::INTEGER;
+                v->m_classvariableType = TokenType::INTEGER;
                 scale = 2;
             }
             if (et.toLower()=="long") {
-                v->m_writeType = TokenType::LONG;
+                v->m_classvariableType = TokenType::LONG;
                 scale = 4;
             }
         }
@@ -4022,8 +4024,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
             v->m_expr = NodeFactory::CreateNumber(m_currentToken,0);
 
         // Propagate 8/16/32 bit write type
-        v->m_writeType = sv->m_writeType;
-        //      qDebug() << "PARSER  type "<< type <<v->value<<TokenType::getType(v->m_writeType);
+        v->m_classvariableType = sv->m_classvariableType;
+        //      qDebug() << "PARSER  type "<< type <<v->value<<TokenType::getType(v->m_classvariableType);
 
 
         v->m_subNode = nullptr; // REMOVE subnode
@@ -5153,10 +5155,15 @@ void Parser::HandlePerlinNoise()
     float pers = m_currentToken.m_intVal/100.0;
     Eat();
     int amp = m_currentToken.m_intVal;
+    float pow = 1;
     Eat(TokenType::INTEGER_CONST);
+    if (m_currentToken.m_type == TokenType::INTEGER_CONST) {
+        pow = m_currentToken.m_intVal/100.0;
+        Eat(TokenType::INTEGER_CONST);
+    }
     SimplexNoise sn;
 //    qDebug() << "PARSER:::" <<file;
-    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
+    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
 
 }
 

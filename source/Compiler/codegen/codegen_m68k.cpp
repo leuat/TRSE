@@ -648,7 +648,7 @@ QString CodeGen68k::LoadAddress(QSharedPointer<Node> n)
     n->ForceAddress();
 //    qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as);
 if (!n->isPure()) {
-//        n->setForceType(TokenType::LONG);
+//        n->setLoadType(TokenType::LONG);
         n->Accept(this);
         return "";
     }
@@ -751,7 +751,7 @@ void CodeGen68k::TransformVariable(QString op, QString n, QString val)
 
 QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
 //    getType(as)==TokenType::LONG
-    if (v->m_forceType==TokenType::LONG)
+    if (v->getLoadType()==TokenType::LONG)
         return ".l";
 
 
@@ -759,11 +759,11 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
 
     // Classes return types
     if (nv!=nullptr) {
-        if (nv->m_writeType==TokenType::BYTE)
+        if (nv->m_classvariableType==TokenType::BYTE)
             return ".b";
-        if (nv->m_writeType==TokenType::INTEGER)
+        if (nv->m_classvariableType==TokenType::INTEGER)
             return ".w";
-        if (nv->m_writeType==TokenType::LONG)
+        if (nv->m_classvariableType==TokenType::LONG)
             return ".l";
     }
 
@@ -1015,18 +1015,18 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     if (node->m_left->getType(as)==TokenType::INTEGER) {
-        node->m_right->m_forceType = TokenType::INTEGER; // FORCE integer on right-hand side
+        node->m_right->setLoadType(TokenType::INTEGER); // FORCE integer on right-hand side
     }
     if (node->m_left->getType(as)==TokenType::LONG) {
-        node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
+        node->m_right->setLoadType(TokenType::LONG); // FORCE integer on right-hand side
     }
     if (node->m_left->getType(as)==TokenType::POINTER && !node->m_left->hasArrayIndex()) {
-        node->m_right->m_forceType = TokenType::LONG; // FORCE integer on right-hand side
+        node->m_right->setLoadType(TokenType::LONG); // FORCE integer on right-hand side
         node->m_right->ForceAddress();
     }
     if (node->m_left->getType(as)==TokenType::POINTER && node->m_left->hasArrayIndex()) {
         //if (node->m_left->getArrayType(as))
-        node->m_right->m_forceType = node->m_left->getArrayType(as); // FORCE integer on right-hand side
+        node->m_right->setLoadType(node->m_left->getArrayType(as)); // FORCE integer on right-hand side
 
     }
     if (node->m_left->isPointer(as))
@@ -1082,12 +1082,12 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     if (node->m_right->hasArrayIndex()) {
-  //      as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->m_forceType));
+  //      as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->getLoadType()));
         LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
 
     }
     else {
-//        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->m_forceType));
+//        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->getLoadType()));
         node->m_right->Accept(this);
     }
 

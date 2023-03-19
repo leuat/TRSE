@@ -37,10 +37,18 @@
 
 
 /* 
-    ?
-    m_left: ?
-    m_right: ?
-    m_op: ?
+    Variable declaration node, for instance
+    var
+        b : byte = 10;
+
+    or in procedure declarations:
+    procedure myProc( p : integer );
+
+    m_left: unused
+    m_right: unused
+    m_op: unused
+    n_varNode : NodeVar, the variable ( ex: "p" )
+    m_typeNode : NodeVarType, the type (ex : "integer");
 */
 class NodeVarDecl : public Node {
 public:
