@@ -39,6 +39,7 @@ var
 	ba1 : array[10] of byte = buildtable("i");
 	strLst : array[] of string = ("S1","S2",("J",75), "S3");
 
+@ifndef CPU_PCHIP8
 @ifndef CPU_M6809
 	Mini = class
 		a:integer; // 4   // 7
@@ -91,6 +92,7 @@ var
 	m : Monster;
 	const NN : byte = 10;
 	monsters: array[ NN ] of Monster;
+@endif
 @endif
 	zp: pointer;
 

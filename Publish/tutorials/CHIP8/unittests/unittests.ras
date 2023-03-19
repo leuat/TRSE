@@ -1,0 +1,29 @@
+Program UnitTestsAmstradCPC;
+@projectsettings "amstradcpc_options" "-O system.printer=1 -O file.printer_file=/tmp/printer.dat"
+
+@define CHARSET "charsset.inc"
+
+@use "unittests/unittests"
+@use "unittests/common"
+
+
+
+procedure TestResult(s : pointer);
+begin
+	Text::Reset();
+	Text::PrintXY(s,0,0);
+end;
+
+
+begin
+	//ForLoop::Exec();//	Unittests::Exec();
+	if Common::unittests_status = 0 then
+		TestResult("SUCCESS")
+	else
+		TestResult("FAILURE");
+	
+	asm("
+topp:
+	jp topp	
+	");
+end.

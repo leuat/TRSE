@@ -850,11 +850,6 @@ void CodeGen6502::dispatch(QSharedPointer<Node> node)
 
 
 
-void CodeGen6502::dispatch(QSharedPointer<NodeVarType> node)
-{
-    node->DispatchConstructor(as,this);
-
-}
 
 void CodeGen6502::dispatch(QSharedPointer<NodeBinaryClause> node)
 {

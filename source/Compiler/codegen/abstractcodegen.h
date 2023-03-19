@@ -67,14 +67,14 @@ public:
     AbstractCodeGen();
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch
+    virtual void dispatch(QSharedPointer<Node> node) { }
+    virtual void dispatch(QSharedPointer<NodeVarType> node) { }
     virtual void dispatch(QSharedPointer<NodeBinOP> node) = 0;
     virtual void dispatch(QSharedPointer<NodeNumber> node) = 0;
-    virtual void dispatch(QSharedPointer<Node> node) = 0;
     virtual void dispatch(QSharedPointer<NodeString> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAssign> node);
     virtual void dispatch(QSharedPointer<NodeBlock> node);
-    virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
     virtual void dispatch(QSharedPointer<NodeCase> node);

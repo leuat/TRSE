@@ -441,7 +441,9 @@ void CodeGenChip8::AssignString(QSharedPointer<NodeAssign> node) {
 	QString str = as->NewLabel("stringassignstr");
 	QString lblCpy=as->NewLabel("stringassigncpy");
 	bool isPointer = left->isPointer(as);
-	QString strAssign = str + "\t db \"" + right->m_op.m_value + "\",0";
+   // as->DeclareString();
+    QString strAssign =    str +":\n\t" + as->String(QStringList() <<right->m_op.m_value,false);
+//str + "\t db \"" + right->m_op.m_value + "\",0";
 	as->m_tempVars<<strAssign;
 	if (isPointer) {
 		as->Asm("mw si, "+str+"");

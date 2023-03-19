@@ -105,7 +105,7 @@ begin
 	Vars::text := "09:"; if Vars::p1=$E486 then Common::PASS() else Common::FAIL();
 end;
 */
-
+@ifndef CPU_PCHIP8
 procedure MulDivCombo1();
 begin
 	Vars::text := "M1:";
@@ -136,7 +136,7 @@ begin
 	Vars::i1 :=  (Vars::v1*($100 / (hi(Vars::i2)) ))*Vars::v2; 
 	if Vars::i1=$2000 then Common::PASS() else Common::FAIL();
 end;
-
+@endif
 
 procedure Exec();
 begin
@@ -157,9 +157,11 @@ begin
 	@ifdef C64
 	AdvFactorial();
 	@endif
+@ifndef CPU_PCHIP8
 	MulDivCombo1();
 	MulDivCombo2();
 	MulDivCombo3();
+@endif
 	Common::WaitABit();
 	
 end;
