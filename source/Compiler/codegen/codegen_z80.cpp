@@ -581,20 +581,9 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             as->Asm("ld hl,0");
             as->Asm("ld c,0");
             if (!node->m_right->isPureNumeric()) {
-                //              if (!node->m_left->isWord(as))
-                //                as->Asm("pop af");
-                //          else
                 as->Asm("pop af");
             }
-            //         as->Asm("clc");
             as->Asm("call mul_16x8");
-            //                as->Asm("ld a,l");
-
-            //            node->setForceType(TokenType::INTEGER);
-
-            //            }
-
-            //            ErrorHandler::e.Error("Generic 16-bit multiplication is not implemented yet!",  node->m_op.m_lineNumber);
             return;
         }
         node->m_left->Accept(this);
