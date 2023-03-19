@@ -272,9 +272,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 			return;
 		}
 	} else if (node->isWord(as)) {
-		auto imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 		as->Comment("Load Word");
-		
 		as->Asm("ld I,"+node->getValue(as));
 		as->Asm("LD V1, [I]");
 		
