@@ -59,7 +59,7 @@ public:
 
     bool isWord(Assembler* as) override;
 
-    void setForceType(TokenType::Type t) override;
+    void setLoadType(TokenType::Type t) override;
     void setCastType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {

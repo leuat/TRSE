@@ -71,7 +71,7 @@ TokenType::Type NodeVar::getOrgType(Assembler *as) {
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
             QSharedPointer<Symbol> s = parserSymTab->Lookup(value, m_op.m_lineNumber);
-            //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
+            //            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_loadType);
             if (s!=nullptr)
                 t= s->getTokenType();
         }
@@ -103,14 +103,14 @@ TokenType::Type NodeVar::getType(Assembler *as) {
         TokenType::Type t = m_op.m_type;
         if (parserSymTab != nullptr) {
             QSharedPointer<Symbol> s = parserSymTab->Lookup(value, m_op.m_lineNumber);
-//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_forceType);
+//            qDebug() << "NodeVar::getType "<< s->m_name << TokenType::getType(s->getTokenType()) << " with forcetype " << TokenType::getType(m_loadType);
             if (s!=nullptr)
                 t= s->getTokenType();
 
         }
-        //qDebug() << "Forcetype = " << TokenType::getType(m_forceType);
-        if ((m_forceType!=TokenType::NADA))// && (t!=TokenType::POINTER && m_expr==nullptr))
-            return m_forceType;
+        //qDebug() << "Forcetype = " << TokenType::getType(m_loadType);
+        if ((m_loadType!=TokenType::NADA))// && (t!=TokenType::POINTER && m_expr==nullptr))
+            return m_loadType;
 
         return t;
     }
@@ -126,8 +126,8 @@ TokenType::Type NodeVar::getType(Assembler *as) {
 
 
 
-    if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
-        return m_forceType;
+    if (m_loadType!=TokenType::NADA && t!=TokenType::POINTER)
+        return m_loadType;
 
 //    qDebug() <<   " " + TokenType::getType(t);
 
@@ -157,15 +157,15 @@ TokenType::Type NodeVar::getArrayType(Assembler *as)
 
     }
 */
-/*    if (m_forceType!=TokenType::NADA && t!=TokenType::POINTER)
-        return m_forceType;
+/*    if (m_loadType!=TokenType::NADA && t!=TokenType::POINTER)
+        return m_loadType;
 */
     return t;
 }
 
 bool NodeVar::isPointer(Assembler *as)
 {
-    if (m_forceType==TokenType::POINTER)
+    if (m_loadType==TokenType::POINTER)
         return true;
     return as->m_symTab->Lookup(value, m_op.m_lineNumber)->getTokenType()==TokenType::POINTER;
 

@@ -489,8 +489,8 @@ void CodeGen6809::Mul16x8(QSharedPointer<Node> node) {
 void CodeGen6809::Div16x8(QSharedPointer<Node> node) {
     as->Comment("16x16 div");
 
-    node->m_left->setForceType(TokenType::INTEGER);
-    node->m_right->setForceType(TokenType::INTEGER);
+    node->m_left->setLoadType(TokenType::INTEGER);
+    node->m_right->setLoadType(TokenType::INTEGER);
     LoadVariable(node->m_right);
 
     as->Asm("tfr x,y");
@@ -853,8 +853,8 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
 {
 //    if (node->m_op.m_type!=TokenType::PLUS && node->m_op.m_type!=TokenType::MINUS)
   //      ErrorHandler::e.Error("Only + and - are currently implemented",node->m_op.m_lineNumber);
-   // node->m_right->setForceType(TokenType::INTEGER);
-    node->m_left->setForceType(TokenType::INTEGER);
+   // node->m_right->setLoadType(TokenType::INTEGER);
+    node->m_left->setLoadType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::PLUS) {
         if (node->m_right->isPureNumeric() && !node->m_right->isReference()) {
             LoadVariable(node->m_left);
@@ -902,7 +902,7 @@ void CodeGen6809::BinOp16(QSharedPointer<Node> node)
 void CodeGen6809::AssignVariable(QSharedPointer<NodeAssign> node)
 {
     if (!node->m_left->isWord(as)) {
-        node->m_right->setForceType(TokenType::BYTE);
+        node->m_right->setLoadType(TokenType::BYTE);
     }
     AbstractCodeGen::AssignVariable(node);
 }
@@ -1299,7 +1299,7 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
         as->Asm("ldx "+addr+node->getValue(as));
     }
 //    as->Asm("leax d,x");
-    if (node->m_forceType==TokenType::INTEGER && node->getArrayType(as)==TokenType::BYTE) {
+    if (node->getLoadType()==TokenType::INTEGER && node->getArrayType(as)==TokenType::BYTE) {
         as->Comment("Forcing data data from byte array to be integer ");
         as->Asm("ldb "+shift+",x");
         as->Asm("lda #0");
@@ -1310,7 +1310,7 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
         if (node->getArrayType(as)==TokenType::INTEGER)
         {
             as->Asm("ldx "+shift+",x");
-            if (node->m_forceType==TokenType::BYTE) {
+            if (node->getLoadType()==TokenType::BYTE) {
                 as->Comment("load from integer array, force result to be byte");
                 as->Asm("tfr x,d");
                 //as->Asm("exg a,b");
@@ -1319,7 +1319,7 @@ void CodeGen6809::LoadPointer(QSharedPointer<NodeVar> node) {
         }
         else
         {
-            if (node->m_forceType==TokenType::INTEGER) {
+            if (node->getLoadType()==TokenType::INTEGER) {
                     as->Comment("Forcing data data from byte array to be integer ");
                     as->Asm("ldb "+shift+",x");
                     as->Asm("lda #0");
@@ -1397,7 +1397,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
         as->Variable(val, isOK);*/
         if (node->getOrgType(as)==TokenType::BYTE || node->getOrgType(as)==TokenType::BOOLEAN) {
 
-            if (node->m_forceType == TokenType::INTEGER) {
+            if (node->getLoadType() == TokenType::INTEGER) {
                 // OOps byte but must be integer
                 as->Comment("Forcing byte to be integer ");
  //               if (dstack==0)
@@ -1420,10 +1420,10 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
         }
         else {
             as->Comment("integer assignment NodeVar");
-            if (node->m_forceType == TokenType::BYTE) {
+            if (node->getLoadType() == TokenType::BYTE) {
                 as->Comment("Force integer to be byte");
                 as->Asm("ldb "+val+"+1");
-             //   node->setForceType(TokenType::NADA);
+             //   node->setLoadType(TokenType::NADA);
                 node->m_castType = TokenType::INTEGER;
                 return;
             }
@@ -1509,7 +1509,7 @@ void CodeGen6809::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     //    bool disable16bit =false;
 
-    if (node->getOrgType(as)!=TokenType::INTEGER && node->m_forceType == TokenType::INTEGER) {
+    if (node->getOrgType(as)!=TokenType::INTEGER && node->getLoadType() == TokenType::INTEGER) {
 //        as->Asm("ldy #0 ; lhs is byte, but integer required");
     }
     // Optimization : ldx #3, lda a,x   FIX
@@ -1788,7 +1788,7 @@ void CodeGen6809::LoadIndex(QSharedPointer<Node> node, TokenType::Type arrayType
             as->Asm("ldd "+ref+node->getValue(as));
     }
     else {
-        node->setForceType(TokenType::INTEGER);
+        node->setLoadType(TokenType::INTEGER);
         if (!node->isPure())
             dstack++;
         node->Accept(this);
@@ -1898,7 +1898,7 @@ bool CodeGen6809::AssignPointer(QSharedPointer<NodeAssign> node) {
     // Generic expression
 
     node->m_right->forceWord();
-    node->m_right->setForceType(TokenType::INTEGER);
+    node->m_right->setLoadType(TokenType::INTEGER);
     as->Term();
     node->m_right->Accept(this);
     as->Term();
@@ -2289,7 +2289,7 @@ void CodeGen6809::HackPointer( QSharedPointer<Node> n)
         //return;
         // simply hack value
         v->value = zp;
-        v->setForceType(TokenType::POINTER);
+        v->setLoadType(TokenType::POINTER);
         v->m_op.m_type=TokenType::POINTER;
         Token t = v->m_op;
         t.m_type = TokenType::INTEGER;
@@ -2438,7 +2438,7 @@ void CodeGen6809::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPo
     //        if (nodeA->isWord(as))
     //          ErrorHandler::e.Error("Integer compares not supported yet on the 6809",nodeA->m_op.m_lineNumber);
     if (nodeA->isWord(as))
-        nodeB->setForceType(TokenType::INTEGER);
+        nodeB->setLoadType(TokenType::INTEGER);
 
     as->ClearTerm();
     nodeB->Accept(this);

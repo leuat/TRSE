@@ -15,14 +15,14 @@ CodeGenZ80::CodeGenZ80()
  *
  */
 void CodeGenZ80::Handle16bitShift(QSharedPointer<NodeBinOP> node)
-{   node->m_left->setForceType(TokenType::INTEGER);
+{   node->m_left->setLoadType(TokenType::INTEGER);
     node->m_left->Accept(this);
     //    as->Asm("ld l,a");
     //    as->Asm("ld h,0");
     // sorry!
     if (!node->m_right->isPureNumeric()){
         node->m_right->setCastType(TokenType::BYTE);
-        node->m_right->setForceType(TokenType::BYTE);
+        node->m_right->setLoadType(TokenType::BYTE);
         auto skip = as->NewLabel("16_bit_shift_skip");
         if (!node->m_right->isPure())
             as->Asm("push hl");
@@ -151,7 +151,7 @@ void CodeGenZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
         QString ax = "hl";
         if (step!=nullptr) {
             as->Comment("; 16 bit counter with STEP");
-            step->setForceType(TokenType::INTEGER);
+            step->setLoadType(TokenType::INTEGER);
             step->Accept(this);
             //            as->Asm("ex de,hl");
             ExDeHl();
@@ -296,7 +296,7 @@ void CodeGenZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointe
         ExDeHl();
     }
     LoadVariable(var); // Load address into hl
-    //    as->Comment(";Comment : "+node->m_left->isWord(as)+TokenType::getType(node->m_left->m_forceType));
+    //    as->Comment(";Comment : "+node->m_left->isWord(as)+TokenType::getType(node->m_left->getLoadType()));
     if (!var->isWord(as)) {
         as->Comment(";var is 8-bit, compensate");
         as->Asm("ld l,a");
@@ -378,7 +378,7 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
 
 
                 as->Comment("Special case for integer<>0");
-                node->m_left->setForceType(TokenType::INTEGER);
+                node->m_left->setLoadType(TokenType::INTEGER);
                 node->m_left->Accept(this);
                 as->Term();
                 as->Asm("ld a,h");
@@ -399,16 +399,16 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
         p="p";
     as->Term();
     if (node->m_right->isPureNumeric())
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     if (node->m_left->isPureNumeric())
-        node->m_left->setForceType(TokenType::INTEGER);
+        node->m_left->setLoadType(TokenType::INTEGER);
 
     if (node->m_op.m_type!=TokenType::LESSEQUAL) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);
         as->Asm("push hl");
         //        as->Asm("ex de,hl");
-        node->m_left->setForceType(TokenType::INTEGER);
+        node->m_left->setLoadType(TokenType::INTEGER);
         node->m_left->Accept(this);
         as->Asm("pop de");
         //        as->Asm("sbc hl,de");
@@ -457,14 +457,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 {
 
     if (node->m_left->isWord(as))
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
 
     if (node->m_right->isWord(as))
-        node->m_left->setForceType(TokenType::INTEGER);
+        node->m_left->setLoadType(TokenType::INTEGER);
 
     //    as->Comment("Cast type " + TokenType::getType(node->m_castType));
     if (node->m_castType==TokenType::INTEGER)
-        node->setForceType(TokenType::INTEGER);
+        node->setLoadType(TokenType::INTEGER);
 
 
     if (node->isPureNumeric()) {
@@ -485,7 +485,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
     if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::DIV) {
 
         if (node->m_op.m_type == TokenType::DIV) {
-            //            node->m_right->setForceType(TokenType::BYTE);
+            //            node->m_right->setLoadType(TokenType::BYTE);
             //            ErrorHandler::e.Error("Generic division is not implemented yet!",  node->m_op.m_lineNumber);
             //            as->Asm("cwd");
             if (node->m_left->isWord(as) && node->m_right->isWord(as)) {
@@ -513,14 +513,14 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
             node->m_right->Accept(this);
             as->Asm("ld c,a");
-            node->m_left->setForceType(TokenType::INTEGER);
+            node->m_left->setLoadType(TokenType::INTEGER);
             node->m_left->Accept(this);
             //               as->Asm("clc");
             as->Asm("call div_16x8");
             as->Asm("ld a,l");
 //            node->m_returnType = TokenType::BYTE;
-            if (node->m_forceType==TokenType::NADA)
-                 node->m_left->setForceType(TokenType::NADA);
+            if (node->getLoadType()==TokenType::NADA)
+                 node->m_left->setLoadType(TokenType::NADA);
 
 
             return;
@@ -541,8 +541,8 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 node->SwapNodes();
             }
             node->m_left->setCastType(TokenType::NADA);
-            node->m_left->setForceType(TokenType::BYTE);
-            //node->m_left->setForceType(TokenType::INTEGER);
+            node->m_left->setLoadType(TokenType::BYTE);
+            //node->m_left->setLoadType(TokenType::INTEGER);
 
             as->Comment("Generic mul");
             // make sure 16 bit number is loaded first
@@ -569,7 +569,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             node->m_left->Accept(this);
             if (!node->m_right->isPureNumeric())
                 as->Asm("push af");
-            //            node->m_right->setForceType(TokenType::BYTE);
+            //            node->m_right->setLoadType(TokenType::BYTE);
             // Push pop de since not pure
 
             node->m_right->Accept(this);
@@ -669,7 +669,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
     if (node->m_right->isWord(as) || node->m_right->m_castType==TokenType::INTEGER || node->m_left->getWriteType()==TokenType::INTEGER || node->m_right->getWriteType()==TokenType::INTEGER) {
         node->m_right->setCastType(TokenType::INTEGER);
         node->m_left->setCastType(TokenType::INTEGER);
-  //      node->m_left->setForceType(TokenType::INTEGER);
+  //      node->m_left->setLoadType(TokenType::INTEGER);
         as->Comment("Generic 16-bit binop");
         //        if (node->m_right->isWord(as))
         //          as->Asm("ld d,0");
@@ -904,7 +904,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         else
             as->Asm("ld a,"+node->getValue(as));
 
-        /*      if (node->m_forceType==TokenType::INTEGER) {
+        /*      if (node->getLoadType()==TokenType::INTEGER) {
             as->Comment("; Byte, but forced to be integer");
         }
 */
@@ -972,7 +972,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 
 /*    as->Comment("Casttype : "+TokenType::getType(node->m_castType)) ;
-    as->Comment("Forcetype : "+TokenType::getType(node->m_forceType)) ;
+    as->Comment("Forcetype : "+TokenType::getType(node->getLoadType())) ;
     as->Comment("Writetype : "+TokenType::getType(node->getWriteType())) ;*/
     if (!node->isWord(as) )
         as->Asm("ld a,"+node->getValue(as) );
@@ -1074,7 +1074,7 @@ void CodeGenZ80::AssignToRegister(QSharedPointer<NodeAssign> node)
 void CodeGenZ80::LoadIndex(QSharedPointer<Node> n, TokenType::Type arrayType)
 {
     auto node = qSharedPointerDynamicCast<NodeVar>(n);
-    node->m_expr->setForceType(TokenType::INTEGER);
+    node->m_expr->setLoadType(TokenType::INTEGER);
 
     node->m_expr->Accept(this);
     ExDeHl();
@@ -1178,11 +1178,11 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
     if (var->hasArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
 /*        as->Comment("Casttype : "+TokenType::getType(var->m_castType)) ;
-        as->Comment("Forcetype : "+TokenType::getType(var->m_forceType)) ;
+        as->Comment("Forcetype : "+TokenType::getType(var->getLoadType())) ;
         as->Comment("Writetype : "+TokenType::getType(var->getWriteType())) ;*/
 
         if (var->m_expr->isPureNumeric()) {
-            node->m_right->setForceType(TokenType::INTEGER);
+            node->m_right->setLoadType(TokenType::INTEGER);
             node->m_right->Accept(this);
             as->Asm("ld a,l");
             as->Asm("ld ["+var->getValue(as)+"+"+var->m_expr->getValue(as)+"],a");
@@ -1273,7 +1273,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
     as->Comment("generic assign ");
     QString name = var->getValue(as);
     if (var->isWord(as)  ||node->m_right->getWriteType()==TokenType::INTEGER) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
         as->Term();
@@ -1385,7 +1385,7 @@ void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 {
 
     if (node->m_left->isWord(as)) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
     as->ClearTerm();
 
@@ -1510,7 +1510,7 @@ void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
     as->Comment("generic assign ");
     QString name = var->getValue(as);
     if (var->isWord(as)) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
         if (var->hasArrayIndex())  { // Storing in 16 bit array index
@@ -1561,7 +1561,7 @@ void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
 */
 QString CodeGenZ80::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
-    if (n->m_forceType==TokenType::INTEGER)
+    if (n->getLoadType()==TokenType::INTEGER)
         return "hl";
     if (n->getType(as)==TokenType::INTEGER)
         return "hl";
@@ -1822,13 +1822,13 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
     /*    if (var->isPointer(as) && var->m_writeType==TokenType::INTEGER && var->hasArrayIndex()) {
         as->Comment("Writing an integer class pointer");
         as->ClearTerm();
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);
         as->Term();
         as->Asm("push hl");
         LoadAddress(var);
         as->Asm("push hl");
-        var->m_expr->setForceType(TokenType::INTEGER);
+        var->m_expr->setLoadType(TokenType::INTEGER);
         var->m_expr->Accept(this);
         as->Term();
         as->Asm("pop de");
@@ -1875,7 +1875,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             if (bop->m_left->getValue(as)==var->getValue(as)) {
                 as->Comment(";generic pointer/integer P:=P+(expr) add expression");
 
-                bop->setForceType(TokenType::INTEGER);
+                bop->setLoadType(TokenType::INTEGER);
                 if (bop->m_right->isPure()) {
                     as->Comment("RHS is pure ");
                     if (bop->m_right->isPureNumeric() && (bop->m_right->getValueAsInt(as)&0xFF)==0) {
@@ -1952,7 +1952,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         }
         // Generic : Doesn't really work
         as->Comment("Generic assign 16-bit pointer");
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);
         as->Comment("Store 16-bit address");
         StoreAddress(var);

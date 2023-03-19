@@ -648,7 +648,7 @@ void CodeGen6502::HandleRestBinOp(QSharedPointer<Node> node) {
     //    qDebug() << node->m_op.m_value;
     // check if both are constant values:
 
-    if (!isWord16 && !node->isLong(as) && node->m_forceType!=TokenType::LONG) {
+    if (!isWord16 && !node->isLong(as) && node->getLoadType()!=TokenType::LONG) {
         as->Comment("8 bit binop");
         // Optimizing check: if right var is number, then cut losses
         if (HandleSingleAddSub(node)) {
@@ -720,7 +720,7 @@ void CodeGen6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
     as->ClearTerm();
     //    as->Comment("Load 16 bit var IS WORD "+QString::number(node->isWord(as)));
 
-    as->Comment("Forcetype:  "+TokenType::getType(node->m_castType));
+//    as->Comment("WOOT:  "+TokenType::getType(node->m_castType));
     if (node->isLong(as) || (node->m_castType==TokenType::LONG)) {
   //      as->Comment("Var is LONG");
 //        as->ClearTerm();
@@ -728,10 +728,8 @@ void CodeGen6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
         as->Asm("ldx "+getValue8bit(node,2));
         as->Asm("lda "+getValue8bit(node,false));
         return;
-
     }
-
-    if (node->isWord(as))
+    if (node->isWord(as) || (node->m_castType==TokenType::INTEGER))
         as->Asm("ld"+reg+" "+getValue8bit(node,true));
     as->Asm("lda "+getValue8bit(node,false));
 }
@@ -810,12 +808,12 @@ void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
 {
     node->DispatchConstructor(as,this);
 
-    as->Comment("Forcetype: "+TokenType::getType(node->m_forceType));
+    as->Comment("Forcetype: "+TokenType::getType(node->getLoadType()));
     QString val = getValue(node);
-    if ((node->m_forceType==TokenType::INTEGER || node->m_forceType==TokenType::LONG) && node->m_val<=255) {
+    if ((node->m_castType==TokenType::INTEGER ||node->getLoadType()==TokenType::INTEGER || node->getLoadType()==TokenType::LONG) && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
-    if (node->m_forceType==TokenType::LONG && node->m_val<=65535) {
+    if (node->getLoadType()==TokenType::LONG && node->m_val<=65535) {
         as->Asm("ldx #0   ; Force long");
     }
 
@@ -1496,7 +1494,7 @@ bool CodeGen6502::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
     if (var->m_writeType==TokenType::INTEGER) {
         as->Comment("Writing an integer class pointer");
-        //        node->m_right->setForceType(TokenType::INTEGER);
+        //        node->m_right->setLoadType(TokenType::INTEGER);
         as->ClearTerm();
         node->m_right->Accept(this);
         as->Term();
@@ -1681,9 +1679,9 @@ void CodeGen6502::LoadPointer(QSharedPointer<NodeVar> node) {
     if (m=="")
         m="lda ";
     as->Asm(m+  ""+p1+"" + getValue(node)+""+p2+",y");
-    if (node->m_forceType == TokenType::INTEGER)
+    if (node->getLoadType() == TokenType::INTEGER)
         as->Asm("ldy #0 ; Loading 8-bit pointer, but return type should be integer");
-    if (node->m_forceType == TokenType::LONG) {
+    if (node->getLoadType() == TokenType::LONG) {
         as->Asm("ldy #0 ; Loading 8-bit pointer, but return type should be integer");
         as->Asm("ldx #0 ; Loading 8-bit pointer, but return type should be integer");
     }
@@ -1774,9 +1772,9 @@ void CodeGen6502::dispatch(QSharedPointer<NodeVar> node)
             return;
         }
 
-        if ((node->m_fake16bit || node->m_forceType==TokenType::INTEGER) && s->getTokenType()==TokenType::BYTE )
+        if ((node->m_fake16bit || node->getLoadType()==TokenType::INTEGER) && s->getTokenType()==TokenType::BYTE )
             as->Asm("ldy #0 ; Fake 16 bit");
-        if ((node->m_fake16bit || node->m_forceType==TokenType::LONG) && s->getTokenType()==TokenType::BYTE ) {
+        if ((node->m_fake16bit || node->getLoadType()==TokenType::LONG) && s->getTokenType()==TokenType::BYTE ) {
             as->Asm("ldy #0 ; Fake 24 bit");
             as->Asm("ldx #0 ; Fake 24 bit");
         }
@@ -1879,10 +1877,10 @@ void CodeGen6502::LoadByteArray(QSharedPointer<NodeVar> node) {
     }
     //    bool disable16bit =false;
 
-    if (((node->getOrgType(as)!=TokenType::INTEGER) && node->m_forceType == TokenType::INTEGER)) {
+    if (((node->getOrgType(as)!=TokenType::INTEGER) && node->getLoadType() == TokenType::INTEGER)) {
         as->Asm("ldy #0 ; lhs is byte, but integer required");
     }
-    as->Comment("CAST type "+TokenType::getType(node->m_forceType));
+    as->Comment("CAST type "+TokenType::getType(node->getLoadType()));
     if (node->m_writeType==TokenType::BYTE) {
        // as->Asm("ldy #0 ; lhs is byte, but integer required");
         as->Asm("ldy #0");
@@ -2339,7 +2337,7 @@ bool CodeGen6502::AssignPointer(QSharedPointer<NodeAssign> node) {
     // Generic expression
 
     node->m_right->forceWord();
-    node->m_right->setForceType(TokenType::INTEGER);
+    node->m_right->setLoadType(TokenType::INTEGER);
     as->Term();
     node->m_right->Accept(this);
     as->Term();
@@ -2438,7 +2436,7 @@ bool CodeGen6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPoint
     if (!(rterm->m_op.m_type==TokenType::PLUS || rterm->m_op.m_type==TokenType::MINUS))
         return false;
     //    qDebug()<< rterm->m_right->getValue(as);
-    /*    qDebug() << "isSimpleAeqAOpB16Bit" << var->isWord(as) << rterm->m_right->is8bitValue(as) << TokenType::getType(node->m_forceType) ;
+    /*    qDebug() << "isSimpleAeqAOpB16Bit" << var->isWord(as) << rterm->m_right->is8bitValue(as) << TokenType::getType(node->getLoadType()) ;
 
     qDebug() << "Is pure " <<rterm->m_right->isPure() << " is variable " << variable;
     qDebug() << "Is word " <<var->isWord(as) << " is 8bit " << rterm->m_right->is8bitValue(as);
@@ -2447,7 +2445,7 @@ bool CodeGen6502::isSimpleAeqAOpB16Bit(QSharedPointer<NodeVar> var, QSharedPoint
 
 
 
-    /*    if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !(node->m_forceType==TokenType::INTEGER)) {
+    /*    if (var->isWord(as) &&  rterm->m_right->is8bitValue(as) && !(node->getLoadType()==TokenType::INTEGER)) {
   //      qDebug() << "WHOO";
         //          qDebug() << "Cont";
 
@@ -2830,7 +2828,7 @@ void CodeGen6502::HackPointer(QSharedPointer<Node> n)
         //return;
         // simply hack value
         v->value = zp;
-        v->setForceType(TokenType::POINTER);
+        v->setLoadType(TokenType::POINTER);
         v->m_op.m_type=TokenType::POINTER;
         Token t = v->m_op;
         t.m_type = TokenType::INTEGER;
@@ -3050,7 +3048,7 @@ void CodeGen6502::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPo
     //        if (nodeA->isWord(as))
     //          ErrorHandler::e.Error("Integer compares not supported yet on the 6502",nodeA->m_op.m_lineNumber);
     if (nodeA->isWord(as))
-        nodeB->setForceType(TokenType::INTEGER);
+        nodeB->setLoadType(TokenType::INTEGER);
     as->ClearTerm();
     nodeB->Accept(this);
     as->Term();

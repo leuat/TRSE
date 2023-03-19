@@ -78,6 +78,8 @@ protected:
     bool m_classApplied = false;
     static uint s_nodeCount;
     MemoryBlockInfo m_blockInfo;
+    TokenType::Type m_loadType = TokenType::NADA;
+
 public:
     friend class Parser;
     // Token contains node type data and values from the parser
@@ -88,7 +90,6 @@ public:
     // Is the current node a register? (applicable to variables only)
     bool m_isRegister = false;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
-    TokenType::Type m_forceType = TokenType::NADA;
     bool m_isBoolean = false;
     TokenType::Type m_castType = TokenType::NADA;
     bool m_isWord = false;
@@ -112,6 +113,7 @@ public:
     // Makes sure that the node and blocks are in sync
     int MaintainBlocks(Assembler* as);
 
+    virtual TokenType::Type getLoadType() { return m_loadType ;}
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
 
@@ -127,8 +129,8 @@ public:
     virtual bool containsPointer(Assembler* as) {return false;}
 
     // Force a specific type to be set for this node
-    virtual void setForceType(TokenType::Type t) {
-        m_forceType = t;
+    virtual void setLoadType(TokenType::Type t) {
+        m_loadType = t;
     }
     // Force a specific type to be set for this node
     virtual void setCastType(TokenType::Type t) {

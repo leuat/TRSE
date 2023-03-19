@@ -112,23 +112,23 @@ bool NodeBinOP::isAddress() {
 
 
 bool NodeBinOP::isWord(Assembler *as) {
-    return ((m_left->isWord(as) || m_right->isWord(as)) || (m_forceType==TokenType::INTEGER));
+    return ((m_left->isWord(as) || m_right->isWord(as)) || (m_loadType==TokenType::INTEGER));
 }
 
 bool NodeBinOP::isLong(Assembler *as) {
-    return ((m_left->isLong(as) || m_right->isLong(as)) || (m_forceType==TokenType::LONG));
+    return ((m_left->isLong(as) || m_right->isLong(as)) || (m_loadType==TokenType::LONG));
 }
 
-void NodeBinOP::setForceType(TokenType::Type t) {
+void NodeBinOP::setLoadType(TokenType::Type t) {
 //    qDebug() << "Binop set force type " << TokenType::getType(t);
-    m_forceType  =t;
-    m_left->setForceType(t);
-    m_right->setForceType(t);
+    m_loadType  =t;
+    m_left->setLoadType(t);
+    m_right->setLoadType(t);
 }
 
-/*void NodeBinOP::setForceTypeFunctions(TokenType::Type t) {
-    m_left->setForceTypeFunctions(t);
-    m_right->setForceTypeFunctions(t);
+/*void NodeBinOP::setLoadTypeFunctions(TokenType::Type t) {
+    m_left->setLoadTypeFunctions(t);
+    m_right->setLoadTypeFunctions(t);
 }*/
 void NodeBinOP::setCastType(TokenType::Type t) {
     m_left->setCastType(t);

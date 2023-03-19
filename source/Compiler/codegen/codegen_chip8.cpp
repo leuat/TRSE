@@ -143,8 +143,8 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 	auto right_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 	auto left_imm = qSharedPointerDynamicCast<NodeNumber>(node->m_left);
 	if (node->isWord(as)) {
-		auto workaround = node->m_forceType;
-		node->setForceType(TokenType::NADA);
+		auto workaround = node->getLoadType();
+		node->setLoadType(TokenType::NADA);
 
 		as->Comment("accept right");
 		node->m_right->Accept(this);
@@ -168,7 +168,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeBinOP> node)
 
 		PrintBop16(node->m_op.m_type,"V0","V1",c,d);
 		PopReg(); PopReg();
-		node->setForceType(workaround);
+		node->setLoadType(workaround);
 
 	} else if (node->m_op.m_type == TokenType::Type::PLUS || node->m_op.m_type == TokenType::Type::MINUS){
 		QString negate = node->m_op.m_type==TokenType::Type::MINUS?"-":"";
@@ -226,7 +226,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 			const auto node_m_expr_number = qSharedPointerDynamicCast<NodeNumber>(node->m_expr);
 			const bool has_index=node->hasArrayIndex() || (node_m_expr_number != nullptr && node_m_expr_number->m_val != 0) ;
 			if (has_index) {
-				node->m_expr->setForceType(TokenType::BYTE); 
+				node->m_expr->setLoadType(TokenType::BYTE); 
 				node->m_expr->Accept(this);
 				index=getReg();
 				as->Asm("LD "+index+", V0");
@@ -254,7 +254,7 @@ void CodeGenChip8::dispatch(QSharedPointer<NodeVar> node)
 			const auto node_m_expr_number = qSharedPointerDynamicCast<NodeNumber>(node->m_expr);
 			const bool has_index=node->hasArrayIndex() || (node_m_expr_number != nullptr && node_m_expr_number->m_val != 0) ;
 			if (has_index) {
-				node->m_expr->setForceType(TokenType::BYTE);
+				node->m_expr->setLoadType(TokenType::BYTE);
 				node->m_expr->Accept(this);
 				index = getReg();
 				as->Asm("LD "+index+", V0");
@@ -499,7 +499,7 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 				const bool has_index = var->hasArrayIndex() || (var_m_expr_num != nullptr && var_m_expr_num->m_val != 0);
 				QString index;
 				if (has_index) {
-					var->m_expr->setForceType(TokenType::BYTE);
+					var->m_expr->setLoadType(TokenType::BYTE);
 					var->m_expr->Accept(this);
 					index=getReg(); PushReg();
 					as->Asm("LD "+index+",V0");
@@ -553,7 +553,7 @@ bool CodeGenChip8::AssignPointer(QSharedPointer<NodeAssign> node)
 				const bool has_index=var->hasArrayIndex();
 				QString index;
 				if (has_index) {
-					var->m_expr->setForceType(TokenType::BYTE);
+					var->m_expr->setLoadType(TokenType::BYTE);
 					var->m_expr->Accept(this);
 					index=getReg(); PushReg();
 					as->Asm("LD "+index+",V0");
@@ -950,7 +950,7 @@ void CodeGenChip8::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
 void CodeGenChip8::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
 	#if 0
-	if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
+	if (nodeA->isWord(as)) nodeB->setLoadType(TokenType::INTEGER);
 	LoadVariable(nodeA);
 	QString ax = getReg();
 	PushReg();

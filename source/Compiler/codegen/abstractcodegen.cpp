@@ -52,14 +52,14 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
 {
     node->DispatchConstructor(as,this);
     /*    if (node->m_op.m_type==TokenType::INTEGER)
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     if (node->m_op.m_type==TokenType::BYTE)
-       node->m_right->setForceType(TokenType::BYTE);*/
-    node->m_right->setForceType(node->m_op.m_type);
+       node->m_right->setLoadType(TokenType::BYTE);*/
+    node->m_right->setLoadType(node->m_op.m_type);
     node->m_right->Accept(this);
-    as->Comment("WriteType : "+TokenType::getType(node->m_castType) + " " +TokenType::getType(node->m_forceType));
+    as->Comment("WriteType : "+TokenType::getType(node->m_castType) + " " +TokenType::getType(node->getLoadType()));
     //    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
-    Cast(node->m_op.m_type, node->m_forceType);
+    Cast(node->m_op.m_type, node->getLoadType());
 
 }
 /*
@@ -238,7 +238,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
     // Maintain b has same type as a
     if (nVar->m_left->isWord(as))
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
 
     // Perform block
     node->m_block->Accept(this);
@@ -525,8 +525,8 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     //    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
 
     /*    if (v->m_writeType==TokenType::INTEGER) {
-        v->setForceType(TokenType::INTEGER);
-        node->m_right->setForceType(TokenType::INTEGER);
+        v->setLoadType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
 */
     // Set force type for functions
@@ -606,10 +606,10 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     if (node->m_left->isWord(as)) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
     if (node->m_left->isLong(as))
-        node->m_right->setForceType(TokenType::LONG);
+        node->m_right->setLoadType(TokenType::LONG);
 
 
     // stack parameters
@@ -964,10 +964,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     // Return value
     if (node->m_returnValue!=nullptr) {
         if (node->m_returnType->getValue(as).toLower()=="integer") {
-            node->m_returnValue->setForceType(TokenType::INTEGER);
+            node->m_returnValue->setLoadType(TokenType::INTEGER);
         }
         if (node->m_returnType->getValue(as).toLower()=="byte") {
-            node->m_returnValue->setForceType(TokenType::BYTE);
+            node->m_returnValue->setLoadType(TokenType::BYTE);
         }
 
         as->ClearTerm();
@@ -1061,7 +1061,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
 
     ProcedureStart();
     //    if (node->m_procedure->m_returnType!=nullptr)
-    //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->m_forceType)) ;
+    //      as->Comment("Return type: "+node->m_procedure->m_returnType->getValue(as) +" with forcetype " +TokenType::getType(node->getLoadType())) ;
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
 
     if (node->m_procedure->m_returnType!=nullptr)
@@ -1465,7 +1465,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node)
 
     if (node->m_right->isPureNumeric()) {
         int s = node->getValueAsInt(as);
-        bool isWord = node->m_forceType==TokenType::INTEGER;
+        bool isWord = node->getLoadType()==TokenType::INTEGER;
         QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
 
         if (node->m_op.m_type==TokenType::MINUS) {

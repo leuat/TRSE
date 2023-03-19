@@ -91,7 +91,7 @@ void Methods6809::Modulo(Assembler *as)
 
 
     if (m_node->m_params[0]->isWord(as)) {
-        m_node->m_params[1]->setForceType(TokenType::INTEGER);
+        m_node->m_params[1]->setLoadType(TokenType::INTEGER);
         LoadVar(as,1);
         as->Term();
         QString val = as->StoreInTempVar("val","word");

@@ -262,6 +262,7 @@ end;
 
 procedure MTest1();
 begin
+	asm(";balle");
 	s1.a := 100;
 	s1.b := 100;
 	s1.MulTest1();	

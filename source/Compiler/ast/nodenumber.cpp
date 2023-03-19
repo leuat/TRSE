@@ -59,7 +59,7 @@ bool NodeNumber::isPureNumericOrAddress()
 
 bool NodeNumber::isWord(Assembler *as) {
 //    return (m_val>=256 && m_op.m_type == TokenType::INTEGER_CONST);
-    if (m_forceType == TokenType::INTEGER)
+    if (m_loadType == TokenType::INTEGER)
         return true;
     if (isReference())
         return true;
@@ -100,7 +100,7 @@ QString NodeNumber::getValue8bit(Assembler *as, int isHi) {
 
 bool NodeNumber::is8bitValue(Assembler* as)
 {
-    //  if (m_forceType==TokenType::INTEGER)
+    //  if (m_loadType==TokenType::INTEGER)
     //        return false;
     return m_val<256 && m_op.m_type == TokenType::INTEGER_CONST;
 }
