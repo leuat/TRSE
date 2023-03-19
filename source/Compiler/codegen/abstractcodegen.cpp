@@ -517,14 +517,14 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
     // Get variable name
     QString vname = getValue(v);
     // Make sure write type for classes are the same
-    if (v->m_writeType==TokenType::NADA)
-        v->m_writeType = node->m_right->getWriteType();
+    if (v->m_classvariableType==TokenType::NADA)
+        v->m_classvariableType = node->m_right->getClassvariableType();
 
 
 
-    //    qDebug() <<v->value<<TokenType::getType(v->m_writeType) <<TokenType::getType(node->m_right->getWriteType());
+    //    qDebug() <<v->value<<TokenType::getType(v->m_classvariableType) <<TokenType::getType(node->m_right->getClassvariableType());
 
-    /*    if (v->m_writeType==TokenType::INTEGER) {
+    /*    if (v->m_classvariableType==TokenType::INTEGER) {
         v->setLoadType(TokenType::INTEGER);
         node->m_right->setLoadType(TokenType::INTEGER);
     }

@@ -215,13 +215,13 @@ bool NodeVar::isWord(Assembler *as) {
             return true;
         // Next one is for the z80 and 6502
         if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::PX86)
-           if (m_writeType==TokenType::INTEGER) {
+           if (m_classvariableType==TokenType::INTEGER) {
             as->Comment("IsWord TRUE pointer integer write array");
             return false;
         }
     }
-//    if (m_writeType!=TokenType::NADA)
-//        return m_writeType==TokenType::INTEGER;
+//    if (m_classvariableType!=TokenType::NADA)
+//        return m_classvariableType==TokenType::INTEGER;
     return getType(as)==TokenType::INTEGER || (getType(as)==TokenType::POINTER && m_expr==nullptr) || m_fake16bit;
     /*    return m_op.m_type==TokenType::INTEGER;
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(value, m_op.m_lineNumber);

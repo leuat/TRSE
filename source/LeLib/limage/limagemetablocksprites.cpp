@@ -82,10 +82,10 @@ void LImageMetaBlockSprites::setPixel(int x, int y, unsigned int color)
 //        if (rand()%100>98)
   //        qDebug() << QString::number(color);
 
-  //  if (m_writeType==Character)
+  //  if (m_classvariableType==Character)
         ((LMetaChunkItem*)m_items[m_current].get())->setPixel(p.x(),p.y(),m_currentChar,m_img->m_bitMask);
 
-//    if (m_writeType==Color)
+//    if (m_classvariableType==Color)
         ((LMetaChunkItem*)m_items[m_current].get())->setPixelAttrib(p.x(),p.y(),(color&3) |m_currentAttribute,m_img->m_bitMask);
 
 }

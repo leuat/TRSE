@@ -127,7 +127,7 @@ void LImageMetaChunk::CopyFrom(LImage *mc)
 //        m_current = img->m_current;
 //        m_current = 0;
         m_currentAttribute = img->m_currentAttribute;
-        m_writeType = img->m_writeType;
+        m_classvariableType = img->m_classvariableType;
         //m_currentBank = img->m_currentBank;
         m_footer = img->m_footer;
         m_charWidthDisplay = img->m_charWidthDisplay;

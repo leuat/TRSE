@@ -1492,9 +1492,9 @@ void CodeGen6809::LoadByteArray(QSharedPointer<NodeVar> node) {
     bool unknownType = false;
     bool scale = true;
     //    Disable16bit();
-    if (node->m_writeType!=TokenType::NADA) {
-        s->m_arrayType = node->m_writeType;
-        s->m_arrayTypeText = TokenType::getType(node->m_writeType);
+    if (node->m_classvariableType!=TokenType::NADA) {
+        s->m_arrayType = node->m_classvariableType;
+        s->m_arrayTypeText = TokenType::getType(node->m_classvariableType);
         scale = false;
     }
 
@@ -1678,7 +1678,7 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
 
             }
             else {
-//                if (node->m_writeType==TokenType::BYTE)
+//                if (node->m_classvariableType==TokenType::BYTE)
                 as->Asm("stb " + getValue(node) + "+"+ getValue(node->m_expr));
             }
             //                as->Asm("tya");
@@ -1688,7 +1688,7 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             //if regular array
             QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(node->m_expr);
             as->Comment("Storing to a pointer");
-            //            as->Comment("Writetype: " +TokenType::getType(node->m_writeType));
+            //            as->Comment("Writetype: " +TokenType::getType(node->m_classvariableType));
 
 
             as->ClearTerm();
@@ -1716,7 +1716,7 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             as->Asm("stb ,x");
 
 
-            /*            if (node->getArrayType(as)==TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
+            /*            if (node->getArrayType(as)==TokenType::INTEGER || node->m_classvariableType==TokenType::INTEGER) {
                 if (pa=="") {
                     as->Asm(tya);
                     as->Asm("sta " + getValue(node)+"+1,"+ secondReg);
@@ -1744,12 +1744,12 @@ void CodeGen6809::StoreVariable(QSharedPointer<NodeVar> node) {
             as->Asm("stb " + getValue(node));
             return;
         }
-        if (t == TokenType::INTEGER || node->m_writeType==TokenType::INTEGER) {
+        if (t == TokenType::INTEGER || node->m_classvariableType==TokenType::INTEGER) {
 
             as->Asm("stx " + getValue(node));
             return;
         }
-        if (t == TokenType::POINTER || node->m_writeType==TokenType::INTEGER) {
+        if (t == TokenType::POINTER || node->m_classvariableType==TokenType::INTEGER) {
 
             as->Asm("stx " + getValue(node));
             return;
@@ -2473,7 +2473,7 @@ bool CodeGen6809::StoreVariableSimplified(QSharedPointer<NodeAssign> assignNode)
 
     if (!(!node->isWord(as) && expr->isPure() && node->m_expr!=nullptr))
         return false;
-    if (node->m_writeType != TokenType::BYTE)
+    if (node->m_classvariableType != TokenType::BYTE)
         return false;
 
     //    as->Comment("Simplified storevariable");

@@ -48,7 +48,7 @@ public:
     bool m_ignoreLookup = false;
     bool m_scaleApplied = false; // used for class array index scaling in parser
     bool m_hasGlobalFlag = false;
-    TokenType::Type m_writeType = TokenType::NADA;
+    TokenType::Type m_classvariableType = TokenType::NADA;
     bool m_isArrayInClass = false;
     NodeVar(Token t);
 
@@ -59,7 +59,7 @@ public:
 
     void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override;
 
-    TokenType::Type getWriteType()  override { return m_writeType; }
+    TokenType::Type getClassvariableType()  override { return m_classvariableType; }
 
     TokenType::Type getOrgType(Assembler *as) override;
 

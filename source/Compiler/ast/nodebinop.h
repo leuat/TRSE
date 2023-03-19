@@ -66,7 +66,7 @@ public:
     bool isPurePointer(Assembler *as) override {
         return m_left->isPurePointer(as) && m_right->isPurePointer(as);
     }
-    TokenType::Type getWriteType()  override;
+    TokenType::Type getClassvariableType()  override;
 
     bool isPointer(Assembler *as) override
     {

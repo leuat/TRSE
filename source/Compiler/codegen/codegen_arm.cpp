@@ -496,10 +496,10 @@ void CodeGenARM::ProcedureEnd() {
     }
 
 
-    if (var->m_writeType==TokenType::INTEGER) {
+    if (var->m_classvariableType==TokenType::INTEGER) {
         node->m_right->setLoadType(TokenType::INTEGER);
     }
-    if (var->m_writeType==TokenType::LONG)
+    if (var->m_classvariableType==TokenType::LONG)
         node->m_right->setLoadType(TokenType::LONG);
 
 
@@ -576,7 +576,7 @@ void CodeGenARM::ProcedureEnd() {
         // TO DO: Optimize special cases
 
         as->ClearTerm();
-        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_writeType));
+        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_classvariableType));
         if (var->isWord(as))
             node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);

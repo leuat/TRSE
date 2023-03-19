@@ -51,12 +51,12 @@ void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp
         m_right->ReplaceInline(as,inp);
 }
 
-TokenType::Type Node::getWriteType() {
+TokenType::Type Node::getClassvariableType() {
     TokenType::Type t1=TokenType::NADA,t2=TokenType::NADA;
     if (m_left!=nullptr)
-        t1 = m_left->getWriteType();
+        t1 = m_left->getClassvariableType();
     if (m_left!=nullptr)
-        t2 = m_left->getWriteType();
+        t2 = m_left->getClassvariableType();
 
     if (t1!=TokenType::NADA) return t1;
     if (t2!=TokenType::NADA) return t2;

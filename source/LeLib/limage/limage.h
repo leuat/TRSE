@@ -220,7 +220,7 @@ public:
 //    unsigned int m_border=0, m_background=0;
 
     Type m_type = Type::QImageBitmap;
-    WriteType m_writeType = WriteType::Color;
+    WriteType m_classvariableType = WriteType::Color;
     unsigned char m_bitMask = 0b11;
     unsigned char m_scale = 2;
     unsigned char m_noColors = 4;
@@ -433,7 +433,7 @@ public:
     virtual int getCharAtPos(QPoint p, float zoom, QPointF center) { return 0;}
 
     virtual void SetCurrentType(WriteType wt) {
-        m_writeType = wt;
+        m_classvariableType = wt;
     }
 
     void CopyTo(LImage* img);

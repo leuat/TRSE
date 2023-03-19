@@ -135,12 +135,12 @@ void NodeBinOP::setStoreType(TokenType::Type t) {
     m_right->setStoreType(t);
 }
 
-TokenType::Type NodeBinOP::getWriteType() {
-    if (m_left->getWriteType()==TokenType::LONG || m_right->getWriteType()==TokenType::LONG)
+TokenType::Type NodeBinOP::getClassvariableType() {
+    if (m_left->getClassvariableType()==TokenType::LONG || m_right->getClassvariableType()==TokenType::LONG)
         return TokenType::LONG;
-    if (m_left->getWriteType()==TokenType::INTEGER || m_right->getWriteType()==TokenType::INTEGER)
+    if (m_left->getClassvariableType()==TokenType::INTEGER || m_right->getClassvariableType()==TokenType::INTEGER)
         return TokenType::INTEGER;
-    if (m_left->getWriteType()==TokenType::BYTE || m_right->getWriteType()==TokenType::BYTE)
+    if (m_left->getClassvariableType()==TokenType::BYTE || m_right->getClassvariableType()==TokenType::BYTE)
         return TokenType::BYTE;
     return TokenType::NADA;
 }

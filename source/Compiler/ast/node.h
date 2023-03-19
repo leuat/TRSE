@@ -165,7 +165,7 @@ public:
 
     virtual QString getAddress() {return "";}
     // Writetype is used for writing data to class objects
-    virtual TokenType::Type getWriteType();
+    virtual TokenType::Type getClassvariableType();
 
     virtual void forceWord() {}
     virtual QString getTypeText(Assembler* as) {return "";}

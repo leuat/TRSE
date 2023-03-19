@@ -261,14 +261,14 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
             if (node->m_expr->isPureNumeric()) {
                 //                as->Comment("Data size:"+QString::number(node->getArrayDataSize(as)));
                 QString scale = "*"+QString::number(node->getArrayDataSize(as));
-                if (node->m_writeType!=TokenType::NADA) {
-                    if (node->m_writeType==TokenType::BYTE)
+                if (node->m_classvariableType!=TokenType::NADA) {
+                    if (node->m_classvariableType==TokenType::BYTE)
                         scale = "";
                 }
 
-                //                as->Comment("Scale : "+scale + " " + TokenType::getType(node->m_writeType));
+                //                as->Comment("Scale : "+scale + " " + TokenType::getType(node->m_classvariableType));
                 as->Asm("mov ax, word [es:di + "+node->m_expr->getValue(as)+scale+"]");
-                if (node->m_writeType==TokenType::LONG || node->isLong(as)) {
+                if (node->m_classvariableType==TokenType::LONG || node->isLong(as)) {
                     as->Asm("mov bx, word [es:di + "+node->m_expr->getValue(as)+"+2]");
                     as->Asm("mov es,bx");
                     as->Asm("mov di,ax");
@@ -302,7 +302,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
             if (node->isWord(as))
                 as->Asm("mov ax, word [es:di]; Is word");
             else
-                if (node->isLong(as) || node->getWriteType()==TokenType::LONG) {
+                if (node->isLong(as) || node->getClassvariableType()==TokenType::LONG) {
                     as->Asm("mov ax, word [es:di] ; is long" );
                     as->Asm("mov cx, word [es:di+2]" );
                     as->Asm("mov es,cx");
@@ -326,7 +326,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
         node->m_expr->setLoadType(TokenType::INTEGER);
 
 
-        if (!node->isPointer(as) && node->m_expr!=nullptr && node->getWriteType()==TokenType::LONG) {
+        if (!node->isPointer(as) && node->m_expr!=nullptr && node->getClassvariableType()==TokenType::LONG) {
             // Read / write long bytes from non-pointer
             node->m_expr->setLoadType(TokenType::INTEGER);
             as->Comment("Writetype LONG to non-pointer");
@@ -536,8 +536,8 @@ QString CodeGenX86::getIndexScaleVal( QSharedPointer<Node> var)
     /*    auto v = qSharedPointerDynamicCast<NodeVar>(var);
 
     if (v!=nullptr) {
-        as->Comment(TokenType::getType(v->m_writeType));
-        if (v->m_writeType==TokenType::NADA)
+        as->Comment(TokenType::getType(v->m_classvariableType));
+        if (v->m_classvariableType==TokenType::NADA)
             return "1";
     }*/
     if (var->isWord(as))
@@ -748,14 +748,14 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
         // TO DO: Optimize special cases
 
         as->ClearTerm();
-        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_writeType) + " right is pointer: " +QString::number(node->m_right->isPointer(as)));
+        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_classvariableType) + " right is pointer: " +QString::number(node->m_right->isPointer(as)));
         if (var->isWord(as))
             node->m_right->setLoadType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
 
         as->Term();
-        if (var->m_expr->isPureNumeric() && node->getWriteType()!=TokenType::LONG) {
+        if (var->m_expr->isPureNumeric() && node->getClassvariableType()!=TokenType::LONG) {
             as->Asm("les di, ["+var->getValue(as)+"]");
             as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(var)+"],"+getAx("a",var));
             return true;
@@ -898,7 +898,7 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
             if (!node->m_right->isStringList(as))
                 if (!node->m_right->isPointer(as))
                     if ((node->m_right->isWord(as) || node->m_right->isByte(as))) {
-                        if (node->m_right->getWriteType()!=TokenType::LONG)
+                        if (node->m_right->getClassvariableType()!=TokenType::LONG)
                             ErrorHandler::e.Error("Trying to assign a non-pointer / non-reference / non-long to pointer '"+var->getValue(as)+"'",var->m_op.m_lineNumber);
                     }
 

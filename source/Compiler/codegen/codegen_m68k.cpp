@@ -759,11 +759,11 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
 
     // Classes return types
     if (nv!=nullptr) {
-        if (nv->m_writeType==TokenType::BYTE)
+        if (nv->m_classvariableType==TokenType::BYTE)
             return ".b";
-        if (nv->m_writeType==TokenType::INTEGER)
+        if (nv->m_classvariableType==TokenType::INTEGER)
             return ".w";
-        if (nv->m_writeType==TokenType::LONG)
+        if (nv->m_classvariableType==TokenType::LONG)
             return ".l";
     }
 

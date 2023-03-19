@@ -223,14 +223,14 @@ void C64FullScreenChar::fromQImage(QImage *img, LColorList &lst)
                 m_currentChar=0xA0;
 */
             /*
-            m_writeType=Color;
+            m_classvariableType=Color;
             setPixel(i*sx,j*sy,col);
-            m_writeType=Character;
+            m_classvariableType=Character;
             setPixel(i*sx,j*sy,col);
             */
-            m_writeType=Color;
+            m_classvariableType=Color;
             setPixel(i*8,j*8,col);
-            m_writeType=Character;
+            m_classvariableType=Character;
             setPixel(i*8,j*8,col);
         }
     //   Reorganize();
@@ -316,7 +316,7 @@ bool C64FullScreenChar::KeyPress(QKeyEvent *e)
     SetColor(((C64Screen*)m_items[m_current].get())->m_data[1],0);
 
     if (e->key()==Qt::Key_C) {
-        m_writeType=Character;
+        m_classvariableType=Character;
         if (m_currentChar==0x20) {
             m_currentChar = m_tempChar;
         }
@@ -361,9 +361,9 @@ void C64FullScreenChar::setPixel(int x, int y, unsigned int color)
         x*=2;
 
 
-    if (m_writeType==Character || m_forcePaintColorAndChar)
+    if (m_classvariableType==Character || m_forcePaintColorAndChar)
         ((C64Screen*)m_items[m_current].get())->m_rawData[x/8+ (y/8)*m_charWidth] = m_currentChar;
-    if (m_writeType==Color || m_forcePaintColorAndChar)
+    if (m_classvariableType==Color || m_forcePaintColorAndChar)
         ((C64Screen*)m_items[m_current].get())->m_rawColors[x/8+ (y/8)*m_charWidth] = color;
 
 
@@ -468,7 +468,7 @@ void C64FullScreenChar::CopyFrom(LImage *mc)
         m_current = c->m_current;
 
         m_charset = c->m_charset;
-        m_writeType = c->m_writeType;
+        m_classvariableType = c->m_classvariableType;
         m_currentChar = c->m_currentChar;
 
     }

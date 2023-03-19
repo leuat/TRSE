@@ -536,7 +536,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
                 as->Comment("Swapping nodes");
                 node->SwapNodes();
             }
-            if (node->m_right->getWriteType()==TokenType::BYTE && node->m_left->getWriteType()==TokenType::INTEGER) {
+            if (node->m_right->getClassvariableType()==TokenType::BYTE && node->m_left->getClassvariableType()==TokenType::INTEGER) {
                 as->Comment("Swapping nodes");
                 node->SwapNodes();
             }
@@ -546,7 +546,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
             as->Comment("Generic mul");
             // make sure 16 bit number is loaded first
-            if (!node->isWord(as) && node->getWriteType()!=TokenType::INTEGER) {
+            if (!node->isWord(as) && node->getClassvariableType()!=TokenType::INTEGER) {
                 node->m_right->Accept(this);
                 as->Asm("ld e,a");
                 as->Asm("ld d,0");
@@ -666,7 +666,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
         return;
     }
 
-    if (node->m_right->isWord(as) || node->m_right->getStoreType()==TokenType::INTEGER || node->m_left->getWriteType()==TokenType::INTEGER || node->m_right->getWriteType()==TokenType::INTEGER) {
+    if (node->m_right->isWord(as) || node->m_right->getStoreType()==TokenType::INTEGER || node->m_left->getClassvariableType()==TokenType::INTEGER || node->m_right->getClassvariableType()==TokenType::INTEGER) {
         node->m_right->setStoreType(TokenType::INTEGER);
         node->m_left->setStoreType(TokenType::INTEGER);
   //      node->m_left->setLoadType(TokenType::INTEGER);
@@ -787,7 +787,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         return;
     }
 
-    TokenType::Type wt = node->getWriteType();
+    TokenType::Type wt = node->getClassvariableType();
     if (node->m_expr!=nullptr) {
         if (node->m_expr->isPureNumeric() && node->m_expr->getValueAsInt(as)==0) {
             as->Asm("; Optimization : zp[0]");
@@ -797,7 +797,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             if (node->isReference())
                 return;
             as->Asm("ld a,[hl]");
-            if ((node->isWord(as) && node->getArrayType(as)==TokenType::INTEGER) && node->m_writeType==TokenType::NADA ) {//|| node->getWriteType()==TokenType::INTEGER*/) {
+            if ((node->isWord(as) && node->getArrayType(as)==TokenType::INTEGER) && node->m_classvariableType==TokenType::NADA ) {//|| node->getClassvariableType()==TokenType::INTEGER*/) {
                 wt = TokenType::INTEGER;
 /*                as->Asm("ld e,a");
                 as->Asm("inc hl");
@@ -808,7 +808,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("ld h,[hl]");
                 as->Asm("ld l,a");
             }
-            if (node->m_writeType==TokenType::INTEGER) {//|| node->getWriteType()==TokenType::INTEGER*/) {
+            if (node->m_classvariableType==TokenType::INTEGER) {//|| node->getClassvariableType()==TokenType::INTEGER*/) {
 //                as->Asm("ld e,a");
                 as->Asm("inc hl");
                 as->Asm("ld h,[hl]");
@@ -816,7 +816,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
                 wt = TokenType::INTEGER;
 //                ExDeHl();
             }
-            if (node->m_writeType==TokenType::NADA) // not in a class
+            if (node->m_classvariableType==TokenType::NADA) // not in a class
                 Cast(node->getArrayType(as), node->getStoreType());
             else
                 Cast(wt, node->getStoreType());
@@ -845,9 +845,9 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         LoadAddress(node);
         as->Asm("add hl,de");
 
-        as->Comment("TYPETEST : "+TokenType::getType(node->getArrayType(as)) + "  WriteType : "+TokenType::getType(node->m_writeType));
-        //        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
-        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_writeType==TokenType::NADA)
+        as->Comment("TYPETEST : "+TokenType::getType(node->getArrayType(as)) + "  WriteType : "+TokenType::getType(node->m_classvariableType));
+        //        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_classvariableType==TokenType::NADA)
+        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER ) && node->m_classvariableType==TokenType::NADA)
             as->Asm("add hl,de");
 
   //      as->Comment(" IS REF " +QString::number(node->isReference())+ "  "+node->getValue(as));
@@ -857,7 +857,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
         as->Asm("ld a,[hl]");
 
         //        as->Comment("LoadVar Testing if '"+node->getValue(as)+"' is word : "+QString::number(node->isWord(as)));
-        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER) && node->m_writeType==TokenType::NADA) // More complicated: Load integer byte array into de
+        if ((node->getArrayType(as)==TokenType::INTEGER || node->getArrayType(as)==TokenType::POINTER) && node->m_classvariableType==TokenType::NADA) // More complicated: Load integer byte array into de
         {
 //            as->Asm("ld e,a");
             as->Asm("inc hl");
@@ -866,7 +866,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             wt = TokenType::INTEGER;
 //            ExDeHl();
         }
-        if ( node->m_writeType==TokenType::INTEGER) // More complicated: Load integer byte array into de
+        if ( node->m_classvariableType==TokenType::INTEGER) // More complicated: Load integer byte array into de
         {
 //            as->Asm("ld e,a");
             as->Asm("inc hl");
@@ -875,12 +875,12 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
             wt = TokenType::INTEGER;
 //            ExDeHl();
         }
-        if (node->m_writeType==TokenType::NADA) // not in a class
+        if (node->m_classvariableType==TokenType::NADA) // not in a class
             Cast(node->getArrayType(as), node->getStoreType());
         else
         {
 //            if (node->getStoreType()!=TokenType::NADA)
-//           as->Comment("WTF going on here: "+TokenType::getType(node->m_writeType) + " " +TokenType::getType(node->getStoreType()));
+//           as->Comment("WTF going on here: "+TokenType::getType(node->m_classvariableType) + " " +TokenType::getType(node->getStoreType()));
 
             Cast(wt, node->getStoreType());
         }
@@ -973,7 +973,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
 
 /*    as->Comment("Casttype : "+TokenType::getType(node->getStoreType())) ;
     as->Comment("Forcetype : "+TokenType::getType(node->getLoadType())) ;
-    as->Comment("Writetype : "+TokenType::getType(node->getWriteType())) ;*/
+    as->Comment("Writetype : "+TokenType::getType(node->getClassvariableType())) ;*/
     if (!node->isWord(as) )
         as->Asm("ld a,"+node->getValue(as) );
     else
@@ -1176,10 +1176,10 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
         return false;
 
 
-    if (var->hasArrayIndex() && var->m_writeType==TokenType::INTEGER && !var->isPointer(as)) {
+    if (var->hasArrayIndex() && var->m_classvariableType==TokenType::INTEGER && !var->isPointer(as)) {
 /*        as->Comment("Casttype : "+TokenType::getType(var->getStoreType())) ;
         as->Comment("Forcetype : "+TokenType::getType(var->getLoadType())) ;
-        as->Comment("Writetype : "+TokenType::getType(var->getWriteType())) ;*/
+        as->Comment("Writetype : "+TokenType::getType(var->getClassvariableType())) ;*/
 
         if (var->m_expr->isPureNumeric()) {
             node->m_right->setLoadType(TokenType::INTEGER);
@@ -1272,7 +1272,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
 
     as->Comment("generic assign ");
     QString name = var->getValue(as);
-    if (var->isWord(as)  ||node->m_right->getWriteType()==TokenType::INTEGER) {
+    if (var->isWord(as)  ||node->m_right->getClassvariableType()==TokenType::INTEGER) {
         node->m_right->setLoadType(TokenType::INTEGER);
 
         node->m_right->Accept(this);
@@ -1686,7 +1686,7 @@ void CodeGenZ80::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess
     as->Comment("Binary clause core: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
 
-    if (node->isWord(as) || node->getWriteType()==TokenType::INTEGER) {
+    if (node->isWord(as) || node->getClassvariableType()==TokenType::INTEGER) {
         BinaryClauseInteger(node,lblSuccess, lblFailed, offPage);
         return;
     }
@@ -1819,7 +1819,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
 
 
 
-    /*    if (var->isPointer(as) && var->m_writeType==TokenType::INTEGER && var->hasArrayIndex()) {
+    /*    if (var->isPointer(as) && var->m_classvariableType==TokenType::INTEGER && var->hasArrayIndex()) {
         as->Comment("Writing an integer class pointer");
         as->ClearTerm();
         node->m_right->setLoadType(TokenType::INTEGER);
@@ -1966,7 +1966,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         // Much simpler. set value.
         if (!node->m_right->isPure()) {
             node->m_right->Accept(this);
-            if (node->m_right->isWord(as) || node->m_right->getWriteType()==TokenType::INTEGER)
+            if (node->m_right->isWord(as) || node->m_right->getClassvariableType()==TokenType::INTEGER)
                 as->Asm("push hl");
             else
                 as->Asm("push af");
@@ -1984,7 +1984,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             if (var->m_expr->isPureNumeric()) {
                 as->Comment("; index is pure number optimization");
                 int scale = var->getArrayDataSize(as);
-                if (var->m_writeType!=TokenType::NADA)
+                if (var->m_classvariableType!=TokenType::NADA)
                     scale = 1;
                 as->Asm("ld de,"+Util::numToHex(var->m_expr->getValueAsInt(as)*scale));
                 as->Asm("add hl,de");
@@ -2011,16 +2011,16 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
                 }
             }
         }
-        as->Comment("Writetype: "+TokenType::getType(node->m_left->getWriteType()));
+        as->Comment("Writetype: "+TokenType::getType(node->m_left->getClassvariableType()));
         if (!node->m_right->isPure()) {
-            if (node->m_right->isWord(as) || node->m_right->getWriteType()==TokenType::INTEGER)
+            if (node->m_right->isWord(as) || node->m_right->getClassvariableType()==TokenType::INTEGER)
                 as->Asm("pop de");
             else
                 as->Asm("pop af");
         }
         else
 
-            if (node->m_left->isWord(as) || node->m_left->getWriteType()==TokenType::INTEGER) {
+            if (node->m_left->isWord(as) || node->m_left->getClassvariableType()==TokenType::INTEGER) {
                 if (node->m_right->isPure()) {
                     as->Comment("Optimization: rhs is integer, but pure");
                     if (node->m_right->isPureVariable()) {
@@ -2060,7 +2060,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             else
                 node->m_right->Accept(this);
 
-        if (node->m_right->isWord(as) || node->m_right->getWriteType()==TokenType::INTEGER) {
+        if (node->m_right->isWord(as) || node->m_right->getClassvariableType()==TokenType::INTEGER) {
             as->Asm("ld a,e");
             as->Asm("ld [hl],a"); // Store in pointer
             as->Asm("inc hl");
