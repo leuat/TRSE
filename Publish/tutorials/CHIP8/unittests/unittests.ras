@@ -6,6 +6,36 @@ Program UnitTestsAmstradCPC;
 @use "unittests/unittests"
 @use "unittests/common"
 
+/* MAIN PROGRAM */
+procedure ForLoopTest();
+begin
+	Common::Initialise("FOR LOOP");
+	ForLoop::Test1();
+	
+	ForLoop::NegativeStep1();
+/*@if SUPPORTS_FORI = "1"
+	NegativeStep2();  
+	NegativeStep3();
+@endif
+	Test1();
+@if SUPPORTS_FORI = "1"
+	Test2();
+@endif
+	Test3();
+@if SUPPORTS_FORI = "1"
+	Test4();
+@endif
+	Test5();
+	Test6();
+	Test7();
+	@ifndef X86
+	Test8();
+	@endif
+	TestBreak();
+	TestContinue();
+	*/
+	Common::WaitABit();
+end;
 
 
 procedure TestResult(s : pointer);
@@ -14,9 +44,18 @@ begin
 	Text::PrintXY(s,0,0);
 end;
 
+var
+	p : ^byte;
+	ll : integer;
 
 begin
-	//ForLoop::Exec();//	Unittests::Exec();
+	p:=#ll;
+	
+//	TestResult("SUCCESS");
+	
+//	ForLoop::Exec();//	Unittests::Exec();
+	ForLoopTest();
+	
 	if Common::unittests_status = 0 then
 		TestResult("SUCCESS")
 	else

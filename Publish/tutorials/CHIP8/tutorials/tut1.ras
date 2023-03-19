@@ -8,7 +8,8 @@ var
 	x,y,z,c,v : byte;
 	p,src : pointer;
 	s1 : string ="HELLO";
-	
+	@donotremove MainProgram_stringassignstr24
+	@donotremove Text_PrintXY
 @define CHARSET "charset.inc"
 @use "text"
 
@@ -18,7 +19,10 @@ var
 begin
 	System::Clear();
 	System::Beep(10);
-	Text::PrintXY(#s1, 0,0);
+	asm(";here");
+	Text::PrintXY("UHM", 0,0);
+
+
 	begin
 		z:=System::Random();
 //		System::DrawLine(x,x,%10000001);

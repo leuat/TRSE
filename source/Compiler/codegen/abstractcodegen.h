@@ -177,6 +177,12 @@ public:
     // Virtual methods
     // note that not all methods below are implemented on all systems.
 
+    /*
+     * Note that the methods returning a "bool" are typically used
+     * in AbstractCodegen::AssignVariable, where if a "IsSimpleIncDec" is true, the
+     * code will be written out and the assign statement is finished
+    */
+
     // assign a variable from an internal register: var := _ax;
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) {}
     // assign a register to a variable: _ax := var;
