@@ -79,6 +79,7 @@ protected:
     static uint s_nodeCount;
     MemoryBlockInfo m_blockInfo;
     TokenType::Type m_loadType = TokenType::NADA;
+    TokenType::Type m_storeType = TokenType::NADA;
 
 public:
     friend class Parser;
@@ -91,7 +92,6 @@ public:
     bool m_isRegister = false;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
     bool m_isBoolean = false;
-    TokenType::Type m_castType = TokenType::NADA;
     bool m_isWord = false;
     // Force page for conditionals (while/if/repeat until etc)
     int m_forcePage = 0;
@@ -114,6 +114,7 @@ public:
     int MaintainBlocks(Assembler* as);
 
     virtual TokenType::Type getLoadType() { return m_loadType ;}
+    virtual TokenType::Type getStoreType() { return m_storeType ;}
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
 
@@ -133,8 +134,8 @@ public:
         m_loadType = t;
     }
     // Force a specific type to be set for this node
-    virtual void setCastType(TokenType::Type t) {
-        m_castType  = t;
+    virtual void setStoreType(TokenType::Type t) {
+        m_storeType  = t;
     }
     virtual void clearComment();
     // Replaces all variables of a given name within the subnodes with another one

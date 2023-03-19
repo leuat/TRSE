@@ -60,7 +60,7 @@ public:
     bool isWord(Assembler* as) override;
 
     void setLoadType(TokenType::Type t) override;
-    void setCastType(TokenType::Type t) override;
+    void setStoreType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {
         return m_right->isPurePointer(as);

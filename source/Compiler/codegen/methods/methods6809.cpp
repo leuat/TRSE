@@ -447,7 +447,7 @@ void Methods6809::LoHi(Assembler *as, bool isHi)
         as->Asm("tfr x,d");
         as->Asm("lda #0");
     }
-    if (m_node->m_castType==TokenType::INTEGER)
+    if (m_node->getStoreType()==TokenType::INTEGER)
     {
 //        as->Asm("exg a,b");
         as->Asm("tfr d,x");

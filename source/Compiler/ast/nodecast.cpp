@@ -91,9 +91,9 @@ void NodeCast::setLoadType(TokenType::Type t) {
     m_left->setLoadTypeFunctions(t);
     m_right->setLoadTypeFunctions(t);
 }*/
-void NodeCast::setCastType(TokenType::Type t) {
-//    m_right->setCastType(t);
-    m_castType = t;
+void NodeCast::setStoreType(TokenType::Type t) {
+//    m_right->setStoreType(t);
+    m_storeType = t;
 }
 
 bool NodeCast::containsPointer(Assembler *as)

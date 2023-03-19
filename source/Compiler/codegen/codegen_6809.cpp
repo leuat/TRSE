@@ -280,7 +280,7 @@ void CodeGen6809::HandleMulDiv(QSharedPointer<Node> node) {
 
         if (node->isWord(as)) {
             Mul16x8(node);
-            Cast(TokenType::INTEGER, node->m_left->m_castType);
+            Cast(TokenType::INTEGER, node->m_left->getStoreType());
         }
         else
             EightBitMul(node);
@@ -292,7 +292,7 @@ void CodeGen6809::HandleMulDiv(QSharedPointer<Node> node) {
 
         Div16x8(node);
         // Since div always 16 bit
-//        as->Asm(";Casting? "+TokenType::getType(node->m_left->m_castType));
+//        as->Asm(";Casting? "+TokenType::getType(node->m_left->getStoreType()));
 
 
         return;
@@ -504,8 +504,8 @@ void CodeGen6809::Div16x8(QSharedPointer<Node> node) {
     as->Asm("pshs x,y");
     as->Asm("jsr UDIV16");
     as->Asm("puls x");
-    as->Comment("; CAST TYPE "+TokenType::getType(node->m_left->m_castType));
-    Cast(TokenType::INTEGER, node->m_left->m_castType);
+    as->Comment("; CAST TYPE "+TokenType::getType(node->m_left->getStoreType()));
+    Cast(TokenType::INTEGER, node->m_left->getStoreType());
 
 
 }
@@ -1178,7 +1178,7 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
 
 //    Cast(nodeA->m_left->getOrgType(as), nodeB->getOrgType(as));
     // Force casting
-    nodeB->setCastType(nodeA->m_left->getOrgType(as));
+    nodeB->setStoreType(nodeA->m_left->getOrgType(as));
 
     if (nodeA->m_left->isWord(as)) {
         Token t = nodeA->m_op;
@@ -1200,7 +1200,7 @@ void CodeGen6809::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB
     QString cmp ="cmpb ";
     as->ClearTerm();
 //    Cast(nodeA->m_left->getOrgType(as), nodeB->getOrgType(as));
-//    as->Comment("NODE B cast type: " + TokenType::getType(nodeA->m_castType));
+//    as->Comment("NODE B cast type: " + TokenType::getType(nodeA->getStoreType()));
     if (!nodeA->m_left->isPureVariable() || nodeA->m_left->hasArrayIndex()) {
         as->Comment("Compare variable is complex, storing in temp variable : "+nodeA->getValue(as));
         nodeA->m_left->Accept(this);
@@ -1383,7 +1383,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("ldx #" + val);
             }
             else {
-                if (node->m_castType==TokenType::BYTE)
+                if (node->getStoreType()==TokenType::BYTE)
                     as->Asm("ldb " + val+"+1");
                 else
                 as->Asm("ldx " + val);
@@ -1407,9 +1407,9 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
                 as->Asm("tfr d,x");
      //           if (dstack==0)
        //             as->Asm("puls d");
-                if (node->m_castType==TokenType::INTEGER)
-                    node->m_castType = TokenType::NADA;
-                //                Cast(node->getOrgType(as),node->m_castType);
+                if (node->getStoreType()==TokenType::INTEGER)
+                    node->setStoreType(TokenType::NADA);
+                //                Cast(node->getOrgType(as),node->getStoreType());
 
             }
             else {
@@ -1424,14 +1424,14 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
                 as->Comment("Force integer to be byte");
                 as->Asm("ldb "+val+"+1");
              //   node->setLoadType(TokenType::NADA);
-                node->m_castType = TokenType::INTEGER;
+                node->setStoreType(TokenType::INTEGER);
                 return;
             }
 
             as->Term("ldx "+val);
             as->Term();
-           // Cast(node->getOrgType(as),node->m_castType);
-//            as->Comment("HERE cast type: "+TokenType::getType(node->m_castType));
+           // Cast(node->getOrgType(as),node->getStoreType());
+//            as->Comment("HERE cast type: "+TokenType::getType(node->getStoreType()));
 
         }
 

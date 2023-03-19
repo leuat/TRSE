@@ -724,10 +724,10 @@ void CodeGen6502::Load16bitVariable(QSharedPointer<Node> node, QString reg)
 
     as->ClearTerm();
     as->Comment("Load16bitvariable : "+node->getValue(as));
-    if (node->isLong(as) || (node->m_castType==TokenType::LONG) || node->getLoadType()==TokenType::LONG) {
+    if (node->isLong(as) || (node->getStoreType()==TokenType::LONG) || node->getLoadType()==TokenType::LONG) {
         as->Asm("ldx "+getValue8bit(node,2));
     }
-    if (node->isWord(as) || (node->m_castType==TokenType::INTEGER) || node->getLoadType()==TokenType::LONG)
+    if (node->isWord(as) || (node->getStoreType()==TokenType::INTEGER) || node->getLoadType()==TokenType::LONG)
         as->Asm("ld"+reg+" "+getValue8bit(node,true));
 
     as->Asm("lda "+getValue8bit(node,false));
@@ -747,7 +747,7 @@ void CodeGen6502::dispatch(QSharedPointer<NodeNumber>node)
 
 //    as->Comment("Forcetype: "+TokenType::getType(node->getLoadType()));
     QString val = getValue(node);
-    if ((node->m_castType==TokenType::INTEGER ||node->getLoadType()==TokenType::INTEGER || node->getLoadType()==TokenType::LONG) && node->m_val<=255) {
+    if ((node->getStoreType()==TokenType::INTEGER ||node->getLoadType()==TokenType::INTEGER || node->getLoadType()==TokenType::LONG) && node->m_val<=255) {
         as->Asm("ldy #0   ; Force integer assignment, set y = 0 for values lower than 255");
     }
     if (node->getLoadType()==TokenType::LONG && node->m_val<=65535) {
@@ -2016,7 +2016,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
     as->ClearTerm();
     //   qDebug() << "OAD NUMBER";
 //    as->Comment("Loadvariable numbr");
-    if (node->m_castType==TokenType::LONG) {
+    if (node->getStoreType()==TokenType::LONG) {
         as->Asm("lda "+node->getValue8bit(as,false));
         as->Asm("ldy "+node->getValue8bit(as,true));
         as->Asm("ldx "+node->getValue8bit(as,2));
@@ -2398,7 +2398,7 @@ bool CodeGen6502::isSimpleAeqAOpB(QSharedPointer<NodeVar> var, QSharedPointer<No
     as->BinOP(rterm->m_op.m_type);
     rterm->m_right->Accept(this);
     as->Term();
-//    Cast(var->getType(as), rterm->m_castType);
+//    Cast(var->getType(as), rterm->getStoreType());
     StoreVariable(var);
     return true;
 }

@@ -57,8 +57,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeCast> node)
        node->m_right->setLoadType(TokenType::BYTE);*/
     node->m_right->setLoadType(node->m_op.m_type);
     node->m_right->Accept(this);
-    as->Comment("WriteType : "+TokenType::getType(node->m_castType) + " " +TokenType::getType(node->getLoadType()));
-    //    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->m_castType);
+    as->Comment("WriteType : "+TokenType::getType(node->getStoreType()) + " " +TokenType::getType(node->getLoadType()));
+    //    Cast(node->m_right->getOrgType(as), node->m_op.m_type, node->m_right->getStoreType());
     Cast(node->m_op.m_type, node->getLoadType());
 
 }
@@ -365,12 +365,12 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
     //    StoreVariable(VarOrNum(node->m_left));
     //  as->Comment("RHS is byte: "+Util::numToHex(node->m_right->isByte(as)) + " "+node->m_right->getTypeText(as) + " " +TokenType::getType(node->m_right->getType(as)));
     //as->Comment("LHS is byte: "+Util::numToHex(node->m_left->isByte(as)) + " "+node->m_left->getTypeText(as) + " " +TokenType::getType(node->m_left->getType(as)));
-    //    as->Comment("CastType: "+TokenType::getType(n));
+    //    as->Comment("StoreType: "+TokenType::getType(n));
 
     if (node->m_right->getTypeText(as)=="BYTE")
-        Cast(TokenType::BYTE,node->m_right->m_castType);
+        Cast(TokenType::BYTE,node->m_right->getStoreType());
     if (node->m_right->getTypeText(as)=="INTEGER")
-        Cast(TokenType::INTEGER,node->m_right->m_castType);
+        Cast(TokenType::INTEGER,node->m_right->getStoreType());
     StoreVariable(VarOrNum(node->m_left));
 }
 
@@ -533,22 +533,22 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node)
 
 
     if (v->isByte(as) || v->getArrayType(as)==TokenType::BYTE) {
-        node->m_right->setCastType(TokenType::BYTE);
+        node->m_right->setStoreType(TokenType::BYTE);
     }
     if (v->isWord(as) || v->getArrayType(as)==TokenType::INTEGER)
-        node->m_right->setCastType(TokenType::INTEGER);
+        node->m_right->setStoreType(TokenType::INTEGER);
 
     if (v->isLong(as) || v->getArrayType(as)==TokenType::LONG)
-        node->m_right->setCastType(TokenType::LONG);
+        node->m_right->setStoreType(TokenType::LONG);
 
     /*    if (v->isByte(as)) {
 //        as->Comment("SETTING BYTE CAST TYPE");
-        node->m_right->setCastType(TokenType::BYTE);
+        node->m_right->setStoreType(TokenType::BYTE);
     }
     if (v->isWord(as) )
-        node->m_right->setCastType(TokenType::INTEGER);
+        node->m_right->setStoreType(TokenType::INTEGER);
     if (v->isLong(as) )
-        node->m_right->setCastType(TokenType::LONG);
+        node->m_right->setStoreType(TokenType::LONG);
 */
 
     // ****** REGISTERS TO
@@ -1065,8 +1065,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     as->Asm(getCallSubroutine() + " " + as->jumpLabel(node->m_procedure->m_procName));
 
     if (node->m_procedure->m_returnType!=nullptr)
-        if (node->m_procedure->m_returnType->m_op.m_type!=node->m_castType) {
-            Cast(node->m_procedure->m_returnType->m_op.m_type, node->m_castType);
+        if (node->m_procedure->m_returnType->m_op.m_type!=node->getStoreType()) {
+            Cast(node->m_procedure->m_returnType->m_op.m_type, node->getStoreType());
         }
     ProcedureEnd();
     PopLostStack(lostStack);

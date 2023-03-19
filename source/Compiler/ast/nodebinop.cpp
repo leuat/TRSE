@@ -130,9 +130,9 @@ void NodeBinOP::setLoadType(TokenType::Type t) {
     m_left->setLoadTypeFunctions(t);
     m_right->setLoadTypeFunctions(t);
 }*/
-void NodeBinOP::setCastType(TokenType::Type t) {
-    m_left->setCastType(t);
-    m_right->setCastType(t);
+void NodeBinOP::setStoreType(TokenType::Type t) {
+    m_left->setStoreType(t);
+    m_right->setStoreType(t);
 }
 
 TokenType::Type NodeBinOP::getWriteType() {
