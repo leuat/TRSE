@@ -104,7 +104,7 @@ void LImageEffects::RenderCircles(LImageEffect *le)
 
             if (dynamic_cast<C64FullScreenChar*>(m_image)!=nullptr) {
 
-                m_image->m_writeType=LImage::Character;
+                m_image->m_classvariableType=LImage::Character;
 
                 m_image->m_currentChar = k;
                 m_image->setPixel(x,y,k);

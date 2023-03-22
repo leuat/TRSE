@@ -1,0 +1,37 @@
+program Tutorial8;
+@use "screen"
+@use "memory"
+@use "system/str"
+@use "text"
+@use "system"
+@use "compression/compression"
+@use "gfx/genericlevels"
+
+@addemulatorparam "-nothrottle"
+
+var
+	@export "resources/images/tiles.flf" "resources/images/tiles.bin" 320
+	tiles : incbin("resources/images/tiles.bin");
+	@export "resources/images/levels.flf" "resources/images/levels.bin" 256
+	levels : incbin("resources/images/levels.bin");
+
+	i:byte;
+	palette : incbin("resources/images/tiles_palette.bin");
+	src : pointer;
+	
+
+	
+begin
+	System::Init();
+	// 320x225 4-colour 
+	Screen::SetBitmapMode(Screen::BPL_128, 3);
+	Tiles::SetTileLoc(#tiles);
+	Memory::Fill16(#Screen::gfx, 0, 128*225);
+	
+	Screen::SetPalette(#palette, 16);
+	
+	GenericLevels::ReadHeader(#levels);
+	// Render first level in upper-left corner
+	GenericLevels::RenderLevel(0,0, 8,8);
+	loop();
+end.

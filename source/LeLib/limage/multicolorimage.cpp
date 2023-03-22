@@ -955,6 +955,278 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
     }
     file.write(data);
 }
+
+
+/*
+   Exports sprite data as code in procedures to draw it
+
+   It takes three strategies:
+   1. Identify a group of the same data values, this offers opportunity to do one LDA followed by either LDY or INY
+   2. Identify unique values and attempt to optimise ASM with INY instead of LDY (size benefit, both use same number of cycles)
+   3. Discards 0 (zero) values as these do not need to be drawn, saves time and space like the disk drive on a Tardis.
+
+   The end result is some specific code that draws the bitmap data for the sprite in an efficient way
+
+*/
+void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString pointerName, QString asmOperation, int start, int width, int height, int isMulticolor)
+{
+    //QByteArray charByte;
+
+    struct charData
+    {
+        short val;
+        int pos;
+    };
+
+    charData d[255]; // sorted array on values - priority for groups of same data
+
+    QVector<PixelChar*> pcList;
+
+    f << "// This is an auto-generated file created by @VBMCompileChunk.\n// Do not edit. Ensure this file is not open in the editor when building.\n\n";
+
+    for (int i=0;i<width;i++) { // x
+
+        int nextLine = 0;
+
+        for (int j=0; j<height; j++) { // y
+
+            // Convert to POS in charset:
+            int x = i; // % m_charWidthDisplay;
+            int y = j; // ((i/m_charWidthDisplay));
+            int pos = x+(y*m_charWidthDisplay) + start;
+
+            //qDebug() <<i <<j <<"-" << x << y << pos;
+
+            // check in bounds
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<8;i++) {
+
+                    short val = 0;
+
+                    // VIC20 and Multicolor mode - swap bit
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
+                    {
+                       val = PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i]));
+                    }
+                    else
+                    {
+                        val = PixelChar::reverse(pc.p[i]);
+                    }
+
+                    // don't add character data of 0 because when drawing sprite
+                    if (val != 0){
+                        d[nextLine].pos = j+i; d[nextLine].val = val; // this will be sorted on char value
+                        nextLine++;
+                    }
+
+                }
+                pos += m_charWidthDisplay;
+
+                // generate procedure
+
+                f<<"@donotremove "+ procName+"_"+QString::number(i) +"\n";
+                f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
+                f<<"begin\n    asm ; draw "+ QString::number(nextLine) +" lines\n\n";
+
+                int lpos = -1; // used to store last y position in sprite drawing (what line to draw to)
+
+                // process unique data
+                for (int k = 0; k <nextLine; k++){
+
+                    int p = d[k].pos;
+
+                    f << "; row "+QString::number(p) + "\n";
+
+                    if ( lpos == -1 )
+                        f<< "    ldy #" + QString::number(p) + " ; start of data\n";
+                    else if ( p == lpos+1 )
+                        f<< "    iny ; next\n";
+                    else
+                        f<< "    ldy #" + QString::number(p) + "; skip ahead\n";
+
+                    f<< "    lda #"+Util::numToHex( d[k].val ) + "\n";
+                    if (asmOperation != "") f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                    f<< "    sta ("+ pointerName +"),y\n";
+
+                    lpos = p;
+
+                }
+                f<<"\n";
+
+                f<<"    end; // asm\nend;\n\n";
+
+                /*
+                 // debug - all values from u
+                for (int k = 0; k <nextLine; k++){
+                        f<< "pos "+ QString::number(d[k].pos) +" char="+ Util::numToHex(d[k].val) + "\n";
+                }
+                */
+            }
+
+        } // y
+
+    } // x
+
+    f<<"\n\n// Lookup table for LBM8\n";
+    f<<"var\n";
+    f<<"    " + procName + ": array[] of integer = (\n        ";
+    for (int i=0;i<width;i++) {
+        f << "#" + procName+"_"+QString::number(i);
+        if (i!=width-1) f << ", ";
+        if (i != 0 && i % 4 == 0) f << "\n        ";
+    }
+    f<<"\n    );\n";
+
+}
+/* previous version where I tried to reduce the number of LDA's for groups of data, but could not use as ORA / EOR operations broke that
+void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString pointerName, QString asmOperation, int start, int width, int height, int isMulticolor)
+{
+    //QByteArray charByte;
+
+    struct charData
+    {
+        short val;
+        int pos;
+    };
+
+    charData d[255]; // sorted array on values - priority for groups of same data
+    charData u[255]; // sorted array on char line/row position - priority for unique data
+
+    QVector<PixelChar*> pcList;
+
+    f << "// This is an auto-generated file created by @VBMCompileChunk.\n// Do not edit. Ensure this file is not open in the editor when building.\n\n";
+
+    for (int i=0;i<width;i++) { // x
+
+        int nextLine = 0;
+
+        for (int j=0; j<height; j++) { // y
+
+            // Convert to POS in charset:
+            int x = i; // % m_charWidthDisplay;
+            int y = j; // ((i/m_charWidthDisplay));
+            int pos = x+(y*m_charWidthDisplay) + start;
+
+            //qDebug() <<i <<j <<"-" << x << y << pos;
+
+            // check in bounds
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<8;i++) {
+
+                    short val = 0;
+
+                    // VIC20 and Multicolor mode - swap bit
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
+                    {
+                       val = PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i]));
+                    }
+                    else
+                    {
+                        val = PixelChar::reverse(pc.p[i]);
+                    }
+
+                    // don't add character data of 0 because when drawing sprite
+                    if (val != 0){
+                        d[nextLine].pos = j+i; d[nextLine].val = val; // this will be sorted on char value
+                        u[nextLine].pos = j+i; u[nextLine].val = val; // this will remain in row/line order
+                        nextLine++;
+                    }
+
+                }
+                pos += m_charWidthDisplay;
+
+                d[nextLine].pos = -1; // end of list
+
+                // sort array by char data values (allows us to get groups of data together)
+                for (int ii = 0; ii < nextLine; ++ii){
+                   for (int jj = ii + 1; jj < nextLine; ++jj){
+                      if (d[ii].val > d[jj].val){
+                         charData a = d[ii];
+                         d[ii] = d[jj];
+                         d[jj] = a;
+                      }
+                   }
+                }
+
+                // generate procedure
+
+                f<<"@donotremove "+ procName+"_"+QString::number(i) +"\n";
+                f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
+                f<<"begin\n    asm ; draw "+ QString::number(nextLine) +" lines\n\n";
+
+                short last = 0; // used to store last character
+                int lpos = 0; // used to store last y position in sprite drawing (what line to draw to)
+
+                // process Grouped data
+                for (int k = 0; k <=nextLine; k++){
+                    if ((last == d[k].val || d[k+1].val == d[k].val) && k != nextLine)
+                    {
+                        int p = d[k].pos;
+                        if (lpos != 0 && lpos+1 == p )
+                            f<< "    iny\n";
+                        else
+                            f<< "    ldy #" + QString::number(p) + "\n";
+
+                        if (last != d[k].val) f<< "    ; group\n    lda #"+Util::numToHex( d[k].val ) + "\n";
+                        f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                        f<< "    sta ("+ pointerName +"),y\n";
+                        lpos = d[k].pos;
+                    }
+                    else
+                    {
+                        d[k].val = 0; // remove from list
+                    }
+                    last = d[k].val;
+                }
+
+                f<<"\n    ; unique\n";
+
+                // process unique data
+                for (int k = 0; k <nextLine; k++){
+
+                    // make sure it is not in the sorted d list
+                    bool found = false;
+                    for (int kk = 0; kk < nextLine; kk++)
+                        if (u[k].val == d[kk].val) found = true;
+
+                    if (!found) {
+
+                        int p = u[k].pos;
+                        if (lpos != 0 && lpos+1 == p )
+                            f<< "    iny\n";
+                        else
+                            f<< "    ldy #" + QString::number(p) + "\n";
+
+                        f<< "    lda #"+Util::numToHex( u[k].val ) + "\n";
+                        f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                        f<< "    sta ("+ pointerName +"),y\n";
+                        lpos = u[k].pos;
+                    }
+                }
+                f<<"\n";
+
+                f<<"    end; // asm\nend;\n\n";
+            }
+
+        } // y
+
+    } // x
+
+    f<<"\n\n// Lookup table for LBM8\n";
+    f<<"var\n";
+    f<<"    " + procName + ": array[] of integer = (\n        ";
+    for (int i=0;i<width;i++) {
+        f << "#" + procName+"_"+QString::number(i);
+        if (i!=width-1) f << ", ";
+        if (i != 0 && i % 4 == 0) f << "\n        ";
+    }
+    f<<"\n    );\n";
+
+}
+*/
+
 /*bool SortFunc(const int &s1, const int &s2)
 {
     return s1 < s2;

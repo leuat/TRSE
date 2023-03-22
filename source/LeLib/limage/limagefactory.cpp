@@ -116,9 +116,10 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageCOCO3(colorType);
     if (t == LImage::THOMSON)
         return new LImageThomson(colorType);
-    if (t == LImage::TIMG) {
+    if (t == LImage::TIMG)
         return new LImageTIMGen(colorType);
-    }
+    if (t == LImage::LevelEditorGeneric)
+        return new LImageLevelGeneric(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

@@ -1,0 +1,85 @@
+program InsideTorus;
+
+@use "screen"
+
+
+var  
+	val,val2,c2x, c2y,ax, ay,time,t2,t : byte;
+	x,y,shift,i : byte;
+	dst,zp,src,per : ^byte;
+	// mini sine table
+	const width : byte = 32;
+	const height : byte = 180;	
+	// The tables must be aligned at $xx00
+//    siny : array[width] of byte at $7F00; 
+//	sinx : array[height] of byte at $7E00; 
+	sin : array[256] of byte = buildsinetable(127);
+
+	data : incbin("data/smooth_data.bin", $7F00);
+	@perlinnoise "data/perlin160.dat" 16 16 2 1 1 20 128 50 
+	perlin0 : incbin("data/perlin160.dat", $7E00);
+	
+	map : incbin("data/combined.bin");
+
+procedure RenderEffect();
+begin
+	src:=#map+31;// + (sin[time*4]>>2);
+	per := #perlin0;	
+	t:=time;
+	for y:=0 to height step 2  offpage do 
+	begin
+		dst:=Screen::ytab[y + shift];
+		asm("
+		
+			ld de,[dst]
+			ld bc,[src]
+			ld ix,time ; sin table
+			ld a,[ix]
+			ld ixl, a
+;			ld a,[t]
+;			ld c,a
+			ld hl,[per] 
+			
+			repeat 32
+			; load data			
+			ld a,[bc]
+			; add time
+			add a,ixl
+			ld l,a
+			; lookup in perlin
+			ldi
+			dec hl
+			
+			repend
+		");
+		src+=32;
+	end;
+
+end;
+
+procedure FixPerlinTable();
+begin
+	per:=#perlin0;
+	src:=#data;
+	for i:=0 to 256 do
+	begin
+		x:=per[i];
+		per[i]:=src[x];
+	end;
+end;
+
+
+
+begin
+	Screen_BorderColor(0);
+	Screen::ClearScreen(0,$43);
+	FixPerlinTable();
+	while (true) do
+	begin
+
+		RenderEffect();
+		time+=1;
+		shift:=(shift+1)&1;
+	end;
+
+end.

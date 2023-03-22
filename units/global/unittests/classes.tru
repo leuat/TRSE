@@ -9,16 +9,35 @@ var
 		@ifdef X86
 		str: pointer;
 		@endif
-		
+		b : integer;
 		function getValue() : integer;
 		begin
 //			Common::DebugValue(this.str);
 			StrItem::getValue := this.str;
 		end;
+		
+		procedure Init( ss1 : integer);
+		begin
+			this.str := ss1;
+		end;
+		procedure MulTest1();
+		begin
+			this.b:=this.b*this.a;
+		end;
+		procedure MulTest2();
+		begin
+			this.b:=this.a*this.b;
+		end;
+		procedure DivTest1();
+		begin
+			this.b:=this.b/this.a;
+		end;
 //		c : array[3] of byte;
 	end;
-	
-	
+	s1 : StrItem;	
+	ps1 : pointer of StrItem;
+
+		
 	StringList = class
 		items : array[16] of StrItem;	
 		curLen: byte;
@@ -153,8 +172,6 @@ begin
 	Vars::pm.pos.minis[1].IncA(); // calculates a+=b, so A should be 30
 		
 	
-	
-	
 
 	if (Vars::pm.pos.minis[1].a=30) then Common::PASS() else Common::FAIL();
 end;
@@ -199,7 +216,6 @@ begin
 	sl.Add("HALLO");
 	sl.Add(#text);
 	sl.Add("BALL");
-
 	zp := sl.items[2].str;
 	Vars::text := "C1:";
 
@@ -235,6 +251,67 @@ begin
 	if (Vars::v1=3+3*2) then Common::PASS() else Common::FAIL();
 end;
 
+procedure CTest11();
+begin
+	s1.Init(1000);
+	Vars::text := "C11:";
+	if (s1.str=1000) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure MTest1();
+begin
+	s1.a := 100;
+	s1.b := 100;
+	s1.MulTest1();	
+	Vars::text := "M1:";
+	if (s1.b=10000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+procedure MTest2();
+begin
+	s1.a := 200;
+	s1.b := 200;
+	s1.MulTest2();	
+	Vars::text := "M2:";
+	if (s1.b=40000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+
+procedure MTest3();
+begin
+	ps1:=#s1;
+	ps1.a := 100;
+	ps1.b := 100;
+	ps1.MulTest1();	
+	Vars::text := "M3:";
+	if (ps1.b=10000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+procedure MTest4();
+begin
+	ps1:=#s1;
+	ps1.a := 200;
+	ps1.b := 100;
+	ps1.MulTest2();	
+	Vars::text := "M4:";
+	if (ps1.b=20000) then Common::PASS() else Common::FAIL();
+	
+end;
+
+procedure DTest1();
+begin
+	ps1:=#s1;
+	ps1.b := 200;
+	ps1.a := 10;
+	ps1.DivTest1();	
+	Vars::text := "D1:";
+	if (ps1.b=20) then Common::PASS() else Common::FAIL();
+	
+end;
 
 
 procedure Exec();
@@ -254,6 +331,9 @@ begin
     CTest7(); 
     CTest8();    
     CTest9(); 
+    @ifndef X86
+    CTest11();
+    @endif
     
     CTest10();
  
@@ -273,8 +353,13 @@ begin
 //    CTestC2(); // FAILS fix
 //      CTestC2(); // FAILS fix
   @endif
-
-
+//@ifdef NOT_DEFINED_YET_FIX_THIS_UP
+	MTest1();
+	MTest2();
+	MTest3();
+	MTest4();
+	DTest1();
+//@endif
     // Fails for now - FIX UP
 	Common::WaitABit();
 

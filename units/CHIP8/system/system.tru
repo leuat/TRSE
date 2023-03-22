@@ -1,7 +1,10 @@
 unit System;
 var
-	x,y,c : byte; 
-    ptr : Integer;
+	n,x,y,c : byte; 
+	word : Integer;
+    ptr : pointer;
+	
+
 procedure Clear() inline;
 begin
 	asm("cls");
@@ -13,16 +16,43 @@ begin
 		RND V0, #FF
 	");
 end;
-procedure DrawLine(x,y,c:global byte);
+procedure DrawLine(x,y:global byte ; line : byte);
 begin 
     asm("
         LD I, System_x
         LD V1, [I]
-        LD I, System_c
+        LD I, System_line
         DRW V0, V1, 1
     ");
 end;
-procedure PutPixel(x,y:global byte ) ;
+function DrawSprite(ptr: global pointer; x,y,c : global byte) : boolean;
+begin
+    if (c<=15) then begin 
+    asm("
+        LD I, System_c 
+        LD V0, [I]
+        ADD V0, #40
+        LD I, drw_insertion_point+1
+        LD [I], V0
+
+        LD I, System_x
+        LD V1, [I]
+        LD V3, V0
+        LD V4, V1
+        LD I, System_ptr
+        LD V1, [I]
+		LD I, Inject_ptr
+		LD [I], V1
+		call Inject_LoadPointer
+    drw_insertion_point:
+        DRW V3, V4, 0
+        LD V0, VF
+        
+
+    ");
+    end;
+end;
+procedure PutPixel(x,y:global byte) inline;
 begin
     DrawLine(x,y,$80);
 end;
@@ -37,7 +67,38 @@ begin
         LD ST, V0
     ");
 end;
+procedure Wait(word : global Integer);
+begin
+    asm("
+        LD I, System_word
+        LD V1, [I]
+        LD DT, V1
+        System_wait_loop1:
+        LD V1, DT
+        SE V1, 0
+        JP System_wait_loop1
+        LD V1, 128 
 
+        System_wait_loop2:
+        SNE V0, 0
+        RET
+        LD DT, V1
+        System_wait_inner_loop_1:
+        LD V1, DT
+        SE V1, 0
+        JP System_wait_inner_loop_1
+        LD DT, V1
+        System_wait_inner_loop_2:
+        LD V1, DT
+        SE V1, 0
+        JP System_wait_inner_loop_2
+        ADD V0, -1
+        JP System_wait_loop2
+
+
+
+    ");
+end; 
 procedure PrintHexChar(x,y,c : global byte);
 
 begin
@@ -49,10 +110,31 @@ begin
         DRW V0, V1, 5 
     ");
 end;
-
+procedure PrintByte(n,x,y:global byte);
+var 
+hundreds, tens, units: byte;
+begin
+    asm("
+        LD I, System_n 
+        LD V0,[I]
+        LD I, System_hundreds
+        LD B, V0
+    ");
+    if (n>=100) then begin
+        PrintHexChar(x,y,hundreds);
+        x+=5;
+    end;
+    if (n>=10) then begin
+        PrintHexChar(x,y,tens);
+        x+=5;
+    end;
+    PrintHexChar(x,y,units);
+end;
 function WaitForKey() inline : byte;
 begin
-    asm("LD V0, K");
+    asm("
+        LD V0, K
+    ");
 end;
 
 procedure setDT(x : global byte);
@@ -67,8 +149,9 @@ end;
 
 function getDT() inline : byte;
 begin
-    asm("LD V0, DT");
-
+    asm("
+        LD V0, DT
+    ");
 end;
 
 function isKeydown(c : global byte) : boolean;
@@ -82,20 +165,5 @@ begin
         LD V0, V1
     ");
 end;
-//Moves ptr to I, this is a procedure because it requires Self Modifying code. 
-//This procedure is only used in codegen and should not be used in High Level code
-procedure loadPointer(ptr : global Integer);
-begin
-    if (ptr <= $fff) then begin
-        asm("
-        LD I, System_ptr
-        LD V1, [I]
-        ADD V0, #A0
-        LD I, load_inst
-        LD [I], V1
-    load_inst:
-        LD I, 0
-        ");
-    end;
-end;
+
 end.

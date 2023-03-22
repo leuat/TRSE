@@ -1,0 +1,107 @@
+program Image;
+@use "compression"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/graphics"
+@use "misc"
+
+@export "images/image2.flf" "images/image2.bin" 256
+
+//@addemulatorparam "-nothrottle"
+
+
+var  
+	// some plasma variables
+	val,val2,c2x, c2y,ax, ay,time,t2 : byte;
+	x,y,shift,i,t : byte;
+	dst,zp,src,per : ^byte;
+	// mini sine table
+	const width : byte = 512/4;
+	const height : byte = 100;	
+	// The tables must be aligned at $xx00
+//    siny : array[width] of byte at $7F00; 
+//	sinx : array[height] of byte at $7E00; 
+	sin : array[256] of byte = buildsinetable(127);
+
+	data : incbin("data/smooth_data.bin", $7D00);
+	@perlinnoise "data/perlin160.dat" 16 16 2 1 1 20 512  100
+	perlin0 : incbin("data/perlin160.dat", $6800);
+	
+	map : incbin("data/combined.bin");
+	tab256 : array[8] of integer= buildtable("i*256");
+
+procedure RenderEffect();
+begin
+	src:=#map + (sin[time*4]>>2);
+	dst:=$8000+28;//+32*256;
+	per := #perlin0;	
+	t:=time;
+	for x:=0 to width  offpage do 
+	begin
+		asm("
+			ld bc,[dst]
+			ld de,[src]
+			ld ix,time ; sin table
+;			ld de,data ; data lookup for screen
+			ld a,[t]
+			ld ixl,a
+			ld l,a
+			ld hl,[per] 
+			
+			
+			repeat 80
+			; load data			
+			ld a,[de]
+			inc de
+			; add time
+			add a,ixl
+			ld l,a
+			; lookup in perlin
+			ld a,[hl]
+			
+			; lookup in data[e] 
+;			ld a,[de]
+			; now out it!
+			ld c, {i*2+50}
+			out (c),a
+			
+			repend
+		");
+		src+=128;
+		dst+=256;
+	end;
+
+end;
+procedure FixPerlinTable();
+begin
+	per:=#perlin0;
+	src:=#data;
+	for i:=0 to 256 do
+	begin
+		x:=per[i];
+		per[i]:=src[x];
+	end;
+end;
+
+
+begin
+	Z80CPM::Startup();
+	System::CursorOff();
+	Screen::ClearBox(0, 0, 128, 64, 0);
+	FixPerlinTable();
+	Misc::InitKeyboardCheck(5);
+	while (Misc::keyPressed=false) do
+	begin
+
+		RenderEffect();
+		time+=1;
+		Misc::KeyboardCheck();
+		shift:=(shift+1)&3;
+	end;
+
+	Z80CPM::GetChar();
+	System::CursorOn();
+	Z80CPM::Exit();
+
+end.

@@ -17,7 +17,6 @@
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-#include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
@@ -57,7 +56,7 @@ public:
     QString getShift(QSharedPointer<NodeVar> n);
 
 
-    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
+    QString getIndexScaleVal(QSharedPointer<Node> var);
 
     GenRegisterStack m_reg8 = GenRegisterStack(QStringList({"a","b","l","h"}));
     GenRegisterStack m_reg16 = GenRegisterStack(QStringList({"ba","x1","x2","hl"}));
@@ -67,7 +66,7 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jnz ";
 
-    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+    QString getWordByteType( QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
 
@@ -95,7 +94,7 @@ public:
     void dispatch(QSharedPointer<NodeVarDecl> node) override;
 
 
-    virtual QString getJDH8Value(Assembler* as, QSharedPointer<Node> n) {
+    virtual QString getJDH8Value(QSharedPointer<Node> n) {
         if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
@@ -104,6 +103,7 @@ public:
 
 
     virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
+
 
 
 
@@ -154,7 +154,7 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 

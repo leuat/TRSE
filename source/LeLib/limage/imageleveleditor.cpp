@@ -149,9 +149,9 @@ ImageLevelEditor::ImageLevelEditor(LColorList::Type t)  : MultiColorImage(t)
 void ImageLevelEditor::ReInitialize()
 {
 //    m_meta = meta;
-    m_meta.Calculate();
-//    qDebug() << meta.m_width;
-  //  qDebug() << meta.dataSize();
+//    m_meta.Calculate();
+  //  qDebug() << m_meta.m_width <<m_meta.m_sizex;
+  //  qDebug() << m_meta.dataSize();
     m_levels.resize(m_meta.m_sizex*m_meta.m_sizey);
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++)
@@ -626,9 +626,9 @@ void ImageLevelEditor::setPixel(int x, int y, unsigned int color)
     }
 
 
-    if (m_writeType==Character || m_forcePaintColorAndChar)
+    if (m_classvariableType==Character || m_forcePaintColorAndChar)
         m_currentLevel->m_CharData[pos] = m_currentChar + shift;
-    if (m_writeType==Color || m_forcePaintColorAndChar)
+    if (m_classvariableType==Color || m_forcePaintColorAndChar)
         m_currentLevel->m_ColorData[pos] = color;
 
     //BuildImage();
@@ -787,7 +787,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
         m_charset = c->m_charset;
         m_charWidthDisplay = c->m_charWidthDisplay;
         m_gridWidthDisplay = c->m_gridWidthDisplay;
-        m_writeType = c->m_writeType;
+        m_classvariableType = c->m_classvariableType;
 //        for (int i=0;i<4;i++)
   //          m_extraCols[i] = c->m_extraCols[i];
         //SetLevel(QPoint(0,0));

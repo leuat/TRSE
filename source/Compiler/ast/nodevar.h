@@ -30,19 +30,26 @@
 #include "source/Compiler/ast/nodevartype.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    A Node representing a variable. 
+    m_left: undefined 
+    m_right: undefined
+    m_op: ?
+    m_expr : index, for instance var[idx*2]  then m_expr will be a nodebinop (idx*2)
+*/
 class NodeVar : public Node {
 private:
 public:
     QString value;
     QSharedPointer<Node> m_expr = nullptr;
-    //QSharedPointer<NodeVarType> m_type;
     bool m_fake16bit = false;
     QSharedPointer<Node> m_subNode = nullptr;
     bool m_ignoreRecordExpr = false;
     bool m_ignoreLookup = false;
     bool m_scaleApplied = false; // used for class array index scaling in parser
     bool m_hasGlobalFlag = false;
-    TokenType::Type m_writeType = TokenType::NADA;
+    TokenType::Type m_classvariableType = TokenType::NADA;
+    bool m_isArrayInClass = false;
     NodeVar(Token t);
 
     NodeVar(Token t, QSharedPointer<Node> expr);
@@ -52,7 +59,7 @@ public:
 
     void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override;
 
-    TokenType::Type getWriteType()  override { return m_writeType; }
+    TokenType::Type getClassvariableType()  override { return m_classvariableType; }
 
     TokenType::Type getOrgType(Assembler *as) override;
 
@@ -121,8 +128,6 @@ public:
     QString getValue(Assembler* as) override;
     QString getLiteral(Assembler* as) override {
         return getValue(as);
-        //if (m_forceAddress) return "#" + value;
-        //return value;
     }
 
     bool isAddress() override;
@@ -136,12 +141,6 @@ public:
     }
 
 
-
-/*    void LoadVariable(AbstractCodeGen* dispatcher) override;
-    void LoadPointer(Assembler* as);
-
-    void StoreVariable(AbstractCodeGen* dispatcher) override;
-*/
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override;
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeVar>(sharedFromThis()));

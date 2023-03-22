@@ -30,9 +30,27 @@
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodevar.h"
-//#include "source/Compiler/ast/nodeproceduredecl.h"
 #include "source/Compiler/ast/nodevardecl.h"
+/* 
+    Main block node : var + begin/end. Ie
+    procedure SomeProc();
+    ** NodeBlock starts here
+    var
+       a,b: byte;
+    begin
 
+    ...
+
+
+    end;
+    ** Nodeblock ends here
+    **
+    m_left: unused
+    m_right: unused
+    m_op: unused
+    m_decl : block variable declarations (var)
+    m_compointStatement : list of statements (ie contents of the begin/end block)
+*/
 class NodeBlock : public Node {
 public:
     QVector<QSharedPointer<Node>> m_decl;

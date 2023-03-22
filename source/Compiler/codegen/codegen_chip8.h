@@ -19,7 +19,6 @@
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-#include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
@@ -27,23 +26,37 @@
 #include "source/Compiler/codegen/methods/abstractmethods.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/*
+enum CHIP8_TYPE{
+    OG,
+    SCHIP,
+    CHIPX,
+    MEGA,
+    XO_CHIP
+};
+*/
 class CodeGenChip8 : public AbstractCodeGen
 {
+private: 
+    void castToWord(QString hi, QString lo);
+    void castToByte(QString hi, QString lo);
+    void PrintBop(TokenType::Type type, QString x0, QString x1);
+    void PrintBop16(TokenType::Type type, QString x0_hi, QString x0_lo, QString x1_hi, QString x1_lo);
+    int m_lvl = 0;
+    QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7","V8","V9","VA","VB","VC","VD","VE"});
 public:
     CodeGenChip8();
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
-//    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     virtual void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
-    //void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
-//    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
+    void dispatch(QSharedPointer<NodeProgram> node) override;
 
 
 
@@ -55,36 +68,27 @@ public:
     virtual void LoadPointer(QSharedPointer<Node> n);
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
-    QString getShift(QSharedPointer<NodeVar> n);
+
+    //QString getIndexScaleVal(QSharedPointer<Node> var);
 
 
-    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
 
-    int m_lvl = 0;
-    QStringList m_regs = QStringList({"V2","V3","V4","V5","V6","V7", "V8", "V9", "VA", "VB", "VC", "VD", "VE"});
 
-    QString m_jmp = "jp ";
-    QString m_mov = "ld ";
-    QString m_cmp = "cmp ";
-    QString m_jne = "jz ";
-
-    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+    /*QString getWordByteType(QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
-    }
+    }*/
 
-    QString getJmp(bool isOffPage) override {
+    inline QString getJmp(bool isOffPage) override {
         return "jp";
     }
-    QString getCallSubroutine() override;
+    inline QString getCallSubroutine() override {
+	    return "call";
+    };
     bool m_isPurePointer = false;
 
     virtual QString getReg(int dd=0);
 
-    void ldr (QString x0, QString x1);
-    void str (QString x0, QString x1);
-
     void str(QSharedPointer<Node> var);
-    void ldr(QSharedPointer<Node> var);
     void Binop (QString bop, QString x0, QString x1, QString x2);
 
     virtual bool UseBlocks() override { return true;}
@@ -95,7 +99,7 @@ public:
     }
 
 
-    virtual QString getChip8Value(Assembler* as, QSharedPointer<Node> n) {
+    virtual QString getChip8Value(QSharedPointer<Node> n) {
         if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
@@ -103,10 +107,11 @@ public:
     }
 
 
-    virtual QString getBinaryOperation(QSharedPointer<NodeBinOP> bop);
+
 
     QString PushReg();
     void PopReg();
+
 
 
 
@@ -119,7 +124,6 @@ public:
 
     virtual void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
-    virtual void BuildToCmp(QSharedPointer<Node> node);
 
     virtual void CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
     virtual void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB,QString lblJump, bool isOffpage) override;
@@ -136,7 +140,6 @@ public:
      */
 
 
-    void PrintBop(TokenType::Type type, QString x0, QString x1, QString value, bool is16bit=false);
 
     void StoreVariable(QSharedPointer<NodeVar> node) override;
 
@@ -156,14 +159,12 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
-
-
-
+    
 
 };
 #endif

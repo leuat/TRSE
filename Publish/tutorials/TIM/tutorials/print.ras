@@ -1,0 +1,31 @@
+program Print;
+@use "system/z80cpm"
+@use "system/system"
+
+var
+	x,y,tmp: byte;
+
+begin
+	// Startup code for CP/M programs
+	Z80CPM::Startup();
+
+	Z80CPM::PutCharLF(ASCII::CR);
+	
+	x := 37;
+	asm(";here");
+	y := $30 + (x/10);
+
+
+	Z80CPM::PutChar(y);
+	Z80CPM::PutChar($30 + mod(x,10));
+	
+	Z80CPM::PutCharLF(ASCII::CR);
+
+	tmp := x/10;
+	Z80CPM::PutChar($30 + tmp);
+	tmp := mod(x,10);
+	Z80CPM::PutChar($30 + tmp);
+	
+	// Exit code for CP/M programs
+	Z80CPM::Exit();
+end.

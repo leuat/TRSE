@@ -1,0 +1,44 @@
+unit Text;
+@use "system/system"
+var
+@ifndef CHARSET
+@raiseerror "Please define a CHARSET before including this unit"
+@endif
+	px, py : byte = 0; // screen pos
+	x,y,c : byte;
+	p,src : ^byte;	
+
+@include "charset.inc"
+
+procedure DrawChar(x, y, c: global byte);
+begin
+	p:=#chars + c<<3;
+	System::DrawSprite(p,x,y,8);
+	
+end;
+
+procedure Reset();
+begin
+	System::Clear();
+end;
+
+procedure PrintXY(src:global ^byte, x,y : global byte);
+begin
+	while (src^<>0) do
+	begin
+		c:=src^;
+		DrawChar(x,y,c);
+		src+=1;
+		x+=8;		
+	end;
+end;
+
+procedure Print(src : global ^byte);
+begin
+	PrintXY(src,x,y);	
+end;
+
+	
+	
+end.
+

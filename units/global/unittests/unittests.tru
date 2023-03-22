@@ -6,7 +6,9 @@ Unit Unittests;
 @use "unittests/casts"
 @use "unittests/integer"
 @ifndef CPU_M6809
+@ifndef CPU_PCHIP8
 @use "unittests/classes"
+@endif
 @endif
 @use "unittests/ifthenelse"
 @use "unittests/muldiv"
@@ -15,7 +17,9 @@ Unit Unittests;
 @use "unittests/strings"
 @use "unittests/bitop"
 @use "unittests/functions"
+@ifndef CPU_PCHIP8
 @use "unittests/various"
+@endif
 @use "unittests/boolean"
 @use "unittests/long"
 
@@ -58,11 +62,15 @@ begin
 		if (currentTest=8) then BitOp::Exec();
 		if (currentTest=9) then IfThenElse::Exec();
 		if (currentTest=10) then IntegerTest::Exec();
+@ifndef CPU_PCHIP8
 		if (currentTest=11) then Various::Exec();
+@endif
 		if (currentTest=12) then BooleanTest::Exec();
 		if (currentTest=14) then LongTest::Exec();
+@ifndef CPU_PCHIP8
 @ifndef CPU_M6809
 		if (currentTest=0) then Classes::Exec();
+@endif
 @endif
 
 		currentTest+=1;

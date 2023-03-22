@@ -1,0 +1,116 @@
+program Tunnels;
+@use "screen"
+
+// Good old tunnel example!
+
+var  
+	ctr,val,val2,time, time2,time3,zz,h : byte;
+	x,y,shift,i : byte;
+	keep_s : integer;
+	// mini sine table
+	
+	sin : array[256] of byte = buildsinetable(127);
+ 	// smooth data generated in resources/fjong/generate_data.fjo
+	data : incbin("data/smooth_data.bin",$a100);
+	@perlinnoise "data/perlin16.dat" 16 16 1 1 1 0 128 80
+	perlin : incbin("data/perlin16.dat", $a000);
+	
+	
+	// Char width of the circles
+	const width : byte= 32;
+	// Char data width of the circles
+	const dwidth : byte = width;
+	// Char width of the circles
+	const height:byte = 192/2;
+
+	const hei : byte = 40;
+	sqr : array[] of byte = buildtable2d(dwidth,height,"Math.floor((64/(Math.sqrt(Math.pow(i-DWIDTH/2,2)*8+Math.pow(j-HEIGHT/2,2))+8)*8))%16");	
+	atan : array[] of byte = buildtable2d(dwidth,height,"(Math.floor(Math.atan2((i-DWIDTH/2)*4,j-HEIGHT/2)*255.0/(3.14159*2.0)*0.3))*16");	
+	//sqr : array[] of byte = buildtable2d(height,dwidth,"Math.atan2((i-20)/2-20,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
+	dx:byte=64;
+	src1, src2, dst : ^byte;
+
+
+@define OPTIMIZED "1"
+
+
+procedure Circles();
+begin
+	src1 := #sqr;
+	src2 := #atan;
+	
+ 	zz:=(sin[time2]>>2)<<4;
+	h:=shift;
+	for y:=0 to 192 step 4 offpage  do 
+	begin
+		
+		dst := Screen::ytab[h]+1;//+ shift*40;
+@if OPTIMIZED  = "0"	
+		for i:=0 to 30 do
+		begin
+			val:=(src1[i]+time)&15 | src2[i]+zz;
+			val:=perlin[val];
+			dst[i]:=data[val];
+		end;	
+@else
+
+		asm("
+			ld a,[zz]
+			ld e,a
+			ld a,[time]
+			ld d,a
+			ld ix,[src1]
+			ld bc,[src2]
+			ld iy,[dst]
+			exx 
+			ld hl,$a000
+			ld de,$A100
+			exx			
+			
+			repeat 30
+			
+			ld a,[bc]
+			ld l,a
+			ld a,d
+			add a,[ix+[i]]
+			and #$F
+			or l
+			add a,e
+			exx
+			ld l,a
+			ld a,[hl]
+			ld e,a
+			ld a,[de]
+			exx
+			ld [iy+[i]],a
+			
+			
+			inc bc
+			repend
+		
+		");
+@endif
+		src1+=(dwidth*2);
+		src2+=(dwidth*2);
+		h+=4;
+	end;
+
+end;
+
+begin
+	
+	Screen_BorderColor(0);
+	Screen::ClearScreen(0,$05);
+	
+	while (true) do
+	begin
+		Circles();
+		time+=1;
+		time2+=3;
+		time3-=13;
+		if (time&3=0) then dx+=1;
+		shift:=(shift+1)&3;
+		
+	end;
+
+end.

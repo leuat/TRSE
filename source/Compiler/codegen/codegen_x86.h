@@ -19,7 +19,6 @@
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-#include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/noderepeatuntil.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
@@ -55,7 +54,7 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
 
-    QString getIndexScaleVal(Assembler* as,QSharedPointer<Node> var);
+    QString getIndexScaleVal(QSharedPointer<Node> var);
 
     int m_lvl = 0;
     QStringList m_regs = QStringList({"a","b","c","d"});
@@ -67,7 +66,7 @@ public:
     QString m_cmp = "cmp ";
     QString m_jne = "jne ";
 
-    QString getWordByteType(Assembler* as, QSharedPointer<Node> n) {
+    QString getWordByteType(QSharedPointer<Node> n) {
         if (n->isWord(as)) return "word"; else return "byte";
     }
     void Cast(TokenType::Type from, TokenType::Type to) override;
@@ -82,7 +81,7 @@ public:
         virtual QString getAx(QString a, QSharedPointer<Node> n);
 
 
-    virtual QString getX86Value(Assembler* as, QSharedPointer<Node> n) {
+    virtual QString getX86Value(QSharedPointer<Node> n) {
         if (n->isPureVariable() && !n->isReference())
             return "["+n->getValue(as)+"]";
         return n->getValue(as);
@@ -98,7 +97,9 @@ public:
 
 
 
+
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
+
 
 
 
@@ -143,7 +144,7 @@ public:
 
     bool IsSimpleAssignPointer(QSharedPointer<NodeAssign>node) override;
 
-    void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) override;
+    void OptimizeBinaryClause(QSharedPointer<Node> node) override;
 
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 

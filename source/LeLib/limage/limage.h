@@ -104,7 +104,7 @@ public:
               Sprites, VIC20_MultiColorbitmap, Sprites2, CGA, AMIGA320x200, AMIGA320x256, ATARI320x200,
                 OK64_256x256,X16_640x480, NES, LMetaChunk, LevelEditorNES, SpritesNES, GAMEBOY, LevelEditorGameboy, HybridCharset,
                 AmstradCPC, AmstradCPCGeneric, BBC, VGA, Spectrum, SNES,LevelEditorSNES,VZ200, CustomC64, JDH8, LImageGeneric, GenericSprites, CGA160x100,
-                AmstradSprites, SNESGeneric, TIM, TVC, COCO3, THOMSON, TIMG
+                AmstradSprites, SNESGeneric, TIM, TVC, COCO3, THOMSON, TIMG, LevelEditorGeneric
               };
 
 
@@ -186,6 +186,7 @@ public:
     virtual void VBMExport(QFile& file, int p1, int p2, int p3, int p4) {}
     virtual void VBMExportColor(QFile& file, int p1, int p2, int p3, int p4) {}
     virtual void VBMExportChunk(QFile& file, int p1, int p2, int p3, int p4) {}
+    virtual void VBMCompileChunk(QTextStream& f, QString procName, QString pointerName, QString asmOperation, int p1, int p2, int p3, int p4) {}
 
     virtual void CopySingleChar(LImage* src, int srcChar, int dstChar) {qDebug() << "CopySingleChar not implemented";}
 
@@ -196,7 +197,7 @@ public:
 
     }
 
-    virtual QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h) {return QStringList();}
+    virtual QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h, QString pparam) {return QStringList();}
 
     virtual void BeforeRightButton() {}
     virtual void AfterRightButton() {}
@@ -219,7 +220,7 @@ public:
 //    unsigned int m_border=0, m_background=0;
 
     Type m_type = Type::QImageBitmap;
-    WriteType m_writeType = WriteType::Color;
+    WriteType m_classvariableType = WriteType::Color;
     unsigned char m_bitMask = 0b11;
     unsigned char m_scale = 2;
     unsigned char m_noColors = 4;
@@ -432,7 +433,7 @@ public:
     virtual int getCharAtPos(QPoint p, float zoom, QPointF center) { return 0;}
 
     virtual void SetCurrentType(WriteType wt) {
-        m_writeType = wt;
+        m_classvariableType = wt;
     }
 
     void CopyTo(LImage* img);

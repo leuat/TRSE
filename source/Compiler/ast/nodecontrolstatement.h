@@ -3,7 +3,12 @@
 
 #include "source/Compiler/ast/node.h"
 
-
+/* 
+    Control statements in for loops, ie "break", "continue" and "return
+    m_left: not used
+    m_right: not used
+    m_op: control type: BREAK, CONTINUE or RETURN
+*/
 class NodeControlStatement : public Node
 {
 public:

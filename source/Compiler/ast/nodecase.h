@@ -3,6 +3,23 @@
 
 #include "node.h"
 #include "nodevar.h"
+/* 
+    Case node. Handles case blocks such as
+    case val :
+        1 : DoSomething();
+        b : val:=0;
+    else
+       doSomethingElse();
+    end;
+
+    m_left: unused
+    m_right: unused
+    m_op: unused
+    m_variable : variable to be tested
+    m_coniditionals : (val = 1), (val = b) etc
+    m_statements : the individual statements for each of the cases
+    m_elseblock : executed if none of the conditionals are true
+*/
 class NodeCase : public Node
 {
 public:

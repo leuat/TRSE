@@ -1,0 +1,141 @@
+unit GenericLevels;
+@use "gfx/tiles"
+var
+var
+	zp,curLevel: ^byte;
+	zp2,p1,p2 : ^byte;
+	x,y,i,j,k,m,ad,xx,yy : byte;
+	i1,i2,i3,i4,i5 : integer;
+
+
+@ifndef CPU_M6809
+	Level = class
+		
+		lp : integer;
+		sizex,sizey,width,height,startx,starty,chunks,chunksize,datasize,pos:byte;
+		bnk:byte;
+		size:integer;
+		
+		procedure ReadHeader(GenericLevels::zp:global pointer);
+		begin
+			this.lp := zp;
+			// Read level header info
+			this.sizex := zp[0];
+			this.sizey := zp[1];
+		
+			this.width := zp[2];
+			this.height := zp[3];
+	
+			this.startx := zp[4];
+			this.starty := zp[5];
+		
+			this.chunks := zp[6];
+			this.chunksize := zp[7];
+		
+			this.datasize := zp[8];
+			i5:=this.width*this.height;
+			i5 += this.datasize;
+			this.size :=i5;
+			
+			
+		end;
+		
+		procedure RenderLevel(GenericLevels::x,GenericLevels::y : global byte; wx, wy : byte);
+		begin
+			
+			asm(";here");			
+			zp := this.lp;
+			
+			zp+=32; // skip header
+			yy:=0;
+			zp+=(this.size*this.sizex)*y;
+			zp+=(this.size)*x;
+			curLevel := zp;
+
+			for j:=0 to this.height do begin
+				xx:=0;
+				for i:=0 to this.width do 
+				begin
+					Tiles::WriteToScreen(xx,yy,zp^,wx,wy);
+					zp+=1;
+					xx+=wx;					
+				end;
+				yy+=wy;
+			end;
+		
+	
+		end;
+	end;	
+	
+	
+@endif
+	
+	
+@ifdef CPU_M6809
+	Level = record
+		
+		lp : integer;
+		sizex,sizey,width,height,startx,starty,chunks,chunksize,datasize,pos:byte;
+		bnk:byte;
+		size:integer;
+	end;		
+	
+	l : Level;
+	
+	
+	procedure ReadHeader(zp:global pointer);
+		begin
+			l.lp := zp;
+			// Read level header info
+			l.sizex := zp[0];
+			l.sizey := zp[1];
+		
+			l.width := zp[2];
+			l.height := zp[3];
+	
+			l.startx := zp[4];
+			l.starty := zp[5];
+		
+			l.chunks := zp[6];
+			l.chunksize := zp[7];
+		
+			l.datasize := zp[8];
+			i5:=l.width*l.height;
+			i5 += l.datasize;
+			l.size :=i5;
+			
+			
+		end;
+		
+		procedure RenderLevel(x, y : global byte; wx, wy : byte);
+		begin
+			
+			zp := l.lp;
+			
+			zp+=32; // skip header
+			yy:=0;
+			zp+=(l.size*l.sizex)*y;
+			zp+=(l.size)*x;
+			curLevel := zp;
+
+			for j:=0 to l.height do begin
+				xx:=0;
+				for i:=0 to l.width do 
+				begin
+					Tiles::WriteToScreen(xx,yy,zp^,wx,wy);
+					zp+=1;
+					xx+=wx;					
+				end;
+				yy+=wy;
+			end;
+		
+	
+		end;
+	
+	
+@endif
+
+	
+	
+	
+end.

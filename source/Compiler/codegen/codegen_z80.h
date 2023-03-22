@@ -20,7 +20,6 @@
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-#include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
 #include "source/Compiler/ast/nodecase.h"
@@ -100,7 +99,7 @@ public:
     QString getAx(QSharedPointer<Node> n) override;
     QString getA(QSharedPointer<Node> n);
 
-    QString getX86Value(Assembler *as, QSharedPointer<Node> n) override;
+    QString getX86Value(QSharedPointer<Node> n) override;
 
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
@@ -123,7 +122,7 @@ public:
 
     QString getJmp(bool isOffPage) override;
     bool UseBlocks() override;
-    void Load16bitToHl(Assembler* as);
+    void Load16bitToHl();
 
 //    void dispatch(QSharedPointer<NodeConditional> node) override;
     void HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed,QString lblSuccess, bool forcePage);

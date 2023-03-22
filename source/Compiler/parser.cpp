@@ -83,6 +83,7 @@ QStringList Parser::getFlags() {
     m_typeFlags[TokenType::SIGNED] = "signed";
     m_typeFlags[TokenType::GLOBAL] = "global";
     m_typeFlags[TokenType::STACK] = "stack";
+    m_typeFlags[TokenType::VOLATILE] = "volatile";
 
     while (!done)  {
         done = true;
@@ -1252,6 +1253,9 @@ void Parser::HandlePreprocessorInParsing()
             Eat();
             Eat();
             Eat();
+            while (m_currentToken.m_type==TokenType::INTEGER_CONST)
+                Eat();
+
             return;
         }
         if (m_currentToken.m_value=="exportblackwhite") {
@@ -1271,6 +1275,13 @@ void Parser::HandlePreprocessorInParsing()
             return;
         }
         if (m_currentToken.m_value=="exportrgb8palette") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
+        if (m_currentToken.m_value=="bin2inc") {
+            Eat();
             Eat();
             Eat();
             Eat();
@@ -1317,6 +1328,8 @@ void Parser::HandlePreprocessorInParsing()
             Eat(); // Y
             Eat(); // W
             Eat(); // H
+            if (m_currentToken.m_type==TokenType::STRING)
+                Eat(); // H
         }
 
         if (m_currentToken.m_value=="pbmexport") {
@@ -1361,6 +1374,22 @@ void Parser::HandlePreprocessorInParsing()
             Eat(TokenType::INTEGER_CONST);
             return;
         }
+
+        if (m_currentToken.m_value=="vbmcompilechunk") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            return;
+        }
+
+
         if (m_currentToken.m_value=="ignoresystemheaders") {
             Eat();
         }
@@ -1661,9 +1690,13 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
 
     //    qDebug() << "IS REGISTER: "<< m_currentToken.m_value << isRegister;
     //    qDebug() << "SUBVAR  "<< isSubVar << m_currentToken.m_value;
+    if (!isSubVar)
+        m_isClassReference = false;
 
-    if (m_currentToken.m_value == Syntax::s.thisName)
+    if (m_currentToken.m_value == Syntax::s.thisName) {
         m_currentToken.m_value = m_symTab->m_currentClass+"_"+m_currentToken.m_value;
+        m_isClassReference = m_currentToken.m_isReference;
+    }
 
     m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
     // Rename "i" with "_var_i" for disallowed variables (Z80, GB)
@@ -2463,7 +2496,6 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 
     // Start
     Token t = m_currentToken;
-    bool done=false;
     int linenum = m_currentToken.m_lineNumber;
 
     QSharedPointer<Node> clause = BinaryClause();
@@ -3050,6 +3082,10 @@ void Parser::PreprocessSingle() {
             Eat(TokenType::PREPROCESSOR);
             HandleExport();
         }
+        else if (m_currentToken.m_value.toLower() =="bin2inc") {
+            Eat(TokenType::PREPROCESSOR);
+            HandleBin2Inc();
+        }
         else if (m_currentToken.m_value.toLower() =="pathtool") {
             Eat(TokenType::PREPROCESSOR);
             HandlePathTool();
@@ -3142,6 +3178,10 @@ void Parser::PreprocessSingle() {
         else if (m_currentToken.m_value.toLower() =="vbmexportchunk") {
             Eat(TokenType::PREPROCESSOR);
             HandleVBMExportChunk();
+        }
+        else if (m_currentToken.m_value.toLower() =="vbmcompilechunk") {
+            Eat(TokenType::PREPROCESSOR);
+            HandleVBMCompileChunk();
         }
         else if (m_currentToken.m_value.toLower() =="exportframe") {
             Eat(TokenType::PREPROCESSOR);
@@ -3907,19 +3947,25 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         // the entire thing is being transformed to writing to a pointer
         int scale = 1;
         if (s->m_isClassVariable) {
+            v->setReference(m_isClassReference);
+            if (s->m_type!="POINTER")
+            if (s->m_arrayType!=TokenType::NADA)
+                if (v->m_expr==nullptr)
+                    if (!v->isReference())
+                        ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v->value+")</font>",m_currentToken.m_lineNumber);
             QString et = s->getEndType();
             if (s->m_type.toLower()=="pointer") {
-                v->m_writeType = Syntax::s.m_currentSystem->getPointerType();
+                v->m_classvariableType = Syntax::s.m_currentSystem->getPointerType();
                 scale = Syntax::s.m_currentSystem->getPointerSize();
             }
             if (et.toLower()=="byte")
-                v->m_writeType = TokenType::BYTE;
+                v->m_classvariableType = TokenType::BYTE;
             if (et.toLower()=="integer") {
-                v->m_writeType = TokenType::INTEGER;
+                v->m_classvariableType = TokenType::INTEGER;
                 scale = 2;
             }
             if (et.toLower()=="long") {
-                v->m_writeType = TokenType::LONG;
+                v->m_classvariableType = TokenType::LONG;
                 scale = 4;
             }
         }
@@ -3978,8 +4024,8 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
             v->m_expr = NodeFactory::CreateNumber(m_currentToken,0);
 
         // Propagate 8/16/32 bit write type
-        v->m_writeType = sv->m_writeType;
-        //      qDebug() << "PARSER  type "<< type <<v->value<<TokenType::getType(v->m_writeType);
+        v->m_classvariableType = sv->m_classvariableType;
+        //      qDebug() << "PARSER  type "<< type <<v->value<<TokenType::getType(v->m_classvariableType);
 
 
         v->m_subNode = nullptr; // REMOVE subnode
@@ -4802,7 +4848,6 @@ QSharedPointer<Node> Parser::InlineAssembler()
     bool pascalStyleAsm = false;
     // Original pascal-style ASM without (" ");
     if (m_currentToken.m_type!=TokenType::LPAREN){
-        //qDebug() <<m_currentToken.m_value;
         QString org = m_currentToken.m_value;
         m_currentToken = m_lexer->InlineAsm();
 
@@ -5110,10 +5155,15 @@ void Parser::HandlePerlinNoise()
     float pers = m_currentToken.m_intVal/100.0;
     Eat();
     int amp = m_currentToken.m_intVal;
+    float pow = 1;
     Eat(TokenType::INTEGER_CONST);
+    if (m_currentToken.m_type == TokenType::INTEGER_CONST) {
+        pow = m_currentToken.m_intVal/100.0;
+        Eat(TokenType::INTEGER_CONST);
+    }
     SimplexNoise sn;
 //    qDebug() << "PARSER:::" <<file;
-    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp);
+    sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
 
 }
 
@@ -5287,6 +5337,7 @@ void Parser::HandleExport()
         img->m_exportParams["End"] = param2;
     }
     img->m_exportParams["export1"] = param2;
+    img->m_exportParams["param2"] = param1;
 
     if (QFile::exists(outFile))
         QFile::remove(outFile);
@@ -5309,6 +5360,34 @@ void Parser::HandleExport()
 
 
     file.close();
+
+}
+
+void Parser::HandleBin2Inc()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile =m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QString name = m_currentToken.m_value;
+
+    if (!QFile::exists(inFile))
+        ErrorHandler::e.Error("Bin2Inc error: could not open file "+inFile,m_currentToken.m_lineNumber);
+
+    QByteArray data = Util::loadBinaryFile(inFile);
+    QString d = "var "+name+" : array["+QString::number(data.size())+"] of byte =( \n\t";
+    for (int i=0;i<data.size();i++) {
+        d+=Util::numToHex(data[i]);
+        if (i!=data.size()-1)
+            d+=",";
+        if ((i&15)==15) d+="\n\t";
+
+    }
+    d+=");\n";
+    Util::SaveTextFile(outFile,d);
+
 
 }
 
@@ -5814,6 +5893,50 @@ void Parser::HandleVBMExportChunk()
 
 }
 
+void Parser::HandleVBMCompileChunk()
+{
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir + "/" + m_currentToken.m_value;     //m_currentDir+"/"+ m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    QString procName =m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString pointerName =m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString asmOperation =m_currentToken.m_value;
+    Eat(TokenType::STRING);
+
+    int param1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param2 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param3 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int param4 = m_currentToken.m_intVal;
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : "+inFile,ln);
+    }
+    LImage* img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+
+    img->m_silentExport = true;
+
+//    file.open(QFile::WriteOnly);
+    file.open(QIODevice::WriteOnly| QIODevice::Text);
+    QTextStream f(&file);
+
+    img->VBMCompileChunk(f,procName,pointerName,asmOperation,param1,param2,param3,param4);
+
+    file.close();
+
+}
+
 void Parser::HandleExportFrame()
 {
     int ln = m_currentToken.m_lineNumber;
@@ -5994,6 +6117,11 @@ void Parser::HandleSpriteCompiler()
     Eat(TokenType::INTEGER_CONST); // W
     int h = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST); // H
+    QString pparam = "";
+    if (m_currentToken.m_type==TokenType::STRING) {
+        pparam = m_currentToken.m_value;
+        Eat(); // H
+    }
 
     QString id = "drawsprite_cga_"+name;
 
@@ -6010,12 +6138,11 @@ void Parser::HandleSpriteCompiler()
         ErrorHandler::e.Error("Could not find file : "+filename, m_currentToken.m_lineNumber);
 
     LImage* img = LImageIO::Load(m_currentDir +"/"+filename);
-    m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h);
+    m_parserAppendix << img->SpriteCompiler(name,m_currentDir, "","",x,y,w,h,pparam);
 
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)
     {
-
         QList<BuiltInFunction::Type> paramList;
         paramList<<BuiltInFunction::ADDRESS;
         paramList<<BuiltInFunction::ADDRESS;

@@ -16,14 +16,14 @@ var
 
 	
 	// export the default characterset
-	@export "chr\char.flf" "chr\char.bin" 64
-	charset: incbin("chr\char.bin", $1c00); // unexpanded location for char setcharset 
+	@export "chr/char.flf" "chr/char.bin" 64
+	charset: incbin("chr/char.bin", $1c00); // unexpanded location for char setcharset 
 
 
 	// export the 8 16x8 preshifted sprites
 	const ADRSPRITE: address = $1a00;
-	@vbmexport "chr\sprites.flf" "chr\lbm8sprite.bin" 0 16 1 0
-	lbm8Sprite: incbin( "chr\lbm8sprite.bin", ADRSPRITE );
+	@vbmexport "chr/sprites.flf" "chr/lbm8sprite.bin" 0 16 1 0
+	lbm8Sprite: incbin( "chr/lbm8sprite.bin", ADRSPRITE );
 
 	// the pre-shift array
 	sprites: array[8] of integer = buildtable( " ADRSPRITE + (i*16)" );	

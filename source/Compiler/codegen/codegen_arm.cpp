@@ -128,7 +128,7 @@ void CodeGenARM::StoreVariable(QSharedPointer<NodeVar> n)
 bool CodeGenARM::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
-    QString type =getWordByteType(as,var);
+    QString type =getWordByteType(var);
     if (node->m_right->isPure() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Comment("Store variable simplified");
         node->m_right->Accept(this);
@@ -204,7 +204,7 @@ QString CodeGenARM::getShift(QSharedPointer<NodeVar> var)
     return "";
 }
 
-QString CodeGenARM::getIndexScaleVal(Assembler *as, QSharedPointer<Node> var)
+QString CodeGenARM::getIndexScaleVal(QSharedPointer<Node> var)
 {
     if (var->isWord(as))
         return "2";
@@ -287,6 +287,7 @@ void CodeGenARM::PopReg() {
         ErrorHandler::e.Error("Error in ARM dispatcher PopReg : trying to pop regstack from zero");
     m_lvl--;
 }
+
 
 
 
@@ -415,7 +416,7 @@ bool CodeGenARM::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
 }
 
-void CodeGenARM::OptimizeBinaryClause(QSharedPointer<Node> node, Assembler *as)
+void CodeGenARM::OptimizeBinaryClause(QSharedPointer<Node> node)
 {
 
 }
@@ -435,18 +436,18 @@ void CodeGenARM::AssignToRegister(QSharedPointer<NodeAssign> node)
     QString reg = vname.remove(0,1);
 //        as->Comment("Assigning register : " + vname);
 
-    as->Asm("mov "+reg+", "+getARMValue(as,node->m_right));
+    as->Asm("mov "+reg+", "+getARMValue(node->m_right));
     return;
 
 }
 
-void CodeGenARM::ProcedureStart(Assembler *as) {
+void CodeGenARM::ProcedureStart() {
     as->Asm("sub sp, sp, #16");
     as->Asm("stp x29, x30, [sp, #16]  ; store frame pointer + link register ");
 
 }
 
-void CodeGenARM::ProcedureEnd(Assembler *as) {
+void CodeGenARM::ProcedureEnd() {
     as->Asm("ldp x29, x30, [sp, #16]  ; restore frame pointer + link register ");
     as->Asm("add sp, sp, #16");
 
@@ -457,7 +458,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
 {
 
     if (node->m_left->isWord(as)) {
-        node->m_right->setForceType(TokenType::INTEGER);
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
 
     as->ClearTerm();
@@ -495,11 +496,11 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
     }
 
 
-    if (var->m_writeType==TokenType::INTEGER) {
-        node->m_right->setForceType(TokenType::INTEGER);
+    if (var->m_classvariableType==TokenType::INTEGER) {
+        node->m_right->setLoadType(TokenType::INTEGER);
     }
-    if (var->m_writeType==TokenType::LONG)
-        node->m_right->setForceType(TokenType::LONG);
+    if (var->m_classvariableType==TokenType::LONG)
+        node->m_right->setLoadType(TokenType::LONG);
 
 
     if (var->isPointer(as) && !var->hasArrayIndex()) {
@@ -513,7 +514,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
         as->Comment("Assigning pointer");
 
         QSharedPointer<NodeBinOP> bop =  qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
-//        node->m_right->setForceType(TokenType::POINTER);
+//        node->m_right->setLoadType(TokenType::POINTER);
         if (bop!=nullptr && (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::BITOR || bop->m_op.m_type==TokenType::BITAND || bop->m_op.m_type==TokenType::XOR )) {
             if (bop->m_left->getValue(as)==var->getValue(as)) {
 
@@ -558,7 +559,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
             as->Comment("Setting PURE POINTER "+QString::number(node->isPointer(as)));
 //            m_isPurePointer = true;
  //           if (node->m_left->isPointer(as))
-   //            node->m_right->setForceType(TokenType::POINTER);
+   //            node->m_right->setLoadType(TokenType::POINTER);
             node->m_right->Accept(this);
   //          m_isPurePointer = false;
             as->Comment("Setting PURE POINTER ends");
@@ -575,9 +576,9 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
         // TO DO: Optimize special cases
 
         as->ClearTerm();
-        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_writeType));
+        as->Comment("Assigning pointer with index, type:" + TokenType::getType(var->m_classvariableType));
         if (var->isWord(as))
-            node->m_right->setForceType(TokenType::INTEGER);
+            node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);
 
         as->Term();
@@ -600,7 +601,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
         }
 
         as->Asm("push ax");
-        var->m_expr->setForceType(TokenType::INTEGER);
+        var->m_expr->setLoadType(TokenType::INTEGER);
         var->m_expr->Accept(this);
         as->Term();
         if (var->isWord(as))
@@ -636,7 +637,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
         node->m_right->Accept(this);
         // Handle var[ i ] :=
         if (var->m_expr->isPure()) {
-            var->m_expr->setForceType(TokenType::INTEGER);
+            var->m_expr->setLoadType(TokenType::INTEGER);
             if (var->m_expr->isPureNumeric()) {
                 as->Asm("mov ["+var->getValue(as) + "+" + Util::numToHex(var->m_expr->getValueAsInt(as)*var->getArrayDataSize(as))+"],"+getReg() );
                 return;
@@ -649,7 +650,7 @@ void CodeGenARM::ProcedureEnd(Assembler *as) {
         }
         else {
             as->Asm("push ax");
-            var->m_expr->setForceType(TokenType::INTEGER);
+            var->m_expr->setLoadType(TokenType::INTEGER);
             var->m_expr->Accept(this);
             as->Asm("mov di,ax");
             if (var->isWord(as))
@@ -708,7 +709,6 @@ void CodeGenARM::DeclarePointer(QSharedPointer<NodeVarDecl> node)
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)->m_arrayType=t->m_arrayVarType.m_type;
 
 }
-
 
 
 
@@ -791,7 +791,7 @@ void CodeGenARM::BuildToCmp(QSharedPointer<Node> node)
 
     as->Term();
     if (node->m_right->isPureNumeric()) {
-        as->Asm("cmp  "+ax+", " + getARMValue(as,node->m_right));
+        as->Asm("cmp  "+ax+", " + getARMValue(node->m_right));
         return;
 
     }
@@ -828,7 +828,7 @@ void CodeGenARM::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
 
 void CodeGenARM::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
-    if (nodeA->isWord(as)) nodeB->setForceType(TokenType::INTEGER);
+    if (nodeA->isWord(as)) nodeB->setLoadType(TokenType::INTEGER);
     LoadVariable(nodeA);
     QString ax = getReg();
     PushReg();

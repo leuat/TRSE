@@ -78,6 +78,9 @@ protected:
     bool m_classApplied = false;
     static uint s_nodeCount;
     MemoryBlockInfo m_blockInfo;
+    TokenType::Type m_loadType = TokenType::NADA;
+    TokenType::Type m_storeType = TokenType::NADA;
+
 public:
     friend class Parser;
     // Token contains node type data and values from the parser
@@ -88,9 +91,7 @@ public:
     // Is the current node a register? (applicable to variables only)
     bool m_isRegister = false;
     static QSharedPointer<MemoryBlock> m_curMemoryBlock;
-    TokenType::Type m_forceType = TokenType::NADA;
     bool m_isBoolean = false;
-    TokenType::Type m_castType = TokenType::NADA;
     bool m_isWord = false;
     // Force page for conditionals (while/if/repeat until etc)
     int m_forcePage = 0;
@@ -112,9 +113,10 @@ public:
     // Makes sure that the node and blocks are in sync
     int MaintainBlocks(Assembler* as);
 
+    virtual TokenType::Type getLoadType() { return m_loadType ;}
+    virtual TokenType::Type getStoreType() { return m_storeType ;}
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
-//    TokenType::Type m_returnType = TokenType::NADA;
 
     virtual void ForceAddress();
     // Returns a list of potential symols in asm code. Recursive. Used for preventing removal of unused symbols that are actually used within asm blocks
@@ -128,12 +130,12 @@ public:
     virtual bool containsPointer(Assembler* as) {return false;}
 
     // Force a specific type to be set for this node
-    virtual void setForceType(TokenType::Type t) {
-        m_forceType = t;
+    virtual void setLoadType(TokenType::Type t) {
+        m_loadType = t;
     }
     // Force a specific type to be set for this node
-    virtual void setCastType(TokenType::Type t) {
-        m_castType  = t;
+    virtual void setStoreType(TokenType::Type t) {
+        m_storeType  = t;
     }
     virtual void clearComment();
     // Replaces all variables of a given name within the subnodes with another one
@@ -163,7 +165,7 @@ public:
 
     virtual QString getAddress() {return "";}
     // Writetype is used for writing data to class objects
-    virtual TokenType::Type getWriteType();
+    virtual TokenType::Type getClassvariableType();
 
     virtual void forceWord() {}
     virtual QString getTypeText(Assembler* as) {return "";}
@@ -199,8 +201,6 @@ public:
     virtual bool isVariable() { // Variable with possible expressions
         return false;
     }
-    /*    virtual void LoadVariable(AbstractCodeGen* dispatcher) {}
-    virtual void StoreVariable(AbstractCodeGen* dispatcher) {}*/
     virtual TokenType::Type getType(Assembler* as);
     virtual TokenType::Type getArrayType(Assembler* as) {
         return m_op.m_type;

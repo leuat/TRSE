@@ -69,4 +69,55 @@ begin
 			asm(" nop");
 end;
 
+
+procedure SetMode4();
+begin
+	
+	asm("
+	VdpOut_Control = $99
+	ld a,%00000110		;6 - set graphics screen mode bits
+	out (VdpOut_Control),a
+	ld a,128+0		;[ 0 ] [DG ] [IE2] [IE1] [M5] [M4] [M3] [ 0 ]
+	out (VdpOut_Control),a
+	
+	ld a,%01100000  	; Enable Screen - Enable Retrace Interrupt
+	out (VdpOut_Control),a
+	ld a,128+1		;R#1  [ 0 ] [BL ] [IE0] [M1 ] [ M2] [ 0 ] [SI ] [MAG] 
+	out (VdpOut_Control),a
+	
+	ld a,31
+	out (VdpOut_Control),a
+	ld a,128+2		;Pattern layout table
+	out (VdpOut_Control),a
+	
+	ld a,239
+	out (VdpOut_Control),a
+	ld a,128+5		; Sprite Attrib Table Low
+	out (VdpOut_Control),a
+	
+	ld a,%11110000;1	;		Low nibble defines background color (0 or 1 ?)
+	out (VdpOut_Control),a
+	ld a,128+7		;Text and screen margin color
+	out (VdpOut_Control),a
+	
+	ld a,128
+	out (VdpOut_Control),a
+	ld a,128+10		;Color Table High (Don't know what this does!)
+	out (VdpOut_Control),a
+	
+	ld a,%00001010		;Set up Vram (Shrug!) [VR=1] [SPD=SpriteDisable] 
+	out (VdpOut_Control),a
+	ld a,128+8		;R#8  [MS ] [LP ] [TP ] [CB ] [VR ] [ 0 ] [SPD] [BW ] 
+	out (VdpOut_Control),a
+
+	ld a,%00000000 		;[LN ]=1 212 lines / [LN ]=0 = 192 lines
+	out (VdpOut_Control),a
+	ld a,128+9	        ;R#9  [LN ] [ 0 ] [S1 ] [S0 ] [IL ] [E0 ] [*NT] [DC ]
+	out (VdpOut_Control),a
+	ret
+	");
+end;
+
+
+
 end.

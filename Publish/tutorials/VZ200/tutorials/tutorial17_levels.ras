@@ -1,0 +1,175 @@
+program Levels;
+@use "Screen"
+@use "Memory"
+@use "gfx/GenericLevels"
+@use "Font"
+@use "Sprite"
+@use "gfx/tiles"
+@use "Input"
+
+// Automatically export level
+@export "images/level1.flf" "images/level1.bin" 256
+// Automatically export the tiles
+@export "images/tiles.flf" "images/tiles.bin" 1024
+
+ var
+	ddy,ccy : integer;
+	i,j,xx,yy: byte;
+	
+	level : GenericLevels::Level;
+	levels : incbin("images/level1.bin");
+	tiles : incbin("images/tiles.bin");
+	ok,ground : boolean;
+	// Background buffer of the screen for EORing
+	buf : array[2048] of byte;
+	
+	Player = record
+		x, y : integer; // pos * 16
+		sx, sy : integer; // speed
+		lx, ly : byte; // pos in level
+	end;
+		
+	p1 : Player;	
+	// Text message for each level	
+	levelTxt : array[] of string = (
+		"Hi there!", "Hurry up", "You're so cool", "what's this then?",
+		"","","","",
+		"","","","",
+		"","","",""
+	);
+	// Background value for collision detection
+	const background : byte =  %00;
+	
+	
+// Compile up some sprites	
+@spritecompiler "images/sprites2.flf" "tank2" 3 0 16 8 "buf"
+
+
+// Include the tank2 sprite
+@include "tank2.inc"
+
+/*
+	This method is called when the player leaves the screen and a new room needs to be painted. 
+
+*/
+procedure UpdateLevel();
+begin
+	// For some reason rendering to screen seems to crash when performed right after a
+	// vertical blank.. hence the wait... Jason you know anything about this?	
+	Screen::WaitForVerticalBlank();
+	for i:=0 to 200 do wait(190);
+	// Renders the current level at location lx,ly. Height of each block is 8, width is 4 bytes
+	level.RenderLevel(p1.lx,p1.ly, 4,8);
+	// Print out the text
+	Screen::SetPen(2);
+	Font::SetFont(#Font::font1);
+	Font::DrawTextAt(levelTxt[p1.lx+p1.ly<<2],0,64-8,true);
+	// Copy the level to the backbuffer for sprite XORing
+	memcpy(#Screen::screen_char_loc, #buf, 2048);
+end;
+/*
+
+	Will move the player in the direction of dx,dy if not detecting a pixel in the background 
+	buffer. 
+*/
+procedure VerifyMove(cx,cy,dx, dy : integer);
+begin
+	xx := (p1.x+cx*8+16*8)/(16);
+	yy := (p1.y+cy*4+8*8)/(16);
+	
+	ok:=true;
+	
+	if (dx<>0) then
+	for j:=0 to 4 step 2 do
+	begin	
+	//	if Screen::getPixel(#buf, xx,yy+j-4)<>background then ok:=false;
+	end;
+	if (dy<>0) then
+	begin
+		for j:=0 to 16 step 4 do
+		begin	
+			if Screen::getPixel(#buf, xx+j-16,yy)<>background then ok:=false;
+//			Screen::PutPixel(xx+j-16,yy);
+		end;
+		if (not ok and ddy<30000) then ground:=true else ground:=false;
+	end;
+	
+//	ok := true;
+	
+	if (ok) then
+	begin
+		p1.x += dx/2;
+		p1.y += dy/2;
+		
+	end;
+	
+end;
+
+
+/*
+	Updates the player movement
+
+*/
+procedure UpdatePlayer();
+begin
+	// Draw the player
+	tank2(0, #screen, p1.x/16,p1.y/16);
+	// Get key
+	i := Input::GetPressedKey();
+	// Move left/right
+	if (i = Input::Key_D) then VerifyMove(16,16,24,0);
+	if (i = Input::Key_A) then VerifyMove(16,16,65536-24,0);
+	// Jump up
+	if (i = Input::Key_W and ground) then ddy:=65505;//VerifyMove(0,65536-24);
+	// Check jump/falling down
+	ccy:=16;
+	if (ddy>30000) then ccy:=65536-16;
+	VerifyMove(16,ccy,0,ddy);
+	
+	
+	// redraw map wen player is at the edge of the screen	
+	xx := p1.x>>4;
+	yy := p1.y>>4;
+	
+	if (xx>150) then if (p1.lx<>0) then begin p1.lx-=1; p1.x:=111*16; xx:=111; UpdateLevel(); end else begin p1.x:=2; xx:=2; end;
+	if (xx>112) then if (p1.lx<level.sizex) then begin p1.lx+=1; p1.x:=1; xx:=1; UpdateLevel(); end else begin p1.x:=111*16;xx:=111;end;
+	if (yy>70) then if (p1.lx<>0) then begin p1.ly-=1; p1.y:=55*16; yy:=55; UpdateLevel(); end else begin p1.y:=2; yy:=2; end;
+	if (yy>64-8) then if (p1.ly<level.sizey) then begin p1.ly+=1; p1.y:=1; yy:=1; UpdateLevel(); end else begin p1.y:=55*16;yy:=55;end;
+	if (not ground) then
+		ddy+=1;
+		
+end;
+
+/*
+	Initialise the tiles, level
+
+*/
+procedure Init();
+begin
+	Tiles::SetTileLoc(#tiles);
+	level.ReadHeader(#levels);
+	Tiles::tile := #tiles;
+	p1.lx := 0;
+	p1.ly := 0;
+	p1.x := 10;
+	p1.y := 10;
+end;
+
+begin
+	// Set the sprite data
+	Memory::DisableInterrupts();
+	Screen::SetMode(1);	
+	Screen::Cls(1);
+	
+	Init();
+
+	UpdateLevel();	
+	
+	while(true) do
+	begin	
+		Screen::WaitForVerticalBlank();
+		UpdatePlayer();		
+	end;
+
+end.
+	

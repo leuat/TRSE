@@ -1,0 +1,70 @@
+unit Common;
+//@use "format"
+@use "text"
+@use "unittests/vars"
+var
+  unittests_common_string : array[9] of byte;
+  unittests_status : byte = 0;
+
+// Called at the beginning of the testing
+procedure TestInit();
+begin
+	Text::Reset();
+end;
+
+procedure CR() inline;
+begin
+	asm("
+	");
+end;
+
+// Called at the beginning of each test suite (multiple test cases grouped together)
+procedure TestSuiteInit();
+begin
+	Text::Reset();
+end;
+	
+procedure Initialise(zp:pointer);
+begin
+   Text::Reset();
+   Text::PrintXY(zp,0,0);
+   Text::x:=0;
+   Text::y:=8;
+end;
+
+function Status() : byte;
+begin
+	Status := unittests_status;
+end;
+
+// Print POSITIVE result of a test - ptext must be 8 characters or less
+procedure PASS();
+begin
+  Text::Print(#Vars::text);
+//  Text::Println(": PASS");
+end;
+
+// Print NEGATIVE result of a test - ftext must be 8 characters or less
+procedure FAIL();
+begin
+  Text::Print(#Vars::text);
+  Text::Print("F");
+  unittests_status := 1;
+//  for Vars::i1:=0 to 50000 do nop(30);
+end;
+
+procedure WaitABit();
+begin
+//  for Vars::i1:=0 to 200 do nop(50);
+end;
+
+procedure DebugValue(v:integer);
+begin
+  // TODO(ColinPitrat): Print value to screen
+//  Format::Itos(v, #cpc_unittests_common_string);
+  Text::Print(#unittests_common_string);
+end;
+
+end.
+
+

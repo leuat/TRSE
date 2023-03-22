@@ -33,7 +33,12 @@
 
 #include "source/Compiler/codegen/abstractcodegen.h"
 
-
+/* 
+    Node for a Binary Operation (such as a+1)
+    m_left: The first operand
+    m_right: The second operand
+    m_op: The Operation
+*/
 class NodeBinOP : public Node {
 public:
     QVector<int> power2 = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192, 8192*2,8192*4,8192*8};
@@ -55,13 +60,13 @@ public:
     bool isWord(Assembler* as) override;
     bool isLong(Assembler* as) override;
 
-    void setForceType(TokenType::Type t) override;
-//    void setForceTypeFunctions(TokenType::Type t);
-    void setCastType(TokenType::Type t) override;
+    void setLoadType(TokenType::Type t) override;
+    void setStoreType(TokenType::Type t) override;
 
     bool isPurePointer(Assembler *as) override {
         return m_left->isPurePointer(as) && m_right->isPurePointer(as);
     }
+    TokenType::Type getClassvariableType()  override;
 
     bool isPointer(Assembler *as) override
     {

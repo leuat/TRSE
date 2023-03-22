@@ -183,5 +183,13 @@ V_VWAIT:
 ");	
 end;
 	
+procedure SetPalette(p : global ^byte, c : global byte);
+begin
+	for b:=0 to c do
+	begin
+		palette[b]:=p[b];
+	end;
+end;
+	
 	
 end.

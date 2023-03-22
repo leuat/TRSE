@@ -67,14 +67,14 @@ public:
     AbstractCodeGen();
     void UpdateDispatchCounter();
        // Declare overloads for each kind of a file to dispatch
+    virtual void dispatch(QSharedPointer<Node> node) { }
+    virtual void dispatch(QSharedPointer<NodeVarType> node) { }
     virtual void dispatch(QSharedPointer<NodeBinOP> node) = 0;
     virtual void dispatch(QSharedPointer<NodeNumber> node) = 0;
-    virtual void dispatch(QSharedPointer<Node> node) = 0;
     virtual void dispatch(QSharedPointer<NodeString> node) = 0;
     virtual void dispatch(QSharedPointer<NodeVar> node) = 0;
     virtual void dispatch(QSharedPointer<NodeAssign> node);
     virtual void dispatch(QSharedPointer<NodeBlock> node);
-    virtual void dispatch(QSharedPointer<NodeVarType> node) = 0;
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
     virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
     virtual void dispatch(QSharedPointer<NodeCase> node);
@@ -177,6 +177,12 @@ public:
     // Virtual methods
     // note that not all methods below are implemented on all systems.
 
+    /*
+     * Note that the methods returning a "bool" are typically used
+     * in AbstractCodegen::AssignVariable, where if a "IsSimpleIncDec" is true, the
+     * code will be written out and the assign statement is finished
+    */
+
     // assign a variable from an internal register: var := _ax;
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) {}
     // assign a register to a variable: _ax := var;
@@ -209,6 +215,7 @@ public:
     // Method that will increase a variable in <var> with the value in <step>
     // used in for loops
     void IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<Node> var);
+    virtual void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
 
 
@@ -251,7 +258,7 @@ public:
      *  Sometimes compound binary clauses can be optimised. Only used on the 6502 for now.
      *
      */
-    virtual void OptimizeBinaryClause(QSharedPointer<Node> node,Assembler* as) {}
+    virtual void OptimizeBinaryClause(QSharedPointer<Node> node) {}
 
 
 
@@ -281,8 +288,8 @@ public:
      *  Inserts custom .asm code at every procedure start/end.
      *
      */
-    virtual void ProcedureStart(Assembler* as) { }
-    virtual void ProcedureEnd(Assembler* as) { }
+    virtual void ProcedureStart() { }
+    virtual void ProcedureEnd() { }
 
     /*
      * Prints out the "incbin" command for the current cpu/assembler.

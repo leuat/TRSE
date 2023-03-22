@@ -1,0 +1,61 @@
+Unit Schip;
+var
+	n: byte;
+	pram : array[8] of byte;
+	ptr : pointer;
+	
+procedure HiRes() inline;
+begin
+	asm("
+	high
+	");
+end;	
+
+procedure LowRes() inline;
+begin
+	asm("
+	low
+	");
+end;	
+procedure ScrollDown4(n : global byte);
+begin
+	if (n<16) then begin
+		asm("
+		LD V0, Schip_n
+		ADD V0, #C0
+		LD I, schip_scd_insertion+1
+		LD [I], V0
+		schip_scd_insertion:
+		SCD 0
+		");
+	end;
+
+end;
+procedure ScrollLeft() inline;
+begin
+	asm("SCL");
+end;
+procedure ScrollRight() inline;
+begin
+	asm("SCR");
+end;
+
+/*
+procedure SaveToPRAM(ptr: global ^byte)
+begin
+	asm("
+	LD I , Schip_pram
+	LD V7, [I]
+	LD R, V7
+	");
+end;
+procedure SaveFromPRAM(ptr: global ^byte)
+begin
+	asm("
+	LD V7, R
+	LD I , Schip_pram
+	LD [I], V7
+	");
+end;
+*/
+end.

@@ -407,7 +407,7 @@ void MethodsX86::LoadVar(Assembler *as, int paramNo)
 //    qDebug() << "LOADVAR FORCE WORD  TYPE "<<paramNo <<m_node->m_params[paramNo]->m_builtInFunctionParameterType  <<m_node->m_params[paramNo]->isWord(as);
     if (m_node->m_params[paramNo]->m_builtInFunctionParameterType==BuiltInFunction::INTEGER
             && !m_node->m_params[paramNo]->isWord(as)) {
-        m_node->m_params[paramNo]->setForceType(TokenType::INTEGER);
+        m_node->m_params[paramNo]->setLoadType(TokenType::INTEGER);
   //      qDebug() << "LOADVAR FORCE WORD "<<paramNo ;
     }
 

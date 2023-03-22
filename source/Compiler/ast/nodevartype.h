@@ -30,6 +30,12 @@
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/codegen/abstractcodegen.h"
 
+/* 
+    Variable type, for example: Integer, byte, SomeRecord, SomeClass, Mat4x4 etc
+    m_left: unused
+    m_right: unused
+    m_op: unused
+*/
 class NodeVarType : public Node {
 public:
     QString value;

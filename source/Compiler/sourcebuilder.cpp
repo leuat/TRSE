@@ -63,7 +63,7 @@ bool SourceBuilder::Build(QString source)
     ErrorHandler::e.m_level = ErrorHandler::e.ERROR_ONLY;
     ErrorHandler::e.m_teOut = "";
     ErrorHandler::e.exitOnError = false;
-    source= source.replace("\r","");
+    source = source.replace("\r","");
     QStringList lst = source.split("\n");
 
 

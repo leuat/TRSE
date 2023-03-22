@@ -5,6 +5,9 @@ var
 	p: pointer;
 	i: integer;
 	
+@addemulatorparam "-nothrottle"
+	
+	
 begin
 	System::Init();
 	Text::Reset();

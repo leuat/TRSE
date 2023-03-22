@@ -6,6 +6,7 @@ Program UnitTestsTIM;
 
 @use "unittests/unittests"
 @use "unittests/common"
+@addemulatorparam "-nothrottle"
 
 procedure TestResult(s : pointer);
 begin

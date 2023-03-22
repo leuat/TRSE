@@ -1,0 +1,293 @@
+procedure stuff_0();
+begin
+asm ("
+  ld de, $20
+ ld a,$00
+ ld [ix+0],a
+ ld a,$00
+ ld [ix+1],a
+ ld a,$00
+ ld [ix+2],a
+ ld a,$00
+ ld [ix+3],a
+ ld a,$03
+ ld [ix+32],a
+ ld a,$fc
+ ld [ix+33],a
+ ld a,$ff
+ ld [ix+34],a
+ ld a,$00
+ ld [ix+35],a
+ ld a,$0f
+ ld [ix+64],a
+ ld a,$7f
+ ld [ix+65],a
+ ld a,$f7
+ ld [ix+66],a
+ ld a,$c0
+ ld [ix+67],a
+ ld a,$0f
+ ld [ix+96],a
+ ld a,$d7
+ ld [ix+97],a
+ ld a,$57
+ ld [ix+98],a
+ ld a,$c0
+ ld [ix+99],a
+ ld a,$0f
+ ld [ix+128],a
+ ld a,$ff
+ ld [ix+129],a
+ ld a,$fc
+ ld [ix+130],a
+ ld a,$00
+ ld [ix+131],a
+ ld a,$00
+ ld [ix+160],a
+ ld a,$ee
+ ld [ix+161],a
+ ld a,$c0
+ ld [ix+162],a
+ ld a,$00
+ ld [ix+163],a
+ ld a,$00
+ ld [ix+192],a
+ ld a,$00
+ ld [ix+193],a
+ ld a,$00
+ ld [ix+194],a
+ ld a,$00
+ ld [ix+195],a
+ ld a,$00
+ ld [ix+224],a
+ ld a,$00
+ ld [ix+225],a
+ ld a,$00
+ ld [ix+226],a
+ ld a,$00
+ ld [ix+227],a
+");
+end;
+procedure stuff_1();
+begin
+asm ("
+  ld de, $20
+ ld a,$00
+ ld [ix+0],a
+ ld a,$00
+ ld [ix+1],a
+ ld a,$00
+ ld [ix+2],a
+ ld a,$00
+ ld [ix+3],a
+ ld a,$00
+ ld [ix+32],a
+ ld a,$ff
+ ld [ix+33],a
+ ld a,$3f
+ ld [ix+34],a
+ ld a,$c0
+ ld [ix+35],a
+ ld a,$03
+ ld [ix+64],a
+ ld a,$df
+ ld [ix+65],a
+ ld a,$fd
+ ld [ix+66],a
+ ld a,$f0
+ ld [ix+67],a
+ ld a,$03
+ ld [ix+96],a
+ ld a,$f5
+ ld [ix+97],a
+ ld a,$d5
+ ld [ix+98],a
+ ld a,$f0
+ ld [ix+99],a
+ ld a,$03
+ ld [ix+128],a
+ ld a,$ff
+ ld [ix+129],a
+ ld a,$ff
+ ld [ix+130],a
+ ld a,$00
+ ld [ix+131],a
+ ld a,$00
+ ld [ix+160],a
+ ld a,$3b
+ ld [ix+161],a
+ ld a,$b0
+ ld [ix+162],a
+ ld a,$00
+ ld [ix+163],a
+ ld a,$00
+ ld [ix+192],a
+ ld a,$00
+ ld [ix+193],a
+ ld a,$00
+ ld [ix+194],a
+ ld a,$00
+ ld [ix+195],a
+ ld a,$00
+ ld [ix+224],a
+ ld a,$00
+ ld [ix+225],a
+ ld a,$00
+ ld [ix+226],a
+ ld a,$00
+ ld [ix+227],a
+");
+end;
+procedure stuff_2();
+begin
+asm ("
+  ld de, $20
+ ld a,$00
+ ld [ix+0],a
+ ld a,$00
+ ld [ix+1],a
+ ld a,$00
+ ld [ix+2],a
+ ld a,$00
+ ld [ix+3],a
+ ld a,$00
+ ld [ix+32],a
+ ld a,$3f
+ ld [ix+33],a
+ ld a,$cf
+ ld [ix+34],a
+ ld a,$f0
+ ld [ix+35],a
+ ld a,$00
+ ld [ix+64],a
+ ld a,$f7
+ ld [ix+65],a
+ ld a,$ff
+ ld [ix+66],a
+ ld a,$7c
+ ld [ix+67],a
+ ld a,$00
+ ld [ix+96],a
+ ld a,$fd
+ ld [ix+97],a
+ ld a,$75
+ ld [ix+98],a
+ ld a,$7c
+ ld [ix+99],a
+ ld a,$00
+ ld [ix+128],a
+ ld a,$ff
+ ld [ix+129],a
+ ld a,$ff
+ ld [ix+130],a
+ ld a,$c0
+ ld [ix+131],a
+ ld a,$00
+ ld [ix+160],a
+ ld a,$0e
+ ld [ix+161],a
+ ld a,$ec
+ ld [ix+162],a
+ ld a,$00
+ ld [ix+163],a
+ ld a,$00
+ ld [ix+192],a
+ ld a,$00
+ ld [ix+193],a
+ ld a,$00
+ ld [ix+194],a
+ ld a,$00
+ ld [ix+195],a
+ ld a,$00
+ ld [ix+224],a
+ ld a,$00
+ ld [ix+225],a
+ ld a,$00
+ ld [ix+226],a
+ ld a,$00
+ ld [ix+227],a
+");
+end;
+procedure stuff_3();
+begin
+asm ("
+  ld de, $20
+ ld a,$00
+ ld [ix+0],a
+ ld a,$00
+ ld [ix+1],a
+ ld a,$00
+ ld [ix+2],a
+ ld a,$00
+ ld [ix+3],a
+ ld a,$00
+ ld [ix+32],a
+ ld a,$0f
+ ld [ix+33],a
+ ld a,$f3
+ ld [ix+34],a
+ ld a,$fc
+ ld [ix+35],a
+ ld a,$00
+ ld [ix+64],a
+ ld a,$3d
+ ld [ix+65],a
+ ld a,$ff
+ ld [ix+66],a
+ ld a,$df
+ ld [ix+67],a
+ ld a,$00
+ ld [ix+96],a
+ ld a,$3f
+ ld [ix+97],a
+ ld a,$5d
+ ld [ix+98],a
+ ld a,$5f
+ ld [ix+99],a
+ ld a,$00
+ ld [ix+128],a
+ ld a,$3f
+ ld [ix+129],a
+ ld a,$ff
+ ld [ix+130],a
+ ld a,$f0
+ ld [ix+131],a
+ ld a,$00
+ ld [ix+160],a
+ ld a,$03
+ ld [ix+161],a
+ ld a,$bb
+ ld [ix+162],a
+ ld a,$00
+ ld [ix+163],a
+ ld a,$00
+ ld [ix+192],a
+ ld a,$00
+ ld [ix+193],a
+ ld a,$00
+ ld [ix+194],a
+ ld a,$00
+ ld [ix+195],a
+ ld a,$00
+ ld [ix+224],a
+ ld a,$00
+ ld [ix+225],a
+ ld a,$00
+ ld [ix+226],a
+ ld a,$00
+ ld [ix+227],a
+");
+end;
+var stuff_pi : integer;
+@donotremove stuff_dst 
+procedure stuff(stuff_src,stuff_dst : pointer; stuffpx,stuffpy : byte);
+begin
+  stuff_pi:=stuff_dst + stuffpy<<5 + stuffpx>>2;
+asm("  ld ix, [stuff_pi]
+");
+ stuffpx:=stuffpx&3;
+ if (stuffpx=0) then stuff_0();
+ if (stuffpx=1) then stuff_1();
+ if (stuffpx=2) then stuff_2();
+ if (stuffpx=3) then stuff_3();
+end;

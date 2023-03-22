@@ -79,6 +79,8 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("TVC generic", "TVC",LImage::Type::TVC, LColorList::Type::TVC));
     m_types.append(ImageType("CoCo3 generic", "TRS80COCO",LImage::Type::COCO3, LColorList::Type::COCO3));
     m_types.append(ImageType("Thomson generic", "THOMSON",LImage::Type::THOMSON, LColorList::Type::THOMSON));
+    m_types.append(ImageType("Level editor VZ200", "VZ200",LImage::Type::LevelEditorGeneric, LColorList::Type::VZ200));
+    m_types.append(ImageType("Level editor COCO3", "TRS80COCO",LImage::Type::LevelEditorGeneric, LColorList::Type::COCO3));
 
 //    m_types.append(ImageType("Hybrid multicolor/hires charset", "c64",LImage::Type::HybridCharset,LColorList::Type::C64));
   //  m_types.append(ImageType("Hybrid multicolor/hires charset", "vic20",LImage::Type::HybridCharset,LColorList::Type::VIC20));

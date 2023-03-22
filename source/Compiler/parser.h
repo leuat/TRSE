@@ -44,7 +44,6 @@
 #include "source/Compiler/ast/nodeconditional.h"
 #include "source/Compiler/ast/nodeforloop.h"
 #include "source/Compiler/ast/nodebuiltinmethod.h"
-#include "source/Compiler/ast/nodewhileloop.h"
 #include "source/Compiler/ast/nodeasm.h"
 #include "source/Compiler/ast/node.h"
 #include "source/Compiler/ast/nodebinaryclause.h"
@@ -149,7 +148,7 @@ private:
     QString m_procPrefix = "";
     int m_prevPercent = -1;
     int m_pass = 0, m_acc=0;
-
+    bool m_isClassReference = false;
 //    int m_currentParserBlock=-1;
 
     bool m_hasBeenApplied = false;
@@ -312,6 +311,7 @@ private:
     void HandleCallMacro(QString name, bool ignore);
     void HandleExportCompressed();
     void HandleExport();
+    void HandleBin2Inc();
     void HandlePathTool();
     void HandleConvertJDH8();
     void HandleExportShiftedCharset();
@@ -325,6 +325,7 @@ private:
     void HandleVBMExport();
     void HandleVBMExportColor();
     void HandleVBMExportChunk();
+    void HandleVBMCompileChunk();
     void HandleExportFrame();
     void HandleSpriteCompiler();
     void HandleSpritePacker();
