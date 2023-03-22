@@ -1,3 +1,7 @@
+_In this fork of TRSE a small correction has been made which allows for non-problematic compilation of the programs for ZX Spectrum. However, this fork is updated only from time to time, so it is best to use the original one and only introduce the correction to spectrum_general/project.trse file as in this fork (add 0 at the end of line 28)._ 
+
+
+
 First of all: see http://www.turborascal.com
 
 # TRSE
