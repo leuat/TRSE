@@ -1,4 +1,4 @@
-_In this fork of TRSE a small correction has been made which allows for non-problematic compilation of the programs for ZX Spectrum. However, this fork is updated only from time to time, so it is best to use the original one and only introduce the correction to spectrum_general/project.trse file as in this fork (add 0 at the end of line 28)._ 
+_In this fork of TRSE a small correction has been made which allows for non-problematic compilation of the programs for ZX Spectrum. However, this fork is updated only from time to time, so it is best to use the original one and only introduce the correction to spectrum_general/project.trse file as in this fork (add 0 at the end of line 28). Also if the PR https://github.com/leuat/TRSE/pull/740 is merged to the original repository this fork will not have purpose any more._ 
 
 
 
