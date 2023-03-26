@@ -486,7 +486,7 @@ void CodeGenX86::StoreVariable(QSharedPointer<NodeVar> n)
             if (n->isPointer(as))
                 as->Asm("les si,["+n->getValue(as)+"]");
             else
-                as->Asm("lea si,"+n->getValue(as));
+                as->Asm("lea si,["+n->getValue(as)+"]");
             as->Asm("mov [ds:si + bx+2],ax");
             as->Asm("mov [ds:si + bx],di");
         }
@@ -949,7 +949,7 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
                 //                if (node->m_right->isReference())
                 //                 as->Asm("lea si, "+node->m_right->getValue(as));
                 //            else
-                as->Asm("lea si, "+node->m_right->getValue(as)+"");
+                as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
 
                 //as->Asm("mov si, "+node->m_right->getValue(as));
                 as->Asm("mov ["+var->getValue(as)+"+2], ds");
