@@ -658,7 +658,7 @@ void SimplexNoise::CreateNoiseData(QString file, int w, int h, int oct, float pe
         for (int x=0;x<w;x++) {
             float yy = y/(float)h+rs;
             float xx = x/(float)w;
-            float val = 0.5*(1+pow(sn.seamless2d(oct,pers,scalex,xx,yy*scaley/scalex),p)) *amp;
+            float val = pow(0.5*(1.0+(sn.seamless2d(oct,pers,scalex,xx,yy*scaley/scalex))),p) *amp;
             //            for (int j=0;j<4;j++) {
             //              val+=sn.noise(xx*sx,yy*sy,0,0))
             //        }

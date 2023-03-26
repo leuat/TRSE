@@ -2,17 +2,15 @@ program TextStuff;
 @use "system/str"
 @use "system/screen"
 var  
-	tmp : array[256] of byte; // string storage
-	i : integer;
-	
+	tmp : array[256] of byte = buildtable("0"); // string storage
+	i : integer;	
 begin
 	Screen::Print("Whoooo!");
 	Screen::NewLine();
-	
 	str::strcat(#tmp, "Hello ");	
-	str::strcat(#tmp, "World");
 	
-	Screen::Print(#tmp);
+	str::strcat(#tmp, "World");
+
 	Screen::NewLine();
 	i := 5123;
 	Screen::Print("This is a number in base 10 :");

@@ -47,6 +47,13 @@ QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, double l
     return res;
 }
 
+QVector3D AbstractRayObject::CalculateDepthUV(QVector3D org, QVector3D pos, QVector3D n, double l, double dist)
+{
+    return QVector3D(1,1,1)*dist*l;
+//    return QVector3D(1,1,1)*(org-pos).length()*l;
+
+}
+
 QVector3D AbstractRayObject::CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, double l)
 {
     double uu=0,vv=0;
@@ -174,7 +181,10 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
         }
         if (pass==0)
         {
-
+            if (m_material.m_type == Material::Type::UV_DEPTH)
+                col = CalculateDepthUV(ray->m_origin,ray->m_currentPos,QVector3D(1,1,1),m_material.m_uvScale.x(),l);
+            else
+            {
             if (m_material.m_hasTexture) {
 
 
@@ -207,6 +217,7 @@ void AbstractRayObject::CalculateLight(Ray* ray, QVector3D& normal, QVector3D& t
                 ray->m_intensity.setY(std::max(ray->m_intensity.y(),globals.m_ambient.y()*col.y()));
                 ray->m_intensity.setZ(std::max(ray->m_intensity.z(),globals.m_ambient.z()*col.z()));
                 ray->m_intensity += ApplySpecularLight(normal,ray->m_direction,  globals, m_material, shadows);
+            }
             }
             // No lights
             if (m_material.m_lightningType==1) {

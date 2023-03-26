@@ -56,15 +56,16 @@ void CreateVICCharset() {
 void CreateMergedTorus() {
 
 //    QString p = "SPECTRUM/tutorials";
-    QString p = "TIM/tutorials";
+//    QString p = "/Users/leuat/code/TRSE/Publish/tutorials/TIM/tutorials";
 
-    auto b1 = Util::loadBinaryFile("/Users/leuat/code/TRSE/Publish/tutorials/"+p+"/data/inside_torus.bin");
-    auto b2 = Util::loadBinaryFile("/Users/leuat/code/TRSE/Publish/tutorials/"+p+"/data/inside_torus2.bin");
+    QString p = "/Users/leuat/Dropbox/TRSE/dos_cga_party/";
+    auto b1 = Util::loadBinaryFile(p+"/data/inside_torus.bin");
+    auto b2 = Util::loadBinaryFile(p+"/data/inside_torus2.bin");
     QByteArray d;
     for (int i=0;i<b1.size();i++)
         d.append(((b2[i]/16)&15) | (((b1[i]/8)&15)<<4));
 
-    Util::SaveByteArray(d,"/Users/leuat/code/TRSE/Publish/tutorials/"+p+"/data/combined.bin");
+    Util::SaveByteArray(d,p+"/data/combined.bin");
 
 
 }

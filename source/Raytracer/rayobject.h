@@ -80,6 +80,7 @@ public:
     }
 
     QVector3D CalculateBoxUV(QVector3D pos, QVector3D n, double l);
+    QVector3D CalculateDepthUV(QVector3D org, QVector3D pos, QVector3D n, double l, double dist);
 
     QVector3D CalculateSphereUV(QVector3D pos, QVector3D n, QVector3D t, double l);
 

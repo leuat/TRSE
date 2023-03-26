@@ -52,10 +52,10 @@ var
 			mov cx, [File_size] ; number of bytes to read
 			mov dx, [File_dst] ; were to put read data
 			push ds
-			lds dx,[File_dst]	
+;			lds dx,[File_dst]	
 			int 21h	
-			mov [File_val2],ax
 			pop ds
+			mov [File_val2],ax
 			sti
 			");
 			this.err := File::val2;
@@ -102,7 +102,7 @@ var
 	procedure ReadAll(fp,tp: global pointer);
 	begin
 		file.Open(fp,R);
-		file.Read(64000, tp);
+		file.Read(65000,tp);
 		file.Close();
 	end;
 

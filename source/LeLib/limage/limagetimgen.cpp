@@ -40,7 +40,6 @@ void LImageTIMGen::ReInitialize()
     m_charWidth=m_width/8;
     m_charHeight=m_height/8;
 
-    qDebug() << m_width;
     Initialize(m_width,m_height);
     m_charWidth=m_width/8;
     m_charHeight=m_height/8;

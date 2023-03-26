@@ -43,7 +43,7 @@ public:
     float m_shininess_strength =1;
     float m_shininess=0;
     float m_uv_rotation = 0;
-    enum Type {UV_CUBE, UV_SPHERE_MAP, UV_RAW};
+    enum Type {UV_CUBE, UV_SPHERE_MAP, UV_RAW, UV_DEPTH};
     Type m_type = UV_CUBE;
     float m_reflectivity=0.5;
     float m_perlinness = 0.3;

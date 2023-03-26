@@ -540,7 +540,9 @@ static int AddObject(lua_State *L)
 
             if (m_script->get<QString>(material+".uvtype")=="sphere_map") {
                 mat.m_type = Material::Type::UV_SPHERE_MAP;
-                //    qDebug() << "HERE";
+            }
+            if (m_script->get<QString>(material+".uvtype")=="depth") {
+                mat.m_type = Material::Type::UV_DEPTH;
             }
         }
 
@@ -564,6 +566,9 @@ static int AddObject(lua_State *L)
         }
         if (m_script->lua_exists(material+".checkerboard_color")) {
             mat.m_checkerBoard_color = m_script->getVec(material+".checkerboard_color");
+        }
+        if (m_script->lua_exists(material+".light_type")) {
+            mat.m_lightningType = m_script->get<float>(material+".light_type");
         }
         if (m_script->lua_exists(material+".light_type")) {
             mat.m_lightningType = m_script->get<float>(material+".light_type");
@@ -772,6 +777,26 @@ int DialogEffects::Message(lua_State *L)
     return 0;
 }
 
+int MergeUVData(lua_State *L) {
+
+
+
+    QString p = m_currentDir;
+    auto b1 = Util::loadBinaryFile(p+lua_tostring(L,1));
+    auto b2 = Util::loadBinaryFile(p+lua_tostring(L,2));
+    auto b3 = Util::loadBinaryFile(p+lua_tostring(L,3));
+    QByteArray d;
+    for (int i=0;i<b1.size();i++) {
+        d.append(((b2[i]/lua_tointeger(L,5))&15) | (((b1[i]/lua_tointeger(L,6))&15)<<4));
+        d.append(b3[i]-1);
+    }
+
+    Util::SaveByteArray(d,p+lua_tostring(L,4));
+
+    return 0;
+}
+
+
 static int ClearObjects(lua_State *L) {
     m_rt.m_objects.clear();
     return 0;
@@ -896,6 +921,15 @@ static int Add4PixelData(lua_State* L) {
 
     if (m_effect!=nullptr)
         m_compression.AddTo4PixelData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4),lua_tonumber(L,5)==1.0);
+
+    return 0;
+}
+static int Add4PixelCGAData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddVZ200ToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+        m_compression.AddTo4PixelCGAData(m_charData, *m_effect->m_mc ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4),lua_tonumber(L,5)==1.0);
 
     return 0;
 }
@@ -1894,6 +1928,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddC64LineToData", AddToData);
     lua_register(m_script->L, "AddVZ200ToData", AddVZ200Data);
     lua_register(m_script->L, "Add4PixelToData", Add4PixelData);
+    lua_register(m_script->L, "Add4PixelCGAToData", Add4PixelCGAData);
     lua_register(m_script->L, "Add8PixelToData", Add8PixelData);
     lua_register(m_script->L, "Add4PixelToDataTVC", Add4PixelDataTVC);
     lua_register(m_script->L, "AddSpecialC64bitmapModeToData", AddSpecialC64bitmapModeToData);
@@ -1958,6 +1993,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "sqrt", LuaSqrt);
     lua_register(m_script->L, "Message", Message);
     lua_register(m_script->L, "ClearAllObjects", ClearObjects);
+
+    lua_register(m_script->L, "MergeUVData", MergeUVData);
 
     lua_register(m_script->L, "GenerateSpecialClearScreen", GenerateSpecialClearScreen);
     lua_register(m_script->L, "DrawLine", DrawLine);

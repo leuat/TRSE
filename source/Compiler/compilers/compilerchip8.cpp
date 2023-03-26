@@ -11,9 +11,6 @@ void CompilerChip8::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sy
     m_codeGen = QSharedPointer<CodeGenChip8>(new CodeGenChip8());
     m_codeGen->dontOutputLineNumbers();
 
-//    m_assembler->Asm("BALLE");
-
-
 
     m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
 //    m_assembler->WriteConstants();

@@ -111,6 +111,28 @@ void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp,
 
 }
 
+void Compression::AddTo4PixelCGAData(QByteArray &data, LImage &img, int xp, int yp, int w, int h, bool invert)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=4) {
+            uchar c = 0;
+            int xx = xp+x;
+            int yy = yp+y;
+            for (int j=0;j<4;j++) {
+                uchar v = img.getPixel(xx+j,yy);
+                if (invert)
+                    c=c|(v<<(6-2*j));
+                else
+                c=c|(v<<(2*j));
+            }
+            data.append(c);
+
+//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+
+}
+
 void Compression::AddTo8PixelData(QByteArray &data, LImage &img, int xp, int yp, int w, int h, bool invert)
 {
     for (int y=0;y<h;y+=1)

@@ -59,6 +59,10 @@ begin
 	buffer5:=buffer4+16000;
 end;
 
+procedure ReleaseCGABuffers();
+begin
+	Memory::Release(buffer1);
+end;
 
 
 procedure InitVGABuffersNo21(noBuffers:global integer);

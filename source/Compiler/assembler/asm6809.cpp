@@ -428,12 +428,10 @@ void Asm6809::EndAssignVariable(QString variable)
 void Asm6809::BinOP(TokenType::Type t,  bool clearFlag)
 {
     if (t == TokenType::PLUS) {
-        if (clearFlag)
         m_term = "addb ";
     }
 
     if (t == TokenType::MINUS) {
-        if (clearFlag)
         m_term = "subb ";
     }
 

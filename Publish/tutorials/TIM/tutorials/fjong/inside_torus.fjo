@@ -26,7 +26,7 @@ c = 16
 
 -- 10*24
 output = {
-	resolution = { width = 128, height=128},
+	resolution = { width = 320, height=200},
 --	resolution = { width = 320, height=200},
 	aspect = 1.3,
 --	output_type = 3,

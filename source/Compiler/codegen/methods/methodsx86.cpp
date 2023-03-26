@@ -63,6 +63,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     }
     if (Command("startirq")) {
         PushPopAll(as,true);
+        as->Asm("push es");
         as->Asm("push ds");
         as->Asm("mov ax,192h ; reset DS ");
         as->Asm("mov ds,ax");
@@ -75,6 +76,7 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         as->Asm("mov al,20h");
         as->Asm("out 20h,al");
         as->Asm("pop ds");
+        as->Asm("pop es");
         PushPopAll(as,false);
     }
     if (Command("setpalette")) {

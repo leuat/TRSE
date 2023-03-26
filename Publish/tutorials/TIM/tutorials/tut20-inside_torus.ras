@@ -52,10 +52,12 @@ begin
 			
 			repeat 80
 			; load data			
+			ld a,[t]
+			ld l,a
 			ld a,[de]
+			add a,l
 			inc de
 			; add time
-			add a,ixl
 			ld l,a
 			; lookup in perlin
 			ld a,[hl]

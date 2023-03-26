@@ -280,7 +280,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
 
             }
 
-            if (node->m_expr->isPureVariable() && !node->m_expr->hasArrayIndex() && node->m_expr->isWord(as)) {
+            if (node->m_expr->isPureVariable() && !node->m_expr->hasArrayIndex() && node->m_expr->isWord(as) && node->m_expr->getOrgType(as)!=TokenType::BYTE) {
                 as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
                 if (node->isWord(as))
                     as->Asm("add di,word ["+node->m_expr->getValue(as)+"]");
@@ -763,9 +763,18 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
         }
         if (var->m_expr->isPureVariable() && var->m_expr->isWord(as)) {
             as->Asm("les di, ["+var->getValue(as)+"]");
-            as->Asm("add di,["+var->m_expr->getValue(as)+"]");
-            if (var->isWord(as))
+            if (var->m_expr->getOrgType(as)==TokenType::BYTE) {
+                 as->Asm("mov bl, ["+var->m_expr->getValue(as)+"]");
+                 as->Asm("xor bh,bh");
+                 as->Asm("add di,bx");
+                 if (var->isWord(as))
+                     as->Asm("add di,bx");
+            }
+            else {
                 as->Asm("add di,["+var->m_expr->getValue(as)+"]");
+                if (var->isWord(as))
+                    as->Asm("add di,["+var->m_expr->getValue(as)+"]");
+            }
 
             as->Asm("mov [es:di],"+getAx("a",var));
 
@@ -940,7 +949,7 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
                 //                if (node->m_right->isReference())
                 //                 as->Asm("lea si, "+node->m_right->getValue(as));
                 //            else
-                as->Asm("lea si, ["+node->m_right->getValue(as)+"]");
+                as->Asm("lea si, "+node->m_right->getValue(as)+"");
 
                 //as->Asm("mov si, "+node->m_right->getValue(as));
                 as->Asm("mov ["+var->getValue(as)+"+2], ds");

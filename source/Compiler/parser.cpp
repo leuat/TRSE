@@ -5155,14 +5155,14 @@ void Parser::HandlePerlinNoise()
     float pers = m_currentToken.m_intVal/100.0;
     Eat();
     int amp = m_currentToken.m_intVal;
-    float pow = 1;
+    float pow = 1.0;
     Eat(TokenType::INTEGER_CONST);
     if (m_currentToken.m_type == TokenType::INTEGER_CONST) {
-        pow = m_currentToken.m_intVal/100.0;
+        pow = m_currentToken.m_intVal/1000.0;
         Eat(TokenType::INTEGER_CONST);
     }
     SimplexNoise sn;
-//    qDebug() << "PARSER:::" <<file;
+//    qDebug() << "PARSER:::" <<pow;
     sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
 
 }
