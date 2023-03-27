@@ -613,7 +613,6 @@ HEADERS  += mainwindow.h \
     source/PmmEdit/fjonghighlighter.h \
     source/PmmEdit/trsehighlighter.h \
     source/chip8emu/c8asm.h \
-    source/chip8emu/chip8.h \
     source/chip8emu/chip8emu.h \
     source/chip8emu/dialogchip8.h \
     source/dialogcolorselect.h \
