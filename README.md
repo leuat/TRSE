@@ -20,6 +20,11 @@ Windows:
 Macos:
 - install Xcode 
 - download the Qt framework from https://www.qt.io/download. Install the latest framework of Qt6 (desktop application).
+ARM chromebook/ARM computers:
+- sudo apt install qtbase5-dev qt5-qmake qtbase5-dev-tools qtdeclarative5-dev
+- qmake TRSE.pro
+- make -j1
+
 
 Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
 
