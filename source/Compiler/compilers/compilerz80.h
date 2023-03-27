@@ -6,7 +6,7 @@
 class CompilerZ80 : public Compiler
 {
 public:
-    CompilerZ80(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni) : Compiler(ini, pIni) {};
+    CompilerZ80(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni) : Compiler(ini, pIni) {}
 
     void InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) override;
 

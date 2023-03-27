@@ -32,8 +32,6 @@ Compiler::Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni)
 }
 
 Compiler::~Compiler() {
-  //  qDebug() << "~COMPILER DESTROYED "<<this;
-    //    Destroy();
 }
 
 

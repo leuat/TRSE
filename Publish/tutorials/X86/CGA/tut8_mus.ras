@@ -27,10 +27,10 @@ end;
 
 begin
 	BeePlay::Initialize(#song);
-	BeePlay::octShift:=1; // octave shift
+	BeePlay::octShift:=2; // octave shift
 	BeePlay::decayLength[0]:=2; // Sustain of columm 0
 	BeePlay::decayLength[1]:=4; // Sustain of column 1
-	BeePlay::speed := 3;
+	BeePlay::speed := 4;
 	Memory::SetTimer(33860);
 	SetInterrupt($8, RasterIRQ());
 	// Loop infinitely

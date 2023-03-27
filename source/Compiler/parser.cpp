@@ -2734,7 +2734,15 @@ QSharedPointer<Node> Parser::Factor()
             if (s==nullptr) {
                 ErrorHandler::e.Error("Internal function 'Length' reqruires a variable");
             }
+            if (s->m_type=="INCBIN") {
+                len = 0;
+                if (m_fileSizes.contains(s->m_name))
+                  len = m_fileSizes[s->m_name];
+
+            }
+            else
             len = s->getLength();
+//            qDebug() << len;
 
         }
         Token t = m_currentToken;
@@ -4242,7 +4250,15 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
                 ErrorHandler::e.Error("TRSE does not support string parameters. Please use a byte pointer parameter instead",m_currentToken.m_lineNumber);
         }
 
+        if (s->m_type=="INCBIN") {
+            QString binFile = typeNode->m_filename;
+            if (QFile::exists(m_currentDir+binFile)) {
+                int sz = QFile(m_currentDir+binFile).size();
+                m_fileSizes[s->m_name] = sz;
 
+            }
+
+        }
 
         s->m_arrayType = typeNode->m_arrayVarType.m_type;
         s->m_arrayTypeText = TokenType::getType(typeNode->m_arrayVarType.m_type);
@@ -4398,7 +4414,6 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
             requireSplit = true;
         }
         Eat(TokenType::RPAREN);
-
 
         if (requireSplit) {
             m_splitCounter++;

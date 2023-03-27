@@ -156,6 +156,7 @@ private:
     //bool m_breakSubvar = false;
     QSharedPointer<Node> m_currentProcedureCall;
     QString m_addInitialReferenceToProcedureCall = "";
+    QMap<QString, int> m_fileSizes;
 
 
     QStringList m_removedProcedures;
