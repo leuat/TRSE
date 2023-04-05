@@ -3,7 +3,7 @@ unit File;
 @use "system/screen"
 var
 	fp,tp : pointer;
-	val,size,val2 : integer;
+	i,j,val,size,val2 : integer;
 	src,dst: pointer;
 	attr:byte;
 	
@@ -50,9 +50,28 @@ var
 			mov ah, 0x3F
 			mov bx, [File_val]
 			mov cx, [File_size] ; number of bytes to read
-			mov dx, [File_dst] ; were to put read data
+;			mov dx, [File_dst] ; were to put read data
 			push ds
-;			lds dx,[File_dst]	
+			lds dx,[File_dst]	
+			int 21h	
+			pop ds
+			mov [File_val2],ax
+			sti
+			");
+			this.err := File::val2;
+		end;	
+
+	procedure ReadLarge(File::size :global integer;File::dst : global ^integer);
+		begin
+			val:=this.handle;
+			asm("
+			cli
+			mov ah, 0x3F
+			mov bx, [File_val]
+			mov cx, [File_size] ; number of bytes to read
+;			mov dx, [File_dst] ; were to put read data
+			push ds
+			lds dx,[File_dst]	
 			int 21h	
 			pop ds
 			mov [File_val2],ax
@@ -107,5 +126,30 @@ var
 	end;
 
 
+	procedure SetPaletteFromFile(fp:global pointer);
+	@donotremove colbuf
+	var
+		colbuf :array[256*3] of byte;
+	begin
+		tp := #colbuf;
+	/*	handle := File::Open(fp);
+		File::Read(handle, $300, #colbuf);
+		File::Close(handle);
+	*/
+		file.Open(fp,R);
+		file.Read($300,#colbuf);
+		file.Close();	
+		for i:=0 to $300 do 
+		begin
+			tp[i]:=tp[i]/4;
+		end;		
+		j:=0;
+		for i:=0 to $100 do
+		begin
+			Screen::SetColor(i, tp[j], tp[j+1], tp[j+2]);
+			j+=3;
+		end;
+	
+	end;
 
 end.

@@ -816,6 +816,34 @@ static int AddScreen(lua_State* L) {
     return 0;
 }
 
+static int AddCGAScreen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddCGAScreen"))
+        return 0;
+
+    if (m_effect!=nullptr) {
+        QByteArray ba;
+        m_compression.AddCGAScreen(ba, m_effect->m_img,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+        for (char c:ba)
+            m_screenData.append(c);
+    }
+
+    return 0;
+}
+
+static int AddCGA16Screen(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddCGA16Screen"))
+        return 0;
+
+    if (m_effect!=nullptr) {
+        QByteArray ba;
+        m_compression.AddCGA16Screen(ba, *m_effect->m_mc,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));//, lua_tonumber(L,5),lua_tonumber(L,6));
+        for (char c:ba)
+            m_screenData.append(c);
+    }
+
+    return 0;
+}
+
 static int AddC64FullScreen(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddC64FullScreen"))
         return 0;
@@ -1980,6 +2008,8 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "AddByte", AddByte);
 
     lua_register(m_script->L, "AddScreen", AddScreen);
+    lua_register(m_script->L, "AddCGAScreen", AddCGAScreen);
+    lua_register(m_script->L, "AddCGA16Screen", AddCGA16Screen);
     lua_register(m_script->L, "AddC64FullScreen", AddC64FullScreen);
     lua_register(m_script->L, "Translate", Translate);
     lua_register(m_script->L, "AddCharsetScreen", AddCharsetScreen);

@@ -2742,7 +2742,6 @@ QSharedPointer<Node> Parser::Factor()
             }
             else
             len = s->getLength();
-//            qDebug() << len;
 
         }
         Token t = m_currentToken;
@@ -5394,7 +5393,7 @@ void Parser::HandleBin2Inc()
     QByteArray data = Util::loadBinaryFile(inFile);
     QString d = "var "+name+" : array["+QString::number(data.size())+"] of byte =( \n\t";
     for (int i=0;i<data.size();i++) {
-        d+=Util::numToHex(data[i]);
+        d+=Util::numToHex((uchar)data[i]);
         if (i!=data.size()-1)
             d+=",";
         if ((i&15)==15) d+="\n\t";

@@ -66,10 +66,10 @@ begin
 		if (currentTest=11) then Various::Exec();
 @endif
 		if (currentTest=12) then BooleanTest::Exec();
-		if (currentTest=14) then LongTest::Exec();
+		if (currentTest=0) then LongTest::Exec();
 @ifndef CPU_PCHIP8
 @ifndef CPU_M6809
-		if (currentTest=0) then Classes::Exec();
+		if (currentTest=14) then Classes::Exec();
 @endif
 @endif
 

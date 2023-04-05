@@ -56,6 +56,34 @@ void Compression::AddScreen(QByteArray &data, QImage& img,int w, int h, char bas
 
 }
 
+void Compression::AddCGAScreen(QByteArray &data, QImage& img,int w, int h, char col, int div)
+{
+    uchar tab[] = {32, 176,177, 178, 219,219};
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=4) {
+            char c1 = 0;
+            for (int i=0;i<4;i++) {
+                c1 |= (QColor(img.pixel(x+i,y)).red()/div)<<(2*i);
+//            data.append(tab[c1]);
+            }
+            data.append(c1);
+        }
+
+}
+
+void Compression::AddCGA16Screen(QByteArray& data, LImage& img, int w, int h, char col, int div)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=2) {
+            char c1 = 0;
+            for (int i=0;i<2;i++) {
+                c1 |= img.getPixel(x+i,y)<<(4-4*i);
+//            data.append(tab[c1]);
+            }
+            data.append(c1);
+        }
+
+}
 
 
 void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int yp, int w, int h)

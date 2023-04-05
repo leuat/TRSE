@@ -1,9 +1,7 @@
 unit Screen;
-@use "system/file"
 @use "system/memory"
 var
-	i,j,k,noBuffers : integer;
-	f : File::File;
+	i,j,k,noBuffers,x,y,w,h : integer;
 	fp : pointer;
 	tp : pointer of byte;
 	color,red,green,blue : byte;
@@ -24,6 +22,15 @@ var
 	const CRTCb : integer = $3D4; /* 6845 index register */
 	const STATUS_REGISTER : integer = $3DA; /* Input Status Register */
 
+
+procedure SetBGColor(_bx: byte);
+begin
+	asm("
+		mov ah,0bh
+		mov bh,0
+		int 10h
+	");
+end;
 
 
 procedure InitVGABuffers(noBuffers:global integer);
@@ -111,31 +118,6 @@ begin
 end;
 
 
-procedure SetPaletteFromFile(fp:global pointer);
-@donotremove colbuf
-var
-	colbuf :array[256*3] of byte;
-begin
-	tp := #colbuf;
-/*	handle := File::Open(fp);
-	File::Read(handle, $300, #colbuf);
-	File::Close(handle);
-*/
-	f.Open(fp,File::R);
-	f.Read($300,#colbuf);
-	f.Close();	
-	for i:=0 to $300 do 
-	begin
-		tp[i]:=tp[i]/4;
-	end;		
-	j:=0;
-	for i:=0 to $100 do
-	begin
-		SetColor(i, tp[j], tp[j+1], tp[j+2]);
-		j+=3;
-	end;
-
-end;
 
 	
 
@@ -262,5 +244,16 @@ begin
      outportb(port+1,val);
 end;
 
+
+procedure DrawBoxCGA(zp:pointer, x,y,w,h,i : global integer);
+begin
+	zp+=ytab_cga[y] + x;
+	for j:=0 to h do
+	begin
+		fillw(zp,i,w);
+		zp+=80;
+	
+	end;
+end;
 
 end.

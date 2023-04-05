@@ -25,7 +25,7 @@ var
 	sin : array[256] of byte = buildsinetable(127);
 
 	data : incbin("data/smooth_data.bin", $7D00);
-	@perlinnoise "data/perlin160.dat" 16 16 2 1 1 20 512  100
+	@perlinnoise "data/perlin160.dat" 16 16 2 1 1 20 512  1000
 	perlin0 : incbin("data/perlin160.dat", $6800);
 	
 	map : incbin("data/combined.bin");

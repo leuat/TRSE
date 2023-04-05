@@ -118,6 +118,9 @@ public:
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
 
+    QString getStoreTypesDebug();
+
+
     virtual void ForceAddress();
     // Returns a list of potential symols in asm code. Recursive. Used for preventing removal of unused symbols that are actually used within asm blocks
     virtual void FindPotentialSymbolsInAsmCode(QStringList& lst);

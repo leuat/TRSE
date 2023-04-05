@@ -131,6 +131,22 @@ int Node::MaintainBlocks(Assembler* as)
 
 }
 
+QString Node::getStoreTypesDebug()
+{
+    QString s = "";
+    if (m_left!=nullptr && m_right!=nullptr) {
+        s+= "Load type: " + TokenType::getType(m_left->getLoadType())+ "  "+TokenType::getType(m_right->getLoadType())+ "  "+TokenType::getType(getLoadType());
+        s+="\n\t;Store type: " + TokenType::getType(m_left->getStoreType())+"  "+TokenType::getType(m_right->getStoreType()) +"  "+ TokenType::getType(getStoreType());
+    }
+    else {
+        s+= "Load type: " + TokenType::getType(getLoadType());
+        s+="\n\t;Store type: " + TokenType::getType(getStoreType());
+    }
+
+    return s;
+
+}
+
 void Node::ForceAddress() {
     m_forceAddress = true;
     if (m_left!=nullptr)

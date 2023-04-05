@@ -73,7 +73,7 @@ void SystemTRS80::PostProcess(QString &text, QString file, QString currentDir)
         if (size>253) size=253;
         h.append(size+2);
 //    Util::appendInt16(h,ba.count());
-        Util::appendInt16(h,pos);
+        Util::appendInt16(h,pos, false);
         for (int i=0;i<size;i++)
             h.append(ba[i+apos]);
 
@@ -86,7 +86,7 @@ void SystemTRS80::PostProcess(QString &text, QString file, QString currentDir)
     // Add entry point
     all.append(02);
     all.append(02);
-    Util::appendInt16(all,m_programStartAddress);
+    Util::appendInt16(all,m_programStartAddress, false);
 
 
 

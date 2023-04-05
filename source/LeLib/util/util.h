@@ -234,6 +234,7 @@ public:
     static int getInt16(QByteArray& ba, int pos);
     static void setInt16(QByteArray& ba, int pos, int val);
     static void setInt16Rev(QByteArray& ba, int pos, int val);
+    static void appendInt16(QByteArray& ba, int val, bool isRev);
     static void appendInt16(QByteArray& ba, int val);
     static void appendInt16Rev(QByteArray& ba, int val);
 

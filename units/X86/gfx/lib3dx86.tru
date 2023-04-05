@@ -2,14 +2,15 @@ unit Lib3d;
 @use "math/matrix"
 @use "system/memory"
 @use "gfx/gfx"
-
+@use "system/screen"
 var
-
+	b1,b2 : integer;
 	idx,renderType,r1,r2,i,j,n,v,ii,msize,size,xx,yy,zz,cx,cy,cz,k1,k2,k,k3,f1,f2,f3,f4,dx,dy,k4:signed integer;
-	
+	x1,y1,x2,y2,x3,y3 : integer;	
+	fp,pp : ^byte;	
 	const rendertype_lines : integer = 1;
 	const rendertype_triangle : integer = 2;
-	
+	i1,i2 : integer;	
 	mesh = record
 	//	pos,rot: Vector::vec3;
 		posx,posy,posz:signed integer;
@@ -21,8 +22,9 @@ var
 		vertices, vertices_rot : pointer of signed integer; 
 		faces : pointer of integer;
 		// 2D points
-		ppoints, points : pointer of integer;
+		points : pointer of integer;
 	end;
+	CGA_cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
 	tmpp1, tmpp2 : pointer;
 	const MAX : integer = 10;
 
@@ -53,9 +55,8 @@ begin
 	objects[i].noFaces:=n;
 	objects[i].vertices := Memory::GetMem(v*6);
 	objects[i].faces := Memory::GetMem(n*6);
-	objects[i].vertices_rot := Memory::GetMem(v*6);
 	objects[i].points := Memory::GetMem(v*8); // 2D
-	objects[i].ppoints := Memory::GetMem(v*8); // 2D
+	objects[i].vertices_rot := Memory::GetMem(v*6);
 	
 //	objects[i].points := ptr($8000,0);
 end;
@@ -210,7 +211,6 @@ end;
 
 procedure RenderCGAWireframe(i,cx: global integer;p2:global pointer);
 var
-	CGA_cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
 
 begin
 	vr := objects[i].points;
@@ -233,27 +233,19 @@ begin
 end;
 
 procedure RenderCGAWireframe2(i,cx: global integer;p2:global pointer);
-var
-	CGA_cols : array[4] of byte=(cga_color0, cga_color1, cga_color2, cga_color3);
 
 begin
-	vr := objects[i].points;
-	p1 := objects[i].faces;
-	p3 := objects[i].ppoints;
-	asm("
-;	mov ax, [Lib3d_p2+2]
-;	mov [Lib3d_n],ax
-	");
+	fp := objects[i].faces;
 	f1:=1;
 	for j:=0 to objects[i].noFaces do
 	begin
-		k1:=p1[0];
-		k2:=p1[1];
-		Gfx::DrawLine(p3[k1],p3[k1+1],p3[k2],p3[k2+1], $FF, p2);
-		Gfx::DrawLine(vr[k1],vr[k1+1],vr[k2],vr[k2+1], CGA_cols[f1], p2);
+		b1:=fp[0];
+		b2:=fp[1];
+		
+		Gfx::DrawLine(pp[b1]*2,pp[b1+1],pp[b2]*2,pp[b2+1], CGA_cols[f1], p2);
 		f1:=(f1+cx)&3;
 		if (f1=0) then f1+=1;
-		p1:=p1+4;
+		fp:=fp+2;
 	end;
 	
 end;
@@ -286,12 +278,32 @@ begin
 
 end;
 
-procedure FlipBuffers(i:global integer);
+procedure LoadObject(i:global integer; fp: global pointer);
 begin
-	tmpp1 := objects[i].points;
-	tmpp2 := objects[i].ppoints;
-	objects[i].ppoints := tmpp1;
-	objects[i].points := tmpp2;	
+	i1:=fp[0];
+	i2:=fp[1];
+	objects[i].noVertices := i1;
+	objects[i].noFaces := i2;
+	fp+=2;
+	
+	objects[i].vertices := fp;
+	fp:=fp + (i1*3);
+	asm("
+		mov ax,0
+		mov [Lib3d_fp+2],ax
+	");
+	objects[i].faces := fp;
+//	objects[i].vertices_rot := curPos;
+//	curPos += v*6; // rotated are integer
+//	objects[i].color := curPos;
+//	curPos += f; // 1 byte per face
+	
+//	objects[i].points := curPos;
+//	curPos += v*2; // 2 bytes per point
+//	objects[i].rotmat := curPos;
+//	curPos += (4*4*2); // 32 bytes per matrix
+	
+
 end;
 
 end.

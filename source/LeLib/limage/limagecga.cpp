@@ -16,6 +16,19 @@ LImageCGA::LImageCGA(LColorList::Type t)  : LImageQImage(t)
     m_supports.displayForeground = false;
     m_supports.displayBackground = false;
 
+    m_GUIParams[btnEditFullCharset] = "Char";
+    m_supports.displayCharOperations = true;
+
+    m_GUIParams[tabCharset] = "1";
+    m_updateCharsetPosition = true;
+    m_colorList.m_isCharset = true;
+
+    m_charWidth=80;
+    m_charHeight=25;
+    m_updateCharsetPosition = true;
+
+    m_supports.displayCharOperations = true;
+
 }
 
 void LImageCGA::ExportBin(QFile &file)

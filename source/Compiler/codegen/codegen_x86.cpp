@@ -103,17 +103,22 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             if (!node->m_right->isPure()) {
                 //                ErrorHandler::e.Error("Pointers can only add / sub with other pure pointers.", node->m_op.m_lineNumber);
                 //as->Comment("Interesting..");
+                as->Comment(node->getStoreTypesDebug());
+                QString ax = "ax";
+                if (node->m_right->getStoreType()==TokenType::POINTER) {
+                    ax = "di";
+                }
                 as->ClearTerm();
                 node->m_right->Accept(this);
                 as->Asm("push ax");
 
-                QString ax =getAx(node->m_right);
+//                QString ax =getAx(node->m_right);
                 //as->Comment("Interesting ends");
                 node->m_left->Accept(this);
 
                 QString bx =getAx(node->m_left);
                 as->Asm("pop bx");
-                as->Asm(bop + " ax,bx");
+                as->Asm(bop + ax+",bx");
                 return;
 
             }
@@ -144,9 +149,15 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             PopX();
             PopX();
             node->m_left->Accept(this); // Should always be a PURE pointer
-            as->Asm("pop "+bx);
-            as->Asm(bop+" " +bx+",ax ; generic binop when rhs is NOT pointer");
-            as->Asm("mov ax,"+bx);
+            as->Comment(" bop type "+TokenType::getType(node->m_op.m_type));
+            if (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS) {
+                as->Asm("pop "+bx);
+                as->Asm(bop+" ax," +bx +" ; generic binop when rhs is NOT pointer");
+            }
+            else {
+                as->Asm(bop+" " +bx+",ax ; generic binop when rhs is NOT pointer");
+                as->Asm("mov ax,"+bx);
+            }
             return;
         }
 
@@ -192,13 +203,15 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
     as->Comment("Generic add/sub");
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
-    if (m_isPurePointer)
+    if (m_isPurePointer || node->m_left->getStoreType()==TokenType::POINTER ||  node->m_right->getStoreType()==TokenType::POINTER)
         bx = "di";
 
-
+    if (bx=="di" && !node->m_right->isPure())
+        as->Asm("push di");
     PushX();
     if (node->m_op.m_type==TokenType::SHR || node->m_op.m_type==TokenType::SHL)
         PushX();
+
     node->m_right->Accept(this);
     //    as->Term();
     QString ax = getAx(node->m_right);
@@ -207,9 +220,11 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
         ax = "cl";
     }
     PopX();
+    if (bx=="di" && !node->m_right->isPure())
+        as->Asm("pop di");
     as->BinOP(node->m_op.m_type);
 
-    as->Asm(as->m_term + " " +  bx +"," +ax);
+    as->Asm(as->m_term + " " +  bx +"," +ax + "; bop");
     as->m_term = "";
 
 
@@ -309,8 +324,10 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
                     as->Asm("mov di,ax");
 
                 }
-                else
+                else {
                     as->Asm("mov al, byte [es:di]; Is byte" );
+                    as->Asm("mov ah,0");
+                }
             return;
         }
         if (node->is8bitValue(as))
@@ -497,7 +514,6 @@ bool CodeGenX86::StoreVariableSimplified(QSharedPointer<NodeAssign> node)
 {
     auto var = node->m_left;
     QString type =getWordByteType(var);
-
     if (node->m_right->isPureNumeric() && !node->m_left->isPointer(as) && !node->m_left->hasArrayIndex()) {
         as->Asm("mov ["+var->getValue(as)+ "], "+type+ " "+node->m_right->getValue(as));
         return true;
@@ -617,6 +633,8 @@ QString CodeGenX86::getAx(QSharedPointer<Node> n) {
 
     if (n->getLoadType()==TokenType::INTEGER)
         return a+"x";
+    if (n->getLoadType()==TokenType::POINTER)
+        return "di";
     if (n->getLoadType()==TokenType::BYTE)
         return a+"l";
 
@@ -962,6 +980,7 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
             //            m_isPurePointer = true;
             //           if (node->m_left->isPointer(as))
             //            node->m_right->setLoadType(TokenType::POINTER);
+            node->m_right->setStoreType(TokenType::POINTER);
             node->m_right->Accept(this);
             //          m_isPurePointer = false;
             as->Comment("Setting PURE POINTER ends");

@@ -1,7 +1,7 @@
 #include "rayobject.h"
 #include <QPainter>
 SimplexNoise AbstractRayObject::m_sn;
-
+#include "source/Compiler/syntax.h"
 
 QVector3D AbstractRayObject::CalculateBoxUV(QVector3D pos, QVector3D n, double l)
 {
@@ -684,15 +684,26 @@ void RayObjectRegular3D::Save6502(QString file, double scale, double xscale) {
 
     QByteArray data;
     data.append(m_vertices.count());
-    data.append(m_faces.count()/2);
+    if (m_isWireframe)
+        data.append(m_faces.count()/2);
+    else
+        data.append(m_faces.count()/3);
+
     for (int i=0;i<m_vertices.count();i++) {
         data.append(m_vertices[i].y()*scale);
         data.append(m_vertices[i].x()*scale*xscale);
         data.append(m_vertices[i].z()*scale);
     }
-    if (m_isWireframe)
-    for (int i=0;i<m_faces.count();i++) {
-        data.append(m_faces[i]*2);
+    if (m_isWireframe) {
+        for (int i=0;i<m_faces.count();i++) {
+            data.append(m_faces[i]*2);
+        }
+    }
+    else {
+        for (int i=0;i<m_faces.count();i++) {
+            data.append(m_faces[i]*2);
+        }
+
     }
 
     Util::SaveByteArray(data,file);
@@ -790,6 +801,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
 
 //    qDebug() << "HERRR " <<m_isWireframe <<m_type <<m_skipType;
 
+    bool rev = Syntax::s.m_currentSystem->m_isBigEndian;
     if (m_isWireframe) {
         int k=0;
         p.setPen(Qt::white);
@@ -912,13 +924,28 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
                 points[1] = QPointF(m_projected[b].x(),m_projected[b].y());
                 points[2] = QPointF(m_projected[c].x(),m_projected[c].y());
                 p.drawPolygon(points,3,Qt::OddEvenFill);
-                Util::appendInt16Rev(tmp,m_projected[a].x()+img.width()/2);
-                Util::appendInt16Rev(tmp,m_projected[a].y()+img.height()/2);
-                Util::appendInt16Rev(tmp,m_projected[b].x()+img.width()/2);
-                Util::appendInt16Rev(tmp,m_projected[b].y()+img.height()/2);
-                Util::appendInt16Rev(tmp,m_projected[c].x()+img.width()/2);
-                Util::appendInt16Rev(tmp,m_projected[c].y()+img.height()/2);
-                Util::appendInt16Rev(tmp,k);
+
+                if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86) {
+                    tmp.append(m_projected[a].x()+img.width()/2);
+                    tmp.append(m_projected[a].y()+img.height()/2);
+                    tmp.append(m_projected[b].x()+img.width()/2);
+                    tmp.append(m_projected[b].y()+img.height()/2);
+                    tmp.append(m_projected[c].x()+img.width()/2);
+                    tmp.append(m_projected[c].y()+img.height()/2);
+//                    qDebug() << m_projected[a].y()+img.height()/2;
+                    tmp.append(k);
+//                    tmp.append((-m_rotNormals[k].z()+0.35)*8);
+                }
+                else {
+                    Util::appendInt16(tmp,m_projected[a].x()+img.width()/2,rev);
+                    Util::appendInt16(tmp,m_projected[a].y()+img.height()/2,rev);
+                    Util::appendInt16(tmp,m_projected[b].x()+img.width()/2,rev);
+                    Util::appendInt16(tmp,m_projected[b].y()+img.height()/2,rev);
+                    Util::appendInt16(tmp,m_projected[c].x()+img.width()/2,rev);
+                    Util::appendInt16(tmp,m_projected[c].y()+img.height()/2,rev);
+                    Util::appendInt16(tmp,k);
+                }
+
                 cnt++;
             }
         }
@@ -956,7 +983,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
                 cnt++;
             }
         }
-        Util::appendInt16Rev(m_proj8bit, cnt);
+        Util::appendInt16(m_proj8bit, cnt,rev);
         m_proj8bit.append(tmp);
 
 

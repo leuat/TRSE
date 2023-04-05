@@ -4,7 +4,7 @@ program Example3D;
 @define CHECK_LINE_BOUNDARY 1
 @use "gfx/gfx"
 @use "system/tables"
-@use "gfx/lib3d"
+@use "gfx/lib3dx86"
 
 var  
 	k,i,x,x1,x2,y1,y2,y,j,j2,px,time: integer;

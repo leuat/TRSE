@@ -24,6 +24,8 @@ public:
 
     void SaveCharset(QString filename, QImage& img, int w, int h, int div);
     void AddScreen(QByteArray& data, QImage& img, int w, int h, char base, int div);
+    void AddCGAScreen(QByteArray& data, QImage& img, int w, int h, char col, int div);
+    void AddCGA16Screen(QByteArray& data, LImage& img, int w, int h, char col, int div);
     void AddToDataX(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
     void AddToVZ200Data(QByteArray& data, LImage& img,int x, int y, int w, int h);
     void AddTo4PixelData(QByteArray& data, LImage& img,int x, int y, int w, int h, bool inv);
