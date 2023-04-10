@@ -4,10 +4,10 @@ unit CGA16;
 var
 	status,active,switches:byte;
 	@donotremove switches
-	src, dst: ^byte;
+	src, dst, backbuf: ^byte;
 	size:integer;
 	tmpb:byte;
-	
+	dx,dy,wx,wy : integer;
 @use "system/screen"
 
 	
@@ -141,6 +141,51 @@ begin
 
 
 end;	
+	
+procedure PutSprite(src, dst, backbuf : global ^byte, dx,dy,wx,wy : global integer);	
+begin
+//	dy:=dy>>1;
+//	dx:=dx>>1
+	dst+=160*dy + dx&$FE;
+	backbuf +=(160*dy)>>1+(dx>>1);
+	wx>>=1;	
+	asm("
+				
+		les bp,[CGA16_backbuf]
+		les di,[CGA16_dst]
+		inc di
+		push ds
+		lds si,[CGA16_src]
+		pop ds
+		mov cx,[CGA16_wy]
+		mov ah,$de
+ps_top:		
+		push cx
+		mov cx,[CGA16_wx]
+ps_inn:
+		lodsb
+		cmp al,0
+		jne cont1
+		mov al,[ds:bp]
+cont1:
+		stosw
+		inc bp
+		dec cx
+		jnz ps_inn
+		
+		pop cx
+		add di,160
+		sub di,[CGA16_wx]
+		sub di,[CGA16_wx]
+		add bp,80
+		sub bp,[CGA16_wx]
+		dec cx
+		jnz ps_top
+		
+	
+	");
+	
+end;
 	
 	
 end.

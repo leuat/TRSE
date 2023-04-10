@@ -716,6 +716,92 @@ int Compression::BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &out
     return totalChars;
 }
 
+void Compression::CompileCGA16Sprites(QVector<int> &ba, int w, int h, int frames, int type, QString name, QString background, QString dir)
+{
+/*    LImage* img = nullptr;
+    if (QFile::exists(dir+"/"+background))
+        img = LImageIO::Load(dir+"/"+background);
+*/
+    QString s = "";
+    int pos = 0;
+    for (int i=0;i<frames;i++) {
+        s += "procedure "+name+QString::number(i)+ "();\n";
+        s += "begin\n";
+        s+="\tasm(\"\n";
+        s+="\tles di,[dst]\n";
+        uchar prev=255;
+        if (type==0)
+        for (int y=0;y<h/2;y++) {
+            for (int x=0;x<w/2;x+=1){
+
+                uchar v = (ba[pos + x+y*w]);//&15)<<4;
+//                v |= (ba[pos + x+1+y*w]&15);
+                if (v!=0) {
+                    if (prev!=v)
+                        s+="\tmov al,"+QString::number(v)+"\n";
+                    s+="\tmov [es:di+"+QString::number(x + y*80)+"],al\n";
+                }
+                prev = v;
+            }
+        }
+
+        if (type==1) {
+            s+="\tmov al,$de\n";
+            s+="\tpush ds\n";
+            s+="\tlds si,[img]\n";
+            for (int y=0;y<h/2;y++) {
+                for (int x=0;x<w/2;x+=1){
+
+                    uchar v = (ba[pos + x+y*w]);//&15)<<4;
+//                    if (v==0 && img!=nullptr)
+  //                      v = img->getPixel(x,y)  | (img->getPixel(x+1,y)<<4) ;
+    //                v |= (ba[pos + x+1+y*w]&15);
+  //                  if (v!=0)
+                    {
+                        if (prev!=v)
+                            s+="\tmov ah,"+QString::number(v)+"\n";
+                        s+="\tmov [es:di+"+QString::number((x + y*80)*2)+"],ax\n";
+                    }
+/*                    else
+                    {
+                        s+="\tmov ah, [ds:si+"+QString::number(((x) + y*80))+"]\n";
+                        s+="\tmov [es:di+"+QString::number((x + y*80)*2)+"],ax\n";
+
+                    }*/
+                    prev = v;
+                }
+            }
+            s+="\tpop ds\n";
+        }
+
+        s+="\t\");\n";
+        s+="end;\n";
+        pos += h*w/2;
+
+
+    }
+    if (type==0) {
+        s += "procedure "+name+"(x,y,s : global integer;dst:global ^byte);\n";
+        s += "begin\n";
+        s+="\tdst+=y*80;\n";
+        s+="\tdst+=x;\n";
+    }
+    if (type==1) {
+        s += "procedure "+name+"(x,y,s : global integer;dst, img:global ^byte);\n";
+        s += "begin\n";
+        s+="\tdst+=y*160;\n";
+        s+="\tdst+=x*2;\n";
+        s+="\timg+=y*80;\n";
+        s+="\timg+=x;\n";
+    }
+    for (int i=0;i<frames;i++) {
+        s+="\tif (s="+QString::number(i)+") then "+name+QString::number(i)+"();\n";
+    }
+    s+="end;\n";
+//    qDebug() << dir+"/"+name+".inc";
+    Util::SaveTextFile(dir+"/"+name+".inc",s);
+}
+
 
 void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int startaddr, QString fname)
 {

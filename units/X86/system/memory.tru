@@ -5,6 +5,7 @@ var
 	const DEFAULT_TIMER : integer = 23863;
 	error_code : integer = 0;
 	source,dest : pointer of integer;
+	blocks: integer;
 @ifdef QEMU
 	curMem : integer;
 @endif
@@ -56,7 +57,7 @@ begin
 @endif
 end;
 
-function GetBlockMem(blocks: integer):long;
+function GetBlockMem(blocks: global integer):long;
 begin
 	@ifndef QEMU
 	error_code := 0;

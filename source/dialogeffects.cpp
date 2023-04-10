@@ -1018,6 +1018,16 @@ static int AddBitplaneToData(lua_State* L) {
     return 0;
 }
 
+static int CompileCGA16Sprites(lua_State* L) {
+    if (!VerifyFjongParameters(L,"CompileCGA16Sprites"))
+        return 0;
+
+    if (m_effect!=nullptr)
+        m_compression.CompileCGA16Sprites(m_screenData, lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tostring(L,5),lua_tostring(L,6),m_currentDir);
+
+    return 0;
+}
+
 static int AddAmstradCPCToData(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddAmstradCPCToData"))
         return 0;
@@ -1996,6 +2006,9 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorOut", ExportDiffAsUnrolledBitmapColorOut);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorIn", ExportDiffAsUnrolledBitmapColorIn);
     lua_register(m_script->L, "ExportDiffAsUnrolledBitmapColorInAddress", ExportDiffAsUnrolledBitmapColorInAddress);
+
+
+    lua_register(m_script->L, "CompileCGA16Sprites", CompileCGA16Sprites);
 
     lua_register(m_script->L, "Save3DObject", Save3DObject);
 
