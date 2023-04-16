@@ -91,7 +91,8 @@ begin
     call #0a9d      ; Set flag to Integer 
     ld a,#02
     ld (#78af),a   
-    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string  
+    call #0fbd      ; Convert ACC to ASCII string 0-delim HL points to string
+    inc hl
     ld [Functions_s],hl
   ");
 end;
