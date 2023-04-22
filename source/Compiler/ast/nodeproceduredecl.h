@@ -63,6 +63,8 @@ public:
     int m_type;
     bool m_isInline = false;
     bool m_isForward = false;
+    bool m_isAssembler = false;
+
     QSharedPointer<Node> m_block = nullptr;
 
 

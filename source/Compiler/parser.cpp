@@ -3804,6 +3804,13 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         Eat(TokenType::FORWARD);
         Eat(TokenType::SEMI);
     }
+    bool isAssembler = false;
+    if (m_currentToken.m_type == TokenType::ASSEMBLER) {
+        isAssembler = true;
+        Eat(TokenType::ASSEMBLER);
+        Eat(TokenType::SEMI);
+
+    }
     QSharedPointer<Node> block = nullptr;
     QSharedPointer<NodeProcedureDecl> procDecl = QSharedPointer<NodeProcedureDecl>(new NodeProcedureDecl(tok, procName, paramDecl, block, type));
     //    qDebug() << "Starting new procedure decl block with : "<< procName << procDecl->m_blockInfo.m_blockID;
@@ -3867,8 +3874,14 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 
 
     // For recursive procedures, it is vital that we forward declare the current procedure
-    if (!isForward)
-        block = Block(false, procName);
+    if (!isForward) {
+        if (isAssembler) {
+            QSharedPointer<NodeBlock> b = QSharedPointer<NodeBlock>( new NodeBlock(m_currentToken,QVector<QSharedPointer<Node>>(),InlineAssembler()));
+            block = b;
+        }
+        else
+            block = Block(false, procName);
+    }
     //        if (block==nullptr)
     //          qDebug() << "Procedure decl: " << procName;
     //decl.append(procDecl);
@@ -3891,7 +3904,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
 
 
     procDecl->AppendBlock(block);
-
+    procDecl->m_isAssembler = isAssembler;
     if (block!=nullptr && !alreadyForwaredDeclared) {
         bool ok = true;
         for (QSharedPointer<Node> n: m_proceduresOnly) {

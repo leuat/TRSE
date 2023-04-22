@@ -949,8 +949,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
     as->Asm("");
     as->m_currentBlockName = node->m_procName;
-
-
+/*    if (node->m_isAssembler) {
+        as->Label(node->m_procName);
+    }
+*/
 
     if (node->m_block!=nullptr) {
         QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
@@ -991,7 +993,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
     }
 
     as->m_symTab->ExitProcedureScope(false);
-    as->Label("end_procedure_"+node->m_procName);
+    if (!node->m_isAssembler)
+        as->Label("end_procedure_"+node->m_procName);
 
     if (isInbank) {
         as->m_currentBlock = orgBank;
