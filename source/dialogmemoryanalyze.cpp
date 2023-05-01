@@ -62,7 +62,7 @@ void DialogMemoryAnalyze::RenderSystemLabels(QPainter& p, int xstart, int fs )
 
         p.setPen(QPen(QColor(32,32,48)));
 
-        p.setFont(QFont("Courier", std::min(fs,height)));
+        p.setFont(QFont("Courier", std::fmin(fs,height*zoomVal)));
         p.drawText(r, Qt::AlignTop | Qt::AlignLeft, l.m_name);
     }
 
@@ -80,7 +80,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
     ysize= ui->lblImage->height()-8;
 
     fontSize/=2;
-
+    fontSize*=zoomVal;
     InitColors();
 
 
@@ -201,7 +201,7 @@ void DialogMemoryAnalyze::Initialize(QVector<QSharedPointer<MemoryBlock>> &block
             if (mb->m_zeropages.count()!=0)
                 zp = "zp :"+zp;
             zp=zp.trimmed();
-            p.setFont(QFont("Courier", std::min(fontSize,height), QFont::Bold));
+            p.setFont(QFont("Courier", std::fmin(fontSize,height), QFont::Bold));
 
             p.drawText(Trans(x2-xborder-box2s+12, y0,box2, y1-y0), Qt::AlignLeft|Qt::AlignTop, zp);
         }

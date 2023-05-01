@@ -79,3 +79,5 @@ data_header_images/tiles2.flf = 3.0448e-314
 data_header_images/tiles21.flf = 3.0448e-314
 data_header_images/tiles211.flf = 3.04681e-314
 data_header_images/tiles3.flf = 3.04681e-314
+data_header_images/consoles.flf = 0
+data_header_images/font.flf = 0

@@ -2911,9 +2911,9 @@ void Parser::PreprocessSingle() {
         if (QFile::exists(m_currentDir+file))
             QFile::remove(m_currentDir+file);
 
-
+        return;
     }
-    else
+//    else
     if (m_currentToken.m_value.toLower() =="copyfile") {
         Eat(TokenType::PREPROCESSOR);
         QString src = m_currentToken.m_value;

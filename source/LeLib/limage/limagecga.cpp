@@ -46,6 +46,7 @@ void LImageCGA::ExportBin(QFile &file)
             for (int j=0;j<80;j++)
                 c.append(odd[b++]);
         }
+//        qDebug() << "HHHERE";
         file.write(c);
         return;
     }
