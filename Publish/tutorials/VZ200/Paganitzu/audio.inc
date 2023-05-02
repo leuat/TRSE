@@ -1,0 +1,124 @@
+procedure DeathMarch();
+begin
+	Sound::Play(300,120);
+	wait(100);
+	Sound::Play(300,120);
+	wait(100);
+	Sound::Play(300,40);
+	wait(100);
+	Sound::Play(300,200);
+	Sound::Play(250,120);
+	wait(100);
+	Sound::Play(250,40);
+	wait(100);
+	Sound::Play(250,120);
+	Sound::Play(300,40);
+	wait(100);
+	Sound::Play(300,150);
+	wait(100);
+	Sound::Play(330,40);
+	Sound::Play(300,255);
+end;
+
+// Game completed
+procedure CongratsTune();
+begin
+	Sound::Play(50,120);
+	Sound::Play(40,120);
+	Sound::Play(30,220);
+	Sound::Play(20,220);
+	Sound::Play(10,220);
+	wait(100);
+	Sound::Play(20,200);
+	Sound::Play(30,350);
+	Sound::Play(40,350);
+	Sound::Play(50,350);
+	Sound::Play(60,350);
+	wait(100);
+	Sound::Play(50,120);
+	Sound::Play(40,120);
+	Sound::Play(30,220);
+	Sound::Play(20,220);
+	Sound::Play(10,220);	
+end;
+
+// Resetting level tune
+procedure ResetLevelTune();
+begin
+	Sound::Play(30,120);
+	Sound::Play(20,120);
+	Sound::Play(10,220);
+end;
+
+// Play sound fx
+procedure FxPlay(r: global byte);
+begin
+	case r of
+		sfxMove:
+			begin
+				Sound::Play(100,5);
+			end;
+		sfxDiamond:
+			begin
+				Sound::Play(30,60);
+				Sound::Play(20,60);
+				Sound::Play(10,60);
+			end;
+		sfxRock:
+			begin
+				Sound::Play(1500,5);
+			end;
+		sfxKeyhole:
+			begin
+				Sound::Play(130,120);
+				Sound::Play(120,120);
+				Sound::Play(110,220);
+				wait(100);
+				Sound::Play(120,200);
+				Sound::Play(130,350);
+			end;	
+		sfxKey:
+			begin
+				Sound::Play(50,60);
+				Sound::Play(60,60);
+				Sound::Play(70,60);
+				Sound::Play(30,60);
+			end;
+		sfxGameOver:
+			begin
+				DeathMarch();
+			end;
+		sfxStart:
+			begin
+				Sound::Play(130,50);
+				Sound::Play(120,50);
+				Sound::Play(110,50);
+				Sound::Play(120,50);
+				Sound::Play(100,50);
+			end;
+		sfxNoKeys:
+			begin
+				wait(100);
+				Sound::Play(100,45);
+				Sound::Play(90,45);
+				Sound::Play(80,45);
+				Sound::Play(70,45);
+			end;
+		sfxDied:
+			begin
+				Sound::Play(500,25);
+				Sound::Play(600,25);
+				Sound::Play(700,25);
+				Sound::Play(800,25);
+				Sound::Play(900,25);
+			end;
+		sfxResetLevel:
+			begin
+				ResetLevelTune();
+			end;
+		sfxCongrats:
+			begin
+				CongratsTune();
+			end;
+	end;
+end;
