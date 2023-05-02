@@ -1,0 +1,54 @@
+program Paganitzu;
+@use "Screen"
+@use "Memory"
+@use "Compression"
+@use "Font"
+@use "Input"
+@use "Sound"
+@use "Functions"
+@use "Sprite"
+
+@export "resources/titlescreen.flf" "title.bin" 256
+@export "resources/congrats.flf" "congrats.bin" 256
+
+@include "variables.inc"
+@include "audio.inc"
+@include "ui.inc"
+
+@include "gamemanager.inc"
+@include "player.inc"
+
+begin
+	Memory::DisableInterrupts();
+	gameStats.gameRunning := false;
+	gameStats.score := 0;
+	
+	// Main Gameloop
+	while (1) do
+	begin
+		// Set Graphics mode
+		Screen::SetMode(1);
+		Screen::Cls(1);
+		// Display Title screen
+		TitleScreen();
+		// Play game start sound
+		FxPlay(sfxStart);
+		// Reset Game stats variables
+		ResetGameStats();
+		// Copy current room data to grid array
+		CopyRoomToGameGrid(gameStats.room);
+		DrawHUD();
+		UpdateHUDNumbers();
+			
+		while (gameStats.gameRunning = true) do
+		begin
+			Screen::WaitForVerticalBlank();
+			UpdateBonus();
+			UpdateDiamondTile();
+			UpdateSnakeTile();
+			UpdateSpiderTile();
+			DrawRoomTiles();
+			UpdatePlayerTile();
+		end;
+	end;
+end.
