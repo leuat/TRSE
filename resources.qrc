@@ -746,5 +746,6 @@
         <file>resources/text/help/r/bin2inc.rtf</file>
         <file>resources/text/help/r/vbmcompilechunk.rtf</file>
         <file>resources/images/tutorials/gulch.png</file>
+        <file>resources/images/tutorials/VZPaganitzu.png</file>
     </qresource>
 </RCC>
