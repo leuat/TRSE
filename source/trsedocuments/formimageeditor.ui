@@ -179,6 +179,41 @@
                 <string>3:2</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>2:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>3:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>4:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>5:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>6:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>8:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>10:1</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>

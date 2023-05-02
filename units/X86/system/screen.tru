@@ -59,7 +59,8 @@ begin
 		buffer4 := Memory::GetBlockMem($3E8);
 	if (noBuffers>4) then
 		buffer5 := Memory::GetBlockMem($3E8);*/
-	buffer1:=Memory::GetBlockMem(1000*noBuffers);
+//	buffer1:=Memory::GetBlockMem(1000*noBuffers);
+	buffer1:=ptr($2000,0);
 	buffer2:=buffer1+16000;
 	buffer3:=buffer2+16000;
 	buffer4:=buffer3+16000;

@@ -14,12 +14,12 @@ LImageCGA160x100::LImageCGA160x100(LColorList::Type t)  : LImageQImage(t)
     m_currentChar = 0;
     m_metaParams.append(new MetaParameter("screen_width","Screen width",160,2,2048));
     m_metaParams.append(new MetaParameter("screen_height","Screen height",100,2,2048));
-//    Initialize(160,100);
+    //    Initialize(160,100);
 
     m_supports.displayCharOperations = true;
     m_updateCharsetPosition = true;
     m_colorList.m_isCharset = true;
-//    Initialize(160,100);
+    //    Initialize(160,100);
     m_currentChar = 0;
 
     m_GUIParams[tabCharset] = "Charset";
@@ -45,13 +45,24 @@ LImageCGA160x100::LImageCGA160x100(LColorList::Type t)  : LImageQImage(t)
 void LImageCGA160x100::ExportBin(QFile &file)
 {
     QByteArray d;
-    for (int y=0;y<m_height;y++) {
-        for (int x=0;x<m_width/2;x++) {
-            int d1 = getPixel(x*2,y);
-            int d2 = getPixel(x*2+1,y);
-            d.append(d2|(d1<<4));
-    }
-    }
+    int type = m_exportParams["export1"];
+    if (type==0)
+        for (int y=0;y<m_height;y++) {
+            for (int x=0;x<m_width/2;x++) {
+                int d1 = getPixel(x*2,y);
+                int d2 = getPixel(x*2+1,y);
+                d.append(d2|(d1<<4));
+            }
+        }
+    if (type==1)
+        for (int y=0;y<m_height;y++) {
+            for (int x=0;x<m_width;x++) {
+                int d1 = getPixel(x,y);
+                d.append(d1);
+            }
+        }
+
+
     file.write(d);
 }
 

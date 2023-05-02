@@ -27,6 +27,15 @@ var
 
 	i,j,col,ch,sprite,f: integer;
 
+	@exportsubregion "images/tiles.flf" "images/temp1.bin" 16  0 16 16	// pacman 1
+	@exportsubregion "images/tiles.flf" "images/temp2.bin" 16  0 16 16	// pacman 1
+	@exportsubregion "images/tiles.flf" "images/temp3.bin" 16  0 16 16	// pacman 1
+	@exportsubregion "images/tiles.flf" "images/temp4.bin" 16  0 16 16	// pacman 1
+
+	@deletefile "images/temp1.bin"
+	@deletefile "images/temp2.bin"
+	@deletefile "images/temp3.bin"
+	@deletefile "images/temp4.bin"
 
 procedure PressAny();
 begin

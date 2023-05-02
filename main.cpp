@@ -70,6 +70,16 @@ void CreateMergedTorus() {
 
 }
 
+void RandomList() {
+    QVector<int> b;
+    for (int i=0;i<200;i++) {
+        b.append(i);
+    }
+    for (int i=1; i<200; i++) {
+        qSwap (b[i],b[rand()%b.length()]);
+    }
+    qDebug() << b;
+}
 
 int main(int argc, char *argv[])
 {
@@ -83,6 +93,8 @@ int main(int argc, char *argv[])
 //    CreateVICCharset();
 //    CreateMergedTorus();
     // Start main application
+  //  RandomList();
+
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");
