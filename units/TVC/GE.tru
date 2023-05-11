@@ -1,0 +1,2952 @@
+/*================================================
+	Game Engine TRSE unit for VIDEOTON TV-Computer
+            
+	Author:  BerySoft - Zsolt Bertok, 2023
+	Version: May 10, 2023
+================================================*/
+Unit GE;
+
+
+var
+	// Constants
+	const SCREEN_WIDTH 			: byte = 64;  // screen width in bytes
+	const SCREEN_HEIGHT			: byte = 240; // screen height in pixels	
+	const SCREEN_SIZE       : integer = 15360;
+	const SCREEN_ADDR  			: integer = $8000;
+	const BACK_SCREEN_ADDR	: integer = $C000;
+	const CRTC_REG_PORT     : byte = $70; // port to select the CRTC register
+  const CRTC_DATA_PORT    : byte = $71;  // port to the CRTC data
+	// Global variables
+	ScreenAddr							: integer = $8000;	// screen: $8000; back-screen: $C000
+	MemAllocPtr							: integer = 2815;   // free memory address to save sprite backgrounds (the ASCII screen area: 256 - 1855; definalble characters: 1856-2929)	
+	FreeMemSize           	: integer = 2360;		// free memory size for sprite backgrounds (on Page0: 1600 bytes, on Page2, Page3: 16K)
+  MemAllocPage         	  : byte = 0;					// TVC Page for memory allocation (Page 0: $73F -> $100; Page 2: $BFFF -> $8001; Page 3: $FFFF -> $C001)
+  CRTC_ScreenOffset       : integer = 0;      // used for the hardware scroll
+  CursorITPos             : integer = 3839;   // base value of the cursor-interrupt position (end of line 239)
+  TempSP                  : integer = 0;			// temporary storage of the SP register
+  SpriteListPtr           : integer = 256;		// pointer list of sprites (100 x 2 bytes at 256 - 455)
+  LastSpritePtr           : integer = 254;  
+  SpriteCount             : byte = 0;
+  SpritePtr               : integer;
+  CharSetPtr              : pointer;					// CharSet from SPACE to Z (ASCII: 32-90)
+  CharSetImgWidth         : integer = 118;		// CharSet image width in bytes
+  CharWidth               : byte = 2;					// CharSet character width in bytes
+  CharSetHeight           : byte = 6;					// CharSet image height in pixels
+  i                       : byte;
+  soundIsOn               : boolean = false;
+  NumStr                  : array[6] of byte = (0, 0, 0, 0, 0, 0); // result of ByteToStr / IntToStr
+	// Global params	
+	UseBackScreen         	: boolean at $0E70;	// $0E48 - $0E97 -> TV-Computer text Editor working area. Size: 80 bytes. $0E48-$0E6C used by tvc.tru.
+	GetBackgroundBuffer	    : boolean at $0E71;
+	UpdateSpritePos         : boolean at $0E72;
+	Width  									: byte at $0E73;
+	Height                	: byte at $0E74;	
+	Count    								: byte at $0E75;
+	Pattern  								: byte at $0E76;	
+	Mode                    : byte at $0E77;
+	Nr                      : byte at $0E78;
+	Color                   : byte at $0E79;	
+	X                       : byte at $0E7A;
+	Y                       : byte at $0E7B;
+	AnimPhaseCount          : byte at $0E7C;
+	AnimDelay               : byte at $0E7D;
+	JoyCode                 : byte at $0E7E;
+	Value                   : byte at $0E7F;
+	SoundVolume             : byte at $0E80;	
+	MemAddr                 : integer at $0E81;
+	Position 								: integer at $0E83;
+	Size                  	: integer at $0E85;
+	DelayTicks              : integer at $0E87;
+	Pitch                   : integer at $0E89;	
+	IntNum                  : integer at $0E8B;
+	IntNum2                 : integer at $0E8D;
+	ImagePtr             	  : pointer at $0E8E;
+	SourcePtr   						: pointer at $0E90;
+	DestPtr     						: pointer at $0E92;
+	Text 										: ^byte;	
+	// Constants
+	const USE_BACK_SCREEN : byte = 1; // True
+	const DIRECT_TO_SCREEN: byte = 0; // False
+	// Memory mapping
+	const MEM_DEFAULT  : byte = $70;
+	const MEM_VID_ON   : byte = $50;
+	const MEM_FULL_64K : byte = $B0;
+	const MEM_48K_VID  : byte = $90;
+	// System
+	const PORT_3_MEM_MIRROR: address	= 2833;
+	const PORT_5_MEM_MIRROR: address	= 2834;
+	const PORT_6_MEM_MIRROR: address	= 2835;
+	// Graphics  / Screen
+	const SYS_GRAPH_MODE  : address = $0B13;
+	const GRAPH_MODE_PORT : address = 6;
+	const SYS_BORDER_COLOR: address = $0B4F;
+	const SYS_BORDER_PORT	: address = $0;
+	// Graphics modes
+	const GRAPHICS2 : byte = 0;
+	const GRAPHICS4 : byte = 1;
+	const GRAPHICS16: byte = 2;
+	// Sound
+	const SOUND_LO_PORT			:	address = 4;		// Sound PITCH low 8 bit
+	const SOUND_HI_PORT			:	address = 5;		// Bits 0-3.: sound PITCH high 4 bits
+	const SOUND_VOLUME_PORT	:	address = 6;		// Bits 2-5: sound VOLUME (0-15)
+	const SILENT_SOUND 			: integer = 4095;
+	const MAX_VOLUME 				: byte = 15;
+	// Keyboard
+	const KEYBOARD_ROW_SEL_PORT : byte = 3;
+	const KEY_READ_PORT         : byte = 88;
+	const KEYBOARD_0 : address = 2897;        // keyboard mátrix line 0: 4 ! | 1 ' |  Í  | 6 / | 0 & | 2 " | 3 + | 5 % |
+	const KEYBOARD_1 : address = 2898;        // keyboard mátrix line 1: 7 = |  Ö  |  Ó  | É # |  Ü  | 9 ) | 8 ( | ^ ~ |        
+	const KEYBOARD_2 : address = 2899;        // keyboard mátrix line 2:  R  |  Q  | @ ' |  Z  | ; $ |  W  |  E  |  T  |
+	const KEYBOARD_3 : address = 2900;        // keyboard mátrix line 3:  U  |  P  |  Ú  | [ { |  Ő  |  O  |  I  | ] } |
+	const KEYBOARD_4 : address = 2901;        // keyboard mátrix line 4:  F  |  A  | < > |  H  | \ | |  S  |  D  |  G  |
+	const KEYBOARD_5 : address = 2902;        // keyboard mátrix line 5:  J  |  É  |  Ü  | Ret |  Á  |  L  |  K  | Del |
+	const KEYBOARD_6 : address = 2903;        // keyboard mátrix line 6:  V  |  Y  |Lock |  N  |Shift|  X  |  C  |  B  |
+	const KEYBOARD_7 : address = 2904;        // keyboard mátrix line 7:  M  |  =  |Space|Ctrl | Esc | : . | ? , | Alt |
+	const JOY1_STATE : address = 2905;        // keyboard mátrix line 8:  -  |Left |Right| Acc |Fire |Down | Up  | Ins |
+	const JOY2_STATE : address = 2906;        // keyboard mátrix line 9:  -  |Left |Right| Acc |Fire |Down | Up  |  -  |
+	// Joystick
+	const JOY_LEFT	: byte = 64;
+	const JOY_RIGHT	: byte = 32;
+	const JOY_UP		: byte = 2;
+	const JOY_DOWN	: byte = 4;
+	const JOY_FIRE	: byte = 8;	
+	// Palette colors
+	const PALETTE_BLACK 			: byte = $00;
+	const PALETTE_DARKBLUE 		: byte = $1;
+	const PALETTE_DARKRED 		: byte = $4;
+	const PALETTE_DARKMAGENTA : byte = $5;
+	const PALETTE_DARKGREEN 	: byte = $10;
+	const PALETTE_DARKCYAN 		: byte = $11;
+	const PALETTE_DARKYELLOW 	: byte = $14;
+	const PALETTE_GRAY 				: byte = $15;
+	const PALETTE_BLACK2 			: byte = $40;
+	const PALETTE_BLUE 				: byte = $41;
+	const PALETTE_RED					: byte = $44;
+	const PALETTE_MAGENTA 		: byte = $45;
+	const PALETTE_GREEN 			: byte = $50;
+	const PALETTE_CYAN 				: byte = $51;
+	const PALETTE_YELLOW 			: byte = $54;
+	const PALETTE_WHITE 			: byte = $55;
+	// Border colors
+	const BORDER_BLACK 			: byte = 0;
+	const BORDER_DARKBLUE		: byte = 2;
+	const BORDER_DARKRED 		: byte = 8;
+	const BORDER_DARKMAGENTA: byte = 10;
+	const BORDER_DARKGREEN 	: byte = 32;
+	const BORDER_DARKCYAN		: byte = 34;
+	const BORDER_DARKYELLOW	: byte = 40;
+	const BORDER_GRAY				: byte = 42;
+	const BORDER_BLACK2			: byte = 128;
+	const BORDER_BLUE				: byte = 130;
+	const BORDER_RED				: byte = 136;
+	const BORDER_MAGENTA		: byte = 138;
+	const BORDER_GREEN			: byte = 160;
+	const BORDER_CYAN				: byte = 162;
+	const BORDER_YELLOW			: byte = 168;
+	const BORDER_WHITE			: byte = 170;
+	
+	
+	/*===============================================
+             S P R I T E   C L A S S
+	===============================================*/	
+	Sprite								= class
+    Visible             : boolean;  // 0    - false: the sprite will not be drawn in the DrawAllSprites, RanderAllSprites, CopyAllSpritesToScreen, PutAllSprite, RestoreBackground, Draw, Put and CopyToScreen procedures
+    SpriteType          : byte;     // 1    - 1: sprite bitmap (no mask); 2: masked sprite (mask byte + sprite byte)
+    Data                : pointer;	// 2-3  - sprite mask (optionally) + image (Put uses image only; Draw uses mask byte + image byte data)
+    Background          : pointer;	// 4-5  - to save sprite's background - points to a buffer (size: Width * Height bytes)
+    Position            : integer;	// 6-7	- position on the screen or back-buffer
+    LastPosition        : integer;	// 8-9  - last position on the screen or back-buffer - for internal use!
+    RedrawIsRequired    : boolean;	// 10   - redraw is required - for internal use!
+    Width               : byte;     // 11   - width in bytes
+    Height              : byte;     // 12		- height in pixels
+    Size                : integer;  // 13-14- sprite size in bytes = Width * Height - for internal use!
+    X                   : byte;     // 15		- horizontal position (0-63)
+    Y                   : byte;     // 16   - vertical position (0-239)		
+    LastX               : byte;     // 17   - last X (horizontal) position
+    LastY               : byte;     // 18   - last Y (vertical) position
+    ToNextRow           : byte;     // 19   - SCREEN_WIDTH - Width (64 - Width) - for internal use!		
+    AnimSet             : pointer;  // 20-21- set of animation phases (sprites)
+    AnimType            : byte;     // 22   - currently not used
+    AnimPhaseCount      : byte;     // 23 	- number of animation phases (if the sprite is animated)
+    AnimPhaseNr         : byte;     // 24 	- current animation phase number
+    AnimDelayValue      : byte;     // 25 	- delay between two animation phases
+    AnimDelay           : byte;     // 26   - anim delay counter
+    State               : byte;     // 27   - freely usable    
+    Direction           : byte;     // 29   - freely usable
+    Timer               : byte;     // 29   - freely usable
+    Counter             : byte;     // 30   - freely usable
+		
+	  
+		procedure Init(GE::ImagePtr : global pointer; GE::X, GE::Y : global byte; GE::GetBackgroundBuffer : global boolean);
+		begin			
+			Asm("
+			    // Init Sprite class
+					ld  IX,[GE_Sprite_this]			;// IX -> Sprite class
+					;// set Visible flag
+					ld  (IX+0),1								;// this.Visible = True					
+			    ;// init sprite width, height, sprite bitmap and mask
+			    ld  HL,[GE_ImagePtr]
+			    ld  A,(HL)									;// A = sprite type
+			    ld  (IX+1),A                ;// this.SpriteType = A
+			    inc HL
+			    ld  A,(HL)									;// A = sprite width
+			    ld  (IX+11),A               ;// this.Width = A
+			    inc HL
+			    ld  A,(HL)									;// A = sprite height
+			    ld  (IX+12),A               ;// this.Height = A
+			    inc HL
+			    ld  (IX+2),L
+			    ld  (IX+3),H                ;// this.Data = HL			    			    					
+					;// calc Size -> this.Size := this.Width * this.Height;
+					ld  D,0
+					ld  E,(IX+12)								;// DE: this.Height
+					ld  HL,0
+					ld  B,(IX+11)								;// B: this.Width
+			calc_spr_size:
+			    add HL,DE               		;// HL += this.Height
+			    djnz calc_spr_size
+			    ld  (IX+13),L
+			    ld  (IX+14),H								;// this.Size = HL
+			    ;// calc ToNextRow -> this.ToNextRow := SCREEN_WIDTH - this.Width;
+			    ld  A,GE_SCREEN_WIDTH   		;// A: SCREEN_WIDTH
+			    sub (IX+11)            			;// A = SCREEN_WIDTH - this.Width
+			    ld  (IX+19),A			      		;// this.ToNextRow := SCREEN_WIDTH - this.Width;
+			    ;// set sprite X, Y
+			    ld  A,[GE_X]
+			    ld  (IX+15),A	              ;// this.X = X
+			    ld  A,[GE_Y]
+			    ld  (IX+16),A	              ;// this.Y = Y
+			    call GE_Sprite_SetPosition
+			    ;// update last position
+			    ld  A,(IX+6)	;// A = Lo(Position)
+					ld  (IX+8),A	;// Lo(LastPosition) = A
+					ld  A,(IX+7)  ;// A = Hi(Position)
+					ld  (IX+9),A  ;// Hi(LastPosition) = A
+					ld  A,[IX+15] ;// A = X
+					ld  (IX+17),A ;// LastX := X
+					ld  A,[IX+16] ;// A = Y
+					ld  (IX+18),A ;// LastY := Y
+			    ;// add sprite to SpriteList
+			    ld  HL,(GE_LastSpritePtr)
+			    inc HL
+			    inc HL
+			    ld  (GE_LastSpritePtr),HL		;// LastSpritePtr := LastSpritePtr + 2
+			    ld  DE,[GE_Sprite_this]
+			    ld  (HL),E
+			    inc HL
+			    ld  (HL),D									;// LastSpritePtr^ := this
+			    ld  HL,GE_SpriteCount
+			    inc (HL)									  ;// Inc(SpriteCount)
+					");
+			this.Background := 0;
+			if (GetBackgroundBuffer) then
+			begin
+				if ((MemAllocPage = 0) and (FreeMemSize < this.Size)) then
+				begin
+					if (UseBackScreen) then
+					begin
+						MemAllocPage := 2;
+						MemAllocPtr	 := $BFFF; // top of the Page #2
+  				end
+  				else
+  				begin
+	  				MemAllocPage := 3;
+	  				if (Peek(2842, 0) = 191) then
+	  				  MemAllocPtr := $FFFF  // top of the Page #3
+	  				else
+	  				  MemAllocPtr := $7FFF  // top of the Page #1
+  				end;
+  				FreeMemSize := 16384;
+				end;
+				if (FreeMemSize >= this.Size) then
+				begin
+				  MemAllocPtr := MemAllocPtr - this.Size;
+				  FreeMemSize := FreeMemSize - this.Size;
+				  this.Background := MemAllocPtr;
+				end;
+			end;			
+		end; /* Sprite.Init */
+		
+		
+		/**
+		Draws fast a masked sprite on the screen.<br/> 
+		It uses the SP register and disables interrupts.<br/> 
+		<br/>
+		Example:<br/>
+		var<br/>
+			Player : GE::Sprite;<br/>
+		begin<br/>			  
+		  Player.Init(#TestSprite, 4, 20, True);<br/>
+		  Player.X := 30;<br/>
+		  Player.Y := 100;<br/>		  
+		  Player.SetPosition();<br/>
+		  Player.FastDraw;<br/>	
+		**/
+		procedure FastDraw;
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+			fast_draw_sprite:
+		      ld  A,(IX+19)	       ;// A = Sprite.ToNextRow (SCREEN_WDITH - Sprite.Width)
+		      ld  IYH,A            ;// IYH: SCREEN_WDITH - Sprite.Width
+          ld  A,(IX+12)        ;// A:   Sprite.Height
+          ld  IYL,A            ;// IYL: Sprite.Height
+          ld  C,(IX+4)
+          ld  B,(IX+5)         ;// BC -> Sprite.Background
+					ld  L,(IX+2)
+		      ld  H,(IX+3)				 ;// HL -> Sprite.Data (mask + sprite)
+          ld  (GE_TempSP),SP   ;// save SP register
+		      di                   ;// disable interrupts because of using SP register
+		      ld  SP,HL						 ;// SP -> Sprite.Data (mask + sprite)
+		      ld  L,(IX+6)
+		      ld  H,(IX+7)				 ;// HL -> Sprite.Position
+		      ld  A,(IX+11)        ;// A: Sprite.Width
+          ld  IXH,A     			 ;// IXH: Sprite.Width
+			fast_draw_spr:
+			    ld  IXL,IXH	         ;// IXL: sprite width
+			fdraw_spr_row:					
+					ld  A,(HL)           ;// A: screen byte
+					ld  (BC),A           ;// save the background of the sprite
+					inc BC               ;// BC -> next byte in the background buffer
+					pop DE               ;// E: sprite mask byte, D: sprite image byte
+					and E                ;// and mask
+					or  D                ;// or sprite
+					ld  (HL),A           ;// put mixed sprite byte to screen
+					inc HL               ;// HL -> next byte on screen
+					dec IXL					     ;// decrement remaining bytes from the sprite width
+					jp  nz,fdraw_spr_row ;// continue if the remaining rows is not zero
+					ld  D,0              ;// D = 0
+          ld  E,IYH 					 ;// DE = SCREEN_WDITH - Sprite.Width
+					add	HL,DE						 ;// HL -> next line on the screen
+					dec IYL              ;// decrement remaining rows from the sprite height
+					jp  nz,fast_draw_spr ;// continue if the remaining rows is not zero
+					ld  SP,(GE_TempSP)   ;// restore the value of the SP register
+					ei                   ;// enable interrupts					
+					");
+		end; /* Sprite.FastDraw */
+		
+			
+		/**
+		Draw masked sprite to screen.<br/> 
+		It does not use the SP register or disable interrupts.<br/> 
+		<br/>
+    Example:<br/>
+		var<br/>
+			Player : GE::Sprite;<br/>
+		begin<br/>			  
+		  Player.Init(#TestSprite, 4, 20, True);<br/>
+		  Player.X := 30;<br/>
+		  Player.Y := 100;<br/>		  
+		  Player.SetPosition();<br/>
+		  Player.Draw;<br/>	
+		**/
+		procedure Draw;
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+			draw_sprite:
+					ld  H,0
+          ld  L,(IX+19)				;// HL = Sprite.ToNextRow (SCREEN_WDITH - Sprite.Width)
+          ld  (draw_next_row+1),HL ;// self-modifying code: ld BC,SCREEN_WDITH - Sprite.Width
+          ld  L,(IX+2)
+		      ld  H,(IX+3)				;// HL -> sprite mask and image
+          ld  C,(IX+4)
+		      ld  B,(IX+5)				;// BC -> Sprite.Background		      
+          ld  E,(IX+6)
+		      ld  D,(IX+7)				;// DE -> Sprite.Position
+		      ld  A,(IX+11)       ;// A: Sprite.Width
+          ld  IYL,A           ;// IYL: Sprite.Width
+		      ld  A,(IX+12)       ;// A: Sprite.Height
+          ld  IXL,A     			;// IXL: Sprite.Height
+			draw_spr:
+			    ld  IYH,IYL         ;// IXH: sprite width
+			draw_spr_row:
+					ld  A,(DE)          ;// A: screen byte
+					ld	(BC),A          ;// save the background of the sprite
+					inc	BC              ;// BC -> next byte on the background buffer
+				  and	(HL)            ;// and mask
+				  inc HL              ;// HL -> sprite image byte
+				  or  (HL)            ;// or sprite
+				  inc HL              ;// HL -> next mask byte
+				  ld	(DE),A          ;// put the mixed sprite byte to the screen
+				  inc	DE						  ;// DE -> next byte on the screen
+				  dec IYH             ;// decrement remaining bytes from the sprite width
+					jp  nz,draw_spr_row ;// continue if the remaining rows is not zero
+					push BC
+					ex  DE,HL
+			draw_next_row:
+					ld  BC,10           ;// will be overwritten with the required value (SCREEN_WDITH - Sprite.Width)
+					add	HL,BC
+					ex  DE,HL           ;// DE -> next line on the screen
+					pop BC
+					dec IXL             ;// decrement remaining rows from the sprite height
+					jp  nz,draw_spr 		;// continue if the remaining rows is not zero
+					");
+		end; /* Sprite.Draw */
+		
+		
+		/**
+		Restore the background of the sprite<br/>
+    Copy the sprite's saved background back to the screen.<br/>
+		**/
+		procedure RestoreBackground;
+		begin
+		  Asm("		          
+		      ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  E,(IX+8)
+		      ld  D,(IX+9)				 ;// DE -> Sprite.LastPosition
+		      ld  A,(IX+11)        ;// A: sprite width
+		      ld  (restore_spr_bg+1),A ;// self-modifying code: ld C,Sprite.Width
+		      ld  A,(IX+19)        ;// A = SCREEN_WDITH - Sprite.Width (value for new row)
+		      ld  (restore_spr_bg_next_row+1),A ;// self-modifying code: ld C,SCREEN_WDITH - Sprite.Width
+		      ld  A,(IX+12)        ;// A: sprite height
+		      ld  L,(IX+4)
+		      ld  H,(IX+5)				 ;// DE -> Sprite.Backgound
+ 		      ld  B,0
+			restore_spr_bg:
+					ld	C,10             ;// BC = Width (will be overwritten with the Sprite.Width value -> ld C,Width)
+					ldir                 ;// Copy a row from the sprite's background buffer to the screen
+					ex  DE,HL
+			restore_spr_bg_next_row:
+					ld  C,10             ;// will be overwritten with the required value (SCREEN_WDITH - Sprite.Width)
+					add	HL,BC						 
+					ex  DE,HL						 ;// DE -> next line on the screen
+					dec A                ;// decrement remaining rows from the sprite height
+					jp  nz,restore_spr_bg;// continue if the remaining rows is not zero
+					");
+		end; /* Sprite.RestoreBackground */
+		
+		
+		/**
+		Saves the background of the sprite to the background buffer.<br/>
+		**/
+		procedure SaveBackground;
+		begin
+		  Asm("													  		
+		      ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  E,(IX+4)
+		      ld  D,(IX+5)				 ;// DE -> Sprite.Backgound
+		      ld  A,(IX+11)        ;// A: sprite width
+		      ld  (save_spr_bg+1),A ;// self-modifying code: ld C,Sprite.Width
+		      ld  A,(IX+19)        ;// A = SCREEN_WDITH - Sprite.Width (value for new row)
+		      ld (save_spr_bg_next_row+1),A ;// self-modifying code: ld C,SCREEN_WDITH - Sprite.Width
+		      ld  A,(IX+12)        ;// A: sprite height
+		      ld  L,(IX+6)
+		      ld  H,(IX+7)				 ;// HL -> Sprite.Position
+		      ld  (IX+8),L
+		      ld  (IX+9),H				 ;// Sprite.LastPosition := Sprite.Position
+		      ld  B,0
+			save_spr_bg:
+					ld	C,10             ;// BC = Width (will be overwritten with the Sprite.Width value -> ld C,Width)
+					ldir                 ;// copy a sprite background row to the background buffer
+			save_spr_bg_next_row:
+					ld  C,10             ;// will be overwritten with the required value (SCREEN_WDITH - Sprite.Width)
+					add	HL,BC						 ;// HL -> next line on the screen
+					dec A                ;// decrement remaining rows from the sprite height
+					jp  nz,save_spr_bg   ;// continue if the remaining rows is not zero
+					ld  A,[IX+15]        ;// A = X
+					ld  (IX+17),A        ;// LastX := X
+					ld  A,[IX+16]        ;// A = Y
+					ld  (IX+18),A        ;// LastY := Y
+					");
+		end; /* Sprite.SaveBackground */
+
+
+		/**
+		Put sprite to screen by overwrite mode<br/> 
+		<br/>
+		Example:<br/>
+		var<br/>
+			Player : GE::Sprite;<br/>
+		begin<br/>			  
+		  Player.Init(#TestSprite, 4, 20, False);<br/>
+		  Player.X := 30;<br/>
+		  Player.Y := 100;<br/>		  
+		  Player.SetPosition();<br/>
+		  Player.Put();<br/>
+		<br/>
+		**/
+		procedure Put;
+		begin
+		  Asm("													  		
+		      ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+		      ld  E,(IX+6)
+		      ld  D,(IX+7)				 ;// DE -> sprite position
+		      ld  A,(IX+11)        ;// A: sprite width
+		      ld  (put_sprite+1),A ;// self-modifying code: ld C,Sprite.Width
+		      ld  A,(IX+19)        ;// A = SCREEN_WIDTH - Sprite.Width (value for new row)
+		      ld  (put_spr_next_row+1),A ;// self-modifying code: ld C,SCREEN_WDITH - Sprite.Width
+		      ld  L,(IX+2)
+		      ld  H,(IX+3)				 ;// HL -> sprite image (Sprite.Data)
+		      ld  A,(IX+12)        ;// A: sprite height
+		      ld  B,0
+			put_sprite:
+					ld	C,10						 ;// BC = Width (will be overwritten with the Sprite.Width value -> ld C,Width)
+					ldir                 ;// copy one sprite line to the screen
+					ex	DE,HL
+			put_spr_next_row:
+					ld  C,10             ;// will be overwritten with the required value (SCREEN_WDITH - Sprite.Width)
+					add	HL,BC
+					ex	DE,HL            ;// DE -> new line on the screen
+					dec A                ;// decrement remaining rows from the sprite height
+					jp  nz,put_sprite	   ;// continue if the remaining height is not zero
+					");
+		end; /* Sprite.Put */
+		
+	
+		procedure CopyToScreen;
+		begin
+		  Asm("													  		
+		      ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+		      ;// init copy rectangle
+			    ld  A,(IX+16)     ;// A = Y
+			    ld  B,(IX+18)     ;// B = LastY
+			    cp  B             
+			    jp  c,cTos_Y_less ;// if Y < LastY then jump
+			    ;// Y >= LastY
+          sub B             ;// A = Y - LastY
+          add A,(IX+12)     ;// A = (Y - LastY) + Sprite.Height
+          ld  IYL,A					;// IYL = (Y - LastY) + Sprite.Height -> IYL = the rectangle height in pixels
+          ld  L,(IX+8)
+			    ld  H,(IX+9)      ;// HL -> Sprite.LastPosition (the top-left position of the rectangle )
+			    ;// check LastX
+			    ld  A,(IX+17)     ;// A = LastX
+			    ld  B,(IX+15)     ;// B = X
+			    cp  B
+			    jp  c,cTos_LastX_less
+			    jp  z,cTos_LastX_equal
+     			;// LastX > X
+          sub B             ;// A = LastX - X
+          ld  C,A           ;// C = LastX - X
+          add A,(IX+11)     ;// A = (LastX - X) + Sprite.Width;
+          ld  IYH,A         ;// IYH = the rectangle width in bytes
+          ld  A,L						;// A = LastPosition low byte
+          sub C             ;// A = LastPosition low byte - (LastX - X)
+          ld  L,A					  ;// HL -> Sprite.LastPosition - (LastX - X) -> the top-left position of the rectangle
+          jp  cTos_set_screen_pos
+      cTos_LastX_equal:
+          ld  A,(IX+11)     ;// B = Sprite.Width
+          ld  IYH,A         ;// IYH = the rectangle width in bytes
+          jp  cTos_set_screen_pos
+      cTos_LastX_less:
+          ;// LastX < X
+          ld  C,A           ;// C = LastX
+          ld  A,B           ;// A = X
+          sub C             ;// A = X - LastX
+          add A,(IX+11)     ;// A = (X - LastX) + Sprite.Width;
+          ld  IYH,A         ;// IYH = the rectangle width in bytes
+          jp  cTos_set_screen_pos
+      cTos_Y_less:
+          ;// LastY > Y (A = Y; B = LastY)
+          ld  C,A						;// C = Y
+          ld  A,B           ;// A = LastY
+          sub C             ;// A = LastY - Y
+          add A,(IX+12)     ;// A = (LastY - Y) + Sprite.Height
+          ld  IYL,A					;// IYL = (LastY - Y) + Sprite.Height -> IYL = the rectangle height in pixels
+          ld  L,(IX+6)
+			    ld  H,(IX+7)      ;// HL -> Sprite.Position
+			    ;// check X
+			    ld  A,(IX+15)     ;// A = X
+			    ld  B,(IX+17)     ;// B = LastX
+			    cp  B
+			    jp  c,cTos_X_less
+			    jp  z,cTos_LastX_equal
+			    ;// X >= LastX
+			    sub B             ;// A = X - LastX
+          ld  C,A           ;// C = X - LastX
+          add A,(IX+11)     ;// A = (X - LastX) + Sprite.Width;
+          ld  IYH,A         ;// IYH = the rectangle width in bytes
+          ld  A,L						;// A = Sprite.Position low byte
+          sub C             ;// A = Sprite.Position low byte - (X - LastX)
+          ld  L,A					  ;// HL -> Sprite.Position - (X - LastX)
+          jp  cTos_set_screen_pos
+      cTos_X_less:
+          ;// X < LastX
+          ld  C,A           ;// C = X
+          ld  A,B           ;// A = LastX
+          sub C             ;// A = LastX - X
+          add A,(IX+11)     ;// A = (X - LastX) + Sprite.Width;
+          ld  IYH,A         ;// IYH = the rectangle width in bytes
+			cTos_set_screen_pos:
+					ld  A,H
+		      sub 64						;// A = A - 64 (64*256 = 16384)
+		      ld  D,A							
+		      ld  E,L						;// DE = HL - 16384 -> sprite position on the screen     
+          ld  A,GE_SCREEN_WIDTH
+          sub IYH           ;// A = SCREEN_WIDTH - rectangle width
+          ld  (copy_sprToscr_next_row+1),A ;// self-modifying code: ld C,SCREEN_WDITH - rectangle width
+          ld  B,0
+			    ld  A,IYL         ;// A = height
+			copy_sprToscr:
+					ld	C,IYH					;// BC: rectangle width in bytes
+					ldir              ;// copy one sprite line to the screen
+			copy_sprToscr_next_row:
+					ld  C,10          ;// will be overwritten with the required value (SCREEN_WDITH - rectangle width)
+					add	HL,BC					;// HL -> next line on the Back Screen
+					ex	DE,HL			
+					add	HL,BC
+					ex	DE,HL         ;// DE -> next line on the screen
+					dec A             ;// decrement remaining rows from the sprite height
+					jp  nz,copy_sprToscr
+					");
+		end; /* Sprite.CopyToScreen */
+
+
+		/**
+		Adjust the sprite's screen position using the sprite's X and Y values.<br/> 
+		<br/>
+		Example:<br/> 
+		var<br/>
+			Player : GE::Sprite;<br/>
+		begin<br/>			  
+		  Player.Init(#TestSprite, 4, 20, False);<br/>
+		  Player.X := 30;<br/>
+		  Player.Y := 100;<br/>		  
+		  Player.SetPosition();<br/>
+		<br/>
+		**/
+		procedure SetPosition();
+		begin
+			// pSprite.Position := ScreenAddr + Sprite.Y * 64 + Sprite.X;	
+			Asm("
+			   	ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+				  xor A
+					ld  H,A						;// H = 0
+					ld  L,(IX+16)			;// HL = Sprite.Y
+  				srl H
+  				rr  L
+  				rra
+  				srl H
+  				rr  L
+  				rra
+  				ld  H,L
+  				ld  L,A           ;// HL = Y * 64
+					ld 	BC,(GE_ScreenAddr) ;// BC -> screen start address
+					add HL,BC					;// HL = screen start + (Y * 64)
+					ld 	A,(IX+15) 		;// A  = Sprite.X
+					ld 	B,0				
+					ld 	C,A						;// BC = X
+					add HL,BC					;// HL -> screen start address + (Y * 64) + X
+					ld  (IX+6),L
+					ld  (IX+7),H			;// Sprite.Position := HL
+					ld  (IX+10),1			;// Sprite.RedrawIsRequired := True
+					");  
+		end; /* SetPosition */
+		
+		
+		/**
+		Updates the last position with the current position.<br/> 
+		It should be called when you manually copy the sprite from the Back Screen to the screen instead of using the CopyAllSpritesToScreen statement.
+		<br/>
+		It does this:<br/>
+		LastPosition := Position;<br/>
+		LastX := X;<br/>
+		LastY := Y;<br/>
+		<br/>
+		**/
+		procedure UpdateLastPos;
+		begin
+			Asm("
+			    ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  A,(IX+6)	;// A = Lo(Position)
+					ld  (IX+8),A	;// Lo(LastPosition) = A
+					ld  A,(IX+7)  ;// A = Hi(Position)
+					ld  (IX+9),A  ;// Hi(LastPosition) = A
+					ld  A,[IX+15] ;// A = X
+					ld  (IX+17),A ;// LastX := X
+					ld  A,[IX+16] ;// A = Y
+					ld  (IX+18),A ;// LastY := Y
+					")
+		end; /* UpdateLastPos */
+		
+		
+		/**
+		Move the sprite position to LEFT by one byte.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveLeft();<br/> 
+		<br/>
+		**/
+		procedure MoveLeft();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  L,(IX+6)
+					ld  H,(IX+7)					;// HL = Sprite.Position
+		     	dec HL            		;// Dec (Sprite.Position)
+		     	ld  (IX+6),L
+					ld  (IX+7),H					;// Sprite.Position := HL
+					dec (IX+15)           ;// Dec (Sprite.X)
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		
+		/**
+		Move the sprite position to RIGHT by one byte.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveRight();<br/> 
+		<br/>
+		**/
+		procedure MoveRight();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  L,(IX+6)
+					ld  H,(IX+7)					;// HL = Sprite.Position
+		     	inc HL            		;// Inc (Sprite.Position)
+		     	ld  (IX+6),L
+					ld  (IX+7),H					;// Sprite.Position := HL
+					inc (IX+15)           ;// Inc (Sprite.X)
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		
+		/**
+		Move the sprite position UP by one line.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveUp();<br/> 
+		<br/>
+		**/
+		procedure MoveUp();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  L,(IX+6)
+					ld  H,(IX+7)					;// DE = Sprite.Position
+					ld  BC,$FFC0          ;// BC = -SCREEN_WIDTH
+					add HL,BC          		;// Sprite.Position -= SCREEN_WIDTH 
+		     	ld  (IX+6),L
+					ld  (IX+7),H					;// Sprite.Position := HL
+					dec (IX+16)           ;// Dec (Sprite.Y)
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		
+		/**
+		Move the sprite position UP by 2 lines.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveUpBy2();<br/> 
+		<br/>
+		**/
+		procedure MoveUpBy2();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  L,(IX+6)
+					ld  H,(IX+7)					;// DE = Sprite.Position
+					ld  BC,$FF80          ;// BC = -2*SCREEN_WIDTH
+					add HL,BC          		;// Sprite.Position -= SCREEN_WIDTH 
+		     	ld  (IX+6),L
+					ld  (IX+7),H					;// Sprite.Position := HL
+					ld   A,(IX+16)        ;// A := Sprite.Y
+					sub  4                ;// A := A - 4
+					ld  (IX+16),A         ;// Sprite.Y := A
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		
+		/**
+		Move the sprite position UP by 4 lines.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveUpBy4();<br/> 
+		<br/>
+		**/
+		procedure MoveUpBy4();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					dec (IX+7)						;// decrement sprite position hight byte -> pos = pos - 256 (4*SCREENWIDTH = 256)
+					ld   A, (IX+16)       ;// A := Sprite.Y
+					sub  4                ;// A := A - 4
+					ld  (IX+16),A         ;// Sprite.Y := A
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		/**
+		Move the sprite position DOWN by one line.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveDown();<br/> 
+		<br/>
+		**/
+		procedure MoveDown();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  L,(IX+6)
+					ld  H,(IX+7)					;// DE = Sprite.Position
+					ld  BC,GE_SCREEN_WIDTH
+					add HL,BC          		;// Sprite.Position += SCREEN_WIDTH 
+		     	ld  (IX+6),L
+					ld  (IX+7),H					;// Sprite.Position := HL
+					inc (IX+16)           ;// Inc (Sprite.Y)
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		
+		/**
+		Move the sprite position DOWN by 2 lines.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveDownBy2();<br/> 
+		<br/>
+		**/
+		procedure MoveDownBy2();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					ld  L,(IX+6)
+					ld  H,(IX+7)					;// DE = Sprite.Position
+					ld  BC,128            ;// BC = 2*SCREEN_WIDTH
+					add HL,BC          		;// Sprite.Position += SCREEN_WIDTH 
+		     	ld  (IX+6),L
+					ld  (IX+7),H					;// Sprite.Position := HL
+					ld   A, (IX+16)       ;// A := Sprite.Y
+					add A,2               ;// A := A + 2
+					ld  (IX+16),A         ;// Sprite.Y := A
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;		
+		
+		
+		/**
+		Move the sprite position DOWN by 4 lines.<br/> 
+		Faster than SetSpritePos.<br/>
+		<br/>
+		Example:<br/> 
+		Player.MoveDownBy4();<br/> 
+		<br/>
+		**/
+		procedure MoveDownBy4();
+		begin
+			Asm("
+					ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+					inc (IX+7)						;// increment sprite position hight byte -> pos = pos + 256 (4*SCREENWIDTH = 256)
+					ld   A, (IX+16)       ;// A := Sprite.Y
+					add A,4               ;// A := A + 4
+					ld  (IX+16),A         ;// Sprite.Y := A
+		     	ld  (IX+10),1    			;// Sprite.RedrawIsRequired = True
+					");
+		end;
+		
+		
+		procedure InitAnimation(GE::AnimPhaseCount, GE::AnimDelay : global byte);
+		begin
+			Asm("
+			    ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+				  ld  L,(IX+2)
+				  ld  H,(IX+3)            ;// HL -> this.Data
+				  ld  (IX+20),L
+				  ld  (IX+21),H           ;// this.AnimSet = this.Data
+				  ld  (IX+22),0           ;// this.AnimType = 0 (default)
+				  ld  A,[GE_AnimPhaseCount]
+				  ld  (IX+23),A           ;// this.AnimPhaseCount = AnimPhaseCount
+				  ld  (IX+24),A           ;// this.AnimPhaseNr = AnimPhaseCount
+				  ld  A,[GE_AnimDelay]
+				  ld  (IX+25),A           ;// this.AnimDelayValue = AnimDelay
+				  ld  (IX+26),A           ;// this.AnimDelay = AnimDelay
+					");
+		end; /* InitAnimation */
+		
+		
+		/**
+		Sets the next phase of the sprite animation.<br/>
+    The animation is set to the beginning if it has reached the end.<br/>
+    <br/>
+		Example:<br/> 
+		PlayerSprite.Animating();<br/> 
+		<br/>
+		**/
+		procedure Animation();
+		begin
+			Asm("
+			    ld  IX,[GE_Sprite_this]	;// IX -> Sprite class
+				  dec (IX+26)             ;// Dec(this.AnimDelay)
+			    ret nz                  ;// if this.AnimDelay > 0 then return to the caller
+			    ld  A,(IX+25)           ;// A = this.AnimDelayValue
+			    ld  (IX+26),A           ;// this.AnimDelay = this.AnimDelayValue
+			    dec (IX+24)             ;// Dec(this.AnimPhaseNr)
+			    jp  z,reset_spr_anim    ;// if this.AnimPhaseNr == 0 then jump to reset
+			    ld  C,(IX+13)
+			    ld  B,(IX+14)           ;// BC = this.Size
+			    ld  L,(IX+2)
+			    ld  H,(IX+3)            ;// HL = this.Data (sprite + mask)
+			    add HL,BC               ;// HL -> the next anim sprite without mask
+			    ld  A,(IX+1)            ;// A = this.SpriteType
+			    sub 1
+			    jp  z,save_spr_anim_phase
+			    add HL,BC               ;// HL -> the next anim sprite with mask
+			save_spr_anim_phase:
+			    ld  (IX+2),L
+			    ld  (IX+3),H            ;// this.Data = the next anim sprite
+			    ret                     ;// return to the caller
+			reset_spr_anim:
+			    ld  L,(IX+20)
+			    ld  H,(IX+21)           ;// HL = this.AnimSet (the first sprite of the animation)
+			    ld  (IX+2),L
+			    ld  (IX+3),H            ;// this.Data = the first anim sprite
+			    ld  A,(IX+23)           ;// this.AnimPhaseCount
+			    ld  (IX+24),A           ;// this.AnimPhaseNr = this.AnimPhaseCount
+					");
+		end; /* Animation */
+		
+	end; /* Sprite class */
+	
+	
+	/*===============================================
+              I M A G E   C L A S S
+	===============================================*/	
+	Image 								= class
+		Bitmap     					: pointer;	// 0-1 	- image bitmap in TVC format
+		Position						: integer;	// 2-3	- position on the screen or back-buffer
+		Width               : byte;			// 4   	- width in bytes
+		Height              : byte;			// 5	  - height in pixels
+		Size                : integer;	// 6-7 	- image size in bytes = Width * Height - for internal use!
+		X										: byte;			// 8 		- horizontal position (0-63)
+		Y										: byte;			// 9    - vertical position (0-239)
+		ToNextRow        	  : byte;			// 10   - SCREEN_WIDTH - Width (64 - Width) - for internal use!
+		
+	  
+		procedure Init(GE::ImagePtr : global pointer; GE::Width, GE::Height : global byte);
+		begin
+			this.Bitmap := GE::ImagePtr;
+			this.Width  := GE::Width;
+			this.Height := GE::Height;
+			Asm("			   
+			    ;// calc Size -> this.Size := Width * Height;
+					ld  IX,[GE_Image_this]			;// IX -> Image class
+					ld  D,0
+					ld  E,(IX+5)								;// DE: Image.Height
+					ld  HL,0
+					ld  B,(IX+4)								;// B: Image.Width
+			calc_img_size:
+			    add HL,DE               		;// HL += Image.Height
+			    djnz calc_img_size
+			    ld  (IX+6),L
+			    ld  (IX+7),H								;// Image.Size = HL
+			    ;// calc ToNextRow -> this.ToNextRow := SCREEN_WIDTH - this.Width;
+			    ld  A,GE_SCREEN_WIDTH   		;// A: SCREEN_WIDTH
+			    sub (IX+4)               		;// A = SCREEN_WIDTH - Image.Width
+			    ld  (IX+10),A			      		;// Image.ToNextRow := SCREEN_WIDTH - Image.Width;
+					");
+		end; /* Image.Init */
+		
+		
+		/**
+		Put image to screen<br/> 
+		<br/>
+		Example:<br/>
+		var<br/>
+			Img : GE::image;<br/>
+		begin<br/>			  
+		  Img.Init(#MyImage, 4, 20);<br/>
+		  Img.X := 30;<br/>
+		  Img.Y := 100;<br/>		  
+		  Img.Put();<br/>
+		<br/>
+		**/
+		procedure Put;
+		begin
+		  Asm("													  		
+		      ld  IX,[GE_Image_this]	;// IX -> Image class
+		     	ld  A,(IX+9)				;// A = Image.Y
+					ld  L,A
+					ld  H,0							;// HL = Image.Y
+					add HL,HL						;// HL = HL * 2
+					add HL,HL						;// HL = HL * 4
+					add HL,HL						;// HL = HL * 8
+					add HL,HL						;// HL = HL * 16
+					add HL,HL						;// HL = HL * 32
+					add HL,HL						;// HL = Y * 64				
+					ld 	BC,(GE_ScreenAddr) ;// BC -> screen start address
+					add HL,BC						;// HL = screen start + (Y * 64)
+					ld 	A,(IX+8) 			  ;// A  = Image.X
+					ld 	B,0
+					ld 	C,A							;// BC = X
+					add HL,BC						;// HL -> screen start address + (Y * 64) + X
+					ld  (IX+2),L
+					ld  (IX+3),H				;// Image.Position := HL
+          ex  DE,HL         	;// De: Image.Position
+		      ld  A,(IX+4)        ;// A:   Image.Width
+		      ld  IYH,A           ;// IYH: Image.Width
+		      ld  A,(IX+10)       ;// A = SCREEN_WDITH - Image.Width (value for new row)
+		      ld  (put_img_next_row+1),A ;// self-modifying code: ld BC,SCREEN_WDITH - Sprite.Width
+		      ld  L,(IX+0)
+		      ld  H,(IX+1)				;// HL -> Bitmap
+		      ld  A,(IX+5)        ;// A: Image.Height
+			put_image:
+					ld	C,IYH						;// BC: Image.Width in bytes
+					ldir                ;// copy one Image line to the screen
+					ex	DE,HL
+			put_img_next_row:
+					ld  C,10            ;// will be overwritten with the required value (SCREEN_WDITH - Sprite.Width)
+					add	HL,BC
+					ex	DE,HL           ;// DE -> new line on the screen
+					dec A               ;// decrement remaining rows from the Image height
+					jp  nz,put_image	  ;// continue if the remaining height is not zero
+					");
+		end; /* Image.Put */
+				
+	end; /* Image class */
+	
+	
+/*================================================
+          M E M O R Y   M A P P I N G 
+          
+  TV-Computer has 32 KB or 64 KB RAM models
+  and 16 KB VIDEO RAM (or 4x16 KB on 64k+ model)
+	and with 20 KB ROM, of which 16 KB can be mapped.
+  4x16 KB memory pages can be used and addressed at
+  the same time.
+  
+	U0, U1, U2, U3 - user RAM (4 x 16 KB)
+	VID  - video RAM (16 KB)
+	SYS  - system ROM (16 KB)
+	CART - external cartridge (max. 16 KB)
+	EXT  - memory on external card (max. 16 KB)
+=================================================*/
+
+
+/**
+Set memory mapping<br/>
+Params:
+<ul>
+<li>MEM_DEFAULT : U0, U1, U2,  SYS</li>
+<li>MEM_VID_ON  : U0, U1, VID, SYS</li>
+<li>MEM_FULL_64K: U0, U1, U2,  U3</li>
+<li>MEM_48K_VID : U0, U1, VID, U3</li>
+<li>or any other value</li>
+</ul>
+<br/>
+16K pages:<br/>
+U0-U3: user memory; VID: video RAM; SYS: sysem ROM<br/>
+<br/>
+Example: GE::SetMemory(GE::MEM_VID_ON);<br/>
+<br/>
+**/
+procedure SetMemory(Mode : global byte);
+begin
+	Asm("
+	    ld  A,[GE_Mode]
+			ld  ($3),A
+			out ($2),A
+	    ");
+end; /* SetMemory */
+  
+  
+/*===============================================
+                  I N I T                           
+===============================================*/
+
+/**
+Init game engine<br/>
+Param:<br/>
+<ul>
+<li>USE_BACK_SCREEN - drawing to the back-screen on memory Page 3 (64K memory required)</li>
+<li>DIRECT_TO_SCREEN - drawing to the screen</li>
+</ul>
+<br/>
+Example: GE::Init(GE::DIRECT_TO_SCREEN);<br/>
+<br/>
+**/
+procedure Init(UseBackScreen : global boolean);
+begin
+	Asm("	
+	    ;// init ScreenAddr
+	    ld  HL,GE_SCREEN_ADDR
+      ld  A,[GE_UseBackScreen]
+      or  A
+      jr  z,set_screen_addr      
+      ;// set memory mapping to U0, U1, U2, U3
+      ld  A,$B0
+			ld  ($3),A
+			out ($2),A
+      ld  HL,GE_BACK_SCREEN_ADDR
+      ;// set ScreenAddr
+  set_screen_addr:
+      ld (GE_ScreenAddr),HL
+			di							;// disable interruptsű
+			;// change the Interrupt Handler
+			ld	HL,$38			;// HL -> start address of System Interrupt Handler
+			ld	(HL),195		;// JP mnemonic: 195
+			ld  DE,IT_HANLDER
+			inc	HL
+			ld  A,E
+			ld	(HL),A
+			inc	HL
+			ld  A,D
+			ld	(HL),A 			;// $38: JP IT_HANLDER
+			ei			
+	    ret
+	    ;// The new Interrupt Handler
+	IT_HANLDER:
+			out	($7),A			;// reset interrupt
+			ei              ;// enable interrupts
+			ret
+			");	
+	// so that the optimizer keeps this procedures
+	call(GE_Sprite_SetPosition);
+end; /* Init */  
+
+
+/*===============================================
+               S P R I T E S
+===============================================*/
+
+
+/**
+Render all sprites<br/>
+1. Restore all sprites' background<br/>
+2. Draws all sprites and saves sprite backgrounds<br/>
+<br/>
+Example: GE::RenderAllSprites;<br/>
+<br/>
+**/
+procedure RenderAllSprites;
+begin	
+	Asm("
+	    ld A,$90		;// set memory to: U0, U1, VID, U3
+			ld ($3),A
+			out ($2),A
+			;// Restore all sprites' background	
+	    ld  DE,(GE_LastSpritePtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							;// SpritePtr := LastSpritePtr;
+	    xor A                   ;// A = 0
+	    ld  [GE_i],A            ;// i := 0
+	restore_all_spr_for:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							;// DE -> sprite class
+			dec HL
+			dec HL
+			dec HL
+			ld  [GE_SpritePtr],HL	  ;// SpritePtr := prev. sprite
+			ld  [GE_Sprite_this],DE	;// init Sprite class
+			ld  A,(DE)							;// A = Sprite.Visible
+			or  A                   ;// Sprite.Visible = False?			
+			jp  z,restore_all_spr_next
+			inc DE
+			ld  A,(DE)              ;// A = Sprite.SpriteType
+			dec A                   ;// if SpriteType = 1, this is a sprite without a mask; no need to save its background
+			call nz,GE_Sprite_RestoreBackground
+	restore_all_spr_next:
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                ;// Inc (i)
+			cp  (HL)                ;// i = SpriteCount?
+			jp  nz,restore_all_spr_for
+			;// Draws all sprites and saves sprite backgrounds	
+	    ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							;// SpritePtr := SpriteListPtr;
+	    xor A                   ;// A = 0
+	    ld  [GE_i],A            ;// i := 0
+	render_all_spr_for:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							;// DE -> sprite class
+			inc HL									;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		;// SpritePtr := next sprite
+			ld  [GE_Sprite_this],DE	;// init Sprite class
+			ld  A,(DE)							;// A = Sprite.Visible
+			or  A                   ;// Sprite.Visible = False?
+			jp  z,render_all_spr_next
+			inc DE
+			ld  A,(DE)              ;// A = Sprite.SpriteType
+			dec A                   
+			jp  z,render_all_spr_put;// if SpriteType = 1, this is a sprite without a mask; jump to put
+			call GE_Sprite_Draw
+	render_all_spr_next:
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                ;// Inc (i)
+			cp  (HL)                ;// i = SpriteCount?
+			jp  nz,render_all_spr_for
+			;// set memory to 64k (U0, U1, U2, U3)
+	    ld A,$B0		
+			ld ($3),A
+			out ($2),A
+			;// check ScreenAddr
+			ld  HL,GE_ScreenAddr+1
+			ld  A,(HL)		          ;// A = ScreenAddr hight byte
+			cp  $80							 		;// ScreenAddr = $8000 (DIRECT_TO_SCREEN)
+			ret nz									;// if not direct to screen then return
+			;// Update last position of all sprites
+			ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							;// SpritePtr := SpriteListPtr;
+			xor A                   ;// A = 0
+	    ld  [GE_i],A            ;// i := 0
+	upd_all_spr_lastpos_loop:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							;// DE -> sprite class
+			inc HL									;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		;// SpritePtr := next sprite
+			ld  [GE_Sprite_this],DE	;// init Sprite class
+			;// update sprites last position
+			ld  IX,[GE_Sprite_this]
+			ld  A,(IX+6)	;// A = Lo(Position)
+			ld  (IX+8),A	;// Lo(LastPosition) = A
+			ld  A,(IX+7)  ;// A = Hi(Position)
+			ld  (IX+9),A  ;// Hi(LastPosition) = A
+			ld  A,[IX+15] ;// A = X
+			ld  (IX+17),A ;// LastX := X
+			ld  A,[IX+16] ;// A = Y
+			ld  (IX+18),A ;// LastY := Y
+			;// loop test
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                ;// Inc (i)
+			cp  (HL)                ;// i = SpriteCount?
+			jp  nz,upd_all_spr_lastpos_loop
+			ret
+	render_all_spr_put:
+	    call GE_Sprite_Put
+	    jp  render_all_spr_next
+	    ");	    
+	// so that the optimizer keeps this procedures
+	call(GE_Sprite_Put);
+	call(GE_Sprite_Draw);
+	call(GE_Sprite_RestoreBackground);
+end; /* RenderAllSprites */
+
+
+/**
+Copy all sprites from the Back Screen to the screen<br/>
+<br/>
+Example: GE::CopyAllSpritesToScreen;<br/>
+<br/>
+**/
+procedure CopyAllSpritesToScreen;
+begin
+	Asm("
+	    ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							;// SpritePtr := SpriteListPtr;
+	    ;// set memory to: U0, U1, VID, U3
+	    ld A,$90		
+			ld ($3),A
+			out ($2),A
+			;// copy all sprites to screen
+			xor A                   ;// A = 0
+	    ld  [GE_i],A            ;// i := 0
+	copy_all_spr_loop:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							;// DE -> sprite class
+			inc HL									;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		;// SpritePtr := next sprite
+			ld  [GE_Sprite_this],DE	;// init Sprite class
+			ld  A,(DE)							;// A = Sprite.Visible
+			or  A                   ;// Sprite.Visible = False?
+			call nz,GE_Sprite_CopyToScreen ;// if Sprite.Visible then call
+			;// update sprites last position
+			ld  IX,[GE_Sprite_this]
+			ld  A,(IX+6)	;// A = Lo(Position)
+			ld  (IX+8),A	;// Lo(LastPosition) = A
+			ld  A,(IX+7)  ;// A = Hi(Position)
+			ld  (IX+9),A  ;// Hi(LastPosition) = A
+			ld  A,[IX+15] ;// A = X
+			ld  (IX+17),A ;// LastX := X
+			ld  A,[IX+16] ;// A = Y
+			ld  (IX+18),A ;// LastY := Y
+			;// loop test
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                ;// Inc (i)
+			cp  (HL)                ;// i = SpriteCount?
+			jp  nz,copy_all_spr_loop
+	    ;// set memory to 64k (U0, U1, U2, U3)
+	    ld A,$B0		
+			ld ($3),A
+			out ($2),A
+			ret
+	    ");	
+	// so that the optimizer keeps the procedure
+	call(GE_Sprite_CopyToScreen); // an empty call so that the optimizer keeps the procedure
+end; /* CopyAllSpritesToScreen */
+
+
+/**
+Draws all sprites<br/>
+It doesn't restore sprite backgrounds; it just draws all sprites<br/>
+<br/>
+Example: GE::DrawAllSprites;<br/>
+<br/>
+**/
+procedure DrawAllSprites;
+begin
+	Asm("
+	    ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							;// SpritePtr := SpriteListPtr;
+			xor A                   ;// A = 0
+	    ld  [GE_i],A            ;// i := 0
+	draw_all_spr_loop:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							;// DE -> sprite class
+			inc HL									;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		;// SpritePtr := next sprite
+			ld  [GE_Sprite_this],DE	;// init Sprite class
+			ld  A,(DE)							;// A = Sprite.Visible
+			or  A                   ;// Sprite.Visible = False?
+			call nz,GE_Sprite_Draw 	;// if Sprite.Visible then call Sprite.Draw
+			;// loop test
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                ;// Inc (i)
+			cp  (HL)                ;// i = SpriteCount?
+			jp  nz,draw_all_spr_loop
+			ret
+	    ");
+	call(GE_Sprite_Draw); // an empty call so that the optimizer keeps the procedure
+end; /* DrawAllSprites */
+
+
+/**
+Put all sprites<br/>
+It doesn't restore sprite backgrounds; it just put all sprites<br/>
+<br/>
+Example: GE::PutAllSprites;<br/>
+<br/>
+**/
+procedure PutAllSprites;
+begin
+	Asm("
+	    ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							;// SpritePtr := SpriteListPtr;
+			xor A                   ;// A = 0
+	    ld  [GE_i],A            ;// i := 0
+	put_all_spr_loop:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							;// DE -> sprite class
+			inc HL									;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		;// SpritePtr := next sprite
+			ld  [GE_Sprite_this],DE	;// init Sprite class
+			ld  A,(DE)							;// A = Sprite.Visible
+			or  A                   ;// Sprite.Visible = False?
+			call nz,GE_Sprite_Put   ;// if Sprite.Visible then call Sprite.Put
+			;// loop test
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                ;// Inc (i)
+			cp  (HL)                ;// i = SpriteCount?
+			jp  nz,put_all_spr_loop
+			ret
+	    ");
+	// so that the optimizer keeps the procedure
+	call(GE_Sprite_Put); // an empty call so that the optimizer keeps the procedure
+end; /* PutAllSprites */
+
+
+/**
+Copies the entire Back Screen to the screen<br/>
+<br/>
+**/
+procedure CopyBackScreenToScreen;
+begin
+	Asm("
+	    ;// save memory mapping
+			ld  A,($3)				;// A = current memory mapping from system variable
+			ld  [GE_Mode],A		;// save current memory mapping to Mode variable
+			;// mapping the VideoRAM to $8000-BFFF; and U3 ($C000-$FFFF)
+      ld  A,$90				  ;// memory mapping: U0, U1, VID, U3
+			ld  ($3),A				;// set memory mapping to system variable
+			out ($2),A				;// send memory mapping to port #2
+			;// Copy the Back Screen to the screen
+			ld  HL,GE_BACK_SCREEN_ADDR
+			ld  DE,GE_SCREEN_ADDR
+			ld  BC,GE_SCREEN_SIZE
+			ldir
+			;// restore memory mapping
+			ld	A,[GE_Mode]		;// A = saved memory mapping
+			ld	($3),A				;// restore memory mapping to system variable
+			out ($2),A				;// restore memory mapping on port #2
+	    ");	
+end; /* CopyBackScreenToScreen */
+
+
+/**
+Copy the specified rectangle from the Back Screen to the screen.<br/> 
+Screen width is 64 characters and screen height is 240 pixels<br/>
+Left top corner: 0, 0; right bottom corner: 63, 239<br/>
+Params:
+<ul>
+<li>X: left position:0 - 63</li>
+<li>Y: top position: 0 - 239</li>
+<li>Width : 1- 64</li>
+<li>Height: 1-240</li>
+</ul>
+<br/>
+Example: GE::CopyBackScreenRectToScreen(10, 100, 30, 80);<br/>
+<br/>
+**/
+procedure CopyBackScreenRectToScreen(X, Y, Width, Height : global byte);
+begin
+	Asm("
+	    ;// memory mapping to U0, U1, VID, U3
+      ld  A,$90
+			ld  ($3),A
+			out ($2),A
+			;// calc Back Screen top-left corner address
+			ld  A,[GE_Y]
+			ld  L,A
+			ld  H,0					;// HL = Y
+			add HL,HL				;// HL = HL * 2
+			add HL,HL				;// HL = HL * 4
+			add HL,HL				;// HL = HL * 8
+			add HL,HL				;// HL = HL * 16
+			add HL,HL				;// HL = HL * 32
+			add HL,HL				;// HL = Y * 64				
+			ld 	BC,(GE_ScreenAddr) // BC -> screen start address
+			add HL,BC				;// HL := screen start + (Y * 64)
+			ld A,[GE_X]			;// A  := X
+			ld B,0				
+			ld C,A					;// BC := X
+			add HL,BC				;// HL -> screen start start + Y * 64 + X -> left top pos. on the screen
+			;// calc screen address
+			ld  A,H
+		  sub 64					;// A = A - 64 (64*256 = 16384)
+		  ld  D,A							
+		  ld  E,L					;// DE = HL - 16384 -> rectangle position on the screen
+		  ;// calc SCREEN_WIDTH - rectangle Width
+		  ld  A,[GE_Width];// A = Width
+		  ld  IYH,A       ;// IYH = Width
+		  ld  A,GE_SCREEN_WIDTH
+      sub IYH         ;// A = SCREEN_WIDTH - rectangle Width
+      ld  (copy_bb_rect_next_row+1),A ;// self-modifying code: ld C,SCREEN_WDITH - rectangle width
+      ld  A,[GE_Height];// A = rectangle Height
+		copy_bb_rect_lines:
+			ld	C,IYH				;// BC: rectangle width in bytes
+			ldir            ;// copy one rectangle line to the screen
+		copy_bb_rect_next_row:
+			ld  C,10        ;// will be overwritten with the required value (SCREEN_WDITH - rectangle width)
+			add	HL,BC				;// HL -> next line on the Back Screen
+			ex	DE,HL			
+			add	HL,BC
+			ex	DE,HL       ;// DE -> next line on the screen
+			dec A           ;// decrement remaining rows from the rectangle height
+			jp nz,copy_bb_rect_lines
+      ;// mapping full 64k RAM
+      ld  A,$B0				;// memory mapping: U0, U1, U2, U3
+			ld  ($3),A			;// set memory mapping to system variable
+			out ($2),A			;// send memory mapping to port #2
+			");
+end; /* CopyBackScreenRectToScreen */
+
+
+/*================================================
+  		            S C R E E N 
+=================================================*/
+
+/**
+Sets graphics mode. 
+<ul>
+<li>GRAPHICS2:  512x240  2 color mode (code: 0)</li>
+<li>GRAPHICS4:  256x240  4 color mode (code: 1)</li>
+<li>GRAPHICS16: 128x240 16 color mode (code: 2).</li>
+</ul>
+<br/>
+Example: GE::SetGraphics(GE:GRAPHICS_16);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure SetGraphics(Mode : global byte);
+begin
+	asm("
+			ld  A,[GE_Mode]
+			ld 	C,A 							// C = graphics mode code
+			rst $30 							// system function call
+			db $4 								// VMODE function code
+			");
+end;
+
+
+/**
+Gets graphics mode.<br/>
+Result:
+<ul>
+<li>0: GRAPHICS_2</li>
+<li>1: GRAPHICS_4</li>
+<li>2: GRAPHICS_16</li>
+</ul>
+<br/>
+Example: if (GE::GetGraphics() <> GE::GRAPHICS_4) then GE::SetGraphics(GE::GRAPHICS_4);<br/>
+<br/>
+**/
+function GetGraphics() : byte;
+begin
+	Asm("
+			ld	A,($0B13)		// A = port #6 mirror system variable
+			and 3						// A = bit #1 and #2 of port #6 mirror -> graphics mode
+			");
+end;
+
+
+/**
+Sets 2-color or 4-color palette.<br/>
+Params:
+<ul>
+<li>Nr: Palette index (Graph.2: 0 - 1 or Graph.4: 0 - 3)</li>
+<li>Color: Color code </li>
+</ul>
+<br/>
+Example: GE::SetPalette(1, GE::PALETTE_RED);<br/>
+<br/>
+Color codes (decimal code: GE const):
+<ul>
+<li> 0: PALETTE_BLACK</li>
+<li> 1: PALETTE_DARKBLUE</li>
+<li> 4: PALETTE_DARKRED</li>
+<li> 5: PALETTE_DARKMAGENTA</li>
+<li>16: PALETTE_DARKGREEN</li>
+<li>17: PALETTE_DARKCYAN</li>
+<li>20: PALETTE_DARKYELLOW</li>
+<li>21: PALETTE_GRAY</li>
+<li>64: PALETTE_BLACK2</li>
+<li>65: PALETTE_BLUE</li>
+<li>68: PALETTE_RED</li>
+<li>69: PALETTE_MAGENTA</li>
+<li>80: PALETTE_GREEN</li>
+<li>81: PALETTE_CYAN</li>
+<li>84: PALETTE_YELLOW</li>
+<li>85: PALETTE_WHITE</li>
+</ul>
+<br/>
+**/
+procedure SetPalette(Nr, Color : global byte);
+begin
+	if (Nr >= 0 and (Nr <= 3 and Color <= 85)) then
+	begin		
+		Asm("
+				ld A,[GE_Nr]
+				ld C,$60
+				add A,C
+				ld C,A					;// C = $60 + Nr
+				ld A,[GE_Color]	;// A = Color code
+				out (C),A				;// send Color code to desired palette port
+				");
+	end;
+end;
+
+
+/**
+Sets the border color<br/>
+<br/>
+Example: GE::SetBorder(GE::BORDER_BLUE);<br/><br/>
+<br/>
+Border colors:
+<ul>
+<li>BORDER_BLACK</li>
+<li>BORDER_DARKBLUE</li>
+<li>BORDER_DARKRED</li>
+<li>BORDER_DARKMAGENTA</li>
+<li>BORDER_DARKGREEN</li>
+<li>BORDER_DARKCYAN</li>
+<li>BORDER_DARKYELLOW</li>
+<li>BORDER_GRAY</li>
+<li>BORDER_BLACK2</li>
+<li>BORDER_BLUE</li>
+<li>BORDER_RED</li>
+<li>BORDER_MAGENTA</li>
+<li>BORDER_GREEN</li>
+<li>BORDER_CYAN</li>
+<li>BORDER_YELLOW</li>
+<li>BORDER_WHITE</li>
+</ul>
+**/
+procedure SetBorder(Color : global byte);
+begin
+	asm("		
+    ld A,[GE_Color]
+    ld (GE_SYS_BORDER_COLOR),A
+		out (GE_SYS_BORDER_PORT),A
+	");
+end;
+
+
+/**
+Waits until a vertical sync (raster-interrupt) has been performed.
+**/
+procedure WaitForSync();
+begin
+	asm("
+			halt
+			");
+end;
+
+
+/**
+Set the raster-interrupt position on the screen<br/>
+Params:
+<ul>
+<li>LineNr: 0-239</li>
+</ul>
+<br/>
+Example: GE::SetRasterInterruptPos(200);<br/>
+<br/>
+**/
+procedure SetRasterInterruptPos(Nr : global byte);
+begin
+	Asm("
+			ld  A,[GE_Nr]
+			srl A
+			srl A       	// A = LineNr div 4
+			ld  H,0
+			ld 	L,A				// HL = LineNr div 4
+			add HL,HL			// HL = HL * 2
+			add HL,HL			// HL = HL * 4
+			add HL,HL			// HL = HL * 8
+			add HL,HL			// HL = HL * 16
+			add HL,HL			// HL = HL * 32
+			add HL,HL			// HL = (LineNr div 4) * 64			
+			ld	DE,63			// last byte in the line
+			add	HL,DE			// HL = ((LineNr div 4) * 64) + 63
+			ld  [GE_CursorITPos],HL
+			ld	A,14
+			out	($70),A		// select CRTC R14 register - register of raster-interrupt position high byte
+			ld	A,H
+			out	($71),A		// send hight byte of raster-interrupt position to CRTC R14 register
+			ld	A,15
+			out	($70),A		// select CRTC R15 register - register of raster-interrupt position low byte
+			ld	A,L
+			out	($71),A		// send low byte of raster-interrupt position to CRTC R15 register
+			ret
+			");
+end;
+
+
+/*================================================
+                 S C R O L L 
+=================================================*/
+
+
+/**
+Scrolling up the screen<br/>
+This is a handware scroll using the CRTC<br/>
+Use only with DIRECT_TO_SCREEN<br/>
+<br/>
+Example:<br/>
+GE::WaitForSync;<br/>
+GE::ScrollUp;<br/>
+<br/>
+**/
+procedure ScrollUp(UpdateSpritePos : global boolean);
+begin
+	Asm("
+      ;// increment the CRTC_ScreenOffset
+	    ld  HL,[GE_CRTC_ScreenOffset]
+      ld  BC,64                     ;// CRTC line width in bytes
+      add HL,BC                     ;// CRTC_ScreenOffset += 64                               
+      res 4,H                       ;// handle overflow (64 ligical lines * 64 chars = 4096)
+      ld (GE_CRTC_ScreenOffset),HL  ;// store the new value of CRTC_ScreenOffset
+      ;// set screen start by CRTC	
+      ld  A,12                      ;// 12: CRTC port to screen start high
+      out (GE_CRTC_REG_PORT),A			;// selecting Register #12 of the CRTC
+      ld  A,H
+      out (GE_CRTC_DATA_PORT),A     ;// sending the screen start address high value to the CRTC data port
+      ld  A,13                      ;// 13: CRTC port to screen start high
+      out (GE_CRTC_REG_PORT),A      ;// selecting Register #13 of the CRTC
+      ld  A,L                                
+      out (GE_CRTC_DATA_PORT),A     ;// sending the screen start address low value to the CRTC data port
+      ;// set the cursor-interrupt position
+      ld  DE,[GE_CursorITPos]
+      add	HL,DE                     ;// HL = position of the cursor-interrupt
+      ld  A,14                      ;// 14: CRTC port to the high value of the cursor-interrupt position
+      out	(GE_CRTC_REG_PORT),A      ;// selecting Register #14 of the CRTC
+      ld  A,H
+      out	(GE_CRTC_DATA_PORT),A     ;// sending the high value of cursor-interrupt position to the CRTC data port
+      ld  A,15                      ;// 15: CRTC port to the low value of the cursor-interrupt position
+      out	(GE_CRTC_REG_PORT),A      ;// selecting Register #15 of the CRTC
+      ld  A,L
+      out (GE_CRTC_DATA_PORT),A     ;// sending the low value of cursor-interrupt position to the CRTC data port
+      ;// update sprite positions
+      ld  A,[GE_UpdateSpritePos]
+      or  A                         ;// UpdateSpritePos = False?
+      ret z                         ;// if UpdateSpritePos = False then return to caller      
+      ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							      ;// SpritePtr := SpriteListPtr;
+			xor A                         ;// A = 0
+	    ld  [GE_i],A                  ;// i := 0
+	upd_spr_scroll_up:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							      ;// DE -> sprite class
+			inc HL									      ;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		      ;// SpritePtr := next sprite
+			ld	IXL,E
+			ld	IXH,D                     ;// IX -> Sprite class
+			inc (IX+7)                    ;// sprite.Position += 256 -> 4 lines on the screen
+			res 6,(IX+7)                  ;// overflow handling
+			;// loop test
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                      ;// Inc (i)
+			cp  (HL)                      ;// i = SpriteCount?
+			jp  nz,upd_spr_scroll_up
+		  ");		  
+end;
+
+
+/**
+Scrolling down the screen<br/>
+This is a handware scroll using the CRTC<br/>
+Use only with DIRECT_TO_SCREEN<br/>
+<br/>
+Example:<br/>
+GE::WaitForSync;<br/>
+GE::ScrollDown;<br/>
+<br/>
+**/
+procedure ScrollDown(UpdateSpritePos : global boolean);
+begin
+	Asm("
+      ;// decrement the CRTC_ScreenOffset
+	    ld  HL,[GE_CRTC_ScreenOffset]
+      ld  BC,$ffc0                  ;// -> -64 (64 is the CRTC line width in bytes)
+      add HL,BC                     ;// CRTC_ScreenOffset += 64                               
+      res 4,H                       ;// handle overflow (64 ligical lines * 64 chars = 4096)
+      ld (GE_CRTC_ScreenOffset),HL  ;// store the new value of CRTC_ScreenOffset
+      ;// set screen start by CRTC	
+      ld  A,12                      ;// 12: CRTC port to screen start high
+      out (GE_CRTC_REG_PORT),A			;// selecting Register #12 of the CRTC
+      ld  A,H
+      out (GE_CRTC_DATA_PORT),A     ;// sending the screen start address high value to the CRTC data port
+      ld  A,13                      ;// 13: CRTC port to screen start high
+      out (GE_CRTC_REG_PORT),A      ;// selecting Register #13 of the CRTC
+      ld  A,L                                
+      out (GE_CRTC_DATA_PORT),A     ;// sending the screen start address low value to the CRTC data port
+      ;// set the cursor-interrupt position
+      ld  DE,[GE_CursorITPos]
+      add	HL,DE                     ;// HL = position of the cursor-interrupt
+      ld  A,14                      ;// 14: CRTC port to the high value of the cursor-interrupt position
+      out	(GE_CRTC_REG_PORT),A      ;// selecting Register #14 of the CRTC
+      ld  A,H
+      out	(GE_CRTC_DATA_PORT),A     ;// sending the high value of cursor-interrupt position to the CRTC data port
+      ld  A,15                      ;// 15: CRTC port to the low value of the cursor-interrupt position
+      out	(GE_CRTC_REG_PORT),A      ;// selecting Register #15 of the CRTC
+      ld  A,L
+      out (GE_CRTC_DATA_PORT),A     ;// sending the low value of cursor-interrupt position to the CRTC data port
+      ;// update sprite positions
+      ld  A,[GE_UpdateSpritePos]
+      or  A                         ;// UpdateSpritePos = False?
+      ret z                         ;// if UpdateSpritePos = False then return to caller      
+      ld  DE,(GE_SpriteListPtr)
+	    ld  HL,GE_SpritePtr
+	    ld  (HL),E
+	    inc HL
+	    ld  (HL),D							      ;// SpritePtr := SpriteListPtr;
+			xor A                         ;// A = 0
+	    ld  [GE_i],A                  ;// i := 0
+	upd_spr_scroll_down:
+			ld  HL,[GE_SpritePtr]
+			ld  E,(HL)
+			inc HL
+			ld  D,(HL)							      ;// DE -> sprite class
+			inc HL									      ;// HL -> next sprite
+			ld  [GE_SpritePtr],HL		      ;// SpritePtr := next sprite
+			ld	IXL,E
+			ld	IXH,D                     ;// IX -> Sprite class
+			dec (IX+7)                    ;// sprite.Position -= 256
+      set 7,(IX+7)                  ;// overflow handling
+			res 6,(IX+7)                  ;// overflow handling
+			;// loop test
+			ld  A,[GE_SpriteCount]
+			ld  HL,GE_i
+			inc (HL)                      ;// Inc (i)
+			cp  (HL)                      ;// i = SpriteCount?
+			jp  nz,upd_spr_scroll_down
+		  ");		  
+end;
+
+
+/*===============================================
+               G R A P H I C S 
+===============================================*/
+
+/**
+Clear screen<br/>
+<br/>
+Param:<br/>
+Patter: byte for clear<br/>
+For example 0: color of palette #0 or black in Graphics 16<br/>
+<br/>
+Example:<br/>
+GE::ClearScreen(0);<br/>
+<br/>
+**/
+procedure ClearScreen(Pattern : global byte);
+begin
+		Asm("
+				;// save memory mapping
+				ld  A,($3)				;// A = current memory mapping from system variable
+				ld  [GE_Mode],A		;// save current memory mapping to Mode variable
+				// mapping the VideoRAM to $8000-BFFF; and U3 ($C000-$FFFF)
+        ld  A,$90					;// memory mapping: U0, U1, VID, U3
+				ld  ($3),A				;// set memory mapping to system variable
+				out ($2),A				;// send memory mapping to port #2
+				;// clear screen
+				ld  A,[GE_Pattern];// A := fill pattern byte
+				ld  HL,(GE_ScreenAddr) ;// HL -> VIDEORAM / BACK-BUFFER start address				
+				ld  (HL),A        ;// put fill pattern to VIDEORAM first byte
+				ld  D,H
+				ld  E,L           ;// DE = HL
+				inc DE            ;// DE -> HL + 1
+				ld  BC,16383	    ;// BC = 16K - 1 -> VIDEORAM size - 1
+				ldir				      ;// copy fill pattern to all bytes of the VIDEORAM
+				;// restore memory mapping
+				ld	A,[GE_Mode]		;// A = saved memory mapping
+				ld	($3),A				;// restore memory mapping to system variable
+				out ($2),A				;// restore memory mapping on port #2
+				");
+end; /* ClearScreen */
+
+
+/**
+Draw a filed rectangle<br/> 
+Screen width is 64 characters and screen height is 240 pixels<br/>
+Left top corner: 0, 0; right bottom corner: 63, 239<br/>
+Params:
+<ul>
+<li>X: left position: 0 -  63</li>
+<li>Y: top position: 0 - 239</li>
+<li>Width : 1- 64</li>
+<li>Height: 1-240</li>
+<li>Pattern: filler byte (0-255)<br/>
+0: 2 black pixels in Graphics16 or 4/8 pixels with color #0<br/>
+255: 2 white pixels in Graphics16 or 4/8 pixels with color #3)
+</li>
+</ul>
+<br/>
+Example: GE::FillRect(10, 100, 30, 80, 255);<br/>
+<br/>
+**/
+procedure FillRect(X, Y, Width, Height, Pattern : global byte);
+begin
+	Asm("
+				// save memory mapping				
+				ld A,($3)					// A = current memory mapping
+				ld [GE_Mode],A		// save current memory mapping to Mode variable
+				// enable Video RAM
+        ld A,$90					// Pages: U0, U1, VID, U3
+				ld ($3),A
+				out ($2),A
+				// draw filled rectangle
+				ld  A,[GE_Y]
+				ld  L,A
+				ld  H,0						// HL = Y
+				add HL,HL					// HL = HL * 2
+				add HL,HL					// HL = HL * 4
+				add HL,HL					// HL = HL * 8
+				add HL,HL					// HL = HL * 16
+				add HL,HL					// HL = HL * 32
+				add HL,HL					// HL = Y * 64				
+				ld 	BC,(GE_ScreenAddr) // BC -> screen start address
+				add HL,BC					// HL := screen start + (Y * 64)
+				ld A,[GE_X]			  // A  := X
+				ld B,0				
+				ld C,A						// BC := X
+				add HL,BC					// HL -> screen start start + Y * 64 + X -> left top pos. on the screen
+				ld A,[GE_Height]  // A := Height
+				ld C,A						// C := Height
+				ld A,[GE_Width]	  // A := Width
+				ld IXL,A					// IXL := width				
+				ld B,A						// B := Width
+				ld A,64
+				sub B						  // A := 64 - Width
+				ld D,0
+				ld E,A						// DE := 64 - Width
+				ld A,[GE_Pattern] // A := fill pattern byte
+	fill_rect_lines:			
+				ld B,IXL					// B := Width
+	fill_rect_line:
+				ld (HL),A					// put a byte to the screen
+				inc HL					  // HL -> next byte
+				djnz fill_rect_line
+				add HL,DE					// HL -> next line
+				dec C							// decrement remaining lines
+				jp nz,fill_rect_lines
+				// restore memory mapping
+				ld A,[GE_Mode]		// A = saved memory mapping
+				ld ($3),A					// restore memory mapping
+				out ($2),A				// restore memory mapping				
+			");
+end;
+
+
+/**
+Draw a vertical line with a byte pattern (overwrite mode).<br/>
+Coordinates of the upper left corner x: 0, y: 0, and the right lower X: 64, Y: 239.<br/>
+Params:
+<ul>
+<li>Position: position on the screen - $8000 + Y*64 + X</li>
+<li>Count: 1-240</li>
+<li>Pattern: byte pattern</li>
+</ul>
+<br/>
+Example: GE::VBytesLine($8000+100*64+30, 50, 128);<br/>
+<br/>
+**/
+procedure VBytesLine(Position : global integer; Count, Pattern : global byte);
+begin	
+	Asm("
+				ld  HL,[GE_Position]// HL := Position
+				ld  A,[GE_Count]		// A := Length
+				ld  B,A							// B := Length
+				ld  A,[GE_Pattern] // A := vline pattern byte
+				ld  DE,SCREEN_WIDTH
+	vert_byte_line:
+				ld  (HL),A					// put line pattern byte to screen
+				add HL,DE						// HL -> next line
+				djnz vert_byte_line
+			");
+end;
+
+
+/**
+Draw a horizontal line with a byte pattern (overwrite mode).<br/>
+Coordinates of the upper left corner x: 0, y: 0, and the right lower X: 64, Y: 239.<br/>
+Params:
+<ul>
+<li>Position: position on the screen - $8000 + Y*64 + X</li>
+<li>Count: 1-240</li>
+<li>Pattern: byte pattern</li>
+</ul>
+<br/>
+Example: GE::HBytesLine($8000+100*64, 64, 255);<br/>
+<br/>
+**/
+procedure HBytesLine(Position : global integer; Count, Pattern : global byte);
+begin	
+	Asm("
+				ld  HL,[GE_Position]// HL := Position
+				ld  A,[GE_Count]		// A := Length
+				ld  B,A							// B := Length
+				ld  A,[GE_Pattern] // A := vline pattern byte
+	horiz_byte_line:
+				ld  (HL),A					// put line pattern byte to screen
+				inc HL							// HL -> next byte
+				djnz horiz_byte_line
+			");
+end;
+
+
+/*================================================
+    K E Y B O A R D   A N D   J O Y S T I C K 
+=================================================*/
+
+
+/**
+Get keyboard.<br/>
+It must be called before using keyboard functions (such as GE::KeyPressed, GE::SpacePressed, etc.)<br/>
+It fills the keyboard matrix as KEYBOARD_0 - KEYBOARD_7, JOY1_STATE, JOY2_STATE<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::SpacePressed()) then Fire();<br/>
+<br/>
+**/
+procedure GetKeyboard;
+begin
+	Asm("
+		  ld	A,(GE_PORT_3_MEM_MIRROR)      ;// 0-3 bits: keyboard row select
+			and	240                           ;// clear 0-3 bits
+			ld	C,A
+			ld	HL,GE_KEYBOARD_0              ;// HL -> Keyboard matrix row #0
+			ld	B,10                          ;// Keyboard matrix length in bytes
+	fill_keyboard_matrix:
+			ld	A,C                           ;// A: value to select keyboard matrix row
+			out	(GE_KEYBOARD_ROW_SEL_PORT),A  ;// select keyboard matrix row
+			in	A,(GE_KEY_READ_PORT)          ;// read keyboard matrix row data
+			cpl                               ;// invert bits
+			ld	(HL),A                        ;// store keyboard matrix row data
+			inc	HL                            ;// HL -> next row in the keyboard matrix
+			inc	C                             ;// next value to select keyboard matrix row
+			djnz	fill_keyboard_matrix
+		  ");
+end; /* GetKeyboard */
+
+
+/**
+Returns whether any key has been pressed.<br/>
+Result: TRUE: any key is pressed; False: not<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::KeyPressed()) then<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function KeyPressed() : boolean;
+begin
+	Asm("
+			ld 	HL,$0B51	// Keyboard matrix (10 row -> 10 bytes)
+			ld  B,10			// Keyboard matrix length in bytes
+	key_is_pressed_loop:	
+			ld  A,(HL)		// A = a keyboard matrix row
+			or  A					// A = 0?
+			jp nz,key_is_pressed // if not then any key is pressed
+			inc HL				// HL -> next row in Keyboard matrix
+			djnz key_is_pressed_loop
+			xor A					// A = 0 -> result is FALSE
+			ret
+	key_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Space" button is pressed.<br/>
+Result: TRUE: Space key is pressed; False: not<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::SpacePressed()) then Fire();<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function SpacePressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 32				// bit #5 is set? 
+			jp nz,space_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	space_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Return" button is pressed.<br/>
+Result: TRUE: Return key is pressed; False: not<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::ReturnPressed()) then Fire();<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function ReturnPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B56) 	// Row #5 of keyboard matrix 
+			and 16				// bit #4 is set? 
+			jp nz,return_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	return_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Esc" button is pressed.<br/>
+Result: TRUE: Esc key is pressed; False: not<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::EscPressed()) then ExitGame();<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function EscPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 8					// bit #3 is set? 
+			jp nz,esc_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	esc_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Ctrl" button is pressed.<br/>
+Result: TRUE: Ctrl key is pressed; False: not<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::CtrlPressed()) then Fire();<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function CtrlPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 16				// bit #4 is set? 
+			jp nz,ctrl_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	ctrl_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Shift" button is pressed.<br/>
+Result: TRUE: Shift key is pressed; False: not<br/>
+<br/>
+Example:<br/>
+GE::GetKeyboard();<br/>
+if (GE::ShiftPressed()) then Fire();<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function ShiftPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B57) 	// Row #6 of keyboard matrix 
+			and 8					// bit #3 is set? 
+			jp nz,shift_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	shift_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Gets the state of the joysticks..<br/>
+It must be called before using the GE::Joystick function unless you have already called GE::GetKeyboard.<br/>
+<br/>
+Example:<br/>
+GE::GetJoysticks();<br/>
+if (GE::Joystick(1, GE::JOY_LEFT)) then PlayerMoveLeft();<br/>
+if (GE::Joystick(1, GE::JOY_RIGHT)) then PlayerMoveRight();<br/>
+<br/>
+**/
+procedure GetJoysticks;
+begin
+  Asm("
+  		ld	A,(GE_PORT_3_MEM_MIRROR)			;// 0-3 bit of Port #3: select keyboard matrix line
+			and	128+64+32+16									;// clear 0-3 bits
+			;// get Joystick #1
+			add	A,8														;// set bits 0-3 to keyboard matrix line #8
+			ld  C,A                       		;// save A register value to C register
+			out	(GE_KEYBOARD_ROW_SEL_PORT),A	;// select keyboard mátrix line #8
+			in	A,(GE_KEY_READ_PORT)					;// read joystick #1 line
+			cpl																;// invert bits
+			ld	(GE_JOY1_STATE),A							;// store to JOY1_STATE
+			;// get Joystick #2
+			ld  A,C
+			inc A
+			out	(GE_KEYBOARD_ROW_SEL_PORT),A	;// select keyboard mátrix line #9
+			in	A,(GE_KEY_READ_PORT)					;// read joystick #2 line
+			cpl																;// invert bits
+			ld	(GE_JOY2_STATE),A							;// store to JOY2_STATE
+  		");				
+end; /* GetJoysticks */
+
+
+/**
+Get the status of joystick directions or fire button.<br/>
+Params:
+<ul>
+<li>1. JoyNr:<br/>
+  &nbsp;1: joystick #1 or internal<br/>
+  &nbsp;2: joystick #2<br/>
+</li>
+<li>2. KeyCode:<br/>
+  &nbsp;JOY_LEFT<br/>
+  &nbsp;JOY_RIGHT<br/>
+  &nbsp;JOY_UP<br/>
+  &nbsp;JOY_DOWN<br/>
+  &nbsp;JOY_FIRE<li>
+</ul>
+Result
+<ul>
+<li>true:  the specified direction or fire button is pressed</li>
+<li>false: not pressed</li>
+</ul>
+<br/>
+Example:<br/> 
+GE::GetJoysticks();<br/>
+if (GE::Joystick(1, GE::JOY_FIRE)) then PlayerFire();<br/>
+<br/>
+WARNING! It only works if you have not changed the system Interrupt Handler (default) or you set the Keyboard Matrix in your program.
+**/
+function Joystick(Nr, JoyCode : global byte) : boolean;
+begin	
+	Asm("
+	    ld  A,[GE_Nr]
+	    cp  2
+	    jp  z,joy2_test
+	    ;// Joystick #1
+			ld  A,[GE_JoyCode]
+			ld  C,A				// C = KeyCode
+			ld	A,($0B59)	// A = Line #8 of Keyboard Matrix -> Joystick #2
+			and	C
+			ret z					// if A = 0 then return with 0 (FALSE)
+			ld  A,1				// set return value to 1 (TRUE)
+			ret
+			; // Joystick #2
+	joy2_test:
+			ld  A,[GE_JoyCode]
+			ld  C,A				// C = KeyCode
+			ld	A,($0B5A)	// A = Line #9 of Keyboard Matrix -> Joystick #2
+			and	C
+			ret z					// if A = 0 then return with 0 (FALSE)
+			ld  A,1				// set return value to 1 (TRUE)
+			");
+end; /* Joystick */
+
+
+/*================================================
+  		            S O U N D 		
+=================================================*/
+
+/**
+Sets sound volume to specified value<br/>
+Params:<br/>
+Volume: 0 - 15<br/>
+<br/>
+Example: GE::Volume(15);<br/>
+**/
+procedure Volume(SoundVolume : global byte);
+begin
+	/*
+	if (SoundVolume > 15) then
+		SoundVolume := 15;
+	*/
+	Asm("
+			ld A,[GE_SoundVolume]					; // A = Volume
+			sla	A													;// shift left volume bits
+			sla	A													;// shift left again
+			ld	E,A												;// E = shifted volume bits
+			ld	A,(GE_PORT_6_MEM_MIRROR)	;// A = port #6 memory mirror
+			and	128+64+2+1								;// clear bit #2 - #5 in A register
+			or	E													;// set volume to A register bits #2 - #5
+			ld	(GE_PORT_6_MEM_MIRROR),A	;// set value to port #6 mirror
+			out	(GE_SOUND_VOLUME_PORT),A	;// send value to port #6
+	");
+end;
+
+
+/**
+TVC OS sound sign initialization.<br/>
+<br/>
+Example: GE::SoundOn();<br/>
+<br/>
+Not necessary to use before calls Sound procedure.<br/>
+You are only used if you have previously called SoundOff and want to turn the sound on again.
+**/
+procedure SoundOn();
+begin
+	Asm("
+			ld	A,(GE_PORT_5_MEM_MIRROR)
+			and	128+64										;// clear low 6 bits
+			or	16												;// set bit #4 - sound sign enabled
+			ld	(GE_PORT_5_MEM_MIRROR),A	;// set new value to system variable
+			out	(GE_SOUND_HI_PORT),A			;// send new value to port #5
+			ld  A,1
+			ld  (GE_soundIsOn),A          ;// soundIsOn := True
+	");
+	Volume(15);
+end;
+
+
+/**
+Disable firmware sound sign.<br/>
+<br/>
+Example: GE::SoundOff();<br/>
+**/
+procedure SoundOff();
+begin
+	Asm("
+			xor	A													;// A = 0
+		  out	(GE_SOUND_LO_PORT),A			;// send value to port (clear PITCH lower 8 bits)
+			ld	A,(GE_PORT_5_MEM_MIRROR)
+			and	128+64										;// clear low 6 bits (#0-#3: PITCH high 4 bits; #4:SOUND IT, #5:SOUND SIGN)
+			out	(GE_SOUND_HI_PORT),A			;// send new value to port -> disable SOUND-IT, disable SOUND-SIGN, and clear PITCH high 4 bits
+			xor A
+			ld  (GE_soundIsOn),A          ;// soundIsOn := False
+	");
+end;
+
+
+/**
+Plays the sound specified in Pitch param.<br/>
+Params:
+<ul>
+<li>Pitch (sound value): 0 - 4095 (4095: silent)</li>
+</ul>
+<br/>
+Example: GE::Sound(3677);<br/>
+<br/>
+The sound plays until calls NoSound() procedure.<br/>
+Calculation sound Hz: 195312.5 / (4096 - Pitch)<br/>
+For example, the octave 4, #A sound (466.16 Hz) value is $E5D (decimal: 3677)<br/>
+**/
+procedure Sound(Pitch : global integer);
+begin
+	if (not soundIsOn) then
+		SoundOn();
+	Asm("
+			ld	HL,[GE_Pitch]
+			ld	A,L												;// A = pitch low byte
+			out	(GE_SOUND_LO_PORT),A			;// send pitch low byte to port #4
+			ld	A,(GE_PORT_5_MEM_MIRROR)
+			and	128+64+32+16							;// clear low 4 bits
+			or	H													;// set pitch high 4 bits
+			out	(GE_SOUND_HI_PORT),A			;// send pitch 4 bits to port #5
+	");
+end;
+
+
+/**
+Stops the currently played sound.
+**/
+procedure NoSound();
+begin
+	Asm("
+			ld	HL,4095										;// silent value
+			ld	A,L												;// A = pitch low byte
+			out	(GE_SOUND_LO_PORT),A			;// send pitch low byte to port #4
+			ld	A,(GE_PORT_5_MEM_MIRROR)
+			and	128+64+32+16							;// clear low 4 bits
+			or	H													;// set pitch high 4 bits
+			out	(GE_SOUND_HI_PORT),A			;// send pitch 4 bits to port #5
+	");
+end;
+
+
+/*===============================================
+                 W R I T E 
+===============================================*/
+
+/**
+Write a text to the specified position.<br/>
+Using the characterset image pointed by the CharSet variable.<br/>
+<ul>
+<li>X: horizontal position (0-63)</li>
+<li>Y: vertical position (0-239)</li>
+<li>Text: pointer to a 0 terminated string</li>
+</ul>
+<br/>
+Example:<br/>
+var<br/>
+CharSet : incbin("resources/images/CharSet.bin");<br/>
+Text1 : string = ("TV-COMPUTER");<br/>
+// init CharSet<br/>
+GE::CharSetPtr := #CharSet;<br/>
+GE::CharSetImgWidth := 118;<br/>
+GE::CharSetHeight := 7;<br/>
+// write text<br/>
+GE::WriteText(0, 100, "HELLO WORLD!");<br/>
+GE::WriteText(0, 130, #Text1);<br/>
+<br/>
+**/
+procedure WriteText(X, Y : global byte; Text : global ^byte);
+begin
+  Asm("  
+      ;// calc position
+      ld  A,[GE_Y]			;// A = Y pos.
+			ld  L,A
+			ld  H,0						;// HL = Y pos.
+			add HL,HL					;// HL = HL * 2
+			add HL,HL					;// HL = HL * 4
+			add HL,HL					;// HL = HL * 8
+			add HL,HL					;// HL = HL * 16
+			add HL,HL					;// HL = HL * 32
+			add HL,HL					;// HL = Y * 64				
+			ld 	BC,(GE_ScreenAddr) ;// BC -> screen start address
+			add HL,BC					;// HL = screen start + (Y * 64)
+			ld 	A,[GE_X]  		;// A  = X pos.
+			ld 	B,0				
+			ld 	C,A						;// BC = X
+			add HL,BC
+			ex  DE,HL					;// DE -> screen start address + (Y * 64) + X
+			ld  IX,(GE_Text]  ;// IX -> Text
+			;// write text
+	write_text:      
+			ld	A,(IX+0)			;// A = character from the text
+			or	A							;// A == 0?
+			ret	z							;// end of the text -> return to caller
+			cp	32						;// char < SPACE?
+			jp	c,write_text_skip_char
+			cp	91						;// char >= [?
+			jp	nc,write_text_skip_char
+      ld	HL,(GE_CharSetPtr) ;// HL -> character set image
+			sub	32            ;// A = char - 32
+			jp	Z,write_text_char
+			;// calc current char address in the CharSet
+			add	A,A						;// A = A * 2
+			ld	C,A
+			ld	B,0						;// BC = A * 2
+			add	HL,BC					;// HL -> current character in the charset image
+	write_text_char:
+      push DE
+			ld	A,[GE_CharSetHeight]
+			ld  IYL,A
+	write_text_char_loop:			
+	    ld	BC,[GE_CharSetImgWidth]
+	    ldi
+	    ldi
+			add	HL,BC					;// HL -> next line in the charset
+			ex	DE,HL			
+			ld  BC,62
+			add	HL,BC
+			ex	DE,HL					;// DE -> next line on the screen
+			dec	IYL
+			jp	NZ,write_text_char_loop
+			pop	DE
+	write_text_next_char:
+			inc	DE
+			inc	DE
+	write_text_skip_char:
+			inc	IX						;// IX -> next character in the text
+			jp	write_text
+			");
+ end; /* WriteText */
+
+
+/*===============================================
+               H E L P E R S 
+===============================================*/
+
+/**
+Input value from a hardware port<br/> 
+<br/>
+Params:
+<ul>
+<li>Nr: the hardware port number (0 - 255)</li>
+</ul>
+<br/>
+Example: Value := GE::In(0);<br/>
+<br/>
+**/
+function In(Nr : global byte) : byte;
+begin
+	Asm("
+			ld 	A,[GE_Nr]
+			ld  C,A
+			in	A,(C)
+			ret
+			");
+end;
+
+
+/**
+Output a value to a hardware port<br/> 
+<br/>
+Params:
+<ul>
+<li>Nr: the hardware port number (0 - 255)</li>
+<li>Value: the value to send to the port (0 - 255)</li>
+</ul>
+<br/>
+Example: GE::Out(0, 130);<br/>
+<br/>
+**/
+procedure Out(Nr, Value : global byte);
+begin
+	Asm("
+			ld 	A,[GE_Nr]
+			ld  C,A
+			ld 	A,[GE_Value]
+			out	(C),A
+			");
+end;
+
+
+/**
+Get random number between 0-255<br/>
+**/
+function Rnd() : byte;
+begin
+	Asm("
+			ld 	A,R
+			");
+end;
+
+
+/**
+Waiting for param DelayTicks * 20 ms<br/> 
+The accurate value: 20.096 ms - the default Raster-interrupt frequency<br/>
+<br/>
+Example: GE::Delay(10);<br/>
+<br/>
+WARNING! The delay duration changes by the Sound-interrupt frequency when Sound-interrupt is set.
+**/
+procedure Delay(DelayTicks : global integer);
+begin
+	i := 0;
+	while (i < DelayTicks) do
+	begin
+		WaitForSync(); // waiting for Raster-interrupt
+		inc (i);
+	end;
+end;
+
+
+/**
+Return true if the byte param is odd<br/>
+<br/>
+Example: if (GE::Odd(Counter)) then MoveEnemies;<br/>
+<br/>
+**/
+function Odd (Nr : global byte) : boolean;
+begin
+	Asm("
+	    ld  A,[GE_Nr]
+	    and 1
+			");
+end;
+
+
+/**
+Convert an integer to a string<br/> 
+The result is placed in the NumStr variable.
+<br/>
+Example: GET::IntToStr(Number);<br/>
+GE::WriteText(#GE_NumStr);<br/>
+**/
+procedure IntToStr(IntNum : global integer);
+begin	
+	for i := 0 to 5 do
+	  NumStr[i] := 0;	  
+	i := 0;
+	IntNum2 := 10000;
+	if (IntNum >= IntNum2) then
+	begin				
+		X := 0;
+		while (IntNum >= IntNum2) do
+		begin
+			IntNum -= IntNum2;
+			inc (X);
+		end;
+		NumStr[i] := 48 + X;
+		Inc(i);
+	end;
+	IntNum2 := 1000;
+	if (IntNum >= IntNum2) then
+	begin				
+		X := 0;
+		while (IntNum >= IntNum2) do
+		begin
+			IntNum -= IntNum2;
+			inc (X);
+		end;
+		NumStr[i] := 48 + X;
+		Inc(i);
+	end
+	else
+	begin
+		if (i > 0) then
+		begin
+			NumStr[i] := 48; // ASCII "0"
+			Inc(i);
+		end;
+	end;
+	IntNum2 := 100;
+	if (IntNum >= IntNum2) then
+	begin				
+		X := 0;
+		while (IntNum >= IntNum2) do
+		begin
+			IntNum -= IntNum2;
+			inc (X);
+		end;
+		NumStr[i] := 48 + X;
+		Inc(i);
+	end
+	else
+	begin
+		if (i > 0) then
+		begin
+			NumStr[i] := 48; // ASCII "0"
+			Inc(i);
+		end;
+	end;
+	IntNum2 := 10;
+	if (IntNum >= IntNum2) then
+	begin				
+		X := 0;
+		while (IntNum >= IntNum2) do
+		begin
+			IntNum -= IntNum2;
+			inc (X);
+		end;
+		NumStr[i] := 48 + X;
+		Inc(i);
+	end
+	else
+	begin
+		if (i > 0) then
+		begin
+			NumStr[i] := 48; // ASCII "0"
+			Inc(i);
+		end;
+	end;
+	X := IntNum;
+	NumStr[i] := 48 + X;
+end;
+
+
+/**
+Convert a byte to a string<br/> 
+The result is placed in the NumStr variable.
+<br/>
+Example: GET::ByteToStr(Number);<br/>
+GE::WriteText(#GE_NumStr);<br/>
+**/
+procedure ByteToStr(Nr : global byte);
+begin	
+	for i := 0 to 3 do
+	  NumStr[i] := 0;
+	i := 0;
+	if (Nr >= 100) then
+	begin
+		X := 0;
+		while (Nr >= 100) do
+		begin
+			Nr := Nr - 100;	
+			Inc (X);
+		end;
+		NumStr[i] := 48 + X;
+		Inc(i);
+		if (Nr < 10) then
+		begin
+			NumStr[i] := 48; // ASCII "0"
+			Inc(i);
+		end;	
+	end;
+	if (Nr >= 10) then
+	begin
+		X := 0;
+		while (Nr >= 10) do
+		begin
+			Nr := Nr - 10;	
+			Inc (X);
+		end;
+		NumStr[i] := 48 + X;
+		Inc(i);
+	end;
+	NumStr[i] := 48 + Nr;
+end;
+
+
+/**
+Fill memory with a specified byte<br/>
+Params:
+<ul>
+<li>MemAddr - the memory address where starts the filling</li>
+<li>Size - how many bytes to fill with the pattern</li>
+<li>Pattern - the byte that is used for filling</li>
+</ul>
+<br/>
+Example: GE::FillMem(Buffer, 200, 0);<br/>
+<br/>
+**/
+procedure FillMem(MemAddr : global integer; Size : global integer; Pattern : global byte);
+begin
+	Asm("
+			  ld  HL,[GE_MemAddr]
+			  ld  BC,[GE_Size]
+			  ld  A,[GE_Pattern]
+				ld	E,L
+				ld	D,H			;// DE = HL
+				inc	DE			;// DE = HL + 1
+				ld	(HL),A
+				dec	BC
+				ldir
+				ret
+			");
+end; /* FillMem */  
+
+
+/**
+Copy data from the source memory address to the destination memory address. 
+<ul>
+<li>SourcePtr: pointer to the source memory address</li>
+<li>DestPtr: pointer to destination memory address</li>
+<li>Size: number of bytes to copy</li>
+</ul>
+<br/>
+Example: GE::MemCopy(#TitlePicture, $8000, 15360);<br/><br/>
+<br/>
+**/
+procedure MemCopy(SourcePtr, DestPtr: global pointer; Size: global integer);
+begin
+  Asm("
+  		ld  HL,[GE_SourcePtr]
+			ld  DE,[GE_DestPtr]
+			ld  BC,[GE_Size]
+			ldir
+			");
+end;
+
+
+/**
+Decompress the ZX7 compressed data to the specified memory address<br/>
+<ul>
+<li>SourcePtr: pointer to the ZX7 compressed data</li>
+<li>DestPtr: pointer to destination memory address</li>
+</ul>
+<br/>
+Example:<br/>
+var TitlePicZX7 : incbin("resources/images/TitlePic.zx7");<br/>
+<br/>
+GE::ZX7Decompress(#TitlePicZX7, $8000);<br/><br/>
+<br/>
+**/
+procedure ZX7Decompress(SourcePtr, DestPtr: global pointer);
+begin
+	Asm("
+	    ld  HL,[GE_SourcePtr]	;// HL -> compressed data
+			ld  DE,[GE_DestPtr]   ;// DE -> destination memory address
+	DZX7STANDARD:		
+			ld	A,$80
+	COPYBYTELOOPEV:
+			ldi										;// copy literal byte
+	MAINLOOPEV:
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS1				;// no more bits left?
+			jr	C,LENSIZESTARTOD	;// next bit indicates either literal or sequence				
+	COPYBYTELOOPOD:
+			ldi										;//copy literal byte
+	MAINLOOPOD:
+			add	A,A								;//  check next bit
+			jr	NC,COPYBYTELOOPEV	;// next bit indicates either literal or sequence
+      ;// determine number of bits used for length (Elias gamma coding)
+	LENSIZESTARTEV:
+			push	DE
+			ld	BC,1
+			ld	D,B
+	LENSIZELOOPEV:
+			inc	D
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS2EV			;// no more bits left?
+			jr	NC,LENSIZELOOPEV
+			jp	LENVALUESTARTEV
+      ;// determine number of bits used for length (Elias gamma coding)
+	LENSIZESTARTOD:		
+			push	DE
+			ld	BC,1
+			ld	D,B
+	LENSIZELOOPOD:	
+			inc	D
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS2OD			;// no more bits left?
+			jr	NC,LENSIZELOOPOD
+			jp	LENVALUESTARTOD
+      ;// determine length
+	LENVALUELOOPEV:		
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS3EV			;// no more bits left?
+			rl	C
+			rl	B
+			jr	C,EXITEV		
+			;// check end marker
+	LENVALUESTARTEV:		
+			dec	D
+			jr	NZ,LENVALUELOOPEV
+			inc	BC								;// adjust length
+      ;// determine offset
+	OFFSETSTARTOD:
+			ld	E,(HL)						;// load offset flag (1 bit) + offset value (7 bits)
+			inc	HL
+			db  $CB,$33           ;// sll	E	- opcode for undocumented instruction SLL E aka SLS E
+			jr	NC,OFFSETENDOD		;// if offset flag is set,load 4 extra bits
+			add	A,A								;// check next bit
+			rl	D									;// insert first bit into D
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS4				;// no more bits left?
+			rl	D									;// insert second bit into D
+			add	A,A								;// check next bit
+			rl	D									;// insert third bit into D
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS5				;// no more bits left?
+			ccf
+			jr	C,OFFSETENDOD
+	OFFSETINCOD:
+			inc	D									;// equivalent to adding 128 to DE
+	OFFSETENDOD:	
+			rr	E									;// insert inverted fourth bit into E
+      ;// copy previous sequence
+			ex	(SP),HL						;// store source,restore destination
+			push	HL							;// store destination
+			sbc	HL,DE							;// HL = destination - offset - 1
+			pop	DE								;// DE = destination
+			ldir
+			pop	HL								;// restore source address (compressed data)
+			jp	MAINLOOPOD				
+	LOADBITS1:
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			jr	C,LENSIZESTARTOD	;// next bit indicates either literal or sequence
+			jp	COPYBYTELOOPOD				
+	LOADBITS2EV:		
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			jr	NC,LENSIZELOOPEV
+			jp	LENVALUESTARTEV				
+	LOADBITS2OD:	
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			jr	NC,LENSIZELOOPOD
+			jp	LENVALUESTARTOD				
+	LOADBITS3EV:	
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			rl	C
+			rl	B
+			jp	NC,LENVALUESTARTEV ;// check end marker
+	EXITEV:
+			pop	DE
+			ret				
+	LOADBITS4:
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			rl	D									;// insert second bit into D
+			add	A,A								;// check next bit
+			rl	D									;// insert third bit into D
+			add	A,A								;// check next bit
+			ccf
+			jr	C,OFFSETENDOD
+			jp	OFFSETINCOD				
+	LOADBITS5:	
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			ccf
+			jr	C,OFFSETENDOD
+			jp	OFFSETINCOD
+      ;// determine length
+	LENVALUELOOPOD:
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS3OD			;// no more bits left?
+			rl	C
+			rl	B
+			jr	C,EXITOD					;// check end marker
+	LENVALUESTARTOD:		
+			dec	D
+			jr	NZ,LENVALUELOOPOD
+			inc	BC								;// adjust length                              
+      ;// determine offset
+	OFFSETSTARTEV:
+			ld	E,(HL)						;// load offset flag (1 bit) + offset value (7 bits)
+			inc	HL
+			db  $CB, $33          ;// sll	E	- opcode for undocumented instruction SLL E aka SLS E
+			jr	NC,OFFSETENDEV		;// if offset flag is set,load 4 extra bits
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS6				;// no more bits left?
+			rl	D									;// insert first bit into D
+			add	A,A								;// check next bit
+			rl	D									;// insert second bit into D
+			add	A,A								;// check next bit
+			jr	Z,LOADBITS7				;// no more bits left?
+			rl	D									;// insert third bit into D
+			add	A,A								;// check next bit
+			ccf
+			jr	C,OFFSETENDEV
+	OFFSETINCEV:
+			inc	D									;// equivalent to adding 128 to DE
+	OFFSETENDEV:	
+			rr	E									;// insert inverted fourth bit into E
+      ;// copy previous sequence
+			ex	(SP),HL						;// store source,restore destination
+			push	HL							;// store destination
+			sbc	HL,DE							;// HL = destination - offset - 1
+			pop	DE								;// DE = destination
+			ldir
+			pop	HL								;// restore source address (compressed data)
+			jp	MAINLOOPEV				
+	LOADBITS3OD:	
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			rl	C
+			rl	B
+			jp	NC,LENVALUESTARTOD ;// check end marker
+	EXITOD:
+			pop	DE
+			ret				
+	LOADBITS6:
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			rl	D									;// insert first bit into D
+			add	A,A								;// check next bit
+			rl	D									;// insert second bit into D
+			add	A,A								;// check next bit
+			rl	D									;// insert third bit into D
+			add	A,A								;// check next bit
+			ccf
+			jr	C,OFFSETENDEV
+			jp	OFFSETINCEV				
+	LOADBITS7:	
+			ld	A,(HL)						;// load another group of 8 bits
+			inc	HL
+			rla
+			rl	D									;// insert third bit into D
+			add	A,A								;// check next bit
+			ccf
+			jr	C,OFFSETENDEV
+			jp	OFFSETINCEV
+			ret
+	    ");
+end; /* ZX7Decompress */	
+
+ 
+end.

@@ -1,0 +1,894 @@
+program SpaceWar;
+/*==================================================================
+VIDEOTON TV-Computer game in TRSE Pascal
+
+This tutorial game introduces the Game Engine unit.
+Using simple sprites.
+
+Author:  Bery (Zsolt Bertók)
+Version: April 21, 2023.
+==================================================================*/
+
+@use "GE" // The Game Engine unit
+
+var		
+	TitleSreenImage : incbin("resources/images/SpaceWarTitle.zx7");
+	XWingSprite			: incbin("resources/images/XWingSpr.bin");
+	TieFighterSprite: incbin("resources/images/TieFighterSpr.bin");
+	ExplosionAnim   : incbin("resources/images/ExplosionAnim.bin");
+  CharSet         : incbin("resources/images/CharSetGr4.bin"); /* ASCII 32-90 characters (SPACE to Z); 118 bytes x 7 lines; 1 char width: 2 bytes, height: 7 pixels */
+	// Consts
+	const SCREEN_WIDTH  : byte = 64;
+	// Player
+	const PLAYER_WIDTH	: byte = 4;  // 4 bytes = 2 characters
+	const PLAYER_HEIGHT	: byte = 19; // 19 lines
+	const PLAYER_YPOS   : byte = 220;
+	const P_EXPLOSION_Y : byte = 23;
+	// Moves
+	const MOVE_NONE			: byte = 0;
+	const MOVE_LEFT			: byte = 1;
+	const MOVE_RIGHT		: byte = 2;
+	const MOVE_UP				: byte = 3;
+	const MOVE_DOWN			:	byte = 4;
+	// Laser
+	const LASER_NO 			: byte = 10;
+	const LASER_DELAY		: byte = 15;
+	const LASER_LENGTH	: byte = 5;
+	const RED_LASER_BYTE: byte = 136; // Palette #3 color to first pixel
+	const GREEN_LASER_BYTE: byte = 8; // Palette #2 color to first pixel
+	// Enemy
+	const ENEMY_NO 			: byte = 7;
+	const ENEMY_MOVES		: byte = 20;
+	const ENEMY_WIDTH		: byte = 4;  // 4 bytes - 2 characters
+	const ENEMY_HEIGHT	: byte = 16; // 16 lines
+	// Enemy state
+	const DESTROYED			: byte = 0;
+	const EXPLOSION			: byte = 1;
+	const SIDE_MOVE		  : byte = 2;
+	const ATTACK		  	: byte = 3;
+	const FLY_BACK      : byte = 4;
+	// Variables
+	i, nr, b, last		  : byte;
+	// Game
+	IsGameEnd           : boolean = false;	
+	Level			          : byte = 1;
+	LevelPos            : byte;
+	// Laser
+	LaserRec 						= record
+        									IsActive	: boolean;
+													XPos		 	: byte;
+													YPos		 	: byte;
+													Pos       : integer;
+													PrevPos   : integer;
+    										end;  
+	LaserCountdown 			: byte = 0;
+	LaserSoundPitch			: integer;
+	LaserSoundDuration	: byte;
+	// Player	
+	PlayerSprite        : GE::Sprite;
+	PlayerLive          : boolean = true;
+	PlayerMove					: byte = 0;	
+	PlayerLasers	 			: array[LASER_NO] of LaserRec;
+	PlayerExplosionLevel: byte = 0;
+	PlayerExpPhase      : byte;	
+	PlayerExplosionDelay: byte;
+	// Enemies
+	EnemyRec 						= record        									
+													State					: byte;
+        									BaseXPos			: byte;
+        									BaseYPos			: byte;
+        									XPos          : byte;
+        									YPos          : byte;
+        									BaseDirection : byte;
+													Direction			: byte;
+													MoveStep      : byte;
+													IsMoved				: boolean;
+													LaserCountdown: byte;
+													ExplosionCount: byte;
+													ExplosionPhase: byte;
+													ExplosionDelay: byte;
+    										end;  
+  EnemySprite         : GE::Sprite;
+  Enemies	 						: array[ENEMY_NO] of EnemyRec;
+  EnemyLasers					: array[LASER_NO] of LaserRec;
+  EnemyMinLaserDelay	: byte = 100;
+  EnemyCount				  : byte;
+  EnemyMoveNr         : byte = 0;
+  EnemyAttackDelay    : integer;
+  EnemyAttackCountDown: integer;
+  EnemyAttackShip     : byte;
+  ShootingEnemyNr     : byte;
+  // Explosion
+  ExplosionSprite     : GE::Sprite;
+  const EXP_DURATION  : byte = 5;	
+  // Music
+  const MUSIC_DURATION: byte = 6;
+  const MUSIC_LENGTH  : integer = 364;
+  MusicPos		  			: integer = 109;
+  MusicPitch          : integer = 4095;
+	MusicVolume         : byte = 15;
+	MusicDuration				: byte = 1;	
+	MusicData						: array [MUSIC_LENGTH] of integer  = 
+ 												 (3349,4095,4095,4095,4095,4095,3349,3349,3349,4095,4095,4095,4095,4095,3349,3349,3349,4095,4095,4095,3349,4095,4095,4095,3349,
+													4095,3349,4095,3349,3349,4095,3349,3503,4095,4095,4095,4095,4095,3349,3349,3503,4095,4095,4095,4095,4095,3349,3349,3503,4095,
+													4095,4095,3349,4095,4095,4095,3503,4095,3503,4095,3503,3503,4095,3503,3598,4095,4095,4095,4095,4095,4095,4095,3598,4095,4095,
+													4095,3598,3598,4095,3598,3677,4095,4095,4095,4095,4095,4095,4095,3677,4095,4095,4095,3701,3652,4095,3598,3723,4095,4095,3598,
+													3349,3537,4095,3598,3723,4095,4095,4095,3349,4095,4095,3349,3537,4095,4095,4095,4095,4095,4095,4095,3598,4095,4095,4095,4095,
+													3626,4095,3677,3626,4095,4095,4095,4095,4095,4095,4095,3349,4095,4095,4095,4095,4095,3349,4095,3537,4095,4095,4095,4095,4095,
+													3598,4095,3626,4095,3349,4095,3626,3537,4095,3723,3677,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,3349,4095,4095,
+													3349,3537,4095,4095,4095,4095,4095,3598,4095,3626,4095,4095,3537,3723,4095,4095,3626,3816,4095,4095,4095,4095,4095,4095,4095,
+													3537,4095,4095,4095,3626,3598,4095,3537,3723,4095,4095,4095,4095,3626,4095,3537,3349,4095,4095,4095,3349,4095,4095,3349,3537,
+													4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,3349,4095,4095,3349,3537,4095,4095,4095,4095,4095,4095,4095,3598,4095,
+													4095,4095,4095,3626,4095,3677,3626,4095,4095,4095,4095,4095,4095,4095,3349,4095,4095,4095,4095,4095,3349,4095,3537,4095,4095,
+													4095,4095,4095,3598,4095,3626,4095,3349,4095,3626,3537,4095,3723,3677,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,
+													3349,4095,4095,3349,3537,4095,4095,4095,4095,4095,4095,3598,3626,4095,4095,3537,3723,4095,4095,3626,3816,4095,4095,4095,4095,
+													4095,4095,4095,3816,4095,4095,4095,3626,3598,4095,3537,3723,4095,4095,4095,4095,3626,4095,3537,3349,4095,4095,4095,3349,4095,
+													4095,3349,3537,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095);	
+ 												 
+
+
+
+	procedure PlayMusic();
+	begin
+		Dec(MusicDuration);
+		if (MusicDuration = 0) then
+		begin			
+			GE::Sound(GE::SILENT_SOUND);
+			MusicPitch := MusicData[MusicPos]; // next note of music
+			if (MusicPitch <> GE::SILENT_SOUND) then
+			begin
+				MusicVolume := GE::MAX_VOLUME;
+				GE::Volume(MusicVolume);
+				MusicDuration := MUSIC_DURATION;
+			end
+			else
+				MusicDuration := MUSIC_DURATION - 2;
+			GE::Sound(MusicPitch); // Play current note
+			inc (MusicPos);
+			if (MusicPos > MUSIC_LENGTH) then
+				MusicPos := 0;
+		end
+		else
+		begin
+			if (MusicPitch <> GE::SILENT_SOUND) then
+			begin
+				MusicVolume := MusicVolume - 1; 
+				GE::Volume(MusicVolume);
+			end;
+		end;
+	end; /* PlayMusic */
+	
+	
+	procedure TitleScreen();
+	begin    
+		GE::SetGraphics(GE::GRAPHICS16); // set graphic mode to title screen
+		GE::SetMemory(GE::MEM_VID_ON); // mapping VIDEORAM to memory page #2
+		GE::ZX7Decompress(#TitleSreenImage, $8000);
+		// Waiting for the SPACE key to be pressed and playing music
+		while ((not GE::SpacePressed) and (not GE::Joystick(1, GE::JOY_FIRE))) do
+		begin
+		  GE::WaitForSync();		  
+		  PlayMusic();
+		  GE::GetKeyboard();
+		end;
+		GE::Sound(4095); // silent
+	end; /* TitleScreen */
+	
+	
+	procedure InitGame();
+	begin
+		GE::SetGraphics(GE::GRAPHICS4); // set graphic mode to game
+		GE::Init(GE::DIRECT_TO_SCREEN);
+		GE::SetMemory(GE::MEM_VID_ON); // memory mapping to enable VIDEORAM
+		/* Init CharSet */
+	  GE::CharSetPtr := #CharSet;
+	  GE::CharSetImgWidth := 118;
+	  GE::CharSetHeight := 7;
+		// init Player sprite		
+		PlayerSprite.Init(#XWingSprite, 32, PLAYER_YPOS, False);
+		// init Enemy sprite
+		EnemySprite.Init(#TieFighterSprite, 0, 20, False);
+		// Explosion
+		ExplosionSprite.Init(#ExplosionAnim, 0, 0, False);
+		ExplosionSprite.InitAnimation(3, 1);
+		// set the raster-interrupt position to the end of the specified line 
+		GE::SetRasterInterruptPos(239);	// not necessary
+	end; /* InitGame */
+	
+	
+  procedure DisplayHeader(DisplayLevel : boolean);
+  begin			 
+		GE::FillRect(0, 8, 64, 2, 255); // 255: 4 pixels with color #3
+		if (DisplayLevel) then
+		  GE::WriteText(1, 1, "LEVEL: ")
+		else
+		  GE::WriteText(1, 1, "TRSE");
+		GE::WriteText(48, 1, "BERYSOFT");
+		GE::WriteText(23, 1, "SPACE WAR");
+		GE::ByteToStr(Level);
+		if (DisplayLevel) then
+		  GE::WriteText(14, 1, #GE_NumStr);
+  end; /* DisplayHeader */
+
+
+	procedure GameInfo();
+	begin	  
+		// Set 4-color palette
+		GE::SetPalette(0, GE::PALETTE_BLACK);
+		GE::SetPalette(1, GE::PALETTE_WHITE);
+		GE::SetPalette(2, GE::PALETTE_DARKCYAN);
+		GE::SetPalette(3, GE::PALETTE_RED);
+		GE::ClearScreen(0); // clear the screen
+		GE::SetBorder(GE::BORDER_RED);		
+    // Display game control information
+		DisplayHeader(False);
+		GE::WriteText(25, 30, "CONTROL");
+		GE::WriteText(11, 70, " JOY LEFT - MOVE LEFT");
+		GE::WriteText(11, 90, "JOY RIGHT - MOVE RIGHT");
+		GE::WriteText(11,110, " JOY FIRE - FIRE");
+		GE::WriteText(11,130, "    SPACE - FIRE");
+		GE::WriteText(5,220, "DEVELOPED WITH TRSE PASCAL");
+		GE::WriteText(6,230, "GAME ENGINE UNIT TUTORIAL");
+		// Waiting for the SPACE key to be pressed and playing music
+		while ((not GE::SpacePressed) and (not GE::Joystick(1, GE::JOY_FIRE))) do
+		begin
+		  GE::WaitForSync();		  
+		  PlayMusic();
+		  GE::GetKeyboard();
+		end;
+		GE::Sound(GE::SILENT_SOUND); // silent
+		// Display header of the game screen
+		GE::ClearScreen(0);
+		DisplayHeader(True);
+	end; /* GameInfo */
+	
+	
+	procedure InitNewLevel();
+	begin
+		IsGameEnd := False;
+		// Init Player		
+		PlayerSprite.X := 30;
+		PlayerSprite.SetPosition();
+		// Init lasers
+		for i := 0 to LASER_NO-1 do
+		begin
+			PlayerLasers[i].IsActive := False;
+			EnemyLasers[i].IsActive := False;
+		end;		
+	  // Init enemies
+	  EnemyCount  := ENEMY_NO;
+	  EnemyMoveNr	:= 0;
+	  LevelPos    := Level-1;
+	  if (LevelPos > 8) then
+	    LevelPos := 8;
+	  // Enemy #0	  
+	  Enemies[0].BaseXPos := 20;
+	  Enemies[0].BaseYPos := 10 + LevelPos*10;
+	  Enemies[0].BaseDirection  := MOVE_RIGHT;
+	  Enemies[0].LaserCountdown := 100;
+	  // Enemy #1
+	  Enemies[1].BaseXPos := 1;
+	  Enemies[1].BaseYPos := 30 + LevelPos*10;
+	  Enemies[1].BaseDirection  := MOVE_RIGHT;
+	  Enemies[1].LaserCountdown := 10;
+	  // Enemy #2
+	  Enemies[2].BaseXPos := 59;
+	  Enemies[2].BaseYPos := 30 + LevelPos*10;
+	  Enemies[2].BaseDirection  := MOVE_LEFT;
+	  Enemies[2].LaserCountdown := 20;
+	  // Enemy #3
+	  Enemies[3].BaseXPos := 28;
+	  Enemies[3].BaseYPos := 55 + LevelPos*10;
+	  Enemies[3].BaseDirection  := MOVE_LEFT;
+	  Enemies[3].LaserCountdown := 30;
+	  // Enemy #4
+	  Enemies[4].BaseXPos := 33;
+	  Enemies[4].BaseYPos := 55 + LevelPos*10;
+	  Enemies[4].BaseDirection  := MOVE_RIGHT;
+	  Enemies[4].LaserCountdown := 40;
+	  // Enemy #5
+	  Enemies[5].BaseXPos := 8;
+	  Enemies[5].BaseYPos := 80 + LevelPos*10;
+	  Enemies[5].BaseDirection  := MOVE_RIGHT;
+	  Enemies[5].LaserCountdown := 50;
+	  // Enemy #6
+	  Enemies[6].BaseXPos := 52;
+	  Enemies[6].BaseYPos := 80 + LevelPos*10;
+	  Enemies[6].BaseDirection  := MOVE_LEFT;
+	  Enemies[6].LaserCountdown := 60;
+	  EnemyAttackShip := 6;
+	  i := 0;
+	  while (i < ENEMY_NO) do
+	  begin		  
+		  Enemies[i].State    := SIDE_MOVE;		  
+		  Enemies[i].Direction:= Enemies[i].BaseDirection;
+		  Enemies[i].MoveStep	:= ENEMY_MOVES;
+		  Enemies[i].IsMoved	:= True; // forcing put
+		  Enemies[i].XPos 		:= Enemies[i].BaseXPos;
+			Enemies[i].YPos     := Enemies[i].BaseYPos;
+		  Inc(i);
+	  end;
+	  if (Level < 5) then
+	  	EnemyAttackDelay := 500 - Level * 100
+	  else
+	    EnemyAttackDelay := 100;
+	  EnemyAttackCountDown := EnemyAttackDelay;
+	end; /* InitNewLevel */
+	
+	
+	procedure InitNewGame();
+	begin
+		Level := 1;
+		EnemyMinLaserDelay := 100;
+		PlayerLive := True;
+		GE::ClearScreen(0);
+		DisplayHeader(True);
+		InitNewLevel();
+	end; /* InitNewGame */
+	
+		
+	procedure StartLaserSound();
+	begin
+		LaserSoundPitch := 3700;
+		LaserSoundDuration := 15;
+		GE::Sound(LaserSoundPitch);	
+	end; /* StartLaserSound */
+	
+	
+	procedure StartEnemyLaserSound();
+	begin
+		LaserSoundPitch := 3900;
+		LaserSoundDuration := 10;
+		GE::Sound(LaserSoundPitch);	
+	end; /* StartEnemyLaserSound */
+	
+	
+	procedure PlayLaserSound();
+	begin		
+		if ((LaserSoundDuration > 0) and PlayerLive) then
+		begin
+			Dec (LaserSoundDuration);
+			if (LaserSoundDuration > 0) then
+			begin
+				LaserSoundPitch := LaserSoundPitch - 40;
+				GE::Sound(LaserSoundPitch);
+			end
+			else
+				GE::Sound(GE::SILENT_SOUND);			
+		end;
+	end; /* PlayLaserSound */
+	
+	
+	procedure PlayerFire();
+	begin
+		if (LaserCountdown = 0) then
+		begin
+			i := 0;
+			while ((i < LASER_NO-1) and PlayerLasers[i].IsActive) do
+				inc (i);
+			if (not PlayerLasers[i].IsActive) then
+			begin			
+				PlayerLasers[i].IsActive := True;
+				PlayerLasers[i].XPos := PlayerSprite.X + 2;
+				PlayerLasers[i].YPos := PLAYER_YPOS - LASER_LENGTH + 1;
+				PlayerLasers[i].Pos  := GE::SCREEN_ADDR + (PlayerLasers[i].YPos * 64) + PlayerLasers[i].XPos;
+				PlayerLasers[i].PrevPos := PlayerLasers[i].Pos + 320;
+				LaserCountdown := LASER_DELAY;
+				StartLaserSound()
+			end;
+		end;
+	end; /* PlayerFire */
+	
+	
+	procedure PutLasers();
+	begin		
+		for i := 0 to LASER_NO-1 do
+		begin
+			// Player lasers
+			if (PlayerLasers[i].IsActive) then
+			begin
+				if (PlayerLasers[i].YPos >= 12) then
+				begin
+					GE::VBytesLine(PlayerLasers[i].Pos, LASER_LENGTH, RED_LASER_BYTE);
+					// clear from previous position
+					GE::VBytesLine(PlayerLasers[i].PrevPos, LASER_LENGTH, 0);
+					PlayerLasers[i].YPos -= LASER_LENGTH; // move player laser by LASER_LENGTH lines to top of the screen
+					PlayerLasers[i].PrevPos := PlayerLasers[i].Pos;
+					PlayerLasers[i].Pos -= 320;
+				end
+				else
+			  begin
+				  // laser reached the top of the screen
+				  PlayerLasers[i].IsActive := False;
+				  // remove laser from the screen
+					GE::VBytesLine(PlayerLasers[i].PrevPos, LASER_LENGTH, 0);
+			  end;
+			end;
+			// Enemy lasers
+			if (EnemyLasers[i].IsActive) then
+			begin
+				GE::VBytesLine(EnemyLasers[i].Pos, LASER_LENGTH, GREEN_LASER_BYTE);
+				if (EnemyLasers[i].YPos < 245) then
+				begin
+					GE::VBytesLine(EnemyLasers[i].PrevPos, LASER_LENGTH, 0);
+					EnemyLasers[i].YPos += LASER_LENGTH; // move enemy laser by 5 lines to bottom of the screen
+					EnemyLasers[i].PrevPos := EnemyLasers[i].Pos;
+					EnemyLasers[i].Pos += 320;
+				end
+				else
+			  begin
+				  // laser reached the top of the screen
+				  EnemyLasers[i].IsActive := False;
+			  end;
+			end;
+		end;
+		if (LaserCountdown > 0) then
+			Dec(LaserCountdown);
+		PlayLaserSound();
+	end; /* PutLasers */
+	
+	
+	procedure PutPlayer();
+	begin
+		if (PlayerLive) then
+		begin			
+			PlayerSprite.Put();
+			// Clear X-Wing from prev. position
+			if (PlayerMove = MOVE_LEFT) then
+				GE::FillRect(PlayerSprite.X+PLAYER_WIDTH, PLAYER_YPOS, 1, PLAYER_HEIGHT, 0);
+			if (PlayerMove = MOVE_RIGHT) then
+				GE::FillRect(PlayerSprite.X-1, PLAYER_YPOS, 1, PLAYER_HEIGHT, 0);
+		end;
+	end; /* PutPlayer */
+	
+	
+	procedure PlayerControl();
+	begin				
+		PlayerMove := MOVE_NONE;		
+		if (PlayerLive) then
+		begin
+			GE::GetKeyboard();
+			if (GE::Joystick(1, GE::JOY_LEFT) and (PlayerSprite.X > 0)) then
+			begin
+				PlayerSprite.MoveLeft();
+				PlayerMove := MOVE_LEFT;
+		  end;
+			if (GE::Joystick(1, GE::JOY_RIGHT) and (PlayerSprite.X < (SCREEN_WIDTH - PLAYER_WIDTH))) then
+			begin
+				PlayerSprite.MoveRight();
+				PlayerMove := MOVE_RIGHT;
+		  end;
+		  if (GE::Joystick(1, GE::JOY_FIRE) or GE::SpacePressed()) then		  
+		  	PlayerFire();
+	  end;
+	end; /* PlayerControl */
+	
+	
+	procedure PutEnemies();
+	begin
+		i := 0;
+		while (i < ENEMY_NO) do
+		begin					
+			if (Enemies[i].IsMoved and (Enemies[i].State >= SIDE_MOVE)) then
+			begin
+				// Place the enemy in the current position
+				EnemySprite.X := Enemies[i].XPos;
+				EnemySprite.Y := Enemies[i].YPos;
+				EnemySprite.SetPosition();
+				EnemySprite.Put();
+				// Remove enemy from previous position
+				case (Enemies[i].Direction) offpage of 
+					MOVE_LEFT	:begin
+												GE::FillRect(Enemies[i].XPos+ENEMY_WIDTH, Enemies[i].YPos, 1, ENEMY_HEIGHT, 0);
+												if (Enemies[i].State = ATTACK) then
+													GE::FillRect(Enemies[i].XPos+1, Enemies[i].YPos-4, ENEMY_WIDTH, 4, 0)
+												else
+												begin
+													if (Enemies[i].State = FLY_BACK) then
+														GE::FillRect(Enemies[i].XPos+1, Enemies[i].YPos+ENEMY_HEIGHT, ENEMY_WIDTH, 4, 0);
+												end;
+											end;
+					MOVE_RIGHT:	begin
+												GE::FillRect(Enemies[i].XPos-1, Enemies[i].YPos, 1, ENEMY_HEIGHT, 0);
+												if (Enemies[i].State = ATTACK) then	
+													GE::FillRect(Enemies[i].XPos-1, Enemies[i].YPos-4, ENEMY_WIDTH, 4, 0)
+												else
+												begin
+													if (Enemies[i].State = FLY_BACK) then
+														GE::FillRect(Enemies[i].XPos-1, Enemies[i].YPos+ENEMY_HEIGHT, ENEMY_WIDTH, 4, 0);
+												end;
+											end;
+					MOVE_UP  :	GE::FillRect(Enemies[i].XPos, Enemies[i].YPos+ENEMY_HEIGHT, ENEMY_WIDTH, 4, 0);
+					MOVE_DOWN:	GE::FillRect(Enemies[i].XPos, Enemies[i].YPos-4, ENEMY_WIDTH, 4, 0);
+		    end; /* case Enemies[i].Direction */
+				Enemies[i].IsMoved := False;
+			end
+			else
+			begin
+				if (Enemies[i].State = EXPLOSION) then
+				begin
+					dec (Enemies[i].ExplosionDelay);
+					if (Enemies[i].ExplosionDelay = 0) then
+					begin
+						Enemies[i].ExplosionDelay := EXP_DURATION;
+						Inc(Enemies[i].ExplosionPhase);
+						if (Enemies[i].ExplosionPhase > 3) then
+							Enemies[i].ExplosionPhase := 1;
+						ExplosionSprite.X := Enemies[i].XPos;
+						ExplosionSprite.Y := Enemies[i].YPos;
+	          ExplosionSprite.SetPosition;
+						ExplosionSprite.Put;
+						ExplosionSprite.Animation;
+						case (Enemies[i].ExplosionPhase) of
+							1 : GE::Sound(150);
+							2 : GE::Sound(200);
+							3 : GE::Sound(100);
+						end; /* case */					
+					end /* if Enemies[i].ExplosionDelay = 0 */
+					else
+						GE::Sound(GE::SILENT_SOUND);
+				end; /* if Enemies[i].State = EXPLOSION */
+			end;
+			Inc (i);
+		end;
+	end; /* PutEnemies */
+	
+	
+	procedure EnemyShoot();
+	begin
+		nr := 0;
+		while ((nr < LASER_NO-1) and EnemyLasers[nr].IsActive) do
+			inc (nr);
+		if (not EnemyLasers[nr].IsActive) then
+		begin			
+			EnemyLasers[nr].IsActive := True;
+			EnemyLasers[nr].XPos := Enemies[i].XPos + 2;
+			EnemyLasers[nr].YPos := Enemies[i].YPos + ENEMY_HEIGHT;			
+			EnemyLasers[nr].Pos  := GE::SCREEN_ADDR + (EnemyLasers[nr].YPos * 64) + EnemyLasers[nr].XPos;
+			EnemyLasers[nr].PrevPos := EnemyLasers[nr].Pos - 320;
+			StartEnemyLaserSound();
+		end;
+	end; /* EnemyShoot */
+	
+	
+	procedure MoveEnemies();
+	begin				
+    i := EnemyMoveNr;
+    last := EnemyMoveNr+3;
+		while ((not IsGameEnd) and (i < last)) do
+		begin
+			if (Enemies[i].State > EXPLOSION) then
+			begin
+				case (Enemies[i].State) offpage of
+					SIDE_MOVE:begin
+											Enemies[i].IsMoved := True;
+											Dec(Enemies[i].MoveStep);
+											if (Enemies[i].Direction = MOVE_RIGHT) then
+											begin							
+												if ((Enemies[i].MoveStep > 0) and (Enemies[i].XPos < 60)) then
+													Inc(Enemies[i].XPos)
+												else
+												begin
+													Enemies[i].Direction:= MOVE_LEFT;
+													Enemies[i].MoveStep := ENEMY_MOVES;
+												end;
+											end
+											else
+											if (Enemies[i].Direction = MOVE_LEFT) then
+											begin
+												if ((Enemies[i].MoveStep > 0) and (Enemies[i].XPos > 0)) then
+													Dec(Enemies[i].XPos)
+												else
+												begin
+													Enemies[i].Direction:= MOVE_RIGHT;
+													Enemies[i].MoveStep := ENEMY_MOVES;
+												end;
+											end;
+										end; /* SIDE_MOVE */
+					ATTACK:		begin
+											Enemies[i].IsMoved := True;
+											Enemies[i].Direction := MOVE_DOWN;
+											if (Enemies[i].YPos < 140) then
+												Enemies[i].YPos := Enemies[i].YPos + 4
+											else
+											begin
+											  Enemies[i].State := FLY_BACK;
+											  EnemyShoot();
+											end;
+											if (Enemies[i].XPos < PlayerSprite.X) then
+											begin
+												Inc (Enemies[i].XPos);
+												Enemies[i].Direction := MOVE_RIGHT;
+											end
+											else
+											begin
+												if (Enemies[i].XPos > PlayerSprite.X) then
+												begin
+													Dec (Enemies[i].XPos);
+													Enemies[i].Direction := MOVE_LEFT;
+												end;
+											end;
+										end;
+					FLY_BACK:	begin
+											Enemies[i].IsMoved := True;
+											Enemies[i].Direction := MOVE_UP;
+					 						if (Enemies[i].YPos > Enemies[i].BaseYPos) then
+												Enemies[i].YPos := Enemies[i].YPos - 4
+											else
+											begin
+											  Enemies[i].State := SIDE_MOVE;
+											  Enemies[i].Direction := Enemies[i].BaseDirection;
+											end;
+											if (Enemies[i].XPos < Enemies[i].BaseXPos) then
+											begin
+												Inc (Enemies[i].XPos);
+												Enemies[i].Direction := MOVE_RIGHT;
+											end
+											else
+											begin
+												if (Enemies[i].XPos > Enemies[i].BaseXPos) then
+												begin
+													Dec (Enemies[i].XPos);
+													Enemies[i].Direction := MOVE_LEFT;
+												end;
+											end;
+						 				end;
+				end; /* case (Enemies[i].State) */
+				// Shooting
+				if (PlayerLive) then
+				begin
+					Dec(Enemies[i].LaserCountdown);
+					if (Enemies[i].LaserCountdown = 0) then
+					begin
+						b := 10 + GE::Rnd();
+						if (b > EnemyMinLaserDelay) then
+							Enemies[i].LaserCountdown := EnemyMinLaserDelay
+						else
+							Enemies[i].LaserCountdown := b;
+						EnemyShoot();
+					end;
+				end;
+			end /* if (Enemies[i].State > EXPLOSION) */
+			else
+			begin
+				// Enemy explosion
+				if (Enemies[i].State = EXPLOSION) then
+				begin
+					Dec(Enemies[i].ExplosionCount);					
+					if (Enemies[i].ExplosionCount = 0) then
+					begin
+						// Enemy is destroyed
+						Enemies[i].State := DESTROYED;
+						GE::Sound(GE::SILENT_SOUND);
+						// Remove enemy ship from the screen
+						GE::FillRect(Enemies[i].XPos, Enemies[i].YPos, ENEMY_WIDTH, ENEMY_HEIGHT+4, 0);
+						// Decrement the number of enemies and checking level completion
+						Dec(EnemyCount);
+						if (PlayerLive and (EnemyCount = 0)) then
+							IsGameEnd := True; // Player is live and all enemies are destroyed
+					end;
+				end;
+			end;
+			// Next enemy
+			Inc(i);
+		end; /* while i */
+		if (not IsGameEnd) then
+		begin
+			EnemyMoveNr +=2;
+			if (EnemyMoveNr = ENEMY_NO-1) then
+				EnemyMoveNr := 0;
+			// Enemy attack
+			Dec (EnemyAttackCountDown);		
+			if (EnemyAttackCountDown = 0) then
+			begin
+				// start enemy attack
+				EnemyAttackCountDown := EnemyAttackDelay;
+				// Attacker selection
+				nr := ENEMY_NO;
+				i  := EnemyAttackShip;
+				while ((nr > 0) and (Enemies[i].State <> ATTACK)) do
+				begin
+					i := EnemyAttackShip;
+					while ((i > 0) and (Enemies[i].State <> SIDE_MOVE)) do
+						Dec(i);
+					if (Enemies[i].State = SIDE_MOVE) then
+					begin
+						Enemies[i].State := ATTACK;
+						Enemies[i].BaseXPos := Enemies[i].XPos;
+						Enemies[i].BaseYPos := Enemies[i].YPos;
+						Enemies[i].BaseDirection := Enemies[i].Direction;
+				  end;
+					Dec (EnemyAttackShip);
+					if (EnemyAttackShip = 0) then
+					  EnemyAttackShip := ENEMY_NO - 1;
+					Dec (nr);
+				end; /* while */
+			end;
+		end;
+	end; /* MoveEnemies */
+	
+	
+	procedure CheckingIfALaserHitThePlayer();
+	begin
+		if (PlayerLive) then
+		begin
+			i := 0;
+			while (PlayerLive and (i < LASER_NO-1)) do
+			begin
+				if (EnemyLasers[i].IsActive) then
+				begin
+					if (EnemyLasers[i].YPos >= PLAYER_YPOS and (EnemyLasers[i].YPos < PLAYER_YPOS + PLAYER_HEIGHT)) then
+					begin
+						if (EnemyLasers[i].XPos >= PlayerSprite.X and (EnemyLasers[i].XPos < PlayerSprite.X + PLAYER_WIDTH)) then
+						begin
+							// Enemy's laser hit the Player
+							PlayerLive := False;
+							PlayerExplosionLevel := EXP_DURATION*3*5;
+							PlayerExpPhase 			 := 0;
+							PlayerExplosionDelay := 1;
+							// remove the player
+							GE::FillRect(PlayerSprite.X, PLAYER_YPOS, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
+						end;
+					end;
+				end;
+				Inc(i);
+			end; /* while */
+		end
+		else
+		begin
+			// Player explosion
+			Dec (PlayerExplosionLevel);
+			if (PlayerExplosionLevel > 0) then
+			begin
+				Dec (PlayerExplosionDelay);
+				if (PlayerExplosionDelay = 0) then
+				begin
+					PlayerExplosionDelay := EXP_DURATION;
+					Inc (PlayerExpPhase);
+					if (PlayerExpPhase > 3) then
+						PlayerExpPhase := 1;
+					ExplosionSprite.X := PlayerSprite.X;
+					ExplosionSprite.Y := PLAYER_YPOS;
+          ExplosionSprite.SetPosition;
+					ExplosionSprite.Put;
+					ExplosionSprite.Animation;
+					case (PlayerExpPhase) of
+						1 : GE::Sound(150);
+						2 : GE::Sound(200);
+						3 : GE::Sound(100);
+					end; /* case */
+				end
+				else
+					GE::Sound(GE::SILENT_SOUND);
+			end
+			else
+			begin
+				IsGameEnd := True;
+				// remove plaxyer explosion
+				GE::FillRect(PlayerSprite.X, PLAYER_YPOS, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
+			end;
+		end;
+	end; /* CheckingIfALaserHitThePlayer */
+	
+	
+	procedure CheckingIfALaserHitAnEnemy();
+	begin
+		i := 0;
+		while (i < LASER_NO) do
+		begin
+			if (PlayerLasers[i].IsActive) then
+			begin
+				nr := 0;
+				while (nr < ENEMY_NO) do
+				begin
+					if (Enemies[nr].State > EXPLOSION) then
+					begin
+						if (PlayerLasers[i].YPos < Enemies[nr].YPos + ENEMY_HEIGHT and (PlayerLasers[i].YPos >= Enemies[nr].YPos)) then
+						begin
+							if (PlayerLasers[i].XPos >= Enemies[nr].XPos and (PlayerLasers[i].XPos < Enemies[nr].XPos + ENEMY_WIDTH)) then
+							begin
+								// remove laser
+								PlayerLasers[i].IsActive := False;								
+								GE::VBytesLine(PlayerLasers[i].PrevPos, 5, 0);
+								// Player's laser hit an Enemy
+								Enemies[nr].State := EXPLOSION;
+								Enemies[nr].ExplosionCount := 12;
+								Enemies[nr].ExplosionPhase := 0;
+								Enemies[nr].ExplosionDelay := 1;
+								// Remove enemy ship from the screen
+								GE::FillRect(Enemies[nr].XPos, Enemies[nr].YPos, ENEMY_WIDTH, ENEMY_HEIGHT, 0);
+								break;
+							end;
+						end;
+					end;
+					Inc(nr);
+				end; /* while enemy */
+			end;
+			Inc(i);
+		end; /* while PlayerLasers */
+	end; /* CheckingIfALaserHitAnEnemy */
+	
+	
+	procedure GameOver();
+	begin
+		GE::Sound(GE::SILENT_SOUND);
+	  // Dsplay GAME OVER
+		GE::FillRect(5, 90, 54, 75, 255);
+		GE::FillRect(7, 98, 50, 59, 0);
+		GE::WriteText(15, 105, "G A M E   O V E R");
+		GE::WriteText(13, 125, "PRESS SPACE OR FIRE");
+    GE::WriteText(21, 145, "TO NEW GAME");
+    // Waiting for the SPACE key to be released
+		while (GE::SpacePressed() or (GE::Joystick(1, GE::JOY_FIRE))) do
+		begin
+			GE::Delay(1);
+			GE::GetKeyboard();
+	  end;
+		// Waiting for the SPACE key to be pressed
+		while ((not GE::SpacePressed) and (not GE::Joystick(1, GE::JOY_FIRE))) do
+		begin
+			GE::Delay(1);
+			GE::GetKeyboard();
+		end;
+		// Init New Game
+		InitNewGame();
+	end; /* GameOver */
+	
+	
+	procedure NewLevel();
+	begin
+		GE::Sound(GE::SILENT_SOUND);
+		Inc (Level);
+		if (EnemyMinLaserDelay > 20) then
+			EnemyMinLaserDelay := EnemyMinLaserDelay - 20;				
+	  // Display Congratulation
+		GE::FillRect(5, 90, 54, 75, 15); // 15: 4 pixels with color #2
+		GE::FillRect(7, 98, 50, 59, 0);
+		GE::WriteText(17, 105, "CONGRATULATION!");
+		GE::WriteText(13, 125, "PRESS SPACE OR FIRE");
+		GE::WriteText(21, 145, "TO LEVEL");
+		GE::ByteToStr(Level);
+		GE::WriteText(39, 145, #GE_NumStr);
+		// Waiting for the SPACE key to be released
+		while (GE::SpacePressed() or (GE::Joystick(1, GE::JOY_FIRE))) do
+		begin
+			GE::Delay(1);
+			GE::GetKeyboard();
+		end;
+		// Waiting for the SPACE key to be pressed
+		while ((not GE::SpacePressed) and (not GE::Joystick(1, GE::JOY_FIRE))) do
+		begin
+			GE::Delay(1);		
+			GE::GetKeyboard();
+		end;
+		GE::ClearScreen(0);
+		DisplayHeader(True);
+		InitNewLevel();
+	end; /* NewLevel */
+	
+	
+begin
+	TitleScreen();
+	InitGame();
+	GameInfo();
+	InitNewLevel();	
+	while (true) do
+	begin
+		// Game Main Loop
+		while (not IsGameEnd) do
+		begin
+      GE::WaitForSync(); // waiting for raster-interrupt for smooth movement
+			PutLasers();		
+			PutEnemies();
+			PutPlayer();
+			CheckingIfALaserHitThePlayer();
+			CheckingIfALaserHitAnEnemy();
+			PlayerControl();
+			MoveEnemies();
+		end; /* Game Main Loop */
+		if (PlayerLive) then
+			NewLevel()
+		else
+		  GameOver();
+	end; /* infinity game loop */
+end.

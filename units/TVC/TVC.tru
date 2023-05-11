@@ -1,0 +1,2241 @@
+/*====================================================
+	  TRSE TVC unit for VIDEOTON TV-Computer 
+    
+    VIDEOTON TV-Computer (TVC)
+    Screen, Memory, Text, Graphic, Keyboard, Sound and 
+		File sytem ROM functions and some helpers
+    
+		Author:  Bery (Zsolt Bertók), 2023
+		Version: March 4, 2023
+====================================================*/
+Unit TVC;
+
+var 
+	// Global procedure / function params and internal use variables
+	// mapped to freely usable memory addresses.
+	Mode				: byte at $0E48; // $0E48 - $0E97 -> TV-Computer text Editor working area. Size: 80 bytes.
+	Nr					: byte at $0E49;
+	Color				: byte at $0E4A;
+	X           : byte at $0E4B;
+	Y           : byte at $0E4C;
+	Style				: byte at $0E4D;
+	X1					: integer at $0E4E;
+	Y1					: integer at $0E50;
+	X2					: integer at $0E52;
+	Y2					: integer at $0E54;
+	DelayTicks	: integer at $0E56;
+	SoundVolume	: byte at $0E58;
+	Duration		: byte at $0E59;
+	Pitch				: integer at $0E5A;
+	KeyCode			: byte at $0E5C;
+	counter			: integer at $0E5D; // used by Delay procedure
+	CharCode		: byte at $0E5F;
+	CharDataPtr	: pointer at $0E60;
+	Width				: byte at $0E62;
+	Height      : byte at $0E63;
+	FillPattern	: byte at $0E64;
+	GraphMode   : byte at $0E65;
+	Background  : byte at $0E66;	
+	Count       : byte at $0E67;
+	PortNr			: byte at $0E68;
+	Value       : byte at $0E69;
+	LineNr      : byte at $0E6A;
+	Pattern			: byte at $0E6B;
+	Size        : integer at $0E6C;
+	SourcePtr   : pointer;
+	DestPtr     : pointer;	
+	// Text helpers
+	Text 				: ^byte;
+	len 				: byte; // It is used to calculate the text length for Write and WriteAt procedures
+	NumStr      : array[6] of byte = (0, 0, 0, 0, 0, 0);
+	// Sound helper
+	soundIsOn   : boolean = false;  // System sound sign is ON
+	// CreateCharImage helpers
+	ColorPtr		: pointer;
+	// Graphics 4 color tables
+	Gr4Color0		: array[4] of byte = (    0,    0,    0,    0); // pixel #0, #1, #2, #3 in byte by palette color #0
+	Gr4Color1		: array[4] of byte = (  128,   64,   32,   16);	// pixel #0, #1, #2, #3 in byte by palette color #1 
+	Gr4Color2		: array[4] of byte = (    8,    4,    2,    1);	// pixel #0, #1, #2, #3 in byte by palette color #2 
+	Gr4Color3		: array[4] of byte = (128+8, 64+4, 32+2, 16+1);	// pixel #0, #1, #2, #3 in byte by palette color #3 	
+	// File I/O
+	FileType    		: byte;	 // 0: buffered; $FF: not buffered - is used when creating a new file
+	FileName				: ^byte;
+	BlockData 			: ^byte;
+	BlockLength			: integer;
+	// Consts
+	const FILE_BUFFER_TYPE : address = $0B6B;		// 0: buffered file; otherwise not buffered file
+  // Memory mapping
+	const MEM_DEFAULT  : byte = 0;
+	const MEM_VID_ON   : byte = 1;
+	const MEM_FULL_64K : byte = 2;
+	const MEM_48K_VID  : byte = 3;
+	// System
+	const SYS_TIMER:address = $0B1D;		// 16-bit counter, incremented in nterrupt Handler at every 20.096 ms
+	const PORT_3_MEM_MIRROR:address	= 2833;
+	const PORT_5_MEM_MIRROR:address	= 2834;
+	const PORT_6_MEM_MIRROR:address	= 2835;
+	// Graphics  / Screen
+	const SYS_GRAPH_MODE:address = $0B13;
+	const GRAPH_MODE_PORT:address = 6;
+	const SYS_BORDER_COLOR:address = $0B4F;
+	const SYS_BORDER_PORT:address = $0;
+	// Graphics modes
+	const GRAPHICS2  : byte = 0;
+	const GRAPHICS4  : byte = 1;
+	const GRAPHICS16 : byte = 2;
+	// Text	
+	const SYS_INK_COLOR:address = $0B4D;	// text / line / point color
+	const SYS_PAPER_COLOR:address = $0B4E;// text background
+	const SYS_TEXT_STYLE_FLAG:address = $0B50; 		// text overwriting flag → 0: overwrite; 1: invisible ink; 2: transparent background; 3: invisible + transparent
+	// Text styles
+	const TEXT_STYLE_DEFAULT : byte = 0;
+	const TEXT_STYLE_NO_INK : byte = 1;
+	const TEXT_STYLE_TRANSPARENT : byte = 2;
+	const TEXT_STYLE_INVISIBLE : byte = 3;	
+	// Line
+	const SYS_LINE_MODE:address = $0B4B;	// Line overwriting mode → 0: overwrite; 1: OR; 2: AND; 3: XOR
+	const SYS_LINE_STYLE:address = $0B4C;	// Line drawing styles 1..14
+	// Line modes
+	const LINE_MODE_DEFAULT : byte = 0;
+	const LINE_MODE_OR 		  : byte = 1;
+	const LINE_MODE_AND 		: byte = 2;
+	const LINE_MODE_XOR 		: byte = 3;	
+	// Sound
+	const SOUND_LO_PORT:address = 4;			// Sound PITCH low 8 bit
+	const SOUND_HI_PORT:address = 5;			// Bits 0-3.: sound PITCH high 4 bits
+	const SOUND_VOLUME_PORT:address = 6;	// Bits 2-5: sound VOLUME (0-15)
+	const SILENT_SOUND : integer = 4095;
+	const MAX_VOLUME : byte = 15;
+	// Joystick
+	const JOY_LEFT	: byte = 64;
+	const JOY_RIGHT	: byte = 32;
+	const JOY_UP		: byte = 2;
+	const JOY_DOWN	: byte = 4;
+	const JOY_FIRE	: byte = 8;	
+	// Palette colors
+	const PALETTE_BLACK : byte = $00;
+	const PALETTE_DARK_BLUE : byte = $1;
+	const PALETTE_DARK_RED : byte = $4;
+	const PALETTE_DARK_MAGENTA : byte = $5;
+	const PALETTE_DARK_GREEN : byte = $10;
+	const PALETTE_DARK_CYAN : byte = $11;
+	const PALETTE_DARK_YELLOW : byte = $14;
+	const PALETTE_GRAY : byte = $15;
+	const PALETTE_BLACK2 : byte = $40;
+	const PALETTE_BLUE : byte = $41;
+	const PALETTE_RED: byte = $44;
+	const PALETTE_MAGENTA : byte = $45;
+	const PALETTE_GREEN : byte = $50;
+	const PALETTE_CYAN : byte = $51;
+	const PALETTE_YELLOW : byte = $54;
+	const PALETTE_WHITE : byte = $55;
+	// Border colors
+	const BORDER_BLACK 			: byte = 0;
+	const BORDER_DARKBLUE		: byte = 2;
+	const BORDER_DARKRED 		: byte = 8;
+	const BORDER_DARKMAGENTA: byte = 10;
+	const BORDER_DARKGREEN 	: byte = 32;
+	const BORDER_DARKCYAN		: byte = 34;
+	const BORDER_DARKYELLOW	: byte = 40;
+	const BORDER_GRAY				: byte = 42;
+	const BORDER_BLACK2			: byte = 128;
+	const BORDER_BLUE				: byte = 130;
+	const BORDER_RED				: byte = 136;
+	const BORDER_MAGENTA		: byte = 138;
+	const BORDER_GREEN			: byte = 160;
+	const BORDER_CYAN				: byte = 162;
+	const BORDER_YELLOW			: byte = 168;
+	const BORDER_WHITE			: byte = 170;
+	// Graphics 16 colors
+	const GR16_BLACK 			: byte = 0;
+	const GR16_DARKBLUE		: byte = 1;
+	const GR16_DARKRED 		: byte = 2;
+	const GR16_DARKMAGENTA: byte = 3;
+	const GR16_DARKGREEN 	: byte = 4;
+	const GR16_DARKCYAN		: byte = 5;
+	const GR16_DARKYELLOW	: byte = 6;
+	const GR16_GRAY				: byte = 7;
+	const GR16_BLACK2			: byte = 8;
+	const GR16_BLUE				: byte = 9;
+	const GR16_RED				: byte = 10;
+	const GR16_MAGENTA		: byte = 11;
+	const GR16_GREEN			: byte = 12;
+	const GR16_CYAN				: byte = 13;
+	const GR16_YELLOW			: byte = 14;
+	const GR16_WHITE			: byte = 15;
+
+/*================================================
+  		            S C R E E N 
+=================================================*/
+
+/**
+Sets graphics mode. 
+<ul>
+<li>GRAPHICS_2:  512x240  2 color mode (code: 0)</li>
+<li>GRAPHICS_4:  256x240  4 color mode (code: 1)</li>
+<li>GRAPHICS_16: 128x240 16 color mode (code: 2).</li>
+</ul>
+<br/>
+Example: SetGraphicsMode(TVC::GRAPHICS_16);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure SetGraphicsMode(Mode : global byte);
+begin
+	GraphMode   := Mode;
+	FillPattern := 0; 				// Black color, or palette #0 color
+	asm("
+			ld  A,[TVC_Mode]
+			ld 	C,A 							// C = graphics mode code
+			rst $30 							// system function call
+			db $4 								// VMODE function code
+			");
+end;
+
+
+/**
+Gets graphics mode.<br/>
+Result:
+<ul>
+<li>0: GRAPHICS 2</li>
+<li>1: GRAPHICS 4</li>
+<li>2: GRAPHICS 16</li>
+</ul>
+<br/>
+Example: if (TVC::GetGraphicsMode() <> TVC::GRAPHICS_4) then TVC::SetGraphicsMode(TVC::GRAPHICS_4);<br/>
+<br/>
+**/
+function GetGraphicsMode() : byte;
+begin
+	Asm("
+			ld	A,($0B13)		// A = port #6 mirror system variable
+			and 3						// A = bit #1 and #2 of port #6 mirror -> graphics mode
+			");
+end;
+
+
+/**
+Clear screen using the background color<br/>
+<br/>
+Example:<br/>
+TVC::TextBackground(0);<br/>
+TVC::ClearScreen();<br/>
+<br/>
+**/
+procedure ClearScreen();
+begin
+		Asm("
+				// save memory mapping
+				ld  A,($3)				// A = current memory mapping from system variable
+				ld  [TVC_Mode],A	// save current memory mapping to Mode variable
+				// mapping the VideoRAM to $8000-BFFF
+        ld  A,$50					// Memory pages: U0, U1, VID, SYS -> set VIDEORAM to memory page #2
+				ld  ($3),A				// set memory mapping to system variable
+				out ($2),A				// send memory mapping to port #2
+				// clear screen
+				ld  A,[TVC_FillPattern] // A := fill pattern byte
+				ld  HL,$8000			// HL -> VIDEORAM start address				
+				ld  (HL),A        // put fill pattern to VIDEORAM first byte
+				ld  DE,$8001		  // DE -> VIDEORAM 2nd byte
+				ld  BC,16383	    // BC = 16K - 1 -> VIDEORAM size - 1
+				ldir				      // copy fill pattern to all bytes of the VIDEORAM
+				// restore memory mapping
+				ld	A,[TVC_Mode]	// A = saved memory mapping
+				ld	($3),A				// restore memory mapping to system variable
+				out ($2),A				// restore memory mapping on port #2
+				");
+end; // end of PutCharImage
+
+
+
+/**
+Clear screen by BASIC CLS routin<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure Cls();
+begin
+	Asm("
+			rst $30 // TV-Computer ROM routine call
+			db $5		// CLS - clear screen
+	");
+end;
+
+
+/**
+Sets 2-color or 4-color palette using hardware ports.<br/>
+Params:
+<ul>
+<li>Nr: Palette index (Graph.2: 0 - 1 or Graph.4: 0 - 3)</li>
+<li>Color: Color code </li>
+</ul>
+<br/>
+Example: SetPalette(1, TVC::BORDER_RED);<br/><br/>
+<br/>
+Color codes (decimal code: Crt const):
+<ul>
+<li> 0: PALETTE_BLACK</li>
+<li> 1: PALETTE_DARKBLUE</li>
+<li> 4: PALETTE_DARKRED</li>
+<li> 5: PALETTE_DARKMAGENTA</li>
+<li>16: PALETTE_DARKGREEN</li>
+<li>17: PALETTE_DARKCYAN</li>
+<li>20: PALETTE_DARKYELLOW</li>
+<li>21: PALETTE_GRAY</li>
+<li>64: PALETTE_BLACK2</li>
+<li>65: PALETTE_BLUE</li>
+<li>68: PALETTE_RED</li>
+<li>69: PALETTE_MAGENTA</li>
+<li>80: PALETTE_GREEN</li>
+<li>81: PALETTE_CYAN</li>
+<li>84: PALETTE_YELLOW</li>
+<li>85: PALETTE_WHITE</li>
+</ul>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure SetPalette(Nr, Color : global byte);
+begin
+	if (Nr >= 0 and (Nr <= 3 and Color <= 85)) then
+	begin		
+		Asm("
+				ld A,[TVC_Nr]
+				ld C,$60
+				add A,C
+				ld C,A									// C = $60 + Nr
+				ld A,[TVC_Color]				// A = Color code
+				out (C),A								// send Color code to desired palette port
+				");
+	end;
+end;
+
+
+/**
+Sets the border color<br/>
+<br/>
+Example: TVC::SetBorder(TVC::BORDER_BLUE);<br/><br/>
+<br/>
+Border colors:
+<ul>
+<li>BORDER_BLACK</li>
+<li>BORDER_DARKBLUE</li>
+<li>BORDER_DARKRED</li>
+<li>BORDER_DARKMAGENTA</li>
+<li>BORDER_DARKGREEN</li>
+<li>BORDER_DARKCYAN</li>
+<li>BORDER_DARKYELLOW</li>
+<li>BORDER_GRAY</li>
+<li>BORDER_BLACK2</li>
+<li>BORDER_BLUE</li>
+<li>BORDER_RED</li>
+<li>BORDER_MAGENTA</li>
+<li>BORDER_GREEN</li>
+<li>BORDER_CYAN</li>
+<li>BORDER_YELLOW</li>
+<li>BORDER_WHITE</li>
+</ul>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure SetBorder(Color : global byte);
+begin
+	asm("		
+    ld A,[TVC_Color]
+    ld (TVC_SYS_BORDER_COLOR),A
+		out (TVC_SYS_BORDER_PORT),A
+	");
+end;
+
+
+/**
+Waits until a vertical sync (raster-interrupt) has been performed.
+**/
+procedure WaitForSync();
+begin
+	asm("
+			halt
+			");
+end;
+
+
+/**
+Set the raster-interrupt position on the screen<br/>
+Params:
+<ul>
+<li>LineNr: 0-239</li>
+</ul>
+<br/>
+Example: SetRasterInterruptPos(200);<br/>
+<br/>
+**/
+procedure SetRasterInterruptPos(LineNr : global byte);
+begin
+	Asm("
+			ld  A,[TVC_LineNr]
+			srl A
+			srl A       	// A = LineNr div 4
+			ld  H,0
+			ld 	L,A				// HL = LineNr div 4
+			add HL,HL			// HL = HL * 2
+			add HL,HL			// HL = HL * 4
+			add HL,HL			// HL = HL * 8
+			add HL,HL			// HL = HL * 16
+			add HL,HL			// HL = HL * 32
+			add HL,HL			// HL = (LineNr div 4) * 64			
+			ld	DE,63			// last byte in the line
+			add	HL,DE			// HL = ((LineNr div 4) * 64) + 63
+			ld	A,14
+			out	($70),A		// select CRTC R14 register - register of raster-interrupt position high byte
+			ld	A,H
+			out	($71),A		// send hight byte of raster-interrupt position to CRTC R14 register
+			ld	A,15
+			out	($70),A		// select CRTC R15 register - register of raster-interrupt position low byte
+			ld	A,L
+			out	($71),A		// send low byte of raster-interrupt position to CRTC R15 register
+			ret
+			");
+end;
+
+/*================================================
+          M E M O R Y   M A P P I N G 
+          
+  TV-Computer has 32 KB or 64 KB RAM models
+  and 16 KB VIDEO RAM (or 4x16 KB on 64k+ model)
+	and with 20 KB ROM, of which 16 KB can be mapped.
+  4x16 KB memory pages can be used and addressed at
+  the same time.
+  
+	U1, U2, U3, U4 - user RAM (4 x 16 KB)
+	VID  - video RAM (16 KB)
+	SYS  - system ROM (16 KB)
+	CART - external cartridge (max. 16 KB)
+	EXT  - memory on external card (max. 16 KB)
+=================================================*/
+
+
+/**
+Set memory mapping<br/>
+Params:
+<ul>
+<li>MEM_DEFAULT (0): U0, U1, U2,  SYS</li>
+<li>MEM_VID_ON  (1): U0, U1, VID, SYS</li>
+<li>MEM_64K			(2): U0, U1, U2,  U3</li>
+<li>MEM_32K_VID_16K (3): U0, U1, VID, U3</li>
+</ul>
+<br/>
+16K pages:<br/>
+U0-U3: user memory; VID: video RAM; SYS: sysem ROM<br/>
+<br/>
+Example: SetMemory(TVC::MEM_VID_ON);<br/>
+<br/>
+**/
+procedure SetMemory(Mode : global byte);
+begin
+	case (Mode) of
+		0:Asm("
+	    		ld A,$70			// MEM_DEFAULT: U0, U1, U2, SYS
+					ld ($3),A
+					out ($2),A
+					");
+		1:Asm("
+					ld A,$50			// MEM_VID_ON: U0, U1, VID, SYS
+					ld ($3),A
+					out ($2),A
+					");
+		2:Asm("
+	    		ld A,$B0			// MEM_64K: U0, U1, U2, U3
+					ld ($3),A
+					out ($2),A
+					");
+		3:Asm("
+	    		ld A,$90			// MEM_32K_VID_16K: U0, U1, VID, U3
+					ld ($3),A
+					out ($2),A
+					");
+	end; // case
+end;
+
+
+/**
+Copy data from the source memory address to the destination memory address. 
+<ul>
+<li>SourcePtr: pointer to the source memory address</li>
+<li>DestPtr: pointer to destination memory address</li>
+<li>Size: number of bytes to copy</li>
+</ul>
+<br/>
+Example: TVC::MemCopy(#TitlePicture, $8000, 15360);<br/><br/>
+<br/>
+**/
+procedure MemCopy(SourcePtr, DestPtr: global pointer; Size: global integer);
+begin
+  Asm("
+  		ld  HL,[TVC_SourcePtr]
+			ld  DE,[TVC_DestPtr]
+			ld  BC,[TVC_Size]
+			ldir
+			");
+end;
+
+
+/*================================================
+  		            T E X T 
+=================================================*/
+
+/**
+Sets text X (horizontal) and Y (vertical) position. 
+<ul>
+<li>X: 1 - 64 in Graphics 2 mode</li>
+<li>X: 1 - 32 in Graphics 4 mode</li>
+<li>X: 1 - 16 in Graphics 16 mode</li>
+<li>Y: 1 - 24 in all graphics modes</li>
+</ul>
+Left top position: 1, 1<br/>
+<br/>
+Example: TVC::GotoXY(1, 23);<br/><br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure GotoXY(X, Y : global byte);
+begin
+	Asm("
+		  ld A,[TVC_X]
+			ld B,A
+			ld A,[TVC_Y]
+			ld C,A
+			rst $30 		// TV-Computer ROM routine call
+			db $3 			// BTEXT - set position
+	");
+end;
+
+
+/**
+Writes the text specified in the param to the current position.
+<br/>
+Example: Write("TRSE CRT Tutorial");<br/><br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure Write(Text : global ^byte);
+begin
+	len := 0;
+	while (Text[len] <> 0) do
+		inc (len);
+	Asm("
+			ld DE,[TVC_Text]	// text 
+			ld B,0
+			ld A,[TVC_len]
+			ld C,A
+			rst $30 				// TV-Computer ROM routine call
+			db $2 					// VID_BKOUT - write text
+	");
+end;
+
+
+/**
+Writes the Text param to the specified character position.<br/>
+Params:
+<ul>
+<li>X: horizontal character pos. 1 - 16 / 32 / 64</li>
+<li>Y: vertical character pos.   1 - 24</li>
+<li>Text: text to write. Text length: 1 - 254</li>
+</ul>
+Left top position: 1, 1<br/>
+<br/>
+Example: WriteAt(10, 7, "TRSE Tutorial");<br/><br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure WriteAt(X, Y : global byte; Text : global ^byte);
+begin
+	len := 0;
+	while (Text[len] > 0) do
+		inc (len);
+	Asm("
+			// 
+			ld A,[TVC_X]
+			ld B,A
+			ld A,[TVC_Y]
+			ld C,A
+			rst $30 				// TV-Computer ROM routine call
+			db $3 					// BTEXT function - set position
+			// Write
+			ld DE,[TVC_Text]	// text 
+			ld B,0
+			ld A,[TVC_len]
+			ld C,A
+			rst $30 				// TV-Computer ROM routine call
+			db $2 					// VID_BKOUT function - write text
+	");
+end;
+
+/**
+Sets text or line ink color.<br/>
+Params:
+<ul>
+<li> Graphics2: 0 - 1</li>
+<li> Graphics2: 0 - 3</li>
+<li>Graphics16: 1 - 15</li>
+</ul>
+<br/>
+Example: SetColor(1);
+<br/>
+Uses the System ROM (firmware) variable.
+**/
+procedure SetColor(Color : global byte);
+begin
+	Asm("
+			ld A,[TVC_Color]
+			ld (TVC_SYS_INK_COLOR),A
+	");	
+	/*
+	// set VLinePattern for VByteLine
+	GraphMode := GetGraphicsMode();
+	if (GraphMode = GRAPHICS2) then
+  begin
+		if (Color = 0) then
+			VLinePattern := 0
+		else
+			VLinePattern := 128; // left bit set
+	end
+	else
+	if (GraphMode = GRAPHICS4) then
+  begin
+		case (Color) of
+			0: VLinePattern := 0;	 	// clear all bits
+			1: VLinePattern := 128; // set bit #7 -> left bit set to Color #1
+			2: VLinePattern := 8;  	// set bit #3 -> left bit set to Color #2
+			3: VLinePattern := 136; // set bit #7 and #3 -> left bit set to Color #3
+		end;
+	end
+	else
+	if (GraphMode = GRAPHICS16) then
+	begin
+		case (Color) of
+			0: VLinePattern := 0;
+			1: VLinePattern := 2;
+			2: VLinePattern := 8;
+			3: VLinePattern := 10;
+			4: VLinePattern := 32;
+			5: VLinePattern := 34;
+			6: VLinePattern := 40;
+			7: VLinePattern := 42;
+			8: VLinePattern := 128;
+			9: VLinePattern := 130;
+			10: VLinePattern := 136;
+			11: VLinePattern := 138;
+			12: VLinePattern := 160;
+			13: VLinePattern := 162;
+			14: VLinePattern := 168;
+			15: VLinePattern := 170;
+		end;
+	end;
+	*/
+end;
+
+
+/**
+Sets text background color<br/>
+Params:
+<ul>
+<li> Graphics2: 0 - 1</li>
+<li> Graphics2: 0 - 3</li>
+<li>Graphics16: 1 - 15</li>
+</ul>
+<br/>
+Example: TextBackground(3);
+<br/>
+Uses the System ROM (firmware) variable.
+**/
+procedure TextBackground(Color : global byte);
+begin	
+	if (Color <= 15) then
+	begin
+		// set TextBackground to system variable
+		Asm("
+				ld A,[TVC_Color]
+				ld (TVC_SYS_PAPER_COLOR),A
+		");		
+		// set FillPattern for FillRect
+		GraphMode := GetGraphicsMode();
+		if (GraphMode = GRAPHICS2) then
+	  begin
+			// Graphincs 2
+			if (Color = 0) then
+				FillPattern := 0
+			else
+				FillPattern := 255;
+		end
+		else
+		if (GraphMode = GRAPHICS4) then
+	  begin
+			// Graphincs 4
+			case (Color) of
+				0: FillPattern := 0;	 // clear all bits
+				1: FillPattern := 240; // set high 4 bits (128+64+32+16)
+				2: FillPattern := 15;  // set low 4 bits  (1+2+4+8)
+				3: FillPattern := 255; // set all bits
+			end;
+		end
+		else
+		if (GraphMode = GRAPHICS16) then
+		begin
+			// Graphincs 16
+			case (Color) of
+				0: FillPattern := 0;
+				1: FillPattern := 3;
+				2: FillPattern := 12;
+				3: FillPattern := 15;
+				4: FillPattern := 48;
+				5: FillPattern := 51;
+				6: FillPattern := 60;
+				7: FillPattern := 63;
+				8: FillPattern := 192;
+				9: FillPattern := 195;
+				10: FillPattern := 204;
+				11: FillPattern := 207;
+				12: FillPattern := 240;
+				13: FillPattern := 243;
+				14: FillPattern := 252;
+				15: FillPattern := 255;
+			end; /* case (Color) */
+		end;
+	end; 
+end;
+
+
+/**
+Sets text overwrite style.<br/>
+Params:
+<ul>
+<li>0: TEXT_STYLE_DEFAULT - overwrite</li>
+<li>1: TEXT_STYLE_NO_INK - no ink</li>
+<li>2: TEXT_STYLE_TRANSPARENT - transparent background</li>
+<li>3: TEXT_STYLE_INVISIBLE - transparent background and no ink</li>
+</ul>
+<br/>
+Example: TVC::TextStyle(TVC::TEXT_STYLE_TRANSPARENT);<br/>
+<br/>
+Uses the System ROM (firmware) variable.<br/>
+**/
+procedure TextStyle(Style : global byte);
+begin
+	Asm("
+			ld A,[TVC_Style]
+			ld (TVC_SYS_TEXT_STYLE_FLAG),A
+	");
+end;
+
+
+/**
+(Re)Define character<br/>
+Params:
+<ul>
+<li>CharCode: the code of the character to be redefined (128 - 223)</li>
+<li>CharDataPtr: pointer to 10 bytes of character - 1 byte/char-line, 1 bit/pixel</li>
+</ul>
+<br/>
+Example: TVC::DefChar(128, #ChrData);<br/>
+<br/>
+var ChrData: array[10] of byte = (85,254,103,202,79,206,75,230,127,170);
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure DefChar(CharCode : global byte; CharDataPtr : global pointer);
+begin
+  Asm("
+			ld A,[TVC_CharCode]
+			ld C,A        				// C = CharCode
+			ld DE,[TVC_CharDataPtr]
+			rst $30          		// system call
+			db $B            		// DEFC function code
+			");
+end;
+
+
+/**
+Create an image from a redefined character.<br/>
+The created images can be used by the FastPutChar procedure.<br/>
+It currently only works in Graphics 4 mode.<br/>
+<br/>
+Params:
+<ul>
+<li>CharCode: the redefined character code(154 - 223)</li>
+<li>Count: the number of characters to convert to an image (1 - 80)</li>
+<li>Background: the image background color
+	<ul>
+  	<li>Graphics2: 0-1</li>
+    <li>Graphics4: 0-3</li>
+    <li>Graphics2: 0-15</li>
+	</ul>
+</li>
+<li>Color: the image ink color
+	<ul>
+  	<li>Graphics2: 0-1</li>
+    <li>Graphics4: 0-3</li>
+    <li>Graphics2: 0-15</li>
+	</ul>
+</li>
+</ul>
+<br/>
+Example: TVC::CreateCharImage(158, 0, 1);<br/>
+<br/>
+**/
+procedure CreateCharImage(CharCode, Count, Background, Color : global byte);
+begin
+	if (CharCode >= 154 and (CharCode <= 223 and (Count >= 1 and Count <= 80))) then
+	begin
+		GraphMode := GetGraphicsMode();
+		if (GraphMode = GRAPHICS4) then
+		begin
+			case (Background) of			
+				1: Background := $f0;
+				2: Background := $f;
+				3: Background := $ff;
+			end;
+			case (Color) of
+				0: ColorPtr := #Gr4Color0; 	// table of color #0 bits
+				1: ColorPtr := #Gr4Color1;	// table of color #1 bits
+				2: ColorPtr := #Gr4Color2;	// table of color #2 bits
+				3: ColorPtr := #Gr4Color3;	// table of color #3 bits
+			end;
+		  Asm("
+		  		ld 	HL,$740							// start address of the (re)definable characters matrix. 1st character the #128.
+		  		ld	A,[TVC_CharCode]
+		  		sub 128									// A = CharCode - 128 (the first definable char code is #128)
+					ld  BC,10								// size of one character matrix (10 lines x 1 byte - 1 byte = 8 bit = 8 pixel)
+			calc_char_addr:
+					add HL,BC
+					dec A
+					jp  nz,calc_char_addr
+		  		ex	DE,HL								// DE -> specified character in the character matrix		  		
+		  		// calc the char-image memory address
+					ld 	HL,$100							// HL -> start address of the system's full-screen editor area (free to use, length: 64x25 = 1600 bytes) - puts the char-images here
+					ld	A,[TVC_CharCode]
+		  		sub 154									// A = CharCode - 154
+		  		or  A										// A = 0?
+		  		jp 	z,init_create_char_image
+					ld  BC,20								// size of one char-image -> 2 bytes (8 pixels) x 10 lines)
+			calc_img_addr:
+					add HL,BC
+					dec A
+					jp  nz,calc_img_addr
+			init_create_char_image:
+					ex	DE,HL								// HL -> specified char in the character matrix; DE -> char-image start address in the full-screen editor area					
+					ld  IX,[TVC_ColorPtr]		// IX -> color table: pixel#0: IX+0; pixel #1: IX+1; pixel #2: IX+2; pixel #3: IX+3
+					ld  A,(TVC_Count)				// A := Count
+					ld 	IYL,A								// IYL := Count
+			create_charimage:
+					ld  B,10								// 10 lines of char-image
+			create_char_image_loop:
+					ld 	A,[TVC_Background]	// A = 4 pixels byte with background color
+					bit 7,(HL)							// Char bit #7 is set?
+					jp	z,img_char_bit6
+					and 119									// clear bit #7 and bit #3 (255-128-8)
+					or  (IX+0)							// set pixel #1
+			img_char_bit6:
+					bit 6,(HL)							// Char bit #7 is set?
+					jp	z,img_char_bit5
+					and 187									// clear bit #6 and bit #2 (255-64-4)
+					or	(IX+1)							// set pixel #2
+			img_char_bit5:
+					bit 5,(HL)
+					jp	z,img_char_bit4
+					and 221									// clear bit #5 and bit #1 (255-32-2)
+					or	(IX+2)							// set pixel #3
+			img_char_bit4:
+					bit 4,(HL)
+					jp	z,put_img_1st_byte
+					and 238									// clear bit #4 and bit #0 (255-16-1)
+					or	(IX+3)							// set pixel #4
+			put_img_1st_byte:
+					ld 	(DE),A							// put 1st char-image byte of current line
+					inc	DE									// DE -> 2nd byte of char-image line
+					ld 	A,[TVC_Background]	// A = 4 pixels byte with background color
+					// check_char_bit3
+					bit 3,(HL)
+					jp	z,img_char_bit2
+					and 119									// clear bit #7 and bit #3
+					or	(IX+0)							// set pixel #1
+			img_char_bit2:
+					bit 2,(HL)
+					jp	z,img_char_bit1
+					and 187									// clear bit #6 and bit #2
+					or 	(IX+1)							// set pixel #2
+			img_char_bit1:
+					bit 1,(HL)
+					jp	z,img_char_bit0
+					and 221									// clear bit #5 and bit #1
+					or	(IX+2)							// set pixel #3
+			img_char_bit0:
+					bit 0,(HL)
+					jp	z,put_img_2nd_byte
+					and 238									// clear bit #4 and bit #0
+					or	(IX+3)							// set pixel #4
+			put_img_2nd_byte:
+					ld 	(DE),A							// put 2nd char-image byte of current line
+					inc DE									// DE -> next line of char-image
+					inc HL									// HL -> next line of char matrix
+					djnz create_char_image_loop
+					dec IYL
+					jp 	nz,create_charimage
+					");
+		end;
+	end;
+end;
+
+
+/**
+Put created image from defined character to the specified position.<br/>
+Before using it, call the CreateCharImage procudure to create the char-image.<br/>
+Params:
+<ul>
+<li>X: 				horizontal char. pos. (0 - 63)</li>
+<li>Y: 				vertical char. pos.   (0 - 240)</li>
+<li>CharCode: first char image code (154 - 223)</li>
+<li>Count: 		number of characters to display (1 - 80)</li>
+</ul>
+<br/>
+Example: TVC::PutCharImage(0, 0, 154, 1);<br/>
+<br/>
+**/
+procedure PutCharImage(X, Y, CharCode, Count : global byte);
+begin
+	/*
+	if (CharCode >= 154 and (CharCode <= 223 and (Count >= 1 and Count <= 80))) then
+	*/
+		Asm("
+				// save memory mapping
+				ld A,($3)					// A = current memory mapping from system variable
+				ld [TVC_Mode],A		// save current memory mapping to Mode variable
+				// mapping the VideoRAM to $8000-BFFF
+        ld A,$50					// Memory pages: U0, U1, VID, SYS
+				ld ($3),A					// set memory mapping to system variable
+				out ($2),A				// send memory mapping to port #2
+				// calc char-image memory address
+				ld 	HL,$100				// HL -> char-images start address. Originally, the memory address of the system's full-screen editor. Free to use.
+				ld	A,[TVC_CharCode]
+		  	sub 154						// A = CharCode - 154
+				or  A							// A = 0?
+		  	jp 	z,calc_charimg_pos
+				ld  BC,20					// size of one char-image - 2 byte (8 pixel) x 10 lines
+	calc_charimg_addr:
+				add HL,BC
+				dec A
+				jp  nz,calc_charimg_addr
+	calc_charimg_pos:
+				ex  DE,HL					// DE -> char-image start address				
+				ld  A,[TVC_Y]
+				ld  L,A
+				ld  H,0						// HL = Y
+				add HL,HL					// HL = HL * 2
+				add HL,HL					// HL = HL * 4
+				add HL,HL					// HL = HL * 8
+				add HL,HL					// HL = HL * 16
+				add HL,HL					// HL = HL * 32
+				add HL,HL					// HL = Y * 64				
+				ld 	BC,$8000			// BC -> screen start address
+				add HL,BC					// HL := screen start + (Y * 64)
+				ld 	A,[TVC_X]			// A  := X
+				ld 	B,0				
+				ld 	C,A						// BC := X
+				add HL,BC					// HL -> screen start address + (Y * 64) + X -> char-image left top position on the screen
+				ex  DE,HL					// DE -> screen position; HL -> char-image
+				ld 	A,[TVC_Count]	// A := Count
+				ld 	IYL,A					// IYL := Count				
+	put_charimg_loop:			
+				push DE						// save screen poition to Stack
+				ld 	A,10					// A := char image height (10 lines)	
+	put_charimg_line:
+				ld 	BC,64					// BC := 64 (one screen line is 64 bytes)
+				ldi								// put 1st byte from (HL) to (DE)
+				ldi								// put 2nd byte from (HL) to (DE)
+				ex 	DE,HL
+				add HL,BC					
+				ex 	DE,HL					// DE -> next line
+				dec A							// decrement remaining lines
+				jp 	nz,put_charimg_line
+				pop DE						// restore last screen position from Stack
+				inc DE
+				inc DE						// DE -> next character position on the screen
+				dec IYL
+				jp 	nz,put_charimg_loop
+				// restore memory mapping
+				ld	A,[TVC_Mode]	// A = saved memory mapping
+				ld	($3),A				// restore memory mapping to system variable
+				out ($2),A				// restore memory mapping on port #2
+				");
+end; // end of PutCharImage
+
+
+/**
+Put created image from defined character to the specified position.<br/>
+The character background is transparent<br/>
+Before using it, call the CreateCharImage procudure to create the char-image.<br/>
+Params:
+<ul>
+<li>X: 				horizontal char. pos. (0 - 63)</li>
+<li>Y: 				vertical char. pos.   (0 - 240)</li>
+<li>CharCode: first char image code (154 - 223)</li>
+<li>Count: 		number of characters to display (1 - 80)</li>
+</ul>
+<br/>
+Example: TVC::PutCharImage(0, 0, 154, 1);<br/>
+<br/>
+**/
+procedure PutTransparentCharImage(X, Y, CharCode, Count : global byte);
+begin
+	/*
+	if (CharCode >= 154 and (CharCode <= 223 and (Count >= 1 and Count <= 80))) then
+	*/
+		Asm("
+				// save memory mapping
+				ld A,($3)					// A = current memory mapping from system variable
+				ld [TVC_Mode],A		// save current memory mapping to Mode variable
+				// mapping the VideoRAM to $8000-BFFF
+        ld A,$50					// Memory pages: U0, U1, VID, SYS
+				ld ($3),A					// set memory mapping to system variable
+				out ($2),A				// send memory mapping to port #2
+				// calc char-image memory address
+				ld 	HL,$100				// HL -> char-images start address. Originally, the memory address of the system's full-screen editor. Free to use.
+				ld	A,[TVC_CharCode]
+		  	sub 154						// A = CharCode - 154
+				or  A							// A = 0?
+		  	jp 	z,calc_charimg_pos2
+				ld  BC,20					// size of one char-image - 2 byte (8 pixel) x 10 lines
+	calc_charimg_addr2:
+				add HL,BC
+				dec A
+				jp  nz,calc_charimg_addr2
+	calc_charimg_pos2:
+				ex  DE,HL					// DE -> char-image start address				
+				ld  A,[TVC_Y]
+				ld  L,A
+				ld  H,0						// HL = Y
+				add HL,HL					// HL = HL * 2
+				add HL,HL					// HL = HL * 4
+				add HL,HL					// HL = HL * 8
+				add HL,HL					// HL = HL * 16
+				add HL,HL					// HL = HL * 32
+				add HL,HL					// HL = Y * 64				
+				ld 	BC,$8000			// BC -> screen start address
+				add HL,BC					// HL := screen start + (Y * 64)
+				ld 	A,[TVC_X]			// A  := X
+				ld 	B,0				
+				ld 	C,A						// BC := X
+				add HL,BC					// HL -> screen start address + (Y * 64) + X -> char-image left top position on the screen
+				ld 	A,[TVC_Count]	// A := Count
+				ld 	IYL,A					// IYL := Count
+				ld  BC,63
+	put_transimg_loop:
+				push HL						// save screen poition to Stack
+				ld 	IYH,10				// IYH := char image height (10 lines)
+	put_transimg_line:
+				ld  A,(DE)				// A = 1st byte from character image
+				or (HL)						// mix width screen byte
+				ld (HL),A					// put mixed byte to screen
+				inc HL						// HL -> next byte on screen
+				inc DE						// DE -> next byte of char. image
+				ld  A,(DE)				// A = 2nd byte from character image
+				or (HL)						// mix width screen byte
+				ld (HL),A					// put mixed byte to screen
+				add HL,BC					// HL -> next line on screen
+				inc DE
+				dec IYH						// decrement remaining lines
+				jp 	nz,put_transimg_line
+				pop HL						// restore last screen position from Stack
+				inc HL
+				inc HL						// HL -> next character position on the screen
+				dec IYL
+				jp 	nz,put_transimg_loop
+				// restore memory mapping
+				ld	A,[TVC_Mode]	// A = saved memory mapping
+				ld	($3),A				// restore memory mapping to system variable
+				out ($2),A				// restore memory mapping on port #2
+				");
+end; // end of PutCharImage
+
+
+/*================================================
+	            G R A P H I C S 
+=================================================*/
+
+
+/**
+Put a pixel to the X1 and Y1 coordinates.<br/>
+The left bottom corner coordinates are X: 0, Y: 0, and the right top is X: 1023, Y: 959.<br/>
+<ul>
+<li>X1 - point horizontal position: 0 - 1023</li>
+<li>Y1 - point vertical   position: 0 -  959</li>
+</ul>
+<br/>
+Example: TVC::PutPixel(512, 480);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure PutPixel(X1, Y1 : global integer);
+begin
+	if (X1 <= 1023 and (Y1 <= 959 and (X2 <= 1023 and Y2 <= 959))) then
+	Asm("
+		  // move pen to starting position
+			ld BC,[TVC_X1]	// starting X position
+			ld DE,[TVC_Y1]	// starting Y position
+			rst $30 			  // system call
+			db $6 					// Move to absolute coordinate function code
+			// pen ON
+			rst $30 				// system call
+			db $8 					// Pen ON function code
+			// pen OFF
+			rst $30 				// system call
+			db $9 					// Pen OFF function code
+			");
+end;
+
+
+/**
+Draw a line between two points. The X and Y coordinates of the two points passed in params.<br/>
+The left bottom corner coordinates are X: 0, Y: 0, and the right top is X: 1023, Y: 959.<br/>
+Params:
+<ul>
+<li>X1 - point #1 horizontal position: 0 - 1023</li>
+<li>Y1 - point #1 vertical   position: 0 -  959</li>
+<li>X2 - point #2 horizontal position: 0 - 1023</li>
+<li>Y2 - point #2 vertical   position: 0 -  959</li>
+</ul>
+<br/>
+Example: TVC::Line(0, 0, 1023, 959);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure Line(X1, Y1, X2, Y2 : global integer);
+begin
+	if (X1 <= 1023 and (Y1 <= 959 and (X2 <= 1023 and Y2 <= 959))) then
+	Asm("
+		  // move pen to starting position
+			ld BC,[TVC_X1]	// starting X position
+			ld DE,[TVC_Y1]	// starting Y position
+			rst $30 			  // system call
+			db $6 					// Move to absolute coordinate function code
+			// pen ON
+			rst $30 				// system call
+			db $8 					// Pen ON function code
+			// move pen to ending position
+			ld BC,[TVC_X2]	// ending X position
+			ld DE,[TVC_Y2]	// ending Y position
+			rst $30 				// system call
+			db $6 					// function code
+			");
+end;
+
+
+/**
+Draw a line from the current pen position to reletive position.<br/>
+Params:
+<ul>
+<li>X1: horizontal displacement</li>
+<li>Y1: vertical displacement</li>
+</ul>
+<br/>
+Example: TVC::LineRel(200, 100);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure LineRel(X1, Y1 : global integer);
+begin
+  if (X1 <= 1023 and Y1 <= 959) then
+	Asm("
+			// pen ON
+			rst $30 				// system call
+			db $8 					// Pen ON function code
+		  // move pen to starting position
+			ld BC,[TVC_X1]	// X displacement
+			ld DE,[TVC_Y1]	// Y displacement
+			rst $30 				// system call
+			db $7 					// set relative coordinate function code
+			");
+end;
+
+
+/**
+Move pen to X1, Y1 position.<br/>
+The left bottom corner coordinates are X: 0, Y: 0, and the right top is X: 1023, Y: 959.<br/>
+Params:
+<ul>
+<li>X1 - horizontal position: 0 - 1023</li>
+<li>Y1 - vertical position: 0 - 959</li>
+</ul>
+<br/>
+Example: TVC::MoveTo(512, 480);<br/><br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure MoveTo(X1, Y1 : global integer);
+begin
+	if (X1 <= 1023 and Y1 <= 959) then
+	Asm("
+			// pen OFF
+			rst $30 				// system call
+			db $9 					// Pen OFF function code
+		  // move pen to position
+			ld BC,[TVC_X1]	// X displacement
+			ld DE,[TVC_Y1]	// Y displacement
+			rst $30 				// system call
+			db $6 					// set relative coordinate function code
+			");
+end;
+
+
+/**
+Move pen to relative position. <br/>
+Params:
+<ul>
+<li>X1: horizontal displacement</li>
+<li>Y1: vertical displacement</li>
+</ul>
+<br/>
+Example: TVC::MoveTo(100, 50);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure MoveRel(X1, Y1 : global integer);
+begin
+	if (X1 <= 1023 and Y1 <= 959) then
+	Asm("
+			// pen OFF
+			rst $30 				// system call
+			db $9 					// Pen OFF function code
+		  // move pen to relative position
+			ld BC,[TVC_X1]	// X displacement
+			ld DE,[TVC_Y1]	// Y displacement
+			rst $30 				// system call
+			db $7 					// set relative coordinate function code
+			");
+end;
+
+
+/**
+Draw a rectangle. The opposite corners coordinates passed in the params.<br/>
+The screen left bottom coordinates are X: 0, Y: 0, and the right top is X: 1023, Y: 959.<br/>
+Params:
+<ul>
+<li>X1 - left top corner X position: 0 - 1023</li>
+<li>Y1 - left top corner Y position: 0 - 959</li>
+<li>X2 - right bottom corner X position: 0 - 1023</li>
+<li>Y2 - right bottom corner Y position: 0 - 959</li>
+</ul>
+<br/>
+Example: TVC::Rectangle (10, 280, 160, 130);<br/>
+<br/>
+Uses the System ROM (firmware) functions (BABS: move to pos., and BON: pen ON).
+**/
+procedure Rectangle(X1, Y1, X2, Y2 : global integer);
+begin
+	if (X1 <= 1023 and Y1 <= 959) then
+	begin
+		if (X2 > 1023) then
+			X2 := 1023;
+		if (Y2 > 959) then
+			Y2 := 959;
+		Asm("
+				// pen OFF
+				rst $30 				// system call
+				db $9 					// Pen ON function code
+			  // move pen to left top corner
+				ld BC,[TVC_X1]	// starting X position
+				ld DE,[TVC_Y1]	// starting Y position
+				rst $30 			  // system call
+				db $6 					// Move to absolute coordinate function code
+				// pen ON
+				rst $30 				// system call
+				db $8 					// Pen ON function code
+				// line to right top corner
+				ld BC,[TVC_X2]	// starting X position
+				ld DE,[TVC_Y1]	// starting Y position
+				rst $30 			  // system call
+				db $6 					// Move to absolute coordinate function code
+				// line to right bottom corner
+				ld BC,[TVC_X2]	// starting X position
+				ld DE,[TVC_Y2]	// starting Y position
+				rst $30 			  // system call
+				db $6 					// Move to absolute coordinate function code
+				// line to left bottom corner
+				ld BC,[TVC_X1]	// starting X position
+				ld DE,[TVC_Y2]	// starting Y position
+				rst $30 			  // system call
+				db $6 					// Move to absolute coordinate function code
+				// line to left top corner
+				ld BC,[TVC_X1]	// starting X position
+				ld DE,[TVC_Y1]	// starting Y position
+				rst $30 			  // system call
+				db $6 					// Move to absolute coordinate function code
+				");
+	end;
+end;
+
+
+/**
+Drawing a vertical line to the byte border.<br/>
+Use the color set by SetColor procedure<br/>
+Coordinates of the upper left corner x: 0, y: 0, and the right lower X: 64, Y: 239.<br/>
+Params:
+<ul>
+<li>X: horizontal line start position (0 - 64)</li>
+<li>Y: vertical line start position (0 -  239)</li>
+<li>Count: 1-240</li>
+<li>Pattern: byte pattern for put</li>
+</ul>
+<br/>
+Example: TVC::VerticalBytes(20, 100, 100, 128);<br/>
+<br/>
+**/
+procedure VerticalBytes(X, Y, Count, Pattern : global byte);
+begin	
+	Asm("
+				// save memory mapping				b
+				ld  A,($3)					// A = current memory mapping
+				ld  [TVC_Mode],A		// save current memory mapping to Mode variable
+				// enable Video RAM
+        ld  A,$50					// Pages: U0, U1, VID, SYS
+				ld  ($3),A
+				out ($2),A
+				// calc start address
+				xor A             // A := 0
+				ld  H,A           // H := 0
+				ld  B,A           // B := 0
+				ld  A,[TVC_Y]
+				ld  L,A						// HL = Y
+				add HL,HL					// HL = HL * 2
+				add HL,HL					// HL = HL * 4
+				add HL,HL					// HL = HL * 8
+				add HL,HL					// HL = HL * 16
+				add HL,HL					// HL = HL * 32
+				add HL,HL					// HL = Y * 64								
+				ld  A,[TVC_X]			// A  := X
+				ld  C,A						// BC := X
+				add HL,BC					// HL := (Y * 64) + X
+				ld 	BC,$8000			// BC -> screen start address
+				add HL,BC					// HL -> screen start address + (Y * 64) + X
+				ld  A,[TVC_Count]// A := Length
+				ld  B,A						// B := Length
+				ld  A,[TVC_Pattern] // A := vline pattern byte
+				ld  C,A						// C := line pattern byte
+				//!!! ld  A,[TVC_VLineAndPattern] // A := vline AND pattern byte
+				//!!! ld  ILY,A					// ILY := vline AND pattern byte
+	draw_vbyte_line:
+				ld  DE,64
+	draw_vbyte_line_loop:
+				// ld  A,(HL)				// A := byte on the screen
+				// and 136						// clear 1st pixel (Graphics 4 only for test)
+				// or	C							// mix color to screen byte
+				ld  (HL),A				// put line byte to screen
+				add HL,DE					// HL -> next byte
+				djnz draw_vbyte_line_loop
+				// restore memory mapping
+				ld  A,[TVC_Mode]	// A = saved memory mapping
+				ld  ($3),A				// restore memory mapping
+				out ($2),A				// restore memory mapping				
+			");
+end;                              
+
+
+/**
+Fill area from the current pen position.<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure Fill();
+begin
+	Asm("
+			rst $30 				// system call
+			db $A 					// Fill function code
+			");
+end;
+
+
+/**
+Sets line style to specified param.<br/>
+Uses the System ROM (firmware) variable.<br/>
+Allowed values: 1 - 14<br/>
+<br/>
+Example: TVC::SetLineStyle(4);
+<br/>
+**/
+procedure SetLineStyle(Style : global byte);
+begin
+	if (Style <= 14) then
+	begin
+		Asm("
+				ld A,[TVC_Style]
+				ld (TVC_SYS_LINE_STYLE),A
+		");
+	end;
+end;
+
+
+/**
+Sets line mode by param<br/>
+Param:
+<ul>
+<li>LINE_MODE_DEFAULT (0) - overwrite</li>
+<li>LINE_MODE_OR      (1) - OR</li>
+<li>LINE_MODE_AND     (2) - AND</li>
+<li>LINE_MODE_XOR     (3) - XOR</li>
+</ul>
+<br/>
+Example: TVC::SetLineMode(TVC::LINE_MODE_XOR);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure SetLineMode(Mode : global byte);
+begin
+	if (Mode <= 3) then
+	begin
+		Asm("
+				ld A,[TVC_Mode]
+				ld (TVC_SYS_LINE_MODE),A
+		");
+	end;
+end;
+
+
+/**
+Draw a filed rectangle uses the current TextBackground color<br/> 
+Screen width is 64 characters and screen height is 240 pixels<br/>
+Left top corner: 0, 0; right bottom corner: 63, 239<br/>
+Params:
+<ul>
+<li>X: left position: 0 -  63</li>
+<li>Y:  top position: 0 - 239</li>
+<li>Width : 1- 64</li>
+<li>Height: 1-240</li>
+</ul>
+<br/>
+Example: TVC::FillRect(10, 100, 30, 80);<br/>
+<br/>
+**/
+procedure FillRect(X, Y, Width, Height : global byte);
+begin
+	/*
+	if (X > 63) then
+	  X := 63;
+	if (Y > 239) then
+	  Y := 239;
+	if (Width = 0) then
+		Width := 1;
+	if (Height = 0) then
+		Height := 1;
+	if (X + Width > 64) then
+		Width := 64 - X;
+	if (Y + Height > 240) then
+		Height := 240 - Y;
+	*/
+  // Draw filled rectangle 	
+	Asm("
+				// save memory mapping				
+				ld A,($3)					// A = current memory mapping
+				ld [TVC_Mode],A		// save current memory mapping to Mode variable
+				// enable Video RAM
+        ld A,$50					// Pages: U0, U1, VID, SYS
+				ld ($3),A
+				out ($2),A
+				// draw filled rectangle
+				ld  A,[TVC_Y]
+				ld  L,A
+				ld  H,0						// HL = Y
+				add HL,HL					// HL = HL * 2
+				add HL,HL					// HL = HL * 4
+				add HL,HL					// HL = HL * 8
+				add HL,HL					// HL = HL * 16
+				add HL,HL					// HL = HL * 32
+				add HL,HL					// HL = Y * 64				
+				ld 	BC,$8000			// BC -> screen start address
+				add HL,BC					// HL := screen start + (Y * 64)
+				ld A,[TVC_X]			// A  := X
+				ld B,0				
+				ld C,A						// BC := X
+				add HL,BC					// HL -> screen start start + Y * 64 + X -> left top pos. on the screen
+				ld A,[TVC_Height] // A := Height
+				ld C,A						// C := Height
+				ld A,[TVC_Width]	// A := Width
+				ld IXL,A					// IXL := width				
+				ld B,A						// B := Width
+				ld A,64
+				sub B						  // A := 64 - Width
+				ld D,0
+				ld E,A						// DE := 64 - Width
+				ld A,[TVC_FillPattern] // A := fill pattern byte
+	fillrect_lines:			
+				ld B,IXL					// B := Width
+	fillrect_line:
+				ld (HL),A					// put a byte to the screen
+				inc HL					  // HL -> next byte
+				djnz fillrect_line
+				add HL,DE					// HL -> next line
+				dec C							// decrement remaining lines
+				jp nz,fillrect_lines
+				// restore memory mapping
+				ld A,[TVC_Mode]		// A = saved memory mapping
+				ld ($3),A					// restore memory mapping
+				out ($2),A				// restore memory mapping				
+			");
+end;
+
+
+/*================================================
+	            K E Y B O A R D
+=================================================*/
+
+/**
+Waiting for any key pressing.<br/>
+Return to pressed key code.<br/>
+<br/>
+Example: if (TVC::ReadKey() = 13) then Start();<br/>
+<br/>
+Uses the System ROM (firmware) function.<br/>
+**/
+function ReadKey() : byte;
+begin
+	Asm("
+			rst $30 				// system call
+			db $91 					// KBD_CHIN function code
+			ld A,C					// code of pressed key
+			");
+end;
+
+
+/**
+Returns whether any key has been pressed.<br/>
+Result: TRUE: any key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function IsPressed() : byte;
+begin
+	Asm("
+			ld 	HL,$0B51	// Keyboard matrix (10 row -> 10 bytes)
+			ld  B,10			// Keyboard matrix length in bytes
+	any_key_is_pressed_loop:	
+			ld  A,(HL)		// A = a keyboard matrix row
+			or  A					// A = 0?
+			jp nz,any_key_is_pressed // if not then any key is pressed
+			inc HL				// HL -> next row in Keyboard matrix
+			djnz any_key_is_pressed_loop
+			xor A					// A = 0 -> result is FALSE
+			ret
+	any_key_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Space" button is pressed.<br/>
+Result: TRUE: Space key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function SpacePressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 32				// bit #5 is set? 
+			jp nz,Space_is_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	Space_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Return" button is pressed.<br/>
+Result: TRUE: Return key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function ReturnPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B56) 	// Row #5 of keyboard matrix 
+			and 16				// bit #4 is set? 
+			jp nz,Return_is_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	Return_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Esc" button is pressed.<br/>
+Result: TRUE: Esc key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function EscPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 8					// bit #3 is set? 
+			jp nz,Esc_is_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	Esc_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Ctrl" button is pressed.<br/>
+Result: TRUE: Ctrl key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function CtrlPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 16				// bit #4 is set? 
+			jp nz,Ctrl_is_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	Ctrl_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Alt" button is pressed.<br/>
+Result: TRUE: Alt key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function AltPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B58) 	// Row #7 of keyboard matrix 
+			and 1 				// bit #0 is set? 
+			jp nz,Alt_is_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	Alt_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Returns whether the "Shift" button is pressed.<br/>
+Result: TRUE: Shift key is pressed; False: not<br/>
+<br/>
+Uses the Keyboard matrix system variables.
+**/
+function ShiftPressed() : boolean;
+begin
+	Asm("
+			ld A,($0B57) 	// Row #6 of keyboard matrix 
+			and 8					// bit #3 is set? 
+			jp nz,Shift_is_pressed
+			xor A					// A = 0 -> Result is FALSE
+			ret
+	Shift_is_pressed:
+			ld  A,1				// result is TRUE
+			");
+end;
+
+
+/**
+Get the status of joystick directions or fire button.<br/>
+Params:
+<ul>
+<li>1. JoyNr:<br/>
+  &nbsp;1: joystick #1 or internal<br/>
+  &nbsp;2: joystick #2<br/>
+</li>
+<li>2. KeyCode:<br/>
+  &nbsp;JOY_LEFT<br/>
+  &nbsp;JOY_RIGHT<br/>
+  &nbsp;JOY_UP<br/>
+  &nbsp;JOY_DOWN<br/>
+  &nbsp;JOY_FIRE<li>
+</ul>
+Result
+<ul>
+<li>true:  the specified direction or fire button is pressed</li>
+<li>false: not pressed</li>
+</ul>
+<br/>
+Example: if (TVC::Joystick(1, TVC::JOY_FIRE)) then PlayerFire();<br/>
+<br/>
+WARNING! It only works if you have not changed the system Interrupt Handler (default) or you set the Keyboard Matrix in your program.
+**/
+function Joystick(Nr, KeyCode : global byte) : boolean;
+begin
+	// Joystick #1
+	if (Nr = 1) then
+	begin
+		Asm("
+				ld  A,[TVC_KeyCode]
+				ld  C,A				// C = KeyCode
+				ld	A,($0B59)	// A = Line #8 of Keyboard Matrix -> Joystick #2
+				and	C
+				ret z					// if A = 0 then return with 0 (FALSE)
+				ld  A,1				// set return value to 1 (TRUE)
+				");
+	end
+	else
+	// Joystick #2
+	if (Nr = 2) then
+	begin
+		Asm("
+				ld  A,[TVC_KeyCode]
+				ld  C,A				// C = KeyCode
+				ld	A,($0B5A)	// A = Line #9 of Keyboard Matrix -> Joystick #2
+				and	C
+				ret z					// if A = 0 then return with 0 (FALSE)
+				ld  A,1				// set return value to 1 (TRUE)
+				");
+	end;
+end;
+
+
+/*================================================
+		            H E L P E R S
+=================================================*/
+
+
+/**
+Input value from a hardware port<br/> 
+<br/>
+Params:
+<ul>
+<li>PortNr: the hardware port number (0 - 255)</li>
+</ul>
+<br/>
+Example: Value := TVC::In(0);<br/>
+<br/>
+**/
+function In(PortNr : global byte) : byte;
+begin
+	Asm("
+			ld 	A,[TVC_PortNr]
+			ld  C,A
+			in	A,(C)
+			ret
+			");
+end;
+
+
+/**
+Output a value to a hardware port<br/> 
+<br/>
+Params:
+<ul>
+<li>PortNr: the hardware port number (0 - 255)</li>
+<li>Value: the value to send to the port (0 - 255)</li>
+</ul>
+<br/>
+Example: TVC::Out(0, 130);<br/>
+<br/>
+**/
+procedure Out(PortNr, Value : global byte);
+begin
+	Asm("
+			ld 	A,[TVC_PortNr]
+			ld  C,A
+			ld 	A,[TVC_Value]
+			out	(C),A
+			");
+end;
+
+
+/**
+Get random number between 0-255<br/>
+**/
+function Rnd() : byte;
+begin
+	Asm("
+			ld 	A,R
+			");
+end;
+
+
+
+/**
+Waiting for param DelayTicks * 20 ms<br/> 
+The accurate value: 20.096 ms - the default Raster-interrupt frequency<br/>
+<br/>
+Example: TVC::Delay(10);<br/>
+<br/>
+WARNING! The delay duration changes by the Sound-interrupt frequency when Sound-interrupt is set.
+**/
+procedure Delay(DelayTicks : global integer);
+begin
+	counter := 0;
+	while (counter < DelayTicks) do
+	begin
+		WaitForSync(); // waiting for Raster-interrupt
+		inc (counter);
+	end;
+end;
+
+
+/**
+Convert an integer to a string<br/> 
+The result is placed in the NumStr variable.
+<br/>
+Example: TVC::IntToStr(Number);<br/>
+TVC::Write(#TVC_NumStr);<br/>
+**/
+procedure IntToStr(X1 : global integer);
+begin	
+	for len := 0 to 5 do
+	  NumStr[len] := 0;	  
+	len := 0;
+	Y1 := 10000;
+	if (X1 >= Y1) then
+	begin				
+		X := 0;
+		while (X1 >= Y1) do
+		begin
+			X1 -= Y1;
+			inc (X);
+		end;
+		NumStr[len] := 48 + X;
+		Inc(len);
+	end;
+	Y1 := 1000;
+	if (X1 >= Y1) then
+	begin				
+		X := 0;
+		while (X1 >= Y1) do
+		begin
+			X1 -= Y1;
+			inc (X);
+		end;
+		NumStr[len] := 48 + X;
+		Inc(len);
+	end
+	else
+	begin
+		if (len > 0) then
+		begin
+			NumStr[len] := 48; // ASCII "0"
+			Inc(len);
+		end;
+	end;
+	Y1 := 100;
+	if (X1 >= Y1) then
+	begin				
+		X := 0;
+		while (X1 >= Y1) do
+		begin
+			X1 -= Y1;
+			inc (X);
+		end;
+		NumStr[len] := 48 + X;
+		Inc(len);
+	end
+	else
+	begin
+		if (len > 0) then
+		begin
+			NumStr[len] := 48; // ASCII "0"
+			Inc(len);
+		end;
+	end;
+	Y1 := 10;
+	if (X1 >= Y1) then
+	begin				
+		X := 0;
+		while (X1 >= Y1) do
+		begin
+			X1 -= Y1;
+			inc (X);
+		end;
+		NumStr[len] := 48 + X;
+		Inc(len);
+	end
+	else
+	begin
+		if (len > 0) then
+		begin
+			NumStr[len] := 48; // ASCII "0"
+			Inc(len);
+		end;
+	end;
+	X := X1;
+	NumStr[len] := 48 + X;
+end;
+
+
+/**
+Convert a byte to a string<br/> 
+The result is placed in the NumStr variable.
+<br/>
+Example: TVC::IntToStr(Number);<br/>
+TVC::Write(#TVC_NumStr);<br/>
+**/
+procedure ByteToStr(Nr : global byte);
+begin	
+	for len := 0 to 3 do
+	  NumStr[len] := 0;
+	len := 0;
+	if (Nr >= 100) then
+	begin
+		X := 0;
+		while (Nr >= 100) do
+		begin
+			Nr := Nr - 100;	
+			Inc (X);
+		end;
+		NumStr[len] := 48 + X;
+		Inc(len);
+		if (Nr < 10) then
+		begin
+			NumStr[len] := 48; // ASCII "0"
+			Inc(len);
+		end;	
+	end;
+	if (Nr >= 10) then
+	begin
+		X := 0;
+		while (Nr >= 10) do
+		begin
+			Nr := Nr - 10;	
+			Inc (X);
+		end;
+		NumStr[len] := 48 + X;
+		Inc(len);
+	end;
+	NumStr[len] := 48 + Nr;
+end;
+
+
+function Odd (Nr : global byte) : boolean;
+begin
+	Asm("
+	    ld  A,[TVC_Nr]
+	    and 1
+			");
+end;
+
+
+/*================================================
+		            S O U N D 		
+=================================================*/
+
+/**
+Sets sound volume to specified value<br/>
+Params:<br/>
+Volume: 0 - 15<br/>
+<br/>
+Example: TVC::Volume(15);<br/>
+**/
+procedure Volume(SoundVolume : global byte);
+begin
+	/*
+	if (SoundVolume > 15) then
+		SoundVolume := 15;
+	*/
+	Asm("
+			ld A,[TVC_SoundVolume]					// A = Volume
+			sla	A														// shift left volume bits
+			sla	A														// shift left again
+			ld	E,A													// E = shifted volume bits
+			ld	A,(TVC_PORT_6_MEM_MIRROR)		// A = port #6 memory mirror
+			and	128+64+2+1									// clear bit #2 - #5 in A register
+			or	E														// set volume to A register bits #2 - #5
+			ld	(TVC_PORT_6_MEM_MIRROR),A		// set value to port #6 mirror
+			out	(TVC_SOUND_VOLUME_PORT),A		// send value to port #6
+	");
+end;
+
+
+/**
+Firmware sound sign initialization.<br/>
+<br/>
+Example: TVC::SoundOn();<br/>
+<br/>
+Not necessary to use before calls Sound or SoundEx procedures.<br/>
+You are only used if you have previously called SoundOff and want to turn the sound on again.
+**/
+procedure SoundOn();
+begin
+	Asm("
+			ld	A,(TVC_PORT_5_MEM_MIRROR)
+			and	128+64											// clear low 6 bits
+			or	16													// set bit #4 - sound sign enabled
+			ld	(TVC_PORT_5_MEM_MIRROR),A		// set new value to system variable
+			out	(TVC_SOUND_HI_PORT),A				// send new value to port #5
+	");
+	Volume(15);
+	soundIsOn := true;
+end;
+
+
+/**
+Disable firmware sound sign.<br/>
+<br/>
+Example: TVC::SoundOff();<br/>
+**/
+procedure SoundOff();
+begin
+	Asm("
+			xor	A													// A = 0
+		  out	(TVC_SOUND_LO_PORT),A			// send value to port (clear PITCH lower 8 bits)
+			ld	A,(TVC_PORT_5_MEM_MIRROR)
+			and	128+64										// clear low 6 bits (#0-#3: PITCH high 4 bits; #4:SOUND IT, #5:SOUND SIGN)
+			out	(TVC_SOUND_HI_PORT),A			// send new value to port -> disable SOUND-IT, disable SOUND-SIGN, and clear PITCH high 4 bits
+	");
+	soundIsOn := false;
+end;
+
+
+/**
+Plays the sound specified in Pitch param.<br/>
+Params:
+<ul>
+<li>Pitch (sound value): 0 - 4095 (4095: silent)</li>
+</ul>
+<br/>
+Example: TVC::Sound(3677);<br/>
+<br/>
+The sound plays until calls NoSound() procedure.<br/>
+Calculation sound Hz: 195312.5 / (4096 - Pitch)<br/>
+For example, the octave 4, #A sound (466.16 Hz) value is $E5D (decimal: 3677)<br/>
+**/
+procedure Sound(Pitch : global integer);
+begin
+	if (Pitch > 4095) then
+		Pitch := 4095;
+	if (not soundIsOn) then
+		SoundOn();
+	Asm("
+			ld	HL,[TVC_Pitch]
+			ld	A,L												// A = pitch low byte
+			out	(TVC_SOUND_LO_PORT),A			// send pitch low byte to port #4
+			ld	A,(TVC_PORT_5_MEM_MIRROR)
+			and	128+64+32+16							// clear low 4 bits
+			or	H													// set pitch high 4 bits
+			out	(TVC_SOUND_HI_PORT),A			// send pitch 4 bits to port #5
+	");
+end;
+
+
+/**
+Play sound for a specified duration and volume.<br/>
+Params:
+<ul>
+<li>Pitch (sound value): 0 - 4095 (4095: silent)</li>
+<li>Duration: in 20 ms; values: 1-255</li>
+<li>Volume: 0 - 15 (0: silent)</li>
+</ul>
+<br/>
+Example: TVC::SoundEx(3377, 10, 15);<br/>
+<br/>
+Calculation sound Hz -> 195312.5 / (4096 - sound value)<br/>
+For example, the octave 4, #A sound (466.16 Hz) value is $E5D (decimal: 3677)<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure SoundEx(Pitch : global integer, Duration, SoundVolume : global byte);
+begin
+	if (Pitch > 4095) then
+		Pitch := 4095;
+	Asm("
+			ld	DE,[TVC_Pitch]			// DE = sound value (PITCH)
+			ld	A,[TVC_Duration]
+			ld 	B,A									// B = duration
+			ld	A,[TVC_SoundVolume]
+			ld 	C,A									// C = volumen		
+			rst $30 								// system call
+			db $33 									// TONE_SET function code
+	");
+end;
+
+
+/**
+Stops the currently played sound.
+**/
+procedure NoSound();
+begin
+	Asm("
+			ld	HL,4095										// silent value
+			ld	A,L												// A = pitch low byte
+			out	(TVC_SOUND_LO_PORT),A			// send pitch low byte to port #4
+			ld	A,(TVC_PORT_5_MEM_MIRROR)
+			and	128+64+32+16							// clear low 4 bits
+			or	H													// set pitch high 4 bits
+			out	(TVC_SOUND_HI_PORT),A			// send pitch 4 bits to port #5
+	");
+end;
+
+
+/*================================================
+		File I/O sytem ROM functions
+=================================================*/
+
+/**
+Create file or open file for writing<br/>
+Params:
+<ul>
+<li>FileName: name of the file (max length: 16 chars)</li>
+</ul>
+<br/>
+Example: CreateFile("NewFile.txt");<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure CreateFile(FileName : global ^byte);
+begin
+  // file create
+	asm("
+			xor	A													// A := 0
+			ld	(TVC_FILE_BUFFER_TYPE),A  // BUFFER_TYPE := 0 (non buffered)
+			ld  DE,[TVC_FileName]
+			rst $30 											// system function call
+			db  $53 											// CAS_CRTE function code
+			");
+end;
+
+
+
+/**
+Open file for reading<br/>
+Params:
+<ul>
+<li>FileName: name of the file (max length: 16 chars)</li>
+</ul>
+Result:
+<ul>
+<li>true: success</li>
+<li>false: failed</li>
+</ul>
+<br/>
+Example: OpenFile("Picture.bin");<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+function OpenFile(FileName : global ^byte) : boolean;
+begin
+	asm("
+			ld	A,123
+			ld (TVC_FILE_BUFFER_TYPE),A // BUFFER_TYPE := 123 (random value)
+			ld  DE,[TVC_FileName]
+			rst $30 										// system function call
+			db  $D3 										// CAS_OPEN function code		
+			// Check BUFFER_TYPE system variable
+			// if the file open is successful then BUFFER_TYPE set to 0 (not buffered) or 17 (buffered) or 255 (buffered)
+			ld  A,(TVC_FILE_BUFFER_TYPE)
+			cp  123											// BUFFER_TYPE = 1?
+			jp  nz,file_open_success		// if BUFFER_TYPE <> 1 then jump to true result
+			xor A												// A := 0 (False) -> False result
+			ret													// return to the caller
+	file_open_success:
+			ld A,1											// True result
+			");
+end;
+
+
+/**
+Close file<br/>
+<br/>
+Example: CloseFile();<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+procedure CloseFile();
+begin
+  // file create
+	asm("
+			rst $30 									// system function call
+			db  $54 									// CAS_CLOSE function code
+			");
+end;
+
+
+/**
+Read a byte from the opened file<br/>
+<br/>
+Example: DataByte := ReadByte();<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+function ByteRead() : byte;
+begin
+	asm("
+			rst $30		// system function call
+			db  $D1 	// CAS_CHIN function code
+			ld 	A,C		// A := readed byte
+			ret			
+			");
+end;
+
+
+/**
+Read a data block from file<br/>
+Params:
+<ul>
+<li>BlockData: 	 buffer for reading data</li>
+<li>BlockLength: number of bytes to read</li>
+</ul>
+Result:
+<ul>
+<li>0: success</li>
+<li>otherwise: the number of bytes not readed from the file, in case of any error</li>
+</ul>
+<br/>
+Example: BlockRead(#Data, 16384);<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+function BlockRead(BlockData : global ^byte; BlockLength : global integer) : integer;
+begin
+	asm("
+			ld  DE,[TVC_BlockData]
+			ld  BC,[TVC_BlockLength]		
+			rst $30		// system function call
+			db  $D2 	// CAS_BKIN function code
+			ld  H,B
+			ld  L,C		// HL = result = the number of bytes not readed from the file, in case of error
+			");
+end;
+
+
+/**
+Write a data block to created file<br/>
+Params:
+<ul>
+<li>BlockData: 	 data address</li>
+<li>BlockLength: number of bytes to write</li>
+</ul>
+Result:
+<ul>
+<li>0: success</li>
+<li>otherwise: the number of bytes not written to the file, in case of any error</li>
+</ul>
+<br/>
+Example: BlockWrite(#Data, 16384);<br/>
+<br/>
+ATTENTION! It can only be called once to write the data to a file; it is impossible to save the data in several parts with several calls.<br/>
+<br/>
+Uses the System ROM (firmware) function.
+**/
+function BlockWrite(BlockData : global ^byte; BlockLength : global integer) : integer;
+begin
+	asm("
+			ld  DE,[TVC_BlockData]
+			ld  BC,[TVC_BlockLength]
+			rst $30		// system function call
+			db  $52 	// CAS_BKOUT function code
+			ld  H,B
+			ld  L,C		// HL = result = the number of bytes not written to the file, in case of error
+			");
+end;
+
+
+end.

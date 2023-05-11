@@ -1,0 +1,282 @@
+program SpriteDemo;
+/*==================================================================
+Sprite Demo with Game Engine unit
+for VIDEOTON TV-Computer
+
+Author:  Bery (Zsolt Bertók)
+Version: April 21, 2023.
+==================================================================*/
+
+@use "GE" // Game Engine unit
+
+var  
+	/* Image bitmaps */
+	WallBmp1      		  	: incbin("resources/images/Wall1.bin");
+	WallBmp2      		  	: incbin("resources/images/Wall2.bin");	
+	/* Sprites data */
+	FanAnim       		  	: incbin("resources/images/FanAnim.bin");
+  RunRightAnim	        : incbin("resources/images/RunRightAnim.bin");  
+  RunLeftAnim	          : incbin("resources/images/RunLeftAnim.bin");
+  R2D2SpriteData   			: incbin("resources/images/R2D2.bin");
+  BallSpriteData   			: incbin("resources/images/MetalBall.bin");
+  /* character set */
+  CharSet               : incbin("resources/images/CharSet.bin"); /* ASCII 32-90 characters (SPACE to Z); 118 bytes * 6 lines; 1 char width: 2 bytes, height: 6 pixel */
+  /* Info text */
+  InfoText1             : string = ("TVC GAME ENGINE");
+  InfoText2             : string = ("FOR TRSE PASCAL");
+  InfoText3             : string = ("SPRITE DEMO");
+  InfoText4             : string = ("MOVE THE RUNNER: JOY ", 76, "EFT", "-", 82, "IGHT");
+  /* Consts */
+  const P_MOVE_DELAY		: byte = 1;
+  const LEFT      			: byte = 1;
+  const RIGHT     			: byte = 2;
+  const UP        			: byte = 3;
+  const DOWN      			: byte = 4;
+  const BALL_TOP_Y      : byte = 80;
+  const MAX_BALL_VSPEED : byte = 10;
+  /* Images */
+  BackgroundImg1  			: GE::Image;
+  BackgroundImg2  			: GE::Image;  
+  /* Sprites */
+  FanAnimSpr            : GE::Sprite;
+  RunnerSpr       			: GE::Sprite;  
+  R2D2Spr         			: GE::Sprite;
+  R2D2Spr2        			: GE::Sprite;
+  BallSpr             	: GE::Sprite;
+  BallSpr2             	: GE::Sprite;
+  /* other variables */
+  BallVDir            	: byte;
+  BallYSpeed						: byte = 0;  
+  PlayerMoveDelay 			: byte;
+  i, x, y, Speed   			: byte;
+  
+  
+  procedure Init;
+  begin
+	  Speed := 1;	  
+	  GE::SetGraphics(GE::GRAPHICS16);	  
+	  GE::SetBorder(GE::BORDER_DARKBLUE);
+	  /* Init CharSet */
+	  GE::CharSetPtr := #CharSet;
+	  GE::CharSetImgWidth := 118;
+	  GE::CharSetHeight := 6;
+	  /* Write info text */
+	  GE::WriteText(17,  5, #InfoText1);
+	  GE::WriteText(17, 20, #InfoText2);
+	  GE::WriteText(21, 35, #InfoText3);
+	  GE::WriteText( 1, 60, #InfoText4);
+	  /* Draw background */	  
+	  BackgroundImg1.Init(#WallBmp1, 8, 33);	
+	  BackgroundImg2.Init(#WallBmp2, 8, 33);
+	  y := 67;
+	  x := 0;
+		while (x < 128) dO
+		begin
+			BackgroundImg1.Y := y;
+			BackgroundImg1.X := x;
+			BackgroundImg1.Put;
+			x := x + 8;
+		end;
+	  y := 100;	  
+	  while (y < 200) do
+	  begin
+		  x := 0;
+			while (x < 128) dO
+			begin
+				BackgroundImg1.Y := y;
+				BackgroundImg1.X := x;
+				BackgroundImg1.Put;
+				BackgroundImg2.Y := y+33;
+				BackgroundImg2.X := x;
+				BackgroundImg2.Put;
+				x := x + 8;
+			end;
+			y := y + 66;
+		end;
+		/* Init sprites */
+		R2D2Spr.Init(#R2D2SpriteData, 10, 198, True);
+		R2D2Spr.Direction := RIGHT;
+		R2D2Spr.SaveBackground;		
+		R2D2Spr.Put();
+		
+		R2D2Spr2.Init(#R2D2SpriteData, 60, 132, True);	
+		R2D2Spr2.Direction := LEFT;
+		R2D2Spr2.SaveBackground;
+    
+		BallSpr.Init(#BallSpriteData, 20, BALL_TOP_Y, True);	
+		BallSpr.Direction := RIGHT;
+		BallSpr.SaveBackground;
+		BallVDir := DOWN;
+		
+		BallSpr2.Init(#BallSpriteData, 50, BALL_TOP_Y, True);	
+		BallSpr2.Direction := LEFT;
+		BallSpr2.SaveBackground;		
+    
+		RunnerSpr.Init(#RunRightAnim, 10, 133, True);
+		RunnerSpr.InitAnimation(6, 1);
+		RunnerSpr.Direction := RIGHT;		
+		RunnerSpr.SaveBackground;
+		
+		FanAnimSpr.Init(#FanAnim, 48, 170, False);		
+		FanAnimSpr.InitAnimation(4, 3);
+  end; /* Init */
+  
+  
+  procedure RenderSprites;
+  begin
+	  if (GE::ScreenAddr <> GE::BACK_SCREEN_ADDR) then
+		  GE::WaitForSync();
+		GE::RenderAllSprites();
+		if (GE::ScreenAddr = GE::BACK_SCREEN_ADDR) then
+  		GE::CopyAllSpritesToScreen;
+  end; /* RenderSprites */
+  
+  
+  procedure R2D2Movement;
+  begin
+		case R2D2Spr.Direction of
+		  LEFT  : if (R2D2Spr.X > 0) then
+		  					R2D2Spr.MoveLeft()
+		  			  else
+		  			    R2D2Spr.Direction := RIGHT;
+      RIGHT : if (R2D2Spr.X < 61) then
+		  					R2D2Spr.MoveRight()
+		  			  else
+		  			    R2D2Spr.Direction := LEFT;
+		end;
+		case R2D2Spr2.Direction of
+		  LEFT  : if (R2D2Spr2.X > 0) then
+		  					R2D2Spr2.MoveLeft()
+		  			  else
+		  			    R2D2Spr2.Direction := RIGHT;
+      RIGHT : if (R2D2Spr2.X < 61) then
+		  					R2D2Spr2.MoveRight()
+		  			  else
+		  			    R2D2Spr2.Direction := LEFT;
+		end;
+  end; /* R2D2Movement */
+  
+  
+  procedure BallMovement;
+  begin
+	  /* Vertical movement */
+	  if (BallVDir = DOWN) then
+	  begin
+		  BallSpr.Y := BallSpr.Y + BallYSpeed;
+		  if (BallSpr.Y >= 134) then
+			  BallVDir := UP
+		  else
+		  begin
+			  if (BallYSpeed < MAX_BALL_VSPEED) then
+			    Inc (BallYSpeed);
+		  end;
+	  end
+	  else 
+	  begin
+		  /* BallVDir = UP */
+		  BallSpr.Y := BallSpr.Y - BallYSpeed;
+		  if (BallSpr.Y < BALL_TOP_Y) then
+			  BallVDir := DOWN
+		  else
+		  begin
+			  if (BallYSpeed > 0) then
+			    Dec (BallYSpeed)
+			  else
+			    BallVDir := DOWN;
+		  end;
+	  end;
+	  BallSpr2.Y := BallSpr.Y;
+	  /* Horizontal movement */
+	  /* Ball #1 */
+	  if (BallSpr.Direction = RIGHT) then
+	  begin
+		  if (BallSpr.X < 60) then
+		    Inc (BallSpr.X)
+		  else
+		    BallSpr.Direction := LEFT;
+		end
+		else
+		begin
+			if (BallSpr.X > 00) then
+		    Dec (BallSpr.X)
+		  else
+		    BallSpr.Direction := RIGHT;
+	  end;
+	  BallSpr.SetPosition;
+	  /* Ball #2 */
+	  if (BallSpr2.Direction = RIGHT) then
+	  begin
+		  if (BallSpr2.X < 60) then
+		    Inc (BallSpr2.X)
+		  else
+		    BallSpr2.Direction := LEFT;
+		end
+		else
+		begin
+			if (BallSpr2.X > 00) then
+		    Dec (BallSpr2.X)
+		  else
+		    BallSpr2.Direction := RIGHT;
+	  end;
+	  BallSpr2.SetPosition;
+  end; /* BallMovement */
+  
+  
+  procedure RunnerControl;
+  begin
+		if (PlayerMoveDelay > 0) then
+			Dec (PlayerMoveDelay)
+		else
+		begin
+			GE::GetJoysticks();
+			if ((RunnerSpr.X < 60) and GE::Joystick(1, GE::JOY_RIGHT)) then
+			begin
+				PlayerMoveDelay := P_MOVE_DELAY;
+				RunnerSpr.MoveRight;
+				if (RunnerSpr.Direction <> RIGHT) then
+				begin
+					RunnerSpr.Direction   := RIGHT;
+					RunnerSpr.AnimSet     := #RunRightAnim+3; // +3 -> skip sprite type, width and height bytes
+					RunnerSpr.AnimPhaseNr := 1;
+				end;
+				RunnerSpr.Animation();
+			end;
+			if ((RunnerSpr.X > 0) and GE::Joystick(1, GE::JOY_LEFT)) then		
+			begin
+				PlayerMoveDelay := P_MOVE_DELAY;
+				RunnerSpr.MoveLeft;
+				if (RunnerSpr.Direction <> LEFT) then
+				begin
+					RunnerSpr.Direction   := LEFT;
+					RunnerSpr.AnimSet     := #RunLeftAnim+3; // +3 -> skip sprite type, width and height bytes
+					RunnerSpr.AnimPhaseNr := 1;
+				end;
+				RunnerSpr.Animation();
+			end;
+		end;
+  end; /* RunnerControl */		
+  
+
+begin
+	/*
+	GE::Init(GE::DIRECT_TO_SCREEN);
+	GE::Init(GE::USE_BACK_SCREEN);
+	*/
+	GE::Init(GE::DIRECT_TO_SCREEN);
+	if (GE::ScreenAddr <> GE::BACK_SCREEN_ADDR) then
+	begin
+		GE::SetMemory(GE::MEM_VID_ON);
+		GE::SetRasterInterruptPos(160);
+	end;
+	Init;
+	if (GE::ScreenAddr = GE::BACK_SCREEN_ADDR) then
+		GE::CopyBackScreenToScreen;
+	while (True) do
+	begin
+		FanAnimSpr.Animation;
+		R2D2Movement;
+		BallMovement;
+		RunnerControl;
+		RenderSprites;		
+	end;
+end.

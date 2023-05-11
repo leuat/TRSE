@@ -1,0 +1,339 @@
+program Tutorial_TVC;
+/*==================================================================
+This tutorial presents the TVC unit.
+
+The TVC unit uses the VIDEOTON TV-Computer system ROM routines 
+and some helper functions coded in Assembly.
+
+Author:  Bery (Zsolt Bertók)
+Version: 22 February 2023.
+==================================================================*/
+@use "tvc"
+
+var	
+	TVComputerStr : string = "TV-COMPUTER";
+	PascalStr			: string = "PASCAL";
+	TRSEStr				: string = "TRSE";
+	i 						: integer;
+	y 						: byte;
+	xPos 					: integer;
+	yPos 					: integer;
+	direction 		: byte = 0;
+	lineX1Pos 		: integer = 512-150 + 4;
+	lineY1Pos 		: integer = 718-150 + 4;
+	lineX2Pos 		: integer = 512+150 - 4;
+	lineY2Pos 		: integer = 718+150 - 4;
+	lineDirection : byte = 1;	
+	lineColor 		: byte = 2;	
+	ColorCodes		: array[16] of byte = (0,1,4,5,16,17,20,21,64,65,68,69,80,81,84,85);
+	ColorIdx 			: byte = 12;
+	// Running man animation phases for character definition data - an animation phase consists of 2 characters (top, bottom)
+	// Runnin left (6 phases)
+	RunL1p1				: array[10] of byte = (0,48,48,48,48,24,60,60,124,124);
+	RunL1p2				: array[10] of byte = (24,24,56,56,120,126,78,66,66,192);
+	RunL2p1 			: array[10] of byte = (96,96,96,96,48,120,120,120,120,48);
+	RunL2p2				: array[10] of byte = (48,48,48,56,60,20,16,16,16,48);
+	RunL3p1 			: array[10] of byte = (96,96,96,96,48,112,112,112,112,48);
+	RunL3p2				: array[10] of byte = (48,48,48,48,48,56,8,8,4,12);
+	RunL4p1				: array[10] of byte = (0,48,48,48,48,16,56,56,56,56);
+	RunL4p2				: array[10] of byte = (56,24,56,120,112,92,92,68,68,192);
+	RunL5p1 			: array[10] of byte = (96,96,96,96,48,112,112,112,112,48);
+	RunL5p2				: array[10] of byte = (48,48,48,48,56,24,24,16,16,48);
+	RunL6p1				: array[10] of byte = (96,96,96,96,48,112,112,112,112,48);
+	RunL6p2				: array[10] of byte = (48,48,112,112,48,24,24,56,4,12);
+	// Runnin right (6 phases)
+	RunR1p1				: array[10] of byte = (0,12,12,12,12,24,60,60,62,62);
+	RunR1p2				: array[10] of byte = (24,24,28,28,30,126,114,66,66,2);
+	RunR2p1				: array[10] of byte = (6,6,6,6,12,30,30,30,30,12);
+	RunR2p2 			: array[10] of byte = (12,12,12,28,60,40,8,8,8,12);
+	RunR3p1				: array[10] of byte = (6,6,6,6,12,14,14,14,14,12);
+	RunR3p2				: array[10] of byte = (12,12,12,12,12,28,16,16,32,48);
+	RunR4p1				: array[10] of byte = (0,12,12,12,12,8,28,28,28,28);
+	RunR4p2 			: array[10] of byte = (28,24,28,30,14,58,58,34,34,2);
+	RunR5p1				: array[10] of byte = (6,6,6,6,12,14,14,14,14,12);
+	RunR5p2				: array[10] of byte = (12,12,12,12,28,24,24,8,8,12);
+	RunR6p1				: array[10] of byte = (6,6,6,6,12,30,30,30,30,12);
+	RunR6p2				: array[10] of byte = (12,12,14,14,12,24,24,28,32,48);	
+	RunDirection	: byte = 2;
+	RunXPos				: byte = 14;
+	RunYPos				: byte = 176;
+	RunFirstChar	: byte = 166;
+	RunDelay		  : byte = 1;
+	const MusicLength : integer = 184;
+	MusicBorder		: boolean = false;
+	MusicPos		  : integer = 0;
+	MusicDuration : byte = 6;
+	MusicDelay		: byte = 6;		
+	MusicPitch    : integer = 4095;
+	MusicVolume   : byte = 15;
+	MusicData			: array [MusicLength] of integer = (3598,4095,4095,4095,4095,4095,3763,3723,3763,4095,4095,4095,3598,4095,4095,4095,3468,4095,4095,4095,4095,4095,3782,3763,3782,4095,
+																										3763,4095,3723,4095,4095,4095,3468,4095,4095,4095,4095,4095,3782,3763,3782,4095,4095,4095,3598,4095,4095,4095,3537,4095,4095,4095,
+																										4095,4095,3723,3677,3723,4095,3677,4095,3652,4095,3723,4095,3598,4095,4095,4095,4095,4095,3763,3723,3763,4095,4095,4095,3598,4095,
+																										4095,4095,3468,4095,4095,4095,4095,4095,3782,3763,3782,4095,3763,4095,3723,4095,4095,4095,3468,4095,4095,4095,4095,4095,3782,3763,
+																										3782,4095,4095,4095,3598,4095,4095,4095,3537,4095,4095,4095,4095,4095,3723,3677,3723,4095,3677,4095,3652,4095,3723,4095,3677,4095,
+																										4095,4095,4095,4095,3652,3677,3723,4095,4095,4095,4095,4095,3677,3723,3763,4095,3723,4095,3677,4095,3652,4095,3598,4095,4095,4095,
+																										3782,4095,4095,4095,3763,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,4095,3431,3782,3763,3723,3763,4095,4095,4095,4095,4095,
+                                                    4095,4095);	
+	
+	procedure InitScreen();
+	begin
+		TVC::SetGraphicsMode(TVC::GRAPHICS4); // set graphic mode
+		TVC::TextBackground(3);
+		TVC::Cls(); // clear the screen
+		TVC::SetBorder(TVC::BORDER_BLUE);
+		TVC::SetPalette(0, TVC::PALETTE_WHITE);
+		// Define characters
+		// Running left animation phases
+		TVC::DefChar(154, #RunL1p1); // User define charater to chr(154) from RunL1p1 data (10 bytes)
+		TVC::DefChar(155, #RunL1p2);
+		TVC::DefChar(156, #RunL2p1);
+		TVC::DefChar(157, #RunL2p2);
+		TVC::DefChar(158, #RunL3p1);
+		TVC::DefChar(159, #RunL3p2);
+		TVC::DefChar(160, #RunL4p1);
+		TVC::DefChar(161, #RunL4p2);
+		TVC::DefChar(162, #RunL5p1);
+		TVC::DefChar(163, #RunL5p2);
+		TVC::DefChar(164, #RunL6p1);
+		TVC::DefChar(165, #RunL6p2);
+		// Running right animation phases
+		TVC::DefChar(166, #RunR1p1);
+		TVC::DefChar(167, #RunR1p2);
+		TVC::DefChar(168, #RunR2p1);
+		TVC::DefChar(169, #RunR2p2);
+		TVC::DefChar(170, #RunR3p1);
+		TVC::DefChar(171, #RunR3p2);
+		TVC::DefChar(172, #RunR4p1);
+		TVC::DefChar(173, #RunR4p2);
+		TVC::DefChar(174, #RunR5p1);
+		TVC::DefChar(175, #RunR5p2);
+		TVC::DefChar(176, #RunR6p1);
+		TVC::DefChar(177, #RunR6p2);
+		// Create 24 images from the 24 redefined characters
+		TVC::CreateCharImage(154, 24, 3, 0); 
+		// draw screen		
+		TVC::SetColor(1);	
+		TVC::WriteAt(6, 1, "TRSE TVC Unit Tutorial"); // write text to character position
+		TVC::SetColor(2);
+		// Draw RASCAL V logo
+		y := 3;
+		for i := 0 to 8 do
+		begin
+   		TVC::WriteAt( 1+i, y, #PascalStr);
+			TVC::WriteAt(27-i, y, "RASCAL");
+			y := y + 2;
+		end;
+		TVC::SetColor(2);
+		TVC::WriteAt(11, y+2, #TVComputerStr);
+		// Footer line
+		TVC::WriteAt(1, 24, #TVComputerStr);
+		TVC::SetColor(0);
+		TVC::WriteAt(13, 24, "ROM routines by");
+		TVC::SetColor(1);
+		TVC::WriteAt(29, 24, #TRSEStr);
+		// Draw rectangles
+		TVC::Rectangle (10, 280, 160, 130);
+		TVC::Rectangle (1023-160, 280, 1023-10, 130);
+		// Fill the rectangles
+		TVC::SetColor(2);
+		TVC::MoveTo(20, 260);  // move pen to specified position
+		TVC::Fill(); // fill area by TextColor
+		TVC::MoveTo(900, 260);
+		TVC::Fill();
+		// filled rectangles (using character position and size in horizontal)
+		TVC::TextBackground(0);
+		TVC::FillRect(25, 34, 14, 50); // fill color specified by TextBackround procedure		
+		// init for text movement
+		TVC::TextBackground(3);
+  	TVC::SetColor(1);	
+		xPos := 440;
+		yPos := 236;
+		TVC::SetRasterInterruptPos(230); // set the raster-interrupt position
+	end; /* InitScreen */
+	
+	
+	procedure RunAnimation();
+	begin
+		Dec(RunDelay);
+		if (RunDelay = 0) then
+		begin
+		  RunDelay := 2;
+			RunFirstChar := RunFirstChar + 2;		
+			if (RunDirection = 1) then
+			begin
+				// Running left			
+				if (RunFirstChar > 164) then
+					RunFirstChar := 154;	
+				RunXPos := RunXPos - 1;
+				if (RunXPos <= 14) then
+				begin
+					RunDirection := 2;
+					RunFirstChar := 166;
+				end;
+			end
+			else
+			begin
+				// Running right
+				if (RunFirstChar > 176) then
+					RunFirstChar := 166;
+				RunXPos := RunXPos + 1;
+				if (RunXPos >= 47) then
+				begin
+					RunDirection := 1;
+					RunFirstChar := 154;
+				end;
+			end;
+			// Put running man
+			TVC::WaitForSync();
+			TVC::PutCharImage(RunXPos, RunYPos, RunFirstChar, 1);
+			TVC::PutCharImage(RunXPos, RunYPos+10, RunFirstChar+1, 1);
+			// clear running man previous position
+			if (RunDirection = 1) then 
+				TVC::FillRect(RunXPos+2, RunYPos, 1, 20)
+			else
+				TVC::FillRect(RunXPos-1, RunYPos, 1, 20);
+		end
+		else
+			TVC::WaitForSync();
+	end; /* RunAnimation */
+		
+	
+	procedure PlayMusic();
+	begin
+		Dec(MusicDelay);
+		if (MusicDelay = 0) then
+		begin
+			MusicDelay := MusicDuration;
+      MusicPitch := MusicData[MusicPos]; // next note of music			
+      if (MusicPitch <> TVC::SILENT_SOUND) then
+      begin
+	      MusicVolume := TVC::MAX_VOLUME;
+			  TVC::Volume(MusicVolume);
+      end;
+			TVC::Sound(MusicPitch); // Play note			
+			if (MusicBorder) then
+			begin
+				// blinking border by music
+				if (MusicData[MusicPos] <> TVC::SILENT_SOUND) then
+					TVC::SetBorder(TVC::BORDER_DARKBLUE)
+				else
+					TVC::SetBorder(TVC::BORDER_BLUE);
+			end;
+			inc (MusicPos);
+			if (MusicPos >= MusicLength) then
+				MusicPos := 0;
+		end
+		else
+		begin
+			if (MusicPitch <> TVC::SILENT_SOUND) then
+			begin
+				MusicVolume := MusicVolume - 2; 
+				TVC::Volume(MusicVolume);
+			end;
+		end;
+		// Joystick
+		if (TVC::Joystick(1, TVC::JOY_LEFT)) then
+		begin
+			// switch off the border blinking
+			MusicBorder := False;
+			TVC::SetBorder(TVC::BORDER_BLUE)
+		end;
+				if (TVC::Joystick(1, TVC::JOY_RIGHT)) then
+		begin
+			// switch on the border blinking
+			MusicBorder := True;
+		end;
+		if (RunDelay = 1) then
+		begin
+			// Set music duration
+			if (TVC::Joystick(1, TVC::JOY_UP)) then
+			begin
+				if (MusicDuration < 8) then
+					Inc(MusicDuration);
+				while (TVC::Joystick(1, TVC::JOY_UP)) do
+				  TVC::Delay(1);
+			end;
+			if (TVC::Joystick(1, TVC::JOY_DOWN)) then
+			begin
+				if (MusicDuration > 2) then
+					Dec(MusicDuration);
+				while (TVC::Joystick(1, TVC::JOY_DOWN)) do
+				  TVC::Delay(1);
+			end;
+		end;
+	end; /* PlayMusic */
+	
+	
+	procedure ChangeLineColor();
+	begin
+		inc (lineColor);
+		if (lineColor > 3) then
+			lineColor := 1;
+		inc (ColorIdx);
+		if (ColorIdx = 8) then
+		  ColorIdx := 11;
+		if (ColorIdx > 15) then
+		  ColorIdx := 5;
+		TVC::SetPalette(1, ColorCodes[ColorIdx]);
+	end; /* ChangeLineColor */
+	
+	
+	procedure LineAnimation();
+	begin		
+		case (lineDirection) of
+			 1: begin	
+				 		// move right
+			 			lineX1Pos := lineX1Pos - 4;
+			 			lineX2Pos := lineX2Pos + 4;
+			 			if (lineX2Pos >= 512+150) then
+			 			begin
+			 				lineDirection := 2;
+							ChangeLineColor();
+			 		  end;
+					end;	
+			2: begin	
+				 		// move down
+			 			lineY1Pos := lineY1Pos + 4;
+			 			lineY2Pos := lineY2Pos - 4;
+			 			if (lineY1Pos >= 718+150) then
+			 			begin
+			 				lineDirection := 3;
+			 				ChangeLineColor();
+			 		  end;			 				
+					end;
+			3: begin	
+				 		// move left
+			 			lineX1Pos := lineX1Pos + 4;
+			 			lineX2Pos := lineX2Pos - 4;
+			 			if (lineX1Pos >= 512+150) then
+			 			begin
+			 				lineDirection := 4;
+			 				ChangeLineColor();
+			 		  end;
+					end;	
+			4: begin	
+				 		// move up
+			 			lineY1Pos := lineY1Pos - 4;
+			 			lineY2Pos := lineY2Pos + 4;
+			 			if (lineY2Pos >= 718+150) then
+			 			begin
+			 				lineDirection := 1;
+			 				ChangeLineColor();
+			 		  end;
+					end;	
+		end; // case
+		TVC::SetLineMode(TVC::LINE_MODE_XOR);
+		TVC::SetColor(lineColor);	
+		TVC::Line(lineX1Pos, lineY1Pos, lineX2Pos, lineY2Pos);			
+	end; /* LineAnimation */
+	
+	
+begin
+	InitScreen();
+	while (true) do // infinity loop
+	begin
+		RunAnimation();
+		LineAnimation();		
+		PlayMusic();
+	end;
+end.
