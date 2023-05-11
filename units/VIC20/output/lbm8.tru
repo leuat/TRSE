@@ -600,4 +600,153 @@ end;
 
 
 
+
+
+
+
+/**
+<p>Draw a Tall LBM8 sprite to the screen using the code generated data (see @vbmCompileChunk) 
+<ul>
+<li>pa - the character number to start rendering a sprite to. See notes.
+<li>x  - the horizontal position in pixels to display the sprite
+<li>y  - the vertical position in pixels to display the sprite
+<li>sp - the generated sprite lookup table. See notes.
+</ul>
+<h3>Example</h3>
+<p>lbm8::DrawTAt( 0, xp, yp, #MySprite );
+<h3>Notes</h3>
+<p>The number of characters required to render a sprite depends upon how 
+the sprite will move across the screen. 
+<ul>
+<li>If it is free moving in all directions you will need to reserve 
+6 characters to render the tall sprite.</li>  
+<li>If you limit the sprite to only move on one axis (x or y) and the 
+other axis is aligned completely to a character cell 
+then you will only need to reserve 3 characters to render the sprite moving vertically, 
+or need to reserve 4 characters to render the sprite moving horizontally. 
+Think of pac-man style of movement, where it can move up and down, or left and right, 
+but one axis is always fixed in position due to the shape of the maze. 
+IE: pac-man cannot move in diagonals.
+</li>
+</ul>
+<p>Use @DEFINE BGBUFFERS [number] to set the number of buffers you need
+<p>The generated sprite lookup table tells the routine where to find each of the 
+8 pre-shifted sprite procedures.
+
+**/
+procedure DrawTCAt( pa, x, y: global byte, sp: global integer);
+begin
+	
+	xo := (x & $07) << 2;	// X offset 0-7 but require * 4 for integer lookup
+	yo := y & 7;			// Y offset 0-7
+	
+	xc := x >> 3;			// X character position on screen
+	yc := y >> 3;			// Y character position on screen
+
+	fori j := 0 to 1 do // up to two columns for an 8x8 sprite (left and right)
+	begin
+	
+		// if first column (left) or x offset crossing over to right column
+		if (j = 0 or xo <> 0) then
+		begin
+			
+			char := pa; // Save sprite starting character for later
+			
+			// set screen memory address to x and y character coordinates
+			screenmemory := Scr[ yc ] + xc + j;
+
+			_AddBG();					// save BG character that sprite will replace char stored in x			
+			screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+			d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+			_RenderBG();
+			
+			pa += 1;					// next char
+
+
+			// next char down				
+			screenmemory += @SCREENWIDTH; // y offset is not 0, so need another char below
+			
+			_AddBG();					// save BG character that sprite will replace char stored in x		
+			screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+			d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+			_RenderBG( );
+
+			pa += 1; 					// next char
+
+						
+			if (yo <> 0 ) then
+			begin
+				
+				screenmemory += @SCREENWIDTH; // y offset is not 0, so need another char below
+				
+				_AddBG();					// save BG character that sprite will replace char stored in x		
+				screenmemory[ 0 ] := pa;	// put character used to display sprite on screen
+
+				d := Chr[ pa ];				// copy the BG chars bitmap to the sprite char
+				_RenderBG( );
+
+				pa += 1; 					// next char
+		
+			end;
+		
+		end;
+
+
+
+		// render the sprite bitmap into the sprite character(s)
+		// this will do if first column or x offset is not zero (second column)
+		if (j = 0 or xo <> 0) then
+		begin
+
+			d := sp;					// address of sprite pre-shift lookup table
+			
+			asm ; Find address of left side of pre-shifted sprite from lookup table
+			
+			lda lbm8_j
+			beq lbmT8_leftSide
+			
+			lda lbm8_xo ; xo is already * by 4
+			clc
+			adc #2	;; add 2 to get right side
+			bcc lbmT8_rightSide 
+			
+lbmT8_leftSide
+			lda lbm8_xo ; xo is already * by 4
+lbmT8_rightSide
+	
+			tay
+			
+			; change the jsr addresss (self modify)
+			lda (lbm8_d),y
+			sta lbmT8_callSprite+1
+	
+			iny
+			
+			lda (lbm8_d),y 
+			sta lbmT8_callSprite+2
+	
+			end;
+			
+			d := Chr[ char ] + yo;		// address of sprite character to write to
+	
+			// call sprite code here
+			asm ; jump
+			
+lbmT8_callSprite jsr lbmT8_dummy
+			
+			end;
+			
+			
+		end;
+
+	end;
+		
+	asm ; used as a dummy label reference for sprite calling routine
+lbmT8_dummy	
+	end;
+
+end;
+
 end.

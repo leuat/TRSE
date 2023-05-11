@@ -1016,55 +1016,57 @@ void MultiColorImage::VBMCompileChunk(QTextStream &f, QString procName, QString 
 
                     // don't add character data of 0 because when drawing sprite
                     if (val != 0){
-                        d[nextLine].pos = j+i; d[nextLine].val = val; // this will be sorted on char value
+                        d[nextLine].pos = (j*8)+i; d[nextLine].val = val; // this will be sorted on char value
                         nextLine++;
                     }
 
                 }
                 pos += m_charWidthDisplay;
-
-                // generate procedure
-
-                f<<"@donotremove "+ procName+"_"+QString::number(i) +"\n";
-                f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
-                f<<"begin\n    asm ; draw "+ QString::number(nextLine) +" lines\n\n";
-
-                int lpos = -1; // used to store last y position in sprite drawing (what line to draw to)
-
-                // process unique data
-                for (int k = 0; k <nextLine; k++){
-
-                    int p = d[k].pos;
-
-                    f << "; row "+QString::number(p) + "\n";
-
-                    if ( lpos == -1 )
-                        f<< "    ldy #" + QString::number(p) + " ; start of data\n";
-                    else if ( p == lpos+1 )
-                        f<< "    iny ; next\n";
-                    else
-                        f<< "    ldy #" + QString::number(p) + "; skip ahead\n";
-
-                    f<< "    lda #"+Util::numToHex( d[k].val ) + "\n";
-                    if (asmOperation != "") f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
-                    f<< "    sta ("+ pointerName +"),y\n";
-
-                    lpos = p;
-
-                }
-                f<<"\n";
-
-                f<<"    end; // asm\nend;\n\n";
-
-                /*
-                 // debug - all values from u
-                for (int k = 0; k <nextLine; k++){
-                        f<< "pos "+ QString::number(d[k].pos) +" char="+ Util::numToHex(d[k].val) + "\n";
-                }
-                */
             }
+        } // y replace
 
-        } // y
+            // generate procedure
+
+            f<<"@donotremove "+ procName+"_"+QString::number(i) +"\n";
+            f<<"procedure "+procName+"_"+QString::number(i)+"();\n";
+            f<<"begin\n    asm ; draw "+ QString::number(nextLine) +" lines\n\n";
+
+            int lpos = -1; // used to store last y position in sprite drawing (what line to draw to)
+
+            // process unique data
+            for (int k = 0; k <nextLine; k++){
+
+                int p = d[k].pos;
+
+                f << "; row "+QString::number(p) + "\n";
+
+                if ( lpos == -1 )
+                    f<< "    ldy #" + QString::number(p) + " ; start of data\n";
+                else if ( p == lpos+1 )
+                    f<< "    iny ; next\n";
+                else
+                    f<< "    ldy #" + QString::number(p) + "; skip ahead\n";
+
+                f<< "    lda #"+Util::numToHex( d[k].val ) + "\n";
+                if (asmOperation != "") f<< "    "+ asmOperation +" ("+ pointerName +"),y\n";
+                f<< "    sta ("+ pointerName +"),y\n";
+
+                lpos = p;
+
+            }
+            f<<"\n";
+
+            f<<"    end; // asm\nend;\n\n";
+
+            /*
+             // debug - all values from u
+            for (int k = 0; k <nextLine; k++){
+                    f<< "pos "+ QString::number(d[k].pos) +" char="+ Util::numToHex(d[k].val) + "\n";
+            }
+                */
+        //    }
+
+        //} // y
 
     } // x
 
