@@ -67,3 +67,5 @@ build_list = ,
 data_header_resources/charsets/charset1.flf = 0
 charset_resources/charsets/charset1.flf = :resources/character.rom
 exomizer_toggle = 0
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/CHIP8/tutorials/
+open_files = ,tut1.ras

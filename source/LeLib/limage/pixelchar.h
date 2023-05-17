@@ -28,6 +28,7 @@ public:
     bool isEqualBytes(PixelChar& o);
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol, unsigned char forceD800Color);
     int Count(unsigned int col, unsigned char bitMask, unsigned char Scale);
+    void MergeColor3(int target);
 
     void ForceBackgroundColor(int col, int swapcol);
     void swapMCBits(uchar b1, uchar b2);
@@ -42,6 +43,7 @@ public:
     int CompareLength2(PixelChar& other);
 
     void SwapColors12();
+    void SwapColors13();
 
 
     int CompareLength3(PixelChar& other);

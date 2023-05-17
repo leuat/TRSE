@@ -207,6 +207,26 @@ bool MultiColorImage::KeyPress(QKeyEvent *e)
         return true;
 }
 
+void MultiColorImage::FixSameColorsForDemoEffects()
+{
+
+    for (int i=1;i<1000;i++) {
+        if ((m_data[i].c[1]&1)==1) {
+            m_data[i].SwapColors12();
+        }
+        if ((m_data[i].c[2]&1)==0) {
+            m_data[i].SwapColors12();
+          }
+//        if ((m_data[i].c[3]!=0)) {
+//            for (int j=0;j<8;j++)
+  //              m_data[i].p[j] = m_data[i].SwapColor(m_data[i].p[j],1,3);
+            //m_data[i].SwapColors13();
+    //        qDebug() << "woot " <<i;
+
+   //         m_data[i].SwapColor()
+    }
+}
+
 void MultiColorImage::SaveBin(QFile& file)
 {
     char dummy = m_colorList.getPen(0);
@@ -664,7 +684,7 @@ void MultiColorImage::ExportBin(QFile& ofile)
                 qDebug() << "    -     " <<QString::number((uchar)m_data[j*m_charWidth + i].c[1]) <<QString::number((uchar)m_data[j*m_charWidth + i].c[2]);
             }*/
             colorData.append((uchar)m_data[j*m_charWidth + i].colorMapToNumber(1,2));
-}
+    }
 
   /*  for (int i=0;i<m_charWidth*m_charHeight;i++) {
       //  qDebug () << QString::number((uchar)colorData[colorData.count()-1]);

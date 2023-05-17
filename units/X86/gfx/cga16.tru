@@ -129,9 +129,10 @@ begin
 	inc di
 	
 	lds si,[CGA16_src]
-
+;	mov ah,$de
 @lp:	
 	movsb
+;	stosb
 	inc di
 	dec cx
 	jne @lp

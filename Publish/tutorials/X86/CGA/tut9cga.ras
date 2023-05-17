@@ -11,12 +11,11 @@ program CGA16;
 @use "gfx/gfx"
 
 // Export the 160x100 CGA image
-@export "images/cga16.flf" "images/cga16.bin" 256
+@export "images/cga16.flf" "images/cga16.bin" 256 0
 
 var  
 	// include the image
 	img:incbin("images/cga16.bin");
-	p:^Byte;
 begin
 	
 	init_cga_scanlines();
@@ -27,7 +26,8 @@ begin
 	
 	CGA16::Init();	
 	fill(Screen::CGA,$DE,16000);
-	CGA16::CopyScreen(#img,ptr(Screen::CGA,0),8000);		
+	CGA16::CopyScreen(#img,ptr(#Screen::CGA,0),8000);		
+	
 	while (true) do
 	begin
 		waitforverticalblank();

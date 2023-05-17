@@ -20,6 +20,16 @@ begin
 	Screen::Cls(0);
 	// Move cursor to x,y to print text
 	Text::MoveCursorTo(1,2);
+	/*poke(^$7000,0,4);
+	asm("
+      ld hl, $82
+      call #$28a7
+      ld a,#0d
+      call #$033a
+	");
+	
+	loop();
+	*/
 	// Print text to screen
 	Text::Print("HELLO FROM THE TRSE TUTORIAL!");
 	Text::MoveCursorTo(3,4);

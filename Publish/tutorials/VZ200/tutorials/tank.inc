@@ -10,62 +10,70 @@ asm ("
  ld [ix+2],a
  ld a,$00
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$0a
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$40
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$02
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$aa
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$80
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$02
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$aa
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$ee
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$ec
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 procedure tank_1();
@@ -80,62 +88,70 @@ asm ("
  ld [ix+2],a
  ld a,$80
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$02
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$90
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$aa
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$a0
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$aa
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$80
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$3b
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$bb
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 procedure tank_2();
@@ -150,62 +166,70 @@ asm ("
  ld [ix+2],a
  ld a,$a0
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$a4
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$2a
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$a8
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$2a
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$a0
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$0e
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$ee
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$c0
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 procedure tank_3();
@@ -220,62 +244,70 @@ asm ("
  ld [ix+2],a
  ld a,$a8
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$29
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$0a
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$aa
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$0a
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$aa
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$a8
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$03
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$bb
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$b0
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 var tank_pi : integer;

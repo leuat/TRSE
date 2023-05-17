@@ -48,23 +48,23 @@ begin
       ld hl, [Text_c]
 printloop      
       ld a,(hl)
-      cp #00
+      cp $00
       jr z,printout
-      add a,#80
+      add a,$80
       ld (hl),a
       inc hl
       jp printloop
 printout  
       ld hl, [Text_c]
-      call #28a7
-      ld a,#0d
-      call #033a
+      call $28a7
+      ld a,$0d
+      call $033a
       ld hl, [Text_c]
 printloop2      
       ld a,(hl)
-      cp #00
+      cp $00
       jr z,printend
-      sub #80
+      sub $80
       ld (hl),a
       inc hl
       jp printloop2     
@@ -92,25 +92,25 @@ end;
 procedure MoveCursorTo(x, y: global byte);
 begin
   asm("
-    ld hl,#7000
+    ld hl,$7000
     ld a,[Text_x];
     ld b,0
     ld c,a
     add hl,bc
 
-    ld de,#0020
+    ld de,$0020
     ld a,[Text_y]
-    cp #00
+    cp $00
     jr z,noyloop
     ld b,a
 mctloop
     add hl,de
     djnz mctloop  
 noyloop    
-    ld (#7820),hl
+    ld ($7820),hl
     ld a,[Text_x]
-    ld (#78a6),a
-    call #0053 
+    ld ($78a6),a
+    call $0053 
   ");
 end;
 

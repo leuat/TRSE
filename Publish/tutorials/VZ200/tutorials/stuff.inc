@@ -10,62 +10,70 @@ asm ("
  ld [ix+2],a
  ld a,$00
  ld [ix+3],a
+  add ix,de
  ld a,$03
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$fc
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$ff
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$0f
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$7f
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$f7
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$c0
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$0f
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$d7
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$57
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$c0
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$0f
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$ff
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$fc
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$ee
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$c0
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 procedure stuff_1();
@@ -80,62 +88,70 @@ asm ("
  ld [ix+2],a
  ld a,$00
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$ff
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$3f
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$c0
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$03
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$df
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$fd
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$f0
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$03
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$f5
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$d5
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$f0
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$03
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$ff
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$ff
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$3b
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$b0
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 procedure stuff_2();
@@ -150,62 +166,70 @@ asm ("
  ld [ix+2],a
  ld a,$00
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$3f
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$cf
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$f0
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$f7
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$ff
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$7c
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$fd
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$75
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$7c
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$ff
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$ff
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$c0
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$0e
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$ec
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 procedure stuff_3();
@@ -220,62 +244,70 @@ asm ("
  ld [ix+2],a
  ld a,$00
  ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+32],a
+ ld [ix+0],a
  ld a,$0f
- ld [ix+33],a
+ ld [ix+1],a
  ld a,$f3
- ld [ix+34],a
+ ld [ix+2],a
  ld a,$fc
- ld [ix+35],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+64],a
+ ld [ix+0],a
  ld a,$3d
- ld [ix+65],a
+ ld [ix+1],a
  ld a,$ff
- ld [ix+66],a
+ ld [ix+2],a
  ld a,$df
- ld [ix+67],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+96],a
+ ld [ix+0],a
  ld a,$3f
- ld [ix+97],a
+ ld [ix+1],a
  ld a,$5d
- ld [ix+98],a
+ ld [ix+2],a
  ld a,$5f
- ld [ix+99],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+128],a
+ ld [ix+0],a
  ld a,$3f
- ld [ix+129],a
+ ld [ix+1],a
  ld a,$ff
- ld [ix+130],a
+ ld [ix+2],a
  ld a,$f0
- ld [ix+131],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+160],a
+ ld [ix+0],a
  ld a,$03
- ld [ix+161],a
+ ld [ix+1],a
  ld a,$bb
- ld [ix+162],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+163],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+192],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+193],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+194],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+195],a
+ ld [ix+3],a
+  add ix,de
  ld a,$00
- ld [ix+224],a
+ ld [ix+0],a
  ld a,$00
- ld [ix+225],a
+ ld [ix+1],a
  ld a,$00
- ld [ix+226],a
+ ld [ix+2],a
  ld a,$00
- ld [ix+227],a
+ ld [ix+3],a
+  add ix,de
 ");
 end;
 var stuff_pi : integer;

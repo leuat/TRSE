@@ -26,6 +26,13 @@ void DemoEffectRaytracer::Initialize()
        //((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
 
    }
+   if (m_rt->m_globals.m_c64ImageType == 2.0) {
+       m_mc->m_colorList.m_list.resize(128);
+       m_mc->m_colorList.SetGreyscale(QVector3D(1,1,1),false);
+//       m_mc->m_forceD800Color = 0;
+       //((CharsetImage*)(m_mc))->m_currentMode = CharsetImage::FULL_IMAGE;
+
+   }
    if (m_rt->m_globals.m_outputType == RayTracerGlobals::output_type_pico8) {
        m_mc = new LImageQImage(LColorList::PICO8);
        m_mc->Initialize(m_rt->m_globals.m_width,m_rt->m_globals.m_height);

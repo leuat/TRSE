@@ -1001,6 +1001,122 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
     f2.close();
 
 }
+void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int startaddr, QString fname)
+{
+    QString dfname = fname;
+    if (QFile::exists(dfname+"_data.bin"))
+        QFile::remove(dfname+"_data.bin");
+
+    QFile f(dfname+".bin");
+    f.open(QIODevice::WriteOnly);
+    mc->FixSameColorsForDemoEffects();
+    mc->ExportBin(f);
+    f.close();
+    LImageIO::Save(dfname+".flf",mc);
+
+    QFile f2(dfname+"_unroll.ras");
+    f2.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream s(&f2);
+
+    QVector<int> addr;
+    QVector<int> iny;
+    QVector<int> reset;
+    QVector<int> fluff;
+    s<<"procedure "+fname.split("//").last()+"_unroll();\n";
+    s<<"begin\n";
+    s<<" asm(\"\n";
+    for (int y=0;y<24;y++) {
+        QVector<QVector<int>> col;
+        QMap<int,bool> done;
+        col.resize(256);
+        for (int c=0;c<128;c++) {
+            for (int x=0;x<40;x++) {
+                int pos = x + y*40;
+                int addr = startaddr + pos;
+//                qDebug() <<x<<mc->m_data[pos].c[1] << mc->m_data[pos].c[2];
+                int cc = c;//+cadd;
+                if ((c&1)==0) {
+                    if ((int)mc->m_data[pos].c[1]==c) {
+                        col[cc].append(addr);
+                    }
+                }
+                else
+                 {
+                    if ((int)mc->m_data[pos].c[2]==c) {
+                        col[cc].append(addr);
+                    }
+                }
+            }
+        }
+
+
+
+        for (int i=0;i<col.count();i+=2) {
+            if (col[i].count()!=0) {
+                s<<"\tldy #"+Util::numToHex(i)+"\n";
+                s<<"\tlda (zp),y\n";
+                s<<"\ttax\n";
+                for (auto& c: col[i]) {
+                    if (col[i+1].contains(c))
+                    {
+  //                      s<<"\tpha\n";
+  //                       s<<"\tiny\n";
+                        //s<<"\tsta $99\n";
+                         s<<"\tora (zp2),y\n";
+    //                     s<<"\tdey\n";
+                    }
+                     s<<"\tsta "+Util::numToHex(c)+"\n";
+                     if (col[i+1].contains(c))
+                     {
+                         s<<"\ttxa\n";
+     //                    s<<"\tpla\n";
+                         done[c] = true;
+                    }
+                }
+
+            }
+        }
+
+        for (int i=1;i<col.count();i+=2) {
+            if (col[i].count()!=0) {
+                s<<"\tldy #"+Util::numToHex(i-1)+"\n";
+                for (auto& c: col[i]) {
+                    if (!done.contains(c))
+                    {
+//                      s<<"\tlda "+Util::numToHex(c)+"\n";
+                          s<<"\tlda (zp2),y\n";
+                          s<<"\tora "+Util::numToHex(c)+"\n";
+  //                      s<<"\tora (zp2),y\n";
+                        s<<"\tsta "+Util::numToHex(c)+"\n";
+                    }
+                }
+            }
+        }
+
+/*    if (j==0) s<<" ldy #0\n";
+    if (j==1)
+        s<<"\tldy $72\n";
+        s<<
+
+*/
+    int cnt = 0;
+
+        s<<" \");\n";
+        s<<" zp:=zp+"+Util::numToHex(height)+";\n";
+        s<<" zp2:=zp2+"+Util::numToHex(height)+";\n";
+        s<<" asm(\"\n";
+//        s<<"\tldy #0\n";
+
+    }
+//    if (j==0)
+  //      s<<"\tsty $72\n";
+    s<<" \");\n";
+    s<<"end;\n";
+    //}
+
+    f2.close();
+
+}
 
 
 void Compression::SaveCompressedSpriteData(QByteArray &data, QString dataFile, QString tableFile, int address, int compressionLevel)

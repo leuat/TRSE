@@ -668,7 +668,7 @@ void LImage::ExportSubregion(QString outfile, int x, int y, int w, int h, int ty
             for (int i=0;i<w;i++)
             {
                 data.append(getPixel(x+i,y+j));
-                data.append(getPixel(x+i,y+j));
+    //            data.append(getPixel(x+i,y+j));
             }
 
     if (type == 1)

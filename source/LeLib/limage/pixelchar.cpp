@@ -306,6 +306,7 @@ int PixelChar::Count(unsigned int col, unsigned char bitMask, unsigned char scal
     return cnt;
 }
 
+
 double PixelCharSSIM::getVal(int x, int y) {
     if (x<0 || x>=8 || y<0 || y>=8)
         return 0;
@@ -437,6 +438,21 @@ int PixelChar::CompareLength2(PixelChar &other) {
 
 }
 
+void PixelChar::MergeColor3(int target)
+{
+    for (int i=0;i<8;i++)
+        for (int j=0;j<8;j+=2) {
+            if ( ((p[i]>>j) & 0b11)==0b11)
+                p[i] = (p[i]&(~((0b11<<j))))|(target<<j);
+
+        }
+//    c2[]
+//    if (c[target]==0)
+//        c[target] = c[3];
+//    c[3] = 0;
+
+}
+
 void PixelChar::SwapColors12()
 {
     //return;
@@ -451,6 +467,27 @@ void PixelChar::SwapColors12()
             if (t==1) t=2;
             else
              if (t==2) t=1;
+            cc|=t<<k;
+
+        }
+    p[j]=cc;
+    }
+}
+
+void PixelChar::SwapColors13()
+{
+    //return;
+    uchar t = c[3];
+    c[3] = c[1];
+    c[1]  = t;
+//    return;
+    for (int j=0;j<8;j++) {
+        uchar cc = 0;
+        for (int k=0;k<8;k+=2)  {
+            t = (p[j]>>k)&0b11;
+            if (t==1) t=3;
+            else
+             if (t==3) t=1;
             cc|=t<<k;
 
         }

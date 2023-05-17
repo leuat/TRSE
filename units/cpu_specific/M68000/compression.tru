@@ -33,7 +33,7 @@ _GetUINT32:
 	move.b	(a0,d6.w),d7
 	asl.w	#8,d7
 	move.b	1(a0,d6.w),d7
-	swap	d7
+	swap 	d7
 	move.b	2(a0,d6.w),d7
 	asl.w	#8,d7
 	move.b	3(a0,d6.w),d7

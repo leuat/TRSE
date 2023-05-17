@@ -122,6 +122,7 @@ public:
 
     void Reorganize();
     virtual bool KeyPress(QKeyEvent *e) override;
+    void FixSameColorsForDemoEffects();
 
     void SaveBin(QFile& f) override;
     void LoadBin(QFile& f) override;

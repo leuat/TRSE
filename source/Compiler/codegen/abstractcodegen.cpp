@@ -167,6 +167,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 {
     node->DispatchConstructor(as,this);
 
+
+
     QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_left);
 
     // Get name
@@ -373,6 +375,7 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
         Cast(TokenType::INTEGER,node->m_right->getStoreType());
     StoreVariable(VarOrNum(node->m_left));
 }
+
 
 void AbstractCodeGen::IncreaseCounter(QSharedPointer<Node> step, QSharedPointer<Node> var) {
 
