@@ -69,6 +69,3 @@ use_vice_c1541 = 0
 cc1541_disk_type = d64
 disable_compiler_comments = 0
 use_track_19 = 1
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/UnitTests/
-open_files = 3.02719e-314
-current_file = unittests.ras

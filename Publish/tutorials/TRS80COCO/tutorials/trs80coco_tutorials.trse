@@ -77,6 +77,4 @@ data_header_resources/images/levels.flf = 0
 charset_resources/images/levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/TRS80COCO/tutorials/resources/images/tiles.flf
 data_header_resources/images/image1.flf = 0
 data_header_resources/images/squiddy.flf = 0
-open_files = ,tutorial1_putpixel.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/TRS80COCO/tutorials/
-current_file = tutorial9_image_16col.ras
+open_files =, tutorial1_putpixel.ras

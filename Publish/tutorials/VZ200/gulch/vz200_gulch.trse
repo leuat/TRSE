@@ -86,6 +86,3 @@ use_tripe = 0
 dosbox_cycles = 3.04755e-314
 cpu_x86_output = exe
 data_header_resources/tiles.flf = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/gulch/
-open_files = ,gulch.ras, player.inc
-current_file = player.inc

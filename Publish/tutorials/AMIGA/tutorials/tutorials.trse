@@ -53,6 +53,4 @@ d64name = main
 use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
-open_files = ,tutorial8_compression.ras, tutorial1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMIGA/tutorials/
-current_file = [ext]units/cpu_specific/M68000/compression.tru
+open_files =, tutorial1.ras

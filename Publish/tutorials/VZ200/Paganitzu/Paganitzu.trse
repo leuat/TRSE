@@ -72,5 +72,3 @@ cpu_x86_output = exe
 data_header_images\titlescreen.flf = 1.38343e-311
 data_header_resources/tiles.flf = 1.38262e-311
 data_header_resources/congrats.flf = 2.24572e-314
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/Paganitzu/
-open_files = ,main.ras

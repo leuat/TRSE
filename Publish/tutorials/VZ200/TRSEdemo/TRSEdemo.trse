@@ -68,6 +68,3 @@ d64name = main
 use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/VZ200/TRSEdemo/
-open_files = 3.02719e-314
-current_file = main.ras

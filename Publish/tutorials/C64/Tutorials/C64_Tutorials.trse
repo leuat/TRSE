@@ -92,6 +92,4 @@ charset_ = :resources/character.rom
 data_header_resources/images/space_map.flf = 0
 charset_resources/images/space_map.flf = /Users/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/resources/charsets/space.flf
 data_header_test2.flf = 0
-open_files = ,[ext]units/C64/output/pbm.tru, easy/22_trse_compression.ras, easy/06_plasma.ras, Hello.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
-current_file = [ext]units/global/gfx/lib3d.tru
+open_files =, Hello.ras

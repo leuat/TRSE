@@ -68,6 +68,3 @@ d64name = main
 use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/WONDERSWAN/tutorials/
-open_files = ,main.ras
-current_file = main.asm
