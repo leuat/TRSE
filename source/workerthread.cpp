@@ -113,6 +113,7 @@ void WorkerThread::UpdateDrawing()
 
 
         // Check if left click + ctrl
+  //      if (m_currentButton != 0)
         if (m_currentButton == 1  && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             img->CtrlLeftShift(pos.x(), pos.y());
             return;

@@ -63,7 +63,7 @@ bool QLabelLImage::eventFilter(QObject *object, QEvent *event){
 void QLabelLImage::mouseReleaseEvent(QMouseEvent *e)
 {
     AIE_mouseReleaseEvent(e);
-    emit EmitMouseMove(e);
+    emit EmitMouseRelease();
 
 }
 

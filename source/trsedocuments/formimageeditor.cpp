@@ -279,7 +279,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.forceRedraw = true;
         }
 /*        if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-//            m_toolBox.m_current->m_type = 2;
+            m_toolBox.m_current->m_type = 2;
             Data::data.redrawOutput = true;
             Data::data.forceRedraw = true;
         }

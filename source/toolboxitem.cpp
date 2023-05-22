@@ -275,13 +275,13 @@ void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPrevie
         oldPos = QPoint(-1,-1);
 
 
-/*    if (m_type==2) {
+    if (m_type==2) {
         if (abs(m_start.x()-x) > abs(m_start.y()-y)) {
             y = m_start.y();
         }
         else x = m_start.x();
     }
-*/
+
 //    if (m_type==1 && button==1) {
   //      m_start = oldPos;
    // }
