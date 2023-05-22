@@ -260,15 +260,32 @@ void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPrevie
   //      return;
     img->setBasePixel(x,y);
     if (button==0) {
-        m_start = QPoint(x,y);
+        if (m_type==1 && oldPos.x()!=-1) {
+            m_start = oldPos;
+        }
+        else
+            m_start = QPoint(x,y);
+
         return;
     }
-    if (m_type==1) {
+    if (button==1 && m_type==1)
+        oldPos = QPoint(x,y);
+
+    if (button==-1 && m_type==0)
+        oldPos = QPoint(-1,-1);
+
+
+/*    if (m_type==2) {
         if (abs(m_start.x()-x) > abs(m_start.y()-y)) {
             y = m_start.y();
         }
         else x = m_start.x();
     }
+*/
+//    if (m_type==1 && button==1) {
+  //      m_start = oldPos;
+   // }
+//    if (!isPreview && button == 0)
 
     img->drawLine(m_start.x(), m_start.y(), x,y, color, m_size);
 

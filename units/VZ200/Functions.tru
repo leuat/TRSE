@@ -15,12 +15,12 @@ var
 function GetRnd(i : global Integer):Integer;
 begin
   asm("
-    ld bc,#0000
+    ld bc,$0000
     ld de,[Functions_i]
-    call #09b4    ; Loads ACC with BCDE
-    call #0a9d    ; Set flag to Integer
-    call #14c9    ; RND routine. Using ACC, not A
-    call #0a7f    ; CINT. Puts ACC into HL  
+    call $09b4    ; Loads ACC with BCDE
+    call $0a9d    ; Set flag to Integer
+    call $14c9    ; RND routine. Using ACC, not A
+    call $0a7f    ; CINT. Puts ACC into HL  
   ");  // HL is returned by default.
 end;
 
@@ -32,9 +32,9 @@ begin
   asm("
     ld hl,[Functions_i]
     ld a,l
-    ld [Functions_j],a
+;    ld [Functions_j],a
   ");
-  IntToByte := j;
+//  IntToByte := j;
 end;
 
 /** 

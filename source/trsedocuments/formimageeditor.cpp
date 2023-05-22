@@ -278,7 +278,12 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             Data::data.redrawOutput = true;
             Data::data.forceRedraw = true;
         }
-
+/*        if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+//            m_toolBox.m_current->m_type = 2;
+            Data::data.redrawOutput = true;
+            Data::data.forceRedraw = true;
+        }
+*/
         // select a tab with CTRL + 1 ... 5
         if (QApplication::keyboardModifiers() & Qt::ControlModifier)
         {

@@ -67,7 +67,7 @@ var
 	
 	// Other variables	
 	tempint : Integer;
-	mychar : string = "A";
+	mychar : string = "A                                                                          ";
 	myp, mym : pointer;
 	strpos : byte;
 	Value, BitFlag: byte;
@@ -276,6 +276,7 @@ end;
 // Draw numbers on the screen padded and with trailing zeroes
 procedure DrawPadded(zscore : Integer; x, y: global byte);
 begin
+	return;
 	u := x;
 	if (zscore < 1) then 
 	begin
@@ -287,7 +288,7 @@ begin
 	if (zscore < 100) then x := x + 1;
 	if (zscore < 10) then x := x + 1;
 	Functions::IntegerToString(zscore);
-	Font::DrawTextAt(#Functions_s,x,y,false);	
+	Font::DrawTextAt(Functions_s,x,y,false);	
 	Font::DrawTextAt("0",u+6,y,false);
 end;
 
@@ -300,21 +301,21 @@ begin
 	Font::DrawTextAt("Lives:",0,0,false);
 	Font::DrawTextAt("Hi:",8,0,false);
 	Screen::SetPen(1);
-	DrawPadded(gameStats.score,24,0);
+/*	DrawPadded(gameStats.score,24,0);
 	DrawPadded(gameStats.hiScore,10,0);
 	Functions::ByteToString(gameStats.lives);
-	Font::DrawTextAt(#Functions_s,6,0,false);
+	Font::DrawTextAt(Functions_s,6,0,false);*/
 end;
 
 // Initialise stuff
 procedure InitialiseGame();
 begin
 	// Scroll titlescreen off to the left
-	for v := 0 to 32 do
+/*	for v := 0 to 32 do
 	begin
 		Screen::doCoarseScroll(28672,63);
 		for u := 0 to 30 do wait(140);	
-	end;
+	end;*/
 	// Initialise grid
 	for u := 0 to 255 do gameGrid[u] := 0;
 	for u := 0 to (gridWidth * gridHeight) - 255 do gameGrid[u+256] := 0;
@@ -361,7 +362,7 @@ begin
 	for y := 0 to gridHeight - 1 do
 	begin
 		x := Functions::IntToByte(Functions::GetRnd(31));	
-		tempint := lookupGridY[y] + x;
+		/*tempint := lookupGridY[y] + x;
 		gameGrid[tempint] := mushroomSprite;
 		Sprite::DrawAt(x,screenYOffset+lookupScreenY[y],mushroomSprite,false);
 		p := Functions::IntToByte(Functions::GetRnd(31));	
@@ -370,6 +371,7 @@ begin
 		tempint := lookupGridY[y] + x;
 		gameGrid[tempint] := mushroomSprite;
 		Sprite::DrawAt(x,screenYOffset+lookupScreenY[y],mushroomSprite,false);
+		*/
 	end;
 end;
 
@@ -781,7 +783,7 @@ begin
 			AddScore(p);	
 			Screen::SetPen(1);
 			Functions::ByteToString(p);
-			Font::DrawTextAt(#Functions_s,spiderEnemy.x,spiderEnemy.y,false);
+			Font::DrawTextAt(Functions_s,spiderEnemy.x,spiderEnemy.y,false);
 			Font::DrawTextAt("0",spiderEnemy.x+2,spiderEnemy.y,false);
 		end;
 		if (spiderEnemy.animFrame = 6) then
@@ -1394,11 +1396,12 @@ begin
 		// Do titlescreen stuff
 		strpos := 0;
 		TitleScreen();
-		PlaySound(Sfx_Gamestart);
+//		PlaySound(Sfx_Gamestart);
 		InitialiseGame();
 		DrawGrid();
+		loop();
 		// Keep game going until gameRunning is false (Game over)
-		while (gameStats.gameRunning) do
+		while (true) do
 		begin
 			// Sync everything so the speed is correct
 			Screen::WaitForVerticalBlank();

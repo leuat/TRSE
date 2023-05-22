@@ -82,7 +82,7 @@ public:
 
     virtual void Perform(int x, int y, unsigned char color, LImage* img, bool isPreview, int button) = 0;
     virtual void Init() {}
-
+    QPoint oldPos = QPoint(-1,-1);
 
     void setSize(float f);
     void setRadius(float f);
