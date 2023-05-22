@@ -119,7 +119,6 @@ void WorkerThread::UpdateDrawing()
             return;
         }
 
-
         if (isPreview)
             img = (LImage*)m_work->m_currentImage->m_temp;
 

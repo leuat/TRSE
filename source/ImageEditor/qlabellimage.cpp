@@ -83,6 +83,9 @@ void QLabelLImage::resizeEvent(QResizeEvent *event)
     if (m_aspectType==2)
         scale = 1.5;
 
+    if (m_aspectType>2) {
+        scale = m_aspectType;
+    }
 
 
     if (m_aspectType!=0) {

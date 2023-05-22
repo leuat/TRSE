@@ -96,6 +96,9 @@ void FormImageEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini
 
     m_painterType = m_iniFile->getdouble("image_painter")==0?OpenGL:QtPaint;
 
+    // OOOps always force qtpaint
+    m_painterType = QtPaint;
+
     if (m_work.m_currentImage!=nullptr) {
         bool is = m_work.m_currentImage->m_image->isMultiColor();
         ui->chkDisplayMulticolor->setChecked(is);

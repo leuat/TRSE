@@ -409,7 +409,7 @@ void MainWindow::VerifyDefaults()
     }
 
     if (!m_iniFile->contains("image_painter"))
-        m_iniFile->setFloat("image_painter", 0);
+        m_iniFile->setFloat("image_painter", 1);
 
 
 
