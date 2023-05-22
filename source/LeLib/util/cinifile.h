@@ -34,8 +34,8 @@ class CItem : public QVariant {
 public:
     QString name="", strval="";
     QStringList lst;
-    double dval;
-    QVector3D vec;
+    double dval = 0.0;
+    QVector3D vec = QVector3D(0,0,0);
 
 
 

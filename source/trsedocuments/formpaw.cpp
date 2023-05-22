@@ -443,16 +443,25 @@ void PawThread::run()
                 }
                 else
                     params << pf.inFile << pf.cFile;
+
+                if (QFile::exists(pf.cFile))
+                    QFile::remove(pf.cFile);
                 //output+="Compressing :"+ pf.inFile + "\n";
                 //emit EmitTextUpdate();
                 //qDebug() << params;
                 //ui->leOutput->setText(output);
-
-                processCompress.start("python3", params  );
+                if (m_iniFile->getdouble("use_python")==1)
+                    processCompress.start("python", params  );
+                else
+                    processCompress.start("python3", params  );
                 processCompress.waitForFinished();
                 if (QFile::exists(pf.inFile+"_a"))
                     QFile::remove(pf.inFile+"_a");
 
+                if (!QFile::exists(pf.cFile)) {
+                    output+="\nOh no, tinycrunch failed since Python wasn't found! Did you make sure to install python, and select the correct executable (python3/python) type from the TRSE settings panel?";
+                    emit EmitTextUpdate();
+                }
 
             }
             else {

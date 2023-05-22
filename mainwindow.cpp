@@ -2664,6 +2664,8 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("background_color"))
         m_ini->setFloat("background_color",0);
 
+    if (!m_ini->contains("use_python"))
+        m_ini->setFloat("use_python",0);
 
     if (!m_ini->contains("override_target_settings"))
         m_ini->setFloat("override_target_settings",0);

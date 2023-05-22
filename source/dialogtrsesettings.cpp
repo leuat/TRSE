@@ -104,6 +104,7 @@ void DialogTRSESettings::FillFromIni()
 
     ui->leSidplayer->setText(m_ini->getString("sidplayer"));
 
+    ui->chkPython->setChecked(m_ini->getdouble("use_python")==1.0);
     ui->chkBackup->setChecked(m_ini->getdouble("auto_backup")==1.0);
     ui->chkAutoIndent->setChecked(m_ini->getdouble("editor_autocomplete")==1.0);
     ui->chkAutoComplete->setChecked(m_ini->getdouble("editor_autocomplete_nobug")==1.0);
@@ -232,6 +233,7 @@ void DialogTRSESettings::FillToIni()
 
 
     m_ini->setFloat("display_addresses", ui->chkDisplayAddresses->isChecked());
+    m_ini->setFloat("use_python", ui->chkPython->isChecked()?1:0);
     m_ini->setString("gameboy_rgbasm_dir", ui->leRGBAsmDir->text());
 
 
