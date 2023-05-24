@@ -418,15 +418,15 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
 
     double width = m_qImage->width();
     double height = m_qImage->height();
-    QColor col2=color;//QColor(60,180,255,255);
-    QColor c;
+    QColor col2=Util::toColor((Util::fromColor(color)*1.5));//QColor(60,180,255,255);
+
     m_qImage->fill(QColor(0,0,0,0));
     center.setX(center.x()/(double)m_width*width/scale);
     center.setY(center.y()/(double)m_height*height);
 
     //    double xp = (((i-center.x())*(double)zoom)+ center.x());
     //  double yp = (((j-center.y())*(double)zoom)+ center.y());
-
+    QColor c;
     for (float i=1;i<x;i++)
         for (float j = 0;j<height;j++) {
             double xp = (width/((double)(x)))*(i);
@@ -435,6 +435,9 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
             double yp = j;
 
             c = color;
+            if (((int)i&7)==0)
+                c = col2;
+
             if (type==0 && (((int)i&7)!=0))
                 if (((int)j%strip>=strip/2))
                     continue;
@@ -452,6 +455,8 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
             float xp = j;
 
             c = color;
+            if (((int)i&7)==0)
+                c = col2;
 
             if (type==0 && (((int)i&7)!=0))
                 if (((int)j%strip>=strip/2))
