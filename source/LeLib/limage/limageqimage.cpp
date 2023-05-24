@@ -428,7 +428,7 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
     //  double yp = (((j-center.y())*(double)zoom)+ center.y());
 
     for (float i=1;i<x;i++)
-        for (float j = 0;j<iheight;j++) {
+        for (float j = 0;j<height;j++) {
             double xp = (width/((double)(x)))*(i);
 
             xp = (xp - scale*center.x())/zoom + scale*center.x();
