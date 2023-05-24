@@ -13,7 +13,6 @@ begin
 	Screen::SetMode(1);	
 	Screen::Cls(1);
 	Screen::SetPen(1);
-	
 	Font::SetFont(#Font::font1);
 	
 	Font::DrawTextAt("Why, hello there How are you? :)",0,0,true);

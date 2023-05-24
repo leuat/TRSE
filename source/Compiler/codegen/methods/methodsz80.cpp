@@ -771,7 +771,14 @@ void MethodsZ80::HiLo(Assembler *as, bool isHi)
             return;
         }
     }
-    ErrorHandler::e.Error("Hi / lo only implemented for pure variables/numbers", m_node->m_op.m_lineNumber);
+    m_node->m_params[0]->Accept(m_codeGen);
+    if (m_node->m_params[0]->isWord(as)) {
+        if (!isHi)
+            as->Asm("ld a,l");
+        else
+            as->Asm("ld a,h");
+    }
+    //ErrorHandler::e.Error("Hi / lo only implemented for pure variables/numbers", m_node->m_op.m_lineNumber);
 
 }
 

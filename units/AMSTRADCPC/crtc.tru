@@ -17,7 +17,7 @@ var
 	y_lookup : array[200] of integer = buildTable( "0xC000 + (Math.floor(i/8))*80 + (i&7)*2048");
 	// Lookup for mode 0 pixel 0
 	
-	hwConv : array[26] of byte = (
+	hwConv : array[] of byte = (
 	$14,$4,$15,$1c,$18,$1D,$0c,$05,$D,$16,$06,$17,$1E,$00,$1F,$0e,$07,$0f,$12,$02,$13,$1A,$19,$1b,$0a,$03,$0b);
 
 	ytab : array[200] of integer = BuildTable("i*80");
