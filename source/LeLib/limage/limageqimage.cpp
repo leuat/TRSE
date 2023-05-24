@@ -435,9 +435,9 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
             double yp = j;
 
             c = color;
-            if (type==0)
-            if ((int)j%strip>=strip/2)
-                continue;
+            if (type==0 && (((int)i&7)!=0))
+                if (((int)j%strip>=strip/2))
+                    continue;
 //                c= col2;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
                 m_qImage->setPixel(xp, yp, c.rgba());
@@ -452,9 +452,10 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
             float xp = j;
 
             c = color;
-            if (type==0)
-            if ((int)j%strip>=strip/2)
-                continue;
+
+            if (type==0 && (((int)i&7)!=0))
+                if (((int)j%strip>=strip/2))
+                    continue;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
                 m_qImage->setPixel(xp, yp, c.rgba());
         }
