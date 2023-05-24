@@ -128,7 +128,7 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
 unsigned int MultiColorImage::getPixel(int x, int y)
 {
     if (x>=m_width || x<0 || y>=m_height || y<0)
-        return 0;
+        return getCanvasColor(x,y);
 
     PixelChar& pc = getPixelChar(x,y);
 
@@ -1432,6 +1432,11 @@ void MultiColorImage::SetHybridMode(bool checked) {
     if (m_charset!=nullptr)
         m_charset->SetHybridMode(checked);
 
+}
+
+int MultiColorImage::getCanvasColor(int x, int y)
+{
+    return ((x+y)&7)*11;
 }
 
 int MultiColorImage::getCharAtPos(QPoint p, float zoom, QPointF center)

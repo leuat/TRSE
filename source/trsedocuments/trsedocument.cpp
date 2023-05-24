@@ -90,6 +90,7 @@ void TRSEDocument::keyPressEvent(QKeyEvent *e) {
 //    qDebug() << (e->key() == 16777249) << e->key() << Qt::Key_S <<(e->modifiers() & Qt::ControlModifier);
     if (((e->key() == Qt::Key_S) &&  ((QApplication::keyboardModifiers() & Qt::ControlModifier)))) {
         SaveCurrent();
+        return;
     }
     if (e->key() == Qt::Key_B &&  (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
         m_run=false;

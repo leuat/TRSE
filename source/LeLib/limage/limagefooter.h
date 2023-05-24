@@ -35,6 +35,7 @@ public:
     const static uchar POS_CURRENT_STAMP_X = 21;
     const static uchar POS_CURRENT_STAMP_Y = 22;
     const static uchar POS_D800_FIXED = 23;
+    const static uchar POS_GRID_TYPE = 24;
     const static uchar POS_PEN_START = 256-64;
 
 

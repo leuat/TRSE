@@ -40,7 +40,17 @@ LImageQImage::LImageQImage(LColorList::Type t)  : LImage(t)
     m_supports.asmExport = false;
     m_currentChar = 0;
 }
+/*
+int LImageQImage::LImage::getCanvasColor(int x, int y)
+{
+    QColor c(255,0,0,255);
 
+    if ((x+y)&7==0)
+        return c;
+    else
+        return QColor(0,0,0);
+}
+*/
 void LImageQImage::LoadBin(QFile& file)
 {
     //    m_width = 320;
@@ -403,7 +413,7 @@ QImage* LImageQImage::ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effec
     return res;
 }
 
-void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoom, QPointF center, double scale)
+void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoom, QPointF center, double scale, int type, int iheight)
 {
 
     double width = m_qImage->width();
@@ -418,15 +428,17 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
     //  double yp = (((j-center.y())*(double)zoom)+ center.y());
 
     for (float i=1;i<x;i++)
-        for (float j = 0;j<height;j++) {
+        for (float j = 0;j<iheight;j++) {
             double xp = (width/((double)(x)))*(i);
 
             xp = (xp - scale*center.x())/zoom + scale*center.x();
             double yp = j;
 
             c = color;
+            if (type==0)
             if ((int)j%strip>=strip/2)
-                c= col2;
+                continue;
+//                c= col2;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
                 m_qImage->setPixel(xp, yp, c.rgba());
         }
@@ -440,8 +452,9 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
             float xp = j;
 
             c = color;
+            if (type==0)
             if ((int)j%strip>=strip/2)
-                c= col2;
+                continue;
             if (xp>=0 && xp<width && yp>=0 && yp<height)
                 m_qImage->setPixel(xp, yp, c.rgba());
         }
@@ -536,6 +549,8 @@ void LImageQImage::setPixel(int x, int y, unsigned int color)
 
 unsigned int LImageQImage::getPixel(int x, int y)
 {
+    if (x>=m_width || x<0 || y>=m_height || y<0)
+        return getCanvasColor(x,y);
     if (m_qImage==nullptr)
         return 0;
 

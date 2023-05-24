@@ -77,7 +77,8 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     m_updateThread.SetCurrentImage(&m_work, &m_toolBox);
 
 
-    installEventFilter(this);
+  installEventFilter(this);
+
 //    setEnabled(true);
     ui->tblData->setItemDelegate(new ByteDelegate());
   //  ui->splitter->setStretchFactor(1, 0);
@@ -443,6 +444,10 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
 
             Data::data.Redraw();
             onImageMouseEvent();
+        }
+        if (e->key() == Qt::Key_V  && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            on_btnGridType_clicked();
+            return;
         }
 
         if (e->key() == Qt::Key_Z  && !(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
@@ -980,6 +985,9 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 
         if (((ke->key() == Qt::Key_S) &&  ((QApplication::keyboardModifiers() & Qt::ControlModifier)))) {
             SaveCurrent();
+//            QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Enter);
+//            QCoreApplication::postEvent (this, event);
+            return true;
         }
 
 
@@ -2732,5 +2740,14 @@ void FormImageEditor::on_btnDuplicate_clicked()
     onImageMouseEvent();
 
 
+}
+
+
+void FormImageEditor::on_btnGridType_clicked()
+{
+    int i = m_updateThread.m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_TYPE);
+    m_updateThread.m_work->m_currentImage->m_image->m_footer.set(LImageFooter::POS_GRID_TYPE,(i+1)&1);
+    onImageMouseEvent();
+    Update();
 }
 

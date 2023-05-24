@@ -211,24 +211,7 @@ void LImageSNES::SetBank(int bnk) {
 
 void LImageSNES::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
-//#pragma omp parallel for
-    int height  =img.height();//std::min(img.height(), m_height);
-    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
-        height = m_height;
-
-    for (int i=0;i<m_width;i++)
-        for (int j=0;j<height;j++) {
-
-            float xp = ((i-center.x())*zoom)+ center.x();
-            float yp = ((j-center.y())*zoom) + center.y();
-
-            unsigned int pen = getPixel(xp,yp);// % 16;
-            unsigned int col = m_colorList.getPen(pen);
-
-            //            img->setPixel(i,j,QRgb(col));
-            img.setPixel(i,j,lst.get(col).color.rgb());
-        }
-    //return img;
+    return ToQImageUsingPens(lst,img,zoom,center);
 }
 
 void LImageSNES::setPixel(int x, int y, unsigned int color)

@@ -260,6 +260,10 @@ void CharsetImage::LoadCharset(QString file, int skipBytes)
 
 unsigned int CharsetImage::getPixel(int x, int y)
 {
+    if (x>=m_width || x<0 || y>=m_height || y<0)
+        return getCanvasColor(x,y);
+
+
     if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1)
         return getPixelHybrid(x,y);
 

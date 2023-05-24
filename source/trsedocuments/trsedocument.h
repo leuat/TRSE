@@ -96,7 +96,6 @@ public:
 
 
 
-
     void Backup();
 
     virtual void MemoryAnalyze(bool isHidden) {}

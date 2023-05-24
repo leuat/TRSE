@@ -321,6 +321,7 @@ private slots:
     void on_btnDuplicate_clicked();
     void on_btnPanUp_clicked();
     void on_btnPanLeft_clicked();
+    void on_btnGridType_clicked();
 };
 
 

@@ -102,6 +102,7 @@ public:
 
     virtual void SetHybridMode(bool checked) override;
 
+    int getCanvasColor(int x, int y) override;
 
     virtual int getCharAtPos(QPoint p, float zoom, QPointF center) override;
     void setHybrid();

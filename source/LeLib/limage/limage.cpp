@@ -331,6 +331,15 @@ LImage::Type LImage::CharToType(unsigned char c)
 
 }
 
+int LImage::getCanvasColor(int x, int y)
+{
+    if (((x+y)&7)==0)
+        return 1;
+    else
+        return 0;
+//    return (x+y)&7;
+}
+
 MetaParameter *LImage::getMetaParameter(QString name)
 {
     for (MetaParameter* mp: m_metaParams)

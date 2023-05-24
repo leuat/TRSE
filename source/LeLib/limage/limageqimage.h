@@ -37,6 +37,7 @@ public:
         Release();
     }
 
+//    int LImage::getCanvasColor(int x, int y);
 
 
     void Initialize(int width, int height) override;
@@ -97,7 +98,7 @@ public:
     QImage* Blur(float rad);
     QImage* ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effect);
 
-    void CreateGrid(int x, int y, QColor color, int strip,double zoom, QPointF center, double scale);
+    void CreateGrid(int x, int y, QColor color, int strip,double zoom, QPointF center, double scale, int type, int height);
 
 
     void CopyFrom(LImage *img) override;
