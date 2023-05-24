@@ -248,9 +248,12 @@ void FormImageEditor::wheelEvent(QWheelEvent *event)
         m_updateThread.m_zoom -=f*0.05;
         m_updateThread.m_zoom = std::min(m_updateThread.m_zoom, 1.0f);
         m_updateThread.m_zoom = std::max(m_updateThread.m_zoom, 0.1f);
-        float t = 0.2f;
+        float t = 1.0f;
         QPointF pos = (m_updateThread.m_currentPosInImage);// + m_updateThread.m_zoomCenter ;
-        m_updateThread.m_zoomCenter = t*pos + (1-t)*m_updateThread.m_zoomCenter;//*(2-2*m_zoom);
+        if (m_zReset != 0) {
+            m_updateThread.m_zoomCenter = t*pos + (1-t)*m_updateThread.m_zoomCenter;//*(2-2*m_zoom);
+            m_zReset = 0;
+        }
         UpdateGrid();
         emit onImageMouseEvent();
         Data::data.forceRedraw = true;
@@ -978,6 +981,9 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 //        return false;
     }*/
   //  return true;
+    if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier))
+        m_zReset = 10;
+
     if(/*e->type() == QEvent::KeyPress || */e->type()==QEvent::ShortcutOverride) {
         const QKeyEvent *ke = static_cast<QKeyEvent *>(e);
 

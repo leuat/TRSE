@@ -677,6 +677,7 @@ void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF c
     int height  =img.height();//std::min(img.height(), m_height);
     if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
         height = m_height;
+    m_canvasStart = -1;
     for (int i=0;i<m_width;i++)
         for (int j=0;j<height;j++) {
 

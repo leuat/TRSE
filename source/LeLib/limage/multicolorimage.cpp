@@ -89,6 +89,25 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
 
+    m_supports.displayCharOperations = true;
+
+/*    for (int i=0;i<m_charWidth*m_charHeight;i++)
+        m_data[i].c[3]=1;
+*/
+    m_GUIParams[btnLoadCharset] ="";
+    m_GUIParams[btn1x1] = "1x1 Character set";
+    m_GUIParams[btn2x2] = "2x2 Character set";
+    m_GUIParams[btn2x2repeat] = "2x2 Character repeat";
+    m_GUIParams[btnCopy] = "Copy";
+    m_GUIParams[btnPaste] = "Paste";
+    m_GUIParams[btnFlipH] = "Mirror X";
+    m_GUIParams[btnFlipV] = "Mirror Y";
+    m_GUIParams[btnEditFullCharset] = "Full charset";
+
+    m_GUIParams[tabCharset] = "1";
+    m_updateCharsetPosition = true;
+    m_colorList.m_isCharset = true;
+
     //m_data.resize(m_charWidth*m_charHeight);
 
 //    qDebug() << m_charWidth*m_charHeight;
@@ -1852,21 +1871,8 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPoint
             float xp = p.x();
             float yp = p.y();
 
-            unsigned int col = 0;
-            if (xp>=0 && xp<width && yp>=0 && yp<height)
-                col = getPixel(xp,yp);
-            else {
-                if (((i+j)&1)==0)
-                    //img.setPixel(i,j,QColor(40,50,70).rgb());
-                    yline[i] = QColor(40,50,70).rgb();
-                else
-                    yline[i] = QColor(0,0,0).rgb();
-                //img.setPixel(i,j,QColor(0,0,00).rgb());
-                continue;
 
-            }
-
-
+            unsigned int col = getPixel(xp,yp);
             // Has transparency?
 
             QColor c=QColor(0,0,0);

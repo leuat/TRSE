@@ -93,7 +93,7 @@ public:
     PainterType m_painterType = OpenGL;
     bool m_isInitialized = false;
     float m_scaley = 1.0;
-
+    int m_zReset = 0;
     int m_oldWidth = 600;
 
     int m_prefMode=1, m_keepMode=0;

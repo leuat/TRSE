@@ -1257,7 +1257,11 @@ void FormRasEditor::HandleBuildComplete()
     }
     m_builderThread.m_builder->m_buildString= m_builderThread.m_builder->getOutput();
     emit emitOutputTextChanged();
-
+//    if (ui->txtWarnings->toPlainText().simplified=="")
+  //      ui->tabWidget->setTabText(1,"Warnings");
+    //else
+    int cnt = ui->txtWarnings->toPlainText().split("\n").count()-1;
+        ui->tabWidget->setTabText(1,"Warnings ("+QString::number(cnt)+")");
     m_run = false;
 }
 

@@ -2826,8 +2826,11 @@ QSharedPointer<Node> Parser::Factor()
         //        qDebug() << "FINDING PROCEDURE IN TERM: " << t.m_value;
         bool isAssign;
         QSharedPointer<Node> node = FindProcedure(isAssign, nullptr);
-
-
+        auto p = qSharedPointerDynamicCast<NodeProcedure>(node);
+        if (p!=nullptr) {
+            if (!p->m_procedure->m_isFunction)
+                ErrorHandler::e.Warning("Using procedures as functions can result in unpredicted behaviour. Please convert your procedure '" + p->m_procedure->m_procName+ "' into a function in order to avoid potential problems with the return value. ");
+            }
         if (node!=nullptr) {
             return node;
         }
