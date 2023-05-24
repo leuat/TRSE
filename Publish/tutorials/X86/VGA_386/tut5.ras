@@ -2,6 +2,7 @@ program Tutorial5_Fonts;
 @use "music/adlibplayer"
 @use "system/screen"
 @use "system/memory"
+@use "system/file"
 @use "gfx/gfx"
 @use "system/tables"
 @use "system/compression"
@@ -49,7 +50,7 @@ begin
 	Memory::Init();
 	Screen::SetMode($13);
 	Screen::InitVGABuffers(4);
-	Screen::SetPaletteFromFile(#palette1);		
+	File::SetPaletteFromFile(#palette1);		
 	// Load and decompress image
 	File::ReadAll(#filename1,Screen::buffer3);
 

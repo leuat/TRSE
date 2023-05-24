@@ -13,6 +13,7 @@ program Tut3;
 @use "system/screen"
 @use "system/memory"
 @use "system/compression"
+@use "system/file"
 var  
 	song: incbin("music/song1.trt");
 
@@ -44,7 +45,7 @@ begin
 	Screen::SetMode($13);
 	Screen::InitVGABuffers(3);
 	// Load palette from file
-	Screen::SetPaletteFromFile(#palette1);		
+	File::SetPaletteFromFile(#palette1);		
 
 	// Open compressed file and read all to a buffer
 	File::ReadAll(#filename1, Screen::buffer1);
