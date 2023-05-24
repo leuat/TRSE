@@ -96,6 +96,7 @@ void LImageGenericSprites::Clear(int val) {
 void LImageGenericSprites::CopyFrom(LImage *img)
 {
     LImageGenericSprites* mc = dynamic_cast<LImageGenericSprites*>(img);
+    m_aspect = img->m_aspect;
     if (mc!=nullptr)
     {
         m_colorList.CopyFrom(&img->m_colorList);
@@ -319,7 +320,7 @@ void LImageGenericSprites::ToQImage(LColorList &lst, QImage &img, double zoom, Q
     LGenericSprite* s = ((LGenericSprite*)m_items[m_current].get());
     if (s->m_data.m_qImage==nullptr)
         return;
-    img = QImage(s->m_data.m_qImage->width(),s->m_data.m_qImage->height(), QImage::Format_ARGB32);
+//    img = QImage(s->m_data.m_qImage->width(),s->m_data.m_qImage->height(), QImage::Format_ARGB32);
 //    qDebug() << s->m_data.m_qImage->width()<<img.width();
 //    exit(1);
     s->m_data.ToQImage(lst,img,zoom,center);

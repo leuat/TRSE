@@ -73,31 +73,14 @@ void QLabelLImage::mousePressEvent(QMouseEvent *e)
     emit EmitMouseMove(e);
 
 }
-
+/*
 void QLabelLImage::resizeEvent(QResizeEvent *event)
 {
     if (event!=nullptr)
         event->accept();
 
-    float scale = 1;
-    if (m_aspectType==2)
-        scale = 1.5;
-
-    if (m_aspectType>2) {
-        scale = m_aspectType;
-    }
-
-
-    if (m_aspectType!=0) {
-        // Fixed 1:1
-
-        int m = std::min((float)event->size().width(),event->size().height()*scale);
-
-        QWidget::resize(m,m/scale);
-
-    }
     QLabel::resizeEvent(event);
 }
-
+*/
 
 

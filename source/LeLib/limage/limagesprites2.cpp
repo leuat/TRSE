@@ -81,6 +81,8 @@ QString LImageSprites2::getMetaInfo() {
 void LImageSprites2::CopyFrom(LImage *img)
 {
     LImageSprites2* mc = dynamic_cast<LImageSprites2*>(img);
+//    LImage::CopyFrom(img);
+    m_aspect = img->m_aspect;
     if (mc!=nullptr)
     {
         m_colorList.CopyFrom(&img->m_colorList);
@@ -461,7 +463,7 @@ void LImageSprites2::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF
     LSprite* s = ((LSprite*)m_items[m_current].get());
     CharsetImage::setMultiColor(s->m_header[s->HEADER_MULTICOLOR]==(char)1);
 
-    img = img.scaled(m_width,m_height);
+//    img = img.scaled(m_width,m_height);
 
     MultiColorImage::ToQImage(lst,img,zoom,center);
 }

@@ -51,7 +51,6 @@ namespace Ui {
 class Formimageeditor;
 }
 
-
 class ByteDelegate : public QItemDelegate
 {
 public:
@@ -88,6 +87,7 @@ public:
     QVector<int> m_keepSpriteChar;
     QString m_currentFilename = "";
     QSize m_windowSize;
+    bool m_isFreeAspect = false;
 
     enum PainterType {OpenGL, QtPaint };
     PainterType m_painterType = OpenGL;

@@ -22,6 +22,7 @@
 #pragma once
 #include <QLabel>
 #include "abstractimageeditor.h"
+#include <QPainter>
 
 class QLabelLImage : public QLabel, public AbstractImageEditor
 {
@@ -39,8 +40,19 @@ public:
     void mousePressEvent(QMouseEvent* e) override;
 
 
+        void paintEvent(QPaintEvent*) override
+        {
+            if (m_pixmap == nullptr)
+                return;
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing, false);
+            style()->drawItemPixmap(&painter, rect(), Qt::AlignCenter, m_pixmap->scaled(rect().size()));
+        }
+    public:
+        QPixmap* m_pixmap = nullptr;
 
-    void resizeEvent(QResizeEvent *event) override;
+
+//    void resizeEvent(QResizeEvent *event) override;
 
 signals:
     void EmitMouseMove(QEvent* e);

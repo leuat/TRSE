@@ -69,3 +69,4 @@ data_header_resources/images/image1.flf = 0
 data_header_resources/images/image2.flf = 3.01116e-314
 thomson_media = TAPE
 thomson_subtype = MO5
+use_python = 0

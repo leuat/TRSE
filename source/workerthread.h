@@ -99,6 +99,7 @@ public:
     void UpdateImage(LImage* mc);
 
     void UpdateMessages();
+    void FillImage(QImage& img);
 
 signals:
     void updateImageSignal();

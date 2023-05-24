@@ -165,6 +165,7 @@ void LImageLevelGeneric::CopyFrom(LImage *mc)
 
         m_width = c->m_width;
         m_height = c->m_height;
+        m_aspect = c->m_aspect;
         CharmapGlobalData d = c->m_meta;
         //d.m_sizex = 1;
         //d.m_sizey = 1;

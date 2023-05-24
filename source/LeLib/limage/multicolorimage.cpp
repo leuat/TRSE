@@ -127,9 +127,9 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
 
 unsigned int MultiColorImage::getPixel(int x, int y)
 {
-
     if (x>=m_width || x<0 || y>=m_height || y<0)
         return 0;
+
     PixelChar& pc = getPixelChar(x,y);
 
     int ix = x % (8/m_scale);//- (dx*m_charWidth);
@@ -473,6 +473,7 @@ void MultiColorImage::CopyFrom(LImage* img)
     //        || (typeid(*img) == typeid(CharsetImage)))
     m_footer.m_data = img->m_footer.m_data;
     m_colorList.CopyFrom(&img->m_colorList);
+    m_aspect = img->m_aspect;
     if (mc!=nullptr)
     {
         //        m_footer.m_data = mc->m_footer.m_data;
@@ -1824,8 +1825,10 @@ void MultiColorImage::UpdateColorList()
 void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center)
 {
 //    return;
-    int height  =std::min(img.height(), m_height);
-    int width  =std::min(img.width(), m_width);
+    int height  =img.height();//std::min(img.height(), m_height);
+    int width  =img.width();//std::min(img.width(), m_width);
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
+        height = m_height;
     //  center.setX(floor(center.x()));
     //   center.setY(floor(center.y()));
 
@@ -1838,8 +1841,9 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPoint
 
             //            float xp = floor(((i-center.x())*zoom)+ center.x());
             //          float yp = floor(((j-center.y())*zoom) + center.y());
-            double xp = (((i-center.x())*(double)zoom)+ center.x());
-            double yp = (((j-center.y())*(double)zoom)+ center.y());
+            auto p = getZoomedCoordinates(i,j,center,zoom);
+            float xp = p.x();
+            float yp = p.y();
 
             unsigned int col = 0;
             if (xp>=0 && xp<width && yp>=0 && yp<height)

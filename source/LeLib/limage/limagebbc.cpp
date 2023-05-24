@@ -116,7 +116,7 @@ void LImageBBC::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF cent
 {
 //#pragma omp parallel for
     for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
+        for (int j=0;j<img.height();j++) {
 
             float xp = ((i-center.x())*zoom)+ center.x();
             float yp = ((j-center.y())*zoom) + center.y();

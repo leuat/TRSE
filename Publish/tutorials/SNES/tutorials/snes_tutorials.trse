@@ -87,4 +87,6 @@ use_vice_c1541 = 0
 data_header_test,fkf.flf = 0
 use_track_19 = 1
 disable_compiler_comments = 0
+use_python = 0
+data_header_resources/gfx/image.flf = 0
 open_files =, 01_tiles.ras

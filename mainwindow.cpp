@@ -345,6 +345,8 @@ void MainWindow::VerifyDefaults()
     if (!m_iniFile->contains("compile_thread"))
         m_iniFile->setFloat("compile_thread",1);
 
+    if (!m_iniFile->contains("grid_colour"))
+        m_iniFile->setVec("grid_colour",QVector3D(40,80,120));
     if (!m_iniFile->contains("tab_width"))
         m_iniFile->setFloat("tab_width", 4);
 

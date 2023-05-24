@@ -29,14 +29,14 @@
       <bool>true</bool>
      </property>
      <widget class="QWidget" name="layoutImageWidget">
-      <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,200">
+      <layout class="QVBoxLayout" name="ImageLayout" stretch="1,200,0">
        <property name="spacing">
         <number>2</number>
        </property>
        <item>
         <widget class="QLabel" name="lblName">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -44,7 +44,7 @@
          <property name="maximumSize">
           <size>
            <width>3000000</width>
-           <height>16777215</height>
+           <height>20</height>
           </size>
          </property>
          <property name="font">
@@ -58,32 +58,10 @@
         </widget>
        </item>
        <item>
-        <widget class="GLWidget" name="lblImage" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>3000000</width>
-           <height>100</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabelLImage" name="lblImageQt">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
+         <property name="baseSize">
           <size>
-           <width>3000000</width>
+           <width>100</width>
            <height>100</height>
           </size>
          </property>
@@ -91,6 +69,19 @@
           <string/>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -212,6 +203,26 @@
               <item>
                <property name="text">
                 <string>10:1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1:2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1:3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1:4</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1:8</string>
                </property>
               </item>
              </widget>
@@ -1521,8 +1532,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>742</width>
-                  <height>435</height>
+                  <width>98</width>
+                  <height>28</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_13">
@@ -1902,12 +1913,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>GLWidget</class>
-   <extends>QWidget</extends>
-   <header>source/ImageEditor/glwidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>QLabelLImage</class>
    <extends>QLabel</extends>

@@ -90,4 +90,5 @@ cpu_x86_output = exe
 charset_ = :resources/character.rom
 data_header_resources/charsets/c64_charset.flf = 0
 data_header_resources/charsets/charset_gfx.flf = 0
+use_python = 0
 open_files =, easy/01_hello_world.ras

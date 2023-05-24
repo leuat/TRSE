@@ -759,7 +759,7 @@ void ImageLevelEditor::CopyFrom(LImage *mc)
     if (c!=nullptr) {
         if (c->m_charset==nullptr)
             return;
-
+        m_aspect = c->m_aspect;
         m_width = c->m_width;
         m_height = c->m_height;
         CharmapGlobalData d = c->m_meta;

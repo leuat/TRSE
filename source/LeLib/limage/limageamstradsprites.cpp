@@ -121,17 +121,15 @@ void LImageAmstradSprites::ToQImage(LColorList &lst, QImage &img, double zoom, Q
 
     if (s->m_data.m_qImage==nullptr)
         return;
-    img = QImage(s->m_data.m_qImage->width(),s->m_data.m_qImage->height(), QImage::Format_ARGB32);
+//    img = QImage(s->m_data.m_qImage->width(),s->m_data.m_qImage->height(), QImage::Format_ARGB32);
     //    qDebug() << s->m_data.m_qImage->width()<<img.width();
     //    exit(1);
 
     for (int i=0;i<s->m_width*m_blockSize;i++)
-        for (int j=0;j<s->m_height*m_blockSize;j++) {
+        for (int j=0;j<img.height();j++) {
 
-            float xp = ((i-center.x())*zoom)+ center.x();
-            float yp = ((j-center.y())*zoom) + center.y();
-
-            unsigned int pen = s->m_data.getPixel(xp,yp);// % 16;
+            auto p = getZoomedCoordinates(i,j,center,zoom);
+            unsigned int pen = s->m_data.getPixel(p.x(),p.y());// % 16;
             unsigned int col = m_colorList.getPen(pen);
 
             img.setPixel(i,j,lst.get(col).color.rgb());

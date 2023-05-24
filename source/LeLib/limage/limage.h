@@ -138,6 +138,11 @@ public:
     virtual bool isSnes() {return false;}
     bool m_returnActualColor = true;
     float m_importScale = 1.0;
+    float m_aspect = 1.0;
+
+    void setAspect(float as) {
+        m_aspect = as;
+    }
     QVector<MetaParameter*> m_metaParams;
     MetaParameter* getMetaParameter(QString name);
     virtual QString getMetaInfo() { return "";}
@@ -147,6 +152,7 @@ public:
         return m_colorList.m_type;
     }
     bool m_fixMultiColorYSave = false;
+    void ToQImageUsingPens(LColorList &lst, QImage &img, double zoom, QPointF center);
 
     virtual QByteArray getDirArt() { return QByteArray();}
     virtual QByteArray getBinaryExportData() { return QByteArray();}
@@ -154,6 +160,8 @@ public:
     virtual void CopyImageData(LImage* img);
     virtual int getCharWidthDisplay();
     virtual int getCharHeightDisplay();
+
+    QPointF getZoomedCoordinates(int i, int j, const QPointF& center, double zoom);
 
     int m_charHeightDisplay = 25;
     int m_charWidthDisplay = 40;
@@ -352,6 +360,9 @@ public:
     virtual void setPixel(int x, int y, unsigned int color) = 0;
     virtual void setBasePixel(int x, int y) {}
     virtual unsigned int getPixel(int x, int y) = 0;
+
+    virtual unsigned int getPixel(QPointF p);
+
     virtual void SetColor(uchar col, uchar idx) {}
 
     virtual void LoadCharset(QString file, int skipBytes) {

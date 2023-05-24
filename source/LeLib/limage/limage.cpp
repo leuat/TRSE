@@ -340,6 +340,27 @@ MetaParameter *LImage::getMetaParameter(QString name)
     return nullptr;
 }
 
+void LImage::ToQImageUsingPens(LColorList &lst, QImage &img, double zoom, QPointF center)
+{
+    int height  =img.height();
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
+        height = m_height;
+    for (int i=0;i<m_width;i++)
+        for (int j=0;j<height;j++) {
+
+            float xp = ((i-center.x())*zoom)+ center.x();
+            float yp = ((j-center.y())*zoom) + center.y();
+
+            unsigned int pen = getPixel(xp,yp);// % 16;
+            unsigned int col = m_colorList.getPen(pen);
+
+            //            img->setPixel(i,j,QRgb(col));
+            img.setPixel(i,j,lst.get(col).color.rgb());
+        }
+    //return img;
+
+}
+
 void LImage::CopyImageData(LImage *img) {
     qDebug() << "LImage::CopyImageData should not be called on pure virtual class!";
 }
@@ -352,6 +373,12 @@ int LImage::getCharWidthDisplay()
 int LImage::getCharHeightDisplay()
 {
     return m_charHeightDisplay;
+}
+
+QPointF LImage::getZoomedCoordinates(int i, int j, const QPointF& center, double zoom) {
+    float xp = ((i-center.x())*zoom)+ center.x();
+    float yp = (((j-center.y())*zoom) + center.y());//*m_aspect;
+    return QPointF(xp,yp);
 }
 
 QStringList LImage::getBankNames() {
@@ -659,6 +686,10 @@ void LImage::Rotate(QPoint center, float angle, float scale, LImage* img)
         }
 }
 
+unsigned int LImage::getPixel(QPointF p) {
+    return getPixel(p.x(), p.y());
+}
+
 void LImage::ExportSubregion(QString outfile, int x, int y, int w, int h, int type) {
 
     QByteArray data;
@@ -766,6 +797,7 @@ void LImage::CopyFrom(LImage *img) {
         m_height = img->m_height;
 
     }
+    m_aspect = img->m_aspect;
     m_colorList.CopyFrom(&img->m_colorList);
     m_footer = img->m_footer;
     m_scaleX = img->m_scaleX;

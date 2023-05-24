@@ -43,20 +43,7 @@ void LImageThomson::SetMode()
 }
 void LImageThomson::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
-//#pragma omp parallel for
-    for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
-
-            float xp = ((i-center.x())*zoom)+ center.x();
-            float yp = ((j-center.y())*zoom) + center.y();
-
-            unsigned int pen = getPixel(xp,yp);// % 16;
-            unsigned int col = m_colorList.getPen(pen);
-
-            //            img->setPixel(i,j,QRgb(col));
-            img.setPixel(i,j,lst.get(col).color.rgb());
-        }
-    //return img;
+    ToQImageUsingPens(lst,img,zoom,center);
 }
 
 void LImageThomson::setPixel(int x, int y, unsigned int color)
@@ -170,7 +157,7 @@ void LImageThomson::CopyFrom(LImage *img) {
     if (m_width!=img->m_width || m_height!=img->m_height) {
         return;
     }
-
+    m_aspect = img->m_aspect;
     m_colorList.CopyFrom(&img->m_colorList);
     m_footer = img->m_footer;
     m_scaleX = img->m_scaleX;

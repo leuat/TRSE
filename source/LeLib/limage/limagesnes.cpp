@@ -212,8 +212,12 @@ void LImageSNES::SetBank(int bnk) {
 void LImageSNES::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
 //#pragma omp parallel for
+    int height  =img.height();//std::min(img.height(), m_height);
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
+        height = m_height;
+
     for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
+        for (int j=0;j<height;j++) {
 
             float xp = ((i-center.x())*zoom)+ center.x();
             float yp = ((j-center.y())*zoom) + center.y();

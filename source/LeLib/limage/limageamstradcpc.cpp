@@ -94,20 +94,7 @@ unsigned int LImageAmstradCPC::getPixel(int x, int y)
 */
 void LImageAmstradCPC::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
-//#pragma omp parallel for
-    for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
-
-            float xp = ((i-center.x())*zoom)+ center.x();
-            float yp = ((j-center.y())*zoom) + center.y();
-
-            unsigned int pen = getPixel(xp,yp);// % 16;
-            unsigned int col = m_colorList.getPen(pen);
-
-            //            img->setPixel(i,j,QRgb(col));
-            img.setPixel(i,j,lst.get(col).color.rgb());
-        }
-    //return img;
+    ToQImageUsingPens(lst, img, zoom, center);
 }
 /*
 void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma)

@@ -127,6 +127,8 @@ public:
     static uchar MultiCharMask(uchar val);
 
     static QVector3D abss(QVector3D a);
+    static QVector3D fromQString(QString val);
+    static QString fromVec(QVector3D val);
     static QVector3D maxx(QVector3D a, QVector3D b);
 
     static int C64StringToInt(QString f);

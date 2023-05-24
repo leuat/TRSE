@@ -127,11 +127,10 @@ void WorkerThread::UpdateDrawing()
 //        pos.setX(pos.x()-0.25f);
 //        pos.setY(pos.y()-0.25f);
         if (!(QApplication::keyboardModifiers() & Qt::ControlModifier) && perform) {
-//            if (!isPreview)
-            m_toolBox->m_current->Perform(pos.x(), pos.y(), col, img, isPreview, m_currentButton);
-            //if (dynamic_cast<Filler*>(m_toolBox->m_current)!=nullptr) {
-            //    msleep(10);
-           // }
+            float zy = m_zoomCenter.y();
+            float start = ((0-zy*m_zoom) + zy)*(img->m_aspect-1);
+            float yp = pos.y()*img->m_aspect - start;// - ((0-m_zoomCenter.y()*m_zoom) + m_zoomCenter.y());
+            m_toolBox->m_current->Perform(pos.x(), yp, col, img, isPreview, m_currentButton);
         }
         if (m_currentButton == 2)
             img->AfterRightButton();
@@ -189,6 +188,17 @@ void WorkerThread::UpdatePanning()
 }
 
 
+void WorkerThread::FillImage(QImage &img)
+{
+/*    for (int y=0;y<img.height();y++) {
+        for (int x=0;x<img.width();x++) {
+            int j = (x+y)&7;
+            if (j==0) img.setPixel(x,y,QColor(100,80,255,255).rgba());
+            else img.setPixel(x,y,QColor(255,0,0,255).rgba());
+        }
+    }*/
+    img.fill(0);
+}
 
 
 void WorkerThread::UpdateImage(LImage * mc)
@@ -200,15 +210,18 @@ void WorkerThread::UpdateImage(LImage * mc)
    if (mc==nullptr)
        return;
 
-   int sc = 1;
+   double sc = mc->m_aspect;
 
+//    qDebug() << "WORKERTHREAD " << mc->m_aspect <<mc->m_width << mc->m_height*sc<<sc;
     if (m_tmpImage == nullptr) {
-        m_tmpImage = new QImage(mc->m_width*sc,mc->m_height*sc,QImage::Format_ARGB32);
+        m_tmpImage = new QImage(mc->m_width,mc->m_height*sc,QImage::Format_ARGB32);
+        FillImage(*m_tmpImage);
     }
 
-    if (m_tmpImage->width()!=mc->m_width*sc || m_tmpImage->height()!=mc->m_height*sc) {
+    if (m_tmpImage->width()!=mc->m_width || m_tmpImage->height()!=mc->m_height*sc) {
         delete m_tmpImage;
-        m_tmpImage = new QImage(mc->m_width*sc,mc->m_height*sc,QImage::Format_ARGB32);
+        m_tmpImage = new QImage(mc->m_width,mc->m_height*sc,QImage::Format_ARGB32);
+        FillImage(*m_tmpImage);
 
     }
 
@@ -276,6 +289,7 @@ void WorkerThread::UpdateMessages()
 
 }
 
+
 void WorkerThread::OnQuit()
 {
     m_quit = true;
@@ -299,8 +313,12 @@ void WorkerThread::CreateGrid()
         int ys = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_Y);
         if (xs==0) xs++;
         if (ys==0) ys++;
-
-        m_grid->CreateGrid(m_work->m_currentImage->m_image->getGridWidth()/xs,m_work->m_currentImage->m_image->getGridHeight()/ys,m_gridColor,2, m_zoom, QPointF(m_zoomCenter.x(), m_zoomCenter.y())*m_gridScale,m_work->m_currentImage->m_image->m_scaleX);
+        float as = m_work->m_currentImage->m_image->m_aspect;
+        m_grid->CreateGrid(m_work->m_currentImage->m_image->getGridWidth()/xs,
+                           m_work->m_currentImage->m_image->getGridHeight()/ys*as,
+                           m_gridColor,2, m_zoom,
+                           QPointF(m_zoomCenter.x(), m_zoomCenter.y()/as)*m_gridScale,
+                           m_work->m_currentImage->m_image->m_scaleX);
     }
     else
         m_grid->m_qImage->fill(0);

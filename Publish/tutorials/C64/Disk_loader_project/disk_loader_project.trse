@@ -76,4 +76,5 @@ use_track_19 = 1
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
+use_python = 0
 open_files =, main.ras

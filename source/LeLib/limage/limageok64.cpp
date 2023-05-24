@@ -72,12 +72,11 @@ void LImageOK64::LoadBin(QFile &f)
 void LImageOK64::ToQImage(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
     for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
+        for (int j=0;j<img.height();j++) {
 
-            float xp = floor(((i-center.x())*zoom)+ center.x());
-            float yp = floor(((j-center.y())*zoom) + center.y());
-
-
+            auto p = getZoomedCoordinates(i,j,center,zoom);
+            float xp = p.x();
+            float yp = p.y();
             unsigned int col = 0;
             if (xp>=0 && xp<m_width && yp>=0 && yp<m_height)
                 col = getPixel(xp,yp);

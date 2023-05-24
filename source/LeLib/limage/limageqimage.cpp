@@ -240,6 +240,7 @@ QPoint LImageQImage::getPixelPosition(int x, int y)
 {
     int xx = x;
     int yy = y;
+//    y*=m_aspect;
     if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1) {
         bool isRepeat = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_REPEAT)==1;
 
@@ -407,7 +408,7 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
 
     double width = m_qImage->width();
     double height = m_qImage->height();
-    QColor col2=QColor(20,30,40,255);
+    QColor col2=color;//QColor(60,180,255,255);
     QColor c;
     m_qImage->fill(QColor(0,0,0,0));
     center.setX(center.x()/(double)m_width*width/scale);
@@ -456,7 +457,8 @@ void LImageQImage::CopyFrom(LImage *img) {
         m_height = img->m_height;
 //        Initialize(m_width, m_height);
     }
-
+    //LImage::CopyFrom(img);
+    m_aspect = img->m_aspect;
     m_colorList.CopyFrom(&img->m_colorList);
     m_footer = img->m_footer;
     m_scaleX = img->m_scaleX;
@@ -651,13 +653,14 @@ QImage *LImageQImage::Blur(float blurRadius)
 void LImageQImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center)
 {
     //#pragma omp parallel for
+    int height  =img.height();//std::min(img.height(), m_height);
+    if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
+        height = m_height;
     for (int i=0;i<m_width;i++)
-        for (int j=0;j<m_height;j++) {
+        for (int j=0;j<height;j++) {
 
-            float xp = ((i-center.x())*zoom)+ center.x();
-            float yp = ((j-center.y())*zoom) + center.y();
-
-            unsigned int col = getPixel(xp,yp);// % 16;
+            auto p = getZoomedCoordinates(i,j,center,zoom);
+            unsigned int col = getPixel(p.x(),p.y());// % 16;
 
             //            img->setPixel(i,j,QRgb(col));
             img.setPixel(i,j,lst.get(col).color.rgb());

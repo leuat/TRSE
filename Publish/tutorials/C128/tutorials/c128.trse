@@ -43,3 +43,4 @@ data_header_images/image1.flf = 0
 use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
+use_python = 0

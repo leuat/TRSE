@@ -83,3 +83,4 @@ data_header_images/consoles.flf = 0
 data_header_images/font.flf = 0
 data_header_images/tiles111.flf = 0
 data_header_images/tiles11.flf = 0
+use_python = 0

@@ -111,6 +111,7 @@ void DialogTRSESettings::FillFromIni()
     ui->chkCompileThread->setChecked(m_ini->getdouble("compile_thread")==1.0);
 
     ui->leCPCDisk->setText(m_ini->getString("cpcdisk_location"));
+    ui->leGridColor->setText(Util::fromVec(m_ini->getVec("grid_colour")));
 
     ui->chkExomizer->setChecked(m_ini->getdouble("exomizer_version_3")==1.0);
 
@@ -226,6 +227,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("sidplayer",ui->leSidplayer->text());
 
     m_ini->setString("cpcdisk_location",ui->leCPCDisk->text());
+    m_ini->setVec("grid_colour",Util::fromQString(ui->leGridColor->text()));
 
     m_ini->setFloat("backup_files_count",ui->leBackupFiles->text().toInt());
 

@@ -630,6 +630,24 @@ QVector3D Util::abss(QVector3D a)
     return QVector3D(abs(a.x()), abs(a.y()), abs(a.z()));
 }
 
+QVector3D Util::fromQString(QString val)
+{
+    QStringList l = val.split(",");
+    QVector3D v;
+    if (l.size()>0)
+        v.setX(l[0].toFloat());
+    if (l.size()>1)
+        v.setY(l[1].toFloat());
+    if (l.size()>2)
+        v.setZ(l[2].toFloat());
+    return v;
+}
+
+QString Util::fromVec(QVector3D val)
+{
+    return QString::number(val.x())+","+QString::number(val.y())+","+QString::number(val.z());
+}
+
 QVector3D Util::maxx(QVector3D a, QVector3D b)
 {
     return QVector3D(std::max(a.x(),b.x()), std::max(a.y(),b.y()), std::max(a.z(),b.z()));
