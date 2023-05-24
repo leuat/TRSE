@@ -510,46 +510,6 @@ void CharsetImage::Invert()
     }
     MultiColorImage::Invert();
 }
-/*
-void CharsetImage::CopyFrom(LImage *img)
-{
-   // return LImage::CopyFrom(img);
-
-    CharsetImage* mc = dynamic_cast<CharsetImage*>(img);
-    m_colorList.m_isMulticolor = img->m_colorList.m_isMulticolor;
-    //if ((typeid(*img) == typeid(MultiColorImage)) || (typeid(*img) == typeid(StandardColorImage))
-    //        || (typeid(*img) == typeid(CharsetImage)))
-    m_footer = img->m_footer;
-    if (mc!=nullptr)
-    {
-        m_colorList.CopyFrom(&img->m_colorList);
-        //m_currentMode = mc->m_currentMode;
-        m_currentChar = mc->m_currentChar;
-
-        m_width = mc->m_width;
-        m_height = mc->m_height;
-        m_scaleX = mc->m_scaleX;
-        m_bitMask = mc->m_bitMask;
-        m_noColors = mc->m_noColors;
-        m_scale = mc->m_scale;
-        m_minCol = mc->m_minCol;
-        m_charWidth = mc->m_charWidth;
-        m_charHeight = mc->m_charHeight;
-        m_gridWidthDisplay = mc->m_gridWidthDisplay;
-        m_charWidthDisplay = mc->m_charWidthDisplay;
-
-        CopyImageData(img);
-
-    }
-    else
-    {
-        MultiColorImage::CopyFrom(img);
-        return;
-    }
-
-
-}
-*/
 bool CharsetImage::KeyPress(QKeyEvent *e)
 {
     QPoint dir(0,0);

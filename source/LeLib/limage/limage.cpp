@@ -33,6 +33,8 @@
 uchar LImage::m_copy[1024*1024];
 bool LImage::m_hasCopy = false;
 QPoint LImage::m_copySize = QPoint(512,512);
+int LImage::m_canvasStart = -1;
+
 LImage::LImage(LColorList::Type t)
 {
     m_colorList.Initialize(t);
@@ -333,10 +335,11 @@ LImage::Type LImage::CharToType(unsigned char c)
 
 int LImage::getCanvasColor(int x, int y)
 {
-    if (((x+y)&7)==0)
+    return 0;
+/*    if (((x+y)&7)==0)
         return 1;
     else
-        return 0;
+        return 0;*/
 //    return (x+y)&7;
 }
 
@@ -351,6 +354,7 @@ MetaParameter *LImage::getMetaParameter(QString name)
 
 void LImage::ToQImageUsingPens(LColorList &lst, QImage &img, double zoom, QPointF center)
 {
+    m_canvasStart = -1;
     int height  =img.height();
     if (m_footer.get(LImageFooter::POS_DISPLAY_CHAR)==1)
         height = m_height;
@@ -387,6 +391,8 @@ int LImage::getCharHeightDisplay()
 QPointF LImage::getZoomedCoordinates(int i, int j, const QPointF& center, double zoom) {
     float xp = ((i-center.x())*zoom)+ center.x();
     float yp = (((j-center.y())*zoom) + center.y());//*m_aspect;
+    if (yp>=m_height && m_canvasStart == -1)
+        m_canvasStart = j;
     return QPointF(xp,yp);
 }
 

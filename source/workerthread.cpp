@@ -236,6 +236,17 @@ void WorkerThread::UpdateImage(LImage * mc)
         return;
 
     mc->ToQImage(m_work->m_currentImage->m_image->m_colorList, *m_tmpImage, m_zoom, m_zoomCenter);
+    LImage* img = m_work->m_currentImage->m_image;
+    if (img->m_canvasStart!=-1)
+    for (int x=0;x<img->m_width;x++)
+        for (int y=img->m_canvasStart;y<m_tmpImage->height();y++) {
+            QColor c(0,0,0,255);
+            if (((x+y)&3)==0)
+                c=QColor(48,48,48,255);
+            m_tmpImage->setPixel(x,y,c.rgba());
+        }
+
+
 //        *m_tmpImage = m_tmpImage->scaled(320,200,Qt::KeepAspectRatio);
    // m_tmpImage->fill(QColor(255,0,0));
     m_pixMapImage.convertFromImage(*m_tmpImage);

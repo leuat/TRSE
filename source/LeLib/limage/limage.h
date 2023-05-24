@@ -139,7 +139,7 @@ public:
     bool m_returnActualColor = true;
     float m_importScale = 1.0;
     float m_aspect = 1.0;
-
+    static int m_canvasStart;
     void setAspect(float as) {
         m_aspect = as;
     }

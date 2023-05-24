@@ -473,6 +473,7 @@ void MultiColorImage::CopyFrom(LImage* img)
     //        || (typeid(*img) == typeid(CharsetImage)))
     m_footer.m_data = img->m_footer.m_data;
     m_colorList.CopyFrom(&img->m_colorList);
+    //m_canvasStart = img->m_canvasStart;
     m_aspect = img->m_aspect;
     if (mc!=nullptr)
     {
@@ -1436,7 +1437,8 @@ void MultiColorImage::SetHybridMode(bool checked) {
 
 int MultiColorImage::getCanvasColor(int x, int y)
 {
-    return ((x+y)&7)*11;
+    return 0;
+//    return ((x+y)&7)*11;
 }
 
 int MultiColorImage::getCharAtPos(QPoint p, float zoom, QPointF center)
@@ -1836,7 +1838,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPoint
         height = m_height;
     //  center.setX(floor(center.x()));
     //   center.setY(floor(center.y()));
-
+    m_canvasStart = -1;
 
 //#pragma omp parallel for
     for (int j=0;j<height;j++) {
