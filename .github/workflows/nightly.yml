@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      - uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
           delete_release: false
           tag_name: "nightly"
