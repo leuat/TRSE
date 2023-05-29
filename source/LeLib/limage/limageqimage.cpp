@@ -413,7 +413,7 @@ QImage* LImageQImage::ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effec
     return res;
 }
 
-void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoom, QPointF center, double scale, int type, int iheight)
+void LImageQImage::CreateGrid(double x, double y,  QColor color, int strip, double zoom, QPointF center, double scale, int type, int iheight, double aspect)
 {
 
     double width = m_qImage->width();
@@ -423,12 +423,12 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
     m_qImage->fill(QColor(0,0,0,0));
     center.setX(center.x()/(double)m_width*width/scale);
     center.setY(center.y()/(double)m_height*height);
-
     //    double xp = (((i-center.x())*(double)zoom)+ center.x());
     //  double yp = (((j-center.y())*(double)zoom)+ center.y());
+   // qDebug() << height << y << aspect;
     QColor c;
-    for (float i=1;i<x;i++)
-        for (float j = 0;j<height;j++) {
+    for (double i=1;i<x;i++)
+        for (double j = 0;j<height;j++) {
             double xp = (width/((double)(x)))*(i);
 
             xp = (xp - scale*center.x())/zoom + scale*center.x();
@@ -449,10 +449,10 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
     // width lines
     for (float i=1;i<y;i++)
         for (float j = 0;j<width;j++) {
-            float yp = (height/(float)(y))*(i);
+            double yp = (height/(double)(y))*(i);//-(aspect-1)/2.0;
 
             yp = (yp - center.y())/zoom + center.y();
-            float xp = j;
+            double xp = j;
 
             c = color;
             if (((int)i&7)==0)
@@ -461,8 +461,11 @@ void LImageQImage::CreateGrid(int x, int y,  QColor color, int strip, double zoo
             if (type==0 && (((int)i&7)!=0))
                 if (((int)j%strip>=strip/2))
                     continue;
-            if (xp>=0 && xp<width && yp>=0 && yp<height)
+            if (xp>=0 && xp<width && yp>=0 && yp<height) {
                 m_qImage->setPixel(xp, yp, c.rgba());
+ //               if (j==1)
+   //             qDebug() << yp;
+            }
         }
 
 

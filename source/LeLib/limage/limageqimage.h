@@ -98,7 +98,7 @@ public:
     QImage* Blur(float rad);
     QImage* ApplyEffectToImage(QImage& src, QGraphicsBlurEffect *effect);
 
-    void CreateGrid(int x, int y, QColor color, int strip,double zoom, QPointF center, double scale, int type, int height);
+    void CreateGrid(double x, double y, QColor color, int strip,double zoom, QPointF center, double scale, int type, int height, double aspect);
 
 
     void CopyFrom(LImage *img) override;

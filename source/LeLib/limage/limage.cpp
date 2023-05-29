@@ -389,8 +389,8 @@ int LImage::getCharHeightDisplay()
 }
 
 QPointF LImage::getZoomedCoordinates(int i, int j, const QPointF& center, double zoom) {
-    float xp = ((i-center.x())*zoom)+ center.x();
-    float yp = (((j-center.y())*zoom) + center.y());//*m_aspect;
+    double xp = ((i-center.x())*zoom)+ center.x();
+    double yp = (((j-center.y())*zoom) + center.y());//*m_aspect;
     if (yp>=m_height && m_canvasStart == -1)
         m_canvasStart = j;
     return QPointF(xp,yp);

@@ -320,11 +320,12 @@ void WorkerThread::Continue()
 void WorkerThread::CreateGrid()
 {
     if (m_drawGrid) {
-        int xs = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_X);
-        int ys = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_Y);
+        double xs = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_X);
+        double ys = m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_SCALE_Y);
         if (xs==0) xs++;
         if (ys==0) ys++;
-        float as = m_work->m_currentImage->m_image->m_aspect;
+//        ys = 2;
+        double as = m_work->m_currentImage->m_image->m_aspect;
         m_grid->CreateGrid(m_work->m_currentImage->m_image->getGridWidth()/xs,
                            m_work->m_currentImage->m_image->getGridHeight()/ys*as,
                            m_gridColor,4, m_zoom,
@@ -332,7 +333,7 @@ void WorkerThread::CreateGrid()
                            m_work->m_currentImage->m_image->m_scaleX,
                            m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_TYPE),
                            m_work->m_currentImage->m_image->m_height
-                           );
+                           ,as);
     }
     else
         m_grid->m_qImage->fill(0);
