@@ -329,8 +329,7 @@ void WorkerThread::CreateGrid()
         m_grid->CreateGrid(m_work->m_currentImage->m_image->getGridWidth()/xs,
                            m_work->m_currentImage->m_image->getGridHeight()/ys*as,
                            m_gridColor,4, m_zoom,
-                           QPointF(m_zoomCenter.x(), m_zoomCenter.y()/as)*m_gridScale,
-                           m_work->m_currentImage->m_image->m_scaleX,
+                           QPointF(m_zoomCenter.x(), m_zoomCenter.y()/as)*m_gridScale, m_work->m_currentImage->m_image->m_scaleX,
                            m_work->m_currentImage->m_image->m_footer.get(LImageFooter::POS_GRID_TYPE),
                            m_work->m_currentImage->m_image->m_height
                            ,as);

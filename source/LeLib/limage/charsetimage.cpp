@@ -60,7 +60,6 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[col2] = "";
     m_GUIParams[col3] = "Multicolor 1";
     m_GUIParams[col4] = "Multicolor 2";
-
     m_currentChar=0;
     //m_currentMode=Mode::FULL_IMAGE;
     m_exportParams.clear();
@@ -69,7 +68,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_exportParams["IncludeColors"] = 0;
     m_exportParams["VIC20mode"] = 0;
 
-    m_supports.displayCharOperations = true;
+    m_supports.displayCharOperations = false;
 
     for (int i=0;i<m_charWidth*m_charHeight;i++)
         m_data[i].c[3]=1;
@@ -510,10 +509,10 @@ void CharsetImage::Invert()
     }
     MultiColorImage::Invert();
 }
+
 bool CharsetImage::KeyPress(QKeyEvent *e)
 {
     QPoint dir(0,0);
-
 
     if (e->key()==Qt::Key_0 ) { Data::data.currentColor = m_color.c[0];}
     if (e->key()==Qt::Key_1 ) { Data::data.currentColor = m_color.c[1];}

@@ -146,8 +146,7 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 //    emit EmitMouseEvent();
     m_updateThread.RunContents();
     ui->splitter->setCollapsible(0,true);
- //   ui->ImageLayout->set
-
+ //   ui->I
     if (e!=nullptr && e->type()==QEvent::Wheel)
         wheelEvent((QWheelEvent*)e);
     UpdateImage();
@@ -362,7 +361,6 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             if (e->key()==Qt::Key_V)
                 on_btnCharsetPaste_clicked();
         }
-
         if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             int j = 0;
             if (QApplication::keyboardModifiers() & Qt::ShiftModifier)
@@ -423,10 +421,10 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             UpdateLevels();
 
         }
+
         if (!pressed)
         if (!((QApplication::keyboardModifiers() & Qt::ControlModifier)))
             m_work.m_currentImage->m_image->KeyPress(e);
-
 
 //        FillCMBColors();
 
@@ -991,8 +989,6 @@ bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
 
         if (((ke->key() == Qt::Key_S) &&  ((QApplication::keyboardModifiers() & Qt::ControlModifier)))) {
             SaveCurrent();
-//            QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Enter);
-//            QCoreApplication::postEvent (this, event);
             return true;
         }
 
@@ -1099,7 +1095,6 @@ void FormImageEditor::showDetailCharButtons()
         return;
 */
     bool doShow = (GetFooterData(LImageFooter::POS_DISPLAY_CHAR))==1 && m_work.m_currentImage->m_image->m_supports.displayCharOperations;
-
 
 
     ui->btnCharsetCopy->setVisible(doShow);
@@ -1251,13 +1246,6 @@ void FormImageEditor::on_btnCharsetFull_clicked()
     getCurrentPainter()->setFocus();
     ui->lstCharMap->setCurrentItem(nullptr);
 
-/*    CharsetImage* ci = dynamic_cast<CharsetImage*>(m_work.m_currentImage->m_image);
-    if (ci==nullptr)
-        return;
-
-
-    ci->m_currentMode = CharsetImage::Mode::FULL_IMAGE;
-    */
     Data::data.forceRedraw = true;
     UpdateCurrentMode();
     UpdateGrid();
@@ -2685,7 +2673,7 @@ void FormImageEditor::on_cmbCharWidth_currentTextChanged(const QString &arg1)
 }
 
 
-void FormImageEditor::on_btnInv_clicked()
+void FormImageEditor::on_btnInvert_clicked()
 {
     m_work.m_currentImage->m_image->Invert();
     Update();
