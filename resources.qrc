@@ -747,5 +747,6 @@
         <file>resources/text/help/r/vbmcompilechunk.rtf</file>
         <file>resources/images/tutorials/gulch.png</file>
         <file>resources/images/tutorials/VZPaganitzu.png</file>
+        <file>resources/images/tutorials/spacewar.png</file>
     </qresource>
 </RCC>
