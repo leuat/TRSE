@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>969</width>
-    <height>882</height>
+    <height>934</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -642,10 +642,37 @@ QA, whip,  game developer</string>
          </item>
         </layout>
        </item>
+       <item row="10" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_30" stretch="1,100">
+         <item>
+          <widget class="QLabel" name="label_60">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resources.qrc">:/resources/images/portraits/dead_astronaut_small.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lblDate_35">
+           <property name="text">
+            <string>Zsolt Bertók</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_27" stretch=""/>
+      <layout class="QHBoxLayout" name="horizontalLayout_27"/>
      </item>
      <item>
       <widget class="QLabel" name="lblHeader3">
