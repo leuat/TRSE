@@ -976,8 +976,13 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
     as->Comment("Writetype : "+TokenType::getType(node->getClassvariableType())) ;*/
     if (!node->isWord(as) )
         as->Asm("ld a,"+node->getValue(as) );
-    else
-        as->Asm("ld "+hl+","+node->getValue(as));
+    else {
+        int val = node->getValueAsInt(as);
+        // damn.. flip
+        if (node->getStoreType()==TokenType::INTEGER && val<256)
+            val = 65536-(256-val);
+        as->Asm("ld "+hl+","+Util::numToHex(val));
+    }
 
 
 }

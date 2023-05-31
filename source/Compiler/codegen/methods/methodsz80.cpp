@@ -55,6 +55,8 @@ void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 
     if (Command("dec"))
         IncDec(as, "dec");
+    if (Command("abs"))
+        Abs(as);
 
     if (Command("AddBreakpoint")) {
         as->Label("trse_breakpoint_"+QString::number(as->m_currentBreakpoint++));
@@ -333,6 +335,39 @@ void MethodsZ80::Fill(Assembler *as)
     jr	nz,.fill
     ret
   */
+}
+
+void MethodsZ80::Abs(Assembler *as)
+{
+    m_node->m_params[0]->Accept(m_codeGen);
+    QString lbl = as->NewLabel("cont");
+
+    if (!m_node->m_params[0]->isWord(as)) {
+
+        as->Asm("or a");
+        as->Asm("jp p,"+lbl);
+        as->Asm("neg");
+        as->Label(lbl);
+        if (m_node->getStoreType()==TokenType::INTEGER)
+            m_codeGen->Cast(TokenType::BYTE, TokenType::INTEGER);
+
+    }
+    else {
+        as->Asm("bit 7,h");
+        as->Asm("jp z,"+lbl);
+        as->Asm("xor a");
+        as->Asm("sub l");
+        as->Asm("ld l,a");
+        as->Asm("sbc a,a");
+        as->Asm("sub h");
+        as->Asm("ld h,a");
+        as->Label(lbl);
+
+
+        if (m_node->getStoreType()==TokenType::BYTE)
+            m_codeGen->Cast(TokenType::INTEGER, TokenType::BYTE);
+    }
+    as->PopLabel("cont");
 }
 
 void MethodsZ80::Mod(Assembler *as)
