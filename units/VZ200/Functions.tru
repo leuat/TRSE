@@ -167,4 +167,20 @@ begin
 	ResetBit := Value - BitFlag;
 end;
 
+/**
+  Get the absolute value of a byte
+  eg.  v=-123; v=abs(v); v is 123
+  **/
+function abs(j : global byte):byte;
+begin
+  asm("
+    ld a,[Functions_j]
+    or a
+    ret p
+    neg
+    ld [Functions_j],a
+  ");
+  abs := j;
+end;
+
 end.
