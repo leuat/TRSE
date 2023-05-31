@@ -806,8 +806,8 @@ void CodeEditor::addressAreaPaintEvent(QPaintEvent *event) {
 void CodeEditor::ToggleComments()
 {
     QString s = textCursor().selection().toPlainText();
-
     QStringList SL = s.split("\n");
+    QString n;
     for(int i=0; i<SL.length(); i++){
         if(SL.at(i).trimmed().startsWith("//")){
             s = SL.at(i);
@@ -819,7 +819,8 @@ void CodeEditor::ToggleComments()
         }
         if(i<SL.length()-1) s.append("\n");
         //        qDebug() << s;
-        textCursor().insertText(s);
+        n +=s;
     }
+    textCursor().insertText(n);
 
 }
