@@ -5,6 +5,8 @@ program Tutorial7;
 @use "system/system"
 @use "system/graphics"
 
+@addemulatorparam "-nothrottle"
+
 var
 	@deletefile "images/tiles.bin"	
 	@exportsubregion "images/tiles.flf" "images/tiles.bin"  0 112 16 16 // invad 1A

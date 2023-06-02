@@ -21,6 +21,7 @@ var
 	const height: byte = 32;
 	// Frame lookup tab
 	frameTab : array[noFrames] of integer = buildtable("i*WIDTH*HEIGHT");
+@addemulatorparam "-nothrottle"
 
 
 procedure PlaceFrame(frame:byte; loc:pointer);
@@ -28,6 +29,7 @@ begin
 	zp:=#data + frameTab[frame];
 	for i:=0 to 	width do
 	begin
+		
 		Screen::CopyToScreen(zp, loc, height);
 		loc+=256;
 		zp+=height;		

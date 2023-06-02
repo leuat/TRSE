@@ -10,6 +10,8 @@ var
 
 	i,j,x,y,ch,col: integer;
 
+@addemulatorparam "-nothrottle"
+
 procedure PressAny();
 begin
 	Screen::GotoXY(10,0);

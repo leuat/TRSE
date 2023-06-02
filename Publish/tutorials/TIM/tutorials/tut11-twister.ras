@@ -5,6 +5,8 @@ program Image;
 @use "system/screen"
 @use "system/graphics"
 
+@addemulatorparam "-nothrottle"
+
 var  
    	v,i,j,f,frame,n,m,o,dy: byte; 
 	time,time2:byte;
