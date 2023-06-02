@@ -979,7 +979,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeNumber> node)
     else {
         int val = node->getValueAsInt(as);
         // damn.. flip
-        if (node->getStoreType()==TokenType::INTEGER && val<256)
+        if (node->getStoreType()==TokenType::INTEGER && val<256 && node->isNegative())
             val = 65536-(256-val);
         as->Asm("ld "+hl+","+Util::numToHex(val));
     }

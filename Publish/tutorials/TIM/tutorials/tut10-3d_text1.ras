@@ -7,7 +7,7 @@ program Image;
 
 var  
    v,i,j,k,curFrame: byte; 
-
+@addemulatorparam "-nothrottle"
 @export "images/image1.flf" "images/image1.bin" 256
 
 	// 3d data generated with fjong/text.fjo

@@ -52,6 +52,7 @@ protected:
     // automatic removal of nodes
     bool m_hasSwapped = false;
     bool m_isUsed = false;
+    bool m_isNegative = false;
     QStringList m_isUsedBy;
 
 //    int m_lineNumber;
@@ -73,7 +74,6 @@ protected:
     // Used to set various states, such as if binary operations are used etc
     static QMap<QString, bool> flags;
 
-
     bool m_ignoreSuccess = false; // Used for binary expressions
     bool m_classApplied = false;
     static uint s_nodeCount;
@@ -83,6 +83,8 @@ protected:
 
 public:
     friend class Parser;
+
+
     // Token contains node type data and values from the parser
     Token m_op;
     // Base node has 2 children: left and right
@@ -117,6 +119,13 @@ public:
     virtual TokenType::Type getStoreType() { return m_storeType ;}
     // And now for a ton of methods that can/should be implemented by all the subclasses
 
+    bool isNegative() {
+        return m_isNegative;
+    }
+
+    void setNegative(bool b) {
+        m_isNegative = b;
+    }
 
     QString getStoreTypesDebug();
 

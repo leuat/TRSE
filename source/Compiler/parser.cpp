@@ -2805,7 +2805,9 @@ QSharedPointer<Node> Parser::Factor()
                 else
                     t.m_intVal = 65536-t.m_intVal;
             }
-            return QSharedPointer<NodeNumber>(new NodeNumber(t,t.m_intVal));
+            auto n = new NodeNumber(t,t.m_intVal);
+            n->setNegative(true);
+            return QSharedPointer<NodeNumber>(n);
 
 
         }

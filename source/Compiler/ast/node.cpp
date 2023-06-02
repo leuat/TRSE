@@ -24,6 +24,7 @@
 
 
 int Node::m_currentLineNumber;
+
 MemoryBlockInfo  Node::m_staticBlockInfo;
 QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 QString Node::sForceFlag = "";
