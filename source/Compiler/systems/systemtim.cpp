@@ -74,9 +74,17 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
 
     QString cpmtools = m_settingsIni->getString("cpmtools_directory");
 
+    QString cpmcp = "cpmcp.exe";
+#ifdef __linux__
+    cpmcp = "cpmcp";
+#endif
+#ifdef __APPLE__
+    cpmcp = "cpmcp";
+#endif
+
 
     QDir dir(cpmtools);
-    if (!QFile::exists(cpmtools+"/cpmcp")) {
+    if (!QFile::exists(cpmtools+"/"+cpmcp)) {
         text  += "<br><font color=\"#FF0000\">You need to set up a link to the CPMTools directory in the TRSE settings.</font>";
         text+=output;
         m_buildSuccess = false;
@@ -122,7 +130,7 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
     QDir directory(floppyDir);
     QStringList files = directory.entryList(QStringList() << "*.*",QDir::Files | QDir::NoDotAndDotDot);
     for (auto& f:files) {
-        StartProcess(cpmtools+"/cpmcp",QStringList()
+        StartProcess(cpmtools+"/"+cpmcp,QStringList()
                      <<"-f" <<"tim011"
                      //    <<"\"" + floppy + "\""
                      <<dname
