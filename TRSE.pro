@@ -247,6 +247,9 @@ SOURCES += main.cpp\
     source/LeLib/limage/limagethomson.cpp \
     source/LeLib/limage/limagetimgen.cpp \
     source/LeLib/limage/limagetvc.cpp \
+    source/LeLib/util/cpmtools/cpmfs.c \
+    source/LeLib/util/cpmtools/cpmtools.c \
+    source/LeLib/util/cpmtools/device.c \
     source/LeLib/util/dirartd64.cpp \
     source/LeLib/bbc/asmexception.cpp \
     source/LeLib/bbc/discimage.cpp \
@@ -559,6 +562,11 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limagetim.h \
     source/LeLib/limage/limagetimgen.h \
     source/LeLib/limage/limagetvc.h \
+    source/LeLib/util/cpmtools/config.h \
+    source/LeLib/util/cpmtools/cpmdir.h \
+    source/LeLib/util/cpmtools/cpmfs.h \
+    source/LeLib/util/cpmtools/cpmtools.h \
+    source/LeLib/util/cpmtools/getopt_.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \
     source/LeLib/bbc/discimage.h \

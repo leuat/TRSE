@@ -6,6 +6,9 @@ var
 	msg: string = ("TRSE compiles code for TIM-011 !!!");
 	i, ch: integer;
 
+
+@addemulatorparam "-nothrottle"
+
 begin
 	// Startup code for CP/M programs
 	Z80CPM::Startup();

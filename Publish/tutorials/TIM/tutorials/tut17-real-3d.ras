@@ -1,4 +1,5 @@
 program Image;
+@addemulatorparam "-nothrottle"
 @use "system/z80cpm"
 @use "system/system"
 @use "system/screen"

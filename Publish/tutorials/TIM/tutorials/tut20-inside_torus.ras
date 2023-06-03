@@ -8,7 +8,7 @@ program Image;
 
 @export "images/image2.flf" "images/image2.bin" 256
 
-//@addemulatorparam "-nothrottle"
+@addemulatorparam "-nothrottle"
 
 
 var  

@@ -1,5 +1,6 @@
 #include "systemtim.h"
 #include <QThread>
+#include "source/LeLib/util/cpmtools/cpmtools.h"
 
 SystemTIM::SystemTIM(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
 {
@@ -130,7 +131,7 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
     QDir directory(floppyDir);
     QStringList files = directory.entryList(QStringList() << "*.*",QDir::Files | QDir::NoDotAndDotDot);
     for (auto& f:files) {
-        StartProcess(cpmtools+"/"+cpmcp,QStringList()
+       /* StartProcess(cpmtools+"/"+cpmcp,QStringList()
                      <<"-f" <<"tim011"
                      //    <<"\"" + floppy + "\""
                      <<dname
@@ -140,7 +141,17 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
                      <<floppyDir+f
                      <<"0:"
                      ,out,true,workDir
-                     );
+                     );*/
+        QStringList params = QStringList() << "cpmcp"
+                <<"-f" <<"tim011"
+                <<dname
+                <<floppyDir+f
+                <<"0:";
+
+            Util::CopyFile(":resources/text/diskdefs","diskdefs");
+            main_cpmtools(params.size(),Util::StringListToChar(params));
+//            fflush(stdout);
+            QFile("diskDefs").remove();
     }
     //    qDebug() << out;
     QString outFile = filename+".img";
@@ -151,7 +162,7 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
 
 
 
-    CleanupDisk(currentDir);
+//    CleanupDisk(currentDir);
 
 
 

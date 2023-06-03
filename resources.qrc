@@ -748,5 +748,6 @@
         <file>resources/images/tutorials/gulch.png</file>
         <file>resources/images/tutorials/VZPaganitzu.png</file>
         <file>resources/images/tutorials/spacewar.png</file>
+        <file>resources/text/diskdefs</file>
     </qresource>
 </RCC>
