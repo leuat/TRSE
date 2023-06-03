@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include "getopt_.h"
+//#include "getopt_.h"
 #include "cpmfs.h"
 /*}}}*/
 
@@ -20,6 +20,7 @@ const char cmd[]="cpmcp";
 static int text=0;
 static int preserve=0;
 static int xit = 0;
+static int optind = 0;
 /**
  * Return the user number.
  * @param s CP/M filename in 0[0]:aaaaaaaa.bbb format.
@@ -146,7 +147,7 @@ int main_cpmtools(int argc, char *argv[])
 //  printf("here 9 \n");
   /* parse options */ /*{{{*/
 //  if (!(format=getenv("CPMTOOLSFMT"))) format=FORMAT;
-  while ((c=getopt(argc,argv,"T:f:ptuh?"))!=EOF) switch(c)
+/*  while ((c=getopt(argc,argv,"T:f:ptuh?"))!=EOF) switch(c)
   {
     case 'T': devopts=optarg; break;
     case 'f': format=optarg; break;
@@ -155,7 +156,8 @@ int main_cpmtools(int argc, char *argv[])
     case 'u': uppercase=1; break;
     case 'h':
     case '?': usage(); break;
-  }
+  }*/
+  format = "tim011";
   /*}}}*/
   /* parse arguments */ /*{{{*/
   if ((optind+2)>=argc) usage();
@@ -211,7 +213,7 @@ int main_cpmtools(int argc, char *argv[])
     if (gargc>1 && !todir) usage();
     for (i=0; i<gargc; ++i)
     {
-      char dest[_POSIX_PATH_MAX];
+      char dest[1024];
 
       if (todir)
       {

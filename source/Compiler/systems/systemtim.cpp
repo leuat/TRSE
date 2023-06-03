@@ -143,14 +143,14 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
                      ,out,true,workDir
                      );*/
         QStringList params = QStringList() << "cpmcp"
-                <<"-f" <<"tim011"
+//                <<"-f" <<"tim011"
                 <<dname
                 <<floppyDir+f
                 <<"0:";
 
             Util::CopyFile(":resources/text/diskdefs","diskdefs");
             main_cpmtools(params.size(),Util::StringListToChar(params));
-//            fflush(stdout);
+            fflush(stdout);
             QFile("diskDefs").remove();
     }
     //    qDebug() << out;

@@ -6,6 +6,7 @@
 #define CPMDRV_FILE  0 /* Regular file or Unix block device */
 #define CPMDRV_WIN95 1 /* Windows 95 floppy drive accessed via VWIN32 */
 #define CPMDRV_WINNT 2 /* Windows NT floppy drive accessed via CreateFile */
+#include <sys/types.h>
 #endif
 
 struct Device

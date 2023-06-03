@@ -566,6 +566,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/util/cpmtools/cpmdir.h \
     source/LeLib/util/cpmtools/cpmfs.h \
     source/LeLib/util/cpmtools/cpmtools.h \
+    source/LeLib/util/cpmtools/device.h \
     source/LeLib/util/cpmtools/getopt_.h \
     source/LeLib/util/dirartd64.h \
     source/LeLib/bbc/asmexception.h \

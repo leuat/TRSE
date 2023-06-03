@@ -20,8 +20,27 @@ extern "C" {
 #define CPM_ATTR_PWWRITE	4096	/* Password required to write */
 #define CPM_ATTR_PWREAD		8192	/* Password required to read */
 
+
+#ifdef _WIN32
+
+typedef int mode_t;
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
 typedef int cpm_attr_t;
 
+
+
+#include <sys/stat.h>
+#ifndef _S_ISTYPE
+#define _S_ISTYPE(mode, mask)  (((mode) & _S_IFMT) == (mask))
+#define S_ISREG(mode) _S_ISTYPE((mode), _S_IFREG)
+#define S_ISDIR(mode) _S_ISTYPE((mode), _S_IFDIR)
+#endif
+
+
+#endif
 struct cpmInode
 {
   ino_t ino;

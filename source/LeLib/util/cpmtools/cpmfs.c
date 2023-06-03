@@ -21,7 +21,6 @@ extern char **environ;
 #undef CPMFS_DEBUG
 
 /* Number of _used_ bits per int */
-
 #define INTBITS ((int)(sizeof(int)*8))
 
 /* Convert BCD datestamp digits to binary */
@@ -2020,8 +2019,8 @@ int cpmAttrSet(struct cpmInode *ino, cpm_attr_t attrib)
 
   /* Update the stored (inode) copies of the file attributes and mode */
   ino->attr=attrib;
-  if (attrib&CPM_ATTR_RO) ino->mode&=~(S_IWUSR|S_IWGRP|S_IWOTH);
-  else ino->mode|=(S_IWUSR|S_IWGRP|S_IWOTH);
+ // if (attrib&CPM_ATTR_RO) ino->mode&=~(S_IWUSR|S_IWGRP|S_IWOTH);
+ // else ino->mode|=(S_IWUSR|S_IWGRP|S_IWOTH);
   
   return 0;
 }
@@ -2032,6 +2031,7 @@ int cpmChmod(struct cpmInode *ino, mode_t mode)
   /* Convert the chmod() into a chattr() call that affects RO */
   int newatt = ino->attr & ~CPM_ATTR_RO;
 
-  if (!(mode & (S_IWUSR|S_IWGRP|S_IWOTH))) newatt |= CPM_ATTR_RO;
-  return cpmAttrSet(ino, newatt);
+  //if (!(mode & (S_IWUSR|S_IWGRP|S_IWOTH))) newatt |= CPM_ATTR_RO;
+  //return cpmAttrSet(ino, newatt);
+  return 0;
 }

@@ -2,7 +2,9 @@
 //#include "config.h"
 #include "config.h"
 #include <fcntl.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
