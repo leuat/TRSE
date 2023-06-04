@@ -31,7 +31,7 @@
    identifiers so that they do not collide with the system functions
    and variables.  Renaming avoids problems with some compilers and
    linkers.  */
-//#if defined __GETOPT_PREFIX && !defined __need_getopt
+#if defined __GETOPT_PREFIX && !defined __need_getopt
 # include <stdlib.h>
 # include <stdio.h>
 #ifndef _WIN32
@@ -225,4 +225,4 @@ extern int getopt_long_only (int ___argc, char *__getopt_argv_const *___argv,
 /* Make sure we later can get all the definitions and declarations.  */
 #undef __need_getopt
 
-//#endif /* getopt.h */
+#endif /* getopt.h */

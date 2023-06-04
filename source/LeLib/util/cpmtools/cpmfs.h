@@ -20,6 +20,7 @@ extern "C" {
 #define CPM_ATTR_PWWRITE	4096	/* Password required to write */
 #define CPM_ATTR_PWREAD		8192	/* Password required to read */
 
+typedef int cpm_attr_t;
 
 #ifdef _WIN32
 
@@ -28,7 +29,6 @@ typedef int mode_t;
 #include <sys/types.h>
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
-typedef int cpm_attr_t;
 
 
 
