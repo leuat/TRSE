@@ -871,7 +871,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
         auto decls = qSharedPointerDynamicCast<NodeBlock>(node->m_block)->m_decl;
         // Only declare variables in SYMTAB
         for (QSharedPointer<Node> n: decls) {
-            // Print label at end of vardecl
+            // Print label aemt end of vardecl
             auto vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
             auto var = qSharedPointerDynamicCast<NodeVar>(vd->m_varNode);
             /*            if (!(var->m_isGlobal))

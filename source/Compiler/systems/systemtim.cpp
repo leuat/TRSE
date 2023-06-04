@@ -83,12 +83,8 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
     cpmcp = "cpmcp";
 #endif
 
-/*
-    QDir dir(cpmtools);
-=======
 
 /*    QDir dir(cpmtools);
->>>>>>> 080892b5817694751cf2fa3d3337e395b9bc293d
     if (!QFile::exists(cpmtools+"/"+cpmcp)) {
         text  += "<br><font color=\"#FF0000\">You need to set up a link to the CPMTools directory in the TRSE settings.</font>";
         text+=output;
