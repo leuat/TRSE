@@ -84,6 +84,6 @@ data_header_images/font.flf = 0
 data_header_images/tiles111.flf = 0
 data_header_images/tiles11.flf = 0
 use_python = 0
-project_path = tutorials/TIM/tutorials/
+project_path = /home/leuat/code/TRSE/Release/../tutorials/TIM/tutorials/
 open_files = ,tut01-Hello.ras
 current_file = tut01-Hello.ras
