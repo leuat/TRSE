@@ -41,6 +41,14 @@ typedef SSIZE_T ssize_t;
 
 
 #endif
+
+#ifdef __linux__
+
+#include <sys/types.h>
+#include <stdint.h>
+typedef int cpm_attr_t;
+#endif
+
 struct cpmInode
 {
   ino_t ino;
