@@ -1034,6 +1034,37 @@ void CodeGenZ80::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type 
 
 }
 
+void CodeGenZ80::dispatch(QSharedPointer<NodeUnaryOp> node)
+{
+    node->DispatchConstructor(as,this);
+    AbstractCodeGen::dispatch(node);
+    //    as->Comment("Unary op beware!");
+    if (node->m_right->isPureNumeric())
+        return;
+    node->m_right->Accept(this);
+    as->Term();
+    if (node->m_op.m_type==TokenType::MINUS) {
+        if (node->m_right->isWord(as)) {
+
+            as->Asm("xor a");
+            as->Asm("sub l");
+            as->Asm("ld l,a");
+            as->Asm("sbc a,a");
+            as->Asm("sub h");
+            as->Asm("ld h,a");
+            /*Token t = node->m_op;
+                QSharedPointer<NodeBinOP> bop = new QSharedPointer<NodeBinOP>(new NodeBinOP())
+                */
+        }
+        else {
+            as->Comment("Unary operator: Negate 8-bit number");
+            as->Asm("neg");
+        }
+    }
+
+
+}
+
 void CodeGenZ80::ExDeHl()
 {
     if (isGB()) {
