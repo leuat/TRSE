@@ -12,6 +12,11 @@ program MainProgram;
 */
 //@define DEBUG		1		// uncomment to show debugging timings as rasterbar blocks on the screen
 
+@VICMEMORYCONFIG "none"
+//@VICMEMORYCONFIG "3k"
+//@VICMEMORYCONFIG "all"
+
+
 // comment out if using multiplcation or division, otherwise save space
 @ignoremethod "init16x8mul"
 @ignoremethod "init16x8div"
