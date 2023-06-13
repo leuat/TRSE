@@ -360,11 +360,13 @@ void formHelp::SearchForItem(QString item)
             m_curIsTru = true;
             LoadItem(d->m_name);
 //            ui->txtHelp->setText(ApplyColors(d->m_document));
+            LoadItems(1);
             return;
         }
         if (d->m_name.contains(item)) {
             m_curIsTru = true;
             LoadItem(d->m_name);
+            LoadItems(1);
 //            ui->txtHelp->setText(ApplyColors(d->m_document));
             return;
         }
