@@ -352,10 +352,16 @@ void formHelp::SearchForItem(QString item)
     m_idx=0;
     ui->lstItems->clear();
     m_currentItems.clear();
-
+    item = item.simplified().trimmed();
     // First search through locally generated help
     m_curIsTru = false;
     for (auto d : m_hdb.m_documents) {
+        if (d->m_name.toLower() == item.toLower()) {
+            m_curIsTru = true;
+            LoadItem(d->m_name);
+//            ui->txtHelp->setText(ApplyColors(d->m_document));
+            return;
+        }
         if (d->m_name.contains(item)) {
             m_curIsTru = true;
             LoadItem(d->m_name);
@@ -364,7 +370,7 @@ void formHelp::SearchForItem(QString item)
         }
     }
 
-
+    for (int k = 0;k<2;k++)
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
 
         s= s.simplified();
@@ -373,7 +379,15 @@ void formHelp::SearchForItem(QString item)
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
-        if (data[1].toLower().startsWith(item.toLower())) {
+
+        bool isTrue = false;
+        // first, check for words that are *equal*.. then for startswith
+        if (k==0)
+            isTrue = data[1].toLower() == item.toLower();
+        if (k==1)
+            isTrue = data[1].toLower().startsWith(item.toLower());
+
+        if (isTrue) {
             //HelpType ht = m_helpTypes[idx];
             int idx = 0;
             for (int i=0;i<m_helpTypes.count();i++)

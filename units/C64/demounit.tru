@@ -1,6 +1,30 @@
 Unit DemoUnit;
 var
-	curBorderY : byte = 0;
+	curBorderY,keep2,keep : byte = 0;
+
+
+procedure LocalCloseIRQ() inline;
+begin
+	poke(^$01,0,keep2);
+	closeirq();
+end;
+
+procedure LocalStartIRQ() inline;
+begin
+asm("
+		pha
+		txa
+		pha
+		tya
+		pha
+		lda 01
+		sta DemoUnit_keep2 ; $815
+		lda DemoUnit_keep   ; $814
+		sta 01
+		asl $d019
+");
+end;
+
 
 procedure StartDemoIRQ() inline;
 begin

@@ -80,29 +80,6 @@ void RandomList() {
     }
     qDebug() << b;
 }
-/*
-void Perlin() {
-    QImage img = QImage(640,480,QImage::Format_RGB32);
-    SimplexNoise sn;
-    float sx = 0.005;
-    float sy = 0.005;
-    float addx = random()%1000/100.0;
-    float addy = random()%1000/100.0;
-    for (int y=0;y<img.height();y++)
-        for (int x=0;x<img.width();x++) {
-            float val = 0;
-                for (int s = 1;s<10;s++) {
-                    val += ((sn.noise(x*sx*s+addx*s,y*sy*s+addy*s)/2.0)+0.5)/4.0;
-            }
-            val/=2.0;
-            float v = val;
-            QColor col = QColor(255*v,255*v,255*v,1);
-            img.setPixelColor(x,y,col);
-        }
-
-    img.save("/Users/leuat/test.png");
-}
-*/
 
 int main(int argc, char *argv[])
 {
