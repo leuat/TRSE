@@ -355,65 +355,69 @@ void formHelp::SearchForItem(QString item)
     item = item.simplified().trimmed();
     // First search through locally generated help
     m_curIsTru = false;
-    for (auto d : m_hdb.m_documents) {
-        if (d->m_name.toLower() == item.toLower()) {
-            m_curIsTru = true;
-            LoadItem(d->m_name);
-//            ui->txtHelp->setText(ApplyColors(d->m_document));
-            LoadItems(1);
-            return;
-        }
-        if (d->m_name.contains(item)) {
-            m_curIsTru = true;
-            LoadItem(d->m_name);
-            LoadItems(1);
-//            ui->txtHelp->setText(ApplyColors(d->m_document));
-            return;
-        }
-    }
-
-    for (int k = 0;k<2;k++)
-    for (QString s: Syntax::s.m_syntaxData.split('\n')) {
-
-        s= s.simplified();
-        if (s.length()==0) continue;
-        if (s.startsWith("#")) continue;
-        s=s.replace(" ", "");
-
-        QStringList data = s.split(";");
-
-        bool isTrue = false;
-        // first, check for words that are *equal*.. then for startswith
-        if (k==0)
-            isTrue = data[1].toLower() == item.toLower();
-        if (k==1)
-            isTrue = data[1].toLower().startsWith(item.toLower());
-
-        if (isTrue) {
-            //HelpType ht = m_helpTypes[idx];
-            int idx = 0;
-            for (int i=0;i<m_helpTypes.count();i++)
-                if (m_helpTypes[i].id.toLower()==data[0].toLower())
-                    idx=i;
-
-            if (idx>=0) {
-                ui->lstTopic->setCurrentRow(idx);
+    for (int k = 0; k < 2; k++)
+    {
+        for (auto d : m_hdb.m_documents) {
+            if (k==0) {
+                if (d->m_name.toLower() == item.toLower()) {
+                    m_curIsTru = true;
+                    LoadItem(d->m_name);
+        //            ui->txtHelp->setText(ApplyColors(d->m_document));
+                    LoadItems(1);
+                    return;
+                }
             }
-            LoadItems(idx);
-            auto items =  ui->lstItems->findItems(item,Qt::MatchContains);
-            if (m_currentSearchItem>=items.count())
-                m_currentSearchItem=0;
-            if (items.count()!=0) {
-                ui->lstItems->setCurrentItem(items[m_currentSearchItem]);
-                data[1] = items[m_currentSearchItem]->text();
+            else if (k==1) {
+                if (d->m_name.contains(item)) {
+                    m_curIsTru = true;
+                    LoadItem(d->m_name);
+                    LoadItems(1);
+        //            ui->txtHelp->setText(ApplyColors(d->m_document));
+                    return;
+                }
             }
-            LoadItem(data[1]);
-            return;
+        }
+
+        for (QString s: Syntax::s.m_syntaxData.split('\n')) {
+            s= s.simplified();
+            if (s.length()==0) continue;
+            if (s.startsWith("#")) continue;
+            s=s.replace(" ", "");
+
+            QStringList data = s.split(";");
+
+            bool isTrue = false;
+            // first, check for words that are *equal*.. then for startswith
+            if (k==0)
+                isTrue = data[1].toLower() == item.toLower();
+            else if (k==1)
+                isTrue = data[1].toLower().startsWith(item.toLower());
+
+            if (isTrue) {
+                //HelpType ht = m_helpTypes[idx];
+                int idx = 0;
+                for (int i=0;i<m_helpTypes.count();i++)
+                    if (m_helpTypes[i].id.toLower()==data[0].toLower())
+                        idx=i;
+
+                if (idx>=0) {
+                    ui->lstTopic->setCurrentRow(idx);
+                }
+                LoadItems(idx);
+                auto items =  ui->lstItems->findItems(item,Qt::MatchContains);
+                if (m_currentSearchItem>=items.count())
+                    m_currentSearchItem=0;
+                if (items.count()!=0) {
+                    ui->lstItems->setCurrentItem(items[m_currentSearchItem]);
+                    data[1] = items[m_currentSearchItem]->text();
+                }
+                LoadItem(data[1]);
+                return;
+            }
         }
     }
     LoadItems(0);
 }
-
 
 
 void formHelp::on_lstTopic_itemClicked(QListWidgetItem *item)
