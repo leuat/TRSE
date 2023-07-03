@@ -68,7 +68,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_exportParams["IncludeColors"] = 0;
     m_exportParams["VIC20mode"] = 0;
 
-    m_supports.displayCharOperations = false;
+    m_supports.displayCharOperations = true;
 
     for (int i=0;i<m_charWidth*m_charHeight;i++)
         m_data[i].c[3]=1;
