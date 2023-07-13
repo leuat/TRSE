@@ -155,9 +155,9 @@ void FormRasEditor::ExecutePrg(QString fileName)
     }
 
 
-    if (!QFile::exists(emu)) {
+    if (!QFile::exists(emu) && emu!="java") {
         Messages::messages.DisplayMessage(Messages::messages.NO_EMULATOR);
-        ui->txtOutput->setText("Could not find the emulator for system '" + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system) + "'\nMake sure you have set a correct path in the TRSE settings!\n\n"+
+        ui->txtOutput->setText("Could not find the emulator for system '" + AbstractSystem::StringFromSystem(Syntax::s.m_currentSystem->m_system) + "' ("+emu+")\nMake sure you have set a correct path in the TRSE settings!\n\n"+
                                "Example: VICE 'c64','c128','xvic', 'dosbox' or NES 'mednafen'.");
         return;
     }
@@ -175,8 +175,16 @@ void FormRasEditor::ExecutePrg(QString fileName)
     QString orgDir = QDir::currentPath();
 
     if (Syntax::s.m_currentSystem->m_requireEmulatorWorkingDirectory) {
-        process.setWorkingDirectory(QFileInfo(emu).path());
-        QDir::setCurrent(QFileInfo(emu).path());
+        if (emu.toLower()=="java") {
+            auto p = params[1];
+            process.setWorkingDirectory(QFileInfo(p).path());
+            QDir::setCurrent(QFileInfo(p).path());
+        }
+        else {
+
+            process.setWorkingDirectory(QFileInfo(emu).path());
+            QDir::setCurrent(QFileInfo(emu).path());
+        }
     }
 
 

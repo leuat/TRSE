@@ -110,6 +110,7 @@ QString AbstractSystem::StringFromProcessor(Processor s) {
     if (s == S1C88) return "S1C88";
     if (s == M6809) return "M6809";
     if (s == PCHIP8) return "PCHIP8";
+    if (s == PDP11) return "PPDP11";
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return "";
 }
@@ -128,6 +129,7 @@ AbstractSystem::Processor AbstractSystem::ProcessorFromString(QString s) {
     if (s == "Z180") return Z180;
     if (s == "M6809") return M6809;
     if (s == "PCHIP8") return PCHIP8;
+    if (s == "PPDP11") return PDP11;
     qDebug() << "SYSTEM CPU NOT FOUND for system "<<s;
     return MOS6502;
 }
@@ -146,6 +148,7 @@ QString AbstractSystem::StringFromProcessor(QString s) {
     if (s == "POKEMONMINI") return "S1C88";
     if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC" || s=="PCW") return "Z80";
     if (s == "CHIP8") return "PCHIP8";
+    if (s == "BK0010") return "PPDP11";
     qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
     return "";
 }
@@ -231,6 +234,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return CHIP8;
     if (s.toLower()=="pcw")
         return PCW;
+    if (s.toLower()=="bk0010")
+        return BK0010;
 
     qDebug() << "AbstractSystem::SystemFromString error could not identify :"+s;
     return C64;
@@ -276,6 +281,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == THOMSON) return "THOMSON";
     if (s == CHIP8) return "CHIP8";
     if (s == PCW) return "PCW";
+    if (s == BK0010) return "BK0010";
     return "";
 }
 
@@ -304,6 +310,8 @@ bool AbstractSystem::systemIsOfType(QString val)
     if (val=="m6809" && (m_processor==M6809))
         return true;
     if (val=="chip8")
+        return true;
+    if (val=="ppdp11")
         return true;
 
     return false;

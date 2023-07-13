@@ -450,6 +450,7 @@ void PawThread::run()
                 //emit EmitTextUpdate();
                 //qDebug() << params;
                 //ui->leOutput->setText(output);
+
                 if (m_iniFile->getdouble("use_python")==1)
                     processCompress.start("python", params  );
                 else

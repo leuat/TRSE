@@ -240,6 +240,10 @@ private slots:
 
     void on_btnHelpPCW_clicked();
 
+    void on_btnHelpBK0010_clicked();
+
+    void on_btnBK0010Emulator_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };
