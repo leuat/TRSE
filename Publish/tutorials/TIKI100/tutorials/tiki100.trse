@@ -69,4 +69,5 @@ use_tripe = 0
 dosbox_cycles = 0
 cpu_x86_output = exe
 exomizer_toggle = 1
+use_python = 0
 open_files =, tutorial1.ras
