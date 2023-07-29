@@ -30,6 +30,7 @@
 #include "source/Compiler/assembler/asmz80.h"
 #include "source/Compiler/assembler/asmarm.h"
 #include "source/Compiler/assembler/asmjdh8.h"
+#include "source/Compiler/assembler/asmpdp11.h"
 #include "source/Compiler/codegen/codegen_6502.h"
 #include "source/Compiler/codegen/codegen_m68k.h"
 #include "source/Compiler/codegen/codegen_arm.h"
@@ -39,6 +40,7 @@
 #include "source/Compiler/codegen/codegen_tripe.h"
 #include "source/Compiler/codegen/codegen_s1c88.h"
 #include "source/Compiler/codegen/codegen_6809.h"
+#include "source/Compiler/codegen/codegen_pdp11.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"

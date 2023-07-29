@@ -1,0 +1,59 @@
+program tutorial1;
+var
+	
+	
+begin
+	asm("
+	
+.LINK 1000
+
+	mov #1000,sp
+
+
+	MOV #1270, 177664
+
+;	mov #0, r0
+;	emt 40
+;	MOV #405, R0
+;	EMT 52
+;	emt 12
+
+
+;   mov #100000, r1
+;    mov #20000,r3
+
+;3:  clr (r1)+
+;	sob r3,3
+
+    mov #img, r1
+    mov #40000,r2
+    mov #17000,r3
+l1:
+	mov (r1)+,(r2)+
+	sob r3,l1
+
+	movb #377,r1
+;	MOV #0, 177664
+;	MOVb r1, 050
+;	movb r1, 040
+;	movb r1, 047
+;	movb r1, 042
+;	mov #377,177716 
+1:
+
+	mov #54000, r1
+	mov #1000,r2
+2: 	incb (r1)
+	add #1,r1
+	sob r2,2
+	br 1
+	
+img: 
+;	insert_file \"image.mac \"
+
+.END	
+	
+	");
+	
+	
+end.

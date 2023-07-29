@@ -151,6 +151,7 @@ SOURCES += main.cpp\
     source/Compiler/assembler/asmarm.cpp \
     source/Compiler/assembler/asmchip8.cpp \
     source/Compiler/assembler/asmjdh8.cpp \
+    source/Compiler/assembler/asmpdp11.cpp \
     source/Compiler/assembler/asmx86.cpp \
     source/Compiler/assembler/asmz80.cpp \
     source/Compiler/ast/nodecase.cpp \
@@ -165,6 +166,7 @@ SOURCES += main.cpp\
     source/Compiler/codegen/codegen_chip8.cpp \
     source/Compiler/codegen/codegen_jdh8.cpp \
     source/Compiler/codegen/codegen_m68k.cpp \
+    source/Compiler/codegen/codegen_pdp11.cpp \
     source/Compiler/codegen/codegen_s1c88.cpp \
     source/Compiler/codegen/codegen_tripe.cpp \
     source/Compiler/codegen/codegen_x86.cpp \
@@ -190,6 +192,7 @@ SOURCES += main.cpp\
     source/Compiler/compilers/compilergbz80.cpp \
     source/Compiler/compilers/compilerjdh8.cpp \
     source/Compiler/compilers/compilerm68k.cpp \
+    source/Compiler/compilers/compilerpdp11.cpp \
     source/Compiler/compilers/compilers1c88.cpp \
     source/Compiler/compilers/compilerx86.cpp \
     source/Compiler/compilers/compilerz80.cpp \
@@ -209,6 +212,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systematari520st.cpp \
     source/Compiler/systems/systematari800.cpp \
     source/Compiler/systems/systembbcm.cpp \
+    source/Compiler/systems/systembk0010.cpp \
     source/Compiler/systems/systemchip8.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemcustom.cpp \
@@ -220,6 +224,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemoric.cpp \
     source/Compiler/systems/systempcw.cpp \
+    source/Compiler/systems/systempdp11.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systempokemonmini.cpp \
     source/Compiler/systems/systemsnes.cpp \
@@ -462,6 +467,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/assembler/asmarm.h \
     source/Compiler/assembler/asmchip8.h \
     source/Compiler/assembler/asmjdh8.h \
+    source/Compiler/assembler/asmpdp11.h \
     source/Compiler/assembler/asmx86.h \
     source/Compiler/assembler/asmz80.h \
     source/Compiler/ast/nodecast.h \
@@ -469,6 +475,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/codegen/codegen_arm.h \
     source/Compiler/codegen/codegen_chip8.h \
     source/Compiler/codegen/codegen_jdh8.h \
+    source/Compiler/codegen/codegen_pdp11.h \
     source/Compiler/codegen/codegen_s1c88.h \
     source/Compiler/codegen/codegen_tripe.h \
     source/Compiler/codegen/codegen_x86.h \
@@ -503,6 +510,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/compilers/compilergbz80.h \
     source/Compiler/compilers/compilerjdh8.h \
     source/Compiler/compilers/compilerm68k.h \
+    source/Compiler/compilers/compilerpdp11.h \
     source/Compiler/compilers/compilers1c88.h \
     source/Compiler/compilers/compilerx86.h \
     source/Compiler/compilers/compilerz80.h \
@@ -522,7 +530,9 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systematari520st.h \
     source/Compiler/systems/systematari800.h \
     source/Compiler/systems/systembbcm.h \
+    source/Compiler/systems/systembk0010.h \
     source/Compiler/systems/systemchip8.h \
+    source/Compiler/systems/systempdp11.h \
     source/Compiler/systems/systemschip.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemcustom.h \
@@ -820,6 +830,7 @@ RESOURCES += \
 #LELIB INCLUDES
 
 DISTFILES += \
+    resources/bin/bk2010-0.7.jar \
     resources/bin/rasm.exe \
     resources/bin/rasm_osx \
     resources/code/amiga/init_p61_player.s \

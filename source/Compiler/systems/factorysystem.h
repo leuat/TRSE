@@ -41,6 +41,7 @@
 #include "systemthomson.h"
 #include "systemchip8.h"
 #include "systempcw.h"
+#include "systembk0010.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

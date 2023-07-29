@@ -12,6 +12,7 @@
 #include "compilerarm.h"
 #include "compiler6809.h"
 #include "compilerchip8.h"
+#include "compilerpdp11.h"
 
 class FactoryCompiler
 {
