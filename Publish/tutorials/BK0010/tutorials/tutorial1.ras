@@ -1,16 +1,17 @@
 program tutorial1;
+@use "system/system"
 var
+
+@export "images/image1.flf" "images/image1.bin" 256 2	
+	img : incbin("images/image1.bin");
 	
-	
+// docs: 	
+//	https://files-pk--fpga-ru.translate.goog/storage/gid/html/emu_doc.html?_x_tr_sch=http&_x_tr_sl=ru&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp
+// https://git.sr.ht/~adlpr/bk0010-01-programming/tree/main/item/bk0010-01-programming.md
 begin
+	System::Init();
 	asm("
 	
-.LINK 1000
-
-	mov #1000,sp
-
-
-	MOV #1270, 177664
 
 ;	mov #0, r0
 ;	emt 40
@@ -27,7 +28,7 @@ begin
 
     mov #img, r1
     mov #40000,r2
-    mov #17000,r3
+    mov #20000,r3
 l1:
 	mov (r1)+,(r2)+
 	sob r3,l1
@@ -40,18 +41,19 @@ l1:
 ;	movb r1, 042
 ;	mov #377,177716 
 1:
+;	br 1
 
-	mov #54000, r1
+	mov #40000, r1
 	mov #1000,r2
-2: 	incb (r1)
+2: 	
+	incb (r1)
 	add #1,r1
 	sob r2,2
 	br 1
 	
-img: 
-;	insert_file \"image.mac \"
+;img: 
+;	insert_file \"images/image1.bin \"
 
-.END	
 	
 	");
 	

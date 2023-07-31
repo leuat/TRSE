@@ -331,6 +331,14 @@ QString Util::numToHex(long v)
     return "$" +o;
 }
 
+QString Util::numToOct(long v)
+{
+    QString o = QString::number(v,8);
+    if (o.length()==1) o="0"+o;
+    return "" +o;
+
+}
+
 QString Util::Util::numToHex0(long v)
 {
     QString o = QString::number(v,16);

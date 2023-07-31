@@ -7,6 +7,10 @@ AsmPDP11::AsmPDP11()
     m_chipMem = QSharedPointer<Appendix>(new Appendix);
 
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiserM68K());
+
+    m_hram = QSharedPointer<Appendix>(new Appendix);
+    m_hram->m_isMainBlock = true;
+
 }
 
 
@@ -17,12 +21,9 @@ void AsmPDP11::Connect() {
         newSource<<m_source[i];
     }
     newSource << " ; Temp vars section";
-//    Asm(" 	CNOP 0,4");
     newSource<< m_tempVars;
     if (m_tempVarsBlock!=nullptr)
         newSource << m_tempVarsBlock->m_source;
- //   Asm(" 	CNOP 0,4");
-    newSource << " ; Temp vars section ends";
     for (int i=m_varDeclEndsLineNumber;i<m_source.count(); i++) {
         newSource<<m_source[i];
     }
@@ -44,7 +45,9 @@ void AsmPDP11::Connect() {
     m_source.removeAll("");
     m_appendix.clear();
 
-    m_source = QStringList() <<pre << m_source;
+    m_source = QStringList() <<pre << m_source << m_hram->m_source;
+
+    m_source <<".END";
 
 
 
@@ -189,8 +192,6 @@ void AsmPDP11::DeclareVariable(QString name, QString type, QString initval, QStr
 
 
     Write(name +"\t" + t + "\t"+initval);
-    if (t==byte)
-        Asm(" 	CNOP 0,4");
 
 
 }
@@ -225,6 +226,13 @@ void AsmPDP11::BinOP(TokenType::Type t, bool clearFlag)
         v = "lsl";
 
     m_varStack.push(v);
+}
+
+void AsmPDP11::Label(QString s)
+{
+    if (!s.endsWith(":") && !s.contains("="))
+        s=s+":";
+    Write(s,0);
 }
 
 void AsmPDP11::DeclareString(QString name, QStringList initval, QStringList flags)

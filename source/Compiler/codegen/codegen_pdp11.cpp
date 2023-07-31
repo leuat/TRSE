@@ -49,7 +49,7 @@ void CodeGenPDP11::dispatch(QSharedPointer<NodeBinOP>node) {
     QString d1 = as->m_varStack.pop();
     if (m_regs.contains(d1) && m_regs.contains(d0))
         endtype = ".l";
-    TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
+    TransformVariable("mov"+endtype,d0 + "     ; BOP move",d1);
 
 
 
@@ -77,7 +77,7 @@ void CodeGenPDP11::dispatch(QSharedPointer<NodeBinOP>node) {
         QString d1 = as->m_regAcc.Get();
 
         node->m_right->Accept(this);
-        TransformVariable("move"+getEndType(node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
+        TransformVariable("mov"+getEndType(node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
 
         TransformVariable(op,d0,d1);
 
@@ -233,10 +233,7 @@ void CodeGenPDP11::dispatch(QSharedPointer<NodeVarDecl> node)
     if (t->m_flags.contains("chipmem"))
         as->m_currentBlock = as->m_chipMem;
 
-    if (t->m_flags.contains("aligned")) {
-        as->Asm(" 	CNOP 0,256");
-    }
-
+    as->m_currentBlock = as->m_hram;
 
     AbstractCodeGen::dispatch(node);
 
@@ -286,8 +283,10 @@ void CodeGenPDP11::dispatch(QSharedPointer<NodeBlock> node)
 
     }
     as->VarDeclEnds();
+    /*
     if (node->m_decl.length()!=0)
         as->Asm(" 	CNOP 0,4");
+    */
 
     if (!blockLabel && hasLabel) {
         as->Label(label);
@@ -341,85 +340,6 @@ void CodeGenPDP11::dispatch(QSharedPointer<NodeBinaryClause> node)
 }
 
 
-void CodeGenPDP11::dispatch(QSharedPointer<NodeProcedureDecl> node)
-{
-    node->DispatchConstructor(as,this);
-
-
-
-    bool isInitFunction=false;
-    bool isBuiltinFunction=false;
-    if (Syntax::s.builtInFunctions.contains(node->m_procName)) {
-        isBuiltinFunction = true;
-        isInitFunction = Syntax::s.builtInFunctions[node->m_procName].m_initFunction;
-    }
-
-    as->Asm("");
-    as->Asm("");
-    as->Comment("***********  Defining procedure : " + node->m_procName);
-    QString type = (isBuiltinFunction) ? "Built-in function" : "User-defined procedure";
-    as->Comment("   Procedure type : " + type);
-    if (isBuiltinFunction) {
-        type = (isInitFunction) ? "yes" : "no";
-        as->Comment("   Requires initialization : " + type);
-    }
-    as->Asm("");
-    QString endLabel = "";
-    if (node->m_type==0) {
-    }
-    else {
-        endLabel = as->NewLabel("endInterrupt");
-        as->PopLabel("endInterrupt");
-        if (node!=nullptr && node->m_block!=nullptr) {
-            QSharedPointer<NodeBlock> nb = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
-            if (nb!=nullptr) {
-                nb->m_forceInterupt = endLabel;
-            }
-        }
-    }
-  //as->Label("afterProc_" + m_procName);
-
-
-    if (!isInitFunction) {
-        //as->Asm("jmp afterProc_" + m_procName);
-
-
-        //as->Label(m_procName);
-    }
-//    if (m_isInterrupt)
-  //      as->Asm("dec $d019        ; acknowledge IRQ");
-    if (node->m_block!=nullptr) {
-        QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
-        if (b!=nullptr)
-            b->forceLabel=node->m_procName;
-        node->m_block->Accept(this);
-//        node->m_block->Build(as);
-    }
-    if (!isInitFunction) {
-        if (node->m_type==0) {
-            as->Asm("rts");
-        }
-        else {
-            //as->Asm("rti");
-            if (endLabel!="")
-                as->Label(endLabel);
-            if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMIGA)
-                as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");
-            if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI520ST) {
-                as->Asm("movem.l (a7)+,d0-d7/a0-a6");
-  //              as->Asm("move.w  (a7)+,sr                ; restore status register");
-                as->Asm("bclr   #0,$fffffa0f ; Acknowledge end of irq");
-
-            }
-//            as->Asm("movem d0-a6,-(sp)");
-            as->Asm("rte");
-        }
-      //as->Label("afterProc_" + m_procName);
-    }
-
-
-
-}
 void CodeGenPDP11::dispatch(QSharedPointer<NodeVar> node)
 {
 //    LoadVariable(node);
@@ -495,7 +415,7 @@ void CodeGenPDP11::StoreVariable(QSharedPointer<NodeVar> n)
                 TransformVariable("lea",a0,n->getValue(as));
 
 //            as->Comment(";general X");
-            TransformVariable("move"+getEndType(n),Util::numToHex(val)+"("+a0+")",d0);
+            TransformVariable("mov"+getEndType(n),Util::numToHex(val)+"("+a0+")",d0);
 
             as->m_regMem.Pop(a0);
             return;
@@ -527,7 +447,7 @@ void CodeGenPDP11::StoreVariable(QSharedPointer<NodeVar> n)
         else
             TransformVariable("lea",a0,n->getValue(as));
 
-        TransformVariable("move"+getEndType(n),"("+a0+","+d1+")",d0);
+        TransformVariable("mov"+getEndType(n),"("+a0+","+d1+")",d0);
 
         as->m_regMem.Pop(a0);
         if (m_regs.contains(d2)) {
@@ -540,7 +460,7 @@ void CodeGenPDP11::StoreVariable(QSharedPointer<NodeVar> n)
     }
     QString d0 = as->m_varStack.pop();
 
-    TransformVariable("move"+getEndType(n),n->getValue(as),d0);
+    TransformVariable("mov"+getEndType(n),n->getValue(as),d0);
 }
 
 
@@ -571,7 +491,7 @@ void CodeGenPDP11::LoadVariable(QSharedPointer<NodeVar> n)
                 TransformVariable("lea",a0,n->getValue(as));
 
             int shift = n->m_expr->getValueAsInt(as)*n->m_expr->getArrayDataSize(as);
-            as->Asm("move"+getEndType(n)+" "+Util::numToHex(shift)+"("+a0+"),"+d0);
+            as->Asm("mov"+getEndType(n)+" "+Util::numToHex(shift)+"("+a0+"),"+d0);
             as->m_varStack.push(d0);
 
             as->m_regMem.Pop(a0);
@@ -608,7 +528,7 @@ void CodeGenPDP11::LoadVariable(QSharedPointer<NodeVar> n)
             TransformVariable("lea",a0+trp,n->getValue(as));
 
 //        TransformVariable("lea",a0,n->getValue(as));
-        TransformVariable("move",d0+trp,"("+a0+","+d1+")",n);
+        TransformVariable("mov",d0+trp,"("+a0+","+d1+")",n);
         //qDebug() << "Cleaning up loadvar: " <<d1;
         as->m_varStack.push(d0);
 
@@ -633,7 +553,7 @@ void CodeGenPDP11::LoadVariable(QSharedPointer<NodeVar> n)
 
         m_clearFlag=0;
     }
-    TransformVariable("move"+getEndType(n),d0+"          ; Loadvar regular end",n->getValue(as));
+    TransformVariable("mov"+getEndType(n),d0+"          ; Loadvar regular end",n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 }
@@ -683,7 +603,7 @@ void CodeGenPDP11::LoadPointer(QSharedPointer<Node> n)
 {
     QString d0 = as->m_regAcc.Get();
     //    n->Accept(m_)
-    TransformVariable("move"+getEndType(n),d0,n->getValue(as));
+    TransformVariable("mov"+getEndType(n),d0,n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 
@@ -713,7 +633,7 @@ void CodeGenPDP11::LoadVariable(QSharedPointer<Node> n)
 void CodeGenPDP11::LoadVariable(QSharedPointer<NodeNumber>n)
 {
     QString d0 = as->m_regAcc.Get();
-    TransformVariable("move",d0, n->getValue(as));
+    TransformVariable("mov",d0, n->getValue(as));
     as->m_regAcc.Pop(d0);
     as->m_varStack.push(d0);
 
@@ -751,6 +671,7 @@ void CodeGenPDP11::TransformVariable(QString op, QString n, QString val)
 
 QString CodeGenPDP11::getEndType(QSharedPointer<Node> v) {
 //    getType(as)==TokenType::LONG
+    return "";
     if (v->getLoadType()==TokenType::LONG)
         return ".l";
 
@@ -856,9 +777,9 @@ bool CodeGenPDP11::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
         as->Asm(op +getEndType(v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
     else {
         QString d0 = as->m_regAcc.Get();
-        as->Asm("move"+getEndType(v2) + " "+var+","+d0);
+        as->Asm("mov"+getEndType(v2) + " "+var+","+d0);
         as->Asm(op +getEndType(v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
-        as->Asm("move"+getEndType(v2) + " "+d0+","+var);
+        as->Asm("mov"+getEndType(v2) + " "+d0+","+var);
         as->m_regAcc.Pop(d0);
     }
 
@@ -873,7 +794,7 @@ bool CodeGenPDP11::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
     if (node->m_right->isPure() && !node->m_right->hasArrayIndex() && !node->m_left->hasArrayIndex()) {
         QString rval = node->m_right->getValue(as);
 
-        as->Asm("move"+getEndType(node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
+        as->Asm("mov"+getEndType(node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
         return true;
     }
     // Stop here for now
@@ -909,9 +830,9 @@ bool CodeGenPDP11::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
         as->Asm(op +getEndType(v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
     else {
         QString d0 = as->m_regAcc.Get();
-        as->Asm("move"+getEndType(v2) + " "+var+","+d0);
+        as->Asm("mov"+getEndType(v2) + " "+var+","+d0);
         as->Asm(op +getEndType(v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
-        as->Asm("move"+getEndType(v2) + " "+d0+","+var);
+        as->Asm("mov"+getEndType(v2) + " "+d0+","+var);
         as->m_regAcc.Pop(d0);
     }
 
@@ -1130,11 +1051,9 @@ void CodeGenPDP11::IncBin(QSharedPointer<NodeVarDecl> node) {
     }
     QString wname = filename;
     if (t->m_position=="") {
-        as->Asm(" 	CNOP 0,4");
 
         as->Label(v->getValue(as));
-        as->Asm("incbin \"" + wname + "\"");
-        as->Asm(" 	CNOP 0,4");
+        as->Asm("insert_file \"" + wname + "\"");
     }
     else {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
@@ -1144,19 +1063,10 @@ void CodeGenPDP11::IncBin(QSharedPointer<NodeVarDecl> node) {
         typeSymbol->m_size = size;
         //            qDebug() << "POS: " << typeSymbol->m_org;
         //app.Append("org " +t->m_position,1);
-        as->Asm(" 	CNOP 0,4");
+//        as->Asm(" 	CNOP 0,4");
 
         as->Label(v->getValue(as));
-        as->Asm("incbin \"" + wname + "\"");
-        as->Asm(" 	CNOP 0,4");
-/*        bool ok;
-        int start=0;
-        if (t->m_position.startsWith("$")) {
-            start = t->m_position.remove("$").toInt(&ok, 16);
-        }
-        else start = t->m_position.toInt();
-*/
-  //      as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
+        as->Asm("insert_file \"" + wname + "\"");
 
     }
 }
@@ -1232,7 +1142,7 @@ void CodeGenPDP11::BuildToCmp(QSharedPointer<Node> node)
             if (node->m_right->isPureVariable()) {
                 QString wtf = as->m_regAcc.Get();
                 LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
-                TransformVariable("move",wtf,qSharedPointerDynamicCast<NodeVar>(node->m_left));
+                TransformVariable("mov",wtf,qSharedPointerDynamicCast<NodeVar>(node->m_left));
                 TransformVariable("cmp"+getEndType(node->m_left),wtf,as->m_varStack.pop());
 //                TransformVariable("cmp",wtf,as->m_varStack.pop());
                 as->m_regAcc.Pop(wtf);
@@ -1268,6 +1178,7 @@ void CodeGenPDP11::BuildToCmp(QSharedPointer<Node> node)
 
 void CodeGenPDP11::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
+
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
     QString initVal = t->initVal;
     if (initVal=="") initVal = "0";
@@ -1275,7 +1186,9 @@ void CodeGenPDP11::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     as->Label(v->getValue(as) + " dc.l "+ initVal);
 
+
 }
+
 
 QString CodeGenPDP11::CodeGenPDP11::getEndType(QSharedPointer<Node> v1, QSharedPointer<Node> v2)
 {

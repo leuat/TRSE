@@ -57,6 +57,8 @@ public:
     bool m_stripPrg = false;
     bool m_canRunAsmFiles = false;
     bool m_supportsInclusiveFor = true;
+    bool m_useOctals = false;
+
 
     virtual TokenType::Type getSystemPointerArrayType() {
         return TokenType::POINTER;

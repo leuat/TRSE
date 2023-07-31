@@ -17,6 +17,7 @@ public:
     void Connect() override;
 
     void Program(QString name, QString vicParam) override;
+//    void EndProgram() override;
 
     bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos) override;
 
@@ -25,6 +26,8 @@ public:
     int CodeSizeEstimator(QStringList& lines) override {return 0;}
 
     void BinOP(TokenType::Type t, bool clearFlag=true) override;
+
+    void Label(QString s) override;
 
     void DeclareString(QString name, QStringList initval, QStringList flags) override;
 

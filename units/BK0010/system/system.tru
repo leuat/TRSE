@@ -1,0 +1,19 @@
+unit System;
+
+var
+	const SCROLL : address = &177664;
+	
+	
+procedure Init() inline;
+begin
+	
+	asm("
+	mov #1000, sp
+	; turn on extended mode
+;	mov #1330, 177664
+	
+	");
+	scroll := &1330;
+end;
+	
+end.

@@ -6,8 +6,9 @@ SystemPDP11::SystemPDP11(QSharedPointer<CIniFile> settings, QSharedPointer<CIniF
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global" << "aligned";
     m_processor = PDP11;
     m_allowedBaseTypes<<"LONG";
-    m_allowClasses = true;
+    m_allowClasses = false;
     m_supportsInclusiveFor = false;
+    m_useOctals = true;
 }
 
 void SystemPDP11::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
@@ -17,7 +18,8 @@ void SystemPDP11::Assemble(QString &text, QString filename, QString currentDir, 
     int codeEnd = 0;
 
 
-
+    if (QFile::exists(filename+".bin"))
+        QFile::remove(filename+".bin");
     //qDebug() << m_settingsIni->getString("assembler");
     QProcess process;
     QStringList params;
@@ -35,22 +37,27 @@ void SystemPDP11::Assemble(QString &text, QString filename, QString currentDir, 
     process.setProcessEnvironment(ue);
     process.start(python, params);
     process.waitForFinished();
-  /*  qDebug() << python << params;
+  //  qDebug() << python << params;
     output = process.readAllStandardOutput();
-    qDebug() << output;
+  //  qDebug() << output;
     output += process.readAllStandardError();
-    qDebug() << output;
-*/
+  //  qDebug() << output;
+
     if (output.contains("No module named pdpy11")) {
         text  += "<br><font color=\"#FF6040\">Please install python and pdpy11, ie pip3 install pdpy11 before compiling.</font>";
         m_buildSuccess = false;
         return;
     }
+    if (!QFile::exists(filename+".bin")) {
+        text  += "<br><font color=\"#FF6040\">Error during assembly:</font><br>"+output;
+        m_buildSuccess = false;
+        return;
 
+    }
     int assembleTime = timer.elapsed()- time;
     time = timer.elapsed();
 
     //    qDebug() << "*********" << output;
 
-    text+=output;
+//    text+=output;
 }

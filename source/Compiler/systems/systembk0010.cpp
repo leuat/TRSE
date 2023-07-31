@@ -6,6 +6,10 @@ SystemBK0010::SystemBK0010(QSharedPointer<CIniFile> settings, QSharedPointer<CIn
     m_system = BK0010;
     m_hasVariableColorPalette = false;
     m_requireEmulatorWorkingDirectory = true;
+    m_programStartAddress = 512;
+
+
+    m_startAddress = m_programStartAddress;
 }
 
 void SystemBK0010::PostProcess(QString &text, QString file, QString currentDir)

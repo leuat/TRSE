@@ -240,6 +240,11 @@ Token Lexer::Number(bool& isOk)
         base=2;
     }
 
+/*    if (res.contains("&")) {
+        res.remove("&");
+        base=8;
+    }
+*/
     if (res.contains("$")) {
         res.remove("$");
         base=16;
@@ -592,17 +597,16 @@ Token Lexer::GetNextToken()
             return Token(TokenType::MINUS, "-");
         }
         if (m_currentChar=="&") {
-            QString c = m_currentChar;
-            if (peek()=="=") {
-                Advance();
-                Advance();
-                return Token(TokenType::ASSIGNOP, c);
+                  QString c = m_currentChar;
+                  if (peek()=="=") {
+                      Advance();
+                      Advance();
+                      return Token(TokenType::ASSIGNOP, c);
 
-            }
-            Advance();
-            return Token(TokenType::BITAND, "&");
-        }
-        if (m_currentChar=="|") {
+                  }
+                  Advance();
+                  return Token(TokenType::BITAND, "&");
+              }        if (m_currentChar=="|") {
             QString c = m_currentChar;
             if (peek()=="=") {
                 Advance();

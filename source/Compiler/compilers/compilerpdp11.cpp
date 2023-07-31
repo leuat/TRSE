@@ -11,6 +11,9 @@ void CompilerPDP11::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sy
         Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]=(char)1;
 
 
+    m_assembler->Write(".LINK "+Util::numToOct(Syntax::s.m_currentSystem->m_startAddress));
+
+
 //    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::ATARI520ST)
   //          m_assembler->IncludeFile(":resources/code/atari520st/init.s");
 

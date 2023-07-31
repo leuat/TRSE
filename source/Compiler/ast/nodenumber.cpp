@@ -117,6 +117,15 @@ QString NodeNumber::HexValue() {
 
 //    qDebug() << QString::number((ulong)m_val,16) <<m_val << isAddress();
 
+    if (Syntax::s.m_currentSystem->m_useOctals) {
+        if (m_val>=0 || isAddress()) {
+            return "" + QString::number((ulong)m_val,8);
+        }
+        else
+            return "-" + QString::number((long)abs(m_val),8);
+
+    }
+
     if (m_val>=0 || isAddress()) {
         return "$" + QString::number((ulong)m_val,16);
     }

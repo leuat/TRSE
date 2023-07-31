@@ -35,25 +35,24 @@ public:
     CodeGenPDP11();
     QString m_lastSize;
 
-    QStringList m_regs = QStringList()<<"d0" <<"d1"<<"d2" <<"d3"<<"d4" <<"d5"<<"d6";
+    QStringList m_regs = QStringList()<<"r0" <<"r1"<<"r2" <<"r3"<<"r4" <<"r5"<<"r6";
 
     void dispatch(QSharedPointer<NodeBinOP>node) override;
-//    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
+    //    void dispatchOld(QSharedPointer<NodeBinOP>node) override;
     void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
     void dispatch(QSharedPointer<NodeVarDecl> node) override;
     void dispatch(QSharedPointer<NodeBlock> node) override;
-//    void dispatch(QSharedPointer<NodeProgram> node) override;
+    //    void dispatch(QSharedPointer<NodeProgram> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
     void dispatch(QSharedPointer<NodeBinaryClause> node) override;
-  //  void dispatch(QSharedPointer<NodeProcedure> node) override;
-    void dispatch(QSharedPointer<NodeProcedureDecl> node) override;
-   // void dispatch(QSharedPointer<NodeConditional> node) override;
- //   void dispatch(QSharedPointer<NodeForLoop> node) override;
+    //  void dispatch(QSharedPointer<NodeProcedure> node) override;
+    // void dispatch(QSharedPointer<NodeConditional> node) override;
+    //   void dispatch(QSharedPointer<NodeForLoop> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
- //   void dispatch(QSharedPointer<NodeCase> node) override;
+    //   void dispatch(QSharedPointer<NodeCase> node) override;
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     //void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
@@ -72,6 +71,8 @@ public:
     void LoadVariable(QSharedPointer<Node> n) override;
     void LoadVariable(QSharedPointer<NodeNumber> n) override;
 
+    bool UseBlocks() override { return true;}
+
     QString getJmp(bool isOffPage) override {
         return "jmp";
     }
@@ -89,12 +90,13 @@ public:
     void AssignVariable(QSharedPointer<NodeAssign> node) override;
     void IncBin(QSharedPointer<NodeVarDecl> node) override;
 
-//    void BuildConditional(QSharedPointer<Node> node, QString lblFailed);
+    //    void BuildConditional(QSharedPointer<Node> node, QString lblFailed);
     void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
     void BuildToCmp(QSharedPointer<Node> node);
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
+
     bool m_clearFlag = false;
     /*
      *   opcode type for the current variable/number, such as ".w" (word) in "move.w", ".b" as in "move.b"
