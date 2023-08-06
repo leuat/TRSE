@@ -1,0 +1,504 @@
+Unit csp; // Character SPrites
+var  
+
+	// where to find the character data
+	@IFNDEF SCREENADDRESS
+		@DEFINE SCREENADDRESS $1c00 
+	@ENDIF
+
+	// width of the screen
+	@IFNDEF SCREENWIDTH
+		@DEFINE SCREENWIDTH 22
+	@ENDIF
+	
+	// height of the screen
+	@IFNDEF SCREENHEIGHT
+		@DEFINE SCREENHEIGHT 23
+	@ENDIF
+
+
+	p1: pointer;
+	pi: integer;
+
+	
+	xx, yy: byte;
+	xp, yp: byte;
+ 
+	Scr: array[ @SCREENHEIGHT ] of integer = buildtable(" @SCREENADDRESS + ( i * @SCREENWIDTH ) ");
+
+
+@donotremove CalcScreen
+procedure CalcScreen();
+begin
+	
+	screenmemory := Scr[ yp ] + xp;
+
+end;
+
+
+
+/// Draws spritely character on the screen overwriting anything already at that location
+// pi points to 0 1,2 3,4 [5,6,7,8] * last optional
+procedure DrawAt(xx, yy: global byte, _ax: integer);//pi: global integer);
+begin
+	
+//	p1 := pi;
+	
+	asm ;
+	
+	sta csp_p1
+	stx csp_p1+1
+
+	
+	lda csp_xx
+	lsr	
+	sta csp_xp
+	bcc drawAt_x0 ; carry clear = even aligned
+
+	; x is odd aligned, how is y aligned?
+	
+	lda csp_yy
+	lsr
+	sta csp_yp
+	bcc drawAt_x1y0 ; y is even aligned but x is not
+
+
+drawAt_x1y1 ; draw char 5,6,7,8
+	;draw
+	jsr csp_CalcScreen
+
+	ldy #5
+	lda (csp_p1),y
+	ldy #0
+	sta (screenmemory),y
+	ldy #6
+	lda (csp_p1),y
+	ldy #1
+	sta (screenmemory),y
+
+	ldy #7
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH
+	sta (screenmemory),y
+	ldy #8
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH+1
+	sta (screenmemory),y
+
+	rts
+	
+
+drawAt_x1y0 ; draw char 1,2
+	;draw 
+	jsr csp_CalcScreen
+	
+	ldy #1
+	lda (csp_p1),y
+	ldy #0
+	sta (screenmemory),y
+	ldy #2
+	lda (csp_p1),y
+	ldy #1
+	sta (screenmemory),y
+	
+	rts
+	 	
+	
+drawAt_x0	; x is even aligned
+	lda csp_yy
+	lsr
+	sta csp_yp
+	bcc drawAt_x0y0 ; both x and y are zero aligned
+
+	
+	
+drawAt_x0y1 ; draw char 3,4
+	;draw 
+	jsr csp_CalcScreen
+	
+	ldy #3
+	lda (csp_p1),y
+	ldy #0
+	sta (screenmemory),y
+	ldy #4
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH
+	sta (screenmemory),y
+
+	rts
+	
+	
+drawAt_x0y0 ; draw char 0
+	; draw 
+	jsr csp_CalcScreen
+	
+	ldy #0
+	lda (csp_p1),y
+;	ldy #0
+	sta (screenmemory),y
+	
+	rts
+	
+	
+	
+	
+	end;
+	
+end;
+
+/// Draws spritely character on the screen but only over character 0 (transparent / background character)
+procedure DrawAtT(xx, yy: global byte, _ax: integer);//pi: global integer);
+begin
+	
+//	p1 := pi;
+	
+	asm ;
+	
+	sta csp_p1
+	stx csp_p1+1
+
+	
+	lda csp_xx
+	lsr	
+	sta csp_xp
+	bcc drawAtT_x0 ; carry clear = even aligned
+
+	; x is odd aligned, how is y aligned?
+	
+	lda csp_yy
+	lsr
+	sta csp_yp
+	bcc drawAtT_x1y0 ; y is even aligned but x is not
+
+
+drawAtT_x1y1 ; draw char 5,6,7,8
+	;draw
+	jsr csp_CalcScreen
+
+	ldy #5
+	lda (csp_p1),y
+	ldy #0
+	
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x1y1B
+		txa
+		
+	sta (screenmemory),y
+
+drawAtT_x1y1B
+	ldy #6
+	lda (csp_p1),y
+	ldy #1
+	
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x1y1C
+		txa
+	
+	sta (screenmemory),y
+
+drawAtT_x1y1C
+	ldy #7
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH
+	
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x1y1D
+		txa
+	
+	sta (screenmemory),y
+	
+drawAtT_x1y1D
+	ldy #8
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH+1
+
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x1y1end
+		txa
+
+	sta (screenmemory),y
+
+drawAtT_x1y1end
+	rts
+	
+
+drawAtT_x1y0 ; draw char 1,2
+	;draw 
+	jsr csp_CalcScreen
+	
+	ldy #1
+	lda (csp_p1),y
+	ldy #0
+	
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x1y0B
+		txa
+	
+	sta (screenmemory),y
+	
+drawAtT_x1y0B
+	ldy #2
+	lda (csp_p1),y
+	ldy #1
+
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x1y0end
+		txa
+
+	sta (screenmemory),y
+
+drawAtT_x1y0end	
+	rts
+	 	
+	
+drawAtT_x0	; x is even aligned
+	lda csp_yy
+	lsr
+	sta csp_yp
+	bcc drawAtT_x0y0 ; both x and y are zero aligned
+
+	
+	
+drawAtT_x0y1 ; draw char 3,4
+	;draw 
+	jsr csp_CalcScreen
+	
+	ldy #3
+	lda (csp_p1),y
+	ldy #0
+	
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x0y1B
+		txa
+	
+	sta (screenmemory),y
+
+drawAtT_x0y1B
+	ldy #4
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH
+
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x0y1end
+		txa 
+
+	sta (screenmemory),y
+	
+drawAtT_x0y1end
+	rts
+	
+	
+drawAtT_x0y0 ; draw char 0
+	; draw 
+	jsr csp_CalcScreen
+	
+	ldy #0
+	lda (csp_p1),y
+;	ldy #0
+
+		tax
+		lda #0
+		cmp (screenmemory),y
+		bne drawAtT_x0y0end
+		txa 
+
+	sta (screenmemory),y
+
+drawAtT_x0y0end	
+	rts
+	
+	
+	
+	
+	end;
+	
+end;
+
+
+
+
+procedure ClearAt(xx, yy: global byte, _ax: integer);//pi: global integer);
+begin
+	
+//	p1 := pi;
+	
+	asm ;
+	
+	sta csp_p1
+	stx csp_p1+1
+	
+	lda csp_xx
+	lsr	
+	sta csp_xp
+	bcc clearAt_x0 ; carry clear = even aligned
+
+	; x is odd aligned, how is y aligned?
+	
+	lda csp_yy
+	lsr
+	sta csp_yp
+	bcc clearAt_x1y0 ; y is even aligned but x is not
+
+
+clearAt_x1y1 ; draw char 5,6,7,8
+	;draw
+	jsr csp_CalcScreen
+
+	ldy #5
+	lda (csp_p1),y
+	ldy #0
+	
+		cmp (screenmemory),y
+		bne clearAt_x1y1B
+	
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+
+clearAt_x1y1B
+	ldy #6
+	lda (csp_p1),y
+	ldy #1
+	
+		cmp (screenmemory),y
+		bne clearAt_x1y1C
+	
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+
+clearAt_x1y1C
+	ldy #7
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH
+	
+		cmp (screenmemory),y
+		bne clearAt_x1y1D
+	
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+	
+clearAt_x1y1D
+	ldy #8
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH+1
+
+		cmp (screenmemory),y
+		bne clearAt_x1y1end
+
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+
+clearAt_x1y1end
+	rts
+	
+
+clearAt_x1y0 ; draw char 1,2
+	;draw 
+	jsr csp_CalcScreen
+	
+	ldy #1
+	lda (csp_p1),y
+	ldy #0
+	
+		cmp (screenmemory),y
+		bne clearAt_x1y0B
+	
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+	
+clearAt_x1y0B
+	ldy #2
+	lda (csp_p1),y
+	ldy #1
+
+		cmp (screenmemory),y
+		bne clearAt_x1y0end
+
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+
+clearAt_x1y0end	
+	rts
+	 	
+	
+clearAt_x0	; x is even aligned
+	lda csp_yy
+	lsr
+	sta csp_yp
+	bcc clearAt_x0y0 ; both x and y are zero aligned
+
+	
+	
+clearAt_x0y1 ; draw char 3,4
+	;draw 
+	jsr csp_CalcScreen
+	
+	ldy #3
+	lda (csp_p1),y
+	ldy #0
+	
+		cmp (screenmemory),y
+		bne clearAt_x0y1B
+	
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+
+clearAt_x0y1B
+	ldy #4
+	lda (csp_p1),y
+	ldy #@SCREENWIDTH
+
+		cmp (screenmemory),y
+		bne clearAt_x0y1end
+
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+	
+clearAt_x0y1end
+	rts
+	
+	
+clearAt_x0y0 ; draw char 0
+	; draw 
+	jsr csp_CalcScreen
+	
+	ldy #0
+	lda (csp_p1),y
+;	ldy #0
+
+		cmp (screenmemory),y ; only draw if char in screen is less than char to draw
+		bne clearAt_x0y0end
+
+	lda #0 ; clear with this char
+	sta (screenmemory),y
+
+clearAt_x0y0end	
+	rts
+	
+	
+	
+	
+	end;
+	
+end;
+
+
+
+
+
+end.
