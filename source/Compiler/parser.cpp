@@ -2492,7 +2492,7 @@ void Parser::AppendComment(QSharedPointer<Node> n)
 
 QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
 {
-
+    m_isInConditional = true;
     QVector<QSharedPointer<Node>> left, right;
     QVector<Token> compareTokens, conditionals;
 
@@ -2543,6 +2543,7 @@ QSharedPointer<Node> Parser::Conditional(bool isWhileLoop)
         block = randCond;
 
     }
+    m_isInConditional = false;
 
     return QSharedPointer<NodeConditional>(new NodeConditional(t, forcePage, clause, block, isWhileLoop, nodeElse));
 }
@@ -2657,6 +2658,8 @@ QSharedPointer<Node> Parser::Program(QString param)
 
 QSharedPointer<Node> Parser::Factor()
 {
+
+
 
     if (m_currentToken.m_type == TokenType::NOT || m_currentToken.m_type == TokenType::BITNOT) {
         Eat();
@@ -2875,6 +2878,11 @@ QSharedPointer<Node> Parser::RepeatUntil()
 QSharedPointer<Node> Parser::Term()
 {
     QSharedPointer<Node> node = Factor();
+
+
+
+
+
     while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV
            || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR
            || m_currentToken.m_type == TokenType::Type::SHR || m_currentToken.m_type == TokenType::Type::SHL
@@ -6472,7 +6480,20 @@ QSharedPointer<Node> Parser::Expr()
 {
     QSharedPointer<Node> node = Term();
 
+    if (!m_isInConditional)
+    while (m_currentToken.m_type == TokenType::Type::GREATER || m_currentToken.m_type == TokenType::Type::GREATEREQUAL ||
+           m_currentToken.m_type == TokenType::Type::LESS || m_currentToken.m_type == TokenType::Type::LESSEQUAL ||
+           m_currentToken.m_type == TokenType::Type::EQUALS || m_currentToken.m_type == TokenType::Type::NOTEQUALS
+            || m_currentToken.m_type == TokenType::Type::AND || m_currentToken.m_type == TokenType::Type::OR
 
+
+           ) {
+        Token t = m_currentToken;
+        Eat(m_currentToken.m_type);
+        node = NodeFactory::CreateBinaryClause(t,t.m_type,node,Term());
+        //     return node;
+
+    }
 
 
     while (m_currentToken.m_type == TokenType::Type::PLUS || m_currentToken.m_type == TokenType::Type::MINUS

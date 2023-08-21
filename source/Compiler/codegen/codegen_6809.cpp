@@ -728,11 +728,6 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVarType> node)
 
 }
 
-void CodeGen6809::dispatch(QSharedPointer<NodeBinaryClause> node)
-{
-    node->DispatchConstructor(as,this);
-
-}
 
 void CodeGen6809::dispatch(QSharedPointer<NodeString> node)
 {

@@ -719,10 +719,6 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
 
 
-void CodeGenZ80::dispatch(QSharedPointer<NodeBinaryClause> node)
-{
-
-}
 
 
 /*

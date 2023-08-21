@@ -262,6 +262,46 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
 
 }
 
+void AbstractCodeGen::dispatch(QSharedPointer<NodeBinaryClause> node)
+{
+ //   qDebug() << "BINARY CLAUSE CALLED";
+//    BuildToCmp(node);
+    node->DispatchConstructor(as,this);
+
+    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
+    QString lblstartFailBlock = as->NewLabel("ConditionalFailBlock");
+
+    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node);
+
+
+
+
+    // Main recursive method that tests everything. Evaluates all logical
+    // clauses and jumps to the corresponding fail/success label
+    QString localFailed = lblstartFailBlock;
+    bool offpage = false;
+    HandleCompoundBinaryClause(bn, lblstartTrueBlock,localFailed,false);
+
+    // OFFPAGE branching for z80:
+
+//        as->Asm(getJmp(offpage) + " "+as->jumpLabel(lblstartTrueBlock));
+ //        as->Asm(getJmp(offpage) + " " + as->jumpLabel(failedLabel));
+
+    // Start main block
+    as->Asm("lda #1");
+    as->Asm("jmp "+localFailed);
+    as->Label(lblstartTrueBlock+": ;Main true block ;keep "); // This means skip inside
+    as->Asm("lda #0");
+    as->Label(localFailed);
+    //    node->m_block->Accept(this);
+
+    //    as->Comment("; ELSEDONE HERE "+labelElseDone);
+    as->PopLabel("ConditionalTrueBlock");
+    as->PopLabel("ConditionalFailBlock");
+
+
+}
+
 void AbstractCodeGen::dispatch(QSharedPointer<NodeControlStatement> node)
 {
     /*    QString labelStartOverAgain = as->NewLabel("while");

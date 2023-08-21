@@ -76,7 +76,7 @@ public:
     virtual void dispatch(QSharedPointer<NodeAssign> node);
     virtual void dispatch(QSharedPointer<NodeBlock> node);
     virtual void dispatch(QSharedPointer<NodeForLoop> node);
-    virtual void dispatch(QSharedPointer<NodeBinaryClause> node) = 0;
+    virtual void dispatch(QSharedPointer<NodeBinaryClause> node);
     virtual void dispatch(QSharedPointer<NodeCase> node);
     virtual void dispatch(QSharedPointer<NodeCast> node);
     virtual void dispatch(QSharedPointer<NodeRepeatUntil> node) = 0;
@@ -124,6 +124,8 @@ public:
     virtual QString getCallSubroutine() { return "jsr"; }
     // Does the current system support splitting code into custom memory blocks?
     virtual bool UseBlocks() { return false;}
+    // Builds a single compare (a>b) and returns true (1) or false (0)
+    virtual void BuildToCmp(QSharedPointer<Node> node) {}
 
     // Resolves the string value of a temporary (*this) pointer for a class
     virtual QString resolveTemporaryClassPointer(QString name, int mul, int &res) { return "";}

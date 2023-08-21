@@ -187,6 +187,7 @@ private:
 
 
     bool m_ignoreAll = false;
+    bool m_isInConditional = false;
     bool m_isRecord = false;
     bool m_removeUnusedDecls = false;
     bool m_abort = false;
