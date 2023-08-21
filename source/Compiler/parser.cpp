@@ -2949,6 +2949,7 @@ void Parser::PreprocessSingle() {
         if (QFile::exists(m_currentDir+src))
             QFile::remove(m_currentDir+src);
         Util::SaveByteArray(d,m_currentDir+src);
+        return;
 
     }else
     if (m_currentToken.m_value.toLower() =="addemulatorparam") {
