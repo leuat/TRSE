@@ -72,6 +72,4 @@ cc1541_disk_type = d64
 use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
-open_files = ,tiles/tiles.flf, tiles/levels.flf
-project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/mrtibbles/
-current_file = tiles/levels1.flf
+open_files =, main.ras

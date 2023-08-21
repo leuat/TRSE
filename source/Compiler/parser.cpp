@@ -4311,13 +4311,31 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
 
 
 
+    // in case the user tries to use a global variable from another unit, remove the current unit prefix
+    if (m_isTRU)
+        for (QSharedPointer<Node> n : vars) {
+            QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
+//            if (v->m_isGlobal)
+            for (auto unit : s_usedTRUNames) {
+                unit+="_";
+                if (unit == m_symTab->m_currentUnit)
+                    continue;
+
+  //              qDebug() << "PARSER XX " <<unit << v->value;
+                if (v->value.contains(unit)) {
+                    v->value = v->value.remove(m_symTab->m_currentUnit);
+//                    qDebug() << "Renamed to " << v->value ;
+                }
+            }
+        }
+
+
     QVector<QSharedPointer<Node>> var_decleratons;
     if (isGlobal) { // Typecheck that they exist
         for (QSharedPointer<Node> n : vars) {
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
             QSharedPointer<Symbol> sym = nullptr;
             try {
-
                 sym = m_symTab->Lookup(v->value,v->m_op.m_lineNumber);
                 // check if global type matches parameter type:
             } catch (FatalErrorException& fe) {

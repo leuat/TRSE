@@ -91,6 +91,7 @@ void NodeProcedureDecl::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
         auto nv2 = qSharedPointerDynamicCast<NodeVarDecl>(nv);
         auto var = qSharedPointerDynamicCast<NodeVar>(nv2->m_varNode);
         auto typeNode = qSharedPointerDynamicCast<NodeVarType>(nv2->m_typeNode);
+
         QSharedPointer<Symbol> varSymbol = symTab->Lookup(var->value,var->m_op.m_lineNumber);
         if (varSymbol  && varSymbol->m_isStackVariable) {
             stackPos +=varSymbol->m_size;

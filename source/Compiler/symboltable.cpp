@@ -545,11 +545,29 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
     if (!m_symbols.contains(name) && !m_symbols.contains(localName)&& !m_symbols.contains(localUnitName)) {
         QString similarSymbol = findSimilarSymbol(name,85,2,QStringList());
-        //        qDebug() << name << m_forwardedSymbols.keys();
         if (m_forwardedSymbols.contains(name))
             return m_forwardedSymbols[name];
 
+
+/*        auto uadd = m_units;
+        if (m_currentUnit!="") uadd<<m_currentUnit;
+        qDebug() << uadd;
+        for (auto unit: uadd) {
+            if (!unit.endsWith("_"))
+               unit+="_";
+            auto globName = name;
+            globName = globName.remove(unit);
+            qDebug() << "SYMTAB " << globName<<unit<<name << m_forwardedSymbols.keys() << similarSymbol << m_symbols.keys();
+            if (m_symbols.contains(globName)) {
+                qDebug() << "Found "<<globName;
+                return m_symbols[globName];
+            }
+        }
+*/
         // IF you are in a class, you might want to look up a GLOBAL variable in that class
+/*        qDebug() << "SYMTAB 2 " <<m_currentUnit<<name << m_forwardedSymbols.keys() << similarSymbol << m_symbols.keys();
+        qDebug() <<         m_symbols.contains(name);
+*/
         if (m_currentClass!="") {
             auto n = name;
             n = n.replace(m_currentClass+"_", m_currentUnit);
@@ -560,9 +578,10 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         }
         // Check if it is a global variable used from within a class
         // IN dispatcher.
+
         if (pass==1)
             for (auto r:m_units)
-            if (m_symbols.contains(r+"_"+name))
+            if (m_symbols.contains(r+"_"+name) )
                 ErrorHandler::e.Error("Could not find global variable '<font color=\"#FF8080\">" + name + "'</font>. If you declared '<font color=\"#FF8080\">"+name+"</font>' as a global procedure variable within a class, then please declare it as '<font color=\"#FF8080\">"+r+"::"+name+"'</font>.", lineNumber);
 
 
@@ -590,6 +609,8 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         return m_symbols[localName];
 
     }
+
+
     if (m_symbols[name]==nullptr)
         ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>", lineNumber);
 

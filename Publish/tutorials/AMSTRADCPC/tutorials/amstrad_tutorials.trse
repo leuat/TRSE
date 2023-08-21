@@ -84,6 +84,4 @@ dosbox_cycles = 0
 cpu_x86_output = exe
 use_track_19 = 1
 use_python = 0
-open_files = ,temp.asm, temp.ras, tut1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/AMSTRADCPC/tutorials/
-current_file = temp.ras
+open_files =, tut1.ras
