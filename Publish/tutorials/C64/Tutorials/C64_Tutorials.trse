@@ -93,4 +93,6 @@ data_header_resources/images/space_map.flf = 0
 charset_resources/images/space_map.flf = /Users/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/resources/charsets/space.flf
 data_header_test2.flf = 0
 use_python = 0
-open_files =, Hello.ras
+open_files = ,Hello.ras
+project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
+current_file = easy/03_boxes.ras

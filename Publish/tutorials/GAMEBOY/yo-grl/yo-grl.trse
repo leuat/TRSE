@@ -89,4 +89,6 @@ d64name = main
 use_track_19 = 1
 disable_compiler_comments = 0
 use_vice_c1541 = 0
-open_files =, demo.ras
+open_files = ,demo.ras
+project_path = /Users/leuat/code/TRSE/Debug/trse.app/Contents/MacOS/../../tutorials/GAMEBOY/yo-grl/
+use_python = 0

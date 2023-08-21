@@ -321,7 +321,6 @@ Token Lexer::String()
     }
     Advance();
 //    ErrorHandler::e.DebugLow("Calling Lexer::String with string: " + result);
-
     return Token(TokenType::STRING, result);
 
 }
@@ -606,7 +605,8 @@ Token Lexer::GetNextToken()
                   }
                   Advance();
                   return Token(TokenType::BITAND, "&");
-              }        if (m_currentChar=="|") {
+              }
+        if (m_currentChar=="|") {
             QString c = m_currentChar;
             if (peek()=="=") {
                 Advance();

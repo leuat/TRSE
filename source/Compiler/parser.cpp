@@ -1098,6 +1098,7 @@ void Parser::HandlePreprocessorInParsing()
     if (m_currentToken.m_value.toLower()=="macro") {
         Eat();
         HandleMacro();
+        return;
     }
 
     if (m_pass>=PASS_CODE) {
@@ -1605,6 +1606,7 @@ void Parser::HandlePreprocessorInParsing()
         return;
     }
     if (m_macros.contains(m_currentToken.m_value.toLower())) {
+        //qDebug() << "PARSER PASS CODE "<< (m_pass==PASS_CODE);
         HandleCallMacro(m_currentToken.m_value.toLower(), m_pass==PASS_CODE);
     }
 
@@ -3153,7 +3155,10 @@ void Parser::PreprocessSingle() {
         }
         else if (m_currentToken.m_value.toLower() =="macro") {
             Eat(TokenType::PREPROCESSOR);
-            HandleMacro();
+//            HandleMacro();
+            Eat();
+            Eat();
+            Eat();
 
         }
         else if (m_currentToken.m_value.toLower() =="exportrgb8palette") {
@@ -3351,8 +3356,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Symbol::s_currentProcedure = "main";
     m_inCurrentProcedure = "main";
 
-    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000 && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80)
-        StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
+//    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000 && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80)
+  //      StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
 
     Data::data.compilerState = Data::PREPROCESSOR;
     InitSystemPreprocessors();
@@ -3671,6 +3676,7 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
 
     if (m_currentToken.m_type==TokenType::STRING || m_currentToken.m_type==TokenType::CSTRING) {
         QSharedPointer<NodeString> node = QSharedPointer<NodeString>(new NodeString(m_currentToken,QStringList()<<m_currentToken.m_value,m_currentToken.m_type==TokenType::CSTRING));
+
         Eat();
         return node;
     }
@@ -3679,7 +3685,6 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
 
 
     Eat();
-
     Token token(TokenType::STRING, m_currentToken.m_value);
     //m_currentToken.m_type = TokenType::STRING;
     QStringList lst;
@@ -5149,7 +5154,7 @@ void Parser::HandleMacro()
     m.noParams = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
 
-    QString org = m_currentToken.m_value.toLower();
+    QString org = m_currentToken.m_value;//.toLower();
     m_currentToken = m_lexer->Macro();
     m_currentToken.m_value = "\t"+org  + " "+ m_currentToken.m_value;
 
@@ -5206,9 +5211,9 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
-    if (m_pass!=1)
-        return;
-    //    qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
+//    if (m_pass!=1)
+ //       return;
+//        qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
     // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
         QString val = m_currentToken.m_value;
