@@ -1,0 +1,244 @@
+program Character_Sprites;
+/*
+
+	This program demonstrates a very simple sprite-like movement using pre-defined
+	characters.
+	
+	The csp unit (Character SPrites) provides a sub-character movement between the usual
+	Vic 20 character grid. Instead of moving harshly from one 8x8 character block into the 
+	next, this unit moves the character half way vertically and horizontally.
+	
+	Works best for just horizontal or vertical at one time, but can do 'diagonals' if you wish
+	at the expense of having empty appearance of space around the character due to needing
+	to use 4 characters.
+	
+	The unit will only draw to character 0, allowing your spritely characters to move
+	'behind' scenery, walls, platform etc.
+
+*/
+@define DEBUG		1		// uncomment to show debugging timings as rasterbar blocks on the screen
+
+
+// works on every memory config 
+@VICMEMORYCONFIG "none"
+//@VICMEMORYCONFIG "3k"
+//@VICMEMORYCONFIG "all"
+
+// but you should tell the unit where you have your screen memory:
+@DEFINE SCREENADDRESS $1E00
+
+/*
+// if you use a different screen size, set these defines so the unit knows about it
+@DEFINE SCREENWIDTH 22
+@DEFINE SCREENHEIGHT 23
+*/
+
+// the following lines ensure some features of TRSE are not included if not needed
+// comment out if using multiplcation or division, otherwise save space
+@ignoremethod "init16x8mul"
+@ignoremethod "init16x8div"
+@ignoremethod "init8x8div"
+@ignoremethod "initeightbitmul"
+// deprecated commands - ensure not included
+@ignoremethod "initjoystick"
+@ignoremethod "initmoveto"
+
+var  
+@use "screen" 			// this is useful as it allows us to set where the screen memory is located
+@use "output/csp"		// this is the Character SPrite unit that does the magic
+
+/*
+	Memory areas to use.
+
+	Most of these locations can be used if not returning to BASIC.
+	
+	Zero page is a good place to use commonly used variables becasue 6502 instructions take
+	one less byte to access zero page and is a little WaitForRaster
+
+	Other areas of RAM are good for general variables used less frequently rather than using main program RAM.
+
+	Use the 'at $nn' or 'at $nnnn' modifier when setting variables in these locations, replacing nn with the hex address
+
+*/
+
+// ------------------------------
+// Zero Page:	$00-$5d - 94 bytes
+	
+	i,j,k,l: byte at $00;	// general purpose, reusable variables, good for FOR loops and counters, at addresses $00, $01, $02 and $03 in this case
+		
+	xp, yp: byte at $04;	// used in this example for the x and y positions of the sprite
+	
+	seedhi, seedlo: byte at $06; // used for random routine
+		
+// $7d - one byte gap
+	ticks:	byte at $7d;	// used for timing
+
+// ------------------------------
+// BASIC input buffer:	$0200-$0258 - 88 bytes
+
+// ------------------------------
+// Indirect vectors:	$02A1-$02FF - 94 bytes 
+
+// ------------------------------
+// Cassette buffer:		$033C-$03FB (828-1019) - 192 bytes
+
+
+// ------------------------------
+// Total program memory:$1000-$1DFF (4096-7679) - 3584 bytes
+// Working memory:		$1000-$1BFF (4096-7167) - 3072 bytes
+// Character memory:	$1C00-$1DFF (7168-7679) -  512 bytes
+
+	// the characters for the sprites (pre-shifted/positioned) are in chars.flf
+
+	@export "chr\chars.flf" "chr\chars.bin" 0 64
+	charset: incbin("chr\chars.bin", $1c00); 
+
+	// NOTE:
+	// If using the 'transparent' version csp_DrawAtT, character 0 must be reserved in
+	// your game as the background character. Sprite characters will only appear over
+	// character 0. You can use any other character for any purpose you wish but leave
+	// character 0 alone.
+
+// ------------------------------
+// Screen memory:		$1E00-$1FFA (7680-8186) - 506 bytes
+
+// ------------------------------
+// unused Colour memory:$9400-$95FA (37888-38394) - 506 bytes
+// Colour memory:		$9600-$97FA (38400-38906) - 506 bytes
+
+// -------------------------------------------------------------------------------
+
+	// the CSP unit requires an array to tell it where the pre-shifted characters are located
+	// in this example, characters 1 through to 9 are used. Take a look at the chars.flf file
+	// to see them.
+
+	chars: array[] of byte = (1, 2,3, 4,5, 6,7,8,9);
+
+	// this array lists characters for all possivble locations. You can exclude characters
+	// 6,7,8 and 9 if you are only going to be moving horizontally or vertically (not both
+	// together)
+	
+	// character 1 is fully aligned on a character cell
+	// characters 2 and 3 are when the character is moving horizontally
+	// characters 4 and 5 are when the character is moving vertically
+	// characters 6 through 9 are when the character is moving both horizontally and vertically
+
+// -------------------------------------------------------------------------------
+// **** MAIN PROGRAM ****
+
+// generate a random number, return in register A (accumulator)
+function RND() : byte;
+begin
+	
+	asm
+		
+	lda seedhi
+	lsr
+	rol seedlo
+	bcc noeor
+	eor #$B4
+noeor
+	sta seedhi
+	eor seedlo
+  
+	end;
+	// result in a
+	
+end;
+
+
+/* **** MAIN PROGRAM **** */
+begin
+	
+	DefineScreen();
+
+	// clear the screen and colour RAM
+	ClearScreen( 0, #SCREEN_CHAR_LOC); 	// ^$1e00 - unexpanded screen location
+	ClearScreen( YELLOW, #SCREEN_COL_LOC); 	// ^$9600 - unexpanded colour location
+
+	// Set up redefined character set at 1c00 and screen at 1e00 (the ADD_0200). 
+
+	// This setting allows 64 unique characters and access to all default 
+	// ROM letters with BIT7 set (ie: values of 128 and greater)
+	
+	Screen::SetScreenCharAddress( 
+		Screen::SCREEN_1c00 + Screen::CHAR_1c00, 
+		Screen::SCREEN_ADD_0200 );
+	
+
+	AUX_COLOR_AND_VOLUME := %00000010;
+	SCREEN_BG_COLOR := BLUE + SCREEN_BG_BLACK; // border + background colours
+
+
+	// put some random blocks on the screen
+	screenmemory := @SCREENADDRESS;
+	for i := 0 to 50 do
+	begin
+		
+		screenmemory := screenmemory + (RND()&15);
+		screenmemory[ 0 ] := 10;
+		
+	end;
+
+
+	xp:=0; yp:=0; ticks := 0;
+
+	// main game loop
+	while (true) offpage do 
+	begin
+		
+		
+		// wait for raster position outside of visible screen area (vertical blank)
+		WaitForRaster(120); // PAL
+		//WaitForRaster(119); // PAL
+
+		@ifdef DEBUG	// for testing speed of your drawing loop
+		SCREEN_BG_COLOR := RED + SCREEN_BG_RED;
+		@endif
+
+/*		// uncomment this block to put more spritely characters on the screen
+		// but observe as they overwrite each other as the player overlaps them
+		csp_ClearAt(2,2, #chars);
+		csp_ClearAt(3,6, #chars);
+		csp_ClearAt(2,11, #chars);
+		csp_ClearAt(3,17, #chars);
+*/
+
+		// remove the previously drawn 'spritely' character so we can potentially
+		// move it to a new location
+		csp_ClearAt(xp,yp, #chars);
+
+		if (ticks > 0) then ticks -= 1;
+		if (ticks = 0) then
+		begin
+			
+			// move the player character around the screen
+			ticks := 2;
+			readjoy1();
+			if (joy1 & JOY_UP) then yp -= 1;
+			if (joy1 & JOY_DOWN) then yp += 1;
+			if (joy1 & JOY_LEFT) then xp -= 1;
+			if (joy1 & JOY_RIGHT) then xp += 1;
+
+		end;
+	
+		// draw the spritely character. There is also a csp_DrawAt command that is
+		// a little faster, but does not treat any characters as transparent
+		csp_DrawAtT(xp,yp, #chars);
+
+
+/*		// uncomment this block to put more spritely characters on the screen
+		// but observe as they overwrite each other as the player overlaps them
+		csp_DrawAtT(2,2, #chars);
+		csp_DrawAtT(3,6, #chars);
+		csp_DrawAtT(2,11, #chars);
+		csp_DrawAtT(3,17, #chars);
+*/
+
+		@ifdef DEBUG	// for testing speed of your drawing loop
+		SCREEN_BG_COLOR := BLACK + SCREEN_BG_BLACK;
+		@endif
+				
+	end;
+
+end.
