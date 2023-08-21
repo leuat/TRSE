@@ -122,8 +122,8 @@ public:
 
 
     QString puredigit = "0123456789^";
-    QString digit = "^0123456789$%";
-    QString digitAll = "^0123456789$%ABCDEFabcdef";
+    QString digit = "^0123456789$%!";
+    QString digitAll = "^0123456789$%!ABCDEFabcdef";
     QString alpha = "abcdefghijklmnopqrstuvwxyz_";
     QString alnum =alpha+digit;
     QString alnumString =alpha+digit+ " ;:æøå!#¤%&/()=.,-+*";

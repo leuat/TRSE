@@ -59,6 +59,9 @@ public:
     void dispatch(QSharedPointer<NodeComment> node) override;
 
 
+    virtual void setValue(int val) override  {
+        as->Asm("move.w d0,#"+Util::numToHex(val));
+    }
 
 
     void StoreVariable(QSharedPointer<NodeVar> n) override;

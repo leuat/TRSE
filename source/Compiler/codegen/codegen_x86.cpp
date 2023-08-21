@@ -466,11 +466,6 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVarType> node)
 
 }
 
-void CodeGenX86::dispatch(QSharedPointer<NodeBinaryClause> node)
-{
-
-}
-
 
 void CodeGenX86::dispatch(QSharedPointer<Node> node)
 {

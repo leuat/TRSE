@@ -36,7 +36,6 @@ public:
     virtual void dispatch(QSharedPointer<NodeNumber>node) override;
     void dispatch(QSharedPointer<NodeString> node) override;
     void dispatch(QSharedPointer<NodeVarType> node) override;
-    void dispatch(QSharedPointer<NodeBinaryClause> node) override;
     void dispatch(QSharedPointer<NodeVar> node) override;
     void dispatch(QSharedPointer<Node> node) override;
     //void dispatch(QSharedPointer<NodeCase> node) override;
@@ -95,6 +94,9 @@ public:
     void PopX();
 
 
+    virtual void setValue(int val) override  {
+        as->Asm("mov ax,"+Util::numToHex(val));
+    }
 
 
 

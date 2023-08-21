@@ -2798,6 +2798,10 @@ QString CodeGen6502::resolveTemporaryClassPointer(QString name, int mul, int& re
     //return zp;
 }
 
+void CodeGen6502::setValue(int val)  {
+    as->Asm("lda #"+Util::numToHex(val));
+}
+
 
 
 

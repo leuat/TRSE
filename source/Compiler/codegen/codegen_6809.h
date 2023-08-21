@@ -71,6 +71,9 @@ public:
     void HackPointer(QSharedPointer<Node> node);
 
 
+    virtual void setValue(int val) override  {
+        as->Asm("ldb #"+Util::numToHex(val));
+    }
 
 
     /*

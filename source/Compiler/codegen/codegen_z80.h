@@ -48,6 +48,10 @@ public:
 
     void dispatch(QSharedPointer<NodeUnaryOp> node);
 
+    virtual void setValue(int val) override  {
+        as->Asm("ld a,"+Util::numToHex(val));
+    }
+
 
 //    void dispatch(QSharedPointer<NodeForLoop> node);
 

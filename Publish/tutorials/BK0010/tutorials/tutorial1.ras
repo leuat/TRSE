@@ -51,8 +51,6 @@ l1:
 	sob r2,2
 	br 1
 	
-;img: 
-;	insert_file \"images/image1.bin \"
 
 	
 	");

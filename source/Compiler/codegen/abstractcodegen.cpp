@@ -288,10 +288,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBinaryClause> node)
  //        as->Asm(getJmp(offpage) + " " + as->jumpLabel(failedLabel));
 
     // Start main block
-    as->Asm("lda #1");
-    as->Asm("jmp "+localFailed);
+    setValue(1); // set true
+    as->Asm(getJmp(offpage)+" " +localFailed);
     as->Label(lblstartTrueBlock+": ;Main true block ;keep "); // This means skip inside
-    as->Asm("lda #0");
+    setValue(0); // set false
     as->Label(localFailed);
     //    node->m_block->Accept(this);
 

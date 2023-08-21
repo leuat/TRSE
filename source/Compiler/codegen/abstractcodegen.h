@@ -93,6 +93,8 @@ public:
     virtual void dispatch(QSharedPointer<NodeUnaryOp> node);
 
 
+    // sets the default return value to something
+    virtual void setValue(int val)  {}
 
 
 

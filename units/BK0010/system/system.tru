@@ -1,7 +1,7 @@
 unit System;
 
 var
-	const SCROLL : address = &177664;
+	const SCROLL : address = !177664;
 	
 	
 procedure Init() inline;
@@ -13,7 +13,7 @@ begin
 ;	mov #1330, 177664
 	
 	");
-	scroll := &1330;
+	scroll := !1330;
 end;
 	
 end.

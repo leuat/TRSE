@@ -56,6 +56,7 @@ public:
     int block16bit=0;
 
 
+    virtual void setValue(int val) override;
 
 
     QString getJmp(bool isOffPage) override {

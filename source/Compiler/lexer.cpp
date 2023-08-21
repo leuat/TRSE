@@ -240,11 +240,11 @@ Token Lexer::Number(bool& isOk)
         base=2;
     }
 
-/*    if (res.contains("&")) {
-        res.remove("&");
+    if (res.contains("!")) {
+        res.remove("!");
         base=8;
     }
-*/
+
     if (res.contains("$")) {
         res.remove("$");
         base=16;
