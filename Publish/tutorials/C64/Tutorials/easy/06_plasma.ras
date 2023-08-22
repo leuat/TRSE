@@ -6,7 +6,7 @@ var
 @define OPTIMIZED 1
 
 	// some plasma variables
-	c,val,c2x, c2y,ax, ay : byte;
+	val,c2x, c2y,ax, ay : byte;
 	x,y : byte;
 	colorP: ^byte; // same as "pointer" or "pointer of byte";	
 

@@ -5326,7 +5326,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (ret.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
-    qDebug() << "inserting "<<ret.toString() << m_pass;
+//    qDebug() << "inserting "<<ret.toString() << m_pass;
     // Inject macro text into the source code
     m_lexer->m_text.insert(pos,ret.toString());
   //  qDebug().noquote() << m_lexer->m_text;

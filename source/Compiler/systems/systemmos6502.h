@@ -17,6 +17,7 @@ public:
         m_registers << "_a"<<"_x" <<"_y" <<"_ax" <<"_ay" <<"_xy";
         m_canRunAsmFiles = true;
         m_allowClasses = true; // EXPERIMENTAL
+        m_renameVariables << "a" <<"b"<<"c"<<"d"<<"e"<<"f";
 
         m_allowedBaseTypes << "LONG";
 

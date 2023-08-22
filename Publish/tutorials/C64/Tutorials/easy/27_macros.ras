@@ -1,0 +1,46 @@
+program macros;
+	
+	
+/* Macros are javascript. Use "writeln" to produce TR code! Parameters are specified as p0, p1, p2.. etc	
+ this macro will generate a table named "p0" with p1 elements that are multiples of p2, ie (0*p2, 1*p2, 2*p2.. etc)
+ of course, it would be easier to simply use myList : array[8] of byte = buildtable("i*3"), but 
+ javascript allows the user a huge amount of flexibility 
+ 
+ */
+@macro "generate_table" 3
+
+	i = 0;
+//	writeln('balle : byte;');
+	write(p0+' : array['+p1+'] of byte = (');
+	for (i=0;i<p1;i++) {
+		write(p2*i);
+		if (i!=p1-1) write(",");
+	}
+	writeln(");");
+
+@endmacro
+
+// Prints a table with name in p0
+@macro "print_table" 1
+	i = 0;
+	writeln('for j:=0 to sizeof('+p0+') do begin');
+	writeln('    printdecimal('+p0+'[j],1);');
+	writeln('    screenmemory+=3;');
+	writeln('end;');
+@endmacro
+
+
+var
+	j:byte;
+	@generate_table("table1",8,2)
+	@generate_table("table2",10,4)
+
+
+begin
+	clearscreen(key_space,#screen_char_loc);
+	moveto(0,5,hi(#screen_char_loc));
+	@print_table("table1");
+	moveto(0,8,hi(#screen_char_loc));
+	@print_table("table2");
+	loop();
+end.
