@@ -1,0 +1,28 @@
+<h2>Macros</h2>
+<p>Macros are a powerful way to generate TR code using javascript. Macros are defined using the @macro preprocessor,
+and will be evaluated and inserted into the code before Rascal parsing begins.
+<p>
+When defining a macro, the first parameter is the name of the macro itself, and the second parameter specifies how many parameters the macro receives.
+In javascript, each parameter is defined as p0, p1, p2 .... Macros must end with an @endmacro directive.
+<p>
+In order to generate TR code, use the built-in "write" (without newline) or "writeln" (with newline).
+Example:
+<code>
+program Macros;
+
+@macro "print_text" 3
+
+        writeln('moveto('+p1+','+p2+',04);');
+        writeln('printstring("'+p0+'",0,40);');
+
+@endmacro
+
+begin
+        @print_text("HELLO",5,10)
+        @print_text("MACROS",5,12)
+        loop();
+end.
+@endmacro
+</code>
+Macros can be inserted anywhere, and can be used to for example include a large list of resource data, generate advanced tables or anything else. See the
+C64 "main tutorials" example in easy/27_macros.ras for a more advanced example.

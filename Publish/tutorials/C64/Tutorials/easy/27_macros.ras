@@ -1,16 +1,15 @@
 program macros;
 	
 	
-/* Macros are javascript. Use "writeln" to produce TR code! Parameters are specified as p0, p1, p2.. etc	
+/* Macros are defined using javascript. Use "writeln" to produce TR code. Parameters are specified as p0, p1, p2.. etc	
  this macro will generate a table named "p0" with p1 elements that are multiples of p2, ie (0*p2, 1*p2, 2*p2.. etc)
  of course, it would be easier to simply use myList : array[8] of byte = buildtable("i*3"), but 
- javascript allows the user a huge amount of flexibility 
+ javascript allows the user a huge amount of flexibility such as generating a list of resources to incbin etc.
  
  */
 @macro "generate_table" 3
 
 	i = 0;
-//	writeln('balle : byte;');
 	write(p0+' : array['+p1+'] of byte = (');
 	for (i=0;i<p1;i++) {
 		write(p2*i);
@@ -21,6 +20,7 @@ program macros;
 @endmacro
 
 // Prints a table with name in p0
+
 @macro "print_table" 1
 	i = 0;
 	writeln('for j:=0 to sizeof('+p0+') do begin');

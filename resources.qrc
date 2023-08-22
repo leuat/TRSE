@@ -749,5 +749,7 @@
         <file>resources/images/tutorials/VZPaganitzu.png</file>
         <file>resources/images/tutorials/spacewar.png</file>
         <file>resources/text/diskdefs</file>
+        <file>resources/text/help/r/macro.rtf</file>
+        <file>resources/text/help/r/endmacro.rtf</file>
     </qresource>
 </RCC>
