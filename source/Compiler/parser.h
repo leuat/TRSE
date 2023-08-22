@@ -182,6 +182,8 @@ private:
     int PASS_PREPRE = 0;
     int PASS_PRE = 1;
     int PASS_FIRST = 10;
+    bool m_ignoreMacros = false;
+    int PASS_MACROS = 8;
     int PASS_CODE = 2;
     int PASS_OTHER = 4;
 
@@ -232,6 +234,7 @@ private:
     void RemoveComments();
     bool PreprocessIncludeFiles();
     void PreprocessAll();
+    void PreprocessMacros();
     void PreprocessSingle();
     void PreprocessReplace();
     void PreprocessIfDefs(bool ifdef);

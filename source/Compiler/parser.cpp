@@ -1606,8 +1606,9 @@ void Parser::HandlePreprocessorInParsing()
         return;
     }
     if (m_macros.contains(m_currentToken.m_value.toLower())) {
-        //qDebug() << "PARSER PASS CODE "<< (m_pass==PASS_CODE);
-        HandleCallMacro(m_currentToken.m_value.toLower(), m_pass==PASS_CODE);
+        bool ignore = m_pass!=1;
+        if (m_ignoreMacros) ignore=true;
+        HandleCallMacro(m_currentToken.m_value.toLower(), ignore );
     }
 
 
@@ -3263,8 +3264,10 @@ void Parser::PreprocessSingle() {
 
         }
         else {
-            if (m_macros.contains(m_currentToken.m_value.toLower()))
-                HandleCallMacro(m_currentToken.m_value.toLower(),false);
+            if (m_macros.contains(m_currentToken.m_value.toLower())) {
+                // never called...
+                HandleCallMacro(m_currentToken.m_value.toLower(),true);
+            }
             else
                 Eat();
 
@@ -3309,6 +3312,38 @@ void Parser::PreprocessAll()
     // Afterwards, replace all preprocessor defines
     //    PreprocessIfDefs();
     PreprocessReplace();
+}
+
+void Parser::PreprocessMacros()
+{
+    m_lexer->Initialize();
+    m_lexer->m_ignorePreprocessor = false;
+    m_acc = 0;
+    m_currentToken = m_lexer->GetNextToken();
+    //m_preprocessorDefines.clear();
+
+
+    while (m_currentToken.m_type!=TokenType::TEOF) {
+        //        qDebug() << m_currentToken.getType() << m_currentToken.m_value;
+        //      if (m_pass==1)
+        //      emit EmitTick("&"+QString::number((int)(100*m_lexer->m_pos/(float)m_lexer->m_text.size())));
+
+//        qDebug() << m_currentToken.m_value;
+        if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
+            qDebug() << m_currentToken.m_value <<m_macros.contains(m_currentToken.m_value.toLower());
+            if (m_macros.contains(m_currentToken.m_value.toLower())) {
+                HandleCallMacro(m_currentToken.m_value.toLower(), false);
+            }
+            else Eat();
+
+        }
+        else Eat();
+
+        if (m_currentToken.m_type==TokenType::ASM)  // Ignore inline assembler
+            InlineAssembler();
+
+    }
+
 }
 
 void Parser::PreprocessReplace()
@@ -3374,7 +3409,12 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_pass = PASS_FIRST;
     PreprocessAll();
     m_pass = PASS_PRE;
+    m_ignoreMacros = true;
     done = PreprocessIncludeFiles();
+    m_ignoreMacros = false;
+/*    m_pass = PASS_PRE;
+    PreprocessMacros();*/
+    m_pass = PASS_PRE;
     PreprocessAll();
     if (m_abort)
         return nullptr;
@@ -5260,20 +5300,9 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (m_currentToken.m_type == TokenType::SEMI)
         Eat(TokenType::SEMI);
 
-    //  qDebug() << m_pass;
-    // Ignore calling macros in pass 1. Or perhaps pass 0? hm
-    //    qDebug() << "mac1 " << name << m_currentToken.m_value;
     if (ignore)
         return;
-    //  qDebug() << "mac2 " << name << m_currentToken.m_value;
 
-    /*    QString consts = "";
-    for (QString key:m_symTab->m_constants.keys())
-        consts +=key+"="+QString::number(m_symTab->m_constants[key]->m_value->m_fVal)+";";
-*/
-
-    //     QJSValue fun = m_jsEngine.evaluate("(function("+p+") { "+consts+";return "+str+"; })");
-    //    qDebug() << m_macros[name].str;
     // Construct the javascript macro
     QJSValue fun = m_jsEngine.evaluate("__oo = ''; "
                                        "\n function Writeln(__v) {__oo=__oo+__v + '\\n'; } "
@@ -5297,11 +5326,11 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (ret.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
+    qDebug() << "inserting "<<ret.toString() << m_pass;
     // Inject macro text into the source code
     m_lexer->m_text.insert(pos,ret.toString());
-    //       m_lexer->m_pos -=1;
-    //       qDebug() << "TEXT" <<m_lexer->m_text;
-
+  //  qDebug().noquote() << m_lexer->m_text;
+    m_lexer->m_pos+=ret.toString().size();
 
 }
 
