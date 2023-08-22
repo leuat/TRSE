@@ -3,6 +3,7 @@ unit Common;
 @use "text"
 @use "unittests/vars"
 @use "memory"
+@use "system/str"
 var
   cpc_unittests_common_string : array[9] of byte;
   cpc_unittests_status : byte = 0;
@@ -64,6 +65,7 @@ procedure DebugValue(v:integer);
 begin
   // TODO(ColinPitrat): Print value to screen
 //  Format::Itos(v, #cpc_unittests_common_string);
+  str::itoa(v,#cpc_unittests_common_string,10);
   Text::Print(#cpc_unittests_common_string);
 end;
 

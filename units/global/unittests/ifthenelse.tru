@@ -122,6 +122,13 @@ begin
 	Vars::text := "  LTE 1:"; if Vars::v1 <= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
 end;
 
+// when Vars::v1 is less than Vars::v2
+procedure LTE1_LessEqual_True2();
+begin
+	Vars::v1 := 50; Vars::v2 := 50;
+	Vars::text := "  LTE 1:"; if Vars::v1 <= Vars::v2 then begin Common::PASS(); end else begin Common::FAIL(); end;
+end;
+
 // when Vars::v1 is not less or equal to Vars::v2
 procedure LTE2_LessThan_False();
 begin
@@ -609,6 +616,7 @@ begin
 
 	// Less than or equal to conditional tests
 	LTE1_LessEqual_True();
+	LTE1_LessEqual_True2();
 	LTE2_LessThan_False();
 	LTE3_LessThan_True();
 	LTE4_LessThan_True();

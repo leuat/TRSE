@@ -2297,6 +2297,10 @@ void CodeGen6809::HackPointer( QSharedPointer<Node> n)
 
 }
 
+void CodeGen6809::setValue(int val)  {
+    as->Asm("ldb #"+Util::numToHex(val));
+}
+
 
 void CodeGen6809::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {

@@ -32,6 +32,24 @@ begin
 	if (not InvertB(true)=true) then Common::PASS() else Common::FAIL();
 end;
 
+
+procedure T4();
+begin
+	Vars::text := "T4:";
+	
+	Common::CR();
+	Vars::v2 := 0;
+	
+	
+	for Vars::v1:=0 to 10 do 
+	begin
+		Vars::v2+=((Vars::v1>3) and (Vars::v1<6));
+		
+	end;
+	Common::DebugValue(Vars::v2);
+	if (Vars::v2=2) then Common::PASS() else Common::FAIL();
+end;
+
 /* MAIN PROGRAM */
 procedure Exec();
 begin
@@ -40,6 +58,7 @@ begin
 	T1();
 	T2();
 	T3();
+	T4();
 	
 	
 	Common::WaitABit();
