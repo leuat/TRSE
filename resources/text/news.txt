@@ -1,5 +1,22 @@
 <h1>TRSE News and Updates</h1>
 
+<h2>August 2023</h2>
+Been on hiatus for a while. Some new changes are
+<h3>Compiler</h3>
+<ul>
+    <li>JS Macro support added. See the help documentation or c64/easy/27_macros.ras example file
+    <li>Image editor partly rewritten, should be much more stable now
+    <li>Support for binary expression : someByte := ((i>3) and (i<6)); // returns 0 if false, 1 if true
+    <li>Units can now use other unit variables as global parameters
+    <li>z80 post optimizations + bugfixes
+
+</ul>
+
+<h2>Systems/tutorials</h2>
+<ul>
+    <li>New VZ2000 tutorial project "gulch" with an optimised sprite compiler
+</ul>
+
 <h2>March 2023</h2>
 
 <h3>Compiler</h3>
