@@ -1606,9 +1606,7 @@ void Parser::HandlePreprocessorInParsing()
         return;
     }
     if (m_macros.contains(m_currentToken.m_value.toLower())) {
-        bool ignore = m_pass!=1;
-        if (m_ignoreMacros) ignore=true;
-        HandleCallMacro(m_currentToken.m_value.toLower(), ignore );
+        HandleCallMacro(m_currentToken.m_value.toLower(), m_pass != PASS_MACROS );
     }
 
 
@@ -3330,7 +3328,7 @@ void Parser::PreprocessMacros()
 
 //        qDebug() << m_currentToken.m_value;
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
-            qDebug() << m_currentToken.m_value <<m_macros.contains(m_currentToken.m_value.toLower());
+            //qDebug() << m_currentToken.m_value <<m_macros.contains(m_currentToken.m_value.toLower());
             if (m_macros.contains(m_currentToken.m_value.toLower())) {
                 HandleCallMacro(m_currentToken.m_value.toLower(), false);
             }
@@ -3409,11 +3407,16 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_pass = PASS_FIRST;
     PreprocessAll();
     m_pass = PASS_PRE;
-    m_ignoreMacros = true;
+//    m_ignoreMacros = true;
     done = PreprocessIncludeFiles();
-    m_ignoreMacros = false;
+ //   m_ignoreMacros = false;
 /*    m_pass = PASS_PRE;
     PreprocessMacros();*/
+
+    m_pass = PASS_MACROS;
+    PreprocessAll();
+
+
     m_pass = PASS_PRE;
     PreprocessAll();
     if (m_abort)
@@ -5326,7 +5329,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (ret.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
-//    qDebug() << "inserting "<<ret.toString() << m_pass;
+ //   qDebug() << "inserting "<<ret.toString() << m_pass;
     // Inject macro text into the source code
     m_lexer->m_text.insert(pos,ret.toString());
   //  qDebug().noquote() << m_lexer->m_text;

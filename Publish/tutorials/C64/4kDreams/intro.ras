@@ -815,7 +815,7 @@ begin
 
 	asm("
 		
-		ldy a
+		ldy varPrefixed_a
 pwl:		tya
 		adc ms_shift
 		and #7
@@ -825,7 +825,7 @@ pwl:		tya
 		sta (p1),y
 		
 		iny
-		cpy b
+		cpy varPrefixed_b
 		bne pwl
 
 	");

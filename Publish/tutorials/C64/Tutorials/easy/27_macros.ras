@@ -37,6 +37,7 @@ var
 
 
 begin
+	TEMP_VAR1 := 10;
 	clearscreen(key_space,#screen_char_loc);
 	moveto(0,5,hi(#screen_char_loc));
 	@print_table("table1");
