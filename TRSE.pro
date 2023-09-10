@@ -74,7 +74,7 @@ macx{
 
    }
    LIBS+= -lomp
-   LIBS += -L$$PWD/libs/lua/ -lluamac
+#   LIBS += -L$$PWD/libs/lua/ -lluamac
 
 #   INCLUDEPATH += /usr/local/include/
 #   INCLUDEPATH += /opt/homebrew/include/
