@@ -73,4 +73,5 @@ disk1_name = exampledemo
 disk1_type = d64
 disk1_flf = images/dirart.flf
 use_track_19 = 1
+use_python = 0
 open_files =, main.ras
