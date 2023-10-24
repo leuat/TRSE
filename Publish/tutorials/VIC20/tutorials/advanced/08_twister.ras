@@ -1,6 +1,8 @@
 program Twister;
 var  
 	
+	@VicMemoryConfig "all"
+	
 
 const twisterAddr:address = $2000;
    	xp: byte; 

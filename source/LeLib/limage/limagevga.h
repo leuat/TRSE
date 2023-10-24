@@ -3,8 +3,8 @@
 
 
 #include "source/LeLib/util/util.h"
-#include "source/LeLib/limage/limageok64.h"
-class LImageVGA : public LImageOK64
+#include "source/LeLib/limage/limageqimage.h"
+class LImageVGA : public LImageQImage
 {
 public:
 
@@ -12,6 +12,7 @@ public:
 
 //    void ExportBin(QFile &file) override;
 
+    void ExportBin(QFile &file);
 
 
 };

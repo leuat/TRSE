@@ -37,7 +37,7 @@ In this program, we simply display these 16 screens while updating the character
 procedure SetScreen();
 begin
 	// Ugly but works, sets p1 to point to screen memory location 1000*frame 
-	p1:=#screen+frame*1000;
+	p1:=#screen+(frame*1000);
 	
 
 	// Enable bank switching to remove flickering
@@ -45,9 +45,8 @@ begin
 	if (curBank=0) then p2:=$4400;
 	// Copy 1000 bytes from p1 to p2
 	copyfullscreen(p1, p2);
-
 	// Set charset location based on frame
-	if (frame>=0 and frame<4) then setcharsetlocation($2000);
+	if (frame<4) then setcharsetlocation($2000);
 	if (frame>=4 and frame<8) then setcharsetlocation($2800);
 	if (frame>=8 and frame<12) then setcharsetlocation($3000);
 	if (frame>=12 and frame<16) then setcharsetlocation($3800);
@@ -85,7 +84,7 @@ begin
 	StartIRQ(0);
 
 	SetScreen();	
-	if (time&3=0) then 
+	if (time&3=0) then
 		frame:=(frame + 1)&maxFrames;
 		
 	inc(time);
@@ -104,7 +103,7 @@ begin
 	setmulticolormode();
 	MULTICOLOR_CHAR_COL[2]:=BLUE;
 	MULTICOLOR_CHAR_COL[1]:=WHITE;
-
+	setcharsetlocation($2000);
 	RasterIRQ(RasterMain(),0,0);
 	EnableRasterIRQ();
 	enableirq();

@@ -1,0 +1,32 @@
+unit Tiles;
+
+@use "system/screen"
+var
+	tlookup2x1 : array[256] of integer = buildtable("((i%16)*8)+((Math.floor((i/16.0)))*( 320*8))");
+	tab320 : array[200] of integer=buildtable("i*320");
+	dst, src, tile : ^byte;
+	i : byte;
+	
+procedure SetTileLoc(tile: global ^byte);
+begin
+	
+end;
+
+	
+procedure WriteToScreen(xx,yy,val,wx,wy : byte);
+begin
+	dst:=Screen::buffer2 + tab320[yy]; 
+	dst+=xx;
+//	val:=16;
+	src:=tile+ tlookup2x1[val];
+	for i:=0 to wy do
+	begin
+		memcpy16(src,dst,8);
+		src+=320;
+		dst+=320;
+	end;
+end;
+	
+	
+end.
+

@@ -407,11 +407,13 @@ void LColorList::toArray(QByteArray& data)
 
 void LColorList::fromArray(QByteArray &d)
 {
+
     int size = (uchar)d[0];
     int shift = 1;
     if (size==0) {
         size = 256;
-        shift = 0;
+        shift = 1;
+
     }
     m_list.clear();
  //    setNoBitplanes(size);
@@ -420,6 +422,7 @@ void LColorList::fromArray(QByteArray &d)
                 (unsigned char)d[3*i+1+shift],
                 (unsigned char)d[3*i+2+shift]);
         m_list.append(LColor(col,""));
+  //      if (i<15) qDebug() << i << col;
     }
 }
 

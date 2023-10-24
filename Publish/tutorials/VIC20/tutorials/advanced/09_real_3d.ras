@@ -1,5 +1,6 @@
 program real3d;
 
+@VicMemoryConfig "all"
 
 @projectsettings "startaddress" $1C00
 @projectsettings "basicsysaddress" $1C10

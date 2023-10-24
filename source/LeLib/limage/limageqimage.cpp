@@ -63,6 +63,17 @@ void LImageQImage::LoadBin(QFile& file)
             setPixel(i,j, data[i+j*m_width]);
         }
     delete[] data;
+    if (m_savePalette) {
+        uchar size;
+        file.read((char*)&size,1);
+        int isize = size;
+        if (isize ==0) isize = 256;
+
+        QByteArray d = file.read(isize*3);
+        d.insert(0,isize);
+        m_colorList.fromArray(d);
+    }
+
 }
 
 void LImageQImage::SaveBin(QFile& file)
@@ -83,6 +94,12 @@ void LImageQImage::SaveBin(QFile& file)
         }
     file.write((char*)data, m_width*m_height);
     delete[] data;
+    if (m_savePalette) {
+        QByteArray cols;
+        m_colorList.toArray(cols);
+        file.write(cols);
+    }
+
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);
 
 }

@@ -751,5 +751,6 @@
         <file>resources/text/diskdefs</file>
         <file>resources/text/help/r/macro.rtf</file>
         <file>resources/text/help/r/endmacro.rtf</file>
+        <file>resources/images/DRAGON.png</file>
     </qresource>
 </RCC>

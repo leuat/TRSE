@@ -276,6 +276,11 @@
                    <string>BK0010</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>DRAGON</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="1" column="1">

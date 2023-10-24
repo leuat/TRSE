@@ -172,6 +172,7 @@ public:
 
     virtual QStringList getBankNames();
     bool m_updatePaletteInternal = true;
+    bool m_savePalette = false;
     virtual void SetBank(int bnk) {
         m_footer.set(LImageFooter::POS_CURRENT_BANK,bnk);
     }

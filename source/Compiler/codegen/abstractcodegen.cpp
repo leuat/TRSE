@@ -172,12 +172,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node)
     QSharedPointer<NodeAssign> nVar = qSharedPointerDynamicCast<NodeAssign>(node->m_left);
 
     // Get name
-    if (nVar->m_left->m_isRegister )
+    if (nVar->m_left->m_isRegister)
         ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
 
     auto v = qSharedPointerDynamicCast<NodeVar>(nVar->m_left);
-    if (v == nullptr )
-        ErrorHandler::e.Error("Index cannot be register", node->m_op.m_lineNumber);
+    if (v == nullptr)
+        ErrorHandler::e.Error("Index must be a varialbe", node->m_op.m_lineNumber);
 
     if (node->m_unroll) {
         node->clearComment();

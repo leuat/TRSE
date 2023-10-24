@@ -86,6 +86,7 @@ CharsetImage::CharsetImage(LColorList::Type t) : MultiColorImage(t)
     m_GUIParams[tabCharset] = "1";
     m_updateCharsetPosition = true;
     m_colorList.m_isCharset = true;
+
     EnsureSystemColours();
     InitPens();
 //    InitPens();

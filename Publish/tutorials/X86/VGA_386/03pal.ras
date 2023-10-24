@@ -1,0 +1,41 @@
+program lines;
+@use "system/screen"
+@use "math/random"
+@use "gfx/gfx"
+var
+	x,y,i,r,g,b,c : integer;
+	color : byte;
+	
+	
+
+// fills the screen with some pixels
+procedure InitScreen();
+begin
+	for x:=0 to 320 do
+	begin
+		c:=Random::Random();
+		for y:=0 to 200 do
+		begin
+			Gfx::PutPixelVGA(ptr(Screen::VGA,0), x,y,c);
+			c+=1;
+		end;
+	end;
+	
+end;
+
+	
+begin
+	Memory::Init();
+	Screen::SetMode($13); // VGA 320 x 200	
+	InitScreen();
+	while (true) do
+	begin
+		waitforverticalblank();
+		
+		setpalette(color, r/8, g/6, b/4); // red
+		r+=11;
+		g+=3;
+		b+=5;
+		color+=1;
+	end;
+end.

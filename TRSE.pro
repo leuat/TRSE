@@ -32,7 +32,7 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-##################ARCH = arm64
+###################ARCH = arm64
 
 macx{
 #    CONFIG += warn_off
@@ -216,6 +216,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemchip8.cpp \
     source/Compiler/systems/systemcoleco.cpp \
     source/Compiler/systems/systemcustom.cpp \
+    source/Compiler/systems/systemdragon.cpp \
     source/Compiler/systems/systemgameboy.cpp \
     source/Compiler/systems/systemjdh8.cpp \
     source/Compiler/systems/systemm1arm.cpp \
@@ -532,6 +533,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systembbcm.h \
     source/Compiler/systems/systembk0010.h \
     source/Compiler/systems/systemchip8.h \
+    source/Compiler/systems/systemdragon.h \
     source/Compiler/systems/systempdp11.h \
     source/Compiler/systems/systemschip.h \
     source/Compiler/systems/systemcoleco.h \

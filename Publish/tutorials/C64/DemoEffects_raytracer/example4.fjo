@@ -48,7 +48,7 @@ Material2 = {
 }
 
 
-frame = 0
+frame = -1
 -- Total number of frames
 noFrames = 16
 
@@ -110,8 +110,9 @@ function Update()
 
 	compression = 5
 	maxchars = 64
-
-	CompressCharset(0,40,0,25,  compression, maxchars)
+	if (frame>=0) then
+		CompressCharset(0,40,0,25,  compression, maxchars)
+	end
 	if (frame==0) then Message("Please wait...") end
 	frame=frame+1
 	if (frame == noFrames) then 

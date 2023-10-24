@@ -78,6 +78,8 @@ void DialogTRSESettings::FillFromIni()
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
     ui->leColecoEmulator->setText(m_ini->getString("coleco_emulator"));
     ui->leBK0010Emulator->setText(m_ini->getString("bk0010_emulator"));
+
+    ui->leDragonEmulator->setText(m_ini->getString("dragon_emulator"));
     ui->leVectrexEmulator->setText(m_ini->getString("vectrex_emulator"));
     //ui->lec8asm->setText(m_ini->getString("c8asm"));
     ui->leQemuDir->setText(m_ini->getString("qemu_directory"));
@@ -205,6 +207,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("plus4_emulator", ui->lePlus4Emulator->text());
     m_ini->setString("x16_emulator", ui->leX16Emu->text());
     m_ini->setString("bk0010_emulator", ui->leBK0010Emulator->text());
+    m_ini->setString("dragon_emulator", ui->leDragonEmulator->text());
     m_ini->setString("amstradcpc_emulator", ui->leAmstradCPC->text());
     m_ini->setString("vectrex_emulator", ui->leVectrexEmulator->text());
     //m_ini->setString("c8asm", ui->lec8asm->text());
@@ -334,7 +337,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "BK0010"<<"TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -1029,6 +1032,16 @@ void DialogTRSESettings::on_btnBK0010Emulator_clicked()
         tr("BK0010 emulator"), m_ini->getString("project_path"), "*.jar");
     if (filename!="")
         ui->leBK0010Emulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnDragonEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+        tr("Dragon emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leDragonEmulator->setText(filename);
 
 }
 

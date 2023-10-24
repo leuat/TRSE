@@ -17,6 +17,12 @@ LImageOK64::LImageOK64(LColorList::Type t)  : LImage(t)
     m_supports.flfLoad = true;
     m_supports.asmExport = false;
 
+    m_supports.displayCharOperations = true;
+
+    m_GUIParams[btnEditFullCharset] = "Full charset";
+
+    m_GUIParams[tabCharset] = "1";
+
 }
 
 void LImageOK64::Initialize(int width, int height)

@@ -2,6 +2,7 @@ unit Gfx;
 var
 	x1,x2,y,color: integer;
 	addr:pointer;
+	bank : integer;
 
 
 @ifndef LINE_PUTPIXEL 
@@ -75,10 +76,12 @@ end;
 
 
 
-procedure PutPixel (x1,y : global integer; color : global integer); 
+procedure PutPixelVGA (addr: global pointer, x1,y : global integer; color : global integer); 
 begin
 @ifdef CPU_FLAVOR_8086
   asm
+	mov 	ax, [Gfx_addr+2]
+	mov es,ax	  
     mov     bx,[Gfx_x1]
     mov     dx,[Gfx_y]
     mov     di,bx
@@ -89,7 +92,6 @@ begin
     shl     bx, cl
     add     dx, bx                  ; dx = dx + bx (ie y*320)
     add     di, dx                  ; finalise location
-    Dec     Di
     mov     al, [Gfx_color]
     stosb
    end;
@@ -97,6 +99,8 @@ begin
 	
 @else	
   asm
+	mov 	ax, [Gfx_addr+2]
+	mov es,ax	  
     mov     bx,[Gfx_x1]
     mov     dx,[Gfx_y]
     mov     di,bx
@@ -105,7 +109,6 @@ begin
     shl     bx, 6
     add     dx, bx                  ; dx = dx + bx (ie y*320)
     add     di, dx                  ; finalise location
-    Dec     Di
     mov     al, [Gfx_color]
     stosb
    end;

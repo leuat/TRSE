@@ -1095,8 +1095,6 @@ void FormImageEditor::showDetailCharButtons()
         return;
 */
     bool doShow = (GetFooterData(LImageFooter::POS_DISPLAY_CHAR))==1 && m_work.m_currentImage->m_image->m_supports.displayCharOperations;
-
-
     ui->btnCharsetCopy->setVisible(doShow);
     ui->btnCharsetPaste->setVisible(doShow);
     ui->btnFlipVert->setVisible(doShow);
@@ -1107,6 +1105,7 @@ void FormImageEditor::showDetailCharButtons()
     if (dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image)!=nullptr) {
         doShow = true;
     }
+
     ui->btnShiftUp->setVisible(doShow);
     ui->btnShiftDown->setVisible(doShow);
     ui->btnShiftLeft->setVisible(doShow);

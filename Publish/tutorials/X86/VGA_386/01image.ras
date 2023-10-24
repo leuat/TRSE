@@ -14,30 +14,30 @@ program Tut3;
 @use "system/memory"
 @use "system/compression"
 @use "system/file"
-var  
-	song: incbin("music/song1.trt");
 
 
-// Automatically export image	
+/*
+
+ This example exports a VGA image to disk before compressing it (which happens compile-time).
+ The program itself loads these files and decompresses the image data to VGA memory
+ 
+
+*/
+
+// Automatically export image	 to image1.bin (and image1.pal)
 @export "images/image1.flf" "images/image1.bin" 256
 // Lz4-compress the image to a new file
 @compress "images/image1.bin" "images/image1_c.bin"
 
+var
 	
 	filename1 : string="IMAGES/IMAGE1_C.BIN";
 	// Palette file is automatically exported as well
 	palette1 : string="IMAGES/IMAGE1.PAL";
+	
 	f1 : File::File;
 	
-
-
-// Simple music player
-interrupt RasterIRQ();
-begin
-	StartIRQ();
-	AdlibPlayer::Play();
-	CloseIRQ();
-end;
+	
 
 
 begin
@@ -52,14 +52,9 @@ begin
 	// Decomress data from buffer to screen	
 	Compression::Decompress(Screen::buffer1,ptr(screen_vga,0));
 
-	// Setup music	
-	AdlibPlayer::Initialize(#song);
-	Memory::SetTimer(23863);
-	SetInterrupt($8, RasterIRQ());
 	// Loop infinitely
 	while (true) do
 	begin
 		waitforverticalblank();
 	end;
-	AdlibPlayer::Stop();	
 end.

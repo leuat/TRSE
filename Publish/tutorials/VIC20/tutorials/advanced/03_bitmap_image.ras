@@ -1,7 +1,7 @@
 program BitmapImage;
 
 
-
+@VicMemoryConfig "all"
 @ignoremethod "init16x8div"
 
 @ignoremethod "init16x8mul"

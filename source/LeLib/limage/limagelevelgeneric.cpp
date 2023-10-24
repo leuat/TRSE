@@ -1,5 +1,6 @@
 #include "limagelevelgeneric.h"
 #include "limageio.h"
+#include "source/Compiler/syntax.h"
 
 LImageLevelGeneric::LImageLevelGeneric(LColorList::Type t) : ImageLevelEditor(t)
 {
@@ -122,7 +123,10 @@ void LImageLevelGeneric::LoadCharset(QString file, int skipBttes)
 //    m_charset->InitPens();
 //    InitPens();
     m_colorList.m_list = m_charset->m_colorList.m_list;
-
+    m_colorList.DefaultPen(LPen::FixedSingle);
+ //   m_colorList.m_ = m_charset->m_colorList;
+//    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::X86)
+  //      m_
 //    qDebug() << Util::numToHex(m_charset->m_colorList.m_nesPPU[4*2]);
 
 }

@@ -246,7 +246,7 @@ begin
 end;
 
 
-procedure DrawBoxCGA(zp:pointer, x,y,w,h,i : global integer);
+procedure DrawBoxCGA(zp:global pointer, x,y,w,h,i : global integer);
 begin
 	zp+=ytab_cga[y] + x;
 	for j:=0 to h do

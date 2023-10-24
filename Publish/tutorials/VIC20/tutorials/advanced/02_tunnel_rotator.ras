@@ -1,6 +1,6 @@
 program Tunnel;
 
-
+@VicMemoryConfig "all"
 @userdata "$1600" "$17FA" "Generated Table"
 
 @ignoremethod "init16x8div"

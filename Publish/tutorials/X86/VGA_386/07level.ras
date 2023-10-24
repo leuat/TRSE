@@ -1,0 +1,78 @@
+program Level;
+
+/*
+
+	This example demonstrates how to 
+	a) load a compressed file
+	b) decompress the data to a location
+
+
+*/
+
+@use "music/adlibplayer"
+@use "system/screen"
+@use "system/memory"
+@use "system/compression"
+@use "system/file"
+@use "gfx/genericlevels"
+
+
+/*
+
+ This example exports a VGA image to disk before compressing it (which happens compile-time).
+ The program itself loads these files and decompresses the image data to VGA memory
+ 
+
+*/
+
+@export "images/tiles1.flf" "images/tiles1.bin" 256
+// Lz4-compress the image to a new file
+@compress "images/tiles1.bin" "images/tiles1_c.bin"
+
+@export "images/level1.flf" "images/level1.bin" 256
+
+
+var
+	
+	filename1 : string="IMAGES/TILES1_C.BIN";
+	// Palette file is automatically exported as well
+	palette1 : string="IMAGES/TILES1.PAL";
+	
+	levels : incbin("IMAGES/LEVEL1.BIN");
+	
+	l: GenericLevels::Level;
+	
+	f1 : File::File;
+	
+	scr,zp : pointer;
+	xx,yy,i,j : byte;
+	
+
+
+begin
+	Memory::Init();
+	Screen::SetMode($13);
+	Screen::InitVGABuffers(3);
+	// Load palette from file
+	File::SetPaletteFromFile(#palette1);		
+	scr := ptr(#Screen::VGA, 0);
+
+	// Open compressed file and read all to a buffer
+	File::ReadAll(#filename1, Screen::buffer1);
+	// Decomress data from buffer to screen	
+	Compression::Decompress(Screen::buffer1,Screen::buffer3);
+
+	setpalette(0,0,0,0);
+
+	l.ReadHeader(#levels);
+	Tiles::SetTileLoc(Screen::buffer3);
+	l.RenderLevel(0,0, 16,16);
+	memcpy32(Screen::buffer2, scr,16000);
+	
+
+	// Loop infinitely
+	while (true) do
+	begin
+		waitforverticalblank();
+	end;
+end.

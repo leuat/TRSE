@@ -1178,8 +1178,11 @@ void CodeGenX86::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
     if (isInclusive)
         as->Asm("add "+getAx(nodeB)+",1");
 
+    QString reg = getAx(nodeB);
+    if (nodeA->m_left->isByte(as))
+        reg.replace("x","l");
+    as->Asm(m_cmp+reg+","+getWordByteType(nodeA->m_left)+" ["+var+"]");
 
-    as->Asm(m_cmp+getAx(nodeB)+","+getWordByteType(nodeA->m_left)+" ["+var+"]");
     as->Asm(m_jne+lblJump);
 
 }
