@@ -1,6 +1,8 @@
-First of all: see http://www.turborascal.com
-
 # TRSE
+![TRSE Logo](resources/images/trse_optic.png)
+
+First of all: see [Turbo Racal SE Hompage](http://www.turborascal.com)
+
 Turbo Rascal Syntax Error full repo 
 - C++
 - Qt
