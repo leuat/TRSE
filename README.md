@@ -1,8 +1,13 @@
 # TRSE
 ![TRSE Logo](resources/images/trse_optic.png)
 
-First of all: see [Turbo Racal SE Hompage](http://www.turborascal.com)
+## What is Turbo Rascal Syntax error, “;” expected but “BEGIN”?
 
+In a nutshell, Turbo Rascal Syntax error, “;” expected but “BEGIN” is a complete suite for developing games and demos for older computer systems. TRSE is created with Qt (C++), and runs as a stand-alone application that contains various tools for developing and deploying projects for these processors. 
+
+Read more at [Turbo Racal SE Hompage](http://www.turborascal.com).
+
+## Repository
 Turbo Rascal Syntax Error full repo 
 - C++
 - Qt
