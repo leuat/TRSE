@@ -10,7 +10,7 @@ var
 	const VSCROLL : address = $FF9C;
 	const VDVG : address=$FF22;
 	const INIT0 : address=$FF90;
-	const gfx : address = $7000;
+	const gfx : address = $0200;
 	const palette : address = $ffb0;
 	x,y : integer;
 	color : byte;
@@ -36,7 +36,7 @@ var
 **/
 procedure SetBitmapMode(b,c:global byte);
 begin
-	asm("
+/*	asm("
 	 ldb #$08
 	 stb $FF90
 	");
@@ -49,6 +49,16 @@ begin
 ; LSB = (addr / 8) AND $ff	 	
  	stb $FF9E	
 	clr $FF9F
+	");*/
+	
+	asm("
+	sta $ffc0
+	sta $ffc3
+	sta $ffc5
+	lda $ff22
+	anda #$07
+	ora #$f0
+	sta $ff22	 
 	");
 end;	
 	

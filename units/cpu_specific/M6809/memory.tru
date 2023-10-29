@@ -32,7 +32,7 @@ memcpy_loop16:
 	");
 end;	
 	
-procedure Fill( dst:global pointer; b: global byte; len: global byte );	
+procedure Fill( dst:global pointer; b: global byte; len: global byte ) inline;	
 begin
 	asm("
 		lda Memory_b

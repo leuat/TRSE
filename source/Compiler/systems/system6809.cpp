@@ -9,7 +9,7 @@ System6809::System6809(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
     m_allowedGlobalTypeFlags << "compressed" <<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" << "volatile";
     m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
     m_exomizerName ="Compress executable";
-    m_renameVariables << "a" <<"b"<<"x"<<"y"<<"sp"<<"dp"<<"d"<<"u";
+    m_renameVariables << "a" <<"b"<<"x"<<"y"<<"sp"<<"dp"<<"d"<<"u" << "org";
     m_isBigEndian = true;
     m_supportsInclusiveFor = false;
 
@@ -77,7 +77,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
     QString output = "";
     QString format = "-r";
     int iformat = 1;
-    if (m_system==TRS80COCO || m_system==THOMSON ) {
+    if (m_system==TRS80COCO || m_system==THOMSON || m_system==DRAGON ) {
         format ="-decb";
         iformat = 2;
     }

@@ -8,8 +8,8 @@ SystemTRS80CoCo::SystemTRS80CoCo(QSharedPointer<CIniFile> settings, QSharedPoint
     m_processor = M6809;
     m_system = TRS80COCO;
 
-    m_startAddress = 0x2000;
-    m_programStartAddress = 0x2000;
+    m_startAddress = 0xC000;
+    m_programStartAddress = 0xC000;
     m_supportsExomizer = false;
 
 

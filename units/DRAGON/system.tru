@@ -35,16 +35,37 @@ end;
 procedure Init() inline;
 begin
 	DisableInterrupts();
-	DisableROM();
-	asm("
-		
+//	DisableROM();
+
+/*	asm("
+	lda #0x7E
+	sta 0
+	sta 0x0071		
+	");
+*/
+	
+/*	asm("
 	clra
 	tfr a,dp
 	lds #System_stack+64
 	");
-	SetFast();
-
+*/	
 	
+//	SetFast();
+/*	asm("
+	
+	lda #0x7E
+	sta 0
+	sta 0x0071		; BASIC cold boot flag
+	rts	
+	
+	; Turn on PIA  CB1 (50Hz interrupt)
+	lda 0xFF03
+	ora #1
+	sta 0xFF03
+	
+	");
+*/	
 end;
 	
 	

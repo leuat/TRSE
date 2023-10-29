@@ -12,7 +12,7 @@ var
    chars : string="0123456789ABCDEF";
 
    
-   curx, cury : byte;
+   curx, cury : byte = 0;
    sptr : pointer;
    tab32 : array[64] of integer = buildtable("i*32");
    text : string=("            ");

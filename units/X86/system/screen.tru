@@ -159,7 +159,10 @@ begin
 end;
 
 
+/**
 
+ Sets the graphics mode. 13 is VGA 320x200.
+**/
 procedure SetMode(i : global integer);
 begin
 	asm("

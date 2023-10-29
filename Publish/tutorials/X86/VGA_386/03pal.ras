@@ -33,7 +33,7 @@ begin
 		waitforverticalblank();
 		
 		setpalette(color, r/8, g/6, b/4); // red
-		r+=11;
+		r+=7;
 		g+=3;
 		b+=5;
 		color+=1;

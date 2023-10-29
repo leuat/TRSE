@@ -39,8 +39,14 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
     if (node->m_op.m_type == TokenType::MUL || node->m_op.m_type == TokenType::DIV) {
         node->m_left->Accept(this);
         QString bx = getAx(node->m_left);
+//        as->Comment("class variable: "+TokenType::getType(node->m_right->getClassvariableType()));
+
+
 
         PushX();
+        if (node->m_right->getClassvariableType()!=TokenType::NADA) {
+            as->Asm("push "+bx);
+        }
         QString sign = "";
         bool isSigned = false;
         if (node->m_left->isSigned(as)||node->m_right->isSigned(as)) {
@@ -63,6 +69,10 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
 
         QString ax = getAx(node->m_right);
         PopX();
+        if (node->m_right->getClassvariableType()!=TokenType::NADA) {
+            as->Asm("pop bx");
+        }
+
         as->BinOP(node->m_op.m_type);
         if (bx[0]!='a')  {
             as->Asm("push ax");
@@ -277,7 +287,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
                 //                as->Comment("Data size:"+QString::number(node->getArrayDataSize(as)));
                 QString scale = "*"+QString::number(node->getArrayDataSize(as));
                 if (node->m_classvariableType!=TokenType::NADA) {
-                    if (node->m_classvariableType==TokenType::BYTE)
+//                    if (node->m_classvariableType==TokenType::BYTE)
                         scale = "";
                 }
 
@@ -289,7 +299,9 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
                     as->Asm("mov di,ax");
                     return;
                 }
-                if (!node->isWord(as))
+  //              as->Asm(";Class variable type : " +TokenType::getType(node->getClassvariableType()) + "  scale:" +scale);
+
+                if (!node->isWord(as) && node->getClassvariableType()!=TokenType::INTEGER)
                     as->Asm("mov ah,0"); // Force byte
                 return;
 
@@ -626,7 +638,10 @@ void CodeGenX86::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type 
 QString CodeGenX86::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
 
-    if (n->getLoadType()==TokenType::INTEGER)
+//    as->Comment("Class var type : " + TokenType::getType(n->getClassvariableType()));
+
+
+    if (n->getLoadType()==TokenType::INTEGER || n->getClassvariableType()==TokenType::INTEGER)
         return a+"x";
     if (n->getLoadType()==TokenType::POINTER)
         return "di";
@@ -647,11 +662,13 @@ QString CodeGenX86::getAx(QSharedPointer<Node> n) {
 
 QString CodeGenX86::getAx(QString a, QSharedPointer<Node> n) {
 
-
     if (n->getLoadType()==TokenType::INTEGER)
         return a+"x";
     if (n->isWord(as))
         return a+"x";
+    if (n->getClassvariableType()==TokenType::INTEGER)
+        return a+"x";
+
 
     return a+"l";
 
@@ -770,6 +787,8 @@ bool CodeGenX86::IsAssignPointerWithIndex(QSharedPointer<NodeAssign> node)
         as->Term();
         if (var->m_expr->isPureNumeric() && node->getClassvariableType()!=TokenType::LONG) {
             as->Asm("les di, ["+var->getValue(as)+"]");
+//               as->Comment("Class var type : " + TokenType::getType(var->getClassvariableType()));
+
             as->Asm("mov [es:di+"+var->m_expr->getValue(as)+"*"+getIndexScaleVal(var)+"],"+getAx("a",var));
             return true;
 

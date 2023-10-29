@@ -5,6 +5,7 @@ var
 	zp,curLevel: ^byte;
 	zp2,p1,p2 : ^byte;
 	x,y,i,j,k,m,ad,xx,yy,wx,wy,hack : byte;
+	xpos : integer;
 	i1,i2,i3,i4,i5 : integer;
 
 
@@ -33,10 +34,11 @@ var
 			this.chunksize := zp[7];
 		
 			this.datasize := zp[8];
+			//this.size := this.width*this.height + this.datasize;
+			
 			i5:=this.width*this.height;
 			i5 += this.datasize;
-			this.size :=i5;
-			
+			this.size :=i5;			
 			
 		end;
 		
@@ -47,6 +49,7 @@ var
 			
 			zp+=32; // skip header
 			yy:=0;
+			
 			zp+=(this.size*this.sizex)*y;
 			zp+=(this.size)*x;
 			curLevel := zp;
@@ -64,6 +67,28 @@ var
 		
 	
 		end;
+			procedure RenderLevelStrip(GenericLevels::x,GenericLevels::y : global byte;  GenericLevels::wx, GenericLevels::wy, GenericLevels::xx : global byte, GenericLevels::xpos : global integer );
+			begin
+			
+			zp := this.lp;
+			
+			zp+=32; // skip header
+			yy:=0;
+			zp+=(this.size*this.sizex)*y;
+			zp+=this.size*x;
+			curLevel := zp;
+			zp+=xx;
+			for j:=0 to this.height do begin
+				Tiles::WriteToScreen(xpos,yy,zp^,wx,wy);
+				zp+=this.width;
+				yy+=wy;
+			end;
+		
+	
+		end;
+
+		
+		
 	end;	
 	
 	

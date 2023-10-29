@@ -13,7 +13,7 @@ begin
 end;
 
 	
-procedure WriteToScreen(xx,yy,val,wx,wy : byte);
+procedure WriteToScreen(xx:integer,yy,val,wx,wy : byte);
 begin
 	dst:=Screen::buffer2 + tab320[yy]; 
 	dst+=xx;

@@ -2,9 +2,7 @@ program Level;
 
 /*
 
-	This example demonstrates how to 
-	a) load a compressed file
-	b) decompress the data to a location
+	Loads a level (image/level1.flf) and displays it 
 
 
 */
@@ -16,14 +14,6 @@ program Level;
 @use "system/file"
 @use "gfx/genericlevels"
 
-
-/*
-
- This example exports a VGA image to disk before compressing it (which happens compile-time).
- The program itself loads these files and decompresses the image data to VGA memory
- 
-
-*/
 
 @export "images/tiles1.flf" "images/tiles1.bin" 256
 // Lz4-compress the image to a new file
@@ -43,10 +33,45 @@ var
 	l: GenericLevels::Level;
 	
 	f1 : File::File;
+	pos : integer;
+	curx,xx,yy,dx,i,xscroll : byte = 0;
+	scr,keep,zp,zp2 : ^byte;
 	
-	scr,zp : pointer;
-	xx,yy,i,j : byte;
+	const width : byte = 16;
+
+procedure Render();
+begin
+	xx := curx/width;
+	dx := mod(curx,width);
+	pos:=0;
+	for i:=0 to 19 do
+	begin
+		l.RenderLevelStrip(xx,0, 16,16,dx, pos);
+		pos+=width;
+		dx+=1;
+		if (dx=width) then
+		begin
+			dx:=0;
+			xx+=1;
+		end;
+	end;
+	// Fill black borders
+	zp:=keep;
+	zp2:=zp+(320-16);
+	for i:=0 to 200 do
+	begin
+		fill(zp,0,16);
+		fill(zp2,0,16);
+		zp2+=320;
+		zp+=320;
+	end;
+	waitforverticalblank();
 	
+	memcpy32(keep, scr,16000);
+	
+	
+end;
+
 
 
 begin
@@ -56,23 +81,29 @@ begin
 	// Load palette from file
 	File::SetPaletteFromFile(#palette1);		
 	scr := ptr(#Screen::VGA, 0);
-
+	keep := Screen::buffer2;
 	// Open compressed file and read all to a buffer
 	File::ReadAll(#filename1, Screen::buffer1);
 	// Decomress data from buffer to screen	
 	Compression::Decompress(Screen::buffer1,Screen::buffer3);
 
+	
 	setpalette(0,0,0,0);
 
 	l.ReadHeader(#levels);
 	Tiles::SetTileLoc(Screen::buffer3);
-	l.RenderLevel(0,0, 16,16);
-	memcpy32(Screen::buffer2, scr,16000);
 	
-
 	// Loop infinitely
-	while (true) do
+	while (true) do 
 	begin
-		waitforverticalblank();
+		Screen::buffer2:= keep+(15-xscroll);
+		Render();
+		xscroll+=1;
+		if (xscroll=16) then
+		begin
+			xscroll:=0;
+			curx+=1;
+
+		end;
 	end;
 end.

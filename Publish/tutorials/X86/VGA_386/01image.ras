@@ -9,7 +9,6 @@ program Tut3;
 
 */
 
-@use "music/adlibplayer"
 @use "system/screen"
 @use "system/memory"
 @use "system/compression"
@@ -43,6 +42,7 @@ var
 begin
 	Memory::Init();
 	Screen::SetMode($13);
+	// Initialises 3 64kb VGA buffers
 	Screen::InitVGABuffers(3);
 	// Load palette from file
 	File::SetPaletteFromFile(#palette1);		
