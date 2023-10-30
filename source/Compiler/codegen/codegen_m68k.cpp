@@ -53,9 +53,9 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     if (m_regs.contains(d1) && m_regs.contains(d0))
         endtype = ".l";
 
-    if (getEndType(node->m_left)!= getEndType(node->m_right))
+/*    if (getEndType(node->m_left)!= getEndType(node->m_right))
         adv = true;
-
+*/
     TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
 
 

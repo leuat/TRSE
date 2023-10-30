@@ -57,6 +57,4 @@ use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
-open_files = ,tut6.ras, tut1.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/ATARI520ST/tutorials/
-current_file = tut1.ras
+open_files =, tut1.ras
