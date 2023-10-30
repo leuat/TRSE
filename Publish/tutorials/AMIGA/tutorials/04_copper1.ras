@@ -1,0 +1,106 @@
+program Text8;
+@use "graphics"
+@use "text/text"
+var  
+	
+	/*
+		This method initializes the copper list to change the background color on multiple raster lines
+	
+	*/
+	@export "resources/fonts/font16x16.flf" "resources/fonts/font16x16.bin" 256
+
+	// Remember that the font data must also reside in chipmem!	
+	fontData : incbin("resources/fonts/font16x16.bin") chipmem;
+					
+	const noBitPlanes : integer = 1;				
+	
+	const fontHeight : byte = 16;
+	const fontWidth : byte = 16;
+	
+	const asciiStart : byte = 65; 
+	
+	const screenWidth : integer = 320; // We're using 320x256
+	
+	// Position to place text
+	const ypos : integer = 64;
+	
+	// Tablesize must be power of 2, so 16,32,64,128,256,512 etc
+	const tableSize : integer = 128;
+	const tableSizeAnd : integer = tableSize-1;
+	
+	// Set up a sine table of 128 bytes with blue
+	colors : array[tableSize] of byte = buildsinetable(15);
+	
+
+	screen : array[40*256*noBitPlanes] of byte chipmem;
+
+	col, row, i, time : integer;
+
+
+	const rowIncrease : integer = $200*(128/tableSize); 
+
+/*
+	All the copper magic will happen on vblank, which will trigger
+	once per frame. Here, the new copper list is updated 
+
+*/
+
+interrupt VBlank();
+begin
+	// Start on row 7
+	row:=7;
+	// Set the current color to the time
+	col:=time;// Color background start
+	InitCustomCopperList(); // start custom copper list
+	
+	/*
+		Note that the copper list doesn't extend beyond y=200. We'll get that fixed later.
+	*/
+	
+	AddCopperCommand(COPPER_PALETTE_START, col); 
+	// 128 
+	for i:=0 to tableSize do 
+	begin
+		// First, copper should wait until raster "row" has been reached
+		AddCopperCommand(row, COPPER_WAIT_FOR_RASTER);
+	 	// Set the background color to the lookup value in the colors table (blue)
+		AddCopperCommand(COPPER_PALETTE_START, colors[col&tableSizeAnd]);
+	 	// Set the palette #1 color to the lookup value in the colors table *16 (so it turns green)
+	 	// The text printed on the screen uses color #1
+		AddCopperCommand(COPPER_PALETTE_START+2, colors[(col+64)&tableSizeAnd]<<4);
+		// Increase the "col" counter
+		col+=1;
+		// Move down 2 pixels
+		row+=rowIncrease;
+	end;
+	// End the copper list by restoring the black color. Again, positions below 200 will be fixed later.	
+	AddCopperCommand(row, COPPER_WAIT_FOR_RASTER);
+	AddCopperCommand(COPPER_PALETTE_START, 0); // black!
+	// Message end of copper list
+	EndCustomCopperList();
+
+	time+=1;
+
+end;
+
+
+
+
+begin	
+	// Enable and set the vertical blank irq to VBlank 
+	// The procedure VBlank will be called once per frame, and this is where 
+	// we manipulate the copper list 
+	vbirq(VBlank());
+	EnableInterrupt(VB_IRQ);
+	ApplyCopperList();
+	
+	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
+	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
+	// Initialise a 16x16 font 
+	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16 );
+	// Draws a string at position (x,y) = (8*8, ypos)
+	Text::Draw("HELLO COPPER", 8, ypos, #screen);
+
+	loop();
+end.
+

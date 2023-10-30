@@ -1,0 +1,132 @@
+program Copper2;
+@use "graphics"
+@use "text/text"
+var  
+	
+	/*
+		Now, let's increase the number of bitplanes from 1 to 2, so we can have two independent
+		images. On one, we will print a static background text, while on the first we'll scroll
+
+	
+	*/
+	@export "resources/fonts/font16x16.flf" "resources/fonts/font16x16.bin" 256
+	@export "resources/fonts/font8x8.flf" "resources/fonts/font8x8.bin" 256
+
+	fontData8 : incbin("resources/fonts/font8x8.bin") chipmem;
+	fontData16 : incbin("resources/fonts/font16x16.bin") chipmem;
+					
+	// Note that we are now using 2 bitplanes
+	const noBitPlanes : integer = 2;				
+	
+	const fontHeight : byte = 16;
+	const fontWidth : byte = 16;
+	
+	const asciiStart : byte = 65; 
+	
+	const screenWidth : integer = 320; // We're using 320x256
+	
+	// Position to place text
+	const ypos : integer = 64;
+	
+	// Tablesize must be power of 2, so 16,32,64,128,256,512 etc
+	const tableSize : integer = 128;
+	const tableSizeAnd : integer = tableSize-1;
+	
+	// Set up a sine table of 128 bytes with blue
+	colors : array[tableSize] of byte = buildsinetable(15);
+	
+
+	screen : array[40*256*noBitPlanes] of byte chipmem;
+
+	col, row, i, time : integer;
+	scroll : integer = 15;
+
+	const rowIncrease : integer = $200*(128/tableSize); 
+
+/*
+	All the copper magic will happen on vblank, which will trigger
+	once per frame. Here, the new copper list is updated 
+
+*/
+
+interrupt VBlank();
+begin
+	// Start on row 7
+	row:=7;
+	// Set the current color to the time
+	col:=time;// Color background start
+	InitCustomCopperList(); // start custom copper list
+	
+	/*
+		Note that the copper list doesn't extend beyond y=200. We'll get that fixed later.
+	*/
+	
+	AddCopperCommand(COPPER_PALETTE_START, col); 
+	// Set color #2, the color of the outside text (in bitplane 1) to red
+	AddCopperCommand(COPPER_PALETTE_START+(2*2), $F00); 
+	// 128 
+	for i:=0 to tableSize do 
+	begin
+		// First, copper should wait until raster "row" has been reached
+		AddCopperCommand(row, COPPER_WAIT_FOR_RASTER);
+
+		// Only scroll between values 54 and 54+8! 	 	
+	 	if ((i>54) and (i<54+8)) then
+		 	AddCopperCommand(COPPER_SCROLL, scroll)
+		else
+		 	AddCopperCommand(COPPER_SCROLL, 0);
+	 	
+	 	// Set the background color to the lookup value in the colors table (blue)
+		AddCopperCommand(COPPER_PALETTE_START, colors[col&tableSizeAnd]);
+	 	// Set the palette #1 color to the lookup value in the colors table *16 (so it turns green)
+	 	// The text printed on the screen uses color #1
+		AddCopperCommand(COPPER_PALETTE_START+(1*2), colors[(col+64)&tableSizeAnd]<<4);
+		// Increase the "col" counter
+		col+=1;
+		// Move down 2 pixels
+		row+=rowIncrease;
+	end;
+	// End the copper list by restoring the black color. Again, positions below 200 will be fixed later.	
+	AddCopperCommand(row, COPPER_WAIT_FOR_RASTER);
+	AddCopperCommand(COPPER_PALETTE_START, 0); // black!
+	// Message end of copper list
+	EndCustomCopperList();
+
+	time+=1;
+
+	scroll:=(scroll-1)&15;
+
+end;
+
+
+
+
+begin	
+	// Enable and set the vertical blank irq to VBlank 
+	// The procedure VBlank will be called once per frame, and this is where 
+	// we manipulate the copper list 
+	vbirq(VBlank());
+	EnableInterrupt(VB_IRQ);
+	ApplyCopperList();
+	
+	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
+	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
+	// Initialise a 16x16 font 
+	
+	Text::Init( #fontData8, screenWidth,64, 8, 8, noBitPlanes, #Text::lookup8x8 );
+	// Draws a string at position (x,y) = (8*8, ypos) to bitplane 1 (#Screen+40, since we are using interlaced mode)
+	
+	Text::Draw("OUTSIDE SCROLL AREA", 8, ypos+48, #screen+40);
+	Text::Draw("OUTSIDE SCROLL AREA", 8, ypos-24, #screen+40);
+
+	
+	Text::Init( #fontData16, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16 );
+	// "inside scroll" will be placed within the scrolling area in bitplane 0
+	Text::Draw("INSIDE SCROLL", 8, ypos, #screen);
+	// "A" and "B" will be placed  outside of the scrolling area in bitplane 0
+	Text::Draw("A", 30, ypos+40, #screen);
+	Text::Draw("B", 30, ypos-32, #screen);
+
+	loop();
+end.
+

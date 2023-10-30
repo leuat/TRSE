@@ -65,9 +65,27 @@ end;
 	
 	
 	
- /*
-	Sets up the copper list to point to the screen 
-*/
+ /**
+	Sets up the copper list to point to a 320x256 buffer. Note that the screen will be set up 
+	interlaced, with 40 bytes per line per bitplane. <p>
+	
+	Usage: 
+		SetupDefaultScreen( [ data buffer ], [ number of bitplanes ] )
+		
+	Note that the data buffer must reside in chipmem
+	
+	Example:
+	
+	<code>
+var
+	const noBitPlanes = 2; // 2 bitplanes = 4 colors
+	buf : array[40*256*noBitPlanes] chipmem; // data buffer stored in chipmem  
+...
+begin
+	Graphics::SetupDefaultScreen(#buf, noBitPlanes);
+	</code>
+	
+**/
 procedure SetupDefaultScreen(pa:global pointer of integer; bpl : global integer);
 begin
 	j:=$1000*bpl | $200;
@@ -117,6 +135,27 @@ begin
 end;
 
 
+ /**
+	Sets up the copper list to point to a 320x256 buffer. Note that the screen will be set up 
+	non-interlaced, with 40*256 bytes per bitplane. <p>
+	
+	Usage: 
+		SetupNonInterlacedScreen( [ data buffer ], [ number of bitplanes ] )
+		
+	Note that the data buffer must reside in chipmem
+	
+	Example:
+	
+	<code>
+var
+	const noBitPlanes = 4; // 4 bitplanes = 16 colors
+	buf : array[40*256*noBitPlanes] chipmem; // data buffer stored in chipmem  
+...
+begin
+	Graphics::SetupNonInterlacedScreen(#buf, noBitPlanes);
+	</code>
+	
+**/
 procedure SetupNonInterlacedScreen(pa:global pointer of integer; bpl : global integer);
 begin
 	j:=$1000*bpl | $200;

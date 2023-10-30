@@ -1,0 +1,41 @@
+This method adds a copper command to the custom copper list.
+<p>
+Here are the built-in copper instructions in TRSE:<b>
+COPPER_DIWSTRT,
+COPPER_DIWSTOP,
+COPPER_DDFSTRT,
+COPPER_DDFSTOP,
+COPPER_SCROLL,
+COPPER_WAIT_FOR_RASTER,
+COPPER_PALETTE_START,
+COPPER_MODULO_EVEN,
+COPPER_MODULO_ODD
+</b>
+<p>
+Example:
+
+<code>
+// start custom copper list
+row:=7;
+InitCustomCopperList();
+AddCopperCommand($0180, 0); // First row black
+// 128x2 lines
+for i:=0 to 128 do begin
+        // First, copper should wait until raster "row" has been reached
+        AddCopperCommand(row, COPPER_WAIT_FOR_RASTER);
+        // Next, copper should scroll value "scroll" on this line
+        AddCopperCommand(COPPER_SCROLL, scroll);
+        // Set the background to palette value 1
+        AddCopperCommand(COPPER_PALETTE_START, col1);
+        // Set color 1 to palette value 2
+        AddCopperCommand(COPPER_PALETTE_START+2, col2);
+
+        //.. now do some tricks with "scroll","col1" and "col2"
+
+end;
+
+// end of copper list
+EndCustomCopperList();
+
+</code>
+

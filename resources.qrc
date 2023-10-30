@@ -752,5 +752,19 @@
         <file>resources/text/help/r/macro.rtf</file>
         <file>resources/text/help/r/endmacro.rtf</file>
         <file>resources/images/DRAGON.png</file>
+        <file>resources/text/help/m/matmul3x3.rtf</file>
+        <file>resources/text/help/m/setrotationx.rtf</file>
+        <file>resources/text/help/m/drawline.rtf</file>
+        <file>resources/text/help/m/setcopperlist32.rtf</file>
+        <file>resources/text/help/m/enableinterrupt.rtf</file>
+        <file>resources/text/help/m/vbirq.rtf</file>
+        <file>resources/text/help/m/poke16.rtf</file>
+        <file>resources/text/help/m/ablit.rtf</file>
+        <file>resources/text/help/m/addcoppercommand.rtf</file>
+        <file>resources/text/help/m/endcustomcopperlist.rtf</file>
+        <file>resources/text/help/m/initcustomcopperlist.rtf</file>
+        <file>resources/text/help/m/applycopperlist.rtf</file>
+        <file>resources/text/help/m/waitverticalblank.rtf</file>
+        <file>resources/text/help/m/setpalette.rtf</file>
     </qresource>
 </RCC>

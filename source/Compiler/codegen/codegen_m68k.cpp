@@ -1,3 +1,4 @@
+
 #include "codegen_m68k.h"
 #include "source/Compiler/ast/nodefactory.h"
 
@@ -35,13 +36,15 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     if (adv)
         as->Comment("Advanced binop: Evaluate expr first");
 
-//    as->Comment("BOP NEW register: " + d0);
-//    if (m_clearFlag) {
+    //    as->Comment("BOP NEW register: " + d0);
+    //    if (m_clearFlag) {
 
-     TransformVariable("moveq",d0,"#0");
+    TransformVariable("moveq",d0,"#0");
     //    m_clearFlag=false;
-  //  }
+    //  }
     node->m_left->Accept(this);
+
+
     QString endtype = getEndType(node->m_left, node->m_right);
     if (node->m_left->isByte(as))
         endtype =".b";
@@ -49,14 +52,18 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     QString d1 = as->m_varStack.pop();
     if (m_regs.contains(d1) && m_regs.contains(d0))
         endtype = ".l";
+
+    if (getEndType(node->m_left)!= getEndType(node->m_right))
+        adv = true;
+
     TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
 
 
 
-//    qDebug() << "NodeBinOp : " << op;
-  //  as->Comment("NodeBinop  : " +op);
+    //    qDebug() << "NodeBinOp : " << op;
+    //  as->Comment("NodeBinop  : " +op);
     if (op.toLower().contains("mul") || op.toLower().contains("div")) {
-            op+=".w";
+        op+=".w";
         if (node->isSigned(as))
             op = op.replace("u","s");
         auto nv = qSharedPointerDynamicCast<NodeVar>(node->m_left);
@@ -72,7 +79,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
 
     else op=op + getEndType(node->m_left, node->m_right);//+m_lastSize;//+".l";
 
-//    as->Comment("d0 used:" +d0);
+    //    as->Comment("d0 used:" +d0);
     if (adv) {
         QString d1 = as->m_regAcc.Get();
 
@@ -205,15 +212,15 @@ void CodeGen68k::dispatch(QSharedPointer<NodeString> node)
 
 void CodeGen68k::dispatch(QSharedPointer<NodeUnaryOp> node)
 {
-  //  node->DispatchConstructor(as,this);
-//    node->Accept(this);
-//    if (node->isMinusOne())
+    //  node->DispatchConstructor(as,this);
+    //    node->Accept(this);
+    //    if (node->isMinusOne())
     if (!(node->m_op.m_type==TokenType::MINUS))
         node->m_right->Accept(this);
     else {
         QSharedPointer<NodeNumber>n = qSharedPointerDynamicCast<NodeNumber>(node->m_right);
         if (n!=nullptr)
-           n->m_val*=-1;
+            n->m_val*=-1;
         node->m_right->Accept(this);
     }
 
@@ -299,7 +306,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBlock> node)
 
     // (Amiga) interrupt.
     if (node->m_forceInterupt!="") {
-//        as->Asm(" 	CNOP 0,4");
+        //        as->Asm(" 	CNOP 0,4");
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AMIGA) {
 
             as->Asm("movem.l d0-d7/a0-a6,-(sp)");
@@ -311,8 +318,8 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBlock> node)
             as->Asm("move.w #$0020,$dff09c ; Twice for compatibility");
         }
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI520ST) {
-    //        as->Asm("move.w  sr,-(a7)                ; backup status register");
-     //       as->Asm("or.w    #$0700,sr               ; disable interrupts");
+            //        as->Asm("move.w  sr,-(a7)                ; backup status register");
+            //       as->Asm("or.w    #$0700,sr               ; disable interrupts");
             as->Asm("movem.l d0-d7/a0-a6,-(a7)");
 
         }
@@ -377,7 +384,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
             }
         }
     }
-  //as->Label("afterProc_" + m_procName);
+    //as->Label("afterProc_" + m_procName);
 
 
     if (!isInitFunction) {
@@ -386,14 +393,14 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
         //as->Label(m_procName);
     }
-//    if (m_isInterrupt)
-  //      as->Asm("dec $d019        ; acknowledge IRQ");
+    //    if (m_isInterrupt)
+    //      as->Asm("dec $d019        ; acknowledge IRQ");
     if (node->m_block!=nullptr) {
         QSharedPointer<NodeBlock> b = qSharedPointerDynamicCast<NodeBlock>(node->m_block);
         if (b!=nullptr)
             b->forceLabel=node->m_procName;
         node->m_block->Accept(this);
-//        node->m_block->Build(as);
+        //        node->m_block->Build(as);
     }
     if (!isInitFunction) {
         if (node->m_type==0) {
@@ -407,14 +414,14 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
                 as->Asm("movem.l (sp)+,d0-d7/a0-a6 ");
             if (Syntax::s.m_currentSystem->m_system == AbstractSystem::ATARI520ST) {
                 as->Asm("movem.l (a7)+,d0-d7/a0-a6");
-  //              as->Asm("move.w  (a7)+,sr                ; restore status register");
+                //              as->Asm("move.w  (a7)+,sr                ; restore status register");
                 as->Asm("bclr   #0,$fffffa0f ; Acknowledge end of irq");
 
             }
-//            as->Asm("movem d0-a6,-(sp)");
+            //            as->Asm("movem d0-a6,-(sp)");
             as->Asm("rte");
         }
-      //as->Label("afterProc_" + m_procName);
+        //as->Label("afterProc_" + m_procName);
     }
 
 
@@ -422,17 +429,17 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
 }
 void CodeGen68k::dispatch(QSharedPointer<NodeVar> node)
 {
-//    LoadVariable(node);
+    //    LoadVariable(node);
 
     if (m_inlineParameters.contains(node->value)) {
-  //      qDebug()<< "INLINE node override : "<< node->value;
+        //      qDebug()<< "INLINE node override : "<< node->value;
         m_inlineParameters[node->value]->Accept(this);
         return;
     }
 
 
     if (node->m_expr!=nullptr) {
-//        qDebug() << "HERE";
+        //        qDebug() << "HERE";
         LoadVariable(node);
         return;
     }
@@ -483,7 +490,7 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             int val = n->m_expr->getValueAsInt(as)*n->getArrayDataSize(as);
             as->Comment("expr : " +QString::number(n->m_expr->getValueAsInt(as)));
             as->Comment("data size : " +QString::number(n->getArrayDataSize(as)));
-/*            if (n->getArrayType(as)==TokenType::INTEGER)
+            /*            if (n->getArrayType(as)==TokenType::INTEGER)
                 val*=2;
             if (n->getArrayType(as)==TokenType::LONG)
                 val*=4;*/
@@ -494,17 +501,17 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             else
                 TransformVariable("lea",a0,n->getValue(as));
 
-//            as->Comment(";general X");
+            //            as->Comment(";general X");
             TransformVariable("move"+getEndType(n),Util::numToHex(val)+"("+a0+")",d0);
 
             as->m_regMem.Pop(a0);
             return;
         }
 
-//        bool done = false;
+        //        bool done = false;
         as->Term();
         as->m_regAcc.m_latest="";
-//        QString d0 = as->m_varStack.pop();
+        //        QString d0 = as->m_varStack.pop();
         QString d2 = as->m_regAcc.Get();
         QString oldd2 = "";
         bool newD2 = false;
@@ -538,26 +545,27 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
 
         return;
     }
-    QString d0 = as->m_varStack.pop();
 
+
+    QString d0 = as->m_varStack.pop();
     TransformVariable("move"+getEndType(n),n->getValue(as),d0);
 }
 
 
 void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
 {
-//    TokenType::Type t = as->m_symTab->Lookup(n->getValue(as), n->m_op.m_lineNumber)->getTokenType();
+    //    TokenType::Type t = as->m_symTab->Lookup(n->getValue(as), n->m_op.m_lineNumber)->getTokenType();
 
     if (n->m_expr!=nullptr) {
-//        qDebug() << n->m_op.getType();
-  //      exit(1);
+        //        qDebug() << n->m_op.getType();
+        //      exit(1);
         bool done = false;
         if (as->m_regAcc.m_latest.length()==2) {
             //as->Comment("Trying to clear: " + as->m_regAcc.m_latest + " YO");
-//            TransformVariable("move.l",as->m_regAcc.m_latest,"#0");
+            //            TransformVariable("move.l",as->m_regAcc.m_latest,"#0");
             done = true;
         }
-//        move.b (a0,$1),d0             ; LoadVariable:: is array
+        //        move.b (a0,$1),d0             ; LoadVariable:: is array
         // move.b $1(a0),d0
         QString d0 = as->m_regAcc.Get();
         QString a0 = as->m_regMem.Get();
@@ -582,9 +590,9 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
 
         QString trp = "             ; LoadVariable:: is array";
         if (!done ) {
-//            as->Comment("Clearing : " + d0 + " YO");
+            //            as->Comment("Clearing : " + d0 + " YO");
             m_clearFlag=true;
-           // TransformVariable("move.l",d0,"#0");
+            // TransformVariable("move.l",d0,"#0");
         }
         //qDebug() << "Loading array: expression";
         LoadVariable(n->m_expr);
@@ -599,15 +607,15 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
         }
         //qDebug() << "TYPE: "<< TokenType::getType(n->getArrayType(as));
         //qDebug() << "Popping varstack: " <<d1;
-      //  as->Comment("Type : " + TokenType::getType(n->getType(as)));
-//        as->Comment("Raw type: " + TokenType::getType(as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType()));
+        //  as->Comment("Type : " + TokenType::getType(n->getType(as)));
+        //        as->Comment("Raw type: " + TokenType::getType(as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType()));
         //as->Comment("Is Pointer : " + QString::number(n->isPointer(as)));
         if (n->isPointer(as))
             TransformVariable("move.l",a0 + trp,n->getValue(as));
         else
             TransformVariable("lea",a0+trp,n->getValue(as));
 
-//        TransformVariable("lea",a0,n->getValue(as));
+        //        TransformVariable("lea",a0,n->getValue(as));
         TransformVariable("move",d0+trp,"("+a0+","+d1+")",n);
         //qDebug() << "Cleaning up loadvar: " <<d1;
         as->m_varStack.push(d0);
@@ -615,12 +623,12 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
         as->m_regMem.Pop(a0);
         as->m_regAcc.Pop(d0);
 
-//        as->Comment("LoadVar array Popping "+a0 +" " +d0 + "   pushing " + d0);
-  //      as->Comment("Free "+Util::toString(as->m_regAcc.m_free));
-  //      as->Comment("Occ "+Util::toString(as->m_regAcc.m_occupied));
+        //        as->Comment("LoadVar array Popping "+a0 +" " +d0 + "   pushing " + d0);
+        //      as->Comment("Free "+Util::toString(as->m_regAcc.m_free));
+        //      as->Comment("Occ "+Util::toString(as->m_regAcc.m_occupied));
 
-//        as->m_regAcc.Pop(d0);
-//        LoadPointer(n);
+        //        as->m_regAcc.Pop(d0);
+        //        LoadPointer(n);
         //qDebug() << "Done: ";
 
         return;
@@ -628,7 +636,7 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
 
     QString d0 = as->m_regAcc.Get();
     if (m_clearFlag || n->isByte(as)) {
-//        as->Comment("LoadVariable:: Clearing");
+        //        as->Comment("LoadVariable:: Clearing");
         TransformVariable("move.l",d0,"#0");
 
         m_clearFlag=0;
@@ -646,9 +654,9 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeProcedure> node)
 QString CodeGen68k::LoadAddress(QSharedPointer<Node> n)
 {
     n->ForceAddress();
-//    qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as);
-if (!n->isPure()) {
-//        n->setLoadType(TokenType::LONG);
+    //    qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as);
+    if (!n->isPure()) {
+        //        n->setLoadType(TokenType::LONG);
         n->Accept(this);
         return "";
     }
@@ -665,7 +673,7 @@ QString CodeGen68k::LoadAddress(QSharedPointer<Node> n, QString a0)
 {
     n->ForceAddress();
     if (n->isPureNumeric() && n->isAddress()) {
-//        qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as) << n->HexValue() << qSharedPointerDynamicCast<NodeNumber>(n)->m_val;
+        //        qDebug() << "CodeGen68k::Loadaddress  "+n->getValue(as) << n->HexValue() << qSharedPointerDynamicCast<NodeNumber>(n)->m_val;
         QString val = n->getValue(as);
         if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000) {
             if (val[0]=='-')
@@ -702,11 +710,11 @@ void CodeGen68k::LoadVariable(QSharedPointer<Node> n)
     else
         if (nn!=nullptr){
             LoadVariable(qSharedPointerDynamicCast<NodeNumber>(n));
-    }
-    else {
-    //    as->Comment("LoadVariable: unknown, just accepting");
-        n->Accept(this);
-    }
+        }
+        else {
+            //    as->Comment("LoadVariable: unknown, just accepting");
+            n->Accept(this);
+        }
 }
 
 
@@ -721,7 +729,7 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeNumber>n)
 
 void CodeGen68k::TransformVariable(QString op, QString n, QString val, QSharedPointer<Node> t)
 {
-//    as->Asm(op+getEndType(t) +" "+val + "," + n);
+    //    as->Asm(op+getEndType(t) +" "+val + "," + n);
     m_lastSize = getEndType(t);
     as->Asm(op+getEndType(t) +" "+val + "," + n);
 
@@ -732,7 +740,7 @@ void CodeGen68k::TransformVariable(QString op, QSharedPointer<NodeVar> n, QStrin
     as->Asm(op+getEndType(n) +" "+val + "," + n->getValue(as));
     m_lastSize = getEndType(n);
 
-//    qDebug() << " ** OP : " << op+getEndType(n) +" "+val + "," + n->getValue(as);
+    //    qDebug() << " ** OP : " << op+getEndType(n) +" "+val + "," + n->getValue(as);
 }
 
 void CodeGen68k::TransformVariable( QString op, QString n, QSharedPointer<NodeVar> val)
@@ -740,7 +748,7 @@ void CodeGen68k::TransformVariable( QString op, QString n, QSharedPointer<NodeVa
     as->Asm(op+getEndType(val) +" "+val->getValue(as) + "," + n);
     m_lastSize = getEndType(val);
 
-//
+    //
 }
 
 void CodeGen68k::TransformVariable(QString op, QString n, QString val)
@@ -750,10 +758,14 @@ void CodeGen68k::TransformVariable(QString op, QString n, QString val)
 }
 
 QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
-//    getType(as)==TokenType::LONG
-    if (v->getLoadType()==TokenType::LONG)
-        return ".l";
+    //    getType(as)==TokenType::LONG
 
+//    as->Comment("var: " + v->getValue(as) + " type " +TokenType::getType(v->getType(as)) + "  ot "+TokenType::getType(v->getOrgType(as)) +  "  loadtype " + TokenType::getType(v->getLoadType()) + +  "  storetype " + TokenType::getType(v->getStoreType()));
+
+ /*   if (v->getLoadType()==TokenType::LONG) {
+        return ".l";
+    }
+*/
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(v);
 
@@ -767,17 +779,16 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
             return ".l";
     }
 
-
-    TokenType::Type t = v->getType(as);
-//    as->Comment("Type: "+TokenType::getType(t) + "  for var "+v->getValue(as));
+    TokenType::Type t = v->getOrgType(as);
+  //  as->Comment("Type: "+TokenType::getType(t) + "  for var "+v->getValue(as) + "  with orgtype " + TokenType::getType(v->getOrgType(as)));
     if (nv!=nullptr && nv->m_expr!=nullptr) {
-      //  qDebug() << nv->getValue(as);
+        //  qDebug() << nv->getValue(as);
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(nv->getValue(as), v->m_op.m_lineNumber, v->isAddress());
         if (s!=nullptr) {
             t = s->m_arrayType;
-//            as->Comment("GetEndType : is array of type : " +TokenType::getType(t));
+            //            as->Comment("GetEndType : is array of type : " +TokenType::getType(t));
             if (t==TokenType::IF) {
-  //              as->Comment("Lookup : is type " + TokenType::getType(s->getTokenType()));
+                //              as->Comment("Lookup : is type " + TokenType::getType(s->getTokenType()));
                 if (s->getTokenType()==TokenType::STRING)
                     t = TokenType::BYTE;
             }
@@ -804,8 +815,9 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
         return ".w";
     }
 
-    if (t==TokenType::INTEGER)
+    if (t==TokenType::INTEGER) {
         return ".w";
+    }
     if (t==TokenType::POINTER)
         return ".l";
     if (t==TokenType::LONG)
@@ -813,9 +825,9 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
     if (t==TokenType::BYTE)
         return ".b";
 
-//    as->Comment("Current tokentype : "+TokenType::getType(t));
+    //    as->Comment("Current tokentype : "+TokenType::getType(t));
 
-    return "";
+    return ".l";
 }
 
 bool CodeGen68k::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
@@ -868,54 +880,28 @@ bool CodeGen68k::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
 bool CodeGen68k::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
 {
     QString var = node->m_left->getValue(as);
-//    return false;
+    //    return false;
     // First: Check if right is simple,
-    if (node->m_right->isPure() && !node->m_right->hasArrayIndex() && !node->m_left->hasArrayIndex()) {
+    if (node->m_right->isPure() && !node->m_right->hasArrayIndex() && !node->m_left->hasArrayIndex() ) {
         QString rval = node->m_right->getValue(as);
+        if (getEndType(node->m_left) == getEndType(node->m_right)) {
+            as->Asm("move"+getEndType(node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization ");
+        }
+            else {
+                as->Asm("moveq #0,d0");
+                as->Comment("HALLA");
+                as->Asm("move"+getEndType(node->m_right) + " "+rval+",d0");
+                as->Asm("move"+getEndType(node->m_left) + " d0,"+var);
 
-        as->Asm("move"+getEndType(node->m_left) + " "+rval+","+var + " ; Simple a:=b optimization");
+            }
+
         return true;
+
     }
     // Stop here for now
     return false;
 
 
-    QSharedPointer<NodeBinOP> bop = qSharedPointerDynamicCast<NodeBinOP>(node->m_right);
-    if (bop==nullptr)
-        return false;
-
-    bop->SwapVariableFirst();
-    //if (bop->m_left->)
-
-    QSharedPointer<NodeVar> v2 = qSharedPointerDynamicCast<NodeVar>(bop->m_left);
-    // v2 MUst be variable
-    if (v2==nullptr)
-        return false;
-    // Make sure that A:=A op ...
-    if (v2->getValue(as)!=var)
-        return false;
-    // rvar must be pure numeric
-    if (!bop->m_right->isPureNumeric())
-        return false;
-
-    QString num = bop->m_right->getValue(as);
-
-    // Good to go!
-    as->BinOP(bop->m_op.m_type);
-    QString op = as->m_varStack.pop();
-
-    // Can be done directly
-    if (bop->m_op.m_type==TokenType::PLUS || bop->m_op.m_type==TokenType::MINUS || bop->m_op.m_type==TokenType::OR || bop->m_op.m_type==TokenType::AND)
-        as->Asm(op +getEndType(v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
-    else {
-        QString d0 = as->m_regAcc.Get();
-        as->Asm("move"+getEndType(v2) + " "+var+","+d0);
-        as->Asm(op +getEndType(v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
-        as->Asm("move"+getEndType(v2) + " "+d0+","+var);
-        as->m_regAcc.Pop(d0);
-    }
-
-    return true;
 
 }
 
@@ -954,7 +940,7 @@ void CodeGen68k::AssignStringPtr(QSharedPointer<NodeAssign> node, bool isPointer
         as->Asm("move.l #"+str+","+left->getValue(as));
     }
     else {
-//                ErrorHandler::e.Error("String copying not yet implemented, can only be assigned as pointers.", node->m_op.m_lineNumber);
+        //                ErrorHandler::e.Error("String copying not yet implemented, can only be assigned as pointers.", node->m_op.m_lineNumber);
         as->Comment("String copy!");
         as->Asm("move.l #"+str+",a0");
         as->Asm("move.l #"+left->value+",a1");
@@ -1034,24 +1020,24 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     // Trying to assign a PURE record
-  //  if (v == nullptr) {
-//        ErrorHandler::e.Error("Left is null pointer, should not happen! ", node->m_op.m_lineNumber);
+    //  if (v == nullptr) {
+    //        ErrorHandler::e.Error("Left is null pointer, should not happen! ", node->m_op.m_lineNumber);
     //}
     if (v!=nullptr)
-    if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
-        if (!node->m_right->isRecord(as))
-            ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
-        if (v->getTypeText(as)!=node->m_right->getTypeText(as))
-            ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
-        if (node->m_right->isRecordData(as))
-            ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+        if (v->isRecord(as) && !v->isRecordData(as) && !v->isClass(as)) {
+            if (!node->m_right->isRecord(as))
+                ErrorHandler::e.Error("Right-hand side of assignment must also be record of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+            if (v->getTypeText(as)!=node->m_right->getTypeText(as))
+                ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
+            if (node->m_right->isRecordData(as))
+                ErrorHandler::e.Error("Right-hand side of assignment must also be of type '"+v->getTypeText(as)+"'", v->m_op.m_lineNumber);
 
-        // Copy record:
-//        HandleNodeAssignCopyRecord(node);
-        ErrorHandler::e.Error("RECORD ASSIGNMENT NOT IMPLEMENTED YET", v->m_op.m_lineNumber);
+            // Copy record:
+            //        HandleNodeAssignCopyRecord(node);
+            ErrorHandler::e.Error("RECORD ASSIGNMENT NOT IMPLEMENTED YET", v->m_op.m_lineNumber);
 
-        return;
-    }
+            return;
+        }
 
     // POINTER = RECORD errors
     if (node->m_left->getType(as)==TokenType::POINTER && node->m_right->isRecord(as) && !node->m_right->isClass(as)) {
@@ -1059,8 +1045,8 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
             ErrorHandler::e.Error("Cannot assign a pointer to a record.", node->m_op.m_lineNumber);
         if (!node->m_right->isRecordData(as))
             ErrorHandler::e.Error("Cannot assign a pointer data to a record.", node->m_op.m_lineNumber);
- //       if (node->)
-    }
+        //       if (node->)
+        }
     // Variable = POINTER
     if (node->m_right->isRecord(as) && (!node->m_right->isRecordData(as)) && !node->m_right->isClass(as)) {
         ErrorHandler::e.Error("Cannot assign a record of type '"+node->m_right->getTypeText(as)+"' to a single variable. ",node->m_op.m_lineNumber);
@@ -1082,20 +1068,20 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
 
     if (node->m_right->hasArrayIndex()) {
-  //      as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->getLoadType()));
+        //      as->Comment("Assign: is Array index, forcetype " +TokenType::getType(node->m_right->getLoadType()));
         LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
 
     }
     else {
-//        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->getLoadType()));
+        //        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->getLoadType()));
         node->m_right->Accept(this);
     }
 
 
     StoreVariable(v);
-//    as->Comment("regacc : " +as->m_regAcc.m_latest);
+    //    as->Comment("regacc : " +as->m_regAcc.m_latest);
     as->m_regAcc.m_latest ="";
-//    as->m_regAcc.Pop(as->m_regAcc.m_latest);
+    //    as->m_regAcc.Pop(as->m_regAcc.m_latest);
     while (as->m_varStack.m_vars.length()!=0)
         as->m_varStack.pop();
 
@@ -1116,9 +1102,9 @@ void CodeGen68k::IncBin(QSharedPointer<NodeVarDecl> node) {
         FC8 fc;
         filename = filename+ "_c";
 
-  //      if (Util::fileChanged(filename) || !QFile(old).exists())
-            fc.Encode(old,filename);
-//        else qDebug() << "Ignoring compressing " << old;
+        //      if (Util::fileChanged(filename) || !QFile(old).exists())
+        fc.Encode(old,filename);
+        //        else qDebug() << "Ignoring compressing " << old;
     }
 
 
@@ -1138,7 +1124,7 @@ void CodeGen68k::IncBin(QSharedPointer<NodeVarDecl> node) {
     }
     else {
         //            qDebug() << "bin: "<<v->getValue(as) << " at " << t->m_position;
-//        Appendix app(t->m_position);
+        //        Appendix app(t->m_position);
         QSharedPointer<Symbol> typeSymbol = as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber);
         typeSymbol->m_org = Util::C64StringToInt(t->m_position);
         typeSymbol->m_size = size;
@@ -1149,14 +1135,14 @@ void CodeGen68k::IncBin(QSharedPointer<NodeVarDecl> node) {
         as->Label(v->getValue(as));
         as->Asm("incbin \"" + wname + "\"");
         as->Asm(" 	CNOP 0,4");
-/*        bool ok;
+        /*        bool ok;
         int start=0;
         if (t->m_position.startsWith("$")) {
             start = t->m_position.remove("$").toInt(&ok, 16);
         }
         else start = t->m_position.toInt();
 */
-  //      as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
+        //      as->blocks.append(new MemoryBlock(start,start+size, MemoryBlock::DATA,t->m_filename));
 
     }
 }
@@ -1164,8 +1150,14 @@ void CodeGen68k::IncBin(QSharedPointer<NodeVarDecl> node) {
 void CodeGen68k::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page)
 {
 
-//    as->Comment("Binary clause Simplified: " + node->m_op.getType());
-    //    as->Asm("pha"); // Push that baby
+
+    if (node->m_right->isPureNumeric() && node->m_left->isPureNumeric()) {
+        if (node->m_right->getValueAsInt(as) == node->m_left->getValueAsInt(as))
+            as->Asm("bra "+lblFailed);
+
+        return;
+    }
+
 
     BuildToCmp(node);
     QString bge = "bge";
@@ -1197,7 +1189,7 @@ void CodeGen68k::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess
 
 
 
-/*    if (node->m_op.m_type==TokenType::LESS)
+    /*    if (node->m_op.m_type==TokenType::LESS)
         as->Asm("bcc " + lblFailed);
     if (node->m_op.m_type==TokenType::GREATER)
         as->Asm("bcs " + lblFailed);
@@ -1207,9 +1199,9 @@ void CodeGen68k::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess
 
 void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
 {
-//    QString b="";
+    //    QString b="";
 
-  /*  QSharedPointer<NodeVar> varb = dynamic_cast<QSharedPointer<NodeVar>>(node->m_right);
+    /*  QSharedPointer<NodeVar> varb = dynamic_cast<QSharedPointer<NodeVar>>(node->m_right);
     if (varb!=nullptr && varb->m_expr==nullptr)
         b = varb->getValue(as);
 
@@ -1217,28 +1209,28 @@ void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
     if (numb!=nullptr)
         b = numb->StringValue();
 */
-//    as->Term();
+    //    as->Term();
 
     if (node->m_left->isPure()) {
         if (node->m_right->isPureNumeric())
         {
-  //          as->Comment("Compare with pure num / var optimization");
-//            TransformVariable("cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
+            //          as->Comment("Compare with pure num / var optimization");
+            //            TransformVariable("cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             TransformVariable("cmp",node->m_left->getValue(as),node->m_right->getValue(as),node->m_left);
             return;
         } else
         {
-    //        as->Comment("Compare two vars optimization");
+            //        as->Comment("Compare two vars optimization");
             if (node->m_right->isPureVariable()) {
                 QString wtf = as->m_regAcc.Get();
                 LoadVariable(qSharedPointerDynamicCast<NodeVar>(node->m_right));
                 TransformVariable("move",wtf,qSharedPointerDynamicCast<NodeVar>(node->m_left));
                 TransformVariable("cmp"+getEndType(node->m_left),wtf,as->m_varStack.pop());
-//                TransformVariable("cmp",wtf,as->m_varStack.pop());
+                //                TransformVariable("cmp",wtf,as->m_varStack.pop());
                 as->m_regAcc.Pop(wtf);
                 return;
             }
-                 else
+            else
                 node->m_right->Accept(this);
 
             TransformVariable("cmp",qSharedPointerDynamicCast<NodeVar>(node->m_left),as->m_varStack.pop());
@@ -1252,15 +1244,15 @@ void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
     node->m_right->Accept(this);
     QString d1 = as->m_varStack.pop();
     as->m_regAcc.Pop(tmp);
-//    qDebug() << "VARSTACK" <<d0 << d1;
+    //    qDebug() << "VARSTACK" <<d0 << d1;
 
     as->Asm("cmp"+getEndType(node->m_left)+" "+d1+"," +d0);
     //TransformVariable("cmp",node->m_left, as->m_varStack.pop());
 
-        // Perform a full compare : create a temp variable
-//        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
-//        node->m_right->Accept(this);
-  //      as->Asm("cmp " + tmpVar);
+    // Perform a full compare : create a temp variable
+    //        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
+    //        node->m_right->Accept(this);
+    //      as->Asm("cmp " + tmpVar);
     //      as->PopTempVar();
 
 

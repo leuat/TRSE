@@ -1,0 +1,19 @@
+Copies a desired palette to the copperlist. The original palette data must be in
+12-bit format (RRRRGGGGBBBBXXXX). Usage:
+<code>
+setpalette(#[palette data],#copper_palette,[number of colors]);
+</code>
+<p>
+Example:<p>
+<code>
+// The palette is automaticallt exported when using the @export command on a TRSE A500 image.
+image_palette : incbin("images/trse.pal");
+...
+begin
+// Set to default interleaved 4-bpl screen, point to the 320x256 image
+    Graphics::SetupDefaultScreen(#image,4);
+// Sets the palette in the copper list, 16 colors (4 bitplanes)
+    setpalette(#image_palette,#copper_palette, 16);
+</code>
+
+

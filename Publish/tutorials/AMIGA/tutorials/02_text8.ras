@@ -1,0 +1,61 @@
+program Text8;
+@use "graphics"
+@use "text/text"
+var  
+	
+	/*
+	
+	This example uses the "text" library to set up and display a 8x8 (c64 petscii) font.
+ 	
+ 	The font itself is located at : resources/fonts/font8x8.flf
+	
+	*/
+	
+	
+	@export "resources/fonts/font8x8.flf" "resources/fonts/font8x8.bin" 256
+
+	// Remember that the font data must also reside in chipmem!	
+	fontData : incbin("resources/fonts/font8x8.bin") chipmem;
+	// Random text to be printed 
+	text : string =("UNFORTUNATELY THE FONT SYSTEM",10,10,
+					"CURRENTLY ONLY SUPPORTS TEXT",10,10,
+					"AND NOTHING ELSE   ",10,10,10,10,
+					"KTHKXBYE");
+					
+	const noBitPlanes : integer = 1;				
+	const printSpeed : integer = 16;
+	
+	const fontHeight : byte = 8;
+	const fontWidth : byte = 8;
+	
+	const asciiStart : byte = 64; // PETSCII font, so ASCII starts at char 64
+	
+	const screenWidth : integer = 320; // We're using 320x256
+	
+
+	screen : array[40*256*noBitPlanes] of byte chipmem;
+ 
+	const speed : integer = 16;
+	counter : integer = 0;
+
+
+
+begin	
+	ApplyCopperList();
+	
+	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
+	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
+	// Initialise a 8x8 font based on the included data. Currently only 1-bpl fonts are supported
+	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup8x8 );
+	// Draws a string at position (x,y) = (8*32)
+	Text::Draw("HELLO TEXT WORLD", 8, 32, #screen);
+	// Initialise a text printer at position (x,y) = (4*8,64)
+	Text::InitPrinter(#text, 4,64, #screen, printSpeed);
+	while (true) do
+	begin
+		waitverticalblank();
+		Text::AdvancePrinter();
+	end;	
+
+end.
+
