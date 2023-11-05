@@ -14,7 +14,7 @@ var
 					
 	const noBitPlanes : integer = 1;				
 	
-	const fontHeight : byte = 16;
+	const fontHeight : byte = 21;
 	const fontWidth : byte = 16;
 	
 	const asciiStart : byte = 65; 
@@ -97,7 +97,7 @@ begin
 	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
 	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
 	// Initialise a 16x16 font 
-	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16 );
+	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16, true);
 	// Draws a string at position (x,y) = (8*8, ypos)
 	Text::Draw("HELLO COPPER", 8, ypos, #screen);
 

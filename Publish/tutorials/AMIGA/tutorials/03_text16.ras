@@ -18,13 +18,12 @@ var
 	// Random text!
 	text : string =("THIS FONT IS SIXTEEN",10,10,
 					"BY SIXTEEN",10,10,
-					"AND NOTHING ELSE   ",10,10,10,10,
 					"KTHKXBYE");
 					
 	const noBitPlanes : integer = 1;				
 	const printSpeed : integer = 16;
 	
-	const fontHeight : byte = 16;
+	const fontHeight : byte = 21;
 	const fontWidth : byte = 16;
 	
 	const asciiStart : byte = 65; // PETSCII font, so ASCII starts at char 64
@@ -43,7 +42,7 @@ begin
 	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
 	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
 	// Initialise a 8x8 font based on the included data. Currently only 1-bpl fonts are supported
-	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16);
+	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16, true);
 	// Draws a string at position (x,y) = (8*32)
 	Text::Draw("HELLO WORLD", 0, 32, #screen);
 	// Initialise a text printer at position (x,y) = (4*8,64)

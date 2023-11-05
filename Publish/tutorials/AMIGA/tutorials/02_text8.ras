@@ -23,7 +23,7 @@ var
 					"KTHKXBYE");
 					
 	const noBitPlanes : integer = 1;				
-	const printSpeed : integer = 16;
+	const printSpeed : integer = 4;
 	
 	const fontHeight : byte = 8;
 	const fontWidth : byte = 8;
@@ -35,7 +35,6 @@ var
 
 	screen : array[40*256*noBitPlanes] of byte chipmem;
  
-	const speed : integer = 16;
 	counter : integer = 0;
 
 
@@ -46,7 +45,7 @@ begin
 	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
 	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
 	// Initialise a 8x8 font based on the included data. Currently only 1-bpl fonts are supported
-	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup8x8 );
+	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup8x8, true);
 	// Draws a string at position (x,y) = (8*32)
 	Text::Draw("HELLO TEXT WORLD", 8, 32, #screen);
 	// Initialise a text printer at position (x,y) = (4*8,64)

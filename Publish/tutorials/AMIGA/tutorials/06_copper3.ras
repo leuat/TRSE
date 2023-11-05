@@ -1,12 +1,11 @@
-program Copper2;
+program Copper3;
 @use "graphics"
 @use "text/text"
 var  
 	
 	/*
-		Now, let's increase the number of bitplanes from 1 to 2, so we can have two independent
-		images. On one, we will print a static background text, while on the first we'll scroll
 
+		Finally, let's make the text scroll!
 	
 	*/
 	@export "resources/fonts/font16x16.flf" "resources/fonts/font16x16.bin" 256
@@ -40,8 +39,33 @@ var
 
 	col, row, i, time : integer;
 	scroll : integer = 15;
-
+	src, dst : ^byte;
 	const rowIncrease : integer = $200*(128/tableSize); 
+
+	scrollText : string = "HELLO THERE THIS IS A GENERIC TEXT SCROLLER THAT CAN YOU CAN USE IN YOUR JOB APPLICATIONS";
+	curChar : array[2] of byte; // null-terminated single char
+
+	// Pointer to the current string
+	textPtr : ^byte; 	
+
+
+
+/*
+	This method moves the text in the scroll area 2 bytes (16 pixels) to the left
+
+*/
+procedure MoveText();
+begin
+	src:=#screen + (ypos*80) + 2; 
+	dst:=#screen + (ypos*80) ;
+	for i:=0 to fontHeight do
+	begin
+		memcpyunroll(src,0,dst,0,10,4);
+		src+=80;
+		dst+=80;
+	end;
+end;
+
 
 /*
 	All the copper magic will happen on vblank, which will trigger
@@ -51,6 +75,19 @@ var
 
 interrupt VBlank();
 begin
+	
+	// Move text on final frame
+	if (scroll=15) then 
+	begin
+		MoveText();
+		// Set the current char to the text pointer char
+		// If the scroll text reaches "0", reset to the start
+		if (textPtr[0]=0) then textPtr:=#scrollText;
+		Text::DrawChar(textPtr^, 38, ypos, #screen);
+		textPtr+=1;
+	end;
+
+	
 	// Start on row 7
 	row:=7;
 	// Set the current color to the time
@@ -95,8 +132,9 @@ begin
 	time+=1;
 
 	scroll:=(scroll-1)&15;
-
+	
 end;
+
 
 
 
@@ -108,6 +146,8 @@ begin
 	vbirq(VBlank());
 	EnableInterrupt(VB_IRQ);
 	ApplyCopperList();
+	
+	textPtr := #scrollText;
 	
 	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
 	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
@@ -122,7 +162,6 @@ begin
 	
 	Text::Init( #fontData16, screenWidth, asciiStart, fontWidth, fontHeight, noBitPlanes, #Text::lookup16x16, true);
 	// "inside scroll" will be placed within the scrolling area in bitplane 0
-	Text::Draw("INSIDE SCROLL", 8, ypos, #screen);
 	// "A" and "B" will be placed  outside of the scrolling area in bitplane 0
 	Text::Draw("A", 30, ypos+40, #screen);
 	Text::Draw("B", 30, ypos-32, #screen);

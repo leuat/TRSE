@@ -53,10 +53,13 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     if (m_regs.contains(d1) && m_regs.contains(d0))
         endtype = ".l";
 
+
+
 /*    if (getEndType(node->m_left)!= getEndType(node->m_right))
         adv = true;
 */
-    TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
+//    TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
+    TransformVariable("move"+getEndType(node->m_left),d0 + "     ; BOP move",d1);
 
 
 
@@ -77,12 +80,16 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
         }
     }
 
-    else op=op + getEndType(node->m_left, node->m_right);//+m_lastSize;//+".l";
+    else {
+        op=op + getEndType( node->m_left, node->m_right);//+m_lastSize;//+".l";
+    }
+
+
 
     //    as->Comment("d0 used:" +d0);
     if (adv) {
         QString d1 = as->m_regAcc.Get();
-
+        as->Comment("is advanced bop");
         node->m_right->Accept(this);
         TransformVariable("move"+getEndType(node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
 
@@ -93,7 +100,10 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     }
     else {
         node->m_right->Accept(this);
-        TransformVariable(op,d0,as->m_varStack.pop());
+        if (node->m_right->isVariable())
+            op = op.split(".")[0] + getEndType(node->m_right);
+
+        TransformVariable(op,d0 + " ; simple bop",as->m_varStack.pop());
     }
 
 
@@ -497,7 +507,7 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             QString a0 = as->m_regMem.Get();
 
             if (n->getType(as)==TokenType::POINTER)
-                TransformVariable("move.l",a0,n->getValue(as));
+                TransformVariable("move"+getEndType(n),a0,n->getValue(as));
             else
                 TransformVariable("lea",a0,n->getValue(as));
 
@@ -610,8 +620,9 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
         //  as->Comment("Type : " + TokenType::getType(n->getType(as)));
         //        as->Comment("Raw type: " + TokenType::getType(as->m_symTab->Lookup(n->value, n->m_op.m_lineNumber)->getTokenType()));
         //as->Comment("Is Pointer : " + QString::number(n->isPointer(as)));
-        if (n->isPointer(as))
+        if (n->isPointer(as)) {
             TransformVariable("move.l",a0 + trp,n->getValue(as));
+        }
         else
             TransformVariable("lea",a0+trp,n->getValue(as));
 
@@ -771,12 +782,19 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
 
     // Classes return types
     if (nv!=nullptr) {
-        if (nv->m_classvariableType==TokenType::BYTE)
+        if (nv->m_classvariableType==TokenType::BYTE || nv->m_classvariableType==TokenType::BOOLEAN)
             return ".b";
         if (nv->m_classvariableType==TokenType::INTEGER)
             return ".w";
         if (nv->m_classvariableType==TokenType::LONG)
             return ".l";
+
+        if (nv->hasArrayIndex()) {
+            if (nv->getArrayType(as)==TokenType::BYTE || nv->getType(as)==TokenType::STRING)
+                return ".b";
+
+        }
+
     }
 
     TokenType::Type t = v->getOrgType(as);
@@ -822,7 +840,7 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
         return ".l";
     if (t==TokenType::LONG)
         return ".l";
-    if (t==TokenType::BYTE)
+    if (t==TokenType::BYTE || t==TokenType::BOOLEAN)
         return ".b";
 
     //    as->Comment("Current tokentype : "+TokenType::getType(t));
@@ -889,7 +907,7 @@ bool CodeGen68k::HandleSimpleAeqBopConst(QSharedPointer<NodeAssign> node)
         }
             else {
                 as->Asm("moveq #0,d0");
-                as->Comment("HALLA");
+//                as->Comment("HALLA");
                 as->Asm("move"+getEndType(node->m_right) + " "+rval+",d0");
                 as->Asm("move"+getEndType(node->m_left) + " d0,"+var);
 

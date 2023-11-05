@@ -1,0 +1,85 @@
+program MovingText;
+@use "graphics"
+@use "text/text"
+var  
+   	x,y,i,j,k,time: integer = 0; 
+
+/*
+	In this example, we display a 1-bitmap image with an overlay of vertically moving text
+	Note that this example is using non-interlaced mode, so each bitmap is separate in memory
+
+
+*/	
+
+@export "images/logo.flf" "images/logo.bin" 256   	
+   	logo_image : incbin("images/logo.bin") chipmem;
+   	
+	// Font data
+@export "resources/fonts/font16x16.flf" "resources/fonts/font16x16.bin" 256
+
+	// Remember that the font data must also reside in chipmem!	
+fontData : incbin("resources/fonts/font16x16.bin") chipmem;
+
+
+
+	// Sine table for movement / color palette
+	  	
+   	sin64 : array[64] of byte = buildsinetable(31);
+
+   	const screenWidth:integer= 320; 
+   	const screenHeight: integer = 256;
+   	const bitplanes: byte = 2;
+   	
+	const fontHeight : integer = 21;
+	const fontWidth : integer = 16;
+
+	const asciiStart : byte = 65; // PETSCII font, so ASCII starts at char 64
+
+	// Text to be displayed
+	text: string =("HELLO AMIGA");
+   	// Allocate screen memory
+   	screen : array[screenWidth*screenHeight*bitplanes/8] of byte  chipmem;
+
+
+
+procedure PrintText();
+begin
+	// Loops through each character and displays it on the screen
+	for i:=0 to length(text) do begin
+		y:=sin64[(i*6+time)&63] + 40;
+		x:=8+i*2;
+		Text::DrawChar(text[i], x,y, #screen+256*40);
+	end;
+end;
+
+
+begin
+	ApplyCopperList();
+	Graphics::SetupNonInterlacedScreen(#screen,bitPlanes);
+	
+	// Copy 40x256 bytes to the screen (using long words)
+	memcpy(#logo_image,0,#screen,0,10*245,4);
+	// Initialise the 16x16 text
+	Text::Init( #fontData, screenWidth, asciiStart, fontWidth, fontHeight, bitPlanes, #Text::lookup16x16, false);
+
+
+	// Set the colors
+	poke16(#copper_palette,6,$78E); // Background image color, blueish
+	poke16(#copper_palette,10,$EE9); // Font foreground color, yellow
+	poke16(#copper_palette,14,$F4F); // Font color when overlapping the image, purple
+		
+	while (true) do begin
+	
+		// Blink background color blue
+		i:=sin64[time&63]/4;
+		poke16(#copper_palette,2,i); // position 2 = background color = color 0. Next color is located at +6
+
+		PrintText();
+		
+		// Wait for vertical blank
+		WaitVerticalBlank();	
+		// Apply copper list
+		time:=time+1;
+	end;
+
+end.
