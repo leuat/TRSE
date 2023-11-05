@@ -26,7 +26,7 @@ output = {
 --	resolution = { width = 320, height=160},
 	resolution = { width = 64, height=32},
 	output_type = 3,
-	palette_file = "images/pals.pal",
+	palette_file = "resources/images/pals.pal",
 	c64_imageType = 0,
 	c64_multicolor=1,
 	aspect = 1,
@@ -163,7 +163,7 @@ function Update()
 		frame = 0
 		if char == 25 then 
 			globals.isPaused = 1
-			CompressAndSaveHorizontalData(16,4, "data/data.bin","data/table.bin",1);
+			CompressAndSaveHorizontalData(16,4, "resources/data/data.bin","resources/data/table.bin",1);
 			--SaveRawData("data/pal.bin");
 			--CompressAndSaveHorizontalData(4,1, "data/screen_sprite.bin","data/table_sprite.bin");
 

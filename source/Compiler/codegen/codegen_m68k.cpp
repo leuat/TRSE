@@ -100,7 +100,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     }
     else {
         node->m_right->Accept(this);
-        if (node->m_right->isVariable())
+        if (node->m_right->isVariable() && !node->m_right->isPointer(as))
             op = op.split(".")[0] + getEndType(node->m_right);
 
         TransformVariable(op,d0 + " ; simple bop",as->m_varStack.pop());
@@ -507,7 +507,7 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             QString a0 = as->m_regMem.Get();
 
             if (n->getType(as)==TokenType::POINTER)
-                TransformVariable("move"+getEndType(n),a0,n->getValue(as));
+                TransformVariable("move.l",a0,n->getValue(as));
             else
                 TransformVariable("lea",a0,n->getValue(as));
 

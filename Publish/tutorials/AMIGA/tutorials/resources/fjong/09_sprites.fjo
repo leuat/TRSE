@@ -134,7 +134,7 @@ function Update()
 
 	if (frame==noFrames+1) then 
 		hasSaved = 1
-		SaveRawData("data/sprites_data.bin");
+		SaveRawData("resources/data/sprites_data.bin");
 		Message("SAVED")
 		Message("You can exit now");
 	end	

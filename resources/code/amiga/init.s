@@ -94,3 +94,7 @@ init:
 	jsr -270(a6)	; WaitTOF
 	move.l	$4,a6
 	jsr -132(a6)	; Forbid
+
+        move.l #cop,a0
+        move.l a0,COP1LCH
+

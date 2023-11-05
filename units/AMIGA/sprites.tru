@@ -1,0 +1,31 @@
+unit Sprites;
+var
+	
+/**
+	Updates the X/Y position and height of a sprite
+	
+	
+	Usage: SetPos(#sprite1, 160,160, 32);
+	(sets a sprite at pos 160,160 with height 32)
+	
+**/
+
+procedure SetPos(spo : ^byte; u_cx, u_cy, u_height:byte);
+begin
+	spo[1]:=u_cx; // X
+	spo[0]:=u_cy; // Y 
+	spo[2]:=u_cy+u_height; // Y+height
+	spo[3]:=0;
+end;
+
+procedure SetSpriteColors(pos, a,b,c,d : integer);
+begin
+	pos:=pos<<4+2 + 16*4;
+	poke16(#copper_palette,pos,a);	
+	poke16(#copper_palette,pos+4,b);	
+	poke16(#copper_palette,pos+8,c);	
+	poke16(#copper_palette,pos+12,d);	
+	
+end;
+
+end.

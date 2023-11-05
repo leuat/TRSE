@@ -105,9 +105,6 @@ void LImageTIM::ExportSubregion(QString outfile, int x, int y, int w, int h, int
 
     existing.append(data);
     Util::SaveByteArray(existing,outfile);
-
-
-
 }
 
 /*QStringList LImageTIM::SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int xp, int yp, int w, int h)

@@ -107,7 +107,6 @@ begin
 	// we manipulate the copper list 
 	vbirq(VBlank());
 	EnableInterrupt(VB_IRQ);
-	ApplyCopperList();
 	
 	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
 	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	

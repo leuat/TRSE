@@ -20,7 +20,11 @@ LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
     m_supports.binaryLoad = false;
     m_supports.binarySave = true;
     m_supports.flfSave = true;
+    m_GUIParams[btnEditFullCharset] = "Full charset";
+
+    m_GUIParams[tabCharset] = "1";
     m_supports.flfLoad = true;
+    m_supports.displayCharOperations = true;
     InitPens();
 }
 
@@ -125,5 +129,40 @@ void LImageAmiga::LoadBin(QFile &file)
         d.insert(0,size);
         m_colorList.fromArray(d);
     }
+}
+
+void LImageAmiga::ExportSubregion(QString outfile, int xp, int yp, int w, int h, int type) {
+
+    QByteArray data;
+    //    qDebug() << x<<type;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+    auto bpl = m_colorList.getNoBitplanes();
+    int d= 0;
+    w/=8;
+    for (int y=0;y<h;y+=1)
+        for (int bp=0; bp<bpl;bp++) {
+        int curBit = pow(2,bp);
+        //            curBit=curBit;
+
+
+        for (int x=0;x<w;x++) {
+            int xx = xp+x;
+            int yy = yp+y;
+            char c = 0;
+            for (int i=0;i<8;i++) {
+                int col = getPixel(xx*8+i,yy);
+                if ((col & curBit)==curBit )
+                    c = c | (0x1<<(7-i));
+            }
+            data.append(c);
+            d++;
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
+        }
+        }
+    //    qDebug() << "AddBitplaneToData size " <<d << w << h;
+
+
+    Util::SaveByteArray(data,outfile);
 }
 

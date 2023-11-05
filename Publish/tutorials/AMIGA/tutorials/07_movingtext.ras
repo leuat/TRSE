@@ -11,8 +11,8 @@ var
 
 */	
 
-@export "images/logo.flf" "images/logo.bin" 256   	
-   	logo_image : incbin("images/logo.bin") chipmem;
+@export "resources/images/logo.flf" "resources/images/logo.bin" 256   	
+   	logo_image : incbin("resources/images/logo.bin") chipmem;
    	
 	// Font data
 @export "resources/fonts/font16x16.flf" "resources/fonts/font16x16.bin" 256
@@ -54,7 +54,6 @@ end;
 
 
 begin
-	ApplyCopperList();
 	Graphics::SetupNonInterlacedScreen(#screen,bitPlanes);
 	
 	// Copy 40x256 bytes to the screen (using long words)

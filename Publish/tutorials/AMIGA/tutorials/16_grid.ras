@@ -1,6 +1,12 @@
-program Tutorial7_Grid;
+program Grid;
 @use "graphics"
 var  
+
+	/*
+	
+		Advanced example that draws a grid using the line method
+	
+	*/
 
 
    	loo,t,j,sx,sy,l,m,jj,k,i,isDone,time,tt,curFrame: integer = 0; 
@@ -10,7 +16,7 @@ var
    	ii,ij,l2,k2:long;
 	curBuf : integer = 0;
 	
-	sin : array[256] of byte = buildtable("Math.sin(i/256.0*2*3.14159)*127 +127");
+	sin : array[256] of byte = buildsinetable(255);
 	
 	p1 : pointer of long;
    	pi : pointer of integer;
@@ -300,7 +306,7 @@ begin
 	ApplyCopperList();
 	time:=0;
 	
-	while (isDone=0) do begin
+	while (true) do begin
 		UpdateGrid();	
 		SetupRotMat((time/3)&255,time&255,(time/2)&255);
 		SetupRotMat(0,(92+time)&255,(111-time)&255);

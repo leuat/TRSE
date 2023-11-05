@@ -709,6 +709,7 @@ void LImage::ExportSubregion(QString outfile, int x, int y, int w, int h, int ty
 
     QByteArray data;
 //    qDebug() << x<<type;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     if (type==0)
         for (int j=0;j<h;j++)
             for (int i=0;i<w;i++)

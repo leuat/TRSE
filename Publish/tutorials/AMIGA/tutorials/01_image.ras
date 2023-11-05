@@ -18,11 +18,11 @@ var
 	generate a the "trse.pal" palette binary file
 
 */
-@export "images/trse.flf"	 "images/trse.bin" 256
+@export "resources/images/trse.flf"	 "resources/images/trse.bin" 256
 
    	i,j,k, isDone: integer = 0; 
-   	image : incbin("images/trse.bin") chipmem;
-	image_palette : incbin("images/trse.pal");
+   	image : incbin("resources/images/trse.bin") chipmem;
+	image_palette : incbin("resources/images/trse.pal");
 	
 	const noBitPlanes : byte = 4;
 	const noColors : byte = 16;
@@ -31,7 +31,6 @@ var
 
 begin
 	// Set to default interleaved 4-bpl screen, point to the 320x256 image
-	ApplyCopperList();
 	Graphics::SetupDefaultScreen(#image,noBitPlanes);	
 	// Sets the palette in the copper list
 	setpalette(#image_palette,#copper_palette,noColors);

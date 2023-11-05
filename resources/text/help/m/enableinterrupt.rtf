@@ -1,1 +1,21 @@
+This method enables a specific interrupt on the Amiga.
+<p>
+Example:
+
+<code>
+procedure Update();
+begin
+
+    // .. do some IRQ update stuff
+end;
+
+begin
+    // Sets the IRQ routine to "Update"
+    vbirq(Update());
+    // Turns on VB IRQ interrupts
+    EnableInterrupt(VB_IRQ);
+    ...
+</code>
+
+
 

@@ -3,12 +3,20 @@ program Interferens;
 var  
 
 	// Number of bitplanes	
-	const bpl : byte = 4;
+	const bpl : byte = 3;
 
-   	i, isDone,curFrame, time, time2: integer = 0; 
-   	data : incbin("data/tutorial9.bin") chipmem;
+   	i, curFrame, time, time2: integer = 0; 
    	
-	image_palette : incbin("images/palette.bin");
+   	/*
+   	
+   		This effect displays a bitmap effect using 16 bitmap planes. The data
+   		is pre-generated using the resources/fjong/bitplane_effect.fjo file.
+   	
+   	
+   	*/
+   	
+   	data : incbin("resources/data/bitplane_effect.bin") chipmem;
+   	
 	ptr : pointer of byte;
 	
 	sinx : 	array[256] of integer = buildtable( "((Math.sin((i)/256*3.14159*2)*0x7f + 0x7f))");
@@ -17,9 +25,6 @@ var
 	
 	imgTab : array[maxFrames+1] of long = BuildTable("i*40*256");
 	
-@export "images/logo.flf" "images/logo.bin" 256
-
-	image : incbin("images/logo.bin") chipmem;	
 	
 procedure RenderFrame2(t1,t2,div1 : integer;adde:integer);
 begin
@@ -42,29 +47,22 @@ begin
 end;
 
 begin
-	setpalette(#image_palette,#copper_palette,16);
+	Graphics::SetupNonInterlacedScreen(0,bpl);
+	// Set some extra colors
 	poke16(#copper_palette,2+1*0,$1010);	
 	poke16(#copper_palette,2+4*1,$0800);	
 	poke16(#copper_palette,2+4*2,$0F16);	
 	poke16(#copper_palette,2+4*3,$0FA2);	
 
-	// Set bpl 3 colors 8-15 to yellow!	
-	for i:=0 to 8 do
-	begin
-		poke16(#copper_palette,2+4*(i+8),$0FA2);	
-	end;
-
-	SetCopperList32(#image, #copper_bitplane3);
 
 
 	time := 0;	
-	while (isDone=0) do begin
+	while (true) do begin
 	
 		RenderFrame2(time, time*2,4,0);
 		RenderFrame2(time*2, time2,8,1);
 		RenderFrame2(time2, time2,16,2);
 		
-		ApplyCopperList();
 		WaitVerticalBlank();	
 
 		time+=1;

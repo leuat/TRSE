@@ -1,0 +1,84 @@
+program Sprites;
+@use "graphics"
+@use "sprites"
+
+@requirefile "resources/data/sprites_data.bin" "Please execute the Fjong raytracer file 'resources/fjong/09_sprites.fjo' before compiling this program"
+
+
+	/*
+		This is a slightly more advaned sprite example that updates sprite data per frame. 
+		The sprite data (128 frames) is rendered with resources/fjong/09_sprites.fjo, and is output
+		as 16x32 2-bitplane data. 
+	
+	*/
+
+var	
+
+   	j,time: integer = 0; 
+   	x,y : byte;
+	sin : array[256] of byte = buildsinetable(255);
+	// Include the sprite data
+   	sprites : incbin("resources/data/sprites_data.bin");
+   	
+	// 2 bitplanes
+   	const bpl : integer = 2;
+	// Screen
+   	screen : array[bpl*40*256] of byte chipmem;
+	// Sprite structure, located in chipmem		
+	sprite_struct1 : array[140] of byte chipmem;
+	sprite_struct2 : array[140] of byte chipmem;
+
+
+
+
+
+
+interrupt Raster();
+begin
+	time:=time+1;
+	
+	// Calculate some funky sines
+	x:=sin[time&255]/2;
+	y:=sin[(time+64)&255]/2;
+	x:=x+64;
+	y:=y+64;
+	Sprites::SetPos(#sprite_struct1, x,y, 32);
+	Sprites::SetPos(#sprite_struct2, x,256-y, 32);
+
+	// Find frame in data	
+	j:=(time&63)<<7; // 64 frames in total, 128 bytes per frame (<<7)
+	// Copy over 32*4=128 bytes of data for sprite 1
+	memcpy(#sprites,j,#sprite_struct1,4,32,4);
+
+	j:=((time+16)&63)<<7; // 64 frames in total, 128 bytes per frame (<<7)
+	
+	// Copy over 32*4=128 bytes of data for sprite 2
+	memcpy(#sprites,j,#sprite_struct2,4,32,4);
+end;
+
+
+procedure Init();
+begin
+	Graphics::SetupDefaultScreen(#screen,bpl);
+	// Clear screen
+	fill(#screen, 0 ,10*bpl*201);
+	
+	// Set colors for sprite 0
+	Sprites::SetSpriteColors(0, 0, $800,$F16, $FA2);
+	// Set colors for sprite 1
+	Sprites::SetSpriteColors(1, 0, $428,$84F, $FFF);
+
+	// Setup copper sprite pointer
+	setcopperlist32(#sprite_struct2, #copper_spritestruct2);
+	setcopperlist32(#sprite_struct1, #copper_spritestruct0);
+
+end;
+
+
+begin	
+	
+	Init();
+	vbirq(Raster());
+	EnableInterrupt(VB_IRQ);
+	Loop();
+end.

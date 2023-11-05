@@ -58,4 +58,5 @@ data_header_images/font8x8.flf = 0
 data_header_resources/fonts/font8x8.flf = 0
 data_header_resources/fonts/font16x16.flf = 0
 data_header_images/logo.flf = 0
+data_header_images/sprites.flf = 0
 open_files =, tutorial1.ras

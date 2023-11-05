@@ -40,8 +40,6 @@ var
 
 
 begin	
-	ApplyCopperList();
-	
 	// Initialises 320x256 1-bitplane using "screen" as the screen buffer
 	Graphics::SetupDefaultScreen(#screen,noBitPlanes);	
 	// Initialise a 8x8 font based on the included data. Currently only 1-bpl fonts are supported
@@ -50,6 +48,7 @@ begin
 	Text::Draw("HELLO TEXT WORLD", 8, 32, #screen);
 	// Initialise a text printer at position (x,y) = (4*8,64)
 	Text::InitPrinter(#text, 4,64, #screen, printSpeed);
+	
 	while (true) do
 	begin
 		waitverticalblank();

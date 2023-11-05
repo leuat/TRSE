@@ -145,7 +145,6 @@ begin
 	// we manipulate the copper list 
 	vbirq(VBlank());
 	EnableInterrupt(VB_IRQ);
-	ApplyCopperList();
 	
 	textPtr := #scrollText;
 	
