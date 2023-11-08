@@ -246,6 +246,8 @@ private slots:
 
     void on_btnDragonEmulator_clicked();
 
+    void on_btnSparkle_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

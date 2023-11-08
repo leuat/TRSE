@@ -176,7 +176,12 @@ void Asm68000::DeclareVariable(QString name, QString type, QString initval, QStr
     if (type.toLower()=="long")
         t = llong;
 
+
+
     if (DeclareClass(name,type,1,QStringList() <<initval,position))
+        return;
+
+    if (DeclareRecord(name,type,1,QStringList() <<initval,position))
         return;
 
 

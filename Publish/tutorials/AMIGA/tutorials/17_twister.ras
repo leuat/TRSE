@@ -1,14 +1,21 @@
-program Tutorial5_Twister;
+program Twister;
 @use "graphics"
-@requirefile "data/data.bin" "Please execute the Fjong raytracer file 'twister.fjo' before compiling this program"
+@requirefile "resources/data/data.bin" "Please execute the Fjong raytracer file 'resources/data/twister.fjo' before compiling this program"
+
+
+/*
+
+	The obligatory TRSE Twister(tm) effect!
+
+*/
 
 var	
 
    	k,l,i,time,tt,t2,j: integer = 0; 
  	n : long;
  	done : integer = 0;
-   	t_tab : incbin("data/table.bin");
-   	t_data : incbin("data/data.bin");
+   	t_tab : incbin("resources/data/table.bin");
+   	t_data : incbin("resources/data/data.bin");
    	
 // 2 bitplanes
 	
@@ -81,7 +88,6 @@ interrupt Raster();
 begin
 	RenderTwister(10,time/2);
 	time:=time+1;
-	ApplyCopperList();
 	
 end;
 

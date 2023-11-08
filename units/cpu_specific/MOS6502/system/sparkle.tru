@@ -1,0 +1,54 @@
+unit Sparkle;
+var
+	val: byte;
+
+procedure LoadBundle(val:global byte);
+begin
+	asm("
+		lda Sparkle_val
+		jsr $019d
+	
+	");
+end;
+
+	
+	
+procedure SetBank(val:global byte);
+begin
+	asm("
+	clc
+	lda #$3c
+	adc Sparkle_val
+	sta $dd02
+	");
+end;	
+	
+	
+procedure LoadBundleIndex(DirIndex:byte);
+begin
+asm("
+	Bits = $04 //default ZP address
+	sendbyte = $18
+	buslock = $f8
+	
+	lda #DirIndex
+	sta Bits
+	lda #$35
+	sta $01
+	ldx #sendbyte
+	stx $dd00
+	bit $dd00
+	bmi *-3
+sparkle_topp: adc #$e7
+	sax $dd00
+	and #$10
+	eor #$10
+	ror Bits
+	bne sparkle_topp
+	lda #buslock
+	sta $dd00
+
+");
+end;
+	
+end.

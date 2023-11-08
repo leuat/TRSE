@@ -1206,6 +1206,12 @@ void Parser::HandlePreprocessorInParsing()
                 Eat();
             return;
         }
+        if (m_currentToken.m_value=="sparklefile") {
+            Eat();
+            Eat();
+            return;
+        }
+
         if (m_currentToken.m_value=="setcompressionweights") {
             Eat();
             Eat();
@@ -3115,6 +3121,11 @@ void Parser::PreprocessSingle() {
         else if (m_currentToken.m_value.toLower() =="exportsubregion") {
             Eat(TokenType::PREPROCESSOR);
             HandleExportSubregion();
+        }
+        else if (m_currentToken.m_value.toLower() =="sparklefile") {
+            Eat(TokenType::PREPROCESSOR);
+            Data::data.sparkle = m_currentToken.m_value;
+            Eat(TokenType::STRING);
         }
 
 

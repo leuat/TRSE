@@ -59,6 +59,7 @@ public:
     bool abort = false;
     bool isBuilding = false;
     int imageEvent = 0;
+    QString sparkle;
     bool requestSaveAs = false;
     bool requestCloseWindow = false;
     bool blink = false;

@@ -1226,8 +1226,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>445</width>
-              <height>156</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_23">
@@ -1297,8 +1297,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>893</width>
-              <height>384</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
@@ -1310,16 +1310,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <layout class="QGridLayout" name="gridLayout_26">
                 <item row="0" column="0">
                  <layout class="QGridLayout" name="gridLayout_5">
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="leBackgroundColor"/>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_18">
+                    <property name="text">
+                     <string>Initial value of $01</string>
+                    </property>
+                   </widget>
                   </item>
                   <item row="0" column="1">
                    <widget class="QLineEdit" name="leBorderColor"/>
                   </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_17">
+                  <item row="2" column="1">
+                   <widget class="QLineEdit" name="leInitMachineState">
                     <property name="text">
-                     <string>Cartridge background color</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -1330,17 +1334,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
                     </property>
                    </widget>
                   </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_18">
-                    <property name="text">
-                     <string>Initial value of $01</string>
-                    </property>
-                   </widget>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="leBackgroundColor"/>
                   </item>
-                  <item row="2" column="1">
-                   <widget class="QLineEdit" name="leInitMachineState">
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_17">
                     <property name="text">
-                     <string/>
+                     <string>Cartridge background color</string>
                     </property>
                    </widget>
                   </item>
@@ -1407,18 +1407,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <property name="title">
                 <string>Disk settings</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_38" rowstretch="3,0,0,0,0,0,0,0" columnstretch="6">
-                <item row="5" column="0">
-                 <layout class="QGridLayout" name="grdDisks"/>
-                </item>
-                <item row="7" column="0">
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>Please note that your main program .prg will only be added to disk1. Also, in order to be able to use directory art, you need to enable track 19.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
+               <layout class="QGridLayout" name="gridLayout_38" rowstretch="3,0,0,0,0,0,0,0,0,0,0" columnstretch="0">
+                <item row="3" column="0">
                  <layout class="QGridLayout" name="gridLayout_39">
                   <item row="0" column="1">
                    <widget class="QPushButton" name="pushButton_3">
@@ -1449,12 +1439,47 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   </item>
                  </layout>
                 </item>
-                <item row="6" column="0">
+                <item row="9" column="0">
                  <widget class="QCheckBox" name="chkTrack19">
                   <property name="text">
                    <string>Use track 19. If not, track 18 will be used.</string>
                   </property>
                  </widget>
+                </item>
+                <item row="10" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Please note that your main program .prg will only be added to disk1. Also, in order to be able to use directory art, you need to enable track 19.</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0">
+                 <layout class="QGridLayout" name="grdDisks"/>
+                </item>
+                <item row="1" column="0">
+                 <layout class="QGridLayout" name="gridLayout_36">
+                  <item row="3" column="1">
+                   <widget class="QComboBox" name="cmbDiskSystem">
+                    <item>
+                     <property name="text">
+                      <string>Krill</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Sparkle</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_47">
+                    <property name="text">
+                     <string>Disk system:</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </widget>
@@ -1480,8 +1505,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>474</width>
-              <height>681</height>
+              <width>957</width>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1765,8 +1790,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>341</width>
-              <height>319</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1870,8 +1895,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>498</width>
-              <height>217</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_31">
@@ -2020,8 +2045,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>629</width>
-              <height>132</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_32">

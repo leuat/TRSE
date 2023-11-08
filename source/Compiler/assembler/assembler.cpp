@@ -550,7 +550,10 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
 
             // Fill in data
             if (curData<splitData.count()) {
-                Write(getLabelEnding(w)+"\t"+t+"\t"+splitData[curData]);
+                auto v = splitData[curData];
+                if (v=="")
+                    v="0";
+                Write(getLabelEnding(w)+"\t"+t+"\t"+v);
 
             }
             else {

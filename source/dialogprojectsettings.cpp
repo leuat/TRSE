@@ -59,6 +59,8 @@ void DialogProjectSettings::FillFromIni()
     ui->leInternalZp3->setText(m_ini->getString("zeropage_internal3"));
     ui->leInternalZp4->setText(m_ini->getString("zeropage_internal4"));
 
+    if (m_ini->contains("disk_system"))
+        ui->cmbDiskSystem->setCurrentText(m_ini->getString("disk_system"));
 
 
     ui->leZeropages->setText(  fromStringList(m_ini->getStringList("zeropages")));
@@ -255,6 +257,8 @@ void DialogProjectSettings::FillToIni()
     m_ini->setString("custom_system_assembler_parameters",ui->leCustomAssemblerParameters->text());
     m_ini->setString("custom_system_ending",ui->leCustomEnding->text());
 
+
+    m_ini->setString("disk_system",ui->cmbDiskSystem->currentText());
 
 
     m_ini->setString("petmodel", ui->cbmPetSystem->currentText());

@@ -73,6 +73,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leTimEmulator->setText(m_ini->getString("tim_emulator"));
     ui->lePCWEmulator->setText(m_ini->getString("pcw_emulator"));
     ui->leTVCEmulator->setText(m_ini->getString("TVC_emulator"));
+    ui->leSparkle->setText(m_ini->getString("sparkle"));
 
     ui->leTRS80->setText(m_ini->getString("trs80_emulator"));    ui->leSNES->setText(m_ini->getString("snes_emulator"));
     ui->leAmstradCPC->setText(m_ini->getString("amstradcpc_emulator"));
@@ -195,6 +196,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("wonderswan_emulator", ui->leWonderswanEmulator->text());
     m_ini->setString("acorn_emulator", ui->leAcornEmulator->text());
     m_ini->setString("atari800_emulator", ui->leAtari800Emulator->text());
+    m_ini->setString("sparkle", ui->leSparkle->text());
     m_ini->setString("thomson_emulator", ui->leThomsonEmulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
@@ -1042,6 +1044,16 @@ void DialogTRSESettings::on_btnDragonEmulator_clicked()
         tr("Dragon emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leDragonEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnSparkle_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Sparkle 3 executable"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leSparkle->setText(filename);
 
 }
 

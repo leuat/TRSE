@@ -766,5 +766,6 @@
         <file>resources/text/help/m/applycopperlist.rtf</file>
         <file>resources/text/help/m/waitverticalblank.rtf</file>
         <file>resources/text/help/m/setpalette.rtf</file>
+        <file>resources/images/tutorials/sparkle.png</file>
     </qresource>
 </RCC>

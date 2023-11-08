@@ -136,6 +136,13 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
 void SystemMOS6502::PostProcess(QString &text, QString filename, QString currentDir)
 {
     QString output;
+
+
+    if (m_projectIni->contains("disk_system") && m_projectIni->getString("disk_system")=="Sparkle") {
+        Sparkle(text, filename, currentDir);
+        return;
+    }
+
     //    TestForCodeOverwrite(codeEnd,text);
 
     /*
@@ -517,11 +524,11 @@ void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString deb
         params << "-autostartprgmode" << "1";
     }
     auto type=m_projectIni->getString("output_type");
-    qDebug() << type;
-    if (type!="d64")
+    if (type!="d64" || m_projectIni->getString("disk_system")=="Sparkle")
         params << filename+"."+type;
-    else
+    else {
         params << filename+"_disk1."+m_projectIni->getString("disk1_type");
+    }
 
 }
 
