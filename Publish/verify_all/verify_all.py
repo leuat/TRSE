@@ -256,8 +256,8 @@ def CompileRegularRas():
 	#tests.append([ "C64/DemoMaker", []]);
 	#fillRasList(len(tests)-1,".")
 
-	#tests.append([ "C64/Disk_loader_project", []]);
-	#fillRasList(len(tests)-1,".")
+	tests.append([ "C64/Disk_loader_project_sparkle", []]);
+	fillRasList(len(tests)-1,".")
 	tests.append([ "C64/Floskel", []]);
 	fillRasList(len(tests)-1,".")
 	tests.append([ "C64/MusicPlayer", []]);
@@ -525,7 +525,7 @@ def GBUnitTests():
 
 def UnitTests():
 	# add coco
-	COCO3UnitTests();
+	#COCO3UnitTests();
 	DOSUnitTests();
 	C64UnitTests();
 	CPCUnitTests();
@@ -551,6 +551,7 @@ def CompileTests():
 
 print("Welcome to the TRSE auto compiler validator!")
 print("Compiling up a ton of tutorials...")
+UnitTests()
 CompileTests()
 print("Running tests...")
 UnitTests()

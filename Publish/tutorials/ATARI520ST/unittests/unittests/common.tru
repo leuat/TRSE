@@ -12,6 +12,12 @@ begin
     Screen::NewLine();
 end;
 
+procedure CR();
+begin
+	
+end;
+
+
 // Called at the beginning of the testing
 procedure TestInit();
 begin

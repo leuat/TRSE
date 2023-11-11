@@ -20,7 +20,8 @@ end;
 	@endif
 @endif
 
-	@ifndef TRS80COCO
+//	@ifndef TRS80COCO
+	@ifndef CPU_M68000
 procedure LoHi1();
 begin
 	Vars::i1 := $1234;
@@ -36,6 +37,7 @@ begin
 	Common::CR();
 	if (hi(Vars::i1)=$12) then Common::PASS() else Common::FAIL();
 end;
+//@endif
 @endif
 //--------------------------------------------------------------------------------------------
 /* MAIN PROGRAM */

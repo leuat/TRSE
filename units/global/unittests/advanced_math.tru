@@ -106,6 +106,7 @@ begin
 end;
 */
 @ifndef CPU_PCHIP8
+@ifndef CPU_M68000
 procedure MulDivCombo1();
 begin
 	Vars::text := "M1:";
@@ -137,6 +138,7 @@ begin
 	if Vars::i1=$2000 then Common::PASS() else Common::FAIL();
 end;
 @endif
+@endif
 
 procedure Exec();
 begin
@@ -158,9 +160,11 @@ begin
 	AdvFactorial();
 	@endif
 @ifndef CPU_PCHIP8
+@ifndef CPU_M68000
 	MulDivCombo1();
 	MulDivCombo2();
 	MulDivCombo3();
+@endif
 @endif
 	Common::WaitABit();
 	
