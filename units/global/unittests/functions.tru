@@ -17,6 +17,7 @@ function FnByteInt(fn1:global byte):byte;
 begin
 	Vars::i2:=fn1*200;
 	FnByteInt:=Vars::i2;
+	
 end;
 
 function FnInt1(fn1:global byte):integer;

@@ -191,8 +191,11 @@ begin
 	Test6();
 	Test7();
 	@ifndef X86
+	@ifndef CPU_M68000
 	Test8();
 	@endif
+	@endif
+	
 	TestBreak();
 	TestContinue();
 	Common::WaitABit();

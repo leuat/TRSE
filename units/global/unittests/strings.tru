@@ -69,16 +69,20 @@ procedure Exec();
 begin
 	Common::Initialise("STRINGS");
 	@ifndef X86
+	@ifndef CPU_M68000
 	Test1();
+	@endif
 	@endif
 	@ifdef C64
 	Test2();
 	Test3();
 	@endif
+	@ifndef CPU_M68000
 	TestLst1();
 	TestLst2();
 	TestLst3();
 	TestLst4();
+	@endif
 	
 	Common::WaitABit();
 end;

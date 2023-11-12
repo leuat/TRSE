@@ -132,6 +132,7 @@ void Asm68000::DeclareArray(QString name, QString type, int count, QStringList d
     }
     else {
 
+
         if (type.toLower()=="integer")
             t = word;
         if (type.toLower()=="byte")
@@ -140,7 +141,7 @@ void Asm68000::DeclareArray(QString name, QString type, int count, QStringList d
         if (type.toLower()=="string")
             t = byte;
 
-        if (type.toLower()=="long")
+        if (type.toLower()=="long" || type.toLower() == "pointer")
             t = llong;
 
 

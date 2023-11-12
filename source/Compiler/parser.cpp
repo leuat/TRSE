@@ -436,7 +436,7 @@ void Parser::InitSystemPreprocessors()
         m_preprocessorDefines["CPU_FLAVOR_"+Syntax::s.m_currentSystem->getCPUFlavor()] = "1";
     m_preprocessorDefines["SUPPORTS_FORI"] = QString::number((int)Syntax::s.m_currentSystem->m_supportsInclusiveFor);
     m_preprocessorDefines["SUPPORTS_LONG"] = QString::number((int)Syntax::s.m_currentSystem->m_allowedBaseTypes.contains("LONG"));
-
+    m_preprocessorDefines["SUPPORTS_CLASSES"] = QString::number((int)Syntax::s.m_currentSystem->m_allowClasses);
 
 
     Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);

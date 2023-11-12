@@ -78,6 +78,8 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
 
 
         }
+        if (node->m_right->getOrgType(as)==TokenType::BYTE) // || node->m_right->getOrgType(as)==TokenType::BYTE)
+            adv = true;
     }
 
     else {
@@ -91,7 +93,11 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
         QString d1 = as->m_regAcc.Get();
         as->Comment("is advanced bop");
         node->m_right->Accept(this);
-        TransformVariable("move"+getEndType(node->m_right, node->m_right),d1 + "     ; Advanced move",as->m_varStack.pop());
+        as->Comment("Reset register");
+        as->Asm("moveq #0,"+d1);
+        as->Term();
+
+        TransformVariable("move"+getEndType(node->m_right, node->m_right),d1 + "     ; Advanced movee",as->m_varStack.pop());
 
         TransformVariable(op,d0,d1);
 
@@ -100,7 +106,7 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
     }
     else {
         node->m_right->Accept(this);
-        if (node->m_right->isVariable() && !node->m_right->isPointer(as))
+        if (node->m_right->isVariable() && !node->m_right->isPointer(as) && !op.contains("div") && !op.contains("mul"))
             op = op.split(".")[0] + getEndType(node->m_right);
 
         TransformVariable(op,d0 + " ; simple bop",as->m_varStack.pop());
@@ -412,8 +418,28 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
         node->m_block->Accept(this);
         //        node->m_block->Build(as);
     }
+    if (node->m_returnValue!=nullptr) {
+        if (node->m_returnType->getValue(as).toLower()=="integer") {
+            node->m_returnValue->setLoadType(TokenType::INTEGER);
+        }
+        if (node->m_returnType->getValue(as).toLower()=="byte") {
+            node->m_returnValue->setLoadType(TokenType::BYTE);
+        }
+        as->ClearTerm();
+        node->m_returnValue->Accept(this);
+        // Performs an action before returning a function value. Needed by the m68k codegen stack machine
+        as->Term();
+        QString ret = as->m_varStack.pop();
+        if (ret!="d0")
+            TransformVariable("move"+getEndType(node->m_returnValue),"d0",ret);
+
+    }
+
+
     if (!isInitFunction) {
+
         if (node->m_type==0) {
+
             as->Asm("rts");
         }
         else {
@@ -470,6 +496,13 @@ void CodeGen68k::dispatch(QSharedPointer<NodeRepeatUntil> node)
 
 void CodeGen68k::dispatch(QSharedPointer<NodeComment> node)
 {
+
+}
+
+void CodeGen68k::PerformActionBeforeFunctionReturn()
+{
+    as->m_varStack.push("d0");
+
 
 }
 
@@ -588,7 +621,7 @@ void CodeGen68k::LoadVariable(QSharedPointer<NodeVar> n)
             else
                 TransformVariable("lea",a0,n->getValue(as));
 
-            int shift = n->m_expr->getValueAsInt(as)*n->m_expr->getArrayDataSize(as);
+            int shift = n->m_expr->getValueAsInt(as)*n->getArrayDataSize(as);
             as->Asm("move"+getEndType(n)+" "+Util::numToHex(shift)+"("+a0+"),"+d0);
             as->m_varStack.push(d0);
 
@@ -777,6 +810,18 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
         return ".l";
     }
 */
+
+    QSharedPointer<NodeProcedure> proc = qSharedPointerDynamicCast<NodeProcedure>(v);
+    if (proc!=nullptr) {
+            if (proc->m_procedure->m_returnType->getType(as)==TokenType::BYTE || proc->m_procedure->m_returnType->getType(as)==TokenType::BOOLEAN)
+            return ".b";
+            if (proc->m_procedure->m_returnType->getType(as)==TokenType::INTEGER)
+            return ".w";
+            if (proc->m_procedure->m_returnType->getType(as)==TokenType::LONG)
+            return ".l";
+
+    }
+
 
     QSharedPointer<NodeVar> nv = qSharedPointerDynamicCast<NodeVar>(v);
 
@@ -978,6 +1023,52 @@ void CodeGen68k::AssignStringPtr(QSharedPointer<NodeAssign> node, bool isPointer
 
 }
 
+void CodeGen68k::Cast(TokenType::Type from, TokenType::Type to)
+{
+    //    qDebug() <<"Cast " <<TokenType::getType(from) << " " << TokenType::getType(to);
+    if (from==to)
+        return;
+
+/*
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+        as->Comment("Casting from byte to integer");
+        as->Asm("swap.w d0");
+    }
+    if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        as->Comment("Casting from integer to byte");
+        as->Asm("swap.w d0");
+    }
+*/
+}
+
+void CodeGen68k::Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType)
+{
+/*    if (from==to && to==writeType)
+        return;
+    if (from==TokenType::BYTE && to == TokenType::INTEGER) {
+        if (writeType==TokenType::INTEGER) {
+                as->Comment("Casting from byte to integer to integer");
+        }
+        if (writeType==TokenType::BYTE) {
+                as->Comment("Casting from byte to integer to byte");
+                //            as->Asm("ld l,a");
+                //          as->Asm("ld h,0");
+        }
+    }
+    if (from==TokenType::INTEGER && to == TokenType::BYTE) {
+        if (writeType==TokenType::BYTE) {
+                as->Comment("Casting from integer to byte");
+        }
+        if (writeType==TokenType::INTEGER) {
+                as->Comment("Casting from integer to byte to integer");
+                as->Asm("tfr x,d");
+                as->Asm("ldb #0");
+                as->Asm("tfr d,x");
+        }
+    }
+*/
+}
+
 
 void CodeGen68k::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive)
 {
@@ -1094,7 +1185,6 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
         //        as->Comment("Assign: Regular, forcetype " +TokenType::getType(node->m_right->getLoadType()));
         node->m_right->Accept(this);
     }
-
 
     StoreVariable(v);
     //    as->Comment("regacc : " +as->m_regAcc.m_latest);
@@ -1267,7 +1357,7 @@ void CodeGen68k::BuildToCmp(QSharedPointer<Node> node)
     as->Asm("cmp"+getEndType(node->m_left)+" "+d1+"," +d0);
     //TransformVariable("cmp",node->m_left, as->m_varStack.pop());
 
-    // Perform a full compare : create a temp variable
+    //  a full compare : create a temp variable
     //        QString tmpVar = as->m_regAcc.Get();//as->StoreInTempVar("binary_clause_temp");
     //        node->m_right->Accept(this);
     //      as->Asm("cmp " + tmpVar);

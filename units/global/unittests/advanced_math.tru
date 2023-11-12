@@ -152,8 +152,8 @@ begin
 	Advanced05();
 	@ifndef ATARI520ST
 	Advanced06();
-	Advanced07(); 
 	@endif
+	Advanced07(); 
 	Advanced08();
 	@endif
 	@ifdef C64

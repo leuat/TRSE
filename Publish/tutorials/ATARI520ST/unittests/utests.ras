@@ -1,5 +1,6 @@
-Program UnitTestsX86;
+Program UnitTestsM68000;
 
+@define OVERRIDE $20000
 @projectsettings "amstradcpc_options" "-O system.printer=1 -O file.printer_file=/tmp/printer.dat"
 @use "unittests/unittests"
 @use "unittests/common"

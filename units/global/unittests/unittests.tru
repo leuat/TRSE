@@ -5,10 +5,8 @@ Unit Unittests;
 @use "unittests/advanced_math"
 @use "unittests/casts"
 @use "unittests/integer"
-@ifndef CPU_M6809
-@ifndef CPU_PCHIP8
+@if SUPPORTS_CLASSES = 1
 @use "unittests/classes"
-@endif
 @endif
 @use "unittests/ifthenelse"
 @use "unittests/muldiv"
@@ -65,14 +63,14 @@ begin
 @ifndef CPU_PCHIP8
 		if (currentTest=11) then Various::Exec();
 @endif
+@ifndef CPU_M68000
 		if (currentTest=12) then BooleanTest::Exec();
-		if (currentTest=0) then LongTest::Exec();
-@ifndef CPU_PCHIP8
-@ifndef CPU_M6809
-		if (currentTest=14) then Classes::Exec();
 @endif
+		if (currentTest=14) then LongTest::Exec();
+		
+@if SUPPORTS_CLASSES = 1
+		if (currentTest=0) then Classes::Exec();
 @endif
-
 		currentTest+=1;
 				
 		if (currentTest>=noTests) then

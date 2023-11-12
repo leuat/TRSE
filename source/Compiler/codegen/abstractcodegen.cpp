@@ -1018,11 +1018,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node)
 
         as->ClearTerm();
         node->m_returnValue->Accept(this);
+        // Performs an action before returning a function value. Needed by the m68k codegen stack machine
+
         as->Term();
     }
 
     if (!isInitFunction) {
-
         if (node->m_type==0) {
             as->Asm(getReturn());
         }
@@ -1115,6 +1116,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         if (node->m_procedure->m_returnType->m_op.m_type!=node->getStoreType()) {
             Cast(node->m_procedure->m_returnType->m_op.m_type, node->getStoreType());
         }
+    PerformActionBeforeFunctionReturn();
+
     ProcedureEnd();
     PopLostStack(lostStack);
 }

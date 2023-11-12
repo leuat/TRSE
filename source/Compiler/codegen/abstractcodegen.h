@@ -215,6 +215,9 @@ public:
     // Assigns the internal register variable to an array with index
     virtual bool IsAssignArrayWithIndex(QSharedPointer<NodeAssign> node) { return false;}
 
+    // Performs an action before returning a function value. Needed by the m68k codegen stack machine
+    virtual void PerformActionBeforeFunctionReturn() {}
+
 
     // Method that will increase a variable in <var> with the value in <step>
     // used in for loops

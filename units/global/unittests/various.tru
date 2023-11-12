@@ -84,20 +84,22 @@ begin
 	TestAutomaticOffpage();
 	// Mul and div
 	@ifndef X86
-	@ifndef ATARI520ST
+	@ifndef CPU_M68000
 	Test1();
 	@endif
 	@endif
 	
-	@ifndef TRS80COCO
+	@ifndef CPU_M68000
 	LoHi1();
 	LoHi2();
 	@endif
 	
 	@ifndef X86
+	@ifndef CPU_M68000
 	TestAddress1();
 	TestAddress2();
 	TestAddress3();
+	@endif
 	@endif
 	Common::WaitABit();
 end;

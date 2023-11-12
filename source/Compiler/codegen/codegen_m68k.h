@@ -64,6 +64,9 @@ public:
     }
 
 
+
+    void PerformActionBeforeFunctionReturn() override;
+
     void StoreVariable(QSharedPointer<NodeVar> n) override;
     void LoadVariable(QSharedPointer<NodeVar> n) override ;
     void LoadVariable(QSharedPointer<NodeProcedure> node) override;
@@ -115,6 +118,11 @@ public:
     QString getReturnInterrupt() override { return "rti";}
 
     void AssignStringPtr(QSharedPointer<NodeAssign> node, bool isPointer);
+
+
+    void Cast(TokenType::Type from, TokenType::Type to);
+
+    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
 
 
 };
