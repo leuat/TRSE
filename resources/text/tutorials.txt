@@ -90,7 +90,7 @@ VZ200; Millipede; VZ200/millipede/ ;  <h2>Millipede</h2><p><img src=":resources/
 VZ200; Small VZ200 TRSE demo; VZ200/TRSEdemo/ ;  <h2>Small VZ200 demo project</h2><p><img src=":resources/images/tutorials/vz200_demo.png" width="200" class="center"><p>Small VZ200 graphics demo
 VZ200; Paganitzu; VZ200/Paganitzu ; <h2>A port of the DOS PC adventure game Paganitzu. A fun action-adventure puzzle game.<p><img src=":resources/images/tutorials/VZPaganitzu.png" width="200" class="center"><p>Paganitzu action-adventure puzzle game<p>Collect diamonds. Gather keys to open level exits.<p>Push rocks in front of snakes. Push rocks into water. Trap spiders to turn them into diamonds. Avoid spikes which shoot up the screen. 20 levels of fun!
 
-TRS80COCO; Tutorials; TRS80COCO/tutorials/;<h2>TRS80 Coco3 tutorials</h2><p><img src=":resources/images/TRS80COCO.png" width="200" height="200" class="center"><p>Official TRSE tutorials for the TRS80 CoCo3. Under development.
+TRS80COCO; Tutorials; TRS80COCO/tutorials/;<h2>TRS80 Coco3 tutorials</h2><p><img src=":resources/images/TRS80COCO.png" width="200" class="center"><p>Official TRSE tutorials for the TRS80 CoCo3. Under development.
 TRS80COCO; Unit tests; TRS80COCO/unittests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>Internal TRSE 6809 unit tests
 VECTREX; Main Vectrex examples ; VECTREX/tutorials/; <h2>Main Vectrex tutorials</h2><tr><td><img src=":resources/images/VECTREX.png" width="150" class="center"></td><td><p>Under construction</td></tr>
 THOMSON; Thomson mo5 examples ; THOMSON/tutorials/; <h2>Main Thomson MO5 tutorials</h2><tr><td><img src=":resources/images/THOMSON.png" width="150" class="center"></td><td><p>Under construction</td></tr>

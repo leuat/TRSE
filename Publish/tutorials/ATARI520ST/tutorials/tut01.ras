@@ -46,7 +46,7 @@ begin
 	// Initialize VBLank IRQ
 	setirq(VBLank(), irq_verticalblank);
 	//Loop until keypressed
-	while (done = false) do
+	while (done=false) do
 	begin
 		done:=keypressed(sc_key_space_pressed);
 	end;	

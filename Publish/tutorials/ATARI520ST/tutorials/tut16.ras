@@ -1,0 +1,197 @@
+Program rotating_text;
+
+@use "graphics"
+@use "compression"
+
+// Image (painting) by Shaz
+@export "images/background.flf" "images/background.bin" 256
+
+// Path created in gimp, see the corresponding .xvf - path exported to .svg, pathcool converts to x/y/t coordinates
+@pathtool "images/background_paths.svg" "data/path" 320 8
+
+var
+	done,vbl:integer=0;
+	// buffer for text font
+	buf: array[160*200*3] of byte aligned;
+	tp : pointer of byte;
+	text: string = ("                AH LOOK AT ME MOM I HAVE NO TENTACLES PLEASE MOM HELP ME                    ");
+
+	rot_text_data : incbin("data/textsprites1.bin") compressed;
+	
+	image:incbin("images/background.bin") compressed;
+	image_pal:incbin("images/background.pal");
+
+	// Size of the path (from 320 using pathtool)
+	const maxPath : integer = 319;
+	pathXd : incbin("data/pathx.bin");
+	pathYd : incbin("data/pathy.bin");
+	pathTd : incbin("data/patht.bin");
+	ppx,ppy,ppt,zp : pointer of integer;
+	
+	p1 :^byte;
+
+	// BG storage
+   	storage : array[160*200] of byte aligned;
+
+
+
+	// 14 characters on-screen at the same time
+	const rotTextCount : integer = 14;
+	// x space distance between text
+	const rotTextAdd : integer = 22;
+	// Start of the path
+	const rotTextStart : integer = 26;
+
+
+	x1,scroll,i,j,x2,y2,k,cx,cy:integer;
+
+	textLookupChar : array[27] of long=BuildTable("(i*8*256)");
+	textLookupFrame : array[8] of long=BuildTable("(i*256)");
+
+
+/*
+	Renders the actual text.
+*/
+procedure RenderRotatingText();
+begin
+	// Current scroll value	
+	x1:=rotTextStart-scroll;
+	p1 := Graphics::offBuf;
+	for i:=0 to rotTextCount do
+	begin
+		j := tp[i]&255;	
+		x2 := ppx[x1];
+		y2 := ppy[x1];
+		// Real text char?
+		if (j>64) then 
+		begin
+			// Find ascii value in lookup text
+			j:=j-65;
+			zp := #buf;
+			// Find frame
+			k := ppt[x1]&7;
+			// Offset with character and frame
+			zp:=zp + textLookupChar[j];
+			zp:=zp +textLookupFrame[k];
+			// Blit text!
+			
+			Graphics::BlitMaskSingle2(zp, p1, x2,y2, 1,15,160-((1+1)*8));
+		end;
+		x1:=x1+rotTextAdd;
+		if (x1>maxPath) then x1:=maxPath;
+	end;
+
+end;
+
+/*
+
+ 	Clears out the rotating text areas
+*/ 
+procedure ClearRotatingText();
+begin
+	x1:=rotTextStart-scroll;
+	p1 := Graphics::curBuf;
+	for i:=0 to rotTextCount do
+	begin
+		j := tp[i]&255;	
+		
+		x2 := ppx[x1];
+		y2 := ppy[x1];
+		y2:=y2-2;
+		if (j>64) then 
+		begin
+//			Graphics::CopyGraphics(#storage, p1,  x2,y2, 1,15,160-((1+1)*8));
+			// clear height = 16 pixels
+			Graphics::CopyGraphicsFast2(#storage, p1,  x2,y2, 16);
+		end;
+		x1:=x1+rotTextAdd;
+		if (x1>maxPath) then x1:=maxPath;
+	end;
+
+end;
+
+/*
+	Moves the text, keeps track of text pointer
+
+*/
+
+procedure UpdateRotText();
+begin
+	scroll:=scroll+2;
+	if (scroll>=rotTextAdd) then
+	begin
+		scroll:=0;
+		tp:=tp+1;
+		if tp[8]=0 then tp:=#text;
+	end;
+
+end;
+/*
+	Waits for VBL. Hack: only waits for vbl to turn to 1, which is set manually in the vblank routine
+*/
+procedure WaitForVBL();
+begin
+	vbl:=0;
+	while (vbl=0) do
+	begin
+	end;
+end;
+
+
+interrupt VBlank();
+begin
+	vbl:=1;	
+end;
+
+procedure Setup();
+begin
+	// Set the palette
+	memcpy(#image_pal,0,#palette_start,0,15,2);
+	// Image in storage
+	Compression::Decompress(#image,#storage);
+	// text data at buf
+	Compression::Decompress(#rot_text_data,#buf);
+	Graphics::FlipBuffers();	
+	// Copy image to the two buffers	
+	memcpy(#storage, 0, Graphics::curBuf, 0, 8000,4);
+	memcpy(#storage, 0, Graphics::offBuf, 0, 8000,4);
+	// Point to the paths	
+	ppx := #pathXd;
+	ppy := #pathYd;
+	ppt := #pathTd;
+	// Adjust the path a little bit
+	for i:=0 to 320 do
+	begin
+		ppx[i]:=ppx[i]-16;
+		ppy[i]:=ppy[i]-16;
+	end;
+	
+	scroll:=0;
+	tp := #text;
+	
+	// Eor's the original data
+	Graphics::EorBuffer(#buf,(128*8*26));
+	
+	
+
+
+end;
+
+begin
+	InitGraphics();
+	Graphics::Init();
+	Graphics::InitHTabs();
+	setirq(VBlank(), irq_verticalblank);
+	Setup();	
+	
+	while (done=false) do
+	begin
+		WaitForVBL();		
+		ClearRotatingText();	
+		Graphics::FlipBuffers();
+		UpdateRotText();
+		RenderRotatingText();	
+	end;
+
+	
+end.

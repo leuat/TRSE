@@ -57,4 +57,6 @@ use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
+data_header_images/sprites_balls.flf = 0
+data_header_images/sprites_balls2.flf = 0
 open_files =, tut1.ras

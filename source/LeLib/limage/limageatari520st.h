@@ -21,6 +21,9 @@ public:
 
     void LoadBin(QFile &file) override;
 
+    QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h, QString pparam) override;
+
+    void PrintShift(QString name, QString &s, int x, int y, int w, int h, int shift);
 
 };
 

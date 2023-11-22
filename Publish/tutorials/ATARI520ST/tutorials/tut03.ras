@@ -3,7 +3,7 @@ var
 	done : integer = 0;
 	screen : pointer of integer;
  	i,time : integer = 0;
-	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*48 +48");
+	sin : array[256] of integer = buildsinetable(110);
 
 	// Palette gets exported automatically	
 	@export "images/logo.flf" "images/logo.bin" 256

@@ -1,0 +1,85 @@
+program Tutorial6_Sprite_compiler;
+
+@use compression
+@use graphics
+
+var 
+	done,next,time,k,t,cx,cy,i,x1,y1,x2,y2 : integer = 0;
+	
+	bstart : array[8] of integer =(4*160,6*160,8*160,9*160,10*160,10*160,10*160,10*160);
+	blen : array[8] of integer =(24,20,16,12,10,10,10,10);
+
+	
+	@spritecompiler "images/sprites_balls2.flf" "images/sprites_balls.ras" 0 0 6 16 "ball"
+	
+	@export "images/sprites_balls.flf" "images/sprites_balls.bin" 256
+	pal : incbin("images/sprites_balls.pal");
+
+	storage : array[160*200] of byte aligned;
+
+	
+	sin : array[256] of integer = buildsinetable(255);
+	p1 : ^byte;
+
+/*
+
+	
+*/
+
+@include "images/sprites_balls.ras"
+
+procedure RenderBalls();
+begin
+	t:=time;
+	k:=time/3;
+	// center value
+	cx:=sin[time&255]>>4+8;
+	cy:=sin[(time*2)&255]>>3+16;
+	for i:=0 to 18 do
+	begin
+		// x and y values for each of the 24 balls
+		x1:=sin[t&255]+cx;
+		y1:=sin[(t+64+k)&255]>>1+cy;
+		
+
+		ball(Graphics::curBuf, x1,y1);
+		t:=t+10;
+		k:=k+7;
+	end;
+end;
+
+interrupt VBlank();
+begin
+	Graphics::vbl:=1;
+end;
+
+begin
+	// Set to lores mode
+	SetLoRes();
+	
+	Graphics::Init();
+
+	setirq(VBlank(), irq_verticalblank);
+	
+
+	
+	memcpy(#pal,0,#palette_start,0,15,2);
+	while (done = false) do
+	begin
+		
+		RenderBalls();
+		
+		Graphics::FlipBuffers();
+		
+		Graphics::WaitForVBL();
+		Graphics::ClearScreenFast(Graphics::curBuf);
+		done:=keypressed(sc_key_space_pressed);
+
+		time+=1;
+
+	end;	
+//	setirq(VBLankEmpty(), irq_verticalblank);
+
+end.
+
+

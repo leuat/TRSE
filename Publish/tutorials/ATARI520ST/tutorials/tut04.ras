@@ -1,11 +1,15 @@
 program Tutorial4;
 var 
-@use graphics
+
+@use "graphics"
+
+
+// This example renders horizontal lines
 
 	done : integer = 0;
 	buf: array[32000] of byte aligned;
  	j,i,time,x1,t,col : integer = 0;
-	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*128 +128");
+	sin : array[256] of integer = buildsinetable(256);
 	test : pointer of long;
 
 	const yStart : integer = 25;
@@ -53,6 +57,7 @@ begin
 	begin
 		// Clear back buffer. Do this smarter. 
 		fill(Graphics::curBuf,0,40*200);
+		// Render the lines
 		RenderLines();
 		// Flip buffers
 		Graphics::FlipBuffers();

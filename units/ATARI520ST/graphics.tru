@@ -9,7 +9,7 @@ var
 	//above2 : array[4096] of byte aligned; 
 	screen2Buf : array[180*200] of byte aligned; 
 	empty : array[512] of byte aligned;
-
+	vbl : integer;
 
 
 	rnd : array[256] of integer = buildtable("Math.random()*0xFFFF");
@@ -1260,6 +1260,16 @@ topp_flipp_eor:
 	");
 
 end;
+
+procedure WaitForVBL();
+begin
+	vbl:=0;
+	while (vbl=0) do
+	begin
+	end;
+
+end;
+
 
 
 end.

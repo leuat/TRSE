@@ -5,7 +5,7 @@ var
 	screen : pointer of integer;
  	
 	ym_file : incbin("music/slow.ym");
-	sin : array[256] of integer = buildtable("Math.sin(i/256.0*2*3.14159)*0xFF");
+	sin : array[256] of integer = buildsinetable(255);
 	
 	@export "images/image1.flf" "images/image1.bin" 256
 	
@@ -26,6 +26,7 @@ end;
 // Some raster boys
 interrupt Timer();
 begin
+	// Set the background color
 	if (line<98) then
 		palette_start[0]:=col
 	else 
@@ -40,8 +41,10 @@ begin
 	SetLoRes();
 	
 	GetScreen(screen);
-	
+
+	// Copy the image palette	
 	memcpy(#image_pal,0,#palette_start,0,15,2);
+	// Copy the image to screen
 	memcpy(#image,0,screen,0,8000,4);
 	InitMusic(#ym_file);
 	setirq(VBLank(), irq_verticalblank);
