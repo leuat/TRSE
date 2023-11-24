@@ -1,10 +1,7 @@
-program Tutorial1;
+program Tutorial1_Image;
 var 
-	done : integer = 0;
+	done : boolean = false;
 	screen : pointer of integer;
-	// Music is a sample .ym song from Arkos Tracker II 
-	// Download from https://www.julien-nevo.com/arkostracker/ . Export as ".ym" file, load in TRSE!
-	ym_file : incbin("music/test1.ym");
 	
 	@export "images/image1.flf" "images/image1.bin" 256
 	
@@ -25,29 +22,27 @@ var
 
 */
 
-
-// Vertical blank is called once per frame. Perfect for music!
 interrupt VBLank();
 begin
-	UpdateMusic();
 end;
+
 
 begin
 	// Set to lores mode
 	SetLoRes();
-	// Copy palette data
-	memcpy(#image_pal,0,#palette_start,0,16,2);
 	// Get screen pointer
 	GetScreen(screen);
-	// Copy image data
-	memcpy(#image,0,screen,0,8000,4);
-	// Initialize music	
-	InitMusic(#ym_file);
-	// Initialize VBLank IRQ
+	
 	setirq(VBLank(), irq_verticalblank);
-	//Loop until keypressed
+
+	// Copy palette data
+	memcpy(#image_pal,0,#palette_start,0,16,2);
+	// Copy image data to the screen
+	memcpy(#image,0,screen,0,8000,4);
+		
 	while (done=false) do
 	begin
+		waitverticalblank();
 		done:=keypressed(sc_key_space_pressed);
 	end;	
 

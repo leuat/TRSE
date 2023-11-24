@@ -1,0 +1,34 @@
+program Tutorial10_music;
+var 
+	done : integer = 0;
+	screen : pointer of integer;
+	// Music is a sample .ym song from Arkos Tracker II 
+	// Download from https://www.julien-nevo.com/arkostracker/ . Export as ".ym" file, load in TRSE!
+	ym_file : incbin("music/test1.ym");
+
+
+// Vertical blank is called once per frame. Perfect for music!
+interrupt VBLank();
+begin
+	UpdateMusic();
+end;
+
+// Empty vblank for reset
+interrupt VBLankEmpty();
+begin
+end;
+
+begin
+	InitMusic(#ym_file);
+	// Initialize VBLank IRQ
+	setirq(VBLank(), irq_verticalblank);
+	//Loop until keypressed
+	while (done=false) do
+	begin
+		done:=keypressed(sc_key_space_pressed);
+	end;	
+	setirq(VBLankEmpty(), irq_verticalblank);
+	
+
+end.
+

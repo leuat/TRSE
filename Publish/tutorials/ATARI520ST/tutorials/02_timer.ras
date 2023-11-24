@@ -1,10 +1,9 @@
-program Test;
+program Tutorial2_Timer;
 var 
 	col,time,line : integer = 0;
 	done : integer = 0;
 	screen : pointer of integer;
  	
-	ym_file : incbin("music/slow.ym");
 	sin : array[256] of integer = buildsinetable(255);
 	
 	@export "images/image1.flf" "images/image1.bin" 256
@@ -12,18 +11,22 @@ var
 	image : incbin("images/image1.bin");
 	image_pal : incbin("images/image1.pal");
 	
+/*
 
+This tutorial uses a timer IRQ to set the background colors
+
+
+*/
 
 
 interrupt VBLank();
 begin
-	UpdateMusic();
 	col:=sin[(time)&255];
 	time:=time+1;
 	line:=0;
 end;
 
-// Some raster boys
+// Set background palette
 interrupt Timer();
 begin
 	// Set the background color
@@ -46,7 +49,6 @@ begin
 	memcpy(#image_pal,0,#palette_start,0,15,2);
 	// Copy the image to screen
 	memcpy(#image,0,screen,0,8000,4);
-	InitMusic(#ym_file);
 	setirq(VBLank(), irq_verticalblank);
 	settimerirq(Timer(),2);
 		

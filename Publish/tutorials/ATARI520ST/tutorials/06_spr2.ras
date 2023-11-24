@@ -1,29 +1,36 @@
-program Tutorial5_Sprite;
+program Tutorial6_Sprite_compiler;
 
 @use compression
 @use graphics
 
+/*
+	This example file compiles a sprite directly to assembly, and stores the function in then
+	"draw_ball.ras" file. While this results in much faster rendering, the drawback is that
+	a) the sprite can't be changed and b) it takes up way of more space
+
+
+*/
+
+
 var 
 	done,next,time,k,t,cx,cy,i,x1,y1,x2,y2 : integer = 0;
 	
-	bstart : array[8] of integer =(4*160,6*160,8*160,9*160,10*160,10*160,10*160,10*160);
-	blen : array[8] of integer =(24,20,16,12,10,10,10,10);
-
+	// Compiles the sprites_balls2.flf file to sprites_balls.ras defining a method called "draw_ball"
+	@spritecompiler "images/sprites_balls2.flf" "images/sprites_balls.ras" 0 0 6 16 "draw_ball"
 	
 	@export "images/sprites_balls.flf" "images/sprites_balls.bin" 256
-	sprites : incbin("images/sprites_balls.bin") aligned compressed;
 	pal : incbin("images/sprites_balls.pal");
-
-	storage : array[160*200] of byte aligned;
 
 	
 	sin : array[256] of integer = buildsinetable(255);
-	p1 : ^byte;
 
 /*
 
 	
 */
+
+@include "images/sprites_balls.ras"
+
 procedure RenderBalls();
 begin
 	t:=time;
@@ -33,19 +40,14 @@ begin
 	cy:=sin[(time*2)&255]>>3+16;
 	for i:=0 to 16 do
 	begin
-		// x and y values for each of the 24 balls
+		// x and y values for each of the 16 balls
 		x1:=sin[t&255]+cx;
 		y1:=sin[(t+64+k)&255]>>1+cy;
-		// Sprite lookup between 0-5
-		y2:=sin[(192-t)&255]>>5;
-//		y2:=y2&7;
-		if (y2>=5) then y2:=5;
 		
-		p1:=#storage+toPointer(bstart[y2]);
-
+		// "draw_ball" is auto-generated in sprites_balls.ras 
 		
-		p1:=p1+toPointer(y2*(4*6)+8);		
-		Graphics::Blit(p1, Graphics::curBuf, x1,y1, 1,blen[y2],160-((1+1)*8));
+		draw_ball(Graphics::curBuf, x1,y1);
+		
 		t:=t+10;
 		k:=k+7;
 	end;
@@ -64,7 +66,6 @@ begin
 
 	setirq(VBlank(), irq_verticalblank);
 	
-	Compression::Decompress(#sprites,#storage);
 
 	
 	memcpy(#pal,0,#palette_start,0,15,2);
@@ -74,11 +75,12 @@ begin
 		RenderBalls();
 		
 		Graphics::FlipBuffers();
+		
 		Graphics::WaitForVBL();
 		Graphics::ClearScreenFast(Graphics::curBuf);
 		done:=keypressed(sc_key_space_pressed);
 
-		time+=2;
+		time+=1;
 
 	end;	
 //	setirq(VBLankEmpty(), irq_verticalblank);

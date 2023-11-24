@@ -1,0 +1,65 @@
+program Tutorial9_Text16x16;
+@use "text/text"
+var 
+	done,i,j,x,y,time : integer = 0;
+	// pointer to the screen
+	screen : ^byte;
+	
+
+	// Export 1 bitplane from the font in order to save space
+	@export "fonts/font16x16.flf" "images/font16x16.bin" 256 1 // 1 here means 1 bitplane
+
+	// Include the font data
+	font : incbin("images/font16x16.bin") aligned;
+	// wobbling text
+	text : string = "TRSE BABY YEAH";
+
+	sin : array[256] of integer = buildsinetable(64);
+
+
+
+procedure DrawText();
+begin
+	x:=2;
+	j:=time;
+	for i:=0 to length(text) do 
+	begin
+		y:=100 + sin[j&255];
+		Text::DrawChar(text[i], x ,y+1, screen);		
+		// Increase phase by some random number
+		j+=11;
+		x+=8;
+	end;
+	
+end;
+
+begin
+	// Set to lores mode
+	SetLoRes();
+	
+	// Get screen pointer
+	GetScreen(screen);
+	
+	// Set black background
+	poke16(#palette_start, 0,0);
+	// Color 1 white
+	poke16(#palette_start, 2,$FFF);
+	// Color 2 green
+	poke16(#palette_start, 4,$3F4);
+
+	
+	Text::Init(#font, 160, 65, 16, 16, #Text::lookup16x16);
+	
+	
+	Text::Draw("HELLO WORLD", 0,20, screen);
+	
+	while (true) do
+	begin
+		DrawText();	
+		time+=1;
+		waitverticalblank();
+		done:=keypressed(sc_key_space_pressed);
+	end;	
+end.
+
+

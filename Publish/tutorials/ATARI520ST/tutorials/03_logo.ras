@@ -1,4 +1,4 @@
-program Tutorial3;
+program Tutorial3_logo;
 var 
 	done : integer = 0;
 	screen : pointer of integer;
@@ -10,6 +10,13 @@ var
 	
 	image : incbin("images/logo.bin");
 	image_pal : incbin("images/logo.pal");
+
+/*
+
+This tutorial copies image data to the screen for each frame in a vertical blank irq method	
+
+*/
+
 	
 // Moves the screen data
 procedure UpdateLogo();
@@ -25,6 +32,7 @@ end;
 
 interrupt VBLank();
 begin
+	// Update the logo on Vertical Blank
 	UpdateLogo();
 	time:=time+1;
 	done:=keypressed(sc_key_space_pressed);

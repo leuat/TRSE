@@ -42,12 +42,14 @@ void LImageAtari520ST::ExportBin(QFile &file)
 //    data.resize(320*200/2); // 4 bitplanes
   //  data.fill(0);
 
-
+    int type = 0;
+    if (m_exportParams.contains("export1")) type = m_exportParams["export1"];
     int curBit = 0;
     int idx = 0;
     QVector<int> is;
     is.resize(4);
     is.fill(0);
+    if (type!=0) nobp = std::fmin(type,nobp);
     for (int y=0;y<m_height;y++) {
         for (int x=0;x<320;x++) {
 
@@ -217,7 +219,7 @@ void LImageAtari520ST::PrintShift(QString name, QString &s, int xp, int yp, int 
 //                int pos = y*160 + (x>>5)*16;
                 int pos = y*160 + (x>>4)*8;
 
-                for (int i=0;i<nobp;i++) {
+                for (int i=0;i<nobp;i+=1) {
                     //                    is[i] = x+y;
                     if (is[i]!=0) {
 //                        qDebug() << pos+i*2;;

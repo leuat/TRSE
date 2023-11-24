@@ -1,8 +1,17 @@
-program Tutorial6_Sprite_compiler;
+program Tutorial5_Sprite;
 
 @use compression
 @use graphics
 
+/*
+
+	This example renders a set of sprites in a sine wave using
+	Graphics::Blit. This method is somewhat slow, but still works nicely if you
+	need to conserve space. The next example (tut06) renders the same sprite, but
+	by compiling the sprite directly to code, which is much faster - but takes up more space. 
+
+
+*/
 var 
 	done,next,time,k,t,cx,cy,i,x1,y1,x2,y2 : integer = 0;
 	
@@ -10,9 +19,8 @@ var
 	blen : array[8] of integer =(24,20,16,12,10,10,10,10);
 
 	
-	@spritecompiler "images/sprites_balls2.flf" "images/sprites_balls.ras" 0 0 6 16 "ball"
-	
 	@export "images/sprites_balls.flf" "images/sprites_balls.bin" 256
+	sprites : incbin("images/sprites_balls.bin") aligned compressed;
 	pal : incbin("images/sprites_balls.pal");
 
 	storage : array[160*200] of byte aligned;
@@ -25,9 +33,6 @@ var
 
 	
 */
-
-@include "images/sprites_balls.ras"
-
 procedure RenderBalls();
 begin
 	t:=time;
@@ -35,14 +40,22 @@ begin
 	// center value
 	cx:=sin[time&255]>>4+8;
 	cy:=sin[(time*2)&255]>>3+16;
-	for i:=0 to 18 do
+	for i:=0 to 16 do
 	begin
 		// x and y values for each of the 24 balls
 		x1:=sin[t&255]+cx;
 		y1:=sin[(t+64+k)&255]>>1+cy;
+		// Sprite lookup between 0-5
+		y2:=sin[(192-t)&255]>>5;
+//		y2:=y2&7;
+		if (y2>=5) then y2:=5;
 		
+		p1:=#storage+toPointer(bstart[y2]);
 
-		ball(Graphics::curBuf, x1,y1);
+		
+		p1:=p1+toPointer(y2*(4*6)+8);		
+		// Copies the sprite to screen
+		Graphics::Blit(p1, Graphics::curBuf, x1,y1, 1,blen[y2],160-((1+1)*8));
 		t:=t+10;
 		k:=k+7;
 	end;
@@ -61,6 +74,7 @@ begin
 
 	setirq(VBlank(), irq_verticalblank);
 	
+	Compression::Decompress(#sprites,#storage);
 
 	
 	memcpy(#pal,0,#palette_start,0,15,2);
@@ -70,12 +84,11 @@ begin
 		RenderBalls();
 		
 		Graphics::FlipBuffers();
-		
 		Graphics::WaitForVBL();
 		Graphics::ClearScreenFast(Graphics::curBuf);
 		done:=keypressed(sc_key_space_pressed);
 
-		time+=1;
+		time+=2;
 
 	end;	
 //	setirq(VBLankEmpty(), irq_verticalblank);

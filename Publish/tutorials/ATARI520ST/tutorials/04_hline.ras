@@ -1,13 +1,15 @@
-program Tutorial4;
+program Tutorial4_Horizontal_lines;
 var 
 
 @use "graphics"
 
 
-// This example renders horizontal lines
+/* 
+	This example renders horizontal lines
+
+*/
 
 	done : integer = 0;
-	buf: array[32000] of byte aligned;
  	j,i,time,x1,t,col : integer = 0;
 	sin : array[256] of integer = buildsinetable(256);
 	test : pointer of long;
