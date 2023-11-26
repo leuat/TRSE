@@ -843,7 +843,7 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
     }
 
     TokenType::Type t = v->getOrgType(as);
-  //  as->Comment("Type: "+TokenType::getType(t) + "  for var "+v->getValue(as) + "  with orgtype " + TokenType::getType(v->getOrgType(as)));
+//    as->Comment("Type: "+TokenType::getType(t) + "  for var "+v->getValue(as) + "  with orgtype " + TokenType::getType(v->getOrgType(as)));
     if (nv!=nullptr && nv->m_expr!=nullptr) {
         //  qDebug() << nv->getValue(as);
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(nv->getValue(as), v->m_op.m_lineNumber, v->isAddress());
@@ -874,10 +874,8 @@ QString CodeGen68k::getEndType(QSharedPointer<Node> v) {
 
     QSharedPointer<NodeNumber> n =qSharedPointerDynamicCast<NodeNumber>(v);
     if (n!=nullptr) {
-
         return ".w";
     }
-
     if (t==TokenType::INTEGER) {
         return ".w";
     }

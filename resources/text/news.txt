@@ -1,9 +1,11 @@
 <h1>TRSE News and Updates</h1>
 
 <h2>November 2023</h2>
-More hiatus. However, some new changes are
+Key changes :
 <h3>Compiler</h3>
 <ul>
+    <li>Atari ST tutorials rewritten (not done yet)
+    <li>M68K compiler updates, unit tests running again
     <li>Amiga tutorials rewritten. Not entirely done yet. Fixed up a lot of bugs in the 68k compiler
     <li>X86 VGA examples updated/rewritten
     <li>Sparkle 3 support - not done yet, simple disk loader example project in the C64 tutorials

@@ -1,0 +1,126 @@
+program Level2_with_sprite;
+@use "graphics"
+@use "system/keys"
+@use "gfx/genericlevels2"
+@use "gfx/tiles"
+@use "text/text"
+var  
+	done : integer = false;
+/*
+
+	This example displays a level made with the TRSE level editor with a moving sprite using
+	the sprite compiler. 
+ 
+
+*/
+
+@export "images/tiles.flf"	 "images/tiles.bin" 256 
+
+   	tiles : incbin("images/tiles.bin") aligned;
+	tiles_pal : incbin("images/tiles.pal");
+   	i,j,k,key,x,y, trigger : integer = 0; 
+	
+	l: GenericLevels2::Level;
+
+@export "images/levels.flf" "images/levels.bin" 256
+	levelData : incbin("images/levels.bin");
+	
+	screen : ^byte;
+	buffer : array[160*200] of byte aligned;
+
+	// Compiles the sprites
+	@spritecompiler "images/level_sprite.flf" "images/level_sprite.ras" 0 0 16 48 "draw_player"
+
+	// Export 1 bitplane from the font in order to save space
+	@export "fonts/font8x8.flf" "images/font8x8.bin" 256 1 // 1 here means 1 bitplane
+
+	// Include the font data
+	font : incbin("images/font8x8.bin") aligned;
+
+
+interrupt VBLank();
+begin
+	Graphics::vbl:=1;
+end;
+
+
+var
+	px, py: integer; //player position
+
+@include "images/level_sprite.ras"
+
+
+
+procedure Init();
+begin
+	// Set to lores mode
+	Graphics::Init();
+	
+	// Sets the palette in the copper list
+	memcpy(#tiles_pal,0,#palette_start,0,16,2);
+	
+	setirq(VBLank(), irq_verticalblank);
+	
+	Tiles::SetTileLoc(#tiles);
+	Tiles::SetScreen(#buffer);
+	
+	x:=0;
+	y:=0;
+	px:=16;
+	py:=80;
+	GenericLevels2::ReadHeader(#levelData);
+	GenericLevels2::RenderLevel(x,y,2,16);
+
+	Text::Init(#font, 160, 64, 8, 8, #Text::lookup8x8);
+	
+	Text::Draw("THIS IS PROBABLY THE BEST ATARI ST GAME", 6,180, Graphics::buf1);
+	memcpy(Graphics::buf1,0,Graphics::buf2,0,40*200,4);
+	
+
+end;
+
+
+procedure HandleInput();
+begin
+	key := peek16(#keyboard_input,0);
+	if (key=Keys::right) then px+=2;
+	if (key=Keys::left) then px-=2; 
+	if (key=Keys::up) then py-=1; 
+	if (key=Keys::down) then py+=1; 
+	if (key=Keys::space) then done:=true;
+end;
+	
+procedure HandlePlayer();
+begin
+	trigger:=0;
+	if (px>300) then begin px:=2; x+=1; trigger:=1;end;
+	if (px<2) then begin px:=300; x-=1; trigger:=1;end;
+	if (py>112) then begin py:=2; y+=1; trigger:=1;end;
+	if (py<2) then begin py:=112; y-=1; trigger:=1;end;
+	if (trigger=1) then
+	begin		
+		GenericLevels2::RenderLevel(x,y,2,16);
+		trigger:=0;
+	end;
+	
+end;
+	
+begin
+	Init();
+		
+	while (done=false) do
+	begin
+		HandleInput();
+
+		HandlePlayer();
+		
+		Graphics::WaitForVBL();
+		Graphics::FlipBuffers();
+
+		// Copy original level buffer data 
+		memcpy(#buffer,0,Graphics::curBuf,0,40*160,4);
+		// Draw the player		
+		draw_player(Graphics::curBuf,px,py);
+		
+	end;	
+end.

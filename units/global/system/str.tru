@@ -20,7 +20,7 @@ var
 @define sz byte
 @endif
 	
-	p1,p2,p3 : ^byte;
+	p1,p2,p3,cp : ^byte;
 	i,j : @sz;
 	li,ii,jj:byte;
 	b,c : @sz;
@@ -75,21 +75,43 @@ itoa(1234, p1, 16); // coverts "1234" to a hexadecimal string stored in p1
 	</code>
 
 **/
-
+@ifndef CPU_M68000
 procedure itoa( num:global integer; p1: global ^byte; b:global @sz);
 begin
 	i:=0;
-	
 	if (num = 0) then
 	begin
 		p1[0]:=$30; // Simply 0
 		p1[1]:=0; 
 		return;
 	end;
-	
 	while (num <> 0) do
 	begin
- 		p1[i] :=chars[mod(num,b)];
+ 		p1[i] := chars[mod(num,b)];
+		i+=1;
+		num:=num/b;
+    end;
+	p1[i]:=0; // null-term string    
+	reverse(p1);	
+	
+end;
+@else
+procedure itoa( num:global integer; p1: global ^byte; b:global @sz);
+begin
+	i:=0;
+	
+	cp:=#chars;
+	if (num = 0) then
+	begin
+		p1[0]:=$30; // Simply 0
+		p1[1]:=0; 
+		return;
+	end;
+	while (num <> 0) do
+	begin
+		
+		
+ 		p1[i] :=cp[mod(num,b)];
 		i+=1;
 		num:=num/b;
     end;
@@ -98,6 +120,8 @@ begin
 	
 end;
 
+
+@endif
 @if SUPPORTS_LONG = 1
 
 /**

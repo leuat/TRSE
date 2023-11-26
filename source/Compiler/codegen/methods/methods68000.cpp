@@ -77,6 +77,8 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         Poke(as,".w");
     if (Command("poke32"))
         Poke(as,".l");
+    if (Command("peek16"))
+        Peek(as,".w");
 
 
 //    if (Command("InitProjectToScreen"))
@@ -265,6 +267,42 @@ void Methods68000::Poke(Assembler *as, QString bb)
     as->Asm("move"+bb+" "+ val +","+"("+a0+")");
 
     as->m_regMem.Pop(a0);
+
+}
+
+void Methods68000::Peek(Assembler *as, QString bb)
+{
+    QString a0 = as->m_regMem.Get();
+    as->Comment("Peek command");
+    //LoadAddress(as,m_node->m_params[0],a0);
+    m_codeGen->LoadAddress(m_node->m_params[0],a0);
+    // m_codeGen->LoadVariable(m_node->m_params[2]);
+    //    m_node->m_params[2]->Accept(m_codeGen);
+    QSharedPointer<NodeNumber> num = qSharedPointerDynamicCast<NodeNumber>(m_node->m_params[1]);
+    if (num!=nullptr) {
+        if (num->m_val==0) {
+            as->Asm("move"+bb+" ("+a0+"),d0");
+
+            as->m_regMem.Pop(a0);
+            as->m_varStack.push("d0");
+            return;
+        }
+    }
+
+    /*    if (m_node->m_params[2]->isPureNumeric() || m_node->m_params[2]->isPureVariable()) {
+
+    }
+  */
+    //    m_node->m_params[2]->Accept(m_codeGen);
+
+    //    Asm(as,"move",as->m_varStack.pop(),d0);
+    //    m_codeGen->LoadVariable(m_node->m_params[1]);
+    m_node->m_params[1]->Accept(m_codeGen);
+    Asm(as,"add.w",as->m_varStack.pop(),a0);
+    as->Asm("move"+bb+"("+a0+"),d0");
+
+    as->m_regMem.Pop(a0);
+    as->m_varStack.push("d0");
 
 }
 

@@ -224,6 +224,7 @@ m; SetTimerIRQ; ATARI520ST; p, b
 
 c; palette_start; ATARI520ST; a; $ffff8240
 c; sc_key_space_pressed; ATARI520ST; b; #$39
+c; keyboard_input; ATARI520ST; a; $fffc02
 c; irq_verticalblank; ATARI520ST; a; $70
 c; irq_horizontalblank; ATARI520ST; a; $68
 
@@ -246,6 +247,7 @@ m; InitP61Module; Amiga;a
 m; PlayP61Module; Amiga;
 m; Poke8; Amiga, ATARI520ST ; a,i,b
 m; Poke16; Amiga, ATARI520ST ; a,i,i
+m; Peek16; M68000 ; a,i
 m; Poke32; Amiga, ATARI520ST ; a,i,l
 m; WaitVerticalBlank; Amiga, ATARI520ST;
 m; SetCopperList32; Amiga; a, a

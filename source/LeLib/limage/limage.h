@@ -284,13 +284,7 @@ public:
     int m_charWidth=40;
     int m_charHeight=25;
 
-    void ToQPixMaps(QVector<QPixmap> &map)
-    {
-        map.clear();
-        for (int i=0;i<m_charWidth*m_charHeight;i++) {
-            map.append(ToQPixMap(i));
-        }
-    }
+    void ToQPixMaps(QVector<QPixmap> &map);
     virtual QPixmap ToQPixMap(int chr) {return QPixmap();}
 
     virtual void setCurrentChar(int i) {m_currentChar = i;}

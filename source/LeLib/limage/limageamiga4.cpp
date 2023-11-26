@@ -15,6 +15,7 @@ LImageAmiga::LImageAmiga(LColorList::Type t, int type)  : LImageQImage(t)
     }*/
     m_type = LImage::Type::AMIGA320x256;
     Initialize(320,256);
+    m_charHeight=40;
     m_scale = 1;
     m_supports.asmExport = false;
     m_supports.binaryLoad = false;

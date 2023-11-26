@@ -1,0 +1,16 @@
+unit Keys;
+var
+	
+	const right: integer = $4DFF;
+	const right_release: integer = $CDFF;
+	const left: integer = $4BFF;
+	const left_release: integer = $CBFF;
+	const up: integer = $48FF;
+	const up_release: integer = $C8FF;
+	const down: integer = $50FF;
+	const down_release: integer = $D0FF;
+	
+	
+	const space: integer = $39FF;
+	
+end.

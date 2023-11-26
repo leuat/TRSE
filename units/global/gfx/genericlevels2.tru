@@ -28,7 +28,8 @@ var
 			// Read level header info
 			l.sizex := zp[0];
 			l.sizey := zp[1];
-		
+
+			asm(";here");		
 			l.width := zp[2];
 			l.height := zp[3];
 	
@@ -39,7 +40,9 @@ var
 			l.chunksize := zp[7];
 		
 			l.datasize := zp[8];
-			i5:=l.width*l.height;
+			
+			
+			i5:=(l.width*l.height);
 			i5 += l.datasize;
 			l.size :=i5;
 			
@@ -57,8 +60,8 @@ var
 			zp+=(l.size)*x;
 			curLevel := zp;
 
-			l.width := 20;
-			l.height := 12;
+//			l.width := 20;
+//			l.height := 12;
 
 			for j:=0 to l.height do begin
 				xx:=0;

@@ -32,6 +32,7 @@ public:
     void DrawLine(Assembler*as);
     void Fill(Assembler*as);
     void Poke(Assembler* as, QString bb);
+    void Peek(Assembler* as, QString bb);
     void SetCopperList32(Assembler* as);
     void Memcpy(Assembler *as);
     void MemcpyUnroll(Assembler *as);

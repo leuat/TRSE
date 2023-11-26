@@ -1,0 +1,26 @@
+program Keys;
+@use "system/screen"
+@use "system/str"
+var
+	key, prev : integer aligned;
+	txt : array[255] of byte = (0);
+	
+	// Small program that displays input key code on the screen
+	
+	
+begin
+	key:=10;
+	while (key<>$39) do
+	begin
+		key := peek16(#keyboard_input,0);
+		str::itoa(key,#txt,16);
+		if (prev<>key) then
+		begin
+			Screen::Print(#txt);
+			Screen::NewLine();
+		end;
+		prev:=key;		
+	end;
+	
+	
+end.

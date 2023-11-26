@@ -16,6 +16,7 @@ LImageAtari520ST::LImageAtari520ST(LColorList::Type t, int type)  : LImageAmiga(
         m_type = LImage::Type::AMIGA320x256;
     }*/
     m_type = LImage::Type::ATARI320x200;
+    m_charHeight=40;
     Initialize(320,200);
     m_scale = 1;
     m_colorList.setNoBitplanes(4);

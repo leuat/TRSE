@@ -4478,12 +4478,12 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     bool forceByteAlignment =(Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000 && m_isRecord);
 //    qDebug() << "TYPESPEC " <<m_currentToken.getType() << varNames << m_symTab->m_currentClass;
 
-    if (forceByteAlignment && t.m_type==TokenType::BYTE) {
+/*    if (forceByteAlignment && t.m_type==TokenType::BYTE) {
         t.m_type = TokenType::INTEGER;
         t.m_value = "INTEGER";
         m_currentToken = t;
     }
-
+*/
     if (m_types.contains(t.m_value) || m_types.contains(m_symTab->m_gPrefix+t.m_value)) {
         QString n = t.m_value;
         if (!m_types.contains(t.m_value))

@@ -29,6 +29,7 @@
 #include <QPainter>
 #include <QMatrix4x4>
 #include "source/Compiler/syntax.h"
+#include <QDebug>
 //#include <omp.h>
 uchar LImage::m_copy[1024*1024];
 bool LImage::m_hasCopy = false;
@@ -413,10 +414,18 @@ QString LImage::GetCurrentModeString() {
     return "";
 }
 
+void LImage::ToQPixMaps(QVector<QPixmap> &map)
+{
+    map.clear();
+    for (int i=0;i<m_charWidth*m_charHeight;i++) {
+        map.append(ToQPixMap(i));
+    }
+}
+
 void LImage::FloydSteinbergDither(QImage &oimg, LColorList &colors, bool dither, double strength)
 {
 
-/*    int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
+    /*    int xx = (dx-img.width()/2.0)*m_importScaleX + img.width()/2.0;
     int yy = (dy-img.height()/2.0)*m_importScaleY + img.height()/2.0;
 
     if (m_importScaleX==1.0 && m_importScaleY==1.0) { // prevent rounding errors on windows.. damn

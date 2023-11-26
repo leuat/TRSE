@@ -1379,7 +1379,7 @@ void FormImageEditor::updateCharSet()
         itm->setIcon(q);
         itm->setData(Qt::UserRole, kk);
         cnt++;
-        if (cnt>=256 && isLevelEditor) break;
+        if (cnt>=512 && isLevelEditor) break;
         i++;
         kk++;
         if (i>=width) {

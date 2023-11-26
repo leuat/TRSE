@@ -545,6 +545,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             if (s->m_type.toLower()=="long")
                 t= llong;
 
+
             if (s->m_type.toLower()=="string")
                 ErrorHandler::e.Error("Record types does not support strings for record : " + type+", please use classes instead.");
 

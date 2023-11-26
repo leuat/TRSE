@@ -1,0 +1,66 @@
+program Level1;
+@use "graphics"
+@use "system/keys"
+@use "gfx/genericlevels2"
+@use "gfx/tiles"
+var  
+	done : integer = false;
+/*
+
+	This example displays a level made with the TRSE level editor
+ 
+
+*/
+
+@export "images/tiles.flf"	 "images/tiles.bin" 256 
+
+   	tiles : incbin("images/tiles.bin") aligned;
+	tiles_pal : incbin("images/tiles.pal");
+   	i,j,k,key,x,y, trigger, prev: integer = 0; 
+	
+	l: GenericLevels2::Level;
+
+@export "images/levels.flf" "images/levels.bin" 256
+	levelData : incbin("images/levels.bin");
+	
+	screen : ^byte;
+	
+
+interrupt VBLank();
+begin
+end;
+	
+begin
+		
+	// Set to lores mode
+	SetLoRes();
+	getscreen(screen);
+	// Sets the palette in the copper list
+	memcpy(#tiles_pal,0,#palette_start,0,16,2);
+	
+	
+
+	setirq(VBLank(), irq_verticalblank);
+	
+	Tiles::SetTileLoc(#tiles);
+	Tiles::SetScreen(screen);
+	
+	x:=0;
+	y:=0;
+	GenericLevels2::ReadHeader(#levelData);
+	GenericLevels2::RenderLevel(x,y,2,16);
+	while (done=false) do
+	begin
+		key := peek16(#keyboard_input,0);
+		if (prev<>key) then
+		begin
+			if (key=Keys::right) then x+=1;
+			if (key=Keys::left) then x-=1; 
+			if (key=Keys::up) then y-=1; 
+			if (key=Keys::down) then y+=1; 
+			if (key=Keys::space) then done:=true;
+			GenericLevels2::RenderLevel(x,y,2,16);
+		end;
+		prev := key;
+	end;	
+end.
