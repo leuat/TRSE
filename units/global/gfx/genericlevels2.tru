@@ -14,7 +14,8 @@ var
 	Level = record
 		
 		lp : pointer;
-		sizex,sizey,width,height,startx,starty,chunks,chunksize,datasize,pos:byte;
+		// "temp" for alignment
+		sizex,sizey,width,height,startx,starty,chunks,chunksize,datasize,pos,temp:byte;
 		bnk:byte;
 		size:integer;
 	end;		
@@ -29,7 +30,6 @@ var
 			l.sizex := zp[0];
 			l.sizey := zp[1];
 
-			asm(";here");		
 			l.width := zp[2];
 			l.height := zp[3];
 	
@@ -59,9 +59,6 @@ var
 			zp+=(l.size*l.sizex)*y;
 			zp+=(l.size)*x;
 			curLevel := zp;
-
-//			l.width := 20;
-//			l.height := 12;
 
 			for j:=0 to l.height do begin
 				xx:=0;

@@ -79,6 +79,8 @@ void Methods68000::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
         Poke(as,".l");
     if (Command("peek16"))
         Peek(as,".w");
+    if (Command("peek8"))
+        Peek(as,".b");
 
 
 //    if (Command("InitProjectToScreen"))

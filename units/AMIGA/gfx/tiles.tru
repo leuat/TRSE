@@ -1,14 +1,21 @@
 unit Tiles;
 
 var
-	tlookup2x1 : array[256] of integer = buildtable("((i%20)*2)+((Math.floor((i/20.0)))*( 40*8))");
+	tlookup2x1 : array[256] of integer = buildtable("((i%20))+((Math.floor((i/20.0)))*( 200*8))");
 	//tlookup2x1 : array[256] of integer = buildtable("2");
-	tab40 : array[256] of integer=buildtable("i*40*5");
+	tab40 : array[256] of integer = buildtable("i*40*5");
 	screen,dst, src, tile : ^byte;
+	noBitplanes : integer;
 	
 	i : byte;
+	tab5 : array[100] of integer = buildtable("i*5");
 	
 procedure SetTileLoc(tile: global ^byte);
+begin
+	
+end;
+
+procedure SetNoBitplanes(noBitplanes: global integer);
 begin
 	
 end;
@@ -18,13 +25,12 @@ begin
 	
 end;
 	
-procedure WriteToScreen(xx:integer,yy,val,wx,wy : integer);
+procedure WriteToScreen(xx,yy,val,wx,wy : integer);
 begin
-	dst:=screen + tab40[yy]; 
-	dst+=xx;
-//	val:=16;
-	src:=tile+ tlookup2x1[val];
-	wy*=5;
+	dst:=screen + tab40[yy]+xx;  
+	src:=tile + tlookup2x1[val];
+//	wy*=noBitplanes;
+	wy := tab5[wy];
 	for i:=0 to wy do
 	begin
 		memcpyunroll(src,0,dst,0,1,2);

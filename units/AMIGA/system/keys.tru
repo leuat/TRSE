@@ -1,0 +1,29 @@
+unit Keys;
+var
+	key:byte;
+	
+	const A:byte = $20;
+	const S:byte = $21;
+	const D:byte = $22;
+	
+
+	const Q:byte = $10;
+	const W:byte = $11;
+	const E:byte = $12;
+
+	const RIGHT:byte = $4E;
+	const LEFT:byte = $4F;
+	const UP:byte = $4C;
+	const DOWN:byte = $4D;	
+	
+procedure Read();
+begin
+	asm("
+	move.b  $bfec01,d0
+	ror.b   #1,d0
+    not.b   d0	
+	move.b d0,Keys_key	
+	");
+end;	
+
+end.

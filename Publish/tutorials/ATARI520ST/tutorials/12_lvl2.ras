@@ -116,7 +116,7 @@ begin
 		
 		Graphics::WaitForVBL();
 		Graphics::FlipBuffers();
-
+	
 		// Copy original level buffer data 
 		memcpy(#buffer,0,Graphics::curBuf,0,40*160,4);
 		// Draw the player		
