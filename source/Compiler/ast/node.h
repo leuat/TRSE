@@ -158,7 +158,8 @@ public:
 
     // Replaces inline variables with the macro parameter
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp);
-
+    virtual void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val);
+    virtual void ResetInlineAssembler();
     // Apply type flags to node
     virtual void ApplyFlags() {}
 
@@ -242,7 +243,6 @@ public:
     virtual bool isStringList(Assembler* as) {return false;}
     virtual bool isLong(Assembler* as) { return false;}
     virtual bool isByte(Assembler* as) { return false;}
-
 
     virtual bool isMinusOne() { return false; }
     virtual bool isOne() { return false; }

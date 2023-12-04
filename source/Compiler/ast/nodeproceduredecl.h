@@ -87,6 +87,8 @@ public:
 
     void SetParametersValue(QVector<PVar>& lst);
 
+    void ResetInlineAssembler() override;
+
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 

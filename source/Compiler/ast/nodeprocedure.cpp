@@ -114,6 +114,11 @@ void NodeProcedure::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Nod
     m_procedure->ReplaceInline(as,inp);
 }
 
+void NodeProcedure::ResetInlineAssembler()
+{
+    m_procedure->ResetInlineAssembler();
+}
+
 bool NodeProcedure::isPureNumeric() {
     return false;
     return isReference();

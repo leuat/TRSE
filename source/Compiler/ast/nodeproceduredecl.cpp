@@ -78,6 +78,12 @@ void NodeProcedureDecl::SetParametersValue(QVector<PVar> &lst) {
     //        ((QSharedPointer<NodeBlock>)m_block)->SetParameters(lst, names);
 }
 
+void NodeProcedureDecl::ResetInlineAssembler()
+{
+    if (m_block!=nullptr)
+        m_block->ResetInlineAssembler();
+}
+
 
 void NodeProcedureDecl::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
 

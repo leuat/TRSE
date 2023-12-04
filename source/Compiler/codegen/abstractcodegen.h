@@ -57,6 +57,7 @@ protected:
     Assembler* as = nullptr;
     QMap< QString,QSharedPointer<Node>> m_inlineParameters;
     bool m_flag1 = false;
+    bool m_isCurrentlyWithinInline = false;
     QString m_useNext="";
 public:
 

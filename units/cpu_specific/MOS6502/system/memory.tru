@@ -1,0 +1,136 @@
+unit Memory;
+var
+	@donotremove p
+	@donotremove 2
+	@donotremove v
+	@donotremove v2
+	p,p2 : ^byte;
+	v,v2 : byte;
+	i1,i2 : integer;
+
+
+
+procedure Poke( i1: global integer pure_number, v: global byte pure_number) inline;
+begin
+	asm("
+		lda #[Memory_v]
+		sta [Memory_i1]
+	");
+end;
+
+
+procedure Poke( i1: global integer pure_number, v: global byte pure_variable) inline;
+begin
+	asm("
+		lda [Memory_v]
+		sta [Memory_i1]
+	");
+end;
+
+procedure Poke( p: global pointer pure , v: global byte pure_variable) inline;
+begin
+	asm("
+		lda [Memory_v]
+		ldy #0
+		sta ([Memory_p]),y
+	");
+end;
+
+procedure Poke( p: global pointer pure , v: global byte pure_number) inline;
+begin
+	asm("
+		lda #[Memory_v]
+		ldy #0
+		sta ([Memory_p]),y
+	");
+end;
+
+
+procedure Poke( p: global pointer, v: global byte);
+begin
+	p[0]:=v;
+end;
+
+procedure MemCpy( i1 : global integer pure, i2 : global integer pure, v: global byte pure ) inline;
+begin
+	asm("
+		ldx #0
+{label0}:
+		lda [Memory_i1],x
+		sta [Memory_i2],x
+		inx
+		cpx #[Memory_v]
+		bne {label0}
+	");
+end;
+
+procedure MemCpy( p : global pointer pure, p2 : global pointer pure, v: global byte pure ) inline;
+begin
+	asm("
+		ldy #0
+{label0}:
+		lda ([Memory_p]),y
+		sta ([Memory_p2]),y
+		iny
+		cpy #[Memory_v]
+		bne {label0}
+	");
+end;
+
+procedure MemCpy( p : global pointer, p2 : global pointer, v: global byte);
+begin
+	asm("
+		ldy #0
+memcpy_cpy_1:
+		lda (Memory_p),y
+		sta (Memory_p2),y
+		iny
+		cpy Memory_v
+		bne memcpy_cpy_1
+	");
+end;
+
+
+procedure Fill( i1: global integer pure_number, v,v2: global byte pure_number) inline;
+begin
+	asm("
+	lda #[Memory_v]
+	ldy #0
+{label0}:
+	sta [Memory_i1],y
+	iny
+	cpy #[Memory_v2]
+	bne {label0}
+	");	
+end;
+
+procedure Fill( i1: global integer pure_number, v: global byte pure_variable, v2: global byte pure_variable) inline;
+begin
+	asm("
+	lda [Memory_v]
+	ldy #0
+{label0}:
+	sta [Memory_i1],y
+	iny
+	cpy [Memory_v2]
+	bne {label0}
+	");	
+end;
+
+
+procedure Fill( p: global pointer, v,v2: global byte);
+begin
+	asm("
+	lda Memory_v
+	ldy #0
+memory_fill_loop:
+	sta (Memory_p),y
+	iny
+	cpy Memory_v2
+	bne memory_fill_loop
+
+
+	");	
+end;
+	
+end.

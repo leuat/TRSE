@@ -1,10 +1,14 @@
 program Randomness;
+@use "system/memory"
+@use "screen/screen"
 var  
 	random_color,x,y,index: byte; 
 	// Array of random bytes
 	random_values : array[256] of byte; 
 	// Pointer to screen and color ram
 	screenP, colorP : pointer of byte; // or just "pointer", or "^byte"
+	
+	
 
 
 
@@ -21,16 +25,16 @@ end;
 begin
 	InitializeRandom();
 	// Set screen foreground and background to black. The second parameter is an offset.
-	screen_bg_col:=black;
-	screen_fg_col:=black;
+	Screen::background := black;
+	Screen::border := black;
 	
 	// point to start of random table
 	index:=0; 
 	// infinite loop
 	while (true) do  begin
 		// Set pointer to point to beginning of screen/color ram ($0400 and $D800)
-		screenP:=#screen_char_loc;
-		colorP:=#screen_col_loc;
+		screenP:=#Screen::screen0;
+		colorP:=#Screen::color;
 		// loop y		
 		for y:=0 to screen_height do begin
 			// moves current screen position
@@ -45,7 +49,7 @@ begin
 			// Select some random color
 			random_color := random_values[index];
 			// Fill the current line in colorP with 40 bytes of random_color
-			fill(colorP,random_color,screen_width);
+			Memory::Fill(colorP, random_color, screen_width);
 			// Increase screen and color pointers
 			screenP:=screenP+screen_width;
 			colorP:=colorP+screen_width;

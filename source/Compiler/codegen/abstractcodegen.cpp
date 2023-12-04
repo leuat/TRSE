@@ -1130,18 +1130,29 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
 
 void AbstractCodeGen::InlineProcedure(QSharedPointer<NodeProcedure> p)
 {
+    m_isCurrentlyWithinInline = true;
     m_inlineParameters.clear();
+    p->ResetInlineAssembler();
     int cur = 0;
+    as->Comment("*** Inline procedure :" +p->m_procedure->m_procName);
     for (auto v : p->m_procedure->m_paramDecl) {
         QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
         QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);
-        if (!var->m_isRegister)
+        if (!var->m_isRegister) {
             m_inlineParameters[var->value] = p->m_parameters[cur];
+            QString val = p->m_parameters[cur]->getValue(as);
+            if (p->m_parameters[cur]->isPureNumeric())
+                val = val.replace("#","");
+
+            p->m_procedure->m_block->ReplaceInlineAssemblerVariables(as, "["+var->value+"]", val);
+
+        }
         else {
             QSharedPointer<NodeAssign>na = QSharedPointer<NodeAssign>(new NodeAssign(nv->m_varNode,
                                                                                      p->m_parameters[cur]->m_op,
                                                                                      p->m_parameters[cur]));
             na->Accept(this);
+
         }
         cur++;
     }
@@ -1149,6 +1160,8 @@ void AbstractCodeGen::InlineProcedure(QSharedPointer<NodeProcedure> p)
 
     p->m_procedure->m_block->Accept(this);
     m_inlineParameters.clear();
+    m_isCurrentlyWithinInline = false;
+    as->Comment("*** End of inline procedure :" +p->m_procedure->m_procName);
 
 }
 /*
@@ -1382,8 +1395,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeAsm> node)
 {
     node->DispatchConstructor(as,this);
 
-    QStringList txt = node->m_asm.split("\n");
-    as->Comment("****** Inline assembler section");
+    QStringList txt;
+    if (m_isCurrentlyWithinInline)
+        txt = node->m_outAsm.split("\n");
+    else
+        txt = node->m_asm.split("\n");
+//    as->Comment("****** Inline assembler section");
     for (QString t: txt) {
         as->Write(t,0);
     }

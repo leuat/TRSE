@@ -1,5 +1,8 @@
 unit Keys;
 var
+	
+// Todo: add more raw keys: http://www.whdload.de/docs/en/rawkey.html
+	
 	key:byte;
 	
 	const A:byte = $20;

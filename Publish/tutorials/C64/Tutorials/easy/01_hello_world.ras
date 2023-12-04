@@ -1,34 +1,36 @@
 program HelloWorld;
+@use "screen/screen"
+@use "system/memory"
 var  
 	// you can split strings into several substrings	
-  	text : string = ("HELLO ", "WORLD");
-	cheap_scroller : string = "YES THIS IS A VERY LONG STRING AND IT WILL NOT LOOK PARTICULARLY NICE WHEN IT REACHES ITS END BECAUSE THERE IS NO TEST WHETHER THE STRING SHOULD WRAP OR NOT";
+  	text : cstring = ("HELLO ", "WORLD");
+	cheap_scroller : cstring = "YES THIS IS A VERY LONG STRING AND IT WILL NOT LOOK PARTICULARLY NICE WHEN IT REACHES ITS END BECAUSE THERE IS NO TEST WHETHER THE STRING SHOULD WRAP OR NOT";
 	i, j:byte;
+	ptr : ^byte;
 	
 begin
-	// Fill the screen (at screen_char_loc) with  40*25 bytes of character $20 - "space"
-	ClearScreen(key_space, #screen_char_loc);
+	// Fill the screen (at screen0 = $400) with  40*25 bytes of character $20 - "space"
+	Screen::Clear(#Screen::screen0, key_space);
 	// Fill the color ram with yellow
-	ClearScreen(yellow, #screen_col_loc);
-	// Move cursor to x,y position 10,12
-	moveto(10,12,hi(#screen_char_loc));
-	// Print the text
-	printstring(#text,0,40);
-	// Move cursor 2 rows down (2*40)
-	screenmemory+=2*screen_width;
-	// Print something else
-	moveto(10,14,hi(#screen_char_loc));
-	printstring("THIS IS ANOTHER STRING",0,40);
+	Screen::Clear(#Screen::color, yellow);
+	// Print a string at 10, 12 	
+	Screen::PrintString(#text, 10,12,#Screen::Screen0);
+	// Print another string directly
+	Screen::PrintString(cstring("THIS IS ANOTHER STRING 123"), 10,14,#Screen::Screen0);
 	// Infinite loop
-	moveto(0,18,hi(#screen_char_loc));
 	while (true) do
 	begin
 		// Wait a bit
 		for j:=0 to 4 do
-			waitforverticalblank();
+			Screen::WaitForVerticalBlank();
 			
-		printstring(#cheap_scroller,i,40);
+		// Point ptr to line 22 on the screen
+		ptr := #Screen::screen0 + screen_width*22;	
+		// Copy the data from the cstring to the screen
+		Memory::MemCpy(#cheap_scroller + i, ptr, 40);
+		// Increase the counter
 		i+=1;
+		// Reset the text counter when the reaches the end of the string
 		if (i+40>length(cheap_scroller)) then i:=0;
 	end;	
 	

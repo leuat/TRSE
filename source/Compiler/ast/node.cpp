@@ -52,6 +52,24 @@ void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp
         m_right->ReplaceInline(as,inp);
 }
 
+void Node::ReplaceInlineAssemblerVariables(Assembler *as, QString var, QString val)
+{
+    if (m_left != nullptr)
+        m_left->ReplaceInlineAssemblerVariables(as,var,val);
+    if (m_right != nullptr)
+        m_right->ReplaceInlineAssemblerVariables(as,var,val);
+
+}
+
+void Node::ResetInlineAssembler()
+{
+    if (m_left != nullptr)
+        m_left->ResetInlineAssembler();
+    if (m_right != nullptr)
+        m_right->ResetInlineAssembler();
+
+}
+
 TokenType::Type Node::getClassvariableType() {
     TokenType::Type t1=TokenType::NADA,t2=TokenType::NADA;
     if (m_left!=nullptr)

@@ -49,3 +49,17 @@ void NodeCompound::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node
         n->ReplaceInline(as, inp);
 }
 
+void NodeCompound::ReplaceInlineAssemblerVariables(Assembler *as, QString var, QString val)
+{
+    for (auto n: children)
+        n->ReplaceInlineAssemblerVariables(as, var, val);
+
+}
+
+void NodeCompound::ResetInlineAssembler()
+{
+    for (auto n: children)
+        n->ResetInlineAssembler();
+
+}
+

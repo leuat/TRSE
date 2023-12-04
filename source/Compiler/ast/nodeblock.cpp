@@ -42,6 +42,12 @@ void NodeBlock::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >
         m_compoundStatement->ReplaceInline(as,inp);
 }
 
+void NodeBlock::ReplaceInlineAssemblerVariables(Assembler *as, QString var, QString val)
+{
+    if (m_compoundStatement!=nullptr)
+        m_compoundStatement->ReplaceInlineAssemblerVariables(as,var,val);
+}
+
 
 void NodeBlock::PopZeroPointers(Assembler *as) {
     for (QSharedPointer<Node> n: m_decl) {
@@ -71,4 +77,10 @@ void NodeBlock::ExecuteSym(QSharedPointer<SymbolTable> symTab) {
         n->ExecuteSym(m_symTab);
     }
     m_compoundStatement->ExecuteSym(m_symTab);
+}
+
+void NodeBlock::ResetInlineAssembler()
+{
+    if (m_compoundStatement!=nullptr)
+        m_compoundStatement->ResetInlineAssembler();
 }

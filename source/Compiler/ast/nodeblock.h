@@ -82,6 +82,7 @@ public:
 
     void SetParameter(QString name, PVar var);
     void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
+    void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val) override;
 
     void PopZeroPointers(Assembler* as);
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {
@@ -98,7 +99,7 @@ public:
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeBlock>(sharedFromThis()));
     }
-
+    void ResetInlineAssembler() override;
     void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override
     {
         Node::ReplaceVariable(as,name,node);

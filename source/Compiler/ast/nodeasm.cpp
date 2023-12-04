@@ -25,3 +25,21 @@
 void NodeAsm::FindPotentialSymbolsInAsmCode(QStringList &lst) {
     lst <<Syntax::s.m_currentSystem->AnalyseForPotentialVariables(m_asm);
 }
+
+void NodeAsm::ReplaceInlineAssemblerVariables(Assembler *as, QString var, QString val)
+{
+    m_outAsm.replace(var,val);
+    int cnt = 0;
+    while (m_outAsm.contains("{label"+QString::number(cnt)+"}")) {
+        QString lbl = "generated_label_"+QString::number(Data::data.genLabel);
+        m_outAsm.replace("{label"+QString::number(cnt)+"}",lbl);
+        cnt+=1;
+        Data::data.genLabel+=1;
+    }
+//    qDebug() << m_outAsm;
+}
+
+void NodeAsm::ResetInlineAssembler()
+{
+    m_outAsm = m_asm;
+}

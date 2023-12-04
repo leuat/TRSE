@@ -37,7 +37,7 @@ class NodeAsm : public Node
 {
 public:
     /* Assembly code associated with the node as a QString */
-    QString m_asm;
+    QString m_asm, m_outAsm;
 
 
     NodeAsm(Token t):Node() {
@@ -55,6 +55,9 @@ public:
     void Accept(AbstractCodeGen* dispatcher) override {
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeAsm>(sharedFromThis()));
     }
+
+    void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val) override;
+    void ResetInlineAssembler() override;
 
 };
 

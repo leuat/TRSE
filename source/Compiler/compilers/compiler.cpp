@@ -47,6 +47,7 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     ErrorHandler::e.m_displayWarnings = m_ini->getdouble("display_warnings")==1;
 
     connect(&m_parser, SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
+    Data::data.genLabel = 0;
 
     m_tree = nullptr;
     m_parser.m_preprocessorDefines[m_projectIni->getString("system").toUpper()]="1";

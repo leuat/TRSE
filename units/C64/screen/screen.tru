@@ -6,11 +6,24 @@ var
 
 */
 
-//var
-   	p1, sp, cp : pointer;
+   	p1, sp, cp, p2 : pointer;
 	i, j, x, y, c : byte;
+	@donotremove i2
+	@donotremove p1
+	@donotremove i
 	i2 : integer;
+	
+	const screen0 : address = $0400;
+	const screen1 : address = $4400;
+	const screen2 : address = $8400;
+	const screen3 : address = $C400;
+	
+	const border : address = $d020;
+	const background : address = $d021;
+	const color : address = $d800;
 
+	tab40 : array[25] of integer = buildtable("i*SCREEN_WIDTH");
+	
 /**
 
 	Toggles raster interrupts on lines above than 256
@@ -77,6 +90,39 @@ begin
 	end;
 end;
 
+/**
+	Prints a string text to the screen at position [p1 + y*40 + c] with color [c]
+**/
+procedure PrintString(p1 : global pointer; x, y : global byte; p2: global ^byte);
+begin
+	sp := p2 +tab40[y] + x;
+
+
+	asm("
+		ldy #0
+printstring_loop1:
+		lda (Screen_p1),y
+		beq printstring_endd
+		
+		sta (Screen_sp),y
+		iny
+		jmp printstring_loop1
+printstring_endd:
+
+		
+	
+	");
+	
+	while (p1^<>0) do
+	begin
+		j := p1^;
+		if (j>64 and j<64+32) then j:=j-64;
+		sp^:=j;
+		sp+=1;
+		p1+=1;
+	end;
+end;
+
 
 procedure WaitForRaster( i2 : global integer); 
 begin
@@ -101,6 +147,59 @@ wait_for_raster:
 	bne wait_for_raster
 	");
 
+end;
+
+procedure WaitForVerticalBlank() inline;
+begin
+	asm("
+{label0}:
+	bit $D011
+	bpl {label0}
+{label1}:
+	bit $D011
+	bmi {label1}
+	");
+end;
+
+procedure Clear( i2 : global integer pure_number, i: global byte pure_number) inline;
+begin
+	asm("
+	lda #[Screen_i]
+	ldx #$fa
+{label0}
+	dex
+	sta [Screen_i2] + $0000,x
+	sta [Screen_i2] + $00fa,x
+	sta [Screen_i2] + $01f4,x
+	sta [Screen_i2] + $02ee,x
+	bne {label0}
+	");
+end;
+
+procedure Clear( i2 : global integer pure_number, i: global byte pure_variable) inline;
+begin
+	asm("
+	lda [Screen_i]
+	ldx #$fa
+{label0}
+	dex
+	sta [Screen_i2] + $0000,x
+	sta [Screen_i2] + $00fa,x
+	sta [Screen_i2] + $01f4,x
+	sta [Screen_i2] + $02ee,x
+	bne {label0}
+	");
+end;
+
+procedure Clear( p1 : global pointer, i: global byte);
+begin
+	fill(p1,i,250);
+	p1+=250;
+	fill(p1,i,250);
+	p1+=250;
+	fill(p1,i,250);
+	p1+=250;
+	fill(p1,i,250);
 end;
 
 end.

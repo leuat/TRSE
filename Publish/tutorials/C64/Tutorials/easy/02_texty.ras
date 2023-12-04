@@ -1,4 +1,6 @@
 program Texty;
+@use "screen/screen"
+@use "system/memory"
 var  
 	// Define four variables : position x, position y, time and a counter i
    x,y,time,i: byte = 0;  
@@ -8,29 +10,31 @@ begin
 
 
  	// First, fill color ram with white
-	ClearScreen(white, #screen_col_loc);
+ 	Screen::Clear(#Screen::color, white);
+ 	Screen::Clear(#Screen::screen0, key_space);
 	// Set black border
-	screen_bg_col:=black;
+	Screen::border := black;
+	Screen::background := green;
 	// infinite loop
+	
 	while (true) do
 	begin
 		// Make sure we wait for 1 raster cycle to complete
-		waitforverticalblank();
+		Screen::WaitForVerticalBlank();
 		// Clear screen with character $20 (space)
-		ClearScreen(key_space, #screen_char_loc);
+		Screen::PrintString(cstring("                                      "),x,y, #Screen::screen0);
 		// Calculate x,y some sine values (making a circle)
 		// if sine[x] then sine[x+64] is equal to cosine  
 		x:=sine[time]/12 + 6;		
 		y:=sine[time+64]/16 + 4;		
 		// move "screenmemory" cursor to x,y at screen memory $0400
-		moveto(x,y,hi(#screen_char_loc));
 		i:=time/64; // i will now have values between 0 and 3 (since time is between 0 and 255)
 		// Print some random string
 		case i of
-			0: printstring("I AM FISH",0,40);
-			1: printstring("ARE YOU FISH",0,40);
-			2: printstring("ME AM CAT",0,40);
-			3: printstring("OM NOM NOM",0,40);
+			0: Screen::PrintString(cstring("I AM FISH"),x,y, #Screen::screen0);
+			1: Screen::PrintString(cstring("ARE YOU FISH"),x,y, #Screen::screen0);
+			2: Screen::PrintString(cstring("ME AM CAT"),x,y, #Screen::screen0);
+			3: Screen::PrintString(cstring("OM NOM NOM"),x,y, #Screen::screen0);
 		end;
 		// Increase the timer
 		time+=1;

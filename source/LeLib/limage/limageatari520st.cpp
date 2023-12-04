@@ -159,31 +159,6 @@ QStringList LImageAtari520ST::SpriteCompiler(QString name, QString currentDir, Q
     for (int i=0;i<16;i++) {
         s+="\tif ("+xx+"="+QString::number(i)+") then "+p+"_"+QString::number(i)+"();\n";
     }
-/*    s+="\tasm(\"\n";
-    //    qDebug() << nobp;
-    QByteArray data;
-    //    data.resize(320*200/2); // 4 bitplanes
-    //  data.fill(0);
-
-
-    int curBit = 0;
-    int idx = 0;
-    QVector<int> is;
-    is.resize(4);
-    is.fill(0);
-
-/*    s+="\tmove.l "+dst+",a0\n";
-    s+="\tmoveq #0,d0\n";
-    s+="\tmoveq #0,d1\n";
-    s+="\tmove.w "+yy+",d0\n";
-    s+="\tmulu.w #160,d0\n";
-//    s+="\tadd.w "+xx+",d0\n";
-    s+="\tmove.w "+xx+",d1\n";
-    s+="\tlsr #1,d1\n";
-    s+="\tand #$FFF8,d1\n";
-    s+="\tadd.l d0,a0\n";
-    s+="\tadd.l d1,a0\n";
-*/
 
 
   //  s+="\t\");\n";

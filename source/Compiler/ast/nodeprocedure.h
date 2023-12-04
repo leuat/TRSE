@@ -78,6 +78,11 @@ public:
 
 
     virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
+    virtual void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val) {
+        m_procedure->ReplaceInlineAssemblerVariables(as,var,val);
+    }
+    virtual void ResetInlineAssembler();
+
     bool isPureNumeric() override;
 
 };

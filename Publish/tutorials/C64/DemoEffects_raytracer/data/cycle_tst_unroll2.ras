@@ -1,870 +1,852 @@
 procedure cycle_tst_unroll2_unroll();
 begin asm(" 
- ldx #$0e
+ ldx #$38
  lda cols,x
+ sta $47bd
+ sta $47be
+ sta $47bf
+ sta $47e5
+ sta $47e6
+ sta $47e7
+ ldx #$39
+ lda cols,x
+ sta $dbe2
+ sta $dbe3
+ sta $dbe4
+ sta $dbe1
+ ldx #$3f
+ lda cols,x
+ sta $db6b
+ sta $db6c
+ sta $db6d
+ sta $db93
+ sta $db94
+ sta $db95
+ ldx #$40
+ lda cols,x
+ sta $478f
+ sta $4790
+ sta $4791
+ sta $4792
+ sta $47b7
  sta $47b8
  sta $47b9
+ sta $47ba
+ sta $47df
  sta $47e0
  sta $47e1
- ldx #$15
- lda cols,x
- sta $db8f
- sta $db90
- sta $dbb7
- sta $dbb8
- ldx #$16
- lda cols,x
- sta $47b5
- sta $47b6
- sta $47dd
- sta $47de
- ldx #$17
+ sta $47e2
+ ldx #$41
  lda cols,x
  sta $dbdc
  sta $dbdd
- ldx #$1c
+ sta $dbde
+ ldx #$46
  lda cols,x
- sta $4765
- sta $4766
- sta $478d
- sta $478e
- ldx #$1d
+ sta $4719
+ sta $471a
+ sta $471b
+ sta $471c
+ sta $4741
+ sta $4742
+ sta $4743
+ sta $4744
+ ldx #$47
  lda cols,x
- sta $db8c
- sta $db8d
- sta $dbb4
- sta $dbb5
- ldx #$1e
- lda cols,x
- sta $47b2
- sta $47b3
- sta $47da
- sta $47db
- ldx #$1f
- lda cols,x
- sta $dbd8
- sta $dbd9
- sta $dbda
- ldx #$23
- lda cols,x
- sta $db3c
- sta $db3d
- sta $db64
+ sta $db3e
+ sta $db3f
+ sta $db40
  sta $db65
- ldx #$24
+ sta $db66
+ sta $db67
+ sta $db68
+ sta $db8e
+ sta $db8f
+ sta $db90
+ ldx #$48
  lda cols,x
- sta $4762
- sta $4763
  sta $478a
  sta $478b
- ldx #$25
+ sta $478c
+ sta $47b2
+ sta $47b3
+ sta $47b4
+ ldx #$49
  lda cols,x
- sta $db89
- sta $db8a
- sta $dbb1
- sta $dbb2
- ldx #$26
- lda cols,x
- sta $47af
- sta $47b0
- sta $47d7
- sta $47d8
- ldx #$27
- lda cols,x
- sta $dbd5
- sta $dbd6
- ldx #$2a
- lda cols,x
- sta $473b
- sta $473c
- ldx #$2b
- lda cols,x
- sta $db39
- sta $db3a
- sta $db61
- sta $db62
- ldx #$2c
- lda cols,x
- sta $475f
- sta $4760
- sta $4761
- sta $4787
- sta $4788
- sta $4789
- ldx #$2d
- lda cols,x
- sta $db86
- sta $db87
  sta $dbae
  sta $dbaf
- ldx #$2e
+ sta $dbb0
+ sta $dbd6
+ sta $dbd7
+ sta $dbd8
+ ldx #$4a
  lda cols,x
- sta $47ac
- sta $47ad
- ldx #$2f
+ sta $47d2
+ sta $47d3
+ sta $47d4
+ ldx #$4d
  lda cols,x
- sta $dbd2
- sta $dbd3
- ldx #$31
+ sta $dac8
+ sta $daef
+ sta $daf0
+ sta $daf1
+ sta $daf2
+ sta $db18
+ sta $db19
+ sta $db1a
+ ldx #$4e
  lda cols,x
- sta $db12
- sta $db13
- ldx #$32
+ sta $4714
+ sta $4715
+ sta $4716
+ sta $473c
+ sta $473d
+ sta $473e
+ ldx #$4f
  lda cols,x
- sta $4710
- sta $4711
- sta $4738
- sta $4739
- ldx #$33
- lda cols,x
- sta $db36
- sta $db37
- sta $db5e
- sta $db5f
- ldx #$34
+ sta $db38
+ sta $db39
+ sta $db3a
+ sta $db60
+ sta $db61
+ sta $db62
+ ldx #$50
  lda cols,x
  sta $475c
  sta $475d
  sta $475e
- ldx #$35
+ sta $475f
+ sta $4784
+ sta $4785
+ sta $4786
+ sta $4787
+ ldx #$51
  lda cols,x
- sta $db83
- sta $db84
- ldx #$36
- lda cols,x
- sta $47a9
- sta $47aa
- ldx #$37
- lda cols,x
- sta $dba7
- sta $dba8
- sta $dbcf
- sta $dbd0
- ldx #$38
- lda cols,x
- sta $46e8
- sta $46e9
- sta $46ea
- ldx #$39
- lda cols,x
- sta $dae7
- sta $dae8
- sta $db0f
- sta $db10
- ldx #$3a
- lda cols,x
- sta $470d
- sta $470e
- sta $4735
- sta $4736
- ldx #$3b
- lda cols,x
- sta $db33
- sta $db34
- ldx #$3c
- lda cols,x
- sta $4759
- sta $475a
- sta $475b
- ldx #$3d
- lda cols,x
- sta $db58
- sta $db59
  sta $db80
  sta $db81
- ldx #$3e
+ sta $db82
+ sta $db83
+ sta $dba8
+ sta $dba9
+ sta $dbaa
+ sta $dbab
+ ldx #$52
  lda cols,x
- sta $477e
- sta $477f
+ sta $47a4
+ sta $47a5
  sta $47a6
  sta $47a7
- ldx #$3f
+ sta $47cc
+ sta $47cd
+ sta $47ce
+ sta $47cf
+ ldx #$54
  lda cols,x
- sta $dac0
- sta $dac1
- ldx #$40
+ sta $469e
+ sta $469f
+ sta $46a0
+ sta $46c6
+ sta $46c7
+ sta $46c8
+ ldx #$55
  lda cols,x
- sta $46be
- sta $46bf
+ sta $dac2
+ sta $dac3
+ sta $dac4
+ sta $dac5
+ sta $daea
+ sta $daeb
+ sta $daec
+ sta $daed
+ ldx #$56
+ lda cols,x
  sta $46e6
  sta $46e7
- ldx #$41
+ sta $46e8
+ sta $46e9
+ sta $470e
+ sta $470f
+ sta $4710
+ sta $4711
+ ldx #$57
  lda cols,x
- sta $dae4
- sta $dae5
+ sta $db0b
  sta $db0c
  sta $db0d
- ldx #$42
+ sta $db33
+ sta $db34
+ sta $db35
+ ldx #$58
  lda cols,x
- sta $470a
- sta $470b
- ldx #$43
- lda cols,x
- sta $db08
- sta $db09
- sta $db30
- sta $db31
- ldx #$44
- lda cols,x
- sta $472e
  sta $472f
  sta $4730
- sta $4756
+ sta $4731
  sta $4757
  sta $4758
- ldx #$45
+ sta $4759
+ ldx #$59
  lda cols,x
- sta $db55
+ sta $db53
  sta $db54
- sta $db56
- ldx #$46
+ sta $db55
+ sta $db52
+ sta $db7a
+ sta $db7b
+ sta $db7c
+ sta $db7d
+ ldx #$5a
  lda cols,x
- sta $4697
- sta $4698
- ldx #$47
+ sta $4776
+ sta $4777
+ sta $4778
+ sta $4779
+ sta $479e
+ sta $479f
+ sta $47a0
+ sta $47a1
+ ldx #$5b
+ lda cols,x
+ sta $da4d
+ sta $da4e
+ sta $da4f
+ sta $da4c
+ sta $da75
+ sta $da76
+ sta $da77
+ ldx #$5c
+ lda cols,x
+ sta $4671
+ sta $4672
+ sta $4673
+ sta $4699
+ sta $469a
+ sta $469b
+ ldx #$5d
  lda cols,x
  sta $da95
  sta $da96
+ sta $da97
  sta $dabd
  sta $dabe
- ldx #$48
+ sta $dabf
+ ldx #$5e
  lda cols,x
+ sta $46b9
+ sta $46ba
  sta $46bb
- sta $46bc
+ sta $46e1
+ sta $46e2
  sta $46e3
- sta $46e4
- ldx #$49
+ ldx #$5f
  lda cols,x
- sta $dae1
- sta $dae2
- ldx #$4a
- lda cols,x
- sta $46df
- sta $46e0
- sta $4707
- sta $4708
- ldx #$4b
- lda cols,x
+ sta $dadd
+ sta $dade
+ sta $dadf
  sta $db05
  sta $db06
  sta $db07
- sta $db2e
- ldx #$4c
- lda cols,x
- sta $472b
- sta $472c
- sta $472d
- ldx #$4d
- lda cols,x
- sta $da6e
- sta $da6f
- sta $da97
- ldx #$4e
- lda cols,x
- sta $4694
- sta $4695
- ldx #$4f
- lda cols,x
- sta $da92
- sta $da93
- sta $daba
- sta $dabb
- ldx #$50
- lda cols,x
- sta $46b8
- sta $46b9
- ldx #$51
- lda cols,x
- sta $dab7
- sta $dab8
- sta $dadf
- sta $dae0
- ldx #$52
- lda cols,x
- sta $46dd
- sta $46de
- ldx #$53
- lda cols,x
- sta $dadb
- sta $dadc
- sta $db03
- sta $db04
- ldx #$54
- lda cols,x
- sta $4645
- sta $4646
- sta $466d
- sta $466e
- ldx #$55
- lda cols,x
- sta $da6b
- sta $da6c
- ldx #$56
- lda cols,x
- sta $466a
- sta $4669
- sta $466b
- sta $4691
- sta $4692
- sta $4693
- ldx #$57
- lda cols,x
- sta $da90
- sta $da91
- ldx #$58
- lda cols,x
- sta $468e
- sta $468f
- sta $46b6
- sta $46b7
- ldx #$59
- lda cols,x
- sta $dab4
- sta $dab5
- ldx #$5a
- lda cols,x
- sta $46b2
- sta $46b3
- sta $46da
- sta $46db
- ldx #$5b
- lda cols,x
- sta $da1c
- sta $da1d
- sta $da44
- sta $da45
- ldx #$5c
- lda cols,x
- sta $4643
- sta $4644
- ldx #$5d
- lda cols,x
- sta $da41
- sta $da42
- sta $da69
- sta $da6a
- ldx #$5e
- lda cols,x
- sta $4667
- sta $4668
- ldx #$5f
- lda cols,x
- sta $da65
- sta $da66
- sta $da8d
- sta $da8e
  ldx #$60
  lda cols,x
- sta $468b
- sta $468c
+ sta $4701
+ sta $4702
+ sta $4703
+ sta $4729
+ sta $472a
+ sta $472b
  ldx #$61
  lda cols,x
- sta $da89
- sta $da8a
- sta $dab1
- sta $dab2
+ sta $db25
+ sta $db26
+ sta $db27
+ sta $db4d
+ sta $db4e
+ sta $db4f
  ldx #$62
  lda cols,x
- sta $461c
- sta $461d
+ sta $45fb
+ sta $45fc
+ sta $45fd
+ sta $4623
+ sta $4624
+ sta $4625
+ sta $4626
+ sta $464b
+ sta $464c
+ sta $464d
+ sta $464e
  ldx #$63
  lda cols,x
- sta $da1a
- sta $da1b
+ sta $da20
+ sta $da21
+ sta $da22
+ sta $da1f
+ sta $da47
+ sta $da48
+ sta $da49
+ sta $da4a
  ldx #$64
  lda cols,x
- sta $4618
- sta $4619
- sta $4640
- sta $4641
+ sta $4644
+ sta $4645
+ sta $4646
+ sta $466c
+ sta $466d
+ sta $466e
  ldx #$65
  lda cols,x
- sta $da3e
- sta $da3f
+ sta $da68
+ sta $da69
+ sta $da6a
+ sta $da90
+ sta $da91
+ sta $da92
  ldx #$66
  lda cols,x
- sta $463c
- sta $463d
- sta $4664
- sta $4665
+ sta $468c
+ sta $468d
+ sta $468e
+ sta $46b4
+ sta $46b5
+ sta $46b6
  ldx #$67
  lda cols,x
- sta $da62
- sta $da63
+ sta $dab0
+ sta $dab1
+ sta $dab2
+ sta $dad8
+ sta $dad9
+ sta $dada
  ldx #$68
  lda cols,x
- sta $4660
- sta $4661
- sta $4688
- sta $4689
+ sta $46d3
+ sta $46d4
+ sta $46d5
+ sta $46d6
+ sta $46fb
+ sta $46fc
+ sta $46fd
+ sta $46fe
  ldx #$69
+ lda cols,x
+ sta $d9d2
+ sta $d9d3
+ sta $d9d4
+ sta $d9fa
+ sta $d9fb
+ sta $d9fc
+ ldx #$6a
+ lda cols,x
+ sta $45f6
+ sta $45f7
+ sta $45f8
+ sta $45f9
+ sta $461e
+ sta $461f
+ sta $4620
+ sta $4621
+ ldx #$6b
  lda cols,x
  sta $d9f3
  sta $d9f4
- ldx #$6a
- lda cols,x
- sta $45f2
- sta $45f1
- sta $461a
- ldx #$6b
- lda cols,x
- sta $da18
- sta $da19
+ sta $d9f5
+ sta $da1b
+ sta $da1c
+ sta $da1d
  ldx #$6c
  lda cols,x
- sta $4616
  sta $4617
+ sta $4618
+ sta $4619
+ sta $463f
+ sta $4640
+ sta $4641
  ldx #$6d
  lda cols,x
- sta $da14
- sta $da15
+ sta $da3b
  sta $da3c
  sta $da3d
+ sta $da63
+ sta $da64
+ sta $da65
  ldx #$6e
  lda cols,x
- sta $463a
- sta $463b
+ sta $465f
+ sta $4660
+ sta $4661
+ sta $465e
+ sta $4686
+ sta $4687
+ sta $4688
+ sta $4689
  ldx #$6f
  lda cols,x
- sta $da38
- sta $da39
- sta $da61
+ sta $da5a
+ sta $da5b
+ sta $da5c
+ sta $da5d
+ sta $da82
+ sta $da83
+ sta $da84
+ sta $da85
  ldx #$70
  lda cols,x
- sta $45cb
- sta $45cc
- sta $45f3
- sta $45f4
+ sta $4581
+ sta $4582
+ sta $4583
+ sta $45a9
+ sta $45aa
+ sta $45ab
  ldx #$71
  lda cols,x
- sta $d9c9
- sta $d9ca
- sta $d9f1
- sta $d9f2
+ sta $d9a5
+ sta $d9a6
+ sta $d9a7
+ sta $d9a8
+ sta $d9cd
+ sta $d9ce
+ sta $d9cf
+ sta $d9d0
  ldx #$72
  lda cols,x
- sta $45ef
- sta $45f0
+ sta $45ca
+ sta $45cb
+ sta $45cc
+ sta $45f2
+ sta $45f3
+ sta $45f4
  ldx #$73
  lda cols,x
- sta $d9ed
+ sta $d9c6
+ sta $d9c7
+ sta $d9c8
  sta $d9ee
- sta $da16
+ sta $d9ef
+ sta $d9f0
  ldx #$74
  lda cols,x
+ sta $45ea
  sta $45eb
  sta $45ec
+ sta $4612
  sta $4613
  sta $4614
  ldx #$75
  lda cols,x
- sta $da11
- sta $da12
+ sta $da0e
+ sta $da0f
+ sta $da10
+ sta $da0d
+ sta $da35
+ sta $da36
+ sta $da37
+ sta $da38
  ldx #$76
  lda cols,x
- sta $460f
- sta $4610
+ sta $4609
+ sta $460a
+ sta $460b
+ sta $460c
+ sta $4631
+ sta $4632
+ sta $4633
+ sta $4634
  ldx #$77
  lda cols,x
- sta $d9a2
- sta $d9a3
- sta $d9cb
+ sta $d958
+ sta $d959
+ sta $d95a
+ sta $d95b
+ sta $d980
+ sta $d981
+ sta $d982
+ sta $d983
  ldx #$78
  lda cols,x
- sta $45c9
- sta $45ca
+ sta $4555
+ sta $4556
+ sta $4554
+ sta $4557
+ sta $457c
+ sta $457d
+ sta $457e
+ sta $457f
  ldx #$79
  lda cols,x
- sta $d9c7
- sta $d9c8
- ldx #$7a
- lda cols,x
- sta $45c5
- sta $45c6
- sta $45ed
- sta $45ee
- ldx #$7b
- lda cols,x
- sta $d9c3
- sta $d9c4
- sta $d9eb
- sta $d9ec
- ldx #$7c
- lda cols,x
- sta $45e9
- sta $45ea
- ldx #$7d
- lda cols,x
- sta $d9e7
- sta $d9e8
- ldx #$7e
- lda cols,x
- sta $45a2
- sta $45a3
- ldx #$7f
- lda cols,x
- sta $d9a0
- sta $d9a1
- ldx #$80
- lda cols,x
- sta $459e
- sta $459f
- sta $45c7
- ldx #$81
- lda cols,x
- sta $d99d
- sta $d9c5
- ldx #$82
- lda cols,x
- sta $45c3
- ldx #$83
- lda cols,x
- sta $d9c1
- sta $d9c2
- ldx #$84
- lda cols,x
- sta $45bf
- sta $45c0
- sta $45e7
- sta $45e8
- ldx #$85
- lda cols,x
+ sta $d979
  sta $d97a
  sta $d97b
- ldx #$86
+ sta $d9a1
+ sta $d9a2
+ sta $d9a3
+ ldx #$7a
  lda cols,x
- sta $4578
- sta $4579
- sta $45a0
- sta $45a1
- ldx #$87
- lda cols,x
- sta $d976
- sta $d977
- sta $d99e
- sta $d99f
- ldx #$88
- lda cols,x
- sta $459c
- sta $459d
- ldx #$89
- lda cols,x
- sta $d99a
- sta $d99b
- ldx #$8a
- lda cols,x
- sta $4598
- sta $4599
- ldx #$8b
- lda cols,x
- sta $d996
- sta $d997
- sta $d9be
- sta $d9bf
- ldx #$8c
- lda cols,x
- sta $4551
- sta $4552
- sta $457a
- ldx #$8d
- lda cols,x
- sta $d950
- sta $d978
- ldx #$8e
- lda cols,x
+ sta $4575
  sta $4576
  sta $4577
- ldx #$8f
+ sta $459d
+ sta $459e
+ sta $459f
+ ldx #$7b
  lda cols,x
+ sta $d999
+ sta $d99a
+ sta $d99b
+ sta $d9c1
+ sta $d9c2
+ sta $d9c3
+ ldx #$7c
+ lda cols,x
+ sta $45bd
+ sta $45be
+ sta $45bf
+ sta $45e5
+ sta $45e6
+ sta $45e7
+ ldx #$7d
+ lda cols,x
+ sta $d9b9
+ sta $d9ba
+ sta $d9bb
+ sta $d9b8
+ sta $d9e0
+ sta $d9e1
+ sta $d9e2
+ sta $d9e3
+ ldx #$7e
+ lda cols,x
+ sta $4508
+ sta $4509
+ sta $4507
+ sta $450a
+ sta $452f
+ sta $4530
+ sta $4531
+ sta $4532
+ ldx #$7f
+ lda cols,x
+ sta $d92c
+ sta $d92d
+ sta $d92e
+ sta $d954
+ sta $d955
+ sta $d956
+ ldx #$80
+ lda cols,x
+ sta $4528
+ sta $4529
+ sta $452a
+ sta $4550
+ sta $4551
+ sta $4552
+ ldx #$81
+ lda cols,x
+ sta $d94c
+ sta $d94d
+ sta $d94e
  sta $d974
  sta $d975
- ldx #$90
- lda cols,x
- sta $4572
- sta $4573
- ldx #$91
- lda cols,x
- sta $d970
- sta $d971
- sta $d998
- sta $d999
- ldx #$92
- lda cols,x
- sta $456e
- sta $456f
- sta $4596
- sta $4597
- ldx #$93
- lda cols,x
- sta $d951
- sta $d952
- ldx #$94
- lda cols,x
- sta $454f
- sta $4550
- ldx #$95
- lda cols,x
- sta $d94e
- ldx #$96
- lda cols,x
- sta $454c
- sta $454d
- ldx #$97
- lda cols,x
- sta $d94a
- sta $d94b
- sta $d972
- sta $d973
- ldx #$98
+ sta $d976
+ ldx #$82
  lda cols,x
  sta $4548
  sta $4549
+ sta $454a
  sta $4570
  sta $4571
- ldx #$99
+ sta $4572
+ ldx #$83
  lda cols,x
- sta $d946
- sta $d947
+ sta $d96c
+ sta $d96d
  sta $d96e
- sta $d96f
- ldx #$9a
+ sta $d994
+ sta $d995
+ sta $d996
+ ldx #$84
  lda cols,x
- sta $4529
- sta $452a
- ldx #$9b
+ sta $4568
+ sta $4569
+ sta $456a
+ sta $4590
+ sta $4591
+ sta $4592
+ ldx #$85
  lda cols,x
- sta $d927
- sta $d928
- ldx #$9c
+ sta $d8df
+ sta $d8e0
+ sta $d8e1
+ sta $d907
+ sta $d908
+ sta $d909
+ ldx #$86
  lda cols,x
- sta $4525
- sta $4526
- sta $454e
- ldx #$9d
- lda cols,x
- sta $d924
- sta $d94c
- ldx #$9e
- lda cols,x
- sta $4522
- sta $4523
- sta $454a
- sta $454b
- ldx #$9f
- lda cols,x
- sta $d920
- sta $d921
- sta $d948
- sta $d949
- ldx #$a0
- lda cols,x
- sta $4546
- sta $4547
- ldx #$a1
- lda cols,x
- sta $d901
- sta $d902
- sta $d929
- sta $d92a
- ldx #$a2
- lda cols,x
- sta $44ff
- sta $4500
- sta $4527
- sta $4528
- ldx #$a3
- lda cols,x
- sta $d925
- sta $d926
- ldx #$a4
- lda cols,x
- sta $4524
- ldx #$a5
- lda cols,x
- sta $d922
- ldx #$a6
- lda cols,x
- sta $4520
- sta $4521
- ldx #$a7
- lda cols,x
- sta $d91e
- sta $d91f
- ldx #$a8
- lda cols,x
- sta $4501
- ldx #$a9
+ sta $44db
+ sta $44dc
+ sta $44dd
+ sta $4503
+ sta $4504
+ sta $4505
+ ldx #$87
  lda cols,x
  sta $d8ff
  sta $d900
- ldx #$aa
+ sta $d901
+ sta $d927
+ sta $d928
+ sta $d929
+ ldx #$88
  lda cols,x
- sta $44fd
- sta $44fe
- ldx #$ab
- lda cols,x
- sta $d8fb
- sta $d8fc
- ldx #$ac
- lda cols,x
- sta $44f9
- sta $44fa
- ldx #$ad
- lda cols,x
- sta $d8f8
- sta $d8f9
- ldx #$ae
- lda cols,x
- sta $44f6
- sta $44f7
- ldx #$af
- lda cols,x
- sta $d8d9
- sta $d8d8
- ldx #$b0
- lda cols,x
- sta $44d7
- sta $44d8
- ldx #$b1
- lda cols,x
- sta $d8d5
- sta $d8d6
- sta $d8fd
- sta $d8fe
- ldx #$b2
- lda cols,x
- sta $44d3
- sta $44d4
  sta $44fb
  sta $44fc
- ldx #$b3
+ sta $44fd
+ sta $4523
+ sta $4524
+ sta $4525
+ ldx #$89
  lda cols,x
- sta $d8d1
- sta $d8d2
- sta $d8fa
- ldx #$b4
- lda cols,x
- sta $44d0
- sta $44d1
- sta $44f8
- ldx #$b5
- lda cols,x
- sta $d8ce
- sta $d8cf
- sta $d8f6
  sta $d8f7
- ldx #$b6
+ sta $d8f8
+ sta $d8f9
+ sta $d91f
+ sta $d920
+ sta $d921
+ sta $d922
+ ldx #$8a
  lda cols,x
- sta $44d9
- ldx #$b7
+ sta $451b
+ sta $451c
+ sta $451d
+ sta $451e
+ sta $4543
+ sta $4544
+ sta $4545
+ sta $4546
+ ldx #$8b
  lda cols,x
- sta $d8d7
- ldx #$b8
+ sta $d918
+ sta $d919
+ sta $d91a
+ sta $d940
+ sta $d941
+ sta $d942
+ ldx #$8c
  lda cols,x
- sta $44d5
- sta $44d6
- ldx #$b9
+ sta $448e
+ sta $448f
+ sta $4490
+ sta $44b6
+ sta $44b7
+ sta $44b8
+ ldx #$8d
  lda cols,x
- sta $d8d3
- sta $d8d4
- ldx #$ba
- lda cols,x
- sta $44d2
- ldx #$bb
- lda cols,x
- sta $d8d0
- ldx #$bc
- lda cols,x
- sta $44ce
- sta $44cf
- ldx #$bd
- lda cols,x
- sta $d8b0
- sta $d8b1
- ldx #$be
+ sta $d8b2
+ sta $d8b3
+ sta $d8b4
+ sta $d8b5
+ sta $d8da
+ sta $d8db
+ sta $d8dc
+ sta $d8dd
+ ldx #$8e
  lda cols,x
  sta $44af
- ldx #$bf
- lda cols,x
- sta $d8ad
- sta $d8ae
- ldx #$c0
- lda cols,x
- sta $44ab
- sta $44ac
- ldx #$c1
- lda cols,x
- sta $d8a9
- sta $d8aa
- ldx #$c2
- lda cols,x
- sta $44a8
- sta $44a9
- ldx #$c3
- lda cols,x
- sta $d8a6
- sta $d8a7
- ldx #$c4
- lda cols,x
- sta $4488
- sta $4489
  sta $44b0
  sta $44b1
- ldx #$c5
+ sta $44d7
+ sta $44d8
+ sta $44d9
+ ldx #$8f
  lda cols,x
- sta $d887
- sta $d8af
- ldx #$c6
- lda cols,x
- sta $4485
- sta $4486
- sta $44ad
- sta $44ae
- ldx #$c7
- lda cols,x
- sta $d883
- sta $d884
  sta $d8ab
  sta $d8ac
- ldx #$c8
+ sta $d8ad
+ sta $d8d3
+ sta $d8d4
+ sta $d8d5
+ ldx #$90
  lda cols,x
- sta $4481
- sta $4482
- sta $44aa
- ldx #$c9
+ sta $44cf
+ sta $44d0
+ sta $44d1
+ sta $44f7
+ sta $44f8
+ sta $44f9
+ ldx #$91
  lda cols,x
- sta $d880
- sta $d881
- sta $d8a8
- ldx #$ca
+ sta $d8cb
+ sta $d8cc
+ sta $d8cd
+ sta $d8f3
+ sta $d8f4
+ sta $d8f5
+ ldx #$92
  lda cols,x
- sta $447e
- sta $447f
- sta $44a6
- sta $44a7
- ldx #$cb
+ sta $44c8
+ sta $44c9
+ sta $44f0
+ sta $44f1
+ ldx #$93
  lda cols,x
- sta $d888
- sta $d889
- ldx #$cc
+ sta $d866
+ sta $d867
+ sta $d868
+ sta $d88e
+ sta $d88f
+ sta $d890
+ ldx #$94
  lda cols,x
- sta $4487
- ldx #$cd
+ sta $4462
+ sta $4463
+ sta $4464
+ sta $448a
+ sta $448b
+ sta $448c
+ ldx #$95
  lda cols,x
- sta $d885
  sta $d886
- ldx #$ce
+ sta $d887
+ sta $d888
+ sta $d8ae
+ sta $d8af
+ sta $d8b0
+ ldx #$96
  lda cols,x
+ sta $4482
  sta $4483
  sta $4484
- ldx #$cf
- lda cols,x
- sta $d882
- ldx #$d0
- lda cols,x
- sta $4480
- ldx #$d1
+ sta $44aa
+ sta $44ab
+ sta $44ac
+ ldx #$97
  lda cols,x
  sta $d87e
  sta $d87f
+ sta $d880
+ sta $d881
+ sta $d8a6
+ sta $d8a7
+ sta $d8a8
+ sta $d8a9
+ ldx #$98
+ lda cols,x
+ sta $447b
+ sta $447c
+ sta $447a
+ sta $447d
+ sta $44a2
+ sta $44a3
+ sta $44a4
+ sta $44a5
+ ldx #$99
+ lda cols,x
+ sta $d8a0
+ sta $d8a1
+ sta $d8c8
+ sta $d8c9
+ ldx #$9a
+ lda cols,x
+ sta $443d
+ sta $443e
+ sta $443f
+ sta $4465
+ sta $4466
+ sta $4467
+ ldx #$9b
+ lda cols,x
+ sta $d83a
+ sta $d83b
+ sta $d83c
+ sta $d862
+ sta $d863
+ sta $d864
+ ldx #$9c
+ lda cols,x
+ sta $4436
+ sta $4437
+ sta $4438
+ sta $445e
+ sta $445f
+ sta $4460
+ ldx #$9d
+ lda cols,x
+ sta $d832
+ sta $d833
+ sta $d834
+ sta $d85a
+ sta $d85b
+ sta $d85c
+ ldx #$9e
+ lda cols,x
+ sta $442e
+ sta $442f
+ sta $4456
+ sta $4457
+ sta $4458
+ ldx #$9f
+ lda cols,x
+ sta $d852
+ sta $d853
+ sta $d854
+ sta $d87a
+ sta $d87b
+ sta $d87c
+ ldx #$a0
+ lda cols,x
+ sta $4450
+ sta $4451
+ sta $4478
+ ldx #$a1
+ lda cols,x
+ sta $d815
+ sta $d816
+ sta $d817
+ ldx #$a2
+ lda cols,x
+ sta $4411
+ sta $4412
+ sta $4413
+ sta $443a
+ sta $443b
+ ldx #$a3
+ lda cols,x
+ sta $d80e
+ sta $d80f
+ sta $d835
+ sta $d836
+ sta $d837
+ ldx #$a4
+ lda cols,x
+ sta $440a
+ sta $440b
+ sta $440c
+ sta $4432
+ sta $4433
+ sta $4434
+ ldx #$a5
+ lda cols,x
+ sta $d806
+ sta $d807
+ sta $d808
+ sta $d82e
+ sta $d82f
+ sta $d830
+ ldx #$a6
+ lda cols,x
+ sta $4402
+ sta $4403
+ sta $4404
+ sta $442a
+ sta $442b
+ sta $442c
+ ldx #$a7
+ lda cols,x
+ sta $d800
+ sta $d828
+ ldx #$ad
+ lda cols,x
+ sta $d803
+ sta $d804
+ ldx #$ae
+ lda cols,x
+ sta $4400
 "); end;

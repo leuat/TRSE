@@ -64,7 +64,7 @@ void Compression::AddCGAScreen(QByteArray &data, QImage& img,int w, int h, char 
             char c1 = 0;
             for (int i=0;i<4;i++) {
                 c1 |= (QColor(img.pixel(x+i,y)).red()/div)<<(2*i);
-//            data.append(tab[c1]);
+                //            data.append(tab[c1]);
             }
             data.append(c1);
         }
@@ -78,7 +78,7 @@ void Compression::AddCGA16Screen(QByteArray& data, LImage& img, int w, int h, ch
             char c1 = 0;
             for (int i=0;i<2;i++) {
                 c1 |= img.getPixel(x+i,y)<<(4-4*i);
-//            data.append(tab[c1]);
+                //            data.append(tab[c1]);
             }
             data.append(c1);
         }
@@ -112,8 +112,8 @@ void Compression::AddToVZ200Data(QByteArray &data, LImage &img, int xp, int yp, 
             }
             data.append(c);
 
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
 
 }
@@ -129,12 +129,12 @@ void Compression::AddTo4PixelData(QByteArray &data, LImage &img, int xp, int yp,
                 if (invert)
                     c=c|(v<<(6-2*j));
                 else
-                c=c|(v<<(2*j));
+                    c=c|(v<<(2*j));
             }
             data.append(c);
 
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
 
 }
@@ -151,12 +151,12 @@ void Compression::AddTo4PixelCGAData(QByteArray &data, LImage &img, int xp, int 
                 if (invert)
                     c=c|(v<<(6-2*j));
                 else
-                c=c|(v<<(2*j));
+                    c=c|(v<<(2*j));
             }
             data.append(c);
 
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
 
 }
@@ -173,12 +173,12 @@ void Compression::AddTo8PixelData(QByteArray &data, LImage &img, int xp, int yp,
                 if (invert)
                     c=c|(v<<(7-j));
                 else
-                c=c|(v<<(j));
+                    c=c|(v<<(j));
             }
             data.append(c);
 
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
 
 }
@@ -198,8 +198,8 @@ void Compression::AddTo4PixelDataTVC(QByteArray &data, LImage &img, int xp, int 
             }
             data.append(c);
 
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
 
 }
@@ -219,8 +219,8 @@ void Compression::AddSpecialC64bitmapModeToData(QByteArray &data, LImage &img, i
             data.append(c);
             data.append(v3);
 
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
+            //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+            //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
 
 }
@@ -232,17 +232,17 @@ void Compression::AddToDataBBCMode5(QByteArray &data, LImage *img, int xp, int y
             int xx = xp+x;
             int yy = yp+y;
 
-//            uchar val  = img.m_colorList.getIndex(QColor(img.getPixel(xx,yy)));
+            //            uchar val  = img.m_colorList.getIndex(QColor(img.getPixel(xx,yy)));
             uchar pixel1  = img->getPixel(xx,yy);
             uchar pixel2  = img->getPixel(xx+1,yy);
             uchar pixel3  = img->getPixel(xx+2,yy);
             uchar pixel4  = img->getPixel(xx+3,yy);
             uchar c = LImageBBC::tablemode5[pixel4] |
-                    LImageBBC::tablemode5[pixel3]<<1 |
-                    LImageBBC::tablemode5[pixel2]<<2 |
-                    LImageBBC::tablemode5[pixel1]<<3;
+                      LImageBBC::tablemode5[pixel3]<<1 |
+                      LImageBBC::tablemode5[pixel2]<<2 |
+                      LImageBBC::tablemode5[pixel1]<<3;
 
-//            qDebug() << QString::number(val) << QColor(img.getPixel(xx,yy));
+            //            qDebug() << QString::number(val) << QColor(img.getPixel(xx,yy));
             data.append(c);
         }
 
@@ -256,9 +256,9 @@ void Compression::AddToDataVGA(QByteArray &data, LImageQImage& img, int xp, int 
             int xx = xp+x;
             int yy = yp+y;
 
-//            uchar val  = img.m_colorList.getIndex(QColor(img.getPixel(xx,yy)));
+            //            uchar val  = img.m_colorList.getIndex(QColor(img.getPixel(xx,yy)));
             uchar val  = QColor(img.getPixel(xx,yy)).blue();
-//            qDebug() << QString::number(val) << QColor(img.getPixel(xx,yy));
+            //            qDebug() << QString::number(val) << QColor(img.getPixel(xx,yy));
             data.append(val);
         }
 
@@ -268,29 +268,31 @@ void Compression::AddToDataVGA(QByteArray &data, LImageQImage& img, int xp, int 
 void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h, int bpl, int shift)
 {
     int d= 0;
-    for (int y=0;y<h;y+=1)
+        for (int y=0;y<h;y+=1) {
         for (int bp=0; bp<bpl;bp++) {
             int curBit = pow(2,bp+shift);
-//            curBit=curBit;
+            //            curBit=curBit;
 
 
-        for (int x=0;x<w;x++) {
-            int xx = xp+x;
-            int yy = yp+y;
-            char c = 0;
-            for (int i=0;i<8;i++) {
-                int col = img.getPixel(xx*8+i,yy);
-                if ((col & curBit)==curBit )
-                    c = c | (0x1<<(7-i));
-                //0101
+            for (int x=0;x<w;x++) {
+                int xx = xp+x;
+                int yy = yp+y;
+                char c = 0;
+                for (int i=0;i<8;i++) {
+                    int col = img.getPixel(xx*8+i,yy);
+                    if ((col & curBit)==curBit )
+                        c = c | (0x1<<(7-i));
+                    //0101
+                }
+                data.append(c);
+                d++;
+                //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+                //          data.append(PixelChar::reverse(pc.p[yy&7]));
             }
-            data.append(c);
-            d++;
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
-     }
-//    qDebug() << "AddBitplaneToData size " <<d << w << h;
+    }
+
+    //    qDebug() << "AddBitplaneToData size " <<d << w << h;
 
 }
 
@@ -304,20 +306,20 @@ void Compression::AddAmstradCPCToData(QByteArray &data, LImage *img, int xx, int
 
         char c = 0;
         for (int x=0;x<w;x++) {
-             int curBit = x&1;
+            int curBit = x&1;
 
-             int pixel = img->getPixel(x+xx,y+yy);
-             c|= LImageAmstradCPC::table160[pixel]<<(1-curBit);
+            int pixel = img->getPixel(x+xx,y+yy);
+            c|= LImageAmstradCPC::table160[pixel]<<(1-curBit);
 
-             if (curBit==1)
-             {
+            if (curBit==1)
+            {
                 data.append(LImageAmstradCPC::AmstradCrazySwap(c));
                 d++;
                 c = 0;
-             }
-     }
+            }
+        }
     }
-//    qDebug() << "AddCPC data size and width : " <<d << w << h;
+    //    qDebug() << "AddCPC data size and width : " <<d << w << h;
 }
 
 void Compression::AddAtariBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h)
@@ -326,7 +328,7 @@ void Compression::AddAtariBitplaneToData(QByteArray &data, MultiColorImage &img,
     int bpl = 4;
     // 4*(16/8)*4
     for (int y=0;y<h;y+=1)
-//            curBit=curBit;
+        //            curBit=curBit;
 
 
         for (int x=0;x<w;x++) {
@@ -335,26 +337,26 @@ void Compression::AddAtariBitplaneToData(QByteArray &data, MultiColorImage &img,
                 int curBit = pow(2,bp);
 
 
-            int xx = xp+x;
-            int yy = yp+y;
+                int xx = xp+x;
+                int yy = yp+y;
 
-            unsigned int c = 0;
-            for (int i=0;i<16;i++) {
-                int col = img.getPixel(xx*16+i,yy);
-                if ((col & curBit)==curBit )
-                    c = c | (0b1<<(15-i));
-                //0101
+                unsigned int c = 0;
+                for (int i=0;i<16;i++) {
+                    int col = img.getPixel(xx*16+i,yy);
+                    if ((col & curBit)==curBit )
+                        c = c | (0b1<<(15-i));
+                    //0101
+                }
+                // Test
+                //            if (x!=0)
+                //              c=0;
+                data.append((char)((c>>8)&255));
+                data.append((char)(c&255));
+                d+=2;
+                //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+                //          data.append(PixelChar::reverse(pc.p[yy&7]));
             }
-            // Test
-//            if (x!=0)
-  //              c=0;
-            data.append((char)((c>>8)&255));
-            data.append((char)(c&255));
-            d+=2;
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
-     }
     qDebug() << "AddAtariBitplaneToData size " <<d << w << h;
 
 }
@@ -365,7 +367,7 @@ void Compression::AddSingleAtariBitplaneToData(QByteArray &data, MultiColorImage
     int bpl = 4;
     // 4*(16/8)*4
     for (int y=0;y<h;y+=1)
-//            curBit=curBit;
+        //            curBit=curBit;
 
 
         for (int x=0;x<w;x++) {
@@ -374,28 +376,28 @@ void Compression::AddSingleAtariBitplaneToData(QByteArray &data, MultiColorImage
                 int curBit = pow(2,bp);
 
 
-            int xx = xp+x;
-            int yy = yp+y;
+                int xx = xp+x;
+                int yy = yp+y;
 
-            unsigned int c = 0;
-            for (int i=0;i<16;i++) {
-                int col = img.getPixel(xx*16+i,yy);
-                if ((col & curBit)==curBit )
-                    c = c | (0b1<<(15-i));
-                //0101
+                unsigned int c = 0;
+                for (int i=0;i<16;i++) {
+                    int col = img.getPixel(xx*16+i,yy);
+                    if ((col & curBit)==curBit )
+                        c = c | (0b1<<(15-i));
+                    //0101
+                }
+                // Test
+                //            if (x!=0)
+                //              c=0;
+                if (bp == bpl_select) {
+                    data.append((char)((c>>8)&255));
+                    data.append((char)(c&255));
+                }
+                d+=2;
+                //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+                //          data.append(PixelChar::reverse(pc.p[yy&7]));
             }
-            // Test
-//            if (x!=0)
-  //              c=0;
-            if (bp == bpl_select) {
-                data.append((char)((c>>8)&255));
-                data.append((char)(c&255));
-            }
-            d+=2;
-//            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-  //          data.append(PixelChar::reverse(pc.p[yy&7]));
         }
-     }
     qDebug() << "AddAtariBitplaneToData size " <<d << w << h;
 
 }
@@ -404,33 +406,33 @@ void Compression::AddSingleAtariBitplaneToData(QByteArray &data, MultiColorImage
 void Compression::AddGameboyData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h)
 {
     int d= 0;
-//            curBit=curBit;
+    //            curBit=curBit;
 
     for (int ymain=0;ymain<h/8;ymain++)
-    for (int x=0;x<w;x++) {
-        for (int y=0;y<8;y+=1) {
+        for (int x=0;x<w;x++) {
+            for (int y=0;y<8;y+=1) {
 
-            for (int bp=0; bp<2;bp++) {
+                for (int bp=0; bp<2;bp++) {
 
-                int curBit = pow(2,bp);
+                    int curBit = pow(2,bp);
 
-                int xx = xp+x;
-                int yy = yp+y+ymain*8;
-                char c = 0;
-                for (int i=0;i<8;i++) {
-                    int col = img.getPixel(xx*8+i,yy);
-                    if ((col & curBit)==curBit )
-                        c = c | (0x1<<(7-i));
-                    //0101
+                    int xx = xp+x;
+                    int yy = yp+y+ymain*8;
+                    char c = 0;
+                    for (int i=0;i<8;i++) {
+                        int col = img.getPixel(xx*8+i,yy);
+                        if ((col & curBit)==curBit )
+                            c = c | (0x1<<(7-i));
+                        //0101
+                    }
+                    data.append(c);
+
+                    d++;
+                    //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
+                    //          data.append(PixelChar::reverse(pc.p[yy&7]));
                 }
-                data.append(c);
-
-                d++;
-                //            PixelChar& pc = img.m_data[40*(yy/8)+xx];
-                //          data.append(PixelChar::reverse(pc.p[yy&7]));
             }
         }
-    }
     //    qDebug() << "AddBitplaneToData size " <<d << w << h;
 
 }
@@ -456,10 +458,10 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
     if (sw==0 || sh==0)
         return;
     int screens = screen.size()/sw/sh;
-//    QByteArray curCharset = charset;
+    //    QByteArray curCharset = charset;
 
-//    cOut.insert(0,32,0);
-/*    for (int i=0;i<8;i++) {
+    //    cOut.insert(0,32,0);
+    /*    for (int i=0;i<8;i++) {
         cOut[i+0] = 0;
         cOut[i+8] = 0xFF;
         cOut[i+16] = 0b10101010;
@@ -471,8 +473,8 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
 
     double compression = 0.03;
     int pass = 0;
-//    for (int i=0;i<sOut.count();i++)
- //       qDebug() << "Sout : " << i << sOut[i];
+    //    for (int i=0;i<sOut.count();i++)
+    //       qDebug() << "Sout : " << i << sOut[i];
     // First, make everything unique
     for (int i=0;i<screens;i++) {
         int k = charSize*i;
@@ -484,15 +486,15 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
         qDebug() << "Cur chars " <<curChars << " with compression " << compression;
         // What to do: go through every char and check every other that is the same
         for (int i=0;i<cOut.length()/8;i++) {
-       //     int found = -1;
+            //     int found = -1;
             QVector<int> found;
             double curMin = 1E5;
             for (int j=i+1;j<cOut.length()/8;j++) {
                 double res = Compare(cOut, cOut,j*8,i*8,8, 1, bmask);
                 if (res<compression) {
                     found.append(j);
-//                    curMin = res;
-                 }
+                    //                    curMin = res;
+                }
             }
 
             int cur=0;
@@ -500,8 +502,8 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
                 f = f-cur;// Collaps characters:
                 cur++;
                 cOut.remove(f*8,8); // Removed
-//                found = found &0xFF;// noTargetChar;
-               // int add = 0;
+                //                found = found &0xFF;// noTargetChar;
+                // int add = 0;
                 for (int j=0;j<sOut.length();j++) {
                     if (sOut[j]==f) sOut[j] = i;
                     if (sOut[j]>f) sOut[j]--;
@@ -516,7 +518,7 @@ void Compression::CompressScreenAndCharset(QVector<int> &screen, QByteArray &cha
         compression = compression * 1.05;
         // After pass :
     }
-//    screen = sOut;
+    //    screen = sOut;
 }
 
 void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type, LColorList& lst, int bmask)
@@ -526,11 +528,11 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
     if (sw==0 || sh==0)
         return;
     int screens = screen.size()/sw/sh;
-/*    for (int i=0;i<screens;i++) {
+    /*    for (int i=0;i<screens;i++) {
         for (int x=0;x<sw*sh;x++)
             screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
     }*/
-//    qDebug() << sw << sh << charSize << screens << charset.count()/8 << compression;
+    //    qDebug() << sw << sh << charSize << screens << charset.count()/8 << compression;
     int sum = 0;
     cOut.resize(32);
     for (int i=0;i<8;i++) {
@@ -541,8 +543,8 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
     }
 
 
-//    for (int i=0;i<charset.count();i++)
-  //      qDebug() << QString::number(charset[i]);
+    //    for (int i=0;i<charset.count();i++)
+    //      qDebug() << QString::number(charset[i]);
 
     // All screens are set up. Start compressing!
     for (int i=0;i<screens;i++) {
@@ -552,30 +554,30 @@ void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &cha
             int s = screen[i*sw*sh + x] + charSize*i;
 
 
-  //          qDebug() << "   Current s: " << QString::number(s) << " with compression type " <<type ;
+            //          qDebug() << "   Current s: " << QString::number(s) << " with compression type " <<type ;
             int found = -1;
             double curMin = 8000;
             for (int j=0;j<cOut.length()/8;j++) {
-             //   int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
+                //   int Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int length)
                 double res = Compare(cOut, charset,j*8,s*8,8, type, bmask);
-//                double res = 1;
+                //                double res = 1;
                 if (res<compression && res<curMin) {
 
 
                     found = j;
                     curMin = res;
-    //                qDebug() << "Found similar: " << found;
-//                    break;
+                    //                qDebug() << "Found similar: " << found;
+                    //                    break;
                 }
             }
-//            qDebug() << "FOUND " << found;
+            //            qDebug() << "FOUND " << found;
             if (found ==-1) {
                 found = cOut.size()/8;
                 for (int j=0;j<8;j++)
                     cOut.push_back( charset[s*8+j]  );
-            //    qDebug() << "Added new : " << found;
+                //    qDebug() << "Added new : " << found;
             }
-//            qDebug() << "  ADDING : " << QString::number(found) << " vs "  << QString::number(s);
+            //            qDebug() << "  ADDING : " << QString::number(found) << " vs "  << QString::number(s);
 
             sOut.append((uchar)found);
         }
@@ -595,7 +597,7 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
     if (sw==0 || sh==0)
         return;
     int screens = screen.size()/sw/sh;
-/*    for (int i=0;i<screens;i++) {
+    /*    for (int i=0;i<screens;i++) {
         for (int x=0;x<sw*sh;x++)
             screen[i*sw*sh +x] = screen[i*sw*sh +x]+ charSize*i;
     }*/
@@ -617,18 +619,18 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
 
     }
 
-//    for (int i=0;i<charset.count();i++)
-  //      qDebug() << QString::number(charset[i]);
+    //    for (int i=0;i<charset.count();i++)
+    //      qDebug() << QString::number(charset[i]);
 
     // All screens are set up. Start compressing!
     for (int i=0;i<screens;i++) {
-       // qDebug() << "Current screen : " << i ;
+        // qDebug() << "Current screen : " << i ;
 
         for (int x=0;x<sw*sh;x++) {
             int s = screen[i*sw*sh + x] + charSize*i;
 
 
-//            qDebug() << "   Current s: " << QString::number(s) ;
+            //            qDebug() << "   Current s: " << QString::number(s) ;
             int found = -1;
             double curMin = 80000;
             for (int j=0;j<cOut.length()/16;j++) {
@@ -637,17 +639,17 @@ void Compression::OptimizeScreenAndCharsetGB(QVector<int> &screen, QByteArray &c
                 if (res<compression && res<curMin) {
                     found = j;
                     curMin = res;
-    //                qDebug() << "Found similar: " << found;
-//                    break;
+                    //                qDebug() << "Found similar: " << found;
+                    //                    break;
                 }
             }
             if (found ==-1) {
                 found = cOut.size()/16;
                 for (int j=0;j<16;j++)
                     cOut.push_back( charset[s*16+j]  );
-      //          qDebug() << "Added new : " << found;
+                //          qDebug() << "Added new : " << found;
             }
-//            qDebug() << "  ADDING : " << QString::number(found) << " vs "  << QString::number(s);
+            //            qDebug() << "  ADDING : " << QString::number(found) << " vs "  << QString::number(s);
 
             sOut.append((uchar)found);
         }
@@ -666,18 +668,18 @@ void Compression::SaveSinusScrollerData_OLD(MultiColorImage* mc, int height, int
 
 
 int Compression::BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &outData, QVector<int> &arrangement,
-                                              int x, int y, int w, int h, int compression, int noBitplanes) {
+                                             int x, int y, int w, int h, int compression, int noBitplanes) {
     int cur = 0;
     outData.clear();
     int foundChars = 0;
     int totalChars = 0;
- //   qDebug() << arrangement.size();
+    //   qDebug() << arrangement.size();
     for (int j=0;j<h;j++)
         for (int i=0;i<w;i++) {
             // Lookup in array
             int ii =(i+(j)*w)*noBitplanes*8;
-//            qDebug() << "Currently on "<<ii<<i<<j << " with total size" << totalChars << " found chars" << foundChars;
-/*            QByteArray org;
+            //            qDebug() << "Currently on "<<ii<<i<<j << " with total size" << totalChars << " found chars" << foundChars;
+            /*            QByteArray org;
             for (int i=0;i<noBitplanes;i++)
                 org.append(ii + i);
 */
@@ -686,13 +688,13 @@ int Compression::BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &out
             double best = 1E30;
             for (int k=0;k<totalChars;k++) {
                 double res = Compare(inData, outData,ii,k*noBitplanes*8,8*noBitplanes, TYPE_REGULAR, 1);
-//                qDebug() << res;
+                //                qDebug() << res;
                 if (res<compression) {
                     if (res<best) {
                         found = k;
                         best = res;
                     }
-//                    break;
+                    //                    break;
                 }
 
             }
@@ -712,13 +714,13 @@ int Compression::BitplaneCharsetSpritePacker(QByteArray& inData, QByteArray &out
                 foundChars +=1;
             }
         }
-//    qDebug() << "Compression::BitplaneCharsetSpritePacker found / total " << foundChars << totalChars << " Arrangement size " << arrangement.size();
+    //    qDebug() << "Compression::BitplaneCharsetSpritePacker found / total " << foundChars << totalChars << " Arrangement size " << arrangement.size();
     return totalChars;
 }
 
 void Compression::CompileCGA16Sprites(QVector<int> &ba, int w, int h, int frames, int type, QString name, QString background, QString dir)
 {
-/*    LImage* img = nullptr;
+    /*    LImage* img = nullptr;
     if (QFile::exists(dir+"/"+background))
         img = LImageIO::Load(dir+"/"+background);
 */
@@ -731,19 +733,19 @@ void Compression::CompileCGA16Sprites(QVector<int> &ba, int w, int h, int frames
         s+="\tles di,[dst]\n";
         uchar prev=255;
         if (type==0)
-        for (int y=0;y<h/2;y++) {
-            for (int x=0;x<w/2;x+=1){
+            for (int y=0;y<h/2;y++) {
+                for (int x=0;x<w/2;x+=1){
 
-                uchar v = (ba[pos + x+y*w]);//&15)<<4;
-//                v |= (ba[pos + x+1+y*w]&15);
-                if (v!=0) {
-                    if (prev!=v)
-                        s+="\tmov al,"+QString::number(v)+"\n";
-                    s+="\tmov [es:di+"+QString::number(x + y*80)+"],al\n";
+                    uchar v = (ba[pos + x+y*w]);//&15)<<4;
+                    //                v |= (ba[pos + x+1+y*w]&15);
+                    if (v!=0) {
+                        if (prev!=v)
+                            s+="\tmov al,"+QString::number(v)+"\n";
+                        s+="\tmov [es:di+"+QString::number(x + y*80)+"],al\n";
+                    }
+                    prev = v;
                 }
-                prev = v;
             }
-        }
 
         if (type==1) {
             s+="\tmov al,$de\n";
@@ -753,16 +755,16 @@ void Compression::CompileCGA16Sprites(QVector<int> &ba, int w, int h, int frames
                 for (int x=0;x<w/2;x+=1){
 
                     uchar v = (ba[pos + x+y*w]);//&15)<<4;
-//                    if (v==0 && img!=nullptr)
-  //                      v = img->getPixel(x,y)  | (img->getPixel(x+1,y)<<4) ;
-    //                v |= (ba[pos + x+1+y*w]&15);
-  //                  if (v!=0)
+                    //                    if (v==0 && img!=nullptr)
+                    //                      v = img->getPixel(x,y)  | (img->getPixel(x+1,y)<<4) ;
+                    //                v |= (ba[pos + x+1+y*w]&15);
+                    //                  if (v!=0)
                     {
                         if (prev!=v)
                             s+="\tmov ah,"+QString::number(v)+"\n";
                         s+="\tmov [es:di+"+QString::number((x + y*80)*2)+"],ax\n";
                     }
-/*                    else
+                    /*                    else
                     {
                         s+="\tmov ah, [ds:si+"+QString::number(((x) + y*80))+"]\n";
                         s+="\tmov [es:di+"+QString::number((x + y*80)*2)+"],ax\n";
@@ -798,7 +800,7 @@ void Compression::CompileCGA16Sprites(QVector<int> &ba, int w, int h, int frames
         s+="\tif (s="+QString::number(i)+") then "+name+QString::number(i)+"();\n";
     }
     s+="end;\n";
-//    qDebug() << dir+"/"+name+".inc";
+    //    qDebug() << dir+"/"+name+".inc";
     Util::SaveTextFile(dir+"/"+name+".inc",s);
 }
 
@@ -874,14 +876,14 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
 
 
             int iv = 0;
-//            if (isUniform)
-  //              addy=1;
+            //            if (isUniform)
+            //              addy=1;
             if (cross) {
                 alt++;
                 addy=1;
             }
-//            qDebug() <<addy <<y;
-//            if (rows==0) addy=1;
+            //            qDebug() <<addy <<y;
+            //            if (rows==0) addy=1;
             if (c==0 && d!=0) {
                 sng=2;
             }
@@ -892,7 +894,7 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
             int inyAfter = 0;
 
             if ((y&7)==0) {
-//                qDebug() << "Append "<<y;
+                //                qDebug() << "Append "<<y;
                 if (addy==1 && c==oc) {
                     addy=0; inyAfter=1;
                 }
@@ -905,9 +907,9 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
                 rows++;
 
 
-  //              if (x==2)
-    //                  qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d)<< "- "<<QString::number(nc) << QString::number(nd) <<  " - " << addy << cnt;
-//                      qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
+                //              if (x==2)
+                //                  qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d)<< "- "<<QString::number(nc) << QString::number(nd) <<  " - " << addy << cnt;
+                //                      qDebug() << "Y:" <<y << " - " <<QString::number(c) << QString::number(d) <<  " - " << addy << cnt << cval;
 
 
                 addy = 0;
@@ -923,9 +925,9 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
             y++;
 
         }
-    //    qDebug() << "DONE";
+        //    qDebug() << "DONE";
         // Last one
-/*        int pos = y*40+x;
+        /*        int pos = y*40+x;
         addr.append(pos+startaddr);
         cnt++;
         iny.append(1);
@@ -938,17 +940,17 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
         }
         iny[iny.count()-1]=add;
 
-//        qDebug() << cnt << rows;
+        //        qDebug() << cnt << rows;
 
     }
-//    int i=0;
-  /*  for (int j=0;j<2;j++) {*/
-//    s<<"procedure paint_unroll"+QString::number(j)+"();\n";
+    //    int i=0;
+    /*  for (int j=0;j<2;j++) {*/
+    //    s<<"procedure paint_unroll"+QString::number(j)+"();\n";
     s<<"procedure paint_unroll();\n";
     s<<"begin\n";
     s<<" asm(\"\n";
 
-/*    if (j==0) s<<" ldy #0\n";
+    /*    if (j==0) s<<" ldy #0\n";
     if (j==1)
         s<<"\tldy $72\n";
         s<<
@@ -988,12 +990,12 @@ void Compression::SaveSinusScrollerData(MultiColorImage* mc, int height, int sta
                 cnt = 0;
             }
         }
-  //      i++;
+        //      i++;
 
 
     }
-//    if (j==0)
-  //      s<<"\tsty $72\n";
+    //    if (j==0)
+    //      s<<"\tsty $72\n";
     s<<" \");\n";
     s<<"end;\n";
     //}
@@ -1033,7 +1035,7 @@ void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int st
             for (int x=0;x<40;x++) {
                 int pos = x + y*40;
                 int addr = startaddr + pos;
-//                qDebug() <<x<<mc->m_data[pos].c[1] << mc->m_data[pos].c[2];
+                //                qDebug() <<x<<mc->m_data[pos].c[1] << mc->m_data[pos].c[2];
                 int cc = c;//+cadd;
                 if ((c&1)==0) {
                     if ((int)mc->m_data[pos].c[1]==c) {
@@ -1041,7 +1043,7 @@ void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int st
                     }
                 }
                 else
-                 {
+                {
                     if ((int)mc->m_data[pos].c[2]==c) {
                         col[cc].append(addr);
                     }
@@ -1059,18 +1061,18 @@ void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int st
                 for (auto& c: col[i]) {
                     if (col[i+1].contains(c))
                     {
-  //                      s<<"\tpha\n";
-  //                       s<<"\tiny\n";
+                        //                      s<<"\tpha\n";
+                        //                       s<<"\tiny\n";
                         //s<<"\tsta $99\n";
-                         s<<"\tora (zp2),y\n";
-    //                     s<<"\tdey\n";
+                        s<<"\tora (zp2),y\n";
+                        //                     s<<"\tdey\n";
                     }
-                     s<<"\tsta "+Util::numToHex(c)+"\n";
-                     if (col[i+1].contains(c))
-                     {
-                         s<<"\ttxa\n";
-     //                    s<<"\tpla\n";
-                         done[c] = true;
+                    s<<"\tsta "+Util::numToHex(c)+"\n";
+                    if (col[i+1].contains(c))
+                    {
+                        s<<"\ttxa\n";
+                        //                    s<<"\tpla\n";
+                        done[c] = true;
                     }
                 }
 
@@ -1083,33 +1085,33 @@ void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int st
                 for (auto& c: col[i]) {
                     if (!done.contains(c))
                     {
-//                      s<<"\tlda "+Util::numToHex(c)+"\n";
-                          s<<"\tlda (zp2),y\n";
-                          s<<"\tora "+Util::numToHex(c)+"\n";
-  //                      s<<"\tora (zp2),y\n";
+                        //                      s<<"\tlda "+Util::numToHex(c)+"\n";
+                        s<<"\tlda (zp2),y\n";
+                        s<<"\tora "+Util::numToHex(c)+"\n";
+                        //                      s<<"\tora (zp2),y\n";
                         s<<"\tsta "+Util::numToHex(c)+"\n";
                     }
                 }
             }
         }
 
-/*    if (j==0) s<<" ldy #0\n";
+        /*    if (j==0) s<<" ldy #0\n";
     if (j==1)
         s<<"\tldy $72\n";
         s<<
 
 */
-    int cnt = 0;
+        int cnt = 0;
 
         s<<" \");\n";
         s<<" zp:=zp+"+Util::numToHex(height)+";\n";
         s<<" zp2:=zp2+"+Util::numToHex(height)+";\n";
         s<<" asm(\"\n";
-//        s<<"\tldy #0\n";
+        //        s<<"\tldy #0\n";
 
     }
-//    if (j==0)
-  //      s<<"\tsty $72\n";
+    //    if (j==0)
+    //      s<<"\tsty $72\n";
     s<<" \");\n";
     s<<"end;\n";
     //}
@@ -1176,30 +1178,30 @@ double Compression::Compare(QByteArray &a, QByteArray &b, int p1, int p2, int le
                 }
             }
         }
-//        if (rand()%100>98) qDebug() << "TYPE: " << l;
+        //        if (rand()%100>98) qDebug() << "TYPE: " << l;
         return l;
 
     }
 
-   if (type==TYPE_SSIM) {
-       PixelCharSSIM pc1,pc2;
-       for (int j=0;j<8;j++) {
-           pc1.p[j] = a[p1+j];
-           pc2.p[j] = b[p2+j];
-       }
-       pc1.m_lastBitmask = 1;//bmask;
-       pc2.m_lastBitmask = 1;//bmask;
-//       double l = 1;
-       double l = pc1.CalcSSIM(&pc2);
-       return l;
+    if (type==TYPE_SSIM) {
+        PixelCharSSIM pc1,pc2;
+        for (int j=0;j<8;j++) {
+            pc1.p[j] = a[p1+j];
+            pc2.p[j] = b[p2+j];
+        }
+        pc1.m_lastBitmask = 1;//bmask;
+        pc2.m_lastBitmask = 1;//bmask;
+        //       double l = 1;
+        double l = pc1.CalcSSIM(&pc2);
+        return l;
 
-   }
-   qDebug() << "UKNOWN COMPRESSION TYPE";
-//    exit(1);
+    }
+    qDebug() << "UKNOWN COMPRESSION TYPE";
+    //    exit(1);
 
 
-  //      if (a[p1+i]!=b[p2+i]) l++;
-  //  }
+    //      if (a[p1+i]!=b[p2+i]) l++;
+    //  }
     return -1;
 }
 
@@ -1237,10 +1239,10 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
                 out.append(dataIn[i*width+j]);
             }
         }
-//        qDebug() << isNew << currentPointer;
+        //        qDebug() << isNew << currentPointer;
         char lo = currentPointer&0xff;
         char hi = (currentPointer>>8)&0xff;
-//        qDebug() << QString::number(lo) << QString::number(hi);
+        //        qDebug() << QString::number(lo) << QString::number(hi);
 
         if (invertTable) {
 
@@ -1248,8 +1250,8 @@ void Compression::OptimizeAndPackCharsetData(QByteArray &dataIn, QByteArray &out
             table.append(lo);
         }
         else {
-        table.append(lo);
-        table.append(hi);
+            table.append(lo);
+            table.append(hi);
         }
 
     }
@@ -1274,7 +1276,7 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
     int compType = 0;
     for (int scroll=0;scroll<8;scroll+=2) {
         QSharedPointer<CharsetImage> c1 = QSharedPointer<CharsetImage>(new CharsetImage(imgIn->m_colorList.m_type));
- //       c1->setMultiColor(false)
+        //       c1->setMultiColor(false)
         c1->m_width = 320;
         c1->m_bitMask = 0b1;
         c1->m_noColors = 4;
@@ -1288,9 +1290,9 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
         c1->m_minCol = 0;
 
 
-//        c1->setMultiColor(false);
-//        c1->m_charWidth = imgIn->m_charWidth;
-  //      c1->m_width = imgIn->m_width;
+        //        c1->setMultiColor(false);
+        //        c1->m_charWidth = imgIn->m_charWidth;
+        //      c1->m_width = imgIn->m_width;
         // Paint data!
         for (int y=0;y<imgIn->m_height;y++)
             for (int x=0;x<imgIn->m_width;x++) {
@@ -1305,7 +1307,7 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
                             noChars,p1,  256, compType,true);
         charData.append(ba);
         screenData.append(tmpI);
-//        qDebug() << "NO chars frame " << scroll << " : " << noChars <<imgIn->m_charHeight << screenData.count();
+        //        qDebug() << "NO chars frame " << scroll << " : " << noChars <<imgIn->m_charHeight << screenData.count();
         //qDebug() << charData;
 
         if (scroll==2)
@@ -1328,31 +1330,31 @@ void Compression::GenerateParallaxData(QString inFile, QString outFile, int x0, 
         }
         charData = n;
     }
-//    qDebug() << type << QString::number(eor,2) <;
+    //    qDebug() << type << QString::number(eor,2) <;
 
     QString fsOut = outFile+"_screens.bin";
     QString fcOut = outFile+"_charset.bin";
     QVector<int> sOut;
     QByteArray cOut;
-/*    OptimizeScreenAndCharset(screenData, charData, sOut, cOut,  x1-x0,y1-y0,
+    /*    OptimizeScreenAndCharset(screenData, charData, sOut, cOut,  x1-x0,y1-y0,
                              256,p1, compType,imgIn->m_colorList,imgIn->m_bitMask);
                              */
-//    int sw, int sh, int charSize, double compression, int type, LColorList& lst, int bmask//
-/*    Util::SaveByteArray(cOut, fcOut);
+    //    int sw, int sh, int charSize, double compression, int type, LColorList& lst, int bmask//
+    /*    Util::SaveByteArray(cOut, fcOut);
     QByteArray d = Util::toQByteArray(sOut);
     Util::SaveByteArray(d, fsOut);
 */
-//    qDebug() << "Parallax no chars : " << charData.count()/8 << " vs ORG " << charData.count()/8 << "  ";
+    //    qDebug() << "Parallax no chars : " << charData.count()/8 << " vs ORG " << charData.count()/8 << "  ";
 
-     Util::SaveByteArray(charData, fcOut);
-     QByteArray d = Util::toQByteArray(screenData);
-     Util::SaveByteArray(d, fsOut);
-
-
-//    void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type,LColorList& lst, int bmask)
+    Util::SaveByteArray(charData, fcOut);
+    QByteArray d = Util::toQByteArray(screenData);
+    Util::SaveByteArray(d, fsOut);
 
 
-//    qDebug() << "WHOO";
+    //    void Compression::OptimizeScreenAndCharset(QVector<int> &screen, QByteArray &charset, QVector<int> &sOut, QByteArray &cOut, int sw, int sh, int charSize, double compression, int type,LColorList& lst, int bmask)
+
+
+    //    qDebug() << "WHOO";
 }
 
 void Compression::AddCharsetScreen(QByteArray &data, QImage &img, CharsetImage *charset, int w, int h)
@@ -1365,16 +1367,16 @@ void Compression::AddPetsciiScreen(QByteArray &data, QImage &img)
 {
 
     QByteArray d;
-//    qDebug() << QString::number(img.width());
+    //    qDebug() << QString::number(img.width());
     int pixelw = img.width()/80;
     int pixelH = img.height()/50;
     QColor bg(QColor(0,0,0));
     int cnt = 0;
     unsigned cc = 0;
     unsigned char petTable[16]= {0x20, 0x7e, 0x7C, 0xE2,
-                                    0x6C, 0x7f, 0xE1,  0xFb,
-                                0x7b, 0x61, 0xff, 0xec,
-                                0x62, 0xfc, 0xfe, 0xA0};
+                                  0x6C, 0x7f, 0xE1,  0xFb,
+                                  0x7b, 0x61, 0xff, 0xec,
+                                  0x62, 0xfc, 0xfe, 0xA0};
 
     for (int y=0;y<25;y++)
         for (int x=0;x<40;x++) {
@@ -1384,18 +1386,18 @@ void Compression::AddPetsciiScreen(QByteArray &data, QImage &img)
 
 
             int i1 =  !Util::isEqual(img.pixelColor(xx,yy),bg) <<0 |
-                      !Util::isEqual(img.pixelColor(xx+pixelw,yy),bg) <<1 |
-                      !Util::isEqual(img.pixelColor(xx,yy+pixelH),bg) <<3 |
-                      !Util::isEqual(img.pixelColor(xx+pixelw,yy+pixelH),bg) <<2;
+                     !Util::isEqual(img.pixelColor(xx+pixelw,yy),bg) <<1 |
+                     !Util::isEqual(img.pixelColor(xx,yy+pixelH),bg) <<3 |
+                     !Util::isEqual(img.pixelColor(xx+pixelw,yy+pixelH),bg) <<2;
 
             int i2 =  !Util::isEqual(img.pixelColor(xx,yy),bg) <<0;
             i2=i2*0xA0;
-//            d.append(petTable[i1]);
+            //            d.append(petTable[i1]);
             d.append(i2);
-//            qDebug() << i1 << img.pixelColor(xx,yy);
+            //            qDebug() << i1 << img.pixelColor(xx,yy);
 
 
-/*            if (cnt==0) {
+            /*            if (cnt==0) {
                 cc=i1;
             }
             else {
@@ -1404,8 +1406,8 @@ void Compression::AddPetsciiScreen(QByteArray &data, QImage &img)
 
             }
 */
-//            cnt=(cnt+1)&1;
-//            unsigned char i1 =
+            //            cnt=(cnt+1)&1;
+            //            unsigned char i1 =
         }
 
     data.append(d);
@@ -1416,7 +1418,7 @@ void Compression::AddBinaryScreen(QByteArray &data, QImage &img)
 {
 
     QByteArray d;
-//    qDebug() << QString::number(img.width());
+    //    qDebug() << QString::number(img.width());
     int pixelw = img.width()/80;
     int pixelH = img.height()/50;
     QColor bg(QColor(0,0,0));
@@ -1444,7 +1446,7 @@ void Compression::AddBinaryScreen(QByteArray &data, QImage &img)
                 d.append(cc);
 
             }
-//            unsigned char i1 =
+            //            unsigned char i1 =
         }
 
     data.append(d);
@@ -1471,7 +1473,7 @@ void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
     header.append(endChar);
     header.append(skipChar);
 
-//    file.write(header);
+    //    file.write(header);
 
 
 
@@ -1487,17 +1489,17 @@ void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
         }
 
         if (c==3)
-        data.append(mc.CompressScreen3(s1, s2,
-                40, 25,compr,
-                endChar ,skipChar, false));
+            data.append(mc.CompressScreen3(s1, s2,
+                                           40, 25,compr,
+                                           endChar ,skipChar, false));
 
         if (c==2)
-        data.append(mc.CompressScreen2(s1, s2,
-                40, 25,compr,
-                endChar ,skipChar,false));
+            data.append(mc.CompressScreen2(s1, s2,
+                                           40, 25,compr,
+                                           endChar ,skipChar,false));
 
     }
-   Util::SaveByteArray(data,fileName) ;
+    Util::SaveByteArray(data,fileName) ;
 
 }
 
@@ -1605,7 +1607,7 @@ void Compression::GenerateUnrolledAsm1(QString name, QString outFile, QString in
 
     out+="begin\n";
     out+="\tasm(\"\n";
-/*    uchar c = Util::MultiCharMask(0b10000001);
+    /*    uchar c = Util::MultiCharMask(0b10000001);
     QString s = QString::number(c,2);
     qDebug() << s;
 */
@@ -1627,8 +1629,8 @@ void Compression::GenerateUnrolledAsm1(QString name, QString outFile, QString in
                 org2 = img[pos2];
             uchar m1 = ~Util::MultiCharMask(org1);
             uchar m2 = ~Util::MultiCharMask(org2);
-//            if (m1!=0)
-  //              qDebug() << (int)m1;
+            //            if (m1!=0)
+            //              qDebug() << (int)m1;
             // 1000 org
             // 1100 mask
             // 0101 val
@@ -1641,7 +1643,7 @@ void Compression::GenerateUnrolledAsm1(QString name, QString outFile, QString in
             else if (m1!=0){
                 out +="\t lda "+Util::numToHex(src)+"+ "+Util::numToHex(i)+"+ "+ Util::numToHex(shift2) +"+"+Util::numToHex(j*160)+"\n";
                 out+="\t and #"+Util::numToHex((uchar)m1)+"\n";
-//                out+="\t ora #"+Util::numToHex((uchar)org1)+"\n";
+                //                out+="\t ora #"+Util::numToHex((uchar)org1)+"\n";
                 out += "\t sta "+Util::numToHex(dst)+"+"+Util::numToHex(i*8)+"+"+ Util::numToHex(shift1) +"+"+Util::numToHex(j*320)+"\n";
 
             }
@@ -1653,12 +1655,12 @@ void Compression::GenerateUnrolledAsm1(QString name, QString outFile, QString in
             {
                 out += "\t lda "+Util::numToHex(src)+"+"+Util::numToHex(i)+" +"+ Util::numToHex(shift3) +" +"+Util::numToHex(j*160)+"\n";
                 out+="\t and #"+Util::numToHex((uchar)m2)+"\n";
-  //              out+="\t ora #"+Util::numToHex((uchar)org2)+"\n";
+                //              out+="\t ora #"+Util::numToHex((uchar)org2)+"\n";
                 out += "\t sta "+Util::numToHex(dst)+"+"+Util::numToHex(i*8)+" +"+ Util::numToHex(shift1+4) +" +"+Util::numToHex(j*320)+"\n";
 
             }
 
-/*                   sta @SDST+[i*8] +[j*320]
+            /*                   sta @SDST+[i*8] +[j*320]
 
 
                    lda $8000+[i]+80+[j*160]

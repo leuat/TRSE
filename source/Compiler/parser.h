@@ -113,6 +113,7 @@ public:
     QSharedPointer<SymbolTable>  m_symTab = nullptr;
     QString m_initAssembler = "";
     QString m_endAssembler = "";
+    QString m_override = "_override_";
     QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     static QStringList s_usedTRUs, s_usedTRUNames;
@@ -256,6 +257,7 @@ private:
 
     QSharedPointer<Node> ApplyClassVariable(QSharedPointer<Node> var);
 
+    QSharedPointer<NodeProcedureDecl> FindCorrectOverridenProcedure(QString procName, QVector<QSharedPointer<Node>> params);
     QSharedPointer<Node> Variable(bool isSubVar=false);
     QSharedPointer<Node> SubVariable(QString parent,QSharedPointer<Node> parentExpr);
     QSharedPointer<Node> Empty();
@@ -283,6 +285,11 @@ private:
     void AppendComment(QSharedPointer<Node> n);
 
 //    void AppendComment(QSharedPointer<Node> n);
+
+    QString CompareAndWashOverloadedProcedure(QString procName, QVector<QSharedPointer<Node>> decls);
+
+    int CompareDeclerations(QVector<QSharedPointer<Node>> a, QVector<QSharedPointer<Node>> b);
+    int CompareDeclerationsVsParameters(QVector<QSharedPointer<Node>> a, QVector<QSharedPointer<Node>> b);
 
     QVector<QSharedPointer<Node>> ConstDeclaration();
     QSharedPointer<Node> TypeDeclaration();

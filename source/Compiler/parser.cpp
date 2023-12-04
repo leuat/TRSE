@@ -260,7 +260,7 @@ void Parser::InitBuiltinFunctions()
             InitBuiltinFunction(QStringList()<< "", "init8x8div");
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
-                Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
+            Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
             InitBuiltinFunction(QStringList()<< "getkey(", "initgetkey");
         }
         InitBuiltinFunction(QStringList()<< "rand(", "initrandom","init_random_call");
@@ -451,7 +451,7 @@ void Parser::InitSystemSymbols()
             for (QString s : m_projectIni->getStringList("zeropages_userdefined")) {
                 QString name = "TEMP_VAR"+QString::number(cur++);
                 m_symTab->m_constants[name] = QSharedPointer<Symbol>(
-                            new Symbol(name,"ADDRESS",Util::NumberFromStringHex(s)));
+                    new Symbol(name,"ADDRESS",Util::NumberFromStringHex(s)));
             }
         }
 
@@ -610,7 +610,7 @@ void Parser::ApplyTPUAfter(QVector<QSharedPointer<Node>>& declBlock, QVector<QSh
 
         for (QSharedPointer<Node> on : np->m_NodeBlock->m_decl) {
             QSharedPointer<NodeProcedureDecl> procDecl =
-                    qSharedPointerDynamicCast<NodeProcedureDecl>(on);
+                qSharedPointerDynamicCast<NodeProcedureDecl>(on);
             if (procDecl!=nullptr) {
                 if (!m_ignoreBuiltinFunctionTPU.contains(procDecl->m_procName)) {
                     procs.append(procDecl);
@@ -1063,7 +1063,7 @@ void Parser::RemoveUnusedSymbols(QSharedPointer<NodeProgram> root)
 
                     //                   if (isUsed)
 
-                }
+                    }
                 //                qDebug() << "Used: " << s->m_name << isUsed <<s->isUsedBy;
 
                 if (!isUsed && !(s->m_type=="INCBIN" || s->m_type=="INCSID")) {
@@ -1673,7 +1673,7 @@ bool Parser::PreprocessIncludeFiles()
                 m_lexer->m_text.insert(m_lexer->m_pos, text);
                 int count = text.split("\n").count();
                 m_lexer->m_includeFiles.append(
-                            FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
+                    FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
                 m_acc-=count-1;
                 done = false;
                 Eat(TokenType::STRING);            }
@@ -2010,7 +2010,7 @@ QVector<QSharedPointer<Node>> Parser::Record(QString name)
     //m_symTab->Define(new Symbol(name,"record"));
     record->setName(name);
     QString oldPrefix = m_symTab->m_gPrefix;
-//    m_symTab->m_gPrefix=m_symTab->m_currentUnit+"_"+name+"_";
+    //    m_symTab->m_gPrefix=m_symTab->m_currentUnit+"_"+name+"_";
     m_symTab->m_gPrefix=name+"_";
     m_isRecord = true;
     bool first = true;
@@ -2405,15 +2405,15 @@ QSharedPointer<Node> Parser::BinaryClause()
     // Nothing : the null test. Check if NOT EQUALS ZERO
 
     if (m_currentToken.m_type==TokenType::RPAREN
-            || m_currentToken.m_type==TokenType::THEN
-            || m_currentToken.m_type==TokenType::DO
-            || m_currentToken.m_type==TokenType::AND
-            || m_currentToken.m_type==TokenType::OR
-            || m_currentToken.m_type==TokenType::SEMI
-            || m_currentToken.m_type==TokenType::XOR
-            || m_currentToken.m_type==TokenType::NOT
-            || m_currentToken.m_type==TokenType::OFFPAGE
-            || m_currentToken.m_type==TokenType::ONPAGE)  {
+        || m_currentToken.m_type==TokenType::THEN
+        || m_currentToken.m_type==TokenType::DO
+        || m_currentToken.m_type==TokenType::AND
+        || m_currentToken.m_type==TokenType::OR
+        || m_currentToken.m_type==TokenType::SEMI
+        || m_currentToken.m_type==TokenType::XOR
+        || m_currentToken.m_type==TokenType::NOT
+        || m_currentToken.m_type==TokenType::OFFPAGE
+        || m_currentToken.m_type==TokenType::ONPAGE)  {
         Token t;
         t.m_type = TokenType::BYTE;
         t.m_intVal = 0;
@@ -2491,6 +2491,101 @@ void Parser::AppendComment(QSharedPointer<Node> n)
         return;
     n->m_comment = m_lexer->m_currentComment;
     m_lexer->m_currentComment="";
+}
+
+QString Parser::CompareAndWashOverloadedProcedure(QString procName, QVector<QSharedPointer<Node>> decls)
+{
+    int cnt = 0;
+    for (auto pr: m_procedures) {
+        auto p = qSharedPointerDynamicCast<NodeProcedureDecl>(pr);
+        if (p->m_procName==procName || p->m_procName.startsWith(procName+m_override)) {
+            if (CompareDeclerations(decls, p->m_paramDecl)==0)
+                ErrorHandler::e.Error("Procedure '"+ WashVariableName(procName) +"' is already declared with identical parameters. ", m_currentToken.m_lineNumber);
+            cnt++;
+
+        }
+    }
+
+    //    QMap<QString, QSharedPointer<Node>> m_procedures;
+    return procName+m_override + QString::number(cnt);
+}
+
+
+int Parser::CompareDeclerations(QVector<QSharedPointer<Node> > aa, QVector<QSharedPointer<Node> > bb)
+{
+    if (aa.count()!=bb.count())
+        return -1;
+
+    int cnt = 0;
+    for (int i=0;i<aa.count();i++) {
+        auto a = qSharedPointerDynamicCast<NodeVarDecl>(aa[i]);
+        auto b = qSharedPointerDynamicCast<NodeVarDecl>(bb[i]);
+        auto t1 = qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode);
+        auto t2 = qSharedPointerDynamicCast<NodeVarType>(b->m_typeNode);
+
+        if (t1->m_op.m_value != t2->m_op.m_value) cnt++;
+        if (t1->m_flags.count() != t2->m_flags.count()) cnt++;
+        for (auto &s: t1->m_flags)
+            if (!t2->m_flags.contains(s) && s!="global") cnt++;
+
+    }
+    return cnt;
+}
+
+int Parser::CompareDeclerationsVsParameters(QVector<QSharedPointer<Node> > aa, QVector<QSharedPointer<Node> > bb)
+{
+    if (aa.count()!=bb.count())
+        return -1;
+
+    int cnt = 0;
+    for (int i=0;i<aa.count();i++) {
+        auto a = qSharedPointerDynamicCast<NodeVarDecl>(aa[i]);
+//        auto b = qSharedPointerDynamicCast<NodeVarDecl>(bb[i]);
+        auto t1 = qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode);
+
+        auto p1 = t1->m_op.m_value;
+        auto p2 = TokenType::getType(bb[i]->m_op.m_type);
+
+//        qDebug() << "PARSER COMPARE " <<p1 << p2 << t1->m_flags << cnt;
+
+        if (p1=="BYTE" || p1=="INTEGER" || p1=="LONG")  {
+            if (p2 =="INTEGER_CONST" || p2=="ADDRESS") {
+                if (t1->m_flags.contains("pure_variable")) cnt++;
+                continue;
+            }
+            if (p2=="ID") {
+                // Lookup
+                auto s = m_symTab->Lookup(bb[i]->m_op.m_value,m_currentToken.m_lineNumber);
+                if (s==nullptr) {
+                    qDebug() << "OISANN NULLPTR " << bb[i]->m_op.m_value;
+                    //exit(1);
+                    return -1;
+                }
+                if (s->m_type!=p1) cnt++;
+                if (t1->m_flags.contains("pure_number")) cnt++;
+
+//                qDebug() << s->m_type;
+                continue;
+
+            }
+            if (t1->isPure())
+                cnt++;
+
+        }
+        if (p1=="POINTER") {
+            if (p2=="INTEGER_CONST" || p2=="POINTER" || p2=="ID") continue;
+            if (t1->isPure())
+                cnt++;
+
+        }
+
+//        else
+        //qDebug() << "PARSER COMPARE "<< t1->m_op.m_value << TokenType::getType(bb[i]->m_op.m_type);
+  //      if (t1->m_op.m_value != TokenType::getType(bb[i]->m_op.m_type)) cnt++;
+
+    }
+    return cnt;
+
 }
 
 
@@ -2670,17 +2765,17 @@ QSharedPointer<Node> Parser::Factor()
         Eat();
 
         auto t = m_currentToken;
-//        qDebug() << t.m_value;
-//        if (m_currentToken.m_type == TokenType::NOT) {
-            if (t.m_value.toLower()=="true") {
-                Eat();
-                return NodeFactory::CreateNumber(t,0);
-            }
-            if (t.m_value.toLower()=="false") {
-                Eat();
-                return NodeFactory::CreateNumber(t,1);
-            }
-  //      }
+        //        qDebug() << t.m_value;
+        //        if (m_currentToken.m_type == TokenType::NOT) {
+        if (t.m_value.toLower()=="true") {
+            Eat();
+            return NodeFactory::CreateNumber(t,0);
+        }
+        if (t.m_value.toLower()=="false") {
+            Eat();
+            return NodeFactory::CreateNumber(t,1);
+        }
+        //      }
         return NodeFactory::CreateBinop(t,TokenType::XOR,Factor(), NodeFactory::CreateNumber(t,255));
     }
 
@@ -2747,11 +2842,11 @@ QSharedPointer<Node> Parser::Factor()
             if (s->m_type=="INCBIN") {
                 len = 0;
                 if (m_fileSizes.contains(s->m_name))
-                  len = m_fileSizes[s->m_name];
+                    len = m_fileSizes[s->m_name];
 
             }
             else
-            len = s->getLength();
+                len = s->getLength();
 
         }
         Token t = m_currentToken;
@@ -2792,7 +2887,7 @@ QSharedPointer<Node> Parser::Factor()
 
 
     if (t.m_type == TokenType::INTEGER_CONST || t.m_type ==TokenType::REAL_CONST
-            || t.m_type ==TokenType::ADDRESS) {
+        || t.m_type ==TokenType::ADDRESS) {
 
 
         Eat(t.m_type);
@@ -2842,7 +2937,7 @@ QSharedPointer<Node> Parser::Factor()
         if (p!=nullptr) {
             if (!p->m_procedure->m_isFunction && p->m_procedure->m_type==0)
                 ErrorHandler::e.Warning("Using procedures as functions can result in unpredicted behaviour. Please convert your procedure '" + p->m_procedure->m_procName+ "' into a function in order to avoid potential problems with the return value. ");
-            }
+        }
         if (node!=nullptr) {
             return node;
         }
@@ -2933,7 +3028,7 @@ void Parser::PreprocessSingle() {
 
         return;
     }
-//    else
+    //    else
     if (m_currentToken.m_value.toLower() =="copyfile") {
         Eat(TokenType::PREPROCESSOR);
         QString src = m_currentToken.m_value;
@@ -2965,31 +3060,31 @@ void Parser::PreprocessSingle() {
         return;
 
     }else
-    if (m_currentToken.m_value.toLower() =="addemulatorparam") {
-        Eat(TokenType::PREPROCESSOR);
-        m_additionalEmulatorParams<<m_currentToken.m_value;
-        Eat();
-    }
-
-    else
-        if (m_currentToken.m_value.toLower() =="define") {
+        if (m_currentToken.m_value.toLower() =="addemulatorparam") {
             Eat(TokenType::PREPROCESSOR);
-            QString key = m_currentToken.m_value;
+            m_additionalEmulatorParams<<m_currentToken.m_value;
             Eat();
-            //                qDebug() << m_currentToken.m_value;
-            //            int i = getIntVal(m_currentToken);
-            //              qDebug() << "After: " << Util::numToHex(i);
-            QString val = m_currentToken.m_value;
-            if (val=="")
-                val = QString::number(m_currentToken.m_intVal);
-
-            if (m_pass == PASS_PRE || m_pass == PASS_FIRST)
-                m_preprocessorDefines[key] = val;
-
-            //                  if (m_pass == PASS_PRE)
-            //                    qDebug() << "Defined: " << key << val;
-
         }
+
+        else
+            if (m_currentToken.m_value.toLower() =="define") {
+                Eat(TokenType::PREPROCESSOR);
+                QString key = m_currentToken.m_value;
+                Eat();
+                //                qDebug() << m_currentToken.m_value;
+                //            int i = getIntVal(m_currentToken);
+                //              qDebug() << "After: " << Util::numToHex(i);
+                QString val = m_currentToken.m_value;
+                if (val=="")
+                    val = QString::number(m_currentToken.m_intVal);
+
+                if (m_pass == PASS_PRE || m_pass == PASS_FIRST)
+                    m_preprocessorDefines[key] = val;
+
+                //                  if (m_pass == PASS_PRE)
+                //                    qDebug() << "Defined: " << key << val;
+
+            }
     if (m_currentToken.m_value.toLower() == "output_target") {
         Eat(TokenType::PREPROCESSOR);
         m_overrideOutputTarget = m_currentToken.m_value;
@@ -3174,7 +3269,7 @@ void Parser::PreprocessSingle() {
         }
         else if (m_currentToken.m_value.toLower() =="macro") {
             Eat(TokenType::PREPROCESSOR);
-//            HandleMacro();
+            //            HandleMacro();
             Eat();
             Eat();
             Eat();
@@ -3337,7 +3432,7 @@ void Parser::PreprocessMacros()
         //      if (m_pass==1)
         //      emit EmitTick("&"+QString::number((int)(100*m_lexer->m_pos/(float)m_lexer->m_text.size())));
 
-//        qDebug() << m_currentToken.m_value;
+        //        qDebug() << m_currentToken.m_value;
         if (m_currentToken.m_type == TokenType::PREPROCESSOR) {
             //qDebug() << m_currentToken.m_value <<m_macros.contains(m_currentToken.m_value.toLower());
             if (m_macros.contains(m_currentToken.m_value.toLower())) {
@@ -3382,7 +3477,6 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_lexer->m_orgText = m_lexer->m_orgText + "\n" + globalDefines+"\n";
     m_lexer->m_text = m_lexer->m_orgText;
 
-
     m_removeUnusedDecls = removeUnusedDecls;
     Node::m_curMemoryBlock = nullptr; //
     Node::m_staticBlockInfo.m_blockID = -1;
@@ -3409,8 +3503,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Symbol::s_currentProcedure = "main";
     m_inCurrentProcedure = "main";
 
-//    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000 && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80)
-  //      StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
+    //    if (Syntax::s.m_currentSystem->m_processor!=AbstractSystem::M68000 && Syntax::s.m_currentSystem->m_processor!=AbstractSystem::Z80)
+    //      StripWhiteSpaceBeforeParenthesis(); // TODO: make better fix for this
 
     Data::data.compilerState = Data::PREPROCESSOR;
     InitSystemPreprocessors();
@@ -3418,10 +3512,10 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     m_pass = PASS_FIRST;
     PreprocessAll();
     m_pass = PASS_PRE;
-//    m_ignoreMacros = true;
+    //    m_ignoreMacros = true;
     done = PreprocessIncludeFiles();
- //   m_ignoreMacros = false;
-/*    m_pass = PASS_PRE;
+    //   m_ignoreMacros = false;
+    /*    m_pass = PASS_PRE;
     PreprocessMacros();*/
 
     m_pass = PASS_MACROS;
@@ -3531,6 +3625,7 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
 
     if (m_procedures.contains(m_symTab->m_gPrefix+m_currentToken.m_value) || dual || triple) {
         QString procName = m_symTab->m_gPrefix+m_currentToken.m_value; // fix prefix
+
         if (triple) procName = m_symTab->m_currentUnit+m_currentToken.m_value;
         if (dual) procName = m_currentToken.m_value;
         Token t = m_currentToken;
@@ -3555,7 +3650,6 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
             return nullptr;
         }
         QVector<QSharedPointer<Node>> paramList;
-        QSharedPointer<NodeProcedureDecl> p = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
         if (m_currentToken.m_type!=TokenType::SEMI && m_currentToken.m_type!=TokenType::RPAREN)  {
             Eat(TokenType::LPAREN); // Must be a procedure call
             while (m_currentToken.m_type!=TokenType::RPAREN && !m_lexer->m_finished) {
@@ -3565,13 +3659,13 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
                     Eat(TokenType::COMMA);
                 }
                 else
-                if (m_currentToken.m_type==TokenType::RPAREN) {
+                    if (m_currentToken.m_type==TokenType::RPAREN) {
 
-                }
-                else {
-                    ErrorHandler::e.Error("Uknown token '"+m_currentToken.m_value+"'. Please separate your parametes by commas. ",m_currentToken.m_lineNumber);
+                    }
+                    else {
+                        ErrorHandler::e.Error("Uknown token '"+m_currentToken.m_value+"'. Please separate your parametes by commas. ",m_currentToken.m_lineNumber);
 
-                }
+                    }
                 //if (m_currentToken.m_type==TokenType::SEMI)
                 //    ErrorHandler::e.Error("Syntax errror", m_currentToken.m_lineNumber);
             }
@@ -3581,6 +3675,14 @@ QSharedPointer<Node> Parser::FindProcedure(bool& isAssign,QSharedPointer<Node> p
 
             Eat(TokenType::RPAREN);
         }
+//        QSharedPointer<NodeProcedureDecl> p = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+
+        auto p = FindCorrectOverridenProcedure(procName, paramList);
+  //      if (p==nullptr)
+    //        p = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+//        qDebug() << "PARSER FOUND PROCEDURE "<<procName << p->m_procName;
+
+
         //p->SetParameters(paramList);
         p->m_isUsed = true;
         if (m_inCurrentProcedure != "")
@@ -3662,8 +3764,8 @@ QVector<QSharedPointer<Node> > Parser::Parameters(QString blockName)
             for (QSharedPointer<Node> n: ns) {
                 decl.append(n);
             }
-//            qDebug() << TokenType::getType(m_currentToken.m_type);
-//            Eat(m_currentToken.m_type);
+            //            qDebug() << TokenType::getType(m_currentToken.m_type);
+            //            Eat(m_currentToken.m_type);
             if (m_currentToken.m_type==TokenType::COMMA || m_currentToken.m_type==TokenType::SEMI || m_currentToken.m_type==TokenType::RPAREN)
                 Eat();
             else
@@ -3701,7 +3803,7 @@ QSharedPointer<Node> Parser::ForLoop(bool inclusive)
         if (m_currentToken.m_type==TokenType::STEP) {
             Eat();
             step = Expr();
-/*            qDebug() << TokenType::getType(step->m_op.m_type);
+            /*            qDebug() << TokenType::getType(step->m_op.m_type);
             auto num = qSharedPointerDynamicCast<NodeNumber>(step);
             qDebug() << num->m_val;*/
         }
@@ -3754,8 +3856,8 @@ QSharedPointer<Node> Parser::String(bool isCString = false)
     //    lst<<m_currentToken.m_value;
     int max=0;
     QString numID = "";
-//    if (isCString)
-        numID = Syntax::s.m_numID;
+    //    if (isCString)
+    numID = Syntax::s.m_numID;
 
 
     while (m_currentToken.m_type!=TokenType::RPAREN) {
@@ -3895,32 +3997,41 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     AppendComment(procDecl);
 
     bool alreadyForwaredDeclared = false;
+    bool isOverload = false;
 
     if (m_procedures[procName]!=nullptr) {
         //  qDebug() << "Procedure already defined: testing for forward "<<procName <<m_proceduresOnly.count();
         procDecl->m_isUsed = m_procedures[procName]->m_isUsed;
         procDecl->m_isUsedBy = m_procedures[procName]->m_isUsedBy;
-        if (qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName])->m_isForward==false)
-            ErrorHandler::e.Error("Procedure '"+ WashVariableName(procName) +"' is already declared.", tok.m_lineNumber);
+        if (qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName])->m_isForward==false) {
+            //ErrorHandler::e.Error("Procedure '"+ WashVariableName(procName) +"' is already declared.", tok.m_lineNumber);
+            procName = CompareAndWashOverloadedProcedure(procName, paramDecl);
+            isOverload = true;
+            //            procName = procName + "_overload_";
+        }
 
         // Make sure that the correct number of parameters + types etc are identical for the forward declared procedure
-        QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
-        if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
-            ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect number of parameters. ", tok.m_lineNumber);
+        if (!isOverload) {
+            QSharedPointer<NodeProcedureDecl> existing = qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+            if (existing->m_paramDecl.count()!=procDecl->m_paramDecl.count())
+                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect number of parameters. ", tok.m_lineNumber);
 
-        for (int i=0;i<existing->m_paramDecl.count();i++) {
-            QSharedPointer<NodeVarDecl> a = qSharedPointerDynamicCast<NodeVarDecl>(existing->m_paramDecl[i]);
-            QSharedPointer<NodeVarDecl> b = qSharedPointerDynamicCast<NodeVarDecl>(procDecl->m_paramDecl[i]);
-            if ( qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value!=
-                 qSharedPointerDynamicCast<NodeVar>(b->m_varNode)->value)
-                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect or missing declared parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"'", tok.m_lineNumber);
 
-            if ( qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value!=
-                 qSharedPointerDynamicCast<NodeVarType>(b->m_typeNode)->value)
-                ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +
-                                      "' has incorrect declared parameter type for parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"', should be "
-                                      +WashVariableName(qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value), tok.m_lineNumber);
+            if (!isOverload)
+                for (int i=0;i<existing->m_paramDecl.count();i++) {
+                    QSharedPointer<NodeVarDecl> a = qSharedPointerDynamicCast<NodeVarDecl>(existing->m_paramDecl[i]);
+                    QSharedPointer<NodeVarDecl> b = qSharedPointerDynamicCast<NodeVarDecl>(procDecl->m_paramDecl[i]);
+                    if ( qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value!=
+                        qSharedPointerDynamicCast<NodeVar>(b->m_varNode)->value)
+                        ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +"' has incorrect or missing declared parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"'", tok.m_lineNumber);
 
+                    if ( qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value!=
+                        qSharedPointerDynamicCast<NodeVarType>(b->m_typeNode)->value)
+                        ErrorHandler::e.Error("Forward declared procedure '"+ WashVariableName(procName) +
+                                                  "' has incorrect declared parameter type for parameter '"+WashVariableName(qSharedPointerDynamicCast<NodeVar>(a->m_varNode)->value)+"', should be "
+                                                  +WashVariableName(qSharedPointerDynamicCast<NodeVarType>(a->m_typeNode)->value), tok.m_lineNumber);
+
+                }
         }
         /*        for (QSharedPointer<Node> d: m_proceduresOnly) {
 //            qDebug()<< "   *********";
@@ -3938,6 +4049,7 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
         //            qDebug() << procName << procDecl->m_paramDecl.count() << existing->m_paramDecl.count();
 
     }
+    procDecl->m_procName = procName;
     m_procedures[procName] = procDecl;
     //        qDebug() << "Adding to GLOBAL list: " <<procName;
     m_symTab->m_globalList.append(procName);
@@ -4042,10 +4154,10 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
         if (s->m_isClassVariable) {
             v->setReference(m_isClassReference);
             if (s->m_type!="POINTER")
-            if (s->m_arrayType!=TokenType::NADA)
-                if (v->m_expr==nullptr)
-                    if (!v->isReference())
-                        ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v->value+")</font>",m_currentToken.m_lineNumber);
+                if (s->m_arrayType!=TokenType::NADA)
+                    if (v->m_expr==nullptr)
+                        if (!v->isReference())
+                            ErrorHandler::e.Error("Unknown usage of data or array. <font color=\"orange\">Did you mean to reference it? (#"+v->value+")</font>",m_currentToken.m_lineNumber);
             QString et = s->getEndType();
             if (s->m_type.toLower()=="pointer") {
                 v->m_classvariableType = Syntax::s.m_currentSystem->getPointerType();
@@ -4145,6 +4257,32 @@ QSharedPointer<Node> Parser::ApplyClassVariable(QSharedPointer<Node> var)
 
 
     return NodeFactory::CreateBinop(m_currentToken,TokenType::PLUS, v,add);
+
+}
+
+QSharedPointer<NodeProcedureDecl> Parser::FindCorrectOverridenProcedure(QString procName, QVector<QSharedPointer<Node> > params)
+{
+    QVector<QSharedPointer<NodeProcedureDecl>> lst;
+    lst.append(qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]));
+    QStringList procs = m_procedures.keys();
+    for (auto& s : procs) {
+        if (s.contains(procName+m_override)) {
+            lst.append(qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[s]));
+        }
+    }
+    if (lst.count()==1)
+        return lst.first();//qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
+    for (auto l : lst ) {
+        if (CompareDeclerationsVsParameters(l->m_paramDecl, params)==0) {
+            qDebug() << "PARSER RETURNING "<<l->m_procName <<lst.count();
+
+            return l;
+        }
+    }
+
+    return lst.first();
+
+
 
 }
 
@@ -4378,16 +4516,16 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     if (m_isTRU)
         for (QSharedPointer<Node> n : vars) {
             QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(n);
-//            if (v->m_isGlobal)
+            //            if (v->m_isGlobal)
             for (auto unit : s_usedTRUNames) {
                 unit+="_";
                 if (unit == m_symTab->m_currentUnit)
                     continue;
 
-  //              qDebug() << "PARSER XX " <<unit << v->value;
+                //              qDebug() << "PARSER XX " <<unit << v->value;
                 if (v->value.contains(unit)) {
                     v->value = v->value.remove(m_symTab->m_currentUnit);
-//                    qDebug() << "Renamed to " << v->value ;
+                    //                    qDebug() << "Renamed to " << v->value ;
                 }
             }
         }
@@ -4464,7 +4602,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     //    return vars;
     var_decleratons.append(m_extraDecls); // Extra variables such as string lists
     m_extraDecls.clear();
-//    m_extraDeclsNames.clear();
+    //    m_extraDeclsNames.clear();
     return var_decleratons;
 }
 
@@ -4476,9 +4614,9 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
     // So here is something interesting: if you're in a class on the m68k,
     // then if you have defined a byte it MUST become an integer due to the alignment requires
     bool forceByteAlignment =(Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000 && m_isRecord);
-//    qDebug() << "TYPESPEC " <<m_currentToken.getType() << varNames << m_symTab->m_currentClass;
+    //    qDebug() << "TYPESPEC " <<m_currentToken.getType() << varNames << m_symTab->m_currentClass;
 
-/*    if (forceByteAlignment && t.m_type==TokenType::BYTE) {
+    /*    if (forceByteAlignment && t.m_type==TokenType::BYTE) {
         t.m_type = TokenType::INTEGER;
         t.m_value = "INTEGER";
         m_currentToken = t;
@@ -4560,7 +4698,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
         VerifyTypeSpec(arrayType);
         TokenType::Type dataType = m_currentToken.m_type;
         if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 &&
-                dataType == TokenType::POINTER) {
+            dataType == TokenType::POINTER) {
             QString ie = "<br><font color=\"grey\">Example:<br>anIntegerArray[i]:=#data;<br>aPointer := anIntegerArray[i];</font>";
             ErrorHandler::e.Error("Cannot have arrays of (zeropage) pointers on the 6502. Instead, please use an array of integers, and then assign a pointer to the (integer) array item."+ie,m_currentToken.m_lineNumber);
         }
@@ -4590,7 +4728,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                     //tmp_data.append(m_currentToken);
                     tmp_data.append(String(false));
                     //                    qDebug() << m_currentToken.m_value;
-//                    Eat();
+                    //                    Eat();
                     if (m_currentToken.m_type == TokenType::COMMA)
                         Eat();
                 }
@@ -4627,7 +4765,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
 
                 if (m_currentToken.m_type==TokenType::BUILDTABLE) {
                     data = BuildTable(count, dataType);
-//                    qDebug() << data;
+                    //                    qDebug() << data;
                 }
                 else
                     if (m_currentToken.m_type==TokenType::BUILDSINETABLE) {
@@ -4663,7 +4801,7 @@ QSharedPointer<Node> Parser::TypeSpec(bool isInProcedure, QStringList varNames)
                                     QString extra="";
                                     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::M68000)
                                         extra="0";
-                                     data << "$"+extra+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
+                                    data << "$"+extra+QString::number(GetParsedInt(dataType),16);//QString::number(m_currentToken.m_intVal);
                                 }
                                 //data << "$0"+QString::number(GetParsedInt(),16);//QString::number(m_currentToken.m_intVal);
                                 if (m_currentToken.m_type!=TokenType::RPAREN) {
@@ -5245,7 +5383,7 @@ void Parser::HandleMacro()
 
 
     m_macros[name.toLower()] = m;
-//    qDebug() << m_currentToken.m_value;
+    //    qDebug() << m_currentToken.m_value;
 
     Eat();
     Eat(); // endmacro
@@ -5280,7 +5418,7 @@ void Parser::HandlePerlinNoise()
         Eat(TokenType::INTEGER_CONST);
     }
     SimplexNoise sn;
-//    qDebug() << "PARSER:::" <<pow;
+    //    qDebug() << "PARSER:::" <<pow;
     sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
 
 }
@@ -5292,9 +5430,9 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     Eat(TokenType::LPAREN);
     QStringList params;
     QString p;
-//    if (m_pass!=1)
- //       return;
-//        qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
+    //    if (m_pass!=1)
+    //       return;
+    //        qDebug() << "Before " <<m_pass <<m_currentToken.m_value << m_lexer->m_pos << m_lexer->m_text[m_lexer->m_pos];
     // Build the parameter list + "p"
     for (int i=0;i<m_macros[name].noParams;i++) {
         QString val = m_currentToken.m_value;
@@ -5324,7 +5462,7 @@ void Parser::HandleCallMacro(QString name, bool ignore)
                                        "\n function Write(__v) {__oo=__oo+__v; } "
                                        "\n function write(__v) {__oo=__oo+__v; } "
                                        "\n   (function("+p+") { "+m_macros[name].str+"; return __oo;})");
-//    qDebug() <<m_macros[name].str;
+    //    qDebug() <<m_macros[name].str;
     if (fun.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + fun.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
@@ -5340,10 +5478,10 @@ void Parser::HandleCallMacro(QString name, bool ignore)
     if (ret.isError())
         ErrorHandler::e.Error("Error evaluation javascript expression : " + ret.toString() + " <br><br>", m_currentToken.m_lineNumber);
 
- //   qDebug() << "inserting "<<ret.toString() << m_pass;
+    //   qDebug() << "inserting "<<ret.toString() << m_pass;
     // Inject macro text into the source code
     m_lexer->m_text.insert(pos,ret.toString());
-  //  qDebug().noquote() << m_lexer->m_text;
+    //  qDebug().noquote() << m_lexer->m_text;
     m_lexer->m_pos+=ret.toString().size();
 
 }
@@ -6034,7 +6172,7 @@ void Parser::HandleVBMCompileChunk()
 
     img->m_silentExport = true;
 
-//    file.open(QFile::WriteOnly);
+    //    file.open(QFile::WriteOnly);
     file.open(QIODevice::WriteOnly| QIODevice::Text);
     QTextStream f(&file);
 
@@ -6481,9 +6619,9 @@ void Parser::HandleUseTPU(QString fileName)
     try {
 
         p->m_tree = p->Parse( false
-                              ,m_vicMemoryConfig,
-                              Util::fromStringList(m_projectIni->getStringList("global_defines")),
-                              m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
+                             ,m_vicMemoryConfig,
+                             Util::fromStringList(m_projectIni->getStringList("global_defines")),
+                             m_projectIni->getdouble("pascal_settings_use_local_variables")==1.0);
     } catch (FatalErrorException& e)
     {
         e.message = "<font color=\"#FFB030\">Error during compiling the Turbo Rascal Unit file : '</font><font color=\"yellow\">" +fileName + "</font>'<font color=\"#FFB030\"> on line " +QString::number(e.linenr)+ "</font><br><font color=\"red\">"+e.message+"</font>";
@@ -6524,19 +6662,19 @@ QSharedPointer<Node> Parser::Expr()
     QSharedPointer<Node> node = Term();
 
     if (!m_isInConditional)
-    while (m_currentToken.m_type == TokenType::Type::GREATER || m_currentToken.m_type == TokenType::Type::GREATEREQUAL ||
-           m_currentToken.m_type == TokenType::Type::LESS || m_currentToken.m_type == TokenType::Type::LESSEQUAL ||
-           m_currentToken.m_type == TokenType::Type::EQUALS || m_currentToken.m_type == TokenType::Type::NOTEQUALS
-            || m_currentToken.m_type == TokenType::Type::AND || m_currentToken.m_type == TokenType::Type::OR
+        while (m_currentToken.m_type == TokenType::Type::GREATER || m_currentToken.m_type == TokenType::Type::GREATEREQUAL ||
+               m_currentToken.m_type == TokenType::Type::LESS || m_currentToken.m_type == TokenType::Type::LESSEQUAL ||
+               m_currentToken.m_type == TokenType::Type::EQUALS || m_currentToken.m_type == TokenType::Type::NOTEQUALS
+               || m_currentToken.m_type == TokenType::Type::AND || m_currentToken.m_type == TokenType::Type::OR
 
 
-           ) {
-        Token t = m_currentToken;
-        Eat(m_currentToken.m_type);
-        node = NodeFactory::CreateBinaryClause(t,t.m_type,node,Term());
-        //     return node;
+               ) {
+            Token t = m_currentToken;
+            Eat(m_currentToken.m_type);
+            node = NodeFactory::CreateBinaryClause(t,t.m_type,node,Term());
+            //     return node;
 
-    }
+        }
 
 
     while (m_currentToken.m_type == TokenType::Type::PLUS || m_currentToken.m_type == TokenType::Type::MINUS
