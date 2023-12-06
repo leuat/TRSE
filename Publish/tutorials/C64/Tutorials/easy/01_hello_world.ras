@@ -27,7 +27,7 @@ begin
 		// Point ptr to line 22 on the screen
 		ptr := #Screen::screen0 + screen_width*22;	
 		// Copy the data from the cstring to the screen
-		Memory::MemCpy(#cheap_scroller + i, ptr, 40);
+		Memory::Copy(#cheap_scroller + i, ptr, 40);
 		// Increase the counter
 		i+=1;
 		// Reset the text counter when the reaches the end of the string

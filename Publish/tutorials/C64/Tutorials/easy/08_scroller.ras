@@ -1,4 +1,6 @@
 program Scroller;
+@use "screen/screen"
+@use "system/memory"
 var
 	scrollVal : byte=0;
 	textPointer : ^byte;
@@ -12,14 +14,15 @@ var
 // Position of scroller raster line
 	const yposRaster:byte=$A0;
 
+	ptr : ^byte;
 
 /*
   The following method just copes the current contents of textPointer to screenmemory
 */
 procedure PrintText();
 begin
-	moveto(0,ypos,hi(#screen_char_loc));
-	memcpy(textPointer, 0, screenmemory, screen_width-1);
+	ptr := #Screen::screen0 + ypos*Screen::width;
+	Memory::Copy(textPointer, ptr, Screen::width-1);
 end;
 
 /*
@@ -84,15 +87,14 @@ end;
 procedure InitScreen();
 begin
 	// Clear screen with spaces
-	ClearScreen(key_space,#screen_char_loc);
+	Screen::Clear(#Screen::screen0, key_space);
 	// Fill the upper screen color ram with black
-	fill(#screen_col_loc,black,0);	
+	Memory::Fill(#Screen::color, black, 0);
 	// Fill the scroll area with light red
-	fill(#screen_col_loc+ypos*screen_width,light_red,0);	
+	Memory::Fill(#Screen::color + ypos*Screen::width,light_red,0);
 	
 	// Print some static text
-	moveto(6,2,hi(screen_char_loc));
-	printstring("THIS TEXT IS STATIONARY",0,40);
+	Screen::PrintString("THIS TEXT IS STATIONARY", 8,2,#Screen::Screen0);
 	
 	// Removes the 0th and 39th column on the screen, enabling the "smooth" transition at 
 	// the edges. 

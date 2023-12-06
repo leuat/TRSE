@@ -8,8 +8,6 @@ var
 	v,v2 : byte;
 	i1,i2 : integer;
 
-
-
 procedure Poke( i1: global integer pure_number, v: global byte pure_number) inline;
 begin
 	asm("
@@ -45,13 +43,22 @@ begin
 	");
 end;
 
+/**
+	Sets a value at memory address.<p>
+	Usage:
+	<code>
+poke($400, $54); // puts value $54 at address $400
+	</code> 
+
+**/
+
 
 procedure Poke( p: global pointer, v: global byte);
 begin
 	p[0]:=v;
 end;
 
-procedure MemCpy( i1 : global integer pure, i2 : global integer pure, v: global byte pure ) inline;
+procedure Copy( i1 : global integer pure, i2 : global integer pure, v: global byte pure ) inline;
 begin
 	asm("
 		ldx #0
@@ -64,7 +71,7 @@ begin
 	");
 end;
 
-procedure MemCpy( p : global pointer pure, p2 : global pointer pure, v: global byte pure ) inline;
+procedure Copy( p : global pointer pure, p2 : global pointer pure, v: global byte pure ) inline;
 begin
 	asm("
 		ldy #0
@@ -77,7 +84,17 @@ begin
 	");
 end;
 
-procedure MemCpy( p : global pointer, p2 : global pointer, v: global byte);
+/**
+	Copies v bytes of data from p1 to p2. Note that the count must be a byte, ie <256. use "0" for 256 bytes. <p>
+	Usage:
+	<code>
+Memory::Copy($400, $4400, 128); // copies 128 bytes from $400 to $4400
+	</code> 
+
+**/
+
+
+procedure Copy( p : global pointer, p2 : global pointer, v: global byte);
 begin
 	asm("
 		ldy #0

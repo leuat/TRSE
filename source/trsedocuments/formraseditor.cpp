@@ -719,6 +719,16 @@ void FormRasEditor::keyPressEvent(QKeyEvent *e)
             QTextCursor tc = ui->txtEditor->textCursor();
             tc.select(QTextCursor::WordUnderCursor);
             QString word = tc.selectedText();
+            tc.select(QTextCursor::LineUnderCursor);
+            QString line = tc.selectedText();
+            int pos = line.indexOf(word);
+            // Match for stuff like Memory::Clear
+            QRegularExpression regexp("\\b(\\S+?)::(\\S+?)\\b");
+            if (line.contains(regexp)) {
+                QString w = regexp.match(line).captured();
+                if (w.contains(word))
+                    word = w; // Match! change "MemCpy" to "Memory::MemCpy"
+            }
             Help(word);
             return;
         }

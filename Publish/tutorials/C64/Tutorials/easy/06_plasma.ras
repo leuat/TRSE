@@ -1,5 +1,6 @@
 program PlasmaProgram;
-
+@use "screen/screen"
+@use "system/memory"
 var
 
 // set to "0" to get the unoptimized version
@@ -22,12 +23,13 @@ var
 	
 
 	// mini sine table
-    siny : array[screen_height] of byte; 
-	sinx : array[screen_width] of byte; 
+    siny : array[Screen::height] of byte; 
+	sinx : array[Screen::width] of byte; 
 
 	// Lookup table for division by 16
 	lookupDiv16 : array[256] of byte = buildtable("i/16");
 
+	ptr : ^byte;
 
 
 	const yStart:byte = 2;
@@ -45,7 +47,7 @@ begin
 	c2y:=ay;
 	
 	// Set up y-sine table
-	for x:=0 to screen_height unroll do begin 
+	for x:=0 to Screen::height unroll do begin 
 		siny[x]:=  sine[c2x] + sine[c2y];
 		c2x:=c2x+4;
 		c2y:=c2y+9;
@@ -55,17 +57,17 @@ begin
 	ay:=ay-5;
 
 	// Set up x-sine table
-	for x:=0 to screen_width unroll do begin 
+	for x:=0 to Screen::width unroll do begin 
 		sinx[x] := sine[c2x] + sine[c2y];
 		c2x:=c2x+3;
 		c2y:=c2y+7;
 
 	end;
 	// Move cursor to (1,y) on $0400 on bank 1
-	moveto(0,yStart, hi(screen_char_loc));
+	ptr := #Screen::screen0 + Screen::width*yStart;
 	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
 	
-	colorP:=#screen_col_loc + yStart*screen_width;
+	colorP:=#Screen::color + yStart*Screen::width;
 	
 	for y:=yStart to yEnd do 
 	begin
@@ -91,7 +93,7 @@ begin
 				tax
 				lda lookupDiv16,x
 				ldy x
-				sta (screenmemory),y
+				sta (ptr),y
 				tax
 				lda fade,x
 				sta (colorP),y
@@ -99,9 +101,9 @@ begin
 @endif
 		end;
 		// Increase screen memory pointer by 40 (next row)
-		screenmemory+=+screen_width;
+		ptr+=+Screen::width;
 		// Increase color pointer by 40 (next row)
-		colorP+=screen_width;
+		colorP+=Screen::width;
 	end;
 
 end;
@@ -110,20 +112,20 @@ end;
 
 begin
 	// Set color background
-	screen_bg_col:=black;
-	screen_fg_col:=black;
+	Screen::bg_col:=black;
+	Screen::fg_col:=black;
 	// Set charmap location at $2000
 	SetCharsetLocation(charsetLocation);
 	// Copy the 16 characters rom baseCharacter to 0
-	memcpy(#charsetLocation +8*baseCharacter, 0, #charsetLocation,8*16);
+	Memory::Copy(#charsetLocation +8*baseCharacter, #charsetLocation,8*16);
 	ax:=1;
 	ay:=5;
 
 	// Clear screen and color memory
-	ClearScreen(key_space, #screen_char_loc);
+	Screen::Clear(#Screen::screen0, key_space);
 	// Main loop
 	while (true) do begin
-		waitforverticalblank();
+		Screen::WaitForVerticalBlank();
 		Plasma();
 	end;
 

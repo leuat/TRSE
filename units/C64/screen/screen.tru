@@ -21,7 +21,8 @@ var
 	const border : address = $d020;
 	const background : address = $d021;
 	const color : address = $d800;
-
+	const width : byte = 40;
+	const height : byte = 25;
 	tab40 : array[25] of integer = buildtable("i*SCREEN_WIDTH");
 	
 /**
