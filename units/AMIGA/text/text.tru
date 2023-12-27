@@ -1,0 +1,207 @@
+unit Text;
+var
+	
+	// Pointer to the font
+	fontPtr : ^byte; 
+	screenWidth : integer;
+	
+	asciiStart, val : byte = 0;
+	fontHeight, noBitPlanes, speed, counter : integer;
+	fontWidth : integer;
+	size, incScreen: integer;
+	lookupVal : long = 0;
+	isInterlaced : boolean;
+	textP: ^byte; 
+	x,y, orgx : integer; 
+	target, zp, orgTarget : ^byte;
+	
+	lookup8x8 : array[128] of long = buildtable("i%40 + Math.floor(i/40)*(40*8)");
+	lookup16x16 : array[128] of long = buildtable("(i%20)*2 + Math.floor((i)/20.0)*(40*20)");
+	
+	lookup,dst, tmp : ^long;
+	
+	screenAdd : integer;
+	
+	
+	/**
+	Initialises a new font. <p>
+	Please note that the only supported formats right now are 1-bitplane 8x8 and 16x16 fonts
+	Parameters are: 
+	<ul>
+	 <li>[ 320x256 1-bpl font data ]
+	 <li>[ width of the current screen ]
+	 <li>[ start of ascii chars ]
+	 <li>[ width of the font in pixels ] 
+	 <li>[ height of the font in pixels ] 
+	 <li>[ start of the ascii conversion - if "A" is your first char, then the value is 65 ] 
+	 <li>[ number of bitplanes on your current setup ]
+	 <li>[ pointer to font lookup data ]
+	 <li>[ is the screen interlaced or not? ]
+	</ul>
+	Example:
+	<code>
+// Initializes a PETSCII 8x8 font
+Text::Init( #fontData, 320, 65, 8, 8, noBitPlanes, #Text::lookup8x8 );
+	</code>
+	**/
+	procedure Init(fontPtr: global ^byte; screenWidth:global integer; asciiStart : global byte; fontWidth: global integer, fontHeight : global integer; noBitPlanes : global integer; lookup: global ^long, isInterlaced:global boolean);
+	begin
+		
+		fontWidth:=(fontWidth>>3);
+				
+		size := (fontHeight * $40) + fontWidth-1;;
+
+		if (isInterlaced) then
+		begin		
+			incScreen:=(screenWidth/8)*noBitPlanes;
+			screenAdd := noBitPlanes*(screenWidth/8) - fontWidth;
+		end
+		else 
+		begin
+			incScreen:=(screenWidth/8);
+			screenAdd := (incScreen) - fontWidth;
+		end;
+	end;
+	
+	
+	procedure DrawFont8();
+	begin
+		zp := fontPtr + lookupVal;
+		asm("
+			move.l Text_zp,a0
+			move.l Text_target,a1
+			move.l #0,d5
+			move.l #0,d1
+			
+			move.w Text_fontHeight,d5
+			sub.w #1,d5
+			move.w Text_incScreen,d1
+dfl1:
+ 			move.b (a0),(a1)
+ 			add.l #40, a0
+ 			add.l d1, a1
+ 			dbf d5,dfl1
+		
+		");
+	end;
+
+	procedure DrawSingleChar(char: byte);
+	begin
+		lookupVal := lookup[char];
+		if (fontWidth=1) then
+		begin
+			DrawFont8();		
+		end
+		else
+		begin
+			tmp:=fontPtr+ lookupVal;
+			ablit(tmp, target, 0, 0, 0,  40,  size, 40-2,screenAdd, 40-2,$09E0);
+		end;
+		
+	end;
+
+
+	procedure Advance();
+	begin
+		val := textP^;
+			
+		// Not space
+		if (val<>32) then
+		begin
+			DrawSingleChar(val-asciiStart);
+		end;
+		textP+=1;
+		target += fontWidth;
+		
+	end;
+
+/**
+	Sets up a "printer" routine to constantly output a given text to the screen. Use in tandem with
+	"AdvancePrinter" in order to perform the actual printing. <p>	
+	Example:<p>
+	<code>
+var
+	// the value "10" implies newline
+	text: string =("HELLO",10,10,
+	"WORLD");
+					
+	
+..
+begin	
+	// Will initialise the printer to position (x,y)=(4*8,64) on the "screen" buffer. Higher printspeed
+	// number means slower output. 
+	Text::InitPrinter(#text, 4,64, #screen, printSpeed);
+	
+	while (true) do
+	begin
+		waitverticalblank();
+		Text::AdvancePrinter();
+	end;	
+	
+	</code>
+
+**/	
+	procedure InitPrinter(textP: global ^byte; x,y : global integer; target : global ^byte, speed: global integer);
+	begin
+		orgx:=x;
+		orgTarget := target;
+		target+=incScreen*y+x;	
+		counter := 0;
+	end;
+	
+	procedure AdvancePrinter();
+	begin
+		
+		counter+=1;
+		if (counter>=speed) then
+		begin
+			counter:=0;
+
+			
+			if (textP^=0) then return;
+			Advance();
+			// Newline
+			while (textP^=10) do 
+			begin
+				x:=orgx;
+				y+=fontHeight;
+				target:= orgTarget + (incScreen*y);
+				target+=x;
+				textP+=1;
+			end;
+		end;
+
+	end;
+
+/**
+	Draws a text based on the current font to a buffer. <p>
+	Note that the x parameter is the actual byte position on screen, so you can only draw
+	text on every 8th pixel. 
+	
+	Example:<p>
+	<code>
+// Draws "hello world" to position (x,y) =  (8*8,32) to the "screen" buffer 
+Text::Draw("HELLO WORLD", 8, 32, #screen);
+	</code>
+
+**/	
+	procedure Draw(textP: global ^byte; x,y : global integer; target : global ^byte);
+	begin
+		target+=incScreen*y+x;	
+		while (textP^<>0) do
+		begin
+			Advance();
+		end;		
+	end;
+
+	procedure DrawChar(val: global byte; x,y : global integer; target : global ^byte);
+	begin
+		target+=incScreen*y+x;	
+		
+		if (val<>32) then
+		begin
+			DrawSingleChar(val-asciiStart);
+		end;		
+	end;
+	
+end.
