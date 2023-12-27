@@ -6,6 +6,7 @@ program Object1;
 @define muldivtables $2700
 @define objPos $2F00
 @define max3dobjects 1
+@define linemethod "Gfx::Line"
 
 /*
  Renders the first 3D object. Require the screen to already be filled with some data

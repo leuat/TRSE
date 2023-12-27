@@ -6,7 +6,7 @@ program Object2;
 @define muldivtables $2700
 @define objPos $3000
 @define max3dobjects 1
-
+@define linemethod "Gfx::Line"
 
 //@projectsettings "startaddress" $1280
 /*

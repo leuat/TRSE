@@ -1,8 +1,6 @@
 program Randomness;
 
 var  
-	screen_height : byte = 25; //Not defined for some reason on C128
-	 
 	random_color,x,y,index: byte; 
 	// Array of random bytes
 	random_values : array[256] of byte; 

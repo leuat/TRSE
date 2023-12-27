@@ -87,7 +87,7 @@ begin
 	STA $FE4B			; timer 1 one shot mode
 	");
 	RasterIRQ(Screen::DefaultIRQ());
-	Screen::StartInterrupts();
+//	Screen::StartInterrupts();
 	Player::InitMusic(#music);
 	Screen::irqProcedure := #Player::PlayMusic;
 	zp:=#files;

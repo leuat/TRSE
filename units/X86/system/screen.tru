@@ -17,6 +17,7 @@ var
 	port:integer;
 	val, reg:byte;
 	
+	zp:pointer;
 	
 	const CRTCa : integer = $3D8;/* 6845 mode control register */
 	const CRTCb : integer = $3D4; /* 6845 index register */
@@ -182,7 +183,7 @@ begin
 end;
 
 
-procedure Print(zp:pointer);
+procedure Print(zp:global pointer);
 begin
 	while (zp^<>0) do
 	begin

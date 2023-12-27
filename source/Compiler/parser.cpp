@@ -28,7 +28,6 @@ QStringList Parser::s_usedTRUNames;
 QVector<QSharedPointer<Parser>> Parser::m_tpus;
 
 
-
 QString Parser::WashVariableName(QString v)
 {
     //  QString p =m_symTab->m_gPrefix;

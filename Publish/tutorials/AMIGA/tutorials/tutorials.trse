@@ -62,4 +62,5 @@ data_header_images/sprites.flf = 0
 data_header_resources/images/tiles.flf = 0
 data_header_resources/images/levels.flf = 0
 charset_resources/images/levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/AMIGA/tutorials/resources/images/tiles.flf
+data_header_resources/images/image2.flf = 0
 open_files =, tutorial1.ras

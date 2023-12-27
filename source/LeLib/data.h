@@ -37,7 +37,6 @@ public:
 };
 
 
-
 class Data : public QObject
 {
     Q_OBJECT

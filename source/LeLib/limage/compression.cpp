@@ -265,6 +265,8 @@ void Compression::AddToDataVGA(QByteArray &data, LImageQImage& img, int xp, int 
 }
 
 
+
+
 void Compression::AddBitplaneToData(QByteArray &data, MultiColorImage &img, int xp, int yp, int w, int h, int bpl, int shift)
 {
     int d= 0;

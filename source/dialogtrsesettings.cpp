@@ -612,7 +612,7 @@ void DialogTRSESettings::on_btnHelpGB_clicked()
 
 void DialogTRSESettings::on_btnHelpZX_clicked()
 {
-    Help("ZX Spectrum Emulator", "Please use https://www.retrovirtualmachine.org/en/ ");
+    Help("ZX Spectrum Emulator", "Please use https://www.retrovirtualmachine.org/en/ version 2.0 (not newer!)");
 }
 
 void DialogTRSESettings::on_btnHelpTiki_clicked()
