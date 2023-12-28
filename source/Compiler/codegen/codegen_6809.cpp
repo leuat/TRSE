@@ -839,7 +839,16 @@ void CodeGen6809::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
         node->m_pushedPointers++;
     }
 */  if (initVal.trimmed()=="") initVal="$00";
+
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
+
+
+    if (as->m_currentBlock == as->m_wram) {
+        as->Write(v->value + "\t = \t" + Util::numToHex(as->m_currentRamAddress));
+        as->m_currentRamAddress+=2;
+        return;
+    }
+
     as->Write(v->value + ":\t"+as->word+"\t" + initVal,0);
 
 }

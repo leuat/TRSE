@@ -22,6 +22,7 @@
 #include "asm6809.h"
 #include "source/Compiler/syntax.h"
 #include "source/Compiler/optimiser/postoptimizer6809.h"
+#include "source/Compiler/systems/abstractsystem.h"
 
 QString Asm6809::m_defaultZeroPointers = "$02, $04, $08, $16, $0B,$0D, $10, $12, $22,$24, $68";
 QString Asm6809::m_defaultViaZeroPointers = "$5B, $5C, $5D, $5E";
@@ -34,8 +35,10 @@ Asm6809::Asm6809() :Assembler()
     m_countCycles = false;
 
     m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiser6809());
-    m_wram = QSharedPointer<Appendix>(new Appendix("$C800"));
+//    m_wram = QSharedPointer<Appendix>(new Appendix(Util::numToHex(Syntax::s.m_currentSystem->m_ramAddress)));
+    m_wram = QSharedPointer<Appendix>(new Appendix());
     m_optimiser->m_noPasses = 3;
+    m_currentRamAddress = Syntax::s.m_currentSystem->m_ramAddress;
 
 }
 
@@ -183,6 +186,7 @@ void Asm6809::DeclareVariable(QString name, QString type, QString initval, QStri
     QString t = "";
     if (initval=="")
         initval="0";
+
     if (DeclareRecord(name,type,1,QStringList(),position))
          return;
     if (DeclareClass(name,type,1,QStringList(),position))
@@ -234,6 +238,11 @@ void Asm6809::DeclareVariable(QString name, QString type, QString initval, QStri
 */
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
+
+    if (m_currentBlock == m_wram) {
+        Write(DeclareWRamVar(name,type));
+        return;
+    }
 
     Write(getLabelEnding(name) +"\t" + t + "\t"+initval);
 
@@ -591,11 +600,13 @@ QString Asm6809::StoreInTempVar(QString name, QString type, bool actuallyStore)
         type = byte;
     if (type=="word") type=word;
     Comment("Store in temp var");
-    QString labelVar = getLabelEnding(tmpVar) + "\t "+type+"\t0 ";
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX)
-        m_wram->Append(labelVar,0);
+
+ //   QString labelVar = getLabelEnding(tmpVar) + "\t "+type+"\t0 ";
+    if (Syntax::s.m_currentSystem->m_usesRom) {
+        m_wram->Append(DeclareWRamVar(tmpVar,type),0);
+    }
     else
-        m_tempVars << labelVar;
+        m_tempVars << getLabelEnding(tmpVar) + "\t "+type+"\t0 ";;
     if (actuallyStore) {
 
         if (type==word)

@@ -15,6 +15,8 @@ var
 	
 	noVerts, noFaces, size: byte ram;
 	ppn,faces,p1 : pointer ram;
+	balle : pointer;
+	@donotremove balle
 	i1, i2,k,j : byte ram;
 	frame : byte ram;
 	
@@ -41,6 +43,8 @@ begin
 		px2:=ppn[i2];
 		py2:=ppn[byte(i2+1)];
 		System::SetScale();
+		
+		asm(";here");
 		System::DrawLine(px1+160,py1+100,px2+160,py2+100);		
 	end;
 

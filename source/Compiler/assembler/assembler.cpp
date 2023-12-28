@@ -383,6 +383,20 @@ QString Assembler::getLabelEnding(QString s)
     return s;
 }
 
+QString Assembler::DeclareWRamVar(QString name, QString t) {
+    int addr = m_currentRamAddress;
+    if (t==byte || t.toUpper()=="BYTE")
+        m_currentRamAddress+=1;
+    if (t==word || t=="fdb" || t.toUpper()=="INTEGER")
+        m_currentRamAddress+=2;
+    if (t==llong || t.toUpper()=="LONG")
+        m_currentRamAddress+=4;
+
+    return name + "\t = \t" + Util::numToHex(addr);
+
+
+}
+
 
 
 void Assembler::Asm(QString s, QString comment)
@@ -391,7 +405,7 @@ void Assembler::Asm(QString s, QString comment)
     if (comment=="") c="";
     if (s=="" && comment=="") return;
     Write(s+c ,1);
- /*   if (m_currentBlock!=nullptr)
+    /*   if (m_currentBlock!=nullptr)
         qDebug() << m_currentBlock->m_pos + " : "+ s;
     else
         qDebug() << "NULL : "+ s;

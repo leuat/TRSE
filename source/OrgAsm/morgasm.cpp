@@ -71,10 +71,12 @@ int MOrgasm::getTypeFromParams(OrgasmLine& ol)
 
     }
 
-
     if (s.startsWith("#"))
         return Op6809::imm;
 
+    int val = getParsedInt(s);
+    if (val>0 &&val<=255)
+        return Op6809::dir;
 
 
     if (m_instructions[op]->opcodes[Op6809::rel]!=0)

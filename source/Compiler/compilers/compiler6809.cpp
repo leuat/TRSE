@@ -29,7 +29,7 @@ void Compiler6809::Connect()
     m_assembler->Connect();
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
 
-        m_assembler->m_source << "\torg $C800";
+//        m_assembler->m_source << "\torg $C800";
         m_assembler->m_source <<m_assembler->m_wram->m_source;
     }
 

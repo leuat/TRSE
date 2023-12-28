@@ -210,6 +210,8 @@ public:
     QMap<int, int> m_cyclesOut, m_blockCyclesOut;
     QMap<int,int> m_addressesOut, m_addresses;
 
+    int m_currentRamAddress = 0;
+
     QMap<int, int> m_blockIndent;
 
     QVector<int> m_cycleCounter;
@@ -259,6 +261,8 @@ public:
     QString ppointer = "dc.w";
 
     QString getLabelEnding(QString name);
+
+    QString DeclareWRamVar(QString name, QString t);
 
     Assembler();
     virtual ~Assembler();

@@ -72,6 +72,7 @@ public:
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     int m_startAddress = 0x800;
     int m_programStartAddress = m_startAddress+10;
+    int m_ramAddress = 0;
 //    bool m_hasSysHeader = true;
 
 //    virtual void getEmulatorAndParams(QString emulator, QStringList params) = 0;
@@ -110,6 +111,7 @@ public:
 
     bool m_requireEmulatorWorkingDirectory = false;
     bool m_isBigEndian = false;
+    bool m_usesRom = false;
 
     virtual bool is8bit() {
         return true;
@@ -176,6 +178,8 @@ public:
     virtual void applyEmulatorParameters(QStringList& params, QString debugFile, QString baseFile, CIniFile* pini) = 0;
 
     virtual bool useZeroPagePointers() { return false;}
+
+
 
     virtual QString getTripePointerType() { return "uint64";}
 

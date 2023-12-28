@@ -12,6 +12,9 @@ SystemVectrex::SystemVectrex(QSharedPointer<CIniFile> settings, QSharedPointer<C
     m_programStartAddress = 0x0000;
     m_supportsExomizer = false;
 
+
+    m_ramAddress = 0xC800;
+    m_usesRom = true;
     m_allowedGlobalTypeFlags <<"ram";
     m_allowedProcedureTypeFlags<<"ram";
 

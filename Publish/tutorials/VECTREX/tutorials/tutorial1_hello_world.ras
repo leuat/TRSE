@@ -12,7 +12,7 @@ var
 			
 			
 	sinx : array[256] of byte = buildsinetable(128);		
-	time,i,t,px1,px2,py1,py2,t2,t3:byte ram;			
+	time,i,t,px1,px2,py1,py2,t2,t3:ram byte;
 
 	
  			
