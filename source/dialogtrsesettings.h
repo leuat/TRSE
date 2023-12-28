@@ -248,6 +248,8 @@ private slots:
 
     void on_btnSparkle_clicked();
 
+    void on_btnHelpVectrex_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

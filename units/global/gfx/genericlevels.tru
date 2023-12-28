@@ -9,7 +9,7 @@ var
 	i1,i2,i3,i4,i5 : integer;
 
 
-@ifndef CPU_M6809
+@if SUPPORTS_CLASSES=1
 	Level = class
 		
 		lp : pointer;
@@ -95,7 +95,7 @@ var
 @endif
 	
 	
-@ifdef CPU_M6809
+@if SUPPORTS_CLASSES=0
 	Level = record
 		
 		lp : integer;
@@ -131,7 +131,7 @@ var
 			
 		end;
 		
-		procedure RenderLevel(x, y : global byte; wx, wy : byte);
+		procedure RenderLevel(x, y : global byte; wx, wy : global byte);
 		begin
 			
 			zp := l.lp;

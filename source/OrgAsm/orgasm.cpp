@@ -219,6 +219,8 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("dc.b", ".byte");
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
+    line = line.replace("fcb", ".byte");
+    line = line.replace("fcc", ".dc");
     line = line.replace("dc.w", ".word");
     line = line.replace("dc.l", ".long24");
     line = line.replace(" EQU ", " = ");
@@ -359,7 +361,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         l.m_expr = lst[1];
         return l;
     }
-    if (line.contains("=") && !line.contains("\"")) {
+    if (line.contains("=") && !line.contains("\"") && !line.contains("*")) {
         l.m_type = OrgasmLine::CONSTANT;
         QStringList cl = line.split("=");
         l.m_label = cl[0].trimmed();
@@ -825,6 +827,14 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
 {
     if (m_pCounter == 0) {
         int val = Util::NumberFromStringHex(ol.m_expr);
+/*        QString washed =ol.m_expr;
+        qDebug() << washed;
+        for (QString s: m_symbols.keys())
+            washed = OrgasmData::ReplaceWord(washed,s,Util::numToHex(m_symbols[s]));
+        qDebug() << washed;
+        int val = Util::NumberFromStringHex(Util::BinopString(washed));
+        qDebug() << val;
+*/
         if (m_cpuFlavor!=CPUFLAVOR_Z80) {
             m_data.append(val&0xFF);
             m_data.append((val>>8)&0xFF);
@@ -899,7 +909,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         add = add.replace("*", Util::numToHex(m_pCounter));
         add = Util::BinopString(add);
         expr = add;//expr.split(" ")[0] + " " + add;
-    //    qDebug() << "* : " << expr;
+//        qDebug() << "* : " << expr;
 
     }
     QString orgExpr = expr;

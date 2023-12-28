@@ -81,7 +81,7 @@ zx0_decompress
                      ldd #$80ff
                      sta zx0_bit        ; init bit stream
                      sex                ; reg A = $FF
-                     std zx0_offset     ; init offset = -1
+                     std zx0_offset+2     ; init offset = -1
 ;                   else
  ;                    ifdef ZX0_VAR1
   ;                     ifdef ZX0_VAR2
@@ -108,7 +108,7 @@ zx0_literals:       bsr zx0_elias       ; obtain length
 
 ; 0 - copy from last offset (repeat N bytes from last offset)
                    bsr zx0_elias       ; obtain length
-zx0_copy:           equ *
+zx0_copy:           ;equ *
  ;                  ifndef ZX0_VAR3
                      pshs x            ; save reg X
   ;                 else
@@ -116,8 +116,8 @@ zx0_copy:           equ *
     ;               endc
                    tfr d,y             ; setup length
     ;               ifndef ZX0_VAR2
-zx0_offset           equ *+2
-                     leax >$ffff,u     ; calculate offset address
+zx0_offset:   ;        equ *+2
+                     leax $ffff,u     ; calculate offset address
     ;               else
      ;                ldd zx0_offset    ; calculate offset address
      ;                leax d,u          ; from stored value
@@ -139,7 +139,7 @@ zx0_new_offset     bsr zx0_elias       ; obtain offset MSB
                      ldb ,x+           ; obtain LSB offset
                      rora              ; last offset bit becomes first length bit
                      rorb              ;  
-                     std zx0_offset    ; preserve new offset
+                     std zx0_offset+2    ; preserve new offset
                      ldd #1            ; set elias = 1
     ;               else
     ;                 rorb              ; rotate MSB position (bit 7 is set)
@@ -191,7 +191,8 @@ zx0_copy_bytes     ldb ,x+             ; copy byte
 
 ; assign bit stream variable if DP memory is not used
 ;                   ifndef ZX0_VAR1
-zx0_bit            fcb $80
+zx0_bit            
+				fcb $0,$80
  ;                  endc
 	
 	");

@@ -1057,3 +1057,10 @@ void DialogTRSESettings::on_btnSparkle_clicked()
 
 }
 
+
+void DialogTRSESettings::on_btnHelpVectrex_clicked()
+{
+    Help("Vectrex Emulator","Use RetroArch. Install the GCE Vectrex core. ");
+
+}
+

@@ -219,7 +219,7 @@ void FormRasEditor::ExecutePrg(QString fileName)
         process.startDetached();
     }
     else {
-        qDebug() <<emu<<params;
+//        qDebug() <<emu<<params;
         process.startDetached(emu, params);
 
     }

@@ -12,7 +12,7 @@ System6809::System6809(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
     m_renameVariables << "a" <<"b"<<"x"<<"y"<<"sp"<<"dp"<<"d"<<"u" << "org";
     m_isBigEndian = true;
     m_supportsInclusiveFor = false;
-
+    m_allowClasses = false;
     //        m_registers <<"_a" <<"_b"<<"_c"<<"_d"<<"_af"<<"_bc"<<"_de"<<"_hl"<<"_ix"<<"_iy"<<"_h"<<"_l";
 }
 
