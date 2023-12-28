@@ -75,3 +75,4 @@ via_zeropages = ,$64, $65, $66, $67
 use_track_19 = 1
 disable_compiler_comments = 0
 use_vice_c1541 = 0
+use_python = 0

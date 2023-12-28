@@ -4,42 +4,39 @@
 @donotremove MySprite_0
 procedure MySprite_0();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
-; row 1
-    ldy #1 ; start of data
+; row 0
+    ldy #0 ; start of data
     lda #$18
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 1
+    iny ; next
+    lda #$24
     sta (lbm8_d),y
 ; row 2
     iny ; next
-    lda #$24
-    ora (lbm8_d),y
+    lda #$3c
     sta (lbm8_d),y
 ; row 3
     iny ; next
-    lda #$3c
-    ora (lbm8_d),y
+    lda #$18
     sta (lbm8_d),y
 ; row 4
     iny ; next
     lda #$ff
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$3c
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$24
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$24
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -57,42 +54,39 @@ end;
 @donotremove MySprite_2
 procedure MySprite_2();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$0c
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$12
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$1e
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$0c
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$7f
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$1e
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$12
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$12
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -106,7 +100,6 @@ begin
 ; row 4
     ldy #4 ; start of data
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -115,42 +108,39 @@ end;
 @donotremove MySprite_4
 procedure MySprite_4();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$06
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$09
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$0f
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$06
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$0f
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$3f
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$09
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$09
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -164,7 +154,6 @@ begin
 ; row 3
     ldy #3 ; start of data
     lda #$c0
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -173,42 +162,39 @@ end;
 @donotremove MySprite_6
 procedure MySprite_6();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$03
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$04
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$07
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$03
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$07
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$1f
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$04
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$04
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -222,37 +208,30 @@ begin
 ; row 1
     ldy #1 ; start of data
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 3
     iny ; next
     lda #$60
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 4
     iny ; next
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -261,42 +240,39 @@ end;
 @donotremove MySprite_8
 procedure MySprite_8();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$02
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$03
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$01
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$0f
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$03
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$02
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$02
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -305,42 +281,39 @@ end;
 @donotremove MySprite_9
 procedure MySprite_9();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$80
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$40
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$c0
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$80
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$f0
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$c0
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$40
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$40
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -354,32 +327,26 @@ begin
 ; row 1
     ldy #1 ; start of data
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 4
     ldy #4; skip ahead
     lda #$07
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -388,42 +355,39 @@ end;
 @donotremove MySprite_11
 procedure MySprite_11();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$c0
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$20
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$e0
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$c0
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$f8
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$e0
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$20
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$20
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -437,7 +401,6 @@ begin
 ; row 3
     ldy #3 ; start of data
     lda #$03
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -446,42 +409,39 @@ end;
 @donotremove MySprite_13
 procedure MySprite_13();
 begin
-    asm ; draw 7 lines
+    asm ; draw 8 lines
 
 ; row 0
     ldy #0 ; start of data
     lda #$60
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$90
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$f0
-    ora (lbm8_d),y
+    sta (lbm8_d),y
+; row 3
+    iny ; next
+    lda #$60
     sta (lbm8_d),y
 ; row 4
-    ldy #4; skip ahead
+    iny ; next
     lda #$f0
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$fc
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$90
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$90
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -495,7 +455,6 @@ begin
 ; row 3
     ldy #3 ; start of data
     lda #$01
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm
@@ -509,42 +468,34 @@ begin
 ; row 0
     ldy #0 ; start of data
     lda #$30
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 1
     iny ; next
     lda #$48
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 2
     iny ; next
     lda #$78
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 3
     iny ; next
-    lda #$80
-    ora (lbm8_d),y
+    lda #$b0
     sta (lbm8_d),y
 ; row 4
     iny ; next
     lda #$78
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 5
     iny ; next
     lda #$7e
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 6
     iny ; next
     lda #$48
-    ora (lbm8_d),y
     sta (lbm8_d),y
 ; row 7
     iny ; next
     lda #$48
-    ora (lbm8_d),y
     sta (lbm8_d),y
 
     end; // asm

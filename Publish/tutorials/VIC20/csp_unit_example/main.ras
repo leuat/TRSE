@@ -90,8 +90,8 @@ var
 
 	// the characters for the sprites (pre-shifted/positioned) are in chars.flf
 
-	@export "chr\chars.flf" "chr\chars.bin" 0 64
-	charset: incbin("chr\chars.bin", $1c00); 
+	@export "chr/chars.flf" "chr/chars.bin" 0 64
+	charset: incbin("chr/chars.bin", $1c00); 
 
 	// NOTE:
 	// If using the 'transparent' version csp_DrawAtT, character 0 must be reserved in
