@@ -15,6 +15,7 @@ program effect1_3d;
 @ifndef IS_DEMO
 @setvalue "output_type" "prg"
 @endif
+@define linemethod "Gfx::Line"
 @use "gfx/lib3d"
 @use "demounit"
 

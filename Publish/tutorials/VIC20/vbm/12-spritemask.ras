@@ -112,7 +112,7 @@ begin
 		// first, take a copy of the bitmap where we will be
 		// drawing the sprite, so we can restore it later
 		vbmSetPosition1(x,x);
-		vbmCopyToBuffer( bgnd1 , 2, 16);
+		vbmCopyToBuffer( #bgnd1 , 2, 16);
 
 	SCREEN_BG_COLOR := SCREEN_BG_WHITE + GREEN;
 
@@ -135,7 +135,7 @@ begin
 		// restore the bitmap we data we saved previously
 		// to erase the sprite
 		vbmSetPosition1(x,x);
-		vbmCopyFromBuffer( bgnd1 , 2, 16);
+		vbmCopyFromBuffer( #bgnd1 , 2, 16);
 
 		
 	SCREEN_BG_COLOR := SCREEN_BG_WHITE + YELLOW;

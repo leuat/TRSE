@@ -38,7 +38,7 @@ begin
 	// Copy palette data
 	memcpy(#image_pal,0,#palette_start,0,16,2);
 	// Copy image data to the screen
-	memcpy(#image,0,screen,0,40*200,4,4);
+	memcpy(#image,0,screen,0,40*200,4);
 		
 	while (done=false) do
 	begin

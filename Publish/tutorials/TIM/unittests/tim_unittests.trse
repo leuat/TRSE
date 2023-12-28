@@ -81,3 +81,4 @@ cpu_x86_output = exe
 cc1541_disk_type = d64
 disable_compiler_comments = 0
 use_track_19 = 1
+use_python = 0

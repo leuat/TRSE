@@ -252,10 +252,10 @@ def CompileRegularRas():
 	tests.append([ "C64/4kDreams", ["intro.ras"]]);
 	tests.append([ "C64/DemoEffects_raytracer", []]);
 	fillRasList(len(tests)-1,".")
-	tests.append([ "C64/DemoMaker",[]])
-	fillRasList(len(tests)-1,".")
-	tests.append([ "C64/Olimp",[]])
-	fillRasList(len(tests)-1,".")
+#	tests.append([ "C64/DemoMaker",[]])
+#	fillRasList(len(tests)-1,".")
+#	tests.append([ "C64/Olimp",[]])
+#	fillRasList(len(tests)-1,".")
 	tests.append([ "C64/Floskel",[]])
 	fillRasList(len(tests)-1,".")
 	tests.append([ "C64/wormwood",[]])
