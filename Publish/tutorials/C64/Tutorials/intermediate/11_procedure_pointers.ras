@@ -30,7 +30,7 @@ procedure Proc1();
 begin
 	Screen::border := purple;
 	Screen::Clear(#Screen::screen0,key_space);
-	Screen::PrintString("THIS IS PROC 1 ",5,10, #Screen::screen0);
+	Screen::PrintString("THIS IS PROC 1",5,10, #Screen::screen0);
 end;
 
 // Another random procedure 
