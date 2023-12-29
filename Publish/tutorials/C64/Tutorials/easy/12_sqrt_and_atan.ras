@@ -95,7 +95,7 @@ end;
 
 // Main initialization routine
 begin
-	setcharsetlocation(charsetLoc);
+	Screen::SetCharsetLocation(#charsetLoc);
 	Screen::border:=black;
 	Screen::background:=black;
 	RenderScreen();

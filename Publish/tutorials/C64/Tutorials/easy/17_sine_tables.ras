@@ -1,4 +1,5 @@
 program Sinewave;
+@use "screen/screen"
 var  
 
 	i: byte;
@@ -7,8 +8,7 @@ var
 	symbol:	string="*";
 
 begin
-
-	clearscreen(key_space,screen_char_loc);
+	Screen::Clear(#Screen::screen0, key_space);
 	
 	// Create a sinewave table - to be used as a fast lookup table later
 	
@@ -19,16 +19,15 @@ begin
 	// Use the table in real time to calculate a sine wave value on the fly
 	
 	while (true) do begin
-		waitforverticalblank();
-		moveto(x_position, precalculated_sinewave_table[i], hi(screen_char_loc));
-		printstring(#symbol,0,1);
+		Screen::WaitForVerticalBlank();
+		Screen::PrintString(#symbol, x_position, precalculated_sinewave_table[i], #Screen::screen0); 
 		
 		i:=i+8;
 
 		x_position+=1;
-		if (x_position=screen_width) then begin
+		if (x_position=Screen::width) then begin
 			x_position:=0;
-			clearscreen(key_space,screen_char_loc);
+			Screen::Clear(#Screen::screen0, key_space);
 		end;
 
 		

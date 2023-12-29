@@ -1,5 +1,6 @@
 program String_manipulation;
 @use "system/str"
+@use "screen/screen"
 var
 	longString : string ="I MEOW YOU KNOW";
 	splitString : array[64] of byte;
@@ -24,10 +25,9 @@ var
 
 
 begin
-	clearscreen(key_space,screen_char_loc);
+	Screen::Clear(#Screen::screen0, key_space);
 	
-	moveto(5,2,hi(screen_char_loc));
-	printstring(#longString,0,40);
+	Screen::PrintString(#longString,5,2, #Screen::screen0);
 
 	// Splits "longstring" with token " ", save in "splitString"
 	strsplit(#longString,#splitString,key_space);
@@ -35,51 +35,39 @@ begin
 	sp:=strgetfromindex(#splitString,0);
 	// strcmp compares a string/pointer to another string/pointer
 	if (strcmp(sp,"I")) then 
-	begin
-		moveto(5,5,hi(screen_char_loc));
-		printstring("ALWAYS ABOUT YOURSELF...",0,40);
-	end;	
+		Screen::PrintString("ALWAYS ABOUT YOURSELF...",5,5, #Screen::screen0);
 	
-	moveto(7,8,hi(screen_char_loc));
 	sp:=strgetfromindex(#splitString,1);
-	printstring(	sp,0,40);
+	Screen::PrintString(sp,7,8, #Screen::screen0);
 
-	moveto(9,10,hi(screen_char_loc));
 	sp:=strgetfromindex(#splitString,3);
-	printstring(	sp,0,40);
+	Screen::PrintString(sp,9,10, #Screen::screen0);
 
-	moveto(11,12,hi(screen_char_loc));
 	sp:=strgetfromindex(#splitString,2);
-	printstring(	sp,0,40);
+	Screen::PrintString(sp,11,12, #Screen::screen0);
 
 
 	// Using the new global string library (not finished yet)
 	
-	moveto(11,14,hi(screen_char_loc));
 	// convert the number "ii" to decimal:
 	str::itoa(ii, #buf, 10);
-	printstring(#buf,0,40);
+	Screen::PrintString(#buf,11,14, #Screen::screen0);
 	
 	
 	
-	moveto(19,14,hi(screen_char_loc));
 	// convert the number in "ii" to hex
 	str::itoa(ii, #buf, 16);
-	printstring(#buf,0,40);
+	Screen::PrintString(#buf,19,14, #Screen::screen0);
 	
 
-	moveto(10,17,hi(screen_char_loc));
 	// Copy a substring to the buffer ("MEOW")
 	str::substr(#buf, #longString, 2,4);
-	printstring(#buf,0,40);
+	Screen::PrintString(#buf,10,17, #Screen::screen0);
 	
-	moveto(0,19,hi(screen_char_loc));
 	// Copy a substring to the buffer ("MEOW")
-	printstring(	lst[0],0,40);
-	screenmemory+=10;
-	printstring(	lst[1],0,40);
-	screenmemory+=10;
-	printstring(	lst[2],0,40);
+	Screen::PrintString(lst[0],0,19, #Screen::screen0);
+	Screen::PrintString(lst[1],10,19, #Screen::screen0);
+	Screen::PrintString(lst[2],20,19, #Screen::screen0);
 	
 	
 	Loop();

@@ -10,8 +10,9 @@ var
 	i, j, x, y, c : byte;
 	@donotremove i2
 	@donotremove p1
+	@donotremove p2
 	@donotremove i
-	i2 : integer;
+	i2,i1 : integer;
 	
 	const screen0 : address = $0400;
 	const screen1 : address = $4400;
@@ -261,6 +262,114 @@ begin
 	ora #%1000
 	sta $D016
 	");
+end;
+
+
+procedure CopyFull(i1, i2 : global integer pure_number) inline;
+begin
+	asm("
+	ldx #0
+{label0}
+	lda [Screen_i1],x
+	sta [Screen_i2],x
+	lda [Screen_i1]+250,x
+	sta [Screen_i2]+250,x
+	lda [Screen_i1]+500,x
+	sta [Screen_i2]+500,x
+	lda [Screen_i1]+750,x
+	sta [Screen_i2]+750,x
+	inx
+	cpx #250
+	bne {label0}
+	");	
+end;
+/**
+	Copies a full screen (1000 bytes) from parameter 1 to parameter 2
+
+**/
+procedure CopyFull(p1, p2 : global pointer);
+begin
+	for i:=0 to 4 do
+	begin
+		memcpy(p1,0,p2,250);
+		p1+=250;
+		p2+=250;
+	end;
+end;
+
+
+/**
+
+	Sets multicolor mode
+
+**/
+
+procedure SetMulticolorMode() inline;
+begin
+	asm("
+	lda #16
+	ora $d016
+	sta $d016
+	");
+end;
+
+/**
+
+	Sets bitmap mode
+
+**/
+
+procedure SetBitmapMode() inline;
+begin
+	asm("
+	lda #$3b
+	sta $d011
+	");
+end;
+
+/**
+	Sets vic bank 0-4
+	<code>
+Screen::SetBank(vic_bank1);
+	</code>
+
+**/
+procedure SetBank(i: global byte) inline;
+begin
+	asm("
+		lda #[Screen_i]
+		sta $dd00
+	");		
+end;
+/**
+
+	Sets the location of the screen data (text mode) or color data (bitmap mode). Must be an offset
+	of $400, ie $0, $400, $800, $c00, $1000, $1400 etc
+<code>
+Screen::SetScreenLocation($4000);
+</code>
+
+**/
+procedure SetScreenLocation(i1: global integer);
+begin
+	i:=((hi(i1)/4)&%00001111)<<4;
+	vic_data_loc:=((vic_data_loc)&%00001111)|i;
+end;
+
+/**
+
+	Sets the location of the character set (text mode) or bitmap data (bitmap mode). Must be an offset
+	of $800, ie $0, $800, $1000, $1800, $2000, $2800 etc. Bitmap data can only be stored at $0 and $2000 on each bank.
+	
+<code>
+Screen::SetCharsetLocation($1000); // point to ROM
+</code>
+
+**/
+procedure SetCharsetLocation(i1: global integer);
+begin
+	i:=((hi(i1)/8)&%00001111)<<1;
+	vic_data_loc:=((vic_data_loc)&%11110000)|i;
 end;
 
 end.

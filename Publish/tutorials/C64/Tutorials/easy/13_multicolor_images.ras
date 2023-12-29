@@ -1,6 +1,7 @@
 program Display_multicolor_image;
 @use "screen/screen"
 var
+	zp:pointer;
 /*
 	Open your ".flf" 320x200 image and click "export", then type in the "base name" of the files to output.
 	The first file (.. _data.bin) contains pixel data, while the second file (..._color.bin) contains color data. 
@@ -24,29 +25,28 @@ var
 
 // basically the same as the built-in method copyimagecolordatamanually
 procedure CopyImageColordataManually();
-var
-  zp:pointer;
 begin
 	zp:=#image_color;
 	Screen::border:=zp^;
 	zp+=1;
 	Screen::background:=zp^; // 2nd byte is foreground color 
 	zp+=1;
-	copyfullscreen(zp,screen_char_loc2); // Copy first 1000 bytes (1 screen worth of data) to bank 1
-	zp+=1000; // point to next screen 
-	copyfullscreen(zp,screen_col_loc); // copy 1 screen worth of data to color ram
+	Screen::CopyFull(zp, #Screen::screen1);
+	Screen::CopyFull(zp+1000, #Screen::color);
 end;
-
 
 begin
 	// Turn off multicolor if you want hires! 
-	setmulticolormode();
-	setbitmapmode();
+		
+	Screen::SetMulticolorMode();
+	Screen::SetBitmapMode();
 	// Set data pointer to $6000
-	setcharsetandscreenlocation($6000,$4400);
-	setbank(vic_bank1);
+	Screen::SetScreenLocation($4400);
+	Screen::SetCharsetLocation($6000);
+	// Set bank 1 ($4000-$7FFF)
+	Screen::SetBank(vic_bank1);
 	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
-	copyimagecolordata(#image_color,1);
+//	copyimagecolordata(#image_color,1);
 	Screen::background:=black;
 	// Example of how to copy the color data manually
 	CopyImageColordataManually();

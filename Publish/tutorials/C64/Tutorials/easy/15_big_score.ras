@@ -1,4 +1,5 @@
 program BCDNumbers;
+@use "screen/screen"
 var  
 	// create two BCD numbers in memory, least significant byte first
 	score: array[] of byte = ($00, $00, $00, $00, $00);
@@ -23,28 +24,25 @@ var
 */
 	
 begin
+	DefineScreen();
+	Screen::Clear(#Screen::screen0, key_space);
+	Screen::Clear(#Screen::color, white);
+	Screen::background := black;
+	Screen::border := cyan;
 
-	definescreen();
-	clearscreen($20, screen_char_loc);
-	clearscreen(white, screen_col_loc);
-	screen_fg_col := black;
-	screen_bg_col := cyan;
-
-	screenmemory := #screen_char_loc;
-	printstring("HI SCORE:",0,8);
-	screenmemory := #screen_char_loc + 10;
+	Screen::PrintString("HI SCORE:",0,0,#Screen::screen0);
+	screenmemory := #Screen::screen0 + 10;
 	BcdPrint( #hiscore, 5 );  // print the high score using 5 bytes
 
-	screenmemory := #screen_char_loc + screen_width;
-	printstring("SCORE:",0,5);
-	screenmemory := #screen_char_loc + screen_width + 10;
+	Screen::PrintString("CORE:",0,1,#Screen::screen0);
+	screenmemory := #Screen::screen0 + Screen::width + 10;
 	
 	// repeat this loop until score has reached the high score
 	while (BcdIsEqual(#score, #hiscore, 5) = false) do
 	begin
 		BcdAdd( #score, #scoreAdd, 5 );	// add scoreAdd to score
 		BcdPrint( #score, 5 ); // print the current score
-		waitforverticalblank();	
+		Screen::WaitForVerticalBlank();	
 	end;
 	loop();
 end.
