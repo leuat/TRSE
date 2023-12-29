@@ -1,4 +1,6 @@
 program Sprites;
+@use "screen/screen"
+@use "system/memory"
 var  
 	// sprite_x is an integer since x values range between 0 and 320
 	sprite_x : integer = 160;
@@ -24,11 +26,11 @@ var
 // This method initializes the screen
 procedure InitScreen();
 begin
-	screen_bg_col:=purple;
-	screen_fg_col:=black;
-	clearscreen(key_space, screen_char_loc);
-	moveto(1,23,hi(#screen_char_loc));
-	printstring("JOYSTICK IN PORT 2 TO MOVE",0,40);
+	Screen::border:=purple;
+	Screen::background:=black;
+	
+	Screen::Clear(#Screen::screen0, key_space);
+	Screen::PrintString("JOYSTICK IN PORT 2 TO MOVE",1,23,#Screen::screen0);
 end;   
 
 // This method initializes the sprites
@@ -83,7 +85,7 @@ interrupt MainRaster();
 begin
 	startirq(1);
 	// Update joystick here
-	fill(#joystickup,0,5);
+	Memory::Fill(#joystickup,0,5);
 	Joystick(joystickPort);
 	// Update sprites
 	UpdateSprite();	

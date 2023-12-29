@@ -1,4 +1,5 @@
 program Display_multicolor_image;
+@use "screen/screen"
 var
 /*
 	Open your ".flf" 320x200 image and click "export", then type in the "base name" of the files to output.
@@ -27,9 +28,9 @@ var
   zp:pointer;
 begin
 	zp:=#image_color;
-	screen_bg_col:=zp[0]; // first byte is border color
+	Screen::border:=zp^;
 	zp+=1;
-	screen_fg_col:=zp[0]; // 2nd byte is foreground color 
+	Screen::background:=zp^; // 2nd byte is foreground color 
 	zp+=1;
 	copyfullscreen(zp,screen_char_loc2); // Copy first 1000 bytes (1 screen worth of data) to bank 1
 	zp+=1000; // point to next screen 
@@ -46,7 +47,7 @@ begin
 	setbank(vic_bank1);
 	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
 	copyimagecolordata(#image_color,1);
-	screen_fg_col:=black;
+	Screen::background:=black;
 	// Example of how to copy the color data manually
 	CopyImageColordataManually();
 	

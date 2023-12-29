@@ -161,7 +161,11 @@ begin
 	bmi {label1}
 	");
 end;
+/**
 
+	Clears 40*25 = 1000 bytes at position i2 with value i
+
+**/
 procedure Clear( i2 : global integer pure_number, i: global byte pure_number) inline;
 begin
 	asm("
@@ -201,6 +205,62 @@ begin
 	fill(p1,i,250);
 	p1+=250;
 	fill(p1,i,250);
+end;
+
+/*
+
+	Scrolls i pixels horizontally (between 0-7)
+
+*/
+procedure Scrollx(i: global byte);
+begin
+	asm("
+	lda Screen_i
+	sta $58
+	lda $d016  
+	and #$F8
+	ora $58
+	sta $d016
+	
+	");	
+end;
+
+procedure RasterIRQ(i2 : global integer, i: global byte pure) inline;
+begin
+	asm("
+	lda #[Screen_i]
+	sta $d012
+	lda #<[Screen_i2]
+	sta $0314
+	lda #>[Screen_i2]
+	sta $0315
+	
+	");
+end;
+/**
+	Hides column 0 and 39
+
+**/
+procedure HideBorders() inline;
+begin
+	asm("
+	lda $D016
+	and #%11110111
+	sta $D016
+	");
+end;
+
+/**
+	Shows column 0 and 39
+
+**/
+procedure ShowBorders() inline;
+begin
+	asm("
+	lda $D016
+	ora #%1000
+	sta $D016
+	");
 end;
 
 end.

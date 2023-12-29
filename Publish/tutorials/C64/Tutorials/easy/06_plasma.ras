@@ -112,8 +112,8 @@ end;
 
 begin
 	// Set color background
-	Screen::bg_col:=black;
-	Screen::fg_col:=black;
+	Screen::background:=black;
+	Screen::border:=black;
 	// Set charmap location at $2000
 	SetCharsetLocation(charsetLocation);
 	// Copy the 16 characters rom baseCharacter to 0

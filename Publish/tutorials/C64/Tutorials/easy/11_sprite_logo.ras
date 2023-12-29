@@ -1,7 +1,10 @@
 program SpriteLogo;
+@use "screen/screen"
 var  
    	org_x, x: integer;
 	y, org_y,i,j, time: byte;
+	
+	ptr : ^byte;
 
 	const spriteLoc : integer = $2000;
 
@@ -65,7 +68,7 @@ begin
 
 	UpdateSprites();
 	// Update time
-	inc(time);
+	time+=1;
 	
 	CloseIRQ();
 end;
@@ -74,35 +77,34 @@ end;
 procedure RenderText();
 begin
 	// Move screen pointer to upper left pointer
-	moveto(0,0,hi(#screen_char_loc));
+	ptr := #Screen::Screen0;
 	// text pointer pointing to text
-	tp:=#text;
+	tp := #text;
 	// go through 25 rows
-	for j:=0 to screen_height do begin
+	for j:=0 to Screen::height do begin
 		// and 40 columns 
-		for i:=0 to screen_width do begin
+		for i:=0 to Screen::width do begin
 			// if text pointer is zero, the end of string has been reached. If so, reset text pointer
 			if (tp^=0) then tp:=#text;
 			// copy text char from text to screen
-			screenmemory[i]:=tp^;
+			ptr[i]:=tp^;
 			// Increase text pointer
 			tp:=tp+1;
 	
 		end;
-		screenmemory+=screen_width;
+		ptr+=Screen::width;
 	end
 end;
 
 
 begin
 	// Set up screen
-	ClearScreen(key_space,screen_char_loc);
-	ClearScreen(dark_grey,screen_col_loc);
-	screen_bg_col:=dark_grey;	
-	screen_fg_col:=black;
+	Screen::Clear(#Screen::screen0,key_space);
+	Screen::Clear(#Screen::color,dark_grey);
+	Screen::border:=dark_grey;
+	Screen::background:=black;
 	// Render background text
 	RenderText();
-	org_x:=0;
 	// Setup sprites
 	InitSprites();
 	// Init main raster

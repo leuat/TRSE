@@ -20,9 +20,9 @@ var
 	
 begin
 	// Set screen background/border color
-	screen_bg_col:=black;
-	screen_fg_col:=black;
-	
+	Screen::border:=black;
+	Screen::background:=black;
+
     clearscreen(key_space, #screen_char_loc);
     clearscreen(black, #screen_col_loc);
 	// Sets up the address tables for the screen & color memory    
