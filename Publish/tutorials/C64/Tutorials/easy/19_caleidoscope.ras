@@ -3,23 +3,23 @@
 	An Experiment in TRSE by Eugenio R.
 */
 program CaleidoTRSE;
+@use "screen/screen"
 var
 	x,y,c: byte;
 	alfa: integer;
 	// Size of the square
 	const width : byte = 23;	
+	p: ^byte;
 
 
 begin
+	Screen::background:=black;
+	Screen::border:=black;
 	
-	SCREEN_BG_COL:=BLACK;
-    SCREEN_FG_COL:=BLACK;
-	
-	definescreen();
-	clearscreen(81, screen_char_loc);		// clearscreen to fill the screen_char_loc screen memory with the character code 81, this is the BALL character
-	clearscreen(BLACK, screen_col_loc);		// clearscreen to fill the screen_col_loc colour memory with the colour code for BLACK
+	Screen::Clear(#Screen::screen0,81);
+	Screen::Clear(#Screen::color,black);
 
-	screenmemory := #screen_col_loc;
+	p := #Screen::color;
 		
 	while (true) do
 		begin
@@ -31,10 +31,10 @@ begin
 Let's put the 'c' color on the ball B1 at line x, column y	
 */	
 			
-			alfa := x + y*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := x + y*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 			
 /*
 Now, in the square with vertexes (0,0), (23,0), (0,23), (23,23), 
@@ -62,40 +62,40 @@ and so on; I' sure you got the idea, something like this:
 */
 	
 	
-			alfa := y + x*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := y + x*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 	
-			alfa := (width-x)+ y*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := (width-x)+ y*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 	
-			alfa := (width-y)+ x*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := (width-y)+ x*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 	
-			alfa := x+ (width-y)*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := x+ (width-y)*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 			
-			alfa := y+ (width-x)*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := y+ (width-x)*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 	
-			alfa := (width-x)+ (width-y)*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := (width-x)+ (width-y)*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 	
-			alfa := (width-y)+ (width-x)*screen_width;
-			screenmemory := screenmemory + alfa;
-			screenmemory[0]:=c;
-			screenmemory := screenmemory - alfa;
+			alfa := (width-y)+ (width-x)*Screen::width;
+			p := p + alfa;
+			p[0]:=c;
+			p := p - alfa;
 		end;
 	loop();
 end.

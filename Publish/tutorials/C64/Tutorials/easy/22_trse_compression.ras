@@ -1,5 +1,7 @@
 program TRSE_LZ4_Compression;
 @use "compression/compression"
+@use "screen/screen"
+@use "system/memory"
 var
 /*
 	TRSE has since version 0.11.3 got a built-in lossless LZ4 compression system for 
@@ -39,32 +41,35 @@ var
 procedure SetupImage(data, color : pointer);
 begin
 	// Clear the screen & color ram first
-	clearbitmap(^$6000,32);	
-	clearscreen(black,#screen_col_loc);
-	clearscreen(black,#screen_char_loc2);
+//	clearbitmap(^$6000,32);
+	Memory::FillChunks($6000, 0, $20);
+	Screen::Clear(#Screen::color, black);	
+	Screen::Clear(#Screen::screen1, key_space);	
 	// Decompress the color data
 	Compression::Decompress(color, #colorAddress); 
 	// Copy color data to color ram at $4400 and $D800
-	copyimagecolordata(colorAddress,1);
+	Screen::CopyImageColorData(#colorAddress,1);
+	// 9copyimagecolordata(#colorAddress,1);
 	// Decompress image data directly to the address
 	Compression::Decompress(data, #dataAddress); 
 	// Artistic pause
-	for i:=0 to 255 do waitforraster(0);
+	for i:=0 to 64 do Screen::WaitForVerticalBlank();;
 
 end;
 
 
 begin
 	// Turn off multicolor if you want hires! 
-	setmulticolormode();
-	setbitmapmode();
+	Screen::SetMulticolorMode();
+	Screen::SetBitmapMode();
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
-	screen_fg_col:=black;
-	screen_bg_col:=black;
+	Screen::border:=black;
+	Screen::background:=black;
 	// Set data pointer to $6000
-	vic_data_loc:=$18;
-	setbank(vic_bank1);
+	Screen::SetCharsetLocation($6000); // bitmap data 
+	Screen::SetScreenLocation($4400); // color data
+	Screen::SetBank(vic_bank1);
 	// Continuously decompress data
 	while (true) do
 	begin

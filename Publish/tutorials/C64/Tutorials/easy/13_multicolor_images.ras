@@ -41,12 +41,12 @@ begin
 	Screen::SetMulticolorMode();
 	Screen::SetBitmapMode();
 	// Set data pointer to $6000
-	Screen::SetScreenLocation($4400);
-	Screen::SetCharsetLocation($6000);
+	Screen::SetScreenLocation($4400); // color data
+	Screen::SetCharsetLocation($6000); // bitmap data
 	// Set bank 1 ($4000-$7FFF)
 	Screen::SetBank(vic_bank1);
 	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
-//	copyimagecolordata(#image_color,1);
+	Screen::CopyImageColorData(#image_color,1);
 	Screen::background:=black;
 	// Example of how to copy the color data manually
 	CopyImageColordataManually();

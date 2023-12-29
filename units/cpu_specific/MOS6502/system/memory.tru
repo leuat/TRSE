@@ -5,7 +5,7 @@ var
 	@donotremove v
 	@donotremove v2
 	p,p2 : ^byte;
-	v,v2 : byte;
+	v,v2,i,v3,v4 : byte;
 	i1,i2 : integer;
 
 procedure Poke( i1: global integer pure_number, v: global byte pure_number) inline;
@@ -149,5 +149,19 @@ memory_fill_loop:
 
 	");	
 end;
+
+/**
 	
+	fills p3*256 bytes of memory
+
+**/
+procedure FillChunks(p : global pointer; v3, v4 : global byte);
+begin
+	for i:=0 to v4 do
+	begin
+		Fill(p,v3,0);
+		asm(" inc Memory_p+1");
+	end;
+	
+end;
 end.

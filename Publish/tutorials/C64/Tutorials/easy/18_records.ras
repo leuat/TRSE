@@ -1,7 +1,7 @@
 program Records;
+@use "screen/screen"
 var  
    i,j,shift,k: byte = 0;
-   saddr: array[screen_height] of integer; // Screen address table
 /*
 	The famous MCMC random walk!	
 
@@ -26,7 +26,7 @@ var
 	// The following is allowed even if monster_type contains an array
 	singleMonster : monster_type;
 
-
+	ptr : ^byte;
 
 /*
 	Initialize all the monsters
@@ -35,8 +35,8 @@ procedure InitMonsters();
 begin
 	for i:=0 to no do
 	begin
-		monsters[i].x:=mod(random(),screen_width); // Random x-position
-		monsters[i].y:=mod(random(),screen_height); // Random t-position
+		monsters[i].x:=mod(random(),Screen::width); // Random x-position
+		monsters[i].y:=mod(random(),Screen::height); // Random t-position
 		monsters[i].prevx := monsters[i].x;
 		monsters[i].prevy := monsters[i].y;
 		monsters[i].color:=mod(random(),14)+blue+1; // Random colour excluding background
@@ -50,13 +50,15 @@ procedure RenderMonsters(render_char:byte);
 begin
 	for i:=0 to no do
 	begin
-		screenmemory:=addresstable(#saddr,monsters[i].prevx,monsters[i].prevy);
-		screenmemory[0]:=key_space;
+//		screenmemory:=addresstable(#saddr,monsters[i].prevx,monsters[i].prevy);
+		ptr := $0400 + Screen::tab40[monsters[i].prevy] + monsters[i].prevx;
+		// Clear
+		ptr^:=key_space;
 
-		screenmemory:=addresstable(#saddr,monsters[i].x,monsters[i].y);
-		screenmemory[0]:=render_char;
-		screenmemory:=screenmemory+$D400;
-		screenmemory[0]:=monsters[i].color;
+		ptr := $0400 + Screen::tab40[monsters[i].y] + monsters[i].x;
+		ptr^:=render_char;
+		ptr+=+$D400; // point to color memory
+		ptr^:=monsters[i].color; // set monter color
 		
 	end;	
 
@@ -103,13 +105,11 @@ end;
  
 begin
 	// Initialize
-	screen_bg_col:=blue;
-	screen_fg_col:=blue;
-	clearscreen(key_space,screen_char_loc);
-	clearscreen(black,screen_col_loc);
-	DefineScreen();
+	Screen::background := blue;
+	Screen::border := blue;
+	Screen::Clear(#Screen::screen0, key_space);
+	Screen::Clear(#Screen::color, black);
 	// Initialize tables
-	createaddresstable(#saddr,screen_char_loc,screen_width,screen_height);
 	for i:=0 to 256 do 
 		randomTable[i]:=random()&3;
 
@@ -123,9 +123,8 @@ begin
 		// Wait a bit each frame
 		
 		for i:=0 to 4 do
-			waitforverticalblank();
+			Screen::WaitForVerticalBlank();
 		shift+=1; // Some prime number
 	end;	
 
-	Loop();
 end.

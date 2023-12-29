@@ -1135,6 +1135,8 @@ void AbstractCodeGen::InlineProcedure(QSharedPointer<NodeProcedure> p)
     p->ResetInlineAssembler();
     int cur = 0;
     as->Comment("*** Inline procedure :" +p->m_procedure->m_procName);
+    // Just call it once
+    p->m_procedure->m_block->ReplaceInlineAssemblerVariables(as, "Nothing", "Nothing");
     for (auto v : p->m_procedure->m_paramDecl) {
         QSharedPointer<NodeVarDecl> nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
         QSharedPointer<NodeVar> var = qSharedPointerDynamicCast<NodeVar>(nv->m_varNode);

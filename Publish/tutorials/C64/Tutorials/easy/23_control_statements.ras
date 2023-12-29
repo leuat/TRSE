@@ -1,4 +1,5 @@
 program SimpleControlStatements;
+@use "screen/screen"
 var  
    i,j,k: byte; 
 
@@ -15,15 +16,14 @@ var
 
 begin
 	// Outer loop
-	for k:=0 to 10 do
+	for k:=0 to 100 do
 	begin
-
-		inc(screen_bg_col);
+		Screen::border +=1;
 		// Wait a bit!
-		ClearScreen(key_space, #screen_char_loc);
-		moveto(18,10,hi(screen_char_loc));
-		printdecimal(k,1);
-		for j:=0 to 200 do waitforraster(0); 
+		Screen::Clear(#Screen::screen0, key_space);
+		
+		Screen::PrintNumber(k,18,10, 10, #Screen::screen0);
+		for j:=0 to 20 do Screen::WaitForVerticalBlank();
 		// ignore every second k, jump back to start of the outer loop
 		if (k&1=0) then 
 			continue; 
@@ -31,22 +31,22 @@ begin
 		// Inner loop
 		for i:=0 to 256 do 
 		begin
-			for j:=0 to 6 do waitforraster(0); 
+			for j:=0 to 2 do Screen::WaitForVerticalBlank(); 
 		
 		// Stops after 2 rows, breaks out of the loop
-			if (i>=screen_width*2) then 
+			if (i>=Screen::width*2) then 
 				break;
 		
 		// Print char
 		
-			poke(screen_char_loc,i,i);		
+			poke(#Screen::screen0,i,i);		
 		
 		// Skip settings colors after 1 row 
-			if (i>=screen_width) then 
+			if (i>=Screen::width) then 
 				continue;
 			
 		// Print color
-			poke(screen_col_loc,i,i);		
+			poke(#Screen::color,i,i);		
 
 		end;
 	end;
