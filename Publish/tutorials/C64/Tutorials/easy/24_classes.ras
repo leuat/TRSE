@@ -1,7 +1,9 @@
 program Classes;
+@use "screen/screen"
 var  
-   i,j,shift,k: byte = 0;
+    i,j,shift,k: byte = 0;
 	dx,dy : byte;
+	p : ^byte;
 /*
 	The famous MCMC random walk!	
 
@@ -44,7 +46,7 @@ var
 
 	 		if (this.pos.x<>1) then
 	 			if (j=0) then dx:=-1;
-	 		if (this.pos.x<>screen_width-2) then
+	 		if (this.pos.x<>Screen::width-2) then
 				if (j=3) then dx:=1; // Wall X
 
 			k+=11;			
@@ -53,7 +55,7 @@ var
 			if (this.pos.y<>1) then // Wall Y
 				if (j=0) then dy:=-1;
 
-			if (this.pos.y<>screen_height-1) then // Wall Y
+			if (this.pos.y<>Screen::height-1) then // Wall Y
 				if (j=3) then dy:=1;
 
 			this.pos.x+=dx;
@@ -64,31 +66,31 @@ var
 		procedure Render(rchar:byte);
 		begin
 			// Clear previous stuff
-			moveto(this.prevPos.x, this.prevPos.y,hi(screen_char_loc));
-			screenmemory[0]:=key_space;
-			screenmemory-=41;
-			screenmemory[0]:=key_space;
-			screenmemory[1]:=key_space;
-			screenmemory[2]:=key_space;
+			p:=#Screen::screen0 + Screen::tab40[this.prevPos.y] + this.prevPos.x;
+			p[0]:=key_space;
+			p-=41;
+			p[0]:=key_space;
+			p[1]:=key_space;
+			p[2]:=key_space;
 			
 			// Paint char!
-			moveto(this.pos.x, this.pos.y,hi(screen_char_loc));
-			screenmemory[0]:=rchar;
+			p:=#Screen::screen0 + Screen::tab40[this.pos.y] + this.pos.x;
+			p[0]:=rchar;
 			// Paint colors 
-			screenmemory+=$D400;
-			screenmemory[0]:=this.color;
-			screenmemory-=41;
+			p+=$D400;
+			p[0]:=this.color;
+			p-=41;
 			// Text color
-			screenmemory[0]:=this.color;
-			screenmemory[1]:=this.color;
-			screenmemory[2]:=this.color;
+			p[0]:=this.color;
+			p[1]:=this.color;
+			p[2]:=this.color;
 			
 			
 			// Paint text
-			moveto(this.pos.x-1, this.pos.y-1,hi(screen_char_loc));
+			p:=#Screen::screen0 + Screen::tab40[this.pos.y-1] + this.pos.x-1;
 			// Print name
 			for j:=0 to 3 do
-				screenmemory[j] := this.name[j];
+				p[j] := this.name[j];
 	
 		end;
 		
@@ -151,11 +153,10 @@ end;
 begin
 	
 	// Initialize
-	screen_bg_col:=blue;
-	screen_fg_col:=blue;
-	clearscreen(key_space,screen_char_loc);
-	clearscreen(black,screen_col_loc);
-	DefineScreen();
+	Screen::background:=blue;
+	Screen::border:=blue;
+	Screen::Clear(#Screen::screen0,key_space);
+	Screen::Clear(#Screen::color,black);
 	// Initialize tables
 	for i:=0 to 256 do 
 		randomTable[i]:=random()&3;
@@ -170,9 +171,8 @@ begin
 		RenderMonsters(0);// 'at' sign
 		// Wait a bit each frame
 		for i:=0 to 4 do
-			waitforverticalblank();
+			Screen::WaitForVerticalBlank();
 		shift+=1; // Some prime number
 	end;	
 
-	Loop();
 end.

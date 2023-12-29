@@ -1,4 +1,5 @@
 program Procedure_pointers;
+@use "screen/screen"
 var  
  	time: byte = 0; 
  	// Pointer to procedure is stored in p1
@@ -27,19 +28,17 @@ var
 // Some random procedure 
 procedure Proc1();
 begin
-	screen_bg_col:=purple;
-	clearscreen(key_space,screen_char_loc);
-	moveto(10,10,hi(screen_char_loc));
-	printstring("THIS IS PROC 1",0,40);
+	Screen::border := purple;
+	Screen::Clear(#Screen::screen0,key_space);
+	Screen::PrintString("THIS IS PROC 1 ",5,10, #Screen::screen0);
 end;
 
 // Another random procedure 
 procedure Proc2();
 begin
-	screen_bg_col:=green;
-	clearscreen(key_space,screen_char_loc);
-	moveto(5,12,hi(screen_char_loc));
-	printstring("THIS IS PROC 2",0,40);
+	Screen::border := green;
+	Screen::Clear(#Screen::screen0,key_space);
+	Screen::PrintString("THIS IS PROC 2 ",15,16, #Screen::screen0);
 end;
 
 
@@ -57,7 +56,7 @@ begin
 
 		time:=time+4;
 
-		waitforverticalblank(); 	
+		Screen::WaitForVerticalblank();
 	end;
 
 end.

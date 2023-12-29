@@ -145,8 +145,6 @@ memory_fill_loop:
 	iny
 	cpy Memory_v2
 	bne memory_fill_loop
-
-
 	");	
 end;
 

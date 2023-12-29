@@ -1,22 +1,23 @@
 program FireFire;
-
+@use "screen/screen"
+@use "system/memory"
 var
 
-@define charLoc $2000
  // use chars 64-72 as fire chars. You could try others here, like 80
  
 @define OPTIMIZED 1 // Optimized, turn to 0 to turn off optimization
 
 
 
-   const fireChar:byte = 64;
+   	const fireChar:byte = 64;
 
+	const charLoc:address =  $2000;
 
 
 	val,i : byte;
 	x,y,ystart : byte;
 	// Use custom charset
-	charset: IncBin("resources/charsets/charset.bin",@charLoc);
+	charset: IncBin("resources/charsets/charset.bin",charLoc);
 	// Fire colors, from low to high brightness
 	color : array [] of byte = (9, 2,2,8,8, 13,10, 7,7,1, 1,1,1); 
 	// Shiftx shifts random values
@@ -24,7 +25,7 @@ var
 
 	rands : array[256] of byte;
 
-	colorzp: pointer;
+	colorzp, p: ^byte;
 
 // Remove this line to use unoptimized version
 
@@ -42,16 +43,16 @@ begin
 
 	shiftx:=shiftx+31;
 	ystart:=3;
-	colorzp:=#screen_col_loc +ystart*screen_width;
-	moveto(0, ystart, hi(screen_char_loc));
+	colorzp:=#screen_col_loc +ystart*Screen::width;
+	p:=#Screen::screen0 + ystart*Screen::width;
 	for y:=0 to 5 offpage do begin // 160*4
 	//	 Original code
 @if OPTIMIZED = 0
 		for x:=0 to 160 do begin
 			// This is the main method for calculating "fire" : current neighbouring values+ lower value
-			val:=screenmemory[x+39]+screenmemory[x+40]+screenmemory[x+41] + screenmemory[x+80];
+			val:=p[x+39]+p[x+40]+p[x+41] + p[x+80];
 			val:=val/4;
-			screenmemory[x]:=val;
+			p[x]:=val;
 			colorzp[x]:=color[val];
 		end;
 @endif
@@ -66,23 +67,23 @@ begin
 				lda #[i]							
 				adc #38
 				tay
-				lda (screenmemory),y
+				lda (p),y
 				iny
-				adc (screenmemory),y
+				adc (p),y
 				iny
-				adc (screenmemory),y
+				adc (p),y
 				pha
 				tya
 				adc #39
 				tay
 				pla
-				adc (screenmemory),y
+				adc (p),y
 				
 				lsr
 				lsr
 
 				ldy #[i]							
-				sta (screenmemory),y		
+				sta (p),y		
 				tax
 				lda color,x
 				sta (colorzp),y
@@ -90,12 +91,12 @@ begin
 				repend
 			");		
 @endif
-		screenmemory+=160;
+		p+=160;
 		colorzp+=160;
 	end;
-	for i:=0 to screen_width unroll do begin
-		screenmemory[i]:=rands[i+shiftx];
-		screenmemory[i+screen_width]:=rands[i-shiftx];
+	for i:=0 to Screen::width unroll do begin
+		p[i]:=rands[i+shiftx];
+		p[i+Screen::width]:=rands[i-shiftx];
 	end;
 end;	
 @endblock
@@ -112,18 +113,17 @@ end;
 begin
 	InitRandom();
 	// Set color background
-	screen_bg_col:=black;
-	screen_fg_col:=black;
+	Screen::background := black;
+	Screen::border := black;
 	// Set charmap location at $2000
 	// Clear screen and color memory
-	ClearScreen(0, screen_char_loc);
-	ClearScreen(black, screen_col_loc);
-	SetCharsetLocation(@charLoc);
-	memcpy(^@charLoc+fireChar*8,0,^@charLoc,0);	
-	asm(";here");
+	Screen::Clear(#Screen::screen0, 0);
+	Screen::Clear(#Screen::color, black);
 	
-	fill(@charLoc+^8*^8,$FF,128);
-//	fill(^@charLoc,$FF,0);
+	Screen::SetCharsetLocation(#charLoc);
+	
+	Memory::Copy(#charLoc+fireChar*8,#charLoc,0);
+	Memory::Fill(#charLoc+^8*^8,$FF,128);
 	
 	while (true) do 
 		Fire();

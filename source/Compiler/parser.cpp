@@ -2293,8 +2293,11 @@ QSharedPointer<Node> Parser::Statement()
         //            node = Constant();
         if (node==nullptr)
             node = AssignStatement();
-
-
+/*
+        auto p= qSharedPointerDynamicCast<NodeProcedure>(node);
+        if (p)
+            qDebug() << "PARSER "<<p->m_procedure->m_procName;
+*/
     }
     else if (m_currentToken.m_type == TokenType::ADDRESS) {
         if (node==nullptr)
@@ -2547,6 +2550,8 @@ int Parser::CompareDeclerationsVsParameters(QVector<QSharedPointer<Node> > aa, Q
 
 //        qDebug() << "PARSER COMPARE " <<p1 << p2 << t1->m_flags << cnt;
 
+//        qDebug() << p1 << p2;
+
         if (p1=="BYTE" || p1=="INTEGER" || p1=="LONG")  {
             if (p2 =="INTEGER_CONST" || p2=="ADDRESS") {
                 if (t1->m_flags.contains("pure_variable")) cnt++;
@@ -2556,7 +2561,7 @@ int Parser::CompareDeclerationsVsParameters(QVector<QSharedPointer<Node> > aa, Q
                 // Lookup
                 auto s = m_symTab->Lookup(bb[i]->m_op.m_value,m_currentToken.m_lineNumber);
                 if (s==nullptr) {
-                    qDebug() << "OISANN NULLPTR " << bb[i]->m_op.m_value;
+  //                  qDebug() << "OISANN NULLPTR " << bb[i]->m_op.m_value;
                     //exit(1);
                     return -1;
                 }
@@ -4273,13 +4278,10 @@ QSharedPointer<NodeProcedureDecl> Parser::FindCorrectOverridenProcedure(QString 
         return lst.first();//qSharedPointerDynamicCast<NodeProcedureDecl>(m_procedures[procName]);
     for (auto l : lst ) {
         if (CompareDeclerationsVsParameters(l->m_paramDecl, params)==0) {
-//            qDebug() << "PARSER RETURNING "<<l->m_procName <<lst.count();
-
             return l;
         }
     }
-
-    return lst.first();
+    return lst.last();
 
 
 

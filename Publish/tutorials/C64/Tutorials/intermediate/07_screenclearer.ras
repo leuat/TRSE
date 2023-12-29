@@ -1,4 +1,5 @@
 program ClearThatScreen;
+@use "screen/screen"
 var  
    	i,j,k,l,m,c2x: byte; 
 
@@ -19,8 +20,8 @@ procedure CalculateCircles();
 begin
 	zp:=#dataLoc;
 	// Since perlin noise repeats every 16 bytes, we add a higher frequency noise with a shifted phase	
-	for j:=0 to screen_height do begin
-		for i:=0 to screen_width do begin
+	for j:=0 to Screen::height do begin
+		for i:=0 to Screen::width do begin
 			m:=j&15;
 			// lookup : val := x+y*16 with x,y confined to 0..15
 			l:=i&15+m*16;	
@@ -34,7 +35,7 @@ begin
 //			k:=k+sine[i+j]/8;
 			zp[i]:=k/2+8; 
 		end;
-		zp:=zp+screen_width;
+		zp:=zp+Screen::width;
 	end;
 end;
 
@@ -44,14 +45,14 @@ end;
 */
 procedure PerformPerlin();
 begin
-	zp:=#screen_char_loc;
-	p1:=#screen_col_loc;
+	zp:=#Screen::screen0;
+	p1:=#Screen::color;
 	l1:=#dataLoc;
 		
 
 
-	for j:=0 to screen_height do begin
-		for i:=0 to screen_width do begin
+	for j:=0 to Screen::height do begin
+		for i:=0 to Screen::width do begin
 		
 @if IS_OPTIMIZED=0
 			k:=l1[i];
@@ -76,8 +77,8 @@ pp_cont:
 ");			
 @endif
 		end;
-		p1:=p1+screen_width;
-		l1:=l1+screen_width;
+		p1:=p1+Screen::width;
+		l1:=l1+Screen::width;
 //		inczp(zp,40);
 	end;
 
@@ -85,15 +86,15 @@ end;
 
 
 begin
-	Clearscreen(blue,screen_col_loc);
-	Clearscreen($A0,screen_char_loc); // $A0 is solid block
+	Screen::Clear(#Screen::color, blue);
+	Screen::Clear(#Screen::screen0, $A0);
 	CalculateCircles();
 	c2x:=16;
 	while(true) do begin
-		waitforverticalblank();
+		Screen::WaitForVerticalBlank();
 		if (c2x<127) then begin
-			screen_bg_col:=colorsc2[c2x];
-			dec(c2x);
+			Screen::bg_col:=colorsc2[c2x];
+			c2x-=1;
 		end;
 		PerformPerlin();
 	end;

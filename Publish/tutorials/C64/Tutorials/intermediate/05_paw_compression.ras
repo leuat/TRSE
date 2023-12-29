@@ -4,6 +4,10 @@ var
    
 	const noImages : byte = 2;
 /*
+
+	NOTE: PAW FILE COMPRESSION IS OBSOLETE AND WILL BE DISCONTINUED IN THE FUTURE. Use "compression" instead
+
+
 	For this tutorial to work, you must first load "05_paw_file.paw" and build
 	the resource. 
 

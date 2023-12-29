@@ -1,4 +1,6 @@
 program Scroller2x2;
+@use "screen/screen"
+@use "system/memory"
 var
 	// Values that will be printed to the screen
 	val : byte;
@@ -14,21 +16,19 @@ var
 	// Text to be rendered on-screen
 	text : string=("THIS IS A TWO X TWO CHARACTER SCROLLER           ");
 
+	p : ^byte;
+
 // Character that points to a 2x2 block of black areas in the character map
 	const clearChar : byte = $a0;
 	const useKernal : byte = 0;
 
 
+	const textColor : byte = green;
+	const lineColor : byte = dark_grey;
+	const scrollerLineY : byte = 5;
+	const scrollerStartRaster : byte = 86;
+	const scrollerEndRaster : byte = 110;
 // Since textcolor1 sets the $D800 colors, it will be multicolor - 8 - dark blue
-@define textColor1 "green"
-// Bank 1
-
-@define lineColor "DARK_GREY"
-
-// Y pos of scroller (in chars)
-@define scrollerLineY 5
-@define scrollerStartRaster 86
-@define scrollerEndRaster 110
 
 procedure MainScreen();
 
@@ -41,23 +41,23 @@ begin
 	// Line drawing trick : wait a couple of cycles, then change colors
 	startirq(@useKernal);
 	wait(6);
-	screen_fg_col:=@lineColor;
-	scrollx(0);
-	waitnoraster(1);
+	Screen::background:=lineColor;
+	Screen::Scrollx(0);
+	Screen::WaitNoLines(1);
 	wait(9);
-	screen_fg_col:=black;
+	Screen::background:=black;
 	// point to next raster 
 	RasterIRQ(MainScreen(),130, @useKernal);
 	// Copy content 1 to the left
 	if (ms_scroll=1) then begin
-		memcpy(screen_char_loc + ^40*^@scrollerLineY+^1, 0, screen_char_loc + ^40*^@scrollerLineY, 39);
-		memcpy(screen_char_loc + ^40*^@scrollerLineY+^40+^1, 0, screen_char_loc + ^40*^@scrollerLineY +^40, 39);
+		Memory::Copy(#Screen::screen0+ 40*scrollerLineY+1, #Screen::screen0+ 40*scrollerLineY, 39);
+		Memory::Copy(#Screen::screen0+ 40*scrollerLineY+40+1, #Screen::screen0+ 40*scrollerLineY +40, 39);
 	end;
 	closeirq();
 	
 end;
 
-procedure CalculatePositionInCharset(cc_val:byte);
+function CalculatePositionInCharset(cc_val:byte):byte;
 begin
 		// If space then return 
 	if (cc_val=key_space) then 
@@ -80,7 +80,7 @@ end;
 procedure UpdateTextScroll();
 begin
 	ms_scroll := 7;
-	inc(ms_sshift);
+	ms_sshift += 1;
 	// if column 2 has been rendered, increase pointer to the next character
 	if (ms_sshift=2) then begin
 		ms_sshift:=0;
@@ -98,12 +98,12 @@ begin
 	if (ms_scroll>127) then begin
 		// Lookup character value
 		// Move to y position
-		moveto(0,@scrollerLineY, hi(screen_char_loc));
+		p := #Screen::screen0 + Screen::tab40[scrollerLineY];
 		
 		val:=CalculatePositionInCharset(pText[0]);
 		
-		screenmemory[39]:=val;
-		screenmemory[39+screen_width]:=val+screen_width;
+		p[39]:=val;
+		p[39+Screen::width]:=val+Screen::width;
 		// Reset scrolling
 
 		UpdateTextScroll();		
@@ -117,15 +117,15 @@ begin
 	// A line drawing trick: wait some cycles, change background color
 	startirq(@useKernal);
 	wait(6);
-	screen_fg_col:=@lineColor;
-	waitnoraster(1);
+	Screen::background:=lineColor;
+	Screen::WaitNoLines(1);
 	wait(10);
 	// wait some more, return to black! 
-	screen_fg_col:=black;
+	Screen::Background:=black;
 	
 	// Decrease scroll register by 2 (faster scrolling, less boring)
 	ms_scroll:=ms_scroll-2;
-	scrollx(ms_scroll&7);
+	Screen::Scrollx(ms_scroll&7);
 	// Update the text	
 	DrawText();
 
@@ -144,17 +144,17 @@ begin
 
 end;
 begin
-	screen_fg_col:=black;
-	screen_bg_col:=black;
-	SetCharsetLocation($2000);
+	Screen::background := black;
+	Screen::border := black;
+	Screen::SetCharsetLocation($2000);
 	// Clear screen and color memory
-	ClearScreen(@clearChar, screen_char_loc);
-	ClearScreen(@textColor1, screen_col_loc);
+	Screen::Clear(#Screen::screen0, clearChar);
+	Screen::Clear(#Screen::color, textColor);
 
 	// Initialize text pointer
 	pText:=#text;
 	// Hide the 0th and 39th column
-	hideborderx(0);
+	Screen::HideBorders();
 	SetMemoryConfig(1,@useKernal,0);
 	StartRasterChain(MainScreen(),1,@useKernal);
 	Loop();

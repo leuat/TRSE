@@ -9,6 +9,8 @@
         time : byte;
         lives ; byte = 3;
         zeroVal : byte at $01; // declared at memory location 1.
+        p : ^byte; // Pointer to a byte. same as "pointer of byte".
+
     begin
         lives := lives - 1;
 </code>

@@ -1,5 +1,5 @@
 program tutorial_14_horizontal_starfield;
-
+@use "screen/screen"
 var
 
 // number of stars
@@ -21,7 +21,7 @@ var
    	i,j,x,dx, time: byte = 0; 
 	// a star can have 8 values in a single char
 	charsetVals: array[8] of byte =(1,2,4,8,16,32,64,128);	
-	
+	p : ^byte;	
 	star = record
 		x,dx,ddx,color : byte;
 	end;
@@ -79,23 +79,23 @@ end;
 // the charpos should be inverted and lose the +7, write in assembler etc
 procedure RenderStarfield();
 begin
-	moveto(0,0,hi(screen_char_loc));
-	cp:=#screen_col_loc;
+	p:=#Screen::screen0;
+	cp:=#Screen::color;
 	for i:=0 to noStars do begin
 		if i<>12 then begin // ignore stars at line 12
 			x:=stars[i].x;
 			dx:=stars[i].dx/8;
-			screenmemory[x]:=charPos+7-dx;
+			p[x]:=charPos+7-dx;
 			if x<>39 then
-				screenmemory[x+1]:=key_space
+				p[x+1]:=key_space
 			else
-				screenmemory[0]:=key_space;
+				p[0]:=key_space;
 
 			cp[x]:=stars[i].color;
 
 		end;
-		screenmemory += screen_width;
-		cp += screen_width;
+		p += Screen::width;
+		cp += Screen::width;
 	end;
 end;
 
@@ -122,8 +122,7 @@ end;
 
 procedure InitializeText();
 begin
-	moveto(12,12,hi(screen_char_loc));
-	printstring(#text,0,20);
+	Screen::PrintString(#text,12,12,#Screen::screen0);
 end;
 
 
@@ -132,7 +131,7 @@ end;
 interrupt Raster1();
 begin
 	StartIRQ(useKernal);
-	inc(time);
+	time+=1;
 	RenderStarfield();	
 	UpdateStarfield();
 	closeIRQ();
@@ -143,12 +142,14 @@ end;
 begin
 	InitializeRand();
 	InitializeStarfield();
-	screen_bg_col:=black;
-	screen_fg_col:=black;
-	clearscreen(key_space,screen_char_loc);	
+	Screen::background:=black;
+	Screen::border:=black;
+	Screen::Clear(#Screen::screen0, key_space);
 	//VIC_DATA_LOC:=@charsetVicData;
-	SetCharsetLocation(charsetPos);
-	copycharsetfromrom(charsetPos);
+	
+	Screen::SetCharsetLocation(#charsetPos);
+	Screen::CopyCharsetFromRom(#Screen::ROMCharset_uppercase,#charsetPos);
+	
 	GenerateCharset();
 	InitializeText();
 

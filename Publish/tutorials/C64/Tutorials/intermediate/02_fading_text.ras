@@ -1,4 +1,6 @@
 program fading_text;
+@use "screen/screen"
+@use "system/memory"
 var  
    	time1, waitTime,x,y,i,j,k,val : byte = 0; 
 
@@ -8,7 +10,7 @@ var
 
 	// Colors to fade between, one per frame
 	colors:  array[] of byte = (0, $06,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$06,$06,$06);
-
+	p:^byte;
 
 	// Current texts, supports @max 
 //	text_x, text_y, text_time, text_len:array[max] of byte = (0,0,0,0,0,0);
@@ -77,18 +79,17 @@ begin
 	// Advance to text
 	textPtr:=textPtr+2;
 	// Move screenmemory pointer to $d800 color ram
-	moveto(x,y,hi(screen_col_loc));
-	colorPtr:=screenmemory;
+	colorPtr := #Screen::color + Screen::tab40[y]+x;
 	// Also, move to screen position
-	moveto(x,y,hi(screen_char_loc));
+	p := #Screen::screen0 + Screen::tab40[y]+x;
 	i:=0;
 	// Write chars as long as char isn't zero 
 	while (textPtr[0]<>0) do begin
 		colorPtr[i]:=0; // Should be black!
 		val:=textPtr[0];
 		if (val>64) then val-=64; // Petscii/c64 codes conversion
-		screenmemory[i]:=val;
-		inc(i);
+		p[i]:=val;
+		i+=1;
 		textPtr:=textPtr+1;
 	end;
 	text[j].len:=i; // Set length
@@ -110,8 +111,8 @@ begin
 	for i:=0 to maxx do begin
 		if (text[i].time<>0) then begin // is active: update color 
 			text[i].time-=1; 
-			moveto(text[i].x, text[i].y, hi(screen_col_loc));
-			fill(screenmemory,colors[text[i].time],text[i].len);
+			p := #Screen::color + Screen::tab40[text[i].y]+text[i].x;
+			Memory::Fill(p, colors[text[i].time], text[i].len);
 		end;
 	end; 
 
@@ -123,12 +124,13 @@ end;
 */
 procedure Update();
 begin
-	inc(time1);
+	time1+=1;
 	// Update colors
 	UpdateTextColors();
 	// Every 7th frame, advance timer
-	if (time1&7=0) then begin	
-		dec(waitTime);
+	if (time1&7=0) then 
+	begin	
+		waitTime-=1;	
 		// if wait time is over, advance text pointer and create a new slot
 		if (waitTime>127) then 
 			Advance();
@@ -147,11 +149,11 @@ end;
 
 // Main block
 begin
-	screen_bg_col:=black;
-	screen_fg_col:=black;
+	Screen::background:=black;
+	Screen::border:=black;
 	textPtr:=#demotext;
-	ClearScreen(key_space,screen_char_loc);
-	ClearScreen(black,screen_col_loc);
+	Screen::Clear(#Screen::screen0,key_space);
+	Screen::Clear(#Screen::color,black);
 	
 	StartRasterChain(RasterMain(),0,useKernal);
 	Loop();

@@ -26,6 +26,10 @@ var
 	const color : address = $d800;
 	const width : byte = 40;
 	const height : byte = 25;
+	
+	const ROMCharset_uppercase : address = $D000;
+	const ROMCharset_lowercase : address = $D800;
+	
 	tab40 : array[25] of integer = buildtable("i*SCREEN_WIDTH");
 	
 	numStr : array[16] of byte;
@@ -411,5 +415,45 @@ begin
 	str::itoa(i1, #numStr, c);
 	PrintString(#numStr, x,y, cp);
 end;	
+/**
+	Copes charset from ROM at p1 to p2 (2000 bytes)
+
+**/
+procedure CopyCharsetFromRom(p1, p2 : global ^byte);
+begin
+	asm(" sei");
+	i:=peek(^01,0);
+	poke(^01,0,$33);
+	CopyFull(p1,p2);
+	CopyFull(p1+1000,p2+1000);
+	poke(^01,0,i);
+end;
+
+/**
+
+	Waits p1 raster lines
+
+**/
+procedure WaitNoLines(i : global byte pure_number) inline;
+begin
+	asm("
+	lda #[Screen_i]
+	clc 
+	adc $d012
+	cmp $d012
+	bne *-3
+	");
+end;
+
+procedure WaitNoLines(i : global byte);
+begin
+	asm("
+	lda Screen_i
+	clc 
+	adc $d012
+	cmp $d012
+	bne *-3
+	");
+end;
 
 end.

@@ -1,7 +1,10 @@
 program Keyboard_input;
+@use "screen/screen"
+@use "system/memory"
 var  
    	index: byte; 
 	command : array[64] of byte;
+	p : ^byte;
 	
 procedure ReadLine();
 var
@@ -10,12 +13,12 @@ var
 	
 begin
 	isNotDone:=true;
-	moveto(0,4,hi(screen_char_loc));
+	p:=#Screen::screen0 + Screen::tab40[4];
 	
 
 	while (isNotDone) do
 	begin
-		waitforraster(0);
+		Screen::WaitForRaster(0);
 			
 		renderChar:=true;
 		key:=getKey();
@@ -37,10 +40,10 @@ begin
 
 			if (key=$F7) then // backspace
 			begin
-				screenmemory[cur]:=key_space;
+				p[cur]:=key_space;
 				if (cur<>0) then
 					cur:=cur-1;
-				screenmemory[cur]:=key_space;
+				p[cur]:=key_space;
 			
 				renderChar:=false;		
 			end;
@@ -56,31 +59,29 @@ begin
 			begin
 				command[cur]:=key;
 				if (key>64 and key<91) then key:=key-64;
-				screenmemory[cur]:=key;
+				p[cur]:=key;
 				inc(cur);
 			end;
 
 		end;
-		inc(blink);
-		if (blink=16) then screenmemory[cur]:=key_space+$80;
-		if (blink=32) then begin screenmemory[cur]:=key_space; blink:=0; end;
+		blink+=1;
+		if (blink=16) then p[cur]:=key_space+$80;
+		if (blink=32) then begin p[cur]:=key_space; blink:=0; end;
 		
-		if (reset<>0) then dec(reset);
+		if (reset<>0) then reset-=1;
 
 	end;
 end;
 
-procedure Message(p:pointer);
+procedure Message(p2:pointer);
 begin
-	moveto(0,7,hi(screen_char_loc));
-	printstring(p,0,40);
-
+	Screen::PrintString(p2,0,7, #Screen::screen0);
 end;
 
 
 procedure ExecuteCommand();
 begin
-	fill(screenmemory,key_space,40);
+	Memory::Fill(p,key_space,40);
 		Message(#command);
 	
 	if (strcmp(#command,"HELLO")) then
@@ -101,11 +102,9 @@ end;
    
 begin
 	clearscreen(key_space,screen_char_loc);
-	moveto(0,1,hi(screen_char_loc));
-	printstring("HI THERE!",0,screen_width);
-	screenmemory:=screenmemory+screen_width;
-	printstring("SPEAK YOUR MIND",0,screen_width);
-	screenmemory:=screenmemory+screen_width*2;
+	p:=#Screen::screen0 + Screen::width;
+	Screen::PrintString("HI THERE!",0,1, #Screen::screen0);
+	Screen::PrintString("SPEAK YOUR MIND",0,2, #Screen::screen0);
 	
 	while (true) do
 	begin

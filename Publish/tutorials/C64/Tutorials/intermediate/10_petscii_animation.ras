@@ -1,4 +1,5 @@
 program PetsciiAnimations;
+@use "screen/screen"
 // The unit is accessible in the C64 Turbl Rascal Units project from the front page 
 @use "animation/animation"
 
@@ -22,14 +23,14 @@ begin
 		Animations::RenderNextPackedFrameCompressionType2(#screen_char_loc, screen_width,0,0);
 		screenon();
 		for i:=0 to 100 do
-			waitforverticalblank();
+			Screen::WaitForVerticalBlank();
 	end;
 end;
 
 
 begin
-	screen_bg_col:=black;
-	screen_fg_col:=black;
+	Screen::background := black;
+	Screen::border := black;
 	Animations::ReadAnimationHeader(#anim);
 	Render();	
 end.

@@ -1,4 +1,5 @@
 program Unrolled_Loops;
+@use "screen/screen"
 var
 	i,j:byte;
 	zp:pointer;
@@ -13,7 +14,7 @@ var
 
 procedure NoUnroll(val:global byte);
 begin
-	zp:=#screen_char_loc;
+	zp:=#Screen::screen0;
 	// output 250 bytes to the screen 
  	for j:=0 to 250 do
 	begin
@@ -24,7 +25,7 @@ end;
 	
 procedure Unrolled(val:global byte);
 begin
-	zp:=#screen_char_loc;
+	zp:=#Screen::screen0;
 	// output 250 bytes to the screen unolled
 	for j:=0 to 250 unroll do
 	begin
@@ -37,7 +38,7 @@ begin
 		
 	while(true) do
 	begin	
-		waitforverticalblank();
+		Screen::WaitForVerticalBlank();
 		screen_bg_col:=red; 
 		NoUnroll(1); // slow
 		screen_bg_col:=blue;

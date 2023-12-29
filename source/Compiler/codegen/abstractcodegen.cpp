@@ -1064,7 +1064,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
         LoadVariable(node);
         return;
     }
-
+//    qDebug() << "ABSTRACTCODEGEN HERE " <<node->m_procedure->m_procName;
     if (node->m_parameters.count()!=node->m_procedure->m_paramDecl.count())
         ErrorHandler::e.Error("Procedure '" + node->m_procedure->m_procName+"' requires "
                               + QString::number(node->m_procedure->m_paramDecl.count()) +" parameters, not "
@@ -1074,6 +1074,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node)
     for (int i=0; i<node->m_parameters.count();i++) {
         QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(node->m_procedure->m_paramDecl[i]);
         QSharedPointer<NodeVarType> vt = qSharedPointerDynamicCast<NodeVarType>(vd->m_typeNode);
+//        qDebug() << vt->m_flags.contains("pure_number") << node->m_procedure->m_procName;
         if (vt->m_flags.contains("pure"))
             if (!node->m_parameters[i]->isPure())
                 ErrorHandler::e.Error("Procedure '"+node->m_procedure->m_procName+"' requires parameter "+QString::number(i) +" to be a pure variable or number", node->m_op.m_lineNumber);
