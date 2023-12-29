@@ -56,7 +56,7 @@ begin
 
 		time:=time+4;
 
-		Screen::WaitForVerticalblank();
+		Screen::WaitForVerticalBlank();
 	end;
 
 end.
