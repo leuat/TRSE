@@ -1783,28 +1783,53 @@ Use Pasmo if something goes wrong</string>
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>697</height>
+              <height>723</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_26">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout_5">
-               <item row="4" column="2">
-                <widget class="QLineEdit" name="leSplashSeconds"/>
+               <item row="1" column="2">
+                <widget class="QComboBox" name="cmbThemeFjong"/>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_21">
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_76">
                  <property name="text">
-                  <string>Fjong editor color theme:</string>
+                  <string>Auto load most recent project on startup:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QComboBox" name="cmbPalette">
+                 <item>
+                  <property name="text">
+                   <string>Dark</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Light</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="8" column="0">
+                <widget class="QLabel" name="label_69">
+                 <property name="text">
+                  <string>Image editor grid colour:</string>
                  </property>
                 </widget>
                </item>
                <item row="6" column="0">
-                <widget class="QLabel" name="label_62">
+                <widget class="QLabel" name="label_56">
                  <property name="text">
-                  <string>Enable auto-complete:</string>
+                  <string>Editor auto-indent
+(shift-enter works if disabled):</string>
                  </property>
                 </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QLineEdit" name="leSplashSeconds"/>
                </item>
                <item row="3" column="2">
                 <widget class="QCheckBox" name="chkDisableFileColors">
@@ -1813,10 +1838,17 @@ Use Pasmo if something goes wrong</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QComboBox" name="cmbThemeFjong"/>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_41">
+                 <property name="text">
+                  <string>Disable project explorer colors:</string>
+                 </property>
+                </widget>
                </item>
-               <item row="6" column="2">
+               <item row="8" column="2">
+                <widget class="QLineEdit" name="leGridColor"/>
+               </item>
+               <item row="7" column="2">
                 <widget class="QCheckBox" name="chkAutoComplete">
                  <property name="text">
                   <string/>
@@ -1836,43 +1868,29 @@ Use Pasmo if something goes wrong</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="2">
-                <widget class="QComboBox" name="cmbTheme"/>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_41">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_21">
                  <property name="text">
-                  <string>Disable project explorer colors:</string>
+                  <string>Fjong editor color theme:</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
-                <widget class="QComboBox" name="cmbPalette">
-                 <item>
-                  <property name="text">
-                   <string>Dark</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Light</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_47">
-                 <property name="text">
-                  <string>Seconds to show splash screen (0 to disable):</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
+               <item row="6" column="2">
                 <widget class="QCheckBox" name="chkAutoIndent">
                  <property name="text">
                   <string/>
                  </property>
                 </widget>
+               </item>
+               <item row="7" column="0">
+                <widget class="QLabel" name="label_62">
+                 <property name="text">
+                  <string>Enable auto-complete:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QComboBox" name="cmbTheme"/>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_8">
@@ -1882,22 +1900,18 @@ Use Pasmo if something goes wrong</string>
                 </widget>
                </item>
                <item row="5" column="0">
-                <widget class="QLabel" name="label_56">
+                <widget class="QLabel" name="label_47">
                  <property name="text">
-                  <string>Editor auto-indent
-(shift-enter works if disabled):</string>
+                  <string>Seconds to show splash screen (0 to disable):</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="label_69">
+               <item row="4" column="2">
+                <widget class="QCheckBox" name="chkAutoLoadRecent">
                  <property name="text">
-                  <string>Image editor grid colour:</string>
+                  <string/>
                  </property>
                 </widget>
-               </item>
-               <item row="7" column="2">
-                <widget class="QLineEdit" name="leGridColor"/>
                </item>
               </layout>
              </item>

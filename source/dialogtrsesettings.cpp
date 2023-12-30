@@ -100,6 +100,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
+    ui->chkAutoLoadRecent->setChecked(m_ini->getdouble("auto_load_recent_project_on_startup")==1.0);
     ui->leBackupFiles->setText(QString::number((int)m_ini->getdouble("backup_files_count")));
 
     ui->leLZ4->setText(m_ini->getString("lz4"));
@@ -264,6 +265,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("image_painter",ui->cmbPainter_2->currentIndex());
 
     m_ini->setFloat("auto_inject", ui->chkAutoInject->isChecked()?1:0);
+    m_ini->setFloat("auto_load_recent_project_on_startup", ui->chkAutoLoadRecent->isChecked()?1:0);
+
     m_ini->setFloat("auto_backup", ui->chkBackup->isChecked()?1:0);
     m_ini->setFloat("editor_autocomplete", ui->chkAutoIndent->isChecked()?1:0);
     m_ini->setFloat("editor_autocomplete_nobug", ui->chkAutoComplete->isChecked()?1:0);

@@ -142,6 +142,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->txtNews->setText(Util::loadTextFile(":resources/text/news.txt"));
 
+    // Load recent project
+    bool autoLoad = true;
+    if (m_iniFile->contains("auto_load_recent_project_on_startup"))
+        autoLoad = (m_iniFile->getdouble("auto_load_recent_project_on_startup")==1);
+    if (autoLoad && ui->lstRecentProjects->count()>0) {
+        auto item = ui->lstRecentProjects->itemAt(0,0);
+        QString projectFile = item->data(Qt::UserRole).toString();
+        LoadProject(projectFile);
+        ui->tabMain->setCurrentIndex(0);
+    }
 
 
 //    ui->lblBrag1->setText(t0);
@@ -344,6 +354,9 @@ void MainWindow::VerifyDefaults()
 
     if (!m_iniFile->contains("compile_thread"))
         m_iniFile->setFloat("compile_thread",1);
+
+    if (!m_iniFile->contains("auto_load_recent_project_on_startup"))
+        m_iniFile->setFloat("auto_load_recent_project_on_startup",1);
 
     if (!m_iniFile->contains("grid_colour"))
         m_iniFile->setVec("grid_colour",QVector3D(40,80,120));

@@ -310,6 +310,7 @@ SOURCES += main.cpp\
     source/LeLib/util/zx0/zx0.c \
     source/OrgAsm/morgasm.cpp \
     source/OrgAsm/zorgasm.cpp \
+    source/OrgAsm/orgasm68k.cpp \
     source/PmmEdit/asmhighlighter.cpp \
     source/PmmEdit/fjonghighlighter.cpp \
     source/PmmEdit/trsehighlighter.cpp \

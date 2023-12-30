@@ -161,8 +161,8 @@ int MOrgasm::getLeaParams(OrgasmLine &ol, int& size)
     }
     if (m_lea.contains(p2))
         val |= (m_lea[p2]<<4) << shl;
-    if (ol.m_orgLine.contains("pcr"))
-          qDebug() << ol.m_orgLine << Util::numToHex(val) << shl;
+    //if (ol.m_orgLine.contains("pcr"))
+      //    qDebug() << ol.m_orgLine << Util::numToHex(val) << shl;
 
     return val;
 }
@@ -351,14 +351,12 @@ void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         add = Util::BinopString(add);
         expr = add;//expr.split(" ")[0] + " " + add;
         //        qDebug() << "* : " << expr;
-        qDebug() << "A1" <<expr;
 
     }
         if (expr.trimmed()=="*") {
-        qDebug() << "B0 "<< expr;
              expr = expr.replace("*", Util::numToHex(m_pCounter));
-            qDebug() << "B1 "<< expr;
-             qDebug() <<ol.m_instruction.m_opCode;
+//            qDebug() << "B1 "<< expr;
+//             qDebug() <<ol.m_instruction.m_opCode;
 
     }
 
@@ -385,7 +383,7 @@ void MOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         data.append(val>>8);
         data.append(val&255);
 
-        qDebug() << "HERE";
+//        qDebug() << "HERE";
         qDebug() << expr << QString::number(val,16);
 
     }

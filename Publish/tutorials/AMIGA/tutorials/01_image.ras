@@ -6,6 +6,19 @@ var
 
 	This example initialises a 320x256 16-color image
  
+ 
+ 	How to compile and run A500 TRSE examples:
+ 		- Download vasm_mot from https://www.irio.co.uk/trse/assembler/vasmm68k_mot_win32.exe 
+ 		- Install winUAE and create a new A500 device with an emulated hard drive located at [some path]
+ 		- In the TRSE settings panel "assemblers", point to vasmm68k_mot.execute
+ 		- In the TRSE settings panel "assemblers", point the "target deployment directory" for the A500 to your emulated hard drive [some path]
+ 		
+ 	You build programs by pressing ctrl-B. To run the program, switch to your emulator and make sure
+ 	you are running in command line on drive C, then simply type in the name of your file to run it. 
+ 	
+ 	It is recommended to keep a save state of your emulator so you can easily reset the computer back to 
+ 	a state where you can easily type the program name again
+ 		
 
 */
 
