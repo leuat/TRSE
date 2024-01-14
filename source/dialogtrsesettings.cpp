@@ -89,6 +89,7 @@ void DialogTRSESettings::FillFromIni()
     ui->lePokemonMinEmulator->setText(m_ini->getString("pokemonmini_emulator"));
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
+    ui->leFoenixEmulator->setText(m_ini->getString("foenix_emulator"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
     ui->leWasm->setText(m_ini->getString("lwasm"));
     ui->lePMAS->setText(m_ini->getString("pmas"));
@@ -100,7 +101,10 @@ void DialogTRSESettings::FillFromIni()
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
-    ui->chkAutoLoadRecent->setChecked(m_ini->getdouble("auto_load_recent_project_on_startup")==1.0);
+    if (m_ini->contains("auto_load_recent_project_on_startup"))
+       ui->chkAutoLoadRecent->setChecked(m_ini->getdouble("auto_load_recent_project_on_startup")==1.0);
+    else
+        ui->chkAutoLoadRecent->setChecked(true);
     ui->leBackupFiles->setText(QString::number((int)m_ini->getdouble("backup_files_count")));
 
     ui->leLZ4->setText(m_ini->getString("lz4"));
@@ -168,6 +172,7 @@ void DialogTRSESettings::FillFromIni()
     ui->cmbAssembler->setCurrentText(m_ini->getString("assembler"));
     ui->cmbAssemblerZ80->setCurrentText(m_ini->getString("assembler_z80"));
     ui->cmb6809Assembler->setCurrentText(m_ini->getString("assembler_6809"));
+    ui->cmbAssemblerM68k->setCurrentText(m_ini->getString("assembler_m68k"));
     ui->cmbPainter_2->setCurrentIndex((int)m_ini->getdouble("image_painter"));
 
 }
@@ -225,6 +230,7 @@ void DialogTRSESettings::FillToIni()
 
     m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
     m_ini->setString("tiki100_emulator", ui->leTiki100->text());
+    m_ini->setString("foenix_emulator", ui->leFoenixEmulator->text());
     m_ini->setString("pasmo", ui->lePasmo->text());
     m_ini->setString("lwasm", ui->leWasm->text());
     m_ini->setString("pmas", ui->lePMAS->text());
@@ -294,6 +300,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
     m_ini->setString("assembler_z80", ui->cmbAssemblerZ80->currentText());
     m_ini->setString("assembler_6809", ui->cmb6809Assembler->currentText());
+    m_ini->setString("assembler_m68k", ui->cmbAssemblerM68k->currentText());
 
     m_ini->setStringList("custom_keyword_list", ui->leKeywords_2->text().split(","));
     m_ini->setStringList("custom_keyword_colour", ui->leColour_2->text().split(","));
@@ -342,7 +349,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM"<<"FOENIX" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -1064,6 +1071,23 @@ void DialogTRSESettings::on_btnSparkle_clicked()
 void DialogTRSESettings::on_btnHelpVectrex_clicked()
 {
     Help("Vectrex Emulator","Use RetroArch. Install the GCE Vectrex core. ");
+
+}
+
+
+void DialogTRSESettings::on_btnFoenixEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Foenix emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leFoenixEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnFoenixHelp_clicked()
+{
+    Help("Foenix Emulator","Use https://github.com/FoenixRetro/junior-emulator");
 
 }
 

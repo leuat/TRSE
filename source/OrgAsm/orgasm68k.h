@@ -42,6 +42,7 @@ public:
     int getTypeFromParams(OrgasmLine& ol);
     int getParsedValue(OrgasmLine& ol, int& size, int type);
     int getParsedInt(QString p1);
+    unsigned short getOpcodeWithEnding(QString o);
     void LoadCodes(int CPUflavor) override;
     QMap<QString,QSharedPointer<Opm68k>> m_instructions;
     QString m_opCode;

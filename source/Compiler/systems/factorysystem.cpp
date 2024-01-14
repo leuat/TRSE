@@ -91,6 +91,8 @@ AbstractSystem *FactorySystem::Create(AbstractSystem::System type, QSharedPointe
         return new SystemBK0010(settings, proj);
     if (type==AbstractSystem::DRAGON)
         return new SystemDragon(settings, proj);
+    if (type==AbstractSystem::FOENIX)
+        return new SystemFoenix(settings, proj);
 
 
     return s;

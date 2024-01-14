@@ -221,6 +221,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemjdh8.cpp \
     source/Compiler/systems/systemm1arm.cpp \
     source/Compiler/systems/systemmega65.cpp \
+    source/Compiler/systems/systemfoenix.cpp \
     source/Compiler/systems/systemmsx.cpp \
     source/Compiler/systems/systemok64.cpp \
     source/Compiler/systems/systemoric.cpp \
@@ -543,6 +544,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemjdh8.h \
     source/Compiler/systems/systemm1arm.h \
     source/Compiler/systems/systemmega65.h \
+    source/Compiler/systems/systemfoenix.h \
     source/Compiler/systems/systemmsx.h \
     source/Compiler/systems/systemok64.h \
     source/Compiler/systems/systemoric.h \

@@ -3,7 +3,17 @@
 
 void SystemAtari520ST::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
+
+    bool useOrgAsm = m_settingsIni->getString("assembler_m68k").toLower()=="orgasm"; // point to TRSE settings when implemented
+
     QString output;
+    if (useOrgAsm) {
+        AssembleZOrgasm(output,text,filename,currentDir,symTab,4);
+        text+=output;
+        return;
+    }
+
+
     int time = timer.elapsed();
     int codeEnd = 0;
 

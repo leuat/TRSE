@@ -1,0 +1,9 @@
+program Tutorial1;
+var
+	
+
+begin
+	
+	loop();
+	
+end.

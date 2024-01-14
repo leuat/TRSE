@@ -5,6 +5,7 @@
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/zorgasm.h"
 #include "source/OrgAsm/morgasm.h"
+#include "source/OrgAsm/orgasm68k.h"
 #include <QMessageBox>
 #include "source/LeLib/data.h"
 
@@ -144,7 +145,7 @@ QString AbstractSystem::StringFromProcessor(QString s) {
     if (s == "M1ARM") return "ARM";
     if (s == "GAMEBOY") return "GBZ80";
     if (s == "SNES") return "WDC65C816";
-    if (s == "MEGA65") return "WDC65C02";
+    if (s == "MEGA65" || s=="FOENIX") return "WDC65C02";
     if (s == "JDH8") return "PJDH8";
     if (s == "TRS80COCO" || s=="VECTREX" || s=="THOMSON" || s=="DRAGON") return "M6809";
     if (s == "POKEMONMINI") return "S1C88";
@@ -196,6 +197,8 @@ AbstractSystem::System AbstractSystem::SystemFromString(QString s) {
         return COLECO;
     if (s.toLower()=="mega65")
         return MEGA65;
+    if (s.toLower()=="foenix")
+        return FOENIX;
     if (s.toLower()=="atari800")
         return ATARI800;
     if (s.toLower()=="msx")
@@ -287,6 +290,7 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
     if (s == PCW) return "PCW";
     if (s == BK0010) return "BK0010";
     if (s == DRAGON) return "DRAGON";
+    if (s == FOENIX) return "FOENIX";
     return "";
 }
 
@@ -376,6 +380,8 @@ void AbstractSystem::AssembleZOrgasm(QString& output, QString &text, QString fil
         m_orgAsm = QSharedPointer<MOrgasm>(new MOrgasm());
         m_orgAsm->m_header = Orgasm::HEADER_DECB;
     }
+    if (orgType==4)
+        m_orgAsm = QSharedPointer<OrgAsm68k>(new OrgAsm68k());
 
     if (m_orgAsm == nullptr)
         return;

@@ -51,74 +51,25 @@ bool d = false;
 
 }
 
+unsigned short OrgAsm68k::getOpcodeWithEnding(QString o)
+{
+    return 0;
+}
+
 void OrgAsm68k::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 {
-    //    QByteArray d = ol.m_instruction.Assemble(ol.m_expr, m_opCodes, pd, m_symbols, m_pCounter,m_constants, m_regs, m_symbolsList);
-//    if (ol.m_orgLine.contains("ldb"))
-  //      qDebug() <<ol.m_orgLine;
     QString expr = ol.m_expr;
     QByteArray data;
-    ol.m_instruction.m_opCode = ol.m_instruction.m_opCode.toLower();
-    QString op = ol.m_instruction.m_opCode.simplified().toLower();
-    //    qDebug() << op;
-    if (!m_instructions.contains(op) && op!="=")
-        throw OrgasmError("Unknown instruction (opcode missing or not implemented yet. Bug Leuat!) : "+ol.m_orgLine.simplified(),ol);
-    bool b = false;
-/*    if (ol.m_expr.contains("*")) {
-        qDebug() << ol.m_expr;
-        b= true;
-    }*/
-/*    if (expr.contains("*")) {
-        qDebug() << expr;
-    }
-*/
-        if (expr.contains("**")) {
-        //        line = line.replace("*", Util::numToHex(pCounter));
-        QString add = expr;//expr.simplified().split(" ")[1].replace(" ", "");
-        add = add.replace("**", "*"+Util::numToHex(m_pCounter));
-        add = Util::BinopString(add);
-        expr = add;//expr.split(" ")[0] + " " + add;
-        //        qDebug() << "* : " << expr;
-        qDebug() << "A1" <<expr;
 
-    }
-        if (expr.trimmed()=="*") {
-        qDebug() << "B0 "<< expr;
-             expr = expr.replace("*", Util::numToHex(m_pCounter));
-            qDebug() << "B1 "<< expr;
-             qDebug() <<ol.m_instruction.m_opCode;
-
-    }
+    auto ins = getOpcode(ol);;
+    unsigned short opcode = ins->opcode;
 
 
-    ol.m_expr.replace("*",Util::numToHex(m_pCounter));
-/*    if (b)
-        qDebug() << ol.m_expr;*/
-    if (ol.m_instruction.m_opCode=="processor")
-        return;
-    //    qDebug() << line;
 
-    if (ol.m_instruction.m_opCode=="org")
-        return;
+    qDebug() <<  QString::number(opcode,2) << expr;
 
+//    if (expr)
 
-    if (ol.m_instruction.m_opCode!="=") {
-        int type = getTypeFromParams(ol);
-    //    qDebug() << op<<type;
-    //    if (type==Opm68k::imm || type==Opm68k::ext || type==Opm68k::inh || type==Opm68k::rel)
-        Write(data,ol,type);
-    }
-    else {
-        int val = Util::NumberFromStringHex(Util::BinopString(expr));
-        data.append(val>>8);
-        data.append(val&255);
-
-        qDebug() << "HERE";
-        qDebug() << expr << QString::number(val,16);
-
-    }
-    //  else
-    //    throw OrgasmError("Unknown instruction / opcode : "+ol.m_orgLine.simplified(),ol);
 
 
 
@@ -154,6 +105,10 @@ void OrgAsm68k::LoadCodes(int CPUflavor)
         op->name = lst[1].simplified();
         op->pattern = lst[0].simplified();
         op->size = 2;
+        auto ss = op->pattern;
+        ss = ss.replace("x","0");
+        bool ok;
+        op->opcode = ss.toInt(&ok,2);
         m_instructions[op->name] = QSharedPointer<Opm68k>(op);
     }
 
@@ -206,6 +161,8 @@ void OrgAsm68k::Write(QByteArray &data, OrgasmLine &l, int type) {
 
 void OrgAsm68k::WriteNumber(QByteArray &data, int val, int size)
 {
+    if (size>=4)
+        data.append((val>>24)&0xFF);
     if (size>=3)
         data.append((val>>16)&0xFF);
     if (size>=2)

@@ -250,6 +250,10 @@ private slots:
 
     void on_btnHelpVectrex_clicked();
 
+    void on_btnFoenixEmulator_clicked();
+
+    void on_btnFoenixHelp_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

@@ -1,5 +1,5 @@
-#ifndef SYSTEMM6800_H
-#define SYSTEMM6800_H
+#ifndef SYSTEMM68000_H
+#define SYSTEMM68000_H
 
 #include "abstractsystem.h"
 #include <QProcess>
