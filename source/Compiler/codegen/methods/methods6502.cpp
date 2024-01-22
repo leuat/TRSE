@@ -2978,6 +2978,18 @@ void Methods6502::LoHi(Assembler *as, int type)
             return;
 
      }
+    if (!m_node->m_params[0]->isPure()) {
+        m_node->m_params[0]->Accept(m_codeGen);
+        as->Term();
+        if (type==1) {
+             as->Asm("tya");
+        }
+        if (type==2) {
+             as->Asm("txa");
+        }
+        return;
+
+    }
 
 
     if (m_node->m_params[0]->getType(as)==TokenType::POINTER) {
@@ -3022,7 +3034,7 @@ void Methods6502::LoHi(Assembler *as, int type)
 
         return;
     }
-//    ErrorHandler::e.Error("Lo/Hi currently only supports pure values (no expressions).", m_node->m_op.m_lineNumber);
+
 
 }
 

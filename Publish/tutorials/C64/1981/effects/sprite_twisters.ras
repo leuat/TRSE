@@ -39,7 +39,7 @@ var
 	sprite : incbin("data/twist.bin", $5000);
 	
 @ifndef IS_DEMO
- music : incsid("../demo_system/music/moskou.sid",2);
+// music : incsid("../demo_system/music/moskou.sid",2);
 @endif
 
 procedure SetSprites(b:byte);
@@ -207,7 +207,7 @@ begin
 	@endif
 	hideborderx(0);
 @ifndef IS_DEMO
-	call(SIDFILE_1_PLAY);
+//	call(SIDFILE_1_PLAY);
 @endif
 		//screen_bg_col:=0;
 	
@@ -376,7 +376,7 @@ begin
 @ifndef IS_DEMO
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
-	initsid(SIDFILE_1_INIT);
+//	initsid(SIDFILE_1_INIT);
 @endif
 	hideborderx(0);
 	@ifdef IS_DEMO

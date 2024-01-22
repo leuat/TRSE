@@ -29,7 +29,7 @@ var
 	font: IncBin("charsets/charset_16x16.bin",@fontLoc);
 
 @ifndef IS_DEMO
-	music: incsid("../demo_system/music/moskou2.sid",2);
+//	music: incsid("../demo_system/music/moskou2.sid",2);
 @endif
 
 //@export "images/building.flf" "images/tanks.bin" 10
@@ -606,7 +606,7 @@ begin
 	if (peek(^@transition,0)<3) then trans:=1;
 @endif
 @ifndef IS_DEMO
-	call(SIDFILE_1_PLAY);
+//	call(SIDFILE_1_PLAY);
 	wait(20);
 //	if (time>100) then trans:=1;
 @endif
@@ -881,7 +881,7 @@ begin
 	setmemoryconfig(1,0,0);
 	i := peek(^$01,0);
 	poke(^@keepPos,0,i);
-	initsid(SIDFILE_1_INIT);	
+//	initsid(SIDFILE_1_INIT);	
 	@endif
 
 //	screen_bg_col:=3;	

@@ -59,7 +59,7 @@ var
 
 
 @ifndef IS_DEMO
- music : incsid("../demo_system/music/happynewyear.sid",2);
+// music : incsid("../demo_system/music/happynewyear.sid",2);
 @endif
 
 	
@@ -230,7 +230,7 @@ begin
 	hideborderx(1);
 	FlipBank();
 @ifndef IS_DEMO
-	call(SIDFILE_1_PLAY);
+//	call(SIDFILE_1_PLAY);
 	if (time>127) then trans:=1;
 @endif	
 @ifdef IS_DEMO
@@ -343,7 +343,7 @@ begin
 		lda $01
 		sta @keepPos
 	");
-	initsid(SIDFILE_1_INIT);
+//	initsid(SIDFILE_1_INIT);
 @endif
 //	screen_bg_col:=black;
 	EnableAllRam();

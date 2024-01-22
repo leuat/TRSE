@@ -66,7 +66,7 @@ var
 	curl : byte=0;
 	
 @ifndef IS_DEMO
- 	music: incsid("../demo_system/music/moskou.sid",2);
+// 	music: incsid("../demo_system/music/moskou.sid",2);
 @endif
 
 	
@@ -239,7 +239,7 @@ begin
 	if (t3=10) then curSprTar2 := 4;	
 	if (t3=4) then start:=1;
 	@ifndef IS_DEMO
-		call(SIDFILE_1_PLAY);
+//		call(SIDFILE_1_PLAY);
 	@endif
 //	screen_bg_col:=blue;
 //	UpdateColor();
@@ -412,7 +412,6 @@ begin
 @ifndef IS_DEMO
 	disableciainterrupts();
 	setmemoryconfig(1,0,0);
-	initsid(SIDFILE_1_INIT);
 @endif
 	InitSprites();
 	sp:=#screens1;

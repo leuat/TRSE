@@ -42,6 +42,7 @@ def GetOption(name):
 	for opt in options:
 		if opt.name == name:
 			return opt.value
+
 	raise KeyError("Unknown option '%s'" % name)
 
 

@@ -24,7 +24,7 @@ var
    	Black2White: array[16] of byte = (0,0,0,0,0,0,6,11,4,14,3,13,1,7,10,8,2,2,2,2,2,2,2,2,2,2,2,2,2,2);
 
 @ifndef IS_DEMO
- music : incsid("../demo_system/music/moskou.sid",2);
+// music : incsid("../demo_system/music/moskou.sid",2);
 @endif
 
 
@@ -268,7 +268,7 @@ begin
 		adv:=0;
 	end;
 	@ifndef IS_DEMO
-	call(sidfile_1_play);
+//	call(sidfile_1_play);
 	@endif
 	@ifdef IS_DEMO
 		call(^@callPos);
@@ -296,7 +296,7 @@ begin
 	setmemoryconfig(1,0,0);
 	i := peek(^$01,0);
 	poke(^@keepPos,0,i);
-	initsid(SIDFILE_1_INIT);	
+//	initsid(SIDFILE_1_INIT);	
 	
 	@endif
 	screen_bg_col:=black;

@@ -1,4 +1,5 @@
 program Boxes;
+@use "screen/screen"
 var  
 	saddr: array[screen_height] of integer; // Screen address table
 	caddr: array[screen_height] of integer; // Color adress table
