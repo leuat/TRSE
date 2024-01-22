@@ -113,6 +113,10 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     // COPY SYMBOL TABLE
     m_assembler->m_symTab->m_forwardedVariables = m_parser.m_symTab->m_forwardedVariables;
 
+    for (QString s: m_parser.m_symTab->m_forwardedVariables)
+        m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+//    qDebug() << "COMPILER.CPP "<<m_parser.m_symTab->m_forwardedVariables;
+
 //    m_assembler->m_symTab->m_forwardedSymbols = m_parser.m_symTab->m_forwardedSymbols;
     m_assembler->m_projectDir = project_dir;
     // Copy symbol table stuff, like records
