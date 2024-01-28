@@ -25,7 +25,6 @@ can have some speed and size benefits. The code is generated as follows:
 </p>
 <ul>
 <li>Any lines containing a 0 (zero) are excluded as these do not need to be drawn.</li>
-<li>In each character column, all rows containing the same data are grouped together. Only on LDA #value is needed. For unique values they are ordered and drawn in their position sequence.</li>
 <li>For all rows, any that are sequential in position generate an INY to move to the next line saving a byte each time, otherwise LDY #line-pos is used. There is no speed advantage but the assembled code will be a little smaller.</li>
 </ul>
 <p>Example: Export from character 40, 16 characters wide with each character column 1 character high. The file output.inc is generated
