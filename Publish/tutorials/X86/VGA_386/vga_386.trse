@@ -66,3 +66,4 @@ charset_ = /Users/leuat/code/TRSE/Publish/tutorials/X86/VGA_386/images/tiles1.fl
 data_header_images/level1.flf = 0
 charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/X86/VGA_386/images/tiles1.flf
 data_header_images/image11.flf = 0
+data_header_images/image2.flf = 0

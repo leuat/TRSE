@@ -102,6 +102,7 @@ macx{
 }
 
 win32-g++ {
+    CONFIG += console
     CONFIG += warn_off
     QMAKE_CXXFLAGS += -fopenmp
     LIBS += -fopenmp
@@ -111,6 +112,7 @@ win32-g++ {
 
 }
 win32-msvc*{
+    CONFIG += console
     CONFIG += warn_off
     QMAKE_CXXFLAGS += -openmp
     LIBS += -openmp
