@@ -1,29 +1,39 @@
-First of all: see http://www.turborascal.com
-
 # TRSE
+![TRSE Logo](resources/images/trse_optic.png)
+
+## What is Turbo Rascal Syntax error, “;” expected but “BEGIN”?
+
+In a nutshell, Turbo Rascal Syntax error, “;” expected but “BEGIN” is a complete suite for developing games and demos for older computer systems. TRSE is created with Qt (C++), and runs as a stand-alone application that contains various tools for developing and deploying projects for these processors. 
+
+Read more at [Turbo Racal SE Hompage](http://www.turborascal.com).
+
+## Repository
 Turbo Rascal Syntax Error full repo 
 - C++
 - Qt
 
-## Compiling
+## Prepare
 First, clone this repo to a TRSE directory.
 
-Linux:
+### Linux
 - apt-get install qt5-default qt5-qmake qtdeclarative5-dev mesa-common-dev
-- qmake TRSE.pro
-- make -j8 
 
 On windows/macos, you need to download and install the qt libraries, msvc, xcode etc:
-Windows:
+
+### Windows
 - install MSVC 2019
 - download the Qt framework from https://www.qt.io/download. Install the latest framework of Qt6 (desktop application).
-Macos:
+
+### Macos
 - install Xcode 
 - download the Qt framework from https://www.qt.io/download. Install the latest framework of Qt6 (desktop application).
-ARM chromebook/ARM computers:
+
+### ARM chromebook/ARM computers
 - sudo apt install qtbase5-dev qt5-qmake qtbase5-dev-tools qtdeclarative5-dev
+
+## Compiling
 - qmake TRSE.pro
-- make -j1
+- make -j8 
 
 
 Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
