@@ -112,7 +112,7 @@ win32-g++ {
 
 }
 win32-msvc*{
-    CONFIG += console
+#    CONFIG += console
     CONFIG += warn_off
     QMAKE_CXXFLAGS += -openmp
     LIBS += -openmp
