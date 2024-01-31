@@ -14,6 +14,7 @@ public:
     unsigned char c[4];
     static int m_lastBitmask;
     unsigned char get(int x, int y, unsigned char bitMask);
+    unsigned char getByteValue(int x, int y, unsigned char bitMask);
     void set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol, int forceD800Col=-1);
     void set(int x, int y, unsigned char color, unsigned char bitMask);
     void Clear(unsigned char background);
@@ -23,7 +24,7 @@ public:
     QByteArray data();
     uchar flipSpriteBit(int i, int mask);
     QString colorToAssembler();
-    QImage toQImage(int size, uchar bmask, LColorList& lst, int scale);
+    QImage toQImage(int size, uchar bmask, LColorList& lst, int scale, bool isHybrid);
     bool isEmpty();
     bool isEqualBytes(PixelChar& o);
     void Reorganize(unsigned char bitMask, unsigned char Scale,unsigned char minCol, unsigned char maxCol, unsigned char bgCol, unsigned char forceD800Color);

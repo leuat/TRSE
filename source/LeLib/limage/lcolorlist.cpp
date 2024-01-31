@@ -540,7 +540,6 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
     }
 
-
     if (!m_isMulticolor && !m_isHybridMode) {
         m_pens[1]->Hide(true);
         m_pens[2]->Hide(true);
@@ -700,6 +699,7 @@ void LColorList::CopyFrom(LColorList *other)
     m_background = other->m_background;
     m_enabledColors = other->m_enabledColors;
     m_nesPPU = other->m_nesPPU;
+    m_isHybridMode = other->m_isHybridMode;
 
 }
 

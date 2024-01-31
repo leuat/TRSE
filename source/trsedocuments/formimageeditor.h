@@ -77,6 +77,7 @@ public:
 
     WorkerThread m_updateThread;
     bool m_ignoreMC = false;
+    bool m_dontUpdateAspect = false;
     LImageQImage m_grid;
     Toolbox m_toolBox;
     LColorList* m_currentColorList = nullptr;
@@ -106,7 +107,6 @@ public:
     void InitQtPainter();
     void FixSplitting(QWidget* w, bool sideVisible);
     QList<int> m_lastSizes; // Last qsplitter sizes
-
     void PrepareImageTypeGUI();
     void Initialize();
     void SetSingleCharsetEdit();
@@ -186,7 +186,6 @@ private:
 private slots:
     void UpdateAspect();
     void UpdateMulticolorImageSettings();
-    void InitAspect();
     void onSwapDisplayMode();
     void onImageMouseEvent(QEvent* e);
     void onPenChanged();

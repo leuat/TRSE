@@ -20,6 +20,16 @@ unsigned char PixelChar::get(int x, int y, unsigned char bitMask)
 
 }
 
+unsigned char PixelChar::getByteValue(int x, int y, unsigned char bitMask)
+{
+    if (x<0 || x>=8 || y<0 || y>=8)
+        return 0;
+
+    return (p[y]>>x) & bitMask;
+
+
+}
+
 void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask, unsigned char maxCol, unsigned char minCol, int forceD800)
 {
     m_lastBitmask = bitMask;
@@ -220,19 +230,20 @@ QString PixelChar::colorToAssembler()
 
 }
 
-QImage PixelChar::toQImage(int size, uchar bmask, LColorList& lst, int scale)
+QImage PixelChar::toQImage(int size, uchar bmask, LColorList& lst, int scale, bool isHybrid)
 {
     QImage img= QImage(size,size,QImage::Format_RGB32);
+    if (isHybrid && c[3]>=8) {
+        bmask = 0b11;
+        scale = 2;
+    }
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
             int x = i/(float)(size)*8;
             int ix = (x % (8)/scale)*scale;
             int y = j/(float)(size)*8;
-            uchar c = get(ix,y, bmask);
-
-           // if (rand()%100==0 && c!=0)
-           //     qDebug() << lst.m_list[c].color;
-            img.setPixelColor(i,j,lst.get(c).color);
+            uchar cc = get(ix,y, bmask);
+            img.setPixelColor(i,j,lst.get(cc).color);
         }
 
     return img;

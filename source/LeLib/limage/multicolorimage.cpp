@@ -1442,7 +1442,7 @@ void MultiColorImage::LoadCharset(QString file, int skipBytes)
     m_charWidthDisplay = m_charset->m_charWidthDisplay;
     m_gridWidthDisplay = m_charset->m_gridWidthDisplay;
     m_charHeightDisplay = m_charset->m_charHeightDisplay;;//m_meta.m_height;
-
+    m_charset->m_colorList.m_isHybridMode = m_charset->m_footer.get(LImageFooter::POS_DISPLAY_HYBRID);
     InitPens();
 
 }

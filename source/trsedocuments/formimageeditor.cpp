@@ -645,6 +645,7 @@ void FormImageEditor::Initialize()
 
         ui->chkHybrid->setChecked(GetFooterData(LImageFooter::POS_DISPLAY_HYBRID));
         on_chkHybrid_clicked(GetFooterData(LImageFooter::POS_DISPLAY_HYBRID));
+//        m_work.m_currentImage->m_image->m_colorList.m_isHybridMode = GetFooterData(LImageFooter::POS_DISPLAY_HYBRID)==1;
     }
     else ui->chkHybrid->setVisible(false);
 
@@ -692,17 +693,12 @@ void FormImageEditor::Initialize()
     updateCharSet();
 
 //    onImageMouseEvent();
+    ui->cmbAspect->setCurrentIndex(GetFooterData(LImageFooter::POS_ASPECT));
+
 
     emit onImageMouseEvent();
     m_isInitialized = true;
-
     UpdateAspect();
-
-    QTimer::singleShot(50, this, SLOT(InitAspect()));
-
-    //for (int i=0;i<100;i++)
-    //    Data::data.UpdatePens();
-
     QTimer::singleShot(50, this, SLOT(onPenChanged()));
 
 //    m_work.m_currentImage->m_image->m_colorList.m_pens[1].
@@ -738,13 +734,6 @@ bool FormImageEditor::Load(QString filename)
 }
 
 
-void FormImageEditor::InitAspect()
-{
-//    if (m_projectIniFile->contains("aspect_ratio"))
-  //      ui->cmbAspect->setCurrentIndex(m_projectIniFile->getdouble("aspect_ratio"));
-//    qDebug() <<GetFooterData(LImageFooter::POS_ASPECT);
-    ui->cmbAspect->setCurrentIndex(GetFooterData(LImageFooter::POS_ASPECT));
-}
 
 
 void FormImageEditor::Save(QString filename)
@@ -941,6 +930,8 @@ void FormImageEditor::FillCMBColors()
 
 void FormImageEditor::focusInEvent(QFocusEvent *)
 {
+  //  UpdateAspect();
+//    qDebug() << "FOCUS";
 }
 
 void FormImageEditor::OpenSelectCharset()
@@ -1858,17 +1849,6 @@ void FormImageEditor::Aspect1()
     }
     else w->setMaximumHeight(3000000);
 
-    //  w->setMinimumWidth(size);
-   //   w->setMaximumHeight(sy);
-  //    w->setMaximumWidth(size);
- //     w->setMinimumHeight(sy);
-  //    w->setMinimumWidth(size);
-//
-//    ui->vImageSpacer->changeSize(0,this->height()-sy-20,QSizePolicy::Expanding,QSizePolicy::Expanding);
-//    QTimer::singleShot(10, this, SLOT(AspectDone()));
-
-//    w->setVisible(true);
-  //  ui->lblName->setVisible(true);
 
 }
 
@@ -1879,6 +1859,7 @@ void FormImageEditor::UpdateAspect()
     auto img = getCurrentPainter();
 
     //auto img = ui->lblImage;
+
 
     QString v = ui->cmbAspect->currentText();
     float val = 1.0;
@@ -1893,7 +1874,6 @@ void FormImageEditor::UpdateAspect()
 //    w->setMaximumWidth(100000);
 
     m_work.m_currentImage->m_image->setAspect(val);
-//    QTimer::singleShot(2, this, SLOT(Aspect1()));
     Data::data.Redraw();
     onImageMouseEvent();
     Aspect1();
@@ -1948,6 +1928,7 @@ void FormImageEditor::LoseFocus() {
 
 void FormImageEditor::SetFocus() {
     QObject::connect(&Data::data, SIGNAL(EmitPenChanged()), this,SLOT(onPenChanged()));
+    UpdateAspect();
 
 }
 
@@ -2519,8 +2500,9 @@ void FormImageEditor::on_btnCharSelect_clicked()
 void FormImageEditor::on_cmbAspect_currentIndexChanged(int index)
 {
 //    m_projectIniFile->setFloat("aspect_ratio",index);
+    if (m_dontUpdateAspect)
+        return;
     SetFooterData(LImageFooter::POS_ASPECT,index);
-
     UpdateAspect();
 
 }
@@ -2553,6 +2535,7 @@ void FormImageEditor::on_cmbCharX_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X,ui->cmbCharX->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
+    on_btnCharsetFull_clicked();
 
     Update();
     UpdateCurrentCell();
@@ -2564,6 +2547,7 @@ void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y,ui->cmbCharY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
+    on_btnCharsetFull_clicked();
     Update();
 
 }
@@ -2572,6 +2556,7 @@ void FormImageEditor::on_cmbTileStampX_currentIndexChanged(int index)
 {
     SetFooterData(LImageFooter::POS_CURRENT_STAMP_X,ui->cmbTileStampX->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
+    on_btnCharsetFull_clicked();
     on_btnCharsetFull_clicked();
 
     Update();
@@ -2583,6 +2568,7 @@ void FormImageEditor::on_cmbTileStampY_currentIndexChanged(int index)
 {
     SetFooterData(LImageFooter::POS_CURRENT_STAMP_Y,ui->cmbTileStampY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
+    on_btnCharsetFull_clicked();
     on_btnCharsetFull_clicked();
     Update();
 

@@ -639,6 +639,7 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     if (m_charset==nullptr)
         return 0;
     int pos;
+    m_charset->m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     if (!PixelToPos(x,y, pos,m_meta.m_width, m_meta.m_height))
         return 0; // out of bounds
 
@@ -676,15 +677,20 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
     }
     else {
         // Check if level colour is >8 etc, set hires or mc
-        if (col>=8)
-            ss = 2;
-        else {
-            ss = 1;
-            bitmask = 1;
+        if (m_colorList.m_isHybridMode) {
+            if (col>=8)
+                ss = 2;
+            else {
+                ss = 1;
+                bitmask = 1;
+            }
         }
 
     }
-
+  //  bitmask = 3;
+//    col = m_charset->m_data[pos].c[3];
+ //   if (rand()%1000>900)
+   //     qDebug() << m_meta.m_useColors;
 
 
 
@@ -712,29 +718,50 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
 
     m_charset->m_data[pos].c[3] = col;
-
+    if (m_charset->m_colorList.m_isHybridMode && col>=8) {
+        bitmask = 0b11;
+        ix = ((x*cx/2) % (8)/2)*2;//- (dx*40);
+    }
+//    if (rand()%1000>900)
+  //      qDebug() << m_charset->m_colorList.m_isHybridMode <<m_colorList.m_isHybridMode << m_charset->m_footer.get(LImageFooter::POS_DISPLAY_HYBRID);
+//    bitmask = 0b11;
+//    if (bitmask==3 && rand()%1000>900) qDebug() << ix;
     uint val = m_charset->m_data[pos].get(ix, iy,bitmask);
-
+    uint pval = m_charset->m_data[pos].getByteValue(ix, iy,bitmask);
+//    uint val = m_charset->getPixel(x,y);
+//    if (rand()%1000>995) qDebug() << val << ix << iy << bitmask << (int)col;
     if (m_meta.m_useColors) {
         if (m_meta.m_displayMultiColor) {
-            if (col<8) // Non-multicolor
-                if (val!=getBackground())
-                    val = col;
+//            if (col<8) // Non-multicolor
+  //              if (val!=getBackground())
+    //                val = col;
         }
         else
             if (val!=getBackground())
                 val = col;
     }
+    else {
+        if (m_charset->m_colorList.m_isHybridMode) {
+            if (val!=getBackground()) {
+                val = col;
+                if (val>=8) {
+                    val &=7;
+                    if (pval==0b10)
+                        val = m_charset->m_data[pos].c[1];
+                    if (pval==0b01)
+                        val = m_charset->m_data[pos].c[2];
+                }
 
+            }
+        }
+
+    }
     if (dynamic_cast<LImageMetaChunk*>(m_charset)!=nullptr) {
-
-
         val = m_charset->getCharPixel(v, col, x,y);
             if (m_charset->m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)!=1)
                 if (val!=getBackground())
                     val = col;
     }
-
 
     if (m_meta.m_useColors) {
         if (val==m_charset->m_data[pos].c[3] && val!=getBackground())

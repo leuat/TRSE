@@ -398,7 +398,27 @@ void CharsetImage::ToRaw(QByteArray &arr)
 
 QPixmap CharsetImage::ToQPixMap(int chr)
 {
-    QImage img = m_data[chr].toQImage(32, m_bitMask, m_colorList, m_scale);
+  //  QImage img = m_data[chr].toQImage(32, m_bitMask, m_colorList, m_scale,m_colorList.m_isHybridMode);
+    int size = 32;
+    QImage img= QImage(size,size,QImage::Format_RGB32);
+
+    int xx = ((chr)%m_charWidth)*8;
+    int yy = ((chr/m_charWidth)%m_charHeight)*8;
+    int scale = 1;
+    if (isMultiColor())
+        scale = 2;
+//    qDebug() << xx << yy;
+    int keep = m_footer.get(LImageFooter::POS_DISPLAY_CHAR);
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
+    for (int i=0;i<size;i++)
+        for (int j=0;j<size;j++) {
+            uchar v = getPixel(i/4/scale+xx/scale,j/4+yy);
+            //if (rand()%1000>996 && v!=0) qDebug() << (int)v;
+            img.setPixelColor(i,j,m_colorList.m_list[v].color);
+        }
+
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);
+
     return QPixmap::fromImage(img);
 
 }
@@ -793,11 +813,13 @@ void CharsetImage::setBackground(unsigned int col)
     //   qDebug() << "SETBACK";
     if (m_bitMask==0b11 || m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
         //        qDebug() << "HERE SETBACKGROUND " << m_colorList.getPen(1) << m_colorList.getPen(2) ;;;
+        uint a = m_colorList.getPen(1);
         if (m_type != MultiColorBitmap)
             for (int i=0;i<m_charWidth*m_charHeight;i++) {
                 //m_data[i].c[0] = col;
-
-                m_data[i].c[1] = m_colorList.getPen(1);
+                //qDebug() << m_colorList.getPen(1) << m_colorList.getPen(2);
+                if (a!=col)
+                    m_data[i].c[1] = a;
                 m_data[i].c[2] = m_colorList.getPen(2);
             }
 
