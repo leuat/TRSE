@@ -1,0 +1,47 @@
+unit Screen;
+
+var
+	const VKY_BKG_COL_B:address = $D00D;           // Vicky Graphics Background Color Blue Component
+	const VKY_BKG_COL_G:address = $D00E;           // Vicky Graphics Background Color Green Component
+	const VKY_BKG_COL_R:address = $D00F;           // Vicky Graphics Background Color Red Component
+	
+	const VKY_MSTR_CTRL_0:address = $D000;         // Vicky Master Control Register 0
+	const VKY_MSTR_CTRL_1:address = $D001;         // Vicky Master Control Register 1
+	const VKY_LAYER_CTRL_0:address = $D002;        // Vicky Layer Control Register 0
+	const VKY_LAYER_CTRL_1:address = $D003;        // Vicky Layer Control Register 1
+	const VKY_BRDR_CTRL:address = $D004;           // Vicky Border Control Register
+
+
+
+	const SYS_CTRL_0:address = $0000;
+	const SYS_CTRL_1:address = $0001;
+  	const SYS_CTRL_DSBL_IO:byte = $40;
+  	const SYS_CTRL_TEXT_PG:byte = $02;
+  	const SYS_CTRL_COLOR_PG:byte = $03;
+  	
+  	const text_width : byte = 80;
+  	const text_height : byte = 50;
+  	
+  	
+  	lumi:  array[32] of byte = ($00,$06,$09,$0b,$02,$04,$08,$0c,$0e,$0a,$05,$0f,$03,$07,$0d,$01,$0d,$07,$03,$0f,$05,$0a,$0e,$0c,$08,$04,$02,$0b,$09,$06,$00,$00);
+
+
+/**
+
+	Points $C000 to text data
+
+**/
+
+procedure BankText() inline;
+begin
+	sys_ctrl_1:=sys_ctrl_text_pg;
+end;	
+
+procedure BankColor() inline;
+begin
+	sys_ctrl_1:=sys_ctrl_color_pg;
+end;	
+
+
+
+end.

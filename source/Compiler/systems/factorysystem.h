@@ -44,6 +44,7 @@
 #include "systembk0010.h"
 #include "systemdragon.h"
 #include "systemfoenix.h"
+#include "systemagon.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

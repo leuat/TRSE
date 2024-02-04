@@ -254,6 +254,10 @@ private slots:
 
     void on_btnFoenixHelp_clicked();
 
+    void on_btnHelpAgon_clicked();
+
+    void on_btnAgon_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

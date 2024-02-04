@@ -38,15 +38,14 @@ void SystemFoenix::Assemble(QString &text, QString filename, QString currentDir,
     if (!QFile::exists(smc))
         Util::CopyFile(":resources/code/mega65/config.cfg",smc);
     //        QStringList params = QStringList() << "-t none" << "-C" <<smc <<"--start-addr"<< "$2020"<<("-o"+filename+".prg") <<(filename +".asm") ;
-    QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<"--start-addr"<< Util::numToHex(m_startAddress)<<("-o"+filename+".prg") <<(filename +".asm") ;
+    QStringList params = QStringList() << "-t"<<"none" << "-C" <<smc <<"--start-addr"<< Util::numToHex(m_startAddress)<<("-o"+filename+".bin") <<(filename +".asm") ;
     //        QStringList params = QStringList() <<"--cpu"<<"4510"<<(filename +".asm") <<("-o"+filename+".prg");
-    AssembleCL65(text,filename,currentDir,symTab,"prg",params);
-    QString f= filename+".prg";
-    QByteArray da = Util::loadBinaryFile(f);
-    da.insert(0,(uchar)01);
-    da.insert(1,(uchar)0x20);
+    AssembleCL65(text,filename,currentDir,symTab,"bin",params);
+    QString f= filename+".bin";
+/*    QByteArray da = Util::loadBinaryFile(f);
+    da.remove(0,2);
     Util::SaveByteArray(da,f);
-
+*/
     System65C816::Assemble(text,filename,currentDir,symTab);
 
 }

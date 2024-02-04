@@ -19,7 +19,7 @@ public:
         DefaultValues();
         m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
         m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));
-        m_system = MEGA65;
+        m_system = FOENIX;
 
 
     }
@@ -34,7 +34,7 @@ public:
 //    virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) override;
 
     int getDefaultBasicAddress() override {
-        return 0x8080;
+        return 0x2000;
     };
 
 
@@ -44,7 +44,12 @@ public:
 
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
 //        params  <<"-besure" <<"-prgmode" <<"65"<< "-prg" <<filename+".prg";
-        params  <<filename+".prg" << "@"+Util::numToHex(m_startAddress);
+        params  <<filename+".bin@"+Util::numToHex(m_startAddress).remove("$") << "boot@"+Util::numToHex(m_startAddress).remove("$");
+#ifdef __APPLE__
+        QString out;
+        StartProcess("killall", QStringList()<<"-9" <<"jr256",out);
+#endif
+
     }
 
     void PrepareInitialAssembler(Assembler* as) override;

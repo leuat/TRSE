@@ -1,9 +1,92 @@
 program Tutorial1;
+@use "system/screen"
 var
+	i,time,j:byte;
+	src,dst,p:pointer;
+
+	circles : array[Screen::text_width*Screen::text_height] of byte = 
+		buildtable2d(Screen::text_width, Screen::text_height,
+		"512/Math.sqrt(Math.pow(i-80/2,2)*0.8 + Math.pow(j-50/2,2) +25)");
+
+
+
+
+procedure RenderText();
+begin
+	dst:=$c000;
+	src:=#circles;
+	for j:=0 to Screen::text_height offpage do
+	begin
+		asm("
+		
+			ldy #0
+			.repeat 80
+			lda (src),y
+			adc time
+			sta (dst),y
+			iny
+			.endrepeat
+					
+		");
+		src+=Screen::text_width;
+		dst+=Screen::text_width;
+	end;
 	
+end;
+
+
+procedure RenderColor();
+begin
+	dst:=$c000;
+	src:=#circles;
+	for j:=0 to Screen::text_height offpage do
+	begin
+		asm("
+		
+			ldy #0
+			.repeat 80
+			lda (src),y
+			adc time
+			and #31
+			tax
+			
+			lda Screen_lumi,x
+			
+			
+			sta (dst),y
+			iny
+			.endrepeat
+					
+		");
+		src+=Screen::text_width;
+		dst+=Screen::text_width;
+	end;
+	
+end;
+
 
 begin
 	
-	loop();
+	Screen::BankText();
+	
+	while(true) do
+	begin
+		if (time&1=0) then
+		begin
+			Screen::BankText();
+			RenderText();
+		end
+		else
+		begin
+			Screen::BankColor();
+			RenderColor();
+		end;
+		
+		
+		time+=1;
+		
+	
+	end;	
+	
 	
 end.
