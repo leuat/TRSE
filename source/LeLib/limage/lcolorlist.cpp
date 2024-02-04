@@ -573,6 +573,7 @@ void LColorList::SetVIC20Pens(bool m_isMulticolor)
 {
     QVector<int> oldList = getPenList();
     // Make sure old data is kept!
+//    qDebug() << oldList.count();
     for (int i=0;i<4;i++) {
         if (i>=oldList.count())
             oldList.append(i);
@@ -593,6 +594,7 @@ void LColorList::SetVIC20Pens(bool m_isMulticolor)
     if (allZero)
         return;
 
+//    qDebug() << "prev aux: " << oldList[2];
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"AUX",LPen::Dropdown)));
 //    qDebug() << "BORDER:  "<<oldList[1];
@@ -1641,7 +1643,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
 
 
         QWidget* widget = nullptr;
-//        qDebug() << "PEN COLOR:  " << getPen(i);
+   //     qDebug() << "PEN COLOR:  " << getPen(i);
         widget = m_pens[i]->CreateUI(getPenColour(i),width,xx,yy, m_list);
 
         if (widget!=nullptr) {

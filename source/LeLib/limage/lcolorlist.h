@@ -49,10 +49,10 @@ private:
 
     int m_currentType = 0;
     int m_currentPalette = 0;
-    QVector<QSharedPointer<LPen>> m_pens;
     bool firstTime=true;
 
 public:
+    QVector<QSharedPointer<LPen>> m_pens;
 //    uchar m_nesCols[4];    // OBSOLETE REWRITE
     QVector<int> m_multicolors;
 //    bool m_isMulticolor = true; // OBSOLETE REWRITE

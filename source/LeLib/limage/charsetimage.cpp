@@ -398,12 +398,13 @@ void CharsetImage::ToRaw(QByteArray &arr)
 
 QPixmap CharsetImage::ToQPixMap(int chr)
 {
-  //  QImage img = m_data[chr].toQImage(32, m_bitMask, m_colorList, m_scale,m_colorList.m_isHybridMode);
+    //QImage img = m_data[chr].toQImage(32, m_bitMask, m_colorList, m_scale,m_colorList.m_isHybridMode);
+    //return QPixmap::fromImage(img);
     int size = 32;
     QImage img= QImage(size,size,QImage::Format_RGB32);
 
-    int xx = ((chr)%m_charWidth)*8;
-    int yy = ((chr/m_charWidth)%m_charHeight)*8;
+    int xx = ((chr)%m_charWidthDisplay)*8;
+    int yy = ((chr/m_charWidthDisplay)%m_charHeight)*8;
     int scale = 1;
     if (isMultiColor())
         scale = 2;
@@ -412,7 +413,7 @@ QPixmap CharsetImage::ToQPixMap(int chr)
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
-            uchar v = getPixel(i/4/scale+xx/scale,j/4+yy);
+            uchar v = getPixel(i/4+xx,j/4+yy);
             //if (rand()%1000>996 && v!=0) qDebug() << (int)v;
             img.setPixelColor(i,j,m_colorList.m_list[v].color);
         }

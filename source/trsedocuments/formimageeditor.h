@@ -184,6 +184,7 @@ private:
     QWidget* getCurrentPainter();
 
 private slots:
+    void UpdatePenShot();
     void UpdateAspect();
     void UpdateMulticolorImageSettings();
     void onSwapDisplayMode();

@@ -189,15 +189,25 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 
     //    qDebug() << m_work.m_currentImage->m_image->m_footer.isFullscreen();
 }
+void FormImageEditor::UpdatePenShot()
+{
+    m_work.m_currentImage->m_image->InitPens();
+    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+
+}
+
 
 void FormImageEditor::onPenChanged()
 {
 
 //    qDebug() << "PEN CHANGED A "  << Data::data.currentColor;
    // qDebug() << LImage::TypeToString(m_work.m_currentImage->m_image->m_type);
-    m_work.m_currentImage->m_image->InitPens();
+//    qDebug() << "OnPenChanged "<<m_work.m_currentImage->m_image->m_colorList.getPen(2);
+
+    UpdatePenShot();
   //  qDebug() << "PEN CHANGED B "  << Data::data.currentColor;
-    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+  //  QTimer::singleShot(50, this, SLOT(UpdatePenShot()));
+//    QTimer::singleShot(50, this, SLOT(onImageMouseEvent()));
   //  qDebug() << "PEN CHANGED C " << Data::data.currentColor;
 //    if (m_work.m_currentImage->m_image->Copy)
 //    qDebug() << "INITING PENS";
@@ -206,6 +216,7 @@ void FormImageEditor::onPenChanged()
 
     updateCharSet();
     Data::data.Redraw();
+
 //    onImageMouseEvent();
 
 }

@@ -181,7 +181,7 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
         Data::data.currentColor = b->currentData(Qt::UserRole).toInt();
         Data::data.currentIsColor=true;
         m_colorIndex = Data::data.currentColor;
-
+//        qDebug() << "LPEN : "<<m_colorIndex << Get();
 
         Data::data.UpdatePens();
 
