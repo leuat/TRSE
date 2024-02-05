@@ -27,7 +27,7 @@ Been on hiatus for a while. Some new changes are
 
 <h2>Systems/tutorials</h2>
 <ul>
-    <li>New VZ2000 tutorial project "gulch" with an optimised sprite compiler
+    <li>New VZ200 tutorial project "gulch" with an optimised sprite compiler
 </ul>
 
 <h2>March 2023</h2>
