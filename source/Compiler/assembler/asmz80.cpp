@@ -386,8 +386,9 @@ QString AsmZ80::GetOrg(int pos)
     }
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
         return "[org " + Util::numToHex(pos).replace("$","0x") + "]";
-    else
+    else {
         return "org " + Util::numToHex(pos);
+    }
 }
 
 

@@ -467,7 +467,7 @@ begin
 
 	*/
 
-	
+/*	
 	// PROXIMA presents
 	InitEffect(24);  // effect lasts 24 ticks
 	EffectProximaImage(); 
@@ -476,7 +476,7 @@ begin
 	InitEffect(20);
 	EffectMoveText();
 	ClearScreen();
-
+*/
 
 
 

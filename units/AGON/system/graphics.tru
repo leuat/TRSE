@@ -1,0 +1,16 @@
+unit Graphics;
+@use "system/screen"
+
+var
+	x1,y1,x2,y2 : integer;
+	col : byte;
+	
+procedure Line(x1,y1,x2,y2 : global integer; col: global byte);	
+begin
+	Screen::SetPCol(3);
+	Screen::Plot(x1,y1,4);
+	Screen::Plot(x2-x1,y2-y1,1);
+	
+end;	
+	
+end.

@@ -104,7 +104,7 @@ class OrgasmInstruction {
 
 class OrgasmLine {
 public:
-    enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE, ORGASMCOMMAND, LONG24};
+    enum OLType {INSTRUCTION, ORG, INCBIN, CONSTANT, BYTE, WORD, LABELONLY, PADBYTE, ORGASMCOMMAND, LONG24, ALIGN};
 
     OLType m_type;
     int m_pos, m_lineNumber, m_rasLineNumber=0;
@@ -122,6 +122,8 @@ public:
             return "ORGASMCOMMAND";
         if (m_type==ORG)
             return "ORG";
+        if (m_type==ALIGN)
+            return "ALIGN";
         if (m_type==INCBIN)
             return "INCBIN";
         if (m_type==CONSTANT)
@@ -241,6 +243,7 @@ public:
     void ProcessWordData(OrgasmLine& ol);
     void ProcessLong24Data(OrgasmLine& ol);
     void ProcessOrgData(OrgasmLine& ol);
+    void ProcessAlignData(OrgasmLine& ol);
     void ProcessIncBin(OrgasmLine& ol);
     virtual void ProcessInstructionData(OrgasmLine& ol, OrgasmData::PassType pd);
     void SaveSymbolsList(QString dupFile);

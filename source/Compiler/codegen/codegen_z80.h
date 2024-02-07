@@ -106,6 +106,19 @@ public:
 
     QString getX86Value(QSharedPointer<Node> n) override;
 
+    QString getez80suffix(QSharedPointer<Node> n) {
+        return "";
+        if (Syntax::s.m_currentSystem->iseZ80() && n->isPointer(as))
+            return ".lil";
+        return "";
+    }
+    QString getez80suffix() {
+        return "";
+        if (Syntax::s.m_currentSystem->iseZ80())
+            return ".lil";
+        return "";
+    }
+
     QString getBinaryOperation(QSharedPointer<NodeBinOP> bop) override;
 
     QString LoadAddress(QSharedPointer<Node> n) override;

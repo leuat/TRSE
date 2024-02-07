@@ -196,6 +196,7 @@ public:
     static QString StringFromSystem(System s);
 
     bool isWDC65();
+    bool iseZ80();
 
 
     bool systemIsOfType(QString val);

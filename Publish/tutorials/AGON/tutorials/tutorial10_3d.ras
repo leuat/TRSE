@@ -1,0 +1,85 @@
+program stuff3d;
+@use "system/screen"
+@use "system/graphics"
+@use "memory"
+//-----------------------------------------
+//@define clear_method_backbuffer 0
+//-----------------------------------------
+
+@define lib3d_clearlines 0
+@define linemethod "Graphics::Line"
+
+@define max3dobjects 1
+@define lib3d_projection_x_scale 2
+
+@use "gfx/lib3d"
+/*
+
+Doesn't work yet. hmm. 
+
+*/
+
+var  
+	time, time2, i,j, curFrame : byte;
+	objPos : array[4096] of byte;//address = $042000;
+	size : integer;
+	obj1 : incbin("data/torus1.bin");
+	// objPos is the location where the object is stored: rotation matrix, 
+	// rotated vertices and projected 2d coordinates
+	// Three matrices
+	matX, matY, matZ, matT : Matrix::mat4;
+
+	src, dst : pointer;
+
+
+procedure Render();
+begin
+	// Flips the projection pointers so that we always keep a copy of the previous line list for 
+	// black line clearing
+	
+	Lib3d::FlipPointPointers(0);
+	// Rotate x,y and z with some random time value
+	Matrix::RotateX(#matX, time*4);
+	Matrix::RotateZ(#matY, time*3);
+	Matrix::RotateZ(#matZ, time*2);
+
+	// Mul X and Y to a temp mat T	
+	Matrix::MatMul3(#matX, #matY, #matT);
+	// Mul together and store in the objects rotation matrix
+	Matrix::MatMul3(#matT, #matZ, Lib3d::objects[0].rotmat);
+	// Perform the rotation (rotation_matrix * each vertex_in_the_object)
+	Lib3d::RotateVertices(0);	
+//	Lib3d::RotateVerticesOptimisedZ80(0);	
+	// Projects the rotated vertices in a simple manner to 2d coordinates
+	Lib3d::ProjectSimple(0,512,512,90,  80);
+	
+	Lib3d::RenderWireframeColor(0,3);
+
+	Graphics::Line(10,10,200,100, time);
+
+end;	
+
+begin
+	Memory::DisableInterrupts();
+
+	Screen::SetMode(Screen::mode_640_480_16);
+	Screen::PrintString("Realtime calculation");
+	Lib3d::InitializeData(#objPos);	
+	
+	Lib3d::LoadObject(0, #obj1);
+
+	Matrix::Identity(#matX);
+	Matrix::Identity(#matY);
+	Matrix::Identity(#matZ);
+	
+//	Matrix::Identity(Lib3d::objects[0].rotmat);
+//	for i:=0 to 10 do Lib3d::objects[i].color:=i;
+	time:=16;
+	
+	while (true) do
+	begin
+		Render();
+		time+=1;
+	end;
+
+end.

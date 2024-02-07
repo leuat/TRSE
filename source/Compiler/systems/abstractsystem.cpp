@@ -149,9 +149,10 @@ QString AbstractSystem::StringFromProcessor(QString s) {
     if (s == "JDH8") return "PJDH8";
     if (s == "TRS80COCO" || s=="VECTREX" || s=="THOMSON" || s=="DRAGON") return "M6809";
     if (s == "POKEMONMINI") return "S1C88";
-    if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC" || s=="PCW" || s=="AGON") return "Z80";
+    if (s == "AMSTRADCPC" || s == "TIKI100" || s=="VZ200" || s == "SPECTRUM" || s =="COLECO" || s == "MSX" || s=="TRS80" || s=="TIM" || s=="TVC" || s=="PCW") return "Z80";
     if (s == "CHIP8") return "PCHIP8";
     if (s == "BK0010") return "PPDP11";
+    if (s == "AGON") return "EZ80";
     qDebug() << "SYSTEM STRING NOT FOUND for system "<<s ;
     return "";
 }
@@ -299,6 +300,12 @@ QString AbstractSystem::StringFromSystem(AbstractSystem::System s) {
 
 bool AbstractSystem::isWDC65() {
     return m_processor==WDC65C816;
+}
+
+bool AbstractSystem::iseZ80()
+{
+    return m_system == AGON;
+
 }
 
 bool AbstractSystem::systemIsOfType(QString val)

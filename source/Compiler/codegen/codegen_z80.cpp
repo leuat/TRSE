@@ -335,7 +335,7 @@ void CodeGenZ80::HandleAeqAopB16bit(QSharedPointer<NodeBinOP> bop, QSharedPointe
 
 void CodeGenZ80::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
-    as->Asm("ld hl,"+node->m_procedure->m_procName);
+    as->Asm("ld"+getez80suffix()+" hl, "+node->m_procedure->m_procName);
 }
 
 void CodeGenZ80::LoadVariable(QSharedPointer<NodeVar> n)
@@ -694,7 +694,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             return;
 
         }
-        ErrorHandler::e.Error("TRSE currently does not support the following 16-bit binary opreation : "+node->m_op.getType(),node->m_op.m_lineNumber);
+//        ErrorHandler::e.Error("TRSE currently does not support the following 16-bit binary opreation : "+node->m_op.getType(),node->m_op.m_lineNumber);
 
         //        as->Asm(getBinaryOperation(node)+" hl,de");
 
@@ -931,7 +931,7 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeVar> node)
 
             if (node->isReference()) {
                 //                as->Comment("")
-                as->Asm("ld hl,"+node->getValue(as));
+                as->Asm("ld"+getez80suffix()+" hl,"+node->getValue(as));
                 return;
 
             }
@@ -1113,7 +1113,7 @@ void CodeGenZ80::LoadIndex(QSharedPointer<Node> n, TokenType::Type arrayType)
     if (node->isPointer(as))
         LoadPointer(node);
     else
-        as->Asm("ld hl,"+node->getValue(as));
+        as->Asm("ld"+getez80suffix()+" hl,"+node->getValue(as));
 
     as->Asm("add hl,de");
     if (arrayType==TokenType::INTEGER)
@@ -1262,7 +1262,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
                 as->Asm("ld e,a");
                 as->Asm("ld d,0");
             }
-            as->Asm("ld hl," + var->getValue(as));
+            as->Asm("ld"+getez80suffix(var)+" hl," + var->getValue(as));
             as->Asm("add hl,de");
         }
         if (!rightIsPure)
@@ -1277,8 +1277,8 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
 
     if (node->m_right->isPureNumeric() && !var->isWord(as)) {
         //        if (node->isWord())
-        as->Asm("ld "+getAx(node) + ", "+node->m_right->getValue(as));
-        as->Asm("ld ["+var->getValue(as)+ "], "+getAx(node));
+        as->Asm("ld"+getez80suffix(node->m_left)+" "+getAx(node) + ", "+node->m_right->getValue(as));
+        as->Asm("ld"+getez80suffix(node->m_left)+" ["+var->getValue(as)+ "], "+getAx(node));
         return true;
     }
 
@@ -1368,7 +1368,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
     }
     //    as->Comment(TokenType::getType(node->m_left->getType(as)));
     Cast(node->m_left->getType(as), node->m_right->getStoreType());
-    as->Asm("ld ["+name + "], "+getAx(node->m_left));
+    as->Asm("ld"+getez80suffix(node->m_left)+" ["+name + "], "+getAx(node->m_left));
 }
 
 void CodeGenZ80::AssignVariable(QSharedPointer<NodeAssign> node)
@@ -1381,8 +1381,9 @@ void CodeGenZ80::LoadPointer(QSharedPointer<Node> node)
 {
     QString name = getValue(node);
     as->Comment("Loading pointer");
-    if (!isGB())
-        as->Asm("ld ["+name+"],hl");
+    if (!isGB()) {
+        as->Asm("ld"+getez80suffix(node)+" ["+name+"],hl");
+    }
     else {
         as->Asm("ld a,h");
         as->Asm("ld ["+name+"],a");
@@ -1397,7 +1398,7 @@ void CodeGenZ80::LoadPointerToHl(QSharedPointer<Node> node)
     QString name = getValue(node);
     as->Comment("Loading pointer");
     if (!isGB()) {
-        as->Asm("ld hl,["+name+"]");
+        as->Asm("ld"+getez80suffix(node)+" hl,["+name+"]");
         if (node->getOrgType(as)==TokenType::BYTE || node->getOrgType(as)==TokenType::BOOLEAN)
             as->Asm("ld h,0 ; variable is byte");
     }
@@ -1661,10 +1662,10 @@ QString CodeGenZ80::LoadAddress(QSharedPointer<Node> n)
             //            if (n->isReference())
             //              as->Asm("ld "+hl+","+n->getValue(as)+"");
             //    else
-            as->Asm("ld "+hl+",["+n->getValue(as)+"]");
+            as->Asm("ld"+getez80suffix()+" " + hl+",["+n->getValue(as)+"]");
 
     }
-    else as->Asm("ld "+hl+"," +n->getValue(as));
+    else as->Asm("ld"+getez80suffix()+" "+hl+"," +n->getValue(as));
     return "";
 }
 
@@ -1701,7 +1702,7 @@ void CodeGenZ80::StoreAddress(QSharedPointer<Node> n)
 
     }
     else
-        as->Asm("ld ["+n->getValue(as)+"],"+hl);
+        as->Asm("ld"+getez80suffix(n)+" ["+n->getValue(as)+"],"+hl);
 }
 
 QString CodeGenZ80::getHL() {

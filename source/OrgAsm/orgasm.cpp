@@ -297,6 +297,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         return l;
 
     }
+
 /*
     if (!(line[0]==' ') && !(line.contains("=") && !line.contains("\""))) {
         QString lbl = line.split(":").first().trimmed().simplified();
@@ -311,6 +312,20 @@ OrgasmLine Orgasm::LexLine(int i) {
 
   */
 //    qDebug() << line.contains("\"") << line;
+
+    if (line.simplified().toLower().startsWith(".align")) {
+        QStringList lst = line.simplified().split(" ");
+        l.m_type = OrgasmLine::ALIGN;
+        if (lst.count()!=2) {
+            throw OrgasmError("Align only takes one parameter",l);
+        }
+        l.m_expr = lst[1];
+//        qDebug() << l.m_expr;
+        return l;
+    }
+
+
+
     if (!(line[0]==' ') && !(line.contains("=") && !line.contains("\""))) {
         QString ll= line;
         QString lbl = ll.replace(":", " ").trimmed().split(" ")[0];
@@ -319,7 +334,6 @@ OrgasmLine Orgasm::LexLine(int i) {
         if (line.startsWith(":"))
             line = line.remove(0,1);
 
-//        qDebug() <<"LABEL " <<lbl <<line;
     }
     if (m_cpuFlavor==CPUFLAVOR_Z80 || m_cpuFlavor==CPUFLAVOR_Z80) {
         if (line.trimmed().simplified().split(" ").first().endsWith(":")) {
@@ -337,8 +351,9 @@ OrgasmLine Orgasm::LexLine(int i) {
         return l;
     }
 
-
     QStringList lst = line.simplified().split(" ");
+
+
 //    qDebug() << line.trimmed();
     if (line.trimmed().toLower().startsWith("incbin")) {
         lst.clear();
@@ -356,6 +371,7 @@ OrgasmLine Orgasm::LexLine(int i) {
 
         return l;
     }
+
     if (lst[0].toLower()=="incbin") {
         l.m_type = OrgasmLine::INCBIN;
         l.m_expr = lst[1];
@@ -641,6 +657,9 @@ void Orgasm::Compile(OrgasmData::PassType pt)
         if (ol.m_type==OrgasmLine::ORG)
             ProcessOrgData(ol);
 
+        if (ol.m_type==OrgasmLine::ALIGN)
+            ProcessAlignData(ol);
+
       if (ol.m_type==OrgasmLine::INSTRUCTION)
             ProcessInstructionData(ol, pt);
 
@@ -867,6 +886,18 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
 //            m_data.append((uchar)0xff);
             m_data.append((uchar)0xff);
         }
+    }
+}
+
+void Orgasm::ProcessAlignData(OrgasmLine &ol)
+{
+    uint val = ol.m_expr.toInt();
+    if (val<=0)
+        throw OrgasmError("Invalid align parameter, must be >0",ol);
+
+    while (m_pCounter%val!=0) {
+        m_data.append((uchar)0x00);
+        m_pCounter+=1;
     }
 }
 

@@ -4,7 +4,7 @@
 #include "source/Compiler/errorhandler.h"
 
 SystemAgon::SystemAgon(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj) {
-    m_processor = Z180;
+    m_processor = Z80;
     m_system = AGON;
 
     m_startAddress = 0x040000;

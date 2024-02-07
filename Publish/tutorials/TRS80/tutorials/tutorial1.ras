@@ -5,7 +5,7 @@ var
 	i,j,time,k:byte;
 	circle : array[Screen::width*Screen::height] of byte = 
 		buildtable2D(Screen::width,Screen::height,
-	"Math.sqrt(0.1*Math.pow(i-SCREEN_WIDTH/2,2) + Math.pow(j-SCREEN_HEIGHT/2,2))") at $4800;
+	"3*Math.sqrt(Math.pow(i-SCREEN_WIDTH/2,2) + Math.pow(j-SCREEN_HEIGHT/2,2))") at $4800;
 	src,dst:pointer;
 
 

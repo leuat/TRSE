@@ -1464,6 +1464,7 @@ QStringList MainWindow::getTRUPaths()
 
     // Then, system dir
     QString s2 =  Util::path + QDir::separator() + Data::data.unitPath+QDir::separator() + Data::data.cpuUnitPath + QDir::separator() + Syntax::s.m_currentSystem->StringFromProcessor(system) +  QDir::separator();
+    s2 = s2.replace("EZ80","Z80");
     s2 = s2.replace("\\\\","\\");
     if (s2.startsWith("\\")) s2 = s2.remove(0,1);
 
