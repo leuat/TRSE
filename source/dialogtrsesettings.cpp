@@ -100,6 +100,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leExomizer->setText(m_ini->getString("exomizer"));
     ui->leRGBAsmDir->setText(m_ini->getString("gameboy_rgbasm_dir"));
     ui->leTinyCrunch->setText(m_ini->getString("tinycrunch"));
+    ui->leezasm->setText(m_ini->getString("ez80asm"));
     ui->leCursorWidth->setText(QString::number((int)m_ini->getdouble("editor_cursor_width")));
     ui->chkAutoInject->setChecked(m_ini->getdouble("auto_inject")==1.0);
     if (m_ini->contains("auto_load_recent_project_on_startup"))
@@ -206,6 +207,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("sparkle", ui->leSparkle->text());
     m_ini->setString("thomson_emulator", ui->leThomsonEmulator->text());
     m_ini->setString("msx_emulator", ui->leMSXEmulator->text());
+    m_ini->setString("ez80asm", ui->leezasm->text());
     m_ini->setString("appleii_emulator", ui->leAppleIIEmulator->text());
     m_ini->setString("oric_emulator", ui->leOricEmulator->text());
     m_ini->setString("tim_emulator", ui->leTimEmulator->text());
@@ -1107,6 +1109,16 @@ void DialogTRSESettings::on_btnAgon_clicked()
                                                     tr("Agon emulator"), m_ini->getString("project_path"), "*");
     if (filename!="")
         ui->leAgonEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnezasm_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("ez80asm assembler"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leezasm->setText(filename);
 
 }
 

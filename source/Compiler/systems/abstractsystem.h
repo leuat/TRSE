@@ -221,13 +221,14 @@ public:
     System m_system = C64;
     Processor m_processor = MOS6502;
 
+
     virtual void Assemble(QString& text, QString file, QString currentDir, QSharedPointer<SymbolTable>  symTab) {}
     virtual void PostProcess(QString& text, QString file, QString currentDir) {}
     virtual void DefaultValues() {}
     void Sparkle(QString &text, QString filename, QString currentDir);
     bool GenericAssemble(QString assembler, QStringList parameters, QString error, QString& output, QString workingDir="");
     bool useZByte = false;
-
+    virtual bool useez80asm() { return false;}
 
 
 //    virtual void Execute(QString filename, QString currentDir);

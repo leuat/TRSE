@@ -21,8 +21,13 @@ void SystemZ80::PerformAssembling(QString filename, QString &text,QString curren
 
 
     QString assembler = m_settingsIni->getString("pasmo");
+    if (m_system==AGON) {
+        assembler = m_settingsIni->getString("ez80asm");
+        useOrgasm = false;
+
+    }
     if (!useOrgasm && !QFile::exists(assembler)) {
-        text  += "<br><font color=\"#FF6040\">Please set up a link to the PASMO assembler directory in the TRSE settings panel.</font>";
+        text  += "<br><font color=\"#FF6040\">Please set up a link to the assembler (pasmo/ez80asm etc) directory in the TRSE settings panel.</font>";
         m_buildSuccess = false;
         return;
     }
@@ -40,7 +45,8 @@ void SystemZ80::PerformAssembling(QString filename, QString &text,QString curren
     }
     else {
         QProcess process;
-        StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", text);
+        StartProcess(assembler, QStringList() << filename+".asm" <<filename+".bin", text,true,currentDir);
+
     }
 
 

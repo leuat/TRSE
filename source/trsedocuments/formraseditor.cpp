@@ -1129,7 +1129,8 @@ bool FormRasEditor::Load(QString filename)
     m_isTRU = filename.toLower().endsWith(".tru");
     if (m_isTRU)
         ui->txtEditor->m_fileType = CodeEditor::TRU;
-    if (filename.toLower().endsWith(".asm"))
+
+    if (filename.toLower().endsWith(".asm") || filename.toLower().endsWith(".ll"))
         ui->txtEditor->m_fileType = CodeEditor::ASM;
     if (filename.toLower().endsWith(".inc"))
         ui->txtEditor->m_fileType = CodeEditor::INC;

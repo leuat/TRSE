@@ -712,7 +712,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
         fe->m_projectPath = getProjectPath();
 
     }
-    if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc") || fileName.contains(".tru") ) {
+    if (fileName.contains(".ras") || fileName.contains(".asm") || fileName.contains(".inc") || fileName.contains(".tru") || fileName.contains(".ll")) {
         editor = new FormRasEditor(this);
     }
     if (fileName.contains(".fjo")) {
@@ -1163,6 +1163,10 @@ void MainWindow::setupIcons()
     img.load(":resources/images/asm_icon.png");
     m_icons["asm"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["asm"] = QColor(32,120,32);
+
+    img.load(":resources/images/asm_icon.png");
+    m_icons["ll"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["ll"] = QColor(32,120,64);
 
     img.load(":resources/images/image_icon.png");
     m_icons["flf"] = QIcon(QPixmap::fromImage(img));
@@ -1624,7 +1628,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt"<<"*.rtf";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt"<<"*.rtf" << "*.ll";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {

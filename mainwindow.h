@@ -151,6 +151,8 @@ class CustomFileSystemModel : public QFileSystemModel {
                img.load(":resources/images/ras.png");
             if (f.contains(".asm"))
                 img.load(":resources/images/asm_icon.png");
+            if (f.contains(".ll"))
+                img.load(":resources/images/asm_icon.png");
             if (f.contains(".prg"))
                 img.load(":resources/images/cmb_icon.png");
             if (f.contains(".flf"))
@@ -216,9 +218,9 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf" << "*.pal";
+    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf" << "*.pal" <<"*.ll";
     QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt"<<"*.rtf" <<"*.pal";
-    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf" <<".pal";
+    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf" <<".pal" << ".ll";
     TRSEDocument* m_currentDoc = nullptr;
 
     void LoadIniFile();

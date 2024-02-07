@@ -47,8 +47,6 @@ void PostOptimiser6809::Analyze(SourceLine &line) {
         st = st.simplified().trimmed();
 
 
-    // Not implemented anything yet!
-    // Below are stuff for the x86
 /*
 
     if (m_axModifiers.contains(cmd)) {

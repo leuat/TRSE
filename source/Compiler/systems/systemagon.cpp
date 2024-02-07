@@ -7,8 +7,8 @@ SystemAgon::SystemAgon(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
     m_processor = Z180;
     m_system = AGON;
 
-    m_startAddress = 0xB000;
-    m_programStartAddress = 0xB000;
+    m_startAddress = 0x040000;
+    m_programStartAddress = 0x040000;
     m_supportsExomizer = false;
 
 
@@ -31,8 +31,9 @@ void SystemAgon::Assemble(QString &text, QString filename, QString currentDir, Q
     int time = timer.elapsed();
 
     output+="<br>";
+    QFileInfo fn(filename+".asm");
 
-    PerformAssembling(filename,text,currentDir,symTab);
+    PerformAssembling(fn.fileName().remove(".asm"),text,currentDir,symTab);
 
 
     if (!QFile::exists(filename+".bin")) {
@@ -126,6 +127,8 @@ void SystemAgon::Assemble(QString &text, QString filename, QString currentDir, Q
 
 void SystemAgon::PostProcess(QString &text, QString file, QString currentDir)
 {
+    QDir d = QFileInfo(m_settingsIni->getString("agon_emulator")).absoluteDir();
+    Util::CopyFile(file+".bin",d.absolutePath()+"/sdcard/program.bin");
     // Add vz header
 /*    auto d = Util::loadBinaryFile(file+".bin");
     QByteArray h;

@@ -28,10 +28,10 @@ AsmTripe::AsmTripe() :Assembler()
 {
 //    m_stack["for"] = new Stack();
 
-    byte = "uint8";
-    word = "uint16";
-    llong = "uint32";
-    ppointer = "uint16";
+    byte = "i8";
+    word = "i16";
+    llong = "i32";
+    ppointer = "*i8";
 
 }
 
@@ -43,7 +43,7 @@ AsmTripe::~AsmTripe() {
 QString AsmTripe::intToHexString(int val)
 {
     QString s = QString::number(val);
-    QString line = ".uint8 ";
+    QString line = "i8 ";
     for (int i=0;i<s.length();i++) {
         int val = QString(s[i]).toInt() + 0x30;
         line = line + Util::numToHex(val) + " ";
@@ -68,7 +68,7 @@ void AsmTripe::Program(QString programName, QString vicConfig)
     if (!Syntax::s.m_ignoreSys && (Syntax::s.m_currentSystem->m_programStartAddress!=Syntax::s.m_currentSystem->m_startAddress)) {
 
 
-        // new method
+/*        // new method
         //Asm(".byte $00 ; fill $xxx0");
         Asm( "."+byte+" $" + QString::number( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff, 16  ) + " ; lo byte of next line" );
         Asm( "."+byte+" $" + QString::number( ( (Syntax::s.m_currentSystem->m_startAddress + 10) & 0x0ff00 ) >> 8, 16 ) + " ; hi byte of next line" );
@@ -77,7 +77,7 @@ void AsmTripe::Program(QString programName, QString vicConfig)
         // write PETSCII / ASCII representation of address to call
         Asm(intToHexString(Syntax::s.m_currentSystem->m_programStartAddress));
         Asm("."+byte+" $00 $00 $00 ; end of program");
-
+*/
         Nl();
 
         EndMemoryBlock();
@@ -389,11 +389,11 @@ void AsmTripe::Peek(bool start)
 
 QString AsmTripe::GetOrg(int pos)
 {
-    return ".data uint16:" + Util::numToHex(pos);
+    return "; org " + Util::numToHex(pos);
 }
 
 QString AsmTripe::GetOrg() {
-    return ".data ";
+    return "; org ";
 }
 
 void AsmTripe::Label(QString s)
@@ -404,14 +404,15 @@ void AsmTripe::Label(QString s)
 void AsmTripe::Connect()
 {
     Assembler::Connect();
+    for (QString& l: m_source) {
+        l.replace("StartBlock","; .label StartBlock");
+    }
     for (QString& l: m_source)
-        l.replace("StartBlock",".label StartBlock");
-    for (QString& l: m_source)
-        l.replace("EndBlock",".label EndBlock");
+        l.replace("EndBlock","; .label EndBlock");
   //  for (QString& l: m_source)
     //    l.replace("processor",".processor");
     for (QString& l: m_source) {
-        l.replace("processor",".processor");
+        l.replace("processor","; .processor");
         if (l.endsWith(":"))
             l = l.remove(l.length()-1,1);
     }

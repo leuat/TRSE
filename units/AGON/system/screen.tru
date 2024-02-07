@@ -1,0 +1,156 @@
+unit Screen;
+var
+	ix,iy : integer;
+	i,j,k : byte;
+	src,dst : ^byte;
+	cmd : array[16] of byte;
+
+	const black : byte = 0;
+	const red : byte = 1;
+	const green : byte = 2;
+	const yellow : byte = 3;
+	const blue : byte = 4;
+	const purple : byte = 5;
+	const cyan : byte = 6;
+	const light_gray : byte = 7;
+	const dark_gray : byte = 8;
+	const light_red : byte = 9;
+	const light_green : byte = 10;
+	const light_yellow : byte = 11;
+	const light_blue : byte = 12;
+	const light_purple : byte = 13;
+	const light_cyan : byte = 14;
+	const white : byte = 15;
+	
+	
+	const mode_640_480_16 : byte = 0;
+	const mode_640_480_4 : byte = 1;
+	const mode_640_480_2 : byte = 2;
+	const mode_640_240_64 : byte = 3;
+	const mode_640_240_16 : byte = 4;
+	const mode_640_240_4 : byte = 5;
+	const mode_640_240_2 : byte = 6;
+	const mode_320_240_64 : byte = 8;
+	const mode_320_240_16 : byte = 9;
+	const mode_320_240_8 : byte = 10;
+	const mode_320_240_2 : byte = 11;
+	const mode_320_200_64 : byte = 12;
+	const mode_320_200_16 : byte = 13;
+	const mode_320_200_4 : byte = 14;
+	const mode_320_200_2 : byte = 15;
+	
+/**
+
+	Sets graphics mode [i]
+
+**/	
+procedure SetMode( i : global byte) inline;
+begin
+	asm("
+	ld a, 22
+	rst.lil $10
+	ld a, [Screen_i]
+	rst.lil $10
+	
+	");
+end;
+
+
+procedure out(i : global byte pure_variable) inline;
+begin
+	asm("
+	ld a, ([Screen_i])
+	rst.lil	10h
+	
+	");
+end;
+
+
+procedure out(i : global byte pure_number) inline;
+begin
+	asm("
+	ld a, [Screen_i]
+	rst.lil	10h
+	
+	");
+end;
+
+procedure out(i : global byte);
+begin
+	asm("
+;	ld a, (Screen_i)
+	rst.lil	10h
+	
+	");
+end;
+
+procedure PrintString(src : global ^byte);
+begin
+	asm("
+	ld hl,(Screen_src)
+	ld bc, 0
+	xor a
+	rst.lil $18
+;	ld hl, 0
+	
+	");
+
+end;
+
+procedure SetTextCol(i : global byte);
+begin
+	out(17);
+	out(i);
+end;
+
+procedure SetPCol(i : global byte);
+begin
+	
+	out(18);	
+	out(1);	
+	out(i);	
+
+end;
+
+procedure Plot(ix,iy : global integer,k : global byte);
+begin
+	out(25);
+	out(k);
+	k:=ix;
+	out(k);
+	k:=ix>>8;
+	out(k);
+	k:=iy;
+	out(k);
+	k:=iy>>8;
+	out(k);
+
+end;
+
+procedure DrawB();
+begin
+	out(23);
+	out(27);
+	out(3);
+	out(32);
+	out(32);
+	
+end;
+
+procedure SelectB(i : global byte);
+begin
+	out(23);
+	out(27);
+	out(i);
+	
+end;
+procedure LoadB(i : global byte);
+begin
+	out(23);
+	out(27);
+	out(1);
+	out(i);
+	
+end;
+
+end.

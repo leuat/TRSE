@@ -104,7 +104,7 @@ mul_16x8_s8:
     ret
 
 
-div_16x8
+div_16x8:
 ;div_hl_c:
    xor	a
    ld	b, 16

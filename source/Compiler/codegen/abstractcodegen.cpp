@@ -268,8 +268,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBinaryClause> node)
 //    BuildToCmp(node);
     node->DispatchConstructor(as,this);
 
-    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
-    QString lblstartFailBlock = as->NewLabel("ConditionalFailBlock");
+    QString lblstartTrueBlock = as->NewLabel("ctb");
+    QString lblstartFailBlock = as->NewLabel("cfb");
 
     QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node);
 
@@ -296,8 +296,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBinaryClause> node)
     //    node->m_block->Accept(this);
 
     //    as->Comment("; ELSEDONE HERE "+labelElseDone);
-    as->PopLabel("ConditionalTrueBlock");
-    as->PopLabel("ConditionalFailBlock");
+    as->PopLabel("ctb");
+    as->PopLabel("cfb");
 
 
 }
@@ -708,10 +708,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
     node->DispatchConstructor(as,this);
 
     QString labelStartOverAgain = as->NewLabel("while");
-    QString lblstartTrueBlock = as->NewLabel("ConditionalTrueBlock");
+    QString lblstartTrueBlock = as->NewLabel("ctb");
 
-    QString labelElse = as->NewLabel("elseblock");
-    QString labelElseDone = as->NewLabel("elsedoneblock");
+    QString labelElse = as->NewLabel("eblock");
+    QString labelElseDone = as->NewLabel("edblock");
 
     // While loops are identical to "ifs" with a loop
 
@@ -781,9 +781,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
         as->Label(lblLoopEnd);
 
     as->PopLabel("while");
-    as->PopLabel("ConditionalTrueBlock");
-    as->PopLabel("elseblock");
-    as->PopLabel("elsedoneblock");
+    as->PopLabel("ctb");
+    as->PopLabel("eblock");
+    as->PopLabel("edblock");
 
     if (node->m_isWhileLoop)  { // for BREAK and CONT
         as->PopLabel("loopstart");

@@ -17,13 +17,13 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     auto sys = m_projectIni->getString("cpu_Z80_system");
 //    if (sys=="") sys ="z80";
-    if (m_ini->getString("assembler_z80")!="Pasmo")
+    if (m_ini->getString("assembler_z80")!="Pasmo" && Syntax::s.m_currentSystem->m_system!=AbstractSystem::AGON)
   //      if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm("CPU "+Syntax::s.m_currentSystem->StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
     if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
 //        if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
-        m_assembler->Asm(" org "+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
+        m_assembler->Asm(m_assembler->GetOrg(Syntax::s.m_currentSystem->m_programStartAddress));
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::MSX) {
         /*        m_assembler->Asm("db $FE     ; magic number");
@@ -39,6 +39,18 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
         m_assembler->Asm("dw 0		; TEXT");
         m_assembler->Asm("dw 0,0,0	; Reserved    ");
         m_assembler->Label("msx_prg_start");
+
+
+    }
+
+    if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AGON) {
+        m_assembler->Asm("jp main_start_gen");
+        m_assembler->Asm(".align $40");
+        m_assembler->Asm(".db \"MOS\"");
+        m_assembler->Asm(".db 0");
+        m_assembler->Asm(".db 1");
+
+        m_assembler->Label("main_start_gen");
     }
 
 
@@ -95,7 +107,7 @@ void CompilerZ80::Connect()
 
     }
 
-    if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
+    if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO && Syntax::s.m_currentSystem->m_system!=AbstractSystem::AGON)
         m_assembler->Asm("end");//+Util::numToHex(Syntax::s.m_currentSystem->m_programStartAddress));
 
 

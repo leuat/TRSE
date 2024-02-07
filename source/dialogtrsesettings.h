@@ -258,6 +258,8 @@ private slots:
 
     void on_btnAgon_clicked();
 
+    void on_btnezasm_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

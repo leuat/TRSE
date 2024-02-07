@@ -74,6 +74,13 @@ void AsmZ80::Connect() {
     m_source = QStringList() <<pre << m_source;
 
 
+    if (Syntax::s.m_currentSystem->useez80asm()) {
+        for (auto&s : m_source ) {
+            s = s.replace("[","(");
+            s = s.replace("]",")");
+        }
+    }
+
 
 
 }
@@ -148,7 +155,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
         }
         else
 
-        Write(name+":" +"\t ds "+QString::number(count*scale));// +" "+t+" 0",0);
+        Write(name+":" +"\t ds "+QString::number(count*scale),0);// +" "+t+" 0",0);
 
     }
     else {
@@ -223,6 +230,7 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
     if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::POKEMONMINI)
     if (m_currentBlock==m_hram || m_currentBlock==m_wram || m_currentBlock==m_sprram) {
         t = "ds";
+
         if (type.toLower()=="byte") {
             initval = "1";
             m_currentBlock->m_dataSize+=1;
@@ -235,8 +243,9 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     }
 
-    if (position=="")
+    if (position=="") {
         Write(name+":" +"\t" + t + "\t"+initval,0);
+    }
     else
     {
         Write(name +"\t equ \t"+position,0);
@@ -379,6 +388,9 @@ void AsmZ80::Label(QString s)
 
 QString AsmZ80::GetOrg(int pos)
 {
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AGON) {
+        return ".org " + Util::numToHex(pos);
+    }
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::S1C88) {
         return ".orgfill " + Util::numToHex(pos);
 
