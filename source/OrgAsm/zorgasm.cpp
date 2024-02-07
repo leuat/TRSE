@@ -87,9 +87,9 @@ QString ZOrgasm::Process(QString s, OrgasmLine& ol)
                 }
                 cur++;
             }
-        if (!ok && !Util::isNumber(tst) && !tst.startsWith("($") && !tst.startsWith("(0x")){ // && !tst.startsWith("*")) {
+        if (!ok && !Util::isNumber(tst) && !tst.startsWith("($") && !tst.startsWith("(0x") && !m_opCode.startsWith("rst")){ // && !tst.startsWith("*")) {
   //          qDebug() << "Testing for symbol " << tst<<m_symbolsList;
-            qDebug() <<Util::isNumber(tst) << tst;
+//            qDebug() <<Util::isNumber(tst) << tst;
             throw OrgasmError("Symbol '"+tst+"' undefined",ol);
         }
 
@@ -273,14 +273,19 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
     }
     // What a silly-looking opcode
     if (m_opCode.startsWith("rst")) {
-//        qDebug() << "RST " << m_opCode<<value;
-        if (value.startsWith("$"))
-           m_opCode = "rst "+value.mid(1,3)+"h";
+        QString rst = "rst ";
+        if (m_opCode.contains(".lil"))
+            rst = "rst.lil ";
+        if (expr.startsWith("$"))
+           m_opCode = rst+expr.mid(1,3)+"h";
         else
-            m_opCode = "rst "+value;
+            m_opCode = rst+expr;
 
-        if (pd!=OrgasmData::PASS_SYMBOLS)
-            m_opCode = "rst 00h";
+//        if (pd!=OrgasmData::PASS_SYMBOLS)
+  //          m_opCode = "rst 00h";
+   //     if (m_opcode.co)
+ //       qDebug() << "RST " << m_opCode<<value << expr;
+
         value = "";
         expr = "";
         type = OrgasmInstruction::none;
@@ -305,11 +310,11 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
 
 
-
     int code = 0;
     // Get actual opcode
-    if (m_opCodes.contains(m_opCode))
+    if (m_opCodes.contains(m_opCode)) {
         code = m_opCodes[m_opCode];
+    }
 
     else {
         throw OrgasmError("Unknown opcode: " + m_opCode,ol);
@@ -394,6 +399,8 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
             if (type==OrgasmInstruction::abs) {
                 data.append(val&0xFF);
                 data.append((val>>8)&0xFF);
+                if (is24bitAddress())
+                    data.append((val>>16)&0xFF);
             }
     if (pd != OrgasmData::PASS_SYMBOLS)
         expr = orgExpr;
@@ -406,6 +413,7 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         m_data.append(data);
         m_pCounter+=data.length();
     }
+
 }
 
 void ZOrgasm::ApplyCPUType()

@@ -228,7 +228,6 @@ public:
     void Sparkle(QString &text, QString filename, QString currentDir);
     bool GenericAssemble(QString assembler, QStringList parameters, QString error, QString& output, QString workingDir="");
     bool useZByte = false;
-    virtual bool useez80asm() { return false;}
 
 
 //    virtual void Execute(QString filename, QString currentDir);

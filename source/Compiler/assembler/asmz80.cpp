@@ -74,14 +74,6 @@ void AsmZ80::Connect() {
     m_source = QStringList() <<pre << m_source;
 
 
-    if (Syntax::s.m_currentSystem->useez80asm()) {
-        for (auto&s : m_source ) {
-            s = s.replace("[","(");
-            s = s.replace("]",")");
-        }
-    }
-
-
 
 }
 
@@ -388,9 +380,6 @@ void AsmZ80::Label(QString s)
 
 QString AsmZ80::GetOrg(int pos)
 {
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::AGON) {
-        return ".org " + Util::numToHex(pos);
-    }
     if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::S1C88) {
         return ".orgfill " + Util::numToHex(pos);
 

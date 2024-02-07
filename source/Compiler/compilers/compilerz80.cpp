@@ -17,7 +17,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     auto sys = m_projectIni->getString("cpu_Z80_system");
 //    if (sys=="") sys ="z80";
-    if (m_ini->getString("assembler_z80")!="Pasmo" && Syntax::s.m_currentSystem->m_system!=AbstractSystem::AGON)
+    if (m_ini->getString("assembler_z80")!="Pasmo")
   //      if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm("CPU "+Syntax::s.m_currentSystem->StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
@@ -45,10 +45,12 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::AGON) {
         m_assembler->Asm("jp main_start_gen");
-        m_assembler->Asm(".align $40");
-        m_assembler->Asm(".db \"MOS\"");
-        m_assembler->Asm(".db 0");
-        m_assembler->Asm(".db 1");
+//        m_assembler->Asm(".align $40");
+        m_assembler->Asm("ds 60");
+        m_assembler->Asm("db \"MOS\"");
+        m_assembler->Asm("db 0");
+        m_assembler->Asm("db 1");
+
 
         m_assembler->Label("main_start_gen");
     }

@@ -22,6 +22,12 @@ public:
     bool isRegister(QString str) {
         return m_regs.contains(str.toLower());
     }
+
+    bool is24bitAddress() {
+        return Syntax::s.m_currentSystem->m_system==AbstractSystem::AGON;
+    }
+
+
     void ApplyCPUType() override;
 
     void LoadCodes(int CPUflavor) override;

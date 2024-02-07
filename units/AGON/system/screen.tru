@@ -48,9 +48,9 @@ procedure SetMode( i : global byte) inline;
 begin
 	asm("
 	ld a, 22
-	rst.lil $10
+	rst.lil 10h
 	ld a, [Screen_i]
-	rst.lil $10
+	rst.lil 10h
 	
 	");
 end;
@@ -60,7 +60,7 @@ procedure out(i : global byte pure_variable) inline;
 begin
 	asm("
 	ld a, ([Screen_i])
-	rst.lil	10h
+	rst.lil 10h
 	
 	");
 end;
@@ -90,7 +90,7 @@ begin
 	ld hl,(Screen_src)
 	ld bc, 0
 	xor a
-	rst.lil $18
+	rst.lil 18h
 ;	ld hl, 0
 	
 	");

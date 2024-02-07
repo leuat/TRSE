@@ -1269,7 +1269,7 @@
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>226</height>
+              <height>926</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1368,7 +1368,7 @@
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>1057</height>
+              <height>1864</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1744,31 +1744,31 @@ Use Dasm if something goes wrong</string>
                      <string>Z80/Gameboy Assembler settings</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_11">
-                     <item row="4" column="2">
-                      <widget class="QPushButton" name="btnRgbAsmDir">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="4" column="1">
+                     <item row="3" column="1">
                       <widget class="QLineEdit" name="leRGBAsmDir">
                        <property name="text">
                         <string/>
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="0">
-                      <widget class="QLabel" name="label_38">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_20">
+                       <property name="minimumSize">
+                        <size>
+                         <width>300</width>
+                         <height>0</height>
+                        </size>
+                       </property>
                        <property name="text">
-                        <string>Gameboy RGB Asm directory:</string>
+                        <string>OrgAsm is TRSE's built-in assembler. 
+Use Pasmo if something goes wrong</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="2">
-                      <widget class="QPushButton" name="btnPasmo">
+                     <item row="3" column="0">
+                      <widget class="QLabel" name="label_38">
                        <property name="text">
-                        <string>...</string>
+                        <string>Gameboy RGB Asm directory:</string>
                        </property>
                       </widget>
                      </item>
@@ -1807,36 +1807,15 @@ Use Dasm if something goes wrong</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label_20">
-                       <property name="minimumSize">
-                        <size>
-                         <width>300</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>OrgAsm is TRSE's built-in assembler. 
-Use Pasmo if something goes wrong</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QLabel" name="label_80">
-                       <property name="text">
-                        <string>ez80asm location (Agon)</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="1">
-                      <widget class="QLineEdit" name="leezasm">
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
                      <item row="3" column="2">
-                      <widget class="QPushButton" name="btnezasm">
+                      <widget class="QPushButton" name="btnRgbAsmDir">
+                       <property name="text">
+                        <string>...</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="2">
+                      <widget class="QPushButton" name="btnPasmo">
                        <property name="text">
                         <string>...</string>
                        </property>
@@ -1885,7 +1864,7 @@ Use Pasmo if something goes wrong</string>
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>723</height>
+              <height>1864</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_26">
@@ -2208,7 +2187,7 @@ Use Pasmo if something goes wrong</string>
               <x>0</x>
               <y>0</y>
               <width>950</width>
-              <height>719</height>
+              <height>1864</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_30">

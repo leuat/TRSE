@@ -20,7 +20,6 @@ public:
         params<< "-f"<<filename+".bin";
 
     }
-    virtual bool useez80asm() { return true;}
 
 };
 
