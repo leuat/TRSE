@@ -1,0 +1,55 @@
+program Tutorial1;
+@use "system/screen"
+var
+	hello : string =("  Hello world yes yes TRSE",13,10,0);
+	sin : array[256] of integer = buildsinetable(128);
+	time,i,t,t2 : byte;
+	x,y,px : integer;
+	py:integer = 193;
+	@donotremove pt
+	pt: ^integer;
+	
+begin
+		
+	Screen::SetMode(Screen::mode_320_200_64);
+	Screen::SetTextCol(Screen::light_green);
+	Screen::PrintString(#hello);
+	
+	while (true) offpage do
+	begin	
+		t:=time;
+		t2:=0-time*2;
+		px:=0;
+		py:=0;
+		pt:=#sin;
+		for i:=0 to 160 offpage do
+		begin
+			x:=i<<3;
+			
+			y:=pt[t&255]+128*3;
+			if (i=0) then py:=y;
+			y -= pt[t2&255];
+			Screen::SetPCol((i+time)&15);
+			Screen::Plot(x,y,4);
+			Screen::Plot(4,y-py,1);
+			t+=6;
+			t2-=11;
+			px:=x;
+			py:=y;
+		end;
+		// Clear windows
+		Screen::SetPCol(0);
+		for i:=0 to 70 offpage do
+		begin
+			x:=0;
+			y:=i;
+			Screen::Plot(x,y*4+250,4);
+			Screen::Plot(320*4,0,1);
+//			Screen::Plot(x,y,1);
+			t+=11;
+		end;
+		time+=7;
+		
+	end;
+	
+end.
