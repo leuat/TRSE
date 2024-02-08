@@ -219,8 +219,8 @@ OrgasmLine Orgasm::LexLine(int i) {
     line = line.replace("dc.b", ".byte");
     line = line.replace("!by", ".byte");
     line = line.replace("!fi", ".byte");
-    line = line.replace("fcb", ".byte");
-    line = line.replace("fcc", ".dc");
+//    line = line.replace("fcb", ".byte");
+  //  line = line.replace("fcc", ".dc");
     line = line.replace("dc.w", ".word");
     line = line.replace("dc.l", ".long24");
     line = line.replace(" EQU ", " = ");
@@ -388,7 +388,7 @@ OrgasmLine Orgasm::LexLine(int i) {
         //qDebug() << l.m_expr;
         return l;
     }
-    if (lst[0].toLower()==".byte" || lst[0].toLower()=="db") {
+    if (lst[0].toLower()==".byte" || lst[0].toLower()=="db" || lst[0].toLower()=="fcb" || lst[0].toLower()=="dc") {
         l.m_type = OrgasmLine::BYTE;
         l.m_expr = line.replace(".byte", "").trimmed();//.simplified();
         l.m_expr = line.replace(" db ", "").trimmed();//.simplified();
