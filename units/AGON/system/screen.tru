@@ -1,9 +1,12 @@
 unit Screen;
 var
 	ix,iy : integer;
-	i,j,k : byte;
-	src,dst : ^byte;
+	ii,i,j,k,l,m : byte;
+	src,dst,p : ^byte;
 	cmd : array[16] of byte;
+
+
+	const cursor_home : byte = 30;
 
 	const black : byte = 0;
 	const red : byte = 1;
@@ -84,6 +87,35 @@ begin
 	");
 end;
 
+
+
+procedure LoadSingleChar(src: global ^byte, m : global byte);
+begin
+	out(23);
+	out(m);
+	out(src[0]);
+	out(src[1]);
+	out(src[2]);
+	out(src[3]);
+	out(src[4]);
+	out(src[5]);
+	out(src[6]);
+	out(src[7]);
+end;
+
+procedure LoadCharset(p: global ^byte, k,l : global byte);
+begin
+	
+	for ii:=0 to k do 
+	begin
+		Screen::LoadSingleChar(p, ii+l);
+		p+=8;	
+	end;
+	
+end;
+
+
+
 procedure PrintString(src : global ^byte);
 begin
 	asm("
@@ -91,7 +123,6 @@ begin
 	ld bc, 0
 	xor a
 	rst.lil 18h
-;	ld hl, 0
 	
 	");
 

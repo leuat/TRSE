@@ -1,5 +1,5 @@
-zeropages = ,$02,  $04,  $08,  $16,  $0B,  $0D,  $10,  $12,  $22,  $24,  $68
-temp_zeropages = ,$54,  $56,  $58,  $5A
+zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
+temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
 zeropage_decrunch1 = $47
 zeropage_decrunch2 = $48
@@ -87,4 +87,8 @@ cpu_x86_output = exe
 columns = 40
 via_zeropages = ,$40, $42, $44, $46
 override_target_settings_basic = 2.15899e-314
+use_track_19 = 1
+disable_compiler_comments = 0
+use_vice_c1541 = 0
+use_python = 0
 open_files =, graveintentions.ras

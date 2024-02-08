@@ -1,0 +1,50 @@
+program Tutorial2;
+@use "system/screen"
+var
+	time : byte;
+	// Sqrt table	
+	sqrt : array[40*25] of byte = 
+		buildtable2d(40,25,
+		"-2*Math.sqrt(Math.pow(i-40/2,2)*0.8 + Math.pow(j-25/2,2) +25)");
+	
+	
+	i,x,y,v : byte;
+	src : ^byte;
+	
+	// Custom c64 charset
+	@export "charsets/charset.flf" "charsets/charset.bin" 256
+	// Include it
+	charset : incbin("charsets/charset.bin");
+
+	const char : byte = 128;
+
+	
+begin
+		
+	Screen::SetMode(Screen::mode_320_200_64);
+
+	Screen::LoadCharset(#charset + 8*64, 16, char);
+	
+	while (true) offpage do
+	begin
+		// Move home
+		Screen::out(Screen::cursor_home);
+		src := #sqrt;
+		// Simply copy the data
+		for y:=0 to 25 do
+		begin
+ 			for x:=0 to 40 do
+ 			begin
+				v:=(src[x]+time);		 
+				// 64 colors			
+				Screen::SetTextCol(v&63);
+				// 16 chars, so and with 15
+				Screen::out(v&15 + char);
+			end;
+			src+=40;
+		end;
+		time+=1;
+	end;	
+	
+
+end.
