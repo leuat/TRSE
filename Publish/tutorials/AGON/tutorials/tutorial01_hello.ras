@@ -10,8 +10,8 @@ var
 	pt: ^integer;
 	
 begin
-		
 	Screen::SetMode(Screen::mode_320_200_64);
+	Screen::DisableCursor();	
 	Screen::SetTextCol(Screen::light_green);
 	Screen::PrintString(#hello);
 	
