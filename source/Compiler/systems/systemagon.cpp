@@ -62,6 +62,15 @@ void SystemAgon::PostProcess(QString &text, QString file, QString currentDir)
 {
     QDir d = QFileInfo(m_settingsIni->getString("agon_emulator")).absoluteDir();
     Util::CopyFile(file+".bin",d.absolutePath()+"/sdcard/program.bin");
+
+    auto autoexec = d.absolutePath()+"/sdcard/autoexec.txt";
+
+/*    if (QFile::exists(autoexec)) {
+        Util::CopyFile(autoexec, autoexec+"_keep.txt");
+    }*/
+    QString a = "load program.bin\nrun\n";
+    Util::SaveTextFile(autoexec, a);
+
     // Add vz header
 /*    auto d = Util::loadBinaryFile(file+".bin");
     QByteArray h;
