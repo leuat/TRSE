@@ -45,7 +45,6 @@ begin
 			y:=i;
 			Screen::Plot(x,y*4+250,4);
 			Screen::Plot(320*4,0,1);
-//			Screen::Plot(x,y,1);
 			t+=11;
 		end;
 		time+=7;
