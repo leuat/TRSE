@@ -35,6 +35,8 @@ public:
     QString String(QStringList lst, bool term) override;
 
 
+
+
     void StartMemoryBlock(QString pos) override;
 
     void EndMemoryBlock()  override;

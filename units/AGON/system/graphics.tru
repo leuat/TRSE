@@ -7,7 +7,16 @@ var
 	
 procedure Line(x1,y1,x2,y2 : global integer; col: global byte);	
 begin
-	Screen::SetPCol(3);
+	x1<<=2;
+	y1<<=2;
+	x2<<=2;
+	y2<<=2;
+	
+	x1+=256;
+	y1+=200;
+	x2+=256;
+	y2+=200;
+	Screen::SetPCol(col);
 	Screen::Plot(x1,y1,4);
 	Screen::Plot(x2-x1,y2-y1,1);
 	

@@ -1055,7 +1055,8 @@ void CodeGenX86::DeclarePointer(QSharedPointer<NodeVarDecl> node)
 
     if (Syntax::s.m_currentSystem->iseZ80()) {
         as->Write(".align 4",0);
-        as->Write(v->getValue(as)+ ": dw  0,0,0,0",0);
+        as->Write(v->getValue(as)+ ": dw  0,0",0);
+        as->Write(".align 4",0);
 
     }
     else {

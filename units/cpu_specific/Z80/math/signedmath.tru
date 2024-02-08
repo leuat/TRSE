@@ -52,6 +52,10 @@ end;
 
 function Muls8x8(T1,T2 : global byte):integer;
 begin
+	asm("
+	ld hl,0
+	ld de,0
+	");	
 	asm(" 
 		ld a, [SignedMath_T1]
 		ld c,a
@@ -74,8 +78,6 @@ end;
 
 function Divs16x8(PRODUCT:global integer; T1 : global byte):integer;
 begin
-		
-	
 	
 	
 	if (hi(PRODUCT)>=128) then 

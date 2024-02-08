@@ -199,8 +199,8 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
         Write(name + " equ " + initval,0);
         return;
     }
-
-
+    //if (Syntax::s.m_currentSystem->iseZ80())
+    //   Write(".align 4",0);
     if (type.toLower()=="integer")
         t = word;
     if (type.toLower()=="byte"  || type.toLower()=="boolean") {
@@ -230,10 +230,14 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
         if (type.toLower()=="integer") {
             initval = "2";
             m_currentBlock->m_dataSize+=2;
+
         }
 
 
     }
+    if (type.toLower()=="integer")
+        if (Syntax::s.m_currentSystem->iseZ80())
+            Write(".align 4",0);
 
     if (position=="") {
         Write(name+":" +"\t" + t + "\t"+initval,0);
@@ -252,6 +256,10 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
         m_appendix.append(app);*/
     }
+    if (type.toLower()=="integer")
+        if (Syntax::s.m_currentSystem->iseZ80())
+            Write(".align 4",0);
+
 }
 
 void AsmZ80::DeclareString(QString name, QStringList initVal, QStringList flags) {

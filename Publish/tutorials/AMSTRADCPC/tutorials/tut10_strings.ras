@@ -37,6 +37,7 @@ begin
 	str::itoa(ch,#num,10);
 		
 	Text::Print("Number of chars:");	
+	
 	Text::Print(#num);
 		
 	Text::MoveCursorTo(1, 7);

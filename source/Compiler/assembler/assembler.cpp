@@ -552,12 +552,17 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
             QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
             QString w = n;
             QString t = byte;
-            if (s->m_type.toLower()=="integer")
+//            if (Syntax::s.m_currentSystem->iseZ80())
+  //              Write(".align 4",0);
+
+            if (s->m_type.toLower()=="integer") {
                 t= word;
+            }
             if (s->m_type.toLower()=="pointer")
                 t= ppointer;
             if (s->m_type.toLower()=="long")
                 t= llong;
+
 
 
             if (s->m_type.toLower()=="string")
@@ -586,6 +591,8 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
                 if (count!=1)
                     Asm("    "+t+" "+bytes);
             }
+            if (Syntax::s.m_currentSystem->iseZ80())
+                Write(".align 4",0);
             //                Asm("org "+n+"+" +QString::number(count*scale));
             curData++;
         }

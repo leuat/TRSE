@@ -124,6 +124,7 @@ public:
     QString LoadAddress(QSharedPointer<Node> n) override;
 
     void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType);
+    void FixAgon();
 
     void LoadInteger(QSharedPointer<Node> n);
     void StoreAddress(QSharedPointer<Node> n);

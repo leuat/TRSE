@@ -355,7 +355,6 @@ void CodeGenZ80::BinaryClauseInteger(QSharedPointer<Node> node, QString lblSucce
     as->Comment("Binary clause INTEGER: " + node->m_op.getType());
     QString lbl2 = lblFailed;
     QString lbl1 = lblSuccess;
-
     /*    QString lo1,lo2,hi1,hi2;
     Evaluate16bitExpr(node->m_left,lo1,hi1);
     Evaluate16bitExpr(node->m_right,lo2,hi2);
@@ -489,7 +488,8 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
             //            ErrorHandler::e.Error("Generic division is not implemented yet!",  node->m_op.m_lineNumber);
             //            as->Asm("cwd");
             if (node->m_left->isWord(as) && node->m_right->isWord(as)) {
-
+                if (Syntax::s.m_currentSystem->iseZ80())
+                    as->Asm("ld hl,0");
                 node->m_right->Accept(this);
                 //                as->Asm("ex de,hl");
                 ExDeHl();
@@ -565,7 +565,6 @@ void CodeGenZ80::dispatch(QSharedPointer<NodeBinOP>node)
 
             //                ErrorHandler::e.Error("NOT IMPLEMENTED YET", node->m_op.m_lineNumber);
             as->Comment("Node is pure : "+QString::number(node->m_right->isPure()));
-
             node->m_left->Accept(this);
             if (!node->m_right->isPureNumeric())
                 as->Asm("push af");
@@ -1121,6 +1120,12 @@ void CodeGenZ80::LoadIndex(QSharedPointer<Node> n, TokenType::Type arrayType)
 
 }
 
+void CodeGenZ80::FixAgon()
+{
+    if (Syntax::s.m_currentSystem->iseZ80())
+        as->Asm("ld de,0 ; agon fix");
+}
+
 void CodeGenZ80::StoreVariable(QSharedPointer<NodeVar> node)
 {
     if (node->hasArrayIndex()) {
@@ -1207,7 +1212,7 @@ bool CodeGenZ80::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
     if (var==nullptr)
         return false;
 
-
+//    FixAgon();
     if (var->hasArrayIndex() && var->m_classvariableType==TokenType::INTEGER && !var->isPointer(as)) {
 /*        as->Comment("Casttype : "+TokenType::getType(var->getStoreType())) ;
         as->Comment("Forcetype : "+TokenType::getType(var->getLoadType())) ;
@@ -1301,7 +1306,7 @@ void CodeGenZ80::GenericAssign(QSharedPointer<NodeAssign> node)
 
 
 
-
+    FixAgon();
     as->Comment("generic assign ");
     QString name = var->getValue(as);
     if (var->isWord(as)  ||node->m_right->getClassvariableType()==TokenType::INTEGER) {
@@ -1719,6 +1724,7 @@ void CodeGenZ80::BuildConditional(QSharedPointer<Node> node,  QString lblSuccess
     as->Comment("Binary clause core: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
 
+//    FixAgon();
     if (node->isWord(as) || node->getClassvariableType()==TokenType::INTEGER) {
         BinaryClauseInteger(node,lblSuccess, lblFailed, offPage);
         return;
@@ -1985,6 +1991,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
         }
         // Generic : Doesn't really work
         as->Comment("Generic assign 16-bit pointer");
+        FixAgon();
         node->m_right->setLoadType(TokenType::INTEGER);
         node->m_right->Accept(this);
         as->Comment("Store 16-bit address");
@@ -2024,6 +2031,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
             }
             else {
                 if (var->m_expr->isWord(as)) {
+                    FixAgon();
                     as->Comment(";general 16-bit expression for the index");
                     //                  as->Asm("ex de,hl ;keep");
                     as->Asm("push hl");
@@ -2033,6 +2041,7 @@ bool CodeGenZ80::AssignPointer(QSharedPointer<NodeAssign> node)
                     as->Asm("add hl,de");
                 }
                 else {
+                    FixAgon();
                     as->Comment(";general 8-bit expression for the index");
                     //                as->Asm("xor a");
                     as->Asm("ld d,0");
