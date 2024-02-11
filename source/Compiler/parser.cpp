@@ -5988,23 +5988,27 @@ void Parser::HandleExportPrg2Bin()
     int to = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
 
+
+    qDebug() << "Exporting prg "<<inFile<<outFile << Util::numToHex(from) << Util::numToHex(to);
     QByteArray in  = Util::loadBinaryFile(inFile);
     QByteArray out;
     if (outFile.toLower().contains(".prg")) {
         out.append((char)((from)&0xFF)); // lo byte
         out.append((char)((from>>8)&0xFF)); // hi byte
     }
-    int start = (in[0] | ((int)(in[1])<<8))&0xFFFF;
-    //    qDebug() << "PRG2BIN START "<<Util::numToHex(start);
+    uint start = (((uchar)in[0]) | (((uchar)in[1])<<8))&0xFFFF;
+ //       qDebug() << "PRG2BIN START "<<Util::numToHex(start) << Util::numToHex((uchar)in[0]) << Util::numToHex((uchar)in[1]);
     in = in.remove(0,2);
     //  qDebug() << "PRG2BIN "<<Util::numToHex(from) << Util::numToHex(to);
     for (int i=from;i<to;i++) {
         int j = i-start;
-        if (in.length()<j)
+        if (in.length()<j || j<0) {
             out.append((char)0);
-        else
+        }
+        else {
             //          ErrorHandler::e.Error("ExportPrg2Bin error: .prg file does not contain specified binary range.", m_currentToken.m_lineNumber);
             out.append(in[j]);
+        }
     }
     Util::SaveByteArray(out,outFile);
 }

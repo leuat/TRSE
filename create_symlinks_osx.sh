@@ -7,13 +7,13 @@ rm Debug$1/trse.app/tutorials
 rm Debug$1/trse.app/units
 rm Debug$1/trse.app/project_templates
 
-ln -s  ../../Publish/source/themes Release$1/trse.app/themes
-ln -s  ../../Publish/tutorials Release$1/trse.app/tutorials
-ln -s  ../../units Release$1/trse.app/units
-ln -s  ../../project_templates Release$1/trse.app/project_templates
+ln -sf  ../../Publish/source/themes Release$1/trse.app/themes
+ln -sf  ../../Publish/tutorials Release$1/trse.app/tutorials
+ln -sf  ../../units Release$1/trse.app/units
+ln -sf  ../../Publish/project_templates Release$1/trse.app/project_templates
 
-ln -s  ../../Publish/source/themes Debug$1/trse.app/themes
-ln -s  ../../Publish/tutorials Debug$1/trse.app/tutorials
-ln -s  ../../units Debug$1/trse.app/units
-ln -s  ../../project_templates Debug$1/trse.app/project_templates
+ln -sf  ../../Publish/source/themes Debug$1/trse.app/themes
+ln -sf  ../../Publish/tutorials Debug$1/trse.app/tutorials
+ln -sf  ../../units Debug$1/trse.app/units
+ln -sf  ../../Publish/project_templates Debug$1/trse.app/project_templates
 
