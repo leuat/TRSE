@@ -5989,7 +5989,7 @@ void Parser::HandleExportPrg2Bin()
     Eat(TokenType::INTEGER_CONST);
 
 
-    qDebug() << "Exporting prg "<<inFile<<outFile << Util::numToHex(from) << Util::numToHex(to);
+//    qDebug() << "Exporting prg "<<inFile<<outFile << Util::numToHex(from) << Util::numToHex(to);
     QByteArray in  = Util::loadBinaryFile(inFile);
     QByteArray out;
     if (outFile.toLower().contains(".prg")) {
