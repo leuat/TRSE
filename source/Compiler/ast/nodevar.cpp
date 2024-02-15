@@ -144,8 +144,9 @@ TokenType::Type NodeVar::getArrayType(Assembler *as)
     TokenType::Type t = m_op.m_type;
     if (as==nullptr)
         return t;
-    if (as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)!=nullptr)
-        t= as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber)->m_arrayType;
+    auto s = as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber);
+    if (s!=nullptr)
+       t = s->m_arrayType;
 
 
 /*    if (m_subNode!=nullptr) {

@@ -49,7 +49,7 @@ public:
     QString m_name;
     QString m_type;
     static QString s_currentProcedure;
-    TokenType::Type m_arrayType;
+    TokenType::Type m_arrayType = TokenType::BYTE;
     // For records
     QString m_arrayTypeText;
     QStringList m_flags;

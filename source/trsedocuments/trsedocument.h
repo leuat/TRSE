@@ -38,9 +38,9 @@ class TRSEDocument : public QWidget
     Q_OBJECT
 public:
     TRSEDocument(QWidget* parent);
-    enum Type {FJONG, RAS, PAW };
+    enum Type {FJONG, RAS, PAW, NONE };
 
-    Type m_type;
+    Type m_type = NONE;
     bool m_run = false;
 
     bool m_hasFocus = true;

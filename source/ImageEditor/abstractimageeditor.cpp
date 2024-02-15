@@ -10,7 +10,9 @@ bool AbstractImageEditor::AIE_eventFilter(QObject *object, QEvent *event, QWidge
         return true;
     if(object==this) {*/
   //      qDebug() << event;
-        AIE_mouseMoveEvent((QMouseEvent*)event,p);
+        auto me = dynamic_cast<QMouseEvent*>(event);
+        if (me!=nullptr)
+          AIE_mouseMoveEvent(me,p);
         if (event->type()==QEvent::Enter) {
             Data::data.imageEvent = 1;
         }
@@ -104,15 +106,17 @@ bool AbstractImageEditor::AIE_mouseMoveEvent(QMouseEvent *e, QWidget* p)
         return false;
 
 
-    m_active=true;
+    m_active = true;
+    if (e==nullptr)
+        return false;
+//    auto butt = e->button();
 
     QPointF pos = QCursor::pos() -p->mapToGlobal(QPoint(0,0));
     pos.setX(pos.x()*(float)m_work->m_currentImage->m_image->m_width/p->width());
     pos.setY(pos.y()*(float)m_work->m_currentImage->m_image->m_height/p->height());
     QPointF f = m_updateThread->m_prevPos;
-
-    if (e->button() == Qt::RightButton || e->button() == Qt::MiddleButton || e->button() == Qt::MiddleButton)
-        return true;
+  //  if (butt == Qt::RightButton || butt == Qt::MiddleButton)
+    //    return true;
 
 //    if ((m_updateThread->m_prevPos-m_updateThread->m_currentPos).manhattanLength()!=0) {
         m_updateThread->m_prevPos = m_updateThread->m_currentPos;

@@ -140,6 +140,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QString t3 = "Total number of units: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "units/",QStringList()<<"tru"));
 
 
+//    ((QObject*)(nullptr))->setObjectName("whoo");
+
     ui->txtNews->setText(Util::loadTextFile(":resources/text/news.txt"));
 
     // Load recent project
