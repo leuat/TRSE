@@ -495,7 +495,7 @@ begin
 	clc
 	ldx gameLevel
 	lda levelCompleteBCD,x
-	adc bcd1
+	adc bcd1Tab
 	sta levelCompleteBCD,x
 	cld
 	
@@ -530,7 +530,7 @@ begin
 	gameRoom := 0;
 	
 	// count mouse
-	bcdadd( #numMouseBCD, #bcd1, 3 );
+	bcdadd( #numMouseBCD, #bcd1Tab, 3 );
 
 end;
 

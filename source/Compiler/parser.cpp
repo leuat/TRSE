@@ -44,6 +44,11 @@ QString Parser::VerifyVariableName(QString v)
     if (Syntax::s.m_currentSystem->m_renameVariables.contains(v.toLower())) {
         return Syntax::s.m_currentSystem->m_renamedVariablePrefix+v;
     }
+    bool ok=false;
+    auto temp = v.toInt(&ok, 16);
+    if (ok)
+        return Syntax::s.m_currentSystem->m_renamedVariablePrefix+v;
+
     return v;
 }
 

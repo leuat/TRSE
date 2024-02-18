@@ -184,7 +184,7 @@ begin
 			end;
 			//screenmemory := colormemory; // restore it
 
-			bcdadd( #gameRoomBCD, #bcd1, 1 );
+			bcdadd( #gameRoomBCD, #bcd1Tab, 1 );
 			cheeseId := cheeseId + CHEESEIDNEXT;
 		
 		end;

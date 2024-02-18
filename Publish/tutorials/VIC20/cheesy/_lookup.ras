@@ -8,7 +8,7 @@
 
 // -------------------------------------------------------------------------------
 // BCD fixed values
-	bcd1: array[] of byte = ( $01, $00, $00 );	// to add or subtract a BCD value of 1
+	bcd1Tab: array[] of byte = ( $01, $00, $00 );	// to add or subtract a BCD value of 1
 
 
 

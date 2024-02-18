@@ -143,6 +143,7 @@ def CompileRegularRas():
 
 	tests.append([ "SNES/tutorials/",[]])
 	fillRasList(len(tests)-1,".")
+	tests.append([ "SNES/redredwine",["redredwine.ras"]])
 
 	# TIM
 
@@ -158,8 +159,9 @@ def CompileRegularRas():
 	# vZ200
 
 	tests.append([ "VZ200/tutorials/",[]])
-	tests.append([ "VZ200/millipede",["millipede.ras"]])
 	fillRasList(len(tests)-1,".")
+	tests.append([ "VZ200/millipede",["millipede.ras"]])
+	tests.append([ "VZ200/gulch",["gulch.ras"]])
 
 
 	# SPECTRUM
@@ -171,7 +173,8 @@ def CompileRegularRas():
 	# CPC
 
 	tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
-	tests.append([ "AMSTRADCPC/tutorials",[]])
+	tests.append([ "AMSTRADCPC/Morketid",["main.ras"]])
+	tests.append([ "AMSTRADCPC/SuperSki2021",["main.ras"]])
 	fillRasList(len(tests)-1,".")
 
 
@@ -180,6 +183,7 @@ def CompileRegularRas():
 	tests.append([ "AMIGA/tutorials",[]])
 	fillRasList(len(tests)-1,".")
 	tests.append([ "AMIGA/small_intro",["intro.ras"]])
+	tests.append([ "AMIGA/hopscotch",["demo.ras"]])
 
 	# ATARI
 
@@ -220,11 +224,11 @@ def CompileRegularRas():
 	# PET
 
 	# fails for some reason
-	#tests.append([ "PET/examples/",[]])
-	#fillRasList(len(tests)-1,".")
+#	tests.append([ "PET/examples/",[]])
+#	fillRasList(len(tests)-1,".")
 
-	#tests.append([ "PET/pbm-pet/",[]])
-	#fillRasList(len(tests)-1,".")
+	tests.append([ "PET/pbm-pet/",[]])
+	fillRasList(len(tests)-1,".")
 
 	tests.append([ "PET/PETFrog/",["petfrog.ras"]])
 
@@ -271,10 +275,6 @@ def CompileRegularRas():
 	fillRasList(len(tests)-1,".")
 	tests.append([ "C64/TutorialGame_Introduction", []]);
 	fillRasList(len(tests)-1,".")
-	#fillRasList(len(tests)-1,"arithmetic")
-	#fillRasList(len(tests)-1,"conditional")
-	#fillRasList(len(tests)-1,"keywords")
-	#fillRasList(len(tests)-1,"structures")
 
 
 	# VIC 20
@@ -288,6 +288,18 @@ def CompileRegularRas():
 	tests.append([ "VIC20/lbm",[]])
 	fillRasList(len(tests)-1,".")
 	tests.append([ "VIC20/vbm",[]])
+	fillRasList(len(tests)-1,".")
+
+
+	tests.append([ "VECTREX/tutorials",[]])
+	fillRasList(len(tests)-1,".")
+
+	tests.append([ "TVC/tutorials",[]])
+	fillRasList(len(tests)-1,".")
+
+#	tests.append([ "TIKI100/tutorials",[]])
+#	fillRasList(len(tests)-1,".")
+	tests.append([ "AGON/tutorials",[]])
 	fillRasList(len(tests)-1,".")
 
 	# Gameboy
