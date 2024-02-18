@@ -11,11 +11,11 @@ var
 
 
 begin
-	// Turn off multicolor if you want hires! 
 		
 	Screen::SetBitmapMode();
+	// Sets hires
 	Screen::SetHiresMode();
-	// Set data pointer to $6000
+	// Set data pointer to $6000, color data at $4400
 	Screen::SetScreenLocation($4400); // color data
 	Screen::SetCharsetLocation($6000); // bitmap data
 	// Set bank 1 ($4000-$7FFF)

@@ -238,7 +238,7 @@ void FormImageEditor::SelectFromLeftClick()
     m_prefMode = m_keepMode;
     m_work.m_currentImage->m_image->m_currentChar =
             m_work.m_currentImage->m_image->getCharAtPos(
-                (QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y())),
+        (QPoint(m_updateThread.m_currentPos.x(),m_updateThread.m_currentPos.y()*m_work.m_currentImage->m_image->m_aspect)),
                 m_updateThread.m_zoom,m_updateThread.m_zoomCenter);
     //showDetailCharButtons(true);
     SetSingleCharsetEdit();
