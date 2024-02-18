@@ -251,6 +251,7 @@ void Asm6809::DeclareVariable(QString name, QString type, QString initval, QStri
 void Asm6809::DeclareString(QString name, QStringList initval, QStringList flags)
 {
 
+//    qDebug() << "asm6809 declarestring" <<name <<initval;
     Write(getLabelEnding(name) +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
 }
@@ -387,14 +388,13 @@ void Asm6809::Comment(QString s)
 
 QString Asm6809::String(QStringList lst, bool term)
 {
-
     QString res;
     QString mark = "dc.b";
     if (!m_isOrgasm)
         mark = "fcc";
 
     for (QString s:lst) {
-        for (QString s:lst)
+//        for (QString s:lst)
             res+=DeclareSingleString(s,mark,byte);
 
 /*        if (s!=lst.last())

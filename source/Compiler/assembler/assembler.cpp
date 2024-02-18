@@ -786,7 +786,6 @@ void Assembler::Connect()
 {
     // Connect with temp vars
 
-
     if (m_mainBlock==nullptr) {
         QStringList newSource;
         for (int i=0;i<m_varDeclEndsLineNumber;i++) {
@@ -814,6 +813,8 @@ void Assembler::Connect()
 //        qDebug() <<m_tempVarsBlock->m_source;
         if (m_tempVarsBlock!=nullptr)
             m_mainBlock->m_source<<m_tempVarsBlock->m_source;
+
+
 
     }
 

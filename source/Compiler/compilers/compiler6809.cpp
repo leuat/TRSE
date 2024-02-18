@@ -78,8 +78,16 @@ void Compiler6809::Init6809Assembler()
     m_assembler->m_defines = m_parser.m_preprocessorDefines;
 
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX)
+    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::VECTREX) {
         m_assembler->IncludeFile(":resources/code/6809/vectrex_header.asm", true, true);
+        bool useMorgasm = (m_ini->getString("assembler_6809")=="OrgAsm");
+        if (useMorgasm)
+            for (QString&s : m_assembler->m_startInsertAssembler) {
+                s = s.replace("fcc", ".dc");
+                s = s.replace("fcb", ".byte");
+            }
+
+    }
 
 
 //    m_assembler->InitZeroPointers(m_projectIni->getStringList("zeropages"),m_projectIni->getStringList("temp_zeropages"),m_projectIni->getStringList("var_zeropages"));

@@ -1261,11 +1261,13 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
         s->m_arrayType = t->m_arrayVarType.m_type;
     }else
         if (t->m_op.m_type==TokenType::STRING) {
+    //        qDebug() << as->m_mainBlock->m_source;
             as->DeclareString(v->value, t->m_data, t->m_flags);
             node->m_dataSize = 0;
             for (QString s: t->m_data)
                 node->m_dataSize+=s.length();
             node->m_dataSize++; // 0 end
+      //      qDebug() << as->m_mainBlock->m_source;
         }
         else
             if (t->m_op.m_type==TokenType::CSTRING) {
