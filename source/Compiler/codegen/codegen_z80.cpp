@@ -232,6 +232,16 @@ void CodeGenZ80::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node
         as->Asm(m_cmp+nodeB->getValue(as)+inc);
 
 
+    // Step value.. hmm
+/*    if (step!=nullptr && step->getValueAsInt(as)>0 && step->isPureNumeric()) {
+        if (!isOffPage)
+            as->Asm("jr c,"+lblJump);
+        else
+            as->Asm("jp c,"+lblJump);
+        return;
+
+    }
+*/
     if (!isOffPage)
         as->Asm("jr nz,"+lblJump);
     else

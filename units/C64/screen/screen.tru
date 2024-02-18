@@ -331,6 +331,21 @@ end;
 
 /**
 
+	Sets hires mode
+
+**/
+
+procedure SetHiresMode() inline;
+begin
+	asm("
+	lda $d016
+	and #%11101111
+	sta $d016
+	");
+end;
+
+/**
+
 	Sets bitmap mode
 
 **/
@@ -342,6 +357,7 @@ begin
 	sta $d011
 	");
 end;
+
 
 /**
 	Sets vic bank 0-4

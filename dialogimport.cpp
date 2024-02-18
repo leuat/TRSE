@@ -56,8 +56,11 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 //    qDebug() << "Currenttype: " <<QString::number(LImage::TypeToChar(m_imageType)) <<m_image->m_width<<img->m_width;
 
     m_image = LImageFactory::Create(m_imageType, colorType);
+    m_image->setMultiColor(img->isMultiColor());
     m_work.Initialize(m_image->m_width, m_image->m_height);
     m_work.m_colorList.CopyFrom(&img->m_colorList);
+//    qDebug() << "Dialog Import : "<<m_image->m_width << img->m_width;
+
     //qDebug() << "COUNT : " << m_work.m_colorList.m_list.count();
 //    qDebug() << m_image->m_width << m_imageType;
 
@@ -87,7 +90,6 @@ void DialogImport::Initialize(LImage::Type imageType, LColorList::Type colorType
 
     }
     LImageSprites2* sprite = dynamic_cast<LImageSprites2*>(img);
-
 
 
 
@@ -327,7 +329,9 @@ void DialogImport::Convert()
         inter = nullptr;
 
     }
-
+//    if (dynamic_cast<MultiColorImage*>(m_image)!=nullptr)
+  //      dynamic_cast<MultiColorImage*>(m_image)->Reorganize();
+//    m_image->FixHires();
     m_image->ToQImage(m_image->m_colorList,*m_output.m_qImage,1, QPoint(0.0,0.0));
 }
 

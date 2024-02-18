@@ -133,6 +133,7 @@ public:
     virtual int charWidthDisplay() {
         return m_charWidth;
     }
+    virtual void FixHires();
 
     void ImportKoa(QFile& f) override;
     void ExportKoa(QFile& f) override;

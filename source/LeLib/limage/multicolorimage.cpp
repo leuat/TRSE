@@ -125,7 +125,7 @@ void MultiColorImage::setPixel(int x, int y, unsigned int color)
 
     PixelChar& pc = getPixelChar(x,y);
 
-
+//    qDebug() << "dialog import " << m_noColors << m_minCol;;
     int cols = m_forceD800Color==-1?m_noColors:m_noColors-1;
 
     pc.Reorganize(m_bitMask, m_scale,m_minCol, cols, getBackground(),m_forceD800Color);
@@ -291,6 +291,55 @@ void MultiColorImage::Color2Raw(QByteArray &ba, int yl,int sx,int sy, int ex,int
     }
 
 
+}
+
+void MultiColorImage::FixHires() {
+    if (m_footer.get(LImageFooter::POS_DISPLAY_MULTICOLOR)==1)
+
+        return;
+
+//    return;
+    for (int i=0;i<m_charHeight*m_charWidth;i++) {
+        PixelChar& pc = m_data[i];
+
+/*        if (pc.c[1] == getBackground()) {
+            pc.c[1] = pc.c[0];//pc.c[2];
+            pc.c[0] = getBackground();//pc.c[2];
+            qDebug() << "MCIMAGE HERE "<< i;
+            for (int j=0;j<8;j++)
+                pc.p[i]=~pc.p[i];
+        }*/
+        // 27 10
+//        if (i==10*m_charWidth + 27 || i==10*m_charWidth + 26) {
+//            if (i==15*40 + 27 || i==15*40 + 26) {
+            if (i==15*40 + 27) {
+            qDebug() << "NEW" << i;
+            qDebug() << (uint)pc.c[0];
+            qDebug() << (uint)pc.c[1];
+            qDebug() << (uint)pc.c[2];
+            qDebug() << (uint)pc.c[3];
+            qDebug() << "P";
+            qDebug() << (uint)pc.p[0];
+            qDebug() << (uint)pc.p[1];
+            qDebug() << (uint)pc.p[2];
+            qDebug() << (uint)pc.p[3];
+            for (int j=0;j<8;j++)
+                pc.p[j]=1;
+
+//            pc.c[0] = 1;
+  //          pc.c[1] = 2;
+/*            uchar c = pc.c[0];
+            pc.c[0] = pc.c[1];
+            pc.c[1] = c;*/
+        }
+/*        if (pc.c[0]==255) {
+            pc.c[1] = 1;
+            qDebug() << "MCIMAGE HERE2";
+        }
+*/
+//        if (pc.c[1] ==0)
+  //          pc.c[1] = pc.c[3];
+    }
 }
 
 void MultiColorImage::ImportKoa(QFile &f)
@@ -645,7 +694,7 @@ void MultiColorImage::ForceColorFlattening()
 
 void MultiColorImage::ExportBin(QFile& ofile)
 {
-
+//    FixHires();
     QString f = ofile.fileName();
 
     QString filenameBase = Util::getFileWithoutEnding(f);
@@ -668,9 +717,9 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
     for (int i=0;i<m_charHeight*m_charWidth;i++) {
         PixelChar& pc = m_data[i];
-        if (pc.isEmpty())
+/*        if (pc.isEmpty())
             for (int j=0;j<4;j++)
-                pc.c[j] = 0;
+                pc.c[j] = 0;*/
     }
 
 
@@ -723,8 +772,9 @@ void MultiColorImage::ExportBin(QFile& ofile)
 //            c = (uchar)m_data[i+j*m_charWidth].c[charC];
             c = ((uchar)m_data[j*m_charWidth + i].colorMapToNumber(0,1));
         }
-        if (c==255)
+        if (c==255) {
             c=0;
+        }
 //        if (c!=0)
   //          qDebug() << c;
 

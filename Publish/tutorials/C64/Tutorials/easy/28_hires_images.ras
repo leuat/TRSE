@@ -1,0 +1,32 @@
+ program Hires_image;
+@use "screen/screen"
+var
+	zp:pointer;
+	
+	@export "resources/images/squiddy_hires.flf" "resources/images/squiddy_hires.bin" 0
+
+	image_color: IncBin("resources/images/squiddy_hires_color.bin", $5000);
+	image_data: IncBin("resources/images/squiddy_hires_data.bin", $6000);
+
+
+
+begin
+	// Turn off multicolor if you want hires! 
+		
+	Screen::SetBitmapMode();
+	Screen::SetHiresMode();
+	// Set data pointer to $6000
+	Screen::SetScreenLocation($4400); // color data
+	Screen::SetCharsetLocation($6000); // bitmap data
+	// Set bank 1 ($4000-$7FFF)
+	Screen::SetBank(vic_bank1);
+	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
+	// Copy image data!
+	Screen::CopyFull(#image_color+2, $4400);
+	Screen::background := black;
+	Screen::border := black;
+	// Example of how to copy the color data manually
+	
+	Loop();
+
+end.

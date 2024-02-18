@@ -349,6 +349,7 @@ public:
 
     virtual void Initialize(int width, int height) = 0;
 
+    virtual void FixHires() {}
 
     virtual QString GetCurrentDataString() {
         return "";
