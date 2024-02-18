@@ -120,6 +120,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageTIMGen(colorType);
     if (t == LImage::LevelEditorGeneric)
         return new LImageLevelGeneric(colorType);
+    if (t == LImage::AGON)
+        return new LImageAgon(colorType);
 
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;

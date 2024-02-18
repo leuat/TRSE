@@ -133,6 +133,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 43;
     if (t==LevelEditorGeneric)
         return 44;
+    if (t==AGON)
+        return 45;
 
 
     return 255;
@@ -230,6 +232,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic TIM image";
     if (t==LevelEditorGeneric)
         return "Generic Level Editor";
+    if (t==AGON)
+        return "Generic AGON image";
 
 
     return "Unknown image type";
@@ -329,6 +333,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return TIMG;
     if (c==44)
         return LevelEditorGeneric;
+    if (c==45)
+        return AGON;
 
     return NotSupported;
 

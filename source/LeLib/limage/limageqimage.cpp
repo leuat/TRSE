@@ -76,6 +76,42 @@ void LImageQImage::LoadBin(QFile& file)
 
 }
 
+void LImageQImage::SaveBinRGBA(QFile &f)
+{
+    if (m_qImage->width()!=m_width || m_qImage->height()!=m_height) {
+        qDebug() << "LImageQImage::SaveBin error... width/height are not equal!";
+        qDebug() << m_qImage->width()<<" vs " << m_width;
+        qDebug() << m_qImage->height()<<" vs " << m_height;
+        return;
+    }
+    unsigned int *data = new unsigned int[m_width*m_height];
+    for (int i=0;i<m_qImage->width();i++)
+        for (int j=0;j<m_qImage->height();j++) {
+            QColor val = m_colorList.get(getPixel(i,j)).color;
+            val.setAlpha(255);
+            auto v = val.red();
+            val.setRed(val.blue());
+            val.setBlue(v);
+            data[(i+j*m_qImage->width())] = val.rgba();
+        }
+    f.write((char*)data, m_width*m_height*4);
+    delete[] data;
+
+}
+
+void LImageQImage::LoadBinRGBA(QFile &f)
+{
+    m_qImage = new QImage(m_width, m_height, QImage::Format_ARGB32);
+    unsigned int *data = new unsigned int[m_width*m_height];
+    f.read((char*)data, m_width*m_height*4);
+    for (int i=0;i<m_width;i++)
+        for (int j=0;j<m_height;j++) {
+            m_qImage->setPixel(i,j, data[i+j*m_width]);
+        }
+    delete[] data;
+
+}
+
 void LImageQImage::SaveBin(QFile& file)
 {
     if (m_qImage->width()!=m_width || m_qImage->height()!=m_height) {

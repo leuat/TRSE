@@ -49,6 +49,8 @@ public:
 
     void SaveBin(QFile &f) override;
     void LoadBin(QFile &f) override;
+    void SaveBinRGBA(QFile &f);
+    void LoadBinRGBA(QFile &f);
     virtual LImage* getCharset() override { return this; }
 
     void LoadQImage(QString filename);

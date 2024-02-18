@@ -84,6 +84,7 @@ ImageWorker::ImageWorker()
     m_types.append(ImageType("Level editor VGA", "X86",LImage::Type::LevelEditorGeneric, LColorList::Type::VGA));
     m_types.append(ImageType("Level editor AMIGA", "AMIGA",LImage::Type::LevelEditorGeneric, LColorList::Type::VGA));
     m_types.append(ImageType("Level editor ATARI", "ATARI520ST",LImage::Type::LevelEditorGeneric, LColorList::Type::VGA));
+    m_types.append(ImageType("Agon generic", "AGON",LImage::Type::AGON, LColorList::Type::VGA));
 
 //    m_types.append(ImageType("Hybrid multicolor/hires charset", "c64",LImage::Type::HybridCharset,LColorList::Type::C64));
   //  m_types.append(ImageType("Hybrid multicolor/hires charset", "vic20",LImage::Type::HybridCharset,LColorList::Type::VIC20));

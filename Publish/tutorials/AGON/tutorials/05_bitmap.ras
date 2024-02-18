@@ -1,0 +1,34 @@
+program Bitmap_image;
+
+
+@use "system/screen"
+
+@export "images/squiddy.flf" "images/squiddy.bin" 256
+@export "images/squiddy_small.flf" "images/squiddy_small.bin" 256
+
+
+var  
+	image : incbin("images/squiddy_small.bin");
+	zp:^byte;
+
+	sin : array[256] of byte = buildsinetable(64);
+	time : byte;
+	x,y : integer;
+
+	const img1 : byte = 1; // ID
+
+begin
+	Screen::SetMode(Screen::mode_320_200_64);
+	Screen::DisableCursor();	
+	Screen::LoadBitmap(#image, sizeof(#image), img1);
+	
+	while(true) do
+	begin
+		x:=sin[time]+32;
+		y:=sin[time+64]+16;
+		Screen::DrawBitmap(img1, x,y);
+		time+=1;
+		for x:=0 to 100 do
+		wait(100);
+	end;
+end.

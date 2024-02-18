@@ -8,11 +8,13 @@ class LImageGeneric : public LImageQImage
 public:
 
     LImageGeneric(LColorList::Type t);
-    void LoadBin(QFile& file) override;
+    virtual void LoadBin(QFile& file) override;
 
-    void SaveBin(QFile& file) override;
+    virtual void SaveBin(QFile& file) override;
 
-    QString getMetaInfo() override;
+    virtual QString getMetaInfo() override;
+
+    void ExportBin(QFile &file) override;
 
 private:
 };

@@ -170,31 +170,37 @@ begin
 	out(k);
 
 end;
+/**
+	Loads a TRSE-exported image from 'p' into id 'j' 
 
-procedure DrawB();
+**/
+procedure LoadBitmap(p : global ^byte, ix:global integer , j: global byte);
 begin
-	out(23);
-	out(27);
-	out(3);
-	out(32);
-	out(32);
-	
+	p[7] := j;
+	asm("
+	ld hl,[Screen_p]
+    ld bc, [Screen_ix]        
+    rst.lil $18    	
+	");
+
 end;
 
-procedure SelectB(i : global byte);
+procedure DrawBitmap(j : global byte, ix,iy : integer);
 begin
 	out(23);
 	out(27);
-	out(i);
-	
-end;
-procedure LoadB(i : global byte);
-begin
+	out(0);
+	out(j);
 	out(23);
-	out(27);
-	out(1);
-	out(i);
+	out(27); 
+	out(3); // draw
+
 	
+	out(lo(ix));
+	out(hi(ix));
+	out(lo(iy));
+	out(hi(iy));
+
 end;
 
 end.
