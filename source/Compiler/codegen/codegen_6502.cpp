@@ -1029,6 +1029,9 @@ void CodeGen6502::BuildToCmp(QSharedPointer<Node> node)
             as->Asm("cmp " + b+";keep");
         }
         else {
+            if (Syntax::s.m_currentSystem->isWDC65())
+            as->Asm("cmp " + b+";keep");
+            else
             as->Comment("cmp #$00 ignored");
             //            as->Asm("cmp " + b+";keep");
         }

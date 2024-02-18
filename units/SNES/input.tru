@@ -8,38 +8,36 @@ var
 		jpad1l := peek(^$4218,0);
 	end;
 
-	procedure Movement(i:global byte pure);
+	function Movement(i:global byte pure):byte;
 	begin
-		if (i&$0F<>0) then
-			returnvalue(1)
-		else returnvalue(0);
+		Movement:=i&$0F;
 	end;
 	
-	procedure Right(i:global byte pure);
+    function Right(i:global byte pure):byte;
 	begin
 		returnvalue(i&1);
 	end;
-	procedure Left(i:global byte pure);
+	function Left(i:global byte pure):byte;
 	begin
 		returnvalue((i>>1)&1);
 	end;
-	procedure Up(i:global byte pure);
+	function Up(i:global byte pure):byte;
 	begin
 		returnvalue((i>>2)&1);
 	end;
-	procedure Down(i:global byte pure);
+	function Down(i:global byte pure):byte;
 	begin
 		returnvalue((i>>3)&1);
 	end;
-	procedure Start(i:global byte pure);
+	function Start(i:global byte pure) : byte;
 	begin
 		returnvalue((i>>4)&1);
 	end;
-	procedure Select(i:global byte pure);
+	function Select(i:global byte pure):byte;
 	begin
 		returnvalue((i>>5)&1);
 	end;
-	procedure B(i:global byte pure);
+	function B(i:global byte pure):byte;
 	begin
 		returnvalue((i>>6)&1);
 	end;
