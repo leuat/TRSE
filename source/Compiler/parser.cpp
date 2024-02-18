@@ -6012,6 +6012,7 @@ void Parser::HandleExportPrg2Bin()
         }
         else {
             //          ErrorHandler::e.Error("ExportPrg2Bin error: .prg file does not contain specified binary range.", m_currentToken.m_lineNumber);
+            if (j>=0 && j<in.size())
             out.append(in[j]);
         }
     }

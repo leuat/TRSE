@@ -28,6 +28,7 @@
 #include "source/messages.h"
 #include "source/dialogselectcharset.h"
 #include <QTimer>
+#include "source/dialogselectroom.h"
 
 FormImageEditor::FormImageEditor(QWidget *parent) :
     TRSEDocument(parent),
@@ -381,6 +382,10 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 OpenSelectCharset();
                 return;
             }
+            if (e->key()==Qt::Key_R) {
+                OpenSelectRoom();
+                return;
+            }
 
             if (e->key()==Qt::Key_P) {
                 ui->chkPaintSeparately->click();
@@ -614,6 +619,9 @@ void FormImageEditor::Initialize()
     UpdatePalette();
     updateCharSet();
     FillCMBColors();
+
+    ui->btnRoomSelect->setVisible(m_work.m_currentImage->m_image->isLevelEditor());
+
 
     ui->cmbNesPalette->clear();
     ui->cmbNesPalette->addItems(m_work.m_currentImage->m_image->getPaletteNames());
@@ -945,6 +953,27 @@ void FormImageEditor::focusInEvent(QFocusEvent *)
 //    qDebug() << "FOCUS";
 }
 
+void FormImageEditor::OpenSelectRoom()
+{
+    if (!m_work.m_currentImage->m_image->isLevelEditor())
+        return;
+
+    DialogSelectRoom* dsr = new DialogSelectRoom();
+    dsr->SetLevel((ImageLevelEditor*)m_work.m_currentImage->m_image);
+    dsr->exec();
+    if (dsr->result() == QDialog::Rejected) {
+        return;
+    }
+    ((ImageLevelEditor*)m_work.m_currentImage->m_image)->SetLevel(dsr->m_level);
+    delete dsr;
+
+    Data::data.Redraw();
+    Data::data.forceRedraw = true;
+    onImageMouseEvent();
+
+}
+
+
 void FormImageEditor::OpenSelectCharset()
 {
     if (m_work.m_currentImage->m_image->getCharset()==nullptr)
@@ -967,10 +996,10 @@ void FormImageEditor::OpenSelectCharset()
 
 
 
+
 void FormImageEditor::Reload()
 {
     m_work.m_currentImage->m_image->onFocus();
-
 }
 
 bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)
@@ -1645,7 +1674,8 @@ void FormImageEditor::SetMCColors()
 void FormImageEditor::UpdateLevels()
 {
 //    qDebug() << "ICONS!";
-    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
+    return;
+/*    ImageLevelEditor* le = dynamic_cast<ImageLevelEditor*>(m_work.m_currentImage->m_image);
     if (le==nullptr)
         return;
 
@@ -1679,7 +1709,7 @@ void FormImageEditor::UpdateLevels()
 
         }
 
-
+*/
 
 }
 
@@ -2546,7 +2576,7 @@ void FormImageEditor::on_cmbCharX_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_X,ui->cmbCharX->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
-    on_btnCharsetFull_clicked();
+//    on_btnCharsetFull_clicked();
 
     Update();
     UpdateCurrentCell();
@@ -2558,7 +2588,7 @@ void FormImageEditor::on_cmbCharY_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_DISPLAY_Y,ui->cmbCharY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
-    on_btnCharsetFull_clicked();
+  //  on_btnCharsetFull_clicked();
     Update();
 
 }
@@ -2568,7 +2598,7 @@ void FormImageEditor::on_cmbTileStampX_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_STAMP_X,ui->cmbTileStampX->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
-    on_btnCharsetFull_clicked();
+    //on_btnCharsetFull_clicked();
 
     Update();
     UpdateCurrentCell();
@@ -2580,7 +2610,7 @@ void FormImageEditor::on_cmbTileStampY_currentIndexChanged(int index)
     SetFooterData(LImageFooter::POS_CURRENT_STAMP_Y,ui->cmbTileStampY->currentText().toInt());
     SetFooterData(LImageFooter::POS_DISPLAY_CHAR,0);
     on_btnCharsetFull_clicked();
-    on_btnCharsetFull_clicked();
+    //on_btnCharsetFull_clicked();
     Update();
 
 }
@@ -2739,5 +2769,11 @@ void FormImageEditor::on_btnGridType_clicked()
     m_updateThread.m_work->m_currentImage->m_image->m_footer.set(LImageFooter::POS_GRID_TYPE,(i+1)&1);
     onImageMouseEvent();
     Update();
+}
+
+
+void FormImageEditor::on_btnRoomSelect_clicked()
+{
+    OpenSelectRoom();
 }
 

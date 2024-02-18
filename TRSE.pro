@@ -332,6 +332,7 @@ SOURCES += main.cpp\
     source/dialognewproject.cpp \
     source/dialognewtrt.cpp \
     source/dialogselectcharset.cpp \
+    source/dialogselectroom.cpp \
     source/dialogsimplelineedit.cpp \
     source/dialogsizeanalyser.cpp \
     source/dialogsplash.cpp \
@@ -655,6 +656,7 @@ HEADERS  += mainwindow.h \
     source/dialognewproject.h \
     source/dialognewtrt.h \
     source/dialogselectcharset.h \
+    source/dialogselectroom.h \
     source/dialogsimplelineedit.h \
     source/dialogsizeanalyser.h \
     source/dialogsplash.h \
@@ -808,6 +810,7 @@ FORMS    += mainwindow.ui \
     source/dialognewproject.ui \
     source/dialognewtrt.ui \
     source/dialogselectcharset.ui \
+    source/dialogselectroom.ui \
     source/dialogsimplelineedit.ui \
     source/dialogsizeanalyser.ui \
     source/dialogsplash.ui \

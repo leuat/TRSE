@@ -143,6 +143,9 @@ public:
     void setAspect(float as) {
         m_aspect = as;
     }
+
+    virtual bool isLevelEditor() { return false; }
+
     virtual int getCanvasColor(int x, int y);
     QVector<MetaParameter*> m_metaParams;
     MetaParameter* getMetaParameter(QString name);

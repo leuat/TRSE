@@ -474,17 +474,23 @@ CharmapLevel *ImageLevelEditor::getLevel(int i, int j)
 QVector<QPixmap> ImageLevelEditor::CreateIcons()
 {
     QVector<QPixmap> lst;
-
+    auto keep = m_currentLevelPos;
+    m_footer.set(LImageFooter::POS_DISPLAY_CHAR,0);
     for (int i=0;i<m_meta.m_sizex;i++)
         for (int j=0;j<m_meta.m_sizey;j++) {
             bool hasBorder = false;
             if (m_currentLevelPos.x() ==i && m_currentLevelPos.y()==j)
                 hasBorder = true;
-            QImage img = getLevel(i,j)->createImage(64,m_colorList,m_meta.m_width, m_meta.m_height, hasBorder);
+   //         QImage img = getLevel(i,j)->createImage(64,m_colorList,m_meta.m_width, m_meta.m_height, hasBorder);
+            SetLevel(QPoint(i,j));
+            QImage img = QImage(m_width,m_height,QImage::Format_ARGB32);
+//            ToQImage(m_colorList,img,0,QPointF(m_width/2,m_height/2));
+            ToQImage(m_colorList,img,1,QPoint(0,0));
             QPixmap pixmap = QPixmap::fromImage(img);
             //QIcon icon(pixmap);
             lst.append(pixmap);
         }
+    SetLevel(keep);
     return lst;
 }
 

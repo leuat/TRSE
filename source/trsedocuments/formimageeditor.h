@@ -130,6 +130,7 @@ public:
 
 
     void OpenSelectCharset();
+    void OpenSelectRoom();
     void Reload() override;
 
     bool eventFilter(QObject *ob, QEvent *e) override;
@@ -322,6 +323,7 @@ private slots:
     void on_btnPanUp_clicked();
     void on_btnPanLeft_clicked();
     void on_btnGridType_clicked();
+    void on_btnRoomSelect_clicked();
 };
 
 

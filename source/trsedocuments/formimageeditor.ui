@@ -86,7 +86,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="layoutToolsWidget">
-      <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="0,20">
+      <layout class="QHBoxLayout" name="ToolLayoutCombined" stretch="0,0">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -1502,49 +1502,6 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_6">
-          <attribute name="icon">
-           <iconset resource="../../resources.qrc">
-            <normaloff>:/resources/images/levels-trans.png</normaloff>:/resources/images/levels-trans.png</iconset>
-          </attribute>
-          <attribute name="title">
-           <string/>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
-            <layout class="QGridLayout" name="gridLevelsOld">
-             <item row="0" column="0">
-              <widget class="QScrollArea" name="scrollArea">
-               <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOn</enum>
-               </property>
-               <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOn</enum>
-               </property>
-               <property name="widgetResizable">
-                <bool>true</bool>
-               </property>
-               <widget class="QWidget" name="scrollAreaWidgetContents">
-                <property name="geometry">
-                 <rect>
-                  <x>0</x>
-                  <y>0</y>
-                  <width>853</width>
-                  <height>435</height>
-                 </rect>
-                </property>
-                <layout class="QGridLayout" name="gridLayout_13">
-                 <item row="0" column="0">
-                  <layout class="QGridLayout" name="gridLevels"/>
-                 </item>
-                </layout>
-               </widget>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
          <widget class="QWidget" name="tab_7">
           <attribute name="icon">
            <iconset resource="../../resources.qrc">
@@ -1661,7 +1618,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0,0,4">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,0,0,0,4">
      <item>
       <widget class="QPushButton" name="btnHelpImage">
        <property name="text">
@@ -1673,6 +1630,13 @@
       <widget class="QPushButton" name="btnCharSelect">
        <property name="text">
         <string>Char selector (c)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRoomSelect">
+       <property name="text">
+        <string>Room selector (r)</string>
        </property>
       </widget>
      </item>

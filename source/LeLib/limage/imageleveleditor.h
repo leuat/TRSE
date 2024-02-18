@@ -210,6 +210,7 @@ public:
             m_charset->SetBank(bnk);
     }
 
+    virtual bool isLevelEditor() override { return true; }
 
     void SetLevel(QPoint f, bool updateUi=true);
     ImageLevelEditor(LColorList::Type t);
