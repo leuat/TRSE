@@ -16,9 +16,7 @@ globals = {
 }
 
 output = {
-	-- resolution of 2x2 multicolor sprites (12x21 each)
-	resolution = { width = 32, height=28},
---	resolution = { width = 320, height=200},
+	resolution = { width = 48, height=28},
 	aspect = 1.0,
 	output_type = 0, -- c64 image type
 	dither = 2,

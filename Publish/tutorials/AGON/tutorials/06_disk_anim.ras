@@ -5,6 +5,7 @@ program Bitmap_image;
 
 @use "system/screen"
 
+// Include all the images as incbins
 
 @macro "include_images" 1
 
@@ -14,6 +15,8 @@ program Bitmap_image;
 	}
 
 @endmacro
+
+// Load all bitmaps
 
 @macro "load_images" 1
 
@@ -26,12 +29,12 @@ program Bitmap_image;
 @endmacro
 
 var  
+	//64 frames (1-65)
 	@include_images(65)
-//	image : incbin("data/disksprite1.bin");
 	zp:^byte;
 
-	sinx : array[256] of byte = buildsinetable(240);
-	siny : array[256] of byte = buildsinetable(180);
+	sinx : array[256] of integer = buildsinetable(560);
+	siny : array[256] of byte = buildsinetable(200);
 	time,frame,t2,i,f,t3 : byte;
 	delta : byte = 64;
 	x,y : integer;
@@ -39,14 +42,17 @@ var
 	const img1 : byte = 0; // ID
 
 begin
-	Screen::SetMode(Screen::mode_320_200_64);
+	Screen::SetMode(Screen::mode_640_240_64);
 	Screen::DisableCursor();	
+	// Load 64 frames (1-65) into bitmap data
 	@load_images(65);
 	while(true) do
 	begin
 		t2:=time;
 		t3:=time;
 		f:=frame;
+		
+		Screen::ClearScreen();
 		for i:=0 to 24 offpage do
 		begin
 			x:=sinx[t2]+32;
@@ -62,8 +68,9 @@ begin
 			delta+=1;
 			
 		if (time&3=0) then frame+=1;
-		for x:=0 to 400 do
-			wait(100);
-		Screen::ClearScreen();
+		
+		for x:=0 to 350 do
+			wait(119);
+			
 	end;
 end.
