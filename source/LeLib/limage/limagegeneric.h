@@ -14,7 +14,7 @@ public:
 
     virtual QString getMetaInfo() override;
 
-    void ExportBin(QFile &file) override;
+    virtual void ExportBin(QFile &file) override;
 
 private:
 };

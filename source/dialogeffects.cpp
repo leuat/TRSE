@@ -934,6 +934,16 @@ static int AddToData(lua_State* L) {
     return 0;
 }
 
+static int AddRGBAToData(lua_State* L) {
+    if (!VerifyFjongParameters(L,"AddRGBAToData"))
+        return 0;
+
+    if (m_effect!=nullptr)
+        m_compression.AddToRGBAData(m_charData, m_effect->m_img ,lua_tonumber(L,1),lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+
+    return 0;
+}
+
 static int AddVZ200Data(lua_State* L) {
     if (!VerifyFjongParameters(L,"AddVZ200ToData"))
         return 0;
@@ -1984,6 +1994,7 @@ void DialogEffects::LoadScript(QString file)
 
     // Data registration
     lua_register(m_script->L, "AddC64LineToData", AddToData);
+    lua_register(m_script->L, "AddRGBALineToData", AddRGBAToData);
     lua_register(m_script->L, "AddVZ200ToData", AddVZ200Data);
     lua_register(m_script->L, "Add4PixelToData", Add4PixelData);
     lua_register(m_script->L, "Add4PixelCGAToData", Add4PixelCGAData);

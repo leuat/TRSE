@@ -99,6 +99,25 @@ void Compression::AddToDataX(QByteArray &data, MultiColorImage& img, int xp, int
 
 }
 
+void Compression::AddToRGBAData(QByteArray &data, QImage& img, int xp, int yp, int w, int h)
+{
+    for (int y=0;y<h;y+=1)
+        for (int x=0;x<w;x+=1) {
+            int xx = xp+x;
+            int yy = yp+y;
+
+            uint val = img.pixel(x,y);
+            data.append((val>>16)&255);
+            data.append((val>>8)&255);
+            data.append(val&255);
+              if ((val&255)==0)
+                data.append((uchar)0);
+            else
+                data.append((uchar)255);
+        }
+
+}
+
 void Compression::AddToVZ200Data(QByteArray &data, LImage &img, int xp, int yp, int w, int h)
 {
     for (int y=0;y<h;y+=1)

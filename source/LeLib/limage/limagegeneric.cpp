@@ -48,25 +48,6 @@ QString LImageGeneric::getMetaInfo()
 
 void LImageGeneric::ExportBin(QFile &file)
 {
-    ushort width = m_width;
-    ushort height = m_height;
-    ushort tmp = 0;
-    tmp=23; file.write((char*)&tmp, 1);
-    tmp=0; file.write((char*)&tmp, 1);
-    tmp=192; file.write((char*)&tmp, 1);
-    tmp=0; file.write((char*)&tmp, 1);
-
-    tmp=23; file.write((char*)&tmp, 1);
-    tmp=27; file.write((char*)&tmp, 1);
-    tmp=0; file.write((char*)&tmp, 1);
-    tmp=0; file.write((char*)&tmp, 1); // id
-
-    tmp=23; file.write((char*)&tmp, 1); // id
-    tmp=27; file.write((char*)&tmp, 1); // id
-    tmp=1; file.write((char*)&tmp, 1); // id
-
-    file.write((char*)&width, 2);
-    file.write((char*)&height, 2);
     LImageQImage::SaveBinRGBA(file);
 }
 

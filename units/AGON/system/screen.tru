@@ -203,4 +203,10 @@ begin
 
 end;
 
+
+procedure ClearScreen();
+begin
+	Screen::PrintString(string(12));
+end;
+
 end.

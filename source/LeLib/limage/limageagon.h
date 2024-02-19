@@ -13,6 +13,7 @@ public:
     void SaveBin(QFile& file) override;
 
     QString getMetaInfo() override;
+    void ExportBin(QFile &file) override;
 
 private:
 };

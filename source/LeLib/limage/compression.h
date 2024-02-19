@@ -40,6 +40,7 @@ public:
     void AddAtariBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h);
     void AddSingleAtariBitplaneToData(QByteArray& data, MultiColorImage& img,int x, int y, int w, int h, int bpl_select);
 
+    void AddToRGBAData(QByteArray &data, QImage& img, int xp, int yp, int w, int h);
     int CompareSprites(QByteArray& d1,QByteArray& d2, int sprite1, int sprite2);
 
     void CompressScreenAndCharset(QVector<int>& screen, QByteArray& charset, QVector<int> &sOut, QByteArray& cOut, int sw, int sh, int charSize, int noTargetChar,int bmask);
