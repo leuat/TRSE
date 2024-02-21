@@ -33,6 +33,12 @@ LImageSpectrum::LImageSpectrum(LColorList::Type t) : LImageQImage(t)
     m_exportParams["VIC20mode"] = 0;
   */
     m_supports.displayCharOperations = true;
+    m_GUIParams[tabCharset] = "Charset";
+    m_GUIParams[tabData] = "";
+    m_GUIParams[tabLevels] = "";
+    m_GUIParams[tabEffects] = "Effects";
+
+    m_GUIParams[btnEditFullCharset] = "Char";
 
     m_colorList.InitSPECTRUM();
     //    InitPens();
