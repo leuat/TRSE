@@ -807,8 +807,13 @@ void Orgasm::ProcessLong24Data(OrgasmLine &ol)
         m_data.append((char)0x00);
         return;
     }
+
+
+    QMap <QString, int> g;
+
+
     QStringList lst = ol.m_expr.split(",");
-    for (QString s: lst) {
+    for (QString& s: lst) {
         if (s.trimmed()=="") continue;
         s = s.trimmed().simplified();
         if (m_symbolsList.contains(s)) {

@@ -12,8 +12,7 @@
 #include "source/Raytracer/particles.h"
 #include "source/LeLib/limage/limage.h"
 class RayTracer
-{
-public:
+{ public:
     RayTracer();
     QVector<AbstractRayObject*> m_objects, m_objectsFlattened;
     Camera m_camera;

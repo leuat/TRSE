@@ -132,6 +132,7 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask)
 
     // find index
     uchar index = 10;
+
     if (c[0]==color) index=0;
     else
     if (c[1]==color) index=1;
@@ -149,6 +150,11 @@ void PixelChar::set(int x, int y, unsigned char color, unsigned char bitMask)
     p[y] &= f;
     // Add
     p[y] |= (index&bitMask)<<x;
+
+/*    if (color==2) {
+        qDebug() << index  << x << bitMask << QString::number((index&bitMask)<<x,02);
+    }
+*/
 
 }
 
