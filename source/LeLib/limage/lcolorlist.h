@@ -197,6 +197,9 @@ public:
     void CreateUI(QLayout* ly, int type);
     void CreateUI(QLayout* ly, int type, QSize windowSize);
     void UpdateUI();
+
+    void EnableAuxShowing(bool yes);
+
 public slots:
     void handleButtonImport(int data);
 

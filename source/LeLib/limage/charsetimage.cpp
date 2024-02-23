@@ -766,43 +766,16 @@ void CharsetImage::setPixelHybrid(int x, int y, unsigned int color)
     if (m_colorList.getPen(0)!=color) {
 
 
-        //    if (pc.c[3]>=8 || color==m_extraCols[1] || color==m_extraCols[2]) {
         if (color>=8 || isAux) {
             m_bitMask=0b11;
             m_scale = 2;
             m_scaleX = 2.5f;
             m_noColors = 4;
             p.setX(((p.x()&0xFFFE)/2.0));
-//            if (rand()%100>98)
         }
         else {
-            //        pc.c[1] = color;
-            //      pc.c[2] = color;
-            /*
-            if (color==m_colorList.getPen(2)) {
-                m_bitMask=0b1;
-                m_scale = 1;
-                m_scaleX = 1;
-                m_noColors = 2;
-                p.setX(((p.x())));
-                //pc.c[2] = color;
-                qDebug() << "HERE " << QString::number(pc.c[2]);
-
-            }
-            else {
-*/
-            //if (m_colorList.getPen(2)!=color)
                 pc.c[1] = color;
                 pc.c[3] = color;
-
-/*            if (color>0) {
-                    qDebug() << (uint)pc.c[1] << (uint)pc.c[2] << (uint)pc.c[3] << (uint)p.x();
-//                color = 2;
-                }*/
-/*                if (color!=0)
-
-                qDebug() << "PURE "<<color ;*/
-  //          }
         }
     }
     else {

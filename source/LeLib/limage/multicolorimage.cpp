@@ -1529,6 +1529,7 @@ void MultiColorImage::onFocus()
 }
 
 void MultiColorImage::InitPens() {
+    m_colorList.EnableAuxShowing(isMultiColor() || m_colorList.m_isHybridMode);
 
     if (m_colorList.m_type==LColorList::NES) {
         if (m_charset==nullptr)
@@ -1547,24 +1548,11 @@ void MultiColorImage::InitPens() {
             m_colorList.SetVIC20Pens(m_bitMask == 0b11);
         }
         else {
-    //        QVector<int> keep = m_charset->m_colorList.getPenList();
- //           m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
-//            m_colorList.CopyFrom(&m_charset->m_colorList);
-
-            //m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
- //           m_charset->m_colorList.m_pens = m_colorList.m_pens;
-   //         m_charset->m_colorList.SetVIC20Pens(m_bitMask == 0b11);
-     //       m_colorList.CopyFrom(&m_charset->m_colorList);
               bool ish = m_charset->m_colorList.m_isHybridMode;
-//    qDebug() << ish;
               m_colorList.SetVIC20Pens(m_bitMask == 0b11);
               m_charset->m_colorList.CopyFrom(&m_colorList);
               m_charset->m_colorList.m_isHybridMode = ish;
               m_colorList.m_isHybridMode = ish;
-//
-//            for (int i=0;i<keep.count();i++)
-  //            m_colorList.setPen(i,keep[i]);
-//            m_colorList.SetVIC20Pens(m_bitMask == 0b11);
         }
         setBackground(getBackground());
         return;
@@ -1579,6 +1567,8 @@ void MultiColorImage::InitPens() {
         }
 
     }
+
+
 
 /*    if (m_colorList.m_type==LColorList::VIC20) {
         if (m_charset==nullptr)

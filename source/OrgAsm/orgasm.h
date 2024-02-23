@@ -92,12 +92,6 @@ class OrgasmInstruction {
 
         Type getTypeFromParamsZ80(QString s);
 
-/*        QByteArray Assemble(QString& expr, Opcodes6502 &m_opCodes,
-                            OrgasmData::PassType pass, QMap<QString, int>& symbols,
-                            int pCounter, QMap<QString, QString>& constants, QMap<QString, QRegExp*>& exp,
-                            QVector<QString>& symList, QVector<QString>& constList);
-
-*/
     };
 
 

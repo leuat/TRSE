@@ -148,24 +148,22 @@ MainWindow::MainWindow(QWidget *parent) :
     bool autoLoad = true;
     if (m_iniFile->contains("auto_load_recent_project_on_startup"))
         autoLoad = (m_iniFile->getdouble("auto_load_recent_project_on_startup")==1);
+
     if (autoLoad && ui->lstRecentProjects->count()>0) {
         auto item = ui->lstRecentProjects->itemAt(0,0);
-        QString projectFile = item->data(Qt::UserRole).toString();
-        LoadProject(projectFile);
-        ui->tabMain->setCurrentIndex(0);
+        m_autoLoadProject = item->data(Qt::UserRole).toString();
+        QTimer::singleShot(50, this, SLOT(slotLoadProject()));
+
     }
-
-
-//    ui->lblBrag1->setText(t0);
-//    ui->lblBrag2->setText(t0 + "\n" +t1+ "\n" + t2 + "\n" + t3);
-
-//    setWindowTitle(Util::GetSystemPrefix());
-
-
-//    ui->qsplitter->setSizes(QList<int>() << 5<<15<<10000);
 
 }
 
+
+void MainWindow::slotLoadProject() {
+    LoadProject(m_autoLoadProject);
+    ui->tabMain->setCurrentIndex(0);
+
+}
 
 void MainWindow::InitOpenGLBanners()
 {
@@ -2999,10 +2997,11 @@ void MainWindow::on_btnClearProject_clicked()
 
 void MainWindow::HandleBuildSuccess()
 {
+
     RefreshFileList();
     UpdateSymbolTree();
     auto main = getMainDocument();
-    if (main!=m_currentDoc)
+    if (main!=m_currentDoc && m_currentDoc!=nullptr)
         m_currentDoc->ApplySymbolList(((FormRasEditor*)main)->m_builderThread.m_builder.get());
 
 }

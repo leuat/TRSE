@@ -246,7 +246,7 @@ public:
 
     static QPoint mapToWindow(QWidget *from, QPoint pt);
 
-    static QPixmap CreateColorIcon(QColor col, int s);
+    static QPixmap CreateColorIcon(QColor col, int s, int index);
 
 
     static bool fileChanged(QString filename);

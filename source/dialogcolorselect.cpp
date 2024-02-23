@@ -50,7 +50,7 @@ void DialogColorSelect::UpdateGUI(QWidget* except)
    QPushButton* b = ui->btnColor;
     QPalette p;
     b->setFlat(true);
-    QPixmap pm = Util::CreateColorIcon(m_color.color,10);
+    QPixmap pm = Util::CreateColorIcon(m_color.color,10,0);
     b->setAutoFillBackground(true);
     p.setBrush(b->backgroundRole(), QBrush(pm));
     b->setPalette(p);

@@ -47,7 +47,7 @@ public:
     QWidget* CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& list);
 
 
-    QWidget* createButton(QColor col, int index, int width);
+    QWidget* createButton(QColor col, int index, int width, bool displayMultiIndex);
     QWidget* createButtonNumber(QColor col, int index, int width);
     QWidget* createButtonSelect(QColor col, int index, int width);
     QWidget* createComboBox(QColor col,int width, QVector<LColor> &list);

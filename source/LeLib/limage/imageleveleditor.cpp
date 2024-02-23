@@ -250,6 +250,7 @@ void ImageLevelEditor::InitPens()
     SetColor(m_colorList.getPen(0),0);
     SetColor(m_colorList.getPen(1),1);
     SetColor(m_colorList.getPen(2),2);
+
 //    SetLevel(m_currentLevelPos);
 }
 

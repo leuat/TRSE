@@ -25,7 +25,7 @@
 
 #include <QString>
 #include <QObject>
-
+#include <QColor>
 
 
 class CompileData {
@@ -74,6 +74,11 @@ public:
     static Data data;
     void Redraw();
     void UpdatePens();
+
+    QColor aux1 = Qt::black;
+    QColor aux2 = Qt::black;
+    bool displayAux = false;
+
 signals:
     void EmitPenChanged();
 

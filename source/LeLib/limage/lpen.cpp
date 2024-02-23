@@ -30,7 +30,7 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
 
     QWidget* widget = nullptr;
     if (m_type == FixedSingle)
-        widget = createButton(col, m_colorIndex, width);
+        widget = createButton(col, m_colorIndex, width, true);
 
     if (m_type == FixedSingleNumbers)
         widget = createButtonNumber(col, m_colorIndex, width);
@@ -56,13 +56,15 @@ QWidget* LPen::CreateUI(QColor col, int width,int xx,int yy,QVector<LColor>& lis
 }
 
 
-QWidget *LPen::createButton(QColor col, int index, int width) {
+QWidget *LPen::createButton(QColor col, int index, int width, bool displayMultiIndex) {
     QPushButton *b = new QPushButton();
     QPalette p;
+
     b->setFlat(true);
     if (!col.isValid())
         col = QColor(0,0,0,255);
-    QPixmap pm = Util::CreateColorIcon(col,width);
+    QPixmap pm = Util::CreateColorIcon(col,width, displayMultiIndex?index:0);
+
     b->setAutoFillBackground(true);
     p.setBrush(b->backgroundRole(), QBrush(pm));
     b->setMaximumWidth(width);
@@ -132,12 +134,12 @@ QWidget *LPen::createButtonSelect(QColor col, int index, int width)
 
 
 
-    ly->addWidget(createButton(col,index,width/1.3),0,0);
+    ly->addWidget(createButton(col,index,width/1.3,false),0,0);
 
     QPushButton* palSelect = new QPushButton("..");
     int w2= width/2;
     palSelect->setMaximumSize(w2,w2);
-    ly->addWidget(createButton(col,index,width),0,0);
+    ly->addWidget(createButton(col,index,width,false),0,0);
     ly->addWidget(palSelect,0,1);
     ly->setContentsMargins(QMargins(1,1,1,1));
 
@@ -166,7 +168,7 @@ QWidget *LPen::createComboBox(QColor col, int width, QVector<LColor> &list)
 {
     QGridLayout* ly = new QGridLayout();
     ly->setVerticalSpacing(0);
-    QWidget* btn = createButton(col,m_colorIndex,width);
+    QWidget* btn = createButton(col,m_colorIndex,width,false);
     m_dataType = 1;
     QComboBox *b = new QComboBox();
     if (m_type == Dropdown || m_type == DisplayAll)
@@ -221,6 +223,8 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
     int j=0;
     int x = 0;
     bool filled = false;
+    if (Data::data.displayAux)
+        m_and = 7;
     ly->addWidget(new QLabel(m_name),0,0);
     for (int i=0;i<list.count();i++) {
         bool ok=true;
@@ -237,7 +241,7 @@ QWidget *LPen::createGrid(QColor col, int width, QVector<LColor> &list)
             ok = false;
 
         if (ok) {
-            ly->addWidget(createButton(list[i&m_and].color,i,width),j+1,x);
+            ly->addWidget(createButton(list[i&m_and].color,i,width,true),j+1,x);
             if (x>=1) filled = true;
 
         }

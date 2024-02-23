@@ -30,7 +30,7 @@ void Orgasm::LoadCodes(int CPUFlavor)
     QString all = f.readAll();
    // qDebug() << filename << all;
     f.close();
-    for (QString s: all.split("\n")) {
+    for (QString& s: all.split("\n")) {
         s = s.trimmed().simplified().toLower();
         if (s=="") continue;
         if (s.startsWith("#")) continue;
@@ -540,7 +540,7 @@ void Orgasm::PassReplaceConstants()
     //    if (m_constantPassLines==0)
     for (OrgasmLine& ol : m_olines) {
         if (ol.m_type != OrgasmLine::CONSTANT && ol.m_type!= OrgasmLine::INCBIN) {
-            for (QString k : m_constList) {
+            for (QString& k : m_constList) {
                 if (ol.m_expr.contains(k))
                     ol.m_expr =  OrgasmData::ReplaceWord(ol.m_expr, k, m_constants[k]);
             }
@@ -683,7 +683,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
     }
     QStringList lst = Util::splitStringSafely(ol.m_expr);
 
-    for (QString s: lst) {
+    for (QString& s: lst) {
 
         if (s.trimmed()=="") continue;
         //      qDebug() << Util::NumberFromStringHex(s);
@@ -769,7 +769,7 @@ void Orgasm::ProcessWordData(OrgasmLine &ol)
         return;
     }
     QStringList lst = ol.m_expr.split(",");
-    for (QString s: lst) {
+    for (QString& s: lst) {
         if (s.trimmed()=="") continue;
         s = s.trimmed().simplified();
         if (m_symbolsList.contains(s)) {
@@ -871,7 +871,7 @@ void Orgasm::ProcessOrgData(OrgasmLine &ol)
     else {
 
 
-        for (QString s: m_symbols.keys())
+        for (QString& s: m_symbols.keys())
                 ol.m_expr = OrgasmData::ReplaceWord(ol.m_expr,s,Util::numToHex(m_symbols[s]));
 
         ol.m_expr =ol.m_expr.replace("#","");

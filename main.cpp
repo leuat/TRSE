@@ -32,6 +32,7 @@ void fixCurrentDir(QString execFile) {
     QFileInfo exec(execFile);
     QDir::setCurrent(exec.absoluteDir().absolutePath());
 }
+
 #include "source/LeLib/limage/multicolorimage.h"
 void CreateVICCharset() {
     QByteArray ba;

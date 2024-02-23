@@ -21,6 +21,7 @@
 
 #include "util.h"
 #include <QDebug>
+#include "source/LeLib/data.h"
 //#include <QtGlobal>
 
 QString Util::path = "";
@@ -1047,20 +1048,35 @@ QPoint Util::mapToWindow(QWidget *from, QPoint pt) {
     return pt;
 }
 
-QPixmap Util::CreateColorIcon(QColor col, int s) {
+QPixmap Util::CreateColorIcon(QColor col, int s, int index) {
     QImage img(s,s,QImage::Format_RGB32);
-
     QColor c2(col.red()/2, col.green()/2, col.blue()/2);
     for (int y=0;y<s;y++)
         for (int x=0;x<s;x++) {
-            //            if (s-1-y>x)
-
-            //              img.setPixelColor(x,y, m_list[col].color);
-            //        else
             if (y==0 || y==s-1 ||x==0 || x==s-1)
                 img.setPixelColor(x,y, c2);
             else
                 img.setPixelColor(x,y, col);
+
+
+            if (Data::data.displayAux) {
+                if (index>8) {
+/*                    if (y>1 && y<s/2-2 && x>s/2-2 && x<s-2)
+                        img.setPixelColor(x,y,Data::data.aux1);
+
+                    if (y>s/2 && y<s-2 && x>s/2-2 && x<s-2)
+                        img.setPixelColor(x,y,Data::data.aux2);
+*/
+
+                    if (x>s/3 && x<2*s/3)
+                        img.setPixelColor(x,y,Data::data.aux1);
+
+                    if (x>=2*s/3 && x<s)
+                        img.setPixelColor(x,y,Data::data.aux2);
+
+
+                }
+            }
 
 
         }

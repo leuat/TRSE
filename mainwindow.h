@@ -81,7 +81,7 @@ public:
     QSharedPointer<CIniFile> m_ini;
     QString m_filename="";
     QString m_projectName = "";
-//    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc", "fjo"};
+    //    QStringList m_acceptedFileTypes = {"asm", "flf", "ras", "prg", "paw", "inc", "fjo"};
     void Load(QString projectfile) {
         m_ini = QSharedPointer<CIniFile>(new CIniFile());
         m_ini->Load(projectfile);
@@ -98,10 +98,10 @@ public:
     void VerifyDefaults();
     void ConvertFromOldDiskSystem()
     {
-     //   cc1541_disk_type
-       //  d64name
-    //    dirart_flf_file
-    //    d64_paw_file
+        //   cc1541_disk_type
+        //  d64name
+        //    dirart_flf_file
+        //    d64_paw_file
         if (m_ini->contains("d64_paw_file") && m_ini->getString("d64_paw_file")!="none") {
             // Convert!
             m_ini->setString("disk1_paw",m_ini->getString("d64_paw_file"));
@@ -134,7 +134,7 @@ public:
 class CustomFileSystemModel : public QFileSystemModel {
     Q_OBJECT
 
-  public:
+public:
     CustomFileSystemModel(QWidget* parent) : QFileSystemModel(parent) {
 
     }
@@ -147,8 +147,8 @@ class CustomFileSystemModel : public QFileSystemModel {
             QImage img;
             QString f = index.data().toString();
             if (f.contains(".ras"))
-//                img.load(":resources/images/trselogo.png");
-               img.load(":resources/images/ras.png");
+                //                img.load(":resources/images/trselogo.png");
+                img.load(":resources/images/ras.png");
             if (f.contains(".asm"))
                 img.load(":resources/images/asm_icon.png");
             if (f.contains(".ll"))
@@ -169,8 +169,8 @@ class CustomFileSystemModel : public QFileSystemModel {
 
             return QVariant(ic);
         }
-    else
-        return QFileSystemModel::data(index, role);
+        else
+            return QFileSystemModel::data(index, role);
     }
 
 
@@ -179,6 +179,9 @@ class CustomFileSystemModel : public QFileSystemModel {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+private:
+    QString m_autoLoadProject = "";
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -189,7 +192,7 @@ public:
 
     QSharedPointer<CIniFile> m_iniFile;
     QMap<QString, QTreeWidgetItem*> m_symbolItems;
- //   CodeEditor m_codeEditor;
+    //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
     QStringList m_commandParams;
     QString m_iniFileNameOld = "fluff64.ini";
@@ -248,19 +251,19 @@ public:
 
 
 
-//    WorkerThread* m_updateThread;
-
     void LoadDocument(QString fileName, bool isExternal = false);
 
     bool m_quit = false;
 
     bool VerifyFile(QString file, QString message);
 
-  //  void setupEditor();
+    //  void setupEditor();
     void SetupFileList();
 
 
 public slots:
+    void slotLoadProject();
+    void HandleBuildSuccess();
     void ShowSplash();
     void RefreshFileList();
     void AcceptUpdateSourceFiles(QSharedPointer<SourceBuilder> sourceBuilder);
@@ -288,7 +291,7 @@ public slots:
 
     void ForceOpenFile(QString s, int ln);
 
-/*    void updateImage() {
+    /*    void updateImage() {
         FormImageEditor* imageEdit = dynamic_cast<FormImageEditor*>(ui->tabMain->currentWidget());
         if (imageEdit==nullptr)
             return;
@@ -328,22 +331,20 @@ public slots:
 
 
 signals:
-   void ValueChanged();
-
-
+    void ValueChanged();
 
 
 private slots:
 
-   void AcceptRequestSystemChange(QString system);
+    void AcceptRequestSystemChange(QString system);
 
-   void AcceptMemoryAnalyse();
+    void AcceptMemoryAnalyse();
 
 
-   void LoadTutorialProject(QString file);
+    void LoadTutorialProject(QString file);
 
-   void ShowContextMenu(const QPoint &pos);
-   void ShowFileContext(const QPoint &pos);
+    void ShowContextMenu(const QPoint &pos);
+    void ShowFileContext(const QPoint &pos);
     void UpdateOutputSystemChange();
     void FindFileDialog();
     void GotoSymbol(QString s);
@@ -419,7 +420,7 @@ private slots:
 
     void on_btnBuildAll_clicked();
 
-/*    void on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column);
+    /*    void on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
     void on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 */
@@ -458,17 +459,16 @@ private slots:
 
     void on_actionRas_source_file_triggered();
 
-//    void on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    //    void on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
- //   void on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    //   void on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
- //   void on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item);
+    //   void on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item);
 
     void removeFromRecentList();
 
     void on_btnClearProject_clicked();
 
-    void HandleBuildSuccess();
 
     void on_actionTRSE_Showcases_triggered();
 
@@ -476,7 +476,7 @@ private slots:
 
     void on_cmbSelectSystem_activated(int index);
 
-//    void on_btnChangelog_clicked();
+    //    void on_btnChangelog_clicked();
 
     void on_actionView_changelog_triggered();
 
@@ -491,7 +491,7 @@ private slots:
 
     void on_actionTRSE_Tracker_File_trt_triggered();
 
-//    void on_checkBox_stateChanged(int arg1);
+    //    void on_checkBox_stateChanged(int arg1);
 
     void on_chkShowAllFiles_clicked();
 

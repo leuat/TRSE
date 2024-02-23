@@ -100,6 +100,19 @@ void LColorList::UpdateUI()
     CreateUI(m_layout,m_currentType,m_windowSize);
 }
 
+void LColorList::EnableAuxShowing(bool yes)
+{
+    if (!yes || m_pens.count()<3) {
+        Data::data.displayAux = false;
+        return;
+    }
+    Data::data.displayAux = true;
+
+    Data::data.aux1 = m_list[m_pens[1]->Get()].color;
+    Data::data.aux2 = m_list[m_pens[2]->Get()].color;
+
+}
+
 
 void LColorList::SetPPUColors(char c1, int idx)
 {
@@ -566,7 +579,6 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
  //       if (m_type == C64)
 
     }
-
 }
 
 void LColorList::SetVIC20Pens(bool m_isMulticolor)
