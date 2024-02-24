@@ -253,7 +253,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         type = OrgasmInstruction::none;
     }
     if (m_opCode.startsWith("bit ") || m_opCode.startsWith("res ") ||  m_opCode.startsWith("set ")) {
-  //      qDebug() <<"BIT before " <<m_opCode<<value << expr<<ol.m_orgLine;
         if (m_opCode.contains("+*)")) { // uh oh handle ix iy+*
             m_opCode = m_opCode.replace("**",QString(ol.m_orgLine.trimmed().simplified()[4]));
             value = value2;
@@ -281,10 +280,6 @@ void ZOrgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
         else
             m_opCode = rst+expr;
 
-//        if (pd!=OrgasmData::PASS_SYMBOLS)
-  //          m_opCode = "rst 00h";
-   //     if (m_opcode.co)
- //       qDebug() << "RST " << m_opCode<<value << expr;
 
         value = "";
         expr = "";
@@ -478,11 +473,9 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
     t = t.remove("(").remove(")");
 
     if (m_cpuFlavor==CPUFLAVOR_S1C88) {
-//        qDebug() << t;
         if (t.toLower()=="x2+l")
             return ("(x2+l)");
         if (t.toLower().startsWith("nn+")) {
-  //          qDebug() << t;
             value = t.split("+")[1];
             return ("(nn+*)");
         }

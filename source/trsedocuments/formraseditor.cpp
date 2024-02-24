@@ -1311,7 +1311,7 @@ void FormRasEditor::ShadowBuild()
     if (!m_hasFocus)
         return;
 
-    Build(true);
+//    Build(true);
 
 
 }

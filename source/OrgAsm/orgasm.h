@@ -13,8 +13,6 @@
 class OrgasmData {
 public:
     enum PassType { PASS_LABELS, PASS_SYMBOLS, PASS_COMPILE };
-
-
     static QString ReplaceWord(QString& line, QString& word, QString replacement);
     static QString BinopExpr(QString& expr, long& val, QString rep);
 
@@ -27,12 +25,10 @@ class OrgasmInstruction {
         enum Type {none, imm, zp, zpx, zpy, izx, izy,abs, abx,aby, ind, rel, izz, label, imp};
         Type m_type;
         int m_size = 0;
-//        enum Pass { passSymbol, passCompile };
         bool m_bracketsAroundVariables = false;
 
         void Init(QStringList lst) {
             m_opCode = lst[0];
-//            m_expr = lst[1];
             if (lst.count()>1)
                 m_type = getTypeFromParams(lst[1]);
             else m_type=none;
@@ -40,11 +36,12 @@ class OrgasmInstruction {
 
         Type getTypeFromParams(QString s) {
             s=s.toLower();
-            //        qDebug() << " Getting type from : " << s;
             if (s=="")
                 return none;
+
             if (s.startsWith("#"))
                 return imm;
+
             long i = 0;
             bool ok;
             if (s.contains(",")) {

@@ -681,6 +681,10 @@ unsigned int ImageLevelEditor::getPixel(int x, int y)
 
     else col = m_charset->m_data[cpos].c[3];
 
+    if (m_classvariableType == LevelCharacter) {
+        return v;
+    }
+
 //    if (col>=8) {
 //        cx/=2;
   //  }

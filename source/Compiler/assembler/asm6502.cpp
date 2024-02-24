@@ -1036,20 +1036,13 @@ void Asm6502::OptimisePassLdaTax(QString x)
                 QString tst = getToken(l2,0);
                 if (tst.startsWith("ta") || tst=="sta")
                     perform=false;
-                //                    qDebug() << "TEST " << perform << tst ;
+
                 if (perform) {
                     m_removeLines.append(j);
                     QString org = m_source[i];
                     m_source[i] = m_source[i].replace("lda", "ld"+x)+" ; optimized, look out for bugs";
-                    //                      qDebug() << "Changed : "<< org << " to " <<m_source[i] << " with op " <<op;
                 }
-                //m_removeLines.append(i);
-
-
-
             }
-            //            if (m_removeLines.count()!=0)
-            //              break;
         }
     }
 

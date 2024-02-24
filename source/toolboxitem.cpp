@@ -295,7 +295,7 @@ void Line::Perform(int x, int y, unsigned char color, LImage *img, bool isPrevie
 void CopyStamp::Perform(int x, int y, unsigned char color, LImage *img, bool isPreview, int button)
 {
     img->setBasePixel(x,y);
-
+    img->SetCurrentType(LImage::Character);
     if (button==1 && m_status == Status::Idle) {
         m_status = Status::Selecting;
         m_start = QPoint(x,y);
@@ -364,12 +364,15 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
 {
     if (m_copy == nullptr)
         return;
+    img->SetCurrentType(LImage::Character);
+    m_copy->SetCurrentType(LImage::LevelCharacter);
     int w = abs(m_end.x()-m_start.x());
     int h = abs(m_end.y()-m_start.y());
     img->setBasePixel(x,y);
     for (int i=0;i<w;i++)
         for (int j=0;j<h;j++) {
             unsigned int col = m_copy->getPixel(m_start.x() + i-0.5, m_start.y()+j-0.5);
+            img->m_currentChar = col;
             if (m_type==1)
                 img->setPixel(i-w/2+x,j-h/2+y, col);
             else
@@ -378,6 +381,8 @@ void CopyStamp::StampImage(int x, int y, LImage* img)
 //                for (int xd=0;xd<m_copy->m_scale;xd++)
   //                  img->setPixel(i-w/2.0+x + xd,j-h/2.0+y, col);
         }
+ //   m_copy->SetCurrentType(LImage::Color);
+   // img->SetCurrentType(LImage::Color);
 }
 
 void CopyStamp::Init() {

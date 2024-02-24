@@ -108,7 +108,7 @@ public:
               };
 
 
-    enum WriteType { Color, Character };
+    enum WriteType { Color, Character, LevelCharacter };
     LImage() {}
     LImage(LColorList::Type t);
     virtual ~LImage() {

@@ -51,14 +51,10 @@ void Orgasm::LoadCodes(int CPUFlavor)
 
 void Orgasm::ProcessSource()
 {
-  //  QElapsedTimer t;
-    //t.start();
     for (int i=0;i<256;i++) {
         QString r = "#P"+QString::number(i)+";";
-//        m_source = m_source.replace(r,QChar(i));
         m_source = m_source.replace(r,"\"," + QString::number(i) + ",\"");
     }
-    //    qDebug() << "Orgasm::Processources took " << Util::MilisecondToString(t.elapsed());
 }
 
 

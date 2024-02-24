@@ -672,12 +672,12 @@ void LImage::ShiftXY(int dx, int dy)
 /*    if (m_footer.get(LImageFooter::POS_DISPLAY_HYBRID)==1) {
         dx*=2;
     }*/
-    if (m_isHybridTemp) {
-        dx*=2;
-    }
 
     dx*=m_bitMask==0b11?2:1;
-
+/*    if (m_isHybridTemp && m_bitMask==0b11) {
+        dx*=1;
+    }
+*/
     if (!m_footer.isFullscreen()) {
         int sx = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_X)*8;
         int sy = m_footer.get(LImageFooter::POS_CURRENT_DISPLAY_Y)*8;
