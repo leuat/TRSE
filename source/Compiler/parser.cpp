@@ -46,8 +46,10 @@ QString Parser::VerifyVariableName(QString v)
     }
     bool ok=false;
     auto temp = v.toInt(&ok, 16);
-    if (ok)
+    if (ok) {
+        qDebug() << "renaming " <<v;
         return Syntax::s.m_currentSystem->m_renamedVariablePrefix+v;
+    }
 
     return v;
 }
@@ -1711,7 +1713,8 @@ QSharedPointer<Node> Parser::Variable(bool isSubVar)
         m_isClassReference = m_currentToken.m_isReference;
     }
 
-    m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
+    if (m_currentToken.m_type!=TokenType::STRING && m_currentToken.m_type!=TokenType::CSTRING)
+        m_currentToken.m_value = VerifyVariableName(m_currentToken.m_value);
     // Rename "i" with "_var_i" for disallowed variables (Z80, GB)
 
     // Subvar can't be CONST
