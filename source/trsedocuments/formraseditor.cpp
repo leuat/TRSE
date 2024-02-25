@@ -252,6 +252,7 @@ void FormRasEditor::InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, 
     ui->txtEditor->m_autoComplete = m_iniFile->getdouble("editor_autocomplete_nobug")==1;
     ui->txtEditor->m_autoIndent = m_iniFile->getdouble("editor_autocomplete")==1;
 
+    ui->btnAsm->setVisible(m_currentSourceFile.toLower().endsWith(".ras"));
 
 }
 
@@ -312,7 +313,7 @@ void FormRasEditor::Build(bool isShadow)
     if (!(QApplication::keyboardModifiers() & Qt::ShiftModifier))
         if (!isShadow)
             if (m_projectIniFile->getString("main_ras_file")!="none") {
-                if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
+                    if (m_projectIniFile->getString("main_ras_file")!=m_currentFileShort) {
                     emit requestBuildMain(m_run);
                     return;
                 }
@@ -1396,3 +1397,10 @@ void FormRasEditor::on_btnViewHelp_clicked()
     Help(ui->widgetHelp->m_currentWord);
 
 }
+
+void FormRasEditor::on_btnAsm_clicked()
+{
+    LookupAssemblerUnderCursor();
+
+}
+

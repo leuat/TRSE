@@ -38,6 +38,13 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
+          <widget class="QPushButton" name="btnAsm">
+           <property name="text">
+            <string>View Asm (f3)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Search:</string>

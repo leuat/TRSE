@@ -95,7 +95,7 @@ public:
     BuilderThread m_builderThread;
     QElapsedTimer m_timer;
     int m_lastBuild= 0;
-    QVector3D m_curCol = QVector3D(180,160,50);;
+    QVector3D m_curCol = QVector3D(180,160,50);
     QVector3D m_startCol = QVector3D(64,32,0);
     QVector3D m_endCol = QVector3D(255,200,100);
 
@@ -112,7 +112,6 @@ public:
     void FocusOnOutput();
 
 
-    void LoadRasFile(QString fileName);
     void ExecutePrg(QString fileName);
     void InitDocument(WorkerThread *t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
     void setupEditor();
@@ -209,6 +208,7 @@ private slots:
     void on_chkDisplayAddresses_stateChanged(int arg1);
     void on_chkDisplayCycles_stateChanged(int arg1);
     void on_btnViewHelp_clicked();
+    void on_btnAsm_clicked();
 };
 
 #endif // FORMRASEDITOR_H
