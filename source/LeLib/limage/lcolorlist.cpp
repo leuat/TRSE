@@ -163,6 +163,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 19;
   if (t==THOMSON)
       return 20;
+  if (t==MONO)
+      return 21;
 
   return 255;
 }
@@ -211,6 +213,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return COCO3;
     if (c==20)
         return THOMSON;
+    if (c==21)
+        return MONO;
 
     return UNSUPPORTED;
 
@@ -490,6 +494,8 @@ void LColorList::Initialize(Type t)
         InitTIM();
     if (m_type == Type::TVC)
         InitTVC();
+    if (m_type == Type::MONO)
+        InitMono();
 
 
 
@@ -791,6 +797,16 @@ void LColorList::InitC64()
     m_background = m_list[0];
 //    DefaultPen();
     m_pens.clear();
+
+}
+
+void LColorList::InitMono()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
+    m_pens.clear();
+    DefaultPen(LPen::FixedSingle);
 
 }
 

@@ -770,5 +770,6 @@
         <file>resources/text/opcodes_m68k.txt</file>
         <file>resources/images/FOENIX.png</file>
         <file>resources/images/AGON.png</file>
+        <file>resources/images/PRIMO.png</file>
     </qresource>
 </RCC>

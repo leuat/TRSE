@@ -236,6 +236,7 @@ SOURCES += main.cpp\
     source/Compiler/systems/systempdp11.cpp \
     source/Compiler/systems/systemplus4.cpp \
     source/Compiler/systems/systempokemonmini.cpp \
+    source/Compiler/systems/systemprimo.cpp \
     source/Compiler/systems/systemsnes.cpp \
     source/Compiler/systems/systemspectrum.cpp \
     source/Compiler/systems/systemthomson.cpp \
@@ -258,6 +259,7 @@ SOURCES += main.cpp\
     source/LeLib/limage/limageagon.cpp \
     source/LeLib/limage/limagecoco3.cpp \
     source/LeLib/limage/limagelevelgeneric.cpp \
+    source/LeLib/limage/limageprimo.cpp \
     source/LeLib/limage/limagesnesgeneric.cpp \
     source/LeLib/limage/limagethomson.cpp \
     source/LeLib/limage/limagetimgen.cpp \
@@ -547,6 +549,7 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemchip8.h \
     source/Compiler/systems/systemdragon.h \
     source/Compiler/systems/systempdp11.h \
+    source/Compiler/systems/systemprimo.h \
     source/Compiler/systems/systemschip.h \
     source/Compiler/systems/systemcoleco.h \
     source/Compiler/systems/systemcustom.h \
@@ -583,6 +586,7 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/limageagon.h \
     source/LeLib/limage/limagecoco3.h \
     source/LeLib/limage/limagelevelgeneric.h \
+    source/LeLib/limage/limageprimo.h \
     source/LeLib/limage/limagesnesgeneric.h \
     source/LeLib/limage/limagethomson.h \
     source/LeLib/limage/limagetim.h \

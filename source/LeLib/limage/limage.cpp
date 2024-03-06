@@ -135,6 +135,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 44;
     if (t==AGON)
         return 45;
+    if (t==PRIMO)
+        return 46;
 
 
     return 255;
@@ -234,6 +236,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic Level Editor";
     if (t==AGON)
         return "Generic AGON image";
+    if (t==PRIMO)
+        return "Generic PRIMO image";
 
 
     return "Unknown image type";
@@ -335,6 +339,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return LevelEditorGeneric;
     if (c==45)
         return AGON;
+    if (c==46)
+        return PRIMO;
 
     return NotSupported;
 

@@ -1,0 +1,27 @@
+unit Screen;
+var
+	ytab : array[192] of integer=BuildTable("0xE800 + i*32 ");
+	//@donotremove ytab
+	//@donotremove tabpow
+	tabpow: array[] of byte = (128,64,32,16,8,4,2,1);
+	i,j:byte;
+	x,y,x2,y2 : byte;
+	zp:pointer;
+	const width:integer = 256;
+	const height:byte = 192;
+	const screen : address = $E800;
+
+
+procedure FillScreen(x,y,x2  : global byte);
+begin
+	for i:=x to y do
+	begin
+		zp:=ytab[i];
+		fill(zp, x2, 32);
+	end;
+end;
+
+
+
+
+end.

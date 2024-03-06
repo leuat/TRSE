@@ -1,12 +1,12 @@
-#include "systemtvc.h"
+#include "systemprimo.h"
 
-SystemTVC::SystemTVC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
+SystemPrimo::SystemPrimo(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj)
 {
     m_processor = Z80;
-    m_system = AbstractSystem::TVC;
+    m_system = AbstractSystem::PRIMO;
 
-    m_startAddress = 0x19EF;
-    m_programStartAddress = 0x19EF;
+    m_startAddress = 0x4400;
+    m_programStartAddress = 0x4400;
     m_supportsExomizer = false;
 
 
@@ -18,12 +18,12 @@ SystemTVC::SystemTVC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
     m_labels.append(SystemLabel(SystemLabel::VIC,"Video memory",0xC000,0xFFFF));
     m_labels.append(SystemLabel(SystemLabel::SID,"Firmware",0xB000,0xBEFF));
 */
-    m_systemColor = QColor(50,10,60);
+    m_systemColor = QColor(20,60,30);
     m_requireEmulatorWorkingDirectory = true;
 
 }
 
-void SystemTVC::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
+void SystemPrimo::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;
     int time = timer.elapsed();
@@ -50,34 +50,29 @@ void SystemTVC::Assemble(QString &text, QString filename, QString currentDir, QS
     QByteArray d = Util::loadBinaryFile(filename+".bin");
 
 
-    QByteArray bas;
+    QByteArray b;
 
-    bas.resize(16);
-    bas.fill(0);
-    bas[0] = 0x00;
-    bas[1] = 0x01;
-    bas[2] = d.size()&0xFF;
-    bas[3] = (d.size()>>8)&0xFF;
-    bas[4] = 0xFF;
+    b.resize(5);
+    b.fill(0);
+    b[0] = 0xD9;
+    b[1] = m_programStartAddress&0xff;
+    b[2] = (m_programStartAddress>>8)&0xff;
+    b[3] = (d.size())&0xFF;
+    b[4] = (d.size()>>8)&0xFF;
 
 //    bas[19] = 0xf5;
 
-    int len = d.size()-20;//+bas.size();
-
-    QByteArray h;
-    h.resize(128);
-    h.fill(0);
-    uint bsize = (len)>>7;
-
-    h[0] = 0x11;
-    h[2] = (uchar)(bsize)&0xff;
-    h[3] = (uchar)(bsize>>8)&0xff;
-    h[4] = len&0x7F;
-    h.append(bas);
-    h.append(d);
+    b.append(d);
 
 
-    Util::SaveByteArray(h,filename+".cas");
+    b.append((uchar)0xc3);
+    b.append((uchar)m_programStartAddress&0xff);
+    b.append((uchar)(m_programStartAddress>>8)&0xff);
+
+    Util::SaveByteArray(b,filename+".pri");
+//    qDebug() << "HERE";
+  //  Util::CopyFile("/Users/leuat/Downloads/ufo.pri", filename+".pri");
+    QFile::remove(filename+".bin");
     time = timer.elapsed();
 
     text+=output;
@@ -85,19 +80,18 @@ void SystemTVC::Assemble(QString &text, QString filename, QString currentDir, QS
 }
 
 
-void SystemTVC::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
-    //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
+void SystemPrimo::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
 #ifndef __APPLE__
 
-    params <<filename+".cas";
+    params <<filename+".pri";
 #else
     QString name = qgetenv("USER");
     if (name.isEmpty())
         name = qgetenv("USERNAME");
-    Util::CopyFile(filename+".cas","/Users/"+name+"/.wine/drive_c/trse.cas");
-    params << "c:\\trse.cas";
+    qDebug() << name;
+    Util::CopyFile(filename+".pri","/Users/"+name+"/.wine/drive_c/trse.pri");
+    params << "c:\\trse.pri";
 
-//    qDebug() << params;
 
 #endif
   //  params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";

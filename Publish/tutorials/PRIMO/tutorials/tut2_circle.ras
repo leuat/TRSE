@@ -1,0 +1,81 @@
+program Circles;
+@use "system/screen"
+
+
+
+var  
+	// some plasma variables
+	x,y,time, shift, val : byte;
+	dst,src : ^byte;
+	// mini sine table
+	const width : byte = 256/8;
+	const height : byte = 192;	
+
+	data : incbin("data/smooth_data.bin", $7D00);
+	
+	sqrt : array[32*height] of byte = 
+		buildtable2d(32,height,
+		"-16*Math.sqrt(Math.pow(i-32/2,2)*4 + 0.1*Math.pow(j-HEIGHT/2,2))");
+
+// Circles!
+
+@define OPTIMIZED 1
+
+procedure Calculate();
+begin
+	src:=#sqrt + shift*64;
+	dst:=#Screen::screen+shift*64;
+	
+	for y:=0 to height step 4 offpage do
+	begin
+@if OPTIMIZED = 0
+		for x:=0 to width do
+		begin
+			dst[x] := data [ src[x] + time ];			
+		end;
+@endif
+@if OPTIMIZED = 1
+		asm("
+			ld a,[time]
+			ld d,a
+			
+			ld bc,[src]
+			ld ix,[dst]
+			ld hl,data
+			
+			repeat 32
+			ld a,[bc]
+			adc a,d
+			ld l,a
+			ld a,[hl]
+			ld [ix],a
+			inc ix
+			inc bc
+			
+			repend
+		
+		");
+	
+
+@endif
+		dst+=128;
+		src+=128;
+	end;
+	
+end;
+
+
+
+
+begin
+		
+
+	while (true) do
+	begin
+		Calculate();
+		time+=10;
+		shift:=(shift+1)&1;
+	end;
+
+
+end.

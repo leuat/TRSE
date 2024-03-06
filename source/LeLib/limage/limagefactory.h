@@ -70,6 +70,7 @@
 #include "source/LeLib/limage/limagetimgen.h"
 #include "source/LeLib/limage/limagelevelgeneric.h"
 #include "source/LeLib/limage/limageagon.h"
+#include "source/LeLib/limage/limageprimo.h"
 
 class LImageFactory {
 public:

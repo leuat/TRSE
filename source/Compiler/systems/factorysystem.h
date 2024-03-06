@@ -45,6 +45,7 @@
 #include "systemdragon.h"
 #include "systemfoenix.h"
 #include "systemagon.h"
+#include "systemprimo.h"
 #include "source/LeLib/util/cinifile.h"
 
 class FactorySystem

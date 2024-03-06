@@ -168,6 +168,11 @@ void FormRasEditor::ExecutePrg(QString fileName)
         // USE WINE
         params.insert(0,emu);
         emu = "/opt/homebrew/bin/wine64";
+        if (!QFile::exists(emu)) {
+            ui->txtOutput->setText("You're running a windows emulator on macos. Please install wine64, and it might just work! TRSE is looking for wine here: "+emu);
+            return;
+
+        }
        }
 #endif
 

@@ -259,6 +259,10 @@ private slots:
     void on_btnAgon_clicked();
 
 
+    void on_btnPrimoEmulator_clicked();
+
+    void on_btnHelpTVC_2_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

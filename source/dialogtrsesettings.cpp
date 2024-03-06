@@ -73,6 +73,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leTimEmulator->setText(m_ini->getString("tim_emulator"));
     ui->lePCWEmulator->setText(m_ini->getString("pcw_emulator"));
     ui->leTVCEmulator->setText(m_ini->getString("TVC_emulator"));
+    ui->lePrimoEmulator->setText(m_ini->getString("primo_emulator"));
     ui->leAgonEmulator->setText(m_ini->getString("agon_emulator"));
     ui->leSparkle->setText(m_ini->getString("sparkle"));
 
@@ -211,6 +212,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("tim_emulator", ui->leTimEmulator->text());
     m_ini->setString("pcw_emulator", ui->lePCWEmulator->text());
     m_ini->setString("TVC_emulator", ui->leTVCEmulator->text());
+    m_ini->setString("primo_emulator", ui->lePrimoEmulator->text());
     m_ini->setString("agon_emulator", ui->leAgonEmulator->text());
     m_ini->setString("trs80_emulator", ui->leTRS80->text());
     m_ini->setString("snes_emulator", ui->leSNES->text());
@@ -351,7 +353,7 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"AGON" <<"TVC"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM"<<"FOENIX" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"AGON" <<"TVC" << "PRIMO"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM"<<"FOENIX" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -1111,4 +1113,21 @@ void DialogTRSESettings::on_btnAgon_clicked()
 }
 
 
+
+
+void DialogTRSESettings::on_btnPrimoEmulator_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Primo emulator"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->lePrimoEmulator->setText(filename);
+
+}
+
+
+void DialogTRSESettings::on_btnHelpTVC_2_clicked()
+{
+    Help("Primo Emulator","Use http://primo.homeserver.hu/html/ultimoemulator.html");
+
+}
 
