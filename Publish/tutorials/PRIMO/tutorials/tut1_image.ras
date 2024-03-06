@@ -1,0 +1,17 @@
+program Image;
+@use "system/screen"
+@use "compression"
+var
+@export "resources/images/squiddy.flf" "data/squiddy.bin" 256
+	
+	
+	image : incbin("data/squiddy.bin") compressed;
+	
+	
+begin
+	
+	Compression::Decompress(#image, Screen::screen);
+	
+	loop();
+	
+end.
