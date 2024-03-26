@@ -18,7 +18,7 @@ var
 	const SCREEN : address = $B000;
 	const SCREEN_BANK : byte = 1;
 
-procedure VSyncIRQ(i1:global long) inline;
+procedure VSyncIRQ(i1:global integer) inline;
 begin
 	asm(" sei");
 	asm("
