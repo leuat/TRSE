@@ -95,4 +95,5 @@ data_header_test2.flf = 0
 use_python = 0
 charset_resources/charsets/charset.flf = :resources/character.rom
 data_header_resources/images/squiddy_hires.flf = 0
+data_header_resources/images/squiddy_hires1.flf = 0
 open_files =, Hello.ras
