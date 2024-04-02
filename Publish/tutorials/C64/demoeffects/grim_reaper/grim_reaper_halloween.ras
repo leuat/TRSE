@@ -367,10 +367,13 @@ begin
 	// Fade in effect
 	FadeInOut::InitCols(#Luminosities::fromBlue);
 	FadeInOut::DefaultFadeIn(#img_col,$4400,#fadein,4);
-
 	
 	
 	copyimagecolordata(#img_col,1);
+	/*zp:=#img_col+2;
+	copyfullscreen(zp,^$4400);
+	zp:=#img_col+2+1000;
+	copyfullscreen(zp,^$D800);*/
 end;
 
 // Runs the effect - outside of the raster. 

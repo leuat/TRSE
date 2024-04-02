@@ -717,9 +717,9 @@ void MultiColorImage::ExportBin(QFile& ofile)
 
     for (int i=0;i<m_charHeight*m_charWidth;i++) {
         PixelChar& pc = m_data[i];
-/*        if (pc.isEmpty())
+        if (pc.isEmpty())
             for (int j=0;j<4;j++)
-                pc.c[j] = 0;*/
+                pc.c[j] = 0;
     }
 
 

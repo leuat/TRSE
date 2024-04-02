@@ -47,7 +47,6 @@ QString Parser::VerifyVariableName(QString v)
     bool ok=false;
     auto temp = v.toInt(&ok, 16);
     if (ok) {
-        qDebug() << "renaming " <<v;
         return Syntax::s.m_currentSystem->m_renamedVariablePrefix+v;
     }
 
