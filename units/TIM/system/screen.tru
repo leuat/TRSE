@@ -10,6 +10,7 @@ var
 	font_ptr, str: pointer;
 
 	cursorx, cursory: integer; // current cursor position
+	cursorx_tmp, cursory_tmp: integer; // used for saving current cursor position
 	chrinv: integer = $0800; // XOR value for drawing (0800 - no changes, 08FF - inverted chars)
 	chrsub: integer = $0020; // value to substract from char code (20 - ASCII, 0 - screen codes)
 
@@ -17,7 +18,7 @@ var
 	scrl_w, scrl_stp, scrl_phs: byte;
 	scrl_txt: pointer;
 	
-	const gfx:address = $8000;
+	const gfx: address = $8000;
 	
 @donotremove PrintChrXY
 /**
@@ -208,12 +209,12 @@ end;
 /**
 	Sets normal or inverted printing, where 0 means normal and 1 inverted
 **/
-procedure SetPrintInv(x: global integer);
+procedure SetPrintInv(inv: boolean);
 begin
-	if x = 0 then
-		chrinv := $0800
+	if inv then
+		chrinv := $08FF
 	else
-		chrinv := $08FF;
+		chrinv := $0800;
 end;
 
 
@@ -276,7 +277,7 @@ end;
 
 
 /**
-	Initialization of simple scrolling, whewe x = 0..127, y = 0..63, cwidth is width in characters (1 character is two X positions!), and str is pointer to a null-terminated string.
+	Initialization of simple scrolling, where x = 0..127, y = 0..63, cwidth is width in characters (1 character is two X positions!), and str is pointer to a null-terminated string.
 **/
 procedure SetScroll(x, y: global integer, cwidth: byte, str: global pointer);
 var
@@ -302,6 +303,9 @@ procedure DoScroll();
 var
 	txtChars : integer;
 begin
+	cursorx_tmp := cursorx;
+	cursory_tmp := cursory;
+
     txtChars := scrl_w - 1;
     if scrl_phs = 0 then begin
         if scrl_pos >= txtChars then begin
@@ -337,6 +341,9 @@ begin
             end
         end
     end;
+
+	cursorx := cursorx_tmp;
+	cursory := cursory_tmp;
 end;
 
 
@@ -360,5 +367,131 @@ tp:
 	");
 	
 end;
+
+/**
+	Prints a 12x8 character to screen at given coordinates, where x = 0..127, y = 0..63, chr 0..254. <br>
+	Uses 1.5 width chars, where for each code, that char is printed and half of next char code.<br>
+	This gives square elements on screen.<br>
+	Control codes are not recognized!
+**/
+@donotremove PrintChrXY15
+procedure PrintChrXY15(x, y, char: global integer);
+// puts character to screen and updates cursor position
+// prchrxy(x, y, chr)
+// x = 0 .. 127, y = 0 .. 63, chr 0-255 
+begin
+	asm("
+	ld bc, (Screen_x)
+	ld de, (Screen_y)
+	ld hl, (Screen_char)
+	
+  ;  // save current position
+    ld (Screen_cursorx), bc
+    ld (Screen_cursory), de
+
+   ; // entry point for the rest of char printing routines
+_prchrxy150:
+	;// video memory ofset = x*128*2 + y*2*2 + 8000H
+    ;// calculate video address
+    ld b, c
+    sla b
+    scf     ;// add 80h
+    rr b
+    sla e
+    sla e
+    ld c, e
+
+    ;// calculate char address, each char is 16 bytes
+    and a
+    ld de, (Screen_chrsub)    ;// substract Screen_chrsub value
+    sbc hl, de
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    ld de, (Screen_font_ptr)
+    add hl, de
+
+    ld e, 3		// 3 rows of 4 pixels
+_prchrxy151:
+    push bc
+    push de
+    ld de,(Screen_chrinv)      ;// load Screen_chrinv
+
+_prchrxy152:
+    ld a,(hl)
+    xor e
+    out (c), a
+
+    inc hl
+    inc bc
+    dec d
+    jp nz, _prchrxy152
+
+    pop de
+    pop bc
+    inc b
+    dec e
+    jp nz, _prchrxy151
+
+;    // calculate next char position
+_prchrxy153:
+    ld a,(Screen_cursorx) ;// x+=3
+    inc a
+    inc a
+    inc a
+;//    bit 7,a         // 6th bit set => x>=128
+;//    jp z, _prchrxy5
+    cp 127
+    jp c, _prchrxy155
+    ld a,(Screen_cursory) ;// y+=2
+    inc a
+    inc a
+    bit 6,a        ; // 5th bit set => y>=64
+    jp z, _prchrxy154
+    xor a         ;  // y=0
+_prchrxy154:
+    ld (Screen_cursory),a
+    xor a        ;   // x=0
+_prchrxy155:
+    ld (Screen_cursorx),a
+	");	
+end;
+
+/**
+	Prints a null-terminated string to screen at current cursor position.<br>
+	Uses 1.5 width chars, where for each code, that char is printed and half of next char code.<br>
+	This gives square elements on screen.<br>
+	Character resolution is 64x32, but characters can be printed at half width and height.<br>
+	Control codes are not recognized!
+**/
+procedure PrintNStr15(str: global pointer, n: global integer);
+begin
+	asm("
+    ld hl, (Screen_str)
+    ld de, (Screen_n)
+_prnstr151:
+    push hl
+    push de
+    ld l,(hl)   ;// get net xhar
+    inc l       ;// check if null
+    dec l
+    jp z, _prnstr152
+    ld h, 0
+    ld bc,(Screen_cursorx)
+    ld de,(Screen_cursory)
+    call _prchrxy150
+    pop de
+    pop hl
+    inc hl
+    dec e
+    jp nz, _prnstr151
+    ret
+_prnstr152:
+    pop hl
+    pop de
+	");
+end;
+
 
 end.
