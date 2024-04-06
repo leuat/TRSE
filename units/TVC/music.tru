@@ -1,0 +1,667 @@
+/*==========================================================
+	3 channel Music Player for VIDEOTON TV-Computer
+  TRSE Rascal unit
+	Author:  Fast&Force - Bela Szalontai, 2024
+	Thnx to BerySoft - Zsolt Bertok for code parts from GE unit
+	Thnx to kks - Karoly Kiss for SidDumpTVCGUI v1.1 development
+	Version: April 4, 2024
+==========================================================*/
+
+Unit Music;
+var 
+	data_pointer				: pointer;
+	graphics_mode				: byte;
+	bpm_value					: byte;
+	bpm							: integer;
+	interrupt_freq				: byte;
+	music_finished_flag			: byte = $FF;
+	freqTableRelocationTable	: array[99+256] of integer;
+	freqTable_8491				: array[99] of integer = (0,252,267,283,300,318,337,357,378,401,424,450,476,505,535,567,600,636,674,714,756,801,849,899,953,1010,1070,1133,1201,1272,1348,1428,1513,1603,1698,1799,1906,2019,2139,2266,2401,2544,2695,2855,3025,3205,3396,3598,3812,4038,4278,4533,4802,5088,5390,5711,6050,6410,6791,7195,7623,8076,8557,9065,9605,10176,10781,11422,12101,12820,13583,14391,15246,16153,17113,18131,19209,20351,21561,22844,24202,25641,27166,28781,30492,32306,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	freqTable_5008				: array[99] of integer = (0,428,453,480,509,539,571,605,641,679,720,763,808,856,907,961,1018,1078,1143,1210,1282,1359,1439,1525,1616,1712,1814,1921,2036,2157,2285,2421,2565,2717,2879,3050,3232,3424,3627,3843,4072,4314,4570,4842,5130,5435,5758,6100,6463,6847,7255,7686,8143,8627,9140,9684,10259,10870,11516,12201,12926,13695,14509,15372,16286,17254,18280,19367,20519,21739,23032,24401,25852,27389,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	i							: integer;	
+
+	// constants for inner use	
+	@define DIGI_FREQ_HI        15		// digi frequency hi byte	
+	@define CRTC_CUR_START_CHAR	10      // CRTC register #10 - first character in the cursor-interrupt line
+	@define CRTC_CUR_END_CHAR   11      // CRTC register #11 - last  character in the cursor-interrupt line
+	@define MAX_VOLUME        	20		// maximum volume per channel
+	@define DURATION_IRQ_CONST	6		// 8491/6 = 0,7ms
+	@define BPM_DIVIDER			14153	// 8491/6*10
+	@define MUTE				86		// 0 Hz	channel is muted
+	@define FINISH				253		// music playing is finished
+	@define SKIP				254		// channel is skipped (previous sound continues)
+	@define LOOP				255		// music is looped
+	@define FRQINC00			87		// increase freq const by 256
+	@define FRQINC0F			102		// increase freq const by 240					
+	@define FRQDEC00			103		// decrease freq const by 256
+	@define FRQDEC0F			118		// decrease freq const by 240
+	@define ADSR00				119		// volume ADSR 0 
+	@define ADSR01				120		// volume ADSR 1	
+	@define ADSR02				121		// volume ADSR 2
+	@define ADSR03				122		// volume ADSR 3
+	@define ADSR04				123		// volume ADSR 4
+	@define ADSR05				124		// volume ADSR 5
+	@define ADSR06				125		// volume ADSR 6
+	@define ADSR07				126		// volume ADSR 7
+	@define ADSR08				127		// volume ADSR 8
+	@define ADSR09				128		// volume ADSR 9
+	@define ADSR0A				129		// volume ADSR 10
+	@define ADSR0B				130		// volume ADSR 11
+	@define ADSR0C				131		// volume ADSR 12
+	@define ADSR0D				132		// volume ADSR 13
+	@define ADSR0E				133		// volume ADSR 14
+	@define ADSR0F				134		// volume ADSR 15
+	
+	// Constants
+	const IT_ACK_PORT			: address = 7;
+	const SOUND_LO_PORT			: address = 4;		// Sound PITCH low 8 bit
+	const SOUND_HI_PORT			: address = 5;		// Bits 0-3.: sound PITCH high 4 bits
+	const SOUND_VOLUME_PORT		: address = 6;		// Bits 2-5: sound VOLUME (0-15)
+	
+	const CRTC_REG_PORT     	: byte = $70; 		// port to select the CRTC register
+	const CRTC_DATA_PORT    	: byte = $71;  		// port to the CRTC data	
+	const PORT_5_MEM_MIRROR		: address = 2834;
+	
+	const GRAPHICS_MODE_2		: byte = 0;
+	const GRAPHICS_MODE_4		: byte = 1;
+	const GRAPHICS_MODE_16		: byte = 2;
+	const INTERRUPT_FREQ_8491	: byte = $E9;		// IT frequency = Fsys / 16 / 23 = ~ 8491 Hz (4096 - 23 = 4073 = $0FE9)
+	const INTERRUPT_FREQ_5008	: byte = $D9;		// IT frequency = Fsys / 16 / 39 = ~ 5008 Hz (4096 - 39 = 4057 = $0FD9)
+	const BPM_SID_5008			: integer = 884;
+	const BPM_SID_8491			: integer = 500;
+
+/**
+Init the Music Library with the Sound Generator frequency.<br/> 
+Frequency can be 8491Hz or 5008 Hz<br/>
+This procedure does not change any interrupt<br/>
+only prepares frequency tables of sound generator<br/>
+<br/>
+Following constants could be used:<br/>
+for interrupt_freq: INTERRUPT_FREQ_8491, INTERRUPT_FREQ_5008<br/>
+<br/>
+Params:
+<ul>
+<li>interrupt_freq: $E9, $D9 (only this two value allowed)</li>
+</ul>
+<br/>
+Example 1: Music::Init(Music::INTERRUPT_FREQ_8491);<br/>
+Example 2: Music::Init(Music::INTERRUPT_FREQ_5008);<br/>
+<br/>
+**/
+procedure Init(interrupt_freq: global byte; );
+begin
+	if (interrupt_freq = $E9) then
+	asm("
+		ld de,Music_freqTableRelocationTable		;// copy freq table into the first address divisible by 256
+		inc d
+		ld e,$00
+		ld a,d						
+		ld (FREQ_TABLE_HIGH+1),a					;// set up the high value of new freq table address
+		ld hl,Music_freqTable_8491
+		ld bc,99+99
+		ldir
+	")
+	else
+		asm("
+		ld de,Music_freqTableRelocationTable		;// copy freq table into the first address divisible by 256
+		inc d
+		ld e,$00
+		ld a,d						
+		ld (FREQ_TABLE_HIGH+1),a					;// set up the high value of new freq table address
+		ld hl,Music_freqTable_5008
+		ld bc,99+99
+		ldir
+	");
+end;
+
+/**
+Play Music from binary data with given speed and graphics mode<br/> 
+<br/>
+Warning:<br/>
+During playing the CRTC cursor interrupt is disabled<br/>
+During playing HALT isntruction can be used but the frequency is 8491Hz or 5008Hz instead of 50Hz<br/>
+During playing the shadow registers (BC', DE', HL', AF') and IX and IY registers are used by interrupt so could not be used in main program<br/>
+During Playing Stack pointer could not be used as a register directly<br/>
+<br/>
+BPM is a playing speed value between 60 and 6000<br/>
+BPM actualy is a frame playing frequency calculated as: SoundItFrequency/6/(14153/BPM)<br/>
+For example at 8491 Hz interrupt a SID converted music needs 50Hz frame playing frequency<br/>
+BPM value for 8491Hz is: BPM = 14153/(8491Hz/6/50Hz) = 500
+<br/>
+Following constants could be used:<br/>
+for graphics_mode: GRAPHICS_MODE_2, GRAPHICS_MODE_4, GRAPHICS_MODE_16<br/>
+for bpm value: BPM_SID_5008, BPM_SID_8491<br/>
+<br/>
+Params:
+<ul>
+<li>data_pointer: points to the binary music data</li>
+<li>bpm: 60-6000</li>
+<li>graphics_mode: 0,1,2</li>
+</ul>
+<br/>
+Example: Music::Play(#music_data, Music::BPM_SID_5008, Music::GRAPHICS_MODE_4);<br/>
+<br/>
+**/
+procedure Play(data_pointer: global pointer; bpm: global integer; graphics_mode : global byte; );
+begin
+	bpm_value:= @BPM_DIVIDER / bpm;
+	asm("		
+		di											;// disable interrupts
+	;// overwrite the system interrupt handler entry point with JP MUSIC_IT_HANDLER instruction
+		ld	HL,$38									;// HL -> start address of System Interrupt Handler
+		ld	(HL),195								;// 195: JP
+		ld  DE,MusicITHandler
+		inc	HL
+		ld	(HL),E
+		inc	HL
+		ld	(HL),D 									;// $38: JP MUSIC_IT_HANDLER
+	;// set frequency and enable sound interrupt
+		ld	A,(MUSIC_PORT_5_MEM_MIRROR)
+		and	128+64									;// clear lower 6 bits (#0-#3: PITCH high 4 bits; #4:SOUND IT, #5:SOUND SIGN)
+		or	@DIGI_FREQ_HI+32						;// set frequency on high 4 bits and set bit #5 to enable SOUND-IT
+		ld	C,91									;// port #91: sound generator frequency divider
+		in	B,(C)									;// clear sound generator frequency divider port for precise timing
+		out	(MUSIC_SOUND_HI_PORT),A					;// send register A value to port
+		ld  A,(Music_interrupt_freq)				;// music frequency lower 8 bits
+		out	(MUSIC_SOUND_LO_PORT),A					;// send value to port
+	;// disable the cursor-interrupt
+		ld	A,@CRTC_CUR_START_CHAR
+		out	(MUSIC_CRTC_REG_PORT),A					;// select CRTC register #10
+		ld	A,3+32                  				;// set bit #5 (+ the default value 3) to disable the cursor-interrupt
+		out	(MUSIC_CRTC_DATA_PORT),A				;// send value to CRTC data port
+		ld	B,A										;// save value to register B
+		ld	A,@CRTC_CUR_END_CHAR
+		out	(MUSIC_CRTC_REG_PORT),A					;// select CRTC register #11
+		ld	A,B                     				;// restore value from register B
+		out	(MUSIC_CRTC_DATA_PORT),A				;// send value to CRTC data port
+	;// init variables
+		ld	A,[Music_bpm_value]
+		ld	(BPM_COUNTER+1),A
+		ld	A,@DURATION_IRQ_CONST
+		ld	(DURATION_COUNTER+1),A
+		ld 	hl,[Music_data_pointer]
+		dec HL										;// -1 is needed because parsing is started with 'inc hl' instruction
+		ld	(MUSICPOS+1),HL
+		ld	(MUSIC_RESTART+1),HL
+		ld 	a,(Music_graphics_mode)
+		ld (GR_MODE+1),a
+		xor a
+		ld (Music_music_finished_flag),a			;// set flag music is not finished
+		ei											;// enable interrupts
+		ret
+		
+	;//------------------------------------------------------------------
+	;// MUSIC INTERRUPT HANDLER 
+	;// Execution time: 280 cycle 
+	;// Interrupt Frequency: ~ 8491.847826086956 Hz
+	;// CPU load by sound generator: ~ 77%
+	;//
+	;// EXX IX = channel 1 phase accumulator 
+	;// EXX IY = channel 2 phase accumulator 
+	;// EXX HL = channel 3 phase accumulator 
+	;//
+	;// EXX BC = local variable for calculation 
+	;// EXX DE = local variable for mixing
+	;//------------------------------------------------------------------
+	MusicITHandler:
+		ex	af,af'
+		exx
+		out	(MUSIC_IT_ACK_PORT),A					;//	ack interrupt
+	PAC1:
+		ld	BC,$0000;keep							// self modified code do not optimise
+		add	IX,BC									;// IX = IX + phase accumulator freq const
+	PAC2:
+		ld	BC,$0000;keep							// self modified code do not optimise
+		add	IY,BC									;// IY = IY + phase accumulator freq const
+	PAC3:
+		ld	BC,$0000;keep							// self modified code do not optimise
+		add	HL,BC									;//	HL = HL + phase accumulator freq const
+				
+		ld	C,$80									;// set mixed value for channel 1 based on pac1 msb
+		ld	A,IXH
+		cp	C										;//	check highest bit of PAC1
+		sbc	A,A
+	CH1_VOLUME:
+		and	@MAX_VOLUME				
+		ld	B,A										;// STORE CH1
+
+		ld	A,IYH									;// set mixed value for channel 2 based on pac2 msb				
+		cp	C										;//	check highest bit of PAC2
+		sbc	A,A
+	CH2_VOLUME:
+		and	@MAX_VOLUME
+		add	A,B										;//	MIX CH1 + CH2
+		ld	B,A										;// STORE CH1 + CH2         
+				
+		ld	A,H										;// set mixed value for channel 3 based on pac3 msb
+		cp	C										;//	check highest bit of PAC3
+		sbc	A,A
+	CH3_VOLUME:
+		and	@MAX_VOLUME
+				
+		add	A,B										;// MIX CH1 + CH2 + CH3
+	GR_MODE:
+		or	1										;// must have in 4 color graphics mode (2 for 16 color mode)
+		out	(MUSIC_SOUND_VOLUME_PORT),A				;//	write to sound port
+				
+	DURATION_COUNTER:
+		ld	A,@DURATION_IRQ_CONST					;// 06h -> 1 ms, 55h -> 10 ms
+		dec	A
+		ld	(DURATION_COUNTER+1),A
+		jp	Z,MUSIC_PROCESSOR						;// music processor is part of interrupt
+		
+		exx
+		ex	AF,AF'
+		ei
+		ret
+	
+	;// not only the sound generator, but also the music player is part of the interrupt handler
+	MUSIC_PROCESSOR:
+		ld	A,@DURATION_IRQ_CONST					;// reset duration counter
+		ld	(DURATION_COUNTER+1),A
+		exx
+		ex	AF,AF'
+		ei											;// interrupt is enabled but not finished. running on (the next interrupt) is not a problem
+		push	AF									;// running in the interrupt -> normal registers are need to be saved
+		push	BC
+		push	DE
+		push	HL
+				
+	;// Handling ADSR for channels (only volume release)				
+	CH1_VOL_RELEASE_CNT:
+		ld	bc,0
+		dec	bc
+		ld	(CH1_VOL_RELEASE_CNT+1),bc
+		ld	a,b
+		or	c
+		jp	nz,CH2_VOL_RELEASE_CNT
+	CH1_VOL_RELEASE:
+		ld	bc,0									;// reset counter
+		ld	(CH1_VOL_RELEASE_CNT+1),bc
+		ld	a,(CH1_VOLUME+1)
+		sub	4										;// decrease volume from 14h to 00h in 5 steps
+		jp	c,CH2_VOL_RELEASE_CNT
+		ld	(CH1_VOLUME+1),a
+				
+	CH2_VOL_RELEASE_CNT:
+		ld	bc,0
+		dec	bc
+		ld	(CH2_VOL_RELEASE_CNT+1),bc
+		ld	a,b
+		or	c
+		jp	nz,CH3_VOL_RELEASE_CNT
+	CH2_VOL_RELEASE:
+		ld	bc,0									;// reset counter
+		ld	(CH2_VOL_RELEASE_CNT+1),bc
+		ld	a,(CH2_VOLUME+1)
+		sub	4										;// decrease volume from 14h to 00h in 5 steps
+		jp	c,CH3_VOL_RELEASE_CNT
+		ld	(CH2_VOLUME+1),a
+				
+	CH3_VOL_RELEASE_CNT:
+		ld	bc,0
+		dec	bc
+		ld	(CH3_VOL_RELEASE_CNT+1),bc
+		ld	a,b
+		or	c
+		jp	nz,BPM_COUNTER
+	CH3_VOL_RELEASE:
+		ld	bc,0									;// reset counter
+		ld	(CH3_VOL_RELEASE_CNT+1),bc
+		ld	a,(CH3_VOLUME+1)
+		sub	4										;// decrease volume from 14h to 00h in 5 steps
+		jp	c,BPM_COUNTER
+		ld	(CH3_VOLUME+1),a
+				
+	BPM_COUNTER:
+		ld	a,$28									;// process BPM counter				
+		dec	a
+		ld	(BPM_COUNTER+1),A
+		jp	NZ,END_INT
+		ld	A,(Music_bpm_value)						;// reset BPM divider (IRQfreq/BPM_DIVIDER)/BPM
+		ld	(BPM_COUNTER+1),A
+				
+	;// parse music record							
+	MUSICPOS:
+		ld	HL,Music_data_pointer
+	FREQ_TABLE_HIGH:
+		ld	d,$1b									;// high address of sound frequency constant lookup table
+	MP_CH1:
+		inc	hl
+		ld	a,(hl)									;// load first byte of music record
+	;// check control codes for channel 1
+		cp  @FINISH									;// first byte can be stop playing
+		jp  nz,CHECK_LOOP
+		ld  hl,0
+		ld	(PAC1+1),hl		
+		ld	(PAC2+1),hl		
+		ld	(PAC3+1),hl		
+		ld  a,$FF
+		ld (Music_music_finished_flag),a
+		jp 	END_INT			
+	CHECK_LOOP:	
+		cp	@LOOP									;// first byte can be LOOP control
+		jp	nz,MP_SKIP
+	MUSIC_RESTART:
+		ld	HL,Music_data_pointer					;// reset music data pointer
+		ld	(MUSICPOS+1),HL
+		jp	MP_CH1									;// restart parsing
+	MP_SKIP:
+		cp	@SKIP
+		jp	z,MP_CH2								;// SKIP -> skip channel 1
+		cp	@FRQINC00
+		jp	c,MP_CH1_NEXT1
+		cp	@FRQINC0F + 1
+		jp	nc,MP_CH1_NEXT1
+	;// INCFREQ0x -> increment frequency
+		sub	@FRQINC00								;// A = freq delta / 16
+		rlca
+		push hl
+		ld	hl,(PAC1+1)
+		ld	b,0
+		ld	c,a
+		add	hl,bc
+		ld	(PAC1+1),hl
+		pop	hl
+		jp	MP_CH2
+	MP_CH1_NEXT1:
+		cp	@FRQDEC00
+		jp	c,MP_CH1_NEXT2
+		cp	@FRQDEC0F + 1
+		jp	nc,MP_CH1_NEXT2
+	;// DECFREQ0x -> decrement frequency
+		sub	@FRQDEC00								;// A = freq delta / 16
+		rlca
+		push	hl
+		ld	hl,(PAC1+1)
+		ld	b,0
+		ld	c,a
+		or	a										;// clear CY
+		sbc	hl,bc
+		ld	(PAC1+1),hl
+		pop	hl
+		jp	MP_CH2
+	MP_CH1_NEXT2:
+		call CHECK_RELEASE_CONTROL
+		jp	nz,MP_CH1_NEXT3
+		ld	(CH1_VOL_RELEASE+1),bc
+		jp	MP_CH1
+	;// handle normal musical note on CH1
+	MP_CH1_NEXT3:
+		ld	e,a
+		sla	e										;// low address of sound frequency constant lookup table = control code * 2
+		ld	a,(de)									;// load frequ constant for CH1
+		inc	de
+		ld	c,a
+		ld	a,(de)
+		ld	b,a
+		ld	(PAC1+1),BC								;// put into CH1 freq constant in irq handler    
+		ld	a,@MAX_VOLUME							;// new sound -> new volume
+		ld	(CH1_VOLUME+1),a
+		ld	bc,(CH1_VOL_RELEASE+1)
+		ld	(CH1_VOL_RELEASE_CNT+1),bc			
+	MP_CH2:
+		inc	hl
+		ld	a,(hl)
+	;// check control codes for channel 2
+		cp	@SKIP
+		jp	z,MP_CH3								;// SKIP -> skip channel 2
+		cp	@FRQINC00
+		jp	c,MP_CH2_NEXT1
+		cp	@FRQINC0F + 1
+		jp	nc,MP_CH2_NEXT1
+	;// INCFREQ0x -> increment frequency
+		sub	@FRQINC00								;// A = freq delta / 16
+		rlca
+		push	hl
+		ld	hl,(PAC2+1)
+		ld	b,0
+		ld	c,a
+		add	hl,bc
+		ld	(PAC2+1),hl
+		pop	hl
+		jp	MP_CH3
+	MP_CH2_NEXT1:
+		cp @FRQDEC00
+		jp c,MP_CH2_NEXT2
+		cp @FRQDEC0F + 1
+		jp nc,MP_CH2_NEXT2
+	;// DECFREQ0x -> decrement frequency
+		sub	@FRQDEC00								;// A = freq delta / 16
+		rlca
+		push	hl
+		ld	hl,(PAC2+1)
+		ld	b,0
+		ld	c,a
+		or	a										;// clear CY
+		sbc	hl,bc
+		ld	(PAC2+1),hl
+		pop	hl
+		jp	MP_CH3
+	MP_CH2_NEXT2:
+		call CHECK_RELEASE_CONTROL
+		jp	nz,MP_CH2_NEXT3
+		ld	(CH2_VOL_RELEASE+1),bc
+		jp	MP_CH2
+	;// handle normal musical note on CH2
+	MP_CH2_NEXT3:
+		ld	e,a
+		sla	e										;// low address of sound frequency constant lookup table
+		ld	a,(de)									;// load frequ constant for CH2
+		inc	de
+		ld	c,a
+		ld	a,(de)
+		ld	b,a
+		ld	(PAC2+1),BC								;// put into CH2 freq constant in irq handler     
+		ld	a,@MAX_VOLUME							;// new sound -> new volume
+		ld	(CH2_VOLUME+1),a
+		ld	bc,(CH2_VOL_RELEASE+1)
+		ld	(CH2_VOL_RELEASE_CNT+1),bc
+				
+	MP_CH3:
+		inc	hl
+		ld	a,(hl)
+	;// check control codes for channel 3
+		cp	@SKIP
+		jp	z,MP_END								;// SKIP -> skip channel 3
+		cp	@FRQINC00
+		jp	c,MP_CH3_NEXT1
+		cp	@FRQINC0F + 1
+		jp	nc,MP_CH3_NEXT1
+	;// INCFREQ0x -> increment frequency
+		sub	@FRQINC00								;// A = freq delta / 16
+		rlca
+		push	hl
+		ld	hl,(PAC3+1)
+		ld	b,0
+		ld	c,a
+		add	hl,bc
+		ld	(PAC3+1),hl
+		pop	hl
+		jp	MP_END
+	MP_CH3_NEXT1:
+		cp	@FRQDEC00
+		jp	c,MP_CH3_NEXT2
+		cp	@FRQDEC0F + 1
+		jp	nc,MP_CH3_NEXT2
+	;// DECFREQ0x -> decrement frequency
+		sub	@FRQDEC00								;// A = freq delta / 16
+		rlca
+		push	hl
+		ld	hl,(PAC3+1)
+		ld	b,0
+		ld	c,a
+		or	a										;// clear CY
+		sbc	hl,bc
+		ld	(PAC3+1),hl
+		pop	hl
+		jp	MP_END
+	MP_CH3_NEXT2:
+		call CHECK_RELEASE_CONTROL
+		jp	nz,MP_CH3_NEXT3
+		ld	(CH3_VOL_RELEASE+1),bc
+		jp	MP_CH3
+	;// handle normal musical note on CH3
+	MP_CH3_NEXT3:
+		ld	e,a
+		sla	e										;// low address of sound frequency constant lookup table
+		ld	a,(de)									;// load frequ constant for CH3
+		inc	de
+		ld	c,a
+		ld	a,(de)
+		ld	b,a
+		ld	(PAC3+1),BC								;// put into CH3 freq constant in irq handler    				
+		ld	a,@MAX_VOLUME							;// new sound -> new volume
+		ld	(CH3_VOLUME+1),a
+		ld	bc,(CH3_VOL_RELEASE+1)
+		ld	(CH3_VOL_RELEASE_CNT+1),bc
+				
+	MP_END:
+		ld	(MUSICPOS+1),HL
+	END_INT:										;// End of interrupt handler
+		pop	HL
+		pop	DE
+		pop	BC
+		pop	AF
+		ret
+		
+	;//--------------------------------------------------------------------------------------------------------------------------------------                                   
+	;// Subroutine of interrupt handler
+	;// check and set ADSR release control code
+	;// INPUT: 		A = control code to be look up
+	;// OUTPUT: 	BC = VOL RELEASE COUNTER if RELEASE00..RELEASE0F code is found
+	;// 			Z = 1 if found
+	;//--------------------------------------------------------------------------------------------------------------------------------------                                   
+	CHECK_RELEASE_CONTROL:
+		cp	@ADSR00
+		jp	nz,MP_CH1_NEXT21
+		ld	bc,2									;// ~ 7ms
+		ret
+	MP_CH1_NEXT21:
+		cp	@ADSR01
+		jp	nz,MP_CH1_NEXT22
+		ld	bc,7									;// ~ 24ms
+		ret
+	MP_CH1_NEXT22:
+		cp	@ADSR02
+		jp	nz,MP_CH1_NEXT23
+		ld	bc,14									;// ~ 49ms
+		ret
+	MP_CH1_NEXT23:
+		cp	@ADSR03
+		jp	nz,MP_CH1_NEXT24
+		ld	bc,21									;// ~ 74ms
+		ret	
+	MP_CH1_NEXT24:
+		cp	@ADSR04
+		jp	nz,MP_CH1_NEXT25
+		ld	bc,33									;// ~ 116ms
+		ret
+	MP_CH1_NEXT25:
+		cp	@ADSR05
+		jp	nz,MP_CH1_NEXT26
+		ld	bc,48									;// ~ 169ms
+		ret
+	MP_CH1_NEXT26:
+		cp	@ADSR06
+		jp	nz,MP_CH1_NEXT27
+		ld	bc,58									;// ~ 204ms
+		ret
+	MP_CH1_NEXT27:		
+		cp	@ADSR07
+		jp	nz,MP_CH1_NEXT28
+		ld	bc,68									;// ~ 240ms
+		ret
+	MP_CH1_NEXT28:
+		cp	@ADSR08
+		jp	nz,MP_CH1_NEXT29
+		ld	bc,85									;// ~ 300ms
+		ret
+	MP_CH1_NEXT29:
+		cp	@ADSR09
+		jp	nz,MP_CH1_NEXT2A
+		ld	bc,213									;// ~ 752ms
+		ret
+	MP_CH1_NEXT2A:
+		cp	@ADSR0A
+		jp	nz,MP_CH1_NEXT2B
+		ld	bc,425									;// ~ 1501ms
+		ret
+	MP_CH1_NEXT2B:
+		cp	@ADSR0B
+		jp	nz,MP_CH1_NEXT2C
+		ld	bc,680									;// ~ 2402ms
+		ret
+	MP_CH1_NEXT2C:		
+		cp	@ADSR0C
+		jp	nz,MP_CH1_NEXT2D
+		ld	bc,850									;// ~ 3002ms
+		ret
+	MP_CH1_NEXT2D:		
+		cp	@ADSR0D
+		jp	nz,MP_CH1_NEXT2E
+		ld	bc,2548									;// ~ 9001ms
+		ret
+	MP_CH1_NEXT2E:		
+		cp	@ADSR0E
+		jp	nz,MP_CH1_NEXT2F
+		ld	bc,4246									;// ~ 15000ms
+		ret
+	MP_CH1_NEXT2F:		
+		cp	@ADSR0F
+		ret	nz
+		ld	bc,6794									;// ~ 24001ms
+		ret	  
+	");
+
+end;
+
+/**
+Stops the music playing and restore the original TVC interrupt<br/>
+Example: Music::Stop();<br/>
+**/
+procedure Stop();
+begin
+	asm("
+		di											;// disable interrupts	 
+;// enable the cursor-interrupt		
+		ld	A,@CRTC_CUR_START_CHAR		
+		out	(MUSIC_CRTC_REG_PORT),A					;// cursor pos felső byte regiszter kiválasztása 
+		ld	A,3                     				;// clear the bit #5 and #6 to disable the cursor-interrupt and set the default value (3)
+		out	(MUSIC_CRTC_DATA_PORT),A				;// H-ban levő cursor pos felső byte kiírása
+		
+;// overwrite the system interrupt handler entry point with JP CURSOR_IT_HANDLER instruction
+		ld	HL,$38									;// HL -> start address of System Interrupt Handler
+		ld	(HL),$F5								;// $F5: PUSH AF
+		inc	HL
+		ld	(HL),$3E
+		inc	HL
+		ld	(HL),$70								;// $3E $70: LD A,$70
+		
+;// disables the sound interrupt
+		ld	A,(MUSIC_PORT_5_MEM_MIRROR)
+		and	128+64									;// clear lower 6 bits (#0-#3: PITCH high 4 bits; #4:SOUND IT, #5:SOUND SIGN)
+		out	(MUSIC_SOUND_HI_PORT),A					;// send register A value to port -> disable SOUND-IT, disable SOUND-SIGN, and clear PITCH high 4 bits
+		xor	A										;// A = 0
+		out	(MUSIC_SOUND_LO_PORT),A					;// send value to port (clear PITCH lower 8 bits)
+		ei											;// enable interrupts
+		ld 	a,$FF
+		ld	(Music_music_finished_flag),a			;// set flag music is finished
+	");
+
+end;
+
+/**
+Returns the status of music playing. 0 = playing, 255 = music is finished<br/>
+When music is finished, the sound generator is muted, but the interrupt still works<br/>
+if this function returns with 255 then the Stop() procedure must be called to stop and restore interrupt<br/>
+Example: while (Music::IsMusicFinished() = 0) do;<br/>
+**/
+function IsMusicFinished() : byte;
+begin
+	Asm("
+		ld	A,(Music_music_finished_flag)			;// return the music_finsihed_flag -> 255 = finished, 0 = playing is in progress
+	");
+end;
+
+end.
