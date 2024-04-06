@@ -1,0 +1,101 @@
+unit PolyCGA16;
+@use "system/screen"
+@use "system/memory"
+var
+	p1,p2 : ^byte;	
+	
+var	
+
+
+	val : byte;
+	dx1, dx2, ex1, ex2, i : integer;
+	lx1, lx2, lx3, y ,xx1, xx2 : signed integer;
+	dst,p,screen : pointer;
+	v1,v2,j,d1,d2,d3,v3,v4,c1,v1x,v2x: byte;
+	
+	const shift : byte = 7;
+
+
+
+
+procedure hline();
+begin
+
+end;
+
+
+
+
+procedure Poly(x1,y1,x2,y2,x3,y3:signed integer;
+                val : global byte);
+
+
+begin
+	if ( y1>y3 ) then
+	begin
+		Memory::Swap(x1,x3);
+		Memory::Swap(y1,y3);
+
+	end;
+	
+	
+	if ( y2>y3 ) then
+	begin
+		Memory::Swap(x2,x3);
+		Memory::Swap(y2,y3);
+
+	end;
+	if ( y1>y2 ) then
+	begin
+		Memory::Swap(x1,x2);
+		Memory::Swap(y1,y2);
+    end;
+
+	if ( (y1-y3)=0 ) then y3+=2;
+	if ( (y1-y2)=0 ) then y2+=2;
+	if ( (y2-y3)=0 ) then y3+=2;
+
+	lx1 := ((x1-x3))<<shift;
+	lx2 := ((x1-x2))<<shift;
+	lx3 := ((x2-x3))<<shift;
+	
+	
+	lx1 := lx1/(y1-y3);
+	lx2 := lx2/(y1-y2);
+	lx3 := lx3/(y2-y3);
+	
+	
+    xx1:=x1 << (shift);
+	xx2:=xx1;
+	y:=y1;
+	dst := screen +y*80;//ptr($B800,y*40);
+	
+	while (y<y2) do
+	begin
+		hline();		      
+		dst+=80;
+        y+=1;
+	
+		xx1+=lx1;
+		xx2+=lx2;
+
+
+	end;
+	lx2:=lx3;
+	while (y<y3) do
+	begin
+		hline();		      
+		dst+=80;
+        y+=1;
+	
+		xx1+=lx1;
+		xx2+=lx2;
+
+	end;
+
+end;
+
+	
+	
+	
+end.

@@ -139,4 +139,16 @@ begin
   end;
 end;
 
+procedure Swap(dex1,dex2 : integer) inline;
+begin
+	asm("
+		mov ax,[[Memory_dex1]]	
+		mov bx,[[Memory_dex2]]	
+		mov [[Memory_dex1]],bx	
+		mov [[Memory_dex2]],ax	
+	
+	");
+end;
+
+
 end.

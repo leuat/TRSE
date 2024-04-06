@@ -73,4 +73,5 @@ cc1541_disk_type = d64
 use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
-open_files =, info.rtf
+open_files = ,info.rtf
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/demoeffects/

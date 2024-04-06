@@ -399,7 +399,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
         }
         else {
             node->m_expr->Accept(this);
-            as->Asm("mov di,ax");
+            as->Asm("mov di,"+getAx(node->m_expr));
             if (node->getArrayType(as)==TokenType::INTEGER)
                 as->Asm("shl di,1 ; Accomodate for word");
             if (node->getArrayType(as)==TokenType::LONG)

@@ -1,4 +1,6 @@
 unit PolyCGA;
+@use "system/screen"
+@use "system/memory"
 var
 	p1,p2 : ^byte;	
 	
@@ -70,5 +72,308 @@ begin
 	
 	");
 end;	
+	
+
+var	
+
+	maskOut : array[4] of byte = (%11000000,%11110000, %11111100, %11111111);
+	@donotremove maskIn
+	maskIn : array[4] of byte = (%11111111,%00111111, %00001111, %00000011);
+
+	maskBit : array[4] of byte =( %00111111,  %11001111, %11110011,%11111100);
+	@donotremove maskBitInv
+	maskBitInv : array[4] of byte =(%11000000,   %00110000,%00001100,%00000011 );
+
+	val : byte;
+	dx1, dx2, ex1, ex2, i : integer;
+	lx1, lx2, lx3, y ,xx1, xx2 : signed integer;
+	dst,p,screen : pointer;
+	v1,v2,j,d1,d2,d3,v3,v4,c1,v1x,v2x: byte;
+	
+	const shift : byte = 7;
+
+
+
+
+procedure hline();
+begin
+//	dx1:=xx1>>8;
+//	dx2:=xx2>>8;
+	
+	asm("
+		mov cl,7
+		mov ax,[PolyCGA_xx1]
+		mov bx,[PolyCGA_xx2]
+		sar  ax,cl
+		sar  bx,cl
+		
+		cmp ax,bx
+		jbe label0
+		xchg ax,bx
+
+label0:		
+		
+		mov word [PolyCGA_dx1],ax
+		mov word [PolyCGA_dx2],bx
+
+
+		
+	");
+
+asm("		
+		push ax
+		push bx
+		
+		
+		and ax,3
+		and bx,3
+		mov cl,[ds:si+bx]
+		mov [PolyCGA_v2],cl
+		xor cl,255
+		mov [PolyCGA_v2x],cl
+;		mov si,PolyCGA_maskIn
+		mov bx,ax
+		mov dl,[ds:si+bx+4]
+;		mov [PolyCGA_v1],cl
+		mov dh,dl
+		xor dh,255
+;		mov [PolyCGA_v1x],cl
+		pop bx
+		pop ax
+		mov cl,2
+		sar ax,cl
+		sar bx,cl
+
+;		mov [PolyCGA_ex1],ax		
+;		mov [PolyCGA_ex2],bx		
+		
+		les di,[PolyCGA_dst]
+		add di,ax
+		sub bx,ax
+
+		cmp bx,0
+		jne fullrun		
+	
+	");
+
+//	v1:=maskIn[dx1&3];
+//	v2:=maskOut[dx2&3];
+/*
+asm(";woot");
+	if (dx1>dx2) then 
+	begin
+		Swap(dx2, dx1);
+	end;
+*/
+//	ex1:=dx1>>2;
+//	ex2:=dx2>>2;
+
+	
+	
+//	if (ex1=ex2) then
+	begin
+		asm("
+		mov bx,[PolyCGA_dx1]
+		mov cx,[PolyCGA_dx2]		
+		and cx,3
+		and bx,3
+		cmp cx,bx
+		je alldone
+
+		mov al,[es:di]
+		push si
+		mov si,PolyCGA_maskBit
+		
+lpp:
+		and al,[si+bx] ; j:=j & maskBit[d1];
+		mov ah, [PolyCGA_val]
+		and ah, [si+bx+4] ; and with maskinv
+		or al,ah		
+		inc bx
+		cmp cx, bx
+		jne lpp		
+		
+		mov [es:di],al
+		pop si
+		
+alldone:
+		ret
+		");				
+		/*
+		i:=ex1;
+		ex1:=dx1&3;
+		ex2:=dx2&3;
+		
+		if (ex1<>ex2) then
+		begin
+			
+			j := dst[i];
+			for d1:=ex1 to ex2 do
+			begin
+				j:=j & maskBit[d1]; // 00111111
+				v2:=maskBitInv[d1]; // 11000000
+				j:=j | (val&v2);
+			end;
+			dst[i] := j;
+		end;
+		*/	
+	end;
+//	else
+	begin
+		
+//		v3 := v1 xor $FF;
+//		v4 := v2 xor $FF;
+/*		
+		j:=dst[dx1];
+		dst[dx1]:=(j&(v1 xor 255))|(val&v1);
+		
+		j:=dst[dx2];
+		dst[dx2]:=(j&(v2 xor 255))|(val&v2);
+*/
+
+		asm("
+fullrun:		
+	
+;			push bx		
+			mov cl,[PolyCGA_val]
+;			add di,[PolyCGA_ex1]
+;			mov bx,[PolyCGA_ex1]
+			mov al, byte [es:di]
+			and al, dh; byte [PolyCGA_v1x]
+			
+			mov ah,cl
+			and ah,dl ;[PolyCGA_v1]
+			or al,ah
+			mov byte [es:di],al
+
+;			pop bx
+;			mov bx,[PolyCGA_ex2]
+;			sub bx,[PolyCGA_ex1]
+
+			mov al, [PolyCGA_v2x]
+			and al,byte [es:di+bx]
+			mov ah,cl
+			and ah,[PolyCGA_v2]
+			or al,ah
+			
+			
+			mov byte [es:di+bx],al
+			mov al,cl
+		
+		");		
+		
+//		j:=dst[dx2];
+//		dst[dx2]:=(j&(v2 xor 255))|(val&v2);
+		asm("
+;		les di,[PolyCGA_dst]
+;		add di,[PolyCGA_ex1]
+		add di,1
+		
+		mov cx, bx
+		sub cx,1
+;		sub cx,[PolyCGA_ex1]
+		
+;		mov al, [PolyCGA_val]
+	 	rep stosb		
+		");
+		
+/*		
+		dx2:=dx2-dx1-1;
+		if (dx2<40) then
+		begin
+			dx1+=1;
+			p:=dst+dx1;
+			fill(p,val, dx2);
+		end;
+*/		
+
+	end;
+end;
+
+
+
+
+procedure Poly(x1,y1,x2,y2,x3,y3:signed integer;
+                val : global byte);
+
+
+begin
+	if ( y1>y3 ) then
+	begin
+		Memory::Swap(x1,x3);
+		Memory::Swap(y1,y3);
+
+	end;
+	
+	
+	if ( y2>y3 ) then
+	begin
+		Memory::Swap(x2,x3);
+		Memory::Swap(y2,y3);
+
+	end;
+	if ( y1>y2 ) then
+	begin
+		Memory::Swap(x1,x2);
+		Memory::Swap(y1,y2);
+
+    end;
+    	y1:=y1&$FFFE;
+    	y2:=y2&$FFFE;
+    	y3:=y3&$FFFE;
+
+
+	if ( (y1-y3)=0 ) then y3+=2;
+	if ( (y1-y2)=0 ) then y2+=2;
+	if ( (y2-y3)=0 ) then y3+=2;
+
+	lx1 := ((x1-x3))<<shift;
+	lx2 := ((x1-x2))<<shift;
+	lx3 := ((x2-x3))<<shift;
+	
+	
+	lx1 := lx1/(y1-y3);
+	lx2 := lx2/(y1-y2);
+	lx3 := lx3/(y2-y3);
+	
+	
+    xx1:=x1 << (shift);
+	xx2:=xx1;
+	y:=y1;
+	dst := screen +y*40;//ptr($B800,y*40);
+	lx1*=2;
+	lx2*=2;
+	lx3*=2;
+	asm("
+		mov si,PolyCGA_maskOut
+	
+	");
+	while (y<y2) do
+	begin
+		hline();		      
+		dst+=80;
+        y+=2;
+	
+		xx1+=lx1;
+		xx2+=lx2;
+
+
+	end;
+	lx2:=lx3;
+	while (y<y3) do
+	begin
+		hline();		      
+		dst+=80;
+        y+=2;
+	
+		xx1+=lx1;
+		xx2+=lx2;
+
+	end;
+
+end;
+
+	
+	
 	
 end.

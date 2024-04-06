@@ -66,3 +66,6 @@ override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
 data_header_images/image1.flf = 0
+project_path = /Users/leuat/code/TRSE/Publish/tutorials/BK0010/tutorials/
+open_files = ,tutorial1.ras
+current_file = tutorial1.ras
