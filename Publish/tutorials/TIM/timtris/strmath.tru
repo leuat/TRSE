@@ -1,0 +1,162 @@
+Unit StrMath;
+
+var
+	s, sout: pointer;		// used as string pointers
+	i,j,k,n: byte;		// temp and input variables
+	len: byte = 8;		// number of digits in string
+	code_0: byte = $30;	// code for char '0'
+	code_9: byte = $39;	// code for char '9'
+	o1, o2: byte;		// variables used for overflow
+
+/**
+	Sets string length for StrMath functions (default is 6).<br>
+	Strings must contain only codes for characters 0-9.
+**/
+procedure SetLen(i: global byte);
+begin
+	len := i;
+end;
+
+
+/**
+	Sets value for character code for zero (default is $30)
+**/
+procedure SetCodeZero(n: global byte);
+begin
+	code_0 := n;
+	code_9 := n + 9;
+end;
+
+
+/**
+	Adds first string to second one. Both must be the same length, set by SetLen function.<br>
+	Strings must contain only codes for characters 0-9.<br>
+	Returns overflow from most significant digit (0 value means everything is OK).
+**/
+function AddStrStr(s, sout: global pointer): byte;
+begin
+	i := len - 1;
+	o1 := 0;
+	// loop finishes when i overflows to $FF
+	while i < len do begin
+		j := s[i] + sout[i] - code_0;
+		if j > code_9 then begin
+			j -= 10;
+			if i > 0 then begin
+				sout[i-1] += 1;
+			end else o1 += 1;
+		end;
+		sout[i] := j;
+		i -= 1;
+	end;
+	
+	ReturnValue(o1);
+end;
+
+
+/**
+	Multiplies byte value by first string and writes the result to second string.<br>
+	Not very efficient (just calls AddStrStr in a loop).<br>
+	Strings must contain only codes for characters 0-9.<br>
+	Returns overflow from most significant digit (0 value means everything is OK).<br><br>
+	Can be used to init string to zeros with MulByteStr(0,0,#str) 
+**/
+function MulByteStr(n: global byte, s, sout: global pointer): byte;
+begin
+	o2 := 0;
+	if n > 0 then begin
+		//Memory::MemCpyLDIR(s, sout, len);
+		memcpy(s, sout, len);
+		if n > 1 then
+			for k:= 1 to n do begin
+				o2 += AddStrStr(s, sout);
+			end;
+	end else begin
+		for i := 0 to len do sout[i] := code_0;
+	end;
+	
+	ReturnValue(o2);
+end;
+
+
+/**
+	Adds byte value to string.<br>
+	String must contain only codes for characters 0-9.<br>
+	Returns overflow from most significant digit (0 value means everything is OK).
+**/
+function AddByteStr(n: global byte, sout: global pointer): byte;
+begin
+	o1 := 0;
+	i := len - 3;
+	while n >= 100 do begin
+		sout[i] += 1;
+		n -= 100;
+	end;
+	
+	i := len - 1;
+	k := i - 1;
+	// loop finishes when i overflows to $FF
+	while i < len do begin
+		j := sout[i] + n;
+		n := 0;
+		while j > code_9 do begin
+			j -= 10;
+			if k < len then begin
+				sout[k] += 1;
+			end else o1 += 1;
+		end;
+		sout[i] := j;
+		i -= 1;
+		k -= 1;
+	end;
+	
+	ReturnValue(o1);
+end;
+
+
+/**
+	Adds integer value to string.<br>
+	String must contain only codes for characters 0-9.<br>
+	Returns overflow from most significant digit (0 value means everything is OK).
+**/
+function AddIntStr(nn: integer, sout: global pointer): byte;
+begin
+	i := len - 5;
+	while nn >= 10000 do begin
+		sout[i] += 1;
+		nn -= 10000;
+	end;
+	
+	i += 1;
+	while nn >= 1000 do begin
+		sout[i] += 1;
+		nn -= 1000;
+	end;
+
+	i += 1;
+	while nn >= 100 do begin
+		sout[i] += 1;
+		nn -= 100;
+	end;
+
+	ReturnValue(AddByteStr(Lo(nn), sout));
+end;
+
+
+/**
+	Compares values in two strings.<br>
+	Strings must be of the same size.<br>
+	Returns 0 if strings are equal, 1 if first is bigger, or $FF if second is bigger.
+**/
+function CmpStrStr(s, sout: global pointer): byte;
+begin
+	for i := 0 to len do begin
+		if s[i] > sout[i] then ReturnValue(1)
+		else if s[i] < sout[i] then ReturnValue($FF);
+	end;
+	
+	ReturnValue(0);
+end;
+
+
+end.

@@ -1,0 +1,356 @@
+unit Images;
+
+
+@macro "gen_font" 1
+	i = 0;
+	for (i = 0; i < p0; i++) {
+		// generate one row of font chars from the flf image
+		writeln('\t@exportsubregion "images/font2.flf" "images/font2.bin" 0 '+(i*8)+' 128 8	'); 
+	}
+@endmacro
+
+
+@macro "gen_tpc" 3
+	i = 0;
+	for (i = 0; i < p0; i++) {
+		letter = String.fromCharCode(i+97);
+		// delete existing image
+		writeln('\t@deletefile "copy_to_img/bg' + letter + p1 + '.tpc"'); 
+		// last parameter (1) is needed for TPC as it adds TPC header to the file; dimensions must be divisable by 4
+		writeln('\t@exportsubregion "images/bg' + letter + '.flf" "copy_to_img/bg' + letter + p1 + '.tpc" ' + p2 + ' 32 172 192 1'); 
+	}
+@endmacro
+
+
+@macro "gen_compr" 3
+	i = 0;
+	for (i = 0; i < p0; i++) {
+		letter = String.fromCharCode(i+97);
+		// delete existing image
+		writeln('\t@deletefile "copy_to_img/bg' + letter + p1 + '.lz4"'); 
+		// delete temporary image
+		writeln('\t@deletefile "temp/bg' + letter + p1 + '.bin"'); 
+		// export image to uncompressed temporary file
+		writeln('\t@exportsubregion "images/bg' + letter + '.flf" "temp/bg' + letter + p1 + '.bin" ' + p2 + ' 32 172 192 1'); 
+		// compress image
+		writeln('\t@compress "temp/bg' + letter + p1 + '.bin" "copy_to_img/bg' + letter + p1 + '.lz4"'); 
+		// add 2-byte header for loading
+		writeln('\t@addcpmheader "copy_to_img/bg' + letter + p1 + '.lz4"'); 
+	}
+@endmacro
+
+
+/*
+	// delete compressed images
+	@deletefile "copy_to_img/bgaleft.lz4"
+	@deletefile "copy_to_img/bgbleft.lz4"
+
+	@deletefile "copy_to_img/bgaright.lz4"
+	@deletefile "copy_to_img/bgbright.lz4"
+
+	// delete temporary images
+	@deletefile "temp/bgaleft.bin"
+	@deletefile "temp/bgbleft.bin"
+
+	@deletefile "temp/bgaright.bin"
+	@deletefile "temp/bgbright.bin"
+
+	// export images to uncompressed temporary files
+	@exportsubregion "images/bga.flf" "temp/bgaleft.bin"    0 32 172 192
+	@exportsubregion "images/bgb.flf" "temp/bgbleft.bin"    0 32 172 192
+
+	@exportsubregion "images/bga.flf" "temp/bgaright.bin" 340 32 172 192
+	@exportsubregion "images/bgb.flf" "temp/bgbright.bin" 340 32 172 192
+
+	// compress images
+	@compress "temp/bgaleft.bin" "copy_to_img/bgaleft.lz4"
+	@compress "temp/bgbleft.bin" "copy_to_img/bgbleft.lz4"
+
+	@compress "temp/bgaright.bin" "copy_to_img/bgaright.lz4"
+	@compress "temp/bgbright.bin" "copy_to_img/bgbright.lz4"
+
+	// add 2-byte header for loading
+	@addcpmheader "copy_to_img/bgaleft.lz4"
+	@addcpmheader "copy_to_img/bgbleft.lz4"
+
+	@addcpmheader "copy_to_img/bgaright.lz4"
+	@addcpmheader "copy_to_img/bgbright.lz4"
+*/
+
+var
+		// font generation
+//	@deletefile "images/font.bin"
+//// font image is organized as 8-pixel high char rows, so rows must be separately exported
+//	@exportsubregion "images/font.flf" "images/font.bin" 0  0 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0  8 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 16 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 24 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 32 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 40 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 48 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 56 128 8	// font chars
+//	@exportsubregion "images/font.flf" "images/font.bin" 0 64 128 8	// font chars
+//	font: incbin("images/font.bin");	// load an 8x8 font
+
+	@deletefile "images/font2.bin"
+	// font image is organized as 8-pixel high char rows, so rows must be separately exported
+/*
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0  0 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0  8 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 16 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 24 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 32 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 40 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 48 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 56 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 64 128 8	// font chars
+	@exportsubregion "images/font2.flf" "images/font2.bin" 0 72 128 8	// font chars
+*/
+	@gen_font(10)
+	font: incbin("images/font2.bin");	// load an 8x8 font
+
+/*
+	// delete existing TPC files
+	@deletefile "copy_to_img/bgaleft.tpc"
+	@deletefile "copy_to_img/bgaright.tpc"
+	@deletefile "copy_to_img/bgbleft.tpc"
+	@deletefile "copy_to_img/bgbright.tpc"
+	@deletefile "copy_to_img/bgcleft.tpc"
+	@deletefile "copy_to_img/bgcright.tpc"
+	@deletefile "copy_to_img/bgdleft.tpc"
+	@deletefile "copy_to_img/bgdright.tpc"
+	@deletefile "copy_to_img/bgeleft.tpc"
+	@deletefile "copy_to_img/bgeright.tpc"
+	@deletefile "copy_to_img/bgfleft.tpc"
+	@deletefile "copy_to_img/bgfright.tpc"
+	@deletefile "copy_to_img/bggleft.tpc"
+	@deletefile "copy_to_img/bggright.tpc"
+	@deletefile "copy_to_img/bghleft.tpc"
+	@deletefile "copy_to_img/bghright.tpc"
+	@deletefile "copy_to_img/bgileft.tpc"
+	@deletefile "copy_to_img/bgiright.tpc"
+	@deletefile "copy_to_img/bgjleft.tpc"
+	@deletefile "copy_to_img/bgjright.tpc"
+	@deletefile "copy_to_img/bgkleft.tpc"
+	@deletefile "copy_to_img/bgkright.tpc"
+	@deletefile "copy_to_img/bglleft.tpc"
+	@deletefile "copy_to_img/bglright.tpc"
+	@deletefile "copy_to_img/bgmleft.tpc"
+	@deletefile "copy_to_img/bgmright.tpc"
+	@deletefile "copy_to_img/bgnleft.tpc"
+	@deletefile "copy_to_img/bgnright.tpc"
+	@deletefile "copy_to_img/bgoleft.tpc"
+	@deletefile "copy_to_img/bgoright.tpc"
+
+	// create TPC files
+	// last parameter (1) is needed for TPC as it adds TPC header to the file
+	@exportsubregion "images/bga.flf" "copy_to_img/bgaleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bga.flf" "copy_to_img/bgaright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgb.flf" "copy_to_img/bgbleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgb.flf" "copy_to_img/bgbright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgc.flf" "copy_to_img/bgcleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgc.flf" "copy_to_img/bgcright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgd.flf" "copy_to_img/bgdleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgd.flf" "copy_to_img/bgdright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bge.flf" "copy_to_img/bgeleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bge.flf" "copy_to_img/bgeright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgf.flf" "copy_to_img/bgfleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgf.flf" "copy_to_img/bgfright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgg.flf" "copy_to_img/bggleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgg.flf" "copy_to_img/bggright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgh.flf" "copy_to_img/bghleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgh.flf" "copy_to_img/bghright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgi.flf" "copy_to_img/bgileft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgi.flf" "copy_to_img/bgiright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgj.flf" "copy_to_img/bgjleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgj.flf" "copy_to_img/bgjright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgk.flf" "copy_to_img/bgkleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgk.flf" "copy_to_img/bgkright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgl.flf" "copy_to_img/bglleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgl.flf" "copy_to_img/bglright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgm.flf" "copy_to_img/bgmleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgm.flf" "copy_to_img/bgmright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgn.flf" "copy_to_img/bgnleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgn.flf" "copy_to_img/bgnright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgo.flf" "copy_to_img/bgoleft.tpc"    0 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+	@exportsubregion "images/bgo.flf" "copy_to_img/bgoright.tpc" 340 32 172 192 1	 // image to convert to TPC format, dimensions must be divisable by 4
+*/
+	@gen_tpc(15,"left",0)
+	@gen_tpc(15,"right",340)
+
+	@gen_compr(15,"left",0)
+	@gen_compr(15,"right",340)
+
+
+
+
+
+/*
+	// delete compressed images
+	@deletefile "copy_to_img/bgaleft.lz4"
+	@deletefile "copy_to_img/bgbleft.lz4"
+	@deletefile "copy_to_img/bgcleft.lz4"
+	@deletefile "copy_to_img/bgdleft.lz4"
+	@deletefile "copy_to_img/bgeleft.lz4"
+	@deletefile "copy_to_img/bgfleft.lz4"
+	@deletefile "copy_to_img/bggleft.lz4"
+	@deletefile "copy_to_img/bghleft.lz4"
+	@deletefile "copy_to_img/bgileft.lz4"
+	@deletefile "copy_to_img/bgjleft.lz4"
+	@deletefile "copy_to_img/bgkleft.lz4"
+	@deletefile "copy_to_img/bglleft.lz4"
+	@deletefile "copy_to_img/bgmleft.lz4"
+	@deletefile "copy_to_img/bgnleft.lz4"
+	@deletefile "copy_to_img/bgoleft.lz4"
+
+	@deletefile "copy_to_img/bgaright.lz4"
+	@deletefile "copy_to_img/bgbright.lz4"
+	@deletefile "copy_to_img/bgcright.lz4"
+	@deletefile "copy_to_img/bgdright.lz4"
+	@deletefile "copy_to_img/bgeright.lz4"
+	@deletefile "copy_to_img/bgfright.lz4"
+	@deletefile "copy_to_img/bggright.lz4"
+	@deletefile "copy_to_img/bghright.lz4"
+	@deletefile "copy_to_img/bgiright.lz4"
+	@deletefile "copy_to_img/bgjright.lz4"
+	@deletefile "copy_to_img/bgkright.lz4"
+	@deletefile "copy_to_img/bglright.lz4"
+	@deletefile "copy_to_img/bgmright.lz4"
+	@deletefile "copy_to_img/bgnright.lz4"
+	@deletefile "copy_to_img/bgoright.lz4"
+
+	// delete temporary images
+	@deletefile "temp/bgaleft.bin"
+	@deletefile "temp/bgbleft.bin"
+	@deletefile "temp/bgcleft.bin"
+	@deletefile "temp/bgdleft.bin"
+	@deletefile "temp/bgeleft.bin"
+	@deletefile "temp/bgfleft.bin"
+	@deletefile "temp/bggleft.bin"
+	@deletefile "temp/bghleft.bin"
+	@deletefile "temp/bgileft.bin"
+	@deletefile "temp/bgjleft.bin"
+	@deletefile "temp/bgkleft.bin"
+	@deletefile "temp/bglleft.bin"
+	@deletefile "temp/bgmleft.bin"
+	@deletefile "temp/bgnleft.bin"
+	@deletefile "temp/bgoleft.bin"
+
+	@deletefile "temp/bgaright.bin"
+	@deletefile "temp/bgbright.bin"
+	@deletefile "temp/bgcright.bin"
+	@deletefile "temp/bgdright.bin"
+	@deletefile "temp/bgeright.bin"
+	@deletefile "temp/bgfright.bin"
+	@deletefile "temp/bggright.bin"
+	@deletefile "temp/bghright.bin"
+	@deletefile "temp/bgiright.bin"
+	@deletefile "temp/bgjright.bin"
+	@deletefile "temp/bgkright.bin"
+	@deletefile "temp/bglright.bin"
+	@deletefile "temp/bgmright.bin"
+	@deletefile "temp/bgnright.bin"
+	@deletefile "temp/bgoright.bin"
+
+
+
+	// export images to uncompressed temporary files
+	@exportsubregion "images/bga.flf" "temp/bgaleft.bin"    0 32 172 192
+	@exportsubregion "images/bgb.flf" "temp/bgbleft.bin"    0 32 172 192
+	@exportsubregion "images/bgc.flf" "temp/bgcleft.bin"    0 32 172 192
+	@exportsubregion "images/bgd.flf" "temp/bgdleft.bin"    0 32 172 192
+	@exportsubregion "images/bge.flf" "temp/bgeleft.bin"    0 32 172 192
+	@exportsubregion "images/bgf.flf" "temp/bgfleft.bin"    0 32 172 192
+	@exportsubregion "images/bgg.flf" "temp/bggleft.bin"    0 32 172 192
+	@exportsubregion "images/bgh.flf" "temp/bghleft.bin"    0 32 172 192
+	@exportsubregion "images/bgi.flf" "temp/bgileft.bin"    0 32 172 192
+	@exportsubregion "images/bgj.flf" "temp/bgjleft.bin"    0 32 172 192
+	@exportsubregion "images/bgk.flf" "temp/bgkleft.bin"    0 32 172 192
+	@exportsubregion "images/bgl.flf" "temp/bglleft.bin"    0 32 172 192
+	@exportsubregion "images/bgm.flf" "temp/bgmleft.bin"    0 32 172 192
+	@exportsubregion "images/bgn.flf" "temp/bgnleft.bin"    0 32 172 192
+	@exportsubregion "images/bgo.flf" "temp/bgoleft.bin"    0 32 172 192
+
+	@exportsubregion "images/bga.flf" "temp/bgaright.bin" 340 32 172 192
+	@exportsubregion "images/bgb.flf" "temp/bgbright.bin" 340 32 172 192
+	@exportsubregion "images/bgc.flf" "temp/bgcright.bin" 340 32 172 192
+	@exportsubregion "images/bgd.flf" "temp/bgdright.bin" 340 32 172 192
+	@exportsubregion "images/bge.flf" "temp/bgeright.bin" 340 32 172 192
+	@exportsubregion "images/bgf.flf" "temp/bgfright.bin" 340 32 172 192
+	@exportsubregion "images/bgg.flf" "temp/bggright.bin" 340 32 172 192
+	@exportsubregion "images/bgh.flf" "temp/bghright.bin" 340 32 172 192
+	@exportsubregion "images/bgi.flf" "temp/bgiright.bin" 340 32 172 192
+	@exportsubregion "images/bgj.flf" "temp/bgjright.bin" 340 32 172 192
+	@exportsubregion "images/bgk.flf" "temp/bgkright.bin" 340 32 172 192
+	@exportsubregion "images/bgl.flf" "temp/bglright.bin" 340 32 172 192
+	@exportsubregion "images/bgm.flf" "temp/bgmright.bin" 340 32 172 192
+	@exportsubregion "images/bgn.flf" "temp/bgnright.bin" 340 32 172 192
+	@exportsubregion "images/bgo.flf" "temp/bgoright.bin" 340 32 172 192
+
+	// compress images
+	@compress "temp/bgaleft.bin" "copy_to_img/bgaleft.lz4"
+	@compress "temp/bgbleft.bin" "copy_to_img/bgbleft.lz4"
+	@compress "temp/bgcleft.bin" "copy_to_img/bgcleft.lz4"
+	@compress "temp/bgdleft.bin" "copy_to_img/bgdleft.lz4"
+	@compress "temp/bgeleft.bin" "copy_to_img/bgeleft.lz4"
+	@compress "temp/bgfleft.bin" "copy_to_img/bgfleft.lz4"
+	@compress "temp/bggleft.bin" "copy_to_img/bggleft.lz4"
+	@compress "temp/bghleft.bin" "copy_to_img/bghleft.lz4"
+	@compress "temp/bgileft.bin" "copy_to_img/bgileft.lz4"
+	@compress "temp/bgjleft.bin" "copy_to_img/bgjleft.lz4"
+	@compress "temp/bgkleft.bin" "copy_to_img/bgkleft.lz4"
+	@compress "temp/bglleft.bin" "copy_to_img/bglleft.lz4"
+	@compress "temp/bgmleft.bin" "copy_to_img/bgmleft.lz4"
+	@compress "temp/bgnleft.bin" "copy_to_img/bgnleft.lz4"
+	@compress "temp/bgoleft.bin" "copy_to_img/bgoleft.lz4"
+
+	@compress "temp/bgaright.bin" "copy_to_img/bgaright.lz4"
+	@compress "temp/bgbright.bin" "copy_to_img/bgbright.lz4"
+	@compress "temp/bgcright.bin" "copy_to_img/bgcright.lz4"
+	@compress "temp/bgdright.bin" "copy_to_img/bgdright.lz4"
+	@compress "temp/bgeright.bin" "copy_to_img/bgeright.lz4"
+	@compress "temp/bgfright.bin" "copy_to_img/bgfright.lz4"
+	@compress "temp/bggright.bin" "copy_to_img/bggright.lz4"
+	@compress "temp/bghright.bin" "copy_to_img/bghright.lz4"
+	@compress "temp/bgiright.bin" "copy_to_img/bgiright.lz4"
+	@compress "temp/bgjright.bin" "copy_to_img/bgjright.lz4"
+	@compress "temp/bgkright.bin" "copy_to_img/bgkright.lz4"
+	@compress "temp/bglright.bin" "copy_to_img/bglright.lz4"
+	@compress "temp/bgmright.bin" "copy_to_img/bgmright.lz4"
+	@compress "temp/bgnright.bin" "copy_to_img/bgnright.lz4"
+	@compress "temp/bgoright.bin" "copy_to_img/bgoright.lz4"
+
+	// add 2-byte header for loading
+	@addcpmheader "copy_to_img/bgaleft.lz4"
+	@addcpmheader "copy_to_img/bgbleft.lz4"
+	@addcpmheader "copy_to_img/bgcleft.lz4"
+	@addcpmheader "copy_to_img/bgdleft.lz4"
+	@addcpmheader "copy_to_img/bgeleft.lz4"
+	@addcpmheader "copy_to_img/bgfleft.lz4"
+	@addcpmheader "copy_to_img/bggleft.lz4"
+	@addcpmheader "copy_to_img/bghleft.lz4"
+	@addcpmheader "copy_to_img/bgileft.lz4"
+	@addcpmheader "copy_to_img/bgjleft.lz4"
+	@addcpmheader "copy_to_img/bgkleft.lz4"
+	@addcpmheader "copy_to_img/bglleft.lz4"
+	@addcpmheader "copy_to_img/bgmleft.lz4"
+	@addcpmheader "copy_to_img/bgnleft.lz4"
+	@addcpmheader "copy_to_img/bgoleft.lz4"
+
+	@addcpmheader "copy_to_img/bgaright.lz4"
+	@addcpmheader "copy_to_img/bgbright.lz4"
+	@addcpmheader "copy_to_img/bgcright.lz4"
+	@addcpmheader "copy_to_img/bgdright.lz4"
+	@addcpmheader "copy_to_img/bgeright.lz4"
+	@addcpmheader "copy_to_img/bgfright.lz4"
+	@addcpmheader "copy_to_img/bggright.lz4"
+	@addcpmheader "copy_to_img/bghright.lz4"
+	@addcpmheader "copy_to_img/bgiright.lz4"
+	@addcpmheader "copy_to_img/bgjright.lz4"
+	@addcpmheader "copy_to_img/bgkright.lz4"
+	@addcpmheader "copy_to_img/bglright.lz4"
+	@addcpmheader "copy_to_img/bgmright.lz4"
+	@addcpmheader "copy_to_img/bgnright.lz4"
+	@addcpmheader "copy_to_img/bgoright.lz4"
+*/
+end.

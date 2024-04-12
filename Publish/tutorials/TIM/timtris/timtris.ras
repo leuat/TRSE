@@ -1,0 +1,931 @@
+program Timtris;
+@use "random"
+@use "memory"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/file"
+
+//@use "tetromino"
+@use "figure"
+@use "images"
+@use "title"
+@use "strmath"
+
+var
+	// constants for playfield
+	const playFieldWidth: byte = 10;
+	const playFieldHeight: byte = 20;
+	const fieldWidth: byte = playFieldWidth + 2;		// wall on left and right
+	const fieldHeight: byte = playFieldHeight + 1;	// wall on bottom
+	// 4 additional playfield lines that are not drawn, for figure entering
+	const entryFieldWidth: byte = fieldWidth;
+	const entryFieldHeight: byte = 4;
+
+	// location of playfield on screen
+	const fieldScreenX: byte = 64 - fieldWidth*3/2;	// figure chars are 1.5 regular char width
+	const fieldScreenY: byte = 12;
+	
+	const pictureY: byte = 10;
+
+	// table for multiplying with "fieldWidth"
+	fieldWidthMulTable: array[fieldHeight] of byte = buildtable("i * FIELDWIDTH");
+
+	// global irq byte variables
+	ib_irq, jb_irq, kb_irq, lb_irq: byte;
+	
+	// helper field when figure starts to fall down
+	entryField: array[entryFieldWidth*entryFieldHeight] of byte;
+	// main field that holds currently occupied squares
+	field: array[fieldWidth*fieldHeight] of byte;
+	// fields for drawing, content of previous ones is copied there
+	drawEntryField: array[entryFieldWidth*entryFieldHeight] of byte;
+	drawField: array[fieldWidth*fieldHeight] of byte;
+
+	spaceLine: array[fieldWidth] of byte = buildtable("0xBA");
+
+	// pointers used for placing a figure and checking if it can be placed
+	figPt_irq, fieldPt_irq: pointer of byte;
+	// phase, x and y coordinates and starting line of the figure, used for placing and checking
+	figPhase_irq, figX_irq, figY_irq, startLine_irq: byte;
+
+	// current figure
+	figurePhase, figureX, figureY: byte;	
+	figurePt, figureWPt, figPt, fieldPt: pointer of byte;
+
+	// keyboard reading
+	newKey: boolean;
+	keyCode: byte;
+
+	// game speed
+	dropTime: byte;
+	dropTimeInitial: byte;
+
+	// do we need to redraw the playfield	
+	doRedraw: boolean;
+
+	// game control
+	gamePaused: boolean;	
+	gameOver: boolean;	
+	
+	// random selection of figures
+	figureNo, nextFigureNo: byte;
+	randomBucket1: array[Figure::FiguresNo] of byte;
+	randomBucket2: array[Figure::FiguresNo] of byte;
+	randomBucketPos: byte;
+
+	// detection of full lines
+	fullLines: array[4] of byte;
+	fullLinesCnt: byte;
+	prevLinesCnt: byte;
+    fullLinePhase: byte;
+    fullLineTime: byte;
+    const fullLineDuration: byte = 5; //10
+
+	// screen shaking effect tables
+	const shake1TableSize: byte = 20;
+	shake1Table: array[shake1TableSize] of byte = buildtable("256-Math.cos((SHAKE1TABLESIZE-i)/20.0*Math.PI*2.0)*i/5");
+	const shake2TableSize: byte = 40;
+	shake2Table: array[shake2TableSize] of byte = buildtable("256-Math.cos((SHAKE2TABLESIZE-i)/20.0*Math.PI*2.0)*i/5");
+	const shake3TableSize: byte = 60;
+	shake3Table: array[shake3TableSize] of byte = buildtable("256-Math.cos((SHAKE3TABLESIZE-i)/20.0*Math.PI*2.0)*i/5");
+	const shake4TableSize: byte = 100;
+	shake4Table: array[shake4TableSize] of byte = buildtable("256-Math.cos((SHAKE4TABLESIZE-i)/20.0*Math.PI*2.0)*i/5");
+	shakeTableSize: array[4] of byte = (shake1TableSize, shake2TableSize, shake3TableSize, shake4TableSize);
+	shakeTablePtrs: array[4] of pointer = (#shake1Table, #shake2Table, #shake3Table, #shake4Table);
+	shakeCnt: byte;
+	shakeTablePtr: pointer;
+	
+	// next figure drawing
+	const nextFigWidth: byte = 4+2;
+	const nextFigHeight: byte = 4+2;
+	const nextFigScrX:byte = fieldScreenX + fieldWidth*3 + 8;
+	const nextFigScrY:byte = fieldScreenY + 4;
+	nextFigField: array[nextFigWidth*nextFigHeight] of byte;
+	doRedrawNext: boolean;
+
+	// global main code byte variables
+	ib,jb,kb,lb: byte;
+
+	// debug string
+	//dbgStr: string = ("AAAAAAAAAAAAAAA");
+	
+	// scores
+	const scoLen: byte = 8;
+	scoLines: string = ("00000000");
+	scoScore: string = ("00000000");
+	scoLevel: string = (" 1");
+	dropPoints: byte;
+	
+	const scoScoreX: byte = fieldScreenX - scoLen*2 - 8;
+	const scoLinesX: byte = scoScoreX;
+	const scoLevelX: byte = scoScoreX + 12;
+	const scoLinesY: byte = fieldScreenY + 4;
+	const scoScoreY: byte = scoLinesY+6;
+	const scoLevelY: byte = scoScoreY+6;
+	
+	// points table
+	scoLines1L1: string = ("00000100");
+	scoLines2L1: string = ("00000300");
+	scoLines3L1: string = ("00000500");
+	scoLines4L1: string = ("00000800");
+	scoLines4B2BL1: string = ("00000400");
+	scoLines0: string = ("00000000");	// *LEVEL
+	scoLines1: string = ("00000100");	// *LEVEL
+	scoLines2: string = ("00000300");	// *LEVEL
+	scoLines3: string = ("00000500");	// *LEVEL
+	scoLines4: string = ("00000800");	// *LEVEL
+	scoLines4B2B: string = ("00000400");	// *LEVEL
+	scoLinesPtrs: array[5] of pointer = (#scoLines0, #scoLines1, #scoLines2, #scoLines3, #scoLines4);
+	scoSoftDr: string = ("00000001");
+	scoHardDr: string = ("00000002");
+	nextLevelLines: integer;
+	level: byte;
+	timtrisFile: File::Handle;
+	
+	// pic loading
+	picLoadPhase: byte = 0;
+	picLoadCnt: byte = 0;
+	const picLoadCntInit: byte = 5;
+	tpcLeft: string = ("bgaleft.tpc");
+	tpcRight: string = ("bgaright.tpc");
+	tpcChar: byte;
+	
+	const imgLoad: address = $7000;
+	const imgUnpack: address = $9000;
+	img: File::Handle;
+	imgPtr: pointer;
+	scrPtr: pointer;
+	imgLeft: string = ("bgaleft.lz4");
+	imgRight: string = ("bgaright.lz4");
+
+	ptxplay: incbin("ayplayer/ptxplay.bin", $5000);
+	pt3tune: incbin("ayplayer/tetris2.pt3", $5A9D);
+
+
+procedure genLevelString();
+begin
+	if level < 10 then begin
+		scoLevel[0] := ' ';
+		scoLevel[1] := ASCII::NUM0 + level;
+	end else begin
+		scoLevel[0] := '1';
+		scoLevel[1] := ASCII::NUM0 + level - 10;
+	end;
+end;
+
+procedure CalcStartingLevelNumbers();
+begin
+	level := Title::level;
+	
+	StrMath::MulByteStr(level, #scoLines1L1, #scoLines1);
+	StrMath::MulByteStr(level, #scoLines2L1, #scoLines2);
+	StrMath::MulByteStr(level, #scoLines3L1, #scoLines3);
+	StrMath::MulByteStr(level, #scoLines4L1, #scoLines4);
+	StrMath::MulByteStr(level, #scoLines4B2BL1, #scoLines4B2B);
+
+	// WHEN STARTING FROM LEVEL > 1, ALL THE LINES FOR PREVIOUS LEVEL PLUS FOR THE CURENT ONE
+	// FOR EXAMPLE, IF STARTING FROM LEVEL 4, 5+10+15+20=50 LINES
+	// (LEVEL/2)*(2*START_POINTS + (LEVEL-1)*DIFFERENCE) = LEVEL*(2*5 + (LEVEL-1)*5)/2 = ((10+(LEVEL-1)*5)*LEVEL)>>1 
+	nextLevelLines := 10 + (level - 1) * 5;
+	nextLevelLines := (nextLevelLines * level) >> 1;
+
+	dropTimeInitial := 51 - level*3;
+	genLevelString();
+
+	tpcChar := ASCII::lower_a;
+	if level > 2 then tpcChar += level - 2;
+	tpcLeft[2] := tpcChar;
+	tpcRight[2] := tpcChar;
+	if Title::picMode = 0 then begin
+		picLoadPhase := 0;
+	end else begin
+		picLoadPhase := 4;
+	end;
+
+end;
+
+
+procedure CalcNextLevelNumbers();
+begin
+	if level < 15 then begin
+		level += 1;
+	
+		StrMath::AddStrStr(#scoLines1L1, #scoLines1);
+		StrMath::AddStrStr(#scoLines2L1, #scoLines2);
+		StrMath::AddStrStr(#scoLines3L1, #scoLines3);
+		StrMath::AddStrStr(#scoLines4L1, #scoLines4);
+		StrMath::AddStrStr(#scoLines4B2BL1, #scoLines4B2B);
+	
+		// NEXT LEVEL LINES: LEVEL*5
+		nextLevelLines := level * 5;
+
+		dropTimeInitial -= 3;
+		genLevelString();
+	end else begin
+		nextLevelLines := 30000;
+	end;
+
+	if level > 2 then begin
+		tpcChar := tpcLeft[2];
+		tpcChar += 1;
+		if tpcChar > ASCII::lower_o then tpcChar := ASCII::lower_a;
+		tpcLeft[2] := tpcChar;
+		tpcRight[2] := tpcChar;
+	end;
+
+	if ((Title::picMode = 0) and (level > 2)) then begin
+		picLoadPhase := 0;
+	end;
+end;
+
+
+procedure DrawScores();
+begin
+	Screen::GotoXY(scoLinesX, scoLinesY);
+	Screen::PrintStr(#scoLines);
+	Screen::GotoXY(scoScoreX, scoScoreY);
+	Screen::PrintStr(#scoScore);
+	Screen::GotoXY(scoLevelX, scoLevelY);
+	Screen::PrintStr(#scoLevel);
+end;
+
+
+procedure DrawScoreHeaders();
+begin
+	Screen::GotoXY(scoLinesX+6,scoLinesY-2);
+	Screen::PrintStr("LINES");
+	Screen::GotoXY(scoScoreX+6,scoScoreY-2);
+	Screen::PrintStr("SCORE");
+	Screen::GotoXY(scoScoreX+6,scoLevelY-2);
+	Screen::PrintStr("LEVEL");
+end;
+
+
+procedure InitField();
+begin
+	ib_irq := 0;
+	for jb_irq := 0 to playFieldHeight do begin
+		field[ib_irq] := Figure::tmWL;
+		ib_irq += 1;
+		for kb_irq := 0 to playFieldWidth do begin	// TODO replace with memcpy
+			field[ib_irq] := Figure::tmEM;
+			ib_irq += 1;
+		end;
+		field[ib_irq] := Figure::tmWL;
+		ib_irq += 1;
+	end;
+	for jb_irq := 0 to fieldWidth do begin
+		field[ib_irq] := Figure::tmWL;
+		ib_irq += 1;
+	end;
+
+	ib_irq := 0;
+	for jb_irq := 0 to entryFieldHeight do begin
+		entryField[ib_irq] := Figure::tmWL;
+		ib_irq += 1;
+		for kb_irq := 0 to playFieldWidth do begin	// TODO replace with memcpy
+			entryField[ib_irq] := Figure::tmEM;
+			ib_irq += 1;
+		end;
+		entryField[ib_irq] := Figure::tmWL;
+		ib_irq += 1;
+	end;
+	
+	if Title::rndLines > 0 then begin
+		ib_irq := (playFieldHeight-1)*fieldWidth + 1;
+		for lb_irq := 0 to Title::rndLines do begin
+			for jb_irq := 0 to 10 do field[ib_irq+jb_irq] := Figure::tmDS;
+			for jb_irq := 0 to 5 do begin
+				kb_irq := Random::RandomByte() & $0F;
+				if kb_irq > 9 then kb_irq -= 8;
+				field[ib_irq+kb_irq] := Figure::tmEM;
+			end;
+			ib_irq -= fieldWidth;
+		end;
+	end;
+	
+	for ib_irq := 0 to nextFigHeight*nextFigWidth do nextFigField[ib_irq] := Figure::tmWL;
+end;
+
+
+procedure ShuffleRandomBucket2();
+begin
+	for ib_irq := 0 to Figure::FiguresNo do begin
+		jb_irq := Random::RandomByte() & $07;
+		if jb_irq >= Figure::FiguresNo then continue;
+		kb_irq := Random::RandomByte() & $07;
+		if kb_irq >= Figure::FiguresNo then continue;
+		lb_irq := randomBucket2[jb_irq];
+		randomBucket2[jb_irq] := randomBucket2[kb_irq];
+		randomBucket2[kb_irq] := lb_irq;
+	end;
+end;
+
+
+function GetRandomFigure(): byte;
+var
+	GetRandomFigureValue: byte;
+begin
+	if Title::rndMode = 0 then begin
+		if randomBucketPos = Figure::FiguresNo then begin
+			memcpy(#randomBucket2, #randomBucket1, Figure::FiguresNo);
+			ShuffleRandomBucket2();
+			randomBucketPos := 0;
+		end;
+		GetRandomFigureValue := randomBucket1[randomBucketPos];
+		randomBucketPos += 1;
+	end else begin
+		GetRandomFigureValue := Figure::FiguresNo;
+		while GetRandomFigureValue >= Figure::FiguresNo do
+			GetRandomFigureValue := Random::RandomByte() & $07;
+	end;
+	ReturnValue(GetRandomFigureValue);
+end;
+
+
+// places figure into a drawing field
+procedure DrawFigure(tmpt1: pointer, tmphase1, tmx1, tmy1: byte);
+var 
+	fieldpt1: pointer of byte;
+begin
+	tmpt1 += tmphase1 << 4;
+	if tmy1 < entryFieldHeight then begin
+		fieldpt1 := #drawEntryField;
+	end else begin
+		fieldpt1 := #drawField;
+		tmy1 -= entryFieldHeight;
+	end;
+	//fieldpt1 += tmx1 + (tmy1 * fieldWidth);
+	fieldpt1 += tmx1 + fieldWidthMulTable[tmy1];
+	for ib := 0 to 4 do begin
+		for jb := 0 to 4 do begin
+			if tmpt1[jb] = Figure::tmEN then
+				return;
+			if tmpt1[jb] <> Figure::tmEM then
+				fieldpt1[jb] := tmpt1[jb];
+		end;
+		fieldpt1 += fieldWidth;
+		tmpt1 += 4;
+	end;
+end;
+
+
+// draws next figure on screen
+procedure DrawNextFigure(drawCurrent: boolean);
+begin
+	// place figure into next figure field
+	if drawCurrent then begin
+		figPt := Figure::Figures[figureNo];
+		figPt += figurePhase << 4;
+	end else
+		figPt := Figure::Figures[nextFigureNo];
+	fieldPt := #nextFigField + nextFigWidth + 1;
+	for ib := 0 to 4 do begin
+		for jb := 0 to 4 do begin
+			fieldPt[jb] := figPt[jb];
+			if figPt[jb] = Figure::tmEN then fieldPt[jb] := Figure::tmEM;
+		end;
+		fieldPt += nextFigWidth;
+		figPt += 4;
+	end;
+
+	if drawCurrent then
+		Screen::GotoXY(nextFigScrX+2,nextFigScrY-2)
+	else
+		Screen::GotoXY(nextFigScrX+2,nextFigScrY-2+24);
+	if drawCurrent then begin
+		Screen::PrintStr("CURRENT");
+		jb := nextFigScrY;
+	end	else begin
+		Screen::PrintStr("NEXT");
+		jb := nextFigScrY + 24;
+	end;
+	// draw next figure field
+	ib := 0;
+	for kb := 0 to nextFigHeight do begin
+		Screen::GotoXY(nextFigScrX, jb);
+		Screen::PrintNStr15(#nextFigField[ib], nextFigWidth);
+		ib += nextFigWidth;
+		jb += 2;
+	end;
+end;
+
+
+procedure DrawField();
+var
+begin
+	ib := 0;
+	jb := fieldScreenY;
+	for kb := 0 to fieldHeight do begin
+		Screen::GotoXY(fieldScreenX, jb);
+		Screen::PrintNStr15(#drawField[ib], fieldWidth);
+		ib += fieldWidth;
+		jb += 2;
+	end;
+end;
+
+
+// places the figure into a main playfield
+procedure PlaceFigure(figPt_irq: global pointer, figPhase_irq, figX_irq, figY_irq: global byte);
+begin
+	figPt_irq += figPhase_irq << 4;
+	if figY_irq < entryFieldHeight then begin
+		fieldPt_irq := #entryField;
+	end else begin
+		fieldPt_irq := #field;
+		figY_irq -= entryFieldHeight;
+	end;
+	//fieldPt_irq += figX_irq + (figY_irq * fieldWidth);
+	fieldPt_irq += figX_irq + fieldWidthMulTable[figY_irq];
+	for ib_irq := 0 to 4 do begin
+		for jb_irq := 0 to 4 do begin
+			if figPt_irq[jb_irq] = Figure::tmEN then
+				return;
+			if figPt_irq[jb_irq] <> Figure::tmEM then
+				fieldPt_irq[jb_irq] := figPt_irq[jb_irq];
+		end;
+		fieldPt_irq += fieldWidth;
+		figPt_irq += 4;
+	end;
+end;
+
+
+function CheckTetromino(figPt_irq: global pointer, figPhase_irq, figX_irq, figY_irq: global byte): boolean;
+begin
+	figPt_irq += figPhase_irq << 4;
+	if figY_irq < entryFieldHeight then begin
+		fieldPt_irq := #entryField;
+	end else begin
+		fieldPt_irq := #field;
+		figY_irq -= entryFieldHeight;
+	end;
+	//fieldPt_irq += figX_irq + (figY_irq * fieldWidth);
+	fieldPt_irq += figX_irq + fieldWidthMulTable[figY_irq];
+	for ib_irq := 0 to 4 do begin
+		for jb_irq := 0 to 4 do begin
+			if figPt_irq[jb_irq] = Figure::tmEN then
+				ReturnValue(true);
+			if ( (figPt_irq[jb_irq] <> Figure::tmEM) and (fieldPt_irq[jb_irq] <> Figure::tmEM) ) then
+				ReturnValue(false);
+		end;
+		fieldPt_irq += fieldWidth;
+		figPt_irq += 4;
+	end;
+	ReturnValue(true);
+end;
+
+function FullLine(): boolean;
+begin
+	for lb_irq := 0 to playFieldWidth do
+		if fieldPt_irq[lb_irq] = Figure::tmEM then
+			ReturnValue(false);
+	ReturnValue(true);
+end;
+
+function FindFullLines(startLine_irq: global byte): byte;
+var
+	lineIndex: byte;
+begin
+	if startLine_irq < entryFieldHeight then startLine_irq := 0
+	else startLine_irq -= entryFieldHeight;
+	lineIndex := fieldWidthMulTable[startLine_irq] + 1;
+	fieldPt_irq := #field + lineIndex;
+	fullLinesCnt := 0;
+	
+	for ib_irq := 0 to 4 do fullLines[ib_irq] := $FF;
+
+	for ib_irq := 0 to 4 do begin
+		if FullLine() then begin
+			fullLines[fullLinesCnt] := lineIndex;
+			fullLinesCnt += 1;
+			for jb_irq := 0 to playFieldWidth do
+				fieldPt_irq[jb_irq] := Figure::tmSQ;
+		end;
+		startLine_irq += 1;
+		if startLine_irq >= playFieldHeight then break;
+		fieldPt_irq += fieldWidth;
+		lineIndex += fieldWidth;
+	end;
+	ReturnValue(fullLinesCnt);	
+end;
+
+/*
+procedure RemoveLines(startLine_irq: global byte);
+var
+	rlines_count1, rlines_count2: byte;
+begin
+	for ib_irq := 0 to 4 do begin
+		if fullLines[ib_irq] = $FF then break;
+		rlines_count1 := fullLines[ib_irq] + playFieldWidth;	// end of line
+		rlines_count2 := rlines_count1 - fieldWidth;			// end of previous line
+		Memory::MemCpyLDDR(#field + rlines_count2, #field + rlines_count1, rlines_count2);
+	end;
+	gameOver := false;
+	for jb_irq := 1 to playFieldWidth+1 do begin
+		if field[jb_irq] <> Figure::tmEM then begin
+			Screen::GotoXY(0,0);Screen::PrintStr("OVER:RemoveLines");
+			gameOver := true;
+			break;
+		end;
+	end;
+end;
+*/
+
+procedure HandleKeyLeft();
+begin
+	if figureX > 0 then begin
+		if CheckTetromino(figurePt, figurePhase, figureX-1, figureY) then begin
+			figureX -= 1;
+			doRedraw := true;
+		end;
+	end;
+	newKey := false;
+end;
+
+procedure HandleKeyRight();
+begin
+	if CheckTetromino(figurePt, figurePhase, figureX+1, figureY) then begin
+		figureX += 1;
+		doRedraw := true;
+	end;
+	newKey := false;
+end;
+
+
+procedure HandleKeyRotate(rotateValue: byte);
+var
+	irqtmp: byte;
+begin
+	irqtmp := (figurePhase + rotateValue) & $03;
+	if CheckTetromino(figurePt, irqtmp, figureX, figureY) then begin
+		figurePhase := irqtmp;
+		doRedraw := true;
+	end
+	else if CheckTetromino(figurePt, irqtmp, figureX+1, figureY) then begin
+		figureX += 1;
+		figurePhase := irqtmp;
+		doRedraw := true;
+	end
+	else if CheckTetromino(figurePt, irqtmp, figureX-1, figureY) then begin
+		figureX -= 1;
+		figurePhase := irqtmp;
+		doRedraw := true;
+	end;
+	newKey := false;
+end;
+
+
+procedure MainInterrupt();
+begin
+	if fullLinePhase > 0 then begin
+		fullLineTime -= 1;
+		if fullLineTime = 0 then begin
+			fullLineTime := fullLineDuration;
+			fullLinePhase -= 1;
+			if fullLinePhase > 0 then begin
+				// fill full lines with next square
+				if fullLinePhase = 2 then kb_irq := Figure::tmB1
+				else if fullLinePhase = 1 then kb_irq := Figure::tmB2
+				else kb_irq := Figure::tmSQ;
+				for ib_irq := 0 to 4 do begin
+					if fullLines[ib_irq] = $FF then break;
+					fieldPt_irq := #field + fullLines[ib_irq];
+					for jb_irq := 0 to playFieldWidth do
+						fieldPt_irq[jb_irq] := kb_irq;
+				end;
+			end else begin
+				// remove full lines
+				for ib_irq := 0 to 4 do begin
+					if fullLines[ib_irq] = $FF then break;
+					jb_irq := fullLines[ib_irq] + playFieldWidth;	// end of full line, destination
+					kb_irq := jb_irq - fieldWidth;				// end of previous line, source
+					Memory::MemCpyLDDR(#field + kb_irq, #field + jb_irq, kb_irq);
+				end;
+				// check if game is over (is there anything in top line)
+				gameOver := false;
+				for jb_irq := 1 to playFieldWidth+1 do begin
+					if field[jb_irq] <> Figure::tmEM then begin
+						gameOver := true;
+						break;
+					end;
+				end;
+				// get next figure
+				figureNo := nextFigureNo;
+				nextFigureNo := GetRandomFigure();
+				doRedrawNext := true;
+				figurePt := Figure::Figures[figureNo];
+				figureWPt := Figure::FigureWidths[figureNo];
+				figurePhase := 0;
+				figureX := 5;
+				figureY := 1;
+				// prepare screen shake
+				if fullLinesCnt > 0 then begin
+					shakeCnt := shakeTableSize[fullLinesCnt-1]-1;
+					shakeTablePtr := shakeTablePtrs[fullLinesCnt-1];
+				end;
+			end;
+			doRedraw := true;
+		end;
+		return;
+	end;
+	if shakeCnt > 0 then begin
+		System::SetScreenPos(shakeTablePtr[shakeCnt]);
+		shakeCnt -= 1;
+	end;
+	if (gamePaused or gameOver) then return;
+	dropTime -= 1;
+	if picLoadCnt > 0 then picLoadCnt -= 1;
+	if dropTime = 0 then begin
+		dropTime := dropTimeInitial;
+		if not CheckTetromino(figurePt, figurePhase, figureX, figureY+1) then begin
+			PlaceFigure(figurePt, figurePhase, figureX, figureY);
+			if FindFullLines(figureY) then begin
+				fullLinePhase := 3;
+				fullLineTime := fullLineDuration;
+			end else begin
+				fullLinePhase := 1;
+				fullLineTime := 1;
+			end;
+		end else begin
+			figureY += 1;
+		end;
+		doRedraw := true;
+	end;
+	
+	if newKey then begin
+		case keyCode of
+			ASCII::lower_a: HandleKeyLeft();
+			ASCII::lower_d: HandleKeyRight();
+			ASCII::lower_s: HandleKeyRotate(1);
+			ASCII::lower_w: HandleKeyRotate($FF);
+		end;
+	end;
+end;
+
+
+procedure GameLoop();
+begin
+	// clear screen
+	//dbgStr[4] += 1;
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	if Title::picMode = 1 then begin
+		File::ShowPic(0, pictureY, #tpcLeft);
+		File::ShowPic(85, pictureY, #tpcRight);
+	end;
+
+	DrawScoreHeaders();
+	
+//	File::ShowPic(0, pictureY, "bg1left.tpc");
+//	File::ShowPic(85, pictureY, "bg1right.tpc");
+
+	// initialize next figure random values
+	//dbgStr[5] += 1;
+	Random::SetRSeed();
+	for ib_irq := 0 to Figure::FiguresNo do randomBucket2[ib_irq] := ib_irq;
+	ShuffleRandomBucket2();
+	randomBucketPos := Figure::FiguresNo;
+
+	//dbgStr[6] += 1;
+
+	fullLinesCnt := 0;
+	prevLinesCnt := 0;
+	dropPoints := 0;
+
+	newKey := false;
+	keyCode := 0;
+	dropTime := 1;
+
+	//dbgStr[7] += 1;
+	figureNo := GetRandomFigure();
+	nextFigureNo := GetRandomFigure();
+	figurePt := Figure::Figures[figureNo];
+	figureWPt := Figure::FigureWidths[figureNo];
+	figurePhase := 0;
+	figureX := 5;
+	figureY := 1;
+
+	//dbgStr[8] += 1;
+	doRedraw := true;
+	doRedrawNext := true;
+	gamePaused := false;
+	gameOver := false;
+	
+	//dbgStr[9] += 1;
+	InitField();
+
+	//dbgStr[10] += 1;
+	Screen::GotoXY(12,6);
+	//Screen::PrintStr(" A/D-Move S/W-Rotate X-Down Space-Drop P-Pause Q-Quit E/R-Speed");_addr
+	//Screen::PrintStr("AD-Move SW-Rotate X-Down Spc-Drop P-Pause Q-Quit ER-Speed N-NewP");
+	//                123456789012345678901234567890123456789012345678901234567890
+	Screen::PrintStr("A/D-Move S/W-Rotate X-Down Space-Drop P-Pause Q-Quit");
+
+	// sets function to be called from TIM's interrupt (every 100ms by default)
+	//dbgStr[11] += 1;
+	System::SetTimerFunction(#MainInterrupt);
+	// sets timer interrupt to fire faster, roughly 25 times a second
+	System::SetTimerCountdown(30);
+	
+	//dbgStr[12] += 1;
+	while keyCode <> ASCII::lower_q do begin
+		if Z80CPM::KeyPressed() then begin
+			keyCode := Z80CPM::GetChar();
+			newKey := true;
+		end;
+
+		
+		if ((picLoadPhase < 3) and (picLoadCnt = 0)) then case picLoadPhase of
+			0: begin
+				File::PreparePic(0, pictureY, #tpcLeft);
+				picLoadPhase := 1;
+				picLoadCnt := picLoadCntInit;
+			   end;
+			1: begin
+					if not File::ShowIncrementalPic() then begin
+						File::PreparePic(85, pictureY, #tpcRight);
+						picLoadPhase := 2;
+						DrawScoreHeaders();
+						DrawScores();
+					end;
+					picLoadCnt := picLoadCntInit;
+			   end;
+			2: begin
+					if not File::ShowIncrementalPic() then begin
+						picLoadPhase := 3;
+						DrawNextFigure(true);
+						DrawNextFigure(false);
+					end;
+					picLoadCnt := picLoadCntInit;
+			   end;
+		end;
+
+		if newKey then begin
+/*			if keyCode = ASCII::lower_r then begin
+				newKey := false;
+				if dropTimeInitial > 4 then dropTimeInitial -= 2;
+			end
+			else if keyCode = ASCII::lower_e then begin
+				newKey := false;
+				if dropTimeInitial < 52 then dropTimeInitial += 2;
+			end
+			else */
+			if keyCode = ASCII::lower_p then begin
+				newKey := false;
+				gamePaused := not gamePaused;
+				Screen::GotoXY(60,2);
+				if gamePaused then Screen::PrintStr("PAUSED")
+				else Screen::PrintStr("      ");
+			end
+			else if keyCode = ASCII::lower_x then begin
+				newKey := false;
+				dropTime := 1;
+				dropPoints += 1;
+			end
+			else if keyCode = ASCII::lower_n then begin
+				newKey := false;
+				if picLoadPhase = 3 then picLoadPhase := 0;
+			end
+			else if keyCode = ASCII::SPACE then begin
+				newKey := false;
+				gamePaused := true;
+				while CheckTetromino(figurePt, figurePhase, figureX, figureY+1) do begin
+					figureY += 1;
+					dropPoints += 2;
+				end;
+				dropTime := 1;
+				gamePaused := false;
+			end
+			else if keyCode = ASCII::lower_m then begin
+				newKey := false;
+				Title::ToggleMusic();
+			end;
+			
+		end;
+	
+		if doRedraw then begin
+			doRedraw := false;
+			memcpy(#field, #drawField, fieldWidth*fieldHeight);
+			memcpy(#entryField, #drawEntryField, entryFieldWidth*entryFieldHeight);
+			if fullLinePhase = 0 then
+				DrawFigure(figurePt, figurePhase, figureX, figureY);
+			DrawField();
+			if figureY < 5 then begin
+				Screen::GotoXY(fieldScreenX+2, fieldScreenY-2);
+				Screen::PrintNStr15(#spaceLine,10);
+				if figureY < 4 then begin
+					Screen::GotoXY(fieldScreenX+(figureX<<1)+figureX, fieldScreenY-2);
+					Screen::PrintNStr15(#figureWPt[figurePhase<<2],4);
+				end;
+			end;
+			DrawNextFigure(true);
+			// debug string
+			//Screen::GotoXY(10,4);
+			//Screen::PrintStr(#dbgStr);
+		end;
+		
+		if doRedrawNext then begin
+			doRedrawNext := false;
+			DrawNextFigure(true);
+			DrawNextFigure(false);
+			StrMath::AddStrStr(scoLinesPtrs[fullLinesCnt], #scoScore);
+			StrMath::AddByteStr(dropPoints, #scoScore);
+			dropPoints := 0;
+			StrMath::AddByteStr(fullLinesCnt, #scoLines);
+			if ((prevLinesCnt = 4) and (fullLinesCnt = 4)) then
+				StrMath::AddStrStr(#scoLines4B2B, #scoScore);
+			if fullLinesCnt <> 0 then
+				prevLinesCnt := fullLinesCnt;
+			if ((fullLinesCnt > 0) and (fullLinesCnt >= nextLevelLines)) then begin
+				fullLinesCnt -= nextLevelLines;
+				CalcNextLevelNumbers();
+				if ((Title::picMode = 1) and (level > 2)) then begin
+					gamePaused := true;
+					File::ShowPic(0, pictureY, #tpcLeft);
+					DrawScoreHeaders();
+					DrawScores();
+					File::ShowPic(85, pictureY, #tpcRight);
+					DrawNextFigure(true);
+					DrawNextFigure(false);
+					gamePaused := false;
+				end;
+			end;
+			nextLevelLines -= fullLinesCnt;
+			DrawScores();
+		end;
+		
+		if gameOver then break;
+	end;
+	if picLoadPhase < 3 then File::PicFile.Close();
+	Screen::GotoXY(40,0);Screen::PrintStr("GAME OVER, press any key");
+	DrawField();
+	Z80CPM::GetChar();
+end;
+
+begin
+	//dbgStr[0] += 1;
+	Z80CPM::Startup();
+	
+	Title::ToggleMusic();
+
+/*
+	Screen::ClearBox(0, 0, 128, 64, $AA);
+	ib := 4;	// image 0-14
+	imgLeft[2] := ASCII::lower_a + ib;
+	imgRight[2] := ASCII::lower_a + ib;
+
+	img.LoadCompressedFile(#imgLeft, #imgUnpack, #imgLoad);
+	imgPtr := imgUnpack;
+	scrPtr := $8000 + 0*4*256 + fieldScreenY;
+	for ib:= 0 to 43 do begin
+		Memory::MemCpyOut(#imgPtr, #scrPtr, 192);
+		imgPtr += 192;
+		scrPtr += $100;
+	end;
+
+	img.LoadCompressedFile(#imgRight, #imgUnpack, #imgLoad);
+	imgPtr := imgUnpack;
+	scrPtr := $8000 + 85*4*256 + fieldScreenY;
+	for ib:= 0 to 43 do begin
+		Memory::MemCpyOut(#imgPtr, #scrPtr, 192);
+		imgPtr += 192;
+		scrPtr += $100;
+	end;
+*/	
+	
+	// turn off terminal cursor
+	//dbgStr[1] += 1;
+	System::CursorOff();
+
+
+	
+	// set hardware scroll to 0 (otherwise graphics coordinates could be translated)
+	//dbgStr[2] += 1;
+	System::SetScreenPos(0);
+	
+	// set printing font
+	//dbgStr[3] += 1;
+	Screen::SetFont(#Images::font);
+
+	Title::Init();
+
+	while Title::TitleLoop(#scoScore) <> ASCII::lower_q do begin
+		// clear lines and score
+		StrMath::MulByteStr(0,0,#scoLines);
+		StrMath::MulByteStr(0,0,#scoScore);
+		CalcStartingLevelNumbers();
+		GameLoop();	
+	end;
+
+	// clear screen
+	Screen::ClearBox(0, 0, 128, 64, 0);
+
+	System::SetTimerFunction(0);
+	System::SetTimerCountdown(0);
+
+	// turn on terminal cursor
+	System::CursorOn();
+
+	Z80CPM::Exit();
+end.

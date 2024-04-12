@@ -1,0 +1,391 @@
+unit Figure;
+
+var
+	// special values
+	const tmEM: byte = $B8;	// empty (dot in the middle)
+	const tmEN: byte = $FF;	// end of definition
+
+	// single block characters
+	const tmSQ: byte = $90;	// one square			// 90
+	const tmDS: byte = $B6;	// darker one square
+	const tmB1: byte = $B2;	// one square broken 1
+	const tmB2: byte = $B4;	// one square broken 2
+	const tmWL: byte = $B0;	// wall
+
+	// tetromino font characters
+	const tmUP: byte = $96;	// opening up
+	const tmDW: byte = $92;	// opening down
+	const tmLF: byte = $98;	// opening left
+	const tmRG: byte = $94;	// opening right
+
+	const tmUL: byte = $9E;	// opening up-left
+	const tmUR: byte = $9C;	// opening up-right
+	const tmDL: byte = $A0;	// opening down-left
+	const tmDR: byte = $9A;	// opening down-right
+
+	const tmUA: byte = $A6;	// opening up on all sides
+	const tmDA: byte = $A2;	// opening down on all sides
+	const tmLA: byte = $A8;	// opening left on all sides
+	const tmRA: byte = $A4;	// opening right on all sides
+
+	const tmHR: byte = $AA;	// horizontal pipe
+	const tmVR: byte = $AC;	// vertical pipe
+	const tmAR: byte = $BC;	// arrow down
+	const tmSP: byte = $BA;	// space (really empty)
+
+/*
+	O: array[64] of byte = (
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+	);
+
+	T: array[64] of byte = (
+		tmEM,tmSQ,tmEM,tmEM,//   * 
+		tmSQ,tmSQ,tmSQ,tmEM,// * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmSQ,tmEM,tmEM,//   *
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmEM,tmSQ,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmSQ,tmEM,// * * *
+		tmEM,tmSQ,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+
+	J: array[64] of byte = (
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmSQ,tmSQ,tmEM,// * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmSQ,tmEM,tmEM,//   *
+		tmEM,tmSQ,tmEM,tmEM,//   *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmSQ,tmEM,// * * *
+		tmEM,tmEM,tmSQ,tmEM,//     *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+
+	L: array[64] of byte = (
+		tmEM,tmEM,tmSQ,tmEM,//     *
+		tmSQ,tmSQ,tmSQ,tmEM,// * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmEM,tmSQ,tmEM,tmEM,//   *
+		tmEM,tmSQ,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmSQ,tmEM,// * * *
+		tmSQ,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+
+	S: array[64] of byte = (
+		tmEM,tmSQ,tmSQ,tmEM,//   * *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmEM,tmSQ,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmSQ,tmSQ,tmEM,//   * *
+		tmSQ,tmSQ,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmEM,tmEM,tmEM,// *
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmEM,tmSQ,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+
+	Z: array[64] of byte = (
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmEM,tmSQ,tmSQ,tmEN,//   * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmSQ,tmEM,tmEM,//   *
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmEM,tmSQ,tmSQ,tmEN,//   * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmSQ,tmEM,tmEM,//   *
+		tmSQ,tmSQ,tmEM,tmEM,// * *
+		tmSQ,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+
+	I: array[64] of byte = (
+		tmEM,tmEM,tmEM,tmEM,
+		tmSQ,tmSQ,tmSQ,tmSQ,// * * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEm,tmSQ,tmEM,tmEM,//   *
+		tmEm,tmSQ,tmEM,tmEM,//   *
+		tmEm,tmSQ,tmEM,tmEM,//   *
+		tmEm,tmSQ,tmEN,tmEM,//   *
+
+		tmEM,tmEM,tmEM,tmEM,
+		tmSQ,tmSQ,tmSQ,tmSQ,// * * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEm,tmSQ,tmEM,tmEM,//   *
+		tmEm,tmSQ,tmEM,tmEM,//   *
+		tmEm,tmSQ,tmEM,tmEM,//   *
+		tmEm,tmSQ,tmEN,tmEM,//   *
+	);
+*/
+	O: array[64] of byte = (
+		tmDR,tmDL,tmEM,tmEM,// * *
+		tmUR,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDR,tmDL,tmEM,tmEM,// * *
+		tmUR,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDR,tmDL,tmEM,tmEM,// * *
+		tmUR,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDR,tmDL,tmEM,tmEM,// * *
+		tmUR,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+	);
+	OW: array[16] of byte = (
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+	);
+	
+	T: array[64] of byte = (
+		tmEM,tmDW,tmEM,tmEM,//   * 
+		tmRG,tmUA,tmLF,tmEM,// * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmDW,tmEM,tmEM,//   *
+		tmRG,tmLA,tmEM,tmEM,// * *
+		tmEM,tmUP,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmRG,tmDA,tmLF,tmEM,// * * *
+		tmEM,tmUP,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDW,tmEM,tmEM,tmEM,// *
+		tmRA,tmLF,tmEM,tmEM,// * *
+		tmUP,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+	TW: array[16] of byte = (
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+	);
+
+	J: array[64] of byte = (
+		tmDW,tmEM,tmEM,tmEM,// *
+		tmUR,tmHR,tmLF,tmEM,// * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmDW,tmEM,tmEM,//   *
+		tmEM,tmVR,tmEM,tmEM,//   *
+		tmRG,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmRG,tmHR,tmDL,tmEM,// * * *
+		tmEM,tmEM,tmUP,tmEM,//     *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDR,tmLF,tmEM,tmEM,// * *
+		tmVR,tmEM,tmEM,tmEM,// *
+		tmUP,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+	JW: array[16] of byte = (
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+	);
+
+	L: array[64] of byte = (
+		tmEM,tmEM,tmDW,tmEM,//     *
+		tmRG,tmHR,tmUL,tmEM,// * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmRG,tmDL,tmEM,tmEM,// * *
+		tmEM,tmVR,tmEM,tmEM,//   *
+		tmEM,tmUP,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDR,tmHR,tmLF,tmEM,// * * *
+		tmUP,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDW,tmEM,tmEM,tmEM,// *
+		tmVR,tmEM,tmEM,tmEM,// *
+		tmUR,tmLF,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+	LW: array[16] of byte = (
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+	);
+
+	S: array[64] of byte = (
+		tmEM,tmDR,tmLF,tmEM,//   * *
+		tmRG,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDW,tmEM,tmEM,tmEM,// *
+		tmUR,tmDL,tmEM,tmEM,// * *
+		tmEM,tmUP,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmDR,tmLF,tmEM,//   * *
+		tmRG,tmUL,tmEN,tmEM,// * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmDW,tmEM,tmEM,tmEM,// *
+		tmUR,tmDL,tmEM,tmEM,// * *
+		tmEM,tmUP,tmEN,tmEM,//   *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+	SW: array[16] of byte = (
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+	);
+
+	Z: array[64] of byte = (
+		tmRG,tmDL,tmEM,tmEM,// * *
+		tmEM,tmUR,tmLF,tmEN,//   * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmDW,tmEM,tmEM,//   *
+		tmDR,tmUL,tmEM,tmEM,// * *
+		tmUP,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmRG,tmDL,tmEM,tmEM,// * *
+		tmEM,tmUR,tmLF,tmEN,//   * *
+		tmEM,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEM,tmDW,tmEM,tmEM,//   *
+		tmDR,tmUL,tmEM,tmEM,// * *
+		tmUP,tmEN,tmEM,tmEM,// *
+		tmEM,tmEM,tmEM,tmEM,
+	);
+	ZW: array[16] of byte = (
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmAR, tmSP,
+		tmAR, tmAR, tmSP, tmSP,
+	);
+
+	I: array[64] of byte = (
+		tmEM,tmEM,tmEM,tmEM,
+		tmRG,tmHR,tmHR,tmLF,// * * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEm,tmDW,tmEM,tmEM,//   *
+		tmEm,tmVR,tmEM,tmEM,//   *
+		tmEm,tmVR,tmEM,tmEM,//   *
+		tmEm,tmUP,tmEN,tmEM,//   *
+
+		tmEM,tmEM,tmEM,tmEM,
+		tmRG,tmHR,tmHR,tmLF,// * * * *
+		tmEN,tmEM,tmEM,tmEM,
+		tmEM,tmEM,tmEM,tmEM,
+
+		tmEm,tmDW,tmEM,tmEM,//   *
+		tmEm,tmVR,tmEM,tmEM,//   *
+		tmEm,tmVR,tmEM,tmEM,//   *
+		tmEm,tmUP,tmEN,tmEM,//   *
+	);
+	IW: array[16] of byte = (
+		tmAR, tmAR, tmAR, tmAR,
+		tmSP, tmAR, tmSP, tmSP,
+		tmAR, tmAR, tmAR, tmAR,
+		tmSP, tmAR, tmSP, tmSP,
+	);
+
+	const FiguresNo: byte = 7;
+	//Figures: array[7] of integer = (#O, #T, #J, #L, #S, #Z, #I);
+	Figures: array[Figure::FiguresNo] of pointer = (#Figure::O, #Figure::T, #Figure::J, #Figure::L, #Figure::S, #Figure::Z, #Figure::I);
+	FigureWidths: array[Figure::FiguresNo] of pointer = (#Figure::OW, #Figure::TW, #Figure::JW, #Figure::LW, #Figure::SW, #Figure::ZW, #Figure::IW);
+end.

@@ -1,0 +1,346 @@
+Unit Title;
+
+@use "memory"
+@use "system/z80cpm"
+@use "system/system"
+@use "system/screen"
+@use "system/ascii"
+
+var
+	Logo: string = (
+	   //         1         2         3         4
+	   //1234567890123456789012345678901234567890
+		"                                   ",
+		" XXXXX X X   X XXXXX XXXX  X  XXX  ",
+		"   X   X XX XX   X   X   X X X     ",
+		"   X   X X X X   X   XXXX  X  XXX  ",
+		"   X   X X   X   X   X  X  X     X ",
+		"   X   X X   X   X   X   X X  XXX  ",
+		"                                   "
+	);
+
+	const LogoW: byte = 35;
+	const LogoH: byte = 7;
+	const LogoWScr: byte = LogoW * 3; // * 2 * 15 / 10
+	const LogoHScr: byte = LogoH * 2;
+	
+	const LogoWTblSize: byte = 40;
+	LogoWTbl: array[LogoWTblSize] of byte = buildtable("Math.cos(i*Math.PI*2.0/(LOGOWTBLSIZE))*(128-LOGOWSCR)/2+(128-LOGOWSCR)/2+0.5");
+	const LogoHTblSize: byte = 25;
+	LogoHTbl: array[LogoHTblSize] of byte = buildtable("Math.cos(i*Math.PI*2.0/(LOGOHTBLSIZE))*(20-LOGOHSCR)/2+(20-LOGOHSCR)/2+0.5");
+
+	LogoX: byte; 
+   	LogoY: byte;
+	i,j,k,l,m: byte;
+	tblW: byte;
+	tblH: byte;
+	doDraw: boolean;
+	key: byte;
+	newKey: boolean;
+	pos: byte;
+	level: byte = 1;
+	levelStr: string = ("01");
+	rndMode: byte = 0;
+	picMode: byte = 1;
+	rndLines:byte = 0;
+	rndLinesStr: string = ("00");
+	
+	score, name: pointer;
+
+	scoreTbl: string = (
+	   //123456789012345678901234567890
+		"00100000  Zarko     ",
+		"00090000  Marko     ",
+		"00080000  Leuat     ",
+		"00070000  Micko     ",
+		"00060000  Popmilo   ",
+		"00050000  Once Upon ",
+		"00040000    a Byte  ",
+		"00030000  8 Bit Chip",
+		"00020000   C64 > ZX ",
+		"00010000   TimTris! "
+	);
+	const oneScore: byte = 20;
+	const lastScore: byte = oneScore * 9;
+
+	//xscore: string = ("00009000");
+	xscore: pointer;
+	xname: string = ("MILOJE    ");
+	const enterNameX: byte = 21;
+	const enterNameY: byte = 16; //62;
+	
+	scrollStr: string = (
+		"TimTris v0.9 by Zarko Zivanov for Revision 2024          ",
+		"Original Tetris by Alexey Pajitnov          ",
+		"Game is made with TRSE by Nicolaas Groeneboom, using TIM-011 gfx libs by me, startup/file code adapted from MESCC by Miguel Garcia Lopez, "
+		"PTX Player by S.V.Bulba, and Tetris 2 Red Dawn music by Frantisek Fuka          ",
+		"Many thanks to Marko for helping with various TIM stuff and Micko for TIM-011 emulator!   "
+	);
+	
+	playMusic: byte = 0;
+
+procedure Init();
+begin
+	k := LogoW * LogoH;
+	for i := 0 to k do begin
+		if Logo[i] = Ascii::X then Logo[i] := $90
+		else Logo[i] := $BA;
+	end;
+end;
+
+
+procedure StartStopMusic();
+begin
+	if playMusic = 1 then begin
+		asm("
+			call $5000
+		");
+	end else if playMusic = 2 then begin
+		asm("
+			call $5003
+		");
+	end;
+end;
+
+
+procedure ToggleMusic();
+begin
+	if playMusic = 1 then begin
+		playMusic := 2;
+	end else begin
+		playMusic := 1;
+	end;
+	StartStopMusic();
+end;
+
+procedure DrawLogo();
+begin
+	if LogoX >= 2 then k := LogoX - 2
+	else k := 0;
+	Screen::ClearBox(k, LogoY, 4, LogoHScr, $00);
+	k := LogoX + LogoWScr;
+	if k > 124 then k := 124;
+	Screen::ClearBox(k, LogoY, 4, LogoHScr, $00);
+	
+	LogoX := LogoWTbl[tblW];
+	LogoY := LogoHTbl[tblH];
+	j := 0;
+	k := LogoY;
+	for i := 0 to LogoH do begin
+		Screen::GotoXY(LogoX, k);
+		Screen::PrintNStr15(#Logo[j], LogoW);
+		j += LogoW;
+		k += 2;
+	end;
+end;
+
+procedure DrawHiScore();
+begin
+	j := 0;
+	k := 26;
+	for i :=0 to 10 do begin
+		Screen::GotoXY(47, k);
+		if i = 0 then Screen::SetPrintInv(true)
+		else Screen::SetPrintInv(false);
+		if i < 9 then begin
+			Screen::PrintChr(' ');
+			Screen::PrintChr(ASCII::NUM1 + i);
+		end	else begin
+			Screen::PrintChr('1');
+			Screen::PrintChr('0');
+		end;
+		Screen::PrintChr(' ');
+		
+		//Screen::GotoXY(53, k);
+		Screen::PrintNStr(#scoreTbl[j], oneScore);
+		j += oneScore;
+		k += 2;
+	end;
+end;
+
+procedure DrawText();
+begin
+	//Screen::GotoXY(34, 20);
+	////                123456789012345678901234567890
+	//Screen::PrintStr("v1.0,  Zarko Zivanov  [c] 2023");
+	
+	Screen::GotoXY(6, 48);
+	//                1234567890123456789012345678901234567890
+	Screen::PrintStr("Starting level [A/S]: ");
+	Screen::PrintStr(#levelStr);
+	Screen::PrintStr("            Random lines [D/F]: ");
+	Screen::PrintStr(#rndLinesStr);
+
+	Screen::GotoXY(6, 52);
+	Screen::PrintStr("[N]ext figure: ");
+	if rndMode = 0 then Screen::PrintStr("Bucket")
+	else Screen::PrintStr("Random");
+	Screen::PrintStr("       [P]ictures loading: ");
+	case picMode of
+		0: Screen::PrintStr("Background");
+		1: Screen::PrintStr("Pause game");
+		2: Screen::PrintStr("No loading");
+	end;
+
+	Screen::GotoXY(6, 56);
+	//                         1         2         3         4         5         6
+	//                1234567890123456789012345678901234567890123456789012345678901234567890
+	Screen::PrintStr("SPACE - Start game      Q - Quit game     M - Toggle music");
+end;
+
+procedure TitleTimer();
+begin
+	tblW += 1;
+	if tblW >= LogoWTblSize then tblW := 0;
+	tblH += 1;
+	if tblH >= LogoHTblSize then tblH := 0;
+	doDraw := true;
+end;
+
+function IsNewHighScore(score: global pointer): byte;
+var
+	smaller: boolean;
+begin
+	j := 0;
+	for i :=0 to 10 do begin
+		// check new score against the current one
+		l := j + 8;
+		m := 0;
+		smaller := false;
+		for k := j to l do begin
+			if score[m] > scoreTbl[k] then ReturnValue(j)
+			else if score[m] < scoreTbl[k] then begin
+				smaller := true;
+				break;
+			end;
+			m += 1;
+		end;
+		// check if equal
+		if not smaller then ReturnValue(j);
+		j += oneScore;
+	end;
+	ReturnValue($FF);
+end;
+
+procedure InsertNewScore(pos: global byte, score, name: global pointer);
+begin
+	if pos < lastScore then begin
+		Memory::MemCpyLDDR(#scoreTbl + lastScore - 1, #scoreTbl + lastScore + oneScore - 1, 200 - pos - oneScore);
+	end;
+	Memory::MemCpyLDIR(score, #scoreTbl + pos, 8);
+	Memory::MemCpyLDIR(name, #scoreTbl + pos + 8 + 2, 10);
+end;
+
+procedure EnterName(name: global pointer);
+begin
+	for i := 0 to 10 do name[i] := ASCII::SPACE;
+	key := 0;
+	i := 0;
+	while key <> Ascii::CR do begin
+		Screen::GotoXY(enterNameX, enterNameY);
+		//                1234567890123456789012345678901234567890
+		Screen::PrintStr("New high score, enter your name : ");
+		Screen::PrintNStr(name, 10);
+		key := Z80CPM::GetChar();
+		if ((key >= Ascii::SPACE) and (key <= Ascii::lower_z)) then begin
+			if i < 10 then begin
+				name[i] := key;
+				i += 1;
+			end;
+		end;
+		if key = Ascii::BACKSP then begin
+			if i>0 then begin
+				i -= 1;
+				name[i] := Ascii::SPACE
+			end;
+		end;
+	end;
+	Screen::ClearBox(0, enterNameY, 128, 2, $00);
+end;
+
+
+function TitleLoop(xscore: global pointer): byte;
+begin
+	Screen::ClearBox(0, 0, 128, 64, $00);
+	System::SetScreenPos(0);
+
+	LogoX := 0;
+	LogoY := 0;
+	tblW := 0;
+	tblH := 0;
+	doDraw := false;
+
+	Screen::SetScroll(20, 20, 44, #scrollStr);
+
+	DrawHiScore();
+	DrawText();
+	
+	System::SetTimerFunction(#TitleTimer);
+	System::SetTimerCountdown(60);
+
+	pos := IsNewHighScore(#xscore);
+	if pos <> $FF then begin
+		EnterName(#xname);
+		InsertNewScore(pos, #xscore, #xname);
+		DrawHiScore();
+	end;
+
+	key := 0;
+	newKey := false;
+	while true do begin
+		if Z80CPM::KeyPressed() then begin
+			key := Z80CPM::GetChar();
+			newKey := true;
+		end;
+
+		if newKey then begin
+			case key of
+				ASCII::SPACE: break;
+				ASCII::lower_q: break;
+				ASCII::lower_s: if level < 15 then level += 1;
+				ASCII::lower_a: if level > 1 then level -= 1;
+				ASCII::lower_f: if rndLines < 15 then rndLines += 1;
+				ASCII::lower_d: if rndLines <> 0 then rndLines -= 1;
+				ASCII::lower_n: begin
+					rndMode += 1;
+					if rndMode > 1 then rndMode := 0;
+				end;
+				ASCII::lower_p: begin
+					picMode += 1;
+					if picMode > 2 then picMode := 0;
+				end;
+				ASCII::lower_m: ToggleMusic();
+			end;
+			if level < 10 then begin
+				levelStr[0] := ASCII::NUM0;
+				levelStr[1] := ASCII::NUM0 + level;
+			end else begin
+				levelStr[0] := ASCII::NUM1;
+				levelStr[1] := ASCII::NUM0 + level - 10;
+			end;
+			if rndLines < 10 then begin
+				rndLinesStr[0] := ASCII::NUM0;
+				rndLinesStr[1] := ASCII::NUM0 + rndLines;
+			end else begin
+				rndLinesStr[0] := ASCII::NUM1;
+				rndLinesStr[1] := ASCII::NUM0 + rndLines - 10;
+			end;
+			
+			DrawText();
+			newKey := false;
+		end;
+
+		if doDraw then begin
+			doDraw := false;
+			DrawLogo();
+			Screen::DoScroll();
+		end;
+	end;
+	
+	System::SetTimerFunction(0);
+	System::SetTimerCountdown(0);
+	
+	ReturnValue(key);
+end;
+
+end.
