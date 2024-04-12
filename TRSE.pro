@@ -257,6 +257,7 @@ SOURCES += main.cpp\
     source/ImageEditor/hexview.cpp \
     source/ImageEditor/qlabellimage.cpp \
     source/LeLib/limage/limageagon.cpp \
+    source/LeLib/limage/limagecga_hires.cpp \
     source/LeLib/limage/limagecoco3.cpp \
     source/LeLib/limage/limagelevelgeneric.cpp \
     source/LeLib/limage/limageprimo.cpp \
@@ -584,6 +585,7 @@ HEADERS  += mainwindow.h \
     source/ImageEditor/hexview.h \
     source/ImageEditor/qlabellimage.h \
     source/LeLib/limage/limageagon.h \
+    source/LeLib/limage/limagecga_hires.h \
     source/LeLib/limage/limagecoco3.h \
     source/LeLib/limage/limagelevelgeneric.h \
     source/LeLib/limage/limageprimo.h \

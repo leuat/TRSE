@@ -1,14 +1,12 @@
 unit PolyCGA16;
 @use "system/screen"
 @use "system/memory"
-var
-	p1,p2 : ^byte;	
 	
 var	
 
 
 	val : byte;
-	dx1, dx2, ex1, ex2, i : integer;
+	dx1, dx2, ex1, ex2, i ,val2 : integer;
 	lx1, lx2, lx3, y ,xx1, xx2 : signed integer;
 	dst,p,screen : pointer;
 	v1,v2,j,d1,d2,d3,v3,v4,c1,v1x,v2x: byte;
@@ -20,9 +18,45 @@ var
 
 procedure hline();
 begin
-
+	p:=dst;
+	dx1:=xx1>>8;
+	dx2:=xx2>>8;
+	if (dx1>dx2) then Memory::Swap(dx1,dx2);
+	p+=dx1;
+	v1:=(dx2-dx1);
+//+	v1:=v1>>1;
+	
+	fill(p,val,v1);
 end;
 
+
+
+procedure CopyToScreen(p:global ^byte);
+begin
+	
+	asm("
+		push ds
+		lds si,[PolyCGA16_p]
+		mov ax,$b800
+		mov es,ax
+		mov di,1
+		mov ah,$de
+		mov cl,4
+		mov bh, 0
+again:		
+		%rep 80*25
+		lodsb
+		stosw
+		%endrep
+		inc bh
+		cmp bh,4
+		jne again
+		
+		
+		pop ds
+	
+	");
+end;
 
 
 
@@ -31,6 +65,7 @@ procedure Poly(x1,y1,x2,y2,x3,y3:signed integer;
 
 
 begin
+//	val2 := val | val<<8;
 	if ( y1>y3 ) then
 	begin
 		Memory::Swap(x1,x3);

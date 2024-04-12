@@ -918,7 +918,7 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
             int a = m_faces[k*3];
             int b = m_faces[k*3+1];
             int c = m_faces[k*3+2];
-            if (m_rotNormals[k].z()<0.35)
+            if (m_rotNormals[k].z()<-0.0)
             {
                 points[0] = QPointF(m_projected[a].x(),m_projected[a].y());
                 points[1] = QPointF(m_projected[b].x(),m_projected[b].y());
@@ -932,6 +932,10 @@ void RayObjectRegular3D::Render(Camera& cam, QImage &img) {
                     tmp.append(m_projected[b].y()+img.height()/2);
                     tmp.append(m_projected[c].x()+img.width()/2);
                     tmp.append(m_projected[c].y()+img.height()/2);
+                    float l = QVector3D::dotProduct(m_rotNormals[k],QVector3D(0,-2,3).normalized());
+                    int val = std::fmax(0.0f, -l)*4.0;
+                    tmp.append((uchar)val);
+                    qDebug() << (uchar)val;
 //                    qDebug() << m_projected[a].y()+img.height()/2;
                     tmp.append(k);
 //                    tmp.append((-m_rotNormals[k].z()+0.35)*8);

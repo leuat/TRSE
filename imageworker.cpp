@@ -27,6 +27,7 @@ ImageWorker::ImageWorker()
 {
 
     m_types.append(ImageType("CGA png Palette 1", "X86",LImage::Type::CGA, LColorList::Type::CGA1_HIGH));
+    m_types.append(ImageType("CGA hires", "X86",LImage::Type::CGA_HIRES, LColorList::Type::MONO));
     m_types.append(ImageType("Amiga 320x256", "AMIGA",LImage::Type::AMIGA320x256, LColorList::Type::C64));
     m_types.append(ImageType("Amiga 320x200", "AMIGA",LImage::Type::AMIGA320x200, LColorList::Type::C64));
     m_types.append(ImageType("MultiColor bitmap", "C64", LImage::Type::MultiColorBitmap,LColorList::Type::C64));

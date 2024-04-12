@@ -124,6 +124,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImageAgon(colorType);
     if (t == LImage::PRIMO)
         return new LImagePrimo(colorType);
+    if (t == LImage::CGA_HIRES)
+        return new LImageCGAHires(colorType);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

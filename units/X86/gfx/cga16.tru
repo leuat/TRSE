@@ -8,6 +8,7 @@ var
 	size:integer;
 	tmpb:byte;
 	dx,dy,wx,wy : integer;
+	
 @use "system/screen"
 
 	
