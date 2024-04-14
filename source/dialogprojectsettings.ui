@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -1241,14 +1241,24 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>445</width>
-              <height>156</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_23">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="2" column="0">
+                <widget class="QCheckBox" name="chkMacroUnroll">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string>Output macro-unrolled source code to macro_unrolled/ directory (for debugging purposes)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
                 <widget class="QTextBrowser" name="textBrowser_3">
                  <property name="html">
                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1312,8 +1322,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>893</width>
-              <height>426</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
@@ -1520,8 +1530,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>474</width>
-              <height>681</height>
+              <width>957</width>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1805,8 +1815,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>341</width>
-              <height>319</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1910,8 +1920,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>498</width>
-              <height>217</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_31">
@@ -2060,8 +2070,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>629</width>
-              <height>132</height>
+              <width>957</width>
+              <height>475</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_32">

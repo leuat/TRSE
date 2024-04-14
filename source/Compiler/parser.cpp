@@ -3537,6 +3537,8 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
 
     m_pass = PASS_PRE;
     PreprocessAll();
+
+
     if (m_abort)
         return nullptr;
 
@@ -3574,6 +3576,12 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
     Node::m_staticBlockInfo.m_blockID=-1;
     ErrorHandler::e.m_lexer = m_lexer.get(); // for Warnings
 
+    if (m_projectIni->getdouble("save_unrolled_macros")==1 && m_containsMacros) {
+        qDebug().noquote() << m_lexer->m_text;
+        Util::SaveTextFile(m_currentDir + "/macro_unrolled/"+QFileInfo(m_currentFileShort).baseName()+".ras",m_lexer->m_text);
+    }
+
+
 
     /* MAIN PARSER
   _____
@@ -3582,6 +3590,7 @@ QSharedPointer<Node> Parser::Parse(bool removeUnusedDecls, QString param, QStrin
  |  ___/ _` | '__/ __|/ _ \ '__|
  | |  | (_| | |  \__ \  __/ |
  |_|   \__,_|_|  |___/\___|_|
+
 
                                 */
     QSharedPointer<NodeProgram> root = qSharedPointerDynamicCast<NodeProgram>(Program(param));
@@ -5377,6 +5386,7 @@ void Parser::HandleSetCompressionWeights()
 
 void Parser::HandleMacro()
 {
+    m_containsMacros = true;
     LMacro m;
     QString name = m_currentToken.m_value;
     Eat(TokenType::STRING);

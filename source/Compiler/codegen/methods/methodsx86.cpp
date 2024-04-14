@@ -453,6 +453,10 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
         as->Asm("xor "+di+","+di);
         return;
     }
+    if (m_node->m_params[paramNo]->isReference()) {
+        m_node->m_params[paramNo]->Accept(m_codeGen);
+        return;
+    }
     ErrorHandler::e.Error("Parameter "+QString::number(paramNo)+" must be an address (variable, number or pointer)");
   //  m_node->m_params[paramNo]->Accept(m_codeGen);
 

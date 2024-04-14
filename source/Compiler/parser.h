@@ -114,6 +114,7 @@ public:
     QString m_initAssembler = "";
     QString m_endAssembler = "";
     QString m_override = "_override_";
+    bool m_containsMacros = false;
     QMap<QString, QSharedPointer<Node>> m_procedures;
     QMap<QString, QString> m_preprocessorDefines;
     static QStringList s_usedTRUs, s_usedTRUNames;

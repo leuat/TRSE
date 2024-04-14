@@ -755,6 +755,13 @@ wchar_t *Util::QStringToWchar(QString t) {
 }
 
 void Util::SaveByteArray(QByteArray &data, QString file) {
+
+    QFileInfo info(file);
+    QString d = info.dir().absolutePath();
+    QDir dir(d);
+    if (!dir.exists())
+        dir.mkpath(d);
+
     QFile f(file);
     f.open(QFile::WriteOnly);
     f.write(data);
@@ -914,6 +921,14 @@ QString Util::loadTextFile(QString filename) {
 
 void Util::SaveTextFile(QString fname, QString text)
 {
+    QFileInfo info(fname);
+    QString d = info.dir().absolutePath();
+    QDir dir(d);
+    if (!dir.exists())
+        dir.mkpath(d);
+
+
+
     if (QFile::exists(fname)) {
         QFile::remove(fname);
     }

@@ -86,6 +86,8 @@ void DialogProjectSettings::FillFromIni()
     ui->chkTrack19->setChecked(m_ini->getdouble("use_track_19")==1);
     ui->chkCompilerComments->setChecked(m_ini->getdouble("disable_compiler_comments")==1);
 
+    ui->chkMacroUnroll->setChecked(m_ini->getdouble("save_unrolled_macros")==1);
+
     ui->chkPassLda->setChecked(m_ini->getdouble("post_optimizer_passlda")==1);
     ui->chkPassJmp->setChecked(m_ini->getdouble("post_optimizer_passjmp")==1);
     ui->chkPassLdaTax->setChecked(m_ini->getdouble("post_optimizer_passldatax")==1);
@@ -145,6 +147,7 @@ void DialogProjectSettings::FillFromIni()
 
 
     ui->chkOverrideTargetSettings->setChecked(m_ini->getdouble("override_target_settings")==1);
+
 
     ui->leProgramStartAddress->setText(m_ini->getString("override_target_settings_org"));
     ui->leBasicStartAddress->setText(m_ini->getString("override_target_settings_basic"));
@@ -287,6 +290,8 @@ void DialogProjectSettings::FillToIni()
     //    m_ini->setFloat("use_vice_c1541", ui->chkUseViceC1541->isChecked());
     m_ini->setFloat("disable_compiler_comments", ui->chkCompilerComments->isChecked());
     m_ini->setFloat("use_track_19", ui->chkTrack19->isChecked());
+
+    m_ini->setFloat("save_unrolled_macros",ui->chkMacroUnroll->isChecked());
 
     m_ini->setFloat("post_optimizer_passlda", ui->chkPassLda->isChecked());
     m_ini->setFloat("post_optimizer_passjmp", ui->chkPassJmp->isChecked());

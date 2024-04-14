@@ -159,13 +159,16 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             PopX();
             PopX();
             node->m_left->Accept(this); // Should always be a PURE pointer
+            QString ax = "ax";
+            if (node->isPointer(as))
+                ax = "di";
             as->Comment(" bop type "+TokenType::getType(node->m_op.m_type));
             if (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS) {
                 as->Asm("pop "+bx);
-                as->Asm(bop+" ax," +bx +" ; generic binop when rhs is NOT pointer");
+                as->Asm(bop+" "+ax+"," +bx +" ; generic binop when rhs is NOT pointer");
             }
             else {
-                as->Asm(bop+" " +bx+",ax ; generic binop when rhs is NOT pointer");
+                as->Asm(bop+" " +bx+","+ax+" ; generic binop when rhs is NOT pointer");
                 as->Asm("mov ax,"+bx);
             }
             return;
@@ -188,7 +191,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
         return;
     }
 
-    if (node->m_right->isPure() && (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS || node->m_op.m_type==TokenType::BITAND || node->m_op.m_type==TokenType::BITOR || node->m_op.m_type==TokenType::XOR)) {
+    if (node->m_right->getOrgType(as)!=TokenType::BYTE && node->m_right->isPure() && (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS || node->m_op.m_type==TokenType::BITAND || node->m_op.m_type==TokenType::BITOR || node->m_op.m_type==TokenType::XOR)) {
         as->Comment("RHS is pure optimization");
 
         as->ClearTerm();
@@ -204,6 +207,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
         if (node->m_left->isBool(as)) {
             as->Asm("and "+ax+",1");
         }
+
         as->ClearTerm();
         return;
 
@@ -641,10 +645,10 @@ QString CodeGenX86::getAx(QSharedPointer<Node> n) {
 //    as->Comment("Class var type : " + TokenType::getType(n->getClassvariableType()));
 
 
+    if (n->getLoadType()==TokenType::POINTER || n->isReference())
+        return "di";
     if (n->getLoadType()==TokenType::INTEGER || n->getClassvariableType()==TokenType::INTEGER)
         return a+"x";
-    if (n->getLoadType()==TokenType::POINTER)
-        return "di";
     if (n->getLoadType()==TokenType::BYTE)
         return a+"l";
 
