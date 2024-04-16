@@ -83,7 +83,7 @@ begin
 	scr := ptr(#Screen::VGA, 0);
 	keep := Screen::buffer2;
 	// Open compressed file and read all to a buffer
-	File::ReadAll(#filename1, Screen::buffer1);
+	File::ReadAllLarge(#filename1, Screen::buffer1);
 	// Decomress data from buffer to screen	
 	Compression::Decompress(Screen::buffer1,Screen::buffer3);
 
@@ -96,7 +96,9 @@ begin
 	// Loop infinitely
 	while (true) do 
 	begin
-		Screen::buffer2:= keep+(15-xscroll);
+		asm(";here");
+		Screen::buffer2:= keep-xscroll;
+		Screen::buffer2+=16;
 		Render();
 		xscroll+=1;
 		if (xscroll=16) then

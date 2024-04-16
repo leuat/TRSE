@@ -40,7 +40,7 @@ begin
 	// Load and decompress image
 
 	fontP := Screen::buffer4;
-	File::ReadAll(#font1_file, Screen::buffer4);
+	File::ReadAllLarge(#font1_file, Screen::buffer4);
 	
 //	Compression::Decompress(Screen::buffer3, Screen::buffer4);
 	

@@ -159,9 +159,10 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             PopX();
             PopX();
             node->m_left->Accept(this); // Should always be a PURE pointer
-            QString ax = "ax";
-            if (node->isPointer(as))
-                ax = "di";
+            QString ax = "ax";//getAx(node->m_left);
+//            if (node->isPointer(as) && node->isPure())
+  //              ax = "di";
+
             as->Comment(" bop type "+TokenType::getType(node->m_op.m_type));
             if (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS) {
                 as->Asm("pop "+bx);
@@ -217,7 +218,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
     as->Comment("Generic add/sub");
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
-    if (m_isPurePointer || node->m_left->getStoreType()==TokenType::POINTER ||  node->m_right->getStoreType()==TokenType::POINTER)
+    if (m_isPurePointer || node->m_left->getStoreType()==TokenType::POINTER ||  node->m_right->getStoreType()==TokenType::POINTER )
         bx = "di";
 
     if (bx=="di" && !node->m_right->isPure())
@@ -643,10 +644,13 @@ QString CodeGenX86::getAx(QSharedPointer<Node> n) {
     QString a = m_regs[m_lvl];
 
 //    as->Comment("Class var type : " + TokenType::getType(n->getClassvariableType()));
+  //  as->Comment("Class load type : " + TokenType::getType(n->getLoadType()));
 
-
-    if (n->getLoadType()==TokenType::POINTER || n->isReference())
+/*
+    if (n->getLoadType()==TokenType::POINTER || n->isReference()) {
         return "di";
+    }
+*/
     if (n->getLoadType()==TokenType::INTEGER || n->getClassvariableType()==TokenType::INTEGER)
         return a+"x";
     if (n->getLoadType()==TokenType::BYTE)
@@ -1000,6 +1004,8 @@ bool CodeGenX86::IsSimpleAssignPointer(QSharedPointer<NodeAssign> node)
             //            node->m_right->setLoadType(TokenType::POINTER);
             node->m_right->setStoreType(TokenType::POINTER);
             node->m_right->Accept(this);
+//            if (getAx(node->m_right)=="ax")
+  //              as->Asm("mov di,ax");
             //          m_isPurePointer = false;
             as->Comment("Setting PURE POINTER ends");
 

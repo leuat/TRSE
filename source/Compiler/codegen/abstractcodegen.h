@@ -3,6 +3,7 @@
 
 #include "source/Compiler/assembler/assembler.h"
 #include <QStack>
+
 class Node;
 class NodeBinOP;
 class NodeNumber;
@@ -226,6 +227,8 @@ public:
     virtual void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
 
 
+
+    virtual QString getAx(QSharedPointer<Node> n) { return ""; }
 
     // handles for loops that are onpage, enabling the use of relative <128 byte branches
     void SmallLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);

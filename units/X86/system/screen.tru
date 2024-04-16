@@ -5,8 +5,8 @@ var
 	fp : pointer;
 	tp : pointer of byte;
 	color,red,green,blue : byte;
-	const VGA : integer = $A000;
-	const CGA : integer = $B800;
+	const VGA : address = $A000;
+	const CGA : address = $B800;
 	buffer1, buffer2, buffer3, buffer4, buffer5 : pointer;
 	@donotremove source	
 	@donotremove dest

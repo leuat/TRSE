@@ -50,6 +50,17 @@ class Node : public QEnableSharedFromThis<Node> {
 protected:
     // Toggle nodes as "used" and "used by" - necessary for the optimizer for
     // automatic removal of nodes
+    enum NodeType {
+        NONE,
+        VARIABLE
+    };
+
+
+    virtual NodeType getNodeType() {
+        return NONE;
+    }
+
+
     bool m_hasSwapped = false;
     bool m_isUsed = false;
     bool m_isNegative = false;

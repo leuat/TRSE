@@ -120,26 +120,16 @@ var
 	
 	procedure ReadAll(fp,tp: global pointer);
 	begin
-		Screen::Print(" F1 ");
-		Screen::Print(fp);
 		file.Open(fp,R);
-		Screen::Print(" F2 ");
 		file.Read(65000,tp);
-		Screen::Print(" F3 ");
 		file.Close();
-		Screen::Print(" F4 ");
 	end;
 
 	procedure ReadAllLarge(fp,tp: global pointer);
 	begin
-		Screen::Print(" F1 ");
-		Screen::Print(fp);
 		file.Open(fp,R);
-		Screen::Print(" F2 ");
 		file.ReadLarge(65000,tp);
-		Screen::Print(" F3 ");
 		file.Close();
-		Screen::Print(" F4 ");
 	end;
 
 

@@ -1,5 +1,5 @@
 #include "methodsx86.h"
-
+#include <QSharedPointer>
 MethodsX86::MethodsX86()
 {
 
@@ -205,8 +205,9 @@ void MethodsX86::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
     }
 
     if (Command("topointer") || Command("ptr")) {
+
         LoadVar(as,0);
-        as->Asm("mov es,ax");
+        as->Asm("mov es,"+m_codeGen->getAx(m_node->m_params[0]));
         LoadVar(as,1);
         as->Asm("mov di,ax");
     }

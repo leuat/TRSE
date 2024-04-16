@@ -9,7 +9,7 @@ var
 	x,y,time,i,t,shift: integer;
 	col : integer;
 	sin : array[256] of integer = buildsinetable(127);
-	
+	p:pointer;
 begin
 	// Initialises memory
 	Memory::Init();
@@ -19,9 +19,12 @@ begin
 	Screen::SetMode($13);
 	
 	Random::Init(151); // set some random seed
+	asm(";here");
+	Gfx::PutPixelVGA(ptr(#Screen::VGA,0), x, y, col);
 	x:=0;	
 	// sine shift for x
 	shift := 64;
+	
 	while (true) do
 	begin
 		// waits for vertical blank

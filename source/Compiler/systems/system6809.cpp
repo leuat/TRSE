@@ -68,7 +68,7 @@ void System6809::PerformAssembling(QString filename, QString &text,QString curre
 
 
     if (!useMorgasm && !QFile::exists(assembler)) {
-        text  += "<br><font color=\"#FF6040\">Please set up a link to the LWASM assembler in the TRSE settings panel, or use Morgasm (which isn't done yet.. so use lwasm).</font>";
+        text  += "<br><font color=\"#FF6040\">Please set up a link to the LWASM assembler in the TRSE settings panel, or use the internal Morgasm.</font>";
         m_buildSuccess = false;
         return;
 

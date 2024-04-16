@@ -76,7 +76,7 @@ public:
     }
     QString getCallSubroutine() override { return "call"; }
     bool m_isPurePointer = false;
-    virtual QString getAx(QSharedPointer<Node> n);
+    QString getAx(QSharedPointer<Node> n) override;
         virtual QString getAx(QString a, QSharedPointer<Node> n);
 
 

@@ -26,7 +26,7 @@ var
 
 // Random image of Roberto Carlos doing his thing
 	
-@export "images/image2.flf" "image2.bin" 256
+@export "images/image2.flf" "images/image2.bin" 256
 @compress "images/image2.bin" "image2_c.bin"
 
 /*
@@ -50,16 +50,18 @@ begin
 	Memory::Init();
 	Screen::SetMode($13);
 	Screen::InitVGABuffers(4);
+	
+
 	File::SetPaletteFromFile(#palette1);		
 	// Load and decompress image
-	File::ReadAll(#filename1,Screen::buffer3);
+	File::ReadAllLarge(#filename1,Screen::buffer3);
 
 
 	Compression::Decompress(Screen::buffer3, Screen::buffer2);
 	
 	// Load and decompress font
 	fontP := Screen::buffer4;
-	File::ReadAll(#font1_file, Screen::buffer4);
+	File::ReadAllLarge(#font1_file, Screen::buffer4);
 	
 //	Compression::Decompress(Screen::buffer3, Screen::buffer4);
 	
@@ -76,6 +78,7 @@ end;
 
 begin
 	Init();
+
 	
 	AdlibPlayer::Initialize(#song);
 	Memory::SetTimer(Memory::Default_Timer);
@@ -91,7 +94,6 @@ begin
 	tp1:=#cheesy_text;
 	AdvanceText(tp1);
 	tp1:=tp;
-		
 	while (true) do
 	begin
 		waitforverticalblank();

@@ -14,7 +14,7 @@ var
 	
 
 begin
-	
+	Memory::Init();
 	init_cga_scanlines();
 	init_keyboard_irq();
 	setscreenmode(mode_cga_320x200);
