@@ -442,8 +442,8 @@ void MethodsX86::LoadAddress(Assembler *as, int paramNo, bool isSource)
                 return;
             }
 
-//        as->Asm("mov ax,ds");
- //       as->Asm("mov es,ax");
+        as->Asm("mov ax,ds");
+        as->Asm("mov es,ax");
 
         as->Asm("lea "+di+",["+m_node->m_params[paramNo]->getValue(as)+"]");
         return;

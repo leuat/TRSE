@@ -46,6 +46,9 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override;
 
     QString BothConstants(Assembler* as);
+    NodeType getNodeType() override {
+        return BINOP;
+    }
 
     bool containsVariables() override;
     bool isPureNumeric() override;

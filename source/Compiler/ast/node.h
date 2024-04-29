@@ -50,15 +50,8 @@ class Node : public QEnableSharedFromThis<Node> {
 protected:
     // Toggle nodes as "used" and "used by" - necessary for the optimizer for
     // automatic removal of nodes
-    enum NodeType {
-        NONE,
-        VARIABLE
-    };
 
 
-    virtual NodeType getNodeType() {
-        return NONE;
-    }
 
 
     bool m_hasSwapped = false;
@@ -94,6 +87,16 @@ protected:
 
 public:
     friend class Parser;
+    enum NodeType {
+        NONE,
+        VARIABLE,
+        BINOP,
+        NUMBER,
+        BINARYCLAUSE
+    };
+    virtual NodeType getNodeType() {
+        return NONE;
+    }
 
 
     // Token contains node type data and values from the parser

@@ -66,10 +66,10 @@ begin
 @ifndef CPU_M68000
 		if (currentTest=12) then BooleanTest::Exec();
 @endif
-		if (currentTest=14) then LongTest::Exec();
+		if (currentTest=0) then LongTest::Exec();
 		
 @if SUPPORTS_CLASSES = 1
-		if (currentTest=0) then Classes::Exec();
+		if (currentTest=14) then Classes::Exec();
 @endif
 		currentTest+=1;
 				

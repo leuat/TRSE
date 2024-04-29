@@ -44,6 +44,9 @@ public:
     void ExecuteSym(QSharedPointer<SymbolTable> symTab) override {
     }
 
+    NodeType getNodeType() override {
+        return NUMBER;
+    }
     bool isAddress() override;
     bool isPureNumeric() override;
     bool isPureNumericOrAddress() override;

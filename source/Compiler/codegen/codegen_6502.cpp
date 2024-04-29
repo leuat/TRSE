@@ -1349,12 +1349,18 @@ bool CodeGen6502::IsSimpleAndOr(QSharedPointer<NodeBinaryClause> node, QString l
 {
     if(node==nullptr)
         return false;
-    //    if (dynamic_cast<NodeBinaryClausenode->m_left)
-    QSharedPointer<NodeBinaryClause> a = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_left);
-    QSharedPointer<NodeBinaryClause> b = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_right);
-    //    return false;
-    if (a==nullptr || b==nullptr)
+
+    if (node->m_left->getNodeType()!=Node::BINARYCLAUSE || node->m_right->getNodeType()!=Node::BINARYCLAUSE)
         return false;
+
+    auto a = node->m_left;
+    auto b = node->m_right;
+    //    if (dynamic_cast<NodeBinaryClausenode->m_left)
+//    QSharedPointer<NodeBinaryClause> a = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_left);
+  //  QSharedPointer<NodeBinaryClause> b = qSharedPointerDynamicCast<NodeBinaryClause>(node->m_right);
+    //    return false;
+//    if (a==nullptr || b==nullptr)
+  //      return false;
     if (a->m_op.m_type==TokenType::AND || a->m_op.m_type==TokenType::OR)
         return false;
     if (b->m_op.m_type==TokenType::AND || b->m_op.m_type==TokenType::OR)

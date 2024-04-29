@@ -71,6 +71,7 @@ interrupt RasterLower();
 begin
 	startirq(1);
 	// fails if we turn off unroll copying
+//	wait(10);
 	memcpyunroll(#sprPosLower,0,^$D000,$11);
 	memcpyunroll(#sprLocLower,0,^$07F8,8);
 	

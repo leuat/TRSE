@@ -271,8 +271,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBinaryClause> node)
     QString lblstartTrueBlock = as->NewLabel("ctb");
     QString lblstartFailBlock = as->NewLabel("cfb");
 
-    QSharedPointer<NodeBinaryClause> bn = qSharedPointerDynamicCast<NodeBinaryClause>(node);
-
 
 
 
@@ -280,7 +278,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBinaryClause> node)
     // clauses and jumps to the corresponding fail/success label
     QString localFailed = lblstartFailBlock;
     bool offpage = false;
-    HandleCompoundBinaryClause(bn, lblstartTrueBlock,localFailed,false);
+    HandleCompoundBinaryClause(node, lblstartTrueBlock,localFailed,false);
 
     // OFFPAGE branching for z80:
 

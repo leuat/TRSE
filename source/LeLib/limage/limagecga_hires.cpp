@@ -1,4 +1,4 @@
-#include "limagecga_hires.h".h"
+#include "limagecga_hires.h"
 
 LImageCGAHires::LImageCGAHires(LColorList::Type t)  : LImageCGA(t)
 {

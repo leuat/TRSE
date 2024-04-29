@@ -50,6 +50,9 @@ public:
 
     bool cannotBeSimplified(Assembler* as);
 
+    NodeType getNodeType() override {
+        return BINARYCLAUSE;
+    }
 
 
     void Accept(AbstractCodeGen* dispatcher) override {

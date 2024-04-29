@@ -97,8 +97,8 @@ begin
 	while (true) do 
 	begin
 		asm(";here");
-		Screen::buffer2:= keep-xscroll;
-		Screen::buffer2+=16;
+		Screen::buffer2:= keep-xscroll+16;
+//		Screen::buffer2+=16;
 		Render();
 		xscroll+=1;
 		if (xscroll=16) then

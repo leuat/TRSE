@@ -53,6 +53,9 @@ public:
     NodeVar(Token t);
 
     NodeVar(Token t, QSharedPointer<Node> expr);
+    NodeType getNodeType() override {
+        return VARIABLE;
+    }
 
     bool m_isGlobal = false;
     void ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp) override;

@@ -160,8 +160,8 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             PopX();
             node->m_left->Accept(this); // Should always be a PURE pointer
             QString ax = "ax";//getAx(node->m_left);
-//            if (node->isPointer(as) && node->isPure())
-  //              ax = "di";
+            if (node->isPointer(as) || node->isReference())
+                ax = "di";
 
             as->Comment(" bop type "+TokenType::getType(node->m_op.m_type));
             if (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS) {
@@ -170,7 +170,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             }
             else {
                 as->Asm(bop+" " +bx+","+ax+" ; generic binop when rhs is NOT pointer");
-                as->Asm("mov ax,"+bx);
+                as->Asm("mov "+ax+","+bx);
             }
             return;
         }
@@ -218,8 +218,10 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
     as->Comment("Generic add/sub");
     node->m_left->Accept(this);
     QString bx = getAx(node->m_left);
-    if (m_isPurePointer || node->m_left->getStoreType()==TokenType::POINTER ||  node->m_right->getStoreType()==TokenType::POINTER )
+    if (m_isPurePointer || node->m_left->getStoreType()==TokenType::POINTER ||  node->m_right->getStoreType()==TokenType::POINTER || node->isReference() )
         bx = "di";
+
+    as->Comment("Main reg: "+bx + "  " + QString::number(node->isReference()));
 
     if (bx=="di" && !node->m_right->isPure())
         as->Asm("push di");
@@ -237,6 +239,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
     PopX();
     if (bx=="di" && !node->m_right->isPure())
         as->Asm("pop di");
+
     as->BinOP(node->m_op.m_type);
 
     as->Asm(as->m_term + " " +  bx +"," +ax + "; bop");
