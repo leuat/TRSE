@@ -866,8 +866,7 @@ void Asm6502::OptimisePassStaLda()
         QString l0 = getLine(i);
         if (l0.contains("sta ")) {
             QString l1 = getNextLine(i,j);
-            if (l0==l1 && !
-                    l1.contains("keep")) {
+            if (l0==l1 && !l1.contains("keep")) {
 
                 //                qDebug() << "Removing: " << l0 << l1 << " on line " << j;
 
@@ -875,7 +874,7 @@ void Asm6502::OptimisePassStaLda()
                 continue;
             }
             QString var = getToken(l0,1);
-            if (getToken(l1,1)==var && getToken(l1,0)=="lda") {
+            if (getToken(l1,1)==var && getToken(l1,0)=="lda" &&!l1.contains("keep")) {
 
                 //                qDebug() << "Removing: " << l0 << l1<< " on line " << j;
                 m_removeLines.append(j);

@@ -4341,6 +4341,7 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
     Eat();
     Eat(TokenType::COLON);
     QString type = "";
+    getFlags();
     if (m_currentToken.m_type == TokenType::ADDRESS)
         type="address";
     if (m_currentToken.m_type == TokenType::BYTE)

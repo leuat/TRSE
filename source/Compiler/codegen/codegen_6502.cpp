@@ -2030,6 +2030,7 @@ void CodeGen6502::LoadVariable(QSharedPointer<NodeNumber>node)
     }
     as->Term("lda ");
     node->Accept(this);
+
     as->Term();
 }
 
