@@ -1296,7 +1296,8 @@ void MainWindow::ForceOpenFile(QString s, int ln)
 //    qDebug() << "FIle exists : " <<QFile::exists(s) <<s;
 
     LoadDocument(s,isExternal);
-    m_currentDoc->GotoLine(ln);
+    if (ln!=0)
+        m_currentDoc->GotoLine(ln);
     FormRasEditor* fe = dynamic_cast<FormRasEditor*>(m_currentDoc);
     if (fe!=nullptr)
         fe->setOutputText(txt);
@@ -2848,7 +2849,11 @@ void MainWindow::GotoSymbol(QString s)
 
 void MainWindow::GotoAssemblerLine(QString s, int lineNumber)
 {
-    QString asmSrc = s.split(".")[0] + ".asm";
+    QString type = ".asm";
+
+    if (s.toLower().contains(".asm"))
+        type = ".ras";
+    QString asmSrc = s.split(".")[0] + type;
 //    qDebug() << "Exists : " + m_currentPath+ asmSrc;
  //   qDebug() << QFile::exists(m_currentPath+ asmSrc);
     if (!QFile::exists(m_currentPath+ QDir::separator() + asmSrc))
@@ -2856,7 +2861,8 @@ void MainWindow::GotoAssemblerLine(QString s, int lineNumber)
 
     ForceOpenFile(asmSrc,0);
     m_currentDoc->Focus();
-    m_currentDoc->SearchInSource("linenumber: "+QString::number(lineNumber+1));
+    if (type==".asm")
+        m_currentDoc->SearchInSource("linenumber: "+QString::number(lineNumber+1));
 //    qDebug() << "Searching for line : " << lineNumber+2;
 //    m_currentDoc->SearchInSource("lineumber:");
 }
