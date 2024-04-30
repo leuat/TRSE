@@ -592,7 +592,6 @@ bool Assembler::DeclareClass(QString name, QString type, int count, QStringList 
 void Assembler::RemoveLines()
 {
     int k=0;
-    //    qDebug() << "WOOOT";
     for (int i: m_removeLines) {
         //        qDebug() << "Removing line " << (i) << " : " << getLine(i-k);
         //    if (!m_source[i-k].contains(";keep")) {

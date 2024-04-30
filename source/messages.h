@@ -32,14 +32,14 @@
 
 class Message {
 public:
-    QString m_message;
-    int m_id;
-    bool m_ignore;
+    QString m_message{};
+    int m_id{};
+    bool m_ignore{};
 
     enum Severity {Msg, Warning, Error, Welcome};
-    Severity m_severity;
+    Severity m_severity{};
 
-    Message() {}
+    Message() = default;
 
     Message(int id, Severity sev, QString msg) {
         m_message = msg;

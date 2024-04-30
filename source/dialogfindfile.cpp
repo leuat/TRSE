@@ -21,6 +21,7 @@ void DialogFindFile::Init(QVector<QString> files)
     Update();
     ui->leSearch->setFocus();
     ui->lstItems->setCurrentRow(0);
+    ui->leSearch->installEventFilter(this);
 }
 
 void DialogFindFile::keyPressEvent(QKeyEvent *e)
@@ -35,7 +36,6 @@ void DialogFindFile::keyPressEvent(QKeyEvent *e)
         if (cur>0)
             cur--;
         ui->lstItems->setCurrentRow(cur);
-        qDebug() << "WOOT";
 
     }
     if (e->key() == Qt::Key_Escape) {
@@ -54,6 +54,18 @@ void DialogFindFile::Update()
             ui->lstItems->addItem(i);
         }
 
+}
+
+bool DialogFindFile::eventFilter(QObject *sender, QEvent *event)
+{
+    if (sender == ui->leSearch)
+    {
+        if(event->type()== QEvent::KeyPress)
+        {
+            keyPressEvent((QKeyEvent*)event);
+        }
+    }
+    return QWidget::eventFilter(sender,event);
 }
 
 void DialogFindFile::on_leSearch_textChanged(const QString &arg1)
@@ -80,7 +92,7 @@ void DialogFindFile::on_lstItems_itemDoubleClicked(QListWidgetItem *item)
 
 void DialogFindFile::on_lstItems_itemPressed(QListWidgetItem *item)
 {
- //   m_selected = item->text();
-   // close();
+    //   m_selected = item->text();
+    // close();
 
 }

@@ -19,10 +19,12 @@ public:
     QVector<QString> m_shortFile;
     QVector<QString> m_fullFile;
     QString m_selected;
-    void keyPressEvent(QKeyEvent* e);
+    void keyPressEvent(QKeyEvent* e) override;
     int cur=0;
 
     void Update();
+
+    bool eventFilter(QObject *sender, QEvent *event);
 
 private slots:
     void on_leSearch_textChanged(const QString &arg1);
