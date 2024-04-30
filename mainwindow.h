@@ -509,6 +509,7 @@ private:
 
     TRSEDocument* getMainDocument();
 
+    void saveCurrentProject();
 
     QString FindPathInProjectFolders(const QModelIndex &index);
 

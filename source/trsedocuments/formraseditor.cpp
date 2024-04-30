@@ -1126,6 +1126,9 @@ void FormRasEditor::Save(QString filename)
 
 bool FormRasEditor::Load(QString filename)
 {
+    if (!QFile::exists(filename))
+        return false;
+
     QFile file(filename);
     if (file.open(QFile::ReadOnly | QFile::Text)) {
         SetText(file.readAll());

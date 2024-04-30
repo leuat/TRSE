@@ -740,6 +740,7 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     // replace "//" with "/"
     editor->m_currentSourceFile = editor->m_currentSourceFile.replace(s+s,s);
 
+
     if (isExternal) {
         fileName = testFilename; //"[external]"+fileName.split(QDir::separator()).last();
     }
@@ -755,7 +756,8 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
 
 
     m_currentProject.m_ini->addStringList("open_files", editor->m_currentFileShort, true);
-    m_currentProject.Save();
+    saveCurrentProject();
+
 
 
 
@@ -1256,7 +1258,6 @@ void MainWindow::OnQuit()
     while (Data::data.isCompiling) {
         this->thread()->sleep(25);
     }
-
     m_currentProject.Save();
 //    qDebug() << m_currentProject.m_ini->getString("current_file");
 
@@ -1401,10 +1402,6 @@ bool MainWindow::RemoveTab(int idx, bool save)
 
     if (doc==nullptr)
         return false;
-    if (save) {
-        m_currentProject.m_ini->removeFromList("open_files", doc->m_currentFileShort);
-        m_currentProject.Save();
-    }
 
 
 //    disconnect(m_currentDoc, SIGNAL(requestCloseWindow()), this, SLOT(closeWindowSlot()));
@@ -1415,6 +1412,9 @@ bool MainWindow::RemoveTab(int idx, bool save)
     m_documents[idx];
     m_documents.remove(idx);
 
+
+    if (save)
+        saveCurrentProject();
 
 //    m_updateThread->SetCurrentImage(nullptr, nullptr, nullptr);
 
@@ -1482,6 +1482,7 @@ QStringList MainWindow::getTRUPaths()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    saveCurrentProject();
     if (CloseAll()) {
         QSettings settings("LemonSpawn", "TRSE");
         settings.setValue("MainWindow/geometry", saveGeometry());
@@ -1753,7 +1754,6 @@ void MainWindow::on_tabMain_currentChanged(int index)
     }
     UpdateSymbolTree();
     PropagateMainOutput();
-
 }
 
 TRSEDocument* MainWindow::getMainDocument()
@@ -1771,6 +1771,19 @@ TRSEDocument* MainWindow::getMainDocument()
     }
 
     return main;
+}
+
+void MainWindow::saveCurrentProject()
+{
+    QStringList files;
+    // Order files according to the tab list
+    for (int i=0;i<ui->tabMain->count();i++)
+        files << ui->tabMain->tabText(i);
+
+    m_currentProject.m_ini->setStringList("open_files",files);
+
+    m_currentProject.Save();
+
 }
 
 
@@ -2264,13 +2277,26 @@ void MainWindow::LoadProject(QString filename)
 
     QStringList files = m_currentProject.m_ini->getStringList("open_files");
 
-    QString focusFile = m_currentProject.m_ini->getString("current_file");
-    for (int i=0;i<files.count();i++) {
-        QString f = files[files.count()-1-i];
-        if (QFile::exists(getProjectPath() + "/"+ f))
-            LoadDocument(f);
-    }
 
+    QString focusFile = m_currentProject.m_ini->getString("current_file");
+    QStringList updatedFiles;
+    for (int i=0;i<files.count();i++) {
+        QString f = files[i].replace("\\","/");
+        if (QFile::exists(getProjectPath() + "/"+ f)) {
+            LoadDocument(f);
+            updatedFiles << f;
+        }
+        else
+        if (f.contains("[ext]")) {
+            QString fn = Util::path +  f;
+            fn = fn.remove("[ext]");
+            if (QFile::exists(fn)) {
+                LoadDocument(fn, true);
+                updatedFiles << f;
+            }
+        }
+    }
+    m_currentProject.m_ini->setStringList("open_files", updatedFiles);
 //    qDebug() << f;
     if (QFile::exists(getProjectPath() + "/"+ focusFile))
         if (!(QDir(getProjectPath() + "/"+ focusFile).exists()))
