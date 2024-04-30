@@ -1059,7 +1059,7 @@ void Orgasm::ProcessInstructionData(OrgasmLine &ol, OrgasmData::PassType pd)
 
     int code = cyc.m_opcodes[(int)type];
 
-    if (code==0 && pd==OrgasmData::PASS_SYMBOLS) {
+    if (code==0 && pd==OrgasmData::PASS_SYMBOLS && m_opCode.toLower()!="brk") {
         qDebug() << "ERROR on line : " << m_opCode + " " +expr;
         throw OrgasmError("Opcode type not implemented or illegal: " + m_opCode + "  type " +QString::number(type) + "        on line " + ol.m_expr,ol );
     }
