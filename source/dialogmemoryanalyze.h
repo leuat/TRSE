@@ -47,6 +47,7 @@ class DialogMemoryAnalyze : public QDialog
     QString curT = "";
     QPoint cur;
     QPoint mpos;
+    int curFree = 0;
     float delta;
 
     QPoint zoomCenter;

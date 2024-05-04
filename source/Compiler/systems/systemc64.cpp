@@ -9,7 +9,10 @@ SystemC64::SystemC64(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
     m_labels.append(SystemLabel(SystemLabel::ZEROPAGE,"Zero pages",0,0x00FF));
     m_labels.append(SystemLabel(SystemLabel::STACK,"Stack",0x0100,0x01FF));
     m_labels.append(SystemLabel(SystemLabel::BASIC,"Basic",0x0200,0x03FF));
-    m_labels.append(SystemLabel(SystemLabel::FREE,"Free",0x0800,0xBFFF));
+    m_labels.append(SystemLabel(SystemLabel::FREE,"Bank1",0x0800,0x3FFF));
+    m_labels.append(SystemLabel(SystemLabel::FREE,"Bank2",0x4000,0x7FFF));
+    m_labels.append(SystemLabel(SystemLabel::FREE,"Bank3",0x8000,0xBFFF));
+    m_labels.append(SystemLabel(SystemLabel::FREE,"Bank4",0xC000,0xFFFF));
     m_labels.append(SystemLabel(SystemLabel::SID,"VIC",0xD000,0xD3FF));
     m_labels.append(SystemLabel(SystemLabel::SID,"SID",0xD400,0xD7FF));
     m_labels.append(SystemLabel(SystemLabel::COLOUR,"Colour ram",0xD800,0xDBFF));
