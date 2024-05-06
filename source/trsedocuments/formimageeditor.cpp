@@ -36,7 +36,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 //    m_toolBox.Initialize(ui->lyToolbox_3,width());
-    m_toolBox.Initialize(ui->ToolboxLayout,height()*1.8);
+    m_toolBox.Initialize(ui->ToolboxLayout,width()*0.6);
 
     UpdatePalette();
     m_grid.Initialize(320,200);
@@ -85,6 +85,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
   //  ui->splitter->setStretchFactor(1, 0);
 
   ui->splitter->setSizes(QList<int>() << 1000<<500);
+  ui->splitter_2->setSizes(QList<int>() << 1000<<1000);
   m_lastSizes = ui->splitter->sizes();
 //  ui->splitter->s
 //  ui->splitter->setCollapsible(0, false);
@@ -1885,25 +1886,28 @@ void FormImageEditor::AspectDone() {
 void FormImageEditor::Aspect1()
 {
     QWidget* w = getCurrentPainter();
+    w->setMaximumHeight(3000000);
+    w->setMaximumWidth(3000000);
+  //  w->setVisible(false);
+    QTimer::singleShot(0, this, SLOT(forceAspect()));
+
+
+}
+
+void FormImageEditor::forceAspect()
+{
+    QWidget* w = getCurrentPainter();
+
     if (!m_isFreeAspect) {
-        if (ui->ImageLayout->geometry().width()<ui->ImageLayout->geometry().height())
-        {
-
-//            w->setMaximumHeight(w->width());
-            w->setMaximumHeight(std::max(ui->ImageLayout->geometry().width()-2,10));
-            w->setMaximumWidth(1000000);
-        }
-        else {
-            w->setMaximumHeight(1000000);
-            w->setMaximumWidth(std::max(ui->ImageLayout->geometry().height()-2,10));
-
-        }
+        w->setMaximumHeight(std::min(getCurrentPainter()->width(),getCurrentPainter()->height()));
+        w->setMaximumWidth(std::min(getCurrentPainter()->width(),getCurrentPainter()->height()));
     }
-    else {
+    else
+    {
         w->setMaximumHeight(3000000);
         w->setMaximumWidth(3000000);
-    }
 
+    }
 
 }
 
@@ -1931,6 +1935,7 @@ void FormImageEditor::UpdateAspect()
     m_work.m_currentImage->m_image->setAspect(val);
     Data::data.Redraw();
     onImageMouseEvent();
+    Aspect1();
     Aspect1();
 
 
@@ -1964,6 +1969,7 @@ QWidget *FormImageEditor::getCurrentPainter()
 */
     return ui->lblImageQt;
 }
+
 
 
 
@@ -2767,12 +2773,12 @@ void FormImageEditor::on_splitter_splitterMoved(int pos, int index)
     UpdateAspect();
 }
 
-
+/*
 void FormImageEditor::on_pushButton_2_clicked()
 {
     ui->tabMain->setVisible(!ui->tabMain->isVisible());
     ui->pushButton_2->setText(ui->tabMain->isVisible()?">":"<");
 }
-
+*/
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1172</width>
-    <height>644</height>
+    <width>1530</width>
+    <height>1019</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -109,289 +109,258 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1012</width>
-               <height>583</height>
+               <width>1339</width>
+               <height>820</height>
               </rect>
              </property>
-             <layout class="QGridLayout" name="gridLayout_5" columnstretch="0,0,0" columnminimumwidth="0,0,0">
+             <layout class="QGridLayout" name="gridLayout_5">
               <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_8"/>
-              </item>
-              <item row="0" column="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <widget class="QLabel" name="label_7">
-                  <property name="text">
-                   <string>Tools:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_2">
-                  <property name="maximumSize">
-                   <size>
-                    <width>24</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="2" column="0">
-               <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0">
-                <property name="spacing">
-                 <number>4</number>
+               <widget class="QSplitter" name="splitter_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-                <item>
-                 <widget class="QLabel" name="label_13">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Zoom level</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="cmbZoomLevel">
-                  <property name="toolTip">
-                   <string>General background color. </string>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>1x</string>
-                   </property>
+                <widget class="QGroupBox" name="groupBox">
+                 <property name="title">
+                  <string/>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_13">
+                  <item row="0" column="0">
+                   <widget class="QSplitter" name="splitter_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <widget class="QWidget" name="">
+                     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0">
+                      <property name="spacing">
+                       <number>4</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_13">
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Zoom level</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="cmbZoomLevel">
+                        <property name="toolTip">
+                         <string>General background color. </string>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>1x</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>2x</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>4x</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>8x</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_3">
+                        <property name="text">
+                         <string>Aspect:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="cmbAspect">
+                        <item>
+                         <property name="text">
+                          <string>Free</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>1:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>3:2</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>2:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>3:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>4:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>5:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>6:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>8:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>10:1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>1:2</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>1:3</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>1:4</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>1:8</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="lblPalette">
+                        <property name="text">
+                         <string>Palette:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="cmbNesPalette">
+                        <item>
+                         <property name="text">
+                          <string>Tiles 1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Tiles 2</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Tiles 3</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Tiles 4</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Sprites 1</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Sprites 2</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Sprites 3</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Sprites 4</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="lblBank">
+                        <property name="text">
+                         <string>Bank:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="cmbBank">
+                        <item>
+                         <property name="text">
+                          <string>Bank 0</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Bank 1</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <layout class="QGridLayout" name="ToolboxLayout"/>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>4000</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="">
+                     <layout class="QGridLayout" name="layoutColorsEdit_4"/>
+                    </widget>
+                   </widget>
                   </item>
-                  <item>
-                   <property name="text">
-                    <string>2x</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>4x</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>8x</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>Aspect:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="cmbAspect">
-                  <item>
-                   <property name="text">
-                    <string>Free</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>1:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>3:2</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>2:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>3:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>4:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>5:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>6:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>8:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>10:1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>1:2</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>1:3</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>1:4</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>1:8</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="lblPalette">
-                  <property name="text">
-                   <string>Palette:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="cmbNesPalette">
-                  <item>
-                   <property name="text">
-                    <string>Tiles 1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Tiles 2</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Tiles 3</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Tiles 4</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Sprites 1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Sprites 2</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Sprites 3</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Sprites 4</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="lblBank">
-                  <property name="text">
-                   <string>Bank:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="cmbBank">
-                  <item>
-                   <property name="text">
-                    <string>Bank 0</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Bank 1</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QGridLayout" name="ToolboxLayout"/>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>4000</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item row="2" column="2">
-               <widget class="QTabWidget" name="tabMain">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="currentIndex">
-                 <number>0</number>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>32</width>
-                  <height>32</height>
-                 </size>
-                </property>
-                <widget class="QWidget" name="tabCharset">
+                 </layout>
+                </widget>
+                <widget class="QTabWidget" name="tabMain">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>1</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -404,1259 +373,1276 @@
                    <height>16777215</height>
                   </size>
                  </property>
-                 <attribute name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/charset-trans.png</normaloff>:/resources/images/charset-trans.png</iconset>
-                 </attribute>
-                 <attribute name="title">
-                  <string/>
-                 </attribute>
-                 <layout class="QGridLayout" name="gridLayout_9">
-                  <item row="1" column="0">
-                   <layout class="QGridLayout" name="gridLayout">
-                    <item row="1" column="0">
-                     <widget class="QPushButton" name="btnCharsetCopy">
-                      <property name="toolTip">
-                       <string>Copy screen (Ctrl-C)</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-5-Copy.png</normaloff>:/resources/images/charset_icons/btn-5-Copy.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1">
-                     <widget class="QPushButton" name="btnCharsetPaste">
-                      <property name="toolTip">
-                       <string>Paste screen ((Ctrl-V)</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-6-Paste.png</normaloff>:/resources/images/charset_icons/btn-6-Paste.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2">
-                     <widget class="QPushButton" name="btnClear">
-                      <property name="toolTip">
-                       <string>Clear the current screen</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-c-cleart.png</normaloff>:/resources/images/charset_icons/btn-c-cleart.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QPushButton" name="btnRepeating">
-                      <property name="toolTip">
-                       <string>Toggle repeating tiles</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-3-RepeatTile.png</normaloff>:/resources/images/charset_icons/btn-3-RepeatTile.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2">
-                     <widget class="QPushButton" name="btnFlipVert">
-                      <property name="toolTip">
-                       <string>Mirror around Y-axis</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-a-mirror-horiz.png</normaloff>:/resources/images/charset_icons/btn-a-mirror-horiz.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0">
-                     <widget class="QPushButton" name="btnShiftLeft">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-9-ShiftLeft.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftLeft.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="3">
-                     <widget class="QPushButton" name="btnFlipHorisontal">
-                      <property name="toolTip">
-                       <string>Mirror around X-axis</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-b-mirror-vert.png</normaloff>:/resources/images/charset_icons/btn-b-mirror-vert.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QPushButton" name="btnCharsetFull">
-                      <property name="toolTip">
-                       <string>Toggle fullscreen / character mode (space bar)</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-1-FullView.png</normaloff>:/resources/images/charset_icons/btn-1-FullView.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="2">
-                     <widget class="QPushButton" name="btnShiftUp">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="3">
-                     <widget class="QPushButton" name="btnShiftDown">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="1">
-                     <widget class="QPushButton" name="btnShiftRight">
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="3">
-                     <widget class="QPushButton" name="btnInvert">
-                      <property name="toolTip">
-                       <string>Clear the current screen</string>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="../../resources.qrc">
-                        <normaloff>:/resources/images/brush_invert.png</normaloff>:/resources/images/brush_invert.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>32</width>
-                        <height>32</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="0" column="0">
-                   <layout class="QGridLayout" name="gridLayout_8">
-                    <item row="3" column="0">
-                     <widget class="CustomQTableWidget" name="lstCharMap"/>
-                    </item>
-                    <item row="2" column="0">
-                     <widget class="QPushButton" name="btnImportRom">
-                      <property name="text">
-                       <string>Import C64 ROM charset</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="8" column="0">
-                     <layout class="QGridLayout" name="gridLayout_11" rowstretch="0,0,0,0,0" columnstretch="1,1,1">
-                      <item row="2" column="2">
-                       <widget class="QComboBox" name="cmbCharY">
-                        <property name="toolTip">
-                         <string>Meta character height</string>
-                        </property>
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>3</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>5</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>6</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>7</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item row="4" column="1">
-                       <widget class="QComboBox" name="cmbCharWidth">
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>12</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>16</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>20</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>24</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>28</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>32</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>36</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>40</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>50</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>60</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>64</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="lblTileSize">
-                        <property name="text">
-                         <string>Tile size</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="0">
-                       <widget class="QLabel" name="label_6">
-                        <property name="text">
-                         <string>Width</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="1">
-                       <widget class="QComboBox" name="cmbCharX">
-                        <property name="toolTip">
-                         <string>Meta character width</string>
-                        </property>
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>3</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>5</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>6</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>7</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>10</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>12</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>14</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>16</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item row="3" column="0">
-                       <widget class="QLabel" name="lblTileStamp">
-                        <property name="text">
-                         <string>Tile stamp size</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="1">
-                       <widget class="QComboBox" name="cmbTileStampX">
-                        <property name="toolTip">
-                         <string>Meta character width</string>
-                        </property>
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>3</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>5</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>6</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>7</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>10</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>12</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>14</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>16</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item row="3" column="2">
-                       <widget class="QComboBox" name="cmbTileStampY">
-                        <property name="toolTip">
-                         <string>Meta character height</string>
-                        </property>
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>3</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>5</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>6</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>7</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QPushButton" name="btnLoadCharmap">
-                      <property name="toolTip">
-                       <string>Load a charmap to use in a level editor</string>
-                      </property>
-                      <property name="text">
-                       <string>Load Charset</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QPushButton" name="btnImportMain">
-                      <property name="text">
-                       <string>Import image</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="tab_3">
-                 <attribute name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/import-export-trans.png</normaloff>:/resources/images/import-export-trans.png</iconset>
-                 </attribute>
-                 <attribute name="title">
-                  <string/>
-                 </attribute>
-                 <layout class="QGridLayout" name="gridLayout_3">
-                  <item row="0" column="0">
-                   <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0">
-                    <item row="10" column="0">
-                     <widget class="QPushButton" name="btnImportC">
-                      <property name="text">
-                       <string>Import .c</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="5" column="0">
-                     <widget class="QPushButton" name="btnExportKoala">
-                      <property name="text">
-                       <string>Export koala</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="8" column="0">
-                     <widget class="QPushButton" name="btnNew">
-                      <property name="toolTip">
-                       <string>Clear this image</string>
-                      </property>
-                      <property name="text">
-                       <string>Clear</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="9" column="0">
-                     <widget class="QPushButton" name="btnPalette">
-                      <property name="toolTip">
-                       <string>Clear this image</string>
-                      </property>
-                      <property name="text">
-                       <string>Palette</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="11" column="0">
-                     <widget class="QPushButton" name="btnExportC">
-                      <property name="text">
-                       <string>Export .c</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QPushButton" name="btnExportImage">
-                      <property name="toolTip">
-                       <string>Export this image as a png/jpg</string>
-                      </property>
-                      <property name="text">
-                       <string>Export image</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0">
-                     <widget class="QPushButton" name="btnImportKoala">
-                      <property name="text">
-                       <string>Import koala</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0">
-                     <widget class="QPushButton" name="btnImportBin">
-                      <property name="toolTip">
-                       <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
-                      </property>
-                      <property name="text">
-                       <string>Import bin</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="7" column="0">
-                     <widget class="QPushButton" name="btnExportCompressed">
-                      <property name="text">
-                       <string>Export compressed</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="6" column="0">
-                     <widget class="QPushButton" name="btnExportMovie">
-                      <property name="text">
-                       <string>Export movie</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0">
-                     <widget class="QPushButton" name="btnExportBin">
-                      <property name="toolTip">
-                       <string>Export to C64 binary format (or CBM PRG Studio)</string>
-                      </property>
-                      <property name="text">
-                       <string>Export bin</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QPushButton" name="btnImport">
-                      <property name="toolTip">
-                       <string>Imports a png/jpg into a c64 image of any type</string>
-                      </property>
-                      <property name="text">
-                       <string>Import image</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="12" column="0">
-                     <spacer name="verticalSpacer_2">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="tabSprites">
-                 <attribute name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/tabs-meta-trans.png</normaloff>:/resources/images/tabs-meta-trans.png</iconset>
-                 </attribute>
-                 <attribute name="title">
-                  <string/>
-                 </attribute>
-                 <layout class="QGridLayout" name="gridLayout_4">
-                  <item row="0" column="0">
-                   <layout class="QVBoxLayout" name="verticalLayout_3">
-                    <item>
-                     <widget class="QLabel" name="lblSpriteInfo">
-                      <property name="text">
-                       <string/>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_5">
-                      <item>
-                       <widget class="QPushButton" name="lblSprite1">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>90</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="flat">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="lblSprite2">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>90</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="flat">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="lblSprite3">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>90</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="flat">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,2,2,1,2">
-                      <item>
-                       <widget class="QPushButton" name="btnNewSprite">
-                        <property name="text">
-                         <string>New</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label_4">
-                        <property name="text">
-                         <string>size:</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QComboBox" name="cmbSpriteX">
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>3</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>5</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>6</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>7</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>9</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>10</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>11</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>12</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>13</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>14</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>15</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>16</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label">
-                        <property name="text">
-                         <string>x</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QComboBox" name="cmbSpriteY">
-                        <item>
-                         <property name="text">
-                          <string>1</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>2</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>3</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>4</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>5</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>6</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>7</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>8</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>9</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>10</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>11</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>12</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>13</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>14</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>15</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>16</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
-                      <item row="1" column="1">
-                       <widget class="QPushButton" name="btnPasteSprite">
-                        <property name="text">
-                         <string>Paste</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="1">
-                       <widget class="QPushButton" name="btnMoveSpriteRight">
-                        <property name="text">
-                         <string>Move right</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="1">
-                       <widget class="QPushButton" name="btnFlipYSprite">
-                        <property name="text">
-                         <string>Flip Y</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <widget class="QPushButton" name="btnDeleteSprite">
-                        <property name="text">
-                         <string>Delete</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="9" column="1">
-                       <spacer name="verticalSpacer_3">
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>20</width>
-                          <height>40</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QPushButton" name="btnSpriteMulticolor">
-                        <property name="text">
-                         <string>Toggle multicolor</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QPushButton" name="btnCopySprite">
-                        <property name="text">
-                         <string>Copy</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0">
-                       <widget class="QPushButton" name="btnDuplicate">
-                        <property name="text">
-                         <string>Duplicate</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="0">
-                       <widget class="QPushButton" name="btnFlipXSprite">
-                        <property name="text">
-                         <string>Flip X</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="0">
-                       <widget class="QPushButton" name="btnMoveSpriteLeft">
-                        <property name="text">
-                         <string>Move left</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="0">
-                       <widget class="QPushButton" name="btnPanRight">
-                        <property name="text">
-                         <string>Shift Left</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="1">
-                       <widget class="QPushButton" name="btnPanDown">
-                        <property name="text">
-                         <string>Shift Up</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="8" column="1">
-                       <layout class="QHBoxLayout" name="hlTimeStamp">
-                        <item>
-                         <widget class="QLabel" name="lblTimeStamp">
-                          <property name="text">
-                           <string>TimeStamp</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLineEdit" name="leTimeStamp"/>
-                        </item>
-                       </layout>
-                      </item>
-                      <item row="5" column="0">
-                       <widget class="QPushButton" name="btnPanLeft">
-                        <property name="text">
-                         <string>Shift Right</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="1">
-                       <widget class="QPushButton" name="btnPanUp">
-                        <property name="text">
-                         <string>Shift Down</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="0" column="1">
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="tab_7">
-                 <attribute name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/data-trans.png</normaloff>:/resources/images/data-trans.png</iconset>
-                 </attribute>
-                 <attribute name="title">
-                  <string/>
-                 </attribute>
-                 <layout class="QGridLayout" name="gridLayout_7">
-                  <item row="0" column="0">
-                   <layout class="QGridLayout" name="gridLayout_6">
-                    <property name="sizeConstraint">
-                     <enum>QLayout::SetDefaultConstraint</enum>
-                    </property>
-                    <item row="0" column="0">
-                     <widget class="QTableWidget" name="tblData">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="horizontalScrollBarPolicy">
-                       <enum>Qt::ScrollBarAlwaysOn</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QPushButton" name="btnResizeData">
-                    <property name="text">
-                     <string>Resize data</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLineEdit" name="leHeaders"/>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="tab">
-                 <attribute name="icon">
-                  <iconset resource="../../resources.qrc">
-                   <normaloff>:/resources/images/fx-trans.png</normaloff>:/resources/images/fx-trans.png</iconset>
-                 </attribute>
-                 <attribute name="title">
-                  <string/>
-                 </attribute>
-                 <widget class="QWidget" name="horizontalLayoutWidget">
-                  <property name="geometry">
-                   <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>261</width>
-                    <height>51</height>
-                   </rect>
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>32</width>
+                   <height>32</height>
+                  </size>
+                 </property>
+                 <widget class="QWidget" name="tabCharset">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
-                   <item>
-                    <widget class="QLabel" name="label_2">
-                     <property name="text">
-                      <string>Effect:</string>
-                     </property>
-                    </widget>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <attribute name="icon">
+                   <iconset resource="../../resources.qrc">
+                    <normaloff>:/resources/images/charset-trans.png</normaloff>:/resources/images/charset-trans.png</iconset>
+                  </attribute>
+                  <attribute name="title">
+                   <string/>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_9">
+                   <item row="1" column="0">
+                    <layout class="QGridLayout" name="gridLayout">
+                     <item row="1" column="0">
+                      <widget class="QPushButton" name="btnCharsetCopy">
+                       <property name="toolTip">
+                        <string>Copy screen (Ctrl-C)</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-5-Copy.png</normaloff>:/resources/images/charset_icons/btn-5-Copy.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QPushButton" name="btnCharsetPaste">
+                       <property name="toolTip">
+                        <string>Paste screen ((Ctrl-V)</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-6-Paste.png</normaloff>:/resources/images/charset_icons/btn-6-Paste.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="2">
+                      <widget class="QPushButton" name="btnClear">
+                       <property name="toolTip">
+                        <string>Clear the current screen</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-c-cleart.png</normaloff>:/resources/images/charset_icons/btn-c-cleart.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QPushButton" name="btnRepeating">
+                       <property name="toolTip">
+                        <string>Toggle repeating tiles</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-3-RepeatTile.png</normaloff>:/resources/images/charset_icons/btn-3-RepeatTile.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="2">
+                      <widget class="QPushButton" name="btnFlipVert">
+                       <property name="toolTip">
+                        <string>Mirror around Y-axis</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-a-mirror-horiz.png</normaloff>:/resources/images/charset_icons/btn-a-mirror-horiz.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QPushButton" name="btnShiftLeft">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-9-ShiftLeft.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftLeft.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="3">
+                      <widget class="QPushButton" name="btnFlipHorisontal">
+                       <property name="toolTip">
+                        <string>Mirror around X-axis</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-b-mirror-vert.png</normaloff>:/resources/images/charset_icons/btn-b-mirror-vert.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="btnCharsetFull">
+                       <property name="toolTip">
+                        <string>Toggle fullscreen / character mode (space bar)</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-1-FullView.png</normaloff>:/resources/images/charset_icons/btn-1-FullView.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="2">
+                      <widget class="QPushButton" name="btnShiftUp">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</normaloff>:/resources/images/charset_icons/btn-7-ShiftUp.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="3">
+                      <widget class="QPushButton" name="btnShiftDown">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</normaloff>:/resources/images/charset_icons/btn-8-ShiftDown.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="1">
+                      <widget class="QPushButton" name="btnShiftRight">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</normaloff>:/resources/images/charset_icons/btn-9-ShiftRightt.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="3">
+                      <widget class="QPushButton" name="btnInvert">
+                       <property name="toolTip">
+                        <string>Clear the current screen</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../../resources.qrc">
+                         <normaloff>:/resources/images/brush_invert.png</normaloff>:/resources/images/brush_invert.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>32</width>
+                         <height>32</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
-                   <item>
-                    <widget class="QComboBox" name="cmbEffect"/>
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="gridLayout_8">
+                     <item row="3" column="0">
+                      <widget class="CustomQTableWidget" name="lstCharMap"/>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QPushButton" name="btnImportRom">
+                       <property name="text">
+                        <string>Import C64 ROM charset</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="8" column="0">
+                      <layout class="QGridLayout" name="gridLayout_11" rowstretch="0,0,0,0,0" columnstretch="1,1,1">
+                       <item row="2" column="2">
+                        <widget class="QComboBox" name="cmbCharY">
+                         <property name="toolTip">
+                          <string>Meta character height</string>
+                         </property>
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>5</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>6</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>7</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                       <item row="4" column="1">
+                        <widget class="QComboBox" name="cmbCharWidth">
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>12</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>16</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>20</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>24</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>28</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>32</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>36</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>40</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>50</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>60</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>64</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                       <item row="2" column="0">
+                        <widget class="QLabel" name="lblTileSize">
+                         <property name="text">
+                          <string>Tile size</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="4" column="0">
+                        <widget class="QLabel" name="label_6">
+                         <property name="text">
+                          <string>Width</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="1">
+                        <widget class="QComboBox" name="cmbCharX">
+                         <property name="toolTip">
+                          <string>Meta character width</string>
+                         </property>
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>5</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>6</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>7</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>10</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>12</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>14</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>16</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                       <item row="3" column="0">
+                        <widget class="QLabel" name="lblTileStamp">
+                         <property name="text">
+                          <string>Tile stamp size</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="1">
+                        <widget class="QComboBox" name="cmbTileStampX">
+                         <property name="toolTip">
+                          <string>Meta character width</string>
+                         </property>
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>5</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>6</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>7</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>10</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>12</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>14</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>16</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                       <item row="3" column="2">
+                        <widget class="QComboBox" name="cmbTileStampY">
+                         <property name="toolTip">
+                          <string>Meta character height</string>
+                         </property>
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>5</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>6</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>7</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="btnLoadCharmap">
+                       <property name="toolTip">
+                        <string>Load a charmap to use in a level editor</string>
+                       </property>
+                       <property name="text">
+                        <string>Load Charset</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QPushButton" name="btnImportMain">
+                       <property name="text">
+                        <string>Import image</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QGroupBox" name="groupBox_2">
-                  <property name="geometry">
-                   <rect>
-                    <x>10</x>
-                    <y>90</y>
-                    <width>250</width>
-                    <height>321</height>
-                   </rect>
-                  </property>
-                  <property name="title">
-                   <string>Parameters</string>
-                  </property>
-                  <widget class="QWidget" name="gridLayoutWidget">
+                 <widget class="QWidget" name="tab_3">
+                  <attribute name="icon">
+                   <iconset resource="../../resources.qrc">
+                    <normaloff>:/resources/images/import-export-trans.png</normaloff>:/resources/images/import-export-trans.png</iconset>
+                  </attribute>
+                  <attribute name="title">
+                   <string/>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_3">
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0">
+                     <item row="10" column="0">
+                      <widget class="QPushButton" name="btnImportC">
+                       <property name="text">
+                        <string>Import .c</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="5" column="0">
+                      <widget class="QPushButton" name="btnExportKoala">
+                       <property name="text">
+                        <string>Export koala</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="8" column="0">
+                      <widget class="QPushButton" name="btnNew">
+                       <property name="toolTip">
+                        <string>Clear this image</string>
+                       </property>
+                       <property name="text">
+                        <string>Clear</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="9" column="0">
+                      <widget class="QPushButton" name="btnPalette">
+                       <property name="toolTip">
+                        <string>Clear this image</string>
+                       </property>
+                       <property name="text">
+                        <string>Palette</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="11" column="0">
+                      <widget class="QPushButton" name="btnExportC">
+                       <property name="text">
+                        <string>Export .c</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QPushButton" name="btnExportImage">
+                       <property name="toolTip">
+                        <string>Export this image as a png/jpg</string>
+                       </property>
+                       <property name="text">
+                        <string>Export image</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="4" column="0">
+                      <widget class="QPushButton" name="btnImportKoala">
+                       <property name="text">
+                        <string>Import koala</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QPushButton" name="btnImportBin">
+                       <property name="toolTip">
+                        <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
+                       </property>
+                       <property name="text">
+                        <string>Import bin</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="7" column="0">
+                      <widget class="QPushButton" name="btnExportCompressed">
+                       <property name="text">
+                        <string>Export compressed</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="6" column="0">
+                      <widget class="QPushButton" name="btnExportMovie">
+                       <property name="text">
+                        <string>Export movie</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QPushButton" name="btnExportBin">
+                       <property name="toolTip">
+                        <string>Export to C64 binary format (or CBM PRG Studio)</string>
+                       </property>
+                       <property name="text">
+                        <string>Export bin</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="btnImport">
+                       <property name="toolTip">
+                        <string>Imports a png/jpg into a c64 image of any type</string>
+                       </property>
+                       <property name="text">
+                        <string>Import image</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="12" column="0">
+                      <spacer name="verticalSpacer_2">
+                       <property name="orientation">
+                        <enum>Qt::Vertical</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>20</width>
+                         <height>40</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="tabSprites">
+                  <attribute name="icon">
+                   <iconset resource="../../resources.qrc">
+                    <normaloff>:/resources/images/tabs-meta-trans.png</normaloff>:/resources/images/tabs-meta-trans.png</iconset>
+                  </attribute>
+                  <attribute name="title">
+                   <string/>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_4">
+                   <item row="0" column="0">
+                    <layout class="QVBoxLayout" name="verticalLayout_3">
+                     <item>
+                      <widget class="QLabel" name="lblSpriteInfo">
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_5">
+                       <item>
+                        <widget class="QPushButton" name="lblSprite1">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>90</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="flat">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="lblSprite2">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>90</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="flat">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="lblSprite3">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>90</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="flat">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,2,2,1,2">
+                       <item>
+                        <widget class="QPushButton" name="btnNewSprite">
+                         <property name="text">
+                          <string>New</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_4">
+                         <property name="text">
+                          <string>size:</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="cmbSpriteX">
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>5</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>6</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>7</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>9</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>10</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>11</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>12</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>13</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>14</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>15</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>16</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label">
+                         <property name="text">
+                          <string>x</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="cmbSpriteY">
+                         <item>
+                          <property name="text">
+                           <string>1</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>2</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>3</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>4</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>5</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>6</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>7</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>8</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>9</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>10</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>11</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>12</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>13</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>14</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>15</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>16</string>
+                          </property>
+                         </item>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
+                      <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="btnPasteSprite">
+                         <property name="text">
+                          <string>Paste</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="6" column="1">
+                        <widget class="QPushButton" name="btnMoveSpriteRight">
+                         <property name="text">
+                          <string>Move right</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="1">
+                        <widget class="QPushButton" name="btnFlipYSprite">
+                         <property name="text">
+                          <string>Flip Y</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="btnDeleteSprite">
+                         <property name="text">
+                          <string>Delete</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="9" column="1">
+                        <spacer name="verticalSpacer_3">
+                         <property name="orientation">
+                          <enum>Qt::Vertical</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>20</width>
+                           <height>40</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="btnSpriteMulticolor">
+                         <property name="text">
+                          <string>Toggle multicolor</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="btnCopySprite">
+                         <property name="text">
+                          <string>Copy</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="0">
+                        <widget class="QPushButton" name="btnDuplicate">
+                         <property name="text">
+                          <string>Duplicate</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="0">
+                        <widget class="QPushButton" name="btnFlipXSprite">
+                         <property name="text">
+                          <string>Flip X</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="6" column="0">
+                        <widget class="QPushButton" name="btnMoveSpriteLeft">
+                         <property name="text">
+                          <string>Move left</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="4" column="0">
+                        <widget class="QPushButton" name="btnPanRight">
+                         <property name="text">
+                          <string>Shift Left</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="4" column="1">
+                        <widget class="QPushButton" name="btnPanDown">
+                         <property name="text">
+                          <string>Shift Up</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="8" column="1">
+                        <layout class="QHBoxLayout" name="hlTimeStamp">
+                         <item>
+                          <widget class="QLabel" name="lblTimeStamp">
+                           <property name="text">
+                            <string>TimeStamp</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLineEdit" name="leTimeStamp"/>
+                         </item>
+                        </layout>
+                       </item>
+                       <item row="5" column="0">
+                        <widget class="QPushButton" name="btnPanLeft">
+                         <property name="text">
+                          <string>Shift Right</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="5" column="1">
+                        <widget class="QPushButton" name="btnPanUp">
+                         <property name="text">
+                          <string>Shift Down</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="0" column="1">
+                    <spacer name="horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="tab_7">
+                  <attribute name="icon">
+                   <iconset resource="../../resources.qrc">
+                    <normaloff>:/resources/images/data-trans.png</normaloff>:/resources/images/data-trans.png</iconset>
+                  </attribute>
+                  <attribute name="title">
+                   <string/>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_7">
+                   <item row="0" column="0">
+                    <layout class="QGridLayout" name="gridLayout_6">
+                     <property name="sizeConstraint">
+                      <enum>QLayout::SetDefaultConstraint</enum>
+                     </property>
+                     <item row="0" column="0">
+                      <widget class="QTableWidget" name="tblData">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="horizontalScrollBarPolicy">
+                        <enum>Qt::ScrollBarAlwaysOn</enum>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="btnResizeData">
+                     <property name="text">
+                      <string>Resize data</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLineEdit" name="leHeaders"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="tab">
+                  <attribute name="icon">
+                   <iconset resource="../../resources.qrc">
+                    <normaloff>:/resources/images/fx-trans.png</normaloff>:/resources/images/fx-trans.png</iconset>
+                  </attribute>
+                  <attribute name="title">
+                   <string/>
+                  </attribute>
+                  <widget class="QWidget" name="horizontalLayoutWidget">
                    <property name="geometry">
                     <rect>
                      <x>10</x>
                      <y>20</y>
-                     <width>231</width>
-                     <height>301</height>
+                     <width>261</width>
+                     <height>51</height>
                     </rect>
                    </property>
-                   <layout class="QGridLayout" name="grdEffectParams"/>
+                   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
+                    <item>
+                     <widget class="QLabel" name="label_2">
+                      <property name="text">
+                       <string>Effect:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="cmbEffect"/>
+                    </item>
+                   </layout>
                   </widget>
-                 </widget>
-                 <widget class="QPushButton" name="btnGenerate">
-                  <property name="geometry">
-                   <rect>
-                    <x>140</x>
-                    <y>440</y>
-                    <width>93</width>
-                    <height>28</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>Generate</string>
-                  </property>
+                  <widget class="QGroupBox" name="groupBox_2">
+                   <property name="geometry">
+                    <rect>
+                     <x>10</x>
+                     <y>90</y>
+                     <width>250</width>
+                     <height>321</height>
+                    </rect>
+                   </property>
+                   <property name="title">
+                    <string>Parameters</string>
+                   </property>
+                   <widget class="QWidget" name="gridLayoutWidget">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>20</y>
+                      <width>231</width>
+                      <height>301</height>
+                     </rect>
+                    </property>
+                    <layout class="QGridLayout" name="grdEffectParams"/>
+                   </widget>
+                  </widget>
+                  <widget class="QPushButton" name="btnGenerate">
+                   <property name="geometry">
+                    <rect>
+                     <x>140</x>
+                     <y>440</y>
+                     <width>93</width>
+                     <height>28</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>Generate</string>
+                   </property>
+                  </widget>
                  </widget>
                 </widget>
                </widget>
-              </item>
-              <item row="0" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_9"/>
-              </item>
-              <item row="2" column="1">
-               <layout class="QGridLayout" name="layoutColorsEdit_4"/>
               </item>
              </layout>
             </widget>

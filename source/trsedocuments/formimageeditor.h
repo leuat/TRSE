@@ -185,6 +185,7 @@ private:
     QWidget* getCurrentPainter();
 
 private slots:
+    void forceAspect();
     void UpdatePenShot();
     void UpdateAspect();
     void UpdateMulticolorImageSettings();
@@ -325,7 +326,6 @@ private slots:
     void on_btnGridType_clicked();
     void on_btnRoomSelect_clicked();
     void on_splitter_splitterMoved(int pos, int index);
-    void on_pushButton_2_clicked();
 };
 
 
