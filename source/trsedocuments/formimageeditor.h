@@ -324,6 +324,8 @@ private slots:
     void on_btnPanLeft_clicked();
     void on_btnGridType_clicked();
     void on_btnRoomSelect_clicked();
+    void on_splitter_splitterMoved(int pos, int index);
+    void on_pushButton_2_clicked();
 };
 
 

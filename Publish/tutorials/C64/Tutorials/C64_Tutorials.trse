@@ -98,4 +98,6 @@ data_header_resources/images/squiddy_hires.flf = 0
 data_header_resources/images/squiddy_hires1.flf = 0
 disk_system = Krill
 save_unrolled_macros = 0
-open_files =, Hello.ras
+open_files = ,Turbo Rascal Solution, Hello.ras, resources/charsets/charset.flf
+project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/Tutorials/
+current_file = resources/charsets/charset.flf

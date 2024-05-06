@@ -193,7 +193,7 @@ void FormImageEditor::onImageMouseEvent(QEvent* e = nullptr)
 void FormImageEditor::UpdatePenShot()
 {
     m_work.m_currentImage->m_image->InitPens();
-    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+    m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_4,1,m_windowSize);
 
 }
 
@@ -539,7 +539,7 @@ void FormImageEditor::UpdateImage()
 
 
     QString currentChar = m_work.m_currentImage->m_image->GetCurrentDataString();
-    ui->lblPosition->setText("Position: " +
+    ui->lblPosition->setText("Pos: " +
                              QString::number(m_updateThread.m_currentPosInImage.x()) + ", " +
                              QString::number(m_updateThread.m_currentPosInImage.y()) + currentChar);
 
@@ -856,7 +856,7 @@ void FormImageEditor::UpdatePalette()
     //{
 
     if (m_work.m_currentImage->m_image->m_supports.displayColors)
-        l->CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
+        l->CreateUI(ui->layoutColorsEdit_4,1, m_windowSize);
 
 /*    l->FillComboBox(ui->cmbBackgroundMain_3);
     l->FillComboBox(ui->cmbBorderMain_3);
@@ -908,7 +908,7 @@ void FormImageEditor::UpdatePalette()
     ui->cmbMC2->setVisible(m_work.m_currentImage->m_image->m_supports.displayMC2);
     ui->cmbBorderMain_3->setVisible(m_work.m_currentImage->m_image->m_supports.displayForeground);
     */
-    ui->layoutColorsEdit_3->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
+    ui->layoutColorsEdit_4->setEnabled(m_work.m_currentImage->m_image->m_supports.displayColors);
     ui->cmbBank->setVisible(m_work.m_currentImage->m_image->m_supports.displayBank);
     if (!m_work.m_currentImage->m_image->m_supports.displayBank) {
         // NES stuff: turn off tiles, bank
@@ -1259,7 +1259,7 @@ void FormImageEditor::on_btnImport_clicked()
 
         UpdatePalette();
         FillCMBColors();
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1, m_windowSize);
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_4,1, m_windowSize);
 
         Data::data.redrawOutput = true;
 
@@ -1886,9 +1886,23 @@ void FormImageEditor::Aspect1()
 {
     QWidget* w = getCurrentPainter();
     if (!m_isFreeAspect) {
-        w->setMaximumHeight(w->width());
+        if (ui->ImageLayout->geometry().width()<ui->ImageLayout->geometry().height())
+        {
+
+//            w->setMaximumHeight(w->width());
+            w->setMaximumHeight(std::max(ui->ImageLayout->geometry().width()-2,10));
+            w->setMaximumWidth(1000000);
+        }
+        else {
+            w->setMaximumHeight(1000000);
+            w->setMaximumWidth(std::max(ui->ImageLayout->geometry().height()-2,10));
+
+        }
     }
-    else w->setMaximumHeight(3000000);
+    else {
+        w->setMaximumHeight(3000000);
+        w->setMaximumWidth(3000000);
+    }
 
 
 }
@@ -1919,37 +1933,7 @@ void FormImageEditor::UpdateAspect()
     onImageMouseEvent();
     Aspect1();
 
-    return;
 
-
-    //ui->vImageSpacer->changeSize(0,0);
-    if (m_painterType == OpenGL) {
-/*        ui->lblImage->m_aspectType = val;
-        ui->lblImage->repaint();
-        ui->lblImage->update();
-        ui->lblImage->resize(ui->lblImage->width(),ui->lblImage->height());*/
-    }
-    else {
-        ui->lblImageQt->m_aspectType = val;
-        ui->lblImageQt->repaint();
-        ui->lblImageQt->update();
-//        ui->lblImageQt->resize(ui->lblImageQt->width(),ui->lblImageQt->height());
-
-    }
-    Data::data.Redraw();
-    onImageMouseEvent();
-
-/*
-    this->resize(this->geometry().width()-1, this->geometry().height());
-    this->resize(this->geometry().width()+1, this->geometry().height());*/
-    repaint();
-    update();
-    //emit mySizeChanged(QSize(width(), height()));
- //   ui->lblImage->resizeGL(320,200);
-  //  ui->splitter->update();
-//    ui->splitter->repaint();
-//    ui->splitter->setSizes(QList<int>()<<1<<1);
-   // ui->splitter->move(1,1);
 
 }
 
@@ -2160,7 +2144,7 @@ void FormImageEditor::UpdateMulticolorImageSettings()
 {
     if (m_work.m_currentImage->m_image->m_supports.displayColors) {
         m_work.m_currentImage->m_image->m_colorList.SetIsMulticolor(ui->chkDisplayMulticolor->isChecked());
-        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_3,1,m_windowSize);
+        m_work.m_currentImage->m_image->m_colorList.CreateUI(ui->layoutColorsEdit_4,1,m_windowSize);
     }
 
 }
@@ -2776,4 +2760,19 @@ void FormImageEditor::on_btnRoomSelect_clicked()
 {
     OpenSelectRoom();
 }
+
+
+void FormImageEditor::on_splitter_splitterMoved(int pos, int index)
+{
+    UpdateAspect();
+}
+
+
+void FormImageEditor::on_pushButton_2_clicked()
+{
+    ui->tabMain->setVisible(!ui->tabMain->isVisible());
+    ui->pushButton_2->setText(ui->tabMain->isVisible()?">":"<");
+}
+
+
 
