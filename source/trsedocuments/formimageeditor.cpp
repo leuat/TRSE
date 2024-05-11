@@ -84,7 +84,7 @@ FormImageEditor::FormImageEditor(QWidget *parent) :
     ui->tblData->setItemDelegate(new ByteDelegate());
   //  ui->splitter->setStretchFactor(1, 0);
 
-  ui->splitter->setSizes(QList<int>() << 1000<<500);
+  ui->splitter->setSizes(QList<int>() << 500<<500);
   ui->splitter_2->setSizes(QList<int>() << 1000<<1000);
   m_lastSizes = ui->splitter->sizes();
 //  ui->splitter->s
