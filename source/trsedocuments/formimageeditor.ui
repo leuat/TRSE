@@ -119,7 +119,7 @@
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <widget class="QGroupBox" name="groupBox">
+                <widget class="QGroupBox" name="groupBoxTools">
                  <property name="title">
                   <string/>
                  </property>
@@ -129,7 +129,7 @@
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
-                    <widget class="QWidget" name="">
+                    <widget class="QWidget" name="layoutWidget">
                      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0">
                       <property name="spacing">
                        <number>4</number>
@@ -344,7 +344,7 @@
                       </item>
                      </layout>
                     </widget>
-                    <widget class="QWidget" name="">
+                    <widget class="QWidget" name="layoutWidget">
                      <layout class="QGridLayout" name="layoutColorsEdit_4"/>
                     </widget>
                    </widget>

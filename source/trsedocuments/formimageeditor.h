@@ -96,7 +96,7 @@ public:
     float m_scaley = 1.0;
     int m_zReset = 0;
     int m_oldWidth = 600;
-
+    QList<int> m_keepSplitterSizes;
     int m_prefMode=1, m_keepMode=0;
 //    CharsetImage::Mode m_prefMode = CharsetImage::Mode::CHARSET1x1;
 //    CharsetImage::Mode m_keepMode = CharsetImage::Mode::CHARSET1x1;
@@ -113,6 +113,8 @@ public:
 
     void SetFooterData(int pos, uchar val);
     uchar GetFooterData(int pos);
+
+
 
 
 

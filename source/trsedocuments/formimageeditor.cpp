@@ -335,16 +335,16 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         // toggle
         if (e->key()==Qt::Key_Backslash || e->key()==Qt::Key_F7) {
 
+            auto container = ui->groupBoxTools;
             if ( ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) )
             {
-
                 // no Ctrl key, toggle from one to the other
-                if (ui->Tools_2->isVisible() ) {
-                    ui->Tools_2->setVisible(false);
+                if (container->isVisible() ) {
+                    container->setVisible(false);
                     ui->tabMain->setVisible(true);
                 }
                 else {
-                    ui->Tools_2->setVisible(true);
+                    container->setVisible(true);
                     ui->tabMain->setVisible(false);
                 }
 
@@ -353,19 +353,22 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             {
 
                 // Ctrl key, toggle both on and both off
-                if (!ui->Tools_2->isVisible() ) {
-                    ui->Tools_2->setVisible(true);
+                if (!container->isVisible() ) {
+                    container->setVisible(true);
                     ui->tabMain->setVisible(true);
+                    ui->splitter->setSizes(m_keepSplitterSizes);
                 }
                 else {
-                    ui->Tools_2->setVisible(false);
+                    m_keepSplitterSizes = ui->splitter->sizes();
+                    container->setVisible(false);
                     ui->tabMain->setVisible(false);
+                    ui->splitter->setSizes(QList<int>()<<1000<<1);
                 }
 
             }
 
-            FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
-            FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
+//            FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
+//            FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
 
         if ((QApplication::keyboardModifiers() & Qt::ControlModifier)) {
@@ -1488,10 +1491,11 @@ void FormImageEditor::FixSplitting(QWidget *w, bool sideVisible) {
     if (not w->isVisible()) {
         m_lastSizes = ui->splitter->sizes();
         if (not sideVisible)
-            ui->splitter->setSizes(QList<int> {this->width(), 1});
+            ui->splitter->setSizes(QList<int> {this->width(), this->width()});
     } else {
         ui->splitter->setSizes(m_lastSizes);
     }
+    UpdateAspect();
 }
 
 
