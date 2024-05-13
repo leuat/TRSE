@@ -387,6 +387,7 @@ OrgasmLine Orgasm::LexLine(int i) {
     if (lst[0].toLower()==".byte" || lst[0].toLower()=="db" || lst[0].toLower()=="fcb" || lst[0].toLower()=="dc") {
         l.m_type = OrgasmLine::BYTE;
         l.m_expr = line.replace(".byte", "").trimmed();//.simplified();
+        l.m_expr = line.replace("fcb ", "").trimmed();//.simplified();
         l.m_expr = line.replace(" db ", "").trimmed();//.simplified();
         return l;
     }
@@ -680,8 +681,9 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
     QStringList lst = Util::splitStringSafely(ol.m_expr);
 
     for (QString& s: lst) {
-
+        bool ok = true;
         if (s.trimmed()=="") continue;
+        if (s.trimmed()==".byte") continue;
         //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
 
@@ -693,14 +695,15 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
 
                     }
                 //              qDebug() << "After: "<<s;
-
-                s = Util::numToHex(Util::NumberFromStringHex(s));
+                s = Util::numToHex(Util::NumberFromStringHex(s,ok));
                 //                qDebug() << "After2: "<<s;
 
             }
 
 
-            m_data.append(Util::NumberFromStringHex(s));
+            m_data.append(Util::NumberFromStringHex(s,ok));
+            if (!ok)
+                throw OrgasmError("Incorrect number format: "+s, ol);
 
 //            qDebug() << Util::NumberFromStringHex(s);
             //qDebug() << s << Util::NumberFromStringHex(s);

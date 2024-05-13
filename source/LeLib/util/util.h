@@ -153,6 +153,8 @@ public:
 
     static QString fromStringList(QStringList lst);
 
+    static long NumberFromStringHex(QString s, bool& isOk);
+
     static long NumberFromStringHex(QString s);
 
     static QString ReplaceWords(QString line, QString word);

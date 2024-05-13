@@ -784,10 +784,18 @@ QString Util::fromStringList(QStringList lst)
 }
 
 
-long Util::NumberFromStringHex(QString s) {
+long Util::NumberFromStringHex(QString s, bool& isOk) {
+    long val = 0;
+    isOk = NumberFromStringHex(s,val);
+    return val;
+}
+
+long Util::NumberFromStringHex(QString s)
+{
     long val = 0;
     bool ok = NumberFromStringHex(s,val);
     return val;
+
 }
 
 QString Util::findFileInSubDirectories(QString search, QString dir, QString extension)

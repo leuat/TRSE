@@ -34,32 +34,13 @@ var
 	@donotremove "strCrossroads"
 	@donotremove "strCPU"
 
-	strField: 		string = ("YOU ARE IN A FIELD.");
-	strCrossroads:	string = ("YOU ARE AT A CROSSROADS.");
-	strCPU: 		string = ("YOU ARE IN THE CPU");
+
+	data: array[] of string = ("YOU ARE IN A FIELD.","YOU ARE AT A CROSSROADS.","YOU ARE IN THE CPU");
 
 
 	p1: pointer; // temporary pointer for general use
 	location: byte = FIELD; // starting location
 
-
-@donotremove "stringLocations"
-procedure stringLocations();
-begin
-
-	// place pointers to strings
-	// store in Low and High byte lists to make it easier
-	asm("
-	
-mapDescAddrL 
-	dc.b <strField, <strCrossroads, <strCPU
-
-mapDescAddrH 
-	dc.b >strField, >strCrossroads, >strCPU
-
-	");
-
-end;
 
 
 // print the current location
@@ -67,16 +48,7 @@ procedure PrintLocation();
 begin
 
 	// assign p1 to string
-	asm("
-
-	ldx location
-	
-	lda mapDescAddrL,x
-	sta p1
-	lda mapDescAddrH,x
-	sta p1+1
-	
-	");
+	p1 := data[location];
 	
 	printstring( p1, 0, 30 );
 	screenmemory := screenmemory + SCREEN_WIDTH;
