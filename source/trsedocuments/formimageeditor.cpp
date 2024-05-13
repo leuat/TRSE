@@ -335,7 +335,12 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         // toggle
         if (e->key()==Qt::Key_Backslash || e->key()==Qt::Key_F7) {
 
-            auto container = ui->groupBoxTools;
+            auto container = ui->Tools_2;//ui->groupBoxTools;
+            if (ui->tabMain->isVisible() || ui->Tools_2->isVisible())
+                m_keepSplitterSizes = ui->splitter->sizes();
+
+//            qDebug() << m_keepSplitterSizes;
+
             if ( ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) )
             {
                 // no Ctrl key, toggle from one to the other
@@ -356,17 +361,20 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 if (!container->isVisible() ) {
                     container->setVisible(true);
                     ui->tabMain->setVisible(true);
-                    ui->splitter->setSizes(m_keepSplitterSizes);
                 }
                 else {
-                    m_keepSplitterSizes = ui->splitter->sizes();
                     container->setVisible(false);
                     ui->tabMain->setVisible(false);
-                    ui->splitter->setSizes(QList<int>()<<1000<<1);
                 }
 
             }
+            if (!ui->tabMain->isVisible() && !ui->Tools_2->isVisible()) {
+                ui->splitter->setSizes(QList<int>()<<1000<<1);
+            }
+            else
+                ui->splitter->setSizes(m_keepSplitterSizes);
 
+            UpdateAspect();
 //            FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
 //            FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }

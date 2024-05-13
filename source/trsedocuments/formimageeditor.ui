@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1530</width>
+    <width>2100</width>
     <height>1019</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="100,0,1,0">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1000,1">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -109,8 +109,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1339</width>
-               <height>820</height>
+               <width>1859</width>
+               <height>883</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
@@ -1656,110 +1656,77 @@
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout_12"/>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,4,0">
-     <item>
-      <widget class="QPushButton" name="btnHelpImage">
-       <property name="text">
-        <string>Keyboard shortcuts</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnCharSelect">
-       <property name="text">
-        <string>Char selector (c)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnRoomSelect">
-       <property name="text">
-        <string>Room selector (r)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnSelectDefaultClearItm">
-       <property name="text">
-        <string>Select default clear item (B)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>Reload</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblMode">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QCheckBox" name="chkBackgroundArea">
+    <widget class="QScrollArea" name="scrollArea_2">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>2074</width>
+        <height>72</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_15">
+       <item row="0" column="13">
+        <widget class="QComboBox" name="cbmGridSize">
+         <item>
+          <property name="text">
+           <string>1x1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1x2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1x3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2x3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3x3</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="btnCharSelect">
          <property name="text">
-          <string>Collision area (x)</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
+          <string>Char selector (c)</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QCheckBox" name="chkPaintSeparately">
-         <property name="text">
-          <string>Char/colour</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chkDisplayMulticolor">
-         <property name="text">
-          <string>Multicolor</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chkHybrid">
-         <property name="text">
-          <string>Hybrid</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblFixedD800">
-         <property name="text">
-          <string>Fixed D800 colour:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
+       <item row="0" column="10">
         <widget class="QComboBox" name="cmbFixedfD800">
          <item>
           <property name="text">
@@ -1848,15 +1815,99 @@
          </item>
         </widget>
        </item>
-       <item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="lblFixedD800">
+         <property name="text">
+          <string>Fixed D800 colour:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btnSelectDefaultClearItm">
+         <property name="text">
+          <string>Select default clear item (B)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QCheckBox" name="chkHybrid">
+         <property name="text">
+          <string>Hybrid</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="QCheckBox" name="chkPaintSeparately">
+         <property name="text">
+          <string>Char/colour</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="12">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Grid size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QCheckBox" name="chkBackgroundArea">
+         <property name="text">
+          <string>Collision area (x)</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_14">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="btnHelpImage">
+           <property name="text">
+            <string>Keyboard shortcuts</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="15">
+        <widget class="QPushButton" name="btnGridType">
+         <property name="text">
+          <string>Grid type (v)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="20">
         <widget class="QLabel" name="lblPosition">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Reload</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="QCheckBox" name="chkDisplayMulticolor">
+         <property name="text">
+          <string>Multicolor</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="17">
+        <widget class="QLabel" name="lblMode">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="21">
+        <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -1868,11 +1919,14 @@
          </property>
         </spacer>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
-       <item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="btnRoomSelect">
+         <property name="text">
+          <string>Room selector (r)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="14">
         <widget class="QCheckBox" name="chkGrid">
          <property name="text">
           <string>Display grid (z)</string>
@@ -1882,85 +1936,9 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QPushButton" name="btnGridType">
-         <property name="text">
-          <string>Grid type (v)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Grid size:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="cbmGridSize">
-         <item>
-          <property name="text">
-           <string>1x1</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>1x2</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2x1</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2x2</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>1x3</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2x3</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3x1</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3x2</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3x3</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
