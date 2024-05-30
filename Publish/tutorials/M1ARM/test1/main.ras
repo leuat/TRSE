@@ -31,7 +31,7 @@ begin
 		
 		if (k=Console::sizex*Console::sizey) then 
 		begin
-			Console::Sleep(30000);			
+			//Console::Sleep(30000);			
 			Console::ClearScreen();
 			k:=0;
 			i:=0;	

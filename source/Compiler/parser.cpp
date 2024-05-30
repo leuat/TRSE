@@ -2992,10 +2992,6 @@ QSharedPointer<Node> Parser::Term()
 {
     QSharedPointer<Node> node = Factor();
 
-
-
-
-
     while (m_currentToken.m_type == TokenType::Type::MUL || m_currentToken.m_type == TokenType::Type::DIV
            || m_currentToken.m_type == TokenType::Type::BITAND || m_currentToken.m_type == TokenType::Type::BITOR
            || m_currentToken.m_type == TokenType::Type::SHR || m_currentToken.m_type == TokenType::Type::SHL
@@ -3012,26 +3008,6 @@ QSharedPointer<Node> Parser::Term()
 
 void Parser::PreprocessSingle() {
 
-    //              qDebug() << "***PRE" << m_currentToken.m_value << m_pass;
-
-
-    /*            if (m_currentToken.m_value.toLower()=="include") {
-
-  //                QString str = m_currentToken.m_value;
-                  Eat(TokenType::PREPROCESSOR);
-                  QString name = m_currentToken.m_value;
-                  QString filename =(m_currentDir +"/"+ m_currentToken.m_value);
-                  filename = filename.replace("//","/");
-                  QString text = m_lexer->loadTextFile(filename);
-                  int ln=m_lexer->getLineNumber(m_currentToken.m_value)+m_acc;
-                  m_lexer->m_text.insert(m_lexer->m_pos, text);
-                  int count = text.split("\n").count();
-                  m_lexer->m_includeFiles.append(
-                              FilePart(name,ln, ln+ count, ln-m_acc,ln+count-m_acc,count));
-                  m_acc-=count-1;
-
-                  Eat(TokenType::STRING);
-              }*/
     if (m_currentToken.m_value.toLower() =="deletefile") {
         Eat(TokenType::PREPROCESSOR);
         QString file = m_currentToken.m_value;

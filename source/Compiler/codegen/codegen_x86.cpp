@@ -163,6 +163,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             if (node->isPointer(as) || node->isReference())
                 ax = "di";
 
+
             as->Comment(" bop type "+TokenType::getType(node->m_op.m_type));
             if (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS) {
                 as->Asm("pop "+bx);

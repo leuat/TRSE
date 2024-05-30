@@ -683,7 +683,7 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
     for (QString& s: lst) {
         bool ok = true;
         if (s.trimmed()=="") continue;
-        if (s.trimmed()==".byte") continue;
+        if (s.trimmed().simplified()==".byte") continue;
         //      qDebug() << Util::NumberFromStringHex(s);
         if (!s.contains("\"")) {
 
@@ -702,8 +702,10 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
 
 
             m_data.append(Util::NumberFromStringHex(s,ok));
-            if (!ok)
+            if (!ok && !(s.startsWith("<") || s.startsWith('>') || s.startsWith('^'))) {
                 throw OrgasmError("Incorrect number format: "+s, ol);
+
+            }
 
 //            qDebug() << Util::NumberFromStringHex(s);
             //qDebug() << s << Util::NumberFromStringHex(s);
