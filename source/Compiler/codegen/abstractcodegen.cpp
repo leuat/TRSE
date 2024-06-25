@@ -1399,11 +1399,12 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeAsm> node)
     node->DispatchConstructor(as,this);
 
     QStringList txt;
-    if (m_isCurrentlyWithinInline)
+    if (m_isCurrentlyWithinInline && node->m_outAsm!="") {
         txt = node->m_outAsm.split("\n");
+    }
     else
         txt = node->m_asm.split("\n");
-//    as->Comment("****** Inline assembler section");
+    //    as->Comment("****** Inline assembler section");
     for (QString t: txt) {
         as->Write(t,0);
     }
