@@ -1,9 +1,9 @@
 unit Screens;
 var
 	p1,zp:pointer wram;
-	w,h,adde,b,x,y,j,i,done,c:byte wram;
+	dx,dy,flipx, flipy, w,h,adde,b,x,y,j,i,done,c,idx, attr, len, start:byte wram;
 	screenOn : byte;
-
+	
 	const storage: address= $C900;
 
 
@@ -322,6 +322,34 @@ begin
 	CopyBankHB(^$D000, $8800, 8);
 	CopyBankHB(^$D000, $9000, 8);
 end;
+
+
+procedure InitDataSprite(spriteData, spriteIndices : ^byte, start, len, w, attr : global byte );
+begin
+	flipx := (attr & %00100000) = %00100000;	
+	flipy := (attr & %01000000) = %01000000;	
+	x:=0;
+	y:=0;
+	h := len/w;	
+	for i:=0 to len do
+	begin
+		dx := x;
+		dy := y;
+		if (flipx) then dx := w - 1 - dx;
+		if (flipy) then dy := h - 1 - dy;
+		c := (dx + dy*w)<<2;
+		spriteData[c+2] := spriteIndices[start];		
+		spriteData[c+3] := attr;		
+		
+		start+=1;
+		x+=1;
+	 	if (x=w) then
+		begin
+			x := 0;
+			y += 1;
+		end;	
+	end;
+end;	
 
 
 end.

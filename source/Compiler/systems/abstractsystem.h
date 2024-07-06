@@ -166,7 +166,7 @@ public:
         return false;
     }
 
-    const bool isGB() { return m_system == AbstractSystem::GAMEBOY; }
+    bool isGB() { return m_system == AbstractSystem::GAMEBOY; }
 
 
     virtual bool HasCycleCounter() {
